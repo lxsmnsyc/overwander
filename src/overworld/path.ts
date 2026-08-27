@@ -154,6 +154,58 @@ export function findPath(from: number, to: number, passable: Passable): number[]
 }
 
 /**
+ * The way to a cell, or as close to it as the ground allows.
+ *
+ * A press on a tree or a rock is still a press on somewhere: the player
+ * pointed at a spot and meant "over there". Refusing it leaves them
+ * pressing a boulder and watching nothing happen, so the walk ends on
+ * the nearest cell that can be stood on instead.
+ *
+ * Nearest is measured from the target, not from the walker, and only
+ * cells that can actually be walked to count — the far side of a wall
+ * is not close to anything. So this floods outward for everywhere the
+ * walker can reach and picks the best of it, rather than searching once
+ * per ring around a cell that may be sealed off entirely
+ */
+export function findPathNear(from: number, to: number, passable: Passable): number[] | null {
+  if (from < 0 || to < 0 || from >= CELL_COUNT || to >= CELL_COUNT) {
+    return null;
+  }
+  if (passable(to)) {
+    return findPath(from, to, passable);
+  }
+
+  const reached = new Set<number>([from]);
+  const queue = [from];
+
+  for (let at = 0; at < queue.length; at++) {
+    for (const next of neighbors(queue[at])) {
+      if (passable(next) && !reached.has(next)) {
+        reached.add(next);
+        queue.push(next);
+      }
+    }
+  }
+
+  // Breadth-first order, so of two cells equally close to the target
+  // the one found first is the one with the shorter walk to it
+  let best = from;
+  let closest = stepsBetween(from, to);
+
+  for (const cell of reached) {
+    const off = stepsBetween(cell, to);
+
+    if (off < closest) {
+      closest = off;
+      best = cell;
+    }
+  }
+  // Already as close as the ground allows, which includes a walker with
+  // nowhere at all to go
+  return best === from ? [] : findPath(from, best, passable);
+}
+
+/**
  * The way to somewhere a player can put a hand on the cell from: the
  * ring of eight around it, which is the same reach an interaction has.
  *

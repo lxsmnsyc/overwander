@@ -4,7 +4,7 @@ import { asNumber, asRecord, asRecordArray, asString } from './__normalize';
 import getSupabase, { type Unwatch, watchRow, watchTable } from './supabase';
 import { requireUid } from '../server/auth';
 import BattleOutcome from './battle-outcome';
-import recordOnServer from '../server/battles';
+import recordOnServer, { type CandyEarned } from '../server/battles';
 import { finishBattle as finishOnServer } from '../server/raids';
 import type BattleAftermath from './battle-aftermath';
 
@@ -12,6 +12,7 @@ import getIdToken from './session';
 import { type TeamSnapshotRecord, getTeamSnapshot } from './teams';
 
 export { default as BattleOutcome } from './battle-outcome';
+export type { CandyEarned } from '../server/battles';
 
 /**
  * One fought battle at battles/{battleId}: the team snapshots that
@@ -172,7 +173,10 @@ async function finishBattleOnServer(
  * The server checks the report against the team snapshots it froze
  * itself, and settles each player once per battle
  */
-export async function recordAftermath(id: string, aftermath: BattleAftermath[]): Promise<boolean> {
+export async function recordAftermath(
+  id: string,
+  aftermath: BattleAftermath[],
+): Promise<CandyEarned[]> {
   return recordAftermathOnServer(await getIdToken(), id, aftermath);
 }
 
@@ -180,7 +184,7 @@ async function recordAftermathOnServer(
   token: string,
   id: string,
   aftermath: BattleAftermath[],
-): Promise<boolean> {
+): Promise<CandyEarned[]> {
   'use server';
   return recordOnServer(await requireUid(token), id, aftermath);
 }

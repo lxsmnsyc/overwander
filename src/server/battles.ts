@@ -7,7 +7,10 @@ import { settleStatuses } from '../data/ids/status';
 import { gainFriendship } from '../data/constants/friendship';
 import type { Items } from '../data/ids/items';
 import BattleOutcome from '../auth/battle-outcome';
+import type Families from '../data/ids/families';
+import { getSpeciesData } from '../data/species';
 import { Metric } from '../auth/quest-record';
+import { grantCandy } from './candy';
 import { getSql, tx } from './db';
 import { readCaughtIn, updateCaughtIn } from './caught-io';
 import { type ProgressBump, bumpProgress } from './quest-progress';
@@ -74,23 +77,30 @@ async function readFielded(battleId: string, player: string): Promise<Map<string
   return fielded;
 }
 
+/** What a fought team came home with, one entry per family fielded */
+export interface CandyEarned {
+  family: Families;
+  count: number;
+}
+
 /**
  * Write what the battle did to a player's party: the items it spent
  * come off the catch records, the health it has left and the statuses
- * it is carrying are written onto them.
+ * it is carrying are written onto them, and the team is paid its
+ * candy for having fought at all.
  *
  * A marker at battleAftermaths/{battleId}:{uid} guards the whole
  * thing, so one battle settles one player once however many times the
- * report arrives. Resolves false when the player did not fight it, or
- * has already settled it
+ * report arrives. Resolves what the candy came to, and nothing at all
+ * for a player who did not fight it or has already settled it
  */
 export default async function recordAftermath(
   uid: string,
   battleId: string,
   aftermath: BattleAftermath[],
-): Promise<boolean> {
+): Promise<CandyEarned[]> {
   if (aftermath.length === 0) {
-    return false;
+    return [];
   }
 
   const fought = await getSql()`
@@ -98,7 +108,7 @@ export default async function recordAftermath(
   `;
 
   if (fought.length === 0) {
-    return false;
+    return [];
   }
 
   // A raid or an npc fight settles for whoever fought it. A fight
@@ -115,7 +125,7 @@ export default async function recordAftermath(
   `;
 
   if (battles.at(0) == null) {
-    return false;
+    return [];
   }
   if (battles[0].raid_id == null && asNumber(others.at(0)?.players) > 1) {
     const challenged = await getSql()`
@@ -123,7 +133,7 @@ export default async function recordAftermath(
     `;
 
     if (challenged.length === 0) {
-      return false;
+      return [];
     }
   }
 
@@ -131,7 +141,7 @@ export default async function recordAftermath(
   const reported = aftermath.filter((entry) => fielded.has(entry.caught));
 
   if (reported.length === 0) {
-    return false;
+    return [];
   }
 
   // The report is the client's word, so what a Pay Day can pay is
@@ -209,19 +219,38 @@ export default async function recordAftermath(
     return true;
   });
 
+  if (!settled) {
+    return [];
+  }
+
   // Settling is the once-per-battle moment, so it is where a raid run
   // counts; a win counts on top from the stamped outcome, and Pay Day
   // gold counts as earned the moment it lands
-  if (settled) {
-    // oxlint-disable-next-line typescript/no-unsafe-enum-comparison
-    const won = asNumber(battles[0].outcome) === BattleOutcome.Won;
-    const raid = battles[0].raid_id != null;
+  // oxlint-disable-next-line typescript/no-unsafe-enum-comparison
+  const won = asNumber(battles[0].outcome) === BattleOutcome.Won;
+  const raid = battles[0].raid_id != null;
 
-    await bumpProgress(uid, [
-      ...(coins > 0 ? [[Metric.GoldEarned, 0, coins] satisfies ProgressBump] : []),
-      ...(raid ? [[Metric.RaidRuns, 0, 1] satisfies ProgressBump] : []),
-      ...(raid && won ? [[Metric.RaidWins, 0, 1] satisfies ProgressBump] : []),
-    ]);
+  await bumpProgress(uid, [
+    ...(coins > 0 ? [[Metric.GoldEarned, 0, coins] satisfies ProgressBump] : []),
+    ...(raid ? [[Metric.RaidRuns, 0, 1] satisfies ProgressBump] : []),
+    ...(raid && won ? [[Metric.RaidWins, 0, 1] satisfies ProgressBump] : []),
+  ]);
+
+  // And what the fight was worth to the team that fought it: one
+  // candy each, of whichever family the pokemon belongs to, so a
+  // party of 3 Gyarados comes home with 3 Magikarp candies. It is
+  // counted off the team snapshots rather than the report, since what
+  // was fielded is the server's own writing, and it rides the same
+  // marker as everything else here: one battle pays one team once
+  const earned = new Map<Families, number>();
+
+  for (const snapshot of fielded.values()) {
+    const { family } = getSpeciesData(snapshot.species);
+
+    earned.set(family, (earned.get(family) ?? 0) + 1);
   }
-  return settled;
+  for (const [family, count] of earned) {
+    await grantCandy(uid, family, count);
+  }
+  return [...earned].map(([family, count]) => ({ family, count }));
 }

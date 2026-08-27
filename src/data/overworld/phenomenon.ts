@@ -4,6 +4,7 @@ import { listItemsByType } from '../items';
 import { GEMS } from '../items/gems';
 import { PLATES } from '../items/plates';
 import { WING_STATS } from '../items/wings';
+import { getRegisteredSpecies, getSpeciesData } from '../species';
 
 /**
  * Something happening on a patch of ground rather than something
@@ -146,6 +147,29 @@ export function getPhenomenonItems(phenomenon: Phenomenon): Items[] {
   return pool;
 }
 
+/**
+ * The evolution items some registered line actually asks for.
+ *
+ * Most of the family is registered against generations this game has
+ * not: a Reaper Cloth and a Dawn Stone have a name, a picture and
+ * nothing on earth to spend them on. Kicking up the whole type made a
+ * dust cloud mostly a disappointment, so it is derived from the lines
+ * rather than listed, and a stone earns its place the day something
+ * asks for it
+ */
+function spendableStones(): Items[] {
+  const asked = new Set<Items>();
+
+  for (const species of getRegisteredSpecies()) {
+    for (const evolution of getSpeciesData(species).evolvesInto ?? []) {
+      if (evolution.item != null) {
+        asked.add(evolution.item);
+      }
+    }
+  }
+  return listItemsByType(ItemTypes.Evolution).filter((item) => asked.has(item));
+}
+
 function buildPool(phenomenon: Phenomenon): Items[] {
   // Everything the ground itself holds. The stones are in here as much
   // as the nuggets, which is what makes a dust cloud worth crossing a
@@ -153,7 +177,7 @@ function buildPool(phenomenon: Phenomenon): Items[] {
   if (phenomenon === Phenomenon.DustCloud) {
     return [
       ...GEMS.keys(),
-      ...listItemsByType(ItemTypes.Evolution),
+      ...spendableStones(),
       ...PLATES.keys(),
       ...listItemsByType(ItemTypes.Valuable),
     ];

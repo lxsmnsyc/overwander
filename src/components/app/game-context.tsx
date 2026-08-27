@@ -21,6 +21,7 @@ import { getPosition, savePosition } from '../../auth/positions';
 import { AWARD_NAMES } from '../../data/ids/awards';
 import { getItemData } from '../../data/items';
 import ItemSprite from '../items/ItemSprite';
+import watchDueQuests from './due-quests';
 import { useToast } from '../styled';
 import type { AuctionSubject } from '../auctions/AuctionDialog';
 import { ensureProfile } from '../../auth/profile';
@@ -336,6 +337,16 @@ export default function GameProvider(props: ParentProps): JSX.Element {
   const [trading, setTrading] = createSignal<string | null>(null);
   const [dexEntry, setDexEntry] = createSignal<Species | null>(null);
   const [records, setRecords] = createSignal(0);
+
+  // Said wherever the player is, since the board is shut whenever it
+  // is worth hearing
+  watchDueQuests(
+    () => auth.user()?.uid ?? null,
+    records,
+    (name) => {
+      toast.push({ title: 'Quest complete', message: `${name} is ready to claim.`, tone: 'leaf' });
+    },
+  );
 
   const [raid, setRaid] = createSignal<string | null>(null);
   const [battle, setBattle] = createSignal<ActiveBattle | null>(null);

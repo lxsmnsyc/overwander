@@ -104,14 +104,32 @@ function CatchSheet(
     },
   );
 
+  /**
+   * Every one of these is keyed by a **string** rather than by the
+   * record or a tuple of it.
+   *
+   * A source is compared by identity, and a re-read of the record
+   * hands back a new object every time — so keying on one asks the
+   * server all of this again after every favourite, nickname and
+   * effort point, and, worse, leaves the resource loading. A read of
+   * a loading resource throws, the sheet has no boundary of its own,
+   * and the page's boundary catches it: the whole screen is torn down
+   * and built again. Keyed by what actually decides the answer, an
+   * unchanged pokemon is not asked about twice
+   */
   const [evolutions, { refetch: refetchEvolutions }] = createResource(
     () => {
       const uid = owned();
       const catchId = props.catchId;
 
-      return uid == null || catchId == null ? null : ([uid, catchId, view()?.species] as const);
+      return uid == null || catchId == null ? null : `${uid}/${catchId}/${view()?.species ?? ''}`;
     },
-    async ([uid, catchId]) => listEvolutionOptions(uid, catchId),
+    async () => {
+      const uid = owned();
+      const catchId = props.catchId;
+
+      return uid == null || catchId == null ? [] : listEvolutionOptions(uid, catchId);
+    },
   );
 
   /**
@@ -121,8 +139,16 @@ function CatchSheet(
    * either way; this is only so the buttons say so first
    */
   const [fighting] = createResource(
-    () => view(),
-    async (caught) => isLockLive(caught, await syncServerClock()),
+    () => {
+      const loaded = view();
+
+      return loaded == null ? null : `${props.catchId ?? ''}/${loaded.lockedAt}`;
+    },
+    async () => {
+      const loaded = view();
+
+      return loaded != null && isLockLive(loaded, await syncServerClock());
+    },
   );
 
   /**
@@ -133,9 +159,13 @@ function CatchSheet(
     () => {
       const species = view()?.species;
 
-      return species == null ? null : ([props.player, getSpeciesData(species).family] as const);
+      return species == null ? null : `${props.player}/${getSpeciesData(species).family}`;
     },
-    async ([player, family]) => getCandyCount(player, family),
+    async (key) => {
+      const [player, family] = key.split('/');
+
+      return getCandyCount(player, Number(family));
+    },
   );
 
   return (

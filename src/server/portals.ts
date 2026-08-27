@@ -4,7 +4,7 @@ import { Items } from '../data/ids/items';
 import Landmark from '../data/overworld/landmark';
 import getWorld from '../overworld/current';
 import { type PortalDestination, findPortal } from '../overworld/portal';
-import { Landmark as QuestLandmark, Metric } from '../auth/quest-record';
+import { Metric, Landmark as QuestLandmark } from '../auth/quest-record';
 import { consumeItem } from './inventory';
 import { resolveSnapshot } from './overworld';
 import { bumpProgress } from './quest-progress';

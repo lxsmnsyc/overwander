@@ -1,4 +1,4 @@
-import { Foe, Metric } from '../../auth/quest-record';
+import { Foe, Landmark, Metric } from '../../auth/quest-record';
 import AleaRNG from '../../core/alea';
 import type Families from '../ids/families';
 import { Items } from '../ids/items';
@@ -62,7 +62,14 @@ const DAILY_POOL: [name: string, requirement: MetricRequirement, rewards: Rotati
     [{ item: Items.HyperPotion, amount: 2 }],
   ],
   ['Local Rounds', ask(Metric.NpcVisits, 1), [{ item: Items.SuperPotion, amount: 2 }]],
-  ["Forager's Rounds", ask(Metric.Landmarks, 3), [{ item: Items.GreatBall, amount: 3 }]],
+  // Named to a kind: "claim 3 landmarks" counted caches, patches,
+  // nests and portal crossings alike, which told a player to go and do
+  // something without saying what
+  [
+    "Forager's Rounds",
+    ask(Metric.Landmarks, 3, { landmark: Landmark.Cache }),
+    [{ item: Items.GreatBall, amount: 3 }],
+  ],
   ['Well Supplied', ask(Metric.ItemUses, 3), [{ item: Items.UltraBall, amount: 1 }]],
   ['Answer the Siren', ask(Metric.RaidRuns, 1), [{ item: Items.HyperPotion, amount: 3 }]],
 ];

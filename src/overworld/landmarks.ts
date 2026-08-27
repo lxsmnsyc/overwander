@@ -127,8 +127,10 @@ function fitting(entries: SpawnEntry[], groups: Set<EggGroups> | undefined): Spa
  * worth stopping for — and neither is the special one.
  *
  * Rippling water and a flying shadow look like something particular,
- * so the pick prefers the egg groups they suggest and falls back to
- * the whole band only when the biome has nothing that fits.
+ * and that is binding rather than a preference: a shadow overhead that
+ * turned out to be a Rattata is the picture lying. A biome with
+ * nothing of the kind answers null, and the caller hands over what the
+ * phenomenon was carrying instead.
  *
  * The day's featured family, when one is given, crowds the pool
  * exactly as it crowds the overworld's
@@ -149,9 +151,12 @@ function startled(
   const rare = random() < PHENOMENON_RARE_CHANCE;
   const preferred = rare ? pool.rare : pool.uncommon;
   const fallback = rare ? pool.uncommon : pool.rare;
-  // Fitting entries of either band first, then any entry at all: a
-  // biome with nothing that fits still answers, as it always did
-  const bands = [fitting(preferred, groups), fitting(fallback, groups), preferred, fallback];
+  // Either band, so a thin rare band borrows the uncommon one. What is
+  // never borrowed is a species of the wrong kind
+  const bands =
+    groups == null
+      ? [preferred, fallback]
+      : [fitting(preferred, groups), fitting(fallback, groups)];
 
   return pickFromEntries(bands.find((band) => band.length > 0) ?? [], random);
 }
@@ -177,6 +182,15 @@ export function resolvePhenomenon(
   random: () => number,
   featured: Families | null = null,
 ): PhenomenonReward | null {
+  // One piece. Everything a phenomenon leaves is worth carrying home
+  // on its own, so a handful of them would be a different landmark
+  const dropped = (): PhenomenonReward | null => {
+    const pool = getPhenomenonItems(phenomenon);
+    const item = pool.length === 0 ? null : pool[Math.floor(random() * pool.length)];
+
+    return item == null ? null : { kind: 'item', items: [{ item, amount: 1 }] };
+  };
+
   if (phenomenon === Phenomenon.HiddenGrotto) {
     if (random() < GROTTO_EGG_CHANCE) {
       const species = resolveNest(biome, time, random, featured);
@@ -184,15 +198,12 @@ export function resolvePhenomenon(
       return species == null ? null : { kind: 'egg', species };
     }
   } else if (random() < PHENOMENON_ITEM_CHANCE) {
-    const pool = getPhenomenonItems(phenomenon);
-    const item = pool.length === 0 ? null : pool[Math.floor(random() * pool.length)];
-
-    // One piece. Everything a phenomenon leaves is worth carrying home
-    // on its own, so a handful of them would be a different landmark
-    return item == null ? null : { kind: 'item', items: [{ item, amount: 1 }] };
+    return dropped();
   }
 
   const species = startled(phenomenon, biome, time, random, featured);
 
-  return species == null ? null : { kind: 'pokemon', species };
+  // A shadow over a biome with nothing that flies drops what it was
+  // carrying rather than turning out to be nothing at all
+  return species == null ? dropped() : { kind: 'pokemon', species };
 }

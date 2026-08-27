@@ -12,6 +12,7 @@ import type Unit from '../../../battle/unit';
 import {
   BattleOutcome,
   type BattleRecord,
+  type CandyEarned,
   finishBattle,
   listBattleTeams,
   recordAftermath,
@@ -33,7 +34,8 @@ import BattleField from '../BattleField';
 import VerdictDialog from './VerdictDialog';
 import { type Contribution, type SideSummary, readContributions, readSides } from './summary';
 import CatchDialog from '../../catches/catch-dialog';
-import { Badge, Button, Dialog, DialogActions, Note, Status } from '../../styled';
+import { getFamilyName } from '../../../data/species';
+import { Badge, Button, Dialog, DialogActions, Note, Status, useToast } from '../../styled';
 import { type ActiveBattle, GameDialog, useGame } from '../../app/game-context';
 import { type Profile, getProfiles } from '../../../auth/profile';
 
@@ -74,6 +76,26 @@ export interface BattleViewProps {
 export default function BattleView(props: BattleViewProps): JSX.Element {
   const game = useGame();
   const auth = useAuth();
+  const toast = useToast();
+
+  /**
+   * What the team brought home for having fought: a candy each, said
+   * once rather than a line per pokemon
+   */
+  const sayCandy = (earned: CandyEarned[]): void => {
+    if (earned.length === 0) {
+      return;
+    }
+
+    const total = earned.reduce((sum, one) => sum + one.count, 0);
+
+    toast.push({
+      title: `${total} candy`,
+      message: earned.map((one) => `${getFamilyName(one.family)} × ${one.count}`).join(', '),
+      tone: 'leaf',
+    });
+  };
+
   // Followed rather than read once: the outcome is stamped by
   // whoever watches the fight settle, and that may not be this player
   const record = from<BattleRecord | null>((set) =>
@@ -386,7 +408,7 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
 
     (async () => {
       if (aftermath.length > 0) {
-        await recordAftermath(props.active.id, aftermath);
+        sayCandy(await recordAftermath(props.active.id, aftermath));
       }
       await finishBattle(props.active.id, BattleOutcome.Lost);
     })().catch(() => {
@@ -481,7 +503,7 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
         const aftermath = collectAftermath(built, user.uid);
 
         if (aftermath.length > 0) {
-          await recordAftermath(props.active.id, aftermath);
+          sayCandy(await recordAftermath(props.active.id, aftermath));
         }
       }
 

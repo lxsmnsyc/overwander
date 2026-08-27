@@ -84,7 +84,10 @@ const SEA_LANDMARKS = LANDMARKS.filter((kind) => !SEA_PEOPLE.has(kind));
  */
 const SINGLETON_LANDMARKS = new Set([
   Landmark.Portal,
+  // The region's title fights, one apiece: two gyms in sight of each
+  // other is a badge run walked in a single chunk
   Landmark.GymLeader,
+  Landmark.EliteFour,
   Landmark.Champion,
   // One seat to a chunk: a seat is a place players come back to, and
   // two of them beside each other would be one contest split in half
@@ -112,10 +115,11 @@ const LAND_ROCKS: [minimum: number, maximum: number] = [0, 2];
 
 /**
  * How many cells one grown patch holds — a pool, a bank or a rock
- * outcrop alike
+ * outcrop alike. Big enough to read as a lake or a ridge from across
+ * the chunk: at five cells a pool was a puddle the eye skipped over
  */
-const MIN_BLOB_CELLS = 5;
-const MAX_BLOB_CELLS = 9;
+const MIN_BLOB_CELLS = 9;
+const MAX_BLOB_CELLS = 16;
 
 /**
  * The cells touching one, diagonals included, clipped to the chunk.
@@ -186,6 +190,69 @@ function grownBlob(rng: AleaRNG, start: number, size: number, allowed: Set<numbe
     blob.add(frontier[Math.floor(rng.random() * frontier.length)]);
   }
   return blob;
+}
+
+/** The four cells straight out of one, clipped to the chunk */
+function orthogonal(cell: number): number[] {
+  const x = cell % CHUNK_CELLS;
+  const y = Math.floor(cell / CHUNK_CELLS);
+  const found: number[] = [];
+
+  if (x > 0) {
+    found.push(cell - 1);
+  }
+  if (x < CHUNK_CELLS - 1) {
+    found.push(cell + 1);
+  }
+  if (y > 0) {
+    found.push(cell - CHUNK_CELLS);
+  }
+  if (y < CHUNK_CELLS - 1) {
+    found.push(cell + CHUNK_CELLS);
+  }
+  return found;
+}
+
+/**
+ * The cells a walk in from the chunk's rim cannot reach around the
+ * given wall: the yards a blob closed round on itself.
+ *
+ * A grown blob takes its shape from a random walk, so a big one can
+ * curl back and pen a cell in. A pen is worse than a wall: a spawn can
+ * land in one and no player can ever get to it
+ */
+function penned(wall: Set<number>): Set<number> {
+  const reached = new Set<number>();
+  const queue: number[] = [];
+
+  // The rim is outside every blob's allowed area, so it is always open
+  // ground to start from
+  for (let cell = 0; cell < CELL_COUNT; cell++) {
+    const x = cell % CHUNK_CELLS;
+    const y = Math.floor(cell / CHUNK_CELLS);
+
+    if (x === 0 || y === 0 || x === CHUNK_CELLS - 1 || y === CHUNK_CELLS - 1) {
+      reached.add(cell);
+      queue.push(cell);
+    }
+  }
+  for (let at = 0; at < queue.length; at++) {
+    for (const next of orthogonal(queue[at])) {
+      if (!wall.has(next) && !reached.has(next)) {
+        reached.add(next);
+        queue.push(next);
+      }
+    }
+  }
+
+  const shut = new Set<number>();
+
+  for (let cell = 0; cell < CELL_COUNT; cell++) {
+    if (!wall.has(cell) && !reached.has(cell)) {
+      shut.add(cell);
+    }
+  }
+  return shut;
 }
 
 /**
@@ -311,6 +378,15 @@ export default class Chunk {
         // The blob and its ring leave the pool of room for the next
         for (const cell of spread(blob)) {
           allowed.delete(cell);
+        }
+      }
+      // Solid, not a wall round a yard: a cell an outcrop closed in on
+      // is filled rather than left for a spawn to land in. A pool
+      // caught inside one is left alone, since water is not something
+      // to pave over
+      for (const cell of penned(cells)) {
+        if (!spots.has(cell)) {
+          cells.add(cell);
         }
       }
       this.rockCells = cells;

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { CHUNK_CELLS } from '../../src/overworld/chunk';
-import { findPath, findPathBeside, stepsBetween } from '../../src/overworld/path';
+import { findPath, findPathBeside, findPathNear, stepsBetween } from '../../src/overworld/path';
 
 const OPEN = (): boolean => true;
 
@@ -101,5 +101,72 @@ describe('walking across a chunk', () => {
   it('walks nowhere for something already within reach', () => {
     // Standing diagonally beside it is standing beside it
     expect(findPathBeside(cell(5, 5), cell(6, 6), () => true)).toEqual([]);
+  });
+});
+
+describe('walking to a cell nobody can stand on', () => {
+  it('is the plain walk when the cell is open ground', () => {
+    const from = cell(2, 2);
+    const to = cell(9, 4);
+
+    expect(findPathNear(from, to, OPEN)).toEqual(findPath(from, to, OPEN));
+  });
+
+  it('stops on the nearest cell to it rather than refusing', () => {
+    const from = cell(1, 1);
+    const to = cell(6, 6);
+    const passable = (index: number): boolean => index !== to;
+    const route = findPathNear(from, to, passable);
+    const ended = route?.at(-1) ?? from;
+
+    expect(route).not.toBeNull();
+    expect(walkable(from, route ?? [])).toBe(true);
+    // One step off it: straight beside, never the diagonal, since a
+    // diagonal is two steps away on a grid walked in straight lines
+    expect(stepsBetween(ended, to)).toBe(1);
+    expect(route).toHaveLength(stepsBetween(from, to) - 1);
+  });
+
+  it('widens the ring when everything beside it is blocked too', () => {
+    const to = cell(6, 6);
+    // The cell and its whole neighbourhood: a copse rather than a tree
+    const blocked = new Set<number>();
+
+    for (let y = 5; y <= 7; y++) {
+      for (let x = 5; x <= 7; x++) {
+        blocked.add(cell(x, y));
+      }
+    }
+    const passable = (index: number): boolean => !blocked.has(index);
+    const from = cell(1, 1);
+    const route = findPathNear(from, to, passable);
+    const ended = route?.at(-1) ?? from;
+
+    expect(route).not.toBeNull();
+    expect(passable(ended)).toBe(true);
+    expect(walkable(from, route ?? [])).toBe(true);
+    // Two off it, which is as close as the copse lets anybody stand
+    expect(stepsBetween(ended, to)).toBe(2);
+  });
+
+  it('prefers where a walker can get to over what is merely close', () => {
+    const to = cell(8, 8);
+    // A wall the target sits behind: the cells beside it are open
+    // ground, and none of them can be reached
+    const passable = (index: number): boolean =>
+      index !== to && index % CHUNK_CELLS !== 6 && Math.floor(index / CHUNK_CELLS) !== 6;
+    const from = cell(1, 1);
+    const route = findPathNear(from, to, passable);
+    const ended = route?.at(-1) ?? from;
+
+    expect(route).not.toBeNull();
+    expect(walkable(from, route ?? [])).toBe(true);
+    // The near corner of the walled-off quarter, not the cell next to
+    // the target that a walker could never stand on
+    expect(ended).toBe(cell(5, 5));
+  });
+
+  it('stands still when there is nowhere at all to go', () => {
+    expect(findPathNear(cell(0, 0), cell(6, 6), () => false)).toEqual([]);
   });
 });

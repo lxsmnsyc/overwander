@@ -55,7 +55,7 @@ import { CHUNK_CELLS } from '../../../overworld/chunk';
 import type ChunkSnapshot from '../../../overworld/chunk-snapshot';
 import type { Buddy } from '../../../overworld/core';
 import getWorld from '../../../overworld/current';
-import { findPath, findPathBeside } from '../../../overworld/path';
+import { findPathBeside, findPathNear } from '../../../overworld/path';
 import type SafariSession from '../../../overworld/safari';
 import { isInWorld } from '../../../overworld/world';
 import { GameDialog, useGame } from '../../app/game-context';
@@ -1102,6 +1102,13 @@ export default function OverworldBoard(props: {
   const [journey, setJourney] = createSignal<Journey | null>(null);
 
   /**
+   * When the last cell of a walk was stepped. The pace is measured from
+   * it rather than from the press, so pressing again mid-walk changes
+   * where the player is going without changing how fast they get there
+   */
+  let steppedAt = 0;
+
+  /**
    * Whether the walk has arrived. Reaching for something ends beside
    * it rather than on it: standing on top of what you are looking at
    * is not what walking up to something means
@@ -1146,15 +1153,18 @@ export default function OverworldBoard(props: {
     // Solid rock stops a walk the way a fixture does
     const passable = (index: number): boolean =>
       !loaded.landmarks.has(index) && !loaded.decorations.has(index) && !loaded.rocks.has(index);
+    // A goal nothing can stand on is walked up to instead of refused,
+    // so a press on a boulder still takes the player over to it
     const route = plan.act
       ? findPathBeside(here, plan.goal, passable)
-      : findPath(here, plan.goal, passable);
+      : findPathNear(here, plan.goal, passable);
     const next = route?.[0];
 
     if (next == null) {
       setJourney(null);
       return;
     }
+    steppedAt = Date.now();
     move(
       (next % CHUNK_CELLS) - (here % CHUNK_CELLS),
       Math.floor(next / CHUNK_CELLS) - Math.floor(here / CHUNK_CELLS),
@@ -1165,9 +1175,11 @@ export default function OverworldBoard(props: {
    * The walk itself: a step, and then one every `STEP_PACE` until it
    * arrives or gives up.
    *
-   * The first step is taken the moment the press lands. A walk that
-   * waited half a second before starting reads as a press that did not
-   * register, which is the one thing a control like this must never do.
+   * The first step is taken the moment the press lands, unless one was
+   * taken less than a pace ago — a new press restarts this effect, and
+   * stepping straight away on every press let a player who kept
+   * re-pressing walk as fast as they could click. What is owed from the
+   * last step is waited out first, and only then does the clock resume.
    *
    * Everything the step reads is read outside the effect's tracking,
    * so the only thing that restarts the clock is a **new** press: read
@@ -1179,14 +1191,30 @@ export default function OverworldBoard(props: {
     if (journey() == null) {
       return;
     }
-    untrack(stride);
+    const owed = Math.max(0, STEP_PACE - (Date.now() - steppedAt));
+    let waiting: ReturnType<typeof setTimeout> | null = null;
+    let timer: ReturnType<typeof setInterval> | null = null;
 
-    const timer = setInterval(() => {
+    const pace = (): void => {
       untrack(stride);
-    }, STEP_PACE);
+      timer = setInterval(() => {
+        untrack(stride);
+      }, STEP_PACE);
+    };
+
+    if (owed > 0) {
+      waiting = setTimeout(pace, owed);
+    } else {
+      pace();
+    }
 
     onCleanup(() => {
-      clearInterval(timer);
+      if (waiting != null) {
+        clearTimeout(waiting);
+      }
+      if (timer != null) {
+        clearInterval(timer);
+      }
     });
   });
 
@@ -1237,13 +1265,8 @@ export default function OverworldBoard(props: {
       }
       return;
     }
-    // Scenery is not a destination and not a thing to reach for: a
-    // tree is walked round, so pressing one is a press on ground
-    // nobody can stand on
-    if (loaded.decorations.has(index)) {
-      setJourney(null);
-      return;
-    }
+    // Scenery is not a thing to reach for, but it is still somewhere
+    // to head: the walk stops on the nearest cell that can be stood on
     setJourney(index === cell() ? null : { goal: index, exit: null, act: false });
   };
 

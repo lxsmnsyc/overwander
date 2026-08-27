@@ -48,7 +48,13 @@ import { Statuses, packStatuses } from '../../src/data/ids/status';
 import { type RocketRecord, deriveRocketReward } from '../../src/auth/rocket-record';
 import { seatId } from '../../src/auth/gym-seat-record';
 import type Chunk from '../../src/overworld/chunk';
-import { PLACEMENT_AREA, centeredCells, neighborCells } from '../../src/overworld/chunk';
+import {
+  CELL_COUNT,
+  PLACEMENT_AREA,
+  centeredCells,
+  neighborCells,
+} from '../../src/overworld/chunk';
+import { CARDINALS } from '../../src/overworld/path';
 import { getBiomeDecorations } from '../../src/data/overworld/decoration';
 import ChunkSnapshot, {
   LANDMARK_INTERVAL,
@@ -2275,17 +2281,14 @@ describe('world', () => {
     // The other three are half a meeting and half a find, and what
     // they leave behind is their own: dust turns up anything the
     // ground held, water only what it keeps, a shadow only wings
-    for (const phenomenon of [
-      Phenomenon.DustCloud,
-      Phenomenon.RipplingWater,
-      Phenomenon.FlyingShadow,
-    ]) {
-      const found = resolvePhenomenon(
-        phenomenon,
-        Biome.Grassland,
-        TimeOfDay.Morning,
-        rolls([0, 0.5]),
-      );
+    // Each in a biome that hosts it: a ripple asks for water, and
+    // grassland has none of it in either band
+    for (const [phenomenon, biome] of [
+      [Phenomenon.DustCloud, Biome.Grassland],
+      [Phenomenon.RipplingWater, Biome.Swamp],
+      [Phenomenon.FlyingShadow, Biome.Grassland],
+    ] as const) {
+      const found = resolvePhenomenon(phenomenon, biome, TimeOfDay.Morning, rolls([0, 0.5]));
 
       expect(found?.kind).toBe('item');
       if (found?.kind === 'item') {
@@ -2298,8 +2301,7 @@ describe('world', () => {
 
       // Past the item draw it is a pokemon, the same two bands
       expect(
-        resolvePhenomenon(phenomenon, Biome.Grassland, TimeOfDay.Morning, rolls([0.9, 0.5, 0]))
-          ?.kind,
+        resolvePhenomenon(phenomenon, biome, TimeOfDay.Morning, rolls([0.9, 0.5, 0]))?.kind,
       ).toBe('pokemon');
     }
 
@@ -2353,7 +2355,8 @@ describe('world', () => {
       }
     }
 
-    // A biome with nothing that fits still answers from the plain band
+    // A biome with nothing that fits hands over what the phenomenon
+    // was carrying rather than a species of the wrong kind
     const landlocked = resolvePhenomenon(
       Phenomenon.RipplingWater,
       Biome.Grassland,
@@ -2364,7 +2367,7 @@ describe('world', () => {
       })(),
     );
 
-    expect(landlocked?.kind).toBe('pokemon');
+    expect(landlocked?.kind).toBe('item');
   });
 
   it('produces varied biomes across a region', () => {
@@ -2536,6 +2539,8 @@ describe('chunk snapshot', () => {
 
   it('furnishes a chunk with the biome scenery, spaced like everything else', () => {
     const world = new World('overworld');
+    let chunks = 0;
+    let short = 0;
 
     for (let y = -20; y < 20; y += 7) {
       for (let x = -20; x < 20; x += 7) {
@@ -2543,7 +2548,14 @@ describe('chunk snapshot', () => {
         const scenery = chunk.getDecorationCells();
         const kinds = new Set(getBiomeDecorations(chunk.biome));
 
-        expect(scenery.size).toBeGreaterThanOrEqual(8);
+        chunks++;
+        // The roll is 8 to 12, and scenery is placed last of the
+        // three: a chunk whose landmarks, pools and rocks left no room
+        // takes fewer, which is allowed and should stay rare
+        if (scenery.size < 8) {
+          short++;
+        }
+        expect(scenery.size).toBeGreaterThan(0);
         expect(scenery.size).toBeLessThanOrEqual(12);
 
         for (const [cell, decoration] of scenery) {
@@ -2563,6 +2575,9 @@ describe('chunk snapshot', () => {
         expect([...world.getChunk(x, y).getDecorationCells()]).toEqual([...scenery]);
       }
     }
+
+    // A crowded board is the exception, not the rule
+    expect(short / chunks).toBeLessThan(0.05);
   });
 
   it('leaves a cell of room around every landmark', () => {
@@ -3138,8 +3153,8 @@ describe('terrain spots', () => {
 
       // One grown patch at least, three at most, all confined inside
       // the placement area's own ring
-      expect(spots.size).toBeGreaterThanOrEqual(5);
-      expect(spots.size).toBeLessThanOrEqual(27);
+      expect(spots.size).toBeGreaterThanOrEqual(9);
+      expect(spots.size).toBeLessThanOrEqual(48);
       for (const cell of spots) {
         expect(cell % 16).toBeGreaterThanOrEqual(2);
         expect(cell % 16).toBeLessThanOrEqual(13);
@@ -3241,6 +3256,46 @@ describe('terrain spots', () => {
     }
     expect(checked).toBeGreaterThan(0);
   });
+
+  it('never closes an outcrop round a cell nothing can walk to', () => {
+    const world = new World('overworld');
+
+    for (let y = -12; y < 12; y++) {
+      for (let x = -12; x < 12; x++) {
+        const chunk = world.getChunk(x, y);
+        const rocks = chunk.getRockCells();
+        const open = [...Array(CELL_COUNT).keys()].filter((cell) => !rocks.has(cell));
+
+        // The walk in from the rim, which is outside every blob's
+        // reach and so is always ground
+        const reached = new Set([0]);
+        const queue = [0];
+
+        for (let at = 0; at < queue.length; at++) {
+          const cell = queue[at];
+
+          // Straight steps only, the way the overworld is walked: a
+          // diagonal slip past a corner is not a way out
+          for (const [dx, dy] of CARDINALS) {
+            const nx = (cell % 16) + dx;
+            const ny = Math.floor(cell / 16) + dy;
+            const next = ny * 16 + nx;
+
+            if (nx < 0 || ny < 0 || nx > 15 || ny > 15) {
+              continue;
+            }
+            if (!rocks.has(next) && !reached.has(next)) {
+              reached.add(next);
+              queue.push(next);
+            }
+          }
+        }
+        // Everything not rock is walked to: a yard behind a wall is
+        // somewhere a spawn could land and nobody could reach
+        expect(reached.size).toBe(open.length);
+      }
+    }
+  });
 });
 
 describe('the open seas', () => {
@@ -3283,8 +3338,8 @@ describe('the open seas', () => {
 
     // At least one grown outcrop, confined inside the placement
     // area's own ring, and nothing stands in one
-    expect(rocks.size).toBeGreaterThanOrEqual(5);
-    expect(rocks.size).toBeLessThanOrEqual(27);
+    expect(rocks.size).toBeGreaterThanOrEqual(9);
+    expect(rocks.size).toBeLessThanOrEqual(48);
     for (const cell of rocks) {
       expect(cell % 16).toBeGreaterThanOrEqual(2);
       expect(cell % 16).toBeLessThanOrEqual(13);
@@ -3318,7 +3373,7 @@ describe('the open seas', () => {
 
     if (land != null) {
       expect(land.getShallowCells().size).toBe(0);
-      expect(land.getRockCells().size).toBeLessThanOrEqual(18);
+      expect(land.getRockCells().size).toBeLessThanOrEqual(32);
     }
   });
 

@@ -1070,20 +1070,25 @@ export default class ChunkSnapshot {
       // Standing on water — in a pool, or at sea off the banks — the
       // only thing that can be going on is the water itself
       const afloat = (cell: number): boolean => flooded !== spots.has(cell);
+      // ...and water is the only thing that ripples, so the rest of
+      // the biome's list is what dry ground can show. A beach hosts
+      // both, and a ripple on its sand was the sea in the wrong place
+      const dry = kinds.filter((kind) => kind !== Phenomenon.RipplingWater);
       const open = centeredCells(PLACEMENT_AREA).filter((cell) => !occupied.has(cell));
-      // Dry ground first, so the biome's own four are actually seen.
-      // A wetland is mostly water, and rolling it flat would make
-      // every marsh ripple and no marsh ever hide a grotto; the open
-      // seas have no dry ground at all and ripple, which is right
-      const ground = open.filter((cell) => !afloat(cell));
-      const free = ground.length > 0 ? ground : open;
+      // Dry ground first, so the biome's own are actually seen. A
+      // wetland is mostly water, and rolling it flat would make every
+      // marsh ripple and no marsh ever hide a grotto. A biome with
+      // nothing but ripples in it goes the other way: its islands show
+      // nothing, since nothing else happens there
+      const ground = dry.length === 0 ? [] : open.filter((cell) => !afloat(cell));
+      const free = ground.length > 0 ? ground : open.filter(afloat);
 
       for (let at = 0; at < count && free.length > 0; at++) {
         const [cell] = free.splice(Math.floor(rng.random() * free.length), 1);
 
         showing.set(
           cell,
-          afloat(cell) ? Phenomenon.RipplingWater : kinds[Math.floor(rng.random() * kinds.length)],
+          afloat(cell) ? Phenomenon.RipplingWater : dry[Math.floor(rng.random() * dry.length)],
         );
       }
       this.phenomena = showing;

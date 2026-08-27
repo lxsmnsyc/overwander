@@ -9,8 +9,25 @@ import useBall from '../../../auth/balls';
 import useBottleCap from '../../../auth/bottle-caps';
 import { setBuddy } from '../../../auth/buddy';
 import { getCandyCost, getCatchCandy, useCandy, useRareCandy } from '../../../auth/candy';
-import { type CaughtPokemon, giveItem, isFavorite, isGuarded, releaseCatch, setFavorite, setGuarded, setNickname, takeItem } from '../../../auth/caught';
-import { NICKNAME_LIMIT, asNickname, getCatchName, getMovePoints, isShadow, isShiny } from '../../../auth/caught-record';
+import {
+  type CaughtPokemon,
+  giveItem,
+  isFavorite,
+  isGuarded,
+  releaseCatch,
+  setFavorite,
+  setGuarded,
+  setNickname,
+  takeItem,
+} from '../../../auth/caught';
+import {
+  NICKNAME_LIMIT,
+  asNickname,
+  getCatchName,
+  getMovePoints,
+  isShadow,
+  isShiny,
+} from '../../../auth/caught-record';
 import { useAuth } from '../../../auth/context';
 
 import { canHatch, isEgg } from '../../../auth/egg';
@@ -22,7 +39,12 @@ import type { InventoryEntry } from '../../../auth/inventory';
 import { learnLevelUpMove } from '../../../auth/moves';
 import type { PokedexView } from '../../../auth/pokedex';
 import usePurifyingGem from '../../../auth/purify';
-import { type TrainingResult, feedEffortBerry, trainEffort, useEffortItem } from '../../../auth/training';
+import {
+  type TrainingResult,
+  feedEffortBerry,
+  trainEffort,
+  useEffortItem,
+} from '../../../auth/training';
 
 import { MAX_LEVEL } from '../../../data/constants/levels';
 
@@ -47,7 +69,22 @@ import InventoryPicker from '../../items/InventoryPicker';
 
 import { describeItem } from '../../items/ItemGrid';
 
-import { Badge, Button, Dialog, DialogActions, DialogSection, Field, Menu, type MenuAction, Meta, Note, Row, StepButton, type ToastTone, useToast } from '../../styled';
+import {
+  Badge,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogSection,
+  Field,
+  Menu,
+  type MenuAction,
+  Meta,
+  Note,
+  Row,
+  StepButton,
+  type ToastTone,
+  useToast,
+} from '../../styled';
 import IncreasePPDialog from '../IncreasePPDialog';
 import TeachMoveDialog from '../TeachMoveDialog';
 
@@ -242,7 +279,7 @@ export function CatchSheetBody(
     }
     // A distributed pokemon names the trainer it came from, who has no
     // account to look up — so what the record says is what it is called
-    return props.owners()?.get(entry.owner) ?? entry.name ?? 'A trainer';
+    return props.owners.latest?.get(entry.owner) ?? entry.name ?? 'A trainer';
   };
 
   /**
@@ -271,7 +308,7 @@ export function CatchSheetBody(
   const frozen = (): boolean => {
     const loaded = view();
 
-    return props.fighting() === true || (loaded != null && isGuarded(loaded));
+    return props.fighting.latest === true || (loaded != null && isGuarded(loaded));
   };
 
   /**
@@ -417,7 +454,6 @@ export function CatchSheetBody(
     return `${isShiny(loaded) ? '✦ ' : ''}${getCatchName(loaded)}`;
   };
 
-  
   /**
    * What in the bag could be handed over. The button that opens the
    * bag asks this rather than opening onto an empty list
@@ -989,14 +1025,14 @@ export function CatchSheetBody(
   const actions = (loaded: CaughtPokemon): MenuAction[] => [
     {
       label: isFavorite(loaded) ? 'Unfavorite' : 'Favorite',
-      disabled: props.fighting() === true,
+      disabled: props.fighting.latest === true,
       onSelect: () => {
         favorite(!isFavorite(loaded));
       },
     },
     {
       label: isGuarded(loaded) ? 'Unlock' : 'Lock',
-      disabled: props.fighting() === true,
+      disabled: props.fighting.latest === true,
       onSelect: () => {
         guard(!isGuarded(loaded));
       },
@@ -1028,7 +1064,7 @@ export function CatchSheetBody(
       // still taking bids, the block has no room for another
       disabled:
         props.onAuction == null ||
-        props.fighting() === true ||
+        props.fighting.latest === true ||
         props.selling() === true ||
         isFavorite(loaded) ||
         isEgg(loaded) ||
@@ -1053,7 +1089,7 @@ export function CatchSheetBody(
       label: loaded.nickname === '' ? 'Set nickname' : 'Change nickname',
       // An egg is not named. What is in it has not been met, and a
       // name given to a shell is a name given to nobody
-      disabled: props.fighting() === true || isEgg(loaded),
+      disabled: props.fighting.latest === true || isEgg(loaded),
       onSelect: () => {
         // Opened on the name it already has rather than on an empty
         // box: renaming is far commoner than naming, and a player
@@ -1188,7 +1224,7 @@ export function CatchSheetBody(
                   is where they are turned on and off; a raid is the one
                   nobody chose, so it is the one worth a sentence */}
               <Show when={owned()}>
-                <Show when={props.fighting()}>
+                <Show when={props.fighting.latest}>
                   <Meta class="text-center">In a raid — nothing about it can be changed.</Meta>
                 </Show>
 
@@ -1398,7 +1434,7 @@ export function CatchSheetBody(
                         // this, so the button is dead rather than
                         // pressable and refused
                         disabled={
-                          props.fighting() === true ||
+                          props.fighting.latest === true ||
                           props.onlyOne() === true ||
                           isFavorite(loaded()) ||
                           isGuarded(loaded())

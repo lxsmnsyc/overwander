@@ -2,6 +2,7 @@ import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Stats } from '../../data/constants/stats';
 import { Moves } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
+import { scoreSelfHeal } from '../ai/score';
 import type Battle from '../core';
 import { BattleEvents, EffectType } from '../events';
 import type Unit from '../unit';
@@ -56,5 +57,13 @@ export default function setupRest(battle: Battle): void {
       event.source.checkStat(Stats.HP, 0),
       0,
     );
+  });
+
+  // Rest fills the whole pool, so it is only ever worth what the user
+  // is missing
+  battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
+    if (event.move === Moves.Rest) {
+      scoreSelfHeal(event, 1);
+    }
   });
 }

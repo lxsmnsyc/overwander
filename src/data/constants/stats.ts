@@ -240,6 +240,14 @@ export const STAGE_NAMES: Record<Stages, string> = {
   [Stages.Accuracy]: 'Accuracy',
 };
 
+/**
+ * How far a stage can be pushed either way. Everything that changes a
+ * stage clamps to this, and anything weighing a move that would push
+ * one further reads the same pair
+ */
+export const MIN_STAGE = -6;
+export const MAX_STAGE = 6;
+
 export type StagesField = { [key in Stages]: number };
 
 export function createStagesField(): StagesField {

@@ -43,6 +43,9 @@ const FPS_DURATION = 1000 / FPS;
 const FRAMES_PER_PRIORITY = 16;
 const BASE_FRAMES = 104;
 
+/** The middle of the damage range, for a simulated attack */
+const SIMULATED_DAMAGE_ROLL = 0.925;
+
 /**
  * The gap between a move going off and its effect landing, for moves
  * that do not name their own. It is what the swing takes: without it
@@ -1109,8 +1112,15 @@ export function setupAttackMechanics(battle: Battle): void {
           event.value *= resolveCriticalMult(parent);
         }
 
-        // Random factor: 85% to 100%
-        event.value *= battle.randomRange(0.85, 1);
+        // Random factor: 85% to 100%. A simulation takes the middle
+        // of that range instead of rolling: the AI runs this pipeline
+        // once per move it is weighing, so a roll here would both make
+        // its estimates noisy enough to flip a KO and tie the fight's
+        // random stream to how many moves it had to consider
+        event.value *=
+          parent.flags & MoveAttackFlags.Simulated
+            ? SIMULATED_DAMAGE_ROLL
+            : battle.randomRange(0.85, 1);
       }
 
       if (event.parent.flags & MoveAttackFlags.Confused) {

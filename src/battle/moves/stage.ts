@@ -1,7 +1,8 @@
-import { EventPriority } from '../../core/event-emitter';
-import { Stages } from '../../data/constants/stats';
+import { AttackPriority, EventPriority } from '../../core/event-emitter';
+import { MAX_STAGE, MIN_STAGE, Stages } from '../../data/constants/stats';
 import { Moves } from '../../data/ids/moves';
 import type Battle from '../core';
+import { USELESS_PENALTY } from '../ai/score';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 
 type StageMovesConfig = { [key in Moves]?: number };
@@ -103,4 +104,21 @@ export default function setupStageMoves(battle: Battle): void {
   for (const [stage, config] of STAGE_MOVE_GROUPS) {
     createStageMove(stage, config)(battle);
   }
+
+  // A stage already pinned at the end it is being pushed towards has
+  // nowhere to go, so the move spends a cast changing nothing
+  battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
+    const effect = getStageMoveEffect(event.move);
+
+    if (effect == null) {
+      return;
+    }
+
+    const receiver = event.target.type === MoveTargetType.Unit ? event.target.unit : event.source;
+    const current = receiver.stages[effect.stage];
+
+    if (effect.value > 0 ? current >= MAX_STAGE : current <= MIN_STAGE) {
+      event.score -= USELESS_PENALTY;
+    }
+  });
 }

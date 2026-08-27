@@ -1,6 +1,7 @@
-import { EventPriority } from '../../core/event-emitter';
+import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Moves } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
+import { STEP_PENALTY } from '../ai/score';
 import type Battle from '../core';
 import { BattleEvents, EffectType } from '../events';
 
@@ -24,6 +25,14 @@ export default function setupRechargeMoves(battle: Battle): void {
         move: event.move,
         unit: event.source,
       });
+    }
+  });
+
+  // The recharge is a cast spent standing still, the same cost as a
+  // move that has to wind up first
+  battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
+    if (RECHARGE_MOVES.has(event.move)) {
+      event.score -= STEP_PENALTY;
     }
   });
 }

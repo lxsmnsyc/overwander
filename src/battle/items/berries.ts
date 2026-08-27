@@ -5,7 +5,7 @@ import {
 } from '../../core/event-emitter';
 import { type Stages, Stats } from '../../data/constants/stats';
 import { ItemTypes, Items } from '../../data/ids/items';
-import { DamageFlags, MoveCategories } from '../../data/ids/moves';
+import { DamageFlags, MoveAttackFlags, MoveCategories } from '../../data/ids/moves';
 import { NATURE_EFFECTS } from '../../data/ids/natures';
 import { Statuses } from '../../data/ids/status';
 import {
@@ -41,7 +41,13 @@ import {
 } from '../events';
 import { type Lifecycle, MergedLifecycle } from '../lifecycle';
 import type Unit from '../unit';
-import { createEffectivenessTracker, createHeldItem, createHeldItems, spendItem } from './__create';
+import {
+  createEffectivenessTracker,
+  createHeldItem,
+  createHeldItems,
+  holds,
+  spendItem,
+} from './__create';
 
 /**
  * Held berries that trigger on their own in battle. Eating a berry
@@ -165,7 +171,21 @@ function createResistBerry(item: Items, resisted: Types): (battle: Battle) => Li
       if (resisted !== Types.Normal && !landingHard(event.parent)) {
         return;
       }
-      if (spendItem(event.parent.target, item)) {
+
+      const target = event.parent.target;
+
+      // The AI weighs a move by running this same pipeline. A berry
+      // that ate itself answering the question would be gone before
+      // the move it was asked about was ever cast, so a simulation
+      // gets the half without the bite
+      if (event.parent.flags & MoveAttackFlags.Simulated) {
+        if (holds(target, item) && target.checkCanConsumeItem(item)) {
+          event.value *= BERRY_RESIST_FACTOR;
+        }
+        return;
+      }
+
+      if (spendItem(target, item)) {
         event.value *= BERRY_RESIST_FACTOR;
       }
     });

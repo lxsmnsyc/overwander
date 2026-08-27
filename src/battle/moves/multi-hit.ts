@@ -31,6 +31,23 @@ export const MULTI_HIT_MOVES: { [key in Moves]?: MultiHitConfig } = {
 // Delay between strikes
 const STRIKE_DELAY = 250;
 
+/** What the 2-5 distribution below averages out at */
+const EXPECTED_HITS = 3.1;
+
+/**
+ * How many times a multi-hit move is expected to land, for anything
+ * weighing the move before it is cast. One for everything else, so a
+ * caller can multiply by it unconditionally
+ */
+export function estimateMoveHits(move: Moves): number {
+  const config = MULTI_HIT_MOVES[move];
+
+  if (config == null) {
+    return 1;
+  }
+  return config.min === config.max ? config.min : EXPECTED_HITS;
+}
+
 interface MultiHitInstance {
   source: Unit;
   target: Unit;

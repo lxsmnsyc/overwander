@@ -3,14 +3,27 @@ import { chooseMove, setupChooseMoveAI } from '../../src/battle/ai/choose-move';
 import { BattleModes } from '../../src/battle/core';
 import setupIdleAI, { AI_REST_PERIOD } from '../../src/battle/ai/idle';
 import { checkTeamUnit, checkUnitRating } from '../../src/battle/ai/rating';
-import { BattleEvents, EffectType, MoveTargetType } from '../../src/battle/events';
+import {
+  BattleEvents,
+  type CheckUnitAIMoveScoreEvent,
+  EffectType,
+  type MoveTarget,
+  MoveTargetType,
+} from '../../src/battle/events';
+import {
+  BASE_SCORE,
+  HEAL_BONUS,
+  STEP_PENALTY,
+  USELESS_PENALTY,
+} from '../../src/battle/ai/score';
 import type Unit from '../../src/battle/unit';
 import { EventPriority } from '../../src/core/event-emitter';
 import Abilities from '../../src/data/ids/abilities';
 import { Stages } from '../../src/data/constants/stats';
 import { Types } from '../../src/data/constants/types';
 import { MoveTargetPriorities, Moves } from '../../src/data/ids/moves';
-import { Statuses } from '../../src/data/ids/status';
+import { Items } from '../../src/data/ids/items';
+import { Statuses, Weathers } from '../../src/data/ids/status';
 import { type BattleHarness, createBattle, createUnit, pinRandom } from './harness';
 
 const NONE_CAUSE = { type: EffectType.None } as const;
@@ -611,5 +624,170 @@ describe('Struggle', () => {
     expect(unit.checkCanCast(Moves.Struggle, { type: MoveTargetType.Unit, unit: enemy })).toBe(
       true,
     );
+  });
+});
+
+describe('weighing a move', () => {
+  /**
+   * What the scoring listeners make of one move against one target,
+   * without the chooser's enumeration in the way
+   */
+  function scoreMove(
+    battle: BattleHarness['battle'],
+    source: Unit,
+    move: Moves,
+    target: MoveTarget,
+  ): number {
+    const event: CheckUnitAIMoveScoreEvent = {
+      id: 'CheckUnitAIMoveScore',
+      disabled: false,
+      source,
+      move,
+      target,
+      score: BASE_SCORE,
+    };
+    battle.emit(BattleEvents.CheckUnitAIMoveScore, event);
+    return event.score;
+  }
+
+  it('does not eat the target berry it asks about', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    pinRandom(battle, 0.99);
+    const unit = createUnit(battle, teamA);
+    const holder = createUnit(battle, teamB);
+    // Chilan answers a Normal blow, which is what Tackle is
+    holder.addItem(Items.ChilanBerry);
+    unit.addMove(Moves.Tackle);
+
+    chooseMove(battle, unit);
+
+    expect(holder.items[Items.ChilanBerry]).toBeDefined();
+    expect(holder.health).toBe(160);
+  });
+
+  it('counts what a fixed-damage move takes off', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    pinRandom(battle, 0.99);
+    const unit = createUnit(battle, teamA);
+    createUnit(battle, teamB);
+    unit.removeMove(Moves.Attack);
+    unit.addMove(Moves.SeismicToss);
+    unit.addMove(Moves.Growl);
+
+    // Seismic Toss carries no power at all, so a reading that went by
+    // the move data would call it a move that does nothing
+    expect(chooseMove(battle, unit)?.move).toBe(Moves.SeismicToss);
+  });
+
+  it('counts every strike of a multi-hit move', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    pinRandom(battle, 0.99);
+    const unit = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    unit.removeMove(Moves.Attack);
+    unit.addMove(Moves.Twineedle);
+    unit.addMove(Moves.PinMissile);
+    // Same type, same power: what separates them is that Pin Missile
+    // averages three strikes to Twineedle's two, and this is a pool
+    // only three of them empty
+    enemy.setHealth(30);
+
+    expect(chooseMove(battle, unit)?.move).toBe(Moves.PinMissile);
+  });
+
+  it('weighs a move by how often it lands', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    pinRandom(battle, 0.99);
+    const unit = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    const target: MoveTarget = { type: MoveTargetType.Unit, unit: enemy };
+
+    const unaided = scoreMove(battle, unit, Moves.Fissure, target);
+
+    unit.addStage(Stages.Accuracy, 6, NONE_CAUSE);
+
+    expect(scoreMove(battle, unit, Moves.Fissure, target)).toBeGreaterThan(unaided);
+  });
+
+  it('pays for the step a move spends winding up', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    pinRandom(battle, 0.99);
+    const unit = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    const target: MoveTarget = { type: MoveTargetType.Unit, unit: enemy };
+
+    const windingUp = scoreMove(battle, unit, Moves.SolarBeam, target);
+
+    // The sun is what lets Solar Beam skip its charge
+    battle.setWeather(Weathers.Sunny);
+
+    expect(scoreMove(battle, unit, Moves.SolarBeam, target)).toBe(windingUp + STEP_PENALTY);
+  });
+
+  it('leaves a stage alone once it is pinned', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    pinRandom(battle, 0.99);
+    const unit = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    unit.removeMove(Moves.Attack);
+    unit.addMove(Moves.Growl);
+    unit.addMove(Moves.TailWhip);
+    enemy.addStage(Stages.Attack, -6, NONE_CAUSE);
+
+    // Growl has nowhere left to push, so the other debuff wins
+    expect(chooseMove(battle, unit)?.move).toBe(Moves.TailWhip);
+  });
+
+  it('will not clear a field it is the one winning', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    pinRandom(battle, 0.99);
+    const unit = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    // Targetless, so the rating-aware focus on a named enemy stays
+    // out of what is being measured
+    const target: MoveTarget = { type: MoveTargetType.None };
+
+    unit.addStage(Stages.Attack, 6, NONE_CAUSE);
+
+    const ahead = scoreMove(battle, unit, Moves.Haze, target);
+
+    unit.addStage(Stages.Attack, -6, NONE_CAUSE);
+    enemy.addStage(Stages.Attack, 6, NONE_CAUSE);
+
+    expect(scoreMove(battle, unit, Moves.Haze, target)).toBe(ahead + USELESS_PENALTY);
+  });
+
+  it('spends its life only when there is little left of it', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    pinRandom(battle, 0.99);
+    const unit = createUnit(battle, teamA);
+    createUnit(battle, teamB);
+    // Targetless, so the rating-aware focus on a named enemy stays
+    // out of what is being measured
+    const target: MoveTarget = { type: MoveTargetType.None };
+
+    const healthy = scoreMove(battle, unit, Moves.Explosion, target);
+
+    unit.setHealth(20);
+
+    expect(scoreMove(battle, unit, Moves.Explosion, target)).toBeGreaterThan(healthy);
+  });
+
+  it('heals by what the heal would put back', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    pinRandom(battle, 0.99);
+    const unit = createUnit(battle, teamA);
+    createUnit(battle, teamB);
+    // Targetless, so the rating-aware focus on a named enemy stays
+    // out of what is being measured
+    const target: MoveTarget = { type: MoveTargetType.None };
+
+    // Recover restores half a pool, so a unit missing a tenth of one
+    // is throwing most of it away
+    expect(scoreMove(battle, unit, Moves.Recover, target)).toBe(BASE_SCORE - USELESS_PENALTY);
+
+    unit.setHealth(60);
+
+    expect(scoreMove(battle, unit, Moves.Recover, target)).toBe(BASE_SCORE + HEAL_BONUS);
   });
 });

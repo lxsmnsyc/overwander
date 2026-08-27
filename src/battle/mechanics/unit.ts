@@ -1,5 +1,7 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import {
+  MAX_STAGE,
+  MIN_STAGE,
   Stats,
   StatsKind,
   createStagesField,
@@ -23,9 +25,6 @@ function setupUnitStatusMechanics(battle: Battle): void {
     event.source.status[event.status] = undefined;
   });
 }
-
-const MIN_STAGE = -6;
-const MAX_STAGE = 6;
 
 function setupUnitStageMechanics(battle: Battle): void {
   battle.on(BattleEvents.UnitAddStage, EventPriority.Exact, (event) => {

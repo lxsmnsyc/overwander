@@ -1,6 +1,7 @@
-import { EventPriority } from '../../core/event-emitter';
+import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Stats } from '../../data/constants/stats';
 import { DamageFlags, Moves } from '../../data/ids/moves';
+import { RISKY_PENALTY, USELESS_PENALTY } from '../ai/score';
 import type Battle from '../core';
 import { BattleEvents, EffectType } from '../events';
 
@@ -24,5 +25,21 @@ export default function setupCrashMoves(battle: Battle): void {
         DamageFlags.Indirect | DamageFlags.HealthScaled,
       );
     }
+  });
+
+  /**
+   * A miss costs half the user's maximum, so a unit already below that
+   * is betting its life on the roll. The odds themselves are priced by
+   * the accuracy rule
+   */
+  battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
+    if (!CRASH_MOVES.has(event.move)) {
+      return;
+    }
+
+    const source = event.source;
+    const fatal = source.health <= source.checkStat(Stats.HP, 0) * CRASH_FRACTION;
+
+    event.score -= fatal ? USELESS_PENALTY : RISKY_PENALTY;
   });
 }

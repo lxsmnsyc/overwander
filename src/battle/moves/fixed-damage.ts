@@ -42,12 +42,34 @@ const FIXED_DAMAGE_MOVES: {
 /**
  * Fixed-damage moves whose amount derives from the target's health
  */
-const HEALTH_SCALED_MOVES = new Set<Moves>([
+export const HEALTH_SCALED_MOVES = new Set<Moves>([
   Moves.Fissure,
   Moves.HornDrill,
   Moves.Guillotine,
   Moves.SuperFang,
 ]);
+
+/**
+ * What the AI weighs a fixed-damage move at, where the amount itself
+ * is a roll and asking for it twice would give two answers
+ */
+const FIXED_DAMAGE_ESTIMATES: {
+  [key in Moves]?: (source: Unit, target: Unit) => number;
+} = {
+  // Psywave averages out at the user's level
+  [Moves.Psywave]: (source) => source.level,
+};
+
+/**
+ * What a fixed-damage move would take off, without rolling for it.
+ * `undefined` for anything whose damage comes from the stats instead.
+ *
+ * These moves carry no `power`, so an estimate that went by the move
+ * data alone would read every one of them as doing nothing
+ */
+export function estimateFixedDamage(source: Unit, move: Moves, target: Unit): number | undefined {
+  return (FIXED_DAMAGE_ESTIMATES[move] ?? FIXED_DAMAGE_MOVES[move])?.(source, target);
+}
 
 export default function setupFixedDamageMoves(battle: Battle): void {
   battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, (event) => {

@@ -1,6 +1,7 @@
-import { EventPriority } from '../../core/event-emitter';
+import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Stats } from '../../data/constants/stats';
 import { Moves } from '../../data/ids/moves';
+import { scoreSelfHeal } from '../ai/score';
 import type Battle from '../core';
 import { BattleEvents, EffectType } from '../events';
 
@@ -26,6 +27,16 @@ export default function setupRecoverMoves(battle: Battle): void {
         event.source.checkStat(Stats.HP, 0) * fraction,
         0,
       );
+    }
+  });
+
+  // Worth what it would actually put back, so a full unit does not
+  // spend a cast topping itself off
+  battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
+    const fraction = HEAL_FRACTION[event.move];
+
+    if (fraction != null) {
+      scoreSelfHeal(event, fraction);
     }
   });
 }

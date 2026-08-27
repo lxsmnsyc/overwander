@@ -5,7 +5,7 @@ import { getMoveData } from '../../data/moves';
 import type Battle from '../core';
 import { BattleEvents } from '../events';
 import type Unit from '../unit';
-import { USELESS_PENALTY } from '../ai/choose-move';
+import { USELESS_PENALTY } from '../ai/score';
 
 /**
  * Conversion: the user becomes the type of one of its own moves.

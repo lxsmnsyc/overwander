@@ -1,7 +1,7 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
-import { Stats } from '../../data/constants/stats';
+import { MAX_STAGE, Stats } from '../../data/constants/stats';
 import Abilities from '../../data/ids/abilities';
-import { MoveAttackFlags, MoveCategories, MoveTargetFlags, Moves } from '../../data/ids/moves';
+import { MoveAttackFlags, MoveCategories, MoveTargetFlags, type Moves } from '../../data/ids/moves';
 import { getMoveData } from '../../data/moves';
 import type Battle from '../core';
 import {
@@ -14,48 +14,27 @@ import {
   type UnitAIChooseMoveEvent,
   type UnitAttackEvent,
   type UnitAttackResolveAmountEvent,
+  type UnitTriggerMoveEvent,
+  type UnitTriggerMoveResolveAccuracyEvent,
 } from '../events';
 import { BattleModes } from '../core';
+import { HEALTH_SCALED_MOVES, estimateFixedDamage } from '../moves/fixed-damage';
+import { estimateMoveHits } from '../moves/multi-hit';
 import { getStageMoveEffect } from '../moves/stage';
+import {
+  ACCURACY_PENALTY,
+  BASE_SCORE,
+  STEP_PENALTY,
+  USELESS_PENALTY,
+} from './score';
 import { SELF_STATUS_MOVES, STATUS_MOVES } from '../moves/status';
 import type Unit from '../unit';
-
-/**
- * Gen 4/5 cartridge AI style move selection: every usable move starts
- * at a base score per candidate target, scoring listeners nudge it up
- * or down, and the highest total wins (random tie-break).
- *
- * https://bulbapedia.bulbagarden.net/wiki/Artificial_intelligence_in_the_Pok%C3%A9mon_games
- */
-const BASE_SCORE = 100;
-
-/**
- * The gen 4 "useless move" penalty: enough to lose against any
- * neutral option, so the move is only picked when everything is bad.
- *
- * Exported because an effect that makes a move pointless says so
- * itself, next to the effect — the AI does not keep a list of what
- * everything else does
- */
-export const USELESS_PENALTY = 10;
-
-/**
- * What a move costs to use when using it hands something back: a
- * drain into Liquid Ooze, a status into Synchronize, a punch into
- * Static. Smaller than the useless penalty on purpose — the move
- * still does its job, so it loses to an equally good one that is free
- * and beats doing nothing at all
- */
-export const RISKY_PENALTY = 3;
 
 /**
  * Raid battles favor setting up: enough to outbid any non-KO damage
  * bonus (which caps at +4)
  */
 const RAID_BUFF_BONUS = 6;
-
-// AI knowledge tables (kept here, like the cartridge AI's own lists)
-const HEALING_MOVES = new Set<Moves>([Moves.Rest, Moves.Recover, Moves.SoftBoiled]);
 
 /**
  * Pick the best move for a unit. Internal to the AI module; the idle
@@ -79,17 +58,34 @@ export function setupChooseMoveAI(battle: Battle): void {
    * pipeline (effectiveness, STAB, Reflect, burn, abilities) without
    * applying anything to the target.
    *
-   * The Critical flag is left out so no crit roll happens; the
-   * resolver still consumes one battle.random() for the damage range.
+   * The Critical flag is left out so no crit roll happens, and the
+   * Simulated flag makes the resolver take the middle of the damage
+   * range rather than rolling for it.
    */
   function estimateDamage(source: Unit, move: Moves, target: Unit): number {
     const data = getMoveData(move);
-
-    if (data.power == null || data.category === MoveCategories.Status) {
-      return 0;
-    }
-
     const moveTarget: MoveTarget = { type: MoveTargetType.Unit, unit: target };
+
+    let flags = MoveAttackFlags.Simulated;
+    let value: number;
+
+    // A fixed-damage move carries no power, so it has to be asked what
+    // it takes off. Pure and HealthScaled the way its trigger sets
+    // them, so the resolver treats the estimate as it treats the hit
+    const fixed = estimateFixedDamage(source, move, target);
+
+    if (fixed != null) {
+      value = fixed;
+      flags |= MoveAttackFlags.Pure;
+
+      if (HEALTH_SCALED_MOVES.has(move)) {
+        flags |= MoveAttackFlags.HealthScaled;
+      }
+    } else if (data.power == null || data.category === MoveCategories.Status) {
+      return 0;
+    } else {
+      value = source.checkMovePower(move, moveTarget) ?? data.power;
+    }
 
     const parent: UnitAttackEvent = {
       id: 'UnitAttack',
@@ -97,10 +93,10 @@ export function setupChooseMoveAI(battle: Battle): void {
       source,
       target,
       move,
-      value: source.checkMovePower(move, moveTarget) ?? data.power,
+      value,
       category: data.category,
       type: source.checkMoveType(move, moveTarget),
-      flags: MoveAttackFlags.Simulated,
+      flags,
       success: false,
     };
 
@@ -112,7 +108,36 @@ export function setupChooseMoveAI(battle: Battle): void {
     };
     battle.emit(BattleEvents.UnitAttackResolveDamage, event);
 
-    return event.value;
+    // The resolver answers for one strike; a multi-hit move lands
+    // several off the same cast
+    return event.value * estimateMoveHits(move);
+  }
+
+  /**
+   * What the move's chance of landing works out to here, accuracy and
+   * evasion stages included. The engine resolves that off a trigger,
+   * so the estimate runs the same resolver against a synthetic one.
+   *
+   * 100 for a move that cannot miss
+   */
+  function estimateAccuracy(source: Unit, move: Moves, target: MoveTarget): number {
+    const parent: UnitTriggerMoveEvent = {
+      id: 'UnitTriggerMove',
+      disabled: false,
+      source,
+      move,
+      target,
+      steps: 0,
+    };
+
+    const event: UnitTriggerMoveResolveAccuracyEvent = {
+      id: 'UnitTriggerMoveResolveAccuracy',
+      disabled: false,
+      parent,
+    };
+    battle.emit(BattleEvents.UnitTriggerMoveResolveAccuracy, event);
+
+    return event.accuracy ?? 100;
   }
 
   /**
@@ -410,29 +435,25 @@ export function setupChooseMoveAI(battle: Battle): void {
 
     const receiver = event.target.type === MoveTargetType.Unit ? event.target.unit : event.source;
 
-    // Useless once the receiver's stage is maxed out
-    if (receiver.stages[effect.stage] >= 6) {
-      event.score -= USELESS_PENALTY;
+    // A stage that will not move is not worth a bonus; the stage move
+    // group is what says it is worth a penalty
+    if (receiver.stages[effect.stage] >= MAX_STAGE) {
       return;
     }
 
     event.score += RAID_BUFF_BONUS;
   });
 
-  // Healing moves: valuable when hurt, useless when topped off
+  // A move that has to wind up first pays for the cast it spends there
   battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
-    if (!HEALING_MOVES.has(event.move)) {
-      return;
-    }
+    event.score -= STEP_PENALTY * event.source.checkMoveSteps(event.move, event.target);
+  });
 
-    const source = event.source;
-    const maxHP = Math.max(1, source.checkStat(Stats.HP, 0));
-    const ratio = source.health / maxHP;
+  // An unreliable move is worth what it lands, so it gives up ground
+  // in proportion to how often it misses
+  battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Cleanup, (event) => {
+    const accuracy = Math.min(100, estimateAccuracy(event.source, event.move, event.target));
 
-    if (ratio >= 0.9) {
-      event.score -= USELESS_PENALTY;
-    } else if (ratio < 0.4) {
-      event.score += 7;
-    }
+    event.score -= ACCURACY_PENALTY * (1 - accuracy / 100);
   });
 }

@@ -18,7 +18,7 @@ import { Genders } from '../../data/ids/species';
 import { Statuses, TeamStatuses, Weathers } from '../../data/ids/status';
 import { getItemData } from '../../data/items';
 import { getMoveData } from '../../data/moves';
-import { RISKY_PENALTY } from '../ai/choose-move';
+import { RISKY_PENALTY } from '../ai/score';
 import { checkUnitRating } from '../ai/rating';
 import type Battle from '../core';
 import {

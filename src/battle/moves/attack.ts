@@ -1,5 +1,5 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
-import { USELESS_PENALTY } from '../ai/choose-move';
+import { USELESS_PENALTY } from '../ai/score';
 import { Moves } from '../../data/ids/moves';
 import type Battle from '../core';
 import { BattleEvents } from '../events';

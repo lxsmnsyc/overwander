@@ -6,7 +6,7 @@ import { getWeatherMove } from '../../data/moves';
 import type { Types } from '../../data/constants/types';
 import type Abilities from '../../data/ids/abilities';
 import type { Statuses, Weathers } from '../../data/ids/status';
-import { RISKY_PENALTY } from '../ai/choose-move';
+import { RISKY_PENALTY } from '../ai/score';
 import type Battle from '../core';
 import type { CheckUnitAIMoveScoreEvent } from '../events';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';

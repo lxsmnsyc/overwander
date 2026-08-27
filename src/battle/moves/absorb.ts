@@ -1,6 +1,8 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
+import { Stats } from '../../data/constants/stats';
 import { DamageFlags, Moves } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
+import { HEAL_BONUS } from '../ai/score';
 import type Battle from '../core';
 import type { MoveTarget } from '../events';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
@@ -19,6 +21,19 @@ export const ABSORB_MOVES = new Set<Moves>([
 ]);
 
 const HEALING_FACTOR = 0.5;
+
+/**
+ * The share of its health below which a unit values the drain as well
+ * as the hit
+ */
+const HURTING = 0.5;
+
+/**
+ * What a drain is worth on top of its damage. Under a real heal: it
+ * gives back half of what it deals, and the AI has already scored the
+ * dealing
+ */
+const DRAIN_BONUS = Math.round(HEAL_BONUS / 2);
 
 /**
  * What counts as having a dream to eat. A dormant boss is not asleep,
@@ -70,6 +85,20 @@ export default function setupAbsorb(battle: Battle): void {
         // The drain backfired (e.g. Liquid Ooze)
         event.source.damage(event.cause, event.source, -amount, DamageFlags.Indirect);
       }
+    }
+  });
+
+  // A drain is a hit that heals, so it is worth more than the hit
+  // alone to a user with room to take the health back
+  battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
+    if (!ABSORB_MOVES.has(event.move)) {
+      return;
+    }
+
+    const source = event.source;
+
+    if (source.health < source.checkStat(Stats.HP, 0) * HURTING) {
+      event.score += DRAIN_BONUS;
     }
   });
 }

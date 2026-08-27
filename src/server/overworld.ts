@@ -191,6 +191,44 @@ async function grantStash(uid: string, stash: ItemStack[]): Promise<void> {
   );
 }
 
+function berryPrefix(snapshot: ChunkSnapshot): string {
+  return `${snapshot.key}@${snapshot.landmarkTimestamp}$berry`;
+}
+
+/**
+ * Which of this chunk's patches this player has already picked, inside
+ * the window they grew in.
+ *
+ * The board draws a picked patch as the bare bush it now is, which is
+ * the same thing the refusal says in words. It is per player, so a
+ * bush one trainer stripped is still in fruit for the next, and the
+ * markers are keyed by the window, so the answer empties itself when
+ * the patches grow again
+ */
+export async function listPickedBerryPatches(
+  uid: string,
+  x: number,
+  y: number,
+  now: number,
+  offset: number,
+): Promise<number[]> {
+  const snapshot = await resolveSnapshot(x, y, now, offset);
+
+  if (snapshot == null) {
+    return [];
+  }
+
+  const prefix = berryPrefix(snapshot);
+  const rows = await getSql()`
+    select marker from berry_claims
+    where player = ${uid} and marker like ${`${prefix}%`}
+  `;
+
+  return rows
+    .map((row) => Number(asString(row.marker).slice(prefix.length)))
+    .filter((cell) => Number.isInteger(cell));
+}
+
 /**
  * Pick a berry patch: everything on the bush lands in the bag. A
  * patch bears a handful of one kind rather than a single berry
@@ -210,7 +248,7 @@ export async function claimBerryPatch(
     return null;
   }
 
-  const id = `${snapshot.key}@${snapshot.landmarkTimestamp}$berry${cell}`;
+  const id = `${berryPrefix(snapshot)}${cell}`;
 
   if (
     !(await claim('berry_claims', id, {

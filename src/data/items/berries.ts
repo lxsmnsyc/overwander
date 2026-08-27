@@ -220,6 +220,98 @@ export const BERRY_EFFORT_DROPS = new Map<Items, Stats>([
 export const BERRY_EFFORT_DROP = 10;
 
 /**
+ * The flavour berries. The mainline grows these for cooking and gives
+ * them no held effect at all, so here they are bait and nothing else:
+ * handed to a wild pokemon to talk it round, and worth a little more
+ * for the throw than a cure berry is
+ */
+export const BAIT_BERRY_NAMES = new Map<Items, string>([
+  [Items.RazzBerry, 'Razz Berry'],
+  [Items.BlukBerry, 'Bluk Berry'],
+  [Items.NanabBerry, 'Nanab Berry'],
+  [Items.WepearBerry, 'Wepear Berry'],
+  [Items.PinapBerry, 'Pinap Berry'],
+  [Items.CornnBerry, 'Cornn Berry'],
+  [Items.MagostBerry, 'Magost Berry'],
+  [Items.RabutaBerry, 'Rabuta Berry'],
+  [Items.NomelBerry, 'Nomel Berry'],
+  [Items.SpelonBerry, 'Spelon Berry'],
+  [Items.PamtreBerry, 'Pamtre Berry'],
+  [Items.WatmelBerry, 'Watmel Berry'],
+  [Items.DurinBerry, 'Durin Berry'],
+  [Items.BelueBerry, 'Belue Berry'],
+]);
+
+/**
+ * What feeding one is worth, against the quarter a cure berry buys.
+ * Fed to the encounter rather than held, so the multiplier is read by
+ * the safari rules in [`src/overworld/safari.ts`](../../overworld/safari.ts)
+ */
+export const BAIT_CATCH_BONUS = 1.5;
+
+/**
+ * A flavour berry sells for what a cure does. It is not scarce and it
+ * settles no fight, so nothing about it is worth the rare price
+ */
+const BAIT_BERRY_SELL = 20;
+
+/**
+ * The prize berries: the same three fruits a patch bears, grown silver
+ * or gold. Every one of them is fed rather than held, and each family
+ * buys a different thing with the feeding
+ */
+export const PRIZE_BERRY_NAMES = new Map<Items, string>([
+  [Items.SilverRazzBerry, 'Silver Razz Berry'],
+  [Items.GoldenRazzBerry, 'Golden Razz Berry'],
+  [Items.SilverNanabBerry, 'Silver Nanab Berry'],
+  [Items.GoldenNanabBerry, 'Golden Nanab Berry'],
+  [Items.SilverPinapBerry, 'Silver Pinap Berry'],
+  [Items.GoldenPinapBerry, 'Golden Pinap Berry'],
+]);
+
+/**
+ * What a Razz grade is worth fed, against the half again plain bait
+ * buys. Feeding stacks to four times over, so one gold Razz is most
+ * of what feeding can achieve at all
+ */
+export const RAZZ_CATCH_BONUS = new Map<Items, number>([
+  [Items.SilverRazzBerry, 2],
+  [Items.GoldenRazzBerry, 3],
+]);
+
+/**
+ * What a Nanab grade leaves of the encounter's chance to bolt, for the
+ * one throw that follows it. A gold one settles the pokemon
+ * completely, which is what makes it the berry for something that
+ * would otherwise be gone before the third ball
+ */
+export const NANAB_FLEE_FACTOR = new Map<Items, number>([
+  [Items.SilverNanabBerry, 0.5],
+  [Items.GoldenNanabBerry, 0],
+]);
+
+/**
+ * Extra helpings of the catch's own candy a Pinap grade pays.
+ *
+ * Unlike the other two this rides the **encounter** rather than the
+ * next throw: the berry is fed once and paid out whenever the pokemon
+ * finally goes in a ball, however many balls that takes. Paid flat,
+ * the way the held items are, since the species day already multiplies
+ * a catch's own candy
+ */
+export const PINAP_CANDY_HELPINGS = new Map<Items, number>([
+  [Items.SilverPinapBerry, 1],
+  [Items.GoldenPinapBerry, 2],
+]);
+
+/**
+ * What a prize berry fetches. Rarer than anything else a patch bears
+ * and spent on one meeting, so it is worth more to a seller than the
+ * berries that settle a fight
+ */
+const PRIZE_BERRY_SELL = 300;
+
+/**
  * The berries that answer to no table: each one is the only thing
  * that does what it does
  */
@@ -306,6 +398,8 @@ export function isBerry(item: Items): boolean {
     BERRY_NATURE_HEALS.has(item) ||
     BERRY_BRACE_STAGES.has(item) ||
     BERRY_EFFORT_DROPS.has(item) ||
+    BAIT_BERRY_NAMES.has(item) ||
+    PRIZE_BERRY_NAMES.has(item) ||
     OTHER_BERRIES.has(item)
   );
 }
@@ -320,7 +414,19 @@ export function isBerry(item: Items): boolean {
  * draw nothing rather than draw the wrong fruit
  */
 function berryIcon(name: string): string {
-  return `berries/${name.replace(' Berry', '').toLowerCase()}`;
+  return `berries/${berryFruit(name)}`;
+}
+
+/**
+ * The bare half of a berry's name, which is what both its icon and its
+ * plant are filed under. A grade is two words, and the sheets hyphenate
+ * rather than space them
+ */
+export function berryFruit(name: string): string {
+  return name
+    .replace(/ berry$/i, '')
+    .toLowerCase()
+    .replace(/\s+/g, '-');
 }
 
 /**
@@ -359,6 +465,30 @@ export function describeBerry(item: Items): string {
 
   if (own != null) {
     return own;
+  }
+
+  if (BAIT_BERRY_NAMES.has(item)) {
+    return `Fed to a wild pokemon for ${BAIT_CATCH_BONUS}x catch odds.`;
+  }
+
+  const razz = RAZZ_CATCH_BONUS.get(item);
+
+  if (razz != null) {
+    return `Fed to a wild pokemon for ${razz}x catch odds.`;
+  }
+
+  const calm = NANAB_FLEE_FACTOR.get(item);
+
+  if (calm != null) {
+    return calm === 0
+      ? 'Fed to a wild pokemon to stop it bolting from the next ball.'
+      : 'Fed to a wild pokemon to halve its chance of bolting from the next ball.';
+  }
+
+  const helpings = PINAP_CANDY_HELPINGS.get(item);
+
+  if (helpings != null) {
+    return `Fed to a wild pokemon: catching it pays ${helpings + 1}x its candy.`;
   }
 
   const resisted = BERRY_RESIST_TYPES.get(item);
@@ -500,6 +630,34 @@ export default function registerBattleBerries(): void {
       // The scarcer berries are worth more to a seller than the cures
       // are, which is most of what makes them worth digging up
       sell: RARE_BERRY_SELL,
+    });
+  }
+
+  // Bait is not held and triggers on nothing, so it carries neither
+  // the holdable flag nor the rare price
+  for (const [item, name] of BAIT_BERRY_NAMES) {
+    registerItem(item, {
+      name,
+      description: describeBerry(item),
+      type: ItemTypes.Berry,
+      icon: berryIcon(name),
+      flags: ItemFlags.Consumable,
+      buy: 0,
+      sell: BAIT_BERRY_SELL,
+    });
+  }
+
+  // The grades are fed the same way and differ only in what the
+  // feeding buys, so they are registered off one table too
+  for (const [item, name] of PRIZE_BERRY_NAMES) {
+    registerItem(item, {
+      name,
+      description: describeBerry(item),
+      type: ItemTypes.Berry,
+      icon: berryIcon(name),
+      flags: ItemFlags.Consumable,
+      buy: 0,
+      sell: PRIZE_BERRY_SELL,
     });
   }
 }

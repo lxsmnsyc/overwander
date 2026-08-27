@@ -1,0 +1,32 @@
+{
+  "compact": true,
+  "width": 32,
+  "height": 87,
+  "grid": {
+    "columns": 2,
+    "rows": 3,
+    "frameWidth": 16,
+    "frameHeight": 29,
+    "sourceFrameWidth": 22,
+    "sourceFrameHeight": 34,
+    "trim": [
+      2,
+      4
+    ]
+  },
+  "images": [
+    {
+      "name": "grid",
+      "x": 0,
+      "y": 0,
+      "width": 32,
+      "height": 87,
+      "sourceWidth": 44,
+      "sourceHeight": 102,
+      "trim": [
+        2,
+        4
+      ]
+    }
+  ]
+}

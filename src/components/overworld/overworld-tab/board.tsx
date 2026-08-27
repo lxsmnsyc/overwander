@@ -24,6 +24,7 @@ import {
   claimNest,
   claimPhenomenon,
   listClaimedPhenomena,
+  listPickedBerryPatches,
   peekNest,
   peekPhenomenonEgg,
   startEncounter,
@@ -462,6 +463,40 @@ export default function OverworldBoard(props: {
   });
 
   /**
+   * The patches this player has already stripped this window.
+   *
+   * Read from the store on arrival rather than only remembered from the
+   * press, so a bare bush stays bare across a reload or a walk back
+   * into the chunk. The markers behind it are keyed by the window, so
+   * the set empties itself when the patches grow again
+   */
+  const [picked, setPicked] = createSignal<Set<number>>(new Set());
+
+  createEffect(() => {
+    const loaded = view();
+
+    if (loaded == null) {
+      return;
+    }
+
+    let live = true;
+
+    listPickedBerryPatches(loaded.snapshot)
+      .then((cells) => {
+        if (live) {
+          setPicked(new Set(cells));
+        }
+      })
+      .catch(() => {
+        // A board that cannot say which bushes are bare draws them all
+        // in fruit: pressing one costs a refusal, not a mistake
+      });
+    onCleanup(() => {
+      live = false;
+    });
+  });
+
+  /**
    * What is going on at a cell, once what this player has already had
    * is taken out of it
    */
@@ -832,6 +867,9 @@ export default function OverworldBoard(props: {
     if (landmark === Landmark.BerryPatch) {
       const berries = await claimBerryPatch(loaded.snapshot, at);
 
+      // Bare either way: the bush was already stripped, or this press
+      // stripped it
+      setPicked((cells) => new Set(cells).add(at));
       announce('Bare bushes. Come back next window.', berries == null ? null : [berries]);
       return null;
     }
@@ -1401,6 +1439,13 @@ export default function OverworldBoard(props: {
                 rocks={loaded().rocks}
                 wanderers={loaded().snapshot.getWanderingNpcs()}
                 coats={loaded().snapshot.getWandererCoats()}
+                // What is on each bush this window, which is what
+                // decides the plant drawn on the patch. The snapshot's
+                // own map rather than one built here: a prop is a
+                // getter, and the draw loop reads this once a cell a
+                // frame
+                berries={loaded().snapshot.getBerryPatches()}
+                picked={picked()}
                 decorations={loaded().decorations}
                 spawns={
                   new Map(

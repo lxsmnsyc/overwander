@@ -7,9 +7,10 @@ seed plus the clock. Two players in the same place at the same time compute the
 same world without exchanging any of it, and nothing is generated ahead of time.
 
 On top of that world sits the game: pokemon to meet and throw balls at, eggs to
-walk, raids that need a party, Team Rocket grunts who block a cell for six
-hours, an auction house for trading between players, and a real-time battle
-engine both sides replay from a seed.
+walk, raids that need a party, trainers and gym leaders to beat, gym seats other
+players are holding, quests and badges to collect, an auction house and
+friend-to-friend trades, and a real-time battle engine both sides replay from a
+seed.
 
 The dex is Gen 1 — 151 species with their moves, abilities and items. Where Gen
 1 and the modern games disagree, the mechanics follow the modern games.

@@ -50,6 +50,10 @@ import type { Species } from '../../../data/ids/species';
 import facingToward from '../../../canvas/facing';
 import type OWCharSprite from '../../../canvas/ow-char-sprite';
 import loadOWChar from '../../../canvas/ow-char-sprites';
+import type OWPlantSprite from '../../../canvas/ow-plant-sprite';
+import loadOWPlant from '../../../canvas/ow-plant-sprites';
+import berryPlantSheet from '../../../data/overworld/berry-plant';
+import type { ItemStack } from '../../../data/overworld/item-pool';
 import { CHUNK_CELLS } from '../../../overworld/chunk';
 import {
   APRON,
@@ -68,6 +72,9 @@ import {
   LOADING_SIZE,
   MOVE_KEYS,
   NPC_CELLS,
+  PICKED_STAGE,
+  PLANT_CELLS,
+  PLANT_PHASES,
   PLAYER_SHEET,
   QUARTER_TURN,
   SIZE_TIERS,
@@ -158,6 +165,19 @@ export interface ChunkCanvasProps {
    * with no coat falls back to the role's first style
    */
   coats: Map<number, string>;
+  /**
+   * What each patch is bearing this window, by cell. A landmark says a
+   * patch is there; this says what is on the bush, which is what
+   * decides the plant that is drawn
+   */
+  berries: Map<number, ItemStack>;
+  /**
+   * The patches this player has already stripped this window. They keep
+   * their plant and lose their fruit: the bare stage is on the same
+   * sheet, and a bush drawn in fruit that answers nothing is the board
+   * lying about the cell
+   */
+  picked: Set<number>;
   /**
    * The chunk's scenery by cell. It is drawn and nothing else: a tree
    * cannot be pressed, and standing on one does nothing
@@ -294,6 +314,13 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
   const arriving = new Map<string, Promise<void>>();
 
   /**
+   * The berry plants, by the folder they are in. Shared rather than
+   * cloned: a plant's frame is a function of the clock it is drawn
+   * with, so one sheet serves every patch bearing that berry
+   */
+  const plants = new Map<string, OWPlantSprite | null>();
+
+  /**
    * When a sheet last failed to come, so a miss is retried after a
    * pause rather than either refetched every frame or given up on for
    * the life of the board — a charset the processor is writing this
@@ -386,6 +413,66 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
   };
 
   const drawnAsPerson = (index: number): boolean => personOn(index) != null;
+
+  const loadPlant = async (sheet: string): Promise<void> => {
+    const already = arriving.get(sheet);
+
+    if (already != null) {
+      return already;
+    }
+
+    const missed = missedAt.get(sheet);
+
+    if (missed != null && performance.now() - missed < RETRY_PACE) {
+      return;
+    }
+
+    plants.set(sheet, null);
+
+    const loading = loadOWPlant(sheet)
+      .then((loaded) => {
+        if (loaded == null) {
+          missedAt.set(sheet, performance.now());
+          plants.delete(sheet);
+          arriving.delete(sheet);
+        } else {
+          plants.set(sheet, loaded);
+          missedAt.delete(sheet);
+        }
+      })
+      .catch(() => {
+        // The letter in a circle it always was
+      });
+
+    arriving.set(sheet, loading);
+    return loading;
+  };
+
+  /**
+   * The plant growing on a cell, once its sheet is in hand. A patch
+   * whose berry has no drawing yet is the letter in a circle it was
+   * before there were any
+   */
+  const plantOn = (index: number): OWPlantSprite | null => {
+    const bearing = props.berries.get(index);
+
+    if (bearing == null || props.landmarks.get(index) !== Landmark.BerryPatch) {
+      return null;
+    }
+
+    const sheet = berryPlantSheet(bearing.item);
+
+    if (!plants.has(sheet)) {
+      loadPlant(sheet).catch(() => {
+        // Already answered inside: nothing else to do with it
+      });
+      return null;
+    }
+
+    const plant = plants.get(sheet) ?? null;
+
+    return plant?.ready === true ? plant : null;
+  };
 
   /**
    * The player's own walker, and the copy is the point.
@@ -1164,7 +1251,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         // Somebody standing there is drawn with the rest of what
         // stands, in paint order — so a mark on the ground under their
         // feet as well would be the cell saying the same thing twice
-        if (drawnAsPerson(index)) {
+        if (drawnAsPerson(index) || plantOn(index) != null) {
           continue;
         }
         if (showing != null) {
@@ -1243,6 +1330,28 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         // sparkle of its own
         if (standing?.shiny !== true) {
           sparkles.delete(index);
+        }
+
+        // A bush is drawn before whatever is standing beside it: it is
+        // scenery with a berry on it, and a pokemon in front of it
+        // should read as being in front of it
+        const plant = loading() ? null : plantOn(index);
+
+        if (plant != null) {
+          plant.draw(context, middle.x, middle.y, {
+            scale: (CELL * PLANT_CELLS * middle.scale * magnify) / plant.sourceFrameHeight,
+            // A patch in fruit is the bottom row of the sheet, and one
+            // this player has stripped is the top: the same bush
+            // without its berries
+            stage: props.picked.has(index) ? PICKED_STAGE : plant.ripe,
+            at: clock,
+            // Out of step with its neighbours, so a chunk with four
+            // patches on it is four bushes rather than one drawn four
+            // times
+            phase: (index % PLANT_PHASES) / PLANT_PHASES,
+            // The soil the plant grows out of is the bottom of the cell
+            anchor: 'foot',
+          });
         }
 
         const person = loading() ? null : personOn(index);

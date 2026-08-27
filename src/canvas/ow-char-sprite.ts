@@ -73,7 +73,7 @@ const WALK_HOLD = SPRITE_TICK * 3;
 const STRIDE = 8;
 
 /** A cell of the grid, in sheet pixels. */
-interface FrameRect {
+export interface FrameRect {
   x: number;
   y: number;
   width: number;
@@ -159,7 +159,7 @@ function bareName(name: string): string {
  * it does not. The biggest is the right guess: a charset packed whole
  * is sixteen cells and anything else on the sheet beside it is one
  */
-function gridOf(data: BasicSpriteData, name: string | undefined): FrameRect | null {
+export function gridOf(data: BasicSpriteData, name: string | undefined): FrameRect | null {
   let best: FrameRect | null = null;
 
   for (const image of data.images) {

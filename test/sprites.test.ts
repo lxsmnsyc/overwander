@@ -2,6 +2,9 @@ import { createHash } from 'node:crypto';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { ItemTypes, Items } from '../src/data/ids/items';
+import registerItems, { getItemData, listItemsByType } from '../src/data/items';
+import berryPlantSheet, { berryPlantName } from '../src/data/overworld/berry-plant';
 
 /**
  * The sprites and what has been done to them.
@@ -18,6 +21,8 @@ import { describe, expect, it } from 'vitest';
  */
 
 const SPRITE_ROOT = 'public/sprites';
+
+registerItems();
 
 const LEDGER_PATH = 'sprite-pipeline.json';
 
@@ -105,5 +110,62 @@ describe('the sprite pipeline record', () => {
     const gone = [...LEDGER.keys()].filter((path) => !existsSync(path));
 
     expect(gone, `run \`pnpm compact-sprites\` to clear: ${gone.join(', ')}`).toEqual([]);
+  });
+});
+
+describe('the berry plants that ship', () => {
+  const ROOT = `${SPRITE_ROOT}/overworld/landmarks-berry`;
+
+  /** Every berry the game registers, by the name its folder is called. */
+  function registered(): { item: Items; name: string }[] {
+    return listItemsByType(ItemTypes.Berry)
+      .map((item) => ({ item, name: berryPlantName(item) }))
+      .sort((one, two) => one.name.localeCompare(two.name));
+  }
+
+  it('names a folder after the berry, the way the icons are named', () => {
+    expect(berryPlantSheet(Items.CheriBerry)).toBe('landmarks-berry/cheri');
+  });
+
+  it('has a plant for every berry the game registers', () => {
+    const missing = registered()
+      .filter(({ name }) => !existsSync(`${ROOT}/${name}/image.png`))
+      .map((one) => one.name);
+
+    expect(missing, 'run `node scripts/berry-plants.ts <sheet>` for these').toEqual([]);
+  });
+
+  it('ships no plant for a berry the game does not have', () => {
+    const known = new Set(registered().map((one) => one.name));
+
+    expect(readdirSync(ROOT).filter((folder) => !known.has(folder))).toEqual([]);
+  });
+
+  it('lays every plant out as two frames across and three stages down', () => {
+    for (const { name } of registered()) {
+      const described = JSON.parse(readFileSync(`${ROOT}/${name}/data.json`, 'utf8')) as unknown;
+      const grid = fieldOf(described, 'grid');
+
+      expect(fieldOf(grid, 'columns'), name).toBe(2);
+      expect(fieldOf(grid, 'rows'), name).toBe(3);
+      // Cropped alike, so a stage is still found by multiplying
+      expect(fieldOf(described, 'width'), name).toBe(Number(fieldOf(grid, 'frameWidth')) * 2);
+      expect(fieldOf(described, 'height'), name).toBe(Number(fieldOf(grid, 'frameHeight')) * 3);
+      // All cut from the same cell, so every berry scales alike
+      expect(fieldOf(grid, 'sourceFrameWidth'), name).toBe(22);
+      expect(fieldOf(grid, 'sourceFrameHeight'), name).toBe(34);
+    }
+  });
+
+  it('takes the folder name off the item, so a rename cannot go unnoticed', () => {
+    for (const { item, name } of registered()) {
+      // A grade is two words in the name and one hyphen in the folder,
+      // which is how the icon sheet spells it too
+      expect(`${name.replace(/-/g, ' ')} berry`).toBe(getItemData(item).name.toLowerCase());
+    }
+  });
+
+  it('spells a two-word berry the way its icon is filed', () => {
+    expect(berryPlantSheet(Items.GoldenRazzBerry)).toBe('landmarks-berry/golden-razz');
   });
 });

@@ -96,7 +96,7 @@ next window grows something new.
 | **Base**     | The five single-status cures                                            |
 | **Uncommon** | Leppa, Oran, Persim, and the five bitter berries                        |
 | **Rare**     | Lum, Sitrus, the five that answer a blow, and the eighteen type-resists |
-| **Special**  | The pinch berries, held for the moment the holder is nearly out         |
+| **Special**  | The pinch berries, and the six silver and gold prize berries            |
 
 ### Phenomena
 
@@ -167,8 +167,9 @@ all the help it gets. Each berry triggers on its own.
 | **Kee, Maranga**          | Hit physically or specially       | A defence stage                                                        |
 | **Effort drops** (6)      | Fed out of battle                 | 10 training points off one stat, and friendship gained                 |
 
-Ten berries can also be fed to a wild pokemon to make it easier to catch, and
-fourteen further berries do nothing but that; see
+Ten berries can also be fed to a wild pokemon to make it easier to catch,
+fourteen further berries do nothing but that, and six rarer ones buy catch odds,
+a pokemon that will not bolt, or double and triple candy; see
 [Catching](catching.md#berries).
 
 ## Wings

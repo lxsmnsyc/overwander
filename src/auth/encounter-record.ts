@@ -44,6 +44,12 @@ export interface EncounterRecord extends Encounter {
    * `ability` and nothing else
    */
   abilities?: Abilities[];
+  /**
+   * The berry the player fed this meeting, for the grades that pay out
+   * on the catch rather than on the next throw. Absent for every
+   * encounter nobody fed, which is most of them
+   */
+  fed?: Items;
 }
 
 /**
@@ -84,5 +90,6 @@ export function asEncounterRecord(value: unknown): EncounterRecord {
     ...(Array.isArray(data.abilities)
       ? { abilities: asNumberArray(data.abilities) as Abilities[] }
       : {}),
+    ...(typeof data.fed === 'number' ? { fed: asNumber(data.fed) as Items } : {}),
   };
 }

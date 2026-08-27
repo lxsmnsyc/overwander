@@ -68,6 +68,12 @@ import registerItems, {
 } from '../src/data/items';
 import { WING_STATS, isWing } from '../src/data/items/wings';
 import {
+  BAIT_BERRY_NAMES,
+  BAIT_CATCH_BONUS,
+  NANAB_FLEE_FACTOR,
+  PINAP_CANDY_HELPINGS,
+  PRIZE_BERRY_NAMES,
+  RAZZ_CATCH_BONUS,
   BERRY_BRACE_STAGES,
   BERRY_EFFORT_DROPS,
   BERRY_NATURE_HEALS,
@@ -75,6 +81,7 @@ import {
   BERRY_RESIST_TYPES,
   BERRY_STATUS_CURES,
   PINCH_BERRIES,
+  describeBerry,
   isBerry,
 } from '../src/data/items/berries';
 import BERRY_POOL from '../src/data/overworld/berry-pool';
@@ -190,6 +197,7 @@ import {
 } from '../src/data/items/trinkets';
 import { LUCK_INCENSE_BONUS } from '../src/overworld/items/incenses';
 import { AMULET_COIN_BONUS } from '../src/overworld/items/trinkets';
+import { FEED_CATCH_BONUS, MAX_CATCH_BONUS } from '../src/overworld/safari';
 import { ORBS, ORB_PRICE } from '../src/data/items/orbs';
 import { PLATES, PLATE_RESALE } from '../src/data/items/plates';
 import { RAID_ITEMS, getRaidSpecies } from '../src/data/items/raid-items';
@@ -2203,6 +2211,74 @@ describe('item data', () => {
       Items.RowapBerry,
     ]) {
       expect(grown.has(item)).toBe(true);
+    }
+  });
+
+  it('registers the flavour berries as bait, and nothing else', () => {
+    for (const [item, name] of BAIT_BERRY_NAMES) {
+      const data = getItemData(item);
+
+      expect(isBerry(item)).toBe(true);
+      expect(data.name).toBe(name);
+      expect(data.type).toBe(ItemTypes.Berry);
+      // Fed, never held: nothing in a battle reads one
+      expect(data.flags & ItemFlags.Holdable).toBe(0);
+      expect(data.flags & ItemFlags.Consumable).not.toBe(0);
+      expect(FEED_CATCH_BONUS[item]).toBe(BAIT_CATCH_BONUS);
+      // Worth more fed than a berry that had another use
+      expect(BAIT_CATCH_BONUS).toBeGreaterThan(FEED_CATCH_BONUS[Items.OranBerry] ?? 0);
+    }
+  });
+
+  it('gives every prize berry one job, and a patch to grow in', () => {
+    const jobs = [RAZZ_CATCH_BONUS, NANAB_FLEE_FACTOR, PINAP_CANDY_HELPINGS];
+    const grown = new Set(BERRY_POOL.special.map((entry) => entry.item));
+
+    for (const [item, name] of PRIZE_BERRY_NAMES) {
+      const data = getItemData(item);
+
+      expect(isBerry(item)).toBe(true);
+      expect(data.name).toBe(name);
+      expect(data.type).toBe(ItemTypes.Berry);
+      // Fed, never held
+      expect(data.flags & ItemFlags.Holdable).toBe(0);
+      // Every grade is bait first, whatever else it buys
+      expect(FEED_CATCH_BONUS[item]).toBeGreaterThanOrEqual(BAIT_CATCH_BONUS);
+      // Exactly one of the three tables answers for it, so no berry
+      // quietly does two things or nothing
+      expect(jobs.filter((table) => table.has(item)).length, name).toBe(1);
+      // The rarest band a patch has, which is where the user put them
+      expect(grown.has(item), name).toBe(true);
+      expect(describeBerry(item)).not.toBe('');
+    }
+  });
+
+  it('makes each grade worth more than the one below it', () => {
+    expect(RAZZ_CATCH_BONUS.get(Items.GoldenRazzBerry)).toBeGreaterThan(
+      RAZZ_CATCH_BONUS.get(Items.SilverRazzBerry) ?? 0,
+    );
+    // Less left of the flee roll is the better berry here
+    expect(NANAB_FLEE_FACTOR.get(Items.GoldenNanabBerry)).toBeLessThan(
+      NANAB_FLEE_FACTOR.get(Items.SilverNanabBerry) ?? 1,
+    );
+    expect(PINAP_CANDY_HELPINGS.get(Items.GoldenPinapBerry)).toBeGreaterThan(
+      PINAP_CANDY_HELPINGS.get(Items.SilverPinapBerry) ?? 0,
+    );
+    // A gold Razz alone is most of what feeding can ever achieve
+    expect(RAZZ_CATCH_BONUS.get(Items.GoldenRazzBerry)).toBeLessThanOrEqual(MAX_CATCH_BONUS);
+  });
+
+  it('grows no flavour berry yet', () => {
+    // They are cut, named and fed, and deliberately left out of the
+    // patches: nothing in the world drops one until they are pooled
+    const grown = new Set(
+      [...BERRY_POOL.base, ...BERRY_POOL.uncommon, ...BERRY_POOL.rare, ...BERRY_POOL.special].map(
+        (entry) => entry.item,
+      ),
+    );
+
+    for (const item of BAIT_BERRY_NAMES.keys()) {
+      expect(grown.has(item)).toBe(false);
     }
   });
 

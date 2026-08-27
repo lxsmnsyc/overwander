@@ -14,6 +14,7 @@ import {
   claimNest as claimNestOnServerSide,
   claimPhenomenon as claimPhenomenonOnServerSide,
   listClaimedPhenomena as listClaimedPhenomenaOnServerSide,
+  listPickedBerryPatches as listPickedBerryPatchesOnServerSide,
   meetSpawn,
   peekNest as peekNestOnServerSide,
   peekPhenomenonEgg as peekPhenomenonEggOnServerSide,
@@ -369,6 +370,36 @@ async function listClaimedOnServer(
 ): Promise<number[]> {
   'use server';
   return listClaimedPhenomenaOnServerSide(
+    await requireUid(token),
+    x,
+    y,
+    await syncServerClock(),
+    offset,
+  );
+}
+
+/**
+ * Which of this chunk's patches this player has already picked this
+ * window. The board draws those as bare bushes: a patch that would
+ * answer nothing should not be drawn in fruit
+ */
+export async function listPickedBerryPatches(snapshot: ChunkSnapshot): Promise<number[]> {
+  return listPickedOnServer(
+    await getIdToken(),
+    snapshot.chunk.x,
+    snapshot.chunk.y,
+    snapshot.offset,
+  );
+}
+
+async function listPickedOnServer(
+  token: string,
+  x: number,
+  y: number,
+  offset: number,
+): Promise<number[]> {
+  'use server';
+  return listPickedBerryPatchesOnServerSide(
     await requireUid(token),
     x,
     y,

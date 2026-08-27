@@ -746,6 +746,40 @@ export const enum Items {
   PowerLens = 358,
   PowerBand = 359,
   PowerAnklet = 360,
+
+  /**
+   * The flavour berries: the ones the mainline grows for cooking
+   * rather than for holding. Nothing here triggers in a battle, so
+   * they are bait and nothing else. See
+   * [`src/data/items/berries.ts`](../items/berries.ts)
+   */
+  RazzBerry = 361,
+  BlukBerry = 362,
+  NanabBerry = 363,
+  WepearBerry = 364,
+  PinapBerry = 365,
+  CornnBerry = 366,
+  MagostBerry = 367,
+  RabutaBerry = 368,
+  NomelBerry = 369,
+  SpelonBerry = 370,
+  PamtreBerry = 371,
+  WatmelBerry = 372,
+  DurinBerry = 373,
+  BelueBerry = 374,
+
+  /**
+   * The prize berries: the same fruit a patch usually bears, grown
+   * silver or gold. Each family keeps its own job and buys more of it
+   * at the higher grade. See
+   * [`src/data/items/berries.ts`](../items/berries.ts)
+   */
+  SilverRazzBerry = 375,
+  GoldenRazzBerry = 376,
+  SilverNanabBerry = 377,
+  GoldenNanabBerry = 378,
+  SilverPinapBerry = 379,
+  GoldenPinapBerry = 380,
 }
 
 /**

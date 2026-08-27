@@ -1657,6 +1657,882 @@
         "bytes": 1248
       }
     },
+    "public/sprites/overworld/landmarks-berry/aguav/image.png": {
+      "digest": "ca85d5964ad0610d",
+      "bytes": 650,
+      "width": 28,
+      "height": 81,
+      "compact": {
+        "at": "2026-08-27T06:54:50Z",
+        "as": "already compact",
+        "was": 650,
+        "bytes": 650
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/apicot/image.png": {
+      "digest": "cb05ceec4cbde47b",
+      "bytes": 636,
+      "width": 32,
+      "height": 75,
+      "compact": {
+        "at": "2026-08-27T06:54:50Z",
+        "as": "already compact",
+        "was": 636,
+        "bytes": 636
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/aspear/image.png": {
+      "digest": "465372e133026414",
+      "bytes": 726,
+      "width": 32,
+      "height": 87,
+      "compact": {
+        "at": "2026-08-27T06:54:50Z",
+        "as": "already compact",
+        "was": 726,
+        "bytes": 726
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/babiri/image.png": {
+      "digest": "a3fb08b3a3fe0c15",
+      "bytes": 685,
+      "width": 32,
+      "height": 90,
+      "compact": {
+        "at": "2026-08-27T06:54:50Z",
+        "as": "already compact",
+        "was": 685,
+        "bytes": 685
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/belue/image.png": {
+      "digest": "bda7a5290e0c3b0e",
+      "bytes": 623,
+      "width": 28,
+      "height": 93,
+      "compact": {
+        "at": "2026-08-27T07:26:26Z",
+        "as": "already compact",
+        "was": 623,
+        "bytes": 623
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/bluk/image.png": {
+      "digest": "55b799fefa85c4c9",
+      "bytes": 865,
+      "width": 34,
+      "height": 87,
+      "compact": {
+        "at": "2026-08-27T07:26:26Z",
+        "as": "already compact",
+        "was": 865,
+        "bytes": 865
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/charti/image.png": {
+      "digest": "6f0df8e6b56ae4ac",
+      "bytes": 582,
+      "width": 30,
+      "height": 66,
+      "compact": {
+        "at": "2026-08-27T06:54:50Z",
+        "as": "already compact",
+        "was": 582,
+        "bytes": 582
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/cheri/image.png": {
+      "digest": "30c904b447562931",
+      "bytes": 600,
+      "width": 30,
+      "height": 84,
+      "compact": {
+        "at": "2026-08-27T06:54:50Z",
+        "as": "already compact",
+        "was": 600,
+        "bytes": 600
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/chesto/image.png": {
+      "digest": "f434663e2332bb94",
+      "bytes": 748,
+      "width": 32,
+      "height": 81,
+      "compact": {
+        "at": "2026-08-27T06:54:50Z",
+        "as": "already compact",
+        "was": 748,
+        "bytes": 748
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/chilan/image.png": {
+      "digest": "488c2cb263b98544",
+      "bytes": 689,
+      "width": 30,
+      "height": 78,
+      "compact": {
+        "at": "2026-08-27T06:54:50Z",
+        "as": "already compact",
+        "was": 689,
+        "bytes": 689
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/chople/image.png": {
+      "digest": "a3a9650591d25e5f",
+      "bytes": 828,
+      "width": 32,
+      "height": 78,
+      "compact": {
+        "at": "2026-08-27T06:54:50Z",
+        "as": "already compact",
+        "was": 828,
+        "bytes": 828
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/coba/image.png": {
+      "digest": "f59ecea2ef56fe39",
+      "bytes": 656,
+      "width": 32,
+      "height": 54,
+      "compact": {
+        "at": "2026-08-27T06:54:50Z",
+        "as": "already compact",
+        "was": 656,
+        "bytes": 656
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/colbur/image.png": {
+      "digest": "d90a6c0a79690cb4",
+      "bytes": 657,
+      "width": 32,
+      "height": 72,
+      "compact": {
+        "at": "2026-08-27T06:54:50Z",
+        "as": "already compact",
+        "was": 657,
+        "bytes": 657
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/cornn/image.png": {
+      "digest": "6cad1ded5dc2314f",
+      "bytes": 675,
+      "width": 32,
+      "height": 75,
+      "compact": {
+        "at": "2026-08-27T07:26:26Z",
+        "as": "already compact",
+        "was": 675,
+        "bytes": 675
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/custap/image.png": {
+      "digest": "427ebfd8476ec37d",
+      "bytes": 612,
+      "width": 32,
+      "height": 87,
+      "compact": {
+        "at": "2026-08-27T06:54:50Z",
+        "as": "already compact",
+        "was": 612,
+        "bytes": 612
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/durin/image.png": {
+      "digest": "6acaf6cd0e087600",
+      "bytes": 814,
+      "width": 32,
+      "height": 93,
+      "compact": {
+        "at": "2026-08-27T07:26:26Z",
+        "as": "already compact",
+        "was": 814,
+        "bytes": 814
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/enigma/image.png": {
+      "digest": "b632f96ba1f182e9",
+      "bytes": 666,
+      "width": 32,
+      "height": 90,
+      "compact": {
+        "at": "2026-08-27T06:54:50Z",
+        "as": "already compact",
+        "was": 666,
+        "bytes": 666
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/figy/image.png": {
+      "digest": "990b2bad6e7b0ac3",
+      "bytes": 732,
+      "width": 30,
+      "height": 78,
+      "compact": {
+        "at": "2026-08-27T06:54:50Z",
+        "as": "already compact",
+        "was": 732,
+        "bytes": 732
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/ganlon/image.png": {
+      "digest": "9eece73fec903ead",
+      "bytes": 637,
+      "width": 28,
+      "height": 84,
+      "compact": {
+        "at": "2026-08-27T06:54:50Z",
+        "as": "already compact",
+        "was": 637,
+        "bytes": 637
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/golden-nanab/image.png": {
+      "digest": "c10407ba455175e1",
+      "bytes": 844,
+      "width": 32,
+      "height": 78,
+      "compact": {
+        "at": "2026-08-27T07:53:04Z",
+        "as": "already compact",
+        "was": 844,
+        "bytes": 844
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/golden-pinap/image.png": {
+      "digest": "991ab829f56c074c",
+      "bytes": 559,
+      "width": 30,
+      "height": 66,
+      "compact": {
+        "at": "2026-08-27T07:53:04Z",
+        "as": "already compact",
+        "was": 559,
+        "bytes": 559
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/golden-razz/image.png": {
+      "digest": "0e5cd19ec3d9ab85",
+      "bytes": 813,
+      "width": 32,
+      "height": 87,
+      "compact": {
+        "at": "2026-08-27T07:53:04Z",
+        "as": "already compact",
+        "was": 813,
+        "bytes": 813
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/grepa/image.png": {
+      "digest": "4ac1b647bad39469",
+      "bytes": 675,
+      "width": 30,
+      "height": 78,
+      "compact": {
+        "at": "2026-08-27T06:54:50Z",
+        "as": "already compact",
+        "was": 675,
+        "bytes": 675
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/haban/image.png": {
+      "digest": "b8e34e4ad901f779",
+      "bytes": 671,
+      "width": 32,
+      "height": 72,
+      "compact": {
+        "at": "2026-08-27T06:54:50Z",
+        "as": "already compact",
+        "was": 671,
+        "bytes": 671
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/hondew/image.png": {
+      "digest": "a451a8651d44e023",
+      "bytes": 616,
+      "width": 28,
+      "height": 93,
+      "compact": {
+        "at": "2026-08-27T06:54:50Z",
+        "as": "already compact",
+        "was": 616,
+        "bytes": 616
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/iapapa/image.png": {
+      "digest": "508fca7c4ce5d844",
+      "bytes": 591,
+      "width": 30,
+      "height": 66,
+      "compact": {
+        "at": "2026-08-27T06:54:50Z",
+        "as": "already compact",
+        "was": 591,
+        "bytes": 591
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/jaboca/image.png": {
+      "digest": "60bdbddb2620e522",
+      "bytes": 567,
+      "width": 32,
+      "height": 72,
+      "compact": {
+        "at": "2026-08-27T06:54:50Z",
+        "as": "already compact",
+        "was": 567,
+        "bytes": 567
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/kasib/image.png": {
+      "digest": "8991e63ff516cc79",
+      "bytes": 593,
+      "width": 28,
+      "height": 93,
+      "compact": {
+        "at": "2026-08-27T06:54:50Z",
+        "as": "already compact",
+        "was": 593,
+        "bytes": 593
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/kebia/image.png": {
+      "digest": "9e821543264c03e0",
+      "bytes": 721,
+      "width": 30,
+      "height": 78,
+      "compact": {
+        "at": "2026-08-27T06:54:50Z",
+        "as": "already compact",
+        "was": 721,
+        "bytes": 721
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/kee/image.png": {
+      "digest": "00300a8d35f653af",
+      "bytes": 562,
+      "width": 32,
+      "height": 72,
+      "compact": {
+        "at": "2026-08-27T07:39:25Z",
+        "as": "already compact",
+        "was": 562,
+        "bytes": 562
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/kelpsy/image.png": {
+      "digest": "fed1cbde95983ce0",
+      "bytes": 744,
+      "width": 32,
+      "height": 69,
+      "compact": {
+        "at": "2026-08-27T06:54:50Z",
+        "as": "already compact",
+        "was": 744,
+        "bytes": 744
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/lansat/image.png": {
+      "digest": "3b62b39c45c6cc99",
+      "bytes": 517,
+      "width": 32,
+      "height": 63,
+      "compact": {
+        "at": "2026-08-27T06:54:50Z",
+        "as": "already compact",
+        "was": 517,
+        "bytes": 517
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/leppa/image.png": {
+      "digest": "c87441afede7077c",
+      "bytes": 594,
+      "width": 32,
+      "height": 69,
+      "compact": {
+        "at": "2026-08-27T06:54:50Z",
+        "as": "already compact",
+        "was": 594,
+        "bytes": 594
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/liechi/image.png": {
+      "digest": "55251e05f414bdc2",
+      "bytes": 585,
+      "width": 32,
+      "height": 87,
+      "compact": {
+        "at": "2026-08-27T06:54:50Z",
+        "as": "already compact",
+        "was": 585,
+        "bytes": 585
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/lum/image.png": {
+      "digest": "5a48997100633f41",
+      "bytes": 688,
+      "width": 32,
+      "height": 93,
+      "compact": {
+        "at": "2026-08-27T06:54:50Z",
+        "as": "already compact",
+        "was": 688,
+        "bytes": 688
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/mago/image.png": {
+      "digest": "2bcde7c546edb0d6",
+      "bytes": 835,
+      "width": 32,
+      "height": 78,
+      "compact": {
+        "at": "2026-08-27T06:54:50Z",
+        "as": "already compact",
+        "was": 835,
+        "bytes": 835
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/magost/image.png": {
+      "digest": "b16c6f297f9b7e99",
+      "bytes": 589,
+      "width": 30,
+      "height": 69,
+      "compact": {
+        "at": "2026-08-27T07:26:26Z",
+        "as": "already compact",
+        "was": 589,
+        "bytes": 589
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/maranga/image.png": {
+      "digest": "3578e4d8975c10ec",
+      "bytes": 636,
+      "width": 32,
+      "height": 69,
+      "compact": {
+        "at": "2026-08-27T07:39:25Z",
+        "as": "already compact",
+        "was": 636,
+        "bytes": 636
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/micle/image.png": {
+      "digest": "b5bd1cb2feb98e31",
+      "bytes": 607,
+      "width": 32,
+      "height": 69,
+      "compact": {
+        "at": "2026-08-27T06:54:50Z",
+        "as": "already compact",
+        "was": 607,
+        "bytes": 607
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/nanab/image.png": {
+      "digest": "ae2d2301e804e3c8",
+      "bytes": 851,
+      "width": 32,
+      "height": 78,
+      "compact": {
+        "at": "2026-08-27T07:26:26Z",
+        "as": "already compact",
+        "was": 851,
+        "bytes": 851
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/nomel/image.png": {
+      "digest": "e76bd3b859e84888",
+      "bytes": 666,
+      "width": 30,
+      "height": 69,
+      "compact": {
+        "at": "2026-08-27T07:26:26Z",
+        "as": "already compact",
+        "was": 666,
+        "bytes": 666
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/occa/image.png": {
+      "digest": "571fe899b72aa6d5",
+      "bytes": 702,
+      "width": 32,
+      "height": 93,
+      "compact": {
+        "at": "2026-08-27T06:54:50Z",
+        "as": "already compact",
+        "was": 702,
+        "bytes": 702
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/oran/image.png": {
+      "digest": "d0b84806d5617309",
+      "bytes": 858,
+      "width": 34,
+      "height": 87,
+      "compact": {
+        "at": "2026-08-27T06:54:50Z",
+        "as": "already compact",
+        "was": 858,
+        "bytes": 858
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/pamtre/image.png": {
+      "digest": "0d226e47aab27c32",
+      "bytes": 717,
+      "width": 32,
+      "height": 93,
+      "compact": {
+        "at": "2026-08-27T07:26:26Z",
+        "as": "already compact",
+        "was": 717,
+        "bytes": 717
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/passho/image.png": {
+      "digest": "57c97c8d15070658",
+      "bytes": 729,
+      "width": 30,
+      "height": 78,
+      "compact": {
+        "at": "2026-08-27T06:54:50Z",
+        "as": "already compact",
+        "was": 729,
+        "bytes": 729
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/payapa/image.png": {
+      "digest": "45a446828204fcfa",
+      "bytes": 699,
+      "width": 30,
+      "height": 69,
+      "compact": {
+        "at": "2026-08-27T06:54:50Z",
+        "as": "already compact",
+        "was": 699,
+        "bytes": 699
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/pecha/image.png": {
+      "digest": "08fa57d587c05244",
+      "bytes": 728,
+      "width": 32,
+      "height": 81,
+      "compact": {
+        "at": "2026-08-27T06:54:50Z",
+        "as": "already compact",
+        "was": 728,
+        "bytes": 728
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/persim/image.png": {
+      "digest": "376e2091fee470e5",
+      "bytes": 676,
+      "width": 32,
+      "height": 72,
+      "compact": {
+        "at": "2026-08-27T06:54:50Z",
+        "as": "already compact",
+        "was": 676,
+        "bytes": 676
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/petaya/image.png": {
+      "digest": "80704df2b7aacad0",
+      "bytes": 479,
+      "width": 32,
+      "height": 69,
+      "compact": {
+        "at": "2026-08-27T06:54:50Z",
+        "as": "already compact",
+        "was": 479,
+        "bytes": 479
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/pinap/image.png": {
+      "digest": "6ddde8b0aa719860",
+      "bytes": 565,
+      "width": 30,
+      "height": 66,
+      "compact": {
+        "at": "2026-08-27T07:26:26Z",
+        "as": "already compact",
+        "was": 565,
+        "bytes": 565
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/pomeg/image.png": {
+      "digest": "fc52a5decf762c29",
+      "bytes": 591,
+      "width": 30,
+      "height": 72,
+      "compact": {
+        "at": "2026-08-27T06:54:50Z",
+        "as": "already compact",
+        "was": 591,
+        "bytes": 591
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/qualot/image.png": {
+      "digest": "9000e1cb6c73979c",
+      "bytes": 641,
+      "width": 32,
+      "height": 72,
+      "compact": {
+        "at": "2026-08-27T06:54:50Z",
+        "as": "already compact",
+        "was": 641,
+        "bytes": 641
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/rabuta/image.png": {
+      "digest": "7c015a0e94eadb90",
+      "bytes": 708,
+      "width": 32,
+      "height": 78,
+      "compact": {
+        "at": "2026-08-27T07:26:26Z",
+        "as": "already compact",
+        "was": 708,
+        "bytes": 708
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/rawst/image.png": {
+      "digest": "594415e68827faa8",
+      "bytes": 664,
+      "width": 32,
+      "height": 54,
+      "compact": {
+        "at": "2026-08-27T06:54:50Z",
+        "as": "already compact",
+        "was": 664,
+        "bytes": 664
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/razz/image.png": {
+      "digest": "f15c122128469554",
+      "bytes": 813,
+      "width": 32,
+      "height": 87,
+      "compact": {
+        "at": "2026-08-27T07:26:26Z",
+        "as": "already compact",
+        "was": 813,
+        "bytes": 813
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/rindo/image.png": {
+      "digest": "1a8dbc944c75dac7",
+      "bytes": 701,
+      "width": 30,
+      "height": 84,
+      "compact": {
+        "at": "2026-08-27T06:54:50Z",
+        "as": "already compact",
+        "was": 701,
+        "bytes": 701
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/roseli/image.png": {
+      "digest": "5fce9d18a99689ed",
+      "bytes": 689,
+      "width": 30,
+      "height": 78,
+      "compact": {
+        "at": "2026-08-27T07:39:25Z",
+        "as": "already compact",
+        "was": 689,
+        "bytes": 689
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/rowap/image.png": {
+      "digest": "b22765404c7b2de6",
+      "bytes": 636,
+      "width": 32,
+      "height": 69,
+      "compact": {
+        "at": "2026-08-27T06:54:50Z",
+        "as": "already compact",
+        "was": 636,
+        "bytes": 636
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/salac/image.png": {
+      "digest": "1f10e20b2fced428",
+      "bytes": 501,
+      "width": 28,
+      "height": 78,
+      "compact": {
+        "at": "2026-08-27T06:54:50Z",
+        "as": "already compact",
+        "was": 501,
+        "bytes": 501
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/shuca/image.png": {
+      "digest": "a43c2b96ff3135ab",
+      "bytes": 704,
+      "width": 32,
+      "height": 72,
+      "compact": {
+        "at": "2026-08-27T06:54:50Z",
+        "as": "already compact",
+        "was": 704,
+        "bytes": 704
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/silver-nanab/image.png": {
+      "digest": "4d43b1c0103ece15",
+      "bytes": 844,
+      "width": 32,
+      "height": 78,
+      "compact": {
+        "at": "2026-08-27T07:53:04Z",
+        "as": "already compact",
+        "was": 844,
+        "bytes": 844
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/silver-pinap/image.png": {
+      "digest": "ec444df17487eea4",
+      "bytes": 559,
+      "width": 30,
+      "height": 66,
+      "compact": {
+        "at": "2026-08-27T07:53:04Z",
+        "as": "already compact",
+        "was": 559,
+        "bytes": 559
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/silver-razz/image.png": {
+      "digest": "0eab64c4770be051",
+      "bytes": 813,
+      "width": 32,
+      "height": 87,
+      "compact": {
+        "at": "2026-08-27T07:53:04Z",
+        "as": "already compact",
+        "was": 813,
+        "bytes": 813
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/sitrus/image.png": {
+      "digest": "951ac760cf5a0be1",
+      "bytes": 1258,
+      "width": 32,
+      "height": 87,
+      "compact": {
+        "at": "2026-08-27T06:54:50Z",
+        "as": "already compact",
+        "was": 1258,
+        "bytes": 1258
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/spelon/image.png": {
+      "digest": "10b384b0aad57aaa",
+      "bytes": 492,
+      "width": 28,
+      "height": 60,
+      "compact": {
+        "at": "2026-08-27T07:26:26Z",
+        "as": "already compact",
+        "was": 492,
+        "bytes": 492
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/starf/image.png": {
+      "digest": "21e3671c17fbc17c",
+      "bytes": 659,
+      "width": 32,
+      "height": 75,
+      "compact": {
+        "at": "2026-08-27T06:54:50Z",
+        "as": "already compact",
+        "was": 659,
+        "bytes": 659
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/tamato/image.png": {
+      "digest": "0fbd2128491c6bc1",
+      "bytes": 683,
+      "width": 30,
+      "height": 84,
+      "compact": {
+        "at": "2026-08-27T06:54:50Z",
+        "as": "already compact",
+        "was": 683,
+        "bytes": 683
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/tanga/image.png": {
+      "digest": "ecc649070bb7fb14",
+      "bytes": 711,
+      "width": 32,
+      "height": 75,
+      "compact": {
+        "at": "2026-08-27T06:54:50Z",
+        "as": "already compact",
+        "was": 711,
+        "bytes": 711
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/wacan/image.png": {
+      "digest": "752dad430839e1f1",
+      "bytes": 826,
+      "width": 32,
+      "height": 87,
+      "compact": {
+        "at": "2026-08-27T06:54:50Z",
+        "as": "already compact",
+        "was": 826,
+        "bytes": 826
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/watmel/image.png": {
+      "digest": "fea4c34457309007",
+      "bytes": 757,
+      "width": 32,
+      "height": 78,
+      "compact": {
+        "at": "2026-08-27T07:26:26Z",
+        "as": "already compact",
+        "was": 757,
+        "bytes": 757
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/wepear/image.png": {
+      "digest": "d68294cbd43c01bd",
+      "bytes": 667,
+      "width": 32,
+      "height": 72,
+      "compact": {
+        "at": "2026-08-27T07:26:26Z",
+        "as": "already compact",
+        "was": 667,
+        "bytes": 667
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/wiki/image.png": {
+      "digest": "a82fe52250865bb8",
+      "bytes": 747,
+      "width": 34,
+      "height": 72,
+      "compact": {
+        "at": "2026-08-27T06:54:50Z",
+        "as": "already compact",
+        "was": 747,
+        "bytes": 747
+      }
+    },
+    "public/sprites/overworld/landmarks-berry/yache/image.png": {
+      "digest": "e556a6ada0469a27",
+      "bytes": 525,
+      "width": 28,
+      "height": 66,
+      "compact": {
+        "at": "2026-08-27T06:54:50Z",
+        "as": "already compact",
+        "was": 525,
+        "bytes": 525
+      }
+    },
     "public/sprites/overworld/landmarks-item-cache/image.png": {
       "digest": "ff851620ccc26cff",
       "bytes": 226,

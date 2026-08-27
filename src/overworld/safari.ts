@@ -6,6 +6,13 @@ import { Types } from '../data/constants/types';
 import { TimeOfDay, getTimeOfDay, isWaterBiome } from '../data/ids/biome';
 import { Balls, Items } from '../data/ids/items';
 import { getNatureFactor } from '../data/ids/natures';
+import {
+  BAIT_BERRY_NAMES,
+  BAIT_CATCH_BONUS,
+  NANAB_FLEE_FACTOR,
+  PRIZE_BERRY_NAMES,
+  RAZZ_CATCH_BONUS,
+} from '../data/items/berries';
 import { SPECIES_DAY_CATCH_BOOST, getSpeciesData, isFeaturedSpecies } from '../data/species';
 import { type Encounter, EncounterType, isRaidEncounter } from './encounter';
 
@@ -157,26 +164,45 @@ export interface SafariContext {
 }
 
 /**
- * Items an encounter can be fed and the catch multiplier each
- * grants; future bait items slot in here
+ * What a cure berry is worth when it is fed rather than held. Feeding
+ * one costs the player something that does a job elsewhere, so it
+ * buys less than bait grown for the purpose
+ */
+const CURE_CATCH_BONUS = 1.25;
+
+/**
+ * Items an encounter can be fed and the catch multiplier each grants.
+ * The flavour berries are bait and nothing else, so they are worth
+ * more here than a berry that had another use
  */
 export const FEED_CATCH_BONUS: Partial<Record<Items, number>> = {
-  [Items.CheriBerry]: 1.25,
-  [Items.ChestoBerry]: 1.25,
-  [Items.PechaBerry]: 1.25,
-  [Items.RawstBerry]: 1.25,
-  [Items.AspearBerry]: 1.25,
-  [Items.LeppaBerry]: 1.25,
-  [Items.OranBerry]: 1.25,
-  [Items.PersimBerry]: 1.25,
-  [Items.LumBerry]: 1.25,
-  [Items.SitrusBerry]: 1.25,
+  [Items.CheriBerry]: CURE_CATCH_BONUS,
+  [Items.ChestoBerry]: CURE_CATCH_BONUS,
+  [Items.PechaBerry]: CURE_CATCH_BONUS,
+  [Items.RawstBerry]: CURE_CATCH_BONUS,
+  [Items.AspearBerry]: CURE_CATCH_BONUS,
+  [Items.LeppaBerry]: CURE_CATCH_BONUS,
+  [Items.OranBerry]: CURE_CATCH_BONUS,
+  [Items.PersimBerry]: CURE_CATCH_BONUS,
+  [Items.LumBerry]: CURE_CATCH_BONUS,
+  [Items.SitrusBerry]: CURE_CATCH_BONUS,
 };
+
+for (const item of BAIT_BERRY_NAMES.keys()) {
+  FEED_CATCH_BONUS[item] = BAIT_CATCH_BONUS;
+}
+
+// A grade is bait first: one whose grade buys something other than
+// catch odds still buys what plain bait does, so feeding it is never
+// worse than feeding the fruit it was grown from
+for (const item of PRIZE_BERRY_NAMES.keys()) {
+  FEED_CATCH_BONUS[item] = RAZZ_CATCH_BONUS.get(item) ?? BAIT_CATCH_BONUS;
+}
 
 /**
  * Feeding stacks multiplicatively up to this total bonus
  */
-const MAX_CATCH_BONUS = 4;
+export const MAX_CATCH_BONUS = 4;
 
 /**
  * What each ball already thrown adds to the next one. Compound, so it
@@ -305,6 +331,13 @@ export default class SafariSession<
    * rhythm is feed, throw, feed, throw rather than feed, feed, feed
    */
   fed = false;
+
+  /**
+   * The treat it is chewing, for the grades whose effect is read off
+   * the berry itself rather than folded into the catch bonus. Null
+   * whenever `fed` is false
+   */
+  fedItem: Items | null = null;
 
   constructor(
     public readonly encounter: E,
@@ -436,7 +469,10 @@ export default class SafariSession<
     ) {
       return 0;
     }
-    return Math.min(MAX_FLEE_CHANCE, this.getSpeed() / CATCH_RATE_SCALE);
+    const calm = this.fedItem == null ? null : NANAB_FLEE_FACTOR.get(this.fedItem);
+    const chance = Math.min(MAX_FLEE_CHANCE, this.getSpeed() / CATCH_RATE_SCALE);
+
+    return calm == null ? chance : chance * calm;
   }
 
   /**
@@ -541,6 +577,7 @@ function setupSafariMechanics(session: SafariSession): void {
       // It has a mouthful; nothing else is offered until a throw
       // misses
       event.session.fed = true;
+      event.session.fedItem = event.item;
     }
   });
 
@@ -571,6 +608,7 @@ function setupSafariMechanics(session: SafariSession): void {
     // nobody
     if (event.result !== ThrowResult.Caught) {
       event.session.fed = false;
+      event.session.fedItem = null;
     }
   });
 }

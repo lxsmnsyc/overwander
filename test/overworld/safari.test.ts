@@ -58,6 +58,19 @@ describe('safari session', () => {
     expect(session.feed(Items.OranBerry)).toBe(true);
     expect(session.getCatchChance()).toBeCloseTo(pull(encounter) * 2 * 1.25);
     expect(session.feed(Items.FireStone)).toBe(false);
+
+    // A Razz grade is worth more fed than plain bait is
+    const razzed = new SafariSession(encounter, rolls([]));
+
+    razzed.feed(Items.GoldenRazzBerry);
+    expect(razzed.getCatchChance()).toBeCloseTo(pull(encounter) * 3);
+
+    // A grade whose own job is elsewhere is still bait, so feeding one
+    // is never worse than feeding the fruit it was grown from
+    const calmed = new SafariSession(encounter, rolls([]));
+
+    calmed.feed(Items.SilverNanabBerry);
+    expect(calmed.getCatchChance()).toBeCloseTo(pull(encounter) * 1.5);
     expect(session.getCatchChance()).toBeCloseTo(pull(encounter) * 2 * 1.25);
   });
 
@@ -292,6 +305,26 @@ describe('safari session', () => {
     expect(fled.getFleeChance()).toBeCloseTo(fled.getSpeed() / 255);
     expect(fled.throwBall()).toBe(ThrowResult.Fled);
     expect(fled.state).toBe(SafariState.Fled);
+
+    // A Nanab grade cuts the roll it bolts on. Silver halves it, and
+    // the same throw that fled above now breaks free instead
+    const calmed = new SafariSession(makeEncounter(), rolls([0.99, 0.5]));
+
+    expect(calmed.feed(Items.SilverNanabBerry)).toBe(true);
+    expect(calmed.getFleeChance()).toBeCloseTo((calmed.getSpeed() / 255) * 0.5);
+    expect(calmed.throwBall()).toBe(ThrowResult.BrokeFree);
+
+    // And the treat is gone with the throw, so the next one is rolled
+    // against the whole chance again
+    expect(calmed.fedItem).toBe(null);
+    expect(calmed.getFleeChance()).toBeCloseTo(calmed.getSpeed() / 255);
+
+    // Gold settles it completely: nothing bolts from the ball after one
+    const settled = new SafariSession(makeEncounter(), rolls([0.99, 0]));
+
+    settled.feed(Items.GoldenNanabBerry);
+    expect(settled.getFleeChance()).toBe(0);
+    expect(settled.throwBall()).toBe(ThrowResult.BrokeFree);
 
     // Failed catch, failed flee: the encounter stays
     const stayed = new SafariSession(makeEncounter(), rolls([0.99, 0.99]));

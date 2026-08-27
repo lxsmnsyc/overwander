@@ -1,4 +1,5 @@
 import 'server-only';
+import type { Items } from '../data/ids/items';
 import type { EncounterRecord } from '../auth/encounter-record';
 import { type Tx, getSql } from './db';
 import { asNumber } from './read';
@@ -63,7 +64,24 @@ export async function readEncounter(
     ...(abilities.length > 0
       ? { abilities: abilities.map((entry) => asNumber(entry.ability)) }
       : {}),
+    ...(row.fed == null ? {} : { fed: row.fed }),
   };
+}
+
+/**
+ * Write down what the player just fed this meeting.
+ *
+ * The berry is spent in the same call that lands here, so the row is
+ * the only place it survives to the catch. One column rather than a
+ * list: the encounter chews one treat at a time, and a later feeding
+ * is the one that counts
+ */
+export async function stampFeed(spawnId: string, player: string, item: Items): Promise<void> {
+  const sql = getSql();
+
+  await sql`
+    update encounters set fed = ${item} where spawn_id = ${spawnId} and player = ${player}
+  `;
 }
 
 /**

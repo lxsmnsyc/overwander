@@ -114,6 +114,29 @@ nothing else: Razz, Bluk, Nanab, Wepear, Pinap, Cornn, Magost, Rabuta, Nomel,
 Spelon, Pamtre, Watmel, Durin and Belue. Nothing grows them yet, so they are not
 in a player's hands today.
 
+### Prize berries
+
+Three of those fruits also grow silver and gold, in the rarest band a berry patch
+has. Each family buys a different thing, and every one of them is bait first, so
+feeding one is never worse than feeding the plain fruit.
+
+| Berry            | What feeding one buys                           |
+| ---------------- | ----------------------------------------------- |
+| **Silver Razz**  | Twice the catch chance                          |
+| **Golden Razz**  | Three times the catch chance                    |
+| **Silver Nanab** | Halves its chance of bolting from the next ball |
+| **Golden Nanab** | It will not bolt from the next ball at all      |
+| **Silver Pinap** | Catching it pays double candy                   |
+| **Golden Pinap** | Catching it pays triple candy                   |
+
+A gold Razz on its own is most of the four times feeding can ever reach, so
+there is little point stacking anything on top of one.
+
+The two Nanabs last for **one throw**, the same as any treat. A Pinap is
+different: it rides the meeting rather than the throw, so once one is fed the
+extra candy is paid whenever the pokemon finally goes in a ball, however many
+balls that takes.
+
 Feeding costs a turn, which is what stops it being free: every turn is another
 chance for the pokemon to flee, and it advances the Timer Ball's clock while
 spending the Quick Ball's opening.

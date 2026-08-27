@@ -10,6 +10,7 @@ import SafariSession, {
 import { recordCatch } from '../server/caught';
 import { requireUid } from '../server/auth';
 import { consumeItem } from '../server/inventory';
+import { stampFeed } from '../server/encounter-io';
 import { retireSpawn } from '../server/overworld';
 import { hasCaughtSpecies } from './caught';
 import { syncServerClock } from './clock';
@@ -87,11 +88,22 @@ async function spendBall(token: string, ball: Balls): Promise<boolean> {
 }
 
 /**
- * Spend one feeding item. Resolves false when it is not carried
+ * Spend one feeding item and write it onto the meeting. Resolves false
+ * when it is not carried, in which case nothing is fed and nothing is
+ * written
  */
-async function spendFeed(token: string, item: Items): Promise<boolean> {
+async function spendFeed(token: string, spawn: string, item: Items): Promise<boolean> {
   'use server';
-  return consumeItem(await requireUid(token), item);
+
+  const uid = await requireUid(token);
+
+  if (!(await consumeItem(uid, item))) {
+    return false;
+  }
+  // The row is what pays a Pinap out, and it is written here rather
+  // than at the throw because this is the call that knows the berry
+  await stampFeed(spawn, uid, item);
+  return true;
 }
 
 /**
@@ -188,7 +200,7 @@ export async function feedEncounter(
   if (!session.canFeed() || FEED_CATCH_BONUS[item] == null) {
     return false;
   }
-  if (!(await spendFeed(await getIdToken(), item))) {
+  if (!(await spendFeed(await getIdToken(), session.encounter.spawn, item))) {
     return false;
   }
   return session.feed(item);

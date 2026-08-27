@@ -69,6 +69,26 @@ export const SIZE_TIERS = [0.85, 1, 1.1];
  */
 export const NPC_CELLS = 1.45;
 
+/**
+ * How many cells tall a berry plant is drawn. Shorter than a person:
+ * a bush the player walks up to should not hide whoever is standing
+ * behind it
+ */
+export const PLANT_CELLS = 1.1;
+
+/**
+ * How many points of the sway loop the patches are spread over. A
+ * prime, so neighbouring cells and whole rows both land on different
+ * ones rather than a stripe of bushes moving as a block
+ */
+export const PLANT_PHASES = 7;
+
+/**
+ * The stage a stripped patch is drawn at: the youngest the sheet has,
+ * which is the bush before it bore anything
+ */
+export const PICKED_STAGE = 0;
+
 /** The charset the player walks in when nothing else is chosen. */
 export const PLAYER_SHEET = 'characters/frlg/red';
 

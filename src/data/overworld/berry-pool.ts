@@ -71,6 +71,16 @@ const BERRY_POOL: ItemRarityGroups = {
     // Two stages at once, and no saying which: the thinnest slot of
     // the lot, and the one worth the walk
     { item: Items.StarfBerry, weight: 4 },
+    // The prize grades. They settle no fight, so they are here for
+    // scarcity rather than for power: a bush that bears a gold berry
+    // is the reason to keep checking the patches. Gold is half of
+    // silver's slot, and neither is anything to count on
+    { item: Items.SilverRazzBerry, weight: 4 },
+    { item: Items.SilverNanabBerry, weight: 4 },
+    { item: Items.SilverPinapBerry, weight: 4 },
+    { item: Items.GoldenRazzBerry, weight: 2 },
+    { item: Items.GoldenNanabBerry, weight: 2 },
+    { item: Items.GoldenPinapBerry, weight: 2 },
   ],
 };
 

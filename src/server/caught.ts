@@ -19,6 +19,7 @@ import Abilities from '../data/ids/abilities';
 import type { Items } from '../data/ids/items';
 import { Balls, ItemFlags } from '../data/ids/items';
 import { getItemData } from '../data/items';
+import { PINAP_CANDY_HELPINGS } from '../data/items/berries';
 import type { Species } from '../data/ids/species';
 import { getSpeciesData } from '../data/species';
 import createOverworld from '../overworld/setup';
@@ -234,6 +235,16 @@ export async function recordCatch(
 
   for (const [owed, count] of overworld.checkCatchCandy(spawnId, family)) {
     await grantCandy(uid, owed, count);
+  }
+
+  // And whatever was fed to it. A Pinap is paid flat for the same
+  // reason the held items are, and off the catch's own worth rather
+  // than a fixed number, so the berry is worth most on what is worth
+  // meeting
+  const helpings = encounter.fed == null ? undefined : PINAP_CANDY_HELPINGS.get(encounter.fed);
+
+  if (helpings != null) {
+    await grantCandy(uid, family, getCatchCandy(encounter.species) * helpings);
   }
   await mendWithHealBall(uid, ball);
   // And it is not standing there any more, for this player. The spawn

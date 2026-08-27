@@ -8,7 +8,7 @@ import {
   settled,
   signIn,
 } from './game';
-import { insertRow, uidOf } from './admin';
+import { clearAuctions, insertRow, uidOf } from './admin';
 import { stageSeller } from './stranger';
 import { openAuctionBoard } from './walk';
 
@@ -86,6 +86,10 @@ test.describe('friends', () => {
   });
 
   test('asks the trainer whose profile is open', async ({ page }) => {
+    // Nothing but this lot on the board, so the square hovered is the
+    // one the card comes up for
+    await clearAuctions();
+
     const seller = await stageSeller('Juniper');
     const player = await signIn(page);
 
@@ -158,6 +162,8 @@ test.describe('friends', () => {
   });
 
   test('shuts somebody out, and lists them where the block can be lifted', async ({ page }) => {
+    await clearAuctions();
+
     const seller = await stageSeller('Nettle');
     const player = await signIn(page);
 

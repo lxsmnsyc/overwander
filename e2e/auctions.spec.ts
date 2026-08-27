@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { type Player, claimStarter, expectShut, signIn } from './game';
 import { openAuctionBoard } from './walk';
+import { clearAuctions } from './admin';
 import { stageSeller } from './stranger';
 
 /**
@@ -16,6 +17,10 @@ let player: Player;
 
 test.describe('the auction board', () => {
   test.beforeEach(async ({ page }) => {
+    // The board is global and nothing expires a lot, so what previous
+    // runs left on it would be on it still — and a spec that hovers
+    // one seller's lot would find several
+    await clearAuctions();
     player = await signIn(page);
     await claimStarter(page);
   });
@@ -50,19 +55,21 @@ test.describe('the auction board', () => {
     await expect(card.getByRole('button', { name: /^Bid/ })).toBeVisible();
   });
 
-  test('offers selling from the top bar rather than from the bottom of the list', async ({
+  test('offers selling from the panel bar rather than from the bottom of the list', async ({
     page,
   }) => {
     const board = await openAuctionBoard(page, player);
     const add = board.getByRole('button', { name: 'Add' });
-
-    // Beside the heading, which is the top of the panel
-    const heading = board.getByText('Auctions', { exact: true });
-    const above = await add.boundingBox();
-    const named = await heading.boundingBox();
+    // In the panel's own bar, on the line the way out is on. The lots
+    // scroll, and a key at the end of them scrolls away with them
+    const leave = board.getByRole('button', { name: 'Close' });
 
     await expect(add).toBeVisible();
-    expect(Math.abs((above?.y ?? 0) - (named?.y ?? 0))).toBeLessThan(40);
+
+    const adding = await add.boundingBox();
+    const leaving = await leave.boundingBox();
+
+    expect(Math.abs((adding?.y ?? 0) - (leaving?.y ?? 0))).toBeLessThan(40);
 
     await add.click();
     await expect(board.getByRole('heading', { name: 'Sell' })).toBeVisible();

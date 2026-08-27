@@ -200,13 +200,20 @@ export async function openAuctionBoard(page: Page, player: Player): Promise<Loca
   if (standing == null) {
     throw new Error('no auction board stands within reach of the origin');
   }
-  await standBeside(player, standing);
-  await page.reload();
-
   const board = boardOf(page);
 
-  await expect(page.getByRole('navigation', { name: 'Game' })).toBeVisible({ timeout: 20_000 });
-  await expect(board).toBeVisible();
+  // Written down and then checked, rather than written down and
+  // trusted. The world saves where the player is standing as they
+  // walk, so a save still in the air when the row is written puts them
+  // back where they started; what says it took is the chunk the board
+  // names once the page has read it again
+  await expect(async () => {
+    await standBeside(player, standing);
+    await page.reload();
+    await expect(page.getByRole('navigation', { name: 'Game' })).toBeVisible({ timeout: 20_000 });
+    await expect(board).toBeVisible();
+    expect(await placeOf(board)).toContain(`(${standing.chunkX}, ${standing.chunkY})`);
+  }).toPass({ timeout: 60_000 });
 
   // Aimed at rather than fired at. The chunk is still being read when
   // the canvas first appears, and a press at a board that is not drawn
@@ -217,7 +224,7 @@ export async function openAuctionBoard(page: Page, player: Player): Promise<Loca
     expect(await nameAt(page, board, standing.cell)).toContain(
       LANDMARK_NAMES[Landmark.AuctionBoard],
     );
-  }).toPass({ timeout: 20_000 });
+  }).toPass({ timeout: 30_000 });
 
   // The walk is one step, and the panel opens when it arrives
   await pressCell(page, board, standing.cell);

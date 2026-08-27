@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { findRows, uidOf } from './admin';
+import { clearAuctions, findRows, uidOf } from './admin';
 import { SHEET, claimStarter, dialogNamed, expectOpen, signIn } from './game';
 import { stageCatchLot, stageSeller } from './stranger';
 import { openAuctionBoard } from './walk';
@@ -17,6 +17,11 @@ import { openAuctionBoard } from './walk';
 
 test.describe('another trainer', () => {
   test('opens from the board, with nothing on it to press', async ({ page }) => {
+    // Nothing but this lot on the board: what earlier runs left there
+    // would crowd it, and the square being hovered has to be the one
+    // the card comes up for
+    await clearAuctions();
+
     const seller = await stageSeller('Wisteria');
 
     const player = await signIn(page);
@@ -49,13 +54,17 @@ test.describe('another trainer', () => {
 
     // And the bids are gone with them, which is a rule rather than a
     // choice: a bidding history is the one thing on the board that
-    // cannot be read by anybody but its owner. That leaves the
-    // battles, and one tab is no tabs at all
-    await expect(profile.getByRole('tab')).toHaveCount(0);
+    // cannot be read by anybody but its owner. What a visitor is left
+    // with is what this trainer has done
+    await expect(profile.getByRole('tab', { name: 'Battles' })).toBeVisible();
+    await expect(profile.getByRole('tab', { name: 'Awards' })).toBeVisible();
+    await expect(profile.getByRole('tab')).toHaveCount(2);
     await expect(profile.getByText('No battles fought yet.')).toBeVisible();
   });
 
   test('opens from the hands a pokemon has passed through', async ({ page }) => {
+    await clearAuctions();
+
     const seller = await stageSeller('Hawthorn');
     const player = await signIn(page);
 

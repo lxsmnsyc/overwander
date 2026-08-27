@@ -120,6 +120,31 @@ export async function clearIdleRaids(): Promise<void> {
   }
 }
 
+/**
+ * Take every lot off the board.
+ *
+ * The board is global and nothing expires it, so lots pile up run
+ * after run until a spec that hovers "the lot by Bracken" finds two of
+ * them. A spec that is about what an empty board looks like, or about
+ * one particular lot, starts by clearing it
+ */
+export async function clearAuctions(): Promise<void> {
+  // Children first: a bid and a seller's daily marker both name the
+  // lot they belong to. Each is cleared through the column it actually
+  // has, since only the lot itself is keyed by an id
+  for (const [table, column] of [
+    ['bids', 'auction'],
+    ['auction_sellers', 'auction'],
+    ['auctions', 'id'],
+  ]) {
+    const { error } = await admin.from(table).delete().neq(column, '');
+
+    if (error != null) {
+      throw new Error(`${table}: ${error.message}`);
+    }
+  }
+}
+
 /** One row into any table, service-role, plain columns */
 /**
  * The columns Postgres works out for itself: the unpacked individual

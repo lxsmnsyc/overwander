@@ -5,6 +5,7 @@ import { asRecord } from '../../auth/__normalize';
 import type { Drawing } from './files';
 import { biomeDestination, writeSheet } from './files';
 import { decode, encode } from './raster';
+import refloor from './refloor';
 
 /**
  * One packed biome's wall, taken from another packed biome.
@@ -19,6 +20,10 @@ import { decode, encode } from './raster';
  * A biome's sheet is everything that biome draws, and keeping that
  * true is worth the twenty kilobytes a wall column costs: the board
  * loads one sheet, runs one clock and knows nothing about this.
+ *
+ * The floor baked around the borrowed wall is repainted in the
+ * borrower's own ground by [`refloor`](./refloor.ts), so nothing here
+ * reads the column it writes and a sheet can be grafted again.
  */
 
 export interface GraftOptions {
@@ -36,7 +41,7 @@ export interface Grafted {
   drawing: Drawing;
   /** Tiles copied, which is every autotile case of the column. */
   tiles: number;
-  /** Pixels of the lender's floor repainted in this biome's. */
+  /** Pixels of the lender's floor repainted in this biome's ground. */
   ringed: number;
 }
 
@@ -83,6 +88,8 @@ interface Described {
   variants: number;
   width: number;
   height: number;
+  /** The neighbourhood each row of the atlas is drawn for. */
+  cases: number[];
   terrains: Block[];
   draws?: Record<string, string>;
 }
@@ -109,6 +116,7 @@ function asDescribed(value: unknown): Described {
     variants: Math.max(1, number(record.variants)),
     width: number(record.width),
     height: number(record.height),
+    cases: Array.isArray(record.cases) ? record.cases.map(Number) : [],
     terrains: Array.isArray(record.terrains) ? record.terrains.map(asBlock) : [],
     draws:
       typeof record.draws === 'object' && record.draws != null
@@ -136,139 +144,11 @@ function wallOf(described: Described): Block | null {
   return walls.at(0) ?? null;
 }
 
-/** Every colour one terrain column draws, and how much of it. */
-function coloursOf(
-  pixels: Awaited<ReturnType<typeof decode>>,
-  described: Described,
-  block: Block,
-): Map<number, number> {
-  const found = new Map<number, number>();
-  const left = block.column * described.tile;
-  const across = described.variants * described.tile;
-
-  for (let y = 0; y < pixels.height; y += 1) {
-    for (let x = 0; x < across; x += 1) {
-      const off = (y * pixels.width + left + x) * 4;
-
-      if (pixels.data[off + 3] === 0) {
-        continue;
-      }
-      const key = (pixels.data[off] << 16) | (pixels.data[off + 1] << 8) | pixels.data[off + 2];
-
-      found.set(key, (found.get(key) ?? 0) + 1);
-    }
-  }
-  return found;
-}
-
-interface Hsl {
-  h: number;
-  s: number;
-  l: number;
-}
-
-function toHsl(colour: number): Hsl {
-  const r = ((colour >> 16) & 0xff) / 255;
-  const g = ((colour >> 8) & 0xff) / 255;
-  const b = (colour & 0xff) / 255;
-  const max = Math.max(r, g, b);
-  const min = Math.min(r, g, b);
-  const l = (max + min) / 2;
-  const span = max - min;
-
-  if (span === 0) {
-    return { h: 0, s: 0, l };
-  }
-  const s = l > 0.5 ? span / (2 - max - min) : span / (max + min);
-  const sixth = ((): number => {
-    if (max === r) {
-      return (g - b) / span + (g < b ? 6 : 0);
-    }
-    return max === g ? (b - r) / span + 2 : (r - g) / span + 4;
-  })();
-
-  return { h: sixth / 6, s, l };
-}
-
-function toRgb({ h, s, l }: Hsl): number {
-  if (s === 0) {
-    const flat = Math.round(l * 255);
-
-    return (flat << 16) | (flat << 8) | flat;
-  }
-  const second = l < 0.5 ? l * (1 + s) : l + s - l * s;
-  const first = 2 * l - second;
-  const channel = (shift: number): number => {
-    const at = (h + shift + 1) % 1;
-
-    if (at < 1 / 6) {
-      return first + (second - first) * 6 * at;
-    }
-    if (at < 1 / 2) {
-      return second;
-    }
-    if (at < 2 / 3) {
-      return first + (second - first) * (2 / 3 - at) * 6;
-    }
-    return first;
-  };
-
-  return (
-    (Math.round(channel(1 / 3) * 255) << 16) |
-    (Math.round(channel(0) * 255) << 8) |
-    Math.round(channel(-1 / 3) * 255)
-  );
-}
-
 /**
- * What the lender's floor becomes in the borrower's sheet.
- *
- * A wall's outer ring is drawn over the floor it stands on, so a
- * borrowed wall arrives ringed in the lender's ground and reads as a
- * cut-out laid on the grass.
- *
- * The ring is **tinted** rather than matched colour for colour. A
- * biome's floor is not one hue — a grass tile carries its dirt and its
- * highlights — so pairing the two palettes off by brightness lands the
- * ring on whichever colour happens to sit at that rank, and a green
- * field gets a brown rim. Taking the hue of the floor's commonest
- * colour and keeping each ring pixel's own lightness keeps the shading
- * the artist drew and puts it in this biome's colour
+ * How much of a wall column may come out as floor before the fill is
+ * taken to have leaked into the wall itself
  */
-function floorSwaps(
-  donorGround: Map<number, number>,
-  targetGround: Map<number, number>,
-): Map<number, number> {
-  const swaps = new Map<number, number>();
-  let ground = -1;
-  let most = 0;
-
-  for (const [colour, count] of targetGround) {
-    if (count > most) {
-      most = count;
-      ground = colour;
-    }
-  }
-  if (ground < 0 || donorGround.size === 0) {
-    return swaps;
-  }
-
-  const wanted = toHsl(ground);
-
-  for (const colour of donorGround.keys()) {
-    const was = toHsl(colour);
-
-    swaps.set(colour, toRgb({ h: wanted.h, s: Math.max(wanted.s, was.s * 0.5), l: was.l }));
-  }
-  return swaps;
-}
-
-/**
- * How much of a wall may be floor-coloured before it cannot be lent.
- * Past this the ring is not a ring: the wall is drawn in its own floor's
- * palette and recolouring would repaint the whole of it
- */
-const MOSTLY_FLOOR = 0.4;
+const MOSTLY_FLOOR = 0.5;
 
 async function readBiome(
   biome: number,
@@ -348,53 +228,39 @@ async function graftOne(
   }
 
   const under = target.described.terrains.find((one) => one.role === 'ground');
-  const lentGround = donor.described.terrains.find((one) => one.role === 'ground');
-  const swaps =
-    under == null || lentGround == null
-      ? new Map<number, number>()
-      : floorSwaps(
-          coloursOf(donor.pixels, donor.described, lentGround),
-          coloursOf(target.pixels, target.described, under),
-        );
 
-  const { tile, variants } = target.described;
-  const across = variants * tile;
-  const rows = Math.floor(target.described.height / tile);
-  const fromLeft = lend.column * tile;
-  const toLeft = take.column * tile;
-  let ringed = 0;
-  let lit = 0;
-
-  for (let y = 0; y < rows * tile; y += 1) {
-    for (let x = 0; x < across; x += 1) {
-      const at = (y * donor.pixels.width + fromLeft + x) * 4;
-      const to = (y * target.pixels.width + toLeft + x) * 4;
-      const alpha = donor.pixels.data[at + 3];
-      const key =
-        (donor.pixels.data[at] << 16) |
-        (donor.pixels.data[at + 1] << 8) |
-        donor.pixels.data[at + 2];
-      const swapped = alpha === 0 ? undefined : swaps.get(key);
-
-      if (alpha > 0) {
-        lit += 1;
-      }
-      if (swapped == null) {
-        target.pixels.data[to] = donor.pixels.data[at];
-        target.pixels.data[to + 1] = donor.pixels.data[at + 1];
-        target.pixels.data[to + 2] = donor.pixels.data[at + 2];
-      } else {
-        target.pixels.data[to] = (swapped >> 16) & 0xff;
-        target.pixels.data[to + 1] = (swapped >> 8) & 0xff;
-        target.pixels.data[to + 2] = swapped & 0xff;
-        ringed += 1;
-      }
-      target.pixels.data[to + 3] = alpha;
-    }
+  if (under == null) {
+    throw new Error(`Biome ${biome} has no ground for the wall to stand on`);
   }
-  if (lit > 0 && ringed / lit > MOSTLY_FLOOR) {
+  if (donor.described.cases.length === 0) {
+    throw new Error(`Biome ${donor.described.biome}'s description does not say which rows it drew`);
+  }
+
+  const soil = donor.described.terrains.find((one) => one.role === 'ground');
+
+  if (soil == null) {
+    throw new Error(`Biome ${donor.described.biome} has no ground under the wall it lends`);
+  }
+
+  const { tile, variants, cases } = donor.described;
+  const covered = cases.length * variants * tile * tile;
+  const ringed = refloor({
+    donor: { width: donor.pixels.width, height: donor.pixels.height, rgba: donor.pixels.data },
+    lends: lend.column,
+    soil: soil.column,
+    target: { width: target.pixels.width, height: target.pixels.height, rgba: target.pixels.data },
+    takes: take.column,
+    stands: under.column,
+    tile,
+    variants,
+    cases,
+  });
+
+  // Past this the fill has walked out of the floor and into the wall,
+  // which would repaint the rock in grass
+  if (ringed > covered * MOSTLY_FLOOR) {
     throw new Error(
-      `The lender's wall is ${Math.round((ringed / lit) * 100)}% floor colour, so recolouring its ring would repaint the wall`,
+      `The lender's wall reads as ${Math.round((ringed / covered) * 100)}% floor, so it cannot be lent`,
     );
   }
 
@@ -428,6 +294,6 @@ async function graftOne(
     was: take.name,
     ringed,
     drawing: { ...files[0], as: drawn.as, bytes: drawn.bytes.length, plain: drawn.plain },
-    tiles: rows * variants,
+    tiles: cases.length * variants,
   };
 }

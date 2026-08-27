@@ -44,7 +44,7 @@ const DECORATION_CUTS: Cut[] = [
   { name: 'cactus', x: 321, y: 195, width: 30, height: 29 },
   { name: 'shrub', x: 210, y: 202, width: 27, height: 25 },
   { name: 'grass', x: 48, y: 320, width: 16, height: 16, crowded: true },
-  { name: 'flower', x: 48, y: 352, width: 16, height: 16, crowded: true },
+  { name: 'flower', x: 192, y: 336, width: 16, height: 16, crowded: true },
   { name: 'rock', x: 481, y: 369, width: 14, height: 14 },
   { name: 'boulder', x: 484, y: 645, width: 24, height: 27 },
   // Reeds and kelp are the same plant here, so the tallest blades on
@@ -54,6 +54,57 @@ const DECORATION_CUTS: Cut[] = [
   { name: 'ice', x: 417, y: 627, width: 30, height: 29 },
   { name: 'mushroom', x: 64, y: 197, width: 16, height: 30 },
   { name: 'stump', x: 264, y: 197, width: 32, height: 30 },
+
+  // The variants. A chunk rolls eight to twelve pieces of scenery out
+  // of a list of three or four kinds, so one picture a kind put the
+  // same rock down four times: these are what the roll spreads over.
+  // Most are shelved among their neighbours on the rip, hence
+  // `crowded`
+  //
+  // Pebbles, in a block of four: two brown, one capped with snow and
+  // one sitting in a ring of it
+  { name: 'rock-brown', x: 353, y: 593, width: 15, height: 15, crowded: true },
+  { name: 'rock-snow', x: 369, y: 593, width: 15, height: 15, crowded: true },
+  { name: 'rock-pair', x: 353, y: 609, width: 15, height: 15, crowded: true },
+  { name: 'rock-iced', x: 368, y: 608, width: 16, height: 16, crowded: true },
+  // Boulders, drawn shoulder to shoulder in one row: bare, snowed on,
+  // grown over, and one weathered into a stack
+  { name: 'boulder-brown', x: 353, y: 657, width: 31, height: 31, crowded: true },
+  { name: 'boulder-snow', x: 384, y: 657, width: 32, height: 31, crowded: true },
+  { name: 'boulder-moss', x: 416, y: 657, width: 32, height: 31, crowded: true },
+  { name: 'boulder-stack', x: 448, y: 656, width: 32, height: 32, crowded: true },
+  // Bushes, from the shelf the round one came off
+  { name: 'shrub-sapling', x: 146, y: 194, width: 12, height: 33, crowded: true },
+  { name: 'shrub-conifer', x: 160, y: 194, width: 16, height: 32, crowded: true },
+  { name: 'shrub-spiky', x: 176, y: 194, width: 16, height: 32, crowded: true },
+  { name: 'shrub-fern', x: 192, y: 194, width: 16, height: 33, crowded: true },
+  { name: 'shrub-tall', x: 241, y: 194, width: 14, height: 33, crowded: true },
+  { name: 'shrub-flower', x: 304, y: 198, width: 16, height: 26 },
+  { name: 'shrub-star', x: 144, y: 352, width: 16, height: 16, crowded: true },
+  { name: 'shrub-dark', x: 64, y: 368, width: 16, height: 16, crowded: true },
+  // Tufts, out of the rip's grid of ground plants
+  { name: 'grass-broad', x: 48, y: 336, width: 16, height: 16, crowded: true },
+  { name: 'grass-blades', x: 96, y: 352, width: 16, height: 16, crowded: true },
+  { name: 'grass-fern', x: 112, y: 352, width: 16, height: 16, crowded: true },
+  { name: 'flower-white', x: 176, y: 336, width: 16, height: 16, crowded: true },
+  { name: 'flower-blue', x: 192, y: 352, width: 16, height: 16, crowded: true },
+  // Toadstools, which is what the rip draws beside the pale ones
+  { name: 'mushroom-red', x: 48, y: 352, width: 16, height: 16, crowded: true },
+  { name: 'cactus-flower', x: 353, y: 195, width: 30, height: 29 },
+  // Dead wood: a mossy log, a bare one, and two stumps cut low. The
+  // rip draws a snowbound log beside them, and nothing cold enough for
+  // it grows a stump
+  { name: 'log-moss', x: 17, y: 194, width: 30, height: 14, crowded: true },
+  { name: 'log', x: 81, y: 210, width: 31, height: 17 },
+  { name: 'stump-pale', x: 96, y: 194, width: 16, height: 14 },
+  { name: 'stump-dark', x: 49, y: 192, width: 14, height: 16, crowded: true },
+  // Ice, from the shelf the dome came off: shards, a splinter, a floe
+  { name: 'ice-shards', x: 384, y: 624, width: 16, height: 16, crowded: true },
+  { name: 'ice-shard', x: 400, y: 610, width: 14, height: 14 },
+  { name: 'ice-floe', x: 400, y: 628, width: 14, height: 12 },
+  { name: 'coral-brain', x: 465, y: 368, width: 15, height: 9 },
+  { name: 'coral-red', x: 482, y: 353, width: 10, height: 14 },
+  { name: 'coral-small', x: 500, y: 374, width: 8, height: 10 },
 ];
 
 /**

@@ -1,12 +1,80 @@
 {
   "compact": true,
-  "width": 106,
-  "height": 92,
+  "width": 160,
+  "height": 157,
   "images": [
     {
-      "name": "boulder.png",
-      "x": 81,
+      "name": "boulder-brown.png",
+      "x": 33,
+      "y": 69,
+      "width": 31,
+      "height": 30,
+      "sourceWidth": 36,
+      "sourceHeight": 36,
+      "trim": [
+        2,
+        6
+      ],
+      "base": [
+        18,
+        30
+      ]
+    },
+    {
+      "name": "boulder-moss.png",
+      "x": 0,
+      "y": 37,
+      "width": 32,
+      "height": 31,
+      "sourceWidth": 36,
+      "sourceHeight": 36,
+      "trim": [
+        2,
+        5
+      ],
+      "base": [
+        19,
+        30
+      ]
+    },
+    {
+      "name": "boulder-snow.png",
+      "x": 64,
       "y": 0,
+      "width": 32,
+      "height": 31,
+      "sourceWidth": 36,
+      "sourceHeight": 36,
+      "trim": [
+        2,
+        5
+      ],
+      "base": [
+        18,
+        30
+      ]
+    },
+    {
+      "name": "boulder-stack.png",
+      "x": 31,
+      "y": 0,
+      "width": 32,
+      "height": 32,
+      "sourceWidth": 36,
+      "sourceHeight": 36,
+      "trim": [
+        2,
+        4
+      ],
+      "base": [
+        19,
+        30
+      ]
+    },
+    {
+      "name": "boulder.png",
+      "x": 114,
+      "y": 60,
       "width": 24,
       "height": 27,
       "sourceWidth": 36,
@@ -21,9 +89,9 @@
       ]
     },
     {
-      "name": "cactus.png",
-      "x": 0,
-      "y": 37,
+      "name": "cactus-flower.png",
+      "x": 114,
+      "y": 30,
       "width": 30,
       "height": 29,
       "sourceWidth": 36,
@@ -38,9 +106,77 @@
       ]
     },
     {
+      "name": "cactus.png",
+      "x": 65,
+      "y": 69,
+      "width": 30,
+      "height": 29,
+      "sourceWidth": 36,
+      "sourceHeight": 36,
+      "trim": [
+        3,
+        7
+      ],
+      "base": [
+        18,
+        33
+      ]
+    },
+    {
+      "name": "coral-brain.png",
+      "x": 145,
+      "y": 113,
+      "width": 14,
+      "height": 8,
+      "sourceWidth": 36,
+      "sourceHeight": 36,
+      "trim": [
+        11,
+        28
+      ],
+      "base": [
+        18,
+        32
+      ]
+    },
+    {
+      "name": "coral-red.png",
+      "x": 145,
+      "y": 61,
+      "width": 10,
+      "height": 14,
+      "sourceWidth": 36,
+      "sourceHeight": 36,
+      "trim": [
+        13,
+        22
+      ],
+      "base": [
+        19,
+        33
+      ]
+    },
+    {
+      "name": "coral-small.png",
+      "x": 145,
+      "y": 103,
+      "width": 7,
+      "height": 9,
+      "sourceWidth": 36,
+      "sourceHeight": 36,
+      "trim": [
+        14,
+        27
+      ],
+      "base": [
+        16,
+        34
+      ]
+    },
+    {
       "name": "coral.png",
-      "x": 62,
-      "y": 52,
+      "x": 145,
+      "y": 76,
       "width": 11,
       "height": 13,
       "sourceWidth": 36,
@@ -55,26 +191,77 @@
       ]
     },
     {
-      "name": "flower.png",
-      "x": 81,
-      "y": 45,
-      "width": 14,
+      "name": "flower-blue.png",
+      "x": 115,
+      "y": 125,
+      "width": 15,
       "height": 15,
       "sourceWidth": 36,
       "sourceHeight": 36,
       "trim": [
-        11,
+        10,
         21
       ],
       "base": [
-        18,
+        20,
+        33
+      ]
+    },
+    {
+      "name": "flower-white.png",
+      "x": 98,
+      "y": 125,
+      "width": 16,
+      "height": 15,
+      "sourceWidth": 36,
+      "sourceHeight": 36,
+      "trim": [
+        10,
+        21
+      ],
+      "base": [
+        21,
+        33
+      ]
+    },
+    {
+      "name": "flower.png",
+      "x": 33,
+      "y": 125,
+      "width": 16,
+      "height": 15,
+      "sourceWidth": 36,
+      "sourceHeight": 36,
+      "trim": [
+        10,
+        21
+      ],
+      "base": [
+        21,
+        33
+      ]
+    },
+    {
+      "name": "grass-blades.png",
+      "x": 0,
+      "y": 142,
+      "width": 15,
+      "height": 14,
+      "sourceWidth": 36,
+      "sourceHeight": 36,
+      "trim": [
+        10,
+        22
+      ],
+      "base": [
+        19,
         32
       ]
     },
     {
-      "name": "grass.png",
-      "x": 81,
-      "y": 28,
+      "name": "grass-broad.png",
+      "x": 127,
+      "y": 100,
       "width": 16,
       "height": 16,
       "sourceWidth": 36,
@@ -89,9 +276,94 @@
       ]
     },
     {
+      "name": "grass-fern.png",
+      "x": 0,
+      "y": 125,
+      "width": 16,
+      "height": 16,
+      "sourceWidth": 36,
+      "sourceHeight": 36,
+      "trim": [
+        10,
+        20
+      ],
+      "base": [
+        18,
+        32
+      ]
+    },
+    {
+      "name": "grass.png",
+      "x": 60,
+      "y": 100,
+      "width": 16,
+      "height": 16,
+      "sourceWidth": 36,
+      "sourceHeight": 36,
+      "trim": [
+        10,
+        20
+      ],
+      "base": [
+        18,
+        32
+      ]
+    },
+    {
+      "name": "ice-floe.png",
+      "x": 145,
+      "y": 90,
+      "width": 13,
+      "height": 12,
+      "sourceWidth": 36,
+      "sourceHeight": 36,
+      "trim": [
+        11,
+        24
+      ],
+      "base": [
+        18,
+        32
+      ]
+    },
+    {
+      "name": "ice-shard.png",
+      "x": 145,
+      "y": 46,
+      "width": 13,
+      "height": 14,
+      "sourceWidth": 36,
+      "sourceHeight": 36,
+      "trim": [
+        11,
+        22
+      ],
+      "base": [
+        17,
+        32
+      ]
+    },
+    {
+      "name": "ice-shards.png",
+      "x": 17,
+      "y": 125,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 36,
+      "sourceHeight": 36,
+      "trim": [
+        10,
+        20
+      ],
+      "base": [
+        17,
+        32
+      ]
+    },
+    {
       "name": "ice.png",
-      "x": 31,
-      "y": 37,
+      "x": 114,
+      "y": 0,
       "width": 30,
       "height": 29,
       "sourceWidth": 36,
@@ -106,8 +378,59 @@
       ]
     },
     {
+      "name": "log-moss.png",
+      "x": 16,
+      "y": 142,
+      "width": 30,
+      "height": 14,
+      "sourceWidth": 36,
+      "sourceHeight": 36,
+      "trim": [
+        3,
+        22
+      ],
+      "base": [
+        17,
+        29
+      ]
+    },
+    {
+      "name": "log.png",
+      "x": 28,
+      "y": 100,
+      "width": 31,
+      "height": 17,
+      "sourceWidth": 36,
+      "sourceHeight": 36,
+      "trim": [
+        2,
+        19
+      ],
+      "base": [
+        16,
+        26
+      ]
+    },
+    {
+      "name": "mushroom-red.png",
+      "x": 145,
+      "y": 0,
+      "width": 14,
+      "height": 15,
+      "sourceWidth": 36,
+      "sourceHeight": 36,
+      "trim": [
+        11,
+        21
+      ],
+      "base": [
+        18,
+        32
+      ]
+    },
+    {
       "name": "mushroom.png",
-      "x": 31,
+      "x": 97,
       "y": 0,
       "width": 16,
       "height": 30,
@@ -140,9 +463,77 @@
       ]
     },
     {
+      "name": "rock-brown.png",
+      "x": 50,
+      "y": 125,
+      "width": 15,
+      "height": 15,
+      "sourceWidth": 36,
+      "sourceHeight": 36,
+      "trim": [
+        10,
+        21
+      ],
+      "base": [
+        17,
+        31
+      ]
+    },
+    {
+      "name": "rock-iced.png",
+      "x": 77,
+      "y": 100,
+      "width": 16,
+      "height": 16,
+      "sourceWidth": 36,
+      "sourceHeight": 36,
+      "trim": [
+        10,
+        20
+      ],
+      "base": [
+        18,
+        32
+      ]
+    },
+    {
+      "name": "rock-pair.png",
+      "x": 82,
+      "y": 125,
+      "width": 15,
+      "height": 15,
+      "sourceWidth": 36,
+      "sourceHeight": 36,
+      "trim": [
+        10,
+        21
+      ],
+      "base": [
+        17,
+        31
+      ]
+    },
+    {
+      "name": "rock-snow.png",
+      "x": 66,
+      "y": 125,
+      "width": 15,
+      "height": 15,
+      "sourceWidth": 36,
+      "sourceHeight": 36,
+      "trim": [
+        10,
+        21
+      ],
+      "base": [
+        17,
+        31
+      ]
+    },
+    {
       "name": "rock.png",
-      "x": 62,
-      "y": 37,
+      "x": 145,
+      "y": 16,
       "width": 14,
       "height": 14,
       "sourceWidth": 36,
@@ -157,9 +548,145 @@
       ]
     },
     {
+      "name": "shrub-conifer.png",
+      "x": 46,
+      "y": 37,
+      "width": 16,
+      "height": 31,
+      "sourceWidth": 36,
+      "sourceHeight": 36,
+      "trim": [
+        10,
+        5
+      ],
+      "base": [
+        18,
+        32
+      ]
+    },
+    {
+      "name": "shrub-dark.png",
+      "x": 111,
+      "y": 100,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 36,
+      "sourceHeight": 36,
+      "trim": [
+        10,
+        20
+      ],
+      "base": [
+        17,
+        32
+      ]
+    },
+    {
+      "name": "shrub-fern.png",
+      "x": 96,
+      "y": 69,
+      "width": 16,
+      "height": 22,
+      "sourceWidth": 36,
+      "sourceHeight": 36,
+      "trim": [
+        10,
+        14
+      ],
+      "base": [
+        18,
+        31
+      ]
+    },
+    {
+      "name": "shrub-flower.png",
+      "x": 97,
+      "y": 31,
+      "width": 16,
+      "height": 26,
+      "sourceWidth": 36,
+      "sourceHeight": 36,
+      "trim": [
+        10,
+        10
+      ],
+      "base": [
+        19,
+        34
+      ]
+    },
+    {
+      "name": "shrub-sapling.png",
+      "x": 33,
+      "y": 37,
+      "width": 12,
+      "height": 31,
+      "sourceWidth": 36,
+      "sourceHeight": 36,
+      "trim": [
+        12,
+        5
+      ],
+      "base": [
+        18,
+        32
+      ]
+    },
+    {
+      "name": "shrub-spiky.png",
+      "x": 63,
+      "y": 37,
+      "width": 16,
+      "height": 31,
+      "sourceWidth": 36,
+      "sourceHeight": 36,
+      "trim": [
+        10,
+        5
+      ],
+      "base": [
+        18,
+        32
+      ]
+    },
+    {
+      "name": "shrub-star.png",
+      "x": 94,
+      "y": 100,
+      "width": 16,
+      "height": 16,
+      "sourceWidth": 36,
+      "sourceHeight": 36,
+      "trim": [
+        10,
+        20
+      ],
+      "base": [
+        18,
+        32
+      ]
+    },
+    {
+      "name": "shrub-tall.png",
+      "x": 80,
+      "y": 37,
+      "width": 14,
+      "height": 31,
+      "sourceWidth": 36,
+      "sourceHeight": 36,
+      "trim": [
+        11,
+        5
+      ],
+      "base": [
+        18,
+        32
+      ]
+    },
+    {
       "name": "shrub.png",
       "x": 0,
-      "y": 67,
+      "y": 100,
       "width": 27,
       "height": 24,
       "sourceWidth": 36,
@@ -174,9 +701,43 @@
       ]
     },
     {
+      "name": "stump-dark.png",
+      "x": 145,
+      "y": 31,
+      "width": 14,
+      "height": 14,
+      "sourceWidth": 36,
+      "sourceHeight": 36,
+      "trim": [
+        11,
+        22
+      ],
+      "base": [
+        18,
+        32
+      ]
+    },
+    {
+      "name": "stump-pale.png",
+      "x": 47,
+      "y": 142,
+      "width": 16,
+      "height": 14,
+      "sourceWidth": 36,
+      "sourceHeight": 36,
+      "trim": [
+        10,
+        22
+      ],
+      "base": [
+        18,
+        32
+      ]
+    },
+    {
       "name": "stump.png",
-      "x": 48,
-      "y": 0,
+      "x": 0,
+      "y": 69,
       "width": 32,
       "height": 30,
       "sourceWidth": 36,

@@ -385,11 +385,10 @@ describe('the scenery that ships', () => {
       sheet: TREE_SHEET,
       name: 'pine-snow',
     });
-    // A rock in the cold is a rock: a white one would be invisible
-    // against the ground it stands on
-    expect(decorationPicture(Decoration.Rock, Biome.Taiga)).toEqual(
-      decorationPicture(Decoration.Rock, Biome.Savanna),
-    );
+    // A rock in the cold is still drawn off the props sheet: the snow
+    // table reaches the trees and nothing else, and what a cold biome
+    // does about its rocks it does by naming one
+    expect(decorationPicture(Decoration.Rock, Biome.Taiga).sheet).toBe(DECORATION_SHEET);
     // The palm has no coat cut for it, so a cold beach keeps a bare one
     expect(decorationPicture(Decoration.Palm, Biome.Taiga).name).toBe('palm');
     // The mountain is cold, but its tiles are bare rock and its walls
@@ -422,15 +421,39 @@ describe('the scenery that ships', () => {
     expect(grottoPicture(Biome.Taiga).name).toBe('pine-snow');
   });
 
-  it('gives a tree its biome and a rock the same picture everywhere', () => {
+  it('gives every biome the scenery it is made of', () => {
     // A forest and a savanna both put a tree on a cell and mean
     // different things by it
     expect(decorationPicture(Decoration.Tree, Biome.Savanna).name).not.toBe(
       decorationPicture(Decoration.Tree, Biome.TropicalRainforest).name,
     );
-    // Scenery that is not a tree is the same wherever it stands
-    expect(decorationPicture(Decoration.Rock, Biome.Volcano)).toEqual(
-      decorationPicture(Decoration.Rock, Biome.Glacier),
+    // And the props go the same way: a rock in a glacier is iced over
+    // and one in a volcano is bare stone
+    expect(decorationPicture(Decoration.Rock, Biome.Volcano).name).not.toBe(
+      decorationPicture(Decoration.Rock, Biome.Glacier).name,
+    );
+  });
+
+  it('draws the cells of one chunk as different pictures', () => {
+    // A chunk rolls eight to twelve pieces of scenery out of three or
+    // four kinds, so one picture a kind put the same rock down four
+    // times in a row
+    for (const [kind, biome] of [
+      [Decoration.Rock, Biome.Mountain],
+      [Decoration.Shrub, Biome.Shrubland],
+      [Decoration.Grass, Biome.Grassland],
+      [Decoration.Boulder, Biome.Desert],
+    ] as [Decoration, Biome][]) {
+      const drawn = new Set(
+        Array.from({ length: 8 }, (_, cell) => decorationPicture(kind, biome, cell).name),
+      );
+
+      expect(drawn.size, `${BIOME_NAMES[biome]} ${DECORATION_NAMES[kind]}`).toBeGreaterThan(1);
+    }
+    // The same cell is the same picture, so a chunk drawn again is the
+    // chunk that was there
+    expect(decorationPicture(Decoration.Rock, Biome.Mountain, 5)).toEqual(
+      decorationPicture(Decoration.Rock, Biome.Mountain, 5),
     );
   });
 

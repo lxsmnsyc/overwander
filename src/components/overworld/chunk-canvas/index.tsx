@@ -537,7 +537,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       return null;
     }
 
-    const picture = decorationPicture(kind, props.biome);
+    const picture = decorationPicture(kind, props.biome, index);
 
     if (!scenery.has(picture.sheet)) {
       loadScenery(picture.sheet).catch(() => {
@@ -610,7 +610,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       return null;
     }
 
-    const picture = grottoPicture(props.biome);
+    const picture = grottoPicture(props.biome, index);
 
     if (!scenery.has(picture.sheet)) {
       loadScenery(picture.sheet).catch(() => {

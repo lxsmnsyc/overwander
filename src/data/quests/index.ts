@@ -1,13 +1,17 @@
 import { Foe, Landmark, Metric } from '../../auth/quest-record';
-import Awards from '../ids/awards';
-import type Families from '../ids/families';
-import Regions from '../ids/regions';
 import { Balls, Items } from '../ids/items';
-import type { Moves } from '../ids/moves';
 import Npc from '../overworld/npc';
-import type { TrainerClass } from '../overworld/trainers';
 import { Species } from '../ids/species';
-import type { Types } from '../constants/types';
+import { dexChainId, getDexChain, getDexQuests, getDexRegions } from './dex';
+import {
+  type ChainData,
+  Chains,
+  type MetricRequirement,
+  type QuestData,
+  QuestRewardKind,
+  Quests,
+  RequirementKind,
+} from './types';
 
 /**
  * The quests themselves: requirements against the lifetime counters,
@@ -15,157 +19,14 @@ import type { Types } from '../constants/types';
  * so a line of them reads as a progression. Definitions live in code
  * the way items and species do; the database only remembers counters
  * and claims.
- */
-
-export const enum Quests {
-  // Catcher's Start
-  FirstCatch = 0,
-  GrowingTeam = 1,
-  NewFaces = 2,
-  FieldNotes = 3,
-  // Roadside Rivals
-  PickingFights = 4,
-  RocketTrouble = 5,
-  CleanupCrew = 6,
-  // Raid Sirens
-  RaidRookie = 7,
-  BossDown = 8,
-  SirenVeteran = 9,
-  // Strange Weather
-  OddLights = 10,
-  StormChaser = 11,
-  // The Hatchery
-  EggSpotting = 12,
-  OutForAWalk = 13,
-  FreshHatch = 14,
-  Matchmaker = 15,
-  NestForANibble = 16,
-  // Warm Company
-  SideBySide = 17,
-  DayAtTheSpa = 18,
-  // Coaching Course
-  GrowthSpurt = 19,
-  BalancedDiet = 20,
-  NewTricks = 21,
-  FullBloom = 22,
-  // Auction House
-  OpeningBid = 23,
-  Sold = 24,
-  // The Wide World
-  OverTheHill = 25,
-  ThroughTheDoor = 26,
-  FarAfield = 27,
-  // Better Together
-  FriendlyFace = 28,
-  FairSwap = 29,
-  // Coaching Course, added after the first board shipped
-  FineTuning = 30,
-  // Kanto Pokedex
-  FieldResearcher = 31,
-  DexScholar = 32,
-  KantoComplete = 33,
-}
-
-export const enum RequirementKind {
-  /** A lifetime counter reaching a total */
-  Counter = 0,
-  /** Items standing in the bag, taken when the reward is */
-  TurnIn = 1,
-  /** Distinct species the dex has as caught */
-  Dex = 2,
-}
-
-export interface MetricRequirement {
-  kind: RequirementKind.Counter;
-  metric: Metric;
-  count: number;
-  /**
-   * Narrowings, at most one, and only where the metric has the
-   * dimension: species/family/type where the params are species, item
-   * for uses, npc for visits, landmark for landmarks, move for moves
-   * learned, foe for battle wins. None asks for the total
-   */
-  species?: Species;
-  family?: Families;
-  type?: Types;
-  item?: Items;
-  npc?: Npc;
-  landmark?: Landmark;
-  move?: Moves;
-  foe?: Foe;
-  /** Which class of duelling trainer, for TrainerWins */
-  trainer?: TrainerClass;
-}
-
-export interface TurnInRequirement {
-  kind: RequirementKind.TurnIn;
-  item: Items;
-  count: number;
-}
-
-export interface DexRequirement {
-  kind: RequirementKind.Dex;
-  count: number;
-  /** Count only one region's stretch of the dex; none counts it all */
-  region?: Regions;
-}
-
-export type QuestRequirement = MetricRequirement | TurnInRequirement | DexRequirement;
-
-export const enum QuestRewardKind {
-  Item = 0,
-  /** A finished record, handed over whole */
-  Catch = 1,
-  /** A meeting staged in the world, caught with the player's own ball */
-  Encounter = 2,
-  /** An egg in the box, hatched by walking */
-  Egg = 3,
-  /** A place on the awards shelf, earned for good */
-  Award = 4,
-}
-
-export type QuestReward =
-  | { kind: QuestRewardKind.Item; item: Items; amount: number }
-  | { kind: QuestRewardKind.Catch; species: Species; level: number; shiny?: boolean; ball?: Balls }
-  | { kind: QuestRewardKind.Encounter; species: Species; level: number; shiny?: boolean }
-  | { kind: QuestRewardKind.Egg; species: Species }
-  | { kind: QuestRewardKind.Award; award: Awards };
-
-export interface QuestData {
-  name: string;
-  requirements: QuestRequirement[];
-  rewards: QuestReward[];
-}
-
-/**
- * A chain: quests claimed strictly in order, drawn as one group with
- * its progress. Membership lives here rather than on the quest, so
- * the order is written exactly once.
  *
- * Each chain introduces one of the game's features, so the board
- * itself is the tutorial: the first quest of every chain stands open
- * from the start, and finishing one unlocks the next lesson in it
+ * The vocabulary they are written in is in `types.ts`, which the
+ * generated pokedex chains in `dex.ts` share
  */
-export const enum Chains {
-  Catching = 0,
-  Battling = 1,
-  Raiding = 2,
-  Phenomena = 3,
-  Eggs = 4,
-  Happiness = 5,
-  Training = 6,
-  Auctions = 7,
-  Biomes = 8,
-  Friends = 9,
-  Pokedex = 10,
-}
 
-export interface ChainData {
-  name: string;
-  quests: Quests[];
-}
+export * from './types';
 
-export const CHAINS: Record<Chains, ChainData> = {
+const WRITTEN_CHAINS: Record<Chains, ChainData> = {
   [Chains.Catching]: {
     name: "Catcher's Start",
     quests: [Quests.FirstCatch, Quests.GrowingTeam, Quests.NewFaces, Quests.FieldNotes],
@@ -218,14 +79,10 @@ export const CHAINS: Record<Chains, ChainData> = {
     name: 'Better Together',
     quests: [Quests.FriendlyFace, Quests.FairSwap],
   },
-  [Chains.Pokedex]: {
-    name: 'Kanto Pokedex',
-    quests: [Quests.FieldResearcher, Quests.DexScholar, Quests.KantoComplete],
-  },
 };
 
-/** Every chain, in the order the board shows them */
-export const CHAIN_ORDER: Chains[] = [
+/** The written chains, in the order the board shows them */
+const WRITTEN_CHAIN_ORDER: Chains[] = [
   Chains.Catching,
   Chains.Battling,
   Chains.Raiding,
@@ -236,30 +93,13 @@ export const CHAIN_ORDER: Chains[] = [
   Chains.Auctions,
   Chains.Biomes,
   Chains.Friends,
-  Chains.Pokedex,
 ];
-
-/**
- * The quest that has to be claimed before this one unlocks: its
- * predecessor in its chain, or nothing for a chain opener and for
- * every standalone
- */
-export function prerequisiteOf(quest: Quests): Quests | null {
-  for (const chain of CHAIN_ORDER) {
-    const at = CHAINS[chain].quests.indexOf(quest);
-
-    if (at > 0) {
-      return CHAINS[chain].quests[at - 1];
-    }
-  }
-  return null;
-}
 
 function ask(metric: Metric, count: number, rest?: Partial<MetricRequirement>): MetricRequirement {
   return { kind: RequirementKind.Counter, metric, count, ...rest };
 }
 
-export const QUESTS: Record<Quests, QuestData> = {
+const WRITTEN_QUESTS: Record<Quests, QuestData> = {
   // Catcher's Start: throw a ball, then meet the dex
   [Quests.FirstCatch]: {
     name: 'First Catch',
@@ -449,28 +289,83 @@ export const QUESTS: Record<Quests, QuestData> = {
     requirements: [ask(Metric.Trades, 1)],
     rewards: [{ kind: QuestRewardKind.Item, item: Items.GreatBall, amount: 5 }],
   },
-
-  // Kanto Pokedex: the region's 151, milestone by milestone, with a
-  // medal on the shelf at the end of it
-  [Quests.FieldResearcher]: {
-    name: 'Field Researcher',
-    requirements: [{ kind: RequirementKind.Dex, count: 25, region: Regions.Kanto }],
-    rewards: [{ kind: QuestRewardKind.Item, item: Items.UltraBall, amount: 5 }],
-  },
-  [Quests.DexScholar]: {
-    name: 'Dex Scholar',
-    requirements: [{ kind: RequirementKind.Dex, count: 75, region: Regions.Kanto }],
-    rewards: [{ kind: QuestRewardKind.Item, item: Items.RareCandy, amount: 3 }],
-  },
-  [Quests.KantoComplete]: {
-    name: 'Kanto Complete',
-    requirements: [{ kind: RequirementKind.Dex, count: 150, region: Regions.Kanto }],
-    rewards: [
-      { kind: QuestRewardKind.Award, award: Awards.KantoDexMedal },
-      { kind: QuestRewardKind.Item, item: Items.MasterBall, amount: 1 },
-    ],
-  },
 };
+
+/**
+ * Every chain there is: the written ones, then one pokedex chain per
+ * region that has a dex. The generated half is why these are built
+ * rather than declared — a region arrives with its chain already in
+ * the board's order
+ */
+export const CHAINS: Record<number, ChainData> = (() => {
+  const chains: Record<number, ChainData> = { ...WRITTEN_CHAINS };
+
+  for (const region of getDexRegions()) {
+    const chain = getDexChain(region);
+
+    if (chain != null) {
+      chains[dexChainId(region)] = chain;
+    }
+  }
+  return chains;
+})();
+
+export const CHAIN_ORDER: Chains[] = [
+  ...WRITTEN_CHAIN_ORDER,
+  ...getDexRegions().map((region) => dexChainId(region)),
+];
+
+export const QUESTS: Record<number, QuestData> = (() => {
+  const quests: Record<number, QuestData> = { ...WRITTEN_QUESTS };
+
+  for (const region of getDexRegions()) {
+    for (const [quest, data] of getDexQuests(region)) {
+      quests[quest] = data;
+    }
+  }
+  return quests;
+})();
+
+/**
+ * One quest's definition, or null for an id nothing declares. A claim
+ * row outlives the quest it was written for — a region's dex chain can
+ * be taken out again — so a reader must be able to ask
+ */
+export function getQuestData(quest: Quests): QuestData | null {
+  return Object.hasOwn(QUESTS, quest) ? QUESTS[quest] : null;
+}
+
+/**
+ * The quest that has to be claimed before this one unlocks: its
+ * predecessor in its chain, or nothing for a chain opener and for
+ * every standalone
+ */
+export function prerequisiteOf(quest: Quests): Quests | null {
+  for (const chain of CHAIN_ORDER) {
+    const at = CHAINS[chain].quests.indexOf(quest);
+
+    if (at > 0) {
+      return CHAINS[chain].quests[at - 1];
+    }
+  }
+  return null;
+}
+
+/**
+ * The quest this one unlocks by being claimed: its successor in its
+ * chain, or nothing for a chain's last quest and for every standalone
+ */
+export function successorOf(quest: Quests): Quests | null {
+  for (const chain of CHAIN_ORDER) {
+    const chained = CHAINS[chain].quests;
+    const at = chained.indexOf(quest);
+
+    if (at >= 0 && at < chained.length - 1) {
+      return chained[at + 1];
+    }
+  }
+  return null;
+}
 
 /** Every quest, in the order the list shows them: chain by chain */
 export const QUEST_ORDER: Quests[] = CHAIN_ORDER.flatMap((chain) => CHAINS[chain].quests);

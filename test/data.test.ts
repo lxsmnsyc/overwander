@@ -290,6 +290,26 @@ import {
   getWeeklyHunt,
   weeklyWindow,
 } from '../src/data/quests/rotations';
+import {
+  CHAINS,
+  CHAIN_ORDER,
+  QUESTS,
+  QUEST_ORDER,
+  QuestRewardKind,
+  type Quests,
+  RequirementKind,
+  getQuestData,
+  prerequisiteOf,
+  successorOf,
+} from '../src/data/quests';
+import {
+  DEX_QUEST_BASE,
+  dexChainId,
+  dexQuestId,
+  getDexChain,
+  getDexQuests,
+  getDexRegions,
+} from '../src/data/quests/dex';
 
 // Registry-only tests: no battle is involved, the data just has to
 // be registered (re-registration is an idempotent map overwrite)
@@ -3687,5 +3707,109 @@ describe('rotating quests', () => {
     expect(hunt.requirement.family).not.toBeUndefined();
     expect(getWeeklyHunt(NOON + 24 * 3_600_000).name).toBe(hunt.name);
     expect(weeklyWindow(NOON)).not.toBe(weeklyWindow(NOON + 7 * 24 * 3_600_000));
+  });
+});
+
+describe('the quest board', () => {
+  it('gives every quest one chain and one definition', () => {
+    const seen = new Set<Quests>();
+
+    for (const chain of CHAIN_ORDER) {
+      for (const quest of CHAINS[chain].quests) {
+        expect(seen.has(quest), `${quest} is in two chains`).toBe(false);
+        seen.add(quest);
+        expect(getQuestData(quest), `${quest} has no definition`).not.toBeNull();
+        expect(QUESTS[quest].requirements.length).toBeGreaterThan(0);
+      }
+    }
+    expect(QUEST_ORDER.length).toBe(seen.size);
+    // Nothing is defined that the board never shows
+    expect(Object.keys(QUESTS).length).toBe(seen.size);
+  });
+
+  it('walks a chain forwards and backwards the same way', () => {
+    for (const chain of CHAIN_ORDER) {
+      const chained = CHAINS[chain].quests;
+
+      expect(prerequisiteOf(chained[0])).toBeNull();
+      for (const [at, quest] of chained.entries()) {
+        expect(prerequisiteOf(quest)).toBe(at === 0 ? null : chained[at - 1]);
+        expect(successorOf(quest)).toBe(at === chained.length - 1 ? null : chained[at + 1]);
+      }
+    }
+  });
+});
+
+describe('a region’s pokedex chain', () => {
+  it('is generated from the region rather than written out', () => {
+    const chain = getDexChain(Regions.Kanto);
+    const quests = getDexQuests(Regions.Kanto);
+
+    expect(chain?.name).toBe('Kanto Pokedex');
+    expect(chain?.quests).toEqual([...quests.keys()]);
+    expect([...quests.keys()]).toEqual([
+      dexQuestId(Regions.Kanto, 0),
+      dexQuestId(Regions.Kanto, 1),
+      dexQuestId(Regions.Kanto, 2),
+    ]);
+
+    // The rungs are the region's own milestones, counted against the
+    // region's own stretch of the dex and nobody else's
+    const asks = [...quests.values()].map((data) => data.requirements[0]);
+
+    for (const ask of asks) {
+      expect(ask.kind).toBe(RequirementKind.Dex);
+      if (ask.kind === RequirementKind.Dex) {
+        expect(ask.region).toBe(Regions.Kanto);
+      }
+    }
+    expect(asks.map((ask) => ask.count)).toEqual([25, 75, 150]);
+
+    // The last rung is the one with the medal on it
+    const last = quests.get(dexQuestId(Regions.Kanto, 2));
+
+    expect(last?.name).toBe('Kanto Complete');
+    expect(last?.rewards.some((reward) => reward.kind === QuestRewardKind.Award)).toBe(true);
+  });
+
+  it('is in the board with everything else', () => {
+    const chain = dexChainId(Regions.Kanto);
+
+    expect(CHAIN_ORDER).toContain(chain);
+    expect(CHAINS[chain].name).toBe('Kanto Pokedex');
+    // ...and its rungs chain to each other like any other chain
+    expect(prerequisiteOf(dexQuestId(Regions.Kanto, 1))).toBe(dexQuestId(Regions.Kanto, 0));
+  });
+
+  it('leaves a region with no dex alone rather than inventing one', () => {
+    // Nothing is written for it, so it stands no chain at all. This is
+    // what a generation that has not landed yet looks like
+    expect(getDexChain(Regions.Unknown)).toBeNull();
+    expect(getDexQuests(Regions.Unknown).size).toBe(0);
+    expect(getDexRegions()).not.toContain(Regions.Unknown);
+  });
+
+  it('numbers its quests where no written quest can reach', () => {
+    const written = Object.keys(QUESTS)
+      .map(Number)
+      .filter((quest) => quest < DEX_QUEST_BASE);
+
+    // A written quest and a generated one can never collide, however
+    // many of either are added
+    expect(written.length).toBeGreaterThan(0);
+    expect(Math.max(...written)).toBeLessThan(DEX_QUEST_BASE);
+
+    // ...and one region's rungs can never collide with another's,
+    // which is what lets a region be added without renumbering
+    const ids = new Set<number>();
+
+    for (let region = 0; region < 20; region++) {
+      for (let rung = 0; rung < 100; rung++) {
+        const id = dexQuestId(region, rung);
+
+        expect(ids.has(id)).toBe(false);
+        ids.add(id);
+      }
+    }
   });
 });

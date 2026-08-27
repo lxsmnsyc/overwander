@@ -15,7 +15,9 @@ import {
   type Quests,
   RequirementKind,
   type TurnInRequirement,
+  getQuestData,
   prerequisiteOf,
+  successorOf,
 } from '../data/quests';
 import type Regions from '../data/ids/regions';
 import { defaultSlots } from '../data/constants/slots';
@@ -33,7 +35,7 @@ import {
 } from './gifts';
 import { recordAwardWin } from './awards';
 import { readCaughtDexCount } from './pokedex';
-import { readProgress } from './quest-progress';
+import { openQuestBaselines, readProgress, readQuestBaselines } from './quest-progress';
 import { getSql, tx } from './db';
 import { readStack, readStackIn, spendStackIn } from './stacks';
 import { asNumber, asRecord } from './read';
@@ -103,6 +105,56 @@ export function countOf(counters: Counters, requirement: QuestRequirement): numb
   return total;
 }
 
+/**
+ * What one quest's counters read as, measured from where they stood
+ * when the quest opened.
+ *
+ * Only a quest behind a prerequisite is measured: one at the head of
+ * its chain has been open as long as the account has, so its counters
+ * are its own from the first step. The line is drawn on first sight
+ * as well as at the unlock itself, which is what carries a quest that
+ * was already unlocked when this arrived
+ */
+async function baselinedCounts(
+  uid: string,
+  quest: Quests,
+  requirements: QuestRequirement[],
+  counters: Counters,
+  stored: Map<number, Map<number, number>>,
+): Promise<Map<number, number>> {
+  if (prerequisiteOf(quest) == null) {
+    return new Map();
+  }
+
+  const held = stored.get(quest) ?? new Map<number, number>();
+  const missing: [number, number][] = [];
+
+  for (const [slot, requirement] of requirements.entries()) {
+    if (requirement.kind !== RequirementKind.Counter || held.has(slot)) {
+      continue;
+    }
+    missing.push([slot, countOf(counters, requirement)]);
+  }
+  if (missing.length === 0) {
+    return held;
+  }
+
+  const opened = await openQuestBaselines(uid, quest, missing);
+
+  stored.set(quest, opened);
+  return opened;
+}
+
+/** One counter requirement's standing, net of the quest's baseline */
+function progressOf(
+  counters: Counters,
+  requirement: QuestRequirement,
+  slot: number,
+  baselines: Map<number, number>,
+): number {
+  return Math.max(0, countOf(counters, requirement) - (baselines.get(slot) ?? 0));
+}
+
 /** The name under which one quest's one reward rides the gift rows */
 function questGiftId(uid: string, quest: Quests, at: number): string {
   return giftId(`quest-${quest}-${at}`, uid);
@@ -154,7 +206,11 @@ async function readClaims(uid: string): Promise<Set<Quests>> {
  * player stands on each
  */
 export async function listQuests(uid: string): Promise<QuestStanding[]> {
-  const [counters, claims] = await Promise.all([readProgress(uid), readClaims(uid)]);
+  const [counters, claims, baselines] = await Promise.all([
+    readProgress(uid),
+    readClaims(uid),
+    readQuestBaselines(uid),
+  ]);
   const standings: QuestStanding[] = [];
   // One dex query per region asked about, however many quests ask
   const dexCounts = new Map<number, number>();
@@ -181,8 +237,9 @@ export async function listQuests(uid: string): Promise<QuestStanding[]> {
     }
 
     const requirements: RequirementStanding[] = [];
+    const opened = await baselinedCounts(uid, quest, data.requirements, counters, baselines);
 
-    for (const requirement of data.requirements) {
+    for (const [slot, requirement] of data.requirements.entries()) {
       let have: number;
 
       if (requirement.kind === RequirementKind.TurnIn) {
@@ -190,7 +247,7 @@ export async function listQuests(uid: string): Promise<QuestStanding[]> {
       } else if (requirement.kind === RequirementKind.Dex) {
         have = await dexOf(requirement.region);
       } else {
-        have = countOf(counters, requirement);
+        have = progressOf(counters, requirement, slot, opened);
       }
 
       requirements.push({ requirement, have, met: have >= requirement.count });
@@ -231,7 +288,7 @@ export async function claimQuest(
   offset: number,
   locale: string,
 ): Promise<QuestPayout | null> {
-  const data = QUESTS[quest] as QuestData | undefined;
+  const data = getQuestData(quest);
 
   if (data == null) {
     return null;
@@ -244,13 +301,15 @@ export async function claimQuest(
     return null;
   }
 
-  const counters = await readProgress(uid);
+  const [counters, baselines] = await Promise.all([readProgress(uid), readQuestBaselines(uid)]);
+  const opened = await baselinedCounts(uid, quest, data.requirements, counters, baselines);
   const turnIns = data.requirements.filter(
     (one): one is TurnInRequirement => one.kind === RequirementKind.TurnIn,
   );
-  const metricsMet = data.requirements
-    .filter((one) => one.kind === RequirementKind.Counter)
-    .every((one) => countOf(counters, one) >= one.count);
+  const metricsMet = data.requirements.every(
+    (one, slot) =>
+      one.kind !== RequirementKind.Counter || progressOf(counters, one, slot, opened) >= one.count,
+  );
 
   if (!metricsMet) {
     return null;
@@ -332,5 +391,31 @@ export async function claimQuest(
       encounter = paid.encounter;
     }
   }
+
+  // The next quest in the chain starts counting here, rewards and all:
+  // a pokemon this claim just handed over is not one the player went
+  // and caught. Read fresh, since the rewards above moved counters
+  await openBaselinesFor(uid, successorOf(quest));
+
   return { rewards: data.rewards, encounter, egg };
+}
+
+/**
+ * Draw the line a newly unlocked quest counts from. Keep-first, so an
+ * unlock that already happened keeps the line it was given
+ */
+async function openBaselinesFor(uid: string, quest: Quests | null): Promise<void> {
+  if (quest == null) {
+    return;
+  }
+
+  const counters = await readProgress(uid);
+  const slots: [number, number][] = [];
+
+  for (const [slot, requirement] of QUESTS[quest].requirements.entries()) {
+    if (requirement.kind === RequirementKind.Counter) {
+      slots.push([slot, countOf(counters, requirement)]);
+    }
+  }
+  await openQuestBaselines(uid, quest, slots);
 }

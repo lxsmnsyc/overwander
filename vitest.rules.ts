@@ -15,6 +15,14 @@ export default defineConfig({
     alias: { 'server-only': new URL('test/rls/__server-only.ts', import.meta.url).pathname },
   },
   test: {
+    // The server modules read the connection from the environment the
+    // way the app does. The local stack's default stands in when
+    // nothing set it, the same fallback `clients.ts` keeps, so the
+    // suite runs against a fresh `supabase start` with no .env at all
+    env: {
+      SUPABASE_DB_URL:
+        process.env.SUPABASE_DB_URL ?? 'postgresql://postgres:postgres@127.0.0.1:54322/postgres',
+    },
     include: ['test/rls/**/*.test.ts'],
     fileParallelism: false,
     // The first case pays for the emulator's handshake, and clearing

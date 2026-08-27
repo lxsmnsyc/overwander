@@ -68,3 +68,59 @@ export async function readProgress(uid: string): Promise<Map<Metric, Map<number,
   }
   return held;
 }
+
+/**
+ * Where a quest's counters stood when it opened, as quest to slot to
+ * value.
+ *
+ * A requirement reads the lifetime counter, so a quest waiting behind
+ * a prerequisite would otherwise arrive already part-done off a
+ * player's whole history. Measuring from a baseline written at the
+ * moment the quest opened is what makes it a task rather than a
+ * receipt. `slot` is the requirement's index within the quest
+ */
+export async function readQuestBaselines(uid: string): Promise<Map<number, Map<number, number>>> {
+  const rows = await getSql()`
+    select quest, slot, baseline from quest_baselines where player = ${uid}
+  `;
+  const held = new Map<number, Map<number, number>>();
+
+  for (const entry of rows) {
+    const row = asRecord(entry);
+    const quest = asNumber(row.quest);
+    const inner = held.get(quest) ?? new Map<number, number>();
+
+    inner.set(asNumber(row.slot), asNumber(row.baseline));
+    held.set(quest, inner);
+  }
+  return held;
+}
+
+/**
+ * Open a quest's counters at where they stand now. Keep-first, so the
+ * line is drawn once: a second unlock, a racing board read, or a
+ * replayed claim all agree on whichever landed
+ */
+export async function openQuestBaselines(
+  uid: string,
+  quest: number,
+  slots: [slot: number, baseline: number][],
+): Promise<Map<number, number>> {
+  for (const [slot, baseline] of slots) {
+    await getSql()`
+      insert into quest_baselines (player, quest, slot, baseline)
+      values (${uid}, ${quest}, ${slot}, ${baseline})
+      on conflict (player, quest, slot) do nothing
+    `;
+  }
+
+  // Read back rather than trusting what was offered: a racing writer
+  // may have drawn the line first, and theirs is the one that counts
+  const rows = await getSql()`
+    select slot, baseline from quest_baselines where player = ${uid} and quest = ${quest}
+  `;
+
+  return new Map(
+    rows.map((row) => [asNumber(asRecord(row).slot), asNumber(asRecord(row).baseline)]),
+  );
+}

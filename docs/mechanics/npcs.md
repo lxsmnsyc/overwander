@@ -4,17 +4,19 @@ Some chunks contain a **Wandering NPC** cell. The cell itself never moves, but
 whoever is standing on it changes every **three hours**, so the same spot may
 offer a breeder in the morning and a daycare lady by midday.
 
-Nine people can be standing there: the vendor, the breeder, the daycare lady,
-Nurse Joy, the groomer, the Move Reminder, the Fossil Maniac, the Fossil
-Scientist, and a **Team Rocket grunt**, who is there to fight rather than to
-help. Duelling trainers keep a landmark of their own, further down. A cell is a crossroads rather than a shop, so walking up to one does not
-reveal in advance whether it holds a nurse or a fight.
+Nine people wander: the breeder, the daycare lady, Nurse Joy, the groomer, the
+Move Reminder, the Move Tutor, the chef, the Fossil Maniac and the Fossil
+Scientist. The vendor, the Team Rocket grunt and the duelling trainers each keep
+a landmark of their own, further down. A cell is a crossroads rather than a shop,
+so walking up to one does not reveal in advance which of the nine is there.
 
 ## The once-per-window rule
 
-Every traveller except the **vendor**, **Nurse Joy** and the **Fossil
-Scientist** helps a player once per three-hour window. Asking again before the
-window turns over is refused whatever the player can pay.
+Every traveller except **Nurse Joy**, the **chef** and the **Fossil Scientist**
+helps a player once per three-hour window, and asking again before it turns over
+is refused whatever the player can pay. Nurse Joy takes up to six pokemon in one
+handover and turns nobody away while she is standing there; the chef and the
+scientist are paced by a purse and by how many fossils have been dug up.
 
 The limit applies per cell, so walking to another wandering cell finds somebody
 who has not served that player yet. That walk is what a second egg costs.
@@ -67,13 +69,14 @@ evolution stones, by contrast, do carry a price, so a spare one is worth gold.
 | **Nurse Joy**        | Any number, one at a time, free          | Each healed, and any shadow purified       |
 | **Groomer**          | One pokemon, 2,500 gold                  | Half of the friendship it had left to gain |
 | **Move Reminder**    | One Heart Scale                          | A level-up move the pokemon has lost       |
+| **Move Tutor**       | One Heart Scale                          | Any move a machine could teach it          |
+| **Chef**             | Gold, as often as it holds out           | Drinks and treats, stocked nowhere else    |
 | **Fossil Maniac**    | 12,000 gold, or 30,000 for the Old Amber | One of the two fossils he is carrying      |
 | **Fossil Scientist** | A fossil, free                           | The pokemon inside it, at level 20         |
 
 **Nurse Joy** charges nothing and heals everything: full health, statuses
-cleared, and any shadow pokemon purified on the way. Press a pokemon and she sees
-to that one; she will see to as many as you bring, as often as you come back,
-so there is nothing to gather up first and nothing to ration.
+cleared, and any shadow pokemon purified on the way. Six pokemon to a handover,
+and as many handovers as you like while she is standing there.
 
 **The Groomer** always adds half of what friendship remains, so he is worth a
 great deal to a pokemon fresh out of a ball and almost nothing to one that is
@@ -84,6 +87,14 @@ eggs outright.
 machine moves. His price is not gold: a Heart Scale is dug out of the ground and
 no shop deals in them, so what paces him is walking. The scale is spent only if a
 move is actually taught.
+
+**The Move Tutor** deals in the same currency and covers the other half of a move
+list: everything on the species' machine list that it does not already know. What
+he sells is the lesson without the hunt for the disc.
+
+**The Chef** keeps the one shelf no vendor stocks: the region's drinks and its
+treats, six of them a window. Like the vendor, he serves as often as a purse
+holds out rather than once per window.
 
 **The Fossil Maniac** is the only source of a fossil other than the ground
 itself. He carries **two of the three** and will part with **one** while he is
@@ -119,10 +130,10 @@ fair: nothing they field is a shadow, and a win costs them only the purse.
 
 Who turns up decides what they bring:
 
-| Standing there | What they field |
-| -------------- | --------------- |
-| **Ace Trainer** | Five fully-grown pokemon of any type, levels 60-80 |
-| **A type expert** | Three to five of their own type, levels 40-60 |
+| Standing there    | What they field                                    |
+| ----------------- | -------------------------------------------------- |
+| **Ace Trainer**   | Five fully-grown pokemon of any type, levels 60-80 |
+| **A type expert** | Three to five of their own type, levels 40-60      |
 
 The type experts are the trainer classes: the Bug Catcher, the Swimmer, the Black
 Belt, the Bird Keeper, the Biker, the Hiker, the Poké Maniac, the Channeler, the

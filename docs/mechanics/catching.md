@@ -105,9 +105,14 @@ Ten berries may be fed, each worth **25% more** catch chance. They stack
 multiplicatively up to a total of **four times** the original chance, so four
 berries is nearly everything feeding can achieve and a fifth is close to wasted.
 
-The ten are the five single-status cures — Cheri, Chesto, Pecha, Rawst and Aspear
-— together with Leppa, Oran, Persim, Lum and Sitrus. All are everyday berries,
+The ten are the five single-status cures (Cheri, Chesto, Pecha, Rawst and Aspear)
+together with Leppa, Oran, Persim, Lum and Sitrus. All are everyday berries,
 which makes feeding one a real decision against saving it for a fight.
+
+Fourteen more exist and are worth **50% more** each, since they are bait and
+nothing else: Razz, Bluk, Nanab, Wepear, Pinap, Cornn, Magost, Rabuta, Nomel,
+Spelon, Pamtre, Watmel, Durin and Belue. Nothing grows them yet, so they are not
+in a player's hands today.
 
 Feeding costs a turn, which is what stops it being free: every turn is another
 chance for the pokemon to flee, and it advances the Timer Ball's clock while

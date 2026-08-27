@@ -26,10 +26,13 @@ rebuilds it from the migrations.
 | [Player-owned tables](database/player-stores.md) | `profiles` (buddy included), `bag_items`, `bag_candies`, `pokedex_entries`, `positions`, `fled_encounters` |
 | [Catch records](database/catches.md)             | `caught` and its children, the battle lock, and eggs waiting to be walked                                  |
 | [Shared overworld tables](database/overworld.md) | `snapshots`, `snapshot_spawns`, `encounters`, and the landmark claim markers                               |
-| [Raids and battles](database/raids.md)           | `raids`, `teams`, `team_snapshots`, `battles`, `rocket_stops`, `raid_rewards`                              |
+| [Raids and battles](database/raids.md)           | `raids`, `teams`, `team_snapshots`, `battles`, `rocket_stops`, `raid_rewards`, invites and watchers        |
+| [Battle lobbies](database/duels.md)              | `duels`, `duel_members`, `duel_catches`, `duel_invites`: the private lobbies players open                  |
+| [Gym seats](database/gyms.md)                    | `gym_seats`, `gym_challenges`: the seat a player holds, and what a challenge stakes                        |
 | [Auctions](database/auctions.md)                 | `auctions`, `auction_sellers`, `bids`, and the escrow a lot sits in                                        |
 | [Mystery gifts](database/gifts.md)               | `gifts`, `gift_claims`: what is waiting on a shelf, and who has taken it                                   |
-| [Friends](database/friends.md)                   | `friends`, `friend_requests`, `blocks`                                                                     |
+| [Friends](database/friends.md)                   | `friends`, `friend_requests`, `blocks`, `friend_codes`, `trades`                                           |
+| [Quests and awards](database/quests.md)          | `quest_progress`, `quest_claims`, the rotation windows, `awards`, and the worn title                       |
 | [Encounter kinds](database/encounters.md)        | `EncounterType`: what each way of meeting a pokemon is recorded as                                         |
 | [Time](database/time.md)                         | The server clock, and the player-local zone everything is read in                                          |
 | [Security](database/security.md)                 | Privileged writes, the policies, the grants, and the indexes the queries need                              |

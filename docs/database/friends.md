@@ -59,6 +59,42 @@ the request that was already standing rather than adding a second. An index on
 Read by the blocker alone. Lifting it does not put back the friendship it
 undid.
 
+## `trades`
+
+A friend-to-friend swap: the one place a pokemon passes between players without
+gold deciding who gets it. Written by
+[`src/server/trades.ts`](../../src/server/trades.ts).
+
+| Column                                    | Type                | Notes                                                                   |
+| ----------------------------------------- | ------------------- | ----------------------------------------------------------------------- |
+| `id`                                      | `text`              | The offer                                                               |
+| `proposer`                                | `uuid`              | Who made it                                                             |
+| `receiver`                                | `uuid`              | Who was asked; must already be a friend                                 |
+| `offered_caught`                          | `text`              | What is on the table, in escrow while it stands                         |
+| `asked_caught`                            | `text`              | What was asked for, or null for an open ask                             |
+| `given_caught`                            | `text`              | What the receiver actually gave; fills at accept                        |
+| `gold`                                    | `bigint`            | Signed: positive rides with the offer, negative asks it of the receiver |
+| `status`                                  | `smallint`          | Open (0), Accepted (1), Declined (2), Cancelled (3)                     |
+| `created_at`, `resolved_at`, `utc_offset` | `bigint`/`smallint` | When, and in whose zone                                                 |
+
+**The offered catch is escrowed as the offer is written**, its `owner` set to
+null the way an auction lot's is, so an offer is something the receiver can trust
+until it is answered. Gold riding with the offer is taken then too. The **asked**
+catch is never escrowed: it is checked again at accept, since it may have gone
+into a lobby or onto the block while the offer sat.
+
+A partial unique index holds one open offer per direction of a pair, so a
+proposer cannot bury a friend under offers.
+
+Tier 2: a trade is the two parties' business and nobody else's, and it is
+published to realtime so an inbox sees an offer arrive.
+
+`TRADE_GOLD_LIMIT` caps what may ride along at a million either way.
+
+A settled trade appends `Acquisition.Trade` to both records' histories, resets
+`friendship`, and sets `traded`, which is what opens a
+[trade evolution](catches.md).
+
 ## Asking, and answering
 
 `sendFriendRequest` reads three rows in a transaction: the friendship, the

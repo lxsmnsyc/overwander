@@ -59,8 +59,34 @@ A lair holds a legendary for a few hours, and anybody may join.
 - Beat it once and the lair closes until it restocks. Everyone in the lobby is
   paid the same.
 - **Mythicals** appear only when somebody spends a relic to call one out.
+- Bring a friend into a lobby, to fight or just to watch.
 - **Team Rocket grunts** block a path with three shadowed pokemon and pay out
   when you beat them.
+
+## The league, and other trainers
+
+The road is full of people who want a fight.
+
+- **Duelling trainers** stand at their own cells: an Ace, or an expert in one
+  type, with a purse on the win.
+- **Gym leaders** hold the region's eight badges, one badge each.
+- The **Elite Four** want every badge before they will see you, and the
+  **Champion** wants all four of their marks.
+- **Gym seats** are held by other players. Beat the party standing there and you
+  take a share of their gold and the cell itself, then sit down on it yourself.
+- **Duels** are two players who both chose to fight, in a private lobby, with
+  whoever they invite watching. Nothing is staked and nothing is lost.
+
+## Quests, badges and titles
+
+- A **quest board** asks for things you were going to do anyway and pays for
+  them: catches, hatches, walks, raids, trades.
+- **Three dailies and a weekly hunt** on top of it, the same for everybody in
+  the world, counted from the moment the day first sees you.
+- **Achievements** climb four tiers on lifetime counters, per deed, per type,
+  and per class of trainer beaten.
+- Wear one **title** over your name: League Challenger, Master Collector,
+  whatever you have earned.
 
 ## Raising
 
@@ -111,19 +137,20 @@ Hardly anything is for sale. You dig it up.
 
 ## Trading
 
-The auction house is where things pass between players.
+Two ways a pokemon changes hands.
 
-- List a lot and it leaves your bag until the auction ends.
-- Bid and the gold leaves your purse at once, and returns the moment somebody
-  outbids you.
-- One lot each, per day.
-- Only the genuinely scarce may be listed: the rarest items, shinies, and
-  pokemon at the extremes.
+- **The auction house**, open to everybody: list a lot and it leaves your bag
+  until the auction ends, bid and the gold leaves your purse at once and comes
+  back the moment somebody outbids you. One lot each, per day, and only the
+  genuinely scarce may be listed.
+- **A trade with a friend**: your pokemon for theirs, with gold either way if
+  you like. What you offer is held while they think about it, and a traded
+  pokemon can evolve the way only a traded one can.
 
 ## Friends and gifts
 
-- Add a friend by the email they signed up with, so somebody has to hand it to
-  you first.
+- Add a friend by their **friend code**, so somebody has to hand it to you
+  first.
 - Requests can be taken back. Blocking quietly ends the lot.
 - **Gifts** are set aside for you: a pokemon, a stack for your bag, or a meeting
   where you still throw the ball.

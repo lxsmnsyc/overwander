@@ -7,16 +7,17 @@ One row per account, keyed by the auth uid. Set by
 trigger the moment the account is created, so a foreign key never waits on the
 app having run.
 
-| Column       | Type      | Notes                                 |
-| ------------ | --------- | ------------------------------------- |
-| `id`         | `uuid`    | The account, `references auth.users`  |
-| `nickname`   | `text`    | Display name; defaults to `"Trainer"` |
-| `avatar`     | `text`    | Avatar URL, null when unset           |
-| `gold`       | `bigint`  | Currency balance; opens at zero       |
-| `role`       | `text`    | Staff standing; empty for a player    |
-| `banned`     | `boolean` | Whether the account is shut out       |
-| `ban_reason` | `text`    | What the player is told on the way in |
-| `buddy_id`   | `text`    | The `caught` row walking beside them  |
+| Column       | Type       | Notes                                   |
+| ------------ | ---------- | --------------------------------------- |
+| `id`         | `uuid`     | The account, `references auth.users`    |
+| `nickname`   | `text`     | Display name; defaults to `"Trainer"`   |
+| `avatar`     | `text`     | Avatar URL, null when unset             |
+| `gold`       | `bigint`   | Currency balance; opens at zero         |
+| `role`       | `text`     | Staff standing; empty for a player      |
+| `banned`     | `boolean`  | Whether the account is shut out         |
+| `ban_reason` | `text`     | What the player is told on the way in   |
+| `buddy_id`   | `text`     | The `caught` row walking beside them    |
+| `title`      | `smallint` | The title worn over their name, or null |
 
 Anyone signed in may read it, since other players see nicknames and avatars. The
 owner writes their own `nickname`, `avatar` and `buddy_id`, and nothing else:
@@ -25,7 +26,9 @@ choose rows.
 
 `role`, `banned` and `ban_reason` are the server's alone, see
 [Roles](security.md), and the insert policy refuses a row that arrives with a
-role, a balance or a ban already on it.
+role, a balance or a ban already on it. So is `title`: what a player may wear is
+derived from their counters and awards, so the column carries no client grant at
+all. See [Quests, achievements and awards](quests.md).
 
 The balance is not the player's to write. `grantGold` and `spendGold` live in
 [`src/server/profile.ts`](../../src/server/profile.ts) and read the row `for

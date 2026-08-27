@@ -8,8 +8,9 @@ while a third is still charging a Solar Beam.
 Players do not choose moves during a fight. Each pokemon picks for itself, and
 will not choose a move that would do nothing.
 
-Battles occur in four situations: legendary, shadow and mythical **raids**, and
-**Team Rocket** stops.
+Fights come from five places: **raids** at a lair, the **trainers** a walk runs
+into, **Team Rocket** stops, a **gym seat** another player is holding, and a
+**duel** two players opened between themselves.
 
 ## How a move resolves
 
@@ -246,15 +247,63 @@ its side's band, so a party has a spread rather than a rank. Which type expert i
 standing at a trainer cell depends on the country; see
 [People you meet](npcs.md).
 
-| Who               | What they field                           | Levels |
-| ----------------- | ----------------------------------------- | ------ |
-| **Team Rocket grunt** | Three shadows of the biome's own      | 45-55  |
-| **Type expert**   | Three to five of their own type            | 40-60  |
-| **Ace Trainer**   | Five fully-grown pokemon of any type       | 60-80  |
-| **Gym leader**    | Six of their gym's type                    | 45-65  |
-| **Giovanni**      | Six shadows, one of them a legendary       | 70-80  |
-| **Elite Four**    | Six of their seat's type                   | 65-85  |
-| **Champion**      | Six of anything                            | 85-100 |
+| Who                   | What they field                      | Levels |
+| --------------------- | ------------------------------------ | ------ |
+| **Team Rocket grunt** | Three shadows of the biome's own     | 45-55  |
+| **Type expert**       | Three to five of their own type      | 40-60  |
+| **Ace Trainer**       | Five fully-grown pokemon of any type | 60-80  |
+| **Gym leader**        | Six of their gym's type              | 45-65  |
+| **Giovanni**          | Six shadows, one of them a legendary | 70-80  |
+| **Elite Four**        | Six of their seat's type             | 65-85  |
+| **Champion**          | Six of anything                      | 85-100 |
+
+## Gym seats
+
+A **gym seat** is a cell somebody else's party is standing on. It is the one
+place in the world where a walk runs into another player rather than into
+something the world rolled, and unlike everything else staged in a chunk it
+belongs to whoever last took it rather than to a window: a seat is held until
+somebody takes it off them.
+
+**Sitting down** leaves a frozen copy of the party behind, up to six pokemon.
+The originals stay the holder's to raise, fight and trade; what a challenger
+fights is the copy, exactly as it stood when its owner sat down.
+
+**Challenging** stakes gold on the outcome:
+
+- The loser pays the winner **a tenth of their purse**, capped at 60,000 a
+  fight, and never more than they hold.
+- A challenger may strip at most **three good wins' worth** off one seat in a
+  rolling day. A holder's takings are not capped: they did not choose the fight.
+- A settled challenge bars that challenger from the same seat for **half an
+  hour**.
+
+**Winning empties the cell rather than handing it over.** The challenger takes
+the purse and the seat opens; they then sit down on it like anybody else, with
+whatever their party has left after the fight. The trainer they beat is barred
+from their own seat for **an hour**, or until somebody else sits down, whichever
+comes first.
+
+A seat that turns a challenger away counts the stand: a holder's **defences** are
+what the cell brags about, and they reset when the seat changes hands.
+
+Only the **challenger** carries a gym fight out with them: their party keeps the
+health it has left and the statuses it picked up. The holder settles nothing,
+since what fought was a copy and they were not there.
+
+## Duels
+
+Two players may also fight because they both chose to. A **battle lobby** is
+opened by a player, filled by invitation, and private to the people in it. Both
+fighters bring up to six pokemon and both have to be ready before the host may
+start; everyone else in the lobby watches.
+
+A duel is a plain trainer battle. It **costs nothing and pays nothing**: no
+gold, no pokemon, and no wear carried out afterwards. See
+[Battle lobbies](duels.md).
+
+Raid lobbies take onlookers too. Anybody may walk up to a lair and watch, and a
+player who owns no pokemon can do nothing else.
 
 ## Costs and rewards
 
@@ -262,12 +311,14 @@ A battle leaves a party as it found it. Lost health, eaten berries and carried
 statuses all persist into the next fight, which is what makes a party something to
 look after rather than a row of levels.
 
-| Fight                | Gold  | Pokemon                                |
-| -------------------- | ----- | -------------------------------------- |
-| **Mythical raid**    | 3,000 | The mythical, at level 30              |
-| **Legendary raid**   | 2,000 | The legendary, at level 50             |
-| **Shadow raid**      | 1,000 | A shadow, at level 25                  |
-| **Team Rocket stop** | 500   | A shadowed common pokemon, at level 10 |
+| Fight                | Gold                         | Pokemon                                |
+| -------------------- | ---------------------------- | -------------------------------------- |
+| **Mythical raid**    | 3,000                        | The mythical, at level 30              |
+| **Legendary raid**   | 2,000                        | The legendary, at level 50             |
+| **Shadow raid**      | 1,000                        | A shadow, at level 25                  |
+| **Team Rocket stop** | 500                          | A shadowed common pokemon, at level 10 |
+| **Gym seat**         | A tenth of the loser's purse | Nothing                                |
+| **Duel**             | Nothing                      | Nothing                                |
 
 Everyone in a raid is paid the same amount: the boss decides the purse, not who
 landed the last hit. A **Luck Incense** held by the buddy doubles a player's
@@ -282,4 +333,5 @@ closed tab never holds a party indefinitely.
 
 - [Raising a pokemon](raising.md)
 - [Items and gold](items.md)
-- [The battle engine](../engine.md) — how the engine works internally
+- [Battle lobbies](duels.md)
+- [The battle engine](../engine.md): how the engine works internally

@@ -193,6 +193,26 @@ The team picker greys out anything it can see is fighting (`isLockLive`, from th
 two lock fields it already has), so the refusal is usually visible before the join
 is attempted.
 
+## `raid_invites` and `raid_watchers`
+
+A lobby stands open in the world, so anybody may walk into one. Two tables cover
+the people who arrive some other way.
+
+**`raid_invites`** is a player in a lobby calling a friend into it: one row per
+raid and recipient, whoever sent it first, carrying the `role` they are called in
+as (a fighter or a watcher). It goes when the raid does, when the friend
+dismisses it, or when they join and it has done its work. Readable by the two
+ends alone.
+
+**`raid_watchers`** is who is standing in a lobby without a party: written on the
+way in, dropped on the way out, and taken by the cascade when the lobby goes. A
+player who owns no pokemon can do nothing else, and a raid has always had
+onlookers; the row is what lets the lobby say so. Tier 1, the way the lobby
+itself is, since who is watching a raid is as public as who has joined it.
+
+Both are published to realtime, so an invited list and a crowd both move while
+somebody is looking at them.
+
 ## `team_snapshots`
 
 | Column     | Type       | Notes                                        |

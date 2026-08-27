@@ -9,7 +9,12 @@ overworld is the game's supply of items and raids are its supply of gold.
 The bag is a tray of pictures. Resting on one brings up a card saying what the
 thing is, what it does and how many are carried, and — for anything that is spent
 on a pokemon rather than held, sold or handed to somebody — a **Use** button.
-Pressing it asks which pokemon, and that pokemon's sheet spends it.
+Pressing it asks which pokemon, offering only the ones the item would do some
+good, and that press spends it: what it came to is said over the bag. Two items
+ask a question back first, because neither can be undone. A **machine** asks
+which move is given up for the one it teaches, and a **PP Up** or **PP Max**
+asks which move the points land on; nothing leaves the bag until that is
+answered.
 
 ## Where items come from
 
@@ -162,7 +167,8 @@ all the help it gets. Each berry triggers on its own.
 | **Kee, Maranga**          | Hit physically or specially       | A defence stage                                                        |
 | **Effort drops** (6)      | Fed out of battle                 | 10 training points off one stat, and friendship gained                 |
 
-Ten berries can also be fed to a wild pokemon to make it easier to catch; see
+Ten berries can also be fed to a wild pokemon to make it easier to catch, and
+fourteen further berries do nothing but that; see
 [Catching](catching.md#berries).
 
 ## Wings

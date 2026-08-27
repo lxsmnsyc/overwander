@@ -95,11 +95,11 @@ browser reads; the server writes.
 
 Three tiers:
 
-| Tier                  | Tables                                                                                                                                                                                                  | Who reads                   |
-| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------- |
-| **Public to players** | `caught` and its children, `snapshots`, `snapshot_spawns`, `auctions`, `raids`, `teams`, `team_catches`, `team_snapshots`, `battles`, `battle_teams`, `rocket_stops`, `rocket_party`                    | Any signed-in player        |
-| **Own rows only**     | `bag_items`, `bag_candies`, `pokedex_entries`, `positions`, `fled_encounters`, `encounters` and its children, `bids`, `auction_sellers`, `friends`, `friend_requests`, `blocks`, and every claim marker | The player named on the row |
-| **Closed**            | `gifts`, `gift_claims`                                                                                                                                                                                  | Nobody                      |
+| Tier                  | Tables                                                                                                                                                                                                                                                                                    | Who reads                   |
+| --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------- |
+| **Public to players** | `caught` and its children, `snapshots`, `snapshot_spawns`, `auctions`, `raids`, `teams`, `team_catches`, `team_snapshots`, `battles`, `battle_teams`, `rocket_stops`, `rocket_party`, `gym_seats`, `raid_watchers`, `awards`                                                              | Any signed-in player        |
+| **Own rows only**     | `bag_items`, `bag_candies`, `pokedex_entries`, `positions`, `fled_encounters`, `encounters` and its children, `bids`, `auction_sellers`, `friends`, `friend_requests`, `blocks`, `friend_codes`, `trades`, `raid_invites`, `gym_challenges`, the four duel tables, and every claim marker | The player named on the row |
+| **Closed**            | `gifts`, `gift_claims`, `quest_progress`, `quest_claims`, `rotation_baselines`, `rotation_claims`                                                                                                                                                                                         | Nobody                      |
 
 `profiles` sits outside the three: everyone signed in reads every profile,
 because a trade or a raid lobby starts with looking somebody up, and a player may
@@ -125,11 +125,20 @@ A few consequences worth having in hand:
   trainer is standing is shown through a server call that reads one row for one
   uid.
 
+A duel's four tables are the one place a policy cannot say the condition
+directly: a policy on `duel_members` that reads `duel_members` is recursion,
+which Postgres refuses. `in_duel(duel, player)` is a `security definer` function
+standing in for it. See [Battle lobbies](duels.md).
+
 ### Grants back the policies
 
 Supabase hands the client roles nothing by default, so the grants are explicit:
 `select` on every table for `authenticated`, everything for `service_role`, and
-on `profiles` the three-column `insert` and `update` above. A policy decides
+on `profiles` the three-column `insert` and `update` above.
+
+The blanket `grant ... on all tables` in the RLS migration only reached the
+tables that existed then, so **every table added since names its own grants**.
+A new table without them is readable by nobody, whatever its policy says. A policy decides
 which **rows**; a grant decides which **columns** and which verbs. Both are
 needed, and the column grant is the half that keeps a player from writing their
 own balance.
@@ -145,6 +154,7 @@ server cannot break them either:
 | `append_only` on `caught_history`     | History is insert-only, with one lawful update: the cascade that nulls a deleted account |
 | `settle_once` on `battles`            | An outcome stamps once, from Unfinished, and nothing else on the row moves               |
 | `dex_monotonic`                       | Pokedex counts only rise                                                                 |
+| `trades_open_pair`                    | One open trade offer per direction of a pair                                             |
 | `buddy_owner` / `buddy_follows_owner` | A buddy must be an owned catch, and stops following when the catch changes hands         |
 | `gift_claims` backfill guard          | A claim may be updated exactly once, to record the catch it became                       |
 | Column checks                         | Gold never negative, levels 1 to 100, friendship 0 to 255, a bid above zero              |
@@ -154,9 +164,11 @@ server cannot break them either:
 
 The browser follows live tables over `postgres_changes`, which checks the same
 policies per socket: a stream only carries rows the reader may already select.
-The published set is listed in the realtime migration and covers `battles`,
-`auctions`, `raids`, `teams`, `battle_teams`, `snapshots`, `snapshot_spawns`,
-`friends`, `friend_requests`, `blocks` and `profiles`.
+The published set is listed in the realtime migration and in the migrations that
+added tables since: `battles`, `auctions`, `raids`, `teams`, `battle_teams`,
+`snapshots`, `snapshot_spawns`, `friends`, `friend_requests`, `blocks`,
+`profiles`, `trades`, `raid_invites`, `raid_watchers`, `gym_seats`, and the four
+duel tables.
 
 The stream carries changes only, never current state, so the watch helpers in
 [`src/auth/supabase.ts`](../../src/auth/supabase.ts) do the first read

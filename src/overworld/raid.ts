@@ -372,6 +372,26 @@ export function collectAftermath(built: RaidBattle, player: string): BattleAfter
 }
 
 /**
+ * How many of the other side this player's team put down.
+ *
+ * A lost fight still pays for what it beat, and this is the count it
+ * pays on. It is the client's word, like the Pay Day coins beside it,
+ * so the server clamps it to the party it actually staged
+ */
+export function countDefeated(built: RaidBattle, player: string): number {
+  let downed = 0;
+
+  for (const fielded of built.units.values()) {
+    for (const unit of fielded) {
+      if (unit.team.player !== player && unit.health <= 0) {
+        downed += 1;
+      }
+    }
+  }
+  return downed;
+}
+
+/**
  * The statuses the unit carries out of the fight. A unit can hold
  * several at once — poisoned and asleep is an ordinary way to come
  * out of a raid — so all of them travel, in the order the list names

@@ -22,7 +22,12 @@ import { useAuth } from '../../../auth/context';
 import { PLAYER_ALLIANCE, clearRaid, getRaid, getRaidTitle } from '../../../auth/raids';
 import { BattleModes } from '../../../battle/core';
 import BattleKind, { getBattleKind } from '../../../auth/battle-kind';
-import { type RaidBattle, collectAftermath, createRaidBattle } from '../../../overworld/raid';
+import {
+  type RaidBattle,
+  collectAftermath,
+  countDefeated,
+  createRaidBattle,
+} from '../../../overworld/raid';
 import { createTrainerBattle } from '../../../overworld/rocket';
 import BattleField from '../BattleField';
 import VerdictDialog from './VerdictDialog';
@@ -438,10 +443,13 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
     // frees the party, and a freed pokemon can have its berry pulled
     // back
     const aftermath = built != null && user != null ? collectAftermath(built, user.uid) : [];
+    // Counted here too, before the teardown: conceding still pays for
+    // whatever the party managed to put down first
+    const defeated = built != null && user != null ? countDefeated(built, user.uid) : 0;
 
     (async () => {
       if (aftermath.length > 0) {
-        sayCandy(await recordAftermath(props.active.id, aftermath));
+        sayCandy(await recordAftermath(props.active.id, aftermath, defeated));
       }
       await finishBattle(props.active.id, BattleOutcome.Lost);
     })().catch(() => {
@@ -537,7 +545,9 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
         const aftermath = collectAftermath(built, user.uid);
 
         if (aftermath.length > 0) {
-          sayCandy(await recordAftermath(props.active.id, aftermath));
+          sayCandy(
+            await recordAftermath(props.active.id, aftermath, countDefeated(built, user.uid)),
+          );
         }
       }
 

@@ -87,7 +87,7 @@ export interface CandyEarned {
  * Write what the battle did to a player's party: the items it spent
  * come off the catch records, the health it has left and the statuses
  * it is carrying are written onto them, and the team is paid its
- * candy for having fought at all.
+ * candy for what the fight was worth.
  *
  * A marker at battleAftermaths/{battleId}:{uid} guards the whole
  * thing, so one battle settles one player once however many times the
@@ -98,6 +98,7 @@ export default async function recordAftermath(
   uid: string,
   battleId: string,
   aftermath: BattleAftermath[],
+  defeated: number,
 ): Promise<CandyEarned[]> {
   if (aftermath.length === 0) {
     return [];
@@ -238,13 +239,19 @@ export default async function recordAftermath(
 
   // And what the fight was worth to the team that fought it: one
   // candy each, of whichever family the pokemon belongs to, so a
-  // party of 3 Gyarados comes home with 3 Magikarp candies. It is
-  // counted off the team snapshots rather than the report, since what
-  // was fielded is the server's own writing, and it rides the same
-  // marker as everything else here: one battle pays one team once
+  // party of 3 Gyarados comes home with 3 Magikarp candies.
+  //
+  // A win pays for the whole party. A loss pays only for what it beat
+  // — one candy per pokemon the other side lost — so a fight walked
+  // into and given up on is worth nothing, and one lost on the last
+  // unit is worth nearly a win. It is counted off the team snapshots
+  // rather than the report, since what was fielded is the server's
+  // own writing, and it rides the same marker as everything else
+  // here: one battle pays one team once
+  const paid = won ? fielded.size : Math.min(fielded.size, await downed(battleId, uid, defeated));
   const earned = new Map<Families, number>();
 
-  for (const snapshot of fielded.values()) {
+  for (const snapshot of [...fielded.values()].slice(0, paid)) {
     const { family } = getSpeciesData(snapshot.species);
 
     earned.set(family, (earned.get(family) ?? 0) + 1);
@@ -253,4 +260,28 @@ export default async function recordAftermath(
     await grantCandy(uid, family, count);
   }
   return [...earned].map(([family, count]) => ({ family, count }));
+}
+
+/**
+ * How many of the other side this player may be paid for.
+ *
+ * The count comes from the client, like the Pay Day coins, so it is
+ * clamped to the party the server itself staged against them: nobody
+ * can knock down more pokemon than were standing there
+ */
+async function downed(battleId: string, player: string, reported: number): Promise<number> {
+  const rows = await getSql()`
+    select ts.catches
+    from battle_teams bt
+    join team_snapshots ts on ts.id = bt.snapshot_id
+    where bt.battle_id = ${battleId} and (bt.player is null or bt.player <> ${player})
+  `;
+  let standing = 0;
+
+  for (const data of rows) {
+    if (Array.isArray(data.catches)) {
+      standing += data.catches.length;
+    }
+  }
+  return Math.min(standing, Math.max(0, Math.floor(reported)));
 }

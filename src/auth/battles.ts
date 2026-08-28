@@ -171,22 +171,26 @@ async function finishBattleOnServer(
  * player, since nobody else's catches are theirs to write.
  *
  * The server checks the report against the team snapshots it froze
- * itself, and settles each player once per battle
+ * itself, and settles each player once per battle. `defeated` is how
+ * many of the other side went down, which is what a lost fight is
+ * paid on; it is clamped there to the party the server staged
  */
 export async function recordAftermath(
   id: string,
   aftermath: BattleAftermath[],
+  defeated: number,
 ): Promise<CandyEarned[]> {
-  return recordAftermathOnServer(await getIdToken(), id, aftermath);
+  return recordAftermathOnServer(await getIdToken(), id, aftermath, defeated);
 }
 
 async function recordAftermathOnServer(
   token: string,
   id: string,
   aftermath: BattleAftermath[],
+  defeated: number,
 ): Promise<CandyEarned[]> {
   'use server';
-  return recordOnServer(await requireUid(token), id, aftermath);
+  return recordOnServer(await requireUid(token), id, aftermath, defeated);
 }
 
 /**

@@ -18,7 +18,14 @@ import EggGroups from '../src/data/ids/egg-groups';
 import Families from '../src/data/ids/families';
 import registerAbilities, { getAbilityData } from '../src/data/abilities';
 import Abilities from '../src/data/ids/abilities';
-import { TYPE_COLORS, TYPE_NAMES, Types } from '../src/data/constants/types';
+import {
+  TYPE_COLORS,
+  TYPE_EFFECTIVENESS,
+  TYPE_NAMES,
+  TypeEffectiveness,
+  Types,
+  getTypeMatchups,
+} from '../src/data/constants/types';
 import Biome, {
   AnyTimeOfDay,
   TimeOfDay,
@@ -320,6 +327,118 @@ registerAbilities();
 registerSpecies();
 registerItems();
 registerBiomeSpawns();
+
+describe('the type chart', () => {
+  /**
+   * The chart as the main games write it: what each attacking type
+   * hits for double, what it is halved by, and what it cannot touch.
+   *
+   * Kept as words rather than as another copy of `TYPE_EFFECTIVENESS`
+   * so the two are independent. These lines are the `damage_relations`
+   * PokeAPI serves for each type, and a cell that drifts from them is
+   * a silent balance change across every fight in the game
+   */
+  const CANON: Record<string, { double: string; half: string; none: string }> = {
+    Normal: { double: '', half: 'Rock,Steel', none: 'Ghost' },
+    Fighting: { double: 'Normal,Rock,Steel,Ice,Dark', half: 'Flying,Poison,Bug,Psychic,Fairy', none: 'Ghost' },
+    Flying: { double: 'Fighting,Bug,Grass', half: 'Rock,Steel,Electric', none: '' },
+    Poison: { double: 'Grass,Fairy', half: 'Poison,Ground,Rock,Ghost', none: 'Steel' },
+    Ground: { double: 'Poison,Rock,Steel,Fire,Electric', half: 'Bug,Grass', none: 'Flying' },
+    Rock: { double: 'Flying,Bug,Fire,Ice', half: 'Fighting,Ground,Steel', none: '' },
+    Bug: { double: 'Grass,Psychic,Dark', half: 'Fighting,Flying,Poison,Ghost,Steel,Fire,Fairy', none: '' },
+    Ghost: { double: 'Ghost,Psychic', half: 'Dark', none: 'Normal' },
+    Steel: { double: 'Rock,Ice,Fairy', half: 'Steel,Fire,Water,Electric', none: '' },
+    Fire: { double: 'Bug,Steel,Grass,Ice', half: 'Rock,Fire,Water,Dragon', none: '' },
+    Water: { double: 'Ground,Rock,Fire', half: 'Water,Grass,Dragon', none: '' },
+    Grass: { double: 'Ground,Rock,Water', half: 'Flying,Poison,Bug,Steel,Fire,Grass,Dragon', none: '' },
+    Electric: { double: 'Flying,Water', half: 'Grass,Electric,Dragon', none: 'Ground' },
+    Psychic: { double: 'Fighting,Poison', half: 'Steel,Psychic', none: 'Dark' },
+    Ice: { double: 'Flying,Ground,Grass,Dragon', half: 'Steel,Fire,Water,Ice', none: '' },
+    Dragon: { double: 'Dragon', half: 'Steel', none: 'Fairy' },
+    Dark: { double: 'Ghost,Psychic', half: 'Fighting,Dark,Fairy', none: '' },
+    Fairy: { double: 'Fighting,Dragon,Dark', half: 'Poison,Steel,Fire', none: '' },
+  };
+
+  const BY_NAME = new Map<string, Types>();
+
+  for (const [id, name] of Object.entries(TYPE_NAMES)) {
+    const type: Types = Number(id);
+
+    BY_NAME.set(name, type);
+  }
+
+  function typeNamed(name: string): Types {
+    const found = BY_NAME.get(name);
+
+    if (found == null) {
+      throw new Error(`No type called ${name}`);
+    }
+    return found;
+  }
+
+  /** The eighteen a pokemon can actually be, in the order the chart names them */
+  const FOUGHT_WITH = Object.keys(CANON).map(typeNamed);
+
+  /** The words on one side of one row, as the ids they name */
+  function idsIn(list: string): Types[] {
+    return list === '' ? [] : list.split(',').map(typeNamed);
+  }
+
+  it('lands every attack the way the main games do', () => {
+    for (const [name, relations] of Object.entries(CANON)) {
+      const attacking = typeNamed(name);
+      const wanted = new Map<Types, TypeEffectiveness>();
+
+      for (const type of idsIn(relations.double)) {
+        wanted.set(type, TypeEffectiveness.Effective);
+      }
+      for (const type of idsIn(relations.half)) {
+        wanted.set(type, TypeEffectiveness.Resistant);
+      }
+      for (const type of idsIn(relations.none)) {
+        wanted.set(type, TypeEffectiveness.Immune);
+      }
+
+      // Every cell, not only the ones the chart bothered to write: a
+      // cell that says nothing has to mean neutral rather than missing
+      for (const defending of FOUGHT_WITH) {
+        expect(
+          TYPE_EFFECTIVENESS[attacking][defending],
+          `${name} against ${TYPE_NAMES[defending]}`,
+        ).toBe(wanted.get(defending));
+      }
+    }
+  });
+
+  it('says nothing about the two types no move is', () => {
+    // Unknown is what a move has before it has decided, and Stellar
+    // has no chart of its own; neither may quietly halve a hit
+    expect(TYPE_EFFECTIVENESS[Types.Unknown]).toEqual({});
+    expect(TYPE_EFFECTIVENESS[Types.Stellar]).toEqual({});
+
+    for (const chart of Object.values(TYPE_EFFECTIVENESS)) {
+      expect(chart[Types.Unknown]).toBeUndefined();
+      expect(chart[Types.Stellar]).toBeUndefined();
+    }
+  });
+
+  it('reads the chart both ways round for a badge', () => {
+    // Attacking is the row; the other three are a scan down the column
+    const fire = getTypeMatchups(Types.Fire);
+
+    expect(new Set(fire.strong)).toEqual(new Set(idsIn('Bug,Steel,Grass,Ice')));
+    expect(new Set(fire.weak)).toEqual(new Set(idsIn('Ground,Rock,Water')));
+    expect(new Set(fire.resists)).toEqual(new Set(idsIn('Bug,Steel,Fire,Grass,Ice,Fairy')));
+    expect(fire.immune).toEqual([]);
+
+    // The one type nothing is merely resisted by, which is the pair
+    // most easily lost by folding immunities in with resistances
+    const ghost = getTypeMatchups(Types.Ghost);
+
+    expect(new Set(ghost.immune)).toEqual(new Set(idsIn('Normal,Fighting')));
+    expect(new Set(ghost.resists)).toEqual(new Set(idsIn('Poison,Bug')));
+  });
+});
 
 describe('species abilities', () => {
   it('evolved species learn their pre-evolutions abilities', () => {

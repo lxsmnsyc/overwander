@@ -1,0 +1,241 @@
+{
+  "compact": true,
+  "width": 635,
+  "height": 512,
+  "images": [
+    {
+      "name": "bug",
+      "x": 0,
+      "y": 0,
+      "width": 127,
+      "height": 128,
+      "sourceWidth": 128,
+      "sourceHeight": 128,
+      "trim": [
+        1,
+        0
+      ]
+    },
+    {
+      "name": "dark",
+      "x": 127,
+      "y": 0,
+      "width": 127,
+      "height": 128,
+      "sourceWidth": 128,
+      "sourceHeight": 128,
+      "trim": [
+        1,
+        0
+      ]
+    },
+    {
+      "name": "dragon",
+      "x": 254,
+      "y": 0,
+      "width": 127,
+      "height": 128,
+      "sourceWidth": 128,
+      "sourceHeight": 128,
+      "trim": [
+        1,
+        0
+      ]
+    },
+    {
+      "name": "electric",
+      "x": 0,
+      "y": 128,
+      "width": 127,
+      "height": 128,
+      "sourceWidth": 128,
+      "sourceHeight": 128,
+      "trim": [
+        1,
+        0
+      ]
+    },
+    {
+      "name": "fairy",
+      "x": 127,
+      "y": 128,
+      "width": 127,
+      "height": 128,
+      "sourceWidth": 128,
+      "sourceHeight": 128,
+      "trim": [
+        1,
+        0
+      ]
+    },
+    {
+      "name": "fighting",
+      "x": 254,
+      "y": 128,
+      "width": 127,
+      "height": 128,
+      "sourceWidth": 128,
+      "sourceHeight": 128,
+      "trim": [
+        1,
+        0
+      ]
+    },
+    {
+      "name": "fire",
+      "x": 381,
+      "y": 0,
+      "width": 127,
+      "height": 128,
+      "sourceWidth": 128,
+      "sourceHeight": 128,
+      "trim": [
+        1,
+        0
+      ]
+    },
+    {
+      "name": "flying",
+      "x": 381,
+      "y": 128,
+      "width": 127,
+      "height": 128,
+      "sourceWidth": 128,
+      "sourceHeight": 128,
+      "trim": [
+        1,
+        0
+      ]
+    },
+    {
+      "name": "ghost",
+      "x": 0,
+      "y": 256,
+      "width": 127,
+      "height": 128,
+      "sourceWidth": 128,
+      "sourceHeight": 128,
+      "trim": [
+        1,
+        0
+      ]
+    },
+    {
+      "name": "grass",
+      "x": 127,
+      "y": 256,
+      "width": 127,
+      "height": 128,
+      "sourceWidth": 128,
+      "sourceHeight": 128,
+      "trim": [
+        1,
+        0
+      ]
+    },
+    {
+      "name": "ground",
+      "x": 254,
+      "y": 256,
+      "width": 127,
+      "height": 128,
+      "sourceWidth": 128,
+      "sourceHeight": 128,
+      "trim": [
+        1,
+        0
+      ]
+    },
+    {
+      "name": "ice",
+      "x": 381,
+      "y": 256,
+      "width": 127,
+      "height": 128,
+      "sourceWidth": 128,
+      "sourceHeight": 128,
+      "trim": [
+        1,
+        0
+      ]
+    },
+    {
+      "name": "normal",
+      "x": 508,
+      "y": 0,
+      "width": 127,
+      "height": 128,
+      "sourceWidth": 128,
+      "sourceHeight": 128,
+      "trim": [
+        1,
+        0
+      ]
+    },
+    {
+      "name": "poison",
+      "x": 508,
+      "y": 128,
+      "width": 127,
+      "height": 128,
+      "sourceWidth": 128,
+      "sourceHeight": 128,
+      "trim": [
+        1,
+        0
+      ]
+    },
+    {
+      "name": "psychic",
+      "x": 508,
+      "y": 256,
+      "width": 127,
+      "height": 128,
+      "sourceWidth": 128,
+      "sourceHeight": 128,
+      "trim": [
+        1,
+        0
+      ]
+    },
+    {
+      "name": "rock",
+      "x": 0,
+      "y": 384,
+      "width": 127,
+      "height": 128,
+      "sourceWidth": 128,
+      "sourceHeight": 128,
+      "trim": [
+        1,
+        0
+      ]
+    },
+    {
+      "name": "steel",
+      "x": 127,
+      "y": 384,
+      "width": 127,
+      "height": 128,
+      "sourceWidth": 128,
+      "sourceHeight": 128,
+      "trim": [
+        1,
+        0
+      ]
+    },
+    {
+      "name": "water",
+      "x": 254,
+      "y": 384,
+      "width": 127,
+      "height": 128,
+      "sourceWidth": 128,
+      "sourceHeight": 128,
+      "trim": [
+        1,
+        0
+      ]
+    }
+  ]
+}

@@ -16,7 +16,11 @@ import { SHEER } from './transition';
 
 export interface TooltipProps {
   name: string;
-  description: string;
+  /**
+   * The line worth reading, where the subject has one. A picture whose
+   * card is entirely made of other pictures leaves it out
+   */
+  description?: string;
   /**
    * One more box under the description, for a card whose subject has
    * a third thing worth saying. A thunk rather than markup: the card
@@ -70,7 +74,7 @@ export function Tooltip(props: TooltipProps): JSX.Element {
         shadow-window ${props.class ?? ''}`}
     >
       <Detail label="Name">{props.name}</Detail>
-      <Detail label="Description">{props.description}</Detail>
+      <Show when={props.description}>{(line) => <Detail label="Description">{line()}</Detail>}</Show>
       {props.extra?.()}
     </div>
   );

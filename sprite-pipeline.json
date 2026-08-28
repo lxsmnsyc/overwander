@@ -6910,6 +6910,18 @@
         "was": 403,
         "bytes": 403
       }
+    },
+    "public/sprites/ui/types/image.png": {
+      "digest": "e6d7bbc06f3dc722",
+      "bytes": 84820,
+      "width": 635,
+      "height": 512,
+      "compact": {
+        "at": "2026-08-28T12:27:06Z",
+        "as": "already compact",
+        "was": 84820,
+        "bytes": 84820
+      }
     }
   }
 }

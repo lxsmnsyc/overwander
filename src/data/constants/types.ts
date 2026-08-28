@@ -103,19 +103,21 @@ export const TYPE_EFFECTIVENESS: Record<Types, { [type in Types]?: TypeEffective
     [Types.Ghost]: TypeEffectiveness.Immune,
 
     [Types.Normal]: TypeEffectiveness.Effective,
-    [Types.Ice]: TypeEffectiveness.Effective,
     [Types.Rock]: TypeEffectiveness.Effective,
-    [Types.Dark]: TypeEffectiveness.Effective,
     [Types.Steel]: TypeEffectiveness.Effective,
+    [Types.Ice]: TypeEffectiveness.Effective,
+    [Types.Dark]: TypeEffectiveness.Effective,
 
     [Types.Flying]: TypeEffectiveness.Resistant,
+    [Types.Poison]: TypeEffectiveness.Resistant,
+    [Types.Bug]: TypeEffectiveness.Resistant,
     [Types.Psychic]: TypeEffectiveness.Resistant,
     [Types.Fairy]: TypeEffectiveness.Resistant,
   },
   [Types.Flying]: {
     [Types.Fighting]: TypeEffectiveness.Effective,
-    [Types.Flying]: TypeEffectiveness.Effective,
     [Types.Bug]: TypeEffectiveness.Effective,
+    [Types.Grass]: TypeEffectiveness.Effective,
 
     [Types.Rock]: TypeEffectiveness.Resistant,
     [Types.Steel]: TypeEffectiveness.Resistant,
@@ -155,8 +157,8 @@ export const TYPE_EFFECTIVENESS: Record<Types, { [type in Types]?: TypeEffective
     [Types.Steel]: TypeEffectiveness.Resistant,
   },
   [Types.Bug]: {
+    [Types.Grass]: TypeEffectiveness.Effective,
     [Types.Psychic]: TypeEffectiveness.Effective,
-    [Types.Fairy]: TypeEffectiveness.Effective,
     [Types.Dark]: TypeEffectiveness.Effective,
 
     [Types.Fighting]: TypeEffectiveness.Resistant,
@@ -165,6 +167,7 @@ export const TYPE_EFFECTIVENESS: Record<Types, { [type in Types]?: TypeEffective
     [Types.Ghost]: TypeEffectiveness.Resistant,
     [Types.Steel]: TypeEffectiveness.Resistant,
     [Types.Fire]: TypeEffectiveness.Resistant,
+    [Types.Fairy]: TypeEffectiveness.Resistant,
   },
   [Types.Ghost]: {
     [Types.Normal]: TypeEffectiveness.Immune,
@@ -231,10 +234,10 @@ export const TYPE_EFFECTIVENESS: Record<Types, { [type in Types]?: TypeEffective
     [Types.Dark]: TypeEffectiveness.Immune,
 
     [Types.Fighting]: TypeEffectiveness.Effective,
-    [Types.Ghost]: TypeEffectiveness.Effective,
+    [Types.Poison]: TypeEffectiveness.Effective,
 
     [Types.Steel]: TypeEffectiveness.Resistant,
-    [Types.Fairy]: TypeEffectiveness.Resistant,
+    [Types.Psychic]: TypeEffectiveness.Resistant,
   },
   [Types.Ice]: {
     [Types.Flying]: TypeEffectiveness.Effective,
@@ -258,9 +261,9 @@ export const TYPE_EFFECTIVENESS: Record<Types, { [type in Types]?: TypeEffective
     [Types.Psychic]: TypeEffectiveness.Effective,
     [Types.Ghost]: TypeEffectiveness.Effective,
 
-    [Types.Fighting]: TypeEffectiveness.Effective,
-    [Types.Dragon]: TypeEffectiveness.Effective,
-    [Types.Fairy]: TypeEffectiveness.Effective,
+    [Types.Fighting]: TypeEffectiveness.Resistant,
+    [Types.Dark]: TypeEffectiveness.Resistant,
+    [Types.Fairy]: TypeEffectiveness.Resistant,
   },
   [Types.Fairy]: {
     [Types.Fighting]: TypeEffectiveness.Effective,
@@ -268,9 +271,58 @@ export const TYPE_EFFECTIVENESS: Record<Types, { [type in Types]?: TypeEffective
     [Types.Dark]: TypeEffectiveness.Effective,
 
     [Types.Poison]: TypeEffectiveness.Resistant,
-    [Types.Ghost]: TypeEffectiveness.Resistant,
     [Types.Steel]: TypeEffectiveness.Resistant,
+    [Types.Fire]: TypeEffectiveness.Resistant,
   },
   [Types.Stellar]: {},
   [Types.Unknown]: {},
 };
+
+export interface TypeMatchups {
+  /** What it hits for double */
+  strong: Types[];
+  /** What hits it for double */
+  weak: Types[];
+  /** What it takes half from */
+  resists: Types[];
+  /** What cannot touch it at all */
+  immune: Types[];
+}
+
+/**
+ * How a type fares both ways round: what it is good against, and what
+ * is good against it.
+ *
+ * The chart is written attacker first, so the attacking half is one
+ * row and the defending half is a scan down a column. Worked out once
+ * per type and kept, since the chart never changes
+ */
+const MATCHUPS = new Map<Types, TypeMatchups>();
+
+export function getTypeMatchups(type: Types): TypeMatchups {
+  const known = MATCHUPS.get(type);
+
+  if (known != null) {
+    return known;
+  }
+
+  const found: TypeMatchups = { strong: [], weak: [], resists: [], immune: [] };
+
+  for (const [key, row] of Object.entries(TYPE_EFFECTIVENESS)) {
+    const attacking: Types = Number(key);
+
+    if (row[type] === TypeEffectiveness.Effective) {
+      found.weak.push(attacking);
+    } else if (row[type] === TypeEffectiveness.Resistant) {
+      found.resists.push(attacking);
+    } else if (row[type] === TypeEffectiveness.Immune) {
+      found.immune.push(attacking);
+    }
+
+    if (TYPE_EFFECTIVENESS[type][attacking] === TypeEffectiveness.Effective) {
+      found.strong.push(attacking);
+    }
+  }
+  MATCHUPS.set(type, found);
+  return found;
+}

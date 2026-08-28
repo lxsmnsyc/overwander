@@ -38,6 +38,7 @@ function backgroundOf(
   sprite: BasicSprite,
   frame: BasicSpriteImage,
   scale: number,
+  rendering: NonNullable<JSX.CSSProperties['image-rendering']>,
 ): JSX.CSSProperties {
   return {
     position: 'absolute',
@@ -49,7 +50,7 @@ function backgroundOf(
     'background-position': `${-frame.x * scale}px ${-frame.y * scale}px`,
     'background-size': `${sprite.data.width * scale}px ${sprite.data.height * scale}px`,
     'background-repeat': 'no-repeat',
-    'image-rendering': 'pixelated',
+    'image-rendering': rendering,
   };
 }
 
@@ -64,7 +65,11 @@ function backgroundOf(
  * against what is left over — the sheet minus one frame — rather than
  * against the sheet
  */
-function fillingOf(sprite: BasicSprite, frame: BasicSpriteImage): JSX.CSSProperties {
+function fillingOf(
+  sprite: BasicSprite,
+  frame: BasicSpriteImage,
+  rendering: NonNullable<JSX.CSSProperties['image-rendering']>,
+): JSX.CSSProperties {
   const share = (part: number, whole: number): string =>
     `${whole <= 0 ? 0 : (part / whole) * 100}%`;
 
@@ -84,7 +89,7 @@ function fillingOf(sprite: BasicSprite, frame: BasicSpriteImage): JSX.CSSPropert
       frame.height,
     )}`,
     'background-repeat': 'no-repeat',
-    'image-rendering': 'pixelated',
+    'image-rendering': rendering,
   };
 }
 
@@ -110,11 +115,19 @@ export interface AtlasSpriteProps {
    */
   fill?: boolean;
   /**
+   * Whether the picture is resampled rather than blocked up when it is
+   * drawn at another size. It is for a sheet that was not drawn as
+   * pixel art, where nearest-neighbour turns a curve into a stair
+   */
+  smooth?: boolean;
+  /**
    * What a screen reader is told. An empty string is for a caller that
    * has already written the name beside the picture, so the row is not
    * read out twice
    */
   label?: string;
+  /** What a pointer resting on it is told, where the name is not written beside it */
+  title?: string;
   class?: string;
 }
 
@@ -176,11 +189,14 @@ export default function AtlasSprite(props: AtlasSpriteProps): JSX.Element {
           height: `${cell().height * scale()}px`,
         };
 
+  const rendering = (): NonNullable<JSX.CSSProperties['image-rendering']> => (props.smooth === true ? 'auto' : 'pixelated');
+
   return (
     <span
       role="img"
       aria-label={props.label ?? props.name}
       aria-hidden={props.label === '' ? true : undefined}
+      title={props.title}
       style={box()}
       class={`relative block shrink-0 overflow-hidden ${props.class ?? ''}`}
     >
@@ -191,8 +207,8 @@ export default function AtlasSprite(props: AtlasSpriteProps): JSX.Element {
               <span
                 style={
                   props.fill === true
-                    ? fillingOf(loaded(), drawn())
-                    : backgroundOf(loaded(), drawn(), scale())
+                    ? fillingOf(loaded(), drawn(), rendering())
+                    : backgroundOf(loaded(), drawn(), scale(), rendering())
                 }
               />
             )}

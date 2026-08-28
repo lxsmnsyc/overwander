@@ -5,16 +5,19 @@ import {
   getCatchSlots,
   isFavorite,
   isGuarded,
+  isShadow,
   isShiny,
 } from '../../auth/caught-record';
 import { isEgg } from '../../auth/egg';
 import { getMaxHealth, isFainted } from '../../auth/health';
 import getSigil from '../../data/constants/sigil';
-import { LockIcon, SparklesIcon, StarIcon } from '../icons';
+import { LockIcon, MoonIcon, SparklesIcon, StarIcon } from '../icons';
 import { MAX_IV_STARS, getIVStars } from '../../data/constants/stats';
 import { Slots } from '../../data/constants/slots';
 import type { Items } from '../../data/ids/items';
 import { NATURE_NAMES } from '../../data/ids/natures';
+import { getSpeciesData } from '../../data/species';
+import TypeBadge from '../sprites/TypeBadge';
 import { describeMove, detailAbility } from '../details';
 import { GENDER_LABELS, GENDER_MARKS } from './catch-summary';
 import MoveHoverCard from '../moves/MoveHoverCard';
@@ -37,6 +40,12 @@ import { Button, HoverCard, Meta, TooltipHost } from '../styled';
  * column of them still fits the card's third
  */
 const ITEM_SPRITE = 24;
+
+/**
+ * How big the type sigils are drawn. They share a line with words, so
+ * they are cut to the line rather than to the size they are elsewhere
+ */
+const TYPE_SIGIL = 16;
 
 export interface CatchCardProps {
   caught: CaughtPokemon;
@@ -100,33 +109,45 @@ export default function CatchCard(props: CatchCardProps): JSX.Element {
     // No frame of its own: it is shown inside a window that already
     // has one, and two borders around one pokemon reads as two cards
     <div class={`flex w-full flex-col gap-1.5 text-left text-xs ${props.class ?? ''}`}>
-      {/* What its owner calls it, against the mark that says which
-          individual it is: two of the same species with the same sigil
-          are the same pokemon. Centred rather than sat on a baseline,
-          since the marks in front of the name are pictures and a
-          picture has no baseline to share with the words beside it */}
-      <div class="flex items-center justify-between gap-1">
-        <span class="flex min-w-0 items-center gap-1">
-          {/* What the square says in its corners, said here in front
-              of the name: a card read at a glance should answer "is
-              it shiny, is it kept, is it put away" without being
-              read through */}
-          <Show when={!egg() && isShiny(caught())}>
-            <SparklesIcon aria-hidden="true" class="size-3.5 shrink-0 text-gold" />
-          </Show>
-          <Show when={isGuarded(caught())}>
-            <LockIcon aria-hidden="true" class="size-3.5 shrink-0 text-tide" />
-          </Show>
-          <Show when={isFavorite(caught())}>
-            <StarIcon aria-hidden="true" class="size-3.5 shrink-0 text-gold" />
-          </Show>
-          <strong class="truncate">{egg() ? 'Egg' : getCatchName(caught())}</strong>
-        </span>
-        <Show when={!egg()}>
+      {/* The two rolls it was made from, one at each end: how well it
+          rolled, and the mark that says which individual it is. Two of
+          the same species with the same sigil are the same pokemon.
+          An egg has neither yet */}
+      <Show when={!egg()}>
+        <div class="flex items-center justify-between gap-1">
+          <span
+            role="img"
+            aria-label={`${getIVStars(caught().ivs)} of ${MAX_IV_STARS} stars`}
+            class="shrink-0 tracking-[0.2em] text-gold"
+          >
+            {stars()}
+          </span>
           <Meta class="shrink-0 font-mono tracking-[0.15em]">
             {getSigil(caught().individualValue, caught().traitValue)}
           </Meta>
+        </div>
+      </Show>
+
+      {/* What its owner calls it, behind the marks the square says in
+          its corners: a card read at a glance should answer "is it
+          shiny, is it shadowed, is it kept, is it put away" without
+          being read through. Centred rather than sat on a baseline,
+          since a mark is a picture and a picture has no baseline to
+          share with the words beside it */}
+      <div class="flex min-w-0 items-center gap-1">
+        <Show when={!egg() && isShiny(caught())}>
+          <SparklesIcon aria-hidden="true" class="size-3.5 shrink-0 text-gold" />
         </Show>
+        <Show when={!egg() && isShadow(caught())}>
+          <MoonIcon aria-hidden="true" class="size-3.5 shrink-0 text-arcane" />
+        </Show>
+        <Show when={isFavorite(caught())}>
+          <StarIcon aria-hidden="true" class="size-3.5 shrink-0 text-gold" />
+        </Show>
+        <Show when={isGuarded(caught())}>
+          <LockIcon aria-hidden="true" class="size-3.5 shrink-0 text-tide" />
+        </Show>
+        <strong class="min-w-0 truncate">{egg() ? 'Egg' : getCatchName(caught())}</strong>
       </div>
 
       {/* An egg says nothing about what is inside it — that is the
@@ -145,27 +166,23 @@ export default function CatchCard(props: CatchCardProps): JSX.Element {
           </>
         }
       >
-        {/* The nature rather than the species: the line above already
-            says what it is called, and a nature is the one thing about
-            an individual that changes how it fights. How well it rolled
-            ends the same line, pinned to the right — coarsely, since
-            the six numbers are on the sheet and a card is for deciding
-            whether to open one */}
-        <div class="flex items-baseline gap-1">
+        {/* What it brings to a fight: what it fights as, then how far
+            along it is, which one it is, and how it is inclined. The
+            species is not named again, since the line above has just
+            said it */}
+        <div class="flex items-center gap-1">
+          <span class="flex shrink-0 items-center gap-0.5">
+            <For each={getSpeciesData(caught().species).types}>
+              {(type) => <TypeBadge type={type} size={TYPE_SIGIL} />}
+            </For>
+          </span>
           <span class="shrink-0 text-muted">Lv. {caught().level}</span>
-          <span class="truncate">{NATURE_NAMES[caught().nature]}</span>
           <Show when={GENDER_MARKS[caught().gender] !== ''}>
             <span class="shrink-0" role="img" aria-label={GENDER_LABELS[caught().gender]}>
               {GENDER_MARKS[caught().gender]}
             </span>
           </Show>
-          <span
-            role="img"
-            aria-label={`${getIVStars(caught().ivs)} of ${MAX_IV_STARS} stars`}
-            class="ml-auto shrink-0 tracking-[0.2em] text-gold"
-          >
-            {stars()}
-          </span>
+          <span class="truncate">{NATURE_NAMES[caught().nature]}</span>
         </div>
 
         <div class="flex items-center gap-1">

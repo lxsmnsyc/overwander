@@ -174,7 +174,7 @@ the walk, so an egg carried past midnight keeps what it banked and goes back to
 ordinary paces.
 
 A raid cleared on the featured family's own day hands over a pokemon whose
-individual stats are all at least 6, so nothing won that day is hopeless.
+individual stats are all at least 10, so nothing won that day is hopeless.
 
 ## Weather
 
@@ -194,14 +194,16 @@ A few skies are showpieces and turn up rarely and in one place at a time: an
 **aurora** over the far north, a **rainbow** over open water, a **meteor
 shower** over a desert or an open sea, and **pollen drift** through a forest.
 
-**What weather is worth.** A pokemon met under weather comes with a floor of
-**5 under every one of its six values**, so the worst it can roll is a good deal
-better than the worst it could roll under a clear sky.
+**What weather is worth.** Every sky is kind to a type or two, and a pokemon of a
+type its sky favours comes with a floor of **10 under every one of its six
+values**. Everything else met in that weather rolls exactly as it would have
+under a clear sky: rain is worth walking into for a Water type, not for whatever
+happens to be standing in it.
 
-Every sky is kind to a type or two, and one met by a type the sky favours carries
-**10** instead. Rain favours Water and Electric, mist favours Bug and Grass, fog
-favours Ghost, Dark and Psychic, and so on down every one of the eighteen types:
-whatever a player is raising, there is weather worth going out in for it.
+Rain favours Water and Electric, a breeze favours Flying, cloud favours Normal,
+mist favours Bug, Grass and Poison, fog favours Ghost, Dark and Psychic, and so on
+down every one of the eighteen types: whatever a player is raising, there is
+weather worth going out in for it.
 
 The pairings follow how often a sky actually turns up rather than only what it
 looks like. This world is wet and cold, so damp skies are common and storms are
@@ -209,12 +211,13 @@ rare, and a type paired with nothing but a sandstorm would be a type nobody is
 ever boosted for. The commonest boosted type comes up about five times as often
 as the rarest, not fifty.
 
-Floors **stack**. A raid on the family's own day already carries a floor of 6, so
-one fought under weather carries **11**, and **16** if the sky favours its type,
-which makes a wet family day the best day to raid.
+Floors **stack**. A raid on the family's own day already carries a floor of 10, so
+one fought under a sky that favours its type carries **20**, which makes the
+right weather on the family's own day the best day to raid.
 
-Plain skies do not boost: clear, cloudy and breezy are the ordinary weather, and
-about half of all windows are one of them.
+One sky favours nothing at all. A clear afternoon is the ordinary weather and
+about two windows in five are one, which is what makes the rest worth walking
+into.
 
 **Weather in a fight.** A trainer met out in the world is fought under the sky
 that was over them, so rain falls on the field and does to the fight what rain

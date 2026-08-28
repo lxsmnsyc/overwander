@@ -7,7 +7,6 @@ import Weather, {
   WEATHER_MIN_IV,
   WEATHER_NAMES,
   WEATHER_TYPES,
-  WEATHER_TYPE_MIN_IV,
   classifyWeather,
   isBoostingWeather,
   toBattleWeather,
@@ -94,10 +93,16 @@ describe('classifying a sky', () => {
 
   it('boosts everything but the plain skies', () => {
     expect(isBoostingWeather(Weather.Clear)).toBe(false);
-    expect(isBoostingWeather(Weather.Cloudy)).toBe(false);
+    // A wind is worth something to the things that ride it, and an
+    // ordinary grey day to the ordinary things
+    expect(isBoostingWeather(Weather.Breezy)).toBe(true);
+    expect(isBoostingWeather(Weather.Cloudy)).toBe(true);
     expect(isBoostingWeather(Weather.Rain)).toBe(true);
     expect(isBoostingWeather(Weather.Aurora)).toBe(true);
-    expect(WEATHER_MIN_IV).toBe(5);
+    expect(WEATHER_MIN_IV).toBe(10);
+    // What a sky boosts is its own types and nothing else, so a plain
+    // sky is one that favours nobody
+    expect(WEATHER_TYPES[Weather.Clear]).toEqual([]);
   });
 });
 
@@ -198,11 +203,12 @@ describe('what weather is worth', () => {
   it('leaves a pokemon met under a plain sky exactly as it rolled', () => {
     expect(valuesOf(undefined)).toEqual([0, 0, 0, 0, 0, 0]);
     expect(valuesOf(Weather.Clear)).toEqual([0, 0, 0, 0, 0, 0]);
-    expect(valuesOf(Weather.Cloudy)).toEqual([0, 0, 0, 0, 0, 0]);
   });
 
-  it('puts a floor under every value of one met under weather', () => {
-    for (const sky of [Weather.Rain, Weather.Snow, Weather.Fog, Weather.Aurora]) {
+  it('puts a floor under every value of one the sky favours', () => {
+    // Rattata is Normal, and cloud, dust and overcast are the skies
+    // that favour Normal
+    for (const sky of [Weather.Cloudy, Weather.DustHaze, Weather.Overcast]) {
       expect(valuesOf(sky)).toEqual([
         WEATHER_MIN_IV,
         WEATHER_MIN_IV,
@@ -214,17 +220,19 @@ describe('what weather is worth', () => {
     }
   });
 
-  it('is worth twice as much to a type the sky is kind to', () => {
-    // Rattata is Normal, and dust is the sky that favours Normal
-    expect(valuesOf(Weather.DustHaze)[0]).toBe(WEATHER_MIN_IV + WEATHER_TYPE_MIN_IV);
-    // Rain is worth going out in for a Water type, and a rat is not one
-    expect(valuesOf(Weather.Rain)[0]).toBe(WEATHER_MIN_IV);
+  it('is worth nothing to a pokemon the sky is not about', () => {
+    // Rain is worth walking into for a Water type, and a rat is not
+    // one. A floor under everything met in the rain would be a floor
+    // under the whole game
+    for (const sky of [Weather.Rain, Weather.Snow, Weather.Fog, Weather.Aurora]) {
+      expect(valuesOf(sky)).toEqual([0, 0, 0, 0, 0, 0]);
+    }
   });
 
   it('stacks with the family day rather than being beaten by it', () => {
     // A raid on the family's own day is already worth a floor; fought
-    // under weather it is worth both, which is what makes a wet family
-    // day the best day to raid
+    // under a sky that favours it, it is worth both, which is what
+    // makes the right weather on the right day the best day to raid
     // The day of the year that matches the family's own number is the
     // day it is featured on, which is the whole of the rule
     const day = new ChunkSnapshot(
@@ -241,7 +249,9 @@ describe('what weather is worth', () => {
       );
 
     expect(prize(undefined)).toBe(RAID_FAMILY_DAY_MIN_IV);
-    expect(prize(Weather.Rain)).toBe(RAID_FAMILY_DAY_MIN_IV + WEATHER_MIN_IV);
+    // A rat is Normal, so dust is the sky its raid is worth more under
+    expect(prize(Weather.Rain)).toBe(RAID_FAMILY_DAY_MIN_IV);
+    expect(prize(Weather.DustHaze)).toBe(RAID_FAMILY_DAY_MIN_IV + WEATHER_MIN_IV);
   });
 
   it('never floors a pokemon above what the game can roll', () => {
@@ -302,7 +312,7 @@ describe('the types a sky is kind to', () => {
   });
 
   it('leaves the plain skies favouring nothing, which is what makes them plain', () => {
-    for (const sky of [Weather.Clear, Weather.Cloudy, Weather.Breezy]) {
+    for (const sky of [Weather.Clear]) {
       expect(WEATHER_TYPES[sky]).toEqual([]);
       expect(isBoostingWeather(sky)).toBe(false);
     }

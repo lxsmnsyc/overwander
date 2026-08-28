@@ -1,7 +1,6 @@
 # TODOS
 
 - [ ] Remaining Held Items
-- [ ] overworld weather
 - [ ] add Jeweler
 - [ ] add Archaeologist
 - [ ] adjacent chunk preload

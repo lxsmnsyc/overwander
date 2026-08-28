@@ -11,9 +11,9 @@ import { Weathers } from '../ids/status';
  * hour sees the same sky without asking the server, which is the rule
  * every other feature of a chunk follows.
  *
- * It reaches the game in two ways. A pokemon met under weather comes
- * with a floor under every one of its values, so a wet afternoon is
- * worth going out in. A trainer met out on the road is fought under
+ * It reaches the game in two ways. A pokemon of a type the sky
+ * favours comes with a floor under every one of its values, so a wet
+ * afternoon is worth going out in for the things rain is about. A trainer met out on the road is fought under
  * the sky that was over the road, which is the only kind of fight the
  * weather reaches: a raid, a duel and a league seat are all fought
  * under a clear sky whatever the world was doing. That one fight
@@ -84,9 +84,9 @@ export const WEATHER_NAMES: Record<Weather, string> = {
  */
 export const WEATHER_DESCRIPTIONS: Record<Weather, string> = {
   [Weather.Clear]: 'An ordinary sky, and the one nothing is boosted under.',
-  [Weather.Cloudy]: 'Cloud with no weather in it.',
+  [Weather.Cloudy]: 'Cloud, and an ordinary day under it.',
   [Weather.Overcast]: 'A flat grey lid over the chunk.',
-  [Weather.Breezy]: 'Moving air and nothing more.',
+  [Weather.Breezy]: 'A steady wind across the chunk.',
   [Weather.Drizzle]: 'Light rain.',
   [Weather.Rain]: 'Steady rain.',
   [Weather.Downpour]: 'Rain coming down hard.',
@@ -128,14 +128,14 @@ export const WEATHER_DESCRIPTIONS: Record<Weather, string> = {
  */
 export const WEATHER_TYPES: Record<Weather, Types[]> = {
   [Weather.Clear]: [],
-  [Weather.Cloudy]: [],
-  [Weather.Breezy]: [],
+  [Weather.Cloudy]: [Types.Normal],
+  [Weather.Breezy]: [Types.Flying],
   [Weather.Overcast]: [Types.Dark, Types.Normal],
   [Weather.Drizzle]: [Types.Water, Types.Grass],
   [Weather.Rain]: [Types.Water, Types.Electric],
   [Weather.Downpour]: [Types.Water, Types.Grass],
-  [Weather.Thunderstorm]: [Types.Electric, Types.Dragon, Types.Flying],
-  [Weather.Mist]: [Types.Bug, Types.Grass],
+  [Weather.Thunderstorm]: [Types.Electric, Types.Dragon],
+  [Weather.Mist]: [Types.Bug, Types.Grass, Types.Poison],
   [Weather.Fog]: [Types.Ghost, Types.Dark, Types.Psychic],
   [Weather.Haze]: [Types.Fire, Types.Poison],
   [Weather.Frost]: [Types.Ice, Types.Steel],
@@ -153,12 +153,14 @@ export const WEATHER_TYPES: Record<Weather, Types[]> = {
 };
 
 /**
- * What a sky is worth to the types it favours, on top of the floor
- * every boosting sky carries. A Water type met in rain comes out at
- * ten rather than five: going out in the right weather for what you
- * are looking for is the whole of the reward
+ * The lowest every value comes out at for a pokemon the sky favours.
+ *
+ * It is worth something only to what the weather is actually about: a
+ * rat met in the rain is a rat, and a Water type met in it is the
+ * reason to go out. Rain over everything would be a floor under the
+ * whole game rather than a reason to walk anywhere
  */
-export const WEATHER_TYPE_MIN_IV = 5;
+export const WEATHER_MIN_IV = 10;
 
 /** Whether this sky is kind to a pokemon carrying these types */
 export function isWeatherFavored(weather: Weather, types: Types[]): boolean {
@@ -166,17 +168,6 @@ export function isWeatherFavored(weather: Weather, types: Types[]): boolean {
 
   return types.some((type) => favored.has(type));
 }
-
-/**
- * The lowest every value of a pokemon met under weather comes out at.
- *
- * It is the whole of what weather is worth, so it has to be worth
- * something: a floor of five puts the worst possible roll a sixth of
- * the way up rather than at nothing. It **stacks** with the family
- * day's own floor rather than being beaten by it, so a raid on the
- * right day fought under weather is worth both
- */
-export const WEATHER_MIN_IV = 5;
 
 /**
  * The skies a biome can show, one per reading of the two channels.
@@ -492,13 +483,13 @@ export function classifyWeather(biome: Biome, wetness: number, energy: number): 
 }
 
 /**
- * Whether a sky is worth going out in.
+ * Whether a sky is worth going out in at all, for somebody.
  *
- * Everything but the plain skies boosts what is met under it. A clear
- * afternoon has to be the ordinary case or the floor is not a boost at
- * all, it is the game
+ * It says nothing about any one pokemon: what a sky is worth is worth
+ * only to the types it favours. Callers deciding a floor want
+ * `isWeatherFavored`
  */
-const PLAIN = new Set<Weather>([Weather.Clear, Weather.Cloudy, Weather.Breezy]);
+const PLAIN = new Set<Weather>([Weather.Clear]);
 
 export function isBoostingWeather(weather: Weather): boolean {
   return !PLAIN.has(weather);

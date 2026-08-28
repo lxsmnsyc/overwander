@@ -136,7 +136,7 @@ Two of the encounter's own fields are worth calling out:
   keeps the ability for good.
 
 A raid reward derived on its family's own day floors every IV at
-`RAID_FAMILY_DAY_MIN_IV` (6), leaving rolls above the floor alone. Its level is
+`RAID_FAMILY_DAY_MIN_IV` (10), leaving rolls above the floor alone. Its level is
 fixed rather than rolled, `LEGENDARY_RAID_REWARD_LEVEL` (50) or
 `SHADOW_RAID_REWARD_LEVEL` (25), so clearing the same kind of raid is worth the
 same to everyone, and the level-up moves follow that level.

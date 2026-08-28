@@ -132,6 +132,7 @@ import deriveEncounter, {
   MAX_SIZE_SCALE,
   MIN_SIZE_SCALE,
   MOVE_LIMIT,
+  RAID_FAMILY_DAY_MIN_IV,
   SPAWN_LEVELS,
   deriveAbility,
   deriveMoves,
@@ -2938,7 +2939,7 @@ describe('chunk snapshot', () => {
     expect(deriveSize(Species.Gastly, traitValue).weight).toBeGreaterThan(0);
   });
 
-  it('floors a family-day raid reward at six in every IV', () => {
+  it('floors a family-day raid reward at ten in every IV', () => {
     const world = new World('overworld');
     // The first day of the year features Bulbasaur's family
     const day = Date.UTC(2026, 0, 1);
@@ -2950,7 +2951,14 @@ describe('chunk snapshot', () => {
       type: EncounterType.LegendaryRaid,
     });
 
-    expect(Object.values(unpackIVs(raid.ivs))).toEqual([6, 6, 6, 6, 6, 6]);
+    expect(Object.values(unpackIVs(raid.ivs))).toEqual([
+      RAID_FAMILY_DAY_MIN_IV,
+      RAID_FAMILY_DAY_MIN_IV,
+      RAID_FAMILY_DAY_MIN_IV,
+      RAID_FAMILY_DAY_MIN_IV,
+      RAID_FAMILY_DAY_MIN_IV,
+      RAID_FAMILY_DAY_MIN_IV,
+    ]);
 
     // Only raids on the family's own day get the floor
     const wild = deriveEncounter(snapshot, [...spawn], 'trainer-red');

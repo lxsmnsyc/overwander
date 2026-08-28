@@ -39,11 +39,25 @@ and the button that buys or sells it at the price on the square.
 
 ### What he sells
 
-Six kinds of item, drawn from the balls and the medicine. Two are always the same
-— a **Poke Ball** and a **Potion** — and the other four vary. What he carries is
-part of who walked up rather than anything a player can influence, and every
-player who reaches him in that window is offered the same six. A player who wants
-an Ultra Ball walks until they find somebody carrying one.
+A stall sets up **one counter** per window, drawn from five:
+
+| Counter          | What is on it                                                |
+| ---------------- | ------------------------------------------------------------ |
+| **Balls**        | Every ball with a price, opening with a Poke Ball            |
+| **Medicine**     | Potions, cures, revives and the herbs, opening with a Potion |
+| **Vitamins**     | The six vitamins, and the PP Ups                             |
+| **Incenses**     | The incenses a buddy carries                                 |
+| **Battle items** | The one-fight boosters                                       |
+
+Six kinds off that counter, drawn without repeats. The balls and the medicine
+open with a staple, a **Poke Ball** and a **Potion**, and everything else varies.
+What a stall carries is part of who set it up rather than anything a player can
+influence, and every player who reaches it in that window is offered the same six.
+A player who wants an Ultra Ball walks until they find a ball counter carrying
+one.
+
+The counter is rolled apart from the crate, so a shelf added to the game later
+does not reshuffle every stall in the world.
 
 Prices are the same from every vendor in the world.
 
@@ -96,6 +110,9 @@ he sells is the lesson without the hunt for the disc.
 treats, six of them a window. Like the vendor, he serves as often as a purse
 holds out rather than once per window.
 
+A trade moves at most **99** of one kind at a time, which is a guard against a
+slipped keyboard rather than a rule: gold is the real limit.
+
 **The Fossil Maniac** is the only source of a fossil other than the ground
 itself. He carries **two of the three** and will part with **one** while he is
 standing there, so a player after a particular fossil waits for it or walks
@@ -116,8 +133,11 @@ Every player fights the grunt separately. One player's victory closes nothing fo
 anybody else, and losing costs nothing but the attempt: the grunt is still
 standing and may be challenged again until the three hours are up.
 
-Beating one pays **500 gold** and leaves behind one of the two commoners it
-fielded — never the rare one — shadowed and at level 10.
+Beating one pays a purse rolled between **1,000 and 10,000 gold**, drawn per
+winner so the same grunt is worth a different amount to the next player, and
+leaves behind one of the two commoners it fielded, never the rare one, shadowed
+and at level 10. **Giovanni**, who fields six with a legendary among them, pays
+between 10,000 and 50,000.
 
 The grunt is the one person at a crossroads a player can lose to. See
 [Battles](battles.md) for how the fight itself runs.
@@ -126,7 +146,9 @@ The grunt is the one person at a crossroads a player can lose to. See
 
 A **trainer cell** is its own landmark rather than a wanderer's crossroads, and
 whoever is standing on it changes with the same three-hour window. They fight
-fair: nothing they field is a shadow, and a win costs them only the purse.
+fair: nothing they field is a shadow, and a win costs them only the purse, which
+is rolled between **1,000 and 10,000** per winner. They keep their party, so
+nothing is handed over.
 
 Who turns up decides what they bring:
 
@@ -145,6 +167,24 @@ wherever they are met, and it is drawn from the whole region rather than from th
 country they are standing in.
 
 The **Ace Trainer** belongs to no country and may turn up anywhere.
+
+## The league
+
+Three more landmarks fight rather than help, and each is worth something that is
+kept for good.
+
+| Who            | What they field                 | What beating them is worth                        |
+| -------------- | ------------------------------- | ------------------------------------------------- |
+| **Gym leader** | Six of their gym's type, 45-65  | Their badge, a purse, and a machine of their type |
+| **Elite Four** | Six of their seat's type, 65-85 | Their mark, and a purse                           |
+| **Champion**   | Six of anything, 85-100         | The region's title, and 10,000 to 50,000          |
+
+A member of the **Elite Four** will not fight anybody who is not carrying all
+eight badges, and the **Champion** asks for all four of their marks first.
+
+An award is earned once. Every later win over the same leader counts on the shelf
+and pays its purse again, and a gym leader's machine is rolled per winner, so a
+second visit is worth going to. See [Awards and titles](awards.md).
 
 Beating them is counted for life, class by class. Enough wins over one class earns
 that class' own **title** to wear on the profile, from **Bronze** on its

@@ -78,6 +78,7 @@ with a description saying where the pictures are.
 | `public/sprites/coats.json`               | Which coats each pokemon has, and the stamp of what is on disk       |
 | `public/sprites/ui/items`                 | Item icons, one sheet per kind — balls, berries, medicine, plates    |
 | `public/sprites/ui/move-categories`       | The three marks a move's category is shown by                        |
+| `public/sprites/ui/types`                 | The eighteen sigils a type is shown by                               |
 
 Sheets are filed by region — `kanto` for the first 151, `unknown` for Missingno,
 the egg and the substitute — and which region a pokemon belongs to comes from its
@@ -114,7 +115,8 @@ today's description.
 | `pokemon/regular`, `pokemon/shiny` | [PMDCollab/SpriteCollab](https://github.com/PMDCollab/SpriteCollab) | CC BY-NC — attribution, **non-commercial**                                                     |
 | `pokemon/meta`                     | Derived from the same collection's `AnimData.xml` and `Offsets.png` | The same terms as the sprites it describes                                                     |
 | `ui/items`                         | [msikma/pokesprite](https://github.com/msikma/pokesprite)           | Sprite images © Nintendo/Creatures Inc./GAME FREAK Inc.; that repo's own code and data are MIT |
-| `ui/move-categories`               | Not recorded yet                                                    | Unknown                                                                                        |
+| `ui/move-categories`               | [msikma/pokesprite](https://github.com/msikma/pokesprite)           | The same terms                                                                                 |
+| `ui/types`                         | [msikma/pokesprite](https://github.com/msikma/pokesprite)           | The same terms                                                                                 |
 
 **SpriteCollab** is the Pokémon Mystery Dungeon sprite collection this game's
 pokemon are animated from. The drawings themselves, the frame durations and the
@@ -127,11 +129,13 @@ the names in the collection's `credit_names.txt`. The 164 sheets that ship —
 Kanto's 161 plus the three under `unknown` — are credited there, most of them to
 **CHUNSOFT**, whose games the sprites are drawn from.
 
-**pokesprite** is where the item icons come from: 32×32 inventory sprites, named
-the way that project names them, which is why an `Exp. Share` is `exp-share.png`
-on the `held` sheet. Its README is explicit that the code is MIT and **the sprite
-images are not** — they are © Nintendo/Creatures Inc./GAME FREAK Inc., like the
-names in `src/data`.
+**pokesprite** is where every icon in the interface comes from. The item icons
+are its 32×32 inventory sprites, named the way that project names them, which is
+why an `Exp. Share` is `exp-share.png` on the `held` sheet. The eighteen **type
+badges** and the three **move category marks**, physical, special and status, are
+its `misc` set. Its README is explicit that the code and the data are MIT and
+**the sprite images are not**: they are © Nintendo/Creatures Inc./GAME FREAK
+Inc., like the names in `src/data`.
 
 ### Pokengine community
 
@@ -146,116 +150,116 @@ land in `public/` without its artist landing here. A sheet missing from the
 table predates the step and came from ripped Gen 4 overworlds; those are being
 replaced.
 
-| Sheet | Credit |
-| ----- | ------ |
-| `characters/extra/nurse` | kyledove |
-| `characters/frlg/ace-trainer-f` | kyledove |
-| `characters/frlg/ace-trainer-m` | kyledove |
-| `characters/frlg/agatha` | kyledove |
-| `characters/frlg/beauty` | kyledove |
-| `characters/frlg/bill` | kyledove |
-| `characters/frlg/blaine` | kyledove |
-| `characters/frlg/blue` | kyledove |
-| `characters/frlg/brock` | kyledove |
-| `characters/frlg/bruno` | kyledove |
-| `characters/frlg/bug-catcher` | kyledove |
-| `characters/frlg/camper-f` | kyledove |
-| `characters/frlg/camper-m` | kyledove |
-| `characters/frlg/captain` | kyledove |
-| `characters/frlg/captain-2` | kyledove |
-| `characters/frlg/chef` | kyledove |
-| `characters/frlg/crush-girl` | Ginzuishou |
-| `characters/frlg/daisy-oak` | kyledove |
-| `characters/frlg/erika` | kyledove |
-| `characters/frlg/gentleman` | kyledove |
-| `characters/frlg/giovanni` | kyledove |
-| `characters/frlg/hiker` | kyledove |
-| `characters/frlg/koga` | kyledove |
-| `characters/frlg/lady` | figyberries |
-| `characters/frlg/lance` | kyledove |
-| `characters/frlg/lass` | Kazan(TrainerRed) |
-| `characters/frlg/leaf` | kyledove |
-| `characters/frlg/lorelei` | PurpleZaffre |
-| `characters/frlg/man-1` | kyledove |
-| `characters/frlg/man-2` | kyledove |
-| `characters/frlg/man-3` | kyledove |
-| `characters/frlg/misty` | kyledove |
-| `characters/frlg/mr-fuji` | PurpleZaffre |
-| `characters/frlg/oak` | kyledove |
-| `characters/frlg/officer` | kyledove |
-| `characters/frlg/old-man` | kyledove |
-| `characters/frlg/red` | Jext |
-| `characters/frlg/rocker` | Jext |
-| `characters/frlg/roughneck` | SoundMS |
-| `characters/frlg/ruin-maniac` | kyledove |
-| `characters/frlg/sabrina` | kyledove |
-| `characters/frlg/sailor` | kyledove |
-| `characters/frlg/shop-keeper` | kyledove |
-| `characters/frlg/staff-member` | kyledove |
-| `characters/frlg/surge` | kyledove |
-| `characters/frlg/tamer` | Jext |
-| `characters/frlg/woman` | kyledove |
-| `characters/hgss/blaine` | Jext |
-| `characters/hgss/blue` | Jext |
-| `characters/hgss/brock` | Jext |
-| `characters/hgss/bruno` | Jext |
-| `characters/hgss/erika` | Jext |
-| `characters/hgss/giovanni` | Jext |
-| `characters/hgss/koga` | Jext |
-| `characters/hgss/lance` | Jext |
-| `characters/hgss/lance-2` | Jext |
-| `characters/hgss/misty` | Jext |
-| `characters/hgss/oak` | kyledove |
-| `characters/hgss/red` | Jext |
-| `characters/hgss/rocket-f` | Jext |
-| `characters/hgss/rocket-m` | Jext |
-| `characters/hgss/sabrina` | Jext |
-| `characters/hgss/surge` | Jext |
-| `characters/lgpe/ace-trainer` | PixelMister |
-| `characters/lgpe/agatha` | PurpleZaffre |
-| `characters/lgpe/bill` | kyledove |
-| `characters/lgpe/bird-keeper` | figyberries |
-| `characters/lgpe/black-belt` | kyledove |
-| `characters/lgpe/blaine` | kyledove |
-| `characters/lgpe/blue` | kyledove |
-| `characters/lgpe/brock` | kyledove |
-| `characters/lgpe/bruno` | kyledove |
-| `characters/lgpe/bug-catcher` | kyledove |
-| `characters/lgpe/burglar` | kyledove |
-| `characters/lgpe/camper` | kyledove |
-| `characters/lgpe/channeler` | kyledove |
-| `characters/lgpe/daisy-oak` | kyledove |
-| `characters/lgpe/engineer` | kyledove |
-| `characters/lgpe/erika` | kyledove |
-| `characters/lgpe/fisherman` | kyledove |
-| `characters/lgpe/gambler` | kyledove |
-| `characters/lgpe/gentleman` | kyledove |
-| `characters/lgpe/giovanni` | kyledove |
-| `characters/lgpe/gym-guide` | kyledove |
-| `characters/lgpe/hiker` | kyledove |
-| `characters/lgpe/juggler` | kyledove |
-| `characters/lgpe/koga` | kyledove |
-| `characters/lgpe/lance` | kyledove |
-| `characters/lgpe/lass` | figyberries |
-| `characters/lgpe/man` | kyledove |
-| `characters/lgpe/misty` | kyledove |
-| `characters/lgpe/oak` | kyledove |
-| `characters/lgpe/picnicker` | kyledove |
-| `characters/lgpe/poke-maniac` | kyledove |
-| `characters/lgpe/psychic` | kyledove |
-| `characters/lgpe/punk` | kyledove |
-| `characters/lgpe/red` | Kazan(Red) |
-| `characters/lgpe/rocker` | kyledove |
-| `characters/lgpe/roughneck` | kyledove |
-| `characters/lgpe/sabrina` | kyledove |
-| `characters/lgpe/sailor` | kyledove |
-| `characters/lgpe/scientist` | kyledove |
-| `characters/lgpe/super-nerd` | kyledove |
-| `characters/lgpe/surge` | kyledove |
-| `characters/lgpe/swimmer-f` | kyledove |
-| `characters/lgpe/swimmer-m` | kyledove |
-| `characters/lgpe/tamer` | kyledove |
-| `characters/lgpe/trace` | kyledove |
+| Sheet                           | Credit            |
+| ------------------------------- | ----------------- |
+| `characters/extra/nurse`        | kyledove          |
+| `characters/frlg/ace-trainer-f` | kyledove          |
+| `characters/frlg/ace-trainer-m` | kyledove          |
+| `characters/frlg/agatha`        | kyledove          |
+| `characters/frlg/beauty`        | kyledove          |
+| `characters/frlg/bill`          | kyledove          |
+| `characters/frlg/blaine`        | kyledove          |
+| `characters/frlg/blue`          | kyledove          |
+| `characters/frlg/brock`         | kyledove          |
+| `characters/frlg/bruno`         | kyledove          |
+| `characters/frlg/bug-catcher`   | kyledove          |
+| `characters/frlg/camper-f`      | kyledove          |
+| `characters/frlg/camper-m`      | kyledove          |
+| `characters/frlg/captain`       | kyledove          |
+| `characters/frlg/captain-2`     | kyledove          |
+| `characters/frlg/chef`          | kyledove          |
+| `characters/frlg/crush-girl`    | Ginzuishou        |
+| `characters/frlg/daisy-oak`     | kyledove          |
+| `characters/frlg/erika`         | kyledove          |
+| `characters/frlg/gentleman`     | kyledove          |
+| `characters/frlg/giovanni`      | kyledove          |
+| `characters/frlg/hiker`         | kyledove          |
+| `characters/frlg/koga`          | kyledove          |
+| `characters/frlg/lady`          | figyberries       |
+| `characters/frlg/lance`         | kyledove          |
+| `characters/frlg/lass`          | Kazan(TrainerRed) |
+| `characters/frlg/leaf`          | kyledove          |
+| `characters/frlg/lorelei`       | PurpleZaffre      |
+| `characters/frlg/man-1`         | kyledove          |
+| `characters/frlg/man-2`         | kyledove          |
+| `characters/frlg/man-3`         | kyledove          |
+| `characters/frlg/misty`         | kyledove          |
+| `characters/frlg/mr-fuji`       | PurpleZaffre      |
+| `characters/frlg/oak`           | kyledove          |
+| `characters/frlg/officer`       | kyledove          |
+| `characters/frlg/old-man`       | kyledove          |
+| `characters/frlg/red`           | Jext              |
+| `characters/frlg/rocker`        | Jext              |
+| `characters/frlg/roughneck`     | SoundMS           |
+| `characters/frlg/ruin-maniac`   | kyledove          |
+| `characters/frlg/sabrina`       | kyledove          |
+| `characters/frlg/sailor`        | kyledove          |
+| `characters/frlg/shop-keeper`   | kyledove          |
+| `characters/frlg/staff-member`  | kyledove          |
+| `characters/frlg/surge`         | kyledove          |
+| `characters/frlg/tamer`         | Jext              |
+| `characters/frlg/woman`         | kyledove          |
+| `characters/hgss/blaine`        | Jext              |
+| `characters/hgss/blue`          | Jext              |
+| `characters/hgss/brock`         | Jext              |
+| `characters/hgss/bruno`         | Jext              |
+| `characters/hgss/erika`         | Jext              |
+| `characters/hgss/giovanni`      | Jext              |
+| `characters/hgss/koga`          | Jext              |
+| `characters/hgss/lance`         | Jext              |
+| `characters/hgss/lance-2`       | Jext              |
+| `characters/hgss/misty`         | Jext              |
+| `characters/hgss/oak`           | kyledove          |
+| `characters/hgss/red`           | Jext              |
+| `characters/hgss/rocket-f`      | Jext              |
+| `characters/hgss/rocket-m`      | Jext              |
+| `characters/hgss/sabrina`       | Jext              |
+| `characters/hgss/surge`         | Jext              |
+| `characters/lgpe/ace-trainer`   | PixelMister       |
+| `characters/lgpe/agatha`        | PurpleZaffre      |
+| `characters/lgpe/bill`          | kyledove          |
+| `characters/lgpe/bird-keeper`   | figyberries       |
+| `characters/lgpe/black-belt`    | kyledove          |
+| `characters/lgpe/blaine`        | kyledove          |
+| `characters/lgpe/blue`          | kyledove          |
+| `characters/lgpe/brock`         | kyledove          |
+| `characters/lgpe/bruno`         | kyledove          |
+| `characters/lgpe/bug-catcher`   | kyledove          |
+| `characters/lgpe/burglar`       | kyledove          |
+| `characters/lgpe/camper`        | kyledove          |
+| `characters/lgpe/channeler`     | kyledove          |
+| `characters/lgpe/daisy-oak`     | kyledove          |
+| `characters/lgpe/engineer`      | kyledove          |
+| `characters/lgpe/erika`         | kyledove          |
+| `characters/lgpe/fisherman`     | kyledove          |
+| `characters/lgpe/gambler`       | kyledove          |
+| `characters/lgpe/gentleman`     | kyledove          |
+| `characters/lgpe/giovanni`      | kyledove          |
+| `characters/lgpe/gym-guide`     | kyledove          |
+| `characters/lgpe/hiker`         | kyledove          |
+| `characters/lgpe/juggler`       | kyledove          |
+| `characters/lgpe/koga`          | kyledove          |
+| `characters/lgpe/lance`         | kyledove          |
+| `characters/lgpe/lass`          | figyberries       |
+| `characters/lgpe/man`           | kyledove          |
+| `characters/lgpe/misty`         | kyledove          |
+| `characters/lgpe/oak`           | kyledove          |
+| `characters/lgpe/picnicker`     | kyledove          |
+| `characters/lgpe/poke-maniac`   | kyledove          |
+| `characters/lgpe/psychic`       | kyledove          |
+| `characters/lgpe/punk`          | kyledove          |
+| `characters/lgpe/red`           | Kazan(Red)        |
+| `characters/lgpe/rocker`        | kyledove          |
+| `characters/lgpe/roughneck`     | kyledove          |
+| `characters/lgpe/sabrina`       | kyledove          |
+| `characters/lgpe/sailor`        | kyledove          |
+| `characters/lgpe/scientist`     | kyledove          |
+| `characters/lgpe/super-nerd`    | kyledove          |
+| `characters/lgpe/surge`         | kyledove          |
+| `characters/lgpe/swimmer-f`     | kyledove          |
+| `characters/lgpe/swimmer-m`     | kyledove          |
+| `characters/lgpe/tamer`         | kyledove          |
+| `characters/lgpe/trace`         | kyledove          |
 
 > **What is still missing.** Three of the sheets under `pokemon` are not pokemon
 > — the Missingno placeholder, an egg and a substitute, numbered past a hundred

@@ -32,13 +32,13 @@ rolls first for a rarity band:
 
 ### The item pool
 
-| Band         | Contents                                                                                                                                                                                                                                    |
-| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Base**     | Poke, Great, Premier, Heal and Luxury Balls; Pearls, Stardust, shoal salt and shells, Pretty Wings, Tiny Mushrooms, Relic Copper; Black Sludge and a Sticky Barb; the everyday medicine; Energy and Heal Powder                             |
-| **Uncommon** | The eight utility balls; Big Pearls, Star Pieces, Big Mushrooms, Rare Bones, Relic Silver; Super and Hyper Potions, Full Heals, Energy Roots; Heart Scales; the six wings; the Everstone; the four weather rocks, Light Clay and a Big Root |
-| **Rare**     | The five evolution stones; Nuggets and the richer valuables; Max Potions, Full Restores, Revives, Revival Herbs; the species relics; the seventeen plates; Leftovers and a Shed Shell                                                       |
-| **Prized**   | Bottle Caps, the Purifying Gem, the Utility Belt, Max Revives, the Sacred Ash, the Portal Key, the Amulet Coin, all three fossils, the ruins                                                                                                |
-| **Special**  | Master Ball, Shiny Charm, Golden Bottle Cap, the raid relics, the Relic Crown                                                                                                                                                               |
+| Band         | Contents                                                                                                                                                                                                                                                                                                          |
+| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Base**     | Poke, Great, Premier, Heal and Luxury Balls; Pearls, Stardust, shoal salt and shells, Pretty Wings, Tiny Mushrooms, Relic Copper; Black Sludge and a Sticky Barb; the everyday medicine; Energy and Heal Powder                                                                                                   |
+| **Uncommon** | The eight utility balls; Big Pearls, Star Pieces, Big Mushrooms, Rare Bones, Relic Silver; Super and Hyper Potions, Full Heals, Energy Roots; Heart Scales; the six wings; the sixteen one-shot answers, from a Focus Sash to a Weakness Policy; the Everstone; the four weather rocks, Light Clay and a Big Root |
+| **Rare**     | The five evolution stones; Nuggets and the richer valuables; Max Potions, Full Restores, Revives, Revival Herbs; the species relics; the seventeen plates and the type-boosting gear; the choice items, the vest and the Eviolite; the three orbs; Leftovers, a Shed Shell and the rest of the battle gear        |
+| **Prized**   | Bottle Caps, the Purifying Gem, the Utility Belt, Max Revives, the Sacred Ash, the Portal Key, the Amulet Coin, the six power items, all three fossils, the ruins                                                                                                                                                 |
+| **Special**  | Master Ball, Shiny Charm, Golden Bottle Cap, the raid relics, the Relic Crown                                                                                                                                                                                                                                     |
 
 The line between rare and prized is **permanence**. Rare is where a walk turns up
 something that gets a party through the next fight: a stone, a Revive, a plate.
@@ -143,10 +143,41 @@ never used up: it works for as long as it is held.
 | **Shed Shell**             | Its holder can always flee, whatever is holding it                                |
 | **Sticky Barb**            | Costs its holder an eighth of its health a move, and sticks to whoever touches it |
 
+Most of what a pokemon can hold is gear of some kind, and the ground turns up all
+of it:
+
+| Kind                  | What is in it                                                                         |
+| --------------------- | ------------------------------------------------------------------------------------- |
+| **Type boosters**     | Eighteen, one per type, and the plates beside them                                    |
+| **Hitting harder**    | A Muscle Band, Wise Glasses, an Expert Belt, a Life Orb                               |
+| **Choosing**          | The three Choice items: one move, in exchange for a stat and a half                   |
+| **Standing up**       | An Assault Vest, an Eviolite, a Focus Band, a Rocky Helmet                            |
+| **Accuracy and luck** | A Wide Lens, a Zoom Lens, a Scope Lens, Bright Powder, a Quick Claw                   |
+| **Turning a fight**   | The sixteen one-shots: a Focus Sash, a Weakness Policy, an Eject Button, a White Herb |
+| **Costing something** | A Flame Orb, a Toxic Orb, a Sticky Barb, an Iron Ball                                 |
+
 The **species relics** are the same idea for one pokemon each: a Thick Club for a
 Cubone, a Light Ball for a Pikachu, a Lucky Punch for a Chansey, a Stick for a
 Farfetch'd, and Metal and Quick Powder for a Ditto. They are worth nothing to
 anybody else.
+
+The **six power items** are the odd ones out: they are worn for breeding rather
+than for a fight, and each names one stat and passes it straight to an egg.
+
+## Drinks and treats
+
+The wandering chef keeps the one shelf nothing else stocks, and both halves of it
+are carried into a fight rather than spent out of one.
+
+- **Drinks** give health back the moment their holder drops low: Fresh Water 30
+  points, Soda Pop 60, Lemonade 80, Moomoo Milk a hundred, and a Berry Juice the
+  20 a handful of berries is worth.
+- **Treats** are a Full Heal in the hand. The seven regional sweets clear every
+  status a pokemon carries; a Rage Candy Bar and a Sweet Heart feed their holder
+  instead, the way a drink does.
+
+Both are cheaper than the bottle they stand in for, and both sell back at half
+like anything else on a counter.
 
 ## Berries
 
@@ -183,18 +214,21 @@ that its levels did not pay for. See [Raising a pokemon](raising.md#training).
 
 ### Where it comes from
 
-| Source                      | Amount                      |
-| --------------------------- | --------------------------- |
-| Clearing a mythical raid    | 3,000                       |
-| Clearing a legendary raid   | 2,000                       |
-| Clearing a shadow raid      | 1,000                       |
-| Beating a Team Rocket grunt | 500                         |
-| Selling an auction lot      | The winning bid             |
-| Selling to a vendor         | The item's price, per piece |
+| Source                                               | Amount                       |
+| ---------------------------------------------------- | ---------------------------- |
+| Clearing a mythical raid                             | 3,000                        |
+| Clearing a legendary raid                            | 2,000                        |
+| Clearing a shadow raid                               | 1,000                        |
+| Beating a grunt, a trainer, a gym leader or an elite | 1,000 to 10,000              |
+| Beating Giovanni or the Champion                     | 10,000 to 50,000             |
+| Taking a gym seat                                    | A tenth of the loser's purse |
+| Selling an auction lot                               | The winning bid              |
+| Selling to a vendor or the chef                      | The item's price, per piece  |
 
-Everyone in a raid is paid the same amount. Two items on the **buddy** raise a
-player's own share: a **Luck Incense** doubles it, and an **Amulet Coin** trebles
-it.
+Everyone in a raid is paid the same amount. Everything else rolls its own purse
+per winner, so the same trainer pays two players differently. Two items on the
+**buddy** raise a player's own share wherever it came from: a **Luck Incense**
+doubles it, and an **Amulet Coin** trebles it.
 
 ### Where it goes
 

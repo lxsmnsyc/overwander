@@ -35,6 +35,8 @@ export type { RadioGroupProps, RadioOption } from './radio-group';
 export { default as Search, SEARCH_FROM } from './search';
 export { default as Select } from './select';
 export type { SelectOption, SelectProps } from './select';
+export { default as Slider } from './slider';
+export type { SliderProps } from './slider';
 export { default as Switch } from './switch';
 export type { SwitchProps } from './switch';
 export { default as StepButton } from './step-button';

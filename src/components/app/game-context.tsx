@@ -75,6 +75,10 @@ export const enum GameDialog {
    * and the one they are hosting
    */
   Battles = 10,
+  /**
+   * How the game is set up for this player, and what it is made of
+   */
+  Settings = 11,
 }
 
 /**

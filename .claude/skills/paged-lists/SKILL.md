@@ -23,6 +23,10 @@ and the clamp that pulls the page back when the list shrinks under the
 reader (a search narrowed, a row settled). Use it instead of a local
 `page`/`setPage` pair.
 
+`size` is a number or an accessor. Pass an accessor wherever the player
+can change how much fits on a page, or the last row of every page goes
+missing when they do.
+
 ```tsx
 const paged = createPager(() => rows(), LIST_PAGE);
 // …
@@ -38,7 +42,9 @@ const paged = createPager(() => rows(), LIST_PAGE);
 ## Sizes
 
 - Lists of text rows: `LIST_PAGE` (20), exported next to the pager.
-- The pokemon box: `BOX_SIZE` (30) — it is six by five squares.
+- The pokemon box: `boxSizeOf(settings().boxColumns)`. The player sets
+  the box five, six or eight wide, so its page is an accessor rather
+  than the `BOX_SIZE` constant, which is only the default six by five.
 - The item tray pages itself at `GRID_SIZE` inside `ItemGrid`; do not
   page around it.
 

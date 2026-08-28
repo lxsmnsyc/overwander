@@ -32,6 +32,7 @@ import WeatherIcon from '../overworld/WeatherIcon';
 import { Divider } from '../styled';
 import { SHEER } from '../styled/transition';
 import { ThemeToggle } from './theme';
+import settings, { type ClockFormat } from './settings';
 
 /**
  * The one piece of furniture the game has: a bar along the bottom of
@@ -81,7 +82,7 @@ const ENTRIES: MenuEntry[] = [
   // profile still hands over anything already won
   { label: 'Gifts', dialog: GameDialog.Gifts, icon: GiftIcon },
   { label: 'Quests', dialog: GameDialog.Quests, icon: TrophyIcon },
-  { label: 'Settings', icon: SettingsIcon },
+  { label: 'Settings', dialog: GameDialog.Settings, icon: SettingsIcon },
 ];
 
 const TILE =
@@ -105,10 +106,17 @@ const CLOCK_TICK = 60_000;
  * pokemon from — so a word that disagrees with the window outside
  * shows up as the bug it is
  */
-function worldClock(at: number): string {
+function worldClock(at: number, format: ClockFormat): string {
   const minutes = Math.floor(at / 60_000) % (24 * 60);
+  const hour = Math.floor(minutes / 60);
+  const past = String(minutes % 60).padStart(2, '0');
 
-  return `${String(Math.floor(minutes / 60)).padStart(2, '0')}:${String(minutes % 60).padStart(2, '0')}`;
+  if (format === '24h') {
+    return `${String(hour).padStart(2, '0')}:${past}`;
+  }
+  // Midnight and noon are both twelve, which is the one case a
+  // remainder gets wrong
+  return `${hour % 12 === 0 ? 12 : hour % 12}:${past} ${hour < 12 ? 'am' : 'pm'}`;
 }
 
 export default function GameMenu(): JSX.Element {
@@ -228,12 +236,20 @@ export default function GameMenu(): JSX.Element {
         <Divider />
 
         {/* What hour the world is in, which is what decides what walks
-            about in it */}
+            about in it. Whichever of the two the player did not choose
+            is what the other is titled with, so neither reading is
+            ever more than a hover away */}
         <span
           class="shrink-0 text-sm whitespace-nowrap text-muted"
-          title={`World time ${worldClock(now())}`}
+          title={
+            settings().worldTime === 'clock'
+              ? TIME_OF_DAY_NAMES[getTimeOfDay(now())]
+              : `World time ${worldClock(now(), settings().clock)}`
+          }
         >
-          {TIME_OF_DAY_NAMES[getTimeOfDay(now())]}
+          {settings().worldTime === 'clock'
+            ? worldClock(now(), settings().clock)
+            : TIME_OF_DAY_NAMES[getTimeOfDay(now())]}
         </span>
 
         <Divider />

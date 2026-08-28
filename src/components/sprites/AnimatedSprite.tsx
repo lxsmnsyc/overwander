@@ -9,6 +9,7 @@ import {
   onCleanup,
 } from 'solid-js';
 import { type AuraKind, paintPurifiedAura, paintShadowAura } from '../../canvas/auras';
+import settings from '../app/settings';
 import type SpeciesSpriteAnimation from '../../canvas/species-sprite-animation';
 import loadSpeciesSprite from '../../canvas/species-sprites';
 import {
@@ -476,8 +477,12 @@ export default function AnimatedSprite(props: AnimatedSpriteProps): JSX.Element 
     // Read here rather than inside the tick: the clock is a plain
     // animation frame with no owner and nothing tracking, so a prop
     // first read in there builds its memo ownerless and keeps it
-    // forever. Taking it in the effect re-registers when it changes
-    const speed = props.speed ?? 1;
+    // forever. Taking it in the effect re-registers when it changes.
+    //
+    // Nought is a pokemon holding its first frame, which is what a
+    // player asking for less motion is asking for: the picture is
+    // still there and still the right one, it simply does not breathe
+    const speed = settings().reduceMotion ? 0 : (props.speed ?? 1);
 
     onCleanup(
       ticking((elapsed) => {

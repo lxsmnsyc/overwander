@@ -31,6 +31,7 @@ for players; the developer documentation lives in
 | [Battle lobbies](mechanics/duels.md)       | Fighting another player on purpose, and who watches          |
 | [Quests](mechanics/quests.md)              | What the game asks of you, and what each ask pays            |
 | [Awards and titles](mechanics/awards.md)   | Badges, achievements, and what a trainer is called           |
+| [Settings](mechanics/settings.md)          | What a player sets for themselves on this machine            |
 
 ## Overview
 

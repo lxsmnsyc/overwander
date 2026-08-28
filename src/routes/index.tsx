@@ -22,6 +22,7 @@ import PokedexTab from '../components/dex/PokedexTab';
 import ProfileDialog from '../components/profile/ProfileDialog';
 import ProfileTab from '../components/profile/ProfileTab';
 import QuestsTab from '../components/quests/quests-tab';
+import SettingsTab from '../components/settings/SettingsTab';
 import RaidsTab from '../components/raids/RaidsTab';
 import TradeOfferDialog from '../components/trades/TradeOfferDialog';
 import { ThemeToggle } from '../components/app/theme';
@@ -54,7 +55,8 @@ type Panelled =
   | GameDialog.Pokedex
   | GameDialog.Gifts
   | GameDialog.Quests
-  | GameDialog.Battles;
+  | GameDialog.Battles
+  | GameDialog.Settings;
 
 const TITLES: Record<Panelled, string> = {
   [GameDialog.Profile]: 'Profile',
@@ -66,6 +68,7 @@ const TITLES: Record<Panelled, string> = {
   [GameDialog.Gifts]: 'Gifts',
   [GameDialog.Quests]: 'Quests',
   [GameDialog.Battles]: 'Battle',
+  [GameDialog.Settings]: 'Settings',
 };
 
 const DESCRIPTIONS: Record<Panelled, string> = {
@@ -80,6 +83,7 @@ const DESCRIPTIONS: Record<Panelled, string> = {
   [GameDialog.Quests]: 'What the game asks of you, and what each ask pays.',
   [GameDialog.Battles]:
     'The private fights you have been called into, and the one you are hosting.',
+  [GameDialog.Settings]: 'How the game is set up for you, and what it is made of.',
 };
 
 /**
@@ -196,6 +200,22 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
             description={DESCRIPTIONS[GameDialog.Quests]}
           >
             <QuestsTab isOpen={showing(GameDialog.Quests)} onClose={close} />
+            <DialogActions>
+              <Button onClick={close}>Close</Button>
+            </DialogActions>
+          </Dialog>
+
+          {/* Nothing in here is earned or spent, so it is the one
+              panel that never waits on the server */}
+          <Dialog
+            isOpen={showing(GameDialog.Settings)}
+            onClose={close}
+            width="wide"
+            terse
+            title={TITLES[GameDialog.Settings]}
+            description={DESCRIPTIONS[GameDialog.Settings]}
+          >
+            <SettingsTab />
             <DialogActions>
               <Button onClick={close}>Close</Button>
             </DialogActions>

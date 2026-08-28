@@ -1,10 +1,11 @@
 import { MetaProvider, Title } from '@solidjs/meta';
 import { Router } from '@solidjs/router';
 import { FileRoutes } from '@solidjs/start/router';
-import { type JSX, Suspense } from 'solid-js';
+import { type JSX, Suspense, createEffect, onMount } from 'solid-js';
 import AuthProvider from './auth/context';
 import registerGameData from './data';
 import ThemeProvider from './components/app/theme';
+import settings, { loadSettings } from './components/app/settings';
 import { ToastProvider } from './components/styled';
 import './app.css';
 
@@ -13,6 +14,17 @@ import './app.css';
 registerGameData();
 
 export default function App(): JSX.Element {
+  // After hydration rather than at import: reading storage while the
+  // page is still being matched against the server's markup is what
+  // makes the two disagree
+  onMount(loadSettings);
+
+  // The reduce-motion setting reaches CSS the way the theme does, as a
+  // class on the root element. `app.css` is the other half of it
+  createEffect(() => {
+    document.documentElement.classList.toggle('reduce-motion', settings().reduceMotion);
+  });
+
   return (
     <Router
       root={(props) => (

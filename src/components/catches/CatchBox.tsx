@@ -32,6 +32,18 @@ export const BOX_ROWS = 5;
 export const BOX_SIZE = BOX_COLUMNS * BOX_ROWS;
 
 /**
+ * The widths a player may set the box to. Five and eight are the same
+ * five rows drawn narrower or wider, so a box stays one screenful
+ * either way
+ */
+export type BoxWidth = 5 | 6 | 8;
+
+/** How many a box of a given width holds, which is what a page of them is */
+export function boxSizeOf(columns: BoxWidth): number {
+  return columns * BOX_ROWS;
+}
+
+/**
  * How fast an egg's idle plays, by how far along it is. A fresh egg
  * barely stirs and one about to open is shaking: it is the only thing an
  * egg has to say, so it says it with the only thing it has
@@ -40,9 +52,23 @@ const EGG_SPEED = [0.6, 2.4] as const;
 
 /**
  * The squares, as something to iterate: what stands in each is read off
- * the entries by index
+ * the entries by index. Kept per width rather than rebuilt, so the
+ * `Index` above it is handed the same array every render
  */
-const SQUARES: null[] = Array.from({ length: BOX_SIZE }, () => null);
+const SQUARES = new Map<number, null[]>();
+
+function squaresOf(count: number): null[] {
+  const known = SQUARES.get(count);
+
+  if (known != null) {
+    return known;
+  }
+
+  const made: null[] = Array.from({ length: count }, () => null);
+
+  SQUARES.set(count, made);
+  return made;
+}
 
 /**
  * One square of the box: what stands in it, and what the caller needs
@@ -99,10 +125,11 @@ export interface CatchBoxProps {
   cardOnly?: boolean;
   /**
    * How wide the box is, in squares. Six is the box the game keeps
-   * pokemon in; three is for a line-up that is three long, where the
-   * full width would leave half a box of nothing beside it
+   * pokemon in and what the player's own setting starts at; three is
+   * for a line-up that is three long, where the full width would leave
+   * half a box of nothing beside it
    */
-  columns?: 3 | 6;
+  columns?: 3 | BoxWidth;
   /**
    * How many squares the box draws, for a box that is not the box: a
    * team preview is one row of six, not thirty squares five of which
@@ -138,9 +165,11 @@ const SQUARE = 'relative aspect-square w-full rounded-lg border-2 transition-col
  * width is what keeps a three-square box drawing squares the size of
  * a six-square one
  */
-const SHAPE: Record<3 | 6, string> = {
+const SHAPE: Record<3 | BoxWidth, string> = {
   3: 'max-w-64 grid-cols-3',
+  5: 'max-w-md grid-cols-5',
   6: 'max-w-lg grid-cols-6',
+  8: 'max-w-2xl grid-cols-8',
 };
 
 export default function CatchBox(props: CatchBoxProps): JSX.Element {
@@ -235,8 +264,14 @@ export default function CatchBox(props: CatchBoxProps): JSX.Element {
     </>
   );
 
-  const squares = (): null[] =>
-    props.capacity == null ? SQUARES : SQUARES.slice(0, props.capacity);
+  /**
+   * How wide a full box is here. A three-wide line-up is always given a
+   * capacity, so it never falls through to this
+   */
+  const width = (): BoxWidth =>
+    props.columns == null || props.columns === 3 ? BOX_COLUMNS : props.columns;
+
+  const squares = (): null[] => squaresOf(props.capacity ?? boxSizeOf(width()));
 
   return (
     // Narrower than the panel it sits in, with air around it: a box

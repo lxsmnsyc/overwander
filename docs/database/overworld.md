@@ -15,7 +15,8 @@ never rolls over halfway through the window a player is standing in.
 | --------------------- | ---------- | ------------------------------------------------------------------------ |
 | `SNAPSHOT_INTERVAL`   | 5 minutes  | The shared window row and its spawns                                     |
 | `LANDMARK_INTERVAL`   | 15 minutes | Item stashes and berry patches                                           |
-| `PHENOMENON_INTERVAL` | 1 hour     | What is going on at a phenomenon cell                                    |
+| `PHENOMENON_INTERVAL` | 1 hour     | What is happening over a chunk's open ground, and where                  |
+| `WEATHER_INTERVAL`    | 1 hour     | The sky over a chunk                                                     |
 | `RAID_INTERVAL`       | 3 hours    | Legendary and shadow raid lobbies                                        |
 | `NPC_INTERVAL`        | 3 hours    | Who is at a wandering-NPC cell, and the party a Team Rocket grunt fields |
 | `NEST_INTERVAL`       | 12 hours   | The egg lying in a nest                                                  |

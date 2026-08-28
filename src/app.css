@@ -328,3 +328,21 @@
     transform: translateY(-65%) scale(0.3);
   }
 }
+
+/**
+ * The whole of the reduce-motion setting, as far as CSS goes: a class
+ * on the root element, put there by `src/components/app/settings.ts`.
+ *
+ * Durations are cut to nothing rather than to zero, because a
+ * transition that takes no time at all never fires `transitionend`,
+ * and the dialogs wait on it to know when to unmount. Sprites hold
+ * still separately — a canvas hears nothing about a class.
+ */
+.reduce-motion *,
+.reduce-motion *::before,
+.reduce-motion *::after {
+  animation-duration: 1ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 1ms !important;
+  scroll-behavior: auto !important;
+}

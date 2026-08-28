@@ -199,17 +199,21 @@ A full lobby is twenty rows of strangers, so it carries a search box of its own
 with the same grammar as everything else. `TEAM_VOCABULARY` and `matchesTeam`
 live in [`team-search.ts`](../../src/auth/team-search.ts).
 
-| Field             | What it narrows by                                               |
-| ----------------- | ---------------------------------------------------------------- |
-| a plain word      | The nickname the lobby shows, or the player's id                 |
-| `player:`         | The same, asked by name                                          |
-| `size:`           | How many pokemon they brought                                    |
-| `is:`, `not:`     | `mine`, `host`, `alone`                                          |
-| `sort:`, `order:` | `name`, `size`                                                   |
+| Field             | What it narrows by                               |
+| ----------------- | ------------------------------------------------ |
+| a plain word      | The nickname the lobby shows, or the player's id |
+| `player:`         | The same, asked by name                          |
+| `size:`           | How many pokemon they brought                    |
+| `is:`, `not:`     | `mine`, `host`, `alone`                          |
+| `sort:`, `order:` | `name`, `size`                                   |
 
 What each pokemon in a party is stays out of the grammar: a lobby holds catch
 ids, and the records behind them are read by the row that draws them rather than
 by the row that filters.
+
+A lobby holds `RAID_PLAYER_LIMIT` (20) **players** rather than teams: somebody
+fielding two parties still fills one place. Both sides read the limit, so the
+join button and the server refuse together.
 
 ## `raid_invites` and `raid_watchers`
 

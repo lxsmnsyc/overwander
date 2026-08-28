@@ -27,16 +27,26 @@ export interface Pager<T> {
  * list can shrink under the reader — a search narrowed, a row settled
  * — and a page past the end reads as an empty list
  */
-export function createPager<T>(items: Accessor<T[]>, size: number, unit = 'Page'): Pager<T> {
+export function createPager<T>(
+  items: Accessor<T[]>,
+  /**
+   * How many fit on a page. An accessor for a size the player can
+   * change: a box drawn eight wide holds forty, and the page has to
+   * follow or the last row of every box goes missing
+   */
+  size: number | Accessor<number>,
+  unit = 'Page',
+): Pager<T> {
   const [page, setPage] = createSignal(0);
-  const pages = (): number => Math.max(1, Math.ceil(items().length / size));
+  const fits = (): number => (typeof size === 'number' ? size : size());
+  const pages = (): number => Math.max(1, Math.ceil(items().length / fits()));
 
   createEffect(() => {
     setPage((at) => Math.min(at, pages() - 1));
   });
 
   return {
-    shown: () => items().slice(page() * size, (page() + 1) * size),
+    shown: () => items().slice(page() * fits(), (page() + 1) * fits()),
     controls: () => (
       <Show when={pages() > 1}>
         <Row class="justify-center">

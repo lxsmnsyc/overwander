@@ -105,6 +105,20 @@ Three things move them:
 - **A bitter berry** removes 10 points from one stat. They return to the unused
   pool rather than being lost, and the pokemon thinks better of its trainer for
   swallowing something unpleasant.
+- **A vitamin** grants 10 points in its own stat and raises the budget by the
+  same, the way a wing does: an HP Up, a Protein, an Iron, a Calcium, a Zinc or a
+  Carbos. One bottle is three wings and a third, and it is the only training gold
+  alone can buy, off a vendor's vitamin counter.
+
+### PP Ups
+
+A **PP Up** raises one move's points by a fifth of what it started with, up to
+three times, and a **PP Max** takes it the whole way in one bottle. In this game
+that buys a **shorter cooldown** rather than more uses, since nothing runs out
+mid-fight: see [Battles](battles.md#how-a-move-resolves).
+
+It is permanent. No berry takes it back, which is why they cost more than a
+vitamin, and a move already at the limit is refused rather than charged.
 
 ## Friendship
 

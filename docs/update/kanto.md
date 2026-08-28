@@ -52,8 +52,8 @@ Both sides fight at once, in real time. Nobody waits for a turn.
 
 A lair holds a legendary for a few hours, and anybody may join.
 
-- Bring up to six pokemon. Bring friends. There is no cap on how many parties
-  pile in.
+- Bring up to six pokemon and up to twenty players, or just stand there and
+  watch.
 - The boss hits your whole party at once, and stands still at the start while
   you set up.
 - Beat it once and the lair closes until it restocks. Everyone in the lobby is
@@ -156,6 +156,19 @@ Two ways a pokemon changes hands.
   where you still throw the ball.
 - Four are waiting on day one: Bulbasaur, Charmander, Squirtle, and twenty Poke
   Balls. Take all three starters if you like.
+
+## Where the art comes from
+
+Every pokemon on screen is animated from **SpriteCollab**, the Pokémon Mystery
+Dungeon sprite collection, whose artists are credited per sprite in that
+project's own files. The overworld people are the **Pokengine** community's fan
+sheets.
+
+Everything in the interface is **pokesprite**: the item icons in the bag, the
+eighteen type badges, and the three marks a move's category is shown by.
+
+[Credits](../credits.md) names all of it, sheet by sheet, with the terms each
+comes under.
 
 ## A few promises
 

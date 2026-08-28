@@ -88,6 +88,32 @@ Size belongs to the individual rather than to the number on the record, so
 evolving grows a pokemon into its new species while keeping its place within it:
 a big Bulbasaur becomes a big Ivysaur.
 
+### What it is carrying
+
+A wild pokemon often turns up **holding something of its own**: a Pikachu with a
+Light Ball, a Cubone with a Thick Club, a Ditto with a Metal Powder. Whether it
+has anything is a roll against the species' own list, and the three slots are
+worth different odds:
+
+| Slot         | Odds    |
+| ------------ | ------- |
+| **Common**   | 1 / 2   |
+| **Uncommon** | 1 / 20  |
+| **Rare**     | 1 / 100 |
+
+The rare slot is this game's own, and it is where a species' signature item sits:
+a relic worth more than a one-in-twenty slot should be handing out.
+
+Whatever it was holding comes with it when it is caught, which is one of the two
+ways a species relic reaches a player at all.
+
+### Weather
+
+A pokemon met under a sky that favours its type comes with a floor of **10 under
+every one of its six individual values**. Everything else met in the same weather rolls
+exactly as it would have on a clear day, so a front is worth walking out into for
+the things it is a front for. See [The world](world.md#weather).
+
 ## Shininess
 
 A shiny pokemon is a match between a **trainer and that pokemon**. The same wild

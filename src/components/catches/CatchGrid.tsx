@@ -1,7 +1,8 @@
 import { type Accessor, type JSX, Show, createMemo, createSignal } from 'solid-js';
 import { type CaughtPokemon, findDuplicates } from '../../auth/caught';
 import matchesCatch, { CATCH_VOCABULARY, orderCatches } from '../../auth/catch-search';
-import CatchBox, { BOX_SIZE, type BoxEntry } from './CatchBox';
+import CatchBox, { type BoxEntry, boxSizeOf } from './CatchBox';
+import settings from '../app/settings';
 import { Note, Row, Search, createPager } from '../styled';
 
 /**
@@ -59,7 +60,9 @@ export default function CatchGrid(props: CatchGridProps): JSX.Element {
       (entry) => entry.caught,
     ).map((entry) => entry.square);
 
-  const shelf = createPager(matched, BOX_SIZE, 'Box');
+  // A box the player has set eight wide holds forty, so the page has
+  // to be the box rather than a constant beside it
+  const shelf = createPager(matched, () => boxSizeOf(settings().boxColumns), 'Box');
 
   return (
     <div class="flex w-full flex-col gap-3">
@@ -96,6 +99,7 @@ export default function CatchGrid(props: CatchGridProps): JSX.Element {
       >
         <CatchBox
           entries={shelf.shown()}
+          columns={settings().boxColumns}
           onOpen={props.onOpen}
           cardOnly={props.cardOnly}
           cell={props.cell}

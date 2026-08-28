@@ -7,12 +7,13 @@ hands the reward over on the spot.
 
 ## Requirements
 
-Most requirements are lifetime totals: pokemon caught (overall, of a type,
-of a species, or from one line), eggs hatched, levels raised, items used,
-steps walked with a buddy, services taken from the wandering people, Team
-Rocket grunts beaten, landmarks claimed, raids fought or won, trades
-settled, friends made, auctions settled. Everything you have already done
-counts; nothing resets.
+Most requirements are lifetime totals: pokemon caught (overall, of a type, of a
+species, or from one line), eggs hatched, levels raised, items used, steps walked
+with a buddy, services taken from the wandering people, landmarks claimed, raids
+fought or won, trainers and grunts beaten, gold earned and spent, shadows
+purified, pokemon evolved, released or taught a move, biomes stood in, trades
+settled, friends made, gifts taken, bids placed and auctions settled. Everything
+you have already done counts; nothing resets.
 
 A few quests instead ask you to **hand something over**: those items stay in
 your bag until the moment you claim, and are taken as the reward is paid. A
@@ -46,9 +47,14 @@ turns.
 
 ## Chains
 
-Some quests are links in a chain: the next one only appears once the one
-before it is claimed. The opening chain walks a new trainer through the
-whole game, from a first catch to a first raid.
+Some quests are links in a chain: the next one only appears once the one before
+it is claimed. Ten chains run through the game, one per thing there is to do:
+catching, battling, raiding, phenomena, eggs, friendship, training, auctions,
+biomes and friends, each opening with something a new trainer would do anyway.
+
+One more chain is the **dex** itself. Kanto's asks for 25 caught, then 75, then
+150, and the last rung hangs the region's medal on the shelf along with a Master
+Ball. Mew is not among the 150: nobody walks into one.
 
 ## See also
 

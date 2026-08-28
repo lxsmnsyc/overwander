@@ -147,6 +147,11 @@ before it may try again.
 
 A held berry cures a status the moment it lands, before the first move is cast.
 
+A fight met on the road is fought **under the sky that was over it**: a trainer
+or a grunt standing in the rain fights in the rain, and the sky is kept with the
+battle so a replay runs under the same one. Raids, duels and gym seats are fought
+under a clear sky whatever the world is doing.
+
 There are nine kinds of weather, from plain sun and rain up to the extreme forms.
 In a **raid**, a pokemon that changes the weather changes it only for its own
 party — unless the boss changed it, in which case it applies to everybody.
@@ -178,8 +183,9 @@ it, and the raid is named after the place, so two Articuno raids in one chunk
 carry different names.
 
 A lobby stands for the whole three-hour raid window and anyone may join it; the
-host starts it. Each player brings up to **six** pokemon, and there is no limit on
-how many parties join.
+host starts it. Each player brings up to **six** pokemon, and a lobby holds
+**twenty players**. Somebody fielding two parties still fills one place, and
+anybody may stand there and watch without a party at all.
 
 The boss may be defeated **once per window**, not fought once: clearing it closes
 the lair until the next window. A raid that is lost, or left unfinished for ten
@@ -311,18 +317,28 @@ A battle leaves a party as it found it. Lost health, eaten berries and carried
 statuses all persist into the next fight, which is what makes a party something to
 look after rather than a row of levels.
 
-| Fight                | Gold                         | Pokemon                                |
-| -------------------- | ---------------------------- | -------------------------------------- |
-| **Mythical raid**    | 3,000                        | The mythical, at level 30              |
-| **Legendary raid**   | 2,000                        | The legendary, at level 50             |
-| **Shadow raid**      | 1,000                        | A shadow, at level 25                  |
-| **Team Rocket stop** | 500                          | A shadowed common pokemon, at level 10 |
-| **Gym seat**         | A tenth of the loser's purse | Nothing                                |
-| **Duel**             | Nothing                      | Nothing                                |
+| Fight                 | Gold                         | What else                                |
+| --------------------- | ---------------------------- | ---------------------------------------- |
+| **Mythical raid**     | 3,000                        | The mythical, at level 30                |
+| **Legendary raid**    | 2,000                        | The legendary, at level 50               |
+| **Shadow raid**       | 1,000                        | A shadow, at level 25                    |
+| **Team Rocket grunt** | 1,000 to 10,000              | A shadowed common pokemon, at level 10   |
+| **Giovanni**          | 10,000 to 50,000             | The same                                 |
+| **Duelling trainer**  | 1,000 to 10,000              | Nothing: they keep their party           |
+| **Gym leader**        | 1,000 to 10,000              | Their badge, and a machine of their type |
+| **Elite Four**        | 1,000 to 10,000              | Their mark                               |
+| **Champion**          | 10,000 to 50,000             | The region's title                       |
+| **Gym seat**          | A tenth of the loser's purse | The cell, if you want to sit on it       |
+| **Duel**              | Nothing                      | Nothing                                  |
 
-Everyone in a raid is paid the same amount: the boss decides the purse, not who
-landed the last hit. A **Luck Incense** held by the buddy doubles a player's
-share. Rewards wait to be claimed, so leaving early costs nothing.
+A raid pays everyone the same: the boss decides the purse, not who landed the
+last hit. Everything else **rolls its own purse per winner** inside the range
+above, so no two wins are quite alike and the same trainer is worth a different
+amount to the next player. A **Luck Incense** on the buddy doubles a purse and an
+**Amulet Coin** trebles it, wherever the gold comes from.
+
+Rewards wait to be claimed, so leaving early costs nothing. An award is earned
+once and kept for good, though the shelf counts every later win.
 
 While a fight is live, every pokemon in it is **locked**: it cannot be levelled,
 evolved, given an item, traded, auctioned or entered into a second raid. The lock

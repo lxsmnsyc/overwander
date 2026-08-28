@@ -27,9 +27,10 @@ export default function registerPortalKey(): void {
     name: 'Portal Key',
     description: 'Pays for one crossing at a portal you are standing on. Spent on use.',
     type: ItemTypes.KeyItem,
-    // The sheets have no portal key; a key stone is the nearest
-    // thing they draw
-    icon: 'key/key-stone',
+    // Its own picture, tinted out of the Intriguing Stone by
+    // `scripts/item-icons.ts`: no rip drew a portal key, and the two
+    // stones it used to borrow are spoken for
+    icon: 'key/portal-key',
     flags: ItemFlags.Usable | ItemFlags.Consumable,
     buy: 0,
     sell: 0,

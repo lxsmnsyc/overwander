@@ -1,1 +1,1398 @@
-{"compact":true,"width":202,"height":213,"images":[{"name":"absorb-bulb.png","x":60,"y":90,"width":16,"height":20,"sourceWidth":32,"sourceHeight":32,"trim":[9,6]},{"name":"adamant-orb.png","x":65,"y":0,"width":22,"height":22,"sourceWidth":32,"sourceHeight":32,"trim":[5,5]},{"name":"adrenaline-orb.png","x":104,"y":47,"width":17,"height":21,"sourceWidth":32,"sourceHeight":32,"trim":[7,6]},{"name":"air-balloon.png","x":87,"y":0,"width":18,"height":22,"sourceWidth":32,"sourceHeight":32,"trim":[6,5]},{"name":"amulet-coin.png","x":20,"y":111,"width":21,"height":19,"sourceWidth":32,"sourceHeight":32,"trim":[7,6]},{"name":"assault-vest.png","x":130,"y":111,"width":21,"height":18,"sourceWidth":32,"sourceHeight":32,"trim":[5,7]},{"name":"big-root.png","x":105,"y":0,"width":21,"height":22,"sourceWidth":32,"sourceHeight":32,"trim":[5,5]},{"name":"binding-band.png","x":151,"y":111,"width":21,"height":18,"sourceWidth":32,"sourceHeight":32,"trim":[6,7]},{"name":"black-belt.png","x":121,"y":47,"width":20,"height":21,"sourceWidth":32,"sourceHeight":32,"trim":[6,5]},{"name":"black-glasses.png","x":176,"y":167,"width":21,"height":15,"sourceWidth":32,"sourceHeight":32,"trim":[5,9]},{"name":"black-sludge.png","x":22,"y":149,"width":20,"height":17,"sourceWidth":32,"sourceHeight":32,"trim":[6,8]},{"name":"blue-orb.png","x":172,"y":111,"width":18,"height":18,"sourceWidth":32,"sourceHeight":32,"trim":[7,7]},{"name":"blunder-policy.png","x":42,"y":149,"width":20,"height":17,"sourceWidth":32,"sourceHeight":32,"trim":[6,7]},{"name":"bright-powder.png","x":0,"y":131,"width":22,"height":18,"sourceWidth":32,"sourceHeight":32,"trim":[5,8]},{"name":"burn-drive.png","x":0,"y":183,"width":21,"height":15,"sourceWidth":32,"sourceHeight":32,"trim":[6,8]},{"name":"cell-battery.png","x":141,"y":47,"width":8,"height":21,"sourceWidth":32,"sourceHeight":32,"trim":[12,6]},{"name":"charcoal.png","x":76,"y":90,"width":20,"height":20,"sourceWidth":32,"sourceHeight":32,"trim":[6,6]},{"name":"chill-drive.png","x":21,"y":183,"width":21,"height":15,"sourceWidth":32,"sourceHeight":32,"trim":[6,8]},{"name":"choice-band.png","x":126,"y":0,"width":22,"height":22,"sourceWidth":32,"sourceHeight":32,"trim":[5,5]},{"name":"choice-scarf.png","x":148,"y":0,"width":22,"height":22,"sourceWidth":32,"sourceHeight":32,"trim":[5,5]},{"name":"choice-specs.png","x":0,"y":167,"width":22,"height":16,"sourceWidth":32,"sourceHeight":32,"trim":[5,9]},{"name":"cleanse-tag.png","x":41,"y":111,"width":17,"height":19,"sourceWidth":32,"sourceHeight":32,"trim":[8,7]},{"name":"damp-rock.png","x":170,"y":0,"width":22,"height":22,"sourceWidth":32,"sourceHeight":32,"trim":[5,5]},{"name":"destiny-knot.png","x":0,"y":25,"width":20,"height":22,"sourceWidth":32,"sourceHeight":32,"trim":[7,5]},{"name":"douse-drive.png","x":42,"y":183,"width":21,"height":15,"sourceWidth":32,"sourceHeight":32,"trim":[6,8]},{"name":"dragon-fang.png","x":149,"y":47,"width":19,"height":21,"sourceWidth":32,"sourceHeight":32,"trim":[6,6]},{"name":"eject-button.png","x":22,"y":131,"width":20,"height":18,"sourceWidth":32,"sourceHeight":32,"trim":[6,7]},{"name":"eject-pack.png","x":20,"y":25,"width":23,"height":22,"sourceWidth":32,"sourceHeight":32,"trim":[6,5]},{"name":"electric-seed.png","x":63,"y":183,"width":25,"height":15,"sourceWidth":32,"sourceHeight":32,"trim":[4,9]},{"name":"everstone.png","x":88,"y":183,"width":18,"height":15,"sourceWidth":32,"sourceHeight":32,"trim":[7,9]},{"name":"eviolite.png","x":35,"y":198,"width":13,"height":13,"sourceWidth":32,"sourceHeight":32,"trim":[10,10]},{"name":"expert-belt.png","x":168,"y":47,"width":22,"height":21,"sourceWidth":32,"sourceHeight":32,"trim":[5,5]},{"name":"flame-orb.png","x":22,"y":167,"width":16,"height":16,"sourceWidth":32,"sourceHeight":32,"trim":[8,8]},{"name":"float-stone.png","x":48,"y":198,"width":16,"height":13,"sourceWidth":32,"sourceHeight":32,"trim":[8,9]},{"name":"focus-band.png","x":43,"y":25,"width":22,"height":22,"sourceWidth":32,"sourceHeight":32,"trim":[5,5]},{"name":"focus-sash.png","x":0,"y":69,"width":20,"height":21,"sourceWidth":32,"sourceHeight":32,"trim":[6,5]},{"name":"grassy-seed.png","x":106,"y":183,"width":25,"height":15,"sourceWidth":32,"sourceHeight":32,"trim":[4,9]},{"name":"grip-claw.png","x":65,"y":25,"width":22,"height":22,"sourceWidth":32,"sourceHeight":32,"trim":[5,5]},{"name":"griseous-orb.png","x":87,"y":25,"width":20,"height":22,"sourceWidth":32,"sourceHeight":32,"trim":[6,5]},{"name":"hard-stone.png","x":42,"y":131,"width":17,"height":18,"sourceWidth":32,"sourceHeight":32,"trim":[7,7]},{"name":"heat-rock.png","x":20,"y":69,"width":22,"height":21,"sourceWidth":32,"sourceHeight":32,"trim":[5,6]},{"name":"heavy-duty-boots.png","x":42,"y":69,"width":24,"height":21,"sourceWidth":32,"sourceHeight":32,"trim":[4,6]},{"name":"icy-rock.png","x":107,"y":25,"width":22,"height":22,"sourceWidth":32,"sourceHeight":32,"trim":[5,5]},{"name":"iron-ball.png","x":38,"y":167,"width":16,"height":16,"sourceWidth":32,"sourceHeight":32,"trim":[8,8]},{"name":"kings-rock.png","x":129,"y":25,"width":21,"height":22,"sourceWidth":32,"sourceHeight":32,"trim":[6,5]},{"name":"lagging-tail.png","x":66,"y":69,"width":22,"height":21,"sourceWidth":32,"sourceHeight":32,"trim":[5,6]},{"name":"leftovers.png","x":96,"y":90,"width":13,"height":20,"sourceWidth":32,"sourceHeight":32,"trim":[9,6]},{"name":"life-orb.png","x":54,"y":167,"width":16,"height":16,"sourceWidth":32,"sourceHeight":32,"trim":[8,8]},{"name":"light-ball.png","x":70,"y":167,"width":16,"height":16,"sourceWidth":32,"sourceHeight":32,"trim":[8,8]},{"name":"light-clay.png","x":86,"y":167,"width":19,"height":16,"sourceWidth":32,"sourceHeight":32,"trim":[6,8]},{"name":"lucky-egg.png","x":59,"y":131,"width":15,"height":18,"sourceWidth":32,"sourceHeight":32,"trim":[8,7]},{"name":"lucky-punch.png","x":150,"y":25,"width":22,"height":22,"sourceWidth":32,"sourceHeight":32,"trim":[5,5]},{"name":"luminous-moss.png","x":109,"y":90,"width":15,"height":20,"sourceWidth":32,"sourceHeight":32,"trim":[9,6]},{"name":"lustrous-orb.png","x":172,"y":25,"width":22,"height":22,"sourceWidth":32,"sourceHeight":32,"trim":[5,5]},{"name":"magnet.png","x":74,"y":131,"width":18,"height":18,"sourceWidth":32,"sourceHeight":32,"trim":[7,7]},{"name":"mental-herb.png","x":62,"y":149,"width":19,"height":17,"sourceWidth":32,"sourceHeight":32,"trim":[6,8]},{"name":"metal-coat.png","x":124,"y":90,"width":17,"height":20,"sourceWidth":32,"sourceHeight":32,"trim":[7,6]},{"name":"metal-powder.png","x":92,"y":131,"width":22,"height":18,"sourceWidth":32,"sourceHeight":32,"trim":[5,8]},{"name":"metronome.png","x":141,"y":90,"width":15,"height":20,"sourceWidth":32,"sourceHeight":32,"trim":[8,6]},{"name":"miracle-seed.png","x":81,"y":149,"width":17,"height":17,"sourceWidth":32,"sourceHeight":32,"trim":[7,8]},{"name":"misty-seed.png","x":131,"y":183,"width":25,"height":15,"sourceWidth":32,"sourceHeight":32,"trim":[4,9]},{"name":"muscle-band.png","x":0,"y":47,"width":22,"height":22,"sourceWidth":32,"sourceHeight":32,"trim":[5,5]},{"name":"mystic-water.png","x":88,"y":69,"width":18,"height":21,"sourceWidth":32,"sourceHeight":32,"trim":[7,6]},{"name":"never-melt-ice.png","x":106,"y":69,"width":20,"height":21,"sourceWidth":32,"sourceHeight":32,"trim":[6,6]},{"name":"poison-barb.png","x":58,"y":111,"width":19,"height":19,"sourceWidth":32,"sourceHeight":32,"trim":[6,7]},{"name":"power-herb.png","x":98,"y":149,"width":19,"height":17,"sourceWidth":32,"sourceHeight":32,"trim":[6,8]},{"name":"protective-pads.png","x":22,"y":47,"width":20,"height":22,"sourceWidth":32,"sourceHeight":32,"trim":[6,6]},{"name":"psychic-seed.png","x":156,"y":183,"width":25,"height":15,"sourceWidth":32,"sourceHeight":32,"trim":[4,9]},{"name":"quick-claw.png","x":77,"y":111,"width":17,"height":19,"sourceWidth":32,"sourceHeight":32,"trim":[7,7]},{"name":"quick-powder.png","x":114,"y":131,"width":22,"height":18,"sourceWidth":32,"sourceHeight":32,"trim":[5,8]},{"name":"red-card.png","x":117,"y":149,"width":15,"height":17,"sourceWidth":32,"sourceHeight":32,"trim":[9,8]},{"name":"red-orb.png","x":42,"y":47,"width":18,"height":22,"sourceWidth":32,"sourceHeight":32,"trim":[7,5]},{"name":"ring-target.png","x":132,"y":149,"width":14,"height":17,"sourceWidth":32,"sourceHeight":32,"trim":[9,7]},{"name":"rocky-helmet.png","x":136,"y":131,"width":20,"height":18,"sourceWidth":32,"sourceHeight":32,"trim":[6,8]},{"name":"room-service.png","x":0,"y":0,"width":22,"height":25,"sourceWidth":32,"sourceHeight":32,"trim":[5,4]},{"name":"rusted-shield.png","x":156,"y":131,"width":22,"height":18,"sourceWidth":32,"sourceHeight":32,"trim":[5,7]},{"name":"rusted-sword.png","x":156,"y":90,"width":21,"height":20,"sourceWidth":32,"sourceHeight":32,"trim":[6,5]},{"name":"safety-goggles.png","x":105,"y":167,"width":23,"height":16,"sourceWidth":32,"sourceHeight":32,"trim":[5,8]},{"name":"scope-lens.png","x":126,"y":69,"width":22,"height":21,"sourceWidth":32,"sourceHeight":32,"trim":[5,6]},{"name":"sharp-beak.png","x":148,"y":69,"width":19,"height":21,"sourceWidth":32,"sourceHeight":32,"trim":[6,6]},{"name":"shed-shell.png","x":177,"y":90,"width":20,"height":20,"sourceWidth":32,"sourceHeight":32,"trim":[6,6]},{"name":"shell-bell.png","x":178,"y":131,"width":21,"height":18,"sourceWidth":32,"sourceHeight":32,"trim":[6,8]},{"name":"shock-drive.png","x":181,"y":183,"width":21,"height":15,"sourceWidth":32,"sourceHeight":32,"trim":[6,8]},{"name":"silk-scarf.png","x":60,"y":47,"width":22,"height":22,"sourceWidth":32,"sourceHeight":32,"trim":[5,5]},{"name":"silver-powder.png","x":64,"y":198,"width":22,"height":13,"sourceWidth":32,"sourceHeight":32,"trim":[5,12]},{"name":"smoke-ball.png","x":128,"y":167,"width":16,"height":16,"sourceWidth":32,"sourceHeight":32,"trim":[8,8]},{"name":"smooth-rock.png","x":82,"y":47,"width":22,"height":22,"sourceWidth":32,"sourceHeight":32,"trim":[5,5]},{"name":"snowball.png","x":86,"y":198,"width":13,"height":13,"sourceWidth":32,"sourceHeight":32,"trim":[10,10]},{"name":"soft-sand.png","x":0,"y":149,"width":22,"height":18,"sourceWidth":32,"sourceHeight":32,"trim":[5,8]},{"name":"soul-dew.png","x":21,"y":198,"width":14,"height":14,"sourceWidth":32,"sourceHeight":32,"trim":[9,9]},{"name":"spell-tag.png","x":94,"y":111,"width":17,"height":19,"sourceWidth":32,"sourceHeight":32,"trim":[8,7]},{"name":"stick.png","x":167,"y":69,"width":21,"height":21,"sourceWidth":32,"sourceHeight":32,"trim":[5,6]},{"name":"sticky-barb.png","x":144,"y":167,"width":16,"height":16,"sourceWidth":32,"sourceHeight":32,"trim":[8,8]},{"name":"terrain-extender.png","x":46,"y":0,"width":19,"height":23,"sourceWidth":32,"sourceHeight":32,"trim":[6,5]},{"name":"thick-club.png","x":0,"y":111,"width":20,"height":20,"sourceWidth":32,"sourceHeight":32,"trim":[6,6]},{"name":"throat-spray.png","x":0,"y":90,"width":18,"height":21,"sourceWidth":32,"sourceHeight":32,"trim":[6,5]},{"name":"toxic-orb.png","x":160,"y":167,"width":16,"height":16,"sourceWidth":32,"sourceHeight":32,"trim":[8,8]},{"name":"twisted-spoon.png","x":18,"y":90,"width":22,"height":21,"sourceWidth":32,"sourceHeight":32,"trim":[5,6]},{"name":"utility-umbrella.png","x":22,"y":0,"width":24,"height":24,"sourceWidth":32,"sourceHeight":32,"trim":[3,3]},{"name":"weakness-policy.png","x":146,"y":149,"width":20,"height":17,"sourceWidth":32,"sourceHeight":32,"trim":[6,7]},{"name":"white-herb.png","x":166,"y":149,"width":19,"height":17,"sourceWidth":32,"sourceHeight":32,"trim":[6,8]},{"name":"wide-lens.png","x":40,"y":90,"width":20,"height":21,"sourceWidth":32,"sourceHeight":32,"trim":[6,5]},{"name":"wise-glasses.png","x":0,"y":198,"width":21,"height":15,"sourceWidth":32,"sourceHeight":32,"trim":[5,9]},{"name":"zoom-lens.png","x":111,"y":111,"width":19,"height":19,"sourceWidth":32,"sourceHeight":32,"trim":[6,7]}]}
+{
+  "compact": true,
+  "width": 301,
+  "height": 138,
+  "images": [
+    {
+      "name": "absorb-bulb.png",
+      "x": 260,
+      "y": 47,
+      "width": 16,
+      "height": 20,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        9,
+        6
+      ]
+    },
+    {
+      "name": "adamant-orb.png",
+      "x": 83,
+      "y": 0,
+      "width": 22,
+      "height": 22,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        5,
+        5
+      ]
+    },
+    {
+      "name": "adrenaline-orb.png",
+      "x": 211,
+      "y": 25,
+      "width": 17,
+      "height": 21,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        7,
+        6
+      ]
+    },
+    {
+      "name": "air-balloon.png",
+      "x": 105,
+      "y": 0,
+      "width": 18,
+      "height": 22,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        6,
+        5
+      ]
+    },
+    {
+      "name": "amulet-coin.png",
+      "x": 121,
+      "y": 68,
+      "width": 21,
+      "height": 19,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        7,
+        6
+      ]
+    },
+    {
+      "name": "assault-vest.png",
+      "x": 231,
+      "y": 68,
+      "width": 21,
+      "height": 18,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        5,
+        7
+      ]
+    },
+    {
+      "name": "big-root.png",
+      "x": 123,
+      "y": 0,
+      "width": 21,
+      "height": 22,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        5,
+        5
+      ]
+    },
+    {
+      "name": "binding-band.png",
+      "x": 252,
+      "y": 68,
+      "width": 21,
+      "height": 18,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        6,
+        7
+      ]
+    },
+    {
+      "name": "black-belt.png",
+      "x": 228,
+      "y": 25,
+      "width": 20,
+      "height": 21,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        6,
+        5
+      ]
+    },
+    {
+      "name": "black-glasses.png",
+      "x": 280,
+      "y": 106,
+      "width": 21,
+      "height": 15,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        5,
+        9
+      ]
+    },
+    {
+      "name": "black-sludge.png",
+      "x": 239,
+      "y": 88,
+      "width": 20,
+      "height": 17,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        6,
+        8
+      ]
+    },
+    {
+      "name": "blue-orb.png",
+      "x": 273,
+      "y": 68,
+      "width": 18,
+      "height": 18,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        7,
+        7
+      ]
+    },
+    {
+      "name": "blunder-policy.png",
+      "x": 259,
+      "y": 88,
+      "width": 20,
+      "height": 17,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        6,
+        7
+      ]
+    },
+    {
+      "name": "bright-powder.png",
+      "x": 0,
+      "y": 88,
+      "width": 22,
+      "height": 18,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        5,
+        8
+      ]
+    },
+    {
+      "name": "burn-drive.png",
+      "x": 0,
+      "y": 123,
+      "width": 21,
+      "height": 15,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        6,
+        8
+      ]
+    },
+    {
+      "name": "cell-battery.png",
+      "x": 248,
+      "y": 25,
+      "width": 8,
+      "height": 21,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        12,
+        6
+      ]
+    },
+    {
+      "name": "charcoal.png",
+      "x": 276,
+      "y": 47,
+      "width": 20,
+      "height": 20,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        6,
+        6
+      ]
+    },
+    {
+      "name": "chill-drive.png",
+      "x": 21,
+      "y": 123,
+      "width": 21,
+      "height": 15,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        6,
+        8
+      ]
+    },
+    {
+      "name": "choice-band.png",
+      "x": 144,
+      "y": 0,
+      "width": 22,
+      "height": 22,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        5,
+        5
+      ]
+    },
+    {
+      "name": "choice-scarf.png",
+      "x": 166,
+      "y": 0,
+      "width": 22,
+      "height": 22,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        5,
+        5
+      ]
+    },
+    {
+      "name": "choice-specs.png",
+      "x": 104,
+      "y": 106,
+      "width": 22,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        5,
+        9
+      ]
+    },
+    {
+      "name": "cleanse-tag.png",
+      "x": 142,
+      "y": 68,
+      "width": 17,
+      "height": 19,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        7
+      ]
+    },
+    {
+      "name": "clear-amulet.png",
+      "x": 22,
+      "y": 0,
+      "width": 18,
+      "height": 25,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        7,
+        3
+      ]
+    },
+    {
+      "name": "damp-rock.png",
+      "x": 188,
+      "y": 0,
+      "width": 22,
+      "height": 22,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        5,
+        5
+      ]
+    },
+    {
+      "name": "destiny-knot.png",
+      "x": 210,
+      "y": 0,
+      "width": 20,
+      "height": 22,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        7,
+        5
+      ]
+    },
+    {
+      "name": "douse-drive.png",
+      "x": 42,
+      "y": 123,
+      "width": 21,
+      "height": 15,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        6,
+        8
+      ]
+    },
+    {
+      "name": "dragon-fang.png",
+      "x": 256,
+      "y": 25,
+      "width": 19,
+      "height": 21,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        6,
+        6
+      ]
+    },
+    {
+      "name": "eject-button.png",
+      "x": 22,
+      "y": 88,
+      "width": 20,
+      "height": 18,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        6,
+        7
+      ]
+    },
+    {
+      "name": "eject-pack.png",
+      "x": 230,
+      "y": 0,
+      "width": 23,
+      "height": 22,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        6,
+        5
+      ]
+    },
+    {
+      "name": "electric-seed.png",
+      "x": 63,
+      "y": 123,
+      "width": 25,
+      "height": 15,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        4,
+        9
+      ]
+    },
+    {
+      "name": "everstone.png",
+      "x": 88,
+      "y": 123,
+      "width": 18,
+      "height": 15,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        7,
+        9
+      ]
+    },
+    {
+      "name": "eviolite.png",
+      "x": 237,
+      "y": 123,
+      "width": 13,
+      "height": 13,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        10,
+        10
+      ]
+    },
+    {
+      "name": "expert-belt.png",
+      "x": 275,
+      "y": 25,
+      "width": 22,
+      "height": 21,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        5,
+        5
+      ]
+    },
+    {
+      "name": "fairy-feather.png",
+      "x": 248,
+      "y": 47,
+      "width": 12,
+      "height": 21,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        10,
+        5
+      ]
+    },
+    {
+      "name": "flame-orb.png",
+      "x": 126,
+      "y": 106,
+      "width": 16,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "float-stone.png",
+      "x": 250,
+      "y": 123,
+      "width": 16,
+      "height": 13,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        9
+      ]
+    },
+    {
+      "name": "focus-band.png",
+      "x": 253,
+      "y": 0,
+      "width": 22,
+      "height": 22,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        5,
+        5
+      ]
+    },
+    {
+      "name": "focus-sash.png",
+      "x": 0,
+      "y": 47,
+      "width": 20,
+      "height": 21,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        6,
+        5
+      ]
+    },
+    {
+      "name": "grassy-seed.png",
+      "x": 106,
+      "y": 123,
+      "width": 25,
+      "height": 15,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        4,
+        9
+      ]
+    },
+    {
+      "name": "grip-claw.png",
+      "x": 275,
+      "y": 0,
+      "width": 22,
+      "height": 22,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        5,
+        5
+      ]
+    },
+    {
+      "name": "griseous-orb.png",
+      "x": 0,
+      "y": 25,
+      "width": 20,
+      "height": 22,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        6,
+        5
+      ]
+    },
+    {
+      "name": "hard-stone.png",
+      "x": 42,
+      "y": 88,
+      "width": 17,
+      "height": 18,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        7,
+        7
+      ]
+    },
+    {
+      "name": "heat-rock.png",
+      "x": 20,
+      "y": 47,
+      "width": 22,
+      "height": 21,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        5,
+        6
+      ]
+    },
+    {
+      "name": "heavy-duty-boots.png",
+      "x": 42,
+      "y": 47,
+      "width": 24,
+      "height": 21,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        4,
+        6
+      ]
+    },
+    {
+      "name": "icy-rock.png",
+      "x": 20,
+      "y": 25,
+      "width": 22,
+      "height": 22,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        5,
+        5
+      ]
+    },
+    {
+      "name": "iron-ball.png",
+      "x": 142,
+      "y": 106,
+      "width": 16,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "kings-rock.png",
+      "x": 42,
+      "y": 25,
+      "width": 21,
+      "height": 22,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        6,
+        5
+      ]
+    },
+    {
+      "name": "lagging-tail.png",
+      "x": 66,
+      "y": 47,
+      "width": 22,
+      "height": 21,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        5,
+        6
+      ]
+    },
+    {
+      "name": "leftovers.png",
+      "x": 0,
+      "y": 68,
+      "width": 13,
+      "height": 20,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        9,
+        6
+      ]
+    },
+    {
+      "name": "life-orb.png",
+      "x": 158,
+      "y": 106,
+      "width": 16,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "light-ball.png",
+      "x": 174,
+      "y": 106,
+      "width": 16,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "light-clay.png",
+      "x": 190,
+      "y": 106,
+      "width": 19,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        6,
+        8
+      ]
+    },
+    {
+      "name": "lucky-egg.png",
+      "x": 59,
+      "y": 88,
+      "width": 15,
+      "height": 18,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        7
+      ]
+    },
+    {
+      "name": "lucky-punch.png",
+      "x": 63,
+      "y": 25,
+      "width": 22,
+      "height": 22,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        5,
+        5
+      ]
+    },
+    {
+      "name": "luminous-moss.png",
+      "x": 13,
+      "y": 68,
+      "width": 15,
+      "height": 20,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        9,
+        6
+      ]
+    },
+    {
+      "name": "lustrous-orb.png",
+      "x": 85,
+      "y": 25,
+      "width": 22,
+      "height": 22,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        5,
+        5
+      ]
+    },
+    {
+      "name": "magnet.png",
+      "x": 74,
+      "y": 88,
+      "width": 18,
+      "height": 18,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        7,
+        7
+      ]
+    },
+    {
+      "name": "mental-herb.png",
+      "x": 279,
+      "y": 88,
+      "width": 19,
+      "height": 17,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        6,
+        8
+      ]
+    },
+    {
+      "name": "metal-coat.png",
+      "x": 28,
+      "y": 68,
+      "width": 17,
+      "height": 20,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        7,
+        6
+      ]
+    },
+    {
+      "name": "metal-powder.png",
+      "x": 92,
+      "y": 88,
+      "width": 22,
+      "height": 18,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        5,
+        8
+      ]
+    },
+    {
+      "name": "metronome.png",
+      "x": 45,
+      "y": 68,
+      "width": 15,
+      "height": 20,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        6
+      ]
+    },
+    {
+      "name": "miracle-seed.png",
+      "x": 0,
+      "y": 106,
+      "width": 17,
+      "height": 17,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        7,
+        8
+      ]
+    },
+    {
+      "name": "misty-seed.png",
+      "x": 131,
+      "y": 123,
+      "width": 25,
+      "height": 15,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        4,
+        9
+      ]
+    },
+    {
+      "name": "muscle-band.png",
+      "x": 107,
+      "y": 25,
+      "width": 22,
+      "height": 22,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        5,
+        5
+      ]
+    },
+    {
+      "name": "mystic-water.png",
+      "x": 88,
+      "y": 47,
+      "width": 18,
+      "height": 21,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        7,
+        6
+      ]
+    },
+    {
+      "name": "never-melt-ice.png",
+      "x": 106,
+      "y": 47,
+      "width": 20,
+      "height": 21,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        6,
+        6
+      ]
+    },
+    {
+      "name": "poison-barb.png",
+      "x": 159,
+      "y": 68,
+      "width": 19,
+      "height": 19,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        6,
+        7
+      ]
+    },
+    {
+      "name": "power-herb.png",
+      "x": 17,
+      "y": 106,
+      "width": 19,
+      "height": 17,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        6,
+        8
+      ]
+    },
+    {
+      "name": "protective-pads.png",
+      "x": 129,
+      "y": 25,
+      "width": 20,
+      "height": 22,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        6,
+        6
+      ]
+    },
+    {
+      "name": "psychic-seed.png",
+      "x": 156,
+      "y": 123,
+      "width": 25,
+      "height": 15,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        4,
+        9
+      ]
+    },
+    {
+      "name": "purifying-gem.png",
+      "x": 221,
+      "y": 88,
+      "width": 18,
+      "height": 18,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        7,
+        7
+      ]
+    },
+    {
+      "name": "quick-claw.png",
+      "x": 178,
+      "y": 68,
+      "width": 17,
+      "height": 19,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        7,
+        7
+      ]
+    },
+    {
+      "name": "quick-powder.png",
+      "x": 114,
+      "y": 88,
+      "width": 22,
+      "height": 18,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        5,
+        8
+      ]
+    },
+    {
+      "name": "red-card.png",
+      "x": 36,
+      "y": 106,
+      "width": 15,
+      "height": 17,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        9,
+        8
+      ]
+    },
+    {
+      "name": "red-orb.png",
+      "x": 149,
+      "y": 25,
+      "width": 18,
+      "height": 22,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        7,
+        5
+      ]
+    },
+    {
+      "name": "ring-target.png",
+      "x": 51,
+      "y": 106,
+      "width": 14,
+      "height": 17,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        9,
+        7
+      ]
+    },
+    {
+      "name": "rocky-helmet.png",
+      "x": 136,
+      "y": 88,
+      "width": 20,
+      "height": 18,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        6,
+        8
+      ]
+    },
+    {
+      "name": "room-service.png",
+      "x": 0,
+      "y": 0,
+      "width": 22,
+      "height": 25,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        5,
+        4
+      ]
+    },
+    {
+      "name": "rusted-shield.png",
+      "x": 156,
+      "y": 88,
+      "width": 22,
+      "height": 18,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        5,
+        7
+      ]
+    },
+    {
+      "name": "rusted-sword.png",
+      "x": 60,
+      "y": 68,
+      "width": 21,
+      "height": 20,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        6,
+        5
+      ]
+    },
+    {
+      "name": "safety-goggles.png",
+      "x": 209,
+      "y": 106,
+      "width": 23,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        5,
+        8
+      ]
+    },
+    {
+      "name": "scope-lens.png",
+      "x": 126,
+      "y": 47,
+      "width": 22,
+      "height": 21,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        5,
+        6
+      ]
+    },
+    {
+      "name": "sharp-beak.png",
+      "x": 148,
+      "y": 47,
+      "width": 19,
+      "height": 21,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        6,
+        6
+      ]
+    },
+    {
+      "name": "shed-shell.png",
+      "x": 81,
+      "y": 68,
+      "width": 20,
+      "height": 20,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        6,
+        6
+      ]
+    },
+    {
+      "name": "shell-bell.png",
+      "x": 178,
+      "y": 88,
+      "width": 21,
+      "height": 18,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        6,
+        8
+      ]
+    },
+    {
+      "name": "shock-drive.png",
+      "x": 181,
+      "y": 123,
+      "width": 21,
+      "height": 15,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        6,
+        8
+      ]
+    },
+    {
+      "name": "silk-scarf.png",
+      "x": 167,
+      "y": 25,
+      "width": 22,
+      "height": 22,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        5,
+        5
+      ]
+    },
+    {
+      "name": "silver-powder.png",
+      "x": 266,
+      "y": 123,
+      "width": 22,
+      "height": 13,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        5,
+        12
+      ]
+    },
+    {
+      "name": "smoke-ball.png",
+      "x": 232,
+      "y": 106,
+      "width": 16,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "smooth-rock.png",
+      "x": 189,
+      "y": 25,
+      "width": 22,
+      "height": 22,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        5,
+        5
+      ]
+    },
+    {
+      "name": "snowball.png",
+      "x": 288,
+      "y": 123,
+      "width": 13,
+      "height": 13,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        10,
+        10
+      ]
+    },
+    {
+      "name": "soft-sand.png",
+      "x": 199,
+      "y": 88,
+      "width": 22,
+      "height": 18,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        5,
+        8
+      ]
+    },
+    {
+      "name": "soul-dew.png",
+      "x": 223,
+      "y": 123,
+      "width": 14,
+      "height": 14,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        9,
+        9
+      ]
+    },
+    {
+      "name": "spell-tag.png",
+      "x": 195,
+      "y": 68,
+      "width": 17,
+      "height": 19,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        7
+      ]
+    },
+    {
+      "name": "stick.png",
+      "x": 167,
+      "y": 47,
+      "width": 21,
+      "height": 21,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        5,
+        6
+      ]
+    },
+    {
+      "name": "sticky-barb.png",
+      "x": 248,
+      "y": 106,
+      "width": 16,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "terrain-extender.png",
+      "x": 64,
+      "y": 0,
+      "width": 19,
+      "height": 23,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        6,
+        5
+      ]
+    },
+    {
+      "name": "thick-club.png",
+      "x": 101,
+      "y": 68,
+      "width": 20,
+      "height": 20,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        6,
+        6
+      ]
+    },
+    {
+      "name": "throat-spray.png",
+      "x": 188,
+      "y": 47,
+      "width": 18,
+      "height": 21,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        6,
+        5
+      ]
+    },
+    {
+      "name": "toxic-orb.png",
+      "x": 264,
+      "y": 106,
+      "width": 16,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "twisted-spoon.png",
+      "x": 206,
+      "y": 47,
+      "width": 22,
+      "height": 21,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        5,
+        6
+      ]
+    },
+    {
+      "name": "utility-umbrella.png",
+      "x": 40,
+      "y": 0,
+      "width": 24,
+      "height": 24,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        3,
+        3
+      ]
+    },
+    {
+      "name": "weakness-policy.png",
+      "x": 65,
+      "y": 106,
+      "width": 20,
+      "height": 17,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        6,
+        7
+      ]
+    },
+    {
+      "name": "white-herb.png",
+      "x": 85,
+      "y": 106,
+      "width": 19,
+      "height": 17,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        6,
+        8
+      ]
+    },
+    {
+      "name": "wide-lens.png",
+      "x": 228,
+      "y": 47,
+      "width": 20,
+      "height": 21,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        6,
+        5
+      ]
+    },
+    {
+      "name": "wise-glasses.png",
+      "x": 202,
+      "y": 123,
+      "width": 21,
+      "height": 15,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        5,
+        9
+      ]
+    },
+    {
+      "name": "zoom-lens.png",
+      "x": 212,
+      "y": 68,
+      "width": 19,
+      "height": 19,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        6,
+        7
+      ]
+    }
+  ]
+}

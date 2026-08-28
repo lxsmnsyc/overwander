@@ -6672,15 +6672,15 @@
       }
     },
     "public/sprites/ui/items/ev-items/image.png": {
-      "digest": "fc5af32618182d4b",
-      "bytes": 1382,
+      "digest": "a8401556a6047445",
+      "bytes": 1616,
       "width": 44,
       "height": 85,
       "compact": {
-        "at": "2026-08-17T06:50:23Z",
-        "as": "indexed 8-bit, none",
-        "was": 3278,
-        "bytes": 1382
+        "at": "2026-08-27T19:35:59Z",
+        "as": "already compact",
+        "was": 1616,
+        "bytes": 1616
       }
     },
     "public/sprites/ui/items/evolutions/image.png": {
@@ -6732,15 +6732,15 @@
       }
     },
     "public/sprites/ui/items/held/image.png": {
-      "digest": "8ea4092b8bcfdd13",
-      "bytes": 20568,
-      "width": 202,
-      "height": 213,
+      "digest": "73e6abbc67435f9b",
+      "bytes": 21494,
+      "width": 301,
+      "height": 138,
       "compact": {
-        "at": "2026-08-17T06:50:23Z",
-        "as": "truecolour, none",
-        "was": 39158,
-        "bytes": 20568
+        "at": "2026-08-27T19:35:59Z",
+        "as": "already compact",
+        "was": 21494,
+        "bytes": 21494
       }
     },
     "public/sprites/ui/items/incense/image.png": {
@@ -6756,15 +6756,15 @@
       }
     },
     "public/sprites/ui/items/key/image.png": {
-      "digest": "243ebd48101f73ce",
-      "bytes": 54189,
+      "digest": "6dad15b8dff525dc",
+      "bytes": 54358,
       "width": 328,
       "height": 326,
       "compact": {
-        "at": "2026-08-17T06:50:23Z",
-        "as": "truecolour, none",
-        "was": 103599,
-        "bytes": 54189
+        "at": "2026-08-27T19:28:16Z",
+        "as": "already compact",
+        "was": 54358,
+        "bytes": 54358
       }
     },
     "public/sprites/ui/items/medicine/image.png": {

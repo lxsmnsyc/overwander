@@ -1,0 +1,685 @@
+import { readFileSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
+import decode, { type Image, encodeSmallest } from '../src/server/sprites/png.ts';
+import pack from '../src/server/sprites/packing.ts';
+
+/**
+ * Item pictures that no rip drew.
+ *
+ * A few items are this engine's own and have no mainline art anywhere:
+ * a portal key, a purifying gem, a utility belt. They used to point at
+ * somebody else's picture, which is a loan that goes wrong twice over,
+ * once when the borrowed item is added and wants its picture back, and
+ * once when a tray shows two rows with the same square in them.
+ *
+ * So they are made here instead. Most are a **palette swap** of a
+ * picture that already has the right shape, which is how the sheets
+ * draw eighteen gems and eighteen plates; the swaps are exact colour
+ * for exact colour, because the art is indexed in practice. One is
+ * drawn outright from a grid written down below.
+ */
+
+const ROOT = 'public/sprites/ui/items';
+
+/** How wide a cell of an item sheet is. Every sheet is cut at this. */
+const CELL = 32;
+
+interface Picture {
+  name: string;
+  image: Image;
+  /** Where it sits in its 32x32 cell. */
+  trim: [number, number];
+  /** Where it sits on the sheet, or nothing until it is placed. */
+  at?: [number, number];
+}
+
+interface Sheet {
+  atlas: Image;
+  pictures: Picture[];
+}
+
+function hexOf(image: Image, at: number): string {
+  return `#${((image.rgba[at] << 16) | (image.rgba[at + 1] << 8) | image.rgba[at + 2])
+    .toString(16)
+    .padStart(6, '0')}`;
+}
+
+function readSheet(name: string): Sheet {
+  const parsed: unknown = JSON.parse(readFileSync(join(ROOT, name, 'data.json'), 'utf8'));
+
+  if (typeof parsed !== 'object' || parsed === null || !('images' in parsed)) {
+    throw new Error(`Sheet ${name} has no description`);
+  }
+  const images = parsed.images;
+
+  if (!Array.isArray(images)) {
+    throw new Error(`Sheet ${name} describes no pictures`);
+  }
+  const atlas = decode(readFileSync(join(ROOT, name, 'image.png')));
+
+  return {
+    atlas,
+    pictures: images.map((entry: Record<string, number | string | number[]>) => {
+      const box = {
+        name: String(entry.name).replace(/\.png$/, ''),
+        x: Number(entry.x),
+        y: Number(entry.y),
+        width: Number(entry.width),
+        height: Number(entry.height),
+        trim: Array.isArray(entry.trim) ? entry.trim.map(Number) : [0, 0],
+      };
+      const image: Image = {
+        width: box.width,
+        height: box.height,
+        rgba: Buffer.alloc(box.width * box.height * 4),
+      };
+
+      for (let y = 0; y < box.height; y += 1) {
+        for (let x = 0; x < box.width; x += 1) {
+          const from = ((box.y + y) * atlas.width + box.x + x) * 4;
+          const to = (y * box.width + x) * 4;
+
+          image.rgba.set(atlas.rgba.subarray(from, from + 4), to);
+        }
+      }
+      return {
+        name: box.name,
+        image,
+        trim: [box.trim[0], box.trim[1]] as [number, number],
+        at: [box.x, box.y] as [number, number],
+      };
+    }),
+  };
+}
+
+/**
+ * Where a picture can go on a sheet without moving anything already on
+ * it, or nothing if there is no room. Top-left first fit, which is
+ * enough: the pictures are all about a cell wide and the gaps left by
+ * the sheets' own packing are about that size too
+ */
+function roomFor(
+  taken: Uint8Array,
+  width: number,
+  height: number,
+  want: Image,
+): [number, number] | null {
+  for (let y = 0; y + want.height <= height; y += 1) {
+    for (let x = 0; x + want.width <= width; x += 1) {
+      let free = true;
+
+      for (let row = 0; row < want.height && free; row += 1) {
+        for (let column = 0; column < want.width; column += 1) {
+          if (taken[(y + row) * width + x + column] === 1) {
+            free = false;
+            break;
+          }
+        }
+      }
+      if (free) {
+        return [x, y];
+      }
+    }
+  }
+  return null;
+}
+
+function mark(taken: Uint8Array, width: number, at: [number, number], image: Image): void {
+  for (let row = 0; row < image.height; row += 1) {
+    for (let column = 0; column < image.width; column += 1) {
+      taken[(at[1] + row) * width + at[0] + column] = 1;
+    }
+  }
+}
+
+/** A sheet's pictures each given a place, and how big that came to. */
+interface Layout {
+  places: Map<string, [number, number]>;
+  width: number;
+  height: number;
+}
+
+function areaOf(layout: Layout): number {
+  return layout.width * layout.height;
+}
+
+/**
+ * How far from square a sheet may be. Rows at every width will happily
+ * find a strip one picture wide, which is the tightest fit and the
+ * worst sheet: the ones already in `public/` are all within about this
+ */
+const MAX_ASPECT = 2.5;
+
+function shapely(layout: Layout): boolean {
+  return (
+    Math.max(layout.width, layout.height) <= Math.min(layout.width, layout.height) * MAX_ASPECT
+  );
+}
+
+/**
+ * Every picture kept exactly where it is, with the new ones dropped
+ * into the gaps and the sheet grown only when nothing fits
+ */
+function keptInPlace(sheet: Sheet): Layout {
+  const width = sheet.atlas.width;
+  let height = sheet.atlas.height;
+  let taken = new Uint8Array(width * height);
+  const places = new Map<string, [number, number]>();
+
+  for (const picture of sheet.pictures) {
+    if (picture.at != null) {
+      places.set(picture.name, picture.at);
+      mark(taken, width, picture.at, picture.image);
+    }
+  }
+
+  for (const picture of sheet.pictures) {
+    if (picture.at != null) {
+      continue;
+    }
+    let where = roomFor(taken, width, height, picture.image);
+
+    if (where == null) {
+      const grown = new Uint8Array(width * (height + picture.image.height));
+
+      grown.set(taken, 0);
+      taken = grown;
+      height += picture.image.height;
+      where = roomFor(taken, width, height, picture.image);
+    }
+    if (where == null) {
+      throw new Error(`No room on the sheet for ${picture.name}`);
+    }
+    places.set(picture.name, where);
+    mark(taken, width, where, picture.image);
+  }
+  return { places, width, height };
+}
+
+/**
+ * Every picture laid in rows of a given width, tallest first. Rows
+ * rather than a tree, because a sheet of pictures that are all about a
+ * cell wide packs into rows almost perfectly and the tree will not
+ * find that: it keeps the sheet square, and eight belts want one long
+ * strip
+ */
+function shelved(pictures: Picture[], width: number): Layout | null {
+  const order = [...pictures].sort((one, two) => two.image.height - one.image.height);
+  const places = new Map<string, [number, number]>();
+  let x = 0;
+  let y = 0;
+  let tallest = 0;
+
+  for (const picture of order) {
+    if (picture.image.width > width) {
+      return null;
+    }
+    if (x + picture.image.width > width) {
+      x = 0;
+      y += tallest;
+      tallest = 0;
+    }
+    places.set(picture.name, [x, y]);
+    x += picture.image.width;
+    tallest = Math.max(tallest, picture.image.height);
+  }
+  return { places, width, height: y + tallest };
+}
+
+/**
+ * Every picture placed again from scratch, nothing kept: the tree
+ * packer, and rows at every width worth trying, whichever comes out
+ * smallest
+ */
+function packedAfresh(sheet: Sheet): Layout {
+  const packed = pack(
+    sheet.pictures.map((one) => ({ one, w: one.image.width, h: one.image.height })),
+  );
+  let best: Layout = {
+    places: new Map(packed.placed.map(({ box, x, y }) => [box.one.name, [x, y]])),
+    width: packed.width,
+    height: packed.height,
+  };
+  const widest = Math.max(...sheet.pictures.map((one) => one.image.width));
+  const across = sheet.pictures.reduce((sum, one) => sum + one.image.width, 0);
+
+  for (let width = widest; width <= across; width += 1) {
+    const rows = shelved(sheet.pictures, width);
+
+    if (rows != null && shapely(rows) && areaOf(rows) < areaOf(best)) {
+      best = rows;
+    }
+  }
+  return best;
+}
+
+/**
+ * How much smaller a repack has to come out before it is worth moving
+ * every picture on the sheet. A repack rewrites every row of the
+ * description, so a percent or two is not worth the churn
+ */
+const WORTH_REPACKING = 0.95;
+
+/**
+ * Puts the new pictures on the sheet and writes it back.
+ *
+ * Keeping what is already placed is the first choice: these sheets
+ * were packed by whatever tool cut them, tighter than the packer in
+ * this repo manages, so a repack usually costs area rather than saving
+ * it. The exception is a sheet that has to grow anyway, where the
+ * strip left over can be worse than starting again, so both are worked
+ * out and the smaller one wins
+ */
+function writeSheet(name: string, sheet: Sheet): void {
+  const kept = keptInPlace(sheet);
+  const grew = kept.width !== sheet.atlas.width || kept.height !== sheet.atlas.height;
+  const afresh = grew ? packedAfresh(sheet) : null;
+  const layout = afresh != null && areaOf(afresh) < areaOf(kept) * WORTH_REPACKING ? afresh : kept;
+  const atlas: Image = {
+    width: layout.width,
+    height: layout.height,
+    rgba: Buffer.alloc(layout.width * layout.height * 4),
+  };
+
+  for (const picture of sheet.pictures) {
+    const [x, y] = layout.places.get(picture.name) ?? [0, 0];
+
+    for (let row = 0; row < picture.image.height; row += 1) {
+      for (let column = 0; column < picture.image.width; column += 1) {
+        const from = (row * picture.image.width + column) * 4;
+
+        atlas.rgba.set(
+          picture.image.rgba.subarray(from, from + 4),
+          ((y + row) * atlas.width + x + column) * 4,
+        );
+      }
+    }
+  }
+
+  const encoded = encodeSmallest(atlas);
+
+  writeFileSync(join(ROOT, name, 'image.png'), encoded.bytes);
+  writeFileSync(
+    join(ROOT, name, 'data.json'),
+    `${JSON.stringify(
+      {
+        compact: true,
+        width: atlas.width,
+        height: atlas.height,
+        images: sheet.pictures
+          .map((picture) => {
+            const [x, y] = layout.places.get(picture.name) ?? [0, 0];
+
+            return {
+              name: `${picture.name}.png`,
+              x,
+              y,
+              width: picture.image.width,
+              height: picture.image.height,
+              sourceWidth: CELL,
+              sourceHeight: CELL,
+              trim: picture.trim,
+            };
+          })
+          .sort((one, two) => one.name.localeCompare(two.name)),
+      },
+      null,
+      2,
+    )}\n`,
+  );
+
+  const lit = sheet.pictures.reduce((sum, one) => sum + one.image.width * one.image.height, 0);
+
+  console.log(
+    `${name}: ${sheet.pictures.length} pictures, ${atlas.width}x${atlas.height}, ` +
+      `${Math.round((lit / areaOf(layout)) * 100)}% full, ` +
+      (layout === afresh ? 'packed again' : 'kept as it was'),
+  );
+}
+
+/** One picture made out of another by swapping its colours one for one. */
+interface Tint {
+  /** The picture it is made from, as `sheet/name`. */
+  from: string;
+  /** Where the result lands, as `sheet/name`. */
+  to: string;
+  /** Why it is not simply borrowing the picture it is made from. */
+  why: string;
+  /** `#rrggbb` to `#rrggbb`. Every colour of the source must be named. */
+  swaps: Record<string, string>;
+}
+
+const TINTS: Tint[] = [
+  {
+    from: 'key/silver-wing',
+    to: 'held/fairy-feather',
+    why: 'the boosters are one object each, and the silver wing is its own item',
+    swaps: {
+      '#202020': '#2a1a24',
+      '#e6eeff': '#ffeef6',
+      '#bdcdee': '#ffd5ee',
+      '#b4c5e6': '#f6c5de',
+      '#94acde': '#de94c5',
+      '#8394bd': '#c57bb4',
+      '#5a6a94': '#a45a8b',
+      '#5a7b83': '#8b4a6a',
+      '#4a5a6a': '#6a3952',
+    },
+  },
+  {
+    from: 'key/intriguing-stone',
+    to: 'key/portal-key',
+    why: 'the mystic ticket is a mythical item of its own, and the key stone is mega evolution',
+    swaps: {
+      '#202020': '#141026',
+      '#ffffff': '#ffffff',
+      '#f6eef6': '#e6f6ff',
+      // The warm half of the stone, taken round to the cold end so the
+      // two halves read as a way through rather than as a gemstone
+      '#ffcd00': '#94f6ff',
+      '#ffe683': '#bdffff',
+      '#ffeea4': '#d5ffff',
+      '#eec573': '#62deee',
+      '#f6dea4': '#94eeff',
+      '#ffbd7b': '#73e6f6',
+      '#eea400': '#41c5de',
+      '#f6a44a': '#52cde6',
+      '#ee8300': '#29a4c5',
+      '#ff5210': '#1883ac',
+      '#d52029': '#10628b',
+      '#d5005a': '#08396a',
+      // The cool half, deepened so the core reads lit against it
+      '#b4089c': '#5a1894',
+      '#9420b4': '#41108b',
+      '#8b4aee': '#7339de',
+      '#6239b4': '#39208b',
+      '#a4a4f6': '#a494ff',
+      '#9483de': '#7b6ac5',
+      '#bdc5ff': '#c5b4ff',
+      '#5a73e6': '#4a41c5',
+    },
+  },
+  {
+    from: 'partner/beach-glass',
+    to: 'held/purifying-gem',
+    why: 'the sparkling stone is held for Z-Moves, and sea glass is a partner keepsake',
+    // A shadow is purple and what lifts it is the light version of the
+    // same, so the shard goes white through lilac rather than gold:
+    // the sheets are already crowded with gold
+    swaps: {
+      '#292929': '#2a2135',
+      '#b4f6ff': '#fffbff',
+      '#94e6ee': '#f6eeff',
+      '#73dede': '#eedeff',
+      '#52c5e6': '#dec5ff',
+      '#52acd5': '#c5a4f6',
+      '#529cc5': '#b494ee',
+      '#52a4cd': '#bd9cf6',
+      '#6ab4cd': '#cdb4ff',
+      '#5a9ccd': '#a483e6',
+      '#5a8bbd': '#8b6ad5',
+    },
+  },
+  {
+    from: 'ev-items/power-lens',
+    to: 'ev-items/utility-belt',
+    why: 'the power lens is worn by a pokemon that is already holding it',
+    // The ring is a band with fittings set into it, so leather and
+    // brass make it a belt without a pixel moving
+    swaps: {
+      '#202020': '#231810',
+      '#ffffff': '#fff6de',
+      '#f6b4ff': '#e6bd83',
+      '#f652f6': '#d59c5a',
+      '#ff62ff': '#c58b4a',
+      '#c541de': '#9c6231',
+      '#a441bd': '#8b5231',
+      '#94419c': '#7b4a29',
+      '#6a3973': '#4a2d18',
+      '#20e6ff': '#ffcd52',
+      '#3994ff': '#e6a420',
+    },
+  },
+];
+
+function tinted(tint: Tint, sheets: Map<string, Sheet>): Picture {
+  const [fromSheet, fromName] = tint.from.split('/');
+  const source = sheets.get(fromSheet)?.pictures.find((one) => one.name === fromName);
+
+  if (source == null) {
+    throw new Error(`Nothing called ${tint.from} to make ${tint.to} from`);
+  }
+  const image: Image = {
+    width: source.image.width,
+    height: source.image.height,
+    rgba: Buffer.from(source.image.rgba),
+  };
+  const missed = new Set<string>();
+
+  for (let at = 0; at < image.rgba.length; at += 4) {
+    if (image.rgba[at + 3] === 0) {
+      continue;
+    }
+    const was = hexOf(image, at);
+
+    if (!Object.hasOwn(tint.swaps, was)) {
+      missed.add(was);
+      continue;
+    }
+    const packedColour = Number.parseInt(tint.swaps[was].slice(1), 16);
+
+    image.rgba[at] = (packedColour >> 16) & 0xff;
+    image.rgba[at + 1] = (packedColour >> 8) & 0xff;
+    image.rgba[at + 2] = packedColour & 0xff;
+  }
+  if (missed.size > 0) {
+    throw new Error(`${tint.to} says nothing about ${[...missed].sort().join(' ')}`);
+  }
+  return { name: tint.to.split('/')[1], image, trim: [source.trim[0], source.trim[1]] };
+}
+
+/**
+ * The one picture drawn here rather than made out of another.
+ *
+ * An omamori: a paper charm on a cord, which is the shape the item is
+ * named for and one no sheet carries. It is built out of three pieces
+ * rather than one grid, because a grid wide enough to hold all of it
+ * is counted by hand and miscounted by hand.
+ */
+const AMULET_COLOURS: Record<string, string> = {
+  K: '#241c2d',
+  // The cord, the only saturated thing on it
+  r: '#c5294a',
+  R: '#ee5a73',
+  d: '#8b1839',
+  // The card behind, which is what "clear" means here: it has no
+  // colour of its own and takes whatever the light is doing
+  w: '#fff6ff',
+  p: '#ffcdee',
+  c: '#b4eeff',
+  v: '#d5c5ff',
+  // The mark on it
+  g: '#ffbd18',
+  G: '#ffe694',
+  b: '#c58310',
+};
+
+/**
+ * The loop it hangs by: an arch of cord off the card's top edge, open
+ * at the bottom because that is where it goes into the card
+ */
+const AMULET_CORD = [
+  '......KKKKKK......',
+  '.....KrRRRRrK.....',
+  '....KrR....RrK....',
+  '....KrR....RrK....',
+  '....KrR....RrK....',
+  '....KdR....RdK....',
+  '....KdrK..KrdK....',
+];
+
+/**
+ * The mark stamped on the card. Typed as its gold alone: the dark line
+ * round it is drawn afterwards, which is the only way an outline stays
+ * one pixel everywhere
+ */
+const AMULET_MARK = [
+  '....gg....',
+  '....gg....',
+  '....gg....',
+  'GGGGGGGGGG',
+  'gggggggggg',
+  '....gg....',
+  '....gg....',
+  '...gggg...',
+  '..gg..gg..',
+  '.bg....gb.',
+];
+
+/**
+ * The card's own colour, corner to corner. Banded on the diagonal
+ * rather than in stripes, which is the difference between a prism and
+ * a flag
+ */
+const AMULET_BANDS = ['w', 'p', 'c', 'v'];
+
+const CARD = 18;
+const MARK_INK = new Set(['g', 'G', 'b']);
+
+/**
+ * The charm, as a grid of letters: the cord, then the card under it,
+ * then the mark on the card, then a line drawn round the mark
+ */
+function amulet(): string[] {
+  const rows = [...AMULET_CORD];
+  const top = rows.length;
+
+  const inner = CARD - 4;
+
+  for (let y = 0; y < CARD; y += 1) {
+    const inside = Array.from({ length: inner }, (_, x) => {
+      const along = (x / (inner - 1) + y / (CARD - 1)) / 2;
+
+      return AMULET_BANDS[Math.min(AMULET_BANDS.length - 1, Math.floor(along * 4))];
+    });
+
+    rows.push(y === 0 || y === CARD - 1 ? `..${'K'.repeat(inner)}..` : `.K${inside.join('')}K.`);
+  }
+
+  const grid = rows.map((row) => row.padEnd(CARD, '.').split(''));
+  const markLeft = Math.floor((CARD - AMULET_MARK[0].length) / 2);
+  const markTop = top + Math.floor((CARD - AMULET_MARK.length) / 2);
+
+  AMULET_MARK.forEach((row, y) => {
+    for (let x = 0; x < row.length; x += 1) {
+      if (row[x] !== '.') {
+        grid[markTop + y][markLeft + x] = row[x];
+      }
+    }
+  });
+
+  // The line round the mark, laid only over the card so the card's own
+  // border keeps its shape
+  const under = grid.map((row) => [...row.values()]);
+
+  for (let y = 0; y < grid.length; y += 1) {
+    for (let x = 0; x < CARD; x += 1) {
+      if (MARK_INK.has(under[y][x]) || !'wpcv'.includes(under[y][x])) {
+        continue;
+      }
+      const beside = [-1, 0, 1].some((dy) =>
+        [-1, 0, 1].some((dx) => MARK_INK.has(under[y + dy]?.[x + dx] ?? '.')),
+      );
+
+      if (beside) {
+        grid[y][x] = 'K';
+      }
+    }
+  }
+  return grid.map((row) => row.join(''));
+}
+
+/** A picture out of a grid of letters, one letter to a pixel. */
+function drawn(name: string, rows: string[], colours: Record<string, string>): Picture {
+  const width = Math.max(...rows.map((row) => row.length));
+  const image: Image = {
+    width,
+    height: rows.length,
+    rgba: Buffer.alloc(width * rows.length * 4),
+  };
+
+  rows.forEach((row, y) => {
+    for (let x = 0; x < row.length; x += 1) {
+      if (!Object.hasOwn(colours, row[x])) {
+        continue;
+      }
+      const colour = Number.parseInt(colours[row[x]].slice(1), 16);
+      const at = (y * width + x) * 4;
+
+      image.rgba[at] = (colour >> 16) & 0xff;
+      image.rgba[at + 1] = (colour >> 8) & 0xff;
+      image.rgba[at + 2] = colour & 0xff;
+      image.rgba[at + 3] = 255;
+    }
+  });
+  return {
+    name,
+    image,
+    trim: [Math.floor((CELL - width) / 2), Math.floor((CELL - rows.length) / 2)],
+  };
+}
+
+const DRAWN: { to: string; rows: string[]; colours: Record<string, string> }[] = [
+  { to: 'held/clear-amulet', rows: amulet(), colours: AMULET_COLOURS },
+];
+
+const sheets = new Map<string, Sheet>();
+const reading = new Set(
+  [...TINTS.flatMap((one) => [one.from, one.to]), ...DRAWN.map((one) => one.to)].map(
+    (spec) => spec.split('/')[0],
+  ),
+);
+
+for (const name of reading) {
+  sheets.set(name, readSheet(name));
+}
+
+const touched = new Set<string>();
+
+function put(sheetName: string, picture: Picture): void {
+  const sheet = sheets.get(sheetName);
+
+  if (sheet == null) {
+    throw new Error(`No sheet called ${sheetName}`);
+  }
+  const at = sheet.pictures.findIndex((one) => one.name === picture.name);
+
+  if (at < 0) {
+    sheet.pictures.push(picture);
+  } else {
+    // A picture the same size keeps the place it already had, so
+    // running this again after changing a swap list rewrites those
+    // pixels and moves nothing
+    const was = sheet.pictures[at];
+    const fits =
+      was.image.width === picture.image.width && was.image.height === picture.image.height;
+
+    sheet.pictures[at] = fits ? { ...picture, at: was.at } : picture;
+  }
+  touched.add(sheetName);
+  console.log(`  ${sheetName}/${picture.name}  ${picture.image.width}x${picture.image.height}`);
+}
+
+for (const tint of TINTS) {
+  put(tint.to.split('/')[0], tinted(tint, sheets));
+}
+for (const one of DRAWN) {
+  put(one.to.split('/')[0], drawn(one.to.split('/')[1], one.rows, one.colours));
+}
+for (const name of touched) {
+  const sheet = sheets.get(name);
+
+  if (sheet != null) {
+    writeSheet(name, sheet);
+  }
+}

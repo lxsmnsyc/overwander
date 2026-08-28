@@ -13,6 +13,7 @@
     "compact-sprites": "node scripts/compact-sprites.ts",
     "sprite-coats": "node scripts/sprite-coats.ts",
     "graft-walls": "node scripts/graft-walls.ts",
+    "item-icons": "node scripts/item-icons.ts",
     "test": "vitest run",
     "test:rules": "vitest run --config vitest.rules.ts",
     "test:e2e": "playwright test",

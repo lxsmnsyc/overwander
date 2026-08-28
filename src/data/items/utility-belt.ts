@@ -34,9 +34,10 @@ export default function registerUtilityBelt(): void {
     name: 'Utility Belt',
     description: 'Gives one pokemon a permanent extra item slot. Spent on use.',
     type: ItemTypes.Training,
-    // No belt of its own on the sheets; a forager's bag is the same
-    // idea — somewhere to put what you are carrying
-    icon: 'key/forage-bag',
+    // Its own picture, tinted out of the Power Lens by
+    // `scripts/item-icons.ts`: that one is a band with fittings set
+    // into it, which in leather and brass is a belt
+    icon: 'ev-items/utility-belt',
     // Used on a pokemon and gone, like a cap. Never held: a belt in
     // the grip would be a held item taking up the slot it grants
     flags: ItemFlags.Usable | ItemFlags.Consumable,

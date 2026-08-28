@@ -55,18 +55,6 @@ const NAMES: { [key in Items]?: string } = {
 };
 
 /**
- * The one whose name points at nothing. Every other booster is on the
- * `held` sheet under its own name; no fairy feather is drawn anywhere,
- * so it borrows the Silver Wing — a plain pale feather, and one no
- * other item is using. The Pretty Wing it used to borrow belongs to
- * the Pretty Wing, and two items drawn the same picture are one item
- * as far as a tray of pictures is concerned
- */
-const ICONS: { [key in Items]?: string } = {
-  [Items.FairyFeather]: 'key/silver-wing',
-};
-
-/**
  * They all do the same job, so they all cost the same: a flat price
  * rather than one type being dearer than another
  */
@@ -85,7 +73,7 @@ export default function registerTypeBoosters(): void {
       name: NAMES[item] ?? `Item #${item}`,
       type: ItemTypes.Held,
       description: `${TYPE_NAMES[type]} moves hit 1.2x for as long as it is held.`,
-      icon: ICONS[item] ?? nameToIcon('held', NAMES[item] ?? ''),
+      icon: nameToIcon('held', NAMES[item] ?? ''),
       // Held for as long as its holder keeps it: nothing consumes a
       // Charcoal, and nothing uses one on a pokemon either
       flags: ItemFlags.Holdable | ItemFlags.Marketable,

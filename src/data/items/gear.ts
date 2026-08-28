@@ -118,18 +118,6 @@ const GEAR_RESALE = 0.5;
  */
 const FOUND_GEAR_RESALE = 1000;
 
-/**
- * TODO: the Clear Amulet has no picture of its own cut yet, so it
- * borrows the Oval Charm — a charm hanging from a cord, which is the
- * only amulet shape the sheets carry. Give it `held/clear-amulet`
- * once the art exists
- */
-const GEAR_ICONS: Map<Items, string> = new Map([[Items.ClearAmulet, 'key/oval-charm']]);
-
-function gearIcon(item: Items, name: string): string {
-  return GEAR_ICONS.get(item) ?? nameToIcon('held', name);
-}
-
 export function isGear(item: Items): boolean {
   return MARKET_GEAR.has(item) || FOUND_GEAR.has(item);
 }
@@ -140,7 +128,7 @@ export default function registerGear(): void {
       name,
       description,
       type: ItemTypes.Held,
-      icon: gearIcon(item, name),
+      icon: nameToIcon('held', name),
       // Held for as long as its holder keeps it: none is consumed,
       // and none is used on a pokemon
       flags: ItemFlags.Holdable | ItemFlags.Marketable,
@@ -154,7 +142,7 @@ export default function registerGear(): void {
       name,
       description,
       type: ItemTypes.Held,
-      icon: gearIcon(item, name),
+      icon: nameToIcon('held', name),
       flags: ItemFlags.Holdable,
       buy: 0,
       sell: FOUND_GEAR_RESALE,

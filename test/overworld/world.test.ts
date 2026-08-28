@@ -154,7 +154,7 @@ import Phenomenon, {
 import {
   VENDOR_STAPLES,
   VENDOR_STOCK_KINDS,
-  VendorKind,
+  type VendorKind,
   getChefGoods,
   getVendorGoods,
   isMarketable,
@@ -1957,13 +1957,11 @@ describe('world', () => {
           for (const item of stock) {
             expect(goods.has(item)).toBe(true);
           }
-          // The staples belong to the medicine counter: a vendor with
-          // neither balls nor potions is one a player cannot plan a
-          // walk around, and the other shelves are their own plan
-          if (kind === VendorKind.Medicine) {
-            for (const staple of VENDOR_STAPLES) {
-              expect(new Set(stock).has(staple)).toBe(true);
-            }
+          // A counter with a staple always has it out: a ball stall
+          // with no Poke Ball is one a player cannot plan a walk
+          // around, and the specialist shelves are their own plan
+          for (const staple of VENDOR_STAPLES[kind] ?? []) {
+            expect(new Set(stock).has(staple)).toBe(true);
           }
         }
         // Priced goods only, which is what keeps the Master Ball out

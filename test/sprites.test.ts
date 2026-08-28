@@ -3,7 +3,7 @@ import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { ItemTypes, Items } from '../src/data/ids/items';
-import registerItems, { getItemData, listItemsByType } from '../src/data/items';
+import registerItems, { ITEM_TYPE_ORDER, getItemData, listItemsByType } from '../src/data/items';
 import berryPlantSheet, { berryPlantName } from '../src/data/overworld/berry-plant';
 import { BIOME_NAMES } from '../src/data/biome/names';
 import Biome from '../src/data/ids/biome';
@@ -511,5 +511,135 @@ describe('the scenery that ships', () => {
         expect(one.trim[0], one.name).toBe(Math.floor((cell - one.width) / 2));
       }
     }
+  });
+});
+
+/**
+ * The item pictures, and whether an icon still names one.
+ *
+ * An item says where its picture is as `sheet/name` and nothing checks
+ * that at build time, so a sheet rewritten by hand or by a script can
+ * leave every icon in the bag drawing a slice of the wrong thing. The
+ * failure is silent: the interface draws whatever those coordinates
+ * land on.
+ */
+describe('the item pictures that ship', () => {
+  const ITEM_ROOT = `${SPRITE_ROOT}/ui/items`;
+
+  /** One picture of an item sheet: a `Packed` plus where it sits. */
+  interface Placed extends Packed {
+    x: number;
+    y: number;
+  }
+
+  interface ItemSheet {
+    width: number;
+    height: number;
+    images: Placed[];
+  }
+
+  const sheetsByName = new Map<string, ItemSheet>(
+    readdirSync(ITEM_ROOT, { withFileTypes: true })
+      .filter((entry) => entry.isDirectory())
+      .map((entry) => {
+        const described = JSON.parse(
+          readFileSync(join(ITEM_ROOT, entry.name, 'data.json'), 'utf8'),
+        ) as unknown;
+        const images = fieldOf(described, 'images');
+
+        return [
+          entry.name,
+          {
+            width: Number(fieldOf(described, 'width')),
+            height: Number(fieldOf(described, 'height')),
+            images: (Array.isArray(images) ? images : []).map((one: unknown) => ({
+              name: String(fieldOf(one, 'name')).replace(/\.png$/, ''),
+              width: Number(fieldOf(one, 'width')),
+              height: Number(fieldOf(one, 'height')),
+              sourceWidth: Number(fieldOf(one, 'sourceWidth')),
+              sourceHeight: Number(fieldOf(one, 'sourceHeight')),
+              trim: trimOf(one),
+              base: pairOf(fieldOf(one, 'base')),
+              x: Number(fieldOf(one, 'x')),
+              y: Number(fieldOf(one, 'y')),
+            })),
+          },
+        ];
+      }),
+  );
+
+  it('describes each sheet at the size its drawing actually is', () => {
+    // What goes wrong when it drifts: the interface scrolls the sheet
+    // by a share of these numbers, so a description that disagrees with
+    // its own drawing shows a slice of somebody else's icon
+    for (const [name, sheet] of sheetsByName) {
+      if (sheet.images.length === 0) {
+        continue;
+      }
+      const drawing = readFileSync(join(ITEM_ROOT, name, 'image.png'));
+      // The width and height of a PNG are the eight bytes after the
+      // `IHDR` tag, big-endian
+      const header = drawing.indexOf('IHDR') + 4;
+
+      expect(sheet.width, name).toBe(drawing.readUInt32BE(header));
+      expect(sheet.height, name).toBe(drawing.readUInt32BE(header + 4));
+    }
+  });
+
+  it('keeps every picture inside its sheet and inside its cell', () => {
+    for (const [name, sheet] of sheetsByName) {
+      for (const one of sheet.images) {
+        const where = `${name}/${one.name}`;
+
+        expect(one.x + one.width, where).toBeLessThanOrEqual(sheet.width);
+        expect(one.y + one.height, where).toBeLessThanOrEqual(sheet.height);
+        expect(one.trim[0] + one.width, where).toBeLessThanOrEqual(one.sourceWidth);
+        expect(one.trim[1] + one.height, where).toBeLessThanOrEqual(one.sourceHeight);
+      }
+    }
+  });
+
+  it('names each picture once, since a caller asks by name', () => {
+    for (const [name, sheet] of sheetsByName) {
+      const seen = new Set(sheet.images.map((one) => one.name));
+
+      expect(seen.size, name).toBe(sheet.images.length);
+    }
+  });
+
+  it('has the picture every registered item asks for', () => {
+    const missing: string[] = [];
+
+    for (const type of ITEM_TYPE_ORDER) {
+      for (const item of listItemsByType(type)) {
+        const icon = getItemData(item).icon;
+        const cut = icon.lastIndexOf('/');
+        const sheet = sheetsByName.get(icon.slice(0, cut));
+
+        if (sheet?.images.some((one) => one.name === icon.slice(cut + 1)) !== true) {
+          missing.push(`${getItemData(item).name} wants ${icon}`);
+        }
+      }
+    }
+    expect(missing).toEqual([]);
+  });
+
+  it('draws no two items with the same picture', () => {
+    const byIcon = new Map<string, string[]>();
+
+    for (const type of ITEM_TYPE_ORDER) {
+      for (const item of listItemsByType(type)) {
+        const data = getItemData(item);
+
+        byIcon.set(data.icon, [...(byIcon.get(data.icon) ?? []), data.name]);
+      }
+    }
+    // Two rows of a bag showing the same square are one item as far as
+    // anybody reading it is concerned
+    expect(
+      [...byIcon]
+        .filter(([, names]) => names.length > 1)
+        .map(([icon, names]) => `${icon}: ${names.join(', ')}`),
+    ).toEqual([]);
   });
 });

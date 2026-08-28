@@ -35,9 +35,17 @@ export const enum VendorKind {
   Vitamins = 1,
   Incenses = 2,
   BattleItems = 3,
+  /**
+   * Split off the medicine counter, which carried thirty kinds where
+   * the others carry eight or nine. Six drawn out of thirty showed a
+   * fifth of the shelf, so a player after a Dusk Ball and a player
+   * after a Revive were both told to come back later
+   */
+  Balls = 4,
 }
 
 export const VENDOR_KINDS: VendorKind[] = [
+  VendorKind.Balls,
   VendorKind.Medicine,
   VendorKind.Vitamins,
   VendorKind.Incenses,
@@ -49,7 +57,8 @@ export const VENDOR_KINDS: VendorKind[] = [
  * from across the chunk, so it says the shelf rather than the trade
  */
 export const VENDOR_KIND_NAMES: Record<VendorKind, string> = {
-  [VendorKind.Medicine]: 'Ball & Potion Stall',
+  [VendorKind.Balls]: 'Ball Stall',
+  [VendorKind.Medicine]: 'Medicine Stall',
   [VendorKind.Vitamins]: 'Vitamin Stall',
   [VendorKind.Incenses]: 'Incense Stall',
   [VendorKind.BattleItems]: 'Battle Item Stall',
@@ -63,12 +72,17 @@ export const VENDOR_KIND_NAMES: Record<VendorKind, string> = {
 export const VENDOR_STOCK_KINDS = 6;
 
 /**
- * The two the medicine vendor always carries, whatever else the
- * window rolled. A trader who might have no balls and no potions is a
- * trader a player cannot plan a walk around; the other counters have
- * no staple, since their whole shelf is the plan
+ * What a counter always carries, whatever else the window rolled.
+ *
+ * A stall that might have no balls at all is a stall a player cannot
+ * plan a walk around, and the same goes for a medicine counter with no
+ * potion on it. The specialist counters have no staple, since their
+ * whole shelf is the plan
  */
-export const VENDOR_STAPLES: Items[] = [Items.PokeBall, Items.Potion];
+export const VENDOR_STAPLES: Partial<Record<VendorKind, Items[]>> = {
+  [VendorKind.Balls]: [Items.PokeBall],
+  [VendorKind.Medicine]: [Items.Potion],
+};
 
 /**
  * The most of one kind that changes hands in a single trade. Gold is
@@ -112,7 +126,8 @@ export function sellPrice(item: Items): number {
  * time would be reading an empty one
  */
 const SHELVES = new Map<VendorKind, () => Items[]>([
-  [VendorKind.Medicine, () => [...Object.values(BALL_ITEMS), ...MEDICINES.keys()]],
+  [VendorKind.Balls, () => [...Object.values(BALL_ITEMS)]],
+  [VendorKind.Medicine, () => [...MEDICINES.keys()]],
   [VendorKind.Vitamins, () => [...VITAMIN_STATS.keys(), ...PP_ITEMS.keys()]],
   [VendorKind.Incenses, () => [...INCENSES]],
   [VendorKind.BattleItems, () => [...BATTLE_ITEMS]],
@@ -120,7 +135,7 @@ const SHELVES = new Map<VendorKind, () => Items[]>([
 
 const stocked = new Map<VendorKind, Items[]>();
 
-export function getVendorGoods(kind: VendorKind = VendorKind.Medicine): Items[] {
+export function getVendorGoods(kind: VendorKind = VendorKind.Balls): Items[] {
   const built = stocked.get(kind);
 
   if (built != null) {
@@ -143,11 +158,9 @@ export function getVendorGoods(kind: VendorKind = VendorKind.Medicine): Items[] 
  */
 export function rollVendorStock(
   random: () => number,
-  kind: VendorKind = VendorKind.Medicine,
+  kind: VendorKind = VendorKind.Balls,
 ): Items[] {
-  const staples = kind === VendorKind.Medicine ? VENDOR_STAPLES : [];
-
-  return fillCrate(staples, getVendorGoods(kind), random);
+  return fillCrate(VENDOR_STAPLES[kind] ?? [], getVendorGoods(kind), random);
 }
 
 /**

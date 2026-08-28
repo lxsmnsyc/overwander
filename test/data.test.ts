@@ -120,6 +120,8 @@ import {
 } from '../src/data/overworld/fossil';
 import { FOSSIL_SPECIES, isFossil, listFossils } from '../src/data/items/fossils';
 import {
+  VENDOR_KINDS,
+  VENDOR_KIND_NAMES,
   VENDOR_STAPLES,
   VENDOR_STOCK_KINDS,
   VendorKind,
@@ -1359,29 +1361,63 @@ describe('item data', () => {
     expect(pairs.size).toBe(3);
   });
 
-  it('lets a vendor carry balls and medicine, and never a Master Ball', () => {
-    const goods = new Set(getVendorGoods());
+  it('keeps the balls and the medicine on counters of their own', () => {
+    const balls = new Set(getVendorGoods(VendorKind.Balls));
+    const medicine = new Set(getVendorGoods(VendorKind.Medicine));
 
-    expect(goods.size).toBeGreaterThan(VENDOR_STOCK_KINDS);
-    for (const item of goods) {
-      const data = getItemData(item);
-
-      expect(data.type === ItemTypes.PokeBall || data.type === ItemTypes.Medicine).toBe(true);
-      expect(isMarketable(item)).toBe(true);
-      // Nothing bought from him can be sold back at a profit, which is
-      // what keeps a vendor from being a gold press
-      expect(data.buy).toBeGreaterThan(0);
-      expect(data.sell).toBeLessThan(data.buy);
+    // Each is a whole shelf rather than a shared one, so a player
+    // after a Dusk Ball and a player after a Revive walk to different
+    // stalls and both find what they came for
+    for (const item of balls) {
+      expect(getItemData(item).type, getItemData(item).name).toBe(ItemTypes.PokeBall);
+      expect(medicine.has(item)).toBe(false);
+    }
+    for (const item of medicine) {
+      expect(getItemData(item).type, getItemData(item).name).toBe(ItemTypes.Medicine);
+      expect(balls.has(item)).toBe(false);
     }
 
     // The one ball the registry never priced. It is left out because
     // it has no price rather than because a list says so
-    expect(goods.has(Items.MasterBall)).toBe(false);
+    expect(balls.has(Items.MasterBall)).toBe(false);
     expect(isMarketable(Items.MasterBall)).toBe(false);
+  });
 
-    // Everything the staples are is something every crate holds
-    for (const staple of VENDOR_STAPLES) {
-      expect(goods.has(staple)).toBe(true);
+  it('gives every counter a priced shelf, and two of them a staple', () => {
+    for (const kind of VENDOR_KINDS) {
+      const goods = new Set(getVendorGoods(kind));
+
+      expect(goods.size, VENDOR_KIND_NAMES[kind]).toBeGreaterThan(0);
+      for (const item of goods) {
+        const data = getItemData(item);
+
+        expect(isMarketable(item)).toBe(true);
+        // Nothing bought from him can be sold back at a profit, which
+        // is what keeps a vendor from being a gold press
+        expect(data.buy).toBeGreaterThan(0);
+        expect(data.sell).toBeLessThan(data.buy);
+      }
+
+      // A staple is something the counter always has, so it has to be
+      // on that counter's own shelf
+      for (const staple of VENDOR_STAPLES[kind] ?? []) {
+        expect(goods.has(staple), VENDOR_KIND_NAMES[kind]).toBe(true);
+      }
+    }
+
+    // A crate is smaller than every shelf, so no counter ever shows
+    // its whole hand
+    for (const kind of VENDOR_KINDS) {
+      expect(getVendorGoods(kind).length, VENDOR_KIND_NAMES[kind]).toBeGreaterThan(
+        VENDOR_STOCK_KINDS,
+      );
+    }
+
+    // The two a player plans a walk around, and nothing else
+    expect(VENDOR_STAPLES[VendorKind.Balls]).toEqual([Items.PokeBall]);
+    expect(VENDOR_STAPLES[VendorKind.Medicine]).toEqual([Items.Potion]);
+    for (const kind of [VendorKind.Vitamins, VendorKind.Incenses, VendorKind.BattleItems]) {
+      expect(VENDOR_STAPLES[kind], VENDOR_KIND_NAMES[kind]).toBeUndefined();
     }
   });
 

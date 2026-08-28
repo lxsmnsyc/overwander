@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync, renameSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import decode, { type Image, encodeSmallest } from '../src/server/sprites/png.ts';
 import pack from '../src/server/sprites/packing.ts';
@@ -132,6 +132,18 @@ function mark(taken: Uint8Array, width: number, at: [number, number], image: Ima
   }
 }
 
+/**
+ * Writes a file in one step.
+ *
+ * Through a temporary name and a rename, which is atomic: a sheet is
+ * two files that have to agree, and a description caught half-written
+ * is one nothing can parse
+ */
+function write(path: string, body: Buffer | string): void {
+  writeFileSync(`${path}.writing`, body);
+  renameSync(`${path}.writing`, path);
+}
+
 /** A sheet's pictures each given a place, and how big that came to. */
 interface Layout {
   places: Map<string, [number, number]>;
@@ -255,10 +267,15 @@ function packedAfresh(sheet: Sheet): Layout {
 
 /**
  * How much smaller a repack has to come out before it is worth moving
- * every picture on the sheet. A repack rewrites every row of the
- * description, so a percent or two is not worth the churn
+ * every picture on the sheet.
+ *
+ * A high bar, because a repack costs more than the churn in the diff:
+ * the sheet keeps its path, so a browser holding the old drawing pairs
+ * it with the new description and every icon on the page is then a
+ * slice of the wrong thing until the cache turns over. Worth it to save
+ * a fifth of a sheet, not worth it to save a twentieth
  */
-const WORTH_REPACKING = 0.95;
+const WORTH_REPACKING = 0.85;
 
 /**
  * Puts the new pictures on the sheet and writes it back.
@@ -298,8 +315,8 @@ function writeSheet(name: string, sheet: Sheet): void {
 
   const encoded = encodeSmallest(atlas);
 
-  writeFileSync(join(ROOT, name, 'image.png'), encoded.bytes);
-  writeFileSync(
+  write(join(ROOT, name, 'image.png'), encoded.bytes);
+  write(
     join(ROOT, name, 'data.json'),
     `${JSON.stringify(
       {

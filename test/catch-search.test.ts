@@ -11,7 +11,11 @@ import Biome from '../src/data/ids/biome';
 import { BIOME_NAMES } from '../src/data/biome/names';
 import { getMaxHealth } from '../src/auth/health';
 import { getSpeciesData } from '../src/data/species';
-import matchesCatch, { orderCatches, planCatchSearch } from '../src/auth/catch-search';
+import matchesCatch, {
+  CATCH_VOCABULARY,
+  orderCatches,
+  planCatchSearch,
+} from '../src/auth/catch-search';
 import parseQuery from '../src/core/query';
 import registerGameData from '../src/data';
 
@@ -703,5 +707,42 @@ describe('the cheap filters over what the registries already know', () => {
     expect(matchesCatch(egg, 'stat:spe:>1')).toBe(false);
     expect(matchesCatch(egg, 'is:stab')).toBe(false);
     expect(matchesCatch(egg, 'not:stab')).toBe(false);
+  });
+});
+
+describe('what the box says it can be asked', () => {
+  it('gives every field a line, so none goes missing from the guide', () => {
+    // The field list is read off the table that answers them, so one
+    // added there arrives here on its own. The line about it cannot
+    const bare = CATCH_VOCABULARY.fields.filter((field) => field.hint === '');
+
+    expect(bare.map((field) => field.name)).toEqual([]);
+  });
+
+  it('offers only values the field would actually answer to', () => {
+    const kinds = CATCH_VOCABULARY.fields.find((field) => field.name === 'type');
+    const fire = pokemon({ species: Species.Charmander });
+
+    expect(kinds?.values?.()).toContain('Fire');
+    // A suggested value that matched nothing would be the box
+    // offering a search it knows comes back empty
+    for (const kind of kinds?.values?.() ?? []) {
+      expect(matchesCatch(fire, `type:${kind}`)).toBe(kind === 'Fire');
+    }
+  });
+
+  it('offers the marks that `is:` actually reads', () => {
+    const marks = CATCH_VOCABULARY.fields.find((field) => field.name === 'is');
+    const shiny = pokemon({ shiny: true });
+
+    expect(marks?.values?.()).toContain('shiny');
+    expect(matchesCatch(shiny, 'is:shiny')).toBe(true);
+  });
+
+  it('knows the two terms that arrange rather than narrow', () => {
+    const named = CATCH_VOCABULARY.fields.map((field) => field.name);
+
+    expect(named).toContain('sort');
+    expect(named).toContain('order');
   });
 });

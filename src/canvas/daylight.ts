@@ -178,8 +178,21 @@ export interface Cast {
 /** The longest a shadow is drawn, however low the sun is */
 const MAX_LENGTH = 3.2;
 
-/** How dark a shadow is with the sun straight overhead */
-const NOON_ALPHA = 0.34;
+/**
+ * How much of the shadow's own colour reaches the ground, with the sun
+ * straight overhead. All of it: how dark a shadow is belongs to
+ * whoever is drawing it, and this only says how much the hour takes
+ * away
+ */
+const NOON_ALPHA = 1;
+
+/**
+ * The least the hour takes it down to while the sun is still up. A
+ * shadow that faded to nothing at dusk popped back to full the moment
+ * the sun went under, since what is left then is the ambient patch and
+ * that is drawn at its own colour
+ */
+const DUSK_ALPHA = 0.6;
 
 /**
  * How much of a shadow's length survives the way the ground is drawn.
@@ -231,7 +244,7 @@ export function getCast(localTime: number, yaw = 0, latitude = 0): Cast {
     // Fading with the sun rather than switching off at the horizon:
     // the last of the light throws the faintest shadow, which is what
     // makes dusk feel like dusk
-    alpha: risen ? NOON_ALPHA * Math.min(1, up * 2.4) : 0,
+    alpha: risen ? Math.max(DUSK_ALPHA, NOON_ALPHA * Math.min(1, up * 2.4)) : 0,
   };
 }
 

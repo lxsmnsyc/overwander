@@ -1,6 +1,6 @@
 import { type Accessor, type JSX, Show, createMemo, createSignal } from 'solid-js';
 import { type CaughtPokemon, findDuplicates } from '../../auth/caught';
-import matchesCatch, { orderCatches } from '../../auth/catch-search';
+import matchesCatch, { CATCH_VOCABULARY, orderCatches } from '../../auth/catch-search';
 import CatchBox, { BOX_SIZE, type BoxEntry } from './CatchBox';
 import { Note, Row, Search, createPager } from '../styled';
 
@@ -69,6 +69,8 @@ export default function CatchGrid(props: CatchGridProps): JSX.Element {
       <Show when={props.bare !== true}>
         <Row>
           <Search
+            vocabulary={CATCH_VOCABULARY}
+            example="type:fire"
             placeholder="Name, or type:fire is:shiny"
             value={query()}
             onChange={(value) => {

@@ -1,7 +1,7 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import { Items, getMachineItem } from '../src/data/ids/items';
 import { Moves } from '../src/data/ids/moves';
-import matchesItem from '../src/data/items/search';
+import matchesItem, { ITEM_VOCABULARY } from '../src/data/items/search';
 import registerGameData from '../src/data';
 
 beforeAll(() => {
@@ -62,5 +62,34 @@ describe('searching a bag', () => {
     expect(matchesItem(Items.OranBerry, 'type:berries type:medicine')).toBe(false);
     expect(matchesItem(Items.OranBerry, 'colour:red')).toBe(false);
     expect(matchesItem(Items.OranBerry, 'is:sparkly')).toBe(false);
+  });
+});
+
+describe('what the bag says it can be asked', () => {
+  it('gives every field a line, so none goes missing from the guide', () => {
+    // The list is read off the table that answers the fields, so a
+    // field added there arrives here on its own. What cannot arrive on
+    // its own is the line about it
+    const bare = ITEM_VOCABULARY.fields.filter((field) => field.hint === '');
+
+    expect(bare.map((field) => field.name)).toEqual([]);
+  });
+
+  it('offers only values the field would actually answer to', () => {
+    const shelves = ITEM_VOCABULARY.fields.find((field) => field.name === 'type');
+
+    expect(shelves?.values?.()).toContain('Berries');
+    // Every offered value has to find something, or the box is
+    // suggesting a search that comes back empty
+    for (const shelf of shelves?.values?.() ?? []) {
+      expect(matchesItem(Items.OranBerry, `type:${shelf}`)).toBe(shelf === 'Berries');
+    }
+  });
+
+  it('knows the two terms that arrange rather than narrow', () => {
+    const named = ITEM_VOCABULARY.fields.map((field) => field.name);
+
+    expect(named).toContain('sort');
+    expect(named).toContain('order');
   });
 });

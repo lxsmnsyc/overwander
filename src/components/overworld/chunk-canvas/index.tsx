@@ -47,6 +47,7 @@ import Landmark from '../../../data/overworld/landmark';
 import Phenomenon from '../../../data/overworld/phenomenon';
 import Npc, { npcSheet } from '../../../data/overworld/npc';
 import type { Species } from '../../../data/ids/species';
+import { getSpeciesData } from '../../../data/species';
 import facingToward from '../../../canvas/facing';
 import type OWCharSprite from '../../../canvas/ow-char-sprite';
 import loadOWChar, { OW_SPRITE_ROOT } from '../../../canvas/ow-char-sprites';
@@ -82,12 +83,12 @@ import {
   PLAYER_SHEET,
   QUARTER_TURN,
   SCENERY_CELLS,
-  SIZE_TIERS,
   SNAP_CELLS,
-  SPRITE_SCALE,
+  SPRITE_STANDS,
   TURN_DEAD_ZONE,
   WIDTH,
   isTurningPress,
+  sizeOf,
   slideGain,
 } from './metrics';
 import {
@@ -1597,8 +1598,12 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
               loop: true,
             });
 
+            // Sized the way the scenery is: so many source pixels of
+            // the sheet stand on one cell, with the dex height saying
+            // how far this one is off ordinary
             const scale =
-              SPRITE_SCALE * (SIZE_TIERS[sprite.shadowSize] ?? 1) * middle.scale * magnify;
+              (CELL * sizeOf(getSpeciesData(standing.species).height) * middle.scale * magnify) /
+              SPRITE_STANDS;
             // The sheet's own shadow marker is the point that stands on
             // the ground, so putting it on the middle of the cell is
             // the whole of standing a pokemon there — whatever is drawn

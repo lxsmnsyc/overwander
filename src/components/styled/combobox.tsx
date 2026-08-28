@@ -10,7 +10,7 @@ import {
   Transition,
 } from 'terracotta';
 import { SHEER } from './transition';
-import { Badge } from './feedback';
+import { Badge, BadgeDismiss } from './feedback';
 import { FieldFrame } from './form';
 import dismissOutside from './dismiss';
 import { usePortalHost } from './portal-host';
@@ -82,20 +82,6 @@ const OPTION =
   ' aria-selected:hover:bg-tide-dark aria-disabled:cursor-not-allowed aria-disabled:opacity-50' +
   ' [&[tc-active]]:bg-tide-soft [&[tc-active]]:text-tide-dark' +
   ' [&:not([tc-matches])]:hidden';
-
-/**
- * The cross on a badge: a round button of a fixed size with the mark
- * drawn inside it. Flat and small, since the badge around it is the
- * thing on the screen and a chunky button inside one reads as a
- * second control
- */
-const DROP =
-  'inline-flex size-4 shrink-0 cursor-pointer items-center justify-center rounded-full border-0' +
-  // A ground of its own at rest, or the round shape only appears
-  // under the pointer and the cross reads as loose punctuation
-  ' bg-paper p-0 text-tide-dark shadow-none transition-colors hover:border-0 hover:bg-tide' +
-  ' hover:text-on-accent active:translate-y-0 focus-visible:outline-2' +
-  ' focus-visible:outline-offset-1 focus-visible:outline-tide disabled:cursor-not-allowed';
 
 /** The gap between the box and the list under it, in pixels */
 const DROP_GAP = 6;
@@ -243,28 +229,14 @@ export default function Combobox<V>(props: ComboboxProps<V>): JSX.Element {
           {(value) => (
             <Badge tone="tide" class="py-0.5 pr-1 pl-2 text-xs">
               {named(value)}
-              <button
-                type="button"
-                class={DROP}
+              <BadgeDismiss
+                tone="tide"
+                label={`Remove ${named(value)}`}
                 disabled={props.disabled}
-                aria-label={`Remove ${named(value)}`}
-                onClick={() => {
+                onDismiss={() => {
                   many.onChange(many.value.filter((kept) => kept !== value));
                 }}
-              >
-                {/* Drawn rather than a character: a glyph sits on its
-                    own baseline, and no amount of leading puts it in
-                    the middle of a circle */}
-                <svg viewBox="0 0 10 10" class="size-2.5" aria-hidden="true">
-                  <path
-                    d="M2.5 2.5l5 5M7.5 2.5l-5 5"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                  />
-                </svg>
-              </button>
+              />
             </Badge>
           )}
         </For>

@@ -4,7 +4,7 @@ import { describeItem } from '../details';
 import { ArrowLeftIcon, ArrowRightIcon } from '../icons';
 import ItemCard from './ItemCard';
 import ItemSprite from './ItemSprite';
-import matchesItem, { orderItems } from '../../data/items/search';
+import matchesItem, { ITEM_VOCABULARY, orderItems } from '../../data/items/search';
 import { Button, HoverCard, Meta, Note, Row, Search } from '../styled';
 
 /**
@@ -207,6 +207,8 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
       <Show when={props.bare !== true}>
         <Row class="flex-nowrap items-start gap-2">
           <Search
+            vocabulary={ITEM_VOCABULARY}
+            example="type:berry"
             placeholder="Name, or type:berry is:usable"
             value={query()}
             onChange={(typed) => {

@@ -105,6 +105,23 @@ them last, over whatever the predicate kept. A `sort:` word nothing has a
 reading for leaves the box in the order it arrived. There is no `limit:`: a box
 that already pages has nothing to do with one.
 
+#### What the box offers
+
+Neither the grammar nor the four dozen fields are worth memorising, so the box
+says what it knows. Each search declares a **vocabulary**: its field names, one
+line about each, and the values a field takes where there is a closed list of
+them. `CATCH_VOCABULARY` and `ITEM_VOCABULARY` read their field lists off the
+tables that answer the fields, so a field added there arrives in the box on its
+own; only the line about it is written by hand, and a test fails where one is
+missing.
+
+The box uses the vocabulary three ways. It finishes the word the caret is in,
+offering field names before the colon and that field's values after it. It draws
+every finished term as a badge, marked in red where nothing has a reading for the
+field, since such a term matches nothing rather than being ignored. And it
+carries the grammar itself on a card behind the information icon, written in the
+vocabulary's own words so the card attached to the bag is about the bag.
+
 #### What the store answers
 
 A term is pushed only when the query is **implied** by the predicate, since a

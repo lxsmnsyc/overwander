@@ -1,6 +1,7 @@
 import { ITEM_TYPE_NAMES } from './names';
 import { getItemData } from './__create';
 import { ItemFlags, type Items, getMachineMove, isMachineItem } from '../ids/items';
+import type { QueryVocabulary } from '../../core/query';
 import { alternatives, askedTerms, holds, parseControls, within } from '../../core/query';
 import { getMoveData } from '../moves';
 
@@ -107,6 +108,45 @@ const SORTS = new Map<string, (item: Items, holding: ItemHolding) => number | st
     amount: (_item, holding) => holding.amount ?? 0,
   }),
 );
+
+/**
+ * One short line per field, and the values it is known to take.
+ *
+ * Which fields exist is read off the table that answers them, so a
+ * field added there turns up in the guide on its own; the values come
+ * off the same tables the fields are answered from. Only the lines
+ * themselves are written out, and a test holds every field to having
+ * one
+ */
+const HINTS: Record<string, string> = {
+  type: 'Which shelf it sits on',
+  about: 'A word from the line under the name',
+  move: 'What a machine teaches',
+  is: 'A fact it has',
+  not: 'A fact it lacks',
+  buy: 'What the market charges',
+  sell: 'What it fetches',
+  amount: 'How many are carried',
+  sort: 'Arrange by',
+  order: 'Which way round',
+};
+
+const VALUES: Record<string, () => string[]> = {
+  type: () => Object.values(ITEM_TYPE_NAMES),
+  is: () => [...MARKS.keys()],
+  not: () => [...MARKS.keys()],
+  sort: () => [...SORTS.keys()],
+  order: () => ['asc', 'desc'],
+};
+
+/** What the bag's box can be asked, with the arranging terms on the end */
+export const ITEM_VOCABULARY: QueryVocabulary = {
+  fields: [...FIELDS.keys(), 'sort', 'order'].map((name) => ({
+    name,
+    hint: HINTS[name] ?? '',
+    values: VALUES[name],
+  })),
+};
 
 /**
  * The rows a search asked for, in the order it asked for them. The two

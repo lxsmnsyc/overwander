@@ -62,6 +62,65 @@ export function Badge(
   );
 }
 
+/**
+ * The cross on a badge: a round button of a fixed size with the mark
+ * drawn inside it. Flat and small, since the badge around it is the
+ * thing on the screen and a chunky button inside one reads as a
+ * second control
+ */
+const DISMISS =
+  'inline-flex size-4 shrink-0 cursor-pointer items-center justify-center rounded-full border-0' +
+  // A ground of its own at rest, or the round shape only appears
+  // under the pointer and the cross reads as loose punctuation
+  ' bg-paper p-0 shadow-none transition-colors hover:border-0 active:translate-y-0' +
+  ' focus-visible:outline-2 focus-visible:outline-offset-1 disabled:cursor-not-allowed';
+
+/** The cross's own colours, which are its badge's read back at it */
+const DISMISS_TONES: Record<BadgeTone, string> = {
+  neutral: 'text-muted outline-line hover:bg-line hover:text-ink',
+  leaf: 'text-leaf-dark outline-leaf hover:bg-leaf hover:text-on-accent',
+  ember: 'text-ember-dark outline-ember hover:bg-ember hover:text-on-accent',
+  gold: 'text-gold outline-gold hover:bg-gold hover:text-on-accent',
+  tide: 'text-tide-dark outline-tide hover:bg-tide hover:text-on-accent',
+};
+
+/**
+ * What takes a badge off: the cross inside a badge that stands for
+ * something chosen, and can be unchosen
+ */
+export function BadgeDismiss(props: {
+  /** What pressing it takes off, for a screen reader: "Remove Water" */
+  label: string;
+  onDismiss: () => void;
+  tone?: BadgeTone;
+  disabled?: boolean;
+}): JSX.Element {
+  return (
+    <button
+      type="button"
+      class={`${DISMISS} ${DISMISS_TONES[props.tone ?? 'neutral']}`}
+      disabled={props.disabled}
+      aria-label={props.label}
+      onClick={() => {
+        props.onDismiss();
+      }}
+    >
+      {/* Drawn rather than a character: a glyph sits on its own
+          baseline, and no amount of leading puts it in the middle of a
+          circle */}
+      <svg viewBox="0 0 10 10" class="size-2.5" aria-hidden="true">
+        <path
+          d="M2.5 2.5l5 5M7.5 2.5l-5 5"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+        />
+      </svg>
+    </button>
+  );
+}
+
 export interface StatusProps {
   /**
    * Nothing to say draws nothing — an empty box under a form reads as

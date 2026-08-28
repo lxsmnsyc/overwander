@@ -46,33 +46,75 @@ export function isControlField(field: string): boolean {
   return CONTROLS.has(field);
 }
 
+/** One term, and where in the box it was typed */
+export interface QueryToken extends QueryTerm {
+  /** Where the word starts, and one past where it ends */
+  start: number;
+  end: number;
+}
+
 /**
- * Split on spaces, but not inside quotes. The quotes themselves are
- * dropped — they are punctuation for the parser, not part of the name
+ * Split on spaces, but not inside quotes, keeping where each word sat.
+ * The quotes are punctuation for the parser rather than part of a
+ * name, so they are dropped from the word and counted in the span
  */
-function split(query: string): string[] {
-  const words: string[] = [];
+function split(query: string): { word: string; start: number; end: number }[] {
+  const words: { word: string; start: number; end: number }[] = [];
   let word = '';
+  let start = 0;
   let quoted = false;
 
-  for (const character of query) {
+  for (let at = 0; at < query.length; at++) {
+    const character = query[at];
+
     if (character === '"') {
+      if (word === '') {
+        start = at;
+      }
       quoted = !quoted;
       continue;
     }
     if (!quoted && /\s/.test(character)) {
       if (word !== '') {
-        words.push(word);
+        words.push({ word, start, end: at });
         word = '';
       }
       continue;
     }
+    if (word === '') {
+      start = at;
+    }
     word += character;
   }
   if (word !== '') {
-    words.push(word);
+    words.push({ word, start, end: query.length });
   }
   return words;
+}
+
+/** One word taken apart, without regard to where it was */
+function readWord(word: string): QueryTerm {
+  // A bare `!` is somebody mid-word, not a refusal of everything.
+  // The mark is `!` rather than `-` because a value carries dashes of
+  // its own: a range and a written date are both full of them
+  const negated = word.startsWith('!') && word.length > 1;
+  const rest = negated ? word.slice(1) : word;
+  const colon = rest.indexOf(':');
+  // A colon at the start is not a field, and neither is one inside a
+  // quoted phrase: a name is allowed to hold punctuation
+  const field = colon > 0 ? rest.slice(0, colon) : '';
+
+  return /\s/.test(field)
+    ? { field: '', value: rest, negated }
+    : { field: field.toLowerCase(), value: rest.slice(colon + 1), negated };
+}
+
+/**
+ * What a search is asking and where each part of it was typed, which
+ * is what lets a box draw its own terms as it is being typed into
+ */
+export function scanQuery(query: string): QueryToken[] {
+  return split(query).map(({ word, start, end }) => ({ ...readWord(word), start, end }));
 }
 
 /**
@@ -82,21 +124,7 @@ function split(query: string): string[] {
  * the whole list
  */
 export default function parseQuery(query: string): QueryTerm[] {
-  return split(query).map((word) => {
-    // A bare `!` is somebody mid-word, not a refusal of everything.
-    // The mark is `!` rather than `-` because a value carries dashes of
-    // its own: a range and a written date are both full of them
-    const negated = word.startsWith('!') && word.length > 1;
-    const rest = negated ? word.slice(1) : word;
-    const colon = rest.indexOf(':');
-    // A colon at the start is not a field, and neither is one inside a
-    // quoted phrase: a name is allowed to hold punctuation
-    const field = colon > 0 ? rest.slice(0, colon) : '';
-
-    return /\s/.test(field)
-      ? { field: '', value: rest, negated }
-      : { field: field.toLowerCase(), value: rest.slice(colon + 1), negated };
-  });
+  return split(query).map(({ word }) => readWord(word));
 }
 
 /**
@@ -280,4 +308,227 @@ export function parseControls(query: string): QueryControls {
     }
   }
   return controls;
+}
+
+/**
+ * What a particular box knows how to be asked.
+ *
+ * The grammar above is the same everywhere; this is the half that is
+ * not. A box declares its own fields so that the field names can be
+ * offered while somebody types and explained where they are stuck,
+ * rather than living only in whichever list happens to answer them.
+ */
+export interface QueryField {
+  /** The word before the colon */
+  name: string;
+  /** One short line on what it narrows by, for the guide */
+  hint: string;
+  /**
+   * The values it is usually given, where there is a closed list of
+   * them. Read when somebody asks rather than up front, since some of
+   * these are whole registries. A field with none is free text: a
+   * name, a place, a number
+   */
+  values?: () => string[];
+}
+
+export interface QueryVocabulary {
+  fields: QueryField[];
+}
+
+/** One thing the box is offering to finish the current word with */
+export interface QuerySuggestion {
+  /** What the word becomes when this is taken */
+  word: string;
+  /** What is offered, on its own, for the list */
+  label: string;
+  hint?: string;
+  /**
+   * Whether the word still wants something after this. A field name is
+   * half a term and a value is the whole of one, which is what says
+   * whether the box closes when it is taken
+   */
+  partial: boolean;
+}
+
+export interface QueryCompletion {
+  /** The word being finished, as a span of the box */
+  start: number;
+  end: number;
+  suggestions: QuerySuggestion[];
+}
+
+/** How many suggestions a box offers at once */
+const SUGGESTIONS = 8;
+
+/**
+ * Which of a list of words are worth offering for what has been typed.
+ * What it starts with comes before what merely holds it, since a
+ * prefix is nearly always what somebody meant
+ */
+function matching(words: string[], typed: string): string[] {
+  const wanted = typed.trim().toLowerCase();
+
+  if (wanted === '') {
+    return words;
+  }
+  const starting = words.filter((word) => word.toLowerCase().startsWith(wanted));
+  const holding = words.filter(
+    (word) => !word.toLowerCase().startsWith(wanted) && word.toLowerCase().includes(wanted),
+  );
+
+  return [...starting, ...holding];
+}
+
+/** The word the caret is in, as a span of the box */
+function wordAround(query: string, caret: number): { start: number; end: number } {
+  let start = caret;
+  let end = caret;
+
+  while (start > 0 && !/\s/.test(query[start - 1])) {
+    start--;
+  }
+  while (end < query.length && !/\s/.test(query[end])) {
+    end++;
+  }
+  return { start, end };
+}
+
+/** A value written back into a term, quoted where it carries a space */
+function asValue(value: string): string {
+  return /\s/.test(value) ? `"${value}"` : value;
+}
+
+/**
+ * What the box can offer to finish the word the caret is in.
+ *
+ * Before the colon it offers the fields, after it the values that
+ * field is known to take. Nothing at all for an empty word, since a
+ * list that opened on every space would be in the way rather than out
+ * of it
+ */
+export function completeQuery(
+  query: string,
+  caret: number,
+  vocabulary: QueryVocabulary,
+): QueryCompletion | null {
+  const { start, end } = wordAround(query, caret);
+  const word = query.slice(start, end);
+
+  if (word === '') {
+    return null;
+  }
+  const negated = word.startsWith('!');
+  const bang = negated ? '!' : '';
+  const rest = negated ? word.slice(1) : word;
+  const colon = rest.indexOf(':');
+
+  if (colon <= 0) {
+    const suggestions = matching(
+      vocabulary.fields.map((field) => field.name),
+      rest,
+    )
+      .slice(0, SUGGESTIONS)
+      .map((name) => ({
+        word: `${bang}${name}:`,
+        label: `${name}:`,
+        hint: vocabulary.fields.find((field) => field.name === name)?.hint,
+        partial: true,
+      }));
+
+    return { start, end, suggestions };
+  }
+
+  const asked = rest.slice(0, colon).toLowerCase();
+  const field = vocabulary.fields.find((one) => one.name === asked);
+  const known = field?.values?.();
+
+  if (known == null) {
+    return null;
+  }
+  // Only the alternative the caret is in is finished. What was written
+  // before the last bar is somebody's earlier answer, and is put back
+  // untouched
+  const value = rest.slice(colon + 1);
+  const bar = value.lastIndexOf('|');
+  const held = bar < 0 ? '' : value.slice(0, bar + 1);
+  const suggestions = matching(known, value.slice(bar + 1))
+    .slice(0, SUGGESTIONS)
+    .map((one) => ({
+      word: `${bang}${asked}:${asValue(`${held}${one}`)}`,
+      label: one,
+      partial: false,
+    }));
+
+  return { start, end, suggestions };
+}
+
+/**
+ * How far every offer agrees, which is how far one Tab can get.
+ *
+ * Case is ignored while comparing and kept from the first offer, since
+ * the words being finished are registry names and a box is typed in
+ * lower case
+ */
+export function sharedPrefix(words: string[]): string {
+  if (words.length === 0) {
+    return '';
+  }
+  const [first, ...rest] = words;
+  let length = first.length;
+
+  for (const word of rest) {
+    let at = 0;
+
+    while (at < length && at < word.length && first[at].toLowerCase() === word[at].toLowerCase()) {
+      at++;
+    }
+    length = at;
+  }
+  return first.slice(0, length);
+}
+
+/**
+ * The terms of a query and whatever else it holds, which is how a
+ * query becomes a row of badges and a box with the rest still in it.
+ *
+ * A term is taken out whole, quotes and all, so that putting the two
+ * back together with a space between them gives the query it came from
+ */
+export function splitTerms(query: string): { terms: string[]; rest: string } {
+  const terms: string[] = [];
+  let rest = '';
+  let at = 0;
+
+  for (const token of scanQuery(query)) {
+    if (token.field === '') {
+      continue;
+    }
+    terms.push(query.slice(token.start, token.end));
+    rest += query.slice(at, token.start);
+    at = token.end;
+  }
+  rest += query.slice(at);
+  return { terms, rest: rest.replace(/\s+/g, ' ').trim() };
+}
+
+/**
+ * The same split, but only for terms somebody has finished: a term is
+ * finished once there is a space after it, and until then it is still
+ * being typed and stays in the box
+ */
+export function typedTerms(text: string): { terms: string[]; rest: string } {
+  const ended = text.search(/\s\S*$/);
+  const settled = ended < 0 ? '' : text.slice(0, ended + 1);
+  // A space inside a half-written quote is punctuation rather than the
+  // end of a term, and taking one out there would break the phrase
+  if (settled.split('"').length % 2 === 0) {
+    return { terms: [], rest: text };
+  }
+  const tail = text.slice(settled.length);
+  const { terms, rest } = splitTerms(settled);
+
+  // The space that finished the last term is what separates it from
+  // whatever is being typed next
+  return { terms, rest: rest === '' ? tail : `${rest} ${tail}` };
 }

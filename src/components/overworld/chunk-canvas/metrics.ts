@@ -34,30 +34,45 @@ export const WIDTH = CELL * CHUNK_CELLS * PICTURE_SPAN;
 export const APRON = BORDER_CELLS / CHUNK_CELLS;
 
 /**
- * How much bigger than the sheet a pokemon standing in a cell is
- * drawn, at the board's middle row. The rows in front of it are drawn
- * larger and the rows behind smaller — that factor is the projection's
+ * How many source pixels of a pokemon sheet stand on one cell of
+ * ground, at the board's middle row. The rows in front are drawn
+ * larger and the rows behind smaller, which is the projection's doing
  * and comes back with every point it is asked about.
  *
- * A little larger than it was, because a sprite is no longer sitting
- * inside its cell: it stands **up** out of it, over the row behind,
- * which is the whole of what makes the board read as a place with
- * things on it rather than a chart with pictures in it
+ * The same measure the scenery sheets carry as `stands`, so a tree and
+ * a pokemon are sized the one way. Fewer pixels than a cell is wide on
+ * purpose: a sprite is not sitting inside its cell, it stands up out of
+ * it over the row behind, which is what makes the board read as a place
+ * with things on it rather than a chart with pictures in it
  */
-export const SPRITE_SCALE = 0.95;
+export const SPRITE_STANDS = 21;
+
+/** The height a pokemon is drawn at its sheet's own size, in meters */
+const ORDINARY_HEIGHT = 1;
 
 /**
- * How much of that a pokemon gets, by the size the game calls it.
- *
- * Drawn pixels alone are a poor measure of how big something is: a
- * frame is trimmed to the widest pose in the sheet, so a Zubat with
- * its wings out came out taller on the board than most of the pokemon
- * twice its size. `shadowSize` is the game's own answer and the only
- * one a sheet carries, so it corrects what the drawing says rather
- * than replacing it. Gentle on purpose, since the artists already draw
- * a Gyarados larger than a Caterpie and this multiplies that
+ * How much of the difference in height survives, and how far it is
+ * allowed to carry. Onix is forty Digletts tall, so the ratio is
+ * pulled through a root and clamped
  */
-export const SIZE_TIERS = [0.85, 1, 1.1];
+const HEIGHT_CURVE = 0.18;
+
+const MIN_SIZE = 0.85;
+
+const MAX_SIZE = 1.25;
+
+/**
+ * How much bigger or smaller than its sheet a pokemon of this height,
+ * in meters, is drawn.
+ *
+ * The sheets are a poor measure of size: PMD art fills much the same
+ * box whatever it is drawing, and the `shadowSize` beside it calls a
+ * Ponyta small, so a horse came out shorter than a Rattata. The dex
+ * height is the game's own answer to how big something is
+ */
+export function sizeOf(height: number): number {
+  return Math.min(MAX_SIZE, Math.max(MIN_SIZE, (height / ORDINARY_HEIGHT) ** HEIGHT_CURVE));
+}
 
 /**
  * How many cells tall a charset's own cell is drawn.
@@ -182,9 +197,11 @@ export const COLORS = {
   loading: '#1c1c1c',
   loadingHalo: 'rgba(255, 255, 255, 0.75)',
   /**
-   * The ground under something standing on it
+   * The ground under something standing on it. As dark as the shadow
+   * the scenery sheets carry baked in, so a pokemon and the tree it is
+   * standing beside sit on the same ground
    */
-  shadow: 'rgba(0, 0, 0, 0.28)',
+  shadow: 'rgba(0, 0, 0, 0.35)',
   /**
    * What lifts the board off the country it lies in. The ground
    * beyond it is the same colour — it is the same country — so the

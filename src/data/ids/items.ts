@@ -716,10 +716,13 @@ export const enum Items {
   MarkCharm = 345,
 
   /**
-   * TODO: held items blocked on a battle feature that does not exist —
-   * terrain for the seeds and the extender, entry hazards for the
-   * boots, Trick Room for the service, the Paradox abilities for the
-   * energy
+   * TODO: held items blocked on a battle feature that does not exist.
+   *
+   * Terrain for the seeds and the extender, and entry hazards for the
+   * boots: both are TODO'd where they would be declared, in
+   * [`src/data/ids/status.ts`](./status.ts). Trick Room for the
+   * service and the Paradox abilities for the energy have nowhere to
+   * be written down yet
    */
   ElectricSeed = 346,
   GrassySeed = 347,

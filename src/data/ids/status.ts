@@ -166,10 +166,40 @@ export const enum Weathers {
   StrongWinds = 9,
 }
 
+/**
+ * TODO: the four terrains. Only `None` is written, so the field is
+ * always bare.
+ *
+ * `BattleEvents.SetTerrain` is already in the event map and
+ * `mechanics/weather.ts` is the shape to copy: a field effect with a
+ * duration, a setter, and checks the moves read. What makes terrain
+ * its own job rather than a second weather is that it only reaches
+ * **grounded** units, so the Flying and Levitate exemptions the
+ * ground-type moves already use have to be shared with it.
+ *
+ * Electric, Grassy, Misty and Psychic. Five items are waiting on it:
+ * the four seeds and the Terrain Extender
+ */
 export const enum Terrains {
   None = 0,
 }
 
+/**
+ * What a whole side is carrying. The screens live here, and so would
+ * the entry hazards.
+ *
+ * TODO: Spikes, Toxic Spikes, Stealth Rock and Sticky Web. They are
+ * team statuses like the screens, but they bite when a unit **arrives**
+ * rather than each turn, and they stack in layers rather than running
+ * on a timer. The hook is already there and already knows about them:
+ * `UnitEntersFieldEvent.reactivation` exists so that a one-time entry
+ * effect skips an ability re-activation, and names hazards as the
+ * reason.
+ *
+ * They belong to the generations that introduced them rather than to
+ * this one, so they arrive with those move sets. Heavy-Duty Boots is
+ * waiting on them
+ */
 export const enum TeamStatuses {
   Reflect = 0,
   /**

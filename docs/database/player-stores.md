@@ -7,27 +7,28 @@ One row per account, keyed by the auth uid. Set by
 trigger the moment the account is created, so a foreign key never waits on the
 app having run.
 
-| Column       | Type       | Notes                                   |
-| ------------ | ---------- | --------------------------------------- |
-| `id`         | `uuid`     | The account, `references auth.users`    |
-| `nickname`   | `text`     | Display name; defaults to `"Trainer"`   |
-| `avatar`     | `text`     | Avatar URL, null when unset             |
-| `gold`       | `bigint`   | Currency balance; opens at zero         |
-| `role`       | `text`     | Staff standing; empty for a player      |
-| `banned`     | `boolean`  | Whether the account is shut out         |
-| `ban_reason` | `text`     | What the player is told on the way in   |
-| `buddy_id`   | `text`     | The `caught` row walking beside them    |
-| `title`      | `smallint` | The title worn over their name, or null |
+| Column       | Type       | Notes                                    |
+| ------------ | ---------- | ---------------------------------------- |
+| `id`         | `uuid`     | The account, `references auth.users`     |
+| `nickname`   | `text`     | Display name; defaults to `"Trainer"`    |
+| `sprite`     | `text`     | The overworld character they are seen as |
+| `gold`       | `bigint`   | Currency balance; opens at zero          |
+| `role`       | `text`     | Staff standing; empty for a player       |
+| `banned`     | `boolean`  | Whether the account is shut out          |
+| `ban_reason` | `text`     | What the player is told on the way in    |
+| `buddy_id`   | `text`     | The `caught` row walking beside them     |
+| `title`      | `smallint` | The title worn over their name, or null  |
 
-Anyone signed in may read it, since other players see nicknames and avatars. The
-owner writes their own `nickname`, `avatar` and `buddy_id`, and nothing else:
+Anyone signed in may read it, since other players see nicknames and characters.
+The owner writes their own `nickname` and `buddy_id`, and nothing else:
 that limit is a **column grant** rather than a policy, because a policy can only
 choose rows.
 
 `role`, `banned` and `ban_reason` are the server's alone, see
 [Roles](security.md), and the insert policy refuses a row that arrives with a
-role, a balance or a ban already on it. So is `title`: what a player may wear is
-derived from their counters and awards, so the column carries no client grant at
+role, a balance or a ban already on it. So are `title` and `sprite`: what a
+player may wear is derived from their counters and awards, so neither column
+carries a client grant at
 all. See [Quests, achievements and awards](quests.md).
 
 The balance is not the player's to write. `grantGold` and `spendGold` live in

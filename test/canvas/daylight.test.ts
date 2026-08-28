@@ -60,6 +60,21 @@ describe('daylight', () => {
     expect(night.depth).toBeLessThan(1);
   });
 
+  it('warms the wash through the afternoon, not only at the horizon', () => {
+    const afternoon = getAmbient(at(16));
+    const sunset = getAmbient(at(18));
+    const night = getAmbient(at(23));
+
+    // The golden hour is a stretch of the day rather than a minute of
+    // it: the light is already warming while the sun is well up
+    expect(afternoon.warmth).toBeGreaterThan(0);
+    expect(sunset.warmth).toBeGreaterThan(afternoon.warmth);
+    // And the wash it is multiplied through warms with it, so an
+    // evening is amber rather than a dimmer blue
+    expect(sunset.shade).not.toBe(night.shade);
+    expect(afternoon.shade).not.toBe(night.shade);
+  });
+
   it('reads the same hour the same way whatever day it is', () => {
     const DAY = 24 * HOUR;
 

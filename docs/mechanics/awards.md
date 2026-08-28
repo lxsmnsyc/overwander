@@ -60,6 +60,27 @@ called one and a Collector at Platinum may be called a Master Collector. The
 type lines and the trainer lines work the same way: enough Bug Catchers beaten is
 what lets a player be called one.
 
+## Characters
+
+Everybody is seen as an overworld character rather than a picture: the one
+standing beside the name in a lobby is the one walking the chunk, so a trainer
+met in a lobby is somebody who could have been met on the road.
+
+Two are yours from the start, and you may switch between them whenever you like:
+**Red** and **Leaf**. Every other character is earned, from the same deeds the
+titles come from.
+
+| Character                 | Unlocked by                     |
+| ------------------------- | ------------------------------- |
+| A gym leader              | That leader's badge             |
+| One of the Elite Four     | Beating that member             |
+| The Champion's other look | The Champion's own seat         |
+| A class of trainer        | That class's line at **Bronze** |
+
+So beating Brock lets you go about as Brock, and putting down enough Bug
+Catchers is what lets you dress as one. Where a character was drawn twice, once
+in each of two games, both looks are unlocked together and you pick which.
+
 ## See also
 
 - [Quests](quests.md): what the game asks, and what it pays

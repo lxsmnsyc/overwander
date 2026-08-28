@@ -95,7 +95,7 @@ export interface BattleHistoryProps {
  */
 interface FoughtLine {
   mine: [string, CaughtPokemon][];
-  rival: { uid: string; name: string; avatar: string | null } | null;
+  rival: { uid: string; name: string; sprite: string | null } | null;
 }
 
 async function loadFought(key: string): Promise<FoughtLine> {
@@ -123,7 +123,7 @@ async function loadFought(key: string): Promise<FoughtLine> {
         : {
             uid: other.player,
             name: profile?.nickname ?? 'A trainer',
-            avatar: profile?.avatar ?? null,
+            sprite: profile?.sprite ?? null,
           },
   };
 }
@@ -138,7 +138,7 @@ function RivalPlate(props: {
       {(rival) => (
         <PlayerPlate
           name={rival().name}
-          avatar={rival().avatar}
+          sprite={rival().sprite}
           onOpen={() => {
             props.onVisit(rival().uid);
           }}

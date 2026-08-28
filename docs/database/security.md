@@ -77,11 +77,12 @@ Three things stay client-side by design:
   spawn rows atomically. The rolls are deterministic from the chunk seed and the
   window, so an honest client recomputes the same set and a dishonest one only
   lies to itself: the server re-derives every reward from the seed regardless.
-- **Profile details.** Nickname, avatar and buddy are the player's to set. The
-  purse in the same row is not, and neither is `role` or `banned`. This is
-  enforced by **column grants** rather than by a policy, because a policy can
-  only say which rows may be written, not which columns:
-  `grant update (nickname, avatar, buddy_id) on profiles to authenticated`.
+- **Profile details.** Nickname and buddy are the player's to set. The purse in
+  the same row is not, and neither is `role`, `banned`, `title` or `sprite`: the
+  last two are earned, and what was earned is re-derived on the server before
+  either is written. This is enforced by **column grants** rather than by a
+  policy, because a policy can only say which rows may be written, not which
+  columns: `grant update (nickname, buddy_id) on profiles to authenticated`.
 - **Buddies.** Setting one is a preference, and a trigger checks that the catch
   named belongs to the player setting it.
 

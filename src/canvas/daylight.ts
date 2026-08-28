@@ -126,7 +126,25 @@ const NIGHT_DEPTH = 0.62;
 const DUSK_DEPTH = 0.34;
 
 /** How strong the horizon's colour is at its strongest */
-const GLOW_STRENGTH = 0.12;
+const GLOW_STRENGTH = 0.2;
+
+/**
+ * How much the low sun colours what it is multiplied over, on top of
+ * whatever the night is already taking away. This is the golden hour
+ * itself: the ground goes amber, not merely dim
+ */
+const GOLDEN_DEPTH = 0.22;
+
+/**
+ * How fast the golden hour falls off with the sun's height. Slow: an
+ * afternoon reads warm long before the sun touches the horizon, and a
+ * window that only opened at sunset was over before it was noticed
+ */
+const GOLDEN_FALLOFF = 1.25;
+
+/** The colour of night, and the colour of a low sun */
+const NIGHT_SHADE = '#2a3a6b';
+const GOLDEN_SHADE = '#ffb37a';
 
 export function getAmbient(localTime: number, latitude = 0): Ambient {
   const { elevation } = getSun(localTime, latitude);
@@ -141,19 +159,37 @@ export function getAmbient(localTime: number, latitude = 0): Ambient {
    * the colour is: a sun overhead is white, and a sun on the horizon
    * is the reason sunsets are worth looking at
    */
-  const low = Math.max(0, 1 - Math.abs(elevation) * 3);
+  const low = Math.max(0, 1 - Math.abs(elevation) * GOLDEN_FALLOFF);
 
   return {
-    // A cold blue for night rather than grey: the eye reads a drop in
-    // blue as dusk and a drop in everything as a dimmed screen
-    shade: '#2a3a6b',
-    depth: dark * NIGHT_DEPTH,
+    // Warmed toward the low sun by how low it is. The wash is one
+    // multiply, and a cold blue laid over an evening would cancel the
+    // very thing the evening is: night is blue, the golden hour is
+    // amber, and dusk is on the way between them
+    shade: mixHex(NIGHT_SHADE, GOLDEN_SHADE, low),
+    depth: Math.min(NIGHT_DEPTH, dark * NIGHT_DEPTH + low * GOLDEN_DEPTH),
     // Warm at both horizons and gone by the time the sun is properly
     // up or properly down: this is the colour of a low sun, not a
     // light of its own
     glow: elevation >= 0 ? '#ffb066' : '#ff8a5c',
     warmth: low * GLOW_STRENGTH,
   };
+}
+
+/** `from` and `to` mixed by `amount`, as the `#rrggbb` the canvas takes */
+function mixHex(from: string, to: string, amount: number): string {
+  const a = Number.parseInt(from.slice(1), 16);
+  const b = Number.parseInt(to.slice(1), 16);
+  let mixed = '#';
+
+  for (let shift = 16; shift >= 0; shift -= 8) {
+    const channel = Math.round(
+      ((a >> shift) & 0xff) * (1 - amount) + ((b >> shift) & 0xff) * amount,
+    );
+
+    mixed += channel.toString(16).padStart(2, '0');
+  }
+  return mixed;
 }
 
 /**

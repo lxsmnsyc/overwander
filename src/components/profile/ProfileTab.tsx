@@ -15,6 +15,7 @@ import { type Profile, watchProfile } from '../../auth/profile';
 import { AchievementTier, TIER_COLORS } from '../../data/achievements';
 import AddFriendDialog from '../friends/AddFriendDialog';
 import AwardsCard from './AwardsCard';
+import { PlayerFace } from './PlayerPlate';
 import BattleHistory from '../battle/BattleHistory';
 import BuddyCard from '../catches/BuddyCard';
 import { type AuctionRecord, canReclaim, listAuctionsBy } from '../../auth/auctions';
@@ -293,35 +294,10 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
       <Show when={profile()} fallback={<Note>Loading profile…</Note>}>
         {(loaded) => (
           <Card class="sm:flex-row sm:items-start sm:gap-4">
-            {/* The avatar, or the room one will take. It is drawn
-                either way: a card that grows a picture the day a
-                player sets one changes shape under somebody who
-                already knows it, and the placeholder says there is
-                something here to set */}
-            <Show
-              when={loaded().avatar}
-              fallback={
-                <div
-                  class="flex size-16 shrink-0 items-center justify-center rounded-full border
-                    border-dashed border-line bg-line-soft text-lg font-semibold text-muted"
-                  role="img"
-                  aria-label="No avatar set"
-                  title="No avatar set"
-                >
-                  {loaded().nickname.slice(0, 1).toUpperCase()}
-                </div>
-              }
-            >
-              {(avatar) => (
-                <img
-                  src={avatar()}
-                  alt="Avatar"
-                  width={64}
-                  height={64}
-                  class="size-16 shrink-0 rounded-full border-2 border-tide object-cover"
-                />
-              )}
-            </Show>
+            {/* The character they go about as, at the size the card
+                keeps for it. Everybody has one, so there is no room to
+                hold open and no letter in a circle to fall back to */}
+            <PlayerFace sprite={loaded().sprite} size={64} />
             <div class="flex min-w-0 grow flex-col gap-2">
               {/* The purse beside the name rather than on a line of
                   its own, where it sat looking like a stray under the

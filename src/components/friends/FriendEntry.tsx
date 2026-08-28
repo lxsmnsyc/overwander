@@ -1,6 +1,7 @@
 import { type JSX, type ParentProps, Show, from } from 'solid-js';
 import { type Profile, watchProfile } from '../../auth/profile';
 import { ListRow, Meta } from '../styled';
+import { PlayerFace } from '../profile/PlayerPlate';
 
 /**
  * One trainer in a friends list, a request or a block: their face,
@@ -19,33 +20,6 @@ export interface FriendEntryProps extends ParentProps {
   when?: string;
 }
 
-function Face(props: { profile: Profile | null; called: string }): JSX.Element {
-  return (
-    <Show
-      when={props.profile?.avatar}
-      fallback={
-        <span
-          class="flex size-8 shrink-0 items-center justify-center rounded-full border border-dashed
-            border-line bg-line-soft text-sm font-semibold text-muted"
-          aria-hidden="true"
-        >
-          {props.called.slice(0, 1).toUpperCase()}
-        </span>
-      }
-    >
-      {(avatar) => (
-        <img
-          src={avatar()}
-          alt=""
-          width={32}
-          height={32}
-          class="size-8 shrink-0 rounded-full border-2 border-tide object-cover"
-        />
-      )}
-    </Show>
-  );
-}
-
 export default function FriendEntry(props: FriendEntryProps): JSX.Element {
   const profile = from<Profile | null>((set) =>
     watchProfile(props.uid, (record) => {
@@ -61,7 +35,7 @@ export default function FriendEntry(props: FriendEntryProps): JSX.Element {
 
   return (
     <ListRow>
-      <Face profile={profile() ?? null} called={called()} />
+      <PlayerFace sprite={profile()?.sprite} />
       <span class="grow truncate font-semibold">{called()}</span>
       <Show when={props.when != null && (props.since ?? 0) > 0}>
         <Meta>

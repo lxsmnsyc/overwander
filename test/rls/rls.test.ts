@@ -94,6 +94,16 @@ describe('profiles', () => {
       .eq('id', alice.uid);
 
     expect(crowned.error).not.toBeNull();
+
+    // Nor is the character they go about as: it is earned, and what
+    // was earned is checked on the server, so the column cannot be
+    // the player's to write
+    const dressed = await alice.client
+      .from('profiles')
+      .update({ sprite: 'characters/frlg/blue' })
+      .eq('id', alice.uid);
+
+    expect(dressed.error).not.toBeNull();
   });
 
   it('never updates somebody else', async () => {

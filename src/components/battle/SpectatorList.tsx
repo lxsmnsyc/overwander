@@ -35,7 +35,7 @@ function Watchers(
             <ListRow selected={uid === props.player}>
               <PlayerPlate
                 name={uid === props.player ? 'You' : named(uid)}
-                avatar={props.names()?.get(uid)?.avatar ?? null}
+                sprite={props.names()?.get(uid)?.sprite ?? null}
                 onOpen={
                   uid === props.player
                     ? undefined

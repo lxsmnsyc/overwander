@@ -3,6 +3,8 @@ import challengerOf from './challengers';
 import { describeItem } from '../../details';
 import { type Journey, describeStash, stateOf } from './journey';
 import { useAuth } from '../../../auth/context';
+import { DEFAULT_CHARSET } from '../../../data/overworld/charsets';
+import { watchProfile } from '../../../auth/profile';
 import { type EggWalk, walk } from '../../../auth/eggs';
 import type { EncounterRecord } from '../../../auth/encounter-record';
 import { getLocalOffset } from '../../../auth/local-time';
@@ -117,6 +119,27 @@ export default function OverworldBoard(props: {
   onFled: () => void;
 }): JSX.Element {
   const auth = useAuth();
+
+  /**
+   * The character the player walks as, which is theirs to choose and
+   * is earned. Watched rather than read once: changing it in the
+   * profile should change who is standing on the chunk behind it
+   */
+  const [charset, setCharset] = createSignal(DEFAULT_CHARSET);
+
+  createEffect(() => {
+    const user = auth.user();
+
+    if (user == null) {
+      setCharset(DEFAULT_CHARSET);
+      return;
+    }
+    onCleanup(
+      watchProfile(user.uid, (profile) => {
+        setCharset(profile?.sprite ?? DEFAULT_CHARSET);
+      }),
+    );
+  });
   const [chunkX, setChunkX] = createSignal(0);
   const [chunkY, setChunkY] = createSignal(0);
   const [cellX, setCellX] = createSignal(START_CELL);
@@ -1441,6 +1464,7 @@ export default function OverworldBoard(props: {
             >
               <ChunkCanvas
                 biome={loaded().biome}
+                charset={charset()}
                 // The camera belongs to the player rather than to the
                 // chunk: walking over a boundary swaps the board out
                 // and a camera living down there would face front

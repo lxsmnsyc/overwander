@@ -64,7 +64,7 @@ function OtherParty(props: { uid: string }): JSX.Element {
   return (
     <PlayerPlate
       name={called()}
-      avatar={profile()?.avatar}
+      sprite={profile()?.sprite}
       onOpen={() => {
         game.setVisiting(props.uid);
       }}

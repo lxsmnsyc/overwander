@@ -19,7 +19,7 @@ import { Note } from '../styled';
 interface PreviewRow {
   player: string;
   name: string;
-  avatar: string | null;
+  sprite: string | null;
   catches: [string, CaughtPokemon][];
 }
 
@@ -45,7 +45,7 @@ function TeamsRows(props: TeamsPreviewProps & { loaded: Resource<PreviewRow[]> }
           <li class="flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
             <PlayerPlate
               name={row.player === props.player ? 'You' : row.name}
-              avatar={row.avatar}
+              sprite={row.sprite}
               onOpen={
                 props.onVisit != null && row.player !== '' && row.player !== props.player
                   ? () => props.onVisit?.(row.player)
@@ -84,7 +84,7 @@ export default function TeamsPreview(props: TeamsPreviewProps): JSX.Element {
         return {
           player: snapshot.player,
           name: snapshot.player === '' ? wild : (profile?.nickname ?? 'A trainer'),
-          avatar: profile?.avatar ?? null,
+          sprite: profile?.sprite ?? null,
           catches: snapshot.catches.map((caught, at): [string, CaughtPokemon] => [
             caught.caught === '' ? `${at}` : caught.caught,
             previewSnapshot(caught),

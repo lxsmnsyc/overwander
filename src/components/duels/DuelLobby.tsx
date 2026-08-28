@@ -77,7 +77,7 @@ function LobbyRows(
 
   const duel = (): DuelRecord | null => props.duel();
   const named = (uid: string): string => props.names()?.get(uid)?.nickname ?? uid;
-  const faceOf = (uid: string): string | null => props.names()?.get(uid)?.avatar ?? null;
+  const faceOf = (uid: string): string | null => props.names()?.get(uid)?.sprite ?? null;
 
   const mine = (): DuelMember | undefined =>
     duel()?.members.find((member) => member.player === props.user.uid);
@@ -167,7 +167,7 @@ function LobbyRows(
           <>
             <PlayerPlate
               name={taken().player === props.user.uid ? 'You' : named(taken().player)}
-              avatar={faceOf(taken().player)}
+              sprite={faceOf(taken().player)}
               onOpen={
                 taken().player === props.user.uid
                   ? undefined

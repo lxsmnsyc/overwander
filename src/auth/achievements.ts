@@ -4,8 +4,10 @@ import type { TrainerClass } from '../data/overworld/trainers';
 import type { Title } from '../data/ids/titles';
 import { requireUid } from '../server/auth';
 import {
+  listUnlockedSprites as listSpritesOnServer,
   listUnlockedTitles as listTitlesOnServer,
   readAchievements as readOnServer,
+  setSprite as setSpriteOnServer,
   setTitle as setTitleOnServer,
 } from '../server/achievements';
 import getIdToken from './session';
@@ -56,4 +58,24 @@ export async function saveTitle(title: Title | null): Promise<boolean> {
 async function saveTitleOnServer(token: string, title: Title | null): Promise<boolean> {
   'use server';
   return setTitleOnServer(await requireUid(token), title);
+}
+
+/** The characters the signed-in player has earned the right to wear */
+export async function listMySprites(): Promise<string[]> {
+  return listSpritesFor(await getIdToken());
+}
+
+async function listSpritesFor(token: string): Promise<string[]> {
+  'use server';
+  return listSpritesOnServer(await requireUid(token));
+}
+
+/** Go about as one of them. Resolves whether it stuck */
+export async function saveSprite(sprite: string): Promise<boolean> {
+  return saveSpriteOnServer(await getIdToken(), sprite);
+}
+
+async function saveSpriteOnServer(token: string, sprite: string): Promise<boolean> {
+  'use server';
+  return setSpriteOnServer(await requireUid(token), sprite);
 }

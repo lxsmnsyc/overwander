@@ -1,4 +1,5 @@
 import claimDevAdmin from './roles';
+import { DEFAULT_CHARSET } from '../data/overworld/charsets';
 import getSupabase, { type Unwatch, watchRow } from './supabase';
 import type { PlayerIdentity } from './user';
 
@@ -14,9 +15,12 @@ export interface Profile {
    */
   nickname: string;
   /**
-   * Avatar image URL; null when unset
+   * The overworld character this trainer is seen as, everywhere from a
+   * lobby row to the chunk they are walking. A sheet under
+   * `sprites/overworld`; written by the server alone, since wearing
+   * one takes earning it
    */
-  avatar: string | null;
+  sprite: string;
   /**
    * The in-game currency balance
    */
@@ -28,8 +32,8 @@ export interface Profile {
    *
    * It is a **string** rather than a flag or an enum so the set of
    * roles can grow without a migration. Nothing a browser sends may
-   * name it: the grants let a player write only their nickname,
-   * avatar and buddy. A role is granted out of band, the way gold is
+   * name it: the grants let a player write only their nickname and
+   * buddy. A role is granted out of band, the way gold is
    */
   role: string;
   /**
@@ -63,7 +67,7 @@ export interface Profile {
 
 const PROFILE_TABLE = 'profiles';
 
-const PROFILE_COLUMNS = 'nickname, avatar, gold, role, banned, ban_reason, buddy_id, title';
+const PROFILE_COLUMNS = 'nickname, sprite, gold, role, banned, ban_reason, buddy_id, title';
 
 /**
  * The store hands back untyped rows; normalize the fields instead of
@@ -72,7 +76,7 @@ const PROFILE_COLUMNS = 'nickname, avatar, gold, role, banned, ban_reason, buddy
 function asProfile(data: Record<string, unknown>): Profile {
   return {
     nickname: typeof data.nickname === 'string' ? data.nickname : 'Trainer',
-    avatar: typeof data.avatar === 'string' ? data.avatar : null,
+    sprite: typeof data.sprite === 'string' && data.sprite !== '' ? data.sprite : DEFAULT_CHARSET,
     gold: typeof data.gold === 'number' ? data.gold : Number(data.gold ?? 0),
     buddy: typeof data.buddy_id === 'string' ? data.buddy_id : '',
     // Everybody is a player until somebody says otherwise, so a
@@ -131,12 +135,12 @@ export function watchProfile(uid: string, onChange: (profile: Profile | null) =>
  * The fields a player edits themselves; the balance is off limits
  * here and only moves through grantGold and spendGold
  */
-export type ProfileDetails = Pick<Profile, 'nickname' | 'avatar'>;
+export type ProfileDetails = Pick<Profile, 'nickname'>;
 
 export async function saveProfile(uid: string, details: ProfileDetails): Promise<void> {
   const { error } = await getSupabase()
     .from(PROFILE_TABLE)
-    .update({ nickname: details.nickname, avatar: details.avatar })
+    .update({ nickname: details.nickname })
     .eq('id', uid);
 
   if (error != null) {
@@ -168,7 +172,7 @@ export async function setBuddyField(uid: string, catchId: string): Promise<void>
 export function deriveProfileDefaults(user: PlayerIdentity): Profile {
   return {
     nickname: user.displayName ?? user.email?.split('@')[0] ?? 'Trainer',
-    avatar: user.photoURL,
+    sprite: DEFAULT_CHARSET,
     gold: 0,
     buddy: '',
     // An account opens as a player, and welcome, whatever it may be
@@ -184,8 +188,8 @@ export function deriveProfileDefaults(user: PlayerIdentity): Profile {
 /**
  * The user's profile. The row itself is created by a database trigger
  * the moment the account is, so what is left to this call is the
- * cosmetics: seed the display name and avatar from whatever the auth
- * method already knows, once, and hand a development build its keys
+ * cosmetics: seed the display name from whatever the auth method
+ * already knows, once, and hand a development build its keys
  */
 export async function ensureProfile(user: PlayerIdentity): Promise<Profile> {
   const existing = await getProfile(user.uid);
@@ -197,8 +201,8 @@ export async function ensureProfile(user: PlayerIdentity): Promise<Profile> {
     let held = existing;
 
     if (held.nickname === 'Trainer' && defaults.nickname !== 'Trainer') {
-      await saveProfile(user.uid, { nickname: defaults.nickname, avatar: defaults.avatar });
-      held = { ...held, nickname: defaults.nickname, avatar: defaults.avatar };
+      await saveProfile(user.uid, { nickname: defaults.nickname });
+      held = { ...held, nickname: defaults.nickname };
     }
     // The trigger usually wins the race, so the dev keys are handed
     // out here too, not only to the account that outran its own row

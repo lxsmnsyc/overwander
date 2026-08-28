@@ -9,6 +9,7 @@ import {
   deriveAchievements,
 } from '../data/achievements';
 import { LadderTitle, type Title, lineTitle, trainerTitle, typeTitle } from '../data/ids/titles';
+import { CHARSETS } from '../data/overworld/charsets';
 import { listAwards } from './awards';
 import { getSql } from './db';
 import { readProgress } from './quest-progress';
@@ -91,5 +92,47 @@ export async function setTitle(uid: string, title: Title | null): Promise<boolea
     }
   }
   await getSql()`update profiles set title = ${title} where id = ${uid}`;
+  return true;
+}
+
+/**
+ * Every character this player may go about as.
+ *
+ * The same entitlement the titles run on, over the same two facts: an
+ * award held, or a trainer class' line at Bronze. Beating a gym is
+ * what lets somebody dress as its leader, and putting down enough Bug
+ * Catchers is what makes them one
+ */
+export async function listUnlockedSprites(player: string): Promise<string[]> {
+  const [standings, held] = await Promise.all([readAchievements(player), listAwards(player)]);
+  const awards = new Set(held.map((entry) => entry.award));
+
+  return CHARSETS.filter((charset) => {
+    switch (charset.lock.kind) {
+      case 'free':
+        return true;
+      case 'award':
+        return awards.has(charset.lock.award);
+      default:
+        return (
+          (standings.trainers.get(charset.lock.trainer)?.tier ?? AchievementTier.None) >=
+          AchievementTier.Bronze
+        );
+    }
+  }).map((charset) => charset.sheet);
+}
+
+/**
+ * Wear a character. Entitlement is re-derived here rather than trusted,
+ * which is the whole reason the column is not the player's to write.
+ * Resolves whether the write happened
+ */
+export async function setSprite(uid: string, sprite: string): Promise<boolean> {
+  const unlocked = await listUnlockedSprites(uid);
+
+  if (!unlocked.includes(sprite)) {
+    return false;
+  }
+  await getSql()`update profiles set sprite = ${sprite} where id = ${uid}`;
   return true;
 }

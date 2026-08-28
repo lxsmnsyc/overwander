@@ -83,7 +83,7 @@ export default function VerdictDialog(props: VerdictDialogProps): JSX.Element {
                     <div class="flex items-center justify-between gap-4">
                       <PlayerPlate
                         name={sideName(side)}
-                        avatar={props.names()?.get(side.player)?.avatar ?? null}
+                        sprite={props.names()?.get(side.player)?.sprite ?? null}
                       />
                       <span class="text-sm text-muted">
                         {Math.round(side.dealt).toLocaleString()} damage

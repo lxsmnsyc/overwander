@@ -1,12 +1,13 @@
-import { type JSX, Show, createEffect, createResource, createSignal, on } from 'solid-js';
-import { listMyTitles, saveTitle } from '../../auth/achievements';
+import { type JSX, createEffect, createResource, createSignal, on } from 'solid-js';
+import { listMyTitles, saveSprite, saveTitle } from '../../auth/achievements';
 import { type Profile, saveProfile } from '../../auth/profile';
 import { type Title, getTitleName } from '../../data/ids/titles';
 import { Button, Combobox, Dialog, DialogActions, Status, TextField } from '../styled';
+import SpritePicker from './SpritePicker';
 
 /**
  * The things about a trainer that are theirs to set: what they are
- * called, the picture beside the name, and which earned title hangs
+ * called, the character they go about as, and which earned title hangs
  * under it.
  *
  * All live behind a dialog rather than in the card. A name that can be
@@ -27,7 +28,7 @@ export interface EditProfileDialogProps {
 
 export default function EditProfileDialog(props: EditProfileDialogProps): JSX.Element {
   const [name, setName] = createSignal('');
-  const [avatar, setAvatar] = createSignal('');
+  const [sprite, setSprite] = createSignal('');
   const [title, setTitle] = createSignal<Title>(NO_TITLE);
   const [saving, setSaving] = createSignal(false);
   const [error, setError] = createSignal<string | null>(null);
@@ -59,7 +60,7 @@ export default function EditProfileDialog(props: EditProfileDialogProps): JSX.El
           return;
         }
         setName(props.profile.nickname);
-        setAvatar(props.profile.avatar ?? '');
+        setSprite(props.profile.sprite);
         setTitle(props.profile.title ?? NO_TITLE);
         setError(null);
       },
@@ -68,19 +69,18 @@ export default function EditProfileDialog(props: EditProfileDialogProps): JSX.El
 
   const save = (): void => {
     const wanted = name().trim();
-    const picture = avatar().trim();
 
     if (wanted === '') {
       return;
     }
     setError(null);
     setSaving(true);
-    // Empty is stored as nothing rather than as an empty string: the
-    // record says a trainer with no picture has `null` — and the
-    // title rides its own server call, since wearing one is checked
-    // against what was earned
+    // The character and the title ride their own server calls, since
+    // both are checked against what was earned; the nickname is the
+    // one thing here a player writes directly
     Promise.all([
-      saveProfile(props.player, { nickname: wanted, avatar: picture === '' ? null : picture }),
+      saveProfile(props.player, { nickname: wanted }),
+      saveSprite(sprite()),
       saveTitle(title() === NO_TITLE ? null : title()),
     ])
       .then(() => {
@@ -100,7 +100,7 @@ export default function EditProfileDialog(props: EditProfileDialogProps): JSX.El
       isOpen={props.isOpen}
       onClose={props.onClose}
       title="Edit profile"
-      description="What everybody else sees you as: the name on your lots and in a lobby, and the picture beside it."
+      description="What everybody else sees you as: the name on your lots and in a lobby, and the character standing beside it."
     >
       <TextField
         label="Nickname"
@@ -111,14 +111,11 @@ export default function EditProfileDialog(props: EditProfileDialogProps): JSX.El
           setName(value);
         }}
       />
-      <TextField
-        label="Avatar address"
-        value={avatar()}
-        kind="url"
-        placeholder="https://…"
+      <SpritePicker
+        value={sprite()}
         disabled={saving()}
-        onChange={(value) => {
-          setAvatar(value);
+        onChange={(sheet) => {
+          setSprite(sheet);
         }}
       />
 
@@ -137,21 +134,6 @@ export default function EditProfileDialog(props: EditProfileDialogProps): JSX.El
           setTitle(value);
         }}
       />
-
-      {/* What it will look like beside the name, at the size the card
-          draws it. Nothing is said about an address that loads
-          nothing: the picture failing to appear says it */}
-      <Show when={avatar().trim()}>
-        {(picture) => (
-          <img
-            src={picture()}
-            alt="Avatar"
-            width={64}
-            height={64}
-            class="size-16 self-center rounded-full border-2 border-tide object-cover"
-          />
-        )}
-      </Show>
 
       <Status message={error()} tone="alert" />
       <DialogActions>

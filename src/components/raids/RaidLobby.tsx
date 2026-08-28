@@ -95,7 +95,7 @@ function LobbyRows(
   const canJoin = (): boolean | undefined => props.canJoin();
 
   const named = (uid: string): string => props.names()?.get(uid)?.nickname ?? uid;
-  const faceOf = (uid: string): string | null => props.names()?.get(uid)?.avatar ?? null;
+  const faceOf = (uid: string): string | null => props.names()?.get(uid)?.sprite ?? null;
 
   const isHost = (): boolean => raid()?.host === props.user.uid;
 
@@ -315,7 +315,7 @@ function LobbyRows(
                               the menu already gives them */}
                           <PlayerPlate
                             name={team.player === props.user.uid ? 'You' : named(team.player)}
-                            avatar={faceOf(team.player)}
+                            sprite={faceOf(team.player)}
                             onOpen={
                               team.player === props.user.uid
                                 ? undefined

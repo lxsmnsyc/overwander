@@ -3,7 +3,7 @@ import { getSql } from './db';
 
 /**
  * The gold balance, written over the owner connection. A player edits
- * their own nickname and avatar directly (those are theirs to set)
+ * their own nickname directly (that is theirs to set)
  * but the balance is currency, so it only moves here.
  *
  * Both moves are single atomic statements: the guard rides in the

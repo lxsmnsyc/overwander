@@ -91,7 +91,11 @@ const PHENOMENON_KINDS: Record<string, number> = { item: 0, encounter: 1, egg: 2
 /**
  * The marker as one insert: the primary key is the whole race, and
  * the row count is the answer. A marker that is already there grants
- * nothing
+ * nothing.
+ *
+ * Every row is stamped with when it was written, which is what the
+ * hourly sweep reads: a marker whose window has rolled can never
+ * refuse a second claim again, so it is only taking up room
  */
 async function writeClaim(table: string, marker: string, record: ClaimRecord): Promise<boolean> {
   const { player, ...extra } = record;
@@ -121,26 +125,27 @@ async function writeClaim(table: string, marker: string, record: ClaimRecord): P
       }
     } else if (table === 'berry_claims') {
       inserted = await transaction`
-        insert into berry_claims (marker, player, item, amount)
-        values (${marker}, ${player}, ${asNumber(extra.item)}, ${asNumber(extra.amount)})
+        insert into berry_claims (marker, player, item, amount, claimed_at)
+        values (${marker}, ${player}, ${asNumber(extra.item)}, ${asNumber(extra.amount)},
+                ${Date.now()})
         on conflict do nothing
       `;
     } else if (table === 'nest_claims') {
       inserted = await transaction`
-        insert into nest_claims (marker, player, species)
-        values (${marker}, ${player}, ${asNumber(extra.species)})
+        insert into nest_claims (marker, player, species, claimed_at)
+        values (${marker}, ${player}, ${asNumber(extra.species)}, ${Date.now()})
         on conflict do nothing
       `;
     } else if (table === 'phenomenon_claims') {
       inserted = await transaction`
-        insert into phenomenon_claims (marker, player, kind)
-        values (${marker}, ${player}, ${PHENOMENON_KINDS[String(extra.kind)] ?? 0})
+        insert into phenomenon_claims (marker, player, kind, claimed_at)
+        values (${marker}, ${player}, ${PHENOMENON_KINDS[String(extra.kind)] ?? 0}, ${Date.now()})
         on conflict do nothing
       `;
     } else {
       inserted = await transaction`
-        insert into npc_claims (marker, player, payload)
-        values (${marker}, ${player}, ${jsonOf(transaction, extra)})
+        insert into npc_claims (marker, player, payload, claimed_at)
+        values (${marker}, ${player}, ${jsonOf(transaction, extra)}, ${Date.now()})
         on conflict do nothing
       `;
     }

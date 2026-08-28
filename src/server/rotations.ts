@@ -116,15 +116,44 @@ async function standingOf(
   return { quest, have, claimed, claimable: !claimed && have >= quest.requirement.count };
 }
 
+/**
+ * Forget the windows that have rolled past.
+ *
+ * A window key is derived from the date, so yesterday's is a string
+ * nothing will ever compute again: the rows under it are not stale,
+ * they are unreachable. They are swept here rather than on a clock
+ * because the moment they became garbage is the moment this player's
+ * day turned over, and this is where that is noticed
+ */
+async function forgetOldWindows(uid: string, daily: string, weekly: string): Promise<void> {
+  await getSql()`
+    delete from rotation_baselines
+    where player = ${uid} and window_key not in (${daily}, ${weekly})
+  `;
+  await getSql()`
+    delete from rotation_claims
+    where player = ${uid} and window_key not in (${daily}, ${weekly})
+  `;
+}
+
 /** The whole rotating board as it stands for this player right now */
 export async function listRotations(uid: string, now: number): Promise<RotationBoard> {
   const counters = await readProgress(uid);
+  const today = dailyWindow(now);
+  const thisWeek = weeklyWindow(now);
   const [dailyBase, weeklyBase, dailyClaims, weeklyClaims] = await Promise.all([
-    readBaselines(uid, dailyWindow(now)),
-    readBaselines(uid, weeklyWindow(now)),
-    readClaimedSlots(uid, dailyWindow(now)),
-    readClaimedSlots(uid, weeklyWindow(now)),
+    readBaselines(uid, today),
+    readBaselines(uid, thisWeek),
+    readClaimedSlots(uid, today),
+    readClaimedSlots(uid, thisWeek),
   ]);
+
+  // Nothing written for today yet means the day just turned for this
+  // player, which is the one moment a sweep is worth the statement:
+  // any other read finds nothing to delete and pays for the look
+  if (dailyBase.size === 0) {
+    await forgetOldWindows(uid, today, thisWeek);
+  }
 
   const daily: RotationStanding[] = [];
 

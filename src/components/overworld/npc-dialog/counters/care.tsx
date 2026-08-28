@@ -1,9 +1,13 @@
 import type { JSX } from 'solid-js';
 import { boostedSteps, isEgg, stepsRemaining } from '../../../../auth/egg';
-import { isGuarded, isShadow } from '../../../../auth/caught-record';
+import { getCatchSlots, isGuarded, isShadow } from '../../../../auth/caught-record';
 import { groomedFriendship } from '../../../../data/constants/friendship';
+import { MAX_SLOTS, Slots, countAbilitySlots } from '../../../../data/constants/slots';
+import type { Items } from '../../../../data/ids/items';
+import { getAwakenableAbilities } from '../../../../data/overworld/npc';
 import CatchPicker, { type CatchOption } from '../../../catches/catch-picker';
-import { DialogSection, Meta, Status } from '../../../styled';
+import ItemSprite from '../../../items/ItemSprite';
+import { Badge, DialogSection, Meta, Status } from '../../../styled';
 import { canLayEggs } from '../../../../overworld/breeding';
 import { CENTRED } from '../shared';
 
@@ -181,6 +185,66 @@ export function GroomerCounter(props: GroomerCounterProps): JSX.Element {
       {/* What it costs. The rest of what he is for is said in his own
           words under him */}
       <Meta class="block">{props.fee} gold, once while he is here.</Meta>
+    </DialogSection>
+  );
+}
+
+export interface ChannelerCounterProps {
+  options: CatchOption[];
+  /** How many Heart Scales the player is carrying */
+  scales: number;
+  fee: Items;
+  busy: boolean;
+  onChannel: (catchId: string) => void;
+}
+
+/**
+ * Whether she has anything left to call up out of this one: room on
+ * the record, and something in its line it does not already carry
+ */
+function hasSomethingLeft(caught: CatchOption['caught']): boolean {
+  return (
+    getCatchSlots(caught, Slots.Ability) < MAX_SLOTS &&
+    countAbilitySlots(caught.abilities) >= getCatchSlots(caught, Slots.Ability) &&
+    getAwakenableAbilities(caught.species, caught.abilities).length > 0
+  );
+}
+
+export function ChannelerCounter(props: ChannelerCounterProps): JSX.Element {
+  return (
+    <DialogSection class={CENTRED}>
+      {/* One press, one pokemon widened. What comes out is the line's
+          rather than the player's, so there is nothing to choose after
+          picking who — and a pokemon whose line has nothing left is
+          filtered out rather than shown and refused */}
+      <CatchPicker
+        inline
+        disabled={props.busy || props.scales < 1}
+        options={props.options}
+        value={null}
+        verb="Call up"
+        empty="You have nothing she can reach."
+        filter={(option) =>
+          !isEgg(option.caught) && !option.fighting && hasSomethingLeft(option.caught)
+        }
+        note={(option) =>
+          `${option.caught.abilities.length} → ${option.caught.abilities.length + 1}`
+        }
+        onPick={(id) => {
+          if (id != null) {
+            props.onChannel(id);
+          }
+        }}
+      />
+      {/* What it costs, and whether it is in the bag: the squares go
+          grey without a scale, and this is the reason why */}
+      <Status message={props.scales < 1 ? 'She wants a Heart Scale, and you have none.' : null} />
+      <Meta class="block">
+        <Badge tone="gold">
+          <ItemSprite item={props.fee} size={16} label="" />1
+        </Badge>{' '}
+        once while she is here.
+      </Meta>
     </DialogSection>
   );
 }

@@ -5,6 +5,7 @@ import { getMaxHealth } from '../auth/health';
 import { groomedFriendship } from '../data/constants/friendship';
 import Npc, {
   BREEDING_FEE,
+  CHANNELER_FEE,
   DAYCARE_FEE,
   GROOMING_FEE,
   NURSE_CARE_LIMIT,
@@ -32,6 +33,7 @@ import { grantBredEgg } from './eggs';
 import { consumeItem, grantItem } from './inventory';
 import { readCaughtIn, updateCaughtIn } from './caught-io';
 import { getSql, tx } from './db';
+import awakenAbility, { type Awakening } from './awaken';
 import { learnMove } from './moves';
 import { readStackIn, writeStackIn } from './stacks';
 import { ITEM_STACKS } from '../auth/stacks';
@@ -605,6 +607,62 @@ export async function tutorMove(
     await releaseVisit(visit);
   }
   return taught;
+}
+
+/**
+ * Have the Channeler draw a second ability out of the pokemon, for
+ * one Heart Scale.
+ *
+ * The slot she opens and the ability that fills it are written
+ * together, so a pokemon is never left holding room for nothing. What
+ * comes out is seeded by the visit rather than the moment, so asking
+ * again while she stands there is the same question rather than
+ * another roll at it.
+ *
+ * Resolves what she drew out, or null when she refuses: the catch is
+ * not the player's, it is fighting, locked or still an egg, no scale
+ * is carried, the pokemon has no room left, its line has nothing it
+ * does not already have, or this window's visit has already been made
+ */
+export async function channelAbility(
+  uid: string,
+  x: number,
+  y: number,
+  cell: number,
+  catchId: string,
+  now: number,
+  offset: number,
+): Promise<Awakening | null> {
+  const snapshot = await resolveNpc(x, y, cell, now, offset, Npc.Channeler);
+
+  if (snapshot == null) {
+    return null;
+  }
+
+  const visit = await takeVisit(snapshot, 'channel', cell, uid, { caught: catchId });
+
+  if (visit == null) {
+    return null;
+  }
+
+  const seed = `${snapshot.key}${snapshot.npcTimestamp}channel${cell}:${uid}:${catchId}`;
+
+  let drawn: Awakening | null;
+
+  try {
+    drawn = await awakenAbility(uid, catchId, CHANNELER_FEE, seed);
+  } catch (error) {
+    await releaseVisit(visit);
+    throw error;
+  }
+
+  // She was asked and drew nothing out — no scale, a pokemon she
+  // cannot touch, a line with nothing left in it. The window is given
+  // back with it
+  if (drawn == null) {
+    await releaseVisit(visit);
+  }
+  return drawn;
 }
 
 /**

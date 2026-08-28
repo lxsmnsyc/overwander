@@ -3,6 +3,7 @@ import type { Moves } from '../data/ids/moves';
 import Npc from '../data/overworld/npc';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
 import { requireUid } from '../server/auth';
+import type { Awakening } from '../server/awaken';
 import {
   type RevivedFossil,
   type TradeResult,
@@ -10,6 +11,7 @@ import {
   breedCatches as breedOnServerSide,
   buyFossil as buyFossilOnServerSide,
   buyFromVendor as buyOnServerSide,
+  channelAbility as channelOnServerSide,
   countVisit,
   groomCatch as groomOnServerSide,
   remindMove as remindOnServerSide,
@@ -35,6 +37,7 @@ import getSupabase from './supabase';
  */
 
 export type { RevivedFossil, TradeResult } from '../server/npcs';
+export type { Awakening } from '../server/awaken';
 
 /**
  * Leave two pokemon with the breeder and take the egg. Both must be
@@ -333,6 +336,52 @@ async function tutorOnServer(
       await syncServerClock(),
       offset,
     ),
+  );
+}
+
+/**
+ * Have the Channeler open an ability slot and fill it in the same
+ * write, for one Heart Scale. What she can still draw out is derived
+ * from the family, so the client already knows whether she has
+ * anything to offer this pokemon — `getAwakenableAbilities` — and the
+ * server derives it again from the stored record before it takes the
+ * scale.
+ *
+ * Which of them comes out is hers rather than the player's: the pool
+ * is the line's, and the roll is seeded by the visit.
+ *
+ * Resolves what she drew out, or null when she refuses
+ */
+export async function channelAbility(
+  snapshot: ChunkSnapshot,
+  cell: number,
+  catchId: string,
+): Promise<Awakening | null> {
+  return channelOnServer(
+    await getIdToken(),
+    snapshot.chunk.x,
+    snapshot.chunk.y,
+    cell,
+    catchId,
+    snapshot.offset,
+  );
+}
+
+async function channelOnServer(
+  token: string,
+  x: number,
+  y: number,
+  cell: number,
+  catchId: string,
+  offset: number,
+): Promise<Awakening | null> {
+  'use server';
+  const uid = await requireUid(token);
+
+  return countVisit(
+    uid,
+    Npc.Channeler,
+    await channelOnServerSide(uid, x, y, cell, catchId, await syncServerClock(), offset),
   );
 }
 

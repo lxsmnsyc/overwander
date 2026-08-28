@@ -13,6 +13,7 @@ import {
   breed,
   buyFossil,
   buyFromVendor,
+  channelAbility,
   groomCatch,
   hasVisited,
   remindMove,
@@ -27,9 +28,11 @@ import { isFossil } from '../../../data/items';
 
 import { getFossilPrice } from '../../../data/overworld/fossil';
 import { Species } from '../../../data/ids/species';
+import { getAbilityData } from '../../../data/abilities';
 import { getSpeciesData } from '../../../data/species';
 import Npc, {
   BREEDING_FEE,
+  CHANNELER_FEE,
   DAYCARE_FEE,
   GROOMING_FEE,
   NPC_NAMES,
@@ -48,7 +51,13 @@ import AnimatedSprite from '../../sprites/AnimatedSprite';
 import ItemSprite from '../../items/ItemSprite';
 import TeachMoveDialog from '../../catches/TeachMoveDialog';
 import { Badge, Button, Detail, Dialog, DialogActions, Status, useToast } from '../../styled';
-import { BreederCounter, DaycareCounter, GroomerCounter, NurseCounter } from './counters/care';
+import {
+  BreederCounter,
+  ChannelerCounter,
+  DaycareCounter,
+  GroomerCounter,
+  NurseCounter,
+} from './counters/care';
 import { FossilCounter, ReviveCounter, VendorCounter } from './counters/goods';
 import { ReminderCounter, TutorCounter } from './counters/moves';
 import { NPC_QUOTES, asParent, priceOf } from './shared';
@@ -409,6 +418,48 @@ function NpcCounter(
   };
 
   /**
+   * Hand the scale over and let her call something up.
+   *
+   * One press: the slot she opens and the ability that fills it are
+   * one write on the server, so there is nothing here to agree to
+   * afterwards. What came out is said in a word in passing, since it
+   * is the one thing the picker behind it cannot show
+   */
+  const channel = (id: string): void => {
+    const snapshot = props.snapshot;
+    const standing = props.standing;
+
+    if (snapshot == null || standing == null) {
+      return;
+    }
+    setStatus(null);
+    setBusy(true);
+    channelAbility(snapshot, standing[0], id)
+      .then((drawn) => {
+        setBusy(false);
+
+        if (drawn == null) {
+          setStatus(
+            'Nothing answered. No scale, a pokemon she cannot reach, or she has seen you this while.',
+          );
+          return;
+        }
+        toast.push({
+          title: getAbilityData(drawn.ability).name,
+          message: `Called up, and room for it. (−1 Heart Scale)`,
+          tone: 'leaf',
+        });
+        props.onTraded();
+        props.onServed();
+        props.onChange?.();
+      })
+      .catch((caught: unknown) => {
+        setBusy(false);
+        setStatus(caught instanceof Error ? caught.message : String(caught));
+      });
+  };
+
+  /**
    * How many of it the player is carrying. It is what the crate cannot
    * say — his counts are his — and what a player buying a third potion
    * is actually deciding with
@@ -664,9 +715,10 @@ function NpcCounter(
       );
     }
     if (npc !== Npc.Vendor && npc !== Npc.Chef) {
-      // The daycare lady, the groomer, the maniac and the scientist
-      // act the moment something is pressed, so there is nothing left
-      // to agree to — a button here would only ask the question twice
+      // The daycare lady, the groomer, the channeler, the maniac and
+      // the scientist act the moment something is pressed, so there is
+      // nothing left to agree to: a button here would only ask the
+      // question twice
       return null;
     }
 
@@ -789,6 +841,16 @@ function NpcCounter(
               </Show>
               <Show when={standing()[1] === Npc.Groomer}>
                 <GroomerCounter options={offers()} fee={GROOMING_FEE} onGroom={groom} />
+              </Show>
+
+              <Show when={standing()[1] === Npc.Channeler}>
+                <ChannelerCounter
+                  options={offers()}
+                  scales={scales()}
+                  fee={CHANNELER_FEE}
+                  busy={busy()}
+                  onChannel={channel}
+                />
               </Show>
 
               <Show when={standing()[1] === Npc.MoveReminder}>

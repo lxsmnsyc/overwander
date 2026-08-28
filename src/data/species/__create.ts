@@ -395,6 +395,34 @@ export function getSpeciesAbilityPools(species: Species): SpeciesAbilityPools {
 }
 
 /**
+ * Every ability anywhere in the species' line, evolutions included.
+ *
+ * `getSpeciesAbilities` walks a chain upwards, which answers what
+ * *this* stage could have been born with. This answers what the line
+ * is capable of, which is a wider question and the one the Channeler
+ * asks: a Magikarp's line knows Intimidate even though no Magikarp
+ * ever hatched with it
+ */
+export function getFamilyAbilities(species: Species): Set<Abilities> {
+  const family = getSpeciesData(species).family;
+  const abilities = new Set<Abilities>();
+
+  for (const data of SPECIES_MAP.values()) {
+    if (data.family !== family) {
+      continue;
+    }
+    for (const ability of data.abilities) {
+      abilities.add(ability);
+    }
+    if (data.hiddenAbility != null) {
+      abilities.add(data.hiddenAbility);
+    }
+  }
+
+  return abilities;
+}
+
+/**
  * Every ability the species can learn: its own set plus its
  * pre-evolutions' sets, walked up the evolution chain
  */

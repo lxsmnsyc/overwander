@@ -4,11 +4,12 @@ Some chunks contain a **Wandering NPC** cell. The cell itself never moves, but
 whoever is standing on it changes every **three hours**, so the same spot may
 offer a breeder in the morning and a daycare lady by midday.
 
-Nine people wander: the breeder, the daycare lady, Nurse Joy, the groomer, the
-Move Reminder, the Move Tutor, the chef, the Fossil Maniac and the Fossil
-Scientist. The vendor, the Team Rocket grunt and the duelling trainers each keep
-a landmark of their own, further down. A cell is a crossroads rather than a shop,
-so walking up to one does not reveal in advance which of the nine is there.
+Ten people wander: the breeder, the daycare lady, Nurse Joy, the groomer, the
+Move Reminder, the Move Tutor, the chef, the Fossil Maniac, the Fossil Scientist
+and the Channeler. The vendor, the Team Rocket grunt and the duelling trainers
+each keep a landmark of their own, further down. A cell is a crossroads rather
+than a shop, so walking up to one does not reveal in advance which of the ten is
+there.
 
 ## The once-per-window rule
 
@@ -87,6 +88,7 @@ evolution stones, by contrast, do carry a price, so a spare one is worth gold.
 | **Chef**             | Gold, as often as it holds out           | Drinks and treats, stocked nowhere else    |
 | **Fossil Maniac**    | 12,000 gold, or 30,000 for the Old Amber | One of the two fossils he is carrying      |
 | **Fossil Scientist** | A fossil, free                           | The pokemon inside it, at level 20         |
+| **Channeler**        | One pokemon, one Heart Scale             | An extra ability slot, filled at once      |
 
 **Nurse Joy** charges nothing and heals everything: full health, statuses
 cleared, and any shadow pokemon purified on the way. Six pokemon to a handover,
@@ -105,6 +107,16 @@ move is actually taught.
 **The Move Tutor** deals in the same currency and covers the other half of a move
 list: everything on the species' machine list that it does not already know. What
 he sells is the lesson without the hunt for the disc.
+
+**The Channeler** is the only way a pokemon ever gains an ability. Every other
+ability it has was decided before you met it. She opens one more ability slot and
+fills it in the same breath, drawing from everything the pokemon's **family** is
+capable of, so a Magikarp can wake up with Intimidate. Which one answers is hers
+to decide, not yours.
+
+She refuses a pokemon whose family has nothing left it does not already carry,
+and she refuses one that has run out of room. A shadow's mark and a boss's do not
+count against that room, so a shadow is not punished for carrying one.
 
 **The Chef** keeps the one shelf no vendor stocks: the region's drinks and its
 treats, six of them a window. Like the vendor, he serves as often as a purse

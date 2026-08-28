@@ -42,6 +42,8 @@ export const NPC_QUOTES: Record<Npc, string> = {
   // way an ambush is, only asked rather than sprung
   [Npc.Trainer]: 'You look strong. Prove it. Three of the local best, purse to the winner.',
   [Npc.Chef]: 'Fresh off the stove and out of the icebox. Your pokemon carries it, it eats well.',
+  [Npc.Channeler]:
+    'There is more in it than it knows. One Heart Scale and I will call it up. What answers is not mine to choose.',
 };
 
 /**

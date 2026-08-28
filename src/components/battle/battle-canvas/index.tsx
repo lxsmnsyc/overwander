@@ -17,6 +17,10 @@ import {
   moveMissVisual,
 } from '../../../canvas/battle/moves';
 import type { FieldView } from '../../../canvas/battle/field';
+import loadBiomeTileset from '../../../canvas/biome-tilesets';
+import type BiomeTileset from '../../../canvas/biome-tileset';
+import drawFloor, { type FloorRegion } from './floor';
+import Biome from '../../../data/ids/biome';
 
 import loadSpeciesSprite from '../../../canvas/species-sprites';
 import { BattleEvents, MoveTargetType } from '../../../battle/events';
@@ -64,6 +68,12 @@ import {
 
 export interface BattleCanvasProps {
   battle: Battle;
+  /**
+   * The ground the fight is standing on. Left out, or set to a biome
+   * nobody has packed a tileset for, and the field is the plain colour
+   * it has always been
+   */
+  biome?: Biome;
   /**
    * Whose side of the field is drawn at the bottom. A spectator has no
    * party of their own, and is shown the fighting side instead
@@ -266,6 +276,27 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
      */
     let live = true;
 
+    /**
+     * The biome's ground, once it lands. The fight is not held back
+     * for it the way it is for the sheets: a floor that arrives late
+     * appears under a fight already under way, which is better than a
+     * fight that waited for scenery
+     */
+    let floor: BiomeTileset | null = null;
+    const standing = props.biome ?? Biome.Beyond;
+
+    if (standing !== Biome.Beyond) {
+      loadBiomeTileset(standing)
+        .then((loaded) => {
+          if (live) {
+            floor = loaded;
+          }
+        })
+        .catch(() => {
+          // The plain field, which is what it was before
+        });
+    }
+
     Promise.allSettled(
       [...props.battle.units()].map(async (unit) => {
         spriteFor(unit);
@@ -308,6 +339,13 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
      */
     let sized = { width: 0, height: 0, ratio: 0 };
 
+    /**
+     * How much of the drawing's own coordinates the element covers.
+     * Larger than the picture, since the field is centred in a canvas
+     * the size of the page and the margins are field as well
+     */
+    let region: FloorRegion = { left: 0, top: 0, right: WIDTH, bottom: HEIGHT };
+
     const ground = (): void => {
       const ratio = window.devicePixelRatio;
       const width = Math.max(1, element.clientWidth);
@@ -326,14 +364,16 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       // field, so the margins are field rather than page
       context.fillStyle = COLORS.field;
       context.fillRect(0, 0, width, height);
-      context.transform(
-        scale,
-        0,
-        0,
-        scale,
-        (width - WIDTH * scale) / 2,
-        (height - HEIGHT * scale) / 2,
-      );
+      const offsetX = (width - WIDTH * scale) / 2;
+      const offsetY = (height - HEIGHT * scale) / 2;
+
+      context.transform(scale, 0, 0, scale, offsetX, offsetY);
+      region = {
+        left: -offsetX / scale,
+        top: -offsetY / scale,
+        right: (width - offsetX) / scale,
+        bottom: (height - offsetY) / scale,
+      };
     };
 
     const draw = (): void => {
@@ -366,6 +406,11 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
         unit: FIELD_UNIT * lobbyCamera(field.teams.length).zoom,
         yaw,
       };
+      // The ground the fight is standing on, under everything on it
+      if (floor != null) {
+        drawFloor(context, floor, view, region, clock);
+      }
+
       const slots = project(ringStandings(field, spriteFor), view, striking);
       const at = new Map(slots.map((slot) => [slot.unit, slot]));
 

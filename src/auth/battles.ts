@@ -4,6 +4,7 @@ import { asNumber, asRecord, asRecordArray, asString } from './__normalize';
 import getSupabase, { type Unwatch, watchRow, watchTable } from './supabase';
 import { requireUid } from '../server/auth';
 import BattleOutcome from './battle-outcome';
+import Biome from '../data/ids/biome';
 import recordOnServer, { type CandyEarned } from '../server/battles';
 import { finishBattle as finishOnServer } from '../server/raids';
 import type BattleAftermath from './battle-aftermath';
@@ -40,6 +41,12 @@ export interface BattleRecord {
    * Server-clock milliseconds the battle started
    */
   startedAt: number;
+  /**
+   * The biome the fight is standing in, so the field is drawn in the
+   * ground it is happening on. `Biome.Beyond` is a fight with no
+   * place of its own, and draws the plain field
+   */
+  biome: Biome;
   /**
    * What the fight allowed a unit to bring — abilities, items and
    * moves — packed the way a catch's own `slots` are.
@@ -85,6 +92,8 @@ function fromBattleRow(row: Record<string, unknown>): BattleRecord {
     // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
     outcome: asNumber(row.outcome) as BattleOutcome,
     startedAt: asNumber(row.started_at),
+    // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+    biome: (row.biome == null ? Biome.Beyond : asNumber(row.biome)) as Biome,
     limits: row.limits == null ? UNLIMITED_BATTLE_LIMITS : asNumber(row.limits),
   };
 }

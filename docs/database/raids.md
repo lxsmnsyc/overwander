@@ -279,14 +279,22 @@ amount is a heal, so drains reach it as they would anything else.
 
 ## `battles` and `battle_teams`
 
-| Column       | Type       | Notes                                     |
-| ------------ | ---------- | ----------------------------------------- |
-| `id`         | `text`     | The battle, and its RNG seed              |
-| `raid_id`    | `text`     | The raid it was fought for; null for PvP  |
-| `species`    | `integer`  | What was fought, so a listing can name it |
-| `outcome`    | `smallint` | Unfinished (0), Won (1), Lost (2)         |
-| `started_at` | `bigint`   | Server-clock milliseconds                 |
-| `limits`     | `integer`  | The engine limits the fight ran under     |
+| Column       | Type       | Notes                                               |
+| ------------ | ---------- | --------------------------------------------------- |
+| `id`         | `text`     | The battle, and its RNG seed                        |
+| `raid_id`    | `text`     | The raid it was fought for; null for PvP            |
+| `species`    | `integer`  | What was fought, so a listing can name it           |
+| `outcome`    | `smallint` | Unfinished (0), Won (1), Lost (2)                   |
+| `started_at` | `bigint`   | Server-clock milliseconds                           |
+| `biome`      | `smallint` | The ground it is fought on; Beyond (24) for nowhere |
+| `limits`     | `integer`  | The engine limits the fight ran under               |
+
+`biome` is what the field draws its ground from: a raid takes its lobby's, a
+grunt's fight takes the chunk the stop stands in, and a fight with no place of
+its own is left at Beyond, which draws the plain field. It is stored rather than
+looked up for the same reason `limits` is. A raid lobby is cleared when the raid
+ends and a rocket stop is a row of the player's own, so a battle that had to
+chase either would lose its setting the moment somebody watched it back.
 
 Who fought is `battle_teams`, one row per side: `(battle_id, position,
 snapshot_id, player)`, boss first, and the boss row names no player.

@@ -190,6 +190,19 @@ export default function projectField(point: FieldPoint, view: FieldView): FieldP
 }
 
 /**
+ * How far down the picture the ground runs out, in canvas pixels.
+ *
+ * Depth is worth less and less as it goes, and never quite reaches
+ * this: it is where the plane would arrive if it ran forever. At the
+ * ordinary camera it is above the top of the frame and the ground
+ * fills the picture; pulled back for a crowded lobby it comes into
+ * shot, and what is above it is sky
+ */
+export function horizonOf(view: FieldView): number {
+  return view.height * (view.horizon ?? DEFAULT_HORIZON) - FOCAL * view.unit;
+}
+
+/**
  * Which place on the ground is under a point on the canvas.
  *
  * The same transform read backwards rather than a search. Nothing

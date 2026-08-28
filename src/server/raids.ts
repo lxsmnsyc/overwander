@@ -813,9 +813,9 @@ export async function startRaid(uid: string, lobby: string, now: number): Promis
       ])})
     `;
     await transaction`
-      insert into battles (id, raid_id, species, outcome, started_at, limits)
+      insert into battles (id, raid_id, species, outcome, started_at, biome, limits)
       values (${battleId}, ${lobby}, ${raid.species}, ${BattleOutcome.Unfinished}, ${now},
-              ${UNLIMITED_BATTLE_LIMITS})
+              ${raid.biome}, ${UNLIMITED_BATTLE_LIMITS})
     `;
 
     const rows = [

@@ -594,6 +594,7 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
           {(built) => (
             <BattleField
               battle={built().battle}
+              biome={record()?.biome}
               player={auth.user()?.uid ?? ''}
               onPick={(unit) => {
                 // A pokemon that stands for no record — the raid boss,

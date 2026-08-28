@@ -322,10 +322,10 @@ export async function startRocketBattle(
               ${jsonOf(transaction, createRocketParty(snapshot, toSpawns(record.party), shadow, levels))})
     `;
     await transaction`
-      insert into battles (id, raid_id, species, outcome, started_at, limits)
+      insert into battles (id, raid_id, species, outcome, started_at, biome, limits)
       values (${battleId}, null, ${record.party[0]?.species ?? 0},
               ${BattleOutcome.Unfinished}, ${now},
-              ${PVP_BATTLE_LIMITS})
+              ${chunk.biome}, ${PVP_BATTLE_LIMITS})
     `;
 
     const rows = [

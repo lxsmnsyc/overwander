@@ -1,5 +1,6 @@
 import { type JSX, Show, createEffect, createSignal, onCleanup } from 'solid-js';
 import type Battle from '../../battle/core';
+import type Biome from '../../data/ids/biome';
 import type Unit from '../../battle/unit';
 import { type BaseEvent, EventPriority } from '../../core/event-emitter';
 import BattleCanvas, { type UnitSpot } from './battle-canvas';
@@ -34,6 +35,8 @@ const CLOSE_DELAY = 140;
 
 export interface BattleFieldProps {
   battle: Battle;
+  /** The ground the fight is standing on, for the field to draw. */
+  biome?: Biome;
   /**
    * Whose side is drawn at the bottom. Empty for a spectator, who is
    * shown the fighting side instead
@@ -105,6 +108,7 @@ export default function BattleField(props: BattleFieldProps): JSX.Element {
     <>
       <BattleCanvas
         battle={props.battle}
+        biome={props.biome}
         player={props.player}
         onHover={(unit, at) => {
           if (unit == null || at == null) {

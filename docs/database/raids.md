@@ -193,6 +193,24 @@ The team picker greys out anything it can see is fighting (`isLockLive`, from th
 two lock fields it already has), so the refusal is usually visible before the join
 is attempted.
 
+## Searching the lobby
+
+A full lobby is twenty rows of strangers, so it carries a search box of its own
+with the same grammar as everything else. `TEAM_VOCABULARY` and `matchesTeam`
+live in [`team-search.ts`](../../src/auth/team-search.ts).
+
+| Field             | What it narrows by                                               |
+| ----------------- | ---------------------------------------------------------------- |
+| a plain word      | The nickname the lobby shows, or the player's id                 |
+| `player:`         | The same, asked by name                                          |
+| `size:`           | How many pokemon they brought                                    |
+| `is:`, `not:`     | `mine`, `host`, `alone`                                          |
+| `sort:`, `order:` | `name`, `size`                                                   |
+
+What each pokemon in a party is stays out of the grammar: a lobby holds catch
+ids, and the records behind them are read by the row that draws them rather than
+by the row that filters.
+
 ## `raid_invites` and `raid_watchers`
 
 A lobby stands open in the world, so anybody may walk into one. Two tables cover

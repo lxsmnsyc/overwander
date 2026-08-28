@@ -110,17 +110,21 @@ that already pages has nothing to do with one.
 Neither the grammar nor the four dozen fields are worth memorising, so the box
 says what it knows. Each search declares a **vocabulary**: its field names, one
 line about each, and the values a field takes where there is a closed list of
-them. `CATCH_VOCABULARY` and `ITEM_VOCABULARY` read their field lists off the
-tables that answer the fields, so a field added there arrives in the box on its
-own; only the line about it is written by hand, and a test fails where one is
-missing.
+them. `CATCH_VOCABULARY`, `ITEM_VOCABULARY`, `AUCTION_VOCABULARY` and `TEAM_VOCABULARY`
+read their field lists off the tables that answer the fields, so a field added
+there arrives in the box on its own; only the line about it is written by hand,
+and a test fails where one is missing.
 
 The box uses the vocabulary three ways. It finishes the word the caret is in,
-offering field names before the colon and that field's values after it. It draws
-every finished term as a badge, marked in red where nothing has a reading for the
-field, since such a term matches nothing rather than being ignored. And it
-carries the grammar itself on a card behind the information icon, written in the
-vocabulary's own words so the card attached to the bag is about the bag.
+offering field names before the colon and that field's values after it, with Tab
+taking the highlighted offer or filling in as far as every offer agrees. It keeps
+every finished term as a badge **inside the box**, coloured by what the term does
+— blue narrows, amber refuses, grey arranges, red is a field nobody has a reading
+for, which matches nothing rather than being ignored — and each badge carries a
+cross that takes the term back off. A term becomes a badge once a space follows
+it, and Backspace at the head of the box takes the last one apart to be edited.
+And it carries the grammar itself on a card behind the information icon, written
+in the vocabulary's own words so the card attached to the bag is about the bag.
 
 #### What the store answers
 

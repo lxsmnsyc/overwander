@@ -110,6 +110,34 @@ An **egg** lot shows none of it. What is inside one is hidden from everybody but
 its owner, and a board is not the place to give it away, which is also why
 `openAuction` refuses to list one at all.
 
+## Searching the board
+
+The board takes the same grammar the bag and the box do (`field:value` pairs, a
+leading `!` to refuse one, `|` inside a value to accept any of several, a
+comparison or a range for a number), asked of a lot rather than of something
+owned. `AUCTION_VOCABULARY` and `matchesAuction` live in
+[`auction-search.ts`](../../src/auth/auction-search.ts).
+
+There is no query half: the board already holds every live lot, so every term is
+answered over what it read.
+
+| Field                                | What it narrows by                                                                  |
+| ------------------------------------ | ----------------------------------------------------------------------------------- |
+| a plain word                         | What the lot is called, item or pokemon                                             |
+| `seller:`                            | Who listed it, as the board says it, so `seller:you` is the reader's own            |
+| `shelf:`                             | Which shelf an item lot sits on                                                     |
+| `species:`, `type:`, `level:`        | What a pokemon lot is, once the board has read the escrowed record                  |
+| `price:`, `start:`                   | What it stands at (the bid, or the asking price where nobody has bid) and what it opened at |
+| `ends:`                              | Hours of bidding left, so `ends:<6` is the end of the board                         |
+| `is:`, `not:`                        | `item`, `pokemon`, `mine`, `bidding`, `bid`, `unbid`, `live`, `ended`, `settled`, `shiny`, `shadow` |
+| `sort:`, `order:`                    | `name`, `seller`, `price`, `start`, `ends`, `listed`, `level`                       |
+
+What the board writes for itself — the lot's name and the seller's — is handed
+to the search as context rather than derived twice, along with the escrowed
+pokemon and where the reader stands on the lot. A lot whose pokemon has not
+loaded yet answers nothing about it, and stays on the board rather than
+disappearing while it is being read.
+
 ## What a bid does
 
 `placeBid` runs in one transaction:

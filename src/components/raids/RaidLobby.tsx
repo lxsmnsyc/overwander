@@ -37,7 +37,7 @@ import LobbyParty from '../battle/LobbyParty';
 import SpectatorList from '../battle/SpectatorList';
 import TeamPickerDialog from '../battle/TeamPickerDialog';
 import TypeBadge from '../sprites/TypeBadge';
-import matches from '../../core/search';
+import matchesTeam, { TEAM_VOCABULARY, type TeamContext, orderTeams } from '../../auth/team-search';
 import {
   Badge,
   Button,
@@ -172,14 +172,22 @@ function LobbyRows(
     return props.watching().filter((uid) => !fighting.has(uid));
   };
 
+  /**
+   * What the search knows about a row besides the party in it: what
+   * the lobby calls them, and the two rows a player picks out of a
+   * crowd, their own and the host's
+   */
+  const contextOf = (team: TeamRecord): TeamContext => ({
+    name: team.player === props.user.uid ? 'You' : named(team.player),
+    mine: team.player === props.user.uid,
+    host: raid()?.host === team.player,
+  });
+
   const joined = (): TeamRecord[] =>
-    (teams() ?? []).filter((team) =>
-      matches(
-        team.player === props.user.uid
-          ? `You ${team.player}`
-          : `${named(team.player)} ${team.player}`,
-        query(),
-      ),
+    orderTeams(
+      (teams() ?? []).filter((team) => matchesTeam(team, query(), contextOf(team))),
+      query(),
+      (team) => ({ team, context: contextOf(team) }),
     );
 
   const act = (action: () => Promise<string | null>, failure: string): void => {
@@ -269,7 +277,9 @@ function LobbyRows(
                   in it is worth typing for */}
               <Show when={(teams()?.length ?? 0) > SEARCH_FROM}>
                 <Search
-                  placeholder="Search players"
+                  vocabulary={TEAM_VOCABULARY}
+                  example="is:host"
+                  placeholder="Name, or size:6 is:host"
                   value={query()}
                   onChange={(typed) => {
                     setQuery(typed);

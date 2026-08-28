@@ -16,7 +16,11 @@ import {
 import { type CaughtPokemon, isFavorite } from '../../../auth/caught';
 import { isEgg } from '../../../auth/egg';
 import { type Profile, watchProfile } from '../../../auth/profile';
-import matches from '../../../core/search';
+import matchesAuction, {
+  AUCTION_VOCABULARY,
+  type AuctionContext,
+  orderAuctions,
+} from '../../../auth/auction-search';
 import { useGame } from '../../app/game-context';
 import CatchCard from '../../catches/CatchCard';
 import CatchGrid, { type CatchGridEntry } from '../../catches/CatchGrid';
@@ -270,16 +274,33 @@ export function AuctionBoard(
    * board, and hiding it until its pokemon loads would be a board
    * that shrinks while it is being read
    */
-  const board = (): [string, AuctionRecord][] =>
-    (auctions() ?? [])
-      .filter(([id, auction]) => isLive(auction, now()) || claimOf(id, auction) !== undefined)
-      .filter(([, auction]) => {
-        const name = nameOf(auction);
+  /**
+   * What the search knows about a lot besides the record: the two
+   * words the board writes for itself, the pokemon it has read, and
+   * where the reader stands on it
+   */
+  const contextOf = (auction: AuctionRecord): AuctionContext => ({
+    name: nameOf(auction),
+    seller: describeSeller(auction),
+    caught: lots()?.get(auction.caught) ?? null,
+    mine: auction.seller === props.player,
+    bidding: auction.bidder === props.player,
+    now: now(),
+  });
 
-        // Searched with the seller alongside, so a board can be
-        // narrowed to one trainer's lots as well as to one thing
-        return name == null || matches(`${name} by ${describeSeller(auction)}`, query());
-      });
+  const board = (): [string, AuctionRecord][] =>
+    orderAuctions(
+      (auctions() ?? [])
+        .filter(([id, auction]) => isLive(auction, now()) || claimOf(id, auction) !== undefined)
+        .filter(
+          // A lot whose name has not arrived is still on the board,
+          // but only a search with nothing to say about it can keep it
+          ([, auction]) =>
+            nameOf(auction) == null || matchesAuction(auction, query(), contextOf(auction)),
+        ),
+      query(),
+      ([, auction]) => ({ auction, context: contextOf(auction) }),
+    );
 
   const running = (): number | null => {
     const mine = standing();
@@ -503,7 +524,9 @@ export function AuctionBoard(
         </Show>
         <Show when={board().length > SEARCH_FROM}>
           <Search
-            placeholder="Search the lots"
+            vocabulary={AUCTION_VOCABULARY}
+            example="price:<500"
+            placeholder="Name, or price:<500 is:pokemon"
             value={query()}
             onChange={(typed) => {
               setQuery(typed);

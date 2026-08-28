@@ -28,6 +28,7 @@ import {
   TrophyIcon,
   UserIcon,
 } from '../icons';
+import WeatherIcon from '../overworld/WeatherIcon';
 import { Divider } from '../styled';
 import { SHEER } from '../styled/transition';
 import { ThemeToggle } from './theme';
@@ -208,6 +209,20 @@ export default function GameMenu(): JSX.Element {
             something, which is once a session */}
         <span class="min-w-0 truncate text-sm font-bold text-ink">
           {game.place() ?? 'Somewhere'}
+        </span>
+
+        <Divider />
+
+        {/* What the sky is doing, which is worth reading: a pokemon met
+            under weather comes with a floor under its values. Drawn
+            rather than named, since the bar is a strip and the place
+            beside it has the words */}
+        <span class="flex shrink-0 items-center text-muted">
+          {(() => {
+            const sky = game.weather();
+
+            return sky == null ? '' : <WeatherIcon weather={sky} />;
+          })()}
         </span>
 
         <Divider />

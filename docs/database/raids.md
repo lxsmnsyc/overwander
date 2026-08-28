@@ -305,6 +305,7 @@ amount is a heal, so drains reach it as they would anything else.
 | `outcome`    | `smallint` | Unfinished (0), Won (1), Lost (2)                   |
 | `started_at` | `bigint`   | Server-clock milliseconds                           |
 | `biome`      | `smallint` | The ground it is fought on; Beyond (24) for nowhere |
+| `weather`    | `smallint` | The sky it was started under; Clear (0) for none    |
 | `limits`     | `integer`  | The engine limits the fight ran under               |
 
 `biome` is what the field draws its ground from: a raid takes its lobby's, a
@@ -313,6 +314,12 @@ its own is left at Beyond, which draws the plain field. It is stored rather than
 looked up for the same reason `limits` is. A raid lobby is cleared when the raid
 ends and a rocket stop is a row of the player's own, so a battle that had to
 chase either would lose its setting the moment somebody watched it back.
+
+`weather` is the sky the fight was started under, and only an overworld trainer's
+fight carries one. It is stored for the reason `biome` is and for one of its own:
+the world's sky is quantised to the hour, so a fight replayed an hour later would
+otherwise replay under different weather. Clear is the default and clear does
+nothing, so every other kind of fight is fought under no weather at all.
 
 Who fought is `battle_teams`, one row per side: `(battle_id, position,
 snapshot_id, player)`, boss first, and the boss row names no player.

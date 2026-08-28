@@ -171,6 +171,13 @@ export const NEST_INTERVAL = 12 * 60 * 60 * 1000;
 export const PHENOMENON_INTERVAL = 60 * 60 * 1000;
 
 /**
+ * How long the sky holds. One hour, the same as a phenomenon: long
+ * enough that a player who saw rain from the next chunk can walk into
+ * it, short enough that the sky is worth looking at again
+ */
+export const WEATHER_INTERVAL = 60 * 60 * 1000;
+
+/**
  * How many things may be going on in one chunk at once.
  *
  * Zero is deliberately in range: a chunk with nothing happening is
@@ -366,6 +373,16 @@ export default class ChunkSnapshot {
    */
   get landmarkTimestamp(): number {
     return Math.floor(this.timestamp / LANDMARK_INTERVAL) * LANDMARK_INTERVAL;
+  }
+
+  /**
+   * Which hour of sky this chunk is standing under, counted rather
+   * than stamped: the weather field is read at a point that walks with
+   * the window, so what it wants is the number of windows rather than
+   * the instant one began
+   */
+  get weatherWindow(): number {
+    return Math.floor(this.timestamp / WEATHER_INTERVAL);
   }
 
   private itemCaches: Map<number, ItemStack[]> | null = null;

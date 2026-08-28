@@ -10,6 +10,7 @@ import {
   useContext,
 } from 'solid-js';
 import { useAuth } from '../../auth/context';
+import type Weather from '../../data/overworld/weather';
 import type { EncounterRecord } from '../../auth/encounter-record';
 import { claimRaidReward } from '../../auth/raids';
 import { claimRocketReward } from '../../auth/rockets';
@@ -153,6 +154,13 @@ export interface GameState {
   place: Accessor<string | null>;
   setPlace: Setter<string | null>;
   /**
+   * What the sky over that place is doing, travelling the same way the
+   * words for the place do and for the same reason. Null while the
+   * chunk is still being read
+   */
+  weather: Accessor<Weather | null>;
+  setWeather: Setter<Weather | null>;
+  /**
    * The raid lobby the player is in, shown inside the raids dialog
    */
   raid: Accessor<string | null>;
@@ -265,6 +273,7 @@ export default function GameProvider(props: ParentProps): JSX.Element {
   const [dialog, setDialog] = createSignal(GameDialog.None);
   const [position, setPosition] = createSignal<PositionRecord | null>(null);
   const [place, setPlace] = createSignal<string | null>(null);
+  const [weather, setWeather] = createSignal<Weather | null>(null);
 
   // A profile on first sight, seeded from whatever the sign-in
   // already knows. The game reads a profile everywhere, so a player
@@ -480,6 +489,8 @@ export default function GameProvider(props: ParentProps): JSX.Element {
         position,
         setPosition,
         place,
+        weather,
+        setWeather,
         setPlace,
         raid,
         setRaid,

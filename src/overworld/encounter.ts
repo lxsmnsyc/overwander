@@ -1,7 +1,14 @@
 import AleaRNG from '../core/alea';
 import { SpawnRarity, getSpawnRarity } from '../data/biome';
 import type Lairs from '../data/overworld/lair';
-import { Stats, packIVs } from '../data/constants/stats';
+import type Weather from '../data/overworld/weather';
+import {
+  WEATHER_MIN_IV,
+  WEATHER_TYPE_MIN_IV,
+  isBoostingWeather,
+  isWeatherFavored,
+} from '../data/overworld/weather';
+import { MAX_IV, Stats, packIVs } from '../data/constants/stats';
 import type Abilities from '../data/ids/abilities';
 import type Biome from '../data/ids/biome';
 import type { Moves } from '../data/ids/moves';
@@ -511,6 +518,14 @@ export interface EncounterOptions {
    */
   shadow?: boolean;
   /**
+   * The sky the meeting happened under. A pokemon met under weather
+   * comes with a floor under every one of its values, which is the
+   * whole of what weather is worth: nothing about a fight changes.
+   * Left out for the meetings weather has no say in, which is
+   * everything that is handed over rather than met
+   */
+  weather?: Weather;
+  /**
    * The lair the raid it came out of stands in
    */
   lair?: Lairs | null;
@@ -551,7 +566,19 @@ export default function deriveEncounter(
   const featured = isFeaturedSpecies(species, snapshot.timestamp);
   // A raid staged on the family's own day hands over a pokemon worth
   // keeping: no stat comes out of it hopeless
-  const minimumIV = isRaidEncounter(type) && featured ? RAID_FAMILY_DAY_MIN_IV : 0;
+  // The floors stack rather than the kinder one winning, so a raid on
+  // the family's own day fought under weather is worth both, and a sky
+  // met by the type it is kind to is worth twice what the sky is.
+  // Capped at a perfect value, since a floor above the ceiling would
+  // hand over something the game cannot roll
+  const sky = options.weather;
+  const boosting = sky != null && isBoostingWeather(sky);
+  const minimumIV = Math.min(
+    MAX_IV,
+    (isRaidEncounter(type) && featured ? RAID_FAMILY_DAY_MIN_IV : 0) +
+      (boosting ? WEATHER_MIN_IV : 0) +
+      (boosting && isWeatherFavored(sky, getSpeciesData(species).types) ? WEATHER_TYPE_MIN_IV : 0),
+  );
 
   // Slices in trait order: level, gender, ability, nature — all but
   // the level are read by the derive helpers above

@@ -17,6 +17,12 @@ import { SHEER } from './transition';
 export interface TooltipProps {
   name: string;
   description: string;
+  /**
+   * One more box under the description, for a card whose subject has
+   * a third thing worth saying. A thunk rather than markup: the card
+   * is built when the pointer arrives, not when the trigger is drawn
+   */
+  extra?: () => JSX.Element;
   class?: string;
 }
 
@@ -65,6 +71,7 @@ export function Tooltip(props: TooltipProps): JSX.Element {
     >
       <Detail label="Name">{props.name}</Detail>
       <Detail label="Description">{props.description}</Detail>
+      {props.extra?.()}
     </div>
   );
 }
@@ -164,7 +171,7 @@ export function TooltipHost(props: TooltipHostProps): JSX.Element {
               }`}
               style={{ left: `${spot.x}px`, top: `${spot.y}px` }}
             >
-              <Tooltip name={props.name} description={props.description} />
+              <Tooltip name={props.name} description={props.description} extra={props.extra} />
             </Transition>
           </Portal>
         )}

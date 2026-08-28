@@ -1,5 +1,6 @@
 import { type SpawnRoll, spawnId } from '../../../auth/snapshot-record';
 import type Biome from '../../../data/ids/biome';
+import type Weather from '../../../data/overworld/weather';
 import type Decoration from '../../../data/overworld/decoration';
 import type { ItemStack } from '../../../data/overworld/item-pool';
 import type Landmark from '../../../data/overworld/landmark';
@@ -26,6 +27,12 @@ export interface ChunkView {
   x: number;
   y: number;
   biome: Biome;
+  /**
+   * What the sky over this chunk is doing this hour. Derived here
+   * beside the biome, since both are facts about the place rather than
+   * about the window's spawns
+   */
+  weather: Weather;
   snapshot: ChunkSnapshot;
   landmarks: Map<number, Landmark>;
   /**
@@ -72,7 +79,8 @@ export function buildChunkView(
   buddy: Buddy | null,
   fled: Set<string>,
 ): ChunkView {
-  const chunk = getWorld().getChunk(x, y);
+  const world = getWorld();
+  const chunk = world.getChunk(x, y);
   const snapshot = new ChunkSnapshot(chunk, timestamp, offset);
   // Rolling locally reproduces the published placement — same seed,
   // same window, same count — and is what pins each spawn to a cell
@@ -129,6 +137,7 @@ export function buildChunkView(
     x,
     y,
     biome: chunk.biome,
+    weather: world.getWeather(x, y, snapshot.weatherWindow),
     snapshot,
     landmarks: chunk.getLandmarkCells(),
     spots: chunk.getSpotCells(),

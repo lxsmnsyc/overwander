@@ -5,6 +5,7 @@ import getSupabase, { type Unwatch, watchRow, watchTable } from './supabase';
 import { requireUid } from '../server/auth';
 import BattleOutcome from './battle-outcome';
 import Biome from '../data/ids/biome';
+import Weather from '../data/overworld/weather';
 import recordOnServer, { type CandyEarned } from '../server/battles';
 import { finishBattle as finishOnServer } from '../server/raids';
 import type BattleAftermath from './battle-aftermath';
@@ -47,6 +48,12 @@ export interface BattleRecord {
    * place of its own, and draws the plain field
    */
   biome: Biome;
+  /**
+   * The sky the fight was started under. Only an overworld trainer's
+   * fight carries one; everything else is `Weather.Clear`, which the
+   * battle reads as no weather at all
+   */
+  weather: Weather;
   /**
    * What the fight allowed a unit to bring — abilities, items and
    * moves — packed the way a catch's own `slots` are.
@@ -94,6 +101,8 @@ function fromBattleRow(row: Record<string, unknown>): BattleRecord {
     startedAt: asNumber(row.started_at),
     // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
     biome: (row.biome == null ? Biome.Beyond : asNumber(row.biome)) as Biome,
+    // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+    weather: (row.weather == null ? Weather.Clear : asNumber(row.weather)) as Weather,
     limits: row.limits == null ? UNLIMITED_BATTLE_LIMITS : asNumber(row.limits),
   };
 }

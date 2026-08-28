@@ -580,6 +580,15 @@ export async function startEncounter(
   const overworld = createOverworld(uid, await resolveBuddy(uid));
   const derived = deriveEncounter(snapshot, spawn, uid, {
     ...options,
+    // The sky the meeting happened under, read here rather than taken
+    // from the client: the floor it puts under the pokemon's values is
+    // written into the record, so what the weather was is the server's
+    // to say. After the spread, so a caller that named one keeps it
+    // and one that named nothing is not handed an undefined over the
+    // top of this
+    weather:
+      options.weather ??
+      getWorld().getWeather(snapshot.chunk.x, snapshot.chunk.y, snapshot.weatherWindow),
     shinyBoost: (options.shinyBoost ?? 1) * overworld.checkEncounterShiny(id),
   });
   const record: EncounterRecord = {

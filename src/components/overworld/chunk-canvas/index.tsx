@@ -28,6 +28,8 @@ import type SpeciesSpriteAnimation from '../../../canvas/species-sprite-animatio
 import { SPRITE_DIRECTIONS, type SpriteDirection } from '../../../canvas/sprite-sheet';
 import drawSparkle from '../../../canvas/sparkle';
 import { type Cast, getCast, paintAmbient } from '../../../canvas/daylight';
+import type Weather from '../../../data/overworld/weather';
+import paintSky from '../../../canvas/sky';
 import { getLocalOffset, toLocalTime } from '../../../auth/local-time';
 import { serverNow } from '../../../auth/clock';
 import loadSpeciesSprite from '../../../canvas/species-sprites';
@@ -217,6 +219,11 @@ export interface ChunkCanvasProps {
    * day is the same length everywhere, and the light is not
    */
   latitude: number;
+  /**
+   * What the sky over this chunk is doing. Drawn over the world and
+   * under the player's own instruments, the same as the hour's light
+   */
+  weather: Weather;
   /**
    * Whether the board is on its way off the screen or on to it, and
    * which way the player went. Null while they are standing in the
@@ -1737,6 +1744,9 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       // evening is a compass that is harder to read at night for
       // nothing
       paintAmbient(context, screen.width, screen.height, worldTime(), props.latitude);
+      // And the sky, over the light rather than under it: rain at dusk
+      // is dusk seen through rain
+      paintSky(context, screen.width, screen.height, props.weather, clock);
 
       /**
        * And the compass: four letters standing off the four edges of

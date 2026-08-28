@@ -115,6 +115,7 @@ to obtain, the sooner it returns.
 | The pokemon standing in a chunk                 | 5 minutes  |
 | Item caches and berry patches                   | 15 minutes |
 | Where things are happening, and what they are   | 1 hour     |
+| The weather over a chunk                        | 1 hour     |
 | Legendary and shadow raids                      | 3 hours    |
 | Who is at a wandering-NPC cell, grunts included | 3 hours    |
 | Which counter a market stall is keeping         | 3 hours    |
@@ -174,6 +175,60 @@ ordinary paces.
 
 A raid cleared on the featured family's own day hands over a pokemon whose
 individual stats are all at least 6, so nothing won that day is hopeless.
+
+## Weather
+
+The sky over a chunk changes every hour, and it is not rolled per chunk: it is
+read off a **weather field** laid over the whole world, so a front covers a
+stretch of country and neighbouring chunks share it. Walking out of the rain is a
+walk rather than a step. The field itself never changes; what moves is where it
+is read, so weather travels in a direction the way real weather does.
+
+What the sky can do depends on the ground under it. The same front is a
+thunderstorm over rainforest, a blizzard over a glacier and a sandstorm over the
+desert it crosses next: one weather system meeting different countries. A front
+arrives in order, too, so a clear afternoon turns hazy, then damp, then wet
+before it turns to a storm.
+
+A few skies are showpieces and turn up rarely and in one place at a time: an
+**aurora** over the far north, a **rainbow** over open water, a **meteor
+shower** over a desert or an open sea, and **pollen drift** through a forest.
+
+**What weather is worth.** A pokemon met under weather comes with a floor of
+**5 under every one of its six values**, so the worst it can roll is a good deal
+better than the worst it could roll under a clear sky.
+
+Every sky is kind to a type or two, and one met by a type the sky favours carries
+**10** instead. Rain favours Water and Electric, mist favours Bug and Grass, fog
+favours Ghost, Dark and Psychic, and so on down every one of the eighteen types:
+whatever a player is raising, there is weather worth going out in for it.
+
+The pairings follow how often a sky actually turns up rather than only what it
+looks like. This world is wet and cold, so damp skies are common and storms are
+rare, and a type paired with nothing but a sandstorm would be a type nobody is
+ever boosted for. The commonest boosted type comes up about five times as often
+as the rarest, not fifty.
+
+Floors **stack**. A raid on the family's own day already carries a floor of 6, so
+one fought under weather carries **11**, and **16** if the sky favours its type,
+which makes a wet family day the best day to raid.
+
+Plain skies do not boost: clear, cloudy and breezy are the ordinary weather, and
+about half of all windows are one of them.
+
+**Weather in a fight.** A trainer met out in the world is fought under the sky
+that was over them, so rain falls on the field and does to the fight what rain
+does: water moves hit harder, fire moves hit softer, and a sandstorm or hail
+chips at whoever is not built for it. Only that kind of fight reads the sky. A
+raid, a duel, a gym seat and any fight between players are all fought under a
+clear sky whatever the world is doing, so nobody wins a match on the weather they
+happened to stand in.
+
+Not every sky reaches a battle. Rain, snow, hail, sand, fog and heat all have a
+counterpart the fight understands; the showpieces and the calm skies do not, and
+those are worth what is met under them and nothing more. A fight keeps the sky it
+started under, so watching it back later shows the weather it was actually fought
+in.
 
 ## Portals
 

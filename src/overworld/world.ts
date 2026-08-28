@@ -2,6 +2,8 @@ import AleaRNG from '../core/alea';
 import PerlinNoise from '../core/perlin';
 import type Biome from '../data/ids/biome';
 import { getBiome } from '../data/ids/biome';
+import type Weather from '../data/overworld/weather';
+import { classifyWeather } from '../data/overworld/weather';
 import Chunk from './chunk';
 
 /**
@@ -29,6 +31,30 @@ const CLIMATE_SPREAD = 1.5;
 function spreadNoise(value: number): number {
   return Math.max(-1, Math.min(1, value * CLIMATE_SPREAD));
 }
+
+/**
+ * How many chunks one weather cell spans.
+ *
+ * Tighter than a climate cell on purpose: a country keeps its ground
+ * for good and its sky for an hour, so a front should cross a country
+ * rather than cover it. At eight chunks a cell, walking out of the
+ * rain is a walk rather than a step
+ */
+const WEATHER_FREQUENCY = 1 / 8;
+
+/** Sampled at the chunk centre, for the reason the climate is */
+const WEATHER_OFFSET = 0.5;
+
+/**
+ * How far the field slides in one window, in weather cells.
+ *
+ * The field itself never changes; what moves is where it is read. That
+ * is what makes a front travel in a direction instead of fading in and
+ * out where it stands. The two axes differ so the wind blows across
+ * the world rather than along its diagonal
+ */
+const WEATHER_DRIFT_X = 0.35;
+const WEATHER_DRIFT_Y = 0.14;
 
 /**
  * How wide the world is, in chunks. It is square and finite: at
@@ -79,6 +105,14 @@ export default class World {
   readonly elevation: PerlinNoise;
   readonly temperature: PerlinNoise;
   /**
+   * The two channels the sky is read from: how much is falling, and
+   * how hard. Drawn **after** the climate ones, since the draw order
+   * is part of the world format and inserting a channel among them
+   * would reshape every world that exists
+   */
+  readonly wetness: PerlinNoise;
+  readonly energy: PerlinNoise;
+  /**
    * Chunk coordinates to the biome their climate classified as. A
    * biome is a pure function of the seed and the coordinates, so a
    * remembered one can never go stale
@@ -91,6 +125,30 @@ export default class World {
     this.humidity = new PerlinNoise(String(rng.int32()));
     this.elevation = new PerlinNoise(String(rng.int32()));
     this.temperature = new PerlinNoise(String(rng.int32()));
+    this.wetness = new PerlinNoise(String(rng.int32()));
+    this.energy = new PerlinNoise(String(rng.int32()));
+  }
+
+  /**
+   * What the sky over a chunk is doing in a window.
+   *
+   * Two noise samples read against the ground underneath, so
+   * neighbouring chunks share a front and the same front is a
+   * thunderstorm over forest and a sandstorm over the desert it
+   * crosses next. Pure, like everything else about a chunk: nobody has
+   * to be told what the weather is
+   */
+  getWeather(chunkX: number, chunkY: number, window: number): Weather {
+    const x = clampToWorld(chunkX);
+    const y = clampToWorld(chunkY);
+    const sampleX = (x + WEATHER_OFFSET) * WEATHER_FREQUENCY + window * WEATHER_DRIFT_X;
+    const sampleY = (y + WEATHER_OFFSET) * WEATHER_FREQUENCY + window * WEATHER_DRIFT_Y;
+
+    return classifyWeather(
+      this.getChunkBiome(x, y),
+      spreadNoise(this.wetness.noise(sampleX, sampleY)),
+      spreadNoise(this.energy.noise(sampleX, sampleY)),
+    );
   }
 
   /**

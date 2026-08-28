@@ -157,6 +157,7 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
             teams,
             loaded.limits,
             kind === BattleKind.Player ? BattleModes.PvP : BattleModes.Npc,
+            loaded.weather,
           );
         }
 

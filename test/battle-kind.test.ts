@@ -3,6 +3,7 @@ import BattleKind, { BATTLE_KIND_NAMES, getBattleKind } from '../src/auth/battle
 import type { BattleRecord } from '../src/auth/battles';
 import BattleOutcome from '../src/auth/battle-outcome';
 import Biome from '../src/data/ids/biome';
+import Weather from '../src/data/overworld/weather';
 import { UNLIMITED_BATTLE_LIMITS } from '../src/data/constants/battle-limits';
 import { Species } from '../src/data/ids/species';
 
@@ -15,6 +16,7 @@ function asRecord(fields: Partial<BattleRecord>): BattleRecord {
     outcome: BattleOutcome.Won,
     startedAt: 0,
     biome: Biome.Beyond,
+    weather: Weather.Clear,
     limits: UNLIMITED_BATTLE_LIMITS,
     ...fields,
   };

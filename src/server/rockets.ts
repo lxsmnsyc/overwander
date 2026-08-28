@@ -313,6 +313,10 @@ export async function startRocketBattle(
     duellist == null ? undefined : trainerLevels(duellist),
   );
   const gruntId = newDocId();
+  // The sky over the cell when the fight was accepted, read here
+  // rather than trusted from the client and kept on the row, since
+  // the world's own moves on within the hour
+  const weather = getWorld().getWeather(record.chunk.x, record.chunk.y, snapshot.weatherWindow);
 
   await tx(async (transaction) => {
     // The stop's party belongs to nobody, the way a raid boss' does
@@ -322,10 +326,10 @@ export async function startRocketBattle(
               ${jsonOf(transaction, createRocketParty(snapshot, toSpawns(record.party), shadow, levels))})
     `;
     await transaction`
-      insert into battles (id, raid_id, species, outcome, started_at, biome, limits)
+      insert into battles (id, raid_id, species, outcome, started_at, biome, weather, limits)
       values (${battleId}, null, ${record.party[0]?.species ?? 0},
               ${BattleOutcome.Unfinished}, ${now},
-              ${chunk.biome}, ${PVP_BATTLE_LIMITS})
+              ${chunk.biome}, ${weather}, ${PVP_BATTLE_LIMITS})
     `;
 
     const rows = [

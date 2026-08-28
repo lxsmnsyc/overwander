@@ -628,10 +628,12 @@ export default function OverworldBoard(props: {
     const standing = shown();
 
     game.setPlace(standing == null ? null : naming(standing));
+    game.setWeather(standing == null ? null : standing.weather);
   });
 
   onCleanup(() => {
     game.setPlace(null);
+    game.setWeather(null);
   });
 
   /**
@@ -1464,6 +1466,7 @@ export default function OverworldBoard(props: {
             >
               <ChunkCanvas
                 biome={loaded().biome}
+                weather={loaded().weather}
                 charset={charset()}
                 // The camera belongs to the player rather than to the
                 // chunk: walking over a boundary swaps the board out

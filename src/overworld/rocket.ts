@@ -10,6 +10,7 @@ import { PVP_BATTLE_LIMITS } from '../data/constants/battle-limits';
 import { defaultSlots } from '../data/constants/slots';
 import Abilities from '../data/ids/abilities';
 import Landmark from '../data/overworld/landmark';
+import Weather, { toBattleWeather } from '../data/overworld/weather';
 import type ChunkSnapshot from './chunk-snapshot';
 import { GIOVANNI_PARTY_SIZE, type Spawn } from './chunk-snapshot';
 import deriveEncounter, { EncounterType, deriveSize } from './encounter';
@@ -222,14 +223,21 @@ export function createRocketParty(
 
 /**
  * Assemble a trainer fight from its stored team snapshots: no raid
- * rules, under whichever non-raid mode the fight was — a grunt's by
- * default, a player's when both sides are somebody's
+ * rules, under whichever non-raid mode the fight was, a grunt's by
+ * default, a player's when both sides are somebody's.
+ *
+ * The sky is laid before the teams are fielded, so a pokemon that
+ * reads the weather as it arrives reads the one it is standing in.
+ * It holds for the whole fight rather than running out, since it is
+ * the world's sky and not a move's, and it only reaches a fight
+ * against the world: two players meet under nothing
  */
 export function createTrainerBattle(
   battleId: string,
   teams: TeamSnapshotRecord[],
   limits = PVP_BATTLE_LIMITS,
   mode: BattleModes = BattleModes.Npc,
+  weather = Weather.Clear,
 ): RaidBattle {
   const battle: Battle = createBattle(battleId, {
     mode,
@@ -237,6 +245,9 @@ export function createTrainerBattle(
     limits,
   });
 
+  if (mode === BattleModes.Npc) {
+    battle.setWeather(toBattleWeather(weather));
+  }
   return { battle, ...fieldTeams(battle, teams, null) };
 }
 
@@ -248,6 +259,7 @@ export function createRocketBattle(
   battleId: string,
   teams: TeamSnapshotRecord[],
   limits = PVP_BATTLE_LIMITS,
+  weather = Weather.Clear,
 ): RaidBattle {
-  return createTrainerBattle(battleId, teams, limits, BattleModes.Npc);
+  return createTrainerBattle(battleId, teams, limits, BattleModes.Npc, weather);
 }

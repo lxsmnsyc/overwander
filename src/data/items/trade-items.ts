@@ -19,13 +19,16 @@ import { registerItem } from './__create';
  * is, for the same reason the latent stones do not: a price is what
  * the market charges, and the market does not stock them.
  *
- * Two items of the family are deliberately absent. **Metal Coat** is
+ * One item of the family is deliberately absent: **Metal Coat** is
  * already registered as the Steel type booster it also is, so the
  * evolution will read the same id the battle does rather than a second
- * copy of it. **Linking Cord** exists in the mainline to spare a
- * player the trade itself, and the trade is exactly what this game
- * asks for — an item that waived it would waive the only condition
- * these evolutions have.
+ * copy of it.
+ *
+ * **Linking Cord** is the odd one out at the other end. It is not
+ * handed to a pokemon before a trade, it is used instead of one, so it
+ * is registered on its own below with a price and a market listing:
+ * alone in the family, the evolutions it opens are ones this game
+ * already has.
  */
 
 /**
@@ -82,6 +85,19 @@ const TRADE_ITEMS: [item: Items, name: string, icon: string, description: string
 const HELD_TRADE_ITEMS = new Set<Items>([Items.KingsRock, Items.RazorFang, Items.RazorClaw]);
 
 export default function registerTradeItems(): void {
+  // Priced and listed like an evolution stone, because that is what it
+  // is used as: the four gen 1 lines that ask for a trade are the only
+  // evolutions in this family a player can reach
+  registerItem(Items.LinkingCord, {
+    name: 'Linking Cord',
+    description: 'Evolves a pokemon that would otherwise only evolve by being traded.',
+    type: ItemTypes.Evolution,
+    icon: 'evolutions/linking-cord',
+    flags: ItemFlags.Usable | ItemFlags.Marketable,
+    buy: 3000,
+    sell: 1500,
+  });
+
   for (const [item, name, icon, description] of TRADE_ITEMS) {
     registerItem(item, {
       name,

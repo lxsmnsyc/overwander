@@ -1,9 +1,10 @@
 import Biome from '../ids/biome';
-import { ItemTypes, type Items } from '../ids/items';
+import { ItemTypes, Items } from '../ids/items';
 import { listItemsByType } from '../items';
 import { GEMS } from '../items/gems';
 import { PLATES } from '../items/plates';
 import { WING_STATS } from '../items/wings';
+import { EvolutionMethod } from '../ids/species';
 import { getRegisteredSpecies, getSpeciesData } from '../species';
 
 /**
@@ -164,6 +165,12 @@ function spendableStones(): Items[] {
     for (const evolution of getSpeciesData(species).evolvesInto ?? []) {
       if (evolution.item != null) {
         asked.add(evolution.item);
+      }
+      // No `evolvesInto` entry names the cord: it stands in for the
+      // trade itself, so a line asking for a trade is a line asking
+      // for it
+      if ((evolution.method & EvolutionMethod.Trade) !== 0) {
+        asked.add(Items.LinkingCord);
       }
     }
   }

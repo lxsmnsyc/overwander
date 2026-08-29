@@ -58,7 +58,13 @@ export default async function evolveCatch(
       return null;
     }
 
-    const consumed = getConsumedItem(evolution);
+    // Read off the stored record rather than taken from the caller: a
+    // trade evolution is opened by the trade the server wrote, not by
+    // a client saying one happened. It decides what is spent as well
+    // as what is allowed, since an untraded pokemon pays a Linking
+    // Cord for the half the trade would have covered
+    const traded = caught.traded === true;
+    const consumed = getConsumedItem(evolution, traded);
     // Only the item this evolution actually needs is read; the rest
     // of the bag has no bearing on the criteria
     const carried = new Set<Items>();
@@ -79,10 +85,7 @@ export default async function evolveCatch(
       // same row the species change is written back to
       // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
       held: new Set(asNumberArray(caught.items) as Items[]),
-      // Read off the stored record rather than taken from the caller:
-      // a trade evolution is opened by the trade the server wrote, not
-      // by a client saying one happened
-      traded: caught.traded === true,
+      traded,
     };
 
     if (!getAvailableEvolutions(species, context).some((entry) => entry.species === into)) {

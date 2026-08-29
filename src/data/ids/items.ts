@@ -783,6 +783,18 @@ export const enum Items {
   GoldenNanabBerry = 378,
   SilverPinapBerry = 379,
   GoldenPinapBerry = 380,
+
+  /**
+   * The cord that stands in for the trade.
+   *
+   * The rest of the trade family is handed to a pokemon and read at
+   * the moment it changes hands; this one is what a player uses
+   * instead of finding somebody to change hands with. It is the only
+   * member of the family with a price, because it is the only one
+   * whose evolutions are reachable today. See
+   * [`src/data/items/trade-items.ts`](../items/trade-items.ts)
+   */
+  LinkingCord = 381,
 }
 
 /**

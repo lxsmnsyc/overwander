@@ -6684,15 +6684,15 @@
       }
     },
     "public/sprites/ui/items/evolutions/image.png": {
-      "digest": "9df92dbcce61208b",
-      "bytes": 10382,
+      "digest": "5390e0556826a4c6",
+      "bytes": 10610,
       "width": 121,
-      "height": 139,
+      "height": 157,
       "compact": {
-        "at": "2026-08-17T06:50:23Z",
-        "as": "truecolour, none",
-        "was": 18581,
-        "bytes": 10382
+        "at": "2026-08-29T05:37:11Z",
+        "as": "already compact",
+        "was": 10610,
+        "bytes": 10610
       }
     },
     "public/sprites/ui/items/flutes/image.png": {

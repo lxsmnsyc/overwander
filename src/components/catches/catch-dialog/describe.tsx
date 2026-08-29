@@ -6,7 +6,6 @@ import { BIOME_NAMES } from '../../../data/biome';
 import { Slots } from '../../../data/constants/slots';
 import { STAT_NAMES, STAT_ORDER, Stats, getIV, getOtherStat } from '../../../data/constants/stats';
 import Biome from '../../../data/ids/biome';
-import type { Items } from '../../../data/ids/items';
 import type Natures from '../../../data/ids/natures';
 import { getNatureFactor } from '../../../data/ids/natures';
 import { EvolutionMethod } from '../../../data/ids/species';
@@ -22,7 +21,7 @@ import { describeItem } from '../../details';
 import ItemSprite from '../../items/ItemSprite';
 import { type JSX, Show } from 'solid-js';
 import { getMaxHealth } from '../../../auth/health';
-import { ItemFlags } from '../../../data/ids/items';
+import { ItemFlags, Items } from '../../../data/ids/items';
 import { getItemData } from '../../../data/items';
 
 /**
@@ -255,6 +254,17 @@ export function EvolutionCondition(props: { evolution: EvolutionData }): JSX.Ele
         </Show>
         <Show when={has(EvolutionMethod.Trade)}>
           <span>Trade</span>
+          {/* The cord is an alternative rather than a second
+          condition, and it is only one where no stone is
+          being spent as well */}
+          <Show when={!has(EvolutionMethod.UsedItem)}>
+            <span>or use</span>
+            <ItemSprite
+              item={Items.LinkingCord}
+              size={CONDITION_ICON}
+              label={describeItem(Items.LinkingCord)}
+            />
+          </Show>
         </Show>
       </span>
     </Show>
@@ -288,7 +298,11 @@ export function describeEvolutionMethod(evolution: EvolutionData): string {
     steps.push(`have it hold ${withArticle(describeItem(item))}`);
   }
   if ((method & EvolutionMethod.Trade) !== 0) {
-    steps.push('trade it away');
+    steps.push(
+      (method & EvolutionMethod.UsedItem) === 0
+        ? `trade it away or use ${withArticle(describeItem(Items.LinkingCord))}`
+        : 'trade it away',
+    );
   }
   if (steps.length === 0) {
     return 'It evolves on its own.';

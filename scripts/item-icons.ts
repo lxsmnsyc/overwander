@@ -15,8 +15,8 @@ import pack from '../src/server/sprites/packing.ts';
  * So they are made here instead. Most are a **palette swap** of a
  * picture that already has the right shape, which is how the sheets
  * draw eighteen gems and eighteen plates; the swaps are exact colour
- * for exact colour, because the art is indexed in practice. One is
- * drawn outright from a grid written down below.
+ * for exact colour, because the art is indexed in practice. Two are
+ * drawn outright from grids written down below.
  */
 
 const ROOT = 'public/sprites/ui/items';
@@ -616,6 +616,26 @@ function amulet(): string[] {
   return grid.map((row) => row.join(''));
 }
 
+/** The grid with the empty rows and columns round it taken off. */
+function cropped(grid: string[][]): string[] {
+  let top = grid.length;
+  let bottom = -1;
+  let left = grid[0].length;
+  let right = -1;
+
+  for (let y = 0; y < grid.length; y += 1) {
+    for (let x = 0; x < grid[y].length; x += 1) {
+      if (grid[y][x] !== '.') {
+        top = Math.min(top, y);
+        bottom = Math.max(bottom, y);
+        left = Math.min(left, x);
+        right = Math.max(right, x);
+      }
+    }
+  }
+  return grid.slice(top, bottom + 1).map((row) => row.slice(left, right + 1).join(''));
+}
+
 /** A picture out of a grid of letters, one letter to a pixel. */
 function drawn(name: string, rows: string[], colours: Record<string, string>): Picture {
   const width = Math.max(...rows.map((row) => row.length));
@@ -646,8 +666,148 @@ function drawn(name: string, rows: string[], colours: Record<string, string>): P
   };
 }
 
+const CORD_COLOURS: Record<string, string> = {
+  K: '#202020',
+  // The plug: a lit top face over a warm charcoal body, with the
+  // contacts gold so the two ends read as ends at 32 pixels
+  M: '#c5bdb4',
+  P: '#8b8378',
+  p: '#5a524a',
+  g: '#ffcd52',
+  // The cable, lit along the side the rest of the sheet is lit from
+  C: '#6a625a',
+  c: '#4a423b',
+  d: '#312b26',
+};
+
+type Point = [x: number, y: number];
+
+/**
+ * The line the cord runs along, as the few points it bends through.
+ * A curve rather than a grid of letters, because a cord drawn as
+ * letters comes out a staple: what makes it read is that it bends
+ */
+const CORD_PATH: Point[] = [
+  [6, 5],
+  [3, 12],
+  [9, 18],
+  [16, 15],
+  [19, 6],
+];
+
+/** Half the cable's thickness, so three pixels across. */
+const CORD_RADIUS = 1.6;
+
+/** Where the light comes from, as the sheet lights everything else. */
+const CORD_LIGHT: Point = [-0.707, -0.707];
+
+/** How far off the centreline the cable stops reading as its mid tone. */
+const CORD_EDGE = 0.4;
+
+/** A plug, row by row: a lit top face, a body with a seam, contacts. */
+const CORD_PLUG = ['MMMMM', 'pPPPp', 'pPPPp', 'pPPPp', 'ggggg'];
+
+/** A point along a Catmull-Rom through the path's bends. */
+function alongCord(t: number): Point {
+  const span = CORD_PATH.length - 1;
+  const at = Math.min(span - 1, Math.floor(t * span));
+  const local = t * span - at;
+  const before = CORD_PATH[Math.max(0, at - 1)];
+  const one = CORD_PATH[at];
+  const two = CORD_PATH[at + 1];
+  const after = CORD_PATH[Math.min(span, at + 2)];
+
+  const axis = (a: number, b: number, c: number, d: number): number =>
+    0.5 *
+    (2 * b +
+      (c - a) * local +
+      (2 * a - 5 * b + 4 * c - d) * local * local +
+      (3 * b - a - 3 * c + d) * local * local * local);
+
+  return [axis(before[0], one[0], two[0], after[0]), axis(before[1], one[1], two[1], after[1])];
+}
+
+/**
+ * The cord, drawn rather than typed: the cable is stamped along the
+ * curve and shaded by which side of it a pixel sits on, the plugs are
+ * blocks at either end, and the outline is whatever ends up beside
+ * something
+ */
+function cord(): string[] {
+  const width = 24;
+  const height = 24;
+  const grid = Array.from({ length: height }, () => Array.from({ length: width }, () => '.'));
+  const samples: Point[] = [];
+
+  for (let step = 0; step <= 400; step += 1) {
+    samples.push(alongCord(step / 400));
+  }
+
+  for (let y = 0; y < height; y += 1) {
+    for (let x = 0; x < width; x += 1) {
+      let nearest: Point | null = null;
+      let closest = Number.POSITIVE_INFINITY;
+
+      for (const point of samples) {
+        const off = (point[0] - x) ** 2 + (point[1] - y) ** 2;
+
+        if (off < closest) {
+          closest = off;
+          nearest = point;
+        }
+      }
+      if (nearest == null || Math.sqrt(closest) > CORD_RADIUS) {
+        continue;
+      }
+      // Which side of the centreline the pixel is on, along the light
+      const side = (x - nearest[0]) * CORD_LIGHT[0] + (y - nearest[1]) * CORD_LIGHT[1];
+
+      if (side < -CORD_EDGE) {
+        grid[y][x] = 'C';
+      } else if (side > CORD_EDGE) {
+        grid[y][x] = 'd';
+      } else {
+        grid[y][x] = 'c';
+      }
+    }
+  }
+
+  // A plug at either end, sat over the cable rather than beside it, so
+  // the cord runs into it instead of stopping short
+  for (const end of [CORD_PATH[0], CORD_PATH[CORD_PATH.length - 1]]) {
+    const left = Math.round(end[0]) - 2;
+    const top = Math.round(end[1]) - 3;
+
+    for (let row = 0; row < CORD_PLUG.length; row += 1) {
+      for (let column = 0; column < CORD_PLUG[row].length; column += 1) {
+        grid[top + row][left + column] = CORD_PLUG[row][column];
+      }
+    }
+  }
+
+  // The line round all of it, one pixel everywhere
+  const under = grid.map((row) => [...row.values()]);
+
+  for (let y = 0; y < height; y += 1) {
+    for (let x = 0; x < width; x += 1) {
+      if (under[y][x] !== '.') {
+        continue;
+      }
+      const beside = [-1, 0, 1].some((dy) =>
+        [-1, 0, 1].some((dx) => (under[y + dy]?.[x + dx] ?? '.') !== '.'),
+      );
+
+      if (beside) {
+        grid[y][x] = 'K';
+      }
+    }
+  }
+  return cropped(grid);
+}
+
 const DRAWN: { to: string; rows: string[]; colours: Record<string, string> }[] = [
   { to: 'held/clear-amulet', rows: amulet(), colours: AMULET_COLOURS },
+  { to: 'evolutions/linking-cord', rows: cord(), colours: CORD_COLOURS },
 ];
 
 const sheets = new Map<string, Sheet>();

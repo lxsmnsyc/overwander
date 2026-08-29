@@ -16,8 +16,9 @@ export const SUPPORTED_METHODS =
 
 /**
  * What an evolution check is measured against: the catch's level,
- * the items its owner carries (for an item used on it), the items
- * the catch itself holds, and whether it has ever changed hands
+ * the items its owner carries (for an item used on it, and for the
+ * Linking Cord that stands in for a trade), the items the catch itself
+ * holds, and whether it has ever changed hands
  */
 export interface EvolutionContext {
   level: number;
@@ -77,10 +78,26 @@ export function meetsEvolutionCriteria(
       return false;
     }
   }
-  if ((method & EvolutionMethod.Trade) !== 0 && !context.traded) {
+  if ((method & EvolutionMethod.Trade) !== 0 && !context.traded && !pullsCord(evolution, context)) {
     return false;
   }
   return true;
+}
+
+/**
+ * Whether a Linking Cord is standing in for the trade this evolution
+ * asks for: the pokemon has never changed hands and its owner is
+ * carrying one.
+ *
+ * A line asking for a used item as well is left out, because it would
+ * then want two items spent and an evolution spends one. No registered
+ * line asks for both; the day one does it keeps needing a real trade
+ * rather than quietly taking the cord and charging for the stone
+ */
+function pullsCord(evolution: EvolutionData, context: EvolutionContext): boolean {
+  return (
+    (evolution.method & EvolutionMethod.UsedItem) === 0 && context.carried.has(Items.LinkingCord)
+  );
 }
 
 /**
@@ -110,11 +127,22 @@ export function getAvailableEvolutions(
 
 /**
  * The item this evolution spends, if any. Only a used item is
- * consumed — a held item stays with the pokemon
+ * consumed: a held item stays with the pokemon.
+ *
+ * A trade evolution asked for by a pokemon that has never changed
+ * hands spends a Linking Cord instead. It is answered from `traded`
+ * alone rather than from a whole context, because the caller reads the
+ * bag for whatever comes back from here and cannot know what to read
+ * until it does
  */
-export function getConsumedItem(evolution: EvolutionData): Items | null {
-  if ((evolution.method & EvolutionMethod.UsedItem) === 0) {
-    return null;
+export function getConsumedItem(evolution: EvolutionData, traded = false): Items | null {
+  const { method } = evolution;
+
+  if ((method & EvolutionMethod.UsedItem) !== 0) {
+    return evolution.item ?? null;
   }
-  return evolution.item ?? null;
+  if ((method & EvolutionMethod.Trade) !== 0 && !traded) {
+    return Items.LinkingCord;
+  }
+  return null;
 }

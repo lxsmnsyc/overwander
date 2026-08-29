@@ -1188,6 +1188,39 @@ describe('evolution data', () => {
     );
   });
 
+  it('takes a Linking Cord in place of the trade', () => {
+    const context = { level: 100, held: new Set<Items>(), traded: false };
+    const cord = new Set([Items.LinkingCord]);
+
+    expect(getAvailableEvolutions(Species.Machoke, { ...context, carried: cord })).toEqual([
+      { species: Species.Machamp, method: EvolutionMethod.Trade },
+    ]);
+    // And it is what gets spent, since the trade is the half it paid
+    expect(
+      getConsumedItem({ species: Species.Machamp, method: EvolutionMethod.Trade }, false),
+    ).toBe(Items.LinkingCord);
+    // A pokemon that really was traded owes nothing
+    expect(getConsumedItem({ species: Species.Machamp, method: EvolutionMethod.Trade }, true)).toBe(
+      null,
+    );
+  });
+
+  it('refuses the cord where a stone is being spent as well', () => {
+    // Two items for one evolution is not something a spend can
+    // express, so the trade half stays a real trade
+    const line = {
+      species: Species.Machamp,
+      method: EvolutionMethod.Trade | EvolutionMethod.UsedItem,
+      item: Items.FireStone,
+    };
+    const carried = new Set([Items.LinkingCord, Items.FireStone]);
+
+    expect(
+      meetsEvolutionCriteria(line, { level: 100, carried, held: new Set(), traded: false }),
+    ).toBe(false);
+    expect(getConsumedItem(line, false)).toBe(Items.FireStone);
+  });
+
   it('never offers evolutions it cannot verify', () => {
     // Friendship, weather and party composition have no stored
     // counterpart, so an evolution asking for one is refused rather

@@ -3,7 +3,7 @@
 // number) considers unnecessary
 // oxlint-disable typescript/no-unnecessary-type-assertion
 import { asNumber, asRecord, asRecordArray, asString } from './__normalize';
-import { type DuelInvite, type DuelRecord, asDuelRecord } from './duel-record';
+import { type DuelInvite, type DuelRecord, type DuelRules, asDuelRecord } from './duel-record';
 import type { LobbyRole } from './lobby-role';
 import { requireUid } from '../server/auth';
 import {
@@ -16,14 +16,21 @@ import {
   setDuelParty as setPartyOnServer,
   setDuelReady as setReadyOnServer,
   setDuelRole as setRoleOnServer,
+  setDuelRules as setRulesOnServer,
   startDuel as startOnServer,
 } from '../server/duels';
 import { syncServerClock } from './clock';
 import getSupabase, { type Unwatch, watchRow, watchTable } from './supabase';
 import getIdToken from './session';
 
-export { DUEL_FIGHTERS, getDuelBlocker, getDuelFighters, getDuelSpectators } from './duel-record';
-export type { DuelInvite, DuelMember, DuelRecord } from './duel-record';
+export {
+  DEFAULT_DUEL_RULES,
+  DUEL_FIGHTERS,
+  getDuelBlocker,
+  getDuelFighters,
+  getDuelSpectators,
+} from './duel-record';
+export type { DuelInvite, DuelMember, DuelRecord, DuelRules } from './duel-record';
 
 const DUEL_TABLE = 'duels';
 
@@ -33,7 +40,10 @@ export async function getDuel(id: string): Promise<DuelRecord | null> {
   const [lobby, parties] = await Promise.all([
     supabase
       .from(DUEL_TABLE)
-      .select('host, battle_id, created_at, duel_members(player, role, ready, joined_seq)')
+      .select(
+        'host, battle_id, created_at, limits, team_size, ' +
+          'duel_members(player, role, ready, joined_seq)',
+      )
       .eq('id', id)
       .maybeSingle(),
     supabase.from('duel_catches').select('player, slot, caught_id').eq('duel_id', id),
@@ -63,6 +73,8 @@ export async function getDuel(id: string): Promise<DuelRecord | null> {
     host: row.host,
     battle: row.battle_id,
     createdAt: row.created_at,
+    limits: row.limits,
+    teamSize: row.team_size,
     members: members.map((entry) => ({
       player: entry.player,
       role: entry.role,
@@ -224,6 +236,20 @@ export async function setDuelRole(id: string, role: LobbyRole): Promise<boolean>
 async function setDuelRoleOnServer(token: string, id: string, role: LobbyRole): Promise<boolean> {
   'use server';
   return setRoleOnServer(await requireUid(token), id, role);
+}
+
+/**
+ * Set what this fight allows. The host's alone, and it takes every
+ * ready back: what both sides agreed to was a fight under the rules
+ * they could see
+ */
+export async function setDuelRules(id: string, rules: DuelRules): Promise<boolean> {
+  return setDuelRulesOnServer(await getIdToken(), id, rules);
+}
+
+async function setDuelRulesOnServer(token: string, id: string, rules: DuelRules): Promise<boolean> {
+  'use server';
+  return setRulesOnServer(await requireUid(token), id, rules);
 }
 
 /**

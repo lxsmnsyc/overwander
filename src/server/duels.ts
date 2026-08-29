@@ -4,10 +4,17 @@
 // oxlint-disable typescript/no-unnecessary-type-assertion
 import 'server-only';
 import BattleOutcome from '../auth/battle-outcome';
-import { DUEL_FIGHTERS, type DuelRecord, asDuelRecord } from '../auth/duel-record';
-import { LobbyRole } from '../auth/lobby-role';
-import { PVP_BATTLE_LIMITS } from '../data/constants/battle-limits';
+import {
+  DEFAULT_DUEL_RULES,
+  DUEL_FIGHTERS,
+  type DuelRecord,
+  type DuelRules,
+  asDuelRecord,
+} from '../auth/duel-record';
+import { withLimit } from '../data/constants/battle-limits';
+import { Slots, getSlots } from '../data/constants/slots';
 import { TEAM_SIZE } from '../auth/teams';
+import { LobbyRole } from '../auth/lobby-role';
 import { asCaughtPokemon } from '../auth/caught-record';
 import { isFainted } from '../auth/health';
 import { getSql, newDocId, tx } from './db';
@@ -55,6 +62,8 @@ export async function readDuel(id: string): Promise<DuelRecord | null> {
     host: asString(row.host),
     battle: row.battle_id == null ? null : asString(row.battle_id),
     createdAt: asNumber(row.created_at),
+    limits: asNumber(row.limits),
+    teamSize: asNumber(row.team_size),
     members: members.map((entry) => ({
       player: asString(entry.player),
       role: asNumber(entry.role),
@@ -102,7 +111,9 @@ export async function hostDuel(uid: string, watching: boolean, now: number): Pro
 
   await tx(async (transaction) => {
     await transaction`
-      insert into duels (id, host, battle_id, created_at) values (${id}, ${uid}, null, ${now})
+      insert into duels (id, host, battle_id, created_at, limits, team_size)
+      values (${id}, ${uid}, null, ${now},
+        ${DEFAULT_DUEL_RULES.limits}, ${DEFAULT_DUEL_RULES.teamSize})
     `;
     await transaction`
       insert into duel_members (duel_id, player, role)
@@ -294,6 +305,59 @@ export async function setDuelRole(uid: string, id: string, role: LobbyRole): Pro
 }
 
 /**
+ * Set what this fight allows: what one pokemon may bring and how many
+ * of them a side may field. The host's alone, and only while the lobby
+ * is still gathering.
+ *
+ * Every ready is taken back, because what both sides agreed to was a
+ * fight under the old rules. A party longer than the new team size is
+ * cut to it from the end rather than thrown away: the order is the
+ * fighter's own, so the tail is what they cared least about, and they
+ * are told by their party visibly shrinking and their ready going with
+ * it
+ */
+export async function setDuelRules(uid: string, id: string, rules: DuelRules): Promise<boolean> {
+  const limits = clampLimits(rules.limits);
+  const teamSize = Math.max(1, Math.min(TEAM_SIZE, Math.floor(rules.teamSize)));
+
+  if (!Number.isFinite(rules.limits) || !Number.isFinite(rules.teamSize)) {
+    return false;
+  }
+
+  return tx(async (transaction) => {
+    const rows = await transaction`
+      select host, battle_id from duels where id = ${id} for update
+    `;
+    const row = rows.at(0);
+
+    if (row == null || asString(row.host) !== uid || row.battle_id != null) {
+      return false;
+    }
+
+    await transaction`
+      update duels set limits = ${limits}, team_size = ${teamSize} where id = ${id}
+    `;
+    await transaction`
+      delete from duel_catches where duel_id = ${id} and slot >= ${teamSize}
+    `;
+    await transaction`
+      update duel_members set ready = false where duel_id = ${id}
+    `;
+    return true;
+  });
+}
+
+/** The packed limits with every count brought inside what a host may pick */
+function clampLimits(limits: number): number {
+  let held = 0;
+
+  for (const kind of [Slots.Ability, Slots.Item, Slots.Move]) {
+    held = withLimit(held, kind, getSlots(limits, kind));
+  }
+  return held;
+}
+
+/**
  * Assemble the party this side is bringing. The catches are checked
  * the way a raid team's are (owned, distinct, not fighting, not
  * fainted, not put away, not queued anywhere else) and the ready is
@@ -301,10 +365,7 @@ export async function setDuelRole(uid: string, id: string, role: LobbyRole): Pro
  * see
  */
 export async function setDuelParty(uid: string, id: string, catches: string[]): Promise<boolean> {
-  if (catches.length === 0 || catches.length > TEAM_SIZE) {
-    return false;
-  }
-  if (new Set(catches).size !== catches.length) {
+  if (catches.length === 0 || new Set(catches).size !== catches.length) {
     return false;
   }
 
@@ -312,6 +373,11 @@ export async function setDuelParty(uid: string, id: string, catches: string[]): 
   const mine = duel?.members.find((member) => member.player === uid);
 
   if (duel == null || duel.battle != null || mine == null || mine.role !== LobbyRole.Fighter) {
+    return false;
+  }
+  // The lobby's own ceiling rather than the game's: the host may have
+  // called for a fight of three
+  if (catches.length > duel.teamSize) {
     return false;
   }
 
@@ -468,7 +534,7 @@ export async function startDuel(uid: string, id: string, now: number): Promise<s
   await tx(async (transaction) => {
     await transaction`
       insert into battles (id, raid_id, species, outcome, started_at, limits)
-      values (${battleId}, null, 0, ${BattleOutcome.Unfinished}, ${now}, ${PVP_BATTLE_LIMITS})
+      values (${battleId}, null, 0, ${BattleOutcome.Unfinished}, ${now}, ${duel.limits})
     `;
 
     const rows = fielded.map(([player, snapshot], position) => ({

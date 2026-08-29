@@ -30,15 +30,20 @@ export interface TeamPickerDialogProps {
   isOpen: boolean;
   onClose: () => void;
   /**
-   * Fired with the chosen catch ids, at most TEAM_SIZE of them
+   * The most that may be brought. A duel's host sets this; anything
+   * else takes the game's own six
+   */
+  max?: number;
+  /**
+   * Fired with the chosen catch ids, at most `max` of them
    */
   onSubmit: (catches: string[]) => void;
 }
 
 /**
- * Pick up to six catches to bring into a raid. The list itself is the
- * ordinary catch picker — what makes it a team is the six, and the
- * three reasons a pokemon cannot be one of them
+ * Pick the catches to bring into a fight. The list itself is the
+ * ordinary catch picker: what makes it a team is the ceiling, and the
+ * four reasons a pokemon cannot be one of them
  */
 export default function TeamPickerDialog(props: TeamPickerDialogProps): JSX.Element {
   return (
@@ -51,7 +56,7 @@ export default function TeamPickerDialog(props: TeamPickerDialogProps): JSX.Elem
       open={props.isOpen}
       onClose={props.onClose}
       value={[]}
-      max={TEAM_SIZE}
+      max={props.max ?? TEAM_SIZE}
       title="Form a team"
       verb="Join with"
       empty="No catches to bring."

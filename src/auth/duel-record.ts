@@ -3,7 +3,9 @@
 // number) considers unnecessary
 // oxlint-disable typescript/no-unnecessary-type-assertion
 import { asNumber, asRecord, asRecordArray, asString, asStringArray } from './__normalize';
+import { PVP_BATTLE_LIMITS } from '../data/constants/battle-limits';
 import { LobbyRole } from './lobby-role';
+import { TEAM_SIZE } from './teams';
 
 /**
  * What a battle lobby is, and how a stored one is read back. Both the
@@ -16,6 +18,39 @@ import { LobbyRole } from './lobby-role';
  * watching, however many of them there are
  */
 export const DUEL_FIGHTERS = 2;
+
+/**
+ * The rules the host set the fight to: what one pokemon may bring,
+ * packed the way a battle's limits are, and how many of them a side
+ * may field.
+ *
+ * They are the lobby's rather than the battle's until the host starts,
+ * because they are what the other side is agreeing to when they say
+ * they are ready. Changing them takes that agreement back
+ */
+export interface DuelRules {
+  limits: number;
+  teamSize: number;
+}
+
+/** What a lobby is arranged under until its host says otherwise */
+export const DEFAULT_DUEL_RULES: DuelRules = {
+  limits: PVP_BATTLE_LIMITS,
+  teamSize: TEAM_SIZE,
+};
+
+/**
+ * The rules as a stored row gives them. A lobby written before they
+ * existed reads as the shape every duel used to be held to
+ */
+export function asDuelRules(value: unknown): DuelRules {
+  const data = asRecord(value);
+
+  return {
+    limits: data.limits == null ? PVP_BATTLE_LIMITS : asNumber(data.limits),
+    teamSize: data.teamSize == null ? TEAM_SIZE : asNumber(data.teamSize),
+  };
+}
 
 /** One player standing in a lobby */
 export interface DuelMember {
@@ -37,7 +72,7 @@ export interface DuelMember {
  * stages one, and only the people in it and the people called into it
  * can read it
  */
-export interface DuelRecord {
+export interface DuelRecord extends DuelRules {
   host: string;
   /**
    * The battles/{battleId} the host started, or null while the lobby
@@ -63,6 +98,7 @@ export function asDuelRecord(value: unknown): DuelRecord {
   const data = asRecord(value);
 
   return {
+    ...asDuelRules(data),
     host: asString(data.host),
     battle: typeof data.battle === 'string' ? data.battle : null,
     createdAt: asNumber(data.createdAt),

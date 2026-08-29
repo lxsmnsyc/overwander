@@ -11,6 +11,7 @@ import {
 } from 'solid-js';
 import type { PlayerIdentity } from '../../auth/user';
 import {
+  DEFAULT_DUEL_RULES,
   DUEL_FIGHTERS,
   type DuelMember,
   type DuelRecord,
@@ -23,11 +24,14 @@ import {
   setDuelParty,
   setDuelReady,
   setDuelRole,
+  setDuelRules,
   startDuel,
   watchDuel,
 } from '../../auth/duels';
+import { Slots, getSlots } from '../../data/constants/slots';
 import { LobbyRole } from '../../auth/lobby-role';
 import { type Profile, getProfiles } from '../../auth/profile';
+import DuelRulesDialog from '../battle/DuelRulesDialog';
 import LobbyInviteDialog from '../battle/LobbyInviteDialog';
 import LobbyParty from '../battle/LobbyParty';
 import PlayerPlate from '../profile/PlayerPlate';
@@ -72,6 +76,7 @@ function LobbyRows(
   const game = useGame();
   const [picking, setPicking] = createSignal(false);
   const [calling, setCalling] = createSignal(false);
+  const [arranging, setArranging] = createSignal(false);
   const [status, setStatus] = createSignal<string | null>(null);
   const [busy, setBusy] = createSignal(false);
 
@@ -92,6 +97,20 @@ function LobbyRows(
     return record == null ? [] : getDuelSpectators(record).map((member) => member.player);
   };
   const isHost = (): boolean => duel()?.host === props.user.uid;
+  const teamSize = (): number => duel()?.teamSize ?? DEFAULT_DUEL_RULES.teamSize;
+  const limits = (): number => duel()?.limits ?? DEFAULT_DUEL_RULES.limits;
+
+  /**
+   * The rules as one line. Everybody reads it, not only the host: it
+   * is what the other side is agreeing to when they say they are ready
+   */
+  const arrangement = (): string =>
+    [
+      `${teamSize()} per side`,
+      `${getSlots(limits(), Slots.Move)} moves`,
+      `${getSlots(limits(), Slots.Ability)} abilities`,
+      `${getSlots(limits(), Slots.Item)} items`,
+    ].join(' · ');
   const fighting = (): boolean => mine()?.role === LobbyRole.Fighter;
   const seatFree = (): boolean => fighters().length < DUEL_FIGHTERS;
 
@@ -200,6 +219,24 @@ function LobbyRows(
               A fight between trainers. Nothing is recorded from it: no candy, no aftermath, and
               what the party spent comes back.
             </Note>
+
+            <DialogSection title="Rules">
+              <List>
+                <ListRow>
+                  <Note class="grow">{arrangement()}</Note>
+                  <Show when={isHost()}>
+                    <Button
+                      disabled={busy()}
+                      onClick={() => {
+                        setArranging(true);
+                      }}
+                    >
+                      Change
+                    </Button>
+                  </Show>
+                </ListRow>
+              </List>
+            </DialogSection>
 
             <DialogSection title="Fighters">
               <List>
@@ -312,8 +349,21 @@ function LobbyRows(
         onInviteByCode={async (code, role) => inviteToDuelByCode(props.duelId, code, role)}
       />
 
+      <DuelRulesDialog
+        isOpen={arranging()}
+        onClose={() => {
+          setArranging(false);
+        }}
+        rules={{ limits: limits(), teamSize: teamSize() }}
+        onSubmit={(rules) => {
+          setArranging(false);
+          act(async () => setDuelRules(props.duelId, rules), 'Those rules could not be set.');
+        }}
+      />
+
       <TeamPickerDialog
         player={props.user.uid}
+        max={teamSize()}
         isOpen={picking()}
         onClose={() => {
           setPicking(false);

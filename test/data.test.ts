@@ -169,7 +169,14 @@ import {
 } from '../src/data/constants/stats';
 import { BOTTLE_CAPS, isBottleCap, isPerfectIVs, polishIVs } from '../src/data/items/bottle-caps';
 import { UTILITY_BELT_SLOT, isUtilityBelt } from '../src/data/items/utility-belt';
-import { PVP_BATTLE_LIMITS, UNLIMITED_BATTLE_LIMITS } from '../src/data/constants/battle-limits';
+import {
+  MAX_LIMIT_SLOTS,
+  MIN_LIMIT_SLOTS,
+  PVP_BATTLE_LIMITS,
+  UNLIMITED_BATTLE_LIMITS,
+  withLimit,
+} from '../src/data/constants/battle-limits';
+import { DEFAULT_DUEL_RULES, asDuelRules } from '../src/auth/duel-record';
 import {
   PURIFY_IV_BOOST,
   isPurifiable,
@@ -1704,6 +1711,30 @@ describe('item data', () => {
 
     expect(getSlots(scenario, Slots.Item)).toBe(2);
     expect(getSlots(scenario, Slots.Ability)).toBe(1);
+  });
+
+  it('holds a host\u2019s limits inside what a fight can be set to', () => {
+    // A count below one would field a pokemon that cannot act, and
+    // one above the packing's ceiling would wrap into its neighbour
+    expect(getSlots(withLimit(PVP_BATTLE_LIMITS, Slots.Move, 0), Slots.Move)).toBe(MIN_LIMIT_SLOTS);
+    expect(getSlots(withLimit(PVP_BATTLE_LIMITS, Slots.Move, 99), Slots.Move)).toBe(
+      MAX_LIMIT_SLOTS,
+    );
+
+    // And one count moves without disturbing the other two
+    const set = withLimit(PVP_BATTLE_LIMITS, Slots.Item, 3);
+
+    expect(getSlots(set, Slots.Item)).toBe(3);
+    expect(getSlots(set, Slots.Ability)).toBe(1);
+    expect(getSlots(set, Slots.Move)).toBe(4);
+  });
+
+  it('reads a lobby written before it had rules as the shape duels used to be', () => {
+    expect(asDuelRules({})).toEqual(DEFAULT_DUEL_RULES);
+    expect(asDuelRules({ limits: packSlots(2, 2, 2), teamSize: 3 })).toEqual({
+      limits: packSlots(2, 2, 2),
+      teamSize: 3,
+    });
   });
 
   it('buries the Utility Belt with the things that change a pokemon', () => {

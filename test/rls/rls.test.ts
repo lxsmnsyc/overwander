@@ -1,5 +1,6 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { type Actor, actor, caughtRow, clearAll, guest, service, sql } from './clients';
+import { DEFAULT_DUEL_RULES } from '../../src/auth/duel-record';
 
 /**
  * The security surface, asserted from the outside: what a signed-in
@@ -325,8 +326,9 @@ describe('gym seats', () => {
 describe('battle lobbies', () => {
   const stage = async (host: string): Promise<void> => {
     await sql`
-      insert into duels (id, host, battle_id, created_at)
-      values ('rls-duel', ${host}, null, 1000)
+      insert into duels (id, host, battle_id, created_at, limits, team_size)
+      values ('rls-duel', ${host}, null, 1000,
+        ${DEFAULT_DUEL_RULES.limits}, ${DEFAULT_DUEL_RULES.teamSize})
     `;
     await sql`insert into duel_members (duel_id, player, role) values ('rls-duel', ${host}, 0)`;
   };

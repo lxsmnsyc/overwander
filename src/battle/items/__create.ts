@@ -157,12 +157,13 @@ export function lowering(
 
 /**
  * Whether the unit is holding the item and able to use it. A disabled
- * item is still in its holder's grip but does nothing — that is how an
+ * item is still in its holder's grip but does nothing, which is how an
  * item that has already fired is kept from firing again while the
- * effect it started is still running
+ * effect it started is still running. Asked through the unit so a
+ * suppressor (a Frisk) can answer no without touching the grip
  */
 export function holds(unit: Unit, item: Items): boolean {
-  return unit.items[item] === true;
+  return unit.hasItem(item);
 }
 
 /**

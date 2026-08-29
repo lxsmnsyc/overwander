@@ -26,7 +26,7 @@ export default function registerPinsirSpecies(): void {
     },
     types: [Types.Bug],
     abilities: [Abilities.HyperCutter, Abilities.MoldBreaker],
-    hiddenAbility: Abilities.Moxie,
+    hiddenAbilities: [Abilities.Moxie, Abilities.Swarm],
     eggGroups: [EggGroups.Bug],
     genderRatio: [1, 1],
     catchRate: 45,

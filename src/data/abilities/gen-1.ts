@@ -102,6 +102,11 @@ export default function registerGen1Abilities(): void {
     description: 'Refuses Defense drops from anybody else.',
   });
 
+  registerAbility(Abilities.GaleWings, {
+    name: 'Gale Wings',
+    description: 'Winds up Flying moves a bracket faster while at full HP.',
+  });
+
   // Rattata
   registerAbility(Abilities.Guts, {
     name: 'Guts',
@@ -141,6 +146,11 @@ export default function registerGen1Abilities(): void {
   registerAbility(Abilities.SandRush, {
     name: 'Sand Rush',
     description: '2x Speed in a sandstorm, which never chips it.',
+  });
+
+  registerAbility(Abilities.RoughSkin, {
+    name: 'Rough Skin',
+    description: 'Anything that touches it loses 1/8 of its HP.',
   });
 
   // Nidoran
@@ -188,7 +198,7 @@ export default function registerGen1Abilities(): void {
   });
   registerAbility(Abilities.Frisk, {
     name: 'Frisk',
-    description: 'Reveals what the enemy is holding as it enters the field.',
+    description: 'Pockets one enemy item, berries aside, while it stands.',
   });
 
   // Zubat
@@ -331,6 +341,11 @@ export default function registerGen1Abilities(): void {
       'Survives any one blow from full health on 1 HP, and one-hit KOs never work on it.',
   });
 
+  registerAbility(Abilities.SolidRock, {
+    name: 'Solid Rock',
+    description: 'Super-effective blows on it hit 1/4 softer.',
+  });
+
   // Ponyta
   registerAbility(Abilities.FlameBody, {
     name: 'Flame Body',
@@ -377,6 +392,11 @@ export default function registerGen1Abilities(): void {
     description: 'Restores 1/16 of its HP each time it acts in hail, which never chips it.',
   });
 
+  registerAbility(Abilities.SlushRush, {
+    name: 'Slush Rush',
+    description: '2x Speed in hail.',
+  });
+
   // Grimer
   registerAbility(Abilities.StickyHold, {
     name: 'Sticky Hold',
@@ -407,6 +427,11 @@ export default function registerGen1Abilities(): void {
     description: 'Floats, so Ground moves miss unless something pins it down.',
   });
 
+  registerAbility(Abilities.CursedBody, {
+    name: 'Cursed Body',
+    description: '30% to shut off whatever move just hit it, for 8 seconds.',
+  });
+
   // Onix
   registerAbility(Abilities.WeakArmor, {
     name: 'Weak Armor',
@@ -420,7 +445,12 @@ export default function registerGen1Abilities(): void {
   });
   registerAbility(Abilities.Forewarn, {
     name: 'Forewarn',
-    description: 'Reads what the enemy is carrying as it enters the field.',
+    description: 'Disables the strongest enemy move for 8 seconds on entry.',
+  });
+
+  registerAbility(Abilities.BadDreams, {
+    name: 'Bad Dreams',
+    description: 'Sleeping enemies lose 1/8 of their HP each time it acts.',
   });
 
   // Krabby
@@ -544,7 +574,7 @@ export default function registerGen1Abilities(): void {
   });
   registerAbility(Abilities.Anticipation, {
     name: 'Anticipation',
-    description: 'Shudders at a move that would hurt as it enters the field.',
+    description: 'Takes half damage from the worst enemy move it braced for.',
   });
 
   // Jolteon
@@ -567,10 +597,21 @@ export default function registerGen1Abilities(): void {
     description: '+1 Attack or Special Attack, whichever side the enemy is softer on.',
   });
 
+  // Kabuto (Kabutops)
+  registerAbility(Abilities.Sharpness, {
+    name: 'Sharpness',
+    description: '1.5x power on slicing moves.',
+  });
+
   // Aerodactyl
   registerAbility(Abilities.Pressure, {
     name: 'Pressure',
     description: 'Moves aimed at it cost 2x the cooldown.',
+  });
+
+  registerAbility(Abilities.StrongJaw, {
+    name: 'Strong Jaw',
+    description: '1.5x power on biting moves.',
   });
 
   // Snorlax
@@ -585,6 +626,17 @@ export default function registerGen1Abilities(): void {
     description: 'Moves are 20% less accurate against it in hail, which never chips it.',
   });
 
+  registerAbility(Abilities.SnowWarning, {
+    name: 'Snow Warning',
+    description: 'Calls up hail as it enters the field.',
+  });
+
+  // Zapdos
+  registerAbility(Abilities.Drizzle, {
+    name: 'Drizzle',
+    description: 'Calls up rain as it enters the field.',
+  });
+
   // Dratini
   registerAbility(Abilities.MarvelScale, {
     name: 'Marvel Scale',
@@ -595,6 +647,12 @@ export default function registerGen1Abilities(): void {
   registerAbility(Abilities.Multiscale, {
     name: 'Multiscale',
     description: 'Halves any blow that lands on it at full health.',
+  });
+
+  // Mew
+  registerAbility(Abilities.Protean, {
+    name: 'Protean',
+    description: 'Takes the type of every move it uses, so all of them are same-type.',
   });
 
   // Special (non-standard abilities outside the regular pool)

@@ -3118,9 +3118,11 @@ describe('chunk snapshot', () => {
     const world = new World('overworld');
     const snapshot = new ChunkSnapshot(world.getChunk(0, 0), 0);
 
-    // Lapras: regular Water Absorb/Shell Armor, hidden Hydration
+    // Lapras: regular Water Absorb/Shell Armor, hidden Hydration and
+    // Friend Guard sharing the one rare band
     const species = Species.Lapras;
-    const { abilities, hiddenAbility } = getSpeciesData(species);
+    const { abilities, hiddenAbilities } = getSpeciesData(species);
+    const rare = new Set(hiddenAbilities);
 
     // Sweep the whole ability slice (byte 2 of the trait value)
     let hidden = 0;
@@ -3128,7 +3130,7 @@ describe('chunk snapshot', () => {
     for (let slice = 0; slice < SAMPLES; slice++) {
       const instance = deriveEncounter(snapshot, [species, 0, slice << 16]);
 
-      if (instance.ability === hiddenAbility) {
+      if (rare.has(instance.ability)) {
         hidden += 1;
       } else {
         expect(abilities).toContain(instance.ability);

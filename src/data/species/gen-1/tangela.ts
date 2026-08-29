@@ -26,7 +26,7 @@ export default function registerTangelaSpecies(): void {
     },
     types: [Types.Grass],
     abilities: [Abilities.Chlorophyll, Abilities.LeafGuard],
-    hiddenAbility: Abilities.Regenerator,
+    hiddenAbilities: [Abilities.Regenerator],
     eggGroups: [EggGroups.Grass],
     genderRatio: [1, 1],
     catchRate: 45,

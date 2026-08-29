@@ -75,6 +75,14 @@ export const enum MoveFlags {
    * Powder- or spore-based (blocked by e.g. Overcoat)
    */
   Powder = 0b100,
+  /**
+   * Bites, chews or gnaws (boosted by e.g. Strong Jaw)
+   */
+  Bite = 0b1000,
+  /**
+   * Cuts with a blade or an edge (boosted by e.g. Sharpness)
+   */
+  Slicing = 0b10000,
 }
 
 export const enum MoveAttackFlags {

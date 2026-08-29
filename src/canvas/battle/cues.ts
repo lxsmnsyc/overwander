@@ -751,6 +751,7 @@ const ABILITY_CUES: Partial<Record<Abilities, CueKind>> = {
   [Abilities.Stench]: 'Ail',
   [Abilities.EffectSpore]: 'Ail',
   [Abilities.CuteCharm]: 'Ail',
+  [Abilities.RoughSkin]: 'Barb',
 
   // Something rose
   [Abilities.AngerPoint]: 'Rise',
@@ -792,6 +793,8 @@ const ABILITY_CUES: Partial<Record<Abilities, CueKind>> = {
   [Abilities.NeutralizingGas]: 'Menace',
   [Abilities.MoldBreaker]: 'Menace',
   [Abilities.Intimidate]: 'Menace',
+  [Abilities.CursedBody]: 'Menace',
+  [Abilities.BadDreams]: 'Menace',
   [Abilities.Boss]: 'Menace',
 };
 

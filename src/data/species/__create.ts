@@ -111,9 +111,11 @@ export interface SpeciesData {
    */
   abilities: Abilities[];
   /**
-   * The rarer hidden ability, if the species has one
+   * The rarer hidden abilities, if the species has any. A birth roll
+   * reaches them through a narrow band, so a species with several is
+   * no likelier to hatch hidden: the band is split between them
    */
-  hiddenAbility?: Abilities;
+  hiddenAbilities?: Abilities[];
   /**
    * Egg groups
    */
@@ -373,19 +375,32 @@ export function getFamilyName(family: Families): string {
   return `Family #${family}`;
 }
 
+/**
+ * The two pools a birth roll draws from: what this species is
+ * ordinarily born with, and the narrow band it is rarely born with.
+ *
+ * Only the species' **own** `abilities` are ordinary. Anything it
+ * reaches through a pre-evolution and does not list itself is rare, so
+ * a Persian born with a Meowth's Pickup is the uncommon one, and so is
+ * a Gyarados born with Swift Swim
+ */
 export function getSpeciesAbilityPools(species: Species): SpeciesAbilityPools {
-  const regular = new Set<Abilities>();
+  const regular = new Set(getSpeciesData(species).abilities);
   const hidden = new Set<Abilities>();
 
   let current: Species | undefined = species;
   while (current != null) {
     const data = getSpeciesData(current);
 
-    for (const ability of data.abilities) {
-      regular.add(ability);
+    for (const ability of data.hiddenAbilities ?? []) {
+      hidden.add(ability);
     }
-    if (data.hiddenAbility != null) {
-      hidden.add(data.hiddenAbility);
+    if (current !== species) {
+      for (const ability of data.abilities) {
+        if (!regular.has(ability)) {
+          hidden.add(ability);
+        }
+      }
     }
 
     current = data.evolvesFrom;
@@ -395,36 +410,11 @@ export function getSpeciesAbilityPools(species: Species): SpeciesAbilityPools {
 }
 
 /**
- * Every ability anywhere in the species' line, evolutions included.
+ * Every ability the species can ever have: its own set plus its
+ * pre-evolutions' sets, walked up the evolution chain.
  *
- * `getSpeciesAbilities` walks a chain upwards, which answers what
- * *this* stage could have been born with. This answers what the line
- * is capable of, which is a wider question and the one the Channeler
- * asks: a Magikarp's line knows Intimidate even though no Magikarp
- * ever hatched with it
- */
-export function getFamilyAbilities(species: Species): Set<Abilities> {
-  const family = getSpeciesData(species).family;
-  const abilities = new Set<Abilities>();
-
-  for (const data of SPECIES_MAP.values()) {
-    if (data.family !== family) {
-      continue;
-    }
-    for (const ability of data.abilities) {
-      abilities.add(ability);
-    }
-    if (data.hiddenAbility != null) {
-      abilities.add(data.hiddenAbility);
-    }
-  }
-
-  return abilities;
-}
-
-/**
- * Every ability the species can learn: its own set plus its
- * pre-evolutions' sets, walked up the evolution chain
+ * It walks **upwards** and never sideways, so a Magikarp cannot reach
+ * Intimidate on the grounds that Gyarados has it
  */
 export function getSpeciesAbilities(species: Species): Set<Abilities> {
   const abilities = new Set<Abilities>();
@@ -436,8 +426,8 @@ export function getSpeciesAbilities(species: Species): Set<Abilities> {
     for (const ability of data.abilities) {
       abilities.add(ability);
     }
-    if (data.hiddenAbility != null) {
-      abilities.add(data.hiddenAbility);
+    for (const ability of data.hiddenAbilities ?? []) {
+      abilities.add(ability);
     }
 
     current = data.evolvesFrom;

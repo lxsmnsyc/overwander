@@ -3,7 +3,7 @@ import type Abilities from '../ids/abilities';
 import { Items } from '../ids/items';
 import type { Moves } from '../ids/moves';
 import type { Species } from '../ids/species';
-import { getFamilyAbilities, getLevelUpMoves, getTeachableMoves } from '../species';
+import { getLevelUpMoves, getSpeciesAbilities, getTeachableMoves } from '../species';
 
 /**
  * The people who stand at the world's people landmarks. Most pass
@@ -277,18 +277,18 @@ export function getTutorableMoves(species: Species, known: Iterable<Moves>): Mov
 export const CHANNELER_FEE = Items.HeartScale;
 
 /**
- * What she can still draw out of the pokemon: everything its line is
- * capable of, minus what it already carries.
+ * What she can still draw out of the pokemon: everything it could ever
+ * come to have, minus what it already carries.
  *
- * Read off the family rather than the chain, so a Magikarp is offered
- * what a Gyarados was born with. The special tier is left out of both
- * sides: a shadow's mark is not an ability the line has, and it takes
- * up no room either way
+ * The pool walks up the chain and stops there, so a Magikarp is never
+ * offered what only a Gyarados knows. The special tier is left out of
+ * both sides: a shadow's mark is not an ability the pokemon could have
+ * been born with, and it takes up no room either way
  */
 export function getAwakenableAbilities(species: Species, known: Iterable<Abilities>): Abilities[] {
   const knows = new Set(known);
 
-  return [...getFamilyAbilities(species)].filter(
+  return [...getSpeciesAbilities(species)].filter(
     (ability) => countsAgainstSlots(ability) && !knows.has(ability),
   );
 }

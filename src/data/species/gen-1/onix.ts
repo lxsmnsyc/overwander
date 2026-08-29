@@ -26,7 +26,7 @@ export default function registerOnixSpecies(): void {
     },
     types: [Types.Rock, Types.Ground],
     abilities: [Abilities.RockHead, Abilities.Sturdy],
-    hiddenAbility: Abilities.WeakArmor,
+    hiddenAbilities: [Abilities.WeakArmor],
     eggGroups: [EggGroups.Mineral],
     genderRatio: [1, 1],
     catchRate: 45,

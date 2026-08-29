@@ -22,6 +22,7 @@ import type {
   CheckUnitDrainEvent,
   CheckUnitEscapeEvent,
   CheckUnitGroundedEvent,
+  CheckUnitItemEvent,
   CheckUnitItemThresholdEvent,
   CheckUnitMoveAccuracyEvent,
   CheckUnitMoveContactEvent,
@@ -624,6 +625,23 @@ export default class Unit {
     };
     this.battle.emit(BattleEvents.CheckUnitDrain, event);
     return event.value;
+  }
+
+  /**
+   * Whether the unit may use the item it is gripping. A Frisk answers
+   * no while it stands, which is why every held item asks rather than
+   * reading the record
+   */
+  hasItem(item: Items): boolean {
+    const event: CheckUnitItemEvent = {
+      id: 'CheckUnitItem',
+      disabled: false,
+      source: this,
+      item,
+      enabled: this.items[item] === true,
+    };
+    this.battle.emit(BattleEvents.CheckUnitItem, event);
+    return event.enabled;
   }
 
   enableItem(item: Items): void {

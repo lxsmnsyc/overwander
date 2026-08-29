@@ -262,17 +262,17 @@ export function DexEntryBody(
                       </TooltipHost>
                     )}
                   </For>
-                  <Show when={entry().data.hiddenAbility}>
+                  <For each={entry().data.hiddenAbilities}>
                     {(hidden) => (
                       // Said rather than left to be worked out from the
                       // order: a hidden ability is rolled far less
                       // often, which is the whole of what makes one
                       // worth hunting
-                      <TooltipHost {...detailAbility(hidden())}>
-                        <Badge tone="tide">{describeAbility(hidden())} · Hidden</Badge>
+                      <TooltipHost {...detailAbility(hidden)}>
+                        <Badge tone="tide">{describeAbility(hidden)} · Hidden</Badge>
                       </TooltipHost>
                     )}
-                  </Show>
+                  </For>
                 </Row>
               </DialogSection>
 

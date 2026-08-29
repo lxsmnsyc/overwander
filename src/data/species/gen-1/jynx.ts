@@ -26,7 +26,7 @@ export default function registerJynxSpecies(): void {
     },
     types: [Types.Ice, Types.Psychic],
     abilities: [Abilities.Oblivious, Abilities.Forewarn],
-    hiddenAbility: Abilities.DrySkin,
+    hiddenAbilities: [Abilities.DrySkin],
     eggGroups: [EggGroups.HumanLike],
     genderRatio: [0, 1],
     catchRate: 45,

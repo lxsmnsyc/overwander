@@ -641,10 +641,10 @@ describe('the cheap filters over what the registries already know', () => {
     expect(matchesCatch(blazing, 'is:stab')).toBe(true);
     expect(matchesCatch(plain, 'is:stab')).toBe(false);
 
-    const rare = getSpeciesData(Species.Charmander).hiddenAbility;
+    const [rare] = getSpeciesData(Species.Charmander).hiddenAbilities ?? [];
 
     expect(rare).toBeDefined();
-    expect(matchesCatch(pokemon({ abilities: [rare!] }), 'is:hidden')).toBe(true);
+    expect(matchesCatch(pokemon({ abilities: [rare] }), 'is:hidden')).toBe(true);
     expect(matchesCatch(pokemon({ abilities: [Abilities.Blaze] }), 'is:hidden')).toBe(false);
   });
 

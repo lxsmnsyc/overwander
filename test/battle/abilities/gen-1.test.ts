@@ -1758,27 +1758,79 @@ describe('Insomnia', () => {
 });
 
 describe('Forewarn', () => {
-  it('cues on entry once per move-carrying foe', () => {
+  it('disables the strongest enemy move on entry', () => {
     const { battle, teamA, teamB } = createBattle();
     const enemy = createUnit(battle, teamB);
     const other = createUnit(battle, teamB);
-    const bare = createUnit(battle, teamB);
     enemy.addMove(Moves.Tackle);
-    other.addMove(Moves.Growl);
-
-    let triggers = 0;
-    battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Post, (event) => {
-      if (event.ability === Abilities.Forewarn) {
-        triggers += 1;
-      }
-    });
+    other.addMove(Moves.HyperBeam);
 
     const holder = createUnit(battle, teamA);
     holder.addAbility(Abilities.Forewarn);
     holder.enter();
 
-    expect(bare.alive).toBe(true);
-    expect(triggers).toBe(2);
+    expect(other.moves[Moves.HyperBeam]?.disabled).toBe(true);
+    expect(enemy.moves[Moves.Tackle]?.disabled).toBe(false);
+  });
+
+  it('hands the move back once the lockout runs out', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const enemy = createUnit(battle, teamB);
+    enemy.addMove(Moves.Tackle);
+
+    const holder = createUnit(battle, teamA);
+    holder.addAbility(Abilities.Forewarn);
+    holder.enter();
+
+    expect(enemy.moves[Moves.Tackle]?.disabled).toBe(true);
+
+    battle.tick(turns(4));
+
+    expect(enemy.moves[Moves.Tackle]?.disabled).toBe(false);
+  });
+
+  it('hands the move back when the forewarner leaves', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const enemy = createUnit(battle, teamB);
+    enemy.addMove(Moves.Tackle);
+
+    const holder = createUnit(battle, teamA);
+    holder.addAbility(Abilities.Forewarn);
+    holder.enter();
+    holder.leave();
+
+    expect(enemy.moves[Moves.Tackle]?.disabled).toBe(false);
+  });
+});
+
+describe('Frisk', () => {
+  it('pockets one enemy item while it stands', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const enemy = createUnit(battle, teamB);
+    enemy.addItem(Items.LifeOrb);
+
+    const holder = createUnit(battle, teamA);
+    holder.addAbility(Abilities.Frisk);
+    holder.enter();
+
+    expect(enemy.hasItem(Items.LifeOrb)).toBe(false);
+    expect(enemy.items[Items.LifeOrb]).toBe(true); // still in the grip
+
+    holder.leave();
+
+    expect(enemy.hasItem(Items.LifeOrb)).toBe(true);
+  });
+
+  it('leaves berries alone', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const enemy = createUnit(battle, teamB);
+    enemy.addItem(Items.SitrusBerry);
+
+    const holder = createUnit(battle, teamA);
+    holder.addAbility(Abilities.Frisk);
+    holder.enter();
+
+    expect(enemy.hasItem(Items.SitrusBerry)).toBe(true);
   });
 });
 
@@ -2745,7 +2797,7 @@ describe('Quick Feet', () => {
 });
 
 describe('Anticipation', () => {
-  it('shudders on entry against threatening moves', () => {
+  it('halves the damage of the move it braced for', () => {
     const { battle, teamA, teamB } = createBattle();
     const enemy = createUnit(battle, teamB);
     enemy.addMove(Moves.KarateChop); // Fighting vs Normal: super effective
@@ -2763,6 +2815,28 @@ describe('Anticipation', () => {
     eevee.enter();
 
     expect(triggers).toBe(1);
+
+    // Same blow twice, differing only in which move id carries it
+    pinRandom(battle, 1);
+
+    const braced = dealDamage(
+      enemy,
+      eevee,
+      Moves.KarateChop,
+      50,
+      Types.Fighting,
+      MoveCategories.Physical,
+    );
+    const plain = dealDamage(
+      enemy,
+      eevee,
+      Moves.Tackle,
+      50,
+      Types.Fighting,
+      MoveCategories.Physical,
+    );
+
+    expect(braced).toBeCloseTo(plain * 0.5);
   });
 });
 
@@ -3026,5 +3100,235 @@ describe('interaction fixes', () => {
     // entry
     gas.leave();
     expect(genuineEntries).toBe(1);
+  });
+});
+
+describe('Gale Wings', () => {
+  it('winds up Flying moves a bracket faster while at full health', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.GaleWings);
+
+    const target = { type: MoveTargetType.Unit, unit: enemy } as const;
+
+    expect(holder.checkMovePriority(Moves.WingAttack, target)).toBe(1);
+    expect(holder.checkMovePriority(Moves.Tackle, target)).toBe(0);
+
+    // A scratch is enough to ground it
+    holder.setHealth(holder.health - 1);
+
+    expect(holder.checkMovePriority(Moves.WingAttack, target)).toBe(0);
+  });
+});
+
+describe('Rough Skin', () => {
+  it('costs the attacker an eighth of its health on contact', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const attacker = createUnit(battle, teamA);
+    const holder = createUnit(battle, teamB);
+    holder.addAbility(Abilities.RoughSkin);
+
+    attacker.damage({ type: EffectType.Move, move: Moves.Tackle, unit: attacker }, holder, 10, 0);
+
+    // an eighth of 160 max HP
+    expect(attacker.health).toBe(140);
+  });
+
+  it('leaves a move that never touched it alone', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const attacker = createUnit(battle, teamA);
+    const holder = createUnit(battle, teamB);
+    holder.addAbility(Abilities.RoughSkin);
+
+    attacker.damage({ type: EffectType.Move, move: Moves.Ember, unit: attacker }, holder, 10, 0);
+
+    expect(attacker.health).toBe(160);
+  });
+});
+
+describe('Solid Rock', () => {
+  it('softens super-effective hits by a quarter', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const attacker = createUnit(battle, teamA);
+    const holder = createUnit(battle, teamB);
+    const plain = createUnit(battle, teamB);
+    holder.types.add(Types.Grass);
+    plain.types.add(Types.Grass);
+    holder.addAbility(Abilities.SolidRock);
+
+    attacker.triggerMoveEffect(Moves.Ember, { type: MoveTargetType.Unit, unit: plain }, 0);
+    attacker.triggerMoveEffect(Moves.Ember, { type: MoveTargetType.Unit, unit: holder }, 0);
+
+    const plainDamage = 160 - plain.health;
+    const softenedDamage = 160 - holder.health;
+
+    expect(plainDamage).toBeGreaterThan(0);
+    expect(softenedDamage).toBeCloseTo(plainDamage * 0.75);
+  });
+});
+
+describe('Slush Rush', () => {
+  it('doubles Speed in hail only', () => {
+    const { battle, teamA } = createBattle();
+    const holder = createUnit(battle, teamA);
+    holder.addAbility(Abilities.SlushRush);
+
+    const plain = holder.checkStat(Stats.Speed, 0);
+
+    teamA.weather.current = Weathers.Hail;
+
+    expect(holder.checkStat(Stats.Speed, 0)).toBe(plain * 2);
+
+    teamA.weather.current = Weathers.Sandstorm;
+
+    expect(holder.checkStat(Stats.Speed, 0)).toBe(plain);
+  });
+});
+
+describe('Cursed Body', () => {
+  it('shuts off the move that hit it', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0);
+    const attacker = createUnit(battle, teamA);
+    const holder = createUnit(battle, teamB);
+    attacker.addMove(Moves.Tackle);
+    holder.addAbility(Abilities.CursedBody);
+
+    // The lock reads what the attacker is committed to
+    attacker.cast(Moves.Tackle, { type: MoveTargetType.Unit, unit: holder });
+    attacker.damage({ type: EffectType.Move, move: Moves.Tackle, unit: attacker }, holder, 10, 0);
+    // The lock is Disable's, cast like any other move, so it lands a
+    // delay later
+    battle.tick(MOVE_DELAY);
+
+    expect(attacker.moves[Moves.Tackle]?.disabled).toBe(true);
+  });
+
+  it('leaves the move alone when the roll misses', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const attacker = createUnit(battle, teamA);
+    const holder = createUnit(battle, teamB);
+    attacker.addMove(Moves.Tackle);
+    holder.addAbility(Abilities.CursedBody);
+
+    attacker.cast(Moves.Tackle, { type: MoveTargetType.Unit, unit: holder });
+    attacker.damage({ type: EffectType.Move, move: Moves.Tackle, unit: attacker }, holder, 10, 0);
+    battle.tick(MOVE_DELAY);
+
+    expect(attacker.moves[Moves.Tackle]?.disabled).toBe(false);
+  });
+});
+
+describe('Bad Dreams', () => {
+  it('bites sleeping enemies each time the holder acts', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const asleep = createUnit(battle, teamB);
+    const awake = createUnit(battle, teamB);
+    const ally = createUnit(battle, teamA);
+    holder.addAbility(Abilities.BadDreams);
+
+    asleep.addStatus(Statuses.Sleeping, NONE_CAUSE);
+    ally.addStatus(Statuses.Sleeping, NONE_CAUSE);
+
+    battle.emit(BattleEvents.UnitCast, {
+      id: 'UnitCast',
+      disabled: false,
+      source: holder,
+      move: Moves.Tackle,
+      target: { type: MoveTargetType.None },
+    });
+
+    // an eighth of 160 max HP, and only from the enemy asleep
+    expect(asleep.health).toBe(140);
+    expect(awake.health).toBe(160);
+    expect(ally.health).toBe(160);
+  });
+});
+
+describe('Sharpness', () => {
+  it('boosts slicing move power only', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Sharpness);
+
+    const target = { type: MoveTargetType.Unit, unit: enemy } as const;
+
+    expect(holder.checkMovePower(Moves.Slash, target)).toBeCloseTo(70 * 1.5);
+    expect(holder.checkMovePower(Moves.Tackle, target)).toBe(40);
+  });
+});
+
+describe('Strong Jaw', () => {
+  it('boosts biting move power only', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.StrongJaw);
+
+    const target = { type: MoveTargetType.Unit, unit: enemy } as const;
+
+    expect(holder.checkMovePower(Moves.Bite, target)).toBeCloseTo(60 * 1.5);
+    expect(holder.checkMovePower(Moves.Tackle, target)).toBe(40);
+  });
+});
+
+describe('Snow Warning', () => {
+  it('calls up hail as the holder enters', () => {
+    const { battle, teamA } = createBattle();
+    const holder = createUnit(battle, teamA);
+
+    holder.addAbility(Abilities.SnowWarning);
+    battle.tick(MOVE_DELAY);
+
+    expect(battle.weather.current).toBe(Weathers.Hail);
+  });
+});
+
+describe('Drizzle', () => {
+  it('calls up rain as the holder enters', () => {
+    const { battle, teamA } = createBattle();
+    const holder = createUnit(battle, teamA);
+
+    holder.addAbility(Abilities.Drizzle);
+    battle.tick(MOVE_DELAY);
+
+    expect(battle.weather.current).toBe(Weathers.Rain);
+  });
+});
+
+describe('Protean', () => {
+  it('takes the type of the move it is about to use', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA, [Types.Normal]);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Protean);
+
+    holder.triggerMove(Moves.Ember, { type: MoveTargetType.Unit, unit: enemy }, 0);
+
+    expect([...holder.types]).toEqual([Types.Fire]);
+  });
+
+  it('leaves a type it is already wearing alone', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA, [Types.Fire]);
+    const enemy = createUnit(battle, teamB);
+    let triggered = 0;
+
+    holder.addAbility(Abilities.Protean);
+    battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Post, (event) => {
+      if (event.ability === Abilities.Protean) {
+        triggered += 1;
+      }
+    });
+
+    holder.triggerMove(Moves.Ember, { type: MoveTargetType.Unit, unit: enemy }, 0);
+
+    expect([...holder.types]).toEqual([Types.Fire]);
+    expect(triggered).toBe(0);
   });
 });

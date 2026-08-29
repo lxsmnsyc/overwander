@@ -26,7 +26,7 @@ export default function registerElectabuzzSpecies(): void {
     },
     types: [Types.Electric],
     abilities: [Abilities.Static],
-    hiddenAbility: Abilities.VitalSpirit,
+    hiddenAbilities: [Abilities.VitalSpirit],
     eggGroups: [EggGroups.HumanLike],
     genderRatio: [3, 1],
     catchRate: 45,

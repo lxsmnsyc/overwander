@@ -26,7 +26,7 @@ export default function registerChanseySpecies(): void {
     },
     types: [Types.Normal],
     abilities: [Abilities.NaturalCure, Abilities.SereneGrace],
-    hiddenAbility: Abilities.Healer,
+    hiddenAbilities: [Abilities.Healer],
     eggGroups: [EggGroups.Fairy],
     genderRatio: [0, 1],
     catchRate: 30,

@@ -26,6 +26,7 @@ export default function registerMewSpecies(): void {
     },
     types: [Types.Psychic],
     abilities: [Abilities.Synchronize],
+    hiddenAbilities: [Abilities.Trace, Abilities.Adaptability, Abilities.Protean],
     eggGroups: [EggGroups.NoEggsDiscovered],
     genderRatio: undefined,
     catchRate: 45,

@@ -26,7 +26,7 @@ export default function registerMagmarSpecies(): void {
     },
     types: [Types.Fire],
     abilities: [Abilities.FlameBody],
-    hiddenAbility: Abilities.VitalSpirit,
+    hiddenAbilities: [Abilities.VitalSpirit],
     eggGroups: [EggGroups.HumanLike],
     genderRatio: [3, 1],
     catchRate: 45,

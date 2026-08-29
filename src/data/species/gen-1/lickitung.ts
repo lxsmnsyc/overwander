@@ -26,7 +26,7 @@ export default function registerLickitungSpecies(): void {
     },
     types: [Types.Normal],
     abilities: [Abilities.OwnTempo, Abilities.Oblivious],
-    hiddenAbility: Abilities.CloudNine,
+    hiddenAbilities: [Abilities.CloudNine],
     eggGroups: [EggGroups.Monster],
     genderRatio: [1, 1],
     catchRate: 45,

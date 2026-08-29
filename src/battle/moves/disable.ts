@@ -57,8 +57,9 @@ export default function setupDisable(battle: Battle): void {
   /**
    * What Disable would take away from the target: the move being used
    * right now, otherwise the last one used. Undefined when there is
-   * nothing to take — the target has used nothing, no longer knows
-   * what it used, or is already carrying a disabled move
+   * nothing to take: the target has used nothing, no longer knows what
+   * it used, or the move is already shut off. Never a move somebody
+   * else locked, or whichever lock lifted first would hand it back
    */
   function getDisabledMove(target: Unit): Moves | undefined {
     if (instances.has(target)) {
@@ -66,8 +67,9 @@ export default function setupDisable(battle: Battle): void {
     }
 
     const move = target.casting?.move ?? target.channeling?.move ?? lastUsed.get(target);
+    const state = move == null ? undefined : target.moves[move];
 
-    return move != null && target.moves[move] != null ? move : undefined;
+    return state?.disabled === false ? move : undefined;
   }
 
   battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Exact, (event) => {

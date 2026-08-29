@@ -177,6 +177,28 @@ const enum Abilities {
   MarvelScale = 112,
   // Dragonite
   Multiscale = 113,
+  // Pidgeot
+  GaleWings = 114,
+  // Sandslash
+  RoughSkin = 115,
+  // Golem
+  SolidRock = 116,
+  // Gengar
+  CursedBody = 117,
+  // Dewgong
+  SlushRush = 118,
+  // Hypno
+  BadDreams = 119,
+  // Kabutops
+  Sharpness = 120,
+  // Aerodactyl
+  StrongJaw = 121,
+  // Articuno
+  SnowWarning = 122,
+  // Zapdos
+  Drizzle = 123,
+  // Mew
+  Protean = 124,
   // Special (non-standard abilities outside the regular pool)
   Boss = 100001,
   Shadow = 100002,

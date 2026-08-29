@@ -132,6 +132,7 @@ export default function registerGastlySpecies(): void {
     stats: FAMILY_STATS.gengar,
     types: [Types.Ghost, Types.Poison],
     abilities: [...FAMILY_ABILITIES],
+    hiddenAbilities: [Abilities.Infiltrator, Abilities.Frisk, Abilities.CursedBody],
     eggGroups: [EggGroups.Amorphous],
     genderRatio: [1, 1],
     catchRate: 45,

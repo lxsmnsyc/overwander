@@ -278,6 +278,12 @@ export const enum BattleEvents {
   CheckUnitCanHeal = 141,
   UnitUpdateSwitch = 142,
   UnitFinishSwitch = 143,
+  /**
+   * Whether the unit may use a held item at all. The item mirror of
+   * `CheckUnitAbility`: the grip is the baseline, and a suppressor
+   * (a Frisk that pocketed it) answers no without touching the record
+   */
+  CheckUnitItem = 144,
 }
 
 export const enum MoveTargetType {
@@ -456,6 +462,11 @@ export interface CheckUnitMoveContactEvent extends CheckUnitMoveEvent {
  */
 export interface CheckUnitAbilityEvent extends UnitEvent {
   ability: Abilities;
+  enabled: boolean;
+}
+
+export interface CheckUnitItemEvent extends UnitEvent {
+  item: Items;
   enabled: boolean;
 }
 
@@ -873,6 +884,7 @@ export interface BattleEventMap extends EventMap {
   [BattleEvents.CheckUnitMoveTargetFlags]: [CheckUnitMoveTargetFlagsEvent, EventPriority];
   [BattleEvents.UnitSetWeather]: [UnitSetWeatherEvent, EventPriority];
   [BattleEvents.CheckUnitAbility]: [CheckUnitAbilityEvent, EventPriority];
+  [BattleEvents.CheckUnitItem]: [CheckUnitItemEvent, EventPriority];
   [BattleEvents.CheckUnitMoveCastTime]: [CheckUnitMoveTimeEvent, EventPriority];
   [BattleEvents.CheckUnitMoveChannelTime]: [CheckUnitMoveTimeEvent, EventPriority];
   [BattleEvents.CheckUnitMoveDuration]: [CheckUnitMoveTimeEvent, EventPriority];

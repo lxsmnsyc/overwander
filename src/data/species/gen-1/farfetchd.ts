@@ -46,7 +46,7 @@ export default function registerFarfetchdSpecies(): void {
     },
     types: [Types.Normal, Types.Flying],
     abilities: [Abilities.KeenEye, Abilities.InnerFocus],
-    hiddenAbility: Abilities.Defiant,
+    hiddenAbilities: [Abilities.Defiant],
     eggGroups: [EggGroups.Flying, EggGroups.Field],
     genderRatio: [1, 1],
     catchRate: 45,

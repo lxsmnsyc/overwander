@@ -26,7 +26,7 @@ export default function registerLaprasSpecies(): void {
     },
     types: [Types.Water, Types.Ice],
     abilities: [Abilities.WaterAbsorb, Abilities.ShellArmor],
-    hiddenAbility: Abilities.Hydration,
+    hiddenAbilities: [Abilities.Hydration, Abilities.FriendGuard],
     eggGroups: [EggGroups.Monster, EggGroups.Water1],
     genderRatio: [1, 1],
     catchRate: 45,

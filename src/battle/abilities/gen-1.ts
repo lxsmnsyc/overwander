@@ -1,8 +1,4 @@
-import {
-  AttackPriority,
-  type EventListenerLifecycle,
-  EventPriority,
-} from '../../core/event-emitter';
+import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Stages, Stats } from '../../data/constants/stats';
 import { TYPE_EFFECTIVENESS, TYPE_EFFECTIVENESS_FACTOR, Types } from '../../data/constants/types';
 import Abilities from '../../data/ids/abilities';
@@ -21,13 +17,7 @@ import { getMoveData } from '../../data/moves';
 import { RISKY_PENALTY } from '../ai/score';
 import { checkUnitRating } from '../ai/rating';
 import type Battle from '../core';
-import {
-  BattleEvents,
-  type CheckUnitCanDamageEvent,
-  EffectType,
-  MoveTargetType,
-  type UnitAttackEvent,
-} from '../events';
+import { BattleEvents, EffectType, MoveTargetType, type UnitAttackEvent } from '../events';
 import { ABSORB_MOVES } from '../moves/absorb';
 import { CRASH_MOVES } from '../moves/crash';
 import { OHKO_MOVES } from '../moves/fixed-damage';
@@ -51,17 +41,22 @@ import {
   unitTarget,
 } from '../utils';
 import {
+  chipImmunity,
   createAbility,
   createBlazeAbility,
   createContactHazard,
   createDrizzleAbility,
+  createFilterAbility,
   createHydrationAbility,
   createKeenEyeAbility,
   createLimberAbility,
+  createSandRushAbility,
   createShellArmorAbility,
+  createToughClawsAbility,
   createWaterAbsorbAbility,
 } from './__create';
 import { MergedLifecycle } from '../lifecycle';
+import turns from '../turn';
 
 /**
  * The swing every unit is fielded with, as the string key a move set
@@ -70,25 +65,6 @@ import { MergedLifecycle } from '../lifecycle';
  * `Object.entries`
  */
 const SWING = String(Moves.Attack);
-
-// Vetoes the residual weather chip damage carried by the given weather
-// cause (see mechanics/weather.ts)
-function chipImmunity(
-  battle: Battle,
-  ability: Abilities,
-  weather: Weathers,
-): EventListenerLifecycle<CheckUnitCanDamageEvent> {
-  return battle.on(BattleEvents.CheckUnitCanDamage, EventPriority.Post, (event) => {
-    if (
-      event.success &&
-      event.cause.type === EffectType.Weather &&
-      event.cause.weather === weather &&
-      event.target.hasAbility(ability)
-    ) {
-      event.success = false;
-    }
-  });
-}
 
 const setupAbilities = [
   // Bulbasaur
@@ -165,17 +141,7 @@ const setupAbilities = [
   ),
 
   // https://bulbapedia.bulbagarden.net/wiki/Tough_Claws_(Ability)
-  createAbility(Abilities.ToughClaws, (battle) => {
-    const FACTOR = 5325 / 4096;
-    return battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
-      if (event.power != null) {
-        const moveData = getMoveData(event.move);
-        if (event.source.hasAbility(Abilities.ToughClaws) && moveData.flags & MoveFlags.Contact) {
-          event.power *= FACTOR;
-        }
-      }
-    });
-  }),
+  createToughClawsAbility(Abilities.ToughClaws, MoveFlags.Contact, 5325 / 4096),
 
   // https://bulbapedia.bulbagarden.net/wiki/Drought_(Ability)
   createDrizzleAbility(Abilities.Drought, Weathers.Sunny),
@@ -343,6 +309,19 @@ const setupAbilities = [
 
         // For visual cues
         event.source.triggerAbility(Abilities.BigPecks);
+      }
+    }),
+  ),
+
+  // https://bulbapedia.bulbagarden.net/wiki/Gale_Wings_(Ability)
+  createAbility(Abilities.GaleWings, (battle) =>
+    battle.on(BattleEvents.CheckUnitMovePriority, EventPriority.Post, (event) => {
+      if (
+        event.source.hasAbility(Abilities.GaleWings) &&
+        event.source.health >= event.source.checkStat(Stats.HP, 0) &&
+        event.source.checkMoveType(event.move, event.target) === Types.Flying
+      ) {
+        event.priority += 1;
       }
     }),
   ),
@@ -628,20 +607,41 @@ const setupAbilities = [
   ),
 
   // https://bulbapedia.bulbagarden.net/wiki/Sand_Rush_(Ability)
+  createSandRushAbility(Abilities.SandRush, isWeatherSandstorm, Weathers.Sandstorm),
+
+  // https://bulbapedia.bulbagarden.net/wiki/Rough_Skin_(Ability)
   createAbility(
-    Abilities.SandRush,
+    Abilities.RoughSkin,
     (battle) =>
       new MergedLifecycle([
-        battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
+        battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
           if (
-            event.stat === Stats.Speed &&
-            event.source.hasAbility(Abilities.SandRush) &&
-            isWeatherSandstorm(event.source)
+            event.success &&
+            !(event.flags & DamageFlags.Indirect) &&
+            event.cause.type === EffectType.Move &&
+            event.cause.unit !== event.target &&
+            event.target.hasAbility(Abilities.RoughSkin) &&
+            event.cause.unit.checkMoveContact(event.cause.move, unitTarget(event.target))
           ) {
-            event.value *= 2;
+            const attacker = event.cause.unit;
+
+            event.target.triggerAbility(Abilities.RoughSkin);
+
+            event.target.damage(
+              {
+                type: EffectType.Ability,
+                ability: Abilities.RoughSkin,
+                unit: event.target,
+              },
+              attacker,
+              attacker.checkStat(Stats.HP, 0) / 8,
+              DamageFlags.Indirect,
+            );
           }
         }),
-        chipImmunity(battle, Abilities.SandRush, Weathers.Sandstorm),
+        // Touching it costs something, so the AI is told before it
+        // decides to
+        createContactHazard(battle, Abilities.RoughSkin),
       ]),
   ),
 
@@ -941,22 +941,69 @@ const setupAbilities = [
   ),
 
   // https://bulbapedia.bulbagarden.net/wiki/Frisk_(Ability)
-  createAbility(Abilities.Frisk, (battle) =>
-    // Reveal is a visual cue: the trigger fires when any opposing
-    // unit holds an item as the holder enters the field
-    battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
-      if (!event.source.hasAbility(Abilities.Frisk)) {
-        return;
-      }
+  createAbility(Abilities.Frisk, (battle) => {
+    /**
+     * What each holder pocketed on the way in. The item stays in its
+     * owner's grip and reads as unusable through `CheckUnitItem`, so
+     * nothing has to be handed back when the holder leaves
+     */
+    const pocketed = new Map<Unit, { unit: Unit; item: Items }>();
 
-      for (const unit of battle.units(event.source.team.alliance)) {
-        if (unit.alive && holdsAnyItem(unit)) {
-          event.source.triggerAbility(Abilities.Frisk);
-          return;
+    // Berries are exempt: taking one away is Unnerve's job, and
+    // stacking the two would leave a berry holder with nothing
+    function frisk(unit: Unit): Items | undefined {
+      for (const key in unit.items) {
+        // tsc requires the assertion to index the Items-mapped record;
+        // tsgolint resolves the const enum to number and disagrees
+        // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+        const item = Number(key) as Items;
+
+        if (unit.hasItem(item) && getItemData(item).type !== ItemTypes.Berry) {
+          return item;
         }
       }
-    }),
-  ),
+
+      return undefined;
+    }
+
+    return new MergedLifecycle([
+      battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+        if (pocketed.has(event.source) || !event.source.hasAbility(Abilities.Frisk)) {
+          return;
+        }
+
+        for (const unit of battle.units(event.source.team.alliance)) {
+          const item = unit.alive ? frisk(unit) : undefined;
+
+          if (item != null) {
+            pocketed.set(event.source, { unit, item });
+            event.source.triggerAbility(Abilities.Frisk);
+            return;
+          }
+        }
+      }),
+      // Pure query: the pocketed item reads as unusable while the
+      // frisker stands
+      battle.on(BattleEvents.CheckUnitItem, EventPriority.Post, (event) => {
+        if (!event.enabled) {
+          return;
+        }
+
+        for (const taken of pocketed.values()) {
+          if (taken.unit === event.source && taken.item === event.item) {
+            event.enabled = false;
+            return;
+          }
+        }
+      }),
+      battle.on(BattleEvents.UnitLeavesField, EventPriority.Post, (event) => {
+        pocketed.delete(event.source);
+      }),
+      battle.on(BattleEvents.UnitFaints, EventPriority.Post, (event) => {
+        pocketed.delete(event.source);
+      }),
+    ]);
+  }),
 
   // Zubat
   // https://bulbapedia.bulbagarden.net/wiki/Inner_Focus_(Ability)
@@ -1731,6 +1778,9 @@ const setupAbilities = [
       ]),
   ),
 
+  // https://bulbapedia.bulbagarden.net/wiki/Solid_Rock_(Ability)
+  createFilterAbility(Abilities.SolidRock),
+
   // Ponyta
   // https://bulbapedia.bulbagarden.net/wiki/Flame_Body_(Ability)
   createAbility(Abilities.FlameBody, (battle) => {
@@ -1987,6 +2037,9 @@ const setupAbilities = [
       ]),
   ),
 
+  // https://bulbapedia.bulbagarden.net/wiki/Slush_Rush_(Ability)
+  createSandRushAbility(Abilities.SlushRush, isWeatherHail),
+
   // Grimer
   // https://bulbapedia.bulbagarden.net/wiki/Sticky_Hold_(Ability)
   createAbility(Abilities.StickyHold, (battle) =>
@@ -2110,6 +2163,32 @@ const setupAbilities = [
       ]),
   ),
 
+  /**
+   * Cursed Body: what hit it stops working for a while.
+   *
+   * The lock is Disable's, cast rather than reimplemented, so the
+   * ability inherits its duration, its interrupt and its release
+   * https://bulbapedia.bulbagarden.net/wiki/Cursed_Body_(Ability)
+   */
+  createAbility(Abilities.CursedBody, (battle) => {
+    const CHANCE = 0.3;
+
+    return battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
+      if (
+        event.success &&
+        !(event.flags & DamageFlags.Indirect) &&
+        event.cause.type === EffectType.Move &&
+        event.cause.unit !== event.target &&
+        event.target.alive &&
+        event.target.hasAbility(Abilities.CursedBody) &&
+        battle.random() < CHANCE
+      ) {
+        event.target.triggerAbility(Abilities.CursedBody);
+        event.target.triggerMove(Moves.Disable, unitTarget(event.cause.unit), 0);
+      }
+    });
+  }),
+
   // Onix
   // https://bulbapedia.bulbagarden.net/wiki/Weak_Armor_(Ability)
   createAbility(
@@ -2150,36 +2229,172 @@ const setupAbilities = [
   createLimberAbility(Abilities.Insomnia, [Statuses.Sleeping]),
 
   // https://bulbapedia.bulbagarden.net/wiki/Forewarn_(Ability)
-  createAbility(Abilities.Forewarn, (battle) =>
-    // Reveal is a visual cue: the trigger fires once per opposing
-    // unit carrying a move of its own as the holder enters the field.
-    // The swing every unit is fielded with does not count — it is
-    // what a pokemon does with its hands rather than something to be
-    // forewarned about, and counting it would fire this on everything
-    // alive
-    battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
-      if (!event.source.hasAbility(Abilities.Forewarn)) {
-        return;
-      }
+  createAbility(Abilities.Forewarn, (battle) => {
+    // Same lockout the Disable move gives, so the two read as one
+    // mechanic rather than two that happen to look alike
+    const DURATION = turns(4);
 
-      for (const unit of battle.units(event.source.team.alliance)) {
-        // The swing every unit is fielded with is not something to be
-        // forewarned about: it is what a pokemon does with its hands,
-        // and warning about it would fire this on everything alive
-        const known = Object.entries(unit.moves).filter(
-          // The key is the move's id as a string, which is what makes
-          // the comparison a string one — and tsgolint narrows the
-          // optional record's values to defined, while at runtime a
-          // cleared slot holds undefined
-          // oxlint-disable-next-line typescript/no-unnecessary-condition
-          ([move, state]) => state != null && move !== SWING,
-        );
+    interface Warned {
+      unit: Unit;
+      move: Moves;
+      progress: number;
+    }
 
-        if (unit.alive && known.length > 0) {
-          event.source.triggerAbility(Abilities.Forewarn);
+    /** What each forewarner shut off, keyed by the forewarner */
+    const locked = new Map<Unit, Warned>();
+
+    const timer = battle.on(BattleEvents.Tick, EventPriority.Post, (event) => {
+      for (const [holder, data] of locked) {
+        data.progress -= event.duration;
+
+        if (data.progress <= 0) {
+          release(holder);
         }
       }
-    }),
+    });
+
+    timer.stop();
+
+    function release(holder: Unit): void {
+      const data = locked.get(holder);
+
+      if (data) {
+        locked.delete(holder);
+        data.unit.enableMove(data.move);
+
+        if (locked.size === 0) {
+          timer.stop();
+        }
+      }
+    }
+
+    /** Release whatever a unit was holding, on either side of it */
+    function clear(unit: Unit): void {
+      release(unit);
+
+      for (const [holder, data] of locked) {
+        if (data.unit === unit) {
+          release(holder);
+        }
+      }
+    }
+
+    /**
+     * The hardest hitter on the other side. The swing every unit is
+     * fielded with does not count: it is what a pokemon does with its
+     * hands rather than something to be forewarned about. Nor does a
+     * move somebody else already shut off, or whichever lock lifted
+     * first would hand it back
+     */
+    function strongest(holder: Unit): Warned | undefined {
+      let found: Warned | undefined;
+      let power = 0;
+
+      for (const unit of battle.units(holder.team.alliance)) {
+        if (!unit.alive) {
+          continue;
+        }
+
+        for (const [key, state] of Object.entries(unit.moves)) {
+          // The key is the move's id as a string, which is what makes
+          // the comparison a string one, and tsgolint narrows the
+          // optional record's values to defined while at runtime a
+          // cleared slot holds undefined
+          // oxlint-disable-next-line typescript/no-unnecessary-condition
+          if (state == null || state.disabled || key === SWING) {
+            continue;
+          }
+
+          const rated = getMoveData(state.move).power ?? 0;
+
+          if (rated > power) {
+            power = rated;
+            found = { unit, move: state.move, progress: DURATION };
+          }
+        }
+      }
+
+      return found;
+    }
+
+    return new MergedLifecycle([
+      battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+        if (locked.has(event.source) || !event.source.hasAbility(Abilities.Forewarn)) {
+          return;
+        }
+
+        const warned = strongest(event.source);
+
+        if (warned == null) {
+          return;
+        }
+
+        // Shutting the move off mid-use interrupts it, as Disable does
+        if (
+          warned.unit.casting?.move === warned.move ||
+          warned.unit.channeling?.move === warned.move
+        ) {
+          warned.unit.interrupt();
+        }
+
+        locked.set(event.source, warned);
+        warned.unit.disableMove(warned.move);
+        event.source.triggerAbility(Abilities.Forewarn);
+
+        if (locked.size === 1) {
+          timer.start();
+        }
+      }),
+      battle.on(BattleEvents.UnitLeavesField, EventPriority.Post, (event) => {
+        clear(event.source);
+      }),
+      battle.on(BattleEvents.UnitFaints, EventPriority.Post, (event) => {
+        clear(event.source);
+      }),
+    ]);
+  }),
+
+  /**
+   * Bad Dreams: sleeping enemies are bitten for an eighth of their HP.
+   *
+   * No turn to hang it on, and a sleeper never acts, so it is paid as
+   * the holder reaches for a move
+   * https://bulbapedia.bulbagarden.net/wiki/Bad_Dreams_(Ability)
+   */
+  createAbility(
+    Abilities.BadDreams,
+    (battle) =>
+      new MergedLifecycle([
+        ...onUnitActs(battle, (unit) => {
+          if (unit.hasAbility(Abilities.BadDreams)) {
+            unit.triggerAbility(Abilities.BadDreams);
+          }
+        }),
+        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
+          if (event.ability !== Abilities.BadDreams) {
+            return;
+          }
+
+          for (const unit of battle.units()) {
+            if (
+              unit.alive &&
+              unit.team.alliance !== event.source.team.alliance &&
+              unit.status[Statuses.Sleeping] != null
+            ) {
+              unit.damage(
+                {
+                  type: EffectType.Ability,
+                  ability: Abilities.BadDreams,
+                  unit: event.source,
+                },
+                unit,
+                unit.checkStat(Stats.HP, 0) / 8,
+                DamageFlags.Indirect,
+              );
+            }
+          }
+        }),
+      ]),
   ),
 
   // Krabby
@@ -2681,28 +2896,7 @@ const setupAbilities = [
 
   // MrMime
   // https://bulbapedia.bulbagarden.net/wiki/Filter_(Ability)
-  createAbility(Abilities.Filter, (battle) => {
-    const FACTOR = 0.75;
-
-    // Total effectiveness per attack; the reduction applies once on
-    // the final damage when the attack is super effective overall
-    const totals = new WeakMap<UnitAttackEvent, number>();
-
-    return new MergedLifecycle([
-      battle.on(BattleEvents.UnitAttackResolveEffectiveness, EventPriority.Post, (event) => {
-        if (event.parent.target.hasAbility(Abilities.Filter)) {
-          totals.set(event.parent, (totals.get(event.parent) ?? 1) * event.multiplier);
-        }
-      }),
-      battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, (event) => {
-        const total = totals.get(event.parent);
-
-        if (total != null && total > 1) {
-          event.value *= FACTOR;
-        }
-      }),
-    ]);
-  }),
+  createFilterAbility(Abilities.Filter),
 
   // Pinsir
   // https://bulbapedia.bulbagarden.net/wiki/Moxie_(Ability)
@@ -2909,14 +3103,22 @@ const setupAbilities = [
       return data.category !== MoveCategories.Status && effectiveness(data.type, holder) > 1;
     }
 
-    // The shudder is a visual cue: it fires once per foe carrying a
-    // threatening move as the holder enters the field
-    return battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
-      if (!event.source.hasAbility(Abilities.Anticipation)) {
-        return;
-      }
+    // How much the shudder is worth once the blow it was for lands
+    const FACTOR = 0.5;
 
-      for (const unit of battle.units(event.source.team.alliance)) {
+    /** The move each holder braced for, keyed by the holder */
+    const braced = new Map<Unit, Moves>();
+
+    /**
+     * The worst thing on the other side: an instant knockout first,
+     * then whatever hits the holder hardest, weighing how badly the
+     * type lands before how hard the move does
+     */
+    function worst(holder: Unit): Moves | undefined {
+      let found: Moves | undefined;
+      let rank = 0;
+
+      for (const unit of battle.units(holder.team.alliance)) {
         if (!unit.alive) {
           continue;
         }
@@ -2925,13 +3127,52 @@ const setupAbilities = [
           // tsgolint narrows the optional record's values to defined;
           // at runtime cleared slots hold undefined
           // oxlint-disable-next-line typescript/no-unnecessary-condition
-          if (state && isThreatening(event.source, state.move)) {
-            event.source.triggerAbility(Abilities.Anticipation);
-            break;
+          if (state == null || !isThreatening(holder, state.move)) {
+            continue;
+          }
+
+          const data = getMoveData(state.move);
+          const scored = OHKO_MOVES.has(state.move)
+            ? Number.POSITIVE_INFINITY
+            : effectiveness(data.type, holder) * (data.power ?? 0);
+
+          if (scored > rank) {
+            rank = scored;
+            found = state.move;
           }
         }
       }
-    });
+
+      return found;
+    }
+
+    return new MergedLifecycle([
+      battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+        if (braced.has(event.source) || !event.source.hasAbility(Abilities.Anticipation)) {
+          return;
+        }
+
+        const move = worst(event.source);
+
+        if (move != null) {
+          braced.set(event.source, move);
+          event.source.triggerAbility(Abilities.Anticipation);
+        }
+      }),
+      // Mutates the in-flight damage resolution, so the effect stays
+      // inline
+      battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, (event) => {
+        if (braced.get(event.parent.target) === event.parent.move) {
+          event.value *= FACTOR;
+        }
+      }),
+      battle.on(BattleEvents.UnitLeavesField, EventPriority.Post, (event) => {
+        braced.delete(event.source);
+      }),
+      battle.on(BattleEvents.UnitFaints, EventPriority.Post, (event) => {
+        braced.delete(event.source);
+      }),
+    ]);
   }),
 
   // Jolteon
@@ -3062,6 +3303,10 @@ const setupAbilities = [
       ]),
   ),
 
+  // Kabuto (Kabutops)
+  // https://bulbapedia.bulbagarden.net/wiki/Sharpness_(Ability)
+  createToughClawsAbility(Abilities.Sharpness, MoveFlags.Slicing, 1.5),
+
   // Aerodactyl
   // https://bulbapedia.bulbagarden.net/wiki/Pressure_(Ability)
   createAbility(
@@ -3091,6 +3336,9 @@ const setupAbilities = [
       ]),
   ),
 
+  // https://bulbapedia.bulbagarden.net/wiki/Strong_Jaw_(Ability)
+  createToughClawsAbility(Abilities.StrongJaw, MoveFlags.Bite, 1.5),
+
   // Snorlax
   // https://bulbapedia.bulbagarden.net/wiki/Immunity_(Ability)
   createLimberAbility(Abilities.Immunity, [Statuses.Poisoned, Statuses.BadlyPoisoned]),
@@ -3115,6 +3363,13 @@ const setupAbilities = [
         chipImmunity(battle, Abilities.SnowCloak, Weathers.Hail),
       ]),
   ),
+
+  // https://bulbapedia.bulbagarden.net/wiki/Snow_Warning_(Ability)
+  createDrizzleAbility(Abilities.SnowWarning, Weathers.Hail),
+
+  // Zapdos
+  // https://bulbapedia.bulbagarden.net/wiki/Drizzle_(Ability)
+  createDrizzleAbility(Abilities.Drizzle, Weathers.Rain),
 
   // Dratini
   // https://bulbapedia.bulbagarden.net/wiki/Marvel_Scale_(Ability)
@@ -3144,6 +3399,38 @@ const setupAbilities = [
       ) {
         event.value *= 0.5;
       }
+    }),
+  ),
+
+  /**
+   * Protean: the holder takes the type of whatever it is about to use,
+   * so everything it casts is same-type.
+   *
+   * Set before the move resolves, which is what puts the new type in
+   * reach of its own STAB
+   * https://bulbapedia.bulbagarden.net/wiki/Protean_(Ability)
+   */
+  createAbility(Abilities.Protean, (battle) =>
+    battle.on(BattleEvents.UnitTriggerMove, EventPriority.Pre, (event) => {
+      if (!event.source.hasAbility(Abilities.Protean)) {
+        return;
+      }
+
+      const type = event.source.checkMoveType(event.move, event.target);
+
+      if (
+        type === Types.Unknown ||
+        (event.source.types.size === 1 && event.source.types.has(type))
+      ) {
+        return;
+      }
+
+      event.source.triggerAbility(Abilities.Protean);
+
+      for (const worn of [...event.source.types]) {
+        event.source.removeType(worn);
+      }
+      event.source.addType(type);
     }),
   ),
 ];

@@ -26,7 +26,7 @@ export default function registerPorygonSpecies(): void {
     },
     types: [Types.Normal],
     abilities: [Abilities.Trace, Abilities.Download],
-    hiddenAbility: Abilities.Analytic,
+    hiddenAbilities: [Abilities.Analytic],
     eggGroups: [EggGroups.Mineral],
     genderRatio: undefined,
     catchRate: 45,

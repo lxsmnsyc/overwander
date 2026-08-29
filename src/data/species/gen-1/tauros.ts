@@ -26,7 +26,7 @@ export default function registerTaurosSpecies(): void {
     },
     types: [Types.Normal],
     abilities: [Abilities.Intimidate, Abilities.AngerPoint],
-    hiddenAbility: Abilities.SheerForce,
+    hiddenAbilities: [Abilities.SheerForce, Abilities.Reckless],
     eggGroups: [EggGroups.Field],
     genderRatio: [1, 0],
     catchRate: 45,

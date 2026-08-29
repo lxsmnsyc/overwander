@@ -26,7 +26,7 @@ export default function registerAerodactylSpecies(): void {
     },
     types: [Types.Rock, Types.Flying],
     abilities: [Abilities.RockHead, Abilities.Pressure],
-    hiddenAbility: Abilities.Unnerve,
+    hiddenAbilities: [Abilities.Unnerve, Abilities.StrongJaw],
     eggGroups: [EggGroups.Flying],
     genderRatio: [7, 1],
     catchRate: 45,

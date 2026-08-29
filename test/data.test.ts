@@ -340,17 +340,29 @@ describe('the type chart', () => {
    */
   const CANON: Record<string, { double: string; half: string; none: string }> = {
     Normal: { double: '', half: 'Rock,Steel', none: 'Ghost' },
-    Fighting: { double: 'Normal,Rock,Steel,Ice,Dark', half: 'Flying,Poison,Bug,Psychic,Fairy', none: 'Ghost' },
+    Fighting: {
+      double: 'Normal,Rock,Steel,Ice,Dark',
+      half: 'Flying,Poison,Bug,Psychic,Fairy',
+      none: 'Ghost',
+    },
     Flying: { double: 'Fighting,Bug,Grass', half: 'Rock,Steel,Electric', none: '' },
     Poison: { double: 'Grass,Fairy', half: 'Poison,Ground,Rock,Ghost', none: 'Steel' },
     Ground: { double: 'Poison,Rock,Steel,Fire,Electric', half: 'Bug,Grass', none: 'Flying' },
     Rock: { double: 'Flying,Bug,Fire,Ice', half: 'Fighting,Ground,Steel', none: '' },
-    Bug: { double: 'Grass,Psychic,Dark', half: 'Fighting,Flying,Poison,Ghost,Steel,Fire,Fairy', none: '' },
+    Bug: {
+      double: 'Grass,Psychic,Dark',
+      half: 'Fighting,Flying,Poison,Ghost,Steel,Fire,Fairy',
+      none: '',
+    },
     Ghost: { double: 'Ghost,Psychic', half: 'Dark', none: 'Normal' },
     Steel: { double: 'Rock,Ice,Fairy', half: 'Steel,Fire,Water,Electric', none: '' },
     Fire: { double: 'Bug,Steel,Grass,Ice', half: 'Rock,Fire,Water,Dragon', none: '' },
     Water: { double: 'Ground,Rock,Fire', half: 'Water,Grass,Dragon', none: '' },
-    Grass: { double: 'Ground,Rock,Water', half: 'Flying,Poison,Bug,Steel,Fire,Grass,Dragon', none: '' },
+    Grass: {
+      double: 'Ground,Rock,Water',
+      half: 'Flying,Poison,Bug,Steel,Fire,Grass,Dragon',
+      none: '',
+    },
     Electric: { double: 'Flying,Water', half: 'Grass,Electric,Dragon', none: 'Ground' },
     Psychic: { double: 'Fighting,Poison', half: 'Steel,Psychic', none: 'Dark' },
     Ice: { double: 'Flying,Ground,Grass,Dragon', half: 'Steel,Fire,Water,Ice', none: '' },
@@ -461,10 +473,10 @@ describe('species abilities', () => {
     const lapras = getSpeciesData(Species.Lapras);
 
     expect(lapras.abilities).toEqual([Abilities.WaterAbsorb, Abilities.ShellArmor]);
-    expect(lapras.hiddenAbility).toBe(Abilities.Hydration);
+    expect(lapras.hiddenAbilities).toEqual([Abilities.Hydration, Abilities.FriendGuard]);
 
-    // Species without one leave the field unset
-    expect(getSpeciesData(Species.Gastly).hiddenAbility).toBeUndefined();
+    // Species without any leave the field unset
+    expect(getSpeciesData(Species.Gastly).hiddenAbilities).toBeUndefined();
 
     // The ancestry walk still covers hidden abilities
     expect(getSpeciesAbilities(Species.Lapras).has(Abilities.Hydration)).toBe(true);
@@ -476,6 +488,40 @@ describe('species abilities', () => {
 
     expect(pools.regular).toEqual([Abilities.Chlorophyll]);
     expect(pools.hidden).toEqual([Abilities.EffectSpore, Abilities.Stench, Abilities.RunAway]);
+  });
+
+  it('makes what a stage only inherits rare', () => {
+    // Persian is born Limber or Technician; the Pickup it reaches
+    // only through Meowth is rolled out of the hidden band
+    const persian = getSpeciesAbilityPools(Species.Persian);
+
+    expect(persian.regular).toEqual([Abilities.Limber, Abilities.Technician]);
+    expect(persian.hidden).toContain(Abilities.Pickup);
+
+    // An ability the stage lists itself stays ordinary, however far
+    // down the line it also appears
+    const vileplume = getSpeciesAbilityPools(Species.Vileplume);
+
+    expect(vileplume.regular).toContain(Abilities.Chlorophyll);
+    expect(vileplume.hidden).not.toContain(Abilities.Chlorophyll);
+  });
+
+  it('never lets a stage reach what only a later stage has', () => {
+    // The rule the pools exist to keep: an ability exclusive to an
+    // evolution is out of reach of every stage below it
+    for (const species of getRegisteredSpecies()) {
+      const reachable = getSpeciesAbilities(species);
+      let previous = getSpeciesData(species).evolvesFrom;
+
+      while (previous != null) {
+        for (const ability of getSpeciesAbilities(previous)) {
+          // Everything a pre-evolution reaches, the stage above it
+          // reaches too: the walk only ever runs upwards
+          expect(reachable.has(ability)).toBe(true);
+        }
+        previous = getSpeciesData(previous).evolvesFrom;
+      }
+    }
   });
 });
 

@@ -26,7 +26,7 @@ export default function registerMrMimeSpecies(): void {
     },
     types: [Types.Psychic, Types.Fairy],
     abilities: [Abilities.Soundproof, Abilities.Filter],
-    hiddenAbility: Abilities.Technician,
+    hiddenAbilities: [Abilities.Technician],
     eggGroups: [EggGroups.HumanLike],
     genderRatio: [1, 1],
     catchRate: 45,

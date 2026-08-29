@@ -1,14 +1,18 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import type { EventListenerLifecycle } from '../../core/event-emitter';
 import { Stages, Stats } from '../../data/constants/stats';
-import { StatFlags } from '../../data/ids/moves';
-import { getWeatherMove } from '../../data/moves';
+import { type MoveFlags, StatFlags } from '../../data/ids/moves';
+import { getMoveData, getWeatherMove } from '../../data/moves';
 import type { Types } from '../../data/constants/types';
 import type Abilities from '../../data/ids/abilities';
 import type { Statuses, Weathers } from '../../data/ids/status';
 import { RISKY_PENALTY } from '../ai/score';
 import type Battle from '../core';
-import type { CheckUnitAIMoveScoreEvent } from '../events';
+import type {
+  CheckUnitAIMoveScoreEvent,
+  CheckUnitCanDamageEvent,
+  UnitAttackEvent,
+} from '../events';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import { type Lifecycle, MergedLifecycle } from '../lifecycle';
 import { MAJOR_STATUS_CONDITIONS } from '../status';
@@ -399,5 +403,111 @@ export function createDrizzleAbility(
           event.source.triggerMove(move, { type: MoveTargetType.None }, 0);
         }),
       ]),
+  );
+}
+
+/**
+ * Vetoes the residual weather chip damage carried by the given weather
+ * cause (see mechanics/weather.ts)
+ */
+export function chipImmunity(
+  battle: Battle,
+  ability: Abilities,
+  weather: Weathers,
+): EventListenerLifecycle<CheckUnitCanDamageEvent> {
+  return battle.on(BattleEvents.CheckUnitCanDamage, EventPriority.Post, (event) => {
+    if (
+      event.success &&
+      event.cause.type === EffectType.Weather &&
+      event.cause.weather === weather &&
+      event.target.hasAbility(ability)
+    ) {
+      event.success = false;
+    }
+  });
+}
+
+/**
+ * Meta ability for the weather sprinters (Sand Rush, Slush Rush):
+ * double Speed while their sky is up. `chipWeather` is the sky they
+ * are also built to stand in, which Slush Rush is not
+ * https://bulbapedia.bulbagarden.net/wiki/Sand_Rush_(Ability)
+ * https://bulbapedia.bulbagarden.net/wiki/Slush_Rush_(Ability)
+ */
+export function createSandRushAbility(
+  targetAbility: Abilities,
+  inWeather: (unit: Unit) => boolean,
+  chipWeather?: Weathers,
+): (battle: Battle) => void {
+  return createAbility(
+    targetAbility,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
+          if (
+            event.stat === Stats.Speed &&
+            event.source.hasAbility(targetAbility) &&
+            inWeather(event.source)
+          ) {
+            event.value *= 2;
+          }
+        }),
+        ...(chipWeather == null ? [] : [chipImmunity(battle, targetAbility, chipWeather)]),
+      ]),
+  );
+}
+
+/**
+ * Meta ability for the super-effective softeners (Filter, Solid Rock):
+ * a quarter off whatever lands super effective.
+ *
+ * The effectiveness arrives one type at a time, so the multipliers are
+ * gathered per attack and the reduction is paid once, on the damage
+ */
+export function createFilterAbility(targetAbility: Abilities): (battle: Battle) => void {
+  const FACTOR = 0.75;
+
+  return createAbility(targetAbility, (battle) => {
+    const totals = new WeakMap<UnitAttackEvent, number>();
+
+    return new MergedLifecycle([
+      battle.on(BattleEvents.UnitAttackResolveEffectiveness, EventPriority.Post, (event) => {
+        if (event.parent.target.hasAbility(targetAbility)) {
+          totals.set(event.parent, (totals.get(event.parent) ?? 1) * event.multiplier);
+        }
+      }),
+      battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, (event) => {
+        const total = totals.get(event.parent);
+
+        if (total != null && total > 1) {
+          event.value *= FACTOR;
+        }
+      }),
+    ]);
+  });
+}
+
+/**
+ * Meta ability for the move-flag power boosters (Tough Claws, Strong
+ * Jaw, Sharpness): moves carrying the flag hit harder
+ * https://bulbapedia.bulbagarden.net/wiki/Tough_Claws_(Ability)
+ * https://bulbapedia.bulbagarden.net/wiki/Strong_Jaw_(Ability)
+ * https://bulbapedia.bulbagarden.net/wiki/Sharpness_(Ability)
+ */
+export function createToughClawsAbility(
+  targetAbility: Abilities,
+  flag: MoveFlags,
+  factor: number,
+): (battle: Battle) => void {
+  return createAbility(targetAbility, (battle) =>
+    battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
+      if (
+        event.power != null &&
+        event.source.hasAbility(targetAbility) &&
+        getMoveData(event.move).flags & flag
+      ) {
+        event.power *= factor;
+      }
+    }),
   );
 }

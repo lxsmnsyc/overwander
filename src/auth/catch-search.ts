@@ -291,9 +291,9 @@ const MARKS = new Map<string, Mark>(
     // Whether it rolled the rarer ability its species keeps back
     hidden: {
       of: (caught) => {
-        const rare = getSpeciesData(caught.species).hiddenAbility;
+        const rare = new Set(getSpeciesData(caught.species).hiddenAbilities);
 
-        return rare != null && caught.abilities.includes(rare);
+        return caught.abilities.some((ability) => rare.has(ability));
       },
       secret: true,
       constrain: () => [],

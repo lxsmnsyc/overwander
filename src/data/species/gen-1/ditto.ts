@@ -26,7 +26,7 @@ export default function registerDittoSpecies(): void {
     },
     types: [Types.Normal],
     abilities: [Abilities.Limber],
-    hiddenAbility: Abilities.Imposter,
+    hiddenAbilities: [Abilities.Imposter, Abilities.StickyHold, Abilities.Unaware],
     eggGroups: [EggGroups.Ditto],
     genderRatio: undefined,
     catchRate: 35,

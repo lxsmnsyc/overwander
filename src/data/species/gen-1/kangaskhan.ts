@@ -26,7 +26,7 @@ export default function registerKangaskhanSpecies(): void {
     },
     types: [Types.Normal],
     abilities: [Abilities.EarlyBird, Abilities.Scrappy],
-    hiddenAbility: Abilities.InnerFocus,
+    hiddenAbilities: [Abilities.InnerFocus, Abilities.IronFist],
     eggGroups: [EggGroups.Monster],
     genderRatio: [0, 1],
     catchRate: 45,

@@ -26,7 +26,7 @@ export default function registerSnorlaxSpecies(): void {
     },
     types: [Types.Normal],
     abilities: [Abilities.Immunity, Abilities.ThickFat],
-    hiddenAbility: Abilities.Gluttony,
+    hiddenAbilities: [Abilities.Gluttony],
     eggGroups: [EggGroups.Monster],
     genderRatio: [7, 1],
     catchRate: 25,

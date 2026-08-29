@@ -26,7 +26,7 @@ export default function registerScytherSpecies(): void {
     },
     types: [Types.Bug, Types.Flying],
     abilities: [Abilities.Swarm, Abilities.Technician],
-    hiddenAbility: Abilities.Steadfast,
+    hiddenAbilities: [Abilities.Steadfast],
     eggGroups: [EggGroups.Bug],
     genderRatio: [1, 1],
     catchRate: 45,

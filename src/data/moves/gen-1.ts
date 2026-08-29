@@ -75,7 +75,7 @@ export default function registerGen1Moves(): void {
     pp: 25,
     accuracy: 95,
     target: MoveTargetFlags.Multiple | MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
-    flags: 0,
+    flags: MoveFlags.Slicing,
     delay: PROJECTILE_DELAY,
     cast: [SpriteAnim.Slice, SpriteAnim.Shoot, SpriteAnim.Attack],
   });
@@ -269,7 +269,7 @@ export default function registerGen1Moves(): void {
     power: 50,
     accuracy: 95,
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
-    flags: MoveFlags.Contact,
+    flags: MoveFlags.Contact | MoveFlags.Slicing,
     cast: [SpriteAnim.Slice, SpriteAnim.Strike, SpriteAnim.Attack],
   });
   registerMove(Moves.Substitute, {
@@ -327,7 +327,7 @@ export default function registerGen1Moves(): void {
     power: 70,
     accuracy: 100,
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
-    flags: MoveFlags.Contact,
+    flags: MoveFlags.Contact | MoveFlags.Slicing,
     cast: [SpriteAnim.Slice, SpriteAnim.Strike, SpriteAnim.Attack],
   });
   registerMove(Moves.Flamethrower, {
@@ -559,7 +559,7 @@ export default function registerGen1Moves(): void {
     power: 60,
     accuracy: 100,
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
-    flags: MoveFlags.Contact,
+    flags: MoveFlags.Contact | MoveFlags.Bite,
     cast: [SpriteAnim.Bite, SpriteAnim.Strike, SpriteAnim.Attack],
   });
   registerMove(Moves.Withdraw, {
@@ -912,7 +912,7 @@ export default function registerGen1Moves(): void {
     power: 80,
     accuracy: 100,
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
-    flags: 0,
+    flags: MoveFlags.Slicing,
     steps: 1,
     cast: [SpriteAnim.Shoot, SpriteAnim.Swing, SpriteAnim.Charge],
   });
@@ -938,7 +938,7 @@ export default function registerGen1Moves(): void {
     power: 80,
     accuracy: 90,
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
-    flags: MoveFlags.Contact,
+    flags: MoveFlags.Contact | MoveFlags.Bite,
     cast: [SpriteAnim.Bite, SpriteAnim.Strike, SpriteAnim.Attack],
   });
   registerMove(Moves.SuperFang, {
@@ -949,7 +949,7 @@ export default function registerGen1Moves(): void {
     pp: 10,
     accuracy: 90,
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
-    flags: MoveFlags.Contact,
+    flags: MoveFlags.Contact | MoveFlags.Bite,
     cast: [SpriteAnim.Bite, SpriteAnim.Strike, SpriteAnim.Attack],
   });
   registerMove(Moves.Peck, {

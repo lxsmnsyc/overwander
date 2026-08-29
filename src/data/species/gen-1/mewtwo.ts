@@ -26,7 +26,7 @@ export default function registerMewtwoSpecies(): void {
     },
     types: [Types.Psychic],
     abilities: [Abilities.Pressure],
-    hiddenAbility: Abilities.Unnerve,
+    hiddenAbilities: [Abilities.Unnerve, Abilities.MagicGuard, Abilities.Forewarn],
     eggGroups: [EggGroups.NoEggsDiscovered],
     genderRatio: undefined,
     catchRate: 3,

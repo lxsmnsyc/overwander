@@ -128,6 +128,15 @@ export interface DialogProps extends ParentProps {
    */
   description: JSX.Element;
   /**
+   * Whether the dialog may only be answered by its own buttons.
+   *
+   * The overlay and Escape close a dialog everywhere else, which is
+   * right for one that is being read and wrong for one that is being
+   * **decided**: a move offered on a level-up is offered once, and a
+   * stray press on the ground behind it threw the offer away
+   */
+  insistent?: boolean;
+  /**
    * Whether the heading is for the screen reader alone.
    *
    * A dialog that *is* one picture — the world map — has nothing to
@@ -328,7 +337,9 @@ export function Dialog(props: DialogProps): JSX.Element {
         <HeadlessDialog
           isOpen
           unmount={false}
-          onClose={close}
+          // An insistent dialog hears the overlay and Escape and does
+          // nothing about either: what closes it is a button on it
+          onClose={props.insistent === true ? () => undefined : close}
           // A dialog on its way out is still in the page for as long
           // as the fade lasts. This is what tells the two apart, and
           // what the Escape handler counts dialogs by

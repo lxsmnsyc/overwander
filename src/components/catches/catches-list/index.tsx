@@ -7,7 +7,7 @@ import {
 } from '../../../auth/caught';
 import CatchPicker, { type CatchOption, type CatchPickerProps } from '../catch-picker';
 import { useGame } from '../../app/game-context';
-import { useToast } from '../../styled';
+import { Button, useToast } from '../../styled';
 import CatchActions from './actions';
 
 export interface CatchesListProps {
@@ -20,12 +20,6 @@ export interface CatchesListProps {
    * nothing on it to press
    */
   viewOnly?: boolean;
-  /**
-   * Whether presses pick pokemon rather than open them. The button
-   * that turns it on is in the dialog's action row, which is the
-   * caller's, so the mode is the caller's too
-   */
-  selecting?: boolean;
 }
 
 /**
@@ -60,11 +54,18 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
    * thrown away every time the mode changed
    */
   const [query, setQuery] = createSignal('');
+  /**
+   * Whether presses pick pokemon rather than open them. It is the
+   * box's own rather than the panel's: what it changes is what a
+   * square does, so the button that turns it on stands beside the
+   * search rather than in the row of buttons that closes the panel
+   */
+  const [marking, setMarking] = createSignal(false);
 
   // Leaving select mode lets go of what was picked. Coming back to a
   // box still lit from last time is a selection nobody made
   createEffect(() => {
-    if (props.selecting !== true) {
+    if (!marking()) {
       setPicked([]);
     }
   });
@@ -124,7 +125,7 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
     settle(releaseCatches(going), (count) => `${count} let go`);
   };
 
-  const selecting = (): boolean => props.selecting === true && props.viewOnly !== true;
+  const selecting = (): boolean => marking() && props.viewOnly !== true;
 
   /**
    * The half of the picker's props that looking and picking disagree
@@ -169,6 +170,25 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
         onSearch={(typed) => {
           setQuery(typed);
         }}
+        // Marking a run of them and letting a run of them go, which is
+        // the one thing the box is for that opening them one at a time
+        // cannot do. Nobody marks somebody else's pokemon
+        aside={
+          props.viewOnly === true
+            ? undefined
+            : () => (
+                <Button
+                  class="shrink-0"
+                  tone={selecting() ? 'primary' : undefined}
+                  disabled={busy()}
+                  onClick={() => {
+                    setMarking(!marking());
+                  }}
+                >
+                  {selecting() ? 'Done' : 'Select'}
+                </Button>
+              )
+        }
         // Nothing more asked for while a round trip is in the air
         disabled={busy()}
         // A record changed under it — an evolution, a release, a lot

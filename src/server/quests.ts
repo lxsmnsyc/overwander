@@ -25,6 +25,7 @@ import { getSpeciesData } from '../data/species';
 import { grantNestEgg } from './eggs';
 import {
   type GiftClaim,
+  QUEST_GIFT,
   type StaffGift,
   claimMysteryGift,
   giftId,
@@ -182,7 +183,7 @@ function progressOf(
 
 /** The name under which one quest's one reward rides the gift rows */
 function questGiftId(uid: string, quest: Quests, at: number): string {
-  return giftId(`quest-${quest}-${at}`, uid);
+  return giftId(`${QUEST_GIFT}${quest}-${at}`, uid);
 }
 
 /** A reward as the staff-gift shape the gift machinery pays out */

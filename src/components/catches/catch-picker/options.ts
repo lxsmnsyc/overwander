@@ -1,3 +1,4 @@
+import type { JSX } from 'solid-js';
 import type { CaughtPokemon } from '../../../auth/caught';
 
 /**
@@ -90,6 +91,11 @@ interface CatchPickerCommonProps {
    */
   search?: string;
   onSearch?: (typed: string) => void;
+  /**
+   * What stands beside the box's search: the button that turns picking
+   * on, for a caller whose box is both things at once
+   */
+  aside?: () => JSX.Element;
   /**
    * Every pokemon the picker is offering, as it changes.
    *

@@ -108,12 +108,6 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
   const [lobby, setLobby] = createSignal<string | null>(null);
   /** The same, for the battle lobby a player is standing in */
   const [duelling, setDuelling] = createSignal<string | null>(null);
-  /**
-   * Whether the box is picking pokemon rather than opening them. It
-   * lives here for the reason the seller's side does: the button that
-   * turns it on is in the dialog's action row
-   */
-  const [selecting, setSelecting] = createSignal(false);
   const close = (): void => {
     game.setDialog(GameDialog.None);
   };
@@ -148,18 +142,8 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
             title={TITLES[GameDialog.Catches]}
             description={DESCRIPTIONS[GameDialog.Catches]}
           >
-            <CatchesList player={props.user.uid} selecting={selecting()} />
+            <CatchesList player={props.user.uid} />
             <DialogActions>
-              {/* Marking a run of them and letting a run of them go,
-                  which is the one thing the box is for that opening
-                  them one at a time cannot do */}
-              <Button
-                onClick={() => {
-                  setSelecting(!selecting());
-                }}
-              >
-                {selecting() ? 'Done' : 'Select'}
-              </Button>
               <Button onClick={close}>Close</Button>
             </DialogActions>
           </Dialog>

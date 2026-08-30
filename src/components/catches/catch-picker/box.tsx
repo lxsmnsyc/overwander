@@ -353,6 +353,7 @@ export default function PickerBox(
           under it already names the pokemon on its first line */}
       <CatchGrid
         entries={entries()}
+        aside={props.aside}
         search={query()}
         onSearch={(typed) => {
           props.onSearch(typed);

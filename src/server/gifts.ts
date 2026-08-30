@@ -84,6 +84,18 @@ export function giftId(gift: string, uid: string): string {
 }
 
 /**
+ * What a quest reward's row is named.
+ *
+ * Every family of gift says in its id who wrote it — `staff-` for one
+ * the dashboard wrote, `rotation-` for the window's own, this for a
+ * quest. It is a constant rather than a literal at each end because
+ * the ledger reads it back: `quests.ts` builds ids with it and
+ * `listAllGifts` leaves those ids out, and the two drifting apart
+ * would quietly fill the dashboard back up
+ */
+export const QUEST_GIFT = 'quest-';
+
+/**
  * One gift, ready to be written down
  */
 export interface Offer {
@@ -494,9 +506,16 @@ export interface GiftLedgerRow {
 }
 
 /**
- * Every gift ever written, newest first, for the dashboard: the
- * player's shelf hides what they have taken and what has run out,
- * and this hides nothing
+ * Every gift the game did not write itself, newest first, for the
+ * dashboard. A player's shelf hides what they have taken and what has
+ * run out; this hides only the quests.
+ *
+ * **Quest rewards are paid through these same rows**, one per quest
+ * per player, so a live game writes far more of them than staff ever
+ * will. Left in, they are the ledger: what somebody opens this page to
+ * find — what was given out by hand — is a handful of lines under
+ * thousands of automatic ones. The quest board is where a quest reward
+ * belongs, and it says so there already
  */
 export async function listAllGifts(now: number): Promise<GiftLedgerRow[]> {
   const rows = await getSql()`
@@ -504,6 +523,7 @@ export async function listAllGifts(now: number): Promise<GiftLedgerRow[]> {
            (select count(*)::int from gift_claims c where c.gift_id = g.id) as claims
     from gifts g
     left join profiles p on p.id = g.player
+    where g.id not like ${`${QUEST_GIFT}%`}
     order by g.offered_at desc
   `;
 

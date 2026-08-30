@@ -27,6 +27,44 @@ import loadBasicSprite from '../../canvas/basic-sprites';
 const DEFAULT_CELL = 32;
 
 /**
+ * How far inside its own edges a frame is sampled from, in sheet
+ * pixels.
+ *
+ * The sheets are packed edge to edge, so frame `n` ends where frame
+ * `n + 1` begins. Drawn at any size the picture was not cut at — a
+ * 128-pixel type sigil in a 24-pixel badge — the browser's sampling
+ * reaches across that seam and the neighbour bleeds in: the Fire badge
+ * carried a blue sliver of the Dragon sigil packed to its left. Half a
+ * pixel in from each edge is inside the seam at every scale, and half
+ * a pixel of a picture drawn at a fifth of its size is nothing to lose
+ */
+const INSET = 0.5;
+
+/** A frame's sampling rectangle, held inside its own edges */
+function insetOf(frame: BasicSpriteImage): {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  left: number;
+  top: number;
+} {
+  // A frame too thin to hold the inset is drawn whole: half of it is
+  // worse than a seam
+  const across = frame.width > 2 * INSET ? INSET : 0;
+  const down = frame.height > 2 * INSET ? INSET : 0;
+
+  return {
+    x: frame.x + across,
+    y: frame.y + down,
+    width: frame.width - across * 2,
+    height: frame.height - down * 2,
+    left: frame.trim[0] + across,
+    top: frame.trim[1] + down,
+  };
+}
+
+/**
  * How a sheet's picture is placed, in the numbers CSS wants.
  *
  * `background-size` is the **whole sheet** at the scale being drawn,
@@ -40,14 +78,16 @@ function backgroundOf(
   scale: number,
   rendering: NonNullable<JSX.CSSProperties['image-rendering']>,
 ): JSX.CSSProperties {
+  const held = insetOf(frame);
+
   return {
     position: 'absolute',
-    left: `${frame.trim[0] * scale}px`,
-    top: `${frame.trim[1] * scale}px`,
-    width: `${frame.width * scale}px`,
-    height: `${frame.height * scale}px`,
+    left: `${held.left * scale}px`,
+    top: `${held.top * scale}px`,
+    width: `${held.width * scale}px`,
+    height: `${held.height * scale}px`,
     'background-image': `url(${sprite.source})`,
-    'background-position': `${-frame.x * scale}px ${-frame.y * scale}px`,
+    'background-position': `${-held.x * scale}px ${-held.y * scale}px`,
     'background-size': `${sprite.data.width * scale}px ${sprite.data.height * scale}px`,
     'background-repeat': 'no-repeat',
     'image-rendering': rendering,
@@ -72,21 +112,22 @@ function fillingOf(
 ): JSX.CSSProperties {
   const share = (part: number, whole: number): string =>
     `${whole <= 0 ? 0 : (part / whole) * 100}%`;
+  const held = insetOf(frame);
 
   return {
     position: 'absolute',
-    left: share(frame.trim[0], frame.sourceWidth),
-    top: share(frame.trim[1], frame.sourceHeight),
-    width: share(frame.width, frame.sourceWidth),
-    height: share(frame.height, frame.sourceHeight),
+    left: share(held.left, frame.sourceWidth),
+    top: share(held.top, frame.sourceHeight),
+    width: share(held.width, frame.sourceWidth),
+    height: share(held.height, frame.sourceHeight),
     'background-image': `url(${sprite.source})`,
-    'background-position': `${share(frame.x, sprite.data.width - frame.width)} ${share(
-      frame.y,
-      sprite.data.height - frame.height,
+    'background-position': `${share(held.x, sprite.data.width - held.width)} ${share(
+      held.y,
+      sprite.data.height - held.height,
     )}`,
-    'background-size': `${share(sprite.data.width, frame.width)} ${share(
+    'background-size': `${share(sprite.data.width, held.width)} ${share(
       sprite.data.height,
-      frame.height,
+      held.height,
     )}`,
     'background-repeat': 'no-repeat',
     'image-rendering': rendering,

@@ -197,6 +197,10 @@ function TeachBody(
       <Dialog
         isOpen={open() && full()}
         onClose={close}
+        // Answered by its buttons alone. A level hands a move over
+        // once, and the overlay was close enough to the panel that a
+        // press meant to land on it threw the offer away
+        insistent
         title={`Teach ${taught()}?`}
         description={`${named()} already knows ${known().length}. Choose the one it forgets — only
           a level-up move ever comes back, and only from the Move Reminder.`}
@@ -236,6 +240,7 @@ function TeachBody(
       <Dialog
         isOpen={open() && !full()}
         onClose={close}
+        insistent
         title={`Teach ${taught()}?`}
         description={`${named()} has room for it. ${spent()} is spent teaching it.`}
       >

@@ -158,6 +158,8 @@ export default function Search(props: SearchProps): JSX.Element {
 
   let box: HTMLInputElement | undefined;
   let field: HTMLElement | undefined;
+  /** The guide in the corner, which is the one part of the field that is not the box */
+  let guide: HTMLElement | undefined;
   let waiting: ReturnType<typeof setTimeout> | undefined;
 
   const listId = createUniqueId();
@@ -377,15 +379,17 @@ export default function Search(props: SearchProps): JSX.Element {
           ref={(element: HTMLElement) => {
             field = element;
           }}
-          class="flex min-w-0 grow flex-wrap items-center gap-1 rounded-xl border-2 border-line
-          bg-paper px-2.5 py-1 focus-within:border-tide
+          class="relative flex min-w-0 grow flex-wrap items-center gap-1 rounded-xl border-2
+          border-line bg-paper py-1 pr-9 pl-2.5 focus-within:border-tide
           [&:has(:focus-visible)]:outline-2 [&:has(:focus-visible)]:outline-offset-2
           [&:has(:focus-visible)]:outline-tide"
           // The whole field is the box: a press anywhere but the
           // letters themselves lands in the box, which is also what
           // keeps the keyboard here while a badge is taken off
           onPointerDown={(event) => {
-            if (event.target !== box) {
+            const pressed = event.target as Node;
+
+            if (pressed !== box && guide?.contains(pressed) !== true) {
               event.preventDefault();
               box?.focus();
             }
@@ -418,8 +422,12 @@ export default function Search(props: SearchProps): JSX.Element {
             type="search"
             value={typed()}
             placeholder={terms().length > 0 ? undefined : props.placeholder}
+            // The browser's own clear is drawn at the inner right
+            // edge, which is where the guide now stands: two marks in
+            // one corner, one of them unlabelled. The badges carry
+            // their own crosses and the box empties as they go
             class="w-24 min-w-0 grow rounded-none border-0 bg-transparent p-0
-            focus-visible:outline-none"
+            focus-visible:outline-none [&::-webkit-search-cancel-button]:appearance-none"
             autocomplete="off"
             role={props.vocabulary == null ? undefined : 'combobox'}
             aria-autocomplete={props.vocabulary == null ? undefined : 'list'}
@@ -500,11 +508,26 @@ export default function Search(props: SearchProps): JSX.Element {
               }
             }}
           />
+          {/* The guide stands in the box, opposite the magnifier: the
+              two are what the box *is* and what it can be asked, and
+              an icon loose beside the field read as a third control on
+              the row. Held to the right edge rather than laid out with
+              the badges, so a field that has wrapped to two lines
+              keeps it where a reader last saw it */}
+          <Show when={props.vocabulary}>
+            {(vocabulary) => (
+              <span
+                ref={(element: HTMLElement) => {
+                  guide = element;
+                }}
+                class="absolute top-1/2 right-2 -translate-y-1/2"
+              >
+                <SearchGuide vocabulary={vocabulary()} example={props.example} />
+              </span>
+            )}
+          </Show>
         </span>
       </label>
-      <Show when={props.vocabulary}>
-        {(vocabulary) => <SearchGuide vocabulary={vocabulary()} example={props.example} />}
-      </Show>
       <Show when={props.vocabulary != null}>
         <Suggestions
           open={open()}

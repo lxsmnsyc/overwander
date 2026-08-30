@@ -1,4 +1,4 @@
-import { type Accessor, type JSX, Show, createMemo, createSignal } from 'solid-js';
+import { type Accessor, type JSX, Show, children, createMemo, createSignal } from 'solid-js';
 import { type CaughtPokemon, findDuplicates } from '../../auth/caught';
 import matchesCatch, { CATCH_VOCABULARY, orderCatches } from '../../auth/catch-search';
 import CatchBox, { type BoxEntry, boxSizeOf } from './CatchBox';
@@ -40,6 +40,14 @@ export interface CatchGridProps {
    */
   search?: string;
   onSearch?: (typed: string) => void;
+  /**
+   * What stands beside the search: the button that turns picking on,
+   * and whatever else acts on the box as a whole.
+   *
+   * A function rather than the markup itself, since it is drawn from a
+   * caller that rebuilds its own props as the box changes under it
+   */
+  aside?: () => JSX.Element;
 }
 
 export default function CatchGrid(props: CatchGridProps): JSX.Element {
@@ -64,13 +72,17 @@ export default function CatchGrid(props: CatchGridProps): JSX.Element {
   // to be the box rather than a constant beside it
   const shelf = createPager(matched, () => boxSizeOf(settings().boxColumns), 'Box');
 
+  // Resolved once: a prop holding markup is a getter, and reading it
+  // twice builds what it describes twice
+  const aside = children(() => props.aside?.());
+
   return (
     <div class="flex w-full flex-col gap-3">
       {/* Always drawn, however short the box is: a search that hides
           itself under a handful of pokemon takes its own box away when
           it narrows far enough */}
       <Show when={props.bare !== true}>
-        <Row>
+        <Row class="flex-nowrap items-center gap-2">
           <Search
             vocabulary={CATCH_VOCABULARY}
             example="type:fire"
@@ -84,6 +96,11 @@ export default function CatchGrid(props: CatchGridProps): JSX.Element {
               }
             }}
           />
+          {/* Whatever the caller keeps beside the search: the button
+              that turns picking on, most of the time. It belongs to the
+              box rather than to the panel around it, since what it
+              changes is what a square does */}
+          {aside()}
         </Row>
       </Show>
 

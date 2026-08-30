@@ -60,14 +60,21 @@ export default function setupFutureSight(battle: Battle): void {
 
   timer.stop();
 
-  // The cast queues the strike instead of landing one, so the shared
-  // hit resolver is kept out of it
-  battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Pre, (event) => {
+  // Nothing resolves on the cast: what a Future Sight does now is
+  // promise, and the promise is kept by the timer above
+  battle.on(BattleEvents.CheckUnitTriggerMoveEffect, EventPriority.Exact, (event) => {
+    if (event.success && event.move === Moves.FutureSight) {
+      event.success = false;
+    }
+  });
+
+  // The strike is queued where the move reached its target, which is
+  // the last thing that happens before the effect would have
+  battle.on(BattleEvents.UnitTriggerMoveTarget, AttackPriority.Post, (event) => {
     if (event.move !== Moves.FutureSight || event.target.type !== MoveTargetType.Unit) {
       return;
     }
 
-    event.disabled = true;
     pending.push({ source: event.source, target: event.target.unit, remaining: DELAY });
     timer.start();
   });

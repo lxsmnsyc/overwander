@@ -274,7 +274,7 @@ describe('Future Sight', () => {
     const user = createUnit(battle, teamA);
     const target = createUnit(battle, teamB);
 
-    user.triggerMoveEffect(Moves.FutureSight, unitTarget(target), 0);
+    user.triggerMoveTarget(Moves.FutureSight, unitTarget(target), 0);
     expect(target.health).toBe(160);
 
     battle.tick(turns(2));
@@ -442,11 +442,14 @@ describe('the moves that only work asleep', () => {
     const user = createUnit(battle, teamA);
     const target = createUnit(battle, teamB);
 
-    user.triggerMoveTarget(Moves.Snore, unitTarget(target), 0);
+    // Awake, the move never fires at all
+    user.triggerMove(Moves.Snore, unitTarget(target), 0);
+    battle.tick(MOVE_DELAY);
     expect(target.health).toBe(160);
 
     user.addStatus(Statuses.Sleeping, { type: 0 });
-    user.triggerMoveTarget(Moves.Snore, unitTarget(target), 0);
+    user.triggerMove(Moves.Snore, unitTarget(target), 0);
+    battle.tick(MOVE_DELAY);
     expect(target.health).toBeLessThan(160);
   });
 });

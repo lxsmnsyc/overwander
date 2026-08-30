@@ -91,8 +91,118 @@ In each provider's own console, the callback is Supabase's, not the site's:
 https://<ref>.supabase.co/auth/v1/callback
 ```
 
+That is worth sitting with, because it decides how many OAuth apps you need:
+**one per Supabase project, not one per hostname**. The player's browser goes to
+the provider, the provider returns to Supabase, and Supabase returns to whatever
+page the player left, which is why the site's own origins are configured in the
+redirect list above and nowhere else. Production and every preview deployment
+share one app.
+
 Signing in for the first time creates the profile row through the `auth.users`
 trigger. Nothing about that needs configuring.
+
+### GitHub, step by step
+
+**In GitHub.** Settings, Developer settings, OAuth Apps, New OAuth App. It sits
+under your account, or under an organisation if the project should belong to
+one:
+
+| Field                        | What to put there                          |
+| ---------------------------- | ------------------------------------------ |
+| Application name             | What the player is asked to authorise      |
+| Homepage URL                 | `https://your-domain`                      |
+| Authorization callback URL   | `https://<ref>.supabase.co/auth/v1/callback` |
+
+Create it, then **Generate a new client secret**. The secret is shown once.
+
+**In Supabase.** Authentication, Providers, GitHub. Turn it on, paste the client
+id and the secret, and save. The callback URL is printed on that same page,
+which is the one to copy into GitHub if you are doing this in the other order.
+
+**Then check it.** Sign in on the deployed site. A first sign-in shows GitHub's
+authorisation screen once and comes back signed in.
+
+Three things worth knowing about GitHub in particular:
+
+- **The email may be private.** GitHub only hands over an address if the account
+  has a verified one, and Supabase asks for the `user:email` scope to reach it.
+  An account with no verified address is refused rather than let in without one.
+- **The display name is GitHub's `name`, not the login.** An account that has
+  left its name blank arrives with none, and the profile trigger writes
+  **Trainer** instead. The player renames themselves in the game, so this is a
+  starting point rather than a problem.
+- **The avatar is ignored.** A trainer is seen as the overworld character they
+  earned, so nothing reads the provider's picture.
+
+### Google, step by step
+
+Same shape, more paperwork: Google wants to know what the app is before it will
+let strangers sign in to it.
+
+**In Google Cloud.** Pick a project or make one, then go to the OAuth consent
+screen, which newer consoles file under Google Auth Platform:
+
+| Field                   | What to put there                                     |
+| ----------------------- | ------------------------------------------------------ |
+| User type or audience   | **External**, unless everyone signing in is in one Workspace |
+| App name, support email | What the player is shown on the consent screen         |
+| Developer contact       | Where Google writes to you about the app               |
+| Scopes                  | The default three: `openid`, `email`, `profile`        |
+
+Those scopes are the non-sensitive ones, so nothing here needs Google's
+verification review. Asking for more does.
+
+Then Credentials, Create credentials, **OAuth client ID**, application type
+**Web application**:
+
+| Field                          | What to put there                            |
+| ------------------------------ | -------------------------------------------- |
+| Authorised redirect URI        | `https://<ref>.supabase.co/auth/v1/callback` |
+| Authorised JavaScript origins  | Nothing. The game uses the redirect flow, not One Tap |
+
+Creating it shows the client id and secret.
+
+**In Supabase.** Authentication, Providers, Google. Turn it on, paste the id and
+the secret, save.
+
+**Then publish it.** An app left in **Testing** only admits the accounts listed
+as test users, and hands out sessions that expire after seven days, which looks
+exactly like players being randomly signed out. Publishing to Production is a
+button on the consent screen, and with only the default scopes it takes effect
+immediately.
+
+Google is the easier of the two to live with once it is up: every account has a
+verified address, and the name comes through, so nobody arrives called
+**Trainer** unless they signed in with GitHub.
+
+### Signing in with a provider locally
+
+The local stack runs its own auth server, so it needs its own OAuth app: a
+second one whose callback is `http://127.0.0.1:54321/auth/v1/callback`. Most of
+the time this is not worth doing, since a development build draws the email and
+password form and `pnpm seed` leaves two accounts ready to use.
+
+If you do want it, add the provider to
+[`supabase/config.toml`](../supabase/config.toml) and keep the secret out of the
+file:
+
+```toml
+[auth.external.github]
+enabled = true
+client_id = "env(SUPABASE_AUTH_EXTERNAL_GITHUB_CLIENT_ID)"
+secret = "env(SUPABASE_AUTH_EXTERNAL_GITHUB_SECRET)"
+
+[auth.external.google]
+enabled = true
+client_id = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID)"
+secret = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET)"
+```
+
+Put the variables in `.env`, and restart the stack with `pnpm db:stop && pnpm db`
+so the auth container picks them up. While you are in that file, note that
+`site_url` and `additional_redirect_urls` still name port **4321** and the dev
+server runs on **3000**: a local sign-in comes back nowhere until one of them is
+corrected.
 
 ## 4. Make the Vercel project
 
@@ -122,7 +232,7 @@ change to either needs a redeploy rather than a restart:
 | Variable                 | What to put there                                  |
 | ------------------------ | -------------------------------------------------- |
 | `VITE_SUPABASE_URL`      | `https://<ref>.supabase.co`                        |
-| `VITE_SUPABASE_ANON_KEY` | The project's anon key                             |
+| `VITE_SUPABASE_ANON_KEY` | The project's **publishable** or **anon** key      |
 | `VITE_WORLD_SEED`        | Any string, and then never touched again           |
 
 The **server's** variables are secret and are read at run time:
@@ -131,7 +241,7 @@ The **server's** variables are secret and are read at run time:
 | --------------------------- | --------------------------------------------------------------------- |
 | `SUPABASE_DB_URL`           | The **transaction pooler** URI, port **6543**, with `?sslmode=require` |
 | `SUPABASE_URL`              | `https://<ref>.supabase.co`                                           |
-| `SUPABASE_SERVICE_ROLE_KEY` | The service-role key                                                  |
+| `SUPABASE_SERVICE_ROLE_KEY` | The project's **secret** or **service_role** key                      |
 | `SUPABASE_JWT_SECRET`       | **Left empty**                                                        |
 
 Three of those want a word:
@@ -152,6 +262,45 @@ Three of those want a word:
 
 If you give preview deployments their own Supabase project, give them their own
 values here too, scoped to the Preview environment.
+
+### Which key is which
+
+Supabase hands out two keys per project, and has two generations of names for
+them. The variable names here predate the newer pair, so read them as roles
+rather than as formats: either generation works as the value, since both are
+passed to the client as a string.
+
+| The variable                | Newer key                | Older key      | What it is                                          |
+| --------------------------- | ------------------------ | -------------- | --------------------------------------------------- |
+| `VITE_SUPABASE_ANON_KEY`    | **Publishable**, `sb_publishable_...` | **anon**, a JWT | Public. Bound by row-level security |
+| `SUPABASE_SERVICE_ROLE_KEY` | **Secret**, `sb_secret_...`           | **service_role**, a JWT | Secret. Ignores row-level security |
+
+Both are on the project's API settings page, and `supabase status` prints the
+local stack's.
+
+**The anon or publishable key is meant to be in the browser.** It is in the
+JavaScript bundle of every Supabase app, this one included. It identifies the
+project and grants nothing on its own: what a player may read is decided by the
+policies in [Security](database/security.md) and by the session token they
+carry. Restricting it would break the game rather than protect it.
+
+**The service_role or secret key is the opposite of that.** It bypasses every
+policy and can read or write any row, so it belongs on the server and nowhere
+else. Never give it a `VITE_` name: those are inlined into the browser bundle at
+build time, and publishing one hands the project away.
+
+This game asks little of it. Game data does not travel over that key at all:
+every privileged write goes over the owner connection in
+[`src/server/db.ts`](../src/server/db.ts), which is a separate bypass.
+[`src/server/admin-api.ts`](../src/server/admin-api.ts) is the only module that
+uses the key, and only for **auth admin calls**: finding a player by email, and
+the account pages of the admin dashboard. Accounts live in `auth.users`, which
+nothing else may ask. Leave it unset and those calls refuse while the rest of
+the game runs, which makes it a reasonable thing to leave out of a preview
+environment.
+
+The newer keys are worth preferring where a project offers them: several may
+exist at once, and one can be revoked or rotated on its own.
 
 ## 6. Deploy, then check it
 
@@ -221,6 +370,9 @@ holding a local stack's secret.
 
 **Connections exhausted, or timeouts under load.** The direct connection is
 being used instead of the pooler. It is port 6543, transaction mode.
+
+**Looking a player up by email refuses, everything else works.**
+`SUPABASE_SERVICE_ROLE_KEY` is unset. Only the auth admin calls need it.
 
 **A player's screen never updates until reload.** Realtime is not reaching them.
 The publication is created by the migrations, so the usual cause is a schema

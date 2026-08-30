@@ -61,6 +61,19 @@ export default defineConfig({
   },
   test: {
     /**
+     * The battle engine and the modules that field it are
+     * `client-only`: they are played in a browser and nothing on the
+     * server replays them. Vitest is neither browser nor server, and
+     * the marker's own body throws, so it is resolved to nothing for
+     * the tests that exercise the engine directly
+     */
+    alias: [
+      {
+        find: /^client-only$/,
+        replacement: new URL('./test/stubs/client-only.ts', import.meta.url).pathname,
+      },
+    ],
+    /**
      * `test/rls` needs the local Supabase stack and clears it between
      * cases — run inside `pnpm test` it fails on a machine with no
      * stack, and run beside the e2e suite it deletes the accounts the

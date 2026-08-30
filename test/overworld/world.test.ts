@@ -77,11 +77,10 @@ import {
   RAID_BOSS_LEVEL,
   SHADOW_RAID_REWARD_LEVEL,
   canStageBoss,
-  collectAftermath,
-  createRaidBattle,
   createRaidBossSnapshot,
   getBossMoves,
 } from '../../src/overworld/raid';
+import { collectAftermath, createRaidBattle } from '../../src/overworld/raid-battle';
 import {
   CHAMPION_PARTY_LEVELS,
   ELITE_PARTY_LEVELS,

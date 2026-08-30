@@ -8,7 +8,7 @@ import { MoveTargetFlags, type Moves } from '../data/ids/moves';
 import { Species } from '../data/ids/species';
 import { getMoveData } from '../data/moves';
 import { deriveGender, deriveNature, deriveSize } from '../overworld/encounter';
-import { fieldTeams } from '../overworld/raid';
+import { fieldTeams } from '../overworld/raid-battle';
 import { UNLIMITED_BATTLE_LIMITS } from '../data/constants/battle-limits';
 import { BattleEvents, type MoveTarget, MoveTargetType } from './events';
 import { BattleModes } from './core';

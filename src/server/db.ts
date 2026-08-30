@@ -1,5 +1,9 @@
 import 'server-only';
 import postgres from 'postgres';
+// Imported for its side effect: the privileged side reads species,
+// moves, items and abilities synchronously, so it takes all of them
+// at load rather than awaiting them per call
+import './game-data';
 // Imported for its side effect: the server lives in UTC before
 // anything reads a clock
 import './timezone';

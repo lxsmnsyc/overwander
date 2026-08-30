@@ -1,3 +1,8 @@
+// The engine runs in a browser and nowhere else: a fight is played,
+// watched and settled on the client, and the server keeps what it came
+// to rather than replaying it. The marker is what keeps the whole of
+// it — every mechanic, ability, item and move effect — out of the
+// server bundle
 import setupAbilities from './abilities';
 import setupAI from './ai';
 import Battle, { BattleModes } from './core';

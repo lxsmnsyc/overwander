@@ -1,4 +1,5 @@
 import { Title } from '@solidjs/meta';
+import { clientOnly } from '@solidjs/start';
 import { type JSX, type ParentProps, Show, createSignal, from } from 'solid-js';
 import { AuctionLot } from '../auth/auctions';
 import { type Profile, watchProfile } from '../auth/profile';
@@ -7,7 +8,7 @@ import { useAuth } from '../auth/context';
 import type { PlayerIdentity } from '../auth/user';
 import AuctionDialog from '../components/auctions/AuctionDialog';
 import AuctionTab from '../components/auctions/auction-tab';
-import BattleView from '../components/battle/battle-view';
+import BattleData from '../components/app/battle-data';
 import CatchDialog from '../components/catches/catch-dialog';
 import CatchesList from '../components/catches/catches-list';
 import GameMenu from '../components/app/GameMenu';
@@ -29,6 +30,16 @@ import TradeOfferDialog from '../components/trades/TradeOfferDialog';
 import { ThemeToggle } from '../components/app/theme';
 import WorldMapDialog from '../components/overworld/WorldMapDialog';
 import { Button, Dialog, DialogActions, Note } from '../components/styled';
+
+/**
+ * The fight, fetched when there is one, and only in a browser.
+ *
+ * It pulls the engine, its canvas and the registries behind them: the
+ * largest thing in the app, none of it read to walk around, and none
+ * of it able to run on the server — a battle is played rather than
+ * rendered
+ */
+const BattleView = clientOnly(async () => import('../components/battle/battle-view'));
 
 /**
  * The game is the world.
@@ -142,7 +153,9 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
             title={TITLES[GameDialog.Catches]}
             description={DESCRIPTIONS[GameDialog.Catches]}
           >
-            <CatchesList player={props.user.uid} />
+            <BattleData>
+              <CatchesList player={props.user.uid} />
+            </BattleData>
             <DialogActions>
               <Button onClick={close}>Close</Button>
             </DialogActions>
@@ -157,7 +170,9 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
             title={TITLES[GameDialog.Pokedex]}
             description={DESCRIPTIONS[GameDialog.Pokedex]}
           >
-            <PokedexTab player={props.user.uid} />
+            <BattleData>
+              <PokedexTab player={props.user.uid} />
+            </BattleData>
             <DialogActions>
               <Button onClick={close}>Close</Button>
             </DialogActions>
@@ -171,7 +186,9 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
             title={TITLES[GameDialog.Inventory]}
             description={DESCRIPTIONS[GameDialog.Inventory]}
           >
-            <InventoryList player={props.user.uid} />
+            <BattleData>
+              <InventoryList player={props.user.uid} />
+            </BattleData>
             <DialogActions>
               <Button onClick={close}>Close</Button>
             </DialogActions>
@@ -187,7 +204,9 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
             title={TITLES[GameDialog.Gifts]}
             description={DESCRIPTIONS[GameDialog.Gifts]}
           >
-            <GiftsTab />
+            <BattleData>
+              <GiftsTab />
+            </BattleData>
             <DialogActions>
               <Button onClick={close}>Close</Button>
             </DialogActions>
@@ -203,7 +222,9 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
             title={TITLES[GameDialog.Quests]}
             description={DESCRIPTIONS[GameDialog.Quests]}
           >
-            <QuestsTab isOpen={showing(GameDialog.Quests)} onClose={close} />
+            <BattleData>
+              <QuestsTab isOpen={showing(GameDialog.Quests)} onClose={close} />
+            </BattleData>
             <DialogActions>
               <Button onClick={close}>Close</Button>
             </DialogActions>
@@ -414,7 +435,11 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
     >
       {/* A battle is the whole page while it is running, the same way
           the world is when one is not */}
-      {(active) => <BattleView active={active} />}
+      {(active) => (
+        <BattleData>
+          <BattleView active={active} />
+        </BattleData>
+      )}
     </Show>
   );
 }

@@ -27,8 +27,8 @@ import {
   collectAftermath,
   countDefeated,
   createRaidBattle,
-} from '../../../overworld/raid';
-import { createTrainerBattle } from '../../../overworld/rocket';
+} from '../../../overworld/raid-battle';
+import { createTrainerBattle } from '../../../overworld/rocket-battle';
 import BattleField from '../BattleField';
 import VerdictDialog from './VerdictDialog';
 import { type Contribution, type SideSummary, readContributions, readSides } from './summary';

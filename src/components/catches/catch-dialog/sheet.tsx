@@ -1,4 +1,5 @@
 import { isHoldable } from './describe';
+import BattleData from '../../app/battle-data';
 import BattleSection from './sections/BattleSection';
 import EvolutionSection from './sections/EvolutionSection';
 import HistorySection from './sections/HistorySection';
@@ -876,23 +877,26 @@ export function CatchSheetBody(
             flight. Suspending instead tears the panel down and takes
             the page with it: marking a favorite would blink the whole
             screen for the length of one round trip */}
-        <Show
-          when={view()}
-          fallback={
-            <Note>{props.detail.latest == null ? 'Loading catch…' : 'No such catch.'}</Note>
-          }
-        >
-          {(loaded) => (
-            <>
-              {/* Whether anything is holding the record still. A lock
+        {/* The sheet reads moves, held items and the ability, so it
+            waits for the registries the overworld does not carry */}
+        <BattleData fallback={<Note>Loading catch…</Note>}>
+          <Show
+            when={view()}
+            fallback={
+              <Note>{props.detail.latest == null ? 'Loading catch…' : 'No such catch.'}</Note>
+            }
+          >
+            {(loaded) => (
+              <>
+                {/* Whether anything is holding the record still. A lock
                   and a favorite say so through the Actions menu, which
                   is where they are turned on and off; a raid is the one
                   nobody chose, so it is the one worth a sentence */}
-              <Show when={owned() != null && props.fighting.latest === true}>
-                <Meta class="text-center">In a raid — nothing about it can be changed.</Meta>
-              </Show>
+                <Show when={owned() != null && props.fighting.latest === true}>
+                  <Meta class="text-center">In a raid — nothing about it can be changed.</Meta>
+                </Show>
 
-              {/* The sheet itself, read down the middle: the pokemon
+                {/* The sheet itself, read down the middle: the pokemon
                   first, then what it is, then what it can do, then
                   where it has been.
 
@@ -901,11 +905,11 @@ export function CatchSheetBody(
                   without a line between them a player scrolling it
                   cannot tell where the moves stop and the abilities
                   start */}
-              <div
-                class="flex flex-col items-center gap-4 text-center [&>section]:w-full
+                <div
+                  class="flex flex-col items-center gap-4 text-center [&>section]:w-full
                     [&>section]:border-t [&>section]:border-line-soft [&>section]:pt-4"
-              >
-                {/* What the record is about, walking. An egg is drawn
+                >
+                  {/* What the record is about, walking. An egg is drawn
                     as an egg: what is inside it is not the player's to
                     see until it hatches.
 
@@ -915,76 +919,76 @@ export function CatchSheetBody(
                     bar the moment anything scrolled — and the space
                     that was above the pokemon is better spent under
                     the header than between the pokemon and its name */}
-                <PortraitSection caught={loaded()} named={named()} />
+                  <PortraitSection caught={loaded()} named={named()} />
 
-                <Row class="justify-center">
-                  {/* The level and the thing that raises it are one
+                  <Row class="justify-center">
+                    {/* The level and the thing that raises it are one
                       control, not a label beside a button: what a
                       player wants to know is where it stands and what
                       the next step costs, and those are one thought.
                       For a pokemon that is nobody's to raise — an egg,
                       somebody else's — it is only the label */}
-                  <Show
-                    when={owned() != null && !isEgg(loaded())}
-                    fallback={<Badge tone="leaf">Lv. {loaded().level}</Badge>}
-                  >
-                    <Button
-                      tone="primary"
-                      disabled={
-                        (props.candies.latest ?? 0) < getCandyCost(loaded()) ||
-                        loaded().level >= MAX_LEVEL ||
-                        frozen()
-                      }
-                      onClick={feedCandy}
+                    <Show
+                      when={owned() != null && !isEgg(loaded())}
+                      fallback={<Badge tone="leaf">Lv. {loaded().level}</Badge>}
                     >
-                      {loaded().level >= MAX_LEVEL
-                        ? `Lv. ${loaded().level} — at the cap`
-                        : `Lv. ${loaded().level} → ${loaded().level + 1} (${getCandyCost(
-                            loaded(),
-                          )})`}
-                    </Button>
-                  </Show>
-                  <Show when={!isEgg(loaded())}>
-                    <Badge>{NATURE_NAMES[loaded().nature]}</Badge>
-                  </Show>
-                  <Badge tone="gold">
-                    {props.candies.latest ?? 0}{' '}
-                    {(props.candies.latest ?? 0) === 1 ? 'candy' : 'candies'}
-                  </Badge>
-                </Row>
+                      <Button
+                        tone="primary"
+                        disabled={
+                          (props.candies.latest ?? 0) < getCandyCost(loaded()) ||
+                          loaded().level >= MAX_LEVEL ||
+                          frozen()
+                        }
+                        onClick={feedCandy}
+                      >
+                        {loaded().level >= MAX_LEVEL
+                          ? `Lv. ${loaded().level} — at the cap`
+                          : `Lv. ${loaded().level} → ${loaded().level + 1} (${getCandyCost(
+                              loaded(),
+                            )})`}
+                      </Button>
+                    </Show>
+                    <Show when={!isEgg(loaded())}>
+                      <Badge>{NATURE_NAMES[loaded().nature]}</Badge>
+                    </Show>
+                    <Badge tone="gold">
+                      {props.candies.latest ?? 0}{' '}
+                      {(props.candies.latest ?? 0) === 1 ? 'candy' : 'candies'}
+                    </Badge>
+                  </Row>
 
-                {/* An egg has no evolution to offer, so the section
+                  {/* An egg has no evolution to offer, so the section
                     that would hold one holds the way out of the shell
                     instead: how far along the walk is, and the button
                     that ends it */}
-                <Show when={isEgg(loaded())}>
-                  <DialogSection title="Hatching">
-                    <div class="h-2 overflow-hidden rounded-full bg-line-soft">
-                      <div
-                        class="h-full rounded-full bg-leaf transition-[width]"
-                        style={{
-                          width: `${Math.min(100, (loaded().steps / Math.max(1, loaded().hatchSteps)) * 100)}%`,
-                        }}
-                      />
-                    </div>
-                    <Note>
-                      {loaded().steps} / {loaded().hatchSteps} steps
-                      {props.buddy.latest === props.catchId
-                        ? '.'
-                        : ' — it only moves while it is the one being carried.'}
-                    </Note>
-                    <Show when={owned()}>
-                      <Row class="justify-center">
-                        <Button tone="primary" disabled={!canHatch(loaded())} onClick={hatch}>
-                          Hatch it
-                        </Button>
-                      </Row>
-                    </Show>
-                  </DialogSection>
-                </Show>
+                  <Show when={isEgg(loaded())}>
+                    <DialogSection title="Hatching">
+                      <div class="h-2 overflow-hidden rounded-full bg-line-soft">
+                        <div
+                          class="h-full rounded-full bg-leaf transition-[width]"
+                          style={{
+                            width: `${Math.min(100, (loaded().steps / Math.max(1, loaded().hatchSteps)) * 100)}%`,
+                          }}
+                        />
+                      </div>
+                      <Note>
+                        {loaded().steps} / {loaded().hatchSteps} steps
+                        {props.buddy.latest === props.catchId
+                          ? '.'
+                          : ' — it only moves while it is the one being carried.'}
+                      </Note>
+                      <Show when={owned()}>
+                        <Row class="justify-center">
+                          <Button tone="primary" disabled={!canHatch(loaded())} onClick={hatch}>
+                            Hatch it
+                          </Button>
+                        </Row>
+                      </Show>
+                    </DialogSection>
+                  </Show>
 
-                <Show when={!isEgg(loaded())}>
-                  {/* Everything it could ever become, with the ones
+                  <Show when={!isEgg(loaded())}>
+                    {/* Everything it could ever become, with the ones
                       it cannot become yet left in and refused. A row
                       that is out of reach says what it is waiting for,
                       so the sheet is also where a player finds out
@@ -995,115 +999,116 @@ export function CatchSheetBody(
                       not evolve": most of a full-grown box would carry
                       a ruled-off paragraph saying nothing was going to
                       happen */}
-                  <EvolutionSection
-                    options={props.evolutions.latest}
-                    owned={owned() != null}
-                    frozen={frozen()}
-                    dexKnows={dexKnows}
-                    onEvolve={evolve}
-                  />
+                    <EvolutionSection
+                      options={props.evolutions.latest}
+                      owned={owned() != null}
+                      frozen={frozen()}
+                      dexKnows={dexKnows}
+                      onEvolve={evolve}
+                    />
 
-                  {/* Three readings of the same six numbers: what the
+                    {/* Three readings of the same six numbers: what the
                       pokemon has, what it was born with, and what has
                       been trained into it. They are tabs rather than
                       three lists, because a player compares one stat
                       across them rather than reading all eighteen */}
-                  <StatsSection
-                    caught={loaded()}
-                    owned={owned() != null}
-                    frozen={frozen()}
-                    onTrain={train}
-                  />
+                    <StatsSection
+                      caught={loaded()}
+                      owned={owned() != null}
+                      frozen={frozen()}
+                      onTrain={train}
+                    />
 
-                  {/* What it brings to a fight, in one row: what it
+                    {/* What it brings to a fight, in one row: what it
                       knows, what it is, and what it carries. They were
                       three sections down a long sheet, which put the
                       three answers to "can it win this" three scrolls
                       apart */}
-                  <BattleSection
-                    caught={loaded()}
-                    owned={owned() != null}
-                    frozen={frozen()}
-                    holdables={holdables()}
-                    bag={props.bag.latest}
-                    giving={panel() === 'give'}
-                    onGiving={(open) => {
-                      setPanel(open ? 'give' : null);
-                    }}
-                    onGive={(item) => {
-                      moveItem(item, true);
-                    }}
-                    onTake={(at) => {
-                      moveItem(loaded().items[at], false);
-                    }}
-                  />
-                </Show>
+                    <BattleSection
+                      caught={loaded()}
+                      owned={owned() != null}
+                      frozen={frozen()}
+                      holdables={holdables()}
+                      bag={props.bag.latest}
+                      giving={panel() === 'give'}
+                      onGiving={(open) => {
+                        setPanel(open ? 'give' : null);
+                      }}
+                      onGive={(item) => {
+                        moveItem(item, true);
+                      }}
+                      onTake={(at) => {
+                        moveItem(loaded().items[at], false);
+                      }}
+                    />
+                  </Show>
 
-                {/* Whose hands it has passed through, oldest first, and
+                  {/* Whose hands it has passed through, oldest first, and
                     where it came from before any of them */}
-                <HistorySection
-                  caught={loaded()}
-                  player={auth.user()?.uid ?? ''}
-                  nameOf={describeOwner}
-                  onTrainer={props.onTrainer}
-                />
+                  <HistorySection
+                    caught={loaded()}
+                    player={auth.user()?.uid ?? ''}
+                    nameOf={describeOwner}
+                    onTrainer={props.onTrainer}
+                  />
 
-                {/* There is no undoing it, so it takes two presses —
+                  {/* There is no undoing it, so it takes two presses —
                     and whatever it is holding comes back to the bag,
                     along with the candy the pokemon was worth. The
                     second press names that candy: what a player gets
                     for it is part of the decision, and a number that
                     only turns up afterwards is a number they had to
                     make the decision without */}
-                <Show when={owned()}>
-                  <DialogSection>
-                    <Row class="justify-center">
-                      <Button
-                        tone="danger"
-                        // A favorite and a locked one are both marks a
-                        // player put on the record to stop exactly
-                        // this, so the button is dead rather than
-                        // pressable and refused
-                        disabled={
-                          props.fighting.latest === true ||
-                          props.onlyOne() === true ||
-                          isFavorite(loaded()) ||
-                          isGuarded(loaded())
-                        }
-                        onClick={release}
-                      >
-                        {releasing()
-                          ? `Let it go for ${getCatchCandy(loaded().species)} candy?`
-                          : 'Release'}
-                      </Button>
-                      <Show when={releasing()}>
+                  <Show when={owned()}>
+                    <DialogSection>
+                      <Row class="justify-center">
                         <Button
-                          onClick={() => {
-                            setReleasing(false);
-                          }}
+                          tone="danger"
+                          // A favorite and a locked one are both marks a
+                          // player put on the record to stop exactly
+                          // this, so the button is dead rather than
+                          // pressable and refused
+                          disabled={
+                            props.fighting.latest === true ||
+                            props.onlyOne() === true ||
+                            isFavorite(loaded()) ||
+                            isGuarded(loaded())
+                          }
+                          onClick={release}
                         >
-                          Keep it
+                          {releasing()
+                            ? `Let it go for ${getCatchCandy(loaded().species)} candy?`
+                            : 'Release'}
                         </Button>
+                        <Show when={releasing()}>
+                          <Button
+                            onClick={() => {
+                              setReleasing(false);
+                            }}
+                          >
+                            Keep it
+                          </Button>
+                        </Show>
+                      </Row>
+                      <Show when={isFavorite(loaded())}>
+                        <Meta>A favorite cannot be released. Unfavorite it first.</Meta>
                       </Show>
-                    </Row>
-                    <Show when={isFavorite(loaded())}>
-                      <Meta>A favorite cannot be released. Unfavorite it first.</Meta>
-                    </Show>
-                    <Show when={isGuarded(loaded())}>
-                      <Meta>A locked pokemon cannot be released. Unlock it first.</Meta>
-                    </Show>
-                    {/* Nothing takes the last one: a player with an
+                      <Show when={isGuarded(loaded())}>
+                        <Meta>A locked pokemon cannot be released. Unlock it first.</Meta>
+                      </Show>
+                      {/* Nothing takes the last one: a player with an
                           empty collection has no way back into the
                           game except the gift that would replace it */}
-                    <Show when={props.onlyOne()}>
-                      <Meta>The only pokemon you have cannot be released.</Meta>
-                    </Show>
-                  </DialogSection>
-                </Show>
-              </div>
-            </>
-          )}
-        </Show>
+                      <Show when={props.onlyOne()}>
+                        <Meta>The only pokemon you have cannot be released.</Meta>
+                      </Show>
+                    </DialogSection>
+                  </Show>
+                </div>
+              </>
+            )}
+          </Show>
+        </BattleData>
         <DialogActions>
           <Button
             onClick={() => {

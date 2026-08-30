@@ -1,4 +1,5 @@
 import { type JSX, Suspense, createResource } from 'solid-js';
+import BattleData from '../../app/battle-data';
 import { getCandyCount } from '../../../auth/candy';
 import { getSpeciesDexEntry } from '../../../auth/pokedex';
 import type { Species } from '../../../data/ids/species';
@@ -106,7 +107,11 @@ export default function DexEntryDialog(props: DexEntryDialogProps): JSX.Element 
       description="One species in full: what it is, where it lives, and everything it can learn."
     >
       <Suspense fallback={<Note>Reading the dex…</Note>}>
-        <DexEntryBody {...props} dex={dex} candy={candy} female={female} />
+        {/* An entry lists what it can learn and what it can hold, so
+            it waits for the two registries the walk does not */}
+        <BattleData fallback={<Note>Reading the dex…</Note>}>
+          <DexEntryBody {...props} dex={dex} candy={candy} female={female} />
+        </BattleData>
       </Suspense>
 
       <DialogActions>

@@ -1,6 +1,6 @@
 import { BattleModes } from '../../../battle/core';
 import type Team from '../../../battle/team';
-import type { RaidBattle } from '../../../overworld/raid';
+import type { RaidBattle } from '../../../overworld/raid-battle';
 import type { Species } from '../../../data/ids/species';
 import { getSpeciesData } from '../../../data/species';
 

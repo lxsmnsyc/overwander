@@ -29,24 +29,9 @@ export const BOSS_HEALTH_SCALE = 10;
  */
 export const BOSS_STAT_SCALE = 2;
 
-/**
- * Moves a boss is never staged with.
- *
- * **Transform** copies a player, which throws away the raid-sized
- * health pool the fight is built around. **Metronome**, **Mirror
- * Move** and **Mimic** are each a way back to it, so banning them is
- * simpler than teaching three kinds of copy what a boss may not
- * become.
- *
- * The list is filtered out of the boss' learnset as the raid is
- * staged, so the unit never has one to cast
- */
-export const BANNED_BOSS_MOVES = new Set<Moves>([
-  Moves.Transform,
-  Moves.Metronome,
-  Moves.MirrorMove,
-  Moves.Mimic,
-]);
+// The list a raid is staged against, kept with the data it filters
+// rather than with the ability that made it necessary
+export { default as BANNED_BOSS_MOVES } from '../../data/overworld/boss-moves';
 
 /**
  * Statuses a Boss shrugs off unless self-inflicted (e.g. Rest).

@@ -49,6 +49,10 @@ function Gate(props: ParentProps<{ uid: string }>): JSX.Element {
   const allowed = (role: string): boolean =>
     sectionFor(location.pathname).runs !== true || runsTheGame(role);
 
+  // Undefined until the first read answers, null when it answered
+  // with nothing. The two look alike and are not: one is a row on its
+  // way, the other is a session whose account the store has no row
+  // for, and waiting on the second never ends
   const profile = from<Profile | null>((set) =>
     watchProfile(props.uid, (record) => {
       set(record);
@@ -57,46 +61,58 @@ function Gate(props: ParentProps<{ uid: string }>): JSX.Element {
 
   return (
     <Show
-      when={profile()}
+      when={profile() !== undefined}
       fallback={
         <Standing title="Loading">
           <Note>Reading the account…</Note>
         </Standing>
       }
     >
-      {(loaded) => (
-        <Show
-          when={isStaff(loaded().role) && !loaded().banned}
-          fallback={
-            <Standing title="Not for this account">
-              <Note>
-                The dashboard is staff only, and this account is{' '}
-                {loaded().banned ? 'banned' : 'a player'}. <A href="/">Back to the overworld.</A>
-              </Note>
-            </Standing>
-          }
-        >
-          {/* The dashboard reuses the game's own panels — the auction
+      <Show
+        when={profile()}
+        fallback={
+          <Standing title="No account">
+            <Note>
+              This session is signed in as somebody the store has never heard of.{' '}
+              <A href="/">Sign in again from the game.</A>
+            </Note>
+          </Standing>
+        }
+      >
+        {(loaded) => (
+          <Show
+            when={isStaff(loaded().role) && !loaded().banned}
+            fallback={
+              <Standing title="Not for this account">
+                <Note>
+                  The dashboard is staff only, and this account is{' '}
+                  {loaded().banned ? 'banned' : 'a player'}. <A href="/">Back to the overworld.</A>
+                </Note>
+              </Standing>
+            }
+          >
+            {/* The dashboard reuses the game's own panels — the auction
               board, the gift shelf — and those read where the player
               is and open sheets through the game's state, so the
               provider they expect stands here too */}
-          <GameProvider>
-            <StaffProvider uid={props.uid} role={() => loaded().role}>
-              <AdminShell nickname={loaded().nickname}>
-                {/* A section a moderator is not offered is a section
+            <GameProvider>
+              <StaffProvider uid={props.uid} role={() => loaded().role}>
+                <AdminShell nickname={loaded().nickname}>
+                  {/* A section a moderator is not offered is a section
                     they cannot open by typing its address either. The
                     server refuses them anyway; this is so the refusal
                     reads as one rather than as a screen whose buttons
                     all fail */}
-                <Show when={allowed(loaded().role)} fallback={<Note>{REFUSED}</Note>}>
-                  {props.children}
-                </Show>
-              </AdminShell>
-              <AdminDialogs player={props.uid} />
-            </StaffProvider>
-          </GameProvider>
-        </Show>
-      )}
+                  <Show when={allowed(loaded().role)} fallback={<Note>{REFUSED}</Note>}>
+                    {props.children}
+                  </Show>
+                </AdminShell>
+                <AdminDialogs player={props.uid} />
+              </StaffProvider>
+            </GameProvider>
+          </Show>
+        )}
+      </Show>
     </Show>
   );
 }

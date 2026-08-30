@@ -15,10 +15,12 @@ export default function registerSwampSpawns(): void {
         { species: Species.Slowpoke, weight: 20 },
         { species: Species.Goldeen, weight: 20 },
         { species: Species.Magikarp, weight: 30 },
+        { species: Species.Totodile, weight: 2 },
       ],
       uncommon: [
         { species: Species.Wartortle, weight: 1 },
         { species: Species.Poliwhirl, weight: 5 },
+        { species: Species.Croconaw, weight: 1 },
       ],
       rare: [
         { species: Species.Golduck, weight: 10 },
@@ -27,6 +29,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Farfetchd, weight: 5 },
         { species: Species.Lickitung, weight: 5 },
         { species: Species.Seaking, weight: 10 },
+        { species: Species.Feraligatr, weight: 2 },
       ],
       special: [],
     },
@@ -38,10 +41,12 @@ export default function registerSwampSpawns(): void {
         { species: Species.Slowpoke, weight: 20 },
         { species: Species.Goldeen, weight: 20 },
         { species: Species.Magikarp, weight: 30 },
+        { species: Species.Totodile, weight: 2 },
       ],
       uncommon: [
         { species: Species.Wartortle, weight: 1 },
         { species: Species.Poliwhirl, weight: 5 },
+        { species: Species.Croconaw, weight: 1 },
       ],
       rare: [
         { species: Species.Golduck, weight: 10 },
@@ -50,6 +55,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Farfetchd, weight: 5 },
         { species: Species.Lickitung, weight: 5 },
         { species: Species.Seaking, weight: 10 },
+        { species: Species.Feraligatr, weight: 2 },
       ],
       special: [],
     },

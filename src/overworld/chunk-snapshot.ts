@@ -52,8 +52,8 @@ import { resolveBerryPatch, resolveItemCache, resolveNest, resolvePhenomenon } f
 
 /**
  * The region a chunk's experts belong to: the whole world is Kanto
- * until another region's species exist to field. The seam where a
- * real mapping will go when one does
+ * until another region has enough registered to field a gym. The seam
+ * where a real mapping will go when one does
  */
 function regionOf(_chunk: Chunk): Regions {
   return Regions.Kanto;

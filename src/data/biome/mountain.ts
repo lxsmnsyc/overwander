@@ -14,11 +14,13 @@ export default function registerMountainSpawns(): void {
         { species: Species.Mankey, weight: 20 },
         { species: Species.Machop, weight: 20 },
         { species: Species.Geodude, weight: 20 },
+        { species: Species.Cyndaquil, weight: 2 },
       ],
       uncommon: [
         { species: Species.Charmeleon, weight: 1 },
         { species: Species.Machoke, weight: 5 },
         { species: Species.Graveler, weight: 5 },
+        { species: Species.Quilava, weight: 1 },
       ],
       rare: [
         { species: Species.Charizard, weight: 2 },
@@ -29,6 +31,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Onix, weight: 10 },
         { species: Species.Magmar, weight: 5 },
         { species: Species.Snorlax, weight: 5 },
+        { species: Species.Typhlosion, weight: 2 },
       ],
       special: [
         { species: Species.Zapdos, weight: 10 },
@@ -42,11 +45,13 @@ export default function registerMountainSpawns(): void {
         { species: Species.Mankey, weight: 20 },
         { species: Species.Machop, weight: 20 },
         { species: Species.Geodude, weight: 20 },
+        { species: Species.Cyndaquil, weight: 2 },
       ],
       uncommon: [
         { species: Species.Charmeleon, weight: 1 },
         { species: Species.Machoke, weight: 5 },
         { species: Species.Graveler, weight: 5 },
+        { species: Species.Quilava, weight: 1 },
       ],
       rare: [
         { species: Species.Charizard, weight: 2 },
@@ -57,6 +62,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Onix, weight: 10 },
         { species: Species.Magmar, weight: 5 },
         { species: Species.Snorlax, weight: 5 },
+        { species: Species.Typhlosion, weight: 2 },
       ],
       special: [
         { species: Species.Zapdos, weight: 10 },

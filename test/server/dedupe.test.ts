@@ -216,3 +216,34 @@ describe('packing each picture once', () => {
     }
   });
 });
+
+/**
+ * A drawing that is not the size it is being read as.
+ *
+ * The coats of one pokemon share a single description, so a coat
+ * exported at another frame size has its rows cut in the wrong places
+ * and the last of them falls off the end of the drawing. The packer
+ * re-canvases such a coat before it gets here; this is the floor under
+ * that, so a drawing that still does not match comes out short rather
+ * than throwing out of a buffer copy.
+ */
+describe('a source shorter than it claims', () => {
+  it('draws what there is instead of throwing', () => {
+    const target = blankPixels(16, 16);
+    // Eight rows of pixels described as sixteen, which is what a coat
+    // cut at half the frame height arrives as
+    const short: Pixels = { width: 16, height: 16, data: Buffer.alloc(16 * 8 * 4, 0xff) };
+
+    expect(() => {
+      drawPictures(
+        target,
+        [{ x: 0, y: 0, width: 16, height: 16, source: 0 }],
+        [{ x: 0, y: 0 }],
+        () => short,
+      );
+    }).not.toThrow();
+    // The rows that were there landed, and the rest is left clear
+    expect(target.data[0]).toBe(0xff);
+    expect(target.data[(8 * 16 + 0) * 4]).toBe(0);
+  });
+});

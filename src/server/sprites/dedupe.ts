@@ -278,8 +278,15 @@ function copy(target: Pixels, source: Pixels, from: Rect, to: { x: number; y: nu
       continue;
     }
     const start = (sourceY * source.width + from.x) * 4;
+    // Against the buffer rather than against the stated height: a
+    // drawing whose size does not match what it is being read as
+    // should come out short, not throw out of a copy
+    const end = Math.min(start + width * 4, source.data.length);
 
-    source.data.copy(target.data, (targetY * target.width + to.x) * 4, start, start + width * 4);
+    if (end <= start) {
+      continue;
+    }
+    source.data.copy(target.data, (targetY * target.width + to.x) * 4, start, end);
   }
 }
 

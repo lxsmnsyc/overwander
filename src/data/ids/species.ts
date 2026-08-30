@@ -229,4 +229,13 @@ export const enum Species {
   Dragonite = 149,
   Mewtwo = 150,
   Mew = 151,
+  Chikorita = 152,
+  Bayleef = 153,
+  Meganium = 154,
+  Cyndaquil = 155,
+  Quilava = 156,
+  Typhlosion = 157,
+  Totodile = 158,
+  Croconaw = 159,
+  Feraligatr = 160,
 }

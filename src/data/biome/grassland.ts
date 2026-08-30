@@ -17,12 +17,14 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Growlithe, weight: 10 },
         { species: Species.Ponyta, weight: 10 },
         { species: Species.Eevee, weight: 2 },
+        { species: Species.Chikorita, weight: 2 },
       ],
       uncommon: [
         { species: Species.Ivysaur, weight: 1 },
         { species: Species.Pidgeotto, weight: 5 },
         { species: Species.Nidorina, weight: 5 },
         { species: Species.Nidorino, weight: 5 },
+        { species: Species.Bayleef, weight: 1 },
       ],
       rare: [
         { species: Species.Venusaur, weight: 2 },
@@ -44,6 +46,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Ditto, weight: 10 },
         { species: Species.Jolteon, weight: 5 },
         { species: Species.Flareon, weight: 5 },
+        { species: Species.Meganium, weight: 2 },
       ],
       special: [],
     },
@@ -59,6 +62,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Abra, weight: 10 },
         { species: Species.Ponyta, weight: 10 },
         { species: Species.Eevee, weight: 2 },
+        { species: Species.Chikorita, weight: 2 },
       ],
       uncommon: [
         { species: Species.Ivysaur, weight: 1 },
@@ -66,6 +70,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Nidorina, weight: 5 },
         { species: Species.Nidorino, weight: 5 },
         { species: Species.Kadabra, weight: 5 },
+        { species: Species.Bayleef, weight: 1 },
       ],
       rare: [
         { species: Species.Venusaur, weight: 2 },
@@ -90,6 +95,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Ditto, weight: 10 },
         { species: Species.Jolteon, weight: 5 },
         { species: Species.Flareon, weight: 5 },
+        { species: Species.Meganium, weight: 2 },
       ],
       special: [],
     },

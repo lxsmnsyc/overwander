@@ -78,6 +78,9 @@ const enum Families {
   Dratini = 75,
   Mewtwo = 76,
   Mew = 77,
+  Chikorita = 78,
+  Cyndaquil = 79,
+  Totodile = 80,
 }
 
 export default Families;

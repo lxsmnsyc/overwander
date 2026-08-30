@@ -18,6 +18,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.NidoranF, weight: 20 },
         { species: Species.NidoranM, weight: 20 },
         { species: Species.Eevee, weight: 2 },
+        { species: Species.Chikorita, weight: 2 },
       ],
       uncommon: [
         { species: Species.Ivysaur, weight: 1 },
@@ -26,6 +27,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Pidgeotto, weight: 5 },
         { species: Species.Nidorina, weight: 5 },
         { species: Species.Nidorino, weight: 5 },
+        { species: Species.Bayleef, weight: 1 },
       ],
       rare: [
         { species: Species.Venusaur, weight: 2 },
@@ -38,6 +40,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Nidoking, weight: 5 },
         { species: Species.Chansey, weight: 2 },
         { species: Species.Scyther, weight: 5 },
+        { species: Species.Meganium, weight: 2 },
       ],
       special: [],
     },
@@ -52,6 +55,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.NidoranF, weight: 20 },
         { species: Species.NidoranM, weight: 20 },
         { species: Species.Eevee, weight: 2 },
+        { species: Species.Chikorita, weight: 2 },
       ],
       uncommon: [
         { species: Species.Ivysaur, weight: 1 },
@@ -60,6 +64,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Pidgeotto, weight: 5 },
         { species: Species.Nidorina, weight: 5 },
         { species: Species.Nidorino, weight: 5 },
+        { species: Species.Bayleef, weight: 1 },
       ],
       rare: [
         { species: Species.Venusaur, weight: 2 },
@@ -72,6 +77,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Nidoking, weight: 5 },
         { species: Species.Chansey, weight: 2 },
         { species: Species.Scyther, weight: 5 },
+        { species: Species.Meganium, weight: 2 },
       ],
       special: [],
     },

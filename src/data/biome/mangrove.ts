@@ -11,12 +11,14 @@ export default function registerMangroveSpawns(): void {
       base: [
         { species: Species.Slowpoke, weight: 20 },
         { species: Species.Krabby, weight: 20 },
+        { species: Species.Totodile, weight: 2 },
       ],
-      uncommon: [],
+      uncommon: [{ species: Species.Croconaw, weight: 1 }],
       rare: [
         { species: Species.Slowbro, weight: 10 },
         { species: Species.Farfetchd, weight: 5 },
         { species: Species.Kingler, weight: 10 },
+        { species: Species.Feraligatr, weight: 2 },
       ],
       special: [],
     },
@@ -24,12 +26,14 @@ export default function registerMangroveSpawns(): void {
       base: [
         { species: Species.Slowpoke, weight: 20 },
         { species: Species.Krabby, weight: 20 },
+        { species: Species.Totodile, weight: 2 },
       ],
-      uncommon: [],
+      uncommon: [{ species: Species.Croconaw, weight: 1 }],
       rare: [
         { species: Species.Slowbro, weight: 10 },
         { species: Species.Farfetchd, weight: 5 },
         { species: Species.Kingler, weight: 10 },
+        { species: Species.Feraligatr, weight: 2 },
       ],
       special: [],
     },

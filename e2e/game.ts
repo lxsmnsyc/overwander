@@ -294,9 +294,9 @@ async function claimGift(
 export async function claimStarter(page: Page): Promise<void> {
   const gifts = await openPanel(page, 'Gifts');
   // Waited for rather than looked for: the shelf is empty until the
-  // server has written the offers down. The three starters stand on
-  // every shelf, so one of them is taken and the rest are left. The
-  // squares are buttons now — the card's press rides on them too
+  // server has written the offers down. Every starter stands on every
+  // shelf, so one of them is taken and the rest are left. The squares
+  // are buttons now, and the card's press rides on them too
   const pokemon = gifts.getByRole('button', { name: /^Claim Lv\./ });
 
   await expect(pokemon.first()).toBeVisible({ timeout: CLAIMED });

@@ -13,7 +13,7 @@ import type { FrameMarkers, Point, SpriteDirection } from './markers';
 import markersFor, { SPRITE_DIRECTIONS } from './markers';
 import pack from './packing';
 import type { Raster } from './raster';
-import { blank, decode, encode } from './raster';
+import { blank, blit, decode, encode } from './raster';
 import type { Trim } from './trim';
 import computeTrim from './trim';
 
@@ -260,7 +260,99 @@ function entriesFor(
   return entries;
 }
 
-/** The rectangle that holds every one of them. */
+/**
+ * The same drawing on the plain coat's canvas.
+ *
+ * Cells are copied one at a time and centred in their new box, which
+ * is the whole of what these archives differ by: the artist exported a
+ * coat with a few rows less padding round the same pokemon, and its
+ * frames sit that many pixels higher as a result
+ */
+function recanvas(
+  raster: Raster,
+  columns: number,
+  rows: number,
+  width: number,
+  height: number,
+): Raster {
+  const was = { width: raster.width / columns, height: raster.height / rows };
+  const out = blank(columns * width, rows * height);
+  const shiftX = Math.round((width - was.width) / 2);
+  const shiftY = Math.round((height - was.height) / 2);
+
+  for (let row = 0; row < rows; row += 1) {
+    for (let column = 0; column < columns; column += 1) {
+      blit(
+        out,
+        raster,
+        { x: column * was.width, y: row * was.height, width: was.width, height: was.height },
+        { x: column * width + shiftX, y: row * height + shiftY },
+      );
+    }
+  }
+  return out;
+}
+
+/**
+ * Puts every coat on one canvas.
+ *
+ * A coat is its own archive on the collab site and is exported on its
+ * own, so a female drawn a little smaller comes back with a shorter
+ * frame: Meganium's female Attack is cut at 88 where the plain one is
+ * 96. One description ships for all four coats, and the anchors in it
+ * are the plain coat's, so the odd coat is re-canvassed onto the plain
+ * one's frame rather than read against a grid that is not its own.
+ *
+ * Only the padding may differ. A coat whose grid is a different shape
+ * is a different animation, and nothing here can reconcile that
+ */
+function alignCoats(
+  images: Map<SpriteAnim, SpriteImages>,
+  others: Map<SpriteAnim, SpriteImages>[],
+  data: AnimData,
+  extra: { key: keyof Coats }[],
+): void {
+  const sizes = new Map<SpriteAnim, { width: number; height: number }>();
+
+  for (const anim of data.anims) {
+    if (!sizes.has(anim.target)) {
+      sizes.set(anim.target, { width: anim.frameWidth, height: anim.frameHeight });
+    }
+  }
+
+  for (const [name, held] of images) {
+    const plain = held.animation;
+    const size = sizes.get(name);
+
+    if (plain == null || size == null) {
+      continue;
+    }
+    const columns = Math.max(Math.floor(plain.width / size.width), 1);
+    const rows = Math.max(Math.floor(plain.height / size.height), 1);
+
+    for (let coat = 0; coat < others.length; coat += 1) {
+      const drawing = others[coat].get(name)?.animation;
+
+      if (drawing == null || (drawing.width === plain.width && drawing.height === plain.height)) {
+        continue;
+      }
+      if (drawing.width % columns !== 0 || drawing.height % rows !== 0) {
+        throw new Error(
+          `The ${extra[coat].key} coat's ${spriteAnimName(name)} is ` +
+            `${drawing.width}x${drawing.height}, which is not ${columns} by ${rows} frames ` +
+            `the way the ordinary coat's ${plain.width}x${plain.height} is.`,
+        );
+      }
+      const coated = others[coat].get(name);
+
+      if (coated != null) {
+        coated.animation = recanvas(drawing, columns, rows, size.width, size.height);
+      }
+    }
+  }
+}
+
+/** The rectangle that holds every one of them. */ /** The rectangle that holds every one of them. */
 function widest(trims: Trim[]): Trim {
   const x = Math.min(...trims.map((trim) => trim.x));
   const y = Math.min(...trims.map((trim) => trim.y));
@@ -362,6 +454,8 @@ export default async function processPmd(coats: Coats, options: PmdOptions): Pro
     // oxlint-disable-next-line typescript/no-non-null-assertion
     extra.map(async (coat) => coatImages(coats[coat.key]!, keep)),
   );
+  alignCoats(images, others, data, extra);
+
   const entries = entriesFor(images, others, data, options.compact);
 
   if (entries.length === 0) {

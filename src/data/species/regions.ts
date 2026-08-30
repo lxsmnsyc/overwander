@@ -19,6 +19,7 @@ import { getRegisteredSpecies } from './__create';
 /** The dex numbers each region covers, ends included. */
 const RANGES: { region: Regions; from: number; to: number }[] = [
   { region: Regions.Kanto, from: 1, to: 151 },
+  { region: Regions.Johto, from: 152, to: 251 },
 ];
 
 /**
@@ -28,10 +29,11 @@ const RANGES: { region: Regions; from: number; to: number }[] = [
 export const REGION_NAMES: Record<Regions, string> = {
   [Regions.Unknown]: 'unknown',
   [Regions.Kanto]: 'kanto',
+  [Regions.Johto]: 'johto',
 };
 
 /** Every region there is, in order. */
-export const REGIONS: Regions[] = [Regions.Unknown, Regions.Kanto];
+export const REGIONS: Regions[] = [Regions.Unknown, Regions.Kanto, Regions.Johto];
 
 /** The dex numbers one region covers, ends included, or null for Unknown */
 export function getRegionSpan(region: Regions): [from: number, to: number] | null {

@@ -239,6 +239,25 @@ export interface ChunkCanvasProps {
    * this says only which square was pressed
    */
   onPress: (cell: BoardCell) => void;
+  /**
+   * How to find where a cell is on the screen, handed up once there is
+   * a canvas to measure. It is what lets a caller hang something over
+   * a cell — a reward, a remark — in the page's own coordinates rather
+   * than the board's
+   */
+  onPlaced?: (spotOf: (cell: number) => CellSpot | null) => void;
+}
+
+/**
+ * Where a cell is on the **screen**, in client coordinates: the middle
+ * of its ground, and how big a sprite standing there is drawn. Client
+ * coordinates because what hangs over a cell is a fixed element on the
+ * page rather than anything the board draws
+ */
+export interface CellSpot {
+  x: number;
+  y: number;
+  scale: number;
 }
 
 export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
@@ -934,6 +953,39 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       y: (event.clientY - bounds.top - frame.y) / frame.height,
     };
   };
+
+  /**
+   * The other way round: a cell's middle in client coordinates. The
+   * pointer's road out, walked backwards, so a card hung over a cell
+   * sits where a press on it would land
+   */
+  const spotOf = (cell: number): CellSpot | null => {
+    const element = canvas;
+
+    if (element == null) {
+      return null;
+    }
+
+    const bounds = element.getBoundingClientRect();
+    const frame = fitPicture(bounds.width, bounds.height);
+
+    if (frame.width === 0 || frame.height === 0) {
+      return null;
+    }
+    const point = projectCell(cell, yaw());
+
+    return {
+      x: bounds.left + frame.x + point.x * frame.width,
+      y: bounds.top + frame.y + point.y * frame.height,
+      scale: point.scale,
+    };
+  };
+
+  // Handed up once, since it reads the canvas and the yaw as it is
+  // called rather than closing over either
+  onMount(() => {
+    props.onPlaced?.(spotOf);
+  });
 
   const cellAt = (event: MouseEvent): BoardCell | null => {
     const at = fractionAt(event);

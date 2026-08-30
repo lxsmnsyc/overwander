@@ -67,12 +67,6 @@ export interface ItemCell {
    */
   carried?: number;
   /**
-   * What the button on this square's card says, or nothing where this
-   * one cannot be acted on. It falls back to the tray's own verb, so a
-   * picker that treats every square alike says it once
-   */
-  action?: string | null;
-  /**
    * What pressing this square itself does, where one square's press is
    * not the tray's — a gift tray claims the gift behind the square,
    * not the item on it. It wins over the tray-wide `onPress`
@@ -118,9 +112,10 @@ export interface ItemGridProps {
    */
   disabled?: boolean;
   /**
-   * Whether a square itself does nothing and the card over it is the
-   * only way to act. It is for a tray where the press *spends* — a
-   * vendor's crate, where a stray click on a picture was a purchase
+   * Whether a square itself does nothing, leaving whatever the caller
+   * put in the card as the only way to act — a board of lots, where
+   * the buttons are bid and collect rather than anything about the
+   * item
    */
   cardOnly?: boolean;
   /**
@@ -241,35 +236,11 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
               class="block w-full"
               title="Info"
               stayOnPress={props.keepCards}
-              // One button and nothing else, unless the caller brought
-              // its own. Why a square is refused stays off the card —
-              // a greyed picture with a dead button under it has
-              // already said it. Built as nested Shows so the button
-              // is one DOM node whose attributes update: rebuilt, the
-              // button a purchase was just pressed on would be torn
-              // down under the pointer and take the card with it
-              footer={
-                <Show
-                  when={cell().footer}
-                  fallback={
-                    <Show when={cell().action ?? props.verb}>
-                      {(verb) => (
-                        <Button
-                          tone="primary"
-                          disabled={props.disabled === true || cell().blocked != null}
-                          onClick={() => {
-                            press(cell());
-                          }}
-                        >
-                          {verb()}
-                        </Button>
-                      )}
-                    </Show>
-                  }
-                >
-                  {(foot) => foot()()}
-                </Show>
-              }
+              // What a square is for is the square: pressing the
+              // picture is the whole of it, and the card says what the
+              // thing is. Only a caller with buttons of its own — bid,
+              // collect, take it back — puts anything in the foot
+              footer={<Show when={cell().footer}>{(foot) => foot()()}</Show>}
               trigger={
                 <button
                   type="button"

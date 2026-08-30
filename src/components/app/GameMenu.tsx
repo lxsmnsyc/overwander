@@ -13,6 +13,14 @@ import { serverNow, syncServerClock } from '../../auth/clock';
 import { getLocalOffset, toLocalTime } from '../../auth/local-time';
 import { TIME_OF_DAY_NAMES } from '../../data/biome';
 import { getTimeOfDay } from '../../data/ids/biome';
+import {
+  LANDMARK_INTERVAL,
+  NEST_INTERVAL,
+  PHENOMENON_INTERVAL,
+  RAID_INTERVAL,
+  SNAPSHOT_INTERVAL,
+  WEATHER_INTERVAL,
+} from '../../overworld/chunk-snapshot';
 import { GameDialog, useGame } from './game-context';
 import { watchProfile } from '../../auth/profile';
 import {
@@ -29,7 +37,7 @@ import {
   UserIcon,
 } from '../icons';
 import WeatherIcon from '../overworld/WeatherIcon';
-import { Divider } from '../styled';
+import { Divider, HoverCard } from '../styled';
 import { SHEER } from '../styled/transition';
 import { ThemeToggle } from './theme';
 import settings, { type ClockFormat } from './settings';
@@ -117,6 +125,48 @@ function worldClock(at: number, format: ClockFormat): string {
   // Midnight and noon are both twelve, which is the one case a
   // remainder gets wrong
   return `${hour % 12 === 0 ? 12 : hour % 12}:${past} ${hour < 12 ? 'am' : 'pm'}`;
+}
+
+/**
+ * What a chunk turns over, and how long each window runs. Named the
+ * way a player would name them, and read as a countdown: when the next
+ * one lands is what somebody standing in a chunk is deciding on
+ */
+const WINDOWS: [called: string, every: number][] = [
+  ['Pokemon', SNAPSHOT_INTERVAL],
+  ['Caches and patches', LANDMARK_INTERVAL],
+  ['Weather', WEATHER_INTERVAL],
+  ['Happenings', PHENOMENON_INTERVAL],
+  ['Raids and wanderers', RAID_INTERVAL],
+  ['Nest eggs', NEST_INTERVAL],
+];
+
+/**
+ * How long until a window of this length turns over. Every one of them
+ * is counted off the same instant the chunk counts it off, so this is
+ * the chunk's own arithmetic rather than a guess at it
+ */
+function until(at: number, every: number): number {
+  return every - (at % every);
+}
+
+/**
+ * A wait, in the largest units that still say something true. "In 2
+ * hours" for a wait of two and a half is a clock a player would set
+ * something by and be wrong, so the odd minutes stay on
+ */
+function saidWait(left: number): string {
+  const minutes = Math.max(1, Math.ceil(left / 60_000));
+  const hours = Math.floor(minutes / 60);
+  const past = minutes % 60;
+
+  if (hours === 0) {
+    return `in ${minutes} minute${minutes === 1 ? '' : 's'}`;
+  }
+  if (past === 0) {
+    return `in ${hours} hour${hours === 1 ? '' : 's'}`;
+  }
+  return `in ${hours}h ${past}m`;
 }
 
 export default function GameMenu(): JSX.Element {
@@ -236,21 +286,45 @@ export default function GameMenu(): JSX.Element {
         <Divider />
 
         {/* What hour the world is in, which is what decides what walks
-            about in it. Whichever of the two the player did not choose
-            is what the other is titled with, so neither reading is
-            ever more than a hover away */}
-        <span
-          class="shrink-0 text-sm whitespace-nowrap text-muted"
-          title={
+            about in it. The reading the player did not choose is the
+            first thing the card says, so neither is ever more than a
+            hover away, and the windows the hour is divided into are
+            under it: what changes on this clock, and how often */}
+        <HoverCard
+          title="The world's clock"
+          description={
             settings().worldTime === 'clock'
               ? TIME_OF_DAY_NAMES[getTimeOfDay(now())]
               : `World time ${worldClock(now(), settings().clock)}`
           }
+          placement="top"
+          width="wide"
+          class="shrink-0 cursor-help rounded text-sm whitespace-nowrap text-muted
+          focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tide"
+          trigger={
+            settings().worldTime === 'clock'
+              ? worldClock(now(), settings().clock)
+              : TIME_OF_DAY_NAMES[getTimeOfDay(now())]
+          }
         >
-          {settings().worldTime === 'clock'
-            ? worldClock(now(), settings().clock)
-            : TIME_OF_DAY_NAMES[getTimeOfDay(now())]}
-        </span>
+          {/* When each of them next turns over, rather than how long
+              it runs: a player reads this to decide whether to wait
+              where they stand or walk on */}
+          <dl>
+            <For each={WINDOWS}>
+              {([called, every]) => (
+                <>
+                  <dt>{called}</dt>
+                  <dd>{saidWait(until(now(), every))}</dd>
+                </>
+              )}
+            </For>
+          </dl>
+          <p class="mt-2 text-xs text-muted">
+            Counted off this clock, yours rather than the world's, so nothing turns over halfway
+            through what you are doing at it.
+          </p>
+        </HoverCard>
 
         <Divider />
 

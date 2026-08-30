@@ -3,6 +3,17 @@ import { isServer } from 'solid-js/web';
 import type { Point } from './placing';
 
 /**
+ * How far from the apex a pointer still counts as being on its way.
+ *
+ * The triangle is one point wide where the pointer left, so the first
+ * position the browser reports — a fraction of a pixel to the side —
+ * is outside it by the maths and on the way out by any other reading.
+ * This is that much room around the exit point itself; the shape is
+ * otherwise exact
+ */
+export const GRACE = 6;
+
+/**
  * Where the answer to "why did the card close" is remembered. Chasing
  * a triangle takes more than one reload, so the choice outlives the page
  */

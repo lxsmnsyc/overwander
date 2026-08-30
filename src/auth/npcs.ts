@@ -20,6 +20,7 @@ import {
   tutorMove as tutorOnServerSide,
   visitNurse as visitNurseOnServerSide,
 } from '../server/npcs';
+import type { LearnResult } from './learn-refusal';
 import { syncServerClock } from './clock';
 import { getLocale } from './local-time';
 import getIdToken from './session';
@@ -239,7 +240,7 @@ export async function remindMove(
   catchId: string,
   move: Moves,
   replaces = 0,
-): Promise<Moves[] | null> {
+): Promise<LearnResult> {
   return remindOnServer(
     await getIdToken(),
     snapshot.chunk.x,
@@ -261,7 +262,7 @@ async function remindOnServer(
   move: Moves,
   replaces: number,
   offset: number,
-): Promise<Moves[] | null> {
+): Promise<LearnResult> {
   'use server';
   const uid = await requireUid(token);
 
@@ -296,7 +297,7 @@ export async function tutorMove(
   catchId: string,
   move: Moves,
   replaces = 0,
-): Promise<Moves[] | null> {
+): Promise<LearnResult> {
   return tutorOnServer(
     await getIdToken(),
     snapshot.chunk.x,
@@ -318,7 +319,7 @@ async function tutorOnServer(
   move: Moves,
   replaces: number,
   offset: number,
-): Promise<Moves[] | null> {
+): Promise<LearnResult> {
   'use server';
   const uid = await requireUid(token);
 

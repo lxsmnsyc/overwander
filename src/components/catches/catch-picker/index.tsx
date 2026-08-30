@@ -46,7 +46,16 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
 
   const showing = (): boolean => props.inline === true || (props.open ?? opened());
 
-  const [query, setQuery] = createSignal('');
+  const [own, setOwn] = createSignal('');
+  /** The caller's query where it holds one, ours otherwise */
+  const query = (): string => props.search ?? own();
+  const setQuery = (value: string): void => {
+    if (props.onSearch == null) {
+      setOwn(value);
+    } else {
+      props.onSearch(value);
+    }
+  };
   /**
    * The half of the search the store can answer, which is what decides
    * whether the box has to be read again.

@@ -82,6 +82,23 @@ interface CatchPickerCommonProps {
    * Changing this re-reads the records
    */
   revision?: unknown;
+  /**
+   * The query, for a caller that holds it itself. A screen that swaps
+   * one shape of picker for another — browsing for selecting — would
+   * otherwise throw away whatever the player had typed, since the two
+   * are different components. Pass both or neither
+   */
+  search?: string;
+  onSearch?: (typed: string) => void;
+  /**
+   * Every pokemon the picker is offering, as it changes.
+   *
+   * A caller holding its own picks holds ids, and an id says nothing
+   * about whether the pokemon behind it is a favorite or in a battle.
+   * This is how it gets the records back without reading them a second
+   * time
+   */
+  onOptions?: (offered: CatchOption[]) => void;
 }
 
 export type CatchPickerProps = CatchPickerCommonProps &

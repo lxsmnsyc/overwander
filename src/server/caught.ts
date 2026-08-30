@@ -35,7 +35,7 @@ import {
 } from './catch-fields';
 import { readCaughtIn, updateCaughtIn } from './caught-io';
 import { BASE_FRIENDSHIP, SHADOW_FRIENDSHIP } from '../data/constants/friendship';
-import { getSql, newDocId, tx } from './db';
+import { type Tx, getSql, newDocId, tx } from './db';
 import { readEncounter } from './encounter-io';
 import { recordCaughtSpecies } from './pokedex';
 import { Metric } from '../auth/quest-record';
@@ -468,77 +468,174 @@ export async function takeItem(uid: string, catchId: string, item: Items): Promi
 }
 
 /**
- * Let a pokemon go. The row is deleted outright rather than flagged:
- * a released pokemon is gone, and nothing in the game reads a catch
- * it no longer owns.
+ * Let one pokemon go, inside a transaction somebody else opened.
  *
- * Whatever it was holding goes back to the bag in the same
- * transaction (the item was the player's, not the pokemon's), and its
- * family's candy is paid once more as it goes. The buddy field clears
- * itself: it is a foreign key that nulls on delete.
+ * The row is deleted outright rather than flagged: a released pokemon
+ * is gone, and nothing in the game reads a catch it no longer owns.
+ * Whatever it was holding goes back to the bag in the same transaction
+ * (the item was the player's, not the pokemon's), and its family's
+ * candy is paid once more as it goes. The buddy field clears itself: it
+ * is a foreign key that nulls on delete.
  *
- * A **favorite** is refused. Releasing cannot be undone, and the flag
- * is there for exactly this. So is the **last** one, whatever it is:
- * see `hasSpareCatch`.
+ * A **favorite** and a **locked** one are both refused. Releasing
+ * cannot be undone, and both marks are a player saying so about this
+ * pokemon in particular.
+ *
+ * Resolves the species that went, or null when it was refused. The
+ * caller checks there is a spare one to lose
+ */
+async function releaseCatchIn(
+  transaction: Tx,
+  uid: string,
+  catchId: string,
+): Promise<Species | null> {
+  const caught = await readCaughtIn(transaction, catchId);
+
+  if (
+    caught == null ||
+    caught.owner !== uid ||
+    isCatchLocked(caught) ||
+    isFavoriteRecord(caught) ||
+    isGuardedRecord(caught)
+  ) {
+    return null;
+  }
+
+  // One copy back per copy held: two of the same item share a
+  // stack, and giving them back one write at a time would clobber
+  const returning = new Map<Items, number>();
+
+  for (const item of asHeldItems(caught.items)) {
+    returning.set(item, (returning.get(item) ?? 0) + 1);
+  }
+
+  // What the pokemon was worth meeting, paid once more as it goes
+  const record = asCaughtPokemon(caught);
+  const { family } = getSpeciesData(record.species);
+
+  // Read in one question before any of them is written, the way a
+  // transaction wants: what is going back is a whole belt at once
+  const carried = await readStacksIn(transaction, ITEM_STACKS, uid, [...returning.keys()]);
+
+  for (const [item, count] of returning) {
+    await writeStackIn(transaction, ITEM_STACKS, uid, item, (carried.get(item) ?? 0) + count);
+  }
+
+  const candies = await readStackIn(transaction, CANDY_STACKS, uid, family);
+
+  await writeStackIn(
+    transaction,
+    CANDY_STACKS,
+    uid,
+    family,
+    candies + getCatchCandy(record.species),
+  );
+  await transaction`delete from caught where id = ${catchId}`;
+  return record.species;
+}
+
+/**
+ * Let a pokemon go.
+ *
+ * The **last** one is refused whatever it is: see `hasSpareCatch`. What
+ * else is refused, and what letting one go is worth, is
+ * `releaseCatchIn` above.
  *
  * Resolves false when the catch is not the player's, is fighting, is
- * a favorite, or is the only pokemon they have
+ * a favorite, is locked, or is the only pokemon they have
  */
 export async function releaseCatch(uid: string, catchId: string): Promise<boolean> {
   if (!(await hasSpareCatch(uid))) {
     return false;
   }
 
-  let gone: Species | null = null;
-  const released = await tx(async (transaction) => {
-    const caught = await readCaughtIn(transaction, catchId);
+  const gone = await tx(async (transaction) => releaseCatchIn(transaction, uid, catchId));
 
-    if (
-      caught == null ||
-      caught.owner !== uid ||
-      isCatchLocked(caught) ||
-      isFavoriteRecord(caught)
-    ) {
-      return false;
-    }
-
-    // One copy back per copy held: two of the same item share a
-    // stack, and giving them back one write at a time would clobber
-    const returning = new Map<Items, number>();
-
-    for (const item of asHeldItems(caught.items)) {
-      returning.set(item, (returning.get(item) ?? 0) + 1);
-    }
-
-    // What the pokemon was worth meeting, paid once more as it goes
-    const record = asCaughtPokemon(caught);
-    const { family } = getSpeciesData(record.species);
-
-    // Read in one question before any of them is written, the way a
-    // transaction wants: what is going back is a whole belt at once
-    const carried = await readStacksIn(transaction, ITEM_STACKS, uid, [...returning.keys()]);
-
-    for (const [item, count] of returning) {
-      await writeStackIn(transaction, ITEM_STACKS, uid, item, (carried.get(item) ?? 0) + count);
-    }
-
-    const candies = await readStackIn(transaction, CANDY_STACKS, uid, family);
-
-    await writeStackIn(
-      transaction,
-      CANDY_STACKS,
-      uid,
-      family,
-      candies + getCatchCandy(record.species),
-    );
-    await transaction`delete from caught where id = ${catchId}`;
-    gone = record.species;
-    return true;
-  });
-
-  // oxlint-disable-next-line typescript/no-unnecessary-condition
-  if (released && gone != null) {
+  if (gone != null) {
     await bumpProgress(uid, [[Metric.Releases, gone, 1]]);
   }
-  return released;
+  return gone != null;
+}
+
+/**
+ * What a run of catches came to: the ones that changed, and the ones
+ * that would not. A caller says what actually happened rather than
+ * assuming the whole selection went through
+ */
+export interface BulkOutcome {
+  done: string[];
+  refused: string[];
+}
+
+/**
+ * Let several go at once.
+ *
+ * One transaction over the lot, so a batch either lands or does not,
+ * and one round trip rather than one per pokemon. Each is refused on
+ * its own terms — see `releaseCatchIn` — and a refusal leaves its
+ * neighbours alone rather than failing the batch.
+ *
+ * **The last pokemon is still safe.** `hasSpareCatch` answers about one
+ * release; a batch has to hold the same promise across all of them, so
+ * the collection is counted first and at most one short of it goes
+ */
+export async function releaseCatches(uid: string, catchIds: string[]): Promise<BulkOutcome> {
+  const held = await getSql()`select count(*)::int as count from caught where owner = ${uid}`;
+  const room = Math.max(0, asNumber(held.at(0)?.count) - 1);
+  const outcome: BulkOutcome = { done: [], refused: [] };
+  /** How many of each species went, so the quest board is told once */
+  const gone = new Map<Species, number>();
+
+  await tx(async (transaction) => {
+    for (const catchId of catchIds) {
+      const species =
+        outcome.done.length < room ? await releaseCatchIn(transaction, uid, catchId) : null;
+
+      if (species == null) {
+        outcome.refused.push(catchId);
+      } else {
+        outcome.done.push(catchId);
+        gone.set(species, (gone.get(species) ?? 0) + 1);
+      }
+    }
+  });
+
+  if (gone.size > 0) {
+    const bumps: ProgressBump[] = [...gone].map(([species, count]) => [
+      Metric.Releases,
+      species,
+      count,
+    ]);
+
+    await bumpProgress(uid, bumps);
+  }
+  return outcome;
+}
+
+/**
+ * Put a mark on several of the player's catches at once, or take it
+ * off several. One transaction over the lot, and a catch that is
+ * fighting or is not theirs is refused on its own
+ */
+export async function setCatchMarks(
+  uid: string,
+  catchIds: string[],
+  field: 'favorite' | 'guarded',
+  on: boolean,
+): Promise<BulkOutcome> {
+  const outcome: BulkOutcome = { done: [], refused: [] };
+
+  await tx(async (transaction) => {
+    for (const catchId of catchIds) {
+      const caught = await readCaughtIn(transaction, catchId);
+
+      if (caught == null || caught.owner !== uid || isCatchLocked(caught)) {
+        outcome.refused.push(catchId);
+        continue;
+      }
+      await updateCaughtIn(transaction, catchId, { [field]: on });
+      outcome.done.push(catchId);
+    }
+  });
+  return outcome;
 }

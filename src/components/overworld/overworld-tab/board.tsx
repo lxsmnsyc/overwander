@@ -64,6 +64,7 @@ import { findPathBeside, findPathNear } from '../../../overworld/path';
 import type SafariSession from '../../../overworld/safari';
 import { isInWorld } from '../../../overworld/world';
 import { GameDialog, useGame } from '../../app/game-context';
+import { createCellNotes } from '../cell-notes';
 import watchLive from '../../app/watch';
 import ItemSprite from '../../items/ItemSprite';
 import RaidDialog from '../../raids/RaidDialog';
@@ -72,7 +73,12 @@ import NestDialog, { type EggSource, type EggState } from '../NestDialog';
 import PortalDialog from '../PortalDialog';
 import RocketStopDialog, { type StopChallenge } from '../RocketStopDialog';
 import SafariDialog from '../SafariDialog';
-import ChunkCanvas, { CROSSING_IN, CROSSING_OUT, type Crossing } from '../chunk-canvas';
+import ChunkCanvas, {
+  CROSSING_IN,
+  CROSSING_OUT,
+  type CellSpot,
+  type Crossing,
+} from '../chunk-canvas';
 import NpcDialog from '../npc-dialog';
 import {
   For,
@@ -152,6 +158,13 @@ export default function OverworldBoard(props: {
   const [session, setSession] = createSignal<SafariSession<EncounterRecord> | null>(null);
   const game = useGame();
   const toast = useToast();
+  /**
+   * How the board says where a cell is, once it is drawn. Held in a
+   * signal rather than a variable because what reads it is built
+   * before the canvas that answers it
+   */
+  const [spotOf, setSpotOf] = createSignal<((cell: number) => CellSpot | null) | null>(null);
+  const notes = createCellNotes(() => spotOf());
 
   /**
    * Say something in passing: over the world for a few seconds, and
@@ -173,18 +186,23 @@ export default function OverworldBoard(props: {
    * one part they already know. A stack of short lines says the same
    * in the corner
    */
-  const announce = (empty: string, items: ItemStack[] | null): void => {
+  const announce = (at: number, empty: string, items: ItemStack[] | null): void => {
     if (items == null || items.length === 0) {
-      remark(empty);
+      if (!notes.say(at, { message: empty, tone: 'neutral' })) {
+        remark(empty);
+      }
       return;
     }
 
     for (const stack of items) {
-      toast.push({
-        message: `${describeItem(stack.item)} ×${stack.amount}`,
-        art: () => <ItemSprite item={stack.item} size={ICON_SIZE} label="" />,
-        tone: 'leaf',
-      });
+      const said = `${describeItem(stack.item)} ×${stack.amount}`;
+      const art = (): JSX.Element => <ItemSprite item={stack.item} size={ICON_SIZE} label="" />;
+
+      // Over the cell where there is a board to hang it on, and in the
+      // corner where there is not: a list has no square to point at
+      if (!notes.say(at, { message: said, art, tone: 'leaf' })) {
+        toast.push({ message: said, art, tone: 'leaf' });
+      }
     }
   };
 
@@ -556,6 +574,24 @@ export default function OverworldBoard(props: {
     return live;
   };
 
+  /**
+   * Shut a wanderer's dialog once they have walked on.
+   *
+   * Three hours is long enough to be standing in one when the window
+   * turns over, and the person who was there is then somebody else.
+   * Everything the dialog offers is derived from the live window by
+   * the server, so what is on screen would be refused anyway: it is
+   * closed rather than left offering a stranger's business
+   */
+  createEffect(() => {
+    const open = wanderer();
+    const standing = view()?.snapshot;
+
+    if (open != null && standing != null && standing.getStandingNpc(open[0]) !== open[1]) {
+      setWanderer(null);
+    }
+  });
+
   const cross = (deltaX: number, deltaY: number): void => {
     const standing = view();
 
@@ -907,7 +943,7 @@ export default function OverworldBoard(props: {
       // What came out of the ground is put in front of them rather
       // than said under the map: a player pressing a cell is looking
       // at the cell
-      announce('Picked clean. Come back next window.', stash);
+      announce(at, 'Picked clean. Come back next window.', stash);
       return null;
     }
     if (landmark === Landmark.BerryPatch) {
@@ -916,7 +952,7 @@ export default function OverworldBoard(props: {
       // Bare either way: the bush was already stripped, or this press
       // stripped it
       setPicked((cells) => new Set(cells).add(at));
-      announce('Bare bushes. Come back next window.', berries == null ? null : [berries]);
+      announce(at, 'Bare bushes. Come back next window.', berries == null ? null : [berries]);
       return null;
     }
     // The landmarks somebody fights at share one flow: Team Rocket's
@@ -1053,7 +1089,7 @@ export default function OverworldBoard(props: {
         // Shown the way a cache or a patch is shown: something was
         // found, and a player pressing a cell is looking at the cell
         // rather than at the line under the map
-        announce('Nothing was left behind.', claim.items);
+        announce(at, 'Nothing was left behind.', claim.items);
         return null;
       }
       if (claim.kind === 'egg') {
@@ -1512,7 +1548,13 @@ export default function OverworldBoard(props: {
                 }
                 label={titleOf}
                 onPress={press}
+                onPlaced={(found) => {
+                  // Stored rather than called: a setter handed a
+                  // function would run it as an updater
+                  setSpotOf(() => found);
+                }}
               />
+              {notes.view()}
             </div>
 
             {/* What the player is carrying and what they can spend

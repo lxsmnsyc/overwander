@@ -133,19 +133,52 @@ export function drawPhenomenon(
   context.save();
 
   if (phenomenon === Phenomenon.RipplingWater) {
+    // The one phenomenon that stands on ground its own colour: pale
+    // rings on pale water were all but invisible in a kelp forest. So
+    // each ring is laid on a dark halo, the way the compass letters
+    // are, and the cell is seated on a shadow of its own
+    const seat = context.createRadialGradient(spot.x, spot.y, 0, spot.x, spot.y, size * 0.55);
+
+    seat.addColorStop(0, 'rgba(4, 30, 48, 0.34)');
+    seat.addColorStop(1, 'rgba(4, 30, 48, 0)');
+    context.globalAlpha = 1;
+    context.fillStyle = seat;
+    context.beginPath();
+    context.ellipse(spot.x, spot.y, size * 0.55, size * 0.31, 0, 0, Math.PI * 2);
+    context.fill();
+
     // Two rings a half-beat apart, each spreading out and thinning
     // away, squashed to lie on the ground
     for (const phase of [0, 0.5]) {
       const part = (now / 1600 + phase) % 1;
       const reach = size * (0.12 + part * 0.42);
+      const fade = 1 - part;
+      const width = Math.max(1, size * 0.07 * (1 - part * 0.5));
 
-      context.globalAlpha = (1 - part) * 0.9;
-      context.strokeStyle = '#eaf7ff';
-      context.lineWidth = Math.max(1, size * 0.06 * (1 - part * 0.6));
       context.beginPath();
       context.ellipse(spot.x, spot.y, reach, reach * 0.55, 0, 0, Math.PI * 2);
+      // The dark line under the pale one, drawn wider so it shows at
+      // both edges: it is what the ring is read against on water too
+      // bright for white and too green for blue
+      context.globalAlpha = fade * 0.5;
+      context.strokeStyle = '#04263a';
+      context.lineWidth = width * 2;
+      context.stroke();
+      context.globalAlpha = fade;
+      context.strokeStyle = '#f4fcff';
+      context.lineWidth = width;
       context.stroke();
     }
+
+    // The drop itself, beating in the middle, so the cell is never
+    // bare in the moment between one ring leaving and the next
+    const beat = Math.abs(Math.sin(now / 800));
+
+    context.globalAlpha = 0.55 + beat * 0.45;
+    context.fillStyle = '#f4fcff';
+    context.beginPath();
+    context.ellipse(spot.x, spot.y, size * 0.055, size * 0.032, 0, 0, Math.PI * 2);
+    context.fill();
   } else if (phenomenon === Phenomenon.DustCloud) {
     // A rolling heap of billows rather than a flat swirl: a ground
     // shadow, a wheeling ring of rolls with one riding on top, each

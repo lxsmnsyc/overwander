@@ -9,7 +9,7 @@ import AuctionDialog from '../components/auctions/AuctionDialog';
 import AuctionTab from '../components/auctions/auction-tab';
 import BattleView from '../components/battle/battle-view';
 import CatchDialog from '../components/catches/catch-dialog';
-import CatchesList from '../components/catches/CatchesList';
+import CatchesList from '../components/catches/catches-list';
 import GameMenu from '../components/app/GameMenu';
 import GameProvider, { GameDialog, useGame } from '../components/app/game-context';
 import InventoryList from '../components/items/InventoryList';
@@ -104,6 +104,12 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
   const [lobby, setLobby] = createSignal<string | null>(null);
   /** The same, for the battle lobby a player is standing in */
   const [duelling, setDuelling] = createSignal<string | null>(null);
+  /**
+   * Whether the box is picking pokemon rather than opening them. It
+   * lives here for the reason the seller's side does: the button that
+   * turns it on is in the dialog's action row
+   */
+  const [selecting, setSelecting] = createSignal(false);
   const close = (): void => {
     game.setDialog(GameDialog.None);
   };
@@ -138,8 +144,18 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
             title={TITLES[GameDialog.Catches]}
             description={DESCRIPTIONS[GameDialog.Catches]}
           >
-            <CatchesList player={props.user.uid} />
+            <CatchesList player={props.user.uid} selecting={selecting()} />
             <DialogActions>
+              {/* Marking a run of them and letting a run of them go,
+                  which is the one thing the box is for that opening
+                  them one at a time cannot do */}
+              <Button
+                onClick={() => {
+                  setSelecting(!selecting());
+                }}
+              >
+                {selecting() ? 'Done' : 'Select'}
+              </Button>
               <Button onClick={close}>Close</Button>
             </DialogActions>
           </Dialog>

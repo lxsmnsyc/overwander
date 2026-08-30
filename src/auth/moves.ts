@@ -1,5 +1,6 @@
 import type { Items } from '../data/ids/items';
 import type { Moves } from '../data/ids/moves';
+import type { LearnResult } from './learn-refusal';
 import { requireUid } from '../server/auth';
 import teachOnServerSide, { learnLevelUpMove as learnOnServerSide } from '../server/moves';
 import getIdToken from './session';
@@ -18,14 +19,13 @@ import getIdToken from './session';
  * names which of the four the new move goes over and is ignored by a
  * pokemon that still has room for one.
  *
- * Resolves the move list as it now stands, or null when the teaching
- * is refused
+ * Resolves the move list as it now stands, or which rule refused it
  */
 export default async function teachMove(
   catchId: string,
   item: Items,
   replaces = 0,
-): Promise<Moves[] | null> {
+): Promise<LearnResult> {
   return teachOnServer(await getIdToken(), catchId, item, replaces);
 }
 
@@ -34,7 +34,7 @@ async function teachOnServer(
   catchId: string,
   item: Items,
   replaces: number,
-): Promise<Moves[] | null> {
+): Promise<LearnResult> {
   'use server';
   return teachOnServerSide(await requireUid(token), catchId, item, replaces);
 }
@@ -48,13 +48,13 @@ async function teachOnServer(
  * this cannot reach back for an older move — that is the Move
  * Reminder's trade, and it costs a Heart Scale.
  *
- * Resolves the move list as it now stands, or null when it is refused
+ * Resolves the move list as it now stands, or which rule refused it
  */
 export async function learnLevelUpMove(
   catchId: string,
   move: Moves,
   replaces = 0,
-): Promise<Moves[] | null> {
+): Promise<LearnResult> {
   return learnOnServer(await getIdToken(), catchId, move, replaces);
 }
 
@@ -63,7 +63,7 @@ async function learnOnServer(
   catchId: string,
   move: Moves,
   replaces: number,
-): Promise<Moves[] | null> {
+): Promise<LearnResult> {
   'use server';
   return learnOnServerSide(await requireUid(token), catchId, move, replaces);
 }

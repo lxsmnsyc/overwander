@@ -35,6 +35,7 @@ import { readCaughtIn, readCaughtMany, updateCaughtIn } from './caught-io';
 import { getSql, tx } from './db';
 import awakenAbility, { type Awakening } from './awaken';
 import { learnMove } from './moves';
+import { LearnRefusal, type LearnResult, isRefusal } from '../auth/learn-refusal';
 import { readStacksIn, writeStackIn } from './stacks';
 import { ITEM_STACKS } from '../auth/stacks';
 import { isCatchLocked } from './locks';
@@ -51,7 +52,10 @@ import { asNumber } from './read';
  * yes lands on the same counter
  */
 export async function countVisit<T>(uid: string, npc: Npc, served: T): Promise<T> {
-  if (served != null) {
+  // A refusal is not a visit. The two who take a scale answer with the
+  // rule that turned the player away rather than with nothing at all,
+  // and a counter that took those would count walking up as a lesson
+  if (served != null && !isRefusal(served)) {
     await bumpProgress(uid, [[Metric.NpcVisits, npc, 1]]);
   }
   return served;
@@ -507,10 +511,13 @@ export async function groomCatch(
  * actually taught. `replaces` names which known move goes and is
  * ignored where there is room.
  *
- * Resolves the move list as it now stands, or null when he refuses:
- * the catch is not the player's, it is fighting, locked or still an
- * egg, the move is not one he can give back, no scale is carried, or
- * this window's visit has already been made
+ * He serves as often as a player has scales. A scale is dug out of
+ * the ground and nothing sells one, so the fee is what paces him:
+ * a second limit on top of it only meant a player holding five of
+ * them could spend one every three hours.
+ *
+ * Resolves the move list as it now stands, or which rule refused it,
+ * a person who has walked on among them
  */
 export async function remindMove(
   uid: string,
@@ -522,50 +529,31 @@ export async function remindMove(
   replaces: number,
   now: number,
   offset: number,
-): Promise<Moves[] | null> {
+): Promise<LearnResult> {
   const snapshot = await resolveNpc(x, y, cell, now, offset, Npc.MoveReminder);
 
   if (snapshot == null) {
-    return null;
+    return { refused: LearnRefusal.Gone };
   }
-
-  const visit = await takeVisit(snapshot, 'remind', cell, uid, { caught: catchId, move });
-
-  if (visit == null) {
-    return null;
-  }
-
-  let taught: Moves[] | null;
-
-  try {
-    taught = await learnMove(uid, catchId, move, REMINDER_FEE, replaces, (species, level, known) =>
-      new Set(getRecallableMoves(species, level, known)).has(move),
-    );
-  } catch (error) {
-    await releaseVisit(visit);
-    throw error;
-  }
-
-  // He was asked and gave nothing back — no scale, the wrong move, a
-  // pokemon he cannot touch. The window is given back with it
-  if (taught == null) {
-    await releaseVisit(visit);
-  }
-  return taught;
+  return learnMove(uid, catchId, move, REMINDER_FEE, replaces, (species, level, known) =>
+    new Set(getRecallableMoves(species, level, known)).has(move),
+  );
 }
 
 /**
- * Have the Move Tutor put a teachable move on the pokemon, for gold.
+ * Have the Move Tutor put a teachable move on the pokemon.
  *
  * The reminder's trade run the other way: the tutor deals in what a
  * machine would teach rather than in what levelling once gave, for
  * the same one Heart Scale. It leaves the bag in the transaction the
  * move is written in, so a refusal costs nothing.
  *
- * Resolves the move list as it now stands, or null when he refuses:
- * the catch is not the player's, it is fighting, locked or still an
- * egg, the move is not on the species' teachable list, no scale is
- * carried, or this window's visit has already been made
+ *
+ * He serves as often as a player has scales, for the reason the
+ * reminder does: the scale is the limit, and it is a real one.
+ *
+ * Resolves the move list as it now stands, or which rule refused it,
+ * a person who has walked on among them
  */
 export async function tutorMove(
   uid: string,
@@ -577,36 +565,15 @@ export async function tutorMove(
   replaces: number,
   now: number,
   offset: number,
-): Promise<Moves[] | null> {
+): Promise<LearnResult> {
   const snapshot = await resolveNpc(x, y, cell, now, offset, Npc.MoveTutor);
 
   if (snapshot == null) {
-    return null;
+    return { refused: LearnRefusal.Gone };
   }
-
-  const visit = await takeVisit(snapshot, 'tutor', cell, uid, { caught: catchId, move });
-
-  if (visit == null) {
-    return null;
-  }
-
-  let taught: Moves[] | null;
-
-  try {
-    taught = await learnMove(uid, catchId, move, TUTOR_FEE, replaces, (species, _level, known) =>
-      new Set(getTutorableMoves(species, known)).has(move),
-    );
-  } catch (error) {
-    await releaseVisit(visit);
-    throw error;
-  }
-
-  // He was asked and taught nothing — a thin purse, the wrong move, a
-  // pokemon he cannot touch. The window is given back with it
-  if (taught == null) {
-    await releaseVisit(visit);
-  }
-  return taught;
+  return learnMove(uid, catchId, move, TUTOR_FEE, replaces, (species, _level, known) =>
+    new Set(getTutorableMoves(species, known)).has(move),
+  );
 }
 
 /**

@@ -18,6 +18,7 @@ import { getMachineItem } from '../../data/ids/items';
 import { Species } from '../../data/ids/species';
 import { getMoveData } from '../../data/moves';
 import { getSpeciesData } from '../../data/species';
+import { type LearnResult, describeLearnRefusal } from '../../auth/learn-refusal';
 
 import MovePicker, { MoveLine } from './MovePicker';
 import AnimatedSprite from '../sprites/AnimatedSprite';
@@ -54,7 +55,7 @@ export interface TeachMoveDialogProps {
    * How the teaching is actually paid for and written. Defaults to
    * using the machine for the move out of the player's bag
    */
-  teach?: (catchId: string, move: Moves, replaces: number) => Promise<Moves[] | null>;
+  teach?: (catchId: string, move: Moves, replaces: number) => Promise<LearnResult | null>;
   onClose: () => void;
   /**
    * Fired once the move is actually learned, so the sheet behind the
@@ -143,13 +144,19 @@ function TeachBody(
       props.teach?.(catchId, move, forgetting()) ??
       teachMove(catchId, getMachineItem(move), forgetting())
     )
-      .then((moves) => {
+      .then((result) => {
         setBusy(false);
 
-        if (moves == null) {
-          setStatus(
-            `${named()} could not be taught ${taught()} — it may know it already, be unable to learn it, be locked, or what it costs may not be in your bag.`,
-          );
+        // The server says which rule refused, so the dialog says one
+        // true sentence rather than listing every rule there is. A
+        // null is nobody refusing anything: the person who would have
+        // taught it is no longer standing there
+        if (result == null) {
+          setStatus(`${named()} could not be taught ${taught()} just now.`);
+          return;
+        }
+        if ('refused' in result) {
+          setStatus(describeLearnRefusal(result.refused, named(), taught()));
           return;
         }
         props.onTaught?.();

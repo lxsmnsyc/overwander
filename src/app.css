@@ -330,6 +330,65 @@
 }
 
 /**
+ * A toast arriving and leaving: it drops in from just above where it
+ * settles, and goes back the same way. The two are separate keyframes
+ * rather than a transition because a toast is drawn and removed rather
+ * than shown and hidden
+ */
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(-0.5rem) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes toast-out {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(-0.5rem) scale(0.96);
+  }
+}
+
+/**
+ * A note over a cell: it lifts off the ground it is about and fades
+ * back into it. The rise is small — it is a label on a square, not a
+ * number thrown out of a fight
+ */
+@keyframes cell-note-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem) scale(0.9);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes cell-note-out {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(-0.75rem);
+  }
+}
+
+/**
  * The whole of the reduce-motion setting, as far as CSS goes: a class
  * on the root element, put there by `src/components/app/settings.ts`.
  *

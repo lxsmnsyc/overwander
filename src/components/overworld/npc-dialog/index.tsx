@@ -41,6 +41,7 @@ import Npc, {
 } from '../../../data/overworld/npc';
 import { VENDOR_TRADE_LIMIT } from '../../../data/overworld/vendor';
 import { canBreed } from '../../../overworld/breeding';
+import { LearnRefusal, type LearnResult } from '../../../auth/learn-refusal';
 import type ChunkSnapshot from '../../../overworld/chunk-snapshot';
 import type { CatchOption } from '../../catches/catch-picker';
 import { describeItem } from '../../details';
@@ -50,7 +51,7 @@ import NpcSprite from '../NpcSprite';
 import AnimatedSprite from '../../sprites/AnimatedSprite';
 import ItemSprite from '../../items/ItemSprite';
 import TeachMoveDialog from '../../catches/TeachMoveDialog';
-import { Badge, Button, Detail, Dialog, DialogActions, Status, useToast } from '../../styled';
+import { Badge, Button, Detail, Dialog, DialogActions, Meta, Status, useToast } from '../../styled';
 import {
   BreederCounter,
   ChannelerCounter,
@@ -468,15 +469,14 @@ function NpcCounter(
     (props.bag.latest ?? []).find((entry) => entry.item === item)?.amount ?? 0;
 
   /**
-   * Trade one of something, either way across the counter.
+   * Trade some of something, either way across the counter.
    *
-   * One press, one item, one transaction. It was a basket filled and
-   * then checked over, which is two screens and three presses for the
-   * thing a player does most: buying a potion. The price is on the
-   * square and what it leaves the purse at is the badge above the
-   * crate, so the card's button is the whole of the decision
+   * One line, one transaction, however many of it: the crate takes a
+   * count under the tray and the whole line lands or none of it does.
+   * A basket of several kinds was two screens and three presses for
+   * the thing a player does most, buying a potion
    */
-  const trade = (item: Items, buyingIt: boolean): void => {
+  const trade = (item: Items, amount: number, buyingIt: boolean): void => {
     const snapshot = props.snapshot;
     const standing = props.standing;
 
@@ -484,7 +484,7 @@ function NpcCounter(
       return;
     }
 
-    const picks: ItemAmount[] = [[item, 1]];
+    const picks: ItemAmount[] = [[item, amount]];
 
     setStatus(null);
     setBusy(true);
@@ -502,8 +502,8 @@ function NpcCounter(
         // the purse badge climbing, and a refusal is the greyed square
         if (buyingIt) {
           toast.push({
-            title: describeItem(item),
-            message: `−${priceOf(item, true)} gold`,
+            title: `${describeItem(item)}${amount > 1 ? ` ×${amount}` : ''}`,
+            message: `−${priceOf(item, true) * amount} gold`,
             art: () => <ItemSprite item={item} size={24} label="" />,
             tone: 'leaf',
           });
@@ -623,16 +623,12 @@ function NpcCounter(
    * the same transaction the move list is written in, which is what
    * makes a refusal cost nothing
    */
-  const remind = async (
-    catchId: string,
-    move: Moves,
-    replaces: number,
-  ): Promise<Moves[] | null> => {
+  const remind = async (catchId: string, move: Moves, replaces: number): Promise<LearnResult> => {
     const snapshot = props.snapshot;
     const standing = props.standing;
 
     if (snapshot == null || standing == null) {
-      return null;
+      return { refused: LearnRefusal.Gone };
     }
     return remindMove(snapshot, standing[0], catchId, move, replaces);
   };
@@ -642,12 +638,12 @@ function NpcCounter(
    * transaction the move list is written in, so a refusal costs
    * nothing
    */
-  const tutor = async (catchId: string, move: Moves, replaces: number): Promise<Moves[] | null> => {
+  const tutor = async (catchId: string, move: Moves, replaces: number): Promise<LearnResult> => {
     const snapshot = props.snapshot;
     const standing = props.standing;
 
     if (snapshot == null || standing == null) {
-      return null;
+      return { refused: LearnRefusal.Gone };
     }
     return tutorMove(snapshot, standing[0], catchId, move, replaces);
   };
@@ -781,8 +777,9 @@ function NpcCounter(
         onClose={close}
         title={who()}
         terse
-        description="Somebody passing through with an offer. Gone when the window turns, and most
-        of them will serve you once. The vendor trades as long as your purse holds."
+        description="Somebody passing through with an offer, gone when the window turns. Most
+        will serve you once; the vendor trades as long as your purse holds, and the two who take
+        a Heart Scale as long as you have scales."
       >
         <Show when={showing()}>
           {(standing) => (
@@ -955,8 +952,8 @@ function NpcCounter(
         below={<Badge tone="gold">{props.gold.latest ?? 0} gold</Badge>}
         description={
           counter() === 'sell'
-            ? 'One at a time. Press a card to sell it.'
-            : 'One at a time. Press a card to buy it.'
+            ? 'Press what you are selling, then say how many.'
+            : 'Press what you are buying, then say how many.'
         }
         verb={counter() === 'sell' ? 'Sell' : 'Buy'}
         entries={counter() === 'sell' ? props.bag.latest : crate()}
@@ -992,9 +989,37 @@ function NpcCounter(
             {priceOf(entry.item, counter() !== 'sell')} gold
           </Detail>
         )}
-        onPick={(item) => {
-          if (item != null) {
-            trade(item, counter() !== 'sell');
+        // How many of one line he will part with, or take: the purse
+        // decides a purchase and the bag decides a sale, and the
+        // trade limit is over both so a slip of the keyboard cannot
+        // ask for a hundred thousand potions
+        most={(entry) =>
+          counter() === 'sell'
+            ? Math.min(VENDOR_TRADE_LIMIT, entry.amount)
+            : Math.max(
+                1,
+                Math.min(
+                  VENDOR_TRADE_LIMIT,
+                  Math.floor((props.gold.latest ?? 0) / Math.max(1, priceOf(entry.item, true))),
+                ),
+              )
+        }
+        // What the count comes to, which is the number the decision is
+        // actually about: the price on the square is one of them
+        sum={(item, amount) => (
+          <Meta>
+            {amount} × {priceOf(item, counter() !== 'sell')} gold ={' '}
+            <strong>{priceOf(item, counter() !== 'sell') * amount} gold</strong>
+          </Meta>
+        )}
+        refuse={(item, amount) =>
+          counter() !== 'sell' && priceOf(item, true) * amount > (props.gold.latest ?? 0)
+            ? 'More than you hold.'
+            : null
+        }
+        onPick={(item, amount) => {
+          if (item != null && amount > 0) {
+            trade(item, amount, counter() !== 'sell');
           }
         }}
       />

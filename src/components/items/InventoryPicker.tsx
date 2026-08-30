@@ -13,6 +13,7 @@ import { type InventoryEntry, getInventory } from '../../auth/inventory';
 import type { Items } from '../../data/ids/items';
 import { describeItem } from '../details';
 import ItemGrid, { type ItemCell } from './ItemGrid';
+import ItemSprite from './ItemSprite';
 import { Button, Dialog, DialogActions, Note, Row } from '../styled';
 
 /**
@@ -34,6 +35,9 @@ import { Button, Dialog, DialogActions, Note, Row } from '../styled';
  * "three Potions" is a different answer from "a Potion"
  */
 export type ItemAmount = [item: Items, amount: number];
+
+/** How big the picture beside the count under the tray is drawn */
+const COUNT_ICON = 24;
 
 interface InventoryPickerCommonProps {
   /**
@@ -123,12 +127,6 @@ interface InventoryPickerCommonProps {
    */
   carried?: (entry: InventoryEntry) => number;
   /**
-   * What the button on one square's card says. It falls back to the
-   * picker's verb, so a caller only answers per square where the
-   * squares differ — a bag where only some of it can be used
-   */
-  action?: (entry: InventoryEntry) => string | null;
-  /**
    * Whether a square does nothing and its card is the only way to act.
    * A crate spends gold on a press, and a stray click on a picture
    * should not be a purchase
@@ -144,6 +142,24 @@ interface InventoryPickerCommonProps {
    * for a window that spends it
    */
   below?: JSX.Element;
+  /**
+   * The most of one thing that may be taken at once. Given one, the
+   * picker asks **how many** before it hands anything back: a square
+   * pressed opens a count under the tray rather than answering at
+   * once. Left out, a press is one of it, the way it always was
+   */
+  most?: (entry: InventoryEntry) => number;
+  /**
+   * What the count comes to, over the button that settles it — the
+   * total, and what it leaves behind
+   */
+  sum?: (item: Items, amount: number) => JSX.Element;
+  /**
+   * Why this many cannot be taken: more gold than the purse holds. It
+   * is a sentence rather than a flag, since it is shown as well as
+   * gating the button
+   */
+  refuse?: (item: Items, amount: number) => string | null;
   /**
    * Whether the list stays up after a pick. A crate being bought from
    * is opened once and traded with several times, and a window that
@@ -172,7 +188,11 @@ export type InventoryPickerProps = InventoryPickerCommonProps &
          * but never decides it — the caller owns the value
          */
         value: Items | null;
-        onPick: (item: Items | null) => void;
+        /**
+         * What was picked, and how many of it. The count is one
+         * unless the picker was given `most` and asked for a number
+         */
+        onPick: (item: Items | null, amount: number) => void;
       }
     | {
         multiple: true;
@@ -196,6 +216,8 @@ function PickerList(
   },
 ): JSX.Element {
   const [pending, setPending] = createSignal<Items | null>(null);
+  /** How many of the pending square are being taken */
+  const [taking, setTaking] = createSignal(1);
   const [confirming, setConfirming] = createSignal(false);
   const [draft, setDraft] = createSignal<ItemAmount[]>([]);
 
@@ -234,7 +256,6 @@ function PickerList(
       note: props.note?.(entry) ?? null,
       card: () => props.card?.(entry),
       carried: props.carried?.(entry) ?? entry.amount,
-      action: props.action?.(entry) ?? props.verb ?? null,
     }));
 
   const close = (): void => {
@@ -243,13 +264,14 @@ function PickerList(
     props.onDone();
   };
 
-  const pickOne = (item: Items | null): void => {
+  const pickOne = (item: Items | null, amount = 1): void => {
     if (props.multiple === true) {
       return;
     }
-    props.onPick(item);
+    props.onPick(item, amount);
     if (props.keepOpen === true) {
       setPending(null);
+      setTaking(1);
       return;
     }
     close();
@@ -262,6 +284,12 @@ function PickerList(
     props.onPick(draft());
     close();
   };
+
+  /** The most of this one that may be taken at once */
+  const room = (entry: InventoryEntry): number => Math.max(1, props.most?.(entry) ?? 1);
+
+  /** Why this many cannot be taken, if it cannot */
+  const refused = (item: Items): string | null => props.refuse?.(item, taking()) ?? null;
 
   /**
    * Whether this row is one the caller wants asked about twice. A
@@ -283,6 +311,13 @@ function PickerList(
           ? draft().filter(([picked]) => picked !== entry.item)
           : [...draft(), [entry.item, 1]],
       );
+      return;
+    }
+    // A caller that deals in amounts is asked how many before
+    // anything is spent, and the count under the tray is the answer
+    if (props.most != null && pending() !== entry.item) {
+      setPending(entry.item);
+      setTaking(Math.min(1, props.most(entry)));
       return;
     }
     if (asksTwice(entry) && pending() !== entry.item) {
@@ -335,28 +370,93 @@ function PickerList(
           }}
         />
 
-        {/* Asked once more, since picking it is what spends it.
-              There is no room for a question under a picture, so it is
-              asked below the tray */}
+        {/* What the pressed square costs and how many of it are being
+              taken. There is no room for either under a picture, so
+              both stand below the tray: the count first, then the
+              button that spends on it */}
         <Show when={offered().find((entry) => entry.item === pending())} keyed>
           {(asked) => (
-            <Row class="justify-center">
-              <Button
-                tone="primary"
-                onClick={() => {
-                  pickOne(asked.item);
-                }}
-              >
-                {props.verb ?? 'Pick'} {describeItem(asked.item)}?
-              </Button>
-              <Button
-                onClick={() => {
-                  setPending(null);
-                }}
-              >
-                Cancel
-              </Button>
-            </Row>
+            <div class="flex flex-col gap-2 rounded-panel border-2 border-line bg-paper p-2">
+              <Row class="flex-nowrap items-center gap-2">
+                <ItemSprite item={asked.item} size={COUNT_ICON} label="" />
+                <span class="min-w-0 grow truncate text-sm font-semibold">
+                  {describeItem(asked.item)}
+                </span>
+                <Show when={props.most != null}>
+                  <Row class="flex-nowrap items-center gap-1">
+                    <Button
+                      label="One less"
+                      disabled={props.disabled === true || taking() <= 1}
+                      onClick={() => {
+                        setTaking(taking() - 1);
+                      }}
+                    >
+                      −
+                    </Button>
+                    {/* Typed as well as stepped: fifty of something is
+                        not fifty presses of an arrow */}
+                    <input
+                      type="number"
+                      class="w-16 text-center"
+                      min={1}
+                      max={room(asked)}
+                      value={taking()}
+                      disabled={props.disabled}
+                      aria-label={`How many ${describeItem(asked.item)}`}
+                      onInput={(event) => {
+                        const wanted = Math.floor(Number(event.currentTarget.value));
+
+                        setTaking(Math.min(room(asked), Math.max(1, wanted || 1)));
+                      }}
+                    />
+                    <Button
+                      label="One more"
+                      disabled={props.disabled === true || taking() >= room(asked)}
+                      onClick={() => {
+                        setTaking(taking() + 1);
+                      }}
+                    >
+                      +
+                    </Button>
+                    <Button
+                      label="As many as you can"
+                      disabled={props.disabled === true || taking() >= room(asked)}
+                      onClick={() => {
+                        setTaking(room(asked));
+                      }}
+                    >
+                      Max
+                    </Button>
+                  </Row>
+                </Show>
+              </Row>
+
+              <Show when={props.sum != null}>
+                <Row class="justify-end">{props.sum?.(asked.item, taking())}</Row>
+              </Show>
+              <Show when={refused(asked.item)}>{(why) => <Note>{why()}</Note>}</Show>
+
+              <Row class="justify-center">
+                <Button
+                  tone="primary"
+                  disabled={props.disabled === true || refused(asked.item) != null}
+                  onClick={() => {
+                    pickOne(asked.item, taking());
+                  }}
+                >
+                  {props.most == null
+                    ? `${props.verb ?? 'Pick'} ${describeItem(asked.item)}?`
+                    : `${props.verb ?? 'Take'} ${taking()}`}
+                </Button>
+                <Button
+                  onClick={() => {
+                    setPending(null);
+                  }}
+                >
+                  Cancel
+                </Button>
+              </Row>
+            </div>
           )}
         </Show>
       </Show>
@@ -464,7 +564,7 @@ export default function InventoryPicker(props: InventoryPickerProps): JSX.Elemen
             <Button
               onClick={() => {
                 if (props.multiple !== true) {
-                  props.onPick(null);
+                  props.onPick(null, 0);
                 }
                 close();
               }}

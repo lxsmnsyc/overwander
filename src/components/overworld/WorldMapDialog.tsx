@@ -1,8 +1,8 @@
-import { type JSX, createMemo, createSignal } from 'solid-js';
+import { type JSX, type ParentProps, createMemo, createSignal } from 'solid-js';
 import type Biome from '../../data/ids/biome';
 import getWorld from '../../overworld/current';
 import { WORLD_MAX, WORLD_MIN, isInWorld } from '../../overworld/world';
-import { Button, Dialog, DialogActions, TooltipHost } from '../styled';
+import { Button, Dialog, DialogActions, HoverCard } from '../styled';
 import { InformationIcon } from '../icons';
 import WorldMapCanvas, { PAN_STRIDE } from './WorldMapCanvas';
 import { useGame } from '../app/game-context';
@@ -17,6 +17,20 @@ import { useGame } from '../app/game-context';
 const SPAN = 64;
 
 const HALF = Math.floor(SPAN / 2);
+
+/**
+ * One key and what it does, laid out the way the search guide lays out
+ * one rule: the shape of it first, in the type the game writes keys
+ * in, and the line about it under
+ */
+function Key(props: ParentProps<{ presses: string }>): JSX.Element {
+  return (
+    <li class="flex flex-col gap-0.5">
+      <code class="w-fit rounded bg-line-soft px-1 py-0.5 text-xs text-ink">{props.presses}</code>
+      <span class="text-xs text-muted">{props.children}</span>
+    </li>
+  );
+}
 
 export interface WorldMapDialogProps {
   isOpen: boolean;
@@ -114,31 +128,33 @@ export default function WorldMapDialog(props: WorldMapDialogProps): JSX.Element 
       title="World Map"
       description={
         <>
-          {SPAN} chunks across, centred on {centerX()}, {centerY()}. Click the map and pan with the
-          arrow keys. Shift crosses it {PAN_STRIDE} chunks at a time, and Home brings you back to
-          where you stand.
+          {SPAN} chunks across, centred on {centerX()}, {centerY()}. Click the map to steer it.
         </>
       }
       // The keys, on the one visible row a quiet dialog has. The
       // heading is read out rather than drawn, so a sighted player has
-      // nowhere else to find out the map answers the keyboard at all
+      // nowhere else to find out the map answers the keyboard at all.
+      // A card rather than a tooltip, for the reason the search box
+      // carries one: there are four keys to say, and a line of running
+      // text is not the shape of a list of them
       bar={
-        <TooltipHost
-          name="Keyboard"
-          description={`Arrow keys or WASD pan a chunk at a time, ${PAN_STRIDE} with shift held. Home or C brings the camera back to where you stand.`}
+        <HoverCard
+          title="Steering the map"
+          description="Click it first: the keys go to whatever has the keyboard."
+          placement="bottom"
+          class="inline-flex rounded text-muted transition-colors hover:text-ink
+          focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tide"
+          trigger={<InformationIcon class="size-5" role="img" aria-label="Keyboard controls" />}
         >
-          <span
-            // Focusable, since the card opens on focus as well as on
-            // hover and an icon is not reachable on its own
-            tabindex="0"
-            role="img"
-            aria-label="Keyboard controls"
-            class="inline-flex rounded-full text-muted focus-visible:outline-2
-              focus-visible:outline-offset-2 focus-visible:outline-tide"
-          >
-            <InformationIcon class="size-5" aria-hidden="true" />
-          </span>
-        </TooltipHost>
+          <ul class="flex flex-col gap-2">
+            <Key presses="↑ ↓ ← →">Pan one chunk. WASD does the same.</Key>
+            <Key presses="Shift + ↑ ↓ ← →">Crosses {PAN_STRIDE} chunks at a time.</Key>
+            <Key presses="Home">Back to the chunk you are standing in. C does the same.</Key>
+          </ul>
+          <p class="mt-2 text-xs text-muted">
+            The camera is held inside the world, so panning at the rim comes straight back.
+          </p>
+        </HoverCard>
       }
     >
       <WorldMapCanvas

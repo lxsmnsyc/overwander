@@ -43,12 +43,19 @@ const LIFETIME = 4500;
 const STACK = 3;
 
 /**
- * How wide one is allowed to get. They are back to a column, but a
- * column **in the corner** rather than down the middle: what covered
- * the board before was a stack of tall centred cards, and what is
- * stacked now is a line apiece
+ * How wide one is allowed to get. A line apiece, in a column across
+ * the top of the screen, so a stack of three still leaves the board
+ * under it readable
  */
-const WIDTH = 'w-[min(88vw,16rem)]';
+const WIDTH = 'w-[min(88vw,20rem)]';
+
+/**
+ * How long the arrival and the departure take. The departure is waited
+ * out before the card is dropped, so a toast that goes on its own goes
+ * the same way as one that is pressed
+ */
+const ARRIVING = 200;
+const LEAVING = 180;
 
 export type ToastTone = 'neutral' | 'leaf' | 'ember';
 
@@ -91,6 +98,8 @@ export interface ToastRequest {
 
 interface Toast extends ToastRequest {
   id: number;
+  /** On its way out, and drawn for `LEAVING` longer because of it */
+  leaving?: boolean;
 }
 
 export interface ToastState {
@@ -137,6 +146,12 @@ function ToastCard(props: { toast: Toast; onClose: () => void }): JSX.Element {
       // is three of these rather than one card with a gallery in it
       class={`pointer-events-auto flex ${WIDTH} shrink-0 items-center gap-2 rounded-panel border-2
         px-2 py-1.5 text-left shadow-pop ${TONES[props.toast.tone ?? 'neutral']}`}
+      style={{
+        animation:
+          props.toast.leaving === true
+            ? `toast-out ${LEAVING}ms ease-in both`
+            : `toast-in ${ARRIVING}ms ease-out both`,
+      }}
     >
       <Show when={props.toast.art != null}>
         <div class="flex shrink-0 items-center justify-center">{props.toast.art?.()}</div>
@@ -171,7 +186,8 @@ export default function ToastProvider(props: ParentProps): JSX.Element {
   const timers = new Map<number, ReturnType<typeof setTimeout>>();
   let next = 0;
 
-  const dismiss = (id: number): void => {
+  /** Off the screen for good, timers and all */
+  const drop = (id: number): void => {
     const timer = timers.get(id);
 
     if (timer != null) {
@@ -181,12 +197,48 @@ export default function ToastProvider(props: ParentProps): JSX.Element {
     setToasts((shown) => shown.filter((toast) => toast.id !== id));
   };
 
+  /**
+   * Marked as leaving and dropped once it has finished going. A second
+   * dismissal while it is on its way out is nothing to answer: it is
+   * already going
+   */
+  const dismiss = (id: number): void => {
+    const going = toasts().find((toast) => toast.id === id);
+
+    // Asked twice is nothing to answer: the timer already running is
+    // the one that drops it
+    if (going == null || going.leaving === true) {
+      return;
+    }
+    const timer = timers.get(id);
+
+    if (timer != null) {
+      clearTimeout(timer);
+    }
+    setToasts((shown) =>
+      shown.map((toast) => (toast.id === id ? { ...toast, leaving: true } : toast)),
+    );
+    timers.set(
+      id,
+      setTimeout(() => {
+        drop(id);
+      }, LEAVING),
+    );
+  };
+
   const push = (toast: ToastRequest): number => {
     next += 1;
 
     const id = next;
 
-    setToasts((shown) => [...shown, { ...toast, id }].slice(-STACK));
+    setToasts((shown) => [...shown, { ...toast, id }]);
+    // Anything past the stack is sent on its way rather than cut, so
+    // the oldest leaves the way everything else does
+    for (const older of toasts()
+      .filter((one) => one.leaving !== true)
+      .slice(0, -STACK)) {
+      dismiss(older.id);
+    }
     timers.set(
       id,
       setTimeout(() => {
@@ -207,18 +259,17 @@ export default function ToastProvider(props: ParentProps): JSX.Element {
     <ToastContext.Provider value={{ push, dismiss, toasts }}>
       {props.children}
       <Portal mount={portalHost()}>
-        {/* A column in the **bottom-left corner**, over everything and
-            not in the way of a press: only the toasts themselves take
-            the pointer.
+        {/* A column across the **top centre**, over everything and not
+            in the way of a press: only the toasts themselves take the
+            pointer.
 
-            Anchored at the bottom, so the newest sits in the corner
-            and the older ones are pushed up out of the way rather than
-            down off the screen. The menu bar along the bottom is
-            centred, so the corner is clear of it on anything but the
-            narrowest window */}
+            Reversed, so the newest is the one against the top edge and
+            the older ones are pushed down under it. The player is
+            looking at the middle of the board, which is what puts them
+            there rather than in a corner */}
         <ul
-          class="pointer-events-none fixed bottom-3 left-3 z-[100] m-0 flex list-none flex-col
-            items-start gap-2 p-0"
+          class="pointer-events-none fixed top-3 left-1/2 z-[100] m-0 flex -translate-x-1/2
+            list-none flex-col-reverse items-center gap-2 p-0"
         >
           <For each={toasts()}>
             {(toast) => (

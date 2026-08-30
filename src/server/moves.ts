@@ -1,5 +1,6 @@
 import 'server-only';
 import { asNumberArray } from '../auth/__normalize';
+import { LearnRefusal, type LearnResult } from '../auth/learn-refusal';
 import { ITEM_STACKS } from '../auth/stacks';
 import { type Items, getMachineMove } from '../data/ids/items';
 import type { Moves } from '../data/ids/moves';
@@ -50,10 +51,10 @@ export type MoveSource = (species: Species, level: number, known: Moves[]) => bo
  * is ignored by a pokemon that still has room — one that knows three
  * moves learns a fourth rather than replacing anything.
  *
- * Resolves the move list as it now stands, or null when the teaching
- * is refused: the catch is not the player's, it is fighting, locked or
- * still an egg, `allowed` says no, it knows the move already, the
- * price is not carried, or the move it would go over does not exist
+ * Resolves the move list as it now stands, or which rule refused it.
+ * The reason travels because there are five of them and they read
+ * nothing alike to a player: a pokemon that cannot be written is not a
+ * pokemon that already knows the move
  */
 export async function learnMove(
   uid: string,
@@ -62,8 +63,8 @@ export async function learnMove(
   price: Items | null,
   replaces: number,
   allowed: MoveSource,
-): Promise<Moves[] | null> {
-  const learned = await tx(async (transaction) => {
+): Promise<LearnResult> {
+  const learned = await tx(async (transaction): Promise<LearnResult> => {
     const caught = await readCaughtIn(transaction, catchId);
 
     // An egg has learned nothing yet, a pokemon in a live battle is
@@ -76,7 +77,7 @@ export async function learnMove(
       isEggRecord(caught) ||
       isGuardedRecord(caught)
     ) {
-      return null;
+      return { refused: LearnRefusal.Unavailable };
     }
 
     // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
@@ -87,8 +88,11 @@ export async function learnMove(
     // What may be written is the caller's rule, read off the stored
     // record rather than off anything the client said — and a move it
     // already knows is a price spent on nothing whichever rule applies
-    if (!allowed(species, asNumber(caught.level), known) || new Set(known).has(move)) {
-      return null;
+    if (new Set(known).has(move)) {
+      return { refused: LearnRefusal.Known };
+    }
+    if (!allowed(species, asNumber(caught.level), known)) {
+      return { refused: LearnRefusal.NotLearnable };
     }
 
     // A pokemon with room learns another move; one that is full puts
@@ -98,7 +102,7 @@ export async function learnMove(
     const over = Math.floor(replaces);
 
     if (known.length >= room && (over < 0 || over >= known.length)) {
-      return null;
+      return { refused: LearnRefusal.NoRoom };
     }
 
     // A free move reads nothing and writes nothing to the bag; a paid
@@ -107,7 +111,7 @@ export async function learnMove(
     const carried = price == null ? 1 : await readStackIn(transaction, ITEM_STACKS, uid, price);
 
     if (carried < 1) {
-      return null;
+      return { refused: LearnRefusal.Unpaid };
     }
 
     const full = known.length >= room;
@@ -131,10 +135,10 @@ export async function learnMove(
       }
     }
     await updateCaughtIn(transaction, catchId, { moves, movePoints: points });
-    return moves;
+    return { moves };
   });
 
-  if (learned != null) {
+  if ('moves' in learned) {
     await bumpProgress(uid, [
       [Metric.MovesLearned, move, 1],
       ...(price == null ? [] : [[Metric.ItemUses, price, 1] satisfies ProgressBump]),
@@ -158,15 +162,14 @@ export async function learnMove(
  * deliberate: the level itself is the record. A player who says no by
  * accident may say yes again until they level the pokemon past it.
  *
- * Resolves the move list as it now stands, or null when the learning
- * is refused
+ * Resolves the move list as it now stands, or which rule refused it
  */
 export async function learnLevelUpMove(
   uid: string,
   catchId: string,
   move: Moves,
   replaces = 0,
-): Promise<Moves[] | null> {
+): Promise<LearnResult> {
   return learnMove(uid, catchId, move, null, replaces, (species, level) =>
     new Set(getMovesLearnedAt(species, level)).has(move),
   );
@@ -177,19 +180,18 @@ export async function learnLevelUpMove(
  * the machine's own — there is exactly one machine per move — and the
  * species has to have it on its teachable list.
  *
- * Resolves the move list as it now stands, or null when the teaching
- * is refused
+ * Resolves the move list as it now stands, or which rule refused it
  */
 export default async function teachMove(
   uid: string,
   catchId: string,
   item: Items,
   replaces = 0,
-): Promise<Moves[] | null> {
+): Promise<LearnResult> {
   const move = getMachineMove(item);
 
   if (move == null) {
-    return null;
+    return { refused: LearnRefusal.NotLearnable };
   }
   return learnMove(uid, catchId, move, item, replaces, (species) =>
     new Set(getSpeciesData(species).learnSet.teachable).has(move),

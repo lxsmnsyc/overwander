@@ -47,7 +47,8 @@ const enum Npc {
   /**
    * Takes a Heart Scale and puts back a move the pokemon learned by
    * levelling and has since lost. He is the only way a forgotten
-   * level-up move ever comes back, and gold is no use to him
+   * level-up move ever comes back, gold is no use to him, and he
+   * serves as often as a player has scales
    */
   MoveReminder = 5,
   /**
@@ -70,9 +71,10 @@ const enum Npc {
    */
   FossilScientist = 8,
   /**
-   * Takes gold and puts a move on a pokemon that its species can be
-   * taught but never grows into. The reminder's counter run the other
-   * way: he deals in what a machine would teach, not in what was lost
+   * Takes a Heart Scale and puts a move on a pokemon that its species
+   * can be taught but never grows into. The reminder's counter run the
+   * other way: he deals in what a machine would teach, not in what was
+   * lost, and the scale paces him the same way
    */
   MoveTutor = 9,
   /**

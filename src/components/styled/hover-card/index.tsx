@@ -15,9 +15,9 @@ import { Transition } from 'terracotta';
 import closeWhenGone from '../gone';
 import { TooltipLayer } from '../tooltip';
 import { SHEER } from '../transition';
-import { type HoverCardPlacement, type Point, holds, place, within } from './placing';
+import { type HoverCardPlacement, type Point, apart, holds, place, within } from './placing';
 import { CLOSE_DELAY, OPEN_DELAY } from '../hover-delay';
-import { LINGER, type SafeShape, painting, showSafeAreas } from './safe-area';
+import { GRACE, LINGER, type SafeShape, painting, showSafeAreas } from './safe-area';
 
 export type { HoverCardPlacement };
 export { showSafeAreas };
@@ -255,9 +255,9 @@ export default function HoverCard(props: HoverCardProps): JSX.Element {
    * — leaving a trigger diagonally is the one move a plain
    * mouse-leave gets wrong.
    *
-   * The apex is exactly where the pointer left, so the triangle is one
-   * point wide there: leaving it is the whole test, with no room around
-   * the exit point
+   * The apex is exactly where the pointer left, and `GRACE` around it
+   * is what keeps the first reported move — which lands beside the way
+   * out rather than along it — from reading as having left
    */
   const cross = (from: Point): void => {
     const box = card();
@@ -287,7 +287,7 @@ export default function HoverCard(props: HoverCardProps): JSX.Element {
     const onMove = (event: PointerEvent): void => {
       const at = { x: event.clientX, y: event.clientY };
 
-      if (!within(at, safe)) {
+      if (!within(at, safe) && apart(at, from) > GRACE) {
         stop();
         // Drawn again after the teardown cleared it, this time as the
         // triangle that failed and the point it failed at
@@ -572,7 +572,17 @@ export default function HoverCard(props: HoverCardProps): JSX.Element {
                 stroke-width="2"
                 stroke-dasharray="6 4"
               />
-              {/* The apex: where the pointer actually left */}
+              {/* The apex — where the pointer actually left — and the
+                  grace around it, which is the rest of what counts as
+                  still being on the way */}
+              <circle
+                cx={drawn().corners[0].x}
+                cy={drawn().corners[0].y}
+                r={GRACE}
+                class={drawn().live ? 'fill-leaf/15 stroke-leaf' : 'fill-ember/20 stroke-ember'}
+                stroke-width="1"
+                stroke-dasharray="3 3"
+              />
               <circle
                 cx={drawn().corners[0].x}
                 cy={drawn().corners[0].y}

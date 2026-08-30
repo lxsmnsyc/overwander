@@ -146,13 +146,14 @@ function BagBody(
       <Show when={props.items.latest?.length} fallback={<Note>Carrying nothing.</Note>}>
         {/* The same tray the picker uses: what the bag holds is a
               thing to look at rather than read, and the search and the
-              shelves come with it. What a square's card offers is Use,
-              and only where using it would mean anything */}
+              shelves come with it. Pressing a square uses what is on
+              it, where using it would mean anything */}
         <ItemGrid
+          verb="Use"
           entries={(props.items.latest ?? []).map((entry) => ({
             item: entry.item,
             amount: entry.amount,
-            action: isUsable(entry.item) ? 'Use' : null,
+            blocked: isUsable(entry.item) ? null : 'Nothing to use it on',
           }))}
           onPress={(item) => {
             if (isUsable(item)) {

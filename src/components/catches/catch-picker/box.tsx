@@ -165,6 +165,13 @@ export default function PickerBox(
 
   const chosen = (): string[] => (props.multiple === true ? props.value : []);
 
+  // What is on offer, handed up to a caller that holds its own picks.
+  // It is the filtered list rather than the searched one: a pokemon
+  // picked before the search narrowed is still picked
+  createEffect(() => {
+    props.onOptions?.(offered());
+  });
+
   const limit = (): number =>
     props.multiple === true ? (props.max ?? Number.POSITIVE_INFINITY) : 1;
 

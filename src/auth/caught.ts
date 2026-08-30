@@ -1,10 +1,13 @@
 import type { Items } from '../data/ids/items';
 import type { Species } from '../data/ids/species';
 import {
+  type BulkOutcome,
   setFavorite as favoriteOnServerSide,
   giveItem as giveOnServer,
   setGuarded as guardedOnServerSide,
+  setCatchMarks as markOnServerSide,
   setNickname as nicknameOnServerSide,
+  releaseCatches as releaseManyOnServerSide,
   releaseCatch as releaseOnServerSide,
   takeItem as takeOnServer,
 } from '../server/caught';
@@ -451,4 +454,50 @@ async function setGuardedOnServer(
 ): Promise<boolean | null> {
   'use server';
   return guardedOnServerSide(await requireUid(token), catchId, guarded);
+}
+
+export type { BulkOutcome } from '../server/caught';
+
+/**
+ * Let several of the player's pokemon go at once.
+ *
+ * One round trip and one transaction rather than one of each per
+ * pokemon, which is the whole point: a box being cleared out is thirty
+ * of them. Each is refused on its own terms — a favorite, a locked one,
+ * one in a battle, and the last one whatever it is — so the answer says
+ * which actually went rather than assuming they all did
+ */
+export async function releaseCatches(catchIds: string[]): Promise<BulkOutcome> {
+  return releaseManyOnServer(await getIdToken(), catchIds);
+}
+
+async function releaseManyOnServer(token: string, catchIds: string[]): Promise<BulkOutcome> {
+  'use server';
+  return releaseManyOnServerSide(await requireUid(token), catchIds);
+}
+
+/**
+ * Mark several as ones the player is keeping, or take the mark off
+ * several. One in a battle is refused; nothing else is
+ */
+export async function favoriteCatches(catchIds: string[], on: boolean): Promise<BulkOutcome> {
+  return markManyOnServer(await getIdToken(), catchIds, 'favorite', on);
+}
+
+/**
+ * Put several away, or take several back out. One in a battle is
+ * refused; nothing else is
+ */
+export async function guardCatches(catchIds: string[], on: boolean): Promise<BulkOutcome> {
+  return markManyOnServer(await getIdToken(), catchIds, 'guarded', on);
+}
+
+async function markManyOnServer(
+  token: string,
+  catchIds: string[],
+  field: 'favorite' | 'guarded',
+  on: boolean,
+): Promise<BulkOutcome> {
+  'use server';
+  return markOnServerSide(await requireUid(token), catchIds, field, on);
 }

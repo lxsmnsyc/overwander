@@ -197,6 +197,38 @@ function scatter(index: number, salt: number): number {
   return mixed - Math.floor(mixed);
 }
 
+/** How many of them one drop needs: where it starts, and how it falls */
+const SALTS = 4;
+
+/**
+ * The scatter of every drop, worked out once.
+ *
+ * A drop's four numbers depend on its index alone, so they are the
+ * same on every frame of the fall's life — and the fall is redrawn
+ * sixty times a second. A thunderstorm is fourteen thousand drops on
+ * a 1080p board, which is fifty-six thousand sines a frame recomputing
+ * constants; kept here it is none.
+ *
+ * Grown rather than sized up front, since how many drops there are
+ * depends on the sky and the size of the window
+ */
+let scattered = new Float32Array(0);
+
+function scatterOf(count: number): Float32Array {
+  if (scattered.length >= count * SALTS) {
+    return scattered;
+  }
+  const grown = new Float32Array(count * SALTS);
+
+  for (let at = 0; at < count; at++) {
+    for (let salt = 0; salt < SALTS; salt++) {
+      grown[at * SALTS + salt] = scatter(at, salt + 1);
+    }
+  }
+  scattered = grown;
+  return grown;
+}
+
 /**
  * The heaviest skies are drawn back from what they would really do:
  * a sandstorm that hid the board would hide the pokemon standing on
@@ -228,13 +260,19 @@ function paintFall(
   context.lineCap = 'round';
   context.beginPath();
 
+  const noise = scatterOf(count);
+  // Lifted out of the loop: both are the same for every drop, and a
+  // fall this wide is a hot enough loop to care
+  const fallen = seconds * fall.speed;
+  const blown = seconds * fall.drift;
+
   for (let at = 0; at < count; at++) {
+    const of = at * SALTS;
     // Its own pace, so the fall reads as many things falling rather
     // than one sheet sliding
-    const pace = 0.75 + scatter(at, 3) * 0.5;
-    const y = ((scatter(at, 1) * down + seconds * fall.speed * pace) % down) - MARGIN;
-    const x =
-      ((scatter(at, 2) * across + seconds * fall.drift * pace) % across) - MARGIN + scatter(at, 4);
+    const pace = 0.75 + noise[of + 2] * 0.5;
+    const y = ((noise[of] * down + fallen * pace) % down) - MARGIN;
+    const x = ((noise[of + 1] * across + blown * pace) % across) - MARGIN + noise[of + 3];
 
     if (fall.length <= 0) {
       context.moveTo(x + fall.thickness, y);

@@ -25,27 +25,16 @@ Shortest path to real value, in order: the four PP restoratives (the Leppa hook 
 
 ## Johto moves
 
-All 83 Johto moves are registered and in the Kanto learnsets, but the engine
-only backs part of them so far.
+All 83 are registered, in the Kanto learnsets, and backed by the engine. What
+is still short of the mainline, in rough order of how much it matters:
 
-Working: everything that lands damage with a secondary status or stat stage
-(Sludge Bomb, Spark, Crunch, Iron Tail, Ancient Power, Icy Wind, ...), the
-drains and heals (Giga Drain, Milk Drink, and the three sun-reading heals), the
-crit pair (Aeroblast, Cross Chop), the multi-hits (Bone Rush, Triple Kick),
-Outrage, the priority moves and the plain stage droppers (Charm, Scary Face,
-Cotton Spore, Sweet Scent, Swagger).
-
-Nothing yet, 25 status moves: Sketch, Spider Web, Mind Reader, Lock-On,
-Nightmare, Curse, Conversion 2, Spite, Protect, Detect, Endure, Spikes,
-Foresight, Destiny Bond, Perish Song, Belly Drum, Mean Look, Attract, Sleep
-Talk, Heal Bell, Safeguard, Pain Split, Baton Pass, Encore, Psych Up.
-
-Nothing yet, 7 attacks whose power is worked out rather than registered: Flail,
-Reversal, Return, Frustration, Present, Magnitude, Mirror Coat.
-
-Landing but incomplete: Thief takes nothing, Pursuit does not punish a swap,
-Fury Cutter and Rollout do not escalate, Triple Kick does not step up, False
-Swipe can knock out, Snore ignores whether the user is asleep, Flame Wheel and
-Sacred Fire do not thaw, Twister does not reach a target in the air, Rapid Spin
-sweeps no spikes, Hidden Power is always Normal 60, Beat Up strikes once, and
-Future Sight lands immediately.
+- **Sketch** keeps what it drew, but only out of a raid or an npc fight: a
+  sketch drawn in any fight between players ends with the battle.
+- **Beat Up** counts the party rather than reading each member's Attack, so
+  every strike lands at the user's own figure.
+- **Hidden Power** takes its type off the genes but always hits at 60.
+- **Encore** locks what the AI may pick; nothing forces a move on a unit that
+  is already casting something else.
+- **Present** and **Magnitude** roll their power per cast, so neither can be
+  read off a card before it is thrown.
+- **Whirlpool** does not yet reach a submerged target, because Dive is not in.

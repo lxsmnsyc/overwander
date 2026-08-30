@@ -1,4 +1,5 @@
 import type { Items } from '../data/ids/items';
+import type { Moves } from '../data/ids/moves';
 
 /**
  * What a battle did to one catch: what it spent, what it has left,
@@ -41,4 +42,11 @@ export default interface BattleAftermath {
    * settles
    */
   coins: number;
+  /**
+   * What its Sketch turned into, if it drew one. It is the only thing
+   * here that changes what a pokemon **is** rather than what it has
+   * left, so it settles for raids and npc fights only: a sketch drawn
+   * against another player is a sketch that ends with the battle
+   */
+  sketched?: Moves;
 }

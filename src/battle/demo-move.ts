@@ -1,3 +1,4 @@
+import { BASE_FRIENDSHIP } from '../data/constants/friendship';
 import type { CatchSnapshot } from '../auth/catch-snapshot';
 import { getMaxHealth } from '../auth/health';
 import type { TeamSnapshotRecord } from '../auth/teams';
@@ -129,6 +130,8 @@ function dummy(species: Species): CatchSnapshot {
     items: [],
     slots: defaultSlots(),
     health: getMaxHealth({ species, level: DEMO_LEVEL, ivs: PERFECT_IVS, effortValues }),
+    // Nothing has raised it, so it thinks of nobody
+    friendship: BASE_FRIENDSHIP,
     statuses: 0,
   };
 }

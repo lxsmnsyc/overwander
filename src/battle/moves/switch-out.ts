@@ -1,9 +1,10 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
+import { Stages } from '../../data/constants/stats';
 import { MoveTargetPriorities, Moves } from '../../data/ids/moves';
 import { checkTeamUnit } from '../ai/rating';
 import type Battle from '../core';
 import type { MoveTarget } from '../events';
-import { BattleEvents, MoveTargetType } from '../events';
+import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import type Unit from '../unit';
 
 /**
@@ -21,7 +22,20 @@ import type Unit from '../unit';
  * MoveTargetPriorities.Random.
  */
 export const FORCED_SWITCH_MOVES = new Set<Moves>([Moves.Whirlwind, Moves.Roar]);
-const SELF_SWITCH_MOVES = new Set<Moves>([Moves.Teleport]);
+const SELF_SWITCH_MOVES = new Set<Moves>([Moves.Teleport, Moves.BatonPass]);
+
+/**
+ * Every stage a Baton Pass hands over
+ */
+const PASSED_STAGES = [
+  Stages.Attack,
+  Stages.Defense,
+  Stages.SpecialAttack,
+  Stages.SpecialDefense,
+  Stages.Speed,
+  Stages.Evasion,
+  Stages.Accuracy,
+];
 
 /**
  * Who the move takes off the field, and which teammate it drags in
@@ -95,6 +109,25 @@ export default function setupSwitchOutMoves(battle: Battle): void {
       return;
     }
 
+    // What the user had built up goes with the baton, so the
+    // replacement walks in on the stages rather than on nothing
+    const passed =
+      event.move === Moves.BatonPass
+        ? PASSED_STAGES.map((stage) => switched.unit.stages[stage])
+        : undefined;
+
     switched.unit.forceSwitch(replacement);
+
+    if (passed != null) {
+      const cause = { type: EffectType.Move, move: Moves.BatonPass, unit: event.source } as const;
+
+      for (const [at, stage] of PASSED_STAGES.entries()) {
+        const difference = passed[at] - replacement.stages[stage];
+
+        if (difference !== 0) {
+          replacement.addStage(stage, difference, cause);
+        }
+      }
+    }
   });
 }

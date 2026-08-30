@@ -41,6 +41,47 @@ export const enum Statuses {
    * and nothing reaches it on the way
    */
   Switching = 22,
+  /**
+   * The unit is guarding itself: everything aimed at it this moment
+   * is turned away (Protect, Detect)
+   */
+  Protected = 23,
+  /**
+   * The unit is braced and cannot be put below 1 HP (Endure)
+   */
+  Enduring = 24,
+  /**
+   * The unit is held on the field and cannot be swapped out (Mean
+   * Look, Spider Web)
+   */
+  Cornered = 25,
+  /**
+   * The unit is having a nightmare: it loses health every time it
+   * would act, and only while it is asleep
+   */
+  Nightmared = 26,
+  /**
+   * The unit has heard a Perish Song and faints when it runs out
+   */
+  Perishing = 27,
+  /**
+   * The unit has bound its fate to whoever knocks it out (Destiny
+   * Bond)
+   */
+  Bonded = 28,
+  /**
+   * The unit is cursed: it loses health every time it would act
+   */
+  Cursed = 29,
+  /**
+   * The unit can only cast the move it last used (Encore)
+   */
+  Encored = 30,
+  /**
+   * The unit has been pointed out: its evasion is ignored, and so are
+   * the immunities Normal and Fighting run into (Foresight)
+   */
+  Identified = 31,
 }
 
 /**
@@ -212,4 +253,12 @@ export const enum TeamStatuses {
    * members' stages
    */
   Mist = 3,
+  /**
+   * Nothing on the team can be given a status while it holds
+   */
+  Safeguard = 4,
+  /**
+   * Spikes are laid under the team: anything swapped in loses health
+   */
+  Spikes = 5,
 }

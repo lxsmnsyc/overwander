@@ -67,6 +67,15 @@ export const STATUS_NAMES: Record<Statuses, string> = {
   [Statuses.Submerged]: 'Submerged',
   [Statuses.Dormant]: 'Dormant',
   [Statuses.Switching]: 'Switching',
+  [Statuses.Protected]: 'Protected',
+  [Statuses.Enduring]: 'Enduring',
+  [Statuses.Cornered]: 'Cornered',
+  [Statuses.Nightmared]: 'Nightmare',
+  [Statuses.Perishing]: 'Perishing',
+  [Statuses.Bonded]: 'Bonded',
+  [Statuses.Cursed]: 'Cursed',
+  [Statuses.Encored]: 'Encored',
+  [Statuses.Identified]: 'Identified',
 };
 
 /**

@@ -1,9 +1,9 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
-import { Types } from '../../data/constants/types';
+import { TYPE_EFFECTIVENESS, TypeEffectiveness, Types } from '../../data/constants/types';
 import { Moves } from '../../data/ids/moves';
 import { getMoveData } from '../../data/moves';
 import type Battle from '../core';
-import { BattleEvents } from '../events';
+import { BattleEvents, MoveTargetType } from '../events';
 import type Unit from '../unit';
 import { USELESS_PENALTY } from '../ai/score';
 
@@ -82,5 +82,76 @@ export default function setupConversion(battle: Battle): void {
     if (wanted == null || (event.source.types.size === 1 && event.source.types.has(wanted))) {
       event.score -= USELESS_PENALTY;
     }
+  });
+}
+
+/**
+ * Conversion 2: the user takes a type that stands up to whatever hit
+ * it last. The mainline reads the target's last move; so does this,
+ * and the first type in the chart that resists it or sits the type
+ * out entirely is the one taken
+ * https://bulbapedia.bulbagarden.net/wiki/Conversion_2_(move)
+ */
+function resistingType(against: Types): Types | null {
+  const row = TYPE_EFFECTIVENESS[against];
+
+  for (const key of Object.keys(TYPE_EFFECTIVENESS)) {
+    // The chart is keyed by the type enum, which comes back as a
+    // string from Object.keys
+    // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+    const type = Number(key) as Types;
+    const effect = row[type];
+
+    if (
+      type !== Types.Unknown &&
+      (effect === TypeEffectiveness.Resistant || effect === TypeEffectiveness.Immune)
+    ) {
+      return type;
+    }
+  }
+  return null;
+}
+
+export function setupConversion2(battle: Battle): void {
+  const lastType = new Map<Unit, Types>();
+
+  battle.on(BattleEvents.UnitTriggerMoveTarget, AttackPriority.Post, (event) => {
+    const type = getMoveData(event.move).type;
+
+    if (type !== Types.Unknown) {
+      lastType.set(event.source, type);
+    }
+  });
+
+  battle.on(BattleEvents.UnitLeavesField, EventPriority.Post, (event) => {
+    lastType.delete(event.source);
+  });
+
+  battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Exact, (event) => {
+    if (event.usable && event.move === Moves.Conversion2) {
+      const against =
+        event.target.type === MoveTargetType.Unit ? lastType.get(event.target.unit) : undefined;
+
+      event.usable = against != null && resistingType(against) != null;
+    }
+  });
+
+  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, (event) => {
+    if (event.move !== Moves.Conversion2 || event.target.type !== MoveTargetType.Unit) {
+      return;
+    }
+
+    const against = lastType.get(event.target.unit);
+    const wanted = against == null ? null : resistingType(against);
+
+    if (wanted == null) {
+      event.source.triggerMoveEffectFailed(event.move, event.target, event.steps);
+      return;
+    }
+
+    for (const type of [...event.source.types]) {
+      event.source.removeType(type);
+    }
+    event.source.addType(wanted);
   });
 }

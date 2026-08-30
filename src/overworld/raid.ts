@@ -1,3 +1,4 @@
+import { BASE_FRIENDSHIP } from '../data/constants/friendship';
 import type { CatchSnapshot } from '../auth/catch-snapshot';
 import { getMaxHealth, rescaleHealth } from '../auth/health';
 import type BattleAftermath from '../auth/battle-aftermath';
@@ -184,6 +185,8 @@ export function createRaidBossSnapshot(
       ivs: PERFECT_IVS,
       effortValues: zeroEffortValues(),
     }),
+    // Nothing has raised it, so it thinks of nobody
+    friendship: BASE_FRIENDSHIP,
     statuses: 0,
   };
 }
@@ -205,6 +208,9 @@ function addUnit(battle: Battle, team: Team, snapshot: CatchSnapshot): Unit {
   // Drawn from the shiny sheet, so a sparkling pokemon fights looking
   // like itself
   unit.shiny = snapshot.shiny;
+  // What it thinks of its owner, which is what Return and Frustration
+  // are worth in its hands
+  unit.friendship = snapshot.friendship;
   // The individual's own measurements, not the species' listed ones
   unit.setHeight(snapshot.height);
   unit.setWeight(snapshot.weight);
@@ -367,6 +373,7 @@ export function collectAftermath(built: RaidBattle, player: string): BattleAfter
         health: Math.max(0, Math.floor(unit.health)),
         statuses: carriedStatuses(unit),
         coins: Math.max(0, Math.floor(unit.coins)),
+        ...(unit.sketched == null ? {} : { sketched: unit.sketched }),
       });
     }
   }

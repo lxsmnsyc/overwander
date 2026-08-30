@@ -1,3 +1,4 @@
+import { BASE_FRIENDSHIP } from '../data/constants/friendship';
 import type { CatchSnapshot } from '../auth/catch-snapshot';
 import { getMaxHealth } from '../auth/health';
 import type { TeamSnapshotRecord } from '../auth/teams';
@@ -128,6 +129,8 @@ function rollCatch(random: () => number, index: number): CatchSnapshot {
     items: [],
     slots: defaultSlots(),
     health: getMaxHealth({ species, level, ivs, effortValues }),
+    // Nothing has raised it, so it thinks of nobody
+    friendship: BASE_FRIENDSHIP,
     statuses: 0,
   };
 }

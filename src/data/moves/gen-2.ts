@@ -296,7 +296,8 @@ export default function registerGen2Moves(): void {
   });
   registerMove(Moves.Spikes, {
     name: 'Spikes',
-    description: 'Lays spikes: anything swapped in opposite loses 1/8 of its HP. Stacks 3 deep.',
+    description:
+      'Lays spikes: anything swapped in opposite loses 1/8 of its HP, 1/6 at two layers and 1/4 at three.',
     type: Types.Ground,
     category: MoveCategories.Status,
     pp: 20,
@@ -615,7 +616,7 @@ export default function registerGen2Moves(): void {
   });
   registerMove(Moves.PainSplit, {
     name: 'Pain Split',
-    description: 'Adds up both sides HP and splits it evenly between them.',
+    description: "Adds up both sides' HP and splits it evenly between them.",
     type: Types.Normal,
     category: MoveCategories.Status,
     pp: 20,

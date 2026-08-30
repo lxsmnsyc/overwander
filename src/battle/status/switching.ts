@@ -1,4 +1,5 @@
 import { EventPriority } from '../../core/event-emitter';
+import { Moves } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
 import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
@@ -48,12 +49,15 @@ export default function setupSwitchingStatus(battle: Battle): void {
   });
 
   // And nothing lands on it: mid-walk is semi-invulnerable, and no
-  // move reaches the spot between two spots
+  // move reaches the spot between two spots. Pursuit is the exception
+  // it is written to be, and says so here rather than overruling this
+  // from somewhere else
   battle.on(BattleEvents.UnitTriggerMoveRollHit, EventPriority.Post, (event) => {
     const target = event.parent.target;
 
     if (
       event.hit &&
+      event.parent.move !== Moves.Pursuit &&
       target.type === MoveTargetType.Unit &&
       target.unit.status[Statuses.Switching] != null
     ) {

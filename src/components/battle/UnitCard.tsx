@@ -64,6 +64,15 @@ const STATUS_COLORS: Record<Statuses, string> = {
   [Statuses.Submerged]: '#3f7fa0',
   [Statuses.Dormant]: '#6f6f6f',
   [Statuses.Switching]: '#7fa8c9',
+  [Statuses.Protected]: '#6fa8c9',
+  [Statuses.Enduring]: '#b98a4a',
+  [Statuses.Cornered]: '#6a5a7a',
+  [Statuses.Nightmared]: '#4a3f6a',
+  [Statuses.Perishing]: '#8a4a6a',
+  [Statuses.Bonded]: '#5a4a7a',
+  [Statuses.Cursed]: '#6a2f5a',
+  [Statuses.Encored]: '#c98ab0',
+  [Statuses.Identified]: '#a8a8a8',
 };
 
 const STATUS_NAMES: Record<Statuses, string> = {
@@ -90,6 +99,15 @@ const STATUS_NAMES: Record<Statuses, string> = {
   [Statuses.Submerged]: 'Submerged',
   [Statuses.Dormant]: 'Dormant',
   [Statuses.Switching]: 'Switching',
+  [Statuses.Protected]: 'Protected',
+  [Statuses.Enduring]: 'Enduring',
+  [Statuses.Cornered]: 'Cornered',
+  [Statuses.Nightmared]: 'Nightmare',
+  [Statuses.Perishing]: 'Perishing',
+  [Statuses.Bonded]: 'Bonded',
+  [Statuses.Cursed]: 'Cursed',
+  [Statuses.Encored]: 'Encored',
+  [Statuses.Identified]: 'Identified',
 };
 
 /**

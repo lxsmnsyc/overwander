@@ -1,3 +1,4 @@
+import { SHADOW_FRIENDSHIP } from '../data/constants/friendship';
 import AleaRNG from '../core/alea';
 import type { CatchSnapshot } from '../auth/catch-snapshot';
 import { getMaxHealth } from '../auth/health';
@@ -202,6 +203,8 @@ export function createRocketSnapshot(
       ivs: fielded.ivs,
       effortValues: zeroEffortValues(),
     }),
+    // A shadow has been made to fight and nothing else
+    friendship: SHADOW_FRIENDSHIP,
     statuses: 0,
   };
 }

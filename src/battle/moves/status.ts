@@ -20,6 +20,7 @@ export const STATUS_MOVES: { [key in Moves]?: Statuses } = {
   [Moves.Spore]: Statuses.Sleeping,
   [Moves.Hypnosis]: Statuses.Sleeping,
   [Moves.SweetKiss]: Statuses.Confused,
+  [Moves.Attract]: Statuses.Infatuated,
   [Moves.Swagger]: Statuses.Confused,
 };
 

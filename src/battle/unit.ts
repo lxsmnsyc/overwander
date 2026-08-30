@@ -1,3 +1,4 @@
+import { BASE_FRIENDSHIP } from '../data/constants/friendship';
 import { type Slots, defaultSlots, getSlots } from '../data/constants/slots';
 import type { Stats } from '../data/constants/stats';
 import { Stages, StatsKind, createStatsField } from '../data/constants/stats';
@@ -65,6 +66,19 @@ export default class Unit {
   ) {}
 
   level = 0;
+
+  /**
+   * What the pokemon thinks of its owner, copied off the record it
+   * was built from. Two moves read it and nothing in a fight moves
+   * it: friendship is walked for, not fought for
+   */
+  friendship = BASE_FRIENDSHIP;
+
+  /**
+   * What a Sketch turned into, if one did. A sketch is permanent in
+   * the mainline, so the fight reports it and the record keeps it
+   */
+  sketched?: Moves;
 
   setLevel(value: number): void {
     this.battle.emit(BattleEvents.UnitSetLevel, {

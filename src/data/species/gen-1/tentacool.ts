@@ -28,6 +28,21 @@ const FAMILY_TEACHABLE = [
   Moves.Substitute,
   Moves.Surf,
   Moves.Cut,
+  Moves.Snore,
+  Moves.Curse,
+  Moves.Protect,
+  Moves.SludgeBomb,
+  Moves.IcyWind,
+  Moves.GigaDrain,
+  Moves.Endure,
+  Moves.Swagger,
+  Moves.Attract,
+  Moves.SleepTalk,
+  Moves.Return,
+  Moves.Frustration,
+  Moves.HiddenPower,
+  Moves.RainDance,
+  Moves.Whirlpool,
 ];
 
 const FAMILY_ABILITIES = [Abilities.ClearBody, Abilities.LiquidOoze];
@@ -65,18 +80,25 @@ export default function registerTentacoolSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.Acid],
-        7: [Moves.Supersonic],
+        1: [Moves.Acid, Moves.PoisonSting],
+        6: [Moves.Supersonic],
+        12: [Moves.Constrict],
         13: [Moves.Wrap],
-        18: [Moves.PoisonSting],
         22: [Moves.WaterGun],
-        27: [Moves.Constrict],
+        25: [Moves.BubbleBeam],
         33: [Moves.Barrier],
         40: [Moves.Screech],
         48: [Moves.HydroPump],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.AuroraBeam, Moves.Haze, Moves.ConfuseRay],
+      egg: [
+        Moves.AuroraBeam,
+        Moves.Haze,
+        Moves.ConfuseRay,
+        Moves.Safeguard,
+        Moves.RapidSpin,
+        Moves.MirrorCoat,
+      ],
     },
   });
 
@@ -106,10 +128,9 @@ export default function registerTentacoolSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.Acid, Moves.Supersonic, Moves.Wrap],
-        18: [Moves.PoisonSting],
+        1: [Moves.Acid, Moves.Supersonic, Moves.Wrap, Moves.PoisonSting, Moves.Constrict],
         22: [Moves.WaterGun],
-        27: [Moves.Constrict],
+        25: [Moves.BubbleBeam],
         35: [Moves.Barrier],
         43: [Moves.Screech],
         50: [Moves.HydroPump],

@@ -33,6 +33,29 @@ const FAMILY_TEACHABLE = [
   Moves.Psywave,
   Moves.Substitute,
   Moves.Flash,
+  Moves.FirePunch,
+  Moves.IcePunch,
+  Moves.ThunderPunch,
+  Moves.Headbutt,
+  Moves.DreamEater,
+  Moves.Thief,
+  Moves.Nightmare,
+  Moves.Snore,
+  Moves.Curse,
+  Moves.Protect,
+  Moves.ZapCannon,
+  Moves.Endure,
+  Moves.Swagger,
+  Moves.Attract,
+  Moves.SleepTalk,
+  Moves.Return,
+  Moves.Frustration,
+  Moves.DynamicPunch,
+  Moves.HiddenPower,
+  Moves.RainDance,
+  Moves.SunnyDay,
+  Moves.PsychUp,
+  Moves.ShadowBall,
 ];
 
 const ABRA_STATS = {
@@ -51,12 +74,12 @@ const KADABRA_LEVEL_MOVES = {
   // from the first level and starts it with Kinesis instead — the
   // spoon-bending it is named for, which nothing at all could learn
   // in Red and Blue. There is one Kadabra here rather than two, so it
-  // knows what a Gen 1 Kadabra could know
+  // knows what a Gen 1 Kadabra could know. Johto brings the rest
+  // forward a few levels and adds the Future Sight
   1: [Moves.Teleport, Moves.Kinesis, Moves.Confusion, Moves.Disable],
-  16: [Moves.Confusion],
-  20: [Moves.Disable],
-  27: [Moves.Psybeam],
-  31: [Moves.Recover],
+  21: [Moves.Psybeam],
+  26: [Moves.Recover],
+  31: [Moves.FutureSight],
   38: [Moves.Psychic],
   42: [Moves.Reflect],
 };
@@ -90,7 +113,14 @@ export default function registerAbraSpecies(): void {
         1: [Moves.Teleport],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.Barrier, Moves.FirePunch, Moves.IcePunch, Moves.ThunderPunch],
+      egg: [
+        Moves.Barrier,
+        Moves.FirePunch,
+        Moves.IcePunch,
+        Moves.ThunderPunch,
+        Moves.LightScreen,
+        Moves.Encore,
+      ],
     },
   });
 
@@ -126,7 +156,7 @@ export default function registerAbraSpecies(): void {
     activeTimes: TimeOfDay.Day,
     learnSet: {
       level: { ...KADABRA_LEVEL_MOVES },
-      teachable: [...FAMILY_TEACHABLE],
+      teachable: [...FAMILY_TEACHABLE, Moves.Dig],
     },
   });
 
@@ -156,7 +186,7 @@ export default function registerAbraSpecies(): void {
     activeTimes: TimeOfDay.Day,
     learnSet: {
       level: { ...KADABRA_LEVEL_MOVES },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
+      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.Dig],
     },
   });
 }

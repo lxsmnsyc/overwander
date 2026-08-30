@@ -26,6 +26,24 @@ const FAMILY_TEACHABLE = [
   Moves.SkullBash,
   Moves.Rest,
   Moves.Substitute,
+  Moves.Headbutt,
+  Moves.Roar,
+  Moves.Swift,
+  Moves.Snore,
+  Moves.Curse,
+  Moves.Protect,
+  Moves.Endure,
+  Moves.Swagger,
+  Moves.Attract,
+  Moves.SleepTalk,
+  Moves.Return,
+  Moves.Frustration,
+  Moves.DragonBreath,
+  Moves.IronTail,
+  Moves.HiddenPower,
+  Moves.SunnyDay,
+  Moves.RockSmash,
+  Moves.Flamethrower,
 ];
 
 export default function registerGrowlitheSpecies(): void {
@@ -62,14 +80,15 @@ export default function registerGrowlitheSpecies(): void {
     learnSet: {
       level: {
         1: [Moves.Bite, Moves.Roar],
-        18: [Moves.Ember],
-        23: [Moves.Leer],
-        30: [Moves.TakeDown],
+        9: [Moves.Ember],
+        18: [Moves.Leer],
+        26: [Moves.TakeDown],
+        34: [Moves.FlameWheel],
         39: [Moves.Agility],
         50: [Moves.Flamethrower],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.BodySlam, Moves.Thrash],
+      egg: [Moves.BodySlam, Moves.Thrash, Moves.FireSpin, Moves.Safeguard, Moves.Crunch],
     },
   });
 
@@ -99,7 +118,8 @@ export default function registerGrowlitheSpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.Roar, Moves.Ember, Moves.Leer, Moves.TakeDown],
+        1: [Moves.Roar, Moves.Ember, Moves.Leer, Moves.TakeDown, Moves.FlameWheel],
+        50: [Moves.ExtremeSpeed],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
     },

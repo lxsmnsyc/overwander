@@ -24,6 +24,21 @@ const FAMILY_TEACHABLE = [
   Moves.RockSlide,
   Moves.Substitute,
   Moves.Cut,
+  Moves.Thief,
+  Moves.Snore,
+  Moves.Curse,
+  Moves.Protect,
+  Moves.SludgeBomb,
+  Moves.MudSlap,
+  Moves.Endure,
+  Moves.Swagger,
+  Moves.Attract,
+  Moves.SleepTalk,
+  Moves.Return,
+  Moves.Frustration,
+  Moves.HiddenPower,
+  Moves.SunnyDay,
+  Moves.RockSmash,
 ];
 
 export default function registerDiglettSpecies(): void {
@@ -60,14 +75,16 @@ export default function registerDiglettSpecies(): void {
     learnSet: {
       level: {
         1: [Moves.Scratch],
-        15: [Moves.Growl],
-        19: [Moves.Dig],
+        5: [Moves.Growl],
+        9: [Moves.Magnitude],
+        17: [Moves.Dig],
         24: [Moves.SandAttack],
         31: [Moves.Slash],
         40: [Moves.Earthquake],
+        49: [Moves.Fissure],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.Screech],
+      egg: [Moves.Screech, Moves.FeintAttack, Moves.Pursuit, Moves.AncientPower, Moves.BeatUp],
     },
   });
 
@@ -97,12 +114,11 @@ export default function registerDiglettSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.Scratch, Moves.Growl, Moves.Dig],
-        15: [Moves.Growl],
-        19: [Moves.Dig],
+        1: [Moves.Scratch, Moves.Growl, Moves.Dig, Moves.TriAttack, Moves.Magnitude],
         24: [Moves.SandAttack],
         35: [Moves.Slash],
         47: [Moves.Earthquake],
+        61: [Moves.Fissure],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
     },

@@ -25,6 +25,21 @@ const FAMILY_TEACHABLE = [
   Moves.Rest,
   Moves.Substitute,
   Moves.Fly,
+  Moves.Thief,
+  Moves.Snore,
+  Moves.Curse,
+  Moves.Protect,
+  Moves.MudSlap,
+  Moves.Detect,
+  Moves.Endure,
+  Moves.Swagger,
+  Moves.SteelWing,
+  Moves.Attract,
+  Moves.SleepTalk,
+  Moves.Return,
+  Moves.Frustration,
+  Moves.HiddenPower,
+  Moves.SunnyDay,
 ];
 
 export default function registerPidgeySpecies(): void {
@@ -60,7 +75,7 @@ export default function registerPidgeySpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.Gust],
+        1: [Moves.Gust, Moves.Tackle],
         5: [Moves.SandAttack],
         12: [Moves.QuickAttack],
         19: [Moves.Whirlwind],
@@ -69,6 +84,7 @@ export default function registerPidgeySpecies(): void {
         44: [Moves.MirrorMove],
       },
       teachable: [...FAMILY_TEACHABLE],
+      egg: [Moves.FeintAttack, Moves.Foresight, Moves.SteelWing, Moves.Pursuit],
     },
   });
 
@@ -105,8 +121,7 @@ export default function registerPidgeySpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.Gust, Moves.SandAttack],
-        5: [Moves.SandAttack],
+        1: [Moves.Gust, Moves.SandAttack, Moves.Tackle],
         12: [Moves.QuickAttack],
         21: [Moves.Whirlwind],
         31: [Moves.WingAttack],
@@ -143,9 +158,7 @@ export default function registerPidgeySpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.Gust, Moves.SandAttack, Moves.QuickAttack],
-        5: [Moves.SandAttack],
-        12: [Moves.QuickAttack],
+        1: [Moves.Gust, Moves.SandAttack, Moves.QuickAttack, Moves.Tackle],
         21: [Moves.Whirlwind],
         31: [Moves.WingAttack],
         44: [Moves.Agility],

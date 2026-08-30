@@ -22,6 +22,22 @@ const FAMILY_TEACHABLE = [
   Moves.Rest,
   Moves.Explosion,
   Moves.Substitute,
+  Moves.Thief,
+  Moves.Snore,
+  Moves.Curse,
+  Moves.Protect,
+  Moves.SludgeBomb,
+  Moves.ZapCannon,
+  Moves.Endure,
+  Moves.Rollout,
+  Moves.Swagger,
+  Moves.Attract,
+  Moves.SleepTalk,
+  Moves.Return,
+  Moves.Frustration,
+  Moves.HiddenPower,
+  Moves.SunnyDay,
+  Moves.Flamethrower,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Levitate, Abilities.NeutralizingGas];
@@ -59,15 +75,16 @@ export default function registerKoffingSpecies(): void {
     activeTimes: TimeOfDay.Night,
     learnSet: {
       level: {
-        1: [Moves.Tackle, Moves.Smog],
-        32: [Moves.Sludge],
-        37: [Moves.SmokeScreen],
-        40: [Moves.SelfDestruct],
-        45: [Moves.Haze],
-        48: [Moves.Explosion],
+        1: [Moves.Tackle, Moves.Smog, Moves.PoisonGas],
+        17: [Moves.SelfDestruct],
+        21: [Moves.Sludge],
+        25: [Moves.SmokeScreen],
+        33: [Moves.Haze],
+        41: [Moves.Explosion],
+        45: [Moves.DestinyBond],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.Psywave, Moves.Screech],
+      egg: [Moves.Psywave, Moves.Screech, Moves.Psybeam, Moves.DestinyBond, Moves.PainSplit],
     },
   });
 
@@ -97,11 +114,11 @@ export default function registerKoffingSpecies(): void {
     activeTimes: TimeOfDay.Night,
     learnSet: {
       level: {
-        1: [Moves.Tackle, Moves.Smog, Moves.Sludge],
-        39: [Moves.SmokeScreen],
-        43: [Moves.SelfDestruct],
-        49: [Moves.Haze],
-        53: [Moves.Explosion],
+        1: [Moves.Tackle, Moves.Smog, Moves.Sludge, Moves.SelfDestruct, Moves.PoisonGas],
+        25: [Moves.SmokeScreen],
+        33: [Moves.Haze],
+        44: [Moves.Explosion],
+        51: [Moves.DestinyBond],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
     },

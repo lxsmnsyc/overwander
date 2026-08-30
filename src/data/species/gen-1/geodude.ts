@@ -34,6 +34,26 @@ const FAMILY_TEACHABLE = [
   Moves.Rest,
   Moves.Substitute,
   Moves.Strength,
+  Moves.FirePunch,
+  Moves.Headbutt,
+  Moves.DefenseCurl,
+  Moves.Snore,
+  Moves.Curse,
+  Moves.Protect,
+  Moves.MudSlap,
+  Moves.Sandstorm,
+  Moves.Endure,
+  Moves.Rollout,
+  Moves.Swagger,
+  Moves.Attract,
+  Moves.SleepTalk,
+  Moves.Return,
+  Moves.Frustration,
+  Moves.DynamicPunch,
+  Moves.HiddenPower,
+  Moves.SunnyDay,
+  Moves.RockSmash,
+  Moves.Flamethrower,
 ];
 
 const FAMILY_ABILITIES = [Abilities.RockHead, Abilities.Sturdy];
@@ -72,11 +92,12 @@ export default function registerGeodudeSpecies(): void {
     learnSet: {
       level: {
         1: [Moves.Tackle],
-        11: [Moves.DefenseCurl],
-        16: [Moves.RockThrow],
+        6: [Moves.DefenseCurl],
+        11: [Moves.RockThrow],
+        16: [Moves.Magnitude],
         21: [Moves.SelfDestruct],
         26: [Moves.Harden],
-        31: [Moves.Earthquake],
+        31: [Moves.Earthquake, Moves.Rollout],
         36: [Moves.Explosion],
       },
       teachable: [...FAMILY_TEACHABLE],
@@ -116,10 +137,11 @@ export default function registerGeodudeSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.Tackle, Moves.DefenseCurl],
-        16: [Moves.RockThrow],
+        1: [Moves.Tackle, Moves.DefenseCurl, Moves.RockThrow],
+        16: [Moves.Magnitude],
         21: [Moves.SelfDestruct],
-        29: [Moves.Harden],
+        27: [Moves.Harden],
+        34: [Moves.Rollout],
         36: [Moves.Earthquake],
         43: [Moves.Explosion],
       },
@@ -153,14 +175,14 @@ export default function registerGeodudeSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.Tackle, Moves.DefenseCurl],
-        16: [Moves.RockThrow],
+        1: [Moves.Tackle, Moves.DefenseCurl, Moves.RockThrow, Moves.Magnitude],
         21: [Moves.SelfDestruct],
-        29: [Moves.Harden],
+        27: [Moves.Harden],
+        34: [Moves.Rollout],
         36: [Moves.Earthquake],
         43: [Moves.Explosion],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
+      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.Roar, Moves.FuryCutter],
     },
   });
 }

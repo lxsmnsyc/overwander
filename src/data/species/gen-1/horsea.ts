@@ -26,6 +26,22 @@ const FAMILY_TEACHABLE = [
   Moves.Rest,
   Moves.Substitute,
   Moves.Surf,
+  Moves.Headbutt,
+  Moves.Waterfall,
+  Moves.Snore,
+  Moves.Curse,
+  Moves.Protect,
+  Moves.IcyWind,
+  Moves.Endure,
+  Moves.Swagger,
+  Moves.Attract,
+  Moves.SleepTalk,
+  Moves.Return,
+  Moves.Frustration,
+  Moves.DragonBreath,
+  Moves.HiddenPower,
+  Moves.RainDance,
+  Moves.Whirlpool,
 ];
 
 export default function registerHorseaSpecies(): void {
@@ -62,14 +78,22 @@ export default function registerHorseaSpecies(): void {
     learnSet: {
       level: {
         1: [Moves.Bubble],
-        19: [Moves.SmokeScreen],
-        24: [Moves.Leer],
-        30: [Moves.WaterGun],
-        37: [Moves.Agility],
-        45: [Moves.HydroPump],
+        8: [Moves.SmokeScreen],
+        15: [Moves.Leer],
+        22: [Moves.WaterGun],
+        29: [Moves.Twister],
+        36: [Moves.Agility],
+        43: [Moves.HydroPump],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.AuroraBeam, Moves.Disable, Moves.Splash, Moves.DragonRage],
+      egg: [
+        Moves.AuroraBeam,
+        Moves.Disable,
+        Moves.Splash,
+        Moves.DragonRage,
+        Moves.Flail,
+        Moves.Octazooka,
+      ],
     },
   });
 
@@ -99,12 +123,10 @@ export default function registerHorseaSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.Bubble, Moves.SmokeScreen],
-        19: [Moves.SmokeScreen],
-        24: [Moves.Leer],
-        30: [Moves.WaterGun],
-        41: [Moves.Agility],
-        52: [Moves.HydroPump],
+        1: [Moves.Bubble, Moves.SmokeScreen, Moves.Leer, Moves.WaterGun],
+        29: [Moves.Twister],
+        40: [Moves.Agility],
+        51: [Moves.HydroPump],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
     },

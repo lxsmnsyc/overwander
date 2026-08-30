@@ -26,6 +26,8 @@ export const MULTI_HIT_MOVES: { [key in Moves]?: MultiHitConfig } = {
   [Moves.Barrage]: { min: 2, max: 5 },
   [Moves.Bonemerang]: { min: 2, max: 2 },
   [Moves.CometPunch]: { min: 2, max: 5 },
+  [Moves.BoneRush]: { min: 2, max: 5 },
+  [Moves.TripleKick]: { min: 3, max: 3 },
 };
 
 // Delay between strikes

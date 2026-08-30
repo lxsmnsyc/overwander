@@ -869,6 +869,15 @@ describe('move damage', () => {
     Moves.Psywave,
     Moves.Counter,
     Moves.Bide,
+    Moves.MirrorCoat,
+    // Johto's own: power read off health, off friendship, off the
+    // shake of the ground, off what was in the parcel
+    Moves.Flail,
+    Moves.Reversal,
+    Moves.Return,
+    Moves.Frustration,
+    Moves.Magnitude,
+    Moves.Present,
   ]);
 
   it('gives every damaging move something to hit with', () => {
@@ -3170,14 +3179,14 @@ describe('wandering NPCs', () => {
     // What a pokemon has just grown into is the entry for that level
     // exactly, in the order the entry lists it
     expect(getMovesLearnedAt(Species.Bulbasaur, 1)).toEqual([Moves.Tackle, Moves.Growl]);
-    expect(getMovesLearnedAt(Species.Bulbasaur, 13)).toEqual([Moves.VineWhip]);
+    expect(getMovesLearnedAt(Species.Bulbasaur, 10)).toEqual([Moves.VineWhip]);
     // A level with nothing on it offers nothing — and the level below
     // one is not the level, which is what keeps growing up from being
     // a free Move Reminder
     expect(getMovesLearnedAt(Species.Bulbasaur, 12)).toEqual([]);
 
     // Every level's own moves are part of what it has learned by then
-    for (const level of [1, 7, 13, 20, 27]) {
+    for (const level of [1, 7, 10, 15, 20, 25]) {
       const learned = new Set(getLevelUpMoves(Species.Bulbasaur, level));
 
       for (const move of getMovesLearnedAt(Species.Bulbasaur, level)) {
@@ -3188,14 +3197,16 @@ describe('wandering NPCs', () => {
 
   it('gives back the level-up moves a pokemon has lost and nothing else', () => {
     // Everything Bulbasaur has learned by 27, in the order it learned
-    // them — the whole list rather than the four it would be carrying
+    // them, the whole list rather than the four it would be carrying
     expect(getLevelUpMoves(Species.Bulbasaur, 27)).toEqual([
       Moves.Tackle,
       Moves.Growl,
       Moves.LeechSeed,
       Moves.VineWhip,
       Moves.PoisonPowder,
+      Moves.SleepPowder,
       Moves.RazorLeaf,
+      Moves.SweetScent,
     ]);
     // Nothing it has not reached yet
     expect(new Set(getLevelUpMoves(Species.Bulbasaur, 27)).has(Moves.Growth)).toBe(false);
@@ -3209,6 +3220,8 @@ describe('wandering NPCs', () => {
       Moves.Tackle,
       Moves.Growl,
       Moves.LeechSeed,
+      Moves.SleepPowder,
+      Moves.SweetScent,
     ]);
     // A pokemon that never dropped anything has nothing to remember
     expect(getRecallableMoves(Species.Bulbasaur, 6, [Moves.Tackle, Moves.Growl])).toEqual([]);

@@ -26,6 +26,20 @@ const FAMILY_TEACHABLE = [
   Moves.Rest,
   Moves.Substitute,
   Moves.Surf,
+  Moves.Waterfall,
+  Moves.Swift,
+  Moves.Snore,
+  Moves.Curse,
+  Moves.Protect,
+  Moves.IcyWind,
+  Moves.Endure,
+  Moves.Swagger,
+  Moves.Attract,
+  Moves.SleepTalk,
+  Moves.Return,
+  Moves.Frustration,
+  Moves.HiddenPower,
+  Moves.RainDance,
 ];
 
 const FAMILY_ABILITIES = [Abilities.SwiftSwim, Abilities.WaterVeil];
@@ -64,12 +78,13 @@ export default function registerGoldeenSpecies(): void {
     learnSet: {
       level: {
         1: [Moves.Peck, Moves.TailWhip],
-        19: [Moves.Supersonic],
-        24: [Moves.HornAttack],
-        30: [Moves.FuryAttack],
+        10: [Moves.Supersonic],
+        15: [Moves.HornAttack],
+        24: [Moves.Flail],
+        29: [Moves.FuryAttack],
         37: [Moves.Waterfall],
-        45: [Moves.HornDrill],
-        54: [Moves.Agility],
+        43: [Moves.HornDrill],
+        52: [Moves.Agility],
       },
       teachable: [...FAMILY_TEACHABLE],
       egg: [Moves.Psybeam, Moves.Haze, Moves.HydroPump],
@@ -103,9 +118,9 @@ export default function registerGoldeenSpecies(): void {
     learnSet: {
       level: {
         1: [Moves.Peck, Moves.TailWhip, Moves.Supersonic],
-        19: [Moves.Supersonic],
-        24: [Moves.HornAttack],
-        30: [Moves.FuryAttack],
+        15: [Moves.HornAttack],
+        24: [Moves.Flail],
+        29: [Moves.FuryAttack],
         39: [Moves.Waterfall],
         48: [Moves.HornDrill],
         54: [Moves.Agility],

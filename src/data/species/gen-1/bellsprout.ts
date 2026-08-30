@@ -25,6 +25,21 @@ const FAMILY_TEACHABLE = [
   Moves.Rest,
   Moves.Substitute,
   Moves.Cut,
+  Moves.Flash,
+  Moves.Snore,
+  Moves.Curse,
+  Moves.Protect,
+  Moves.SludgeBomb,
+  Moves.GigaDrain,
+  Moves.Endure,
+  Moves.Swagger,
+  Moves.Attract,
+  Moves.SleepTalk,
+  Moves.Return,
+  Moves.Frustration,
+  Moves.SweetScent,
+  Moves.HiddenPower,
+  Moves.SunnyDay,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Chlorophyll];
@@ -63,16 +78,16 @@ export default function registerBellsproutSpecies(): void {
     learnSet: {
       level: {
         1: [Moves.VineWhip, Moves.Growth],
-        13: [Moves.Wrap],
-        15: [Moves.PoisonPowder],
-        18: [Moves.SleepPowder],
-        21: [Moves.StunSpore],
-        26: [Moves.Acid],
+        11: [Moves.Wrap],
+        15: [Moves.PoisonPowder, Moves.SleepPowder],
+        19: [Moves.StunSpore],
+        23: [Moves.Acid],
+        30: [Moves.SweetScent],
         33: [Moves.RazorLeaf],
         42: [Moves.Slam],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.SwordsDance, Moves.Reflect],
+      egg: [Moves.SwordsDance, Moves.Reflect, Moves.LeechLife, Moves.Encore, Moves.Synthesis],
     },
   });
 
@@ -110,11 +125,10 @@ export default function registerBellsproutSpecies(): void {
     learnSet: {
       level: {
         1: [Moves.VineWhip, Moves.Growth, Moves.Wrap],
-        13: [Moves.Wrap],
-        15: [Moves.PoisonPowder],
-        18: [Moves.SleepPowder],
-        23: [Moves.StunSpore],
-        29: [Moves.Acid],
+        15: [Moves.PoisonPowder, Moves.SleepPowder],
+        19: [Moves.StunSpore],
+        24: [Moves.Acid],
+        33: [Moves.SweetScent],
         38: [Moves.RazorLeaf],
         49: [Moves.Slam],
       },
@@ -148,7 +162,14 @@ export default function registerBellsproutSpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.SleepPowder, Moves.StunSpore, Moves.Acid, Moves.RazorLeaf],
+        1: [
+          Moves.SleepPowder,
+          Moves.StunSpore,
+          Moves.Acid,
+          Moves.RazorLeaf,
+          Moves.VineWhip,
+          Moves.SweetScent,
+        ],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
     },

@@ -28,6 +28,20 @@ const FAMILY_TEACHABLE = [
   Moves.Explosion,
   Moves.Substitute,
   Moves.Surf,
+  Moves.Swift,
+  Moves.Snore,
+  Moves.Curse,
+  Moves.Protect,
+  Moves.IcyWind,
+  Moves.Endure,
+  Moves.Swagger,
+  Moves.Attract,
+  Moves.SleepTalk,
+  Moves.Return,
+  Moves.Frustration,
+  Moves.HiddenPower,
+  Moves.RainDance,
+  Moves.Whirlpool,
 ];
 
 const FAMILY_ABILITIES = [Abilities.ShellArmor, Abilities.SkillLink];
@@ -66,14 +80,15 @@ export default function registerShellderSpecies(): void {
     learnSet: {
       level: {
         1: [Moves.Tackle, Moves.Withdraw],
-        18: [Moves.Supersonic],
+        9: [Moves.Supersonic],
+        17: [Moves.AuroraBeam],
         23: [Moves.Clamp],
-        30: [Moves.AuroraBeam],
-        39: [Moves.Leer],
-        50: [Moves.IceBeam],
+        25: [Moves.Protect],
+        33: [Moves.Leer],
+        49: [Moves.IceBeam],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.BubbleBeam, Moves.TakeDown, Moves.Barrier, Moves.Screech],
+      egg: [Moves.BubbleBeam, Moves.TakeDown, Moves.Barrier, Moves.Screech, Moves.RapidSpin],
     },
   });
 
@@ -103,8 +118,9 @@ export default function registerShellderSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.Withdraw, Moves.Supersonic, Moves.Clamp, Moves.AuroraBeam],
-        50: [Moves.SpikeCannon],
+        1: [Moves.Withdraw, Moves.Supersonic, Moves.Clamp, Moves.AuroraBeam, Moves.Protect],
+        33: [Moves.Spikes],
+        41: [Moves.SpikeCannon],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
     },

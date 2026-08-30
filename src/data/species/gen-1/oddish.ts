@@ -24,6 +24,21 @@ const FAMILY_TEACHABLE = [
   Moves.Rest,
   Moves.Substitute,
   Moves.Cut,
+  Moves.Flash,
+  Moves.Snore,
+  Moves.Curse,
+  Moves.Protect,
+  Moves.SludgeBomb,
+  Moves.GigaDrain,
+  Moves.Endure,
+  Moves.Swagger,
+  Moves.Attract,
+  Moves.SleepTalk,
+  Moves.Return,
+  Moves.Frustration,
+  Moves.SweetScent,
+  Moves.HiddenPower,
+  Moves.SunnyDay,
 ];
 
 export default function registerOddishSpecies(): void {
@@ -60,15 +75,17 @@ export default function registerOddishSpecies(): void {
     learnSet: {
       level: {
         1: [Moves.Absorb],
-        15: [Moves.PoisonPowder],
-        17: [Moves.StunSpore],
-        19: [Moves.SleepPowder],
-        24: [Moves.Acid],
+        7: [Moves.SweetScent],
+        14: [Moves.PoisonPowder],
+        16: [Moves.StunSpore],
+        18: [Moves.SleepPowder],
+        23: [Moves.Acid],
+        32: [Moves.Moonlight],
         33: [Moves.PetalDance],
         46: [Moves.SolarBeam],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.SwordsDance, Moves.RazorLeaf],
+      egg: [Moves.SwordsDance, Moves.RazorLeaf, Moves.Flail, Moves.Charm, Moves.Synthesis],
     },
   });
 
@@ -105,9 +122,10 @@ export default function registerOddishSpecies(): void {
     activeTimes: TimeOfDay.Evening | TimeOfDay.Night,
     learnSet: {
       level: {
-        1: [Moves.Absorb, Moves.PoisonPowder, Moves.StunSpore],
-        19: [Moves.SleepPowder],
-        28: [Moves.Acid],
+        1: [Moves.Absorb, Moves.PoisonPowder, Moves.StunSpore, Moves.SweetScent],
+        18: [Moves.SleepPowder],
+        24: [Moves.Acid],
+        35: [Moves.Moonlight],
         38: [Moves.PetalDance],
         52: [Moves.SolarBeam],
       },
@@ -141,7 +159,7 @@ export default function registerOddishSpecies(): void {
     activeTimes: TimeOfDay.Evening | TimeOfDay.Night,
     learnSet: {
       level: {
-        1: [Moves.Absorb, Moves.PoisonPowder, Moves.PetalDance],
+        1: [Moves.Absorb, Moves.PoisonPowder, Moves.PetalDance, Moves.StunSpore, Moves.SweetScent],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
     },

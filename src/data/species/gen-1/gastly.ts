@@ -24,6 +24,24 @@ const FAMILY_TEACHABLE = [
   Moves.Rest,
   Moves.Explosion,
   Moves.Substitute,
+  Moves.Thief,
+  Moves.Nightmare,
+  Moves.Snore,
+  Moves.Curse,
+  Moves.Protect,
+  Moves.ZapCannon,
+  Moves.GigaDrain,
+  Moves.Endure,
+  Moves.Swagger,
+  Moves.Attract,
+  Moves.SleepTalk,
+  Moves.Return,
+  Moves.Frustration,
+  Moves.HiddenPower,
+  Moves.RainDance,
+  Moves.SunnyDay,
+  Moves.PsychUp,
+  Moves.ShadowBall,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Levitate];
@@ -80,12 +98,22 @@ export default function registerGastlySpecies(): void {
     activeTimes: TimeOfDay.Night,
     learnSet: {
       level: {
-        1: [Moves.Lick, Moves.ConfuseRay, Moves.NightShade],
-        27: [Moves.Hypnosis],
-        35: [Moves.DreamEater],
+        1: [Moves.Lick, Moves.ConfuseRay, Moves.NightShade, Moves.Hypnosis],
+        8: [Moves.Spite],
+        13: [Moves.MeanLook],
+        16: [Moves.Curse],
+        33: [Moves.DreamEater],
+        36: [Moves.DestinyBond],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.Psywave, Moves.Haze, Moves.FirePunch, Moves.IcePunch, Moves.ThunderPunch],
+      egg: [
+        Moves.Psywave,
+        Moves.Haze,
+        Moves.FirePunch,
+        Moves.IcePunch,
+        Moves.ThunderPunch,
+        Moves.PerishSong,
+      ],
     },
   });
 
@@ -113,9 +141,11 @@ export default function registerGastlySpecies(): void {
     activeTimes: TimeOfDay.Night,
     learnSet: {
       level: {
-        1: [Moves.Lick, Moves.ConfuseRay, Moves.NightShade],
-        29: [Moves.Hypnosis],
+        1: [Moves.Lick, Moves.ConfuseRay, Moves.NightShade, Moves.Hypnosis, Moves.Spite],
+        13: [Moves.MeanLook],
+        16: [Moves.Curse],
         38: [Moves.DreamEater],
+        48: [Moves.DestinyBond],
       },
       teachable: [...FAMILY_TEACHABLE],
     },
@@ -140,9 +170,11 @@ export default function registerGastlySpecies(): void {
     activeTimes: TimeOfDay.Night,
     learnSet: {
       level: {
-        1: [Moves.Lick, Moves.ConfuseRay, Moves.NightShade],
-        29: [Moves.Hypnosis],
+        1: [Moves.Lick, Moves.ConfuseRay, Moves.NightShade, Moves.Hypnosis, Moves.Spite],
+        13: [Moves.MeanLook],
+        16: [Moves.Curse],
         38: [Moves.DreamEater],
+        48: [Moves.DestinyBond],
       },
       teachable: [
         ...FAMILY_TEACHABLE,
@@ -155,6 +187,12 @@ export default function registerGastlySpecies(): void {
         Moves.Counter,
         Moves.HyperBeam,
         Moves.Strength,
+        Moves.FirePunch,
+        Moves.IcePunch,
+        Moves.ThunderPunch,
+        Moves.Headbutt,
+        Moves.DynamicPunch,
+        Moves.RockSmash,
       ],
     },
   });

@@ -34,6 +34,10 @@ const STAGE_MOVE_GROUPS: [Stages, StageMovesConfig][] = [
       [Moves.SwordsDance]: 2,
       [Moves.Meditate]: 1,
       [Moves.Sharpen]: 1,
+      [Moves.Charm]: -2,
+      // The target is flattered into swinging harder while it is too
+      // confused to aim
+      [Moves.Swagger]: 2,
     },
   ],
   [
@@ -66,6 +70,8 @@ const STAGE_MOVE_GROUPS: [Stages, StageMovesConfig][] = [
     {
       [Moves.StringShot]: -2,
       [Moves.Agility]: 2,
+      [Moves.ScaryFace]: -2,
+      [Moves.CottonSpore]: -2,
     },
   ],
   [
@@ -82,6 +88,7 @@ const STAGE_MOVE_GROUPS: [Stages, StageMovesConfig][] = [
     {
       [Moves.DoubleTeam]: 1,
       [Moves.Minimize]: 2,
+      [Moves.SweetScent]: -2,
     },
   ],
 ];

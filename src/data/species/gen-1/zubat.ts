@@ -22,6 +22,22 @@ const FAMILY_TEACHABLE = [
   Moves.Bide,
   Moves.Rest,
   Moves.Substitute,
+  Moves.Swift,
+  Moves.Thief,
+  Moves.Snore,
+  Moves.Curse,
+  Moves.Protect,
+  Moves.Detect,
+  Moves.GigaDrain,
+  Moves.Endure,
+  Moves.Swagger,
+  Moves.SteelWing,
+  Moves.Attract,
+  Moves.SleepTalk,
+  Moves.Return,
+  Moves.Frustration,
+  Moves.HiddenPower,
+  Moves.SunnyDay,
 ];
 
 export default function registerZubatSpecies(): void {
@@ -58,14 +74,14 @@ export default function registerZubatSpecies(): void {
     learnSet: {
       level: {
         1: [Moves.LeechLife],
-        10: [Moves.Supersonic],
-        15: [Moves.Bite],
-        21: [Moves.ConfuseRay],
-        28: [Moves.WingAttack],
-        36: [Moves.Haze],
+        6: [Moves.Supersonic],
+        12: [Moves.Bite],
+        19: [Moves.ConfuseRay],
+        27: [Moves.WingAttack],
+        36: [Moves.Haze, Moves.MeanLook],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.QuickAttack, Moves.Gust],
+      egg: [Moves.QuickAttack, Moves.Gust, Moves.Whirlwind, Moves.FeintAttack, Moves.Pursuit],
     },
   });
 
@@ -95,11 +111,10 @@ export default function registerZubatSpecies(): void {
     activeTimes: TimeOfDay.Evening | TimeOfDay.Night,
     learnSet: {
       level: {
-        1: [Moves.Screech, Moves.LeechLife, Moves.Bite],
-        10: [Moves.Supersonic],
-        15: [Moves.Bite],
-        21: [Moves.ConfuseRay],
-        32: [Moves.WingAttack],
+        1: [Moves.Screech, Moves.LeechLife, Moves.Bite, Moves.Supersonic],
+        19: [Moves.ConfuseRay],
+        30: [Moves.WingAttack],
+        42: [Moves.MeanLook],
         43: [Moves.Haze],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],

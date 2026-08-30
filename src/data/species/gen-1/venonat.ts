@@ -24,6 +24,22 @@ const FAMILY_TEACHABLE = [
   Moves.Rest,
   Moves.Psywave,
   Moves.Substitute,
+  Moves.Swift,
+  Moves.Thief,
+  Moves.Snore,
+  Moves.Curse,
+  Moves.Protect,
+  Moves.SludgeBomb,
+  Moves.GigaDrain,
+  Moves.Endure,
+  Moves.Swagger,
+  Moves.Attract,
+  Moves.SleepTalk,
+  Moves.Return,
+  Moves.Frustration,
+  Moves.SweetScent,
+  Moves.HiddenPower,
+  Moves.SunnyDay,
 ];
 
 export default function registerVenonatSpecies(): void {
@@ -59,16 +75,18 @@ export default function registerVenonatSpecies(): void {
     activeTimes: TimeOfDay.Evening | TimeOfDay.Night,
     learnSet: {
       level: {
-        1: [Moves.Tackle, Moves.Disable],
-        24: [Moves.PoisonPowder],
-        27: [Moves.LeechLife],
-        30: [Moves.StunSpore],
-        35: [Moves.Psybeam],
-        38: [Moves.SleepPowder],
-        43: [Moves.Psychic],
+        1: [Moves.Tackle, Moves.Disable, Moves.Foresight],
+        9: [Moves.Supersonic],
+        17: [Moves.Confusion],
+        20: [Moves.PoisonPowder],
+        25: [Moves.LeechLife],
+        28: [Moves.StunSpore],
+        33: [Moves.Psybeam],
+        36: [Moves.SleepPowder],
+        41: [Moves.Psychic],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.Screech],
+      egg: [Moves.Screech, Moves.GigaDrain, Moves.BatonPass],
     },
   });
 
@@ -98,14 +116,16 @@ export default function registerVenonatSpecies(): void {
     activeTimes: TimeOfDay.Evening | TimeOfDay.Night,
     learnSet: {
       level: {
-        1: [Moves.Tackle, Moves.Disable, Moves.PoisonPowder],
-        27: [Moves.LeechLife],
-        30: [Moves.StunSpore],
-        38: [Moves.Psybeam],
-        43: [Moves.SleepPowder],
+        1: [Moves.Tackle, Moves.Disable, Moves.PoisonPowder, Moves.Supersonic, Moves.Foresight],
+        17: [Moves.Confusion],
+        25: [Moves.LeechLife],
+        28: [Moves.StunSpore],
+        31: [Moves.Gust],
+        36: [Moves.Psybeam],
+        42: [Moves.SleepPowder],
         50: [Moves.Psychic],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
+      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.Flash],
     },
   });
 }

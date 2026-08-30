@@ -29,6 +29,25 @@ const FAMILY_TEACHABLE = [
   Moves.Psywave,
   Moves.Explosion,
   Moves.Substitute,
+  Moves.DreamEater,
+  Moves.Flash,
+  Moves.Thief,
+  Moves.Nightmare,
+  Moves.Snore,
+  Moves.Curse,
+  Moves.Protect,
+  Moves.SludgeBomb,
+  Moves.GigaDrain,
+  Moves.Endure,
+  Moves.Rollout,
+  Moves.Swagger,
+  Moves.Attract,
+  Moves.SleepTalk,
+  Moves.Return,
+  Moves.Frustration,
+  Moves.HiddenPower,
+  Moves.SunnyDay,
+  Moves.PsychUp,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Chlorophyll];
@@ -67,15 +86,16 @@ export default function registerExeggcuteSpecies(): void {
     learnSet: {
       level: {
         1: [Moves.Barrage, Moves.Hypnosis],
-        25: [Moves.Reflect],
-        28: [Moves.LeechSeed],
-        32: [Moves.StunSpore],
-        37: [Moves.PoisonPowder],
+        7: [Moves.Reflect],
+        13: [Moves.LeechSeed],
+        19: [Moves.Confusion],
+        25: [Moves.StunSpore],
+        31: [Moves.PoisonPowder],
+        37: [Moves.SleepPowder],
         42: [Moves.SolarBeam],
-        48: [Moves.SleepPowder],
       },
-      teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.Reflect],
+      teachable: [...FAMILY_TEACHABLE, Moves.Strength],
+      egg: [Moves.Reflect, Moves.MegaDrain, Moves.Synthesis, Moves.Moonlight, Moves.AncientPower],
     },
   });
 
@@ -105,10 +125,11 @@ export default function registerExeggcuteSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.Barrage, Moves.Hypnosis],
-        28: [Moves.Stomp],
+        1: [Moves.Barrage, Moves.Hypnosis, Moves.Confusion],
+        19: [Moves.Stomp],
+        31: [Moves.EggBomb],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.Strength],
+      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.Strength, Moves.Headbutt],
     },
   });
 }

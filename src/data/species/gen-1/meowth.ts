@@ -26,6 +26,30 @@ const FAMILY_TEACHABLE = [
   Moves.SkullBash,
   Moves.Rest,
   Moves.Substitute,
+  Moves.Headbutt,
+  Moves.DefenseCurl,
+  Moves.Swift,
+  Moves.DreamEater,
+  Moves.Thief,
+  Moves.Nightmare,
+  Moves.Snore,
+  Moves.Curse,
+  Moves.Protect,
+  Moves.MudSlap,
+  Moves.ZapCannon,
+  Moves.IcyWind,
+  Moves.Detect,
+  Moves.Endure,
+  Moves.Swagger,
+  Moves.Attract,
+  Moves.SleepTalk,
+  Moves.Return,
+  Moves.Frustration,
+  Moves.IronTail,
+  Moves.HiddenPower,
+  Moves.SunnyDay,
+  Moves.PsychUp,
+  Moves.ShadowBall,
 ];
 
 export default function registerMeowthSpecies(): void {
@@ -62,14 +86,15 @@ export default function registerMeowthSpecies(): void {
     learnSet: {
       level: {
         1: [Moves.Scratch, Moves.Growl],
-        12: [Moves.Bite],
+        11: [Moves.Bite],
         17: [Moves.PayDay],
         24: [Moves.Screech],
+        28: [Moves.FeintAttack],
         33: [Moves.FurySwipes],
         44: [Moves.Slash],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.Hypnosis, Moves.Amnesia],
+      egg: [Moves.Hypnosis, Moves.Amnesia, Moves.Spite, Moves.Charm],
     },
   });
 
@@ -99,14 +124,14 @@ export default function registerMeowthSpecies(): void {
     activeTimes: TimeOfDay.Night,
     learnSet: {
       level: {
-        1: [Moves.Scratch, Moves.Growl],
-        12: [Moves.Bite],
+        1: [Moves.Scratch, Moves.Growl, Moves.Bite],
         17: [Moves.PayDay],
         24: [Moves.Screech],
+        29: [Moves.FeintAttack],
         37: [Moves.FurySwipes],
         51: [Moves.Slash],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
+      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.Roar],
     },
   });
 }

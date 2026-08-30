@@ -32,6 +32,27 @@ const FAMILY_TEACHABLE = [
   Moves.ThunderWave,
   Moves.Substitute,
   Moves.Flash,
+  Moves.ThunderPunch,
+  Moves.Headbutt,
+  Moves.Strength,
+  Moves.DefenseCurl,
+  Moves.Snore,
+  Moves.Curse,
+  Moves.Protect,
+  Moves.MudSlap,
+  Moves.ZapCannon,
+  Moves.Detect,
+  Moves.Endure,
+  Moves.Rollout,
+  Moves.Swagger,
+  Moves.Attract,
+  Moves.SleepTalk,
+  Moves.Return,
+  Moves.Frustration,
+  Moves.DynamicPunch,
+  Moves.IronTail,
+  Moves.HiddenPower,
+  Moves.RainDance,
 ];
 
 export default function registerPikachuSpecies(): void {
@@ -68,11 +89,15 @@ export default function registerPikachuSpecies(): void {
     learnSet: {
       level: {
         1: [Moves.ThunderShock, Moves.Growl],
-        9: [Moves.ThunderWave],
-        16: [Moves.QuickAttack],
-        26: [Moves.Swift],
+        6: [Moves.TailWhip],
+        8: [Moves.ThunderWave],
+        11: [Moves.QuickAttack],
+        15: [Moves.DoubleTeam],
+        20: [Moves.Slam],
+        26: [Moves.Swift, Moves.Thunderbolt],
         33: [Moves.Agility],
-        43: [Moves.Thunder],
+        41: [Moves.Thunder],
+        50: [Moves.LightScreen],
       },
       teachable: [...FAMILY_TEACHABLE],
     },
@@ -104,9 +129,16 @@ export default function registerPikachuSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.ThunderShock, Moves.Growl, Moves.ThunderWave],
+        1: [
+          Moves.ThunderShock,
+          Moves.Growl,
+          Moves.ThunderWave,
+          Moves.TailWhip,
+          Moves.Thunderbolt,
+          Moves.QuickAttack,
+        ],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
+      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.Thief],
     },
   });
 }

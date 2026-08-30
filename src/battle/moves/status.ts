@@ -19,6 +19,8 @@ export const STATUS_MOVES: { [key in Moves]?: Statuses } = {
   [Moves.ConfuseRay]: Statuses.Confused,
   [Moves.Spore]: Statuses.Sleeping,
   [Moves.Hypnosis]: Statuses.Sleeping,
+  [Moves.SweetKiss]: Statuses.Confused,
+  [Moves.Swagger]: Statuses.Confused,
 };
 
 export const SELF_STATUS_MOVES: { [key in Moves]?: Statuses } = {
@@ -62,6 +64,17 @@ const EFFECT_STATUS_MOVES: {
   [Moves.Smog]: { status: Statuses.Poisoned, chance: 40 },
   [Moves.DizzyPunch]: { status: Statuses.Confused, chance: 20 },
   [Moves.Waterfall]: { status: Statuses.Flinched, chance: 20 },
+  [Moves.FlameWheel]: { status: Statuses.Burned, chance: 10 },
+  [Moves.SacredFire]: { status: Statuses.Burned, chance: 50 },
+  [Moves.PowderSnow]: { status: Statuses.Frozen, chance: 10 },
+  [Moves.Spark]: { status: Statuses.Paralyzed, chance: 30 },
+  [Moves.DragonBreath]: { status: Statuses.Paralyzed, chance: 30 },
+  [Moves.SludgeBomb]: { status: Statuses.Poisoned, chance: 30 },
+  [Moves.ZapCannon]: { status: Statuses.Paralyzed, chance: 100 },
+  [Moves.DynamicPunch]: { status: Statuses.Confused, chance: 100 },
+  [Moves.Twister]: { status: Statuses.Flinched, chance: 20 },
+  [Moves.Snore]: { status: Statuses.Flinched, chance: 30 },
+  [Moves.Whirlpool]: { status: Statuses.Trapped, chance: 100 },
 };
 
 /**
@@ -78,15 +91,46 @@ export const TRAPPING_MOVES = new Set<Moves>(
     .map(([move]) => Number(move) as Moves),
 );
 
-const EFFECT_STAGE_MOVES: {
-  [key in Moves]?: { stage: Stages; value: number; chance: number };
-} = {
+/**
+ * A stage a move pushes on the side as it lands. `self` is which side:
+ * a Metal Claw sharpens its own claws, an Iron Tail dents what it hit
+ */
+interface AttackStageEffect {
+  stage: Stages | Stages[];
+  value: number;
+  chance: number;
+  self?: boolean;
+}
+
+const EFFECT_STAGE_MOVES: { [key in Moves]?: AttackStageEffect } = {
   [Moves.Bubble]: { stage: Stages.Speed, value: -1, chance: 10 },
   [Moves.BubbleBeam]: { stage: Stages.Speed, value: -1, chance: 10 },
   [Moves.Psychic]: { stage: Stages.SpecialDefense, value: -1, chance: 10 },
   [Moves.Acid]: { stage: Stages.SpecialDefense, value: -1, chance: 10 },
   [Moves.Constrict]: { stage: Stages.Speed, value: -1, chance: 10 },
   [Moves.AuroraBeam]: { stage: Stages.Attack, value: -1, chance: 10 },
+  [Moves.Crunch]: { stage: Stages.Defense, value: -1, chance: 20 },
+  [Moves.IronTail]: { stage: Stages.Defense, value: -1, chance: 30 },
+  [Moves.RockSmash]: { stage: Stages.Defense, value: -1, chance: 50 },
+  [Moves.ShadowBall]: { stage: Stages.SpecialDefense, value: -1, chance: 20 },
+  [Moves.MudSlap]: { stage: Stages.Accuracy, value: -1, chance: 100 },
+  [Moves.Octazooka]: { stage: Stages.Accuracy, value: -1, chance: 50 },
+  [Moves.IcyWind]: { stage: Stages.Speed, value: -1, chance: 100 },
+  [Moves.MetalClaw]: { stage: Stages.Attack, value: 1, chance: 10, self: true },
+  [Moves.SteelWing]: { stage: Stages.Defense, value: 1, chance: 10, self: true },
+  [Moves.RapidSpin]: { stage: Stages.Speed, value: 1, chance: 100, self: true },
+  [Moves.AncientPower]: {
+    stage: [
+      Stages.Attack,
+      Stages.Defense,
+      Stages.SpecialAttack,
+      Stages.SpecialDefense,
+      Stages.Speed,
+    ],
+    value: 1,
+    chance: 10,
+    self: true,
+  },
 };
 
 /**
@@ -174,7 +218,11 @@ function setupUnitStatusMoves(battle: Battle): void {
     const stage = EFFECT_STAGE_MOVES[event.parent.move];
 
     if (stage) {
-      event.parent.target.addStage(stage.stage, stage.value, cause);
+      const receiver = stage.self ? event.parent.source : event.parent.target;
+
+      for (const one of Array.isArray(stage.stage) ? stage.stage : [stage.stage]) {
+        receiver.addStage(one, stage.value, cause);
+      }
     }
   });
 }

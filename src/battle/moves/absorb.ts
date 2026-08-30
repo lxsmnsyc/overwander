@@ -18,6 +18,7 @@ export const ABSORB_MOVES = new Set<Moves>([
   Moves.MegaDrain,
   Moves.LeechLife,
   Moves.DreamEater,
+  Moves.GigaDrain,
 ]);
 
 const HEALING_FACTOR = 0.5;

@@ -55,6 +55,13 @@ export const NAMED_RADIUS = PARTY_SLOT;
 export const HIT_REACH = 1.4;
 
 /**
+ * How far a pointer may travel and still be aiming rather than
+ * turning, in pixels. No hand holds a mouse perfectly still, and a
+ * press that moved a pixel is still a press on what is under it
+ */
+export const TURN_SLOP = 4;
+
+/**
  * What the field says while the fight's sheets are still coming
  */
 export const LOADING_LABEL = 'Loading…';

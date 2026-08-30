@@ -10,6 +10,8 @@ import abilityCueFor, {
   statusTriggerFor,
 } from '../../../canvas/battle/cues';
 import pixelRatio from '../../../canvas/ratio';
+import createTwist from '../../../canvas/twist';
+import createLongPress from '../../styled/long-press';
 import paintWeather from '../../../canvas/battle/weather';
 import {
   delayShapeFor,
@@ -41,7 +43,7 @@ import type { Statuses } from '../../../data/ids/status';
 import { getMoveData } from '../../../data/moves';
 import { bodyOf, boxOf, drawSlot, scaleOf, withinSlot } from './draw';
 import { type Slot, lobbyCamera, project, readField, ringStandings } from './field';
-import { COLORS, FIELD_UNIT, HEIGHT, LOADING_LABEL, WIDTH } from './metrics';
+import { COLORS, FIELD_UNIT, HEIGHT, LOADING_LABEL, TURN_SLOP, WIDTH } from './metrics';
 import {
   CUE_GAP,
   type Casting,
@@ -925,6 +927,18 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
     // pointer that started on the canvas keeps turning it wherever it
     // goes, so a drag that runs off the edge does not stick
     let turning: number | null = null;
+    /**
+     * Two fingers doing the same job. A phone has the drag already:
+     * one finger down is a press on a pokemon, and it is only the
+     * second one that says the camera is what is being moved
+     */
+    const twist = createTwist();
+    /**
+     * Whether the pointer moved far enough to have turned the field. A
+     * drag that walked the camera round is not also a press on
+     * whichever pokemon it finished over
+     */
+    let turned = false;
 
     /**
      * Which pokemon the pointer is over, from where they were last
@@ -985,7 +999,44 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       props.onHover?.(unit, slot == null ? null : spotOf(slot));
     };
 
+    /**
+     * The finger being held, so the card knows which pokemon the hold
+     * was over. A hold reports no coordinates of its own
+     */
+    let holding: PointerEvent | null = null;
+    /**
+     * A finger has no hover, so the card that a pointer raises by
+     * resting on a pokemon is raised by holding one instead
+     */
+    const held = createLongPress(() => {
+      if (holding != null) {
+        report(under(holding));
+      }
+    });
+
     const grab = (event: PointerEvent): void => {
+      // A fresh press starts as a press. The flag is cleared here
+      // rather than at the click it guards, since a two finger lift
+      // often sends no click at all to clear it
+      if (event.isPrimary) {
+        turned = false;
+      }
+      // A press on the glass puts the last card away: a finger cannot
+      // move off a pokemon, so pressing somewhere else is how it says
+      // it has finished with one
+      if (event.pointerType === 'touch' && hovered != null) {
+        report(null);
+      }
+      holding = event;
+      held.onPointerDown(event);
+      twist.down(event);
+      // The second finger takes the drag off the first: what was a
+      // swipe is now a twist, and the two would pull the same yaw two
+      // ways
+      if (twist.turning()) {
+        turning = null;
+        return;
+      }
       // The left button and nothing else. A right-drag belongs to the
       // browser — on a Mac it is also what a ctrl-click is — and a
       // canvas that swallowed it would take the context menu with it
@@ -998,8 +1049,24 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
     };
 
     const turn = (event: PointerEvent): void => {
+      const spun = twist.move(event);
+
+      if (spun != null) {
+        if (hovered != null) {
+          report(null);
+        }
+        turned = true;
+        yaw += spun;
+        draw();
+        return;
+      }
+      held.onPointerMove(event);
       if (turning == null) {
-        report(under(event));
+        // A finger sliding over a pokemon is not pointing at it, and
+        // the hold above is what asks about one
+        if (event.pointerType !== 'touch') {
+          report(under(event));
+        }
         return;
       }
       // Nothing is hovered while the field is being turned: the pointer
@@ -1010,12 +1077,19 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       // A drag across the whole width is one turn all the way round,
       // which is slow enough to aim and quick enough to get behind
       // something without letting go
+      // A pointer that has barely moved was aiming rather than
+      // turning: the pick under it still stands
+      if (Math.abs(event.clientX - turning) > TURN_SLOP) {
+        turned = true;
+      }
       yaw += ((event.clientX - turning) / Math.max(1, element.clientWidth)) * Math.PI * 2;
       turning = event.clientX;
       draw();
     };
 
     const release = (event: PointerEvent): void => {
+      held.onPointerUp(event);
+      twist.up(event);
       turning = null;
       if (element.hasPointerCapture(event.pointerId)) {
         element.releasePointerCapture(event.pointerId);
@@ -1037,6 +1111,13 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
     };
 
     const press = (event: MouseEvent): void => {
+      // The drag that turned the field ends over some pokemon or
+      // other, and that is not who was picked
+      if (turned) {
+        turned = false;
+        return;
+      }
+
       const slot = under(event);
 
       if (slot != null) {

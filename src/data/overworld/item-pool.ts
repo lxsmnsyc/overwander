@@ -237,11 +237,15 @@ export const ITEM_POOL: ItemRarityGroups = {
     // twice
     { item: Items.AmuletCoin, weight: 4 },
     // The ruins. They change nothing about a pokemon, which is what
-    // the rest of this band is for — what puts them here is that one
-    // of them pays for a season of everything else, and a band that
-    // draws a Bottle Cap is the right rate for that
-    { item: Items.RelicVase, weight: 3 },
-    { item: Items.CometShard, weight: 2 },
+    // the rest of this band is for; what puts them here is that one of
+    // them pays for a season of everything else, and a band that draws
+    // a Bottle Cap is the right rate for that.
+    //
+    // The four are spread rather than levelled, because the ladder is
+    // read by price: each is dearer than the one above it, so each is
+    // scarcer than the one above it
+    { item: Items.RelicVase, weight: 4 },
+    { item: Items.CometShard, weight: 3 },
     { item: Items.RelicBand, weight: 2 },
     { item: Items.RelicStatue, weight: 1 },
     // The power items: each decides what a player's next fifty eggs
@@ -260,10 +264,15 @@ export const ITEM_POOL: ItemRarityGroups = {
     { item: Items.GoldenBottleCap, weight: 8 },
     // The one thing here that is only gold. Everything beside it is
     // something gold cannot buy, and the crown earns its place the
-    // other way round: six hundred thousand is more than the game
-    // pays for anything else, so the band that hides a Master Ball is
-    // the only one that can hide it. The thinnest slot of the five
-    { item: Items.RelicCrown, weight: 5 },
+    // other way round: six hundred thousand is more than the game pays
+    // for anything else, so the band that hides a Master Ball is the
+    // only one that can hide it.
+    //
+    // Thin even for this band, and that is the whole of why. A band
+    // eight times rarer is not by itself rarer than a wide slot in the
+    // band below: at 5 the crown outdrew the statue under it, which is
+    // worth two thirds as much
+    { item: Items.RelicCrown, weight: 3 },
   ],
 };
 
@@ -334,6 +343,39 @@ export const ITEM_BAND_ODDS: ItemBandOdds = {
   rare: RARE_SPAWN_ODDS,
   uncommon: UNCOMMON_SPAWN_ODDS,
 };
+
+/**
+ * How often one roll of the pool answers this item: the width of its
+ * band, times its share of that band. Zero for anything the ground
+ * never hides.
+ *
+ * Two items are not ranked by their bands. A band eight times rarer
+ * does not make a wide slot in it rarer than a thin slot in the band
+ * below, and the ladder the valuables are priced along is read here
+ * rather than off `getItemBand`
+ */
+export function getItemOdds(item: Items, odds: ItemBandOdds = ITEM_BAND_ODDS): number {
+  const band = getItemBand(item);
+
+  if (band == null) {
+    return 0;
+  }
+  let total = 0;
+  let weight = 0;
+
+  for (const entry of ITEM_POOL[band]) {
+    total += entry.weight;
+    if (entry.item === item) {
+      weight += entry.weight;
+    }
+  }
+  // Base is whatever the named bands leave, so it is subtracted rather
+  // than looked up: a band added later takes its slice out of base
+  const width =
+    band === 'base' ? 1 - odds.special - odds.prized - odds.rare - odds.uncommon : odds[band];
+
+  return total === 0 ? 0 : width * (weight / total);
+}
 
 /**
  * What a Pickup buddy turns up: the ordinary bands with the top two

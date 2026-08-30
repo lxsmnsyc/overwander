@@ -31,6 +31,7 @@ import { type Cast, getCast, paintAmbient } from '../../../canvas/daylight';
 import type Weather from '../../../data/overworld/weather';
 import pixelRatio from '../../../canvas/ratio';
 import paintSky from '../../../canvas/sky';
+import createTwist from '../../../canvas/twist';
 import { getLocalOffset, toLocalTime } from '../../../auth/local-time';
 import { serverNow } from '../../../auth/clock';
 import loadSpeciesSprite from '../../../canvas/species-sprites';
@@ -854,6 +855,11 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
    * picture reads
    */
   let turning: { pointer: number; angle: number } | null = null;
+  /**
+   * The two fingers doing the same job, for a screen with no right
+   * button to hold down
+   */
+  const twist = createTwist();
   /**
    * Whether the last press actually moved the camera. A drag that
    * turned the board is not also a press on the cell it ended over,
@@ -1887,6 +1893,10 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       // Every square is worth pressing now — the far ones are walked
       // to rather than out of reach — so the pointer says so over all
       // of them, and says nothing over the ground beside the board
+      // The board takes the gestures rather than the page: a two
+      // finger twist here would otherwise be the browser's own pinch,
+      // and a drag would scroll whatever is behind it
+      style={{ 'touch-action': 'none' }}
       class={`absolute inset-0 block h-full w-full focus-visible:outline-none ${
         hovered() == null ? 'cursor-default' : 'cursor-pointer'
       }`}
@@ -1896,6 +1906,13 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         event.preventDefault();
       }}
       onPointerDown={(event) => {
+        // A fresh press starts as a press. Cleared here rather than at
+        // the click it guards, since a two finger lift often sends no
+        // click at all to clear it
+        if (event.isPrimary) {
+          turned = false;
+        }
+        twist.down(event);
         if (!isTurningPress(event)) {
           return;
         }
@@ -1912,6 +1929,17 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         turning = { pointer: event.pointerId, angle: grabbed };
       }}
       onPointerMove={(event) => {
+        const spun = twist.move(event);
+
+        // Two fingers turn it, and the cell the first one is over is
+        // not being pressed while they do
+        if (spun != null) {
+          turned = true;
+          setYaw((angle) => angle + spun);
+          setHovered(null);
+          return;
+        }
+
         const drag = turning;
 
         if (drag?.pointer === event.pointerId) {
@@ -1924,12 +1952,14 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         setHovered(cellAt(event));
       }}
       onPointerUp={(event) => {
+        twist.up(event);
         if (turning?.pointer === event.pointerId) {
           event.currentTarget.releasePointerCapture(event.pointerId);
           turning = null;
         }
       }}
-      onPointerCancel={() => {
+      onPointerCancel={(event) => {
+        twist.up(event);
         turning = null;
       }}
       onMouseLeave={() => {

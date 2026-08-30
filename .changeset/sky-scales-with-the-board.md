@@ -1,5 +1,5 @@
 ---
-'overwander': minor
+'overwander': patch
 ---
 
 The sky is sized for the board, not for the monitor.

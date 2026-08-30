@@ -17,6 +17,7 @@ import { TooltipLayer } from '../tooltip';
 import { SHEER } from '../transition';
 import { type HoverCardPlacement, type Point, apart, holds, place, within } from './placing';
 import { CLOSE_DELAY, OPEN_DELAY } from '../hover-delay';
+import createLongPress from '../long-press';
 import { GRACE, LINGER, type SafeShape, painting, showSafeAreas } from './safe-area';
 
 export type { HoverCardPlacement };
@@ -249,6 +250,16 @@ export default function HoverCard(props: HoverCardProps): JSX.Element {
   };
 
   /**
+   * The touch's way in. A finger cannot hover and cannot cross a safe
+   * triangle either, so it opens the card outright and the press
+   * elsewhere that `away` is already listening for is what shuts it
+   */
+  const held = createLongPress(() => {
+    cancel();
+    setOpen(true);
+  });
+
+  /**
    * The safe triangle: the pointer's last spot on the trigger and the
    * two corners of the card's near edge. While the pointer stays
    * inside it the pointer is on its way to the card, so the card waits
@@ -446,9 +457,22 @@ export default function HoverCard(props: HoverCardProps): JSX.Element {
         // joining it: a trigger filling a grid cell has to say so, and
         // two display utilities in one list are settled by the order
         // Tailwind emits them in rather than by the order written here
-        class={props.class ?? 'inline-flex'}
-        onMouseEnter={show}
-        onMouseLeave={(event) => {
+        // Nothing to select: a hold here is asking about the row,
+        // and a phone that answers by selecting its text has put a
+        // caret over the card instead
+        class={`select-none ${props.class ?? 'inline-flex'}`}
+        {...held}
+        onPointerEnter={(event) => {
+          if (event.pointerType !== 'touch') {
+            show();
+          }
+        }}
+        onPointerLeave={(event) => {
+          // A finger never crosses to the card: it lifts, and the card
+          // stands until something else is pressed
+          if (event.pointerType === 'touch') {
+            return;
+          }
           if (open()) {
             cross({ x: event.clientX, y: event.clientY });
           } else {
@@ -515,9 +539,14 @@ export default function HoverCard(props: HoverCardProps): JSX.Element {
                 class={`${CARD} ${WIDTHS[props.width ?? 'narrow']} ${
                   open() ? '' : 'pointer-events-none'
                 }`}
-                onMouseEnter={cancel}
-                onMouseLeave={() => {
-                  hide();
+                onPointerEnter={cancel}
+                onPointerLeave={(event) => {
+                  // A tap inside the card sends a mouse-leave when the
+                  // finger lifts, which would close the card the tap
+                  // was aimed at
+                  if (event.pointerType !== 'touch') {
+                    hide();
+                  }
                 }}
                 onFocusOut={(event) => {
                   // The pointer outranks the focus here too: a button

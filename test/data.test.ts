@@ -115,6 +115,7 @@ import {
   MAX_KINDS,
   MAX_STACK,
   getItemBand,
+  getItemOdds,
   isPreciousItem,
   pickItem,
   pickItems,
@@ -2295,6 +2296,68 @@ describe('item data', () => {
       expect(getItemData(Items.RelicCrown).sell).toBeGreaterThanOrEqual(
         getItemData(entry.item).sell,
       );
+    }
+  });
+
+  it('never lets a dearer valuable be the commoner find', () => {
+    // The band check above is not enough on its own, and the crown is
+    // why. A band eight times rarer, entered through a slot ten times
+    // wider, is the commoner find in the end: at weight 5 the crown
+    // outdrew the statue worth two thirds of it, and every assertion
+    // about bands passed while it did.
+    //
+    // What holds instead is that the valuables' bands do not overlap:
+    // whatever band a valuable is in, every valuable in a rarer band
+    // is a rarer find than it. The rest of the pool is banded by what
+    // a thing does rather than what it costs, so this is the ladder's
+    // rule and not the pool's
+    const bands = ['base', 'uncommon', 'rare', 'prized', 'special'];
+    const rung = (item: Items): number => bands.indexOf(getItemBand(item) ?? '');
+
+    for (const [item] of VALUABLE_SELL) {
+      for (const [other] of VALUABLE_SELL) {
+        if (rung(other) > rung(item)) {
+          expect(
+            getItemOdds(other),
+            `${getItemData(other).name} against ${getItemData(item).name}`,
+          ).toBeLessThan(getItemOdds(item));
+        }
+      }
+    }
+
+    // The ruins are a ladder inside one band as well as across two,
+    // and there the price order is the whole order: each is dearer
+    // than the last and each is scarcer than the last
+    const ruins = [
+      Items.RelicVase,
+      Items.CometShard,
+      Items.RelicBand,
+      Items.RelicStatue,
+      Items.RelicCrown,
+    ];
+
+    for (const [at, item] of ruins.slice(0, -1).entries()) {
+      const next = ruins[at + 1];
+
+      expect(getItemData(next).sell).toBeGreaterThan(getItemData(item).sell);
+      expect(getItemOdds(next), getItemData(next).name).toBeLessThan(getItemOdds(item));
+    }
+
+    // And the dearest find in the game is the rarest find in the game,
+    // against everything the ground hides rather than against the four
+    // beside it
+    const hidden = new Set(
+      (['base', 'uncommon', 'rare', 'prized', 'special'] as const).flatMap((band) =>
+        ITEM_POOL[band].map((entry) => entry.item),
+      ),
+    );
+
+    for (const item of hidden) {
+      if (item !== Items.RelicCrown) {
+        expect(getItemOdds(item), getItemData(item).name).toBeGreaterThan(
+          getItemOdds(Items.RelicCrown),
+        );
+      }
     }
   });
 

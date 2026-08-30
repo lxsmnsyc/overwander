@@ -23,7 +23,7 @@ import { PINAP_CANDY_HELPINGS } from '../data/items/berries';
 import type { Species } from '../data/ids/species';
 import { getSpeciesData } from '../data/species';
 import createOverworld from '../overworld/setup';
-import resolveBuddy, { resolveBuddyCatch } from './buddy';
+import { asBuddy, resolveBuddyCatch } from './buddy';
 import { grantCandy, grantCatchCandy } from './candy';
 import { getCatchCandy } from '../auth/candy-rules';
 import {
@@ -41,7 +41,7 @@ import { recordCaughtSpecies } from './pokedex';
 import { Metric } from '../auth/quest-record';
 import { type ProgressBump, bumpProgress } from './quest-progress';
 import { CANDY_STACKS, ITEM_STACKS } from '../auth/stacks';
-import { readStackIn, spendStackIn, writeStackIn } from './stacks';
+import { readStackIn, readStacksIn, spendStackIn, writeStackIn } from './stacks';
 import { asOffset, toLocalISO, toLocalTime } from '../auth/local-time';
 import { isCatchLocked } from './locks';
 import { asNumber, asNumberArray } from './read';
@@ -222,6 +222,10 @@ export async function recordCatch(
 
   const encounter = asEncounterRecord(stored);
   const zone = asOffset(offset);
+  // Looked up once and handed on. Both the candy the buddy earns and
+  // the mending a Heal Ball does read the same pokemon, and asking
+  // twice is two round trips of a path a player waits on
+  const buddy = await resolveBuddyCatch(uid);
   const id = await writeCaughtRecord(uid, encounter, ball, Acquisition.Caught, now, offset, locale);
 
   await grantCatchCandy(uid, encounter.species, toLocalTime(now, zone));
@@ -230,7 +234,7 @@ export async function recordCatch(
   // These are paid flat: the species day is already worth four times
   // the catch's own candy, and a bonus that multiplied with it would
   // make one day worth a week of them
-  const overworld = createOverworld(uid, await resolveBuddy(uid));
+  const overworld = createOverworld(uid, buddy == null ? null : asBuddy(buddy[1]));
   const family = getSpeciesData(encounter.species).family;
 
   for (const [owed, count] of overworld.checkCatchCandy(spawnId, family)) {
@@ -246,7 +250,7 @@ export async function recordCatch(
   if (helpings != null) {
     await grantCandy(uid, family, getCatchCandy(encounter.species) * helpings);
   }
-  await mendWithHealBall(uid, ball);
+  await mendWithHealBall(ball, buddy);
   // And it is not standing there any more, for this player. The spawn
   // belongs to the window and the window is everybody's, so it is
   // retired the same way one that ran off is: left in the world, left
@@ -269,14 +273,11 @@ export async function recordCatch(
  * rather than written to, an egg has nothing to mend, and a buddy
  * locked into a live battle is left to fight it
  */
-async function mendWithHealBall(uid: string, ball: Balls): Promise<void> {
-  if (ball !== Balls.HealBall) {
-    return;
-  }
-
-  const resolved = await resolveBuddyCatch(uid);
-
-  if (resolved == null) {
+async function mendWithHealBall(
+  ball: Balls,
+  resolved: [string, Record<string, unknown>] | null,
+): Promise<void> {
+  if (ball !== Balls.HealBall || resolved == null) {
     return;
   }
 
@@ -513,10 +514,12 @@ export async function releaseCatch(uid: string, catchId: string): Promise<boolea
     const record = asCaughtPokemon(caught);
     const { family } = getSpeciesData(record.species);
 
-    for (const [item, count] of returning) {
-      const carried = await readStackIn(transaction, ITEM_STACKS, uid, item);
+    // Read in one question before any of them is written, the way a
+    // transaction wants: what is going back is a whole belt at once
+    const carried = await readStacksIn(transaction, ITEM_STACKS, uid, [...returning.keys()]);
 
-      await writeStackIn(transaction, ITEM_STACKS, uid, item, carried + count);
+    for (const [item, count] of returning) {
+      await writeStackIn(transaction, ITEM_STACKS, uid, item, (carried.get(item) ?? 0) + count);
     }
 
     const candies = await readStackIn(transaction, CANDY_STACKS, uid, family);

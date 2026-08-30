@@ -46,7 +46,7 @@ import { isEggRecord, isGuardedRecord } from './catch-fields';
 import Biome from '../data/ids/biome';
 import { getSpeciesLair } from '../data/overworld/lair';
 import { getSql, jsonOf, newDocId, tx } from './db';
-import { readCaughtIn } from './caught-io';
+import { readCaughtMany } from './caught-io';
 import { foughtBattle, readBattle, readRaid, readRaidIn, readTeam, writeRaid } from './raid-io';
 import { consumeItem } from './inventory';
 import { isAnyCatchLocked, isCatchLocked, releaseBattleLocks } from './locks';
@@ -603,19 +603,11 @@ export async function joinRaid(
     return null;
   }
 
-  const owned = await tx(async (transaction) => {
-    const records: Record<string, unknown>[] = [];
-
-    for (const id of catches) {
-      const record = await readCaughtIn(transaction, id, false);
-
-      if (record == null) {
-        return null;
-      }
-      records.push(record);
-    }
-    return records;
-  });
+  // Read together rather than one at a time: a party of six is two
+  // round trips this way and twelve the other
+  const found = await readCaughtMany(getSql(), catches);
+  const records = catches.map((one) => found.get(one));
+  const owned = records.every((record) => record != null) ? records : null;
 
   if (owned == null || !owned.every((entry) => entry.owner === uid)) {
     return null;
@@ -709,9 +701,12 @@ export async function publishTeamSnapshot(
   return tx(async (transaction) => {
     const fielded: CatchSnapshot[] = [];
     const locking: string[] = [];
+    // Locked together rather than one at a time: the same `for update`
+    // on every row of the party, in one question
+    const found = await readCaughtMany(transaction, catches, true);
 
     for (const id of catches) {
-      const data = await readCaughtIn(transaction, id);
+      const data = found.get(id);
 
       // A pokemon already fighting is left behind rather than fielded
       // twice: a player may sit in two lobbies with the same party,
@@ -782,21 +777,21 @@ export async function startRaid(uid: string, lobby: string, now: number): Promis
     return typeof current?.battle === 'string' ? current.battle : null;
   }
 
-  const fielded: [string, string][] = [];
+  // Every party at once. Each freezes a whole team of its own and
+  // none of them waits on another, so a lobby of four starts in the
+  // time one takes rather than four
+  const teams = await Promise.all(raid.teams.map(async (id) => readTeam(id)));
+  const published = await Promise.all(
+    teams.map(async (team): Promise<[string, string] | null> => {
+      if (team == null) {
+        return null;
+      }
+      const snapshot = await publishTeamSnapshot(team.player, team.catches, PLAYER_ALLIANCE, now);
 
-  for (const id of raid.teams) {
-    const team = await readTeam(id);
-
-    if (team == null) {
-      continue;
-    }
-
-    const snapshot = await publishTeamSnapshot(team.player, team.catches, PLAYER_ALLIANCE, now);
-
-    if (snapshot != null) {
-      fielded.push([team.player, snapshot]);
-    }
-  }
+      return snapshot == null ? null : [team.player, snapshot];
+    }),
+  );
+  const fielded = published.filter((entry) => entry != null);
 
   if (fielded.length === 0) {
     return null;

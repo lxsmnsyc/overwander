@@ -31,11 +31,11 @@ import { isEggRecord, isGuardedRecord } from './catch-fields';
 import { writeCaughtRecord } from './caught';
 import { grantBredEgg } from './eggs';
 import { consumeItem, grantItem } from './inventory';
-import { readCaughtIn, updateCaughtIn } from './caught-io';
+import { readCaughtIn, readCaughtMany, updateCaughtIn } from './caught-io';
 import { getSql, tx } from './db';
 import awakenAbility, { type Awakening } from './awaken';
 import { learnMove } from './moves';
-import { readStackIn, writeStackIn } from './stacks';
+import { readStacksIn, writeStackIn } from './stacks';
 import { ITEM_STACKS } from '../auth/stacks';
 import { isCatchLocked } from './locks';
 import { claim, resolveSnapshot } from './overworld';
@@ -201,11 +201,11 @@ export async function breedCatches(
     return null;
   }
 
-  const stored = await tx(async (transaction) => [
-    await readCaughtIn(transaction, left, false),
-    await readCaughtIn(transaction, right, false),
-  ]);
-  const pair = stored.map((entry) => asParent(entry, uid));
+  // Both parents in one question, and no transaction round them: they
+  // are read rather than read-then-written, so a BEGIN and a COMMIT
+  // would be two round trips buying no lock
+  const found = await readCaughtMany(getSql(), [left, right]);
+  const pair = [left, right].map((id) => asParent(found.get(id) ?? null, uid));
   const [first, second] = pair;
 
   if (first == null || second == null) {
@@ -387,7 +387,7 @@ export async function boostEgg(
     return null;
   }
 
-  const stored = await tx(async (transaction) => readCaughtIn(transaction, catchId, false));
+  const stored = await readCaughtIn(getSql(), catchId, false);
 
   if (stored == null || stored.owner !== uid || !isEggRecord(stored) || isCatchLocked(stored)) {
     return null;
@@ -450,7 +450,7 @@ export async function groomCatch(
     return null;
   }
 
-  const stored = await tx(async (transaction) => readCaughtIn(transaction, catchId, false));
+  const stored = await readCaughtIn(getSql(), catchId, false);
 
   // An egg thinks nothing of anybody yet: what is inside it has not
   // met the player, and the shell is what the daycare lady is for
@@ -695,14 +695,14 @@ async function trade(
     const profiles = await transaction`
       select gold from profiles where id = ${uid} for update
     `;
-    const carried: number[] = [];
-
-    for (const [item] of basket) {
-      carried.push(await readStackIn(transaction, ITEM_STACKS, uid, item));
-    }
-
+    const carried = await readStacksIn(
+      transaction,
+      ITEM_STACKS,
+      uid,
+      basket.map(([item]) => item),
+    );
     const balance = asNumber(profiles[0]?.gold) + gold;
-    const held = basket.map(([, amount], at) => carried[at] + amount);
+    const held = basket.map(([item, amount]) => (carried.get(item) ?? 0) + amount);
 
     // The player cannot pay, or is selling what they have not got.
     // The whole basket is refused rather than the affordable part of

@@ -13,6 +13,7 @@ import getWorld from '../overworld/current';
 import deriveEncounter, { type EncounterOptions } from '../overworld/encounter';
 import { encounterKey, encounterWindow } from '../overworld/safari';
 import createOverworld from '../overworld/setup';
+import type { Buddy } from '../overworld/core';
 import resolveBuddy from './buddy';
 import { grantNestEgg } from './eggs';
 import { getSql, jsonOf, tx } from './db';
@@ -564,6 +565,13 @@ export async function startEncounter(
   id: string,
   spawn: Spawn,
   options: EncounterOptions = {},
+  /**
+   * The buddy the caller has already looked up. Undefined means it has
+   * not been asked for and this will ask; null is a player who has
+   * none. Resolving one costs two round trips, and a caller that
+   * needed it for a check of its own should not pay twice
+   */
+  resolved?: Buddy | null,
 ): Promise<EncounterRecord> {
   const existing = await readEncounter(id, uid);
 
@@ -577,7 +585,10 @@ export async function startEncounter(
   // meeting — the shiny odds it carries, the nature it passes on, the
   // gender it draws out — is asked of the overworld rather than
   // spelled out here
-  const overworld = createOverworld(uid, await resolveBuddy(uid));
+  const overworld = createOverworld(
+    uid,
+    resolved === undefined ? await resolveBuddy(uid) : resolved,
+  );
   const derived = deriveEncounter(snapshot, spawn, uid, {
     ...options,
     // The sky the meeting happened under, read here rather than taken
@@ -637,7 +648,21 @@ export async function meetSpawn(
     return null;
   }
 
-  const overworld = createOverworld(uid, await resolveBuddy(uid));
+  // Both are wanted and neither waits on the other, so they are asked
+  // together: serially they are two round trips of a path that has
+  // too many already. The roll comes off the stored window, which is
+  // the one the whole zone is looking at, addressed by chunk seed and
+  // zone rather than by `snapshot.key`
+  const [buddy, stored] = await Promise.all([
+    resolveBuddy(uid),
+    getSql()`
+      select species, individual_value as "individualValue", trait_value as "traitValue"
+      from snapshot_spawns
+      where chunk_seed = ${snapshot.chunk.seed} and zone = ${toZoneKey(snapshot.offset)}
+      order by idx
+    `,
+  ]);
+  const overworld = createOverworld(uid, buddy);
 
   // The extras a lure draws in are only there for the player whose
   // buddy drew them: the window publishes them for everyone, and a
@@ -646,15 +671,6 @@ export async function meetSpawn(
     return null;
   }
 
-  // The roll comes off the stored window, which is the one the whole
-  // zone is looking at, addressed by chunk seed and zone rather than
-  // by `snapshot.key`
-  const stored = await getSql()`
-    select species, individual_value as "individualValue", trait_value as "traitValue"
-    from snapshot_spawns
-    where chunk_seed = ${snapshot.chunk.seed} and zone = ${toZoneKey(snapshot.offset)}
-    order by idx
-  `;
   const rolls = asSpawnRolls([...stored]);
 
   if (index >= rolls.length) {
@@ -664,7 +680,7 @@ export async function meetSpawn(
   const rolled = rolls[index];
   const spawn: Spawn = [rolled.species, rolled.individualValue, rolled.traitValue];
 
-  return startEncounter(uid, snapshot, spawnId, spawn);
+  return startEncounter(uid, snapshot, spawnId, spawn, {}, buddy);
 }
 
 /**

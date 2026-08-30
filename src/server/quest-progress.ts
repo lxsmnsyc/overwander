@@ -14,20 +14,39 @@ import { asNumber, asRecord } from './read';
 export type ProgressBump = [metric: Metric, param: number, count: number];
 
 export async function bumpProgress(uid: string, bumps: ProgressBump[]): Promise<void> {
-  const rows = bumps.filter(([, , count]) => count > 0);
+  // Merged before it is sent, for two reasons: one statement rather
+  // than one per counter, and `on conflict do update` refuses a
+  // command that would touch the same row twice
+  const totals = new Map<
+    string,
+    { player: string; metric: number; param: number; count: number }
+  >();
 
-  if (rows.length === 0) {
+  for (const [metric, param, count] of bumps) {
+    if (count <= 0) {
+      continue;
+    }
+    const key = `${metric}:${param}`;
+    const held = totals.get(key);
+
+    if (held == null) {
+      totals.set(key, { player: uid, metric, param, count });
+    } else {
+      held.count += count;
+    }
+  }
+
+  if (totals.size === 0) {
     return;
   }
+  const rows = [...totals.values()];
+
   try {
-    for (const [metric, param, count] of rows) {
-      await getSql()`
-        insert into quest_progress (player, metric, param, count)
-        values (${uid}, ${metric}, ${param}, ${count})
-        on conflict (player, metric, param)
-        do update set count = quest_progress.count + ${count}
-      `;
-    }
+    await getSql()`
+      insert into quest_progress ${getSql()(rows, 'player', 'metric', 'param', 'count')}
+      on conflict (player, metric, param)
+      do update set count = quest_progress.count + excluded.count
+    `;
   } catch {
     // Counted or not, the action itself already happened
   }
@@ -106,10 +125,11 @@ export async function openQuestBaselines(
   quest: number,
   slots: [slot: number, baseline: number][],
 ): Promise<Map<number, number>> {
-  for (const [slot, baseline] of slots) {
+  if (slots.length > 0) {
+    const rows = slots.map(([slot, baseline]) => ({ player: uid, quest, slot, baseline }));
+
     await getSql()`
-      insert into quest_baselines (player, quest, slot, baseline)
-      values (${uid}, ${quest}, ${slot}, ${baseline})
+      insert into quest_baselines ${getSql()(rows, 'player', 'quest', 'slot', 'baseline')}
       on conflict (player, quest, slot) do nothing
     `;
   }

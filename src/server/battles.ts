@@ -12,7 +12,7 @@ import { getSpeciesData } from '../data/species';
 import { Metric } from '../auth/quest-record';
 import { grantCandy } from './candy';
 import { getSql, tx } from './db';
-import { readCaughtIn, updateCaughtIn } from './caught-io';
+import { readCaughtMany, updateCaughtIn } from './caught-io';
 import { type ProgressBump, bumpProgress } from './quest-progress';
 import { asNumber, asNumberArray } from './read';
 
@@ -171,8 +171,16 @@ export default async function recordAftermath(
       await transaction`update profiles set gold = gold + ${coins} where id = ${uid}`;
     }
 
+    // Locked together rather than one at a time: everything the fight
+    // put down is read in one question before any of it is written
+    const found = await readCaughtMany(
+      transaction,
+      reported.map((target) => target.caught),
+      true,
+    );
+
     for (const target of reported) {
-      const data = await readCaughtIn(transaction, target.caught);
+      const data = found.get(target.caught);
 
       // A catch sold, released or handed on since the battle started
       // is nobody's to charge

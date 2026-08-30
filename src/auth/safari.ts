@@ -152,7 +152,6 @@ export interface ThrowOutcome {
  * kind is carried
  */
 export async function throwBall(
-  user: PlayerIdentity,
   session: SafariSession<EncounterRecord>,
 ): Promise<ThrowOutcome | null> {
   if (session.state !== SafariState.Active) {
@@ -161,10 +160,10 @@ export async function throwBall(
 
   const token = await getIdToken();
 
-  // Counted before the ball is spent, so "one left" means the ball
-  // about to be thrown is the last one
-  session.ballsLeft = await countBalls(user.uid);
-
+  // The count is not asked for here. A throw is a chain of calls a
+  // player waits through, and this one bought nothing: the dialog
+  // keeps `ballsLeft` in step from the bag it already follows, and
+  // overwrites whatever a throw wrote as soon as the spend lands
   if (!(await spendBall(token, session.ball))) {
     return null;
   }

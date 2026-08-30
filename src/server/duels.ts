@@ -21,7 +21,7 @@ import { getSql, newDocId, tx } from './db';
 import { isEggRecord, isGuardedRecord } from './catch-fields';
 import { isAnyCatchLocked } from './locks';
 import { isAnyCatchQueued, publishTeamSnapshot } from './raids';
-import { readCaughtIn } from './caught-io';
+import { readCaughtMany } from './caught-io';
 import { asNumber, asString } from './read';
 import { findPlayerByCode } from './friends';
 
@@ -381,19 +381,11 @@ export async function setDuelParty(uid: string, id: string, catches: string[]): 
     return false;
   }
 
-  const owned = await tx(async (transaction) => {
-    const records: Record<string, unknown>[] = [];
-
-    for (const catchId of catches) {
-      const record = await readCaughtIn(transaction, catchId, false);
-
-      if (record == null) {
-        return null;
-      }
-      records.push(record);
-    }
-    return records;
-  });
+  // Read together rather than one at a time: a party of six is two
+  // round trips this way and twelve the other
+  const found = await readCaughtMany(getSql(), catches);
+  const records = catches.map((one) => found.get(one));
+  const owned = records.every((record) => record != null) ? records : null;
 
   if (owned == null || !owned.every((entry) => entry.owner === uid)) {
     return false;
@@ -515,15 +507,16 @@ export async function startDuel(uid: string, id: string, now: number): Promise<s
   // One alliance each, numbered by which seat they took. Neither side
   // is marked as the boss, so a mutual knockout is the draw it looks
   // like
-  const fielded: [string, string][] = [];
+  // Both sides at once: neither freeze waits on the other, and the
+  // host is standing on the Start button for both of them
+  const published = await Promise.all(
+    fighters.map(async (member, side): Promise<[string, string] | null> => {
+      const snapshot = await publishTeamSnapshot(member.player, member.catches, side, now);
 
-  for (const [side, member] of fighters.entries()) {
-    const snapshot = await publishTeamSnapshot(member.player, member.catches, side, now);
-
-    if (snapshot != null) {
-      fielded.push([member.player, snapshot]);
-    }
-  }
+      return snapshot == null ? null : [member.player, snapshot];
+    }),
+  );
+  const fielded = published.filter((entry) => entry != null);
 
   // A side that fields nothing is not a fight. The claim stands, which
   // reads as a lobby whose battle never landed, and the host restages

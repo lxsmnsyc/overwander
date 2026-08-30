@@ -51,6 +51,40 @@ export async function readStackIn(
   return rows.at(0) == null ? 0 : asNumber(rows[0].count);
 }
 
+/** Postgres' own oid for int4, so a key list is sent as numbers. */
+const INT4 = 23;
+
+/**
+ * Several counts at once, keyed by whatever the spec keys on, and
+ * missing rows left out. One round trip however many are asked for.
+ *
+ * Locked in key order rather than in the caller's, which is stricter
+ * than reading them one at a time: two callers holding overlapping
+ * baskets take the rows in the same order and so cannot deadlock over
+ * them
+ */
+export async function readStacksIn(
+  transaction: Tx,
+  spec: StackSpec,
+  uid: string,
+  keys: readonly number[],
+): Promise<Map<number, number>> {
+  const wanted = [...new Set(keys)];
+
+  if (wanted.length === 0) {
+    return new Map();
+  }
+  const { table, key: column } = tableOf(spec);
+  const rows = await transaction`
+    select ${transaction(column)}, count from ${transaction(table)}
+    where player = ${uid} and ${transaction(column)} = any(${transaction.array(wanted, INT4)})
+    order by ${transaction(column)}
+    for update
+  `;
+
+  return new Map(rows.map((row) => [asNumber(row[column]), asNumber(row.count)]));
+}
+
 /**
  * Write one count to a known figure inside the caller's transaction.
  * Nothing is checked here; the caller has already read the row and

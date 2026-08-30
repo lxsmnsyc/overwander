@@ -267,7 +267,7 @@ function SafariBody(
           : `It would not take the ${describeItem(thrown)}.`;
       }
 
-      const thrownAt = await throwBall(props.user, active);
+      const thrownAt = await throwBall(active);
 
       if (thrownAt == null) {
         return 'No ball of that kind to throw.';

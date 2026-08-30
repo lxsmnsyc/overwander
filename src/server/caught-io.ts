@@ -1,6 +1,6 @@
 import 'server-only';
 import { asOffset } from '../auth/local-time';
-import type { Tx } from './db';
+import type { Sql, Tx } from './db';
 import { asNumber, asNumberArray, asRecord, asRecordArray, asString } from './read';
 
 /**
@@ -47,10 +47,12 @@ export function fromStoredISO(iso: string): { local: Date; offset: number } {
 /**
  * One catch in the legacy record shape, or null when there is no such
  * row. `lock` takes `for update` on the row and its children, which
- * every read-then-write caller wants
+ * every read-then-write caller wants, and only means anything inside a
+ * transaction: an unlocked read is handed the plain connection so it
+ * does not pay a BEGIN and a COMMIT for nothing
  */
 export async function readCaughtIn(
-  transaction: Tx,
+  transaction: Sql | Tx,
   id: string,
   lock = true,
 ): Promise<Record<string, unknown> | null> {
@@ -74,6 +76,82 @@ export async function readCaughtIn(
   ]);
 
   return assembleCaught(row, moves, abilities, items, history);
+}
+
+/**
+ * Several catches at once, keyed by id, leaving out any that is not
+ * there. Five queries however many are asked for, where reading them
+ * one at a time is two round trips each: a party of six is the
+ * difference between two trips and twelve, and forming one is a
+ * button players press before every raid and duel.
+ *
+ * `lock` takes `for update` on the rows, exactly as `readCaughtIn`
+ * does, and only means anything inside a transaction
+ */
+export async function readCaughtMany(
+  sql: Sql | Tx,
+  ids: readonly string[],
+  lock = false,
+): Promise<Map<string, Record<string, unknown>>> {
+  const wanted = [...new Set(ids)];
+
+  if (wanted.length === 0) {
+    return new Map();
+  }
+
+  // The parent is locked on its own, the way the single read locks
+  // it: the children are never written without their row
+  const rows = lock
+    ? await sql`select * from caught where id = any(${sql.array(wanted)}) for update`
+    : await sql`select * from caught where id = any(${sql.array(wanted)})`;
+
+  const [moves, abilities, items, history] = await Promise.all([
+    sql`select caught_id, move, points from caught_moves
+        where caught_id = any(${sql.array(wanted)}) order by caught_id, slot`,
+    sql`select caught_id, ability from caught_abilities
+        where caught_id = any(${sql.array(wanted)}) order by caught_id, slot`,
+    sql`select caught_id, item from caught_items
+        where caught_id = any(${sql.array(wanted)}) order by caught_id, slot`,
+    sql`select caught_id, owner, owner_name, acquired_at_local, acquired_at_offset,
+               kind, paid, ball
+        from caught_history where caught_id = any(${sql.array(wanted)})
+        order by caught_id, seq`,
+  ]);
+
+  const grouped = (
+    children: readonly Record<string, unknown>[],
+  ): Map<string, Record<string, unknown>[]> => {
+    const held = new Map<string, Record<string, unknown>[]>();
+
+    for (const entry of children) {
+      const key = asString(entry.caught_id);
+
+      held.set(key, [...(held.get(key) ?? []), entry]);
+    }
+    return held;
+  };
+
+  const byMove = grouped(moves);
+  const byAbility = grouped(abilities);
+  const byItem = grouped(items);
+  const byHistory = grouped(history);
+  const found = new Map<string, Record<string, unknown>>();
+
+  for (const row of rows) {
+    const id = asString(row.id);
+
+    found.set(
+      id,
+      assembleCaught(
+        row,
+        byMove.get(id) ?? [],
+        byAbility.get(id) ?? [],
+        byItem.get(id) ?? [],
+        byHistory.get(id) ?? [],
+      ),
+    );
+  }
+  return found;
 }
 
 /**

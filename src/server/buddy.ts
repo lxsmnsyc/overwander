@@ -3,7 +3,7 @@ import 'server-only';
 import { asCaughtPokemon } from '../auth/caught-record';
 import type { Buddy } from '../overworld/core';
 import { readCaughtIn } from './caught-io';
-import { getSql, tx } from './db';
+import { getSql } from './db';
 import { asString } from './read';
 
 /**
@@ -15,35 +15,36 @@ import { asString } from './read';
 export async function resolveBuddyCatch(
   uid: string,
 ): Promise<[string, Record<string, unknown>] | null> {
-  const rows = await getSql()`select buddy_id from profiles where id = ${uid}`;
-  const catchId: unknown = rows.at(0)?.buddy_id;
+  const sql = getSql();
+  // The profile and the catch in one question rather than two. Every
+  // landmark a player touches asks this, and a round trip saved here
+  // is one saved on each of them
+  const rows = await sql`
+    select caught.id from profiles
+    join caught on caught.id = profiles.buddy_id
+    where profiles.id = ${uid} and caught.owner = ${uid}
+  `;
+  const catchId = asString(rows.at(0)?.id);
 
-  if (typeof catchId !== 'string' || catchId === '') {
+  if (catchId === '') {
     return null;
   }
 
-  const stored = await tx(async (transaction) => readCaughtIn(transaction, catchId, false));
+  // Read rather than read-then-write, so it wants no transaction: a
+  // BEGIN and a COMMIT round the outside would be two round trips
+  // buying no lock
+  const stored = await readCaughtIn(sql, catchId, false);
 
-  if (stored == null || asString(stored.owner) !== uid) {
-    return null;
-  }
-  return [catchId, stored];
+  return stored == null ? null : [catchId, stored];
 }
 
 /**
- * The buddy's abilities, nature, gender and held items: everything
- * the overworld reads off the pokemon at a player's side. Resolves
- * null when they have no buddy, or when the record points at one they
- * no longer own
+ * What the overworld reads off a stored buddy, or null for one that is
+ * not out here doing anything. Separate from the lookup so a caller
+ * that already holds the record does not go back for it
  */
-export default async function resolveBuddy(uid: string): Promise<Buddy | null> {
-  const resolved = await resolveBuddyCatch(uid);
-
-  if (resolved == null) {
-    return null;
-  }
-
-  const caught = asCaughtPokemon(resolved[1]);
+export function asBuddy(stored: Record<string, unknown>): Buddy | null {
+  const caught = asCaughtPokemon(stored);
 
   // An egg is carried rather than accompanied: it has an ability and
   // a nature written down already, and neither of them is out here
@@ -59,4 +60,16 @@ export default async function resolveBuddy(uid: string): Promise<Buddy | null> {
     gender: caught.gender,
     items: caught.items,
   };
+}
+
+/**
+ * The buddy's abilities, nature, gender and held items: everything
+ * the overworld reads off the pokemon at a player's side. Resolves
+ * null when they have no buddy, or when the record points at one they
+ * no longer own
+ */
+export default async function resolveBuddy(uid: string): Promise<Buddy | null> {
+  const resolved = await resolveBuddyCatch(uid);
+
+  return resolved == null ? null : asBuddy(resolved[1]);
 }

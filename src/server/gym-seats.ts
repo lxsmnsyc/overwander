@@ -23,7 +23,7 @@ import { TEAM_SIZE } from '../auth/teams';
 import Landmark from '../data/overworld/landmark';
 import getWorld from '../overworld/current';
 import { isEggRecord, isGuardedRecord } from './catch-fields';
-import { readCaughtIn } from './caught-io';
+import { readCaughtMany } from './caught-io';
 import { type Tx, getSql, jsonOf, newDocId, tx } from './db';
 import { isCatchLocked } from './locks';
 import { resolveSnapshot } from './overworld';
@@ -257,9 +257,12 @@ async function freezeSeatParty(
   catches: string[],
 ): Promise<CatchSnapshot[] | null> {
   const fielded: CatchSnapshot[] = [];
+  // Locked together rather than one at a time: the same `for update`
+  // on every row of the party, in one question
+  const found = await readCaughtMany(transaction, catches, true);
 
   for (const id of catches) {
-    const data = await readCaughtIn(transaction, id);
+    const data = found.get(id);
 
     // The same bar a raid sets, minus the lock: an egg has nothing to
     // fight with, one that is down has to be healed first, and one

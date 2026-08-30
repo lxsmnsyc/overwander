@@ -43,7 +43,7 @@ import { bumpProgress } from './quest-progress';
 import { newDocId, tx } from './db';
 import { readCaughtIn, updateCaughtIn } from './caught-io';
 import { ITEM_STACKS } from '../auth/stacks';
-import { readStackIn, writeStackIn } from './stacks';
+import { readStacksIn, writeStackIn } from './stacks';
 import { asLocale, isEggRecord, zeroEffortValues } from './catch-fields';
 import {
   BASE_FRIENDSHIP,
@@ -430,11 +430,11 @@ export async function recordSteps(
       );
       // Every stack is read before anything is written, the way a
       // transaction requires
-      const stacks: [Items, number][] = [];
-
-      for (const item of found.keys()) {
-        stacks.push([item, await readStackIn(transaction, ITEM_STACKS, uid, item)]);
-      }
+      const held = await readStacksIn(transaction, ITEM_STACKS, uid, [...found.keys()]);
+      const stacks: [Items, number][] = [...found.keys()].map((item) => [
+        item,
+        held.get(item) ?? 0,
+      ]);
 
       await updateCaughtIn(transaction, catchId, {
         walked,

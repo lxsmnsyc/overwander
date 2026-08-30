@@ -1,5 +1,6 @@
 {
   "name": "overwander",
+  "version": "0.0.0",
   "private": true,
   "type": "module",
   "publishConfig": {
@@ -20,6 +21,7 @@
     "test:e2e:ui": "playwright test --ui",
     "cs:ver": "changeset version",
     "cs:pub": "changeset publish",
+    "cs:tag": "node scripts/tag-release.ts",
     "cs:add": "changeset add",
     "db": "supabase start",
     "db:stop": "supabase stop",

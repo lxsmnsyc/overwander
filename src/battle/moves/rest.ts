@@ -1,4 +1,4 @@
-import { AttackPriority, EventPriority } from '../../core/event-emitter';
+import { AttackPriority } from '../../core/event-emitter';
 import { Stats } from '../../data/constants/stats';
 import { Moves } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
@@ -27,7 +27,7 @@ export default function setupRest(battle: Battle): void {
     }
   });
 
-  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, (event) => {
+  battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
     if (event.move !== Moves.Rest) {
       return;
     }

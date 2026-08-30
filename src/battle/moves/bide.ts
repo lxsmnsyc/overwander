@@ -53,7 +53,7 @@ export default function setupBide(battle: Battle): void {
     }
   });
 
-  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, (event) => {
+  battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
     if (event.move === Moves.Bide) {
       if (event.steps === 1) {
         event.source.addStatus(Statuses.Biding, {

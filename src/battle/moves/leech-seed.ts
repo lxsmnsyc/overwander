@@ -1,4 +1,4 @@
-import { EventPriority } from '../../core/event-emitter';
+import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Types } from '../../data/constants/types';
 import { Moves } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
@@ -18,7 +18,7 @@ export default function setupLeechSeed(battle: Battle): void {
     }
   });
 
-  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, (event) => {
+  battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
     // TODO Sappy Seed
     if (event.move === Moves.LeechSeed && event.target.type === MoveTargetType.Unit) {
       event.target.unit.addStatus(Statuses.Seeding, {

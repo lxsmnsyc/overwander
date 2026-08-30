@@ -1,4 +1,4 @@
-import { EventPriority } from '../../core/event-emitter';
+import { AttackPriority } from '../../core/event-emitter';
 import { Moves } from '../../data/ids/moves';
 import { getRegisteredMoves } from '../../data/moves';
 import type Battle from '../core';
@@ -27,7 +27,7 @@ export default function setupMetronome(battle: Battle): void {
    */
   const pool = getRegisteredMoves().filter((move) => !EXCLUDED.has(move));
 
-  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, (event) => {
+  battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
     if (event.move !== Moves.Metronome) {
       return;
     }

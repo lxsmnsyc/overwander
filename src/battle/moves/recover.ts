@@ -1,4 +1,4 @@
-import { AttackPriority, EventPriority } from '../../core/event-emitter';
+import { AttackPriority } from '../../core/event-emitter';
 import { Stats } from '../../data/constants/stats';
 import { Moves } from '../../data/ids/moves';
 import { scoreSelfHeal } from '../ai/score';
@@ -17,7 +17,7 @@ const HEAL_FRACTION: { [key in Moves]?: number } = {
 };
 
 export default function setupRecoverMoves(battle: Battle): void {
-  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, (event) => {
+  battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
     const fraction = HEAL_FRACTION[event.move];
 
     if (fraction != null) {

@@ -693,6 +693,89 @@ describe('move delay', () => {
   });
 });
 
+describe('the trigger gates', () => {
+  it('refuses the whole move when the first gate says no', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const attacker = createUnit(battle, teamA);
+    const defender = createUnit(battle, teamB);
+    let fired = 0;
+
+    battle.on(BattleEvents.UnitTriggerMove, AttackPriority.Post, () => {
+      fired += 1;
+    });
+    battle.on(BattleEvents.CheckUnitTriggerMove, EventPriority.Exact, (event) => {
+      if (event.move === Moves.Tackle) {
+        event.success = false;
+      }
+    });
+
+    attacker.triggerMove(Moves.Tackle, unitTarget(defender), 0);
+    advance(battle, MOVE_DELAY);
+
+    // The event never ran at all, which is what the gate is for: the
+    // move never entered the air and nothing landed
+    expect(fired).toBe(0);
+    expect(defender.health).toBe(160);
+  });
+
+  it('refuses the landing when the second gate says no', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const attacker = createUnit(battle, teamA);
+    const defender = createUnit(battle, teamB);
+    let failed = 0;
+
+    battle.on(BattleEvents.UnitTriggerMoveEffectFailed, EventPriority.Post, () => {
+      failed += 1;
+    });
+    battle.on(BattleEvents.CheckUnitTriggerMoveEffect, EventPriority.Exact, (event) => {
+      if (event.target.type === MoveTargetType.Unit && event.target.unit === defender) {
+        event.success = false;
+      }
+    });
+
+    attacker.triggerMoveEffect(Moves.Tackle, unitTarget(defender), 0);
+
+    expect(defender.health).toBe(160);
+    expect(failed).toBe(1);
+  });
+
+  it('refuses one pairing without refusing the move', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const attacker = createUnit(battle, teamA);
+    const spared = createUnit(battle, teamB);
+    const struck = createUnit(battle, teamB);
+
+    battle.on(BattleEvents.CheckUnitTriggerMoveTarget, AttackPriority.Exact, (event) => {
+      if (event.target.type === MoveTargetType.Unit && event.target.unit === spared) {
+        event.success = false;
+      }
+    });
+
+    attacker.triggerMoveTarget(Moves.Tackle, unitTarget(spared), 0);
+    attacker.triggerMoveTarget(Moves.Tackle, unitTarget(struck), 0);
+
+    expect(spared.health).toBe(160);
+    expect(struck.health).toBeLessThan(160);
+  });
+
+  it('opens true, so a move nobody objects to lands', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const attacker = createUnit(battle, teamA);
+    const defender = createUnit(battle, teamB);
+
+    expect(attacker.checkTriggerMove(Moves.Tackle, unitTarget(defender), 0)).toBe(true);
+    expect(attacker.checkTriggerMoveEffect(Moves.Tackle, unitTarget(defender), 0)).toBe(true);
+    expect(attacker.checkTriggerMoveTarget(Moves.Tackle, unitTarget(defender), 0)).toBe(true);
+
+    attacker.triggerMoveEffect(Moves.Tackle, unitTarget(defender), 0);
+    expect(defender.health).toBeLessThan(160);
+  });
+});
+
 describe('what a unit may carry', () => {
   it('holds a fight between players to one item and one ability', () => {
     const { battle, teamA } = createBattle();

@@ -1,4 +1,4 @@
-import { EventPriority } from '../../core/event-emitter';
+import { AttackPriority } from '../../core/event-emitter';
 import { MoveAttackFlags, Moves } from '../../data/ids/moves';
 import { getMoveData } from '../../data/moves';
 import type Battle from '../core';
@@ -72,7 +72,7 @@ export function estimateFixedDamage(source: Unit, move: Moves, target: Unit): nu
 }
 
 export default function setupFixedDamageMoves(battle: Battle): void {
-  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, (event) => {
+  battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
     const getAmount = FIXED_DAMAGE_MOVES[event.move];
 
     if (getAmount && event.target.type === MoveTargetType.Unit && event.steps === 0) {

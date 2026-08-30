@@ -128,7 +128,7 @@ function setupUnitStatusMoves(battle: Battle): void {
     }
   });
 
-  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, (event) => {
+  battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
     const targetStatus = STATUS_MOVES[event.move];
 
     // Explicit null check: the first Statuses enum member is 0
@@ -186,7 +186,7 @@ const TEAM_STATUS_MOVES: { [key in Moves]?: TeamStatuses } = {
 };
 
 function setupTeamStatusMoves(battle: Battle): void {
-  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, (event) => {
+  battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
     const targetStatus = TEAM_STATUS_MOVES[event.move];
     // Explicit null check: the first TeamStatuses enum member is 0
     if (targetStatus != null) {

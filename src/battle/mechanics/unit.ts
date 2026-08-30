@@ -13,7 +13,7 @@ import { DamageFlags, StatFlags } from '../../data/ids/moves';
 import { getNatureFactor } from '../../data/ids/natures';
 import { getSpeciesData } from '../../data/species';
 import type Battle from '../core';
-import { BattleEvents, type ProgressData } from '../events';
+import { BattleEvents, type EffectCause, type ProgressData } from '../events';
 import type Unit from '../unit';
 import { SWITCHING_SPAN } from '../status/switching';
 
@@ -318,7 +318,7 @@ function setupUnitSwitchMechanics(battle: Battle): void {
    * flows through UnitUpdateSwitch every tick, the way a cast does,
    * and UnitFinishSwitch is where both ends actually take the field
    */
-  const walking = new Map<Unit, { target: Unit; time: ProgressData }>();
+  const walking = new Map<Unit, { target: Unit; time: ProgressData; cause: EffectCause }>();
 
   const timer = battle.on(BattleEvents.Tick, EventPriority.Post, (event) => {
     // Snapshot: completions mutate the map mid-walk
@@ -347,6 +347,9 @@ function setupUnitSwitchMechanics(battle: Battle): void {
     walking.set(event.source, {
       target: event.target,
       time: { progress: 0, duration: SWITCHING_SPAN },
+      // Carried to the far end of the walk, so what finishes a switch
+      // knows what started it
+      cause: event.cause,
     });
     timer.start();
   });
@@ -365,6 +368,7 @@ function setupUnitSwitchMechanics(battle: Battle): void {
         disabled: false,
         source: event.source,
         target: walk.target,
+        cause: walk.cause,
       });
     }
   });

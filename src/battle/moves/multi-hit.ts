@@ -1,4 +1,4 @@
-import { EventPriority } from '../../core/event-emitter';
+import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { MoveAttackFlags, Moves } from '../../data/ids/moves';
 import { getMoveData } from '../../data/moves';
 import type Battle from '../core';
@@ -143,7 +143,7 @@ export default function setupMultiHitMoves(battle: Battle): void {
     return 5;
   }
 
-  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, (event) => {
+  battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
     const config = MULTI_HIT_MOVES[event.move];
 
     if (config && event.target.type === MoveTargetType.Unit && event.steps === 0) {

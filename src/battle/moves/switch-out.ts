@@ -1,9 +1,9 @@
-import { AttackPriority, EventPriority } from '../../core/event-emitter';
+import { AttackPriority } from '../../core/event-emitter';
 import { MoveTargetPriorities, Moves } from '../../data/ids/moves';
 import { checkTeamUnit } from '../ai/rating';
 import type Battle from '../core';
 import type { MoveTarget } from '../events';
-import { BattleEvents, MoveTargetType } from '../events';
+import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import type Unit from '../unit';
 
 /**
@@ -11,9 +11,10 @@ import type Unit from '../unit';
  * teammate. Whirlwind throws out the target, Teleport recalls the user.
  *
  * The first step is a wind-up delay; the final step performs the
- * actual switch. Both ends of the swap then spend a second under the
- * Switching status — locked out, untouchable, and walking to each
- * other's spots on the canvas.
+ * actual switch. Both ends then spend a second walking to each
+ * other's spots, and the move travels with them: a Teleport takes its
+ * user out of the world, so it is locked out and untouchable while it
+ * goes, and anything else is a walk that the fight carries on over.
  *
  * Offensive switch-outs drag in the target team's weakest unit, while
  * friendly ones bring in the strongest available. Team-wide switch-out
@@ -75,7 +76,7 @@ export default function setupSwitchOutMoves(battle: Battle): void {
     }
   });
 
-  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, (event) => {
+  battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
     // The wind-up step; the semi-invulnerable move group handles the
     // vanishing of self switch-out users.
     if (event.steps !== 0) {
@@ -95,6 +96,12 @@ export default function setupSwitchOutMoves(battle: Battle): void {
       return;
     }
 
-    switched.unit.forceSwitch(replacement);
+    // The move goes with them: a Teleport is a vanishing and a Roar
+    // is a shove, and what tells the two apart afterwards is this
+    switched.unit.forceSwitch(replacement, {
+      type: EffectType.Move,
+      move: event.move,
+      unit: event.source,
+    });
   });
 }

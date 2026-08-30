@@ -39,6 +39,7 @@ import type {
   CheckUnitStatEvent,
   CheckUnitStatusDurationEvent,
   CheckUnitStatusImmunityEvent,
+  CheckUnitTriggerMoveEvent,
   CheckUnitWeatherDurationEvent,
   CheckUnitWeightEvent,
   EffectCause,
@@ -49,7 +50,7 @@ import type {
   UnitDamageEvent,
   UnitWeatherEvent,
 } from './events';
-import { BattleEvents } from './events';
+import { BattleEvents, EffectType } from './events';
 import type Team from './team';
 
 export default class Unit {
@@ -469,29 +470,103 @@ export default class Unit {
     }
   }
 
-  triggerMove(move: Moves, target: MoveTarget, steps: number): void {
-    this.battle.emit(BattleEvents.UnitTriggerMove, {
-      id: 'TriggerMove',
+  /**
+   * Whether this move fires at all, goes ahead against the one it has
+   * been pointed at, and resolves on it.
+   *
+   * All three open true, and each is asked by the call it guards
+   * rather than by a listener on the event: a refusal means the event
+   * never runs, the way a refused cast is never emitted
+   */
+  checkTriggerMove(move: Moves, target: MoveTarget, steps: number): boolean {
+    return this.checkTrigger(
+      BattleEvents.CheckUnitTriggerMove,
+      'CheckUnitTriggerMove',
+      move,
+      target,
+      steps,
+    );
+  }
+
+  checkTriggerMoveTarget(move: Moves, target: MoveTarget, steps: number): boolean {
+    return this.checkTrigger(
+      BattleEvents.CheckUnitTriggerMoveTarget,
+      'CheckUnitTriggerMoveTarget',
+      move,
+      target,
+      steps,
+    );
+  }
+
+  checkTriggerMoveEffect(move: Moves, target: MoveTarget, steps: number): boolean {
+    return this.checkTrigger(
+      BattleEvents.CheckUnitTriggerMoveEffect,
+      'CheckUnitTriggerMoveEffect',
+      move,
+      target,
+      steps,
+    );
+  }
+
+  private checkTrigger(
+    id:
+      | BattleEvents.CheckUnitTriggerMove
+      | BattleEvents.CheckUnitTriggerMoveTarget
+      | BattleEvents.CheckUnitTriggerMoveEffect,
+    name: string,
+    move: Moves,
+    target: MoveTarget,
+    steps: number,
+  ): boolean {
+    const event: CheckUnitTriggerMoveEvent = {
+      id: name,
       disabled: false,
       source: this,
       move,
       target,
       steps,
-    });
+      success: true,
+    };
+
+    this.battle.emit(id, event);
+
+    return event.success;
+  }
+
+  triggerMove(move: Moves, target: MoveTarget, steps: number): void {
+    if (this.checkTriggerMove(move, target, steps)) {
+      this.battle.emit(BattleEvents.UnitTriggerMove, {
+        id: 'TriggerMove',
+        disabled: false,
+        source: this,
+        move,
+        target,
+        steps,
+      });
+    }
   }
 
   triggerMoveTarget(move: Moves, target: MoveTarget, steps: number): void {
-    this.battle.emit(BattleEvents.UnitTriggerMoveTarget, {
-      id: 'UnitTriggerMoveTarget',
-      disabled: false,
-      source: this,
-      move,
-      target,
-      steps,
-    });
+    if (this.checkTriggerMoveTarget(move, target, steps)) {
+      this.battle.emit(BattleEvents.UnitTriggerMoveTarget, {
+        id: 'UnitTriggerMoveTarget',
+        disabled: false,
+        source: this,
+        move,
+        target,
+        steps,
+      });
+    }
   }
 
   triggerMoveEffect(move: Moves, target: MoveTarget, steps: number): void {
+    // Refused, the move fizzles where it stands: the same report a
+    // move makes when its own prerequisite is unmet
+    if (!this.checkTriggerMoveEffect(move, target, steps)) {
+      this.triggerMoveEffectFailed(move, target, steps);
+      return;
+    }
+
     this.battle.emit(BattleEvents.UnitTriggerMoveEffect, {
       id: 'UnitTriggerMoveEffect',
       disabled: false,
@@ -944,9 +1019,9 @@ export default class Unit {
     return event.success;
   }
 
-  switch(target: Unit): void {
+  switch(target: Unit, cause: EffectCause = { type: EffectType.None }): void {
     if (this.checkEscape() && target.checkEscape()) {
-      this.forceSwitch(target);
+      this.forceSwitch(target, cause);
     }
   }
 
@@ -954,12 +1029,13 @@ export default class Unit {
    * Switch without the escape checks (e.g. forced switch-out moves
    * that bypass trapping)
    */
-  forceSwitch(target: Unit): void {
+  forceSwitch(target: Unit, cause: EffectCause = { type: EffectType.None }): void {
     this.battle.emit(BattleEvents.UnitSwitch, {
       id: 'UnitSwitch',
       disabled: false,
       source: this,
       target,
+      cause,
     });
   }
 

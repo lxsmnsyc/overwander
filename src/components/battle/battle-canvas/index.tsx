@@ -509,7 +509,7 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
     // A move announces itself when it fires, and its picture is built
     // and started here — the one moment the canvas hears about a move
     // as a whole rather than about what it did
-    const firing = props.battle.on(BattleEvents.UnitTriggerMove, EventPriority.Post, (event) => {
+    const firing = props.battle.on(BattleEvents.UnitTriggerMove, AttackPriority.Post, (event) => {
       // What the caster aimed at, and nothing more.
       //
       // A move that goes out to everybody could be asked who it is
@@ -599,7 +599,7 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
     // where it happened rather than where it was aimed
     const landed = props.battle.on(
       BattleEvents.UnitTriggerMoveEffect,
-      EventPriority.Post,
+      AttackPriority.Post,
       (event) => {
         const struck: Unit[] = [];
 

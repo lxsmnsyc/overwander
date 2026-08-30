@@ -1,4 +1,4 @@
-import { EventPriority } from '../../core/event-emitter';
+import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Moves } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
 import type Battle from '../core';
@@ -53,7 +53,7 @@ function getSemiInvulnerableConfig(target: Unit): SemiInvulnerableConfig | undef
 }
 
 export default function setupSemiInvulnerableMoves(battle: Battle): void {
-  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, (event) => {
+  battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
     const config = SEMI_INVULNERABLE_MOVES[event.move];
 
     if (config) {

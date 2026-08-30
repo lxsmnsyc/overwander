@@ -288,13 +288,25 @@ describe('Switching', () => {
 
     expect(out.status[Statuses.Switching]).toBeDefined();
     expect(into.status[Statuses.Switching]).toBeDefined();
-    expect(out.checkCanCast(Moves.Tackle, { type: MoveTargetType.None })).toBe(false);
+    // Walking across the field is not a reason to stand still
+    expect(out.checkCanCast(Moves.Tackle, { type: MoveTargetType.None })).toBe(true);
 
     battle.tick(SWITCHING_SPAN);
 
     expect(out.status[Statuses.Switching]).toBeUndefined();
     expect(into.status[Statuses.Switching]).toBeUndefined();
-    expect(out.checkCanCast(Moves.Tackle, { type: MoveTargetType.None })).toBe(true);
+  });
+
+  it('stops the pair only when the swap is a vanishing', () => {
+    const { battle, teamA } = createBattle();
+    const out = createUnit(battle, teamA);
+    const into = createUnit(battle, teamA);
+    out.addMove(Moves.Tackle);
+
+    out.forceSwitch(into, { type: EffectType.Move, move: Moves.Teleport, unit: out });
+
+    // Gone rather than crossing: neither end is there to act
+    expect(out.checkCanCast(Moves.Tackle, { type: MoveTargetType.None })).toBe(false);
   });
 
   it('leaves at once and takes the field only when the walk ends', () => {
@@ -341,7 +353,7 @@ describe('Switching', () => {
     expect(into.status[Statuses.Switching]).toBeUndefined();
   });
 
-  it('makes every move against it miss until the walk is over', () => {
+  it('lets a move follow its target through the swap', () => {
     const { battle, teamA, teamB } = createBattle();
     pinRandom(battle, 1);
     const attacker = createUnit(battle, teamA);
@@ -349,15 +361,48 @@ describe('Switching', () => {
     const into = createUnit(battle, teamB);
     const target = { type: MoveTargetType.Unit, unit: out } as const;
 
-    // The swing lands its roll mid-walk, so it whiffs
+    // The swing lands its roll mid-walk and connects: what is
+    // crossing the field is still on it
     out.forceSwitch(into);
+    attacker.triggerMove(Moves.Tackle, target, 0);
+    advance(battle, attacker.checkMoveDelay(Moves.Tackle, target));
+
+    expect(out.health).toBeLessThan(160);
+  });
+
+  it('hands a move in the air to whoever took the spot', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const attacker = createUnit(battle, teamA);
+    const out = createUnit(battle, teamB);
+    const into = createUnit(battle, teamB);
+    const target = { type: MoveTargetType.Unit, unit: out } as const;
+
+    // In the air, aimed at the one about to leave
+    attacker.triggerMove(Moves.Tackle, target, 0);
+    out.forceSwitch(into);
+    advance(battle, attacker.checkMoveDelay(Moves.Tackle, target));
+
+    // It arrives at whoever is standing there now
+    expect(into.health).toBeLessThan(160);
+    expect(out.health).toBe(160);
+  });
+
+  it('makes every move miss somebody who vanished instead', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const attacker = createUnit(battle, teamA);
+    const out = createUnit(battle, teamB);
+    const into = createUnit(battle, teamB);
+    const target = { type: MoveTargetType.Unit, unit: out } as const;
+
+    out.forceSwitch(into, { type: EffectType.Move, move: Moves.Teleport, unit: out });
     attacker.triggerMove(Moves.Tackle, target, 0);
     advance(battle, attacker.checkMoveDelay(Moves.Tackle, target));
 
     expect(out.health).toBe(160);
 
-    // The walk is over by now — the misses above already spent most
-    // of the span — and the same swing connects
+    // Back on the field, and the same swing connects
     battle.tick(SWITCHING_SPAN);
     attacker.triggerMove(Moves.Tackle, target, 0);
     advance(battle, attacker.checkMoveDelay(Moves.Tackle, target));

@@ -1,4 +1,4 @@
-import { EventPriority } from '../../core/event-emitter';
+import { AttackPriority } from '../../core/event-emitter';
 import { Stages } from '../../data/constants/stats';
 import { Moves } from '../../data/ids/moves';
 import type Battle from '../core';
@@ -16,7 +16,7 @@ const CHARGE_STAGE_MOVES: {
 };
 
 export default function setupChargeMoves(battle: Battle): void {
-  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, (event) => {
+  battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
     const config = CHARGE_STAGE_MOVES[event.move];
     if (config && event.steps === 1) {
       event.source.addStage(config.stage, config.value, {

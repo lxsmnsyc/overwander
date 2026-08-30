@@ -1,4 +1,4 @@
-import { AttackPriority, EventPriority } from '../../core/event-emitter';
+import { AttackPriority } from '../../core/event-emitter';
 import { Stages } from '../../data/constants/stats';
 import { Moves } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
@@ -6,7 +6,7 @@ import type Battle from '../core';
 import { BattleEvents, EffectType } from '../events';
 
 export default function setupRage(battle: Battle): void {
-  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, (event) => {
+  battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
     if (event.move === Moves.Rage) {
       if (!event.source.status[Statuses.Raging]) {
         event.source.addStatus(Statuses.Raging, {

@@ -479,19 +479,20 @@ function paintAurora(
 function paintRainbow(context: CanvasRenderingContext2D, width: number, height: number): void {
   const bands = ['#ff5d5d', '#ffa94d', '#ffe66d', '#6ee7a0', '#5db8ff', '#9b8cff'];
   const radius = Math.max(width, height) * 0.62;
+  /**
+   * How far in each band sits, kept as a number rather than read back
+   * off the context. A width of zero is not a width the context
+   * accepts: it keeps whatever it had, and the bands then walk inward
+   * past nothing into a negative arc, which throws
+   */
+  const step = radius * 0.028;
 
   context.globalCompositeOperation = 'screen';
-  context.lineWidth = radius * 0.028;
+  context.lineWidth = step;
   for (let band = 0; band < bands.length; band++) {
     context.strokeStyle = `${bands[band]}44`;
     context.beginPath();
-    context.arc(
-      width * 0.7,
-      height * 1.05,
-      radius - band * context.lineWidth,
-      Math.PI,
-      Math.PI * 2,
-    );
+    context.arc(width * 0.7, height * 1.05, radius - band * step, Math.PI, Math.PI * 2);
     context.stroke();
   }
 }
@@ -510,7 +511,10 @@ export default function paintSky(
   clock: number,
   strength = 1,
 ): void {
-  if (weather === Weather.Clear || strength <= 0) {
+  // A canvas with no size is a canvas mid-layout — a board hidden
+  // behind a dialog measures zero until the dialog is gone — and
+  // painting into one is at best nothing drawn
+  if (weather === Weather.Clear || strength <= 0 || !(width > 0) || !(height > 0)) {
     return;
   }
   const wash = WASHES[weather];

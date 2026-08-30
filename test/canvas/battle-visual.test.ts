@@ -127,6 +127,10 @@ const SHAPES: [shape: string, move: Moves][] = [
   ['Warp', Moves.Psychic],
   ['Lash', Moves.VineWhip],
   ['Boost', Moves.SwordsDance],
+  // Johto's own three
+  ['Shade', Moves.ShadowBall],
+  ['Hearts', Moves.Attract],
+  ['Caltrops', Moves.Spikes],
 ];
 
 describe('a painted move', () => {
@@ -178,6 +182,13 @@ describe('a painted move', () => {
     }
   });
 
+  it('reads the move flags rather than naming every move that carries one', () => {
+    // A bite is teeth and a cut is an edge, whatever else the move is
+    expect(effectShapeFor(Moves.Crunch)).toBe('Jaws');
+    expect(effectShapeFor(Moves.MetalClaw)).toBe('Claw');
+    expect(effectShapeFor(Moves.FalseSwipe)).toBe('Claw');
+  });
+
   it('spends the gap differently depending on the move', () => {
     // The pokemon is the projectile: nothing else crosses the gap
     expect(delayShapeFor(Moves.Tackle, 0)).toBeNull();
@@ -195,6 +206,11 @@ describe('a painted move', () => {
     expect(delayShapeFor(Moves.Growl, 0)).toBe('Reach');
     // Its own side: nothing crosses anything
     expect(delayShapeFor(Moves.Harden, 0)).toBe('Charge');
+    // Lobbed rather than shot flat, and laid rather than thrown at
+    expect(delayShapeFor(Moves.SludgeBomb, 0)).toBe('Lobbed');
+    expect(delayShapeFor(Moves.Spikes, 0)).toBe('Lobbed');
+    // The ground answers a Magnitude the way it answers an Earthquake
+    expect(delayShapeFor(Moves.Magnitude, 0)).toBe('Rise');
   });
 
   it('draws nothing on a step that was only the wind-up', () => {
@@ -375,6 +391,16 @@ describe('the cues', () => {
       Statuses.Recharging,
       Statuses.Dormant,
       Statuses.Biding,
+      // Johto's own
+      Statuses.Protected,
+      Statuses.Enduring,
+      Statuses.Cornered,
+      Statuses.Nightmared,
+      Statuses.Perishing,
+      Statuses.Bonded,
+      Statuses.Cursed,
+      Statuses.Encored,
+      Statuses.Identified,
     ];
 
     for (const status of carried) {

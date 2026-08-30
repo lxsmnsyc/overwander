@@ -303,6 +303,18 @@ const NAMED: Partial<Record<Moves, [winding?: DelayShape, striking?: DelayShape]
   [Moves.Earthquake]: [undefined, 'Rise'],
   [Moves.Fissure]: [undefined, 'Rise'],
   [Moves.Sandstorm]: [undefined, 'Rise'],
+
+  // Johto. A bomb and a parcel are lobbed, a bone tumbles, and the
+  // ground answers a Magnitude the way it answers an Earthquake
+  [Moves.SludgeBomb]: [undefined, 'Lobbed'],
+  [Moves.Present]: [undefined, 'Lobbed'],
+  [Moves.BoneRush]: [undefined, 'Spun'],
+  [Moves.Magnitude]: [undefined, 'Rise'],
+  [Moves.Spikes]: [undefined, 'Lobbed'],
+  // Held rather than sent: the wait is the strike hanging over the
+  // target until it arrives
+  [Moves.FutureSight]: [undefined, 'Charge'],
+  [Moves.Outrage]: ['Charge'],
 };
 
 /**

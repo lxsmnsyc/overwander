@@ -15,6 +15,7 @@ import {
   chevrons,
   decay,
   fade,
+  heart,
   jaw,
   lash,
   motes,
@@ -96,6 +97,9 @@ export type EffectShape =
   | 'Leaves'
   | 'Stars'
   | 'Blow'
+  | 'Shade'
+  | 'Hearts'
+  | 'Caltrops'
   | 'Whiff';
 
 /** How long each of them takes at ordinary weight, in milliseconds. */
@@ -136,6 +140,9 @@ const SPANS: Record<EffectShape, number> = {
   Leaves: 560,
   Stars: 620,
   Blow: 620,
+  Shade: 660,
+  Hearts: 680,
+  Caltrops: 560,
   Whiff: 320,
 };
 
@@ -990,6 +997,73 @@ const PAINTERS: Record<
 
   // It went past. Drawn small and grey on purpose: a miss is news,
   // and a miss that looks like a hit is worse than nothing
+  // Ghost: a dark thing gathering, wisping off, and closing in on it
+  Shade(context, stage, share, { paint, seed, weight }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale * weight;
+
+    orb(context, at, size * (0.45 + swell(share) * 0.75), {
+      ...paint,
+      alpha: swell(share) * 0.85,
+    });
+    motes(context, at, size * 1.7, many(6, weight), seed, share, {
+      ...paint,
+      alpha: decay(share) * 0.9,
+      width: 2.4 * stage.scale,
+    });
+    // Inward rather than out: what a ghost move does is close on it
+    ring(context, at, size * (1.9 - share * 1.2), {
+      ...paint,
+      alpha: swell(share) * 0.7,
+      width: 2.2 * stage.scale,
+    });
+  },
+  // What a pokemon is feeling rather than what it was hit with
+  Hearts(context, stage, share, { paint, seed, weight }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale;
+    const rising = many(4, weight);
+
+    for (let one = 0; one < rising; one += 1) {
+      const held = Math.max(0, Math.min(1, share * 1.4 - (one / rising) * 0.5));
+
+      if (held <= 0) {
+        continue;
+      }
+      heart(
+        context,
+        [at[0] + spread(seed, one) * size * 0.9, at[1] - size * 2 * held],
+        size * 0.42,
+        { ...paint, alpha: decay(held) },
+      );
+    }
+  },
+  // Laid on the ground rather than thrown at anybody, so they settle
+  // along it instead of scattering from a point
+  Caltrops(context, stage, share, { paint, seed }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale;
+    const laid = 5;
+
+    for (let one = 0; one < laid; one += 1) {
+      const held = Math.max(0, Math.min(1, share * 1.5 - (one / laid) * 0.4));
+
+      if (held <= 0) {
+        continue;
+      }
+      const along = (one / (laid - 1) - 0.5) * size * 3.2;
+
+      shards(
+        context,
+        [at[0] + along, at[1] + size * 0.5 - size * (1 - held)],
+        size * 0.26,
+        1,
+        seed + one,
+        held,
+        { ...paint, alpha: 1, width: 2.6 * stage.scale },
+      );
+    }
+  },
   Whiff(context, stage, share, { paint }) {
     const at = landing(stage);
     const size = REACH * stage.scale;
@@ -1176,6 +1250,66 @@ const NAMED: Partial<Record<Moves, EffectShape>> = {
   [Moves.Surf]: 'Splash',
   [Moves.Blizzard]: 'Frost',
   [Moves.FireBlast]: 'Flame',
+
+  // Johto. Most of them are answered by the rules underneath: what is
+  // named here is what those rules would have drawn wrong
+  [Moves.Aeroblast]: 'Beam',
+  [Moves.DragonBreath]: 'Beam',
+  [Moves.Twister]: 'Swirl',
+  [Moves.RapidSpin]: 'Swirl',
+  [Moves.Whirlpool]: 'Coil',
+  [Moves.SpiderWeb]: 'Coil',
+  [Moves.Megahorn]: 'Spike',
+  [Moves.CrossChop]: 'Claw',
+  [Moves.IronTail]: 'Lash',
+  [Moves.ExtremeSpeed]: 'Strike',
+  [Moves.Spark]: 'Zap',
+  [Moves.AncientPower]: 'Rocks',
+  [Moves.MudSlap]: 'Haze',
+  [Moves.Octazooka]: 'Blast',
+  [Moves.SludgeBomb]: 'Blast',
+  [Moves.Present]: 'Blast',
+  [Moves.GigaDrain]: 'Drain',
+  [Moves.PainSplit]: 'Drain',
+  [Moves.MilkDrink]: 'Mend',
+  [Moves.MorningSun]: 'Mend',
+  [Moves.Synthesis]: 'Mend',
+  [Moves.Moonlight]: 'Mend',
+  [Moves.HiddenPower]: 'Dazzle',
+
+  // Heard: a song, a bell, a snore, and the sound a Johto pokemon
+  // makes to hold something still
+  [Moves.PerishSong]: 'Wave',
+  [Moves.HealBell]: 'Wave',
+  [Moves.Snore]: 'Wave',
+  [Moves.ScaryFace]: 'Wave',
+
+  // Ghost: something closing on it rather than something thrown
+  [Moves.ShadowBall]: 'Shade',
+  [Moves.Nightmare]: 'Shade',
+  [Moves.Curse]: 'Shade',
+  [Moves.DestinyBond]: 'Shade',
+  [Moves.Spite]: 'Shade',
+
+  // What the target is feeling
+  [Moves.Attract]: 'Hearts',
+  [Moves.SweetKiss]: 'Hearts',
+  [Moves.Charm]: 'Hearts',
+
+  // Laid on the ground for whatever walks in next
+  [Moves.Spikes]: 'Caltrops',
+
+  // Something the pokemon itself did
+  [Moves.BellyDrum]: 'Boost',
+  [Moves.BatonPass]: 'Boost',
+  [Moves.Swagger]: 'Boost',
+
+  // Something turning in front of its eyes, or behind them
+  [Moves.MeanLook]: 'Trance',
+  [Moves.SleepTalk]: 'Trance',
+  [Moves.PsychUp]: 'Trance',
+  [Moves.FutureSight]: 'Warp',
+  [Moves.Conversion2]: 'Warp',
 };
 
 /**
@@ -1238,6 +1372,14 @@ export function effectShapeFor(move: Moves): EffectShape {
     // A powder is a powder whether or not it does damage: what a
     // pokemon standing in one sees is the cloud
     return (data.flags & MoveFlags.Powder) !== 0 || data.type === Types.Poison ? 'Haze' : 'Mark';
+  }
+  // Two of the flags are already a picture: what bites closes teeth
+  // and what cuts rakes an edge, whatever else the move is
+  if ((data.flags & MoveFlags.Bite) !== 0) {
+    return 'Jaws';
+  }
+  if ((data.flags & MoveFlags.Slicing) !== 0) {
+    return 'Claw';
   }
   if (data.category === MoveCategories.Physical) {
     return (data.flags & MoveFlags.Contact) === 0 ? (BY_TYPE[data.type] ?? 'Impact') : 'Impact';

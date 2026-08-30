@@ -194,23 +194,20 @@ function AboutPane(): JSX.Element {
     <Panel>
       <Card title="Overwander">
         <p class="max-w-prose text-sm">
-          A Pokemon-style overworld you walk through, generated as you go. The map is never
-          stored: one seed produces the climate, the climate sorts into biomes, and each chunk
-          rolls its own landmarks, spawns, stashes and raids from that seed plus the clock. Two
-          players standing in the same place at the same time compute the same world without
-          exchanging any of it.
+          A Pokemon-style overworld you walk through, generated as you go. The map is never stored:
+          one seed produces the climate, the climate sorts into biomes, and each chunk rolls its own
+          landmarks, spawns, stashes and raids from that seed plus the clock. Two players standing
+          in the same place at the same time compute the same world without exchanging any of it.
         </p>
         <Line label="Written by">Alexis H. Munsayac</Line>
-        <Line label="Dex">
-          Gen 1, 151 species, with the modern rules wherever the two disagree
-        </Line>
+        <Line label="Dex">Gen 1, 151 species, with the modern rules wherever the two disagree</Line>
         <Line label="Source">MIT licensed, except the art and the names</Line>
       </Card>
 
       <Card title="Credits">
         <p class="max-w-prose text-sm text-muted">
-          The art, the rules and the libraries are other people's work. This is the short list;
-          the full one ships with the source.
+          The art, the rules and the libraries are other people's work. This is the short list; the
+          full one ships with the source.
         </p>
         <ul class="m-0 flex list-none flex-col gap-2 p-0">
           <For each={SOURCES}>
@@ -234,11 +231,11 @@ function AboutPane(): JSX.Element {
 
       <Card title="What this is not">
         <p class="max-w-prose text-sm">
-          Overwander is a fan project. Pokemon is a trademark of Nintendo, Creatures Inc. and
-          GAME FREAK Inc., and The Pokemon Company owns the franchise. None of them is affiliated
-          with this project, has endorsed it, or has seen it. The species, moves, abilities,
-          items and type chart are theirs. Nothing here is sold, and nothing here is offered as
-          an official product.
+          Overwander is a fan project. Pokemon is a trademark of Nintendo, Creatures Inc. and GAME
+          FREAK Inc., and The Pokemon Company owns the franchise. None of them is affiliated with
+          this project, has endorsed it, or has seen it. The species, moves, abilities, items and
+          type chart are theirs. Nothing here is sold, and nothing here is offered as an official
+          product.
         </p>
       </Card>
     </Panel>

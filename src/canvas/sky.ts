@@ -78,6 +78,15 @@ interface Fall {
   length: number;
   thickness: number;
   colour: string;
+  /**
+   * Whether it is drawn as scrolling tiles rather than drop by drop.
+   *
+   * Worth it only where there are enough drops to pay for two
+   * full-screen fills: see `paintTiledFall`. A sparse sky, or one whose
+   * drops are long enough streaks that a repeat would show, keeps its
+   * own
+   */
+  tiled?: boolean;
 }
 
 const FALLS: Partial<Record<Weather, Fall>> = {
@@ -115,6 +124,7 @@ const FALLS: Partial<Record<Weather, Fall>> = {
     length: 13,
     thickness: 1.2,
     colour: '#cfe0f7bb',
+    tiled: true,
   },
   [Weather.Thunderstorm]: {
     density: 3600,
@@ -123,6 +133,7 @@ const FALLS: Partial<Record<Weather, Fall>> = {
     length: 12,
     thickness: 1.2,
     colour: '#ccdcf7bb',
+    tiled: true,
   },
   [Weather.Snow]: {
     density: 1300,
@@ -155,6 +166,7 @@ const FALLS: Partial<Record<Weather, Fall>> = {
     length: 9,
     thickness: 1.4,
     colour: '#e0c184c0',
+    tiled: true,
   },
   [Weather.FallingAsh]: {
     density: 1100,
@@ -236,11 +248,17 @@ function scatterOf(count: number): Float32Array {
  */
 
 /**
- * How wide a stripe of the world the fall is spread over. Wider than
- * the screen, since a drop blown sideways has to come from somewhere
- * off the edge
+ * How far past the screen the fall is spread.
+ *
+ * Only far enough to hide a drop's own trail: the positions wrap, so
+ * nothing has to be drawn off the edge in order to arrive from it. The
+ * longest trail any sky draws is a breeze's, at about eighty pixels.
+ *
+ * It is not free room. The count is a density over the whole stripe,
+ * so a margin twice as wide is nearly twice as many drops, and every
+ * one of the extra ones is drawn where nobody can see it
  */
-const MARGIN = 400;
+const MARGIN = 128;
 
 function paintFall(
   context: CanvasRenderingContext2D,
@@ -254,10 +272,17 @@ function paintFall(
   const down = height + MARGIN;
   const count = Math.round((fall.density * across * down) / 1_000_000);
 
+  // A round drop is a segment going nowhere under a round cap, which
+  // is a circle of the cap's own width — so the cap carries the
+  // diameter where an arc carried the radius
+  const dots = fall.length <= 0;
+
   context.strokeStyle = fall.colour;
-  context.fillStyle = fall.colour;
-  context.lineWidth = fall.thickness;
-  context.lineCap = 'round';
+  context.lineWidth = dots ? fall.thickness * 2 : fall.thickness;
+  // Round only where the cap *is* the drop. On a line it rounds two
+  // ends nobody can resolve at a pixel wide, and a round cap is a
+  // circle to work out at each end of every drop in the sky
+  context.lineCap = dots ? 'round' : 'butt';
   context.beginPath();
 
   const noise = scatterOf(count);
@@ -265,6 +290,9 @@ function paintFall(
   // fall this wide is a hot enough loop to care
   const fallen = seconds * fall.speed;
   const blown = seconds * fall.drift;
+  // Along the way it is actually travelling, so a drop blown sideways
+  // leans the way the wind is blowing it
+  const lean = fall.drift / fall.speed;
 
   for (let at = 0; at < count; at++) {
     const of = at * SALTS;
@@ -274,22 +302,150 @@ function paintFall(
     const y = ((noise[of] * down + fallen * pace) % down) - MARGIN;
     const x = ((noise[of + 1] * across + blown * pace) % across) - MARGIN + noise[of + 3];
 
-    if (fall.length <= 0) {
-      context.moveTo(x + fall.thickness, y);
-      context.arc(x, y, fall.thickness, 0, Math.PI * 2);
+    if (dots) {
+      // A hair rather than nothing at all: a subpath of zero length is
+      // meant to paint its cap and does, but a hair is the same circle
+      // and asks nobody to be sure
+      context.moveTo(x, y);
+      context.lineTo(x + 0.01, y);
       continue;
     }
-    // Along the way it is actually travelling, so a drop blown
-    // sideways leans the way the wind is blowing it
-    const lean = fall.drift / fall.speed;
-
     context.moveTo(x, y);
     context.lineTo(x - fall.length * lean, y - fall.length);
   }
-  if (fall.length <= 0) {
-    context.fill();
-  } else {
-    context.stroke();
+  context.stroke();
+}
+
+/**
+ * A heavy fall, drawn as scrolling cloth instead of drop by drop.
+ *
+ * A drop costs about the same whether anyone can see it or not: what
+ * a stroked segment is paid for is being tessellated and antialiased,
+ * not the dozen pixels it lands on. A downpour is eleven thousand of
+ * them a frame, and the whole sky it draws covers under a tenth of the
+ * screen — so the bill is the count, and the count is what this gets
+ * rid of.
+ *
+ * One tile of rain is drawn once and repeated forever by the browser.
+ * Each frame moves the pattern and fills the screen, so a downpour and
+ * a drizzle cost exactly the same: two fills.
+ *
+ * What it gives up is that every drop had its own pace. Two layers at
+ * two paces is what stands in for it, which is the parallax the effect
+ * was reaching for anyway
+ */
+const LAYERS = 2;
+
+/**
+ * How big one tile is. Large enough that the repeat is not read as a
+ * grid, small enough to build quickly and stay in cache
+ */
+const TILE = 512;
+
+/** The two paces, either side of the one pace a single sheet would have */
+const PACES = [0.85, 1.15];
+
+/** One built cloth per fall. The falls are module constants, so this is bounded */
+const cloths = new Map<Fall, CanvasPattern[]>();
+
+function clothOf(context: CanvasRenderingContext2D, fall: Fall): CanvasPattern[] | null {
+  const known = cloths.get(fall);
+
+  if (known != null) {
+    return known;
+  }
+
+  // Each layer covers the whole screen, so each carries its share of
+  // the density rather than all of it
+  const per = Math.max(1, Math.round((fall.density / LAYERS) * ((TILE * TILE) / 1_000_000)));
+  const noise = scatterOf(per * LAYERS);
+  const dots = fall.length <= 0;
+  const lean = fall.drift / fall.speed;
+  const made: CanvasPattern[] = [];
+
+  for (let layer = 0; layer < LAYERS; layer++) {
+    const canvas = document.createElement('canvas');
+
+    canvas.width = TILE;
+    canvas.height = TILE;
+
+    const into = canvas.getContext('2d');
+
+    if (into == null) {
+      return null;
+    }
+    into.strokeStyle = fall.colour;
+    into.lineWidth = dots ? fall.thickness * 2 : fall.thickness;
+    into.lineCap = dots ? 'round' : 'butt';
+    into.beginPath();
+
+    for (let at = 0; at < per; at++) {
+      const of = (layer * per + at) * SALTS;
+      const x = noise[of + 1] * TILE;
+      const y = noise[of] * TILE;
+
+      // Nine copies of each, so a drop hanging over an edge is already
+      // drawn coming back in at the other one. Without it the seam is
+      // a clean line of half-drops across the sky
+      for (let dx = -1; dx <= 1; dx++) {
+        for (let dy = -1; dy <= 1; dy++) {
+          const from = x + dx * TILE;
+          const down = y + dy * TILE;
+
+          into.moveTo(from, down);
+          if (dots) {
+            into.lineTo(from + 0.01, down);
+          } else {
+            into.lineTo(from - fall.length * lean, down - fall.length);
+          }
+        }
+      }
+    }
+    into.stroke();
+
+    const cloth = context.createPattern(canvas, 'repeat');
+
+    if (cloth == null) {
+      return null;
+    }
+    made.push(cloth);
+  }
+  cloths.set(fall, made);
+  return made;
+}
+
+function paintTiledFall(
+  context: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  fall: Fall,
+  clock: number,
+): void {
+  const cloth = clothOf(context, fall);
+
+  if (cloth == null) {
+    // No second canvas to be had, which is a browser that will not
+    // give one up rather than a state worth handling: the sky falls
+    // back to being drawn a drop at a time
+    paintFall(context, width, height, fall, clock);
+    return;
+  }
+
+  const seconds = clock / 1000;
+
+  for (let layer = 0; layer < LAYERS; layer++) {
+    const pace = PACES[layer];
+
+    // The cloth is moved rather than the screen, so the fill stays put
+    // and nothing has to be saved and restored around it
+    cloth[layer].setTransform(
+      new DOMMatrix().translate(
+        (seconds * fall.drift * pace) % TILE,
+        (seconds * fall.speed * pace) % TILE,
+      ),
+    );
+    context.fillStyle = cloth[layer];
+    context.fillRect(0, 0, width, height);
   }
 }
 
@@ -377,7 +533,11 @@ export default function paintSky(
   }
   context.globalCompositeOperation = 'source-over';
   if (fall != null) {
-    paintFall(context, width, height, fall, clock);
+    if (fall.tiled === true) {
+      paintTiledFall(context, width, height, fall, clock);
+    } else {
+      paintFall(context, width, height, fall, clock);
+    }
   }
   context.restore();
 }

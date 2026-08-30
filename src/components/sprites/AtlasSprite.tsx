@@ -189,7 +189,8 @@ export default function AtlasSprite(props: AtlasSpriteProps): JSX.Element {
           height: `${cell().height * scale()}px`,
         };
 
-  const rendering = (): NonNullable<JSX.CSSProperties['image-rendering']> => (props.smooth === true ? 'auto' : 'pixelated');
+  const rendering = (): NonNullable<JSX.CSSProperties['image-rendering']> =>
+    props.smooth === true ? 'auto' : 'pixelated';
 
   return (
     <span

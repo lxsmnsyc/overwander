@@ -48,6 +48,13 @@ describe('local time', () => {
     expect(asOffset(480)).toBe(480);
     expect(asOffset(480.4)).toBe(480);
 
+    // Every real zone is a whole number of quarter hours out, so
+    // anything between two of them is snapped to the nearer. A caller
+    // cannot stand in a zone of its own and read the chunk again
+    expect(asOffset(345)).toBe(345);
+    expect(asOffset(487)).toBe(480);
+    expect(asOffset(-323)).toBe(-330);
+
     // A caller cannot invent a zone a day away to re-roll the world
     expect(asOffset(99999)).toBe(MAX_OFFSET);
     expect(asOffset(-99999)).toBe(MIN_OFFSET);

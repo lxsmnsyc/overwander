@@ -1,5 +1,6 @@
 import claimDevAdmin from './roles';
 import { DEFAULT_CHARSET } from '../data/overworld/charsets';
+import { DEFAULT_PLAYER_NAME, asPlayerName } from './nickname';
 import getSupabase, { type Unwatch, watchRow } from './supabase';
 import type { PlayerIdentity } from './user';
 
@@ -75,7 +76,7 @@ const PROFILE_COLUMNS = 'nickname, sprite, gold, role, banned, ban_reason, buddy
  */
 function asProfile(data: Record<string, unknown>): Profile {
   return {
-    nickname: typeof data.nickname === 'string' ? data.nickname : 'Trainer',
+    nickname: typeof data.nickname === 'string' ? data.nickname : DEFAULT_PLAYER_NAME,
     sprite: typeof data.sprite === 'string' && data.sprite !== '' ? data.sprite : DEFAULT_CHARSET,
     gold: typeof data.gold === 'number' ? data.gold : Number(data.gold ?? 0),
     buddy: typeof data.buddy_id === 'string' ? data.buddy_id : '',
@@ -138,9 +139,13 @@ export function watchProfile(uid: string, onChange: (profile: Profile | null) =>
 export type ProfileDetails = Pick<Profile, 'nickname'>;
 
 export async function saveProfile(uid: string, details: ProfileDetails): Promise<void> {
+  // Cleaned here as well as by the column's own constraint. The
+  // constraint is what makes the rule true — this row is the one thing
+  // a browser writes for itself — and this is what keeps a name the
+  // player typed from being refused outright when it can be trimmed
   const { error } = await getSupabase()
     .from(PROFILE_TABLE)
-    .update({ nickname: details.nickname })
+    .update({ nickname: asPlayerName(details.nickname) })
     .eq('id', uid);
 
   if (error != null) {
@@ -171,7 +176,7 @@ export async function setBuddyField(uid: string, catchId: string): Promise<void>
  */
 export function deriveProfileDefaults(user: PlayerIdentity): Profile {
   return {
-    nickname: user.displayName ?? user.email?.split('@')[0] ?? 'Trainer',
+    nickname: asPlayerName(user.displayName ?? user.email?.split('@')[0] ?? ''),
     sprite: DEFAULT_CHARSET,
     gold: 0,
     buddy: '',
@@ -200,7 +205,7 @@ export async function ensureProfile(user: PlayerIdentity): Promise<Profile> {
   if (existing != null) {
     let held = existing;
 
-    if (held.nickname === 'Trainer' && defaults.nickname !== 'Trainer') {
+    if (held.nickname === DEFAULT_PLAYER_NAME && defaults.nickname !== DEFAULT_PLAYER_NAME) {
       await saveProfile(user.uid, { nickname: defaults.nickname });
       held = { ...held, nickname: defaults.nickname };
     }

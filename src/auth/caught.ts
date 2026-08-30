@@ -21,13 +21,12 @@ import getIdToken from './session';
 
 export {
   HELD_ITEM_LIMIT,
-  NICKNAME_LIMIT,
   asCaughtPokemon,
-  asNickname,
   getCatchName,
   isFavorite,
   isGuarded,
 } from './caught-record';
+export { NICKNAME_LIMIT, asNickname } from './nickname';
 export type { CaughtPokemon, OwnershipRecord } from './caught-record';
 
 const CAUGHT_TABLE = 'caught';

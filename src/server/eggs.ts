@@ -235,7 +235,7 @@ export async function grantNestEgg(
 ): Promise<string> {
   // The draws land in order: the individual value, the trait value,
   // then the move the hatchling inherits
-  const rng = new AleaRNG(`${snapshot.key}${snapshot.nestTimestamp}nest${cell}egg:${uid}`);
+  const rng = new AleaRNG(`${snapshot.groundKey}${snapshot.nestTimestamp}nest${cell}egg:${uid}`);
   const spawn: Spawn = [species, rng.int32(), rng.int32()];
   const hatchling = deriveEncounter(snapshot, spawn, uid, {
     type: EncounterType.Hatched,

@@ -181,13 +181,19 @@ function HistoryRow(props: {
       <Switch>
         <Match when={kind() === BattleKind.Raid}>
           <span class="flex items-center gap-1.5 font-medium">
-            <AnimatedSprite
-              species={props.record.species}
-              animation={SpriteAnim.Idle}
-              direction="DownLeft"
-              scale={2}
-              label={getSpeciesData(props.record.species).name}
-            />
+            {/* Fitted to a square of its own rather than drawn at a
+                multiple of the sheet: a raid boss is whatever size its
+                sheet is, and one tall one stretched every row in the
+                list to its height */}
+            <span class="flex size-10 shrink-0 items-center justify-center">
+              <AnimatedSprite
+                species={props.record.species}
+                animation={SpriteAnim.Idle}
+                direction="DownLeft"
+                fill
+                label={getSpeciesData(props.record.species).name}
+              />
+            </span>
             {getSpeciesData(props.record.species).name}
           </span>
         </Match>

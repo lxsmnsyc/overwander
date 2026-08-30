@@ -217,6 +217,49 @@ originals were done in bulk:
 
 See [Security](security.md) for what the policies say and why.
 
+### Applying one without a reset
+
+`pnpm db:reset` throws the data away, which is right most of the time and
+annoying when the state took a while to walk into. The CLI can apply only what
+is pending instead:
+
+```bash
+supabase migration list --local   # what the database has, against the folder
+supabase migration up --local     # apply the pending ones, keeping the data
+```
+
+`migration list` prints a **Local** and a **Remote** column, where "remote" means
+the database being asked, the local one here. A row with a local version and an
+empty remote one is pending.
+
+**A pending file older than one already applied needs `--include-all`.** The
+plain `up` only walks forwards from the newest applied version, so a migration
+that arrives out of order (a branch merged after you wrote your own) is skipped
+in silence:
+
+```bash
+supabase migration up --local --include-all
+```
+
+Two things this does not do, both of which `pnpm db:reset` does:
+
+- **It does not prove the folder replays from nothing**, which is what a fresh
+  machine and a hosted project both do. Reset before pushing anywhere.
+- **It does not undo the previous shape.** A file changed after it was applied
+  will not be applied again, since the version is already in the history table.
+  Either write the fix as a new file, or reset.
+
+If you did run something by hand in `psql` and want the history to agree with
+what the database actually has:
+
+```bash
+supabase migration repair --local --status applied <version>
+supabase migration repair --local --status reverted <version>
+```
+
+That writes the history table and nothing else: it does not run or undo any SQL,
+so it is only ever right when the schema already matches what you are claiming.
+
 ## Running the tests
 
 ```bash

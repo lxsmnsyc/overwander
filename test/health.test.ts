@@ -3,11 +3,10 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import {
   ACQUISITION_NAMES,
   Acquisition,
-  NICKNAME_LIMIT,
   asCaughtPokemon,
-  asNickname,
   getCatchName,
 } from '../src/auth/caught-record';
+import { NICKNAME_LIMIT, asNickname } from '../src/auth/nickname';
 import type { HealthSource, HealthState } from '../src/auth/health';
 import {
   NON_VOLATILE_STATUSES,
@@ -388,8 +387,10 @@ describe('stored records', () => {
     // nothing: a name is what a heading can show
     expect(asNickname('Fluff\u0007y')).toBe('Fluffy');
     // Cut to the limit, counted in characters rather than in bytes
-    expect(asNickname('Bulbasaurus Rex')).toBe('Bulbasaurus');
-    expect(asNickname('Bulbasaurus Rex').length).toBeLessThanOrEqual(NICKNAME_LIMIT);
+    const long = 'Bulbasaurus Rex the Magnificent';
+
+    expect([...asNickname(long)]).toHaveLength(NICKNAME_LIMIT);
+    expect(long.startsWith(asNickname(long))).toBe(true);
     // ...and one that comes to nothing is a pokemon with no name,
     // which is how a name is taken back off one
     expect(asNickname('   ')).toBe('');

@@ -12,6 +12,7 @@ import {
 import { useAuth } from '../../auth/context';
 import type Weather from '../../data/overworld/weather';
 import type { EncounterRecord } from '../../auth/encounter-record';
+import { type Notice, watchNotifications } from '../../auth/notifications';
 import { claimRaidReward } from '../../auth/raids';
 import { claimRocketReward } from '../../auth/rockets';
 import { settleGymChallenge } from '../../auth/gym-seats';
@@ -79,6 +80,11 @@ export const enum GameDialog {
    * How the game is set up for this player, and what it is made of
    */
   Settings = 11,
+  /**
+   * Everything waiting on the player, wherever it came from: the one
+   * screen that says an invitation has landed
+   */
+  Notifications = 12,
 }
 
 /**
@@ -251,6 +257,17 @@ export interface GameState {
    */
   records: Accessor<number>;
   touchRecords: () => void;
+  /**
+   * Everything waiting on the player: invitations, requests, offers
+   * and whatever the auction house owes them.
+   *
+   * It is followed here rather than in the panel that lists it, for
+   * the reason `position` is: a panel that is not open watches
+   * nothing, and an invitation nobody is told about is one nobody
+   * answers. The menu reads the count off it and the notifications
+   * panel draws it
+   */
+  notices: Accessor<Notice[]>;
 }
 
 const GameContext = createContext<GameState>();
@@ -365,6 +382,24 @@ export default function GameProvider(props: ParentProps): JSX.Element {
       toast.push({ title: 'Quest complete', message: `${name} is ready to claim.`, tone: 'leaf' });
     },
   );
+
+  /** What is waiting on them, for as long as they are signed in */
+  const [notices, setNotices] = createSignal<Notice[]>([]);
+
+  createEffect(() => {
+    const user = auth.user();
+
+    if (user == null) {
+      setNotices([]);
+      return;
+    }
+
+    const stop = watchNotifications(user.uid, (waiting) => {
+      setNotices(waiting);
+    });
+
+    onCleanup(stop);
+  });
 
   const [raid, setRaid] = createSignal<string | null>(null);
   const [duel, setDuel] = createSignal<string | null>(null);
@@ -517,6 +552,7 @@ export default function GameProvider(props: ParentProps): JSX.Element {
         dexEntry,
         setDexEntry,
         records,
+        notices,
         touchRecords: () => {
           setRecords((count) => count + 1);
         },

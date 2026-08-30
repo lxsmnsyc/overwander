@@ -18,7 +18,8 @@ import {
   setNickname,
   takeItem,
 } from '../../../auth/caught';
-import { NICKNAME_LIMIT, asNickname, getCatchName } from '../../../auth/caught-record';
+import { getCatchName } from '../../../auth/caught-record';
+import { NICKNAME_LIMIT, asNickname } from '../../../auth/nickname';
 import { useAuth } from '../../../auth/context';
 
 import { canHatch, isEgg } from '../../../auth/egg';

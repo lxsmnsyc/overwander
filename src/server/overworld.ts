@@ -198,7 +198,7 @@ async function grantStash(uid: string, stash: ItemStack[]): Promise<void> {
 }
 
 function cachePrefix(snapshot: ChunkSnapshot): string {
-  return `${snapshot.key}@${snapshot.landmarkTimestamp}$`;
+  return `${snapshot.groundKey}@${snapshot.landmarkTimestamp}$`;
 }
 
 /**
@@ -235,7 +235,7 @@ export async function listClaimedItemCaches(
 }
 
 function berryPrefix(snapshot: ChunkSnapshot): string {
-  return `${snapshot.key}@${snapshot.landmarkTimestamp}$berry`;
+  return `${snapshot.groundKey}@${snapshot.landmarkTimestamp}$berry`;
 }
 
 /**
@@ -313,7 +313,7 @@ export async function claimBerryPatch(
  * looking and taking cannot disagree about which egg is in question
  */
 function nestClaimId(snapshot: ChunkSnapshot, cell: number): string {
-  return `${snapshot.key}@${snapshot.nestTimestamp}$nest${cell}`;
+  return `${snapshot.groundKey}@${snapshot.nestTimestamp}$nest${cell}`;
 }
 
 /**
@@ -459,7 +459,7 @@ function phenomenonKey(snapshot: ChunkSnapshot, cell: number): string {
  * already had
  */
 function phenomenonPrefix(snapshot: ChunkSnapshot): string {
-  return `${snapshot.key}@${snapshot.phenomenonTimestamp}$happening`;
+  return `${snapshot.groundKey}@${snapshot.phenomenonTimestamp}$happening`;
 }
 
 /**
@@ -547,7 +547,9 @@ export async function claimPhenomenon(
   // The pokemon needs the two rolls a snapshot spawn would have; they
   // derive from the same chunk, hour and cell, so what the phenomenon
   // startled out is one pokemon rather than one per player
-  const rng = new AleaRNG(`${snapshot.key}${snapshot.phenomenonTimestamp}happening${cell}spawn`);
+  const rng = new AleaRNG(
+    `${snapshot.groundKey}${snapshot.phenomenonTimestamp}happening${cell}spawn`,
+  );
   const spawn: Spawn = [reward.species, rng.int32(), rng.int32()];
 
   return { kind: 'encounter', encounter: await startEncounter(uid, snapshot, key, spawn) };

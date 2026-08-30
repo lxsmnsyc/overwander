@@ -134,3 +134,24 @@ The codes live in `friend_codes`, readable only by their owners, and the lookup
 is a server call. It answers nothing for a code nobody holds, for a banned
 account, for somebody who signed in once and never opened a profile, and for
 the reader's own, since nobody befriends themselves.
+
+## Being told about it
+
+Nothing above writes a notification row: what is waiting on a player is derived
+from the tables that already hold it. `watchNotifications`
+([`notifications.ts`](../../src/auth/notifications.ts)) follows five of them at
+once for the signed-in player and reports them as one list, newest first:
+
+| What it watches                  | What it counts as waiting                                                                                        |
+| -------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `raid_invites`                   | Every call into a lobby                                                                                          |
+| `duel_invites`                   | Every call into a battle                                                                                         |
+| `friend_requests`                | The **incoming** half, since the outgoing half waits on somebody else                                            |
+| `trades`                         | Offers still open where this player is the receiver                                                              |
+| `auctions` plus their own `bids` | A lot won and uncollected, a lot of theirs nobody bid on, and a lot they are outbid on while it is still running |
+
+The list lives in the game context rather than in the panel that draws it: a
+panel that is not open watches nothing, and an invitation nobody is told about
+is one nobody answers. The menu carries the count and the notifications panel
+draws the rows; answering still happens in the panel that owns each thing, since
+that is where the rules for it are.

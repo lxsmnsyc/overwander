@@ -15,6 +15,7 @@ import GameProvider, { GameDialog, useGame } from '../components/app/game-contex
 import InventoryList from '../components/items/InventoryList';
 import LoginForm from '../components/app/LoginForm';
 import GiftsTab from '../components/gifts/GiftsTab';
+import NotificationsTab from '../components/notifications/NotificationsTab';
 import DexEntryDialog from '../components/dex/dex-entry-dialog';
 import DuelsTab from '../components/duels/DuelsTab';
 import OverworldTab from '../components/overworld/overworld-tab';
@@ -47,6 +48,7 @@ import { Button, Dialog, DialogActions, Note } from '../components/styled';
  * text telling them what they just did
  */
 type Panelled =
+  | GameDialog.Notifications
   | GameDialog.Profile
   | GameDialog.Raids
   | GameDialog.Auctions
@@ -59,6 +61,7 @@ type Panelled =
   | GameDialog.Settings;
 
 const TITLES: Record<Panelled, string> = {
+  [GameDialog.Notifications]: 'Notifications',
   [GameDialog.Profile]: 'Profile',
   [GameDialog.Raids]: 'Raids',
   [GameDialog.Auctions]: 'Auctions',
@@ -72,6 +75,7 @@ const TITLES: Record<Panelled, string> = {
 };
 
 const DESCRIPTIONS: Record<Panelled, string> = {
+  [GameDialog.Notifications]: 'Everything waiting on you, wherever it came from.',
   [GameDialog.Profile]:
     'Your details, your buddy, your friends, your battles, your bids and your trades.',
   [GameDialog.Raids]: 'Every lobby still gathering in the current window.',
@@ -216,6 +220,23 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
             description={DESCRIPTIONS[GameDialog.Quests]}
           >
             <QuestsTab isOpen={showing(GameDialog.Quests)} onClose={close} />
+            <DialogActions>
+              <Button onClick={close}>Close</Button>
+            </DialogActions>
+          </Dialog>
+
+          {/* What has been offered to the player, from every corner of
+              the game at once. It notices; the panels behind it are
+              where each is answered */}
+          <Dialog
+            isOpen={showing(GameDialog.Notifications)}
+            onClose={close}
+            width="wide"
+            terse
+            title={TITLES[GameDialog.Notifications]}
+            description={DESCRIPTIONS[GameDialog.Notifications]}
+          >
+            <NotificationsTab notices={game.notices()} onClose={close} />
             <DialogActions>
               <Button onClick={close}>Close</Button>
             </DialogActions>

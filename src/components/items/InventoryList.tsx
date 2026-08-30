@@ -19,6 +19,7 @@ import CatchPicker from '../catches/catch-picker';
 import IncreasePPDialog from '../catches/IncreasePPDialog';
 import TeachMoveDialog from '../catches/TeachMoveDialog';
 import ItemGrid from './ItemGrid';
+import { describeItem } from '../details';
 import spendItemOn, { getLevelMoves, isUsableOn } from './use-item';
 import { useGame } from '../app/game-context';
 import { Badge, List, ListRow, Note, useToast } from '../styled';
@@ -146,14 +147,19 @@ function BagBody(
       <Show when={props.items.latest?.length} fallback={<Note>Carrying nothing.</Note>}>
         {/* The same tray the picker uses: what the bag holds is a
               thing to look at rather than read, and the search and the
-              shelves come with it. Pressing a square uses what is on
-              it, where using it would mean anything */}
+              shelves come with it.
+
+              Nothing here is refused. A bag is what the player is
+              carrying, and a nugget is not unavailable for being a
+              nugget — it simply has no use to press. Only the ones
+              that do are announced as something to use */}
         <ItemGrid
-          verb="Use"
           entries={(props.items.latest ?? []).map((entry) => ({
             item: entry.item,
             amount: entry.amount,
-            blocked: isUsable(entry.item) ? null : 'Nothing to use it on',
+            said: `${isUsable(entry.item) ? 'Use ' : ''}${describeItem(entry.item)}, ${
+              entry.amount
+            } carried`,
           }))}
           onPress={(item) => {
             if (isUsable(item)) {

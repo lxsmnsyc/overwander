@@ -1,6 +1,7 @@
 import { registerMoves } from '../../src/data/moves';
 import { describe, expect, it } from 'vitest';
 import AleaRNG from '../../src/core/alea';
+import { MAX_OFFSET, MIN_OFFSET, asOffset } from '../../src/auth/local-time';
 import Abilities from '../../src/data/ids/abilities';
 import PerlinNoise from '../../src/core/perlin';
 import registerBiomeSpawns, {
@@ -341,6 +342,23 @@ describe('world', () => {
       shapes.add(JSON.stringify([...new ChunkSnapshot(chunk, window * WINDOW).getItemCaches()]));
     }
     expect(shapes.size).toBeGreaterThan(1);
+
+    // ...and the zone it is read in is not one of the things that
+    // makes it a different stash. The offset comes from the caller, so
+    // a zone in the seed or in the claim marker would be a stash dug
+    // up once per zone by a client saying it was somewhere else
+    const NOW = 1_700_000_000_000;
+    const buried = new Set<string>();
+    const markers = new Set<string>();
+
+    for (let offset = MIN_OFFSET; offset <= MAX_OFFSET; offset++) {
+      const zoned = new ChunkSnapshot(chunk, NOW + asOffset(offset) * 60 * 1000, offset);
+
+      buried.add(JSON.stringify([...zoned.getItemCaches()]));
+      markers.add(`${zoned.groundKey}@${zoned.landmarkTimestamp}`);
+    }
+    expect(buried.size).toBe(1);
+    expect(markers.size).toBe(1);
   });
 
   it('rolls what is happening over the chunk rather than pinning it', () => {
@@ -2533,11 +2551,14 @@ describe('chunk snapshot', () => {
     // Asked for more than the chunk can hold, it fills every cell the
     // fixtures are not standing on and stops
     const packed = new ChunkSnapshot(chunk, NOON);
+    // Whatever is going on this hour holds its cell too, so the room
+    // left is what nothing else is standing on
     const room = centeredCells(PLACEMENT_AREA).filter(
       (cell) =>
         !chunk.getLandmarkCells().has(cell) &&
         !chunk.getDecorationCells().has(cell) &&
-        !chunk.getRockCells().has(cell),
+        !chunk.getRockCells().has(cell) &&
+        !packed.getPhenomena().has(cell),
     );
 
     expect(packed.getSpawns(1000)).toHaveLength(room.length);

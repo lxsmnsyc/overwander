@@ -1,4 +1,4 @@
-import { toZoneKey } from '../auth/local-time';
+import { asOffset, toZoneKey } from '../auth/local-time';
 import AleaRNG from '../core/alea';
 import { boostFamilyWeights, getSpawnPool, pickSpawn } from '../data/biome';
 import type { SpawnRarityGroups } from '../data/biome';
@@ -250,6 +250,36 @@ export default class ChunkSnapshot {
     this.rng = new AleaRNG(`${this.key}${this.timestamp}`);
   }
 
+  /**
+   * What the **ground** of this chunk is keyed by: the chunk alone,
+   * with no zone in it.
+   *
+   * Spawns are a zone's own — the pokemon out at dusk are out at dusk
+   * where the player is standing — but what is buried under a chunk is
+   * not. A zone in this key made the same cache roll again for every
+   * zone it was asked in, and made the claim that empties it a
+   * different claim each time, which is a stash a caller could dig up
+   * once per zone by saying it was somewhere else
+   */
+  get groundKey(): string {
+    return this.chunk.seed;
+  }
+
+  /**
+   * The instant this window began, as UTC rather than as the zone's
+   * own wall clock. Every zone reading the same chunk at the same
+   * moment answers the same number, which is what lets the ground be
+   * shared
+   */
+  private get instant(): number {
+    return this.timestamp - asOffset(this.offset) * 60_000;
+  }
+
+  /** The ground's window of that length, counted from UTC */
+  private groundWindow(interval: number): number {
+    return Math.floor(this.instant / interval) * interval;
+  }
+
   private spawns: Spawn[] | null = null;
 
   /**
@@ -372,7 +402,7 @@ export default class ChunkSnapshot {
    * pokemon around it turn over
    */
   get landmarkTimestamp(): number {
-    return Math.floor(this.timestamp / LANDMARK_INTERVAL) * LANDMARK_INTERVAL;
+    return this.groundWindow(LANDMARK_INTERVAL);
   }
 
   /**
@@ -402,7 +432,7 @@ export default class ChunkSnapshot {
 
       for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
         if (landmark === Landmark.ItemCache) {
-          const rng = new AleaRNG(`${this.key}${this.landmarkTimestamp}cache${cell}`);
+          const rng = new AleaRNG(`${this.groundKey}${this.landmarkTimestamp}cache${cell}`);
           const stash = resolveItemCache(() => rng.random());
 
           if (stash.length > 0) {
@@ -429,7 +459,7 @@ export default class ChunkSnapshot {
 
       for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
         if (landmark === Landmark.BerryPatch) {
-          const rng = new AleaRNG(`${this.key}${this.landmarkTimestamp}berry${cell}`);
+          const rng = new AleaRNG(`${this.groundKey}${this.landmarkTimestamp}berry${cell}`);
           const berry = resolveBerryPatch(() => rng.random());
 
           if (berry != null) {
@@ -547,7 +577,7 @@ export default class ChunkSnapshot {
    * a hundred and forty-four times before it holds a new egg
    */
   get nestTimestamp(): number {
-    return Math.floor(this.timestamp / NEST_INTERVAL) * NEST_INTERVAL;
+    return this.groundWindow(NEST_INTERVAL);
   }
 
   private nests: Map<number, Species> | null = null;
@@ -570,7 +600,7 @@ export default class ChunkSnapshot {
           continue;
         }
 
-        const rng = new AleaRNG(`${this.key}${this.nestTimestamp}nest${cell}`);
+        const rng = new AleaRNG(`${this.groundKey}${this.nestTimestamp}nest${cell}`);
         const species = resolveNest(
           this.chunk.biome,
           time,
@@ -1051,7 +1081,7 @@ export default class ChunkSnapshot {
    * event rather than a thing lying there
    */
   get phenomenonTimestamp(): number {
-    return Math.floor(this.timestamp / PHENOMENON_INTERVAL) * PHENOMENON_INTERVAL;
+    return this.groundWindow(PHENOMENON_INTERVAL);
   }
 
   private phenomena: Map<number, Phenomenon> | null = null;
@@ -1085,7 +1115,7 @@ export default class ChunkSnapshot {
         return showing;
       }
 
-      const rng = new AleaRNG(`${this.key}${this.phenomenonTimestamp}happenings`);
+      const rng = new AleaRNG(`${this.groundKey}${this.phenomenonTimestamp}happenings`);
       const count = MIN_PHENOMENA + Math.floor(rng.random() * (MAX_PHENOMENA - MIN_PHENOMENA + 1));
       // A phenomenon may stand in water where a landmark may not: the
       // water rippling is one of the four. What it may not do is stand
@@ -1142,7 +1172,7 @@ export default class ChunkSnapshot {
       return null;
     }
 
-    const rng = new AleaRNG(`${this.key}${this.phenomenonTimestamp}happening${cell}`);
+    const rng = new AleaRNG(`${this.groundKey}${this.phenomenonTimestamp}happening${cell}`);
 
     return resolvePhenomenon(
       phenomenon,

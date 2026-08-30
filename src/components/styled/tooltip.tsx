@@ -75,7 +75,9 @@ export function Tooltip(props: TooltipProps): JSX.Element {
         shadow-window ${props.class ?? ''}`}
     >
       <Detail label="Name">{props.name}</Detail>
-      <Show when={props.description}>{(line) => <Detail label="Description">{line()}</Detail>}</Show>
+      <Show when={props.description}>
+        {(line) => <Detail label="Description">{line()}</Detail>}
+      </Show>
       {props.extra?.()}
     </div>
   );

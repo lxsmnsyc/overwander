@@ -119,9 +119,7 @@ function Matchup(props: { label: string; types: Types[] }): JSX.Element {
     <Show when={props.types.length > 0}>
       <Detail label={props.label}>
         <span class="flex flex-wrap gap-1 py-0.5">
-          <For each={props.types}>
-            {(type) => <Sigil type={type} size={CARD_SIZE} />}
-          </For>
+          <For each={props.types}>{(type) => <Sigil type={type} size={CARD_SIZE} />}</For>
         </span>
       </Detail>
     </Show>

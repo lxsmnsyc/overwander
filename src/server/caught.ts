@@ -1,10 +1,6 @@
 import 'server-only';
-import {
-  Acquisition,
-  asCaughtPokemon,
-  asNickname,
-  isAuctionableCatch,
-} from '../auth/caught-record';
+import { Acquisition, asCaughtPokemon, isAuctionableCatch } from '../auth/caught-record';
+import { asNickname } from '../auth/nickname';
 import { type EncounterRecord, asEncounterRecord } from '../auth/encounter-record';
 import { getMaxHealth, needsCare } from '../auth/health';
 import {

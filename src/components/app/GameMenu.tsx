@@ -2,6 +2,7 @@ import {
   type ComponentProps,
   For,
   type JSX,
+  Show,
   createEffect,
   createSignal,
   onCleanup,
@@ -25,6 +26,7 @@ import { GameDialog, useGame } from './game-context';
 import { watchProfile } from '../../auth/profile';
 import {
   BagIcon,
+  BellIcon,
   FireIcon,
   GiftIcon,
   MapIcon,
@@ -78,6 +80,10 @@ interface MenuEntry {
 
 const ENTRIES: MenuEntry[] = [
   { label: 'World', dialog: GameDialog.Map, icon: MapIcon },
+  // First of the keys that are about other people: an invitation is
+  // worth finding, and nothing else on the bar was ever going to say
+  // one had landed
+  { label: 'Notices', dialog: GameDialog.Notifications, icon: BellIcon },
   { label: 'Catches', dialog: GameDialog.Catches, icon: SparklesIcon },
   { label: 'Pokedex', dialog: GameDialog.Pokedex, icon: SearchIcon },
   { label: 'Inventory', dialog: GameDialog.Inventory, icon: BagIcon },
@@ -175,6 +181,9 @@ export default function GameMenu(): JSX.Element {
   const [open, setOpen] = createSignal(false);
   const [now, setNow] = createSignal(toLocalTime(serverNow(), getLocalOffset()));
   const [gold, setGold] = createSignal<number | null>(null);
+
+  /** How many things are waiting on the player, for the key's own badge */
+  const waiting = (): number => game.notices().length;
 
   /**
    * The instant, read the way the world reads it: the server's clock
@@ -379,7 +388,21 @@ export default function GameMenu(): JSX.Element {
                       game.setDialog(entry.dialog);
                     }}
                   >
-                    <Dynamic component={entry.icon} class="size-7" aria-hidden="true" />
+                    <span class="relative">
+                      <Dynamic component={entry.icon} class="size-7" aria-hidden="true" />
+                      {/* How many things are waiting, on the key that
+                          opens them: whether to look is the whole of
+                          what a player needs off the bar */}
+                      <Show when={entry.dialog === GameDialog.Notifications && waiting() > 0}>
+                        <span
+                          class="absolute -top-1 -right-2 min-w-4 rounded-full border-2
+                            border-ember bg-ember-soft px-1 text-[0.65rem] leading-4
+                            text-ember-dark"
+                        >
+                          {waiting()}
+                        </span>
+                      </Show>
+                    </span>
                     {entry.label}
                   </button>
                 )}

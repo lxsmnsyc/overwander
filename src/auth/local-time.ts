@@ -40,15 +40,29 @@ export function getLocale(): string {
 }
 
 /**
- * An offset as reported by a caller, brought back into the range a
- * zone can actually have. Anything unusable reads as UTC rather than
- * being refused — a broken clock should not stop a player walking
+ * How coarse a real zone is. Every zone on earth is a whole number of
+ * quarter hours from UTC, Kathmandu's +5:45 and Eucla's +8:45
+ * included, so anything between two of them was never a zone
+ */
+const ZONE_STEP = 15;
+
+/**
+ * An offset as reported by a caller, brought back to a zone that
+ * exists. Anything unusable reads as UTC rather than being refused: a
+ * broken clock should not stop a player walking.
+ *
+ * Snapped to the quarter hour as well as clamped, because the offset
+ * is part of what the world is seeded and keyed by. Left at the
+ * minute, a caller had 1,561 zones to ask the same chunk in and could
+ * roll its buried items again in each
  */
 export function asOffset(value: unknown): number {
   if (typeof value !== 'number' || !Number.isFinite(value)) {
     return 0;
   }
-  return Math.min(MAX_OFFSET, Math.max(MIN_OFFSET, Math.round(value)));
+  const minutes = Math.min(MAX_OFFSET, Math.max(MIN_OFFSET, Math.round(value)));
+
+  return Math.round(minutes / ZONE_STEP) * ZONE_STEP;
 }
 
 /**

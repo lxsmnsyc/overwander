@@ -239,29 +239,6 @@ export interface CaughtPokemon {
 }
 
 /**
- * The longest a nickname may be. The name is drawn as a heading over a
- * sprite and printed beside a level; anything longer is a sentence
- */
-export const NICKNAME_LIMIT = 12;
-
-/**
- * A name as it will be stored: ends trimmed, runs of spaces collapsed,
- * control characters dropped, cut to `NICKNAME_LIMIT`. Applied on both
- * sides of the wire, so the field shows what the record will hold. A
- * name that comes to nothing clears the nickname
- */
-export function asNickname(name: string): string {
-  const written = [...name.replace(/\s+/g, ' ')]
-    .filter((character) => (character.codePointAt(0) ?? 0) >= 0x20)
-    .join('')
-    .trim();
-
-  // Trimmed again after the cut: a name shortened mid-word can end on
-  // the space before it
-  return [...written].slice(0, NICKNAME_LIMIT).join('').trim();
-}
-
-/**
  * What to call a catch: the name its owner gave it, or its species'
  * name. It says nothing about eggs — a caller showing one decides that
  * for itself, since the species is what an egg must not give away

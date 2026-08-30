@@ -1,6 +1,7 @@
 import { type JSX, createEffect, createResource, createSignal, on } from 'solid-js';
 import { listMyTitles, saveSprite, saveTitle } from '../../auth/achievements';
 import { type Profile, saveProfile } from '../../auth/profile';
+import { PLAYER_NAME_LIMIT, asNickname } from '../../auth/nickname';
 import { type Title, getTitleName } from '../../data/ids/titles';
 import { Button, Combobox, Dialog, DialogActions, Status, TextField } from '../styled';
 import SpritePicker from './SpritePicker';
@@ -67,10 +68,16 @@ export default function EditProfileDialog(props: EditProfileDialogProps): JSX.El
     ),
   );
 
-  const save = (): void => {
-    const wanted = name().trim();
+  /**
+   * The name as it will actually be stored. The field is cleaned as it
+   * is typed rather than refused on save: a player pasting something
+   * outside the alphabet should see what they will get instead of
+   * being told no afterwards
+   */
+  const wanted = (): string => asNickname(name(), PLAYER_NAME_LIMIT);
 
-    if (wanted === '') {
+  const save = (): void => {
+    if (wanted() === '') {
       return;
     }
     setError(null);
@@ -79,7 +86,7 @@ export default function EditProfileDialog(props: EditProfileDialogProps): JSX.El
     // both are checked against what was earned; the nickname is the
     // one thing here a player writes directly
     Promise.all([
-      saveProfile(props.player, { nickname: wanted }),
+      saveProfile(props.player, { nickname: wanted() }),
       saveSprite(sprite()),
       saveTitle(title() === NO_TITLE ? null : title()),
     ])
@@ -106,9 +113,10 @@ export default function EditProfileDialog(props: EditProfileDialogProps): JSX.El
         label="Nickname"
         value={name()}
         autocomplete="nickname"
+        hint={`Letters, digits, spaces and ' . - are kept. ${PLAYER_NAME_LIMIT} at most.`}
         disabled={saving()}
         onChange={(value) => {
-          setName(value);
+          setName(asNickname(value, PLAYER_NAME_LIMIT));
         }}
       />
       <SpritePicker

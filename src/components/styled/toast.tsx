@@ -207,17 +207,17 @@ export default function ToastProvider(props: ParentProps): JSX.Element {
     <ToastContext.Provider value={{ push, dismiss, toasts }}>
       {props.children}
       <Portal mount={portalHost()}>
-        {/* A column in the **top-left corner**, over everything and
+        {/* A column in the **bottom-left corner**, over everything and
             not in the way of a press: only the toasts themselves take
             the pointer.
 
-            Stacking downwards is what a stack of notices does; what
-            made it unbearable before was doing it down the middle of
-            the screen, on top of the board. In the corner the column
-            is out of the way of the map, of the badges over its other
-            corner, and of the menu along the bottom */}
+            Anchored at the bottom, so the newest sits in the corner
+            and the older ones are pushed up out of the way rather than
+            down off the screen. The menu bar along the bottom is
+            centred, so the corner is clear of it on anything but the
+            narrowest window */}
         <ul
-          class="pointer-events-none fixed top-3 left-3 z-[100] m-0 flex list-none flex-col
+          class="pointer-events-none fixed bottom-3 left-3 z-[100] m-0 flex list-none flex-col
             items-start gap-2 p-0"
         >
           <For each={toasts()}>

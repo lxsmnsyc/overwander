@@ -1,7 +1,8 @@
-import { type JSX, type ParentProps, Show, createSignal } from 'solid-js';
+import { type JSX, type ParentProps, Show, createSignal, onCleanup } from 'solid-js';
 import { Portal } from 'solid-js/web';
 import { Transition } from 'terracotta';
 import closeWhenGone from './gone';
+import { CLOSE_DELAY, OPEN_DELAY } from './hover-delay';
 import { usePortalHost } from './portal-host';
 import { SHEER } from './transition';
 
@@ -115,8 +116,27 @@ export function TooltipHost(props: TooltipHostProps): JSX.Element {
    * pointer has gone. Where it goes is forgotten only once that is over
    */
   const [wanted, setWanted] = createSignal(false);
+  /**
+   * The wait, whichever way it is going. One handle for both, since a
+   * pointer that comes back before the card has gone is cancelling a
+   * close rather than queueing an open behind it
+   */
+  let timer: ReturnType<typeof setTimeout> | undefined;
 
-  const show = (): void => {
+  const cancel = (): void => {
+    if (timer != null) {
+      clearTimeout(timer);
+      timer = undefined;
+    }
+  };
+
+  onCleanup(cancel);
+
+  /**
+   * Where the card goes, measured now rather than when the pointer
+   * arrived: the row under it may have moved in the meantime
+   */
+  const place = (): void => {
     const bounds = host?.getBoundingClientRect();
 
     if (bounds == null) {
@@ -135,21 +155,45 @@ export function TooltipHost(props: TooltipHostProps): JSX.Element {
     setWanted(true);
   };
 
-  const hide = (): void => {
-    setWanted(false);
+  const show = (): void => {
+    cancel();
+    timer = setTimeout(place, OPEN_DELAY);
   };
 
-  // The label goes with what it labels, the same as a hover card does
-  closeWhenGone(() => host, wanted, hide);
+  const hide = (delay = CLOSE_DELAY): void => {
+    cancel();
+    timer = setTimeout(() => {
+      setWanted(false);
+    }, delay);
+  };
+
+  // The label goes with what it labels, the same as a hover card does,
+  // and a label whose subject has left the page goes at once
+  closeWhenGone(
+    () => host,
+    wanted,
+    () => {
+      hide(0);
+    },
+  );
 
   return (
     <span
       ref={host}
       class={props.class ?? 'inline-flex'}
       onMouseEnter={show}
-      onMouseLeave={hide}
-      onFocusIn={show}
-      onFocusOut={hide}
+      onMouseLeave={() => {
+        hide();
+      }}
+      // A keyboard waits for neither: tabbing to something is
+      // deliberate in a way that crossing it with a pointer is not
+      onFocusIn={() => {
+        cancel();
+        place();
+      }}
+      onFocusOut={() => {
+        hide(0);
+      }}
     >
       {props.children}
       {/* The portal stands outside the fade rather than inside it: the

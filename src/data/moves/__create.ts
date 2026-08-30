@@ -108,3 +108,17 @@ export function getMovePP(move: Moves, points = 0): number {
 
   return base + Math.floor(base * PP_UP_STEP * Math.min(Math.max(0, points), PP_UP_LIMIT));
 }
+
+/**
+ * How many casts a move's PP is worth over three minutes, which is
+ * what turns PP into a wait
+ */
+export const PP_COOLDOWN_BASIS = 180;
+
+/**
+ * How long a move takes to come back, in milliseconds, for a pokemon
+ * that has spent `points` on it
+ */
+export function getMoveCooldown(move: Moves, points = 0): number {
+  return (PP_COOLDOWN_BASIS / getMovePP(move, points)) * 1000;
+}

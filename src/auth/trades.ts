@@ -43,7 +43,7 @@ function fromTradeRow(row: Record<string, unknown>): TradeRecord {
   return asTradeRecord({
     proposer: row.proposer,
     receiver: row.receiver,
-    offered: row.offered_caught,
+    offered: row.offered_caught ?? '',
     asked: row.asked_caught ?? '',
     given: row.given_caught ?? '',
     gold: row.gold,

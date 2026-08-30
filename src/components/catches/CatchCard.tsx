@@ -3,6 +3,7 @@ import type { CaughtPokemon } from '../../auth/caught';
 import {
   getCatchName,
   getCatchSlots,
+  getMovePoints,
   isFavorite,
   isGuarded,
   isShadow,
@@ -207,7 +208,7 @@ export default function CatchCard(props: CatchCardProps): JSX.Element {
             <For each={caught().moves} fallback={<Meta>No move</Meta>}>
               {(move) => (
                 <li>
-                  <MoveHoverCard class="block" move={move}>
+                  <MoveHoverCard class="block" move={move} points={getMovePoints(caught(), move)}>
                     <span class="block truncate rounded border border-line-soft bg-line-soft px-1 py-0.5">
                       {describeMove(move)}
                     </span>

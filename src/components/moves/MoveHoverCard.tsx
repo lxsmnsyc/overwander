@@ -11,6 +11,8 @@ import MoveCard from './MoveCard';
  */
 export interface MoveHoverCardProps extends ParentProps {
   move: Moves;
+  /** What the pokemon showing this move has spent on it */
+  points?: number;
   /** How the wrapped name sits in its row */
   class?: string;
 }
@@ -25,7 +27,7 @@ export default function MoveHoverCard(props: MoveHoverCardProps): JSX.Element {
       description={describeMove(props.move)}
       trigger={props.children}
     >
-      <MoveCard move={props.move} />
+      <MoveCard move={props.move} points={props.points} />
     </HoverCard>
   );
 }

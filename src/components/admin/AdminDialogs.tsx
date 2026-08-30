@@ -25,9 +25,6 @@ export default function AdminDialogs(props: { player: string }): JSX.Element {
         onClose={() => {
           game.setSheet(null);
         }}
-        onCatch={(catchId) => {
-          game.setSheet({ catchId });
-        }}
         onTrainer={(uid) => {
           game.setVisiting(uid);
         }}

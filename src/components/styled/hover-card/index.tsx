@@ -16,6 +16,7 @@ import closeWhenGone from '../gone';
 import { TooltipLayer } from '../tooltip';
 import { SHEER } from '../transition';
 import { type HoverCardPlacement, type Point, holds, place, within } from './placing';
+import { CLOSE_DELAY, OPEN_DELAY } from '../hover-delay';
 import { LINGER, type SafeShape, painting, showSafeAreas } from './safe-area';
 
 export type { HoverCardPlacement };
@@ -34,14 +35,6 @@ export { showSafeAreas };
  * is a hover card, and what makes one work is pointer geometry rather
  * than keyboard behaviour.
  */
-
-/**
- * How long the pointer has to rest on the trigger before the card
- * opens, and how long it may be off both before the card goes. The
- * open wait keeps a card from firing at every row a pointer crosses
- */
-const OPEN_DELAY = 180;
-const CLOSE_DELAY = 140;
 
 export type HoverCardWidth = 'narrow' | 'wide';
 

@@ -2,6 +2,8 @@ import { ITEM_SPRITE, isHoldable, itemSlots } from '../describe';
 
 import type { CaughtPokemon } from '../../../../auth/caught';
 
+import { getMovePoints } from '../../../../auth/caught-record';
+
 import type { InventoryEntry } from '../../../../auth/inventory';
 
 import type { Items } from '../../../../data/ids/items';
@@ -36,7 +38,7 @@ export interface BattleSectionProps {
   giving: boolean;
   onGiving: (open: boolean) => void;
   onGive: (item: Items) => void;
-  /** Take back whatever is in this slot */
+  /** Take whatever is in this slot back into the bag */
   onTake: (at: number) => void;
 }
 
@@ -55,7 +57,11 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
               <For each={props.caught.moves}>
                 {(move) => (
                   <li>
-                    <MoveHoverCard class="block" move={move}>
+                    <MoveHoverCard
+                      class="block"
+                      move={move}
+                      points={getMovePoints(props.caught, move)}
+                    >
                       {/* The name and nothing else: what
                       kind it is and what it does are
                       on the card over it, and three
@@ -141,7 +147,7 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
                               props.onTake(at);
                             }}
                           >
-                            Take back
+                            Take
                           </Button>
                         </Show>
                       )}

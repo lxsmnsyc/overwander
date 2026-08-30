@@ -42,7 +42,7 @@ const COLORS = {
  * at a time
  */
 const PAN_STEP = 1;
-const PAN_STRIDE = 8;
+export const PAN_STRIDE = 8;
 
 const PAN_KEYS = new Map<string, [number, number]>([
   ['ArrowUp', [0, -1]],

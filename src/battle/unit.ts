@@ -101,6 +101,13 @@ export default class Unit {
     });
   }
 
+  /**
+   * Whether this individual sparkles. Cosmetic and fixed for the
+   * fight: the canvas draws it from the shiny sheet, and no mechanic
+   * reads it
+   */
+  shiny = false;
+
   gender = Genders.Genderless;
 
   setGender(gender: Genders): void {

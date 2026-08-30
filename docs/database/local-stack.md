@@ -3,7 +3,8 @@
 Development runs against a **local Supabase stack**: Postgres, the auth server,
 PostgREST, the realtime server and Studio, all in Docker on your own machine. No
 hosted project is needed, nothing costs anything, and a mistake is one
-`pnpm db:reset` away from gone.
+`pnpm db:reset` away from gone. For the hosted half, see
+[Deploying the game](../deploy.md).
 
 ## What you need
 

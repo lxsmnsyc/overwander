@@ -16,7 +16,7 @@ import {
   Moves,
   StatFlags,
 } from '../../data/ids/moves';
-import { PP_UP_LIMIT, getMoveData, getMovePP } from '../../data/moves';
+import { PP_COOLDOWN_BASIS, PP_UP_LIMIT, getMoveData, getMovePP } from '../../data/moves';
 import type Alliance from '../alliance';
 import type Battle from '../core';
 import type {
@@ -574,8 +574,6 @@ export function setupChannelingMechanics(battle: Battle): void {
 
 export function setupCooldownMechanics(battle: Battle): void {
   const queue = new Set<MoveState>();
-
-  const PP_COOLDOWN_BASIS = 180; // How many usages is possible within 3 minutes
 
   const timer = battle.on(BattleEvents.Tick, EventPriority.Exact, (event) => {
     for (const state of queue) {

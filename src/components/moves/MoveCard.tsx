@@ -1,7 +1,7 @@
 import { type JSX, Show } from 'solid-js';
 import type { Moves } from '../../data/ids/moves';
 import type { MoveData } from '../../data/moves';
-import { getMoveData } from '../../data/moves';
+import { getMoveCooldown, getMoveData, getMovePP } from '../../data/moves';
 import MoveCategorySprite from '../sprites/MoveCategorySprite';
 import TypeBadge from '../sprites/TypeBadge';
 import { Detail } from '../styled';
@@ -25,6 +25,12 @@ const NONE = '—';
 
 export interface MoveCardProps {
   move: Moves;
+  /**
+   * What the pokemon reading this card has spent on the move. PP is
+   * how often the move comes back rather than a pool that drains, so
+   * a PP Up shows up here as a shorter wait
+   */
+  points?: number;
 }
 
 export default function MoveCard(props: MoveCardProps): JSX.Element {
@@ -58,7 +64,19 @@ export default function MoveCard(props: MoveCardProps): JSX.Element {
         <Detail label="Accuracy">
           {data() == null || data()?.accuracy == null ? NONE : `${data()?.accuracy}%`}
         </Detail>
-        <Detail label="PP">{data()?.pp ?? NONE}</Detail>
+        {/* Its own PP with whatever has been spent on it, and what
+            that comes to at the field: the number a player is deciding
+            with is the wait, not the count behind it */}
+        <Detail label="PP">
+          {data() == null ? NONE : getMovePP(props.move, props.points ?? 0)}
+        </Detail>
+      </div>
+      <div class="grid grid-cols-1 gap-1.5">
+        <Detail label="Cooldown">
+          {data() == null
+            ? NONE
+            : `${(getMoveCooldown(props.move, props.points ?? 0) / 1000).toFixed(1)}s`}
+        </Detail>
       </div>
       <Detail label="Description">{data()?.description ?? 'Nothing is known about this.'}</Detail>
     </div>

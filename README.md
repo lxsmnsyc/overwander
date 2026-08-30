@@ -22,6 +22,8 @@ The dex is Gen 1 — 151 species with their moves, abilities and items. Where Ge
   battle canvas actually run.
 - [The database](docs/database.md): every table the game writes to, what it
   holds, and who may touch it.
+- [Deploying it](docs/deploy.md): standing the game up on Vercel and a hosted
+  Supabase project.
 - [Credits](docs/credits.md): who wrote it, what it is built from, and where the
   art and rules come from.
 
@@ -110,6 +112,9 @@ what the policies say and why.
 ```bash
 supabase db push --project-ref <ref>   # apply them to a hosted project
 ```
+
+[Deploying the game](docs/deploy.md) is the whole of that side: the hosted
+project, the sign-in providers, and what Vercel needs in its environment.
 
 Most tables are read-only to clients on purpose: the server owns anything worth
 cheating for. The exceptions are a player's own profile and the shared snapshot

@@ -3,7 +3,7 @@ import { isLockLive } from '../../../auth/battle-lock';
 import { getBuddy } from '../../../auth/buddy';
 import { syncServerClock } from '../../../auth/clock';
 
-import { type CaughtPokemon, countCaught, getCaught, listCaught } from '../../../auth/caught';
+import { type CaughtPokemon, countCaught, getCaught } from '../../../auth/caught';
 
 import { type PokedexView, getPokedex } from '../../../auth/pokedex';
 import { getProfile } from '../../../auth/profile';
@@ -45,7 +45,6 @@ async function loadDetail(catchId: string): Promise<{ id: string; caught: Caught
 function CatchSheet(
   props: CatchDialogProps & {
     detail: Resource<{ id: string; caught: CaughtPokemon | null }>;
-    siblings: Resource<string[]>;
     dex: Resource<PokedexView>;
     onlyOne: Resource<boolean>;
     selling: Resource<boolean>;
@@ -207,32 +206,6 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
   const [detail, { refetch }] = createResource(() => props.catchId, loadDetail);
 
   /**
-   * The rest of the box, in the order the box draws it — newest first,
-   * the same sort the picker uses, so "next" means the square to the
-   * right of this one rather than some other order nobody can see.
-   *
-   * Read once per player rather than per pokemon: stepping through a
-   * collection would otherwise pay for the whole listing at every
-   * press. It goes stale when a record leaves the box, which is a
-   * release or a listing — and both of those shut the sheet
-   */
-  const [siblings] = createResource(
-    // Read again each time the sheet **opens** rather than once for
-    // the session: a pokemon caught since the last look belongs in the
-    // run. Stepping does not re-read it — the source is the player
-    // rather than the pokemon — so walking a box of three hundred is
-    // still one query
-    () =>
-      props.readOnly === true || props.onCatch == null || props.catchId == null
-        ? null
-        : props.player,
-    async (player) =>
-      (await listCaught(player))
-        .sort(([, one], [, other]) => other.caughtAt.localeCompare(one.caughtAt))
-        .map(([id]) => id),
-  );
-
-  /**
    * What the reader's dex says, read once for the whole sheet.
    *
    * It is the dex rather than this record because of what it is for:
@@ -299,7 +272,6 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
     <CatchSheet
       {...props}
       detail={detail}
-      siblings={siblings}
       dex={dex}
       onlyOne={onlyOne}
       selling={selling}

@@ -2,8 +2,9 @@ import { type JSX, createMemo, createSignal } from 'solid-js';
 import type Biome from '../../data/ids/biome';
 import getWorld from '../../overworld/current';
 import { WORLD_MAX, WORLD_MIN, isInWorld } from '../../overworld/world';
-import { Button, Dialog, DialogActions } from '../styled';
-import WorldMapCanvas from './WorldMapCanvas';
+import { Button, Dialog, DialogActions, TooltipHost } from '../styled';
+import { InformationIcon } from '../icons';
+import WorldMapCanvas, { PAN_STRIDE } from './WorldMapCanvas';
 import { useGame } from '../app/game-context';
 
 /**
@@ -114,8 +115,30 @@ export default function WorldMapDialog(props: WorldMapDialogProps): JSX.Element 
       description={
         <>
           {SPAN} chunks across, centred on {centerX()}, {centerY()}. Click the map and pan with the
-          arrow keys. Shift crosses it faster, and Home brings you back to where you stand.
+          arrow keys. Shift crosses it {PAN_STRIDE} chunks at a time, and Home brings you back to
+          where you stand.
         </>
+      }
+      // The keys, on the one visible row a quiet dialog has. The
+      // heading is read out rather than drawn, so a sighted player has
+      // nowhere else to find out the map answers the keyboard at all
+      bar={
+        <TooltipHost
+          name="Keyboard"
+          description={`Arrow keys or WASD pan a chunk at a time, ${PAN_STRIDE} with shift held. Home or C brings the camera back to where you stand.`}
+        >
+          <span
+            // Focusable, since the card opens on focus as well as on
+            // hover and an icon is not reachable on its own
+            tabindex="0"
+            role="img"
+            aria-label="Keyboard controls"
+            class="inline-flex rounded-full text-muted focus-visible:outline-2
+              focus-visible:outline-offset-2 focus-visible:outline-tide"
+          >
+            <InformationIcon class="size-5" aria-hidden="true" />
+          </span>
+        </TooltipHost>
       }
     >
       <WorldMapCanvas

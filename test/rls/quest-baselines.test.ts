@@ -4,6 +4,7 @@ import { Metric } from '../../src/auth/quest-record';
 import registerData from '../../src/data';
 import { Quests } from '../../src/data/quests';
 import { bumpProgress } from '../../src/server/quest-progress';
+import { recordCaughtSpecies } from '../../src/server/pokedex';
 import { claimQuest, listQuests } from '../../src/server/quests';
 
 /**
@@ -35,7 +36,15 @@ beforeEach(async () => {
   await sql`delete from quest_baselines`;
   await sql`delete from quest_claims`;
   await sql`delete from quest_progress`;
+  await sql`delete from pokedex_entries`;
 });
+
+/** Put `count` distinct species into the player's dex, from id 1 up */
+async function metSpecies(count: number): Promise<void> {
+  for (let species = 1; species <= count; species += 1) {
+    await recordCaughtSpecies(player.uid, species, false);
+  }
+}
 
 async function claim(quest: Quests): Promise<boolean> {
   return (await claimQuest(player.uid, quest, NOW, 0, 'en-US')) != null;
@@ -114,5 +123,41 @@ describe('a quest behind a prerequisite', () => {
     // Written once and kept: a second look does not move the line on
     await bumpProgress(player.uid, [[Metric.RaidWins, 0, 2]]);
     expect(await standing(Quests.BossDown)).toEqual({ have: 2, claimable: true });
+  });
+});
+
+describe('a quest asking for a dex', () => {
+  it('counts from the unlock where the quest before it asked for something else', async () => {
+    // A collector: thirty species in the dex before the chain opened
+    await metSpecies(30);
+    await bumpProgress(player.uid, [[Metric.Catches, 0, 1]]);
+
+    expect(await claim(Quests.FirstCatch)).toBe(true);
+
+    // Growing Team counts its five from the unlock, the way every
+    // chained counter does
+    await bumpProgress(player.uid, [[Metric.Catches, 0, 5]]);
+    expect(await claim(Quests.GrowingTeam)).toBe(true);
+
+    // New Faces asks for five species, and thirty already met are not
+    // five the player went and found
+    expect(await standing(Quests.NewFaces)).toEqual({ have: 0, claimable: false });
+
+    await metSpecies(35);
+    expect(await standing(Quests.NewFaces)).toEqual({ have: 5, claimable: true });
+  });
+
+  it('keeps its total where the quest before it asked for a dex too', async () => {
+    await metSpecies(30);
+    await bumpProgress(player.uid, [[Metric.Catches, 0, 1]]);
+    await claim(Quests.FirstCatch);
+    await bumpProgress(player.uid, [[Metric.Catches, 0, 5]]);
+    await claim(Quests.GrowingTeam);
+    await metSpecies(35);
+    await claim(Quests.NewFaces);
+
+    // A ladder of dex rungs is a ladder of totals: Field Notes wants
+    // ten in the dex altogether, and thirty-five is ten
+    expect(await standing(Quests.FieldNotes)).toEqual({ have: 35, claimable: true });
   });
 });

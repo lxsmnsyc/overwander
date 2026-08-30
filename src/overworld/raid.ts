@@ -202,6 +202,9 @@ function addUnit(battle: Battle, team: Team, snapshot: CatchSnapshot): Unit {
   unit.setLevel(snapshot.level);
   unit.setNature(snapshot.nature);
   unit.setGender(snapshot.gender);
+  // Drawn from the shiny sheet, so a sparkling pokemon fights looking
+  // like itself
+  unit.shiny = snapshot.shiny;
   // The individual's own measurements, not the species' listed ones
   unit.setHeight(snapshot.height);
   unit.setWeight(snapshot.weight);

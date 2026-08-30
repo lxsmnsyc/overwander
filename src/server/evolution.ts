@@ -7,6 +7,7 @@ import type { Species } from '../data/ids/species';
 import { getAvailableEvolutions, getConsumedItem, getSpeciesData } from '../data/species';
 import { Metric } from '../auth/quest-record';
 import { isEggRecord, isGuardedRecord } from './catch-fields';
+import { recordCaughtSpecies } from './pokedex';
 import { type ProgressBump, bumpProgress } from './quest-progress';
 import { readStackIn, writeStackIn } from './stacks';
 import { readCaughtIn, updateCaughtIn } from './caught-io';
@@ -31,6 +32,7 @@ export default async function evolveCatch(
 ): Promise<Species | null> {
   let spent: Items | null = null;
   let from: Species | null = null;
+  let sparkles = false;
   const evolved = await tx(async (transaction) => {
     const caught = await readCaughtIn(transaction, catchId);
 
@@ -102,6 +104,8 @@ export default async function evolveCatch(
     // stays a Charmeleon at half
     const record = asCaughtPokemon(caught);
 
+    sparkles = record.shiny;
+
     await updateCaughtIn(transaction, catchId, {
       species: into,
       // No Gen 1 line evolves into a legendary, so this changes
@@ -119,6 +123,10 @@ export default async function evolveCatch(
 
   // oxlint-disable-next-line typescript/no-unnecessary-condition
   if (evolved != null && from != null) {
+    // The dex counts what the player has held, and after this they
+    // hold one of these. Nothing else logs it: an evolution is the
+    // one way a species arrives without a catch or a hatch
+    await recordCaughtSpecies(uid, evolved, sparkles);
     await bumpProgress(uid, [
       [Metric.Evolutions, from, 1],
       // oxlint-disable-next-line typescript/no-unnecessary-condition

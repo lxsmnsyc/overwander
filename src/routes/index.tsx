@@ -335,11 +335,6 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
               game.setSheet(null);
             }}
             onChange={game.touchRecords}
-            // The pokemon either side of this one in the box, opened
-            // from the arrows beside the sprite
-            onCatch={(catchId) => {
-              game.setSheet({ catchId });
-            }}
             onAuction={(catchId) => {
               game.setListing({ lot: AuctionLot.Catch, catchId });
             }}

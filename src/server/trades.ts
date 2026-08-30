@@ -57,7 +57,7 @@ async function readTradeIn(transaction: Tx, id: string): Promise<TradeRecord | n
   const stored: Record<string, unknown> = {
     proposer: row.proposer,
     receiver: row.receiver,
-    offered: row.offered_caught,
+    offered: row.offered_caught ?? '',
     asked: row.asked_caught ?? '',
     given: row.given_caught ?? '',
     gold: row.gold,

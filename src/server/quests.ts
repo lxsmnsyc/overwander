@@ -5,7 +5,6 @@ import { ITEM_STACKS } from '../auth/stacks';
 import { Balls } from '../data/ids/items';
 import type { EncounterRecord } from '../auth/encounter-record';
 import {
-  type DexRequirement,
   QUESTS,
   QUEST_ORDER,
   type QuestData,
@@ -106,14 +105,38 @@ export function countOf(counters: Counters, requirement: QuestRequirement): numb
 }
 
 /**
- * What one quest's counters read as, measured from where they stood
- * when the quest opened.
+ * Whether a requirement counts from the moment its quest unlocked
+ * rather than from the account's whole life.
  *
- * Only a quest behind a prerequisite is measured: one at the head of
- * its chain has been open as long as the account has, so its counters
- * are its own from the first step. The line is drawn on first sight
- * as well as at the unlock itself, which is what carries a quest that
- * was already unlocked when this arrived
+ * A counter behind a prerequisite always does: the quest before it
+ * asked for the same thing, so a total carried over would finish it
+ * on sight. A **dex** requirement does too, but only where the quest
+ * before it asked for something else — a chain of dex rungs is a
+ * ladder of totals (25, then 75, then all of them), and measuring the
+ * upper rungs from the lower one would ask for a second dex
+ */
+function opensAtUnlock(quest: Quests, requirement: QuestRequirement): boolean {
+  const before = prerequisiteOf(quest);
+
+  if (before == null) {
+    return false;
+  }
+  if (requirement.kind === RequirementKind.Counter) {
+    return true;
+  }
+  if (requirement.kind !== RequirementKind.Dex) {
+    return false;
+  }
+  return !QUESTS[before].requirements.some((one) => one.kind === RequirementKind.Dex);
+}
+
+/**
+ * Where one quest's requirements are measured from: the standings
+ * they had when the quest opened, per slot.
+ *
+ * The line is drawn on first sight as well as at the unlock itself,
+ * which is what carries a quest that was already unlocked when this
+ * arrived
  */
 async function baselinedCounts(
   uid: string,
@@ -121,19 +144,21 @@ async function baselinedCounts(
   requirements: QuestRequirement[],
   counters: Counters,
   stored: Map<number, Map<number, number>>,
+  dexOf: (region?: Regions) => Promise<number>,
 ): Promise<Map<number, number>> {
-  if (prerequisiteOf(quest) == null) {
-    return new Map();
-  }
-
   const held = stored.get(quest) ?? new Map<number, number>();
   const missing: [number, number][] = [];
 
   for (const [slot, requirement] of requirements.entries()) {
-    if (requirement.kind !== RequirementKind.Counter || held.has(slot)) {
+    if (held.has(slot) || !opensAtUnlock(quest, requirement)) {
       continue;
     }
-    missing.push([slot, countOf(counters, requirement)]);
+    missing.push([
+      slot,
+      requirement.kind === RequirementKind.Dex
+        ? await dexOf(requirement.region)
+        : countOf(counters, requirement),
+    ]);
   }
   if (missing.length === 0) {
     return held;
@@ -237,7 +262,7 @@ export async function listQuests(uid: string): Promise<QuestStanding[]> {
     }
 
     const requirements: RequirementStanding[] = [];
-    const opened = await baselinedCounts(uid, quest, data.requirements, counters, baselines);
+    const opened = await baselinedCounts(uid, quest, data.requirements, counters, baselines, dexOf);
 
     for (const [slot, requirement] of data.requirements.entries()) {
       let have: number;
@@ -245,7 +270,7 @@ export async function listQuests(uid: string): Promise<QuestStanding[]> {
       if (requirement.kind === RequirementKind.TurnIn) {
         have = await readStack(ITEM_STACKS, uid, requirement.item);
       } else if (requirement.kind === RequirementKind.Dex) {
-        have = await dexOf(requirement.region);
+        have = Math.max(0, (await dexOf(requirement.region)) - (opened.get(slot) ?? 0));
       } else {
         have = progressOf(counters, requirement, slot, opened);
       }
@@ -302,7 +327,21 @@ export async function claimQuest(
   }
 
   const [counters, baselines] = await Promise.all([readProgress(uid), readQuestBaselines(uid)]);
-  const opened = await baselinedCounts(uid, quest, data.requirements, counters, baselines);
+  const dexCounts = new Map<number, number>();
+  const dexOf = async (region?: Regions): Promise<number> => {
+    const key = region ?? -1;
+    const held = dexCounts.get(key);
+
+    if (held != null) {
+      return held;
+    }
+
+    const count = await readCaughtDexCount(uid, region);
+
+    dexCounts.set(key, count);
+    return count;
+  };
+  const opened = await baselinedCounts(uid, quest, data.requirements, counters, baselines, dexOf);
   const turnIns = data.requirements.filter(
     (one): one is TurnInRequirement => one.kind === RequirementKind.TurnIn,
   );
@@ -315,12 +354,11 @@ export async function claimQuest(
     return null;
   }
 
-  const dexAsks = data.requirements.filter(
-    (one): one is DexRequirement => one.kind === RequirementKind.Dex,
-  );
-
-  for (const dexAsk of dexAsks) {
-    if ((await readCaughtDexCount(uid, dexAsk.region)) < dexAsk.count) {
+  for (const [slot, dexAsk] of data.requirements.entries()) {
+    if (dexAsk.kind !== RequirementKind.Dex) {
+      continue;
+    }
+    if ((await dexOf(dexAsk.region)) - (opened.get(slot) ?? 0) < dexAsk.count) {
       return null;
     }
   }
@@ -413,9 +451,15 @@ async function openBaselinesFor(uid: string, quest: Quests | null): Promise<void
   const slots: [number, number][] = [];
 
   for (const [slot, requirement] of QUESTS[quest].requirements.entries()) {
-    if (requirement.kind === RequirementKind.Counter) {
-      slots.push([slot, countOf(counters, requirement)]);
+    if (!opensAtUnlock(quest, requirement)) {
+      continue;
     }
+    slots.push([
+      slot,
+      requirement.kind === RequirementKind.Dex
+        ? await readCaughtDexCount(uid, requirement.region)
+        : countOf(counters, requirement),
+    ]);
   }
   await openQuestBaselines(uid, quest, slots);
 }

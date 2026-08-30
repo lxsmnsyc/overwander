@@ -1,4 +1,4 @@
-import { STAT_LABELS, isHoldable } from './describe';
+import { isHoldable } from './describe';
 import BattleSection from './sections/BattleSection';
 import EvolutionSection from './sections/EvolutionSection';
 import HistorySection from './sections/HistorySection';
@@ -18,7 +18,7 @@ import {
   setNickname,
   takeItem,
 } from '../../../auth/caught';
-import { NICKNAME_LIMIT, asNickname, getCatchName, isShiny } from '../../../auth/caught-record';
+import { NICKNAME_LIMIT, asNickname, getCatchName } from '../../../auth/caught-record';
 import { useAuth } from '../../../auth/context';
 
 import { canHatch, isEgg } from '../../../auth/egg';
@@ -27,7 +27,7 @@ import { type EvolutionOption, evolveCatch } from '../../../auth/evolution';
 import type { InventoryEntry } from '../../../auth/inventory';
 import { learnLevelUpMove } from '../../../auth/moves';
 import type { PokedexView } from '../../../auth/pokedex';
-import { type TrainingResult, trainEffort } from '../../../auth/training';
+import { trainEffort } from '../../../auth/training';
 
 import { MAX_LEVEL } from '../../../data/constants/levels';
 
@@ -59,7 +59,6 @@ import {
   Meta,
   Note,
   Row,
-  StepButton,
   type ToastTone,
   useToast,
 } from '../../styled';
@@ -119,15 +118,6 @@ export interface CatchDialogProps {
    * This is so the buttons are not offered in the first place
    */
   readOnly?: boolean;
-  /**
-   * Open a different one of the player's pokemon — the one before this
-   * in the box, or the one after.
-   *
-   * Absent for a sheet that is not one of a run: a lot on the block is
-   * a pokemon somebody is looking at rather than a page of their own
-   * collection, and there is nothing either side of it to step to
-   */
-  onCatch?: (catchId: string) => void;
 }
 
 /**
@@ -143,7 +133,6 @@ export interface CatchDialogProps {
 export function CatchSheetBody(
   props: CatchDialogProps & {
     detail: Resource<{ id: string; caught: CaughtPokemon | null }>;
-    siblings: Resource<string[]>;
     owners: Resource<Map<string, string>>;
     dex: Resource<PokedexView>;
     evolutions: Resource<EvolutionOption[]>;
@@ -191,38 +180,6 @@ export function CatchSheetBody(
     // one on the block is the exception: it is owned by nobody while
     // it is there, and being able to look is the point of a board
     return props.readOnly === true || loaded.owner === props.player ? loaded : null;
-  };
-
-  /**
-   * The catch either side of this one, or null at the ends of the box.
-   * The ends are ends rather than a loop: somebody stepping through
-   * three hundred pokemon should stop at the last one instead of
-   * quietly starting again
-   */
-  const neighbour = (step: number): string | null => {
-    const listed = props.siblings();
-    const catchId = props.catchId;
-
-    if (listed == null || catchId == null) {
-      return null;
-    }
-
-    const at = listed.indexOf(catchId);
-    const wanted = at + step;
-
-    return at < 0 || wanted < 0 || wanted >= listed.length ? null : listed[wanted];
-  };
-
-  const walk = (step: number): (() => void) | undefined => {
-    const next = neighbour(step);
-    const open = props.onCatch;
-
-    if (next == null || open == null) {
-      return undefined;
-    }
-    return () => {
-      open(next);
-    };
   };
 
   /**
@@ -376,7 +333,11 @@ export function CatchSheetBody(
    * An egg gives away nothing about what is inside it — not the
    * species, not the name, not even whether it sparkles — and a record
    * still being read gives away nothing at all, but the dialog is
-   * named either way rather than opening unnamed
+   * named either way rather than opening unnamed.
+   *
+   * The name alone: a shiny is said with the same mark the box and the
+   * cards use, drawn beside the heading rather than glued to the front
+   * of the name where it would be read out as part of it
    */
   const named = (): string => {
     const loaded = view();
@@ -387,7 +348,7 @@ export function CatchSheetBody(
     if (isEgg(loaded)) {
       return 'Egg';
     }
-    return `${isShiny(loaded) ? '✦ ' : ''}${getCatchName(loaded)}`;
+    return getCatchName(loaded);
   };
 
   /**
@@ -422,19 +383,26 @@ export function CatchSheetBody(
   };
 
   /**
-   * Everything that moves a pokemon's training lands the same way:
-   * the server decides it against the stored record and hands back
-   * what the pokemon now has, and the sheet re-reads rather than
-   * trusting its own arithmetic
+   * Spend effort on one stat. The server decides it against the stored
+   * record and the sheet re-reads rather than trusting its own
+   * arithmetic.
+   *
+   * Nothing is said when it lands: the bar, the number beside it and
+   * the remaining total are all on screen and all move, so a toast
+   * repeating them is a second answer to a question already answered
+   * — and these are pressed a point at a time
    */
-  const settleTraining = (
-    running: Promise<TrainingResult | null>,
-    refused: string,
-    landed: (result: TrainingResult) => string,
-  ): void => {
-    running
+  const train = (stat: Stats, amount: number): void => {
+    const catchId = props.catchId;
+
+    if (owned() == null || catchId == null) {
+      return;
+    }
+    trainEffort(catchId, stat, amount)
       .then((result) => {
-        say(result == null ? refused : landed(result));
+        if (result == null) {
+          say('Those points could not be moved.', 'ember');
+        }
         props.onRecordChanged();
         props.onBagChanged();
         props.onChange?.();
@@ -442,20 +410,6 @@ export function CatchSheetBody(
       .catch((thrown: unknown) => {
         say(thrown instanceof Error ? thrown.message : String(thrown), 'ember');
       });
-  };
-
-  const train = (stat: Stats, amount: number): void => {
-    const catchId = props.catchId;
-
-    if (owned() == null || catchId == null) {
-      return;
-    }
-    settleTraining(
-      trainEffort(catchId, stat, amount),
-      'Those points could not be moved.',
-      (result) =>
-        `${STAT_LABELS[stat]} trained to ${result.effortValues[stat]} — ${result.unused} left to spend.`,
-    );
   };
 
   const takeAlong = (): void => {
@@ -847,7 +801,13 @@ export function CatchSheetBody(
         // than sitting open behind it: two modals at once fight for the
         // click that closes them, and the sheet is what the player comes
         // back to afterwards
-        isOpen={props.catchId != null && teaching() == null && bottle() == null && naming() == null}
+        isOpen={
+          props.catchId != null &&
+          teaching() == null &&
+          bottle() == null &&
+          naming() == null &&
+          panel() !== 'items'
+        }
         onClose={() => {
           // A release half-confirmed is a release declined
           setReleasing(false);
@@ -858,30 +818,9 @@ export function CatchSheetBody(
         // it: the pokemon's own name is written under its sprite, where
         // it belongs to the pokemon rather than to the window
         title="Pokemon Info"
-        // The run this sheet is one of, either side of its name. They
-        // are the panel's rather than the pokemon's, so they stay put
-        // however far down the sheet is scrolled.
-        //
-        // A pokemon that is not the reader's has no run to be one of:
-        // a lot on the block is opened on its own, and there is
-        // nothing either side of it to step to. The arrows are left
-        // out entirely rather than drawn dead, since a pair of greyed
-        // arrows reads as a box that has run out rather than as a box
-        // that was never there
-        lead={
-          props.readOnly === true ? undefined : (
-            <StepButton label="Previous pokemon" way="previous" onPress={walk(-1)} />
-          )
-        }
-        aside={
-          props.readOnly === true ? undefined : (
-            <StepButton label="Next pokemon" way="next" onPress={walk(1)} />
-          )
-        }
-        // And what can be done to it, on a bar of its own under the
-        // name. It was a button in the corner of the heading, beside
-        // the arrows that are there now — and what a player does to a
-        // pokemon deserves more room than a corner
+        // What can be done to it, on a bar of its own under the name:
+        // what a player does to a pokemon deserves more room than a
+        // corner of the heading
         bar={
           // Kept on a condition that does not flap. The menu used to
           // hang off the record itself, so every re-read of it — and
@@ -948,42 +887,8 @@ export function CatchSheetBody(
                   and a favorite say so through the Actions menu, which
                   is where they are turned on and off; a raid is the one
                   nobody chose, so it is the one worth a sentence */}
-              <Show when={owned()}>
-                <Show when={props.fighting.latest}>
-                  <Meta class="text-center">In a raid — nothing about it can be changed.</Meta>
-                </Show>
-
-                {/* Anything the bag can be spent on this pokemon: a
-                    remedy, a cap, a gem for a shadow, a wing, a bitter
-                    berry. One list rather than five, since the answer
-                    to "what would this do for it" is the same question
-                    every time */}
-                <Show when={panel() === 'items'}>
-                  <DialogSection title="Use item">
-                    <InventoryPicker
-                      inline
-                      entries={props.bag.latest}
-                      disabled={frozen()}
-                      // Only the prized and special bands ask twice.
-                      // Everything a player heals with — a Potion, a
-                      // Full Restore, a wing — is spent over and
-                      // over, and asking about each is a click for
-                      // nothing; a cap or a Purifying Gem changes
-                      // the pokemon for good, and the wrong pokemon
-                      // is the wrong pokemon for good with it
-                      confirm={(entry) => isPreciousItem(entry.item)}
-                      value={null}
-                      verb="Use"
-                      empty="Nothing in the bag would do it any good."
-                      filter={(entry) => isUsable(entry.item)}
-                      onPick={(item) => {
-                        if (item != null) {
-                          useOn(item);
-                        }
-                      }}
-                    />
-                  </DialogSection>
-                </Show>
+              <Show when={owned() != null && props.fighting.latest === true}>
+                <Meta class="text-center">In a raid — nothing about it can be changed.</Meta>
               </Show>
 
               {/* The sheet itself, read down the middle: the pokemon
@@ -1293,6 +1198,42 @@ export function CatchSheetBody(
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* The bag, on a dialog of its own for the same reason the rest
+          are: what is being spent is chosen from a list, and a list
+          drawn into the top of a long sheet pushes the pokemon it is
+          being spent on off the screen.
+
+          Anything the bag can be spent on this pokemon is in it: a
+          remedy, a cap, a gem for a shadow, a wing, a bitter berry.
+          One list rather than five, since "what would this do for it"
+          is the same question every time */}
+      <InventoryPicker
+        open={panel() === 'items'}
+        onClose={() => {
+          setPanel(null);
+        }}
+        title="Use item"
+        description={`Choose what to spend on ${named()}.`}
+        entries={props.bag.latest}
+        disabled={frozen()}
+        // Only the prized and special bands ask twice. Everything a
+        // player heals with — a Potion, a Full Restore, a wing — is
+        // spent over and over, and asking about each is a click for
+        // nothing; a cap or a Purifying Gem changes the pokemon for
+        // good, and the wrong pokemon is the wrong pokemon for good
+        // with it
+        confirm={(entry) => isPreciousItem(entry.item)}
+        value={null}
+        verb="Use"
+        empty="Nothing in the bag would do it any good."
+        filter={(entry) => isUsable(entry.item)}
+        onPick={(item) => {
+          if (item != null) {
+            useOn(item);
+          }
+        }}
+      />
 
       {/* And the same shape for a bottle: a PP Up is spent on one move
           and nothing takes the points back, so it asks which before it

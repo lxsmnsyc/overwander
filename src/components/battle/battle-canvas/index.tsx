@@ -236,8 +236,12 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       unit,
       // A female pokemon is drawn from its own sheet where the species
       // has one. Its **appearance** is what is asked for and its own
-      // gender is what asks: a Transform copies the look, not the sex
-      loadSpeciesSprite(unit.appearance, { female: unit.gender === Genders.Female })
+      // gender and coat are what ask: a Transform copies the look,
+      // not the sex and not the sparkle
+      loadSpeciesSprite(unit.appearance, {
+        female: unit.gender === Genders.Female,
+        shiny: unit.shiny,
+      })
         .then((loaded) => {
           // Only if it is still what the unit looks like: a sheet that
           // arrives after a Transform belongs to nobody

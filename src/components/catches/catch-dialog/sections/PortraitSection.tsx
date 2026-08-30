@@ -8,12 +8,14 @@ import { isEgg } from '../../../../auth/egg';
 import { getMaxHealth, isFainted } from '../../../../auth/health';
 
 import getSigil from '../../../../data/constants/sigil';
+import { MAX_IV_STARS, getIVStars } from '../../../../data/constants/stats';
 
 import { Genders, Species } from '../../../../data/ids/species';
 import { SpriteAnim } from '../../../../data/ids/sprite-anims';
 
 import { getSpeciesData } from '../../../../data/species';
 
+import { SparklesIcon } from '../../../icons';
 import AnimatedSprite from '../../../sprites/AnimatedSprite';
 import TypeBadge from '../../../sprites/TypeBadge';
 import { Divider, Meta, Row } from '../../../styled';
@@ -33,6 +35,12 @@ export interface PortraitSectionProps {
 }
 
 export default function PortraitSection(props: PortraitSectionProps): JSX.Element {
+  const stars = (): string => {
+    const filled = getIVStars(props.caught.ivs);
+
+    return `${'★'.repeat(filled)}${'☆'.repeat(MAX_IV_STARS - filled)}`;
+  };
+
   return (
     <>
       <div class="-mb-2 flex min-h-28 items-end justify-center pt-2">
@@ -50,7 +58,15 @@ export default function PortraitSection(props: PortraitSectionProps): JSX.Elemen
       </div>
 
       <div class="flex flex-col items-center gap-0.5">
-        <h3>{props.named}</h3>
+        {/* The mark the box and the cards put on a shiny, beside the
+            name rather than in it: it is a picture, and a name is a
+            thing a player types */}
+        <Row class="justify-center">
+          <Show when={!isEgg(props.caught) && isShiny(props.caught)}>
+            <SparklesIcon aria-label="Shiny" class="size-4 shrink-0 text-gold" />
+          </Show>
+          <h3>{props.named}</h3>
+        </Row>
         {/* What it actually is, under what it is called —
       and only where the two differ. A pokemon nobody
       has named is headed by its species already, and
@@ -60,11 +76,23 @@ export default function PortraitSection(props: PortraitSectionProps): JSX.Elemen
           <Meta>{getSpeciesData(props.caught.species).name}</Meta>
         </Show>
         {/* Both of the rolls it was made from, drawn rather
-      than printed. Two of the same species with the
-      same sigil are the same individual */}
-        <Meta class="font-mono tracking-[0.2em]">
-          {getSigil(props.caught.individualValue, props.caught.traitValue)}
-        </Meta>
+      than printed, and how well the first of them went.
+      Two of the same species with the same sigil are the
+      same individual. An egg has neither yet */}
+        <Show when={!isEgg(props.caught)}>
+          <Row class="justify-center">
+            <span
+              role="img"
+              aria-label={`${getIVStars(props.caught.ivs)} of ${MAX_IV_STARS} stars`}
+              class="shrink-0 text-sm tracking-[0.2em] text-gold"
+            >
+              {stars()}
+            </span>
+            <Meta class="font-mono tracking-[0.2em]">
+              {getSigil(props.caught.individualValue, props.caught.traitValue)}
+            </Meta>
+          </Row>
+        </Show>
         {/* What it has left, drawn the way the box draws it.
       It is here rather than in the stats below because
       it is about this pokemon *now* rather than about

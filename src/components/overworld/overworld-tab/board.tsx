@@ -688,6 +688,28 @@ export default function OverworldBoard(props: {
     message: string | null;
   } | null>(null);
   const [taking, setTaking] = createSignal(false);
+
+  /**
+   * Whether the player is in the middle of something.
+   *
+   * Every one of these is a dialog standing over the board, and the
+   * board underneath it is still a board: a press on it walked the
+   * player away from whatever they had opened, and a press on another
+   * landmark opened a second thing behind the first. So a press is
+   * refused for as long as one of them is up, and the way on is to
+   * finish or close what is already open.
+   *
+   * `busy` is the other half of it and a shorter one: the moment
+   * between the press and whatever it opens
+   */
+  const engaged = (): boolean =>
+    session() != null ||
+    challenge() != null ||
+    wanderer() != null ||
+    portal() != null ||
+    seat() != null ||
+    lair() != null ||
+    eggOffer() != null;
   /**
    * Which way round the board is being looked at. It outlives the
    * chunk it was turned in
@@ -1184,7 +1206,7 @@ export default function OverworldBoard(props: {
     const loaded = view();
     const user = auth.user();
 
-    if (loaded == null || user == null || busy() || !withinReach(index)) {
+    if (loaded == null || user == null || busy() || engaged() || !withinReach(index)) {
       return;
     }
     setBusy(true);
@@ -1252,6 +1274,15 @@ export default function OverworldBoard(props: {
     const loaded = view();
 
     if (plan == null || loaded == null) {
+      return;
+    }
+
+    // Something opened on the way — a grunt stepped out, a pokemon was
+    // walked up to — and the rest of the walk is not what the player
+    // is answering now. The walk is dropped rather than held: they can
+    // see where they stand when the dialog is gone
+    if (engaged()) {
+      setJourney(null);
       return;
     }
 
@@ -1366,7 +1397,7 @@ export default function OverworldBoard(props: {
   const press = (target: BoardCell): void => {
     const loaded = view();
 
-    if (loaded == null) {
+    if (loaded == null || engaged()) {
       return;
     }
 

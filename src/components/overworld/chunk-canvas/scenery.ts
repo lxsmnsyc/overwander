@@ -3,7 +3,7 @@ import type { Species } from '../../../data/ids/species';
 import Decoration from '../../../data/overworld/decoration';
 import Landmark from '../../../data/overworld/landmark';
 import Phenomenon from '../../../data/overworld/phenomenon';
-import { CELL, COLORS } from './metrics';
+import { CELL, COLORS, GROUND_SQUASH } from './metrics';
 
 /**
  * What stands on a cell besides a pokemon: scenery, weather, and the
@@ -295,6 +295,63 @@ export function drawLandmarkMark(
   context.fillStyle = COLORS.glyph;
   context.font = `bold ${Math.round(CELL * 0.6 * spot.scale * magnify)}px monospace`;
   context.fillText(glyph, spot.x, spot.y + 1);
+}
+
+/**
+ * Whether the person standing at a landmark is somebody to fight.
+ *
+ * The five who do are the two ambushes and the three seats of the
+ * league. Everyone else at a landmark keeps a counter: a nurse, a
+ * breeder, a vendor, whoever the wandering cell turned up this window
+ */
+export function isFightingLandmark(landmark: Landmark): boolean {
+  return (
+    landmark === Landmark.TeamRocket ||
+    landmark === Landmark.Trainer ||
+    landmark === Landmark.GymLeader ||
+    landmark === Landmark.EliteFour ||
+    landmark === Landmark.Champion
+  );
+}
+
+/**
+ * The ring under somebody's feet saying which kind of person they are.
+ *
+ * A charset is a person in a coat and says nothing about what walking
+ * up to them does. The letter that used to say it is gone the moment
+ * the sheet loads — a person is drawn instead of the disc — so the
+ * cell keeps the answer instead, lying on the ground under them where
+ * it cannot cover the sprite.
+ *
+ * Squashed the way everything lying on this board is, and drawn on a
+ * dark line so it reads on snow as well as on grass
+ */
+export function drawPersonRing(
+  context: CanvasRenderingContext2D,
+  spot: { x: number; y: number; scale: number },
+  fighting: boolean,
+  magnify: number,
+): void {
+  const radius = CELL * 0.34 * spot.scale * magnify;
+
+  if (radius <= 0) {
+    return;
+  }
+  context.save();
+  context.translate(spot.x, spot.y);
+  context.scale(1, GROUND_SQUASH);
+  context.beginPath();
+  context.arc(0, 0, radius, 0, Math.PI * 2);
+  context.restore();
+
+  context.lineWidth = Math.max(1, radius * 0.32);
+  context.strokeStyle = COLORS.ringShade;
+  context.stroke();
+  context.lineWidth = Math.max(1, radius * 0.18);
+  context.strokeStyle = fighting ? COLORS.fight : COLORS.serve;
+  context.stroke();
+  // Put back the pen everything else on the board draws with
+  context.lineWidth = 1;
 }
 
 export const LANDMARK_GLYPHS: Record<Landmark, string> = {

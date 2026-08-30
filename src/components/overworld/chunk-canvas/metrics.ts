@@ -179,6 +179,20 @@ export const COLORS = {
   glyph: '#1c1c1c',
   landmark: 'rgba(255, 255, 255, 0.65)',
   /**
+   * The ring on the cell under somebody standing at a landmark, which
+   * says which kind of person they are.
+   *
+   * Once the charsets load, a nurse and a Rocket grunt are two people
+   * standing on two cells and nothing on the board tells them apart —
+   * a player walks up to one to find out, which for the grunt is the
+   * one case where finding out costs something. The game's own two
+   * colours: ember for a fight, tide for a counter
+   */
+  fight: 'rgba(230, 40, 41, 0.8)',
+  serve: 'rgba(41, 128, 239, 0.8)',
+  /** Under both, so a ring reads on pale ground as well as on dark */
+  ringShade: 'rgba(0, 0, 0, 0.28)',
+  /**
    * The keyboard's own pointer, drawn only while the canvas has focus
    */
   cursor: '#3b82f6',

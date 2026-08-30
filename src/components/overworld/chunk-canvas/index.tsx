@@ -98,8 +98,10 @@ import {
   type SpawnCoat,
   drawDecoration,
   drawLandmarkMark,
+  drawPersonRing,
   drawPhenomenon,
   facingOf,
+  isFightingLandmark,
 } from './scenery';
 
 export { CROSSING_IN, CROSSING_OUT, type Crossing, type SpawnCoat, isTurningPress, slideGain };
@@ -1491,9 +1493,22 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         const showing = props.phenomena.get(index);
 
         // Somebody standing there is drawn with the rest of what
-        // stands, in paint order — so a mark on the ground under their
-        // feet as well would be the cell saying the same thing twice
-        if (drawnAsPerson(index) || plantOn(index) != null) {
+        // stands, in paint order — so the letter under their feet as
+        // well would be the cell saying the same thing twice. What the
+        // letter did say is kept as a ring: which sort of person this
+        // is, which the coat they are drawn in does not tell anybody
+        if (drawnAsPerson(index)) {
+          if (landmark != null) {
+            drawPersonRing(
+              context,
+              at(projectCell(index, yaw())),
+              isFightingLandmark(landmark),
+              magnify,
+            );
+          }
+          continue;
+        }
+        if (plantOn(index) != null) {
           continue;
         }
         if (showing != null) {

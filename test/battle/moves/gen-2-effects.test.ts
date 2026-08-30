@@ -504,7 +504,8 @@ describe('Pursuit', () => {
 
     battle.tick(MOVE_DELAY);
 
-    // 40 power doubled, and the walk is no shelter from this one
+    // 40 power doubled, struck at the one leaving rather than at
+    // whoever took the spot
     expect(160 - leaving.health).toBeCloseTo(0.44 * 80 + 2);
     expect(replacement.health).toBe(160);
   });

@@ -24,13 +24,19 @@ function chasing(unit: Unit, leaving: Unit): boolean {
 }
 
 /**
- * Pursuit catches a target on its way out. A swap is declared before
- * the walk begins, so the chase is finished off there: the cast is
- * cut short the moment the target turns to go, and the hit lands
- * while it is still walking
+ * Pursuit catches a target on its way out.
+ *
+ * A swap is declared before the walk begins, and everything else
+ * aimed at whoever is leaving follows the swap onto whoever takes
+ * their place. This one must not: the chase is struck straight at the
+ * one going, in the moment the swap is announced, so it is thrown
+ * here rather than left to the move pipeline that would re-aim it
  * https://bulbapedia.bulbagarden.net/wiki/Pursuit_(move)
  */
 export default function setupPursuit(battle: Battle): void {
+  /** Who is mid-chase, for as long as the strike takes to resolve. */
+  const caught = new WeakSet<Unit>();
+
   battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
     if (
       event.move !== Moves.Pursuit ||
@@ -40,15 +46,14 @@ export default function setupPursuit(battle: Battle): void {
       return;
     }
 
-    if (event.target.unit.status[Statuses.Switching] != null) {
+    if (caught.has(event.source) || event.target.unit.status[Statuses.Switching] != null) {
       event.power *= CHASE_FACTOR;
     }
   });
 
   /**
-   * Pre, because the casting mechanics hand a cast aimed at somebody
-   * leaving over to whoever replaces them: the chase has to be spent
-   * before the target is swapped out from under it
+   * Pre, because the swap has not happened yet: the target is still
+   * standing where it was, and nothing has been handed over
    */
   battle.on(BattleEvents.UnitSwitch, EventPriority.Pre, (event) => {
     if (event.source === event.target) {
@@ -56,9 +61,20 @@ export default function setupPursuit(battle: Battle): void {
     }
 
     for (const unit of battle.units()) {
-      if (chasing(unit, event.source)) {
-        unit.finishCast();
+      if (!chasing(unit, event.source)) {
+        continue;
       }
+
+      const target = { type: MoveTargetType.Unit, unit: event.source } as const;
+
+      // The cast is spent rather than finished: a finish would put the
+      // move back into the air, where the swap would re-aim it
+      unit.stopCast();
+      unit.startCooldown(Moves.Pursuit, target);
+
+      caught.add(unit);
+      unit.triggerMoveTarget(Moves.Pursuit, target, 0);
+      caught.delete(unit);
     }
   });
 

@@ -16,7 +16,7 @@ const NOT_A_MOVE = new Set<Moves>([Moves.Struggle, Moves.Attack, Moves.Encore]);
 export default function setupEncore(battle: Battle): void {
   const lastUsed = new Map<Unit, Moves>();
 
-  battle.on(BattleEvents.UnitTriggerMove, EventPriority.Post, (event) => {
+  battle.on(BattleEvents.UnitTriggerMove, AttackPriority.Post, (event) => {
     if (!NOT_A_MOVE.has(event.move)) {
       lastUsed.set(event.source, event.move);
     }
@@ -53,7 +53,7 @@ export default function setupEncore(battle: Battle): void {
     }
   });
 
-  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, (event) => {
+  battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
     if (event.move !== Moves.Encore || event.target.type !== MoveTargetType.Unit) {
       return;
     }

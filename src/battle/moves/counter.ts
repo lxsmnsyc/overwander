@@ -70,7 +70,7 @@ export default function setupCounter(battle: Battle): void {
     }
   });
 
-  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, (event) => {
+  battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
     const category = RETURNED[event.move];
 
     if (category == null) {

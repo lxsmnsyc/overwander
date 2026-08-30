@@ -1,4 +1,4 @@
-import { EventPriority } from '../../core/event-emitter';
+import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Moves } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
 import type Battle from '../core';
@@ -33,7 +33,7 @@ export default function setupEscalatingMoves(battle: Battle): void {
   const streaks = new Map<Unit, Streak>();
   const curled = new WeakSet<Unit>();
 
-  battle.on(BattleEvents.UnitTriggerMove, EventPriority.Post, (event) => {
+  battle.on(BattleEvents.UnitTriggerMove, AttackPriority.Post, (event) => {
     if (event.move === Moves.DefenseCurl) {
       curled.add(event.source);
     }

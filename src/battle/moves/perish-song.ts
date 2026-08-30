@@ -1,4 +1,4 @@
-import { EventPriority } from '../../core/event-emitter';
+import { AttackPriority } from '../../core/event-emitter';
 import { Moves } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
 import type Battle from '../core';
@@ -10,7 +10,7 @@ import { BattleEvents, EffectType, MoveTargetType } from '../events';
  * unit, so this only has to answer for the one in front of it
  */
 export default function setupPerishSong(battle: Battle): void {
-  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, (event) => {
+  battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
     if (event.move !== Moves.PerishSong || event.target.type !== MoveTargetType.Unit) {
       return;
     }

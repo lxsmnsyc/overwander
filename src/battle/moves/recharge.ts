@@ -1,4 +1,4 @@
-import { AttackPriority, EventPriority } from '../../core/event-emitter';
+import { AttackPriority } from '../../core/event-emitter';
 import { Moves } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
 import { STEP_PENALTY } from '../ai/score';
@@ -18,7 +18,7 @@ export default function setupRechargeMoves(battle: Battle): void {
    *
    * Post priority so the damage handlers at Exact resolve first.
    */
-  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Post, (event) => {
+  battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Post, (event) => {
     if (RECHARGE_MOVES.has(event.move) && event.steps === 0) {
       event.source.addStatus(Statuses.Recharging, {
         type: EffectType.Move,

@@ -1,4 +1,4 @@
-import { AttackPriority, EventPriority } from '../../core/event-emitter';
+import { AttackPriority } from '../../core/event-emitter';
 import { Moves } from '../../data/ids/moves';
 import type Battle from '../core';
 import { BattleEvents, MoveTargetType } from '../events';
@@ -19,7 +19,7 @@ const BANNED_MOVES = new Set<Moves>([
 export default function setupMimic(battle: Battle): void {
   const lastCast = new Map<Unit, Moves>();
 
-  battle.on(BattleEvents.UnitTriggerMove, EventPriority.Post, (event) => {
+  battle.on(BattleEvents.UnitTriggerMove, AttackPriority.Post, (event) => {
     if (!BANNED_MOVES.has(event.move)) {
       lastCast.set(event.source, event.move);
     }
@@ -36,7 +36,7 @@ export default function setupMimic(battle: Battle): void {
     }
   });
 
-  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, (event) => {
+  battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
     if (event.move === Moves.Mimic) {
       if (event.target.type === MoveTargetType.Unit) {
         const targetMove = lastCast.get(event.target.unit);

@@ -1,4 +1,4 @@
-import { AttackPriority, EventPriority } from '../../core/event-emitter';
+import { AttackPriority } from '../../core/event-emitter';
 import { Moves } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
 import type Battle from '../core';
@@ -23,7 +23,7 @@ const GUARD_MOVES: { [key in Moves]?: Statuses } = {
 export default function setupProtectMoves(battle: Battle): void {
   const guarded = new WeakSet<Unit>();
 
-  battle.on(BattleEvents.UnitTriggerMove, EventPriority.Post, (event) => {
+  battle.on(BattleEvents.UnitTriggerMove, AttackPriority.Post, (event) => {
     if (GUARD_MOVES[event.move] == null) {
       guarded.delete(event.source);
     }
@@ -35,7 +35,7 @@ export default function setupProtectMoves(battle: Battle): void {
     }
   });
 
-  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, (event) => {
+  battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
     const status = GUARD_MOVES[event.move];
 
     // Explicit null check: the first Statuses enum member is 0

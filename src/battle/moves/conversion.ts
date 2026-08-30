@@ -50,7 +50,7 @@ export function conversionType(unit: Unit): Types | null {
 }
 
 export default function setupConversion(battle: Battle): void {
-  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, (event) => {
+  battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
     if (event.move !== Moves.Conversion) {
       return;
     }
@@ -136,7 +136,7 @@ export function setupConversion2(battle: Battle): void {
     }
   });
 
-  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, (event) => {
+  battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
     if (event.move !== Moves.Conversion2 || event.target.type !== MoveTargetType.Unit) {
       return;
     }

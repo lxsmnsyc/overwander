@@ -1,4 +1,4 @@
-import { AttackPriority, EventPriority } from '../../core/event-emitter';
+import { AttackPriority } from '../../core/event-emitter';
 import { MAX_STAGE, Stages, Stats } from '../../data/constants/stats';
 import { DamageFlags, Moves } from '../../data/ids/moves';
 import { TeamStatuses } from '../../data/ids/status';
@@ -46,7 +46,7 @@ export default function setupSupportMoves(battle: Battle): void {
     }
   });
 
-  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, (event) => {
+  battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
     if (event.move !== Moves.BellyDrum) {
       return;
     }
@@ -69,7 +69,7 @@ export default function setupSupportMoves(battle: Battle): void {
   });
 
   // Pain Split: both sides come out on the same share of health
-  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, (event) => {
+  battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
     if (event.move !== Moves.PainSplit || event.target.type !== MoveTargetType.Unit) {
       return;
     }
@@ -102,7 +102,7 @@ export default function setupSupportMoves(battle: Battle): void {
   });
 
   // Psych Up: the target's stages, copied over the user's own
-  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, (event) => {
+  battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
     if (event.move !== Moves.PsychUp || event.target.type !== MoveTargetType.Unit) {
       return;
     }
@@ -120,7 +120,7 @@ export default function setupSupportMoves(battle: Battle): void {
   });
 
   // Heal Bell: the whole party is put right, the bench included
-  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, (event) => {
+  battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
     if (event.move !== Moves.HealBell) {
       return;
     }
@@ -156,7 +156,7 @@ export default function setupSupportMoves(battle: Battle): void {
   });
 
   // Safeguard: a screen against statuses rather than against damage
-  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, (event) => {
+  battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
     if (event.move === Moves.Safeguard) {
       event.source.team.addStatus(TeamStatuses.Safeguard, {
         type: EffectType.Move,

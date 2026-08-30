@@ -1,4 +1,4 @@
-import { AttackPriority, EventPriority } from '../../core/event-emitter';
+import { AttackPriority } from '../../core/event-emitter';
 import { Moves } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
 import type Battle from '../core';
@@ -37,14 +37,14 @@ export default function setupSleepingMoves(battle: Battle): void {
   });
 
   // Awake, both of them are a wasted cast rather than a weak one
-  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Pre, (event) => {
+  battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Pre, (event) => {
     if (ASLEEP_ONLY.has(event.move) && !isAsleep(event.source)) {
       event.disabled = true;
       event.source.triggerMoveEffectFailed(event.move, event.target, event.steps);
     }
   });
 
-  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, (event) => {
+  battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
     if (event.move !== Moves.SleepTalk) {
       return;
     }

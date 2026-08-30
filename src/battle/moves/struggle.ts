@@ -1,4 +1,4 @@
-import { EventPriority } from '../../core/event-emitter';
+import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Stats } from '../../data/constants/stats';
 import { DamageFlags, Moves } from '../../data/ids/moves';
 import type Battle from '../core';
@@ -95,7 +95,7 @@ export default function setupStruggle(battle: Battle): void {
    * or not that hit landed for anything, which is the whole of what
    * makes Struggle a losing position rather than a free attack
    */
-  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Post, (event) => {
+  battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Post, (event) => {
     if (event.move !== Moves.Struggle) {
       return;
     }

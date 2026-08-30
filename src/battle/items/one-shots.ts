@@ -129,7 +129,9 @@ function bench(
     return false;
   }
 
-  switched.forceSwitch(replacement);
+  // The card, not a Teleport: whoever it sends away is walking rather
+  // than vanishing, and can be reached on the way
+  switched.forceSwitch(replacement, { type: EffectType.Item, item, unit: holder });
   return true;
 }
 
@@ -303,7 +305,7 @@ const setupBlunderPolicy = createHeldItem(Items.BlunderPolicy, (battle) =>
 
 // A Throat Spray answers the shout rather than what it did
 const setupThroatSpray = createHeldItem(Items.ThroatSpray, (battle) =>
-  battle.on(BattleEvents.UnitTriggerMove, EventPriority.Post, (event) => {
+  battle.on(BattleEvents.UnitTriggerMove, AttackPriority.Post, (event) => {
     if (!(getMoveData(event.move).flags & MoveFlags.Sound)) {
       return;
     }

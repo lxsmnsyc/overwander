@@ -1,4 +1,4 @@
-import { AttackPriority, EventPriority } from '../../core/event-emitter';
+import { AttackPriority } from '../../core/event-emitter';
 import { Moves } from '../../data/ids/moves';
 import { USELESS_PENALTY } from '../ai/score';
 import type Battle from '../core';
@@ -11,7 +11,7 @@ import { clearSpikes, layersUnder } from './spikes';
  * https://bulbapedia.bulbagarden.net/wiki/Rapid_Spin_(move)
  */
 export default function setupRapidSpin(battle: Battle): void {
-  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Post, (event) => {
+  battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Post, (event) => {
     if (event.move === Moves.RapidSpin) {
       clearSpikes(event.source.team);
     }

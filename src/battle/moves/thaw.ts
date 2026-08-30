@@ -1,4 +1,4 @@
-import { EventPriority } from '../../core/event-emitter';
+import { AttackPriority } from '../../core/event-emitter';
 import { Moves } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
 import type Battle from '../core';
@@ -12,7 +12,7 @@ import { BattleEvents, EffectType } from '../events';
 const THAWING_MOVES = new Set<Moves>([Moves.FlameWheel, Moves.SacredFire]);
 
 export default function setupThawingMoves(battle: Battle): void {
-  battle.on(BattleEvents.UnitTriggerMove, EventPriority.Post, (event) => {
+  battle.on(BattleEvents.UnitTriggerMove, AttackPriority.Post, (event) => {
     const frozen = event.source.status[Statuses.Frozen];
 
     if (frozen != null && THAWING_MOVES.has(event.move)) {

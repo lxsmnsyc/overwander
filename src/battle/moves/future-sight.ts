@@ -1,4 +1,4 @@
-import { EventPriority } from '../../core/event-emitter';
+import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { MoveAttackFlags, Moves } from '../../data/ids/moves';
 import { getMoveData } from '../../data/moves';
 import type Battle from '../core';
@@ -62,7 +62,7 @@ export default function setupFutureSight(battle: Battle): void {
 
   // The cast queues the strike instead of landing one, so the shared
   // hit resolver is kept out of it
-  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Pre, (event) => {
+  battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Pre, (event) => {
     if (event.move !== Moves.FutureSight || event.target.type !== MoveTargetType.Unit) {
       return;
     }

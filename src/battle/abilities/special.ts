@@ -251,7 +251,7 @@ const setupAbilities = [
         }
       }),
       // Unfriendly switch-outs (e.g. Roar, Whirlwind) fail outright
-      battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Pre, (event) => {
+      battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Pre, (event) => {
         if (
           event.steps === 0 &&
           FORCED_SWITCH_MOVES.has(event.move) &&

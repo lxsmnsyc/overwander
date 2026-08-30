@@ -782,7 +782,33 @@ export function setupTriggerMoveMechanics(battle: Battle): void {
     }
   });
 
-  battle.on(BattleEvents.UnitTriggerMove, EventPriority.Exact, (event) => {
+  /**
+   * A swap takes the target's place as well as its spot: whatever was
+   * already in the air aimed at whoever left now arrives at whoever
+   * arrived. A cast and a channel follow the swap the same way, so a
+   * move mid-flight is the only one that used to land on an empty
+   * square
+   */
+  battle.on(BattleEvents.UnitSwitch, EventPriority.Post, (event) => {
+    if (event.source === event.target) {
+      return;
+    }
+
+    for (const data of triggerMoveData) {
+      const aimed = data.parent.target;
+
+      if (aimed.type !== MoveTargetType.Unit) {
+        continue;
+      }
+      if (aimed.unit === event.source) {
+        data.parent.target = { type: MoveTargetType.Unit, unit: event.target };
+      } else if (aimed.unit === event.target) {
+        data.parent.target = { type: MoveTargetType.Unit, unit: event.source };
+      }
+    }
+  });
+
+  battle.on(BattleEvents.UnitTriggerMove, AttackPriority.Exact, (event) => {
     const duration = event.source.checkMoveDelay(event.move, event.target);
 
     // No delay: resolve in the same frame

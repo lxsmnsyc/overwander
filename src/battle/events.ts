@@ -284,6 +284,30 @@ export const enum BattleEvents {
    * (a Frisk that pocketed it) answers no without touching the record
    */
   CheckUnitItem = 144,
+  /**
+   * Whether a move that has come round fires at all. It is asked once
+   * when the move is triggered, before the delay it spends in the
+   * air, so a condition the move itself carries (asleep for a Snore,
+   * a guard already spent) refuses the whole cast rather than racing
+   * to disable the event
+   */
+  CheckUnitTriggerMove = 145,
+  /**
+   * Whether the move resolves on the one in front of it. It is asked
+   * once per target a move reached, after the accuracy roll and
+   * before the effect, which is where a prerequisite about the target
+   * belongs: Dream Eater against somebody awake, a parcel that turned
+   * out to be food
+   */
+  CheckUnitTriggerMoveEffect = 146,
+  /**
+   * Whether the move goes ahead against the one it has just been
+   * pointed at. It is asked once per target the move reached, before
+   * the immunity and the accuracy roll, which is where a refusal
+   * about **this pairing** belongs: whatever the move would have done
+   * to somebody else it still does
+   */
+  CheckUnitTriggerMoveTarget = 147,
 }
 
 export const enum MoveTargetType {
@@ -488,6 +512,14 @@ export interface UnitUpdateChannelEvent extends UnitEvent {
 
 export interface UnitTriggerMoveEvent extends UnitCastEvent {
   steps: number;
+}
+
+/**
+ * The question both trigger gates ask. `success` opens true and a
+ * listener answering false stops the move where it stands
+ */
+export interface CheckUnitTriggerMoveEvent extends UnitTriggerMoveEvent {
+  success: boolean;
 }
 
 export interface UnitTriggerMoveUpdateEvent extends BaseEvent {
@@ -752,6 +784,13 @@ export interface CheckUnitDrainEvent extends UnitEvent {
 
 export interface UnitSwitchEvent extends UnitEvent {
   target: Unit;
+  /**
+   * What sent them walking. It is what tells a swap somebody chose
+   * from one they were made to make, and a Teleport from either: a
+   * unit that vanishes is out of reach while it goes, and one merely
+   * walking is not
+   */
+  cause: EffectCause;
 }
 
 /**
@@ -982,12 +1021,15 @@ export interface BattleEventMap extends EventMap {
   [BattleEvents.UnitStopChannel]: [UnitEvent, EventPriority];
   [BattleEvents.UnitFinishChannel]: [UnitEvent, EventPriority];
 
-  [BattleEvents.UnitTriggerMove]: [UnitTriggerMoveEvent, EventPriority];
+  [BattleEvents.UnitTriggerMove]: [UnitTriggerMoveEvent, AttackPriority];
   [BattleEvents.UnitTriggerMoveUpdate]: [UnitTriggerMoveUpdateEvent, EventPriority];
   [BattleEvents.UnitTriggerMoveEnd]: [UnitTriggerMoveEvent, EventPriority];
 
   [BattleEvents.UnitTriggerMoveTarget]: [UnitTriggerMoveEvent, AttackPriority];
-  [BattleEvents.UnitTriggerMoveEffect]: [UnitTriggerMoveEvent, EventPriority];
+  [BattleEvents.UnitTriggerMoveEffect]: [UnitTriggerMoveEvent, AttackPriority];
+  [BattleEvents.CheckUnitTriggerMove]: [CheckUnitTriggerMoveEvent, EventPriority];
+  [BattleEvents.CheckUnitTriggerMoveEffect]: [CheckUnitTriggerMoveEvent, EventPriority];
+  [BattleEvents.CheckUnitTriggerMoveTarget]: [CheckUnitTriggerMoveEvent, AttackPriority];
   [BattleEvents.UnitTriggerMoveEffectFailed]: [UnitTriggerMoveEvent, EventPriority];
 
   [BattleEvents.UnitTriggerMoveResolveAccuracy]: [

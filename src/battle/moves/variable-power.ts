@@ -1,4 +1,4 @@
-import { EventPriority } from '../../core/event-emitter';
+import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { MAX_FRIENDSHIP } from '../../data/constants/friendship';
 import { Stats } from '../../data/constants/stats';
 import { Moves } from '../../data/ids/moves';
@@ -108,7 +108,7 @@ export default function setupVariablePowerMoves(battle: Battle): void {
    * The fifth Present: the parcel turns out to be food. It heals a
    * quarter of the target's health and lands nothing at all
    */
-  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Pre, (event) => {
+  battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Pre, (event) => {
     if (event.move !== Moves.Present || event.target.type !== MoveTargetType.Unit) {
       return;
     }

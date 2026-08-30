@@ -18,7 +18,7 @@ const BANNED = new Set<Moves>([Moves.Struggle, Moves.Attack, Moves.Sketch]);
 export default function setupSketch(battle: Battle): void {
   const lastCast = new Map<Unit, Moves>();
 
-  battle.on(BattleEvents.UnitTriggerMove, EventPriority.Post, (event) => {
+  battle.on(BattleEvents.UnitTriggerMove, AttackPriority.Post, (event) => {
     if (!BANNED.has(event.move)) {
       lastCast.set(event.source, event.move);
     }
@@ -44,7 +44,7 @@ export default function setupSketch(battle: Battle): void {
     }
   });
 
-  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, (event) => {
+  battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
     if (event.move !== Moves.Sketch || event.target.type !== MoveTargetType.Unit) {
       return;
     }

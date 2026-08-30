@@ -61,12 +61,12 @@ export default function setupAbsorb(battle: Battle): void {
     }
   });
 
-  // Dream Eater only works on sleeping targets
-  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Pre, (event) => {
-    if (event.move === Moves.DreamEater && !isDreamEaterUsable(event.target)) {
-      event.disabled = true;
-
-      event.source.triggerMoveEffectFailed(event.move, event.target, event.steps);
+  // Dream Eater only works on sleeping targets. It is answered as a
+  // verdict rather than by disabling the event: the gate that asks
+  // this is what reports the failure
+  battle.on(BattleEvents.CheckUnitTriggerMoveEffect, EventPriority.Exact, (event) => {
+    if (event.success && event.move === Moves.DreamEater && !isDreamEaterUsable(event.target)) {
+      event.success = false;
     }
   });
 

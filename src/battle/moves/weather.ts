@@ -25,7 +25,7 @@ import { isPrimalWeather } from '../utils';
 export const WEATHER_DURATION = turns(5);
 
 export default function setupWeatherMoves(battle: Battle): void {
-  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, (event) => {
+  battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
     const weather = MOVE_WEATHERS.get(event.move);
 
     // Explicit null check: the first Weathers enum member is 0

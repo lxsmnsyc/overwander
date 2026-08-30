@@ -61,7 +61,7 @@ export default function setupSpikes(battle: Battle): void {
     }
   });
 
-  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, (event) => {
+  battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
     if (event.move !== Moves.Spikes || event.target.type !== MoveTargetType.Team) {
       return;
     }

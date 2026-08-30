@@ -80,7 +80,7 @@ export default function setupDisable(battle: Battle): void {
     }
   });
 
-  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, (event) => {
+  battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
     if (event.move !== Moves.Disable || event.target.type !== MoveTargetType.Unit) {
       return;
     }

@@ -13,7 +13,7 @@ export default function setupMirrorMove(battle: Battle): void {
   // nothing left would charge the mirror a quarter of its own health
   // for the privilege, and mirroring a swing they made while waiting
   // on a cooldown spends a real move to copy filler
-  battle.on(BattleEvents.UnitTriggerMove, EventPriority.Post, (event) => {
+  battle.on(BattleEvents.UnitTriggerMove, AttackPriority.Post, (event) => {
     if (
       event.move !== Moves.MirrorMove &&
       event.move !== Moves.Struggle &&
@@ -40,7 +40,7 @@ export default function setupMirrorMove(battle: Battle): void {
     }
   });
 
-  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, (event) => {
+  battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
     if (event.move !== Moves.MirrorMove || event.target.type !== MoveTargetType.Unit) {
       return;
     }

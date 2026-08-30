@@ -769,7 +769,7 @@ describe('Drought', () => {
     const holder = createUnit(battle, teamA);
     let cast: Moves | null = null;
 
-    battle.on(BattleEvents.UnitTriggerMove, EventPriority.Post, (event) => {
+    battle.on(BattleEvents.UnitTriggerMove, AttackPriority.Post, (event) => {
       cast = event.move;
     });
 

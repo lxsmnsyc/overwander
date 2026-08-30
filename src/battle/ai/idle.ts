@@ -1,4 +1,4 @@
-import { EventPriority } from '../../core/event-emitter';
+import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import type Battle from '../core';
 import { BattleEvents } from '../events';
 import { MOVE_LOCKING_STATUS } from '../status';
@@ -90,7 +90,7 @@ export default function setupIdleAI(battle: Battle): void {
   });
 
   // Pre, and counted: see the note above the loop
-  battle.on(BattleEvents.UnitTriggerMove, EventPriority.Pre, (event) => {
+  battle.on(BattleEvents.UnitTriggerMove, AttackPriority.Pre, (event) => {
     pendingTrigger.set(event.source, (pendingTrigger.get(event.source) ?? 0) + 1);
     idle.delete(event.source);
   });

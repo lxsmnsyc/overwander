@@ -3411,7 +3411,7 @@ const setupAbilities = [
    * https://bulbapedia.bulbagarden.net/wiki/Protean_(Ability)
    */
   createAbility(Abilities.Protean, (battle) =>
-    battle.on(BattleEvents.UnitTriggerMove, EventPriority.Pre, (event) => {
+    battle.on(BattleEvents.UnitTriggerMove, AttackPriority.Pre, (event) => {
       if (!event.source.hasAbility(Abilities.Protean)) {
         return;
       }

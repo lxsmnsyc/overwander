@@ -1,4 +1,4 @@
-import { AttackPriority, EventPriority } from '../../core/event-emitter';
+import { AttackPriority } from '../../core/event-emitter';
 import { MoveAttackFlags, Moves } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
 import { getMoveData } from '../../data/moves';
@@ -15,7 +15,7 @@ import { BattleEvents, EffectType, MoveTargetType } from '../events';
 const RAMPAGE_MOVES = new Set<Moves>([Moves.Thrash, Moves.PetalDance, Moves.Outrage]);
 
 export default function setupRampageMoves(battle: Battle): void {
-  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Exact, (event) => {
+  battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
     if (
       RAMPAGE_MOVES.has(event.move) &&
       event.steps > 0 &&
@@ -33,7 +33,7 @@ export default function setupRampageMoves(battle: Battle): void {
   });
 
   // Fatigue: the user comes out of the rampage confused
-  battle.on(BattleEvents.UnitTriggerMoveEffect, EventPriority.Post, (event) => {
+  battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Post, (event) => {
     if (RAMPAGE_MOVES.has(event.move) && event.steps === 0 && event.source.alive) {
       event.source.addStatus(Statuses.Confused, {
         type: EffectType.Move,

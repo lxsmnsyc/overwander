@@ -93,6 +93,9 @@ beforeAll(() => {
       translate(): unknown {
         return this;
       }
+      scale(): unknown {
+        return this;
+      }
     },
   );
   vi.stubGlobal('document', {
@@ -146,5 +149,29 @@ describe('the sky over the board', () => {
         expect(radius).toBeLessThan(radii[at - 1]);
       }
     }
+  });
+
+  it('costs about the same however large the window is', () => {
+    /** How many drops reach the context, which is one subpath each */
+    const drops = (width: number, height: number): number => {
+      let counted = 0;
+      const context = stubContext();
+
+      // oxlint-disable-next-line typescript/no-unsafe-type-assertion
+      (context as unknown as { moveTo: () => void }).moveTo = () => {
+        counted += 1;
+      };
+      paintSky(context, width, height, Weather.Blizzard, 0);
+      return counted;
+    };
+
+    const small = drops(960, 540);
+    const large = drops(3840, 2160);
+
+    expect(small).toBeGreaterThan(0);
+    // Sixteen times the pixels, and a density per pixel would draw
+    // sixteen times the flakes. The fall is sized for the window
+    // instead, so the count barely moves
+    expect(large).toBeLessThan(small * 3);
   });
 });

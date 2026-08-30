@@ -29,6 +29,7 @@ import { SPRITE_DIRECTIONS, type SpriteDirection } from '../../../canvas/sprite-
 import drawSparkle from '../../../canvas/sparkle';
 import { type Cast, getCast, paintAmbient } from '../../../canvas/daylight';
 import type Weather from '../../../data/overworld/weather';
+import pixelRatio from '../../../canvas/ratio';
 import paintSky from '../../../canvas/sky';
 import { getLocalOffset, toLocalTime } from '../../../auth/local-time';
 import { serverNow } from '../../../auth/clock';
@@ -1290,7 +1291,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
        * a phone that is turned over — is a different page
        */
       const screen = box();
-      const ratio = globalThis.devicePixelRatio > 0 ? globalThis.devicePixelRatio : 1;
+      const ratio = pixelRatio();
 
       if (element.width !== Math.round(screen.width * ratio)) {
         element.width = Math.round(screen.width * ratio);

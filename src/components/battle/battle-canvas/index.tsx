@@ -9,6 +9,7 @@ import abilityCueFor, {
   statusCueFor,
   statusTriggerFor,
 } from '../../../canvas/battle/cues';
+import pixelRatio from '../../../canvas/ratio';
 import paintWeather from '../../../canvas/battle/weather';
 import {
   delayShapeFor,
@@ -351,7 +352,7 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
     let region: FloorRegion = { left: 0, top: 0, right: WIDTH, bottom: HEIGHT };
 
     const ground = (): void => {
-      const ratio = window.devicePixelRatio;
+      const ratio = pixelRatio();
       const width = Math.max(1, element.clientWidth);
       const height = Math.max(1, element.clientHeight);
 

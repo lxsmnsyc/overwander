@@ -4,7 +4,8 @@ description: >
   Every change ships with a changeset. The bump level says what kind of change
   it is: `patch` for something that already existed and now behaves differently,
   `minor` for something that did not exist before, `major` only with the
-  maintainer's explicit approval. Applies to every task that touches this
+  maintainer's explicit approval. Keep the description short and to the point,
+  a list when it covers several things. Applies to every task that touches this
   repository, without being asked.
 ---
 
@@ -32,20 +33,30 @@ A markdown file in `.changeset/`, named in kebab-case as a short sentence about 
 ---
 
 One line saying what is true now.
-
-Then a few short paragraphs: what was wrong or missing, what the change does
-about it, and anything a reader of the changelog would be surprised by.
 ```
 
 The package is always `overwander`.
 
 ## The prose
 
-It is written for someone reading `CHANGELOG.md`, not someone reading the diff. Name the behaviour, not the file or the function. Say what a player or a developer will notice.
+**Keep it short.** One line for one change. A changeset is a changelog entry, not a summary of the work: it says what is true now and stops. Resist explaining the reasoning, the trade-offs or what it replaced.
 
-The repository's usual prose rules apply: **no em-dashes**, plain sentences, no build-up. Match the length of the change rather than the effort behind it, and wrap around 80 columns like the files already there.
+Where a change covers several things, use a list rather than paragraphs, one line each:
 
-Where a change touches world generation, say so plainly, because it changes what every existing player sees: *"This changes what the sky over an existing chunk is doing, the way anything touching world generation does."*
+```markdown
+---
+'overwander': patch
+---
+
+- Evolution rows on a shiny catch sheet no longer show the ordinary coat.
+- A gifted species nobody has met draws a silhouette instead of Missingno.
+```
+
+Write for someone reading `CHANGELOG.md`, not someone reading the diff. Name the behaviour, not the file or the function.
+
+The repository's usual prose rules apply: **no em-dashes**, plain sentences, no build-up. Wrap around 80 columns like the files already there.
+
+Where a change touches world generation, say so on its own line, because it changes what every existing player sees.
 
 ## Before concluding one is missing
 

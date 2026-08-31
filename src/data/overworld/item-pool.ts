@@ -378,6 +378,27 @@ export function getItemOdds(item: Items, odds: ItemBandOdds = ITEM_BAND_ODDS): n
 }
 
 /**
+ * What a phenomenon draws on: the ground's own bands, each one step
+ * richer, with base shut out.
+ *
+ * A phenomenon is something going on rather than something buried, and
+ * it is worth walking to. The pokemon side already says so — one
+ * startled in eight is rare, against the ground's one in sixty-four —
+ * and the items say it the same way: what the ground calls uncommon is
+ * the floor here, and every band above it is eight times as wide as
+ * the ground makes it.
+ *
+ * The four sum to one, which is what shuts base out: nothing a walk
+ * turns up anyway is left lying by a phenomenon
+ */
+export const PHENOMENON_BAND_ODDS: ItemBandOdds = {
+  special: 1 / 512,
+  prized: 1 / 64,
+  rare: 1 / 8,
+  uncommon: 1 - 1 / 512 - 1 / 64 - 1 / 8,
+};
+
+/**
  * What a Pickup buddy turns up: the ordinary bands with the top two
  * shut out entirely. What it finds is what was lying about — a ball, a
  * potion, now and then a stone — and a Master Ball scuffed up off a
@@ -488,7 +509,7 @@ export function pickItems(
   // The one band no second kind can reach, and the one that is never
   // more than a single piece
   if (opening < odds.special && groups.special.length > 0) {
-    const item = pickFromBand(groups.special, random);
+    const item = pickWeightedItem(groups.special, random);
 
     if (item != null) {
       stacks.set(item, 1);
@@ -518,7 +539,7 @@ export function pickItems(
       break;
     }
 
-    const item = pickFromBand(groups[HAUL_BANDS[band]], random);
+    const item = pickWeightedItem(groups[HAUL_BANDS[band]], random);
     const amount = 1 + Math.floor(random() * MAX_STACK);
 
     if (item != null) {
@@ -531,7 +552,7 @@ export function pickItems(
 /**
  * One kind out of a band, by weight. Answers null for an empty band
  */
-function pickFromBand(entries: ItemPoolEntry[], random: () => number): Items | null {
+function pickWeightedItem(entries: ItemPoolEntry[], random: () => number): Items | null {
   if (entries.length === 0) {
     return null;
   }
@@ -574,8 +595,8 @@ export function pickItem(
     edge += odds[tier];
 
     if (band < edge && groups[tier].length > 0) {
-      return pickFromBand(groups[tier], random);
+      return pickWeightedItem(groups[tier], random);
     }
   }
-  return pickFromBand(groups.base, random);
+  return pickWeightedItem(groups.base, random);
 }

@@ -187,7 +187,10 @@ export function createCellNotes(
               // Announced rather than read out on arrival, the same as
               // a toast: it reports something that has already happened
               role="status"
-              class={`flex max-w-40 items-center gap-1.5 rounded-panel border-2 px-2 py-1 text-xs
+              // Wide enough for an item's whole name, and it wraps
+              // rather than clipping: a reward the player cannot read
+              // is not a reward they were told about
+              class={`flex max-w-56 items-center gap-1.5 rounded-panel border-2 px-2 py-1 text-xs
                 font-bold shadow-pop ${TONES[note.tone ?? 'leaf']}`}
               style={{
                 animation: note.leaving
@@ -198,7 +201,9 @@ export function createCellNotes(
               <Show when={note.art != null}>
                 <span class="flex shrink-0 items-center">{note.art?.()}</span>
               </Show>
-              <Show when={note.message}>{(said) => <span class="truncate">{said()}</span>}</Show>
+              <Show when={note.message}>
+                {(said) => <span class="min-w-0 break-words">{said()}</span>}
+              </Show>
             </div>
           </div>
         )}

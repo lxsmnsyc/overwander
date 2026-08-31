@@ -27,6 +27,13 @@ import Lairs, {
 import Natures from '../../src/data/ids/natures';
 import { ItemTypes, Items } from '../../src/data/ids/items';
 import registerItems, { getItemData } from '../../src/data/items';
+import { isValuable } from '../../src/data/items/valuables';
+import {
+  ITEM_BAND_ODDS,
+  PHENOMENON_BAND_ODDS,
+  getItemBand,
+  getItemOdds,
+} from '../../src/data/overworld/item-pool';
 import EggGroups from '../../src/data/ids/egg-groups';
 import { Genders, Species } from '../../src/data/ids/species';
 import {
@@ -151,6 +158,7 @@ import { findPortal, findPortals, getPortalCell } from '../../src/overworld/port
 import Npc, { GIOVANNI_CHARSETS, NPCS, npcSheets } from '../../src/data/overworld/npc';
 import Phenomenon, {
   BIOME_PHENOMENA,
+  getPhenomenonGroups,
   getPhenomenonItems,
 } from '../../src/data/overworld/phenomenon';
 import {
@@ -2335,6 +2343,85 @@ describe('world', () => {
     expect(new Set(getPhenomenonItems(Phenomenon.RipplingWater)).has(Items.FireStone)).toBe(false);
     expect(new Set(getPhenomenonItems(Phenomenon.DustCloud)).has(Items.FireStone)).toBe(true);
     expect(getPhenomenonItems(Phenomenon.HiddenGrotto)).toEqual([]);
+  });
+
+  it('draws what a phenomenon leaves through its own bands', () => {
+    // The pools used to be picked over uniformly, which set a relic
+    // crown at 1 in 24 out of a ripple against 1 in 50,000 out of the
+    // ground. Six hundred thousand gold and a two hundred gold shell
+    // are not the same draw
+    for (const phenomenon of [
+      Phenomenon.DustCloud,
+      Phenomenon.RipplingWater,
+      Phenomenon.FlyingShadow,
+    ]) {
+      const groups = getPhenomenonGroups(phenomenon);
+      const listed = getPhenomenonItems(phenomenon);
+      const bands = ['uncommon', 'rare', 'prized', 'special'] as const;
+
+      // Nothing is lost on the way into the bands, and nothing is
+      // invented: the same items, sorted
+      expect(new Set(bands.flatMap((band) => groups[band].map((entry) => entry.item)))).toEqual(
+        new Set(listed),
+      );
+      // Base has no width here, so anything left in it would be an
+      // item the phenomenon could never leave
+      expect(groups.base).toEqual([]);
+
+      for (const band of bands) {
+        const entries = groups[band];
+
+        // Peers stay flat inside a band, and the valuables in it keep
+        // exactly the share their count gave them: the weights decide
+        // **which** valuable, never how often one turns up at all
+        expect(entries.reduce((sum, entry) => sum + entry.weight, 0)).toBeCloseTo(
+          entries.length,
+          6,
+        );
+        for (const entry of entries) {
+          if (!isValuable(entry.item)) {
+            expect(entry.weight, getItemData(entry.item).name).toBe(1);
+          }
+        }
+
+        // And among the valuables it is the ground's own ladder that
+        // orders them, so the two cannot drift apart
+        const valuables = entries.filter((entry) => isValuable(entry.item));
+
+        for (const one of valuables) {
+          for (const other of valuables) {
+            if (getItemOdds(one.item) > getItemOdds(other.item)) {
+              expect(
+                one.weight,
+                `${getItemData(one.item).name} against ${getItemData(other.item).name}`,
+              ).toBeGreaterThan(other.weight);
+            }
+          }
+        }
+      }
+    }
+
+    // A gem is in no band the ground knows, and neither is what a walk
+    // turns up anyway: both are drawn on the floor
+    const dust = getPhenomenonGroups(Phenomenon.DustCloud);
+    const floor = new Set(dust.uncommon.map((entry) => entry.item));
+
+    expect(floor.has(Items.NormalGem)).toBe(true);
+    expect(floor.has(Items.TinyMushroom)).toBe(true);
+    expect(getItemBand(Items.NormalGem)).toBeNull();
+    expect(getItemBand(Items.TinyMushroom)).toBe('base');
+
+    // The bands themselves are the ground's, one step richer, and they
+    // leave base nothing
+    expect(PHENOMENON_BAND_ODDS.rare).toBe(8 * ITEM_BAND_ODDS.rare);
+    expect(PHENOMENON_BAND_ODDS.prized).toBe(8 * ITEM_BAND_ODDS.prized);
+    expect(PHENOMENON_BAND_ODDS.special).toBe(8 * ITEM_BAND_ODDS.special);
+    expect(
+      PHENOMENON_BAND_ODDS.special +
+        PHENOMENON_BAND_ODDS.prized +
+        PHENOMENON_BAND_ODDS.rare +
+        PHENOMENON_BAND_ODDS.uncommon,
+    ).toBe(1);
   });
 
   it('startles what the phenomenon looks like', () => {

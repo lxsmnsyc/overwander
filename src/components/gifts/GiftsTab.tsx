@@ -17,6 +17,7 @@ import {
 import { GameDialog, useGame } from '../app/game-context';
 import { type GiftLedgerRow, listAllGifts } from '../../auth/admin';
 import { claimMysteryGift, listMysteryGifts } from '../../auth/gifts';
+import matchesGift, { GIFT_VOCABULARY, type GiftContext, orderGifts } from '../../auth/gift-search';
 import type { CaughtPokemon } from '../../auth/caught';
 import { BASE_FRIENDSHIP } from '../../data/constants/friendship';
 import { createStatsField } from '../../data/constants/stats';
@@ -32,7 +33,16 @@ import type { BoxEntry } from '../catches/CatchBox';
 import CatchGrid, { type CatchGridEntry } from '../catches/CatchGrid';
 import ItemGrid from '../items/ItemGrid';
 import { describeItem } from '../details';
-import { Button, DialogSection, HoverCard, Meta, Note, type ToastTone, useToast } from '../styled';
+import {
+  Button,
+  DialogSection,
+  HoverCard,
+  Meta,
+  Note,
+  Search,
+  type ToastTone,
+  useToast,
+} from '../styled';
 
 /**
  * What the game is holding for the player, and the taking of it.
@@ -65,6 +75,8 @@ function describeGift(gift: MysteryGift): string {
 interface ShelfRow {
   gift: MysteryGift;
   note?: string;
+  /** What the ledger knows beyond the gift itself, for the box that narrows it */
+  context?: GiftContext;
 }
 
 function takenTimes(claims: number): string {
@@ -201,8 +213,24 @@ function GiftShelf(props: {
    * since the shelf is about to be read again anyway
    */
   const [taking, setTaking] = createSignal<string | null>(null);
+  /**
+   * What the ledger's box has been asked. A player's own shelf holds a
+   * handful of things and narrows nothing; the ledger is every gift
+   * ever written by hand
+   */
+  const [query, setQuery] = createSignal('');
 
-  const gifts = (): ShelfRow[] => props.owed() ?? [];
+  const offered = (): ShelfRow[] => props.owed() ?? [];
+  const gifts = createMemo<ShelfRow[]>(() => {
+    if (props.everything !== true) {
+      return offered();
+    }
+    return orderGifts(
+      offered().filter((row) => matchesGift(row.gift, query(), row.context)),
+      query(),
+      (row) => ({ gift: row.gift, context: row.context }),
+    );
+  });
   const pokemon = (): (ShelfRow & { gift: CatchGift | EncounterGift })[] =>
     gifts().filter(
       (row): row is ShelfRow & { gift: CatchGift | EncounterGift } =>
@@ -219,6 +247,17 @@ function GiftShelf(props: {
   const squares = createMemo<CatchGridEntry[]>(() =>
     pokemon().map(({ gift }) => ({ square: asSquare(gift), caught: asPreview(gift) })),
   );
+
+  /**
+   * What an empty list says. A ledger narrowed to nothing has to say so
+   * rather than read as a game nobody has ever given anything
+   */
+  const emptily = (): string => {
+    if (props.everything !== true) {
+      return 'Nothing is waiting for you.';
+    }
+    return query().length === 0 ? 'Nothing has been offered yet.' : 'No gift matches that.';
+  };
 
   const say = (message: string, tone: ToastTone): void => {
     toast.push({ message, tone });
@@ -261,18 +300,32 @@ function GiftShelf(props: {
 
   return (
     <div class="flex flex-col gap-4">
+      {/* One box over both sections, the way the auction board narrows
+          its two trays with one: a gift is looked for by who it went
+          to and whether anybody came for it, neither of which is a
+          fact about the pokemon on the square */}
+      <Show when={props.everything}>
+        <Search
+          vocabulary={GIFT_VOCABULARY}
+          example="is:waiting"
+          placeholder="Name, or for:red is:waiting"
+          value={query()}
+          onChange={(value) => {
+            setQuery(value);
+          }}
+        />
+      </Show>
+
       <Show when={gifts().length === 0}>
-        <Note class="text-center">
-          {props.everything === true
-            ? 'Nothing has been offered yet.'
-            : 'Nothing is waiting for you.'}
-        </Note>
+        <Note class="text-center">{emptily()}</Note>
       </Show>
 
       <Show when={pokemon().length > 0}>
         <DialogSection title="Pokemon">
           <CatchGrid
             entries={squares()}
+            // The ledger has a box of its own above both sections
+            bare={props.everything === true}
             // The card carries one button, so the square presses it
             // too; a visited shelf has nothing to press anywhere
             cardOnly={props.viewOnly === true}
@@ -386,7 +439,16 @@ export interface GiftsTabProps {
 export default function GiftsTab(props: GiftsTabProps): JSX.Element {
   const [owed, { refetch }] = createResource<ShelfRow[]>(async () =>
     props.everything === true
-      ? (await listAllGifts()).map((row) => ({ gift: row.gift, note: describeLedger(row) }))
+      ? (await listAllGifts()).map((row) => ({
+          gift: row.gift,
+          note: describeLedger(row),
+          context: {
+            recipient: row.recipient,
+            claims: row.claims,
+            expired: row.expired,
+            offeredAt: row.offeredAt,
+          },
+        }))
       : (await listMysteryGifts()).map((gift) => ({ gift })),
   );
 

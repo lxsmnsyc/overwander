@@ -10,7 +10,7 @@ import {
   weeklyWindow,
 } from '../data/quests/rotations';
 import { getSql } from './db';
-import { claimMysteryGift, giftId, makeGiftOffer, offer } from './gifts';
+import { ROTATION_GIFT, claimMysteryGift, giftId, makeGiftOffer, offer } from './gifts';
 import { type Counters, countOf } from './quests';
 import { readProgress } from './quest-progress';
 import { asNumber, asRecord } from './read';
@@ -225,7 +225,7 @@ export async function claimRotation(
         item: reward.item,
         amount: reward.amount,
       },
-      giftId(`rotation-${window}-${slot}-${at}`, uid),
+      giftId(`${ROTATION_GIFT}${window}-${slot}-${at}`, uid),
       now,
     ),
   );
@@ -235,7 +235,7 @@ export async function claimRotation(
   for (const [at] of quest.rewards.entries()) {
     await claimMysteryGift(
       uid,
-      giftId(`rotation-${window}-${slot}-${at}`, uid),
+      giftId(`${ROTATION_GIFT}${window}-${slot}-${at}`, uid),
       now,
       offset,
       locale,

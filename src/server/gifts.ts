@@ -96,6 +96,13 @@ export function giftId(gift: string, uid: string): string {
 export const QUEST_GIFT = 'quest-';
 
 /**
+ * What a daily quest's or a weekly hunt's reward row is named. The
+ * window and the slot are in the rest of the id, so the prefix alone
+ * is what the ledger leaves out
+ */
+export const ROTATION_GIFT = 'rotation-';
+
+/**
  * One gift, ready to be written down
  */
 export interface Offer {
@@ -508,14 +515,15 @@ export interface GiftLedgerRow {
 /**
  * Every gift the game did not write itself, newest first, for the
  * dashboard. A player's shelf hides what they have taken and what has
- * run out; this hides only the quests.
+ * run out; this hides only what the game paid automatically.
  *
- * **Quest rewards are paid through these same rows**, one per quest
- * per player, so a live game writes far more of them than staff ever
- * will. Left in, they are the ledger: what somebody opens this page to
- * find — what was given out by hand — is a handful of lines under
- * thousands of automatic ones. The quest board is where a quest reward
- * belongs, and it says so there already
+ * **Quest and rotation rewards are paid through these same rows**, one
+ * per quest per player and one per daily or weekly slot per player, so
+ * a live game writes far more of them than staff ever will. Left in,
+ * they are the ledger: what somebody opens this page to find, what was
+ * given out by hand, is a handful of lines under thousands of
+ * automatic ones. The quest board and the rotation board are where
+ * those belong, and they say so there already
  */
 export async function listAllGifts(now: number): Promise<GiftLedgerRow[]> {
   const rows = await getSql()`
@@ -524,6 +532,7 @@ export async function listAllGifts(now: number): Promise<GiftLedgerRow[]> {
     from gifts g
     left join profiles p on p.id = g.player
     where g.id not like ${`${QUEST_GIFT}%`}
+      and g.id not like ${`${ROTATION_GIFT}%`}
     order by g.offered_at desc
   `;
 

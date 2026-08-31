@@ -8,10 +8,10 @@ import GiftsTab from '../../components/gifts/GiftsTab';
  *
  * The list below is every gift written by hand, not the reader's own
  * shelf: whose each is, how often it has been taken, and what has run
- * out. Quest rewards ride the same rows and are left out, since a live
- * game writes thousands of them and they would be the whole page.
- * There is nothing to press on it; taking happens in the game. The
- * form above writes to whoever is picked in it
+ * out. Quest, daily and hunt rewards ride the same rows and are left
+ * out, since a live game writes thousands of them and they would be
+ * the whole page. There is nothing to press on it; taking happens in
+ * the game. The form above writes to whoever is picked in it
  */
 export default function AdminGiftsPage(): JSX.Element {
   const [adding, setAdding] = createSignal(false);
@@ -49,7 +49,10 @@ export default function AdminGiftsPage(): JSX.Element {
       </Show>
 
       <Card title="Every gift">
-        <Note>Everything put on a shelf by hand, taken or not. Quest rewards are not here.</Note>
+        <Note>
+          Everything put on a shelf by hand, taken or not. Quest, daily and hunt rewards are not
+          here.
+        </Note>
         {/* Keyed on the count, so a gift just written is read again
             rather than sitting behind the ledger that was already
             drawn */}

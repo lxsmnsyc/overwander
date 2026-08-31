@@ -2357,16 +2357,17 @@ describe('world', () => {
     ]) {
       const groups = getPhenomenonGroups(phenomenon);
       const listed = getPhenomenonItems(phenomenon);
-      const bands = ['uncommon', 'rare', 'prized', 'special'] as const;
+      const bands = ['uncommon', 'rare', 'prized'] as const;
 
       // Nothing is lost on the way into the bands, and nothing is
       // invented: the same items, sorted
       expect(new Set(bands.flatMap((band) => groups[band].map((entry) => entry.item)))).toEqual(
         new Set(listed),
       );
-      // Base has no width here, so anything left in it would be an
-      // item the phenomenon could never leave
+      // Neither base nor special has any width here, so anything left
+      // in one would be an item the phenomenon could never leave
       expect(groups.base).toEqual([]);
+      expect(groups.special).toEqual([]);
 
       for (const band of bands) {
         const entries = groups[band];
@@ -2411,16 +2412,32 @@ describe('world', () => {
     expect(getItemBand(Items.NormalGem)).toBeNull();
     expect(getItemBand(Items.TinyMushroom)).toBe('base');
 
-    // The bands themselves are the ground's, one step richer, and they
-    // leave base nothing
+    // The crown is a special on the ground and is drawn with the ruins
+    // here, because a pool picked by type reaches no other special and
+    // a band of one would hand it that band's whole width
+    const ripple = getPhenomenonGroups(Phenomenon.RipplingWater);
+
+    expect(getItemBand(Items.RelicCrown)).toBe('special');
+    expect(ripple.prized.map((entry) => entry.item)).toContain(Items.RelicCrown);
+    for (const item of [Items.RelicVase, Items.CometShard, Items.RelicBand, Items.RelicStatue]) {
+      expect(ripple.prized.map((entry) => entry.item)).toContain(item);
+    }
+    // And it is still the rarest of the five it stands with
+    const crown = ripple.prized.find((entry) => entry.item === Items.RelicCrown);
+
+    for (const entry of ripple.prized) {
+      if (entry.item !== Items.RelicCrown) {
+        expect(entry.weight, getItemData(entry.item).name).toBeGreaterThan(crown?.weight ?? 0);
+      }
+    }
+
+    // The bands themselves are the ground's, one step richer, and what
+    // is left over is nothing: no base, no special
     expect(PHENOMENON_BAND_ODDS.rare).toBe(8 * ITEM_BAND_ODDS.rare);
     expect(PHENOMENON_BAND_ODDS.prized).toBe(8 * ITEM_BAND_ODDS.prized);
-    expect(PHENOMENON_BAND_ODDS.special).toBe(8 * ITEM_BAND_ODDS.special);
+    expect(PHENOMENON_BAND_ODDS.special).toBe(0);
     expect(
-      PHENOMENON_BAND_ODDS.special +
-        PHENOMENON_BAND_ODDS.prized +
-        PHENOMENON_BAND_ODDS.rare +
-        PHENOMENON_BAND_ODDS.uncommon,
+      PHENOMENON_BAND_ODDS.prized + PHENOMENON_BAND_ODDS.rare + PHENOMENON_BAND_ODDS.uncommon,
     ).toBe(1);
   });
 

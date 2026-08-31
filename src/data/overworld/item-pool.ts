@@ -379,23 +379,29 @@ export function getItemOdds(item: Items, odds: ItemBandOdds = ITEM_BAND_ODDS): n
 
 /**
  * What a phenomenon draws on: the ground's own bands, each one step
- * richer, with base shut out.
+ * richer, with base and special both shut out.
  *
  * A phenomenon is something going on rather than something buried, and
  * it is worth walking to. The pokemon side already says so — one
  * startled in eight is rare, against the ground's one in sixty-four —
  * and the items say it the same way: what the ground calls uncommon is
- * the floor here, and every band above it is eight times as wide as
- * the ground makes it.
+ * the floor here, and prized and rare are eight times as wide as the
+ * ground makes them.
  *
- * The four sum to one, which is what shuts base out: nothing a walk
- * turns up anyway is left lying by a phenomenon
+ * **Special is nobody's here.** A phenomenon's pool is picked by type
+ * rather than by band, and of the ground's five specials only the
+ * relic crown is a valuable, so a special band would have been a band
+ * of one and its whole width would have been that crown's rate. The
+ * crown is drawn with the ruins instead, on its own weight among them.
+ *
+ * The widths sum to one, which is what leaves base nothing: what a
+ * walk turns up anyway is not what a phenomenon leaves
  */
 export const PHENOMENON_BAND_ODDS: ItemBandOdds = {
-  special: 1 / 512,
+  special: 0,
   prized: 1 / 64,
   rare: 1 / 8,
-  uncommon: 1 - 1 / 512 - 1 / 64 - 1 / 8,
+  uncommon: 1 - 1 / 64 - 1 / 8,
 };
 
 /**

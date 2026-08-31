@@ -215,16 +215,22 @@ function weigh(items: Items[]): ItemPoolEntry[] {
 /**
  * Which of a phenomenon's bands an item is drawn in.
  *
- * The ground's answer, with two things sent to the floor. **Base**,
- * because a phenomenon does not leave what a walk turns up anyway;
- * the odds shut that band out, so anything in it would simply never
- * appear. And an item the ground hides **nowhere** — a gem, which no
- * cache has ever held — because the floor is where a thing with no
- * scarcity of its own belongs
+ * The ground's answer, with three moved. **Base** goes to the floor,
+ * because a phenomenon does not leave what a walk turns up anyway, and
+ * so does an item the ground hides **nowhere** — a gem, which no cache
+ * has ever held — since the floor is where a thing with no scarcity of
+ * its own belongs.
+ *
+ * **Special** goes down to prized rather than to the floor. A pool
+ * picked by type reaches exactly one of the ground's specials, and a
+ * band of one hands its whole width to whatever stands in it
  */
 function bandOf(item: Items): keyof ItemRarityGroups {
   const band = getItemBand(item);
 
+  if (band === 'special') {
+    return 'prized';
+  }
   return band == null || band === 'base' ? 'uncommon' : band;
 }
 
@@ -251,12 +257,13 @@ export function getPhenomenonGroups(phenomenon: Phenomenon): ItemRarityGroups {
     sorted.set(band, [...(sorted.get(band) ?? []), item]);
   }
   const groups: ItemRarityGroups = {
-    // Nothing is ever drawn from it: the odds leave it no width
+    // Neither is ever drawn from: the odds leave them no width, and
+    // `bandOf` puts nothing in them
     base: [],
+    special: [],
     uncommon: weigh(sorted.get('uncommon') ?? []),
     rare: weigh(sorted.get('rare') ?? []),
     prized: weigh(sorted.get('prized') ?? []),
-    special: weigh(sorted.get('special') ?? []),
   };
 
   BANDED.set(phenomenon, groups);

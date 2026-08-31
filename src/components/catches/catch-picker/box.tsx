@@ -4,7 +4,7 @@ import { useAuth } from '../../../auth/context';
 import { ItemFlags, type Items } from '../../../data/ids/items';
 import { getItemData } from '../../../data/items';
 import InventoryPicker from '../../items/InventoryPicker';
-import { Button, HoverCard, Row } from '../../styled';
+import { Button, HoverCard, Row, Status } from '../../styled';
 import CatchCard from '../CatchCard';
 import CatchGrid, { type CatchGridEntry } from '../CatchGrid';
 import { asBoxEntry, describeCatch } from '../catch-summary';
@@ -226,6 +226,14 @@ export default function PickerBox(
     }
   };
 
+  /**
+   * Whether this pokemon is one the caller wants asked about twice. A
+   * caller that said `confirm` outright means every one; one that
+   * passed a rule means the ones the rule picks out
+   */
+  const asksTwice = (option: CatchOption): boolean =>
+    typeof props.confirm === 'function' ? props.confirm(option) : props.confirm === true;
+
   const press = (option: CatchOption): void => {
     if (props.reason?.(option) != null) {
       return;
@@ -249,7 +257,7 @@ export default function PickerBox(
       }
       return;
     }
-    if (props.confirm === true && pending() !== option.id) {
+    if (asksTwice(option) && pending() !== option.id) {
       setPending(option.id);
       return;
     }
@@ -407,23 +415,27 @@ export default function PickerBox(
           square: there is no room under a sprite for a question */}
       <Show when={options().find((one) => one.id === pending())}>
         {(asked) => (
-          <Row class="justify-center">
-            <Button
-              tone="primary"
-              onClick={() => {
-                pickOne(asked().id);
-              }}
-            >
-              {props.verb ?? 'Pick'} {describeCatch(asked().caught)}?
-            </Button>
-            <Button
-              onClick={() => {
-                setPending(null);
-              }}
-            >
-              Cancel
-            </Button>
-          </Row>
+          <div class="flex flex-col items-center gap-2">
+            {/* What the second press is really agreeing to */}
+            <Status message={props.warn?.(asked()) ?? null} tone="alert" />
+            <Row class="justify-center">
+              <Button
+                tone="primary"
+                onClick={() => {
+                  pickOne(asked().id);
+                }}
+              >
+                {props.verb ?? 'Pick'} {describeCatch(asked().caught)}?
+              </Button>
+              <Button
+                onClick={() => {
+                  setPending(null);
+                }}
+              >
+                Cancel
+              </Button>
+            </Row>
+          </div>
         )}
       </Show>
 

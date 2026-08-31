@@ -9,6 +9,7 @@ import registerBiomeSpawns, {
   getEggPool,
   getSpawnPool,
   getSpawnRarity,
+  isAwaitingBaby,
   isMythicalSpecies,
   isPrizedSpecies,
   listSpeciesHabitats,
@@ -1137,72 +1138,194 @@ describe('evolution data', () => {
   });
 
   it('offers level evolutions once the threshold is reached', () => {
-    const context = { carried: new Set<Items>(), held: new Set<Items>(), traded: false };
+    const context = {
+      carried: new Set<Items>(),
+      held: new Set<Items>(),
+      tradedAs: null,
+      tradedFor: null,
+    };
 
-    expect(getAvailableEvolutions(Species.Charmander, { ...context, level: 15 })).toEqual([]);
-    expect(getAvailableEvolutions(Species.Charmander, { ...context, level: 16 })).toEqual([
+    expect(getAvailableEvolutions({ species: Species.Charmander, ...context, level: 15 })).toEqual(
+      [],
+    );
+    expect(getAvailableEvolutions({ species: Species.Charmander, ...context, level: 16 })).toEqual([
       { species: Species.Charmeleon, method: EvolutionMethod.Level, level: 16 },
     ]);
   });
 
   it('offers stone evolutions only while the stone is carried', () => {
-    const context = { level: 50, held: new Set<Items>(), traded: false };
+    const context = { level: 50, held: new Set<Items>(), tradedAs: null, tradedFor: null };
 
-    expect(getAvailableEvolutions(Species.Vulpix, { ...context, carried: new Set() })).toEqual([]);
     expect(
-      getAvailableEvolutions(Species.Vulpix, { ...context, carried: new Set([Items.LeafStone]) }),
+      getAvailableEvolutions({ species: Species.Vulpix, ...context, carried: new Set() }),
     ).toEqual([]);
     expect(
-      getAvailableEvolutions(Species.Vulpix, { ...context, carried: new Set([Items.FireStone]) }),
+      getAvailableEvolutions({
+        species: Species.Vulpix,
+        ...context,
+        carried: new Set([Items.LeafStone]),
+      }),
+    ).toEqual([]);
+    expect(
+      getAvailableEvolutions({
+        species: Species.Vulpix,
+        ...context,
+        carried: new Set([Items.FireStone]),
+      }),
     ).toEqual([
       { species: Species.Ninetales, method: EvolutionMethod.UsedItem, item: Items.FireStone },
     ]);
   });
 
   it('offers nothing at all to a pokemon holding an Everstone', () => {
-    const context = { level: 100, carried: new Set([Items.FireStone]), traded: true };
+    // Traded as a Machoke, so the trade door below is genuinely open
+    const context = {
+      level: 100,
+      carried: new Set([Items.FireStone]),
+      tradedAs: Species.Machoke,
+      tradedFor: null,
+    };
 
     // Every door at once: the level one, the stone one and the trade
     // one, all of them open, and the stone shuts all three
     expect(
-      getAvailableEvolutions(Species.Charmander, { ...context, held: new Set([Items.Everstone]) }),
+      getAvailableEvolutions({
+        species: Species.Charmander,
+        ...context,
+        held: new Set([Items.Everstone]),
+      }),
     ).toEqual([]);
     expect(
-      getAvailableEvolutions(Species.Vulpix, { ...context, held: new Set([Items.Everstone]) }),
+      getAvailableEvolutions({
+        species: Species.Vulpix,
+        ...context,
+        held: new Set([Items.Everstone]),
+      }),
     ).toEqual([]);
     expect(
-      getAvailableEvolutions(Species.Machoke, { ...context, held: new Set([Items.Everstone]) }),
+      getAvailableEvolutions({
+        species: Species.Machoke,
+        ...context,
+        held: new Set([Items.Everstone]),
+      }),
     ).toEqual([]);
 
     // And holding something else changes nothing
     expect(
-      getAvailableEvolutions(Species.Machoke, { ...context, held: new Set([Items.Leftovers]) }),
+      getAvailableEvolutions({
+        species: Species.Machoke,
+        ...context,
+        held: new Set([Items.Leftovers]),
+      }),
     ).toEqual([{ species: Species.Machamp, method: EvolutionMethod.Trade }]);
   });
 
-  it('offers trade evolutions only to a pokemon that has changed hands', () => {
+  it('offers a trade evolution only for the handover it was made at', () => {
     const context = { level: 100, carried: new Set<Items>(), held: new Set<Items>() };
 
     // A Machoke nobody has traded stays a Machoke however high its
     // level runs — the level is not what the evolution asks for
-    expect(getAvailableEvolutions(Species.Machoke, { ...context, traded: false })).toEqual([]);
-    expect(getAvailableEvolutions(Species.Machoke, { ...context, traded: true })).toEqual([
-      { species: Species.Machamp, method: EvolutionMethod.Trade },
-    ]);
-    // And the record's own history is what answers, so a fresh catch
-    // of the same species is refused beside a traded one
-    expect(getAvailableEvolutions(Species.Haunter, { ...context, level: 1, traded: true })).toEqual(
-      [{ species: Species.Gengar, method: EvolutionMethod.Trade }],
-    );
+    expect(
+      getAvailableEvolutions({
+        species: Species.Machoke,
+        ...context,
+        tradedAs: null,
+        tradedFor: null,
+      }),
+    ).toEqual([]);
+    expect(
+      getAvailableEvolutions({
+        species: Species.Machoke,
+        ...context,
+        tradedAs: Species.Machoke,
+        tradedFor: null,
+      }),
+    ).toEqual([{ species: Species.Machamp, method: EvolutionMethod.Trade }]);
+
+    // And a handover made at a stage below it is no handover at all:
+    // this is a Machop that changed hands and then levelled, which is
+    // not a Machoke anybody ever traded
+    expect(
+      getAvailableEvolutions({
+        species: Species.Machoke,
+        ...context,
+        tradedAs: Species.Machop,
+        tradedFor: null,
+      }),
+    ).toEqual([]);
+
+    // The other three Gen 1 lines have the same shape, and every one
+    // of them sits a level evolution above the stage that is traded
+    for (const [below, at, into] of [
+      [Species.Abra, Species.Kadabra, Species.Alakazam],
+      [Species.Geodude, Species.Graveler, Species.Golem],
+      [Species.Gastly, Species.Haunter, Species.Gengar],
+    ] as const) {
+      expect(
+        getAvailableEvolutions({ species: at, ...context, tradedAs: below, tradedFor: null }),
+      ).toEqual([]);
+      expect(
+        getAvailableEvolutions({ species: at, ...context, tradedAs: at, tradedFor: null }),
+      ).toEqual([{ species: into, method: EvolutionMethod.Trade }]);
+    }
+  });
+
+  it('wants the named partner where a line names one', () => {
+    // Karrablast and Shelmet, which no generation registered here has
+    // yet: the condition is the pokemon coming the other way, and it
+    // is the only one in the family that is about somebody else's
+    const line = {
+      species: Species.Machamp,
+      method: EvolutionMethod.Trade,
+      partner: Species.Gastly,
+    };
+    const context = {
+      species: Species.Machoke,
+      level: 100,
+      carried: new Set<Items>(),
+      held: new Set<Items>(),
+    };
+
+    // Traded, at the right stage, for the wrong pokemon
+    expect(
+      meetsEvolutionCriteria(line, {
+        ...context,
+        tradedAs: Species.Machoke,
+        tradedFor: Species.Abra,
+      }),
+    ).toBe(false);
+    // Traded for nothing at all, which is what a sale is
+    expect(
+      meetsEvolutionCriteria(line, { ...context, tradedAs: Species.Machoke, tradedFor: null }),
+    ).toBe(false);
+    // And the one handover it asked for
+    expect(
+      meetsEvolutionCriteria(line, {
+        ...context,
+        tradedAs: Species.Machoke,
+        tradedFor: Species.Gastly,
+      }),
+    ).toBe(true);
+
+    // A cord replaces a handover, and what this is waiting for is not
+    // a handover but a particular pokemon. Nothing in a bag is one
+    expect(
+      meetsEvolutionCriteria(line, {
+        ...context,
+        carried: new Set([Items.LinkingCord]),
+        tradedAs: null,
+        tradedFor: null,
+      }),
+    ).toBe(false);
   });
 
   it('takes a Linking Cord in place of the trade', () => {
-    const context = { level: 100, held: new Set<Items>(), traded: false };
+    const context = { level: 100, held: new Set<Items>(), tradedAs: null, tradedFor: null };
     const cord = new Set([Items.LinkingCord]);
 
-    expect(getAvailableEvolutions(Species.Machoke, { ...context, carried: cord })).toEqual([
-      { species: Species.Machamp, method: EvolutionMethod.Trade },
-    ]);
+    expect(getAvailableEvolutions({ species: Species.Machoke, ...context, carried: cord })).toEqual(
+      [{ species: Species.Machamp, method: EvolutionMethod.Trade }],
+    );
     // And it is what gets spent, since the trade is the half it paid
     expect(
       getConsumedItem({ species: Species.Machamp, method: EvolutionMethod.Trade }, false),
@@ -1224,7 +1347,14 @@ describe('evolution data', () => {
     const carried = new Set([Items.LinkingCord, Items.FireStone]);
 
     expect(
-      meetsEvolutionCriteria(line, { level: 100, carried, held: new Set(), traded: false }),
+      meetsEvolutionCriteria(line, {
+        species: Species.Machoke,
+        level: 100,
+        carried,
+        held: new Set(),
+        tradedAs: null,
+        tradedFor: null,
+      }),
     ).toBe(false);
     expect(getConsumedItem(line, false)).toBe(Items.FireStone);
   });
@@ -1236,7 +1366,14 @@ describe('evolution data', () => {
     expect(
       meetsEvolutionCriteria(
         { species: Species.Machamp, method: EvolutionMethod.Trade | EvolutionMethod.Friendship },
-        { level: 100, carried: new Set(), held: new Set(), traded: true },
+        {
+          species: Species.Machoke,
+          level: 100,
+          carried: new Set(),
+          held: new Set(),
+          tradedAs: Species.Machoke,
+          tradedFor: null,
+        },
       ),
     ).toBe(false);
   });
@@ -1341,6 +1478,9 @@ describe('species day', () => {
     for (const entry of eggs) {
       expect(getSpeciesData(entry.species).evolvesFrom).toBeUndefined();
       expect(getSpawnRarity(entry.species)).not.toBe(SpawnRarity.Special);
+      // A line whose baby is not registered yet would hatch one stage
+      // too late, so no nest holds it
+      expect(isAwaitingBaby(entry.species)).toBe(false);
     }
 
     // The weights are the three ordinary bands added up, species by
@@ -1352,6 +1492,9 @@ describe('species day', () => {
       for (const entry of band) {
         const egg = getBaseSpecies(entry.species);
 
+        if (isAwaitingBaby(egg)) {
+          continue;
+        }
         expected.set(egg, (expected.get(egg) ?? 0) + entry.weight);
       }
     }
@@ -1363,6 +1506,27 @@ describe('species day', () => {
 
     // A biome with nothing awake in it has no eggs either
     expect(getEggPool(Biome.Beyond, TimeOfDay.Day)).toEqual([]);
+  });
+
+  it('keeps a line whose baby is not registered yet out of every nest', () => {
+    for (const biome of Object.keys(BIOME_NAMES).map(Number) as Biome[]) {
+      for (const time of TIMES_OF_DAY) {
+        for (const entry of getEggPool(biome, time)) {
+          expect(isAwaitingBaby(entry.species), BIOME_NAMES[biome]).toBe(false);
+        }
+      }
+    }
+  });
+
+  it('has nothing on the awaiting list that already hatches from something', () => {
+    // The tripwire for the day a baby lands: registering one gives the
+    // species it evolves into an `evolvesFrom`, and the entry has to
+    // come off the list in the same change
+    for (const species of getRegisteredSpecies()) {
+      if (getSpeciesData(species).evolvesFrom != null) {
+        expect(isAwaitingBaby(species), getSpeciesData(species).name).toBe(false);
+      }
+    }
   });
 });
 
@@ -2397,8 +2561,6 @@ describe('item data', () => {
       Items.Electirizer,
       Items.Magmarizer,
       Items.ReaperCloth,
-      Items.RazorClaw,
-      Items.RazorFang,
       Items.PrismScale,
       Items.DeepSeaTooth,
       Items.DeepSeaScale,
@@ -2435,6 +2597,21 @@ describe('item data', () => {
     // chance of leaving whoever was hit reeling — works today
     expect(getItemData(Items.KingsRock).flags & ItemFlags.Holdable).not.toBe(0);
     expect(getItemData(Items.KingsRock).flags & ItemFlags.Usable).not.toBe(0);
+
+    // A Razor Claw and a Razor Fang are not trade items at all: what
+    // a Weavile and a Gliscor want is a level at night with one in
+    // hand, so both are held and neither is ever spent
+    for (const item of [Items.RazorClaw, Items.RazorFang]) {
+      const data = getItemData(item);
+
+      expect(data.type, data.name).toBe(ItemTypes.Held);
+      expect(data.flags & ItemFlags.Holdable, data.name).not.toBe(0);
+      expect(data.flags & ItemFlags.Usable, data.name).toBe(0);
+      expect(data.flags & ItemFlags.Marketable, data.name).toBe(0);
+      // Their lines are a later generation's, so the line says the
+      // fight and nothing about an evolution nothing can reach
+      expect(data.description).not.toContain('volve');
+    }
 
     // Metal Coat is not duplicated: the Steel booster already
     // registered is the id an evolution will read

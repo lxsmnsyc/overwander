@@ -13,6 +13,10 @@ import { registerItem } from './__create';
  * Seadra that has been traded *and* is handed a Dragon Scale, and both
  * halves are conditions the record can answer for itself.
  *
+ * Sixteen of the mainline's twenty-seven trade evolutions want an item
+ * this way, so this is the shape of most of the family rather than a
+ * corner of it.
+ *
  * None of them can be spent yet: every line that asks for one — a
  * Slowking, a Steelix, a Porygon2 — belongs to a generation that is
  * not registered. They carry no price and no market listing until one
@@ -52,18 +56,6 @@ const TRADE_ITEMS: [item: Items, name: string, icon: string, description: string
   [Items.Electirizer, 'Electirizer', 'electirizer', EVOLVES],
   [Items.Magmarizer, 'Magmarizer', 'magmarizer', EVOLVES],
   [Items.ReaperCloth, 'Reaper Cloth', 'reaper-cloth', EVOLVES],
-  [
-    Items.RazorClaw,
-    'Razor Claw',
-    'razor-claw',
-    '2x its holder’s odds of a critical. Also evolves a line that asks for it.',
-  ],
-  [
-    Items.RazorFang,
-    'Razor Fang',
-    'razor-fang',
-    '1/10 of its holder’s blows leave the target flinching. Also evolves a line that asks for it.',
-  ],
   [Items.PrismScale, 'Prism Scale', 'prism-scale', EVOLVES],
   [Items.DeepSeaTooth, 'Deep Sea Tooth', 'deep-sea-tooth', EVOLVES],
   [Items.DeepSeaScale, 'Deep Sea Scale', 'deep-sea-scale', EVOLVES],
@@ -74,15 +66,36 @@ const TRADE_ITEMS: [item: Items, name: string, icon: string, description: string
 /**
  * The trade items that are also held items.
  *
- * Each does something in a fight — a King's Rock and a Razor Fang
- * leave the target flinching, a Razor Claw sharpens what its holder
- * throws — and that is true whether or not the evolution it also gates
- * is reachable yet. So they carry the Holdable flag alongside the rest
- * of the family's, the way Metal Coat is one id doing two jobs. The
- * battle half is in
+ * A King's Rock leaves the target flinching, and that is true whether
+ * or not the evolution it also gates is reachable yet. So it carries
+ * the Holdable flag alongside the rest of the family's, the way Metal
+ * Coat is one id doing two jobs. The battle half is in
  * [`src/battle/items/gear.ts`](../../battle/items/gear.ts)
  */
-const HELD_TRADE_ITEMS = new Set<Items>([Items.KingsRock, Items.RazorFang, Items.RazorClaw]);
+const HELD_TRADE_ITEMS = new Set<Items>([Items.KingsRock]);
+
+/**
+ * The two that were filed here and are not trade items at all.
+ *
+ * A Razor Claw and a Razor Fang are **held** through a level, at
+ * night: that is how a Sneasel becomes a Weavile and a Gligar a
+ * Gliscor. Neither is handed over before a trade and neither is ever
+ * spent, so neither is Usable, and their lines are a later
+ * generation's anyway. They keep their pictures with the evolution
+ * items because that is where the sheet packs them.
+ *
+ * Their lines say nothing yet, so the description is the fight and
+ * only the fight, the way every other held item's is
+ */
+const HELD_EVOLUTION_ITEMS: [item: Items, name: string, icon: string, description: string][] = [
+  [Items.RazorClaw, 'Razor Claw', 'razor-claw', '2x its holder’s odds of a critical.'],
+  [
+    Items.RazorFang,
+    'Razor Fang',
+    'razor-fang',
+    '1/10 of its holder’s blows leave the target flinching.',
+  ],
+];
 
 export default function registerTradeItems(): void {
   // Priced and listed like an evolution stone, because that is what it
@@ -105,6 +118,18 @@ export default function registerTradeItems(): void {
       type: ItemTypes.Evolution,
       icon: `evolutions/${icon}`,
       flags: HELD_TRADE_ITEMS.has(item) ? ItemFlags.Usable | ItemFlags.Holdable : ItemFlags.Usable,
+      buy: 0,
+      sell: 0,
+    });
+  }
+
+  for (const [item, name, icon, description] of HELD_EVOLUTION_ITEMS) {
+    registerItem(item, {
+      name,
+      description,
+      type: ItemTypes.Held,
+      icon: `evolutions/${icon}`,
+      flags: ItemFlags.Holdable,
       buy: 0,
       sell: 0,
     });

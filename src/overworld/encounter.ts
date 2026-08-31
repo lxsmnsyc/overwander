@@ -2,7 +2,13 @@ import AleaRNG from '../core/alea';
 import { SpawnRarity, getSpawnRarity } from '../data/biome';
 import type Lairs from '../data/overworld/lair';
 import type Weather from '../data/overworld/weather';
-import { WEATHER_MIN_IV, isWeatherFavored } from '../data/overworld/weather';
+import {
+  WEATHER_MIN_IV,
+  hiddenAbilityBoostOf,
+  isWeatherFavored,
+  shinyBoostOf,
+  teachesEggMove,
+} from '../data/overworld/weather';
 import { MAX_IV, Stats, packIVs } from '../data/constants/stats';
 import type Abilities from '../data/ids/abilities';
 import type Biome from '../data/ids/biome';
@@ -487,6 +493,17 @@ export function deriveEggMoves(species: Species, level: number, random: () => nu
 }
 
 /**
+ * The stream a fogbow's inherited move is picked from. Its own seed
+ * rather than a slice of the trait value, so it takes nothing away
+ * from the slices the level, gender, ability and nature already read
+ */
+function eggMoveRoll(traitValue: number): () => number {
+  const rng = new AleaRNG(`${traitValue}:eggmove`);
+
+  return () => rng.random();
+}
+
+/**
  * What the meeting was, beyond the spawn tuple itself
  */
 export interface EncounterOptions {
@@ -599,7 +616,8 @@ export default function deriveEncounter(
   const ability = deriveAbility(
     species,
     traitValue,
-    featured ? SPECIES_DAY_HIDDEN_ABILITY_BOOST : 1,
+    (featured ? SPECIES_DAY_HIDDEN_ABILITY_BOOST : 1) *
+      (sky == null ? 1 : hiddenAbilityBoostOf(sky)),
   );
 
   // Modern mechanics: gender is a pure ratio roll independent of any
@@ -607,7 +625,14 @@ export default function deriveEncounter(
   const gender = deriveGender(species, traitValue);
 
   // The last four level-up moves learnable at this level
-  const moves = deriveMoves(species, level);
+  // A fogbow hands over what a walk with an egg would have cost, so a
+  // wild meeting under one already knows a move off its line's list.
+  // Seeded by the trait value alone: what a pokemon knows is the
+  // pokemon's, not the trainer's
+  const moves =
+    sky != null && teachesEggMove(sky) && type === EncounterType.Wild
+      ? deriveEggMoves(species, level, eggMoveRoll(traitValue))
+      : deriveMoves(species, level);
   const nature = deriveNature(traitValue);
 
   return {
@@ -621,14 +646,17 @@ export default function deriveEncounter(
     nature,
     ability,
     gender,
-    // The day's featured family sparkles eight times as often, and
-    // whatever the player carries multiplies that further
+    // The day's featured family sparkles eight times as often, the
+    // rarest sky doubles whatever is standing under it, and whatever
+    // the player carries multiplies that further
     shiny:
       userId != null &&
       isShinyFor(
         userId,
         traitValue,
-        (featured ? SPECIES_DAY_SHINY_BOOST : 1) * (options.shinyBoost ?? 1),
+        (featured ? SPECIES_DAY_SHINY_BOOST : 1) *
+          (sky == null ? 1 : shinyBoostOf(sky)) *
+          (options.shinyBoost ?? 1),
       ),
     shadow: options.shadow === true,
     moves,

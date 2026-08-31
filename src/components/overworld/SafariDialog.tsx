@@ -71,6 +71,16 @@ export interface SafariDialogProps {
    * The open session, or null when no encounter is being met
    */
   session: SafariSession<EncounterRecord> | null;
+  /**
+   * Whether walking away has to be meant.
+   *
+   * A wild pokemon on a cell is still standing there after a stray
+   * press on the ground behind the dialog: the player walks back and
+   * meets it again. One that came out of a phenomenon or was won is
+   * met once and never again, and the overlay closing it threw the
+   * whole thing away. Those are answered by the buttons alone
+   */
+  insistent?: boolean;
   onClose: () => void;
   /**
    * Fired with the new record the moment a throw lands.
@@ -355,6 +365,7 @@ function SafariBody(
     <Dialog
       isOpen={props.session != null}
       onClose={leave}
+      insistent={props.insistent}
       title={met()}
       terse
       description="One encounter, one throw at a time. A treat makes it easier to catch and every

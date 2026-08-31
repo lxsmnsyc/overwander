@@ -63,13 +63,16 @@ rather than being waved through.
 | **By level**               | Yes       | Checked against the pokemon's level       |
 | **Using an item**          | Yes       | The stone is consumed                     |
 | **Holding an item**        | Yes       | The item is required, not consumed        |
-| **By trade**               | Yes       | Any pokemon that has changed hands        |
+| **By trade**               | Yes       | A pokemon that changed hands as what it is |
 | Friendship, weather, party | No        | Nothing stores the answer, so not offered |
 
-A **trade evolution** opens the moment a pokemon changes hands — today that means
-winning it at auction — and stays open for good. The mainline evolves one during
-the trade itself, which is a moment this game has nowhere to put, so a Machoke
-that has changed hands is a Machamp waiting to be asked.
+A **trade evolution** opens the moment a pokemon changes hands, and what it opens
+is the evolution of whatever the pokemon was at that moment. A Machoke that was
+traded is a Machamp waiting to be asked. A Machop that was traded and then grew
+into a Machoke is not, because nobody ever traded a Machoke: it wants a handover
+of its own. The mainline evolves one during the trade itself, which is a moment
+this game has nowhere to put, so changing hands opens the evolution rather than
+performing it, and it stays open until it is taken.
 
 An **Everstone** refuses every evolution while the pokemon holds it. It is not
 held back from anything else: it still levels, learns and fights.

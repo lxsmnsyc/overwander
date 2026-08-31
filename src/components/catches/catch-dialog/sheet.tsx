@@ -18,7 +18,7 @@ import {
   setNickname,
   takeItem,
 } from '../../../auth/caught';
-import { getCatchName } from '../../../auth/caught-record';
+import { getCatchName, isShadow } from '../../../auth/caught-record';
 import { NICKNAME_LIMIT, asNickname } from '../../../auth/nickname';
 import { useAuth } from '../../../auth/context';
 
@@ -40,6 +40,7 @@ import type { Species } from '../../../data/ids/species';
 
 import { isPPItem } from '../../../data/items/vitamins';
 import { isPreciousItem } from '../../../data/overworld/item-pool';
+import { isPurifyingGem } from '../../../data/items/purifying-gem';
 import { getFamilyName, getSpeciesData } from '../../../data/species';
 
 import { ActionsIcon, LockIcon, StarIcon } from '../../icons';
@@ -1225,6 +1226,16 @@ export function CatchSheetBody(
         // good, and the wrong pokemon is the wrong pokemon for good
         // with it
         confirm={(entry) => isPreciousItem(entry.item)}
+        // The gem is the one item whose second press is a decision
+        // rather than a formality: what it takes off cannot be put
+        // back, and the reason for keeping a shadow is the shadow
+        warn={(entry) => {
+          const loaded = view();
+
+          return isPurifyingGem(entry.item) && loaded != null && isShadow(loaded)
+            ? 'Purifying cannot be undone. The Shadow ability goes for good, and it stops being a shadow.'
+            : null;
+        }}
         value={null}
         verb="Use"
         empty="Nothing in the bag would do it any good."

@@ -105,6 +105,15 @@ export interface ActiveBattle {
    */
   rocket?: string;
   /**
+   * Who the stop staged, for the screens that name the other side:
+   * the summary, the title, the word a win is announced with. A stop
+   * is not only a grunt (a duelling trainer, a gym leader, one of the
+   * Elite Four, the Champion), and it is the overworld rather than the
+   * battle that knows which, so the name and the face travel with the
+   * fight rather than being worked out again from a stop id
+   */
+  opponent?: { name: string; sprite: string };
+  /**
    * The gym seat the battle was a challenge for. A win moves the
    * seat, so the settlement is the seat's rather than a purse's
    */

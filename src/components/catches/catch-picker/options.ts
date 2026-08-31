@@ -31,9 +31,19 @@ interface CatchPickerCommonProps {
   verb?: string;
   empty?: string;
   /**
-   * Ask once more before handing the pick back
+   * Ask once more before handing the pick back. A caller may answer
+   * per pokemon rather than for the whole list, since what makes a
+   * pick worth a second press is often the pokemon rather than the
+   * counter: Nurse Joy heals anything without a word and purifies a
+   * shadow for good
    */
-  confirm?: boolean;
+  confirm?: boolean | ((option: CatchOption) => boolean);
+  /**
+   * What the player should know before pressing again, or null when
+   * there is nothing to say. It rides the second press, which is
+   * where the decision is actually made
+   */
+  warn?: (option: CatchOption) => string | null;
   /**
    * Whether the list is showing but not taking picks — a catch in a
    * live battle, say, where every row is refused for the same reason

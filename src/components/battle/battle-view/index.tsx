@@ -311,7 +311,10 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
 
   const title = (): string => {
     if (props.active.rocket != null) {
-      return 'Team Rocket';
+      // A stop is not only a grunt: a duelling trainer, a gym leader
+      // and the Champion are all fought from one, and each was named
+      // on the way in
+      return props.active.opponent?.name ?? 'Team Rocket';
     }
     if (instance()?.battle.mode === BattleModes.PvP) {
       return props.active.seat == null ? 'Battle' : 'Gym Seat';
@@ -331,7 +334,9 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
       return 'The other side went down.';
     }
     if (props.active.rocket != null) {
-      return 'The grunt is beaten — what they dropped is waiting in the overworld.';
+      const beaten = props.active.opponent?.name ?? 'The grunt';
+
+      return `${beaten} is beaten. What was left behind is waiting in the overworld.`;
     }
     // A fight between players pays nothing on purpose, so what a win
     // says is the win itself
@@ -722,7 +727,7 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
         sides={sides()}
         names={names}
         player={auth.user()?.uid ?? ''}
-        rocket={props.active.rocket != null}
+        opponent={props.active.opponent ?? null}
         teams={raiding() ? (record()?.teams ?? null) : null}
         shares={shares()}
         replay={props.active.replay}

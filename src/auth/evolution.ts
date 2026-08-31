@@ -43,10 +43,12 @@ export async function listEvolutionOptions(
   }
 
   const context = {
+    species: caught.species,
     level: caught.level,
     carried: new Set(inventory.filter((entry) => entry.amount > 0).map((entry) => entry.item)),
     held: new Set(caught.items),
-    traded: caught.traded,
+    tradedAs: caught.tradedAs,
+    tradedFor: caught.tradedFor,
   };
 
   return (getSpeciesData(caught.species).evolvesInto ?? []).map((evolution) => ({

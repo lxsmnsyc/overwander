@@ -155,6 +155,13 @@ export default function OverworldBoard(props: {
    */
   const cell = (): number => cellY() * CHUNK_CELLS + cellX();
   const [session, setSession] = createSignal<SafariSession<EncounterRecord> | null>(null);
+  /**
+   * Whether the meeting on screen is one that happens once: a
+   * phenomenon's pokemon, or one won and waiting. Both are spent as
+   * they are opened, so an overlay press must not be able to throw
+   * one away
+   */
+  const [once, setOnce] = createSignal(false);
   const game = useGame();
   const toast = useToast();
   /**
@@ -964,14 +971,23 @@ export default function OverworldBoard(props: {
 
   /**
    * Meet a spawn (or a grotto's pokemon): the encounter is derived
-   * once per player and the safari session opens over it
+   * once per player and the safari session opens over it.
+   *
+   * `once` is for the meetings there is no walking back to: the cell
+   * is spent as it is claimed, so the dialog is closed by its own
+   * buttons rather than by a press on the world behind it
    */
-  const meet = async (user: PlayerIdentity, encounter: EncounterRecord): Promise<string | null> => {
+  const meet = async (
+    user: PlayerIdentity,
+    encounter: EncounterRecord,
+    metOnce = false,
+  ): Promise<string | null> => {
     if (await isEncounterRetired(user.uid, encounter)) {
       // Either it ran off or it is already in the bag; from the cell's
       // side those are the same thing — nobody is standing there
       return 'Nothing here. This one is done with you.';
     }
+    setOnce(metOnce);
     setSession(await createSafariSession(user, encounter));
     return null;
   };
@@ -1157,7 +1173,7 @@ export default function OverworldBoard(props: {
         // one if the hour turned over between the two calls
         return 'An egg, tucked away in the grotto. Walk it warm.';
       }
-      return meet(user, claim.encounter);
+      return meet(user, claim.encounter, true);
     }
     if (landmark === Landmark.Portal) {
       // Where it goes is derived from the chunk it stands in, so the
@@ -1201,6 +1217,7 @@ export default function OverworldBoard(props: {
       return;
     }
     game.setEncounter(null);
+    setOnce(true);
     createSafariSession(user, waiting)
       .then(setSession)
       .catch((caught: unknown) => {
@@ -1684,6 +1701,7 @@ export default function OverworldBoard(props: {
             <SafariDialog
               user={user()}
               session={session()}
+              insistent={once()}
               onCaught={(catchId) => {
                 // The encounter is finished the moment it is caught, so
                 // the safari closes and the sheet for what was caught

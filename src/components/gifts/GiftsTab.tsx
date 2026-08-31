@@ -133,6 +133,8 @@ function asPreview(gift: CatchGift | EncounterGift): CaughtPokemon {
     favorite: false,
     guarded: false,
     traded: false,
+    tradedAs: null,
+    tradedFor: null,
     auctionable: false,
     moves: gift.moves,
     movePoints: {},

@@ -34,6 +34,7 @@ export {
   getEggPool,
   getSpawnPool,
   getSpawnRarity,
+  isAwaitingBaby,
   isLegendarySpecies,
   listSpeciesHabitats,
   TIMES_OF_DAY,

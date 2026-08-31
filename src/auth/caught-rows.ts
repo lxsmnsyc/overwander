@@ -70,6 +70,8 @@ export function fromCaughtRow(row: Record<string, unknown>): CaughtPokemon {
     favorite: row.favorite,
     guarded: row.guarded,
     traded: row.traded,
+    tradedAs: row.traded_as,
+    tradedFor: row.traded_for,
     auctionable: row.auctionable,
     moves: moves.map((entry) => Number(entry.move)),
     movePoints,

@@ -444,3 +444,73 @@ export function PollenIcon(props: ComponentProps<'svg'>): JSX.Element {
     </svg>
   );
 }
+
+export function MirageIcon(props: ComponentProps<'svg'>): JSX.Element {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      viewBox="0 0 24 24"
+      {...props}
+    >
+      {/* A horizon, what stands on it, and the same thing again above
+          the line: a superior mirage is the world repeated in the air */}
+      <path d="M3 15h18"></path>
+      <path d="M7 15l3-4 3 4"></path>
+      <path d="M13 15l2-2.5 2 2.5"></path>
+      <path d="M7 8l3 4 3-4" opacity="0.55"></path>
+      <path d="M13 8l2 2.5 2-2.5" opacity="0.55"></path>
+      <path d="M4 19h5m2 0h9" opacity="0.55"></path>
+    </svg>
+  );
+}
+
+export function DarkSunIcon(props: ComponentProps<'svg'>): JSX.Element {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      viewBox="0 0 24 24"
+      {...props}
+    >
+      {/* A sun with its face filled in and only the rim showing: noon
+          with the light taken out of it */}
+      <circle cx="12" cy="12" r="4.5" fill="currentColor" stroke="none"></circle>
+      <circle cx="12" cy="12" r="7.5" opacity="0.5"></circle>
+      <path d="M12 1v2M12 21v2M3.5 3.5l1.4 1.4M19.1 19.1l1.4 1.4M1 12h2M21 12h2M3.5 20.5l1.4-1.4M19.1 4.9l1.4-1.4"></path>
+    </svg>
+  );
+}
+
+export function FogbowIcon(props: ComponentProps<'svg'>): JSX.Element {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      viewBox="0 0 24 24"
+      {...props}
+    >
+      {/* The rainbow's arc drawn faint, standing in the bars of fog it
+          forms in: the same shape with the colour taken out */}
+      <path d="M4 17a8 8 0 0 1 16 0" opacity="0.75"></path>
+      <path d="M7.5 17a4.5 4.5 0 0 1 9 0" opacity="0.4"></path>
+      <path d="M2 20h6M11 20h3M17 20h5"></path>
+    </svg>
+  );
+}

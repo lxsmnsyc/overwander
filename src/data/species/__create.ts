@@ -30,6 +30,13 @@ export interface EvolutionData {
    * (EvolutionMethod.UsedItem / EvolutionMethod.HeldItem)
    */
   item?: Items;
+  /**
+   * The species that has to come the other way
+   * (EvolutionMethod.Trade). Karrablast and Shelmet are the only two
+   * that ask, and they ask for each other; every other trade
+   * evolution is satisfied by any handover at all
+   */
+  partner?: Species;
 }
 
 export interface LearnSetData {

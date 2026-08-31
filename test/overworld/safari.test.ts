@@ -10,6 +10,7 @@ import deriveEncounter, { type Encounter, EncounterType } from '../../src/overwo
 import { EventPriority } from '../../src/core/event-emitter';
 import SafariSession, {
   LEVEL_CATCH_FLOOR,
+  SHADOW_CATCH_FACTOR,
   SafariEvents,
   SafariState,
   ThrowResult,
@@ -72,6 +73,22 @@ describe('safari session', () => {
     calmed.feed(Items.SilverNanabBerry);
     expect(calmed.getCatchChance()).toBeCloseTo(pull(encounter) * 1.5);
     expect(session.getCatchChance()).toBeCloseTo(pull(encounter) * 2 * 1.25);
+  });
+
+  it('leaves half a throw at a shadow', () => {
+    const plain = makeEncounter();
+    const shadow = { ...plain, shadow: true };
+
+    expect(new SafariSession(shadow, rolls([])).getCatchChance()).toBeCloseTo(
+      new SafariSession(plain, rolls([])).getCatchChance() * SHADOW_CATCH_FACTOR,
+    );
+
+    // It multiplies with everything else rather than replacing any of
+    // it, so a better ball still buys exactly what it always bought
+    const thrown = new SafariSession(shadow, rolls([]));
+
+    thrown.chooseBall(Balls.UltraBall);
+    expect(thrown.getCatchChance()).toBeCloseTo(pull(plain) * 2 * SHADOW_CATCH_FACTOR);
   });
 
   it('takes a level as the mainline takes a health bar', () => {

@@ -10,7 +10,9 @@ import ChunkSnapshot, {
   type Spawn,
 } from '../overworld/chunk-snapshot';
 import getWorld from '../overworld/current';
-import deriveEncounter, { type EncounterOptions } from '../overworld/encounter';
+import deriveEncounter, { type EncounterOptions, EncounterType } from '../overworld/encounter';
+import type Weather from '../data/overworld/weather';
+import { DARK_DAY_SHADOW_CHANCE, shadowsWildMeetings } from '../data/overworld/weather';
 import { encounterKey, encounterWindow } from '../overworld/safari';
 import createOverworld from '../overworld/setup';
 import type { Buddy } from '../overworld/core';
@@ -556,6 +558,27 @@ export async function claimPhenomenon(
 }
 
 /**
+ * Whether the sky closed this one's heart.
+ *
+ * Only a wild meeting is ever asked: a raid prize, a hatchling and a
+ * gift arrive under their own rules whatever the sky is doing. The
+ * roll is keyed by the spawn and the player, so it is the same answer
+ * every time this meeting is resolved and a different one for the next
+ * player along
+ */
+function shadowedByTheSky(
+  sky: Weather,
+  type: EncounterType | undefined,
+  spawn: string,
+  uid: string,
+): boolean {
+  if ((type ?? EncounterType.Wild) !== EncounterType.Wild || !shadowsWildMeetings(sky)) {
+    return false;
+  }
+  return new AleaRNG(`${spawn}:${uid}:shadow`).random() < DARK_DAY_SHADOW_CHANCE;
+}
+
+/**
  * Stage a meeting: the per-player derivation is written to
  * encounters/{spawnId}:{uid} on first interaction and returned as-is
  * afterwards, so re-entering a meeting cannot re-roll it into
@@ -591,17 +614,23 @@ export async function startEncounter(
     uid,
     resolved === undefined ? await resolveBuddy(uid) : resolved,
   );
+  // The sky the meeting happened under, read here rather than taken
+  // from the client: the floor it puts under the pokemon's values and
+  // whether it walks out shadowed are both written into the record, so
+  // what the weather was is the server's to say
+  const sky =
+    options.weather ??
+    getWorld().getWeather(snapshot.chunk.x, snapshot.chunk.y, snapshot.weatherWindow);
   const derived = deriveEncounter(snapshot, spawn, uid, {
     ...options,
-    // The sky the meeting happened under, read here rather than taken
-    // from the client: the floor it puts under the pokemon's values is
-    // written into the record, so what the weather was is the server's
-    // to say. After the spread, so a caller that named one keeps it
-    // and one that named nothing is not handed an undefined over the
-    // top of this
-    weather:
-      options.weather ??
-      getWorld().getWeather(snapshot.chunk.x, snapshot.chunk.y, snapshot.weatherWindow),
+    // After the spread, so a caller that named one keeps it and one
+    // that named nothing is not handed an undefined over the top of it
+    weather: sky,
+    // A dark day shadows some of what is met in the wild under it,
+    // rolled per spawn and per player the way the sparkle is. Only the
+    // wild: a raid prize carries its own answer, and a caller that
+    // already said keeps saying
+    shadow: options.shadow ?? shadowedByTheSky(sky, options.type, id, uid),
     shinyBoost: (options.shinyBoost ?? 1) * overworld.checkEncounterShiny(id),
   });
   const record: EncounterRecord = {

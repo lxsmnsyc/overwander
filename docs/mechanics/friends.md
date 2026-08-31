@@ -63,7 +63,8 @@ One offer per direction at a time. Either side may end it: the proposer takes it
 back, the receiver declines, and the pokemon and the gold go home either way.
 
 A traded pokemon arrives with its **friendship reset** and counts as having
-changed hands, which is what opens a [trade evolution](raising.md#evolution).
+changed hands as what it was, which is what opens a
+[trade evolution](raising.md#evolution) for that stage and no other.
 Neither side may trade a pokemon that is fighting, waiting in a lobby, still an
 egg, locked, or walking beside them as a buddy.
 

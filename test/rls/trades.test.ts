@@ -3,6 +3,7 @@ import { type Actor, actor, caughtRow, clearAll, sql } from './clients';
 import { acceptTrade, cancelTrade, declineTrade, offerTrade } from '../../src/server/trades';
 import { TradeStatus } from '../../src/auth/trade-record';
 import { BASE_FRIENDSHIP } from '../../src/data/constants/friendship';
+import { Species } from '../../src/data/ids/species';
 
 // The server pool reads this lazily at its first query, safely after
 // module load
@@ -167,6 +168,36 @@ describe('accepting', () => {
 
     expect(Number(trade[0].status)).toBe(TradeStatus.Accepted);
     expect(trade[0].given_caught).toBe('catch-b');
+  });
+
+  it('records what each side was and what came the other way', async () => {
+    // A trade evolution asks two things of a handover: what the
+    // pokemon was at the time, and what it was swapped for. Karrablast
+    // and Shelmet are the only pair that ask the second, and neither
+    // is registered yet, so the columns are what the test can reach
+    await sql`update caught set species = ${Species.Machop} where id = 'catch-a'`;
+    await sql`update caught set species = ${Species.Abra} where id = 'catch-b'`;
+
+    const id = await offerTrade(
+      proposer.uid,
+      { friend: receiver.uid, caught: 'catch-a', asked: 'catch-b', gold: 0 },
+      NOW,
+      OFFSET,
+    );
+
+    expect(await acceptTrade(receiver.uid, String(id), '', NOW + 1000, -OFFSET)).toBe(true);
+
+    const rows = await sql`
+      select id, traded_as, traded_for from caught where id in ('catch-a', 'catch-b')
+    `;
+    const handover = new Map(rows.map((row) => [String(row.id), row]));
+
+    // Each side reads its own species and the other's, which is what
+    // lets one of them refuse an evolution the other opened
+    expect(Number(handover.get('catch-a')?.traded_as)).toBe(Species.Machop);
+    expect(Number(handover.get('catch-a')?.traded_for)).toBe(Species.Abra);
+    expect(Number(handover.get('catch-b')?.traded_as)).toBe(Species.Abra);
+    expect(Number(handover.get('catch-b')?.traded_for)).toBe(Species.Machop);
   });
 
   it('answers an open ask with the receiver_s pick, and refuses a stranger_s answer', async () => {

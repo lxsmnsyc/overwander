@@ -146,3 +146,71 @@ export function paintPurifiedAura(
   }
   context.restore();
 }
+
+/**
+ * How far past the pool an aura reaches, in the pool's own radii. The
+ * wisps climb `RISE` and drift and swell on the way, which is what
+ * decides how much bigger the picture is than the patch
+ */
+const AURA_ACROSS = 1.6;
+const AURA_UP = RISE + 0.5;
+const AURA_DOWN = 1.2;
+
+/** The largest an aura's picture is painted, in either direction */
+const AURA_LIMIT = 256;
+
+/** An aura's picture, and where the pokemon stands inside it */
+export interface AuraPicture {
+  canvas: HTMLCanvasElement;
+  originX: number;
+  originY: number;
+}
+
+const painted = { canvas: null as HTMLCanvasElement | null, key: '' };
+
+/**
+ * The picture of one aura at this moment, painted at the size it will
+ * be drawn so it is stamped one for one.
+ *
+ * One picture, repainted: a field draws these one at a time, and a
+ * kept copy is wisps out of step with the fight they belong to
+ */
+export function paintAura(
+  kind: 'shadow' | 'purified',
+  radiusX: number,
+  radiusY: number,
+  elapsed: number,
+  seed: number,
+): AuraPicture | null {
+  if (!(radiusX > 0) || !(radiusY > 0)) {
+    return null;
+  }
+  const originX = Math.min(AURA_LIMIT / 2, Math.ceil(radiusX * AURA_ACROSS));
+  const originY = Math.min(AURA_LIMIT, Math.ceil(radiusX * AURA_UP));
+  const across = originX * 2;
+  const down = originY + Math.ceil(radiusY * AURA_DOWN);
+  const key = `${kind}:${Math.round(elapsed)}:${Math.round(seed)}:${across}:${down}`;
+
+  if (painted.canvas != null && painted.key === key) {
+    return { canvas: painted.canvas, originX, originY };
+  }
+  const canvas = painted.canvas ?? document.createElement('canvas');
+
+  canvas.width = across;
+  canvas.height = down;
+
+  const context = canvas.getContext('2d');
+
+  if (context == null) {
+    return null;
+  }
+  context.clearRect(0, 0, across, down);
+  if (kind === 'shadow') {
+    paintShadowAura(context, originX, originY, radiusX, radiusY, elapsed, seed);
+  } else {
+    paintPurifiedAura(context, originX, originY, radiusX, radiusY, elapsed, seed);
+  }
+  painted.canvas = canvas;
+  painted.key = key;
+  return { canvas, originX, originY };
+}

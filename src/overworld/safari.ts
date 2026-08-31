@@ -216,6 +216,16 @@ const THROW_DRIFT = 1.01;
 const CATCH_RATE_SCALE = 255;
 
 /**
+ * What is left of a throw at a shadow.
+ *
+ * A closed heart does not want to be held. It is a flat half rather
+ * than a curve because the reason is not about the pokemon's size or
+ * its level: the same thing is wrong with every one of them, and it is
+ * the one thing purifying puts right
+ */
+export const SHADOW_CATCH_FACTOR = 0.5;
+
+/**
  * How much of a ball's pull is left at the level cap. The mainline
  * reads how hurt the target is, which nothing here has — nothing is
  * fought before it is caught — so level stands in for how much pokemon
@@ -412,8 +422,8 @@ export default class SafariSession<
   /**
    * The chance the next throw lands: species catch rate, ball
    * modifier, accumulated feeding bonus, how grown the thing standing
-   * there is, the family day's own bonus, and how many balls it has
-   * already shaken off
+   * there is, the family day's own bonus, whether its heart is closed,
+   * and how many balls it has already shaken off
    */
   getCatchChance(): number {
     // A distributed pokemon is a gift, and a gift that could break out
@@ -426,13 +436,16 @@ export default class SafariSession<
     const rate = getSpeciesData(this.encounter.species).catchRate;
     const day = this.isFeatured() ? SPECIES_DAY_CATCH_BOOST : 1;
     const grown = levelCatchFactor(this.encounter.level);
+    // A shadow resists whatever it is and whoever is throwing
+    const closed = this.encounter.shadow ? SHADOW_CATCH_FACTOR : 1;
     // Every ball already thrown at it leaves it a little readier for
     // the next one
     const wearing = THROW_DRIFT ** this.throws;
 
     return Math.min(
       1,
-      (rate * this.getBallModifier() * this.catchBonus * day * grown * wearing) / CATCH_RATE_SCALE,
+      (rate * this.getBallModifier() * this.catchBonus * day * grown * closed * wearing) /
+        CATCH_RATE_SCALE,
     );
   }
 

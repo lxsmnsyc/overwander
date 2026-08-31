@@ -8,7 +8,6 @@ import { watchProfile } from '../../../auth/profile';
 import { type EggWalk, walk } from '../../../auth/eggs';
 import type { EncounterRecord } from '../../../auth/encounter-record';
 import { getLocalOffset } from '../../../auth/local-time';
-import { savePosition } from '../../../auth/positions';
 import {
   RaidKind,
   type RaidView,
@@ -156,6 +155,13 @@ export default function OverworldBoard(props: {
    */
   const cell = (): number => cellY() * CHUNK_CELLS + cellX();
   const [session, setSession] = createSignal<SafariSession<EncounterRecord> | null>(null);
+  /**
+   * Whether the meeting on screen is one that happens once: a
+   * phenomenon's pokemon, or one won and waiting. Both are spent as
+   * they are opened, so an overlay press must not be able to throw
+   * one away
+   */
+  const [once, setOnce] = createSignal(false);
   const game = useGame();
   const toast = useToast();
   /**
@@ -830,6 +836,12 @@ export default function OverworldBoard(props: {
    * to the egg — so the steps go first and the position follows
    */
   const settle = (chunk: number, row: number, x: number, y: number): void => {
+    // A screen that has stood down writes nothing. Its coordinates are
+    // where the player used to be, and putting them back would take
+    // the walk off whichever screen has it
+    if (game.elsewhere() != null) {
+      return;
+    }
     reportSteps(true);
     // What the rest of the game is told, so the world map's camera is
     // looking at the chunk the player is actually in — and so a
@@ -842,9 +854,36 @@ export default function OverworldBoard(props: {
       cellY: y,
       movedAt: Date.now(),
     });
-    savePosition(chunk, row, x, y).catch((caught: unknown) => {
-      remark(caught instanceof Error ? caught.message : String(caught), 'ember');
-    });
+    game.saveWalk(chunk, row, x, y);
+  };
+
+  /**
+   * Standing down ends the walk here, so the paces walked since the
+   * last report go now. Nothing else will send them: the settle they
+   * would have ridden is refused for as long as another screen has the
+   * walk
+   */
+  createEffect(() => {
+    if (game.elsewhere() != null) {
+      reportSteps(true);
+    }
+  });
+
+  /**
+   * Take the walk back: stand where the other screen left the player
+   * and write it down, which is what stands that screen down in turn
+   */
+  const resume = (): void => {
+    const at = game.elsewhere();
+
+    if (at == null) {
+      return;
+    }
+    setChunkX(at.chunkX);
+    setChunkY(at.chunkY);
+    setCellX(at.cellX);
+    setCellY(at.cellY);
+    game.takeWalk();
   };
 
   // ...and remembered as they walk. A step is a keypress, so the
@@ -878,6 +917,11 @@ export default function OverworldBoard(props: {
   });
 
   const move = (deltaX: number, deltaY: number): void => {
+    // The walk is on another screen: this one is a picture of where
+    // the player was until somebody asks for it back
+    if (game.elsewhere() != null) {
+      return;
+    }
     // A step is a reason to wonder what is around, at most every few
     // seconds of walking
     askForWindow();
@@ -927,14 +971,23 @@ export default function OverworldBoard(props: {
 
   /**
    * Meet a spawn (or a grotto's pokemon): the encounter is derived
-   * once per player and the safari session opens over it
+   * once per player and the safari session opens over it.
+   *
+   * `once` is for the meetings there is no walking back to: the cell
+   * is spent as it is claimed, so the dialog is closed by its own
+   * buttons rather than by a press on the world behind it
    */
-  const meet = async (user: PlayerIdentity, encounter: EncounterRecord): Promise<string | null> => {
+  const meet = async (
+    user: PlayerIdentity,
+    encounter: EncounterRecord,
+    metOnce = false,
+  ): Promise<string | null> => {
     if (await isEncounterRetired(user.uid, encounter)) {
       // Either it ran off or it is already in the bag; from the cell's
       // side those are the same thing — nobody is standing there
       return 'Nothing here. This one is done with you.';
     }
+    setOnce(metOnce);
     setSession(await createSafariSession(user, encounter));
     return null;
   };
@@ -1120,7 +1173,7 @@ export default function OverworldBoard(props: {
         // one if the hour turned over between the two calls
         return 'An egg, tucked away in the grotto. Walk it warm.';
       }
-      return meet(user, claim.encounter);
+      return meet(user, claim.encounter, true);
     }
     if (landmark === Landmark.Portal) {
       // Where it goes is derived from the chunk it stands in, so the
@@ -1164,6 +1217,7 @@ export default function OverworldBoard(props: {
       return;
     }
     game.setEncounter(null);
+    setOnce(true);
     createSafariSession(user, waiting)
       .then(setSession)
       .catch((caught: unknown) => {
@@ -1623,12 +1677,31 @@ export default function OverworldBoard(props: {
         )}
       </Show>
 
+      {/* The walk went to another screen, so this one is a picture of
+          where the player used to be. It is drawn over the board
+          rather than in place of it: what is underneath is still worth
+          looking at, and one press brings the walk back here */}
+      <Show when={game.elsewhere()}>
+        {(at) => (
+          <div
+            class="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3
+              bg-paper/80 p-4 text-center backdrop-blur-sm"
+          >
+            <Note>
+              This walk is being played on another screen, in chunk {at().chunkX}, {at().chunkY}.
+            </Note>
+            <Button onClick={resume}>Walk here instead</Button>
+          </div>
+        )}
+      </Show>
+
       <Show when={auth.user()}>
         {(user) => (
           <>
             <SafariDialog
               user={user()}
               session={session()}
+              insistent={once()}
               onCaught={(catchId) => {
                 // The encounter is finished the moment it is caught, so
                 // the safari closes and the sheet for what was caught

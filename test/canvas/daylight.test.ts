@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { getAmbient, getCast, getSun, latitudeOf } from '../../src/canvas/daylight';
+import { GROUND_DEPTH } from '../../src/canvas/tilt';
 import { WORLD_MAX } from '../../src/overworld/world';
 
 /**
@@ -87,16 +88,26 @@ describe('daylight', () => {
     const quarter = getCast(noon, Math.PI / 2);
 
     // A quarter turn of the board swings the shadow a quarter of the
-    // way round with it: what was cast east now lies north, flattened
+    // way round with it: what was cast east now lies north, laid back
     // by the same amount the ground is
-    expect(quarter.dx).toBeCloseTo(-still.dy / 0.45, 6);
-    expect(quarter.dy).toBeCloseTo(still.dx * 0.45, 6);
+    expect(quarter.dx).toBeCloseTo(-still.dy / GROUND_DEPTH, 6);
+    expect(quarter.dy).toBeCloseTo(still.dx * GROUND_DEPTH, 6);
 
     // Half a turn puts it the other way about entirely
     const half = getCast(noon, Math.PI);
 
     expect(half.dx).toBeCloseTo(-still.dx, 6);
     expect(half.dy).toBeCloseTo(-still.dy, 6);
+
+    // And it lies away from the sun rather than toward it. At the top
+    // of the day the sun is behind the camera, so what it throws goes
+    // up the picture — the board counts down, so that is a negative
+    const midday = getCast(at(12));
+
+    expect(midday.dy).toBeLessThan(0);
+    // Dawn is in the east and its shadows lie west, dusk the other way
+    expect(getCast(at(7)).dx).toBeLessThan(0);
+    expect(getCast(at(17)).dx).toBeGreaterThan(0);
 
     // What the sun is doing has not changed: only where the ground is
     // facing

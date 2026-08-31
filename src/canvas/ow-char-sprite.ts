@@ -36,6 +36,8 @@ import { type BasicSpriteData, type BasicSpriteImage, asBasicSpriteData } from '
 import { SPRITE_TICK, type SpriteDirection } from './sprite-sheet';
 
 /** The four a character sheet has, in the order sheets lay them out. */
+import type { ShadowPatch, SpriteQuad } from './placement';
+
 const CARDINALS: SpriteDirection[] = ['Down', 'Left', 'Right', 'Up'];
 
 /**
@@ -565,16 +567,15 @@ export default class OWCharSprite {
    * a canvas redrawing on its own schedule should get a gap for a frame
    * rather than an exception
    */
-  draw(
-    context: CanvasRenderingContext2D,
-    x: number,
-    y: number,
-    options: OWCharDrawOptions = {},
-  ): void {
+  /**
+   * Where this frame is cut from and where it lands, for a caller
+   * placing it as a quad rather than drawing it
+   */
+  quadOf(x: number, y: number, options: OWCharDrawOptions = {}): SpriteQuad | null {
     const sheet = this.image;
 
     if (sheet == null || this.frameWidth <= 0 || this.frameHeight <= 0) {
-      return;
+      return null;
     }
 
     // The row is a real row and the frame is a real column of it —
@@ -592,6 +593,57 @@ export default class OWCharSprite {
     // point is the ground the character is standing on
     const above = anchor === 'foot' ? height : height / 2;
     const top = anchor === 'top-left' ? y : y - above;
+
+    return {
+      sheet,
+      source: { x: rect.x, y: rect.y, width: rect.width, height: rect.height },
+      left,
+      top,
+      width,
+      height,
+    };
+  }
+
+  /**
+   * The same frame as it would be drawn facing another way, without
+   * turning the character.
+   *
+   * What a shadow is cut from: the light sees the side of somebody it
+   * is shining on, so a shadow thrown to the east is the character's
+   * eastward pose laid down. Everything is put back before this
+   * returns, walk cycle included — turning a charset restarts its row
+   * so a character plants a foot rather than sliding, and a shadow
+   * asking to borrow a pose must not cost that
+   */
+  facedQuadOf(
+    x: number,
+    y: number,
+    facing: SpriteDirection,
+    options: OWCharDrawOptions = {},
+  ): SpriteQuad | null {
+    const held = { direction: this.direction, row: this.row, position: this.position };
+
+    this.facing = facing;
+
+    const quad = this.quadOf(x, y, options);
+
+    this.direction = held.direction;
+    this.row = held.row;
+    this.position = held.position;
+    return quad;
+  }
+
+  draw(
+    context: CanvasRenderingContext2D,
+    x: number,
+    y: number,
+    options: OWCharDrawOptions = {},
+  ): void {
+    const placed = this.quadOf(x, y, options);
+
+    if (placed == null) {
+      return;
+    }
     const alpha = context.globalAlpha;
     const smoothing = context.imageSmoothingEnabled;
 
@@ -602,7 +654,17 @@ export default class OWCharSprite {
       context.globalAlpha = options.alpha;
     }
 
-    context.drawImage(sheet, rect.x, rect.y, rect.width, rect.height, left, top, width, height);
+    context.drawImage(
+      placed.sheet,
+      placed.source.x,
+      placed.source.y,
+      placed.source.width,
+      placed.source.height,
+      placed.left,
+      placed.top,
+      placed.width,
+      placed.height,
+    );
     context.globalAlpha = alpha;
     context.imageSmoothingEnabled = smoothing;
   }
@@ -616,14 +678,10 @@ export default class OWCharSprite {
    * throwing them. A charset carries no anchors, so the patch is where
    * the feet are by construction — the point `draw` was given
    */
-  drawShadow(
-    context: CanvasRenderingContext2D,
-    x: number,
-    y: number,
-    options: OWCharShadowOptions = {},
-  ): void {
+  /** The patch this character throws, for a caller stamping it */
+  shadowOf(x: number, y: number, options: OWCharShadowOptions = {}): ShadowPatch | null {
     if (this.frameWidth <= 0) {
-      return;
+      return null;
     }
 
     const scale =
@@ -638,22 +696,35 @@ export default class OWCharSprite {
     // on the floor
     const reach = cast == null ? 0 : cast.length * across * 2;
 
-    context.save();
-    context.fillStyle = options.color ?? SHADOW_COLOR;
+    return {
+      x: x + (cast?.dx ?? 0) * reach * 0.5,
+      y: y + (cast?.dy ?? 0) * reach * 0.5,
+      footX: x,
+      footY: y,
+      radiusX: across + reach * 0.5,
+      radiusY: flat,
+      angle: cast == null ? 0 : Math.atan2(cast.dy, cast.dx),
+      colour: options.color ?? SHADOW_COLOR,
+      alpha: cast?.alpha ?? 1,
+    };
+  }
 
-    if (cast?.alpha != null) {
-      context.globalAlpha = cast.alpha;
+  drawShadow(
+    context: CanvasRenderingContext2D,
+    x: number,
+    y: number,
+    options: OWCharShadowOptions = {},
+  ): void {
+    const patch = this.shadowOf(x, y, options);
+
+    if (patch == null) {
+      return;
     }
+    context.save();
+    context.fillStyle = patch.colour;
+    context.globalAlpha = patch.alpha;
     context.beginPath();
-    context.ellipse(
-      x + (cast?.dx ?? 0) * reach * 0.5,
-      y + (cast?.dy ?? 0) * reach * 0.5,
-      across + reach * 0.5,
-      flat,
-      cast == null ? 0 : Math.atan2(cast.dy, cast.dx),
-      0,
-      Math.PI * 2,
-    );
+    context.ellipse(patch.x, patch.y, patch.radiusX, patch.radiusY, patch.angle, 0, Math.PI * 2);
     context.fill();
     context.restore();
   }

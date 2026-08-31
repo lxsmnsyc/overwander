@@ -1,7 +1,6 @@
 import { For, type JSX, type Resource, Show } from 'solid-js';
 import type { Profile } from '../../../auth/profile';
 import { SpriteAnim } from '../../../data/ids/sprite-anims';
-import Npc, { NPC_NAMES } from '../../../data/overworld/npc';
 import { getSpeciesData } from '../../../data/species';
 import PlayerPlate from '../../profile/PlayerPlate';
 import AnimatedSprite from '../../sprites/AnimatedSprite';
@@ -26,10 +25,12 @@ export interface VerdictDialogProps {
   /** The reader, who is called "You" rather than by their nickname */
   player: string;
   /**
-   * Whether a grunt was fought, which is what an unowned side is
-   * called when there was one
+   * Who was fought, where the other side belongs to nobody: a grunt,
+   * a duelling trainer, a gym leader. Null for a fight between
+   * players, and for a replay, which arrives with no overworld behind
+   * it
    */
-  rocket: boolean;
+  opponent: { name: string; sprite: string } | null;
   /** The teams as they were frozen for a raid, for its own summary */
   teams: string[] | null;
   shares: Map<string, number>;
@@ -40,18 +41,29 @@ export interface VerdictDialogProps {
 export default function VerdictDialog(props: VerdictDialogProps): JSX.Element {
   /**
    * What a side's header calls its owner. The reader is "You"; a side
-   * nobody owns is the grunt where a grunt was fought, and otherwise
-   * whatever led it out
+   * nobody owns is whoever staged it, and otherwise whatever led it
+   * out
    */
   const sideName = (side: SideSummary): string => {
     if (side.player === '') {
-      return props.rocket ? NPC_NAMES[Npc.RocketGrunt] : getSpeciesData(side.lead).name;
+      return props.opponent?.name ?? getSpeciesData(side.lead).name;
     }
     if (side.player === props.player) {
       return 'You';
     }
     return props.names()?.get(side.player)?.nickname ?? 'A trainer';
   };
+
+  /**
+   * The face beside that name. A side nobody owns has no profile to
+   * read one from, so the character they were standing in out in the
+   * world is what it wears: without it every trainer in the game
+   * shared the one the game starts everybody as
+   */
+  const sideSprite = (side: SideSummary): string | null =>
+    side.player === ''
+      ? (props.opponent?.sprite ?? null)
+      : (props.names()?.get(side.player)?.sprite ?? null);
 
   return (
     <Show when={props.verdict()}>
@@ -81,10 +93,7 @@ export default function VerdictDialog(props: VerdictDialogProps): JSX.Element {
                 {(side) => (
                   <section class="flex flex-col gap-1">
                     <div class="flex items-center justify-between gap-4">
-                      <PlayerPlate
-                        name={sideName(side)}
-                        sprite={props.names()?.get(side.player)?.sprite ?? null}
-                      />
+                      <PlayerPlate name={sideName(side)} sprite={sideSprite(side)} />
                       <span class="text-sm text-muted">
                         {Math.round(side.dealt).toLocaleString()} damage
                       </span>

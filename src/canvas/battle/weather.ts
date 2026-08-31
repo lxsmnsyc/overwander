@@ -1,4 +1,6 @@
 import { Weathers } from '../../data/ids/status';
+import type QuadBatch from '../gl/quad-batch';
+import type { QuadPoint } from '../gl/quad-batch';
 import { fade, noise } from './moves/__paint';
 
 /**
@@ -158,4 +160,174 @@ export default function paintWeather(
       break;
   }
   context.restore();
+}
+
+/** How large the two baked shapes are kept, in their own pixels */
+const STAMP = 64;
+
+const stamps = new Map<'disc' | 'glow', HTMLCanvasElement>();
+
+/**
+ * A white shape to be tinted: a filled circle for a flake, and a
+ * radial fading to nothing for the sun's glow. Both are drawn once
+ */
+function stamp(kind: 'disc' | 'glow'): HTMLCanvasElement | null {
+  const held = stamps.get(kind);
+
+  if (held != null) {
+    return held;
+  }
+  const made = document.createElement('canvas');
+
+  made.width = STAMP;
+  made.height = STAMP;
+
+  const into = made.getContext('2d');
+
+  if (into == null) {
+    return null;
+  }
+  const half = STAMP / 2;
+
+  if (kind === 'disc') {
+    into.fillStyle = '#ffffff';
+    into.beginPath();
+    into.arc(half, half, half - 1, 0, Math.PI * 2);
+    into.fill();
+  } else {
+    const glow = into.createRadialGradient(half, half, 0, half, half, half);
+
+    glow.addColorStop(0, '#ffffff');
+    glow.addColorStop(1, '#ffffff00');
+    into.fillStyle = glow;
+    into.fillRect(0, 0, STAMP, STAMP);
+  }
+  stamps.set(kind, made);
+  return made;
+}
+
+/** The four corners of a box, for the batch */
+function box(x: number, y: number, across: number, down: number): QuadPoint[] {
+  return [
+    { x, y },
+    { x: x + across, y },
+    { x: x + across, y: y + down },
+    { x, y: y + down },
+  ];
+}
+
+/** One tinted stamp, centred on a point */
+function blot(
+  batch: QuadBatch,
+  kind: 'disc' | 'glow',
+  x: number,
+  y: number,
+  radius: number,
+  colour: string,
+): void {
+  const sheet = stamp(kind);
+
+  if (sheet == null) {
+    return;
+  }
+  batch.quad(
+    sheet,
+    { x: 0, y: 0, width: STAMP, height: STAMP },
+    box(x - radius, y - radius, radius * 2, radius * 2),
+    1,
+    colour,
+    'smooth',
+  );
+}
+
+/**
+ * The same sky, written into a batch rather than painted. Answers
+ * whether it wrote anything
+ */
+export function batchWeather(
+  batch: QuadBatch,
+  weather: Weathers,
+  sky: Sky,
+  clock: number,
+): boolean {
+  const heavy = weather === Weathers.HeavyRain;
+
+  if (weather === Weathers.Rain || heavy) {
+    const drops = heavy ? DROPS * 1.6 : DROPS;
+    const colour = fade('#2980ef', heavy ? 0.5 : 0.35);
+
+    for (let drop = 0; drop < drops; drop += 1) {
+      const along = falling(drop, clock, FALL);
+      const x = noise(2, drop) * sky.width + along * sky.width * 0.1;
+      const y = along * sky.height;
+
+      batch.line(colour, { x, y }, { x: x - sky.width * 0.02, y: y + sky.height * 0.08 }, 1);
+    }
+    return true;
+  }
+
+  const icy = weather === Weathers.Hail;
+
+  if (weather === Weathers.Snow || icy) {
+    const colour = fade(icy ? '#3dcef3' : '#e6ecf5', 0.65);
+
+    for (let flake = 0; flake < DROPS; flake += 1) {
+      const along = falling(flake, clock, FALL * 2.2);
+      const drift = Math.sin(clock / 700 + flake) * sky.width * 0.02;
+      const size = icy ? 1.6 : 1.2 + noise(3, flake);
+
+      blot(batch, 'disc', noise(4, flake) * sky.width + drift, along * sky.height, size, colour);
+    }
+    return true;
+  }
+
+  if (weather === Weathers.Sandstorm) {
+    batch.solid(fade('#c4a24c', 0.4), box(0, 0, sky.width, sky.height));
+
+    const colour = fade('#915121', 0.55);
+
+    for (let grain = 0; grain < DROPS * 2; grain += 1) {
+      const along = (((clock / 600 + noise(5, grain)) % 1) + 1) % 1;
+
+      batch.solid(colour, box(along * sky.width, noise(6, grain) * sky.height, 6, 1));
+    }
+    return true;
+  }
+
+  const harsh = weather === Weathers.ExtremeSunny;
+
+  if (weather === Weathers.Sunny || harsh) {
+    const pulse = 0.5 + Math.sin(clock / 1400) * 0.5;
+    // The painted glow is a radial from the top middle of the field
+    // reaching a little past its bottom, which is the stamp centred on
+    // that point at that radius
+    const reach = sky.height * 1.2;
+
+    blot(
+      batch,
+      'glow',
+      sky.width * 0.5,
+      0,
+      reach,
+      fade('#fac000', (harsh ? 0.3 : 0.18) + pulse * 0.06),
+    );
+    return true;
+  }
+
+  if (weather === Weathers.Fog) {
+    const colour = fade('#9aa0ad', 0.12);
+
+    for (let band = 0; band < 4; band += 1) {
+      const drift = ((clock / 4000 + band * 0.25) % 1) * sky.width;
+
+      batch.solid(
+        colour,
+        box(drift - sky.width, sky.height * (0.3 + band * 0.15), sky.width * 2, 22),
+      );
+    }
+    return true;
+  }
+  // A clear sky is what the field already is, and nothing in the game
+  // turns the wind on yet
+  return false;
 }

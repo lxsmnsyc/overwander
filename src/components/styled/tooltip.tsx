@@ -1,8 +1,10 @@
-import { type JSX, type ParentProps, Show, createSignal, onCleanup } from 'solid-js';
+import { type JSX, type ParentProps, Show, createEffect, createSignal, onCleanup } from 'solid-js';
 import { Portal } from 'solid-js/web';
 import { Transition } from 'terracotta';
 import closeWhenGone from './gone';
+import { holds } from './hover-card/placing';
 import { CLOSE_DELAY, OPEN_DELAY } from './hover-delay';
+import createLongPress from './long-press';
 import { usePortalHost } from './portal-host';
 import { SHEER } from './transition';
 
@@ -169,6 +171,34 @@ export function TooltipHost(props: TooltipHostProps): JSX.Element {
     }, delay);
   };
 
+  /**
+   * A finger has nowhere to move the card off to, so the next press
+   * somewhere else is what takes it down. Listened for only while the
+   * card is up: a bag of thirty squares is thirty of these
+   */
+  createEffect(() => {
+    if (!wanted()) {
+      return;
+    }
+
+    const away = (event: PointerEvent): void => {
+      if (!holds(host, event.target)) {
+        hide(0);
+      }
+    };
+
+    document.addEventListener('pointerdown', away, true);
+    onCleanup(() => {
+      document.removeEventListener('pointerdown', away, true);
+    });
+  });
+
+  /** The touch's way in: hold to ask, rather than hover to ask */
+  const held = createLongPress(() => {
+    cancel();
+    place();
+  });
+
   // The label goes with what it labels, the same as a hover card does,
   // and a label whose subject has left the page goes at once
   closeWhenGone(
@@ -182,14 +212,30 @@ export function TooltipHost(props: TooltipHostProps): JSX.Element {
   return (
     <span
       ref={host}
-      class={props.class ?? 'inline-flex'}
-      onMouseEnter={show}
-      onMouseLeave={() => {
-        hide();
+      // Nothing to select: a hold on the trigger is asking about it,
+      // and a phone that answers by selecting the word instead has
+      // put a text caret over the card
+      class={`select-none ${props.class ?? 'inline-flex'}`}
+      {...held}
+      onPointerEnter={(event) => {
+        if (event.pointerType !== 'touch') {
+          show();
+        }
+      }}
+      onPointerLeave={(event) => {
+        if (event.pointerType !== 'touch') {
+          hide();
+        }
       }}
       // A keyboard waits for neither: tabbing to something is
-      // deliberate in a way that crossing it with a pointer is not
-      onFocusIn={() => {
+      // deliberate in a way that crossing it with a pointer is not.
+      // Only the keyboard, though: a press focuses what is inside too,
+      // and on a touch screen that press was for the button rather
+      // than for the label over it
+      onFocusIn={(event) => {
+        if (!(event.target instanceof Element) || !event.target.matches(':focus-visible')) {
+          return;
+        }
         cancel();
         place();
       }}

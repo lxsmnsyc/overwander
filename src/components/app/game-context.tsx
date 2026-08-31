@@ -18,7 +18,7 @@ import { claimRocketReward } from '../../auth/rockets';
 import { settleGymChallenge } from '../../auth/gym-seats';
 import type { PositionRecord } from '../../auth/position-record';
 import type { Species } from '../../data/ids/species';
-import { getPosition, savePosition } from '../../auth/positions';
+import { getPosition, savePosition, watchPosition } from '../../auth/positions';
 import { AWARD_NAMES } from '../../data/ids/awards';
 import { getItemData } from '../../data/items';
 import ItemSprite from '../items/ItemSprite';
@@ -105,6 +105,15 @@ export interface ActiveBattle {
    */
   rocket?: string;
   /**
+   * Who the stop staged, for the screens that name the other side:
+   * the summary, the title, the word a win is announced with. A stop
+   * is not only a grunt (a duelling trainer, a gym leader, one of the
+   * Elite Four, the Champion), and it is the overworld rather than the
+   * battle that knows which, so the name and the face travel with the
+   * fight rather than being worked out again from a stop id
+   */
+  opponent?: { name: string; sprite: string };
+  /**
    * The gym seat the battle was a challenge for. A win moves the
    * seat, so the settlement is the seat's rather than a purse's
    */
@@ -149,6 +158,29 @@ export interface GameState {
    */
   position: Accessor<PositionRecord | null>;
   setPosition: Setter<PositionRecord | null>;
+  /**
+   * Where the walk went when it went to another screen, or null while
+   * this one still has it.
+   *
+   * A player signed in twice writes one row from two boards. Rather
+   * than let the two drag each other back and forth, the screen that
+   * finds the row standing in a chunk it is not in stands down: it
+   * stops walking and says so, and stays that way until somebody takes
+   * the walk back here
+   */
+  elsewhere: Accessor<PositionRecord | null>;
+  /**
+   * Take the walk back onto this screen. Writes where it stands, which
+   * is what stands the other screen down in turn
+   */
+  takeWalk: () => void;
+  /**
+   * Write down where the player is standing. It goes through here
+   * rather than straight to the store so the stamp is kept: a device
+   * that could not recognise its own writes coming back around the
+   * subscription would stand itself down mid-walk
+   */
+  saveWalk: (chunkX: number, chunkY: number, cellX: number, cellY: number) => void;
   /**
    * Where that is, in words: the country and the chunk's coordinates.
    *
@@ -293,6 +325,35 @@ export default function GameProvider(props: ParentProps): JSX.Element {
   const toast = useToast();
   const [dialog, setDialog] = createSignal(GameDialog.None);
   const [position, setPosition] = createSignal<PositionRecord | null>(null);
+  const [elsewhere, setElsewhere] = createSignal<PositionRecord | null>(null);
+  /**
+   * The newest stamp this screen wrote. Every write comes back around
+   * the subscription, and one mistaken for somebody else's would stand
+   * this screen down in the middle of its own walk
+   */
+  let wroteAt = 0;
+
+  const saveWalk = (chunkX: number, chunkY: number, cellX: number, cellY: number): void => {
+    savePosition(chunkX, chunkY, cellX, cellY)
+      .then((stamp) => {
+        wroteAt = Math.max(wroteAt, stamp);
+      })
+      .catch(() => {
+        // A position that did not save is a walk that will save it,
+        // and there is nothing here worth interrupting a walk for
+      });
+  };
+
+  const takeWalk = (): void => {
+    const at = elsewhere();
+
+    if (at == null) {
+      return;
+    }
+    setElsewhere(null);
+    setPosition(at);
+    saveWalk(at.chunkX, at.chunkY, at.cellX, at.cellY);
+  };
   const [place, setPlace] = createSignal<string | null>(null);
   const [weather, setWeather] = createSignal<Weather | null>(null);
 
@@ -339,10 +400,7 @@ export default function GameProvider(props: ParentProps): JSX.Element {
       });
 
       if (store) {
-        savePosition(at.chunkX, at.chunkY, at.cellX, at.cellY).catch(() => {
-          // A first position that did not save is a walk that will
-          // save it: nothing here is worth interrupting a sign-in for
-        });
+        saveWalk(at.chunkX, at.chunkY, at.cellX, at.cellY);
       }
     };
 
@@ -365,6 +423,45 @@ export default function GameProvider(props: ParentProps): JSX.Element {
     onCleanup(() => {
       cancelled = true;
     });
+  });
+
+  /**
+   * And followed after that, for the one thing a second screen can do
+   * to this one.
+   *
+   * Only a chunk counts. Two screens standing in the same chunk write
+   * cells over each other and neither view moves, which is untidy and
+   * harmless; a chunk written from somewhere else is a walk that has
+   * gone on without this screen, and carrying on here would be two
+   * boards pulling one player apart.
+   *
+   * It sticks once it is set. A write of this screen's own still in
+   * flight when the news arrives would otherwise land, look newer, and
+   * quietly start the walk up again under a player who never asked for
+   * it back
+   */
+  createEffect(() => {
+    const user = auth.user();
+
+    if (user == null) {
+      return;
+    }
+
+    const stop = watchPosition(user.uid, (record) => {
+      const here = position();
+
+      // A row nobody has written yet, this screen's own coming back
+      // around, or news that arrived before there was anything to
+      // compare it against
+      if (record == null || record.movedAt <= wroteAt || here == null || elsewhere() != null) {
+        return;
+      }
+      if (record.chunkX !== here.chunkX || record.chunkY !== here.chunkY) {
+        setElsewhere(record);
+      }
+    });
+
+    onCleanup(stop);
   });
   const [sheet, setSheet] = createSignal<OpenSheet | null>(null);
   const [listing, setListing] = createSignal<AuctionSubject | null>(null);
@@ -527,6 +624,9 @@ export default function GameProvider(props: ParentProps): JSX.Element {
         setDialog,
         position,
         setPosition,
+        elsewhere,
+        takeWalk,
+        saveWalk,
         place,
         weather,
         setWeather,

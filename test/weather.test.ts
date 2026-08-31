@@ -3,25 +3,34 @@ import Biome from '../src/data/ids/biome';
 import Weather, {
   BATTLE_WEATHER,
   BIOME_WEATHER,
+  FATA_MORGANA_HIDDEN_BOOST,
+  METEOR_SHOWER_SHINY_BOOST,
   WEATHER_DESCRIPTIONS,
   WEATHER_MIN_IV,
   WEATHER_NAMES,
   WEATHER_TYPES,
   classifyWeather,
+  favorsEverything,
+  hiddenAbilityBoostOf,
   isBoostingWeather,
+  isWeatherFavored,
+  shadowsWildMeetings,
+  shinyBoostOf,
+  teachesEggMove,
   toBattleWeather,
 } from '../src/data/overworld/weather';
 import World from '../src/overworld/world';
 import ChunkSnapshot from '../src/overworld/chunk-snapshot';
 import deriveEncounter, { EncounterType, RAID_FAMILY_DAY_MIN_IV } from '../src/overworld/encounter';
 import { Species } from '../src/data/ids/species';
+import type { Moves } from '../src/data/ids/moves';
 import { TYPE_NAMES, Types } from '../src/data/constants/types';
 import { MAX_IV, STAT_ORDER, getIV } from '../src/data/constants/stats';
 import registerGameData from '../src/data';
 import { BattleModes } from '../src/battle/core';
 import { Weathers } from '../src/data/ids/status';
 import { createTrainerBattle } from '../src/overworld/rocket-battle';
-import { getSpeciesData } from '../src/data/species';
+import { getEggMoves, getSpeciesData } from '../src/data/species';
 
 /**
  * The sky is derived rather than stored, so what is worth testing is
@@ -75,6 +84,27 @@ describe('classifying a sky', () => {
     expect(classifyWeather(Biome.Glacier, 0.9, 0.9)).toBe(Weather.Aurora);
     // A reading short of the corner is only a storm
     expect(classifyWeather(Biome.Glacier, 0.55, 0.5)).toBe(Weather.Blizzard);
+  });
+
+  it('keeps the rarest sky in the corner of the corner', () => {
+    // A reading that would be any other country's showpiece is not
+    // enough for this one
+    expect(classifyWeather(Biome.Desert, 0.95, 0.95)).toBe(Weather.MeteorShower);
+    expect(classifyWeather(Biome.Desert, 0.65, 0.65)).toBe(Weather.Thunderstorm);
+  });
+
+  it('lets the meteor shower fall over every country but Beyond', () => {
+    for (const [key, bands] of Object.entries(BIOME_WEATHER)) {
+      // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+      const biome = Number(key) as Biome;
+
+      expect(bands.wildest).toBe(biome === Biome.Beyond ? null : Weather.MeteorShower);
+      expect(bands.stillest).toBe(biome === Biome.Beyond ? null : Weather.FataMorgana);
+      expect(bands.bleakest).toBe(biome === Biome.Beyond ? null : Weather.DarkDay);
+    }
+    // Its own showpiece still holds the band below it
+    expect(classifyWeather(Biome.Glacier, 0.95, 0.95)).toBe(Weather.MeteorShower);
+    expect(classifyWeather(Biome.Glacier, 0.7, 0.7)).toBe(Weather.Aurora);
   });
 
   it('leaves Beyond with no sky at all', () => {
@@ -254,6 +284,72 @@ describe('what weather is worth', () => {
     expect(prize(Weather.DustHaze)).toBe(RAID_FAMILY_DAY_MIN_IV + WEATHER_MIN_IV);
   });
 
+  it('hands a fogbow meeting a move off its line', () => {
+    expect(teachesEggMove(Weather.Fogbow)).toBe(true);
+    for (const sky of [Weather.MeteorShower, Weather.FataMorgana, Weather.DarkDay, Weather.Mist]) {
+      expect(teachesEggMove(sky)).toBe(false);
+    }
+
+    // Bulbasaur's line inherits; the moves it walks out with under a
+    // fogbow are not the ones it walks out with under anything else
+    const met = (weather: Weather | undefined): Moves[] =>
+      deriveEncounter(snapshot, [Species.Bulbasaur, 0, 12_345], 'trainer-red', {
+        type: EncounterType.Wild,
+        weather,
+      }).moves;
+    const inherited = met(Weather.Fogbow);
+
+    expect(inherited).not.toEqual(met(Weather.Clear));
+    expect(new Set(getEggMoves(Species.Bulbasaur)).has(inherited[0])).toBe(true);
+
+    // A line that inherits nothing is handed nothing
+    expect(getEggMoves(Species.Butterfree)).toEqual([]);
+    expect(
+      deriveEncounter(snapshot, [Species.Butterfree, 0, 12_345], 'trainer-red', {
+        type: EncounterType.Wild,
+        weather: Weather.Fogbow,
+      }).moves,
+    ).toEqual(
+      deriveEncounter(snapshot, [Species.Butterfree, 0, 12_345], 'trainer-red', {
+        type: EncounterType.Wild,
+        weather: Weather.Clear,
+      }).moves,
+    );
+  });
+
+  it('puts the floor under anything at all met under a meteor shower', () => {
+    // Rain is worth nothing to a rat and the rarest sky is worth the
+    // same to everything, which is the whole of what makes it rare
+    expect(valuesOf(Weather.Rain)).toEqual([0, 0, 0, 0, 0, 0]);
+    expect(valuesOf(Weather.MeteorShower)).toEqual(STAT_ORDER.map(() => WEATHER_MIN_IV));
+  });
+
+  it('doubles the odds of a shiny under a meteor shower', () => {
+    // Counted rather than sampled. A trait value's low half is what
+    // decides the sparkle, so walking all 65536 of them is the whole
+    // population rather than a sample of it: the count is exact, and
+    // the two skies over the same values are the multiplier itself
+    const sparkles = (weather: Weather | undefined): number => {
+      let found = 0;
+
+      for (let trait = 0; trait < 65_536; trait += 1) {
+        if (
+          deriveEncounter(snapshot, [Species.Rattata, 0, trait], 'trainer-red', {
+            type: EncounterType.Wild,
+            weather,
+          }).shiny
+        ) {
+          found += 1;
+        }
+      }
+      return found;
+    };
+    const plain = sparkles(Weather.Clear);
+
+    expect(plain).toBeGreaterThan(0);
+    expect(sparkles(Weather.MeteorShower)).toBe(plain * METEOR_SHOWER_SHINY_BOOST);
+  });
+
   it('never floors a pokemon above what the game can roll', () => {
     expect(Math.min(MAX_IV, RAID_FAMILY_DAY_MIN_IV + WEATHER_MIN_IV)).toBeLessThanOrEqual(MAX_IV);
   });
@@ -320,10 +416,79 @@ describe('the types a sky is kind to', () => {
 
   it('gives every boosting sky at least one type', () => {
     for (const sky of EVERY_SKY) {
-      if (isBoostingWeather(sky)) {
+      // The sky that favours everything carries no list, since a list
+      // of all eighteen is what `favorsEverything` says in a word
+      if (isBoostingWeather(sky) && !favorsEverything(sky)) {
         expect(WEATHER_TYPES[sky].length).toBeGreaterThan(0);
       }
     }
+  });
+
+  it('reaches the fata morgana from the other corner of the field', () => {
+    // The two rarest skies cannot be reached by one reading: one is
+    // both channels as high as they go, the other both as low
+    expect(classifyWeather(Biome.Desert, -0.95, -0.95)).toBe(Weather.FataMorgana);
+    expect(classifyWeather(Biome.Glacier, -0.95, -0.95)).toBe(Weather.FataMorgana);
+    // Short of the corner it is only an ordinary dry, calm sky
+    expect(classifyWeather(Biome.Desert, -0.7, -0.7)).toBe(Weather.Heatwave);
+  });
+
+  it('reaches the dark day from the dry, violent corner', () => {
+    // Three corners, three skies, and no reading can be in two of them
+    expect(classifyWeather(Biome.Grassland, -0.95, 0.95)).toBe(Weather.DarkDay);
+    expect(classifyWeather(Biome.Grassland, 0.95, 0.95)).toBe(Weather.MeteorShower);
+    expect(classifyWeather(Biome.Grassland, -0.95, -0.95)).toBe(Weather.FataMorgana);
+    // Short of the corner it is only a stirred sky
+    expect(classifyWeather(Biome.Grassland, -0.95, 0.5)).toBe(Weather.Breezy);
+  });
+
+  it('reaches the fogbow from the wet, calm corner', () => {
+    // The last of the four corners, and no reading is in two of them
+    expect(classifyWeather(Biome.Grassland, 0.95, -0.95)).toBe(Weather.Fogbow);
+    expect(classifyWeather(Biome.Grassland, 0.95, 0.95)).toBe(Weather.MeteorShower);
+    expect(classifyWeather(Biome.Grassland, -0.95, -0.95)).toBe(Weather.FataMorgana);
+    expect(classifyWeather(Biome.Grassland, -0.95, 0.95)).toBe(Weather.DarkDay);
+    // Short of the corner it is only wet
+    expect(classifyWeather(Biome.Grassland, 0.95, -0.5)).toBe(Weather.Rain);
+  });
+
+  it('shadows what is met under a dark day and nothing else', () => {
+    expect(shadowsWildMeetings(Weather.DarkDay)).toBe(true);
+    for (const sky of [Weather.MeteorShower, Weather.FataMorgana, Weather.Fog, Weather.Clear]) {
+      expect(shadowsWildMeetings(sky)).toBe(false);
+    }
+    // It is the shadow it gives rather than a boost: the other two
+    // keep theirs to themselves
+    expect(shinyBoostOf(Weather.DarkDay)).toBe(1);
+    expect(hiddenAbilityBoostOf(Weather.DarkDay)).toBe(1);
+    // And it is still worth going out in whoever is being raised
+    expect(favorsEverything(Weather.DarkDay)).toBe(true);
+  });
+
+  it('keeps the two rarest skies to their own boost', () => {
+    // Both favour everything; only one touches the coat and only the
+    // other touches what the pokemon was hiding
+    expect(shinyBoostOf(Weather.MeteorShower)).toBe(METEOR_SHOWER_SHINY_BOOST);
+    expect(shinyBoostOf(Weather.FataMorgana)).toBe(1);
+    expect(hiddenAbilityBoostOf(Weather.FataMorgana)).toBe(FATA_MORGANA_HIDDEN_BOOST);
+    expect(hiddenAbilityBoostOf(Weather.MeteorShower)).toBe(1);
+    expect(shinyBoostOf(Weather.Rain)).toBe(1);
+    expect(hiddenAbilityBoostOf(Weather.Rain)).toBe(1);
+  });
+
+  it('makes the rarest sky kind to everything', () => {
+    expect(favorsEverything(Weather.MeteorShower)).toBe(true);
+    expect(favorsEverything(Weather.FataMorgana)).toBe(true);
+    expect(WEATHER_TYPES[Weather.MeteorShower]).toEqual([]);
+
+    // Every type, not merely the ones it used to name
+    for (const key of Object.keys(TYPE_NAMES)) {
+      // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+      expect(isWeatherFavored(Weather.MeteorShower, [Number(key) as Types])).toBe(true);
+    }
+    // No other sky answers that way
+    expect(favorsEverything(Weather.Rain)).toBe(false);
+    expect(isWeatherFavored(Weather.Rain, [Types.Rock])).toBe(false);
   });
 
   it('boosts no type far more often than another', () => {

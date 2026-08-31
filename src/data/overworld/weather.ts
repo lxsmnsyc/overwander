@@ -45,6 +45,9 @@ const enum Weather {
   Rainbow = 20,
   PollenDrift = 21,
   MeteorShower = 22,
+  FataMorgana = 23,
+  DarkDay = 24,
+  Fogbow = 25,
 }
 
 export default Weather;
@@ -73,6 +76,9 @@ export const WEATHER_NAMES: Record<Weather, string> = {
   [Weather.Rainbow]: 'Rainbow',
   [Weather.PollenDrift]: 'Pollen Drift',
   [Weather.MeteorShower]: 'Meteor Shower',
+  [Weather.FataMorgana]: 'Fata Morgana',
+  [Weather.DarkDay]: 'Dark Day',
+  [Weather.Fogbow]: 'Fogbow',
 };
 
 /**
@@ -105,7 +111,14 @@ export const WEATHER_DESCRIPTIONS: Record<Weather, string> = {
   [Weather.Aurora]: 'Light over the far north, and one of the rarest skies there is.',
   [Weather.Rainbow]: 'An arc over open water, and one of the rarest skies there is.',
   [Weather.PollenDrift]: 'Pollen carried through the trees.',
-  [Weather.MeteorShower]: 'Something falling from a long way off, and the rarest sky there is.',
+  [Weather.MeteorShower]:
+    'The rarest sky there is. It favours every type, and doubles the odds of a shiny coat.',
+  [Weather.FataMorgana]:
+    'A mirage on dead-still air. It favours every type, and doubles hidden ability odds.',
+  [Weather.DarkDay]:
+    'Noon gone dark. It favours every type, and a third of what it meets is a shadow.',
+  [Weather.Fogbow]:
+    'A rainbow with the colour gone. Anything met under it knows a move from its line.',
 };
 
 /**
@@ -149,7 +162,12 @@ export const WEATHER_TYPES: Record<Weather, Types[]> = {
   [Weather.Aurora]: [Types.Psychic, Types.Fairy],
   [Weather.Rainbow]: [Types.Fairy, Types.Flying],
   [Weather.PollenDrift]: [Types.Grass, Types.Bug],
-  [Weather.MeteorShower]: [Types.Dragon, Types.Psychic],
+  // Empty because it favours everything: `isWeatherFavored` answers
+  // yes for this sky before it reads the table
+  [Weather.MeteorShower]: [],
+  [Weather.FataMorgana]: [],
+  [Weather.DarkDay]: [],
+  [Weather.Fogbow]: [],
 };
 
 /**
@@ -162,11 +180,102 @@ export const WEATHER_TYPES: Record<Weather, Types[]> = {
  */
 export const WEATHER_MIN_IV = 10;
 
-/** Whether this sky is kind to a pokemon carrying these types */
+/**
+ * Whether this sky is kind to a pokemon carrying these types.
+ *
+ * Every sky picks a type or two. A meteor shower picks none, because it
+ * picks all of them: whatever is standing under it is worth catching,
+ * which is what makes the rarest sky in the game worth walking into
+ * whoever is walking
+ */
 export function isWeatherFavored(weather: Weather, types: Types[]): boolean {
+  if (favorsEverything(weather)) {
+    return true;
+  }
   const favored = new Set(WEATHER_TYPES[weather]);
 
   return types.some((type) => favored.has(type));
+}
+
+/** Whether the sky is kind to everything rather than to a type of it */
+export function favorsEverything(weather: Weather): boolean {
+  return (
+    weather === Weather.MeteorShower ||
+    weather === Weather.FataMorgana ||
+    weather === Weather.DarkDay ||
+    weather === Weather.Fogbow
+  );
+}
+
+/**
+ * What a meteor shower multiplies the shiny odds by.
+ *
+ * It is the one sky that touches the coat rather than the values, and
+ * it is deliberately the smallest boost in the game: the sky is rare
+ * enough on its own that anything larger would make the shiny a
+ * function of standing still and waiting rather than of looking
+ */
+export const METEOR_SHOWER_SHINY_BOOST = 2;
+
+/**
+ * What a fata morgana multiplies the odds of a hidden ability by.
+ *
+ * The meteor shower's opposite number, and deliberately its equal: a
+ * mirage shows what is not there to be seen, so what it is worth is
+ * what the pokemon was hiding rather than what its coat looks like
+ */
+export const FATA_MORGANA_HIDDEN_BOOST = 2;
+
+/**
+ * What this sky multiplies the odds of a shiny coat by.
+ *
+ * Asked as a question rather than read off a table, because only one
+ * sky answers anything but 1 and a table of twenty-three ones would
+ * say less than this does
+ */
+export function shinyBoostOf(weather: Weather): number {
+  return weather === Weather.MeteorShower ? METEOR_SHOWER_SHINY_BOOST : 1;
+}
+
+/**
+ * Whether anything met in the wild under this sky already knows one of
+ * its line's egg moves.
+ *
+ * Breeding is the only other way to come by one, so this is the sky
+ * that hands over what a walk with an egg would have cost. A species
+ * whose line inherits nothing is handed nothing: about half the
+ * families have an egg move at all
+ */
+export function teachesEggMove(weather: Weather): boolean {
+  return weather === Weather.Fogbow;
+}
+
+/**
+ * Whether anything met in the wild under this sky comes out shadowed.
+ *
+ * The one sky that closes a heart rather than opening something. It is
+ * the meeting that is shadowed and not the pokemon: a raid prize, an
+ * egg and a gift arrive under their own rules whatever the sky is
+ * doing
+ */
+export function shadowsWildMeetings(weather: Weather): boolean {
+  return weather === Weather.DarkDay;
+}
+
+/**
+ * How much of what a dark day meets comes out shadowed.
+ *
+ * Not all of it. A sky that closed every heart under it would make the
+ * shadow a property of the window rather than of the meeting, and a
+ * player who found one would be collecting rather than deciding. A
+ * third leaves the sky worth staying out in and every catch under it
+ * still a question
+ */
+export const DARK_DAY_SHADOW_CHANCE = 1 / 3;
+
+/** What this sky multiplies the odds of a hidden ability by */
+export function hiddenAbilityBoostOf(weather: Weather): number {
+  return weather === Weather.FataMorgana ? FATA_MORGANA_HIDDEN_BOOST : 1;
 }
 
 /**
@@ -198,6 +307,41 @@ export interface WeatherBands {
    * its own
    */
   rare: Weather | null;
+  /**
+   * Both channels at their far end: the corner of the corner.
+   *
+   * Every country has the same one, and it is the only sky that is not
+   * a country's own. The band rather than the map is what makes it
+   * rare: it falls anywhere, and almost nowhere
+   */
+  wildest: Weather | null;
+  /**
+   * The opposite corner, both channels as low as they go: air that is
+   * doing nothing at all.
+   *
+   * The field has four corners and this is the second of them worth a
+   * sky. It is as rare as `wildest` by measurement rather than by
+   * arrangement, the noise being near enough symmetric, and the two
+   * cannot both be reached by one reading
+   */
+  stillest: Weather | null;
+  /**
+   * Dry as the still corner and as violent as the wild one: air with
+   * nothing in it but force.
+   *
+   * The third corner worth a sky, and the only one that is not a gift.
+   * What it hands over is a pokemon whose heart has closed, which is
+   * worth having and worth undoing
+   */
+  bleakest: Weather | null;
+  /**
+   * Wet as the wild corner and as calm as the still one: air holding
+   * all it can and nothing moving it.
+   *
+   * The last of the four, and the only one that gives a pokemon
+   * something it was never going to be born with
+   */
+  thickest: Weather | null;
 }
 
 /**
@@ -214,6 +358,16 @@ const WILD = 0.4;
 const RARE = 0.6;
 
 /**
+ * Further out again, and the narrowest band there is.
+ *
+ * It is set against the map rather than picked: the sky above it falls
+ * over every country, so the band is the only thing holding it rare.
+ * At this reading it lands on about one window in thirteen hundred,
+ * which is half as often as the next rarest sky
+ */
+const RAREST = 0.92;
+
+/**
  * Nothing lives in `Beyond` and nothing happens over it, which is why
  * it is the one country with no sky
  */
@@ -224,7 +378,11 @@ export const BIOME_WEATHER: Record<Biome, WeatherBands> = {
     damp: Weather.Mist,
     wet: Weather.Rain,
     storm: Weather.Thunderstorm,
-    rare: Weather.MeteorShower,
+    rare: null,
+    wildest: Weather.MeteorShower,
+    stillest: Weather.FataMorgana,
+    bleakest: Weather.DarkDay,
+    thickest: Weather.Fogbow,
   },
   [Biome.Ocean]: {
     clear: Weather.Clear,
@@ -233,6 +391,10 @@ export const BIOME_WEATHER: Record<Biome, WeatherBands> = {
     wet: Weather.Rain,
     storm: Weather.Thunderstorm,
     rare: Weather.Rainbow,
+    wildest: Weather.MeteorShower,
+    stillest: Weather.FataMorgana,
+    bleakest: Weather.DarkDay,
+    thickest: Weather.Fogbow,
   },
   [Biome.CoralReef]: {
     clear: Weather.Clear,
@@ -241,6 +403,10 @@ export const BIOME_WEATHER: Record<Biome, WeatherBands> = {
     wet: Weather.Rain,
     storm: Weather.Downpour,
     rare: Weather.Rainbow,
+    wildest: Weather.MeteorShower,
+    stillest: Weather.FataMorgana,
+    bleakest: Weather.DarkDay,
+    thickest: Weather.Fogbow,
   },
   [Biome.Beach]: {
     clear: Weather.Clear,
@@ -249,6 +415,10 @@ export const BIOME_WEATHER: Record<Biome, WeatherBands> = {
     wet: Weather.Rain,
     storm: Weather.Thunderstorm,
     rare: Weather.Rainbow,
+    wildest: Weather.MeteorShower,
+    stillest: Weather.FataMorgana,
+    bleakest: Weather.DarkDay,
+    thickest: Weather.Fogbow,
   },
   [Biome.Mangrove]: {
     clear: Weather.Cloudy,
@@ -257,6 +427,10 @@ export const BIOME_WEATHER: Record<Biome, WeatherBands> = {
     wet: Weather.Rain,
     storm: Weather.Downpour,
     rare: null,
+    wildest: Weather.MeteorShower,
+    stillest: Weather.FataMorgana,
+    bleakest: Weather.DarkDay,
+    thickest: Weather.Fogbow,
   },
   [Biome.Swamp]: {
     clear: Weather.Overcast,
@@ -265,6 +439,10 @@ export const BIOME_WEATHER: Record<Biome, WeatherBands> = {
     wet: Weather.Rain,
     storm: Weather.Thunderstorm,
     rare: null,
+    wildest: Weather.MeteorShower,
+    stillest: Weather.FataMorgana,
+    bleakest: Weather.DarkDay,
+    thickest: Weather.Fogbow,
   },
   [Biome.TropicalRainforest]: {
     clear: Weather.Cloudy,
@@ -273,6 +451,10 @@ export const BIOME_WEATHER: Record<Biome, WeatherBands> = {
     wet: Weather.Downpour,
     storm: Weather.Thunderstorm,
     rare: Weather.PollenDrift,
+    wildest: Weather.MeteorShower,
+    stillest: Weather.FataMorgana,
+    bleakest: Weather.DarkDay,
+    thickest: Weather.Fogbow,
   },
   [Biome.TropicalSeasonalForest]: {
     clear: Weather.Clear,
@@ -281,6 +463,10 @@ export const BIOME_WEATHER: Record<Biome, WeatherBands> = {
     wet: Weather.Rain,
     storm: Weather.Thunderstorm,
     rare: Weather.PollenDrift,
+    wildest: Weather.MeteorShower,
+    stillest: Weather.FataMorgana,
+    bleakest: Weather.DarkDay,
+    thickest: Weather.Fogbow,
   },
   [Biome.Savanna]: {
     clear: Weather.Heatwave,
@@ -288,7 +474,11 @@ export const BIOME_WEATHER: Record<Biome, WeatherBands> = {
     damp: Weather.Cloudy,
     wet: Weather.Rain,
     storm: Weather.Thunderstorm,
-    rare: Weather.MeteorShower,
+    rare: null,
+    wildest: Weather.MeteorShower,
+    stillest: Weather.FataMorgana,
+    bleakest: Weather.DarkDay,
+    thickest: Weather.Fogbow,
   },
   [Biome.Desert]: {
     clear: Weather.Heatwave,
@@ -296,7 +486,11 @@ export const BIOME_WEATHER: Record<Biome, WeatherBands> = {
     damp: Weather.DustHaze,
     wet: Weather.Rain,
     storm: Weather.Thunderstorm,
-    rare: Weather.MeteorShower,
+    rare: null,
+    wildest: Weather.MeteorShower,
+    stillest: Weather.FataMorgana,
+    bleakest: Weather.DarkDay,
+    thickest: Weather.Fogbow,
   },
   [Biome.Shrubland]: {
     clear: Weather.Clear,
@@ -305,6 +499,10 @@ export const BIOME_WEATHER: Record<Biome, WeatherBands> = {
     wet: Weather.Rain,
     storm: Weather.Thunderstorm,
     rare: null,
+    wildest: Weather.MeteorShower,
+    stillest: Weather.FataMorgana,
+    bleakest: Weather.DarkDay,
+    thickest: Weather.Fogbow,
   },
   [Biome.Grassland]: {
     clear: Weather.Clear,
@@ -313,6 +511,10 @@ export const BIOME_WEATHER: Record<Biome, WeatherBands> = {
     wet: Weather.Rain,
     storm: Weather.Thunderstorm,
     rare: Weather.Rainbow,
+    wildest: Weather.MeteorShower,
+    stillest: Weather.FataMorgana,
+    bleakest: Weather.DarkDay,
+    thickest: Weather.Fogbow,
   },
   [Biome.TemperateForest]: {
     clear: Weather.Clear,
@@ -321,6 +523,10 @@ export const BIOME_WEATHER: Record<Biome, WeatherBands> = {
     wet: Weather.Rain,
     storm: Weather.Thunderstorm,
     rare: Weather.PollenDrift,
+    wildest: Weather.MeteorShower,
+    stillest: Weather.FataMorgana,
+    bleakest: Weather.DarkDay,
+    thickest: Weather.Fogbow,
   },
   [Biome.TemperateRainforest]: {
     clear: Weather.Overcast,
@@ -329,14 +535,22 @@ export const BIOME_WEATHER: Record<Biome, WeatherBands> = {
     wet: Weather.Downpour,
     storm: Weather.Thunderstorm,
     rare: Weather.PollenDrift,
+    wildest: Weather.MeteorShower,
+    stillest: Weather.FataMorgana,
+    bleakest: Weather.DarkDay,
+    thickest: Weather.Fogbow,
   },
   [Biome.ColdDesert]: {
     clear: Weather.Clear,
-    stirred: Weather.DustHaze,
+    stirred: Weather.Sandstorm,
     damp: Weather.Frost,
     wet: Weather.Snow,
     storm: Weather.Blizzard,
-    rare: Weather.MeteorShower,
+    rare: null,
+    wildest: Weather.MeteorShower,
+    stillest: Weather.FataMorgana,
+    bleakest: Weather.DarkDay,
+    thickest: Weather.Fogbow,
   },
   [Biome.Taiga]: {
     clear: Weather.Clear,
@@ -345,6 +559,10 @@ export const BIOME_WEATHER: Record<Biome, WeatherBands> = {
     wet: Weather.Snow,
     storm: Weather.Blizzard,
     rare: Weather.Aurora,
+    wildest: Weather.MeteorShower,
+    stillest: Weather.FataMorgana,
+    bleakest: Weather.DarkDay,
+    thickest: Weather.Fogbow,
   },
   [Biome.Tundra]: {
     clear: Weather.Frost,
@@ -353,6 +571,10 @@ export const BIOME_WEATHER: Record<Biome, WeatherBands> = {
     wet: Weather.Snow,
     storm: Weather.Blizzard,
     rare: Weather.Aurora,
+    wildest: Weather.MeteorShower,
+    stillest: Weather.FataMorgana,
+    bleakest: Weather.DarkDay,
+    thickest: Weather.Fogbow,
   },
   [Biome.Mountain]: {
     clear: Weather.Clear,
@@ -360,7 +582,11 @@ export const BIOME_WEATHER: Record<Biome, WeatherBands> = {
     damp: Weather.Fog,
     wet: Weather.Hail,
     storm: Weather.Thunderstorm,
-    rare: Weather.MeteorShower,
+    rare: null,
+    wildest: Weather.MeteorShower,
+    stillest: Weather.FataMorgana,
+    bleakest: Weather.DarkDay,
+    thickest: Weather.Fogbow,
   },
   [Biome.AlpineTundra]: {
     clear: Weather.Frost,
@@ -369,6 +595,10 @@ export const BIOME_WEATHER: Record<Biome, WeatherBands> = {
     wet: Weather.Snow,
     storm: Weather.Blizzard,
     rare: Weather.Aurora,
+    wildest: Weather.MeteorShower,
+    stillest: Weather.FataMorgana,
+    bleakest: Weather.DarkDay,
+    thickest: Weather.Fogbow,
   },
   [Biome.Glacier]: {
     clear: Weather.Frost,
@@ -377,6 +607,10 @@ export const BIOME_WEATHER: Record<Biome, WeatherBands> = {
     wet: Weather.Snow,
     storm: Weather.Blizzard,
     rare: Weather.Aurora,
+    wildest: Weather.MeteorShower,
+    stillest: Weather.FataMorgana,
+    bleakest: Weather.DarkDay,
+    thickest: Weather.Fogbow,
   },
   [Biome.Woodland]: {
     clear: Weather.Clear,
@@ -385,6 +619,10 @@ export const BIOME_WEATHER: Record<Biome, WeatherBands> = {
     wet: Weather.Rain,
     storm: Weather.Thunderstorm,
     rare: Weather.PollenDrift,
+    wildest: Weather.MeteorShower,
+    stillest: Weather.FataMorgana,
+    bleakest: Weather.DarkDay,
+    thickest: Weather.Fogbow,
   },
   [Biome.Steppe]: {
     clear: Weather.Clear,
@@ -392,7 +630,11 @@ export const BIOME_WEATHER: Record<Biome, WeatherBands> = {
     damp: Weather.Cloudy,
     wet: Weather.Rain,
     storm: Weather.Thunderstorm,
-    rare: Weather.MeteorShower,
+    rare: null,
+    wildest: Weather.MeteorShower,
+    stillest: Weather.FataMorgana,
+    bleakest: Weather.DarkDay,
+    thickest: Weather.Fogbow,
   },
   [Biome.MontaneForest]: {
     clear: Weather.Clear,
@@ -401,6 +643,10 @@ export const BIOME_WEATHER: Record<Biome, WeatherBands> = {
     wet: Weather.Rain,
     storm: Weather.Thunderstorm,
     rare: Weather.PollenDrift,
+    wildest: Weather.MeteorShower,
+    stillest: Weather.FataMorgana,
+    bleakest: Weather.DarkDay,
+    thickest: Weather.Fogbow,
   },
   [Biome.PolarOcean]: {
     clear: Weather.Frost,
@@ -409,6 +655,10 @@ export const BIOME_WEATHER: Record<Biome, WeatherBands> = {
     wet: Weather.Snow,
     storm: Weather.Blizzard,
     rare: Weather.Aurora,
+    wildest: Weather.MeteorShower,
+    stillest: Weather.FataMorgana,
+    bleakest: Weather.DarkDay,
+    thickest: Weather.Fogbow,
   },
   [Biome.Beyond]: {
     clear: Weather.Clear,
@@ -417,6 +667,10 @@ export const BIOME_WEATHER: Record<Biome, WeatherBands> = {
     wet: Weather.Clear,
     storm: Weather.Clear,
     rare: null,
+    wildest: null,
+    stillest: null,
+    bleakest: null,
+    thickest: null,
   },
   [Biome.Volcano]: {
     clear: Weather.Haze,
@@ -424,15 +678,23 @@ export const BIOME_WEATHER: Record<Biome, WeatherBands> = {
     damp: Weather.Fog,
     wet: Weather.Rain,
     storm: Weather.Thunderstorm,
-    rare: Weather.MeteorShower,
+    rare: null,
+    wildest: Weather.MeteorShower,
+    stillest: Weather.FataMorgana,
+    bleakest: Weather.DarkDay,
+    thickest: Weather.Fogbow,
   },
   [Biome.Badlands]: {
     clear: Weather.Heatwave,
-    stirred: Weather.DustHaze,
+    stirred: Weather.Sandstorm,
     damp: Weather.Haze,
     wet: Weather.Rain,
     storm: Weather.Thunderstorm,
-    rare: Weather.MeteorShower,
+    rare: null,
+    wildest: Weather.MeteorShower,
+    stillest: Weather.FataMorgana,
+    bleakest: Weather.DarkDay,
+    thickest: Weather.Fogbow,
   },
   [Biome.RockyCoast]: {
     clear: Weather.Clear,
@@ -441,6 +703,10 @@ export const BIOME_WEATHER: Record<Biome, WeatherBands> = {
     wet: Weather.Rain,
     storm: Weather.Thunderstorm,
     rare: Weather.Rainbow,
+    wildest: Weather.MeteorShower,
+    stillest: Weather.FataMorgana,
+    bleakest: Weather.DarkDay,
+    thickest: Weather.Fogbow,
   },
   [Biome.Bog]: {
     clear: Weather.Overcast,
@@ -449,6 +715,10 @@ export const BIOME_WEATHER: Record<Biome, WeatherBands> = {
     wet: Weather.Drizzle,
     storm: Weather.Thunderstorm,
     rare: null,
+    wildest: Weather.MeteorShower,
+    stillest: Weather.FataMorgana,
+    bleakest: Weather.DarkDay,
+    thickest: Weather.Fogbow,
   },
   [Biome.KelpForest]: {
     clear: Weather.Clear,
@@ -457,6 +727,10 @@ export const BIOME_WEATHER: Record<Biome, WeatherBands> = {
     wet: Weather.Rain,
     storm: Weather.Downpour,
     rare: Weather.Rainbow,
+    wildest: Weather.MeteorShower,
+    stillest: Weather.FataMorgana,
+    bleakest: Weather.DarkDay,
+    thickest: Weather.Fogbow,
   },
 };
 
@@ -470,6 +744,18 @@ export const BIOME_WEATHER: Record<Biome, WeatherBands> = {
 export function classifyWeather(biome: Biome, wetness: number, energy: number): Weather {
   const bands = BIOME_WEATHER[biome];
 
+  if (bands.wildest != null && wetness >= RAREST && energy >= RAREST) {
+    return bands.wildest;
+  }
+  if (bands.stillest != null && wetness <= -RAREST && energy <= -RAREST) {
+    return bands.stillest;
+  }
+  if (bands.bleakest != null && wetness <= -RAREST && energy >= RAREST) {
+    return bands.bleakest;
+  }
+  if (bands.thickest != null && wetness >= RAREST && energy <= -RAREST) {
+    return bands.thickest;
+  }
   if (bands.rare != null && wetness >= RARE && energy >= RARE) {
     return bands.rare;
   }
@@ -530,6 +816,9 @@ export const BATTLE_WEATHER: Record<Weather, Weathers> = {
   [Weather.Rainbow]: Weathers.None,
   [Weather.PollenDrift]: Weathers.None,
   [Weather.MeteorShower]: Weathers.None,
+  [Weather.FataMorgana]: Weathers.None,
+  [Weather.DarkDay]: Weathers.None,
+  [Weather.Fogbow]: Weathers.None,
 };
 
 export function toBattleWeather(weather: Weather): Weathers {

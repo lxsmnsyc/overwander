@@ -31,6 +31,7 @@ export {
 } from './day';
 export {
   SUPPORTED_METHODS,
+  coversTrade,
   getAvailableEvolutions,
   getConsumedItem,
   isFullyEvolved,

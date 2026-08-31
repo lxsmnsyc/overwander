@@ -237,11 +237,15 @@ export const ITEM_POOL: ItemRarityGroups = {
     // twice
     { item: Items.AmuletCoin, weight: 4 },
     // The ruins. They change nothing about a pokemon, which is what
-    // the rest of this band is for — what puts them here is that one
-    // of them pays for a season of everything else, and a band that
-    // draws a Bottle Cap is the right rate for that
-    { item: Items.RelicVase, weight: 3 },
-    { item: Items.CometShard, weight: 2 },
+    // the rest of this band is for; what puts them here is that one of
+    // them pays for a season of everything else, and a band that draws
+    // a Bottle Cap is the right rate for that.
+    //
+    // The four are spread rather than levelled, because the ladder is
+    // read by price: each is dearer than the one above it, so each is
+    // scarcer than the one above it
+    { item: Items.RelicVase, weight: 4 },
+    { item: Items.CometShard, weight: 3 },
     { item: Items.RelicBand, weight: 2 },
     { item: Items.RelicStatue, weight: 1 },
     // The power items: each decides what a player's next fifty eggs
@@ -260,10 +264,15 @@ export const ITEM_POOL: ItemRarityGroups = {
     { item: Items.GoldenBottleCap, weight: 8 },
     // The one thing here that is only gold. Everything beside it is
     // something gold cannot buy, and the crown earns its place the
-    // other way round: six hundred thousand is more than the game
-    // pays for anything else, so the band that hides a Master Ball is
-    // the only one that can hide it. The thinnest slot of the five
-    { item: Items.RelicCrown, weight: 5 },
+    // other way round: six hundred thousand is more than the game pays
+    // for anything else, so the band that hides a Master Ball is the
+    // only one that can hide it.
+    //
+    // Thin even for this band, and that is the whole of why. A band
+    // eight times rarer is not by itself rarer than a wide slot in the
+    // band below: at 5 the crown outdrew the statue under it, which is
+    // worth two thirds as much
+    { item: Items.RelicCrown, weight: 3 },
   ],
 };
 
@@ -333,6 +342,66 @@ export const ITEM_BAND_ODDS: ItemBandOdds = {
   prized: PRIZED_ITEM_ODDS,
   rare: RARE_SPAWN_ODDS,
   uncommon: UNCOMMON_SPAWN_ODDS,
+};
+
+/**
+ * How often one roll of the pool answers this item: the width of its
+ * band, times its share of that band. Zero for anything the ground
+ * never hides.
+ *
+ * Two items are not ranked by their bands. A band eight times rarer
+ * does not make a wide slot in it rarer than a thin slot in the band
+ * below, and the ladder the valuables are priced along is read here
+ * rather than off `getItemBand`
+ */
+export function getItemOdds(item: Items, odds: ItemBandOdds = ITEM_BAND_ODDS): number {
+  const band = getItemBand(item);
+
+  if (band == null) {
+    return 0;
+  }
+  let total = 0;
+  let weight = 0;
+
+  for (const entry of ITEM_POOL[band]) {
+    total += entry.weight;
+    if (entry.item === item) {
+      weight += entry.weight;
+    }
+  }
+  // Base is whatever the named bands leave, so it is subtracted rather
+  // than looked up: a band added later takes its slice out of base
+  const width =
+    band === 'base' ? 1 - odds.special - odds.prized - odds.rare - odds.uncommon : odds[band];
+
+  return total === 0 ? 0 : width * (weight / total);
+}
+
+/**
+ * What a phenomenon draws on: the ground's own bands, each one step
+ * richer, with base and special both shut out.
+ *
+ * A phenomenon is something going on rather than something buried, and
+ * it is worth walking to. The pokemon side already says so — one
+ * startled in eight is rare, against the ground's one in sixty-four —
+ * and the items say it the same way: what the ground calls uncommon is
+ * the floor here, and prized and rare are eight times as wide as the
+ * ground makes them.
+ *
+ * **Special is nobody's here.** A phenomenon's pool is picked by type
+ * rather than by band, and of the ground's five specials only the
+ * relic crown is a valuable, so a special band would have been a band
+ * of one and its whole width would have been that crown's rate. The
+ * crown is drawn with the ruins instead, on its own weight among them.
+ *
+ * The widths sum to one, which is what leaves base nothing: what a
+ * walk turns up anyway is not what a phenomenon leaves
+ */
+export const PHENOMENON_BAND_ODDS: ItemBandOdds = {
+  special: 0,
+  prized: 1 / 64,
+  rare: 1 / 8,
+  uncommon: 1 - 1 / 64 - 1 / 8,
 };
 
 /**
@@ -446,7 +515,7 @@ export function pickItems(
   // The one band no second kind can reach, and the one that is never
   // more than a single piece
   if (opening < odds.special && groups.special.length > 0) {
-    const item = pickFromBand(groups.special, random);
+    const item = pickWeightedItem(groups.special, random);
 
     if (item != null) {
       stacks.set(item, 1);
@@ -476,7 +545,7 @@ export function pickItems(
       break;
     }
 
-    const item = pickFromBand(groups[HAUL_BANDS[band]], random);
+    const item = pickWeightedItem(groups[HAUL_BANDS[band]], random);
     const amount = 1 + Math.floor(random() * MAX_STACK);
 
     if (item != null) {
@@ -489,7 +558,7 @@ export function pickItems(
 /**
  * One kind out of a band, by weight. Answers null for an empty band
  */
-function pickFromBand(entries: ItemPoolEntry[], random: () => number): Items | null {
+function pickWeightedItem(entries: ItemPoolEntry[], random: () => number): Items | null {
   if (entries.length === 0) {
     return null;
   }
@@ -532,8 +601,8 @@ export function pickItem(
     edge += odds[tier];
 
     if (band < edge && groups[tier].length > 0) {
-      return pickFromBand(groups[tier], random);
+      return pickWeightedItem(groups[tier], random);
     }
   }
-  return pickFromBand(groups.base, random);
+  return pickWeightedItem(groups.base, random);
 }

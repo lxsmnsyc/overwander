@@ -36,7 +36,10 @@ const lastStoodIn = new Map<string, Biome>();
 /**
  * Remember where the player is standing. Stamped as it is written, so
  * a later look can tell a stale record from a fresh one. Standing in
- * a biome is also what discovers it, so the mark rides the same save
+ * a biome is also what discovers it, so the mark rides the same save.
+ *
+ * The stamp is handed back because a device has to recognise its own
+ * writes coming around again on the stream
  */
 export default async function savePosition(
   uid: string,
@@ -45,7 +48,7 @@ export default async function savePosition(
   cellX: number,
   cellY: number,
   now: number,
-): Promise<void> {
+): Promise<number> {
   await getSql()`
     insert into positions (player, chunk_x, chunk_y, cell_x, cell_y, moved_at)
     values (${uid}, ${asChunkCoordinate(chunkX)}, ${asChunkCoordinate(chunkY)},
@@ -62,6 +65,7 @@ export default async function savePosition(
     await markProgress(uid, Metric.Biomes, biome);
     lastStoodIn.set(uid, biome);
   }
+  return now;
 }
 
 /**

@@ -25,18 +25,34 @@ import {
   yawTurns,
 } from '../../../canvas/board';
 import type SpeciesSpriteAnimation from '../../../canvas/species-sprite-animation';
-import { SPRITE_DIRECTIONS, type SpriteDirection } from '../../../canvas/sprite-sheet';
+import {
+  SPRITE_DIRECTIONS,
+  type SpriteDirection,
+  directionOf,
+  litFrame,
+} from '../../../canvas/sprite-sheet';
 import drawSparkle from '../../../canvas/sparkle';
-import { type Cast, getCast, paintAmbient } from '../../../canvas/daylight';
+import { type Cast, batchAmbient, getCast, paintAmbient } from '../../../canvas/daylight';
 import type Weather from '../../../data/overworld/weather';
-import paintSky from '../../../canvas/sky';
+import pixelRatio from '../../../canvas/ratio';
+import paintSky, { batchSky, batchWash } from '../../../canvas/sky';
+import createTwist from '../../../canvas/twist';
 import { getLocalOffset, toLocalTime } from '../../../auth/local-time';
 import { serverNow } from '../../../auth/clock';
 import loadSpeciesSprite from '../../../canvas/species-sprites';
 import type BiomeTileset from '../../../canvas/biome-tileset';
 import { variantAt } from '../../../canvas/biome-tileset';
 import loadBiomeTileset from '../../../canvas/biome-tilesets';
-import drawTileQuad from '../../../canvas/tile-quad';
+import drawTileQuad, { grownQuad, tileCorners } from '../../../canvas/tile-quad';
+import QuadBatch from '../../../canvas/gl/quad-batch';
+import Bakery, { type Baked } from '../../../canvas/bakery';
+import {
+  type ShadowPatch,
+  type SpriteQuad,
+  castCorners,
+  cornersOf,
+  shadowCorners,
+} from '../../../canvas/placement';
 import { BIOME_COLORS } from '../../../data/biome';
 import type Biome from '../../../data/ids/biome';
 import { isWaterBiome } from '../../../data/ids/biome';
@@ -68,8 +84,6 @@ import {
   CELL,
   CELL_STRIDE,
   COLORS,
-  COMPASS_HALO,
-  COMPASS_SIZE,
   CROSSING_IN,
   CROSSING_OUT,
   CROSSING_SLIDE,
@@ -89,19 +103,26 @@ import {
   SPRITE_STANDS,
   TURN_DEAD_ZONE,
   WIDTH,
+  compassArrow,
+  grownArrow,
   isTurningPress,
   sizeOf,
   slideGain,
 } from './metrics';
 import {
-  LANDMARK_GLYPHS,
+  SHADOW_STAMP,
   type SpawnCoat,
-  drawDecoration,
-  drawLandmarkMark,
+  bakePersonRing,
+  bakeShadowDisc,
+  bakeWord,
   drawPersonRing,
   drawPhenomenon,
   facingOf,
   isFightingLandmark,
+  paintPhenomenon,
+  paintSparkle,
+  personRingSpan,
+  phenomenonSpan,
 } from './scenery';
 
 export { CROSSING_IN, CROSSING_OUT, type Crossing, type SpawnCoat, isTurningPress, slideGain };
@@ -264,6 +285,7 @@ export interface CellSpot {
 
 export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
   let canvas: HTMLCanvasElement | undefined;
+  let layer: HTMLCanvasElement | undefined;
   /**
    * Bumped once per animation frame. The drawing is one effect over
    * everything that can change, so a sprite moving on is told the same
@@ -593,6 +615,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
     piece: { sheet: BasicSprite; name: string } | null,
     middle: { x: number; y: number; scale: number },
     magnify: number,
+    lay?: (placed: SpriteQuad | null) => boolean,
   ): void => {
     const cell = piece?.sheet.frameOf(piece.name);
 
@@ -622,10 +645,13 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
     // behind it
     const base = cell.base ?? [cell.sourceWidth / 2, cell.sourceHeight];
 
-    piece.sheet.draw(context, piece.name, middle.x - base[0] * scale, middle.y - base[1] * scale, {
-      scale,
-      anchor: 'top-left',
-    });
+    const left = middle.x - base[0] * scale;
+    const top = middle.y - base[1] * scale;
+    const where = { scale, anchor: 'top-left' } as const;
+
+    if (lay?.(piece.sheet.quadOf(piece.name, left, top, where)) !== true) {
+      piece.sheet.draw(context, piece.name, left, top, where);
+    }
     context.imageSmoothingEnabled = smoothing;
   };
 
@@ -854,6 +880,11 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
    */
   let turning: { pointer: number; angle: number } | null = null;
   /**
+   * The two fingers doing the same job, for a screen with no right
+   * button to hold down
+   */
+  const twist = createTwist();
+  /**
    * Whether the last press actually moved the camera. A drag that
    * turned the board is not also a press on the cell it ended over,
    * and on the Mac the two arrive as the same gesture
@@ -1054,6 +1085,52 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       return;
     }
 
+    /**
+     * The picture, on its own canvas under the one that answers the
+     * pointer: a 2D context and a GL context cannot both be had from
+     * the same element.
+     *
+     * Stacked rather than drawn aside and copied in. A canvas over
+     * another cannot be washed by it, and the hour's light is a
+     * multiply, which has to read what is under it — so the layer
+     * paints the country itself and the wash lands on something
+     * opaque. What is left above is only what still has to be painted
+     */
+    const drawing = layer;
+
+    if (drawing == null) {
+      return;
+    }
+
+    /**
+     * The batch, or null where the browser will not give a WebGL
+     * context and where it has taken one away. Both leave the 2D
+     * passes to draw as they always did
+     */
+    let batch = QuadBatch.create(drawing);
+
+    /**
+     * The drawn art, kept as pictures. Nothing on this sheet changes
+     * frame to frame, so each piece is drawn once and stamped after
+     */
+    const bakery = new Bakery();
+    /** What the batch holds of it, so a newly baked piece re-uploads */
+    let baked = -1;
+
+    drawing.addEventListener('webglcontextlost', (event) => {
+      // Refused, because the default is that the context never comes
+      // back: the board wants it again the moment it can have it
+      event.preventDefault();
+      batch = null;
+    });
+    drawing.addEventListener('webglcontextrestored', () => {
+      batch = QuadBatch.create(drawing);
+    });
+    onCleanup(() => {
+      batch?.dispose();
+      batch = null;
+    });
+
     // How big the page is, watched rather than measured once: the
     // canvas *is* the page, so a resized window or a turned phone is a
     // different picture and a board of the wrong size in the middle of
@@ -1098,7 +1175,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
      * corners closer together than its two near ones, and so is the
      * board
      */
-    const traceQuad = (corners: ProjectedPoint[]): void => {
+    const traceQuad = (corners: { x: number; y: number }[]): void => {
       context.beginPath();
       context.moveTo(corners[0].x, corners[0].y);
       for (const corner of corners.slice(1)) {
@@ -1112,15 +1189,16 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
      * chunk it reaches, in board fractions: none of it for the chunk
      * itself, one cell's worth for the apron around it
      */
+    const groundCorners = (edge: number): ProjectedPoint[] =>
+      [
+        { u: -edge, v: -edge },
+        { u: 1 + edge, v: -edge },
+        { u: 1 + edge, v: 1 + edge },
+        { u: -edge, v: 1 + edge },
+      ].map((corner) => at(projectGround(corner, yaw())));
+
     const traceGround = (edge: number): void => {
-      traceQuad(
-        [
-          { u: -edge, v: -edge },
-          { u: 1 + edge, v: -edge },
-          { u: 1 + edge, v: 1 + edge },
-          { u: -edge, v: 1 + edge },
-        ].map((corner) => at(projectGround(corner, yaw()))),
-      );
+      traceQuad(groundCorners(edge));
     };
 
     /**
@@ -1146,10 +1224,6 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         { u: right, v: near },
         { u: left, v: near },
       ].map((corner) => at(projectGround(corner, yaw())));
-    };
-
-    const traceCell = (cell: BoardCell): void => {
-      traceQuad(projectBoardCellQuad(cell, yaw()).map(at));
     };
 
     /**
@@ -1290,13 +1364,20 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
        * a phone that is turned over — is a different page
        */
       const screen = box();
-      const ratio = globalThis.devicePixelRatio > 0 ? globalThis.devicePixelRatio : 1;
+      const ratio = pixelRatio();
 
-      if (element.width !== Math.round(screen.width * ratio)) {
-        element.width = Math.round(screen.width * ratio);
+      // A backing store of one pixel while the layer below is drawing
+      // the picture. The element is still the whole page — it is what
+      // the pointer and the keyboard talk to — but it has nothing on
+      // it, so there is no second screen of pixels to composite
+      const across = batch == null ? Math.round(screen.width * ratio) : 1;
+      const down = batch == null ? Math.round(screen.height * ratio) : 1;
+
+      if (element.width !== across) {
+        element.width = across;
       }
-      if (element.height !== Math.round(screen.height * ratio)) {
-        element.height = Math.round(screen.height * ratio);
+      if (element.height !== down) {
+        element.height = down;
       }
       // Set rather than multiplied: resizing a canvas throws its
       // transform away, so this is what puts it back — and it is the
@@ -1309,9 +1390,9 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       // Nothing outside the board. A tilted board leaves corners of
       // the canvas that are not board, and painting them — even a
       // shade of the ground — draws a rectangle around a picture that
-      // has no rectangle in it. Cleared, the page's own colour is what
-      // shows through, which is this same country carrying on past the
-      // edge of what the player can reach
+      // has no rectangle in it. Cleared, the country the layer below
+      // paints is what shows through, which is this same country
+      // carrying on past the edge of what the player can reach
       context.clearRect(0, 0, screen.width, screen.height);
 
       // Everything below is drawn where the board is rather than where
@@ -1320,6 +1401,31 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       // canvas whatever the board is doing
       const carried = carrying();
 
+      /** The whole layer, as the four corners the backdrop fills */
+      const screenBox = [
+        { x: 0, y: 0 },
+        { x: screen.width, y: 0 },
+        { x: screen.width, y: screen.height },
+        { x: 0, y: screen.height },
+      ];
+
+      if (batch != null) {
+        batch.begin(screen.width, screen.height, ratio);
+        if (baked !== bakery.revision) {
+          batch.invalidate(bakery.sheet);
+          baked = bakery.revision;
+        }
+        // The country the chunk is standing in, over the whole layer
+        // rather than only under the board. It is what the page behind
+        // this is painted anyway, and having it here rather than there
+        // is what lets the hour's light be a multiply: a wash only
+        // means what it means over something opaque
+        batch.solid(BIOME_COLORS[props.biome], screenBox);
+        // Everything from here is the board, which while a boundary is
+        // being crossed is on its way somewhere
+        batch.carry(carried.x, carried.y, carried.alpha);
+      }
+
       context.save();
       context.globalAlpha = carried.alpha;
       context.translate(carried.x, carried.y);
@@ -1327,16 +1433,20 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       // The country, apron and all: the threshold cells are as much a
       // part of the world as the chunk is, and a player stepping onto
       // one is walking on the same ground
-      traceGround(APRON);
-      context.fillStyle = BIOME_COLORS[props.biome];
-      context.fill();
+      if (batch == null) {
+        traceGround(APRON);
+        context.fillStyle = BIOME_COLORS[props.biome];
+        context.fill();
+      }
       // The one thing that tells the chunk from the ground around it: a
       // surface catches a little more light than the country does. It
       // stops at the chunk's own edge, so the apron reads as the way
       // out rather than as more of the same
-      traceGround(0);
-      context.fillStyle = COLORS.surface;
-      context.fill();
+      if (batch == null) {
+        traceGround(0);
+        context.fillStyle = COLORS.surface;
+        context.fill();
+      }
 
       context.textAlign = 'center';
       context.textBaseline = 'middle';
@@ -1346,12 +1456,31 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       // correct, and only what stands on it is late
       if (loading()) {
         const middle = at(projectGround({ u: 0.5, v: 0.5 }, yaw()));
+        const size = Math.round(LOADING_SIZE * magnify);
+        const font = `bold ${size}px monospace`;
+        const word =
+          batch == null
+            ? null
+            : bakeWord(bakery, LOADING_LABEL, font, COLORS.loading, COLORS.loadingHalo);
 
-        context.font = `bold ${Math.round(LOADING_SIZE * magnify)}px monospace`;
-        context.fillStyle = COLORS.loadingHalo;
-        context.fillText(LOADING_LABEL, middle.x, middle.y + 1);
-        context.fillStyle = COLORS.loading;
-        context.fillText(LOADING_LABEL, middle.x, middle.y);
+        if (batch == null || word == null) {
+          context.font = font;
+          context.fillStyle = COLORS.loadingHalo;
+          context.fillText(LOADING_LABEL, middle.x, middle.y + 1);
+          context.fillStyle = COLORS.loading;
+          context.fillText(LOADING_LABEL, middle.x, middle.y);
+        } else {
+          // Stamped at the size it was baked, so the halo is the one
+          // the stroke drew rather than a scaled copy of it
+          const half = { x: word.width / 2, y: word.height / 2 };
+
+          batch.quad(bakery.sheet, word, [
+            { x: middle.x - half.x, y: middle.y - half.y },
+            { x: middle.x + half.x, y: middle.y - half.y },
+            { x: middle.x + half.x, y: middle.y + half.y },
+            { x: middle.x - half.x, y: middle.y + half.y },
+          ]);
+        }
       }
 
       /**
@@ -1388,6 +1517,32 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       const turns = yawTurns(yaw());
 
       /**
+       * One tile, on whichever layer the ground is being drawn on.
+       *
+       * The batched layer is handed the cell's true four corners; the
+       * 2D one can only take three of them and reads the fourth as a
+       * parallelogram, which is the approximation it has always drawn
+       */
+      const lay = (
+        spot: { sheet: CanvasImageSource; x: number; y: number },
+        corners: ProjectedPoint[],
+      ): void => {
+        const tile = tiles?.tile ?? 0;
+
+        // The tilesets recolour into canvases. Anything else is drawn
+        // the old way rather than assumed to be uploadable
+        if (batch == null || tiles == null || !(spot.sheet instanceof HTMLCanvasElement)) {
+          drawTileQuad(context, spot.sheet, spot, tile, corners, turns);
+          return;
+        }
+        batch.quad(
+          spot.sheet,
+          { x: spot.x, y: spot.y, width: tile, height: tile },
+          grownQuad(tileCorners(corners, turns)),
+        );
+      };
+
+      /**
        * One cell of ground, drawn from the biome's own tileset.
        * Answers whether it drew anything, since a cell it could not
        * draw still wants the flat colour it had before
@@ -1413,7 +1568,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         if (spot == null) {
           return false;
         }
-        drawTileQuad(context, spot.sheet, spot, tiles.tile, corners, turns);
+        lay(spot, corners);
 
         // Deep water against a shore takes the sea rips' foam overlay
         // on top, which is what actually blends the two
@@ -1425,7 +1580,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
           );
 
           if (foam != null) {
-            drawTileQuad(context, foam.sheet, foam, tiles.tile, corners, turns);
+            lay(foam, corners);
           }
         }
         return true;
@@ -1440,6 +1595,13 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
        * round the chunk with its corners left out is a frame with four
        * holes in it
        */
+      if (batch != null) {
+        // The apron over the backdrop, and the chunk's own lit surface
+        // over that: the same country either side of the board's edge,
+        // with the light on the half of it the player can reach
+        batch.solid(BIOME_COLORS[props.biome], groundCorners(APRON));
+        batch.solid(COLORS.surface, groundCorners(0));
+      }
       if (tiles != null) {
         // Off for the pass: these are pixel tiles, and smoothed up to
         // the size of a cell they lose the edges they are drawn with
@@ -1453,8 +1615,174 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         context.restore();
       }
 
+      /**
+       * A piece of baked art, stamped on the point it belongs to.
+       * Answers whether it drew, since a piece the sheet had no room
+       * for is drawn the way it always was
+       */
+      const stamp = (
+        sheet: HTMLCanvasElement,
+        piece: Baked | null,
+        spot: ProjectedPoint,
+        span: number,
+      ): boolean => {
+        if (batch == null || piece == null || !(span > 0)) {
+          return false;
+        }
+        const half = span / 2;
+
+        batch.quad(
+          sheet,
+          piece,
+          [
+            { x: spot.x - half, y: spot.y - half },
+            { x: spot.x + half, y: spot.y - half },
+            { x: spot.x + half, y: spot.y + half },
+            { x: spot.x - half, y: spot.y + half },
+          ],
+          1,
+          undefined,
+          // Baked large and stamped smaller, which is the one place on
+          // this board where smoothing is what is wanted
+          'smooth',
+        );
+        return true;
+      };
+
+      /**
+       * One cell ruled on the board: the grid line round it, over a
+       * breath of light where a threshold goes somewhere.
+       *
+       * Every cell rules its own four edges rather than the board
+       * ruling a lattice, so two cells sharing an edge lay their lines
+       * over each other. That doubling is what the grid looks like:
+       * ruled once each, the inside of the board would go pale and
+       * only its outer edge would keep its weight
+       */
+      const rule = (corners: ProjectedPoint[], glow: number): void => {
+        if (batch != null) {
+          if (glow > 0) {
+            batch.solid(COLORS.highlight, corners, glow);
+          }
+          batch.outline(COLORS.grid, corners, 1);
+          return;
+        }
+        traceQuad(corners);
+
+        if (glow > 0) {
+          const prior = context.globalAlpha;
+
+          context.globalAlpha = prior * glow;
+          context.fillStyle = COLORS.highlight;
+          context.fill();
+          context.globalAlpha = prior;
+        }
+        context.strokeStyle = COLORS.grid;
+        context.stroke();
+      };
+
+      /**
+       * A round patch of one colour, where a sheet has not landed and
+       * a circle is what stands in for it. One baked disc stamped and
+       * tinted, which is what every round thing on this board is
+       */
+      const dot = (spot: { x: number; y: number }, radius: number, colour: string): void => {
+        const disc = batch == null ? null : bakeShadowDisc(bakery);
+
+        if (batch == null || disc == null) {
+          context.fillStyle = colour;
+          context.beginPath();
+          context.arc(spot.x, spot.y, radius, 0, Math.PI * 2);
+          context.fill();
+          return;
+        }
+        const reach = radius * SHADOW_STAMP;
+
+        batch.quad(
+          bakery.sheet,
+          disc,
+          [
+            { x: spot.x - reach, y: spot.y - reach },
+            { x: spot.x + reach, y: spot.y - reach },
+            { x: spot.x + reach, y: spot.y + reach },
+            { x: spot.x - reach, y: spot.y + reach },
+          ],
+          1,
+          colour,
+          'smooth',
+        );
+      };
+
+      /**
+       * A sprite laid into the batch. Answers whether it went, so a
+       * caller can draw it the old way when there is no batch
+       */
+      const place = (quad: SpriteQuad | null, alpha = 1): boolean => {
+        if (batch == null || quad == null) {
+          return false;
+        }
+        batch.quad(quad.sheet, quad.source, cornersOf(quad), alpha);
+        return true;
+      };
+
+      /**
+       * The shadow a thing throws.
+       *
+       * Where the light has a direction to throw one in, it is the
+       * thing's own picture leaned over and laid flat: every point of
+       * it falls along the light by how high it stands, so the feet
+       * stay put and the head goes furthest. That is what a shadow is,
+       * and it costs the same quad the sprite did.
+       *
+       * With the sun overhead or under the horizon there is nothing to
+       * lean, so what is left is the round patch beneath the feet
+       */
+      const shade = (
+        patch: ShadowPatch | null,
+        laid: ((facing: SpriteDirection) => SpriteQuad | null) | null = null,
+      ): boolean => {
+        const disc = batch == null || patch == null ? null : bakeShadowDisc(bakery);
+
+        if (batch == null || patch == null || disc == null) {
+          return false;
+        }
+        const thrown = cast();
+        // Which way the shadow falls. The caller turns that into the
+        // pose the light is looking at, which needs the thing's own
+        // facing as well and only the caller has it
+        const quad =
+          laid == null || thrown == null ? null : laid(directionOf(thrown.dx, thrown.dy));
+
+        if (quad != null && thrown != null) {
+          batch.quad(
+            quad.sheet,
+            quad.source,
+            castCorners(quad, patch, thrown),
+            patch.alpha,
+            patch.colour,
+          );
+          return true;
+        }
+        batch.quad(
+          bakery.sheet,
+          disc,
+          shadowCorners({
+            ...patch,
+            radiusX: patch.radiusX * SHADOW_STAMP,
+            radiusY: patch.radiusY * SHADOW_STAMP,
+          }),
+          patch.alpha,
+          patch.colour,
+          'smooth',
+        );
+        return true;
+      };
+
+      /** Which phenomena have been repainted for this frame already */
+      const repainted = new Set<Phenomenon>();
+
       for (const square of squares) {
-        traceCell(square);
+        const outline = projectBoardCellQuad(square, yaw()).map(at);
 
         // A threshold that goes through keeps the grid, so it reads
         // as ground that can be walked, and breathes a little light
@@ -1463,30 +1791,13 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         // the grid stopping is what says where the walkable ends
         if (isBorderCell(square)) {
           if (borderExit(square) != null) {
-            const prior = context.globalAlpha;
-
-            context.globalAlpha = prior * (0.1 + 0.05 * Math.sin(clock / 600));
-            context.fillStyle = COLORS.highlight;
-            context.fill();
-            context.globalAlpha = prior;
-            context.strokeStyle = COLORS.grid;
-            context.stroke();
+            rule(outline, 0.1 + 0.05 * Math.sin(clock / 600));
           }
           continue;
         }
-        context.strokeStyle = COLORS.grid;
-        context.stroke();
+        rule(outline, 0);
 
         const index = square.y * CHUNK_CELLS + square.x;
-        const decoration = props.decorations.get(index);
-
-        // A shape only while the atlas is still coming. Drawn scenery
-        // is a tree rather than a cone, so it stands with everything
-        // else that stands rather than lying under it
-        if (decoration != null && sceneryOn(index) == null) {
-          drawDecoration(context, at(projectCell(index, yaw())), decoration, magnify);
-        }
-
         const landmark = props.landmarks.get(index);
         // What is going on here, which is no longer a landmark: it is
         // rolled over the chunk by the hour and drawn wherever it fell
@@ -1499,12 +1810,19 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         // is, which the coat they are drawn in does not tell anybody
         if (drawnAsPerson(index)) {
           if (landmark != null) {
-            drawPersonRing(
-              context,
-              at(projectCell(index, yaw())),
-              isFightingLandmark(landmark),
-              magnify,
-            );
+            const middle = at(projectCell(index, yaw()));
+            const fighting = isFightingLandmark(landmark);
+
+            if (
+              !stamp(
+                bakery.sheet,
+                bakePersonRing(bakery, fighting),
+                middle,
+                personRingSpan(middle, magnify),
+              )
+            ) {
+              drawPersonRing(context, middle, fighting, magnify);
+            }
           }
           continue;
         }
@@ -1516,20 +1834,29 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
           // the scenery rather than lying on the ground with the marks;
           // everything else that is going on is drawn here
           if (showing !== Phenomenon.HiddenGrotto) {
-            drawPhenomenon(context, at(projectCell(index, yaw())), showing, clock, magnify);
+            const middle = at(projectCell(index, yaw()));
+            const picture = batch == null ? null : paintPhenomenon(showing, clock);
+            let drew = false;
+
+            if (picture != null && batch != null) {
+              // Repainted since it was uploaded, so the batch is told
+              // once for each kind rather than once for each cell
+              if (!repainted.has(showing)) {
+                batch.invalidate(picture);
+                repainted.add(showing);
+              }
+              drew = stamp(
+                picture,
+                { x: 0, y: 0, width: picture.width, height: picture.height },
+                middle,
+                phenomenonSpan(middle, magnify),
+              );
+            }
+            if (!drew) {
+              drawPhenomenon(context, middle, showing, clock, magnify);
+            }
           }
           continue;
-        }
-        // A landmark drawn as itself stands with everything else that
-        // stands, so a letter on the ground under it would be the cell
-        // saying the same thing twice
-        if (landmark != null && landmarkOn(index) == null) {
-          drawLandmarkMark(
-            context,
-            at(projectCell(index, yaw())),
-            LANDMARK_GLYPHS[landmark],
-            magnify,
-          );
         }
       }
 
@@ -1552,16 +1879,20 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       const reach = reachOutline();
 
       if (reach != null) {
-        context.beginPath();
-        context.moveTo(reach[0].x, reach[0].y);
-        for (const corner of reach.slice(1)) {
-          context.lineTo(corner.x, corner.y);
+        if (batch == null) {
+          context.beginPath();
+          context.moveTo(reach[0].x, reach[0].y);
+          for (const corner of reach.slice(1)) {
+            context.lineTo(corner.x, corner.y);
+          }
+          context.closePath();
+          context.strokeStyle = COLORS.highlight;
+          context.lineWidth = 2;
+          context.stroke();
+          context.lineWidth = 1;
+        } else {
+          batch.outline(COLORS.highlight, reach, 2);
         }
-        context.closePath();
-        context.strokeStyle = COLORS.highlight;
-        context.lineWidth = 2;
-        context.stroke();
-        context.lineWidth = 1;
       }
 
       /**
@@ -1593,9 +1924,9 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         // the backdrop a pokemon is standing in front of, and a lair
         // is the backdrop the whole cell is about
         if (!loading()) {
-          standPiece(context, sceneryOn(index), middle, magnify);
-          standPiece(context, grottoOn(index), middle, magnify);
-          standPiece(context, landmarkOn(index), middle, magnify);
+          standPiece(context, sceneryOn(index), middle, magnify, place);
+          standPiece(context, grottoOn(index), middle, magnify, place);
+          standPiece(context, landmarkOn(index), middle, magnify, place);
         }
 
         // A bush is drawn before whatever is standing beside it: it is
@@ -1604,7 +1935,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         const plant = loading() ? null : plantOn(index);
 
         if (plant != null) {
-          plant.draw(context, middle.x, middle.y, {
+          const growing = {
             scale: (CELL * PLANT_CELLS * middle.scale * magnify) / plant.sourceFrameHeight,
             // A patch in fruit is the bottom row of the sheet, and one
             // this player has stripped is the top: the same bush
@@ -1618,7 +1949,11 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
             // The soil the plant grows out of, which the sheet says
             // where to find
             anchor: 'foot',
-          });
+          } as const;
+
+          if (!place(plant.quadOf(middle.x, middle.y, growing))) {
+            plant.draw(context, middle.x, middle.y, growing);
+          }
         }
 
         const person = loading() ? null : personOn(index);
@@ -1649,15 +1984,30 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
             anchor: 'foot',
           } as const;
 
-          person.drawShadow(context, middle.x, middle.y, {
+          const thrown = {
             ...standingPerson,
             color: COLORS.shadow,
             // Lying the way the board lies, and thrown the way this
             // hour's light throws every other shadow on it
             squash: GROUND_SQUASH,
             cast: cast(),
-          });
-          person.draw(context, middle.x, middle.y, standingPerson);
+          };
+
+          if (
+            !shade(person.shadowOf(middle.x, middle.y, thrown), (fallen) =>
+              person.facedQuadOf(
+                middle.x,
+                middle.y,
+                litFrame(person.facing, fallen),
+                standingPerson,
+              ),
+            )
+          ) {
+            person.drawShadow(context, middle.x, middle.y, thrown);
+          }
+          if (!place(person.quadOf(middle.x, middle.y, standingPerson))) {
+            person.draw(context, middle.x, middle.y, standingPerson);
+          }
         }
 
         if (standing != null) {
@@ -1695,7 +2045,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
             // the description carries a shadow size per pokemon
             const placement = { scale, anchor: 'shadow' } as const;
 
-            sprite.drawShadow(context, middle.x, middle.y, {
+            const thrown = {
               ...placement,
               color: COLORS.shadow,
               squash: GROUND_SQUASH,
@@ -1703,12 +2053,27 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
               // and faint near the horizons, short and hard at noon,
               // and nothing at all once the sun is down
               cast: cast(),
-            });
+            };
+
+            if (
+              !shade(sprite.shadowOf(middle.x, middle.y, thrown), (fallen) =>
+                sprite.facedQuadOf(
+                  middle.x,
+                  middle.y,
+                  litFrame(sprite.direction, fallen),
+                  placement,
+                ),
+              )
+            ) {
+              sprite.drawShadow(context, middle.x, middle.y, thrown);
+            }
             // Upright, and at its own size: the ground is tilted and
             // the pokemon on it are not, which is what a billboard is
             // and what makes them look like they are standing up out
             // of the board
-            sprite.draw(context, middle.x, middle.y, placement);
+            if (!place(sprite.quadOf(middle.x, middle.y, placement))) {
+              sprite.draw(context, middle.x, middle.y, placement);
+            }
 
             if (standing.shiny) {
               // Announced the first time it is actually drawn rather
@@ -1720,21 +2085,38 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
               if (shown == null || shown.species !== standing.species) {
                 sparkles.set(index, { species: standing.species, at: clock });
               }
-              drawSparkle(
-                context,
-                index,
-                clock - (sparkles.get(index)?.at ?? clock),
-                middle.x,
-                middle.y,
-                sprite.sourceFrameSize,
-                scale,
-              );
+              const age = clock - (sparkles.get(index)?.at ?? clock);
+              const glint = batch == null ? null : paintSparkle(index, age, sprite.sourceFrameSize);
+
+              if (batch == null || glint == null) {
+                drawSparkle(context, index, age, middle.x, middle.y, sprite.sourceFrameSize, scale);
+              } else {
+                // Painted in the sheet's own pixels around the point
+                // the pokemon stands on, so it is stamped over the box
+                // the pokemon fills, grown by the room the stars need
+                const half = {
+                  x: (glint.width * scale) / 2,
+                  y: (glint.height * scale) / 2,
+                };
+
+                batch.invalidate(glint);
+                batch.quad(
+                  glint,
+                  { x: 0, y: 0, width: glint.width, height: glint.height },
+                  [
+                    { x: middle.x - half.x, y: middle.y - half.y },
+                    { x: middle.x + half.x, y: middle.y - half.y },
+                    { x: middle.x + half.x, y: middle.y + half.y },
+                    { x: middle.x - half.x, y: middle.y + half.y },
+                  ],
+                  1,
+                  undefined,
+                  'smooth',
+                );
+              }
             }
           } else {
-            context.fillStyle = COLORS.spawn;
-            context.beginPath();
-            context.arc(middle.x, middle.y, CELL * 0.18 * middle.scale * magnify, 0, Math.PI * 2);
-            context.fill();
+            dot(middle, CELL * 0.18 * middle.scale * magnify, COLORS.spawn);
           }
         }
 
@@ -1748,13 +2130,11 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
           );
 
           if (walker == null) {
-            // The dot it was before the sheet landed
-            context.fillStyle = COLORS.player;
-            context.beginPath();
-            context.arc(spot.x, spot.y, CELL * 0.3 * spot.scale * magnify, 0, Math.PI * 2);
-            context.fill();
-            context.strokeStyle = COLORS.glyph;
-            context.stroke();
+            // The dot it was before the sheet landed, on its own line
+            const radius = CELL * 0.3 * spot.scale * magnify;
+
+            dot(spot, radius + 1, COLORS.glyph);
+            dot(spot, radius, COLORS.player);
           } else {
             // Facing the walked way, seen from wherever the camera
             // has been walked to
@@ -1765,13 +2145,23 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
               anchor: 'foot',
             } as const;
 
-            walker.drawShadow(context, spot.x, spot.y, {
+            const thrown = {
               ...walking,
               color: COLORS.shadow,
               squash: GROUND_SQUASH,
               cast: cast(),
-            });
-            walker.draw(context, spot.x, spot.y, walking);
+            };
+
+            if (
+              !shade(walker.shadowOf(spot.x, spot.y, thrown), (fallen) =>
+                walker.facedQuadOf(spot.x, spot.y, litFrame(walker.facing, fallen), walking),
+              )
+            ) {
+              walker.drawShadow(context, spot.x, spot.y, thrown);
+            }
+            if (!place(walker.quadOf(spot.x, spot.y, walking))) {
+              walker.draw(context, spot.x, spot.y, walking);
+            }
           }
         }
       }
@@ -1782,11 +2172,17 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       // standing on the board — and the apron is as pressable as the
       // chunk, so it has to be able to appear out there
       if (focused()) {
-        traceCell(cursor());
-        context.strokeStyle = COLORS.cursor;
-        context.lineWidth = 3;
-        context.stroke();
-        context.lineWidth = 1;
+        const square = projectBoardCellQuad(cursor(), yaw()).map(at);
+
+        if (batch == null) {
+          traceQuad(square);
+          context.strokeStyle = COLORS.cursor;
+          context.lineWidth = 3;
+          context.stroke();
+          context.lineWidth = 1;
+        } else {
+          batch.outline(COLORS.cursor, square, 3);
+        }
       }
 
       // A border while the keyboard is in here. It is not decoration:
@@ -1795,53 +2191,90 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       // something and doing nothing at all. It follows the board's own
       // outline — the apron included, since that is as pressable as
       // the rest — which is a trapezoid rather than the canvas
-      traceGround(APRON);
-      context.strokeStyle = focused() ? COLORS.cursor : COLORS.grid;
-      context.lineWidth = focused() ? 3 : 1;
-      context.stroke();
-      context.lineWidth = 1;
+      const edge = focused() ? COLORS.cursor : COLORS.grid;
+      const weight = focused() ? 3 : 1;
+
+      if (batch == null) {
+        traceGround(APRON);
+        context.strokeStyle = edge;
+        context.lineWidth = weight;
+        context.stroke();
+        context.lineWidth = 1;
+      } else {
+        batch.outline(edge, groundCorners(APRON), weight);
+      }
 
       // The board is finished, so it is put back where it was found:
       // what is drawn from here is the player's own instruments, and
       // they are not the thing being carried off
       context.restore();
+      batch?.carry(0, 0, 1);
 
       // The hour's own light, over everything standing in the world
       // and under everything the player reads: a compass tinted by the
       // evening is a compass that is harder to read at night for
-      // nothing
-      paintAmbient(context, screen.width, screen.height, worldTime(), props.latitude);
-      // And the sky, over the light rather than under it: rain at dusk
-      // is dusk seen through rain
-      paintSky(context, screen.width, screen.height, props.weather, clock);
+      // nothing.
+      //
+      // Then the sky, over the light rather than under it: rain at
+      // dusk is dusk seen through rain. Its own colour first and the
+      // fall after it, the order they were always drawn in
+      if (batch == null) {
+        paintAmbient(context, screen.width, screen.height, worldTime(), props.latitude);
+        paintSky(context, screen.width, screen.height, props.weather, clock);
+      } else {
+        batchAmbient(batch, screen.width, screen.height, worldTime(), props.latitude);
+        batchWash(batch, screen.width, screen.height, props.weather, clock);
+        batchSky(batch, screen.width, screen.height, props.weather, clock);
+      }
 
       /**
-       * And the compass: four letters standing off the four edges of
-       * the board, on the ground rather than in a corner of the canvas.
+       * And the compass: four marks standing off the four edges of the
+       * board, on the ground rather than in a corner of the canvas.
        *
-       * A dial in the corner was a second picture to read — a needle to
+       * A dial in the corner was a second picture to read: a needle to
        * compare against a board, when the thing a player actually wants
-       * to know is which edge of *this board* is north. Put the letters
-       * where the edges are and there is nothing to compare: the letter
-       * is beside the edge it names, and walking the camera round
-       * carries them with it.
+       * to know is which edge of *this board* is north. Put the marks
+       * where the edges are and there is nothing to compare.
        *
-       * They are drawn upright and at one size however far round they
-       * have gone. A compass is read by the player, and a letter laid
-       * into the ground would be scenery
+       * Each is a triangle turned the way it stands for, and north is
+       * the only one coloured: a shape and a colour are read at a
+       * glance, where four letters had to be read one at a time
        */
-      context.font = `bold ${Math.round(COMPASS_SIZE * magnify)}px monospace`;
-      context.lineJoin = 'round';
+      const hub = at(projectGround({ u: 0.5, v: 0.5 }, yaw()));
+
       for (const mark of compassMarks(yaw())) {
         const spot = at(mark);
+        // Which way is out, measured on the screen rather than on the
+        // ground: the picture is taller than it is wide in the
+        // projection's own units, so a bearing taken before the fit
+        // comes out leaning
+        const away = Math.hypot(spot.x - hub.x, spot.y - hub.y);
 
-        context.lineWidth = COMPASS_HALO * magnify;
-        context.strokeStyle = COLORS.compassHalo;
-        context.strokeText(mark.label, spot.x, spot.y);
-        context.fillStyle = COLORS.compass;
-        context.fillText(mark.label, spot.x, spot.y);
+        if (away === 0) {
+          continue;
+        }
+        const out = { x: (spot.x - hub.x) / away, y: (spot.y - hub.y) / away };
+        const points = compassArrow(spot, out, magnify);
+        const halo = grownArrow(points, magnify);
+        const ink = mark.north ? COLORS.compassNorth : COLORS.compass;
+
+        if (batch == null) {
+          traceQuad(halo);
+          context.fillStyle = COLORS.compassHalo;
+          context.fill();
+          traceQuad(points);
+          context.fillStyle = ink;
+          context.fill();
+        } else {
+          batch.triangle(COLORS.compassHalo, halo);
+          batch.triangle(ink, points);
+        }
       }
-      context.lineWidth = 1;
+
+      // Nothing else goes on the picture, so it is handed over here:
+      // the ground, the world standing on it, the hour's light, the
+      // sky and the compass, in one call
+      batch?.end();
 
       // Nothing else is written on the board. The chunk used to caption
       // itself in a corner of the picture, which cost four cells of
@@ -1856,143 +2289,178 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
   });
 
   return (
-    <canvas
-      ref={canvas}
-      // Focusable, so the chunk is still reachable by keyboard now
-      // that its cells are paint rather than 256 buttons: tab to it,
-      // point with the arrows, and walk there with Enter
-      tabindex={0}
-      role="application"
-      // The caption is painted, so it is said here as well: it is the
-      // only place the chunk names itself now
-      aria-label={`Chunk map. ${props.caption}. ${
-        nameOf(cursor()) || 'Empty ground'
-      } under the cursor.`}
-      // A canvas has no per-cell elements to hang a tooltip on, so the
-      // one tooltip it has says whatever the pointer is over
-      title={nameOf(hovered())}
-      // The chunk is the page, so it takes the page — all of it. The
-      // element is the whole window, and the picture is fitted inside
-      // it: as large as the board's own proportions allow, with a
-      // little kept back at the edges. A board fitted to the last
-      // pixel loses its far corner the moment the camera is walked
-      // round, since a square is widest corner-on.
-      //
-      // Nothing outside the picture is painted, so the country behind
-      // shows through — and a press is put back through the same
-      // fitting the painter drew with, so what is under the pointer is
-      // what gets pressed.
-      //
-      // Every square is worth pressing now — the far ones are walked
-      // to rather than out of reach — so the pointer says so over all
-      // of them, and says nothing over the ground beside the board
-      class={`absolute inset-0 block h-full w-full focus-visible:outline-none ${
-        hovered() == null ? 'cursor-default' : 'cursor-pointer'
-      }`}
-      // The right button walks the camera round the board rather than
-      // opening the browser's own menu over it
-      onContextMenu={(event) => {
-        event.preventDefault();
-      }}
-      onPointerDown={(event) => {
-        if (!isTurningPress(event)) {
-          return;
-        }
-        event.preventDefault();
-
-        const grabbed = grab(event);
-
-        if (grabbed == null) {
-          return;
-        }
-        // Captured, so a drag that leaves the canvas keeps turning it
-        // rather than stopping at the edge
-        event.currentTarget.setPointerCapture(event.pointerId);
-        turning = { pointer: event.pointerId, angle: grabbed };
-      }}
-      onPointerMove={(event) => {
-        const drag = turning;
-
-        if (drag?.pointer === event.pointerId) {
-          turned = true;
-          dragTo(event, drag.angle);
-          // Whatever the pointer was over has moved out from under it
-          setHovered(null);
-          return;
-        }
-        setHovered(cellAt(event));
-      }}
-      onPointerUp={(event) => {
-        if (turning?.pointer === event.pointerId) {
-          event.currentTarget.releasePointerCapture(event.pointerId);
-          turning = null;
-        }
-      }}
-      onPointerCancel={() => {
-        turning = null;
-      }}
-      onMouseLeave={() => {
-        setHovered(null);
-      }}
-      onFocus={() => {
-        setFocused(true);
-      }}
-      onBlur={() => {
-        setFocused(false);
-      }}
-      onKeyDown={(event) => {
-        const step = MOVE_KEYS.get(event.key.length === 1 ? event.key.toLowerCase() : event.key);
-
-        if (step != null) {
+    <>
+      {/* The picture: the country, the ground, the world standing on
+          it, the hour's light, the sky and the compass, all written in
+          one pass. It answers no pointer, since the canvas over it
+          does */}
+      <canvas
+        ref={layer}
+        aria-hidden="true"
+        class="pointer-events-none absolute inset-0 block h-full w-full"
+      />
+      <canvas
+        ref={canvas}
+        // Focusable, so the chunk is still reachable by keyboard now
+        // that its cells are paint rather than 256 buttons: tab to it,
+        // point with the arrows, and walk there with Enter
+        tabindex={0}
+        role="application"
+        // The caption is painted, so it is said here as well: it is the
+        // only place the chunk names itself now
+        aria-label={`Chunk map. ${props.caption}. ${
+          nameOf(cursor()) || 'Empty ground'
+        } under the cursor.`}
+        // A canvas has no per-cell elements to hang a tooltip on, so the
+        // one tooltip it has says whatever the pointer is over
+        title={nameOf(hovered())}
+        // The chunk is the page, so it takes the page — all of it. The
+        // element is the whole window, and the picture is fitted inside
+        // it: as large as the board's own proportions allow, with a
+        // little kept back at the edges. A board fitted to the last
+        // pixel loses its far corner the moment the camera is walked
+        // round, since a square is widest corner-on.
+        //
+        // Nothing outside the picture is painted, so the country behind
+        // shows through — and a press is put back through the same
+        // fitting the painter drew with, so what is under the pointer is
+        // what gets pressed.
+        //
+        // Every square is worth pressing now — the far ones are walked
+        // to rather than out of reach — so the pointer says so over all
+        // of them, and says nothing over the ground beside the board
+        // The board takes the gestures rather than the page: a two
+        // finger twist here would otherwise be the browser's own pinch,
+        // and a drag would scroll whatever is behind it
+        style={{ 'touch-action': 'none' }}
+        class={`absolute inset-0 block h-full w-full focus-visible:outline-none ${
+          hovered() == null ? 'cursor-default' : 'cursor-pointer'
+        }`}
+        // The right button walks the camera round the board rather than
+        // opening the browser's own menu over it
+        onContextMenu={(event) => {
           event.preventDefault();
-          // They point rather than walk. Nothing walks a cell at a
-          // time any more: a press says where to be and the walk is
-          // worked out, so the arrows are how a keyboard says where
-          moveCursor(step);
-          return;
-        }
-        // The same walk round the board, for a keyboard — and for
-        // anyone whose pointer can do neither gesture. An eighth of a
-        // turn a press, which is one sprite facing
-        if (event.key === 'q' || event.key === 'e') {
-          event.preventDefault();
-          setYaw((angle) => angle + (event.key === 'q' ? -QUARTER_TURN : QUARTER_TURN) / 2);
-          return;
-        }
-        if (event.key === 'Enter' || event.key === ' ') {
-          event.preventDefault();
-
-          if (!loading()) {
-            props.onPress(cursor());
+        }}
+        onPointerDown={(event) => {
+          // A fresh press starts as a press. Cleared here rather than at
+          // the click it guards, since a two finger lift often sends no
+          // click at all to clear it
+          if (event.isPrimary) {
+            turned = false;
           }
-        }
-      }}
-      onClick={(event) => {
-        // A control-click is how the Mac turns the board, and unlike a
-        // right-click it still comes back round as an ordinary click.
-        // Left alone it would press whichever cell the drag finished
-        // over — so the board turns, and then the player walks off
-        // across it
-        if (isTurningPress(event) || turned) {
-          turned = false;
-          return;
-        }
-        // And nothing at all while the board is being carried on or
-        // off — it is not where it is drawn, so a press would land on
-        // whichever cell slid under the pointer — nor while the
-        // pokemon standing on it have yet to arrive, since a player
-        // cannot see what they would be walking into
-        if (props.crossing != null || loading()) {
-          return;
-        }
+          twist.down(event);
+          if (!isTurningPress(event)) {
+            return;
+          }
+          event.preventDefault();
 
-        const cell = cellAt(event);
+          const grabbed = grab(event);
 
-        if (cell != null) {
-          setCursor(cell);
-          props.onPress(cell);
-        }
-      }}
-    />
+          if (grabbed == null) {
+            return;
+          }
+          // Captured, so a drag that leaves the canvas keeps turning it
+          // rather than stopping at the edge
+          event.currentTarget.setPointerCapture(event.pointerId);
+          turning = { pointer: event.pointerId, angle: grabbed };
+        }}
+        onPointerMove={(event) => {
+          const spun = twist.move(event);
+
+          // Two fingers turn it, and the cell the first one is over is
+          // not being pressed while they do
+          if (spun != null) {
+            turned = true;
+            setYaw((angle) => angle + spun);
+            setHovered(null);
+            return;
+          }
+
+          const drag = turning;
+
+          if (drag?.pointer === event.pointerId) {
+            turned = true;
+            dragTo(event, drag.angle);
+            // Whatever the pointer was over has moved out from under it
+            setHovered(null);
+            return;
+          }
+          setHovered(cellAt(event));
+        }}
+        onPointerUp={(event) => {
+          twist.up(event);
+          if (turning?.pointer === event.pointerId) {
+            event.currentTarget.releasePointerCapture(event.pointerId);
+            turning = null;
+          }
+        }}
+        onPointerCancel={(event) => {
+          twist.up(event);
+          turning = null;
+        }}
+        onMouseLeave={() => {
+          setHovered(null);
+        }}
+        onFocus={() => {
+          setFocused(true);
+        }}
+        onBlur={() => {
+          setFocused(false);
+        }}
+        onKeyDown={(event) => {
+          const step = MOVE_KEYS.get(event.key.length === 1 ? event.key.toLowerCase() : event.key);
+
+          if (step != null) {
+            event.preventDefault();
+            // They point rather than walk. Nothing walks a cell at a
+            // time any more: a press says where to be and the walk is
+            // worked out, so the arrows are how a keyboard says where
+            moveCursor(step);
+            return;
+          }
+          // The same walk round the board, for a keyboard — and for
+          // anyone whose pointer can do neither gesture. An eighth of a
+          // turn a press, which is one sprite facing
+          if (event.key === 'q' || event.key === 'e') {
+            event.preventDefault();
+            setYaw((angle) => angle + (event.key === 'q' ? -QUARTER_TURN : QUARTER_TURN) / 2);
+            return;
+          }
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+
+            if (!loading()) {
+              props.onPress(cursor());
+            }
+          }
+        }}
+        onClick={(event) => {
+          // A control-click is how the Mac turns the board, and unlike a
+          // right-click it still comes back round as an ordinary click.
+          // Left alone it would press whichever cell the drag finished
+          // over — so the board turns, and then the player walks off
+          // across it
+          if (isTurningPress(event) || turned) {
+            turned = false;
+            return;
+          }
+          // And nothing at all while the board is being carried on or
+          // off — it is not where it is drawn, so a press would land on
+          // whichever cell slid under the pointer — nor while the
+          // pokemon standing on it have yet to arrive, since a player
+          // cannot see what they would be walking into
+          if (props.crossing != null || loading()) {
+            return;
+          }
+
+          const cell = cellAt(event);
+
+          if (cell != null) {
+            setCursor(cell);
+            props.onPress(cell);
+          }
+        }}
+      />
+    </>
   );
 }

@@ -378,8 +378,12 @@ export async function claimAuction(
         ],
         friendship: BASE_FRIENDSHIP,
         // A sale is a change of hands, so it opens a trade evolution
-        // the same as a swap between two players would
+        // the same as a swap between two players would. Nothing came
+        // the other way but gold, so the lines that name a partner
+        // stay shut
         traded: true,
+        tradedAs: record.species,
+        tradedFor: null,
       });
     }
 

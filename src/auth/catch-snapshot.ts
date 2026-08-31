@@ -118,6 +118,8 @@ export function previewSnapshot(snapshot: CatchSnapshot): CaughtPokemon {
     favorite: false,
     guarded: false,
     traded: false,
+    tradedAs: null,
+    tradedFor: null,
     auctionable: false,
     moves: snapshot.moves,
     movePoints: snapshot.movePoints,

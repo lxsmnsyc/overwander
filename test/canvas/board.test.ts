@@ -228,10 +228,12 @@ describe('the apron around the chunk', () => {
 });
 
 describe('the compass', () => {
-  it('stands its letters off the board, one to each side', () => {
+  it('stands its marks off the board, one to each side', () => {
     const marks = compassMarks();
 
-    expect(marks.map((mark) => mark.label)).toEqual(['N', 'E', 'S', 'W']);
+    // Only one of the four is told apart, and it is the one a player
+    // is orienting by
+    expect(marks.map((mark) => mark.north)).toEqual([true, false, false, false]);
 
     // Inside the picture, and outside the board: north is beyond the
     // far edge, south beyond the near one
@@ -250,8 +252,8 @@ describe('the compass', () => {
     expect(west.x).toBeLessThan(east.x);
   });
 
-  it('carries the letters round with the board', () => {
-    // A quarter turn puts what was north where east was: the letters
+  it('carries the marks round with the board', () => {
+    // A quarter turn puts what was north where east was: the marks
     // are ground points, so they turn with everything else on it
     const facing = compassMarks();
     const turned = compassMarks(Math.PI / 2);

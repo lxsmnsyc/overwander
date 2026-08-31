@@ -122,7 +122,9 @@ const EGG_POOLS = new WeakMap<SpawnRarityGroups, SpawnEntry[]>();
  * The **special** band is left out because a legendary has no nest,
  * and the **prized** one because a baby is already the first stage of
  * its line and would be counted twice. That leaves out the unown,
- * which has no line to walk back along: it is met rather than hatched
+ * which has no line to walk back along: it is met rather than hatched.
+ * A line whose baby the game has yet to register is left out too, for
+ * the reason `AWAITING_BABY_SPECIES` gives
  */
 export function getEggPool(biome: Biome, time: TimeOfDay): SpawnEntry[] {
   const groups = getSpawnPool(biome, time);
@@ -138,6 +140,12 @@ export function getEggPool(biome: Biome, time: TimeOfDay): SpawnEntry[] {
     for (const entry of band) {
       const egg = getBaseSpecies(entry.species);
 
+      // A line whose first stage is a baby the game does not have yet
+      // would hatch as its second, which is the one thing an egg
+      // never is
+      if (isAwaitingBaby(egg)) {
+        continue;
+      }
       weights.set(egg, (weights.get(egg) ?? 0) + entry.weight);
     }
   }
@@ -311,6 +319,44 @@ const BABY_SPECIES = new Set<Species>();
  * collected over months. Gen 1 has none; Gen 2 registers them here
  */
 const UNOWN_SPECIES = new Set<Species>();
+
+/**
+ * Species whose baby the game does not have yet.
+ *
+ * A nest lays the first stage of a line, and for these that stage is
+ * a pokemon a later gen put in front of them: a Pikachu hatches from
+ * a Pichu, not from a Pikachu. Until the baby is registered the walk
+ * back stops one stage short and the nest lays the wrong thing, and
+ * an egg already laid keeps the answer it was laid under. So they are
+ * left out of nests rather than hatched as themselves.
+ *
+ * Every entry leaves this list the moment its baby is registered.
+ * They are still met in the wild, still bred and still evolved: this
+ * is about what a nest holds and nothing else
+ */
+const AWAITING_BABY_SPECIES = new Set<Species>([
+  // Gen 2 babies
+  Species.Pikachu,
+  Species.Clefairy,
+  Species.Jigglypuff,
+  Species.Hitmonlee,
+  Species.Hitmonchan,
+  Species.Jynx,
+  Species.Electabuzz,
+  Species.Magmar,
+  // Gen 4 babies
+  Species.Chansey,
+  Species.MrMime,
+  Species.Snorlax,
+]);
+
+/**
+ * Whether the species hatches from something the game has not
+ * registered yet, which is what keeps it out of a nest
+ */
+export function isAwaitingBaby(species: Species): boolean {
+  return AWAITING_BABY_SPECIES.has(species);
+}
 
 /**
  * Whether the species is one of the prized band's — a baby or an

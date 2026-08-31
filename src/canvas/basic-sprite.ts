@@ -38,6 +38,8 @@
  * nothing to clone, because there is nothing to get out of step.
  */
 
+import type { SpriteQuad } from './placement';
+
 export interface BasicSpriteImage {
   /**
    * What the picture is called on the sheet. The files carry the
@@ -292,18 +294,18 @@ export default class BasicSprite {
    * an icon it is still waiting for and get a gap for a frame rather
    * than an exception
    */
-  draw(
-    context: CanvasRenderingContext2D,
-    name: string,
-    x: number,
-    y: number,
-    options: BasicDrawOptions = {},
-  ): void {
+  /**
+   * Where one picture is cut from and where it lands, for a caller
+   * placing it as a quad rather than drawing it. Null before the sheet
+   * has arrived and for a name it has not got, which is what `draw`
+   * does with the same two cases
+   */
+  quadOf(name: string, x: number, y: number, options: BasicDrawOptions = {}): SpriteQuad | null {
     const image = this.images.get(name);
     const sheet = this.image;
 
     if (image == null || sheet == null) {
-      return;
+      return null;
     }
 
     // Everything is measured off the **cell**, so two icons drawn in
@@ -314,23 +316,46 @@ export default class BasicSprite {
     const cellHeight = image.sourceHeight * scale;
     const left = options.anchor === 'top-left' ? x : x - cellWidth / 2;
     const top = options.anchor === 'top-left' ? y : y - cellHeight / 2;
+
+    return {
+      sheet,
+      source: { x: image.x, y: image.y, width: image.width, height: image.height },
+      // Placed where it sat in its cell, so an item drawn low in the
+      // cell is still drawn low in it
+      left: left + image.trim[0] * scale,
+      top: top + image.trim[1] * scale,
+      width: image.width * scale,
+      height: image.height * scale,
+    };
+  }
+
+  draw(
+    context: CanvasRenderingContext2D,
+    name: string,
+    x: number,
+    y: number,
+    options: BasicDrawOptions = {},
+  ): void {
+    const placed = this.quadOf(name, x, y, options);
+
+    if (placed == null) {
+      return;
+    }
     const alpha = context.globalAlpha;
 
     if (options.alpha != null) {
       context.globalAlpha = options.alpha;
     }
     context.drawImage(
-      sheet,
-      image.x,
-      image.y,
-      image.width,
-      image.height,
-      // Placed where it sat in its cell, so an item drawn low in the
-      // cell is still drawn low in it
-      left + image.trim[0] * scale,
-      top + image.trim[1] * scale,
-      image.width * scale,
-      image.height * scale,
+      placed.sheet,
+      placed.source.x,
+      placed.source.y,
+      placed.source.width,
+      placed.source.height,
+      placed.left,
+      placed.top,
+      placed.width,
+      placed.height,
     );
     context.globalAlpha = alpha;
   }

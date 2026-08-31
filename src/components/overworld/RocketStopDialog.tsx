@@ -2,7 +2,7 @@ import type { PlayerIdentity } from '../../auth/user';
 import { type JSX, Show, createEffect, createSignal } from 'solid-js';
 import type { RocketRecord } from '../../auth/rocket-record';
 import { startRocketBattle } from '../../auth/rockets';
-import Npc from '../../data/overworld/npc';
+import Npc, { NPC_NAMES, npcSheet } from '../../data/overworld/npc';
 import { getSpeciesData } from '../../data/species';
 import { type LevelBand, rocketPartyLevels } from '../../overworld/rocket';
 import { levelInBand } from '../../overworld/encounter';
@@ -78,6 +78,19 @@ export default function RocketStopDialog(props: RocketStopDialogProps): JSX.Elem
   /** The boss fields six; everybody else makes do with three. */
   const boss = (): boolean => (props.challenge?.[1].party.length ?? 0) > 3;
 
+  /**
+   * Who the fight is against, in a name and a face. It travels with
+   * the battle because this dialog is the last screen that knows: the
+   * field is handed a stop id and a pair of frozen parties, and one of
+   * those parties belongs to nobody
+   */
+  const opponent = (): { name: string; sprite: string } => ({
+    name: props.challenger?.name ?? (boss() ? 'Giovanni' : NPC_NAMES[Npc.RocketGrunt]),
+    // The style they were standing in, so the summary shows the same
+    // person the player walked up to
+    sprite: props.sheet ?? npcSheet(props.npc),
+  });
+
   const greeting = (): string => {
     const challenger = props.challenger;
 
@@ -137,7 +150,7 @@ export default function RocketStopDialog(props: RocketStopDialogProps): JSX.Elem
           return;
         }
         props.onClose();
-        game.setBattle({ id: battle, replay: false, rocket: id });
+        game.setBattle({ id: battle, replay: false, rocket: id, opponent: opponent() });
       })
       .catch((caught: unknown) => {
         setStatus(caught instanceof Error ? caught.message : String(caught));

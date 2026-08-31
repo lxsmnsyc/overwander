@@ -29,7 +29,7 @@ catching it.
 
 ## Catch chance
 
-Five things multiply together to decide whether a thrown ball sticks:
+Six things multiply together to decide whether a thrown ball sticks:
 
 1. **The species' catch rate**, which is the same as in the mainline games. A
    Caterpie comes along easily; a Chansey does not.
@@ -38,9 +38,24 @@ Five things multiply together to decide whether a thrown ball sticks:
 4. **The species day**, worth double if the pokemon belongs to the featured
    family.
 5. **The pokemon's level.**
+6. **Whether it is a shadow**, which halves the chance; see
+   [Shadows](#shadows).
 
-A sixth, much smaller factor rewards persistence within a single session; see
+A seventh, much smaller factor rewards persistence within a single session; see
 [Persistence](#persistence).
+
+### Shadows
+
+A shadow pokemon is **half as likely to be caught** as the same pokemon would be
+otherwise. A closed heart does not want to be held, and it is the one thing
+purifying puts right.
+
+The penalty is flat rather than scaling, because the reason has nothing to do
+with the species or its level: the same thing is wrong with every shadow. It
+multiplies with everything else, so a better ball buys exactly what it always
+bought. Nothing a shadow was given is taken away by it either, and a shadow that
+was fought for rather than found — a grunt's parting gift, a raid prize — still
+never flees, so the only cost is balls.
 
 ### Level
 

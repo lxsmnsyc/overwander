@@ -191,8 +191,41 @@ arrives in order, too, so a clear afternoon turns hazy, then damp, then wet
 before it turns to a storm.
 
 A few skies are showpieces and turn up rarely and in one place at a time: an
-**aurora** over the far north, a **rainbow** over open water, a **meteor
-shower** over a desert or an open sea, and **pollen drift** through a forest.
+**aurora** over the far north, a **rainbow** over open water, and **pollen
+drift** through a forest.
+
+Above those sits one sky of its own: a **meteor shower**. It is the only weather
+that falls anywhere, over every country in the world, and it is still the rarest
+by a clear margin, because what holds it back is the sky rather than the ground.
+Roughly one window in thirteen hundred.
+
+It has an opposite number, just as rare: a **fata morgana**, the mirage that
+rises when the air is utterly still, showing coastlines and cliffs stacked in
+the sky where there is nothing. Roughly one window in thirteen hundred, and it
+too falls anywhere in the world.
+
+A third shares their corner of the field and none of their kindness: a **dark
+day**, noon gone dark under smoke carried from somewhere else, in air that is
+bone dry and moving hard. **About a third** of what is met in the wild under one
+comes out a **shadow**, so a dark day is a window of decisions rather than a
+haul. It is the only place in the world outside Team Rocket that a shadow comes
+from, and a shadow is worth having: purified, it keeps the mark and gains two
+points on every value.
+
+The fourth corner is a **fogbow**: a rainbow with the colour gone, formed in fog
+so fine it scatters the light white instead of splitting it, which takes air
+holding all it can and nothing moving it. Anything met in the wild under one
+already knows one of its line's **egg moves**. Breeding is the only other way to
+come by one. About half the families have an egg move at all, so half of what
+you meet under a fogbow is handed nothing.
+
+All four are the only skies worth going out in whoever you are raising.
+Every other sky favours a type or two; all four of these **favour all eighteen at
+once**, so anything met under any of them carries the floor of 10. Each then does
+one thing no other weather does, and each touches a different part of what a
+pokemon is: a meteor shower its **coat**, a fata morgana its **hidden ability**,
+a dark day what it **becomes**, a fogbow what it **knows**. The two doublings
+stack with the day's featured family and with anything the player is carrying.
 
 **What weather is worth.** Every sky is kind to a type or two, and a pokemon of a
 type its sky favours comes with a floor of **10 under every one of its six
@@ -256,7 +289,8 @@ the player up **beside** it and interacts on arrival.
 
 A darker one-cell border is drawn around the chunk. Stepping onto it carries the
 player into the neighbouring chunk, entering from the opposite side. Four compass
-letters stand outside that border and turn with the map as the camera moves.
+marks stand outside that border and turn with the map as the camera moves. Each
+one points the way it stands for, and north is the red one.
 
 The player's position is saved every second and a half rather than at every step,
 so a page reload never undoes a long walk.

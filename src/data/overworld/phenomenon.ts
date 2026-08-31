@@ -3,7 +3,9 @@ import { ItemTypes, Items } from '../ids/items';
 import { listItemsByType } from '../items';
 import { GEMS } from '../items/gems';
 import { PLATES } from '../items/plates';
+import { isValuable } from '../items/valuables';
 import { WING_STATS } from '../items/wings';
+import { type ItemPoolEntry, type ItemRarityGroups, getItemBand, getItemOdds } from './item-pool';
 import { EvolutionMethod } from '../ids/species';
 import { getRegisteredSpecies, getSpeciesData } from '../species';
 
@@ -126,6 +128,7 @@ export const PHENOMENON_RARE_CHANCE = 1 / 8;
 export const GROTTO_EGG_CHANCE = 1 / 64;
 
 const POOLS = new Map<Phenomenon, Items[]>();
+const BANDED = new Map<Phenomenon, ItemRarityGroups>();
 
 /**
  * What this phenomenon can leave behind, worked out on the first ask —
@@ -175,6 +178,96 @@ function spendableStones(): Items[] {
     }
   }
   return listItemsByType(ItemTypes.Evolution).filter((item) => asked.has(item));
+}
+
+/**
+ * What each of a phenomenon's drops is worth against the others.
+ *
+ * Most of a pool is peers, and a flat draw over peers is right: one
+ * gem is worth about what the next gem is worth, and so is one plate,
+ * one wing, one stone. The **valuables are not peers**. A shoal shell
+ * and a relic crown are three thousand times apart in gold, and drawn
+ * flat the crown came out of a ripple as often as the shell did.
+ *
+ * So they are weighted by what the ground already thinks of them,
+ * which keeps the ladder defined in one place, and the group is left
+ * holding exactly the share its count gave it: a dust cloud pays in
+ * gold as often as it did, it just stops paying six hundred thousand
+ * of it for a puddle
+ */
+function weigh(items: Items[]): ItemPoolEntry[] {
+  const valuables = items.filter((item) => isValuable(item));
+  let ground = 0;
+
+  for (const item of valuables) {
+    ground += getItemOdds(item);
+  }
+  // Nothing to weight by leaves them as flat as everything else,
+  // rather than as a pool nothing can be drawn from
+  const share = ground === 0 ? 0 : valuables.length / ground;
+
+  return items.map((item) => ({
+    item,
+    weight: isValuable(item) ? getItemOdds(item) * share : 1,
+  }));
+}
+
+/**
+ * Which of a phenomenon's bands an item is drawn in.
+ *
+ * The ground's answer, with three moved. **Base** goes to the floor,
+ * because a phenomenon does not leave what a walk turns up anyway, and
+ * so does an item the ground hides **nowhere** — a gem, which no cache
+ * has ever held — since the floor is where a thing with no scarcity of
+ * its own belongs.
+ *
+ * **Special** goes down to prized rather than to the floor. A pool
+ * picked by type reaches exactly one of the ground's specials, and a
+ * band of one hands its whole width to whatever stands in it
+ */
+function bandOf(item: Items): keyof ItemRarityGroups {
+  const band = getItemBand(item);
+
+  if (band === 'special') {
+    return 'prized';
+  }
+  return band == null || band === 'base' ? 'uncommon' : band;
+}
+
+/**
+ * The pool split into the bands a drop is drawn through, weighted
+ * inside each. Built and kept the same way the list is.
+ *
+ * Two draws rather than one: the band says how good the find is, and
+ * the weights say which find it is. That is the same shape the ground
+ * uses, one band richer, and it is why a relic crown coming out of a
+ * ripple is a story rather than an afternoon
+ */
+export function getPhenomenonGroups(phenomenon: Phenomenon): ItemRarityGroups {
+  const built = BANDED.get(phenomenon);
+
+  if (built != null) {
+    return built;
+  }
+  const sorted = new Map<keyof ItemRarityGroups, Items[]>();
+
+  for (const item of getPhenomenonItems(phenomenon)) {
+    const band = bandOf(item);
+
+    sorted.set(band, [...(sorted.get(band) ?? []), item]);
+  }
+  const groups: ItemRarityGroups = {
+    // Neither is ever drawn from: the odds leave them no width, and
+    // `bandOf` puts nothing in them
+    base: [],
+    special: [],
+    uncommon: weigh(sorted.get('uncommon') ?? []),
+    rare: weigh(sorted.get('rare') ?? []),
+    prized: weigh(sorted.get('prized') ?? []),
+  };
+
+  BANDED.set(phenomenon, groups);
+  return groups;
 }
 
 function buildPool(phenomenon: Phenomenon): Items[] {

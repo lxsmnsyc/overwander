@@ -14,7 +14,7 @@ import type { Items } from '../../data/ids/items';
 import { describeItem } from '../details';
 import ItemGrid, { type ItemCell } from './ItemGrid';
 import ItemSprite from './ItemSprite';
-import { Button, Dialog, DialogActions, Note, Row } from '../styled';
+import { Button, Dialog, DialogActions, Note, Row, Status } from '../styled';
 
 /**
  * Picking something out of the bag.
@@ -72,6 +72,15 @@ interface InventoryPickerCommonProps {
    * nothing, and a Golden Bottle Cap is not
    */
   confirm?: boolean | ((entry: InventoryEntry) => boolean);
+  /**
+   * What the player should know before pressing again, or null when
+   * there is nothing to say.
+   *
+   * It rides the second press rather than the row: a warning on
+   * thirty squares is wallpaper, and the one square being spent is
+   * where it is read
+   */
+  warn?: (entry: InventoryEntry) => string | null;
   /**
    * Whether the list is showing but not taking picks — a catch in a
    * live battle, say, where every row is refused for the same reason
@@ -432,9 +441,12 @@ function PickerList(
               </Row>
 
               <Show when={props.sum != null}>
-                <Row class="justify-end">{props.sum?.(asked.item, taking())}</Row>
+                <Row class="justify-center">{props.sum?.(asked.item, taking())}</Row>
               </Show>
               <Show when={refused(asked.item)}>{(why) => <Note>{why()}</Note>}</Show>
+              {/* What the second press is really agreeing to, where
+                  the pressing happens */}
+              <Status message={props.warn?.(asked) ?? null} tone="alert" />
 
               <Row class="justify-center">
                 <Button
@@ -461,26 +473,29 @@ function PickerList(
         </Show>
       </Show>
 
-      {/* Whatever the caller keeps under the tray — the purse, where
-          the tray spends it. Off to the right, out of the way of the
-          squares and next to nothing it could be mistaken for */}
-      <Show when={props.below}>{(extra) => <Row class="justify-end">{extra()}</Row>}</Show>
+      {/* What the tray is answered with: whatever the caller keeps
+          under it (the purse, where the tray spends it) over the
+          button that spends it. One column down the middle, the way
+          every other bar in the game is read */}
+      <Show when={props.below != null || props.multiple === true}>
+        <div class="flex flex-col items-center gap-2">
+          <Show when={props.below}>{(extra) => extra()}</Show>
 
-      <Show when={props.multiple === true}>
-        <Row>
-          <Button
-            tone="primary"
-            disabled={props.disabled === true || draft().length === 0}
-            onClick={finish}
-          >
-            {/* The verb alone. "Buy 3 of them" counted the *rows* in
+          <Show when={props.multiple === true}>
+            <Button
+              tone="primary"
+              disabled={props.disabled === true || draft().length === 0}
+              onClick={finish}
+            >
+              {/* The verb alone. "Buy 3 of them" counted the *rows* in
                 the basket rather than the items in it, which for a
                 basket holding five of one thing was a number that
                 answered nothing — and what is in it is listed above
                 the button either way */}
-            {confirming() ? 'Sure?' : (props.verb ?? 'Take')}
-          </Button>
-        </Row>
+              {confirming() ? 'Sure?' : (props.verb ?? 'Take')}
+            </Button>
+          </Show>
+        </div>
       </Show>
     </div>
   );

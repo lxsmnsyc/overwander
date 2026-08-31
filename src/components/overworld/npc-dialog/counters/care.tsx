@@ -93,6 +93,15 @@ export function NurseCounter(props: NurseCounterProps): JSX.Element {
         filter={(option) => !isEgg(option.caught) && !option.fighting && props.needsCare(option)}
         reason={(option) => (isGuarded(option.caught) ? 'locked' : null)}
         note={(option) => (isShadow(option.caught) ? 'shadow, she would purify it' : null)}
+        // Handing her a shadow is the one thing at this counter that
+        // cannot be taken back, and it happens on the way to something
+        // as ordinary as a heal
+        confirm={(option) => isShadow(option.caught)}
+        warn={(option) =>
+          isShadow(option.caught)
+            ? 'She will purify this one along with the heal. The Shadow ability goes for good, and it stops being a shadow.'
+            : null
+        }
         onPick={(id) => {
           if (id != null) {
             props.onHeal(id);

@@ -278,6 +278,7 @@ export async function acceptTrade(
     // Each arrives thinking of its new owner what a fresh catch would:
     // the friendship it built belonged to the hands it left
     const incoming = asCaughtPokemon(offered);
+    const outgoing = asCaughtPokemon(giving);
 
     await updateCaughtIn(transaction, trade.offered, {
       owner: uid,
@@ -293,9 +294,11 @@ export async function acceptTrade(
       ],
       friendship: BASE_FRIENDSHIP,
       traded: true,
+      // What each side was at the moment of the swap, and what it was
+      // swapped for. A Karrablast reads the other half of this row
+      tradedAs: incoming.species,
+      tradedFor: outgoing.species,
     });
-
-    const outgoing = asCaughtPokemon(giving);
 
     await updateCaughtIn(transaction, counterpart, {
       owner: trade.proposer,
@@ -312,6 +315,8 @@ export async function acceptTrade(
       ],
       friendship: BASE_FRIENDSHIP,
       traded: true,
+      tradedAs: outgoing.species,
+      tradedFor: incoming.species,
     });
 
     await transaction`

@@ -5,6 +5,7 @@ import Weather, {
   WEATHER_DESCRIPTIONS,
   WEATHER_NAMES,
   WEATHER_TYPES,
+  favorsEverything,
 } from '../../data/overworld/weather';
 import TypeBadge from '../sprites/TypeBadge';
 import { Detail, TooltipHost } from '../styled';
@@ -20,9 +21,12 @@ import {
   CloudRainWindIcon,
   CloudSnowIcon,
   CloudsIcon,
+  DarkSunIcon,
   DustIcon,
+  FogbowIcon,
   HeatWaveIcon,
   MeteorIcon,
+  MirageIcon,
   MistIcon,
   PollenIcon,
   RainbowIcon,
@@ -70,6 +74,9 @@ const WEATHER_ICONS: Record<Weather, WeatherIconComponent> = {
   [Weather.Rainbow]: RainbowIcon,
   [Weather.PollenDrift]: PollenIcon,
   [Weather.MeteorShower]: MeteorIcon,
+  [Weather.FataMorgana]: MirageIcon,
+  [Weather.DarkDay]: DarkSunIcon,
+  [Weather.Fogbow]: FogbowIcon,
 };
 
 export function getWeatherIcon(weather: Weather): WeatherIconComponent {
@@ -87,13 +94,20 @@ export interface WeatherIconProps {
 function Favored(props: { weather: Weather }): JSX.Element {
   const favored = (): Types[] => WEATHER_TYPES[props.weather];
 
+  // Eighteen badges would say less than the words do, so the sky that
+  // favours everything says so instead of drawing the whole chart
   return (
-    <Show when={favored().length > 0}>
-      <Detail label="Favors">
-        <span class="flex flex-wrap gap-1">
-          <For each={favored()}>{(type) => <TypeBadge type={type} />}</For>
-        </span>
-      </Detail>
+    <Show
+      when={!favorsEverything(props.weather)}
+      fallback={<Detail label="Favors">Every type</Detail>}
+    >
+      <Show when={favored().length > 0}>
+        <Detail label="Favors">
+          <span class="flex flex-wrap gap-1">
+            <For each={favored()}>{(type) => <TypeBadge type={type} />}</For>
+          </span>
+        </Detail>
+      </Show>
     </Show>
   );
 }

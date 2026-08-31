@@ -9,7 +9,10 @@ import abilityCueFor, {
   statusCueFor,
   statusTriggerFor,
 } from '../../../canvas/battle/cues';
-import paintWeather from '../../../canvas/battle/weather';
+import pixelRatio from '../../../canvas/ratio';
+import createTwist from '../../../canvas/twist';
+import createLongPress from '../../styled/long-press';
+import paintWeather, { batchWeather } from '../../../canvas/battle/weather';
 import {
   delayShapeFor,
   moveDelayVisual,
@@ -20,6 +23,8 @@ import type { FieldView } from '../../../canvas/battle/field';
 import loadBiomeTileset from '../../../canvas/biome-tilesets';
 import type BiomeTileset from '../../../canvas/biome-tileset';
 import drawFloor, { type FloorRegion } from './floor';
+import QuadBatch from '../../../canvas/gl/quad-batch';
+import Bakery from '../../../canvas/bakery';
 import Biome from '../../../data/ids/biome';
 
 import loadSpeciesSprite from '../../../canvas/species-sprites';
@@ -40,7 +45,7 @@ import type { Statuses } from '../../../data/ids/status';
 import { getMoveData } from '../../../data/moves';
 import { bodyOf, boxOf, drawSlot, scaleOf, withinSlot } from './draw';
 import { type Slot, lobbyCamera, project, readField, ringStandings } from './field';
-import { COLORS, FIELD_UNIT, HEIGHT, LOADING_LABEL, WIDTH } from './metrics';
+import { COLORS, FIELD_UNIT, HEIGHT, LOADING_LABEL, TURN_SLOP, WIDTH } from './metrics';
 import {
   CUE_GAP,
   type Casting,
@@ -116,6 +121,7 @@ export interface UnitSpot {
 
 export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
   let canvas: HTMLCanvasElement | undefined;
+  let floorCanvas: HTMLCanvasElement | undefined;
   /**
    * Who is mid-throw at whom. Not a signal, like everything else the
    * tick moves along
@@ -344,6 +350,28 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
     let sized = { width: 0, height: 0, ratio: 0 };
 
     /**
+     * The ground, written into its own element under the visible one:
+     * a 2D context and a GL context cannot both be had from one
+     * canvas, and copying between two would cost a full-screen blit a
+     * frame — more than the ground costs to paint at all
+     */
+    let batch = floorCanvas == null ? null : QuadBatch.create(floorCanvas);
+
+    /**
+     * The drawn art the field stamps rather than paints: the round
+     * patch under a pokemon, and the name of whatever it is winding up
+     */
+    const bakery = new Bakery();
+    /** What the batch holds of that sheet, so a fresh bake re-uploads */
+    let baked = -1;
+
+    /**
+     * How the drawing's own coordinates sit on the element, which the
+     * 2D context carries in its transform and the batch is told
+     */
+    let stage = { scale: 1, offsetX: 0, offsetY: 0 };
+
+    /**
      * How much of the drawing's own coordinates the element covers.
      * Larger than the picture, since the field is centred in a canvas
      * the size of the page and the margins are field as well
@@ -351,7 +379,7 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
     let region: FloorRegion = { left: 0, top: 0, right: WIDTH, bottom: HEIGHT };
 
     const ground = (): void => {
-      const ratio = window.devicePixelRatio;
+      const ratio = pixelRatio();
       const width = Math.max(1, element.clientWidth);
       const height = Math.max(1, element.clientHeight);
 
@@ -364,14 +392,15 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       const scale = Math.min(width / WIDTH, height / HEIGHT);
 
       context.setTransform(ratio, 0, 0, ratio, 0, 0);
-      // Painted edge to edge before the transform that centres the
-      // field, so the margins are field rather than page
-      context.fillStyle = COLORS.field;
-      context.fillRect(0, 0, width, height);
+      // Cleared rather than filled: the field's own colour is the
+      // background of the layer below, so the margins are field
+      // whether or not the biome has ground to lay over them
+      context.clearRect(0, 0, width, height);
       const offsetX = (width - WIDTH * scale) / 2;
       const offsetY = (height - HEIGHT * scale) / 2;
 
       context.transform(scale, 0, 0, scale, offsetX, offsetY);
+      stage = { scale, offsetX, offsetY };
       region = {
         left: -offsetX / scale,
         top: -offsetY / scale,
@@ -410,9 +439,30 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
         unit: FIELD_UNIT * lobbyCamera(field.teams.length).zoom,
         yaw,
       };
-      // The ground the fight is standing on, under everything on it
-      if (floor != null) {
-        drawFloor(context, floor, view, region, clock);
+      // The ground the fight is standing on, under everything on it:
+      // a few hundred tiles laid on a tilted plane, which a 2D context
+      // charges a transform and a blit apiece for
+      if (batch == null) {
+        if (floor != null) {
+          drawFloor(context, floor, view, region, clock);
+        }
+      } else {
+        // Opened here and handed over once the fight is written into
+        // it. Cleared every frame whether or not there is ground to
+        // lay, since a biome that stops having one would otherwise
+        // keep the last floor it drew
+        batch.begin(sized.width, sized.height, sized.ratio);
+        if (baked !== bakery.revision) {
+          batch.invalidate(bakery.sheet);
+          baked = bakery.revision;
+        }
+        // Carrying the transform that centres the field, so everything
+        // below is written in the drawing's own coordinates the way
+        // the painted pass draws it
+        batch.carry(stage.offsetX, stage.offsetY, 1, stage.scale);
+        if (floor != null) {
+          drawFloor(context, floor, view, region, clock, batch);
+        }
       }
 
       const slots = project(ringStandings(field, spriteFor), view, striking);
@@ -460,8 +510,10 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       // drawing is this list
       placed = slots;
 
+      const onto = batch == null ? undefined : { batch, bakery };
+
       for (const slot of slots) {
-        drawSlot(context, slot, striking, clock, gone.has(slot.unit));
+        drawSlot(context, slot, striking, clock, gone.has(slot.unit), onto);
       }
 
       // The sky, over the pokemon and under whatever is going off:
@@ -475,7 +527,16 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       const watcher = slots.find((slot) => slot.unit.alive);
       const sky = watcher == null ? props.battle.weather.current : watcher.unit.checkWeather();
 
-      paintWeather(context, sky, { width: WIDTH, height: HEIGHT }, clock);
+      if (batch == null) {
+        paintWeather(context, sky, { width: WIDTH, height: HEIGHT }, clock);
+      } else {
+        batchWeather(batch, sky, { width: WIDTH, height: HEIGHT }, clock);
+        // Everything the field is made of is written now. What follows
+        // is the move effects, which stay painted: they are the one
+        // thing here drawn as art rather than as pictures, and there
+        // is at most one of them on screen
+        batch.end();
+      }
 
       // Move effects go on top of everything: they are the loudest
       // thing on the field for as long as they last, and a ring drawn
@@ -924,6 +985,18 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
     // pointer that started on the canvas keeps turning it wherever it
     // goes, so a drag that runs off the edge does not stick
     let turning: number | null = null;
+    /**
+     * Two fingers doing the same job. A phone has the drag already:
+     * one finger down is a press on a pokemon, and it is only the
+     * second one that says the camera is what is being moved
+     */
+    const twist = createTwist();
+    /**
+     * Whether the pointer moved far enough to have turned the field. A
+     * drag that walked the camera round is not also a press on
+     * whichever pokemon it finished over
+     */
+    let turned = false;
 
     /**
      * Which pokemon the pointer is over, from where they were last
@@ -984,7 +1057,44 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       props.onHover?.(unit, slot == null ? null : spotOf(slot));
     };
 
+    /**
+     * The finger being held, so the card knows which pokemon the hold
+     * was over. A hold reports no coordinates of its own
+     */
+    let holding: PointerEvent | null = null;
+    /**
+     * A finger has no hover, so the card that a pointer raises by
+     * resting on a pokemon is raised by holding one instead
+     */
+    const held = createLongPress(() => {
+      if (holding != null) {
+        report(under(holding));
+      }
+    });
+
     const grab = (event: PointerEvent): void => {
+      // A fresh press starts as a press. The flag is cleared here
+      // rather than at the click it guards, since a two finger lift
+      // often sends no click at all to clear it
+      if (event.isPrimary) {
+        turned = false;
+      }
+      // A press on the glass puts the last card away: a finger cannot
+      // move off a pokemon, so pressing somewhere else is how it says
+      // it has finished with one
+      if (event.pointerType === 'touch' && hovered != null) {
+        report(null);
+      }
+      holding = event;
+      held.onPointerDown(event);
+      twist.down(event);
+      // The second finger takes the drag off the first: what was a
+      // swipe is now a twist, and the two would pull the same yaw two
+      // ways
+      if (twist.turning()) {
+        turning = null;
+        return;
+      }
       // The left button and nothing else. A right-drag belongs to the
       // browser — on a Mac it is also what a ctrl-click is — and a
       // canvas that swallowed it would take the context menu with it
@@ -997,8 +1107,24 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
     };
 
     const turn = (event: PointerEvent): void => {
+      const spun = twist.move(event);
+
+      if (spun != null) {
+        if (hovered != null) {
+          report(null);
+        }
+        turned = true;
+        yaw += spun;
+        draw();
+        return;
+      }
+      held.onPointerMove(event);
       if (turning == null) {
-        report(under(event));
+        // A finger sliding over a pokemon is not pointing at it, and
+        // the hold above is what asks about one
+        if (event.pointerType !== 'touch') {
+          report(under(event));
+        }
         return;
       }
       // Nothing is hovered while the field is being turned: the pointer
@@ -1009,12 +1135,19 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       // A drag across the whole width is one turn all the way round,
       // which is slow enough to aim and quick enough to get behind
       // something without letting go
+      // A pointer that has barely moved was aiming rather than
+      // turning: the pick under it still stands
+      if (Math.abs(event.clientX - turning) > TURN_SLOP) {
+        turned = true;
+      }
       yaw += ((event.clientX - turning) / Math.max(1, element.clientWidth)) * Math.PI * 2;
       turning = event.clientX;
       draw();
     };
 
     const release = (event: PointerEvent): void => {
+      held.onPointerUp(event);
+      twist.up(event);
       turning = null;
       if (element.hasPointerCapture(event.pointerId)) {
         element.releasePointerCapture(event.pointerId);
@@ -1036,6 +1169,13 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
     };
 
     const press = (event: MouseEvent): void => {
+      // The drag that turned the field ends over some pokemon or
+      // other, and that is not who was picked
+      if (turned) {
+        turned = false;
+        return;
+      }
+
       const slot = under(event);
 
       if (slot != null) {
@@ -1055,6 +1195,8 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
     draw();
 
     onCleanup(() => {
+      batch?.dispose();
+      batch = null;
       element.removeEventListener('contextmenu', menu);
       element.removeEventListener('pointerleave', leave);
       element.removeEventListener('click', press);
@@ -1088,15 +1230,31 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
     // battle is the only thing happening while it is happening, and a
     // picture of it letterboxed in the middle of a page of nothing
     // wastes most of the screen it is the point of
-    <canvas
-      ref={canvas}
-      // The field is the page: it takes every pixel it is given, and
-      // the fight is drawn in the middle of it
-      class="block h-full w-full"
-      // A drag turns the field rather than scrolling the page behind
-      // it, which a touch would otherwise do before the handler ever
-      // saw it
-      style={{ 'touch-action': 'none' }}
-    />
+    //
+    // Two canvases rather than one, stacked: a 2D context and a GL
+    // context cannot be had from the same element, and the ground is
+    // written by one while everything standing on it is painted by
+    // the other. Copying between them would cost a full-screen blit a
+    // frame, which is more than the ground costs to paint at all
+    <div class="relative block h-full w-full">
+      {/* Under everything, and the field's own colour with it: the
+          ground is drawn first, and nothing on this layer is ever
+          drawn over what is above it */}
+      <canvas
+        ref={floorCanvas}
+        class="absolute inset-0 block h-full w-full"
+        style={{ 'background-color': COLORS.field, 'pointer-events': 'none' }}
+      />
+      <canvas
+        ref={canvas}
+        // The field is the page: it takes every pixel it is given, and
+        // the fight is drawn in the middle of it
+        class="absolute inset-0 block h-full w-full"
+        // A drag turns the field rather than scrolling the page behind
+        // it, which a touch would otherwise do before the handler ever
+        // saw it
+        style={{ 'touch-action': 'none' }}
+      />
+    </div>
   );
 }

@@ -4,7 +4,13 @@ import { ITEM_STACKS } from '../auth/stacks';
 import { getMaxHealth, rescaleHealth } from '../auth/health';
 import type { Items } from '../data/ids/items';
 import type { Species } from '../data/ids/species';
-import { getAvailableEvolutions, getConsumedItem, getSpeciesData } from '../data/species';
+import type { EvolutionContext } from '../data/species';
+import {
+  coversTrade,
+  getAvailableEvolutions,
+  getConsumedItem,
+  getSpeciesData,
+} from '../data/species';
 import { Metric } from '../auth/quest-record';
 import { isEggRecord, isGuardedRecord } from './catch-fields';
 import { recordCaughtSpecies } from './pokedex';
@@ -61,36 +67,39 @@ export default async function evolveCatch(
     }
 
     // Read off the stored record rather than taken from the caller: a
-    // trade evolution is opened by the trade the server wrote, not by
-    // a client saying one happened. It decides what is spent as well
-    // as what is allowed, since an untraded pokemon pays a Linking
-    // Cord for the half the trade would have covered
-    const traded = caught.traded === true;
-    const consumed = getConsumedItem(evolution, traded);
+    // trade evolution is opened by the handover the server wrote, not
+    // by a client saying one happened
+    const context: EvolutionContext = {
+      species,
+      level: asNumber(caught.level),
+      // Filled in below, once the criteria have said what to look for
+      carried: new Set<Items>(),
+      // The catch carries what it holds, so the criteria read the
+      // same row the species change is written back to
+      // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+      held: new Set(asNumberArray(caught.items) as Items[]),
+      // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+      tradedAs: caught.tradedAs == null ? null : (asNumber(caught.tradedAs) as Species),
+      // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+      tradedFor: caught.tradedFor == null ? null : (asNumber(caught.tradedFor) as Species),
+    };
+    // What is spent as well as what is allowed: a handover that does
+    // not cover this evolution pays a Linking Cord for the half it
+    // would have covered
+    const consumed = getConsumedItem(evolution, coversTrade(evolution, context));
     // Only the item this evolution actually needs is read; the rest
     // of the bag has no bearing on the criteria
-    const carried = new Set<Items>();
     let stock = 0;
 
     if (consumed != null) {
       stock = await readStackIn(transaction, ITEM_STACKS, uid, consumed);
 
       if (stock > 0) {
-        carried.add(consumed);
+        context.carried = new Set([consumed]);
       }
     }
 
-    const context = {
-      level: asNumber(caught.level),
-      carried,
-      // The catch carries what it holds, so the criteria read the
-      // same row the species change is written back to
-      // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
-      held: new Set(asNumberArray(caught.items) as Items[]),
-      traded,
-    };
-
-    if (!getAvailableEvolutions(species, context).some((entry) => entry.species === into)) {
+    if (!getAvailableEvolutions(context).some((entry) => entry.species === into)) {
       return null;
     }
 

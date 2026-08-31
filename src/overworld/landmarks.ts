@@ -13,12 +13,12 @@ import type Families from '../data/ids/families';
 import type { Species } from '../data/ids/species';
 import BERRY_POOL from '../data/overworld/berry-pool';
 import type { ItemBandOdds, ItemStack } from '../data/overworld/item-pool';
-import { ITEM_POOL, pickItem, pickItems } from '../data/overworld/item-pool';
+import { ITEM_POOL, PHENOMENON_BAND_ODDS, pickItem, pickItems } from '../data/overworld/item-pool';
 import Phenomenon, {
   GROTTO_EGG_CHANCE,
   PHENOMENON_ITEM_CHANCE,
   PHENOMENON_RARE_CHANCE,
-  getPhenomenonItems,
+  getPhenomenonGroups,
 } from '../data/overworld/phenomenon';
 import { SPECIES_DAY_WEIGHT_BOOST, getSpeciesData } from '../data/species';
 
@@ -166,11 +166,11 @@ function startled(
  * to be.
  *
  * Every kind can be a **pokemon**, and every kind but the grotto can
- * be an **item** instead — half the time, drawn uniformly from what
- * that phenomenon leaves behind. A grotto has no item side: what it
- * has instead is one draw in sixty-four on an **egg** of the biome,
- * decided before anything else, which is the rarest thing any landmark
- * hands over without a fee or a walk.
+ * be an **item** instead: half the time, through the phenomenon's own
+ * bands, which are the ground's one step richer. A grotto has no item
+ * side: what it has instead is one draw in sixty-four on an **egg** of
+ * the biome, decided before anything else, which is the rarest thing
+ * any landmark hands over without a fee or a walk.
  *
  * Answers null when the biome has nothing in the bands a phenomenon
  * draws from
@@ -185,8 +185,7 @@ export function resolvePhenomenon(
   // One piece. Everything a phenomenon leaves is worth carrying home
   // on its own, so a handful of them would be a different landmark
   const dropped = (): PhenomenonReward | null => {
-    const pool = getPhenomenonItems(phenomenon);
-    const item = pool.length === 0 ? null : pool[Math.floor(random() * pool.length)];
+    const item = pickItem(getPhenomenonGroups(phenomenon), random, PHENOMENON_BAND_ODDS);
 
     return item == null ? null : { kind: 'item', items: [{ item, amount: 1 }] };
   };

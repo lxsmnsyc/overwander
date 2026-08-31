@@ -18,6 +18,8 @@ function asRecord(fields: Partial<BattleRecord>): BattleRecord {
     biome: Biome.Beyond,
     weather: Weather.Clear,
     limits: UNLIMITED_BATTLE_LIMITS,
+    opponent: '',
+    opponentSprite: '',
     ...fields,
   };
 }

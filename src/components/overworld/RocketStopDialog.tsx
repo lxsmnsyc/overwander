@@ -2,7 +2,7 @@ import type { PlayerIdentity } from '../../auth/user';
 import { type JSX, Show, createEffect, createSignal } from 'solid-js';
 import type { RocketRecord } from '../../auth/rocket-record';
 import { startRocketBattle } from '../../auth/rockets';
-import Npc, { NPC_NAMES, npcSheet } from '../../data/overworld/npc';
+import Npc, { GIOVANNI_NAME, NPC_NAMES, npcSheet } from '../../data/overworld/npc';
 import { getSpeciesData } from '../../data/species';
 import { type LevelBand, rocketPartyLevels } from '../../overworld/rocket';
 import { levelInBand } from '../../overworld/encounter';
@@ -85,7 +85,7 @@ export default function RocketStopDialog(props: RocketStopDialogProps): JSX.Elem
    * those parties belongs to nobody
    */
   const opponent = (): { name: string; sprite: string } => ({
-    name: props.challenger?.name ?? (boss() ? 'Giovanni' : NPC_NAMES[Npc.RocketGrunt]),
+    name: props.challenger?.name ?? (boss() ? GIOVANNI_NAME : NPC_NAMES[Npc.RocketGrunt]),
     // The style they were standing in, so the summary shows the same
     // person the player walked up to
     sprite: props.sheet ?? npcSheet(props.npc),

@@ -64,6 +64,22 @@ export interface BattleRecord {
    * scenario that wants two held items writes that here
    */
   limits: number;
+  /**
+   * Who the fight was against, where the other side belonged to
+   * nobody: a grunt, Giovanni, a duelling trainer, a gym leader.
+   *
+   * It is stored for the reason `species` is: the window that rolled
+   * them turns over within the hour, so a history read back afterwards
+   * has nothing left to derive it from. Empty for a raid and for a
+   * fight between players, and empty for a stop fought before it was
+   * kept
+   */
+  opponent: string;
+  /**
+   * The overworld charset they were wearing, under
+   * `sprites/overworld`. Empty wherever `opponent` is
+   */
+  opponentSprite: string;
 }
 
 const BATTLE_TABLE = 'battles';
@@ -104,6 +120,8 @@ function fromBattleRow(row: Record<string, unknown>): BattleRecord {
     // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
     weather: (row.weather == null ? Weather.Clear : asNumber(row.weather)) as Weather,
     limits: row.limits == null ? UNLIMITED_BATTLE_LIMITS : asNumber(row.limits),
+    opponent: asString(row.opponent),
+    opponentSprite: asString(row.opponent_sprite),
   };
 }
 

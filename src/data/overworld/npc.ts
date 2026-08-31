@@ -157,6 +157,9 @@ const NPC_CHARSETS: Partial<Record<Npc, string[]>> = {
  */
 export const GIOVANNI_CHARSETS: string[] = ['characters/frlg/giovanni', 'characters/hgss/giovanni'];
 
+/** What the boss is called where a screen names him */
+export const GIOVANNI_NAME = 'Giovanni';
+
 /**
  * Every charset a wanderer of this role may be drawn with
  */

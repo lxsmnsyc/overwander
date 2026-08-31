@@ -10,6 +10,9 @@ import { PVP_BATTLE_LIMITS } from '../data/constants/battle-limits';
 import { defaultSlots } from '../data/constants/slots';
 import Abilities from '../data/ids/abilities';
 import Landmark from '../data/overworld/landmark';
+import { CHAMPION_NAME, ELITE_MEMBER_NAMES, GYM_LEADER_NAMES } from '../data/overworld/experts';
+import Npc, { GIOVANNI_NAME, NPC_NAMES, npcSheet } from '../data/overworld/npc';
+import { TRAINER_NAMES } from '../data/overworld/trainers';
 import Weather, { toBattleWeather } from '../data/overworld/weather';
 import type ChunkSnapshot from './chunk-snapshot';
 import { GIOVANNI_PARTY_SIZE, type Spawn } from './chunk-snapshot';
@@ -86,6 +89,55 @@ export function stopPartyLevels(landmark: Landmark, size: number, trainer?: Leve
  * this range rather than a flat fee, so a stop is worth walking to
  * and no two wins feel quite alike
  */
+/**
+ * Who is standing at a fighting landmark, in a name and a face.
+ *
+ * It is derived rather than written down, the way everything about a
+ * chunk is: the landmark says what sort of person, the window's rolls
+ * say which one, and the coat they are wandering in is the picture.
+ *
+ * The greeting and the stakes a challenge dialog puts are that
+ * dialog's copy and stay there; this is the half a battle record has
+ * to keep, since a fight read back a week later has no window to ask
+ */
+export function stopChallenger(
+  snapshot: ChunkSnapshot,
+  cell: number,
+): { name: string; sprite: string } | null {
+  const landmark = snapshot.chunk.getLandmarkCells().get(cell);
+
+  if (landmark == null) {
+    return null;
+  }
+
+  const sprite = snapshot.getWandererCoats().get(cell) ?? npcSheet(Npc.RocketGrunt);
+  const named = (name: string | null): { name: string; sprite: string } | null =>
+    name == null ? null : { name, sprite };
+
+  if (landmark === Landmark.TeamRocket) {
+    return named(snapshot.isRocketBoss(cell) ? GIOVANNI_NAME : NPC_NAMES[Npc.RocketGrunt]);
+  }
+  if (landmark === Landmark.Trainer) {
+    const trainer = snapshot.getTrainerClass(cell);
+
+    return named(trainer == null ? null : TRAINER_NAMES[trainer]);
+  }
+  if (landmark === Landmark.GymLeader) {
+    const leader = snapshot.getGymLeader(cell);
+
+    return named(leader == null ? null : GYM_LEADER_NAMES[leader]);
+  }
+  if (landmark === Landmark.EliteFour) {
+    const member = snapshot.getEliteMember(cell);
+
+    return named(member == null ? null : ELITE_MEMBER_NAMES[member]);
+  }
+  if (landmark === Landmark.Champion) {
+    return named(CHAMPION_NAME);
+  }
+  return null;
+}
+
 export const STOP_GOLD_MIN = 1000;
 export const STOP_GOLD_MAX = 10000;
 

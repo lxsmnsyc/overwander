@@ -309,12 +309,31 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
     });
   });
 
+  /**
+   * Who the other side was, where it belonged to nobody.
+   *
+   * The overworld says so when the fight is opened from a stop; a
+   * replay arrives with nothing but a battle id, and the record kept
+   * the name and the coat for exactly that
+   */
+  const opponent = (): { name: string; sprite: string } | null => {
+    if (props.active.opponent != null) {
+      return props.active.opponent;
+    }
+
+    const loaded = record();
+
+    return loaded == null || loaded.opponent === ''
+      ? null
+      : { name: loaded.opponent, sprite: loaded.opponentSprite };
+  };
+
   const title = (): string => {
     if (props.active.rocket != null) {
       // A stop is not only a grunt: a duelling trainer, a gym leader
       // and the Champion are all fought from one, and each was named
       // on the way in
-      return props.active.opponent?.name ?? 'Team Rocket';
+      return opponent()?.name ?? 'Team Rocket';
     }
     if (instance()?.battle.mode === BattleModes.PvP) {
       return props.active.seat == null ? 'Battle' : 'Gym Seat';
@@ -334,7 +353,7 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
       return 'The other side went down.';
     }
     if (props.active.rocket != null) {
-      const beaten = props.active.opponent?.name ?? 'The grunt';
+      const beaten = opponent()?.name ?? 'The grunt';
 
       return `${beaten} is beaten. What was left behind is waiting in the overworld.`;
     }
@@ -727,7 +746,7 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
         sides={sides()}
         names={names}
         player={auth.user()?.uid ?? ''}
-        opponent={props.active.opponent ?? null}
+        opponent={opponent()}
         teams={raiding() ? (record()?.teams ?? null) : null}
         shares={shares()}
         replay={props.active.replay}

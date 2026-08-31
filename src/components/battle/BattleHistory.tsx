@@ -36,7 +36,7 @@ import Npc, { NPC_NAMES } from '../../data/overworld/npc';
 import { SpriteAnim } from '../../data/ids/sprite-anims';
 import AnimatedSprite from '../sprites/AnimatedSprite';
 import TeamStrip from '../catches/TeamStrip';
-import PlayerPlate from '../profile/PlayerPlate';
+import PlayerPlate, { PlayerFace } from '../profile/PlayerPlate';
 
 const OUTCOME_LABELS: Record<BattleOutcome, string> = {
   [BattleOutcome.Unfinished]: 'Unfinished',
@@ -157,6 +157,13 @@ function OwnStrip(props: { fought: Resource<FoughtLine> }): JSX.Element {
  * One battle as one row: what kind of fight, who it was against, and
  * what the owner of this history fielded — coloured by how it ended
  */
+/**
+ * How large the challenger's face is drawn in a row. The raid's boss
+ * beside it fills a square of 10, and a trainer in a round frame reads
+ * smaller than a pokemon at the same width
+ */
+const NPC_FACE = 34;
+
 function HistoryRow(props: {
   id: string;
   record: BattleRecord;
@@ -198,7 +205,16 @@ function HistoryRow(props: {
           </span>
         </Match>
         <Match when={kind() === BattleKind.Npc}>
-          <span class="font-medium">{NPC_NAMES[Npc.RocketGrunt]}</span>
+          {/* Whoever was standing there, kept on the record: a stop
+              stages a grunt, a duelling trainer, a gym leader or the
+              Champion, and calling every one of them a grunt was the
+              history saying the same wrong thing about all of them.
+              A fight stored before the name was kept has none, and
+              falls back to what it used to say */}
+          <span class="flex items-center gap-1.5 font-medium">
+            <PlayerFace sprite={props.record.opponentSprite} size={NPC_FACE} />
+            {props.record.opponent === '' ? NPC_NAMES[Npc.RocketGrunt] : props.record.opponent}
+          </span>
         </Match>
         <Match when={kind() === BattleKind.Player}>
           <Suspense fallback={<Meta>A trainer</Meta>}>

@@ -880,6 +880,12 @@ export interface AIMoveChoice {
 
 export interface UnitAIChooseMoveEvent extends UnitEvent {
   choice?: AIMoveChoice;
+  /**
+   * Whether something the unit could have cast was only held back by
+   * its cooldown. It separates a unit waiting a moment from one with
+   * nothing that works at all, which are the same empty `choice`
+   */
+  waiting: boolean;
 }
 
 export interface CheckUnitAIRatingEvent extends UnitEvent {

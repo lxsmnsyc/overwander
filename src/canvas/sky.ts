@@ -1,6 +1,6 @@
 import Weather from '../data/overworld/weather';
 import type QuadBatch from './gl/quad-batch';
-import type { QuadBlend } from './gl/quad-batch';
+import type { QuadBlend, QuadPoint } from './gl/quad-batch';
 
 /**
  * The sky over the board, drawn rather than packed.
@@ -73,11 +73,248 @@ const WASHES: Partial<Record<Weather, Wash>> = {
   [Weather.DustHaze]: { colour: '#c8ab7c', depth: 0.26, mode: 'veil' },
   [Weather.Heatwave]: { colour: '#ffb15e', depth: 0.16, mode: 'veil' },
   [Weather.FallingAsh]: { colour: '#6b6560', depth: 0.3, mode: 'darken' },
-  [Weather.Aurora]: { colour: '#4dffc3', depth: 0.18, mode: 'lift' },
+  [Weather.Aurora]: { colour: '#2bff9e', depth: 0.1, mode: 'lift' },
   [Weather.Rainbow]: { colour: '#ffe9a8', depth: 0.12, mode: 'lift' },
   [Weather.PollenDrift]: { colour: '#e8dd8a', depth: 0.14, mode: 'veil' },
   [Weather.MeteorShower]: { colour: '#3b3f6b', depth: 0.22, mode: 'darken' },
+  // Dead-still air, flattened: what is seen through a mirage is the
+  // same country with the distance taken out of it
+  [Weather.FataMorgana]: { colour: '#e9dcc2', depth: 0.18, mode: 'veil' },
+  // A rainbow with the colour gone stands in fog, so it stands in
+  // fog's own wash
+  [Weather.Fogbow]: { colour: '#ccd4dc', depth: 0.3, mode: 'veil' },
 };
+
+/**
+ * A number between 0 and 1 that is always the same for the same seed.
+ *
+ * The sky is derived rather than stored, and a meteor is no different:
+ * every watcher of the same second sees the same one cross. It is the
+ * one-argument cousin of `scatter` below, which salts an index instead
+ */
+function seeded(seed: number): number {
+  const value = Math.sin(seed * 127.1 + 311.7) * 43_758.545;
+
+  return value - Math.floor(value);
+}
+
+/**
+ * A shower of shooting stars: a few crossing at a time, each drawn
+ * from its head backwards so it reads as something written rather
+ * than something falling.
+ *
+ * It is not a fall. A fall is the same drop over and over at the same
+ * speed, which is why a sparse one read as thin rain: what a meteor
+ * does is arrive, streak, and go out, and the tail behind the head is
+ * the part that says so
+ */
+interface Shower {
+  /** How many are crossing at once, on the reference screen */
+  count: number;
+  /** How long one takes to cross, in seconds */
+  life: number;
+  /** How far one travels, as a share of the picture's diagonal */
+  reach: number;
+  /** How long the tail is, as a share of that travel */
+  tail: number;
+  /** How many pieces the tail is drawn in, each fainter than the last */
+  pieces: number;
+  colour: string;
+  thickness: number;
+}
+
+const SHOWERS: Partial<Record<Weather, Shower>> = {
+  [Weather.MeteorShower]: {
+    count: 3,
+    life: 1.6,
+    reach: 0.55,
+    tail: 0.34,
+    pieces: 14,
+    colour: '#fff1cf',
+    thickness: 2.2,
+  },
+};
+
+/**
+ * Where one meteor is this moment, or null while it is between
+ * crossings.
+ *
+ * The head is where it has reached; the tail runs back along the way
+ * it came, and is short while it is still setting out so the streak
+ * is drawn in rather than arriving whole
+ */
+function meteorAt(
+  shower: Shower,
+  which: number,
+  width: number,
+  height: number,
+  seconds: number,
+): { head: QuadPoint; back: QuadPoint; light: number } | null {
+  const slot = seconds / shower.life + which * 0.61;
+  const cycle = Math.floor(slot);
+  const through = slot - cycle;
+  const seed = which * 977 + cycle;
+  // Not every slot flies: a sky where one crosses on a beat is a
+  // metronome rather than a shower
+  if (seeded(seed + 5) < 0.35) {
+    return null;
+  }
+
+  const span = Math.hypot(width, height) * shower.reach;
+  // Down and across, always the same way: a shower radiates from one
+  // point in the sky, so they run parallel to each other
+  const angle = Math.PI * 0.28 + (seeded(seed + 1) - 0.5) * 0.22;
+  const step = { x: Math.cos(angle) * span, y: Math.sin(angle) * span };
+  const from = {
+    x: width * (seeded(seed + 2) * 1.3 - 0.45),
+    y: height * (seeded(seed + 3) * 0.5 - 0.25),
+  };
+  const head = { x: from.x + step.x * through, y: from.y + step.y * through };
+  const behind = Math.min(shower.tail, through);
+
+  return {
+    head,
+    back: { x: head.x - step.x * behind, y: head.y - step.y * behind },
+    // Lit as it arrives and gone before it lands, so nothing ends
+    // abruptly in the middle of the picture
+    light: Math.min(1, through * 14) * Math.min(1, (1 - through) * 3.2),
+  };
+}
+
+/**
+ * A point the dark is kept off, and how far.
+ *
+ * Noon gone dark is not a wash: a wash over everything hides the
+ * things a player is standing there to find. What it is instead is a
+ * dark room with lamps in it, and what carries a lamp is whatever the
+ * board would have been drawing anyway: a landmark, a pokemon
+ * standing on a cell
+ */
+export interface Lamp {
+  x: number;
+  y: number;
+  /** How far the light reaches, in drawn pixels */
+  reach: number;
+}
+
+/** A sky that puts the lights out, and how far out. */
+interface Lamplit {
+  colour: string;
+  /** How dark it gets where nothing is lit */
+  depth: number;
+}
+
+const LAMPLIT: Partial<Record<Weather, Lamplit>> = {
+  [Weather.DarkDay]: { colour: '#070b16', depth: 0.88 },
+};
+
+/**
+ * How wide the dark is kept, whatever the window is. A lamp is a soft
+ * edge and nothing else, so it survives being drawn small and
+ * stretched: a mask the size of the page would be a page repainted
+ * every frame
+ */
+const MASK_WIDE = 320;
+
+let mask: HTMLCanvasElement | null = null;
+
+/**
+ * The dark, with a hole burnt in it wherever a lamp stands.
+ *
+ * Cut rather than drawn: the lamps are taken out of a full sheet with
+ * `destination-out`, so two lamps standing close together share one
+ * pool of light instead of stacking two into a bright spot
+ */
+function lampMask(
+  width: number,
+  height: number,
+  dark: Lamplit,
+  lamps: Lamp[],
+  strength: number,
+): HTMLCanvasElement | null {
+  const held = mask ?? document.createElement('canvas');
+  const scale = MASK_WIDE / width;
+  const down = Math.max(1, Math.round(height * scale));
+
+  held.width = MASK_WIDE;
+  held.height = down;
+
+  const into = held.getContext('2d');
+
+  if (into == null) {
+    return null;
+  }
+  into.clearRect(0, 0, MASK_WIDE, down);
+  into.globalAlpha = dark.depth * strength;
+  into.fillStyle = dark.colour;
+  into.fillRect(0, 0, MASK_WIDE, down);
+  into.globalAlpha = 1;
+  into.globalCompositeOperation = 'destination-out';
+  for (const lamp of lamps) {
+    const reach = lamp.reach * scale;
+
+    if (!(reach > 0)) {
+      continue;
+    }
+    const glow = into.createRadialGradient(
+      lamp.x * scale,
+      lamp.y * scale,
+      0,
+      lamp.x * scale,
+      lamp.y * scale,
+      reach,
+    );
+
+    // Nearly clear at the lamp and gone by its edge, so what it lights
+    // has no rim around it
+    glow.addColorStop(0, '#000000f2');
+    glow.addColorStop(0.55, '#000000a8');
+    glow.addColorStop(1, '#00000000');
+    into.fillStyle = glow;
+    into.fillRect(lamp.x * scale - reach, lamp.y * scale - reach, reach * 2, reach * 2);
+  }
+  into.globalCompositeOperation = 'source-over';
+  mask = held;
+  return held;
+}
+
+/** A sky that lights up, and how often. */
+interface Flash {
+  /** How long between strikes, in seconds */
+  every: number;
+  /** How long one lasts */
+  hold: number;
+  colour: string;
+  /** How much of it at the brightest */
+  depth: number;
+}
+
+const FLASHES: Partial<Record<Weather, Flash>> = {
+  [Weather.Thunderstorm]: { every: 4.5, hold: 0.65, colour: '#e8f0ff', depth: 0.5 },
+};
+
+/** How bright the sky is at this moment, if lightning is striking */
+function flashAt(weather: Weather, seconds: number): number {
+  const flash = FLASHES[weather];
+
+  if (flash == null) {
+    return 0;
+  }
+  const slot = seconds / flash.every;
+  const cycle = Math.floor(slot);
+  const through = (slot - cycle - seeded(cycle) * 0.7) / (flash.hold / flash.every);
+
+  if (through < 0 || through > 1) {
+    return 0;
+  }
+  // Two peaks and a dip: one stroke is a lamp being switched on, and
+  // lightning is a stroke and its return
+  const first = Math.exp(-(((through - 0.06) / 0.05) ** 2));
+  const second = 0.6 * Math.exp(-(((through - 0.3) / 0.1) ** 2));
+
+  // Some strikes are further off than others
+  return Math.min(1, first + second) * (0.45 + 0.55 * seeded(cycle + 61));
+}
 
 /** What is falling, and how it falls. */
 interface Fall {
@@ -196,14 +433,6 @@ const FALLS: Partial<Record<Weather, Fall>> = {
     length: 0,
     thickness: 2,
     colour: '#fff2a8c0',
-  },
-  [Weather.MeteorShower]: {
-    density: 40,
-    speed: 900,
-    drift: 700,
-    length: 44,
-    thickness: 1.6,
-    colour: '#ffe9c0e0',
   },
 };
 
@@ -519,34 +748,247 @@ function paintTiledFall(
 }
 
 /**
- * The bands of an aurora, which is the one sky that is a picture rather
- * than a wash: three slow curtains, each drifting at its own pace
+ * A curtain sky: an aurora, or the shimmer over dead-still air.
+ *
+ * It is drawn as ribs rather than as one band across the picture,
+ * which is the whole difference between an aurora and a green smear.
+ * A real curtain is folded, so each rib hangs to its own depth and
+ * lights to its own brightness, and the fold walks along the sky.
  */
-function paintAurora(
+interface CurtainStop {
+  /** How far down the band it sits, 0 to 1 */
+  at: number;
+  colour: string;
+  /** How much of it there is, 0 to 1 */
+  alpha: number;
+}
+
+interface Curtain {
+  /** How many bands hang, each behind the last */
+  bands: number;
+  /** Where the first hangs, and how far below it the next does */
+  top: number;
+  gap: number;
+  /** How far a band reaches down the picture */
+  deep: number;
+  /** How fast a fold walks along the sky */
+  pace: number;
+  /** How many folds there are across it */
+  ribs: number;
+  /**
+   * How uneven the folds are, 0 for a even comb of them and 1 for a
+   * sky where some rays are half the brightness of their neighbours
+   */
+  grain: number;
+  /**
+   * How much wider a fold is drawn than its share of the picture.
+   * Screened over each other they blend; drawn edge to edge they read
+   * as the row of rectangles they are
+   */
+  spread: number;
+  /** How much a fold's foot rises and falls, as a share of its depth */
+  sway: number;
+  /** The light down one band, top to bottom */
+  stops: CurtainStop[];
+}
+
+/**
+ * How tall a curtain's gradient is kept, as a strip one pixel across
+ * and stretched over the picture. A gradient is one dimension, and
+ * this is that dimension
+ */
+const CURTAIN_STEPS = 64;
+
+const CURTAINS: Partial<Record<Weather, Curtain>> = {
+  /**
+   * Green low and violet at the crown, which is the order the real
+   * thing burns in: oxygen down where the air is thick, nitrogen above
+   * it. The body is brightest near the foot rather than in the middle,
+   * so the bottom edge reads as an edge instead of a fade
+   */
+  [Weather.Aurora]: {
+    bands: 3,
+    top: 0.02,
+    gap: 0.07,
+    deep: 0.44,
+    pace: 0.5,
+    ribs: 40,
+    sway: 0.22,
+    grain: 0.45,
+    spread: 2.6,
+    stops: [
+      { at: 0, colour: '#b06cff', alpha: 0 },
+      { at: 0.16, colour: '#b06cff', alpha: 0.1 },
+      { at: 0.4, colour: '#3dff9e', alpha: 0.16 },
+      { at: 0.78, colour: '#3dff9e', alpha: 0.3 },
+      { at: 1, colour: '#3dff9e', alpha: 0 },
+    ],
+  },
+  /**
+   * A mirage is dead-still air, so nothing here folds: the ribs are
+   * fine and barely move, and what they do is break the horizon into
+   * strata the way heat over a road does
+   */
+  [Weather.FataMorgana]: {
+    bands: 4,
+    top: 0.44,
+    gap: 0.035,
+    deep: 0.08,
+    pace: 0.22,
+    ribs: 40,
+    sway: 0.05,
+    grain: 0.12,
+    spread: 3.2,
+    stops: [
+      { at: 0, colour: '#fff3d8', alpha: 0 },
+      { at: 0.5, colour: '#fff3d8', alpha: 0.22 },
+      { at: 1, colour: '#fff3d8', alpha: 0 },
+    ],
+  },
+};
+
+/** The arc a sky hangs over the water, band by band, outermost first. */
+const ARCS: Partial<Record<Weather, string[]>> = {
+  [Weather.Rainbow]: ['#ff5d5d', '#ffa94d', '#ffe66d', '#6ee7a0', '#5db8ff', '#9b8cff'],
+  /**
+   * A fogbow is the same arc with the colour gone: the drops it stands
+   * in are too small to split the light, so it comes out white and
+   * broad, with barely a blush at either edge
+   */
+  [Weather.Fogbow]: [
+    '#ffd9c9',
+    '#f7f2ec',
+    '#ffffff',
+    '#ffffff',
+    '#f2f4fa',
+    '#e6ecf8',
+    '#dbe6fb',
+    '#cfdcf6',
+  ],
+};
+
+/**
+ * Where one rib of one band hangs this frame, and how brightly.
+ *
+ * Both come off the same travelling wave, so a fold that is deeper is
+ * also brighter: that is what a curtain does, and it is what keeps
+ * ribs from reading as a row of rectangles
+ */
+function ribAt(
+  curtain: Curtain,
+  band: number,
+  rib: number,
+  seconds: number,
+): { foot: number; light: number } {
+  const phase = seconds * curtain.pace + rib * 0.36 + band * 1.3;
+  const wave = Math.sin(phase);
+  // A second wave that does not divide into the first, so the rays
+  // come out uneven: an even comb of them reads as a fence
+  const grain = Math.sin(rib * 2.399 + band * 1.7) * 0.5 + 0.5;
+
+  return {
+    foot: 1 + wave * curtain.sway,
+    light:
+      (0.45 + 0.55 * (Math.sin(phase * 1.7 + band) * 0.5 + 0.5)) *
+      (1 - curtain.grain + curtain.grain * grain),
+  };
+}
+
+/**
+ * A curtain sky, drawn rib by rib. The gradient down a band is a strip
+ * one pixel across, stretched over each rib, so the ribs of one band
+ * share one picture
+ */
+function paintCurtain(
   context: CanvasRenderingContext2D,
   width: number,
   height: number,
+  curtain: Curtain,
   clock: number,
 ): void {
   const seconds = clock / 1000;
+  const across = width / curtain.ribs;
+  const held = context.globalAlpha;
 
   context.globalCompositeOperation = 'screen';
-  for (let band = 0; band < 3; band++) {
+  for (let band = 0; band < curtain.bands; band++) {
     const shift = Math.sin(seconds * 0.12 + band) * 0.5 + 0.5;
-    const top = height * (0.02 + band * 0.06);
-    const curtain = context.createLinearGradient(0, top, 0, top + height * 0.42);
+    const strip = curtainStrip(band, shift, curtain);
 
-    curtain.addColorStop(0, band === 1 ? '#7de2ff00' : '#7dffb800');
-    curtain.addColorStop(0.35 + shift * 0.1, band === 1 ? '#7de2ff3a' : '#7dffb83a');
-    curtain.addColorStop(1, '#7de2ff00');
-    context.fillStyle = curtain;
-    context.fillRect(0, top, width, height * 0.42);
+    if (strip == null) {
+      continue;
+    }
+
+    const top = height * (curtain.top + band * curtain.gap);
+    const deep = height * curtain.deep;
+
+    for (let rib = 0; rib < curtain.ribs; rib++) {
+      const { foot, light } = ribAt(curtain, band, rib, seconds);
+
+      context.globalAlpha = held * light;
+      // A hair wider than its share, so two ribs meet rather than
+      // leaving a seam of ground between them
+      context.drawImage(strip, 0, 0, 1, CURTAIN_STEPS, rib * across, top, across + 1, deep * foot);
+    }
   }
+  context.globalAlpha = held;
 }
 
-/** The arc of a rainbow, low and to one side, drawn once and still */
-function paintRainbow(context: CanvasRenderingContext2D, width: number, height: number): void {
-  const bands = ['#ff5d5d', '#ffa94d', '#ffe66d', '#6ee7a0', '#5db8ff', '#9b8cff'];
+/**
+ * A shower, drawn head first. Each tail is a run of pieces rather than
+ * one line, because what fades along its length is the whole point and
+ * a stroke has one colour from end to end
+ */
+function paintShower(
+  context: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  shower: Shower,
+  clock: number,
+): void {
+  const seconds = clock / 1000;
+  const zoom = zoomFor(width, height);
+  const held = context.globalAlpha;
+
+  context.globalCompositeOperation = 'screen';
+  context.lineCap = 'round';
+  context.strokeStyle = shower.colour;
+  for (let which = 0; which < shower.count; which++) {
+    const flying = meteorAt(shower, which, width, height, seconds);
+
+    if (flying == null) {
+      continue;
+    }
+    for (let piece = 0; piece < shower.pieces; piece++) {
+      const near = piece / shower.pieces;
+      const far = (piece + 1) / shower.pieces;
+      const fade = (1 - near) ** 1.6;
+
+      context.globalAlpha = held * flying.light * fade;
+      context.lineWidth = shower.thickness * zoom * (0.35 + 0.65 * (1 - near));
+      context.beginPath();
+      context.moveTo(
+        flying.head.x + (flying.back.x - flying.head.x) * near,
+        flying.head.y + (flying.back.y - flying.head.y) * near,
+      );
+      context.lineTo(
+        flying.head.x + (flying.back.x - flying.head.x) * far,
+        flying.head.y + (flying.back.y - flying.head.y) * far,
+      );
+      context.stroke();
+    }
+  }
+  context.globalAlpha = held;
+  context.lineWidth = 1;
+}
+
+/** The arc of a bow, low and to one side, drawn once and still */
+function paintArc(
+  context: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  bands: string[],
+): void {
   const radius = Math.max(width, height) * 0.62;
   /**
    * How far in each band sits, kept as a number rather than read back
@@ -602,21 +1044,14 @@ function roundDrop(): HTMLCanvasElement | null {
   return made;
 }
 
-/**
- * How tall a curtain's gradient is kept, as a strip one pixel across
- * and stretched over the picture. A gradient is one dimension, and
- * this is that dimension
- */
-const CURTAIN_STEPS = 64;
-
-const curtains: (HTMLCanvasElement | null)[] = [null, null, null];
+const curtains: (HTMLCanvasElement | null)[] = [];
 
 /**
- * One aurora band's gradient, repainted where it stands this frame.
- * Its stop drifts, so it is drawn again every frame — a strip this
- * size costs a quarter of a kilobyte to hand over
+ * One band's light, repainted where it stands this frame. Its stops
+ * drift, so it is drawn again every frame: a strip this size costs a
+ * quarter of a kilobyte to hand over
  */
-function curtainStrip(band: number, shift: number): HTMLCanvasElement | null {
+function curtainStrip(band: number, shift: number, curtain: Curtain): HTMLCanvasElement | null {
   const held = curtains[band] ?? document.createElement('canvas');
 
   held.width = 1;
@@ -627,13 +1062,22 @@ function curtainStrip(band: number, shift: number): HTMLCanvasElement | null {
   if (into == null) {
     return null;
   }
-  const curtain = into.createLinearGradient(0, 0, 0, CURTAIN_STEPS);
+  const light = into.createLinearGradient(0, 0, 0, CURTAIN_STEPS);
 
-  curtain.addColorStop(0, band === 1 ? '#7de2ff00' : '#7dffb800');
-  curtain.addColorStop(0.35 + shift * 0.1, band === 1 ? '#7de2ff3a' : '#7dffb83a');
-  curtain.addColorStop(1, '#7de2ff00');
+  for (const stop of curtain.stops) {
+    // The middle of the band breathes up and down it, which is what
+    // keeps a curtain from being a picture that happens to move
+    const at = stop.at <= 0 || stop.at >= 1 ? stop.at : Math.min(0.98, stop.at + shift * 0.08);
+
+    light.addColorStop(
+      at,
+      `${stop.colour}${Math.round(stop.alpha * 0xff)
+        .toString(16)
+        .padStart(2, '0')}`,
+    );
+  }
   into.clearRect(0, 0, 1, CURTAIN_STEPS);
-  into.fillStyle = curtain;
+  into.fillStyle = light;
   into.fillRect(0, 0, 1, CURTAIN_STEPS);
   curtains[band] = held;
   return held;
@@ -658,48 +1102,89 @@ function batchLights(
   clock: number,
   strength: number,
 ): void {
-  if (weather === Weather.Aurora) {
-    const seconds = clock / 1000;
+  const curtain = CURTAINS[weather];
+  const arc = ARCS[weather];
 
-    for (let band = 0; band < 3; band++) {
+  if (curtain != null) {
+    const seconds = clock / 1000;
+    const across = width / curtain.ribs;
+
+    for (let band = 0; band < curtain.bands; band++) {
       const shift = Math.sin(seconds * 0.12 + band) * 0.5 + 0.5;
-      const strip = curtainStrip(band, shift);
+      const strip = curtainStrip(band, shift, curtain);
 
       if (strip == null) {
         continue;
       }
-      const top = height * (0.02 + band * 0.06);
-      const deep = height * 0.42;
+      const top = height * (curtain.top + band * curtain.gap);
+      const deep = height * curtain.deep;
 
       batch.invalidate(strip);
-      batch.quad(
-        strip,
-        { x: 0, y: 0, width: 1, height: CURTAIN_STEPS },
-        [
-          { x: 0, y: top },
-          { x: width, y: top },
-          { x: width, y: top + deep },
-          { x: 0, y: top + deep },
-        ],
-        strength,
-        undefined,
-        'smooth',
-        'screen',
-      );
+      for (let rib = 0; rib < curtain.ribs; rib++) {
+        const { foot, light } = ribAt(curtain, band, rib, seconds);
+        const wide = across * curtain.spread;
+        const left = rib * across - (wide - across) / 2;
+        const bottom = top + deep * foot;
+
+        batch.quad(
+          strip,
+          { x: 0, y: 0, width: 1, height: CURTAIN_STEPS },
+          [
+            { x: left, y: top },
+            { x: left + wide, y: top },
+            { x: left + wide, y: bottom },
+            { x: left, y: bottom },
+          ],
+          strength * light,
+          undefined,
+          'smooth',
+          'screen',
+        );
+      }
     }
   }
-  if (weather !== Weather.Rainbow) {
+  const shower = SHOWERS[weather];
+
+  if (shower != null) {
+    const seconds = clock / 1000;
+    const zoom = zoomFor(width, height);
+
+    for (let which = 0; which < shower.count; which++) {
+      const flying = meteorAt(shower, which, width, height, seconds);
+
+      if (flying == null) {
+        continue;
+      }
+      for (let piece = 0; piece < shower.pieces; piece++) {
+        const near = piece / shower.pieces;
+        const far = (piece + 1) / shower.pieces;
+        const along = (share: number): QuadPoint => ({
+          x: flying.head.x + (flying.back.x - flying.head.x) * share,
+          y: flying.head.y + (flying.back.y - flying.head.y) * share,
+        });
+
+        batch.line(
+          shower.colour,
+          along(near),
+          along(far),
+          shower.thickness * zoom * (0.35 + 0.65 * (1 - near)),
+          strength * flying.light * (1 - near) ** 1.6,
+          'screen',
+        );
+      }
+    }
+  }
+  if (arc == null) {
     return;
   }
   // Straight pieces rather than a stroked arc: the batch has no
   // curves, and half a turn cut this fine is a curve at the width
   // these bands are drawn
-  const bands = ['#ff5d5d', '#ffa94d', '#ffe66d', '#6ee7a0', '#5db8ff', '#9b8cff'];
   const radius = Math.max(width, height) * 0.62;
   const step = radius * 0.028;
   const middle = { x: width * 0.7, y: height * 1.05 };
 
-  for (let band = 0; band < bands.length; band++) {
+  for (let band = 0; band < arc.length; band++) {
     const reach = radius - band * step;
     const along = (piece: number): { x: number; y: number } => {
       const angle = Math.PI + (Math.PI * piece) / RAINBOW_STEPS;
@@ -708,7 +1193,7 @@ function batchLights(
     };
 
     for (let piece = 0; piece < RAINBOW_STEPS; piece++) {
-      batch.line(`${bands[band]}44`, along(piece), along(piece + 1), step, strength, 'screen');
+      batch.line(`${arc[band]}44`, along(piece), along(piece + 1), step, strength, 'screen');
     }
   }
 }
@@ -724,12 +1209,35 @@ export function batchWash(
   weather: Weather,
   clock: number,
   strength = 1,
+  lamps: Lamp[] = [],
 ): boolean {
   if (weather === Weather.Clear || strength <= 0 || !(width > 0) || !(height > 0)) {
     return false;
   }
   const wash = WASHES[weather];
+  const dark = LAMPLIT[weather];
 
+  if (dark != null) {
+    const cut = lampMask(width, height, dark, lamps, strength);
+
+    if (cut != null) {
+      batch.invalidate(cut);
+      batch.quad(
+        cut,
+        { x: 0, y: 0, width: cut.width, height: cut.height },
+        [
+          { x: 0, y: 0 },
+          { x: width, y: 0 },
+          { x: width, y: height },
+          { x: 0, y: height },
+        ],
+        1,
+        undefined,
+        'smooth',
+        'over',
+      );
+    }
+  }
   if (wash != null) {
     batch.solid(
       wash.colour,
@@ -741,6 +1249,22 @@ export function batchWash(
       ],
       wash.depth * strength,
       BLENDS[wash.mode],
+    );
+  }
+  const flash = FLASHES[weather];
+  const lit = flashAt(weather, clock / 1000);
+
+  if (flash != null && lit > 0) {
+    batch.solid(
+      flash.colour,
+      [
+        { x: 0, y: 0 },
+        { x: width, y: 0 },
+        { x: width, y: height },
+        { x: 0, y: height },
+      ],
+      flash.depth * lit * strength,
+      'screen',
     );
   }
   batchLights(batch, width, height, weather, clock, strength);
@@ -823,6 +1347,7 @@ export default function paintSky(
   weather: Weather,
   clock: number,
   strength = 1,
+  lamps: Lamp[] = [],
 ): void {
   // A canvas with no size is a canvas mid-layout — a board hidden
   // behind a dialog measures zero until the dialog is gone — and
@@ -832,6 +1357,7 @@ export default function paintSky(
   }
   const wash = WASHES[weather];
   const fall = FALLS[weather];
+  const dark = LAMPLIT[weather];
 
   context.save();
   if (wash != null) {
@@ -840,13 +1366,44 @@ export default function paintSky(
     context.fillStyle = wash.colour;
     context.fillRect(0, 0, width, height);
   }
+  if (dark != null) {
+    const cut = lampMask(width, height, dark, lamps, strength);
+
+    if (cut != null) {
+      context.globalCompositeOperation = 'source-over';
+      context.globalAlpha = 1;
+      context.drawImage(cut, 0, 0, width, height);
+    }
+  }
   context.globalCompositeOperation = 'source-over';
   context.globalAlpha = strength;
-  if (weather === Weather.Aurora) {
-    paintAurora(context, width, height, clock);
+  const curtain = CURTAINS[weather];
+  const arc = ARCS[weather];
+  const shower = SHOWERS[weather];
+  const lit = flashAt(weather, clock / 1000);
+
+  if (curtain != null) {
+    paintCurtain(context, width, height, curtain, clock);
   }
-  if (weather === Weather.Rainbow) {
-    paintRainbow(context, width, height);
+  if (arc != null) {
+    paintArc(context, width, height, arc);
+  }
+  if (shower != null) {
+    paintShower(context, width, height, shower, clock);
+  }
+  // Lightning behind the rain rather than over it, which is where it
+  // is: what a strike lights is the sky, and the fall is between the
+  // player and that
+  if (lit > 0) {
+    const flash = FLASHES[weather];
+
+    if (flash != null) {
+      context.globalCompositeOperation = 'screen';
+      context.globalAlpha = flash.depth * lit * strength;
+      context.fillStyle = flash.colour;
+      context.fillRect(0, 0, width, height);
+      context.globalAlpha = strength;
+    }
   }
   context.globalCompositeOperation = 'source-over';
   if (fall != null) {

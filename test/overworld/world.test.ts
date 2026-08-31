@@ -176,8 +176,13 @@ import {
   resolveNest,
   resolvePhenomenon,
 } from '../../src/overworld/landmarks';
+import { DARK_DAY_LAMP_CELLS } from '../../src/data/overworld/weather';
 import { LURE_SPAWN_BONUS } from '../../src/overworld/abilities/__create';
-import { FLAME_BODY_FACTOR, PICKUP_STEP_INTERVAL } from '../../src/overworld/abilities/gen-1';
+import {
+  FLAME_BODY_FACTOR,
+  ILLUMINATE_LAMP_REACH,
+  PICKUP_STEP_INTERVAL,
+} from '../../src/overworld/abilities/gen-1';
 import { EGG_HATCH_STEPS } from '../../src/auth/egg';
 import type Overworld from '../../src/overworld/core';
 import type { Buddy } from '../../src/overworld/core';
@@ -1486,6 +1491,30 @@ describe('world', () => {
         SPAWN_COUNT + LURE_SPAWN_BONUS,
       );
     }
+  });
+
+  it('reaches further into the dark with an Illuminate buddy', () => {
+    const alone = createOverworld('player-uid', null);
+
+    expect(alone.checkLampReach(DARK_DAY_LAMP_CELLS)).toBe(DARK_DAY_LAMP_CELLS);
+    expect(
+      createOverworld('player-uid', buddyWith([Abilities.Synchronize])).checkLampReach(
+        DARK_DAY_LAMP_CELLS,
+      ),
+    ).toBe(DARK_DAY_LAMP_CELLS);
+
+    // The lantern is Illuminate's alone: the other two lures draw more
+    // out of a chunk and light none of it
+    for (const lure of [Abilities.ArenaTrap, Abilities.NoGuard]) {
+      expect(
+        createOverworld('player-uid', buddyWith([lure])).checkLampReach(DARK_DAY_LAMP_CELLS),
+      ).toBe(DARK_DAY_LAMP_CELLS);
+    }
+    expect(
+      createOverworld('player-uid', buddyWith([Abilities.Illuminate])).checkLampReach(
+        DARK_DAY_LAMP_CELLS,
+      ),
+    ).toBeCloseTo(DARK_DAY_LAMP_CELLS * ILLUMINATE_LAMP_REACH);
   });
 
   it('talks an encounter into a nature and a gender', () => {

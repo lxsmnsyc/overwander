@@ -55,6 +55,11 @@ export const enum OverworldEvents {
    * Pickup is the only thing that answers it
    */
   CheckWalkPickup = 7,
+  /**
+   * How far the player can see under a sky that has put the lights
+   * out. Illuminate is what a lantern is out here
+   */
+  CheckLampReach = 8,
 }
 
 /**
@@ -141,6 +146,14 @@ export interface CheckWalkPickupEvent extends OverworldEvent {
   found: number;
 }
 
+export interface CheckLampReachEvent extends OverworldEvent {
+  /**
+   * How far a player walking alone sees in the dark, in cells
+   */
+  base: number;
+  reach: number;
+}
+
 export interface OverworldEventMap extends EventMap {
   [OverworldEvents.CheckSpawnCount]: [CheckSpawnCountEvent, EventPriority];
   [OverworldEvents.CheckEncounterNature]: [CheckEncounterNatureEvent, EventPriority];
@@ -150,4 +163,5 @@ export interface OverworldEventMap extends EventMap {
   [OverworldEvents.CheckCatchCandy]: [CheckCatchCandyEvent, EventPriority];
   [OverworldEvents.CheckEggSteps]: [CheckEggStepsEvent, EventPriority];
   [OverworldEvents.CheckWalkPickup]: [CheckWalkPickupEvent, EventPriority];
+  [OverworldEvents.CheckLampReach]: [CheckLampReachEvent, EventPriority];
 }

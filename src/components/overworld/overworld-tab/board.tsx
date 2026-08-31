@@ -1588,6 +1588,7 @@ export default function OverworldBoard(props: {
               <ChunkCanvas
                 biome={loaded().biome}
                 weather={loaded().weather}
+                lamp={loaded().lamp}
                 charset={charset()}
                 // The camera belongs to the player rather than to the
                 // chunk: walking over a boundary swaps the board out

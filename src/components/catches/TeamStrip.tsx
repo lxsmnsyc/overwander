@@ -9,6 +9,12 @@ import { asBoxEntry } from './catch-summary';
 export interface TeamStripProps {
   /** The party, as records — live ones, or snapshots read back */
   catches: [string, CaughtPokemon][];
+  /**
+   * How much room the strip takes. It is capped by default, since most
+   * of the rows that carry one put it beside something else; a row
+   * that gives it the width says so
+   */
+  class?: string;
 }
 
 /**
@@ -19,7 +25,7 @@ export interface TeamStripProps {
  */
 export default function TeamStrip(props: TeamStripProps): JSX.Element {
   return (
-    <div class="w-full max-w-60">
+    <div class={props.class ?? 'w-full max-w-60'}>
       <CatchBox
         capacity={TEAM_SIZE}
         cardOnly

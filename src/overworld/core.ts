@@ -13,6 +13,7 @@ import {
   type CheckEncounterNatureEvent,
   type CheckEncounterShinyEvent,
   type CheckGoldRewardEvent,
+  type CheckLampReachEvent,
   type CheckSpawnCountEvent,
   type CheckWalkPickupEvent,
   type OverworldEventMap,
@@ -240,5 +241,25 @@ export default class Overworld extends EventEngine<OverworldEventMap> {
 
     this.emit(OverworldEvents.CheckWalkPickup, event);
     return Math.max(0, Math.floor(event.found));
+  }
+
+  /**
+   * How far the player sees under a sky that has put the lights out,
+   * in cells. It is asked whatever the sky is doing: only a dark one
+   * reads the answer, and a board that asked conditionally would have
+   * to know which skies those are
+   */
+  checkLampReach(base: number): number {
+    const event: CheckLampReachEvent = {
+      id: 'CheckLampReach',
+      disabled: false,
+      overworld: this,
+      random: this.random('lamp', 'reach'),
+      base,
+      reach: base,
+    };
+
+    this.emit(OverworldEvents.CheckLampReach, event);
+    return Math.max(0, event.reach);
   }
 }

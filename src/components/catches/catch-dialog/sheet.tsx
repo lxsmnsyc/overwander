@@ -18,7 +18,7 @@ import {
   setNickname,
   takeItem,
 } from '../../../auth/caught';
-import { getCatchName, isShadow } from '../../../auth/caught-record';
+import { getCatchName, isShadow, isShiny } from '../../../auth/caught-record';
 import { NICKNAME_LIMIT, asNickname } from '../../../auth/nickname';
 import { useAuth } from '../../../auth/context';
 
@@ -213,17 +213,30 @@ export function CatchSheetBody(
   };
 
   /**
-   * Whether the reader has met this species at all, and whether they
-   * have owned one. A dex that has not arrived yet answers "no" to
-   * both, which draws the shadow — a sheet that flashed the full
-   * picture and then hid it would be worse than one that fills in
+   * Whether the reader has met this species at all, whether they have
+   * owned one, and whether one of those sparkled. A dex that has not
+   * arrived yet answers "no" to all three, which draws the shadow: a
+   * sheet that flashed the full picture and then hid it would be worse
+   * than one that fills in.
+   *
+   * Owning one counts as having met it, the way `hasSeenSpecies` has
+   * it: a gift arrives without a meeting, so a species can be kept
+   * without ever having been encountered, and calling that one unmet
+   * would hide a pokemon standing in the reader's own party.
+   *
+   * The sparkling count is its own answer because a shiny is its own
+   * half of an entry. Owning a Pidgeotto says nothing about whether
+   * the reader has ever held a shiny one
    */
-  const dexKnows = (species: Species): { met: boolean; owned: boolean } => {
+  const dexKnows = (species: Species): { met: boolean; owned: boolean; shiny: boolean } => {
     const entry = props.dex();
+    const kept = entry?.caught.find((tally) => tally.species === species);
+    const seen = entry?.seen.some((tally) => tally.species === species) === true;
 
     return {
-      met: entry?.seen.some((tally) => tally.species === species) === true,
-      owned: entry?.caught.some((tally) => tally.species === species) === true,
+      met: seen || kept != null,
+      owned: kept != null,
+      shiny: (kept?.shiny ?? 0) > 0,
     };
   };
 
@@ -1000,6 +1013,7 @@ export function CatchSheetBody(
                     options={props.evolutions.latest}
                     owned={owned() != null}
                     frozen={frozen()}
+                    shiny={isShiny(loaded())}
                     dexKnows={dexKnows}
                     onEvolve={evolve}
                   />

@@ -273,6 +273,15 @@ export function shadowsWildMeetings(weather: Weather): boolean {
  */
 export const DARK_DAY_SHADOW_CHANCE = 1 / 3;
 
+/**
+ * How far a player sees under a Dark Day, in cells, walking alone.
+ *
+ * Wide enough that whatever they are standing on is lit along with
+ * the ground around it, and narrow enough that the board still reads
+ * as dark. A buddy can widen it: see `ILLUMINATE_LAMP_REACH`
+ */
+export const DARK_DAY_LAMP_CELLS = 1.7;
+
 /** What this sky multiplies the odds of a hidden ability by */
 export function hiddenAbilityBoostOf(weather: Weather): number {
   return weather === Weather.FataMorgana ? FATA_MORGANA_HIDDEN_BOOST : 1;

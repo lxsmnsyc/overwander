@@ -4,6 +4,8 @@ import type { EvolutionOption } from '../../../../auth/evolution';
 
 import type { Species } from '../../../../data/ids/species';
 
+import { getSpeciesData } from '../../../../data/species';
+
 import SpeciesCoat from '../../../sprites/SpeciesCoat';
 
 import { Button, DialogSection, List, ListRow } from '../../../styled';
@@ -20,8 +22,14 @@ export interface EvolutionSectionProps {
   options: EvolutionOption[] | undefined;
   owned: boolean;
   frozen: boolean;
+  /**
+   * Whether the pokemon whose sheet this is sparkles. What it turns
+   * into sparkles with it, so the row asks the dex about that coat
+   * rather than the ordinary one
+   */
+  shiny: boolean;
   /** What the reader's dex has met and kept, which decides the picture */
-  dexKnows: (species: Species) => { met: boolean; owned: boolean };
+  dexKnows: (species: Species) => { met: boolean; owned: boolean; shiny: boolean };
   onEvolve: (species: Species) => void;
 }
 
@@ -44,53 +52,69 @@ export default function EvolutionSection(props: EvolutionSectionProps): JSX.Elem
           them. What a line evolves into does not
           move; only whether it can yet */}
           <Index each={props.options}>
-            {(option) => (
-              <ListRow
-                class="items-center gap-3"
-                // The shorthand on the row spelled out,
-                // for anyone who stops on it and for
-                // anything that reads it aloud
-                title={describeEvolutionMethod(option().evolution)}
-              >
-                {/* What it turns into, drawn rather than
+            {(option) => {
+              const becomes = (): Species => option().evolution.species;
+              const known = (): { met: boolean; owned: boolean; shiny: boolean } =>
+                props.dexKnows(becomes());
+
+              return (
+                <ListRow
+                  class="items-center gap-3"
+                  // The shorthand on the row spelled out,
+                  // for anyone who stops on it and for
+                  // anything that reads it aloud
+                  title={describeEvolutionMethod(option().evolution)}
+                >
+                  {/* What it turns into, drawn rather than
                 named — and drawn to what the reader
                 has earned of it, the way the dex
                 draws one. A line whose end they have
                 never met is a shape rather than a
                 spoiler, which is the whole reason a
                 dex is worth filling in */}
-                <div class="flex items-end justify-start">
-                  <SpeciesCoat
-                    species={option().evolution.species}
-                    met={props.dexKnows(option().evolution.species).met}
-                    revealed={props.dexKnows(option().evolution.species).owned}
-                    scale={2}
-                  />
-                </div>
-                {/* The condition reads as a sum with the
+                  <div class="flex items-end justify-start">
+                    <SpeciesCoat
+                      species={becomes()}
+                      met={known().met}
+                      // A shiny sheet asks about the shiny coat. Having
+                      // owned an ordinary Pidgeotto is no reason to show
+                      // a reader the sparkling one they have never held
+                      revealed={props.shiny ? known().shiny : known().owned}
+                      // The sparkling coat is drawn only once it is
+                      // earned. A shadow is the shape with the colour
+                      // taken out, so an unearned one is the ordinary
+                      // sheet blacked out rather than a shiny sheet
+                      // fetched to be hidden
+                      shiny={props.shiny && known().shiny}
+                      called={props.shiny ? `${getSpeciesData(becomes()).name}, shiny` : undefined}
+                      scale={2}
+                    />
+                  </div>
+                  {/* The condition reads as a sum with the
                 picture: that shape, plus a trade.
                 It stays on the row rather than
                 hiding on the button, because it is
                 what the player is working towards
                 and they need it whether or not they
                 are about to press anything */}
-                <span class="flex items-center gap-1 text-muted">
-                  <span>+</span>
-                  <EvolutionCondition evolution={option().evolution} />
-                </span>
-                <Show when={props.owned}>
-                  <Button
-                    tone="primary"
-                    disabled={props.frozen || !option().available}
-                    onClick={() => {
-                      props.onEvolve(option().evolution.species);
-                    }}
-                  >
-                    Evolve
-                  </Button>
-                </Show>
-              </ListRow>
-            )}
+                  <span class="flex items-center gap-1 text-muted">
+                    <span>+</span>
+                    <EvolutionCondition evolution={option().evolution} />
+                  </span>
+                  <Show when={props.owned}>
+                    <Button
+                      tone="primary"
+                      disabled={props.frozen || !option().available}
+                      onClick={() => {
+                        props.onEvolve(option().evolution.species);
+                      }}
+                    >
+                      Evolve
+                    </Button>
+                  </Show>
+                </ListRow>
+              );
+            }}
           </Index>
         </List>
       </DialogSection>

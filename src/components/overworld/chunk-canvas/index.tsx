@@ -35,7 +35,7 @@ import drawSparkle from '../../../canvas/sparkle';
 import { type Cast, batchAmbient, getCast, paintAmbient } from '../../../canvas/daylight';
 import type Weather from '../../../data/overworld/weather';
 import pixelRatio from '../../../canvas/ratio';
-import paintSky, { batchSky, batchWash } from '../../../canvas/sky';
+import paintSky, { type Lamp, batchSky, batchWash } from '../../../canvas/sky';
 import createTwist from '../../../canvas/twist';
 import { getLocalOffset, toLocalTime } from '../../../auth/local-time';
 import { serverNow } from '../../../auth/clock';
@@ -247,6 +247,12 @@ export interface ChunkCanvasProps {
    * under the player's own instruments, the same as the hour's light
    */
   weather: Weather;
+  /**
+   * How far the player sees in the dark, in cells. Only a sky that has
+   * put the lights out reads it, and what it is worth is the buddy's
+   * business rather than the board's
+   */
+  lamp: number;
   /**
    * Whether the board is on its way off the screen or on to it, and
    * which way the player went. Null while they are standing in the
@@ -1114,6 +1120,12 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
      * frame to frame, so each piece is drawn once and stamped after
      */
     const bakery = new Bakery();
+    /**
+     * What a dark sky is kept off, rebuilt every frame as the board is
+     * walked over. A landmark, a pokemon and the player each carry
+     * one; everything else is left to the dark
+     */
+    const lamps: Lamp[] = [];
     /** What the batch holds of it, so a newly baked piece re-uploads */
     let baked = -1;
 
@@ -1906,12 +1918,25 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       // than where the walk is headed
       const playerCell = Math.round(slide.y) * CHUNK_CELLS + Math.round(slide.x);
 
+      lamps.length = 0;
+
       for (const index of paintOrder(yaw())) {
         const middle = at(projectCell(index, yaw()));
         // Nothing standing anywhere while the sheets are still coming:
         // a field that fills in one pokemon at a time reads as a page
         // loading rather than as a place
         const standing = loading() ? undefined : props.spawns.get(index);
+
+        // What a dark sky is kept off: the player, and the places worth
+        // walking to. A pokemon standing on a cell carries no light of
+        // its own, since finding one in the dark is what the sky is
+        // for, so it is seen when a lamp reaches it and not before.
+        //
+        // Gathered here rather than derived again: this loop already
+        // knows where everything on the board ended up on the screen
+        if (index === playerCell || props.landmarks.get(index) != null) {
+          lamps.push({ x: middle.x, y: middle.y, reach: CELL * magnify * props.lamp });
+        }
 
         // Whatever was announced here has been caught, walked off or
         // rolled over, so the next shiny to stand on this cell gets a
@@ -2220,10 +2245,10 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       // fall after it, the order they were always drawn in
       if (batch == null) {
         paintAmbient(context, screen.width, screen.height, worldTime(), props.latitude);
-        paintSky(context, screen.width, screen.height, props.weather, clock);
+        paintSky(context, screen.width, screen.height, props.weather, clock, 1, lamps);
       } else {
         batchAmbient(batch, screen.width, screen.height, worldTime(), props.latitude);
-        batchWash(batch, screen.width, screen.height, props.weather, clock);
+        batchWash(batch, screen.width, screen.height, props.weather, clock, 1, lamps);
         batchSky(batch, screen.width, screen.height, props.weather, clock);
       }
 

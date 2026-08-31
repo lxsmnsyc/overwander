@@ -108,6 +108,27 @@ const setupPickup = createBuddyAbility(Abilities.Pickup, (overworld) => {
 });
 
 /**
+ * How much further a player sees in the dark with an Illuminate buddy
+ * at their side, as a multiple of what they would see alone
+ */
+export const ILLUMINATE_LAMP_REACH = 2.2;
+
+/**
+ * Illuminate, out here, is a lantern as well as a lure: under a sky
+ * that has put the lights out, what the player can see of the board
+ * around them reaches this much further.
+ *
+ * It is registered apart from its lure rather than folded into it,
+ * because the two are answers to different questions and the lure is
+ * shared with two other abilities
+ */
+const setupIlluminate = createBuddyAbility(Abilities.Illuminate, (overworld) => {
+  overworld.on(OverworldEvents.CheckLampReach, EventPriority.Exact, (event) => {
+    event.reach = event.base * ILLUMINATE_LAMP_REACH;
+  });
+});
+
+/**
  * The lures, which draw `LURE_SPAWN_BONUS` more pokemon into a chunk,
  * the two abilities that decide what an encounter comes out as, and
  * the two that pay a walk rather than a meeting
@@ -116,6 +137,8 @@ const FIELD_ABILITIES: ((overworld: Overworld) => void)[] = [
   createLureAbility(Abilities.ArenaTrap),
   createLureAbility(Abilities.Illuminate),
   createLureAbility(Abilities.NoGuard),
+
+  setupIlluminate,
 
   setupSynchronize,
   setupCuteCharm,

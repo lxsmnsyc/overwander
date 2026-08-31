@@ -194,38 +194,35 @@ A few skies are showpieces and turn up rarely and in one place at a time: an
 **aurora** over the far north, a **rainbow** over open water, and **pollen
 drift** through a forest.
 
-Above those sits one sky of its own: a **meteor shower**. It is the only weather
-that falls anywhere, over every country in the world, and it is still the rarest
-by a clear margin, because what holds it back is the sky rather than the ground.
-Roughly one window in thirteen hundred.
+Above those sits a tier of its own, and there are four of them. Each is reached
+from further out than any showpiece and each falls over **every country in the
+world**, so what holds them back is the band rather than the map: roughly one
+window in twelve hundred apiece. Each favours **all eighteen types at once**,
+which nothing else does, so anything met under one carries the floor of 10
+whoever you are raising. Each then does one thing no other weather does, and no
+two touch the same part of what a pokemon is.
 
-It has an opposite number, just as rare: a **fata morgana**, the mirage that
-rises when the air is utterly still, showing coastlines and cliffs stacked in
-the sky where there is nothing. Roughly one window in thirteen hundred, and it
-too falls anywhere in the world.
+| Sky                | What it is                                                        | What it is worth                                    |
+| ------------------ | ----------------------------------------------------------------- | ---------------------------------------------------- |
+| **Meteor shower**  | The old rarest sky, moved to a band of its own                    | Double the odds of a **shiny coat**                  |
+| **Fata morgana**   | The mirage that rises off dead-still air, stacking a coastline into cliffs | Double the odds of a **hidden ability**     |
+| **Dark day**       | Noon gone dark under carried smoke, in air bone dry and moving hard | About a third of what is met is a **shadow**       |
+| **Fogbow**         | A rainbow with the colour gone, formed in fog fine enough to scatter light white | What is met knows one of its line's **egg moves** |
 
-A third shares their corner of the field and none of their kindness: a **dark
-day**, noon gone dark under smoke carried from somewhere else, in air that is
-bone dry and moving hard. **About a third** of what is met in the wild under one
-comes out a **shadow**, so a dark day is a window of decisions rather than a
-haul. It is the only place in the world outside Team Rocket that a shadow comes
-from, and a shadow is worth having: purified, it keeps the mark and gains two
-points on every value.
+The two doublings stack with the day's featured family and with anything the
+player is carrying.
 
-The fourth corner is a **fogbow**: a rainbow with the colour gone, formed in fog
-so fine it scatters the light white instead of splitting it, which takes air
-holding all it can and nothing moving it. Anything met in the wild under one
-already knows one of its line's **egg moves**. Breeding is the only other way to
-come by one. About half the families have an egg move at all, so half of what
-you meet under a fogbow is handed nothing.
+A **dark day** is a window of decisions rather than a haul. It is the only place
+in the world outside Team Rocket that a shadow comes from, and a shadow is worth
+having: purified, it keeps the mark and gains two points on every value. It is
+also the one sky you cannot see across. The board goes near black, lit only in a
+pool around the player and around every landmark, and a wild pokemon carries no
+light of its own, so finding one means walking a lamp onto it. A buddy with
+**Illuminate** more than doubles how far that pool reaches.
 
-All four are the only skies worth going out in whoever you are raising.
-Every other sky favours a type or two; all four of these **favour all eighteen at
-once**, so anything met under any of them carries the floor of 10. Each then does
-one thing no other weather does, and each touches a different part of what a
-pokemon is: a meteor shower its **coat**, a fata morgana its **hidden ability**,
-a dark day what it **becomes**, a fogbow what it **knows**. The two doublings
-stack with the day's featured family and with anything the player is carrying.
+A **fogbow** hands over what breeding was the only way to come by, when there is
+anything to hand over: about half the families have an egg move at all, so half
+of what you meet under one is given nothing.
 
 **What weather is worth.** Every sky is kind to a type or two, and a pokemon of a
 type its sky favours comes with a floor of **10 under every one of its six
@@ -247,6 +244,16 @@ as the rarest, not fifty.
 Floors **stack**. A raid on the family's own day already carries a floor of 10, so
 one fought under a sky that favours its type carries **20**, which makes the
 right weather on the family's own day the best day to raid.
+
+**What a sky is holding.** Weather decides who turns up as well as how good they
+are. A favoured type is crowded into the chunk's spawns at **twice** its ordinary
+weight, the way a species day crowds its family at four times, so walking into a
+storm is a reason to look for what a storm is about. The bands do not move, so a
+favoured rare stays rare and only wins its band more often, and a sky can only
+crowd what already lives there: rain over a grassland roughly doubles a small
+share of it, and rain over a coral reef changes nothing because everything there
+was already Water. The four rarest skies are left out, since they are kind to
+every type and lifting every entry at once is the pool they started with.
 
 One sky favours nothing at all. A clear afternoon is the ordinary weather and
 about two windows in five are one, which is what makes the rest worth walking
@@ -292,8 +299,18 @@ player into the neighbouring chunk, entering from the opposite side. Four compas
 marks stand outside that border and turn with the map as the camera moves. Each
 one points the way it stands for, and north is the red one.
 
+The board can be turned: drag it with the right button, or twist two fingers on a
+touch screen. A drag or a twist that moved the camera does not count as a press on
+whatever it finished over. A card that opens on hover is opened by a **hold**
+instead where there is no pointer to hover with.
+
 The player's position is saved every second and a half rather than at every step,
 so a page reload never undoes a long walk.
+
+**One walk, however many screens are signed in.** A second screen that finds the
+walk has gone somewhere it is not stands down: it stops walking, hands over the
+paces it had not reported yet, and says where the walk went. One press takes it
+back, which stands the other screen down in turn.
 
 ## See also
 

@@ -25,8 +25,8 @@ into, **Team Rocket** stops, a **gym seat** another player is holding, and a
 **A move is in the air for a moment.** Most take a quarter of a second between
 going off and landing — the time a swing takes — while anything thrown names its
 own flight time, twice that, and is drawn crossing the field. It is a real gap: a
-pokemon that faints, is switched out, or interrupts the attacker during it does
-so before the hit arrives.
+pokemon that faints or interrupts the attacker during it does so before the hit
+arrives.
 
 **Priority shortens the wind-up.** Each point of a move's priority takes time off
 it, so Quick Attack visibly comes out faster than a slower move that started
@@ -38,8 +38,15 @@ about every five seconds, a 5 PP Hyper Beam about every thirty-six. Strong moves
 are rationed by the clock.
 
 **A wind-up can be interrupted.** Flinching stops it, and so does the target
-fainting or leaving the field. A move that has already landed cannot be taken
-back.
+fainting. A move that has already landed cannot be taken back.
+
+**Switching is a walk across the field**, not a disappearance. The pair change
+places in front of everybody, the one crossing keeps winding up whatever it had
+started, and anything aimed at it, a wind-up, a channel or a move already in the
+air, follows the swap onto whoever took the spot. Switching out of a hit is
+therefore switching somebody else into it. Only **Teleport** takes its user out
+of the world: that one interrupts, stops both ends acting, and cannot be touched
+while it goes.
 
 **Some moves take several steps.** Dig spends time underground, Thrash swings
 repeatedly, Teleport disappears before it leaves. Each further step takes about as
@@ -119,13 +126,13 @@ including confusion, flinching, seeding, trapping, hiding and floating, end with
 the fight. A pokemon can leave a raid both poisoned and asleep.
 
 Statuses that chip away do so on a clock, since there are no turns. Every
-**two seconds**:
+**two seconds**, which is roughly one move and what a turn used to be worth:
 
-- **Poison** takes an eighth of the pokemon's maximum health.
-- **Bad poison** takes a sixteenth, and the fraction grows with each bite.
-
-Two seconds is roughly one move, which is what a turn used to be worth. Sand and
-hail wear a pokemon down on the same clock, taking a sixteenth every two seconds.
+| What is chipping | How much of the maximum it takes  |
+| ---------------- | --------------------------------- |
+| **Poison**       | An eighth                         |
+| **Bad poison**   | A sixteenth, growing with each bite |
+| **Sand, hail**   | A sixteenth, to whoever is not built for it |
 
 A status that runs out on its own runs out on that clock too:
 

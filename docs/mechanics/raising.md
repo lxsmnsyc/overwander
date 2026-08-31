@@ -219,21 +219,24 @@ amount to a free Move Reminder and the Heart Scale would be worth nothing.
 - **A berry** restores or cures exactly what it does in a fight, so an Oran Berry
   is worth ten points on either side of one. Out of battle the player decides
   when it is worth using.
-- **Medicine.** A Potion restores 20 points, a Super Potion 60, a Hyper Potion
-  120 and a Max Potion all of it. A cure removes one status, a Full Heal removes
-  all of them, a Full Restore does both, and a Revive lifts a fainted pokemon on
-  half its health — a Max Revive on all of it. **No medicine can be held**, so
-  nothing can be drunk mid-raid, which is what keeps berries worth carrying into
-  one.
-- **Herbal medicine** is cheaper and stronger, and costs friendship instead. An
-  Energy Powder restores 50 points, an Energy Root 200, a Heal Powder clears every
-  status, and a Revival Herb lifts a fainted pokemon on full health. Each dose
-  costs friendship, and stronger preparations count as more doses. A Luxury Ball
-  does not soften the loss. It is a straight choice between a party put right
-  today and a pokemon that adores its trainer in a month.
+- **Medicine**, off the shelf below. **None of it can be held**, so nothing is
+  drunk mid-raid, which is what keeps berries worth carrying into one.
+- **Herbal medicine**, cheaper and stronger, paid for in friendship rather than
+  in gold. Stronger preparations count as more doses, and a Luxury Ball does not
+  soften the loss. It is a straight choice between a party put right today and a
+  pokemon that adores its trainer in a month.
 - **A level**, which heals as a side effect.
 - **A Heal Ball thrown at something else**, which restores the buddy for free.
   See [Catching](catching.md#balls).
+
+| Medicine                        | What it does                                            |
+| ------------------------------- | -------------------------------------------------------- |
+| **Potion, Super, Hyper, Max**   | 20 points, 60, 120, and all of it                        |
+| **A cure, Full Heal**           | One status, or every one at once                         |
+| **Full Restore**                | Health and every status together                         |
+| **Revive, Max Revive**          | A fainted pokemon, on half its health or all of it       |
+| **Energy Powder, Energy Root**  | 50 points and 200, for friendship                        |
+| **Heal Powder, Revival Herb**   | Every status, or a faint on full health, for friendship  |
 
 Two rules apply throughout. **A revive is the only thing that reaches a fainted
 pokemon**, and the only thing that does nothing for one still standing. And

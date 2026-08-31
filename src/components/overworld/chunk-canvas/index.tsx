@@ -89,6 +89,7 @@ import {
   CROSSING_OUT,
   CROSSING_SLIDE,
   type Crossing,
+  GROUND_DEPTH,
   GROUND_SQUASH,
   LOADING_LABEL,
   LOADING_SIZE,
@@ -1180,6 +1181,19 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
     });
 
     /**
+     * A pool of light on the ground, for a point already on the
+     * screen. It is a circle of `props.lamp` cells laid back the way
+     * the ground is, and it grows with the cell it stands on the way
+     * everything else on the board does
+     */
+    const lampAt = (point: ProjectedPoint): Lamp => ({
+      x: point.x,
+      y: point.y,
+      reach: CELL * magnify * props.lamp * point.scale,
+      squash: GROUND_DEPTH,
+    });
+
+    /**
      * Lay four corners out as a path, ready to be filled or stroked.
      * Nothing here is a rect: a cell is a quad, with its two far
      * corners closer together than its two near ones, and so is the
@@ -1927,8 +1941,23 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       // through, so occlusion is read off where they are drawn rather
       // than where the walk is headed
       const playerCell = Math.round(slide.y) * CHUNK_CELLS + Math.round(slide.x);
+      /**
+       * Where the player actually is, which is between cells for most
+       * of a walk. Everything about them is drawn from it: the sprite,
+       * the shadow, and the light they carry
+       */
+      const afoot = at(
+        projectGround(
+          { u: (slide.x + 0.5) / CHUNK_CELLS, v: (slide.y + 0.5) / CHUNK_CELLS },
+          yaw(),
+        ),
+      );
 
       lamps.length = 0;
+      // The light travels with them rather than with the cell they are
+      // nearest, so a walk across a dark board carries its own pool
+      // instead of the board switching on a square at a time
+      lamps.push(lampAt(afoot));
 
       for (const index of paintOrder(yaw())) {
         const middle = at(projectCell(index, yaw()));
@@ -1944,8 +1973,8 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         //
         // Gathered here rather than derived again: this loop already
         // knows where everything on the board ended up on the screen
-        if (index === playerCell || props.landmarks.get(index) != null) {
-          lamps.push({ x: middle.x, y: middle.y, reach: CELL * magnify * props.lamp });
+        if (props.landmarks.get(index) != null) {
+          lamps.push(lampAt(middle));
         }
 
         // Whatever was announced here has been caught, walked off or
@@ -2157,12 +2186,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
 
         if (index === playerCell) {
           const walker = playerPerson();
-          const spot = at(
-            projectGround(
-              { u: (slide.x + 0.5) / CHUNK_CELLS, v: (slide.y + 0.5) / CHUNK_CELLS },
-              yaw(),
-            ),
-          );
+          const spot = afoot;
 
           if (walker == null) {
             // The dot it was before the sheet landed, on its own line
@@ -2323,8 +2347,13 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
     });
 
     // The overworld is what the tab is for, so it takes the keyboard
-    // when it opens rather than waiting to be clicked
-    element.focus({ preventScroll: true });
+    // when it opens rather than waiting to be clicked. Never off a
+    // dialog, though: the board is redrawn whenever the chunk changes,
+    // and a command that moved the player would take the keyboard out
+    // of the bar that moved them
+    if (document.activeElement?.closest('[tc-dialog]') == null) {
+      element.focus({ preventScroll: true });
+    }
   });
 
   return (

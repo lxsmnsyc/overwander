@@ -1515,7 +1515,8 @@ describe('world', () => {
       ).toBe(DARK_DAY_LAMP_CELLS);
     }
     // A lantern is a reach of its own rather than a multiple of the
-    // one it replaces: two cells, whatever a player walking alone sees
+    // one it replaces: three cells, whatever a player walking alone
+    // sees
     expect(
       createOverworld('player-uid', buddyWith([Abilities.Illuminate])).checkLampReach(
         DARK_DAY_LAMP_CELLS,

@@ -322,6 +322,21 @@ export default function OverworldBoard(props: {
     setPlaced(true);
   });
 
+  // Put somewhere by something other than a walk, which today means a
+  // staff teleport. The board holds its own coordinates once it is
+  // placed, so the news has to move them rather than the position
+  createEffect(() => {
+    const at = game.moved();
+
+    if (at == null || !placed()) {
+      return;
+    }
+    setChunkX(at.chunkX);
+    setChunkY(at.chunkY);
+    setCellX(at.cellX);
+    setCellY(at.cellY);
+  });
+
   /**
    * Walking into a chunk publishes (or adopts) the window's spawns;
    * everything after that arrives through the subscriptions below,

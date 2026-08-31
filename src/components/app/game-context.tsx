@@ -25,6 +25,7 @@ import ItemSprite from '../items/ItemSprite';
 import watchDueQuests from './due-quests';
 import { useToast } from '../styled';
 import type { AuctionSubject } from '../auctions/AuctionDialog';
+import type ProfileSection from '../profile/sections';
 import { ensureProfile } from '../../auth/profile';
 import getWorld from '../../overworld/current';
 import pickStartPosition, { type StartPosition } from '../../overworld/start';
@@ -175,6 +176,23 @@ export interface GameState {
    */
   takeWalk: () => void;
   /**
+   * Stand where the row already says this player is.
+   *
+   * A staff teleport writes the row from the server, and a screen
+   * that read it as a second screen's walk would fence itself off
+   * instead of moving. The stamp is taken as this screen's own, so
+   * the news of it arriving changes nothing
+   */
+  standHere: (at: PositionRecord) => void;
+  /**
+   * The last place the player was put by something other than a walk.
+   *
+   * The board keeps its own coordinates once it has been placed, so
+   * being moved has to reach it as news rather than through the
+   * position alone
+   */
+  moved: Accessor<PositionRecord | null>;
+  /**
    * Write down where the player is standing. It goes through here
    * rather than straight to the store so the stamp is kept: a device
    * that could not recognise its own writes coming back around the
@@ -263,6 +281,16 @@ export interface GameState {
   visiting: Accessor<string | null>;
   setVisiting: Setter<string | null>;
   /**
+   * Which part of the player's **own** profile to open at, or null to
+   * open it where it always opens.
+   *
+   * A notice about a trade says "Open trades", and the profile is
+   * where trades are answered: without this it opened on the battles
+   * tab and the button read as one that had done nothing
+   */
+  profileAt: Accessor<ProfileSection | null>;
+  setProfileAt: Setter<ProfileSection | null>;
+  /**
    * The friend a trade is being offered to, or null when none is.
    *
    * It lives here for the reason `visiting` does: the offer starts
@@ -342,6 +370,15 @@ export default function GameProvider(props: ParentProps): JSX.Element {
         // A position that did not save is a walk that will save it,
         // and there is nothing here worth interrupting a walk for
       });
+  };
+
+  const [moved, setMoved] = createSignal<PositionRecord | null>(null);
+
+  const standHere = (at: PositionRecord): void => {
+    wroteAt = Math.max(wroteAt, at.movedAt);
+    setElsewhere(null);
+    setPosition(at);
+    setMoved(at);
   };
 
   const takeWalk = (): void => {
@@ -466,6 +503,7 @@ export default function GameProvider(props: ParentProps): JSX.Element {
   const [sheet, setSheet] = createSignal<OpenSheet | null>(null);
   const [listing, setListing] = createSignal<AuctionSubject | null>(null);
   const [visiting, setVisiting] = createSignal<string | null>(null);
+  const [profileAt, setProfileAt] = createSignal<ProfileSection | null>(null);
   const [trading, setTrading] = createSignal<string | null>(null);
   const [dexEntry, setDexEntry] = createSignal<Species | null>(null);
   const [records, setRecords] = createSignal(0);
@@ -625,6 +663,8 @@ export default function GameProvider(props: ParentProps): JSX.Element {
         position,
         setPosition,
         elsewhere,
+        standHere,
+        moved,
         takeWalk,
         saveWalk,
         place,
@@ -647,6 +687,8 @@ export default function GameProvider(props: ParentProps): JSX.Element {
         setListing,
         visiting,
         setVisiting,
+        profileAt,
+        setProfileAt,
         trading,
         setTrading,
         dexEntry,

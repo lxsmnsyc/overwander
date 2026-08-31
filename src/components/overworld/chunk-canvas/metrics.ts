@@ -1,5 +1,5 @@
 import { BORDER_CELLS, PICTURE_SPAN } from '../../../canvas/board';
-import { GROUND_SQUASH } from '../../../canvas/tilt';
+import { GROUND_DEPTH, GROUND_SQUASH } from '../../../canvas/tilt';
 import { CHUNK_CELLS } from '../../../overworld/chunk';
 
 /**
@@ -310,6 +310,14 @@ export function grownArrow(
  * meets the ground, and finding that point needs this
  */
 export { GROUND_SQUASH };
+
+/**
+ * How flat a pool of light lies. The board's own depth rather than the
+ * shadow's: a lamp's reach is a circle drawn **on** the ground, so it
+ * is laid back by exactly what the ground is and not by the flatter
+ * figure a shadow is drawn at for looks
+ */
+export { GROUND_DEPTH };
 
 /**
  * Crossing a boundary, drawn rather than waited through.

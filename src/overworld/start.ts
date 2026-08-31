@@ -35,6 +35,24 @@ export default function pickStartPosition(world: World, seed: string): StartPosi
   // The draws land in order: the chunk coordinates, then the cell
   const chunkX = Math.floor(rng.random() * START_AREA) - half;
   const chunkY = Math.floor(rng.random() * START_AREA) - half;
+
+  return { chunkX, chunkY, ...pickFreeCell(world, chunkX, chunkY, rng) };
+}
+
+/**
+ * A cell in this chunk with no landmark on it.
+ *
+ * Anything that puts somebody down somewhere they did not walk to
+ * wants one: arriving already standing on a raid is not an arrival.
+ * A chunk paved with landmarks has no free cell and answers with its
+ * middle, which is somewhere rather than nowhere
+ */
+export function pickFreeCell(
+  world: World,
+  chunkX: number,
+  chunkY: number,
+  rng: AleaRNG,
+): { cellX: number; cellY: number } {
   const occupied = world.getChunk(chunkX, chunkY).getLandmarkCells();
   const free: number[] = [];
 
@@ -44,12 +62,8 @@ export default function pickStartPosition(world: World, seed: string): StartPosi
     }
   }
 
-  const cell = free[Math.floor(rng.random() * free.length)];
+  const middle = Math.floor(CELL_COUNT / 2);
+  const cell = free.length === 0 ? middle : free[Math.floor(rng.random() * free.length)];
 
-  return {
-    chunkX,
-    chunkY,
-    cellX: cell % CHUNK_CELLS,
-    cellY: Math.floor(cell / CHUNK_CELLS),
-  };
+  return { cellX: cell % CHUNK_CELLS, cellY: Math.floor(cell / CHUNK_CELLS) };
 }

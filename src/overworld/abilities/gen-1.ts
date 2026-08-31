@@ -108,10 +108,11 @@ const setupPickup = createBuddyAbility(Abilities.Pickup, (overworld) => {
 });
 
 /**
- * How much further a player sees in the dark with an Illuminate buddy
- * at their side, as a multiple of what they would see alone
+ * How far a player sees in the dark with an Illuminate buddy at their
+ * side, in cells. It replaces what they would see alone rather than
+ * multiplying it, so the reach is one number wherever it is read
  */
-export const ILLUMINATE_LAMP_CELLS = 2;
+export const ILLUMINATE_LAMP_CELLS = 3;
 
 /**
  * Illuminate, out here, is a lantern as well as a lure: under a sky

@@ -359,14 +359,14 @@ export interface QueryCompletion {
 }
 
 /** How many suggestions a box offers at once */
-const SUGGESTIONS = 8;
+export const SUGGESTIONS = 8;
 
 /**
  * Which of a list of words are worth offering for what has been typed.
  * What it starts with comes before what merely holds it, since a
  * prefix is nearly always what somebody meant
  */
-function matching(words: string[], typed: string): string[] {
+export function matching(words: string[], typed: string): string[] {
   const wanted = typed.trim().toLowerCase();
 
   if (wanted === '') {
@@ -381,7 +381,7 @@ function matching(words: string[], typed: string): string[] {
 }
 
 /** The word the caret is in, as a span of the box */
-function wordAround(query: string, caret: number): { start: number; end: number } {
+export function wordAround(query: string, caret: number): { start: number; end: number } {
   let start = caret;
   let end = caret;
 
@@ -395,7 +395,7 @@ function wordAround(query: string, caret: number): { start: number; end: number 
 }
 
 /** A value written back into a term, quoted where it carries a space */
-function asValue(value: string): string {
+export function asValue(value: string): string {
   return /\s/.test(value) ? `"${value}"` : value;
 }
 

@@ -29,6 +29,7 @@ import {
   unprojectGround,
 } from '../../canvas/board';
 import createTwist from '../../canvas/twist';
+import { GROUND_DEPTH } from '../../canvas/tilt';
 import { TYPE_NAMES } from '../../data/constants/types';
 
 /**
@@ -297,10 +298,13 @@ function SkyStage(props: SkyStageProps): JSX.Element {
             wide,
             reach: wide * MARK_REACH,
           }));
+      // Laid back with the ground where there is a board under them,
+      // and round where the sky is being drawn on the glass
       const lamps: Lamp[] = marks.map((mark) => ({
         x: mark.x,
         y: mark.y,
         reach: mark.reach,
+        squash: props.board ? GROUND_DEPTH : 1,
       }));
 
       if (batch != null) {

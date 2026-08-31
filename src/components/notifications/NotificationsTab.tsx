@@ -13,6 +13,7 @@ import {
 } from '../styled';
 import FriendEntry from '../friends/FriendEntry';
 import { GameDialog, useGame } from '../app/game-context';
+import ProfileSection from '../profile/sections';
 
 /**
  * Everything waiting on the player, in one list.
@@ -66,9 +67,22 @@ const KIND_ACTIONS: Record<NoticeKind, string> = {
   [NoticeKind.AuctionOutbid]: 'Open bids',
 };
 
+/**
+ * Which part of the profile answers a notice. The two lobby kinds are
+ * not here: neither is answered in the profile
+ */
+const KIND_SECTIONS: Record<NoticeKind, ProfileSection> = {
+  [NoticeKind.RaidInvite]: ProfileSection.Battles,
+  [NoticeKind.DuelInvite]: ProfileSection.Battles,
+  [NoticeKind.FriendRequest]: ProfileSection.Requests,
+  [NoticeKind.TradeOffer]: ProfileSection.Trades,
+  [NoticeKind.AuctionWon]: ProfileSection.Bids,
+  [NoticeKind.AuctionUnsold]: ProfileSection.Selling,
+  [NoticeKind.AuctionOutbid]: ProfileSection.Bids,
+};
+
 export interface NotificationsTabProps {
   notices: Notice[];
-  onClose: () => void;
 }
 
 export default function NotificationsTab(props: NotificationsTabProps): JSX.Element {
@@ -78,21 +92,29 @@ export default function NotificationsTab(props: NotificationsTabProps): JSX.Elem
   /**
    * Where a notice is answered. A lobby is opened at the lobby itself;
    * everything else lands on the panel that holds it, since none of
-   * those are one thing to press
+   * those are one thing to press.
+   *
+   * Nothing is closed here. One dialog is open at a time, so opening
+   * the next one takes this one's place: closing as well put the
+   * dialog back to none the instant it was set, and every button on
+   * this list read as one that did nothing
    */
   const open = (notice: Notice): void => {
     if (notice.kind === NoticeKind.RaidInvite) {
       game.setRaid(notice.subject);
       game.setDialog(GameDialog.Raids);
-    } else if (notice.kind === NoticeKind.DuelInvite) {
+      return;
+    }
+    if (notice.kind === NoticeKind.DuelInvite) {
       game.setDuel(notice.subject);
       game.setDialog(GameDialog.Battles);
-    } else {
-      // The rest are read in the profile: requests, trades, bids and
-      // what the player has up for sale are all tabs of it
-      game.setDialog(GameDialog.Profile);
+      return;
     }
-    props.onClose();
+    // The rest are read in the profile: requests, trades, bids and
+    // what the player has up for sale are all tabs of it, so it is
+    // opened at the one the notice is about
+    game.setProfileAt(KIND_SECTIONS[notice.kind]);
+    game.setDialog(GameDialog.Profile);
   };
 
   return (

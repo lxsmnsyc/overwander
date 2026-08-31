@@ -194,8 +194,16 @@ function meteorAt(
 export interface Lamp {
   x: number;
   y: number;
-  /** How far the light reaches, in drawn pixels */
+  /** How far the light reaches across, in drawn pixels */
   reach: number;
+  /**
+   * How far it reaches down the screen, as a share of `reach`.
+   *
+   * A pool of light lying on the board is laid back by the same tilt
+   * the ground is, so it is an ellipse rather than a circle. One
+   * standing on the glass leaves this at 1
+   */
+  squash?: number;
 }
 
 /** A sky that puts the lights out, and how far out. */
@@ -261,22 +269,22 @@ function lampMask(
     if (!(reach > 0)) {
       continue;
     }
-    const glow = into.createRadialGradient(
-      lamp.x * scale,
-      lamp.y * scale,
-      0,
-      lamp.x * scale,
-      lamp.y * scale,
-      reach,
-    );
+    const glow = into.createRadialGradient(0, 0, 0, 0, 0, reach);
 
     // Nearly clear at the lamp and gone by its edge, so what it lights
     // has no rim around it
     glow.addColorStop(0, '#000000f2');
     glow.addColorStop(0.55, '#000000a8');
     glow.addColorStop(1, '#00000000');
+    // Squashed about the lamp rather than drawn as an ellipse: the
+    // gradient is round, and laying the whole thing back is what puts
+    // the pool on the ground instead of on the glass
+    into.save();
+    into.translate(lamp.x * scale, lamp.y * scale);
+    into.scale(1, lamp.squash ?? 1);
     into.fillStyle = glow;
-    into.fillRect(lamp.x * scale - reach, lamp.y * scale - reach, reach * 2, reach * 2);
+    into.fillRect(-reach, -reach, reach * 2, reach * 2);
+    into.restore();
   }
   into.globalCompositeOperation = 'source-over';
   mask = held;

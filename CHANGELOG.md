@@ -1,5 +1,293 @@
 # overwander
 
+## 1.1.1
+
+### Patch Changes
+
+- 25a81af: A trade evolution now opens for what the pokemon was when it changed hands. A
+  Machop that was traded and then grew into a Machoke wants a handover of its own
+  before it becomes a Machamp, where it used to become one for free. The record
+  also remembers what came the other way, for the lines that ask.
+
+  Razor Claw and Razor Fang are no longer filed as trade items. Neither is handed
+  over before a trade in any generation: both are held through a level at night,
+  so both are held items here and neither can be spent.
+
+- 25a81af: The sky has a tier above its showpieces, and there are four of them.
+
+  Weather is read off two channels, wetness and energy, and a showpiece has always
+  been the corner where both run high. The corner is not what made those skies
+  rare, though: a sky wired into eight countries turns up on far more ground than
+  one wired into five, however narrow its band, so the meteor shower was the eighth
+  rarest weather in the game while its own description called it the rarest there
+  is.
+
+  The field has four corners and only one of them was doing anything. All four have
+  a sky now, each reached from further out than a showpiece and each falling over
+  every country in the world, so the band rather than the map is the whole of what
+  holds them back. They are the four rarest weathers there are, at roughly one
+  window in twelve hundred each.
+
+  Each favours **every type at once**, which nothing else does: every other sky
+  picks a type or two, so a meeting under one of these carries the weather's floor
+  of 10 under its values whoever is being raised. Each then does one thing no other
+  weather does, and no two touch the same part of what a pokemon is.
+
+  A **meteor shower** doubles the odds of a shiny coat. It is the sky that was
+  already here, moved to a band of its own and opened to every country.
+
+  A **fata morgana** doubles the odds of a hidden ability. It is the mirage that
+  rises off dead-still air and stacks a distant coastline into cliffs, and what it
+  is worth is the mirage's own joke: it shows what was not there to be seen.
+
+  A **dark day** is noon gone dark under smoke carried from somewhere else, in air
+  that is bone dry and moving hard. About a third of what is met in the wild under
+  one comes out a **shadow**. It is the only place outside Team Rocket that a
+  shadow comes from, and a shadow is worth having, since purifying keeps the mark
+  and adds two points to every value. A third rather than all of it: a sky that
+  closed every heart under it would make the shadow a property of the window rather
+  than of the meeting, and a player who found one would be collecting rather than
+  deciding.
+
+  A **fogbow** is a rainbow with the colour gone, formed in fog fine enough to
+  scatter the light white instead of splitting it, which takes air holding all it
+  can and nothing moving it. Anything met in the wild under one already knows one
+  of its line's **egg moves**, which breeding was the only way to come by. About
+  half the families have an egg move at all, so half of what is met under a fogbow
+  is handed nothing.
+
+  Shadows are **half as likely to be caught** as they were, whether they were found
+  under a dark day, taken off a grunt or won out of a raid. A closed heart does not
+  want to be held, and it is the one thing purifying puts right. The penalty is
+  flat rather than scaled, because the reason has nothing to do with the species or
+  its level: the same thing is wrong with every shadow. It multiplies with the
+  ball, the berries, the day and the level rather than replacing any of them, so a
+  better ball buys exactly what it always bought. Nothing that never fled starts
+  fleeing, so where a shadow was given rather than found the only cost is balls.
+
+  Sandstorms fall over the **badlands and the cold deserts** as well as the desert.
+  A sandstorm was the second rarest sky in the game at one window in 655, and by
+  accident rather than design: it is an ordinary stirred sky that happened to sit
+  on the smallest country there is. Bare eroded sediment and cold desert both raise
+  their own sand, and the world's worst sandstorms come off cold ones. It is one
+  window in 172 now, which is where an ordinary sky belongs. The savanna and the
+  shrubland keep their dust haze, since grass cover means dust carried in rather
+  than sand lifted.
+
+  This changes what the sky over an existing chunk is doing, the way anything
+  touching world generation does.
+
+- 2388a68: The board's ground and grid are drawn on a layer of their own, in batches.
+
+  A tilted cell is not a rectangle, so every one of the 324 tiles was laid
+  through its own skewed transform: a save, a transform, a blit and a restore
+  each. The grid over them was 324 more paths, built and stroked one cell at a
+  time. Together that is most of what a phone was spending a frame on, and none
+  of it fell when the window did.
+
+  Both now go into one buffer on a WebGL layer beneath the board, handed over in
+  a few calls: one per run of tiles that came off the same sheet, and one for the
+  whole grid. The layer sits under everything because nothing on the board is
+  drawn beneath the ground, so the order the passes already ran in is the order
+  they still run in. A browser that will not give a WebGL context, or one that
+  takes it away again, falls back to drawing both exactly as before.
+
+  The grid still rules every cell's own four edges rather than ruling a lattice,
+  so two cells sharing an edge lay their lines over each other and that edge
+  stays the weight it has always been.
+
+  Two things look slightly different, both of them corrections. A tile is laid on
+  its cell's true four corners rather than on the parallelogram a 2D transform can
+  describe, so it sits on the grid line drawn under it. And the label shown while
+  a chunk is still arriving is no longer painted over by the ground it was meant
+  to be read against.
+
+  The weather is batched the same way. A blizzard was about two thousand stroked
+  drops a frame; it is one draw call now. Rain, a downpour and a sandstorm used to
+  be drawn as two scrolling sheets rather than drop by drop, which was only ever a
+  way of not paying for eleven thousand strokes. A batch does not charge for them,
+  so those three get their own paces back.
+
+  The batching happens off the page and is laid into the picture where each pass
+  belongs, rather than on canvases stacked over the board. A canvas above another
+  cannot be washed by it: the hour's light is multiplied over the whole picture,
+  and a multiply has to read what is under it. Drawn off to one side and blitted
+  in, the ground is inside the picture and every pass after it behaves as it
+  always did.
+
+  One thing is not identical. A tile's texels land through a different rasteriser
+  now, so the pattern inside a tile can shift by a pixel here and there. Same
+  tiles, same colours, same edges: it shows up in a pixel comparison and not on a
+  board being played.
+
+  The stand-in art is gone with it. A decoration used to be drawn as a cone or a
+  mound, and a landmark as a lettered disc, for as long as their sheets took to
+  arrive. Every decoration and every landmark that is drawn as a thing has a
+  picture now, so a cell shows nothing until its own picture is in hand rather
+  than something the game does not otherwise use.
+
+  The ring under a person stays. It is not a stand-in: a charset says which coat
+  somebody is wearing and nothing about whether walking up to them starts a fight,
+  which is the whole of what the ring is for. It is drawn once into a shared sheet
+  and stamped from there, which is where the art that has no picture is headed.
+
+  Everything else on the board followed it into the batch: the phenomena, the ring
+  under a person, the ring of ground within reach, the scenery, the plants, the
+  people, the pokemon and their shadows, the cursor and the border round the
+  board. Each sprite class answers with the rectangle it would have drawn instead
+  of drawing it, and its own `draw` is written in terms of that answer, so the two
+  ways of putting a sprite on the board cannot come to disagree.
+
+  The phenomena are the one thing here that is drawn in code and moves while it is
+  drawn, so each is repainted into a small picture of its own once a frame rather
+  than once a cell. A picture that size costs nothing to hand over; the whole
+  screen would cost too much, which is the rule the rest of this follows too.
+
+  The battlefield's own ground is batched now as well. It is 448 tiles a frame at
+  the ordinary camera, laid the same way the board's were: a save, a skewed
+  transform, a blit and a restore each, whatever the fight is doing. Writing them
+  into a batch costs about half a millisecond against six for painting them.
+
+  It sits on a WebGL canvas stacked under the one the fight is drawn on, rather
+  than off the page and copied in. Nothing on the battlefield is washed over the
+  whole picture the way the hour's light washes the board, so there is nothing
+  here that has to read what is beneath it, and a stacked layer costs nothing per
+  frame where a copy would cost a full screen of it.
+
+  A cell of a tilted plane is not a parallelogram, and a 2D context can only draw
+  one: the tile used to be fitted to the longer of each pair of opposite edges so
+  that neighbours lapped over rather than falling short. It is drawn on its four
+  true corners now. Tiles are sampled half a texel inside their own edges, since
+  a sheet packs them against each other and a sampler at an edge reaches past it.
+
+  The field's own colour is the layer's background rather than a rectangle painted
+  over the canvas every frame, so a biome with no tileset packed for it looks
+  exactly as it did.
+
+  The compass is four marks now rather than four letters. Each is a triangle
+  pointing the way it stands for, and north is the game's own ember, so which edge
+  of the board is which is read as a shape and a colour rather than as four
+  letters read one at a time. They stand where the letters stood and turn with the
+  board the same way, each on a halo of its own so it shows against pale country
+  and dark alike.
+
+  It is also the last thing on the board that was writing. A triangle is three
+  corners, which the batch takes as it takes anything else, so nothing on the
+  board needs a font any more.
+
+  The board is one pass now. The batch learned the two blend modes the hour's light
+  is made of, and that was the whole of what kept the picture in two pieces: a
+  multiply has to read what is under it, so the light could not be laid on a canvas
+  stacked over the board and had to be painted onto the same one, which meant
+  copying the batched layer across twice a frame. Both copies are gone.
+
+  For a wash to mean anything it has to fall on something opaque, so the layer
+  paints the country itself rather than letting the page show through. That is the
+  same colour the page behind it was painted anyway. It does mean the ground
+  outside the board is darkened by the evening the same way the ground inside it
+  is, where before the light was multiplied over the board and laid flat over the
+  country beside it.
+
+  Everything else that was still painted went with it: the waiting label, the
+  sparkle a shiny throws, the dots that stand in for a sheet still coming, the
+  aurora's curtains and the rainbow's arc. Words are baked at the size and in the
+  font they are drawn in rather than baked once and stretched, which is what made
+  a scaled halo come out heavier than the stroke drew it.
+
+  Shadows are the thing itself now. A pokemon or a person on the board throws its
+  own silhouette rather than an ellipse standing in for one, and a shadow at dawn
+  is recognisably the shape that cast it. It costs the same one quad the sprite
+  did.
+
+  It is a skew rather than a turn. The edge under the feet stays square to the
+  picture and exactly where the picture put it, so a shadow is always joined to the
+  thing that cast it; only the far edge leans, and it leans the way the light
+  throws it. What carries the direction is the pose. A shadow is the silhouette from where the
+  light stands, so which of a sheet's eight frames is laid down is the angle
+  between the way the thing faces and the way the light is, not the shadow's own
+  bearing: something looking straight at the light lays its front down, and the
+  same thing with the light off its left lays its right down.
+
+  Two things about the light itself were wrong and are fixed with it. The board
+  counts down the picture, so a step north is a step toward smaller numbers, and
+  the shadow's bearing was read as though it counted up: everything with any north
+  or south in it lay the wrong way round, and turning the board swung it somewhere
+  else again rather than turning it. And the bearing was laid back by a number of
+  its own rather than by the board's, so it pointed a few degrees off the ground it
+  was supposed to be lying on. Both now come from the tilt the board is drawn at,
+  and a test holds the shadow's bearing against the board's own projection of the
+  same step at every hour and every turn.
+
+  The battlefield followed. The pokemon, their shadows, the auras a shadow or a
+  purified one stands in, the health and cast bars, the name of whatever is being
+  wound up, and the weather are all written into the batch now; a fight is a
+  handful of calls where it was several a pokemon. Move effects stay painted on the
+  canvas above: there is at most one on screen, and a layer that is never copied
+  costs nothing to leave there.
+
+- 25a81af: A nest no longer lays the wrong stage of a line.
+
+  An egg is the first stage of whatever it holds, found by walking a line back
+  until nothing evolves into it. For eleven Kanto species that walk stops one
+  stage short, because the stage in front of them is a baby a later generation
+  added and the game has not registered yet: a Pikachu hatches from a Pichu, and
+  until there is a Pichu the nest was laying a Pikachu.
+
+  Those eleven are left out of nests until their babies arrive: Pikachu, Clefairy,
+  Jigglypuff, Hitmonlee, Hitmonchan, Jynx, Electabuzz and Magmar, whose babies are
+  Johto's, and Chansey, Mr. Mime and Snorlax, whose are further off. Nothing else
+  about them changes: they are still met in the wild, still bred and still
+  evolved. Every biome still has nests.
+
+  This changes what an existing nest is holding, the way anything touching world
+  generation does. An egg already laid keeps what it was laid as.
+
+- 3b2d892: A note over the board says the whole reward rather than the first few letters.
+
+  The little cards that pop over a cell when a cache pays out were one line
+  clipped with an ellipsis inside a narrow box, which left about fifteen
+  characters for the item's name and the count beside it. Anything longer read as
+  "Silver Nanab Ber…", and the line for a cache that was already empty rarely fit
+  at all. It is the only place the payout is named, so a clipped one is a reward
+  the player was never told about.
+
+  The card is wider now and its line wraps instead of clipping, so a note grows to
+  two short lines rather than losing its end.
+
+- 25a81af: Four fixes to what the game shows and what a stray press can throw away.
+
+  - **A stop fight is named for whoever is standing there.** The summary called
+    every side nobody owns a Team Rocket grunt, and drew it as the character the
+    game starts everybody as, because an unowned side has no profile to read a
+    face from. A duelling trainer, a gym leader, one of the Elite Four, the
+    Champion and Giovanni are all fought from a stop, and each now keeps their
+    own name and the coat they were wearing out in the world, in the summary, the
+    title and the line a win is announced with.
+  - **A meeting that happens once is answered by its buttons.** A phenomenon's
+    pokemon and a prize won in a raid, off a grunt, from a quest or off the gift
+    shelf are all spent as they are opened, so an accidental press on the world
+    behind the dialog threw the whole thing away. Those close on "Run away" and
+    nothing else. A wild pokemon on a cell is still standing there afterwards,
+    and closes as it always did.
+  - **Purifying says what it costs before it happens.** The gem asked twice
+    without saying why, and Nurse Joy purified a shadow for good as a side effect
+    of an ordinary heal, with only a note on the row. Both now warn, and hers
+    asks twice for a shadow alone.
+  - The vendor's basket reads down the middle: the purse, the running total and
+    the button that spends it were spread between the right edge and the centre.
+
+- 2388a68: An encounter is marked shiny with the same sparkles everything else uses.
+
+  The safari dialog was named `Lv. 12 ✦ Gyarados ♂`, using a text glyph the rest
+  of the interface stopped marking shinies with: the box, the catch sheet and the
+  buddy card all draw the sparkles icon instead. One screen still spelling it out
+  in a character is one screen the player has to learn twice.
+
+  The title now carries the icon. It is left in the title bar's own white rather
+  than the gold a card draws it in, because gold on that blue is barely a colour
+  at all, and the word "Shiny" rides along for a screen reader, since the dialog
+  is announced by this heading and a picture says nothing to one.
+
 ## 1.1.0
 
 ### Minor Changes

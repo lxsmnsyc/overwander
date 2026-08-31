@@ -36,6 +36,7 @@ import { LobbyRole } from '../../auth/lobby-role';
 import { GameDialog, useGame } from '../app/game-context';
 import { ActionsIcon } from '../icons';
 import PlayerPlace from './PlayerPlace';
+import ProfileSection from './sections';
 import TradesTab from '../trades/TradesTab';
 import { getTitleName, titleLine, titleType } from '../../data/ids/titles';
 import {
@@ -51,30 +52,6 @@ import {
   TabGroup,
   TabPane,
 } from '../styled';
-
-/**
- * What is left under the tabs.
- *
- * The catches and the bag were the first two, and they are their own
- * panels behind the menu now: they are the two things a player opens
- * most, and neither is a fact about who somebody is. What stays is
- * what the profile was always about — what this player has done.
- *
- * A profile being *visited* has no tabs at all. Somebody else's bids
- * cannot be read — a bidding history is the one thing on the board
- * that stays private, and the rules refuse the query — which leaves
- * their battles, and a bar holding one tab is a control that decides
- * nothing
- */
-const enum InnerTab {
-  Battles = 0,
-  Friends = 1,
-  Requests = 2,
-  Bids = 3,
-  Trades = 4,
-  Awards = 5,
-  Selling = 6,
-}
 
 /**
  * The tier the wearer stands at on the worn title's line, read off
@@ -158,6 +135,12 @@ export interface ProfileTabProps {
    * they are not offered in the first place
    */
   viewOnly?: boolean;
+  /**
+   * Which part to open at, for somebody sent here to answer one thing.
+   * The panel is built fresh each time the dialog opens, so this is
+   * read once on the way in and the player is free to move off it
+   */
+  section?: ProfileSection;
 }
 
 /**
@@ -396,28 +379,32 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
       <Show
         when={props.viewOnly !== true}
         fallback={
-          <TabGroup horizontal defaultValue={InnerTab.Battles} class="flex flex-col gap-3">
+          <TabGroup horizontal defaultValue={ProfileSection.Battles} class="flex flex-col gap-3">
             <TabBar>
-              <TabButton value={InnerTab.Battles}>Battles</TabButton>
-              <TabButton value={InnerTab.Awards}>Awards</TabButton>
+              <TabButton value={ProfileSection.Battles}>Battles</TabButton>
+              <TabButton value={ProfileSection.Awards}>Awards</TabButton>
             </TabBar>
-            <TabPane value={InnerTab.Battles}>
+            <TabPane value={ProfileSection.Battles}>
               <Card title="Battles">
                 <BattleHistory player={props.player} viewOnly />
               </Card>
             </TabPane>
-            <TabPane value={InnerTab.Awards}>
+            <TabPane value={ProfileSection.Awards}>
               <AwardsCard player={props.player} />
             </TabPane>
           </TabGroup>
         }
       >
-        <TabGroup horizontal defaultValue={InnerTab.Battles} class="flex flex-col gap-3">
+        <TabGroup
+          horizontal
+          defaultValue={props.section ?? ProfileSection.Battles}
+          class="flex flex-col gap-3"
+        >
           <TabBar>
-            <TabButton value={InnerTab.Battles}>Battles</TabButton>
-            <TabButton value={InnerTab.Awards}>Awards</TabButton>
-            <TabButton value={InnerTab.Friends}>Friends</TabButton>
-            <TabButton value={InnerTab.Requests}>
+            <TabButton value={ProfileSection.Battles}>Battles</TabButton>
+            <TabButton value={ProfileSection.Awards}>Awards</TabButton>
+            <TabButton value={ProfileSection.Friends}>Friends</TabButton>
+            <TabButton value={ProfileSection.Requests}>
               Friend Requests
               {/* The count of what is waiting, on the tab itself:
                   a request nobody is told about is one nobody
@@ -428,8 +415,8 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
                 </Badge>
               </Show>
             </TabButton>
-            <TabButton value={InnerTab.Bids}>Bids</TabButton>
-            <TabButton value={InnerTab.Selling}>
+            <TabButton value={ProfileSection.Bids}>Bids</TabButton>
+            <TabButton value={ProfileSection.Selling}>
               Selling
               {/* A lot nobody bid on comes back only by hand, and
                   nothing else in the game ever mentions it: the count
@@ -440,9 +427,9 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
                 </Badge>
               </Show>
             </TabButton>
-            <TabButton value={InnerTab.Trades}>Trades</TabButton>
+            <TabButton value={ProfileSection.Trades}>Trades</TabButton>
           </TabBar>
-          <TabPane value={InnerTab.Battles}>
+          <TabPane value={ProfileSection.Battles}>
             <Card title="Battles">
               <BattleHistory player={props.player} />
             </Card>
@@ -450,24 +437,24 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
           {/* What they have won for good: the badge shelf, every slot
               shown so a visitor can see what is earned and what is
               still out there */}
-          <TabPane value={InnerTab.Awards}>
+          <TabPane value={ProfileSection.Awards}>
             <AwardsCard player={props.player} />
           </TabPane>
-          <TabPane value={InnerTab.Friends}>
+          <TabPane value={ProfileSection.Friends}>
             <Card title="Friends">
               <FriendsTab player={props.player} />
             </Card>
           </TabPane>
           {/* Both directions: what has been asked of the player, and
               what they have asked and can still take back */}
-          <TabPane value={InnerTab.Requests}>
+          <TabPane value={ProfileSection.Requests}>
             <Card title="Friend Requests">
               <RequestsTab waiting={asking()} />
             </Card>
           </TabPane>
           {/* What the player has bid on, which lots they are still
               leading, and which they won and have not collected */}
-          <TabPane value={InnerTab.Bids}>
+          <TabPane value={ProfileSection.Bids}>
             <Card title="Bids">
               <BidsList player={props.player} />
             </Card>
@@ -475,7 +462,7 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
           {/* What they have put on the block, and the unsold lots
               waiting to be taken out of escrow. New listings are made
               at an auction board rather than here */}
-          <TabPane value={InnerTab.Selling}>
+          <TabPane value={ProfileSection.Selling}>
             <Card title="Selling">
               <SellingList
                 player={props.player}
@@ -488,7 +475,7 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
           </TabPane>
           {/* Offers between the player and their friends: to answer,
               waiting on an answer, and what has already changed hands */}
-          <TabPane value={InnerTab.Trades}>
+          <TabPane value={ProfileSection.Trades}>
             <Card title="Trades">
               <TradesTab player={props.player} />
             </Card>

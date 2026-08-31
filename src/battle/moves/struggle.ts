@@ -1,5 +1,6 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Stats } from '../../data/constants/stats';
+import Abilities from '../../data/ids/abilities';
 import { DamageFlags, Moves } from '../../data/ids/moves';
 import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
@@ -22,10 +23,14 @@ import type Unit from '../unit';
  * has not run out of anything — it is waiting. Struggling then would
  * mean every pokemon in every fight killing itself in the gaps.
  *
- * So the test is **disabled**, not spent: a unit struggles when every
- * move it knows has been shut off — by Disable, by a status, by having
- * had its move set emptied — or when it knows no moves at all. Those
- * are the states that do not fix themselves by waiting a moment.
+ * So the test is not spent moves but **the chooser coming back with
+ * nothing and nothing merely cooling**, which is the one state that
+ * does not fix itself by waiting. That covers a move set shut off by
+ * Disable or a status, and it covers a unit whose moves all still work
+ * but reach nothing on the field: a Normal type facing only Ghosts has
+ * a full move set, a swing of its own, and no way to touch anybody
+ * with either. A cooldown that would have offered something is what
+ * the chooser reports as waiting, and waiting is not struggling.
  *
  * https://bulbapedia.bulbagarden.net/wiki/Struggle_(move)
  */
@@ -38,32 +43,19 @@ import type Unit from '../unit';
  */
 export const STRUGGLE_RECOIL = 1 / 4;
 
-/**
- * Whether this unit has anything of its own left to throw.
- *
- * Cooldowns deliberately do not count: a move that is cooling is one
- * the unit still has
- */
-function hasAnyMove(unit: Unit): boolean {
-  for (const state of Object.values(unit.moves)) {
-    // tsgolint narrows the optional record's values to defined; at
-    // runtime a cleared slot holds undefined
-    // oxlint-disable-next-line typescript/no-unnecessary-condition
-    if (state != null && !state.disabled) {
-      return true;
-    }
-  }
-  return false;
-}
-
 export default function setupStruggle(battle: Battle): void {
   /**
    * The last word on what to do, after every other resolver has had
-   * its say: a unit with a choice keeps it, and one with no choice at
-   * all and nothing to fall back on struggles
+   * its say: a unit with a choice keeps it, and one with none at all
+   * struggles.
+   *
+   * A raid boss does not. It is the clock the lobby is racing, and a
+   * boss that answered a deadlock by taking a quarter of itself off
+   * every few seconds would lose the raid on its own. It stands there
+   * instead, which is the party's problem to solve
    */
   battle.on(BattleEvents.UnitAIChooseMove, EventPriority.Post, (event) => {
-    if (event.choice != null || hasAnyMove(event.source)) {
+    if (event.choice != null || event.waiting || event.source.hasAbility(Abilities.Boss)) {
       return;
     }
 

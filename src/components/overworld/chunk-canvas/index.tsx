@@ -4,6 +4,7 @@ import {
   BORDER_CELLS,
   type BoardCell,
   type ProjectedPoint,
+  TURN_DEAD_ZONE,
   angleOf,
   boardCellAtFraction,
   boardCellOf,
@@ -35,7 +36,7 @@ import drawSparkle from '../../../canvas/sparkle';
 import { type Cast, batchAmbient, getCast, paintAmbient } from '../../../canvas/daylight';
 import type Weather from '../../../data/overworld/weather';
 import pixelRatio from '../../../canvas/ratio';
-import paintSky, { batchSky, batchWash } from '../../../canvas/sky';
+import paintSky, { type Lamp, batchSky, batchWash } from '../../../canvas/sky';
 import createTwist from '../../../canvas/twist';
 import { getLocalOffset, toLocalTime } from '../../../auth/local-time';
 import { serverNow } from '../../../auth/clock';
@@ -88,9 +89,11 @@ import {
   CROSSING_OUT,
   CROSSING_SLIDE,
   type Crossing,
+  GROUND_DEPTH,
   GROUND_SQUASH,
   LOADING_LABEL,
   LOADING_SIZE,
+  MARK_WEIGHT,
   MOVE_KEYS,
   NPC_CELLS,
   PICKED_STAGE,
@@ -101,7 +104,6 @@ import {
   SCENERY_CELLS,
   SNAP_CELLS,
   SPRITE_STANDS,
-  TURN_DEAD_ZONE,
   WIDTH,
   compassArrow,
   grownArrow,
@@ -112,16 +114,13 @@ import {
 import {
   SHADOW_STAMP,
   type SpawnCoat,
-  bakePersonRing,
   bakeShadowDisc,
   bakeWord,
-  drawPersonRing,
   drawPhenomenon,
   facingOf,
   isFightingLandmark,
   paintPhenomenon,
   paintSparkle,
-  personRingSpan,
   phenomenonSpan,
 } from './scenery';
 
@@ -247,6 +246,12 @@ export interface ChunkCanvasProps {
    * under the player's own instruments, the same as the hour's light
    */
   weather: Weather;
+  /**
+   * How far the player sees in the dark, in cells. Only a sky that has
+   * put the lights out reads it, and what it is worth is the buddy's
+   * business rather than the board's
+   */
+  lamp: number;
   /**
    * Whether the board is on its way off the screen or on to it, and
    * which way the player went. Null while they are standing in the
@@ -1114,6 +1119,12 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
      * frame to frame, so each piece is drawn once and stamped after
      */
     const bakery = new Bakery();
+    /**
+     * What a dark sky is kept off, rebuilt every frame as the board is
+     * walked over. A landmark, a pokemon and the player each carry
+     * one; everything else is left to the dark
+     */
+    const lamps: Lamp[] = [];
     /** What the batch holds of it, so a newly baked piece re-uploads */
     let baked = -1;
 
@@ -1167,6 +1178,19 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       x: placed.x + point.x * placed.width,
       y: placed.y + point.y * placed.height,
       scale: point.scale,
+    });
+
+    /**
+     * A pool of light on the ground, for a point already on the
+     * screen. It is a circle of `props.lamp` cells laid back the way
+     * the ground is, and it grows with the cell it stands on the way
+     * everything else on the board does
+     */
+    const lampAt = (point: ProjectedPoint): Lamp => ({
+      x: point.x,
+      y: point.y,
+      reach: CELL * magnify * props.lamp * point.scale,
+      squash: GROUND_DEPTH,
     });
 
     /**
@@ -1682,6 +1706,28 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       };
 
       /**
+       * A cell called out in a colour: the mark the keyboard leaves
+       * under the cell it is pointing at, lent to anything else that
+       * needs a cell to stand out. On a dark line under the coloured
+       * one, so it reads on snow as well as on grass
+       */
+      const callOut = (corners: ProjectedPoint[], colour: string): void => {
+        if (batch != null) {
+          batch.outline(COLORS.ringShade, corners, MARK_WEIGHT + 2);
+          batch.outline(colour, corners, MARK_WEIGHT);
+          return;
+        }
+        traceQuad(corners);
+        context.strokeStyle = COLORS.ringShade;
+        context.lineWidth = MARK_WEIGHT + 2;
+        context.stroke();
+        context.strokeStyle = colour;
+        context.lineWidth = MARK_WEIGHT;
+        context.stroke();
+        context.lineWidth = 1;
+      };
+
+      /**
        * A round patch of one colour, where a sheet has not landed and
        * a circle is what stands in for it. One baked disc stamped and
        * tinted, which is what every round thing on this board is
@@ -1806,23 +1852,13 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         // Somebody standing there is drawn with the rest of what
         // stands, in paint order — so the letter under their feet as
         // well would be the cell saying the same thing twice. What the
-        // letter did say is kept as a ring: which sort of person this
-        // is, which the coat they are drawn in does not tell anybody
+        // letter did say is kept as the cell itself, called out in the
+        // game's own two colours: ember for a fight, tide for a
+        // counter, which the coat they are drawn in does not tell
+        // anybody
         if (drawnAsPerson(index)) {
           if (landmark != null) {
-            const middle = at(projectCell(index, yaw()));
-            const fighting = isFightingLandmark(landmark);
-
-            if (
-              !stamp(
-                bakery.sheet,
-                bakePersonRing(bakery, fighting),
-                middle,
-                personRingSpan(middle, magnify),
-              )
-            ) {
-              drawPersonRing(context, middle, fighting, magnify);
-            }
+            callOut(outline, isFightingLandmark(landmark) ? COLORS.fight : COLORS.serve);
           }
           continue;
         }
@@ -1905,6 +1941,23 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       // through, so occlusion is read off where they are drawn rather
       // than where the walk is headed
       const playerCell = Math.round(slide.y) * CHUNK_CELLS + Math.round(slide.x);
+      /**
+       * Where the player actually is, which is between cells for most
+       * of a walk. Everything about them is drawn from it: the sprite,
+       * the shadow, and the light they carry
+       */
+      const afoot = at(
+        projectGround(
+          { u: (slide.x + 0.5) / CHUNK_CELLS, v: (slide.y + 0.5) / CHUNK_CELLS },
+          yaw(),
+        ),
+      );
+
+      lamps.length = 0;
+      // The light travels with them rather than with the cell they are
+      // nearest, so a walk across a dark board carries its own pool
+      // instead of the board switching on a square at a time
+      lamps.push(lampAt(afoot));
 
       for (const index of paintOrder(yaw())) {
         const middle = at(projectCell(index, yaw()));
@@ -1912,6 +1965,17 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         // a field that fills in one pokemon at a time reads as a page
         // loading rather than as a place
         const standing = loading() ? undefined : props.spawns.get(index);
+
+        // What a dark sky is kept off: the player, and the places worth
+        // walking to. A pokemon standing on a cell carries no light of
+        // its own, since finding one in the dark is what the sky is
+        // for, so it is seen when a lamp reaches it and not before.
+        //
+        // Gathered here rather than derived again: this loop already
+        // knows where everything on the board ended up on the screen
+        if (props.landmarks.get(index) != null) {
+          lamps.push(lampAt(middle));
+        }
 
         // Whatever was announced here has been caught, walked off or
         // rolled over, so the next shiny to stand on this cell gets a
@@ -2122,12 +2186,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
 
         if (index === playerCell) {
           const walker = playerPerson();
-          const spot = at(
-            projectGround(
-              { u: (slide.x + 0.5) / CHUNK_CELLS, v: (slide.y + 0.5) / CHUNK_CELLS },
-              yaw(),
-            ),
-          );
+          const spot = afoot;
 
           if (walker == null) {
             // The dot it was before the sheet landed, on its own line
@@ -2166,23 +2225,23 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         }
       }
 
-      // Over everything, and only while the keyboard is in here: what
-      // Enter would walk to. It is drawn last rather than in its own
-      // row, because it is a mark on the picture rather than a thing
-      // standing on the board — and the apron is as pressable as the
-      // chunk, so it has to be able to appear out there
-      if (focused()) {
-        const square = projectBoardCellQuad(cursor(), yaw()).map(at);
+      /**
+       * Over everything, and only while the keyboard is in here: what
+       * Enter would walk to. It is drawn last rather than in its own
+       * row, because it is a mark on the picture rather than a thing
+       * standing on the board — and the apron is as pressable as the
+       * chunk, so it has to be able to appear out there.
+       *
+       * Never on the player's own cell. The cursor rests there until
+       * it is moved, so drawing it would put a square under the
+       * character for as long as the board has focus, which says
+       * nothing: the character is already where the character is
+       */
+      const pointed = cursor();
+      const standing = boardCellOf(props.player);
 
-        if (batch == null) {
-          traceQuad(square);
-          context.strokeStyle = COLORS.cursor;
-          context.lineWidth = 3;
-          context.stroke();
-          context.lineWidth = 1;
-        } else {
-          batch.outline(COLORS.cursor, square, 3);
-        }
+      if (focused() && (pointed.x !== standing.x || pointed.y !== standing.y)) {
+        callOut(projectBoardCellQuad(pointed, yaw()).map(at), COLORS.cursor);
       }
 
       // A border while the keyboard is in here. It is not decoration:
@@ -2218,13 +2277,17 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       // Then the sky, over the light rather than under it: rain at
       // dusk is dusk seen through rain. Its own colour first and the
       // fall after it, the order they were always drawn in
+      // Where the board is and which way round it is, so the weather
+      // can stand in the world rather than on the glass
+      const sky = { yaw: yaw(), ...placed };
+
       if (batch == null) {
         paintAmbient(context, screen.width, screen.height, worldTime(), props.latitude);
-        paintSky(context, screen.width, screen.height, props.weather, clock);
+        paintSky(context, screen.width, screen.height, props.weather, clock, 1, lamps, sky);
       } else {
         batchAmbient(batch, screen.width, screen.height, worldTime(), props.latitude);
-        batchWash(batch, screen.width, screen.height, props.weather, clock);
-        batchSky(batch, screen.width, screen.height, props.weather, clock);
+        batchWash(batch, screen.width, screen.height, props.weather, clock, 1, lamps, sky);
+        batchSky(batch, screen.width, screen.height, props.weather, clock, 1, sky);
       }
 
       /**
@@ -2284,8 +2347,13 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
     });
 
     // The overworld is what the tab is for, so it takes the keyboard
-    // when it opens rather than waiting to be clicked
-    element.focus({ preventScroll: true });
+    // when it opens rather than waiting to be clicked. Never off a
+    // dialog, though: the board is redrawn whenever the chunk changes,
+    // and a command that moved the player would take the keyboard out
+    // of the bar that moved them
+    if (document.activeElement?.closest('[tc-dialog]') == null) {
+      element.focus({ preventScroll: true });
+    }
   });
 
   return (

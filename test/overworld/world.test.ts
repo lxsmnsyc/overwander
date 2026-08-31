@@ -175,8 +175,17 @@ import {
   resolveNest,
   resolvePhenomenon,
 } from '../../src/overworld/landmarks';
+import { DARK_DAY_LAMP_CELLS } from '../../src/data/overworld/weather';
 import { LURE_SPAWN_BONUS } from '../../src/overworld/abilities/__create';
-import { FLAME_BODY_FACTOR, PICKUP_STEP_INTERVAL } from '../../src/overworld/abilities/gen-1';
+import {
+  COMPOUND_EYES_HELD_BOOST,
+  FLAME_BODY_FACTOR,
+  ILLUMINATE_LAMP_CELLS,
+  LEVEL_CEILING_LIFT,
+  LEVEL_FLOOR_LIFT,
+  PICKUP_STEP_INTERVAL,
+  STENCH_QUIET,
+} from '../../src/overworld/abilities/gen-1';
 import { EGG_HATCH_STEPS } from '../../src/auth/egg';
 import type Overworld from '../../src/overworld/core';
 import type { Buddy } from '../../src/overworld/core';
@@ -1485,6 +1494,104 @@ describe('world', () => {
         SPAWN_COUNT + LURE_SPAWN_BONUS,
       );
     }
+  });
+
+  it('reaches further into the dark with an Illuminate buddy', () => {
+    const alone = createOverworld('player-uid', null);
+
+    expect(alone.checkLampReach(DARK_DAY_LAMP_CELLS)).toBe(DARK_DAY_LAMP_CELLS);
+    expect(
+      createOverworld('player-uid', buddyWith([Abilities.Synchronize])).checkLampReach(
+        DARK_DAY_LAMP_CELLS,
+      ),
+    ).toBe(DARK_DAY_LAMP_CELLS);
+
+    // The lantern is Illuminate's alone: the other two lures draw more
+    // out of a chunk and light none of it
+    for (const lure of [Abilities.ArenaTrap, Abilities.NoGuard]) {
+      expect(
+        createOverworld('player-uid', buddyWith([lure])).checkLampReach(DARK_DAY_LAMP_CELLS),
+      ).toBe(DARK_DAY_LAMP_CELLS);
+    }
+    // A lantern is a reach of its own rather than a multiple of the
+    // one it replaces: three cells, whatever a player walking alone
+    // sees
+    expect(
+      createOverworld('player-uid', buddyWith([Abilities.Illuminate])).checkLampReach(
+        DARK_DAY_LAMP_CELLS,
+      ),
+    ).toBeCloseTo(ILLUMINATE_LAMP_CELLS);
+  });
+
+  it('keeps a chunk quiet for a buddy that smells', () => {
+    expect(
+      createOverworld('player-uid', buddyWith([Abilities.Stench])).checkSpawnCount(SPAWN_COUNT),
+    ).toBe(SPAWN_COUNT - STENCH_QUIET);
+
+    // A lure and a stink cancel as far as they go, and nothing ever
+    // quiets a chunk below nothing
+    expect(createOverworld('player-uid', buddyWith([Abilities.Stench])).checkSpawnCount(1)).toBe(0);
+  });
+
+  it('lifts the band a meeting rolls in, from either end', () => {
+    const band: [number, number] = [10, 20];
+    const alone = createOverworld('player-uid', null);
+
+    expect(alone.checkEncounterLevels('spawn@0', band)).toEqual(band);
+
+    // Wary keeps the weak away; fierce draws the strong out; a buddy
+    // with one of each does both
+    expect(
+      createOverworld('player-uid', buddyWith([Abilities.KeenEye])).checkEncounterLevels(
+        'spawn@0',
+        band,
+      ),
+    ).toEqual([10 + LEVEL_FLOOR_LIFT, 20]);
+    expect(
+      createOverworld('player-uid', buddyWith([Abilities.Hustle])).checkEncounterLevels(
+        'spawn@0',
+        band,
+      ),
+    ).toEqual([10, 20 + LEVEL_CEILING_LIFT]);
+    expect(
+      createOverworld(
+        'player-uid',
+        buddyWith([Abilities.Intimidate, Abilities.Pressure]),
+      ).checkEncounterLevels('spawn@0', band),
+    ).toEqual([10 + LEVEL_FLOOR_LIFT, 20 + LEVEL_CEILING_LIFT]);
+
+    // A floor lifted past the ceiling is a band of one level rather
+    // than a band that reads backwards
+    expect(
+      createOverworld('player-uid', buddyWith([Abilities.KeenEye])).checkEncounterLevels(
+        'spawn@0',
+        [10, 11],
+      ),
+    ).toEqual([11, 11]);
+  });
+
+  it('finds what a meeting is carrying, and says so', () => {
+    const alone = createOverworld('player-uid', null);
+
+    expect(alone.checkEncounterHeld('spawn@0')).toBe(1);
+    expect(alone.checkRevealsHeld()).toBe(false);
+
+    expect(
+      createOverworld('player-uid', buddyWith([Abilities.CompoundEyes])).checkEncounterHeld(
+        'spawn@0',
+      ),
+    ).toBe(COMPOUND_EYES_HELD_BOOST);
+    expect(createOverworld('player-uid', buddyWith([Abilities.Frisk])).checkRevealsHeld()).toBe(
+      true,
+    );
+    // Seeing what it holds and drawing more of it out are separate
+    // buddies: neither does the other's work
+    expect(
+      createOverworld('player-uid', buddyWith([Abilities.Frisk])).checkEncounterHeld('spawn@0'),
+    ).toBe(1);
+    expect(
+      createOverworld('player-uid', buddyWith([Abilities.CompoundEyes])).checkRevealsHeld(),
+    ).toBe(false);
   });
 
   it('talks an encounter into a nature and a gender', () => {

@@ -148,6 +148,47 @@ describe('choose move', () => {
     expect(chooseMove(battle, unit)?.move).toBe(Moves.Attack);
   });
 
+  it('is not what every cooldown at once means either', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    pinRandom(battle, 0.99);
+    const unit = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    const target = { type: MoveTargetType.Unit as const, unit: enemy };
+    unit.addMove(Moves.Tackle);
+
+    // Nothing left to swing with either, which is as close as waiting
+    // gets to being shut out without being it. The unit stands there
+    // for the moment the cooldowns take rather than opening a vein
+    unit.startCooldown(Moves.Tackle, target);
+    unit.startCooldown(Moves.Attack, target);
+
+    expect(chooseMove(battle, unit)).toBeUndefined();
+  });
+
+  it('struggles when nothing it knows can reach anybody', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    pinRandom(battle, 0.99);
+    // A Normal type swings Normal, so its move set and its swing are
+    // shut out by the same immunity: a full move set that reaches
+    // nothing is still nothing to do
+    const unit = createUnit(battle, teamA, [Types.Normal]);
+    createUnit(battle, teamB, [Types.Ghost]);
+    unit.addMove(Moves.Tackle);
+
+    expect(chooseMove(battle, unit)?.move).toBe(Moves.Struggle);
+  });
+
+  it('leaves a boss standing rather than let it struggle', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    pinRandom(battle, 0.99);
+    const unit = createUnit(battle, teamA, [Types.Normal]);
+    createUnit(battle, teamB, [Types.Ghost]);
+    unit.addMove(Moves.Tackle);
+    unit.addAbility(Abilities.Boss);
+
+    expect(chooseMove(battle, unit)).toBeUndefined();
+  });
+
   it('picks nothing when there is nothing left to aim at', () => {
     const { battle, teamA, teamB } = createAIBattle();
     pinRandom(battle, 0.99);

@@ -21,6 +21,7 @@ import {
   createRocketParty,
   isBossPurse,
   rollStopGold,
+  stopChallenger,
   stopPartyLevels,
 } from '../overworld/rocket';
 import { encounterKey } from '../overworld/safari';
@@ -312,6 +313,10 @@ export async function startRocketBattle(
     record.party.length,
     duellist == null ? undefined : trainerLevels(duellist),
   );
+  // Who is standing there, kept on the battle rather than derived
+  // again later: the window that rolled them is gone within the hour,
+  // and a history read back afterwards has nothing to ask
+  const challenger = stopChallenger(snapshot, record.cell);
   const gruntId = newDocId();
   // The sky over the cell when the fight was accepted, read here
   // rather than trusted from the client and kept on the row, since
@@ -326,10 +331,12 @@ export async function startRocketBattle(
               ${jsonOf(transaction, createRocketParty(snapshot, toSpawns(record.party), shadow, levels))})
     `;
     await transaction`
-      insert into battles (id, raid_id, species, outcome, started_at, biome, weather, limits)
+      insert into battles (id, raid_id, species, outcome, started_at, biome, weather, limits,
+                           opponent, opponent_sprite)
       values (${battleId}, null, ${record.party[0]?.species ?? 0},
               ${BattleOutcome.Unfinished}, ${now},
-              ${chunk.biome}, ${weather}, ${PVP_BATTLE_LIMITS})
+              ${chunk.biome}, ${weather}, ${PVP_BATTLE_LIMITS},
+              ${challenger?.name ?? ''}, ${challenger?.sprite ?? ''})
     `;
 
     const rows = [

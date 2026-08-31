@@ -430,9 +430,20 @@ export function getSpeciesHeldItems(species: Species): WildHeldItems | undefined
  * Rarest slot first, cumulative: a species with all three hands over
  * the rare one on the bottom hundredth of the roll, the uncommon on
  * the twentieth above that, and the common one on the half above
- * those
+ * those.
+ *
+ * `boost` widens the two rare slots and leaves the common one where
+ * it is, for a player walking with something that finds what a
+ * pokemon is carrying. Widening all three would only saturate: the
+ * common slot is already half of every meeting, so doubling it hands
+ * over something every time and the thing actually worth looking for
+ * would be no likelier than before
  */
-export function pickHeldItem(held: WildHeldItems | undefined, roll: number): Items | null {
+export function pickHeldItem(
+  held: WildHeldItems | undefined,
+  roll: number,
+  boost = 1,
+): Items | null {
   if (held == null) {
     return null;
   }
@@ -440,14 +451,14 @@ export function pickHeldItem(held: WildHeldItems | undefined, roll: number): Ite
   let threshold = 0;
 
   if (held.rare != null) {
-    threshold += WILD_HELD_RARE;
+    threshold += WILD_HELD_RARE * boost;
 
     if (roll < threshold) {
       return held.rare;
     }
   }
   if (held.uncommon != null) {
-    threshold += WILD_HELD_UNCOMMON;
+    threshold += WILD_HELD_UNCOMMON * boost;
 
     if (roll < threshold) {
       return held.uncommon;

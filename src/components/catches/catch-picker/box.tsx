@@ -91,10 +91,11 @@ export default function PickerBox(
    * back, so a plain read took the page down for the length of the
    * round trip
    */
-  const offered = (): CatchOption[] =>
+  const offered = createMemo<CatchOption[]>(() =>
     (props.options ?? props.owned.latest ?? [])
       .filter((option) => props.filter?.(option) ?? true)
-      .sort((one, other) => other.caught.caughtAt.localeCompare(one.caught.caughtAt));
+      .sort((one, other) => other.caught.caughtAt.localeCompare(one.caught.caughtAt)),
+  );
 
   const query = (): string => props.search;
   /**
@@ -150,7 +151,7 @@ export default function PickerBox(
    * A `sort:` is applied last, over what is left, and overrides the
    * newest-first order the box arrives in
    */
-  const options = (): CatchOption[] =>
+  const options = createMemo<CatchOption[]>(() =>
     orderCatches(
       offered().filter((option) =>
         matchesCatch(option.caught, query(), {
@@ -161,7 +162,17 @@ export default function PickerBox(
       ),
       query(),
       (option) => option.caught,
-    );
+    ),
+  );
+
+  /**
+   * The same list by id. Every square looks its own record up to draw
+   * the card over it, and a scan each was the box searching itself
+   * once per square
+   */
+  const optionById = createMemo(
+    () => new Map(options().map((option) => [option.id, option] as const)),
+  );
 
   const chosen = (): string[] => (props.multiple === true ? props.value : []);
 
@@ -174,6 +185,10 @@ export default function PickerBox(
 
   const limit = (): number =>
     props.multiple === true ? (props.max ?? Number.POSITIVE_INFINITY) : 1;
+
+  /** Whether two runs of ids are the same run, in the same order */
+  const sameRun = (one: string[], other: string[]): boolean =>
+    one.length === other.length && one.every((id, at) => id === other[at]);
 
   createEffect(() => {
     if (!showing()) {
@@ -188,10 +203,22 @@ export default function PickerBox(
     //
     // Every other picker keeps its draft to itself until it is
     // confirmed, so the caller's value is read once and untracked
-    setDraft(props.multiple === true && props.live === true ? chosen() : untrack(chosen));
+    const wanted = props.multiple === true && props.live === true ? chosen() : untrack(chosen);
+
+    // A live caller hands back the run it was just given. Setting it
+    // again is a second redraw of the whole box saying nothing new
+    if (!sameRun(untrack(draft), wanted)) {
+      setDraft(wanted);
+    }
   });
 
-  const isDrafted = (id: string): boolean => new Set(draft()).has(id);
+  /**
+   * What is drafted, as a set. Built once rather than per square: the
+   * box asks this of every pokemon it draws, and rebuilding the set
+   * each time made a press cost the whole box times everything picked
+   */
+  const drafted = createMemo(() => new Set(draft()));
+  const isDrafted = (id: string): boolean => drafted().has(id);
 
   const close = (): void => {
     setPending(null);
@@ -264,6 +291,13 @@ export default function PickerBox(
     pickOne(option.id);
   };
 
+  /** The one being asked about twice, while a question is up */
+  const pendingOption = createMemo(() => {
+    const id = pending();
+
+    return id == null ? undefined : optionById().get(id);
+  });
+
   const finish = (): void => {
     if (props.confirm === true && !confirming()) {
       setConfirming(true);
@@ -279,7 +313,7 @@ export default function PickerBox(
    * wants to be told it is fighting somewhere else, not left to
    * wonder where it went
    */
-  const entries = (): CatchGridEntry[] =>
+  const entries = createMemo<CatchGridEntry[]>(() =>
     offered().map((option) => {
       const refused = props.reason?.(option) ?? null;
       const taken = props.multiple === true ? isDrafted(option.id) : props.value === option.id;
@@ -295,7 +329,8 @@ export default function PickerBox(
         square: taken ? { ...square, mark: 'picked' as const } : square,
         caught: option.caught,
       };
-    });
+    }),
+  );
 
   /**
    * What the button on a card says it will do. A box being browsed
@@ -313,7 +348,7 @@ export default function PickerBox(
   };
 
   const pressById = (id: string): void => {
-    const option = options().find((entry) => entry.id === id);
+    const option = optionById().get(id);
 
     if (option != null && props.disabled !== true) {
       press(option);
@@ -375,7 +410,7 @@ export default function PickerBox(
         empty={props.empty ?? 'You have nothing for this.'}
         noMatch={`None of ${props.viewOnly === true ? 'theirs' : 'yours'} match that.`}
         cell={(entry) => (
-          <Show when={options().find((option) => option.id === entry().id)}>
+          <Show when={optionById().get(entry().id)}>
             {(option) => (
               <HoverCard
                 class="block size-full"
@@ -413,7 +448,7 @@ export default function PickerBox(
 
       {/* A single pick that asks twice does it here rather than in the
           square: there is no room under a sprite for a question */}
-      <Show when={options().find((one) => one.id === pending())}>
+      <Show when={pendingOption()}>
         {(asked) => (
           <div class="flex flex-col items-center gap-2">
             {/* What the second press is really agreeing to */}

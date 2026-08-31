@@ -1,9 +1,11 @@
 import { Title } from '@solidjs/meta';
 import { clientOnly } from '@solidjs/start';
-import { type JSX, type ParentProps, Show, createSignal, from } from 'solid-js';
+import { type Accessor, type JSX, Show, createSignal, from } from 'solid-js';
 import { AuctionLot } from '../auth/auctions';
 import { type Profile, watchProfile } from '../auth/profile';
 import { signOut } from '../auth/actions';
+import CommandBar from '../components/app/command-bar';
+import { runsTheGame } from '../auth/staff';
 import { useAuth } from '../auth/context';
 import type { PlayerIdentity } from '../auth/user';
 import AuctionDialog from '../components/auctions/AuctionDialog';
@@ -120,6 +122,10 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
   /** The same, for the battle lobby a player is standing in */
   const [duelling, setDuelling] = createSignal<string | null>(null);
   const close = (): void => {
+    // Wherever the profile was sent to open is spent once it closes:
+    // the next player to open it from the menu wants it as they left
+    // it, not on the tab a week-old notice named
+    game.setProfileAt(null);
     game.setDialog(GameDialog.None);
   };
   const showing = (which: GameDialog): boolean => game.dialog() === which;
@@ -241,7 +247,7 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
             title={TITLES[GameDialog.Notifications]}
             description={DESCRIPTIONS[GameDialog.Notifications]}
           >
-            <NotificationsTab notices={game.notices()} onClose={close} />
+            <NotificationsTab notices={game.notices()} />
             <DialogActions>
               <Button onClick={close}>Close</Button>
             </DialogActions>
@@ -271,7 +277,7 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
             title={TITLES[GameDialog.Profile]}
             description={DESCRIPTIONS[GameDialog.Profile]}
           >
-            <ProfileTab player={props.user.uid} />
+            <ProfileTab player={props.user.uid} section={game.profileAt() ?? undefined} />
             <DialogActions>
               <Button onClick={close}>Close</Button>
             </DialogActions>
@@ -451,9 +457,21 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
  * banned account before it reads anything — and this is so the player
  * is told rather than left pressing buttons that quietly do nothing.
  * The profile is followed rather than read once, so a ban lifted while
- * somebody is sitting here opens the world under them
+ * somebody is sitting here opens the world under them.
+ *
+ * The staff command bar hangs here for the same reason: this is the
+ * one place in the game the profile is already being read, and what
+ * the bar needs from it is the role
  */
-function Banned(props: ParentProps<{ uid: string }>): JSX.Element {
+function Banned(props: {
+  uid: string;
+  /**
+   * The game, given the role the account holds. A function rather
+   * than plain children because the command bar is built inside the
+   * game and offered by what is read here
+   */
+  children: (role: Accessor<string>) => JSX.Element;
+}): JSX.Element {
   const profile = from<Profile | null>((set) =>
     watchProfile(props.uid, (record) => {
       set(record);
@@ -461,7 +479,7 @@ function Banned(props: ParentProps<{ uid: string }>): JSX.Element {
   );
 
   return (
-    <Show when={profile()?.banned === true} fallback={props.children}>
+    <Show when={profile()?.banned === true} fallback={props.children(() => profile()?.role ?? '')}>
       <div class="flex h-full items-center justify-center px-4">
         <div
           class="flex max-w-md flex-col gap-3 rounded-panel border-4 border-ember bg-paper p-4
@@ -524,9 +542,16 @@ export default function Home(): JSX.Element {
       >
         {(user) => (
           <Banned uid={user().uid}>
-            <GameProvider>
-              <GameView user={user()} />
-            </GameProvider>
+            {(role) => (
+              <GameProvider>
+                <GameView user={user()} />
+                {/* Offered to an account that runs the game, and
+                    refused again on the server for one that only
+                    claims to. It stands inside the game because a
+                    command may open what the game already has */}
+                <CommandBar allowed={runsTheGame(role())} player={user().uid} />
+              </GameProvider>
+            )}
           </Banned>
         )}
       </Show>

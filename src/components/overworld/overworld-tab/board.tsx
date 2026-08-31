@@ -322,6 +322,21 @@ export default function OverworldBoard(props: {
     setPlaced(true);
   });
 
+  // Put somewhere by something other than a walk, which today means a
+  // staff teleport. The board holds its own coordinates once it is
+  // placed, so the news has to move them rather than the position
+  createEffect(() => {
+    const at = game.moved();
+
+    if (at == null || !placed()) {
+      return;
+    }
+    setChunkX(at.chunkX);
+    setChunkY(at.chunkY);
+    setCellX(at.cellX);
+    setCellY(at.cellY);
+  });
+
   /**
    * Walking into a chunk publishes (or adopts) the window's spawns;
    * everything after that arrives through the subscriptions below,
@@ -1588,6 +1603,7 @@ export default function OverworldBoard(props: {
               <ChunkCanvas
                 biome={loaded().biome}
                 weather={loaded().weather}
+                lamp={loaded().lamp}
                 charset={charset()}
                 // The camera belongs to the player rather than to the
                 // chunk: walking over a boundary swaps the board out
@@ -1702,6 +1718,9 @@ export default function OverworldBoard(props: {
               user={user()}
               session={session()}
               insistent={once()}
+              // A Frisk buddy reads what is standing there before
+              // anything is thrown at it
+              revealsHeld={view()?.revealsHeld === true}
               onCaught={(catchId) => {
                 // The encounter is finished the moment it is caught, so
                 // the safari closes and the sheet for what was caught

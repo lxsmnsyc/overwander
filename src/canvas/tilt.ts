@@ -27,6 +27,17 @@ export const PITCH = 60;
 export const GROUND_DEPTH = Math.sin((PITCH * Math.PI) / 180);
 
 /**
+ * And how much of a step **upward** survives it.
+ *
+ * The other half of the same tilt: a step away from the viewer keeps
+ * its sine, a step into the air keeps its cosine. Anything drawn above
+ * the ground rather than on it — a raindrop, a fold of aurora — is
+ * raised by this, and at sixty degrees it is half of what a step
+ * across the board is worth
+ */
+export const GROUND_RISE = Math.cos((PITCH * Math.PI) / 180);
+
+/**
  * How flat a patch of ground lies: an ellipse as wide as the patch and
  * this much of that tall. Short of the tilt's own sine, since a shadow
  * hugging the ground reads better than one drawn as the full circle

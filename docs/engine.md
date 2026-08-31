@@ -41,8 +41,27 @@ is 180, so a move is usable its full PP's worth of times in three minutes. PP is
 a rate rather than a pool, so nothing runs out mid-raid and a strong move is
 still rationed.
 
-A cast is **interruptible**: flinching stops it, and so does its target leaving
-the field or fainting. A move that has already triggered cannot be taken back.
+A cast is **interruptible**: flinching stops it, and so does its target fainting.
+A move that has already triggered cannot be taken back.
+
+**A switch is a walk, not a vanishing.** The pair change places in front of
+everybody over `SWITCHING_SPAN` (1000ms), the one crossing keeps casting what it
+had started, and anything aimed at it follows the swap onto whoever took the
+spot: a cast, a channel, and a move already in the air. Only **Teleport** takes
+its user out of the world, and that one still interrupts, still stops the pair
+acting, and is still untouchable while it goes. `UnitSwitch` and
+`UnitFinishSwitch` carry the cause that started them, which is what tells the two
+kinds apart.
+
+Three gates stand in front of a move, each asked by the call it guards rather
+than checked afterwards: **`CheckUnitTriggerMove`** before it fires,
+**`CheckUnitTriggerMoveTarget`** before it goes ahead against each one it
+reached, and **`CheckUnitTriggerMoveEffect`** before it resolves on them. A
+refusal means the event never runs at all, the way a refused cast is never
+emitted, so an effect turns a move aside rather than being disabled: Dream Eater
+answers the last of the three. All three sit on the `AttackPriority` scale, so
+anything that has to bracket a move has the `Prepare` and `Cleanup` rungs to do
+it with.
 
 A move with `steps` triggers once as its cast ends and then **channels** the
 rest, one trigger per step, each step running as long as the wind-up that opened
@@ -205,7 +224,7 @@ frame.
 Nothing about this reaches the mechanics. `cast` sits beside `delay` as a purely
 presentational field: the fight is the same fight with the canvas closed.
 
-## The demo raid
+## The demo pages
 
 [`/demo/raid`](../src/routes/demo/raid.tsx) stages a raid out of a seed: one boss
 against `DEMO_TEAMS` (8) parties of `DEMO_TEAM_SIZE` (6), rolled by
@@ -219,7 +238,15 @@ game stages is one somebody walked to, filled a lobby for and paid for — which
 made the loop that most wants watching the hardest one to reach. The seed is in
 the URL, so a fight is a link and two people watch the same frames.
 
-It also carries no session. `/demo/*` is named in `AuthProvider` as sessionless:
+Two pages sit beside it under the same rules. [`/demo/move`](../src/routes/demo/move.tsx)
+stages one move in a live engine, and [`/demo/weather`](../src/routes/demo/weather.tsx)
+draws any of the twenty six skies over any biome's ground, at any strength,
+running or stopped a frame at a time, through both of the board's painters. Both
+carry the thing being looked at in the address, so a link is a demonstration, and
+both are `clientOnly`: a canvas and a frame timer do not exist until a browser is
+here, so the server sends the title and a space for it.
+
+They also carry no session. `/demo/*` is named in `AuthProvider` as sessionless:
 the provider is still mounted so `useAuth` works anywhere, but it opens no
 listener and never builds a Supabase client, which is imported **on demand**
 inside `onMount` rather than at the top of the module. A demo battle that opened

@@ -16,6 +16,7 @@ import Weather, {
   isWeatherFavored,
   shadowsWildMeetings,
   shinyBoostOf,
+  spawnFavoredTypes,
   teachesEggMove,
   toBattleWeather,
 } from '../src/data/overworld/weather';
@@ -531,5 +532,31 @@ describe('the types a sky is kind to', () => {
       expect(line.length).toBeGreaterThan(0);
       expect(line.length).toBeLessThan(90);
     }
+  });
+});
+
+describe('what a sky crowds into a chunk', () => {
+  it('names the types it favours, and none for the ones kind to everything', () => {
+    // A clear sky is about nothing, so it crowds nothing
+    expect(spawnFavoredTypes(Weather.Clear)).toEqual([]);
+
+    // The four rarest are kind to every type, and lifting every entry
+    // by one factor is the pool it started with
+    for (const sky of EVERY_SKY.filter(favorsEverything)) {
+      expect(spawnFavoredTypes(sky), WEATHER_NAMES[sky]).toEqual([]);
+      expect(WEATHER_TYPES[sky], WEATHER_NAMES[sky]).toEqual([]);
+    }
+
+    // Everything else crowds exactly what it is about
+    for (const sky of EVERY_SKY) {
+      if (favorsEverything(sky)) {
+        continue;
+      }
+      expect(spawnFavoredTypes(sky), WEATHER_NAMES[sky]).toEqual(WEATHER_TYPES[sky]);
+    }
+
+    // And at least one sky actually crowds something, or the rule is
+    // a rule about nothing
+    expect(EVERY_SKY.some((sky) => spawnFavoredTypes(sky).length > 0)).toBe(true);
   });
 });

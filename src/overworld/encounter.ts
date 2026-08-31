@@ -359,7 +359,7 @@ export function deriveNature(traitValue: number): Natures {
  * mixes it: every 8-bit slice of it is already spoken for, and a
  * one-in-a-hundred item needs finer odds than 256 steps anyway
  */
-export function deriveHeldItems(species: Species, traitValue: number): Items[] {
+export function deriveHeldItems(species: Species, traitValue: number, boost = 1): Items[] {
   const held = getSpeciesHeldItems(species);
 
   if (held == null) {
@@ -374,7 +374,7 @@ export function deriveHeldItems(species: Species, traitValue: number): Items[] {
   mixed ^= mixed << 8;
   mixed >>>= 0;
 
-  const item = pickHeldItem(held, (mixed & HELD_ITEM_MASK) / HELD_ITEM_RANGE);
+  const item = pickHeldItem(held, (mixed & HELD_ITEM_MASK) / HELD_ITEM_RANGE, boost);
 
   return item == null ? [] : [item];
 }
@@ -553,6 +553,11 @@ export interface EncounterOptions {
    * species day's own boost
    */
   shinyBoost?: number;
+  /**
+   * A multiplier on the odds it is carrying something, from a buddy
+   * that finds what a pokemon has in its mouth
+   */
+  heldBoost?: number;
 }
 
 /**
@@ -663,7 +668,8 @@ export default function deriveEncounter(
     // Wild meetings only: a raid prize and a hatchling arrive with
     // empty hands, and a Rocket's pokemon is carrying whatever its
     // trainer gave it rather than what its species picks up
-    items: type === EncounterType.Wild ? deriveHeldItems(species, traitValue) : [],
+    items:
+      type === EncounterType.Wild ? deriveHeldItems(species, traitValue, options.heldBoost) : [],
     timestamp: snapshot.timestamp,
     x: snapshot.chunk.x,
     y: snapshot.chunk.y,

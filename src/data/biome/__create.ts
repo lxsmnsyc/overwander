@@ -2,6 +2,7 @@ import type Biome from '../ids/biome';
 import { TimeOfDay } from '../ids/biome';
 import type Families from '../ids/families';
 import { Species } from '../ids/species';
+import type { Types } from '../constants/types';
 import { getBaseSpecies, getSpeciesData } from '../species';
 
 /**
@@ -99,6 +100,52 @@ export function boostFamilyWeights(
     rare: boostFamilyEntries(groups.rare, family, factor),
     prized: boostFamilyEntries(spawnBand(groups, 'prized'), family, factor),
     special: boostFamilyEntries(groups.special, family, factor),
+  };
+}
+
+/**
+ * One list of entries with a set of types weighted more heavily. It
+ * is what a sky does to a pool: rain crowds the chunk with what rain
+ * is about, and leaves the rest of it where it stands
+ */
+export function boostTypeEntries(
+  entries: SpawnEntry[],
+  types: Types[],
+  factor: number,
+): SpawnEntry[] {
+  if (types.length === 0) {
+    return entries;
+  }
+
+  const favored = new Set(types);
+
+  return entries.map((entry) =>
+    getSpeciesData(entry.species).types.some((type) => favored.has(type))
+      ? { species: entry.species, weight: entry.weight * factor }
+      : entry,
+  );
+}
+
+/**
+ * The same pool with the types a sky favours weighted more heavily.
+ *
+ * The bands do not move, the way they do not for a species day: a
+ * favoured rare stays rare and wins its band more often. A sky that
+ * favours nothing, or everything, hands the pool back untouched,
+ * since lifting every entry by the same factor is the pool it started
+ * with
+ */
+export function boostTypeWeights(
+  groups: SpawnRarityGroups,
+  types: Types[],
+  factor: number,
+): SpawnRarityGroups {
+  return {
+    base: boostTypeEntries(groups.base, types, factor),
+    uncommon: boostTypeEntries(groups.uncommon, types, factor),
+    rare: boostTypeEntries(groups.rare, types, factor),
+    prized: boostTypeEntries(spawnBand(groups, 'prized'), types, factor),
+    special: boostTypeEntries(groups.special, types, factor),
   };
 }
 

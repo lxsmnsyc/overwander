@@ -41,6 +41,7 @@ export function chooseMove(battle: Battle, source: Unit): AIMoveChoice | undefin
     disabled: false,
     source,
     choice: undefined,
+    waiting: false,
   };
   battle.emit(BattleEvents.UnitAIChooseMove, event);
   return event.choice;
@@ -263,13 +264,6 @@ export function setupChooseMoveAI(battle: Battle): void {
     let best: AIMoveChoice[] = [];
 
     function consider(move: Moves, target: MoveTarget): void {
-      // A move that cannot work here is not a low-scoring option, it
-      // is not an option: casting it would spend the cast time, the
-      // cooldown and the opening for nothing
-      if (!isMoveUsable(source, move, target)) {
-        return;
-      }
-
       const score = scoreMove(source, move, target);
 
       if (best.length === 0 || score > best[0].score) {
@@ -283,13 +277,34 @@ export function setupChooseMoveAI(battle: Battle): void {
       // tsc types the mapped-record values as possibly undefined;
       // tsgolint disagrees, so the guard is flagged as unnecessary
       // oxlint-disable-next-line typescript/no-unnecessary-condition
-      if (!state || state.disabled || state.cooldown) {
+      if (!state || state.disabled) {
+        continue;
+      }
+
+      // A move that is cooling is one the unit still has, so it is
+      // only worth asking about while nothing has said so yet: the
+      // answer feeds the difference between waiting and being stuck
+      const cooling = !!state.cooldown;
+
+      if (cooling && event.waiting) {
         continue;
       }
 
       const data = getMoveData(state.move);
 
       for (const target of collectTargets(source, data.target)) {
+        // A move that cannot work here is not a low-scoring option, it
+        // is not an option: casting it would spend the cast time, the
+        // cooldown and the opening for nothing
+        if (!isMoveUsable(source, state.move, target)) {
+          continue;
+        }
+
+        if (cooling) {
+          event.waiting = true;
+          break;
+        }
+
         consider(state.move, target);
       }
     }

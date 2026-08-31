@@ -55,6 +55,26 @@ export const enum OverworldEvents {
    * Pickup is the only thing that answers it
    */
   CheckWalkPickup = 7,
+  /**
+   * How far the player can see under a sky that has put the lights
+   * out. Illuminate is what a lantern is out here
+   */
+  CheckLampReach = 8,
+  /**
+   * The band a wild meeting rolls its level inside. Keen Eye keeps the
+   * weak away and Hustle draws the strong out
+   */
+  CheckEncounterLevels = 9,
+  /**
+   * How much likelier a wild meeting is to be carrying something.
+   * Compound Eyes is the only thing that answers it
+   */
+  CheckEncounterHeld = 10,
+  /**
+   * Whether the player is shown what a meeting is holding before they
+   * throw anything at it. Frisk is what does the looking
+   */
+  CheckRevealsHeld = 11,
 }
 
 /**
@@ -141,6 +161,35 @@ export interface CheckWalkPickupEvent extends OverworldEvent {
   found: number;
 }
 
+export interface CheckLampReachEvent extends OverworldEvent {
+  /**
+   * How far a player walking alone sees in the dark, in cells
+   */
+  base: number;
+  reach: number;
+}
+
+export interface CheckEncounterLevelsEvent extends OverworldEvent {
+  /**
+   * The band the chunk would field this species in, before anything
+   * walking beside the player has its say
+   */
+  base: [lowest: number, highest: number];
+  lowest: number;
+  highest: number;
+}
+
+export interface CheckEncounterHeldEvent extends OverworldEvent {
+  /**
+   * What the odds of finding something in its mouth are multiplied by
+   */
+  boost: number;
+}
+
+export interface CheckRevealsHeldEvent extends OverworldEvent {
+  shown: boolean;
+}
+
 export interface OverworldEventMap extends EventMap {
   [OverworldEvents.CheckSpawnCount]: [CheckSpawnCountEvent, EventPriority];
   [OverworldEvents.CheckEncounterNature]: [CheckEncounterNatureEvent, EventPriority];
@@ -150,4 +199,8 @@ export interface OverworldEventMap extends EventMap {
   [OverworldEvents.CheckCatchCandy]: [CheckCatchCandyEvent, EventPriority];
   [OverworldEvents.CheckEggSteps]: [CheckEggStepsEvent, EventPriority];
   [OverworldEvents.CheckWalkPickup]: [CheckWalkPickupEvent, EventPriority];
+  [OverworldEvents.CheckLampReach]: [CheckLampReachEvent, EventPriority];
+  [OverworldEvents.CheckEncounterLevels]: [CheckEncounterLevelsEvent, EventPriority];
+  [OverworldEvents.CheckEncounterHeld]: [CheckEncounterHeldEvent, EventPriority];
+  [OverworldEvents.CheckRevealsHeld]: [CheckRevealsHeldEvent, EventPriority];
 }

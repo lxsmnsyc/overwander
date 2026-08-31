@@ -138,14 +138,15 @@ function rollCatch(random: () => number, index: number): CatchSnapshot {
 /**
  * The teams of a demo raid: the boss in its own alliance, and
  * `DEMO_TEAMS` parties sharing the other one, exactly as a real lobby
- * publishes them.
+ * publishes them. `shadow` stages the shadow raid, which is the one
+ * fight the battle field has a shadow's haze to draw.
  *
  * The parties are separate **teams** rather than one big party
  * because that is what a lobby is — five players who happen to be
  * allied — and it is the arrangement the targeting rules and the
  * spread moves actually run against
  */
-export function createDemoRaidTeams(seed: string): TeamSnapshotRecord[] {
+export function createDemoRaidTeams(seed: string, shadow = false): TeamSnapshotRecord[] {
   const rng = new AleaRNG(`demo-raid:${seed}`);
   const random = (): number => rng.random();
   const bosses = getRollableSpecies().filter(canStageBoss);
@@ -156,7 +157,7 @@ export function createDemoRaidTeams(seed: string): TeamSnapshotRecord[] {
       // A boss belongs to nobody, the way a real one does
       player: '',
       alliance: BOSS_ALLIANCE,
-      catches: [createRaidBossSnapshot(boss, Math.floor(random() * 0x1_0000_0000))],
+      catches: [createRaidBossSnapshot(boss, Math.floor(random() * 0x1_0000_0000), shadow)],
     },
   ];
 

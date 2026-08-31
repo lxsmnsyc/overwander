@@ -7,13 +7,18 @@ hands the reward over on the spot.
 
 ## Requirements
 
-Most requirements are lifetime totals: pokemon caught (overall, of a type, of a
-species, or from one line), eggs hatched, levels raised, items used, steps walked
-with a buddy, services taken from the wandering people, landmarks claimed, raids
-fought or won, trainers and grunts beaten, gold earned and spent, shadows
-purified, pokemon evolved, released or taught a move, biomes stood in, trades
-settled, friends made, gifts taken, bids placed and auctions settled. Everything
-you have already done counts; nothing resets.
+Most requirements are lifetime totals, kept for everything worth asking about:
+
+| What is counted | The lines it keeps                                                                                    |
+| --------------- | ------------------------------------------------------------------------------------------------------ |
+| **Catching**    | Pokemon obtained, by type, species or line, shinies among them, and eggs hatched                       |
+| **Raising**     | Levels gained, training points spent, items used, moves learned, evolutions, purifications, releases    |
+| **Walking**     | Steps beside a buddy, biomes stood in for the first time, landmarks claimed, wanderers visited          |
+| **Fighting**    | Raids joined, raids won, grunts and league seats beaten, duelling trainers beaten by their class        |
+| **Dealing**     | Trades settled, friends made, gifts taken, bids placed, auctions settled                               |
+| **Gold**        | Earned, and spent for good                                                                             |
+
+Everything you have already done counts; nothing resets.
 
 A few quests instead ask you to **hand something over**: those items stay in
 your bag until the moment you claim, and are taken as the reward is paid. A
@@ -48,9 +53,21 @@ turns.
 ## Chains
 
 Some quests are links in a chain: the next one only appears once the one before
-it is claimed. Ten chains run through the game, one per thing there is to do:
-catching, battling, raiding, phenomena, eggs, friendship, training, auctions,
-biomes and friends, each opening with something a new trainer would do anyway.
+it is claimed. Ten run through the game, one per thing there is to do, each
+opening with something a new trainer would do anyway:
+
+| Chain                 | What it is about                              | Links |
+| --------------------- | --------------------------------------------- | ----- |
+| **Catcher's Start**   | Throwing balls, and what a full box looks like | 4     |
+| **Roadside Rivals**   | The trainers and grunts a walk runs into      | 3     |
+| **Raid Sirens**       | Joining raids, then clearing them             | 3     |
+| **Strange Weather**   | Phenomena, and what stands in them            | 2     |
+| **The Hatchery**      | Nests, eggs, walking them and breeding        | 5     |
+| **Warm Company**      | Friendship, and what buys it                  | 2     |
+| **Coaching Course**   | Levels, training and teaching                 | 5     |
+| **Auction House**     | Bidding, and selling something of your own    | 2     |
+| **The Wide World**    | Biomes, and the portals between them          | 3     |
+| **Better Together**   | Friends, and a fair swap                      | 2     |
 
 One more chain is the **dex** itself. Kanto's asks for 25 caught, then 75, then
 150, and the last rung hangs the region's medal on the shelf along with a Master

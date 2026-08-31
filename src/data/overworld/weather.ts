@@ -181,6 +181,23 @@ export const WEATHER_TYPES: Record<Weather, Types[]> = {
 export const WEATHER_MIN_IV = 10;
 
 /**
+ * How much more heavily a sky crowds its own types into a chunk's
+ * spawns.
+ *
+ * The same shape as a species day, and deliberately gentler: a day is
+ * one family for one day and a sky is a whole type for an hour, so
+ * four times the weight would leave a rainy chunk holding nothing but
+ * Water. The bands do not move either way, so a favoured rare stays
+ * rare and only wins its band more often.
+ *
+ * The skies that favour *everything* are left out. Lifting every
+ * entry by the same factor is the pool it started with, and those
+ * four are the rarest in the game: what they are worth is already
+ * written into what they hand over
+ */
+export const WEATHER_SPAWN_BOOST = 2;
+
+/**
  * Whether this sky is kind to a pokemon carrying these types.
  *
  * Every sky picks a type or two. A meteor shower picks none, because it
@@ -195,6 +212,19 @@ export function isWeatherFavored(weather: Weather, types: Types[]): boolean {
   const favored = new Set(WEATHER_TYPES[weather]);
 
   return types.some((type) => favored.has(type));
+}
+
+/**
+ * The types a sky crowds into a chunk's spawns, or nothing where it
+ * crowds none.
+ *
+ * A sky that is kind to everything favours nothing here: boosting
+ * every entry by the same factor hands back the pool it started with,
+ * and those four are the rarest skies in the game, whose worth is
+ * already in what they hand over rather than in who turns up
+ */
+export function spawnFavoredTypes(weather: Weather): Types[] {
+  return favorsEverything(weather) ? [] : WEATHER_TYPES[weather];
 }
 
 /** Whether the sky is kind to everything rather than to a type of it */
@@ -272,6 +302,17 @@ export function shadowsWildMeetings(weather: Weather): boolean {
  * still a question
  */
 export const DARK_DAY_SHADOW_CHANCE = 1 / 3;
+
+/**
+ * How far a player sees under a Dark Day, in cells, walking alone.
+ *
+ * A cell and a half: the ring they are standing in, and enough of the
+ * next one out to tell whether it is worth stepping onto. Under a sky
+ * this dark that is the difference between a board you read and a
+ * board you feel your way across. A buddy widens it: see
+ * `ILLUMINATE_LAMP_CELLS`
+ */
+export const DARK_DAY_LAMP_CELLS = 1.5;
 
 /** What this sky multiplies the odds of a hidden ability by */
 export function hiddenAbilityBoostOf(weather: Weather): number {

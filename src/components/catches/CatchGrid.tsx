@@ -59,14 +59,15 @@ export default function CatchGrid(props: CatchGridProps): JSX.Element {
 
   // The query is applied here even when the caller fetched against it,
   // because the store only answers half of a search
-  const matched = (): BoxEntry[] =>
+  const matched = createMemo<BoxEntry[]>(() =>
     orderCatches(
       props.entries.filter((entry) =>
         matchesCatch(entry.caught, query(), { id: entry.square.id, duplicates: duplicates() }),
       ),
       query(),
       (entry) => entry.caught,
-    ).map((entry) => entry.square);
+    ).map((entry) => entry.square),
+  );
 
   // A box the player has set eight wide holds forty, so the page has
   // to be the box rather than a constant beside it

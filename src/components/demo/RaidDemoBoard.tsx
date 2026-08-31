@@ -4,7 +4,7 @@ import { type JSX, Show, createEffect, createSignal, onCleanup } from 'solid-js'
 import type Battle from '../../battle/core';
 import BattleField from '../../components/battle/BattleField';
 import BattleParty from '../../components/battle/BattleParty';
-import { Badge, Button, Meta, Note } from '../../components/styled';
+import { Badge, Button, Meta, Note, Switch } from '../../components/styled';
 import { DEMO_TEAMS, DEMO_TEAM_SIZE, createDemoRaidTeams } from '../../overworld/demo-raid';
 import { BOSS_ALLIANCE, PLAYER_ALLIANCE } from '../../overworld/raid';
 import { type RaidBattle, createRaidBattle } from '../../overworld/raid-battle';
@@ -68,13 +68,16 @@ export default function RaidDemoBoard(): JSX.Element {
   // The seed lives in the URL rather than in a signal, so the fight
   // on screen is a link somebody else can open and watch the same
   // frames of
-  const [params, setParams] = useSearchParams<{ seed?: string }>();
+  const [params, setParams] = useSearchParams<{ seed?: string; shadow?: string }>();
   const seed = (): string => params.seed ?? DEFAULT_SEED;
+  // The shadow raid, staged on request: it is the fight the field
+  // paints a haze under, and nothing else on this page is a shadow
+  const shadow = (): boolean => params.shadow === '1';
   const [built, setBuilt] = createSignal<RaidBattle | null>(null);
   const [revision, setRevision] = createSignal(0);
 
   createEffect(() => {
-    const staged = createRaidBattle(`demo:${seed()}`, createDemoRaidTeams(seed()));
+    const staged = createRaidBattle(`demo:${seed()}`, createDemoRaidTeams(seed(), shadow()));
 
     // Initialized but not started: the canvas starts it once it has
     // every sheet, the way a real fight waits
@@ -149,6 +152,15 @@ export default function RaidDemoBoard(): JSX.Element {
         by the same engine a real raid runs on. Nothing here is recorded, nothing is won, and nobody
         is charged — it is here so the battle mechanics and the sprite animations can be watched.
       </Note>
+
+      <Switch
+        label="Shadow raid"
+        description="Stages the boss as a shadow, which is what the haze under it is drawn for."
+        checked={shadow()}
+        onChange={(on) => {
+          setParams({ shadow: on ? '1' : undefined });
+        }}
+      />
 
       <Meta>The seed is in the address — the same one is the same fight, frame for frame.</Meta>
 

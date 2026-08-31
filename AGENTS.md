@@ -27,3 +27,7 @@ one that covers what you are about to do:
 - `prefer-sets` - use `Set.has` for membership checks instead of scanning arrays.
 - `trigger-driven-abilities` - ability effects that do not mutate their
   detection event ride `UnitTriggerAbility` at `Exact` priority.
+- `changesets` - every change ships with one. `patch` when something that
+  already existed behaves differently, `minor` when something new exists,
+  `major` only with the maintainer's approval. The description stays short,
+  a list when it covers several things.

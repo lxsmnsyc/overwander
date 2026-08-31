@@ -115,6 +115,13 @@ either way a player gets **one** per cell per hour.
 The pokemon is drawn from the biome's **uncommon** band, or its **rare** band one
 time in eight.
 
+What a phenomenon leaves starts at **uncommon**: it does not hand over what an
+ordinary walk turns up anyway, and the two bands above that are eight times as
+wide as the ground makes them. It has no special band at all. The only one of
+those its pools ever reach is the **Relic Crown**, drawn with the other ruins
+rather than at a rate of its own, so nothing happening at a cell leaves a Master
+Ball or a Shiny Charm.
+
 The **dust cloud is the richest** phenomenon: it is the only source of a stone or
 a plate outside an item cache, and the only ordinary source of gems. The
 **grotto** pays in pokemon instead — it never leaves an item at all, and one
@@ -282,16 +289,23 @@ a desirable lot can be put out of reach in a single bid.
 A pokemon that changes hands arrives as a stranger, its friendship reset. Gold
 buys the pokemon, never the walking behind it.
 
-What may be listed is deliberately narrow. An item must be from the **special**
-band. A pokemon must have **perfect stats**, **no stats at all**, be **shiny**, or
-belong to a **special-tier species**. One listing a day is the scarcest thing a
-player has, and anything outside those categories is something a bidder could
-walk out and find for themselves.
+What may be listed is deliberately narrow, since one listing a day is the
+scarcest thing a player has and anything outside these is something a bidder
+could walk out and find for themselves:
 
-Four pokemon cannot be listed even when they qualify: one **in a fight**, one
-**waiting in a raid lobby**, an **egg** — a bidder cannot see inside one and the
-seller can — and the **buddy**. A lot cannot be withdrawn once listed, so the
-buddy is refused outright rather than quietly sent home.
+| A lot          | The bar it has to clear                                                  |
+| -------------- | ------------------------------------------------------------------------ |
+| **An item**    | The **special** band, and nothing below it                               |
+| **A pokemon**  | Perfect stats, no stats at all, shiny, or a special-tier species         |
+
+Four are refused even when they qualify:
+
+| Refused                   | Why                                                     |
+| ------------------------- | -------------------------------------------------------- |
+| One **in a fight**        | It is busy being something else                         |
+| One **in a raid lobby**   | The same                                                |
+| An **egg**                | A bidder cannot see inside one and the seller can       |
+| The **buddy**             | A lot cannot be withdrawn, so it is refused up front rather than quietly sent home |
 
 Nothing happens when bidding closes, because somebody must come back for the lot.
 Usually that is the winner; a lot **nobody bid on** has no winner, so the seller

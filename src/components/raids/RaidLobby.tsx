@@ -44,7 +44,6 @@ import {
   DialogActions,
   DialogSection,
   List,
-  ListRow,
   Note,
   Row,
   SEARCH_FROM,
@@ -299,10 +298,16 @@ function LobbyRows(
                   <List>
                     <For each={joined()}>
                       {(team) => (
-                        <ListRow
-                          selected={team.player === props.user.uid}
-                          class={`flex-wrap justify-between ${
-                            team.player === props.user.uid ? 'sticky top-0 z-10 bg-leaf-soft' : ''
+                        // A box in a box: the strip of squares draws
+                        // its own frame, so the row's frame around it
+                        // and the name together left the squares a
+                        // third of the width to share. The plate wears
+                        // the frame now and the strip has the row
+                        <li
+                          class={`flex flex-col gap-2 sm:flex-row sm:items-center ${
+                            team.player === props.user.uid
+                              ? 'sticky top-0 z-10 rounded-xl bg-paper'
+                              : ''
                           }`}
                         >
                           {/* Anybody but the reader is somebody worth
@@ -313,21 +318,33 @@ function LobbyRows(
                               their own name in a lobby would be
                               opening a read-only copy of the profile
                               the menu already gives them */}
-                          <PlayerPlate
-                            name={team.player === props.user.uid ? 'You' : named(team.player)}
-                            sprite={faceOf(team.player)}
-                            onOpen={
-                              team.player === props.user.uid
-                                ? undefined
-                                : () => {
-                                    game.setVisiting(team.player);
-                                  }
-                            }
-                          />
+                          <span
+                            class={`flex w-full shrink-0 items-center rounded-xl border-2 px-2
+                              py-2 text-sm shadow-pop-sm sm:w-40 ${
+                                team.player === props.user.uid
+                                  ? 'border-leaf bg-leaf-soft'
+                                  : 'border-line bg-paper'
+                              }`}
+                          >
+                            <PlayerPlate
+                              name={team.player === props.user.uid ? 'You' : named(team.player)}
+                              sprite={faceOf(team.player)}
+                              onOpen={
+                                team.player === props.user.uid
+                                  ? undefined
+                                  : () => {
+                                      game.setVisiting(team.player);
+                                    }
+                              }
+                            />
+                          </span>
                           {/* The party itself, square for square, with
-                              the same card the box would put over each */}
-                          <LobbyParty catches={team.catches} />
-                        </ListRow>
+                              the same card the box would put over each.
+                              It takes what is left of the row: six
+                              squares sharing 240 pixels were too small
+                              to tell one pokemon from another */}
+                          <LobbyParty catches={team.catches} class="min-w-0 grow" />
+                        </li>
                       )}
                     </For>
                   </List>

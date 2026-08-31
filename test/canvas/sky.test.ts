@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
-import paintSky from '../../src/canvas/sky';
+import paintSky, { FALL_TABLE, thinningAt, worldDropAt } from '../../src/canvas/sky';
 import Weather, { WEATHER_NAMES } from '../../src/data/overworld/weather';
 
 /**
@@ -20,6 +20,9 @@ import Weather, { WEATHER_NAMES } from '../../src/data/overworld/weather';
  * how a sky that walked its bands inward past nothing took the page
  * down with it
  */
+/** Every field a sheen has written, newest last */
+const painted: { width: number; height: number; data: Uint8ClampedArray }[] = [];
+
 function stubContext(): CanvasRenderingContext2D {
   let lineWidth = 1;
   const context = {
@@ -60,6 +63,17 @@ function stubContext(): CanvasRenderingContext2D {
       }
     },
     ellipse: () => undefined,
+    // The sheen is arithmetic per pixel written into a small canvas,
+    // so the stub has to hand out somewhere to write and keep what
+    // was written
+    createImageData: (width: number, height: number) => ({
+      width,
+      height,
+      data: new Uint8ClampedArray(width * height * 4),
+    }),
+    putImageData: (image: { width: number; height: number; data: Uint8ClampedArray }) => {
+      painted.push(image);
+    },
     rect: () => undefined,
     drawImage: () => undefined,
   };
@@ -127,28 +141,62 @@ describe('the sky over the board', () => {
     }
   });
 
-  it('draws the rainbow as bands walking inward, never past nothing', () => {
-    const radii: number[] = [];
-    const context = stubContext();
+  /**
+   * A bow is a sheen rather than an arch: a field of colour worked
+   * out per pixel into a small canvas and stretched over the picture.
+   * The arch it replaced was a hoop standing in the field, and it
+   * could put a band's radius past nothing and throw
+   */
+  describe('a bow drawn as a sheen', () => {
+    /** The field a sky writes, and the spread of colour in it */
+    const fieldOf = (
+      sky: Weather,
+      width = 960,
+      height = 540,
+    ): { size: [number, number]; spread: number; alpha: [number, number] } => {
+      painted.length = 0;
+      paintSky(stubContext(), width, height, sky, 4000);
 
-    // oxlint-disable-next-line typescript/no-unsafe-type-assertion
-    (context as unknown as { arc: (x: number, y: number, radius: number) => void }).arc = (
-      _x,
-      _y,
-      radius,
-    ) => {
-      radii.push(radius);
+      const field = painted.at(-1);
+
+      if (field == null) {
+        throw new Error(`${WEATHER_NAMES[sky]} wrote no field`);
+      }
+      let spread = 0;
+      let low = 1;
+      let high = 0;
+
+      for (let at = 0; at < field.data.length; at += 4) {
+        const [red, green, blue, alpha] = field.data.slice(at, at + 4);
+
+        spread = Math.max(spread, Math.max(red, green, blue) - Math.min(red, green, blue));
+        low = Math.min(low, alpha / 0xff);
+        high = Math.max(high, alpha / 0xff);
+      }
+      return { size: [field.width, field.height], spread, alpha: [low, high] };
     };
 
-    paintSky(context, 960, 540, Weather.Rainbow, 0);
+    it('lays the spectrum across a rainbow and drains it for a fogbow', () => {
+      // A rainbow is the whole hue wheel; a fogbow's drops are too
+      // small to split the light, so it comes out all but white
+      const bow = fieldOf(Weather.Rainbow).spread;
 
-    expect(radii).toHaveLength(6);
-    for (const [at, radius] of radii.entries()) {
-      expect(radius).toBeGreaterThan(0);
-      if (at > 0) {
-        expect(radius).toBeLessThan(radii[at - 1]);
-      }
-    }
+      expect(bow).toBeGreaterThan(0x80);
+      expect(fieldOf(Weather.Fogbow).spread).toBeLessThan(bow / 4);
+    });
+
+    it('bands the light rather than laying a flat film', () => {
+      const [low, high] = fieldOf(Weather.Rainbow).alpha;
+
+      expect(high).toBeGreaterThan(0.5);
+      expect(low).toBeLessThan(0.1);
+    });
+
+    it('works the field out at its own size whatever the window is', () => {
+      expect(fieldOf(Weather.Rainbow, 3840, 2160).size).toEqual(
+        fieldOf(Weather.Rainbow, 320, 240).size,
+      );
+    });
   });
 
   it('costs about the same however large the window is', () => {
@@ -173,5 +221,93 @@ describe('the sky over the board', () => {
     // sixteen times the flakes. The fall is sized for the window
     // instead, so the count barely moves
     expect(large).toBeLessThan(small * 3);
+  });
+});
+
+/**
+ * The weather standing in the world rather than on the glass.
+ *
+ * A drop is a place in the world now, and the camera turns under it.
+ * What that buys is worth a few guards, because the arithmetic has one
+ * trap in it that nothing else in the file would catch.
+ */
+describe('a fall given a place in the world', () => {
+  /** A real sky by name, since a made-up one proves nothing */
+  const falling = (weather: Weather): NonNullable<(typeof FALL_TABLE)[Weather]> => {
+    const fall = FALL_TABLE[weather];
+
+    if (fall == null) {
+      throw new Error(`${WEATHER_NAMES[weather]} has nothing falling in it`);
+    }
+    return fall;
+  };
+
+  const rain = falling(Weather.Rain);
+  const breeze = falling(Weather.Breezy);
+  const perBoard = 180;
+
+  /**
+   * The trap. A drop's place is `seconds * speed`, not a step added
+   * each frame, so anything that moves with the camera and gets into
+   * this arithmetic rewrites the whole history of the fall — the board
+   * gives up room as it turns, and converting the fall's speed through
+   * *that* scale made the rain surge back and forth in time with the
+   * turn. The guard is the signature: there is no yaw to hand it
+   */
+  it('puts a drop in the same place whatever the camera is doing', () => {
+    for (let at = 0; at < 40; at++) {
+      const one = worldDropAt(rain, at, 12.5, perBoard);
+      const other = worldDropAt(rain, at, 12.5, perBoard);
+
+      expect(other).toEqual(one);
+    }
+  });
+
+  it('keeps every drop inside the volume it wraps in', () => {
+    const radius = 4.6 / 2;
+
+    for (let at = 0; at < 400; at++) {
+      const drop = worldDropAt(rain, at, 31.25, perBoard);
+
+      expect(Math.abs(drop.u - 0.5), `drop ${at} across`).toBeLessThanOrEqual(radius + 0.5);
+      expect(drop.h, `drop ${at} up`).toBeGreaterThanOrEqual(0);
+      expect(drop.h, `drop ${at} up`).toBeLessThanOrEqual(1.5);
+    }
+  });
+
+  /**
+   * The flat sky leans a streak by `drift / speed` and gets away with
+   * it because the streak is a handful of pixels either way. In the
+   * world that ratio is the whole length, and a breeze at sixty parts
+   * sideways to five down drew a streak eleven board widths long
+   */
+  it('draws a streak its own length however hard the wind blows', () => {
+    const lengthOf = (fall: typeof rain): number => {
+      const drop = worldDropAt(fall, 3, 4, perBoard);
+
+      return Math.hypot(drop.tailU - drop.u, drop.tailH - drop.h);
+    };
+
+    // Rain falls nearly straight down and a breeze is nearly sideways
+    expect(lengthOf(rain)).toBeCloseTo((rain.length / perBoard) * 1.5, 6);
+    expect(lengthOf(breeze)).toBeCloseTo((breeze.length / perBoard) * 1.5, 6);
+  });
+
+  /**
+   * A slab of world at arm's length projects onto more screen than the
+   * same slab at the horizon, so an even world density piles into a
+   * mat along the far edge unless the far half is thinned
+   */
+  it('keeps everything close and almost nothing at the horizon', () => {
+    // The queue is uniform over 0 to 1, so the share kept is the share
+    // of the queue below the line. Only the drops within a band of it
+    // are dimmed, which is what keeps one from blinking as the camera
+    // carries it past
+    expect(thinningAt(2, 0.5)).toBe(1);
+    expect(thinningAt(2, 0.95)).toBeLessThan(1);
+    expect(thinningAt(1.6, 0.5)).toBeGreaterThan(0);
+    expect(thinningAt(0.4, 0.5)).toBeLessThanOrEqual(0);
+    // Nearer keeps more than further, at the same place in the queue
+    expect(thinningAt(1.2, 0.4)).toBeGreaterThan(thinningAt(0.8, 0.4));
   });
 });

@@ -31,15 +31,14 @@ catching it.
 
 Six things multiply together to decide whether a thrown ball sticks:
 
-1. **The species' catch rate**, which is the same as in the mainline games. A
-   Caterpie comes along easily; a Chansey does not.
-2. **The ball** that was thrown.
-3. **The berries** the pokemon has been fed.
-4. **The species day**, worth double if the pokemon belongs to the featured
-   family.
-5. **The pokemon's level.**
-6. **Whether it is a shadow**, which halves the chance; see
-   [Shadows](#shadows).
+| Factor                | What it is worth                                            |
+| --------------------- | ------------------------------------------------------------ |
+| **The species**       | Its mainline catch rate: a Caterpie comes along, a Chansey does not |
+| **The ball**          | Up to five times, and a Master Ball never fails              |
+| **The berries** fed   | 25% more each, stacking to four times at most                |
+| **The species day**   | Double for a pokemon of the featured family                  |
+| **The level**         | Falling evenly to 45% of its easiest at level 100            |
+| **A shadow**          | Half, whatever else is true. See [Shadows](#shadows)        |
 
 A seventh, much smaller factor rewards persistence within a single session; see
 [Persistence](#persistence).

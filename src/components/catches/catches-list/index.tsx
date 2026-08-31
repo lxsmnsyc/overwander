@@ -1,4 +1,4 @@
-import { type JSX, Show, createEffect, createSignal } from 'solid-js';
+import { type JSX, Show, createEffect, createMemo, createSignal } from 'solid-js';
 import {
   type BulkOutcome,
   favoriteCatches,
@@ -72,11 +72,14 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
 
   const ids = (): string[] => picked();
 
-  const chosen = (): CatchOption[] => {
+  // Held: the bar under the box asks what was picked a dozen times
+  // over — how many, what they are, what they pay — and each of those
+  // was a scan of the whole box
+  const chosen = createMemo<CatchOption[]>(() => {
     const wanted = new Set(picked());
 
     return offered().filter((option) => wanted.has(option.id));
-  };
+  });
 
   /**
    * A pokemon in a battle is shown and refused rather than left out: a

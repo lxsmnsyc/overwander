@@ -9,7 +9,13 @@ import type Bakery from '../../../canvas/bakery';
 import type QuadBatch from '../../../canvas/gl/quad-batch';
 import type { QuadPoint } from '../../../canvas/gl/quad-batch';
 import { cornersOf, shadowCorners } from '../../../canvas/placement';
-import { SHADOW_STAMP, bakeShadowDisc, bakeWord } from '../../overworld/chunk-canvas/scenery';
+import {
+  SHADOW_STAMP,
+  bakeShadowDisc,
+  bakeWord,
+  paintSparkle,
+} from '../../overworld/chunk-canvas/scenery';
+import drawSparkle, { SPARKLE_LIFE } from '../../../canvas/sparkle';
 import type { Point } from '../../../canvas/sprite-sheet';
 import { Stats } from '../../../data/constants/stats';
 import Abilities from '../../../data/ids/abilities';
@@ -236,6 +242,62 @@ export function withinSlot(slot: Slot, x: number, y: number): boolean {
  * One unit: the circle, what it is, what it has left, and what it is
  * in the middle of doing
  */
+/**
+ * When each shiny was first drawn, so its glint is thrown once as it
+ * comes in rather than every frame it is standing there. Weak, since
+ * a unit that has left the fight has nothing more to announce
+ */
+const shone = new WeakMap<Unit, number>();
+
+/**
+ * The stars a shiny throws as it arrives, the same announcement one
+ * standing on a cell makes. It is over in about a second: a coat worth
+ * looking twice at is worth being told about once
+ */
+function sparkle(
+  context: CanvasRenderingContext2D,
+  slot: Slot,
+  sprite: SpeciesSpriteAnimation,
+  x: number,
+  y: number,
+  clock: number,
+  onto?: SlotBatch,
+): void {
+  const arrived = shone.get(slot.unit) ?? clock;
+
+  shone.set(slot.unit, arrived);
+
+  const age = clock - arrived;
+
+  if (age > SPARKLE_LIFE) {
+    return;
+  }
+
+  const seed = Math.round(slot.x + slot.y);
+  const scale = scaleOf(slot);
+  const frame = sprite.sourceFrameSize;
+  const glint = onto == null ? null : paintSparkle(seed, age, frame);
+
+  if (onto == null || glint == null) {
+    drawSparkle(context, seed, age, x, y, frame, scale);
+    return;
+  }
+
+  // Stamped in the sheet's own pixels around the point it stands on,
+  // grown by the room the stars need
+  const half = { x: (glint.width * scale) / 2, y: (glint.height * scale) / 2 };
+
+  onto.batch.invalidate(glint);
+  onto.batch.quad(
+    glint,
+    { x: 0, y: 0, width: glint.width, height: glint.height },
+    corners(x - half.x, y - half.y, half.x * 2, half.y * 2),
+    1,
+    undefined,
+    'smooth',
+  );
+}
+
 export function drawSlot(
   context: CanvasRenderingContext2D,
   slot: Slot,
@@ -328,6 +390,9 @@ export function drawSlot(
         sprite.draw(context, x, y, placement);
       } else {
         onto.batch.quad(quad.sheet, quad.source, cornersOf(quad), alpha);
+      }
+      if (unit.shiny) {
+        sparkle(context, slot, sprite, x, y, clock, onto);
       }
     } else {
       const middle = { x: slot.x + slot.offset[0], y: slot.y + slot.offset[1] };

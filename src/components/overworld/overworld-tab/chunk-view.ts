@@ -10,6 +10,7 @@ import getWorld from '../../../overworld/current';
 import deriveEncounter from '../../../overworld/encounter';
 import namePlace from '../../../overworld/place';
 import { spawnKey } from '../../../overworld/safari';
+import { DARK_DAY_LAMP_CELLS } from '../../../data/overworld/weather';
 import createOverworld from '../../../overworld/setup';
 import { PUBLISHED_SPAWNS } from './metrics';
 
@@ -33,6 +34,18 @@ export interface ChunkView {
    * about the window's spawns
    */
   weather: Weather;
+  /**
+   * How far the player sees in the dark here, in cells. It only means
+   * anything under a sky that has put the lights out, and it is the
+   * buddy's answer as much as the sky's: an Illuminate lantern reaches
+   * further than a player walking alone
+   */
+  lamp: number;
+  /**
+   * Whether the player is shown what a meeting is holding before they
+   * throw anything at it. A Frisk buddy is what looks
+   */
+  revealsHeld: boolean;
   snapshot: ChunkSnapshot;
   landmarks: Map<number, Landmark>;
   /**
@@ -92,6 +105,8 @@ export function buildChunkView(
   // how many of the window's rolls are there for this player
   const overworld = createOverworld(player ?? '', player == null ? null : buddy);
   const visible = overworld.checkSpawnCount(SPAWN_COUNT);
+  const lamp = overworld.checkLampReach(DARK_DAY_LAMP_CELLS);
+  const revealsHeld = overworld.checkRevealsHeld();
 
   cells.forEach(([cell], index) => {
     // Roll order and publication order are the same, so the nth
@@ -138,6 +153,8 @@ export function buildChunkView(
     y,
     biome: chunk.biome,
     weather: world.getWeather(x, y, snapshot.weatherWindow),
+    lamp,
+    revealsHeld,
     snapshot,
     landmarks: chunk.getLandmarkCells(),
     spots: chunk.getSpotCells(),

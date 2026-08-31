@@ -1,3 +1,4 @@
+import type { ShadowPatch, SpriteQuad } from './placement';
 import asSpriteSheetJSON, {
   type AnimData,
   type Point,
@@ -857,12 +858,8 @@ export default class SpeciesSpriteAnimation {
    * flat field, and the overworld board is tilted and squashes it
    * further
    */
-  drawShadow(
-    context: CanvasRenderingContext2D,
-    x: number,
-    y: number,
-    options: ShadowOptions = {},
-  ): void {
+  /** The patch this pokemon throws, for a caller stamping it */
+  shadowOf(x: number, y: number, options: ShadowOptions = {}): ShadowPatch | null {
     const placed = this.place(x, y, options);
     // The resting mark, not the frame's: the ground does not rise with
     // a pokemon that has just left it
@@ -870,7 +867,7 @@ export default class SpeciesSpriteAnimation {
     const spot = placed == null || point == null ? null : spotOf(point, placed);
 
     if (spot == null) {
-      return;
+      return null;
     }
 
     const radius = this.shadowRadius(options.scale ?? 1, options.squash);
@@ -881,24 +878,36 @@ export default class SpeciesSpriteAnimation {
     // at the feet — a shadow that let go of its caster reads as a
     // second thing lying on the floor
     const reach = cast == null ? 0 : cast.length * radius.x * 2;
-    const angle = cast == null ? 0 : Math.atan2(cast.dy, cast.dx);
 
+    return {
+      x: spot[0] + (cast?.dx ?? 0) * reach * 0.5,
+      y: spot[1] + (cast?.dy ?? 0) * reach * 0.5,
+      footX: spot[0],
+      footY: spot[1],
+      radiusX: radius.x + reach * 0.5,
+      radiusY: radius.y,
+      angle: cast == null ? 0 : Math.atan2(cast.dy, cast.dx),
+      colour: options.color ?? SHADOW_COLOR,
+      alpha: options.alpha ?? cast?.alpha ?? 1,
+    };
+  }
+
+  drawShadow(
+    context: CanvasRenderingContext2D,
+    x: number,
+    y: number,
+    options: ShadowOptions = {},
+  ): void {
+    const patch = this.shadowOf(x, y, options);
+
+    if (patch == null) {
+      return;
+    }
     context.save();
     context.beginPath();
-    context.ellipse(
-      spot[0] + (cast?.dx ?? 0) * reach * 0.5,
-      spot[1] + (cast?.dy ?? 0) * reach * 0.5,
-      radius.x + reach * 0.5,
-      radius.y,
-      angle,
-      0,
-      Math.PI * 2,
-    );
-    context.fillStyle = options.color ?? SHADOW_COLOR;
-
-    if (options.alpha != null || cast != null) {
-      context.globalAlpha = options.alpha ?? cast?.alpha ?? 1;
-    }
+    context.ellipse(patch.x, patch.y, patch.radiusX, patch.radiusY, patch.angle, 0, Math.PI * 2);
+    context.fillStyle = patch.colour;
+    context.globalAlpha = patch.alpha;
     context.fill();
     context.restore();
   }
@@ -910,6 +919,60 @@ export default class SpeciesSpriteAnimation {
    * has been played, which is deliberate: a canvas redrawing sixty
    * times a second should not have to check first
    */
+  /**
+   * Where this frame is cut from and where it lands, for a caller
+   * placing it as a quad rather than drawing it. A mirrored frame is
+   * reported as mirrored rather than pre-flipped, since a quad turns
+   * itself round with its corners
+   */
+  quadOf(x: number, y: number, options: DrawOptions = {}): SpriteQuad | null {
+    const image = this.image;
+    const placed = this.place(x, y, options);
+
+    if (image == null || placed == null) {
+      return null;
+    }
+    return {
+      sheet: image,
+      source: {
+        x: placed.left,
+        y: placed.top,
+        width: placed.frameWidth,
+        height: placed.frameHeight,
+      },
+      left: placed.originX + placed.insetX * placed.scale,
+      top: placed.originY + placed.insetY * placed.scale,
+      width: placed.frameWidth * placed.scale,
+      height: placed.frameHeight * placed.scale,
+      flip: placed.mirror,
+    };
+  }
+
+  /**
+   * The same frame as it would be drawn facing another way, without
+   * turning the pokemon.
+   *
+   * What a shadow is cut from: the light sees the side of whatever it
+   * is shining on, so a shadow thrown to the east is that pokemon's
+   * eastward pose laid down. The facing is put back before this
+   * returns
+   */
+  facedQuadOf(
+    x: number,
+    y: number,
+    direction: SpriteDirection,
+    options: DrawOptions = {},
+  ): SpriteQuad | null {
+    const held = this.facing;
+
+    this.facing = direction;
+
+    const quad = this.quadOf(x, y, options);
+
+    this.facing = held;
+    return quad;
+  }
+
   draw(context: CanvasRenderingContext2D, x: number, y: number, options: DrawOptions = {}): void {
     const image = this.image;
     const placed = this.place(x, y, options);

@@ -15,6 +15,8 @@
  * the whole board with no clone and no per-cell state.
  */
 
+import type { SpriteQuad } from './placement';
+
 import { type BasicSpriteData, asBasicSpriteData } from './basic-sprite';
 import { type FrameRect, gridOf } from './ow-char-sprite';
 import { SPRITE_TICK } from './sprite-sheet';
@@ -240,16 +242,17 @@ export default class OWPlantSprite {
    * redrawing on its own schedule gets a gap for a frame rather than an
    * exception
    */
-  draw(
-    context: CanvasRenderingContext2D,
-    x: number,
-    y: number,
-    options: OWPlantDrawOptions = {},
-  ): void {
+  /**
+   * Where this frame is cut from and where it lands, for a caller
+   * placing it as a quad rather than drawing it. Rounded to whole
+   * pixels the way `draw` rounds, so a plant sits on the same row
+   * either way
+   */
+  quadOf(x: number, y: number, options: OWPlantDrawOptions = {}): SpriteQuad | null {
     const sheet = this.image;
 
     if (sheet == null || this.frameWidth <= 0 || this.frameHeight <= 0) {
-      return;
+      return null;
     }
 
     const rect = this.rectOf(
@@ -258,7 +261,7 @@ export default class OWPlantSprite {
     );
 
     if (rect == null) {
-      return;
+      return null;
     }
 
     const scale =
@@ -273,6 +276,27 @@ export default class OWPlantSprite {
     const foot = anchor === 'foot' ? (this.base ?? [this.frameWidth / 2, this.frameHeight]) : null;
     const left = anchor === 'top-left' ? x : x - (foot == null ? width / 2 : foot[0] * scale);
     const top = anchor === 'top-left' ? y : y - (foot == null ? height / 2 : foot[1] * scale);
+    return {
+      sheet,
+      source: { x: rect.x, y: rect.y, width: rect.width, height: rect.height },
+      left: Math.round(left),
+      top: Math.round(top),
+      width: Math.round(width),
+      height: Math.round(height),
+    };
+  }
+
+  draw(
+    context: CanvasRenderingContext2D,
+    x: number,
+    y: number,
+    options: OWPlantDrawOptions = {},
+  ): void {
+    const placed = this.quadOf(x, y, options);
+
+    if (placed == null) {
+      return;
+    }
     const alpha = options.alpha ?? 1;
     const was = context.globalAlpha;
     // Pixel art scaled up: smoothing would blur away the edges it is
@@ -284,15 +308,15 @@ export default class OWPlantSprite {
       context.globalAlpha = was * alpha;
     }
     context.drawImage(
-      sheet,
-      rect.x,
-      rect.y,
-      rect.width,
-      rect.height,
-      Math.round(left),
-      Math.round(top),
-      Math.round(width),
-      Math.round(height),
+      placed.sheet,
+      placed.source.x,
+      placed.source.y,
+      placed.source.width,
+      placed.source.height,
+      placed.left,
+      placed.top,
+      placed.width,
+      placed.height,
     );
     if (alpha !== 1) {
       context.globalAlpha = was;

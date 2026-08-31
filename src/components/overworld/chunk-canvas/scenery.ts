@@ -1,15 +1,19 @@
 import { SPRITE_FACINGS } from '../../../canvas/board';
 import type { Species } from '../../../data/ids/species';
-import Decoration from '../../../data/overworld/decoration';
 import Landmark from '../../../data/overworld/landmark';
 import Phenomenon from '../../../data/overworld/phenomenon';
+import drawSparkle, { SPARKLE_SPREAD, SPARKLE_STAR_SIZE } from '../../../canvas/sparkle';
+import type Bakery from '../../../canvas/bakery';
+import type { Baked } from '../../../canvas/bakery';
 import { CELL, COLORS, GROUND_SQUASH } from './metrics';
 
 /**
- * What stands on a cell besides a pokemon: scenery, weather, and the
- * letter a landmark is marked with. Each is drawn in code — there are
- * no sheets for any of it — so the board says what a chunk is made of
- * at a glance.
+ * What a cell wears besides its scenery: what is going on there, and
+ * the ring under whoever is standing on it.
+ *
+ * Both are drawn in code because neither has a sheet. Everything that
+ * does have one is drawn from it, so nothing here stands in for a
+ * picture that is on its way.
  */
 
 /**
@@ -42,84 +46,11 @@ export function facingOf(index: number, species: Species): number {
 }
 
 /**
- * One letter per landmark, the same ones the list used before the
- * chunk was a picture — they are short enough to read at this size and
- * a player already knows them
- */
-/**
- * How each piece of scenery is drawn: a colour and a shape.
- *
- * Shapes rather than pictures, because there are no sheets for any of
- * this yet — a green cone is a tree in the way a letter in a circle is
- * a landmark, and it says what a chunk is made of at a glance. What is
- * standing there is named to a screen reader instead
- */
-export const DECORATION_LOOKS: Record<
-  Decoration,
-  { color: string; shape: 'tall' | 'round' | 'tuft' }
-> = {
-  [Decoration.Tree]: { color: '#3f7a3f', shape: 'tall' },
-  [Decoration.Pine]: { color: '#2f5f4a', shape: 'tall' },
-  [Decoration.Palm]: { color: '#4f8f5f', shape: 'tall' },
-  [Decoration.Cactus]: { color: '#5f8f4f', shape: 'tall' },
-  [Decoration.Shrub]: { color: '#5f8a4a', shape: 'round' },
-  [Decoration.Grass]: { color: '#6faa55', shape: 'tuft' },
-  [Decoration.Flower]: { color: '#c9739f', shape: 'tuft' },
-  [Decoration.Rock]: { color: '#8a8a8a', shape: 'round' },
-  [Decoration.Boulder]: { color: '#6f6f6f', shape: 'round' },
-  [Decoration.Reed]: { color: '#7a8f4a', shape: 'tuft' },
-  [Decoration.Coral]: { color: '#d1707f', shape: 'tall' },
-  [Decoration.Ice]: { color: '#a9d8e8', shape: 'round' },
-  [Decoration.Mushroom]: { color: '#b0603f', shape: 'round' },
-  [Decoration.Stump]: { color: '#7a5a3a', shape: 'round' },
-};
-
-/**
- * One piece of scenery, drawn on the ground it stands on. A cone for
- * anything that grows upward, a mound for anything that lies about,
- * and three strokes for anything low enough to walk through
- */
-export function drawDecoration(
-  context: CanvasRenderingContext2D,
-  spot: { x: number; y: number; scale: number },
-  decoration: Decoration,
-  magnify: number,
-): void {
-  const look = DECORATION_LOOKS[decoration];
-  const size = CELL * 0.32 * spot.scale * magnify;
-
-  context.save();
-  context.fillStyle = look.color;
-  context.strokeStyle = look.color;
-  context.lineWidth = Math.max(1, size * 0.22);
-  context.lineCap = 'round';
-  context.beginPath();
-
-  if (look.shape === 'tall') {
-    context.moveTo(spot.x, spot.y - size * 1.4);
-    context.lineTo(spot.x + size * 0.8, spot.y + size * 0.6);
-    context.lineTo(spot.x - size * 0.8, spot.y + size * 0.6);
-    context.closePath();
-    context.fill();
-  } else if (look.shape === 'round') {
-    context.ellipse(spot.x, spot.y, size * 0.9, size * 0.65, 0, 0, Math.PI * 2);
-    context.fill();
-  } else {
-    for (const lean of [-0.7, 0, 0.7]) {
-      context.moveTo(spot.x + size * lean * 0.9, spot.y + size * 0.5);
-      context.lineTo(spot.x + size * lean * 1.3, spot.y - size * 0.7);
-    }
-    context.stroke();
-  }
-  context.restore();
-}
-
-/**
  * What a phenomenon looks like from above, drawn in code the way the
  * scenery is. Each is the thing itself rather than a marker: rings
  * spreading on water, dust hanging over dry ground, the shadow of
- * something passing overhead. The grotto is the exception — hidden is
- * what it is, so it keeps the plain landmark mark
+ * something passing overhead. The grotto is the exception: hidden is
+ * what it is, so it is left to the scenery to draw as a tree
  */
 export function drawPhenomenon(
   context: CanvasRenderingContext2D,
@@ -278,26 +209,6 @@ export function drawPhenomenon(
 }
 
 /**
- * The plain mark a cell wears when there is nothing better to draw:
- * a disc with a letter on it. Everything a player can walk up to gets
- * one, except the phenomena that draw themselves
- */
-export function drawLandmarkMark(
-  context: CanvasRenderingContext2D,
-  spot: { x: number; y: number; scale: number },
-  glyph: string,
-  magnify: number,
-): void {
-  context.fillStyle = COLORS.landmark;
-  context.beginPath();
-  context.arc(spot.x, spot.y, CELL * 0.36 * spot.scale * magnify, 0, Math.PI * 2);
-  context.fill();
-  context.fillStyle = COLORS.glyph;
-  context.font = `bold ${Math.round(CELL * 0.6 * spot.scale * magnify)}px monospace`;
-  context.fillText(glyph, spot.x, spot.y + 1);
-}
-
-/**
  * Whether the person standing at a landmark is somebody to fight.
  *
  * The five who do are the two ambushes and the three seats of the
@@ -354,20 +265,267 @@ export function drawPersonRing(
   context.lineWidth = 1;
 }
 
-export const LANDMARK_GLYPHS: Record<Landmark, string> = {
-  [Landmark.ItemCache]: 'C',
-  [Landmark.LegendaryLair]: 'R',
-  [Landmark.ShadowLair]: 'S',
-  [Landmark.BerryPatch]: 'B',
-  [Landmark.Nest]: 'N',
-  [Landmark.WanderingNpc]: 'P',
-  [Landmark.Portal]: 'O',
-  [Landmark.TeamRocket]: 'G',
-  [Landmark.Trainer]: 'T',
-  [Landmark.GymLeader]: 'L',
-  [Landmark.EliteFour]: 'E',
-  [Landmark.Champion]: 'V',
-  [Landmark.Market]: 'M',
-  [Landmark.GymSeat]: 'A',
-  [Landmark.AuctionBoard]: '$',
-};
+/**
+ * Baking the art above into pictures.
+ *
+ * Every painter here draws around a point and sizes itself off
+ * `CELL * spot.scale * magnify`, so a piece baked with a scale of one
+ * and a chosen magnify is the same drawing at a known size. Drawn back
+ * as a square around the same point, scaled by whatever that cell's
+ * own scale and magnify come to, it is the picture it always was.
+ *
+ * Baked large and drawn smaller, since a cell near the camera is a
+ * good deal bigger than one at the back and one picture serves both
+ */
+
+/** How wide a piece is baked. Every span below is a share of it */
+const BAKED = 96;
+
+/** What a painter needs as `magnify` to fill a `BAKED` box at `span` */
+function bakeMagnify(span: number): number {
+  return BAKED / (span * CELL);
+}
+
+/** The middle of a baked box, which is where a painter is told it is */
+const MIDDLE = { x: 0, y: 0, scale: 1 };
+
+/**
+ * How wide on the board a baked piece is drawn, for a painter whose
+ * art spans `span` cells at a scale and magnify of one
+ */
+function spanOf(span: number, spot: { scale: number }, magnify: number): number {
+  return span * CELL * spot.scale * magnify;
+}
+
+/** The ring is 0.34 of a cell in radius, on a line of its own */
+const RING_SPAN = 0.78;
+
+export function bakePersonRing(bakery: Bakery, fighting: boolean): Baked | null {
+  return bakery.take(`ring:${fighting ? 'fight' : 'talk'}`, BAKED, (context) => {
+    drawPersonRing(context, MIDDLE, fighting, bakeMagnify(RING_SPAN));
+  });
+}
+
+export function personRingSpan(spot: { scale: number }, magnify: number): number {
+  return spanOf(RING_SPAN, spot, magnify);
+}
+
+/**
+ * The phenomena, repainted into a picture each frame.
+ *
+ * These are the one thing on the board that is drawn in code and moves
+ * while it is drawn: rings spreading, a mound rolling, a shadow
+ * crossing. There is nothing to bake, so each is repainted into a
+ * small canvas of its own once a frame and handed over as a picture.
+ *
+ * A canvas per kind rather than per cell: two cells showing the same
+ * thing at the same moment show the same picture, at whatever size
+ * each of them is drawn
+ */
+
+/** How wide a piece is repainted. Bigger than it needs, and stamped down */
+const PAINTED = 128;
+
+/**
+ * How far the art reaches from its cell, as a share of one. Measured
+ * off the painters rather than guessed: the widest is the dust cloud,
+ * at 0.78 either way
+ */
+const PHENOMENON_SPAN = 1.8;
+
+const painted = new Map<Phenomenon, { canvas: HTMLCanvasElement; at: number }>();
+
+/**
+ * The picture of one phenomenon at this moment, painted if it has not
+ * been painted for this moment already. Null where there is no context
+ * to paint with, and a caller that gets one draws it the old way
+ */
+export function paintPhenomenon(phenomenon: Phenomenon, now: number): HTMLCanvasElement | null {
+  const held = painted.get(phenomenon);
+
+  if (held?.at === now) {
+    return held.canvas;
+  }
+
+  const canvas = held?.canvas ?? document.createElement('canvas');
+
+  canvas.width = PAINTED;
+  canvas.height = PAINTED;
+
+  const context = canvas.getContext('2d');
+
+  if (context == null) {
+    return null;
+  }
+  context.clearRect(0, 0, PAINTED, PAINTED);
+  context.save();
+  context.textAlign = 'center';
+  context.textBaseline = 'middle';
+  drawPhenomenon(
+    context,
+    { x: PAINTED / 2, y: PAINTED / 2, scale: 1 },
+    phenomenon,
+    now,
+    PAINTED / (PHENOMENON_SPAN * CELL),
+  );
+  context.restore();
+  painted.set(phenomenon, { canvas, at: now });
+  return canvas;
+}
+
+/** How wide on the board that picture is drawn, for one cell */
+export function phenomenonSpan(spot: { scale: number }, magnify: number): number {
+  return PHENOMENON_SPAN * CELL * spot.scale * magnify;
+}
+
+/**
+ * The round patch every shadow is stamped from.
+ *
+ * One white disc, tinted and turned to whatever shape a shadow wants:
+ * a shadow is an ellipse and an ellipse is a circle in a box
+ */
+export function bakeShadowDisc(bakery: Bakery): Baked | null {
+  return bakery.take('shadow:disc', BAKED, (context) => {
+    context.fillStyle = '#ffffff';
+    context.beginPath();
+    context.arc(0, 0, BAKED / 2 - 1, 0, Math.PI * 2);
+    context.fill();
+  });
+}
+
+/** How much bigger the stamp is than the patch, for the disc's own edge */
+export const SHADOW_STAMP = BAKED / 2 / (BAKED / 2 - 1);
+
+/**
+ * How much room is left round a word for the halo it is read against.
+ */
+const WORD_ROOM = 6;
+
+let ruler: CanvasRenderingContext2D | null = null;
+
+/** Something to measure text with, which is a context and nothing else */
+function measuring(): CanvasRenderingContext2D | null {
+  ruler ??= document.createElement('canvas').getContext('2d');
+  return ruler;
+}
+
+/**
+ * A word, baked in the font it is drawn in, with the halo it is read
+ * against where it has one.
+ *
+ * Keyed by the font rather than baked once and stretched. A stroked
+ * halo scaled down spreads its alpha and comes out heavier than the
+ * stroke draws it, which is why the words on this board stayed painted
+ * for so long. At its own size it is the same two calls, into a sheet
+ * rather than onto the picture, and a board asks for whole pixels so
+ * there are only ever a few
+ */
+export function bakeWord(
+  bakery: Bakery,
+  word: string,
+  font: string,
+  ink: string,
+  halo?: string,
+): Baked | null {
+  const rule = measuring();
+
+  if (rule == null || word === '') {
+    return null;
+  }
+  rule.font = font;
+
+  const measured = rule.measureText(word);
+  // The box the glyphs actually fill, which a font's own size does not
+  // say: a word with no descender wants less room than one with
+  const above = measured.actualBoundingBoxAscent;
+  const below = measured.actualBoundingBoxDescent;
+  const tall = above > 0 || below > 0 ? above + below : Math.ceil(measured.width / word.length) * 2;
+  const across = Math.ceil(measured.width) + WORD_ROOM * 2;
+  const down = Math.ceil(tall) + WORD_ROOM * 2;
+
+  return bakery.take(
+    `word:${word}:${font}:${ink}:${halo ?? ''}`,
+    down,
+    (context) => {
+      context.font = font;
+      context.textAlign = 'center';
+      context.textBaseline = 'middle';
+      if (halo != null) {
+        context.fillStyle = halo;
+        context.fillText(word, 0, 1);
+      }
+      context.fillStyle = ink;
+      context.fillText(word, 0, 0);
+    },
+    across,
+  );
+}
+
+/**
+ * How far past the sprite the stars fall, either way, as a share of
+ * it. `SPARKLE_SPREAD` reaches a quarter of the width to each side and
+ * the widest star adds its own radius, so this is what says how much
+ * bigger the picture is than the pokemon in it
+ */
+const SPARKLE_ROOM = SPARKLE_SPREAD / 4 + SPARKLE_STAR_SIZE;
+
+/**
+ * How much bigger than the pokemon the sparkle's picture is, so a
+ * caller stamps it over the right box
+ */
+export const SPARKLE_SPAN = 1 + SPARKLE_ROOM * 2;
+
+/** The largest a sparkle's picture is painted, in either direction */
+const SPARKLE_LIMIT = 192;
+
+const sparkled = { canvas: null as HTMLCanvasElement | null, key: '' };
+
+/**
+ * The picture of one sparkle at this moment, in the sheet's own
+ * pixels, painted around the point the pokemon stands on.
+ *
+ * The stars are a share of the sprite, so this is painted at the
+ * sheet's scale and stamped at whatever the pokemon is drawn at. One
+ * picture, repainted: two shinies seen in the same frame is not a
+ * thing that happens, and a stale one is a glint out of step with the
+ * pokemon it belongs to
+ */
+export function paintSparkle(
+  seed: number,
+  age: number,
+  frame: { width: number; height: number },
+): HTMLCanvasElement | null {
+  const across = Math.min(SPARKLE_LIMIT, Math.max(1, Math.round(frame.width * SPARKLE_SPAN)));
+  const down = Math.min(SPARKLE_LIMIT, Math.max(1, Math.round(frame.height * SPARKLE_SPAN)));
+  const key = `${seed}:${Math.round(age)}:${across}:${down}`;
+
+  if (sparkled.canvas != null && sparkled.key === key) {
+    return sparkled.canvas;
+  }
+  const canvas = sparkled.canvas ?? document.createElement('canvas');
+
+  canvas.width = across;
+  canvas.height = down;
+
+  const context = canvas.getContext('2d');
+
+  if (context == null) {
+    return null;
+  }
+  context.clearRect(0, 0, across, down);
+  context.save();
+  context.translate(across / 2, down / 2);
+  drawSparkle(
+    context,
+    seed,
+    age,
+    0,
+    0,
+    { width: across / SPARKLE_SPAN, height: down / SPARKLE_SPAN },
+    1,
+  );
+  context.restore();
+  sparkled.canvas = canvas;
+  sparkled.key = key;
+  return canvas;
+}

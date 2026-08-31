@@ -14,6 +14,8 @@
  */
 
 import { WORLD_MAX } from '../overworld/world';
+import type QuadBatch from './gl/quad-batch';
+import { GROUND_DEPTH } from './tilt';
 
 const HOUR = 3_600_000;
 const DAY = 24 * HOUR;
@@ -231,13 +233,6 @@ const NOON_ALPHA = 1;
 const DUSK_ALPHA = 0.6;
 
 /**
- * How much of a shadow's length survives the way the ground is drawn.
- * The board is laid back under the camera, so a step north covers less
- * of the picture than a step east
- */
-const FLATTEN = 0.45;
-
-/**
  * Where this hour's light throws a shadow, in the picture's own
  * directions.
  *
@@ -271,11 +266,18 @@ export function getCast(localTime: number, yaw = 0, latitude = 0): Cast {
   const north = Math.cos(azimuth);
   const cos = Math.cos(yaw);
   const sin = Math.sin(yaw);
+  // The board counts **down** the picture, so a step north is a step
+  // toward smaller numbers. Read as though it counted up, every
+  // shadow with any north or south in it lies the wrong way round,
+  // and turning the board swings it somewhere else again
+  const away = -north;
 
   return {
-    // Turned with the ground, then laid back with it
-    dx: east * cos - north * sin,
-    dy: (east * sin + north * cos) * FLATTEN,
+    // Turned with the ground, then laid back with it, by the board's
+    // own depth: a direction worked out any other way stops agreeing
+    // with the ground it is supposed to lie on
+    dx: east * cos - away * sin,
+    dy: (east * sin + away * cos) * GROUND_DEPTH,
     length: risen ? length : 0,
     // Fading with the sun rather than switching off at the horizon:
     // the last of the light throws the faintest shadow, which is what
@@ -318,4 +320,40 @@ export function paintAmbient(
     context.fillRect(0, 0, width, height);
   }
   context.restore();
+}
+
+/**
+ * The same light, written into a batch: one quad for what the hour
+ * takes out of the picture and one for what a low sun adds.
+ *
+ * The batch blends against what it has already drawn, so this lands
+ * on the whole picture the way the painted pass lands on the whole
+ * canvas. Answers whether it wrote anything
+ */
+export function batchAmbient(
+  batch: QuadBatch,
+  width: number,
+  height: number,
+  localTime: number,
+  latitude = 0,
+): boolean {
+  const ambient = getAmbient(localTime, latitude);
+
+  if (ambient.depth <= 0 && ambient.warmth <= 0) {
+    return false;
+  }
+  const box = [
+    { x: 0, y: 0 },
+    { x: width, y: 0 },
+    { x: width, y: height },
+    { x: 0, y: height },
+  ];
+
+  if (ambient.depth > 0) {
+    batch.solid(ambient.shade, box, ambient.depth, 'multiply');
+  }
+  if (ambient.warmth > 0) {
+    batch.solid(ambient.glow, box, ambient.warmth, 'screen');
+  }
+  return true;
 }

@@ -17,9 +17,19 @@
 export const PITCH = 60;
 
 /**
+ * How much of a step across the board survives being drawn.
+ *
+ * The board is laid back under the camera, so a step away from the
+ * viewer covers less of the picture than the same step across it.
+ * Anything measuring a direction **on the ground** rather than on the
+ * page has to lay it back by this or it points somewhere else
+ */
+export const GROUND_DEPTH = Math.sin((PITCH * Math.PI) / 180);
+
+/**
  * How flat a patch of ground lies: an ellipse as wide as the patch and
  * this much of that tall. Short of the tilt's own sine, since a shadow
  * hugging the ground reads better than one drawn as the full circle
  * the geometry would give
  */
-export const GROUND_SQUASH = Math.sin((PITCH * Math.PI) / 180) * 0.55;
+export const GROUND_SQUASH = GROUND_DEPTH * 0.55;

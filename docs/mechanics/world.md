@@ -256,7 +256,8 @@ the player up **beside** it and interacts on arrival.
 
 A darker one-cell border is drawn around the chunk. Stepping onto it carries the
 player into the neighbouring chunk, entering from the opposite side. Four compass
-letters stand outside that border and turn with the map as the camera moves.
+marks stand outside that border and turn with the map as the camera moves. Each
+one points the way it stands for, and north is the red one.
 
 The player's position is saved every second and a half rather than at every step,
 so a page reload never undoes a long walk.

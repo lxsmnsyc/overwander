@@ -102,6 +102,52 @@ export const SPRITE_DIRECTIONS: SpriteDirection[] = [
   'DownLeft',
 ];
 
+/**
+ * Which of the eight a screen direction points at.
+ *
+ * The list runs clockwise from `Down`, and the screen counts down the
+ * page, so an eighth of a turn along the list is an eighth of a turn
+ * anticlockwise in the ordinary sense
+ */
+export function directionOf(dx: number, dy: number): SpriteDirection {
+  if (dx === 0 && dy === 0) {
+    return 'Down';
+  }
+  const eighths = Math.round((Math.PI / 2 - Math.atan2(dy, dx)) / (Math.PI / 4));
+
+  return SPRITE_DIRECTIONS[((eighths % 8) + 8) % 8];
+}
+
+/**
+ * Which frame shows this thing as the light sees it.
+ *
+ * A shadow is the silhouette from where the light stands, so which
+ * pose is laid down is not the shadow's own bearing: it is the angle
+ * between the way the thing faces and the way the light is. A sheet's
+ * frames are that angle already — the one named `Down` is the thing
+ * looking at the camera — so the frame wanted is the facing turned by
+ * however far the light is off the camera.
+ *
+ * `thrown` is the way the shadow falls, which is away from the light.
+ * Something looking straight at the light lays its front down; the
+ * same thing with the light off its left lays its right down
+ */
+export function litFrame(facing: SpriteDirection, thrown: SpriteDirection): SpriteDirection {
+  const faced = SPRITE_DIRECTIONS.indexOf(facing);
+  const away = SPRITE_DIRECTIONS.indexOf(thrown);
+
+  if (faced < 0 || away < 0) {
+    return facing;
+  }
+  // Half a turn from where the shadow falls is where the light is
+  const half = SPRITE_DIRECTIONS.length / 2;
+
+  return SPRITE_DIRECTIONS[
+    (((faced - away - half) % SPRITE_DIRECTIONS.length) + SPRITE_DIRECTIONS.length) %
+      SPRITE_DIRECTIONS.length
+  ];
+}
+
 /** A position, as `[x, y]`. */
 export type Point = [x: number, y: number];
 

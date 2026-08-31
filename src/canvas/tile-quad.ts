@@ -24,6 +24,40 @@ import type { ProjectedPoint } from './board';
 /** How far past its cell a tile is drawn, as a fraction of one. */
 const OVERLAP = 0.012;
 
+/**
+ * A cell's four corners in the tile's own order: the corner the art
+ * hangs from, then across, then the far one, then down. `turns` is how
+ * far round the camera has been walked, in quarters
+ */
+export function tileCorners(corners: ProjectedPoint[], turns = 0): ProjectedPoint[] {
+  const step = ((turns % 4) + 4) % 4;
+
+  return [
+    corners[(4 - step) % 4],
+    corners[(5 - step) % 4],
+    corners[(6 - step) % 4],
+    corners[(7 - step) % 4],
+  ];
+}
+
+/**
+ * The same four corners grown by `OVERLAP`, which is the quad a tile
+ * is actually laid on. Read off the corners themselves rather than off
+ * two edges of them, so the far side keeps the narrowing the tilt gives
+ * it and the tile lands on the same line the grid is drawn with
+ */
+export function grownQuad(corners: ProjectedPoint[]): { x: number; y: number }[] {
+  const [near, across, far, down] = corners;
+  const spot = (u: number, v: number): { x: number; y: number } => ({
+    x: (1 - u) * (1 - v) * near.x + u * (1 - v) * across.x + u * v * far.x + (1 - u) * v * down.x,
+    y: (1 - u) * (1 - v) * near.y + u * (1 - v) * across.y + u * v * far.y + (1 - u) * v * down.y,
+  });
+  const low = -OVERLAP;
+  const high = 1 + OVERLAP;
+
+  return [spot(low, low), spot(high, low), spot(high, high), spot(low, high)];
+}
+
 export default function drawTileQuad(
   context: CanvasRenderingContext2D,
   sheet: CanvasImageSource,
@@ -32,10 +66,7 @@ export default function drawTileQuad(
   corners: ProjectedPoint[],
   turns = 0,
 ): void {
-  const step = ((turns % 4) + 4) % 4;
-  const far = corners[(4 - step) % 4];
-  const right = corners[(5 - step) % 4];
-  const left = corners[(7 - step) % 4];
+  const [far, right, , left] = tileCorners(corners, turns);
 
   context.save();
   context.transform(right.x - far.x, right.y - far.y, left.x - far.x, left.y - far.y, far.x, far.y);

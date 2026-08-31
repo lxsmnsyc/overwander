@@ -23,6 +23,7 @@ import { describeItem } from '../details';
 import InventoryPicker from '../items/InventoryPicker';
 import ItemSprite from '../items/ItemSprite';
 import AnimatedSprite from '../sprites/AnimatedSprite';
+import { SparklesIcon } from '../icons';
 import { Button, Dialog, DialogActions, Status } from '../styled';
 import { SpriteAnim } from '../../data/ids/sprite-anims';
 
@@ -292,24 +293,38 @@ function SafariBody(
    * caught pokemon, and what the odds behind the next throw are, is
    * not shown: a player deciding whether this one is worth the balls
    * should be looking at the pokemon rather than at a table. A shiny
-   * is still marked, since the sprite is already sparkling and
-   * pretending otherwise would only be coy
+   * is still marked, with the same sparkles the box and the sheet mark
+   * one by, since the sprite alone leaves it to be noticed
    */
-  const met = (): string => {
+  const met = (): JSX.Element => {
     const active = session();
 
     if (active == null) {
       return 'Encounter';
     }
     const { encounter } = active;
-
     // The level first, then what it is, then the one mark for its
     // gender — the order the catch sheet and the field readout say it
     // in. Read as a phrase rather than as a row of facts separated by
     // dots, which is what a name is
-    return `Lv. ${encounter.level} ${isShiny(encounter) ? '✦ ' : ''}${
-      getSpeciesData(encounter.species).name
-    } ${GENDER_MARKS[encounter.gender]}`.trimEnd();
+    const said = `Lv. ${encounter.level} ${getSpeciesData(encounter.species).name} ${
+      GENDER_MARKS[encounter.gender]
+    }`.trimEnd();
+
+    return (
+      <span class="inline-flex items-center justify-center gap-1.5">
+        <Show when={isShiny(encounter)}>
+          {/* Left in the bar's own white rather than the gold it is
+              drawn in on a card: gold on the blue bar is barely a
+              colour at all. The word beside it is what a screen
+              reader hears, since the dialog is announced by this
+              heading and a picture says nothing to one */}
+          <SparklesIcon aria-hidden="true" class="size-4 shrink-0" />
+          <span class="sr-only">Shiny</span>
+        </Show>
+        {said}
+      </span>
+    );
   };
 
   /**
@@ -367,10 +382,10 @@ function SafariBody(
                     species={active().encounter.species}
                     shiny={isShiny(active().encounter)}
                     female={active().encounter.gender === Genders.Female}
-                    // What the dialog's own title is already saying,
-                    // said by the pokemon instead: a shiny standing in
-                    // front of the player is the one encounter worth
-                    // spending the whole bag on
+                    // What the sparkles in the title are about, said
+                    // by the pokemon instead: one standing in front of
+                    // the player is the encounter worth spending the
+                    // whole bag on
                     sparkle={isShiny(active().encounter)}
                     aura={isShadow(active().encounter) ? 'shadow' : undefined}
                     animation={SpriteAnim.Idle}

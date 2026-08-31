@@ -6,6 +6,8 @@ import projectField, {
 } from '../../../canvas/battle/field';
 import type BiomeTileset from '../../../canvas/biome-tileset';
 import { type TileSpot, variantAt } from '../../../canvas/biome-tileset';
+import type { QuadPoint } from '../../../canvas/gl/quad-batch';
+import type QuadBatch from '../../../canvas/gl/quad-batch';
 
 /**
  * The ground a fight is standing on, drawn from the biome's own
@@ -192,6 +194,38 @@ function longer(
 const OVERLAP = 0.06;
 
 /**
+ * How far inside its own edges a tile is sampled, in the sheet's
+ * pixels. Half of one, which is where a linear sampler stops reaching
+ * past the rectangle it was asked for
+ */
+const INSET = 0.5;
+
+/**
+ * The cell's corners pushed out by the overlap, read across the quad
+ * rather than along its axes. A tilted cell is not a parallelogram, so
+ * its far edge grows by less than its near one
+ */
+function grown(corners: QuadPoint[]): QuadPoint[] {
+  const [farLeft, farRight, nearRight, nearLeft] = corners;
+  const spot = (u: number, v: number): QuadPoint => ({
+    x:
+      (1 - u) * (1 - v) * farLeft.x +
+      u * (1 - v) * farRight.x +
+      u * v * nearRight.x +
+      (1 - u) * v * nearLeft.x,
+    y:
+      (1 - u) * (1 - v) * farLeft.y +
+      u * (1 - v) * farRight.y +
+      u * v * nearRight.y +
+      (1 - u) * v * nearLeft.y,
+  });
+  const low = -OVERLAP;
+  const high = 1 + OVERLAP;
+
+  return [spot(low, low), spot(high, low), spot(high, high), spot(low, high)];
+}
+
+/**
  * One tile laid on a patch of ground.
  *
  * A canvas draws an image through an affine transform, which gives a
@@ -256,6 +290,7 @@ export default function drawFloor(
   view: FieldView,
   region: FloorRegion,
   now: number,
+  onto?: QuadBatch,
 ): void {
   if (!tiles.has('ground')) {
     return;
@@ -276,8 +311,19 @@ export default function drawFloor(
   // manage to cover of it
   const skyline = Math.max(region.top, horizonOf(view));
 
-  context.fillStyle = hazeOf(tiles, sample, tiles.tile);
-  context.fillRect(region.left, skyline, region.right - region.left, region.bottom - skyline);
+  const haze = hazeOf(tiles, sample, tiles.tile);
+
+  if (onto == null) {
+    context.fillStyle = haze;
+    context.fillRect(region.left, skyline, region.right - region.left, region.bottom - skyline);
+  } else {
+    onto.solid(haze, [
+      { x: region.left, y: skyline },
+      { x: region.right, y: skyline },
+      { x: region.right, y: region.bottom },
+      { x: region.left, y: region.bottom },
+    ]);
+  }
 
   const first = Math.floor(patch.fromX / TILE_UNITS);
   const last = Math.floor(patch.toX / TILE_UNITS);
@@ -354,7 +400,31 @@ export default function drawFloor(
       // The tile is never turned: the ground is a surface rather than
       // a picture of one, so it swings with the camera the way the
       // pokemon standing on it do
-      layTile(context, spot, tiles.tile, laid);
+      if (onto == null || !(spot.sheet instanceof HTMLCanvasElement)) {
+        layTile(context, spot, tiles.tile, laid);
+        continue;
+      }
+      // Written as the quad it actually covers. A 2D context can only
+      // fit a parallelogram to a tilted cell, which is what `layTile`
+      // measures the longer edges for; a pair of triangles takes the
+      // cell as it is
+      onto.quad(
+        spot.sheet,
+        // Half a texel in on every side. A 2D context samples inside
+        // the rectangle it was given; a sampler does not, and these
+        // tiles are packed against each other, so the edge of one
+        // reads as a stripe of whatever was packed beside it
+        {
+          x: spot.x + INSET,
+          y: spot.y + INSET,
+          width: tiles.tile - INSET * 2,
+          height: tiles.tile - INSET * 2,
+        },
+        grown(laid),
+        1,
+        undefined,
+        'smooth',
+      );
     }
   }
 }

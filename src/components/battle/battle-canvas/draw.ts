@@ -1,9 +1,15 @@
+import type SpeciesSpriteAnimation from '../../../canvas/species-sprite-animation';
 import type { Slot } from './field';
 import { COLORS, HIT_REACH, NAMED_RADIUS } from './metrics';
 import { type Striking, animationFor } from './motion';
 import type { ProgressData } from '../../../battle/events';
 import type Unit from '../../../battle/unit';
-import { paintPurifiedAura, paintShadowAura } from '../../../canvas/auras';
+import { paintAura, paintPurifiedAura, paintShadowAura } from '../../../canvas/auras';
+import type Bakery from '../../../canvas/bakery';
+import type QuadBatch from '../../../canvas/gl/quad-batch';
+import type { QuadPoint } from '../../../canvas/gl/quad-batch';
+import { cornersOf, shadowCorners } from '../../../canvas/placement';
+import { SHADOW_STAMP, bakeShadowDisc, bakeWord } from '../../overworld/chunk-canvas/scenery';
 import type { Point } from '../../../canvas/sprite-sheet';
 import { Stats } from '../../../data/constants/stats';
 import Abilities from '../../../data/ids/abilities';
@@ -42,6 +48,57 @@ const BAR_HEIGHT = 4;
  */
 const CAST_HEIGHT = 3;
 
+/**
+ * Where a slot is written instead of painted: the batch, and the sheet
+ * the drawn art is baked onto. The batch is already carrying the
+ * transform that centres the field, so everything here is in the
+ * drawing's own coordinates the way the painted pass is
+ */
+export interface SlotBatch {
+  batch: QuadBatch;
+  bakery: Bakery;
+}
+
+/** The four corners of a rectangle, for the batch */
+function corners(x: number, y: number, across: number, down: number): QuadPoint[] {
+  return [
+    { x, y },
+    { x: x + across, y },
+    { x: x + across, y: y + down },
+    { x, y: y + down },
+  ];
+}
+
+/**
+ * The round patch under a pokemon, stamped from the one baked disc.
+ * Answers whether it went, so a caller with no batch draws it the way
+ * it always did
+ */
+function shade(
+  patch: ReturnType<SpeciesSpriteAnimation['shadowOf']>,
+  onto: SlotBatch | undefined,
+  alpha: number,
+): boolean {
+  const disc = onto == null || patch == null ? null : bakeShadowDisc(onto.bakery);
+
+  if (onto == null || patch == null || disc == null) {
+    return false;
+  }
+  onto.batch.quad(
+    onto.bakery.sheet,
+    disc,
+    shadowCorners({
+      ...patch,
+      radiusX: patch.radiusX * SHADOW_STAMP,
+      radiusY: patch.radiusY * SHADOW_STAMP,
+    }),
+    patch.alpha * alpha,
+    patch.colour,
+    'smooth',
+  );
+  return true;
+}
+
 function healthColor(share: number): string {
   if (share > 0.5) {
     return COLORS.health;
@@ -57,11 +114,20 @@ function drawBar(
   color: string,
   width = BAR_WIDTH,
   height = BAR_HEIGHT,
+  onto?: SlotBatch,
+  alpha = 1,
 ): void {
-  context.fillStyle = COLORS.track;
-  context.fillRect(x - width / 2, y, width, height);
-  context.fillStyle = color;
-  context.fillRect(x - width / 2, y, width * Math.max(0, Math.min(1, share)), height);
+  const filled = width * Math.max(0, Math.min(1, share));
+
+  if (onto == null) {
+    context.fillStyle = COLORS.track;
+    context.fillRect(x - width / 2, y, width, height);
+    context.fillStyle = color;
+    context.fillRect(x - width / 2, y, filled, height);
+    return;
+  }
+  onto.batch.solid(COLORS.track, corners(x - width / 2, y, width, height), alpha);
+  onto.batch.solid(color, corners(x - width / 2, y, filled, height), alpha);
 }
 
 /**
@@ -74,16 +140,35 @@ function fractionOf(progress: ProgressData): number {
     : Math.min(1, Math.max(0, progress.progress / progress.duration));
 }
 
+/**
+ * The font a move's name is written in. Fixed rather than fitted to
+ * the slot, so a word is baked once and stamped from then on
+ */
+const LABEL_FONT = '12px sans-serif';
+
 function drawLabel(
   context: CanvasRenderingContext2D,
   text: string,
   x: number,
   y: number,
   color: string,
+  onto?: SlotBatch,
+  alpha = 1,
 ): void {
-  context.fillStyle = color;
-  context.textAlign = 'center';
-  context.fillText(text, x, y);
+  const word = onto == null ? null : bakeWord(onto.bakery, text, LABEL_FONT, color);
+
+  if (onto == null || word == null) {
+    context.fillStyle = color;
+    context.textAlign = 'center';
+    context.fillText(text, x, y);
+    return;
+  }
+  onto.batch.quad(
+    onto.bakery.sheet,
+    word,
+    corners(x - word.width / 2, y - word.height / 2, word.width, word.height),
+    alpha,
+  );
 }
 
 /**
@@ -157,12 +242,16 @@ export function drawSlot(
   striking: Map<Unit, Striking>,
   clock: number,
   hidden = false,
+  onto?: SlotBatch,
 ): void {
   const { unit } = slot;
   const maxHealth = unit.checkStat(Stats.HP, 0);
   const share = maxHealth <= 0 ? 0 : unit.health / maxHealth;
+  // What a downed pokemon is left drawn at. The painted pass sets it
+  // on the context; the batch takes it a quad at a time
+  const alpha = unit.alive ? 1 : 0.35;
 
-  context.globalAlpha = unit.alive ? 1 : 0.35;
+  context.globalAlpha = alpha;
 
   const sprite = slot.sprite;
 
@@ -204,23 +293,64 @@ export function drawSlot(
       // for everything else. The painters are the ones the dialogs
       // run, on the battle's own clock so a replay paints the same
       // wisps
-      if (unit.hasAbility(Abilities.Shadow)) {
-        const radius = sprite.shadowRadius(scaleOf(slot));
+      const haze = unit.hasAbility(Abilities.Shadow);
+      const lit = unit.hasAbility(Abilities.Purified);
 
-        paintShadowAura(context, x, y, radius.x, radius.y, clock, slot.x + slot.y);
-      } else if (unit.hasAbility(Abilities.Purified)) {
+      if (haze || lit) {
         const radius = sprite.shadowRadius(scaleOf(slot));
+        const kind = haze ? 'shadow' : 'purified';
+        const aura =
+          onto == null ? null : paintAura(kind, radius.x, radius.y, clock, slot.x + slot.y);
 
-        paintPurifiedAura(context, x, y, radius.x, radius.y, clock, slot.x + slot.y);
-      } else {
+        if (onto == null || aura == null) {
+          const paint = haze ? paintShadowAura : paintPurifiedAura;
+
+          paint(context, x, y, radius.x, radius.y, clock, slot.x + slot.y);
+        } else {
+          const picture = aura.canvas;
+
+          onto.batch.invalidate(picture);
+          onto.batch.quad(
+            picture,
+            { x: 0, y: 0, width: picture.width, height: picture.height },
+            corners(x - aura.originX, y - aura.originY, picture.width, picture.height),
+            alpha,
+            undefined,
+            'smooth',
+          );
+        }
+      } else if (!shade(sprite.shadowOf(x, y, placement), onto, alpha)) {
         sprite.drawShadow(context, x, y, placement);
       }
-      sprite.draw(context, x, y, placement);
+      const quad = onto == null ? null : sprite.quadOf(x, y, placement);
+
+      if (onto == null || quad == null) {
+        sprite.draw(context, x, y, placement);
+      } else {
+        onto.batch.quad(quad.sheet, quad.source, cornersOf(quad), alpha);
+      }
     } else {
-      context.beginPath();
-      context.arc(slot.x + slot.offset[0], slot.y + slot.offset[1], slot.radius, 0, Math.PI * 2);
-      context.fillStyle = unit.alive ? slot.color : COLORS.down;
-      context.fill();
+      const middle = { x: slot.x + slot.offset[0], y: slot.y + slot.offset[1] };
+      const colour = unit.alive ? slot.color : COLORS.down;
+      const disc = onto == null ? null : bakeShadowDisc(onto.bakery);
+
+      if (onto == null || disc == null) {
+        context.beginPath();
+        context.arc(middle.x, middle.y, slot.radius, 0, Math.PI * 2);
+        context.fillStyle = colour;
+        context.fill();
+      } else {
+        const reach = slot.radius * SHADOW_STAMP;
+
+        onto.batch.quad(
+          onto.bakery.sheet,
+          disc,
+          corners(middle.x - reach, middle.y - reach, reach * 2, reach * 2),
+          alpha,
+          colour,
+          'smooth',
+        );
+      }
     }
   }
 
@@ -233,7 +363,7 @@ export function drawSlot(
   // less than none
   const roomy = slot.radius >= NAMED_RADIUS;
 
-  context.font = '12px sans-serif';
+  context.font = LABEL_FONT;
 
   // No name and no level. The field says who is still up and what is
   // landing on them; **which** pokemon each one is belongs to the card
@@ -252,7 +382,7 @@ export function drawSlot(
   const busy = unit.casting ?? unit.channeling;
   const wound = busy == null || !unit.alive ? 0 : fractionOf(busy.time);
 
-  drawBar(context, slot.x, slot.y + 10, share, healthColor(share), bar);
+  drawBar(context, slot.x, slot.y + 10, share, healthColor(share), bar, BAR_HEIGHT, onto, alpha);
   drawBar(
     context,
     slot.x,
@@ -261,6 +391,8 @@ export function drawSlot(
     unit.casting == null ? COLORS.channel : COLORS.cast,
     bar,
     CAST_HEIGHT,
+    onto,
+    alpha,
   );
 
   // What it is in the middle of, named above its head: a cast the
@@ -272,6 +404,8 @@ export function drawSlot(
       slot.x,
       slot.y - slot.radius * 2 - 8,
       COLORS.text,
+      onto,
+      alpha,
     );
   }
   context.globalAlpha = 1;

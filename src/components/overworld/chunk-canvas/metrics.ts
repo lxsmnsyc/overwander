@@ -21,7 +21,7 @@ export const CELL = 26;
 
 /**
  * The reference picture's width. It is wider than the chunk: there is
- * an apron of threshold cells around it and the compass letters stand
+ * an apron of threshold cells around it and the compass marks stand
  * off that again
  */
 export const WIDTH = CELL * CHUNK_CELLS * PICTURE_SPAN;
@@ -197,13 +197,20 @@ export const COLORS = {
    */
   cursor: '#3b82f6',
   /**
-   * The compass, which is four letters standing on the ground off the
-   * edges of the board. They are read against whatever country the
-   * chunk is made of, so each one is drawn on a halo of its own rather
-   * than trusting a dark letter to show up on dark ground
+   * The compass, which is four marks standing on the ground off the
+   * edges of the board, each pointing the way it stands for. They are
+   * read against whatever country the chunk is made of, so each is
+   * drawn on a halo of its own rather than trusting a dark shape to
+   * show up on dark ground
    */
   compass: '#1c1c1c',
   compassHalo: 'rgba(255, 255, 255, 0.75)',
+  /**
+   * North, in the game's own ember. Only one of the four needs telling
+   * apart, and colouring it is what saves the other three from having
+   * to be read at all
+   */
+  compassNorth: '#e62829',
   /**
    * The word said over the board while its pokemon are still coming,
    * on a halo for the same reason the compass has one
@@ -237,16 +244,68 @@ export const COLORS = {
 export const TURN_DEAD_ZONE = 0.06;
 
 /**
- * How big the compass letters are on the reference picture. They are
- * the only writing on it, and they are read at a glance rather than
- * studied
+ * How tall a compass mark is on the reference picture, from its base
+ * to its point
  */
 export const COMPASS_SIZE = 15;
 
 /**
- * How thick the halo under a compass letter is drawn
+ * And how wide its base is. Narrower than it is tall, so which end is
+ * the point is not a thing anybody has to work out
+ */
+export const COMPASS_BASE = 11;
+
+/**
+ * How thick the halo under a compass mark is drawn
  */
 export const COMPASS_HALO = 3;
+
+/**
+ * The three corners of a compass mark: a triangle standing at `spot`
+ * with its point turned along `out`, which is the way that mark faces
+ * once the board has been turned
+ */
+export function compassArrow(
+  spot: { x: number; y: number },
+  out: { x: number; y: number },
+  magnify: number,
+): { x: number; y: number }[] {
+  const reach = (COMPASS_SIZE * magnify) / 2;
+  const half = (COMPASS_BASE * magnify) / 2;
+  const baseX = spot.x - out.x * reach;
+  const baseY = spot.y - out.y * reach;
+
+  return [
+    { x: spot.x + out.x * reach, y: spot.y + out.y * reach },
+    { x: baseX - out.y * half, y: baseY + out.x * half },
+    { x: baseX + out.y * half, y: baseY - out.x * half },
+  ];
+}
+
+/**
+ * The same triangle grown by its halo. Each corner is pushed out from
+ * the middle rather than the three edges being offset properly, which
+ * is near enough at the width a halo is drawn and is three lines
+ * rather than a polygon library
+ */
+export function grownArrow(
+  points: { x: number; y: number }[],
+  magnify: number,
+): { x: number; y: number }[] {
+  const halo = COMPASS_HALO * magnify;
+  const middleX = (points[0].x + points[1].x + points[2].x) / 3;
+  const middleY = (points[0].y + points[1].y + points[2].y) / 3;
+
+  return points.map((point) => {
+    const outX = point.x - middleX;
+    const outY = point.y - middleY;
+    const away = Math.hypot(outX, outY);
+
+    return away === 0
+      ? point
+      : { x: point.x + (outX / away) * halo, y: point.y + (outY / away) * halo };
+  });
+}
 
 /**
  * How flat the shadow lies. It is on the ground, and the ground is
@@ -331,7 +390,7 @@ export function isTurningPress(event: { button: number; ctrlKey: boolean }): boo
 /**
  * Which way a step off the board goes, in the world's own words. North
  * is the far edge of the chunk however the camera has been walked
- * round, which is the same north the compass letters are drawn from
+ * round, which is the same north the compass marks are drawn from
  */
 export const BEARINGS = new Map<string, string>([
   ['0,-1', 'north'],

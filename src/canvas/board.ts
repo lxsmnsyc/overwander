@@ -1,5 +1,5 @@
 import { CHUNK_CELLS } from '../overworld/chunk';
-import { PITCH } from './tilt';
+import { GROUND_DEPTH, PITCH } from './tilt';
 
 /**
  * The chunk seen from a chair rather than from a satellite: the ground
@@ -21,7 +21,7 @@ export { PITCH };
  * How much of the board's depth survives the tilt. Straight down it
  * is all of it; edge-on it is none
  */
-const DEPTH = Math.sin((PITCH * Math.PI) / 180);
+const DEPTH = GROUND_DEPTH;
 
 /**
  * How far the camera stands back, in board widths — what makes the far
@@ -115,23 +115,23 @@ export const BORDER_CELLS = 1;
 const APRON = BORDER_CELLS / CHUNK_CELLS;
 
 /**
- * How far from the middle the compass letters stand: past the apron
- * and a cell further. Off the board on purpose — a letter lying on the
- * ground reads as scenery rather than as which way the board faces
+ * How far from the middle the compass marks stand: past the apron and
+ * a cell further. Off the board on purpose: a mark lying on the ground
+ * reads as scenery rather than as which way the board faces
  */
 const COMPASS_REACH = 0.5 + (BORDER_CELLS + 1) / CHUNK_CELLS;
 
 /**
- * Room for the glyph itself, as a fraction of the picture's width. A
- * letter is drawn about its point, so fitting to the point alone clips
+ * Room for the mark itself, as a fraction of the picture's width. A
+ * mark is drawn about its point, so fitting to the point alone clips
  * half of it. Added **after** the projection: ground beyond the near
  * edge is a long way down the screen once perspective has had it
  */
-const LETTER_ROOM = 0.03;
+const MARK_ROOM = 0.03;
 
 /**
  * Everything that has to be inside the picture: the apron's corners
- * and the four compass letters. The chunk's own corners sit inside the
+ * and the four compass marks. The chunk's own corners sit inside the
  * apron's, so they are not measured separately
  */
 const OUTER: GroundPoint[] = [
@@ -163,9 +163,9 @@ const BOUNDS = ((): { left: number; top: number; width: number; height: number }
   const width = Math.max(...corners.map((corner) => corner.x)) - left;
   const height = Math.max(...corners.map((corner) => corner.y)) - top;
   // ...and then the same room on every side, measured on the picture
-  // rather than on the ground, so the letters have somewhere to be
+  // rather than on the ground, so the marks have somewhere to be
   // drawn and the board is not pushed up the screen to pay for it
-  const room = width * LETTER_ROOM;
+  const room = width * MARK_ROOM;
 
   return {
     left: left - room,
@@ -246,9 +246,9 @@ export const PICTURE_SPAN = BOUNDS.width;
 const PICTURE_INSET = 0.96;
 
 /**
- * And how much of the bottom is the menu's. South's compass letter
- * wants the same spot, so the picture keeps out of it — a button
- * reached for without looking should not move
+ * And how much of the bottom is the menu's. South's compass mark wants
+ * the same spot, so the picture keeps out of it: a button reached for
+ * without looking should not move
  */
 const PICTURE_FLOOR = 0.08;
 
@@ -475,20 +475,20 @@ export function projectCellQuad(index: number, yaw: Yaw = 0): ProjectedPoint[] {
 }
 
 /**
- * Which way each compass point is, and where its letter stands. They
- * are ground points, so they turn with the board on their own; the
- * letters are drawn upright, since a compass is read by the player
+ * Which way each compass point is, and where its mark stands. They are
+ * ground points, so they turn with the board on their own; which one
+ * is north is answered here rather than left to the order they come in
  */
-export function compassMarks(yaw: Yaw = 0): (ProjectedPoint & { label: string })[] {
+export function compassMarks(yaw: Yaw = 0): (ProjectedPoint & { north: boolean })[] {
   return (
     [
-      ['N', 0, -1],
-      ['E', 1, 0],
-      ['S', 0, 1],
-      ['W', -1, 0],
+      [true, 0, -1],
+      [false, 1, 0],
+      [false, 0, 1],
+      [false, -1, 0],
     ] as const
-  ).map(([label, du, dv]) => ({
-    label,
+  ).map(([north, du, dv]) => ({
+    north,
     ...projectGround({ u: 0.5 + du * COMPASS_REACH, v: 0.5 + dv * COMPASS_REACH }, yaw),
   }));
 }

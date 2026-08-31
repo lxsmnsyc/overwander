@@ -166,14 +166,27 @@ export interface AuraPicture {
   originY: number;
 }
 
-const painted = { canvas: null as HTMLCanvasElement | null, key: '' };
+/**
+ * How many auras are kept at once. A field holds a handful, and one
+ * that leaves is dropped by the oldest-first sweep below
+ */
+const AURA_KEPT = 12;
+
+interface Painted {
+  canvas: HTMLCanvasElement;
+  key: string;
+}
+
+/** One picture per aura, held by the kind and seed that name it */
+const painted = new Map<string, Painted>();
 
 /**
  * The picture of one aura at this moment, painted at the size it will
  * be drawn so it is stamped one for one.
  *
- * One picture, repainted: a field draws these one at a time, and a
- * kept copy is wisps out of step with the fight they belong to
+ * A canvas each, not one shared: the batched pass hands the canvas
+ * over as a texture and draws it later, so two auras sharing a canvas
+ * would both come out as whichever was painted last
  */
 export function paintAura(
   kind: 'shadow' | 'purified',
@@ -189,12 +202,14 @@ export function paintAura(
   const originY = Math.min(AURA_LIMIT, Math.ceil(radiusX * AURA_UP));
   const across = originX * 2;
   const down = originY + Math.ceil(radiusY * AURA_DOWN);
-  const key = `${kind}:${Math.round(elapsed)}:${Math.round(seed)}:${across}:${down}`;
+  const held = `${kind}:${Math.round(seed)}`;
+  const key = `${Math.round(elapsed)}:${across}:${down}`;
+  const kept = painted.get(held);
 
-  if (painted.canvas != null && painted.key === key) {
-    return { canvas: painted.canvas, originX, originY };
+  if (kept?.key === key) {
+    return { canvas: kept.canvas, originX, originY };
   }
-  const canvas = painted.canvas ?? document.createElement('canvas');
+  const canvas = kept?.canvas ?? document.createElement('canvas');
 
   canvas.width = across;
   canvas.height = down;
@@ -210,7 +225,17 @@ export function paintAura(
   } else {
     paintPurifiedAura(context, originX, originY, radiusX, radiusY, elapsed, seed);
   }
-  painted.canvas = canvas;
-  painted.key = key;
+  // Re-inserted so the map orders by last use, which is what the
+  // sweep reads
+  painted.delete(held);
+  painted.set(held, { canvas, key });
+  if (painted.size > AURA_KEPT) {
+    for (const stale of painted.keys()) {
+      painted.delete(stale);
+      if (painted.size <= AURA_KEPT) {
+        break;
+      }
+    }
+  }
   return { canvas, originX, originY };
 }

@@ -1,6 +1,7 @@
 import Weather from '../data/overworld/weather';
 import type QuadBatch from './gl/quad-batch';
 import type { QuadBlend, QuadPoint } from './gl/quad-batch';
+import { PICTURE_SPAN, projectAir } from './board';
 
 /**
  * The sky over the board, drawn rather than packed.
@@ -205,7 +206,11 @@ interface Lamplit {
 }
 
 const LAMPLIT: Partial<Record<Weather, Lamplit>> = {
-  [Weather.DarkDay]: { colour: '#070b16', depth: 0.88 },
+  // Pitch black, and black rather than the blue it used to be: a dark
+  // day is the one sky whose whole point is that the board is gone
+  // except where something is lit, and a night-blue veil at seven
+  // eighths left the country legible through it
+  [Weather.DarkDay]: { colour: '#000000', depth: 1 },
 };
 
 /**
@@ -328,18 +333,15 @@ interface Fall {
   length: number;
   thickness: number;
   colour: string;
-  /**
-   * Whether it is drawn as scrolling tiles rather than drop by drop.
-   *
-   * Worth it only where there are enough drops to pay for two
-   * full-screen fills: see `paintTiledFall`. A sparse sky, or one whose
-   * drops are long enough streaks that a repeat would show, keeps its
-   * own
-   */
-  tiled?: boolean;
 }
 
-const FALLS: Partial<Record<Weather, Fall>> = {
+/**
+ * Exported under a name of its own for the tests, which need a real
+ * fall to hand `worldDropAt` and should not invent one: a made-up
+ * speed and drift would not catch a streak drawn eleven board widths
+ * long, and a breeze is exactly the shape that did
+ */
+export const FALL_TABLE: Partial<Record<Weather, Fall>> = {
   // Nothing falls on a breeze, so what is drawn is what it carries:
   // a few specks crossing the board sideways. Without it the one
   // stirred sky in the game looks exactly like a clear one
@@ -374,7 +376,6 @@ const FALLS: Partial<Record<Weather, Fall>> = {
     length: 13,
     thickness: 1.2,
     colour: '#cfe0f7bb',
-    tiled: true,
   },
   [Weather.Thunderstorm]: {
     density: 3600,
@@ -383,7 +384,6 @@ const FALLS: Partial<Record<Weather, Fall>> = {
     length: 12,
     thickness: 1.2,
     colour: '#ccdcf7bb',
-    tiled: true,
   },
   [Weather.Snow]: {
     density: 1300,
@@ -416,7 +416,6 @@ const FALLS: Partial<Record<Weather, Fall>> = {
     length: 9,
     thickness: 1.4,
     colour: '#e0c184c0',
-    tiled: true,
   },
   [Weather.FallingAsh]: {
     density: 1100,
@@ -451,8 +450,11 @@ function scatter(index: number, salt: number): number {
   return mixed - Math.floor(mixed);
 }
 
-/** How many of them one drop needs: where it starts, and how it falls */
-const SALTS = 4;
+/**
+ * How many of them one drop needs: where it starts, how it falls, and
+ * where it stands in the queue when the far field is thinned
+ */
+const SALTS = 5;
 
 /**
  * The scatter of every drop, worked out once.
@@ -515,6 +517,18 @@ const MARGIN = 128;
 const REFERENCE = 960 * 540;
 
 /**
+ * How much of a fall's own density is actually drawn.
+ *
+ * The tables describe a sky flat against the glass, where every drop
+ * costs the same and none of them overlap. Standing in the world they
+ * pile up down the near half of the volume and read far heavier than
+ * the same number ever did on the lens, so the whole set is drawn back
+ * to this. It is a number rather than eleven smaller ones because it
+ * is one decision, and the tables still read as each sky's own
+ */
+const SKY_DENSITY = 0.4;
+
+/**
  * How much larger than the reference this window is, along one side.
  *
  * Clamped at both ends: below it a drop thins to a hairline nobody can
@@ -553,7 +567,9 @@ function eachDrop(
   // Counted on the reference screen rather than this one, so the sky
   // costs the same whatever the window is: the drops are made larger
   // instead of more numerous
-  const count = Math.round((fall.density * across * down) / (zoom * zoom) / 1_000_000);
+  const count = Math.round(
+    (fall.density * SKY_DENSITY * across * down) / (zoom * zoom) / 1_000_000,
+  );
   const length = fall.length * zoom;
 
   // A round drop is a segment going nowhere under a round cap, which
@@ -580,6 +596,214 @@ function eachDrop(
   }
 }
 
+/**
+ * Where the board is on screen, and which way round it is.
+ *
+ * The picture's box is what `fitPicture` already answers with, and the
+ * yaw is the camera the player has walked round. Handed in, the sky is
+ * drawn as weather standing in the world; left out, it is drawn flat
+ * against the glass the way it always was — which is what the weather
+ * demo, having no board to stand in, still wants
+ */
+export interface SkyCamera {
+  yaw: number;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+/**
+ * How wide the volume of weather is and how high it reaches, in board
+ * widths. It has to be a good deal larger than the board: the volume
+ * is fixed in the world, so it must cover the frame whichever way the
+ * camera is facing
+ */
+const VOLUME_SPAN = 4.6;
+const VOLUME_HEAD = 1.5;
+
+/**
+ * How many more drops go in it than a flat sky asks for. Most of the
+ * volume is off screen at any one moment, and the ones that are not
+ * are thinned again by depth, so the count has to start higher to
+ * arrive at the same weather
+ */
+const VOLUME_FILL = 4.3;
+
+/**
+ * The depth at which every drop is kept, and how gently the rest leave.
+ *
+ * A slab of world at arm's length projects onto more screen than the
+ * same slab at the horizon, so a density even in the world piles up
+ * into a mat along the far edge. Keeping a share proportional to the
+ * scale squared evens it out — and the ones it drops were costing full
+ * price to draw a third of a pixel. The band is what stops a drop
+ * blinking as the camera turns it past the line
+ */
+const NEAR = 1.6;
+const THIN_BAND = 0.18;
+
+/**
+ * How much longer a streak is drawn than its own length.
+ *
+ * A streak that is mostly vertical keeps only `cos(pitch)` of itself
+ * seen from up here, so a fall drawn true to scale reads lighter than
+ * the flat version of the same sky
+ */
+const STREAK = 1.5;
+
+/** Where one drop is in the world, and which way it is travelling */
+export interface WorldDrop {
+  u: number;
+  v: number;
+  h: number;
+  /** The other end of its streak, back along the way it came */
+  tailU: number;
+  tailH: number;
+}
+
+/**
+ * Where one drop of a fall stands in the world at this moment.
+ *
+ * Exported for the one property worth guarding: **it takes no yaw**.
+ * A drop's place is `seconds * speed` rather than a step added each
+ * frame, so anything that moves with the camera and gets into this
+ * arithmetic rewrites the whole history of the fall every frame — and
+ * the board's fit, which swells and shrinks four times a turn, is
+ * exactly such a thing. `perBoard` is how many pixels a board width is
+ * worth, taken from the picture's own width, which the yaw never
+ * touches
+ */
+export function worldDropAt(
+  fall: Fall,
+  index: number,
+  seconds: number,
+  perBoard: number,
+): WorldDrop {
+  const noise = scatterOf(index + 1);
+  const of = index * SALTS;
+  const pace = 0.75 + noise[of + 2] * 0.5;
+  const speed = fall.speed / perBoard;
+  const drift = fall.drift / perBoard;
+  const length = (fall.length / perBoard) * STREAK;
+  /**
+   * The way it is actually travelling, as a unit vector. The flat sky
+   * leans a streak by `drift / speed` and gets away with it because
+   * the streak is a handful of pixels either way; in the world that
+   * ratio is the whole length, and a breeze at sixty parts sideways to
+   * five down drew a streak eleven board widths long
+   */
+  const along = Math.hypot(drift, speed) || 1;
+  const edge = (VOLUME_SPAN - 1) / 2;
+  const h = VOLUME_HEAD - ((noise[of] * VOLUME_HEAD + seconds * speed * pace) % VOLUME_HEAD);
+
+  return {
+    u: ((noise[of + 1] * VOLUME_SPAN + seconds * drift * pace) % VOLUME_SPAN) - edge,
+    v: noise[of + 3] * VOLUME_SPAN - edge,
+    h,
+    tailU:
+      ((noise[of + 1] * VOLUME_SPAN + seconds * drift * pace) % VOLUME_SPAN) -
+      edge -
+      (drift / along) * length,
+    tailH: h + (speed / along) * length,
+  };
+}
+
+/**
+ * Whether a drop this far off is drawn at all, and how strongly.
+ *
+ * A slab of world at arm's length projects onto more screen than the
+ * same slab at the horizon, so a density even in the world piles up
+ * into a mat along the far edge. Keeping a share proportional to the
+ * scale squared evens it out, and the ones it drops were costing full
+ * price to draw a third of a pixel. `queued` is the drop's own place
+ * in the queue, so the same drops thin out frame after frame rather
+ * than the whole field flickering
+ */
+export function thinningAt(scale: number, queued: number): number {
+  const room = Math.min(1, (scale / NEAR) * (scale / NEAR));
+
+  return Math.min(1, (room - queued) / THIN_BAND);
+}
+
+/**
+ * Where every drop of a fall is this moment, as a thing standing in
+ * the world rather than on the glass.
+ *
+ * A drop is `(u, v, h)` in board widths and its place is a pure
+ * function of its own number and the clock, exactly as the flat one
+ * is. What it must never be a function of is the board's fit: that
+ * swells and shrinks four times a turn, and since a drop's place is
+ * `seconds * speed` rather than a step added each frame, a speed that
+ * moved with the camera would rewrite the whole history of the fall
+ * every frame. Pixels become board widths through the picture's own
+ * width, which the yaw cannot touch
+ */
+function eachWorldDrop(
+  width: number,
+  height: number,
+  camera: SkyCamera,
+  fall: Fall,
+  clock: number,
+  zoom: number,
+  visit: (x: number, y: number, tipX: number, tipY: number, scale: number, weight: number) => void,
+): void {
+  const seconds = clock / 1000;
+  const margin = MARGIN * zoom;
+  const across = width + margin * 2;
+  const down = height + margin;
+  const count = Math.round(
+    (fall.density * SKY_DENSITY * VOLUME_FILL * across * down) / (zoom * zoom) / 1_000_000,
+  );
+  const noise = scatterOf(count);
+
+  // How many pixels one board width is worth. Free of the fit, and so
+  // free of the yaw
+  const perBoard = camera.width / PICTURE_SPAN;
+  const radius = VOLUME_SPAN / 2;
+
+  for (let at = 0; at < count; at++) {
+    const drop = worldDropAt(fall, at, seconds, perBoard);
+
+    // A square of world turned under the camera puts its corners in
+    // frame and takes them out again four times a turn, which reads as
+    // the weather thickening and thinning. A disc has no corners
+    if ((drop.u - 0.5) * (drop.u - 0.5) + (drop.v - 0.5) * (drop.v - 0.5) > radius * radius) {
+      continue;
+    }
+
+    const head = projectAir({ u: drop.u, v: drop.v }, drop.h, camera.yaw);
+
+    if (head.scale <= 0.02) {
+      continue;
+    }
+
+    const weight = thinningAt(head.scale, noise[at * SALTS + 4]);
+
+    if (weight <= 0) {
+      continue;
+    }
+
+    const x = camera.x + head.x * camera.width;
+    const y = camera.y + head.y * camera.height;
+
+    if (x < -margin || x > width + margin || y < -margin || y > height + margin) {
+      continue;
+    }
+
+    const tail = projectAir({ u: drop.tailU, v: drop.v }, drop.tailH, camera.yaw);
+
+    visit(
+      x,
+      y,
+      camera.x + tail.x * camera.width,
+      camera.y + tail.y * camera.height,
+      head.scale,
+      weight,
+    );
+  }
+}
+
 function paintFall(
   context: CanvasRenderingContext2D,
   width: number,
@@ -587,164 +811,59 @@ function paintFall(
   fall: Fall,
   clock: number,
   zoom: number,
+  camera?: SkyCamera,
 ): void {
   const dots = fall.length <= 0;
+  const thickness = (dots ? fall.thickness * 2 : fall.thickness) * zoom;
 
   context.strokeStyle = fall.colour;
-  context.lineWidth = (dots ? fall.thickness * 2 : fall.thickness) * zoom;
   // Round only where the cap *is* the drop. On a line it rounds two
   // ends nobody can resolve at a pixel wide, and a round cap is a
   // circle to work out at each end of every drop in the sky
   context.lineCap = dots ? 'round' : 'butt';
-  context.beginPath();
-  eachDrop(width, height, fall, clock, zoom, (x, y, tipX, tipY) => {
-    context.moveTo(x, y);
-    // A hair rather than nothing at all: a subpath of zero length is
-    // meant to paint its cap and does, but a hair is the same circle
-    // and asks nobody to be sure
-    context.lineTo(dots ? x + 0.01 : tipX, dots ? y : tipY);
-  });
-  context.stroke();
-}
 
-/**
- * A heavy fall, drawn as scrolling cloth instead of drop by drop.
- *
- * A drop costs about the same whether anyone can see it or not: what
- * a stroked segment is paid for is being tessellated and antialiased,
- * not the dozen pixels it lands on. A downpour is eleven thousand of
- * them a frame, and the whole sky it draws covers under a tenth of the
- * screen — so the bill is the count, and the count is what this gets
- * rid of.
- *
- * One tile of rain is drawn once and repeated forever by the browser.
- * Each frame moves the pattern and fills the screen, so a downpour and
- * a drizzle cost exactly the same: two fills.
- *
- * What it gives up is that every drop had its own pace. Two layers at
- * two paces is what stands in for it, which is the parallax the effect
- * was reaching for anyway
- */
-const LAYERS = 2;
-
-/**
- * How big one tile is. Large enough that the repeat is not read as a
- * grid, small enough to build quickly and stay in cache
- */
-const TILE = 512;
-
-/** The two paces, either side of the one pace a single sheet would have */
-const PACES = [0.85, 1.15];
-
-/** One built cloth per fall. The falls are module constants, so this is bounded */
-const cloths = new Map<Fall, CanvasPattern[]>();
-
-function clothOf(context: CanvasRenderingContext2D, fall: Fall): CanvasPattern[] | null {
-  const known = cloths.get(fall);
-
-  if (known != null) {
-    return known;
-  }
-
-  // Each layer covers the whole screen, so each carries its share of
-  // the density rather than all of it
-  const per = Math.max(1, Math.round((fall.density / LAYERS) * ((TILE * TILE) / 1_000_000)));
-  const noise = scatterOf(per * LAYERS);
-  const dots = fall.length <= 0;
-  const lean = fall.drift / fall.speed;
-  const made: CanvasPattern[] = [];
-
-  for (let layer = 0; layer < LAYERS; layer++) {
-    const canvas = document.createElement('canvas');
-
-    canvas.width = TILE;
-    canvas.height = TILE;
-
-    const into = canvas.getContext('2d');
-
-    if (into == null) {
-      return null;
-    }
-    into.strokeStyle = fall.colour;
-    into.lineWidth = dots ? fall.thickness * 2 : fall.thickness;
-    into.lineCap = dots ? 'round' : 'butt';
-    into.beginPath();
-
-    for (let at = 0; at < per; at++) {
-      const of = (layer * per + at) * SALTS;
-      const x = noise[of + 1] * TILE;
-      const y = noise[of] * TILE;
-
-      // Nine copies of each, so a drop hanging over an edge is already
-      // drawn coming back in at the other one. Without it the seam is
-      // a clean line of half-drops across the sky
-      for (let dx = -1; dx <= 1; dx++) {
-        for (let dy = -1; dy <= 1; dy++) {
-          const from = x + dx * TILE;
-          const down = y + dy * TILE;
-
-          into.moveTo(from, down);
-          if (dots) {
-            into.lineTo(from + 0.01, down);
-          } else {
-            into.lineTo(from - fall.length * lean, down - fall.length);
-          }
-        }
-      }
-    }
-    into.stroke();
-
-    const cloth = context.createPattern(canvas, 'repeat');
-
-    if (cloth == null) {
-      return null;
-    }
-    made.push(cloth);
-  }
-  cloths.set(fall, made);
-  return made;
-}
-
-function paintTiledFall(
-  context: CanvasRenderingContext2D,
-  width: number,
-  height: number,
-  fall: Fall,
-  clock: number,
-  zoom: number,
-): void {
-  const cloth = clothOf(context, fall);
-
-  if (cloth == null) {
-    // No second canvas to be had, which is a browser that will not
-    // give one up rather than a state worth handling: the sky falls
-    // back to being drawn a drop at a time
-    paintFall(context, width, height, fall, clock, zoom);
+  if (camera == null) {
+    context.lineWidth = thickness;
+    context.beginPath();
+    eachDrop(width, height, fall, clock, zoom, (x, y, tipX, tipY) => {
+      context.moveTo(x, y);
+      // A hair rather than nothing at all: a subpath of zero length is
+      // meant to paint its cap and does, but a hair is the same circle
+      // and asks nobody to be sure
+      context.lineTo(dots ? x + 0.01 : tipX, dots ? y : tipY);
+    });
+    context.stroke();
     return;
   }
 
-  const seconds = clock / 1000;
-  // The cloth is woven on the reference screen and stretched to this
-  // one, so a larger window gets larger drops rather than a finer
-  // weave, and the tile is built once whatever the window is
-  const span = TILE * zoom;
+  /**
+   * A drop in the world is drawn at the size of the ground under it,
+   * so the pen changes per drop and the whole fall cannot be one path.
+   * Both are rounded into steps and the path is broken only when the
+   * step changes, which puts the sky back into a few dozen strokes
+   * rather than one per drop
+   */
+  let pen = -1;
+  let ink = -1;
 
-  for (let layer = 0; layer < LAYERS; layer++) {
-    const pace = PACES[layer];
+  context.beginPath();
+  eachWorldDrop(width, height, camera, fall, clock, zoom, (x, y, tipX, tipY, scale, weight) => {
+    const wide = Math.round(Math.max(0.4, thickness * scale) * 4) / 4;
+    const alpha = Math.round(weight * 8) / 8;
 
-    // The cloth is moved rather than the screen, so the fill stays put
-    // and nothing has to be saved and restored around it
-    cloth[layer].setTransform(
-      new DOMMatrix()
-        .translate(
-          (seconds * fall.drift * pace * zoom) % span,
-          (seconds * fall.speed * pace * zoom) % span,
-        )
-        .scale(zoom),
-    );
-    context.fillStyle = cloth[layer];
-    context.fillRect(0, 0, width, height);
-  }
+    if (wide !== pen || alpha !== ink) {
+      context.stroke();
+      context.beginPath();
+      context.lineWidth = wide;
+      context.globalAlpha = Math.max(0.05, alpha);
+      pen = wide;
+      ink = alpha;
+    }
+    context.moveTo(x, y);
+    context.lineTo(dots ? x + 0.01 : tipX, dots ? y : tipY);
+  });
+  context.stroke();
+  context.globalAlpha = 1;
 }
 
 /**
@@ -824,47 +943,6 @@ const CURTAINS: Partial<Record<Weather, Curtain>> = {
       { at: 1, colour: '#3dff9e', alpha: 0 },
     ],
   },
-  /**
-   * A mirage is dead-still air, so nothing here folds: the ribs are
-   * fine and barely move, and what they do is break the horizon into
-   * strata the way heat over a road does
-   */
-  [Weather.FataMorgana]: {
-    bands: 4,
-    top: 0.44,
-    gap: 0.035,
-    deep: 0.08,
-    pace: 0.22,
-    ribs: 40,
-    sway: 0.05,
-    grain: 0.12,
-    spread: 3.2,
-    stops: [
-      { at: 0, colour: '#fff3d8', alpha: 0 },
-      { at: 0.5, colour: '#fff3d8', alpha: 0.22 },
-      { at: 1, colour: '#fff3d8', alpha: 0 },
-    ],
-  },
-};
-
-/** The arc a sky hangs over the water, band by band, outermost first. */
-const ARCS: Partial<Record<Weather, string[]>> = {
-  [Weather.Rainbow]: ['#ff5d5d', '#ffa94d', '#ffe66d', '#6ee7a0', '#5db8ff', '#9b8cff'],
-  /**
-   * A fogbow is the same arc with the colour gone: the drops it stands
-   * in are too small to split the light, so it comes out white and
-   * broad, with barely a blush at either edge
-   */
-  [Weather.Fogbow]: [
-    '#ffd9c9',
-    '#f7f2ec',
-    '#ffffff',
-    '#ffffff',
-    '#f2f4fa',
-    '#e6ecf8',
-    '#dbe6fb',
-    '#cfdcf6',
-  ],
 };
 
 /**
@@ -945,6 +1023,7 @@ function paintShower(
   height: number,
   shower: Shower,
   clock: number,
+  camera?: SkyCamera,
 ): void {
   const seconds = clock / 1000;
   const zoom = zoomFor(width, height);
@@ -954,7 +1033,10 @@ function paintShower(
   context.lineCap = 'round';
   context.strokeStyle = shower.colour;
   for (let which = 0; which < shower.count; which++) {
-    const flying = meteorAt(shower, which, width, height, seconds);
+    const flying =
+      camera == null
+        ? meteorAt(shower, which, width, height, seconds)
+        : worldMeteorAt(shower, which, seconds, camera);
 
     if (flying == null) {
       continue;
@@ -982,30 +1064,255 @@ function paintShower(
   context.lineWidth = 1;
 }
 
-/** The arc of a bow, low and to one side, drawn once and still */
-function paintArc(
+/**
+ * The far sky, built as things standing in the world.
+ *
+ * None of these want depth the way a raindrop does — an aurora has no
+ * drops to space out — but all of them want a *place*. Drawn at fixed
+ * screen coordinates they follow the player round, which is a worse
+ * failure than the rain's: a rainbow is a direction, and one that sits
+ * in the same corner whichever way you face tells you nothing.
+ *
+ * The one constraint the geometry has to respect is that this camera
+ * looks **down**. At sixty degrees the horizon sits near the top of
+ * the frame and the projection diverges just past it, so there is
+ * barely any sky in the picture. Everything here hangs low and close,
+ * draped over the board rather than standing behind it.
+ */
+
+/**
+ * How deep a world point is once the camera has been walked round: 0
+ * at the board's far edge and 1 at the near one, and past either end
+ * beyond it
+ */
+function turned(u: number, v: number, yaw: number): number {
+  const cos = Math.cos(yaw);
+  const sin = Math.sin(yaw);
+
+  return (u - 0.5) * sin + (v - 0.5) * cos + 0.5;
+}
+
+/** A world point in the canvas' own pixels */
+function airOn(camera: SkyCamera, u: number, v: number, h: number): QuadPoint & { scale: number } {
+  const point = projectAir({ u, v }, h, camera.yaw);
+
+  return {
+    x: camera.x + point.x * camera.width,
+    y: camera.y + point.y * camera.height,
+    scale: point.scale,
+  };
+}
+
+/**
+ * The ring a curtain hangs on: a circle **inside** the board's own
+ * footprint, hanging above the ground the player walks on.
+ *
+ * It has to be there and nowhere else. The board's far edge is already
+ * at the very top of the picture, so a ring set outside it is off the
+ * frame at ground level before any height is added at all — this
+ * camera looks down, and the sky it leaves is a band a few dozen
+ * pixels deep. Drawn over the board there is room, and the ring's far
+ * half runs off the top while its near half hangs where it can be
+ * seen, which is what turning the camera walks the player through
+ */
+const RING = { radius: 0.5, foot: 0.32, head: 1.05, spread: 1.06 };
+
+/** One fold of a curtain, laid out ready for either painter */
+interface Fold {
+  corners: QuadPoint[];
+  light: number;
+  band: number;
+  scale: number;
+}
+
+/**
+ * Every fold of a curtain, back to front.
+ *
+ * The head is held level and the foot sways, which is the way the flat
+ * curtain does it: swaying the head instead gives a boiling top edge,
+ * because the folds of a band no longer agree about where the band
+ * begins
+ */
+function foldsOf(curtain: Curtain, camera: SkyCamera, clock: number): Fold[] {
+  const seconds = clock / 1000;
+  const folds: Fold[] = [];
+  // The whole circle, so some of it is over the board whichever way
+  // the camera is facing
+  const step = (Math.PI * 2) / curtain.ribs;
+
+  for (let band = 0; band < curtain.bands; band++) {
+    const out = RING.radius + band * RING.radius * curtain.gap;
+
+    for (let rib = 0; rib < curtain.ribs; rib++) {
+      const { foot, light } = ribAt(curtain, band, rib, seconds);
+      const one = step * rib;
+      // A hair wider than its share, so two folds meet rather than
+      // leaving a seam of sky between them
+      const two = one + step * RING.spread;
+      // The head is held level and the foot sways. Swaying the head
+      // instead gives a boiling top edge, because the folds of a band
+      // stop agreeing about where the band begins
+      const low = RING.foot * foot;
+
+      const oneU = 0.5 + Math.cos(one) * out;
+      const oneV = 0.5 + Math.sin(one) * out;
+      const twoU = 0.5 + Math.cos(two) * out;
+      const twoV = 0.5 + Math.sin(two) * out;
+      const near = airOn(camera, oneU, oneV, low);
+
+      if (near.scale <= 0.05) {
+        continue;
+      }
+      /**
+       * Bright over the far ground and gone by the time it has come
+       * round in front. The ring is closed so that something is always
+       * over the horizon whichever way the player faces; without this
+       * the half of it standing between the player and the board reads
+       * as a hoop around the chunk rather than a curtain over it
+       */
+      const round = turned(oneU, oneV, camera.yaw);
+      const facing = Math.min(1, Math.max(0, (0.85 - round) / 0.45));
+
+      if (facing <= 0) {
+        continue;
+      }
+      folds.push({
+        corners: [
+          airOn(camera, oneU, oneV, RING.head),
+          airOn(camera, twoU, twoV, RING.head),
+          airOn(camera, twoU, twoV, low),
+          near,
+        ],
+        light: light * facing,
+        band,
+        scale: near.scale,
+      });
+    }
+  }
+  // Behind first, so a near fold is drawn over the far one it hides
+  folds.sort((one, other) => one.scale - other.scale);
+  return folds;
+}
+
+function paintCurtainOver(
   context: CanvasRenderingContext2D,
-  width: number,
-  height: number,
-  bands: string[],
+  curtain: Curtain,
+  camera: SkyCamera,
+  clock: number,
 ): void {
-  const radius = Math.max(width, height) * 0.62;
-  /**
-   * How far in each band sits, kept as a number rather than read back
-   * off the context. A width of zero is not a width the context
-   * accepts: it keeps whatever it had, and the bands then walk inward
-   * past nothing into a negative arc, which throws
-   */
-  const step = radius * 0.028;
+  const held = context.globalAlpha;
 
   context.globalCompositeOperation = 'screen';
-  context.lineWidth = step;
-  for (let band = 0; band < bands.length; band++) {
-    context.strokeStyle = `${bands[band]}44`;
+  for (const fold of foldsOf(curtain, camera, clock)) {
+    /**
+     * Built from this fold's own top and bottom rather than once for
+     * the whole band. The folds are drawn in depth order and stand at
+     * different heights, so a gradient built for one of them and used
+     * for the next is a picture that jumps every time the sort shuffles
+     */
+    const strip = context.createLinearGradient(0, fold.corners[0].y, 0, fold.corners[3].y);
+
+    for (const stop of curtain.stops) {
+      strip.addColorStop(
+        stop.at,
+        `${stop.colour}${Math.round(stop.alpha * 0xff)
+          .toString(16)
+          .padStart(2, '0')}`,
+      );
+    }
+    context.globalAlpha = held * fold.light;
+    context.fillStyle = strip;
     context.beginPath();
-    context.arc(width * 0.7, height * 1.05, radius - band * step, Math.PI, Math.PI * 2);
-    context.stroke();
+    context.moveTo(fold.corners[0].x, fold.corners[0].y);
+    for (const corner of fold.corners.slice(1)) {
+      context.lineTo(corner.x, corner.y);
+    }
+    context.closePath();
+    context.fill();
   }
+  context.globalAlpha = held;
+}
+
+function batchCurtainOver(
+  batch: QuadBatch,
+  curtain: Curtain,
+  camera: SkyCamera,
+  clock: number,
+  strength: number,
+): void {
+  const seconds = clock / 1000;
+
+  for (const fold of foldsOf(curtain, camera, clock)) {
+    const strip = curtainStrip(
+      fold.band,
+      Math.sin(seconds * 0.12 + fold.band) * 0.5 + 0.5,
+      curtain,
+    );
+
+    if (strip == null) {
+      continue;
+    }
+    batch.invalidate(strip);
+    batch.quad(
+      strip,
+      { x: 0, y: 0, width: 1, height: CURTAIN_STEPS },
+      fold.corners,
+      strength * fold.light,
+      undefined,
+      'smooth',
+      'screen',
+    );
+  }
+}
+
+/**
+ * A meteor given a bearing: it enters the world somewhere off the far
+ * side and crosses the board along a heading, rather than crossing the
+ * frame along a screen diagonal. Turn the camera and the shower runs
+ * the other way, which is the whole point of it having a direction
+ */
+const METEOR = { high: 0.95, low: 0.25, out: 2.4 };
+
+function worldMeteorAt(
+  shower: Shower,
+  which: number,
+  seconds: number,
+  camera: SkyCamera,
+): { head: QuadPoint; back: QuadPoint; light: number } | null {
+  const slot = seconds / shower.life + which * 0.61;
+  const cycle = Math.floor(slot);
+  const through = slot - cycle;
+  const seed = which * 977 + cycle;
+
+  // Not every slot flies: a sky where one crosses on a beat is a
+  // metronome rather than a shower
+  if (seeded(seed + 5) < 0.35) {
+    return null;
+  }
+
+  // They radiate from one quarter of the sky, so they run parallel
+  const bearing = Math.PI * 1.15 + (seeded(seed + 1) - 0.5) * 0.5;
+  const from = {
+    u: 0.5 + Math.cos(bearing) * -METEOR.out + (seeded(seed + 2) - 0.5) * 2.2,
+    v: 0.5 + Math.sin(bearing) * -METEOR.out + (seeded(seed + 3) - 0.5) * 1.4,
+  };
+  const step = { u: Math.cos(bearing) * METEOR.out * 2, v: Math.sin(bearing) * METEOR.out * 2 };
+  const at = (share: number): QuadPoint =>
+    airOn(
+      camera,
+      from.u + step.u * share,
+      from.v + step.v * share,
+      METEOR.high - (METEOR.high - METEOR.low) * share,
+    );
+  const behind = Math.min(shower.tail, through);
+
+  return {
+    head: at(through),
+    back: at(through - behind),
+    // Lit as it arrives and gone before it lands, so nothing ends
+    // abruptly in the middle of the picture
+    light: Math.min(1, through * 14) * Math.min(1, (1 - through) * 3.2),
+  };
 }
 
 /**
@@ -1084,15 +1391,229 @@ function curtainStrip(band: number, shift: number, curtain: Curtain): HTMLCanvas
 }
 
 /**
- * How many straight pieces a rainbow band is drawn in. The arc runs
- * half a turn across most of the picture, and this is where the join
- * between two pieces stops being visible
+ * A sheen: light split across the air, laid over the whole picture.
+ *
+ * A bow is not geometry here. The real one hangs at infinity and
+ * cannot be walked around, and built as an arch over the chunk it
+ * read as a hoop standing in the field. What one is to the eye is
+ * colour in the air, so it is drawn as colour in the air: bands that
+ * walk the picture, bend on the way, and slide as the camera turns.
+ *
+ * The field is arithmetic per pixel, which is a shader in everything
+ * but where it runs. It is worked out into a small canvas and
+ * stretched over the board, so it costs the same at any window size
+ * and lands in both the 2D pass and the batch.
  */
-const RAINBOW_STEPS = 48;
+interface Sheen {
+  /** How much of it, at the sky's strongest */
+  depth: number;
+  /** How many bands lie across the picture */
+  across: number;
+  /** And how many down it, which is what leans them */
+  down: number;
+  /** How fast the bands walk, in bands a second */
+  pace: number;
+  /** How far a band bends on its way down */
+  wobble: number;
+  /** 0 for the tint alone, 1 for the full spectrum */
+  colour: number;
+  /** What the colourless part of it is drawn in */
+  tint: string;
+  /**
+   * How many swells of light there are for one band of colour. Under
+   * one, so a swell carries the spectrum through it rather than
+   * lighting the same hue every time: tied to the colour's own wave
+   * the whole picture comes out one hue, which is a smear rather than
+   * a bow
+   */
+  swell: number;
+  /** How hard a swell's edge is: 1 is a breath, 3 is a rib */
+  edge: number;
+  /** How much it fades toward the bottom, where the ground is nearest */
+  crown: number;
+  mode: WashMode;
+}
+
+const SHEENS: Partial<Record<Weather, Sheen>> = {
+  /**
+   * The spectrum, leaning across the picture the way a bow's own
+   * bands do, and slow: a rainbow that shimmers quickly is an oil
+   * slick
+   */
+  [Weather.Rainbow]: {
+    depth: 0.36,
+    across: 3.2,
+    down: 1.6,
+    pace: 0.05,
+    wobble: 0.2,
+    colour: 1,
+    tint: '#ffffff',
+    swell: 0.42,
+    edge: 1.3,
+    crown: 0.75,
+    mode: 'lift',
+  },
+  /**
+   * The same field with the colour drained. The drops a fogbow stands
+   * in are too small to split the light, so it comes out white and
+   * broad, with barely a blush left at its edges
+   */
+  [Weather.Fogbow]: {
+    depth: 0.28,
+    across: 2.4,
+    down: 1.2,
+    pace: 0.04,
+    wobble: 0.16,
+    colour: 0.12,
+    tint: '#eef2fa',
+    swell: 0.42,
+    edge: 1.7,
+    crown: 0.9,
+    mode: 'lift',
+  },
+  /**
+   * Not a bow: a mirage is layered air, so its bands lie flat and
+   * stack, and they bend far more than they walk. What it should look
+   * like is the country coming apart in strata, which is what heat
+   * over a road does
+   */
+  [Weather.FataMorgana]: {
+    depth: 0.22,
+    across: 0.12,
+    down: 7,
+    pace: 0.09,
+    wobble: 0.4,
+    colour: 0.08,
+    tint: '#f7e9cd',
+    swell: 1,
+    edge: 2.6,
+    crown: 0.5,
+    mode: 'veil',
+  },
+};
+
+/** How fine the field is worked out before it is stretched over the picture */
+const SHEEN_WIDE = 96;
+const SHEEN_TALL = 64;
+
+/** How far the field slides for a radian of camera, in bands */
+const SHEEN_TURN = 0.5;
+
+/** A `#rrggbb` tint as three numbers, so the field can mix with it */
+function tintOf(colour: string): [number, number, number] {
+  const value = Number.parseInt(colour.slice(1), 16);
+
+  return [(value >> 16) & 0xff, (value >> 8) & 0xff, value & 0xff];
+}
+
+let sheenSheet: HTMLCanvasElement | null = null;
 
 /**
- * The aurora and the rainbow, written into a batch. Both are lifted
- * rather than laid on, the way they are painted
+ * The field, written a pixel at a time. Colour goes in the pixel and
+ * the light goes in its alpha, so the sheet is stretched and blended
+ * rather than read back
+ */
+function sheenField(sheen: Sheen, clock: number, yaw: number): HTMLCanvasElement | null {
+  const made = sheenSheet ?? document.createElement('canvas');
+
+  made.width = SHEEN_WIDE;
+  made.height = SHEEN_TALL;
+  sheenSheet = made;
+
+  const into = made.getContext('2d');
+
+  if (into == null) {
+    return null;
+  }
+  const image = into.createImageData(SHEEN_WIDE, SHEEN_TALL);
+  const seconds = clock / 1000;
+  const slide = seconds * sheen.pace + yaw * SHEEN_TURN;
+  const [tintRed, tintGreen, tintBlue] = tintOf(sheen.tint);
+  const turn = Math.PI * 2;
+  let at = 0;
+
+  for (let y = 0; y < SHEEN_TALL; y++) {
+    const down = y / (SHEEN_TALL - 1);
+    const crown = (1 - down) ** sheen.crown;
+    // The bend is the row's, not the pixel's: a band curves because
+    // its own line moves as it goes down, not because the colour does
+    const bend = Math.sin(down * 5.3 + seconds * sheen.pace * 2.1) * sheen.wobble;
+
+    for (let x = 0; x < SHEEN_WIDE; x++) {
+      const phase = (x / (SHEEN_WIDE - 1)) * sheen.across + down * sheen.down + slide + bend;
+      const light = (0.5 + 0.5 * Math.sin(phase * sheen.swell * turn)) ** sheen.edge * crown;
+      // The spectrum as three offset waves, which is a hue wheel with
+      // none of the arithmetic of one
+      const red = 0.5 + 0.5 * Math.cos(turn * phase);
+      const green = 0.5 + 0.5 * Math.cos(turn * (phase - 1 / 3));
+      const blue = 0.5 + 0.5 * Math.cos(turn * (phase - 2 / 3));
+
+      image.data[at] = tintRed + (red * 0xff - tintRed) * sheen.colour;
+      image.data[at + 1] = tintGreen + (green * 0xff - tintGreen) * sheen.colour;
+      image.data[at + 2] = tintBlue + (blue * 0xff - tintBlue) * sheen.colour;
+      image.data[at + 3] = light * 0xff;
+      at += 4;
+    }
+  }
+  into.putImageData(image, 0, 0);
+  return made;
+}
+
+function paintSheen(
+  context: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  sheen: Sheen,
+  clock: number,
+  yaw: number,
+  strength: number,
+): void {
+  const field = sheenField(sheen, clock, yaw);
+
+  if (field == null) {
+    return;
+  }
+  context.globalCompositeOperation = MODES[sheen.mode];
+  context.globalAlpha = sheen.depth * strength;
+  context.drawImage(field, 0, 0, width, height);
+  context.globalAlpha = strength;
+  context.globalCompositeOperation = 'source-over';
+}
+
+function batchSheen(
+  batch: QuadBatch,
+  width: number,
+  height: number,
+  sheen: Sheen,
+  clock: number,
+  yaw: number,
+  strength: number,
+): void {
+  const field = sheenField(sheen, clock, yaw);
+
+  if (field == null) {
+    return;
+  }
+  batch.invalidate(field);
+  batch.quad(
+    field,
+    { x: 0, y: 0, width: SHEEN_WIDE, height: SHEEN_TALL },
+    [
+      { x: 0, y: 0 },
+      { x: width, y: 0 },
+      { x: width, y: height },
+      { x: 0, y: height },
+    ],
+    sheen.depth * strength,
+    undefined,
+    'smooth',
+    BLENDS[sheen.mode],
+  );
+}
+
+/**
+ * The aurora, the bows and the mirage, written into a batch. All of
+ * them are lifted rather than laid on, the way they are painted
  */
 function batchLights(
   batch: QuadBatch,
@@ -1101,11 +1622,14 @@ function batchLights(
   weather: Weather,
   clock: number,
   strength: number,
+  camera?: SkyCamera,
 ): void {
   const curtain = CURTAINS[weather];
-  const arc = ARCS[weather];
+  const sheen = SHEENS[weather];
 
-  if (curtain != null) {
+  if (curtain != null && camera != null) {
+    batchCurtainOver(batch, curtain, camera, clock, strength);
+  } else if (curtain != null) {
     const seconds = clock / 1000;
     const across = width / curtain.ribs;
 
@@ -1150,7 +1674,10 @@ function batchLights(
     const zoom = zoomFor(width, height);
 
     for (let which = 0; which < shower.count; which++) {
-      const flying = meteorAt(shower, which, width, height, seconds);
+      const flying =
+        camera == null
+          ? meteorAt(shower, which, width, height, seconds)
+          : worldMeteorAt(shower, which, seconds, camera);
 
       if (flying == null) {
         continue;
@@ -1174,27 +1701,8 @@ function batchLights(
       }
     }
   }
-  if (arc == null) {
-    return;
-  }
-  // Straight pieces rather than a stroked arc: the batch has no
-  // curves, and half a turn cut this fine is a curve at the width
-  // these bands are drawn
-  const radius = Math.max(width, height) * 0.62;
-  const step = radius * 0.028;
-  const middle = { x: width * 0.7, y: height * 1.05 };
-
-  for (let band = 0; band < arc.length; band++) {
-    const reach = radius - band * step;
-    const along = (piece: number): { x: number; y: number } => {
-      const angle = Math.PI + (Math.PI * piece) / RAINBOW_STEPS;
-
-      return { x: middle.x + Math.cos(angle) * reach, y: middle.y + Math.sin(angle) * reach };
-    };
-
-    for (let piece = 0; piece < RAINBOW_STEPS; piece++) {
-      batch.line(`${arc[band]}44`, along(piece), along(piece + 1), step, strength, 'screen');
-    }
+  if (sheen != null) {
+    batchSheen(batch, width, height, sheen, clock, camera?.yaw ?? 0, strength);
   }
 }
 
@@ -1210,6 +1718,7 @@ export function batchWash(
   clock: number,
   strength = 1,
   lamps: Lamp[] = [],
+  camera?: SkyCamera,
 ): boolean {
   if (weather === Weather.Clear || strength <= 0 || !(width > 0) || !(height > 0)) {
     return false;
@@ -1267,17 +1776,16 @@ export function batchWash(
       'screen',
     );
   }
-  batchLights(batch, width, height, weather, clock, strength);
+  batchLights(batch, width, height, weather, clock, strength, camera);
   return true;
 }
 
 /**
  * The fall, written into a batch instead of stroked.
  *
- * Every sky is drawn drop by drop here, tiled or not: the tiling was
- * only ever a way of not paying for eleven thousand strokes, and a
- * batch does not charge for them. What it gives back is the pace each
- * drop had of its own, which two scrolling sheets could only pretend at.
+ * Every sky is drawn drop by drop here: a batch does not charge for a
+ * stroke the way a tessellated path does, and every drop keeps the
+ * pace of its own that two scrolling sheets could only pretend at.
  *
  * Answers whether it drew anything, so a caller knows not to stroke it
  */
@@ -1288,8 +1796,9 @@ export function batchSky(
   weather: Weather,
   clock: number,
   strength = 1,
+  camera?: SkyCamera,
 ): boolean {
-  const fall = FALLS[weather];
+  const fall = FALL_TABLE[weather];
 
   if (fall == null || strength <= 0 || !(width > 0) || !(height > 0)) {
     return false;
@@ -1297,26 +1806,33 @@ export function batchSky(
   const zoom = zoomFor(width, height);
   const dots = fall.length <= 0;
   const thickness = fall.thickness * zoom;
+  const stamp = dots ? roundDrop() : null;
 
-  if (!dots) {
-    eachDrop(width, height, fall, clock, zoom, (x, y, tipX, tipY) => {
-      batch.line(fall.colour, { x, y }, { x: tipX, y: tipY }, thickness, strength);
-    });
-    return true;
-  }
-
-  const stamp = roundDrop();
-
-  if (stamp == null) {
+  if (dots && stamp == null) {
     return false;
   }
-  // The stroked pass draws these as a round cap, whose width is the
+  // The stroked pass draws a round drop as a cap, whose width is the
   // whole diameter rather than the radius, so the square is that wide
   // too, grown by however much of the sheet the circle left over
-  const across = thickness * (DROP_SIZE / 2 / DROP_RADIUS);
+  const spread = DROP_SIZE / 2 / DROP_RADIUS;
   const source = { x: 0, y: 0, width: DROP_SIZE, height: DROP_SIZE };
 
-  eachDrop(width, height, fall, clock, zoom, (x, y) => {
+  /** One drop, at whatever size and strength its depth has left it */
+  const put = (
+    x: number,
+    y: number,
+    tipX: number,
+    tipY: number,
+    wide: number,
+    alpha: number,
+  ): void => {
+    if (stamp == null) {
+      batch.line(fall.colour, { x, y }, { x: tipX, y: tipY }, wide, alpha);
+      return;
+    }
+
+    const across = wide * spread;
+
     batch.quad(
       stamp,
       source,
@@ -1326,10 +1842,21 @@ export function batchSky(
         { x: x + across, y: y + across },
         { x: x - across, y: y + across },
       ],
-      strength,
+      alpha,
       fall.colour,
       'smooth',
     );
+  };
+
+  if (camera == null) {
+    eachDrop(width, height, fall, clock, zoom, (x, y, tipX, tipY) => {
+      put(x, y, tipX, tipY, thickness, strength);
+    });
+    return true;
+  }
+
+  eachWorldDrop(width, height, camera, fall, clock, zoom, (x, y, tipX, tipY, scale, weight) => {
+    put(x, y, tipX, tipY, Math.max(0.4, thickness * scale), strength * weight);
   });
   return true;
 }
@@ -1348,6 +1875,7 @@ export default function paintSky(
   clock: number,
   strength = 1,
   lamps: Lamp[] = [],
+  camera?: SkyCamera,
 ): void {
   // A canvas with no size is a canvas mid-layout — a board hidden
   // behind a dialog measures zero until the dialog is gone — and
@@ -1356,7 +1884,7 @@ export default function paintSky(
     return;
   }
   const wash = WASHES[weather];
-  const fall = FALLS[weather];
+  const fall = FALL_TABLE[weather];
   const dark = LAMPLIT[weather];
 
   context.save();
@@ -1378,18 +1906,22 @@ export default function paintSky(
   context.globalCompositeOperation = 'source-over';
   context.globalAlpha = strength;
   const curtain = CURTAINS[weather];
-  const arc = ARCS[weather];
+  const sheen = SHEENS[weather];
   const shower = SHOWERS[weather];
   const lit = flashAt(weather, clock / 1000);
 
   if (curtain != null) {
-    paintCurtain(context, width, height, curtain, clock);
+    if (camera == null) {
+      paintCurtain(context, width, height, curtain, clock);
+    } else {
+      paintCurtainOver(context, curtain, camera, clock);
+    }
   }
-  if (arc != null) {
-    paintArc(context, width, height, arc);
+  if (sheen != null) {
+    paintSheen(context, width, height, sheen, clock, camera?.yaw ?? 0, strength);
   }
   if (shower != null) {
-    paintShower(context, width, height, shower, clock);
+    paintShower(context, width, height, shower, clock, camera);
   }
   // Lightning behind the rain rather than over it, which is where it
   // is: what a strike lights is the sky, and the fall is between the
@@ -1409,11 +1941,7 @@ export default function paintSky(
   if (fall != null) {
     const zoom = zoomFor(width, height);
 
-    if (fall.tiled === true) {
-      paintTiledFall(context, width, height, fall, clock, zoom);
-    } else {
-      paintFall(context, width, height, fall, clock, zoom);
-    }
+    paintFall(context, width, height, fall, clock, zoom, camera);
   }
   context.restore();
 }

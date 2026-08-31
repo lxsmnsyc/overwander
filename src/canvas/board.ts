@@ -1,5 +1,5 @@
 import { CHUNK_CELLS } from '../overworld/chunk';
-import { GROUND_DEPTH, PITCH } from './tilt';
+import { GROUND_DEPTH, GROUND_RISE, PITCH } from './tilt';
 
 /**
  * The chunk seen from a chair rather than from a satellite: the ground
@@ -22,6 +22,13 @@ export { PITCH };
  * is all of it; edge-on it is none
  */
 const DEPTH = GROUND_DEPTH;
+
+/**
+ * And how much of a step into the air survives it. Half of what a step
+ * across the board is worth, at this tilt: a drop ten cells up is
+ * drawn five cells above where it will land
+ */
+const RISE = GROUND_RISE;
 
 /**
  * How far the camera stands back, in board widths — what makes the far
@@ -91,12 +98,14 @@ function scaleAt(v: number): number {
  * The projection, before it is fitted to the canvas: the board's
  * middle at the origin, one unit wide
  */
-function raw(point: GroundPoint): ProjectedPoint {
+function raw(point: GroundPoint, height = 0): ProjectedPoint {
   const scale = scaleAt(point.v);
 
   return {
     x: (point.u - 0.5) * scale,
-    y: (point.v - 0.5) * DEPTH * scale,
+    // Depth pushes a point up the picture and so does height, each
+    // laid back by its own half of the tilt
+    y: ((point.v - 0.5) * DEPTH - height * RISE) * scale,
     scale,
   };
 }
@@ -285,7 +294,21 @@ export function fitPicture(
  * canvas' resolution, its size on screen, and the box a test measures
  */
 export function projectGround(point: GroundPoint, yaw: Yaw = 0): ProjectedPoint {
-  const projected = raw(turn(point, yaw));
+  return projectAir(point, 0, yaw);
+}
+
+/**
+ * The same, for a point standing **above** the ground rather than on
+ * it. `height` is in board widths, so a drop at 1 is as high as the
+ * chunk is wide.
+ *
+ * The fit rides home the same way it does for the ground, so a thing
+ * in the air is drawn at the scale of the board under it: the sky and
+ * the board give up the same room as the camera walks round, and
+ * nothing slides against anything else
+ */
+export function projectAir(point: GroundPoint, height: number, yaw: Yaw = 0): ProjectedPoint {
+  const projected = raw(turn(point, yaw), height);
   // Drawn toward the middle of the picture by however much the board
   // has given up at this angle. Whatever is standing on it gives up
   // the same, which is why the factor rides home on `scale`: a pokemon
@@ -558,6 +581,18 @@ export function angleOf(point: GroundPoint): number {
 export function radiusOf(point: GroundPoint): number {
   return Math.hypot(point.u - 0.5, point.v - 0.5);
 }
+
+/**
+ * How near the middle of the board a grab has to be before it is not
+ * worth turning by.
+ *
+ * The board turns about its own middle, so a bit of plane grabbed
+ * right at the centre has no angle to speak of: a pixel of movement
+ * there would swing it half a turn. A grab inside this holds the
+ * board still until the pointer has been dragged out past it, which
+ * is what a hand on a turntable does
+ */
+export const TURN_DEAD_ZONE = 0.06;
 
 /**
  * The shortest way round from one angle to another. Turning the board

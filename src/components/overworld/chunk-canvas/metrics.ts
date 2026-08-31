@@ -163,6 +163,12 @@ export const CELL_STRIDE = 32;
 export const LOADING_LABEL = 'Loading…';
 export const LOADING_SIZE = 18;
 
+/**
+ * How heavy a called-out cell is ruled, in pixels. The grid under it
+ * is one, so anything at two reads as the grid drawn twice
+ */
+export const MARK_WEIGHT = 3;
+
 export const COLORS = {
   grid: 'rgba(0, 0, 0, 0.12)',
   /**
@@ -179,8 +185,8 @@ export const COLORS = {
   glyph: '#1c1c1c',
   landmark: 'rgba(255, 255, 255, 0.65)',
   /**
-   * The ring on the cell under somebody standing at a landmark, which
-   * says which kind of person they are.
+   * The cell under somebody standing at a landmark, called out in the
+   * colour of what walking up to them does.
    *
    * Once the charsets load, a nurse and a Rocket grunt are two people
    * standing on two cells and nothing on the board tells them apart —
@@ -190,10 +196,11 @@ export const COLORS = {
    */
   fight: 'rgba(230, 40, 41, 0.8)',
   serve: 'rgba(41, 128, 239, 0.8)',
-  /** Under both, so a ring reads on pale ground as well as on dark */
+  /** Under every mark, so one reads on pale ground as well as on dark */
   ringShade: 'rgba(0, 0, 0, 0.28)',
   /**
    * The keyboard's own pointer, drawn only while the canvas has focus
+   * and never on the cell the player is already standing in
    */
   cursor: '#3b82f6',
   /**
@@ -230,18 +237,6 @@ export const COLORS = {
    */
   surface: 'rgba(255, 255, 255, 0.10)',
 } as const;
-
-/**
- * How near the middle of the board a grab has to be before it is not
- * worth turning by.
- *
- * The board turns about its own middle, so a bit of plane grabbed
- * right at the centre has no angle to speak of: a pixel of movement
- * there would swing it half a turn. A grab inside this holds the
- * board still until the pointer has been dragged out past it, which
- * is what a hand on a turntable does
- */
-export const TURN_DEAD_ZONE = 0.06;
 
 /**
  * How tall a compass mark is on the reference picture, from its base

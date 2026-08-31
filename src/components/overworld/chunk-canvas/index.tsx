@@ -4,6 +4,7 @@ import {
   BORDER_CELLS,
   type BoardCell,
   type ProjectedPoint,
+  TURN_DEAD_ZONE,
   angleOf,
   boardCellAtFraction,
   boardCellOf,
@@ -91,6 +92,7 @@ import {
   GROUND_SQUASH,
   LOADING_LABEL,
   LOADING_SIZE,
+  MARK_WEIGHT,
   MOVE_KEYS,
   NPC_CELLS,
   PICKED_STAGE,
@@ -101,7 +103,6 @@ import {
   SCENERY_CELLS,
   SNAP_CELLS,
   SPRITE_STANDS,
-  TURN_DEAD_ZONE,
   WIDTH,
   compassArrow,
   grownArrow,
@@ -112,16 +113,13 @@ import {
 import {
   SHADOW_STAMP,
   type SpawnCoat,
-  bakePersonRing,
   bakeShadowDisc,
   bakeWord,
-  drawPersonRing,
   drawPhenomenon,
   facingOf,
   isFightingLandmark,
   paintPhenomenon,
   paintSparkle,
-  personRingSpan,
   phenomenonSpan,
 } from './scenery';
 
@@ -1694,6 +1692,28 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       };
 
       /**
+       * A cell called out in a colour: the mark the keyboard leaves
+       * under the cell it is pointing at, lent to anything else that
+       * needs a cell to stand out. On a dark line under the coloured
+       * one, so it reads on snow as well as on grass
+       */
+      const callOut = (corners: ProjectedPoint[], colour: string): void => {
+        if (batch != null) {
+          batch.outline(COLORS.ringShade, corners, MARK_WEIGHT + 2);
+          batch.outline(colour, corners, MARK_WEIGHT);
+          return;
+        }
+        traceQuad(corners);
+        context.strokeStyle = COLORS.ringShade;
+        context.lineWidth = MARK_WEIGHT + 2;
+        context.stroke();
+        context.strokeStyle = colour;
+        context.lineWidth = MARK_WEIGHT;
+        context.stroke();
+        context.lineWidth = 1;
+      };
+
+      /**
        * A round patch of one colour, where a sheet has not landed and
        * a circle is what stands in for it. One baked disc stamped and
        * tinted, which is what every round thing on this board is
@@ -1818,23 +1838,13 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         // Somebody standing there is drawn with the rest of what
         // stands, in paint order — so the letter under their feet as
         // well would be the cell saying the same thing twice. What the
-        // letter did say is kept as a ring: which sort of person this
-        // is, which the coat they are drawn in does not tell anybody
+        // letter did say is kept as the cell itself, called out in the
+        // game's own two colours: ember for a fight, tide for a
+        // counter, which the coat they are drawn in does not tell
+        // anybody
         if (drawnAsPerson(index)) {
           if (landmark != null) {
-            const middle = at(projectCell(index, yaw()));
-            const fighting = isFightingLandmark(landmark);
-
-            if (
-              !stamp(
-                bakery.sheet,
-                bakePersonRing(bakery, fighting),
-                middle,
-                personRingSpan(middle, magnify),
-              )
-            ) {
-              drawPersonRing(context, middle, fighting, magnify);
-            }
+            callOut(outline, isFightingLandmark(landmark) ? COLORS.fight : COLORS.serve);
           }
           continue;
         }
@@ -2191,23 +2201,23 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         }
       }
 
-      // Over everything, and only while the keyboard is in here: what
-      // Enter would walk to. It is drawn last rather than in its own
-      // row, because it is a mark on the picture rather than a thing
-      // standing on the board — and the apron is as pressable as the
-      // chunk, so it has to be able to appear out there
-      if (focused()) {
-        const square = projectBoardCellQuad(cursor(), yaw()).map(at);
+      /**
+       * Over everything, and only while the keyboard is in here: what
+       * Enter would walk to. It is drawn last rather than in its own
+       * row, because it is a mark on the picture rather than a thing
+       * standing on the board — and the apron is as pressable as the
+       * chunk, so it has to be able to appear out there.
+       *
+       * Never on the player's own cell. The cursor rests there until
+       * it is moved, so drawing it would put a square under the
+       * character for as long as the board has focus, which says
+       * nothing: the character is already where the character is
+       */
+      const pointed = cursor();
+      const standing = boardCellOf(props.player);
 
-        if (batch == null) {
-          traceQuad(square);
-          context.strokeStyle = COLORS.cursor;
-          context.lineWidth = 3;
-          context.stroke();
-          context.lineWidth = 1;
-        } else {
-          batch.outline(COLORS.cursor, square, 3);
-        }
+      if (focused() && (pointed.x !== standing.x || pointed.y !== standing.y)) {
+        callOut(projectBoardCellQuad(pointed, yaw()).map(at), COLORS.cursor);
       }
 
       // A border while the keyboard is in here. It is not decoration:
@@ -2243,13 +2253,17 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       // Then the sky, over the light rather than under it: rain at
       // dusk is dusk seen through rain. Its own colour first and the
       // fall after it, the order they were always drawn in
+      // Where the board is and which way round it is, so the weather
+      // can stand in the world rather than on the glass
+      const sky = { yaw: yaw(), ...placed };
+
       if (batch == null) {
         paintAmbient(context, screen.width, screen.height, worldTime(), props.latitude);
-        paintSky(context, screen.width, screen.height, props.weather, clock, 1, lamps);
+        paintSky(context, screen.width, screen.height, props.weather, clock, 1, lamps, sky);
       } else {
         batchAmbient(batch, screen.width, screen.height, worldTime(), props.latitude);
-        batchWash(batch, screen.width, screen.height, props.weather, clock, 1, lamps);
-        batchSky(batch, screen.width, screen.height, props.weather, clock);
+        batchWash(batch, screen.width, screen.height, props.weather, clock, 1, lamps, sky);
+        batchSky(batch, screen.width, screen.height, props.weather, clock, 1, sky);
       }
 
       /**

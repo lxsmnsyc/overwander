@@ -5,7 +5,7 @@ import Phenomenon from '../../../data/overworld/phenomenon';
 import drawSparkle, { SPARKLE_SPREAD, SPARKLE_STAR_SIZE } from '../../../canvas/sparkle';
 import type Bakery from '../../../canvas/bakery';
 import type { Baked } from '../../../canvas/bakery';
-import { CELL, COLORS, GROUND_SQUASH } from './metrics';
+import { CELL } from './metrics';
 
 /**
  * What a cell wears besides its scenery: what is going on there, and
@@ -226,89 +226,11 @@ export function isFightingLandmark(landmark: Landmark): boolean {
 }
 
 /**
- * The ring under somebody's feet saying which kind of person they are.
- *
- * A charset is a person in a coat and says nothing about what walking
- * up to them does. The letter that used to say it is gone the moment
- * the sheet loads — a person is drawn instead of the disc — so the
- * cell keeps the answer instead, lying on the ground under them where
- * it cannot cover the sprite.
- *
- * Squashed the way everything lying on this board is, and drawn on a
- * dark line so it reads on snow as well as on grass
+ * How wide a piece is baked. Baked large and stamped smaller, since a
+ * cell near the camera is a good deal bigger than one at the back and
+ * one picture serves both
  */
-export function drawPersonRing(
-  context: CanvasRenderingContext2D,
-  spot: { x: number; y: number; scale: number },
-  fighting: boolean,
-  magnify: number,
-): void {
-  const radius = CELL * 0.34 * spot.scale * magnify;
-
-  if (radius <= 0) {
-    return;
-  }
-  context.save();
-  context.translate(spot.x, spot.y);
-  context.scale(1, GROUND_SQUASH);
-  context.beginPath();
-  context.arc(0, 0, radius, 0, Math.PI * 2);
-  context.restore();
-
-  context.lineWidth = Math.max(1, radius * 0.32);
-  context.strokeStyle = COLORS.ringShade;
-  context.stroke();
-  context.lineWidth = Math.max(1, radius * 0.18);
-  context.strokeStyle = fighting ? COLORS.fight : COLORS.serve;
-  context.stroke();
-  // Put back the pen everything else on the board draws with
-  context.lineWidth = 1;
-}
-
-/**
- * Baking the art above into pictures.
- *
- * Every painter here draws around a point and sizes itself off
- * `CELL * spot.scale * magnify`, so a piece baked with a scale of one
- * and a chosen magnify is the same drawing at a known size. Drawn back
- * as a square around the same point, scaled by whatever that cell's
- * own scale and magnify come to, it is the picture it always was.
- *
- * Baked large and drawn smaller, since a cell near the camera is a
- * good deal bigger than one at the back and one picture serves both
- */
-
-/** How wide a piece is baked. Every span below is a share of it */
 const BAKED = 96;
-
-/** What a painter needs as `magnify` to fill a `BAKED` box at `span` */
-function bakeMagnify(span: number): number {
-  return BAKED / (span * CELL);
-}
-
-/** The middle of a baked box, which is where a painter is told it is */
-const MIDDLE = { x: 0, y: 0, scale: 1 };
-
-/**
- * How wide on the board a baked piece is drawn, for a painter whose
- * art spans `span` cells at a scale and magnify of one
- */
-function spanOf(span: number, spot: { scale: number }, magnify: number): number {
-  return span * CELL * spot.scale * magnify;
-}
-
-/** The ring is 0.34 of a cell in radius, on a line of its own */
-const RING_SPAN = 0.78;
-
-export function bakePersonRing(bakery: Bakery, fighting: boolean): Baked | null {
-  return bakery.take(`ring:${fighting ? 'fight' : 'talk'}`, BAKED, (context) => {
-    drawPersonRing(context, MIDDLE, fighting, bakeMagnify(RING_SPAN));
-  });
-}
-
-export function personRingSpan(spot: { scale: number }, magnify: number): number {
-  return spanOf(RING_SPAN, spot, magnify);
-}
 
 /**
  * The phenomena, repainted into a picture each frame.

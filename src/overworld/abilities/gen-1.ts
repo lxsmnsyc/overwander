@@ -111,7 +111,7 @@ const setupPickup = createBuddyAbility(Abilities.Pickup, (overworld) => {
  * How much further a player sees in the dark with an Illuminate buddy
  * at their side, as a multiple of what they would see alone
  */
-export const ILLUMINATE_LAMP_REACH = 2.2;
+export const ILLUMINATE_LAMP_CELLS = 2;
 
 /**
  * Illuminate, out here, is a lantern as well as a lure: under a sky
@@ -124,7 +124,7 @@ export const ILLUMINATE_LAMP_REACH = 2.2;
  */
 const setupIlluminate = createBuddyAbility(Abilities.Illuminate, (overworld) => {
   overworld.on(OverworldEvents.CheckLampReach, EventPriority.Exact, (event) => {
-    event.reach = event.base * ILLUMINATE_LAMP_REACH;
+    event.reach = ILLUMINATE_LAMP_CELLS;
   });
 });
 

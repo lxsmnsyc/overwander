@@ -2,6 +2,7 @@ import { useSearchParams } from '@solidjs/router';
 import { For, type JSX, Show, createEffect, createSignal, onCleanup } from 'solid-js';
 import { Badge, Button, Meta, Note, Row, Select, Slider, Switch } from '../styled';
 import Weather, {
+  DARK_DAY_LAMP_CELLS,
   WEATHER_DESCRIPTIONS,
   WEATHER_NAMES,
   WEATHER_TYPES,
@@ -15,7 +16,19 @@ import Weather, {
 import { BIOME_COLORS, BIOME_NAMES } from '../../data/biome';
 import Biome from '../../data/ids/biome';
 import QuadBatch from '../../canvas/gl/quad-batch';
-import paintSky, { type Lamp, batchSky, batchWash } from '../../canvas/sky';
+import type { QuadPoint } from '../../canvas/gl/quad-batch';
+import paintSky, { type Lamp, type SkyCamera, batchSky, batchWash } from '../../canvas/sky';
+import {
+  PICTURE_SPAN,
+  TURN_DEAD_ZONE,
+  angleOf,
+  fitPicture,
+  projectAir,
+  radiusOf,
+  shortestTurn,
+  unprojectGround,
+} from '../../canvas/board';
+import createTwist from '../../canvas/twist';
 import { TYPE_NAMES } from '../../data/constants/types';
 
 /**
@@ -43,17 +56,31 @@ const DEFAULT_GROUND = Biome.Grassland;
 /** A step, for looking at one moment of a fall at a time */
 const STEP = 100;
 
-/** How wide the checker's squares are, in drawn pixels */
+/** How wide the checker's squares are, in drawn pixels, off the board */
 const CHECK = 48;
+
+/** How many cells the board is across, which is what the chunk is */
+const CELLS = 16;
 
 /** How much darker the checker's other square is */
 const CHECK_SHADE = 0.12;
 
 /**
+ * And how much darker the country beyond the board is. The overworld
+ * fills the screen with the biome's own colour and stands the board on
+ * it; a little off it here is what keeps the board readable when the
+ * checker is turned off
+ */
+const BEYOND_SHADE = 0.25;
+
+/**
  * Marks standing on the ground, where the board would have landmarks
  * and pokemon. They are here for one sky: a dark day is drawn as a
  * dark room with a lamp over everything worth walking to, and with an
- * empty field under it there would be nothing to light
+ * empty field under it there would be nothing to light.
+ *
+ * Read as board fractions rather than screen ones, so on the board
+ * they stand on cells and turn with it
  */
 const MARKS: { x: number; y: number }[] = [
   { x: 0.22, y: 0.34 },
@@ -87,12 +114,104 @@ function shadeOf(colour: string, amount: number): string {
   return `#${((red << 16) | (green << 8) | blue).toString(16).padStart(6, '0')}`;
 }
 
+/** One cell of the board, laid out ready for either painter */
+interface Cell {
+  corners: QuadPoint[];
+  dark: boolean;
+}
+
+/**
+ * The board, cell by cell, through the same camera the sky goes
+ * through. It is a trapezoid rather than a rectangle, and every cell
+ * is its own quad: the two far corners of one sit closer together
+ * than its two near ones, which is the whole of what makes the ground
+ * read as ground
+ */
+function boardCells(placed: ReturnType<typeof fitPicture>, yaw: number): Cell[] {
+  const at = (u: number, v: number): QuadPoint => {
+    const point = projectAir({ u, v }, 0, yaw);
+
+    return { x: placed.x + point.x * placed.width, y: placed.y + point.y * placed.height };
+  };
+  // Every corner once, since each is shared by up to four cells
+  const grid: QuadPoint[][] = [];
+
+  for (let down = 0; down <= CELLS; down++) {
+    const row: QuadPoint[] = [];
+
+    for (let across = 0; across <= CELLS; across++) {
+      row.push(at(across / CELLS, down / CELLS));
+    }
+    grid.push(row);
+  }
+
+  const cells: Cell[] = [];
+
+  for (let down = 0; down < CELLS; down++) {
+    for (let across = 0; across < CELLS; across++) {
+      cells.push({
+        corners: [
+          grid[down][across],
+          grid[down][across + 1],
+          grid[down + 1][across + 1],
+          grid[down + 1][across],
+        ],
+        dark: (across + down) % 2 === 1,
+      });
+    }
+  }
+  return cells;
+}
+
+/**
+ * Where a mark stands and how far its lamp reaches.
+ *
+ * The lamp is the board's own: cells rather than a share of the
+ * window, so a dark day here is lit exactly as far as a dark day in
+ * the world is, which is the only reason to look at one on this page
+ */
+function marksOn(
+  placed: ReturnType<typeof fitPicture>,
+  yaw: number,
+): { x: number; y: number; wide: number; reach: number }[] {
+  const cell = placed.width / PICTURE_SPAN / CELLS;
+
+  return MARKS.map((mark) => {
+    const point = projectAir({ u: mark.x, v: mark.y }, 0, yaw);
+
+    return {
+      x: placed.x + point.x * placed.width,
+      y: placed.y + point.y * placed.height,
+      // A mark on a near cell is a larger mark, the same as everything
+      // else standing on the board
+      // A cell across, since that is what a landmark on the board is.
+      // Drawn at the share of the window the flat ground uses them at,
+      // a mark would be four cells wide and its lamp would look like a
+      // pinhole beside it
+      wide: cell * 0.5 * point.scale,
+      reach: cell * DARK_DAY_LAMP_CELLS * point.scale,
+    };
+  });
+}
+
 export interface SkyStageProps {
   weather: Weather;
   strength: number;
   ground: Biome;
   checkered: boolean;
   running: boolean;
+  /**
+   * Whether the ground is the board rather than a flat country.
+   *
+   * The sky is weather standing in the world now, so it needs a camera
+   * to stand in front of; without one it falls back to the flat sky it
+   * used to be. Both are worth being able to look at, which is why
+   * this is a switch and not a rewrite
+   */
+  board: boolean;
+  /** Which way the camera has been walked round, in radians */
+  yaw: number;
+  onTurn: (yaw: number) => void;
   /** Steps the clock has been nudged by, while it is stopped */
   stepped: number;
   /** Whether to draw through WebGL rather than the 2D fallback */
@@ -162,18 +281,46 @@ function SkyStage(props: SkyStageProps): JSX.Element {
       const columns = Math.ceil(width / CHECK);
       const rows = Math.ceil(height / CHECK);
       const wide = Math.min(width, height) * MARK_SIZE;
-      const marks = MARKS.map((mark) => ({ x: mark.x * width, y: mark.y * height }));
-      const lamps: Lamp[] = marks.map((mark) => ({ ...mark, reach: wide * MARK_REACH }));
+      const placed = fitPicture(width, height);
+      /**
+       * The camera the sky stands in front of, where there is a board
+       * to stand it on. Without one every painter falls back to the
+       * flat sky, which is the other half of what this page is for
+       */
+      const camera: SkyCamera | undefined = props.board ? { yaw: props.yaw, ...placed } : undefined;
+      const cells = props.board ? boardCells(placed, props.yaw) : [];
+      const marks = props.board
+        ? marksOn(placed, props.yaw)
+        : MARKS.map((mark) => ({
+            x: mark.x * width,
+            y: mark.y * height,
+            wide,
+            reach: wide * MARK_REACH,
+          }));
+      const lamps: Lamp[] = marks.map((mark) => ({
+        x: mark.x,
+        y: mark.y,
+        reach: mark.reach,
+      }));
 
       if (batch != null) {
         batch.begin(width, height, ratio);
-        batch.solid(country, [
+        // The country behind the board as well as under it: a wash is
+        // a multiply or a screen, and it lands on nothing without
+        // something opaque beneath it
+        batch.solid(props.board ? shadeOf(country, BEYOND_SHADE) : country, [
           { x: 0, y: 0 },
           { x: width, y: 0 },
           { x: width, y: height },
           { x: 0, y: height },
         ]);
-        if (props.checkered) {
+        if (props.board) {
+          for (const cell of cells) {
+            if (props.checkered || !cell.dark) {
+              batch.solid(cell.dark ? shade : country, cell.corners);
+            }
+          }
+        } else if (props.checkered) {
           for (let row = 0; row < rows; row++) {
             for (let column = row % 2; column < columns; column += 2) {
               const left = column * CHECK;
@@ -190,14 +337,14 @@ function SkyStage(props: SkyStageProps): JSX.Element {
         }
         for (const mark of marks) {
           batch.solid('#f4b63f', [
-            { x: mark.x - wide, y: mark.y - wide },
-            { x: mark.x + wide, y: mark.y - wide },
-            { x: mark.x + wide, y: mark.y + wide },
-            { x: mark.x - wide, y: mark.y + wide },
+            { x: mark.x - mark.wide, y: mark.y - mark.wide },
+            { x: mark.x + mark.wide, y: mark.y - mark.wide },
+            { x: mark.x + mark.wide, y: mark.y + mark.wide },
+            { x: mark.x - mark.wide, y: mark.y + mark.wide },
           ]);
         }
-        batchWash(batch, width, height, props.weather, clock, props.strength, lamps);
-        batchSky(batch, width, height, props.weather, clock, props.strength);
+        batchWash(batch, width, height, props.weather, clock, props.strength, lamps, camera);
+        batchSky(batch, width, height, props.weather, clock, props.strength, camera);
         batch.end();
         return;
       }
@@ -215,9 +362,23 @@ function SkyStage(props: SkyStageProps): JSX.Element {
       context.setTransform(ratio, 0, 0, ratio, 0, 0);
       context.globalCompositeOperation = 'source-over';
       context.globalAlpha = 1;
-      context.fillStyle = country;
+      context.fillStyle = props.board ? shadeOf(country, BEYOND_SHADE) : country;
       context.fillRect(0, 0, width, height);
-      if (props.checkered) {
+      if (props.board) {
+        for (const cell of cells) {
+          if (!props.checkered && cell.dark) {
+            continue;
+          }
+          context.fillStyle = cell.dark ? shade : country;
+          context.beginPath();
+          context.moveTo(cell.corners[0].x, cell.corners[0].y);
+          for (const corner of cell.corners.slice(1)) {
+            context.lineTo(corner.x, corner.y);
+          }
+          context.closePath();
+          context.fill();
+        }
+      } else if (props.checkered) {
         context.fillStyle = shade;
         for (let row = 0; row < rows; row++) {
           for (let column = row % 2; column < columns; column += 2) {
@@ -227,9 +388,9 @@ function SkyStage(props: SkyStageProps): JSX.Element {
       }
       context.fillStyle = '#f4b63f';
       for (const mark of marks) {
-        context.fillRect(mark.x - wide, mark.y - wide, wide * 2, wide * 2);
+        context.fillRect(mark.x - mark.wide, mark.y - mark.wide, mark.wide * 2, mark.wide * 2);
       }
-      paintSky(context, width, height, props.weather, clock, props.strength, lamps);
+      paintSky(context, width, height, props.weather, clock, props.strength, lamps, camera);
     };
 
     frame = requestAnimationFrame(paint);
@@ -240,7 +401,122 @@ function SkyStage(props: SkyStageProps): JSX.Element {
     });
   });
 
-  return <canvas ref={canvas} class="block size-full" />;
+  /** Two fingers, the same gesture the board itself takes */
+  const twist = createTwist();
+  /**
+   * The bit of ground being held, in the world's own angles, while a
+   * drag is in progress
+   */
+  let turning: number | null = null;
+
+  /** Where the pointer is, in fractions of the drawn picture */
+  const fractionAt = (event: PointerEvent): { x: number; y: number } | null => {
+    const element = canvas;
+
+    if (element == null) {
+      return null;
+    }
+
+    const bounds = element.getBoundingClientRect();
+    const frame = fitPicture(bounds.width, bounds.height);
+
+    if (frame.width === 0 || frame.height === 0) {
+      return null;
+    }
+    return {
+      x: (event.clientX - bounds.left - frame.x) / frame.width,
+      y: (event.clientY - bounds.top - frame.y) / frame.height,
+    };
+  };
+
+  /**
+   * Take hold of the plane. What is grabbed is a point on the ground
+   * rather than a number of pixels, so the board turns the way the
+   * hand pushed it and not the way the mouse went
+   */
+  const grab = (event: PointerEvent): number | null => {
+    const at = fractionAt(event);
+
+    if (at == null) {
+      return null;
+    }
+
+    const ground = unprojectGround(at.x, at.y, props.yaw);
+
+    return radiusOf(ground) < TURN_DEAD_ZONE ? null : angleOf(ground);
+  };
+
+  /**
+   * Turn the board so the grabbed point comes back under the pointer.
+   * The point is held in the world's angles and the pointer read in
+   * the camera's; the difference between the two is the yaw
+   */
+  const dragTo = (event: PointerEvent, grabbed: number): void => {
+    const at = fractionAt(event);
+
+    if (at == null) {
+      return;
+    }
+
+    const seen = unprojectGround(at.x, at.y, 0);
+
+    if (radiusOf(seen) < TURN_DEAD_ZONE) {
+      return;
+    }
+    props.onTurn(props.yaw + shortestTurn(props.yaw, angleOf(seen) - grabbed));
+  };
+
+  return (
+    <canvas
+      ref={canvas}
+      // The board turns under the sky here the way it does in the
+      // world, since what the sky standing in the world buys is only
+      // visible while the camera is moving
+      class={`block size-full ${props.board ? 'cursor-grab active:cursor-grabbing' : ''}`}
+      style={{ 'touch-action': 'none' }}
+      onPointerDown={(event) => {
+        if (!props.board) {
+          return;
+        }
+        twist.down(event);
+        if (twist.turning()) {
+          turning = null;
+          return;
+        }
+
+        const grabbed = grab(event);
+
+        if (grabbed == null) {
+          return;
+        }
+        turning = grabbed;
+        event.currentTarget.setPointerCapture(event.pointerId);
+      }}
+      onPointerMove={(event) => {
+        if (!props.board) {
+          return;
+        }
+
+        const spun = twist.move(event);
+
+        if (spun != null) {
+          props.onTurn(props.yaw + spun);
+          return;
+        }
+        if (turning != null) {
+          dragTo(event, turning);
+        }
+      }}
+      onPointerUp={(event) => {
+        twist.up(event);
+        turning = null;
+      }}
+      onPointerCancel={(event) => {
+        twist.up(event);
+        turning = null;
+      }}
+    />
+  );
 }
 
 export default function WeatherDemo(): JSX.Element {
@@ -284,6 +560,8 @@ export default function WeatherDemo(): JSX.Element {
   const [checkered, setCheckered] = createSignal(true);
   const [running, setRunning] = createSignal(true);
   const [webgl, setWebgl] = createSignal(true);
+  const [board, setBoard] = createSignal(true);
+  const [yaw, setYaw] = createSignal(0);
   const [stepped, setStepped] = createSignal(0);
   const [renderer, setRenderer] = createSignal('');
 
@@ -369,6 +647,11 @@ export default function WeatherDemo(): JSX.Element {
               checkered={checkered()}
               running={running()}
               stepped={stepped()}
+              board={board()}
+              yaw={yaw()}
+              onTurn={(angle) => {
+                setYaw(angle);
+              }}
               webgl={pass === 'gl'}
               onRenderer={(said) => {
                 setRenderer(said);
@@ -407,6 +690,13 @@ export default function WeatherDemo(): JSX.Element {
           Step {STEP}ms
         </Button>
         <Switch
+          label="On the board"
+          checked={board()}
+          onChange={(on) => {
+            setBoard(on);
+          }}
+        />
+        <Switch
           label="Checkered ground"
           checked={checkered()}
           onChange={(on) => {
@@ -423,10 +713,12 @@ export default function WeatherDemo(): JSX.Element {
       </Row>
 
       <Meta>
-        The same two painters the overworld uses, over a flat country instead of a board. Turn WebGL
-        off to see the 2D pass the board falls back to when a browser will not give a context, which
-        is the only way to catch the two drifting apart. The sky in the address is what is staged,
-        so a link is a demonstration.
+        The same two painters the overworld uses, over the same board. Drag it to walk the camera
+        round: the weather stands in the world rather than on the glass, so turning is the only way
+        to see what it is doing. Take it off the board for the flat sky every painter falls back to
+        without a camera, and turn WebGL off for the 2D pass the board falls back to when a browser
+        will not give a context, which is the only way to catch the two drifting apart. The sky in
+        the address is what is staged, so a link is a demonstration.
       </Meta>
     </main>
   );

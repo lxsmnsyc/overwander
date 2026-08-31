@@ -306,11 +306,13 @@ export const DARK_DAY_SHADOW_CHANCE = 1 / 3;
 /**
  * How far a player sees under a Dark Day, in cells, walking alone.
  *
- * Wide enough that whatever they are standing on is lit along with
- * the ground around it, and narrow enough that the board still reads
- * as dark. A buddy can widen it: see `ILLUMINATE_LAMP_REACH`
+ * Half a cell's diagonal, which is exactly the circle that holds one
+ * cell: whatever they are standing on is lit, corners and all, and
+ * nothing beyond it is. Under a sky this dark that is the difference
+ * between a board you read and a board you feel your way across. A
+ * buddy widens it: see `ILLUMINATE_LAMP_CELLS`
  */
-export const DARK_DAY_LAMP_CELLS = 1.7;
+export const DARK_DAY_LAMP_CELLS = Math.SQRT2 / 2;
 
 /** What this sky multiplies the odds of a hidden ability by */
 export function hiddenAbilityBoostOf(weather: Weather): number {

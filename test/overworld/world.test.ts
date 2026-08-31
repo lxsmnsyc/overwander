@@ -181,7 +181,7 @@ import { LURE_SPAWN_BONUS } from '../../src/overworld/abilities/__create';
 import {
   COMPOUND_EYES_HELD_BOOST,
   FLAME_BODY_FACTOR,
-  ILLUMINATE_LAMP_REACH,
+  ILLUMINATE_LAMP_CELLS,
   LEVEL_CEILING_LIFT,
   LEVEL_FLOOR_LIFT,
   PICKUP_STEP_INTERVAL,
@@ -1514,11 +1514,13 @@ describe('world', () => {
         createOverworld('player-uid', buddyWith([lure])).checkLampReach(DARK_DAY_LAMP_CELLS),
       ).toBe(DARK_DAY_LAMP_CELLS);
     }
+    // A lantern is a reach of its own rather than a multiple of the
+    // one it replaces: two cells, whatever a player walking alone sees
     expect(
       createOverworld('player-uid', buddyWith([Abilities.Illuminate])).checkLampReach(
         DARK_DAY_LAMP_CELLS,
       ),
-    ).toBeCloseTo(DARK_DAY_LAMP_CELLS * ILLUMINATE_LAMP_REACH);
+    ).toBeCloseTo(ILLUMINATE_LAMP_CELLS);
   });
 
   it('keeps a chunk quiet for a buddy that smells', () => {

@@ -1,6 +1,6 @@
 import { existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import deduper, { blankPixels, drawPictures, packedGrid } from '../src/server/sprites/dedupe.ts';
-import pack from '../src/server/sprites/packing.ts';
+import { packSmallest } from '../src/server/sprites/packing.ts';
 import decode, { encodeSmallest } from '../src/server/sprites/png.ts';
 
 /**
@@ -179,7 +179,7 @@ for (const { region, file } of DESCRIBED) {
   was += held.pictures.length;
   is += shared.pictures.length;
 
-  const layout = pack(
+  const layout = packSmallest(
     shared.pictures.map((picture, at) => ({ at, w: picture.width, h: picture.height })),
   );
   const spots: ({ x: number; y: number } | undefined)[] = [];

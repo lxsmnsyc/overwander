@@ -11,7 +11,7 @@ import type { Drawing } from './files';
 import { pokemonDestination, writeSheet } from './files';
 import type { FrameMarkers, Point, SpriteDirection } from './markers';
 import markersFor, { SPRITE_DIRECTIONS } from './markers';
-import pack from './packing';
+import { packSmallest } from './packing';
 import type { Raster } from './raster';
 import { blank, blit, decode, encode } from './raster';
 import type { Trim } from './trim';
@@ -486,7 +486,7 @@ export default async function processPmd(coats: Coats, options: PmdOptions): Pro
       coated.map((held) => held.coat).join(','),
     );
   }
-  const layout = pack(
+  const layout = packSmallest(
     shared.pictures.map((picture, at) => ({ at, w: picture.width, h: picture.height })),
   );
   const spots: ({ x: number; y: number } | undefined)[] = [];

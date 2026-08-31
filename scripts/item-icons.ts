@@ -1,7 +1,7 @@
 import { readFileSync, renameSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import decode, { type Image, encodeSmallest } from '../src/server/sprites/png.ts';
-import pack from '../src/server/sprites/packing.ts';
+import { packSmallest } from '../src/server/sprites/packing.ts';
 
 /**
  * Item pictures that no rip drew.
@@ -156,19 +156,6 @@ function areaOf(layout: Layout): number {
 }
 
 /**
- * How far from square a sheet may be. Rows at every width will happily
- * find a strip one picture wide, which is the tightest fit and the
- * worst sheet: the ones already in `public/` are all within about this
- */
-const MAX_ASPECT = 2.5;
-
-function shapely(layout: Layout): boolean {
-  return (
-    Math.max(layout.width, layout.height) <= Math.min(layout.width, layout.height) * MAX_ASPECT
-  );
-}
-
-/**
  * Every picture kept exactly where it is, with the new ones dropped
  * into the gaps and the sheet grown only when nothing fits
  */
@@ -209,60 +196,20 @@ function keptInPlace(sheet: Sheet): Layout {
 }
 
 /**
- * Every picture laid in rows of a given width, tallest first. Rows
- * rather than a tree, because a sheet of pictures that are all about a
- * cell wide packs into rows almost perfectly and the tree will not
- * find that: it keeps the sheet square, and eight belts want one long
- * strip
- */
-function shelved(pictures: Picture[], width: number): Layout | null {
-  const order = [...pictures].sort((one, two) => two.image.height - one.image.height);
-  const places = new Map<string, [number, number]>();
-  let x = 0;
-  let y = 0;
-  let tallest = 0;
-
-  for (const picture of order) {
-    if (picture.image.width > width) {
-      return null;
-    }
-    if (x + picture.image.width > width) {
-      x = 0;
-      y += tallest;
-      tallest = 0;
-    }
-    places.set(picture.name, [x, y]);
-    x += picture.image.width;
-    tallest = Math.max(tallest, picture.image.height);
-  }
-  return { places, width, height: y + tallest };
-}
-
-/**
  * Every picture placed again from scratch, nothing kept: the tree
  * packer, and rows at every width worth trying, whichever comes out
  * smallest
  */
 function packedAfresh(sheet: Sheet): Layout {
-  const packed = pack(
+  const packed = packSmallest(
     sheet.pictures.map((one) => ({ one, w: one.image.width, h: one.image.height })),
   );
-  let best: Layout = {
+
+  return {
     places: new Map(packed.placed.map(({ box, x, y }) => [box.one.name, [x, y]])),
     width: packed.width,
     height: packed.height,
   };
-  const widest = Math.max(...sheet.pictures.map((one) => one.image.width));
-  const across = sheet.pictures.reduce((sum, one) => sum + one.image.width, 0);
-
-  for (let width = widest; width <= across; width += 1) {
-    const rows = shelved(sheet.pictures, width);
-
-    if (rows != null && shapely(rows) && areaOf(rows) < areaOf(best)) {
-      best = rows;
-    }
-  }
-  return best;
 }
 
 /**

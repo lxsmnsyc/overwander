@@ -179,9 +179,13 @@ import {
 import { DARK_DAY_LAMP_CELLS } from '../../src/data/overworld/weather';
 import { LURE_SPAWN_BONUS } from '../../src/overworld/abilities/__create';
 import {
+  COMPOUND_EYES_HELD_BOOST,
   FLAME_BODY_FACTOR,
   ILLUMINATE_LAMP_REACH,
+  LEVEL_CEILING_LIFT,
+  LEVEL_FLOOR_LIFT,
   PICKUP_STEP_INTERVAL,
+  STENCH_QUIET,
 } from '../../src/overworld/abilities/gen-1';
 import { EGG_HATCH_STEPS } from '../../src/auth/egg';
 import type Overworld from '../../src/overworld/core';
@@ -1515,6 +1519,77 @@ describe('world', () => {
         DARK_DAY_LAMP_CELLS,
       ),
     ).toBeCloseTo(DARK_DAY_LAMP_CELLS * ILLUMINATE_LAMP_REACH);
+  });
+
+  it('keeps a chunk quiet for a buddy that smells', () => {
+    expect(
+      createOverworld('player-uid', buddyWith([Abilities.Stench])).checkSpawnCount(SPAWN_COUNT),
+    ).toBe(SPAWN_COUNT - STENCH_QUIET);
+
+    // A lure and a stink cancel as far as they go, and nothing ever
+    // quiets a chunk below nothing
+    expect(createOverworld('player-uid', buddyWith([Abilities.Stench])).checkSpawnCount(1)).toBe(0);
+  });
+
+  it('lifts the band a meeting rolls in, from either end', () => {
+    const band: [number, number] = [10, 20];
+    const alone = createOverworld('player-uid', null);
+
+    expect(alone.checkEncounterLevels('spawn@0', band)).toEqual(band);
+
+    // Wary keeps the weak away; fierce draws the strong out; a buddy
+    // with one of each does both
+    expect(
+      createOverworld('player-uid', buddyWith([Abilities.KeenEye])).checkEncounterLevels(
+        'spawn@0',
+        band,
+      ),
+    ).toEqual([10 + LEVEL_FLOOR_LIFT, 20]);
+    expect(
+      createOverworld('player-uid', buddyWith([Abilities.Hustle])).checkEncounterLevels(
+        'spawn@0',
+        band,
+      ),
+    ).toEqual([10, 20 + LEVEL_CEILING_LIFT]);
+    expect(
+      createOverworld(
+        'player-uid',
+        buddyWith([Abilities.Intimidate, Abilities.Pressure]),
+      ).checkEncounterLevels('spawn@0', band),
+    ).toEqual([10 + LEVEL_FLOOR_LIFT, 20 + LEVEL_CEILING_LIFT]);
+
+    // A floor lifted past the ceiling is a band of one level rather
+    // than a band that reads backwards
+    expect(
+      createOverworld('player-uid', buddyWith([Abilities.KeenEye])).checkEncounterLevels(
+        'spawn@0',
+        [10, 11],
+      ),
+    ).toEqual([11, 11]);
+  });
+
+  it('finds what a meeting is carrying, and says so', () => {
+    const alone = createOverworld('player-uid', null);
+
+    expect(alone.checkEncounterHeld('spawn@0')).toBe(1);
+    expect(alone.checkRevealsHeld()).toBe(false);
+
+    expect(
+      createOverworld('player-uid', buddyWith([Abilities.CompoundEyes])).checkEncounterHeld(
+        'spawn@0',
+      ),
+    ).toBe(COMPOUND_EYES_HELD_BOOST);
+    expect(createOverworld('player-uid', buddyWith([Abilities.Frisk])).checkRevealsHeld()).toBe(
+      true,
+    );
+    // Seeing what it holds and drawing more of it out are separate
+    // buddies: neither does the other's work
+    expect(
+      createOverworld('player-uid', buddyWith([Abilities.Frisk])).checkEncounterHeld('spawn@0'),
+    ).toBe(1);
+    expect(
+      createOverworld('player-uid', buddyWith([Abilities.CompoundEyes])).checkRevealsHeld(),
+    ).toBe(false);
   });
 
   it('talks an encounter into a nature and a gender', () => {

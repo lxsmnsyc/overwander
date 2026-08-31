@@ -10,10 +10,13 @@ import {
   type CheckCatchCandyEvent,
   type CheckEggStepsEvent,
   type CheckEncounterGenderEvent,
+  type CheckEncounterHeldEvent,
+  type CheckEncounterLevelsEvent,
   type CheckEncounterNatureEvent,
   type CheckEncounterShinyEvent,
   type CheckGoldRewardEvent,
   type CheckLampReachEvent,
+  type CheckRevealsHeldEvent,
   type CheckSpawnCountEvent,
   type CheckWalkPickupEvent,
   type OverworldEventMap,
@@ -261,5 +264,61 @@ export default class Overworld extends EventEngine<OverworldEventMap> {
 
     this.emit(OverworldEvents.CheckLampReach, event);
     return Math.max(0, event.reach);
+  }
+
+  /**
+   * The band a wild meeting rolls its level inside. The floor never
+   * passes the ceiling: an ability that keeps the weak away and one
+   * that draws the strong out can be carried by the same buddy
+   */
+  checkEncounterLevels(spawn: string, base: [lowest: number, highest: number]): [number, number] {
+    const event: CheckEncounterLevelsEvent = {
+      id: 'CheckEncounterLevels',
+      disabled: false,
+      overworld: this,
+      random: this.random(spawn, 'levels'),
+      base,
+      lowest: base[0],
+      highest: base[1],
+    };
+
+    this.emit(OverworldEvents.CheckEncounterLevels, event);
+
+    const highest = Math.max(1, Math.round(event.highest));
+
+    return [Math.min(highest, Math.max(1, Math.round(event.lowest))), highest];
+  }
+
+  /**
+   * How much likelier a wild meeting is to be carrying something
+   */
+  checkEncounterHeld(spawn: string): number {
+    const event: CheckEncounterHeldEvent = {
+      id: 'CheckEncounterHeld',
+      disabled: false,
+      overworld: this,
+      random: this.random(spawn, 'held'),
+      boost: 1,
+    };
+
+    this.emit(OverworldEvents.CheckEncounterHeld, event);
+    return Math.max(1, event.boost);
+  }
+
+  /**
+   * Whether what a meeting is holding is shown before anything is
+   * thrown at it
+   */
+  checkRevealsHeld(): boolean {
+    const event: CheckRevealsHeldEvent = {
+      id: 'CheckRevealsHeld',
+      disabled: false,
+      overworld: this,
+      random: this.random('held', 'shown'),
+      shown: false,
+    };
+
+    this.emit(OverworldEvents.CheckRevealsHeld, event);
+    return event.shown;
   }
 }

@@ -10,7 +10,12 @@ import ChunkSnapshot, {
   type Spawn,
 } from '../overworld/chunk-snapshot';
 import getWorld from '../overworld/current';
-import deriveEncounter, { type EncounterOptions, EncounterType } from '../overworld/encounter';
+import { getSpawnRarity } from '../data/biome';
+import deriveEncounter, {
+  type EncounterOptions,
+  EncounterType,
+  SPAWN_LEVELS,
+} from '../overworld/encounter';
 import type Weather from '../data/overworld/weather';
 import { DARK_DAY_SHADOW_CHANCE, shadowsWildMeetings } from '../data/overworld/weather';
 import { encounterKey, encounterWindow } from '../overworld/safari';
@@ -632,6 +637,16 @@ export async function startEncounter(
     // already said keeps saying
     shadow: options.shadow ?? shadowedByTheSky(sky, options.type, id, uid),
     shinyBoost: (options.shinyBoost ?? 1) * overworld.checkEncounterShiny(id),
+    // What a buddy finds in a pokemon's mouth, and how strong the
+    // chunk fields one. Both are wild-meeting rules: a raid prize and
+    // a gift arrive with their level named, and a trainer's party
+    // brings a band of its own
+    heldBoost: (options.heldBoost ?? 1) * overworld.checkEncounterHeld(id),
+    levels:
+      options.levels ??
+      (options.level == null && (options.type ?? EncounterType.Wild) === EncounterType.Wild
+        ? overworld.checkEncounterLevels(id, SPAWN_LEVELS[getSpawnRarity(spawn[0])])
+        : undefined),
   });
   const record: EncounterRecord = {
     ...derived,

@@ -129,6 +129,87 @@ const setupIlluminate = createBuddyAbility(Abilities.Illuminate, (overworld) => 
 });
 
 /**
+ * What Stench keeps away, in spawns. It is an ability the mainline
+ * uses to halve the encounter rate, and out here it is the Pure
+ * Incense worn rather than carried
+ */
+export const STENCH_QUIET = 2;
+
+/**
+ * Stench: fewer come near, and never fewer than none
+ */
+const setupStench = createBuddyAbility(Abilities.Stench, (overworld) => {
+  overworld.on(OverworldEvents.CheckSpawnCount, EventPriority.Exact, (event) => {
+    event.count = Math.max(0, event.count - STENCH_QUIET);
+  });
+});
+
+/**
+ * How many levels a wary buddy keeps off the bottom of a band, and a
+ * fierce one adds to the top.
+ *
+ * They are separate rules rather than one shifted band: a player
+ * walking with both keeps the weak away *and* draws the strong out,
+ * which is the pair working together rather than cancelling
+ */
+export const LEVEL_FLOOR_LIFT = 3;
+export const LEVEL_CEILING_LIFT = 3;
+
+/**
+ * Keen Eye and Intimidate: what is far below the buddy does not come
+ * out at all, so the bottom of the band lifts
+ */
+function createWaryAbility(ability: Abilities): (overworld: Overworld) => void {
+  return createBuddyAbility(ability, (overworld) => {
+    overworld.on(OverworldEvents.CheckEncounterLevels, EventPriority.Exact, (event) => {
+      event.lowest += LEVEL_FLOOR_LIFT;
+    });
+  });
+}
+
+/**
+ * Hustle, Pressure and Vital Spirit: what a chunk fields at its
+ * strongest comes out stronger still
+ */
+function createFierceAbility(ability: Abilities): (overworld: Overworld) => void {
+  return createBuddyAbility(ability, (overworld) => {
+    overworld.on(OverworldEvents.CheckEncounterLevels, EventPriority.Exact, (event) => {
+      event.highest += LEVEL_CEILING_LIFT;
+    });
+  });
+}
+
+/**
+ * What Compound Eyes is worth: the two rare held-item slots turn up
+ * this much more often. The common one is left alone, since it is
+ * already half of every meeting and widening it would hand something
+ * over every time without making the thing worth finding any likelier
+ */
+export const COMPOUND_EYES_HELD_BOOST = 2.5;
+
+/**
+ * Compound Eyes: it sees what a pokemon is carrying, so the meetings
+ * worth searching turn up oftener. A rare slot goes from a hundredth
+ * of them to a fortieth
+ */
+const setupCompoundEyes = createBuddyAbility(Abilities.CompoundEyes, (overworld) => {
+  overworld.on(OverworldEvents.CheckEncounterHeld, EventPriority.Exact, (event) => {
+    event.boost *= COMPOUND_EYES_HELD_BOOST;
+  });
+});
+
+/**
+ * Frisk: what is standing in front of the player is read before
+ * anything is thrown at it, so a meeting worth a ball for what it is
+ * carrying can be told from one that is not
+ */
+const setupFrisk = createBuddyAbility(Abilities.Frisk, (overworld) => {
+  overworld.on(OverworldEvents.CheckRevealsHeld, EventPriority.Exact, (event) => {
+    event.shown = true;
+  });
+});
+
+/**
  * The lures, which draw `LURE_SPAWN_BONUS` more pokemon into a chunk,
  * the two abilities that decide what an encounter comes out as, and
  * the two that pay a walk rather than a meeting
@@ -139,6 +220,17 @@ const FIELD_ABILITIES: ((overworld: Overworld) => void)[] = [
   createLureAbility(Abilities.NoGuard),
 
   setupIlluminate,
+  setupStench,
+
+  createWaryAbility(Abilities.KeenEye),
+  createWaryAbility(Abilities.Intimidate),
+
+  createFierceAbility(Abilities.Hustle),
+  createFierceAbility(Abilities.Pressure),
+  createFierceAbility(Abilities.VitalSpirit),
+
+  setupCompoundEyes,
+  setupFrisk,
 
   setupSynchronize,
   setupCuteCharm,

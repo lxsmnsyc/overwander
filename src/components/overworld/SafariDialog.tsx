@@ -1,5 +1,6 @@
 import type { PlayerIdentity } from '../../auth/user';
 import {
+  For,
   type JSX,
   type Resource,
   Show,
@@ -24,7 +25,7 @@ import InventoryPicker from '../items/InventoryPicker';
 import ItemSprite from '../items/ItemSprite';
 import AnimatedSprite from '../sprites/AnimatedSprite';
 import { SparklesIcon } from '../icons';
-import { Button, Dialog, DialogActions, Status } from '../styled';
+import { Badge, Button, Dialog, DialogActions, Status } from '../styled';
 import { SpriteAnim } from '../../data/ids/sprite-anims';
 
 /**
@@ -56,6 +57,9 @@ const THROW_MESSAGES: Record<ThrowResult, string> = {
  * spells out what is in hand — so it is drawn at a size that can be
  * told from the other balls at a glance
  */
+/** How large the held item is drawn in its badge */
+const HELD_SPRITE = 16;
+
 const THROW_SPRITE = 28;
 
 const STATE_MESSAGES: Record<SafariState, string> = {
@@ -81,6 +85,12 @@ export interface SafariDialogProps {
    * whole thing away. Those are answered by the buttons alone
    */
   insistent?: boolean;
+  /**
+   * Whether what it is carrying is shown before anything is thrown.
+   * A Frisk buddy is what looks; without one the badge stays off and
+   * a held item is found when the pokemon is caught
+   */
+  revealsHeld?: boolean;
   onClose: () => void;
   /**
    * Fired with the new record the moment a throw lands.
@@ -388,7 +398,24 @@ function SafariBody(
                 // around it, so nothing is pushed away from the
                 // heading — and the stars a shiny throws fall outside
                 // the picture, which nothing here clips
-                <div class="flex min-h-52 w-full items-end justify-center">
+                <div class="relative flex min-h-52 w-full items-end justify-center">
+                  {/* What it is holding, over the corner of the
+                      picture rather than under it: it is a fact about
+                      the pokemon standing there, and it is the one
+                      thing that decides whether this meeting is worth
+                      the ball */}
+                  <Show when={props.revealsHeld === true && active().encounter.items.length > 0}>
+                    <span class="absolute top-0 left-0 flex flex-col items-start gap-1">
+                      <For each={active().encounter.items}>
+                        {(item) => (
+                          <Badge tone="tide">
+                            <ItemSprite item={item} size={HELD_SPRITE} label="" />
+                            {describeItem(item)}
+                          </Badge>
+                        )}
+                      </For>
+                    </span>
+                  </Show>
                   <AnimatedSprite
                     species={active().encounter.species}
                     shiny={isShiny(active().encounter)}

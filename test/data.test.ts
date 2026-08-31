@@ -6,6 +6,7 @@ import registerBiomeSpawns, {
   SpawnRarity,
   TIMES_OF_DAY,
   boostFamilyWeights,
+  boostTypeWeights,
   getEggPool,
   getSpawnPool,
   getSpawnRarity,
@@ -1506,6 +1507,24 @@ describe('species day', () => {
 
     // A biome with nothing awake in it has no eggs either
     expect(getEggPool(Biome.Beyond, TimeOfDay.Day)).toEqual([]);
+  });
+
+  it('crowds a sky\u2019s own types into a pool without moving the bands', () => {
+    const pool = getSpawnPool(Biome.Grassland, TimeOfDay.Morning);
+    const crowded = boostTypeWeights(pool, [Types.Water], 2);
+
+    for (const band of ['base', 'uncommon', 'rare'] as const) {
+      expect(crowded[band]).toHaveLength(pool[band].length);
+      pool[band].forEach((entry, at) => {
+        const wet = new Set(getSpeciesData(entry.species).types).has(Types.Water);
+
+        expect(crowded[band][at].species).toBe(entry.species);
+        expect(crowded[band][at].weight).toBe(entry.weight * (wet ? 2 : 1));
+      });
+    }
+
+    // A sky that favours nothing hands the pool back as it found it
+    expect(boostTypeWeights(pool, [], 2).base).toEqual(pool.base);
   });
 
   it('keeps a line whose baby is not registered yet out of every nest', () => {

@@ -1,6 +1,6 @@
 import { asOffset, toZoneKey } from '../auth/local-time';
 import AleaRNG from '../core/alea';
-import { boostFamilyWeights, getSpawnPool, pickSpawn } from '../data/biome';
+import { boostFamilyWeights, boostTypeWeights, getSpawnPool, pickSpawn } from '../data/biome';
 import type { SpawnRarityGroups } from '../data/biome';
 import { SPECIES_DAY_WEIGHT_BOOST, getFeaturedFamily } from '../data/species';
 import { TimeOfDay, getTimeOfDay, isWaterBiome } from '../data/ids/biome';
@@ -43,6 +43,9 @@ import {
   rollChefStock,
   rollVendorStock,
 } from '../data/overworld/vendor';
+import type Weather from '../data/overworld/weather';
+import { WEATHER_SPAWN_BOOST, spawnFavoredTypes } from '../data/overworld/weather';
+import getWorld from './current';
 import type Chunk from './chunk';
 import { canStageBoss } from './raid';
 import { CELL_COUNT, CHUNK_CELLS, PLACEMENT_AREA, centeredCells, neighborCells } from './chunk';
@@ -292,11 +295,32 @@ export default class ChunkSnapshot {
    * featured family carries four times its usual weight, so its
    * members crowd the rolls wherever they live
    */
+  /**
+   * The sky this chunk is standing under, read off the shared world
+   * rather than passed in.
+   *
+   * It has to be the same answer everywhere, since the pool it shapes
+   * is derived on both sides and never exchanged, and the world is
+   * the one thing both sides already agree on
+   */
+  get weather(): Weather {
+    this.sky ??= getWorld().getWeather(this.chunk.x, this.chunk.y, this.weatherWindow);
+    return this.sky;
+  }
+
+  private sky: Weather | null = null;
+
+  /**
+   * What the window may roll, crowded by the two things that crowd it:
+   * the featured family for the day, and the sky for the hour
+   */
   private getPool(): SpawnRarityGroups {
     const pool = getSpawnPool(this.chunk.biome, getTimeOfDay(this.timestamp));
     const featured = getFeaturedFamily(this.timestamp);
+    const dayed =
+      featured == null ? pool : boostFamilyWeights(pool, featured, SPECIES_DAY_WEIGHT_BOOST);
 
-    return featured == null ? pool : boostFamilyWeights(pool, featured, SPECIES_DAY_WEIGHT_BOOST);
+    return boostTypeWeights(dayed, spawnFavoredTypes(this.weather), WEATHER_SPAWN_BOOST);
   }
 
   /**

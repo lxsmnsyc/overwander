@@ -31,6 +31,8 @@ import registerWoodlandSpawns from './woodland';
 export {
   boostFamilyEntries,
   boostFamilyWeights,
+  boostTypeEntries,
+  boostTypeWeights,
   getEggPool,
   getSpawnPool,
   getSpawnRarity,

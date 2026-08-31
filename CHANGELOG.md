@@ -1,5 +1,220 @@
 # overwander
 
+## 1.4.0
+
+### Minor Changes
+
+- 8d55d60: The dashboard's gift ledger now has a search box over it, and no longer
+  lists what the game paid out on its own.
+
+  Daily quest and weekly hunt rewards ride the same gift rows as anything
+  written by hand, one per slot per player, so a live game writes far more
+  of them than staff ever will. They are left out now, the way quest
+  rewards already were, and the boards they came from are where they
+  belong.
+
+  The box takes the same grammar as the bag and the auction board: a plain
+  word, `field:value` pairs, `is:` for the yes-or-no facts, `!` to refuse
+  one and `|` to accept any of several. A gift can be asked for by who it
+  was written for, what is on the shelf, the sentence it carries, its
+  level or amount, how many players have taken it and how long ago it was
+  written, with `is:waiting`, `is:taken`, `is:expired`, `is:open` and
+  `is:shiny` among the facts. One box narrows both the pokemon and the
+  items, the way the auction board narrows its two trays.
+
+- cf75934: The battle history names whoever you actually fought.
+
+  Every fight staged from an overworld stop was listed as "Team Rocket Grunt" with
+  no picture, whether it was a grunt, Giovanni, a duelling trainer, a gym leader,
+  one of the Elite Four or the Champion. Now each row shows the name and the
+  character they were wearing when you walked up to them.
+
+  It has to be remembered rather than worked out again. Who is standing at a
+  landmark is the window's roll, and the window turns over within the hour, so a
+  fight read back a week later has nothing left to derive it from. A battle now
+  keeps the name and the coat the way it already kept the species a raid was
+  fought against, and a replay's verdict reads them too, so watching an old fight
+  back names the same person the history does.
+
+  Fights recorded before this keep saying "Team Rocket Grunt", since there is
+  nothing to look up for them.
+
+- d86c111: A shiny sparkles as it comes into a fight.
+
+  The overworld announces a shiny with a glint the first time it is drawn. A
+  battle never did, so the one coat worth looking twice at walked onto the field
+  saying nothing about itself. Now it throws the same glint as it arrives, once,
+  and is over in about a second.
+
+- fd633ab: A shadow's haze and a purified one's light are drawn again on the
+  battle field.
+
+  The auras were painted onto one canvas that every aura on the field
+  shared. The batched pass hands a canvas over as a texture and draws it
+  later in the frame, so two of them in the same fight both came out as
+  whichever was painted last, at whichever size that one happened to be:
+  one aura stretched over the wrong feet, and the other missing. Each
+  aura now keeps a canvas of its own.
+
+  The raid demo can stage a shadow boss, which is the fight the haze is
+  drawn for. Nothing on that page was a shadow before, so there was
+  nothing to look at.
+
+### Patch Changes
+
+- fd633ab: The board calls out the cell somebody is standing in, and stops calling out the
+  one the player is.
+
+  The keyboard's cursor rests on the player until it is moved, so a board with
+  focus drew a blue square under the character and left it there. It said nothing:
+  the character is already where the character is, and the square only competed
+  with them. It is drawn now only where the cursor has actually been walked to.
+
+  The mark that was going spare has gone to the people standing at landmarks. A
+  nurse and a Rocket grunt are two figures in coats and nothing about the coats
+  tells them apart, which used to be answered by a ring under their feet; the cell
+  itself is ruled instead, in the game's own two colours, ember for a fight and
+  tide for a counter. It is the larger mark of the two and it is the same one the
+  cursor leaves, so a player reads one thing on this board rather than two.
+
+  Every called-out cell is ruled on a dark line under the colour, which the ring
+  did and the cursor did not: a blue square on snow was most of the way to
+  invisible.
+
+- fd633ab: A dark day is dark, and a lamp lights one cell.
+
+  The sky that puts the lights out was drawing a night-blue veil at seven eighths,
+  which left the country legible straight through it: the one weather whose whole
+  point is that the board is gone except where something is lit was showing you
+  the board. It is black now, and all of it.
+
+  The lamps are measured off the cell rather than picked by eye. Walking alone a
+  player sees half a cell's diagonal, which is exactly the circle that holds one
+  cell: whatever they are standing on is lit, corners and all, and nothing beyond
+  it is. An Illuminate buddy carries a lantern worth two cells.
+
+  That lantern is now a reach of its own rather than a multiple of the one it
+  replaces. Two cells is two cells whatever a player walking alone can see, which
+  is what a lantern is, and it means the two numbers can be read side by side
+  instead of one being the other times something.
+
+  Between the black and the tighter lamp a dark day is a great deal darker than it
+  was. That is the intent: finding a pokemon in one is meant to be feeling your
+  way from landmark to landmark.
+
+- 32d9c6f: The player's guide says what the game has been doing since Kanto shipped.
+
+  Four releases of world and battle work had landed without the guide following
+  them, so several pages described a game that no longer existed. What is now
+  written down: a sky crowds its own types into a chunk at twice their weight, and
+  a dark day is the one sky you cannot see across; the eight field abilities that
+  were added to the four already there, from Stench keeping pokemon away to Frisk
+  reading what one is carrying; the eleven species a nest holds back until their
+  babies arrive; and what a phenomenon can and cannot leave behind.
+
+  Two pages were wrong rather than merely short. Switching is a walk across the
+  field, so a move already in the air follows the swap onto whoever took the spot
+  rather than missing, which the battle page had backwards. The engine notes now
+  carry the three gates a move passes through and the two demo pages that sit
+  beside the raid.
+
+- fd633ab: The weather stands in the world instead of on the glass.
+
+  Every drop used to live in screen pixels, wrapped in a flat stripe the size of
+  the window. The board turned under all of it and none of it moved: walk the
+  camera round a thunderstorm and the rain did not care. The aurora's folds were
+  laid across the width of the frame and the rainbow's centre was nailed to seven
+  tenths of the way across it, so both followed the player round like a smudge on
+  the lens.
+
+  A drop is now a place in the world, put through the board's own camera. Near
+  drops are large and slow and far ones fine, the whole field sweeps when the
+  camera turns, and a sandstorm blows along a compass direction rather than across
+  the frame. A streak lies back along the way it is actually travelling, which
+  matters most for the skies that are more sideways than down.
+
+  The far sky is built as geometry where a place is what it wants. The aurora is a
+  ring of folds hanging over the board, bright over the far ground and fading as
+  it comes round in front, and meteors cross on a bearing.
+
+  The bows and the mirage are light rather than shape. A rainbow is a field of
+  colour worked out for every pixel and laid over the whole picture: bands of the
+  spectrum that walk across it, bend as they go, and slide when the camera turns.
+  A fogbow is the same field with the colour drained, which is what a fogbow is,
+  and a fata morgana lies its bands flat and stacks them, so the country comes
+  apart in strata the way it does over a hot road. The arch they were drawn as
+  first was worse than the flat version: a real bow is at infinity and cannot be
+  walked around, and one built over the chunk read as a hoop standing in the
+  field.
+
+  Two things fell out of the work. Weather is drawn back to two fifths of the
+  density the tables ask for, because drops that stand in the world pile up down
+  the near half of the volume and read far heavier than the same number ever did
+  flat against the glass. And the far half of the volume, which projects into a
+  mat of sub-pixel drops along the horizon, is thinned by depth. Between them the
+  sky costs less than it did even for the three heavy skies that gave up their
+  scrolling-tile shortcut: a downpour at 1280x720 went from 8.99ms a frame to
+  2.19, a sandstorm from 8.22 to 0.69.
+
+  The weather demo has no board to stand in, so it keeps the flat sky.
+
+- fd633ab: The weather demo stands its skies on a board.
+
+  It used to draw them over a flat checkered country, which was fine while the sky
+  was painted on the glass and useless the moment it stopped being: weather that
+  stands in the world needs a world to stand in, so on that page every sky was
+  falling back to the flat version of itself and the demo was quietly showing the
+  wrong picture.
+
+  There is a board now, drawn through the same camera the overworld uses, its
+  cells checkered and its marks standing on the ground rather than on the screen.
+  Drag it to walk the camera round, which is the only way to see what weather in
+  the world is actually doing, and it takes a two-finger twist the same way the
+  overworld does. The drag is the overworld's own: a bit of the plane is taken
+  hold of and the board turns so it stays under the pointer, rather than the
+  sideways slide the page started with.
+
+  Both switches that made the page worth having are still there and there is a
+  third. Turning WebGL off gives the 2D pass, which is the only way to catch the
+  two renderers drifting apart. Taking it off the board gives the flat sky every
+  painter still falls back to without a camera, so that path stays somewhere it
+  can be looked at rather than only somewhere it can be tested.
+
+- 6aa24b1: The battle AI weighs several kinds of move it was reading wrongly, and a
+  pokemon with nothing that works no longer stands still for the rest of
+  the fight.
+
+  Fixed-damage moves carry no power, so Seismic Toss, Night Shade, Dragon
+  Rage, Sonic Boom, Super Fang, Psywave and the three one-hit knockouts
+  were all read as doing nothing at all and picked only when everything
+  else was worse. They are asked what they take off now. A multi-hit move
+  is counted for every strike rather than the first, and how often a move
+  lands is part of what it is worth, so a thirty percent Fissure no longer
+  weighs the same as a certainty.
+
+  Moves that cost the user something now say so: an Explosion while the
+  user is healthy, recoil on a pokemon that cannot afford it, a Jump Kick
+  whose miss would be fatal, the turn Hyper Beam spends recharging, and
+  the cast anything with a wind-up spends before it lands. A rampage is
+  exempt, since it strikes on every one of those. Stat-stage moves are
+  declined once the stage they push is pinned, which they only were in
+  raids before, and Haze is declined by the side that is ahead, since it
+  clears the user's own boosts along with everybody else's. Healing is
+  weighed by what it would actually put back rather than by a threshold,
+  and a drain is worth more to a pokemon that is hurt.
+
+  Two things that were plainly wrong: weighing a move against a target
+  holding a resist berry ate the berry, and the AI's damage estimate drew
+  from the battle's random stream once per move it considered.
+
+  Struggle covers a pokemon that cannot reach anybody rather than only one
+  whose moves have been shut off. A Normal type facing nothing but Ghosts
+  has a full move set and no way to touch anyone with it, and used to
+  stand there until the fight ended. A cooldown is still not that: a
+  pokemon waiting for its moves to come back waits, the way it always did.
+  Raid bosses stand there too, since a boss struggling itself down would
+  hand the lobby the raid.
+
 ## 1.3.0
 
 ### Minor Changes

@@ -1,5 +1,117 @@
 # overwander
 
+## 1.2.0
+
+### Minor Changes
+
+- 9bb1562: A page for looking at the weather, at `/demo/weather`.
+
+  A sky is derived from the country and the hour, so seeing a particular one meant
+  finding the one place and window that rolls it. This stages any of the twenty
+  six over any biome's ground, at any strength, running or stopped a frame at a
+  time, with the sky in the address so a link is a demonstration. It says what the
+  weather does to the world as well as what it looks like: the types it favours,
+  the shiny and hidden ability multipliers, whether meetings carry an egg move or
+  come out shadowed, whether it carries into battle.
+
+  It draws through both of the board's painters rather than only the one a browser
+  happens to give. The WebGL pass draws every drop with a pace of its own and the
+  2D fallback tiles its fall, and a switch between them is the only way to see the
+  two drift apart, since nothing else in the game can reach the fallback on
+  purpose.
+
+- 9bb1562: Five skies that were not saying what they are.
+
+  - **Dark Day** is no longer a wash. Noon gone dark hid the things a player was
+    standing there to find, so it is drawn as a dark room instead: near black
+    everywhere, with a pool of light around the player and around every landmark.
+    A wild pokemon carries no light, so finding one under this sky means walking
+    a lamp onto it. The lights are cut out of the dark rather than laid over it,
+    so two standing close together share one pool instead of stacking into a
+    bright spot.
+  - **Illuminate is a lantern out here**, on top of the lure it already was: a
+    buddy that has it more than doubles how far its owner sees under a dark sky.
+    The overworld engine asks how far a lamp reaches the way it asks everything
+    else, so the ability is a listener and nothing that draws the board names it.
+  - **Fata Morgana** and **Fogbow** had no visuals at all and rendered exactly
+    like a clear sky, which was the whole of what the two rarest skies in the game
+    looked like. The mirage is a warm veil with fine shimmering strata over
+    dead-still air; the fogbow is a rainbow with the colour gone, broad and white
+    with a blush at either edge, standing in fog's own veil.
+  - **The aurora** was one gradient band screened over the board, which read as a
+    white smear. It is drawn fold by fold now, green low and violet at the crown,
+    each fold hanging to its own depth and lighting to its own brightness as the
+    wave walks along the sky.
+  - **The meteor shower** was a fall, and a sparse fall is thin rain. It is a few
+    shooting stars at a time instead, each a bright head with a tail that fades
+    out behind it, drawn in as it sets out rather than arriving whole.
+  - **A thunderstorm has lightning.** The sky lights up every few seconds, jittered
+    rather than on a beat, with the stroke and its return, and some strikes
+    further off than others.
+
+  Both painters do all of it: the WebGL pass and the 2D fallback the board uses
+  when a browser will not give a context.
+
+### Patch Changes
+
+- 9bb1562: A raid lobby shows each party at a size worth looking at.
+
+  Every row in the lobby drew two frames around the same thing: the row's own
+  bordered container, and inside it the strip of squares, which draws a frame of
+  its own. The name plate shared that container, so the strip was pushed onto a
+  second line and capped at 240 pixels, which is six squares of about 33 pixels
+  each. At that size one pokemon looks much like another, which defeats the point
+  of showing a party before the fight.
+
+  The row carries no frame now. The name plate wears one instead, and the strip
+  takes the width the row has left: on a wide screen that is roughly 500 pixels,
+  so the squares are about two and a half times what they were, and the row is
+  shorter than the two-line version it replaces. On a narrow screen the plate
+  sits above the strip and the strip takes the whole width, which is still
+  larger than the old cap.
+
+- 9bb1562: Two fixes to the pictures on a catch sheet's evolution list, both of them the
+  sheet asking the dex the wrong question.
+
+  A shiny's sheet no longer gives away an evolution the reader has never held
+  sparkling. What a pokemon turns into is drawn to what the reader has earned of
+  it: a shadow until they have owned one, which is the half of a dex entry that
+  sends somebody out looking. The row asked about the ordinary coat whatever it was
+  standing on, so a shiny Pidgey whose owner had kept an ordinary Pidgeotto was
+  shown a full Pidgeotto, and a shiny Pidgeotto they had never held was drawn for
+  them anyway. A shiny is its own half of an entry, so the row asks about the coat
+  it is actually going to become.
+
+  The shadow is the ordinary sheet with the colour taken out rather than a shiny
+  sheet fetched in order to be hidden, since the two are the same shape and only
+  one of them is already in hand.
+
+  A species the reader was given but never met is no longer drawn as Missingno. The
+  row read the met tally alone, and a gift arrives without a meeting, so a
+  Pidgeotto that had only ever been handed over was a pokemon the sheet claimed
+  nobody had laid eyes on while one stood in the reader's own party. Owning one
+  counts as having met it, which is what the dex itself has always said.
+
+- 9bb1562: Selecting a run of pokemon no longer slows down as the run grows.
+
+  Picking the thirtieth pokemon in the Catches dialog lagged, and the reason was
+  that almost nothing on the way to a square was held. Every press rebuilt the
+  whole box: the list was filtered, sorted by date, searched and ordered again,
+  and the set of what was already picked was rebuilt once per square rather than
+  once per press. That last one is what made it worse the more was selected, since
+  the cost was everything on the page multiplied by everything picked.
+
+  Worse, the page itself was sliced on demand, and a grid asks for the page it is
+  drawing once per square. Measured against a list of two hundred with a box
+  thirty wide, fifty reads of the page rebuilt the list fifty times; it now builds
+  once and the rest are free. The live picker also handed its selection to the
+  caller and was handed the same selection straight back, redrawing the box a
+  second time for a press that had already been drawn.
+
+  The list, the search over it, the page under it and the set of what is picked
+  are all held now, a square looks its own record up by id instead of scanning for
+  it, and an echo from the caller is recognised and ignored.
+
 ## 1.1.1
 
 ### Patch Changes

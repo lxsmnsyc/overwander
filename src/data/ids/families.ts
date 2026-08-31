@@ -81,6 +81,10 @@ const enum Families {
   Chikorita = 78,
   Cyndaquil = 79,
   Totodile = 80,
+  Sentret = 81,
+  Hoothoot = 82,
+  Ledyba = 83,
+  Spinarak = 84,
 }
 
 export default Families;

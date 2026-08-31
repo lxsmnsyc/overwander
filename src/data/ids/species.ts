@@ -238,4 +238,12 @@ export const enum Species {
   Totodile = 158,
   Croconaw = 159,
   Feraligatr = 160,
+  Sentret = 161,
+  Furret = 162,
+  Hoothoot = 163,
+  Noctowl = 164,
+  Ledyba = 165,
+  Ledian = 166,
+  Spinarak = 167,
+  Ariados = 168,
 }

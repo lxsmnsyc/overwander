@@ -23,20 +23,28 @@ export default function registerMontaneForestSpawns(): void {
       special: [],
     },
     [TimeOfDay.Evening]: {
-      base: [{ species: Species.Zubat, weight: 30 }],
+      base: [
+        { species: Species.Zubat, weight: 30 },
+        { species: Species.Hoothoot, weight: 25 },
+      ],
       uncommon: [],
-      rare: [{ species: Species.Golbat, weight: 10 }],
+      rare: [
+        { species: Species.Golbat, weight: 10 },
+        { species: Species.Noctowl, weight: 10 },
+      ],
       special: [],
     },
     [TimeOfDay.Night]: {
       base: [
         { species: Species.Zubat, weight: 30 },
         { species: Species.Paras, weight: 20 },
+        { species: Species.Hoothoot, weight: 25 },
       ],
       uncommon: [],
       rare: [
         { species: Species.Golbat, weight: 10 },
         { species: Species.Parasect, weight: 10 },
+        { species: Species.Noctowl, weight: 10 },
       ],
       special: [],
     },

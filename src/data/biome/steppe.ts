@@ -13,6 +13,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Growlithe, weight: 10 },
         { species: Species.Ponyta, weight: 10 },
         { species: Species.Doduo, weight: 20 },
+        { species: Species.Sentret, weight: 25 },
       ],
       uncommon: [
         { species: Species.Magnemite, weight: 20 },
@@ -27,6 +28,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Tauros, weight: 10 },
         { species: Species.Magneton, weight: 10 },
         { species: Species.Electrode, weight: 10 },
+        { species: Species.Furret, weight: 10 },
       ],
       special: [],
     },
@@ -37,6 +39,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Growlithe, weight: 10 },
         { species: Species.Ponyta, weight: 10 },
         { species: Species.Doduo, weight: 20 },
+        { species: Species.Sentret, weight: 25 },
       ],
       uncommon: [
         { species: Species.Magnemite, weight: 20 },
@@ -52,6 +55,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Tauros, weight: 10 },
         { species: Species.Magneton, weight: 10 },
         { species: Species.Electrode, weight: 10 },
+        { species: Species.Furret, weight: 10 },
       ],
       special: [],
     },

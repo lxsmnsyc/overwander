@@ -21,6 +21,8 @@ description: >
 
 **Read the format from the source.** `../SpriteCollab/compact/README.md` is the authority on `sheet.json` and `frames.bin`, down to the column order of the frame table; [`sprite-sheet.ts`](../../../src/canvas/sprite-sheet.ts) is this game's reader of it and nothing else.
 
+**Two tiers of clip, and the collection names both.** The **bare minimum** six, `Idle` `Attack` `Walk` `Sleep` `Hurt` `Hop`, are what a sheet cannot be put on screen without; four more, `Charge` `Double` `Rotate` `Swing`, complete the ten a renderer may assume. They are [`MINIMUM_CAST` and `COMMON_CAST`](../../../src/data/constants/cast.ts), a cast list may end on any of the ten, and `pickCast` gives up onto two of the six. A sheet short of one of the six is unfinished art worth reporting; short of one of the other four it is drawn a little plainer.
+
 `SpriteAnim`'s numbers are the collection's own and are **append-only**. A new animation takes the next free number; nothing already there ever moves.
 
 ## Rules
@@ -29,12 +31,13 @@ description: >
 - **`sourceFrameWidth`/`sourceFrameHeight` are the cell the artist drew in.** They are authored generously, a Hop is given room for a jump twice the height anything reaches, so they are never a layout measure. They are for the shadow's width and the sparkle's spread, which are facts about the pokemon's size. A coat drawn past its own cell wins: Heracross' Attack box is a column wider than the eighty its `AnimData.xml` declares.
 - **Read a frame through the description, never by arithmetic on the grid.** `frame * frameWidth` is wrong: two frames of a clip are different sizes and sit in different places, and the picture may be somewhere another clip put it.
 - **A mirrored frame keeps its own place.** `flip` says the picture's pixels are reversed about the picture's own axis; `at` is still measured from the left of the box, and only a caller-requested flip turns it round.
-- **Sheets are filed by region.** `public/sprites/pokemon/{region}/{species}` — `kanto` and `johto` for the first 251, `unknown` for Missingno, the egg and the substitute. Which region a pokemon is in comes from its dex number ([`getSpeciesRegion`](../../../src/data/species/regions.ts)), never from a list beside the files; `coats.json` stays at the root and says nothing about regions.
+- **Sheets are filed by region.** `public/sprites/pokemon/{region}/{species}` — `kanto` and `johto` for the first 251 and their forms, `unknown` for Missingno, the egg and the substitute. Which region a pokemon is in comes from its dex number ([`getSpeciesRegion`](../../../src/data/species/regions.ts)), never from a list beside the files; `coats.json` stays at the root and says nothing about regions.
+- **Never assume a clip past the ten.** Ask the sprite, `SpeciesSpriteAnimation.has`, rather than keeping a table of which species owns what; a preference list is how a move asks for better and settles for less.
 - **A clip the game has no number for does not load.** That is a gap in `SpriteAnim` rather than a bad sheet, and `pnpm import-sprites` says so when it finds one.
 
 ## Why
 
-Cropping is most of a sheet, and sharing across clips is most of what is left. A clip's box has to hold its widest lunge, so every quieter frame rattles around inside a box drawn for one reach, and once cropped, two thirds of what remains turns out to be a drawing another clip already has. The 254 sheets that ship weigh about 6MB with four coats apiece.
+Cropping is most of a sheet, and sharing across clips is most of what is left. A clip's box has to hold its widest lunge, so every quieter frame rattles around inside a box drawn for one reach, and once cropped, two thirds of what remains turns out to be a drawing another clip already has. The 281 sheets that ship weigh 6.3MB, coats and all.
 
 ## Importing
 

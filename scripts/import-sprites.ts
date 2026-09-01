@@ -1,6 +1,6 @@
 import { copyFileSync, existsSync, mkdirSync, readFileSync, readdirSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
-import { asSpriteAnim, spriteAnimName } from '../src/data/ids/sprite-anims.ts';
+import { SpriteAnim, asSpriteAnim, spriteAnimName } from '../src/data/ids/sprite-anims.ts';
 import writeCoats from '../src/server/sprites/coats.ts';
 
 /**
@@ -52,6 +52,20 @@ const MISC: Partial<Record<number, { species: number; name: string }>> = {
 
 /** Where the misc three are filed, being of no region. */
 const UNKNOWN = 'unknown';
+
+/**
+ * The six a sheet cannot be put on screen without. Written out rather
+ * than imported from [`MINIMUM_CAST`](../src/data/constants/cast.ts),
+ * which reaches the `const enum`s node refuses to load
+ */
+const MINIMUM = new Set<number>([
+  SpriteAnim.Idle,
+  SpriteAnim.Attack,
+  SpriteAnim.Walk,
+  SpriteAnim.Sleep,
+  SpriteAnim.Hurt,
+  SpriteAnim.Hop,
+]);
 
 /**
  * Which species this game has form ids for, and how many forms it
@@ -205,7 +219,15 @@ export default function importSprites(source: string, dryRun: boolean): void {
   say(`${files} files under ${DESTINATION}`);
 
   for (const slot of taking.filter((one) => one.missing.length > 0)) {
-    say(`  ${slot.species} has no ${named(slot.missing)}: unfinished art, cast falls back`);
+    const bare = slot.missing.filter((anim) => MINIMUM.has(anim));
+
+    // A gap in the other four is a sheet drawn plainer; a gap in the
+    // six is a pokemon that cannot be put on screen properly at all
+    say(
+      bare.length > 0
+        ? `  ${slot.species} has no ${named(bare)}, which a sheet cannot be drawn without`
+        : `  ${slot.species} has no ${named(slot.missing)}: unfinished art, cast falls back`,
+    );
   }
 
   // A clip this game has no number for cannot be asked to play, so it

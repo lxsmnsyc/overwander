@@ -4,9 +4,10 @@ import { SpriteAnim } from '../ids/sprite-anims';
  * What a pokemon looks like it is doing while it uses a move.
  *
  * A sprite sheet is a set of named clips, and the sheets are not all
- * the same: every one of them carries the ten **common** clips, and
- * the rest are there or not depending on what the pokemon was drawn
- * doing. A Machop has a Punch; a Magikarp does not.
+ * the same. Six of them are the **bare minimum**, which a sheet cannot
+ * be drawn at all without; four more make up the ten a renderer may
+ * assume; the rest are there or not depending on what the pokemon was
+ * drawn doing. A Machop has a Punch; a Magikarp does not.
  *
  * So a move does not name one animation, it names a **preference**:
  * an ordered list read left to right, and the first clip the sprite
@@ -21,8 +22,27 @@ import { SpriteAnim } from '../ids/sprite-anims';
  */
 
 /**
- * The clips every sprite sheet carries. A list ending in one of these
- * can never run out of fallbacks
+ * The clips a sheet cannot be put on screen without: standing, acting,
+ * moving, sleeping, being hit, and getting off the ground.
+ *
+ * They are the floor every other clip falls to. A sheet short of one of
+ * these is unfinished art rather than a pokemon drawn differently, and
+ * the collection says which sheets those are: see `missing` in
+ * `compact/index.json` there
+ */
+export const MINIMUM_CAST = [
+  SpriteAnim.Idle,
+  SpriteAnim.Attack,
+  SpriteAnim.Walk,
+  SpriteAnim.Sleep,
+  SpriteAnim.Hurt,
+  SpriteAnim.Hop,
+] as const;
+
+/**
+ * The clips a renderer may assume: the six above, and the four more
+ * that every finished sheet carries. A list ending in one of these can
+ * never run out of fallbacks
  */
 export const COMMON_CAST = [
   SpriteAnim.Idle,
@@ -84,6 +104,7 @@ export const UNCOMMON_CAST = [
   SpriteAnim.Slap,
 ] as const;
 
+export type MinimumCast = (typeof MINIMUM_CAST)[number];
 export type CommonCast = (typeof COMMON_CAST)[number];
 export type UncommonCast = (typeof UNCOMMON_CAST)[number];
 
@@ -94,6 +115,7 @@ export type CastAnimation = CommonCast | UncommonCast;
 
 export const CAST_ANIMATIONS: CastAnimation[] = [...COMMON_CAST, ...UNCOMMON_CAST];
 
+const MINIMUM = new Set<SpriteAnim>(MINIMUM_CAST);
 const COMMON = new Set<SpriteAnim>(COMMON_CAST);
 
 /**
@@ -134,11 +156,20 @@ export function isCommonCast(animation: SpriteAnim): boolean {
 }
 
 /**
+ * Whether the clip is one of the six a sheet cannot be drawn without.
+ * A sheet missing one of these is worth saying so about; a sheet
+ * missing one of the other four is drawn a little plainer
+ */
+export function isMinimumCast(animation: SpriteAnim): boolean {
+  return MINIMUM.has(animation);
+}
+
+/**
  * The clip every sheet has and nothing can be missing: what a walk
  * ends on when a caller hands over a list of things this sprite has
- * never heard of
+ * never heard of. It is one of the six, as is the Idle behind it
  */
-export const DEFAULT_CAST: CommonCast = SpriteAnim.Attack;
+export const DEFAULT_CAST: MinimumCast = SpriteAnim.Attack;
 
 /**
  * The first clip in the list this sprite actually has.

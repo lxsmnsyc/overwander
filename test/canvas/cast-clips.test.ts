@@ -6,7 +6,11 @@ import { MoveTargetType } from '../../src/battle/events';
 import {
   COMMON_CAST,
   type CastAnimation,
+  DEFAULT_CAST,
+  MINIMUM_CAST,
+  isCommonCast,
   isLoopingCast,
+  isMinimumCast,
   pickCast,
 } from '../../src/data/constants/cast';
 import { Moves } from '../../src/data/ids/moves';
@@ -102,6 +106,32 @@ describe('cast clips', () => {
       expect(missing.map(spriteAnimName), `${species} is missing`).toEqual(
         (KNOWN_GAPS[species] ?? []).map(spriteAnimName),
       );
+    }
+  });
+
+  it('leaves no sheet short of the bare minimum', () => {
+    // The six a pokemon cannot be put on screen without: nothing here
+    // is allowed a gap, however forgiving the list above is about the
+    // other four
+    for (const { species } of SHIPPED) {
+      const sprite = loaded(species);
+
+      expect(
+        MINIMUM_CAST.filter((name) => !sprite.has(name)).map(spriteAnimName),
+        `${species} is missing`,
+      ).toEqual([]);
+    }
+  });
+
+  it('ends every walk on a clip the minimum carries', () => {
+    // `pickCast` gives up on the default and then on Idle, so both of
+    // them have to be clips a sheet is guaranteed to hold
+    expect(isMinimumCast(DEFAULT_CAST)).toBe(true);
+    expect(isMinimumCast(SpriteAnim.Idle)).toBe(true);
+    // And what a sheet is guaranteed to hold is a clip a list may end
+    // on
+    for (const name of MINIMUM_CAST) {
+      expect(isCommonCast(name), spriteAnimName(name)).toBe(true);
     }
   });
 

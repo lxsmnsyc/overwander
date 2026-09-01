@@ -4,7 +4,7 @@ import Biome from '../ids/biome';
 import type Regions from '../ids/regions';
 import { Species } from '../ids/species';
 import { getSpeciesByRegion, getSpeciesData, isBaseForm } from '../species';
-import { EVERY_LAIR, getLairSpecies } from './lair';
+import { EVERY_LAIR, getLairResidents } from './lair';
 
 /**
  * The people who stand at a duelling landmark: the Ace Trainer, who
@@ -214,7 +214,7 @@ export function trainerLevels(trainer: TrainerClass): [minimum: number, maximum:
   return trainer === TrainerClass.AceTrainer ? ACE_TRAINER_LEVELS : TYPE_TRAINER_LEVELS;
 }
 
-const LAIR_SPECIES = new Set(EVERY_LAIR.map(getLairSpecies));
+const LAIR_SPECIES = new Set(EVERY_LAIR.flatMap(getLairResidents));
 
 /**
  * What a class may field: the region's fully-grown species of their

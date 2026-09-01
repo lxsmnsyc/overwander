@@ -119,8 +119,13 @@ const enum Families {
   Smeargle = 120,
   // 121 is Tyrogue's
   Miltank = 122,
-  // 123 is Raikou's, 124 Entei's and 125 Suicune's
+  Raikou = 123,
+  Entei = 124,
+  Suicune = 125,
   Larvitar = 126,
+  Lugia = 127,
+  HoOh = 128,
+  Celebi = 129,
 }
 
 export default Families;

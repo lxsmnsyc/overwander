@@ -60,7 +60,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Miltank, weight: 5 },
       ],
       prized: [{ species: Species.Togepi, weight: 10 }],
-      special: [],
+      special: [{ species: Species.Raikou, weight: 10 }],
     },
     [TimeOfDay.Day]: {
       base: [
@@ -121,7 +121,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Miltank, weight: 5 },
       ],
       prized: [{ species: Species.Togepi, weight: 10 }],
-      special: [],
+      special: [{ species: Species.Raikou, weight: 10 }],
     },
     [TimeOfDay.Evening]: {
       base: [
@@ -151,7 +151,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Flareon, weight: 5 },
         { species: Species.Smeargle, weight: 5 },
       ],
-      special: [],
+      special: [{ species: Species.Raikou, weight: 10 }],
     },
     [TimeOfDay.Night]: {
       base: [
@@ -185,7 +185,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Flareon, weight: 5 },
         { species: Species.Smeargle, weight: 5 },
       ],
-      special: [],
+      special: [{ species: Species.Raikou, weight: 10 }],
     },
   });
 }

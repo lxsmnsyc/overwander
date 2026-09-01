@@ -32,7 +32,11 @@ export default function registerVolcanoSpawns(): void {
         { species: Species.Golem, weight: 5 },
         { species: Species.Typhlosion, weight: 3 },
       ],
-      special: [{ species: Species.Moltres, weight: 10 }],
+      special: [
+        { species: Species.Moltres, weight: 10 },
+        { species: Species.Entei, weight: 10 },
+        { species: Species.HoOh, weight: 10 },
+      ],
     },
     [TimeOfDay.Day]: {
       base: [
@@ -57,7 +61,11 @@ export default function registerVolcanoSpawns(): void {
         { species: Species.Onix, weight: 10 },
         { species: Species.Typhlosion, weight: 3 },
       ],
-      special: [{ species: Species.Moltres, weight: 10 }],
+      special: [
+        { species: Species.Moltres, weight: 10 },
+        { species: Species.Entei, weight: 10 },
+        { species: Species.HoOh, weight: 10 },
+      ],
     },
     [TimeOfDay.Evening]: {
       base: [
@@ -75,7 +83,11 @@ export default function registerVolcanoSpawns(): void {
         { species: Species.Rapidash, weight: 5 },
         { species: Species.Magmar, weight: 10 },
       ],
-      special: [{ species: Species.Moltres, weight: 10 }],
+      special: [
+        { species: Species.Moltres, weight: 10 },
+        { species: Species.Entei, weight: 10 },
+        { species: Species.HoOh, weight: 10 },
+      ],
     },
     [TimeOfDay.Night]: {
       base: [
@@ -88,7 +100,11 @@ export default function registerVolcanoSpawns(): void {
         { species: Species.Weezing, weight: 5 },
         { species: Species.Magmar, weight: 10 },
       ],
-      special: [{ species: Species.Moltres, weight: 10 }],
+      special: [
+        { species: Species.Moltres, weight: 10 },
+        { species: Species.Entei, weight: 10 },
+        { species: Species.HoOh, weight: 10 },
+      ],
     },
   });
 }

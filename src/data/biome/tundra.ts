@@ -14,7 +14,7 @@ export default function registerTundraSpawns(): void {
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Delibird, weight: 5 },
       ],
-      special: [],
+      special: [{ species: Species.Suicune, weight: 10 }],
     },
     [TimeOfDay.Day]: {
       base: [],
@@ -23,7 +23,7 @@ export default function registerTundraSpawns(): void {
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Delibird, weight: 5 },
       ],
-      special: [],
+      special: [{ species: Species.Suicune, weight: 10 }],
     },
     [TimeOfDay.Evening]: {
       base: [],
@@ -33,7 +33,7 @@ export default function registerTundraSpawns(): void {
         { species: Species.Jynx, weight: 5 },
         { species: Species.Delibird, weight: 5 },
       ],
-      special: [],
+      special: [{ species: Species.Suicune, weight: 10 }],
     },
     [TimeOfDay.Night]: {
       base: [],
@@ -43,7 +43,7 @@ export default function registerTundraSpawns(): void {
         { species: Species.Jynx, weight: 5 },
         { species: Species.Delibird, weight: 5 },
       ],
-      special: [],
+      special: [{ species: Species.Suicune, weight: 10 }],
     },
   });
 }

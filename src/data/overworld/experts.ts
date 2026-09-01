@@ -8,7 +8,7 @@ import Regions from '../ids/regions';
 import { Species } from '../ids/species';
 import { getTeachableMoves } from '../items/machines';
 import { getMoveData } from '../moves';
-import { EVERY_LAIR, getLairSpecies } from './lair';
+import { EVERY_LAIR, getLairResidents } from './lair';
 import { getSpeciesByRegion, getSpeciesData, isBaseForm } from '../species';
 
 /**
@@ -352,7 +352,7 @@ export function getGymLeaderPool(leader: GymLeader): ExpertPool {
  * the legendaries out with the half-grown, which is right for both.
  * A legendary belongs to its raid, and the egg to nothing at all
  */
-const LAIR_SPECIES = new Set(EVERY_LAIR.map(getLairSpecies));
+const LAIR_SPECIES = new Set(EVERY_LAIR.flatMap(getLairResidents));
 
 export function getExpertPool(region: Regions, pool: ExpertPool): Species[] {
   const types = new Set(pool.types);

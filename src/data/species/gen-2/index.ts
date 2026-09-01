@@ -1,3 +1,4 @@
+import registerCelebiSpecies from './celebi';
 import registerChikoritaSpecies from './chikorita';
 import registerChinchouSpecies from './chinchou';
 import registerCorsolaSpecies from './corsola';
@@ -9,6 +10,7 @@ import registerHoppipSpecies from './hoppip';
 import registerHoundourSpecies from './houndour';
 import registerLarvitarSpecies from './larvitar';
 import registerLedybaSpecies from './ledyba';
+import registerLegendaryBeastSpecies from './legendary-beasts';
 import registerMareepSpecies from './mareep';
 import registerMiltankSpecies from './miltank';
 import registerNatuSpecies from './natu';
@@ -26,6 +28,7 @@ import registerSpinarakSpecies from './spinarak';
 import registerSunkernSpecies from './sunkern';
 import registerTogepiSpecies from './togepi';
 import registerTotodileSpecies from './totodile';
+import registerTowerDuoSpecies from './tower-duo';
 import registerWooperSpecies from './wooper';
 
 export default function registerGen2Species(): void {
@@ -58,4 +61,7 @@ export default function registerGen2Species(): void {
   registerLarvitarSpecies();
   registerHeracrossSpecies();
   registerMiltankSpecies();
+  registerLegendaryBeastSpecies();
+  registerTowerDuoSpecies();
+  registerCelebiSpecies();
 }

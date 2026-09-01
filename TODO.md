@@ -67,3 +67,11 @@ is still short of the mainline, in rough order of how much it matters:
 - [ ] Heracross
 - [x] Houndoom
 - [ ] Tyranitar
+
+## Gen 2
+
+- Apricorns (tree, ball, Kurt)
+- Trainers
+- Gym Leaders
+- Elite Four
+- Characters

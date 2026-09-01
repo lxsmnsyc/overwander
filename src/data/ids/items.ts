@@ -795,6 +795,9 @@ export const enum Items {
    * [`src/data/items/trade-items.ts`](../items/trade-items.ts)
    */
   LinkingCord = 381,
+  // Celebi's relic, numbered after the list rather than beside the
+  // Old Sea Map: 54 was spoken for
+  GSBall = 382,
 }
 
 /**

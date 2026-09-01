@@ -323,6 +323,11 @@ const LEGENDARY_SPECIES = new Set<Species>([
   Species.Zapdos,
   Species.Moltres,
   Species.Mewtwo,
+  Species.Raikou,
+  Species.Entei,
+  Species.Suicune,
+  Species.Lugia,
+  Species.HoOh,
 ]);
 
 /**
@@ -330,7 +335,7 @@ const LEGENDARY_SPECIES = new Set<Species>([
  * will not roll one — the only way to face a mythical is to carry the
  * relic that calls it, which is what a raid item is
  */
-const MYTHICAL_SPECIES = new Set<Species>([Species.Mew]);
+const MYTHICAL_SPECIES = new Set<Species>([Species.Mew, Species.Celebi]);
 
 const SPECIAL_SPECIES = new Set<Species>([...LEGENDARY_SPECIES, ...MYTHICAL_SPECIES]);
 

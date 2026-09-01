@@ -10,7 +10,12 @@ import { Species } from '../data/ids/species';
 import { rollFossilOffer } from '../data/overworld/fossil';
 import Landmark from '../data/overworld/landmark';
 import type Lairs from '../data/overworld/lair';
-import { EVERY_LAIR, getBiomeLairs, getLairSpecies } from '../data/overworld/lair';
+import {
+  EVERY_LAIR,
+  getBiomeLairs,
+  getLairResidents,
+  pickLairSpecies,
+} from '../data/overworld/lair';
 import Npc, { GIOVANNI_CHARSETS, NPCS, npcSheets } from '../data/overworld/npc';
 import {
   BIOME_ELITE_MEMBERS,
@@ -521,7 +526,7 @@ export default class ChunkSnapshot {
     if (this.raids == null) {
       const raids = new Map<number, RaidRoll>();
       const lairs = getBiomeLairs(this.chunk.biome).filter((lair) =>
-        canStageBoss(getLairSpecies(lair)),
+        getLairResidents(lair).some(canStageBoss),
       );
 
       if (lairs.length > 0) {
@@ -532,7 +537,11 @@ export default class ChunkSnapshot {
             // its resident's nature and ability derive from
             const lair = lairs[Math.floor(rng.random() * lairs.length)];
 
-            raids.set(cell, { lair, species: getLairSpecies(lair), traitValue: rng.int32() });
+            raids.set(cell, {
+              lair,
+              species: pickLairSpecies(lair, canStageBoss, rng.int32()),
+              traitValue: rng.int32(),
+            });
           }
         }
       }
@@ -558,7 +567,7 @@ export default class ChunkSnapshot {
       const raids = new Map<number, RaidRoll>();
       const pool = getSpawnPool(this.chunk.biome, getTimeOfDay(this.raidTimestamp));
       const lairs = getBiomeLairs(this.chunk.biome).filter((lair) =>
-        canStageBoss(getLairSpecies(lair)),
+        getLairResidents(lair).some(canStageBoss),
       );
       // A species with nothing left to cast once the boss bans are
       // applied is no boss: it is left out of the draw rather than
@@ -579,7 +588,11 @@ export default class ChunkSnapshot {
         if (taken) {
           const lair = lairs[Math.floor(rng.random() * lairs.length)];
 
-          raids.set(cell, { lair, species: getLairSpecies(lair), traitValue: rng.int32() });
+          raids.set(cell, {
+            lair,
+            species: pickLairSpecies(lair, canStageBoss, rng.int32()),
+            traitValue: rng.int32(),
+          });
           continue;
         }
         if (rare.length === 0) {
@@ -831,7 +844,7 @@ export default class ChunkSnapshot {
             const lair = homes[Math.floor(rng.random() * homes.length)];
             const party = Array.from({ length: GIOVANNI_PARTY_SIZE - 1 }, () => draw(rares));
 
-            party.push([getLairSpecies(lair), rng.int32(), rng.int32()]);
+            party.push([pickLairSpecies(lair, () => true, rng.int32()), rng.int32(), rng.int32()]);
             stops.set(cell, party);
           } else {
             stops.set(cell, fielded.map(draw));

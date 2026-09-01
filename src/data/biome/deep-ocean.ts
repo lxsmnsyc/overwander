@@ -31,7 +31,7 @@ export default function registerDeepOceanSpawns(): void {
         { species: Species.Lapras, weight: 5 },
         { species: Species.Dragonite, weight: 2 },
       ],
-      special: [],
+      special: [{ species: Species.Lugia, weight: 10 }],
     },
     [TimeOfDay.Day]: {
       base: [
@@ -47,7 +47,7 @@ export default function registerDeepOceanSpawns(): void {
         { species: Species.Lapras, weight: 5 },
         { species: Species.Dragonite, weight: 2 },
       ],
-      special: [],
+      special: [{ species: Species.Lugia, weight: 10 }],
     },
     [TimeOfDay.Evening]: {
       base: [
@@ -63,7 +63,7 @@ export default function registerDeepOceanSpawns(): void {
         { species: Species.Lapras, weight: 5 },
         { species: Species.Dragonite, weight: 2 },
       ],
-      special: [],
+      special: [{ species: Species.Lugia, weight: 10 }],
     },
     [TimeOfDay.Night]: {
       base: [
@@ -79,7 +79,7 @@ export default function registerDeepOceanSpawns(): void {
         { species: Species.Lapras, weight: 5 },
         { species: Species.Dragonite, weight: 2 },
       ],
-      special: [],
+      special: [{ species: Species.Lugia, weight: 10 }],
     },
   });
 }

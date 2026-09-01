@@ -33,7 +33,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Furret, weight: 10 },
         { species: Species.Miltank, weight: 5 },
       ],
-      special: [],
+      special: [{ species: Species.Raikou, weight: 10 }],
     },
     [TimeOfDay.Day]: {
       base: [
@@ -63,7 +63,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Furret, weight: 10 },
         { species: Species.Miltank, weight: 5 },
       ],
-      special: [],
+      special: [{ species: Species.Raikou, weight: 10 }],
     },
     [TimeOfDay.Evening]: {
       base: [{ species: Species.Ekans, weight: 20 }],
@@ -76,7 +76,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Magneton, weight: 10 },
         { species: Species.Electrode, weight: 10 },
       ],
-      special: [],
+      special: [{ species: Species.Raikou, weight: 10 }],
     },
     [TimeOfDay.Night]: {
       base: [{ species: Species.Ekans, weight: 20 }],
@@ -89,7 +89,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Magneton, weight: 10 },
         { species: Species.Electrode, weight: 10 },
       ],
-      special: [],
+      special: [{ species: Species.Raikou, weight: 10 }],
     },
   });
 }

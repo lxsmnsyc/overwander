@@ -42,6 +42,7 @@ export default function registerMountainSpawns(): void {
       special: [
         { species: Species.Zapdos, weight: 10 },
         { species: Species.Moltres, weight: 10 },
+        { species: Species.HoOh, weight: 10 },
       ],
     },
     [TimeOfDay.Day]: {
@@ -79,6 +80,7 @@ export default function registerMountainSpawns(): void {
       special: [
         { species: Species.Zapdos, weight: 10 },
         { species: Species.Moltres, weight: 10 },
+        { species: Species.HoOh, weight: 10 },
       ],
     },
     [TimeOfDay.Evening]: {
@@ -106,6 +108,7 @@ export default function registerMountainSpawns(): void {
       special: [
         { species: Species.Zapdos, weight: 10 },
         { species: Species.Moltres, weight: 10 },
+        { species: Species.HoOh, weight: 10 },
       ],
     },
     [TimeOfDay.Night]: {
@@ -141,6 +144,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Zapdos, weight: 10 },
         { species: Species.Moltres, weight: 10 },
         { species: Species.Mewtwo, weight: 10 },
+        { species: Species.HoOh, weight: 10 },
       ],
     },
   });

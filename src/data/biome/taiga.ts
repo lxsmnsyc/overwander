@@ -11,13 +11,13 @@ export default function registerTaigaSpawns(): void {
       base: [],
       uncommon: [],
       rare: [{ species: Species.Snorlax, weight: 5 }],
-      special: [],
+      special: [{ species: Species.Suicune, weight: 10 }],
     },
     [TimeOfDay.Day]: {
       base: [],
       uncommon: [],
       rare: [{ species: Species.Snorlax, weight: 5 }],
-      special: [],
+      special: [{ species: Species.Suicune, weight: 10 }],
     },
     [TimeOfDay.Evening]: {
       base: [{ species: Species.Vulpix, weight: 10 }],
@@ -27,7 +27,7 @@ export default function registerTaigaSpawns(): void {
         { species: Species.Jynx, weight: 5 },
         { species: Species.Snorlax, weight: 5 },
       ],
-      special: [],
+      special: [{ species: Species.Suicune, weight: 10 }],
     },
     [TimeOfDay.Night]: {
       base: [
@@ -41,7 +41,7 @@ export default function registerTaigaSpawns(): void {
         { species: Species.Jynx, weight: 5 },
         { species: Species.Snorlax, weight: 5 },
       ],
-      special: [],
+      special: [{ species: Species.Suicune, weight: 10 }],
     },
   });
 }

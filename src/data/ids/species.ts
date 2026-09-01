@@ -292,7 +292,13 @@ export const enum Species {
   Donphan = 232,
   Smeargle = 235,
   Miltank = 241,
+  Raikou = 243,
+  Entei = 244,
+  Suicune = 245,
   Larvitar = 246,
   Pupitar = 247,
   Tyranitar = 248,
+  Lugia = 249,
+  HoOh = 250,
+  Celebi = 251,
 }

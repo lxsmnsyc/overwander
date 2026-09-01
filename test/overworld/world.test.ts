@@ -20,7 +20,7 @@ import Biome, {
 import Lairs, {
   EVERY_LAIR,
   getBiomeLairs,
-  getLairSpecies,
+  getLairResidents,
   getLairTitle,
   getSpeciesLair,
 } from '../../src/data/overworld/lair';
@@ -606,11 +606,12 @@ describe('world', () => {
       return;
     }
 
-    // A mountain holds two: the volcano and the cave under it. Every
-    // window stages one of them, and whoever is at home in it
+    // A mountain holds three: the volcano, the cave under it and the
+    // tower on it. Every window stages one of them, and whoever is at
+    // home in it
     const hosted = new Set(getBiomeLairs(Biome.Mountain));
 
-    expect(hosted).toEqual(new Set([Lairs.MtEmber, Lairs.CeruleanCave]));
+    expect(hosted).toEqual(new Set([Lairs.MtEmber, Lairs.CeruleanCave, Lairs.BellTower]));
 
     for (let window = 0; window < 12; window++) {
       for (const roll of new ChunkSnapshot(chunk, window * RAID_INTERVAL)
@@ -618,7 +619,7 @@ describe('world', () => {
         .values()) {
         expect(roll.lair).not.toBeNull();
         expect(hosted.has(roll.lair ?? Lairs.FarawayIsland)).toBe(true);
-        expect(roll.species).toBe(getLairSpecies(roll.lair ?? Lairs.FarawayIsland));
+        expect(getLairResidents(roll.lair ?? Lairs.FarawayIsland)).toContain(roll.species);
       }
     }
   });
@@ -1050,7 +1051,7 @@ describe('world', () => {
     }
 
     const snapshot = new ChunkSnapshot(chunk, 0);
-    const lairSpecies = new Set(EVERY_LAIR.map((lair) => getLairSpecies(lair)));
+    const lairSpecies = new Set(EVERY_LAIR.flatMap((lair) => getLairResidents(lair)));
 
     for (const [cell, party] of snapshot.getTrainerStops()) {
       expect(chunk.getLandmarkCells().get(cell)).toBe(Landmark.Trainer);
@@ -1141,7 +1142,7 @@ describe('world', () => {
     }
 
     const party = staged.snapshot.getRocketStops().get(staged.cell) ?? [];
-    const legendaries = new Set(EVERY_LAIR.map((lair) => getLairSpecies(lair)));
+    const legendaries = new Set(EVERY_LAIR.flatMap((lair) => getLairResidents(lair)));
 
     // Six strong: five of the biome's rares and a legendary at the end
     expect(party).toHaveLength(6);
@@ -1259,7 +1260,7 @@ describe('world', () => {
     expect(champChunk).not.toBeNull();
     if (champChunk != null) {
       const snapshot = new ChunkSnapshot(champChunk, 0);
-      const legendaries = new Set(EVERY_LAIR.map((lair) => getLairSpecies(lair)));
+      const legendaries = new Set(EVERY_LAIR.flatMap((lair) => getLairResidents(lair)));
 
       for (const [cell, party] of snapshot.getChampionStops()) {
         expect(party).toHaveLength(EXPERT_PARTY_SIZE);
@@ -1403,7 +1404,7 @@ describe('world', () => {
       // Otherwise it has taken over one of the biome's own lairs, and
       // is called that place with a word in front of it
       expect(hosted.has(roll.lair)).toBe(true);
-      expect(roll.species).toBe(getLairSpecies(roll.lair));
+      expect(getLairResidents(roll.lair)).toContain(roll.species);
       expect(getSpawnRarity(roll.species)).toBe(SpawnRarity.Special);
     }
 

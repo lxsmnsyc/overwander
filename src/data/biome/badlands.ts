@@ -33,7 +33,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Shuckle, weight: 5 },
         { species: Species.Skarmory, weight: 5 },
       ],
-      special: [],
+      special: [{ species: Species.Entei, weight: 10 }],
     },
     [TimeOfDay.Day]: {
       base: [
@@ -61,7 +61,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Shuckle, weight: 5 },
         { species: Species.Skarmory, weight: 5 },
       ],
-      special: [],
+      special: [{ species: Species.Entei, weight: 10 }],
     },
     [TimeOfDay.Evening]: {
       base: [
@@ -85,7 +85,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Tyranitar, weight: 2 },
         { species: Species.Shuckle, weight: 5 },
       ],
-      special: [],
+      special: [{ species: Species.Entei, weight: 10 }],
     },
     [TimeOfDay.Night]: {
       base: [
@@ -109,7 +109,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Tyranitar, weight: 2 },
         { species: Species.Shuckle, weight: 5 },
       ],
-      special: [],
+      special: [{ species: Species.Entei, weight: 10 }],
     },
   });
 }

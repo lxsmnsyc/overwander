@@ -66,6 +66,14 @@ export const enum Balls {
   TimerBall = 11,
   QuickBall = 12,
   DuskBall = 13,
+  // Kurt's seven, which the mainline turns out of apricorns
+  LevelBall = 14,
+  LureBall = 15,
+  MoonBall = 16,
+  FriendBall = 17,
+  LoveBall = 18,
+  HeavyBall = 19,
+  FastBall = 20,
 }
 
 export const enum Items {
@@ -101,6 +109,16 @@ export const enum Items {
   TimerBall = 26,
   QuickBall = 27,
   DuskBall = 28,
+  // Kurt's seven keep the ids reserved for them rather than joining
+  // the run above: an id in a stored record outlives the code that
+  // wrote it, so nothing already numbered may shift to make room
+  LevelBall = 311,
+  LureBall = 312,
+  MoonBall = 313,
+  FriendBall = 314,
+  LoveBall = 315,
+  HeavyBall = 316,
+  FastBall = 317,
   // Key items
   ShinyCharm = 29,
   // Valuables: found in the overworld, worth only what they sell for
@@ -654,13 +672,6 @@ export const enum Items {
   /**
    * TODO: ball variants the existing catch-rate hooks already cover
    */
-  LevelBall = 311,
-  LureBall = 312,
-  MoonBall = 313,
-  FriendBall = 314,
-  LoveBall = 315,
-  HeavyBall = 316,
-  FastBall = 317,
   SafariBall = 318,
   SportBall = 319,
 
@@ -851,6 +862,13 @@ export const BALL_ITEMS: Record<Balls, Items> = {
   [Balls.TimerBall]: Items.TimerBall,
   [Balls.QuickBall]: Items.QuickBall,
   [Balls.DuskBall]: Items.DuskBall,
+  [Balls.LevelBall]: Items.LevelBall,
+  [Balls.LureBall]: Items.LureBall,
+  [Balls.MoonBall]: Items.MoonBall,
+  [Balls.FriendBall]: Items.FriendBall,
+  [Balls.LoveBall]: Items.LoveBall,
+  [Balls.HeavyBall]: Items.HeavyBall,
+  [Balls.FastBall]: Items.FastBall,
 };
 
 const BALLS_BY_ITEM = new Map<Items, Balls>(

@@ -1,6 +1,7 @@
 import AleaRNG from '../core/alea';
 import { SpawnRarity, getSpawnRarity } from '../data/biome';
 import type Lairs from '../data/overworld/lair';
+import type Phenomenon from '../data/overworld/phenomenon';
 import type Weather from '../data/overworld/weather';
 import {
   WEATHER_MIN_IV,
@@ -181,6 +182,15 @@ export interface Encounter {
   x: number;
   y: number;
   biome: Biome;
+  /**
+   * What startled it out, for a meeting a phenomenon staged. Absent
+   * for everything walked into, which is most of them.
+   *
+   * The Lure Ball is what reads it: nothing here fishes, and what a
+   * ripple brings up is the nearest thing the world has to a catch on
+   * a line
+   */
+  phenomenon?: Phenomenon;
 }
 
 /**
@@ -530,6 +540,11 @@ export interface EncounterOptions {
    */
   shadow?: boolean;
   /**
+   * What startled the meeting out, where something did. Only the
+   * phenomena stage a meeting this way
+   */
+  phenomenon?: Phenomenon;
+  /**
    * The sky the meeting happened under. A pokemon met under weather
    * comes with a floor under every one of its values, which is the
    * whole of what weather is worth: nothing about a fight changes.
@@ -674,5 +689,6 @@ export default function deriveEncounter(
     x: snapshot.chunk.x,
     y: snapshot.chunk.y,
     biome: options.biome ?? snapshot.chunk.biome,
+    ...(options.phenomenon == null ? {} : { phenomenon: options.phenomenon }),
   };
 }

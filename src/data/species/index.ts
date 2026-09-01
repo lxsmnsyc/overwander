@@ -37,6 +37,7 @@ export {
   getAvailableEvolutions,
   getConsumedItem,
   isFullyEvolved,
+  lineEvolvesByItem,
   meetsEvolutionCriteria,
 } from './evolution';
 export type { EvolutionContext } from './evolution';

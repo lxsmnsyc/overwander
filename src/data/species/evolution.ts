@@ -3,7 +3,12 @@ import type { TimeOfDay } from '../ids/biome';
 import type { Stats } from '../constants/stats';
 import { Items } from '../ids/items';
 import { EvolutionMethod, type Species } from '../ids/species';
-import { type EvolutionData, type StatComparison, getSpeciesData } from './__create';
+import {
+  type EvolutionData,
+  type StatComparison,
+  getBaseSpecies,
+  getSpeciesData,
+} from './__create';
 
 /**
  * The conditions the game can actually verify today. Everything else
@@ -212,6 +217,38 @@ function pullsCord(evolution: EvolutionData, context: EvolutionContext): boolean
  * carrying. It is what "still growing" means to an Eviolite, and what
  * a demo means by wanting a field of finished pokemon
  */
+/**
+ * Whether an item is what any stage of this pokemon's **line**
+ * evolves on: the species itself, whatever it came from, and whatever
+ * any of those grow into.
+ *
+ * The whole line rather than the one stage, because that is the
+ * question a caller has: a Moon Ball answers a Clefairy, and it
+ * answers a Cleffa and a Clefable with it. The walk starts at the
+ * stage the line hatches at and goes forwards from there
+ */
+export function lineEvolvesByItem(species: Species, item: Items): boolean {
+  const seen = new Set<Species>();
+  const walking = [getBaseSpecies(species)];
+
+  while (walking.length > 0) {
+    const current = walking.pop();
+
+    if (current == null || seen.has(current)) {
+      continue;
+    }
+    seen.add(current);
+
+    for (const evolution of getSpeciesData(current).evolvesInto ?? []) {
+      if ((evolution.method & EvolutionMethod.UsedItem) !== 0 && evolution.item === item) {
+        return true;
+      }
+      walking.push(evolution.species);
+    }
+  }
+  return false;
+}
+
 export function isFullyEvolved(species: Species): boolean {
   return (getSpeciesData(species).evolvesInto ?? []).length === 0;
 }

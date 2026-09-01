@@ -355,6 +355,17 @@ registerSpecies();
 registerItems();
 registerBiomeSpawns();
 
+/** Kurt's seven, which nothing sells and nothing hides in a stash. */
+const APRICORN_BALLS: Items[] = [
+  Items.LevelBall,
+  Items.LureBall,
+  Items.MoonBall,
+  Items.FriendBall,
+  Items.LoveBall,
+  Items.HeavyBall,
+  Items.FastBall,
+];
+
 describe('the type chart', () => {
   /**
    * The chart as the main games write it: what each attacking type
@@ -2099,6 +2110,36 @@ describe('item data', () => {
     // it has no price rather than because a list says so
     expect(balls.has(Items.MasterBall)).toBe(false);
     expect(isMarketable(Items.MasterBall)).toBe(false);
+  });
+
+  it("keeps Kurt's seven off every counter and out of every stash", () => {
+    // They are turned out of apricorns rather than bought or found,
+    // and the exclusion is a property of the data rather than a list
+    // somebody has to remember: nothing prices them, so nothing that
+    // filters on a price can carry them
+    const pooled = new Set(
+      [
+        ITEM_POOL.base,
+        ITEM_POOL.uncommon,
+        ITEM_POOL.rare,
+        ITEM_POOL.prized,
+        ITEM_POOL.special,
+      ].flatMap((band) => band.map((entry) => entry.item)),
+    );
+
+    for (const item of APRICORN_BALLS) {
+      const data = getItemData(item);
+
+      expect(isMarketable(item), data.name).toBe(false);
+      expect(data.buy, data.name).toBe(0);
+      // Nor will he take one off a player's hands
+      expect(data.sell, data.name).toBe(0);
+      expect(pooled.has(item), `${data.name} is in a stash`).toBe(false);
+
+      for (const kind of VENDOR_KINDS) {
+        expect(new Set(getVendorGoods(kind)).has(item), `${data.name} on a counter`).toBe(false);
+      }
+    }
   });
 
   it('gives every counter a priced shelf, and two of them a staple', () => {

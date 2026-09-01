@@ -30,7 +30,7 @@ import {
   zeroEffortValues,
 } from './catch-fields';
 import { readCaughtIn, updateCaughtIn } from './caught-io';
-import { BASE_FRIENDSHIP, SHADOW_FRIENDSHIP } from '../data/constants/friendship';
+import { caughtFriendship } from '../data/constants/friendship';
 import { type Tx, getSql, newDocId, tx } from './db';
 import { readEncounter } from './encounter-io';
 import { recordCaughtSpecies } from './pokedex';
@@ -152,7 +152,7 @@ export async function writeCaughtRecord(
         })},
         0, ${encounter.lair}, ${ball},
         ${new Date(toLocalTime(now, zone))}, ${zone}, ${asLocale(locale)},
-        0, 0, ${shadow ? SHADOW_FRIENDSHIP : BASE_FRIENDSHIP},
+        0, 0, ${caughtFriendship(ball, shadow)},
         ${encounter.timestamp}, ${encounter.x}, ${encounter.y},
         ${encounter.biome}, ${encounter.place ?? null}
       )

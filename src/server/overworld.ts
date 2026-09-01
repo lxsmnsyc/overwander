@@ -559,7 +559,15 @@ export async function claimPhenomenon(
   );
   const spawn: Spawn = [reward.species, rng.int32(), rng.int32()];
 
-  return { kind: 'encounter', encounter: await startEncounter(uid, snapshot, key, spawn) };
+  // What startled it out travels with the meeting: the Lure Ball is
+  // thrown at whatever came up out of a ripple, and by the time it is
+  // thrown the cell is long behind the player
+  return {
+    kind: 'encounter',
+    encounter: await startEncounter(uid, snapshot, key, spawn, {
+      phenomenon: snapshot.getPhenomena().get(cell),
+    }),
+  };
 }
 
 /**

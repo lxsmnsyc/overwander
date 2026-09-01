@@ -135,6 +135,79 @@ export default function registerBalls(): void {
     buy: 1000,
     sell: 500,
   });
+  // Kurt's seven. Nothing sells them, so they carry no price and no
+  // Marketable flag: they are turned out of apricorns, and an
+  // apricorn is picked rather than bought
+  // Better the further the buddy is above what it is thrown at
+  registerItem(Items.LevelBall, {
+    name: 'Level Ball',
+    type: ItemTypes.PokeBall,
+    description: 'Up to 8x on something far below the buddy walking beside you.',
+    icon: 'balls/level',
+    flags: ItemFlags.Usable | ItemFlags.Consumable,
+    buy: 0,
+    sell: 0,
+  });
+  // Better on whatever a ripple brought up
+  registerItem(Items.LureBall, {
+    name: 'Lure Ball',
+    type: ItemTypes.PokeBall,
+    description: '5x on something startled out of rippling water.',
+    icon: 'balls/lure',
+    flags: ItemFlags.Usable | ItemFlags.Consumable,
+    buy: 0,
+    sell: 0,
+  });
+  // Better on the line a Moon Stone answers
+  registerItem(Items.MoonBall, {
+    name: 'Moon Ball',
+    type: ItemTypes.PokeBall,
+    description: '4x on a species a Moon Stone evolves.',
+    icon: 'balls/moon',
+    flags: ItemFlags.Usable | ItemFlags.Consumable,
+    buy: 0,
+    sell: 0,
+  });
+  // Catches no better, and what it catches arrives already fond
+  registerItem(Items.FriendBall, {
+    name: 'Friend Ball',
+    type: ItemTypes.PokeBall,
+    description: 'Catches like a Poke Ball; what it holds arrives at 200 friendship.',
+    icon: 'balls/friend',
+    flags: ItemFlags.Usable | ItemFlags.Consumable,
+    buy: 0,
+    sell: 0,
+  });
+  // Better on the buddy's own species, the other way round
+  registerItem(Items.LoveBall, {
+    name: 'Love Ball',
+    type: ItemTypes.PokeBall,
+    description: "8x on the buddy's own species of the opposite gender.",
+    icon: 'balls/love',
+    flags: ItemFlags.Usable | ItemFlags.Consumable,
+    buy: 0,
+    sell: 0,
+  });
+  // Better the heavier the thing it is thrown at
+  registerItem(Items.HeavyBall, {
+    name: 'Heavy Ball',
+    type: ItemTypes.PokeBall,
+    description: 'Up to 4x by weight, from 2x at 100 kg.',
+    icon: 'balls/heavy',
+    flags: ItemFlags.Usable | ItemFlags.Consumable,
+    buy: 0,
+    sell: 0,
+  });
+  // Better on whatever would outrun it
+  registerItem(Items.FastBall, {
+    name: 'Fast Ball',
+    type: ItemTypes.PokeBall,
+    description: '4x on a species with 100 base Speed or more.',
+    icon: 'balls/fast',
+    flags: ItemFlags.Usable | ItemFlags.Consumable,
+    buy: 0,
+    sell: 0,
+  });
   // Better at night and in caves
   registerItem(Items.DuskBall, {
     name: 'Dusk Ball',

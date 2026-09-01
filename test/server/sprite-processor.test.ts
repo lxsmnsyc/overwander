@@ -1,25 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import type { AnimData } from '../../src/server/sprites/anim-data';
-import readAnimData from '../../src/server/sprites/anim-data';
-import type { Point } from '../../src/server/sprites/markers';
-import markersFor from '../../src/server/sprites/markers';
 import pack from '../../src/server/sprites/packing';
 import { blank, blit, opaque } from '../../src/server/sprites/raster';
 import type { Raster } from '../../src/server/sprites/raster';
 import computeTrim from '../../src/server/sprites/trim';
-import type { Frame, PictureData, SpriteTarget } from '../../src/server/sprites/pmd';
-import processPmd, {
-  alignCoats,
-  animFilter,
-  checkCoatTiming,
-  hoistMarks,
-} from '../../src/server/sprites/pmd';
 import deduper, { drawPictures } from '../../src/server/sprites/dedupe';
 import {
   extraDestination,
   overworldDestination,
   overworldSlug,
-  pokemonDestination,
 } from '../../src/server/sprites/files';
 import {
   FACINGS,
@@ -29,7 +17,6 @@ import {
   withCredit,
 } from '../../src/server/sprites/pokengine';
 import { storedAs } from '../../src/components/admin/sprite-processor/shared';
-import { SpriteAnim } from '../../src/data/ids/sprite-anims';
 
 /**
  * The sprite processor's arithmetic.
@@ -156,149 +143,7 @@ describe('trimming', () => {
   });
 });
 
-describe('the marks beside a frame', () => {
-  it('averages a blob rather than taking its first pixel', () => {
-    const shadow = drawn(16, 16, { x: 4, y: 8, width: 4, height: 2 });
-    const found = markersFor(shadow, null, { x: 0, y: 0, width: 16, height: 16 }, [0, 0]);
-
-    // The middle of a 4 × 2 blob at (4, 8), rounded
-    expect(found.shadow).toEqual([6, 9]);
-    expect(found.head, 'no offsets image to read').toBeNull();
-  });
-
-  it('tells the anchors apart by their channel', () => {
-    const offsets = blank(16, 16);
-    const put = (x: number, y: number, color: [number, number, number, number]): void => {
-      blit(
-        offsets,
-        drawn(1, 1, { x: 0, y: 0, width: 1, height: 1 }, color),
-        {
-          x: 0,
-          y: 0,
-          width: 1,
-          height: 1,
-        },
-        { x, y },
-      );
-    };
-
-    put(1, 1, [255, 0, 0, 255]);
-    put(2, 3, [0, 255, 0, 255]);
-    put(4, 5, [0, 0, 255, 255]);
-    put(6, 7, [0, 0, 0, 255]);
-
-    const found = markersFor(null, offsets, { x: 0, y: 0, width: 16, height: 16 }, [0, 0]);
-
-    expect(found.left).toEqual([1, 1]);
-    expect(found.center).toEqual([2, 3]);
-    expect(found.right).toEqual([4, 5]);
-    // Black, which an archive uses for the head and a reader looking
-    // for a lit channel finds nothing of
-    expect(found.head).toEqual([6, 7]);
-  });
-
-  it('lets a mark fall outside the frame it was trimmed to', () => {
-    // A shadow drawn below the feet is cropped off the picture, and its
-    // anchor is negative rather than lost
-    const shadow = drawn(16, 16, { x: 8, y: 1, width: 1, height: 1 });
-    const found = markersFor(shadow, null, { x: 0, y: 0, width: 16, height: 16 }, [4, 6]);
-
-    expect(found.shadow).toEqual([4, -5]);
-  });
-});
-
-describe('AnimData.xml', () => {
-  const SOURCE = `<?xml version="1.0"?>
-<AnimData>
-  <ShadowSize>2</ShadowSize>
-  <Anims>
-    <Anim>
-      <Name>Walk</Name>
-      <Index>0</Index>
-      <FrameWidth>24</FrameWidth>
-      <FrameHeight>32</FrameHeight>
-      <Durations><Duration>4</Duration><Duration>6</Duration></Durations>
-    </Anim>
-    <Anim>
-      <Name>Strike</Name>
-      <Index>5</Index>
-      <CopyOf>Walk</CopyOf>
-    </Anim>
-    <Anim>
-      <Name>Sleep</Name>
-      <Index>7</Index>
-      <FrameWidth>16</FrameWidth>
-      <FrameHeight>16</FrameHeight>
-      <Durations><Duration>10</Duration></Durations>
-    </Anim>
-  </Anims>
-</AnimData>`;
-
-  it('reads the sizes and the frame times', () => {
-    const data = readAnimData(SOURCE, animFilter(['Walk']));
-    const walk = data.anims.find((anim) => anim.name === SpriteAnim.Walk);
-
-    expect(data.shadowSize).toBe(2);
-    expect(walk).toMatchObject({
-      name: SpriteAnim.Walk,
-      frameWidth: 24,
-      frameHeight: 32,
-      durations: [4, 6],
-      target: SpriteAnim.Walk,
-    });
-  });
-
-  it('resolves a copy against the animation it copies', () => {
-    const data = readAnimData(SOURCE, animFilter(['Walk', 'Sleep']));
-    const strike = data.anims.find((anim) => anim.name === SpriteAnim.Strike);
-
-    // Kept because what it is *drawn from* is kept: a copy has no
-    // image of its own
-    expect(strike).toMatchObject({
-      frameWidth: 24,
-      frameHeight: 32,
-      index: 5,
-      target: SpriteAnim.Walk,
-    });
-  });
-
-  it('drops what the filter does not name', () => {
-    const data = readAnimData(SOURCE, animFilter(['Sleep']));
-
-    // Filtered by the image an animation is *drawn from*, so a copy
-    // rides in on whatever it copied and nothing else does
-    expect(data.anims.map((anim) => anim.name)).toEqual([SpriteAnim.Sleep]);
-    expect(readAnimData(SOURCE, animFilter(['Walk'])).anims.map((anim) => anim.name)).toEqual([
-      SpriteAnim.Walk,
-      SpriteAnim.Strike,
-    ]);
-  });
-
-  it('refuses a filter that names nothing', () => {
-    expect(() => animFilter([' '])).toThrow();
-  });
-});
-
 describe('where a sheet is written', () => {
-  it('files a pokemon under its coat, beside the description of its pair', () => {
-    expect(pokemonDestination({ species: 94, female: false, shiny: false })).toEqual({
-      image: 'sprites/pokemon/kanto/regular/94.png',
-      meta: 'sprites/pokemon/kanto/meta/94.json',
-    });
-    expect(pokemonDestination({ species: 94, female: false, shiny: true }).image).toBe(
-      'sprites/pokemon/kanto/shiny/94.png',
-    );
-  });
-
-  it('marks a female drawing on the description as well as the coat', () => {
-    // A female is a redrawing rather than a recolour, so it is packed
-    // and described apart: the suffix is on both
-    const written = pokemonDestination({ species: 3, female: true, shiny: true });
-
-    expect(written.image).toBe('sprites/pokemon/kanto/shiny/3_f.png');
-    expect(written.meta).toBe('sprites/pokemon/kanto/meta/3_f.json');
-  });
-
   it('keeps anything else out of the pokemon tree', () => {
     expect(extraDestination('Battle Effects!')).toEqual({
       image: 'sprites/extras/battle-effects.png',
@@ -315,39 +160,6 @@ describe('where a sheet is written', () => {
     // nothing and is refused rather than climbing out
     expect(() => extraDestination('../loose')).toThrow();
     expect(() => extraDestination('ui//loose')).toThrow();
-  });
-
-  it('names all four drawings of one pokemon', () => {
-    const four = [
-      { female: false, shiny: false },
-      { female: false, shiny: true },
-      { female: true, shiny: false },
-      { female: true, shiny: true },
-    ].map((coat) => pokemonDestination({ species: 3, ...coat }));
-
-    expect(four.map((written) => written.image)).toEqual([
-      'sprites/pokemon/kanto/regular/3.png',
-      'sprites/pokemon/kanto/shiny/3.png',
-      'sprites/pokemon/kanto/regular/3_f.png',
-      'sprites/pokemon/kanto/shiny/3_f.png',
-    ]);
-    // Two descriptions, one for each pair: a shiny is the same drawing
-    // recoloured and rides its coat's, a female is drawn again and has
-    // its own
-    expect(four.map((written) => written.meta)).toEqual([
-      'sprites/pokemon/kanto/meta/3.json',
-      'sprites/pokemon/kanto/meta/3.json',
-      'sprites/pokemon/kanto/meta/3_f.json',
-      'sprites/pokemon/kanto/meta/3_f.json',
-    ]);
-  });
-
-  it('never lets a species number reach the path as anything but a number', () => {
-    // The only thing the caller decides about a path, and it is cut to
-    // a whole number before it is written into one
-    expect(pokemonDestination({ species: 7.9, female: false, shiny: false }).image).toBe(
-      'sprites/pokemon/kanto/regular/7.png',
-    );
   });
 });
 
@@ -679,166 +491,6 @@ describe('drawing an animation into the sheet', () => {
   });
 });
 
-/** The images of one animation, as the coat readers hand them over. */
-type Coat = Map<SpriteAnim, { animation?: Raster; shadow?: Raster; offsets?: Raster }>;
-
-/** A grid of cells with one lit pixel in each, at the same spot in every one. */
-function cells(columns: number, width: number, height: number, mark: Point): Raster {
-  const raster = blank(columns * width, height);
-
-  for (let column = 0; column < columns; column += 1) {
-    blit(
-      raster,
-      drawn(width, height, { x: mark[0], y: mark[1], width: 1, height: 1 }),
-      {
-        x: 0,
-        y: 0,
-        width,
-        height,
-      },
-      { x: column * width, y: 0 },
-    );
-  }
-  return raster;
-}
-
-/** Where the lit pixels of a grid sit inside their own cell. */
-function marks(raster: Raster, columns: number, width: number, height: number): string[] {
-  const found: string[] = [];
-
-  for (let column = 0; column < columns; column += 1) {
-    for (let y = 0; y < height; y += 1) {
-      for (let x = 0; x < width; x += 1) {
-        if (opaque(raster, column * width + x, y)) {
-          found.push(`${x},${y}`);
-        }
-      }
-    }
-  }
-  return found;
-}
-
-/** One animation's description, which is all `alignCoats` reads. */
-function animsFor(width: number, height: number): AnimData {
-  return {
-    shadowSize: 1,
-    anims: [
-      {
-        name: SpriteAnim.Idle,
-        index: 0,
-        frameWidth: width,
-        frameHeight: height,
-        durations: [1, 1],
-        target: SpriteAnim.Idle,
-      },
-    ],
-  };
-}
-
-describe('coats animated differently', () => {
-  it('takes a coat that is held for the same times', () => {
-    expect(() => {
-      checkCoatTiming(animsFor(4, 4), animsFor(6, 4), 'shiny');
-    }).not.toThrow();
-  });
-
-  it('refuses a coat whose frames are held for other lengths', () => {
-    const coat = animsFor(4, 4);
-
-    coat.anims[0].durations = [1, 2];
-
-    // One description ships for a coat and its shiny, so a shiny that
-    // disagrees would be played at its lead's timing with nothing to
-    // say so
-    expect(() => {
-      checkCoatTiming(animsFor(4, 4), coat, 'shiny');
-    }).toThrow(/held for 1, 2/);
-  });
-
-  it('refuses a coat that casts a different shadow', () => {
-    const coat = animsFor(4, 4);
-
-    coat.shadowSize = 2;
-
-    expect(() => {
-      checkCoatTiming(animsFor(4, 4), coat, 'shiny');
-    }).toThrow(/shadow/);
-  });
-
-  it('refuses a coat holding an animation its lead has not', () => {
-    const coat = animsFor(4, 4);
-
-    coat.anims[0].name = SpriteAnim.Walk;
-
-    expect(() => {
-      checkCoatTiming(animsFor(4, 4), coat, 'shiny');
-    }).toThrow(/the coat it is drawn from does not/);
-  });
-});
-
-describe('coats cut to different frames', () => {
-  it('grows every coat onto the widest frame any of them uses', () => {
-    // A shiny exported 2 wider draws past what its lead's frame holds.
-    // Cropping it back would clip that, so the lead grows instead
-    const plain: Coat = new Map([[SpriteAnim.Idle, { animation: cells(2, 4, 4, [1, 1]) }]]);
-    const shiny: Coat = new Map([[SpriteAnim.Idle, { animation: cells(2, 6, 4, [2, 1]) }]]);
-    const data = animsFor(4, 4);
-
-    alignCoats(plain, [shiny], data, [{ key: 'shiny' }]);
-
-    expect(data.anims[0].frameWidth).toBe(6);
-    expect(plain.get(SpriteAnim.Idle)?.animation?.width).toBe(12);
-    // The lead's own mark moved with it, so the two still line up
-    expect(marks(plain.get(SpriteAnim.Idle)!.animation!, 2, 6, 4)).toEqual(['2,1', '2,1']);
-    expect(marks(shiny.get(SpriteAnim.Idle)!.animation!, 2, 6, 4)).toEqual(['2,1', '2,1']);
-  });
-
-  it('moves the marks of the lead coat along with its drawing', () => {
-    const plain: Coat = new Map([
-      [
-        SpriteAnim.Idle,
-        {
-          animation: cells(2, 4, 4, [1, 1]),
-          offsets: cells(2, 4, 4, [1, 2]),
-          shadow: cells(2, 4, 4, [2, 3]),
-        },
-      ],
-    ]);
-    const data = animsFor(4, 4);
-
-    alignCoats(plain, [new Map([[SpriteAnim.Idle, { animation: cells(2, 6, 4, [2, 1]) }]])], data, [
-      { key: 'shiny' },
-    ]);
-
-    const held = plain.get(SpriteAnim.Idle);
-
-    expect(marks(held!.offsets!, 2, 6, 4)).toEqual(['2,2', '2,2']);
-    expect(marks(held!.shadow!, 2, 6, 4)).toEqual(['3,3', '3,3']);
-  });
-
-  it('pads a coat cut shorter than its lead', () => {
-    // The other way round: a shiny exported with less padding is
-    // centred back onto the frame the description names
-    const plain: Coat = new Map([[SpriteAnim.Idle, { animation: cells(2, 4, 4, [1, 2]) }]]);
-    const shiny: Coat = new Map([[SpriteAnim.Idle, { animation: cells(2, 4, 2, [1, 1]) }]]);
-    const data = animsFor(4, 4);
-
-    alignCoats(plain, [shiny], data, [{ key: 'shiny' }]);
-
-    expect(data.anims[0].frameHeight).toBe(4);
-    expect(marks(shiny.get(SpriteAnim.Idle)!.animation!, 2, 4, 4)).toEqual(['1,2', '1,2']);
-  });
-
-  it('refuses a coat whose grid is a different shape', () => {
-    const plain: Coat = new Map([[SpriteAnim.Idle, { animation: cells(2, 4, 4, [1, 1]) }]]);
-    const shiny: Coat = new Map([[SpriteAnim.Idle, { animation: blank(9, 4) }]]);
-
-    expect(() => {
-      alignCoats(plain, [shiny], animsFor(4, 4), [{ key: 'shiny' }]);
-    }).toThrow(/shiny/);
-  });
-});
-
 describe('copying a rectangle', () => {
   it('drops what hangs off the left rather than wrapping it', () => {
     const target = blank(4, 2);
@@ -855,89 +507,17 @@ describe('copying a rectangle', () => {
       { x: -2, y: 0 },
     );
 
-    expect(marks(target, 1, 4, 2)).toEqual(['0,0', '1,0', '0,1', '1,1']);
-  });
-});
+    // The right half of the source, landed at the left of the target,
+    // and nothing wrapped round onto the row above
+    const lit: string[] = [];
 
-/** One frame of a clip, with everything it does not care about filled in. */
-function framed(cell: number, flip: boolean, at: Point, head: Point): Frame {
-  return { shadow: [0, 0], marks: [null, head, null, null], cell, flip, at };
-}
-
-/** The clip those frames belong to, sized so nothing falls off it. */
-function clipOf(frames: Frame[]): SpriteTarget {
-  return {
-    frameWidth: 16,
-    frameHeight: 16,
-    sourceFrameWidth: 16,
-    sourceFrameHeight: 16,
-    trim: [0, 0],
-    columns: frames.length,
-    rows: 1,
-    frames,
-  };
-}
-
-describe('lifting the marks onto the pictures', () => {
-  const pictures: PictureData[] = [[0, 0, 4, 4]];
-
-  it('writes a mark once for every frame that draws the same picture', () => {
-    const frames = [framed(0, false, [2, 3], [3, 5]), framed(0, false, [5, 1], [6, 3])];
-    const written = hoistMarks([{ name: SpriteAnim.Idle, target: clipOf(frames) }], pictures);
-
-    // Both frames put the head one across and two down in the picture,
-    // so the picture says so and neither frame repeats it
-    expect(written.pictures[0]).toEqual([0, 0, 4, 4, [null, [1, 2], null, null]]);
-    expect(written.sprites[SpriteAnim.Idle]?.frames).toEqual([
-      [[0, 0], 0, 0, [2, 3]],
-      [[0, 0], 0, 0, [5, 1]],
-    ]);
-  });
-
-  it('turns a mirrored frame back over before comparing it', () => {
-    // The same pose drawn the other way round: its head is on the far
-    // side of the frame and in the same place on the picture
-    const frames = [framed(0, false, [0, 0], [1, 2]), framed(0, true, [0, 0], [2, 2])];
-    const written = hoistMarks([{ name: SpriteAnim.Idle, target: clipOf(frames) }], pictures);
-
-    expect(written.pictures[0]).toEqual([0, 0, 4, 4, [null, [1, 2], null, null]]);
-    expect(written.sprites[SpriteAnim.Idle]?.frames[1]).toEqual([[0, 0], 0, 1, [0, 0]]);
-  });
-
-  it('leaves a frame that disagrees carrying its own', () => {
-    const frames = [framed(0, false, [0, 0], [1, 2]), framed(0, false, [0, 0], [3, 3])];
-    const written = hoistMarks([{ name: SpriteAnim.Idle, target: clipOf(frames) }], pictures);
-
-    expect(written.sprites[SpriteAnim.Idle]?.frames[1]).toEqual([
-      [0, 0],
-      0,
-      0,
-      [0, 0],
-      [null, [3, 3], null, null],
-    ]);
-  });
-});
-
-describe('which coats a pack may be given', () => {
-  const options = { species: 1, compact: true, anims: ['Idle'] };
-  const bytes = new Uint8Array([1, 2, 3]);
-
-  it('needs a coat that leads a pair', async () => {
-    await expect(processPmd({}, options)).rejects.toThrow(/regular or a female/);
-  });
-
-  it('takes the female archives without the plain ones', async () => {
-    // Not a real archive, so it fails on reading it rather than on
-    // being refused: what is under test is that it gets that far
-    await expect(processPmd({ female: bytes }, options)).rejects.not.toThrow(/regular or a female/);
-  });
-
-  it('refuses a shiny whose lead is not there', async () => {
-    await expect(processPmd({ regular: bytes, shinyFemale: bytes }, options)).rejects.toThrow(
-      /recolour of the female coat/,
-    );
-    await expect(processPmd({ female: bytes, shiny: bytes }, options)).rejects.toThrow(
-      /recolour of the regular coat/,
-    );
+    for (let y = 0; y < 2; y += 1) {
+      for (let x = 0; x < 4; x += 1) {
+        if (opaque(target, x, y)) {
+          lit.push(`${x},${y}`);
+        }
+      }
+    }
+    expect(lit).toEqual(['0,0', '1,0', '0,1', '1,1']);
   });
 });

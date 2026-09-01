@@ -88,9 +88,9 @@ dex number rather than from a list beside the files.
 stored once, cropped to the pixels that are lit, wherever the packer put it; a
 frame says which picture it draws, whether it is mirrored, and where that picture
 hangs inside the clip's box. Two animations that share a drawing point at one copy
-of it, and the four coats are compared together so a picture is only shared when
-it matches in all of them. `src/canvas/sprite-sheet.ts` is the whole of that
-contract and `src/canvas/species-sprite-animation.ts` plays it.
+of it, and a coat is compared against its shiny so a picture is only shared when
+it matches in both. `src/canvas/sprite-sheet.ts` is the whole of that contract and
+`src/canvas/species-sprite-animation.ts` plays it.
 
 The art began as **PMD sprites**, the layout Pokémon Mystery Dungeon fan projects
 use: eight facing rows per animation, an `anims` block, and an anchor for the
@@ -99,6 +99,10 @@ but the shadow are kept on the picture rather than on the frame, since a pose
 packed once and played by nine frames has its head in the same place in all nine;
 [`scripts/lift-marks.ts`](../scripts/lift-marks.ts) is what moved them there, and
 it halved the descriptions.
+
+The sheets themselves are made outside this repository, in the SpriteCollab
+checkout beside it, which is where the archives and the packing tools live. What
+ships here is the finished sheet and its description.
 
 Two passes run over the sheets. `pnpm compact-sprites` rewrites the PNG containers
 as indexed colour without touching a pixel, and

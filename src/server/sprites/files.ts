@@ -1,7 +1,6 @@
 import 'server-only';
 import { mkdir, stat, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { REGION_NAMES, getSpeciesRegion } from '../../data/species/regions';
 
 /**
  * Where a processed sheet is put.
@@ -26,36 +25,6 @@ export interface Destination {
   image: string;
   /** Where the description goes, or nothing where there is none. */
   meta?: string;
-}
-
-/** What a sheet is called: its species, and which drawing of it. */
-export interface SheetName {
-  species: number;
-  female: boolean;
-  shiny: boolean;
-}
-
-function stem(name: SheetName): string {
-  return `${Math.trunc(name.species)}${name.female ? '_f' : ''}`;
-}
-
-/**
- * A pokemon: the drawing under its coat, and the description of the
- * pair it belongs to, both filed under the species' region. This is
- * the layout `species-sprites.ts` reads.
- *
- * Shiny is a recolour of the same export, so it shares its coat's
- * description. A female is drawn again from an archive of its own, and
- * is described on its own under the same `_f` the drawing carries
- */
-export function pokemonDestination(name: SheetName): Destination {
-  const species = Math.trunc(name.species);
-  const root = `sprites/pokemon/${REGION_NAMES[getSpeciesRegion(species)]}`;
-
-  return {
-    image: `${root}/${name.shiny ? 'shiny' : 'regular'}/${stem(name)}.png`,
-    meta: `${root}/meta/${stem(name)}.json`,
-  };
 }
 
 /**

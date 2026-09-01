@@ -6,13 +6,16 @@ import { canProcessSprites } from '../../../auth/sprites';
 import { BiomeForm } from './biome';
 import ExtrasForm from './extras';
 import GraftForm from './graft';
-import PmdForm from './pmd';
 import PokengineForm from './pokengine';
 import RecolorForm from './recolor';
 
 /**
- * The sprite processor: a PMD archive, loose images or a character
- * sheet packed on the server and written straight into `public/`.
+ * The sprite processor: loose images, a character sheet or a tileset
+ * packed on the server and written straight into `public/`.
+ *
+ * Pokemon sheets are not made here. They come out of the SpriteCollab
+ * checkout beside this repository, which is where the archives and
+ * the tooling for them live.
  *
  * A **development tool** rather than a staff screen: a deployed build
  * serves `public/` from a bundle, and a server that could write its
@@ -23,14 +26,13 @@ import RecolorForm from './recolor';
  * body: the server functions take `FormData`
  */
 
-/** Which of the three the page is on. */
+/** Which of them the page is on. */
 const enum Mode {
-  Pmd = 0,
-  Extras = 1,
-  Pokengine = 2,
-  Tileset = 3,
-  Recolor = 4,
-  Graft = 5,
+  Extras = 0,
+  Pokengine = 1,
+  Tileset = 2,
+  Recolor = 3,
+  Graft = 4,
 }
 
 export default function SpriteProcessor(): JSX.Element {
@@ -45,18 +47,14 @@ export default function SpriteProcessor(): JSX.Element {
         />
       }
     >
-      <TabGroup horizontal defaultValue={Mode.Pmd} class="flex flex-col gap-3">
+      <TabGroup horizontal defaultValue={Mode.Extras} class="flex flex-col gap-3">
         <TabBar>
-          <TabButton value={Mode.Pmd}>PMD</TabButton>
           <TabButton value={Mode.Extras}>Loose images</TabButton>
           <TabButton value={Mode.Pokengine}>Pokengine</TabButton>
           <TabButton value={Mode.Tileset}>Biome</TabButton>
           <TabButton value={Mode.Recolor}>Palette swap</TabButton>
           <TabButton value={Mode.Graft}>Borrow a wall</TabButton>
         </TabBar>
-        <TabPane value={Mode.Pmd}>
-          <PmdForm />
-        </TabPane>
         <TabPane value={Mode.Extras}>
           <ExtrasForm />
         </TabPane>

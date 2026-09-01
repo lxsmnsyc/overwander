@@ -78,7 +78,7 @@ export const ADMIN_SECTIONS: AdminSection[] = [
     href: '/admin/sprite-processor',
     label: 'Sprites',
     title: 'Sprite Processor',
-    lede: 'Pack a PMD archive or a set of loose images into a sheet, written straight into public/.',
+    lede: 'Pack loose images, a charset or a tileset into a sheet, written straight into public/.',
     runs: true,
     dev: true,
   },

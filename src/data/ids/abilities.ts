@@ -243,6 +243,9 @@ const enum Abilities {
   SpeedBoost = 143,
   // Sneasel
   Pickpocket = 144,
+  // Wobbuffet
+  ShadowTag = 145,
+  Telepathy = 146,
   // Special (non-standard abilities outside the regular pool)
   Boss = 100001,
   Shadow = 100002,

@@ -14,7 +14,10 @@ export default function registerCoralReefSpawns(): void {
         { species: Species.Corsola, weight: 20 },
       ],
       uncommon: [],
-      rare: [{ species: Species.Seadra, weight: 10 }],
+      rare: [
+        { species: Species.Seadra, weight: 10 },
+        { species: Species.Mantine, weight: 5 },
+      ],
       special: [],
     },
     [TimeOfDay.Day]: {
@@ -24,7 +27,10 @@ export default function registerCoralReefSpawns(): void {
         { species: Species.Corsola, weight: 20 },
       ],
       uncommon: [],
-      rare: [{ species: Species.Seadra, weight: 10 }],
+      rare: [
+        { species: Species.Seadra, weight: 10 },
+        { species: Species.Mantine, weight: 5 },
+      ],
       special: [],
     },
     [TimeOfDay.Evening]: {
@@ -38,6 +44,7 @@ export default function registerCoralReefSpawns(): void {
       rare: [
         { species: Species.Seadra, weight: 10 },
         { species: Species.Starmie, weight: 10 },
+        { species: Species.Mantine, weight: 5 },
       ],
       special: [],
     },
@@ -52,6 +59,7 @@ export default function registerCoralReefSpawns(): void {
       rare: [
         { species: Species.Seadra, weight: 10 },
         { species: Species.Starmie, weight: 10 },
+        { species: Species.Mantine, weight: 5 },
       ],
       special: [],
     },

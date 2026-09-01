@@ -104,4 +104,13 @@ export default function registerGen2Abilities(): void {
     name: 'Pickpocket',
     description: 'Takes the item off whoever touches it, if it has a hand free.',
   });
+  // Wobbuffet
+  registerAbility(Abilities.ShadowTag, {
+    name: 'Shadow Tag',
+    description: 'Nothing on the far side can flee, ghosts aside.',
+  });
+  registerAbility(Abilities.Telepathy, {
+    name: 'Telepathy',
+    description: "Sees an ally's attack coming and takes nothing from it.",
+  });
 }

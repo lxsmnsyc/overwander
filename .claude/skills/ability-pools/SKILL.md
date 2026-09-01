@@ -58,6 +58,8 @@ None of them may be spent, and each is a reason to leave a species alone rather 
 
 **What a future baby pre-evolution carries.** A baby stage added in a later generation sits below the species and its abilities walk straight up. Tyrogue brings Guts, Steadfast and Vital Spirit to both Hitmons, Smoochum brings Hydration to Jynx, Munchlax brings Pickup to Snorlax, Happiny brings Friend Guard to Chansey, Mime Jr. brings its set to Mr. Mime, Cleffa and Igglybuff bring Friend Guard to their lines. Those species fill themselves up and need nothing invented.
 
+That holds only where the baby brings something new. Bonsly, Wynaut and Mantyke each carry exactly their adult's list, so Sudowoodo, Wobbuffet and Mantine gain nothing the day those babies land and would stay short forever. Read the baby's own abilities before deciding a slot is spoken for; where they match, the species is filled now. It is safe because pools walk **up** only: a filler on the adult can never leak down to the baby, and a baby is a first stage rather than a final evolution, so it never has to reach four itself.
+
 **What a future evolution carries.** A species that gains an evolution in a later generation is not a final evolution and is not filled at all: that is the same rule as the Kanto caveat above. Handing Gligar a Poison Heal because Gliscor will have it breaks the pool the day Gliscor lands, since a pre-evolution's abilities walk up and the exclusivity is gone.
 
 **What that future evolution will itself need filling with.** An evolution added later may be short of four on its own, and whatever is invented for it then has to be an ability the stage below cannot already reach. Spending a good fit on the pre-evolution today takes it off the table twice.

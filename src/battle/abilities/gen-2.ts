@@ -565,6 +565,68 @@ const setupAbilities = [
       ]),
   ),
 
+  // Wobbuffet
+  // Arena Trap without the footing: a shadow pins a flier as readily
+  // as anything else. A ghost still walks, and so does another holder
+  // https://bulbapedia.bulbagarden.net/wiki/Shadow_Tag_(Ability)
+  createAbility(Abilities.ShadowTag, (battle) =>
+    battle.on(BattleEvents.CheckUnitEscape, EventPriority.Post, (event) => {
+      const source = event.source;
+
+      if (
+        !event.success ||
+        source.types.has(Types.Ghost) ||
+        source.hasAbility(Abilities.RunAway) ||
+        source.hasAbility(Abilities.ShadowTag)
+      ) {
+        return;
+      }
+
+      for (const unit of battle.units(source.team.alliance)) {
+        if (unit.alive && unit.hasAbility(Abilities.ShadowTag)) {
+          event.success = false;
+
+          // For visual cues: every holder reacts, not just the first
+          unit.triggerAbility(Abilities.ShadowTag);
+        }
+      }
+    }),
+  ),
+
+  // A swing from its own side goes through it, since it saw the swing
+  // coming. A status move from an ally is still welcome
+  // https://bulbapedia.bulbagarden.net/wiki/Telepathy_(Ability)
+  createAbility(
+    Abilities.Telepathy,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Post, (event) => {
+          if (
+            !event.immune &&
+            event.target.type === MoveTargetType.Unit &&
+            event.target.unit !== event.source &&
+            event.target.unit.team.alliance === event.source.team.alliance &&
+            event.target.unit.hasAbility(Abilities.Telepathy) &&
+            getMoveData(event.move).category !== MoveCategories.Status
+          ) {
+            event.immune = true;
+          }
+        }),
+        battle.on(BattleEvents.UnitTriggerMoveFailed, EventPriority.Post, (event) => {
+          const parent = event.parent;
+
+          if (
+            parent.target.type === MoveTargetType.Unit &&
+            parent.target.unit !== parent.source &&
+            parent.target.unit.team.alliance === parent.source.team.alliance &&
+            parent.target.unit.hasAbility(Abilities.Telepathy)
+          ) {
+            parent.target.unit.triggerAbility(Abilities.Telepathy);
+          }
+        }),
+      ]),
+  ),
+
   // Marill
   // Doubles the stat rather than the blow, so anything reading the
   // Attack it has (Foul Play, a Power Trip) reads the doubled one

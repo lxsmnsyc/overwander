@@ -15,6 +15,7 @@ import registerHoundourSpecies from './houndour';
 import registerLarvitarSpecies from './larvitar';
 import registerLedybaSpecies from './ledyba';
 import registerLegendaryBeastSpecies from './legendary-beasts';
+import registerMantineSpecies from './mantine';
 import registerMareepSpecies from './mareep';
 import registerMarillSpecies from './marill';
 import registerMiltankSpecies from './miltank';
@@ -34,6 +35,7 @@ import registerSneaselSpecies from './sneasel';
 import registerSnubbullSpecies from './snubbull';
 import registerSpinarakSpecies from './spinarak';
 import registerStantlerSpecies from './stantler';
+import registerSudowoodoSpecies from './sudowoodo';
 import registerSunkernSpecies from './sunkern';
 import registerSwinubSpecies from './swinub';
 import registerTeddiursaSpecies from './teddiursa';
@@ -41,6 +43,7 @@ import registerTogepiSpecies from './togepi';
 import registerTotodileSpecies from './totodile';
 import registerTowerDuoSpecies from './tower-duo';
 import registerTyrogueSpecies from './tyrogue';
+import registerWobbuffetSpecies from './wobbuffet';
 import registerWooperSpecies from './wooper';
 import registerYanmaSpecies from './yanma';
 
@@ -90,4 +93,7 @@ export default function registerGen2Species(): void {
   registerStantlerSpecies();
   registerYanmaSpecies();
   registerGirafarigSpecies();
+  registerSudowoodoSpecies();
+  registerWobbuffetSpecies();
+  registerMantineSpecies();
 }

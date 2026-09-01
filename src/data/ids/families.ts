@@ -90,9 +90,7 @@ const enum Families {
   Natu = 87,
   Mareep = 88,
   Marill = 89,
-  // 90 is Sudowoodo's: its dex number falls between these, and an id
-  // is stored in a player's candy stacks, so a later family cannot be
-  // renumbered into place
+  Sudowoodo = 90,
   Hoppip = 91,
   Aipom = 92,
   Sunkern = 93,
@@ -100,7 +98,10 @@ const enum Families {
   Wooper = 95,
   Murkrow = 96,
   Misdreavus = 97,
-  // 98 is Unown's and 99 Wobbuffet's
+  // 98 is Unown's: its dex number falls between these, and an id is
+  // stored in a player's candy stacks, so a later family cannot be
+  // renumbered into place
+  Wobbuffet = 99,
   Girafarig = 100,
   Pineco = 101,
   Dunsparce = 102,
@@ -116,7 +117,7 @@ const enum Families {
   Corsola = 112,
   Remoraid = 113,
   Delibird = 114,
-  // 115 is Mantine's
+  Mantine = 115,
   Skarmory = 116,
   Houndour = 117,
   Phanpy = 118,

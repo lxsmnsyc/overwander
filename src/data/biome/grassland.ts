@@ -59,6 +59,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Smeargle, weight: 5 },
         { species: Species.Miltank, weight: 5 },
         { species: Species.Girafarig, weight: 5 },
+        { species: Species.Wobbuffet, weight: 5 },
       ],
       prized: [
         { species: Species.Togepi, weight: 10 },
@@ -124,6 +125,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Smeargle, weight: 5 },
         { species: Species.Miltank, weight: 5 },
         { species: Species.Girafarig, weight: 5 },
+        { species: Species.Wobbuffet, weight: 5 },
       ],
       prized: [
         { species: Species.Togepi, weight: 10 },
@@ -159,6 +161,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Flareon, weight: 5 },
         { species: Species.Smeargle, weight: 5 },
         { species: Species.Girafarig, weight: 5 },
+        { species: Species.Wobbuffet, weight: 5 },
       ],
       special: [{ species: Species.Raikou, weight: 10 }],
     },
@@ -194,6 +197,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Flareon, weight: 5 },
         { species: Species.Smeargle, weight: 5 },
         { species: Species.Girafarig, weight: 5 },
+        { species: Species.Wobbuffet, weight: 5 },
       ],
       special: [{ species: Species.Raikou, weight: 10 }],
     },

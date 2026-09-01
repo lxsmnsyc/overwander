@@ -16,6 +16,7 @@ export default function registerJynxSpecies(): void {
     height: 1.4,
     weight: 40.6,
     family: Families.Jynx,
+    evolvesFrom: Species.Smoochum,
     stats: {
       [Stats.HP]: 65,
       [Stats.Attack]: 50,

@@ -16,6 +16,7 @@ export default function registerElectabuzzSpecies(): void {
     height: 1.1,
     weight: 30,
     family: Families.Electabuzz,
+    evolvesFrom: Species.Elekid,
     stats: {
       [Stats.HP]: 65,
       [Stats.Attack]: 83,
@@ -92,7 +93,6 @@ export default function registerElectabuzzSpecies(): void {
         Moves.RainDance,
         Moves.RockSmash,
       ],
-      egg: [Moves.KarateChop, Moves.Barrier, Moves.RollingKick, Moves.Meditate],
     },
   });
 }

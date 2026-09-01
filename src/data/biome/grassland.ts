@@ -64,6 +64,7 @@ export default function registerGrasslandSpawns(): void {
       prized: [
         { species: Species.Togepi, weight: 10 },
         { species: Species.Tyrogue, weight: 10 },
+        { species: Species.Elekid, weight: 10 },
       ],
       special: [{ species: Species.Raikou, weight: 10 }],
     },
@@ -130,6 +131,7 @@ export default function registerGrasslandSpawns(): void {
       prized: [
         { species: Species.Togepi, weight: 10 },
         { species: Species.Tyrogue, weight: 10 },
+        { species: Species.Elekid, weight: 10 },
       ],
       special: [{ species: Species.Raikou, weight: 10 }],
     },
@@ -139,7 +141,6 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Ekans, weight: 20 },
         { species: Species.NidoranF, weight: 20 },
         { species: Species.NidoranM, weight: 20 },
-        { species: Species.Jigglypuff, weight: 10 },
         { species: Species.Oddish, weight: 20 },
         { species: Species.Eevee, weight: 2 },
       ],
@@ -147,6 +148,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Nidorina, weight: 5 },
         { species: Species.Nidorino, weight: 5 },
         { species: Species.Gloom, weight: 5 },
+        { species: Species.Jigglypuff, weight: 10 },
       ],
       rare: [
         { species: Species.Raticate, weight: 10 },
@@ -163,6 +165,10 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Girafarig, weight: 5 },
         { species: Species.Wobbuffet, weight: 5 },
       ],
+      prized: [
+        { species: Species.Igglybuff, weight: 10 },
+        { species: Species.Elekid, weight: 10 },
+      ],
       special: [{ species: Species.Raikou, weight: 10 }],
     },
     [TimeOfDay.Night]: {
@@ -171,7 +177,6 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Ekans, weight: 20 },
         { species: Species.NidoranF, weight: 20 },
         { species: Species.NidoranM, weight: 20 },
-        { species: Species.Jigglypuff, weight: 10 },
         { species: Species.Oddish, weight: 20 },
         { species: Species.Meowth, weight: 20 },
         { species: Species.Drowzee, weight: 20 },
@@ -181,6 +186,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Nidorina, weight: 5 },
         { species: Species.Nidorino, weight: 5 },
         { species: Species.Gloom, weight: 5 },
+        { species: Species.Jigglypuff, weight: 10 },
       ],
       rare: [
         { species: Species.Raticate, weight: 10 },
@@ -198,6 +204,10 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Smeargle, weight: 5 },
         { species: Species.Girafarig, weight: 5 },
         { species: Species.Wobbuffet, weight: 5 },
+      ],
+      prized: [
+        { species: Species.Igglybuff, weight: 10 },
+        { species: Species.Elekid, weight: 10 },
       ],
       special: [{ species: Species.Raikou, weight: 10 }],
     },

@@ -34,6 +34,7 @@ export default function registerTaigaSpawns(): void {
         { species: Species.Snorlax, weight: 5 },
         { species: Species.Stantler, weight: 5 },
       ],
+      prized: [{ species: Species.Smoochum, weight: 10 }],
       special: [{ species: Species.Suicune, weight: 10 }],
     },
     [TimeOfDay.Night]: {
@@ -49,6 +50,7 @@ export default function registerTaigaSpawns(): void {
         { species: Species.Snorlax, weight: 5 },
         { species: Species.Stantler, weight: 5 },
       ],
+      prized: [{ species: Species.Smoochum, weight: 10 }],
       special: [{ species: Species.Suicune, weight: 10 }],
     },
   });

@@ -214,7 +214,8 @@ describe('breeding pairs', () => {
   it('lets Ditto stand in for either parent, but not for both', () => {
     const ditto = parent(Species.Ditto, Genders.Genderless, 0);
 
-    expect(getEggSpecies(ditto, parent(Species.Pikachu, Genders.Male, 0))).toBe(Species.Pikachu);
+    // A Pikachu lays the stage below it, not itself
+    expect(getEggSpecies(ditto, parent(Species.Pikachu, Genders.Male, 0))).toBe(Species.Pichu);
     // Even a genderless species breeds, so long as it is with Ditto
     expect(getEggSpecies(ditto, parent(Species.Magnemite, Genders.Genderless, 0))).toBe(
       Species.Magnemite,

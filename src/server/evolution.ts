@@ -85,6 +85,7 @@ export default async function evolveCatch(
       // Derived from the stored record rather than reported: what a
       // Tyrogue becomes is decided by the numbers the server holds
       stats: getStats(asCaughtPokemon(caught)),
+      friendship: asNumber(caught.friendship),
     };
     // What is spent as well as what is allowed: a handover that does
     // not cover this evolution pays a Linking Cord for the half it

@@ -51,6 +51,7 @@ export async function listEvolutionOptions(
     tradedAs: caught.tradedAs,
     tradedFor: caught.tradedFor,
     stats: getStats(caught),
+    friendship: caught.friendship,
   };
 
   return (getSpeciesData(caught.species).evolvesInto ?? []).map((evolution) => ({

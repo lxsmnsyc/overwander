@@ -157,6 +157,7 @@ import {
   withSlots,
 } from '../src/data/constants/slots';
 import getSigil, { BRAILLE_BASE, SIGIL_CELLS } from '../src/data/constants/sigil';
+import { BASE_FRIENDSHIP, EVOLUTION_FRIENDSHIP } from '../src/data/constants/friendship';
 import { isFavorite, isGuarded } from '../src/auth/caught-record';
 import {
   MAX_IV,
@@ -1174,6 +1175,7 @@ describe('evolution data', () => {
       tradedAs: null,
       tradedFor: null,
       stats: EVEN_STATS,
+      friendship: BASE_FRIENDSHIP,
     };
 
     expect(getAvailableEvolutions({ species: Species.Charmander, ...context, level: 15 })).toEqual(
@@ -1191,6 +1193,7 @@ describe('evolution data', () => {
       tradedAs: null,
       tradedFor: null,
       stats: EVEN_STATS,
+      friendship: BASE_FRIENDSHIP,
     };
 
     expect(
@@ -1222,6 +1225,7 @@ describe('evolution data', () => {
       tradedAs: Species.Machoke,
       tradedFor: null,
       stats: EVEN_STATS,
+      friendship: BASE_FRIENDSHIP,
     };
 
     // Every door at once: the level one, the stone one and the trade
@@ -1264,6 +1268,7 @@ describe('evolution data', () => {
       carried: new Set<Items>(),
       held: new Set<Items>(),
       stats: EVEN_STATS,
+      friendship: BASE_FRIENDSHIP,
     };
 
     // A Machoke nobody has traded stays a Machoke however high its
@@ -1275,6 +1280,7 @@ describe('evolution data', () => {
         tradedAs: null,
         tradedFor: null,
         stats: EVEN_STATS,
+        friendship: BASE_FRIENDSHIP,
       }),
     ).toEqual([]);
     expect(
@@ -1284,6 +1290,7 @@ describe('evolution data', () => {
         tradedAs: Species.Machoke,
         tradedFor: null,
         stats: EVEN_STATS,
+        friendship: BASE_FRIENDSHIP,
       }),
     ).toEqual([{ species: Species.Machamp, method: EvolutionMethod.Trade }]);
 
@@ -1297,6 +1304,7 @@ describe('evolution data', () => {
         tradedAs: Species.Machop,
         tradedFor: null,
         stats: EVEN_STATS,
+        friendship: BASE_FRIENDSHIP,
       }),
     ).toEqual([]);
 
@@ -1314,6 +1322,7 @@ describe('evolution data', () => {
           tradedAs: below,
           tradedFor: null,
           stats: EVEN_STATS,
+          friendship: BASE_FRIENDSHIP,
         }),
       ).toEqual([]);
       expect(
@@ -1323,6 +1332,7 @@ describe('evolution data', () => {
           tradedAs: at,
           tradedFor: null,
           stats: EVEN_STATS,
+          friendship: BASE_FRIENDSHIP,
         }),
       ).toEqual([{ species: into, method: EvolutionMethod.Trade }]);
     }
@@ -1343,6 +1353,7 @@ describe('evolution data', () => {
       carried: new Set<Items>(),
       held: new Set<Items>(),
       stats: EVEN_STATS,
+      friendship: BASE_FRIENDSHIP,
     };
 
     // Traded, at the right stage, for the wrong pokemon
@@ -1385,6 +1396,7 @@ describe('evolution data', () => {
       tradedAs: null,
       tradedFor: null,
       stats: EVEN_STATS,
+      friendship: BASE_FRIENDSHIP,
     };
     const cord = new Set([Items.LinkingCord]);
 
@@ -1420,6 +1432,7 @@ describe('evolution data', () => {
         tradedAs: null,
         tradedFor: null,
         stats: EVEN_STATS,
+        friendship: BASE_FRIENDSHIP,
       }),
     ).toBe(false);
     expect(getConsumedItem(line, false)).toBe(Items.FireStone);
@@ -1433,6 +1446,7 @@ describe('evolution data', () => {
       held: new Set<Items>(),
       tradedAs: null,
       tradedFor: null,
+      friendship: BASE_FRIENDSHIP,
     };
     const at = (attack: number, defense: number): Record<Stats, number> => ({
       ...EVEN_STATS,
@@ -1452,13 +1466,32 @@ describe('evolution data', () => {
     expect(getAvailableEvolutions({ ...context, level: 19, stats: at(60, 50) })).toEqual([]);
   });
 
+  it('holds a friendship evolution back until the pokemon is inseparable', () => {
+    const context = {
+      species: Species.Pichu,
+      level: 100,
+      carried: new Set<Items>(),
+      held: new Set<Items>(),
+      tradedAs: null,
+      tradedFor: null,
+      stats: EVEN_STATS,
+    };
+
+    expect(getAvailableEvolutions({ ...context, friendship: EVOLUTION_FRIENDSHIP - 1 })).toEqual(
+      [],
+    );
+    expect(getAvailableEvolutions({ ...context, friendship: EVOLUTION_FRIENDSHIP })).toEqual([
+      { species: Species.Pikachu, method: EvolutionMethod.Friendship },
+    ]);
+  });
+
   it('never offers evolutions it cannot verify', () => {
-    // Friendship, weather and party composition have no stored
-    // counterpart, so an evolution asking for one is refused rather
-    // than waved through — even with everything else in hand
+    // Weather and party composition have no stored counterpart, so an
+    // evolution asking for one is refused rather than waved through,
+    // even with everything else in hand
     expect(
       meetsEvolutionCriteria(
-        { species: Species.Machamp, method: EvolutionMethod.Trade | EvolutionMethod.Friendship },
+        { species: Species.Machamp, method: EvolutionMethod.Trade | EvolutionMethod.Weather },
         {
           species: Species.Machoke,
           level: 100,
@@ -1467,6 +1500,7 @@ describe('evolution data', () => {
           tradedAs: Species.Machoke,
           tradedFor: null,
           stats: EVEN_STATS,
+          friendship: BASE_FRIENDSHIP,
         },
       ),
     ).toBe(false);
@@ -3662,14 +3696,27 @@ describe('biome data', () => {
     // One-per-world class
     expect(getSpawnRarity(Species.Mew)).toBe(SpawnRarity.Special);
 
-    // The prized band is between the two, and Gen 1 puts nothing in
-    // it: the babies and the unowns are a later gen's, and nothing
-    // about the shape of a Gen 1 line reads as either
+    // The prized band is between the two, and the babies are what is
+    // in it. Nothing about the shape of a line reads as one, which is
+    // why they are listed rather than derived: a baby evolves like
+    // any other first stage and would otherwise read as Base
     expect(SpawnRarity.Prized).toBeGreaterThan(SpawnRarity.Rare);
     expect(SpawnRarity.Prized).toBeLessThan(SpawnRarity.Special);
+
+    for (const baby of [Species.Pichu, Species.Togepi, Species.Tyrogue, Species.Magby]) {
+      expect(isPrizedSpecies(baby)).toBe(true);
+      expect(getSpawnRarity(baby)).toBe(SpawnRarity.Prized);
+    }
+
+    // The stage above a baby is a middle evolution like any other
+    expect(isPrizedSpecies(Species.Pikachu)).toBe(false);
+    expect(getSpawnRarity(Species.Pikachu)).toBe(SpawnRarity.Uncommon);
+
+    // Gen 1 puts nothing in the band: every baby is a later gen's
     for (const species of getRegisteredSpecies()) {
-      expect(isPrizedSpecies(species)).toBe(false);
-      expect(getSpawnRarity(species)).not.toBe(SpawnRarity.Prized);
+      if (getSpeciesData(species).dexNumber <= 151) {
+        expect(isPrizedSpecies(species)).toBe(false);
+      }
     }
   });
 

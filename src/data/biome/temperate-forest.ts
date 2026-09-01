@@ -12,7 +12,6 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Bulbasaur, weight: 2 },
         { species: Species.Caterpie, weight: 30 },
         { species: Species.Weedle, weight: 30 },
-        { species: Species.Pikachu, weight: 5 },
         { species: Species.Bellsprout, weight: 20 },
         { species: Species.Chikorita, weight: 2 },
         { species: Species.Ledyba, weight: 20 },
@@ -25,6 +24,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Kakuna, weight: 15 },
         { species: Species.Weepinbell, weight: 5 },
         { species: Species.Bayleef, weight: 1 },
+        { species: Species.Pikachu, weight: 5 },
       ],
       rare: [
         { species: Species.Venusaur, weight: 2 },
@@ -41,7 +41,10 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Stantler, weight: 5 },
         { species: Species.Sudowoodo, weight: 5 },
       ],
-      prized: [{ species: Species.Togepi, weight: 10 }],
+      prized: [
+        { species: Species.Togepi, weight: 10 },
+        { species: Species.Pichu, weight: 10 },
+      ],
       special: [],
     },
     [TimeOfDay.Day]: {
@@ -49,7 +52,6 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Bulbasaur, weight: 2 },
         { species: Species.Caterpie, weight: 30 },
         { species: Species.Weedle, weight: 30 },
-        { species: Species.Pikachu, weight: 5 },
         { species: Species.Bellsprout, weight: 20 },
         { species: Species.Chikorita, weight: 2 },
         { species: Species.Ledyba, weight: 20 },
@@ -62,6 +64,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Kakuna, weight: 15 },
         { species: Species.Weepinbell, weight: 5 },
         { species: Species.Bayleef, weight: 1 },
+        { species: Species.Pikachu, weight: 5 },
       ],
       rare: [
         { species: Species.Venusaur, weight: 2 },
@@ -79,19 +82,24 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Stantler, weight: 5 },
         { species: Species.Sudowoodo, weight: 5 },
       ],
-      prized: [{ species: Species.Togepi, weight: 10 }],
+      prized: [
+        { species: Species.Togepi, weight: 10 },
+        { species: Species.Pichu, weight: 10 },
+      ],
       special: [],
     },
     [TimeOfDay.Evening]: {
       base: [
-        { species: Species.Pikachu, weight: 5 },
         { species: Species.Oddish, weight: 20 },
         { species: Species.Venonat, weight: 20 },
         { species: Species.Hoothoot, weight: 25 },
         { species: Species.Spinarak, weight: 20 },
         { species: Species.Pineco, weight: 20 },
       ],
-      uncommon: [{ species: Species.Gloom, weight: 5 }],
+      uncommon: [
+        { species: Species.Gloom, weight: 5 },
+        { species: Species.Pikachu, weight: 5 },
+      ],
       rare: [
         { species: Species.Raichu, weight: 5 },
         { species: Species.Vileplume, weight: 5 },
@@ -105,11 +113,11 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Stantler, weight: 5 },
         { species: Species.Sudowoodo, weight: 5 },
       ],
+      prized: [{ species: Species.Pichu, weight: 10 }],
       special: [],
     },
     [TimeOfDay.Night]: {
       base: [
-        { species: Species.Pikachu, weight: 5 },
         { species: Species.Oddish, weight: 20 },
         { species: Species.Paras, weight: 20 },
         { species: Species.Venonat, weight: 20 },
@@ -117,7 +125,10 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Spinarak, weight: 20 },
         { species: Species.Pineco, weight: 20 },
       ],
-      uncommon: [{ species: Species.Gloom, weight: 5 }],
+      uncommon: [
+        { species: Species.Gloom, weight: 5 },
+        { species: Species.Pikachu, weight: 5 },
+      ],
       rare: [
         { species: Species.Raichu, weight: 5 },
         { species: Species.Vileplume, weight: 5 },
@@ -132,6 +143,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Stantler, weight: 5 },
         { species: Species.Sudowoodo, weight: 5 },
       ],
+      prized: [{ species: Species.Pichu, weight: 10 }],
       special: [],
     },
   });

@@ -16,6 +16,7 @@ export default function registerMagmarSpecies(): void {
     height: 1.3,
     weight: 44.5,
     family: Families.Magmar,
+    evolvesFrom: Species.Magby,
     stats: {
       [Stats.HP]: 65,
       [Stats.Attack]: 95,
@@ -86,7 +87,6 @@ export default function registerMagmarSpecies(): void {
         Moves.RockSmash,
         Moves.Flamethrower,
       ],
-      egg: [Moves.KarateChop, Moves.MegaPunch, Moves.Barrier, Moves.Screech],
     },
   });
 }

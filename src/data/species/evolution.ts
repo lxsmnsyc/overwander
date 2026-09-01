@@ -1,3 +1,4 @@
+import { EVOLUTION_FRIENDSHIP } from '../constants/friendship';
 import type { Stats } from '../constants/stats';
 import { Items } from '../ids/items';
 import { EvolutionMethod, type Species } from '../ids/species';
@@ -5,15 +6,16 @@ import { type EvolutionData, type StatComparison, getSpeciesData } from './__cre
 
 /**
  * The conditions the game can actually verify today. Everything else
- * — friendship, weather, party composition — has no stored
- * counterpart yet, so an evolution requiring it is never offered
- * rather than silently treated as met
+ * (weather, party composition, a place) has no stored counterpart
+ * yet, so an evolution requiring it is never offered rather than
+ * silently treated as met
  */
 export const SUPPORTED_METHODS =
   EvolutionMethod.Level |
   EvolutionMethod.UsedItem |
   EvolutionMethod.HeldItem |
   EvolutionMethod.Trade |
+  EvolutionMethod.Friendship |
   EvolutionMethod.StatComparison;
 
 /**
@@ -51,6 +53,11 @@ export interface EvolutionContext {
    * any: a Tyrogue's Attack against its Defense
    */
   stats: Record<Stats, number>;
+  /**
+   * What it thinks of its owner. The three Kanto babies ask for it,
+   * and nothing else does yet
+   */
+  friendship: number;
 }
 
 /**
@@ -112,6 +119,9 @@ export function meetsEvolutionCriteria(
     if (evolution.item == null || !context.held.has(evolution.item)) {
       return false;
     }
+  }
+  if ((method & EvolutionMethod.Friendship) !== 0 && context.friendship < EVOLUTION_FRIENDSHIP) {
+    return false;
   }
   if ((method & EvolutionMethod.StatComparison) !== 0) {
     if (evolution.compare == null || !comparesStats(evolution.compare, context)) {

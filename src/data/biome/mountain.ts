@@ -42,6 +42,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Sudowoodo, weight: 5 },
         { species: Species.Wobbuffet, weight: 5 },
       ],
+      prized: [{ species: Species.Magby, weight: 10 }],
       special: [
         { species: Species.Zapdos, weight: 10 },
         { species: Species.Moltres, weight: 10 },
@@ -83,6 +84,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Sudowoodo, weight: 5 },
         { species: Species.Wobbuffet, weight: 5 },
       ],
+      prized: [{ species: Species.Magby, weight: 10 }],
       special: [
         { species: Species.Zapdos, weight: 10 },
         { species: Species.Moltres, weight: 10 },
@@ -116,6 +118,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Sudowoodo, weight: 5 },
         { species: Species.Wobbuffet, weight: 5 },
       ],
+      prized: [{ species: Species.Magby, weight: 10 }],
       special: [
         { species: Species.Zapdos, weight: 10 },
         { species: Species.Moltres, weight: 10 },
@@ -124,7 +127,6 @@ export default function registerMountainSpawns(): void {
     },
     [TimeOfDay.Night]: {
       base: [
-        { species: Species.Clefairy, weight: 5 },
         { species: Species.Zubat, weight: 30 },
         { species: Species.Diglett, weight: 20 },
         { species: Species.Geodude, weight: 20 },
@@ -137,6 +139,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Graveler, weight: 5 },
         { species: Species.Haunter, weight: 5 },
         { species: Species.Pupitar, weight: 1 },
+        { species: Species.Clefairy, weight: 5 },
       ],
       rare: [
         { species: Species.Clefable, weight: 5 },
@@ -156,6 +159,10 @@ export default function registerMountainSpawns(): void {
         { species: Species.Gligar, weight: 5 },
         { species: Species.Sudowoodo, weight: 5 },
         { species: Species.Wobbuffet, weight: 5 },
+      ],
+      prized: [
+        { species: Species.Cleffa, weight: 10 },
+        { species: Species.Magby, weight: 10 },
       ],
       special: [
         { species: Species.Zapdos, weight: 10 },

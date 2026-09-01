@@ -363,7 +363,16 @@ export function isMythicalSpecies(species: Species): boolean {
  * ordinary Base species — and meeting one in the wild is meant to be
  * a story. Gen 1 has none; future gens register theirs here
  */
-const BABY_SPECIES = new Set<Species>();
+const BABY_SPECIES = new Set<Species>([
+  Species.Pichu,
+  Species.Cleffa,
+  Species.Igglybuff,
+  Species.Togepi,
+  Species.Tyrogue,
+  Species.Smoochum,
+  Species.Elekid,
+  Species.Magby,
+]);
 
 /**
  * The unowns. One species wearing many faces, and the point of it is
@@ -387,13 +396,6 @@ const UNOWN_SPECIES = new Set<Species>();
  * is about what a nest holds and nothing else
  */
 const AWAITING_BABY_SPECIES = new Set<Species>([
-  // Gen 2 babies
-  Species.Pikachu,
-  Species.Clefairy,
-  Species.Jigglypuff,
-  Species.Jynx,
-  Species.Electabuzz,
-  Species.Magmar,
   // Gen 3 babies
   Species.Marill,
   Species.Wobbuffet,

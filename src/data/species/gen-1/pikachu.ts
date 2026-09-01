@@ -70,6 +70,7 @@ export default function registerPikachuSpecies(): void {
     height: 0.4,
     weight: 6,
     family: Families.Pikachu,
+    evolvesFrom: Species.Pichu,
     stats: {
       [Stats.HP]: 35,
       [Stats.Attack]: 55,

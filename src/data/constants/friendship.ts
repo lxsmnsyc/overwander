@@ -50,6 +50,13 @@ export function purifiedFriendship(friendship: number): number {
 }
 
 /**
+ * What a pokemon has to think of the player before a friendship
+ * evolution is offered. It is the mainline's Gen 2 number, and it is
+ * also where `describeFriendship` starts saying "inseparable"
+ */
+export const EVOLUTION_FRIENDSHIP = 220;
+
+/**
  * How far a buddy walks between one point of friendship and the next
  */
 export const FRIENDSHIP_STEP_INTERVAL = 256;

@@ -85,6 +85,7 @@ export default function registerJigglypuffSpecies(): void {
     height: 0.5,
     weight: 5.5,
     family: Families.Jigglypuff,
+    evolvesFrom: Species.Igglybuff,
     stats: {
       [Stats.HP]: 115,
       [Stats.Attack]: 45,

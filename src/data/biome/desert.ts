@@ -14,6 +14,7 @@ export default function registerDesertSpawns(): void {
         { species: Species.Dugtrio, weight: 10 },
         { species: Species.Magmar, weight: 5 },
       ],
+      prized: [{ species: Species.Magby, weight: 10 }],
       special: [{ species: Species.Moltres, weight: 10 }],
     },
     [TimeOfDay.Day]: {
@@ -29,6 +30,7 @@ export default function registerDesertSpawns(): void {
         { species: Species.Rhydon, weight: 10 },
         { species: Species.Magmar, weight: 5 },
       ],
+      prized: [{ species: Species.Magby, weight: 10 }],
       special: [{ species: Species.Moltres, weight: 10 }],
     },
     [TimeOfDay.Evening]: {
@@ -42,6 +44,7 @@ export default function registerDesertSpawns(): void {
         { species: Species.Dugtrio, weight: 10 },
         { species: Species.Magmar, weight: 5 },
       ],
+      prized: [{ species: Species.Magby, weight: 10 }],
       special: [{ species: Species.Moltres, weight: 10 }],
     },
     [TimeOfDay.Night]: {
@@ -55,6 +58,7 @@ export default function registerDesertSpawns(): void {
         { species: Species.Marowak, weight: 10 },
         { species: Species.Magmar, weight: 5 },
       ],
+      prized: [{ species: Species.Magby, weight: 10 }],
       special: [{ species: Species.Moltres, weight: 10 }],
     },
   });

@@ -87,6 +87,7 @@ export default function registerClefairySpecies(): void {
     height: 0.6,
     weight: 7.5,
     family: Families.Clefairy,
+    evolvesFrom: Species.Cleffa,
     stats: {
       [Stats.HP]: 70,
       [Stats.Attack]: 45,

@@ -9,7 +9,7 @@ import type { Coat, SpriteCoats } from '../../canvas/sprite-coats';
  * It is derived rather than maintained: the directories are the truth,
  * and a list kept by hand is a list that disagrees with them the first
  * time somebody drops a file in. Rebuilt whole after every write, since
- * scanning two directories costs nothing next to packing a sheet.
+ * scanning the folders costs nothing next to packing a sheet.
  *
  * Unmarked by `server-only`, like the PNG codec beside it, so the
  * script that rebuilds the list outside the app can run it: what keeps
@@ -23,16 +23,19 @@ import type { Coat, SpriteCoats } from '../../canvas/sprite-coats';
 /** Where the sheets are, under `public/`. */
 const ROOT = 'sprites/pokemon';
 
-/** Which directory carries which pair of coats. */
-const SIDES: { directory: string; plain: Coat; female: Coat }[] = [
-  { directory: 'regular', plain: 'regular', female: 'female' },
-  { directory: 'shiny', plain: 'shiny', female: 'shinyFemale' },
-];
-
 /** The order coats are written in, so the file diffs cleanly. */
 const ORDER: Coat[] = ['regular', 'shiny', 'female', 'shinyFemale'];
 
-const SHEET = /^(\d+)(_f)?\.png$/;
+/** What each coat's drawing is called inside a pokemon's folder. */
+const COAT_FILES: Record<Coat, string> = {
+  regular: 'regular.png',
+  shiny: 'shiny.png',
+  female: 'female.png',
+  shinyFemale: 'shiny_female.png',
+};
+
+/** A pokemon's folder is its species id and nothing else. */
+const FOLDER = /^\d+$/;
 
 async function listing(...parts: string[]): Promise<string[]> {
   return readdir(join(process.cwd(), 'public', ROOT, ...parts)).catch(() => []);
@@ -53,22 +56,18 @@ async function regions(): Promise<string[]> {
 
 /** What is on disk right now. */
 export async function readCoats(): Promise<SpriteCoats> {
-  const found = new Map<number, { region: string; coats: Set<Coat> }>();
+  const found = new Map<number, { region: string; coats: Coat[] }>();
 
   for (const region of await regions()) {
-    for (const side of SIDES) {
-      for (const file of await listing(region, side.directory)) {
-        const named = SHEET.exec(file);
+    for (const folder of await listing(region)) {
+      if (!FOLDER.test(folder)) {
+        continue;
+      }
+      const held = new Set(await listing(region, folder));
+      const coats = ORDER.filter((coat) => held.has(COAT_FILES[coat]));
 
-        if (named == null) {
-          continue;
-        }
-        const species = Number.parseInt(named[1], 10);
-        const held = found.get(species) ?? { region, coats: new Set<Coat>() };
-
-        // The name ends in `_f` only for the female drawing
-        held.coats.add(file.endsWith('_f.png') ? side.female : side.plain);
-        found.set(species, held);
+      if (coats.length > 0) {
+        found.set(Number.parseInt(folder, 10), { region, coats });
       }
     }
   }
@@ -84,10 +83,8 @@ export async function readCoats(): Promise<SpriteCoats> {
     if (held == null) {
       continue;
     }
-    const kept = ORDER.filter((coat) => held.coats.has(coat));
-
-    coats[String(species)] = kept;
-    stamps[String(species)] = await stampOf(held.region, species, kept);
+    coats[String(species)] = held.coats;
+    stamps[String(species)] = await stampOf(held.region, species, held.coats);
   }
   return { version: 1, coats, stamps };
 }
@@ -99,14 +96,6 @@ export async function readCoats(): Promise<SpriteCoats> {
  */
 const STAMP_LENGTH = 8;
 
-/** Where each coat's drawing lives, relative to `public/`. */
-function pathOf(region: string, species: number, coat: Coat): string {
-  const side = coat === 'shiny' || coat === 'shinyFemale' ? 'shiny' : 'regular';
-  const female = coat === 'female' || coat === 'shinyFemale' ? '_f' : '';
-
-  return `${ROOT}/${region}/${side}/${species}${female}.png`;
-}
-
 /**
  * A digest of everything a pokemon is drawn from: its description and
  * every coat. Either changing is a reason to fetch both again, which is
@@ -115,9 +104,11 @@ function pathOf(region: string, species: number, coat: Coat): string {
  */
 async function stampOf(region: string, species: number, coats: Coat[]): Promise<string> {
   const hash = createHash('sha256');
+  const folder = `${ROOT}/${region}/${species}`;
   const files = [
-    `${ROOT}/${region}/meta/${species}.json`,
-    ...coats.map((coat) => pathOf(region, species, coat)),
+    `${folder}/sheet.json`,
+    `${folder}/frames.bin`,
+    ...coats.map((coat) => `${folder}/${COAT_FILES[coat]}`),
   ];
 
   for (const file of files) {

@@ -153,6 +153,7 @@ hands every account it creates the `admin` role, granted on the server.
 | `pnpm db`              | Start the local Supabase stack                      |
 | `pnpm db:reset`        | Rebuild the database from `supabase/migrations/`    |
 | `pnpm seed`            | Fill a fresh stack with accounts and sample rows    |
+| `pnpm import-sprites`  | Copy the pokemon sheets in from `../SpriteCollab`   |
 | `pnpm compact-sprites` | Rewrite the sprite PNGs smaller, pixel for pixel    |
 | `pnpm sprite-coats`    | Restamp `coats.json` after anything writes a sheet  |
 | `pnpm test`            | The whole test suite, once                          |
@@ -175,7 +176,7 @@ hands every account it creates the `admin` role, granted on the server.
 | `src/components/`      | The UI, in a folder per feature (`overworld/`, `catches/`, `battle/`, …) over the shared `sprites/`, `styled/` and `app/` |
 | `src/canvas/`          | Sprite sheets and the animation class the map and battle canvases draw with                                               |
 | `src/core/`            | The shared primitives: seeded RNG, Perlin noise, the event engine                                                         |
-| `public/sprites/`      | Sprite sheets by region: a packed `{species}.png` per coat and one description per pokemon                                |
+| `public/sprites/`      | Sprite sheets by region: a folder per pokemon holding its layout, its frames and a PNG per coat                           |
 | `sprite-pipeline.json` | What has been done to each sheet, and to which version of it                                                              |
 | `test/`                | Vitest suites, mirroring the source tree                                                                                  |
 | `supabase/`            | The migrations, and the local stack's configuration                                                                       |

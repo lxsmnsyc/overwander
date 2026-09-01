@@ -1,5 +1,5 @@
 import { existsSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
-import { basename, dirname, join, relative } from 'node:path';
+import { dirname, join, relative } from 'node:path';
 import decode, {
   depthFor,
   encodeIndexed,
@@ -116,9 +116,10 @@ function isRecord(value: unknown): value is Record<string, unknown> {
  */
 function describedBy(imagePath: string): string[] {
   const directory = dirname(imagePath);
-  const species = basename(imagePath, '.png');
 
-  return [join(directory, 'data.json'), join(directory, '..', 'meta', `${species}.json`)];
+  // A pokemon is a folder holding every coat and one `sheet.json`; an
+  // atlas is a folder holding `image.png` and `data.json`
+  return [join(directory, 'sheet.json'), join(directory, 'data.json')];
 }
 
 function describe(imagePath: string): Described | null {

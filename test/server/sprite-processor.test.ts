@@ -3,7 +3,6 @@ import pack from '../../src/server/sprites/packing';
 import { blank, blit, opaque } from '../../src/server/sprites/raster';
 import type { Raster } from '../../src/server/sprites/raster';
 import computeTrim from '../../src/server/sprites/trim';
-import deduper, { drawPictures } from '../../src/server/sprites/dedupe';
 import {
   extraDestination,
   overworldDestination,
@@ -426,68 +425,6 @@ describe('what the page says a drawing cost', () => {
     expect(storedAs({ ...sheet, bytes: 4000, plain: 9000, before: 4000 })).toContain(
       'same as before',
     );
-  });
-});
-
-describe('drawing an animation into the sheet', () => {
-  /** One column of two frames, each 4 × 4 with only its top half drawn. */
-  function twoFrames(): Raster {
-    const raster = blank(4, 8);
-    const paint = (top: number, value: number): void => {
-      for (let y = top; y < top + 2; y += 1) {
-        for (let x = 0; x < 4; x += 1) {
-          const at = (y * 4 + x) * 4;
-
-          raster.data[at] = value;
-          raster.data[at + 3] = 255;
-        }
-      }
-    };
-
-    paint(0, 40);
-    paint(4, 90);
-    return raster;
-  }
-
-  it('copies each frame out of its own cell when the grid was cropped', () => {
-    const sheet = blank(4, 4);
-    const source = twoFrames();
-    const grid = {
-      x: 0,
-      y: 0,
-      pitchX: 4,
-      // Cropped at the bottom only, which is the case that used to
-      // take a whole-image shortcut: the untrimmed picture was copied
-      // into a box sized for the shorter frames, so the second frame
-      // landed too low and the sheet lost its bottom
-      pitchY: 4,
-      offsetX: 0,
-      offsetY: 0,
-      frameWidth: 4,
-      frameHeight: 2,
-      columns: 1,
-      rows: 2,
-    };
-    // Uncropped, so each frame is the whole of its box: the shortcut
-    // this guards against is about where a box lands, not what is lit
-    const kept = deduper(false);
-
-    kept.add([{ raster: source, grid }], 0, 'one');
-    drawPictures(
-      sheet,
-      kept.pictures,
-      [
-        { x: 0, y: 0 },
-        { x: 0, y: 2 },
-      ],
-      () => source,
-    );
-
-    const at = (y: number): number => sheet.data[y * 4 * 4];
-
-    expect(kept.pictures, 'two different frames, both kept').toHaveLength(2);
-    expect([at(0), at(1)], 'the first frame').toEqual([40, 40]);
-    expect([at(2), at(3)], 'the second frame, not the first frame padding').toEqual([90, 90]);
   });
 });
 

@@ -16,9 +16,11 @@ import { Species } from '../../src/data/ids/species';
  * is a detail, so a shiny female with no female drawing keeps its
  * shininess rather than its flower.
  */
-const REAL = JSON.parse(
-  readFileSync('public/sprites/pokemon/kanto/meta/3.json', 'utf8'),
-) as unknown;
+const FOLDER = 'public/sprites/pokemon/kanto/3';
+
+const REAL = JSON.parse(readFileSync(`${FOLDER}/sheet.json`, 'utf8')) as unknown;
+
+const FRAMES = readFileSync(`${FOLDER}/frames.bin`);
 
 /**
  * A world where only these drawings exist. Everything else 404s the
@@ -27,11 +29,16 @@ const REAL = JSON.parse(
 function only(paths: string[]): void {
   const there = new Set(paths);
 
+  // A pokemon is described by a pair of files, and the loader wants
+  // both before it will draw anything
   // oxlint-disable-next-line typescript/require-await
   vi.stubGlobal('fetch', async (url: string) => ({
-    ok: url.endsWith('.json'),
+    ok: url.endsWith('.json') || url.endsWith('.bin'),
     // oxlint-disable-next-line typescript/require-await
     json: async () => REAL,
+    // oxlint-disable-next-line typescript/require-await
+    arrayBuffer: async () =>
+      FRAMES.buffer.slice(FRAMES.byteOffset, FRAMES.byteOffset + FRAMES.byteLength),
   }));
 
   /** Answers to a `src` the way a browser does, for these paths only. */
@@ -62,11 +69,11 @@ afterEach(() => {
 });
 
 describe('spriteImagePath', () => {
-  it('suffixes the female drawing and nothing else', () => {
-    expect(spriteImagePath(Species.Venusaur)).toMatch(/regular\/3\.png$/);
-    expect(spriteImagePath(Species.Venusaur, true)).toMatch(/shiny\/3\.png$/);
-    expect(spriteImagePath(Species.Venusaur, false, true)).toMatch(/regular\/3_f\.png$/);
-    expect(spriteImagePath(Species.Venusaur, true, true)).toMatch(/shiny\/3_f\.png$/);
+  it('names each coat inside the species folder', () => {
+    expect(spriteImagePath(Species.Venusaur)).toMatch(/\/3\/regular\.png$/);
+    expect(spriteImagePath(Species.Venusaur, true)).toMatch(/\/3\/shiny\.png$/);
+    expect(spriteImagePath(Species.Venusaur, false, true)).toMatch(/\/3\/female\.png$/);
+    expect(spriteImagePath(Species.Venusaur, true, true)).toMatch(/\/3\/shiny_female\.png$/);
   });
 
   it('names drawings that are actually there', () => {

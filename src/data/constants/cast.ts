@@ -69,6 +69,19 @@ export const UNCOMMON_CAST = [
   SpriteAnim.Ricochet,
   SpriteAnim.MultiScratch,
   SpriteAnim.Bite,
+  SpriteAnim.Appeal,
+  SpriteAnim.Chop,
+  SpriteAnim.Hover,
+  SpriteAnim.Rumble,
+  SpriteAnim.Sound,
+  SpriteAnim.FlapAround,
+  SpriteAnim.TailWhip,
+  SpriteAnim.Scratch,
+  SpriteAnim.CarefulWalk,
+  SpriteAnim.RaiseArms,
+  SpriteAnim.Sing,
+  SpriteAnim.Yawn,
+  SpriteAnim.Slap,
 ] as const;
 
 export type CommonCast = (typeof COMMON_CAST)[number];

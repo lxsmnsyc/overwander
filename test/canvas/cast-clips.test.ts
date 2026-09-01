@@ -1,7 +1,7 @@
 import { readFileSync, readdirSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import SpeciesSpriteAnimation from '../../src/canvas/species-sprite-animation';
-import asSpriteSheetJSON from '../../src/canvas/sprite-sheet';
+import asSpriteSheetJSON, { readFrameTable } from '../../src/canvas/sprite-sheet';
 import { MoveTargetType } from '../../src/battle/events';
 import {
   COMMON_CAST,
@@ -36,40 +36,49 @@ import { SpriteAnim, spriteAnimName } from '../../src/data/ids/sprite-anims';
 const ROOT = 'public/sprites/pokemon';
 
 /**
- * Every description that ships, whichever region it is filed under.
- *
- * A female pair is packed apart from the plain one and described on
- * its own, so `154` and `154_f` are two sheets here rather than one
- * species twice: they can hold different clips
+ * Every pokemon that ships, whichever region it is filed under. A
+ * pokemon is a folder named after its species id, and every coat of it
+ * is drawn against the one description inside
  */
-function described(): { sheet: string; species: number; path: string }[] {
-  return readdirSync(ROOT, { withFileTypes: true })
-    .filter((entry) => entry.isDirectory())
-    .flatMap((region) =>
-      readdirSync(`${ROOT}/${region.name}/meta`)
-        .filter((name) => name.endsWith('.json'))
-        .map((name) => ({
-          sheet: name.slice(0, -'.json'.length),
-          species: Number.parseInt(name, 10),
-          path: `${ROOT}/${region.name}/meta/${name}`,
-        })),
-    );
-}
+const SHIPPED: { species: number; region: string }[] = readdirSync(ROOT, { withFileTypes: true })
+  .filter((entry) => entry.isDirectory())
+  .flatMap((region) =>
+    readdirSync(`${ROOT}/${region.name}`)
+      .filter((name) => /^\d+$/.test(name))
+      .map((name) => ({ species: Number(name), region: region.name })),
+  )
+  .sort((one, two) => one.species - two.species);
 
-const PATHS = new Map(described().map((entry) => [entry.sheet, entry.path]));
+/**
+ * Read once, since every case here loads several sheets and the
+ * frames are inflated on the way in
+ */
+const DESCRIBED = new Map(
+  await Promise.all(
+    SHIPPED.map(async ({ species, region }) => {
+      const folder = `${ROOT}/${region}/${species}`;
+      const frames = await readFrameTable(readFileSync(`${folder}/frames.bin`));
 
-function loaded(sheet: number | string): SpeciesSpriteAnimation {
-  const data = asSpriteSheetJSON(JSON.parse(readFileSync(PATHS.get(String(sheet)) ?? '', 'utf8')));
-  const sprite = new SpeciesSpriteAnimation(`${sheet}.png`, data);
+      return [
+        species,
+        asSpriteSheetJSON(JSON.parse(readFileSync(`${folder}/sheet.json`, 'utf8')), frames),
+      ] as const;
+    }),
+  ),
+);
+
+function loaded(species: number): SpeciesSpriteAnimation {
+  const data = DESCRIBED.get(species);
+
+  if (data == null) {
+    throw new Error(`No sheet ships for ${species}`);
+  }
+  const sprite = new SpeciesSpriteAnimation(`${species}.png`, data);
 
   // oxlint-disable-next-line typescript/no-unsafe-type-assertion
   (sprite as unknown as { image: unknown }).image = {};
   return sprite;
 }
-
-const SHIPPED = described()
-  .filter((entry) => readFileSync(entry.path, 'utf8').trim().length > 0)
-  .sort((one, two) => one.species - two.species || one.sheet.localeCompare(two.sheet));
 
 /**
  * Sheets that ship without one of the clips every sheet is supposed to
@@ -80,18 +89,18 @@ const SHIPPED = described()
  * to Idle, and the pokemon stands there through its own attack — so a
  * gap is worth knowing about even when nothing has tripped over it yet
  */
-const KNOWN_GAPS: Record<string, SpriteAnim[] | undefined> = {};
+const KNOWN_GAPS: Record<number, SpriteAnim[] | undefined> = {};
 
 describe('cast clips', () => {
   it('builds every common clip on every sheet that ships', () => {
-    for (const { sheet } of SHIPPED) {
-      const sprite = loaded(sheet);
+    for (const { species } of SHIPPED) {
+      const sprite = loaded(species);
       const missing = COMMON_CAST.filter((name) => !sprite.has(name));
 
       // A sheet short of a common clip is one whose moves fall through
       // the whole preference list and land on Idle
-      expect(missing.map(spriteAnimName), `${sheet} is missing`).toEqual(
-        (KNOWN_GAPS[sheet] ?? []).map(spriteAnimName),
+      expect(missing.map(spriteAnimName), `${species} is missing`).toEqual(
+        (KNOWN_GAPS[species] ?? []).map(spriteAnimName),
       );
     }
   });
@@ -186,7 +195,7 @@ describe('what the field shows while a move is cast', () => {
 
   it('knows how long a gesture takes, so it is not cut off', () => {
     const gengar = loaded(94);
-    const strike = gengar.data.anims.anims.find((anim) => anim.name === SpriteAnim.Strike);
+    const strike = gengar.data.anims.find((anim) => anim.name === SpriteAnim.Strike);
     const ticks = strike?.durations.reduce((sum, held) => sum + held, 0) ?? 0;
 
     // A clip runs for as long as its frames say, at the 24 a second

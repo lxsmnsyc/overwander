@@ -40,6 +40,7 @@ What ships in the built app.
 | `postgres`                                           | The direct connection the privileged writes in `src/server/` travel over                                                 | Unlicense |
 | `jose`                                               | Verifying a caller's access token without a round trip                                                                   | MIT       |
 | `date-fns`                                           | Formatting the dates a record carries                                                                                    | MIT       |
+| [fflate](https://github.com/101arrowz/fflate)        | Inflating a sheet's frames on a browser with no `DecompressionStream`, fetched only by those                              | MIT       |
 | `nitro`                                              | The server SolidStart builds onto                                                                                        | MIT       |
 | `server-only`                                        | The marker that keeps server modules out of the client bundle                                                            | MIT       |
 | `vite`                                               | Dev server and bundler, at runtime through SolidStart                                                                    | MIT       |
@@ -70,57 +71,50 @@ Versions are in [package.json](../package.json); the exact tree is in
 Everything drawn on a canvas lives under `public/sprites`, as sheets of pixel art
 with a description saying where the pictures are.
 
-| Path                                      | What it holds                                                        |
-| ----------------------------------------- | -------------------------------------------------------------------- |
-| `public/sprites/pokemon/{region}/regular` | One `{species}.png` per pokemon: every picture it is drawn in        |
-| `public/sprites/pokemon/{region}/shiny`   | The same pokemon again in their shiny colours                        |
-| `public/sprites/pokemon/{region}/meta`    | One `{species}.json` per pokemon: the clips, the frames, the anchors |
-| `public/sprites/coats.json`               | Which coats each pokemon has, and the stamp of what is on disk       |
-| `public/sprites/ui/items`                 | Item icons, one sheet per kind — balls, berries, medicine, plates    |
-| `public/sprites/ui/move-categories`       | The three marks a move's category is shown by                        |
-| `public/sprites/ui/types`                 | The eighteen sigils a type is shown by                               |
+| Path                                                | What it holds                                                     |
+| --------------------------------------------------- | ----------------------------------------------------------------- |
+| `public/sprites/pokemon/{region}/{species}/*.png`   | One drawing per coat: regular, shiny, and a female pair where one was drawn |
+| `public/sprites/pokemon/{region}/{species}/sheet.json` | The layout every coat is drawn against, and who drew each of them |
+| `public/sprites/pokemon/{region}/{species}/frames.bin` | The frames themselves: which picture, where, and the anchors on it |
+| `public/sprites/pokemon/coats.json`                 | Which coats each pokemon has, and the stamp of what is on disk    |
+| `public/sprites/ui/items`                           | Item icons, one sheet per kind: balls, berries, medicine, plates   |
+| `public/sprites/ui/move-categories`                 | The three marks a move's category is shown by                     |
+| `public/sprites/ui/types`                           | The eighteen sigils a type is shown by                            |
 
-Sheets are filed by region — `kanto` for the first 151, `unknown` for Missingno,
-the egg and the substitute — and which region a pokemon belongs to comes from its
-dex number rather than from a list beside the files.
+Sheets are filed by region, `kanto` and `johto` for the first 251 and `unknown`
+for Missingno, the egg and the substitute, and which region a pokemon belongs to
+comes from its dex number rather than from a list beside the files.
 
 **A sheet is a bag of pictures rather than a grid.** Each distinct drawing is
 stored once, cropped to the pixels that are lit, wherever the packer put it; a
 frame says which picture it draws, whether it is mirrored, and where that picture
 hangs inside the clip's box. Two animations that share a drawing point at one copy
-of it, and a coat is compared against its shiny so a picture is only shared when
-it matches in both. `src/canvas/sprite-sheet.ts` is the whole of that contract and
-`src/canvas/species-sprite-animation.ts` plays it.
+of it, and every coat of a pokemon is packed to one layout, so a shiny is a second
+PNG over the same frames. `src/canvas/sprite-sheet.ts` is the whole of that
+contract and `src/canvas/species-sprite-animation.ts` plays it.
 
-The art began as **PMD sprites**, the layout Pokémon Mystery Dungeon fan projects
-use: eight facing rows per animation, an `anims` block, and an anchor for the
-pokemon's shadow, centre, head and hands. The anchors survive the repacking. All
-but the shadow are kept on the picture rather than on the frame, since a pose
-packed once and played by nine frames has its head in the same place in all nine;
-[`scripts/lift-marks.ts`](../scripts/lift-marks.ts) is what moved them there, and
-it halved the descriptions.
+The art is **PMD sprites**, the layout Pokémon Mystery Dungeon fan projects use:
+eight facing rows per animation, an `anims` block, and an anchor for the pokemon's
+shadow, centre, head and hands. The anchors survive the packing.
 
-The sheets themselves are made outside this repository, in the SpriteCollab
-checkout beside it, which is where the archives and the packing tools live. What
-ships here is the finished sheet and its description.
+The sheets are made outside this repository, in the SpriteCollab checkout beside
+it, which is where the archives and the packing tools live. `pnpm import-sprites`
+copies the finished folders in, renaming each from the collection's
+`{region}/{dex}/{form}` to the species id this game knows it by.
 
-Two passes run over the sheets. `pnpm compact-sprites` rewrites the PNG containers
-as indexed colour without touching a pixel, and
-[`scripts/repack-sprites.ts`](../scripts/repack-sprites.ts) crops and de-duplicates
-the pictures — together they took the 154 sheets that ship from 15.0MB to 2.1MB on
-disk, and from 1,752MB to 49MB decoded in a browser.
-[sprite-pipeline.json](../sprite-pipeline.json) records what was done to which
-version of which sheet, so a sheet whose digest no longer matches its entry has
-been re-exported since, and the tests say so. `pnpm sprite-coats` restamps
-`coats.json` afterwards, without which a browser draws yesterday's sheet against
-today's description.
+`pnpm compact-sprites` runs over them afterwards and rewrites any PNG container
+that can be smaller without a pixel changing. [sprite-pipeline.json](../sprite-pipeline.json)
+records what was done to which version of which sheet, so a sheet whose digest no
+longer matches its entry has been re-exported since, and the tests say so. The
+import restamps `coats.json` itself, without which a browser draws yesterday's
+sheet against today's description.
 
 ### Where the sheets come from
 
 | Sheets                             | Source                                                              | Licence                                                                                        |
 | ---------------------------------- | ------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| `pokemon/regular`, `pokemon/shiny` | [PMDCollab/SpriteCollab](https://github.com/PMDCollab/SpriteCollab) | CC BY-NC — attribution, **non-commercial**                                                     |
-| `pokemon/meta`                     | Derived from the same collection's `AnimData.xml` and `Offsets.png` | The same terms as the sprites it describes                                                     |
+| `pokemon/{region}/{species}`       | [PMDCollab/SpriteCollab](https://github.com/PMDCollab/SpriteCollab) | CC BY-NC: attribution, **non-commercial**                                                      |
+| `sheet.json`, `frames.bin`         | Derived from the same collection's `AnimData.xml` and `Offsets.png` | The same terms as the sprites it describes                                                     |
 | `ui/items`                         | [msikma/pokesprite](https://github.com/msikma/pokesprite)           | Sprite images © Nintendo/Creatures Inc./GAME FREAK Inc.; that repo's own code and data are MIT |
 | `ui/move-categories`               | [msikma/pokesprite](https://github.com/msikma/pokesprite)           | The same terms                                                                                 |
 | `ui/types`                         | [msikma/pokesprite](https://github.com/msikma/pokesprite)           | The same terms                                                                                 |
@@ -132,9 +126,11 @@ unchanged. Its terms are `CC BY-NC`: it may be redistributed and built upon with
 appropriate credit, and **not commercially**.
 
 Every sprite in it carries its own credit row in `sprite/{dex}/credits.txt`, with
-the names in the collection's `credit_names.txt`. The 164 sheets that ship —
-Kanto's 161 plus the three under `unknown` — are credited there, most of them to
-**CHUNSOFT**, whose games the sprites are drawn from.
+the names in the collection's `credit_names.txt`. Those rows are carried into each
+sheet's own `sheet.json`, under `credits`, one list per coat: the 254 sheets that
+ship, Kanto and Johto's 251 plus the three under `unknown`, name their artists in
+the file beside the drawing. Most are **CHUNSOFT**, whose games the sprites are
+drawn from.
 
 **pokesprite** is where every icon in the interface comes from. The item icons
 are its 32×32 inventory sprites, named the way that project names them, which is

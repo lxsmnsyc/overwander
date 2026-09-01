@@ -1,41 +1,39 @@
 import { Species } from '../data/ids/species';
 import { REGION_NAMES, getSpeciesRegion } from '../data/species/regions';
 import SpeciesSpriteAnimation from './species-sprite-animation';
-import type { SpriteCoats } from './sprite-coats';
+import type { Coat, SpriteCoats } from './sprite-coats';
 import { COATS_PATH, asSpriteCoats, coatOf, drawn, stamped } from './sprite-coats';
-import asSpriteSheetJSON, { type SpriteSheetJSON } from './sprite-sheet';
+import asSpriteSheetJSON, { type SpriteSheetJSON, readFrameTable } from './sprite-sheet';
 
 /**
  * Which sheet belongs to which pokemon, and how to get one.
  *
- * A pokemon is three files, all named after its species id:
+ * A pokemon is a folder named after its species id:
  *
  * ```
- * public/sprites/pokemon/regular/1.png
- * public/sprites/pokemon/shiny/1.png
- * public/sprites/pokemon/meta/1.json
+ * public/sprites/pokemon/kanto/1/sheet.json
+ * public/sprites/pokemon/kanto/1/frames.bin
+ * public/sprites/pokemon/kanto/1/regular.png
+ * public/sprites/pokemon/kanto/1/shiny.png
  * ```
  *
  * so nothing has to keep a table of names beside the enum that already
  * numbers them. Species 100000, 100001 and 100002 are Missingno, an egg
  * and a substitute: things that appear on a field without being
  * anybody's pokemon, numbered alongside the rest so they are asked for
- * exactly the same way — and numbered a long way past the dex rather
+ * exactly the same way, and numbered a long way past the dex rather
  * than in front of it, because a species id **is** its dex number now
  * and those three have no dex number to take.
  *
- * The two coats are **siblings** rather than one nested inside the
- * other. They are two drawings of the same pokemon, and a directory of
- * every shiny is a thing worth being able to look at on its own. What
- * they are not is two animations: the description under `meta` is one
- * file for both, because a shiny is the same frames held for the same
- * time with the same anchors on them, and two copies of that is two
- * things to keep in step.
+ * Every coat is packed to one layout, so the description is one pair of
+ * files for the whole pokemon and a coat is one PNG. A female coat is a
+ * redrawing rather than a recolour and is still only a PNG: the
+ * collection packs it against the same frames.
  *
  * Everything is shared as far as it can be. One description is fetched
  * per pokemon however many coats of it are asked for, one drawing per
  * coat however many callers want it, and a caller gets its own playhead
- * cloned off the loaded copy — six pokemon on a field are six playheads
+ * cloned off the loaded copy: six pokemon on a field are six playheads
  * over one image.
  */
 
@@ -60,37 +58,46 @@ function regionRoot(species: Species): string {
  */
 export const FALLBACK_SPECIES = Species.Missingno;
 
+/** What each coat's drawing is called inside that folder. */
+const COAT_FILES: Record<Coat, string> = {
+  regular: 'regular.png',
+  shiny: 'shiny.png',
+  female: 'female.png',
+  shinyFemale: 'shiny_female.png',
+};
+
+/** Everything one pokemon is drawn from, in one folder. */
+export function spriteFolder(species: Species): string {
+  return `${regionRoot(species)}/${species}`;
+}
+
 /**
- * The drawing of one coat of one pokemon.
+ * The drawing of one coat.
  *
- * A **female** sheet is the same species drawn again — Venusaur's
- * flower, Pikachu's tail — and lives beside the ordinary one under
- * the same coat, suffixed `_f`. Only a few species have one, which is
- * why asking for it is a preference rather than a promise: see
- * `loadSpeciesSprite`
+ * A **female** coat is the same species drawn again, Venusaur's flower
+ * or Pikachu's tail, and only a few species have one: asking for it is
+ * a preference rather than a promise, see `loadSpeciesSprite`
  */
 export function spriteImagePath(species: Species, shiny = false, female = false): string {
-  return `${regionRoot(species)}/${shiny ? 'shiny' : 'regular'}/${species}${female ? '_f' : ''}.png`;
+  return `${spriteFolder(species)}/${COAT_FILES[coatOf(shiny, female)]}`;
+}
+
+/** The layout every coat of this pokemon is drawn against. */
+export function spriteSheetPath(species: Species): string {
+  return `${spriteFolder(species)}/sheet.json`;
+}
+
+/** The frames that layout points at. */
+export function spriteFramesPath(species: Species): string {
+  return `${spriteFolder(species)}/frames.bin`;
 }
 
 /**
- * The animation a coat is played at.
- *
- * Shiny is a recolour of the same drawing, so it reads its coat's
- * description. A female is a redrawing from an archive of its own,
- * held for its own lengths and cut to its own frames, so it has one
- * of its own under the same `_f` its picture carries
+ * Every description asked for so far, by species. A failure is
+ * remembered as a failure: a pokemon with no description should cost
+ * one 404, not one per frame
  */
-export function spriteMetaPath(species: Species, female = false): string {
-  return `${regionRoot(species)}/meta/${species}${female ? '_f' : ''}.json`;
-}
-
-/**
- * Every description asked for so far, by the path of the description.
- * A failure is remembered as a failure: a pokemon with no description
- * should cost one 404, not one per frame
- */
-const DESCRIPTIONS = new Map<string, Promise<SpriteSheetJSON | null>>();
+const DESCRIPTIONS = new Map<Species, Promise<SpriteSheetJSON | null>>();
 
 /**
  * Every sheet asked for so far, by the path of its drawing
@@ -113,17 +120,23 @@ async function coats(): Promise<SpriteCoats | null> {
   return listed;
 }
 
-async function loadDescription(species: Species, female: boolean): Promise<SpriteSheetJSON | null> {
+async function loadDescription(species: Species): Promise<SpriteSheetJSON | null> {
   try {
     // Asked for with the digest of the sheets it describes, so a
     // repacked pokemon is a new address rather than whatever the
     // browser kept from last time
-    const response = await fetch(stamped(spriteMetaPath(species, female), await coats(), species));
+    const stamp = await coats();
+    const [described, framed] = await Promise.all([
+      fetch(stamped(spriteSheetPath(species), stamp, species)),
+      fetch(stamped(spriteFramesPath(species), stamp, species)),
+    ]);
 
-    if (!response.ok) {
+    if (!described.ok || !framed.ok) {
       return null;
     }
-    return asSpriteSheetJSON(await response.json());
+    const frames = await readFrameTable(new Uint8Array(await framed.arrayBuffer()));
+
+    return asSpriteSheetJSON(await described.json(), frames);
   } catch {
     // A description that is missing, unreachable or not JSON at all is
     // a pokemon this build cannot draw. Falling back is the caller's
@@ -132,17 +145,16 @@ async function loadDescription(species: Species, female: boolean): Promise<Sprit
   }
 }
 
-async function description(species: Species, female: boolean): Promise<SpriteSheetJSON | null> {
-  const path = spriteMetaPath(species, female);
-  const known = DESCRIPTIONS.get(path);
+async function description(species: Species): Promise<SpriteSheetJSON | null> {
+  const known = DESCRIPTIONS.get(species);
 
   if (known != null) {
     return known;
   }
 
-  const loading = loadDescription(species, female);
+  const loading = loadDescription(species);
 
-  DESCRIPTIONS.set(path, loading);
+  DESCRIPTIONS.set(species, loading);
   return loading;
 }
 
@@ -157,7 +169,7 @@ async function loadSheet(
   if (!drawn(await coats(), species, coatOf(shiny, female))) {
     return null;
   }
-  const data = await description(species, female);
+  const data = await description(species);
 
   if (data == null) {
     return null;

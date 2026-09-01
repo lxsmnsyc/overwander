@@ -1,16 +1,14 @@
 import type { ShadowPatch, SpriteQuad } from './placement';
-import asSpriteSheetJSON, {
+import {
   type AnimData,
   type Point,
   SPRITE_DIRECTIONS,
   SPRITE_TICK,
-  type SheetData,
   type SpriteAnchor,
   type SpriteDirection,
   type SpriteFrameData,
   type SpriteSheetJSON,
   type SpriteTargetData,
-  marksOf,
 } from './sprite-sheet';
 import type { Cast } from './daylight';
 import type { SpriteAnim } from '../data/ids/sprite-anims';
@@ -204,25 +202,22 @@ function middleOf(points: Point[]): Point | null {
  * horizontally
  */
 function pointsOf(
-  sheet: SheetData,
   frame: SpriteFrameData,
   frameWidth: number,
   frameHeight: number,
 ): Record<SpriteAnchor, Point> {
-  const anchors = marksOf(sheet, frame);
   const shadow: Point = frame.shadow ?? [(frameWidth - 1) / 2, frameHeight - 1];
-  const marked = [anchors.head, anchors.left, anchors.right].filter(
+  const marked = [frame.head, frame.left, frame.right].filter(
     (point): point is Point => point != null,
   );
-  const center = anchors.center ??
-    middleOf(marked) ?? [(frameWidth - 1) / 2, (frameHeight - 1) / 2];
+  const center = frame.center ?? middleOf(marked) ?? [(frameWidth - 1) / 2, (frameHeight - 1) / 2];
 
   return {
     shadow,
     center,
-    head: anchors.head ?? center,
-    left: anchors.left ?? center,
-    right: anchors.right ?? center,
+    head: frame.head ?? center,
+    left: frame.left ?? center,
+    right: frame.right ?? center,
   };
 }
 
@@ -280,7 +275,7 @@ export default class SpeciesSpriteAnimation {
     this.source = source;
     this.data = data;
 
-    for (const anim of data.anims.anims) {
+    for (const anim of data.anims) {
       // A description that came over the wire is exactly the kind that
       // names a clip it does not carry
       const target = data.sprites[anim.target];
@@ -309,22 +304,6 @@ export default class SpeciesSpriteAnimation {
         duration: total,
       });
     }
-  }
-
-  /**
-   * The description and the drawing, fetched together.
-   *
-   * They come from different places on purpose: the description is one
-   * file per pokemon and the drawing is one per coat, so a shiny and an
-   * ordinary Bulbasaur are two images over one description
-   */
-  static async fetch(metaPath: string, imagePath: string): Promise<SpeciesSpriteAnimation> {
-    const response = await fetch(metaPath);
-
-    if (!response.ok) {
-      throw new Error(`No sprite metadata at ${metaPath}`);
-    }
-    return new SpeciesSpriteAnimation(imagePath, asSpriteSheetJSON(await response.json()));
   }
 
   /**
@@ -476,9 +455,8 @@ export default class SpeciesSpriteAnimation {
     if (clip == null) {
       return null;
     }
-    const marks = this.anchorsAt(this.frame);
-    const cell = marks?.cell ?? null;
-    const held = cell == null ? null : this.data.sheet.pictures[cell];
+    const frame = this.anchorsAt(this.frame);
+    const held = frame == null ? null : this.data.sheet.pictures[frame.cell];
 
     // A frame is a picture hung somewhere in its box. Without one there
     // is nothing to draw: a description that names no picture describes
@@ -491,8 +469,8 @@ export default class SpeciesSpriteAnimation {
       y: held.y,
       width: held.width,
       height: held.height,
-      at: marks?.at ?? [0, 0],
-      mirrored: marks?.flip === true,
+      at: frame?.at ?? [0, 0],
+      mirrored: frame?.flip === true,
     };
   }
 
@@ -704,9 +682,7 @@ export default class SpeciesSpriteAnimation {
     if (clip == null || anchors == null) {
       return null;
     }
-    return pointsOf(this.data.sheet, anchors, clip.target.frameWidth, clip.target.frameHeight)[
-      kind
-    ];
+    return pointsOf(anchors, clip.target.frameWidth, clip.target.frameHeight)[kind];
   }
 
   /**
@@ -728,9 +704,7 @@ export default class SpeciesSpriteAnimation {
     if (clip == null || anchors == null) {
       return null;
     }
-    return pointsOf(this.data.sheet, anchors, clip.target.frameWidth, clip.target.frameHeight)[
-      kind
-    ];
+    return pointsOf(anchors, clip.target.frameWidth, clip.target.frameHeight)[kind];
   }
 
   /**
@@ -747,7 +721,7 @@ export default class SpeciesSpriteAnimation {
    * than a Bulbasaur does
    */
   get shadowSize(): number {
-    return this.data.anims.shadowSize;
+    return this.data.shadowSize;
   }
 
   shadowRadius(scale = 1, squash = SHADOW_FLATNESS): { x: number; y: number } {
@@ -755,7 +729,7 @@ export default class SpeciesSpriteAnimation {
     // fact about the pokemon, and trimming would shrink it on the
     // animations where it happens to tuck its wings in
     const width = this.clip?.target.sourceFrameWidth ?? 0;
-    const size = SHADOW_WIDTHS[this.data.anims.shadowSize] ?? SHADOW_WIDTHS[1];
+    const size = SHADOW_WIDTHS[this.data.shadowSize] ?? SHADOW_WIDTHS[1];
     const across = width * size * scale;
 
     return { x: across, y: across * squash };

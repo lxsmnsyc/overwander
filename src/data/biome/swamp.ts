@@ -16,6 +16,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Goldeen, weight: 20 },
         { species: Species.Magikarp, weight: 30 },
         { species: Species.Totodile, weight: 2 },
+        { species: Species.Wooper, weight: 25 },
       ],
       uncommon: [
         { species: Species.Wartortle, weight: 1 },
@@ -42,6 +43,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Goldeen, weight: 20 },
         { species: Species.Magikarp, weight: 30 },
         { species: Species.Totodile, weight: 2 },
+        { species: Species.Wooper, weight: 25 },
       ],
       uncommon: [
         { species: Species.Wartortle, weight: 1 },
@@ -64,6 +66,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Poliwag, weight: 20 },
         { species: Species.Goldeen, weight: 20 },
         { species: Species.Magikarp, weight: 30 },
+        { species: Species.Wooper, weight: 25 },
       ],
       uncommon: [{ species: Species.Poliwhirl, weight: 5 }],
       rare: [
@@ -79,6 +82,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Koffing, weight: 20 },
         { species: Species.Goldeen, weight: 20 },
         { species: Species.Magikarp, weight: 30 },
+        { species: Species.Wooper, weight: 25 },
       ],
       uncommon: [{ species: Species.Poliwhirl, weight: 5 }],
       rare: [

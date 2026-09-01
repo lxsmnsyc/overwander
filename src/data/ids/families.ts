@@ -92,6 +92,15 @@ const enum Families {
   Natu = 87,
   Mareep = 88,
   Hoppip = 91,
+  // 92 is Aipom's
+  Sunkern = 93,
+  // 94 is Yanma's
+  Wooper = 95,
+  // 96 is Murkrow's, 97 Misdreavus', 98 Unown's, 99 Wobbuffet's and
+  // 100 Girafarig's
+  Pineco = 101,
+  // 102 is Dunsparce's and 103 Gligar's
+  Snubbull = 104,
 }
 
 export default Families;

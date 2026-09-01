@@ -12,6 +12,7 @@ export default function registerMangroveSpawns(): void {
         { species: Species.Slowpoke, weight: 20 },
         { species: Species.Krabby, weight: 20 },
         { species: Species.Totodile, weight: 2 },
+        { species: Species.Wooper, weight: 25 },
       ],
       uncommon: [{ species: Species.Croconaw, weight: 1 }],
       rare: [
@@ -27,6 +28,7 @@ export default function registerMangroveSpawns(): void {
         { species: Species.Slowpoke, weight: 20 },
         { species: Species.Krabby, weight: 20 },
         { species: Species.Totodile, weight: 2 },
+        { species: Species.Wooper, weight: 25 },
       ],
       uncommon: [{ species: Species.Croconaw, weight: 1 }],
       rare: [
@@ -38,13 +40,19 @@ export default function registerMangroveSpawns(): void {
       special: [],
     },
     [TimeOfDay.Evening]: {
-      base: [{ species: Species.Krabby, weight: 20 }],
+      base: [
+        { species: Species.Krabby, weight: 20 },
+        { species: Species.Wooper, weight: 25 },
+      ],
       uncommon: [],
       rare: [{ species: Species.Kingler, weight: 10 }],
       special: [],
     },
     [TimeOfDay.Night]: {
-      base: [{ species: Species.Krabby, weight: 20 }],
+      base: [
+        { species: Species.Krabby, weight: 20 },
+        { species: Species.Wooper, weight: 25 },
+      ],
       uncommon: [],
       rare: [{ species: Species.Kingler, weight: 10 }],
       special: [],

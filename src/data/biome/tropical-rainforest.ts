@@ -8,13 +8,19 @@ import { registerSpawnPool } from './__create';
 export default function registerTropicalRainforestSpawns(): void {
   registerSpawnPool(Biome.TropicalRainforest, {
     [TimeOfDay.Morning]: {
-      base: [{ species: Species.Exeggcute, weight: 20 }],
+      base: [
+        { species: Species.Exeggcute, weight: 20 },
+        { species: Species.Pineco, weight: 20 },
+      ],
       uncommon: [],
       rare: [{ species: Species.Exeggutor, weight: 10 }],
       special: [{ species: Species.Mew, weight: 10 }],
     },
     [TimeOfDay.Day]: {
-      base: [{ species: Species.Exeggcute, weight: 20 }],
+      base: [
+        { species: Species.Exeggcute, weight: 20 },
+        { species: Species.Pineco, weight: 20 },
+      ],
       uncommon: [],
       rare: [{ species: Species.Exeggutor, weight: 10 }],
       special: [{ species: Species.Mew, weight: 10 }],
@@ -23,6 +29,7 @@ export default function registerTropicalRainforestSpawns(): void {
       base: [
         { species: Species.Exeggcute, weight: 20 },
         { species: Species.Spinarak, weight: 20 },
+        { species: Species.Pineco, weight: 20 },
       ],
       uncommon: [],
       rare: [
@@ -35,6 +42,7 @@ export default function registerTropicalRainforestSpawns(): void {
       base: [
         { species: Species.Exeggcute, weight: 20 },
         { species: Species.Spinarak, weight: 20 },
+        { species: Species.Pineco, weight: 20 },
       ],
       uncommon: [],
       rare: [

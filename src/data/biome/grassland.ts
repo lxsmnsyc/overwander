@@ -23,6 +23,8 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Natu, weight: 20 },
         { species: Species.Mareep, weight: 25 },
         { species: Species.Hoppip, weight: 25 },
+        { species: Species.Sunkern, weight: 25 },
+        { species: Species.Snubbull, weight: 20 },
       ],
       uncommon: [
         { species: Species.Ivysaur, weight: 1 },
@@ -75,6 +77,8 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Natu, weight: 20 },
         { species: Species.Mareep, weight: 25 },
         { species: Species.Hoppip, weight: 25 },
+        { species: Species.Sunkern, weight: 25 },
+        { species: Species.Snubbull, weight: 20 },
       ],
       uncommon: [
         { species: Species.Ivysaur, weight: 1 },

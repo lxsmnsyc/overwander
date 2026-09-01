@@ -13,6 +13,8 @@ export default function registerShrublandSpawns(): void {
         { species: Species.Natu, weight: 20 },
         { species: Species.Mareep, weight: 25 },
         { species: Species.Hoppip, weight: 25 },
+        { species: Species.Sunkern, weight: 25 },
+        { species: Species.Snubbull, weight: 20 },
       ],
       uncommon: [],
       rare: [
@@ -27,6 +29,8 @@ export default function registerShrublandSpawns(): void {
         { species: Species.Natu, weight: 20 },
         { species: Species.Mareep, weight: 25 },
         { species: Species.Hoppip, weight: 25 },
+        { species: Species.Sunkern, weight: 25 },
+        { species: Species.Snubbull, weight: 20 },
       ],
       uncommon: [],
       rare: [

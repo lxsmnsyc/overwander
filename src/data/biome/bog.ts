@@ -13,6 +13,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Bellsprout, weight: 20 },
         { species: Species.Venonat, weight: 20 },
         { species: Species.Magikarp, weight: 30 },
+        { species: Species.Wooper, weight: 25 },
       ],
       uncommon: [
         { species: Species.Poliwhirl, weight: 5 },
@@ -31,6 +32,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Bellsprout, weight: 20 },
         { species: Species.Venonat, weight: 20 },
         { species: Species.Magikarp, weight: 30 },
+        { species: Species.Wooper, weight: 25 },
       ],
       uncommon: [
         { species: Species.Poliwhirl, weight: 5 },
@@ -49,6 +51,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Venonat, weight: 20 },
         { species: Species.Gastly, weight: 20 },
         { species: Species.Magikarp, weight: 30 },
+        { species: Species.Wooper, weight: 25 },
       ],
       uncommon: [
         { species: Species.Poliwhirl, weight: 5 },
@@ -68,6 +71,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Gastly, weight: 20 },
         { species: Species.Grimer, weight: 20 },
         { species: Species.Magikarp, weight: 30 },
+        { species: Species.Wooper, weight: 25 },
       ],
       uncommon: [
         { species: Species.Poliwhirl, weight: 5 },

@@ -7,10 +7,12 @@ import { getMoveData } from '../../data/moves';
 import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import { MergedLifecycle } from '../lifecycle';
+import { isWeatherSunny } from '../utils';
 import type Unit from '../unit';
 import { createAbility } from './__create';
 
 const PLUS_BOOST = 1.5;
+const FLOWER_GIFT_BOOST = 1.5;
 
 const setupAbilities = [
   // https://bulbapedia.bulbagarden.net/wiki/Berserk_(Ability)
@@ -114,6 +116,29 @@ const setupAbilities = [
       }),
     ]);
   }),
+
+  // https://bulbapedia.bulbagarden.net/wiki/Flower_Gift_(Ability)
+  // Cherrim's form change is not part of it here: the registry has no
+  // forms yet, so the gift is the buff alone
+  createAbility(Abilities.FlowerGift, (battle) =>
+    battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
+      if (
+        (event.stat !== Stats.Attack && event.stat !== Stats.SpecialDefense) ||
+        !isWeatherSunny(event.source)
+      ) {
+        return;
+      }
+
+      // The holder gives it to the whole team, itself included, so
+      // the ally being asked about is rarely the one carrying it
+      for (const ally of event.source.team.units) {
+        if (ally.alive && ally.hasAbility(Abilities.FlowerGift)) {
+          event.value *= FLOWER_GIFT_BOOST;
+          return;
+        }
+      }
+    }),
+  ),
 
   // https://bulbapedia.bulbagarden.net/wiki/Plus_(Ability)
   // The mainline pairs it with Minus; no registered species has

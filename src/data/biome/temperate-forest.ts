@@ -16,6 +16,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Bellsprout, weight: 20 },
         { species: Species.Chikorita, weight: 2 },
         { species: Species.Ledyba, weight: 20 },
+        { species: Species.Pineco, weight: 20 },
       ],
       uncommon: [
         { species: Species.Ivysaur, weight: 1 },
@@ -46,6 +47,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Bellsprout, weight: 20 },
         { species: Species.Chikorita, weight: 2 },
         { species: Species.Ledyba, weight: 20 },
+        { species: Species.Pineco, weight: 20 },
       ],
       uncommon: [
         { species: Species.Ivysaur, weight: 1 },
@@ -75,6 +77,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Venonat, weight: 20 },
         { species: Species.Hoothoot, weight: 25 },
         { species: Species.Spinarak, weight: 20 },
+        { species: Species.Pineco, weight: 20 },
       ],
       uncommon: [{ species: Species.Gloom, weight: 5 }],
       rare: [
@@ -95,6 +98,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Venonat, weight: 20 },
         { species: Species.Hoothoot, weight: 25 },
         { species: Species.Spinarak, weight: 20 },
+        { species: Species.Pineco, weight: 20 },
       ],
       uncommon: [{ species: Species.Gloom, weight: 5 }],
       rare: [

@@ -25,4 +25,9 @@ export default function registerGen2Abilities(): void {
     name: 'Motor Drive',
     description: 'Electric moves cannot touch it, and raise its Speed a stage instead.',
   });
+  // Sunkern
+  registerAbility(Abilities.FlowerGift, {
+    name: 'Flower Gift',
+    description: '1.5x Attack and Special Defense for its whole team in sunlight.',
+  });
 }

@@ -22,6 +22,8 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Sentret, weight: 25 },
         { species: Species.Ledyba, weight: 20 },
         { species: Species.Hoppip, weight: 25 },
+        { species: Species.Pineco, weight: 20 },
+        { species: Species.Snubbull, weight: 20 },
       ],
       uncommon: [
         { species: Species.Ivysaur, weight: 1 },
@@ -64,6 +66,8 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Sentret, weight: 25 },
         { species: Species.Ledyba, weight: 20 },
         { species: Species.Hoppip, weight: 25 },
+        { species: Species.Pineco, weight: 20 },
+        { species: Species.Snubbull, weight: 20 },
       ],
       uncommon: [
         { species: Species.Ivysaur, weight: 1 },
@@ -103,6 +107,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Eevee, weight: 2 },
         { species: Species.Hoothoot, weight: 25 },
         { species: Species.Spinarak, weight: 20 },
+        { species: Species.Pineco, weight: 20 },
       ],
       uncommon: [
         { species: Species.Nidorina, weight: 5 },
@@ -136,6 +141,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Eevee, weight: 2 },
         { species: Species.Hoothoot, weight: 25 },
         { species: Species.Spinarak, weight: 20 },
+        { species: Species.Pineco, weight: 20 },
       ],
       uncommon: [
         { species: Species.Nidorina, weight: 5 },

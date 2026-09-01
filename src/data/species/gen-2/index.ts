@@ -6,9 +6,13 @@ import registerHoppipSpecies from './hoppip';
 import registerLedybaSpecies from './ledyba';
 import registerMareepSpecies from './mareep';
 import registerNatuSpecies from './natu';
+import registerPinecoSpecies from './pineco';
 import registerSentretSpecies from './sentret';
+import registerSnubbullSpecies from './snubbull';
 import registerSpinarakSpecies from './spinarak';
+import registerSunkernSpecies from './sunkern';
 import registerTotodileSpecies from './totodile';
+import registerWooperSpecies from './wooper';
 
 export default function registerGen2Species(): void {
   registerChikoritaSpecies();
@@ -22,4 +26,8 @@ export default function registerGen2Species(): void {
   registerNatuSpecies();
   registerMareepSpecies();
   registerHoppipSpecies();
+  registerSunkernSpecies();
+  registerWooperSpecies();
+  registerPinecoSpecies();
+  registerSnubbullSpecies();
 }

@@ -266,4 +266,12 @@ export const enum Species {
   Hoppip = 187,
   Skiploom = 188,
   Jumpluff = 189,
+  Sunkern = 191,
+  Sunflora = 192,
+  Wooper = 194,
+  Quagsire = 195,
+  Pineco = 204,
+  Forretress = 205,
+  Snubbull = 209,
+  Granbull = 210,
 }

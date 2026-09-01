@@ -206,6 +206,8 @@ const enum Abilities {
   // Mareep
   Plus = 127,
   MotorDrive = 128,
+  // Sunkern
+  FlowerGift = 129,
   // Special (non-standard abilities outside the regular pool)
   Boss = 100001,
   Shadow = 100002,

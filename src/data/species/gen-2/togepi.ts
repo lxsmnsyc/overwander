@@ -89,13 +89,7 @@ export default function registerTogepiSpecies(): void {
     learnSet: {
       level: { ...FAMILY_LEVEL },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [
-        Moves.Foresight,
-        Moves.FutureSight,
-        Moves.MirrorMove,
-        Moves.Peck,
-        Moves.Present,
-      ],
+      egg: [Moves.Foresight, Moves.FutureSight, Moves.MirrorMove, Moves.Peck, Moves.Present],
     },
   });
 

@@ -66,13 +66,7 @@ export default function registerDelibirdSpecies(): void {
         Moves.MudSlap,
         Moves.Swift,
       ],
-      egg: [
-        Moves.AuroraBeam,
-        Moves.FutureSight,
-        Moves.QuickAttack,
-        Moves.RapidSpin,
-        Moves.Splash,
-      ],
+      egg: [Moves.AuroraBeam, Moves.FutureSight, Moves.QuickAttack, Moves.RapidSpin, Moves.Splash],
     },
   });
 }

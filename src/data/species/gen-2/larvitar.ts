@@ -84,13 +84,7 @@ export default function registerLarvitarSpecies(): void {
         57: [Moves.HyperBeam],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [
-        Moves.AncientPower,
-        Moves.FocusEnergy,
-        Moves.Outrage,
-        Moves.Pursuit,
-        Moves.Stomp,
-      ],
+      egg: [Moves.AncientPower, Moves.FocusEnergy, Moves.Outrage, Moves.Pursuit, Moves.Stomp],
     },
   });
 

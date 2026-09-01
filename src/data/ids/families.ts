@@ -104,7 +104,8 @@ const enum Families {
   Snubbull = 104,
   Qwilfish = 105,
   Shuckle = 106,
-  // 107 is Heracross', 108 Sneasel's and 109 Teddiursa's
+  Heracross = 107,
+  // 108 is Sneasel's and 109 Teddiursa's
   Slugma = 110,
   // 111 is Swinub's
   Corsola = 112,
@@ -116,8 +117,9 @@ const enum Families {
   Phanpy = 118,
   // 119 is Stantler's
   Smeargle = 120,
-  // 121 is Tyrogue's, 122 Miltank's, 123 Raikou's, 124 Entei's and
-  // 125 Suicune's
+  // 121 is Tyrogue's
+  Miltank = 122,
+  // 123 is Raikou's, 124 Entei's and 125 Suicune's
   Larvitar = 126,
 }
 

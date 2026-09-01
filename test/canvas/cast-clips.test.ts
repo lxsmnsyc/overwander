@@ -79,6 +79,10 @@ const KNOWN_GAPS: Record<number, SpriteAnim[] | undefined> = {
   // their ranged casts stand in an Attack
   35: [SpriteAnim.Shoot],
   36: [SpriteAnim.Shoot],
+  // The Togepi line's were drawn the same way: they throw nothing, so
+  // their ranged casts stand in an Attack
+  175: [SpriteAnim.Shoot],
+  176: [SpriteAnim.Shoot],
   100001: [SpriteAnim.Shoot],
 };
 

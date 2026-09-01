@@ -194,10 +194,11 @@ function middleOf(points: Point[]): Point | null {
  * by: a missing shadow becomes the bottom middle of the box, where feet
  * are.
  *
- * The body centre is averaged from the head and both hands, because
- * **no sheet marks it** — they sit around the body rather than on it, so
- * their middle is the body however they are arranged, and the paired
- * hands cancel out horizontally
+ * The body centre falls back to the middle of the head and both hands,
+ * for the sheets packed while the reader was missing the mark: those
+ * three sit around the body rather than on it, so their middle is the
+ * body however they are arranged, and the paired hands cancel out
+ * horizontally
  */
 function pointsOf(
   anchors: SpriteFrameData,
@@ -686,10 +687,10 @@ export default class SpeciesSpriteAnimation {
    * caller always has a point to place by: a missing shadow becomes the
    * bottom middle of the box, where feet are.
    *
-   * The body centre is averaged from the head and both hands, because
-   * **no sheet marks it** — they sit around the body rather than on it,
-   * so their middle is the body however they are arranged, and the
-   * paired hands cancel out horizontally
+   * The body centre falls back to the middle of the head and both
+   * hands, for the sheets packed while the reader was missing the
+   * mark: those three sit around the body rather than on it, so their
+   * middle is the body however they are arranged
    */
   anchor(kind: SpriteAnchor): Point | null {
     const clip = this.clip;

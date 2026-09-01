@@ -1,11 +1,13 @@
 import { describe, expect, it } from 'vitest';
+import type { AnimData } from '../../src/server/sprites/anim-data';
 import readAnimData from '../../src/server/sprites/anim-data';
+import type { Point } from '../../src/server/sprites/markers';
 import markersFor from '../../src/server/sprites/markers';
 import pack from '../../src/server/sprites/packing';
-import { blank, blit } from '../../src/server/sprites/raster';
+import { blank, blit, opaque } from '../../src/server/sprites/raster';
 import type { Raster } from '../../src/server/sprites/raster';
 import computeTrim from '../../src/server/sprites/trim';
-import { animFilter } from '../../src/server/sprites/pmd';
+import { alignCoats, animFilter } from '../../src/server/sprites/pmd';
 import deduper, { drawPictures } from '../../src/server/sprites/dedupe';
 import {
   extraDestination,
@@ -177,14 +179,16 @@ describe('the marks beside a frame', () => {
     put(1, 1, [255, 0, 0, 255]);
     put(2, 3, [0, 255, 0, 255]);
     put(4, 5, [0, 0, 255, 255]);
-    put(6, 7, [255, 255, 255, 255]);
+    put(6, 7, [0, 0, 0, 255]);
 
     const found = markersFor(null, offsets, { x: 0, y: 0, width: 16, height: 16 }, [0, 0]);
 
-    expect(found.head).toEqual([1, 1]);
-    expect(found.left).toEqual([2, 3]);
+    expect(found.left).toEqual([1, 1]);
+    expect(found.center).toEqual([2, 3]);
     expect(found.right).toEqual([4, 5]);
-    expect(found.center).toEqual([6, 7]);
+    // Black, which an archive uses for the head and a reader looking
+    // for a lit channel finds nothing of
+    expect(found.head).toEqual([6, 7]);
   });
 
   it('lets a mark fall outside the frame it was trimmed to', () => {
@@ -660,5 +664,145 @@ describe('drawing an animation into the sheet', () => {
     expect(kept.pictures, 'two different frames, both kept').toHaveLength(2);
     expect([at(0), at(1)], 'the first frame').toEqual([40, 40]);
     expect([at(2), at(3)], 'the second frame, not the first frame padding').toEqual([90, 90]);
+  });
+});
+
+/** The images of one animation, as the coat readers hand them over. */
+type Coat = Map<SpriteAnim, { animation?: Raster; shadow?: Raster; offsets?: Raster }>;
+
+/** A grid of cells with one lit pixel in each, at the same spot in every one. */
+function cells(columns: number, width: number, height: number, mark: Point): Raster {
+  const raster = blank(columns * width, height);
+
+  for (let column = 0; column < columns; column += 1) {
+    blit(
+      raster,
+      drawn(width, height, { x: mark[0], y: mark[1], width: 1, height: 1 }),
+      {
+        x: 0,
+        y: 0,
+        width,
+        height,
+      },
+      { x: column * width, y: 0 },
+    );
+  }
+  return raster;
+}
+
+/** Where the lit pixels of a grid sit inside their own cell. */
+function marks(raster: Raster, columns: number, width: number, height: number): string[] {
+  const found: string[] = [];
+
+  for (let column = 0; column < columns; column += 1) {
+    for (let y = 0; y < height; y += 1) {
+      for (let x = 0; x < width; x += 1) {
+        if (opaque(raster, column * width + x, y)) {
+          found.push(`${x},${y}`);
+        }
+      }
+    }
+  }
+  return found;
+}
+
+/** One animation's description, which is all `alignCoats` reads. */
+function animsFor(width: number, height: number): AnimData {
+  return {
+    shadowSize: 1,
+    anims: [
+      {
+        name: SpriteAnim.Idle,
+        index: 0,
+        frameWidth: width,
+        frameHeight: height,
+        durations: [1, 1],
+        target: SpriteAnim.Idle,
+      },
+    ],
+  };
+}
+
+describe('coats cut to different frames', () => {
+  it('grows every coat onto the widest frame any of them uses', () => {
+    // Heracross: the female coat is cut 2 wider because it draws past
+    // what the plain frame holds. Cropping it back would clip that, so
+    // the plain coat grows instead
+    const plain: Coat = new Map([[SpriteAnim.Idle, { animation: cells(2, 4, 4, [1, 1]) }]]);
+    const female: Coat = new Map([[SpriteAnim.Idle, { animation: cells(2, 6, 4, [2, 1]) }]]);
+    const data = animsFor(4, 4);
+
+    alignCoats(plain, [female], data, [{ key: 'female' }]);
+
+    expect(data.anims[0].frameWidth).toBe(6);
+    expect(plain.get(SpriteAnim.Idle)?.animation?.width).toBe(12);
+    // The plain coat's own mark moved with it, so the two still line up
+    expect(marks(plain.get(SpriteAnim.Idle)!.animation!, 2, 6, 4)).toEqual(['2,1', '2,1']);
+    expect(marks(female.get(SpriteAnim.Idle)!.animation!, 2, 6, 4)).toEqual(['2,1', '2,1']);
+  });
+
+  it('moves the marks of the plain coat along with its drawing', () => {
+    const plain: Coat = new Map([
+      [
+        SpriteAnim.Idle,
+        {
+          animation: cells(2, 4, 4, [1, 1]),
+          offsets: cells(2, 4, 4, [1, 2]),
+          shadow: cells(2, 4, 4, [2, 3]),
+        },
+      ],
+    ]);
+    const data = animsFor(4, 4);
+
+    alignCoats(plain, [new Map([[SpriteAnim.Idle, { animation: cells(2, 6, 4, [2, 1]) }]])], data, [
+      { key: 'female' },
+    ]);
+
+    const held = plain.get(SpriteAnim.Idle);
+
+    expect(marks(held!.offsets!, 2, 6, 4)).toEqual(['2,2', '2,2']);
+    expect(marks(held!.shadow!, 2, 6, 4)).toEqual(['3,3', '3,3']);
+  });
+
+  it('pads a coat cut shorter than the plain one', () => {
+    // Meganium: the female Attack is 8 shorter, so it is centred back
+    // onto the frame the description names
+    const plain: Coat = new Map([[SpriteAnim.Idle, { animation: cells(2, 4, 4, [1, 2]) }]]);
+    const female: Coat = new Map([[SpriteAnim.Idle, { animation: cells(2, 4, 2, [1, 1]) }]]);
+    const data = animsFor(4, 4);
+
+    alignCoats(plain, [female], data, [{ key: 'female' }]);
+
+    expect(data.anims[0].frameHeight).toBe(4);
+    expect(marks(female.get(SpriteAnim.Idle)!.animation!, 2, 4, 4)).toEqual(['1,2', '1,2']);
+  });
+
+  it('refuses a coat whose grid is a different shape', () => {
+    const plain: Coat = new Map([[SpriteAnim.Idle, { animation: cells(2, 4, 4, [1, 1]) }]]);
+    const female: Coat = new Map([[SpriteAnim.Idle, { animation: blank(9, 4) }]]);
+
+    expect(() => {
+      alignCoats(plain, [female], animsFor(4, 4), [{ key: 'female' }]);
+    }).toThrow(/female/);
+  });
+});
+
+describe('copying a rectangle', () => {
+  it('drops what hangs off the left rather than wrapping it', () => {
+    const target = blank(4, 2);
+
+    blit(
+      target,
+      drawn(4, 2, { x: 0, y: 0, width: 4, height: 2 }),
+      {
+        x: 0,
+        y: 0,
+        width: 4,
+        height: 2,
+      },
+      { x: -2, y: 0 },
+    );
+
+    expect(marks(target, 1, 4, 2)).toEqual(['0,0', '1,0', '0,1', '1,1']);
   });
 });

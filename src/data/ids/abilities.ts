@@ -233,6 +233,8 @@ const enum Abilities {
   Prankster = 138,
   // Larvitar
   SandStream = 139,
+  // Heracross
+  SapSipper = 140,
   // Special (non-standard abilities outside the regular pool)
   Boss = 100001,
   Shadow = 100002,

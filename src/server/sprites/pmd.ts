@@ -297,16 +297,21 @@ function recanvas(
  * Puts every coat on one canvas.
  *
  * A coat is its own archive on the collab site and is exported on its
- * own, so a female drawn a little smaller comes back with a shorter
- * frame: Meganium's female Attack is cut at 88 where the plain one is
- * 96. One description ships for all four coats, and the anchors in it
- * are the plain coat's, so the odd coat is re-canvassed onto the plain
- * one's frame rather than read against a grid that is not its own.
+ * own, so its frames may be cut with a few rows or columns more padding
+ * than the plain coat's: Meganium's female Attack is 8 shorter,
+ * Heracross's is 8 wider. One description ships for all four coats, so
+ * every coat is re-canvassed onto the largest frame any of them uses,
+ * growing the plain coat and its two mark images along with it.
+ *
+ * The largest rather than the plain coat's own: a wider coat is wider
+ * because it draws past what the plain frame holds, and cropping it to
+ * fit would clip that. Anchors survive because the marks move with the
+ * drawing, and the trim in `entriesFor` crops the padding back off.
  *
  * Only the padding may differ. A coat whose grid is a different shape
  * is a different animation, and nothing here can reconcile that
  */
-function alignCoats(
+export function alignCoats(
   images: Map<SpriteAnim, SpriteImages>,
   others: Map<SpriteAnim, SpriteImages>[],
   data: AnimData,
@@ -329,11 +334,14 @@ function alignCoats(
     }
     const columns = Math.max(Math.floor(plain.width / size.width), 1);
     const rows = Math.max(Math.floor(plain.height / size.height), 1);
+    const coats = others.map((coat) => coat.get(name));
+    let width = size.width;
+    let height = size.height;
 
-    for (let coat = 0; coat < others.length; coat += 1) {
-      const drawing = others[coat].get(name)?.animation;
+    for (let coat = 0; coat < coats.length; coat += 1) {
+      const drawing = coats[coat]?.animation;
 
-      if (drawing == null || (drawing.width === plain.width && drawing.height === plain.height)) {
+      if (drawing == null) {
         continue;
       }
       if (drawing.width % columns !== 0 || drawing.height % rows !== 0) {
@@ -343,11 +351,38 @@ function alignCoats(
             `the way the ordinary coat's ${plain.width}x${plain.height} is.`,
         );
       }
-      const coated = others[coat].get(name);
+      width = Math.max(width, drawing.width / columns);
+      height = Math.max(height, drawing.height / rows);
+    }
 
-      if (coated != null) {
-        coated.animation = recanvas(drawing, columns, rows, size.width, size.height);
+    if (width !== size.width || height !== size.height) {
+      for (const kind of KINDS) {
+        const raster = held[kind.key];
+
+        if (raster != null) {
+          held[kind.key] = recanvas(raster, columns, rows, width, height);
+        }
       }
+      // The grid the description names has to be the one the pixels are
+      // now on: every read of it downstream goes through here
+      for (const anim of data.anims) {
+        if (anim.target === name) {
+          anim.frameWidth = width;
+          anim.frameHeight = height;
+        }
+      }
+    }
+
+    for (const coated of coats) {
+      const drawing = coated?.animation;
+
+      if (coated == null || drawing == null) {
+        continue;
+      }
+      if (drawing.width === columns * width && drawing.height === rows * height) {
+        continue;
+      }
+      coated.animation = recanvas(drawing, columns, rows, width, height);
     }
   }
 }

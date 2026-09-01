@@ -426,6 +426,45 @@ const setupAbilities = [
 
   // https://bulbapedia.bulbagarden.net/wiki/Sand_Stream_(Ability)
   createDrizzleAbility(Abilities.SandStream, Weathers.Sandstorm),
+
+  // https://bulbapedia.bulbagarden.net/wiki/Sap_Sipper_(Ability)
+  createAbility(
+    Abilities.SapSipper,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Post, (event) => {
+          if (
+            event.type === Types.Grass &&
+            event.target.type === MoveTargetType.Unit &&
+            event.target.unit !== event.source &&
+            event.target.unit.hasAbility(Abilities.SapSipper)
+          ) {
+            event.immune = true;
+          }
+        }),
+        battle.on(BattleEvents.UnitTriggerMoveFailed, EventPriority.Post, (event) => {
+          const parent = event.parent;
+
+          if (
+            parent.target.type === MoveTargetType.Unit &&
+            parent.target.unit !== parent.source &&
+            parent.target.unit.hasAbility(Abilities.SapSipper) &&
+            parent.source.checkMoveType(parent.move, parent.target) === Types.Grass
+          ) {
+            parent.target.unit.triggerAbility(Abilities.SapSipper);
+          }
+        }),
+        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
+          if (event.ability === Abilities.SapSipper) {
+            event.source.addStage(Stages.Attack, 1, {
+              type: EffectType.Ability,
+              ability: Abilities.SapSipper,
+              unit: event.source,
+            });
+          }
+        }),
+      ]),
+  ),
 ];
 
 export default function setupGen2Abilities(battle: Battle): void {

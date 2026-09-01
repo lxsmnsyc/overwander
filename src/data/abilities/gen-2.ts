@@ -79,4 +79,9 @@ export default function registerGen2Abilities(): void {
     name: 'Sand Stream',
     description: 'Whips up a sandstorm when it reaches the field.',
   });
+  // Heracross
+  registerAbility(Abilities.SapSipper, {
+    name: 'Sap Sipper',
+    description: 'Grass moves cannot touch it, and raise its Attack a stage instead.',
+  });
 }

@@ -10,7 +10,10 @@ export default function registerMontaneForestSpawns(): void {
     [TimeOfDay.Morning]: {
       base: [{ species: Species.Mankey, weight: 20 }],
       uncommon: [],
-      rare: [{ species: Species.Primeape, weight: 10 }],
+      rare: [
+        { species: Species.Primeape, weight: 10 },
+        { species: Species.Heracross, weight: 5 },
+      ],
       special: [],
     },
     [TimeOfDay.Day]: {
@@ -19,6 +22,7 @@ export default function registerMontaneForestSpawns(): void {
       rare: [
         { species: Species.Primeape, weight: 10 },
         { species: Species.Pinsir, weight: 5 },
+        { species: Species.Heracross, weight: 5 },
       ],
       special: [],
     },
@@ -31,6 +35,7 @@ export default function registerMontaneForestSpawns(): void {
       rare: [
         { species: Species.Golbat, weight: 10 },
         { species: Species.Noctowl, weight: 10 },
+        { species: Species.Heracross, weight: 5 },
       ],
       special: [],
     },
@@ -45,6 +50,7 @@ export default function registerMontaneForestSpawns(): void {
         { species: Species.Golbat, weight: 10 },
         { species: Species.Parasect, weight: 10 },
         { species: Species.Noctowl, weight: 10 },
+        { species: Species.Heracross, weight: 5 },
       ],
       special: [],
     },

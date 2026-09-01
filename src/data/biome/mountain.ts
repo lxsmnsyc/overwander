@@ -38,6 +38,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Tyranitar, weight: 2 },
         { species: Species.Shuckle, weight: 5 },
         { species: Species.Skarmory, weight: 5 },
+        { species: Species.Dunsparce, weight: 10 },
       ],
       special: [
         { species: Species.Zapdos, weight: 10 },
@@ -76,6 +77,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Tyranitar, weight: 2 },
         { species: Species.Shuckle, weight: 5 },
         { species: Species.Skarmory, weight: 5 },
+        { species: Species.Dunsparce, weight: 10 },
       ],
       special: [
         { species: Species.Zapdos, weight: 10 },
@@ -104,6 +106,9 @@ export default function registerMountainSpawns(): void {
         { species: Species.Snorlax, weight: 5 },
         { species: Species.Tyranitar, weight: 2 },
         { species: Species.Shuckle, weight: 5 },
+        { species: Species.Murkrow, weight: 5 },
+        { species: Species.Dunsparce, weight: 10 },
+        { species: Species.Gligar, weight: 5 },
       ],
       special: [
         { species: Species.Zapdos, weight: 10 },
@@ -139,6 +144,10 @@ export default function registerMountainSpawns(): void {
         { species: Species.Snorlax, weight: 5 },
         { species: Species.Tyranitar, weight: 2 },
         { species: Species.Shuckle, weight: 5 },
+        { species: Species.Murkrow, weight: 5 },
+        { species: Species.Misdreavus, weight: 5 },
+        { species: Species.Dunsparce, weight: 10 },
+        { species: Species.Gligar, weight: 5 },
       ],
       special: [
         { species: Species.Zapdos, weight: 10 },

@@ -1,0 +1,82 @@
+import { Stats } from '../../constants/stats';
+import { Types } from '../../constants/types';
+import Abilities from '../../ids/abilities';
+import Biome, { AnyTimeOfDay } from '../../ids/biome';
+import EggGroups from '../../ids/egg-groups';
+import Families from '../../ids/families';
+import { Moves } from '../../ids/moves';
+import { Species } from '../../ids/species';
+import { registerSpecies } from '../__create';
+
+export default function registerDunsparceSpecies(): void {
+  registerSpecies(Species.Dunsparce, {
+    dexNumber: 206,
+    name: 'Dunsparce',
+    category: 'Land Snake Pokemon',
+    height: 1.5,
+    weight: 14,
+    family: Families.Dunsparce,
+    stats: {
+      [Stats.HP]: 100,
+      [Stats.Attack]: 70,
+      [Stats.Defense]: 70,
+      [Stats.SpecialAttack]: 65,
+      [Stats.SpecialDefense]: 65,
+      [Stats.Speed]: 45,
+    },
+    types: [Types.Normal],
+    abilities: [Abilities.SereneGrace, Abilities.RunAway],
+    hiddenAbilities: [Abilities.Rattled],
+    eggGroups: [EggGroups.Field],
+    genderRatio: [1, 1],
+    catchRate: 190,
+    biomes: [Biome.Mountain, Biome.Steppe, Biome.Badlands],
+    activeTimes: AnyTimeOfDay,
+    learnSet: {
+      level: {
+        1: [Moves.Rage],
+        5: [Moves.DefenseCurl],
+        13: [Moves.Glare],
+        18: [Moves.Spite],
+        26: [Moves.Pursuit],
+        30: [Moves.Screech],
+        38: [Moves.TakeDown],
+      },
+      teachable: [
+        Moves.Attract,
+        Moves.Curse,
+        Moves.DefenseCurl,
+        Moves.Dig,
+        Moves.DoubleTeam,
+        Moves.DreamEater,
+        Moves.Endure,
+        Moves.Flamethrower,
+        Moves.Frustration,
+        Moves.Headbutt,
+        Moves.HiddenPower,
+        Moves.IronTail,
+        Moves.MudSlap,
+        Moves.Nightmare,
+        Moves.Protect,
+        Moves.PsychUp,
+        Moves.RainDance,
+        Moves.Rest,
+        Moves.Return,
+        Moves.RockSmash,
+        Moves.Rollout,
+        Moves.SleepTalk,
+        Moves.Snore,
+        Moves.SolarBeam,
+        Moves.Strength,
+        Moves.SunnyDay,
+        Moves.Swagger,
+        Moves.Thief,
+        Moves.Thunder,
+        Moves.Thunderbolt,
+        Moves.Toxic,
+        Moves.ZapCannon,
+      ],
+      egg: [Moves.AncientPower, Moves.Bide, Moves.Bite, Moves.Rage, Moves.RockSlide],
+    },
+  });
+}

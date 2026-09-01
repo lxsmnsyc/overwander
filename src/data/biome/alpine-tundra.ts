@@ -36,13 +36,19 @@ export default function registerAlpineTundraSpawns(): void {
     [TimeOfDay.Evening]: {
       base: [{ species: Species.Swinub, weight: 25 }],
       uncommon: [],
-      rare: [{ species: Species.Delibird, weight: 5 }],
+      rare: [
+        { species: Species.Delibird, weight: 5 },
+        { species: Species.Sneasel, weight: 5 },
+      ],
       special: [{ species: Species.Articuno, weight: 10 }],
     },
     [TimeOfDay.Night]: {
       base: [{ species: Species.Swinub, weight: 25 }],
       uncommon: [],
-      rare: [{ species: Species.Delibird, weight: 5 }],
+      rare: [
+        { species: Species.Delibird, weight: 5 },
+        { species: Species.Sneasel, weight: 5 },
+      ],
       special: [{ species: Species.Articuno, weight: 10 }],
     },
   });

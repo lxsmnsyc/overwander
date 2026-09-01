@@ -56,6 +56,23 @@ export function hasFreeItemSlot(unit: Unit): boolean {
 }
 
 /**
+ * The one item a thief could walk off with, or nothing when the unit's
+ * hands are empty. The first one found is the one taken: which of two
+ * held items goes is nobody's decision
+ */
+export function stealableItem(unit: Unit): Items | undefined {
+  for (const [item, carried] of Object.entries(unit.items)) {
+    if (carried) {
+      // The bag is keyed by the item enum, which comes back as a
+      // string from Object.entries
+      // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+      return Number(item) as Items;
+    }
+  }
+  return undefined;
+}
+
+/**
  * A unit as a move target, for the checks that have the unit in hand
  * rather than the target that was aimed at
  */

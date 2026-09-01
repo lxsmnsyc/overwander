@@ -239,6 +239,10 @@ const enum Abilities {
   HoneyGather = 141,
   // Marill
   HugePower = 142,
+  // Yanma
+  SpeedBoost = 143,
+  // Sneasel
+  Pickpocket = 144,
   // Special (non-standard abilities outside the regular pool)
   Boss = 100001,
   Shadow = 100002,

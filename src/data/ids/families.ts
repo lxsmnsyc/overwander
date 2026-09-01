@@ -94,19 +94,22 @@ const enum Families {
   // is stored in a player's candy stacks, so a later family cannot be
   // renumbered into place
   Hoppip = 91,
-  // 92 is Aipom's
+  Aipom = 92,
   Sunkern = 93,
-  // 94 is Yanma's
+  Yanma = 94,
   Wooper = 95,
-  // 96 is Murkrow's, 97 Misdreavus', 98 Unown's, 99 Wobbuffet's and
-  // 100 Girafarig's
+  Murkrow = 96,
+  Misdreavus = 97,
+  // 98 is Unown's and 99 Wobbuffet's
+  Girafarig = 100,
   Pineco = 101,
-  // 102 is Dunsparce's and 103 Gligar's
+  Dunsparce = 102,
+  Gligar = 103,
   Snubbull = 104,
   Qwilfish = 105,
   Shuckle = 106,
   Heracross = 107,
-  // 108 is Sneasel's
+  Sneasel = 108,
   Teddiursa = 109,
   Slugma = 110,
   Swinub = 111,
@@ -117,7 +120,7 @@ const enum Families {
   Skarmory = 116,
   Houndour = 117,
   Phanpy = 118,
-  // 119 is Stantler's
+  Stantler = 119,
   Smeargle = 120,
   Miltank = 122,
   Raikou = 123,

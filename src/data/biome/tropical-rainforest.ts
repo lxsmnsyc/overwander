@@ -13,7 +13,11 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Pineco, weight: 20 },
       ],
       uncommon: [],
-      rare: [{ species: Species.Exeggutor, weight: 10 }],
+      rare: [
+        { species: Species.Exeggutor, weight: 10 },
+        { species: Species.Aipom, weight: 5 },
+        { species: Species.Yanma, weight: 5 },
+      ],
       special: [{ species: Species.Mew, weight: 10 }],
     },
     [TimeOfDay.Day]: {
@@ -22,7 +26,11 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Pineco, weight: 20 },
       ],
       uncommon: [],
-      rare: [{ species: Species.Exeggutor, weight: 10 }],
+      rare: [
+        { species: Species.Exeggutor, weight: 10 },
+        { species: Species.Aipom, weight: 5 },
+        { species: Species.Yanma, weight: 5 },
+      ],
       special: [{ species: Species.Mew, weight: 10 }],
     },
     [TimeOfDay.Evening]: {
@@ -35,6 +43,8 @@ export default function registerTropicalRainforestSpawns(): void {
       rare: [
         { species: Species.Exeggutor, weight: 10 },
         { species: Species.Ariados, weight: 8 },
+        { species: Species.Aipom, weight: 5 },
+        { species: Species.Yanma, weight: 5 },
       ],
       special: [{ species: Species.Mew, weight: 10 }],
     },
@@ -48,6 +58,8 @@ export default function registerTropicalRainforestSpawns(): void {
       rare: [
         { species: Species.Exeggutor, weight: 10 },
         { species: Species.Ariados, weight: 8 },
+        { species: Species.Aipom, weight: 5 },
+        { species: Species.Yanma, weight: 5 },
       ],
       special: [{ species: Species.Mew, weight: 10 }],
     },

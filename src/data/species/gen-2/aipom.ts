@@ -1,0 +1,94 @@
+import { Stats } from '../../constants/stats';
+import { Types } from '../../constants/types';
+import Abilities from '../../ids/abilities';
+import Biome, { AnyTimeOfDay } from '../../ids/biome';
+import EggGroups from '../../ids/egg-groups';
+import Families from '../../ids/families';
+import { Moves } from '../../ids/moves';
+import { Species } from '../../ids/species';
+import { registerSpecies } from '../__create';
+
+export default function registerAipomSpecies(): void {
+  registerSpecies(Species.Aipom, {
+    dexNumber: 190,
+    name: 'Aipom',
+    category: 'Long Tail Pokemon',
+    height: 0.8,
+    weight: 11.5,
+    family: Families.Aipom,
+    stats: {
+      [Stats.HP]: 55,
+      [Stats.Attack]: 70,
+      [Stats.Defense]: 55,
+      [Stats.SpecialAttack]: 40,
+      [Stats.SpecialDefense]: 55,
+      [Stats.Speed]: 85,
+    },
+    types: [Types.Normal],
+    abilities: [Abilities.RunAway, Abilities.Pickup],
+    hiddenAbilities: [Abilities.SkillLink],
+    eggGroups: [EggGroups.Field],
+    genderRatio: [1, 1],
+    catchRate: 45,
+    biomes: [Biome.TropicalRainforest, Biome.TemperateForest, Biome.Woodland],
+    activeTimes: AnyTimeOfDay,
+    learnSet: {
+      level: {
+        1: [Moves.Scratch, Moves.TailWhip],
+        6: [Moves.SandAttack],
+        12: [Moves.BatonPass],
+        19: [Moves.FurySwipes],
+        27: [Moves.Swift],
+        36: [Moves.Screech],
+        46: [Moves.Agility],
+      },
+      teachable: [
+        Moves.Attract,
+        Moves.Curse,
+        Moves.Cut,
+        Moves.DefenseCurl,
+        Moves.Detect,
+        Moves.DoubleTeam,
+        Moves.DreamEater,
+        Moves.DynamicPunch,
+        Moves.Endure,
+        Moves.FirePunch,
+        Moves.Frustration,
+        Moves.FuryCutter,
+        Moves.Headbutt,
+        Moves.HiddenPower,
+        Moves.IcePunch,
+        Moves.IronTail,
+        Moves.MudSlap,
+        Moves.Nightmare,
+        Moves.Protect,
+        Moves.Rest,
+        Moves.Return,
+        Moves.RockSmash,
+        Moves.ShadowBall,
+        Moves.SleepTalk,
+        Moves.Snore,
+        Moves.Strength,
+        Moves.SunnyDay,
+        Moves.Swagger,
+        Moves.Swift,
+        Moves.Thief,
+        Moves.Thunder,
+        Moves.ThunderPunch,
+        Moves.Thunderbolt,
+        Moves.Toxic,
+        Moves.ZapCannon,
+      ],
+      egg: [
+        Moves.Agility,
+        Moves.BeatUp,
+        Moves.Counter,
+        Moves.DoubleSlap,
+        Moves.Pursuit,
+        Moves.Screech,
+        Moves.Slam,
+        Moves.Spite,
+      ],
+    },
+  });
+}

@@ -1,25 +1,8 @@
 import { EventPriority } from '../../core/event-emitter';
-import type { Items } from '../../data/ids/items';
 import { Moves } from '../../data/ids/moves';
 import type Battle from '../core';
 import { BattleEvents, EffectType } from '../events';
-import type Unit from '../unit';
-
-/**
- * What the target is carrying, if it is carrying one thing a thief
- * could walk off with. Nothing when its hands are empty
- */
-function stealable(target: Unit): Items | undefined {
-  for (const [item, carried] of Object.entries(target.items)) {
-    if (carried) {
-      // The bag is keyed by the item enum, which comes back as a
-      // string from Object.entries
-      // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
-      return Number(item) as Items;
-    }
-  }
-  return undefined;
-}
+import { stealableItem } from '../utils';
 
 /**
  * Thief takes what the target is holding, and only into a free hand:
@@ -34,9 +17,9 @@ export default function setupThief(battle: Battle): void {
 
     const source = event.parent.source;
     const target = event.parent.target;
-    const item = stealable(target);
+    const item = stealableItem(target);
 
-    if (item == null || stealable(source) != null || !source.alive) {
+    if (item == null || stealableItem(source) != null || !source.alive) {
       return;
     }
 

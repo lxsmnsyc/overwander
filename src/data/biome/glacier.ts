@@ -25,6 +25,7 @@ export default function registerGlacierSpawns(): void {
       rare: [
         { species: Species.Jynx, weight: 5 },
         { species: Species.Delibird, weight: 5 },
+        { species: Species.Sneasel, weight: 5 },
       ],
       special: [{ species: Species.Articuno, weight: 10 }],
     },
@@ -34,6 +35,7 @@ export default function registerGlacierSpawns(): void {
       rare: [
         { species: Species.Jynx, weight: 5 },
         { species: Species.Delibird, weight: 5 },
+        { species: Species.Sneasel, weight: 5 },
       ],
       special: [{ species: Species.Articuno, weight: 10 }],
     },

@@ -94,4 +94,14 @@ export default function registerGen2Abilities(): void {
     name: 'Huge Power',
     description: 'Doubles its Attack.',
   });
+  // Yanma
+  registerAbility(Abilities.SpeedBoost, {
+    name: 'Speed Boost',
+    description: '+1 Speed every time it acts.',
+  });
+  // Sneasel
+  registerAbility(Abilities.Pickpocket, {
+    name: 'Pickpocket',
+    description: 'Takes the item off whoever touches it, if it has a hand free.',
+  });
 }

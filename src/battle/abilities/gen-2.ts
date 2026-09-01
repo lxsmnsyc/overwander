@@ -11,8 +11,13 @@ import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import { MergedLifecycle } from '../lifecycle';
 import type Unit from '../unit';
 import { FORCED_SWITCH_MOVES } from '../moves/switch-out';
-import { hasFreeItemSlot, isWeatherSunny, onUnitActs } from '../utils';
-import { createAbility, createDrizzleAbility, createLimberAbility } from './__create';
+import { hasFreeItemSlot, isWeatherSunny, onUnitActs, stealableItem, unitTarget } from '../utils';
+import {
+  createAbility,
+  createContactHazard,
+  createDrizzleAbility,
+  createLimberAbility,
+} from './__create';
 
 const PLUS_BOOST = 1.5;
 const FLOWER_GIFT_BOOST = 1.5;
@@ -493,6 +498,72 @@ const setupAbilities = [
       }),
     ]);
   }),
+
+  // Yanma
+  // https://bulbapedia.bulbagarden.net/wiki/Speed_Boost_(Ability)
+  createAbility(
+    Abilities.SpeedBoost,
+    (battle) =>
+      new MergedLifecycle([
+        ...onUnitActs(battle, (unit) => {
+          if (unit.hasAbility(Abilities.SpeedBoost)) {
+            unit.triggerAbility(Abilities.SpeedBoost);
+          }
+        }),
+        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
+          if (event.ability === Abilities.SpeedBoost) {
+            event.source.addStage(Stages.Speed, 1, {
+              type: EffectType.Ability,
+              ability: Abilities.SpeedBoost,
+              unit: event.source,
+            });
+          }
+        }),
+      ]),
+  ),
+
+  // Sneasel
+  // Inline rather than trigger-driven: the effect needs the unit that
+  // touched it, which the trigger cannot carry
+  // https://bulbapedia.bulbagarden.net/wiki/Pickpocket_(Ability)
+  createAbility(
+    Abilities.Pickpocket,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
+          if (
+            !event.success ||
+            (event.flags & DamageFlags.Indirect) !== 0 ||
+            event.cause.type !== EffectType.Move ||
+            event.cause.unit === event.target ||
+            !event.target.alive ||
+            !event.target.hasAbility(Abilities.Pickpocket) ||
+            !event.cause.unit.checkMoveContact(event.cause.move, unitTarget(event.target))
+          ) {
+            return;
+          }
+
+          const thief = event.target;
+          const victim = event.cause.unit;
+          const item = stealableItem(victim);
+
+          if (item == null || !hasFreeItemSlot(thief)) {
+            return;
+          }
+
+          thief.triggerAbility(Abilities.Pickpocket);
+          victim.removeItem(item, {
+            type: EffectType.Ability,
+            ability: Abilities.Pickpocket,
+            unit: thief,
+          });
+          thief.addItem(item);
+        }),
+        // Touching it costs something, so the AI is told before it
+        // decides to
+        createContactHazard(battle, Abilities.Pickpocket),
+      ]),
+  ),
 
   // Marill
   // Doubles the stat rather than the blow, so anything reading the

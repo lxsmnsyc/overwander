@@ -10,13 +10,19 @@ export default function registerTaigaSpawns(): void {
     [TimeOfDay.Morning]: {
       base: [{ species: Species.Teddiursa, weight: 20 }],
       uncommon: [],
-      rare: [{ species: Species.Snorlax, weight: 5 }],
+      rare: [
+        { species: Species.Snorlax, weight: 5 },
+        { species: Species.Stantler, weight: 5 },
+      ],
       special: [{ species: Species.Suicune, weight: 10 }],
     },
     [TimeOfDay.Day]: {
       base: [{ species: Species.Teddiursa, weight: 20 }],
       uncommon: [],
-      rare: [{ species: Species.Snorlax, weight: 5 }],
+      rare: [
+        { species: Species.Snorlax, weight: 5 },
+        { species: Species.Stantler, weight: 5 },
+      ],
       special: [{ species: Species.Suicune, weight: 10 }],
     },
     [TimeOfDay.Evening]: {
@@ -26,6 +32,7 @@ export default function registerTaigaSpawns(): void {
         { species: Species.Ninetales, weight: 5 },
         { species: Species.Jynx, weight: 5 },
         { species: Species.Snorlax, weight: 5 },
+        { species: Species.Stantler, weight: 5 },
       ],
       special: [{ species: Species.Suicune, weight: 10 }],
     },
@@ -40,6 +47,7 @@ export default function registerTaigaSpawns(): void {
         { species: Species.Parasect, weight: 10 },
         { species: Species.Jynx, weight: 5 },
         { species: Species.Snorlax, weight: 5 },
+        { species: Species.Stantler, weight: 5 },
       ],
       special: [{ species: Species.Suicune, weight: 10 }],
     },

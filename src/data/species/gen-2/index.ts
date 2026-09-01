@@ -1,9 +1,13 @@
+import registerAipomSpecies from './aipom';
 import registerCelebiSpecies from './celebi';
 import registerChikoritaSpecies from './chikorita';
 import registerChinchouSpecies from './chinchou';
 import registerCorsolaSpecies from './corsola';
 import registerCyndaquilSpecies from './cyndaquil';
 import registerDelibirdSpecies from './delibird';
+import registerDunsparceSpecies from './dunsparce';
+import registerGirafarigSpecies from './girafarig';
+import registerGligarSpecies from './gligar';
 import registerHeracrossSpecies from './heracross';
 import registerHoothootSpecies from './hoothoot';
 import registerHoppipSpecies from './hoppip';
@@ -14,6 +18,8 @@ import registerLegendaryBeastSpecies from './legendary-beasts';
 import registerMareepSpecies from './mareep';
 import registerMarillSpecies from './marill';
 import registerMiltankSpecies from './miltank';
+import registerMisdreavusSpecies from './misdreavus';
+import registerMurkrowSpecies from './murkrow';
 import registerNatuSpecies from './natu';
 import registerPhanpySpecies from './phanpy';
 import registerPinecoSpecies from './pineco';
@@ -24,8 +30,10 @@ import registerShuckleSpecies from './shuckle';
 import registerSkarmorySpecies from './skarmory';
 import registerSlugmaSpecies from './slugma';
 import registerSmeargleSpecies from './smeargle';
+import registerSneaselSpecies from './sneasel';
 import registerSnubbullSpecies from './snubbull';
 import registerSpinarakSpecies from './spinarak';
+import registerStantlerSpecies from './stantler';
 import registerSunkernSpecies from './sunkern';
 import registerSwinubSpecies from './swinub';
 import registerTeddiursaSpecies from './teddiursa';
@@ -34,6 +42,7 @@ import registerTotodileSpecies from './totodile';
 import registerTowerDuoSpecies from './tower-duo';
 import registerTyrogueSpecies from './tyrogue';
 import registerWooperSpecies from './wooper';
+import registerYanmaSpecies from './yanma';
 
 export default function registerGen2Species(): void {
   registerChikoritaSpecies();
@@ -72,4 +81,13 @@ export default function registerGen2Species(): void {
   registerSwinubSpecies();
   registerTyrogueSpecies();
   registerMarillSpecies();
+  registerAipomSpecies();
+  registerDunsparceSpecies();
+  registerGligarSpecies();
+  registerMisdreavusSpecies();
+  registerMurkrowSpecies();
+  registerSneaselSpecies();
+  registerStantlerSpecies();
+  registerYanmaSpecies();
+  registerGirafarigSpecies();
 }

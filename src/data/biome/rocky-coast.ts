@@ -14,7 +14,6 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Seel, weight: 20 },
         { species: Species.Slowpoke, weight: 20 },
         { species: Species.Magikarp, weight: 30 },
-        { species: Species.Qwilfish, weight: 15 },
       ],
       uncommon: [],
       rare: [
@@ -23,6 +22,7 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Slowbro, weight: 10 },
         { species: Species.Shuckle, weight: 5 },
+        { species: Species.Qwilfish, weight: 15 },
       ],
       special: [],
     },
@@ -33,7 +33,6 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Seel, weight: 20 },
         { species: Species.Slowpoke, weight: 20 },
         { species: Species.Magikarp, weight: 30 },
-        { species: Species.Qwilfish, weight: 15 },
       ],
       uncommon: [],
       rare: [
@@ -42,6 +41,7 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Slowbro, weight: 10 },
         { species: Species.Shuckle, weight: 5 },
+        { species: Species.Qwilfish, weight: 15 },
       ],
       special: [],
     },
@@ -52,7 +52,6 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Seel, weight: 20 },
         { species: Species.Staryu, weight: 20 },
         { species: Species.Magikarp, weight: 30 },
-        { species: Species.Qwilfish, weight: 15 },
       ],
       uncommon: [],
       rare: [
@@ -61,6 +60,7 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Starmie, weight: 10 },
         { species: Species.Shuckle, weight: 5 },
+        { species: Species.Qwilfish, weight: 15 },
       ],
       special: [],
     },
@@ -71,7 +71,6 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Seel, weight: 20 },
         { species: Species.Staryu, weight: 20 },
         { species: Species.Magikarp, weight: 30 },
-        { species: Species.Qwilfish, weight: 15 },
       ],
       uncommon: [],
       rare: [
@@ -80,6 +79,7 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Starmie, weight: 10 },
         { species: Species.Shuckle, weight: 5 },
+        { species: Species.Qwilfish, weight: 15 },
       ],
       special: [],
     },

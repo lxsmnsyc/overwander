@@ -17,6 +17,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Slugma, weight: 20 },
         { species: Species.Phanpy, weight: 20 },
         { species: Species.Larvitar, weight: 2 },
+        { species: Species.Rhyhorn, weight: 10 },
       ],
       uncommon: [
         { species: Species.Graveler, weight: 5 },
@@ -27,7 +28,6 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Arbok, weight: 10 },
         { species: Species.Primeape, weight: 10 },
         { species: Species.Marowak, weight: 10 },
-        { species: Species.Rhyhorn, weight: 10 },
         { species: Species.Kangaskhan, weight: 5 },
         { species: Species.Tyranitar, weight: 2 },
         { species: Species.Shuckle, weight: 5 },
@@ -46,6 +46,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Slugma, weight: 20 },
         { species: Species.Phanpy, weight: 20 },
         { species: Species.Larvitar, weight: 2 },
+        { species: Species.Rhyhorn, weight: 10 },
       ],
       uncommon: [
         { species: Species.Graveler, weight: 5 },
@@ -56,7 +57,6 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Arbok, weight: 10 },
         { species: Species.Primeape, weight: 10 },
         { species: Species.Marowak, weight: 10 },
-        { species: Species.Rhyhorn, weight: 10 },
         { species: Species.Kangaskhan, weight: 5 },
         { species: Species.Tyranitar, weight: 2 },
         { species: Species.Shuckle, weight: 5 },
@@ -74,16 +74,16 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Slugma, weight: 20 },
         { species: Species.Houndour, weight: 20 },
         { species: Species.Larvitar, weight: 2 },
+        { species: Species.Rhyhorn, weight: 10 },
       ],
       uncommon: [
         { species: Species.Graveler, weight: 5 },
         { species: Species.Pupitar, weight: 1 },
+        { species: Species.Golbat, weight: 10 },
       ],
       rare: [
-        { species: Species.Golbat, weight: 10 },
         { species: Species.Arbok, weight: 10 },
         { species: Species.Marowak, weight: 10 },
-        { species: Species.Rhyhorn, weight: 10 },
         { species: Species.Tyranitar, weight: 2 },
         { species: Species.Shuckle, weight: 5 },
         { species: Species.Dunsparce, weight: 10 },
@@ -104,9 +104,9 @@ export default function registerBadlandsSpawns(): void {
       uncommon: [
         { species: Species.Graveler, weight: 5 },
         { species: Species.Pupitar, weight: 1 },
+        { species: Species.Golbat, weight: 10 },
       ],
       rare: [
-        { species: Species.Golbat, weight: 10 },
         { species: Species.Marowak, weight: 10 },
         { species: Species.Rhydon, weight: 5 },
         { species: Species.Kangaskhan, weight: 5 },

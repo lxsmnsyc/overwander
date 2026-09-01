@@ -307,11 +307,15 @@ export const ELITE_MEMBER_POOLS: Record<EliteMember, ExpertPool> = {
   // Slowbro is hers in every game she appears in and there is nothing
   // icy about him, so he is named rather than derived
   [EliteMember.Lorelei]: { types: [Types.Ice], also: [Species.Slowbro] },
-  // The Ground half is his two Onix, and it brings the rest of the
-  // heavy ground with it. It overlaps Brock's rock at Golem, Onix and
-  // Rhydon, which is right: they are the same three pokemon a
-  // fighting specialist and a rock specialist would both want
-  [EliteMember.Bruno]: { types: [Types.Fighting, Types.Ground] },
+  // The Ground half brings the heavy ground with it, and overlaps
+  // Brock's rock at Golem and Rhydon, which is right: they are the
+  // same pokemon a fighting specialist and a rock specialist would
+  // both want. Onix is named, since a Steelix above him puts him
+  // below the band the rules read
+  [EliteMember.Bruno]: {
+    types: [Types.Fighting, Types.Ground],
+    also: [Species.Onix],
+  },
   // Not the Poison **type**, which in Kanto is Koga's pool exactly
   // and would make her a second Koga. The Amorphous group is what her
   // ghosts have in common, and her Golbat and Arbok are named
@@ -363,11 +367,17 @@ export function getExpertPool(region: Regions, pool: ExpertPool): Species[] {
     if (species === Species.Egg || LAIR_SPECIES.has(species) || !isBaseForm(species)) {
       return false;
     }
+    // Naming beats the band as well as the type rules. Bruno's Onix
+    // and Agatha's Golbat are middle stages now that a Steelix and a
+    // Crobat exist, and they are still the pokemon those two field
+    if (named.has(species)) {
+      return true;
+    }
     if (getSpawnRarity(species) !== SpawnRarity.Rare) {
       return false;
     }
     // An expert with no specialty takes the band whole
-    if (types.size === 0 || named.has(species)) {
+    if (types.size === 0) {
       return true;
     }
 

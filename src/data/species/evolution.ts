@@ -1,4 +1,5 @@
 import { EVOLUTION_FRIENDSHIP } from '../constants/friendship';
+import type { TimeOfDay } from '../ids/biome';
 import type { Stats } from '../constants/stats';
 import { Items } from '../ids/items';
 import { EvolutionMethod, type Species } from '../ids/species';
@@ -6,9 +7,9 @@ import { type EvolutionData, type StatComparison, getSpeciesData } from './__cre
 
 /**
  * The conditions the game can actually verify today. Everything else
- * (weather, party composition, a place) has no stored counterpart
- * yet, so an evolution requiring it is never offered rather than
- * silently treated as met
+ * (weather, party composition, a place) has nothing to measure
+ * against yet, so an evolution requiring it is never offered rather
+ * than silently treated as met
  */
 export const SUPPORTED_METHODS =
   EvolutionMethod.Level |
@@ -16,6 +17,7 @@ export const SUPPORTED_METHODS =
   EvolutionMethod.HeldItem |
   EvolutionMethod.Trade |
   EvolutionMethod.Friendship |
+  EvolutionMethod.TimeOfDay |
   EvolutionMethod.StatComparison;
 
 /**
@@ -58,6 +60,11 @@ export interface EvolutionContext {
    * and nothing else does yet
    */
   friendship: number;
+  /**
+   * The period of the day it is being asked in. Eevee is the only
+   * line that reads it
+   */
+  time: TimeOfDay;
 }
 
 /**
@@ -122,6 +129,11 @@ export function meetsEvolutionCriteria(
   }
   if ((method & EvolutionMethod.Friendship) !== 0 && context.friendship < EVOLUTION_FRIENDSHIP) {
     return false;
+  }
+  if ((method & EvolutionMethod.TimeOfDay) !== 0) {
+    if (evolution.time == null || (evolution.time & context.time) === 0) {
+      return false;
+    }
   }
   if ((method & EvolutionMethod.StatComparison) !== 0) {
     if (evolution.compare == null || !comparesStats(evolution.compare, context)) {

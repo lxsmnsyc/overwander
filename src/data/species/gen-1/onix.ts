@@ -4,13 +4,21 @@ import Abilities from '../../ids/abilities';
 import Biome, { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
+import { Items } from '../../ids/items';
 import { Moves } from '../../ids/moves';
-import { Species } from '../../ids/species';
+import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 export default function registerOnixSpecies(): void {
   registerSpecies(Species.Onix, {
     dexNumber: 95,
+    evolvesInto: [
+      {
+        species: Species.Steelix,
+        method: EvolutionMethod.Trade | EvolutionMethod.HeldItem,
+        item: Items.MetalCoat,
+      },
+    ],
     name: 'Onix',
     category: 'Rock Snake Pokemon',
     height: 8.8,

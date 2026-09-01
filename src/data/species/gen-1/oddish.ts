@@ -97,6 +97,11 @@ export default function registerOddishSpecies(): void {
         method: EvolutionMethod.UsedItem,
         item: Items.LeafStone,
       },
+      {
+        species: Species.Bellossom,
+        method: EvolutionMethod.UsedItem,
+        item: Items.SunStone,
+      },
     ],
     name: 'Gloom',
     category: 'Weed Pokemon',

@@ -46,6 +46,7 @@ export default function registerVolcanoSpawns(): void {
         { species: Species.Geodude, weight: 20 },
         { species: Species.Cyndaquil, weight: 6 },
         { species: Species.Slugma, weight: 20 },
+        { species: Species.Onix, weight: 10 },
       ],
       uncommon: [
         { species: Species.Charmeleon, weight: 3 },
@@ -58,7 +59,6 @@ export default function registerVolcanoSpawns(): void {
         { species: Species.Rapidash, weight: 5 },
         { species: Species.Magmar, weight: 10 },
         { species: Species.Golem, weight: 5 },
-        { species: Species.Onix, weight: 10 },
         { species: Species.Typhlosion, weight: 3 },
       ],
       special: [
@@ -74,14 +74,12 @@ export default function registerVolcanoSpawns(): void {
         { species: Species.Ponyta, weight: 20 },
         { species: Species.Slugma, weight: 20 },
       ],
-      uncommon: [
-        { species: Species.Charmeleon, weight: 3 },
-        { species: Species.Ninetales, weight: 5 },
-      ],
+      uncommon: [{ species: Species.Charmeleon, weight: 3 }],
       rare: [
         { species: Species.Charizard, weight: 3 },
         { species: Species.Rapidash, weight: 5 },
         { species: Species.Magmar, weight: 10 },
+        { species: Species.Ninetales, weight: 5 },
       ],
       special: [
         { species: Species.Moltres, weight: 10 },
@@ -95,10 +93,11 @@ export default function registerVolcanoSpawns(): void {
         { species: Species.Koffing, weight: 20 },
         { species: Species.Slugma, weight: 20 },
       ],
-      uncommon: [{ species: Species.Ninetales, weight: 5 }],
+      uncommon: [],
       rare: [
         { species: Species.Weezing, weight: 5 },
         { species: Species.Magmar, weight: 10 },
+        { species: Species.Ninetales, weight: 5 },
       ],
       special: [
         { species: Species.Moltres, weight: 10 },

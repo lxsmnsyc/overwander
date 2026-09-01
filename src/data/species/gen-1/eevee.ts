@@ -1,7 +1,7 @@
 import { Stats } from '../../constants/stats';
 import { Types } from '../../constants/types';
 import Abilities from '../../ids/abilities';
-import Biome, { AnyTimeOfDay } from '../../ids/biome';
+import Biome, { AnyTimeOfDay, TimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Items } from '../../ids/items';
@@ -61,6 +61,16 @@ export default function registerEeveeSpecies(): void {
         species: Species.Flareon,
         method: EvolutionMethod.UsedItem,
         item: Items.FireStone,
+      },
+      {
+        species: Species.Espeon,
+        method: EvolutionMethod.Friendship | EvolutionMethod.TimeOfDay,
+        time: TimeOfDay.Morning | TimeOfDay.Day,
+      },
+      {
+        species: Species.Umbreon,
+        method: EvolutionMethod.Friendship | EvolutionMethod.TimeOfDay,
+        time: TimeOfDay.Evening | TimeOfDay.Night,
       },
     ],
     name: 'Eevee',

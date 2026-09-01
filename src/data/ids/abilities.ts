@@ -246,6 +246,8 @@ const enum Abilities {
   // Wobbuffet
   ShadowTag = 145,
   Telepathy = 146,
+  // Scizor
+  LightMetal = 147,
   // Special (non-standard abilities outside the regular pool)
   Boss = 100001,
   Shadow = 100002,

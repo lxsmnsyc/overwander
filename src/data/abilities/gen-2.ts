@@ -113,4 +113,9 @@ export default function registerGen2Abilities(): void {
     name: 'Telepathy',
     description: "Sees an ally's attack coming and takes nothing from it.",
   });
+  // Scizor
+  registerAbility(Abilities.LightMetal, {
+    name: 'Light Metal',
+    description: 'Weighs half what it looks like.',
+  });
 }

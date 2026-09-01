@@ -1142,7 +1142,7 @@ describe('evolution data', () => {
       { species: Species.Ivysaur, method: EvolutionMethod.Level, level: 16 },
     ]);
 
-    expect(getSpeciesData(Species.Eevee).evolvesInto).toHaveLength(3);
+    expect(getSpeciesData(Species.Eevee).evolvesInto).toHaveLength(5);
     expect(getSpeciesData(Species.Eevee).evolvesInto?.[0]).toEqual({
       species: Species.Vaporeon,
       method: EvolutionMethod.UsedItem,
@@ -1176,6 +1176,7 @@ describe('evolution data', () => {
       tradedFor: null,
       stats: EVEN_STATS,
       friendship: BASE_FRIENDSHIP,
+      time: TimeOfDay.Day,
     };
 
     expect(getAvailableEvolutions({ species: Species.Charmander, ...context, level: 15 })).toEqual(
@@ -1194,6 +1195,7 @@ describe('evolution data', () => {
       tradedFor: null,
       stats: EVEN_STATS,
       friendship: BASE_FRIENDSHIP,
+      time: TimeOfDay.Day,
     };
 
     expect(
@@ -1226,6 +1228,7 @@ describe('evolution data', () => {
       tradedFor: null,
       stats: EVEN_STATS,
       friendship: BASE_FRIENDSHIP,
+      time: TimeOfDay.Day,
     };
 
     // Every door at once: the level one, the stone one and the trade
@@ -1269,6 +1272,7 @@ describe('evolution data', () => {
       held: new Set<Items>(),
       stats: EVEN_STATS,
       friendship: BASE_FRIENDSHIP,
+      time: TimeOfDay.Day,
     };
 
     // A Machoke nobody has traded stays a Machoke however high its
@@ -1281,6 +1285,7 @@ describe('evolution data', () => {
         tradedFor: null,
         stats: EVEN_STATS,
         friendship: BASE_FRIENDSHIP,
+        time: TimeOfDay.Day,
       }),
     ).toEqual([]);
     expect(
@@ -1291,6 +1296,7 @@ describe('evolution data', () => {
         tradedFor: null,
         stats: EVEN_STATS,
         friendship: BASE_FRIENDSHIP,
+        time: TimeOfDay.Day,
       }),
     ).toEqual([{ species: Species.Machamp, method: EvolutionMethod.Trade }]);
 
@@ -1305,6 +1311,7 @@ describe('evolution data', () => {
         tradedFor: null,
         stats: EVEN_STATS,
         friendship: BASE_FRIENDSHIP,
+        time: TimeOfDay.Day,
       }),
     ).toEqual([]);
 
@@ -1323,6 +1330,7 @@ describe('evolution data', () => {
           tradedFor: null,
           stats: EVEN_STATS,
           friendship: BASE_FRIENDSHIP,
+          time: TimeOfDay.Day,
         }),
       ).toEqual([]);
       expect(
@@ -1333,6 +1341,7 @@ describe('evolution data', () => {
           tradedFor: null,
           stats: EVEN_STATS,
           friendship: BASE_FRIENDSHIP,
+          time: TimeOfDay.Day,
         }),
       ).toEqual([{ species: into, method: EvolutionMethod.Trade }]);
     }
@@ -1354,6 +1363,7 @@ describe('evolution data', () => {
       held: new Set<Items>(),
       stats: EVEN_STATS,
       friendship: BASE_FRIENDSHIP,
+      time: TimeOfDay.Day,
     };
 
     // Traded, at the right stage, for the wrong pokemon
@@ -1397,6 +1407,7 @@ describe('evolution data', () => {
       tradedFor: null,
       stats: EVEN_STATS,
       friendship: BASE_FRIENDSHIP,
+      time: TimeOfDay.Day,
     };
     const cord = new Set([Items.LinkingCord]);
 
@@ -1433,6 +1444,7 @@ describe('evolution data', () => {
         tradedFor: null,
         stats: EVEN_STATS,
         friendship: BASE_FRIENDSHIP,
+        time: TimeOfDay.Day,
       }),
     ).toBe(false);
     expect(getConsumedItem(line, false)).toBe(Items.FireStone);
@@ -1447,6 +1459,7 @@ describe('evolution data', () => {
       tradedAs: null,
       tradedFor: null,
       friendship: BASE_FRIENDSHIP,
+      time: TimeOfDay.Day,
     };
     const at = (attack: number, defense: number): Record<Stats, number> => ({
       ...EVEN_STATS,
@@ -1475,6 +1488,7 @@ describe('evolution data', () => {
       tradedAs: null,
       tradedFor: null,
       stats: EVEN_STATS,
+      time: TimeOfDay.Day,
     };
 
     expect(getAvailableEvolutions({ ...context, friendship: EVOLUTION_FRIENDSHIP - 1 })).toEqual(
@@ -1483,6 +1497,37 @@ describe('evolution data', () => {
     expect(getAvailableEvolutions({ ...context, friendship: EVOLUTION_FRIENDSHIP })).toEqual([
       { species: Species.Pikachu, method: EvolutionMethod.Friendship },
     ]);
+  });
+
+  it('splits an Eevee by the hour it is asked in', () => {
+    const context = {
+      species: Species.Eevee,
+      level: 100,
+      carried: new Set<Items>(),
+      held: new Set<Items>(),
+      tradedAs: null,
+      tradedFor: null,
+      stats: EVEN_STATS,
+      friendship: EVOLUTION_FRIENDSHIP,
+    };
+    const into = (time: TimeOfDay): Species[] =>
+      getAvailableEvolutions({ ...context, time })
+        .map((entry) => entry.species)
+        .filter((species) => species === Species.Espeon || species === Species.Umbreon);
+
+    expect(into(TimeOfDay.Morning)).toEqual([Species.Espeon]);
+    expect(into(TimeOfDay.Day)).toEqual([Species.Espeon]);
+    expect(into(TimeOfDay.Evening)).toEqual([Species.Umbreon]);
+    expect(into(TimeOfDay.Night)).toEqual([Species.Umbreon]);
+
+    // The friendship still gates both halves
+    expect(
+      getAvailableEvolutions({
+        ...context,
+        friendship: EVOLUTION_FRIENDSHIP - 1,
+        time: TimeOfDay.Day,
+      }).some((entry) => entry.species === Species.Espeon),
+    ).toBe(false);
   });
 
   it('never offers evolutions it cannot verify', () => {
@@ -1501,6 +1546,7 @@ describe('evolution data', () => {
           tradedFor: null,
           stats: EVEN_STATS,
           friendship: BASE_FRIENDSHIP,
+          time: TimeOfDay.Day,
         },
       ),
     ).toBe(false);
@@ -3769,6 +3815,29 @@ describe('biome data', () => {
     expect(peak.special.some((entry) => entry.species === Species.Zapdos)).toBe(true);
   });
 
+  it('files every spawn in the band its line puts it in', () => {
+    // A species that gains an evolution moves down a band, and the
+    // pools have to move with it or the dex describes a Steelix's
+    // Onix as the end of its line
+    for (const biome of Object.keys(BIOME_NAMES).map(Number) as Biome[]) {
+      for (const time of [TimeOfDay.Morning, TimeOfDay.Day, TimeOfDay.Evening, TimeOfDay.Night]) {
+        const groups = getSpawnPool(biome, time);
+
+        for (const [band, rarity] of [
+          ['base', SpawnRarity.Base],
+          ['uncommon', SpawnRarity.Uncommon],
+          ['rare', SpawnRarity.Rare],
+          ['prized', SpawnRarity.Prized],
+          ['special', SpawnRarity.Special],
+        ] as const) {
+          for (const entry of groups[band] ?? []) {
+            expect(getSpawnRarity(entry.species), getSpeciesData(entry.species).name).toBe(rarity);
+          }
+        }
+      }
+    }
+  });
+
   it('knows which finds are worth stopping a player over', () => {
     // The band an item is hidden in is what decides whether spending
     // it is asked about twice
@@ -4109,8 +4178,7 @@ describe('type experts', () => {
       expect(poolOf(member).length, ELITE_MEMBER_NAMES[member]).toBeGreaterThan(1);
     }
 
-    // Named where no rule reaches: Bruno's Onix arrives by the Ground
-    // half of his pool, the other three by name
+    // Named where no rule reaches, or where the band no longer does
     expect(poolOf(EliteMember.Lorelei)).toContain(Species.Slowbro);
     expect(poolOf(EliteMember.Bruno)).toContain(Species.Onix);
     expect(poolOf(EliteMember.Agatha)).toContain(Species.Golbat);
@@ -4129,13 +4197,20 @@ describe('type experts', () => {
     expect(poolOf(EliteMember.Agatha).length).toBeLessThan(koga.length);
     expect(poolOf(EliteMember.Agatha)).not.toContain(Species.Venusaur);
 
-    // Nothing a widener names escapes the band it is drawn from
+    // A name is the one thing that reaches outside the band: Bruno's
+    // Onix and Agatha's Golbat are middle stages now that a Steelix
+    // and a Crobat exist, and both are still theirs. Everything else
+    // a pool derives is fully grown
     for (const member of ELITE_MEMBERS) {
-      for (const named of ELITE_MEMBER_POOLS[member].also ?? []) {
+      const names = new Set(ELITE_MEMBER_POOLS[member].also ?? []);
+
+      for (const named of names) {
         expect(poolOf(member), ELITE_MEMBER_NAMES[member]).toContain(named);
       }
       for (const species of poolOf(member)) {
-        expect(getSpawnRarity(species), getSpeciesData(species).name).toBe(SpawnRarity.Rare);
+        if (!names.has(species)) {
+          expect(getSpawnRarity(species), getSpeciesData(species).name).toBe(SpawnRarity.Rare);
+        }
       }
     }
   });

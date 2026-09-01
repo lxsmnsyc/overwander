@@ -4,6 +4,7 @@ import Abilities from '../../ids/abilities';
 import Biome, { TimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
+import { Items } from '../../ids/items';
 import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
@@ -81,6 +82,11 @@ export default function registerSlowpokeSpecies(): void {
         species: Species.Slowbro,
         method: EvolutionMethod.Level,
         level: 37,
+      },
+      {
+        species: Species.Slowking,
+        method: EvolutionMethod.Trade | EvolutionMethod.HeldItem,
+        item: Items.KingsRock,
       },
     ],
     name: 'Slowpoke',

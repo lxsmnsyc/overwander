@@ -4,6 +4,7 @@ import Abilities from '../../ids/abilities';
 import Biome, { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
+import { Items } from '../../ids/items';
 import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
@@ -99,6 +100,13 @@ export default function registerHorseaSpecies(): void {
 
   registerSpecies(Species.Seadra, {
     dexNumber: 117,
+    evolvesInto: [
+      {
+        species: Species.Kingdra,
+        method: EvolutionMethod.Trade | EvolutionMethod.HeldItem,
+        item: Items.DragonScale,
+      },
+    ],
     name: 'Seadra',
     category: 'Dragon Pokemon',
     height: 1.2,

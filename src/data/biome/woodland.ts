@@ -23,6 +23,8 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Hoppip, weight: 25 },
         { species: Species.Pineco, weight: 20 },
         { species: Species.Snubbull, weight: 20 },
+        { species: Species.Scyther, weight: 5 },
+        { species: Species.Chansey, weight: 2 },
       ],
       uncommon: [
         { species: Species.Ivysaur, weight: 1 },
@@ -43,8 +45,6 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Raichu, weight: 5 },
         { species: Species.Nidoqueen, weight: 5 },
         { species: Species.Nidoking, weight: 5 },
-        { species: Species.Chansey, weight: 2 },
-        { species: Species.Scyther, weight: 5 },
         { species: Species.Meganium, weight: 2 },
         { species: Species.Furret, weight: 10 },
         { species: Species.Ledian, weight: 8 },
@@ -53,6 +53,8 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Aipom, weight: 5 },
         { species: Species.Sudowoodo, weight: 5 },
         { species: Species.Wobbuffet, weight: 5 },
+        { species: Species.Scizor, weight: 5 },
+        { species: Species.Blissey, weight: 5 },
       ],
       prized: [
         { species: Species.Togepi, weight: 10 },
@@ -76,6 +78,8 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Hoppip, weight: 25 },
         { species: Species.Pineco, weight: 20 },
         { species: Species.Snubbull, weight: 20 },
+        { species: Species.Scyther, weight: 5 },
+        { species: Species.Chansey, weight: 2 },
       ],
       uncommon: [
         { species: Species.Ivysaur, weight: 1 },
@@ -96,8 +100,6 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Raichu, weight: 5 },
         { species: Species.Nidoqueen, weight: 5 },
         { species: Species.Nidoking, weight: 5 },
-        { species: Species.Chansey, weight: 2 },
-        { species: Species.Scyther, weight: 5 },
         { species: Species.Meganium, weight: 2 },
         { species: Species.Furret, weight: 10 },
         { species: Species.Ledian, weight: 8 },
@@ -106,6 +108,8 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Aipom, weight: 5 },
         { species: Species.Sudowoodo, weight: 5 },
         { species: Species.Wobbuffet, weight: 5 },
+        { species: Species.Scizor, weight: 5 },
+        { species: Species.Blissey, weight: 5 },
       ],
       prized: [
         { species: Species.Togepi, weight: 10 },
@@ -148,6 +152,8 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Murkrow, weight: 5 },
         { species: Species.Sudowoodo, weight: 5 },
         { species: Species.Wobbuffet, weight: 5 },
+        { species: Species.Bellossom, weight: 5 },
+        { species: Species.Umbreon, weight: 5 },
       ],
       prized: [
         { species: Species.Pichu, weight: 10 },
@@ -195,6 +201,8 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Misdreavus, weight: 5 },
         { species: Species.Sudowoodo, weight: 5 },
         { species: Species.Wobbuffet, weight: 5 },
+        { species: Species.Bellossom, weight: 5 },
+        { species: Species.Umbreon, weight: 5 },
       ],
       prized: [
         { species: Species.Pichu, weight: 10 },

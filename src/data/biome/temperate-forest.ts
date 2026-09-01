@@ -17,6 +17,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Ledyba, weight: 20 },
         { species: Species.Pineco, weight: 20 },
         { species: Species.Teddiursa, weight: 20 },
+        { species: Species.Scyther, weight: 5 },
       ],
       uncommon: [
         { species: Species.Ivysaur, weight: 1 },
@@ -32,7 +33,6 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Beedrill, weight: 10 },
         { species: Species.Raichu, weight: 5 },
         { species: Species.Victreebel, weight: 5 },
-        { species: Species.Scyther, weight: 5 },
         { species: Species.Snorlax, weight: 5 },
         { species: Species.Meganium, weight: 2 },
         { species: Species.Ledian, weight: 8 },
@@ -40,6 +40,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Aipom, weight: 5 },
         { species: Species.Stantler, weight: 5 },
         { species: Species.Sudowoodo, weight: 5 },
+        { species: Species.Scizor, weight: 5 },
       ],
       prized: [
         { species: Species.Togepi, weight: 10 },
@@ -57,6 +58,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Ledyba, weight: 20 },
         { species: Species.Pineco, weight: 20 },
         { species: Species.Teddiursa, weight: 20 },
+        { species: Species.Scyther, weight: 5 },
       ],
       uncommon: [
         { species: Species.Ivysaur, weight: 1 },
@@ -72,7 +74,6 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Beedrill, weight: 10 },
         { species: Species.Raichu, weight: 5 },
         { species: Species.Victreebel, weight: 5 },
-        { species: Species.Scyther, weight: 5 },
         { species: Species.Pinsir, weight: 5 },
         { species: Species.Snorlax, weight: 5 },
         { species: Species.Meganium, weight: 2 },
@@ -81,6 +82,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Aipom, weight: 5 },
         { species: Species.Stantler, weight: 5 },
         { species: Species.Sudowoodo, weight: 5 },
+        { species: Species.Scizor, weight: 5 },
       ],
       prized: [
         { species: Species.Togepi, weight: 10 },
@@ -112,6 +114,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Murkrow, weight: 5 },
         { species: Species.Stantler, weight: 5 },
         { species: Species.Sudowoodo, weight: 5 },
+        { species: Species.Bellossom, weight: 5 },
       ],
       prized: [{ species: Species.Pichu, weight: 10 }],
       special: [],
@@ -142,6 +145,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Murkrow, weight: 5 },
         { species: Species.Stantler, weight: 5 },
         { species: Species.Sudowoodo, weight: 5 },
+        { species: Species.Bellossom, weight: 5 },
       ],
       prized: [{ species: Species.Pichu, weight: 10 }],
       special: [],

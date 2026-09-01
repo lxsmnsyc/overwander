@@ -87,6 +87,12 @@ export default function registerZubatSpecies(): void {
 
   registerSpecies(Species.Golbat, {
     dexNumber: 42,
+    evolvesInto: [
+      {
+        species: Species.Crobat,
+        method: EvolutionMethod.Friendship,
+      },
+    ],
     name: 'Golbat',
     category: 'Bat Pokemon',
     height: 1.6,

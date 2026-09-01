@@ -120,6 +120,11 @@ export default function registerPoliwagSpecies(): void {
         method: EvolutionMethod.UsedItem,
         item: Items.WaterStone,
       },
+      {
+        species: Species.Politoed,
+        method: EvolutionMethod.Trade | EvolutionMethod.HeldItem,
+        item: Items.KingsRock,
+      },
     ],
     name: 'Poliwhirl',
     category: 'Tadpole Pokemon',

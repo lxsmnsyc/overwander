@@ -1,3 +1,4 @@
+import { getTimeOfDay } from '../data/ids/biome';
 import type { Species } from '../data/ids/species';
 import { getSpeciesData, meetsEvolutionCriteria } from '../data/species';
 import type { EvolutionData } from '../data/species';
@@ -52,6 +53,7 @@ export async function listEvolutionOptions(
     tradedFor: caught.tradedFor,
     stats: getStats(caught),
     friendship: caught.friendship,
+    time: getTimeOfDay(Date.now()),
   };
 
   return (getSpeciesData(caught.species).evolvesInto ?? []).map((evolution) => ({

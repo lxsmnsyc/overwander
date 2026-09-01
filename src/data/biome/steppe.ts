@@ -16,11 +16,10 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Sentret, weight: 25 },
         { species: Species.Mareep, weight: 25 },
         { species: Species.Phanpy, weight: 20 },
-      ],
-      uncommon: [
         { species: Species.Magnemite, weight: 20 },
         { species: Species.Voltorb, weight: 20 },
       ],
+      uncommon: [],
       rare: [
         { species: Species.Fearow, weight: 10 },
         { species: Species.Arcanine, weight: 5 },
@@ -47,11 +46,10 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Sentret, weight: 25 },
         { species: Species.Mareep, weight: 25 },
         { species: Species.Phanpy, weight: 20 },
-      ],
-      uncommon: [
         { species: Species.Magnemite, weight: 20 },
         { species: Species.Voltorb, weight: 20 },
       ],
+      uncommon: [],
       rare: [
         { species: Species.Fearow, weight: 10 },
         { species: Species.Arbok, weight: 10 },
@@ -70,11 +68,12 @@ export default function registerSteppeSpawns(): void {
       special: [{ species: Species.Raikou, weight: 10 }],
     },
     [TimeOfDay.Evening]: {
-      base: [{ species: Species.Ekans, weight: 20 }],
-      uncommon: [
+      base: [
+        { species: Species.Ekans, weight: 20 },
         { species: Species.Magnemite, weight: 20 },
         { species: Species.Voltorb, weight: 20 },
       ],
+      uncommon: [],
       rare: [
         { species: Species.Arbok, weight: 10 },
         { species: Species.Magneton, weight: 10 },
@@ -85,11 +84,12 @@ export default function registerSteppeSpawns(): void {
       special: [{ species: Species.Raikou, weight: 10 }],
     },
     [TimeOfDay.Night]: {
-      base: [{ species: Species.Ekans, weight: 20 }],
-      uncommon: [
+      base: [
+        { species: Species.Ekans, weight: 20 },
         { species: Species.Magnemite, weight: 20 },
         { species: Species.Voltorb, weight: 20 },
       ],
+      uncommon: [],
       rare: [
         { species: Species.Arbok, weight: 10 },
         { species: Species.Magneton, weight: 10 },

@@ -627,6 +627,16 @@ const setupAbilities = [
       ]),
   ),
 
+  // Scizor
+  // https://bulbapedia.bulbagarden.net/wiki/Light_Metal_(Ability)
+  createAbility(Abilities.LightMetal, (battle) =>
+    battle.on(BattleEvents.CheckUnitWeight, EventPriority.Post, (event) => {
+      if (event.source.hasAbility(Abilities.LightMetal)) {
+        event.weight /= 2;
+      }
+    }),
+  ),
+
   // Marill
   // Doubles the stat rather than the blow, so anything reading the
   // Attack it has (Foul Play, a Power Trip) reads the doubled one

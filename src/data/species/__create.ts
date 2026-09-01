@@ -2,6 +2,7 @@ import type { Stats } from '../constants/stats';
 import type { Types } from '../constants/types';
 import type Abilities from '../ids/abilities';
 import type Biome from '../ids/biome';
+import type { TimeOfDay } from '../ids/biome';
 import type EggGroups from '../ids/egg-groups';
 import type Families from '../ids/families';
 import type { Items } from '../ids/items';
@@ -37,6 +38,12 @@ export interface EvolutionData {
    * evolution is satisfied by any handover at all
    */
   partner?: Species;
+  /**
+   * The periods of the day the evolution is open in
+   * (EvolutionMethod.TimeOfDay), as a bitmask. Eevee is the only line
+   * that asks: an Espeon is a day's growing and an Umbreon a night's
+   */
+  time?: TimeOfDay;
   /**
    * Two of its own stats set against each other
    * (EvolutionMethod.StatComparison). Tyrogue is the only line that

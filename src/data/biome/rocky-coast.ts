@@ -1,6 +1,6 @@
 import Biome, { TimeOfDay } from '../ids/biome';
 import { Species } from '../ids/species';
-import { registerSpawnPool } from './__create';
+import { UNOWN_SPAWNS, registerSpawnPool } from './__create';
 
 /**
  * RockyCoast spawn pool, grouped by day-cycle period and rarity band
@@ -24,6 +24,7 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Shuckle, weight: 5 },
         { species: Species.Qwilfish, weight: 15 },
       ],
+      prized: [...UNOWN_SPAWNS],
       special: [],
     },
     [TimeOfDay.Day]: {
@@ -43,6 +44,7 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Shuckle, weight: 5 },
         { species: Species.Qwilfish, weight: 15 },
       ],
+      prized: [...UNOWN_SPAWNS],
       special: [],
     },
     [TimeOfDay.Evening]: {
@@ -62,6 +64,7 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Shuckle, weight: 5 },
         { species: Species.Qwilfish, weight: 15 },
       ],
+      prized: [...UNOWN_SPAWNS],
       special: [],
     },
     [TimeOfDay.Night]: {
@@ -81,6 +84,7 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Shuckle, weight: 5 },
         { species: Species.Qwilfish, weight: 15 },
       ],
+      prized: [...UNOWN_SPAWNS],
       special: [],
     },
   });

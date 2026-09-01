@@ -1,6 +1,6 @@
 import Biome, { TimeOfDay } from '../ids/biome';
 import { Species } from '../ids/species';
-import { registerSpawnPool } from './__create';
+import { UNOWN_SPAWNS, registerSpawnPool } from './__create';
 
 /**
  * Ocean spawn pool, grouped by day-cycle period and rarity band
@@ -36,6 +36,7 @@ export default function registerOceanSpawns(): void {
         { species: Species.Corsola, weight: 20 },
         { species: Species.Qwilfish, weight: 15 },
       ],
+      prized: [...UNOWN_SPAWNS],
       special: [{ species: Species.Lugia, weight: 10 }],
     },
     [TimeOfDay.Day]: {
@@ -67,6 +68,7 @@ export default function registerOceanSpawns(): void {
         { species: Species.Corsola, weight: 20 },
         { species: Species.Qwilfish, weight: 15 },
       ],
+      prized: [...UNOWN_SPAWNS],
       special: [{ species: Species.Lugia, weight: 10 }],
     },
     [TimeOfDay.Evening]: {
@@ -97,6 +99,7 @@ export default function registerOceanSpawns(): void {
         { species: Species.Corsola, weight: 20 },
         { species: Species.Qwilfish, weight: 15 },
       ],
+      prized: [...UNOWN_SPAWNS],
       special: [{ species: Species.Lugia, weight: 10 }],
     },
     [TimeOfDay.Night]: {
@@ -127,6 +130,7 @@ export default function registerOceanSpawns(): void {
         { species: Species.Corsola, weight: 20 },
         { species: Species.Qwilfish, weight: 15 },
       ],
+      prized: [...UNOWN_SPAWNS],
       special: [{ species: Species.Lugia, weight: 10 }],
     },
   });

@@ -1,6 +1,6 @@
 import Biome, { TimeOfDay } from '../ids/biome';
 import { Species } from '../ids/species';
-import { registerSpawnPool } from './__create';
+import { PRIZED_WEIGHT, UNOWN_SPAWNS, registerSpawnPool } from './__create';
 
 /**
  * TemperateForest spawn pool, grouped by day-cycle period and rarity band
@@ -43,8 +43,9 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Scizor, weight: 5 },
       ],
       prized: [
-        { species: Species.Togepi, weight: 10 },
-        { species: Species.Pichu, weight: 10 },
+        ...UNOWN_SPAWNS,
+        { species: Species.Togepi, weight: PRIZED_WEIGHT },
+        { species: Species.Pichu, weight: PRIZED_WEIGHT },
       ],
       special: [],
     },
@@ -85,8 +86,9 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Scizor, weight: 5 },
       ],
       prized: [
-        { species: Species.Togepi, weight: 10 },
-        { species: Species.Pichu, weight: 10 },
+        ...UNOWN_SPAWNS,
+        { species: Species.Togepi, weight: PRIZED_WEIGHT },
+        { species: Species.Pichu, weight: PRIZED_WEIGHT },
       ],
       special: [],
     },
@@ -116,7 +118,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Sudowoodo, weight: 5 },
         { species: Species.Bellossom, weight: 5 },
       ],
-      prized: [{ species: Species.Pichu, weight: 10 }],
+      prized: [...UNOWN_SPAWNS, { species: Species.Pichu, weight: PRIZED_WEIGHT }],
       special: [],
     },
     [TimeOfDay.Night]: {
@@ -147,7 +149,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Sudowoodo, weight: 5 },
         { species: Species.Bellossom, weight: 5 },
       ],
-      prized: [{ species: Species.Pichu, weight: 10 }],
+      prized: [...UNOWN_SPAWNS, { species: Species.Pichu, weight: PRIZED_WEIGHT }],
       special: [],
     },
   });

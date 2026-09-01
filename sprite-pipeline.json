@@ -2701,6 +2701,654 @@
         "bytes": 15562
       }
     },
+    "public/sprites/pokemon/johto/1020101/regular.png": {
+      "digest": "56c4813faee238f2",
+      "bytes": 1095,
+      "width": 74,
+      "height": 84,
+      "compact": {
+        "at": "2026-09-01T14:14:20Z",
+        "as": "already compact",
+        "was": 1095,
+        "bytes": 1095
+      }
+    },
+    "public/sprites/pokemon/johto/1020101/shiny.png": {
+      "digest": "d0c34c1465a2bbcc",
+      "bytes": 1095,
+      "width": 74,
+      "height": 84,
+      "compact": {
+        "at": "2026-09-01T14:14:20Z",
+        "as": "already compact",
+        "was": 1095,
+        "bytes": 1095
+      }
+    },
+    "public/sprites/pokemon/johto/1020102/regular.png": {
+      "digest": "ddd2ef9e8a475435",
+      "bytes": 1288,
+      "width": 79,
+      "height": 90,
+      "compact": {
+        "at": "2026-09-01T14:14:20Z",
+        "as": "already compact",
+        "was": 1288,
+        "bytes": 1288
+      }
+    },
+    "public/sprites/pokemon/johto/1020102/shiny.png": {
+      "digest": "84bebc93eb723f53",
+      "bytes": 1288,
+      "width": 79,
+      "height": 90,
+      "compact": {
+        "at": "2026-09-01T14:14:20Z",
+        "as": "already compact",
+        "was": 1288,
+        "bytes": 1288
+      }
+    },
+    "public/sprites/pokemon/johto/1020103/regular.png": {
+      "digest": "3298e9cfcdef4826",
+      "bytes": 1081,
+      "width": 88,
+      "height": 67,
+      "compact": {
+        "at": "2026-09-01T14:14:20Z",
+        "as": "already compact",
+        "was": 1081,
+        "bytes": 1081
+      }
+    },
+    "public/sprites/pokemon/johto/1020103/shiny.png": {
+      "digest": "f5c188ea939da857",
+      "bytes": 1081,
+      "width": 88,
+      "height": 67,
+      "compact": {
+        "at": "2026-09-01T14:14:20Z",
+        "as": "already compact",
+        "was": 1081,
+        "bytes": 1081
+      }
+    },
+    "public/sprites/pokemon/johto/1020104/regular.png": {
+      "digest": "e7f6770dc103df1b",
+      "bytes": 1058,
+      "width": 22,
+      "height": 284,
+      "compact": {
+        "at": "2026-09-01T14:14:20Z",
+        "as": "already compact",
+        "was": 1058,
+        "bytes": 1058
+      }
+    },
+    "public/sprites/pokemon/johto/1020104/shiny.png": {
+      "digest": "c93b2368220718d7",
+      "bytes": 1058,
+      "width": 22,
+      "height": 284,
+      "compact": {
+        "at": "2026-09-01T14:14:20Z",
+        "as": "already compact",
+        "was": 1058,
+        "bytes": 1058
+      }
+    },
+    "public/sprites/pokemon/johto/1020105/regular.png": {
+      "digest": "07d8744ae9452802",
+      "bytes": 1058,
+      "width": 50,
+      "height": 109,
+      "compact": {
+        "at": "2026-09-01T14:14:20Z",
+        "as": "already compact",
+        "was": 1058,
+        "bytes": 1058
+      }
+    },
+    "public/sprites/pokemon/johto/1020105/shiny.png": {
+      "digest": "d77e7392cb1b5ebc",
+      "bytes": 1058,
+      "width": 50,
+      "height": 109,
+      "compact": {
+        "at": "2026-09-01T14:14:20Z",
+        "as": "already compact",
+        "was": 1058,
+        "bytes": 1058
+      }
+    },
+    "public/sprites/pokemon/johto/1020106/regular.png": {
+      "digest": "afa8cb61f2b44da2",
+      "bytes": 986,
+      "width": 77,
+      "height": 67,
+      "compact": {
+        "at": "2026-09-01T14:14:20Z",
+        "as": "already compact",
+        "was": 986,
+        "bytes": 986
+      }
+    },
+    "public/sprites/pokemon/johto/1020106/shiny.png": {
+      "digest": "5599c137f882e131",
+      "bytes": 986,
+      "width": 77,
+      "height": 67,
+      "compact": {
+        "at": "2026-09-01T14:14:20Z",
+        "as": "already compact",
+        "was": 986,
+        "bytes": 986
+      }
+    },
+    "public/sprites/pokemon/johto/1020107/regular.png": {
+      "digest": "f5fb1192828a4baf",
+      "bytes": 1182,
+      "width": 76,
+      "height": 83,
+      "compact": {
+        "at": "2026-09-01T14:14:20Z",
+        "as": "already compact",
+        "was": 1182,
+        "bytes": 1182
+      }
+    },
+    "public/sprites/pokemon/johto/1020107/shiny.png": {
+      "digest": "8b18e65c4222e593",
+      "bytes": 1182,
+      "width": 76,
+      "height": 83,
+      "compact": {
+        "at": "2026-09-01T14:14:20Z",
+        "as": "already compact",
+        "was": 1182,
+        "bytes": 1182
+      }
+    },
+    "public/sprites/pokemon/johto/1020108/regular.png": {
+      "digest": "c13b59eebc0f7fb9",
+      "bytes": 601,
+      "width": 38,
+      "height": 83,
+      "compact": {
+        "at": "2026-09-01T14:14:20Z",
+        "as": "already compact",
+        "was": 601,
+        "bytes": 601
+      }
+    },
+    "public/sprites/pokemon/johto/1020108/shiny.png": {
+      "digest": "3da953dba388486c",
+      "bytes": 601,
+      "width": 38,
+      "height": 83,
+      "compact": {
+        "at": "2026-09-01T14:14:20Z",
+        "as": "already compact",
+        "was": 601,
+        "bytes": 601
+      }
+    },
+    "public/sprites/pokemon/johto/1020109/regular.png": {
+      "digest": "9250d0878c803986",
+      "bytes": 953,
+      "width": 85,
+      "height": 62,
+      "compact": {
+        "at": "2026-09-01T14:14:20Z",
+        "as": "already compact",
+        "was": 953,
+        "bytes": 953
+      }
+    },
+    "public/sprites/pokemon/johto/1020109/shiny.png": {
+      "digest": "fe29337b757a630b",
+      "bytes": 953,
+      "width": 85,
+      "height": 62,
+      "compact": {
+        "at": "2026-09-01T14:14:20Z",
+        "as": "already compact",
+        "was": 953,
+        "bytes": 953
+      }
+    },
+    "public/sprites/pokemon/johto/1020110/regular.png": {
+      "digest": "2a0185c4564a3fac",
+      "bytes": 961,
+      "width": 64,
+      "height": 84,
+      "compact": {
+        "at": "2026-09-01T14:14:20Z",
+        "as": "already compact",
+        "was": 961,
+        "bytes": 961
+      }
+    },
+    "public/sprites/pokemon/johto/1020110/shiny.png": {
+      "digest": "6493fb94e8691b97",
+      "bytes": 961,
+      "width": 64,
+      "height": 84,
+      "compact": {
+        "at": "2026-09-01T14:14:20Z",
+        "as": "already compact",
+        "was": 961,
+        "bytes": 961
+      }
+    },
+    "public/sprites/pokemon/johto/1020111/regular.png": {
+      "digest": "aaff2b0f3418096d",
+      "bytes": 964,
+      "width": 50,
+      "height": 112,
+      "compact": {
+        "at": "2026-09-01T14:14:20Z",
+        "as": "already compact",
+        "was": 964,
+        "bytes": 964
+      }
+    },
+    "public/sprites/pokemon/johto/1020111/shiny.png": {
+      "digest": "99d55ed3c92cef84",
+      "bytes": 964,
+      "width": 50,
+      "height": 112,
+      "compact": {
+        "at": "2026-09-01T14:14:20Z",
+        "as": "already compact",
+        "was": 964,
+        "bytes": 964
+      }
+    },
+    "public/sprites/pokemon/johto/1020112/regular.png": {
+      "digest": "54a48e2566ef2b1f",
+      "bytes": 802,
+      "width": 41,
+      "height": 88,
+      "compact": {
+        "at": "2026-09-01T14:14:20Z",
+        "as": "already compact",
+        "was": 802,
+        "bytes": 802
+      }
+    },
+    "public/sprites/pokemon/johto/1020112/shiny.png": {
+      "digest": "27e8ec49ff57c7c4",
+      "bytes": 802,
+      "width": 41,
+      "height": 88,
+      "compact": {
+        "at": "2026-09-01T14:14:20Z",
+        "as": "already compact",
+        "was": 802,
+        "bytes": 802
+      }
+    },
+    "public/sprites/pokemon/johto/1020113/regular.png": {
+      "digest": "4ec86a1185cfac75",
+      "bytes": 1140,
+      "width": 82,
+      "height": 75,
+      "compact": {
+        "at": "2026-09-01T14:14:20Z",
+        "as": "already compact",
+        "was": 1140,
+        "bytes": 1140
+      }
+    },
+    "public/sprites/pokemon/johto/1020113/shiny.png": {
+      "digest": "5be3d1807c83f721",
+      "bytes": 1140,
+      "width": 82,
+      "height": 75,
+      "compact": {
+        "at": "2026-09-01T14:14:20Z",
+        "as": "already compact",
+        "was": 1140,
+        "bytes": 1140
+      }
+    },
+    "public/sprites/pokemon/johto/1020114/regular.png": {
+      "digest": "257d80f201260157",
+      "bytes": 862,
+      "width": 43,
+      "height": 101,
+      "compact": {
+        "at": "2026-09-01T14:14:20Z",
+        "as": "already compact",
+        "was": 862,
+        "bytes": 862
+      }
+    },
+    "public/sprites/pokemon/johto/1020114/shiny.png": {
+      "digest": "e232b6f9158451f3",
+      "bytes": 862,
+      "width": 43,
+      "height": 101,
+      "compact": {
+        "at": "2026-09-01T14:14:20Z",
+        "as": "already compact",
+        "was": 862,
+        "bytes": 862
+      }
+    },
+    "public/sprites/pokemon/johto/1020115/regular.png": {
+      "digest": "eed5975555f5a035",
+      "bytes": 887,
+      "width": 47,
+      "height": 102,
+      "compact": {
+        "at": "2026-09-01T14:14:20Z",
+        "as": "already compact",
+        "was": 887,
+        "bytes": 887
+      }
+    },
+    "public/sprites/pokemon/johto/1020115/shiny.png": {
+      "digest": "b6c989354d63bfda",
+      "bytes": 887,
+      "width": 47,
+      "height": 102,
+      "compact": {
+        "at": "2026-09-01T14:14:20Z",
+        "as": "already compact",
+        "was": 887,
+        "bytes": 887
+      }
+    },
+    "public/sprites/pokemon/johto/1020116/regular.png": {
+      "digest": "f4aea6f9dc149468",
+      "bytes": 755,
+      "width": 21,
+      "height": 222,
+      "compact": {
+        "at": "2026-09-01T14:14:20Z",
+        "as": "already compact",
+        "was": 755,
+        "bytes": 755
+      }
+    },
+    "public/sprites/pokemon/johto/1020116/shiny.png": {
+      "digest": "275bdc5a22c08284",
+      "bytes": 755,
+      "width": 21,
+      "height": 222,
+      "compact": {
+        "at": "2026-09-01T14:14:20Z",
+        "as": "already compact",
+        "was": 755,
+        "bytes": 755
+      }
+    },
+    "public/sprites/pokemon/johto/1020117/regular.png": {
+      "digest": "e5169fa9dd9549ac",
+      "bytes": 818,
+      "width": 58,
+      "height": 77,
+      "compact": {
+        "at": "2026-09-01T14:14:20Z",
+        "as": "already compact",
+        "was": 818,
+        "bytes": 818
+      }
+    },
+    "public/sprites/pokemon/johto/1020117/shiny.png": {
+      "digest": "db3e92eea2f48532",
+      "bytes": 818,
+      "width": 58,
+      "height": 77,
+      "compact": {
+        "at": "2026-09-01T14:14:20Z",
+        "as": "already compact",
+        "was": 818,
+        "bytes": 818
+      }
+    },
+    "public/sprites/pokemon/johto/1020118/regular.png": {
+      "digest": "a772edba0d30e8e1",
+      "bytes": 969,
+      "width": 20,
+      "height": 283,
+      "compact": {
+        "at": "2026-09-01T14:14:20Z",
+        "as": "already compact",
+        "was": 969,
+        "bytes": 969
+      }
+    },
+    "public/sprites/pokemon/johto/1020118/shiny.png": {
+      "digest": "697bed4e93352d2c",
+      "bytes": 969,
+      "width": 20,
+      "height": 283,
+      "compact": {
+        "at": "2026-09-01T14:14:20Z",
+        "as": "already compact",
+        "was": 969,
+        "bytes": 969
+      }
+    },
+    "public/sprites/pokemon/johto/1020119/regular.png": {
+      "digest": "6bceb1662d1b17fe",
+      "bytes": 626,
+      "width": 53,
+      "height": 56,
+      "compact": {
+        "at": "2026-09-01T14:14:20Z",
+        "as": "already compact",
+        "was": 626,
+        "bytes": 626
+      }
+    },
+    "public/sprites/pokemon/johto/1020119/shiny.png": {
+      "digest": "30ce422fcafb933d",
+      "bytes": 626,
+      "width": 53,
+      "height": 56,
+      "compact": {
+        "at": "2026-09-01T14:14:20Z",
+        "as": "already compact",
+        "was": 626,
+        "bytes": 626
+      }
+    },
+    "public/sprites/pokemon/johto/1020120/regular.png": {
+      "digest": "2b56ca27b193e841",
+      "bytes": 762,
+      "width": 99,
+      "height": 37,
+      "compact": {
+        "at": "2026-09-01T14:14:20Z",
+        "as": "already compact",
+        "was": 762,
+        "bytes": 762
+      }
+    },
+    "public/sprites/pokemon/johto/1020120/shiny.png": {
+      "digest": "09f7c1494cb9e8f6",
+      "bytes": 762,
+      "width": 99,
+      "height": 37,
+      "compact": {
+        "at": "2026-09-01T14:14:20Z",
+        "as": "already compact",
+        "was": 762,
+        "bytes": 762
+      }
+    },
+    "public/sprites/pokemon/johto/1020121/regular.png": {
+      "digest": "1693beabaef47057",
+      "bytes": 1002,
+      "width": 55,
+      "height": 96,
+      "compact": {
+        "at": "2026-09-01T14:14:20Z",
+        "as": "already compact",
+        "was": 1002,
+        "bytes": 1002
+      }
+    },
+    "public/sprites/pokemon/johto/1020121/shiny.png": {
+      "digest": "a2600462c7e60e4e",
+      "bytes": 1002,
+      "width": 55,
+      "height": 96,
+      "compact": {
+        "at": "2026-09-01T14:14:20Z",
+        "as": "already compact",
+        "was": 1002,
+        "bytes": 1002
+      }
+    },
+    "public/sprites/pokemon/johto/1020122/regular.png": {
+      "digest": "5c82a135d13bdca5",
+      "bytes": 694,
+      "width": 46,
+      "height": 77,
+      "compact": {
+        "at": "2026-09-01T14:14:20Z",
+        "as": "already compact",
+        "was": 694,
+        "bytes": 694
+      }
+    },
+    "public/sprites/pokemon/johto/1020122/shiny.png": {
+      "digest": "0c25a693125490c3",
+      "bytes": 694,
+      "width": 46,
+      "height": 77,
+      "compact": {
+        "at": "2026-09-01T14:14:20Z",
+        "as": "already compact",
+        "was": 694,
+        "bytes": 694
+      }
+    },
+    "public/sprites/pokemon/johto/1020123/regular.png": {
+      "digest": "66895f5f98a98aec",
+      "bytes": 622,
+      "width": 50,
+      "height": 56,
+      "compact": {
+        "at": "2026-09-01T14:14:20Z",
+        "as": "already compact",
+        "was": 622,
+        "bytes": 622
+      }
+    },
+    "public/sprites/pokemon/johto/1020123/shiny.png": {
+      "digest": "e7847d9a0d0aac6f",
+      "bytes": 622,
+      "width": 50,
+      "height": 56,
+      "compact": {
+        "at": "2026-09-01T14:14:20Z",
+        "as": "already compact",
+        "was": 622,
+        "bytes": 622
+      }
+    },
+    "public/sprites/pokemon/johto/1020124/regular.png": {
+      "digest": "24a3d30d34dad1ee",
+      "bytes": 679,
+      "width": 51,
+      "height": 67,
+      "compact": {
+        "at": "2026-09-01T14:14:20Z",
+        "as": "already compact",
+        "was": 679,
+        "bytes": 679
+      }
+    },
+    "public/sprites/pokemon/johto/1020124/shiny.png": {
+      "digest": "42617811e1a45405",
+      "bytes": 679,
+      "width": 51,
+      "height": 67,
+      "compact": {
+        "at": "2026-09-01T14:14:20Z",
+        "as": "already compact",
+        "was": 679,
+        "bytes": 679
+      }
+    },
+    "public/sprites/pokemon/johto/1020125/regular.png": {
+      "digest": "0f4963d7bf814ccd",
+      "bytes": 907,
+      "width": 75,
+      "height": 65,
+      "compact": {
+        "at": "2026-09-01T14:14:20Z",
+        "as": "already compact",
+        "was": 907,
+        "bytes": 907
+      }
+    },
+    "public/sprites/pokemon/johto/1020125/shiny.png": {
+      "digest": "88dfbb49b7ac32bf",
+      "bytes": 907,
+      "width": 75,
+      "height": 65,
+      "compact": {
+        "at": "2026-09-01T14:14:20Z",
+        "as": "already compact",
+        "was": 907,
+        "bytes": 907
+      }
+    },
+    "public/sprites/pokemon/johto/1020126/regular.png": {
+      "digest": "9aa32a1a6327aab7",
+      "bytes": 599,
+      "width": 74,
+      "height": 46,
+      "compact": {
+        "at": "2026-09-01T14:14:20Z",
+        "as": "already compact",
+        "was": 599,
+        "bytes": 599
+      }
+    },
+    "public/sprites/pokemon/johto/1020126/shiny.png": {
+      "digest": "d0ad1c9bf3ded715",
+      "bytes": 607,
+      "width": 74,
+      "height": 46,
+      "compact": {
+        "at": "2026-09-01T14:14:20Z",
+        "as": "already compact",
+        "was": 607,
+        "bytes": 607
+      }
+    },
+    "public/sprites/pokemon/johto/1020127/regular.png": {
+      "digest": "474f65f5921aa784",
+      "bytes": 1024,
+      "width": 84,
+      "height": 65,
+      "compact": {
+        "at": "2026-09-01T14:14:20Z",
+        "as": "already compact",
+        "was": 1024,
+        "bytes": 1024
+      }
+    },
+    "public/sprites/pokemon/johto/1020127/shiny.png": {
+      "digest": "d4564be7adc2cb70",
+      "bytes": 1024,
+      "width": 84,
+      "height": 65,
+      "compact": {
+        "at": "2026-09-01T14:14:20Z",
+        "as": "already compact",
+        "was": 1024,
+        "bytes": 1024
+      }
+    },
     "public/sprites/pokemon/johto/152/regular.png": {
       "digest": "a848e0435fcffc51",
       "bytes": 5279,

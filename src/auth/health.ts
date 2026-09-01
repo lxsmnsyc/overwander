@@ -77,6 +77,7 @@ export const STATUS_NAMES: Record<Statuses, string> = {
   [Statuses.Cursed]: 'Cursed',
   [Statuses.Encored]: 'Encored',
   [Statuses.Identified]: 'Identified',
+  [Statuses.Comatose]: 'Comatose',
 };
 
 /**

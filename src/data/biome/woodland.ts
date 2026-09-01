@@ -1,6 +1,6 @@
 import Biome, { TimeOfDay } from '../ids/biome';
 import { Species } from '../ids/species';
-import { registerSpawnPool } from './__create';
+import { PRIZED_WEIGHT, UNOWN_SPAWNS, registerSpawnPool } from './__create';
 
 /**
  * Woodland spawn pool, grouped by day-cycle period and rarity band
@@ -57,8 +57,9 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Blissey, weight: 5 },
       ],
       prized: [
-        { species: Species.Togepi, weight: 10 },
-        { species: Species.Pichu, weight: 10 },
+        ...UNOWN_SPAWNS,
+        { species: Species.Togepi, weight: PRIZED_WEIGHT },
+        { species: Species.Pichu, weight: PRIZED_WEIGHT },
       ],
       special: [],
     },
@@ -112,8 +113,9 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Blissey, weight: 5 },
       ],
       prized: [
-        { species: Species.Togepi, weight: 10 },
-        { species: Species.Pichu, weight: 10 },
+        ...UNOWN_SPAWNS,
+        { species: Species.Togepi, weight: PRIZED_WEIGHT },
+        { species: Species.Pichu, weight: PRIZED_WEIGHT },
       ],
       special: [],
     },
@@ -156,8 +158,9 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Umbreon, weight: 5 },
       ],
       prized: [
-        { species: Species.Pichu, weight: 10 },
-        { species: Species.Igglybuff, weight: 10 },
+        ...UNOWN_SPAWNS,
+        { species: Species.Pichu, weight: PRIZED_WEIGHT },
+        { species: Species.Igglybuff, weight: PRIZED_WEIGHT },
       ],
       special: [],
     },
@@ -205,8 +208,9 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Umbreon, weight: 5 },
       ],
       prized: [
-        { species: Species.Pichu, weight: 10 },
-        { species: Species.Igglybuff, weight: 10 },
+        ...UNOWN_SPAWNS,
+        { species: Species.Pichu, weight: PRIZED_WEIGHT },
+        { species: Species.Igglybuff, weight: PRIZED_WEIGHT },
       ],
       special: [],
     },

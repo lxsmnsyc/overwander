@@ -20,6 +20,7 @@ import LoginForm from '../components/app/LoginForm';
 import GiftsTab from '../components/gifts/GiftsTab';
 import NotificationsTab from '../components/notifications/NotificationsTab';
 import DexEntryDialog from '../components/dex/dex-entry-dialog';
+import SpeciesFormsDialog from '../components/dex/SpeciesFormsDialog';
 import DuelsTab from '../components/duels/DuelsTab';
 import OverworldTab from '../components/overworld/overworld-tab';
 import PokedexTab from '../components/dex/PokedexTab';
@@ -391,6 +392,21 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
             // it goes over the board and the lobby
             onTrainer={(uid) => {
               game.setVisiting(uid);
+            }}
+          />
+
+          {/* Which form was meant, for a row that stands for several.
+              It hands over to the entry rather than opening beside it:
+              the two are one road, not two screens */}
+          <SpeciesFormsDialog
+            player={props.user.uid}
+            species={game.dexForms()}
+            onClose={() => {
+              game.setDexForms(null);
+            }}
+            onSpecies={(species) => {
+              game.setDexForms(null);
+              game.setDexEntry(species);
             }}
           />
 

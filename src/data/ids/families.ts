@@ -98,9 +98,7 @@ const enum Families {
   Wooper = 95,
   Murkrow = 96,
   Misdreavus = 97,
-  // 98 is Unown's: its dex number falls between these, and an id is
-  // stored in a player's candy stacks, so a later family cannot be
-  // renumbered into place
+  Unown = 98,
   Wobbuffet = 99,
   Girafarig = 100,
   Pineco = 101,

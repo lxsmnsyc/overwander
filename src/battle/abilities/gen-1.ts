@@ -26,7 +26,7 @@ import { SELF_DESTRUCT_MOVES } from '../moves/self-destruct';
 import { STATUS_MOVES, hasAttackEffect } from '../moves/status';
 import { transformUnit } from '../moves/transform';
 import { PROTECTED_ABILITIES } from './special';
-import { MAJOR_STATUS_CONDITIONS } from '../status';
+import { ASLEEP_STATUSES, MAJOR_STATUS_CONDITIONS } from '../status';
 import type Team from '../team';
 import type Unit from '../unit';
 import {
@@ -2379,7 +2379,7 @@ const setupAbilities = [
             if (
               unit.alive &&
               unit.team.alliance !== event.source.team.alliance &&
-              unit.status[Statuses.Sleeping] != null
+              hasAnyStatus(unit, ASLEEP_STATUSES)
             ) {
               unit.damage(
                 {

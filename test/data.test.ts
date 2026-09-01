@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { asBasicSpriteData } from '../src/canvas/basic-sprite';
 import registerBiomeSpawns, {
   BIOME_NAMES,
+  PRIZED_WEIGHT,
   SpawnRarity,
   TIMES_OF_DAY,
   boostFamilyWeights,
@@ -15,6 +16,7 @@ import registerBiomeSpawns, {
   isPrizedSpecies,
   listSpeciesHabitats,
   pickSpawn,
+  spawnBand,
 } from '../src/data/biome';
 import EggGroups from '../src/data/ids/egg-groups';
 import Families from '../src/data/ids/families';
@@ -31,6 +33,7 @@ import {
 import Biome, {
   AnyTimeOfDay,
   TimeOfDay,
+  WILD_BIOMES,
   getBiome,
   isOpenSea,
   isWaterBiome,
@@ -60,7 +63,15 @@ import {
   statusFlag,
   unpackStatuses,
 } from '../src/data/ids/status';
-import { EvolutionMethod, Species } from '../src/data/ids/species';
+import {
+  EvolutionMethod,
+  Species,
+  UNOWN_FORMS,
+  getBaseFormSpecies,
+  speciesDexNumber,
+  speciesFormIndex,
+  unownLetter,
+} from '../src/data/ids/species';
 import {
   CANDY_PER_LEVEL,
   SHADOW_CANDY_MULTIPLIER,
@@ -237,6 +248,7 @@ import {
   getDayOfYear,
   getEggMoves,
   getFeaturedFamily,
+  getLearnableMoves,
   getLevelUpMoves,
   getMovesLearnedAt,
   getRegisteredSpecies,
@@ -244,6 +256,7 @@ import {
   getSpeciesAbilityPools,
   getSpeciesByBiome,
   getSpeciesData,
+  getSpeciesForms,
   isBaseForm,
   isFeaturedSpecies,
   meetsEvolutionCriteria,
@@ -276,6 +289,7 @@ import {
   rollGymMachine,
 } from '../src/data/overworld/experts';
 import Regions from '../src/data/ids/regions';
+import { getSpeciesRegion } from '../src/data/species/regions';
 import {
   ACHIEVEMENT_LINES,
   ACHIEVEMENT_TRAINERS,
@@ -568,18 +582,24 @@ describe('species measurements', () => {
 });
 
 describe('species forms', () => {
-  it('treats every registered species as a default form', () => {
-    // Gen 1 has no Alolan anything, so the flag is absent everywhere
-    // and answers true rather than being written out a hundred and
-    // fifty-one times
+  it('treats every registered species but the unowns as a default form', () => {
+    // The flag is absent almost everywhere and answers true rather
+    // than being written out three hundred times; the twenty-seven
+    // unowns past A are the only variants registered so far
     const registered = getRegisteredSpecies();
+    const variants = new Set<Species>(UNOWN_FORMS.slice(1));
 
     expect(registered.length).toBeGreaterThan(0);
     for (const species of registered) {
+      if (variants.has(species)) {
+        expect(getSpeciesData(species).baseForm).toBe(false);
+        expect(isBaseForm(species)).toBe(false);
+        continue;
+      }
       expect(getSpeciesData(species).baseForm).toBeUndefined();
       expect(isBaseForm(species)).toBe(true);
     }
-    expect(getBaseForms()).toEqual(registered);
+    expect(getBaseForms()).toEqual(registered.filter((species) => !variants.has(species)));
   });
 
   it('is about the costume rather than the evolution', () => {
@@ -603,6 +623,143 @@ describe('species forms', () => {
       registerSpeciesData(Species.Charizard, original);
     }
     expect(isBaseForm(Species.Charizard)).toBe(true);
+  });
+
+  it('numbers a form off the species it is a form of', () => {
+    // The band keeps `Species === dexNumber` true of every base form
+    // and sorts a species' forms straight after it
+    expect(Species.Unown).toBe(201);
+    expect(speciesDexNumber(Species.Unown)).toBe(201);
+    expect(speciesFormIndex(Species.Unown)).toBe(0);
+
+    expect(speciesDexNumber(Species.UnownQuestion)).toBe(201);
+    expect(speciesFormIndex(Species.UnownQuestion)).toBe(27);
+    expect(getBaseFormSpecies(Species.UnownQuestion)).toBe(Species.Unown);
+
+    // Anything that is not a form answers itself, the three that are
+    // drawn like pokemon without being pokemon included
+    expect(getBaseFormSpecies(Species.Pikachu)).toBe(Species.Pikachu);
+    expect(speciesFormIndex(Species.Missingno)).toBe(0);
+    expect(speciesDexNumber(Species.Missingno)).toBe(Species.Missingno);
+  });
+
+  it('gathers every shape of one pokemon, its own first', () => {
+    expect(getSpeciesForms(Species.Unown)).toEqual(UNOWN_FORMS);
+    // Asked of a form rather than of the default, the answer is the
+    // same list: they are shapes of one another
+    expect(getSpeciesForms(Species.UnownZ)).toEqual(UNOWN_FORMS);
+
+    // A species with no variants is a list of one, so a caller never
+    // has to know which kind it is holding
+    expect(getSpeciesForms(Species.Pikachu)).toEqual([Species.Pikachu]);
+  });
+});
+
+describe('the unowns', () => {
+  it('files a form under the region of the species it is a form of', () => {
+    expect(getSpeciesRegion(Species.Unown)).toBe(Regions.Johto);
+    expect(getSpeciesRegion(Species.UnownExclamation)).toBe(Regions.Johto);
+  });
+
+  it('is one pokemon in twenty-eight shapes', () => {
+    expect(UNOWN_FORMS.length).toBe(28);
+
+    for (const species of UNOWN_FORMS) {
+      const data = getSpeciesData(species);
+
+      expect(data.dexNumber).toBe(201);
+      expect(data.family).toBe(Families.Unown);
+      expect(data.category).toBe('Symbol Pokemon');
+      expect(data.types).toEqual([Types.Psychic]);
+      expect(data.stats[Stats.HP]).toBe(48);
+      expect(data.stats[Stats.SpecialAttack]).toBe(72);
+      // Genderless and unbreedable, so a nest never lays one and a
+      // letter is only ever met
+      expect(data.genderRatio).toBeUndefined();
+      expect(data.eggGroups).toEqual([EggGroups.NoEggsDiscovered]);
+      expect(getEggMoves(species)).toEqual([]);
+      expect(getLearnableMoves(species)).toEqual([Moves.HiddenPower]);
+    }
+  });
+
+  it('names each shape after the character it is drawn as', () => {
+    expect(unownLetter(Species.Unown)).toBe('A');
+    expect(unownLetter(Species.UnownZ)).toBe('Z');
+    expect(unownLetter(Species.UnownExclamation)).toBe('!');
+    expect(unownLetter(Species.UnownQuestion)).toBe('?');
+    expect(unownLetter(Species.Pikachu)).toBeNull();
+
+    // A is the one the dex prints, so it keeps the plain name and the
+    // other twenty-seven are marked
+    expect(getSpeciesData(Species.Unown).name).toBe('Unown');
+    expect(getSpeciesData(Species.UnownQ).name).toBe('Unown Q');
+  });
+
+  it('gives each shape an ability of its own, and none of them a boost', () => {
+    const signatures = new Set<Abilities>();
+
+    for (const species of UNOWN_FORMS) {
+      const data = getSpeciesData(species);
+
+      // The mainline ability is the ordinary roll; the rest are this
+      // registry's and are hidden, the way an invented ability is
+      expect(data.abilities).toEqual([Abilities.Levitate]);
+      expect(data.hiddenAbilities?.length).toBe(3);
+
+      const [signature, ...shared] = data.hiddenAbilities ?? [];
+
+      expect(shared).toEqual([Abilities.MagicGuard, Abilities.Pressure]);
+      expect(signatures.has(signature), `${data.name} repeats an ability`).toBe(false);
+      signatures.add(signature);
+    }
+    expect(signatures.size).toBe(28);
+
+    // Every unown reaches four, which is what a species with nothing
+    // above or below it owes
+    expect(getSpeciesAbilities(Species.UnownE).size).toBe(4);
+  });
+
+  it('stands in the prized band of every biome, at equal weight', () => {
+    for (const biome of WILD_BIOMES) {
+      for (const time of TIMES_OF_DAY) {
+        const prized = spawnBand(getSpawnPool(biome, time), 'prized');
+        const found = new Map(prized.map((entry) => [entry.species, entry.weight]));
+
+        for (const species of UNOWN_FORMS) {
+          expect(found.get(species), `${BIOME_NAMES[biome]} is missing a letter`).toBe(1);
+        }
+      }
+    }
+    expect(getSpawnRarity(Species.UnownY)).toBe(SpawnRarity.Prized);
+  });
+
+  it('weighs the whole alphabet as one pokemon', () => {
+    // Twenty-eight entries and one pokemon: the letters together are
+    // drawn as often as the baby standing beside them, so a form set
+    // cannot crowd a band out by being long
+    const prized = spawnBand(getSpawnPool(Biome.Woodland, TimeOfDay.Morning), 'prized');
+    const letters = new Set<Species>(UNOWN_FORMS);
+    const alphabet = prized
+      .filter((entry) => letters.has(entry.species))
+      .reduce((total, entry) => total + entry.weight, 0);
+
+    expect(alphabet).toBe(PRIZED_WEIGHT);
+
+    for (const entry of prized.filter((one) => !letters.has(one.species))) {
+      expect(entry.weight).toBe(PRIZED_WEIGHT);
+    }
+  });
+
+  it('is met rather than hatched', () => {
+    // The prized band is left out of the egg pools, so a nest never
+    // lays a letter: an unown has no line to walk back along
+    const hatchable = new Set(
+      getEggPool(Biome.Grassland, TimeOfDay.Morning).map((entry) => entry.species),
+    );
+
+    for (const species of UNOWN_FORMS) {
+      expect(hatchable.has(species)).toBe(false);
+    }
   });
 });
 

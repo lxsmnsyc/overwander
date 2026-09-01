@@ -1,6 +1,6 @@
 import Biome, { TimeOfDay } from '../ids/biome';
 import { Species } from '../ids/species';
-import { registerSpawnPool } from './__create';
+import { UNOWN_SPAWNS, registerSpawnPool } from './__create';
 
 /**
  * Steppe spawn pool, grouped by day-cycle period and rarity band
@@ -34,6 +34,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Dunsparce, weight: 10 },
         { species: Species.Girafarig, weight: 5 },
       ],
+      prized: [...UNOWN_SPAWNS],
       special: [{ species: Species.Raikou, weight: 10 }],
     },
     [TimeOfDay.Day]: {
@@ -65,6 +66,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Dunsparce, weight: 10 },
         { species: Species.Girafarig, weight: 5 },
       ],
+      prized: [...UNOWN_SPAWNS],
       special: [{ species: Species.Raikou, weight: 10 }],
     },
     [TimeOfDay.Evening]: {
@@ -81,6 +83,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Dunsparce, weight: 10 },
         { species: Species.Girafarig, weight: 5 },
       ],
+      prized: [...UNOWN_SPAWNS],
       special: [{ species: Species.Raikou, weight: 10 }],
     },
     [TimeOfDay.Night]: {
@@ -97,6 +100,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Dunsparce, weight: 10 },
         { species: Species.Girafarig, weight: 5 },
       ],
+      prized: [...UNOWN_SPAWNS],
       special: [{ species: Species.Raikou, weight: 10 }],
     },
   });

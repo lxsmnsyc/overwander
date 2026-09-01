@@ -9,7 +9,8 @@ import {
 import { type PokedexView, getPokedex } from '../../auth/pokedex';
 import { ArrowLeftIcon, ArrowRightIcon } from '../icons';
 import type { Species } from '../../data/ids/species';
-import { getBaseForms, getSpeciesData } from '../../data/species';
+import { getBaseFormSpecies } from '../../data/ids/species';
+import { getBaseForms, getSpeciesData, getSpeciesForms } from '../../data/species';
 import PokedexGrid, { DEX_PAGE, type DexEntry, dexLabel } from './PokedexGrid';
 import { Badge, Button, Meta, Note, Panel, Row } from '../styled';
 import { useGame } from '../app/game-context';
@@ -23,10 +24,10 @@ import { useGame } from '../app/game-context';
  * that makes a dex worth opening is the gaps — the shape of what is
  * still out there, in the order it will be filled in.
  *
- * **Base forms only.** A dex is one row per pokemon rather than one
+ * **Default forms only.** A dex is one row per pokemon rather than one
  * per costume, which is the same rule the game counts a dex by
- * (`getBaseForms`); a form is something to show on the entry of the
- * species it belongs to.
+ * (`getBaseForms`). A row with several forms behind it lights up from
+ * any of them and opens the forms grid rather than an entry.
  */
 export interface PokedexTabProps {
   player: string;
@@ -44,8 +45,10 @@ function PokedexBox(props: { dex: Resource<PokedexView> }): JSX.Element {
 
   const entries = (): DexEntry[] => {
     const view = props.dex();
-    const seen = new Set(view?.seen.map((tally) => tally.species) ?? []);
-    const caught = new Set(view?.caught.map((tally) => tally.species) ?? []);
+    // Rolled up to the form's own entry: the dex prints one Unown, and
+    // an Unown B in the record is that row filled in
+    const seen = new Set(view?.seen.map((tally) => getBaseFormSpecies(tally.species)) ?? []);
+    const caught = new Set(view?.caught.map((tally) => getBaseFormSpecies(tally.species)) ?? []);
 
     return getBaseForms()
       .map((species): DexEntry => {
@@ -62,8 +65,17 @@ function PokedexBox(props: { dex: Resource<PokedexView> }): JSX.Element {
       .sort((one, other) => one.dexNumber - other.dexNumber);
   };
 
+  /**
+   * A row with one form opens its entry; a row with several asks which
+   * form first, since the row stands for the pokemon rather than for
+   * any one of its costumes
+   */
   const open = (species: Species): void => {
-    game.setDexEntry(species);
+    if (getSpeciesForms(species).length > 1) {
+      game.setDexForms(species);
+    } else {
+      game.setDexEntry(species);
+    }
   };
 
   /**

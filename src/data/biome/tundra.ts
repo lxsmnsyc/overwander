@@ -1,6 +1,6 @@
 import Biome, { TimeOfDay } from '../ids/biome';
 import { Species } from '../ids/species';
-import { registerSpawnPool } from './__create';
+import { PRIZED_WEIGHT, UNOWN_SPAWNS, registerSpawnPool } from './__create';
 
 /**
  * Tundra spawn pool, grouped by day-cycle period and rarity band
@@ -14,6 +14,7 @@ export default function registerTundraSpawns(): void {
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Delibird, weight: 5 },
       ],
+      prized: [...UNOWN_SPAWNS],
       special: [{ species: Species.Suicune, weight: 10 }],
     },
     [TimeOfDay.Day]: {
@@ -23,6 +24,7 @@ export default function registerTundraSpawns(): void {
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Delibird, weight: 5 },
       ],
+      prized: [...UNOWN_SPAWNS],
       special: [{ species: Species.Suicune, weight: 10 }],
     },
     [TimeOfDay.Evening]: {
@@ -34,7 +36,7 @@ export default function registerTundraSpawns(): void {
         { species: Species.Delibird, weight: 5 },
         { species: Species.Sneasel, weight: 5 },
       ],
-      prized: [{ species: Species.Smoochum, weight: 10 }],
+      prized: [...UNOWN_SPAWNS, { species: Species.Smoochum, weight: PRIZED_WEIGHT }],
       special: [{ species: Species.Suicune, weight: 10 }],
     },
     [TimeOfDay.Night]: {
@@ -46,7 +48,7 @@ export default function registerTundraSpawns(): void {
         { species: Species.Delibird, weight: 5 },
         { species: Species.Sneasel, weight: 5 },
       ],
-      prized: [{ species: Species.Smoochum, weight: 10 }],
+      prized: [...UNOWN_SPAWNS, { species: Species.Smoochum, weight: PRIZED_WEIGHT }],
       special: [{ species: Species.Suicune, weight: 10 }],
     },
   });

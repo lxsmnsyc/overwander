@@ -1,6 +1,6 @@
 import Biome, { TimeOfDay } from '../ids/biome';
 import { Species } from '../ids/species';
-import { registerSpawnPool } from './__create';
+import { UNOWN_SPAWNS, registerSpawnPool } from './__create';
 
 /**
  * TropicalSeasonalForest spawn pool, grouped by day-cycle period and rarity band
@@ -17,6 +17,7 @@ export default function registerTropicalSeasonalForestSpawns(): void {
         { species: Species.Victreebel, weight: 5 },
         { species: Species.Exeggutor, weight: 10 },
       ],
+      prized: [...UNOWN_SPAWNS],
       special: [],
     },
     [TimeOfDay.Day]: {
@@ -30,18 +31,21 @@ export default function registerTropicalSeasonalForestSpawns(): void {
         { species: Species.Exeggutor, weight: 10 },
         { species: Species.Pinsir, weight: 5 },
       ],
+      prized: [...UNOWN_SPAWNS],
       special: [],
     },
     [TimeOfDay.Evening]: {
       base: [{ species: Species.Exeggcute, weight: 20 }],
       uncommon: [],
       rare: [{ species: Species.Exeggutor, weight: 10 }],
+      prized: [...UNOWN_SPAWNS],
       special: [],
     },
     [TimeOfDay.Night]: {
       base: [{ species: Species.Exeggcute, weight: 20 }],
       uncommon: [],
       rare: [{ species: Species.Exeggutor, weight: 10 }],
+      prized: [...UNOWN_SPAWNS],
       special: [],
     },
   });

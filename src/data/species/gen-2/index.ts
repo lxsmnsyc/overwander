@@ -60,6 +60,7 @@ import registerTotodileSpecies from './totodile';
 import registerTowerDuoSpecies from './tower-duo';
 import registerTyrogueSpecies from './tyrogue';
 import registerUmbreonSpecies from './umbreon';
+import registerUnownSpecies from './unown';
 import registerWobbuffetSpecies from './wobbuffet';
 import registerWooperSpecies from './wooper';
 import registerYanmaSpecies from './yanma';
@@ -105,6 +106,7 @@ export default function registerGen2Species(): void {
   registerDunsparceSpecies();
   registerGligarSpecies();
   registerMisdreavusSpecies();
+  registerUnownSpecies();
   registerMurkrowSpecies();
   registerSneaselSpecies();
   registerStantlerSpecies();

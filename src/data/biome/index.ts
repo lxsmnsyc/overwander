@@ -45,6 +45,7 @@ export {
   pickFromEntries,
   pickSpawn,
   PRIZED_SPAWN_ODDS,
+  PRIZED_WEIGHT,
   RARE_SPAWN_ODDS,
   registerSpawnPool,
   spawnBand,

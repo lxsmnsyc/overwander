@@ -1,6 +1,6 @@
 import Biome, { TimeOfDay } from '../ids/biome';
 import { Species } from '../ids/species';
-import { registerSpawnPool } from './__create';
+import { PRIZED_WEIGHT, UNOWN_SPAWNS, registerSpawnPool } from './__create';
 
 /**
  * Desert spawn pool, grouped by day-cycle period and rarity band
@@ -14,7 +14,7 @@ export default function registerDesertSpawns(): void {
         { species: Species.Dugtrio, weight: 10 },
         { species: Species.Magmar, weight: 5 },
       ],
-      prized: [{ species: Species.Magby, weight: 10 }],
+      prized: [...UNOWN_SPAWNS, { species: Species.Magby, weight: PRIZED_WEIGHT }],
       special: [{ species: Species.Moltres, weight: 10 }],
     },
     [TimeOfDay.Day]: {
@@ -30,7 +30,7 @@ export default function registerDesertSpawns(): void {
         { species: Species.Rhydon, weight: 10 },
         { species: Species.Magmar, weight: 5 },
       ],
-      prized: [{ species: Species.Magby, weight: 10 }],
+      prized: [...UNOWN_SPAWNS, { species: Species.Magby, weight: PRIZED_WEIGHT }],
       special: [{ species: Species.Moltres, weight: 10 }],
     },
     [TimeOfDay.Evening]: {
@@ -44,7 +44,7 @@ export default function registerDesertSpawns(): void {
         { species: Species.Dugtrio, weight: 10 },
         { species: Species.Magmar, weight: 5 },
       ],
-      prized: [{ species: Species.Magby, weight: 10 }],
+      prized: [...UNOWN_SPAWNS, { species: Species.Magby, weight: PRIZED_WEIGHT }],
       special: [{ species: Species.Moltres, weight: 10 }],
     },
     [TimeOfDay.Night]: {
@@ -58,7 +58,7 @@ export default function registerDesertSpawns(): void {
         { species: Species.Marowak, weight: 10 },
         { species: Species.Magmar, weight: 5 },
       ],
-      prized: [{ species: Species.Magby, weight: 10 }],
+      prized: [...UNOWN_SPAWNS, { species: Species.Magby, weight: PRIZED_WEIGHT }],
       special: [{ species: Species.Moltres, weight: 10 }],
     },
   });

@@ -73,6 +73,7 @@ const STATUS_COLORS: Record<Statuses, string> = {
   [Statuses.Cursed]: '#6a2f5a',
   [Statuses.Encored]: '#c98ab0',
   [Statuses.Identified]: '#a8a8a8',
+  [Statuses.Comatose]: '#6b6486',
 };
 
 const STATUS_NAMES: Record<Statuses, string> = {
@@ -108,6 +109,7 @@ const STATUS_NAMES: Record<Statuses, string> = {
   [Statuses.Cursed]: 'Cursed',
   [Statuses.Encored]: 'Encored',
   [Statuses.Identified]: 'Identified',
+  [Statuses.Comatose]: 'Comatose',
 };
 
 /**

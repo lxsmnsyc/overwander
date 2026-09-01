@@ -53,6 +53,22 @@ const MISC: Partial<Record<number, { species: number; name: string }>> = {
 /** Where the misc three are filed, being of no region. */
 const UNKNOWN = 'unknown';
 
+/**
+ * Which species this game has form ids for, and how many forms it
+ * knows counting the default. A form past the count is skipped: the
+ * ids are `Species` members, and arithmetic alone cannot say whether
+ * one was ever written down
+ */
+const FORMS: Partial<Record<number, number>> = { 201: 28 };
+
+/**
+ * Where form ids start, matching `SPECIES_FORM_BAND` in
+ * [`src/data/ids/species.ts`](../src/data/ids/species.ts). Repeated
+ * rather than imported, since node refuses a `const enum`'s file
+ */
+const FORM_BAND = 1000000;
+const FORMS_PER_SPECIES = 100;
+
 interface Slot {
   region: string;
   dex: number;
@@ -98,11 +114,23 @@ function wanted(slot: Slot): Wanted | null {
   }
   const region = REGIONS[slot.region];
 
-  // Alternate forms wait on the ids reserved for them in `Species`
-  if (region == null || slot.form !== 0) {
+  if (region == null) {
     return null;
   }
-  return { ...slot, species: slot.dex, under: region };
+  if (slot.form === 0) {
+    return { ...slot, species: slot.dex, under: region };
+  }
+
+  // An alternate form is filed beside its species, under the id the
+  // reserved band gives it, and skipped where the game has no id
+  if (slot.form >= (FORMS[slot.dex] ?? 0)) {
+    return null;
+  }
+  return {
+    ...slot,
+    species: FORM_BAND + slot.dex * FORMS_PER_SPECIES + slot.form,
+    under: region,
+  };
 }
 
 /** What the clips are called, for a line somebody has to read. */

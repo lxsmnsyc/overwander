@@ -1,7 +1,7 @@
 import type Biome from '../ids/biome';
 import { TimeOfDay } from '../ids/biome';
 import type Families from '../ids/families';
-import { Species } from '../ids/species';
+import { Species, UNOWN_FORMS } from '../ids/species';
 import type { Types } from '../constants/types';
 import { getBaseSpecies, getSpeciesData } from '../species';
 
@@ -377,9 +377,29 @@ const BABY_SPECIES = new Set<Species>([
 /**
  * The unowns. One species wearing many faces, and the point of it is
  * the hunt: a walk turns one up rarely enough that the letters are
- * collected over months. Gen 1 has none; Gen 2 registers them here
+ * collected over months
  */
-const UNOWN_SPECIES = new Set<Species>();
+const UNOWN_SPECIES = new Set<Species>(UNOWN_FORMS);
+
+/**
+ * The unowns as prized-band entries, for a pool to spread into its
+ * own. They stand in **every** biome and at equal weight, so which
+ * letter turns up is the roll and where it was walked is not: the
+ * alphabet is collected over months either way, and no letter is
+ * cheaper because of where the player happens to live
+ */
+export const UNOWN_SPAWNS: SpawnEntry[] = UNOWN_FORMS.map((species) => ({ species, weight: 1 }));
+
+/**
+ * What one prized species weighs against the alphabet.
+ *
+ * The unowns are twenty-eight entries and **one pokemon**, so they
+ * are weighted 1 apiece and everything else in the band is weighted
+ * by how many of them there are: a Pichu and the whole alphabet are
+ * then drawn as often as each other, which is what the band would
+ * have said if an unown were one species with a costume
+ */
+export const PRIZED_WEIGHT = UNOWN_SPAWNS.length;
 
 /**
  * Species whose baby the game does not have yet.

@@ -1,5 +1,6 @@
 import Regions from '../ids/regions';
 import type { Species } from '../ids/species';
+import { speciesDexNumber } from '../ids/species';
 import { getRegisteredSpecies } from './__create';
 
 /**
@@ -43,8 +44,9 @@ export function getRegionSpan(region: Regions): [from: number, to: number] | nul
 }
 
 export function getSpeciesRegion(species: Species): Regions {
-  // Widened on purpose: a dex number is what the ranges are written in
-  const dex: number = species;
+  // A form is of the same region as the species it is a form of, so
+  // the ranges are asked about the dex number rather than the id
+  const dex = speciesDexNumber(species);
 
   return RANGES.find((range) => dex >= range.from && dex <= range.to)?.region ?? Regions.Unknown;
 }

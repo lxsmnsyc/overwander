@@ -1,6 +1,6 @@
 import Biome, { TimeOfDay } from '../ids/biome';
 import { Species } from '../ids/species';
-import { registerSpawnPool } from './__create';
+import { PRIZED_WEIGHT, UNOWN_SPAWNS, registerSpawnPool } from './__create';
 
 /**
  * Mountain spawn pool, grouped by day-cycle period and rarity band
@@ -43,7 +43,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Wobbuffet, weight: 5 },
         { species: Species.Steelix, weight: 5 },
       ],
-      prized: [{ species: Species.Magby, weight: 10 }],
+      prized: [...UNOWN_SPAWNS, { species: Species.Magby, weight: PRIZED_WEIGHT }],
       special: [
         { species: Species.Zapdos, weight: 10 },
         { species: Species.Moltres, weight: 10 },
@@ -86,7 +86,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Wobbuffet, weight: 5 },
         { species: Species.Steelix, weight: 5 },
       ],
-      prized: [{ species: Species.Magby, weight: 10 }],
+      prized: [...UNOWN_SPAWNS, { species: Species.Magby, weight: PRIZED_WEIGHT }],
       special: [
         { species: Species.Zapdos, weight: 10 },
         { species: Species.Moltres, weight: 10 },
@@ -122,7 +122,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Crobat, weight: 5 },
         { species: Species.Steelix, weight: 5 },
       ],
-      prized: [{ species: Species.Magby, weight: 10 }],
+      prized: [...UNOWN_SPAWNS, { species: Species.Magby, weight: PRIZED_WEIGHT }],
       special: [
         { species: Species.Zapdos, weight: 10 },
         { species: Species.Moltres, weight: 10 },
@@ -167,8 +167,9 @@ export default function registerMountainSpawns(): void {
         { species: Species.Steelix, weight: 5 },
       ],
       prized: [
-        { species: Species.Cleffa, weight: 10 },
-        { species: Species.Magby, weight: 10 },
+        ...UNOWN_SPAWNS,
+        { species: Species.Cleffa, weight: PRIZED_WEIGHT },
+        { species: Species.Magby, weight: PRIZED_WEIGHT },
       ],
       special: [
         { species: Species.Zapdos, weight: 10 },

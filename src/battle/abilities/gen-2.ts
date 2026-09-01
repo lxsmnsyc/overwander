@@ -7,10 +7,11 @@ import { getMoveData } from '../../data/moves';
 import type Battle from '../core';
 import { Items } from '../../data/ids/items';
 import { Statuses, Weathers } from '../../data/ids/status';
-import { BattleEvents, EffectType, MoveTargetType } from '../events';
+import { BattleEvents, EffectType, type MoveTarget, MoveTargetType } from '../events';
 import { MergedLifecycle } from '../lifecycle';
 import type Unit from '../unit';
 import { FORCED_SWITCH_MOVES } from '../moves/switch-out';
+import { MAJOR_STATUS_CONDITIONS } from '../status';
 import { hasFreeItemSlot, isWeatherSunny, onUnitActs, stealableItem, unitTarget } from '../utils';
 import {
   createAbility,
@@ -28,6 +29,32 @@ const FLOWER_GIFT_BOOST = 1.5;
  */
 const MOODY_STAGES = Object.keys(STAGE_NAMES).map(Number) as Stages[];
 const MOODY_RISE = 2;
+
+/**
+ * Whoever on the struck side turns a queue-jumping move away, and an
+ * empty list where nothing does.
+ *
+ * The priority is asked of the caster rather than read off the move,
+ * so a Prankster's status move counts and the move's printed priority
+ * is only where the answer starts
+ */
+function queenlyGuards(source: Unit, move: Moves, target: MoveTarget): Unit[] {
+  if (target.type !== MoveTargetType.Unit) {
+    return [];
+  }
+
+  const guards: Unit[] = [];
+
+  for (const unit of target.unit.team.units) {
+    if (unit === source) {
+      return [];
+    }
+    if (unit.alive && unit.hasAbility(Abilities.QueenlyMajesty)) {
+      guards.push(unit);
+    }
+  }
+  return guards.length > 0 && source.checkMovePriority(move, target) > 0 ? guards : [];
+}
 
 const setupAbilities = [
   // https://bulbapedia.bulbagarden.net/wiki/Berserk_(Ability)
@@ -635,6 +662,86 @@ const setupAbilities = [
         event.weight /= 2;
       }
     }),
+  ),
+
+  // Unown Q
+  // The whole side is covered, the way the mainline has it: what the
+  // ability answers is the queue rather than the target
+  // https://bulbapedia.bulbagarden.net/wiki/Queenly_Majesty_(Ability)
+  createAbility(
+    Abilities.QueenlyMajesty,
+    (battle) =>
+      new MergedLifecycle([
+        // Pure query: a move that cuts ahead of the queue cannot land
+        battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Post, (event) => {
+          if (!event.immune && queenlyGuards(event.source, event.move, event.target).length > 0) {
+            event.immune = true;
+          }
+        }),
+        // The cue only fires when a real use was blocked, and on the
+        // unit that actually holds it
+        battle.on(BattleEvents.UnitTriggerMoveFailed, EventPriority.Post, (event) => {
+          const parent = event.parent;
+
+          for (const unit of queenlyGuards(parent.source, parent.move, parent.target)) {
+            unit.triggerAbility(Abilities.QueenlyMajesty);
+          }
+        }),
+      ]),
+  ),
+
+  // Unown Z
+  // Nothing is left for a status to do to something already asleep
+  // https://bulbapedia.bulbagarden.net/wiki/Comatose_(Ability)
+  createLimberAbility(Abilities.Comatose, [...MAJOR_STATUS_CONDITIONS]),
+
+  /**
+   * The sleep it is already in, as a status of its own.
+   *
+   * A second registration rather than a longer one above: the
+   * immunity is the shared Limber effect and this is a different
+   * thing the same ability does. The status locks nothing and no cure
+   * takes it off, so the holder acts as normal while everything that
+   * preys on a sleeper (Dream Eater, Nightmare, Bad Dreams, Snore)
+   * finds one here
+   */
+  createAbility(
+    Abilities.Comatose,
+    (battle) =>
+      new MergedLifecycle([
+        // For when the unit transforms into it
+        battle.on(BattleEvents.UnitAddAbility, EventPriority.Post, (event) => {
+          if (event.ability === Abilities.Comatose) {
+            event.source.triggerAbility(Abilities.Comatose);
+          }
+        }),
+        // For when the unit re-enters
+        battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+          if (event.source.hasAbility(Abilities.Comatose)) {
+            event.source.triggerAbility(Abilities.Comatose);
+          }
+        }),
+        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
+          if (event.ability === Abilities.Comatose) {
+            event.source.addStatus(Statuses.Comatose, {
+              type: EffectType.Ability,
+              ability: Abilities.Comatose,
+              unit: event.source,
+            });
+          }
+        }),
+        // Losing the ability is the one thing that wakes it, so a
+        // Skill Swap or a Trace leaves nothing behind
+        battle.on(BattleEvents.UnitRemoveAbility, EventPriority.Post, (event) => {
+          if (event.ability === Abilities.Comatose) {
+            event.source.removeStatus(Statuses.Comatose, {
+              type: EffectType.Ability,
+              ability: Abilities.Comatose,
+              unit: event.source,
+            });
+          }
+        }),
+      ]),
   ),
 
   // Marill

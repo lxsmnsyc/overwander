@@ -310,6 +310,16 @@ export interface GameState {
   dexEntry: Accessor<Species | null>;
   setDexEntry: Setter<Species | null>;
   /**
+   * The species whose **forms** are being looked through, if any.
+   *
+   * A pokemon with forms has one row in the printed dex, so pressing
+   * that row opens the forms rather than an entry: which of the
+   * twenty-eight is meant has not been said yet, and each of them has
+   * a page of its own on the other side of this one
+   */
+  dexForms: Accessor<Species | null>;
+  setDexForms: Setter<Species | null>;
+  /**
    * Bumped whenever a record changes under a list that is showing:
    * an evolution renames a row, a release takes one away, a listing
    * puts one in escrow. Lists watch it rather than being handed a
@@ -506,6 +516,7 @@ export default function GameProvider(props: ParentProps): JSX.Element {
   const [profileAt, setProfileAt] = createSignal<ProfileSection | null>(null);
   const [trading, setTrading] = createSignal<string | null>(null);
   const [dexEntry, setDexEntry] = createSignal<Species | null>(null);
+  const [dexForms, setDexForms] = createSignal<Species | null>(null);
   const [records, setRecords] = createSignal(0);
 
   // Said wherever the player is, since the board is shut whenever it
@@ -693,6 +704,8 @@ export default function GameProvider(props: ParentProps): JSX.Element {
         setTrading,
         dexEntry,
         setDexEntry,
+        dexForms,
+        setDexForms,
         records,
         notices,
         touchRecords: () => {

@@ -1,6 +1,6 @@
 import Biome, { TimeOfDay } from '../ids/biome';
 import { Species } from '../ids/species';
-import { registerSpawnPool } from './__create';
+import { PRIZED_WEIGHT, UNOWN_SPAWNS, registerSpawnPool } from './__create';
 
 /**
  * Taiga spawn pool, grouped by day-cycle period and rarity band
@@ -14,6 +14,7 @@ export default function registerTaigaSpawns(): void {
         { species: Species.Snorlax, weight: 5 },
         { species: Species.Stantler, weight: 5 },
       ],
+      prized: [...UNOWN_SPAWNS],
       special: [{ species: Species.Suicune, weight: 10 }],
     },
     [TimeOfDay.Day]: {
@@ -23,6 +24,7 @@ export default function registerTaigaSpawns(): void {
         { species: Species.Snorlax, weight: 5 },
         { species: Species.Stantler, weight: 5 },
       ],
+      prized: [...UNOWN_SPAWNS],
       special: [{ species: Species.Suicune, weight: 10 }],
     },
     [TimeOfDay.Evening]: {
@@ -34,7 +36,7 @@ export default function registerTaigaSpawns(): void {
         { species: Species.Snorlax, weight: 5 },
         { species: Species.Stantler, weight: 5 },
       ],
-      prized: [{ species: Species.Smoochum, weight: 10 }],
+      prized: [...UNOWN_SPAWNS, { species: Species.Smoochum, weight: PRIZED_WEIGHT }],
       special: [{ species: Species.Suicune, weight: 10 }],
     },
     [TimeOfDay.Night]: {
@@ -50,7 +52,7 @@ export default function registerTaigaSpawns(): void {
         { species: Species.Snorlax, weight: 5 },
         { species: Species.Stantler, weight: 5 },
       ],
-      prized: [{ species: Species.Smoochum, weight: 10 }],
+      prized: [...UNOWN_SPAWNS, { species: Species.Smoochum, weight: PRIZED_WEIGHT }],
       special: [{ species: Species.Suicune, weight: 10 }],
     },
   });

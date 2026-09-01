@@ -239,6 +239,16 @@ export const BIOME_CONFIGS: { [key in Exclude<Biome, Biome.Beyond>]: BiomeConfig
 };
 
 /**
+ * Every biome the world actually grows, in enum order. `Beyond` is
+ * the one left out, since nothing is ever generated there: a species
+ * that lives everywhere lives in these
+ */
+// tsc requires the assertion to produce Biomes from the record keys;
+// tsgolint resolves the const enum to number
+// oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+export const WILD_BIOMES: Biome[] = Object.keys(BIOME_CONFIGS).map(Number) as Biome[];
+
+/**
  * Where the shoreline is on the elevation axis.
  *
  * It is a gate rather than a preference: a sample below it can only

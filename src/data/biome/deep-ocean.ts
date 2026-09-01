@@ -1,6 +1,6 @@
 import Biome, { TimeOfDay } from '../ids/biome';
 import { Species } from '../ids/species';
-import { registerSpawnPool } from './__create';
+import { UNOWN_SPAWNS, registerSpawnPool } from './__create';
 
 /**
  * DeepOcean spawn pool, grouped by day-cycle period and rarity band.
@@ -31,6 +31,7 @@ export default function registerDeepOceanSpawns(): void {
         { species: Species.Lapras, weight: 5 },
         { species: Species.Dragonite, weight: 2 },
       ],
+      prized: [...UNOWN_SPAWNS],
       special: [{ species: Species.Lugia, weight: 10 }],
     },
     [TimeOfDay.Day]: {
@@ -47,6 +48,7 @@ export default function registerDeepOceanSpawns(): void {
         { species: Species.Lapras, weight: 5 },
         { species: Species.Dragonite, weight: 2 },
       ],
+      prized: [...UNOWN_SPAWNS],
       special: [{ species: Species.Lugia, weight: 10 }],
     },
     [TimeOfDay.Evening]: {
@@ -63,6 +65,7 @@ export default function registerDeepOceanSpawns(): void {
         { species: Species.Lapras, weight: 5 },
         { species: Species.Dragonite, weight: 2 },
       ],
+      prized: [...UNOWN_SPAWNS],
       special: [{ species: Species.Lugia, weight: 10 }],
     },
     [TimeOfDay.Night]: {
@@ -79,6 +82,7 @@ export default function registerDeepOceanSpawns(): void {
         { species: Species.Lapras, weight: 5 },
         { species: Species.Dragonite, weight: 2 },
       ],
+      prized: [...UNOWN_SPAWNS],
       special: [{ species: Species.Lugia, weight: 10 }],
     },
   });

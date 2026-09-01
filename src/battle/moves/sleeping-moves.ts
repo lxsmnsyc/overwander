@@ -1,9 +1,10 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Moves } from '../../data/ids/moves';
-import { Statuses } from '../../data/ids/status';
 import type Battle from '../core';
 import { BattleEvents } from '../events';
+import { ASLEEP_STATUSES } from '../status';
 import type Unit from '../unit';
+import { hasAnyStatus } from '../utils';
 
 /**
  * The two moves that only work while the user is asleep. Sleep is not
@@ -26,7 +27,7 @@ const NOT_CALLED = new Set<Moves>([
 ]);
 
 function isAsleep(unit: Unit): boolean {
-  return unit.status[Statuses.Sleeping] != null;
+  return hasAnyStatus(unit, ASLEEP_STATUSES);
 }
 
 export default function setupSleepingMoves(battle: Battle): void {

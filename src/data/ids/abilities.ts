@@ -248,6 +248,9 @@ const enum Abilities {
   Telepathy = 146,
   // Scizor
   LightMetal = 147,
+  // Unown
+  QueenlyMajesty = 148,
+  Comatose = 149,
   // Special (non-standard abilities outside the regular pool)
   Boss = 100001,
   Shadow = 100002,

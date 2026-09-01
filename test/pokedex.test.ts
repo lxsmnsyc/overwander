@@ -101,6 +101,25 @@ describe('pokedex record', () => {
     }
   });
 
+  it('counts a pokemon once however many of its shapes were met', () => {
+    // A row is kept per form, since which letters somebody has found
+    // is worth knowing; a dex is counted in pokemon, and the printed
+    // dex has one Unown in it
+    const dex = {
+      seen: { [Species.Unown]: 1, [Species.UnownB]: 4, [Species.UnownQ]: 2, [Species.Pidgey]: 1 },
+      seenShiny: { [Species.UnownZ]: 1 },
+      caught: { [Species.UnownB]: 1 },
+      caughtShiny: {},
+    };
+
+    expect(listDexTallies(dex, DEX_SEEN).length).toBe(5);
+    expect(countDexSpecies(dex, DEX_SEEN)).toBe(2);
+
+    // An unown nobody has is still an Unown caught, since the entry
+    // the dex prints is the one being filled in
+    expect(countDexSpecies(dex, DEX_CAUGHT)).toBe(1);
+  });
+
   it('ignores anything in the maps that is not a count', () => {
     // A key written as a string, a zero left behind, a negative: none
     // of them is a pokemon met, and none is read as one

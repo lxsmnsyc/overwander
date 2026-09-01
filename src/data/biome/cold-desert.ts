@@ -1,6 +1,6 @@
 import Biome, { TimeOfDay } from '../ids/biome';
 import { Species } from '../ids/species';
-import { registerSpawnPool } from './__create';
+import { UNOWN_SPAWNS, registerSpawnPool } from './__create';
 
 /**
  * ColdDesert spawn pool, grouped by day-cycle period and rarity band
@@ -19,6 +19,7 @@ export default function registerColdDesertSpawns(): void {
         { species: Species.Golem, weight: 5 },
         { species: Species.Steelix, weight: 5 },
       ],
+      prized: [...UNOWN_SPAWNS],
       special: [],
     },
     [TimeOfDay.Day]: {
@@ -33,6 +34,7 @@ export default function registerColdDesertSpawns(): void {
         { species: Species.Golem, weight: 5 },
         { species: Species.Steelix, weight: 5 },
       ],
+      prized: [...UNOWN_SPAWNS],
       special: [],
     },
     [TimeOfDay.Evening]: {
@@ -48,6 +50,7 @@ export default function registerColdDesertSpawns(): void {
         { species: Species.Gligar, weight: 5 },
         { species: Species.Steelix, weight: 5 },
       ],
+      prized: [...UNOWN_SPAWNS],
       special: [],
     },
     [TimeOfDay.Night]: {
@@ -65,6 +68,7 @@ export default function registerColdDesertSpawns(): void {
         { species: Species.Gligar, weight: 5 },
         { species: Species.Steelix, weight: 5 },
       ],
+      prized: [...UNOWN_SPAWNS],
       special: [],
     },
   });

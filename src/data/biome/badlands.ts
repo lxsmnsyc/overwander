@@ -1,6 +1,6 @@
 import Biome, { TimeOfDay } from '../ids/biome';
 import { Species } from '../ids/species';
-import { registerSpawnPool } from './__create';
+import { UNOWN_SPAWNS, registerSpawnPool } from './__create';
 
 /**
  * Badlands spawn pool, grouped by day-cycle period and rarity band
@@ -34,6 +34,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Skarmory, weight: 5 },
         { species: Species.Dunsparce, weight: 10 },
       ],
+      prized: [...UNOWN_SPAWNS],
       special: [{ species: Species.Entei, weight: 10 }],
     },
     [TimeOfDay.Day]: {
@@ -63,6 +64,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Skarmory, weight: 5 },
         { species: Species.Dunsparce, weight: 10 },
       ],
+      prized: [...UNOWN_SPAWNS],
       special: [{ species: Species.Entei, weight: 10 }],
     },
     [TimeOfDay.Evening]: {
@@ -89,6 +91,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Dunsparce, weight: 10 },
         { species: Species.Gligar, weight: 5 },
       ],
+      prized: [...UNOWN_SPAWNS],
       special: [{ species: Species.Entei, weight: 10 }],
     },
     [TimeOfDay.Night]: {
@@ -116,6 +119,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Dunsparce, weight: 10 },
         { species: Species.Gligar, weight: 5 },
       ],
+      prized: [...UNOWN_SPAWNS],
       special: [{ species: Species.Entei, weight: 10 }],
     },
   });

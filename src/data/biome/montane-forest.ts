@@ -1,6 +1,6 @@
 import Biome, { TimeOfDay } from '../ids/biome';
 import { Species } from '../ids/species';
-import { registerSpawnPool } from './__create';
+import { UNOWN_SPAWNS, registerSpawnPool } from './__create';
 
 /**
  * MontaneForest spawn pool, grouped by day-cycle period and rarity band
@@ -18,6 +18,7 @@ export default function registerMontaneForestSpawns(): void {
         { species: Species.Heracross, weight: 5 },
         { species: Species.Stantler, weight: 5 },
       ],
+      prized: [...UNOWN_SPAWNS],
       special: [],
     },
     [TimeOfDay.Day]: {
@@ -32,6 +33,7 @@ export default function registerMontaneForestSpawns(): void {
         { species: Species.Heracross, weight: 5 },
         { species: Species.Stantler, weight: 5 },
       ],
+      prized: [...UNOWN_SPAWNS],
       special: [],
     },
     [TimeOfDay.Evening]: {
@@ -46,6 +48,7 @@ export default function registerMontaneForestSpawns(): void {
         { species: Species.Stantler, weight: 5 },
         { species: Species.Crobat, weight: 5 },
       ],
+      prized: [...UNOWN_SPAWNS],
       special: [],
     },
     [TimeOfDay.Night]: {
@@ -62,6 +65,7 @@ export default function registerMontaneForestSpawns(): void {
         { species: Species.Stantler, weight: 5 },
         { species: Species.Crobat, weight: 5 },
       ],
+      prized: [...UNOWN_SPAWNS],
       special: [],
     },
   });

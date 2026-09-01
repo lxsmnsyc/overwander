@@ -82,6 +82,12 @@ export const enum Statuses {
    * the immunities Normal and Fighting run into (Foresight)
    */
   Identified = 31,
+  /**
+   * The unit is asleep and stays asleep, without that stopping it
+   * acting (Comatose). Anything that preys on a sleeper reads it, and
+   * nothing wakes it: no timer runs it down and no cure takes it off
+   */
+  Comatose = 32,
 }
 
 /**

@@ -8,6 +8,7 @@ import type Families from '../ids/families';
 import type { Items } from '../ids/items';
 import type { Moves } from '../ids/moves';
 import type { Species } from '../ids/species';
+import { getBaseFormSpecies } from '../ids/species';
 
 /**
  * One way a species evolves: the target species and the required
@@ -189,6 +190,12 @@ let biomeIndex: Map<Biome, Species[]> | null = null;
 let familyIndex: Families[] | null = null;
 
 /**
+ * Lazily built base form -> every form of it index, invalidated by
+ * registration the way the others are
+ */
+let formIndex: Map<Species, Species[]> | null = null;
+
+/**
  * What each family is called, worked out the first time it is asked
  * for. See `getFamilyName`
  */
@@ -198,6 +205,7 @@ export function registerSpecies(species: Species, data: SpeciesData): void {
   SPECIES_MAP.set(species, data);
   biomeIndex = null;
   familyIndex = null;
+  formIndex = null;
   // A line that has just gained a member may have gained a new base
   // stage, and the name is that stage's
   familyNames.clear();
@@ -270,6 +278,29 @@ export function isBaseForm(species: Species): boolean {
  */
 export function getBaseForms(): Species[] {
   return [...SPECIES_MAP.keys()].filter((species) => isBaseForm(species));
+}
+
+/**
+ * Every registered form of whatever this is, its own default form
+ * first, in id order. A species with no variants answers a list of
+ * one, so a caller can ask without knowing which kind it holds
+ */
+export function getSpeciesForms(species: Species): Species[] {
+  if (formIndex == null) {
+    formIndex = new Map();
+
+    for (const one of SPECIES_MAP.keys()) {
+      const base = getBaseFormSpecies(one);
+      const held = formIndex.get(base);
+
+      if (held) {
+        held.push(one);
+      } else {
+        formIndex.set(base, [one]);
+      }
+    }
+  }
+  return formIndex.get(getBaseFormSpecies(species)) ?? [species];
 }
 
 export interface SpeciesAbilityPools {

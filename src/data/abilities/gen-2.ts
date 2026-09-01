@@ -118,4 +118,14 @@ export default function registerGen2Abilities(): void {
     name: 'Light Metal',
     description: 'Weighs half what it looks like.',
   });
+  // Unown
+  registerAbility(Abilities.QueenlyMajesty, {
+    name: 'Queenly Majesty',
+    description: 'Nothing on its side can be struck by a move that cuts ahead of the queue.',
+  });
+  registerAbility(Abilities.Comatose, {
+    name: 'Comatose',
+    description:
+      'Always asleep and still acting: no status lands on it, and whatever hunts a sleeper finds one.',
+  });
 }

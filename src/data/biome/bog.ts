@@ -1,6 +1,6 @@
 import Biome, { TimeOfDay } from '../ids/biome';
 import { Species } from '../ids/species';
-import { registerSpawnPool } from './__create';
+import { UNOWN_SPAWNS, registerSpawnPool } from './__create';
 
 /**
  * Bog spawn pool, grouped by day-cycle period and rarity band
@@ -27,6 +27,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Azumarill, weight: 5 },
         { species: Species.Yanma, weight: 5 },
       ],
+      prized: [...UNOWN_SPAWNS],
       special: [],
     },
     [TimeOfDay.Day]: {
@@ -49,6 +50,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Azumarill, weight: 5 },
         { species: Species.Yanma, weight: 5 },
       ],
+      prized: [...UNOWN_SPAWNS],
       special: [],
     },
     [TimeOfDay.Evening]: {
@@ -71,6 +73,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Azumarill, weight: 5 },
         { species: Species.Yanma, weight: 5 },
       ],
+      prized: [...UNOWN_SPAWNS],
       special: [],
     },
     [TimeOfDay.Night]: {
@@ -96,6 +99,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Azumarill, weight: 5 },
         { species: Species.Yanma, weight: 5 },
       ],
+      prized: [...UNOWN_SPAWNS],
       special: [],
     },
   });

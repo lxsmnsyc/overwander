@@ -79,11 +79,11 @@ export const enum Species {
   Egg = 100001,
   Substitute = 100002,
   /**
-   * TODO: reserved for forms, once any exist. A form's id is
-   * `1000000 + dexNumber * 100 + formIndex`, which keeps
-   * `Species === dexNumber` true of every base form, gives each
-   * species a hundred slots (Alcremie's 63 is the largest set the
-   * mainline prints) and sorts a species' forms after it for free.
+   * Forms live past a million, at `1000000 + dexNumber * 100 +
+   * formIndex`, which keeps `Species === dexNumber` true of every
+   * base form, gives each species a hundred slots (Alcremie's 63 is
+   * the largest set the mainline prints) and sorts a species' forms
+   * after it for free. The unowns are the first to use it.
    *
    * Nothing else may claim the band. An id reaches a player's rows,
    * so it cannot be renumbered afterwards
@@ -288,6 +288,39 @@ export const enum Species {
   Murkrow = 198,
   Slowking = 199,
   Misdreavus = 200,
+  /**
+   * The A form, and the base form the other twenty-seven are
+   * numbered off. Their ids are the reserved form band, so they
+   * sort straight after this one
+   */
+  Unown = 201,
+  UnownB = 1020101,
+  UnownC = 1020102,
+  UnownD = 1020103,
+  UnownE = 1020104,
+  UnownF = 1020105,
+  UnownG = 1020106,
+  UnownH = 1020107,
+  UnownI = 1020108,
+  UnownJ = 1020109,
+  UnownK = 1020110,
+  UnownL = 1020111,
+  UnownM = 1020112,
+  UnownN = 1020113,
+  UnownO = 1020114,
+  UnownP = 1020115,
+  UnownQ = 1020116,
+  UnownR = 1020117,
+  UnownS = 1020118,
+  UnownT = 1020119,
+  UnownU = 1020120,
+  UnownV = 1020121,
+  UnownW = 1020122,
+  UnownX = 1020123,
+  UnownY = 1020124,
+  UnownZ = 1020125,
+  UnownExclamation = 1020126,
+  UnownQuestion = 1020127,
   Wobbuffet = 202,
   Girafarig = 203,
   Pineco = 204,
@@ -338,4 +371,102 @@ export const enum Species {
   Lugia = 249,
   HoOh = 250,
   Celebi = 251,
+}
+
+/**
+ * Where form ids start. Below it an id is a dex number; at or above
+ * it an id is `SPECIES_FORM_BAND + dexNumber * FORMS_PER_SPECIES +
+ * formIndex`
+ */
+export const SPECIES_FORM_BAND = 1000000;
+
+/** How many slots each species is given in the band. */
+export const FORMS_PER_SPECIES = 100;
+
+/**
+ * The dex number an id belongs to: its own below the band, and the
+ * species it is a form of above it. Missingno, the egg and the
+ * substitute answer their own id, having no dex number to give
+ */
+export function speciesDexNumber(species: Species): number {
+  const id: number = species;
+
+  return id < SPECIES_FORM_BAND ? id : Math.floor((id - SPECIES_FORM_BAND) / FORMS_PER_SPECIES);
+}
+
+/** Which form of its species an id is, counting the default as 0. */
+export function speciesFormIndex(species: Species): number {
+  const id: number = species;
+
+  return id < SPECIES_FORM_BAND ? 0 : (id - SPECIES_FORM_BAND) % FORMS_PER_SPECIES;
+}
+
+/**
+ * The default form of whatever this is: itself for a base form, and
+ * the species it is a costume of for a variant. It works off the id
+ * alone because a base form's id **is** its dex number
+ */
+export function getBaseFormSpecies(species: Species): Species {
+  // tsc requires the assertion to produce a Species from the number;
+  // tsgolint resolves the const enum to number
+  // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+  return speciesDexNumber(species) as Species;
+}
+
+/**
+ * Every unown, in alphabet order, A first.
+ *
+ * One pokemon wearing twenty-eight faces, and the only species so far
+ * with forms at all. The list is here rather than beside the species
+ * data because the spawn pools and the dex both want it and neither
+ * should have to read the registry to get it
+ */
+export const UNOWN_FORMS: Species[] = [
+  Species.Unown,
+  Species.UnownB,
+  Species.UnownC,
+  Species.UnownD,
+  Species.UnownE,
+  Species.UnownF,
+  Species.UnownG,
+  Species.UnownH,
+  Species.UnownI,
+  Species.UnownJ,
+  Species.UnownK,
+  Species.UnownL,
+  Species.UnownM,
+  Species.UnownN,
+  Species.UnownO,
+  Species.UnownP,
+  Species.UnownQ,
+  Species.UnownR,
+  Species.UnownS,
+  Species.UnownT,
+  Species.UnownU,
+  Species.UnownV,
+  Species.UnownW,
+  Species.UnownX,
+  Species.UnownY,
+  Species.UnownZ,
+  Species.UnownExclamation,
+  Species.UnownQuestion,
+];
+
+/** The two marks the alphabet is followed by. */
+const UNOWN_MARKS = ['!', '?'];
+
+const UNOWN_LETTERS = new Map<Species, string>(
+  UNOWN_FORMS.map((species, at) => [
+    species,
+    at < 26 ? String.fromCharCode(65 + at) : UNOWN_MARKS[at - 26],
+  ]),
+);
+
+/**
+ * The character an unown is shaped like: a letter, and the two marks
+ * that come after Z. Null for anything that is not an unown, which is
+ * how a caller asks whether it is looking at one
+ */
+export function unownLetter(species: Species): string | null {
+  return UNOWN_LETTERS.get(species) ?? null;
 }

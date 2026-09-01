@@ -14,6 +14,7 @@
     "compact-sprites": "node scripts/compact-sprites.ts",
     "sprite-coats": "node scripts/sprite-coats.ts",
     "graft-walls": "node scripts/graft-walls.ts",
+    "apricorn-trees": "node scripts/apricorn-trees.ts",
     "item-icons": "node scripts/item-icons.ts",
     "import-sprites": "node scripts/import-sprites.ts",
     "test": "vitest run",

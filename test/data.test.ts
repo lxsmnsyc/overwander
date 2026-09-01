@@ -39,10 +39,12 @@ import Biome, {
   isWaterBiome,
 } from '../src/data/ids/biome';
 import {
+  APRICORNS,
   BALL_ITEMS,
   ItemFlags,
   ItemTypes,
   Items,
+  getApricornBall,
   getMachineItem,
   getMachineMove,
   isMachineItem,
@@ -356,7 +358,7 @@ registerItems();
 registerBiomeSpawns();
 
 /** Kurt's seven, which nothing sells and nothing hides in a stash. */
-const APRICORN_BALLS: Items[] = [
+const APRICORN_BALL_ITEMS: Items[] = [
   Items.LevelBall,
   Items.LureBall,
   Items.MoonBall,
@@ -2112,6 +2114,42 @@ describe('item data', () => {
     expect(isMarketable(Items.MasterBall)).toBe(false);
   });
 
+  it('pairs every apricorn with the ball its colour makes', () => {
+    expect(APRICORNS.length).toBe(7);
+
+    const balls = new Set<Items>();
+
+    for (const apricorn of APRICORNS) {
+      const data = getItemData(apricorn);
+      const ball = getApricornBall(apricorn);
+
+      expect(ball, data.name).not.toBeNull();
+
+      if (ball == null) {
+        continue;
+      }
+      // One colour, one ball, and no two colours the same one
+      expect(balls.has(ball), data.name).toBe(false);
+      balls.add(ball);
+
+      // An apricorn is a ball nobody has carved yet: nothing holds
+      // one, nothing uses one, and no counter lists one
+      expect(data.flags, data.name).toBe(0);
+      expect(data.buy, data.name).toBe(0);
+      expect(data.sell, data.name).toBe(0);
+      expect(data.name.endsWith(' Apricorn'), data.name).toBe(true);
+      // The line names the ball, so it is read out of the registry
+      // rather than typed twice
+      expect(data.description, data.name).toContain(getItemData(ball).name);
+    }
+
+    // The seven balls the seven colours make are Kurt's seven
+    expect([...balls].sort((one, other) => one - other)).toEqual(
+      [...APRICORN_BALL_ITEMS].sort((one, other) => one - other),
+    );
+    expect(getApricornBall(Items.PokeBall)).toBeNull();
+  });
+
   it("keeps Kurt's seven off every counter and out of every stash", () => {
     // They are turned out of apricorns rather than bought or found,
     // and the exclusion is a property of the data rather than a list
@@ -2127,7 +2165,7 @@ describe('item data', () => {
       ].flatMap((band) => band.map((entry) => entry.item)),
     );
 
-    for (const item of APRICORN_BALLS) {
+    for (const item of APRICORN_BALL_ITEMS) {
       const data = getItemData(item);
 
       expect(isMarketable(item), data.name).toBe(false);

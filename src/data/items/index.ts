@@ -1,3 +1,4 @@
+import registerApricorns from './apricorns';
 import registerBalls from './balls';
 import registerBattleItems from './battle-items';
 import registerBattleBerries from './berries';
@@ -46,6 +47,9 @@ export { WING_EFFORT, WING_STATS, isWing } from './wings';
  */
 export default function registerItems(): void {
   registerBalls();
+  // After the balls: an apricorn's line names the ball it becomes,
+  // and it reads that name out of the registry
+  registerApricorns();
   registerBattleBerries();
   registerMedicines();
   registerDrinks();

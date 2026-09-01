@@ -11,6 +11,7 @@ import {
   breedCatches as breedOnServerSide,
   buyFossil as buyFossilOnServerSide,
   buyFromVendor as buyOnServerSide,
+  carveApricorns as carveOnServerSide,
   channelAbility as channelOnServerSide,
   countVisit,
   groomCatch as groomOnServerSide,
@@ -542,6 +543,53 @@ async function buyFossilOnServer(
  * Resolves what came out, or null when he refuses — he is not
  * standing there, or the fossil is not in the bag
  */
+/**
+ * Hand Kurt a basket of one colour and take back the balls it makes.
+ *
+ * One apricorn is one ball and he charges nothing, so the only thing
+ * a player decides is how many to hand over. He is **not** once a
+ * window: what paces him is how many apricorns have been picked.
+ *
+ * Resolves the ball and how many were carved, or null when he refuses
+ * — he is not standing there, or the basket is more than the bag
+ * holds
+ */
+export async function carveApricorns(
+  snapshot: ChunkSnapshot,
+  cell: number,
+  item: Items,
+  amount: number,
+): Promise<{ ball: Items; amount: number } | null> {
+  return carveOnServer(
+    await getIdToken(),
+    snapshot.chunk.x,
+    snapshot.chunk.y,
+    cell,
+    item,
+    amount,
+    snapshot.offset,
+  );
+}
+
+async function carveOnServer(
+  token: string,
+  x: number,
+  y: number,
+  cell: number,
+  item: Items,
+  amount: number,
+  offset: number,
+): Promise<{ ball: Items; amount: number } | null> {
+  'use server';
+  const uid = await requireUid(token);
+
+  return countVisit(
+    uid,
+    Npc.Kurt,
+    await carveOnServerSide(uid, x, y, cell, item, amount, await syncServerClock(), offset),
+  );
+}
+
 export async function reviveFossil(
   snapshot: ChunkSnapshot,
   cell: number,

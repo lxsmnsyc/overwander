@@ -25,7 +25,7 @@ import Lairs, {
   getSpeciesLair,
 } from '../../src/data/overworld/lair';
 import Natures from '../../src/data/ids/natures';
-import { ItemTypes, Items } from '../../src/data/ids/items';
+import { APRICORNS, ItemTypes, Items } from '../../src/data/ids/items';
 import registerItems, { getItemData } from '../../src/data/items';
 import { isValuable } from '../../src/data/items/valuables';
 import {
@@ -171,6 +171,7 @@ import {
 import {
   MAX_BERRY_PICK,
   MIN_BERRY_PICK,
+  resolveApricornTree,
   resolveBerryPatch,
   resolveNest,
   resolvePhenomenon,
@@ -2390,6 +2391,21 @@ describe('world', () => {
       amount: MAX_BERRY_PICK,
     });
     expect(resolveBerryPatch(rolls([0.5, 0, 0.5]))?.amount).toBe(4);
+  });
+
+  it('bears one apricorn colour a tree, and a handful of it', () => {
+    const rolls = (values: number[]) => () => values.shift() ?? 0.999;
+
+    // No rarer colour to hunt: an apricorn is a ball nobody has
+    // carved yet, and the seven balls are worth about the same as
+    // each other, so the first draw is the colour and every colour is
+    // equally likely
+    expect(resolveApricornTree(rolls([0, 0])).item).toBe(APRICORNS[0]);
+    expect(resolveApricornTree(rolls([0.999, 0])).item).toBe(APRICORNS[APRICORNS.length - 1]);
+
+    // What varies is how good a season it had, the way a bush's does
+    expect(resolveApricornTree(rolls([0, 0])).amount).toBe(MIN_BERRY_PICK);
+    expect(resolveApricornTree(rolls([0, 0.999])).amount).toBe(MAX_BERRY_PICK);
   });
 
   it('resolves a phenomenon into a meeting, a find or an egg', () => {

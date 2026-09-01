@@ -9,6 +9,7 @@ import type { SpawnEntry } from '../data/biome';
 import type Biome from '../data/ids/biome';
 import type { TimeOfDay } from '../data/ids/biome';
 import EggGroups from '../data/ids/egg-groups';
+import { APRICORNS } from '../data/ids/items';
 import type Families from '../data/ids/families';
 import type { Species } from '../data/ids/species';
 import BERRY_POOL from '../data/overworld/berry-pool';
@@ -90,6 +91,23 @@ export function resolveBerryPatch(random: () => number): ItemStack | null {
   if (item == null) {
     return null;
   }
+  return {
+    item,
+    amount: MIN_BERRY_PICK + Math.floor(random() * (MAX_BERRY_PICK - MIN_BERRY_PICK + 1)),
+  };
+}
+
+/**
+ * What one apricorn tree is carrying.
+ *
+ * Every colour is equally likely: an apricorn is a ball nobody has
+ * carved yet, and the seven balls are worth about the same as each
+ * other, so there is no rarer colour to hunt. What varies is how good
+ * a season the tree had, the way a berry patch's does
+ */
+export function resolveApricornTree(random: () => number): ItemStack {
+  const item = APRICORNS[Math.floor(random() * APRICORNS.length)];
+
   return {
     item,
     amount: MIN_BERRY_PICK + Math.floor(random() * (MAX_BERRY_PICK - MIN_BERRY_PICK + 1)),

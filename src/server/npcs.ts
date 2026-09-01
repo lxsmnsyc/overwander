@@ -17,7 +17,7 @@ import Npc, {
 import { FOSSIL_REVIVE_LEVEL, getFossilPrice } from '../data/overworld/fossil';
 import { VENDOR_TRADE_LIMIT, sellPrice } from '../data/overworld/vendor';
 import AleaRNG from '../core/alea';
-import { Balls, Items } from '../data/ids/items';
+import { Balls, Items, getApricornBall } from '../data/ids/items';
 import type { Moves } from '../data/ids/moves';
 import type { Species } from '../data/ids/species';
 import { getItemData } from '../data/items';
@@ -889,6 +889,53 @@ export interface RevivedFossil {
  * Resolves what came out, or null when he is not standing there, the
  * item is not a fossil, or the player is not carrying one
  */
+/**
+ * Kurt's counter: apricorns in, the balls their colours make out.
+ *
+ * One apricorn is one ball and there is no fee, since the picking was
+ * the price. He works through as many of one colour as a player is
+ * carrying, so a basket of nine reds is nine Level Balls in one
+ * handover rather than nine walks back.
+ *
+ * The apricorns leave the bag first and go back if the balls are
+ * never granted: apricorns spent on nothing is the one outcome that
+ * cannot be walked off.
+ *
+ * Resolves how many were carved, or null when he is not standing
+ * there, the item is not an apricorn, or the player is not carrying
+ * that many
+ */
+export async function carveApricorns(
+  uid: string,
+  x: number,
+  y: number,
+  cell: number,
+  item: Items,
+  amount: number,
+  now: number,
+  offset: number,
+): Promise<{ ball: Items; amount: number } | null> {
+  const snapshot = await resolveNpc(x, y, cell, now, offset, Npc.Kurt);
+  const ball = getApricornBall(item);
+  const carving = Math.floor(amount);
+
+  if (snapshot == null || ball == null || carving < 1) {
+    return null;
+  }
+  if (!(await consumeItem(uid, item, carving))) {
+    return null;
+  }
+
+  try {
+    await grantItem(uid, ball, carving);
+    return { ball, amount: carving };
+  } catch (error) {
+    // The apricorns bought nothing, so the player keeps them
+    await grantItem(uid, item, carving);
+    throw error;
+  }
+}
+
 export async function reviveFossil(
   uid: string,
   x: number,

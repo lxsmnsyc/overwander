@@ -98,6 +98,13 @@ const enum Npc {
    * player met it
    */
   Channeler = 12,
+  /**
+   * Takes apricorns and carves them into the balls their colours
+   * make: one apricorn, one ball, and he works through as many as a
+   * player is carrying. He charges nothing, since the picking is the
+   * price, and his seven balls are sold nowhere else at all
+   */
+  Kurt = 13,
 }
 
 export default Npc;
@@ -122,6 +129,7 @@ export const NPCS: Npc[] = [
   Npc.MoveTutor,
   Npc.Chef,
   Npc.Channeler,
+  Npc.Kurt,
 ];
 
 /**
@@ -149,6 +157,7 @@ const NPC_CHARSETS: Partial<Record<Npc, string[]>> = {
   ],
   [Npc.Chef]: ['characters/frlg/chef'],
   [Npc.Channeler]: ['characters/lgpe/channeler'],
+  [Npc.Kurt]: ['characters/hgss/kurt'],
 };
 
 /**
@@ -190,6 +199,7 @@ export const NPC_NAMES: Record<Npc, string> = {
   [Npc.Trainer]: 'Trainer',
   [Npc.Chef]: 'Chef',
   [Npc.Channeler]: 'Channeler',
+  [Npc.Kurt]: 'Kurt',
 };
 
 /**

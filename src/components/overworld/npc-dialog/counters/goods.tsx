@@ -109,6 +109,38 @@ export function ReviveCounter(props: ReviveCounterProps): JSX.Element {
   );
 }
 
+export interface KurtCounterProps {
+  /** The apricorns in the player's own bag, which is all he works on */
+  apricorns: InventoryEntry[];
+}
+
+/**
+ * Kurt's bench. What he takes is in the bag rather than in a crate,
+ * so what is on the counter is the player's own picking, and the
+ * basket that decides how many is a window of its own the way the
+ * vendor's crate is
+ */
+export function KurtCounter(props: KurtCounterProps): JSX.Element {
+  const carrying = (): number => props.apricorns.reduce((total, entry) => total + entry.amount, 0);
+
+  return (
+    <DialogSection class={CENTRED}>
+      <Show
+        when={props.apricorns.length > 0}
+        fallback={<Note>You are carrying nothing he can carve.</Note>}
+      >
+        <Row class="justify-center">
+          <Badge tone="leaf">{carrying()} apricorns</Badge>
+        </Row>
+        {/* What each colour makes, since the pairing is the whole of
+            what a player decides: the basket is opened from the bar
+            below, the way his crate is */}
+        <Note>One ball for each, and the colour decides which.</Note>
+      </Show>
+    </DialogSection>
+  );
+}
+
 export function VendorCounter(props: { gold: number }): JSX.Element {
   return (
     <DialogSection title="Trading" class={CENTRED}>

@@ -13,6 +13,7 @@ import {
   breed,
   buyFossil,
   buyFromVendor,
+  carveApricorns,
   channelAbility,
   groomCatch,
   hasVisited,
@@ -23,8 +24,9 @@ import {
   visitNurse,
 } from '../../../auth/npcs';
 import type { Items } from '../../../data/ids/items';
+import { getApricornBall } from '../../../data/ids/items';
 import type { Moves } from '../../../data/ids/moves';
-import { isFossil } from '../../../data/items';
+import { getItemData, isFossil } from '../../../data/items';
 
 import { getFossilPrice } from '../../../data/overworld/fossil';
 import { Species } from '../../../data/ids/species';
@@ -59,7 +61,7 @@ import {
   GroomerCounter,
   NurseCounter,
 } from './counters/care';
-import { FossilCounter, ReviveCounter, VendorCounter } from './counters/goods';
+import { FossilCounter, KurtCounter, ReviveCounter, VendorCounter } from './counters/goods';
 import { ReminderCounter, TutorCounter } from './counters/moves';
 import { NPC_QUOTES, asParent, priceOf } from './shared';
 
@@ -275,8 +277,59 @@ function NpcCounter(
   const fossils = (): InventoryEntry[] =>
     (props.bag.latest ?? []).filter((entry) => isFossil(entry.item) && entry.amount > 0);
 
+  /** What the apricorn on this square becomes, for the tray to say. */
+  const ballName = (item: Items): string => {
+    const ball = getApricornBall(item);
+
+    return ball == null ? '' : getItemData(ball).name;
+  };
+
+  const apricorns = (): InventoryEntry[] =>
+    (props.bag.latest ?? []).filter(
+      (entry) => getApricornBall(entry.item) != null && entry.amount > 0,
+    );
+
+  /** Whether Kurt's basket is open. */
+  const [carving, setCarving] = createSignal(false);
+
+  /**
+   * Hand him a basket of one colour. The bag is re-read afterwards
+   * the way a trade re-reads it: the apricorns went from it and the
+   * balls arrived in it
+   */
+  const carve = (item: Items, amount: number): void => {
+    const snapshot = props.snapshot;
+    const standing = props.standing;
+
+    if (snapshot == null || standing == null) {
+      return;
+    }
+    setStatus(null);
+    setBusy(true);
+    carveApricorns(snapshot, standing[0], item, amount)
+      .then((done) => {
+        setBusy(false);
+
+        if (done == null) {
+          setStatus('He turned the basket over and handed it straight back.');
+          return;
+        }
+        setStatus(
+          `He carved them one after another. (+${done.amount} ${getItemData(done.ball).name})`,
+        );
+        props.onTraded();
+        props.onServed();
+        props.onChange?.();
+      })
+      .catch(() => {
+        setBusy(false);
+        setStatus('The bench went quiet. Nothing changed hands.');
+      });
+  };
+
   const close = (): void => {
     setStatus(null);
+    setCarving(false);
     setChosen([]);
     setCounter(null);
     forget();
@@ -710,6 +763,20 @@ function NpcCounter(
         </Button>
       );
     }
+    if (npc === Npc.Kurt) {
+      return (
+        <Button
+          tone="primary"
+          disabled={busy() || apricorns().length === 0}
+          onClick={() => {
+            setStatus(null);
+            setCarving(true);
+          }}
+        >
+          Carve
+        </Button>
+      );
+    }
     if (npc !== Npc.Vendor && npc !== Npc.Chef) {
       // The daycare lady, the groomer, the channeler, the maniac and
       // the scientist act the moment something is pressed, so there is
@@ -902,6 +969,10 @@ function NpcCounter(
                 <ReviveCounter fossils={fossils()} busy={busy()} onRevive={openRock} />
               </Show>
 
+              <Show when={standing()[1] === Npc.Kurt}>
+                <KurtCounter apricorns={apricorns()} />
+              </Show>
+
               <Show when={standing()[1] === Npc.Vendor || standing()[1] === Npc.Chef}>
                 <VendorCounter gold={props.gold.latest ?? 0} />
               </Show>
@@ -1020,6 +1091,47 @@ function NpcCounter(
         onPick={(item, amount) => {
           if (item != null && amount > 0) {
             trade(item, amount, counter() !== 'sell');
+          }
+        }}
+      />
+
+      {/* His basket: the same tray the crate is traded from, opened on
+          the player's own apricorns. A square pressed asks how many,
+          which is the only thing there is to decide — he charges
+          nothing, and the colour has already settled which ball */}
+      <InventoryPicker
+        open={carving()}
+        onClose={() => {
+          setCarving(false);
+        }}
+        player={props.player}
+        title="Carve"
+        terse
+        description="Press an apricorn, then say how many."
+        entries={props.bag.latest}
+        disabled={busy()}
+        value={null}
+        counts
+        empty="You are carrying nothing he can carve."
+        filter={(entry) => getApricornBall(entry.item) != null}
+        // What it becomes, short enough for the corner of a square
+        note={(entry) => ballName(entry.item)}
+        card={(entry) => <Detail label="Becomes">{ballName(entry.item)}</Detail>}
+        // He works through as many as are in the basket, so the bag is
+        // the only limit there is
+        most={(entry) => entry.amount}
+        sum={(item, amount) => (
+          <Meta>
+            {amount} × {describeItem(item)} ={' '}
+            <strong>
+              {amount} {ballName(item)}
+            </strong>
+          </Meta>
+        )}
+        onPick={(item, amount) => {
+          if (item != null && amount > 0) {
+            setCarving(false);
+            carve(item, amount);
           }
         }}
       />

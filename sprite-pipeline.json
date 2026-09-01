@@ -1009,6 +1009,18 @@
         "bytes": 1270
       }
     },
+    "public/sprites/overworld/characters/hgss/kurt/image.png": {
+      "digest": "ebf7cd0bf0309320",
+      "bytes": 948,
+      "width": 54,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-01T18:05:32Z",
+        "as": "already compact",
+        "was": 948,
+        "bytes": 948
+      }
+    },
     "public/sprites/overworld/characters/hgss/lance-2/image.png": {
       "digest": "262fb3f8a70a4126",
       "bytes": 1361,
@@ -1667,6 +1679,90 @@
         "as": "already compact",
         "was": 11222,
         "bytes": 11222
+      }
+    },
+    "public/sprites/overworld/landmarks-apricorn/black/image.png": {
+      "digest": "225f3d10430aa54d",
+      "bytes": 810,
+      "width": 32,
+      "height": 78,
+      "compact": {
+        "at": "2026-09-01T18:33:32Z",
+        "as": "already compact",
+        "was": 810,
+        "bytes": 810
+      }
+    },
+    "public/sprites/overworld/landmarks-apricorn/blue/image.png": {
+      "digest": "c3ce9564bdf520be",
+      "bytes": 810,
+      "width": 32,
+      "height": 78,
+      "compact": {
+        "at": "2026-09-01T18:33:32Z",
+        "as": "already compact",
+        "was": 810,
+        "bytes": 810
+      }
+    },
+    "public/sprites/overworld/landmarks-apricorn/green/image.png": {
+      "digest": "75d2a8e6488721b0",
+      "bytes": 810,
+      "width": 32,
+      "height": 78,
+      "compact": {
+        "at": "2026-09-01T18:33:32Z",
+        "as": "already compact",
+        "was": 810,
+        "bytes": 810
+      }
+    },
+    "public/sprites/overworld/landmarks-apricorn/pink/image.png": {
+      "digest": "171e128c84ea64cb",
+      "bytes": 810,
+      "width": 32,
+      "height": 78,
+      "compact": {
+        "at": "2026-09-01T18:33:32Z",
+        "as": "already compact",
+        "was": 810,
+        "bytes": 810
+      }
+    },
+    "public/sprites/overworld/landmarks-apricorn/red/image.png": {
+      "digest": "207a5844a77ea8fd",
+      "bytes": 810,
+      "width": 32,
+      "height": 78,
+      "compact": {
+        "at": "2026-09-01T18:33:32Z",
+        "as": "already compact",
+        "was": 810,
+        "bytes": 810
+      }
+    },
+    "public/sprites/overworld/landmarks-apricorn/white/image.png": {
+      "digest": "9a77d9563e083401",
+      "bytes": 810,
+      "width": 32,
+      "height": 78,
+      "compact": {
+        "at": "2026-09-01T18:33:32Z",
+        "as": "already compact",
+        "was": 810,
+        "bytes": 810
+      }
+    },
+    "public/sprites/overworld/landmarks-apricorn/yellow/image.png": {
+      "digest": "f224a18a29d1d18a",
+      "bytes": 810,
+      "width": 32,
+      "height": 78,
+      "compact": {
+        "at": "2026-09-01T18:33:32Z",
+        "as": "already compact",
+        "was": 810,
+        "bytes": 810
       }
     },
     "public/sprites/overworld/landmarks-berry/aguav/image.png": {

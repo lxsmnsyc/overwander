@@ -809,6 +809,45 @@ export const enum Items {
   // Celebi's relic, numbered after the list rather than beside the
   // Old Sea Map: 54 was spoken for
   GSBall = 382,
+
+  /**
+   * The seven apricorns, picked off a tree and carried to Kurt, who
+   * turns each into the ball its colour makes. They do nothing else:
+   * an apricorn is a ball that has not been carved yet
+   */
+  RedApricorn = 383,
+  BlueApricorn = 384,
+  YellowApricorn = 385,
+  GreenApricorn = 386,
+  PinkApricorn = 387,
+  WhiteApricorn = 388,
+  BlackApricorn = 389,
+}
+
+/**
+ * Which ball each apricorn is carved into, in the mainline's own
+ * pairing. It is read both ways — a basket names the ball it would
+ * become, and a ball names the apricorn it wants — so the reverse is
+ * derived rather than written twice
+ */
+export const APRICORN_BALLS: Partial<Record<number, Items>> = {
+  [Items.RedApricorn]: Items.LevelBall,
+  [Items.BlueApricorn]: Items.LureBall,
+  [Items.YellowApricorn]: Items.MoonBall,
+  [Items.GreenApricorn]: Items.FriendBall,
+  [Items.PinkApricorn]: Items.LoveBall,
+  [Items.WhiteApricorn]: Items.FastBall,
+  [Items.BlackApricorn]: Items.HeavyBall,
+};
+
+/** Every apricorn, in the order their colours are listed above. */
+export const APRICORNS: Items[] = (Object.keys(APRICORN_BALLS).map(Number) as Items[]).sort(
+  (one, other) => one - other,
+);
+
+/** The ball this apricorn becomes, or null for anything that is not one. */
+export function getApricornBall(item: Items): Items | null {
+  return APRICORN_BALLS[item] ?? null;
 }
 
 /**

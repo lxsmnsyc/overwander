@@ -19,6 +19,7 @@ import { asOffset, toLocalISO } from '../auth/local-time';
 import { Acquisition, asCaughtPokemon } from '../auth/caught-record';
 import { isEggRecord, isFavoriteRecord } from './catch-fields';
 import { BASE_FRIENDSHIP } from '../data/constants/friendship';
+import { opensTradeEvolution } from '../data/species';
 import { readCaughtIn, updateCaughtIn } from './caught-io';
 import { type Tx, newDocId, tx } from './db';
 import { readStackIn, spendStackIn, writeStackIn } from './stacks';
@@ -382,8 +383,7 @@ export async function claimAuction(
         // the other way but gold, so the lines that name a partner
         // stay shut
         traded: true,
-        tradedAs: record.species,
-        tradedFor: null,
+        canEvolve: opensTradeEvolution(record.species, null),
       });
     }
 

@@ -1,5 +1,12 @@
 import { type SupabaseClient, createClient } from '@supabase/supabase-js';
 import postgres from 'postgres';
+import registerGameData from '../../src/data';
+
+// The server functions under test read the registries: a trade asks
+// what the handover opens, and nothing is queryable until this has
+// run. Here rather than per file, since every case reaches a server
+// function through this one
+registerGameData();
 
 /**
  * What the suite's clients believe about the schema: any table, rows

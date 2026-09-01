@@ -45,8 +45,8 @@ async function plantMachop(against: Species | null): Promise<void> {
       species: Species.Machop,
       level: 28,
       traded: against != null,
-      traded_as: against == null ? null : Species.Machop,
-      traded_for: against,
+      // A Machop has no trade evolution, so a swap earns it nothing
+      can_evolve: false,
     })}
   `;
 }
@@ -83,8 +83,7 @@ describe('a trade and the stage it was made at', () => {
         species: Species.Machoke,
         level: 28,
         traded: true,
-        traded_as: Species.Machoke,
-        traded_for: Species.Abra,
+        can_evolve: true,
       })}
     `;
 

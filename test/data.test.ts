@@ -229,6 +229,7 @@ import {
 import { TYPE_BOOSTERS, TYPE_BOOSTER_PRICE } from '../src/data/items/type-boosters';
 import {
   SPECIES_DAY_WEIGHT_BOOST,
+  coversHandover,
   getAvailableEvolutions,
   getBaseForms,
   getBaseSpecies,
@@ -246,6 +247,7 @@ import {
   isBaseForm,
   isFeaturedSpecies,
   meetsEvolutionCriteria,
+  opensTradeEvolution,
   registerSpecies,
 } from '../src/data/species';
 import { registerSpecies as registerSpeciesData } from '../src/data/species/__create';
@@ -1172,8 +1174,7 @@ describe('evolution data', () => {
     const context = {
       carried: new Set<Items>(),
       held: new Set<Items>(),
-      tradedAs: null,
-      tradedFor: null,
+      canEvolve: false,
       stats: EVEN_STATS,
       friendship: BASE_FRIENDSHIP,
       time: TimeOfDay.Day,
@@ -1191,8 +1192,7 @@ describe('evolution data', () => {
     const context = {
       level: 50,
       held: new Set<Items>(),
-      tradedAs: null,
-      tradedFor: null,
+      canEvolve: false,
       stats: EVEN_STATS,
       friendship: BASE_FRIENDSHIP,
       time: TimeOfDay.Day,
@@ -1224,8 +1224,7 @@ describe('evolution data', () => {
     const context = {
       level: 100,
       carried: new Set([Items.FireStone]),
-      tradedAs: Species.Machoke,
-      tradedFor: null,
+      canEvolve: true,
       stats: EVEN_STATS,
       friendship: BASE_FRIENDSHIP,
       time: TimeOfDay.Day,
@@ -1265,6 +1264,26 @@ describe('evolution data', () => {
     ).toEqual([{ species: Species.Machamp, method: EvolutionMethod.Trade }]);
   });
 
+  it('settles what a handover opens at the handover itself', () => {
+    // The question the flag answers, asked where it is asked: it has
+    // to have changed hands as what it is now. Four Gen 1 lines evolve
+    // by trade and every one sits a level evolution above the stage
+    // that is usually traded
+    for (const [below, at] of [
+      [Species.Machop, Species.Machoke],
+      [Species.Abra, Species.Kadabra],
+      [Species.Geodude, Species.Graveler],
+      [Species.Gastly, Species.Haunter],
+    ] as const) {
+      expect(opensTradeEvolution(at, null)).toBe(true);
+      expect(opensTradeEvolution(below, null)).toBe(false);
+    }
+
+    // A species with no trade evolution never earns it, whatever it
+    // was swapped for
+    expect(opensTradeEvolution(Species.Pidgey, Species.Machoke)).toBe(false);
+  });
+
   it('offers a trade evolution only for the handover it was made at', () => {
     const context = {
       level: 100,
@@ -1281,8 +1300,7 @@ describe('evolution data', () => {
       getAvailableEvolutions({
         species: Species.Machoke,
         ...context,
-        tradedAs: null,
-        tradedFor: null,
+        canEvolve: false,
         stats: EVEN_STATS,
         friendship: BASE_FRIENDSHIP,
         time: TimeOfDay.Day,
@@ -1292,8 +1310,7 @@ describe('evolution data', () => {
       getAvailableEvolutions({
         species: Species.Machoke,
         ...context,
-        tradedAs: Species.Machoke,
-        tradedFor: null,
+        canEvolve: true,
         stats: EVEN_STATS,
         friendship: BASE_FRIENDSHIP,
         time: TimeOfDay.Day,
@@ -1307,8 +1324,7 @@ describe('evolution data', () => {
       getAvailableEvolutions({
         species: Species.Machoke,
         ...context,
-        tradedAs: Species.Machop,
-        tradedFor: null,
+        canEvolve: false,
         stats: EVEN_STATS,
         friendship: BASE_FRIENDSHIP,
         time: TimeOfDay.Day,
@@ -1317,17 +1333,16 @@ describe('evolution data', () => {
 
     // The other three Gen 1 lines have the same shape, and every one
     // of them sits a level evolution above the stage that is traded
-    for (const [below, at, into] of [
-      [Species.Abra, Species.Kadabra, Species.Alakazam],
-      [Species.Geodude, Species.Graveler, Species.Golem],
-      [Species.Gastly, Species.Haunter, Species.Gengar],
+    for (const [at, into] of [
+      [Species.Kadabra, Species.Alakazam],
+      [Species.Graveler, Species.Golem],
+      [Species.Haunter, Species.Gengar],
     ] as const) {
       expect(
         getAvailableEvolutions({
           species: at,
           ...context,
-          tradedAs: below,
-          tradedFor: null,
+          canEvolve: false,
           stats: EVEN_STATS,
           friendship: BASE_FRIENDSHIP,
           time: TimeOfDay.Day,
@@ -1337,8 +1352,7 @@ describe('evolution data', () => {
         getAvailableEvolutions({
           species: at,
           ...context,
-          tradedAs: at,
-          tradedFor: null,
+          canEvolve: true,
           stats: EVEN_STATS,
           friendship: BASE_FRIENDSHIP,
           time: TimeOfDay.Day,
@@ -1366,26 +1380,18 @@ describe('evolution data', () => {
       time: TimeOfDay.Day,
     };
 
-    // Traded, at the right stage, for the wrong pokemon
-    expect(
-      meetsEvolutionCriteria(line, {
-        ...context,
-        tradedAs: Species.Machoke,
-        tradedFor: Species.Abra,
-      }),
-    ).toBe(false);
+    // The partner is read where the swap happens, since it is the one
+    // moment both halves are in hand. Machamp is stood in for here
+    // because nothing registered names a partner yet
+    expect(coversHandover(line, Species.Abra)).toBe(false);
     // Traded for nothing at all, which is what a sale is
-    expect(
-      meetsEvolutionCriteria(line, { ...context, tradedAs: Species.Machoke, tradedFor: null }),
-    ).toBe(false);
+    expect(coversHandover(line, null)).toBe(false);
     // And the one handover it asked for
-    expect(
-      meetsEvolutionCriteria(line, {
-        ...context,
-        tradedAs: Species.Machoke,
-        tradedFor: Species.Gastly,
-      }),
-    ).toBe(true);
+    expect(coversHandover(line, Species.Gastly)).toBe(true);
+
+    // Whatever the swap decided is all the criteria read afterwards
+    expect(meetsEvolutionCriteria(line, { ...context, canEvolve: true })).toBe(true);
+    expect(meetsEvolutionCriteria(line, { ...context, canEvolve: false })).toBe(false);
 
     // A cord replaces a handover, and what this is waiting for is not
     // a handover but a particular pokemon. Nothing in a bag is one
@@ -1393,8 +1399,7 @@ describe('evolution data', () => {
       meetsEvolutionCriteria(line, {
         ...context,
         carried: new Set([Items.LinkingCord]),
-        tradedAs: null,
-        tradedFor: null,
+        canEvolve: false,
       }),
     ).toBe(false);
   });
@@ -1403,8 +1408,7 @@ describe('evolution data', () => {
     const context = {
       level: 100,
       held: new Set<Items>(),
-      tradedAs: null,
-      tradedFor: null,
+      canEvolve: false,
       stats: EVEN_STATS,
       friendship: BASE_FRIENDSHIP,
       time: TimeOfDay.Day,
@@ -1440,8 +1444,7 @@ describe('evolution data', () => {
         level: 100,
         carried,
         held: new Set(),
-        tradedAs: null,
-        tradedFor: null,
+        canEvolve: false,
         stats: EVEN_STATS,
         friendship: BASE_FRIENDSHIP,
         time: TimeOfDay.Day,
@@ -1456,8 +1459,7 @@ describe('evolution data', () => {
       level: 20,
       carried: new Set<Items>(),
       held: new Set<Items>(),
-      tradedAs: null,
-      tradedFor: null,
+      canEvolve: false,
       friendship: BASE_FRIENDSHIP,
       time: TimeOfDay.Day,
     };
@@ -1485,8 +1487,7 @@ describe('evolution data', () => {
       level: 100,
       carried: new Set<Items>(),
       held: new Set<Items>(),
-      tradedAs: null,
-      tradedFor: null,
+      canEvolve: false,
       stats: EVEN_STATS,
       time: TimeOfDay.Day,
     };
@@ -1505,8 +1506,7 @@ describe('evolution data', () => {
       level: 100,
       carried: new Set<Items>(),
       held: new Set<Items>(),
-      tradedAs: null,
-      tradedFor: null,
+      canEvolve: false,
       stats: EVEN_STATS,
       friendship: EVOLUTION_FRIENDSHIP,
     };
@@ -1542,8 +1542,7 @@ describe('evolution data', () => {
           level: 100,
           carried: new Set(),
           held: new Set(),
-          tradedAs: Species.Machoke,
-          tradedFor: null,
+          canEvolve: true,
           stats: EVEN_STATS,
           friendship: BASE_FRIENDSHIP,
           time: TimeOfDay.Day,

@@ -37,17 +37,16 @@ export interface EvolutionContext {
   carried: ReadonlySet<Items>;
   held: ReadonlySet<Items>;
   /**
-   * What it was when it last changed hands, and what came the other
-   * way. Both null for a pokemon that never has.
+   * Whether a handover has already met the condition a trade
+   * evolution asks for.
    *
    * The mainline evolves one **during** the trade, which is a moment
    * this game has nowhere to put: an evolution here is something a
    * player asks for from the catch sheet. So a handover opens the
-   * evolution rather than performing it, and the record keeps enough
-   * of that handover to say which evolution it opened
+   * evolution rather than performing it, and the answer is worked out
+   * once, there, by `opensTradeEvolution`
    */
-  tradedAs: Species | null;
-  tradedFor: Species | null;
+  canEvolve: boolean;
   /**
    * What its stats actually come to, level and values and nature
    * included, rather than its species' base numbers. Only the pair a
@@ -68,8 +67,9 @@ export interface EvolutionContext {
 }
 
 /**
- * Whether the handover this pokemon has already been through is the
- * one this evolution is asking for.
+ * Whether a handover of this species, against whatever came the other
+ * way, opens one of its trade evolutions. Asked at the handover, and
+ * the answer is the whole of what the record keeps.
  *
  * Two questions, and a bare "has been traded" answers neither. It has
  * to have changed hands **as what it is now**: four Gen 1 lines evolve
@@ -78,13 +78,27 @@ export interface EvolutionContext {
  * and then levelled is a Machoke nobody ever traded. And where the
  * evolution names a partner it has to be **what came back**, which is
  * a fact about somebody else's pokemon and the only one of its kind in
- * the family
+ * the family.
+ *
+ * One answer covers every trade evolution a species has, which is
+ * enough while no species has two of them
  */
-export function coversTrade(evolution: EvolutionData, context: EvolutionContext): boolean {
-  if (context.tradedAs !== context.species) {
-    return false;
-  }
-  return evolution.partner == null || context.tradedFor === evolution.partner;
+export function opensTradeEvolution(species: Species, partner: Species | null): boolean {
+  return (getSpeciesData(species).evolvesInto ?? []).some((evolution) =>
+    coversHandover(evolution, partner),
+  );
+}
+
+/**
+ * Whether this one evolution is what the handover covered. Split out
+ * so the partner rule can be read on its own: nothing registered
+ * names a partner yet, so the line above can never exercise it
+ */
+export function coversHandover(evolution: EvolutionData, partner: Species | null): boolean {
+  return (
+    (evolution.method & EvolutionMethod.Trade) !== 0 &&
+    (evolution.partner == null || evolution.partner === partner)
+  );
 }
 
 /**
@@ -142,7 +156,7 @@ export function meetsEvolutionCriteria(
   }
   if (
     (method & EvolutionMethod.Trade) !== 0 &&
-    !coversTrade(evolution, context) &&
+    !context.canEvolve &&
     !pullsCord(evolution, context)
   ) {
     return false;
@@ -220,7 +234,7 @@ export function getAvailableEvolutions(context: EvolutionContext): EvolutionData
  * Cord instead. It is answered from that one fact rather than from a
  * whole context, because the caller reads the bag for whatever comes
  * back from here and cannot know what to read until it does — see
- * `coversTrade` for who works the fact out
+ * `opensTradeEvolution` for who works the fact out
  */
 export function getConsumedItem(evolution: EvolutionData, covered = false): Items | null {
   const { method } = evolution;

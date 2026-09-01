@@ -6,12 +6,7 @@ import { getTimeOfDay } from '../data/ids/biome';
 import type { Items } from '../data/ids/items';
 import type { Species } from '../data/ids/species';
 import type { EvolutionContext } from '../data/species';
-import {
-  coversTrade,
-  getAvailableEvolutions,
-  getConsumedItem,
-  getSpeciesData,
-} from '../data/species';
+import { getAvailableEvolutions, getConsumedItem, getSpeciesData } from '../data/species';
 import { Metric } from '../auth/quest-record';
 import { isEggRecord, isGuardedRecord } from './catch-fields';
 import { recordCaughtSpecies } from './pokedex';
@@ -21,6 +16,7 @@ import { readCaughtIn, updateCaughtIn } from './caught-io';
 import { tx } from './db';
 import { isCatchLocked } from './locks';
 import { asNumber, asNumberArray } from './read';
+import { asBoolean } from '../auth/__normalize';
 
 /**
  * Evolving, written with admin credentials. An evolution turns a
@@ -79,10 +75,9 @@ export default async function evolveCatch(
       // same row the species change is written back to
       // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
       held: new Set(asNumberArray(caught.items) as Items[]),
-      // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
-      tradedAs: caught.tradedAs == null ? null : (asNumber(caught.tradedAs) as Species),
-      // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
-      tradedFor: caught.tradedFor == null ? null : (asNumber(caught.tradedFor) as Species),
+      // Settled at the handover rather than re-read here: the server
+      // wrote it, so a client saying it was traded changes nothing
+      canEvolve: asBoolean(caught.canEvolve),
       // Derived from the stored record rather than reported: what a
       // Tyrogue becomes is decided by the numbers the server holds
       stats: getStats(asCaughtPokemon(caught)),
@@ -94,7 +89,7 @@ export default async function evolveCatch(
     // What is spent as well as what is allowed: a handover that does
     // not cover this evolution pays a Linking Cord for the half it
     // would have covered
-    const consumed = getConsumedItem(evolution, coversTrade(evolution, context));
+    const consumed = getConsumedItem(evolution, context.canEvolve);
     // Only the item this evolution actually needs is read; the rest
     // of the bag has no bearing on the criteria
     let stock = 0;
@@ -125,6 +120,10 @@ export default async function evolveCatch(
 
     await updateCaughtIn(transaction, catchId, {
       species: into,
+      // Spent by the evolution it opened, and cleared by any other
+      // change of shape: a handover earned by one species is never
+      // read by the next one up
+      canEvolve: false,
       // No Gen 1 line evolves into a legendary, so this changes
       // nothing today. It is written anyway because the day a line
       // does, a silent wrong answer here would be very hard to see

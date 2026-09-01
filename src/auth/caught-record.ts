@@ -104,18 +104,17 @@ export interface CaughtPokemon {
    */
   traded: boolean;
   /**
-   * What it was at that handover, and what came the other way. The
-   * pair is what opens a trade evolution — see
-   * `meetsEvolutionCriteria` — because `traded` alone answers neither
-   * question the mainline asks: a Machop traded and then levelled is
-   * not a Machoke that was traded, and a Karrablast becomes an
-   * Escavalier only against a Shelmet.
+   * Whether a handover has already met what a trade evolution asks
+   * for. `traded` alone cannot answer it: a Machop traded and then
+   * levelled is not a Machoke that was traded, and a Karrablast
+   * becomes an Escavalier only against a Shelmet. Both questions are
+   * settled at the handover, by `opensTradeEvolution`, so what is
+   * kept here is the answer rather than the evidence.
    *
-   * Both null before anything has changed hands. `tradedFor` is null
-   * for a handover with no counterpart, which is what a sale is
+   * Spent by the evolution it opens and cleared by any other change
+   * of species, so a shape that did not earn it never reads it
    */
-  tradedAs: Species | null;
-  tradedFor: Species | null;
+  canEvolve: boolean;
   /**
    * Whether somebody would pay for it — see `isAuctionableCatch`.
    *
@@ -530,10 +529,7 @@ export function asCaughtPokemon(value: unknown): CaughtPokemon {
     // A record written before trading was a field was written before
     // trading was a thing
     traded: asBoolean(data.traded),
-    // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
-    tradedAs: data.tradedAs == null ? null : (asNumber(data.tradedAs) as Species),
-    // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
-    tradedFor: data.tradedFor == null ? null : (asNumber(data.tradedFor) as Species),
+    canEvolve: asBoolean(data.canEvolve),
     auctionable: asBoolean(data.auctionable),
     moves: asNumberArray(data.moves) as Moves[],
     movePoints: asMovePoints(data.movePoints),

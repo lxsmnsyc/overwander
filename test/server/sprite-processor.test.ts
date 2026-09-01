@@ -1,3 +1,6 @@
+import { readFileSync } from 'node:fs';
+import { type Credits, asCredits, groupCredits } from '../../src/data/credits';
+import { withCredit } from '../../src/server/sprites/credits';
 import { describe, expect, it } from 'vitest';
 import pack from '../../src/server/sprites/packing';
 import { blank, blit, opaque } from '../../src/server/sprites/raster';
@@ -8,13 +11,7 @@ import {
   overworldDestination,
   overworldSlug,
 } from '../../src/server/sprites/files';
-import {
-  FACINGS,
-  GRID_NAME,
-  packPokengine,
-  parseOrder,
-  withCredit,
-} from '../../src/server/sprites/pokengine';
+import { FACINGS, GRID_NAME, packPokengine, parseOrder } from '../../src/server/sprites/pokengine';
 import { storedAs } from '../../src/components/admin/sprite-processor/shared';
 
 /**
@@ -331,46 +328,94 @@ describe('cutting a pokengine charset down', () => {
   });
 });
 
-describe('crediting a pokengine sheet', () => {
-  const page = [
-    '## Art',
-    '',
-    '### Pokengine community',
-    '',
-    'Where the charsets come from.',
-    '',
-    '| Sheet | Credit |',
-    '| ----- | ------ |',
-    '',
-    '> The note after the table stays.',
-    '',
-    '## The rules',
-    '',
-  ].join('\n');
+describe('the credits list', () => {
+  const listed: Credits = {
+    version: 1,
+    sources: [],
+    packages: [],
+    sprites: [],
+    overworld: [],
+    scenery: [],
+  };
 
-  it('adds a row and keeps the rest of the page', () => {
-    const credited = withCredit(page, 'rocket-grunt', 'Artist');
-
-    expect(credited).toContain('| `rocket-grunt` | Artist |');
-    expect(credited).toContain('> The note after the table stays.');
-    expect(credited).toContain('## The rules');
+  it('adds a row for a charset it has just packed', () => {
+    expect(withCredit(listed, 'rocket-grunt', 'Artist').overworld).toEqual([
+      { work: 'rocket-grunt', credit: 'Artist' },
+    ]);
   });
 
   it('updates a re-packed sheet rather than adding a second row', () => {
-    const twice = withCredit(withCredit(page, 'rocket-grunt', 'Artist'), 'rocket-grunt', 'Other');
+    const twice = withCredit(withCredit(listed, 'rocket-grunt', 'Artist'), 'rocket-grunt', 'Other');
 
-    expect(twice).toContain('| `rocket-grunt` | Other |');
-    expect(twice).not.toContain('| Artist |');
+    expect(twice.overworld).toEqual([{ work: 'rocket-grunt', credit: 'Other' }]);
   });
 
   it('keeps the rows sorted by sheet', () => {
-    const credited = withCredit(withCredit(page, 'zubat-keeper', 'Z'), 'aide', 'A');
+    const credited = withCredit(withCredit(listed, 'zubat-keeper', 'Z'), 'aide', 'A');
 
-    expect(credited.indexOf('`aide`')).toBeLessThan(credited.indexOf('`zubat-keeper`'));
+    expect(credited.overworld.map((row) => row.work)).toEqual(['aide', 'zubat-keeper']);
   });
 
-  it('refuses a page with no section to credit into', () => {
-    expect(() => withCredit('# Credits\n', 'rocket-grunt', 'Artist')).toThrow(/Pokengine/);
+  it('leaves every hand-written section alone', () => {
+    const held: Credits = {
+      ...listed,
+      sources: [{ what: 'Art', who: 'Somebody', href: 'https://example.test', terms: 'CC BY-NC' }],
+      scenery: ['Kyle-Dove'],
+    };
+
+    const credited = withCredit(held, 'rocket-grunt', 'Artist');
+
+    expect(credited.sources).toEqual(held.sources);
+    expect(credited.scenery).toEqual(held.scenery);
+  });
+
+  it('is shipped filled in, with every section standing up', () => {
+    const shipped = asCredits(JSON.parse(readFileSync('public/credits.json', 'utf8')) as unknown);
+
+    expect(shipped.sources.length).toBeGreaterThan(0);
+    expect(shipped.packages.length).toBeGreaterThan(0);
+    expect(shipped.scenery.length).toBeGreaterThan(0);
+
+    for (const source of shipped.sources) {
+      expect(source.who.length, source.what).toBeGreaterThan(0);
+      expect(source.terms.length, source.what).toBeGreaterThan(0);
+      expect(source.href.startsWith('https://'), source.what).toBe(true);
+    }
+    for (const one of shipped.packages) {
+      expect(one.licence.length, one.name).toBeGreaterThan(0);
+      expect(one.what.length, one.name).toBeGreaterThan(0);
+    }
+
+    // Nobody ships uncredited: every sheet on disk names somebody, and
+    // an empty credit would be a name nobody can read
+    for (const row of [...shipped.sprites, ...shipped.overworld]) {
+      expect(row.credit.length, row.work).toBeGreaterThan(0);
+      expect(row.work.length).toBeGreaterThan(0);
+    }
+    expect(shipped.sprites.length).toBeGreaterThan(200);
+  });
+
+  it('names an artist for every pokemon sheet that ships', () => {
+    const shipped = asCredits(JSON.parse(readFileSync('public/credits.json', 'utf8')) as unknown);
+    const credited = new Set(shipped.sprites.map((row) => row.work));
+
+    // The scan reads the name off the sheet, so a sheet copied in
+    // without a credits block would quietly go uncredited
+    expect(credited.has('Unown')).toBe(true);
+    expect(credited.has('Bulbasaur')).toBe(true);
+  });
+
+  it('gathers the works of one artist, most first', () => {
+    expect(
+      groupCredits([
+        { work: 'Abra', credit: 'CHUNSOFT' },
+        { work: 'Zubat', credit: 'CHUNSOFT' },
+        { work: 'Abra', credit: 'Tacocoa' },
+      ]),
+    ).toEqual([
+      { name: 'CHUNSOFT', works: ['Abra', 'Zubat'] },
+      { name: 'Tacocoa', works: ['Abra'] },
+    ]);
   });
 });
 

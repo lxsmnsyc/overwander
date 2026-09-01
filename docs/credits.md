@@ -3,10 +3,20 @@
 Who and what this game is built out of: the person who wrote it, the libraries
 it stands on, the art it draws with, and the games it takes its rules from.
 
-Anything shipped in this repository that somebody else made belongs on this
-page. If you add a dependency, an asset, or a piece of somebody else's work, add
-it here in the same commit. A credit left for later is a credit that never gets
-written.
+Anything shipped in this repository that somebody else made belongs in the
+credits. This page is the half that has to be explained: the terms, why they
+bind, and what they rule out. The **lists** are in
+[public/credits.json](../public/credits.json), which is where the credits
+screen in the game reads them from, so a name reaches a player rather than only
+a reader of the source.
+
+If you add a dependency, an asset, or a piece of somebody else's work, add it to
+that file in the same commit. A credit left for later is a credit that never
+gets written.
+
+Two of its sections are derived and must not be edited by hand: `sprites` is
+scanned out of every `sheet.json` by `pnpm import-sprites`, and `overworld` is
+written a row at a time by the sprite processor as it packs a charset.
 
 ## The game
 
@@ -24,47 +34,12 @@ species, moves, abilities, items and type chart are theirs. The names are used
 for one reason only: a Gen 1 game that renamed Bulbasaur would not be a Gen 1
 game. Nothing here is sold, and nothing here is offered as an official product.
 
-## Runtime dependencies
+## The libraries
 
-What ships in the built app.
-
-| Package                                              | What it does for the game                                                                                                | Licence   |
-| ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | --------- |
-| [solid-js](https://solidjs.com)                      | Signals, resources and rendering — the whole reactive layer                                                              | MIT       |
-| `@solidjs/start`                                     | The app framework: file routes, server functions, SSR                                                                    | MIT       |
-| `@solidjs/router`                                    | Routing under SolidStart                                                                                                 | MIT       |
-| `@solidjs/meta`                                      | Document head — the page title                                                                                           | MIT       |
-| [terracotta](https://github.com/lxsmnsyc/terracotta) | Headless, accessible dialogs, tabs, menus and buttons; every dialog in the game is one of these with our own paint on it | MIT       |
-| [Tailwind CSS](https://tailwindcss.com)              | Styling, configured in `src/app.css`                                                                                     | MIT       |
-| `@supabase/supabase-js`                              | Auth, the client's reads under row-level security, and the realtime socket                                               | MIT       |
-| `postgres`                                           | The direct connection the privileged writes in `src/server/` travel over                                                 | Unlicense |
-| `jose`                                               | Verifying a caller's access token without a round trip                                                                   | MIT       |
-| `date-fns`                                           | Formatting the dates a record carries                                                                                    | MIT       |
-| [fflate](https://github.com/101arrowz/fflate)        | Inflating a sheet's frames on a browser with no `DecompressionStream`, fetched only by those                              | MIT       |
-| `nitro`                                              | The server SolidStart builds onto                                                                                        | MIT       |
-| `server-only`                                        | The marker that keeps server modules out of the client bundle                                                            | MIT       |
-| `vite`                                               | Dev server and bundler, at runtime through SolidStart                                                                    | MIT       |
-
-## Build and test
-
-What the repository uses and the player never sees.
-
-| Package                                  | What it does                                         | Licence    |
-| ---------------------------------------- | ---------------------------------------------------- | ---------- |
-| [TypeScript](https://typescriptlang.org) | The language, and `tsc --noEmit` as the first check  | Apache-2.0 |
-| [Vite](https://vite.dev)                 | Dev server, bundler, and the test runner's front end | MIT        |
-| [Vitest](https://vitest.dev)             | The unit suites under `test/`                        | MIT        |
-| [Playwright](https://playwright.dev)     | The browser suites under `e2e/`                      | Apache-2.0 |
-| [oxlint](https://oxc.rs)                 | Linting                                              | MIT        |
-| `oxlint-tsgolint`                        | The type-aware half of the lint rules                | MIT        |
-| [oxfmt](https://oxc.rs)                  | Formatting                                           | MIT        |
-| `@lxsmnsyc/oxlint-config`                | The lint configuration this project starts from      | MIT        |
-| Supabase CLI                             | The local stack the tests run against                | Apache-2.0 |
-| `@tailwindcss/vite`                      | Tailwind's Vite plugin                               | MIT        |
-| `@changesets/cli`                        | Versioning                                           | MIT        |
-
-Versions are in [package.json](../package.json); the exact tree is in
-`pnpm-lock.yaml`.
+Every package that ships in the app and every one that only builds it is listed
+in [credits.json](../public/credits.json), under `packages`, with what it does
+here and what its licence is. Versions are in [package.json](../package.json);
+the exact tree is in `pnpm-lock.yaml`.
 
 ## Art
 
@@ -112,13 +87,8 @@ sheet against today's description.
 
 ### Where the sheets come from
 
-| Sheets                             | Source                                                              | Licence                                                                                        |
-| ---------------------------------- | ------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| `pokemon/{region}/{species}`       | [PMDCollab/SpriteCollab](https://github.com/PMDCollab/SpriteCollab) | CC BY-NC: attribution, **non-commercial**                                                      |
-| `sheet.json`, `frames.bin`         | Derived from the same collection's `AnimData.xml` and `Offsets.png` | The same terms as the sprites it describes                                                     |
-| `ui/items`                         | [msikma/pokesprite](https://github.com/msikma/pokesprite)           | Sprite images © Nintendo/Creatures Inc./GAME FREAK Inc.; that repo's own code and data are MIT |
-| `ui/move-categories`               | [msikma/pokesprite](https://github.com/msikma/pokesprite)           | The same terms                                                                                 |
-| `ui/types`                         | [msikma/pokesprite](https://github.com/msikma/pokesprite)           | The same terms                                                                                 |
+Each body of somebody else's work, and its terms, is listed in
+[credits.json](../public/credits.json) under `sources`.
 
 **SpriteCollab** is the Pokémon Mystery Dungeon sprite collection this game's
 pokemon are animated from. The drawings themselves, the frame durations and the
@@ -130,8 +100,10 @@ Every sprite in it carries its own credit row in `sprite/{dex}/credits.txt`, wit
 the names in the collection's `credit_names.txt`. Those rows are carried into each
 sheet's own `sheet.json`, under `credits`, one list per coat: the 281 sheets that
 ship, Kanto and Johto's 251 with Unown's 27 other letters plus the three under
-`unknown`, name their artists in the file beside the drawing. Most are **CHUNSOFT**, whose games the sprites are
-drawn from.
+`unknown`, name their artists in the file beside the drawing. `pnpm
+import-sprites` scans them back out into `credits.json`, so a pokemon cannot
+land in `public/` without its artists landing on the credits screen. Most are
+**CHUNSOFT**, whose games the sprites are drawn from.
 
 **pokesprite** is where every icon in the interface comes from. The item icons
 are its 32×32 inventory sprites, named the way that project names them, which is
@@ -148,129 +120,24 @@ sprites from the [Pokengine](https://pokengine.org) community. The rights to
 each sheet stay with the artist who drew it; they are used here with credit and
 not commercially, on the same footing as the pokemon sheets above.
 
-The sprite processor's Pokengine step writes a row into this table for every
+The sprite processor's Pokengine step writes a row into `credits.json` for every
 charset it packs, from the credit typed in beside the sheet, so a sheet cannot
-land in `public/` without its artist landing here. A sheet missing from the
-table predates the step and came from ripped Gen 4 overworlds; those are being
+land in `public/` without its artist landing in the list. A sheet missing from
+it predates the step and came from ripped Gen 4 overworlds; those are being
 replaced.
 
-| Sheet                           | Credit            |
-| ------------------------------- | ----------------- |
-| `characters/extra/nurse`        | kyledove          |
-| `characters/frlg/ace-trainer-f` | kyledove          |
-| `characters/frlg/ace-trainer-m` | kyledove          |
-| `characters/frlg/agatha`        | kyledove          |
-| `characters/frlg/beauty`        | kyledove          |
-| `characters/frlg/bill`          | kyledove          |
-| `characters/frlg/blaine`        | kyledove          |
-| `characters/frlg/blue`          | kyledove          |
-| `characters/frlg/brock`         | kyledove          |
-| `characters/frlg/bruno`         | kyledove          |
-| `characters/frlg/bug-catcher`   | kyledove          |
-| `characters/frlg/camper-f`      | kyledove          |
-| `characters/frlg/camper-m`      | kyledove          |
-| `characters/frlg/captain`       | kyledove          |
-| `characters/frlg/captain-2`     | kyledove          |
-| `characters/frlg/chef`          | kyledove          |
-| `characters/frlg/crush-girl`    | Ginzuishou        |
-| `characters/frlg/daisy-oak`     | kyledove          |
-| `characters/frlg/erika`         | kyledove          |
-| `characters/frlg/gentleman`     | kyledove          |
-| `characters/frlg/giovanni`      | kyledove          |
-| `characters/frlg/hiker`         | kyledove          |
-| `characters/frlg/koga`          | kyledove          |
-| `characters/frlg/lady`          | figyberries       |
-| `characters/frlg/lance`         | kyledove          |
-| `characters/frlg/lass`          | Kazan(TrainerRed) |
-| `characters/frlg/leaf`          | kyledove          |
-| `characters/frlg/lorelei`       | PurpleZaffre      |
-| `characters/frlg/man-1`         | kyledove          |
-| `characters/frlg/man-2`         | kyledove          |
-| `characters/frlg/man-3`         | kyledove          |
-| `characters/frlg/misty`         | kyledove          |
-| `characters/frlg/mr-fuji`       | PurpleZaffre      |
-| `characters/frlg/oak`           | kyledove          |
-| `characters/frlg/officer`       | kyledove          |
-| `characters/frlg/old-man`       | kyledove          |
-| `characters/frlg/red`           | Jext              |
-| `characters/frlg/rocker`        | Jext              |
-| `characters/frlg/roughneck`     | SoundMS           |
-| `characters/frlg/ruin-maniac`   | kyledove          |
-| `characters/frlg/sabrina`       | kyledove          |
-| `characters/frlg/sailor`        | kyledove          |
-| `characters/frlg/shop-keeper`   | kyledove          |
-| `characters/frlg/staff-member`  | kyledove          |
-| `characters/frlg/surge`         | kyledove          |
-| `characters/frlg/tamer`         | Jext              |
-| `characters/frlg/woman`         | kyledove          |
-| `characters/hgss/blaine`        | Jext              |
-| `characters/hgss/blue`          | Jext              |
-| `characters/hgss/brock`         | Jext              |
-| `characters/hgss/bruno`         | Jext              |
-| `characters/hgss/erika`         | Jext              |
-| `characters/hgss/giovanni`      | Jext              |
-| `characters/hgss/koga`          | Jext              |
-| `characters/hgss/lance`         | Jext              |
-| `characters/hgss/lance-2`       | Jext              |
-| `characters/hgss/misty`         | Jext              |
-| `characters/hgss/oak`           | kyledove          |
-| `characters/hgss/red`           | Jext              |
-| `characters/hgss/rocket-f`      | Jext              |
-| `characters/hgss/rocket-m`      | Jext              |
-| `characters/hgss/sabrina`       | Jext              |
-| `characters/hgss/surge`         | Jext              |
-| `characters/lgpe/ace-trainer`   | PixelMister       |
-| `characters/lgpe/agatha`        | PurpleZaffre      |
-| `characters/lgpe/bill`          | kyledove          |
-| `characters/lgpe/bird-keeper`   | figyberries       |
-| `characters/lgpe/black-belt`    | kyledove          |
-| `characters/lgpe/blaine`        | kyledove          |
-| `characters/lgpe/blue`          | kyledove          |
-| `characters/lgpe/brock`         | kyledove          |
-| `characters/lgpe/bruno`         | kyledove          |
-| `characters/lgpe/bug-catcher`   | kyledove          |
-| `characters/lgpe/burglar`       | kyledove          |
-| `characters/lgpe/camper`        | kyledove          |
-| `characters/lgpe/channeler`     | kyledove          |
-| `characters/lgpe/daisy-oak`     | kyledove          |
-| `characters/lgpe/engineer`      | kyledove          |
-| `characters/lgpe/erika`         | kyledove          |
-| `characters/lgpe/fisherman`     | kyledove          |
-| `characters/lgpe/gambler`       | kyledove          |
-| `characters/lgpe/gentleman`     | kyledove          |
-| `characters/lgpe/giovanni`      | kyledove          |
-| `characters/lgpe/gym-guide`     | kyledove          |
-| `characters/lgpe/hiker`         | kyledove          |
-| `characters/lgpe/juggler`       | kyledove          |
-| `characters/lgpe/koga`          | kyledove          |
-| `characters/lgpe/lance`         | kyledove          |
-| `characters/lgpe/lass`          | figyberries       |
-| `characters/lgpe/man`           | kyledove          |
-| `characters/lgpe/misty`         | kyledove          |
-| `characters/lgpe/oak`           | kyledove          |
-| `characters/lgpe/picnicker`     | kyledove          |
-| `characters/lgpe/poke-maniac`   | kyledove          |
-| `characters/lgpe/psychic`       | kyledove          |
-| `characters/lgpe/punk`          | kyledove          |
-| `characters/lgpe/red`           | Kazan(Red)        |
-| `characters/lgpe/rocker`        | kyledove          |
-| `characters/lgpe/roughneck`     | kyledove          |
-| `characters/lgpe/sabrina`       | kyledove          |
-| `characters/lgpe/sailor`        | kyledove          |
-| `characters/lgpe/scientist`     | kyledove          |
-| `characters/lgpe/super-nerd`    | kyledove          |
-| `characters/lgpe/surge`         | kyledove          |
-| `characters/lgpe/swimmer-f`     | kyledove          |
-| `characters/lgpe/swimmer-m`     | kyledove          |
-| `characters/lgpe/tamer`         | kyledove          |
-| `characters/lgpe/trace`         | kyledove          |
+### Landmarks, decorations and trees
+
+The tiles the world is drawn out of are fan-made too, and are listed in
+`credits.json` under `scenery`. It is names alone: nobody wrote down which of
+them drew which tile, and inventing that mapping would be worse than not having
+it.
 
 > **What is still missing.** Three of the sheets under `pokemon` are not pokemon
 > — the Missingno placeholder, an egg and a substitute, numbered past a hundred
 > thousand — and nobody wrote down which entry of which pack each came from. The
 > source of the three move-category marks is also unrecorded. Both need filling
-> in before this is published anywhere. Any pokemon added later needs its own credit row pulled
-> from `sprite/{dex}/credits.txt` when its sheet is added.
+> in before this is published anywhere.
 >
 > **The art is not MIT.** The licence at the root of this repository covers the
 > code; it does not and cannot cover this directory. `CC BY-NC` makes a

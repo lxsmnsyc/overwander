@@ -2,6 +2,7 @@ import { copyFileSync, existsSync, mkdirSync, readFileSync, readdirSync, rmSync 
 import { join } from 'node:path';
 import { SpriteAnim, asSpriteAnim, spriteAnimName } from '../src/data/ids/sprite-anims.ts';
 import writeCoats from '../src/server/sprites/coats.ts';
+import writeSpriteCredits from '../src/server/sprites/credits.ts';
 
 /**
  * Brings the pokemon sheets in from the SpriteCollab checkout.
@@ -25,7 +26,9 @@ import writeCoats from '../src/server/sprites/coats.ts';
  * ```
  *
  * Run `pnpm compact-sprites` afterwards, which records the new sheets
- * in the pipeline ledger.
+ * in the pipeline ledger. `coats.json` and the sprite half of
+ * `credits.json` are rewritten here, since both are read off the
+ * sheets that were just copied.
  */
 
 const SOURCE = '../SpriteCollab';
@@ -255,4 +258,9 @@ importSprites(from, dryRun);
 
 if (!dryRun) {
   say(`public/${await writeCoats()}`);
+  // Who drew what travels with the sheets: every artist named in a
+  // `sheet.json` is scanned back out into the credits list, so a
+  // pokemon cannot land in `public/` without its artists landing on
+  // the credits screen
+  say(await writeSpriteCredits());
 }

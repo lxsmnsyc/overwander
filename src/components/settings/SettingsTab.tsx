@@ -1,4 +1,4 @@
-import { For, type JSX } from 'solid-js';
+import type { JSX } from 'solid-js';
 import { useColorScheme, usePreferredColorScheme } from 'terracotta';
 import settings, {
   type BoxColumns,
@@ -18,6 +18,7 @@ import {
   TabGroup,
   TabPane,
 } from '../styled';
+import CreditsCard from './CreditsCard';
 
 /**
  * How the game is set up for this player, and what it is made of.
@@ -151,44 +152,6 @@ function Line(props: { label: string; children: JSX.Element }): JSX.Element {
   );
 }
 
-/**
- * Where a credit points. The docs are markdown in the repository
- * rather than pages of the game, so the links leave it
- */
-interface Source {
-  what: string;
-  who: string;
-  href: string;
-  terms: string;
-}
-
-const SOURCES: Source[] = [
-  {
-    what: 'Pokemon sprites',
-    who: 'PMDCollab / SpriteCollab',
-    href: 'https://github.com/PMDCollab/SpriteCollab',
-    terms: 'CC BY-NC, non-commercial',
-  },
-  {
-    what: 'Item icons',
-    who: 'msikma / pokesprite',
-    href: 'https://github.com/msikma/pokesprite',
-    terms: 'Images © Nintendo / Creatures Inc. / GAME FREAK Inc.',
-  },
-  {
-    what: 'Overworld characters',
-    who: 'The Pokengine community',
-    href: 'https://pokengine.org',
-    terms: 'Used with credit; rights stay with each artist',
-  },
-  {
-    what: 'Rendering and routing',
-    who: 'Solid and SolidStart',
-    href: 'https://solidjs.com',
-    terms: 'MIT',
-  },
-];
-
 function AboutPane(): JSX.Element {
   return (
     <Panel>
@@ -204,30 +167,7 @@ function AboutPane(): JSX.Element {
         <Line label="Source">MIT licensed, except the art and the names</Line>
       </Card>
 
-      <Card title="Credits">
-        <p class="max-w-prose text-sm text-muted">
-          The art, the rules and the libraries are other people's work. This is the short list; the
-          full one ships with the source.
-        </p>
-        <ul class="m-0 flex list-none flex-col gap-2 p-0">
-          <For each={SOURCES}>
-            {(source) => (
-              <li class="flex flex-col gap-0.5 border-b border-line-soft pb-2 last:border-b-0">
-                <span class="text-sm font-semibold">{source.what}</span>
-                <a
-                  href={source.href}
-                  target="_blank"
-                  rel="noreferrer"
-                  class="text-sm text-tide-dark underline"
-                >
-                  {source.who}
-                </a>
-                <span class="text-xs text-muted">{source.terms}</span>
-              </li>
-            )}
-          </For>
-        </ul>
-      </Card>
+      <CreditsCard />
 
       <Card title="What this is not">
         <p class="max-w-prose text-sm">

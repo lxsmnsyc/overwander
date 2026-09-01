@@ -1,6 +1,5 @@
 import 'server-only';
-import { readFile, writeFile } from 'node:fs/promises';
-import { join } from 'node:path';
+import { readCredits, withCredit, writeCredits } from './credits';
 import type { Drawing } from './files';
 import { overworldDestination, overworldSlug, writeSheet } from './files';
 import type { Raster } from './raster';
@@ -232,62 +231,6 @@ export function packPokengine(
   };
 }
 
-/** Where the credits page lives, relative to the working tree. */
-const CREDITS_PATH = 'docs/credits.md';
-
-const CREDITS_HEADING = '### Pokengine community';
-
-/**
- * The credits page with this sheet's row upserted into the Pokengine
- * community table, kept sorted so re-packing a sheet updates its row
- * rather than adding a second.
- *
- * Pure, so a test can hand it a page and read the table back: finding
- * the section and keeping the rows straight is the half worth
- * checking, not the file round trip
- */
-export function withCredit(page: string, sheet: string, credit: string): string {
-  const heading = page.indexOf(CREDITS_HEADING);
-
-  if (heading < 0) {
-    throw new Error(`${CREDITS_PATH} has no "${CREDITS_HEADING}" section to credit into`);
-  }
-
-  // The section runs to the next heading or the end of the page
-  const after = heading + CREDITS_HEADING.length;
-  const next = page.slice(after).search(/\n#{2,3} /);
-  const end = next < 0 ? page.length : after + next;
-  const lines = page.slice(after, end).split('\n');
-  const table = lines.findIndex((line) => line.startsWith('|'));
-
-  if (table < 0 || lines.length < table + 2) {
-    throw new Error(`The "${CREDITS_HEADING}" section has no table to credit into`);
-  }
-
-  // Header and divider stay, and so does anything after the table;
-  // only the rows between are rebuilt
-  let past = table + 2;
-
-  const rows = new Map<string, string>();
-
-  while (past < lines.length && lines[past].startsWith('|')) {
-    const cells = lines[past].split('|').map((cell) => cell.trim());
-
-    if (cells.length >= 3 && cells[1].length > 0) {
-      rows.set(cells[1].replace(/`/g, ''), cells[2]);
-    }
-    past += 1;
-  }
-  rows.set(sheet, credit);
-
-  const written = [...rows.entries()]
-    .sort(([a], [b]) => a.localeCompare(b))
-    .map(([name, artist]) => `| \`${name}\` | ${artist} |`);
-  const rebuilt = [...lines.slice(0, table + 2), ...written, ...lines.slice(past)].join('\n');
-
-  return `${page.slice(0, after)}${rebuilt}${page.slice(end)}`;
-}
-
 export default async function processPokengine(
   image: Uint8Array,
   options: PokengineOptions,
@@ -295,19 +238,14 @@ export default async function processPokengine(
   const credit = options.credit.trim();
 
   // Refused before anything is written: a sheet in `public/` with no
-  // row in the credits page is exactly what the page forbids
+  // row in the credits list is exactly what the credits forbid
   if (credit.length === 0) {
-    throw new Error('The sheet needs a credit for the credits page');
+    throw new Error('The sheet needs a credit for the credits list');
   }
 
-  // The credited page is built before the sheet is written for the
+  // The credited list is built before the sheet is written for the
   // same reason: a failure here leaves nothing half-done
-  const creditsFile = join(process.cwd(), CREDITS_PATH);
-  const credited = withCredit(
-    await readFile(creditsFile, 'utf8'),
-    overworldSlug(options.name),
-    credit,
-  );
+  const credited = withCredit(await readCredits(), overworldSlug(options.name), credit);
   const { sheet, data } = packPokengine(await decode(image), options);
   const drawn = encode(sheet);
   const written = await writeSheet(
@@ -316,10 +254,10 @@ export default async function processPokengine(
     JSON.stringify(data, null, 2),
   );
 
-  await writeFile(creditsFile, credited);
+  const listed = await writeCredits(credited);
 
   return {
-    written: [...written.map((file) => file.path), CREDITS_PATH],
+    written: [...written.map((file) => file.path), listed],
     width: data.width,
     height: data.height,
     grid: data.grid,

@@ -180,10 +180,10 @@ spent winding up a Withdraw is one handed to the lobby.
 A move carries a **`cast`** list — animation clip names, most wanted first — and
 the battle plays the first one the sprite in front of it actually has.
 
-Sprite sheets are not uniform. Every one of them carries eleven **common** clips
-(`Idle`, `Sleep`, `Hurt`, `Attack`, `Charge`, `Shoot`, `Double`, `Hop`, `Rotate`,
-`Walk`, `Swing`); twenty-three more are there or not depending on what the pokemon
-was drawn doing. A Machop has a `Punch`; a Magikarp does not. Naming one clip per
+Sprite sheets are not uniform. Every one of them carries ten **common** clips
+(`Idle`, `Sleep`, `Hurt`, `Attack`, `Charge`, `Double`, `Hop`, `Rotate`, `Walk`,
+`Swing`); twenty-four more are there or not depending on what the pokemon was
+drawn doing. A Machop has a `Punch`; a Magikarp does not. Naming one clip per
 move would mean either every move looking the same or half the roster playing
 nothing, so a move names a **preference** instead:
 

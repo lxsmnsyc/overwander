@@ -1019,8 +1019,8 @@ describe('move cast animations', () => {
     );
     expect(isCommonCast(DEFAULT_CAST)).toBe(true);
     // ...and a sheet missing even that falls to the one clip nothing
-    // can be without. It should not happen — every sheet has the
-    // eleven — but a sprite is a file on disk, and a file can be wrong
+    // can be without. It should not happen, since every sheet has the
+    // ten, but a sprite is a file on disk and a file can be wrong
     expect(pickCast([SpriteAnim.Punch, SpriteAnim.Uppercut], () => false)).toBe(SpriteAnim.Idle);
   });
 });

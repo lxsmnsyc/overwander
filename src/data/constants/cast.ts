@@ -4,7 +4,7 @@ import { SpriteAnim } from '../ids/sprite-anims';
  * What a pokemon looks like it is doing while it uses a move.
  *
  * A sprite sheet is a set of named clips, and the sheets are not all
- * the same: every one of them carries the eleven **common** clips, and
+ * the same: every one of them carries the ten **common** clips, and
  * the rest are there or not depending on what the pokemon was drawn
  * doing. A Machop has a Punch; a Magikarp does not.
  *
@@ -12,7 +12,7 @@ import { SpriteAnim } from '../ids/sprite-anims';
  * an ordered list read left to right, and the first clip the sprite
  * actually has is the one that plays. A Fire Punch asks for `Punch`
  * and settles for `Attack`; a Blizzard asks for `Emit`, then `Shoot`,
- * then `Attack`. That way a move can be given the animation it
+ * then `Charge`. That way a move can be given the animation it
  * deserves without every sprite having to own it.
  *
  * The last entry of every list is a **common** clip, so the walk
@@ -30,7 +30,6 @@ export const COMMON_CAST = [
   SpriteAnim.Hurt,
   SpriteAnim.Attack,
   SpriteAnim.Charge,
-  SpriteAnim.Shoot,
   SpriteAnim.Double,
   SpriteAnim.Hop,
   SpriteAnim.Rotate,
@@ -43,6 +42,9 @@ export const COMMON_CAST = [
  * a sheet without it falls through to the next name in the list
  */
 export const UNCOMMON_CAST = [
+  // Was one of the common ones, and is not: the Clefairy and Togepi
+  // lines were drawn throwing nothing
+  SpriteAnim.Shoot,
   SpriteAnim.Slice,
   SpriteAnim.SpAttack,
   SpriteAnim.Shock,
@@ -126,35 +128,12 @@ export function isCommonCast(animation: SpriteAnim): boolean {
 export const DEFAULT_CAST: CommonCast = SpriteAnim.Attack;
 
 /**
- * What stands in for a clip the sheet has not got.
- *
- * A move's list is a preference between *different things to look
- * like*: a Blizzard asks for Emit, settles for Shoot, and would rather
- * not be an Attack. That is the right shape for choosing between
- * clips, and the wrong shape for a sheet with a hole in it — falling
- * off the end of a list lands on Idle, and a pokemon standing still
- * through its own attack looks broken rather than looks approximate.
- *
- * `Shoot` is the one that needs this. It is nominally common, so lists
- * end on it and stop looking, but a sheet or two ships without it —
- * see `100001` — and every one of those moves then plays nothing. An
- * Attack in its place is the wrong distance and the right idea
- */
-const CAST_INSTEAD: Partial<Record<CastAnimation, CastAnimation>> = {
-  [SpriteAnim.Shoot]: SpriteAnim.Attack,
-};
-
-/**
  * The first clip in the list this sprite actually has.
  *
- * `has` is the sprite's own answer — `SpeciesSpriteAnimation.has` —
- * so the decision is made against the sheet in hand rather than
- * against a table of which species owns what, which would be a second
- * copy of the truth and would rot.
- *
- * A name the sheet is missing is tried once more as whatever stands in
- * for it **before** the walk moves on, so a hole in a sheet costs the
- * move its first choice rather than costing it the whole list
+ * `has` is the sprite's own answer, `SpeciesSpriteAnimation.has`, so
+ * the decision is made against the sheet in hand rather than against a
+ * table of which species owns what, which would be a second copy of
+ * the truth and would rot
  */
 export function pickCast(
   cast: readonly CastAnimation[],
@@ -163,12 +142,6 @@ export function pickCast(
   for (const animation of cast) {
     if (has(animation)) {
       return animation;
-    }
-
-    const instead = CAST_INSTEAD[animation];
-
-    if (instead != null && has(instead)) {
-      return instead;
     }
   }
   return has(DEFAULT_CAST) ? DEFAULT_CAST : SpriteAnim.Idle;

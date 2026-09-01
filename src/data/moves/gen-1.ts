@@ -352,7 +352,7 @@ export default function registerGen1Moves(): void {
     accuracy: 85,
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: 0,
-    cast: [SpriteAnim.Emit, SpriteAnim.Twirl, SpriteAnim.Shoot],
+    cast: [SpriteAnim.Emit, SpriteAnim.Twirl, SpriteAnim.Shoot, SpriteAnim.Attack],
   });
   registerMove(Moves.MegaPunch, {
     name: 'Mega Punch',
@@ -1513,7 +1513,7 @@ export default function registerGen1Moves(): void {
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: 0,
     delay: PROJECTILE_DELAY,
-    cast: [SpriteAnim.SpAttack, SpriteAnim.MultiStrike, SpriteAnim.Shoot],
+    cast: [SpriteAnim.SpAttack, SpriteAnim.MultiStrike, SpriteAnim.Shoot, SpriteAnim.Attack],
   });
   registerMove(Moves.AuroraBeam, {
     name: 'Aurora Beam',

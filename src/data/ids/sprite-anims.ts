@@ -18,12 +18,14 @@
  * under `node`, which refuses a file that declares an enum
  */
 export const SpriteAnim = {
-  // The eleven every sheet carries — see `COMMON_CAST`
+  // The ten every sheet carries, see `COMMON_CAST`
   Idle: 0,
   Sleep: 1,
   Hurt: 2,
   Attack: 3,
   Charge: 4,
+  // Numbered among them and not one of them: a handful of sheets ship
+  // without a Shoot, and a number can never move
   Shoot: 5,
   Double: 6,
   Hop: 7,

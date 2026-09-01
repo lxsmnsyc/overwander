@@ -45,7 +45,7 @@ const enum Families {
   Voltorb = 43,
   Exeggcute = 44,
   Cubone = 45,
-  // Hitmonlee/Hitmonchan (the Gen 2 baby names the family)
+  // The baby names the family, and the three it becomes belong to it
   Tyrogue = 46,
   Lickitung = 47,
   Koffing = 48,
@@ -105,9 +105,10 @@ const enum Families {
   Qwilfish = 105,
   Shuckle = 106,
   Heracross = 107,
-  // 108 is Sneasel's and 109 Teddiursa's
+  // 108 is Sneasel's
+  Teddiursa = 109,
   Slugma = 110,
-  // 111 is Swinub's
+  Swinub = 111,
   Corsola = 112,
   Remoraid = 113,
   Delibird = 114,
@@ -117,7 +118,6 @@ const enum Families {
   Phanpy = 118,
   // 119 is Stantler's
   Smeargle = 120,
-  // 121 is Tyrogue's
   Miltank = 122,
   Raikou = 123,
   Entei = 124,

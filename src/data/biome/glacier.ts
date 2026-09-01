@@ -8,19 +8,19 @@ import { registerSpawnPool } from './__create';
 export default function registerGlacierSpawns(): void {
   registerSpawnPool(Biome.Glacier, {
     [TimeOfDay.Morning]: {
-      base: [],
+      base: [{ species: Species.Swinub, weight: 25 }],
       uncommon: [],
       rare: [{ species: Species.Delibird, weight: 5 }],
       special: [{ species: Species.Articuno, weight: 10 }],
     },
     [TimeOfDay.Day]: {
-      base: [],
+      base: [{ species: Species.Swinub, weight: 25 }],
       uncommon: [],
       rare: [{ species: Species.Delibird, weight: 5 }],
       special: [{ species: Species.Articuno, weight: 10 }],
     },
     [TimeOfDay.Evening]: {
-      base: [],
+      base: [{ species: Species.Swinub, weight: 25 }],
       uncommon: [],
       rare: [
         { species: Species.Jynx, weight: 5 },
@@ -29,7 +29,7 @@ export default function registerGlacierSpawns(): void {
       special: [{ species: Species.Articuno, weight: 10 }],
     },
     [TimeOfDay.Night]: {
-      base: [],
+      base: [{ species: Species.Swinub, weight: 25 }],
       uncommon: [],
       rare: [
         { species: Species.Jynx, weight: 5 },

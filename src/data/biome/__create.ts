@@ -391,8 +391,6 @@ const AWAITING_BABY_SPECIES = new Set<Species>([
   Species.Pikachu,
   Species.Clefairy,
   Species.Jigglypuff,
-  Species.Hitmonlee,
-  Species.Hitmonchan,
   Species.Jynx,
   Species.Electabuzz,
   Species.Magmar,

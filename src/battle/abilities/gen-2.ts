@@ -5,12 +5,13 @@ import Abilities from '../../data/ids/abilities';
 import { DamageFlags, MoveCategories, type Moves } from '../../data/ids/moves';
 import { getMoveData } from '../../data/moves';
 import type Battle from '../core';
+import { Items } from '../../data/ids/items';
 import { Statuses, Weathers } from '../../data/ids/status';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import { MergedLifecycle } from '../lifecycle';
 import type Unit from '../unit';
 import { FORCED_SWITCH_MOVES } from '../moves/switch-out';
-import { isWeatherSunny, onUnitActs } from '../utils';
+import { hasFreeItemSlot, isWeatherSunny, onUnitActs } from '../utils';
 import { createAbility, createDrizzleAbility, createLimberAbility } from './__create';
 
 const PLUS_BOOST = 1.5;
@@ -465,6 +466,33 @@ const setupAbilities = [
         }),
       ]),
   ),
+
+  // https://bulbapedia.bulbagarden.net/wiki/Honey_Gather_(Ability)
+  // The mainline finds the jar after the fight, and a fight here has
+  // no after to hand anything over in. So it is gathered on the way
+  // in, once, and only if there is a hand to carry it
+  createAbility(Abilities.HoneyGather, (battle) => {
+    const gathered = new WeakSet<Unit>();
+
+    return new MergedLifecycle([
+      ...onUnitActs(battle, (unit) => {
+        if (
+          unit.hasAbility(Abilities.HoneyGather) &&
+          !gathered.has(unit) &&
+          hasFreeItemSlot(unit)
+        ) {
+          gathered.add(unit);
+          unit.addItem(Items.Honey);
+
+          // Cue only when the jar actually landed: the add can still
+          // be vetoed by something else
+          if (unit.items[Items.Honey] === true) {
+            unit.triggerAbility(Abilities.HoneyGather);
+          }
+        }
+      }),
+    ]);
+  }),
 ];
 
 export default function setupGen2Abilities(battle: Battle): void {

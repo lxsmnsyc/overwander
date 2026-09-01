@@ -1156,12 +1156,24 @@ describe('evolution data', () => {
     expect(getSpeciesData(Species.Venusaur).evolvesInto).toBeUndefined();
   });
 
+  // Nothing but Tyrogue reads a stat, and an even pair is the tie it
+  // branches on, so every other case is unaffected by what is here
+  const EVEN_STATS: Record<Stats, number> = {
+    [Stats.HP]: 100,
+    [Stats.Attack]: 100,
+    [Stats.Defense]: 100,
+    [Stats.SpecialAttack]: 100,
+    [Stats.SpecialDefense]: 100,
+    [Stats.Speed]: 100,
+  };
+
   it('offers level evolutions once the threshold is reached', () => {
     const context = {
       carried: new Set<Items>(),
       held: new Set<Items>(),
       tradedAs: null,
       tradedFor: null,
+      stats: EVEN_STATS,
     };
 
     expect(getAvailableEvolutions({ species: Species.Charmander, ...context, level: 15 })).toEqual(
@@ -1173,7 +1185,13 @@ describe('evolution data', () => {
   });
 
   it('offers stone evolutions only while the stone is carried', () => {
-    const context = { level: 50, held: new Set<Items>(), tradedAs: null, tradedFor: null };
+    const context = {
+      level: 50,
+      held: new Set<Items>(),
+      tradedAs: null,
+      tradedFor: null,
+      stats: EVEN_STATS,
+    };
 
     expect(
       getAvailableEvolutions({ species: Species.Vulpix, ...context, carried: new Set() }),
@@ -1203,6 +1221,7 @@ describe('evolution data', () => {
       carried: new Set([Items.FireStone]),
       tradedAs: Species.Machoke,
       tradedFor: null,
+      stats: EVEN_STATS,
     };
 
     // Every door at once: the level one, the stone one and the trade
@@ -1240,7 +1259,12 @@ describe('evolution data', () => {
   });
 
   it('offers a trade evolution only for the handover it was made at', () => {
-    const context = { level: 100, carried: new Set<Items>(), held: new Set<Items>() };
+    const context = {
+      level: 100,
+      carried: new Set<Items>(),
+      held: new Set<Items>(),
+      stats: EVEN_STATS,
+    };
 
     // A Machoke nobody has traded stays a Machoke however high its
     // level runs — the level is not what the evolution asks for
@@ -1250,6 +1274,7 @@ describe('evolution data', () => {
         ...context,
         tradedAs: null,
         tradedFor: null,
+        stats: EVEN_STATS,
       }),
     ).toEqual([]);
     expect(
@@ -1258,6 +1283,7 @@ describe('evolution data', () => {
         ...context,
         tradedAs: Species.Machoke,
         tradedFor: null,
+        stats: EVEN_STATS,
       }),
     ).toEqual([{ species: Species.Machamp, method: EvolutionMethod.Trade }]);
 
@@ -1270,6 +1296,7 @@ describe('evolution data', () => {
         ...context,
         tradedAs: Species.Machop,
         tradedFor: null,
+        stats: EVEN_STATS,
       }),
     ).toEqual([]);
 
@@ -1281,10 +1308,22 @@ describe('evolution data', () => {
       [Species.Gastly, Species.Haunter, Species.Gengar],
     ] as const) {
       expect(
-        getAvailableEvolutions({ species: at, ...context, tradedAs: below, tradedFor: null }),
+        getAvailableEvolutions({
+          species: at,
+          ...context,
+          tradedAs: below,
+          tradedFor: null,
+          stats: EVEN_STATS,
+        }),
       ).toEqual([]);
       expect(
-        getAvailableEvolutions({ species: at, ...context, tradedAs: at, tradedFor: null }),
+        getAvailableEvolutions({
+          species: at,
+          ...context,
+          tradedAs: at,
+          tradedFor: null,
+          stats: EVEN_STATS,
+        }),
       ).toEqual([{ species: into, method: EvolutionMethod.Trade }]);
     }
   });
@@ -1303,6 +1342,7 @@ describe('evolution data', () => {
       level: 100,
       carried: new Set<Items>(),
       held: new Set<Items>(),
+      stats: EVEN_STATS,
     };
 
     // Traded, at the right stage, for the wrong pokemon
@@ -1339,7 +1379,13 @@ describe('evolution data', () => {
   });
 
   it('takes a Linking Cord in place of the trade', () => {
-    const context = { level: 100, held: new Set<Items>(), tradedAs: null, tradedFor: null };
+    const context = {
+      level: 100,
+      held: new Set<Items>(),
+      tradedAs: null,
+      tradedFor: null,
+      stats: EVEN_STATS,
+    };
     const cord = new Set([Items.LinkingCord]);
 
     expect(getAvailableEvolutions({ species: Species.Machoke, ...context, carried: cord })).toEqual(
@@ -1373,9 +1419,37 @@ describe('evolution data', () => {
         held: new Set(),
         tradedAs: null,
         tradedFor: null,
+        stats: EVEN_STATS,
       }),
     ).toBe(false);
     expect(getConsumedItem(line, false)).toBe(Items.FireStone);
+  });
+
+  it('branches a Tyrogue on its Attack against its Defense', () => {
+    const context = {
+      species: Species.Tyrogue,
+      level: 20,
+      carried: new Set<Items>(),
+      held: new Set<Items>(),
+      tradedAs: null,
+      tradedFor: null,
+    };
+    const at = (attack: number, defense: number): Record<Stats, number> => ({
+      ...EVEN_STATS,
+      [Stats.Attack]: attack,
+      [Stats.Defense]: defense,
+    });
+    const into = (stats: Record<Stats, number>): Species[] =>
+      getAvailableEvolutions({ ...context, stats }).map((entry) => entry.species);
+
+    // Exactly one of the three answers, whichever way the pair falls
+    expect(into(at(60, 50))).toEqual([Species.Hitmonlee]);
+    expect(into(at(50, 60))).toEqual([Species.Hitmonchan]);
+    expect(into(at(55, 55))).toEqual([Species.Hitmontop]);
+
+    // And the level still gates it
+    expect(into({ ...at(60, 50) })).toEqual([Species.Hitmonlee]);
+    expect(getAvailableEvolutions({ ...context, level: 19, stats: at(60, 50) })).toEqual([]);
   });
 
   it('never offers evolutions it cannot verify', () => {
@@ -1392,6 +1466,7 @@ describe('evolution data', () => {
           held: new Set(),
           tradedAs: Species.Machoke,
           tradedFor: null,
+          stats: EVEN_STATS,
         },
       ),
     ).toBe(false);

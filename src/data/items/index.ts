@@ -8,6 +8,7 @@ import registerFossils from './fossils';
 import registerGear from './gear';
 import registerGems from './gems';
 import registerHeartScale from './heart-scale';
+import registerHoney from './honey';
 import registerIncenses from './incenses';
 import registerKeyItems from './key-items';
 import registerMachines from './machines';
@@ -73,6 +74,7 @@ export default function registerItems(): void {
   registerRaidItems();
   registerValuables();
   registerHeartScale();
+  registerHoney();
   registerFossils();
   registerWings();
   registerVitamins();

@@ -1,6 +1,7 @@
+import type { Stats } from '../constants/stats';
 import { Items } from '../ids/items';
 import { EvolutionMethod, type Species } from '../ids/species';
-import { type EvolutionData, getSpeciesData } from './__create';
+import { type EvolutionData, type StatComparison, getSpeciesData } from './__create';
 
 /**
  * The conditions the game can actually verify today. Everything else
@@ -12,7 +13,8 @@ export const SUPPORTED_METHODS =
   EvolutionMethod.Level |
   EvolutionMethod.UsedItem |
   EvolutionMethod.HeldItem |
-  EvolutionMethod.Trade;
+  EvolutionMethod.Trade |
+  EvolutionMethod.StatComparison;
 
 /**
  * What an evolution check is measured against: the catch itself, its
@@ -42,6 +44,13 @@ export interface EvolutionContext {
    */
   tradedAs: Species | null;
   tradedFor: Species | null;
+  /**
+   * What its stats actually come to, level and values and nature
+   * included, rather than its species' base numbers. Only the pair a
+   * registered evolution names is ever read, and today one line names
+   * any: a Tyrogue's Attack against its Defense
+   */
+  stats: Record<Stats, number>;
 }
 
 /**
@@ -104,6 +113,11 @@ export function meetsEvolutionCriteria(
       return false;
     }
   }
+  if ((method & EvolutionMethod.StatComparison) !== 0) {
+    if (evolution.compare == null || !comparesStats(evolution.compare, context)) {
+      return false;
+    }
+  }
   if (
     (method & EvolutionMethod.Trade) !== 0 &&
     !coversTrade(evolution, context) &&
@@ -112,6 +126,24 @@ export function meetsEvolutionCriteria(
     return false;
   }
   return true;
+}
+
+/**
+ * Whether the pair of stats came out the way the evolution asks. The
+ * three orders are exhaustive, so a line branching on all of them
+ * always has exactly one answer
+ */
+function comparesStats(compare: StatComparison, context: EvolutionContext): boolean {
+  const stat = context.stats[compare.stat];
+  const against = context.stats[compare.against];
+
+  if (compare.order === 'greater') {
+    return stat > against;
+  }
+  if (compare.order === 'lesser') {
+    return stat < against;
+  }
+  return stat === against;
 }
 
 /**

@@ -8,7 +8,10 @@ import { registerSpawnPool } from './__create';
 export default function registerMontaneForestSpawns(): void {
   registerSpawnPool(Biome.MontaneForest, {
     [TimeOfDay.Morning]: {
-      base: [{ species: Species.Mankey, weight: 20 }],
+      base: [
+        { species: Species.Mankey, weight: 20 },
+        { species: Species.Teddiursa, weight: 20 },
+      ],
       uncommon: [],
       rare: [
         { species: Species.Primeape, weight: 10 },
@@ -17,7 +20,10 @@ export default function registerMontaneForestSpawns(): void {
       special: [],
     },
     [TimeOfDay.Day]: {
-      base: [{ species: Species.Mankey, weight: 20 }],
+      base: [
+        { species: Species.Mankey, weight: 20 },
+        { species: Species.Teddiursa, weight: 20 },
+      ],
       uncommon: [],
       rare: [
         { species: Species.Primeape, weight: 10 },

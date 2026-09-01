@@ -235,6 +235,8 @@ const enum Abilities {
   SandStream = 139,
   // Heracross
   SapSipper = 140,
+  // Teddiursa
+  HoneyGather = 141,
   // Special (non-standard abilities outside the regular pool)
   Boss = 100001,
   Shadow = 100002,

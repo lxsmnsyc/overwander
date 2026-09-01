@@ -56,6 +56,7 @@ export default function registerTyrogueSpecies(): void {
     height: 1.5,
     weight: 49.8,
     family: Families.Tyrogue,
+    evolvesFrom: Species.Tyrogue,
     stats: {
       [Stats.HP]: 50,
       [Stats.Attack]: 120,
@@ -96,6 +97,7 @@ export default function registerTyrogueSpecies(): void {
     height: 1.4,
     weight: 50.2,
     family: Families.Tyrogue,
+    evolvesFrom: Species.Tyrogue,
     stats: {
       [Stats.HP]: 50,
       [Stats.Attack]: 105,

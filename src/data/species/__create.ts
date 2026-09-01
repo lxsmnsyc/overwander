@@ -37,6 +37,23 @@ export interface EvolutionData {
    * evolution is satisfied by any handover at all
    */
   partner?: Species;
+  /**
+   * Two of its own stats set against each other
+   * (EvolutionMethod.StatComparison). Tyrogue is the only line that
+   * asks: its Attack against its Defense decides which of the three
+   * it becomes, and the tie is a branch of its own rather than a
+   * fallback
+   */
+  compare?: StatComparison;
+}
+
+/**
+ * One stat measured against another, and which way it has to come out
+ */
+export interface StatComparison {
+  stat: Stats;
+  against: Stats;
+  order: 'greater' | 'lesser' | 'equal';
 }
 
 export interface LearnSetData {

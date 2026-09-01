@@ -59,7 +59,10 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Smeargle, weight: 5 },
         { species: Species.Miltank, weight: 5 },
       ],
-      prized: [{ species: Species.Togepi, weight: 10 }],
+      prized: [
+        { species: Species.Togepi, weight: 10 },
+        { species: Species.Tyrogue, weight: 10 },
+      ],
       special: [{ species: Species.Raikou, weight: 10 }],
     },
     [TimeOfDay.Day]: {
@@ -120,7 +123,10 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Smeargle, weight: 5 },
         { species: Species.Miltank, weight: 5 },
       ],
-      prized: [{ species: Species.Togepi, weight: 10 }],
+      prized: [
+        { species: Species.Togepi, weight: 10 },
+        { species: Species.Tyrogue, weight: 10 },
+      ],
       special: [{ species: Species.Raikou, weight: 10 }],
     },
     [TimeOfDay.Evening]: {

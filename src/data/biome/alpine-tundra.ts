@@ -8,7 +8,10 @@ import { registerSpawnPool } from './__create';
 export default function registerAlpineTundraSpawns(): void {
   registerSpawnPool(Biome.AlpineTundra, {
     [TimeOfDay.Morning]: {
-      base: [{ species: Species.Machop, weight: 20 }],
+      base: [
+        { species: Species.Machop, weight: 20 },
+        { species: Species.Swinub, weight: 25 },
+      ],
       uncommon: [{ species: Species.Machoke, weight: 5 }],
       rare: [
         { species: Species.Machamp, weight: 5 },
@@ -18,7 +21,10 @@ export default function registerAlpineTundraSpawns(): void {
       special: [{ species: Species.Articuno, weight: 10 }],
     },
     [TimeOfDay.Day]: {
-      base: [{ species: Species.Machop, weight: 20 }],
+      base: [
+        { species: Species.Machop, weight: 20 },
+        { species: Species.Swinub, weight: 25 },
+      ],
       uncommon: [{ species: Species.Machoke, weight: 5 }],
       rare: [
         { species: Species.Machamp, weight: 5 },
@@ -28,13 +34,13 @@ export default function registerAlpineTundraSpawns(): void {
       special: [{ species: Species.Articuno, weight: 10 }],
     },
     [TimeOfDay.Evening]: {
-      base: [],
+      base: [{ species: Species.Swinub, weight: 25 }],
       uncommon: [],
       rare: [{ species: Species.Delibird, weight: 5 }],
       special: [{ species: Species.Articuno, weight: 10 }],
     },
     [TimeOfDay.Night]: {
-      base: [],
+      base: [{ species: Species.Swinub, weight: 25 }],
       uncommon: [],
       rare: [{ species: Species.Delibird, weight: 5 }],
       special: [{ species: Species.Articuno, weight: 10 }],

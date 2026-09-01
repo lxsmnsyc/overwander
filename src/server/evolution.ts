@@ -1,7 +1,7 @@
 import 'server-only';
 import { asCaughtPokemon, isAuctionableCatch } from '../auth/caught-record';
 import { ITEM_STACKS } from '../auth/stacks';
-import { getMaxHealth, rescaleHealth } from '../auth/health';
+import { getMaxHealth, getStats, rescaleHealth } from '../auth/health';
 import type { Items } from '../data/ids/items';
 import type { Species } from '../data/ids/species';
 import type { EvolutionContext } from '../data/species';
@@ -82,6 +82,9 @@ export default async function evolveCatch(
       tradedAs: caught.tradedAs == null ? null : (asNumber(caught.tradedAs) as Species),
       // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
       tradedFor: caught.tradedFor == null ? null : (asNumber(caught.tradedFor) as Species),
+      // Derived from the stored record rather than reported: what a
+      // Tyrogue becomes is decided by the numbers the server holds
+      stats: getStats(asCaughtPokemon(caught)),
     };
     // What is spent as well as what is allowed: a handover that does
     // not cover this evolution pays a Linking Cord for the half it

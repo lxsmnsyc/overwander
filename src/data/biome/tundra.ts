@@ -8,7 +8,7 @@ import { registerSpawnPool } from './__create';
 export default function registerTundraSpawns(): void {
   registerSpawnPool(Biome.Tundra, {
     [TimeOfDay.Morning]: {
-      base: [],
+      base: [{ species: Species.Swinub, weight: 25 }],
       uncommon: [],
       rare: [
         { species: Species.Dewgong, weight: 10 },
@@ -17,7 +17,7 @@ export default function registerTundraSpawns(): void {
       special: [{ species: Species.Suicune, weight: 10 }],
     },
     [TimeOfDay.Day]: {
-      base: [],
+      base: [{ species: Species.Swinub, weight: 25 }],
       uncommon: [],
       rare: [
         { species: Species.Dewgong, weight: 10 },
@@ -26,7 +26,7 @@ export default function registerTundraSpawns(): void {
       special: [{ species: Species.Suicune, weight: 10 }],
     },
     [TimeOfDay.Evening]: {
-      base: [],
+      base: [{ species: Species.Swinub, weight: 25 }],
       uncommon: [],
       rare: [
         { species: Species.Dewgong, weight: 10 },
@@ -36,7 +36,7 @@ export default function registerTundraSpawns(): void {
       special: [{ species: Species.Suicune, weight: 10 }],
     },
     [TimeOfDay.Night]: {
-      base: [],
+      base: [{ species: Species.Swinub, weight: 25 }],
       uncommon: [],
       rare: [
         { species: Species.Dewgong, weight: 10 },

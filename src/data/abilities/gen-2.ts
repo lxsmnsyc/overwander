@@ -84,4 +84,9 @@ export default function registerGen2Abilities(): void {
     name: 'Sap Sipper',
     description: 'Grass moves cannot touch it, and raise its Attack a stage instead.',
   });
+  // Teddiursa
+  registerAbility(Abilities.HoneyGather, {
+    name: 'Honey Gather',
+    description: 'Comes up with a Honey the first time it acts, if it has a hand free.',
+  });
 }

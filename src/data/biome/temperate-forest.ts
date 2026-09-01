@@ -17,6 +17,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Chikorita, weight: 2 },
         { species: Species.Ledyba, weight: 20 },
         { species: Species.Pineco, weight: 20 },
+        { species: Species.Teddiursa, weight: 20 },
       ],
       uncommon: [
         { species: Species.Ivysaur, weight: 1 },
@@ -50,6 +51,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Chikorita, weight: 2 },
         { species: Species.Ledyba, weight: 20 },
         { species: Species.Pineco, weight: 20 },
+        { species: Species.Teddiursa, weight: 20 },
       ],
       uncommon: [
         { species: Species.Ivysaur, weight: 1 },

@@ -4,6 +4,7 @@ import type { EvolutionData } from '../data/species';
 import evolveOnServerSide from '../server/evolution';
 import { requireUid } from '../server/auth';
 import { getCaught } from './caught';
+import { getStats } from './health';
 import { getInventory } from './inventory';
 import getIdToken from './session';
 
@@ -49,6 +50,7 @@ export async function listEvolutionOptions(
     held: new Set(caught.items),
     tradedAs: caught.tradedAs,
     tradedFor: caught.tradedFor,
+    stats: getStats(caught),
   };
 
   return (getSpeciesData(caught.species).evolvesInto ?? []).map((evolution) => ({

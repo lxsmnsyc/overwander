@@ -26,9 +26,12 @@ import registerSmeargleSpecies from './smeargle';
 import registerSnubbullSpecies from './snubbull';
 import registerSpinarakSpecies from './spinarak';
 import registerSunkernSpecies from './sunkern';
+import registerSwinubSpecies from './swinub';
+import registerTeddiursaSpecies from './teddiursa';
 import registerTogepiSpecies from './togepi';
 import registerTotodileSpecies from './totodile';
 import registerTowerDuoSpecies from './tower-duo';
+import registerTyrogueSpecies from './tyrogue';
 import registerWooperSpecies from './wooper';
 
 export default function registerGen2Species(): void {
@@ -64,4 +67,7 @@ export default function registerGen2Species(): void {
   registerLegendaryBeastSpecies();
   registerTowerDuoSpecies();
   registerCelebiSpecies();
+  registerTeddiursaSpecies();
+  registerSwinubSpecies();
+  registerTyrogueSpecies();
 }

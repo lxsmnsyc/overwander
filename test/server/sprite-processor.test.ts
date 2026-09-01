@@ -7,7 +7,8 @@ import pack from '../../src/server/sprites/packing';
 import { blank, blit, opaque } from '../../src/server/sprites/raster';
 import type { Raster } from '../../src/server/sprites/raster';
 import computeTrim from '../../src/server/sprites/trim';
-import { alignCoats, animFilter } from '../../src/server/sprites/pmd';
+import type { Frame, PictureData, SpriteTarget } from '../../src/server/sprites/pmd';
+import { alignCoats, animFilter, hoistMarks } from '../../src/server/sprites/pmd';
 import deduper, { drawPictures } from '../../src/server/sprites/dedupe';
 import {
   extraDestination,
@@ -804,5 +805,64 @@ describe('copying a rectangle', () => {
     );
 
     expect(marks(target, 1, 4, 2)).toEqual(['0,0', '1,0', '0,1', '1,1']);
+  });
+});
+
+/** One frame of a clip, with everything it does not care about filled in. */
+function framed(cell: number, flip: boolean, at: Point, head: Point): Frame {
+  return { shadow: [0, 0], marks: [null, head, null, null], cell, flip, at };
+}
+
+/** The clip those frames belong to, sized so nothing falls off it. */
+function clipOf(frames: Frame[]): SpriteTarget {
+  return {
+    frameWidth: 16,
+    frameHeight: 16,
+    sourceFrameWidth: 16,
+    sourceFrameHeight: 16,
+    trim: [0, 0],
+    columns: frames.length,
+    rows: 1,
+    frames,
+  };
+}
+
+describe('lifting the marks onto the pictures', () => {
+  const pictures: PictureData[] = [[0, 0, 4, 4]];
+
+  it('writes a mark once for every frame that draws the same picture', () => {
+    const frames = [framed(0, false, [2, 3], [3, 5]), framed(0, false, [5, 1], [6, 3])];
+    const written = hoistMarks([{ name: SpriteAnim.Idle, target: clipOf(frames) }], pictures);
+
+    // Both frames put the head one across and two down in the picture,
+    // so the picture says so and neither frame repeats it
+    expect(written.pictures[0]).toEqual([0, 0, 4, 4, [null, [1, 2], null, null]]);
+    expect(written.sprites[SpriteAnim.Idle]?.frames).toEqual([
+      [[0, 0], 0, 0, [2, 3]],
+      [[0, 0], 0, 0, [5, 1]],
+    ]);
+  });
+
+  it('turns a mirrored frame back over before comparing it', () => {
+    // The same pose drawn the other way round: its head is on the far
+    // side of the frame and in the same place on the picture
+    const frames = [framed(0, false, [0, 0], [1, 2]), framed(0, true, [0, 0], [2, 2])];
+    const written = hoistMarks([{ name: SpriteAnim.Idle, target: clipOf(frames) }], pictures);
+
+    expect(written.pictures[0]).toEqual([0, 0, 4, 4, [null, [1, 2], null, null]]);
+    expect(written.sprites[SpriteAnim.Idle]?.frames[1]).toEqual([[0, 0], 0, 1, [0, 0]]);
+  });
+
+  it('leaves a frame that disagrees carrying its own', () => {
+    const frames = [framed(0, false, [0, 0], [1, 2]), framed(0, false, [0, 0], [3, 3])];
+    const written = hoistMarks([{ name: SpriteAnim.Idle, target: clipOf(frames) }], pictures);
+
+    expect(written.sprites[SpriteAnim.Idle]?.frames[1]).toEqual([
+      [0, 0],
+      0,
+      0,
+      [0, 0],
+      [null, [3, 3], null, null],
+    ]);
   });
 });

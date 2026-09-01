@@ -15,9 +15,16 @@ import { asSpriteAnim } from '../data/ids/sprite-anims';
  * The description is the sprite collection's own, sanitised: the sheet
  * is packed, so `sheet.pictures` says where every distinct drawing
  * landed on it, `anims.anims` says how long each frame is held and
- * which clip it plays from, and `sprites` carries the part no other
- * layout has — **anchor points**, per frame, for where the parts of the
- * pokemon are.
+ * which clip it plays from, and `sprites` says which picture each frame
+ * draws and where it hangs.
+ *
+ * The part no other layout has is the **anchor points**, for where the
+ * parts of the pokemon are. All but the shadow live on the picture: a
+ * pose packed once and played by nine frames has its head in the same
+ * place in all nine, and writing them per frame wrote them nine times.
+ * `marksOf` is what puts them back on a frame. The shadow stays on the
+ * frame, because a pokemon at the top of a hop is drawn the same as one
+ * on the ground and its shadow is not in the same place.
  *
  * The two halves disagree about how big a frame is, on purpose.
  * `anims.anims` is faithful to the `AnimData.xml` it came from and
@@ -36,8 +43,9 @@ import { asSpriteAnim } from '../data/ids/sprite-anims';
  * the authored cell, and a point below a frame is a perfectly good
  * point to hang a sprite from — so nothing clamps them.
  *
- * The anchors come from the collection's `offset.png`, which paints one
- * pixel per part on a copy of the sheet. They are what a canvas needs
+ * The anchors come from the collection's `-Offsets` image, which paints
+ * one pixel per part on a copy of the sheet: black the head, green the
+ * body, red and blue the hands. They are what a canvas needs
  * to place a pokemon rather than guess at it: the shadow marker is the
  * point that sits on the ground, so a sprite whose shadow lands on a
  * cell is standing on that cell however much empty frame there is
@@ -159,6 +167,35 @@ export interface SheetRect {
   height: number;
 }
 
+/**
+ * The four marks an `-Offsets` image paints, wherever they are being
+ * measured from.
+ *
+ * `left` and `right` are the archive's own names for its red and its
+ * blue mark. Red is the one on the left of a frame that faces the
+ * camera, which is the pokemon's own right hand: the names are the
+ * screen's
+ */
+export interface SpriteMarks {
+  /** Body centre. */
+  center: Point | null;
+  head: Point | null;
+  left: Point | null;
+  right: Point | null;
+}
+
+/** A picture on the sheet, and where the parts of it are. */
+export interface SheetPicture extends SheetRect {
+  /**
+   * The marks, in the picture's own pixels.
+   *
+   * They belong to the picture rather than to the frame that draws it:
+   * a pose packed once and drawn by nine frames has its head in the
+   * same place in all nine
+   */
+  marks: SpriteMarks;
+}
+
 export interface SheetData {
   width: number;
   height: number;
@@ -166,14 +203,12 @@ export interface SheetData {
    * Every distinct picture on the sheet, for the whole pokemon rather
    * than for one clip. A frame names one of these by its position here
    */
-  pictures: SheetRect[];
+  pictures: SheetPicture[];
 }
 
 export interface AnimData {
   /** Which animation this is. */
   name: SpriteAnim;
-  frameWidth: number;
-  frameHeight: number;
   /** Animation id from `AnimData.xml`. */
   index: number;
   /**
@@ -201,24 +236,23 @@ export interface SanitizedAnimData {
  */
 export type SpriteAnchor = 'shadow' | 'center' | 'head' | 'left' | 'right';
 
-/** Anchors of a single frame, relative to that frame's top-left corner. */
+/** One frame: which picture it draws, where, and where its shadow is. */
 export interface SpriteFrameData {
-  /** Shadow center. */
+  /**
+   * Shadow centre, in the frame's own pixels.
+   *
+   * The one mark that is the frame's rather than the picture's: a
+   * pokemon at the top of a hop is drawn the same as one on the ground
+   * and its shadow is not in the same place
+   */
   shadow: Point | null;
-  /** Body center. */
-  center: Point | null;
-  head: Point | null;
-  left: Point | null;
-  right: Point | null;
   /**
    * Which packed picture this frame is drawn from, as an index into
-   * the clip's `cells` grid.
+   * `sheet.pictures`.
    *
-   * Half of a sheet is the same picture twice — a pose held for ten
-   * frames, a left-facing row that is the right-facing one mirrored —
-   * so the pictures are packed once and the frames point at them. A
-   * sheet packed before that says nothing here, and its frames are its
-   * pictures: see `cells`
+   * Half of a sheet is the same picture twice, a pose held for ten
+   * frames or a left-facing row that is the right-facing one mirrored,
+   * so the pictures are packed once and the frames point at them
    */
   cell: number | null;
   /** Whether that picture is drawn mirrored to make this frame. */
@@ -233,6 +267,13 @@ export interface SpriteFrameData {
    * box, which is what an untrimmed sheet has
    */
   at: Point | null;
+  /**
+   * Marks for this frame alone, in the picture's pixels, where they
+   * differ from the picture's own. Roughly one frame in a hundred and
+   * fifty: two poses can pack to one picture without agreeing on where
+   * the hands are
+   */
+  marks: SpriteMarks | null;
 }
 
 export interface SpriteTargetData {
@@ -250,9 +291,11 @@ export interface SpriteTargetData {
   trim: Point;
   /** Frames per orientation. */
   columns: number;
-  /** Orientations, in `directions` order. */
+  /**
+   * Orientations, which are the first `rows` of `SPRITE_DIRECTIONS`.
+   * A sleeping pokemon faces nowhere and has one
+   */
   rows: number;
-  directions: SpriteDirection[];
   /**
    * Row-major, `rows * columns` entries. The frame for a given
    * orientation and frame index sits at `direction * columns + frame`
@@ -261,8 +304,12 @@ export interface SpriteTargetData {
 }
 
 export interface SpriteSheetJSON {
-  /** Whether frames were trimmed to their content before packing. */
-  compact: boolean;
+  /**
+   * Which shape the file was written in. 1 wrote every mark on every
+   * frame; 2 writes them on the picture. Anything a reader does not
+   * know is read as the newest it does
+   */
+  version: number;
   sheet: SheetData;
   /**
    * Faithful to `AnimData.xml` — frame sizes here are always untrimmed
@@ -284,10 +331,6 @@ function asNumber(value: unknown): number {
   return typeof value === 'number' && Number.isFinite(value) ? value : 0;
 }
 
-function asString(value: unknown): string {
-  return typeof value === 'string' ? value : '';
-}
-
 function asArray(value: unknown): unknown[] {
   return Array.isArray(value) ? value : [];
 }
@@ -304,56 +347,143 @@ function asPoint(value: unknown): Point | null {
   return pair.length >= 2 ? [asNumber(pair[0]), asNumber(pair[1])] : null;
 }
 
-/** The pictures of a sheet, each written as `[x, y, width, height]`. */
-function asPictures(value: unknown): SheetRect[] {
+/**
+ * Where each part of a picture sits in the array a description writes
+ * it as: the rectangle first, then the marks. The names are worth
+ * nothing in a file that repeats them thousands of times, so the order
+ * **is** the contract, and a new part may only ever be appended
+ */
+const PICTURE_X = 0;
+const PICTURE_Y = 1;
+const PICTURE_WIDTH = 2;
+const PICTURE_HEIGHT = 3;
+const PICTURE_MARKS = 4;
+
+/** The same for a frame. */
+const FRAME_SHADOW = 0;
+const FRAME_CELL = 1;
+const FRAME_FLIP = 2;
+const FRAME_AT = 3;
+const FRAME_MARKS = 4;
+
+/** And for a frame of a version 1 file, which wrote its own marks. */
+const OLD_SHADOW = 0;
+const OLD_CENTER = 1;
+const OLD_HEAD = 2;
+const OLD_LEFT = 3;
+const OLD_RIGHT = 4;
+const OLD_CELL = 5;
+const OLD_FLIP = 6;
+const OLD_AT = 7;
+
+/** Marks in the order they are written, or nothing where none are. */
+function asMarks(value: unknown): SpriteMarks | null {
+  const held = asArray(value);
+
+  if (held.length === 0) {
+    return null;
+  }
+  return {
+    center: asPoint(held[0]),
+    head: asPoint(held[1]),
+    left: asPoint(held[2]),
+    right: asPoint(held[3]),
+  };
+}
+
+const NO_MARKS: SpriteMarks = { center: null, head: null, left: null, right: null };
+
+/** A picture, and the marks written beside it. */
+function asPictures(value: unknown): SheetPicture[] {
   return asArray(value).map((entry) => {
     const rect = asArray(entry);
 
     return {
-      x: asNumber(rect[0]),
-      y: asNumber(rect[1]),
-      width: asNumber(rect[2]),
-      height: asNumber(rect[3]),
+      x: asNumber(rect[PICTURE_X]),
+      y: asNumber(rect[PICTURE_Y]),
+      width: asNumber(rect[PICTURE_WIDTH]),
+      height: asNumber(rect[PICTURE_HEIGHT]),
+      marks: asMarks(rect[PICTURE_MARKS]) ?? NO_MARKS,
     };
   });
 }
 
-/**
- * Where each part of a frame sits in the array a description writes it
- * as. The names are worth nothing in a file that repeats them a
- * hundred thousand times, so the order **is** the contract
- */
-const FRAME_SHADOW = 0;
-const FRAME_CENTER = 1;
-const FRAME_HEAD = 2;
-const FRAME_LEFT = 3;
-const FRAME_RIGHT = 4;
-const FRAME_CELL = 5;
-const FRAME_FLIP = 6;
-const FRAME_AT = 7;
+function asCell(value: unknown): number | null {
+  return typeof value === 'number' ? value : null;
+}
 
 function asFrame(value: unknown): SpriteFrameData {
   const held = asArray(value);
-  const cell = held[FRAME_CELL];
 
   return {
     shadow: asPoint(held[FRAME_SHADOW]),
-    center: asPoint(held[FRAME_CENTER]),
-    head: asPoint(held[FRAME_HEAD]),
-    left: asPoint(held[FRAME_LEFT]),
-    right: asPoint(held[FRAME_RIGHT]),
-    cell: typeof cell === 'number' ? cell : null,
+    cell: asCell(held[FRAME_CELL]),
     flip: held[FRAME_FLIP] === 1,
     at: asPoint(held[FRAME_AT]),
+    marks: asMarks(held[FRAME_MARKS]),
   };
 }
 
-function asDirections(value: unknown): SpriteDirection[] {
-  const known = new Set<string>(SPRITE_DIRECTIONS);
+/**
+ * A version 1 frame, which wrote its own marks in its own box.
+ *
+ * They are moved into the picture's pixels on the way in, so that one
+ * meaning of a mark reaches the game however old the file is: a reader
+ * that kept both meanings would push the difference into every caller
+ */
+function asOldFrame(value: unknown, pictures: SheetPicture[]): SpriteFrameData {
+  const held = asArray(value);
+  const cell = asCell(held[OLD_CELL]);
+  const flip = held[OLD_FLIP] === 1;
+  const at = asPoint(held[OLD_AT]);
+  const width = cell == null ? 0 : (pictures[cell]?.width ?? 0);
+  const back = (point: Point | null): Point | null => {
+    if (point == null) {
+      return null;
+    }
+    const x = point[0] - (at?.[0] ?? 0);
 
-  return asArray(value)
-    .map(asString)
-    .filter((name): name is SpriteDirection => known.has(name));
+    return [flip ? width - 1 - x : x, point[1] - (at?.[1] ?? 0)];
+  };
+
+  return {
+    shadow: asPoint(held[OLD_SHADOW]),
+    cell,
+    flip,
+    at,
+    marks: {
+      center: back(asPoint(held[OLD_CENTER])),
+      head: back(asPoint(held[OLD_HEAD])),
+      left: back(asPoint(held[OLD_LEFT])),
+      right: back(asPoint(held[OLD_RIGHT])),
+    },
+  };
+}
+
+/**
+ * Where the parts of one frame are, in that frame's own pixels.
+ *
+ * The marks are kept on the picture, so this is where they are put
+ * back: mirrored when the frame draws that picture reflected, then
+ * moved to wherever the picture hangs in the frame's box
+ */
+export function marksOf(sheet: SheetData, frame: SpriteFrameData): SpriteMarks {
+  const picture = frame.cell == null ? undefined : sheet.pictures[frame.cell];
+  const marks = frame.marks ?? picture?.marks ?? NO_MARKS;
+  const width = picture?.width ?? 0;
+  const across = frame.at?.[0] ?? 0;
+  const down = frame.at?.[1] ?? 0;
+  const place = (point: Point | null): Point | null =>
+    point == null
+      ? null
+      : [(frame.flip ? width - 1 - point[0] : point[0]) + across, point[1] + down];
+
+  return {
+    center: place(marks.center),
+    head: place(marks.head),
+    left: place(marks.left),
+    right: place(marks.right),
+  };
 }
 
 /**
@@ -370,6 +500,10 @@ export default function asSpriteSheetJSON(value: unknown): SpriteSheetJSON {
   const sheet = asRecord(root.sheet);
   const anims = asRecord(root.anims);
   const sprites: Record<string, SpriteTargetData> = {};
+  // A file with no version at all is the shape that shipped before
+  // there were versions
+  const version = asNumber(root.version) || 1;
+  const pictures = asPictures(sheet.pictures);
 
   for (const [key, entry] of Object.entries(asRecord(root.sprites))) {
     const name = asSpriteAnim(Number.parseInt(key, 10));
@@ -395,17 +529,18 @@ export default function asSpriteSheetJSON(value: unknown): SpriteSheetJSON {
       trim: asPoint(target.trim) ?? [0, 0],
       columns: asNumber(target.columns),
       rows: asNumber(target.rows),
-      directions: asDirections(target.directions),
-      frames: asArray(target.frames).map(asFrame),
+      frames: asArray(target.frames).map((frame) =>
+        version >= 2 ? asFrame(frame) : asOldFrame(frame, pictures),
+      ),
     };
   }
 
   return {
-    compact: root.compact === true,
+    version,
     sheet: {
       width: asNumber(sheet.width),
       height: asNumber(sheet.height),
-      pictures: asPictures(sheet.pictures),
+      pictures,
     },
     anims: {
       shadowSize: asNumber(anims.shadowSize),
@@ -416,13 +551,12 @@ export default function asSpriteSheetJSON(value: unknown): SpriteSheetJSON {
 
           return {
             name,
-            frameWidth: asNumber(anim.frameWidth),
-            frameHeight: asNumber(anim.frameHeight),
             index: asNumber(anim.index),
             durations: asArray(anim.durations).map(asNumber),
             // An anim with no target of its own plays from the grid
-            // named after it
-            target: asSpriteAnim(asNumber(anim.target)) ?? name,
+            // named after it, which is how a file leaves the two out
+            // where they agree
+            target: anim.target == null ? name : asSpriteAnim(asNumber(anim.target)),
           };
         })
         .filter((anim): anim is AnimData => anim.name != null && anim.target != null),

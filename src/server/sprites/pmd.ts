@@ -9,8 +9,8 @@ import type { FrameCell, SourceGrid } from './dedupe';
 import deduper, { drawPictures } from './dedupe';
 import type { Drawing } from './files';
 import { pokemonDestination, writeSheet } from './files';
-import type { FrameMarkers, Point, SpriteDirection } from './markers';
-import markersFor, { SPRITE_DIRECTIONS } from './markers';
+import type { FrameMarkers, Point } from './markers';
+import markersFor from './markers';
 import { packSmallest } from './packing';
 import type { Raster } from './raster';
 import { blank, blit, decode, encode } from './raster';
@@ -78,20 +78,34 @@ interface Entry {
   frames?: FrameCell[];
 }
 
-/** One frame as the description writes it: anchors, then placement. */
-type FrameData = [
-  shadow: Point | null,
+/** The four marks of the `-Offsets` image, in the order they are written. */
+export type MarkData = [
   center: Point | null,
   head: Point | null,
   left: Point | null,
   right: Point | null,
-  cell: number,
-  flip: 0 | 1,
-  at: Point,
 ];
 
+/**
+ * One frame as the description writes it: where its shadow is, which
+ * picture it draws and where. The marks come last and only where this
+ * frame disagrees with its picture about them
+ */
+type FrameData =
+  | [shadow: Point | null, cell: number, flip: 0 | 1, at: Point]
+  | [shadow: Point | null, cell: number, flip: 0 | 1, at: Point, marks: MarkData];
+
+/** One frame before it is written, with its marks still its own. */
+export interface Frame {
+  shadow: Point | null;
+  marks: MarkData;
+  cell: number;
+  flip: boolean;
+  at: Point;
+}
+
 /** What the description says about one animation's frames. */
-interface SpriteTarget {
+export interface SpriteTarget {
   frameWidth: number;
   frameHeight: number;
   sourceFrameWidth: number;
@@ -99,19 +113,49 @@ interface SpriteTarget {
   trim: Point;
   columns: number;
   rows: number;
-  directions: SpriteDirection[];
   /** Row-major: the frame for a direction and index is `row * columns + frame`. */
-  frames: FrameData[];
+  frames: Frame[];
 }
 
-/** Where one picture landed on the sheet, as `[x, y, width, height]`. */
-type PictureData = [x: number, y: number, width: number, height: number];
+/** The same, once the marks it shares have been lifted off it. */
+type WrittenTarget = Omit<SpriteTarget, 'frames'> & { frames: FrameData[] };
+
+/**
+ * Where one picture landed on the sheet, and where the parts of it are.
+ * A picture nothing marks is written as the rectangle alone
+ */
+export type PictureData =
+  | [x: number, y: number, width: number, height: number]
+  | [x: number, y: number, width: number, height: number, marks: MarkData];
+
+/** Which shape the description is written in: see `sprite-sheet.ts`. */
+const VERSION = 2;
 
 interface SheetData {
-  compact: boolean;
+  version: number;
   sheet: { width: number; height: number; pictures: PictureData[] };
-  anims: AnimData;
-  sprites: Partial<Record<SpriteAnim, SpriteTarget>>;
+  anims: WrittenAnimData;
+  sprites: Partial<Record<SpriteAnim, WrittenTarget>>;
+}
+
+/**
+ * The archive's own animation list, less what the sheet already says.
+ *
+ * The frame sizes are dropped: they are the cell each animation was
+ * drawn in, which `sprites` carries as `sourceFrameWidth`, and a fact
+ * written twice is a fact that can disagree with itself
+ */
+interface WrittenAnim {
+  name: SpriteAnim;
+  index: number;
+  durations: number[];
+  /** Left out where it is the animation itself. */
+  target?: SpriteAnim;
+}
+
+interface WrittenAnimData {
+  shadowSize: number;
+  anims: WrittenAnim[];
 }
 
 export interface PmdResult {
@@ -446,24 +490,102 @@ function targetFor(entry: Entry): SpriteTarget {
     trim: entry.trim,
     columns: entry.columns,
     rows: entry.rows,
-    directions: [...SPRITE_DIRECTIONS].slice(0, entry.rows),
-    // Written as an array rather than as named fields: the names are
-    // worth nothing in a file that repeats them a hundred thousand
-    // times. The order is the one `sprite-sheet.ts` reads
-    frames: frames.map((markers, at): FrameData => {
+    frames: frames.map((markers, at): Frame => {
       const held = entry.frames?.[at];
 
-      return [
-        markers.shadow,
-        markers.center,
-        markers.head,
-        markers.left,
-        markers.right,
-        held?.cell ?? at,
-        held?.flip === true ? 1 : 0,
-        held?.at ?? [0, 0],
-      ];
+      return {
+        shadow: markers.shadow,
+        marks: [markers.center, markers.head, markers.left, markers.right],
+        cell: held?.cell ?? at,
+        flip: held?.flip === true,
+        at: held?.at ?? [0, 0],
+      };
     }),
+  };
+}
+
+/**
+ * A frame's marks, moved into the pixels of the picture it draws.
+ *
+ * The marks are read against the frame's box, but they describe the
+ * drawing: the same pose packed once and played by nine frames has its
+ * head in the same place in all nine, and only in the picture's own
+ * pixels does that show
+ */
+function marksOnPicture(frame: Frame, width: number): MarkData {
+  const moved = (point: Point | null): Point | null => {
+    if (point == null) {
+      return null;
+    }
+    const x = point[0] - frame.at[0];
+
+    return [frame.flip ? width - 1 - x : x, point[1] - frame.at[1]];
+  };
+
+  return [
+    moved(frame.marks[0]),
+    moved(frame.marks[1]),
+    moved(frame.marks[2]),
+    moved(frame.marks[3]),
+  ];
+}
+
+/** Whether two frames put the same parts in the same places. */
+function sameMarks(one: MarkData, two: MarkData): boolean {
+  return one.every((point, at) => {
+    const other = two[at];
+
+    return point == null || other == null
+      ? point === other
+      : point[0] === other[0] && point[1] === other[1];
+  });
+}
+
+/**
+ * The description, with every mark written once.
+ *
+ * A picture takes the marks of the first frame that draws it, and a
+ * frame that disagrees carries its own: two poses can pack to one
+ * picture without agreeing on where the hands are, which happens to
+ * about one frame in a hundred and fifty and is worth a line each
+ * rather than a copy for all of them
+ */
+export function hoistMarks(
+  targets: { name: SpriteAnim; target: SpriteTarget }[],
+  pictures: PictureData[],
+): { pictures: PictureData[]; sprites: Partial<Record<SpriteAnim, WrittenTarget>> } {
+  const widthOf = (cell: number): number => pictures[cell]?.[2] ?? 0;
+  const shared = new Map<number, MarkData>();
+  const sprites: Partial<Record<SpriteAnim, WrittenTarget>> = {};
+
+  for (const { target } of targets) {
+    for (const frame of target.frames) {
+      if (!shared.has(frame.cell)) {
+        shared.set(frame.cell, marksOnPicture(frame, widthOf(frame.cell)));
+      }
+    }
+  }
+
+  for (const { name, target } of targets) {
+    sprites[name] = {
+      ...target,
+      frames: target.frames.map((frame): FrameData => {
+        const marks = marksOnPicture(frame, widthOf(frame.cell));
+        const held: FrameData = [frame.shadow, frame.cell, frame.flip ? 1 : 0, frame.at];
+        const common = shared.get(frame.cell);
+
+        return common != null && sameMarks(common, marks) ? held : [...held, marks];
+      }),
+    };
+  }
+
+  return {
+    pictures: pictures.map((picture, at): PictureData => {
+      const marks = shared.get(at);
+
+      return marks == null ? picture : [picture[0], picture[1], picture[2], picture[3], marks];
+    }),
+    sprites,
   };
 }
 
@@ -529,11 +651,7 @@ export default async function processPmd(coats: Coats, options: PmdOptions): Pro
   for (const { box, x, y } of layout.placed) {
     spots[box.at] = { x, y };
   }
-  const sprites: Partial<Record<SpriteAnim, SpriteTarget>> = {};
-
-  for (const entry of entries) {
-    sprites[entry.name] = targetFor(entry);
-  }
+  const targets = entries.map((entry) => ({ name: entry.name, target: targetFor(entry) }));
 
   /** One coat drawn onto the layout every coat shares. */
   const paint = (coat: number): Raster => {
@@ -543,22 +661,28 @@ export default async function processPmd(coats: Coats, options: PmdOptions): Pro
     return raster;
   };
 
+  const described = hoistMarks(
+    targets,
+    shared.pictures.map((picture, at): PictureData => [
+      spots[at]?.x ?? 0,
+      spots[at]?.y ?? 0,
+      picture.width,
+      picture.height,
+    ]),
+  );
   const output: SheetData = {
-    // `anims` mirrors the archive, so its frame sizes stay untrimmed:
-    // `sprites` is the one that follows compaction
-    compact: options.compact,
-    sheet: {
-      width: layout.width,
-      height: layout.height,
-      pictures: shared.pictures.map((picture, at): PictureData => [
-        spots[at]?.x ?? 0,
-        spots[at]?.y ?? 0,
-        picture.width,
-        picture.height,
-      ]),
+    version: VERSION,
+    sheet: { width: layout.width, height: layout.height, pictures: described.pictures },
+    anims: {
+      shadowSize: data.shadowSize,
+      anims: data.anims.map((anim): WrittenAnim => ({
+        name: anim.name,
+        index: anim.index,
+        durations: anim.durations,
+        ...(anim.target === anim.name ? {} : { target: anim.target }),
+      })),
     },
-    anims: data,
-    sprites,
+    sprites: described.sprites,
   };
   const written: string[] = [];
   const drawn: Drawing[] = [];

@@ -7,6 +7,7 @@ import asSpriteSheetJSON, {
   SPRITE_DIRECTIONS,
   type SpriteSheetJSON,
   type SpriteTargetData,
+  marksOf,
 } from '../../src/canvas/sprite-sheet';
 import { Species } from '../../src/data/ids/species';
 import { SpriteAnim, asSpriteAnim } from '../../src/data/ids/sprite-anims';
@@ -198,7 +199,9 @@ describe('sprite metadata', () => {
         expect(target.frames.length, `${species} ${anim.target} frames`).toBe(
           target.rows * target.columns,
         );
-        expect(target.directions.length, `${species} ${anim.target} rows`).toBe(target.rows);
+        expect(target.rows, `${species} ${anim.target} rows`).toBeLessThanOrEqual(
+          SPRITE_DIRECTIONS.length,
+        );
         expect(anim.durations.length, `${species} ${anim.name} durations`).toBe(target.columns);
 
         // Every frame is drawn from one of the sheet's pictures, hung
@@ -216,15 +219,16 @@ describe('sprite metadata', () => {
           expect(frame.at[0] + cell.width, hangs).toBeLessThanOrEqual(target.frameWidth);
           expect(frame.at[1] + cell.height, hangs).toBeLessThanOrEqual(target.frameHeight);
         }
-        // `anims` stays faithful to the file it came from, so its sizes
-        // are the untrimmed ones however the sheet was packed
-        expect(anim.frameWidth, `${species} ${anim.name} source width`).toBe(
-          target.sourceFrameWidth,
-        );
-        expect(anim.frameHeight, `${species} ${anim.name} source height`).toBe(
-          target.sourceFrameHeight,
-        );
       }
+    }
+  });
+
+  it('is written in the shape the reader packs for', () => {
+    // The older shape still reads, so a file left behind by a tool that
+    // does not know about the newer one would work and quietly weigh
+    // twice what it should. This is what says so
+    for (const { species, data } of DESCRIBED) {
+      expect(data.version, `${species}`).toBe(2);
     }
   });
 
@@ -241,10 +245,6 @@ describe('sprite metadata', () => {
         // where it came from cannot fall off the edge
         expect(target.trim[0] + target.frameWidth).toBeLessThanOrEqual(target.sourceFrameWidth);
         expect(target.trim[1] + target.frameHeight).toBeLessThanOrEqual(target.sourceFrameHeight);
-
-        if (!data.compact) {
-          expect(target.trim, `${species} ${name} untrimmed`).toEqual([0, 0]);
-        }
       }
     }
   });
@@ -270,12 +270,13 @@ describe('sprite metadata', () => {
           // drawn, and a flying pokemon's shadow is on the ground
           // below everything drawn. What they may not leave is the
           // cell the frame was cut from
+          const marks = marksOf(data.sheet, frame);
           const parts: [string, Point | null][] = [
             ['shadow', frame.shadow],
-            ['center', frame.center],
-            ['head', frame.head],
-            ['left', frame.left],
-            ['right', frame.right],
+            ['center', marks.center],
+            ['head', marks.head],
+            ['left', marks.left],
+            ['right', marks.right],
           ];
 
           for (const [part, point] of parts) {
@@ -312,12 +313,98 @@ describe('sprite metadata', () => {
     expect(empty.anims.anims[0].target).toBe(SpriteAnim.Idle);
     expect(idle?.frames).toEqual([]);
     expect(asSpriteSheetJSON(null).anims.anims).toEqual([]);
-    // A description that says nothing about trimming describes an
-    // untrimmed sheet, so its frames are their own source cells
-    expect(empty.compact).toBe(false);
+    // A description with no version is the shape that shipped before
+    // there were versions, and one that says nothing about trimming
+    // describes an untrimmed sheet
+    expect(empty.version).toBe(1);
     expect(idle?.trim).toEqual([0, 0]);
     expect(idle?.sourceFrameWidth).toBe(24);
     expect(idle?.sourceFrameHeight).toBe(32);
+  });
+});
+
+describe('marks on the picture rather than on the frame', () => {
+  /** One picture with a head mark, drawn by frames that differ. */
+  const sheet = {
+    version: 2,
+    sheet: { width: 8, height: 8, pictures: [[0, 0, 4, 4, [null, [1, 2], null, null]]] },
+    anims: { shadowSize: 1, anims: [{ name: SpriteAnim.Idle, index: 0, durations: [1, 1, 1] }] },
+    sprites: {
+      [SpriteAnim.Idle]: {
+        frameWidth: 8,
+        frameHeight: 8,
+        sourceFrameWidth: 8,
+        sourceFrameHeight: 8,
+        trim: [0, 0],
+        columns: 3,
+        rows: 1,
+        frames: [
+          [[4, 7], 0, 0, [2, 3]],
+          [[4, 7], 0, 1, [2, 3]],
+          [[4, 7], 0, 0, [2, 3], [null, [0, 0], null, null]],
+        ],
+      },
+    },
+  };
+
+  it("hangs a picture's marks wherever that picture is drawn", () => {
+    const data = asSpriteSheetJSON(sheet);
+    const frames = data.sprites[SpriteAnim.Idle]?.frames ?? [];
+
+    expect(marksOf(data.sheet, frames[0]).head).toEqual([3, 5]);
+  });
+
+  it('mirrors them with the picture', () => {
+    const data = asSpriteSheetJSON(sheet);
+    const frames = data.sprites[SpriteAnim.Idle]?.frames ?? [];
+
+    // The picture is 4 across, so its column 1 is column 2 reflected
+    expect(marksOf(data.sheet, frames[1]).head).toEqual([4, 5]);
+  });
+
+  it('lets a frame that disagrees carry its own', () => {
+    const data = asSpriteSheetJSON(sheet);
+    const frames = data.sprites[SpriteAnim.Idle]?.frames ?? [];
+
+    expect(marksOf(data.sheet, frames[2]).head).toEqual([2, 3]);
+  });
+
+  it('reads a version 1 description as the same thing', () => {
+    // The shape that shipped first: every mark written on every frame,
+    // in the frame's own box
+    const old = asSpriteSheetJSON({
+      sheet: { width: 8, height: 8, pictures: [[0, 0, 4, 4]] },
+      anims: {
+        shadowSize: 1,
+        anims: [{ name: SpriteAnim.Idle, index: 0, durations: [1, 1], target: SpriteAnim.Idle }],
+      },
+      sprites: {
+        [SpriteAnim.Idle]: {
+          frameWidth: 8,
+          frameHeight: 8,
+          sourceFrameWidth: 8,
+          sourceFrameHeight: 8,
+          trim: [0, 0],
+          columns: 2,
+          rows: 1,
+          directions: ['Down'],
+          frames: [
+            [[4, 7], null, [3, 5], null, null, 0, 0, [2, 3]],
+            [[4, 7], null, [4, 5], null, null, 0, 1, [2, 3]],
+          ],
+        },
+      },
+    });
+    const now = asSpriteSheetJSON(sheet);
+    const marks = (data: SpriteSheetJSON, at: number): Point | null => {
+      const frames = data.sprites[SpriteAnim.Idle]?.frames ?? [];
+
+      return marksOf(data.sheet, frames[at]).head;
+    };
+
+    expect(old.version).toBe(1);
+    expect(marks(old, 0)).toEqual(marks(now, 0));
+    expect(marks(old, 1)).toEqual(marks(now, 1));
   });
 });
 
@@ -530,17 +617,17 @@ describe('where the parts of a pokemon are', () => {
     sprite.play(SpriteAnim.Idle, { direction: 'Down' });
 
     const idle = SAMPLE.sprites[SpriteAnim.Idle]!;
-    const down = idle.frames[idle.directions.indexOf('Down') * idle.columns];
+    const down = idle.frames[SPRITE_DIRECTIONS.indexOf('Down') * idle.columns];
 
     expect(sprite.anchor('shadow')).toEqual(down.shadow);
-    expect(sprite.anchor('head')).toEqual(down.head);
+    expect(sprite.anchor('head')).toEqual(marksOf(SAMPLE.sheet, down).head);
 
     // Turning about reads a different row of the same grid, and the
     // sheets do not agree between rows — a pokemon seen from behind
     // stands differently in its box
     sprite.setDirection('Up');
 
-    const up = idle.frames[idle.directions.indexOf('Up') * idle.columns];
+    const up = idle.frames[SPRITE_DIRECTIONS.indexOf('Up') * idle.columns];
 
     expect(sprite.anchor('shadow')).toEqual(up.shadow);
   });
@@ -554,19 +641,20 @@ describe('where the parts of a pokemon are', () => {
     const head = sprite.anchor('head');
     const center = sprite.anchor('center');
     const idle = SAMPLE.sprites[SpriteAnim.Idle]!;
-    const frame = idle.frames[idle.directions.indexOf('Down') * idle.columns];
+    const frame = idle.frames[SPRITE_DIRECTIONS.indexOf('Down') * idle.columns];
+    const marks = marksOf(SAMPLE.sheet, frame);
 
     expect(shadow).not.toBeNull();
     expect(head).not.toBeNull();
-    // No sheet marks the body centre yet, so it is the middle of the
-    // parts that are marked: the head and the two hands, which sit
-    // around the body rather than on it
-    expect(frame.center).toBeNull();
+    // The sheets that ship were packed before the reader could find
+    // the body mark, so it is the middle of the parts that are marked:
+    // the head and the two hands, which sit around the body
+    expect(marks.center).toBeNull();
 
     // Said as a type guard rather than left to be inferred: a plain
     // `!= null` filter still hands back an array that might hold one,
     // and the average below reads into every point it is given
-    const marked = [frame.head, frame.left, frame.right].filter(
+    const marked = [marks.head, marks.left, marks.right].filter(
       (point): point is Point => point != null,
     );
 
@@ -841,9 +929,7 @@ describe('where the sheets are', () => {
     // the order everything that works out a facing counts in
     for (const { species, data } of DESCRIBED) {
       for (const [name, target] of clipsOf(data)) {
-        expect(target.directions, `${species} ${name}`).toEqual(
-          SPRITE_DIRECTIONS.slice(0, target.rows),
-        );
+        expect(target.rows, `${species} ${name}`).toBeLessThanOrEqual(SPRITE_DIRECTIONS.length);
       }
     }
   });
@@ -929,7 +1015,7 @@ describe('drawing from a deduped sheet', () => {
           continue;
         }
         const sprite = loaded(data);
-        const direction = target.directions[Math.floor(at / target.columns)];
+        const direction = SPRITE_DIRECTIONS[Math.floor(at / target.columns)];
 
         sprite.play(name, { loop: true, direction });
 
@@ -960,7 +1046,7 @@ describe('drawing from a deduped sheet', () => {
           continue;
         }
         const sprite = loaded(data);
-        const direction = target.directions[Math.floor(at / target.columns)];
+        const direction = SPRITE_DIRECTIONS[Math.floor(at / target.columns)];
 
         sprite.play(name, { loop: true, direction });
 

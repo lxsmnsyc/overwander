@@ -57,6 +57,7 @@ interface Region {
 }
 
 interface Meta {
+  version?: number;
   sheet: {
     width: number;
     height: number;
@@ -146,6 +147,14 @@ for (const { region, file } of DESCRIBED) {
   }
   // oxlint-disable-next-line typescript/no-unsafe-type-assertion
   const meta = JSON.parse(raw) as Meta;
+
+  // This reads frames of the shape that shipped first, where every
+  // mark is written on the frame. A description that keeps them on the
+  // picture is a different file and this would quietly cut it up
+  if ((meta.version ?? 1) > 1) {
+    say(`${species}: written in a shape this does not read, left alone`);
+    continue;
+  }
   const paths = coatsOf(region, species);
 
   if (paths.length === 0) {

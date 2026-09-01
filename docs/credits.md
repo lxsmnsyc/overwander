@@ -92,10 +92,13 @@ of it, and the four coats are compared together so a picture is only shared when
 it matches in all of them. `src/canvas/sprite-sheet.ts` is the whole of that
 contract and `src/canvas/species-sprite-animation.ts` plays it.
 
-The art began as **PMD sprites** — the layout Pokémon Mystery Dungeon fan
-projects use, eight facing rows per animation with an `anims` block and per-frame
-anchors — and the anchors survive the repacking: every frame still says where the
-pokemon's shadow, centre, head and hands are.
+The art began as **PMD sprites**, the layout Pokémon Mystery Dungeon fan projects
+use: eight facing rows per animation, an `anims` block, and an anchor for the
+pokemon's shadow, centre, head and hands. The anchors survive the repacking. All
+but the shadow are kept on the picture rather than on the frame, since a pose
+packed once and played by nine frames has its head in the same place in all nine;
+[`scripts/lift-marks.ts`](../scripts/lift-marks.ts) is what moved them there, and
+it halved the descriptions.
 
 Two passes run over the sheets. `pnpm compact-sprites` rewrites the PNG containers
 as indexed colour without touching a pixel, and

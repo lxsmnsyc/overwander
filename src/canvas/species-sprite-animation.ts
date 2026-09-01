@@ -2,12 +2,15 @@ import type { ShadowPatch, SpriteQuad } from './placement';
 import asSpriteSheetJSON, {
   type AnimData,
   type Point,
+  SPRITE_DIRECTIONS,
   SPRITE_TICK,
+  type SheetData,
   type SpriteAnchor,
   type SpriteDirection,
   type SpriteFrameData,
   type SpriteSheetJSON,
   type SpriteTargetData,
+  marksOf,
 } from './sprite-sheet';
 import type { Cast } from './daylight';
 import type { SpriteAnim } from '../data/ids/sprite-anims';
@@ -201,11 +204,13 @@ function middleOf(points: Point[]): Point | null {
  * horizontally
  */
 function pointsOf(
-  anchors: SpriteFrameData,
+  sheet: SheetData,
+  frame: SpriteFrameData,
   frameWidth: number,
   frameHeight: number,
 ): Record<SpriteAnchor, Point> {
-  const shadow: Point = anchors.shadow ?? [(frameWidth - 1) / 2, frameHeight - 1];
+  const anchors = marksOf(sheet, frame);
+  const shadow: Point = frame.shadow ?? [(frameWidth - 1) / 2, frameHeight - 1];
   const marked = [anchors.head, anchors.left, anchors.right].filter(
     (point): point is Point => point != null,
   );
@@ -657,7 +662,7 @@ export default class SpeciesSpriteAnimation {
       return 0;
     }
 
-    const at = clip.target.directions.indexOf(this.facing);
+    const at = SPRITE_DIRECTIONS.indexOf(this.facing);
 
     return at >= 0 && at < clip.rows ? at : 0;
   }
@@ -699,7 +704,9 @@ export default class SpeciesSpriteAnimation {
     if (clip == null || anchors == null) {
       return null;
     }
-    return pointsOf(anchors, clip.target.frameWidth, clip.target.frameHeight)[kind];
+    return pointsOf(this.data.sheet, anchors, clip.target.frameWidth, clip.target.frameHeight)[
+      kind
+    ];
   }
 
   /**
@@ -721,7 +728,9 @@ export default class SpeciesSpriteAnimation {
     if (clip == null || anchors == null) {
       return null;
     }
-    return pointsOf(anchors, clip.target.frameWidth, clip.target.frameHeight)[kind];
+    return pointsOf(this.data.sheet, anchors, clip.target.frameWidth, clip.target.frameHeight)[
+      kind
+    ];
   }
 
   /**

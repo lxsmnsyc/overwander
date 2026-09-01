@@ -15,6 +15,7 @@
     "sprite-coats": "node scripts/sprite-coats.ts",
     "graft-walls": "node scripts/graft-walls.ts",
     "item-icons": "node scripts/item-icons.ts",
+    "lift-marks": "node scripts/lift-marks.ts",
     "test": "vitest run",
     "test:rules": "vitest run --config vitest.rules.ts",
     "test:e2e": "playwright test",

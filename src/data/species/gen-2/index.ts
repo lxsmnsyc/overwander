@@ -3,11 +3,15 @@ import registerChinchouSpecies from './chinchou';
 import registerCyndaquilSpecies from './cyndaquil';
 import registerHoothootSpecies from './hoothoot';
 import registerHoppipSpecies from './hoppip';
+import registerHoundourSpecies from './houndour';
 import registerLedybaSpecies from './ledyba';
 import registerMareepSpecies from './mareep';
 import registerNatuSpecies from './natu';
+import registerPhanpySpecies from './phanpy';
 import registerPinecoSpecies from './pineco';
+import registerRemoraidSpecies from './remoraid';
 import registerSentretSpecies from './sentret';
+import registerSlugmaSpecies from './slugma';
 import registerSnubbullSpecies from './snubbull';
 import registerSpinarakSpecies from './spinarak';
 import registerSunkernSpecies from './sunkern';
@@ -30,4 +34,8 @@ export default function registerGen2Species(): void {
   registerWooperSpecies();
   registerPinecoSpecies();
   registerSnubbullSpecies();
+  registerSlugmaSpecies();
+  registerRemoraidSpecies();
+  registerHoundourSpecies();
+  registerPhanpySpecies();
 }

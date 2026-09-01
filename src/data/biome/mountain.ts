@@ -15,6 +15,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Machop, weight: 20 },
         { species: Species.Geodude, weight: 20 },
         { species: Species.Cyndaquil, weight: 2 },
+        { species: Species.Slugma, weight: 20 },
       ],
       uncommon: [
         { species: Species.Charmeleon, weight: 1 },
@@ -46,6 +47,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Machop, weight: 20 },
         { species: Species.Geodude, weight: 20 },
         { species: Species.Cyndaquil, weight: 2 },
+        { species: Species.Slugma, weight: 20 },
       ],
       uncommon: [
         { species: Species.Charmeleon, weight: 1 },
@@ -74,6 +76,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Zubat, weight: 30 },
         { species: Species.Diglett, weight: 20 },
         { species: Species.Geodude, weight: 20 },
+        { species: Species.Slugma, weight: 20 },
       ],
       uncommon: [{ species: Species.Graveler, weight: 5 }],
       rare: [
@@ -97,6 +100,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Geodude, weight: 20 },
         { species: Species.Gastly, weight: 20 },
         { species: Species.Cubone, weight: 20 },
+        { species: Species.Slugma, weight: 20 },
       ],
       uncommon: [
         { species: Species.Graveler, weight: 5 },

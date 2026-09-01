@@ -101,6 +101,14 @@ const enum Families {
   Pineco = 101,
   // 102 is Dunsparce's and 103 Gligar's
   Snubbull = 104,
+  // 105 is Qwilfish's, 106 Shuckle's, 107 Heracross', 108 Sneasel's
+  // and 109 Teddiursa's
+  Slugma = 110,
+  // 111 is Swinub's and 112 Corsola's
+  Remoraid = 113,
+  // 114 is Delibird's, 115 Mantine's and 116 Skarmory's
+  Houndour = 117,
+  Phanpy = 118,
 }
 
 export default Families;

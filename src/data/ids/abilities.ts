@@ -208,6 +208,13 @@ const enum Abilities {
   MotorDrive = 128,
   // Sunkern
   FlowerGift = 129,
+  // Slugma
+  MagmaArmor = 130,
+  // Remoraid
+  SuctionCups = 131,
+  Moody = 132,
+  // Phanpy
+  Stamina = 133,
   // Special (non-standard abilities outside the regular pool)
   Boss = 100001,
   Shadow = 100002,

@@ -274,4 +274,12 @@ export const enum Species {
   Forretress = 205,
   Snubbull = 209,
   Granbull = 210,
+  Slugma = 218,
+  Magcargo = 219,
+  Remoraid = 223,
+  Octillery = 224,
+  Houndour = 228,
+  Houndoom = 229,
+  Phanpy = 231,
+  Donphan = 232,
 }

@@ -15,6 +15,7 @@ export default function registerSavannaSpawns(): void {
         { species: Species.Doduo, weight: 20 },
         { species: Species.Natu, weight: 20 },
         { species: Species.Sunkern, weight: 25 },
+        { species: Species.Phanpy, weight: 20 },
       ],
       uncommon: [
         { species: Species.Nidorina, weight: 5 },
@@ -40,6 +41,7 @@ export default function registerSavannaSpawns(): void {
         { species: Species.Rhyhorn, weight: 20 },
         { species: Species.Natu, weight: 20 },
         { species: Species.Sunkern, weight: 25 },
+        { species: Species.Phanpy, weight: 20 },
       ],
       uncommon: [
         { species: Species.Nidorina, weight: 5 },
@@ -62,6 +64,7 @@ export default function registerSavannaSpawns(): void {
         { species: Species.Ekans, weight: 20 },
         { species: Species.NidoranF, weight: 20 },
         { species: Species.NidoranM, weight: 20 },
+        { species: Species.Houndour, weight: 20 },
       ],
       uncommon: [
         { species: Species.Nidorina, weight: 5 },
@@ -79,6 +82,7 @@ export default function registerSavannaSpawns(): void {
         { species: Species.Ekans, weight: 20 },
         { species: Species.NidoranF, weight: 20 },
         { species: Species.NidoranM, weight: 20 },
+        { species: Species.Houndour, weight: 20 },
       ],
       uncommon: [
         { species: Species.Nidorina, weight: 5 },

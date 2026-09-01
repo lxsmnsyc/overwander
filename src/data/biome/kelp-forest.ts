@@ -14,6 +14,7 @@ export default function registerKelpForestSpawns(): void {
         { species: Species.Staryu, weight: 20 },
         { species: Species.Magikarp, weight: 30 },
         { species: Species.Chinchou, weight: 20 },
+        { species: Species.Remoraid, weight: 20 },
       ],
       uncommon: [],
       rare: [
@@ -31,6 +32,7 @@ export default function registerKelpForestSpawns(): void {
         { species: Species.Staryu, weight: 20 },
         { species: Species.Magikarp, weight: 30 },
         { species: Species.Chinchou, weight: 20 },
+        { species: Species.Remoraid, weight: 20 },
       ],
       uncommon: [],
       rare: [
@@ -48,6 +50,7 @@ export default function registerKelpForestSpawns(): void {
         { species: Species.Staryu, weight: 20 },
         { species: Species.Magikarp, weight: 30 },
         { species: Species.Chinchou, weight: 20 },
+        { species: Species.Remoraid, weight: 20 },
       ],
       uncommon: [],
       rare: [
@@ -64,6 +67,7 @@ export default function registerKelpForestSpawns(): void {
         { species: Species.Staryu, weight: 20 },
         { species: Species.Magikarp, weight: 30 },
         { species: Species.Chinchou, weight: 20 },
+        { species: Species.Remoraid, weight: 20 },
       ],
       uncommon: [],
       rare: [

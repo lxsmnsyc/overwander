@@ -14,6 +14,8 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Mankey, weight: 20 },
         { species: Species.Geodude, weight: 20 },
         { species: Species.Cubone, weight: 20 },
+        { species: Species.Slugma, weight: 20 },
+        { species: Species.Phanpy, weight: 20 },
       ],
       uncommon: [{ species: Species.Graveler, weight: 5 }],
       rare: [
@@ -33,6 +35,8 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Mankey, weight: 20 },
         { species: Species.Geodude, weight: 20 },
         { species: Species.Cubone, weight: 20 },
+        { species: Species.Slugma, weight: 20 },
+        { species: Species.Phanpy, weight: 20 },
       ],
       uncommon: [{ species: Species.Graveler, weight: 5 }],
       rare: [
@@ -51,6 +55,8 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Ekans, weight: 20 },
         { species: Species.Geodude, weight: 20 },
         { species: Species.Cubone, weight: 20 },
+        { species: Species.Slugma, weight: 20 },
+        { species: Species.Houndour, weight: 20 },
       ],
       uncommon: [{ species: Species.Graveler, weight: 5 }],
       rare: [
@@ -67,6 +73,8 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Ekans, weight: 20 },
         { species: Species.Geodude, weight: 20 },
         { species: Species.Cubone, weight: 20 },
+        { species: Species.Slugma, weight: 20 },
+        { species: Species.Houndour, weight: 20 },
       ],
       uncommon: [{ species: Species.Graveler, weight: 5 }],
       rare: [

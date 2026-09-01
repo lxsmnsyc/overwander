@@ -38,3 +38,32 @@ is still short of the mainline, in rough order of how much it matters:
 - **Present** and **Magnitude** roll their power per cast, so neither can be
   read off a card before it is thrown.
 - **Whirlpool** does not yet reach a submerged target, because Dive is not in.
+
+## Available Mega Sprites
+
+- [ ] Venusaur
+- [x] Charizard X
+- [ ] Charizard Y
+- [ ] Blastoise
+- [ ] Pidgeot
+- [ ] Raichu X
+- [ ] Raichu Y
+- [x] Alakazam
+- [ ] Victreebel
+- [x] Slowbro
+- [x] Gengar
+- [x] Kangaskhan (no baby)
+- [ ] Starmie
+- [ ] Pinsir
+- [ ] Gyarados
+- [ ] Aerodactyl
+- [ ] Dragonite
+- [ ] Mewtwo X
+- [x] Mewtwo Y
+- [ ] Meganium
+- [ ] Feraligatr
+- [x] Steelix
+- [ ] Scizor
+- [ ] Heracross
+- [x] Houndoom
+- [ ] Tyranitar

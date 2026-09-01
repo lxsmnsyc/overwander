@@ -30,4 +30,23 @@ export default function registerGen2Abilities(): void {
     name: 'Flower Gift',
     description: '1.5x Attack and Special Defense for its whole team in sunlight.',
   });
+  // Slugma
+  registerAbility(Abilities.MagmaArmor, {
+    name: 'Magma Armor',
+    description: 'Cannot be frozen.',
+  });
+  // Remoraid
+  registerAbility(Abilities.SuctionCups, {
+    name: 'Suction Cups',
+    description: 'Nothing can drag it off the field.',
+  });
+  registerAbility(Abilities.Moody, {
+    name: 'Moody',
+    description: 'Each time it acts, one stat rises two stages and another falls one.',
+  });
+  // Phanpy
+  registerAbility(Abilities.Stamina, {
+    name: 'Stamina',
+    description: '+1 Defense every time a hit lands on it.',
+  });
 }

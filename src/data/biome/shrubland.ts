@@ -40,7 +40,10 @@ export default function registerShrublandSpawns(): void {
       special: [],
     },
     [TimeOfDay.Evening]: {
-      base: [{ species: Species.Vulpix, weight: 10 }],
+      base: [
+        { species: Species.Vulpix, weight: 10 },
+        { species: Species.Houndour, weight: 20 },
+      ],
       uncommon: [],
       rare: [
         { species: Species.Ninetales, weight: 5 },
@@ -49,7 +52,10 @@ export default function registerShrublandSpawns(): void {
       special: [],
     },
     [TimeOfDay.Night]: {
-      base: [{ species: Species.Vulpix, weight: 10 }],
+      base: [
+        { species: Species.Vulpix, weight: 10 },
+        { species: Species.Houndour, weight: 20 },
+      ],
       uncommon: [],
       rare: [
         { species: Species.Ninetales, weight: 5 },

@@ -8,13 +8,19 @@ import { registerSpawnPool } from './__create';
 export default function registerCoralReefSpawns(): void {
   registerSpawnPool(Biome.CoralReef, {
     [TimeOfDay.Morning]: {
-      base: [{ species: Species.Horsea, weight: 20 }],
+      base: [
+        { species: Species.Horsea, weight: 20 },
+        { species: Species.Remoraid, weight: 20 },
+      ],
       uncommon: [],
       rare: [{ species: Species.Seadra, weight: 10 }],
       special: [],
     },
     [TimeOfDay.Day]: {
-      base: [{ species: Species.Horsea, weight: 20 }],
+      base: [
+        { species: Species.Horsea, weight: 20 },
+        { species: Species.Remoraid, weight: 20 },
+      ],
       uncommon: [],
       rare: [{ species: Species.Seadra, weight: 10 }],
       special: [],
@@ -23,6 +29,7 @@ export default function registerCoralReefSpawns(): void {
       base: [
         { species: Species.Horsea, weight: 20 },
         { species: Species.Staryu, weight: 20 },
+        { species: Species.Remoraid, weight: 20 },
       ],
       uncommon: [],
       rare: [
@@ -35,6 +42,7 @@ export default function registerCoralReefSpawns(): void {
       base: [
         { species: Species.Horsea, weight: 20 },
         { species: Species.Staryu, weight: 20 },
+        { species: Species.Remoraid, weight: 20 },
       ],
       uncommon: [],
       rare: [

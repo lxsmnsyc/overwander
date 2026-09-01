@@ -18,6 +18,7 @@ export default function registerVolcanoSpawns(): void {
         { species: Species.Growlithe, weight: 20 },
         { species: Species.Geodude, weight: 20 },
         { species: Species.Cyndaquil, weight: 6 },
+        { species: Species.Slugma, weight: 20 },
       ],
       uncommon: [
         { species: Species.Charmeleon, weight: 3 },
@@ -40,6 +41,7 @@ export default function registerVolcanoSpawns(): void {
         { species: Species.Ponyta, weight: 20 },
         { species: Species.Geodude, weight: 20 },
         { species: Species.Cyndaquil, weight: 6 },
+        { species: Species.Slugma, weight: 20 },
       ],
       uncommon: [
         { species: Species.Charmeleon, weight: 3 },
@@ -62,6 +64,7 @@ export default function registerVolcanoSpawns(): void {
         { species: Species.Charmander, weight: 6 },
         { species: Species.Vulpix, weight: 20 },
         { species: Species.Ponyta, weight: 20 },
+        { species: Species.Slugma, weight: 20 },
       ],
       uncommon: [
         { species: Species.Charmeleon, weight: 3 },
@@ -78,6 +81,7 @@ export default function registerVolcanoSpawns(): void {
       base: [
         { species: Species.Vulpix, weight: 20 },
         { species: Species.Koffing, weight: 20 },
+        { species: Species.Slugma, weight: 20 },
       ],
       uncommon: [{ species: Species.Ninetales, weight: 5 }],
       rare: [

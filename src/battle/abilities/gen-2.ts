@@ -1,18 +1,27 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
-import { Stages, Stats } from '../../data/constants/stats';
+import { STAGE_NAMES, Stages, Stats } from '../../data/constants/stats';
 import { Types } from '../../data/constants/types';
 import Abilities from '../../data/ids/abilities';
 import { DamageFlags, MoveCategories, type Moves } from '../../data/ids/moves';
 import { getMoveData } from '../../data/moves';
 import type Battle from '../core';
+import { Statuses } from '../../data/ids/status';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import { MergedLifecycle } from '../lifecycle';
-import { isWeatherSunny } from '../utils';
 import type Unit from '../unit';
-import { createAbility } from './__create';
+import { FORCED_SWITCH_MOVES } from '../moves/switch-out';
+import { isWeatherSunny, onUnitActs } from '../utils';
+import { createAbility, createLimberAbility } from './__create';
 
 const PLUS_BOOST = 1.5;
 const FLOWER_GIFT_BOOST = 1.5;
+
+/**
+ * Every stage Moody chooses between. Accuracy and evasion are in, as
+ * the mainline has them
+ */
+const MOODY_STAGES = Object.keys(STAGE_NAMES).map(Number) as Stages[];
+const MOODY_RISE = 2;
 
 const setupAbilities = [
   // https://bulbapedia.bulbagarden.net/wiki/Berserk_(Ability)
@@ -193,6 +202,104 @@ const setupAbilities = [
             event.source.addStage(Stages.Speed, 1, {
               type: EffectType.Ability,
               ability: Abilities.MotorDrive,
+              unit: event.source,
+            });
+          }
+        }),
+      ]),
+  ),
+
+  // https://bulbapedia.bulbagarden.net/wiki/Magma_Armor_(Ability)
+  createLimberAbility(Abilities.MagmaArmor, [Statuses.Frozen]),
+
+  // https://bulbapedia.bulbagarden.net/wiki/Suction_Cups_(Ability)
+  // Read as an immunity rather than a hold on the switch, because a
+  // forced switch deliberately ignores whether the target can escape
+  createAbility(
+    Abilities.SuctionCups,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Post, (event) => {
+          if (
+            !event.immune &&
+            FORCED_SWITCH_MOVES.has(event.move) &&
+            event.target.type === MoveTargetType.Unit &&
+            event.target.unit.hasAbility(Abilities.SuctionCups)
+          ) {
+            event.immune = true;
+          }
+        }),
+        battle.on(BattleEvents.UnitTriggerMoveFailed, EventPriority.Post, (event) => {
+          const parent = event.parent;
+
+          if (
+            FORCED_SWITCH_MOVES.has(parent.move) &&
+            parent.target.type === MoveTargetType.Unit &&
+            parent.target.unit.hasAbility(Abilities.SuctionCups)
+          ) {
+            parent.target.unit.triggerAbility(Abilities.SuctionCups);
+          }
+        }),
+      ]),
+  ),
+
+  // https://bulbapedia.bulbagarden.net/wiki/Moody_(Ability)
+  // A per-turn effect with no turn to sit on, so it is paid as the
+  // holder reaches for a move, the way residuals are
+  createAbility(
+    Abilities.Moody,
+    (battle) =>
+      new MergedLifecycle([
+        ...onUnitActs(battle, (unit) => {
+          if (unit.hasAbility(Abilities.Moody)) {
+            unit.triggerAbility(Abilities.Moody);
+          }
+        }),
+        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
+          if (event.ability !== Abilities.Moody) {
+            return;
+          }
+
+          const cause = {
+            type: EffectType.Ability,
+            ability: Abilities.Moody,
+            unit: event.source,
+          } as const;
+
+          const raised = MOODY_STAGES[Math.floor(battle.random() * MOODY_STAGES.length)];
+          // The drop never lands on the stage that just rose, so the
+          // two never cancel each other out
+          const rest = MOODY_STAGES.filter((stage) => stage !== raised);
+          const lowered = rest[Math.floor(battle.random() * rest.length)];
+
+          event.source.addStage(raised, MOODY_RISE, cause);
+          event.source.addStage(lowered, -1, cause);
+        }),
+      ]),
+  ),
+
+  // https://bulbapedia.bulbagarden.net/wiki/Stamina_(Ability)
+  createAbility(
+    Abilities.Stamina,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
+          if (
+            event.success &&
+            (event.flags & DamageFlags.Indirect) === 0 &&
+            event.cause.type === EffectType.Move &&
+            event.cause.unit !== event.target &&
+            event.target.alive &&
+            event.target.hasAbility(Abilities.Stamina)
+          ) {
+            event.target.triggerAbility(Abilities.Stamina);
+          }
+        }),
+        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
+          if (event.ability === Abilities.Stamina) {
+            event.source.addStage(Stages.Defense, 1, {
+              type: EffectType.Ability,
+              ability: Abilities.Stamina,
               unit: event.source,
             });
           }

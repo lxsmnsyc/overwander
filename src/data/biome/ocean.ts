@@ -16,6 +16,7 @@ export default function registerOceanSpawns(): void {
         { species: Species.Magikarp, weight: 30 },
         { species: Species.Dratini, weight: 2 },
         { species: Species.Chinchou, weight: 20 },
+        { species: Species.Remoraid, weight: 20 },
       ],
       uncommon: [{ species: Species.Dragonair, weight: 1 }],
       rare: [
@@ -40,6 +41,7 @@ export default function registerOceanSpawns(): void {
         { species: Species.Magikarp, weight: 30 },
         { species: Species.Dratini, weight: 2 },
         { species: Species.Chinchou, weight: 20 },
+        { species: Species.Remoraid, weight: 20 },
       ],
       uncommon: [{ species: Species.Dragonair, weight: 1 }],
       rare: [
@@ -64,6 +66,7 @@ export default function registerOceanSpawns(): void {
         { species: Species.Magikarp, weight: 30 },
         { species: Species.Dratini, weight: 2 },
         { species: Species.Chinchou, weight: 20 },
+        { species: Species.Remoraid, weight: 20 },
       ],
       uncommon: [{ species: Species.Dragonair, weight: 1 }],
       rare: [
@@ -87,6 +90,7 @@ export default function registerOceanSpawns(): void {
         { species: Species.Magikarp, weight: 30 },
         { species: Species.Dratini, weight: 2 },
         { species: Species.Chinchou, weight: 20 },
+        { species: Species.Remoraid, weight: 20 },
       ],
       uncommon: [{ species: Species.Dragonair, weight: 1 }],
       rare: [

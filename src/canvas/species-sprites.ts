@@ -74,18 +74,23 @@ export function spriteImagePath(species: Species, shiny = false, female = false)
 }
 
 /**
- * The animation both coats of one pokemon share
+ * The animation a coat is played at.
+ *
+ * Shiny is a recolour of the same drawing, so it reads its coat's
+ * description. A female is a redrawing from an archive of its own,
+ * held for its own lengths and cut to its own frames, so it has one
+ * of its own under the same `_f` its picture carries
  */
-export function spriteMetaPath(species: Species): string {
-  return `${regionRoot(species)}/meta/${species}.json`;
+export function spriteMetaPath(species: Species, female = false): string {
+  return `${regionRoot(species)}/meta/${species}${female ? '_f' : ''}.json`;
 }
 
 /**
- * Every description asked for so far, by species. A failure is
- * remembered as a failure: a pokemon with no description should cost
- * one 404, not one per frame
+ * Every description asked for so far, by the path of the description.
+ * A failure is remembered as a failure: a pokemon with no description
+ * should cost one 404, not one per frame
  */
-const DESCRIPTIONS = new Map<Species, Promise<SpriteSheetJSON | null>>();
+const DESCRIPTIONS = new Map<string, Promise<SpriteSheetJSON | null>>();
 
 /**
  * Every sheet asked for so far, by the path of its drawing
@@ -108,12 +113,12 @@ async function coats(): Promise<SpriteCoats | null> {
   return listed;
 }
 
-async function loadDescription(species: Species): Promise<SpriteSheetJSON | null> {
+async function loadDescription(species: Species, female: boolean): Promise<SpriteSheetJSON | null> {
   try {
     // Asked for with the digest of the sheets it describes, so a
     // repacked pokemon is a new address rather than whatever the
     // browser kept from last time
-    const response = await fetch(stamped(spriteMetaPath(species), await coats(), species));
+    const response = await fetch(stamped(spriteMetaPath(species, female), await coats(), species));
 
     if (!response.ok) {
       return null;
@@ -127,16 +132,17 @@ async function loadDescription(species: Species): Promise<SpriteSheetJSON | null
   }
 }
 
-async function description(species: Species): Promise<SpriteSheetJSON | null> {
-  const known = DESCRIPTIONS.get(species);
+async function description(species: Species, female: boolean): Promise<SpriteSheetJSON | null> {
+  const path = spriteMetaPath(species, female);
+  const known = DESCRIPTIONS.get(path);
 
   if (known != null) {
     return known;
   }
 
-  const loading = loadDescription(species);
+  const loading = loadDescription(species, female);
 
-  DESCRIPTIONS.set(species, loading);
+  DESCRIPTIONS.set(path, loading);
   return loading;
 }
 
@@ -151,7 +157,7 @@ async function loadSheet(
   if (!drawn(await coats(), species, coatOf(shiny, female))) {
     return null;
   }
-  const data = await description(species);
+  const data = await description(species, female);
 
   if (data == null) {
     return null;

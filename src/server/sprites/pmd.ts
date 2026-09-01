@@ -589,27 +589,86 @@ export function hoistMarks(
   };
 }
 
-/** One coat's archive, read for its pictures alone. */
-async function coatImages(bytes: Uint8Array, keep: RegExp): Promise<Map<SpriteAnim, SpriteImages>> {
-  return (await readArchive(bytes, keep)).images;
+/**
+ * Whether the coat is animated the way the plain one is.
+ *
+ * One description ships for all four coats, so a coat that holds its
+ * frames for different lengths would be played at the plain coat's
+ * timing and nothing would say so. A coat is exported on its own and
+ * carries its own `AnimData.xml`, so this is possible rather than
+ * hypothetical, and it is refused the way a mismatched grid is: the
+ * padding may differ between coats, the timing may not
+ */
+export function checkCoatTiming(plain: AnimData, coat: AnimData, key: keyof Coats): void {
+  if (plain.shadowSize !== coat.shadowSize) {
+    throw new Error(
+      `The ${key} coat casts a shadow of ${coat.shadowSize} where the ordinary ` +
+        `coat casts ${plain.shadowSize}. One description ships for both.`,
+    );
+  }
+
+  const held = new Map(plain.anims.map((anim) => [anim.name, anim.durations]));
+
+  for (const anim of coat.anims) {
+    const durations = held.get(anim.name);
+    const name = spriteAnimName(anim.name);
+
+    if (durations == null) {
+      throw new Error(`The ${key} coat has a ${name} the ordinary coat does not.`);
+    }
+    if (durations.join() !== anim.durations.join()) {
+      throw new Error(
+        `The ${key} coat's ${name} is held for ${anim.durations.join(', ')} where the ` +
+          `ordinary coat's is held for ${durations.join(', ')}. One description ships for both.`,
+      );
+    }
+  }
 }
 
-export default async function processPmd(coats: Coats, options: PmdOptions): Promise<PmdResult> {
-  const keep = animFilter(options.anims);
-  const plain = coats.regular;
+/** One coat's archive: its pictures, and the timing they are checked against. */
+async function coatImages(
+  bytes: Uint8Array,
+  keep: RegExp,
+  plain: AnimData,
+  key: keyof Coats,
+): Promise<Map<SpriteAnim, SpriteImages>> {
+  const { animData, images } = await readArchive(bytes, keep);
 
-  if (plain == null) {
-    throw new Error('The ordinary coat is the one every sheet is built from');
-  }
-  // The description is the plain coat's. Every coat is the same
-  // pokemon drawn again — the same frames, held for the same time —
-  // and the game keeps one description for all of them
-  const { animData, images } = await readArchive(plain, keep);
+  checkCoatTiming(plain, readAnimData(animData, keep), key);
+  return images;
+}
+
+/**
+ * One pair of coats, packed and described together.
+ *
+ * A **shiny** is the same drawing recoloured, so it rides its coat's
+ * layout and its coat's description. A **female** is a redrawing from
+ * an archive of its own, cut to its own frames and held for its own
+ * lengths, so the pair is built again from scratch and written under
+ * the `_f` that tells the two apart. That is what the suffix is for
+ */
+async function buildPair(
+  coats: Coats,
+  lead: { key: keyof Coats; female: boolean; shiny: boolean },
+  keep: RegExp,
+  options: PmdOptions,
+): Promise<{
+  written: string[];
+  drawn: Drawing[];
+  width: number;
+  height: number;
+  anims: string[];
+}> {
+  // oxlint-disable-next-line typescript/no-non-null-assertion
+  const { animData, images } = await readArchive(coats[lead.key]!, keep);
   const data = readAnimData(animData, keep);
-  const extra = COATS.slice(1).filter((coat) => coats[coat.key] != null);
+  // The recolour that shares this description, where there is one
+  const extra = COATS.filter(
+    (coat) => coat.female === lead.female && coat.shiny !== lead.shiny && coats[coat.key] != null,
+  );
   const others = await Promise.all(
     // oxlint-disable-next-line typescript/no-non-null-assertion
-    extra.map(async (coat) => coatImages(coats[coat.key]!, keep)),
+    extra.map(async (coat) => coatImages(coats[coat.key]!, keep, data, coat.key)),
   );
   alignCoats(images, others, data, extra);
 
@@ -709,24 +768,49 @@ export default async function processPmd(coats: Coats, options: PmdOptions): Pro
     });
   };
 
-  // The plain coat carries the description, and the rest are the same
-  // sheet drawn again from their own pictures. Written without spacing:
-  // the description is read by the game and by nothing else, and
-  // indenting it is three times the bytes
-  await put(paint(0), { female: false, shiny: false }, JSON.stringify(output));
+  // The lead coat carries the description, and its recolour is the
+  // same sheet drawn again from its own pictures. Written without
+  // spacing: the description is read by the game and by nothing else,
+  // and indenting it is three times the bytes
+  await put(paint(0), lead, JSON.stringify(output));
   for (let at = 0; at < extra.length; at += 1) {
     await put(paint(at + 1), extra[at], null);
   }
 
-  // Last, so the list describes the sheets that are now there rather
-  // than the ones that were
-  written.push(await writeCoats());
-
   return {
     written,
+    drawn,
     width: layout.width,
     height: layout.height,
     anims: data.anims.map((anim) => spriteAnimName(anim.name)),
-    coats: drawn,
+  };
+}
+
+export default async function processPmd(coats: Coats, options: PmdOptions): Promise<PmdResult> {
+  const keep = animFilter(options.anims);
+
+  if (coats.regular == null) {
+    throw new Error('The ordinary coat is the one every sheet is built from');
+  }
+  // The female pair is built apart from the plain one rather than
+  // grown onto its grid: it is a redrawing, so its frames, its timing
+  // and its packing are its own
+  const leads = COATS.filter((coat) => !coat.shiny && coats[coat.key] != null);
+  const pairs = [];
+
+  for (const lead of leads) {
+    pairs.push(await buildPair(coats, lead, keep, options));
+  }
+
+  const first = pairs[0];
+
+  return {
+    // Last, so the list describes the sheets that are now there rather
+    // than the ones that were
+    written: [...pairs.flatMap((pair) => pair.written), await writeCoats()],
+    width: first.width,
+    height: first.height,
+    anims: first.anims,
+    coats: pairs.flatMap((pair) => pair.drawn),
   };
 }

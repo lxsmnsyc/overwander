@@ -8,7 +8,7 @@ import { blank, blit, opaque } from '../../src/server/sprites/raster';
 import type { Raster } from '../../src/server/sprites/raster';
 import computeTrim from '../../src/server/sprites/trim';
 import type { Frame, PictureData, SpriteTarget } from '../../src/server/sprites/pmd';
-import { alignCoats, animFilter, hoistMarks } from '../../src/server/sprites/pmd';
+import { alignCoats, animFilter, checkCoatTiming, hoistMarks } from '../../src/server/sprites/pmd';
 import deduper, { drawPictures } from '../../src/server/sprites/dedupe';
 import {
   extraDestination,
@@ -275,7 +275,7 @@ describe('AnimData.xml', () => {
 });
 
 describe('where a sheet is written', () => {
-  it('files a pokemon under its coat, with one description for both', () => {
+  it('files a pokemon under its coat, beside the description of its pair', () => {
     expect(pokemonDestination({ species: 94, female: false, shiny: false })).toEqual({
       image: 'sprites/pokemon/kanto/regular/94.png',
       meta: 'sprites/pokemon/kanto/meta/94.json',
@@ -285,13 +285,13 @@ describe('where a sheet is written', () => {
     );
   });
 
-  it('marks a female drawing on the coat and not on the description', () => {
-    // Both coats share one description, so the suffix belongs to the
-    // drawing alone
+  it('marks a female drawing on the description as well as the coat', () => {
+    // A female is a redrawing rather than a recolour, so it is packed
+    // and described apart: the suffix is on both
     const written = pokemonDestination({ species: 3, female: true, shiny: true });
 
     expect(written.image).toBe('sprites/pokemon/kanto/shiny/3_f.png');
-    expect(written.meta).toBe('sprites/pokemon/kanto/meta/3.json');
+    expect(written.meta).toBe('sprites/pokemon/kanto/meta/3_f.json');
   });
 
   it('keeps anything else out of the pokemon tree', () => {
@@ -326,9 +326,15 @@ describe('where a sheet is written', () => {
       'sprites/pokemon/kanto/regular/3_f.png',
       'sprites/pokemon/kanto/shiny/3_f.png',
     ]);
-    // One description for the lot of them, which is why they have to
-    // be packed to one layout
-    expect(new Set(four.map((written) => written.meta)).size).toBe(1);
+    // Two descriptions, one for each pair: a shiny is the same drawing
+    // recoloured and rides its coat's, a female is drawn again and has
+    // its own
+    expect(four.map((written) => written.meta)).toEqual([
+      'sprites/pokemon/kanto/meta/3.json',
+      'sprites/pokemon/kanto/meta/3.json',
+      'sprites/pokemon/kanto/meta/3_f.json',
+      'sprites/pokemon/kanto/meta/3_f.json',
+    ]);
   });
 
   it('never lets a species number reach the path as anything but a number', () => {
@@ -723,6 +729,47 @@ function animsFor(width: number, height: number): AnimData {
     ],
   };
 }
+
+describe('coats animated differently', () => {
+  it('takes a coat that is held for the same times', () => {
+    expect(() => {
+      checkCoatTiming(animsFor(4, 4), animsFor(6, 4), 'female');
+    }).not.toThrow();
+  });
+
+  it('refuses a coat whose frames are held for other lengths', () => {
+    const coat = animsFor(4, 4);
+
+    coat.anims[0].durations = [1, 2];
+
+    // One description ships for all four coats, so a coat that
+    // disagrees would be played at the plain coat's timing with
+    // nothing to say so
+    expect(() => {
+      checkCoatTiming(animsFor(4, 4), coat, 'female');
+    }).toThrow(/held for 1, 2/);
+  });
+
+  it('refuses a coat that casts a different shadow', () => {
+    const coat = animsFor(4, 4);
+
+    coat.shadowSize = 2;
+
+    expect(() => {
+      checkCoatTiming(animsFor(4, 4), coat, 'shiny');
+    }).toThrow(/shadow/);
+  });
+
+  it('refuses a coat holding an animation the plain one has not', () => {
+    const coat = animsFor(4, 4);
+
+    coat.anims[0].name = SpriteAnim.Walk;
+
+    expect(() => {
+      checkCoatTiming(animsFor(4, 4), coat, 'female');
+    }).toThrow(/the ordinary coat does not/);
+  });
+});
 
 describe('coats cut to different frames', () => {
   it('grows every coat onto the widest frame any of them uses', () => {

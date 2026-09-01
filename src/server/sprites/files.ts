@@ -40,9 +40,13 @@ function stem(name: SheetName): string {
 }
 
 /**
- * A pokemon: the drawing under its coat, the description shared by
- * both coats, both filed under the species' region. This is the layout
- * `species-sprites.ts` reads
+ * A pokemon: the drawing under its coat, and the description of the
+ * pair it belongs to, both filed under the species' region. This is
+ * the layout `species-sprites.ts` reads.
+ *
+ * Shiny is a recolour of the same export, so it shares its coat's
+ * description. A female is drawn again from an archive of its own, and
+ * is described on its own under the same `_f` the drawing carries
  */
 export function pokemonDestination(name: SheetName): Destination {
   const species = Math.trunc(name.species);
@@ -50,7 +54,7 @@ export function pokemonDestination(name: SheetName): Destination {
 
   return {
     image: `${root}/${name.shiny ? 'shiny' : 'regular'}/${stem(name)}.png`,
-    meta: `${root}/meta/${species}.json`,
+    meta: `${root}/meta/${stem(name)}.json`,
   };
 }
 

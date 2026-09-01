@@ -36,7 +36,11 @@ function filesIn(path: string): string[] {
 }
 
 function speciesOf(file: string): number {
-  return Number(file.slice(0, -'.json'.length));
+  const stem = file.slice(0, -'.json'.length);
+
+  // A female coat is described on its own, under the same `_f` its
+  // drawing carries
+  return Number(stem.endsWith('_f') ? stem.slice(0, -'_f'.length) : stem);
 }
 
 /** Every region with sheets under it: `kanto`, and whatever follows. */
@@ -221,7 +225,7 @@ describe('sprite metadata', () => {
         }
       }
     }
-  });
+  }, 60_000);
 
   it('is written in the shape the reader packs for', () => {
     // The older shape still reads, so a file left behind by a tool that
@@ -895,21 +899,23 @@ describe('where the sheets are', () => {
     }
   });
 
-  it('describes every drawing that ships exactly once', () => {
-    const described = new Set(META_FILES.map((file) => speciesOf(file.name)));
+  it('describes every drawing that ships', () => {
+    const described = new Set(META_FILES.map((file) => file.name.slice(0, -'.json'.length)));
 
     for (const coat of ['regular', 'shiny']) {
       for (const region of REGIONS) {
         for (const file of filesIn(`${ROOT}/${region}/${coat}`)) {
           const name = file.slice(0, -'.png'.length);
-          const species = Number(name.endsWith('_f') ? name.slice(0, -'_f'.length) : name);
+          const female = name.endsWith('_f');
+          const species = Number(female ? name.slice(0, -'_f'.length) : name);
 
-          // Every drawing of a species is a drawing of the one
-          // animation — two coats, and a female form where there is
-          // one — so the description is none of theirs: it is the
-          // species'
-          expect(described.has(species), `${region}/${coat}/${file} has a description`).toBe(true);
-          expect(spriteMetaPath(species)).toBe(`/sprites/pokemon/${region}/meta/${species}.json`);
+          // A shiny is the same drawing recoloured and reads its
+          // coat's description; a female is drawn again and reads one
+          // of its own, under the `_f` that tells the two apart
+          expect(described.has(name), `${region}/${coat}/${file} has a description`).toBe(true);
+          expect(spriteMetaPath(species, female)).toBe(
+            `/sprites/pokemon/${region}/meta/${name}.json`,
+          );
         }
       }
     }
@@ -920,8 +926,9 @@ describe('where the sheets are', () => {
     expect(spriteImagePath(Species.Bulbasaur)).not.toBe(
       spriteImagePath(Species.Bulbasaur, false, true),
     );
-    // ...and both of them share the one description
+    // A shiny shares its coat's description, a female has its own
     expect(spriteMetaPath(Species.Bulbasaur)).toBe('/sprites/pokemon/kanto/meta/1.json');
+    expect(spriteMetaPath(Species.Bulbasaur, true)).toBe('/sprites/pokemon/kanto/meta/1_f.json');
   });
 
   it('lays the sheets out in the order the rows are drawn', () => {

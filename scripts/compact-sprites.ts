@@ -86,8 +86,8 @@ function say(message: string): void {
  * neither's contents. A pokemon sheet from
  * [`SpeciesSpriteAnimation`](../src/canvas/species-sprite-animation.ts)
  * wraps its size and sub-images in a `sheet` key and adds animations
- * and anchors, and it is not beside the image at all: the two coats
- * share one `meta/{species}/animation.json`, which is the point of
+ * and anchors, and it is not beside the image at all: a coat and its
+ * recolour share one description under `meta`, which is the point of
  * keeping it there. An item or move-category sheet from
  * [`BasicSprite`](../src/canvas/basic-sprite.ts) is the same size and
  * sub-images at the top level of a `data.json` beside the image, with
@@ -109,9 +109,10 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 }
 
 /**
- * Where the description of the sheet at this path lives: beside it, or
- * — for the pokemon, whose regular and shiny coats are two drawings of
- * one animation — under `meta`, named after the species
+ * Where the description of the sheet at this path lives: beside it,
+ * or under `meta`, named after the drawing. A pokemon's regular and
+ * shiny coats are one drawing recoloured and share a description; a
+ * female is drawn again and carries the `_f` into its own
  */
 function describedBy(imagePath: string): string[] {
   const directory = dirname(imagePath);

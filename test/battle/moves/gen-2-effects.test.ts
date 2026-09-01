@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { MoveTargetType } from '../../../src/battle/events';
 import { beatUpStrikes } from '../../../src/battle/moves/beat-up';
 import { getEncoredMove } from '../../../src/battle/status/encored';
+import Abilities from '../../../src/data/ids/abilities';
 import { PERISH_DURATION } from '../../../src/battle/status/perishing';
 import type Unit from '../../../src/battle/unit';
 import { MAX_STAGE, Stages, Stats, StatsKind } from '../../../src/data/constants/stats';
@@ -117,6 +118,24 @@ describe('Perish Song', () => {
 
     battle.tick(2);
     expect(listener.alive).toBe(false);
+  });
+
+  it('never lands on a boss, whoever sang it', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const singer = createUnit(battle, teamA);
+    const boss = createUnit(battle, teamB);
+
+    boss.addAbility(Abilities.Boss);
+    singer.triggerMoveEffect(Moves.PerishSong, unitTarget(boss), 0);
+    expect(boss.status[Statuses.Perishing]).toBeUndefined();
+
+    // Its own song is refused too: a boss that knows the move would
+    // otherwise sing itself to death
+    boss.triggerMoveEffect(Moves.PerishSong, unitTarget(boss), 0);
+    expect(boss.status[Statuses.Perishing]).toBeUndefined();
+
+    battle.tick(PERISH_DURATION + 1);
+    expect(boss.alive).toBe(true);
   });
 });
 

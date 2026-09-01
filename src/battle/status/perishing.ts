@@ -6,9 +6,12 @@ import turns from '../turn';
 import type Unit from '../unit';
 
 /**
- * The mainline counts three turns down and the third one is fatal
+ * The mainline counts three turns down and the third one is fatal.
+ * A turn longer here, because a real-time count cannot be spent
+ * setting up the way a turn-based one can: the extra turn is the room
+ * to actually use it
  */
-export const PERISH_DURATION = turns(3);
+export const PERISH_DURATION = turns(4);
 
 interface PerishData {
   progress: number;

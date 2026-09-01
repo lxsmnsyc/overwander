@@ -51,8 +51,23 @@ const BOSS_BLOCKED_STATUSES = new Set<Statuses>([
   Statuses.Infatuated,
 ]);
 
+/**
+ * What a boss refuses from itself as well. A Perish Song is a timer
+ * on a fight whose only clock is the pool, so one that landed would
+ * end the raid on its own, and a boss that knows the move would sing
+ * itself to death
+ */
+const BOSS_REFUSED_STATUSES = new Set<Statuses>([Statuses.Perishing]);
+
 function isSelfInflicted(cause: EffectCause, source: unknown): boolean {
   return 'unit' in cause && cause.unit === source;
+}
+
+function refusesStatus(status: Statuses, cause: EffectCause, source: unknown): boolean {
+  return (
+    BOSS_REFUSED_STATUSES.has(status) ||
+    (BOSS_BLOCKED_STATUSES.has(status) && !isSelfInflicted(cause, source))
+  );
 }
 
 const setupAbilities = [
@@ -61,8 +76,9 @@ const setupAbilities = [
    * tenfold HP, doubled everything else, immune to negative stage
    * applications, health-scaling damage (OHKO moves, Super Fang,
    * residual max-HP fractions), forced switch-outs, trapping, and
-   * disruption statuses (unless self-inflicted). Its single-target
-   * enemy moves strike every enemy instead.
+   * disruption statuses (unless self-inflicted), and a Perish Song
+   * whoever sang it. Its single-target enemy moves strike every enemy
+   * instead.
    */
   createAbility(Abilities.Boss, (battle) => {
     // Units that already went through their first-entry dormancy
@@ -195,8 +211,7 @@ const setupAbilities = [
       battle.on(BattleEvents.CheckUnitStatusImmunity, EventPriority.Post, (event) => {
         if (
           !event.immune &&
-          BOSS_BLOCKED_STATUSES.has(event.status) &&
-          !isSelfInflicted(event.cause, event.source) &&
+          refusesStatus(event.status, event.cause, event.source) &&
           event.source.hasAbility(Abilities.Boss)
         ) {
           event.immune = true;
@@ -205,8 +220,7 @@ const setupAbilities = [
       // The cue only fires when a real application was blocked
       battle.on(BattleEvents.UnitAddStatusFailed, EventPriority.Post, (event) => {
         if (
-          BOSS_BLOCKED_STATUSES.has(event.status) &&
-          !isSelfInflicted(event.cause, event.source) &&
+          refusesStatus(event.status, event.cause, event.source) &&
           event.source.hasAbility(Abilities.Boss)
         ) {
           event.source.triggerAbility(Abilities.Boss);

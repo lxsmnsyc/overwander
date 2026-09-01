@@ -786,7 +786,15 @@ describe('world', () => {
     // Transform is banned because a boss that copies a player throws
     // away the raid-sized pool the whole fight is built around; the
     // three copying moves are banned because each is a way back to it
-    for (const move of [Moves.Transform, Moves.Metronome, Moves.MirrorMove, Moves.Mimic]) {
+    for (const move of [
+      Moves.Transform,
+      Moves.Metronome,
+      Moves.MirrorMove,
+      Moves.Mimic,
+      // Temporary: a boss is immune to Perishing, so the song would
+      // only be a slot it wastes
+      Moves.PerishSong,
+    ]) {
       expect(BANNED_BOSS_MOVES.has(move)).toBe(true);
     }
 

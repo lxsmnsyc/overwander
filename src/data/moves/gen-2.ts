@@ -340,7 +340,7 @@ export default function registerGen2Moves(): void {
   });
   registerMove(Moves.PerishSong, {
     name: 'Perish Song',
-    description: 'Everything that hears it faints in 6 seconds unless it is swapped out first.',
+    description: 'Everything that hears it faints in 8 seconds unless it is swapped out first.',
     type: Types.Normal,
     category: MoveCategories.Status,
     pp: 5,

@@ -18,6 +18,10 @@ const BANNED_BOSS_MOVES = new Set<Moves>([
   Moves.Metronome,
   Moves.MirrorMove,
   Moves.Mimic,
+  // TODO: temporary. A boss is already immune to Perishing, so the
+  // song costs it a move slot and does nothing. Drop this line when
+  // there is something for it to do
+  Moves.PerishSong,
 ]);
 
 export default BANNED_BOSS_MOVES;

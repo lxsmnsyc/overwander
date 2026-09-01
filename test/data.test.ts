@@ -720,8 +720,17 @@ describe('egg moves', () => {
       for (const evolution of data.evolvesInto ?? []) {
         expect(getEggMoves(evolution.species)).toEqual([]);
       }
-      // Nothing with no eggs to discover inherits anything
-      expect(new Set(data.eggGroups).has(EggGroups.NoEggsDiscovered)).toBe(false);
+      // Nothing that can never be hatched inherits anything. A baby
+      // is the exception: it is Undiscovered itself, since it cannot
+      // be a parent, and the stage above it is the one that lays it
+      const hatchable = (data.evolvesInto ?? []).some(
+        (evolution) =>
+          !new Set(getSpeciesData(evolution.species).eggGroups).has(EggGroups.NoEggsDiscovered),
+      );
+
+      if (!hatchable) {
+        expect(new Set(data.eggGroups).has(EggGroups.NoEggsDiscovered)).toBe(false);
+      }
     }
   });
 

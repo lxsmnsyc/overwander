@@ -36,6 +36,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Meganium, weight: 2 },
         { species: Species.Ledian, weight: 8 },
       ],
+      prized: [{ species: Species.Togepi, weight: 10 }],
       special: [],
     },
     [TimeOfDay.Day]: {
@@ -68,6 +69,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Meganium, weight: 2 },
         { species: Species.Ledian, weight: 8 },
       ],
+      prized: [{ species: Species.Togepi, weight: 10 }],
       special: [],
     },
     [TimeOfDay.Evening]: {

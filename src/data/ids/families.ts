@@ -86,9 +86,10 @@ const enum Families {
   Ledyba = 83,
   Spinarak = 84,
   Chinchou = 85,
-  // 86 is Togepi's, 89 Marill's and 90 Sudowoodo's: their dex numbers
-  // fall between these, and an id is stored in a player's candy
-  // stacks, so a later family cannot be renumbered into place
+  Togepi = 86,
+  // 89 is Marill's and 90 Sudowoodo's: their dex numbers fall between
+  // these, and an id is stored in a player's candy stacks, so a later
+  // family cannot be renumbered into place
   Natu = 87,
   Mareep = 88,
   Hoppip = 91,
@@ -101,14 +102,23 @@ const enum Families {
   Pineco = 101,
   // 102 is Dunsparce's and 103 Gligar's
   Snubbull = 104,
-  // 105 is Qwilfish's, 106 Shuckle's, 107 Heracross', 108 Sneasel's
-  // and 109 Teddiursa's
+  Qwilfish = 105,
+  Shuckle = 106,
+  // 107 is Heracross', 108 Sneasel's and 109 Teddiursa's
   Slugma = 110,
-  // 111 is Swinub's and 112 Corsola's
+  // 111 is Swinub's
+  Corsola = 112,
   Remoraid = 113,
-  // 114 is Delibird's, 115 Mantine's and 116 Skarmory's
+  Delibird = 114,
+  // 115 is Mantine's
+  Skarmory = 116,
   Houndour = 117,
   Phanpy = 118,
+  // 119 is Stantler's
+  Smeargle = 120,
+  // 121 is Tyrogue's, 122 Miltank's, 123 Raikou's, 124 Entei's and
+  // 125 Suicune's
+  Larvitar = 126,
 }
 
 export default Families;

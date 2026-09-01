@@ -16,12 +16,14 @@ export default function registerMountainSpawns(): void {
         { species: Species.Geodude, weight: 20 },
         { species: Species.Cyndaquil, weight: 2 },
         { species: Species.Slugma, weight: 20 },
+        { species: Species.Larvitar, weight: 2 },
       ],
       uncommon: [
         { species: Species.Charmeleon, weight: 1 },
         { species: Species.Machoke, weight: 5 },
         { species: Species.Graveler, weight: 5 },
         { species: Species.Quilava, weight: 1 },
+        { species: Species.Pupitar, weight: 1 },
       ],
       rare: [
         { species: Species.Charizard, weight: 2 },
@@ -33,6 +35,9 @@ export default function registerMountainSpawns(): void {
         { species: Species.Magmar, weight: 5 },
         { species: Species.Snorlax, weight: 5 },
         { species: Species.Typhlosion, weight: 2 },
+        { species: Species.Tyranitar, weight: 2 },
+        { species: Species.Shuckle, weight: 5 },
+        { species: Species.Skarmory, weight: 5 },
       ],
       special: [
         { species: Species.Zapdos, weight: 10 },
@@ -48,12 +53,14 @@ export default function registerMountainSpawns(): void {
         { species: Species.Geodude, weight: 20 },
         { species: Species.Cyndaquil, weight: 2 },
         { species: Species.Slugma, weight: 20 },
+        { species: Species.Larvitar, weight: 2 },
       ],
       uncommon: [
         { species: Species.Charmeleon, weight: 1 },
         { species: Species.Machoke, weight: 5 },
         { species: Species.Graveler, weight: 5 },
         { species: Species.Quilava, weight: 1 },
+        { species: Species.Pupitar, weight: 1 },
       ],
       rare: [
         { species: Species.Charizard, weight: 2 },
@@ -65,6 +72,9 @@ export default function registerMountainSpawns(): void {
         { species: Species.Magmar, weight: 5 },
         { species: Species.Snorlax, weight: 5 },
         { species: Species.Typhlosion, weight: 2 },
+        { species: Species.Tyranitar, weight: 2 },
+        { species: Species.Shuckle, weight: 5 },
+        { species: Species.Skarmory, weight: 5 },
       ],
       special: [
         { species: Species.Zapdos, weight: 10 },
@@ -77,8 +87,12 @@ export default function registerMountainSpawns(): void {
         { species: Species.Diglett, weight: 20 },
         { species: Species.Geodude, weight: 20 },
         { species: Species.Slugma, weight: 20 },
+        { species: Species.Larvitar, weight: 2 },
       ],
-      uncommon: [{ species: Species.Graveler, weight: 5 }],
+      uncommon: [
+        { species: Species.Graveler, weight: 5 },
+        { species: Species.Pupitar, weight: 1 },
+      ],
       rare: [
         { species: Species.Golbat, weight: 10 },
         { species: Species.Dugtrio, weight: 10 },
@@ -86,6 +100,8 @@ export default function registerMountainSpawns(): void {
         { species: Species.Onix, weight: 10 },
         { species: Species.Magmar, weight: 5 },
         { species: Species.Snorlax, weight: 5 },
+        { species: Species.Tyranitar, weight: 2 },
+        { species: Species.Shuckle, weight: 5 },
       ],
       special: [
         { species: Species.Zapdos, weight: 10 },
@@ -101,10 +117,12 @@ export default function registerMountainSpawns(): void {
         { species: Species.Gastly, weight: 20 },
         { species: Species.Cubone, weight: 20 },
         { species: Species.Slugma, weight: 20 },
+        { species: Species.Larvitar, weight: 2 },
       ],
       uncommon: [
         { species: Species.Graveler, weight: 5 },
         { species: Species.Haunter, weight: 5 },
+        { species: Species.Pupitar, weight: 1 },
       ],
       rare: [
         { species: Species.Clefable, weight: 5 },
@@ -116,6 +134,8 @@ export default function registerMountainSpawns(): void {
         { species: Species.Marowak, weight: 10 },
         { species: Species.Magmar, weight: 5 },
         { species: Species.Snorlax, weight: 5 },
+        { species: Species.Tyranitar, weight: 2 },
+        { species: Species.Shuckle, weight: 5 },
       ],
       special: [
         { species: Species.Zapdos, weight: 10 },

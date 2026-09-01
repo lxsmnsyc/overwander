@@ -10,25 +10,31 @@ export default function registerGlacierSpawns(): void {
     [TimeOfDay.Morning]: {
       base: [],
       uncommon: [],
-      rare: [],
+      rare: [{ species: Species.Delibird, weight: 5 }],
       special: [{ species: Species.Articuno, weight: 10 }],
     },
     [TimeOfDay.Day]: {
       base: [],
       uncommon: [],
-      rare: [],
+      rare: [{ species: Species.Delibird, weight: 5 }],
       special: [{ species: Species.Articuno, weight: 10 }],
     },
     [TimeOfDay.Evening]: {
       base: [],
       uncommon: [],
-      rare: [{ species: Species.Jynx, weight: 5 }],
+      rare: [
+        { species: Species.Jynx, weight: 5 },
+        { species: Species.Delibird, weight: 5 },
+      ],
       special: [{ species: Species.Articuno, weight: 10 }],
     },
     [TimeOfDay.Night]: {
       base: [],
       uncommon: [],
-      rare: [{ species: Species.Jynx, weight: 5 }],
+      rare: [
+        { species: Species.Jynx, weight: 5 },
+        { species: Species.Delibird, weight: 5 },
+      ],
       special: [{ species: Species.Articuno, weight: 10 }],
     },
   });

@@ -5,13 +5,13 @@ import Abilities from '../../data/ids/abilities';
 import { DamageFlags, MoveCategories, type Moves } from '../../data/ids/moves';
 import { getMoveData } from '../../data/moves';
 import type Battle from '../core';
-import { Statuses } from '../../data/ids/status';
+import { Statuses, Weathers } from '../../data/ids/status';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import { MergedLifecycle } from '../lifecycle';
 import type Unit from '../unit';
 import { FORCED_SWITCH_MOVES } from '../moves/switch-out';
 import { isWeatherSunny, onUnitActs } from '../utils';
-import { createAbility, createLimberAbility } from './__create';
+import { createAbility, createDrizzleAbility, createLimberAbility } from './__create';
 
 const PLUS_BOOST = 1.5;
 const FLOWER_GIFT_BOOST = 1.5;
@@ -306,6 +306,126 @@ const setupAbilities = [
         }),
       ]),
   ),
+
+  // https://bulbapedia.bulbagarden.net/wiki/Super_Luck_(Ability)
+  createAbility(Abilities.SuperLuck, (battle) =>
+    battle.on(BattleEvents.UnitAttackCheckCriticalRatio, EventPriority.Post, (event) => {
+      // Additive, so it stacks with Focus Energy and the high-crit moves
+      if (event.parent.source.hasAbility(Abilities.SuperLuck)) {
+        event.value += 1;
+      }
+    }),
+  ),
+
+  // https://bulbapedia.bulbagarden.net/wiki/Contrary_(Ability)
+  createAbility(Abilities.Contrary, (battle) => {
+    // Holders part-way through a flipped change: the flip is a fresh
+    // call and would otherwise come straight back through here
+    const inverting = new Set<Unit>();
+
+    return new MergedLifecycle([
+      battle.on(BattleEvents.CheckUnitCanAddStage, EventPriority.Post, (event) => {
+        if (
+          !event.success ||
+          event.value === 0 ||
+          inverting.has(event.source) ||
+          !event.source.hasAbility(Abilities.Contrary)
+        ) {
+          return;
+        }
+
+        event.success = false;
+        event.source.triggerAbility(Abilities.Contrary);
+
+        inverting.add(event.source);
+        event.source.addStage(event.stage, -event.value, event.cause);
+        inverting.delete(event.source);
+      }),
+      battle.on(BattleEvents.UnitLeavesField, EventPriority.Post, (event) => {
+        inverting.delete(event.source);
+      }),
+    ]);
+  }),
+
+  // https://bulbapedia.bulbagarden.net/wiki/Storm_Drain_(Ability)
+  // The mainline also pulls Water moves aimed elsewhere onto the
+  // holder. Nothing here redirects a move away from the target it
+  // committed to, so this is the immunity and the boost
+  createAbility(
+    Abilities.StormDrain,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Post, (event) => {
+          if (
+            event.type === Types.Water &&
+            event.target.type === MoveTargetType.Unit &&
+            event.target.unit !== event.source &&
+            event.target.unit.hasAbility(Abilities.StormDrain)
+          ) {
+            event.immune = true;
+          }
+        }),
+        battle.on(BattleEvents.UnitTriggerMoveFailed, EventPriority.Post, (event) => {
+          const parent = event.parent;
+
+          if (
+            parent.target.type === MoveTargetType.Unit &&
+            parent.target.unit !== parent.source &&
+            parent.target.unit.hasAbility(Abilities.StormDrain) &&
+            parent.source.checkMoveType(parent.move, parent.target) === Types.Water
+          ) {
+            parent.target.unit.triggerAbility(Abilities.StormDrain);
+          }
+        }),
+        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
+          if (event.ability === Abilities.StormDrain) {
+            event.source.addStage(Stages.SpecialAttack, 1, {
+              type: EffectType.Ability,
+              ability: Abilities.StormDrain,
+              unit: event.source,
+            });
+          }
+        }),
+      ]),
+  ),
+
+  // https://bulbapedia.bulbagarden.net/wiki/Mirror_Armor_(Ability)
+  // Two holders never volley a drop between them: the bounced call
+  // carries the same cause, so the second one sees the drop as its
+  // own and lets it land
+  createAbility(Abilities.MirrorArmor, (battle) =>
+    battle.on(BattleEvents.CheckUnitCanAddStage, EventPriority.Post, (event) => {
+      if (
+        !event.success ||
+        event.value >= 0 ||
+        event.cause.type === EffectType.None ||
+        event.cause.unit === event.source ||
+        !event.source.hasAbility(Abilities.MirrorArmor)
+      ) {
+        return;
+      }
+
+      event.success = false;
+      event.source.triggerAbility(Abilities.MirrorArmor);
+
+      event.cause.unit.addStage(event.stage, event.value, event.cause);
+    }),
+  ),
+
+  // https://bulbapedia.bulbagarden.net/wiki/Prankster_(Ability)
+  createAbility(Abilities.Prankster, (battle) =>
+    battle.on(BattleEvents.CheckUnitMovePriority, EventPriority.Post, (event) => {
+      if (
+        event.source.hasAbility(Abilities.Prankster) &&
+        getMoveData(event.move).category === MoveCategories.Status
+      ) {
+        event.priority += 1;
+      }
+    }),
+  ),
+
+  // https://bulbapedia.bulbagarden.net/wiki/Sand_Stream_(Ability)
+  createDrizzleAbility(Abilities.SandStream, Weathers.Sandstorm),
 ];
 
 export default function setupGen2Abilities(battle: Battle): void {

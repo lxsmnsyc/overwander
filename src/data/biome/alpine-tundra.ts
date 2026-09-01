@@ -10,25 +10,33 @@ export default function registerAlpineTundraSpawns(): void {
     [TimeOfDay.Morning]: {
       base: [{ species: Species.Machop, weight: 20 }],
       uncommon: [{ species: Species.Machoke, weight: 5 }],
-      rare: [{ species: Species.Machamp, weight: 5 }],
+      rare: [
+        { species: Species.Machamp, weight: 5 },
+        { species: Species.Delibird, weight: 5 },
+        { species: Species.Skarmory, weight: 5 },
+      ],
       special: [{ species: Species.Articuno, weight: 10 }],
     },
     [TimeOfDay.Day]: {
       base: [{ species: Species.Machop, weight: 20 }],
       uncommon: [{ species: Species.Machoke, weight: 5 }],
-      rare: [{ species: Species.Machamp, weight: 5 }],
+      rare: [
+        { species: Species.Machamp, weight: 5 },
+        { species: Species.Delibird, weight: 5 },
+        { species: Species.Skarmory, weight: 5 },
+      ],
       special: [{ species: Species.Articuno, weight: 10 }],
     },
     [TimeOfDay.Evening]: {
       base: [],
       uncommon: [],
-      rare: [],
+      rare: [{ species: Species.Delibird, weight: 5 }],
       special: [{ species: Species.Articuno, weight: 10 }],
     },
     [TimeOfDay.Night]: {
       base: [],
       uncommon: [],
-      rare: [],
+      rare: [{ species: Species.Delibird, weight: 5 }],
       special: [{ species: Species.Articuno, weight: 10 }],
     },
   });

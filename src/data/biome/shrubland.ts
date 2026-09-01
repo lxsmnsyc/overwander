@@ -20,6 +20,7 @@ export default function registerShrublandSpawns(): void {
       rare: [
         { species: Species.Fearow, weight: 10 },
         { species: Species.Flareon, weight: 5 },
+        { species: Species.Smeargle, weight: 5 },
       ],
       special: [],
     },
@@ -36,6 +37,7 @@ export default function registerShrublandSpawns(): void {
       rare: [
         { species: Species.Fearow, weight: 10 },
         { species: Species.Flareon, weight: 5 },
+        { species: Species.Smeargle, weight: 5 },
       ],
       special: [],
     },
@@ -48,6 +50,7 @@ export default function registerShrublandSpawns(): void {
       rare: [
         { species: Species.Ninetales, weight: 5 },
         { species: Species.Flareon, weight: 5 },
+        { species: Species.Smeargle, weight: 5 },
       ],
       special: [],
     },
@@ -60,6 +63,7 @@ export default function registerShrublandSpawns(): void {
       rare: [
         { species: Species.Ninetales, weight: 5 },
         { species: Species.Flareon, weight: 5 },
+        { species: Species.Smeargle, weight: 5 },
       ],
       special: [],
     },

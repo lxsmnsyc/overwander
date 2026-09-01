@@ -215,6 +215,24 @@ const enum Abilities {
   Moody = 132,
   // Phanpy
   Stamina = 133,
+  /**
+   * From here on an id is allocated in the order the ability is added
+   * rather than by the dex number of the line that introduces it. The
+   * ones above were renumbered once while they were hours old; an id
+   * reaches a player's caught rows, so that cannot happen again
+   */
+  // Togepi
+  SuperLuck = 134,
+  // Shuckle
+  Contrary = 135,
+  // Corsola
+  StormDrain = 136,
+  // Skarmory
+  MirrorArmor = 137,
+  // Smeargle
+  Prankster = 138,
+  // Larvitar
+  SandStream = 139,
   // Special (non-standard abilities outside the regular pool)
   Boss = 100001,
   Shadow = 100002,

@@ -1,20 +1,28 @@
 import registerChikoritaSpecies from './chikorita';
 import registerChinchouSpecies from './chinchou';
+import registerCorsolaSpecies from './corsola';
 import registerCyndaquilSpecies from './cyndaquil';
+import registerDelibirdSpecies from './delibird';
 import registerHoothootSpecies from './hoothoot';
 import registerHoppipSpecies from './hoppip';
 import registerHoundourSpecies from './houndour';
+import registerLarvitarSpecies from './larvitar';
 import registerLedybaSpecies from './ledyba';
 import registerMareepSpecies from './mareep';
 import registerNatuSpecies from './natu';
 import registerPhanpySpecies from './phanpy';
 import registerPinecoSpecies from './pineco';
+import registerQwilfishSpecies from './qwilfish';
 import registerRemoraidSpecies from './remoraid';
 import registerSentretSpecies from './sentret';
+import registerShuckleSpecies from './shuckle';
+import registerSkarmorySpecies from './skarmory';
 import registerSlugmaSpecies from './slugma';
+import registerSmeargleSpecies from './smeargle';
 import registerSnubbullSpecies from './snubbull';
 import registerSpinarakSpecies from './spinarak';
 import registerSunkernSpecies from './sunkern';
+import registerTogepiSpecies from './togepi';
 import registerTotodileSpecies from './totodile';
 import registerWooperSpecies from './wooper';
 
@@ -38,4 +46,12 @@ export default function registerGen2Species(): void {
   registerRemoraidSpecies();
   registerHoundourSpecies();
   registerPhanpySpecies();
+  registerTogepiSpecies();
+  registerQwilfishSpecies();
+  registerShuckleSpecies();
+  registerCorsolaSpecies();
+  registerDelibirdSpecies();
+  registerSkarmorySpecies();
+  registerSmeargleSpecies();
+  registerLarvitarSpecies();
 }

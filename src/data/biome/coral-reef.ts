@@ -11,6 +11,7 @@ export default function registerCoralReefSpawns(): void {
       base: [
         { species: Species.Horsea, weight: 20 },
         { species: Species.Remoraid, weight: 20 },
+        { species: Species.Corsola, weight: 20 },
       ],
       uncommon: [],
       rare: [{ species: Species.Seadra, weight: 10 }],
@@ -20,6 +21,7 @@ export default function registerCoralReefSpawns(): void {
       base: [
         { species: Species.Horsea, weight: 20 },
         { species: Species.Remoraid, weight: 20 },
+        { species: Species.Corsola, weight: 20 },
       ],
       uncommon: [],
       rare: [{ species: Species.Seadra, weight: 10 }],
@@ -30,6 +32,7 @@ export default function registerCoralReefSpawns(): void {
         { species: Species.Horsea, weight: 20 },
         { species: Species.Staryu, weight: 20 },
         { species: Species.Remoraid, weight: 20 },
+        { species: Species.Corsola, weight: 20 },
       ],
       uncommon: [],
       rare: [
@@ -43,6 +46,7 @@ export default function registerCoralReefSpawns(): void {
         { species: Species.Horsea, weight: 20 },
         { species: Species.Staryu, weight: 20 },
         { species: Species.Remoraid, weight: 20 },
+        { species: Species.Corsola, weight: 20 },
       ],
       uncommon: [],
       rare: [

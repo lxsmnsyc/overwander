@@ -49,4 +49,34 @@ export default function registerGen2Abilities(): void {
     name: 'Stamina',
     description: '+1 Defense every time a hit lands on it.',
   });
+  // Togepi
+  registerAbility(Abilities.SuperLuck, {
+    name: 'Super Luck',
+    description: 'Its moves land critical hits a stage more often.',
+  });
+  // Shuckle
+  registerAbility(Abilities.Contrary, {
+    name: 'Contrary',
+    description: 'Every stat change it takes lands the other way round.',
+  });
+  // Corsola
+  registerAbility(Abilities.StormDrain, {
+    name: 'Storm Drain',
+    description: 'Water moves cannot touch it, and raise its Special Attack a stage instead.',
+  });
+  // Skarmory
+  registerAbility(Abilities.MirrorArmor, {
+    name: 'Mirror Armor',
+    description: 'A stat drop aimed at it lands on whoever aimed it.',
+  });
+  // Smeargle
+  registerAbility(Abilities.Prankster, {
+    name: 'Prankster',
+    description: 'Its status moves go before anything of ordinary priority.',
+  });
+  // Larvitar
+  registerAbility(Abilities.SandStream, {
+    name: 'Sand Stream',
+    description: 'Whips up a sandstorm when it reaches the field.',
+  });
 }

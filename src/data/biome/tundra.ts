@@ -10,13 +10,19 @@ export default function registerTundraSpawns(): void {
     [TimeOfDay.Morning]: {
       base: [],
       uncommon: [],
-      rare: [{ species: Species.Dewgong, weight: 10 }],
+      rare: [
+        { species: Species.Dewgong, weight: 10 },
+        { species: Species.Delibird, weight: 5 },
+      ],
       special: [],
     },
     [TimeOfDay.Day]: {
       base: [],
       uncommon: [],
-      rare: [{ species: Species.Dewgong, weight: 10 }],
+      rare: [
+        { species: Species.Dewgong, weight: 10 },
+        { species: Species.Delibird, weight: 5 },
+      ],
       special: [],
     },
     [TimeOfDay.Evening]: {
@@ -25,6 +31,7 @@ export default function registerTundraSpawns(): void {
       rare: [
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Jynx, weight: 5 },
+        { species: Species.Delibird, weight: 5 },
       ],
       special: [],
     },
@@ -34,6 +41,7 @@ export default function registerTundraSpawns(): void {
       rare: [
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Jynx, weight: 5 },
+        { species: Species.Delibird, weight: 5 },
       ],
       special: [],
     },

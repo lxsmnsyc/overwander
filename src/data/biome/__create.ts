@@ -394,6 +394,8 @@ const AWAITING_BABY_SPECIES = new Set<Species>([
   Species.Jynx,
   Species.Electabuzz,
   Species.Magmar,
+  // Gen 3 babies
+  Species.Marill,
   // Gen 4 babies
   Species.Chansey,
   Species.MrMime,

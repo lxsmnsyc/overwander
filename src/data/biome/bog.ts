@@ -14,6 +14,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Venonat, weight: 20 },
         { species: Species.Magikarp, weight: 30 },
         { species: Species.Wooper, weight: 25 },
+        { species: Species.Marill, weight: 20 },
       ],
       uncommon: [
         { species: Species.Poliwhirl, weight: 5 },
@@ -23,6 +24,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Poliwrath, weight: 5 },
         { species: Species.Victreebel, weight: 5 },
         { species: Species.Venomoth, weight: 10 },
+        { species: Species.Azumarill, weight: 5 },
       ],
       special: [],
     },
@@ -33,6 +35,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Venonat, weight: 20 },
         { species: Species.Magikarp, weight: 30 },
         { species: Species.Wooper, weight: 25 },
+        { species: Species.Marill, weight: 20 },
       ],
       uncommon: [
         { species: Species.Poliwhirl, weight: 5 },
@@ -42,6 +45,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Poliwrath, weight: 5 },
         { species: Species.Victreebel, weight: 5 },
         { species: Species.Venomoth, weight: 10 },
+        { species: Species.Azumarill, weight: 5 },
       ],
       special: [],
     },
@@ -52,6 +56,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Gastly, weight: 20 },
         { species: Species.Magikarp, weight: 30 },
         { species: Species.Wooper, weight: 25 },
+        { species: Species.Marill, weight: 20 },
       ],
       uncommon: [
         { species: Species.Poliwhirl, weight: 5 },
@@ -61,6 +66,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Venomoth, weight: 10 },
         { species: Species.Gengar, weight: 5 },
         { species: Species.Muk, weight: 10 },
+        { species: Species.Azumarill, weight: 5 },
       ],
       special: [],
     },
@@ -72,6 +78,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Grimer, weight: 20 },
         { species: Species.Magikarp, weight: 30 },
         { species: Species.Wooper, weight: 25 },
+        { species: Species.Marill, weight: 20 },
       ],
       uncommon: [
         { species: Species.Poliwhirl, weight: 5 },
@@ -83,6 +90,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Vileplume, weight: 5 },
         { species: Species.Gengar, weight: 5 },
         { species: Species.Muk, weight: 10 },
+        { species: Species.Azumarill, weight: 5 },
       ],
       special: [],
     },

@@ -87,11 +87,12 @@ const enum Families {
   Spinarak = 84,
   Chinchou = 85,
   Togepi = 86,
-  // 89 is Marill's and 90 Sudowoodo's: their dex numbers fall between
-  // these, and an id is stored in a player's candy stacks, so a later
-  // family cannot be renumbered into place
   Natu = 87,
   Mareep = 88,
+  Marill = 89,
+  // 90 is Sudowoodo's: its dex number falls between these, and an id
+  // is stored in a player's candy stacks, so a later family cannot be
+  // renumbered into place
   Hoppip = 91,
   // 92 is Aipom's
   Sunkern = 93,

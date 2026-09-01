@@ -265,6 +265,8 @@ export const enum Species {
   Mareep = 179,
   Flaaffy = 180,
   Ampharos = 181,
+  Marill = 183,
+  Azumarill = 184,
   Hoppip = 187,
   Skiploom = 188,
   Jumpluff = 189,

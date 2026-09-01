@@ -493,6 +493,18 @@ const setupAbilities = [
       }),
     ]);
   }),
+
+  // Marill
+  // Doubles the stat rather than the blow, so anything reading the
+  // Attack it has (Foul Play, a Power Trip) reads the doubled one
+  // https://bulbapedia.bulbagarden.net/wiki/Huge_Power_(Ability)
+  createAbility(Abilities.HugePower, (battle) =>
+    battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
+      if (event.stat === Stats.Attack && event.source.hasAbility(Abilities.HugePower)) {
+        event.value *= 2;
+      }
+    }),
+  ),
 ];
 
 export default function setupGen2Abilities(battle: Battle): void {

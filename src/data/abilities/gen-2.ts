@@ -89,4 +89,9 @@ export default function registerGen2Abilities(): void {
     name: 'Honey Gather',
     description: 'Comes up with a Honey the first time it acts, if it has a hand free.',
   });
+  // Marill
+  registerAbility(Abilities.HugePower, {
+    name: 'Huge Power',
+    description: 'Doubles its Attack.',
+  });
 }

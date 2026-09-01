@@ -12,6 +12,7 @@ import registerLarvitarSpecies from './larvitar';
 import registerLedybaSpecies from './ledyba';
 import registerLegendaryBeastSpecies from './legendary-beasts';
 import registerMareepSpecies from './mareep';
+import registerMarillSpecies from './marill';
 import registerMiltankSpecies from './miltank';
 import registerNatuSpecies from './natu';
 import registerPhanpySpecies from './phanpy';
@@ -70,4 +71,5 @@ export default function registerGen2Species(): void {
   registerTeddiursaSpecies();
   registerSwinubSpecies();
   registerTyrogueSpecies();
+  registerMarillSpecies();
 }

@@ -14,6 +14,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Ponyta, weight: 10 },
         { species: Species.Doduo, weight: 20 },
         { species: Species.Sentret, weight: 25 },
+        { species: Species.Mareep, weight: 25 },
       ],
       uncommon: [
         { species: Species.Magnemite, weight: 20 },
@@ -40,6 +41,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Ponyta, weight: 10 },
         { species: Species.Doduo, weight: 20 },
         { species: Species.Sentret, weight: 25 },
+        { species: Species.Mareep, weight: 25 },
       ],
       uncommon: [
         { species: Species.Magnemite, weight: 20 },

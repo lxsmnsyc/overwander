@@ -148,11 +148,10 @@ export default function registerCyndaquilSpecies(): void {
     },
     types: [Types.Fire],
     abilities: [Abilities.Blaze],
-    // Flame Body and Reckless are this registry's rather than the
+    // Flame Body and Berserk are this registry's rather than the
     // mainline's, filling a final evolution to four: the neck vents
-    // burn what touches them, and Double-Edge is what it throws when
-    // the flames are not enough
-    hiddenAbilities: [Abilities.FlashFire, Abilities.FlameBody, Abilities.Reckless],
+    // burn what touches them, and the flames go up when it is cornered
+    hiddenAbilities: [Abilities.FlashFire, Abilities.FlameBody, Abilities.Berserk],
     eggGroups: [EggGroups.Field],
     genderRatio: [7, 1],
     catchRate: 45,

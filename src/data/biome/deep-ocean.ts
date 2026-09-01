@@ -23,6 +23,7 @@ export default function registerDeepOceanSpawns(): void {
         { species: Species.Horsea, weight: 20 },
         { species: Species.Magikarp, weight: 20 },
         { species: Species.Dratini, weight: 4 },
+        { species: Species.Chinchou, weight: 20 },
       ],
       uncommon: [{ species: Species.Dragonair, weight: 2 }],
       rare: [
@@ -38,6 +39,7 @@ export default function registerDeepOceanSpawns(): void {
         { species: Species.Horsea, weight: 20 },
         { species: Species.Magikarp, weight: 20 },
         { species: Species.Dratini, weight: 4 },
+        { species: Species.Chinchou, weight: 20 },
       ],
       uncommon: [{ species: Species.Dragonair, weight: 2 }],
       rare: [
@@ -53,6 +55,7 @@ export default function registerDeepOceanSpawns(): void {
         { species: Species.Horsea, weight: 20 },
         { species: Species.Magikarp, weight: 20 },
         { species: Species.Dratini, weight: 4 },
+        { species: Species.Chinchou, weight: 20 },
       ],
       uncommon: [{ species: Species.Dragonair, weight: 2 }],
       rare: [
@@ -68,6 +71,7 @@ export default function registerDeepOceanSpawns(): void {
         { species: Species.Horsea, weight: 20 },
         { species: Species.Magikarp, weight: 20 },
         { species: Species.Dratini, weight: 4 },
+        { species: Species.Chinchou, weight: 20 },
       ],
       uncommon: [{ species: Species.Dragonair, weight: 2 }],
       rare: [

@@ -85,6 +85,13 @@ const enum Families {
   Hoothoot = 82,
   Ledyba = 83,
   Spinarak = 84,
+  Chinchou = 85,
+  // 86 is Togepi's, 89 Marill's and 90 Sudowoodo's: their dex numbers
+  // fall between these, and an id is stored in a player's candy
+  // stacks, so a later family cannot be renumbered into place
+  Natu = 87,
+  Mareep = 88,
+  Hoppip = 91,
 }
 
 export default Families;

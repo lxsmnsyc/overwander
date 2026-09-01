@@ -199,6 +199,13 @@ const enum Abilities {
   Drizzle = 123,
   // Mew
   Protean = 124,
+  // Cyndaquil
+  Berserk = 125,
+  // Natu
+  MagicBounce = 126,
+  // Mareep
+  Plus = 127,
+  MotorDrive = 128,
   // Special (non-standard abilities outside the regular pool)
   Boss = 100001,
   Shadow = 100002,

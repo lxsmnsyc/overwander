@@ -78,6 +78,16 @@ export const enum Species {
   Missingno = 100000,
   Egg = 100001,
   Substitute = 100002,
+  /**
+   * TODO: reserved for forms, once any exist. A form's id is
+   * `1000000 + dexNumber * 100 + formIndex`, which keeps
+   * `Species === dexNumber` true of every base form, gives each
+   * species a hundred slots (Alcremie's 63 is the largest set the
+   * mainline prints) and sorts a species' forms after it for free.
+   *
+   * Nothing else may claim the band. An id reaches a player's rows,
+   * so it cannot be renumbered afterwards
+   */
   Bulbasaur = 1,
   Ivysaur = 2,
   Venusaur = 3,
@@ -246,4 +256,14 @@ export const enum Species {
   Ledian = 166,
   Spinarak = 167,
   Ariados = 168,
+  Chinchou = 170,
+  Lanturn = 171,
+  Natu = 177,
+  Xatu = 178,
+  Mareep = 179,
+  Flaaffy = 180,
+  Ampharos = 181,
+  Hoppip = 187,
+  Skiploom = 188,
+  Jumpluff = 189,
 }

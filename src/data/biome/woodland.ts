@@ -21,6 +21,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Chikorita, weight: 2 },
         { species: Species.Sentret, weight: 25 },
         { species: Species.Ledyba, weight: 20 },
+        { species: Species.Hoppip, weight: 25 },
       ],
       uncommon: [
         { species: Species.Ivysaur, weight: 1 },
@@ -62,6 +63,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Chikorita, weight: 2 },
         { species: Species.Sentret, weight: 25 },
         { species: Species.Ledyba, weight: 20 },
+        { species: Species.Hoppip, weight: 25 },
       ],
       uncommon: [
         { species: Species.Ivysaur, weight: 1 },

@@ -13,6 +13,7 @@ export default function registerSavannaSpawns(): void {
         { species: Species.NidoranM, weight: 20 },
         { species: Species.Growlithe, weight: 10 },
         { species: Species.Doduo, weight: 20 },
+        { species: Species.Natu, weight: 20 },
       ],
       uncommon: [
         { species: Species.Nidorina, weight: 5 },
@@ -36,6 +37,7 @@ export default function registerSavannaSpawns(): void {
         { species: Species.Growlithe, weight: 10 },
         { species: Species.Doduo, weight: 20 },
         { species: Species.Rhyhorn, weight: 20 },
+        { species: Species.Natu, weight: 20 },
       ],
       uncommon: [
         { species: Species.Nidorina, weight: 5 },

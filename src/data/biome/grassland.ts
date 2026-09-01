@@ -20,6 +20,9 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Chikorita, weight: 2 },
         { species: Species.Sentret, weight: 25 },
         { species: Species.Ledyba, weight: 20 },
+        { species: Species.Natu, weight: 20 },
+        { species: Species.Mareep, weight: 25 },
+        { species: Species.Hoppip, weight: 25 },
       ],
       uncommon: [
         { species: Species.Ivysaur, weight: 1 },
@@ -69,6 +72,9 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Chikorita, weight: 2 },
         { species: Species.Sentret, weight: 25 },
         { species: Species.Ledyba, weight: 20 },
+        { species: Species.Natu, weight: 20 },
+        { species: Species.Mareep, weight: 25 },
+        { species: Species.Hoppip, weight: 25 },
       ],
       uncommon: [
         { species: Species.Ivysaur, weight: 1 },

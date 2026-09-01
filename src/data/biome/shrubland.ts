@@ -8,7 +8,12 @@ import { registerSpawnPool } from './__create';
 export default function registerShrublandSpawns(): void {
   registerSpawnPool(Biome.Shrubland, {
     [TimeOfDay.Morning]: {
-      base: [{ species: Species.Spearow, weight: 20 }],
+      base: [
+        { species: Species.Spearow, weight: 20 },
+        { species: Species.Natu, weight: 20 },
+        { species: Species.Mareep, weight: 25 },
+        { species: Species.Hoppip, weight: 25 },
+      ],
       uncommon: [],
       rare: [
         { species: Species.Fearow, weight: 10 },
@@ -17,7 +22,12 @@ export default function registerShrublandSpawns(): void {
       special: [],
     },
     [TimeOfDay.Day]: {
-      base: [{ species: Species.Spearow, weight: 20 }],
+      base: [
+        { species: Species.Spearow, weight: 20 },
+        { species: Species.Natu, weight: 20 },
+        { species: Species.Mareep, weight: 25 },
+        { species: Species.Hoppip, weight: 25 },
+      ],
       uncommon: [],
       rare: [
         { species: Species.Fearow, weight: 10 },

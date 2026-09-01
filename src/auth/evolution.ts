@@ -47,8 +47,7 @@ export async function listEvolutionOptions(
     level: caught.level,
     carried: new Set(inventory.filter((entry) => entry.amount > 0).map((entry) => entry.item)),
     held: new Set(caught.items),
-    tradedAs: caught.tradedAs,
-    tradedFor: caught.tradedFor,
+    canEvolve: caught.canEvolve,
   };
 
   return (getSpeciesData(caught.species).evolvesInto ?? []).map((evolution) => ({

@@ -188,16 +188,17 @@ describe('accepting', () => {
     expect(await acceptTrade(receiver.uid, String(id), '', NOW + 1000, -OFFSET)).toBe(true);
 
     const rows = await sql`
-      select id, traded_as, traded_for from caught where id in ('catch-a', 'catch-b')
+      select id, traded, can_evolve from caught where id in ('catch-a', 'catch-b')
     `;
     const handover = new Map(rows.map((row) => [String(row.id), row]));
 
-    // Each side reads its own species and the other's, which is what
-    // lets one of them refuse an evolution the other opened
-    expect(Number(handover.get('catch-a')?.traded_as)).toBe(Species.Machop);
-    expect(Number(handover.get('catch-a')?.traded_for)).toBe(Species.Abra);
-    expect(Number(handover.get('catch-b')?.traded_as)).toBe(Species.Abra);
-    expect(Number(handover.get('catch-b')?.traded_for)).toBe(Species.Machop);
+    // Both changed hands, and neither earned anything by it: a Machop
+    // has no trade evolution and neither has an Abra. The flag is the
+    // answer rather than the evidence, so it says so here
+    expect(handover.get('catch-a')?.traded).toBe(true);
+    expect(handover.get('catch-b')?.traded).toBe(true);
+    expect(handover.get('catch-a')?.can_evolve).toBe(false);
+    expect(handover.get('catch-b')?.can_evolve).toBe(false);
   });
 
   it('answers an open ask with the receiver_s pick, and refuses a stranger_s answer', async () => {

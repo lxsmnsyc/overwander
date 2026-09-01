@@ -12,6 +12,7 @@ import {
 } from '../auth/trade-record';
 import { FriendTie } from '../auth/friend-record';
 import { BASE_FRIENDSHIP } from '../data/constants/friendship';
+import { opensTradeEvolution } from '../data/species';
 import { isEggRecord, isFavoriteRecord } from './catch-fields';
 import { readCaughtIn, updateCaughtIn } from './caught-io';
 import { hasSpareCatch } from './caught';
@@ -294,10 +295,10 @@ export async function acceptTrade(
       ],
       friendship: BASE_FRIENDSHIP,
       traded: true,
-      // What each side was at the moment of the swap, and what it was
-      // swapped for. A Karrablast reads the other half of this row
-      tradedAs: incoming.species,
-      tradedFor: outgoing.species,
+      // Asked once, here: what it was at the moment of the swap and
+      // what came the other way are both in hand, and neither is
+      // afterwards. A Karrablast reads the other half of the swap
+      canEvolve: opensTradeEvolution(incoming.species, outgoing.species),
     });
 
     await updateCaughtIn(transaction, counterpart, {
@@ -315,8 +316,7 @@ export async function acceptTrade(
       ],
       friendship: BASE_FRIENDSHIP,
       traded: true,
-      tradedAs: outgoing.species,
-      tradedFor: incoming.species,
+      canEvolve: opensTradeEvolution(outgoing.species, incoming.species),
     });
 
     await transaction`

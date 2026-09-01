@@ -35,25 +35,32 @@ import { SpriteAnim, spriteAnimName } from '../../src/data/ids/sprite-anims';
  */
 const ROOT = 'public/sprites/pokemon';
 
-/** Every description that ships, whichever region it is filed under. */
-function described(): { species: number; path: string }[] {
+/**
+ * Every description that ships, whichever region it is filed under.
+ *
+ * A female pair is packed apart from the plain one and described on
+ * its own, so `154` and `154_f` are two sheets here rather than one
+ * species twice: they can hold different clips
+ */
+function described(): { sheet: string; species: number; path: string }[] {
   return readdirSync(ROOT, { withFileTypes: true })
     .filter((entry) => entry.isDirectory())
     .flatMap((region) =>
       readdirSync(`${ROOT}/${region.name}/meta`)
         .filter((name) => name.endsWith('.json'))
         .map((name) => ({
+          sheet: name.slice(0, -'.json'.length),
           species: Number.parseInt(name, 10),
           path: `${ROOT}/${region.name}/meta/${name}`,
         })),
     );
 }
 
-const PATHS = new Map(described().map((entry) => [entry.species, entry.path]));
+const PATHS = new Map(described().map((entry) => [entry.sheet, entry.path]));
 
-function loaded(species: number): SpeciesSpriteAnimation {
-  const data = asSpriteSheetJSON(JSON.parse(readFileSync(PATHS.get(species) ?? '', 'utf8')));
-  const sprite = new SpeciesSpriteAnimation(`${species}.png`, data);
+function loaded(sheet: number | string): SpeciesSpriteAnimation {
+  const data = asSpriteSheetJSON(JSON.parse(readFileSync(PATHS.get(String(sheet)) ?? '', 'utf8')));
+  const sprite = new SpeciesSpriteAnimation(`${sheet}.png`, data);
 
   // oxlint-disable-next-line typescript/no-unsafe-type-assertion
   (sprite as unknown as { image: unknown }).image = {};
@@ -62,8 +69,7 @@ function loaded(species: number): SpeciesSpriteAnimation {
 
 const SHIPPED = described()
   .filter((entry) => readFileSync(entry.path, 'utf8').trim().length > 0)
-  .map((entry) => entry.species)
-  .sort((one, two) => one - two);
+  .sort((one, two) => one.species - two.species || one.sheet.localeCompare(two.sheet));
 
 /**
  * Sheets that ship without one of the clips every sheet is supposed to
@@ -74,18 +80,18 @@ const SHIPPED = described()
  * to Idle, and the pokemon stands there through its own attack — so a
  * gap is worth knowing about even when nothing has tripped over it yet
  */
-const KNOWN_GAPS: Record<number, SpriteAnim[] | undefined> = {};
+const KNOWN_GAPS: Record<string, SpriteAnim[] | undefined> = {};
 
 describe('cast clips', () => {
   it('builds every common clip on every sheet that ships', () => {
-    for (const species of SHIPPED) {
-      const sprite = loaded(species);
+    for (const { sheet } of SHIPPED) {
+      const sprite = loaded(sheet);
       const missing = COMMON_CAST.filter((name) => !sprite.has(name));
 
       // A sheet short of a common clip is one whose moves fall through
       // the whole preference list and land on Idle
-      expect(missing.map(spriteAnimName), `${species} is missing`).toEqual(
-        (KNOWN_GAPS[species] ?? []).map(spriteAnimName),
+      expect(missing.map(spriteAnimName), `${sheet} is missing`).toEqual(
+        (KNOWN_GAPS[sheet] ?? []).map(spriteAnimName),
       );
     }
   });

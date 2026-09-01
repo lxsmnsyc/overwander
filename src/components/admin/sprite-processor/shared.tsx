@@ -284,13 +284,19 @@ export function refusalOf(error: unknown): string {
  * has to be there: a species with no female form has two of these, and
  * one still being drawn may have one
  */
-export const COATS: { name: string; label: string; hint: string }[] = [
+export const COATS: { name: string; label: string; hint: string; leads?: boolean }[] = [
   {
     name: 'regular',
     label: 'Regular',
-    hint: 'The ordinary coat. Everything else is packed to it.',
+    hint: 'The plain coat. Its shiny is packed with it.',
+    leads: true,
   },
-  { name: 'shiny', label: 'Shiny', hint: 'Optional.' },
-  { name: 'female', label: 'Female', hint: 'Optional. Written beside the ordinary one as _f.' },
-  { name: 'shinyFemale', label: 'Shiny female', hint: 'Optional.' },
+  { name: 'shiny', label: 'Shiny', hint: 'Optional. Packed with the regular coat.' },
+  {
+    name: 'female',
+    label: 'Female',
+    hint: 'Optional. Packed on its own and written as _f.',
+    leads: true,
+  },
+  { name: 'shinyFemale', label: 'Shiny female', hint: 'Optional. Packed with the female coat.' },
 ];

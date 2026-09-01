@@ -160,9 +160,12 @@ interface WrittenAnimData {
 
 export interface PmdResult {
   written: string[];
-  width: number;
-  height: number;
   anims: string[];
+  /**
+   * One a pair, in the order they were packed. A female is packed
+   * apart from the plain coat, so the two sheets are not the same size
+   */
+  sheets: { female: boolean; width: number; height: number }[];
   /** One a coat, in the order they were written. */
   coats: Drawing[];
 }
@@ -338,19 +341,24 @@ function recanvas(
 }
 
 /**
- * Puts every coat on one canvas.
+ * Puts a pair of coats on one canvas.
  *
- * A coat is its own archive on the collab site and is exported on its
- * own, so its frames may be cut with a few rows or columns more padding
- * than the plain coat's: Meganium's female Attack is 8 shorter,
- * Heracross's is 8 wider. One description ships for all four coats, so
- * every coat is re-canvassed onto the largest frame any of them uses,
- * growing the plain coat and its two mark images along with it.
+ * The pair is a coat and its shiny, which is the same drawing
+ * recoloured and so shares one description. They are two archives all
+ * the same, exported one at a time, so one can come back with a few
+ * rows or columns more padding round the same pokemon. Every coat of
+ * the pair is re-canvassed onto the largest frame either uses, the
+ * lead coat and its two mark images along with it.
  *
- * The largest rather than the plain coat's own: a wider coat is wider
- * because it draws past what the plain frame holds, and cropping it to
- * fit would clip that. Anchors survive because the marks move with the
- * drawing, and the trim in `entriesFor` crops the padding back off.
+ * The largest rather than the lead's own: a wider coat is wider
+ * because it draws past what the lead's frame holds, and cropping it
+ * to fit would clip that. Anchors survive because the marks move with
+ * the drawing, and the trim in `entriesFor` crops the padding back
+ * off.
+ *
+ * A female is not reconciled here at all. It is a redrawing rather
+ * than a recolour, cut to frames of its own, and `buildPair` packs and
+ * describes it apart from the plain coat for that reason.
  *
  * Only the padding may differ. A coat whose grid is a different shape
  * is a different animation, and nothing here can reconcile that
@@ -392,7 +400,7 @@ export function alignCoats(
         throw new Error(
           `The ${extra[coat].key} coat's ${spriteAnimName(name)} is ` +
             `${drawing.width}x${drawing.height}, which is not ${columns} by ${rows} frames ` +
-            `the way the ordinary coat's ${plain.width}x${plain.height} is.`,
+            `the way the coat it is drawn from at ${plain.width}x${plain.height} is.`,
         );
       }
       width = Math.max(width, drawing.width / columns);
@@ -592,34 +600,34 @@ export function hoistMarks(
 /**
  * Whether the coat is animated the way the plain one is.
  *
- * One description ships for all four coats, so a coat that holds its
- * frames for different lengths would be played at the plain coat's
- * timing and nothing would say so. A coat is exported on its own and
- * carries its own `AnimData.xml`, so this is possible rather than
+ * One description ships for a coat and its shiny, so a shiny that
+ * holds its frames for different lengths would be played at its
+ * lead's timing and nothing would say so. Each is exported on its own
+ * and carries its own `AnimData.xml`, so this is possible rather than
  * hypothetical, and it is refused the way a mismatched grid is: the
- * padding may differ between coats, the timing may not
+ * padding may differ between the two, the timing may not
  */
-export function checkCoatTiming(plain: AnimData, coat: AnimData, key: keyof Coats): void {
-  if (plain.shadowSize !== coat.shadowSize) {
+export function checkCoatTiming(lead: AnimData, coat: AnimData, key: keyof Coats): void {
+  if (lead.shadowSize !== coat.shadowSize) {
     throw new Error(
-      `The ${key} coat casts a shadow of ${coat.shadowSize} where the ordinary ` +
-        `coat casts ${plain.shadowSize}. One description ships for both.`,
+      `The ${key} coat casts a shadow of ${coat.shadowSize} where the coat it is ` +
+        `drawn from casts ${lead.shadowSize}. One description ships for both.`,
     );
   }
 
-  const held = new Map(plain.anims.map((anim) => [anim.name, anim.durations]));
+  const held = new Map(lead.anims.map((anim) => [anim.name, anim.durations]));
 
   for (const anim of coat.anims) {
     const durations = held.get(anim.name);
     const name = spriteAnimName(anim.name);
 
     if (durations == null) {
-      throw new Error(`The ${key} coat has a ${name} the ordinary coat does not.`);
+      throw new Error(`The ${key} coat has a ${name} the coat it is drawn from does not.`);
     }
     if (durations.join() !== anim.durations.join()) {
       throw new Error(
-        `The ${key} coat's ${name} is held for ${anim.durations.join(', ')} where the ` +
-          `ordinary coat's is held for ${durations.join(', ')}. One description ships for both.`,
+        `The ${key} coat's ${name} is held for ${anim.durations.join(', ')} where the coat ` +
+          `it is drawn from holds it for ${durations.join(', ')}. One description ships for both.`,
       );
     }
   }
@@ -788,29 +796,49 @@ async function buildPair(
 
 export default async function processPmd(coats: Coats, options: PmdOptions): Promise<PmdResult> {
   const keep = animFilter(options.anims);
-
-  if (coats.regular == null) {
-    throw new Error('The ordinary coat is the one every sheet is built from');
-  }
   // The female pair is built apart from the plain one rather than
   // grown onto its grid: it is a redrawing, so its frames, its timing
-  // and its packing are its own
+  // and its packing are its own. Which is also why either pair may be
+  // packed without the other, and why the plain coat is not required:
+  // a female sheet is patched by handing over the female archives
+  // alone, leaving the plain sheet and its description where they are
   const leads = COATS.filter((coat) => !coat.shiny && coats[coat.key] != null);
-  const pairs = [];
+
+  if (leads.length === 0) {
+    throw new Error('A sheet is built from a regular or a female archive, and neither was given');
+  }
+  // A shiny is a recolour written against its lead's description, so
+  // packing one without its lead would lay it on a layout that is not
+  // the one it was cut for
+  const orphan = COATS.find(
+    (coat) =>
+      coat.shiny && coats[coat.key] != null && !leads.some((lead) => lead.female === coat.female),
+  );
+
+  if (orphan != null) {
+    const lead = COATS.find((coat) => !coat.shiny && coat.female === orphan.female);
+
+    throw new Error(
+      `The ${orphan.key} coat is a recolour of the ${lead?.key ?? 'plain'} coat and is ` +
+        'packed with it. Give that archive too, or leave this one out.',
+    );
+  }
+  const pairs: Awaited<ReturnType<typeof buildPair>>[] = [];
 
   for (const lead of leads) {
     pairs.push(await buildPair(coats, lead, keep, options));
   }
 
-  const first = pairs[0];
-
   return {
     // Last, so the list describes the sheets that are now there rather
     // than the ones that were
     written: [...pairs.flatMap((pair) => pair.written), await writeCoats()],
-    width: first.width,
-    height: first.height,
-    anims: first.anims,
+    anims: pairs[0].anims,
+    sheets: leads.map((lead, at) => ({
+      female: lead.female,
+      width: pairs[at].width,
+      height: pairs[at].height,
+    })),
     coats: pairs.flatMap((pair) => pair.drawn),
   };
 }

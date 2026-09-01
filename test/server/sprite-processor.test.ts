@@ -8,7 +8,12 @@ import { blank, blit, opaque } from '../../src/server/sprites/raster';
 import type { Raster } from '../../src/server/sprites/raster';
 import computeTrim from '../../src/server/sprites/trim';
 import type { Frame, PictureData, SpriteTarget } from '../../src/server/sprites/pmd';
-import { alignCoats, animFilter, checkCoatTiming, hoistMarks } from '../../src/server/sprites/pmd';
+import processPmd, {
+  alignCoats,
+  animFilter,
+  checkCoatTiming,
+  hoistMarks,
+} from '../../src/server/sprites/pmd';
 import deduper, { drawPictures } from '../../src/server/sprites/dedupe';
 import {
   extraDestination,
@@ -733,7 +738,7 @@ function animsFor(width: number, height: number): AnimData {
 describe('coats animated differently', () => {
   it('takes a coat that is held for the same times', () => {
     expect(() => {
-      checkCoatTiming(animsFor(4, 4), animsFor(6, 4), 'female');
+      checkCoatTiming(animsFor(4, 4), animsFor(6, 4), 'shiny');
     }).not.toThrow();
   });
 
@@ -742,11 +747,11 @@ describe('coats animated differently', () => {
 
     coat.anims[0].durations = [1, 2];
 
-    // One description ships for all four coats, so a coat that
-    // disagrees would be played at the plain coat's timing with
-    // nothing to say so
+    // One description ships for a coat and its shiny, so a shiny that
+    // disagrees would be played at its lead's timing with nothing to
+    // say so
     expect(() => {
-      checkCoatTiming(animsFor(4, 4), coat, 'female');
+      checkCoatTiming(animsFor(4, 4), coat, 'shiny');
     }).toThrow(/held for 1, 2/);
   });
 
@@ -760,36 +765,35 @@ describe('coats animated differently', () => {
     }).toThrow(/shadow/);
   });
 
-  it('refuses a coat holding an animation the plain one has not', () => {
+  it('refuses a coat holding an animation its lead has not', () => {
     const coat = animsFor(4, 4);
 
     coat.anims[0].name = SpriteAnim.Walk;
 
     expect(() => {
-      checkCoatTiming(animsFor(4, 4), coat, 'female');
-    }).toThrow(/the ordinary coat does not/);
+      checkCoatTiming(animsFor(4, 4), coat, 'shiny');
+    }).toThrow(/the coat it is drawn from does not/);
   });
 });
 
 describe('coats cut to different frames', () => {
   it('grows every coat onto the widest frame any of them uses', () => {
-    // Heracross: the female coat is cut 2 wider because it draws past
-    // what the plain frame holds. Cropping it back would clip that, so
-    // the plain coat grows instead
+    // A shiny exported 2 wider draws past what its lead's frame holds.
+    // Cropping it back would clip that, so the lead grows instead
     const plain: Coat = new Map([[SpriteAnim.Idle, { animation: cells(2, 4, 4, [1, 1]) }]]);
-    const female: Coat = new Map([[SpriteAnim.Idle, { animation: cells(2, 6, 4, [2, 1]) }]]);
+    const shiny: Coat = new Map([[SpriteAnim.Idle, { animation: cells(2, 6, 4, [2, 1]) }]]);
     const data = animsFor(4, 4);
 
-    alignCoats(plain, [female], data, [{ key: 'female' }]);
+    alignCoats(plain, [shiny], data, [{ key: 'shiny' }]);
 
     expect(data.anims[0].frameWidth).toBe(6);
     expect(plain.get(SpriteAnim.Idle)?.animation?.width).toBe(12);
-    // The plain coat's own mark moved with it, so the two still line up
+    // The lead's own mark moved with it, so the two still line up
     expect(marks(plain.get(SpriteAnim.Idle)!.animation!, 2, 6, 4)).toEqual(['2,1', '2,1']);
-    expect(marks(female.get(SpriteAnim.Idle)!.animation!, 2, 6, 4)).toEqual(['2,1', '2,1']);
+    expect(marks(shiny.get(SpriteAnim.Idle)!.animation!, 2, 6, 4)).toEqual(['2,1', '2,1']);
   });
 
-  it('moves the marks of the plain coat along with its drawing', () => {
+  it('moves the marks of the lead coat along with its drawing', () => {
     const plain: Coat = new Map([
       [
         SpriteAnim.Idle,
@@ -803,7 +807,7 @@ describe('coats cut to different frames', () => {
     const data = animsFor(4, 4);
 
     alignCoats(plain, [new Map([[SpriteAnim.Idle, { animation: cells(2, 6, 4, [2, 1]) }]])], data, [
-      { key: 'female' },
+      { key: 'shiny' },
     ]);
 
     const held = plain.get(SpriteAnim.Idle);
@@ -812,26 +816,26 @@ describe('coats cut to different frames', () => {
     expect(marks(held!.shadow!, 2, 6, 4)).toEqual(['3,3', '3,3']);
   });
 
-  it('pads a coat cut shorter than the plain one', () => {
-    // Meganium: the female Attack is 8 shorter, so it is centred back
-    // onto the frame the description names
+  it('pads a coat cut shorter than its lead', () => {
+    // The other way round: a shiny exported with less padding is
+    // centred back onto the frame the description names
     const plain: Coat = new Map([[SpriteAnim.Idle, { animation: cells(2, 4, 4, [1, 2]) }]]);
-    const female: Coat = new Map([[SpriteAnim.Idle, { animation: cells(2, 4, 2, [1, 1]) }]]);
+    const shiny: Coat = new Map([[SpriteAnim.Idle, { animation: cells(2, 4, 2, [1, 1]) }]]);
     const data = animsFor(4, 4);
 
-    alignCoats(plain, [female], data, [{ key: 'female' }]);
+    alignCoats(plain, [shiny], data, [{ key: 'shiny' }]);
 
     expect(data.anims[0].frameHeight).toBe(4);
-    expect(marks(female.get(SpriteAnim.Idle)!.animation!, 2, 4, 4)).toEqual(['1,2', '1,2']);
+    expect(marks(shiny.get(SpriteAnim.Idle)!.animation!, 2, 4, 4)).toEqual(['1,2', '1,2']);
   });
 
   it('refuses a coat whose grid is a different shape', () => {
     const plain: Coat = new Map([[SpriteAnim.Idle, { animation: cells(2, 4, 4, [1, 1]) }]]);
-    const female: Coat = new Map([[SpriteAnim.Idle, { animation: blank(9, 4) }]]);
+    const shiny: Coat = new Map([[SpriteAnim.Idle, { animation: blank(9, 4) }]]);
 
     expect(() => {
-      alignCoats(plain, [female], animsFor(4, 4), [{ key: 'female' }]);
-    }).toThrow(/female/);
+      alignCoats(plain, [shiny], animsFor(4, 4), [{ key: 'shiny' }]);
+    }).toThrow(/shiny/);
   });
 });
 
@@ -911,5 +915,29 @@ describe('lifting the marks onto the pictures', () => {
       [0, 0],
       [null, [3, 3], null, null],
     ]);
+  });
+});
+
+describe('which coats a pack may be given', () => {
+  const options = { species: 1, compact: true, anims: ['Idle'] };
+  const bytes = new Uint8Array([1, 2, 3]);
+
+  it('needs a coat that leads a pair', async () => {
+    await expect(processPmd({}, options)).rejects.toThrow(/regular or a female/);
+  });
+
+  it('takes the female archives without the plain ones', async () => {
+    // Not a real archive, so it fails on reading it rather than on
+    // being refused: what is under test is that it gets that far
+    await expect(processPmd({ female: bytes }, options)).rejects.not.toThrow(/regular or a female/);
+  });
+
+  it('refuses a shiny whose lead is not there', async () => {
+    await expect(processPmd({ regular: bytes, shinyFemale: bytes }, options)).rejects.toThrow(
+      /recolour of the female coat/,
+    );
+    await expect(processPmd({ female: bytes, shiny: bytes }, options)).rejects.toThrow(
+      /recolour of the regular coat/,
+    );
   });
 });

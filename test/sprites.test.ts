@@ -371,8 +371,9 @@ describe('the landmarks that ship', () => {
       Landmark.Champion,
       Landmark.TeamRocket,
       Landmark.WanderingNpc,
-      // And the patch grows its own bush
+      // And the patch grows its own bush, the way a tree grows its own
       Landmark.BerryPatch,
+      Landmark.ApricornTree,
     ]) {
       expect(hasLandmarkPicture(kind), LANDMARK_NAMES[kind]).toBe(false);
       expect(landmarkPicture(kind, Biome.Grassland), LANDMARK_NAMES[kind]).toBe(null);

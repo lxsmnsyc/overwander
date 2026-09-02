@@ -82,22 +82,23 @@ interface MenuEntry {
 
 const ENTRIES: MenuEntry[] = [
   { label: 'World', dialog: GameDialog.Map, icon: MapIcon },
-  // First of the keys that are about other people: an invitation is
-  // worth finding, and nothing else on the bar was ever going to say
-  // one had landed
+  // An invitation is worth finding, and nothing else on the bar was
+  // ever going to say one had landed
   { label: 'Notices', dialog: GameDialog.Notifications, icon: BellIcon },
-  { label: 'Catches', dialog: GameDialog.Catches, icon: SparklesIcon },
-  { label: 'Pokedex', dialog: GameDialog.Pokedex, icon: SearchIcon },
-  { label: 'Inventory', dialog: GameDialog.Inventory, icon: BagIcon },
   { label: 'Profile', dialog: GameDialog.Profile, icon: UserIcon },
-  { label: 'Raids', dialog: GameDialog.Raids, icon: FireIcon },
-  { label: 'Battle', dialog: GameDialog.Battles, icon: SwordsIcon },
+  // The row a player is in and out of all day: what they caught, what
+  // they are carrying, and what they have seen
+  { label: 'Catches', dialog: GameDialog.Catches, icon: SparklesIcon },
+  { label: 'Bag', dialog: GameDialog.Inventory, icon: BagIcon },
+  { label: 'Pokedex', dialog: GameDialog.Pokedex, icon: SearchIcon },
+  { label: 'Quests', dialog: GameDialog.Quests, icon: TrophyIcon },
   // No Auctions key: the lots are read at an auction board out in the
   // world, which is what makes trading somewhere a player goes rather
   // than a panel they open. The panel itself still exists, and the
   // profile still hands over anything already won
   { label: 'Gifts', dialog: GameDialog.Gifts, icon: GiftIcon },
-  { label: 'Quests', dialog: GameDialog.Quests, icon: TrophyIcon },
+  { label: 'Battle', dialog: GameDialog.Battles, icon: SwordsIcon },
+  { label: 'Raids', dialog: GameDialog.Raids, icon: FireIcon },
   { label: 'Settings', dialog: GameDialog.Settings, icon: SettingsIcon },
 ];
 

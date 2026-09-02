@@ -46,6 +46,7 @@ const LANDMARK_NAMES: Record<Landmark, string> = {
   [Landmark.Nest]: 'nests',
   [Landmark.Phenomenon]: 'phenomena',
   [Landmark.Portal]: 'portal crossings',
+  [Landmark.Apricorn]: 'apricorn trees',
 };
 
 /** What a battle foe is called on a requirement line */

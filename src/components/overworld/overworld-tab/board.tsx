@@ -23,6 +23,7 @@ import { claimRocketReward, enterRocketStop } from '../../../auth/rockets';
 import { createSafariSession, isEncounterRetired } from '../../../auth/safari';
 import type { SnapshotRecord } from '../../../auth/snapshot-record';
 import {
+  claimApricornTree,
   claimBerryPatch,
   claimItemCache,
   claimNest,
@@ -494,6 +495,14 @@ export default function OverworldBoard(props: {
    * player is standing in
    */
   const shown = (): ChunkView | null => frozen()?.view ?? view();
+
+  /**
+   * What every plant on the board is bearing: the berry patches and
+   * the apricorn trees together, since the canvas draws both the same
+   * way and a cell is one or the other
+   */
+  const fruiting = (snapshot: ChunkSnapshot): Map<number, ItemStack> =>
+    new Map([...snapshot.getBerryPatches(), ...snapshot.getApricornTrees()]);
 
   /**
    * The cells whose happening this player has already walked into.
@@ -1048,6 +1057,15 @@ export default function OverworldBoard(props: {
       // stripped it
       setPicked((cells) => new Set(cells).add(at));
       announce(at, 'Bare bushes. Come back next window.', berries == null ? null : [berries]);
+      return null;
+    }
+    if (landmark === Landmark.ApricornTree) {
+      const apricorns = await claimApricornTree(loaded.snapshot, at);
+
+      // Picked either way, and worth saying what they are for: an
+      // apricorn is nothing until Kurt has it
+      setPicked((cells) => new Set(cells).add(at));
+      announce(at, 'Picked bare. Come back next window.', apricorns == null ? null : [apricorns]);
       return null;
     }
     // The landmarks somebody fights at share one flow: Team Rocket's
@@ -1831,7 +1849,7 @@ export default function OverworldBoard(props: {
                 // own map rather than one built here: a prop is a
                 // getter, and the draw loop reads this once a cell a
                 // frame
-                berries={loaded().snapshot.getBerryPatches()}
+                berries={fruiting(loaded().snapshot)}
                 picked={picked()}
                 dug={dug()}
                 decorations={loaded().decorations}

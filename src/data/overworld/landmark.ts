@@ -152,6 +152,7 @@ export const LANDMARKS: Landmark[] = [
   Landmark.Market,
   Landmark.GymSeat,
   Landmark.AuctionBoard,
+  Landmark.ApricornTree,
 ];
 
 /**

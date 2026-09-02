@@ -205,6 +205,7 @@ import {
 import {
   MAX_BERRY_PICK,
   MIN_BERRY_PICK,
+  resolveApricornColour,
   resolveApricornTree,
   resolveBerryPatch,
   resolveNest,
@@ -2852,19 +2853,63 @@ describe('world', () => {
     expect(resolveBerryPatch(rolls([0.5, 0, 0.5]))?.amount).toBe(4);
   });
 
+  it('stands apricorn trees on the ground, one colour to a tree', () => {
+    const world = new World('overworld');
+    const chunk = findChunk(world, (candidate) =>
+      new Set(candidate.getLandmarkCells().values()).has(Landmark.ApricornTree),
+    );
+
+    expect(chunk).not.toBeNull();
+    if (chunk == null) {
+      return;
+    }
+
+    const snapshot = new ChunkSnapshot(chunk, 0);
+    const trees = snapshot.getApricornTrees();
+
+    expect(trees.size).toBeGreaterThan(0);
+    for (const [cell, crop] of trees) {
+      expect(chunk.getLandmarkCells().get(cell)).toBe(Landmark.ApricornTree);
+      expect(APRICORNS).toContain(crop.item);
+      expect(crop.amount).toBeGreaterThanOrEqual(MIN_BERRY_PICK);
+      expect(crop.amount).toBeLessThanOrEqual(MAX_BERRY_PICK);
+      // The colour is the tree's own, and the same one the cell reads
+      expect(snapshot.getApricornTree(cell)).toBe(crop.item);
+    }
+
+    // A tree keeps its colour through every window, since the tree
+    // itself is what is drawn, and its crop turns over on the berry
+    // clock
+    const later = new ChunkSnapshot(chunk, LANDMARK_INTERVAL * 4);
+
+    for (const [cell, crop] of trees) {
+      expect(later.getApricornTrees().get(cell)?.item).toBe(crop.item);
+    }
+    expect(new ChunkSnapshot(chunk, LANDMARK_INTERVAL - 1).getApricornTrees()).toEqual(trees);
+
+    // A cell that holds no tree bears nothing
+    const elsewhere = [...chunk.getLandmarkCells()].find(
+      ([, landmark]) => landmark !== Landmark.ApricornTree,
+    );
+
+    expect(snapshot.getApricornTree(elsewhere?.[0] ?? 0)).toBeNull();
+  });
+
   it('bears one apricorn colour a tree, and a handful of it', () => {
-    const rolls = (values: number[]) => () => values.shift() ?? 0.999;
+    const draw = (value: number) => () => value;
 
     // No rarer colour to hunt: an apricorn is a ball nobody has
     // carved yet, and the seven balls are worth about the same as
-    // each other, so the first draw is the colour and every colour is
-    // equally likely
-    expect(resolveApricornTree(rolls([0, 0])).item).toBe(APRICORNS[0]);
-    expect(resolveApricornTree(rolls([0.999, 0])).item).toBe(APRICORNS[APRICORNS.length - 1]);
+    // each other, so every colour is equally likely
+    expect(resolveApricornColour(draw(0))).toBe(APRICORNS[0]);
+    expect(resolveApricornColour(draw(0.999))).toBe(APRICORNS[APRICORNS.length - 1]);
 
-    // What varies is how good a season it had, the way a bush's does
-    expect(resolveApricornTree(rolls([0, 0])).amount).toBe(MIN_BERRY_PICK);
-    expect(resolveApricornTree(rolls([0, 0.999])).amount).toBe(MAX_BERRY_PICK);
+    // Two draws on two clocks: the colour is the tree's for good and
+    // the crop is the window's, so a good season cannot repaint it
+    expect(resolveApricornTree(draw(0), draw(0)).item).toBe(APRICORNS[0]);
+    expect(resolveApricornTree(draw(0), draw(0.999)).item).toBe(APRICORNS[0]);
+    expect(resolveApricornTree(draw(0), draw(0)).amount).toBe(MIN_BERRY_PICK);
+    expect(resolveApricornTree(draw(0), draw(0.999)).amount).toBe(MAX_BERRY_PICK);
   });
 
   it('resolves a phenomenon into a meeting, a find or an egg', () => {

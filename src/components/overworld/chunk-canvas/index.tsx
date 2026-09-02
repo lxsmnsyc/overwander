@@ -71,6 +71,7 @@ import type OWCharSprite from '../../../canvas/ow-char-sprite';
 import loadOWChar, { OW_SPRITE_ROOT } from '../../../canvas/ow-char-sprites';
 import type OWPlantSprite from '../../../canvas/ow-plant-sprite';
 import loadOWPlant from '../../../canvas/ow-plant-sprites';
+import apricornTreeSheet from '../../../data/overworld/apricorn-tree';
 import berryPlantSheet from '../../../data/overworld/berry-plant';
 import decorationPicture, { grottoPicture } from '../../../data/overworld/decoration-sprite';
 import landmarkPicture, { LANDMARK_SHEET } from '../../../data/overworld/landmark-sprite';
@@ -200,9 +201,9 @@ export interface ChunkCanvasProps {
    */
   coats: Map<number, string>;
   /**
-   * What each patch is bearing this window, by cell. A landmark says a
-   * patch is there; this says what is on the bush, which is what
-   * decides the plant that is drawn
+   * What each plant is bearing this window, by cell: a patch's berry
+   * or a tree's apricorn. A landmark says the plant is there; this
+   * says what is on it, which is what decides the drawing
    */
   berries: Map<number, ItemStack>;
   /**
@@ -532,12 +533,21 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
    */
   const plantOn = (index: number): OWPlantSprite | null => {
     const bearing = props.berries.get(index);
+    const landmark = props.landmarks.get(index);
 
-    if (bearing == null || props.landmarks.get(index) !== Landmark.BerryPatch) {
+    if (
+      bearing == null ||
+      (landmark !== Landmark.BerryPatch && landmark !== Landmark.ApricornTree)
+    ) {
       return null;
     }
 
-    const sheet = berryPlantSheet(bearing.item);
+    // An apricorn tree is the same shape of drawing as a bush, on a
+    // sheet of its own colour
+    const sheet =
+      landmark === Landmark.ApricornTree
+        ? apricornTreeSheet(bearing.item)
+        : berryPlantSheet(bearing.item);
 
     if (!plants.has(sheet)) {
       loadPlant(sheet).catch(() => {

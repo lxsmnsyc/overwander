@@ -98,6 +98,17 @@ next window grows something new.
 | **Rare**     | Lum, Sitrus, the five that answer a blow, and the eighteen type-resists |
 | **Special**  | The pinch berries, and the six silver and gold prize berries            |
 
+### Apricorn trees
+
+A tree bears **one colour** of apricorn and **three to five** of them, on the
+same 15-minute clock a berry patch fruits on. The colour is the tree's own and
+never changes: the tree is drawn bearing it, so a red one is a landmark you can
+walk back to.
+
+An apricorn is worth nothing on its own. **Kurt**, who passes through the
+wandering cells, carves one into the ball it stands for: seven colours, seven
+balls, none of them for sale anywhere.
+
 ### Phenomena
 
 A **phenomenon** is something happening at a cell rather than something buried in

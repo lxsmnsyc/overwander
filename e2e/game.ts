@@ -160,7 +160,7 @@ const MENU_DIALOGS: Record<string, string> = {
   World: 'World Map',
   Catches: 'Catches',
   Pokedex: 'Pokedex',
-  Inventory: 'Inventory',
+  Bag: 'Bag',
   Raids: 'Raids',
   Gifts: 'Gifts',
   Quests: 'Quests',

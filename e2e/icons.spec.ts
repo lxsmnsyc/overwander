@@ -19,7 +19,7 @@ test.describe('item icons', () => {
   });
 
   test('draws a picture beside everything in the bag', async ({ page }) => {
-    const bag = await openPanel(page, 'Inventory');
+    const bag = await openPanel(page, 'Bag');
 
     const balls = bag.getByRole('button', { name: /^Poke Ball, \d+ carried/ });
     // The sheet is a background on a span, and the span is only there

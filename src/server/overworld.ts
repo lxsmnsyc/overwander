@@ -317,6 +317,46 @@ export async function claimBerryPatch(
 }
 
 /**
+ * Pick an apricorn tree: everything ripe on it lands in the bag, the
+ * way a berry patch's does.
+ *
+ * It shares the berry ledger rather than keeping one of its own: a
+ * marker names a cell in a window, a cell is a patch or a tree and
+ * never both, and what is written down either way is a handful of one
+ * item picked off a plant
+ */
+export async function claimApricornTree(
+  uid: string,
+  x: number,
+  y: number,
+  cell: number,
+  now: number,
+  offset: number,
+): Promise<ItemStack | null> {
+  const snapshot = await resolveSnapshot(x, y, now, offset);
+  const picked = snapshot?.getApricornTrees().get(cell);
+
+  if (snapshot == null || picked == null) {
+    return null;
+  }
+
+  const id = `${berryPrefix(snapshot)}${cell}`;
+
+  if (
+    !(await claim('berry_claims', id, {
+      player: uid,
+      item: picked.item,
+      amount: picked.amount,
+    }))
+  ) {
+    return null;
+  }
+  await grantItem(uid, picked.item, picked.amount);
+  await bumpProgress(uid, [[Metric.Landmarks, Landmark.Apricorn, 1]]);
+  return picked;
+}
+
+/**
  * The claim marker one player's visit to one nest, in one half-day
  * window, is written against. Both the peek and the claim name it, so
  * looking and taking cannot disagree about which egg is in question

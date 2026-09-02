@@ -34,21 +34,19 @@ test.describe('the overworld', () => {
     // which is what makes trading somewhere a player goes
     for (const label of [
       'World',
-      'Catches',
-      'Pokedex',
-      'Inventory',
+      'Notices',
       'Profile',
-      'Raids',
-      'Battle',
-      'Gifts',
+      'Catches',
+      'Bag',
+      'Pokedex',
       'Quests',
+      'Gifts',
+      'Battle',
+      'Raids',
+      'Settings',
     ]) {
       await expect(menu.getByRole('button', { name: label, exact: true })).toBeEnabled();
     }
-    // The one key still kept for something unbuilt. Friends was
-    // another until they became a tab of the profile, which is where a
-    // list of people belongs
-    await expect(menu.getByRole('button', { name: 'Settings', exact: true })).toBeDisabled();
   });
 
   /**

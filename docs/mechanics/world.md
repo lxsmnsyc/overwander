@@ -72,6 +72,7 @@ few are one to a chunk, marked below.
 | ------------------- | --------------------------------------------------------------- |
 | **Item Cache**      | A buried stash of items                                         |
 | **Berry Patch**     | A bush bearing one kind of berry                                |
+| **Apricorn Tree**   | A tree bearing one colour of apricorn, for Kurt to carve        |
 | **Nest**            | An egg of a local species                                       |
 | **Legendary Raid**  | A legendary's lair; the raid is named after the place           |
 | **Shadow Raid**     | A lair with something wrong in it                               |
@@ -83,7 +84,7 @@ few are one to a chunk, marked below.
 | **Gym Seat**        | A team another player left standing, to be fought. One to a chunk |
 | **Gym Leader**      | One of the sixteen, with a badge on the line. One to a chunk |
 | **Elite Four**      | One of the eight, for a challenger holding their league's badges  |
-| **Champion**        | Red or Lance, for whoever has beaten their league's Elite Four. They field the team they are known for. One to a chunk |
+| **Champion**        | Blue or Lance, for whoever has beaten their league's Elite Four. They field the team they are known for, and one window in sixty-four a legend has the seat instead. One to a chunk |
 | **Portal**          | A way through to another portal, for the price of a Portal Key. One to a chunk |
 
 Walking up to a wandering cell does not reveal in advance which specialist is
@@ -120,7 +121,7 @@ to obtain, the sooner it returns.
 | What changes                                    | How often  |
 | ----------------------------------------------- | ---------- |
 | The pokemon standing in a chunk                 | 5 minutes  |
-| Item caches and berry patches                   | 15 minutes |
+| Item caches, berry patches and apricorn trees   | 15 minutes |
 | Where things are happening, and what they are   | 1 hour     |
 | The weather over a chunk                        | 1 hour     |
 | Legendary and shadow raids                      | 3 hours    |

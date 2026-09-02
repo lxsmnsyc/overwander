@@ -35,7 +35,7 @@ test.describe('using an item out of the bag', () => {
     await page.reload();
     await expect(page.getByRole('navigation', { name: 'Game' })).toBeVisible();
 
-    const bag = await openPanel(page, 'Inventory');
+    const bag = await openPanel(page, 'Bag');
 
     await bag.getByRole('button', { name: /^Rare Candy, 2 carried/ }).click();
 

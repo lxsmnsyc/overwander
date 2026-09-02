@@ -247,7 +247,7 @@ test.describe('the auction house', () => {
     // The ball is in the winner's bag
     await buyerBoard.getByRole('button', { name: 'Close' }).click();
 
-    const bag = await openPanel(buyer.page, 'Inventory');
+    const bag = await openPanel(buyer.page, 'Bag');
 
     await expect(bag.getByRole('button', { name: /^Master Ball, 1 carried/ })).toBeVisible();
 

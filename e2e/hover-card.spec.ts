@@ -17,7 +17,7 @@ test.describe('a hover card', () => {
     await signIn(page);
     await claimStarter(page);
 
-    const bag = await openPanel(page, 'Inventory');
+    const bag = await openPanel(page, 'Bag');
     const square = bag.getByRole('button', { name: /^Poke Ball, \d+ carried/ });
     const card = page.getByRole('dialog', { name: /^Info$/ });
 
@@ -42,7 +42,7 @@ test.describe('a hover card', () => {
     await signIn(page);
     await claimStarter(page);
 
-    const bag = await openPanel(page, 'Inventory');
+    const bag = await openPanel(page, 'Bag');
     const square = bag.getByRole('button', { name: /^Poke Ball, \d+ carried/ });
     const card = page.getByRole('dialog', { name: /^Info$/ });
 

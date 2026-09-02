@@ -80,7 +80,7 @@ const TITLES: Record<Panelled, string> = {
   [GameDialog.Raids]: 'Raids',
   [GameDialog.Auctions]: 'Auctions',
   [GameDialog.Catches]: 'Catches',
-  [GameDialog.Inventory]: 'Inventory',
+  [GameDialog.Inventory]: 'Bag',
   [GameDialog.Pokedex]: 'Pokedex',
   [GameDialog.Gifts]: 'Gifts',
   [GameDialog.Quests]: 'Quests',

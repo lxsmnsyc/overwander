@@ -74,7 +74,14 @@ import { canStageBoss } from './raid';
 import { CELL_COUNT, CHUNK_CELLS, PLACEMENT_AREA, centeredCells, neighborCells } from './chunk';
 import { getPortalCell } from './portal';
 import type { PhenomenonReward } from './landmarks';
-import { resolveBerryPatch, resolveItemCache, resolveNest, resolvePhenomenon } from './landmarks';
+import {
+  resolveApricornColour,
+  resolveApricornTree,
+  resolveBerryPatch,
+  resolveItemCache,
+  resolveNest,
+  resolvePhenomenon,
+} from './landmarks';
 
 /**
  * An expert's six: five rolled from their kind's band with
@@ -559,6 +566,54 @@ export default class ChunkSnapshot {
       this.berryPatches = patches;
     }
     return this.berryPatches;
+  }
+
+  /**
+   * Which apricorn the tree at this cell bears, or null where the cell
+   * holds no tree. A fixture of the chunk rather than the window's:
+   * the tree is drawn in its own colour, and one that turned over
+   * every quarter-hour would be a different tree each time
+   */
+  getApricornTree(cell: number): Items | null {
+    if (this.chunk.getLandmarkCells().get(cell) !== Landmark.ApricornTree) {
+      return null;
+    }
+
+    const rng = new AleaRNG(`${this.chunk.seed}apricorn${cell}`);
+
+    return resolveApricornColour(() => rng.random());
+  }
+
+  private apricornTrees: Map<number, ItemStack> | null = null;
+
+  /**
+   * The window's ripe apricorns, keyed by the landmark cell: the
+   * colour the tree bears and how many of them are on it. The crop
+   * turns over on the same clock a berry patch fruits on
+   */
+  getApricornTrees(): Map<number, ItemStack> {
+    if (this.apricornTrees == null) {
+      const trees = new Map<number, ItemStack>();
+
+      for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
+        if (landmark !== Landmark.ApricornTree) {
+          continue;
+        }
+
+        const colour = new AleaRNG(`${this.chunk.seed}apricorn${cell}`);
+        const crop = new AleaRNG(`${this.groundKey}${this.landmarkTimestamp}apricorn${cell}`);
+
+        trees.set(
+          cell,
+          resolveApricornTree(
+            () => colour.random(),
+            () => crop.random(),
+          ),
+        );
+      }
+      this.apricornTrees = trees;
+    }
+    return this.apricornTrees;
   }
 
   /**

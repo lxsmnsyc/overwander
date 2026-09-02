@@ -134,24 +134,33 @@ elsewhere.
 emerges belongs to the fossil, and it arrives at level 20. Like the vendor, he has
 no once-per-window limit: what paces him is how many fossils have been dug up.
 
-## The Team Rocket grunt
+## Team Rocket
 
-The grunt bars the cell and fights whoever accepts, with three shadowed pokemon of
-the biome's own — one common, one uncommon and one rare, each somewhere between
-**level 45 and 55**. It is an ordinary trainer battle, so a simultaneous knockout is
-a draw.
+Somebody from Team Rocket bars the cell and fights whoever accepts. Who it is is
+rolled per cell per window, and the three cannot overlap:
 
-Every player fights the grunt separately. One player's victory closes nothing for
-anybody else, and losing costs nothing but the attempt: the grunt is still
-standing and may be challenged again until the three hours are up.
+| Standing there        | How often | What they field                                                 |
+| --------------------- | --------- | --------------------------------------------------------------- |
+| **Grunt**             | The rest  | One common, two uncommon and three rare of the biome's, 40-60    |
+| **Rocket executive**  | 1 in 8    | Six of the biome's rare band, 65-85                              |
+| **Giovanni**          | 1 in 64   | Five of the rare band and a legendary, 85-100                    |
+
+The executives are **Archer**, **Ariana**, **Proton** and **Petrel**, and which
+of the four turns up is its own roll. Everything they field is shadowed, and it
+is an ordinary trainer battle, so a simultaneous knockout is a draw.
+
+Every player fights the cell separately. One player's victory closes nothing for
+anybody else, and losing costs nothing but the attempt: they are still standing
+and may be challenged again until the three hours are up.
 
 Beating one pays a purse rolled between **1,000 and 10,000 gold**, drawn per
-winner so the same grunt is worth a different amount to the next player, and
-leaves behind one of the two commoners it fielded, never the rare one, shadowed
-and at level 10. **Giovanni**, who fields six with a legendary among them, pays
-between 10,000 and 50,000.
+winner so the same fight is worth a different amount to the next player, and
+leaves a pokemon behind, shadowed and at level 10. A grunt leaves one of the
+three it was **not** fighting with — the common and the two uncommons, never its
+best. An executive leaves any of its six. **Giovanni** leaves any of his, the
+legendary included, and pays between 10,000 and 50,000.
 
-The grunt is the one person at a crossroads a player can lose to. See
+Team Rocket is the one person at a crossroads a player can lose to. See
 [Battles](battles.md) for how the fight itself runs.
 
 ## Duelling trainers

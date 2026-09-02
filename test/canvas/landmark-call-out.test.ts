@@ -17,19 +17,20 @@ import { COLORS } from '../../src/components/overworld/chunk-canvas/metrics';
  */
 
 describe('the colour under somebody standing at a landmark', () => {
-  it('gives each rung of the league a colour of its own', () => {
+  it('gives each rung of the league and Team Rocket a colour of its own', () => {
     const gym = landmarkCallOut(Landmark.GymLeader);
     const elite = landmarkCallOut(Landmark.EliteFour);
     const champion = landmarkCallOut(Landmark.Champion);
+    const rocket = landmarkCallOut(Landmark.TeamRocket);
 
-    expect(new Set([gym, elite, champion, COLORS.fight, COLORS.serve]).size).toBe(5);
+    expect(new Set([gym, elite, champion, rocket, COLORS.fight, COLORS.serve]).size).toBe(6);
     expect(gym).toBe(COLORS.gym);
     expect(elite).toBe(COLORS.elite);
     expect(champion).toBe(COLORS.champion);
+    expect(rocket).toBe(COLORS.rocket);
   });
 
-  it('leaves the ordinary fights ember and every counter tide', () => {
-    expect(landmarkCallOut(Landmark.TeamRocket)).toBe(COLORS.fight);
+  it('leaves the roadside duel ember and every counter tide', () => {
     expect(landmarkCallOut(Landmark.Trainer)).toBe(COLORS.fight);
     expect(landmarkCallOut(Landmark.Market)).toBe(COLORS.serve);
     expect(landmarkCallOut(Landmark.WanderingNpc)).toBe(COLORS.serve);
@@ -41,10 +42,11 @@ describe('the colour under somebody standing at a landmark', () => {
     for (const landmark of LANDMARKS) {
       expect(landmarkCallOut(landmark), LANDMARK_NAMES[landmark]).toMatch(/^rgba\(/);
     }
-    // And the three rungs are still fights, so nothing else about them
-    // changes
+    // And every one of them is still a fight, so nothing else about
+    // them changes
     expect(isFightingLandmark(Landmark.GymLeader)).toBe(true);
     expect(isFightingLandmark(Landmark.EliteFour)).toBe(true);
     expect(isFightingLandmark(Landmark.Champion)).toBe(true);
+    expect(isFightingLandmark(Landmark.TeamRocket)).toBe(true);
   });
 });

@@ -16,7 +16,14 @@ import {
   getLairResidents,
   pickLairSpecies,
 } from '../data/overworld/lair';
-import Npc, { GIOVANNI_CHARSETS, NPCS, npcSheets } from '../data/overworld/npc';
+import Npc, {
+  GIOVANNI_CHARSETS,
+  NPCS,
+  ROCKET_EXECUTIVES,
+  ROCKET_EXECUTIVE_CHARSETS,
+  type RocketExecutive,
+  npcSheets,
+} from '../data/overworld/npc';
 import {
   BIOME_ELITE_MEMBERS,
   BIOME_GYM_LEADERS,
@@ -134,10 +141,27 @@ export const PORTAL_KEEPER_CHANCE = 1 / 8;
 export const GIOVANNI_CHANCE = 1 / 64;
 
 /**
- * How many the boss fields: a full six against the player's six,
- * where a grunt makes do with three
+ * How many a Team Rocket stop fields, whoever is standing there: a
+ * full six against the player's six. What changes with the rank is
+ * what the six are drawn from and what level they fight at
  */
-export const GIOVANNI_PARTY_SIZE = 6;
+export const ROCKET_PARTY_SIZE = 6;
+
+/**
+ * Who is standing at a Team Rocket cell this window. Rolled once per
+ * cell from one draw, so the three are disjoint: the boss, then his
+ * executives, then the rank and file who hold everything else
+ */
+const enum RocketRank {
+  Grunt = 0,
+  Executive = 1,
+  Giovanni = 2,
+}
+
+export { RocketRank };
+
+/** One window in eight puts an executive on the cell */
+export const EXECUTIVE_CHANCE = 1 / 8;
 
 export const SNAPSHOT_INTERVAL = 5 * 60 * 1000;
 
@@ -750,7 +774,15 @@ export default class ChunkSnapshot {
 
           dress(cell, trainer == null ? npcSheets(Npc.Trainer) : TRAINER_CHARSETS[trainer]);
         } else if (landmark === Landmark.TeamRocket) {
-          dress(cell, this.isRocketBoss(cell) ? GIOVANNI_CHARSETS : npcSheets(Npc.RocketGrunt));
+          const executive = this.getRocketExecutive(cell);
+
+          if (this.isRocketBoss(cell)) {
+            dress(cell, GIOVANNI_CHARSETS);
+          } else if (executive == null) {
+            dress(cell, npcSheets(Npc.RocketGrunt));
+          } else {
+            dress(cell, ROCKET_EXECUTIVE_CHARSETS[executive]);
+          }
         } else if (landmark === Landmark.GymLeader) {
           const leader = this.getGymLeader(cell);
 
@@ -779,17 +811,42 @@ export default class ChunkSnapshot {
   }
 
   /**
-   * Whether this Team Rocket stop rolled the boss himself this
-   * window: one draw in sixty-four, the rarest thing a walk meets
+   * Who is barring this Team Rocket cell this window, or null where
+   * the cell is not one. One draw settles all three ranks, so they
+   * cannot overlap: the boss at one in sixty-four, an executive at
+   * one in eight, and a grunt the rest of the time
    */
-  isRocketBoss(cell: number): boolean {
+  getRocketRank(cell: number): RocketRank | null {
     if (this.chunk.getLandmarkCells().get(cell) !== Landmark.TeamRocket) {
-      return false;
+      return null;
     }
 
-    const rng = new AleaRNG(`${this.key}${this.npcTimestamp}boss${cell}`);
+    const rolled = new AleaRNG(`${this.key}${this.npcTimestamp}boss${cell}`).random();
 
-    return rng.random() < GIOVANNI_CHANCE;
+    if (rolled < GIOVANNI_CHANCE) {
+      return RocketRank.Giovanni;
+    }
+    return rolled < GIOVANNI_CHANCE + EXECUTIVE_CHANCE ? RocketRank.Executive : RocketRank.Grunt;
+  }
+
+  /**
+   * Which of the four executives it is, once the rank says one is
+   * standing there. Rolled apart from the rank, so adding a fifth
+   * does not move anybody's odds of meeting one at all
+   */
+  getRocketExecutive(cell: number): RocketExecutive | null {
+    if (this.getRocketRank(cell) !== RocketRank.Executive) {
+      return null;
+    }
+
+    const rng = new AleaRNG(`${this.key}${this.npcTimestamp}executive${cell}`);
+
+    return ROCKET_EXECUTIVES[Math.floor(rng.random() * ROCKET_EXECUTIVES.length)] ?? null;
+  }
+
+  /** Whether this Team Rocket stop rolled the boss himself */
+  isRocketBoss(cell: number): boolean {
+    return this.getRocketRank(cell) === RocketRank.Giovanni;
   }
 
   /**
@@ -825,12 +882,14 @@ export default class ChunkSnapshot {
   private rocketStops: Map<number, Spawn[]> | null = null;
 
   /**
-   * The window's Team Rocket stops, keyed by their landmark cell. A
-   * grunt fields three: one from each of the biome's base, uncommon
-   * and rare bands. The window that rolled Giovanni fields six: five
-   * from the rare band and a legendary — the biome's own lair where
-   * it has one, any lair at all where it does not. Each draw carries
-   * its own rolls but no level, which the fight fixes for the party
+   * The window's Team Rocket stops, keyed by their landmark cell.
+   * Everybody fields six, weakest first, and the rank says out of
+   * what: a grunt takes one commoner, two of the uncommon band and
+   * three of the rare, an executive takes six of the rare band, and
+   * Giovanni takes five of it and a legendary — the biome's own lair
+   * where it has one, any lair at all where it does not. Each draw
+   * carries its own rolls but no level, which the fight fixes for the
+   * party
    */
   getRocketStops(): Map<number, Spawn[]> {
     if (this.rocketStops == null) {
@@ -850,17 +909,34 @@ export default class ChunkSnapshot {
             return [entry.species, rng.int32(), rng.int32()];
           };
 
-          if (this.isRocketBoss(cell)) {
-            const rares = fielded[fielded.length - 1];
+          const [commons, uncommons, rares] = fielded;
+          const rank = this.getRocketRank(cell);
+
+          if (rank === RocketRank.Giovanni) {
             const lairs = getBiomeLairs(this.chunk.biome);
             const homes = lairs.length > 0 ? lairs : EVERY_LAIR;
             const lair = homes[Math.floor(rng.random() * homes.length)];
-            const party = Array.from({ length: GIOVANNI_PARTY_SIZE - 1 }, () => draw(rares));
+            const party = Array.from({ length: ROCKET_PARTY_SIZE - 1 }, () => draw(rares));
 
             party.push([pickLairSpecies(lair, () => true, rng.int32()), rng.int32(), rng.int32()]);
             stops.set(cell, party);
+          } else if (rank === RocketRank.Executive) {
+            stops.set(
+              cell,
+              Array.from({ length: ROCKET_PARTY_SIZE }, () => draw(rares)),
+            );
           } else {
-            stops.set(cell, fielded.map(draw));
+            // Weakest first, which is also the half a beaten grunt
+            // hands over: the commoner and the two uncommons, never
+            // the three they were actually fighting with
+            stops.set(cell, [
+              draw(commons),
+              draw(uncommons),
+              draw(uncommons),
+              draw(rares),
+              draw(rares),
+              draw(rares),
+            ]);
           }
         }
       }

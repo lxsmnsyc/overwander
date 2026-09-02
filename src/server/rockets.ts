@@ -11,7 +11,7 @@ import {
   toSpawns,
 } from '../auth/rocket-record';
 import { TEAM_SIZE } from '../auth/teams';
-import ChunkSnapshot, { NPC_INTERVAL, type Spawn } from '../overworld/chunk-snapshot';
+import ChunkSnapshot, { NPC_INTERVAL, RocketRank, type Spawn } from '../overworld/chunk-snapshot';
 import getWorld from '../overworld/current';
 import { EncounterType } from '../overworld/encounter';
 import { PLAYER_ALLIANCE } from '../overworld/raid';
@@ -325,7 +325,7 @@ export async function startRocketBattle(
   const duellist = snapshot.getTrainerClass(record.cell);
   const levels = stopPartyLevels(
     landmark ?? Landmark.TeamRocket,
-    record.party.length,
+    snapshot.getRocketRank(record.cell) ?? RocketRank.Grunt,
     duellist == null ? undefined : trainerLevels(duellist),
   );
   // Who is standing there, kept on the battle rather than derived
@@ -426,6 +426,11 @@ export async function claimRocketReward(uid: string, stop: string): Promise<Rock
   // Every expert counts as a trainer for the quest ledger: what sets
   // them apart is the award, not the metric
   const kind = landmark === Landmark.TeamRocket ? Npc.RocketGrunt : Npc.Trainer;
+  // Whose six it was, which sets both what is on offer and whether
+  // the purse is a boss purse. Re-derived off the cell rather than
+  // stored: the party alone no longer says, now that every rank
+  // fields six
+  const rank = snapshot.getRocketRank(record.cell) ?? RocketRank.Grunt;
 
   // First claim pays; the guard rides in the statement
   const claimed = await getSql()`
@@ -433,7 +438,7 @@ export async function claimRocketReward(uid: string, stop: string): Promise<Rock
     where stop_id = ${stop} and player = ${uid} and not defeated
   `;
 
-  const [spawnId, spawn] = deriveRocketReward(record, stop, uid);
+  const [spawnId, spawn] = deriveRocketReward(record, stop, uid, rank);
 
   if (claimed.count === 0) {
     // Paid already: the only thing possibly still owed is a grunt's
@@ -463,10 +468,7 @@ export async function claimRocketReward(uid: string, stop: string): Promise<Rock
   const overworld = createOverworld(uid, await resolveBuddy(uid));
   const gold = overworld.checkGoldReward(
     stop,
-    rollStopGold(
-      `${stop}:purse:${uid}`,
-      isBossPurse(landmark ?? Landmark.TeamRocket, record.party.length),
-    ),
+    rollStopGold(`${stop}:purse:${uid}`, isBossPurse(landmark ?? Landmark.TeamRocket, rank)),
   );
 
   await grantGold(uid, gold);

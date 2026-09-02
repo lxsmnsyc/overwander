@@ -206,9 +206,14 @@ import { isPortalKey } from '../src/data/items/portal-key';
 import { isHeartScale } from '../src/data/items/heart-scale';
 import Landmark, { LANDMARKS, LANDMARK_NAMES } from '../src/data/overworld/landmark';
 import Npc, {
+  GIOVANNI_CHARSETS,
   NPCS,
   NPC_NAMES,
   REMINDER_FEE,
+  ROCKET_EXECUTIVES,
+  ROCKET_EXECUTIVE_CHARSETS,
+  ROCKET_EXECUTIVE_NAMES,
+  ROCKET_EXECUTIVE_QUOTES,
   getRecallableMoves,
   npcSheet,
   npcSheets,
@@ -4304,6 +4309,26 @@ describe('biome data', () => {
     expect(
       pickSpawn({ base: [], uncommon: [], rare: [], special: [] }, rolls([0.5, 0])),
     ).toBeNull();
+  });
+});
+
+describe('Team Rocket', () => {
+  it('gives every executive a name, a quote and a shipped wardrobe', () => {
+    for (const executive of ROCKET_EXECUTIVES) {
+      expect(ROCKET_EXECUTIVE_NAMES[executive].length).toBeGreaterThan(0);
+      expect(ROCKET_EXECUTIVE_QUOTES[executive].length).toBeGreaterThan(0);
+      expect(ROCKET_EXECUTIVE_CHARSETS[executive].length).toBeGreaterThan(0);
+
+      for (const sheet of ROCKET_EXECUTIVE_CHARSETS[executive]) {
+        expect(existsSync(`public/sprites/overworld/${sheet}/image.png`), sheet).toBe(true);
+        expect(existsSync(`public/sprites/overworld/${sheet}/data.json`), sheet).toBe(true);
+      }
+    }
+    // Four of them, each in a coat nobody else wears
+    const worn = ROCKET_EXECUTIVES.flatMap((one) => ROCKET_EXECUTIVE_CHARSETS[one]);
+
+    expect(new Set(worn).size).toBe(worn.length);
+    expect(new Set(worn).has(GIOVANNI_CHARSETS[0])).toBe(false);
   });
 });
 

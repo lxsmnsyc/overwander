@@ -170,6 +170,50 @@ export const GIOVANNI_CHARSETS: string[] = ['characters/frlg/giovanni', 'charact
 export const GIOVANNI_NAME = 'Giovanni';
 
 /**
+ * The four who answer to him. Like Giovanni they are the grunt's
+ * landmark wearing a rarer face rather than a role of their own, and
+ * they stand between him and the rank and file in every way: what
+ * they field, what level it fights at, and how often one is met
+ */
+const enum RocketExecutive {
+  Archer = 0,
+  Ariana = 1,
+  Proton = 2,
+  Petrel = 3,
+}
+
+export { RocketExecutive };
+
+export const ROCKET_EXECUTIVES: RocketExecutive[] = [
+  RocketExecutive.Archer,
+  RocketExecutive.Ariana,
+  RocketExecutive.Proton,
+  RocketExecutive.Petrel,
+];
+
+export const ROCKET_EXECUTIVE_NAMES: Record<RocketExecutive, string> = {
+  [RocketExecutive.Archer]: 'Archer',
+  [RocketExecutive.Ariana]: 'Ariana',
+  [RocketExecutive.Proton]: 'Proton',
+  [RocketExecutive.Petrel]: 'Petrel',
+};
+
+export const ROCKET_EXECUTIVE_CHARSETS: Record<RocketExecutive, string[]> = {
+  [RocketExecutive.Archer]: ['characters/hgss/archer', 'characters/lgpe/archer'],
+  [RocketExecutive.Ariana]: ['characters/hgss/ariana'],
+  [RocketExecutive.Proton]: ['characters/hgss/proton'],
+  [RocketExecutive.Petrel]: ['characters/hgss/petrel'],
+};
+
+/** What each says as they bar the cell */
+export const ROCKET_EXECUTIVE_QUOTES: Record<RocketExecutive, string> = {
+  [RocketExecutive.Archer]: 'I run this operation. You are an inconvenience in it.',
+  [RocketExecutive.Ariana]: 'A child playing hero. I will enjoy putting you down.',
+  [RocketExecutive.Proton]: 'I am the cruellest of the executives. Ask anyone who is left.',
+  [RocketExecutive.Petrel]: 'Hehe, you thought I was the boss? Close enough for you.',
+};
+
+/**
  * Every charset a wanderer of this role may be drawn with
  */
 export function npcSheets(npc: Npc): string[] {

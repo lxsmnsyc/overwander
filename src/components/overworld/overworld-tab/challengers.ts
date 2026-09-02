@@ -12,12 +12,21 @@ import {
   getEliteBadges,
 } from '../../../data/overworld/experts';
 import Landmark from '../../../data/overworld/landmark';
+import Npc, {
+  GIOVANNI_NAME,
+  NPC_NAMES,
+  ROCKET_EXECUTIVE_NAMES,
+  ROCKET_EXECUTIVE_QUOTES,
+} from '../../../data/overworld/npc';
+import { RocketRank } from '../../../overworld/chunk-snapshot';
+import { NPC_QUOTES } from '../npc-dialog/shared';
 import type ChunkSnapshot from '../../../overworld/chunk-snapshot';
 import {
   CHAMPION_PARTY_LEVELS,
   ELITE_PARTY_LEVELS,
   GYM_PARTY_LEVELS,
   type LevelBand,
+  rocketPartyLevels,
 } from '../../../overworld/rocket';
 import {
   TRAINER_NAMES,
@@ -125,6 +134,51 @@ export default function challengerOf(
   landmark: Landmark,
   cell: number,
 ): StopChallenge | null {
+  if (landmark === Landmark.TeamRocket) {
+    const rank = snapshot.getRocketRank(cell);
+
+    if (rank == null) {
+      return null;
+    }
+
+    const executive = snapshot.getRocketExecutive(cell);
+    const levels = rocketPartyLevels(rank);
+
+    if (rank === RocketRank.Giovanni) {
+      return {
+        name: GIOVANNI_NAME,
+        levels,
+        greeting: `${GIOVANNI_NAME} himself bars the way. “So you are the one. Show me what you
+          have.”`,
+        stakes: `Six of his at ${saidLevels(levels)} against as many as you bring. Beat him and
+          he leaves one of the six behind, the legendary among them, along with a purse worth
+          the trouble. Lose and you lose nothing but the fight.`,
+      };
+    }
+    if (executive != null) {
+      const name = ROCKET_EXECUTIVE_NAMES[executive];
+
+      return {
+        name,
+        levels,
+        greeting: `${name} of Team Rocket blocks the way. “${ROCKET_EXECUTIVE_QUOTES[executive]}”`,
+        stakes: `Six of the country's best at ${saidLevels(levels)} against as many as you
+          bring. Win and they drop a purse and one of the six. Lose and you lose nothing but
+          the fight. They will be here all window.`,
+      };
+    }
+
+    const name = NPC_NAMES[Npc.RocketGrunt];
+
+    return {
+      name,
+      levels,
+      greeting: `A ${name} blocks the way. “${NPC_QUOTES[Npc.RocketGrunt]}”`,
+      stakes: `Six of theirs at ${saidLevels(levels)} against as many as you bring. Win and the
+        grunt drops a purse and one of the three they were not fighting with. Lose and you lose
+        nothing but the fight. They will be here all window.`,
+    };
+  }
   if (landmark === Landmark.Trainer) {
     const trainer = snapshot.getTrainerClass(cell);
 

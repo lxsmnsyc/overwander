@@ -238,19 +238,24 @@ pool the fight is built around, and **Metronome**, **Mirror Move** and **Mimic**
 follow it because each is a route back to Transform. **Ditto** is never staged as
 a boss at all.
 
-## Team Rocket grunts
+## Team Rocket
 
-A grunt stands at a Team Rocket cell for three hours at a time; see
-[People you meet](npcs.md).
+Somebody from Team Rocket stands at their cell for three hours at a time, and
+which of them it is turns over with the window; see [People you meet](npcs.md).
 
-The grunt fields three pokemon — one common, one uncommon and one rare from that
-biome — all shadowed, each rolling its own level between **45 and 55**. It is an
-ordinary trainer battle: neither side is a boss, so a simultaneous knockout is a
-draw. Giovanni, on the rare window that stages him, fields six at **70-80**.
+All three ranks field six shadowed pokemon of that biome's own, each rolling its
+own level, and what changes is where the six come from and how hard they hit. A
+**grunt** brings one common, two uncommon and three rare at **40-60**. An
+**executive** brings six of the rare band at **65-85**, which is where the Elite
+Four stand. **Giovanni** brings five of the rare band and a legendary at
+**85-100**, which is where a Champion stands.
 
-Every player fights the grunt separately. Winning closes nothing for anybody else,
-and losing costs nothing but the attempt — the grunt is still there and may be
-fought again until the window turns over.
+It is an ordinary trainer battle whoever is standing there: neither side is a
+boss, so a simultaneous knockout is a draw.
+
+Every player fights the cell separately. Winning closes nothing for anybody else,
+and losing costs nothing but the attempt — they are still there and may be fought
+again until the window turns over.
 
 ## Trainers and the league
 
@@ -262,11 +267,12 @@ standing at a trainer cell depends on the country; see
 
 | Who                   | What they field                      | Levels |
 | --------------------- | ------------------------------------ | ------ |
-| **Team Rocket grunt** | Three shadows of the biome's own     | 45-55  |
+| **Team Rocket grunt** | Six shadows: one common, two uncommon, three rare | 40-60 |
 | **Type expert**       | Three to five of their own type      | 40-60  |
 | **Ace Trainer**       | Five fully-grown pokemon of any type | 60-80  |
 | **Gym leader**        | Five of their gym's type, and their signature sixth | 45-65 |
-| **Giovanni**          | Six shadows, one of them a legendary | 70-80  |
+| **Rocket executive**  | Six shadows of the biome's rare band | 65-85  |
+| **Giovanni**          | Six shadows, one of them a legendary | 85-100 |
 | **Elite Four**        | Five of their own kind, and their signature sixth | 65-85 |
 | **Champion**          | Their own signature six              | 85-100 |
 
@@ -329,8 +335,9 @@ look after rather than a row of levels.
 | **Mythical raid**     | 3,000                        | The mythical, at level 30                |
 | **Legendary raid**    | 2,000                        | The legendary, at level 50               |
 | **Shadow raid**       | 1,000                        | A shadow, at level 25                    |
-| **Team Rocket grunt** | 1,000 to 10,000              | A shadowed common pokemon, at level 10   |
-| **Giovanni**          | 10,000 to 50,000             | The same                                 |
+| **Team Rocket grunt** | 1,000 to 10,000              | One of the three it was not fighting with, at level 10 |
+| **Rocket executive**  | 1,000 to 10,000              | Any one of their six, at level 10        |
+| **Giovanni**          | 10,000 to 50,000             | Any one of his six, the legendary included |
 | **Duelling trainer**  | 1,000 to 10,000              | Nothing: they keep their party           |
 | **Gym leader**        | 1,000 to 10,000              | Their badge, and a machine of their type |
 | **Elite Four**        | 1,000 to 10,000              | Their mark                               |

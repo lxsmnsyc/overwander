@@ -78,7 +78,7 @@ few are one to a chunk, marked below.
 | **Wandering NPC**   | Whoever is passing through: a breeder, a nurse, a chef          |
 | **Market**          | A vendor's stall, behind one of the trade's four counters       |
 | **Auction Board**   | The region's lots, and the only way to them. One to a chunk     |
-| **Team Rocket**     | A grunt barring the cell, and once in a while Giovanni          |
+| **Team Rocket**     | A grunt barring the cell, one window in eight an executive, and once in a while Giovanni |
 | **Trainer**         | A duelling trainer: an Ace, or an expert in one type            |
 | **Gym Seat**        | A team another player left standing, to be fought. One to a chunk |
 | **Gym Leader**      | One of the sixteen, with a badge on the line. One to a chunk |
@@ -91,10 +91,11 @@ standing there. The market, the board and the seat are fixtures: a stall is
 always a stall, though which counter it set up changes with the window.
 
 **The ring under somebody's feet says what walking up to them does**, which the
-coat they are drawn in does not. Blue for a counter and red for a fight, and
-then a colour apiece for the three rungs of the league: amber for a gym, violet
-for a seat of the Elite Four, gold for a champion. A player short of one badge
-can pick the cell out without walking the chunk.
+coat they are drawn in does not. Blue for a counter and red for a roadside duel,
+crimson for a cell Team Rocket is barring, and then a colour apiece for the three
+rungs of the league: amber for a gym, violet for a seat of the Elite Four, gold
+for a champion. A player short of one badge can pick the cell out without walking
+the chunk.
 
 **Phenomena are not landmarks.** A grotto, a dust cloud, rippling water or a
 shadow overhead is something *happening* rather than somewhere to go, so it is

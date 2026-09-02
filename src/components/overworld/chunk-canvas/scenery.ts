@@ -224,6 +224,9 @@ export function landmarkCallOut(landmark: Landmark): string {
   if (landmark === Landmark.Champion) {
     return COLORS.champion;
   }
+  if (landmark === Landmark.TeamRocket) {
+    return COLORS.rocket;
+  }
   return isFightingLandmark(landmark) ? COLORS.fight : COLORS.serve;
 }
 

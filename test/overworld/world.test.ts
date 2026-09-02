@@ -53,7 +53,11 @@ import { getMaxHealth } from '../../src/auth/health';
 import { isShadow, isShiny } from '../../src/auth/caught-record';
 import { PERFECT_IVS, Stats, unpackIVs } from '../../src/data/constants/stats';
 import { Statuses, packStatuses } from '../../src/data/ids/status';
-import { type RocketRecord, deriveRocketReward } from '../../src/auth/rocket-record';
+import {
+  type RocketRecord,
+  deriveRocketReward,
+  rocketRewardOffer,
+} from '../../src/auth/rocket-record';
 import { seatId } from '../../src/auth/gym-seat-record';
 import type Chunk from '../../src/overworld/chunk';
 import {
@@ -65,12 +69,15 @@ import {
 import { CARDINALS } from '../../src/overworld/path';
 import { getBiomeDecorations } from '../../src/data/overworld/decoration';
 import ChunkSnapshot, {
+  EXECUTIVE_CHANCE,
   LANDMARK_INTERVAL,
   MAX_PHENOMENA,
   NEST_INTERVAL,
   NPC_INTERVAL,
   PHENOMENON_INTERVAL,
   RAID_INTERVAL,
+  ROCKET_PARTY_SIZE,
+  RocketRank,
   SNAPSHOT_INTERVAL,
   SPAWN_COUNT,
   type Spawn,
@@ -101,6 +108,7 @@ import {
   STOP_GOLD_MIN,
   createRocketParty,
   isBossPurse,
+  rocketPartyLevels,
   rollStopGold,
   stopPartyLevels,
 } from '../../src/overworld/rocket';
@@ -154,7 +162,13 @@ import { FOSSIL_OFFER_KINDS, getFossilPrice } from '../../src/data/overworld/fos
 import { isFossil } from '../../src/data/items/fossils';
 import Landmark from '../../src/data/overworld/landmark';
 import { findPortal, findPortals, getPortalCell } from '../../src/overworld/portal';
-import Npc, { GIOVANNI_CHARSETS, NPCS, npcSheets } from '../../src/data/overworld/npc';
+import Npc, {
+  GIOVANNI_CHARSETS,
+  NPCS,
+  ROCKET_EXECUTIVE_CHARSETS,
+  ROCKET_EXECUTIVE_NAMES,
+  npcSheets,
+} from '../../src/data/overworld/npc';
 import Phenomenon, {
   BIOME_PHENOMENA,
   getPhenomenonGroups,
@@ -976,19 +990,37 @@ describe('world', () => {
       // A stop stands at Team Rocket's own landmark now
       expect(chunk.getLandmarkCells().get(cell)).toBe(Landmark.TeamRocket);
 
-      if (snapshot.isRocketBoss(cell)) {
-        // The boss fields six: five rares and a legendary at the end
-        expect(party).toHaveLength(6);
+      // Everybody fields six, whatever the rank
+      expect(party).toHaveLength(ROCKET_PARTY_SIZE);
+
+      const rank = snapshot.getRocketRank(cell);
+      const bandOf = (band: typeof pool.base): typeof pool.base =>
+        band.length > 0 ? band : [pool.base, pool.uncommon, pool.rare].flat();
+      const drawnFrom = (at: number, band: typeof pool.base): void => {
+        expect(new Set(bandOf(band).map((entry) => entry.species)).has(party[at][0])).toBe(true);
+      };
+
+      if (rank === RocketRank.Giovanni) {
+        // Five of the rare band and a legendary at the end
+        for (let at = 0; at < ROCKET_PARTY_SIZE - 1; at++) {
+          drawnFrom(at, pool.rare);
+        }
         continue;
       }
-      // Three pokemon, weakest first: one from each of the biome's
-      // base, uncommon and rare bands — a band the window leaves empty
-      // borrows from the commonest one that is not
-      expect(party).toHaveLength(3);
-      for (const [at, band] of [pool.base, pool.uncommon, pool.rare].entries()) {
-        const drawn = band.length > 0 ? band : [pool.base, pool.uncommon, pool.rare].flat();
+      if (rank === RocketRank.Executive) {
+        // Six of the rare band and nothing softer
+        for (let at = 0; at < ROCKET_PARTY_SIZE; at++) {
+          drawnFrom(at, pool.rare);
+        }
+        continue;
+      }
+      // A grunt's six, weakest first: one commoner, two of the
+      // uncommon band and three of the rare. A band the window leaves
+      // empty borrows from the commonest one that is not
+      const bands = [pool.base, pool.uncommon, pool.uncommon, pool.rare, pool.rare, pool.rare];
 
-        expect(new Set(drawn.map((entry) => entry.species)).has(party[at][0])).toBe(true);
+      for (const [at, band] of bands.entries()) {
+        drawnFrom(at, band);
       }
     }
 
@@ -1015,7 +1047,7 @@ describe('world', () => {
     const [spawns] = [...snapshot.getRocketStops().values()];
     const party = createRocketParty(snapshot, spawns);
 
-    expect(party).toHaveLength(3);
+    expect(party).toHaveLength(ROCKET_PARTY_SIZE);
     for (const [at, member] of party.entries()) {
       // Every one rolls its level inside the grunt's band whatever
       // its species would have rolled, and every one is a shadow
@@ -1029,12 +1061,12 @@ describe('world', () => {
       expect(member.items).toEqual([]);
     }
 
-    // The traits are the spawn's own, so the three are not clones of
+    // The traits are the spawn's own, so the six are not clones of
     // one build
     expect(new Set(party.map((member) => member.nature)).size).toBeGreaterThanOrEqual(1);
     expect(party.map((member) => member.ivs)).not.toEqual([]);
 
-    // A duelling trainer fields the same three as their ordinary
+    // A duelling trainer fields the same pokemon as their ordinary
     // selves: same species and level, nothing shadowed
     const duel = createRocketParty(snapshot, spawns, false);
 
@@ -1160,14 +1192,121 @@ describe('world', () => {
     // Dressed as the boss himself
     expect(GIOVANNI_CHARSETS).toContain(staged.snapshot.getWandererCoats().get(staged.cell));
 
-    // Fielded at his own level, all shadows
-    const fielded = createRocketParty(staged.snapshot, party);
+    // Fielded at his own level, all shadows. The band is the stop's to
+    // pass now that every rank fields six: nothing about the party
+    // says whose it is
+    const fielded = createRocketParty(
+      staged.snapshot,
+      party,
+      true,
+      rocketPartyLevels(RocketRank.Giovanni),
+    );
 
     for (const member of fielded) {
       expect(member.level).toBeGreaterThanOrEqual(GIOVANNI_PARTY_LEVELS[0]);
       expect(member.level).toBeLessThanOrEqual(GIOVANNI_PARTY_LEVELS[1]);
       expect(member.shadow).toBe(true);
     }
+  });
+
+  it('ranks a Team Rocket cell into a grunt, an executive or the boss', () => {
+    const world = new World('overworld');
+    const seen = new Map<RocketRank, number>();
+    let windows = 0;
+    let executive: { snapshot: ChunkSnapshot; cell: number } | null = null;
+
+    for (let x = 0; x < 24; x++) {
+      for (let y = 0; y < 6; y++) {
+        const chunk = world.getChunk(x, y);
+
+        for (const [cell, landmark] of chunk.getLandmarkCells()) {
+          if (landmark !== Landmark.TeamRocket) {
+            continue;
+          }
+          for (let window = 0; window < 24; window++) {
+            const snapshot = new ChunkSnapshot(chunk, window * NPC_INTERVAL);
+            const rank = snapshot.getRocketRank(cell);
+
+            expect(rank).not.toBeNull();
+            if (rank == null) {
+              continue;
+            }
+            seen.set(rank, (seen.get(rank) ?? 0) + 1);
+            windows += 1;
+
+            // The three are one draw, so they cannot overlap: only the
+            // boss reads as the boss, and only an executive names one
+            expect(snapshot.isRocketBoss(cell)).toBe(rank === RocketRank.Giovanni);
+            expect(snapshot.getRocketExecutive(cell) != null).toBe(rank === RocketRank.Executive);
+
+            if (rank === RocketRank.Executive && executive == null) {
+              executive = { snapshot, cell };
+            }
+          }
+        }
+      }
+    }
+
+    expect(windows).toBeGreaterThan(500);
+
+    // Roughly the stated odds: a grunt most of the time, an executive
+    // about one window in eight, the boss far rarer than either
+    const share = (rank: RocketRank): number => (seen.get(rank) ?? 0) / windows;
+
+    expect(share(RocketRank.Grunt)).toBeGreaterThan(0.7);
+    expect(share(RocketRank.Executive)).toBeGreaterThan(EXECUTIVE_CHANCE / 2);
+    expect(share(RocketRank.Executive)).toBeLessThan(EXECUTIVE_CHANCE * 2);
+    expect(share(RocketRank.Giovanni)).toBeLessThan(EXECUTIVE_CHANCE);
+
+    // And an executive stands there as one of the four, dressed as
+    // themselves, fielding six of the country's rares at the Elite
+    // Four's level
+    expect(executive).not.toBeNull();
+    if (executive == null) {
+      return;
+    }
+
+    const who = executive.snapshot.getRocketExecutive(executive.cell);
+
+    expect(who).not.toBeNull();
+    if (who == null) {
+      return;
+    }
+    expect(ROCKET_EXECUTIVE_CHARSETS[who]).toContain(
+      executive.snapshot.getWandererCoats().get(executive.cell),
+    );
+    expect(ROCKET_EXECUTIVE_NAMES[who].length).toBeGreaterThan(0);
+
+    const party = executive.snapshot.getRocketStops().get(executive.cell) ?? [];
+    const rares = new Set(
+      getSpawnPool(
+        executive.snapshot.chunk.biome,
+        getTimeOfDay(executive.snapshot.npcTimestamp),
+      ).rare.map((entry) => entry.species),
+    );
+
+    expect(party).toHaveLength(ROCKET_PARTY_SIZE);
+    for (const [species] of party) {
+      expect(rares.has(species)).toBe(true);
+    }
+
+    const fielded = createRocketParty(
+      executive.snapshot,
+      party,
+      true,
+      rocketPartyLevels(RocketRank.Executive),
+    );
+
+    for (const member of fielded) {
+      expect(member.level).toBeGreaterThanOrEqual(ELITE_PARTY_LEVELS[0]);
+      expect(member.level).toBeLessThanOrEqual(ELITE_PARTY_LEVELS[1]);
+      expect(member.shadow).toBe(true);
+    }
+    // And their whole six is on offer, where a grunt's is only the
+    // half they were not fighting with
+    expect(rocketRewardOffer(RocketRank.Executive)).toBe(ROCKET_PARTY_SIZE);
+    expect(rocketRewardOffer(RocketRank.Giovanni)).toBe(ROCKET_PARTY_SIZE);
+    expect(rocketRewardOffer(RocketRank.Grunt)).toBe(ROCKET_PARTY_SIZE / 2);
   });
 
   it('rolls a purse in the stop’s own range, the same on every ask', () => {
@@ -1288,22 +1427,30 @@ describe('world', () => {
   });
 
   it('prices every rank of stop by its landmark', () => {
-    expect(stopPartyLevels(Landmark.GymLeader, 6)).toEqual(GYM_PARTY_LEVELS);
-    expect(stopPartyLevels(Landmark.EliteFour, 6)).toEqual(ELITE_PARTY_LEVELS);
-    expect(stopPartyLevels(Landmark.Champion, 6)).toEqual(CHAMPION_PARTY_LEVELS);
-    expect(stopPartyLevels(Landmark.TeamRocket, 6)).toEqual(GIOVANNI_PARTY_LEVELS);
-    expect(stopPartyLevels(Landmark.TeamRocket, 3)).toEqual(ROCKET_PARTY_LEVELS);
+    expect(stopPartyLevels(Landmark.GymLeader, RocketRank.Grunt)).toEqual(GYM_PARTY_LEVELS);
+    expect(stopPartyLevels(Landmark.EliteFour, RocketRank.Grunt)).toEqual(ELITE_PARTY_LEVELS);
+    expect(stopPartyLevels(Landmark.Champion, RocketRank.Grunt)).toEqual(CHAMPION_PARTY_LEVELS);
+    // Every rank fields six, so it is the rank rather than the party
+    // that says what a Team Rocket cell is worth
+    expect(stopPartyLevels(Landmark.TeamRocket, RocketRank.Giovanni)).toEqual(
+      CHAMPION_PARTY_LEVELS,
+    );
+    expect(stopPartyLevels(Landmark.TeamRocket, RocketRank.Executive)).toEqual(ELITE_PARTY_LEVELS);
+    expect(stopPartyLevels(Landmark.TeamRocket, RocketRank.Grunt)).toEqual(TYPE_TRAINER_LEVELS);
     // A duellist's band is their class', which the caller passes in
-    expect(stopPartyLevels(Landmark.Trainer, 3, ACE_TRAINER_LEVELS)).toEqual(ACE_TRAINER_LEVELS);
-    expect(stopPartyLevels(Landmark.Trainer, 3)).toEqual(ROCKET_PARTY_LEVELS);
+    expect(stopPartyLevels(Landmark.Trainer, RocketRank.Grunt, ACE_TRAINER_LEVELS)).toEqual(
+      ACE_TRAINER_LEVELS,
+    );
+    expect(stopPartyLevels(Landmark.Trainer, RocketRank.Grunt)).toEqual(ROCKET_PARTY_LEVELS);
 
     // Only the two rarest wins pay from the top range: a gym would
     // otherwise be a 6-strong purse farmed every window
-    expect(isBossPurse(Landmark.TeamRocket, 6)).toBe(true);
-    expect(isBossPurse(Landmark.TeamRocket, 3)).toBe(false);
-    expect(isBossPurse(Landmark.Champion, 6)).toBe(true);
-    expect(isBossPurse(Landmark.EliteFour, 6)).toBe(false);
-    expect(isBossPurse(Landmark.GymLeader, 6)).toBe(false);
+    expect(isBossPurse(Landmark.TeamRocket, RocketRank.Giovanni)).toBe(true);
+    expect(isBossPurse(Landmark.TeamRocket, RocketRank.Executive)).toBe(false);
+    expect(isBossPurse(Landmark.TeamRocket, RocketRank.Grunt)).toBe(false);
+    expect(isBossPurse(Landmark.Champion, RocketRank.Grunt)).toBe(true);
+    expect(isBossPurse(Landmark.EliteFour, RocketRank.Grunt)).toBe(false);
+    expect(isBossPurse(Landmark.GymLeader, RocketRank.Grunt)).toBe(false);
   });
 
   it('offers any of the boss’ six as the reward', () => {
@@ -1331,25 +1478,33 @@ describe('world', () => {
     const met = new Set<Species>();
 
     for (let winner = 0; winner < 64; winner++) {
-      const [, spawn] = deriveRocketReward(record, 'stop-id', `player-${winner}`);
+      const [, spawn] = deriveRocketReward(
+        record,
+        'stop-id',
+        `player-${winner}`,
+        RocketRank.Giovanni,
+      );
 
       met.add(spawn[0]);
     }
-    // Not the commoner pair alone: the back of the party is on offer,
+    // Not the weaker half alone: the back of the party is on offer,
     // the legendary included
-    expect(met.size).toBeGreaterThan(2);
+    expect(met.size).toBeGreaterThan(3);
     expect(
-      [...met].some((species) => record.party.slice(2).some((entry) => entry.species === species)),
+      [...met].some((species) => record.party.slice(3).some((entry) => entry.species === species)),
     ).toBe(true);
   });
 
-  it('pays a beaten grunt out in one of its two commoner species', () => {
+  it('pays a beaten grunt out of the half it was not fighting with', () => {
     const record: RocketRecord = {
       player: 'red',
       party: [
         { species: Species.Rattata, individualValue: 1, traitValue: 2 },
         { species: Species.Pidgey, individualValue: 3, traitValue: 4 },
-        { species: Species.Kangaskhan, individualValue: 5, traitValue: 6 },
+        { species: Species.Ekans, individualValue: 5, traitValue: 6 },
+        { species: Species.Kangaskhan, individualValue: 7, traitValue: 8 },
+        { species: Species.Lapras, individualValue: 9, traitValue: 10 },
+        { species: Species.Snorlax, individualValue: 11, traitValue: 12 },
       ],
       battle: 'battle-id',
       timestamp: 0,
@@ -1366,22 +1521,26 @@ describe('world', () => {
         record,
         'stop-id',
         uid,
+        RocketRank.Grunt,
       );
 
-      // Never the rare one: a grunt does not hand over its best
+      // Never one of the three rares: a grunt does not hand over what
+      // it was actually fighting with
       expect(species).not.toBe(Species.Kangaskhan);
+      expect(species).not.toBe(Species.Lapras);
+      expect(species).not.toBe(Species.Snorlax);
       offered.add(species);
       expect(id).toBe('stop-id$reward');
       // Each winner meets their own individual of it
       expect(individualValue).not.toBe(traitValue);
     }
 
-    // Both commoners come up across enough winners
-    expect(offered.size).toBe(2);
+    // All three of the weaker half come up across enough winners
+    expect(offered.size).toBe(3);
 
     // A player's own reward is the same however often it is derived
-    expect(deriveRocketReward(record, 'stop-id', 'red')).toEqual(
-      deriveRocketReward(record, 'stop-id', 'red'),
+    expect(deriveRocketReward(record, 'stop-id', 'red', RocketRank.Grunt)).toEqual(
+      deriveRocketReward(record, 'stop-id', 'red', RocketRank.Grunt),
     );
   });
 

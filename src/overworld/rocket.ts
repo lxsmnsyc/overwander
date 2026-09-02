@@ -7,10 +7,15 @@ import { defaultSlots } from '../data/constants/slots';
 import Abilities from '../data/ids/abilities';
 import Landmark from '../data/overworld/landmark';
 import { CHAMPION_NAMES, ELITE_MEMBER_NAMES, GYM_LEADER_NAMES } from '../data/overworld/experts';
-import Npc, { GIOVANNI_NAME, NPC_NAMES, npcSheet } from '../data/overworld/npc';
-import { TRAINER_NAMES } from '../data/overworld/trainers';
+import Npc, {
+  GIOVANNI_NAME,
+  NPC_NAMES,
+  ROCKET_EXECUTIVE_NAMES,
+  npcSheet,
+} from '../data/overworld/npc';
+import { TRAINER_NAMES, TYPE_TRAINER_LEVELS } from '../data/overworld/trainers';
 import type ChunkSnapshot from './chunk-snapshot';
-import { GIOVANNI_PARTY_SIZE, type Spawn } from './chunk-snapshot';
+import { RocketRank, type Spawn } from './chunk-snapshot';
 import deriveEncounter, { EncounterType, deriveSize } from './encounter';
 import { BOSS_ALLIANCE, PLAYER_ALLIANCE } from './raid';
 
@@ -32,22 +37,6 @@ import { BOSS_ALLIANCE, PLAYER_ALLIANCE } from './raid';
  */
 export type LevelBand = [minimum: number, maximum: number];
 
-export const ROCKET_PARTY_LEVELS: LevelBand = [45, 55];
-
-/**
- * The boss' six stand well above his grunts: Giovanni is the hardest
- * fight a walk can find that is not a league seat
- */
-export const GIOVANNI_PARTY_LEVELS: LevelBand = [70, 80];
-
-/**
- * The band a stop's party fights in, told apart by its size: only the
- * boss fields a full six
- */
-export function rocketPartyLevels(size: number): LevelBand {
-  return size >= GIOVANNI_PARTY_SIZE ? GIOVANNI_PARTY_LEVELS : ROCKET_PARTY_LEVELS;
-}
-
 /**
  * The ladder the league fights on: a gym leader takes on challengers
  * who have beaten the road, the Elite Four stand above them, and the
@@ -58,12 +47,37 @@ export const ELITE_PARTY_LEVELS: LevelBand = [65, 85];
 export const CHAMPION_PARTY_LEVELS: LevelBand = [85, 100];
 
 /**
- * The band any stop's party fights in, keyed by the landmark it
- * stands on. The league all field 6, so size alone cannot tell a gym
- * from the Champion; a duelling trainer's band is their class', which
- * the caller passes in
+ * And the ladder Team Rocket fights on, which is read off the other
+ * two rather than picked apart from them. A grunt is a thief with a
+ * roadside party and fights at a roadside trainer's level; an
+ * executive stands where the Elite Four do; and the boss stands where
+ * a Champion does, which is what one window in sixty-four should be
+ * worth walking into
  */
-export function stopPartyLevels(landmark: Landmark, size: number, trainer?: LevelBand): LevelBand {
+export const ROCKET_PARTY_LEVELS: LevelBand = TYPE_TRAINER_LEVELS;
+export const EXECUTIVE_PARTY_LEVELS: LevelBand = ELITE_PARTY_LEVELS;
+export const GIOVANNI_PARTY_LEVELS: LevelBand = CHAMPION_PARTY_LEVELS;
+
+/** The band a stop's party fights in, by whose party it is */
+export function rocketPartyLevels(rank: RocketRank): LevelBand {
+  if (rank === RocketRank.Giovanni) {
+    return GIOVANNI_PARTY_LEVELS;
+  }
+  return rank === RocketRank.Executive ? EXECUTIVE_PARTY_LEVELS : ROCKET_PARTY_LEVELS;
+}
+
+/**
+ * The band any stop's party fights in, keyed by the landmark it
+ * stands on. Everybody fields 6 now, so nothing about the party says
+ * what the fight is: the league is told by its landmark, Team Rocket
+ * by the rank standing there, and a duelling trainer's band is their
+ * class', which the caller passes in
+ */
+export function stopPartyLevels(
+  landmark: Landmark,
+  rank: RocketRank,
+  trainer?: LevelBand,
+): LevelBand {
   if (landmark === Landmark.GymLeader) {
     return GYM_PARTY_LEVELS;
   }
@@ -76,7 +90,7 @@ export function stopPartyLevels(landmark: Landmark, size: number, trainer?: Leve
   if (landmark === Landmark.Trainer && trainer != null) {
     return trainer;
   }
-  return rocketPartyLevels(size);
+  return rocketPartyLevels(rank);
 }
 
 /**
@@ -110,7 +124,14 @@ export function stopChallenger(
     name == null ? null : { name, sprite };
 
   if (landmark === Landmark.TeamRocket) {
-    return named(snapshot.isRocketBoss(cell) ? GIOVANNI_NAME : NPC_NAMES[Npc.RocketGrunt]);
+    const executive = snapshot.getRocketExecutive(cell);
+
+    if (snapshot.isRocketBoss(cell)) {
+      return named(GIOVANNI_NAME);
+    }
+    return named(
+      executive == null ? NPC_NAMES[Npc.RocketGrunt] : ROCKET_EXECUTIVE_NAMES[executive],
+    );
   }
   if (landmark === Landmark.Trainer) {
     const trainer = snapshot.getTrainerClass(cell);
@@ -160,13 +181,13 @@ export function rollStopGold(seed: string, boss: boolean): number {
 }
 
 /**
- * Whether a stop's purse is a boss purse: Giovanni's full six on a
- * Team Rocket cell, or the Champion's on their own
+ * Whether a stop's purse is a boss purse: Giovanni on a Team Rocket
+ * cell, or the Champion on their own
  */
-export function isBossPurse(landmark: Landmark, size: number): boolean {
+export function isBossPurse(landmark: Landmark, rank: RocketRank): boolean {
   return (
     landmark === Landmark.Champion ||
-    (landmark === Landmark.TeamRocket && size >= GIOVANNI_PARTY_SIZE)
+    (landmark === Landmark.TeamRocket && rank === RocketRank.Giovanni)
   );
 }
 
@@ -260,14 +281,14 @@ export function createRocketSnapshot(
 /**
  * The stop's whole party, weakest first: shadows for a grunt or the
  * boss, ordinary pokemon for a duelling trainer or a league seat. The
- * band defaults to what the party's size says, for the callers that
- * predate the league; theirs is the landmark's to fix
+ * band defaults to a grunt's, for the callers that predate the
+ * league; theirs is the landmark's to fix
  */
 export function createRocketParty(
   snapshot: ChunkSnapshot,
   spawns: Spawn[],
   shadow = true,
-  levels: LevelBand = rocketPartyLevels(spawns.length),
+  levels: LevelBand = ROCKET_PARTY_LEVELS,
 ): CatchSnapshot[] {
   return spawns.map((spawn) => createRocketSnapshot(snapshot, spawn, shadow, levels));
 }

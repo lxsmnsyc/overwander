@@ -5,7 +5,7 @@
 import AleaRNG from '../core/alea';
 import type { Species } from '../data/ids/species';
 import type Chunk from '../overworld/chunk';
-import type { Spawn } from '../overworld/chunk-snapshot';
+import { RocketRank, type Spawn } from '../overworld/chunk-snapshot';
 import { asNumber, asRecord, asString } from './__normalize';
 import { toZoneKey } from './local-time';
 
@@ -39,8 +39,8 @@ export interface RocketRecord {
    */
   player: string;
   /**
-   * The party fielded, weakest first: a grunt's or a trainer's three,
-   * or the boss' six
+   * The party fielded, weakest first: six for a Team Rocket stop of
+   * any rank, and a duelling trainer's or a league seat's own
    */
   party: RocketPokemon[];
   /**
@@ -123,21 +123,32 @@ export function rocketStopId(chunk: Chunk, npcTimestamp: number, cell: number, o
 }
 
 /**
+ * How many of a stop's six are on offer once it is beaten, by whose
+ * six it was. A grunt hands over the weaker half of what they were
+ * carrying, which is the commoner and the two uncommons rather than
+ * the three they were actually fighting with; an executive and the
+ * boss put their whole party up, the legendary among Giovanni's
+ */
+export function rocketRewardOffer(rank: RocketRank): number {
+  return rank === RocketRank.Grunt ? 3 : 6;
+}
+
+/**
  * What a beaten stop leaves behind, as a spawn the player then has to
- * catch. A grunt offers one of the two commoner species it fielded —
- * it does not hand over its best. Giovanni offers any of his six,
- * the legendary among them: beating the boss is worth the draw.
+ * catch.
  *
  * The rolls are seeded by the stop and the player, so each winner
  * meets their own individual of it, and meeting it again resolves the
  * same one
  */
-export function deriveRocketReward(record: RocketRecord, id: string, uid: string): [string, Spawn] {
+export function deriveRocketReward(
+  record: RocketRecord,
+  id: string,
+  uid: string,
+  rank: RocketRank,
+): [string, Spawn] {
   const rng = new AleaRNG(`${id}:reward:${uid}`);
-  const spawns = toSpawns(record.party);
-  // A party past a grunt's three is the boss', and all of it is on
-  // offer
-  const offered = spawns.length > 3 ? spawns : spawns.slice(0, 2);
+  const offered = toSpawns(record.party).slice(0, rocketRewardOffer(rank));
   const [species] = offered[Math.floor(rng.random() * offered.length)];
 
   return [`${id}$reward`, [species, rng.int32(), rng.int32()]];

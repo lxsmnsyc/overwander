@@ -197,15 +197,18 @@ export const COLORS = {
   fight: 'rgba(230, 40, 41, 0.8)',
   serve: 'rgba(41, 128, 239, 0.8)',
   /**
-   * And the three rungs of the league, which are worth telling apart
-   * from an ambush and from each other: a badge, a mark and a title
-   * are three different walks, and a player who wants the one they
-   * are short of should be able to read it off the ground. Amber for
-   * a gym, violet for a seat of the Elite Four, gold for a champion
+   * And the rungs worth telling apart from an ordinary fight and from
+   * each other: a badge, a mark and a title are three different
+   * walks, and a player who wants the one they are short of should be
+   * able to read it off the ground. Amber for a gym, violet for a
+   * seat of the Elite Four, gold for a champion, and Team Rocket's
+   * own crimson for a cell they are barring, whichever rank of them
+   * is standing on it. Ember is then the roadside duel alone
    */
   gym: 'rgba(214, 138, 26, 0.85)',
   elite: 'rgba(155, 93, 229, 0.85)',
   champion: 'rgba(255, 226, 138, 0.95)',
+  rocket: 'rgba(190, 30, 110, 0.9)',
   /** Under every mark, so one reads on pale ground as well as on dark */
   ringShade: 'rgba(0, 0, 0, 0.28)',
   /**

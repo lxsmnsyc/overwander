@@ -49,7 +49,7 @@ export interface EvolutionContext {
    * this game has nowhere to put: an evolution here is something a
    * player asks for from the catch sheet. So a handover opens the
    * evolution rather than performing it, and the answer is worked out
-   * once, there, by `opensTradeEvolution`
+   * once, there, by `settleHandover`
    */
   canEvolve: boolean;
   /**
@@ -72,9 +72,9 @@ export interface EvolutionContext {
 }
 
 /**
- * Whether a handover of this species, against whatever came the other
- * way, opens one of its trade evolutions. Asked at the handover, and
- * the answer is the whole of what the record keeps.
+ * What a handover settles for this pokemon: whether it opens one of
+ * its trade evolutions, and the held item that evolution spends
+ * there.
  *
  * Two questions, and a bare "has been traded" answers neither. It has
  * to have changed hands **as what it is now**: four Gen 1 lines evolve
@@ -85,13 +85,40 @@ export interface EvolutionContext {
  * a fact about somebody else's pokemon and the only one of its kind in
  * the family.
  *
+ * An evolution asking for a **held item** is covered only while the
+ * pokemon is actually holding it, and the swap takes it: an Onix
+ * traded in a Metal Coat arrives a coat lighter and ready, which is
+ * where the mainline spends it too.
+ *
  * One answer covers every trade evolution a species has, which is
  * enough while no species has two of them
  */
-export function opensTradeEvolution(species: Species, partner: Species | null): boolean {
-  return (getSpeciesData(species).evolvesInto ?? []).some((evolution) =>
-    coversHandover(evolution, partner),
-  );
+export interface Handover {
+  /** Whether the swap met everything one of its trade evolutions asks */
+  opens: boolean;
+  /** The held item the swap took for it, where one was asked */
+  spends: Items | null;
+}
+
+export function settleHandover(
+  species: Species,
+  partner: Species | null,
+  held: ReadonlySet<Items>,
+): Handover {
+  for (const evolution of getSpeciesData(species).evolvesInto ?? []) {
+    if (coversHandover(evolution, partner)) {
+      const wants =
+        (evolution.method & EvolutionMethod.HeldItem) === 0 ? null : (evolution.item ?? null);
+
+      if (wants == null) {
+        return { opens: true, spends: null };
+      }
+      if (held.has(wants)) {
+        return { opens: true, spends: wants };
+      }
+    }
+  }
+  return { opens: false, spends: null };
 }
 
 /**
@@ -141,7 +168,7 @@ export function meetsEvolutionCriteria(
       return false;
     }
   }
-  if ((method & EvolutionMethod.HeldItem) !== 0) {
+  if ((method & EvolutionMethod.HeldItem) !== 0 && !coveredByHandover(evolution, context)) {
     if (evolution.item == null || !context.held.has(evolution.item)) {
       return false;
     }
@@ -167,6 +194,16 @@ export function meetsEvolutionCriteria(
     return false;
   }
   return true;
+}
+
+/**
+ * Whether the handover this pokemon has already been through covered
+ * this evolution. It settles both halves at once: the swap itself, and
+ * the item the swap took, which is why the held item is not asked for
+ * a second time here
+ */
+export function coveredByHandover(evolution: EvolutionData, context: EvolutionContext): boolean {
+  return context.canEvolve && (evolution.method & EvolutionMethod.Trade) !== 0;
 }
 
 /**
@@ -271,7 +308,7 @@ export function getAvailableEvolutions(context: EvolutionContext): EvolutionData
  * Cord instead. It is answered from that one fact rather than from a
  * whole context, because the caller reads the bag for whatever comes
  * back from here and cannot know what to read until it does — see
- * `opensTradeEvolution` for who works the fact out
+ * `settleHandover` for who works the fact out
  */
 export function getConsumedItem(evolution: EvolutionData, covered = false): Items | null {
   const { method } = evolution;

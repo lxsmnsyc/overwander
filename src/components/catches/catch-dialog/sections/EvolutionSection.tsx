@@ -65,7 +65,7 @@ export default function EvolutionSection(props: EvolutionSectionProps): JSX.Elem
                   // The shorthand on the row spelled out,
                   // for anyone who stops on it and for
                   // anything that reads it aloud
-                  title={describeEvolutionMethod(option().evolution)}
+                  title={describeEvolutionMethod(option().evolution, option().covered)}
                 >
                   {/* What it turns into, drawn rather than named, and
                       drawn to what the reader has earned of it the way
@@ -108,11 +108,19 @@ export default function EvolutionSection(props: EvolutionSectionProps): JSX.Elem
                 hiding on the button, because it is
                 what the player is working towards
                 and they need it whether or not they
-                are about to press anything */}
-                  <span class="flex items-center gap-1 text-muted">
-                    <span>+</span>
-                    <EvolutionCondition evolution={option().evolution} />
-                  </span>
+                are about to press anything.
+
+                Once a handover has settled it there
+                is nothing left to work towards, and
+                a condition still asking for the coat
+                the swap already took would be asking
+                for something the pokemon cannot have */}
+                  <Show when={!option().covered} fallback={<span class="text-muted">ready</span>}>
+                    <span class="flex items-center gap-1 text-muted">
+                      <span>+</span>
+                      <EvolutionCondition evolution={option().evolution} />
+                    </span>
+                  </Show>
                   <Show when={props.owned}>
                     <Button
                       tone="primary"

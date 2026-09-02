@@ -12,8 +12,8 @@ import {
 } from '../auth/trade-record';
 import { FriendTie } from '../auth/friend-record';
 import { BASE_FRIENDSHIP } from '../data/constants/friendship';
-import { opensTradeEvolution } from '../data/species';
-import { isEggRecord, isFavoriteRecord } from './catch-fields';
+import { settleHandover } from '../data/species';
+import { isEggRecord, isFavoriteRecord, withoutHeld } from './catch-fields';
 import { readCaughtIn, updateCaughtIn } from './caught-io';
 import { hasSpareCatch } from './caught';
 import { type Tx, getSql, newDocId, tx } from './db';
@@ -280,6 +280,20 @@ export async function acceptTrade(
     // the friendship it built belonged to the hands it left
     const incoming = asCaughtPokemon(offered);
     const outgoing = asCaughtPokemon(giving);
+    // Asked once, here: what each was at the moment of the swap, what
+    // came the other way, and what it was holding are all in hand, and
+    // none of them is afterwards. A held item the evolution asks for
+    // is spent by the swap, the way the mainline spends it
+    const incomingHandover = settleHandover(
+      incoming.species,
+      outgoing.species,
+      new Set(incoming.items),
+    );
+    const outgoingHandover = settleHandover(
+      outgoing.species,
+      incoming.species,
+      new Set(outgoing.items),
+    );
 
     await updateCaughtIn(transaction, trade.offered, {
       owner: uid,
@@ -295,10 +309,10 @@ export async function acceptTrade(
       ],
       friendship: BASE_FRIENDSHIP,
       traded: true,
-      // Asked once, here: what it was at the moment of the swap and
-      // what came the other way are both in hand, and neither is
-      // afterwards. A Karrablast reads the other half of the swap
-      canEvolve: opensTradeEvolution(incoming.species, outgoing.species),
+      canEvolve: incomingHandover.opens,
+      ...(incomingHandover.spends == null
+        ? {}
+        : { items: withoutHeld(incoming.items, incomingHandover.spends) }),
     });
 
     await updateCaughtIn(transaction, counterpart, {
@@ -316,7 +330,10 @@ export async function acceptTrade(
       ],
       friendship: BASE_FRIENDSHIP,
       traded: true,
-      canEvolve: opensTradeEvolution(outgoing.species, incoming.species),
+      canEvolve: outgoingHandover.opens,
+      ...(outgoingHandover.spends == null
+        ? {}
+        : { items: withoutHeld(outgoing.items, outgoingHandover.spends) }),
     });
 
     await transaction`

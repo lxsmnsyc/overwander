@@ -268,8 +268,8 @@ import {
   isBaseForm,
   isFeaturedSpecies,
   meetsEvolutionCriteria,
-  opensTradeEvolution,
   registerSpecies,
+  settleHandover,
 } from '../src/data/species';
 import { registerSpecies as registerSpeciesData } from '../src/data/species/__create';
 import Awards, {
@@ -1476,19 +1476,88 @@ describe('evolution data', () => {
     // to have changed hands as what it is now. Four Gen 1 lines evolve
     // by trade and every one sits a level evolution above the stage
     // that is usually traded
+    const nothingHeld = new Set<Items>();
+
     for (const [below, at] of [
       [Species.Machop, Species.Machoke],
       [Species.Abra, Species.Kadabra],
       [Species.Geodude, Species.Graveler],
       [Species.Gastly, Species.Haunter],
     ] as const) {
-      expect(opensTradeEvolution(at, null)).toBe(true);
-      expect(opensTradeEvolution(below, null)).toBe(false);
+      expect(settleHandover(at, null, nothingHeld)).toEqual({ opens: true, spends: null });
+      expect(settleHandover(below, null, nothingHeld)).toEqual({ opens: false, spends: null });
     }
 
     // A species with no trade evolution never earns it, whatever it
     // was swapped for
-    expect(opensTradeEvolution(Species.Pidgey, Species.Machoke)).toBe(false);
+    expect(settleHandover(Species.Pidgey, Species.Machoke, nothingHeld)).toEqual({
+      opens: false,
+      spends: null,
+    });
+  });
+
+  it('spends the item a trade evolution asks to be held, at the handover', () => {
+    // An Onix traded in a Metal Coat arrives a coat lighter and ready,
+    // which is where the mainline spends it too
+    expect(settleHandover(Species.Onix, null, new Set([Items.MetalCoat]))).toEqual({
+      opens: true,
+      spends: Items.MetalCoat,
+    });
+
+    // Traded holding nothing, the swap covers nothing: what the
+    // evolution asks for was not part of it
+    expect(settleHandover(Species.Onix, null, new Set())).toEqual({
+      opens: false,
+      spends: null,
+    });
+    expect(settleHandover(Species.Onix, null, new Set([Items.Leftovers]))).toEqual({
+      opens: false,
+      spends: null,
+    });
+  });
+
+  it('does not ask twice for an item the handover already took', () => {
+    const context = {
+      species: Species.Onix,
+      level: 50,
+      carried: new Set<Items>(),
+      held: new Set<Items>(),
+      stats: EVEN_STATS,
+      friendship: BASE_FRIENDSHIP,
+      time: TimeOfDay.Day,
+    };
+
+    // The coat is gone, spent by the swap that opened this
+    expect(getAvailableEvolutions({ ...context, canEvolve: true })).toEqual([
+      {
+        species: Species.Steelix,
+        method: EvolutionMethod.Trade | EvolutionMethod.HeldItem,
+        item: Items.MetalCoat,
+      },
+    ]);
+
+    // And an Onix nobody traded still has to hold one, cord or no cord
+    expect(
+      getAvailableEvolutions({
+        ...context,
+        canEvolve: false,
+        carried: new Set([Items.LinkingCord]),
+      }),
+    ).toEqual([]);
+    expect(
+      getAvailableEvolutions({
+        ...context,
+        canEvolve: false,
+        carried: new Set([Items.LinkingCord]),
+        held: new Set([Items.MetalCoat]),
+      }),
+    ).toEqual([
+      {
+        species: Species.Steelix,
+        method: EvolutionMethod.Trade | EvolutionMethod.HeldItem,
+        item: Items.MetalCoat,
+      },
+    ]);
   });
 
   it('offers a trade evolution only for the handover it was made at', () => {

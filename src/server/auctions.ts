@@ -17,9 +17,9 @@ import {
 } from '../auth/auction-record';
 import { asOffset, toLocalISO } from '../auth/local-time';
 import { Acquisition, asCaughtPokemon } from '../auth/caught-record';
-import { isEggRecord, isFavoriteRecord } from './catch-fields';
+import { isEggRecord, isFavoriteRecord, withoutHeld } from './catch-fields';
 import { BASE_FRIENDSHIP } from '../data/constants/friendship';
-import { opensTradeEvolution } from '../data/species';
+import { settleHandover } from '../data/species';
 import { readCaughtIn, updateCaughtIn } from './caught-io';
 import { type Tx, newDocId, tx } from './db';
 import { readStackIn, spendStackIn, writeStackIn } from './stacks';
@@ -349,6 +349,7 @@ export async function claimAuction(
       if (record.owner !== AUCTION_ESCROW) {
         return false;
       }
+      const sale = settleHandover(record.species, null, new Set(record.items));
       // A pokemon carries who it has passed through, so a sale is an
       // entry in it — written in the new owner's own zone, the way a
       // catch date is.
@@ -379,11 +380,13 @@ export async function claimAuction(
         ],
         friendship: BASE_FRIENDSHIP,
         // A sale is a change of hands, so it opens a trade evolution
-        // the same as a swap between two players would. Nothing came
-        // the other way but gold, so the lines that name a partner
-        // stay shut
+        // the same as a swap between two players would, and spends
+        // the item that evolution asks to be held. Nothing came the
+        // other way but gold, so the lines that name a partner stay
+        // shut
         traded: true,
-        canEvolve: opensTradeEvolution(record.species, null),
+        canEvolve: sale.opens,
+        ...(sale.spends == null ? {} : { items: withoutHeld(record.items, sale.spends) }),
       });
     }
 

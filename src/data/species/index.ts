@@ -33,14 +33,15 @@ export {
 export {
   SUPPORTED_METHODS,
   coversHandover,
-  opensTradeEvolution,
+  coveredByHandover,
   getAvailableEvolutions,
   getConsumedItem,
   isFullyEvolved,
   lineEvolvesByItem,
   meetsEvolutionCriteria,
+  settleHandover,
 } from './evolution';
-export type { EvolutionContext } from './evolution';
+export type { EvolutionContext, Handover } from './evolution';
 export { REGIONS, REGION_NAMES, getSpeciesByRegion, getSpeciesRegion } from './regions';
 
 export function registerSpecies(): void {

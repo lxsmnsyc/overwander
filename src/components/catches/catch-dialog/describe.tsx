@@ -280,9 +280,12 @@ export function EvolutionCondition(props: { evolution: EvolutionData }): JSX.Ele
  * given, since a line of pictures and half-sentences is not something
  * that reads aloud
  */
-export function describeEvolutionMethod(evolution: EvolutionData): string {
+export function describeEvolutionMethod(evolution: EvolutionData, covered = false): string {
   if (!isMeasurableEvolution(evolution)) {
     return 'This evolution is not possible here.';
+  }
+  if (covered) {
+    return 'The handover it asked for is done. This evolution is ready.';
   }
 
   const { method, item } = evolution;

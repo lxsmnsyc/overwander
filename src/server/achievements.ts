@@ -121,6 +121,8 @@ export async function listUnlockedSprites(player: string): Promise<string[]> {
         return true;
       case 'award':
         return awards.has(charset.lock.award);
+      case 'awards':
+        return charset.lock.awards.every((award) => awards.has(award));
       default:
         return (
           (standings.trainers.get(charset.lock.trainer)?.tier ?? AchievementTier.None) >=

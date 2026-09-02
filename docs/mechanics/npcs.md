@@ -158,8 +158,13 @@ amount to the next player, and leaves a pokemon behind, shadowed and at level 10
 A grunt pays **5,000 to 15,000** and leaves one of the three it was **not**
 fighting with — the common and the two uncommons, never its best. An executive
 pays **40,000 to 90,000**, leaves any of its six, and drops an item it was
-carrying besides. **Giovanni** pays **120,000 to 250,000** and leaves any of his,
-the legendary included.
+carrying besides. **Giovanni** pays **120,000 to 250,000**, his own mark and any
+of his, the legendary included. The mark is worth the coat he runs Team Rocket
+in; the gym he keeps in Kanto is a different fight with a badge of its own.
+
+Every rank leaves a mark on the shelf as well, one apiece: the rank and file
+share one between them, each executive has their own, and so does the boss. Each
+is worth going about in that person's coat. See [Awards and titles](awards.md).
 
 The executives and Giovanni field trained pokemon rather than caught ones, and
 what they leave behind keeps it: an executive's prize walks away with both its

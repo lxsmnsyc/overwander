@@ -14,7 +14,8 @@ own, and beating one is kept for good.
 | **Elite Four mark** | 8        | Beating that member of the Elite Four  |
 | **Champion**        | 2        | Beating that league's Champion          |
 | **Legend's mark**   | 1        | Beating a legend, who asks for nothing |
-| **Dex medal**       | 1        | Filling the region's dex to 150 caught |
+| **Team Rocket marks** | 6      | Beating a grunt, one of the four executives, or Giovanni |
+| **Dex medal**       | 2        | Filling that region's dex                |
 
 Kanto and Johto keep eight gyms apiece, and their sixteen leaders share the
 world's countries: which of them keeps a given gym is fixed for that gym, so a
@@ -89,11 +90,31 @@ titles come from.
 | One of the Elite Four     | Beating that member             |
 | The Champion's other look | The Champion's own seat         |
 | A legend's other looks    | That legend's mark              |
+| Team Rocket's boss        | Beating Giovanni at a Rocket cell |
+| A Rocket executive        | Beating that executive          |
+| A Rocket grunt's uniform  | Beating any grunt               |
+| **Professor Oak**         | Kanto's dex filled              |
+| **Professor Elm**         | Johto's dex filled              |
+| Oak in Johto              | Both dexes filled               |
+| A Kanto leader's later look | That badge **and** Johto's crown |
 | A class of trainer        | That class's line at **Bronze** |
 
 So beating Brock lets you go about as Brock, and putting down enough Bug
 Catchers is what lets you dress as one. Where a character was drawn twice, once
 in each of two games, both looks are unlocked together and you pick which.
+
+A few looks are a person at a particular time, and those ask for the deed that
+time belongs to. Giovanni keeps a gym in Kanto and runs Team Rocket, and each is
+its own fight: the badge pays the two coats he keeps the gym in, and the boss
+pays the one he runs Team Rocket in. Blue's Heart Gold look is the man who took
+Viridian's gym back after his year at the top, so it asks for **both** crowns,
+Kanto's and Johto's, and Kanto's other leaders are drawn the same era later: each
+of those asks for that gym's badge and Johto's crown. By then Fuchsia's gym is
+Janine's rather than her father's, so the Soul Badge is what pays her.
+
+The professors are earned by filling a dex rather than by fighting: Kanto's pays
+Oak in the two looks he is drawn in there, Johto's pays Elm, and holding both
+pays Oak as he is drawn in Johto.
 
 ## See also
 

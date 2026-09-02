@@ -16,10 +16,13 @@ import {
 } from '../../../data/overworld/experts';
 import Landmark from '../../../data/overworld/landmark';
 import Npc, {
+  GIOVANNI_HONOR,
   GIOVANNI_NAME,
   NPC_NAMES,
+  ROCKET_EXECUTIVE_HONORS,
   ROCKET_EXECUTIVE_NAMES,
   ROCKET_EXECUTIVE_QUOTES,
+  ROCKET_GRUNT_HONOR,
 } from '../../../data/overworld/npc';
 import { RocketRank } from '../../../overworld/chunk-snapshot';
 import { NPC_QUOTES } from '../npc-dialog/shared';
@@ -162,7 +165,8 @@ export default function challengerOf(
         stakes: `Six of his at ${saidLevels(levels)}, each carrying two items and two abilities,
           against as many as you bring. Beat him and he leaves one of the six behind, the
           legendary among them, keeping both its abilities and the room for a second item, along
-          with a purse worth the trouble. Lose and you lose nothing but the fight.`,
+          with a purse worth the trouble and the mark for ${AWARD_NAMES[GIOVANNI_HONOR]}. Lose and
+          you lose nothing but the fight.`,
       };
     }
     if (executive != null) {
@@ -174,8 +178,9 @@ export default function challengerOf(
         greeting: `${name} of Team Rocket blocks the way. “${ROCKET_EXECUTIVE_QUOTES[executive]}”`,
         stakes: `Six of the country's best at ${saidLevels(levels)}, each carrying an item and
           two abilities, against as many as you bring. Win and they drop a purse, one of the six
-          with both its abilities, and whatever they were carrying. Lose and you lose nothing
-          but the fight. They will be here all window.`,
+          with both its abilities, whatever they were carrying, and the mark for
+          ${AWARD_NAMES[ROCKET_EXECUTIVE_HONORS[executive]]}. Lose and you lose nothing but the
+          fight. They will be here all window.`,
       };
     }
 
@@ -186,8 +191,9 @@ export default function challengerOf(
       levels,
       greeting: `A ${name} blocks the way. “${NPC_QUOTES[Npc.RocketGrunt]}”`,
       stakes: `Six of theirs at ${saidLevels(levels)} against as many as you bring. Win and the
-        grunt drops a purse and one of the three they were not fighting with. Lose and you lose
-        nothing but the fight. They will be here all window.`,
+        grunt drops a purse, one of the three they were not fighting with, and the mark for
+        ${AWARD_NAMES[ROCKET_GRUNT_HONOR]} if you do not hold it yet. Lose and you lose nothing
+        but the fight. They will be here all window.`,
     };
   }
   if (landmark === Landmark.Trainer) {

@@ -1,4 +1,5 @@
 import { countsAgainstSlots } from '../constants/slots';
+import Awards from '../ids/awards';
 import type Abilities from '../ids/abilities';
 import { Items } from '../ids/items';
 import type { Moves } from '../ids/moves';
@@ -172,6 +173,20 @@ export const GIOVANNI_CHARSETS: string[] = ['characters/hgss/giovanni'];
 export const GIOVANNI_NAME = 'Giovanni';
 
 /**
+ * The mark putting him down is worth. He keeps a gym in Kanto as
+ * well, and that is a different fight with a badge of its own: this
+ * one is Team Rocket's boss, met one window in sixty-four
+ */
+export const GIOVANNI_HONOR: Awards = Awards.GiovanniDefeated;
+
+/**
+ * And the mark for clearing a cell of the rank and file. One mark
+ * however many grunts are put down: they are a uniform rather than a
+ * person, which is the whole of what a grunt is
+ */
+export const ROCKET_GRUNT_HONOR: Awards = Awards.RocketGruntDefeated;
+
+/**
  * The four who answer to him. Like Giovanni they are the grunt's
  * landmark wearing a rarer face rather than a role of their own, and
  * they stand between him and the rank and file in every way: what
@@ -205,6 +220,14 @@ export const ROCKET_EXECUTIVE_CHARSETS: Record<RocketExecutive, string[]> = {
   [RocketExecutive.Ariana]: ['characters/hgss/ariana'],
   [RocketExecutive.Proton]: ['characters/hgss/proton'],
   [RocketExecutive.Petrel]: ['characters/hgss/petrel'],
+};
+
+/** The mark putting one of them down is worth, one to each */
+export const ROCKET_EXECUTIVE_HONORS: Record<RocketExecutive, Awards> = {
+  [RocketExecutive.Archer]: Awards.ArcherDefeated,
+  [RocketExecutive.Ariana]: Awards.ArianaDefeated,
+  [RocketExecutive.Proton]: Awards.ProtonDefeated,
+  [RocketExecutive.Petrel]: Awards.PetrelDefeated,
 };
 
 /** What each says as they bar the cell */

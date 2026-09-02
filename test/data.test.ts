@@ -5056,6 +5056,22 @@ describe('a region’s pokedex chain', () => {
     expect(prerequisiteOf(dexQuestId(Regions.Kanto, 1))).toBe(dexQuestId(Regions.Kanto, 0));
   });
 
+  it('gives Johto the same ladder with its own numbers', () => {
+    // A second region is a row in the table rather than a second set
+    // of quests, and the medal at the top of it is its own
+    expect(getDexRegions()).toContain(Regions.Johto);
+    expect(CHAINS[dexChainId(Regions.Johto)].name).toBe('Johto Pokedex');
+
+    const last = getDexQuests(Regions.Johto).get(dexQuestId(Regions.Johto, 2));
+
+    expect(last?.name).toBe('Johto Complete');
+    expect(
+      last?.rewards.some(
+        (reward) => reward.kind === QuestRewardKind.Award && reward.award === Awards.JohtoDexMedal,
+      ),
+    ).toBe(true);
+  });
+
   it('leaves a region with no dex alone rather than inventing one', () => {
     // Nothing is written for it, so it stands no chain at all. This is
     // what a generation that has not landed yet looks like

@@ -36,6 +36,16 @@ const enum Awards {
   JohtoChampion = 26,
   /** The one above the league, met where a champion would have been */
   RedDefeated = 27,
+  /** Team Rocket's boss, beaten where his grunts stand */
+  GiovanniDefeated = 28,
+  ArcherDefeated = 29,
+  ArianaDefeated = 30,
+  ProtonDefeated = 31,
+  PetrelDefeated = 32,
+  /** Any one of the rank and file put down */
+  RocketGruntDefeated = 33,
+  /** Johto's dex filled to 99 caught */
+  JohtoDexMedal = 34,
 }
 
 export default Awards;
@@ -69,6 +79,13 @@ export const AWARD_NAMES: Record<Awards, string> = {
   [Awards.JohtoBrunoDefeated]: 'Bruno Defeated (Johto)',
   [Awards.JohtoChampion]: 'Johto Champion',
   [Awards.RedDefeated]: 'Red Defeated',
+  [Awards.GiovanniDefeated]: 'Giovanni Defeated',
+  [Awards.ArcherDefeated]: 'Archer Defeated',
+  [Awards.ArianaDefeated]: 'Ariana Defeated',
+  [Awards.ProtonDefeated]: 'Proton Defeated',
+  [Awards.PetrelDefeated]: 'Petrel Defeated',
+  [Awards.RocketGruntDefeated]: 'Team Rocket Repelled',
+  [Awards.JohtoDexMedal]: 'Johto Dex Medal',
 };
 
 /**

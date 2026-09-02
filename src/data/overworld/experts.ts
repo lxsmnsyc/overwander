@@ -146,6 +146,36 @@ export const GYM_LEADER_CHARSETS: Record<GymLeader, string[]> = {
 };
 
 /**
+ * Coats a badge unlocks that its leader is never seen in.
+ *
+ * A leader wanders in the sheets above; these are the other looks of
+ * the same person, worth wearing and worth nothing to the chunk.
+ * Giovanni's Let's Go coat is here because the gym he keeps is drawn
+ * in his Fire Red one
+ */
+export const GYM_LEADER_PRIZE_CHARSETS: Partial<Record<GymLeader, string[]>> = {
+  [GymLeader.Giovanni]: ['characters/lgpe/giovanni'],
+};
+
+/**
+ * The coat a Kanto leader is drawn in in Johto's era.
+ *
+ * It is the same gym years later, so it asks for the badge **and**
+ * Johto's crown: a look from after that league means nothing to
+ * somebody who has not taken it. Koga's gym has passed to his
+ * daughter by then, so the Soul Badge pays Janine
+ */
+export const GYM_LEADER_LATER_CHARSETS: Partial<Record<GymLeader, string[]>> = {
+  [GymLeader.Brock]: ['characters/hgss/brock'],
+  [GymLeader.Misty]: ['characters/hgss/misty'],
+  [GymLeader.LtSurge]: ['characters/hgss/surge'],
+  [GymLeader.Erika]: ['characters/hgss/erika'],
+  [GymLeader.Koga]: ['characters/hgss/janine'],
+  [GymLeader.Sabrina]: ['characters/hgss/sabrina'],
+  [GymLeader.Blaine]: ['characters/hgss/blaine'],
+};
+
+/**
  * Which leaders keep the gyms of each biome. The country is the map
  * to the badges: a player hunting Blaine walks to fire country. Two
  * regions of leaders now share those countries, so the list per biome
@@ -203,7 +233,6 @@ export const BIOME_GYM_LEADERS: Record<Biome, GymLeader[]> = {
  * teaches nothing
  */
 export function rollGymMachine(leader: GymLeader, random: () => number): Items | null {
-  const moves = getTeachableMoves().filter(
   const type = GYM_LEADER_TYPES[leader];
   const moves = getTeachableMoves().filter((move) => getMoveData(move).type === type);
   const move = moves.at(Math.floor(random() * moves.length));
@@ -380,6 +409,16 @@ export const CHAMPION_CHARSETS: Record<Champion, string[]> = {
 export const CHAMPION_TITLES: Record<Champion, Awards> = {
   [Champion.Blue]: Awards.KantoChampion,
   [Champion.Lance]: Awards.JohtoChampion,
+};
+
+/**
+ * And the coats a champion's title unlocks besides the one they are
+ * seen in. Blue's Let's Go look is his own; his Heart Gold one asks
+ * for Johto's crown as well, since that is the era he is drawn in
+ * there, and it is listed with the crossed unlocks in `charsets.ts`
+ */
+export const CHAMPION_PRIZE_CHARSETS: Partial<Record<Champion, string[]>> = {
+  [Champion.Blue]: ['characters/lgpe/blue'],
 };
 
 /** The Elite Four a champion asks to see beaten first */

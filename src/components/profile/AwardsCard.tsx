@@ -19,7 +19,15 @@ import Awards, {
   KANTO_BADGES,
   KANTO_HONORS,
 } from '../../data/ids/awards';
-import Npc from '../../data/overworld/npc';
+import Npc, {
+  GIOVANNI_CHARSETS,
+  GIOVANNI_HONOR,
+  ROCKET_EXECUTIVES,
+  ROCKET_EXECUTIVE_CHARSETS,
+  ROCKET_EXECUTIVE_HONORS,
+  ROCKET_GRUNT_HONOR,
+  npcSheet,
+} from '../../data/overworld/npc';
 import {
   CHAMPION_TITLES,
   ELITE_MEMBERS,
@@ -70,8 +78,8 @@ const AWARD_SPRITES: Partial<Record<Awards, [sheet: string, name: string]>> = {
 
 /**
  * Each mark won off a person is that person: their first charset, the
- * portrait the challenge dialog uses. The Elite Four and the legends
- * both pay one
+ * portrait the challenge dialog uses: the Elite Four, the legends and
+ * Team Rocket's boss all pay one
  */
 const PERSON_AWARD_SHEETS: Partial<Record<Awards, string>> = Object.fromEntries([
   ...ELITE_MEMBERS.map((member): [Awards, string] => [
@@ -79,6 +87,12 @@ const PERSON_AWARD_SHEETS: Partial<Record<Awards, string>> = Object.fromEntries(
     ELITE_MEMBER_CHARSETS[member][0],
   ]),
   ...LEGENDS.map((legend): [Awards, string] => [LEGEND_HONORS[legend], LEGEND_CHARSETS[legend][0]]),
+  [GIOVANNI_HONOR, GIOVANNI_CHARSETS[0]],
+  ...ROCKET_EXECUTIVES.map((executive): [Awards, string] => [
+    ROCKET_EXECUTIVE_HONORS[executive],
+    ROCKET_EXECUTIVE_CHARSETS[executive][0],
+  ]),
+  [ROCKET_GRUNT_HONOR, npcSheet(Npc.RocketGrunt)],
 ]);
 
 /** The titles that read as a star rather than as a letter */
@@ -119,13 +133,20 @@ const AWARD_COLORS: Record<Awards, string> = {
   [Awards.JohtoBrunoDefeated]: '#c98a4b',
   [Awards.JohtoChampion]: '#e0b64f',
   [Awards.RedDefeated]: '#d0342c',
+  [Awards.GiovanniDefeated]: '#b0453c',
+  [Awards.ArcherDefeated]: '#6f7fa8',
+  [Awards.ArianaDefeated]: '#c2536f',
+  [Awards.ProtonDefeated]: '#4f8f7a',
+  [Awards.PetrelDefeated]: '#7a6f8f',
+  [Awards.RocketGruntDefeated]: '#3f4550',
+  [Awards.JohtoDexMedal]: '#d0a63c',
 };
 
 /**
  * The shelf's order: Kanto's 8 badges, its 4 elite marks, the title
  * and the dex medal, then Johto's 8 badges, its 4 marks and its
- * title, and the legends' marks last, which belong to no region's
- * walk. The walk itself, left to right, a region at a time
+ * title and its medal, then the marks that belong to no region's
+ * walk: Team Rocket's, from the rank and file up, and the legends'. The walk itself, left to right, a region at a time
  */
 const SHELF: Awards[] = [
   ...new Set([
@@ -136,6 +157,10 @@ const SHELF: Awards[] = [
     ...JOHTO_BADGES,
     ...JOHTO_HONORS,
     Awards.JohtoChampion,
+    Awards.JohtoDexMedal,
+    ROCKET_GRUNT_HONOR,
+    ...ROCKET_EXECUTIVES.map((executive) => ROCKET_EXECUTIVE_HONORS[executive]),
+    GIOVANNI_HONOR,
     ...LEGENDS.map((legend) => LEGEND_HONORS[legend]),
   ]),
 ];

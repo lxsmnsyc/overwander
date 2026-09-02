@@ -29,7 +29,11 @@ import {
 import { encounterKey } from '../overworld/safari';
 import createOverworld from '../overworld/setup';
 import Landmark from '../data/overworld/landmark';
-import Npc from '../data/overworld/npc';
+import Npc, {
+  GIOVANNI_HONOR,
+  ROCKET_EXECUTIVE_HONORS,
+  ROCKET_GRUNT_HONOR,
+} from '../data/overworld/npc';
 import { trainerLevels } from '../data/overworld/trainers';
 import type Awards from '../data/ids/awards';
 import {
@@ -566,15 +570,27 @@ export async function claimRocketReward(uid: string, stop: string): Promise<Rock
 }
 
 /**
- * The award a fighting landmark pays, or null for the two that pay
- * none: a badge is the resident leader's, a mark the resident
- * elite's, and the title the region's
+ * The award a fighting landmark pays, or null where it pays none: a
+ * badge is the resident leader's, a mark the resident elite's, the
+ * title the region's, and Team Rocket's is whoever was standing on
+ * the cell
  */
 function awardFor(
   landmark: Landmark | undefined,
   snapshot: ChunkSnapshot,
   cell: number,
 ): Awards | null {
+  if (landmark === Landmark.TeamRocket) {
+    if (snapshot.getRocketRank(cell) === RocketRank.Giovanni) {
+      return GIOVANNI_HONOR;
+    }
+
+    const executive = snapshot.getRocketExecutive(cell);
+
+    // The rank and file share one mark: a grunt is a uniform rather
+    // than a person, and the coat it pays is that uniform
+    return executive == null ? ROCKET_GRUNT_HONOR : ROCKET_EXECUTIVE_HONORS[executive];
+  }
   if (landmark === Landmark.GymLeader) {
     const leader = snapshot.getGymLeader(cell);
 

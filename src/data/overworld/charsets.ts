@@ -1,8 +1,9 @@
-import type Awards from '../ids/awards';
+import Awards from '../ids/awards';
 import {
   CHAMPIONS,
   CHAMPION_CHARSETS,
   CHAMPION_NAMES,
+  CHAMPION_PRIZE_CHARSETS,
   CHAMPION_TITLES,
   ELITE_MEMBERS,
   ELITE_MEMBER_CHARSETS,
@@ -11,13 +12,27 @@ import {
   GYM_LEADERS,
   GYM_LEADER_BADGES,
   GYM_LEADER_CHARSETS,
+  GYM_LEADER_LATER_CHARSETS,
   GYM_LEADER_NAMES,
+  GYM_LEADER_PRIZE_CHARSETS,
   LEGENDS,
   LEGEND_HONORS,
   LEGEND_NAMES,
   LEGEND_PRIZE_CHARSETS,
 } from './experts';
 import { ACHIEVEMENT_TRAINERS } from '../achievements';
+import Npc, {
+  GIOVANNI_CHARSETS,
+  GIOVANNI_HONOR,
+  GIOVANNI_NAME,
+  NPC_NAMES,
+  ROCKET_EXECUTIVES,
+  ROCKET_EXECUTIVE_CHARSETS,
+  ROCKET_EXECUTIVE_HONORS,
+  ROCKET_EXECUTIVE_NAMES,
+  ROCKET_GRUNT_HONOR,
+  npcSheets,
+} from './npc';
 import { TRAINER_CHARSETS, TRAINER_NAMES, type TrainerClass } from './trainers';
 
 /**
@@ -39,6 +54,8 @@ export type CharsetLock =
   | { kind: 'free' }
   /** Held by whoever holds the award, which is a badge or a seat */
   | { kind: 'award'; award: Awards }
+  /** Held by whoever holds every one of them: a coat two deeds wide */
+  | { kind: 'awards'; awards: Awards[] }
   /** Held at Bronze in that class' line, the way its title is */
   | { kind: 'trainer'; trainer: TrainerClass };
 
@@ -62,6 +79,40 @@ export const FREE_CHARSETS = ['characters/frlg/red', 'characters/frlg/leaf'];
 export const DEFAULT_CHARSET = FREE_CHARSETS[0];
 
 /**
+ * The coats an award pays that nobody in the world wears.
+ *
+ * Everything else here is somebody a walk can run into, and their
+ * coats are the ones they are drawn in. These are people the game
+ * does not stage: the professors, and Blue as the man who took
+ * Viridian's gym back after his year at the top. A coat listing two
+ * awards asks for both
+ */
+const AWARDED_CHARSETS: { sheet: string; name: string; awards: Awards[] }[] = [
+  {
+    sheet: 'characters/hgss/blue',
+    name: 'Blue',
+    awards: [Awards.KantoChampion, Awards.JohtoChampion],
+  },
+  { sheet: 'characters/frlg/oak', name: 'Professor Oak', awards: [Awards.KantoDexMedal] },
+  { sheet: 'characters/lgpe/oak', name: 'Professor Oak', awards: [Awards.KantoDexMedal] },
+  { sheet: 'characters/hgss/elm', name: 'Professor Elm', awards: [Awards.JohtoDexMedal] },
+  {
+    sheet: 'characters/hgss/oak',
+    name: 'Professor Oak',
+    awards: [Awards.KantoDexMedal, Awards.JohtoDexMedal],
+  },
+];
+
+/**
+ * Who a sheet is, where that is not who unlocks it. One entry: by
+ * Johto's era the Fuchsia gym is Janine's, and it is her father's
+ * badge that pays it
+ */
+const SHEET_PEOPLE: Record<string, string> = {
+  'characters/hgss/janine': 'Janine',
+};
+
+/**
  * Every charset a trainer can wear, and what unlocks it.
  *
  * A sheet named by two sources keeps the first claim on it, which is
@@ -80,7 +131,10 @@ function buildCharsets(): Charset[] {
   add(FREE_CHARSETS[1], 'Leaf', { kind: 'free' });
 
   for (const leader of GYM_LEADERS) {
-    for (const sheet of GYM_LEADER_CHARSETS[leader]) {
+    for (const sheet of [
+      ...GYM_LEADER_CHARSETS[leader],
+      ...(GYM_LEADER_PRIZE_CHARSETS[leader] ?? []),
+    ]) {
       add(sheet, GYM_LEADER_NAMES[leader], { kind: 'award', award: GYM_LEADER_BADGES[leader] });
     }
   }
@@ -93,10 +147,43 @@ function buildCharsets(): Charset[] {
     }
   }
   for (const champion of CHAMPIONS) {
-    for (const sheet of CHAMPION_CHARSETS[champion]) {
+    for (const sheet of [
+      ...CHAMPION_CHARSETS[champion],
+      ...(CHAMPION_PRIZE_CHARSETS[champion] ?? []),
+    ]) {
       add(sheet, CHAMPION_NAMES[champion], {
         kind: 'award',
         award: CHAMPION_TITLES[champion],
+      });
+    }
+  }
+  for (const sheet of GIOVANNI_CHARSETS) {
+    add(sheet, GIOVANNI_NAME, { kind: 'award', award: GIOVANNI_HONOR });
+  }
+  for (const executive of ROCKET_EXECUTIVES) {
+    for (const sheet of ROCKET_EXECUTIVE_CHARSETS[executive]) {
+      add(sheet, ROCKET_EXECUTIVE_NAMES[executive], {
+        kind: 'award',
+        award: ROCKET_EXECUTIVE_HONORS[executive],
+      });
+    }
+  }
+  for (const sheet of npcSheets(Npc.RocketGrunt)) {
+    add(sheet, NPC_NAMES[Npc.RocketGrunt], { kind: 'award', award: ROCKET_GRUNT_HONOR });
+  }
+  for (const { sheet, name, awards } of AWARDED_CHARSETS) {
+    add(
+      sheet,
+      name,
+      awards.length === 1 ? { kind: 'award', award: awards[0] } : { kind: 'awards', awards },
+    );
+  }
+  // A Kanto gym's later look, which is the badge and Johto's crown
+  for (const leader of GYM_LEADERS) {
+    for (const sheet of GYM_LEADER_LATER_CHARSETS[leader] ?? []) {
+      add(sheet, SHEET_PEOPLE[sheet] ?? GYM_LEADER_NAMES[leader], {
+        kind: 'awards',
+        awards: [GYM_LEADER_BADGES[leader], Awards.JohtoChampion],
       });
     }
   }

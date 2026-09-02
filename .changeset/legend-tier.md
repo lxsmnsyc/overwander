@@ -16,3 +16,8 @@
 - Giovanni keeps Kanto's eighth gym, which is a Ground gym now rather than the one
   gym with no specialty. The Earth Badge is still what is won there, and his gyms
   stand in the countries his type answers to.
+- Beating Team Rocket's Giovanni now leaves his own mark, which is worth the coat
+  he runs Team Rocket in. The gym he keeps in Kanto pays its two other looks of
+  him.
+- Blue's Kanto crown pays both the coats he is drawn in there, and his Heart Gold
+  look asks for Johto's crown as well.

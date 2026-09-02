@@ -1285,6 +1285,18 @@
         "bytes": 1015
       }
     },
+    "public/sprites/overworld/characters/hgss/janine/image.png": {
+      "digest": "c6cf5f4bc844b52e",
+      "bytes": 1431,
+      "width": 78,
+      "height": 116,
+      "compact": {
+        "at": "2026-09-02T05:13:50Z",
+        "as": "already compact",
+        "was": 1431,
+        "bytes": 1431
+      }
+    },
     "public/sprites/overworld/characters/hgss/jasmine/image.png": {
       "digest": "78baf3800be9abdf",
       "bytes": 1228,

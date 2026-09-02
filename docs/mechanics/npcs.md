@@ -189,22 +189,28 @@ Who turns up decides what they bring:
 | **Ace Trainer**   | Five fully-grown pokemon of any type, levels 60-80. Pays 25,000 to 60,000 |
 | **A type expert** | Three to five of their own type, levels 40-60. Pays 5,000 to 15,000 |
 
-The type experts are the trainer classes: the Bug Catcher, the Swimmer, the Black
-Belt, the Bird Keeper, the Biker, the Hiker, the Poké Maniac, the Channeler, the
-Burglar, the Rocker, the Psychic and the Lass.
+The type experts are the trainer classes, and both regions' are on the road:
+Kanto's Bug Catcher, Swimmer, Black Belt, Bird Keeper, Biker, Hiker, Poké Maniac,
+Channeler, Burglar, Rocker, Psychic, Lass, Beauty, Fisherman, Sailor, Gentleman,
+Super Nerd, Juggler, Tamer, Engineer and Gambler.
+
+**A class is not one type only.** Most field one, some field the pair the
+mainline gives them (a Sailor brings water and fighting, an Engineer steel and
+electric), and two trades may want the same type: what tells a Beauty from a Lass
+is who they are rather than what they carry.
 
 **A class belongs to a region.** The trades both regions put on the road are on
 it twice: a Swimmer (Kanto) and a Swimmer (Johto) are the same trade in two
 places, drawn differently, fielding what their own region grows. Their wins climb
 one line between them and pay one title, and their coats are earned apart.
 
-Johto brings eleven trades Kanto has none of as well: the **Sage**, who fields
-grass, the **Skier**, ice, the **Scientist**, steel, the **Firebreather**, fire,
-the **Medium**, ghost, the **Teacher**, psychic, the **School Kid**, electric,
-the **Youngster**, ground, the **Camper**, rock, and its own **Poké Maniac** and
-**Burglar**, who field the dragons of the Dragon's Den and the dark that works
-the roads outside it. Johto's road covers every type the game grows; Kanto's
-covers what Kanto grows.
+Johto brings a dozen trades Kanto has none of as well: the **Sage**, who fields
+grass, the **Skier** and the **Boarder**, ice, the **Scientist**, steel, the
+**Firebreather**, fire, the **Medium**, ghost, the **Teacher**, psychic, the
+**School Kid**, electric, the **Youngster**, ground, the **Camper**, rock, and
+its own **Poké Maniac** and **Burglar**, who field the dragons of the Dragon's
+Den and the dark that works the roads outside it. Johto's road covers every type
+the game grows; Kanto's covers what Kanto grows.
 
 Which of them may be standing on a cell is the country's own: a Swimmer is met on
 the water, a Hiker on hard ground, a Skier in the snow, the same rule the gyms

@@ -393,9 +393,11 @@ function Filler(): JSX.Element {
  * fields anything, so theirs is left in the tray's own colour
  */
 function tintOf(trainer: TrainerClass): string | undefined {
-  const type = TRAINER_TYPES[trainer];
+  // The first of what they field, since a slot is one colour and the
+  // Aces field everything
+  const [type] = TRAINER_TYPES[trainer];
 
-  return type == null ? undefined : TYPE_COLORS[type];
+  return TRAINER_TYPES[trainer].length === 0 ? undefined : TYPE_COLORS[type];
 }
 
 function AchievementShelves(props: { sheet: Resource<AchievementSheet> }): JSX.Element {

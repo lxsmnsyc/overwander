@@ -39,11 +39,19 @@ import {
   TRAINER_NAMES,
   TRAINER_QUOTES,
   TRAINER_TYPES,
-  isAceTrainer,
   trainerLevels,
 } from '../../../data/overworld/trainers';
-import { TYPE_NAMES } from '../../../data/constants/types';
+import { TYPE_NAMES, type Types } from '../../../data/constants/types';
 import type { StopChallenge } from '../RocketStopDialog';
+
+/** The types a class fields, said as a list: "Water and Fighting" */
+function saidTypes(types: Types[]): string {
+  const named = types.map((type) => TYPE_NAMES[type]);
+
+  return named.length < 2
+    ? (named[0] ?? '')
+    : `${named.slice(0, -1).join(', ')} and ${named.at(-1)}`;
+}
 
 /** A band said the way a lineup reads it: "levels 45-65" */
 function saidLevels([lowest, highest]: LevelBand): string {
@@ -205,10 +213,11 @@ export default function challengerOf(
 
     const name = TRAINER_NAMES[trainer];
     const levels = trainerLevels(trainer);
-    const type = TRAINER_TYPES[trainer];
-    const fields = isAceTrainer(trainer)
-      ? 'Five fully-grown pokemon of any type'
-      : `Their ${TYPE_NAMES[type ?? 0]} pokemon`;
+    const types = TRAINER_TYPES[trainer];
+    const fields =
+      types.length === 0
+        ? 'Five fully-grown pokemon of any type'
+        : `Their ${saidTypes(types)} pokemon`;
 
     return {
       name,

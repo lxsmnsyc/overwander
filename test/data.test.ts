@@ -4984,7 +4984,7 @@ describe('achievements', () => {
     ];
 
     for (const [trainer, type] of johto) {
-      expect(TRAINER_TYPES[trainer], TRAINER_NAMES[trainer]).toBe(type);
+      expect(TRAINER_TYPES[trainer], TRAINER_NAMES[trainer]).toContain(type);
       expect(TRAINER_REGIONS[trainer], TRAINER_NAMES[trainer]).toBe(Regions.Johto);
     }
 
@@ -4992,9 +4992,9 @@ describe('achievements', () => {
     // more than Kanto's does: five of them Kanto has nobody for
     const covered = (region: Regions): Set<Types> =>
       new Set(
-        TRAINER_CLASSES.filter((trainer) => TRAINER_REGIONS[trainer] === region)
-          .map((trainer) => TRAINER_TYPES[trainer])
-          .filter((type): type is Types => type != null),
+        TRAINER_CLASSES.filter((trainer) => TRAINER_REGIONS[trainer] === region).flatMap(
+          (trainer) => TRAINER_TYPES[trainer],
+        ),
       );
 
     for (const type of ACHIEVEMENT_TYPES) {
@@ -5048,7 +5048,7 @@ describe('achievements', () => {
       expect(standing).not.toContain(TrainerClass.AceTrainer);
       expect(new Set(standing).size).toBe(standing.length);
       for (const trainer of standing) {
-        expect(TRAINER_TYPES[trainer]).not.toBeNull();
+        expect(TRAINER_TYPES[trainer].length, TRAINER_NAMES[trainer]).toBeGreaterThan(0);
         roads.add(trainer);
       }
       // What may actually be met there: the country's own, plus the

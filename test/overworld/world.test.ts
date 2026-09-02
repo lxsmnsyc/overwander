@@ -149,7 +149,6 @@ import {
   TRAINER_CHARSETS,
   TRAINER_CLASSES,
   TRAINER_NAMES,
-  TRAINER_REGIONS,
   TRAINER_TYPES,
   TYPE_TRAINER_LEVELS,
   TYPE_TRAINER_PARTY_MAX,
@@ -1130,10 +1129,10 @@ describe('world', () => {
       expect(getBiomeTrainers(chunk.biome)).toContain(trainer);
 
       // The Ace fields five of anything; a type expert three to five
-      // of their own type, and nothing of the biome's choosing
-      const type = TRAINER_TYPES[trainer];
+      // of their own kind, and nothing of the biome's choosing
+      const types = new Set(TRAINER_TYPES[trainer]);
 
-      if (trainer === TrainerClass.AceTrainer) {
+      if (isAceTrainer(trainer)) {
         expect(party).toHaveLength(ACE_PARTY_SIZE);
       } else {
         expect(party.length).toBeGreaterThanOrEqual(TYPE_TRAINER_PARTY_MIN);
@@ -1143,8 +1142,11 @@ describe('world', () => {
         // Fully grown, never a legendary, and of the class' type
         expect(getSpawnRarity(species)).toBe(SpawnRarity.Rare);
         expect(lairSpecies.has(species)).toBe(false);
-        if (type != null) {
-          expect(getSpeciesData(species).types).toContain(type);
+        if (types.size > 0) {
+          expect(
+            getSpeciesData(species).types.some((one) => types.has(one)),
+            getSpeciesData(species).name,
+          ).toBe(true);
         }
       }
       // Dressed from their own class' wardrobe rather than the
@@ -1163,14 +1165,15 @@ describe('world', () => {
       );
     }
 
-    // One class per type per region, and each region's Ace is the
-    // one with none
-    const claimed = TRAINER_CLASSES.map(
-      (trainer) => `${TRAINER_REGIONS[trainer]}:${TRAINER_TYPES[trainer]}`,
-    );
+    // Two trades may want the same type now, so what has to be one
+    // class' own is the coat: no sheet is worn twice
+    const worn = TRAINER_CLASSES.flatMap((trainer) => TRAINER_CHARSETS[trainer]);
 
-    expect(new Set(claimed).size).toBe(claimed.length);
-    expect(TRAINER_CLASSES.filter((trainer) => TRAINER_TYPES[trainer] == null)).toHaveLength(2);
+    expect(new Set(worn).size).toBe(worn.length);
+    // And only the two Aces field everything there is
+    expect(TRAINER_CLASSES.filter((trainer) => TRAINER_TYPES[trainer].length === 0)).toHaveLength(
+      2,
+    );
   });
 
   it('rolls Giovanni once in a long while, six strong', () => {

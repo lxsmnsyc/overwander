@@ -52,6 +52,19 @@ const enum TrainerClass {
   SchoolKid = 28,
   Youngster = 29,
   Camper = 30,
+  Beauty = 31,
+  Fisherman = 32,
+  Sailor = 33,
+  Gentleman = 34,
+  SuperNerd = 35,
+  Juggler = 36,
+  Tamer = 37,
+  Engineer = 38,
+  Gambler = 39,
+  JohtoGentleman = 40,
+  JohtoSuperNerd = 41,
+  JohtoJuggler = 42,
+  Boarder = 43,
 }
 
 export { TrainerClass };
@@ -100,6 +113,19 @@ export const TRAINER_CLASSES: TrainerClass[] = [
   TrainerClass.SchoolKid,
   TrainerClass.Youngster,
   TrainerClass.Camper,
+  TrainerClass.Beauty,
+  TrainerClass.Fisherman,
+  TrainerClass.Sailor,
+  TrainerClass.Gentleman,
+  TrainerClass.SuperNerd,
+  TrainerClass.Juggler,
+  TrainerClass.Tamer,
+  TrainerClass.Engineer,
+  TrainerClass.Gambler,
+  TrainerClass.JohtoGentleman,
+  TrainerClass.JohtoSuperNerd,
+  TrainerClass.JohtoJuggler,
+  TrainerClass.Boarder,
 ];
 
 /**
@@ -139,6 +165,19 @@ export const TRAINER_BASE_NAMES: Record<TrainerClass, string> = {
   [TrainerClass.SchoolKid]: 'School Kid',
   [TrainerClass.Youngster]: 'Youngster',
   [TrainerClass.Camper]: 'Camper',
+  [TrainerClass.Beauty]: 'Beauty',
+  [TrainerClass.Fisherman]: 'Fisherman',
+  [TrainerClass.Sailor]: 'Sailor',
+  [TrainerClass.Gentleman]: 'Gentleman',
+  [TrainerClass.SuperNerd]: 'Super Nerd',
+  [TrainerClass.Juggler]: 'Juggler',
+  [TrainerClass.Tamer]: 'Tamer',
+  [TrainerClass.Engineer]: 'Engineer',
+  [TrainerClass.Gambler]: 'Gambler',
+  [TrainerClass.JohtoGentleman]: 'Gentleman',
+  [TrainerClass.JohtoSuperNerd]: 'Super Nerd',
+  [TrainerClass.JohtoJuggler]: 'Juggler',
+  [TrainerClass.Boarder]: 'Boarder',
 };
 
 /**
@@ -179,6 +218,19 @@ export const TRAINER_REGIONS: Record<TrainerClass, Regions> = {
   [TrainerClass.SchoolKid]: Regions.Johto,
   [TrainerClass.Youngster]: Regions.Johto,
   [TrainerClass.Camper]: Regions.Johto,
+  [TrainerClass.Beauty]: Regions.Kanto,
+  [TrainerClass.Fisherman]: Regions.Kanto,
+  [TrainerClass.Sailor]: Regions.Kanto,
+  [TrainerClass.Gentleman]: Regions.Kanto,
+  [TrainerClass.SuperNerd]: Regions.Kanto,
+  [TrainerClass.Juggler]: Regions.Kanto,
+  [TrainerClass.Tamer]: Regions.Kanto,
+  [TrainerClass.Engineer]: Regions.Kanto,
+  [TrainerClass.Gambler]: Regions.Kanto,
+  [TrainerClass.JohtoGentleman]: Regions.Johto,
+  [TrainerClass.JohtoSuperNerd]: Regions.Johto,
+  [TrainerClass.JohtoJuggler]: Regions.Johto,
+  [TrainerClass.Boarder]: Regions.Johto,
 };
 
 /**
@@ -222,6 +274,19 @@ export const TRAINER_TRADE: Record<TrainerClass, TrainerClass> = {
   [TrainerClass.SchoolKid]: TrainerClass.SchoolKid,
   [TrainerClass.Youngster]: TrainerClass.Youngster,
   [TrainerClass.Camper]: TrainerClass.Camper,
+  [TrainerClass.Beauty]: TrainerClass.Beauty,
+  [TrainerClass.Fisherman]: TrainerClass.Fisherman,
+  [TrainerClass.Sailor]: TrainerClass.Sailor,
+  [TrainerClass.Gentleman]: TrainerClass.Gentleman,
+  [TrainerClass.SuperNerd]: TrainerClass.SuperNerd,
+  [TrainerClass.Juggler]: TrainerClass.Juggler,
+  [TrainerClass.Tamer]: TrainerClass.Tamer,
+  [TrainerClass.Engineer]: TrainerClass.Engineer,
+  [TrainerClass.Gambler]: TrainerClass.Gambler,
+  [TrainerClass.JohtoGentleman]: TrainerClass.Gentleman,
+  [TrainerClass.JohtoSuperNerd]: TrainerClass.SuperNerd,
+  [TrainerClass.JohtoJuggler]: TrainerClass.Juggler,
+  [TrainerClass.Boarder]: TrainerClass.Boarder,
 };
 
 /**
@@ -272,43 +337,65 @@ function buildTrainerNames(): Record<TrainerClass, string> {
 }
 
 /**
- * The type each class fields. The Ace has none: they field the best
- * of anything, which is what makes them the hard fight of the road
+ * What each class fields, as the types that count as theirs.
+ *
+ * Most bring one, some bring the pair the mainline gives them, and
+ * the Aces bring an empty list, which is every type there is: that is
+ * what makes them the hard fight of the road. Two trades may want the
+ * same type, since what tells a Beauty from a Lass is who they are
+ * rather than what they carry
  */
-export const TRAINER_TYPES: Record<TrainerClass, Types | null> = {
-  [TrainerClass.AceTrainer]: null,
-  [TrainerClass.Lass]: Types.Normal,
-  [TrainerClass.BlackBelt]: Types.Fighting,
-  [TrainerClass.BirdKeeper]: Types.Flying,
-  [TrainerClass.Biker]: Types.Poison,
-  [TrainerClass.Hiker]: Types.Ground,
-  [TrainerClass.PokeManiac]: Types.Rock,
-  [TrainerClass.BugCatcher]: Types.Bug,
-  [TrainerClass.Channeler]: Types.Ghost,
-  [TrainerClass.Burglar]: Types.Fire,
-  [TrainerClass.Swimmer]: Types.Water,
-  [TrainerClass.Rocker]: Types.Electric,
-  [TrainerClass.Psychic]: Types.Psychic,
-  [TrainerClass.Sage]: Types.Grass,
-  [TrainerClass.Skier]: Types.Ice,
-  [TrainerClass.Scientist]: Types.Steel,
+export const TRAINER_TYPES: Record<TrainerClass, Types[]> = {
+  [TrainerClass.AceTrainer]: [],
+  [TrainerClass.Lass]: [Types.Normal],
+  [TrainerClass.BlackBelt]: [Types.Fighting],
+  [TrainerClass.BirdKeeper]: [Types.Flying],
+  [TrainerClass.Biker]: [Types.Poison],
+  [TrainerClass.Hiker]: [Types.Ground],
+  [TrainerClass.PokeManiac]: [Types.Rock],
+  [TrainerClass.BugCatcher]: [Types.Bug],
+  [TrainerClass.Channeler]: [Types.Ghost],
+  [TrainerClass.Burglar]: [Types.Fire],
+  [TrainerClass.Swimmer]: [Types.Water],
+  [TrainerClass.Rocker]: [Types.Electric],
+  [TrainerClass.Psychic]: [Types.Psychic],
+  [TrainerClass.Sage]: [Types.Grass],
+  [TrainerClass.Skier]: [Types.Ice],
+  [TrainerClass.Scientist]: [Types.Steel],
   // Johto's two answer the types Kanto has nobody for: the Den's
   // maniacs keep dragons, and its burglars work after dark
-  [TrainerClass.JohtoPokeManiac]: Types.Dragon,
-  [TrainerClass.JohtoBurglar]: Types.Dark,
-  [TrainerClass.JohtoAceTrainer]: null,
-  [TrainerClass.JohtoLass]: Types.Normal,
-  [TrainerClass.JohtoBlackBelt]: Types.Fighting,
-  [TrainerClass.JohtoBirdKeeper]: Types.Flying,
-  [TrainerClass.JohtoBiker]: Types.Poison,
-  [TrainerClass.JohtoBugCatcher]: Types.Bug,
-  [TrainerClass.JohtoSwimmer]: Types.Water,
-  [TrainerClass.Firebreather]: Types.Fire,
-  [TrainerClass.Medium]: Types.Ghost,
-  [TrainerClass.Teacher]: Types.Psychic,
-  [TrainerClass.SchoolKid]: Types.Electric,
-  [TrainerClass.Youngster]: Types.Ground,
-  [TrainerClass.Camper]: Types.Rock,
+  [TrainerClass.JohtoPokeManiac]: [Types.Dragon],
+  [TrainerClass.JohtoBurglar]: [Types.Dark],
+  [TrainerClass.JohtoAceTrainer]: [],
+  [TrainerClass.JohtoLass]: [Types.Normal],
+  [TrainerClass.JohtoBlackBelt]: [Types.Fighting],
+  [TrainerClass.JohtoBirdKeeper]: [Types.Flying],
+  [TrainerClass.JohtoBiker]: [Types.Poison],
+  [TrainerClass.JohtoBugCatcher]: [Types.Bug],
+  [TrainerClass.JohtoSwimmer]: [Types.Water],
+  [TrainerClass.Firebreather]: [Types.Fire],
+  [TrainerClass.Medium]: [Types.Ghost],
+  [TrainerClass.Teacher]: [Types.Psychic],
+  [TrainerClass.SchoolKid]: [Types.Electric],
+  [TrainerClass.Youngster]: [Types.Ground],
+  [TrainerClass.Camper]: [Types.Rock],
+  // A type may be fielded by more than one trade: the mainline's
+  // classes overlap, and what tells a Beauty from a Lass is who they
+  // are rather than what they bring
+  [TrainerClass.Beauty]: [Types.Normal, Types.Water],
+  [TrainerClass.Fisherman]: [Types.Water],
+  [TrainerClass.Sailor]: [Types.Water, Types.Fighting],
+  [TrainerClass.Gentleman]: [Types.Fire, Types.Electric],
+  [TrainerClass.SuperNerd]: [Types.Poison, Types.Electric],
+  [TrainerClass.Juggler]: [Types.Psychic],
+  [TrainerClass.Tamer]: [Types.Ground, Types.Poison],
+  // Kanto's one steel line, which is a Magneton and nothing else
+  [TrainerClass.Engineer]: [Types.Steel, Types.Electric],
+  [TrainerClass.Gambler]: [Types.Normal, Types.Fire],
+  [TrainerClass.JohtoGentleman]: [Types.Fire, Types.Electric],
+  [TrainerClass.JohtoSuperNerd]: [Types.Poison, Types.Electric],
+  [TrainerClass.JohtoJuggler]: [Types.Psychic],
+  [TrainerClass.Boarder]: [Types.Ice],
 };
 
 /**
@@ -332,7 +419,7 @@ export const TRAINER_CHARSETS: Record<TrainerClass, string[]> = {
   [TrainerClass.Burglar]: ['characters/lgpe/burglar'],
   [TrainerClass.Swimmer]: ['characters/lgpe/swimmer-f', 'characters/lgpe/swimmer-m'],
   [TrainerClass.Rocker]: ['characters/frlg/rocker', 'characters/lgpe/rocker'],
-  [TrainerClass.Psychic]: ['characters/lgpe/psychic', 'characters/lgpe/juggler'],
+  [TrainerClass.Psychic]: ['characters/lgpe/psychic'],
   // The tower's sages and the two elders who keep it, who are the
   // same people a few decades apart
   [TrainerClass.Sage]: [
@@ -342,7 +429,7 @@ export const TRAINER_CHARSETS: Record<TrainerClass, string[]> = {
     'characters/hgss/elder-1',
     'characters/hgss/elder-2',
   ],
-  [TrainerClass.Skier]: ['characters/hgss/skier', 'characters/hgss/boarder'],
+  [TrainerClass.Skier]: ['characters/hgss/skier'],
   [TrainerClass.Scientist]: ['characters/hgss/scientist', 'characters/lgpe/scientist'],
   [TrainerClass.JohtoPokeManiac]: ['characters/hgss/poke-maniac'],
   [TrainerClass.JohtoBurglar]: ['characters/hgss/burglar'],
@@ -361,6 +448,19 @@ export const TRAINER_CHARSETS: Record<TrainerClass, string[]> = {
   // The two halves of one trade, the way the Black Belt keeps the
   // Crush Girl's sheet
   [TrainerClass.Camper]: ['characters/lgpe/camper', 'characters/lgpe/picnicker'],
+  [TrainerClass.Beauty]: ['characters/frlg/beauty'],
+  [TrainerClass.Fisherman]: ['characters/lgpe/fisherman'],
+  [TrainerClass.Sailor]: ['characters/frlg/sailor', 'characters/lgpe/sailor'],
+  [TrainerClass.Gentleman]: ['characters/frlg/gentleman', 'characters/lgpe/gentleman'],
+  [TrainerClass.SuperNerd]: ['characters/lgpe/super-nerd'],
+  [TrainerClass.Juggler]: ['characters/lgpe/juggler'],
+  [TrainerClass.Tamer]: ['characters/frlg/tamer', 'characters/lgpe/tamer'],
+  [TrainerClass.Engineer]: ['characters/lgpe/engineer'],
+  [TrainerClass.Gambler]: ['characters/lgpe/gambler'],
+  [TrainerClass.JohtoGentleman]: ['characters/hgss/gentleman', 'characters/hgss/gentleman-2'],
+  [TrainerClass.JohtoSuperNerd]: ['characters/hgss/super-nerd'],
+  [TrainerClass.JohtoJuggler]: ['characters/hgss/juggler'],
+  [TrainerClass.Boarder]: ['characters/hgss/boarder'],
 };
 
 /**
@@ -377,14 +477,23 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.JohtoPokeManiac,
     TrainerClass.JohtoSwimmer,
     TrainerClass.JohtoBirdKeeper,
+    TrainerClass.Fisherman,
+    TrainerClass.Sailor,
   ],
   [Biome.Ocean]: [
     TrainerClass.Swimmer,
     TrainerClass.BirdKeeper,
     TrainerClass.JohtoSwimmer,
     TrainerClass.JohtoBirdKeeper,
+    TrainerClass.Fisherman,
+    TrainerClass.Sailor,
   ],
-  [Biome.CoralReef]: [TrainerClass.Swimmer, TrainerClass.PokeManiac, TrainerClass.JohtoSwimmer],
+  [Biome.CoralReef]: [
+    TrainerClass.Swimmer,
+    TrainerClass.PokeManiac,
+    TrainerClass.JohtoSwimmer,
+    TrainerClass.Fisherman,
+  ],
   [Biome.Beach]: [
     TrainerClass.Swimmer,
     TrainerClass.Lass,
@@ -392,6 +501,9 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.JohtoSwimmer,
     TrainerClass.JohtoLass,
     TrainerClass.JohtoBirdKeeper,
+    TrainerClass.Beauty,
+    TrainerClass.Fisherman,
+    TrainerClass.Sailor,
   ],
   [Biome.Mangrove]: [
     TrainerClass.Swimmer,
@@ -400,12 +512,17 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.JohtoSwimmer,
     TrainerClass.JohtoBiker,
     TrainerClass.JohtoBugCatcher,
+    TrainerClass.Fisherman,
+    TrainerClass.SuperNerd,
+    TrainerClass.JohtoSuperNerd,
   ],
   [Biome.KelpForest]: [
     TrainerClass.Swimmer,
     TrainerClass.Psychic,
     TrainerClass.JohtoSwimmer,
     TrainerClass.Teacher,
+    TrainerClass.Fisherman,
+    TrainerClass.Juggler,
   ],
   [Biome.PolarOcean]: [
     TrainerClass.Swimmer,
@@ -413,12 +530,14 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.Skier,
     TrainerClass.JohtoSwimmer,
     TrainerClass.JohtoBirdKeeper,
+    TrainerClass.Boarder,
   ],
   [Biome.Glacier]: [
     TrainerClass.Swimmer,
     TrainerClass.Hiker,
     TrainerClass.Skier,
     TrainerClass.JohtoSwimmer,
+    TrainerClass.Boarder,
   ],
   [Biome.Tundra]: [
     TrainerClass.Hiker,
@@ -427,6 +546,7 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.Skier,
     TrainerClass.JohtoBirdKeeper,
     TrainerClass.JohtoLass,
+    TrainerClass.Boarder,
   ],
   [Biome.Swamp]: [
     TrainerClass.Biker,
@@ -436,6 +556,8 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.JohtoBiker,
     TrainerClass.JohtoBugCatcher,
     TrainerClass.Medium,
+    TrainerClass.SuperNerd,
+    TrainerClass.JohtoSuperNerd,
   ],
   [Biome.Bog]: [
     TrainerClass.Biker,
@@ -443,6 +565,8 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.JohtoBurglar,
     TrainerClass.JohtoBiker,
     TrainerClass.Medium,
+    TrainerClass.SuperNerd,
+    TrainerClass.JohtoSuperNerd,
   ],
   [Biome.TropicalSeasonalForest]: [
     TrainerClass.BugCatcher,
@@ -462,6 +586,8 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.JohtoBugCatcher,
     TrainerClass.JohtoBirdKeeper,
     TrainerClass.Youngster,
+    TrainerClass.Beauty,
+    TrainerClass.Gambler,
   ],
   [Biome.TemperateForest]: [
     TrainerClass.BugCatcher,
@@ -479,6 +605,7 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.Sage,
     TrainerClass.JohtoBugCatcher,
     TrainerClass.JohtoLass,
+    TrainerClass.Beauty,
   ],
   [Biome.Savanna]: [
     TrainerClass.BirdKeeper,
@@ -487,6 +614,8 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.JohtoBirdKeeper,
     TrainerClass.JohtoBlackBelt,
     TrainerClass.Youngster,
+    TrainerClass.Sailor,
+    TrainerClass.Tamer,
   ],
   [Biome.Steppe]: [
     TrainerClass.BirdKeeper,
@@ -495,6 +624,7 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.JohtoBirdKeeper,
     TrainerClass.SchoolKid,
     TrainerClass.Youngster,
+    TrainerClass.Tamer,
   ],
   [Biome.Desert]: [
     TrainerClass.Hiker,
@@ -502,6 +632,10 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.Burglar,
     TrainerClass.Firebreather,
     TrainerClass.Youngster,
+    TrainerClass.Gentleman,
+    TrainerClass.JohtoGentleman,
+    TrainerClass.Tamer,
+    TrainerClass.Gambler,
   ],
   [Biome.Volcano]: [
     TrainerClass.Burglar,
@@ -510,6 +644,9 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.Scientist,
     TrainerClass.JohtoPokeManiac,
     TrainerClass.Firebreather,
+    TrainerClass.Gentleman,
+    TrainerClass.JohtoGentleman,
+    TrainerClass.Engineer,
   ],
   [Biome.ColdDesert]: [
     TrainerClass.Hiker,
@@ -517,6 +654,8 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.Skier,
     TrainerClass.Scientist,
     TrainerClass.Camper,
+    TrainerClass.Engineer,
+    TrainerClass.Boarder,
   ],
   [Biome.Mountain]: [
     TrainerClass.Hiker,
@@ -526,12 +665,16 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.JohtoPokeManiac,
     TrainerClass.JohtoBlackBelt,
     TrainerClass.Camper,
+    TrainerClass.Sailor,
+    TrainerClass.Tamer,
+    TrainerClass.Engineer,
   ],
   [Biome.AlpineTundra]: [
     TrainerClass.Hiker,
     TrainerClass.BirdKeeper,
     TrainerClass.Skier,
     TrainerClass.JohtoBirdKeeper,
+    TrainerClass.Boarder,
   ],
   [Biome.Badlands]: [
     TrainerClass.PokeManiac,
@@ -544,6 +687,11 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.Firebreather,
     TrainerClass.Youngster,
     TrainerClass.Camper,
+    TrainerClass.Tamer,
+    TrainerClass.Engineer,
+    TrainerClass.SuperNerd,
+    TrainerClass.JohtoSuperNerd,
+    TrainerClass.JohtoGentleman,
   ],
   [Biome.RockyCoast]: [
     TrainerClass.PokeManiac,
@@ -552,6 +700,8 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.JohtoSwimmer,
     TrainerClass.JohtoBirdKeeper,
     TrainerClass.Camper,
+    TrainerClass.Fisherman,
+    TrainerClass.Sailor,
   ],
   [Biome.TemperateRainforest]: [
     TrainerClass.BugCatcher,
@@ -560,6 +710,8 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.JohtoBugCatcher,
     TrainerClass.Medium,
     TrainerClass.Teacher,
+    TrainerClass.Juggler,
+    TrainerClass.JohtoJuggler,
   ],
   [Biome.MontaneForest]: [
     TrainerClass.Psychic,
@@ -568,6 +720,8 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.Sage,
     TrainerClass.JohtoBugCatcher,
     TrainerClass.Teacher,
+    TrainerClass.Juggler,
+    TrainerClass.JohtoJuggler,
   ],
   [Biome.Beyond]: [
     TrainerClass.Psychic,
@@ -579,6 +733,8 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.Medium,
     TrainerClass.Teacher,
     TrainerClass.SchoolKid,
+    TrainerClass.Juggler,
+    TrainerClass.JohtoJuggler,
   ],
   [Biome.TropicalRainforest]: [
     TrainerClass.BugCatcher,
@@ -588,6 +744,9 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.JohtoBugCatcher,
     TrainerClass.JohtoBiker,
     TrainerClass.Teacher,
+    TrainerClass.SuperNerd,
+    TrainerClass.Juggler,
+    TrainerClass.JohtoJuggler,
   ],
   [Biome.Shrubland]: [
     TrainerClass.Lass,
@@ -597,6 +756,8 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.JohtoLass,
     TrainerClass.JohtoBugCatcher,
     TrainerClass.SchoolKid,
+    TrainerClass.Beauty,
+    TrainerClass.Gambler,
   ],
   [Biome.Taiga]: [
     TrainerClass.Hiker,
@@ -606,6 +767,7 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.JohtoBurglar,
     TrainerClass.JohtoBugCatcher,
     TrainerClass.JohtoBirdKeeper,
+    TrainerClass.Boarder,
   ],
 };
 
@@ -652,6 +814,19 @@ export const TRAINER_QUOTES: Record<TrainerClass, string> = {
   [TrainerClass.SchoolKid]: 'I did the maths on this battle. You will not like the answer.',
   [TrainerClass.Youngster]: 'I have been digging in the dirt since sunrise. Look what came up!',
   [TrainerClass.Camper]: 'Been up this mountain three days. Found rocks. Found these.',
+  [TrainerClass.Beauty]: 'You are staring. Battle me instead, it is less rude.',
+  [TrainerClass.Fisherman]: 'I have been sat here since dawn. Something finally bit.',
+  [TrainerClass.Sailor]: 'I have hauled rope in worse weather than you have walked in.',
+  [TrainerClass.Gentleman]: 'A wager, then? No? A battle will do just as well.',
+  [TrainerClass.SuperNerd]: 'I have read every paper on this. You have read none of them.',
+  [TrainerClass.Juggler]: 'Keep your eyes on the balls. That was the trick, and you looked away.',
+  [TrainerClass.Tamer]: 'Mine do as they are told. Let us see about yours.',
+  [TrainerClass.Engineer]: 'I built half the machines on this road. Meet the rest.',
+  [TrainerClass.Gambler]: 'Double or nothing on this one. You do not get a say.',
+  [TrainerClass.JohtoGentleman]: 'I keep a house in Goldenrod and a temper on the road.',
+  [TrainerClass.JohtoSuperNerd]: 'My notes say you lose in four minutes. Let us test that.',
+  [TrainerClass.JohtoJuggler]: 'Six in the air, and not one of them dropped. Watch this.',
+  [TrainerClass.Boarder]: 'I came down that face sideways. Standing still is the hard part.',
 };
 
 /**
@@ -698,7 +873,7 @@ const LAIR_SPECIES = new Set(EVERY_LAIR.flatMap(getLairResidents));
  * alternate forms and the egg
  */
 export function getTrainerPool(trainer: TrainerClass): Species[] {
-  const type = TRAINER_TYPES[trainer];
+  const types = new Set(TRAINER_TYPES[trainer]);
 
   return getSpeciesByRegion(TRAINER_REGIONS[trainer]).filter((species) => {
     if (species === Species.Egg || LAIR_SPECIES.has(species) || !isBaseForm(species)) {
@@ -710,6 +885,7 @@ export function getTrainerPool(trainer: TrainerClass): Species[] {
     if (getSpawnRarity(species) !== SpawnRarity.Rare) {
       return false;
     }
-    return type == null || getSpeciesData(species).types.includes(type);
+    // An empty list is every type there is, which is the Ace's
+    return types.size === 0 || getSpeciesData(species).types.some((one) => types.has(one));
   });
 }

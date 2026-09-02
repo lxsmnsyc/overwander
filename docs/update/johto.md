@@ -27,6 +27,11 @@ day** (Espeon by day, Umbreon by night), or on **its own stats**: a Tyrogue at
 level 20 becomes a Hitmonlee, a Hitmonchan or a Hitmontop depending on which
 half of it is stronger.
 
+Six of them grow on a **trade with something in their hands**, and the swap
+spends it. Hand over an Onix in a Metal Coat and it arrives a coat lighter with
+nothing left to ask for: Steelix, Scizor, Kingdra, Politoed, Slowking and
+Porygon2 all come this way.
+
 ## Unown, all twenty-eight
 
 Every letter is its own pokemon, with its own sheet, standing in the prized band

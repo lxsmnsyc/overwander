@@ -186,7 +186,7 @@ Who turns up decides what they bring:
 
 | Standing there    | What they field                                    |
 | ----------------- | -------------------------------------------------- |
-| **Ace Trainer**   | Five fully-grown pokemon of any type, levels 60-80. Pays 25,000 to 60,000 |
+| **Ace Trainer**   | Five fully-grown pokemon of any type, levels 60-80, raised the way the Elite Four raise theirs. Pays 25,000 to 60,000 |
 | **A type expert** | Three to five of their own type, levels 40-60. Pays 5,000 to 15,000 |
 
 The type experts are the trainer classes, and both regions' are on the road:

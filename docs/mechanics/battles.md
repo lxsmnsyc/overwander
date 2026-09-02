@@ -263,13 +263,33 @@ A duelling trainer and a Team Rocket grunt field what they caught. Everybody
 above them fields pokemon that were **trained**, which is most of what makes the
 same six harder from their side of the field:
 
-| Whose party        | Abilities | Held items |
-| ------------------ | --------- | ---------- |
-| Trainer, grunt     | 1         | None       |
-| Gym leader         | 1         | 1          |
-| Elite Four, executive | 2      | 1          |
-| Champion, Giovanni | 2         | 2          |
-| Legend             | 3         | 3          |
+| Whose party        | Abilities | Held items | Individual values | Training |
+| ------------------ | --------- | ---------- | ----------------- | -------- |
+| Trainer, grunt     | 1         | None       | Rolled, like anything wild | None |
+| Ace Trainer        | 1         | None       | Perfect HP and Speed, the rest rolled | 252 in those two, 50 in the rest |
+| Gym leader         | 1         | 1          | A flat 10 in every stat | 50 in every stat |
+| Elite Four, executive | 2      | 1          | Perfect HP and Speed, the rest rolled | 252 in those two, 50 in the rest |
+| Champion, Giovanni | 2         | 2          | Perfect HP, Speed and its better attacking and defending stat, the rest rolled | 252 in those four, 50 in the rest |
+| Legend             | 3         | 3          | Perfect, all six | 252 in every stat |
+
+Which stats an expert polishes is read off the species rather than picked: HP and
+Speed first, since every party wants to move first and stay standing, then the
+attacking and defending side its own spread already leans on, so a Steelix is
+raised to take physical hits and an Alakazam to take special ones. A type expert and a grunt have had nothing
+spent on them, and a gym leader's flat 10s are **below** what a lucky roll gives,
+so the ladder's early rungs are beatable on a good catch alone. An **Ace Trainer**
+is the exception on the road: they bring no gear and no second ability, but their
+six are raised the way the Elite Four's are, which is why they hit above the cell
+they stand on.
+
+Above them it is not. An expert is trained past what the five-points-a-level
+budget would ever allow a player's own pokemon, which is the ladder's answer to a
+player who breeds and trains: see [Raising a pokemon](raising.md) for what that
+budget is.
+
+What a Team Rocket prize is worth is untouched by any of this. The pokemon handed
+over is the one the roll made, values and all, not the one that was raised to
+fight.
 
 A second ability is the one thing a player cannot get by catching the same
 species: a wild meeting rolls one and keeps it. The gear is the pokemon's own

@@ -362,7 +362,7 @@ export async function startRocketBattle(
                   toSpawns(record.party),
                   shadow,
                   levels,
-                  stopOutfit(landmark ?? Landmark.TeamRocket, rank, legend),
+                  stopOutfit(landmark ?? Landmark.TeamRocket, rank, legend, duellist ?? undefined),
                 ),
               )})
     `;

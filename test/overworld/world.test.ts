@@ -55,7 +55,15 @@ import { BANNED_BOSS_MOVES, BOSS_BASE_HEALTH } from '../../src/battle/abilities/
 import { EffectType } from '../../src/battle/events';
 import { getMaxHealth } from '../../src/auth/health';
 import { isShadow, isShiny } from '../../src/auth/caught-record';
-import { PERFECT_IVS, Stats, unpackIVs } from '../../src/data/constants/stats';
+import {
+  MAX_EFFORT_PER_STAT,
+  MAX_IV,
+  PERFECT_IVS,
+  STAT_ORDER,
+  Stats,
+  getIV,
+  unpackIVs,
+} from '../../src/data/constants/stats';
 import { Statuses, packStatuses } from '../../src/data/ids/status';
 import {
   type RocketRecord,
@@ -104,6 +112,7 @@ import {
 } from '../../src/overworld/raid';
 import { collectAftermath, createRaidBattle } from '../../src/overworld/raid-battle';
 import {
+  ACE_OUTFIT,
   CHAMPION_GOLD,
   CHAMPION_OUTFIT,
   CHAMPION_PARTY_LEVELS,
@@ -124,6 +133,7 @@ import {
   ROCKET_REWARD_LEVEL,
   TYPE_TRAINER_GOLD,
   createRocketParty,
+  polishedStats,
   rocketPartyLevels,
   rollStopGold,
   rollStopLoot,
@@ -1356,6 +1366,18 @@ describe('world', () => {
     // its six, the Elite Four and the executives train a second
     // ability into them, and a champion and Giovanni do both twice
     expect(stopOutfit(Landmark.Trainer, RocketRank.Grunt)).toEqual(PLAIN_OUTFIT);
+    // An Ace Trainer catches what anybody catches and raises it the
+    // way the Elite Four do
+    expect(stopOutfit(Landmark.Trainer, RocketRank.Grunt, false, TrainerClass.AceTrainer)).toEqual(
+      ACE_OUTFIT,
+    );
+    expect(ACE_OUTFIT.training).toBe(ELITE_OUTFIT.training);
+    expect(
+      stopOutfit(Landmark.Trainer, RocketRank.Grunt, false, TrainerClass.JohtoAceTrainer),
+    ).toEqual(ACE_OUTFIT);
+    expect(stopOutfit(Landmark.Trainer, RocketRank.Grunt, false, TrainerClass.Swimmer)).toEqual(
+      PLAIN_OUTFIT,
+    );
     expect(stopOutfit(Landmark.TeamRocket, RocketRank.Grunt)).toEqual(PLAIN_OUTFIT);
     expect(stopOutfit(Landmark.GymLeader, RocketRank.Grunt)).toEqual(GYM_OUTFIT);
     expect(stopOutfit(Landmark.EliteFour, RocketRank.Grunt)).toEqual(ELITE_OUTFIT);
@@ -1432,6 +1454,94 @@ describe('world', () => {
       expect(new Set(member.items).size).toBe(3);
       expect(getSlots(member.slots, Slots.Item)).toBe(3);
       expect(getSlots(member.slots, Slots.Ability)).toBe(member.abilities.length);
+    }
+  });
+
+  it('raises an expert’s party by its rung', () => {
+    const world = new World('overworld');
+    const chunk = findChunk(
+      world,
+      (candidate) => new ChunkSnapshot(candidate, 0).getRocketStops().size > 0,
+    );
+
+    expect(chunk).not.toBeNull();
+    if (chunk == null) {
+      return;
+    }
+
+    const snapshot = new ChunkSnapshot(chunk, 0);
+    const [spawns] = [...snapshot.getRocketStops().values()];
+    const fielded = (outfit: typeof PLAIN_OUTFIT): CatchSnapshot[] =>
+      createRocketParty(snapshot, spawns, false, ELITE_PARTY_LEVELS, outfit);
+    const rolled = createRocketParty(snapshot, spawns, false, ELITE_PARTY_LEVELS, PLAIN_OUTFIT);
+
+    // A duelling trainer's and a grunt's is what the roll gave, with
+    // nothing spent on it
+    for (const member of rolled) {
+      for (const stat of STAT_ORDER) {
+        expect(member.effortValues[stat]).toBe(0);
+      }
+    }
+
+    // A gym leader's is evenly raised and evenly valued, which is
+    // below what a lucky roll would have given
+    for (const member of fielded(GYM_OUTFIT)) {
+      for (const stat of STAT_ORDER) {
+        expect(getIV(member.ivs, stat)).toBe(10);
+        expect(member.effortValues[stat]).toBe(50);
+      }
+    }
+
+    for (const [outfit, polished] of [
+      [ELITE_OUTFIT, 2],
+      [CHAMPION_OUTFIT, 4],
+      [LEGEND_OUTFIT, 6],
+    ] as const) {
+      const party = fielded(outfit);
+
+      for (const [index, member] of party.entries()) {
+        const best = new Set(polishedStats(member.species).slice(0, polished));
+
+        for (const stat of STAT_ORDER) {
+          if (best.has(stat)) {
+            expect(getIV(member.ivs, stat)).toBe(MAX_IV);
+            expect(member.effortValues[stat]).toBe(MAX_EFFORT_PER_STAT);
+            continue;
+          }
+          // Everything else is the roll, untouched, and the rung's
+          // even share of training on top
+          expect(getIV(member.ivs, stat)).toBe(getIV(rolled[index].ivs, stat));
+          expect(member.effortValues[stat]).toBe(50);
+        }
+        // HP and Speed are what every rung above a gym polishes first
+        expect(best.has(Stats.HP)).toBe(true);
+        expect(best.has(Stats.Speed)).toBe(true);
+      }
+    }
+
+    // A legend leaves nothing to raise
+    for (const member of fielded(LEGEND_OUTFIT)) {
+      expect(member.ivs).toBe(PERFECT_IVS);
+    }
+  });
+
+  it('polishes the side of its own spread a species leans on', () => {
+    // Steelix attacks and defends physically; Alakazam does neither
+    expect(polishedStats(Species.Steelix).slice(0, 4)).toEqual([
+      Stats.HP,
+      Stats.Speed,
+      Stats.Attack,
+      Stats.Defense,
+    ]);
+    expect(polishedStats(Species.Alakazam).slice(0, 4)).toEqual([
+      Stats.HP,
+      Stats.Speed,
+      Stats.SpecialAttack,
+      Stats.SpecialDefense,
+    ]);
+    // All six, once, however the spread falls
+    for (const species of [Species.Steelix, Species.Alakazam, Species.Snorlax]) {
+      expect(new Set(polishedStats(species)).size).toBe(STAT_ORDER.length);
     }
   });
 

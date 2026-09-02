@@ -3,7 +3,7 @@ import { SHADOW_FRIENDSHIP } from '../data/constants/friendship';
 import AleaRNG from '../core/alea';
 import type { CatchSnapshot } from '../auth/catch-snapshot';
 import { getMaxHealth } from '../auth/health';
-import { Stats } from '../data/constants/stats';
+import { MAX_EFFORT_PER_STAT, MAX_IV, STAT_ORDER, Stats, setIV } from '../data/constants/stats';
 import { Slots, defaultSlots, withSlots } from '../data/constants/slots';
 import { getExpertHeldItems } from '../data/items/expert-loadout';
 import Abilities from '../data/ids/abilities';
@@ -27,6 +27,8 @@ import {
   isAceTrainer,
 } from '../data/overworld/trainers';
 import type { Items } from '../data/ids/items';
+import type { Species } from '../data/ids/species';
+import { getSpeciesData } from '../data/species';
 import { ITEM_POOL, type ItemBandOdds, pickItem } from '../data/overworld/item-pool';
 import type ChunkSnapshot from './chunk-snapshot';
 import { RocketRank, type Spawn } from './chunk-snapshot';
@@ -361,35 +363,137 @@ function zeroEffortValues(): Record<Stats, number> {
  * carries.
  *
  * A league seat and everybody above a Team Rocket grunt field trained
- * pokemon rather than caught ones, and this is the whole of what that
- * means: a second ability, which no wild meeting ever rolls, and gear
- * chosen for the species holding it. The rungs climb by adding one at
- * a time
+ * pokemon rather than caught ones: a second ability, which no wild
+ * meeting ever rolls, gear chosen for the species holding it, and the
+ * values and effort of something raised for the fight. The rungs
+ * climb by adding one at a time
  */
+/**
+ * How the stop's party was raised: what its values were polished to
+ * and what was trained into it, on top of the roll the spawn gave it.
+ *
+ * The polished stats are taken best-first, `polishedStats` order: a
+ * rank that polishes two takes HP and Speed, one that polishes four
+ * takes the side of its own spread the species leans on as well
+ */
+export interface StopTraining {
+  /** Stats raised to a perfect value and trained to the ceiling */
+  polished: number;
+  /** What every other stat is trained to */
+  effort: number;
+  /** What every other value is set to, or null to keep the roll */
+  values: number | null;
+}
+
+/** Nobody raised it: what the roll gave, with nothing spent on it. */
+export const PLAIN_TRAINING: StopTraining = { polished: 0, effort: 0, values: null };
+
+/** A gym leader's party is evenly raised rather than pointed. */
+export const GYM_TRAINING: StopTraining = { polished: 0, effort: 50, values: 10 };
+
+/** The Elite Four's, and the executives': fast and hard to drop. */
+export const ELITE_TRAINING: StopTraining = { polished: 2, effort: 50, values: null };
+
+/** A champion's, and Giovanni's: that, and the side they attack on. */
+export const CHAMPION_TRAINING: StopTraining = { polished: 4, effort: 50, values: null };
+
+/** A legend's: nothing left to raise. */
+export const LEGEND_TRAINING: StopTraining = {
+  polished: STAT_ORDER.length,
+  effort: MAX_EFFORT_PER_STAT,
+  values: MAX_IV,
+};
+
+/**
+ * The six stats in the order a rank polishes them: HP and Speed
+ * first, since every party wants to move first and stay up, then the
+ * attacking and defending stat the species' own spread leans on, then
+ * the two it does not
+ */
+export function polishedStats(species: Species): Stats[] {
+  const base = getSpeciesData(species).stats;
+  const physical = base[Stats.Attack] >= base[Stats.SpecialAttack];
+  const sturdy = base[Stats.Defense] >= base[Stats.SpecialDefense];
+
+  return [
+    Stats.HP,
+    Stats.Speed,
+    physical ? Stats.Attack : Stats.SpecialAttack,
+    sturdy ? Stats.Defense : Stats.SpecialDefense,
+    physical ? Stats.SpecialAttack : Stats.Attack,
+    sturdy ? Stats.SpecialDefense : Stats.Defense,
+  ];
+}
+
+/**
+ * The values and effort one of the stop's pokemon fields. The spawn
+ * tuple is read and never written, so what a beaten stop hands over
+ * is the pokemon the roll made, not the one it raised
+ */
+export function trainStop(
+  species: Species,
+  rolled: number,
+  training: StopTraining,
+): { ivs: number; effortValues: Record<Stats, number> } {
+  const polished = new Set(polishedStats(species).slice(0, training.polished));
+  const effortValues = zeroEffortValues();
+  let ivs = rolled;
+
+  for (const stat of STAT_ORDER) {
+    if (polished.has(stat)) {
+      ivs = setIV(ivs, stat, MAX_IV);
+      effortValues[stat] = MAX_EFFORT_PER_STAT;
+      continue;
+    }
+    if (training.values != null) {
+      ivs = setIV(ivs, stat, training.values);
+    }
+    effortValues[stat] = training.effort;
+  }
+  return { ivs, effortValues };
+}
+
 export interface StopOutfit {
   /** Ordinary abilities each carries, the Shadow mark aside */
   abilities: number;
   /** Held items each carries */
   items: number;
+  /** What was polished and trained into each */
+  training: StopTraining;
 }
 
 /** What a duelling trainer and a grunt field: what they caught. */
-export const PLAIN_OUTFIT: StopOutfit = { abilities: 1, items: 0 };
+export const PLAIN_OUTFIT: StopOutfit = { abilities: 1, items: 0, training: PLAIN_TRAINING };
 
 /** A gym leader's party is geared but not doubled. */
-export const GYM_OUTFIT: StopOutfit = { abilities: 1, items: 1 };
+export const GYM_OUTFIT: StopOutfit = { abilities: 1, items: 1, training: GYM_TRAINING };
+
+/**
+ * An Ace Trainer's: what they caught, raised the way the Elite Four
+ * raise theirs. Nothing they field is beyond what a walk could have
+ * met, and all of it is fast and hard to drop
+ */
+export const ACE_OUTFIT: StopOutfit = { abilities: 1, items: 0, training: ELITE_TRAINING };
 
 /** The Elite Four's, and the executives who match them. */
-export const ELITE_OUTFIT: StopOutfit = { abilities: 2, items: 1 };
+export const ELITE_OUTFIT: StopOutfit = { abilities: 2, items: 1, training: ELITE_TRAINING };
 
 /** A champion's, and Giovanni's: two of everything. */
-export const CHAMPION_OUTFIT: StopOutfit = { abilities: 2, items: 2 };
+export const CHAMPION_OUTFIT: StopOutfit = { abilities: 2, items: 2, training: CHAMPION_TRAINING };
 
 /** A legend's: three of everything, on six at the ceiling. */
-export const LEGEND_OUTFIT: StopOutfit = { abilities: 3, items: 3 };
+export const LEGEND_OUTFIT: StopOutfit = { abilities: 3, items: 3, training: LEGEND_TRAINING };
 
 /** What the party at this stop is fielded with */
-export function stopOutfit(landmark: Landmark, rank: RocketRank, legend = false): StopOutfit {
+export function stopOutfit(
+  landmark: Landmark,
+  rank: RocketRank,
+  legend = false,
+  duellist?: TrainerClass,
+): StopOutfit {
+  if (landmark === Landmark.Trainer && duellist != null && isAceTrainer(duellist)) {
+    return ACE_OUTFIT;
+  }
   if (landmark === Landmark.GymLeader) {
     return GYM_OUTFIT;
   }
@@ -445,14 +549,17 @@ export function createRocketSnapshot(
     ]),
   ];
   const items = getExpertHeldItems(fielded.species, outfit.items);
+  // Read off the roll rather than over it: the spawn tuple is what a
+  // beaten stop hands over, and raising a party must not touch it
+  const { ivs, effortValues } = trainStop(fielded.species, fielded.ivs, outfit.training);
 
   return {
     // A stop's pokemon stands for no catch record
     caught: '',
     species: fielded.species,
     level: fielded.level,
-    ivs: fielded.ivs,
-    effortValues: zeroEffortValues(),
+    ivs,
+    effortValues,
     nature: fielded.nature,
     gender: fielded.gender,
     height: size.height,
@@ -475,8 +582,8 @@ export function createRocketSnapshot(
     health: getMaxHealth({
       species: fielded.species,
       level: fielded.level,
-      ivs: fielded.ivs,
-      effortValues: zeroEffortValues(),
+      ivs,
+      effortValues,
     }),
     // A shadow has been made to fight and nothing else
     friendship: SHADOW_FRIENDSHIP,

@@ -27,6 +27,7 @@ import AnimatedSprite from '../sprites/AnimatedSprite';
 import { SparklesIcon } from '../icons';
 import { Badge, Button, Dialog, DialogActions, Status } from '../styled';
 import { SpriteAnim } from '../../data/ids/sprite-anims';
+import settings, { setSetting } from '../app/settings';
 
 /**
  * Whether the item is something the encounter would eat
@@ -213,14 +214,45 @@ function SafariBody(
   const stockOf = (item: Items): number =>
     (props.bag.latest ?? []).find((entry) => entry.item === item)?.amount ?? 0;
 
-  // A session opens on the Poke Ball, which is not necessarily what
-  // the player has. The first ball in the bag stands in, so the throw
-  // is one the player can actually make without going through it
+  /**
+   * Which session has already been handed its ball, so the player's
+   * own choice is not snapped back underneath them. The bag is re-read
+   * after every throw, and without this the effect below would pick
+   * the ball again each time it lands
+   */
+  let handed: SafariSession<EncounterRecord> | null = null;
+
+  /**
+   * What is in hand when a meeting opens.
+   *
+   * A session opens on the Poke Ball, which is neither necessarily
+   * what the player has nor what they were using. Where they still
+   * carry the ball they last threw, that is picked up again; failing
+   * that the first ball in the bag stands in, so the throw is one they
+   * can actually make without going through the bag first.
+   *
+   * Waits on the bag rather than running as the session arrives: what
+   * the player is carrying decides both answers, and it is still being
+   * read when the encounter opens
+   */
   createEffect(() => {
     const active = props.session;
     const carried = balls();
 
-    if (active == null || carried.length === 0 || stockOf(BALL_ITEMS[active.ball]) > 0) {
+    if (active == null || carried.length === 0) {
+      return;
+    }
+    if (settings().keepBall && handed !== active) {
+      const again = settings().lastBall;
+
+      if (stockOf(BALL_ITEMS[again]) > 0) {
+        handed = active;
+        active.chooseBall(again);
+        setRevision((value) => value + 1);
+        return;
+      }
+    }
+    if (stockOf(BALL_ITEMS[active.ball]) > 0) {
       return;
     }
     active.chooseBall(carried[0][0]);
@@ -288,11 +320,16 @@ function SafariBody(
           : `It would not take the ${describeItem(thrown)}.`;
       }
 
+      const spent = active.ball;
       const thrownAt = await throwBall(active);
 
       if (thrownAt == null) {
         return 'No ball of that kind to throw.';
       }
+      // Written down whatever the setting says: the record is of what
+      // happened, and turning the setting on later should pick up the
+      // ball the player was actually using
+      setSetting('lastBall', spent);
       // Held onto rather than handed straight up. A ball that holds
       // used to throw the catch sheet over the encounter in the same
       // beat — several screens of detail arriving before the player

@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 import { signIn } from './game';
 
 /**
- * The staff command bar, opened with Ctrl+K.
+ * The staff command bar, opened with a slash.
  *
  * Every command here is checked through the screen rather than
  * through what it returned, because the two things that broke it were
@@ -26,7 +26,7 @@ test('the command bar runs its commands', async ({ page }) => {
   // the first moment of the session
   const open = async (): Promise<void> => {
     await expect(async () => {
-      await page.keyboard.press('Control+k');
+      await page.keyboard.press('/');
       await expect(bar).toBeVisible({ timeout: 2_000 });
     }).toPass({ timeout: 30_000 });
   };

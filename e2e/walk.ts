@@ -54,7 +54,12 @@ export function spotOf(
 
 /** The board itself, which is the whole page under everything else */
 export function boardOf(page: Page): Locator {
-  return page.locator('main canvas').first();
+  // By its role rather than by being the first canvas in the page: the
+  // board is drawn on one canvas and pressed on another, the painting
+  // one comes first, and it is `aria-hidden` with no name and no title
+  // on it. Read off that one, everything this file asks the board
+  // comes back empty
+  return page.getByRole('application', { name: /^Chunk map\./ });
 }
 
 /** Where a cell sits on screen */

@@ -24,6 +24,8 @@ export { default as HoverCard, showSafeAreas } from './hover-card';
 export type { HoverCardPlacement, HoverCardProps, HoverCardWidth } from './hover-card';
 export { default as IconSlot } from './icon';
 export type { IconSlotProps } from './icon';
+export { default as KeyBind, keyLabel } from './key-bind';
+export type { KeyBindProps } from './key-bind';
 export type { FilterOption, FilterProps } from './filter';
 export { List, ListRow, Meta, RowButton } from './list';
 export { default as Menu } from './menu';

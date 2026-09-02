@@ -6,6 +6,7 @@ import {
   createEffect,
   createSignal,
   onCleanup,
+  onMount,
 } from 'solid-js';
 import { Dynamic } from 'solid-js/web';
 import { Popover, PopoverButton, PopoverPanel, Transition } from 'terracotta';
@@ -42,6 +43,7 @@ import WeatherIcon from '../overworld/WeatherIcon';
 import { Divider, HoverCard } from '../styled';
 import { SHEER } from '../styled/transition';
 import { ThemeToggle } from './theme';
+import { actionOf, forTheGame } from './keys';
 import settings, { type ClockFormat } from './settings';
 
 /**
@@ -182,6 +184,9 @@ export default function GameMenu(): JSX.Element {
   const [now, setNow] = createSignal(toLocalTime(serverNow(), getLocalOffset()));
   const [gold, setGold] = createSignal<number | null>(null);
 
+  /** The way in, kept so the bound key can hand it the keyboard */
+  let button: HTMLButtonElement | undefined;
+
   /** How many things are waiting on the player, for the key's own badge */
   const waiting = (): number => game.notices().length;
 
@@ -234,6 +239,27 @@ export default function GameMenu(): JSX.Element {
     onCleanup(stop);
   });
 
+  /**
+   * The bound key puts the keyboard on the bar rather than opening it.
+   * The button is then a button: Enter opens the panel, and a player
+   * who pressed the key to see where they were reads the bar and walks
+   * on without a panel over the world
+   */
+  onMount(() => {
+    const onKey = (event: KeyboardEvent): void => {
+      if (!forTheGame(event) || actionOf(event, settings().keys) !== 'menu') {
+        return;
+      }
+      event.preventDefault();
+      button?.focus();
+    };
+
+    window.addEventListener('keydown', onKey);
+    onCleanup(() => {
+      window.removeEventListener('keydown', onKey);
+    });
+  });
+
   return (
     <nav
       aria-label="Game"
@@ -255,6 +281,7 @@ export default function GameMenu(): JSX.Element {
           border-2 border-tide bg-paper/95 py-1 pr-4 pl-1 shadow-pop backdrop-blur-sm"
       >
         <PopoverButton
+          ref={button}
           class="flex shrink-0 cursor-pointer items-center gap-2 rounded-full border-2
             border-transparent bg-transparent px-3 py-1 text-sm font-bold text-ink shadow-none
             transition-colors hover:bg-tide hover:text-on-accent focus-visible:outline-2

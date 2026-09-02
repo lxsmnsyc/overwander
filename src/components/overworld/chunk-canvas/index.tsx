@@ -14,7 +14,6 @@ import {
   compassMarks,
   facingFrom,
   fitPicture,
-  isBoardCell,
   isBorderCell,
   paintOrder,
   projectBoardCellQuad,
@@ -94,7 +93,6 @@ import {
   LOADING_LABEL,
   LOADING_SIZE,
   MARK_WEIGHT,
-  MOVE_KEYS,
   NPC_CELLS,
   PICKED_STAGE,
   PLANT_CELLS,
@@ -158,6 +156,12 @@ export interface ChunkCanvasProps {
    * The cell the player is standing on
    */
   player: number;
+  /**
+   * The way they are standing, as a step. A walk turns them itself;
+   * this is what turns them when a step was refused, so a player stood
+   * against a landmark faces the landmark
+   */
+  facing: [number, number];
   /**
    * The charset the player is drawn in, under `sprites/overworld`.
    * Left out, the default red-trainer sheet
@@ -911,32 +915,14 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
     crossedAt = half == null ? 0 : performance.now();
   });
   /**
-   * The cell the keyboard is pointing at. It follows the player until
-   * it is moved, and goes back to them whenever they walk — which is
-   * what a player looking at their own square expects, and it means
-   * the cursor is never left behind in a chunk they have left
+   * The cell the player is looking at, which is where the interact key
+   * acts. It is a board cell rather than a chunk one, so a player
+   * facing out of the chunk faces a threshold
    */
-  const [cursor, setCursor] = createSignal<BoardCell>(boardCellOf(props.player));
+  const faced = (): BoardCell => {
+    const standing = boardCellOf(props.player);
 
-  createEffect(() => {
-    setCursor(boardCellOf(props.player));
-  });
-
-  /**
-   * Point somewhere else. The thresholds count, since leaving is
-   * something a player at a keyboard has to be able to ask for too,
-   * but the apron's corners do not: nothing pressed there does
-   * anything
-   */
-  const moveCursor = ([dx, dy]: [number, number]): void => {
-    setCursor((at) => {
-      const next = { x: at.x + dx, y: at.y + dy };
-
-      if (!isBoardCell(next) || (isBorderCell(next) && borderExit(next) == null)) {
-        return at;
-      }
-      return next;
-    });
+    return { x: standing.x + props.facing[0], y: standing.y + props.facing[1] };
   };
 
   /**
@@ -1354,6 +1340,10 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       if (span > SNAP_CELLS) {
         slide.x = goalX;
         slide.y = goalY;
+        // Standing still, so the way they are standing is the caller's
+        // to say: a step refused by a landmark moved nobody and still
+        // turned them to face it
+        heading = facingToward(0, 0, props.facing[0], props.facing[1]);
         walker?.stop();
       } else if (span > 0) {
         const gain = slideGain(span, elapsed);
@@ -1363,6 +1353,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         slide.y += (dy / span) * gain;
         walker?.advanceBy(gain * CELL_STRIDE);
       } else {
+        heading = facingToward(0, 0, props.facing[0], props.facing[1]);
         walker?.stop();
       }
       setBeat((count) => count + 1);
@@ -2225,31 +2216,12 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         }
       }
 
-      /**
-       * Over everything, and only while the keyboard is in here: what
-       * Enter would walk to. It is drawn last rather than in its own
-       * row, because it is a mark on the picture rather than a thing
-       * standing on the board — and the apron is as pressable as the
-       * chunk, so it has to be able to appear out there.
-       *
-       * Never on the player's own cell. The cursor rests there until
-       * it is moved, so drawing it would put a square under the
-       * character for as long as the board has focus, which says
-       * nothing: the character is already where the character is
-       */
-      const pointed = cursor();
-      const standing = boardCellOf(props.player);
-
-      if (focused() && (pointed.x !== standing.x || pointed.y !== standing.y)) {
-        callOut(projectBoardCellQuad(pointed, yaw()).map(at), COLORS.cursor);
-      }
-
       // A border while the keyboard is in here. It is not decoration:
-      // the cursor keys only work while this has focus, so whether it
-      // does is the difference between the arrows pointing at
-      // something and doing nothing at all. It follows the board's own
-      // outline — the apron included, since that is as pressable as
-      // the rest — which is a trapezoid rather than the canvas
+      // the camera keys only work while this has focus, so whether it
+      // does is the difference between Q and E turning the board and
+      // doing nothing at all. It follows the board's own outline — the
+      // apron included, since that is as pressable as the rest — which
+      // is a trapezoid rather than the canvas
       const edge = focused() ? COLORS.cursor : COLORS.grid;
       const weight = focused() ? 3 : 1;
 
@@ -2373,12 +2345,16 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         // that its cells are paint rather than 256 buttons: tab to it,
         // point with the arrows, and walk there with Enter
         tabindex={0}
+        // The walking keys are read at the window, and this is what
+        // says they still count while the board itself has the
+        // keyboard rather than only while nothing does
+        data-game-keys=""
         role="application"
         // The caption is painted, so it is said here as well: it is the
         // only place the chunk names itself now
         aria-label={`Chunk map. ${props.caption}. ${
-          nameOf(cursor()) || 'Empty ground'
-        } under the cursor.`}
+          nameOf(faced()) || 'Empty ground'
+        } ahead of you.`}
         // A canvas has no per-cell elements to hang a tooltip on, so the
         // one tooltip it has says whatever the pointer is over
         title={nameOf(hovered())}
@@ -2476,30 +2452,16 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
           setFocused(false);
         }}
         onKeyDown={(event) => {
-          const step = MOVE_KEYS.get(event.key.length === 1 ? event.key.toLowerCase() : event.key);
-
-          if (step != null) {
-            event.preventDefault();
-            // They point rather than walk. Nothing walks a cell at a
-            // time any more: a press says where to be and the walk is
-            // worked out, so the arrows are how a keyboard says where
-            moveCursor(step);
-            return;
-          }
+          // The camera only. Walking and reaching are read at the
+          // window, so that they answer whether or not the board has
+          // ever been clicked on — see `app/keys.ts`
+          //
           // The same walk round the board, for a keyboard — and for
           // anyone whose pointer can do neither gesture. An eighth of a
           // turn a press, which is one sprite facing
           if (event.key === 'q' || event.key === 'e') {
             event.preventDefault();
             setYaw((angle) => angle + (event.key === 'q' ? -QUARTER_TURN : QUARTER_TURN) / 2);
-            return;
-          }
-          if (event.key === 'Enter' || event.key === ' ') {
-            event.preventDefault();
-
-            if (!loading()) {
-              props.onPress(cursor());
-            }
           }
         }}
         onClick={(event) => {
@@ -2524,7 +2486,6 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
           const cell = cellAt(event);
 
           if (cell != null) {
-            setCursor(cell);
             props.onPress(cell);
           }
         }}

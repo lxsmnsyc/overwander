@@ -1,4 +1,4 @@
-import type { JSX } from 'solid-js';
+import { For, type JSX } from 'solid-js';
 import { useColorScheme, usePreferredColorScheme } from 'terracotta';
 import settings, {
   type BoxColumns,
@@ -6,8 +6,10 @@ import settings, {
   type WorldTimeFace,
   setSetting,
 } from '../app/settings';
+import { ACTION_NAMES, ACTION_ORDER, type GameAction } from '../app/keys';
 import {
   Card,
+  KeyBind,
   Note,
   Panel,
   RadioGroup,
@@ -74,6 +76,39 @@ const BOX_WIDTHS: { value: BoxColumns; label: string; description: string }[] = 
   { value: 8, label: 'Eight wide', description: '40 to a box, for sweeping a long collection.' },
 ];
 
+/** What each direction does where it is used, said once */
+const CONTROL_NOTES: Record<GameAction, string> = {
+  up: 'North on the board.',
+  down: 'South on the board.',
+  left: 'West on the board.',
+  right: 'East on the board.',
+  interact: 'Whatever the player is facing.',
+  menu: 'Puts the keyboard on the bar along the bottom.',
+};
+
+/**
+ * Bind a key, and hand whatever had it the key it displaced.
+ *
+ * Two actions on one key is one of them doing nothing, and which one
+ * is not something a player can see. Swapping keeps every action bound
+ * to something without asking anybody to clear one first
+ */
+function bindKey(action: GameAction, key: string): void {
+  const binds = settings().keys;
+
+  if (binds[action] === key) {
+    return;
+  }
+
+  const clashing = ACTION_ORDER.find((one) => binds[one] === key);
+  const next = { ...binds, [action]: key };
+
+  if (clashing != null) {
+    next[clashing] = binds[action];
+  }
+  setSetting('keys', next);
+}
+
 function GeneralPane(): JSX.Element {
   return (
     <Panel>
@@ -86,6 +121,37 @@ function GeneralPane(): JSX.Element {
           checked={settings().reduceMotion}
           onChange={(on) => {
             setSetting('reduceMotion', on);
+          }}
+        />
+      </Card>
+
+      <Card title="Controls">
+        <Note>
+          The arrows always walk, whatever these say. Read while nothing else on the page has the
+          keyboard, so a key typed into a search box is a key typed into a search box.
+        </Note>
+        <For each={ACTION_ORDER}>
+          {(action) => (
+            <KeyBind
+              label={ACTION_NAMES[action]}
+              description={CONTROL_NOTES[action]}
+              value={settings().keys[action]}
+              onChange={(key) => {
+                bindKey(action, key);
+              }}
+            />
+          )}
+        </For>
+      </Card>
+
+      <Card title="Encounters">
+        <Switch
+          label="Keep the last ball"
+          description="A meeting opens on whatever ball you last threw, where you still carry
+            one. Off, every meeting opens on a Poke Ball."
+          checked={settings().keepBall}
+          onChange={(on) => {
+            setSetting('keepBall', on);
           }}
         />
       </Card>

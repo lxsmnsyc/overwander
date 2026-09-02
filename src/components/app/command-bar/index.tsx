@@ -17,13 +17,14 @@ import Offers from './offers';
 import type { Origin } from './locate';
 import { COMMAND_MARK, completeCommand } from '../../../core/command';
 import { getPosition } from '../../../auth/positions';
+import { forTheGame } from '../keys';
 import type { CommandResult } from './run';
 import runCommand from './run';
 import { sharedPrefix } from '../../../core/query';
 import { useGame } from '../game-context';
 
 /**
- * The bar staff type at, opened with Ctrl+K.
+ * The bar staff type at, opened with a slash.
  *
  * It is the search box's grammar with a command in front of it, and
  * it finishes both halves the same way. What differs is that a search
@@ -86,16 +87,19 @@ export default function CommandBar(props: CommandBarProps): JSX.Element {
   const optionId = (index: number): string => `${listId}-${index}`;
 
   /**
-   * Ctrl+K, and Cmd+K where that is the modifier people reach for.
+   * A slash, the way a chat window opens a command.
+   *
    * Listened for at the window rather than on anything drawn, since
-   * the bar is not on screen until it is asked for
+   * the bar is not on screen until it is asked for, and only while
+   * nothing on the page has the keyboard: a slash typed into a search
+   * box is a slash
    */
   createEffect(() => {
     if (!props.allowed) {
       return;
     }
     const onKey = (event: KeyboardEvent): void => {
-      if (event.key.toLowerCase() !== 'k' || !(event.ctrlKey || event.metaKey)) {
+      if (event.key !== '/' || !forTheGame(event)) {
         return;
       }
       event.preventDefault();

@@ -259,6 +259,46 @@ export function getCatchName(caught: { nickname: string; species: Species }): st
 }
 
 /**
+ * Who first held it, or null for a record written before the history
+ * was kept. A distributed pokemon's is a name in a story rather than
+ * an account, which no player's uid matches, so it belongs to nobody
+ * standing here
+ */
+export function originalOwner(caught: { history: OwnershipRecord[] }): string | null {
+  return caught.history.at(0)?.owner ?? null;
+}
+
+/**
+ * Whether `uid` is the player who first held it
+ */
+export function isOriginalOwner(caught: { history: OwnershipRecord[] }, uid: string): boolean {
+  return uid !== '' && originalOwner(caught) === uid;
+}
+
+/**
+ * Whether the name it answers to is its first owner's to change and
+ * nobody else's.
+ *
+ * A pokemon that has changed hands keeps the name it was given: the
+ * name is part of what the last owner handed over, the way its ribbons
+ * and its history are. An **unnamed** one may still be named, since
+ * there is nothing there to overwrite, and a pokemon that finds its
+ * way home may be renamed by the trainer who named it in the first
+ * place.
+ *
+ * A record from before the history was kept has nothing to answer
+ * with, and is left to its holder
+ */
+export function isNicknameLocked(
+  caught: { nickname: string; history: OwnershipRecord[] },
+  uid: string,
+): boolean {
+  const first = originalOwner(caught);
+
+  return caught.nickname !== '' && first != null && first !== uid;
+}
+
+/**
  * Whether the catch sparkles, as its original catcher saw it
  */
 export function isShiny(caught: { shiny: boolean }): boolean {

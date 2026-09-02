@@ -1,5 +1,10 @@
 import 'server-only';
-import { Acquisition, asCaughtPokemon, isAuctionableCatch } from '../auth/caught-record';
+import {
+  Acquisition,
+  asCaughtPokemon,
+  isAuctionableCatch,
+  isNicknameLocked,
+} from '../auth/caught-record';
 import { asNickname } from '../auth/nickname';
 import { type EncounterRecord, asEncounterRecord } from '../auth/encounter-record';
 import { getMaxHealth, needsCare } from '../auth/health';
@@ -335,8 +340,14 @@ async function setCatchMark(
  * what a pokemon is rather than what it is called. A **fighting** one
  * may not: its record is held while the battle runs on a snapshot.
  *
+ * Neither may one that was named by somebody else and handed on: the
+ * name came with it, and only the trainer who gave it may take it
+ * back. An unnamed pokemon that changed hands is still the new
+ * owner's to name.
+ *
  * Resolves the name as it now stands, or null when the catch is not
- * the user's or is fighting
+ * the user's, is fighting, or answers to a name that is not the
+ * user's to change
  */
 export async function setNickname(
   uid: string,
@@ -349,6 +360,9 @@ export async function setNickname(
     const caught = await readCaughtIn(transaction, catchId);
 
     if (caught == null || caught.owner !== uid || isCatchLocked(caught)) {
+      return null;
+    }
+    if (isNicknameLocked(asCaughtPokemon(caught), uid)) {
       return null;
     }
     await updateCaughtIn(transaction, catchId, { nickname: named });

@@ -3,6 +3,7 @@ import challengerOf from './challengers';
 import { describeItem } from '../../details';
 import { type Journey, describeStash, stateOf } from './journey';
 import { useAuth } from '../../../auth/context';
+import { settled } from '../../app/resource-reads';
 import { DEFAULT_CHARSET } from '../../../data/overworld/charsets';
 import { watchProfile } from '../../../auth/profile';
 import { type EggWalk, walk } from '../../../auth/eggs';
@@ -280,7 +281,7 @@ export default function OverworldBoard(props: {
    * in the bag listing
    */
   const relics = (): { item: Items; amount: number; species: Species }[] | undefined =>
-    props.relics();
+    settled(props.relics);
 
   /**
    * Spend a relic: the lobby opens where the player is standing, and
@@ -435,13 +436,13 @@ export default function OverworldBoard(props: {
 
   // What walks beside the player changes what the chunk holds, so the
   // buddy's effects are read alongside it
-  const buddy = (): Buddy | null | undefined => props.buddy();
+  const buddy = (): Buddy | null | undefined => settled(props.buddy);
 
   /**
    * What has run from this player. Re-read when a meeting ends, since
    * the one that just fled is the one that has to stop being drawn
    */
-  const fled = (): Set<string> | undefined => props.fled();
+  const fled = (): Set<string> | undefined => settled(props.fled);
 
   const view = (): ChunkView | null => {
     const record = window();

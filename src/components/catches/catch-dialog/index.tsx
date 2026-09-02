@@ -206,14 +206,23 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
   const [detail, { refetch }] = createResource(() => props.catchId, loadDetail);
 
   /**
-   * What the reader's dex says, read once for the whole sheet.
+   * What the reader's dex says.
    *
    * It is the dex rather than this record because of what it is for:
    * the evolutions below are drawn to what the **player** has met, so
    * a line they have never seen the end of is a silhouette here the
-   * same way it is in the dex
+   * same way it is in the dex.
+   *
+   * Keyed on the sheet as well as the reader, for the same reason the
+   * bag below is: this dialog is mounted for the whole session, so a
+   * dex read once on mount is the dex as it was hours ago. A player
+   * who registers a Dragonite and then opens their Dragonair was
+   * being shown the silhouette of a pokemon standing in their own box
    */
-  const [dex] = createResource(() => auth.user()?.uid ?? null, getPokedex);
+  const [dex, { refetch: refetchDex }] = createResource(
+    () => (props.catchId == null ? null : (auth.user()?.uid ?? null)),
+    getPokedex,
+  );
 
   /**
    * Whether this is the only pokemon they have. The server refuses to
@@ -279,6 +288,9 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
       buddy={buddy}
       onRecordChanged={() => {
         Promise.resolve(refetch()).catch(() => undefined);
+        // Evolving one registers what it became, so the line under it
+        // stops being a silhouette without the sheet being reopened
+        Promise.resolve(refetchDex()).catch(() => undefined);
       }}
       onBagChanged={() => {
         Promise.resolve(refetchBag()).catch(() => undefined);

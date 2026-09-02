@@ -22,6 +22,13 @@ declare global {
   }
 }
 
+/**
+ * How wide the square an evolution's picture stands in is, in pixels.
+ * It is `size-16` in the markup, and it is a number here because the
+ * point of it is that it does not depend on what is standing in it
+ */
+const EVOLUTION_SQUARE = 64;
+
 test.describe('the catch sheet', () => {
   test.beforeEach(async ({ page }) => {
     await signIn(page);
@@ -59,7 +66,33 @@ test.describe('the catch sheet', () => {
     // the row itself spells the shorthand out. Which of them it is
     // depends on the starter the world handed out this run, so the
     // sentence is checked rather than the condition inside it
-    await expect(sheet.getByRole('listitem', { name: /^To evolve, .+\.$/ }).first()).toBeVisible();
+    const row = sheet.getByRole('listitem', { name: /^To evolve, .+\.$/ }).first();
+
+    await expect(row).toBeVisible();
+
+    /**
+     * And the picture beside it stands in a square of its own.
+     *
+     * A pokemon is whatever size it was drawn at, so pictures sized by
+     * their own sheets list a branching line at a different height on
+     * every row, with the condition beside each in a different place.
+     * The square is what makes the rows a list rather than a stack of
+     * unrelated pictures, and it is the same square whatever is in it
+     */
+    const picture = row.getByRole('img').first();
+
+    // Measured until it settles: a dialog's panel grows into place
+    // from half its size, and a box measured on the way in is the
+    // fraction of itself the panel had reached
+    await expect(async () => {
+      const held = await picture.locator('xpath=..').boundingBox();
+      const drawn = await picture.boundingBox();
+
+      expect(held?.width).toBeCloseTo(EVOLUTION_SQUARE, 0);
+      expect(held?.height).toBeCloseTo(EVOLUTION_SQUARE, 0);
+      expect(drawn?.width ?? 0).toBeLessThanOrEqual(EVOLUTION_SQUARE + 1);
+      expect(drawn?.height ?? 0).toBeLessThanOrEqual(EVOLUTION_SQUARE + 1);
+    }).toPass({ timeout: 5_000 });
   });
 
   test('counts out the training points at the end of the list', async ({ page }) => {

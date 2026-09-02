@@ -8,6 +8,8 @@ import { getSpeciesData } from '../../../../data/species';
 
 import SpeciesCoat from '../../../sprites/SpeciesCoat';
 
+import { SpriteAnim } from '../../../../data/ids/sprite-anims';
+
 import { Button, DialogSection, List, ListRow } from '../../../styled';
 
 import { Index, type JSX, Show } from 'solid-js';
@@ -65,14 +67,18 @@ export default function EvolutionSection(props: EvolutionSectionProps): JSX.Elem
                   // anything that reads it aloud
                   title={describeEvolutionMethod(option().evolution)}
                 >
-                  {/* What it turns into, drawn rather than
-                named — and drawn to what the reader
-                has earned of it, the way the dex
-                draws one. A line whose end they have
-                never met is a shape rather than a
-                spoiler, which is the whole reason a
-                dex is worth filling in */}
-                  <div class="flex items-end justify-start">
+                  {/* What it turns into, drawn rather than named, and
+                      drawn to what the reader has earned of it the way
+                      the dex draws one: a line whose end they have
+                      never met is a shape rather than a spoiler.
+
+                      Fitted to a square rather than drawn at a
+                      multiple of the sheet. A pokemon is whatever size
+                      it was drawn at, so a branching line sized by its
+                      own sheets came out a different height on every
+                      row, with the condition beside it in a different
+                      place each time */}
+                  <span class="flex size-16 shrink-0 items-center justify-center">
                     <SpeciesCoat
                       species={becomes()}
                       met={known().met}
@@ -87,9 +93,15 @@ export default function EvolutionSection(props: EvolutionSectionProps): JSX.Elem
                       // fetched to be hidden
                       shiny={props.shiny && known().shiny}
                       called={props.shiny ? `${getSpeciesData(becomes()).name}, shiny` : undefined}
-                      scale={2}
+                      // Standing the way the pokemon above it stands:
+                      // the row is a sum with that picture, and two of
+                      // them facing different ways read as two
+                      // unrelated drawings
+                      animation={SpriteAnim.Idle}
+                      direction="DownLeft"
+                      fill
                     />
-                  </div>
+                  </span>
                   {/* The condition reads as a sum with the
                 picture: that shape, plus a trade.
                 It stays on the row rather than

@@ -58,6 +58,13 @@ export interface SpeciesCoatProps {
   female?: boolean;
   scale?: number;
   /**
+   * Whether to fit the picture to the square it is put in rather than
+   * draw it at a multiple of the sheet. What a list of them wants: a
+   * sheet is whatever size it was drawn at, so a row of coats sized by
+   * their own sheets comes out ragged. **The box has to be square**
+   */
+  fill?: boolean;
+  /**
    * What it should be doing. Something nobody has met is asleep
    * whatever this says: there is nothing to show off
    */
@@ -91,6 +98,7 @@ export default function SpeciesCoat(props: SpeciesCoatProps): JSX.Element {
       duration={props.met ? props.duration : undefined}
       direction={props.direction ?? 'Down'}
       scale={props.scale}
+      fill={props.fill}
       shadow
       // Black by day and white by night: a silhouette is the shape
       // with the colour taken out of it, and "no colour" is a

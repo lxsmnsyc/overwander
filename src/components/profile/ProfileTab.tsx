@@ -3,11 +3,9 @@ import {
   type Resource,
   Show,
   Suspense,
-  createEffect,
   createResource,
   createSignal,
   from,
-  onCleanup,
 } from 'solid-js';
 import { type AchievementSheet, listAchievements } from '../../auth/achievements';
 import { signOut } from '../../auth/actions';
@@ -24,6 +22,8 @@ import SellingList from '../auctions/SellingList';
 import FriendsTab from '../friends/FriendsTab';
 import RequestsTab from '../friends/RequestsTab';
 import createFriendTie from '../friends/tie';
+import createClientSignal from '../app/client-signal';
+import { answered } from '../app/resource-reads';
 import {
   type FriendRequests,
   FriendTie,
@@ -190,37 +190,24 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
    * of what is stranded belongs on the tab itself, and reading it in
    * both places would be the same query twice.
    *
-   * A plain signal rather than a resource, so a slow read leaves the
-   * profile standing instead of suspending it
+   * Gated on the browser, so nothing is asked for while the page is
+   * being drawn, and read below without waiting, since this body
+   * declares it: a read that waits here would reach the boundary
+   * around the profile rather than one inside it. Somebody else's
+   * lots are not the reader's business: the reclaim button on one
+   * would be theirs to press, so a visited profile asks for nothing
    */
-  const [reloaded, setReloaded] = createSignal(0);
-  const [lots, setLots] = createSignal<[string, AuctionRecord][]>([]);
-
-  createEffect(() => {
-    reloaded();
-
-    const player = props.player;
-
-    // Somebody else's lots are not the reader's business, and the
-    // reclaim button on them would be theirs to press
-    if (props.viewOnly === true) {
-      setLots([]);
-      return;
-    }
-
-    let live = true;
-
-    listAuctionsBy(player)
-      .then((found) => {
-        if (live) {
-          setLots(found);
-        }
-      })
-      .catch(() => undefined);
-    onCleanup(() => {
-      live = false;
-    });
-  });
+  const client = createClientSignal();
+  const [selling, { refetch: refetchSelling }] = createResource(
+    () => client() && props.viewOnly !== true && props.player,
+    listAuctionsBy,
+  );
+  // Answered rather than left to the gate: a source that goes falsy
+  // stops a resource fetching but does not empty it, so a reader who
+  // walked from their own profile to somebody else's would be shown
+  // their own lots under the other player's name
+  const lots = (): [string, AuctionRecord][] =>
+    props.viewOnly === true ? [] : (answered(selling) ?? []);
 
   /**
    * How many lots came back unsold and are still sitting in escrow.
@@ -468,7 +455,7 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
                 player={props.player}
                 lots={lots()}
                 onChanged={() => {
-                  setReloaded((count) => count + 1);
+                  Promise.resolve(refetchSelling()).catch(() => undefined);
                 }}
               />
             </Card>

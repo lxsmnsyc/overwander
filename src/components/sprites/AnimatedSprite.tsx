@@ -418,6 +418,28 @@ export interface AnimatedSpriteProps {
 }
 
 export default function AnimatedSprite(props: AnimatedSpriteProps): JSX.Element {
+  /**
+   * What is drawn and how it plays, read through memos so the effects
+   * below wake on the **value** changing rather than on the prop being
+   * re-read.
+   *
+   * A caller that rebuilds its list rebuilds every prop with it: a box
+   * of thirty squares hands out thirty fresh entries the moment one is
+   * picked, and every square's species reads the same as it did. An
+   * effect tracks its sources rather than its answers, so without this
+   * each of those squares refetched its sheet, was handed a new
+   * playhead, and started its idle again from the first frame. What
+   * the player saw was the whole box flinch every time they took one
+   */
+  const drawing = createMemo(() => props.species);
+  const sparkling = createMemo(() => props.shiny === true);
+  const feminine = createMemo(() => props.female === true);
+  const clip = createMemo(() => props.animation ?? SpriteAnim.Idle);
+  const facing = createMemo(() => props.direction ?? 'Down');
+  const stretched = createMemo(() => props.duration);
+  const pace = createMemo(() => props.speed ?? 1);
+  const held = createMemo(() => props.still === true);
+
   const [sprite, setSprite] = createSignal<SpeciesSpriteAnimation | null>(null);
   /**
    * Bumped when a different frame comes up. The playhead moves sixty
@@ -427,9 +449,9 @@ export default function AnimatedSprite(props: AnimatedSpriteProps): JSX.Element 
   const [step, setStep] = createSignal(0);
 
   createEffect(() => {
-    const species = props.species;
-    const shiny = props.shiny === true;
-    const female = props.female === true;
+    const species = drawing();
+    const shiny = sparkling();
+    const female = feminine();
     let live = true;
 
     onCleanup(() => {
@@ -455,14 +477,14 @@ export default function AnimatedSprite(props: AnimatedSpriteProps): JSX.Element 
       return;
     }
 
-    const wanted = props.animation ?? SpriteAnim.Idle;
+    const wanted = clip();
 
     drawn.play(drawn.has(wanted) ? wanted : SpriteAnim.Idle, {
-      direction: props.direction ?? 'Down',
+      direction: facing(),
       loop: true,
       // Only where a caller asked for a pace: everything else plays at
       // the speed it was drawn at
-      duration: props.duration,
+      duration: stretched(),
     });
     setStep((count) => count + 1);
   });
@@ -470,7 +492,7 @@ export default function AnimatedSprite(props: AnimatedSpriteProps): JSX.Element 
   createEffect(() => {
     const drawn = sprite();
 
-    if (drawn == null || props.still === true) {
+    if (drawn == null || held()) {
       return;
     }
 
@@ -482,7 +504,7 @@ export default function AnimatedSprite(props: AnimatedSpriteProps): JSX.Element 
     // Nought is a pokemon holding its first frame, which is what a
     // player asking for less motion is asking for: the picture is
     // still there and still the right one, it simply does not breathe
-    const speed = settings().reduceMotion ? 0 : (props.speed ?? 1);
+    const speed = settings().reduceMotion ? 0 : pace();
 
     onCleanup(
       ticking((elapsed) => {

@@ -39,7 +39,7 @@ import {
   TRAINER_NAMES,
   TRAINER_QUOTES,
   TRAINER_TYPES,
-  TrainerClass,
+  isAceTrainer,
   trainerLevels,
 } from '../../../data/overworld/trainers';
 import { TYPE_NAMES } from '../../../data/constants/types';
@@ -206,10 +206,9 @@ export default function challengerOf(
     const name = TRAINER_NAMES[trainer];
     const levels = trainerLevels(trainer);
     const type = TRAINER_TYPES[trainer];
-    const fields =
-      trainer === TrainerClass.AceTrainer
-        ? 'Five fully-grown pokemon of any type'
-        : `Their ${TYPE_NAMES[type ?? 0]} pokemon`;
+    const fields = isAceTrainer(trainer)
+      ? 'Five fully-grown pokemon of any type'
+      : `Their ${TYPE_NAMES[type ?? 0]} pokemon`;
 
     return {
       name,

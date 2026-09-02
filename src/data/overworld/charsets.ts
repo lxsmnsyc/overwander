@@ -33,7 +33,7 @@ import Npc, {
   ROCKET_GRUNT_HONOR,
   npcSheets,
 } from './npc';
-import { TRAINER_CHARSETS, TRAINER_NAMES, type TrainerClass } from './trainers';
+import { TRAINER_BASE_NAMES, TRAINER_CHARSETS, type TrainerClass } from './trainers';
 
 /**
  * Who a trainer is seen as: the overworld character standing beside
@@ -194,7 +194,7 @@ function buildCharsets(): Charset[] {
   }
   for (const trainer of ACHIEVEMENT_TRAINERS) {
     for (const sheet of TRAINER_CHARSETS[trainer]) {
-      add(sheet, TRAINER_NAMES[trainer], { kind: 'trainer', trainer });
+      add(sheet, TRAINER_BASE_NAMES[trainer], { kind: 'trainer', trainer });
     }
   }
   return [...found.values()];

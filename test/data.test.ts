@@ -337,15 +337,25 @@ import {
   LadderTitle,
   getTitleName,
   lineTitle,
+  professorTitle,
   trainerTitle,
   typeTitle,
 } from '../src/data/ids/titles';
 import {
   BIOME_TRAINERS,
+  TRAINER_BASE_NAMES,
+  TRAINER_CHARSETS,
   TRAINER_CLASSES,
+  TRAINER_NAMES,
+  TRAINER_QUOTES,
+  TRAINER_REGIONS,
+  TRAINER_TRADE,
+  TRAINER_TRADES,
   TRAINER_TYPES,
   TrainerClass,
   getBiomeTrainers,
+  getTradeClasses,
+  getTrainerPool,
 } from '../src/data/overworld/trainers';
 import { Metric, Landmark as QuestLandmark } from '../src/auth/quest-record';
 import {
@@ -4909,6 +4919,109 @@ describe('achievements', () => {
     ).toBeNull();
   });
 
+  it('counts a trade’s regions on one line and dresses them apart', () => {
+    // Both Swimmers are the same trade, so the wins add up to one
+    // line and one title
+    expect(TRAINER_TRADE[TrainerClass.JohtoSwimmer]).toBe(TrainerClass.Swimmer);
+    expect(getTradeClasses(TrainerClass.Swimmer)).toEqual([
+      TrainerClass.Swimmer,
+      TrainerClass.JohtoSwimmer,
+    ]);
+    expect(TRAINER_TRADES).not.toContain(TrainerClass.JohtoSwimmer);
+    expect(ACHIEVEMENT_TRAINERS).toEqual(TRAINER_TRADES);
+
+    const beaten = new Map<Metric, Map<number, number>>([
+      [
+        Metric.TrainerWins,
+        new Map([
+          [TrainerClass.Swimmer, 2],
+          [TrainerClass.JohtoSwimmer, 2],
+        ]),
+      ],
+    ]);
+    const standings = deriveAchievements(beaten);
+
+    // Four between them is the trade's Bronze, which neither reached
+    // alone
+    expect(standings.trainers.get(TrainerClass.Swimmer)?.count).toBe(4);
+    expect(standings.trainers.get(TrainerClass.Swimmer)?.tier).toBe(AchievementTier.Bronze);
+    // The coats are the class' own, and two wins dress nobody
+    expect(standings.variants.get(TrainerClass.Swimmer)?.count).toBe(2);
+    expect(standings.variants.get(TrainerClass.Swimmer)?.tier).toBe(AchievementTier.None);
+    expect(standings.variants.get(TrainerClass.JohtoSwimmer)?.count).toBe(2);
+    // A trade only one region has counts the way it always did
+    expect(getTradeClasses(TrainerClass.Sage)).toEqual([TrainerClass.Sage]);
+  });
+
+  it('names a trade twice over by the region it is met in', () => {
+    // The mainline's own name, and the region after it only where
+    // both regions put the same trade on the road
+    expect(TRAINER_NAMES[TrainerClass.Swimmer]).toBe('Swimmer (Kanto)');
+    expect(TRAINER_NAMES[TrainerClass.JohtoSwimmer]).toBe('Swimmer (Johto)');
+    expect(TRAINER_BASE_NAMES[TrainerClass.JohtoSwimmer]).toBe('Swimmer');
+    // A trade only one region has keeps the plain name
+    expect(TRAINER_NAMES[TrainerClass.Sage]).toBe('Sage');
+    expect(TRAINER_NAMES[TrainerClass.Channeler]).toBe('Channeler');
+    // And no two classes read as the same person
+    expect(new Set(TRAINER_CLASSES.map((one) => TRAINER_NAMES[one])).size).toBe(
+      TRAINER_CLASSES.length,
+    );
+  });
+
+  it('gives Johto the types Kanto had nobody for', () => {
+    const covered = new Set(
+      TRAINER_CLASSES.map((trainer) => TRAINER_TYPES[trainer]).filter(
+        (type): type is Types => type != null,
+      ),
+    );
+    const johto: [TrainerClass, Types][] = [
+      [TrainerClass.Sage, Types.Grass],
+      [TrainerClass.Skier, Types.Ice],
+      [TrainerClass.Scientist, Types.Steel],
+      [TrainerClass.JohtoPokeManiac, Types.Dragon],
+      [TrainerClass.JohtoBurglar, Types.Dark],
+    ];
+
+    // Grass, ice, steel, dragon and dark all have somebody now
+    for (const [trainer, type] of johto) {
+      expect(TRAINER_TYPES[trainer], TRAINER_NAMES[trainer]).toBe(type);
+      expect(covered.has(type)).toBe(true);
+    }
+
+    // Every class is drawn and speaks for itself, twins included
+    for (const trainer of TRAINER_CLASSES) {
+      expect(TRAINER_QUOTES[trainer].length).toBeGreaterThan(0);
+      expect(TRAINER_CHARSETS[trainer].length).toBeGreaterThan(0);
+      for (const sheet of TRAINER_CHARSETS[trainer]) {
+        expect(existsSync(`public/sprites/overworld/${sheet}/image.png`), sheet).toBe(true);
+      }
+    }
+    // No sheet is worn by two classes: a coat is one trade's
+    const worn = TRAINER_CLASSES.flatMap((trainer) => TRAINER_CHARSETS[trainer]);
+
+    expect(new Set(worn).size).toBe(worn.length);
+  });
+
+  it('fields each class out of its own region rather than the country', () => {
+    for (const trainer of TRAINER_CLASSES) {
+      const pool = getTrainerPool(trainer);
+
+      expect(pool.length, TRAINER_NAMES[trainer]).toBeGreaterThan(0);
+      for (const species of pool) {
+        expect(getSpeciesRegion(species), getSpeciesData(species).name).toBe(
+          TRAINER_REGIONS[trainer],
+        );
+      }
+    }
+
+    // The twins are the same trade fielding different water
+    const kanto = new Set(getTrainerPool(TrainerClass.Swimmer));
+
+    for (const species of getTrainerPool(TrainerClass.JohtoSwimmer)) {
+      expect(kanto.has(species)).toBe(false);
+    }
+  });
+
   it('puts each type expert in the countries their type belongs to', () => {
     const roads = new Set<TrainerClass>();
 
@@ -4924,14 +5037,19 @@ describe('achievements', () => {
         expect(TRAINER_TYPES[trainer]).not.toBeNull();
         roads.add(trainer);
       }
-      // What may actually be met there: the country's own, plus the Ace
-      expect(getBiomeTrainers(biome)).toEqual([TrainerClass.AceTrainer, ...standing]);
+      // What may actually be met there: the country's own, plus the
+      // two Aces, who belong to no country
+      expect(getBiomeTrainers(biome)).toEqual([
+        TrainerClass.AceTrainer,
+        TrainerClass.JohtoAceTrainer,
+        ...standing,
+      ]);
     }
 
-    // No class is written out of the world
+    // No class is written out of the world, the two Aces aside
     for (const trainer of TRAINER_CLASSES) {
-      if (trainer !== TrainerClass.AceTrainer) {
-        expect(roads.has(trainer)).toBe(true);
+      if (trainer !== TrainerClass.AceTrainer && trainer !== TrainerClass.JohtoAceTrainer) {
+        expect(roads.has(trainer), TRAINER_NAMES[trainer]).toBe(true);
       }
     }
   });
@@ -4947,6 +5065,14 @@ describe('achievements', () => {
     expect(getTitleName(LadderTitle.EliteConqueror)).toBe('Elite Conqueror');
     expect(getTitleName(LadderTitle.KantoChampion)).toBe('Kanto Champion');
     expect(getTitleName(LadderTitle.LegendBreaker)).toBe('Legend Breaker');
+    // A filled dex is worth that region's professor
+    expect(getTitleName(professorTitle(Regions.Kanto))).toBe('Kanto Professor');
+    expect(getTitleName(professorTitle(Regions.Johto))).toBe('Johto Professor');
+    expect(getTitleName(professorTitle(Regions.Unknown))).toBeNull();
+    // A region's own class carries no title of its own: the trade
+    // does, and both regions' wins climb it
+    expect(getTitleName(trainerTitle(TrainerClass.JohtoSwimmer, false))).toBeNull();
+    expect(getTitleName(trainerTitle(TrainerClass.Swimmer, false))).toBe('Swimmer');
     // A number that names nothing reads as no title
     expect(getTitleName(99)).toBeNull();
     expect(getTitleName(typeTitle(Types.Fairy, false))).toBeNull();

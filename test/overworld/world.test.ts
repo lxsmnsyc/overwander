@@ -143,13 +143,13 @@ import {
   LEGEND_CHARSETS,
   getEliteMemberRoster,
 } from '../../src/data/overworld/experts';
-import Regions from '../../src/data/ids/regions';
 import {
   ACE_PARTY_SIZE,
   ACE_TRAINER_LEVELS,
   TRAINER_CHARSETS,
   TRAINER_CLASSES,
   TRAINER_NAMES,
+  TRAINER_REGIONS,
   TRAINER_TYPES,
   TYPE_TRAINER_LEVELS,
   TYPE_TRAINER_PARTY_MAX,
@@ -157,6 +157,7 @@ import {
   TrainerClass,
   getBiomeTrainers,
   getTrainerPool,
+  isAceTrainer,
   trainerLevels,
 } from '../../src/data/overworld/trainers';
 import pickStartPosition, { START_AREA } from '../../src/overworld/start';
@@ -1156,17 +1157,20 @@ describe('world', () => {
     for (const trainer of TRAINER_CLASSES) {
       expect(TRAINER_NAMES[trainer]).not.toBe('');
       expect(TRAINER_CHARSETS[trainer].length).toBeGreaterThan(0);
-      expect(getTrainerPool(Regions.Kanto, trainer).length).toBeGreaterThan(0);
+      expect(getTrainerPool(trainer).length).toBeGreaterThan(0);
       expect(trainerLevels(trainer)).toEqual(
-        trainer === TrainerClass.AceTrainer ? ACE_TRAINER_LEVELS : TYPE_TRAINER_LEVELS,
+        isAceTrainer(trainer) ? ACE_TRAINER_LEVELS : TYPE_TRAINER_LEVELS,
       );
     }
 
-    // One class per type at most, and only the Ace has none
-    const claimed = TRAINER_CLASSES.map((trainer) => TRAINER_TYPES[trainer]);
+    // One class per type per region, and each region's Ace is the
+    // one with none
+    const claimed = TRAINER_CLASSES.map(
+      (trainer) => `${TRAINER_REGIONS[trainer]}:${TRAINER_TYPES[trainer]}`,
+    );
 
     expect(new Set(claimed).size).toBe(claimed.length);
-    expect(claimed.filter((type) => type == null)).toHaveLength(1);
+    expect(TRAINER_CLASSES.filter((trainer) => TRAINER_TYPES[trainer] == null)).toHaveLength(2);
   });
 
   it('rolls Giovanni once in a long while, six strong', () => {

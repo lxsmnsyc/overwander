@@ -50,11 +50,11 @@ import {
   TRAINER_CHARSETS,
   TYPE_TRAINER_PARTY_MAX,
   TYPE_TRAINER_PARTY_MIN,
-  TrainerClass,
+  type TrainerClass,
   getBiomeTrainers,
   getTrainerPool,
+  isAceTrainer,
 } from '../data/overworld/trainers';
-import Regions from '../data/ids/regions';
 import Phenomenon, { BIOME_PHENOMENA } from '../data/overworld/phenomenon';
 import {
   VENDOR_KINDS,
@@ -75,16 +75,6 @@ import { CELL_COUNT, CHUNK_CELLS, PLACEMENT_AREA, centeredCells, neighborCells }
 import { getPortalCell } from './portal';
 import type { PhenomenonReward } from './landmarks';
 import { resolveBerryPatch, resolveItemCache, resolveNest, resolvePhenomenon } from './landmarks';
-
-/**
- * The region a chunk's roadside trainers and its Champion belong to:
- * the whole world is Kanto until a real mapping goes here. Gym
- * leaders and the Elite Four no longer ask, since an expert reads
- * every region for their own kind
- */
-function regionOf(_chunk: Chunk): Regions {
-  return Regions.Kanto;
-}
 
 /**
  * An expert's six: five rolled from their kind's band with
@@ -1026,18 +1016,17 @@ export default class ChunkSnapshot {
           continue;
         }
 
-        const pool = getTrainerPool(regionOf(this.chunk), trainer);
+        const pool = getTrainerPool(trainer);
 
         if (pool.length === 0) {
           continue;
         }
 
         const rng = new AleaRNG(`${this.key}${this.npcTimestamp}duel${cell}`);
-        const size =
-          trainer === TrainerClass.AceTrainer
-            ? ACE_PARTY_SIZE
-            : TYPE_TRAINER_PARTY_MIN +
-              Math.floor(rng.random() * (TYPE_TRAINER_PARTY_MAX - TYPE_TRAINER_PARTY_MIN + 1));
+        const size = isAceTrainer(trainer)
+          ? ACE_PARTY_SIZE
+          : TYPE_TRAINER_PARTY_MIN +
+            Math.floor(rng.random() * (TYPE_TRAINER_PARTY_MAX - TYPE_TRAINER_PARTY_MIN + 1));
 
         stops.set(
           cell,

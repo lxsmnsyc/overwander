@@ -191,12 +191,22 @@ Who turns up decides what they bring:
 
 The type experts are the trainer classes: the Bug Catcher, the Swimmer, the Black
 Belt, the Bird Keeper, the Biker, the Hiker, the Poké Maniac, the Channeler, the
-Burglar, the Rocker, the Psychic and the Lass. Which of them may be standing on a
-cell is the country's own: a Swimmer is met on the water, a Hiker on hard ground,
-a Channeler in the swamps — the same rule the gyms follow, so a player hunting one
-class knows where to walk. What they field is their type and nothing else,
-wherever they are met, and it is drawn from the whole region rather than from the
-country they are standing in.
+Burglar, the Rocker, the Psychic and the Lass.
+
+**A class belongs to a region.** The trades both regions put on the road are on
+it twice: a Swimmer (Kanto) and a Swimmer (Johto) are the same trade in two
+places, drawn differently, fielding what their own region grows. Their wins climb
+one line between them and pay one title, and their coats are earned apart. Johto brings four trades Kanto has none of as well: the Sage, who
+fields grass, the Skier, who fields ice, the Scientist, who fields steel, and
+its own Poké Maniac and Burglar, who field the dragons of the Dragon's Den and
+the dark that works the roads outside it. Between them every type the game grows
+has somebody on the road fielding it.
+
+Which of them may be standing on a cell is the country's own: a Swimmer is met on
+the water, a Hiker on hard ground, a Skier in the snow, the same rule the gyms
+follow, so a player hunting one class knows where to walk. What they field is
+their type and nothing else, wherever they are met, and it is drawn from their
+own region rather than from the country they are standing in.
 
 The **Ace Trainer** belongs to no country and may turn up anywhere.
 

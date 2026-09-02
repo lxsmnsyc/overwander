@@ -20,7 +20,12 @@ import Npc, {
   ROCKET_EXECUTIVE_NAMES,
   npcSheet,
 } from '../data/overworld/npc';
-import { TRAINER_NAMES, TYPE_TRAINER_LEVELS, TrainerClass } from '../data/overworld/trainers';
+import {
+  TRAINER_NAMES,
+  TYPE_TRAINER_LEVELS,
+  type TrainerClass,
+  isAceTrainer,
+} from '../data/overworld/trainers';
 import type { Items } from '../data/ids/items';
 import { ITEM_POOL, type ItemBandOdds, pickItem } from '../data/overworld/item-pool';
 import type ChunkSnapshot from './chunk-snapshot';
@@ -229,7 +234,7 @@ export function stopGoldBand(
     return legend ? LEGEND_GOLD : CHAMPION_GOLD;
   }
   if (landmark === Landmark.Trainer) {
-    return trainer === TrainerClass.AceTrainer ? ACE_TRAINER_GOLD : TYPE_TRAINER_GOLD;
+    return trainer != null && isAceTrainer(trainer) ? ACE_TRAINER_GOLD : TYPE_TRAINER_GOLD;
   }
   if (rank === RocketRank.Giovanni) {
     return GIOVANNI_GOLD;

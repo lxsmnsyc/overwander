@@ -11,7 +11,11 @@ import {
   tierName,
 } from '../../data/achievements';
 import { TYPE_COLORS, TYPE_NAMES } from '../../data/constants/types';
-import { TRAINER_NAMES, TRAINER_TYPES, type TrainerClass } from '../../data/overworld/trainers';
+import {
+  TRAINER_BASE_NAMES,
+  TRAINER_TYPES,
+  type TrainerClass,
+} from '../../data/overworld/trainers';
 import Awards, {
   AWARD_NAMES,
   JOHTO_BADGES,
@@ -434,8 +438,8 @@ function AchievementShelves(props: { sheet: Resource<AchievementSheet> }): JSX.E
         <For each={props.sheet()?.trainers ?? []}>
           {([trainer, standing]) => (
             <LineSlot
-              name={TRAINER_NAMES[trainer]}
-              deed={`${TRAINER_NAMES[trainer]}s beaten`}
+              name={TRAINER_BASE_NAMES[trainer]}
+              deed={`${TRAINER_BASE_NAMES[trainer]}s beaten`}
               standing={standing}
               tint={tintOf(trainer)}
             />

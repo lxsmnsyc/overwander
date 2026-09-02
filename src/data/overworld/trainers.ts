@@ -1,9 +1,10 @@
 import { SpawnRarity, getSpawnRarity } from '../biome';
 import { Types } from '../constants/types';
 import Biome from '../ids/biome';
-import type Regions from '../ids/regions';
+import Regions from '../ids/regions';
 import { Species } from '../ids/species';
 import { getSpeciesByRegion, getSpeciesData, isBaseForm } from '../species';
+import { REGION_NAMES } from '../species/regions';
 import { EVERY_LAIR, getLairResidents } from './lair';
 
 /**
@@ -32,15 +33,34 @@ const enum TrainerClass {
   Swimmer = 10,
   Rocker = 11,
   Psychic = 12,
+  Sage = 13,
+  Skier = 14,
+  Scientist = 15,
+  /** Johto's own of the trades both regions put on the road */
+  JohtoPokeManiac = 16,
+  JohtoBurglar = 17,
+  JohtoAceTrainer = 18,
+  JohtoLass = 19,
+  JohtoBlackBelt = 20,
+  JohtoBirdKeeper = 21,
+  JohtoBiker = 22,
+  JohtoBugCatcher = 23,
+  JohtoSwimmer = 24,
 }
 
 export { TrainerClass };
 
 /**
- * TODO: Grass, Ice and Dragon have no trainer class here because
- * Kanto has none to give — its grass and ice trainers are Lasses and
- * Beauties, and its only dragon is Lance. Add the three when a region
- * that names them arrives, with the sheets to draw them
+ * A class belongs to a region, and the trades both regions have are
+ * here twice: a Swimmer met on Kanto's water and one met on Johto's
+ * are the same trade in two places, drawn differently and fielding
+ * what their own region grows.
+ *
+ * Johto's own answer the types Kanto had nobody for besides: its
+ * sages field the Bellsprout of Sprout Tower, its skiers the ice of
+ * the north, its scientists the steel it is the first region to
+ * grow, its maniacs the dragons of the Den, and its burglars the
+ * dark that works the roads outside it
  */
 export const TRAINER_CLASSES: TrainerClass[] = [
   TrainerClass.AceTrainer,
@@ -56,9 +76,26 @@ export const TRAINER_CLASSES: TrainerClass[] = [
   TrainerClass.Swimmer,
   TrainerClass.Rocker,
   TrainerClass.Psychic,
+  TrainerClass.Sage,
+  TrainerClass.Skier,
+  TrainerClass.Scientist,
+  TrainerClass.JohtoPokeManiac,
+  TrainerClass.JohtoBurglar,
+  TrainerClass.JohtoAceTrainer,
+  TrainerClass.JohtoLass,
+  TrainerClass.JohtoBlackBelt,
+  TrainerClass.JohtoBirdKeeper,
+  TrainerClass.JohtoBiker,
+  TrainerClass.JohtoBugCatcher,
+  TrainerClass.JohtoSwimmer,
 ];
 
-export const TRAINER_NAMES: Record<TrainerClass, string> = {
+/**
+ * What the mainline calls each of them. Two regions' worth of the
+ * same trade share a name here; `TRAINER_NAMES` is what tells them
+ * apart on a screen
+ */
+export const TRAINER_BASE_NAMES: Record<TrainerClass, string> = {
   [TrainerClass.AceTrainer]: 'Ace Trainer',
   [TrainerClass.Lass]: 'Lass',
   [TrainerClass.BlackBelt]: 'Black Belt',
@@ -72,7 +109,137 @@ export const TRAINER_NAMES: Record<TrainerClass, string> = {
   [TrainerClass.Swimmer]: 'Swimmer',
   [TrainerClass.Rocker]: 'Rocker',
   [TrainerClass.Psychic]: 'Psychic',
+  [TrainerClass.Sage]: 'Sage',
+  [TrainerClass.Skier]: 'Skier',
+  [TrainerClass.Scientist]: 'Scientist',
+  [TrainerClass.JohtoPokeManiac]: 'Poké Maniac',
+  [TrainerClass.JohtoBurglar]: 'Burglar',
+  [TrainerClass.JohtoAceTrainer]: 'Ace Trainer',
+  [TrainerClass.JohtoLass]: 'Lass',
+  [TrainerClass.JohtoBlackBelt]: 'Black Belt',
+  [TrainerClass.JohtoBirdKeeper]: 'Bird Keeper',
+  [TrainerClass.JohtoBiker]: 'Biker',
+  [TrainerClass.JohtoBugCatcher]: 'Bug Catcher',
+  [TrainerClass.JohtoSwimmer]: 'Swimmer',
 };
+
+/**
+ * Which region's road each stands on, and whose species they field.
+ * The class says this rather than the country they are met in: the
+ * world is one map, and a Johto Swimmer brings Johto's water
+ * wherever the water is
+ */
+export const TRAINER_REGIONS: Record<TrainerClass, Regions> = {
+  [TrainerClass.AceTrainer]: Regions.Kanto,
+  [TrainerClass.Lass]: Regions.Kanto,
+  [TrainerClass.BlackBelt]: Regions.Kanto,
+  [TrainerClass.BirdKeeper]: Regions.Kanto,
+  [TrainerClass.Biker]: Regions.Kanto,
+  [TrainerClass.Hiker]: Regions.Kanto,
+  [TrainerClass.PokeManiac]: Regions.Kanto,
+  [TrainerClass.BugCatcher]: Regions.Kanto,
+  [TrainerClass.Channeler]: Regions.Kanto,
+  [TrainerClass.Burglar]: Regions.Kanto,
+  [TrainerClass.Swimmer]: Regions.Kanto,
+  [TrainerClass.Rocker]: Regions.Kanto,
+  [TrainerClass.Psychic]: Regions.Kanto,
+  [TrainerClass.Sage]: Regions.Johto,
+  [TrainerClass.Skier]: Regions.Johto,
+  [TrainerClass.Scientist]: Regions.Johto,
+  [TrainerClass.JohtoPokeManiac]: Regions.Johto,
+  [TrainerClass.JohtoBurglar]: Regions.Johto,
+  [TrainerClass.JohtoAceTrainer]: Regions.Johto,
+  [TrainerClass.JohtoLass]: Regions.Johto,
+  [TrainerClass.JohtoBlackBelt]: Regions.Johto,
+  [TrainerClass.JohtoBirdKeeper]: Regions.Johto,
+  [TrainerClass.JohtoBiker]: Regions.Johto,
+  [TrainerClass.JohtoBugCatcher]: Regions.Johto,
+  [TrainerClass.JohtoSwimmer]: Regions.Johto,
+};
+
+/**
+ * The trade a class is one region's version of.
+ *
+ * A Swimmer met on Kanto's water and one met on Johto's are the same
+ * trade, and what is counted about a trade is counted once: the wins
+ * add up to one line and one title. The coats do not, since a coat is
+ * one region's own, and beating Kanto's swimmers never dressed
+ * anybody as a Johto one
+ */
+export const TRAINER_TRADE: Record<TrainerClass, TrainerClass> = {
+  [TrainerClass.AceTrainer]: TrainerClass.AceTrainer,
+  [TrainerClass.Lass]: TrainerClass.Lass,
+  [TrainerClass.BlackBelt]: TrainerClass.BlackBelt,
+  [TrainerClass.BirdKeeper]: TrainerClass.BirdKeeper,
+  [TrainerClass.Biker]: TrainerClass.Biker,
+  [TrainerClass.Hiker]: TrainerClass.Hiker,
+  [TrainerClass.PokeManiac]: TrainerClass.PokeManiac,
+  [TrainerClass.BugCatcher]: TrainerClass.BugCatcher,
+  [TrainerClass.Channeler]: TrainerClass.Channeler,
+  [TrainerClass.Burglar]: TrainerClass.Burglar,
+  [TrainerClass.Swimmer]: TrainerClass.Swimmer,
+  [TrainerClass.Rocker]: TrainerClass.Rocker,
+  [TrainerClass.Psychic]: TrainerClass.Psychic,
+  [TrainerClass.Sage]: TrainerClass.Sage,
+  [TrainerClass.Skier]: TrainerClass.Skier,
+  [TrainerClass.Scientist]: TrainerClass.Scientist,
+  [TrainerClass.JohtoPokeManiac]: TrainerClass.PokeManiac,
+  [TrainerClass.JohtoBurglar]: TrainerClass.Burglar,
+  [TrainerClass.JohtoAceTrainer]: TrainerClass.AceTrainer,
+  [TrainerClass.JohtoLass]: TrainerClass.Lass,
+  [TrainerClass.JohtoBlackBelt]: TrainerClass.BlackBelt,
+  [TrainerClass.JohtoBirdKeeper]: TrainerClass.BirdKeeper,
+  [TrainerClass.JohtoBiker]: TrainerClass.Biker,
+  [TrainerClass.JohtoBugCatcher]: TrainerClass.BugCatcher,
+  [TrainerClass.JohtoSwimmer]: TrainerClass.Swimmer,
+};
+
+/**
+ * Every trade there is, each named by the class that stands for it.
+ * This is what carries a line and a title; the classes are what
+ * carry the coats
+ */
+export const TRAINER_TRADES: TrainerClass[] = TRAINER_CLASSES.filter(
+  (trainer) => TRAINER_TRADE[trainer] === trainer,
+);
+
+/** The classes that are one trade, in class order */
+export function getTradeClasses(trade: TrainerClass): TrainerClass[] {
+  return TRAINER_CLASSES.filter((trainer) => TRAINER_TRADE[trainer] === trade);
+}
+
+/**
+ * What a screen calls each class: the mainline name, with the region
+ * after it only where both regions put the same trade on the road.
+ * A name nobody shares is the mainline's own
+ */
+export const TRAINER_NAMES: Record<TrainerClass, string> = buildTrainerNames();
+
+function buildTrainerNames(): Record<TrainerClass, string> {
+  const seen = new Set<string>();
+  const shared = new Set<string>();
+
+  for (const trainer of TRAINER_CLASSES) {
+    const name = TRAINER_BASE_NAMES[trainer];
+
+    if (seen.has(name)) {
+      shared.add(name);
+    }
+    seen.add(name);
+  }
+
+  const named: Record<TrainerClass, string> = { ...TRAINER_BASE_NAMES };
+
+  for (const trainer of TRAINER_CLASSES) {
+    const name = TRAINER_BASE_NAMES[trainer];
+    const region = REGION_NAMES[TRAINER_REGIONS[trainer]];
+
+    if (shared.has(name)) {
+      named[trainer] = `${name} (${region.slice(0, 1).toUpperCase()}${region.slice(1)})`;
+    }
+  }
+  return named;
+}
 
 /**
  * The type each class fields. The Ace has none: they field the best
@@ -92,6 +259,20 @@ export const TRAINER_TYPES: Record<TrainerClass, Types | null> = {
   [TrainerClass.Swimmer]: Types.Water,
   [TrainerClass.Rocker]: Types.Electric,
   [TrainerClass.Psychic]: Types.Psychic,
+  [TrainerClass.Sage]: Types.Grass,
+  [TrainerClass.Skier]: Types.Ice,
+  [TrainerClass.Scientist]: Types.Steel,
+  // Johto's two answer the types Kanto has nobody for: the Den's
+  // maniacs keep dragons, and its burglars work after dark
+  [TrainerClass.JohtoPokeManiac]: Types.Dragon,
+  [TrainerClass.JohtoBurglar]: Types.Dark,
+  [TrainerClass.JohtoAceTrainer]: null,
+  [TrainerClass.JohtoLass]: Types.Normal,
+  [TrainerClass.JohtoBlackBelt]: Types.Fighting,
+  [TrainerClass.JohtoBirdKeeper]: Types.Flying,
+  [TrainerClass.JohtoBiker]: Types.Poison,
+  [TrainerClass.JohtoBugCatcher]: Types.Bug,
+  [TrainerClass.JohtoSwimmer]: Types.Water,
 };
 
 /**
@@ -116,6 +297,26 @@ export const TRAINER_CHARSETS: Record<TrainerClass, string[]> = {
   [TrainerClass.Swimmer]: ['characters/lgpe/swimmer-f', 'characters/lgpe/swimmer-m'],
   [TrainerClass.Rocker]: ['characters/frlg/rocker', 'characters/lgpe/rocker'],
   [TrainerClass.Psychic]: ['characters/lgpe/psychic', 'characters/lgpe/juggler'],
+  // The tower's sages and the two elders who keep it, who are the
+  // same people a few decades apart
+  [TrainerClass.Sage]: [
+    'characters/hgss/sage',
+    'characters/hgss/sage-1',
+    'characters/hgss/sage-2',
+    'characters/hgss/elder-1',
+    'characters/hgss/elder-2',
+  ],
+  [TrainerClass.Skier]: ['characters/hgss/skier', 'characters/hgss/boarder'],
+  [TrainerClass.Scientist]: ['characters/hgss/scientist', 'characters/lgpe/scientist'],
+  [TrainerClass.JohtoPokeManiac]: ['characters/hgss/poke-maniac'],
+  [TrainerClass.JohtoBurglar]: ['characters/hgss/burglar'],
+  [TrainerClass.JohtoAceTrainer]: ['characters/hgss/ace-trainer', 'characters/hgss/ace-trainer-f'],
+  [TrainerClass.JohtoLass]: ['characters/hgss/lass'],
+  [TrainerClass.JohtoBlackBelt]: ['characters/hgss/black-belt'],
+  [TrainerClass.JohtoBirdKeeper]: ['characters/hgss/bird-keeper'],
+  [TrainerClass.JohtoBiker]: ['characters/hgss/biker'],
+  [TrainerClass.JohtoBugCatcher]: ['characters/hgss/bug-catcher'],
+  [TrainerClass.JohtoSwimmer]: ['characters/hgss/swimmer', 'characters/hgss/swimmer-f'],
 };
 
 /**
@@ -126,44 +327,209 @@ export const TRAINER_CHARSETS: Record<TrainerClass, string[]> = {
  * field every type and travel everywhere
  */
 export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
-  [Biome.DeepOcean]: [TrainerClass.Swimmer, TrainerClass.BirdKeeper],
-  [Biome.Ocean]: [TrainerClass.Swimmer, TrainerClass.BirdKeeper],
-  [Biome.CoralReef]: [TrainerClass.Swimmer, TrainerClass.PokeManiac],
-  [Biome.Beach]: [TrainerClass.Swimmer, TrainerClass.Lass, TrainerClass.BirdKeeper],
-  [Biome.Mangrove]: [TrainerClass.Swimmer, TrainerClass.Biker, TrainerClass.BugCatcher],
-  [Biome.KelpForest]: [TrainerClass.Swimmer, TrainerClass.Psychic],
-  [Biome.PolarOcean]: [TrainerClass.Swimmer, TrainerClass.BirdKeeper],
-  [Biome.Glacier]: [TrainerClass.Swimmer, TrainerClass.Hiker],
-  [Biome.Tundra]: [TrainerClass.Hiker, TrainerClass.BirdKeeper, TrainerClass.Lass],
-  [Biome.Swamp]: [TrainerClass.Biker, TrainerClass.Channeler, TrainerClass.BugCatcher],
-  [Biome.Bog]: [TrainerClass.Biker, TrainerClass.Channeler],
+  [Biome.DeepOcean]: [
+    TrainerClass.Swimmer,
+    TrainerClass.BirdKeeper,
+    TrainerClass.JohtoPokeManiac,
+    TrainerClass.JohtoSwimmer,
+    TrainerClass.JohtoBirdKeeper,
+  ],
+  [Biome.Ocean]: [
+    TrainerClass.Swimmer,
+    TrainerClass.BirdKeeper,
+    TrainerClass.JohtoSwimmer,
+    TrainerClass.JohtoBirdKeeper,
+  ],
+  [Biome.CoralReef]: [TrainerClass.Swimmer, TrainerClass.PokeManiac, TrainerClass.JohtoSwimmer],
+  [Biome.Beach]: [
+    TrainerClass.Swimmer,
+    TrainerClass.Lass,
+    TrainerClass.BirdKeeper,
+    TrainerClass.JohtoSwimmer,
+    TrainerClass.JohtoLass,
+    TrainerClass.JohtoBirdKeeper,
+  ],
+  [Biome.Mangrove]: [
+    TrainerClass.Swimmer,
+    TrainerClass.Biker,
+    TrainerClass.BugCatcher,
+    TrainerClass.JohtoSwimmer,
+    TrainerClass.JohtoBiker,
+    TrainerClass.JohtoBugCatcher,
+  ],
+  [Biome.KelpForest]: [TrainerClass.Swimmer, TrainerClass.Psychic, TrainerClass.JohtoSwimmer],
+  [Biome.PolarOcean]: [
+    TrainerClass.Swimmer,
+    TrainerClass.BirdKeeper,
+    TrainerClass.Skier,
+    TrainerClass.JohtoSwimmer,
+    TrainerClass.JohtoBirdKeeper,
+  ],
+  [Biome.Glacier]: [
+    TrainerClass.Swimmer,
+    TrainerClass.Hiker,
+    TrainerClass.Skier,
+    TrainerClass.JohtoSwimmer,
+  ],
+  [Biome.Tundra]: [
+    TrainerClass.Hiker,
+    TrainerClass.BirdKeeper,
+    TrainerClass.Lass,
+    TrainerClass.Skier,
+    TrainerClass.JohtoBirdKeeper,
+    TrainerClass.JohtoLass,
+  ],
+  [Biome.Swamp]: [
+    TrainerClass.Biker,
+    TrainerClass.Channeler,
+    TrainerClass.BugCatcher,
+    TrainerClass.JohtoBurglar,
+    TrainerClass.JohtoBiker,
+    TrainerClass.JohtoBugCatcher,
+  ],
+  [Biome.Bog]: [
+    TrainerClass.Biker,
+    TrainerClass.Channeler,
+    TrainerClass.JohtoBurglar,
+    TrainerClass.JohtoBiker,
+  ],
   [Biome.TropicalSeasonalForest]: [
     TrainerClass.BugCatcher,
     TrainerClass.Lass,
     TrainerClass.BirdKeeper,
+    TrainerClass.Sage,
+    TrainerClass.JohtoBugCatcher,
+    TrainerClass.JohtoLass,
+    TrainerClass.JohtoBirdKeeper,
   ],
-  [Biome.Grassland]: [TrainerClass.Lass, TrainerClass.BugCatcher, TrainerClass.BirdKeeper],
-  [Biome.TemperateForest]: [TrainerClass.BugCatcher, TrainerClass.Lass, TrainerClass.Channeler],
-  [Biome.Woodland]: [TrainerClass.BugCatcher, TrainerClass.Lass, TrainerClass.Hiker],
-  [Biome.Savanna]: [TrainerClass.BirdKeeper, TrainerClass.Hiker, TrainerClass.BlackBelt],
-  [Biome.Steppe]: [TrainerClass.BirdKeeper, TrainerClass.Hiker, TrainerClass.Rocker],
+  [Biome.Grassland]: [
+    TrainerClass.Lass,
+    TrainerClass.BugCatcher,
+    TrainerClass.BirdKeeper,
+    TrainerClass.Sage,
+    TrainerClass.JohtoLass,
+    TrainerClass.JohtoBugCatcher,
+    TrainerClass.JohtoBirdKeeper,
+  ],
+  [Biome.TemperateForest]: [
+    TrainerClass.BugCatcher,
+    TrainerClass.Lass,
+    TrainerClass.Channeler,
+    TrainerClass.Sage,
+    TrainerClass.JohtoBugCatcher,
+    TrainerClass.JohtoLass,
+  ],
+  [Biome.Woodland]: [
+    TrainerClass.BugCatcher,
+    TrainerClass.Lass,
+    TrainerClass.Hiker,
+    TrainerClass.Sage,
+    TrainerClass.JohtoBugCatcher,
+    TrainerClass.JohtoLass,
+  ],
+  [Biome.Savanna]: [
+    TrainerClass.BirdKeeper,
+    TrainerClass.Hiker,
+    TrainerClass.BlackBelt,
+    TrainerClass.JohtoBirdKeeper,
+    TrainerClass.JohtoBlackBelt,
+  ],
+  [Biome.Steppe]: [
+    TrainerClass.BirdKeeper,
+    TrainerClass.Hiker,
+    TrainerClass.Rocker,
+    TrainerClass.JohtoBirdKeeper,
+  ],
   [Biome.Desert]: [TrainerClass.Hiker, TrainerClass.PokeManiac, TrainerClass.Burglar],
-  [Biome.Volcano]: [TrainerClass.Burglar, TrainerClass.PokeManiac, TrainerClass.Hiker],
-  [Biome.ColdDesert]: [TrainerClass.Hiker, TrainerClass.PokeManiac],
-  [Biome.Mountain]: [TrainerClass.Hiker, TrainerClass.PokeManiac, TrainerClass.BlackBelt],
-  [Biome.AlpineTundra]: [TrainerClass.Hiker, TrainerClass.BirdKeeper],
-  [Biome.Badlands]: [TrainerClass.PokeManiac, TrainerClass.Biker, TrainerClass.BlackBelt],
-  [Biome.RockyCoast]: [TrainerClass.PokeManiac, TrainerClass.Swimmer, TrainerClass.BirdKeeper],
+  [Biome.Volcano]: [
+    TrainerClass.Burglar,
+    TrainerClass.PokeManiac,
+    TrainerClass.Hiker,
+    TrainerClass.Scientist,
+    TrainerClass.JohtoPokeManiac,
+  ],
+  [Biome.ColdDesert]: [
+    TrainerClass.Hiker,
+    TrainerClass.PokeManiac,
+    TrainerClass.Skier,
+    TrainerClass.Scientist,
+  ],
+  [Biome.Mountain]: [
+    TrainerClass.Hiker,
+    TrainerClass.PokeManiac,
+    TrainerClass.BlackBelt,
+    TrainerClass.Scientist,
+    TrainerClass.JohtoPokeManiac,
+    TrainerClass.JohtoBlackBelt,
+  ],
+  [Biome.AlpineTundra]: [
+    TrainerClass.Hiker,
+    TrainerClass.BirdKeeper,
+    TrainerClass.Skier,
+    TrainerClass.JohtoBirdKeeper,
+  ],
+  [Biome.Badlands]: [
+    TrainerClass.PokeManiac,
+    TrainerClass.Biker,
+    TrainerClass.BlackBelt,
+    TrainerClass.Scientist,
+    TrainerClass.JohtoBurglar,
+    TrainerClass.JohtoBiker,
+    TrainerClass.JohtoBlackBelt,
+  ],
+  [Biome.RockyCoast]: [
+    TrainerClass.PokeManiac,
+    TrainerClass.Swimmer,
+    TrainerClass.BirdKeeper,
+    TrainerClass.JohtoSwimmer,
+    TrainerClass.JohtoBirdKeeper,
+  ],
   [Biome.TemperateRainforest]: [
     TrainerClass.BugCatcher,
     TrainerClass.Channeler,
     TrainerClass.Psychic,
+    TrainerClass.JohtoBugCatcher,
   ],
-  [Biome.MontaneForest]: [TrainerClass.Psychic, TrainerClass.BugCatcher, TrainerClass.Hiker],
-  [Biome.Beyond]: [TrainerClass.Psychic, TrainerClass.Channeler, TrainerClass.Rocker],
-  [Biome.TropicalRainforest]: [TrainerClass.BugCatcher, TrainerClass.Psychic, TrainerClass.Biker],
-  [Biome.Shrubland]: [TrainerClass.Lass, TrainerClass.BugCatcher, TrainerClass.Rocker],
-  [Biome.Taiga]: [TrainerClass.Hiker, TrainerClass.BugCatcher, TrainerClass.BirdKeeper],
+  [Biome.MontaneForest]: [
+    TrainerClass.Psychic,
+    TrainerClass.BugCatcher,
+    TrainerClass.Hiker,
+    TrainerClass.Sage,
+    TrainerClass.JohtoBugCatcher,
+  ],
+  [Biome.Beyond]: [
+    TrainerClass.Psychic,
+    TrainerClass.Channeler,
+    TrainerClass.Rocker,
+    TrainerClass.Scientist,
+    TrainerClass.JohtoPokeManiac,
+    TrainerClass.JohtoBurglar,
+  ],
+  [Biome.TropicalRainforest]: [
+    TrainerClass.BugCatcher,
+    TrainerClass.Psychic,
+    TrainerClass.Biker,
+    TrainerClass.Sage,
+    TrainerClass.JohtoBugCatcher,
+    TrainerClass.JohtoBiker,
+  ],
+  [Biome.Shrubland]: [
+    TrainerClass.Lass,
+    TrainerClass.BugCatcher,
+    TrainerClass.Rocker,
+    TrainerClass.Sage,
+    TrainerClass.JohtoLass,
+    TrainerClass.JohtoBugCatcher,
+  ],
+  [Biome.Taiga]: [
+    TrainerClass.Hiker,
+    TrainerClass.BugCatcher,
+    TrainerClass.BirdKeeper,
+    TrainerClass.Skier,
+    TrainerClass.JohtoBurglar,
+    TrainerClass.JohtoBugCatcher,
+    TrainerClass.JohtoBirdKeeper,
+  ],
 };
 
 /**
@@ -171,7 +537,7 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
  * Ace, who belongs to no country
  */
 export function getBiomeTrainers(biome: Biome): TrainerClass[] {
-  return [TrainerClass.AceTrainer, ...BIOME_TRAINERS[biome]];
+  return [TrainerClass.AceTrainer, TrainerClass.JohtoAceTrainer, ...BIOME_TRAINERS[biome]];
 }
 
 /** What each says as the duel is put to the player */
@@ -189,6 +555,20 @@ export const TRAINER_QUOTES: Record<TrainerClass, string> = {
   [TrainerClass.Swimmer]: 'I swam here. Fighting you is the easy part.',
   [TrainerClass.Rocker]: 'Turn it up! My pokemon like it loud and shocking.',
   [TrainerClass.Psychic]: 'You will decide to battle me. I have already seen it.',
+  [TrainerClass.Sage]: 'The tower teaches patience. My pokemon have more of it than you.',
+  [TrainerClass.Skier]: 'I came down this slope faster than you can think. Keep up.',
+  [TrainerClass.Scientist]: 'My pokemon are steel. Yours are, at best, interesting data.',
+  [TrainerClass.JohtoPokeManiac]:
+    'I have raised dragons since I could walk. Show me what you raised.',
+  [TrainerClass.JohtoBurglar]: 'Nothing good happens on this road after dark. I am the reason.',
+  [TrainerClass.JohtoAceTrainer]: 'I have walked both regions. You have walked into me.',
+  [TrainerClass.JohtoLass]: 'Everyone back home says I am the best. Let us find out!',
+  [TrainerClass.JohtoBlackBelt]: 'I train at the falls under Chuck. You will feel it.',
+  [TrainerClass.JohtoBirdKeeper]: 'My birds fly the whole coast. Yours have seen one road.',
+  [TrainerClass.JohtoBiker]: 'We ride these roads at night. Move or fight.',
+  [TrainerClass.JohtoBugCatcher]:
+    'The contest is over but I never stopped catching. Look at these!',
+  [TrainerClass.JohtoSwimmer]: 'The water is colder here. It has not slowed me down.',
 };
 
 /**
@@ -209,22 +589,35 @@ export const TYPE_TRAINER_PARTY_MAX = 5;
 
 export const TYPE_TRAINER_LEVELS: [minimum: number, maximum: number] = [40, 60];
 
+/**
+ * Whether this is one of the Aces. Each region has one, and what
+ * makes them the hard fight of the road is the same in both: no type,
+ * five fully-grown, and the levels and the purse to match
+ */
+export function isAceTrainer(trainer: TrainerClass): boolean {
+  return trainer === TrainerClass.AceTrainer || trainer === TrainerClass.JohtoAceTrainer;
+}
+
 /** The level band a class fights in */
 export function trainerLevels(trainer: TrainerClass): [minimum: number, maximum: number] {
-  return trainer === TrainerClass.AceTrainer ? ACE_TRAINER_LEVELS : TYPE_TRAINER_LEVELS;
+  return isAceTrainer(trainer) ? ACE_TRAINER_LEVELS : TYPE_TRAINER_LEVELS;
 }
 
 const LAIR_SPECIES = new Set(EVERY_LAIR.flatMap(getLairResidents));
 
 /**
- * What a class may field: the region's fully-grown species of their
- * own type, or of any type for the Ace. Legendaries stay out — one
- * belongs to its raid — and so do the alternate forms and the egg
+ * What a class may field: their own region's fully-grown species of
+ * their own type, or of any type for the Ace. The region is the
+ * class', not the country they are standing in, which is what makes
+ * a Johto Swimmer worth meeting on the same water as a Kanto one.
+ *
+ * Legendaries stay out, one belongs to its raid, and so do the
+ * alternate forms and the egg
  */
-export function getTrainerPool(region: Regions, trainer: TrainerClass): Species[] {
+export function getTrainerPool(trainer: TrainerClass): Species[] {
   const type = TRAINER_TYPES[trainer];
 
-  return getSpeciesByRegion(region).filter((species) => {
+  return getSpeciesByRegion(TRAINER_REGIONS[trainer]).filter((species) => {
     if (species === Species.Egg || LAIR_SPECIES.has(species) || !isBaseForm(species)) {
       return false;
     }

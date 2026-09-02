@@ -1,5 +1,7 @@
 import { TYPE_NAMES, type Types } from '../constants/types';
-import { TRAINER_CLASSES, TRAINER_NAMES, type TrainerClass } from '../overworld/trainers';
+import { TRAINER_BASE_NAMES, TRAINER_TRADES, type TrainerClass } from '../overworld/trainers';
+import Regions from './regions';
+import { REGIONS, REGION_NAMES } from '../species/regions';
 import {
   ACHIEVEMENT_LINES,
   ACHIEVEMENT_TYPES,
@@ -16,8 +18,9 @@ import {
  *
  * The id space: 0-99 the ladder titles, 100-199 the achievement
  * lines' (base at even, Master at odd), 200-299 the types'
- * (Specialist at even, Master at odd), 300+ the trainer classes'
- * (the class name at even, Master at odd)
+ * (Specialist at even, Master at odd), 300-399 the trainer trades'
+ * (the trade's name at even, Master at odd), and 400+ the regions'
+ * professor, one apiece
  */
 export type Title = number;
 
@@ -36,6 +39,7 @@ export const enum LadderTitle {
 const LINE_TITLE_BASE = 100;
 const TYPE_TITLE_BASE = 200;
 const TRAINER_TITLE_BASE = 300;
+const PROFESSOR_TITLE_BASE = 400;
 
 /** The title an achievement line's Bronze (or, `master`, Platinum) tier unlocks */
 export function lineTitle(line: AchievementLine, master: boolean): Title {
@@ -50,10 +54,11 @@ export function typeTitle(type: Types, master: boolean): Title {
 /**
  * The title a trainer line's Bronze (or, `master`, Platinum) tier
  * unlocks: beating enough Bug Catchers is what lets a player be
- * called one
+ * called one. It is the **trade** that is titled, so both regions'
+ * count towards the one title
  */
-export function trainerTitle(trainer: TrainerClass, master: boolean): Title {
-  return TRAINER_TITLE_BASE + trainer * 2 + (master ? 1 : 0);
+export function trainerTitle(trade: TrainerClass, master: boolean): Title {
+  return TRAINER_TITLE_BASE + trade * 2 + (master ? 1 : 0);
 }
 
 /**
@@ -85,18 +90,40 @@ export function titleType(title: Title): Types | null {
 }
 
 /**
- * The trainer class a title belongs to, or null for one that is not a
- * class'
+ * The title filling a region's pokedex is worth: the region's own
+ * professor, since the dex was theirs to fill
+ */
+export function professorTitle(region: Regions): Title {
+  return PROFESSOR_TITLE_BASE + region;
+}
+
+/** The region a professor title belongs to, or null for anything else */
+export function titleProfessor(title: Title): Regions | null {
+  if (title < PROFESSOR_TITLE_BASE) {
+    return null;
+  }
+
+  // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+  const region = (title - PROFESSOR_TITLE_BASE) as Regions;
+
+  return REGIONS.includes(region) && region !== Regions.Unknown ? region : null;
+}
+
+/**
+ * The trainer trade a title belongs to, or null for one that is not a
+ * trade's
  */
 export function titleTrainer(title: Title): TrainerClass | null {
-  if (title < TRAINER_TITLE_BASE) {
+  if (title < TRAINER_TITLE_BASE || title >= PROFESSOR_TITLE_BASE) {
     return null;
   }
 
   // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
   const trainer = Math.floor((title - TRAINER_TITLE_BASE) / 2) as TrainerClass;
 
-  return TRAINER_CLASSES.includes(trainer) ? trainer : null;
+  // A trade carries the title, so a region's own class resolves to
+  // none: there is no Swimmer (Johto) title, only a Swimmer one
+  return TRAINER_TRADES.includes(trainer) ? trainer : null;
 }
 
 const LADDER_TITLE_NAMES: Record<LadderTitle, string> = {
@@ -113,10 +140,20 @@ const LADDER_TITLE_NAMES: Record<LadderTitle, string> = {
  * as no title rather than as garbage
  */
 export function getTitleName(title: Title): string | null {
+  const region = titleProfessor(title);
+
+  if (region != null) {
+    const name = REGION_NAMES[region];
+
+    return `${name.slice(0, 1).toUpperCase()}${name.slice(1)} Professor`;
+  }
+
   const trainer = titleTrainer(title);
 
   if (trainer != null) {
-    const name = TRAINER_NAMES[trainer];
+    // The mainline's own name, not the region-tagged one: a title is
+    // what a player is called, and nobody is called a Swimmer (Johto)
+    const name = TRAINER_BASE_NAMES[trainer];
 
     return title % 2 === 1 ? `Master ${name}` : name;
   }

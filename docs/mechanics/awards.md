@@ -66,6 +66,7 @@ the tier that unlocked it.
 | **Elite Conqueror**   | All four of the Elite Four          |
 | **Champion**          | The Champion's own seat             |
 | **Legend Breaker**    | Any legend's mark                   |
+| **{Region} Professor** | That region's dex filled           |
 | A line's title        | That achievement line at **Bronze** |
 | Its Master form       | The same line at **Platinum**       |
 
@@ -73,6 +74,11 @@ Every achievement line carries a pair of titles, so a Collector at Bronze may be
 called one and a Collector at Platinum may be called a Master Collector. The
 type lines and the trainer lines work the same way: enough Bug Catchers beaten is
 what lets a player be called one.
+
+A trainer line counts the **trade** rather than the region, so Kanto's Swimmers
+and Johto's climb the same line and pay the same title. Their **coats** do not:
+each region's are worn off that region's own wins, so beating Kanto's swimmers
+never dressed anybody as a Johto one.
 
 ## Characters
 
@@ -97,7 +103,7 @@ titles come from.
 | **Professor Elm**         | Johto's dex filled              |
 | Oak in Johto              | Both dexes filled               |
 | A Kanto leader's later look | That badge **and** Johto's crown |
-| A class of trainer        | That class's line at **Bronze** |
+| A class of trainer        | That region's class at **Bronze** |
 
 So beating Brock lets you go about as Brock, and putting down enough Bug
 Catchers is what lets you dress as one. Where a character was drawn twice, once

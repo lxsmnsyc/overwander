@@ -28,6 +28,9 @@ import Natures from '../../src/data/ids/natures';
 import { APRICORNS, ItemTypes, Items } from '../../src/data/ids/items';
 import registerItems, { getItemData } from '../../src/data/items';
 import { isValuable } from '../../src/data/items/valuables';
+import { getExpertHeldItems } from '../../src/data/items/expert-loadout';
+import { Slots, countAbilitySlots, getSlots } from '../../src/data/constants/slots';
+import type { CatchSnapshot } from '../../src/auth/catch-snapshot';
 import {
   ITEM_BAND_ODDS,
   type ItemBand,
@@ -101,14 +104,18 @@ import {
 import { collectAftermath, createRaidBattle } from '../../src/overworld/raid-battle';
 import {
   CHAMPION_GOLD,
+  CHAMPION_OUTFIT,
   CHAMPION_PARTY_LEVELS,
   ELITE_GOLD,
+  ELITE_OUTFIT,
   ELITE_PARTY_LEVELS,
   GIOVANNI_GOLD,
   GIOVANNI_PARTY_LEVELS,
   GYM_GOLD,
+  GYM_OUTFIT,
   GYM_PARTY_LEVELS,
   type GoldBand,
+  PLAIN_OUTFIT,
   ROCKET_GRUNT_GOLD,
   ROCKET_PARTY_LEVELS,
   ROCKET_REWARD_LEVEL,
@@ -118,6 +125,7 @@ import {
   rollStopGold,
   rollStopLoot,
   stopGoldBand,
+  stopOutfit,
   stopPartyLevels,
 } from '../../src/overworld/rocket';
 import {
@@ -1315,6 +1323,83 @@ describe('world', () => {
     expect(rocketRewardOffer(RocketRank.Executive)).toBe(ROCKET_PARTY_SIZE);
     expect(rocketRewardOffer(RocketRank.Giovanni)).toBe(ROCKET_PARTY_SIZE);
     expect(rocketRewardOffer(RocketRank.Grunt)).toBe(ROCKET_PARTY_SIZE / 2);
+  });
+
+  it('fields an expert’s party trained rather than caught', () => {
+    const world = new World('overworld');
+    const chunk = findChunk(
+      world,
+      (candidate) => new ChunkSnapshot(candidate, 0).getRocketStops().size > 0,
+    );
+
+    expect(chunk).not.toBeNull();
+    if (chunk == null) {
+      return;
+    }
+
+    const snapshot = new ChunkSnapshot(chunk, 0);
+    const [spawns] = [...snapshot.getRocketStops().values()];
+
+    // What each rung fields above what it caught: a gym leader gears
+    // its six, the Elite Four and the executives train a second
+    // ability into them, and a champion and Giovanni do both twice
+    expect(stopOutfit(Landmark.Trainer, RocketRank.Grunt)).toEqual(PLAIN_OUTFIT);
+    expect(stopOutfit(Landmark.TeamRocket, RocketRank.Grunt)).toEqual(PLAIN_OUTFIT);
+    expect(stopOutfit(Landmark.GymLeader, RocketRank.Grunt)).toEqual(GYM_OUTFIT);
+    expect(stopOutfit(Landmark.EliteFour, RocketRank.Grunt)).toEqual(ELITE_OUTFIT);
+    expect(stopOutfit(Landmark.TeamRocket, RocketRank.Executive)).toEqual(ELITE_OUTFIT);
+    expect(stopOutfit(Landmark.Champion, RocketRank.Grunt)).toEqual(CHAMPION_OUTFIT);
+    expect(stopOutfit(Landmark.TeamRocket, RocketRank.Giovanni)).toEqual(CHAMPION_OUTFIT);
+
+    const fielded = (outfit: typeof PLAIN_OUTFIT, shadow = false): CatchSnapshot[] =>
+      createRocketParty(snapshot, spawns, shadow, ELITE_PARTY_LEVELS, outfit);
+
+    // A duelling trainer's six is what a walk would have met
+    for (const member of fielded(PLAIN_OUTFIT)) {
+      expect(member.abilities).toHaveLength(1);
+      expect(member.items).toEqual([]);
+      expect(getSlots(member.slots, Slots.Item)).toBe(1);
+      expect(getSlots(member.slots, Slots.Ability)).toBe(1);
+    }
+
+    for (const member of fielded(GYM_OUTFIT)) {
+      expect(member.abilities).toHaveLength(1);
+      // One item, and the one that species would want
+      expect(member.items).toEqual(getExpertHeldItems(member.species, 1));
+      expect(getSlots(member.slots, Slots.Item)).toBe(1);
+    }
+
+    for (const member of fielded(ELITE_OUTFIT)) {
+      // Two abilities, which nothing met in the world ever has, and
+      // room counted for both
+      expect(member.abilities.length, getSpeciesData(member.species).name).toBe(
+        Math.min(
+          2,
+          new Set([
+            ...getSpeciesAbilityPools(member.species).regular,
+            ...getSpeciesAbilityPools(member.species).hidden,
+          ]).size,
+        ),
+      );
+      expect(getSlots(member.slots, Slots.Ability)).toBe(member.abilities.length);
+      expect(member.items).toHaveLength(1);
+    }
+
+    for (const member of fielded(CHAMPION_OUTFIT)) {
+      expect(member.items).toHaveLength(2);
+      expect(new Set(member.items).size).toBe(2);
+      // The room is the outfit's, which is what a Utility Belt would
+      // otherwise have to buy
+      expect(getSlots(member.slots, Slots.Item)).toBe(2);
+    }
+
+    // A shadow's own mark rides free of the ability count, so
+    // Giovanni's six carry two abilities and the Shadow besides
+    for (const member of fielded(CHAMPION_OUTFIT, true)) {
+      expect(new Set(member.abilities).has(Abilities.Shadow)).toBe(true);
+      expect(countAbilitySlots(member.abilities)).toBeLessThanOrEqual(2);
+      expect(getSlots(member.slots, Slots.Ability)).toBe(countAbilitySlots(member.abilities));
+    }
   });
 
   it('rolls a purse in the stop’s own range, the same on every ask', () => {

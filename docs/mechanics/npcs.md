@@ -161,6 +161,11 @@ pays **40,000 to 90,000**, leaves any of its six, and drops an item it was
 carrying besides. **Giovanni** pays **120,000 to 250,000** and leaves any of his,
 the legendary included.
 
+The executives and Giovanni field trained pokemon rather than caught ones, and
+what they leave behind keeps it: an executive's prize walks away with both its
+abilities, and Giovanni's with both and room for a second held item. See
+[Battles](battles.md).
+
 Team Rocket is the one person at a crossroads a player can lose to. See
 [Battles](battles.md) for how the fight itself runs.
 

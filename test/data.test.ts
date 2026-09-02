@@ -202,6 +202,7 @@ import {
   purifyIVs,
 } from '../src/data/items/purifying-gem';
 import { CANDY_ITEM_PRICE } from '../src/data/items/candy-items';
+import { getExpertHeldItems, isBattleHeldItem } from '../src/data/items/expert-loadout';
 import { isPortalKey } from '../src/data/items/portal-key';
 import { isHeartScale } from '../src/data/items/heart-scale';
 import Landmark, { LANDMARKS, LANDMARK_NAMES } from '../src/data/overworld/landmark';
@@ -4309,6 +4310,70 @@ describe('biome data', () => {
     expect(
       pickSpawn({ base: [], uncommon: [], rare: [], special: [] }, rolls([0.5, 0])),
     ).toBeNull();
+  });
+});
+
+describe('what an expert hands its party', () => {
+  it('gives a species the gear that is its own, best first', () => {
+    // A relic nothing else can use: the whole of what makes a gym
+    // leader's Pikachu worse news than one met in the grass
+    expect(getExpertHeldItems(Species.Pikachu, 1)).toEqual([Items.LightBall]);
+    expect(getExpertHeldItems(Species.Marowak, 1)).toEqual([Items.ThickClub]);
+    expect(getExpertHeldItems(Species.Farfetchd, 1)).toEqual([Items.Stick]);
+
+    // A second item is the next thing down rather than the same one
+    // twice, and it is still that species'
+    const pikachu = getExpertHeldItems(Species.Pikachu, 2);
+
+    expect(pikachu).toHaveLength(2);
+    expect(new Set(pikachu).size).toBe(2);
+    expect(pikachu[0]).toBe(Items.LightBall);
+    // Its relic first, then the thing that answers still being a
+    // Pikachu rather than a Raichu
+    expect(pikachu[1]).toBe(Items.Eviolite);
+    expect(getExpertHeldItems(Species.Marowak, 2)[1]).toBe(Items.HardStone);
+  });
+
+  it('never hands out what does nothing in a fight', () => {
+    // Chansey's own rarest is a Lucky Egg and Gengar's is a Smoke
+    // Ball. Both are worth having and neither wins a fight
+    expect(getExpertHeldItems(Species.Chansey, 2)).not.toContain(Items.LuckyEgg);
+    expect(getExpertHeldItems(Species.Gengar, 2)).not.toContain(Items.SmokeBall);
+
+    // Nor a berry, which is what most of the common slots are
+    for (const species of getBaseForms()) {
+      for (const item of getExpertHeldItems(species, 2)) {
+        expect(isBattleHeldItem(item), getSpeciesData(species).name).toBe(true);
+      }
+    }
+  });
+
+  it('answers for every species, and answers the same every time', () => {
+    for (const species of getBaseForms()) {
+      const held = getExpertHeldItems(species, 2);
+
+      // Two, always: a champion's party is never short-handed, and a
+      // species nothing else fits falls to Leftovers and a booster
+      expect(held, getSpeciesData(species).name).toHaveLength(2);
+      expect(new Set(held).size, getSpeciesData(species).name).toBe(2);
+      expect(getExpertHeldItems(species, 2)).toEqual(held);
+      // And the first of the two is what one item asks for
+      expect(getExpertHeldItems(species, 1)).toEqual([held[0]]);
+    }
+    expect(getExpertHeldItems(Species.Pikachu, 0)).toEqual([]);
+  });
+
+  it('answers a half-grown one with the thing that answers being half-grown', () => {
+    // The named middle stages an expert fields — Bruno's Onix, Bugsy's
+    // Scyther, Falkner's Pidgeotto — are there because the trainer is
+    // known for them, so what they carry is the item for having
+    // somewhere left to go
+    for (const species of [Species.Onix, Species.Scyther, Species.Pidgeotto]) {
+      expect(getExpertHeldItems(species, 1), getSpeciesData(species).name).toEqual([
+        Items.Eviolite,
+      ]);
+    }
+    expect(getExpertHeldItems(Species.Steelix, 1)).not.toContain(Items.Eviolite);
   });
 });
 

@@ -332,6 +332,33 @@ export function deriveAbility(species: Species, traitValue: number, boost = 1): 
 }
 
 /**
+ * A second ability for the species, or null where it has only one to
+ * give.
+ *
+ * The rungs above a gym leader field pokemon carrying two, which is
+ * the one thing a player cannot get by catching the same species: a
+ * wild meeting rolls one ability and keeps it. Read off the nature
+ * slice rather than the ability slice, so which second one a pokemon
+ * has is not decided by which first one it rolled
+ */
+export function deriveSecondAbility(
+  species: Species,
+  traitValue: number,
+  first: Abilities,
+): Abilities | null {
+  const pools = getSpeciesAbilityPools(species);
+  const rest = [...pools.regular, ...pools.hidden].filter((ability) => ability !== first);
+
+  if (rest.length === 0) {
+    return null;
+  }
+
+  const slice = (traitValue >>> (TRAIT_BITS * 3)) & TRAIT_MASK;
+
+  return rest[Math.floor((slice / TRAIT_RANGE) * rest.length)];
+}
+
+/**
  * The gender a trait value picks for the species: a pure ratio roll
  * from its own slice, independent of any stat. A species with no
  * ratio is genderless
@@ -573,6 +600,18 @@ export interface EncounterOptions {
    * that finds what a pokemon has in its mouth
    */
   heldBoost?: number;
+  /**
+   * How many ordinary abilities it walks in with. One for everything
+   * met in the world; a pokemon taken off somebody who trained two
+   * into it keeps both
+   */
+  abilities?: number;
+  /**
+   * How many held items it has room for. One for everything met in
+   * the world, and the room is what is handed over rather than
+   * anything in it
+   */
+  itemSlots?: number;
 }
 
 /**

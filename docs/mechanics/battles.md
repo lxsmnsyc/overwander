@@ -257,6 +257,30 @@ Every player fights the cell separately. Winning closes nothing for anybody else
 and losing costs nothing but the attempt — they are still there and may be fought
 again until the window turns over.
 
+### What an expert's party carries
+
+A duelling trainer and a Team Rocket grunt field what they caught. Everybody
+above them fields pokemon that were **trained**, which is most of what makes the
+same six harder from their side of the field:
+
+| Whose party        | Abilities | Held items |
+| ------------------ | --------- | ---------- |
+| Trainer, grunt     | 1         | None       |
+| Gym leader         | 1         | 1          |
+| Elite Four, executive | 2      | 1          |
+| Champion, Giovanni | 2         | 2          |
+
+A second ability is the one thing a player cannot get by catching the same
+species: a wild meeting rolls one and keeps it. The gear is the pokemon's own
+rather than the trainer's — a Pikachu on any team holds the Light Ball because it
+is a Pikachu — and it is chosen from what that species is worth carrying, so a
+half-grown one an expert is known for gets the item that answers being
+half-grown.
+
+Team Rocket's prizes keep what was put into them. An executive's pokemon walks
+away with **both its abilities**, and Giovanni's with both and the **room for a
+second held item**, which nothing else outside a Utility Belt hands over.
+
 ## Trainers and the league
 
 Every other fight a walk can find is fought the same way, and what changes is who
@@ -267,13 +291,13 @@ standing at a trainer cell depends on the country; see
 
 | Who                   | What they field                      | Levels |
 | --------------------- | ------------------------------------ | ------ |
-| **Team Rocket grunt** | Six shadows: one common, two uncommon, three rare | 40-60 |
 | **Type expert**       | Three to five of their own type      | 40-60  |
-| **Ace Trainer**       | Five fully-grown pokemon of any type | 60-80  |
+| **Team Rocket grunt** | Six shadows: one common, two uncommon, three rare | 40-60 |
 | **Gym leader**        | Five of their gym's type, and their signature sixth | 45-65 |
+| **Ace Trainer**       | Five fully-grown pokemon of any type | 60-80  |
 | **Rocket executive**  | Six shadows of the biome's rare band | 65-85  |
-| **Giovanni**          | Six shadows, one of them a legendary | 85-100 |
 | **Elite Four**        | Five of their own kind, and their signature sixth | 65-85 |
+| **Giovanni**          | Six shadows, one of them a legendary | 85-100 |
 | **Champion**          | Their own signature six              | 85-100 |
 
 ## Gym seats

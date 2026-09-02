@@ -23,6 +23,7 @@ import {
   rollStopLoot,
   stopChallenger,
   stopGoldBand,
+  stopOutfit,
   stopPartyLevels,
 } from '../overworld/rocket';
 import { encounterKey } from '../overworld/safari';
@@ -324,9 +325,10 @@ export async function startRocketBattle(
   const landmark = chunk.getLandmarkCells().get(record.cell);
   const shadow = landmark === Landmark.TeamRocket;
   const duellist = snapshot.getTrainerClass(record.cell);
+  const rank = snapshot.getRocketRank(record.cell) ?? RocketRank.Grunt;
   const levels = stopPartyLevels(
     landmark ?? Landmark.TeamRocket,
-    snapshot.getRocketRank(record.cell) ?? RocketRank.Grunt,
+    rank,
     duellist == null ? undefined : trainerLevels(duellist),
   );
   // Who is standing there, kept on the battle rather than derived
@@ -344,7 +346,16 @@ export async function startRocketBattle(
     await transaction`
       insert into team_snapshots (id, player, alliance, catches)
       values (${gruntId}, null, ${ROCKET_ALLIANCE},
-              ${jsonOf(transaction, createRocketParty(snapshot, toSpawns(record.party), shadow, levels))})
+              ${jsonOf(
+                transaction,
+                createRocketParty(
+                  snapshot,
+                  toSpawns(record.party),
+                  shadow,
+                  levels,
+                  stopOutfit(landmark ?? Landmark.TeamRocket, rank),
+                ),
+              )})
     `;
     await transaction`
       insert into battles (id, raid_id, species, outcome, started_at, biome, weather, limits,
@@ -527,12 +538,18 @@ export async function claimRocketReward(uid: string, stop: string): Promise<Rock
   }
 
   // Fixed rather than rolled, so the same grunt is worth the same to
-  // everyone who put them down — and far below the level-50 party it
-  // was taken from
+  // everyone who put them down — and far below the party it was taken
+  // from. What it does keep is how it was trained: an executive's and
+  // Giovanni's pokemon were raised with a second ability, and
+  // Giovanni's with room for a second item, and neither is undone by
+  // changing hands
+  const raised = stopOutfit(Landmark.TeamRocket, rank);
   const encounter = await startEncounter(uid, snapshot, spawnId, spawn, {
     type: EncounterType.Rocket,
     level: ROCKET_REWARD_LEVEL,
     shadow: true,
+    abilities: raised.abilities,
+    itemSlots: raised.items,
   });
 
   return { encounter, gold, award, item };

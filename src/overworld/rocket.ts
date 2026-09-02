@@ -3,7 +3,8 @@ import AleaRNG from '../core/alea';
 import type { CatchSnapshot } from '../auth/catch-snapshot';
 import { getMaxHealth } from '../auth/health';
 import { Stats } from '../data/constants/stats';
-import { defaultSlots } from '../data/constants/slots';
+import { Slots, defaultSlots, withSlots } from '../data/constants/slots';
+import { getExpertHeldItems } from '../data/items/expert-loadout';
 import Abilities from '../data/ids/abilities';
 import Landmark from '../data/overworld/landmark';
 import { CHAMPION_NAMES, ELITE_MEMBER_NAMES, GYM_LEADER_NAMES } from '../data/overworld/experts';
@@ -18,7 +19,7 @@ import type { Items } from '../data/ids/items';
 import { ITEM_POOL, type ItemBandOdds, pickItem } from '../data/overworld/item-pool';
 import type ChunkSnapshot from './chunk-snapshot';
 import { RocketRank, type Spawn } from './chunk-snapshot';
-import deriveEncounter, { EncounterType, deriveSize } from './encounter';
+import deriveEncounter, { EncounterType, deriveSecondAbility, deriveSize } from './encounter';
 import { BOSS_ALLIANCE, PLAYER_ALLIANCE } from './raid';
 
 /**
@@ -315,6 +316,55 @@ function zeroEffortValues(): Record<Stats, number> {
 }
 
 /**
+ * What a stop's party is fielded with above what a wild pokemon
+ * carries.
+ *
+ * A league seat and everybody above a Team Rocket grunt field trained
+ * pokemon rather than caught ones, and this is the whole of what that
+ * means: a second ability, which no wild meeting ever rolls, and gear
+ * chosen for the species holding it. The rungs climb by adding one at
+ * a time
+ */
+export interface StopOutfit {
+  /** Ordinary abilities each carries, the Shadow mark aside */
+  abilities: number;
+  /** Held items each carries */
+  items: number;
+}
+
+/** What a duelling trainer and a grunt field: what they caught. */
+export const PLAIN_OUTFIT: StopOutfit = { abilities: 1, items: 0 };
+
+/** A gym leader's party is geared but not doubled. */
+export const GYM_OUTFIT: StopOutfit = { abilities: 1, items: 1 };
+
+/** The Elite Four's, and the executives who match them. */
+export const ELITE_OUTFIT: StopOutfit = { abilities: 2, items: 1 };
+
+/** A champion's, and Giovanni's: two of everything. */
+export const CHAMPION_OUTFIT: StopOutfit = { abilities: 2, items: 2 };
+
+/** What the party at this stop is fielded with */
+export function stopOutfit(landmark: Landmark, rank: RocketRank): StopOutfit {
+  if (landmark === Landmark.GymLeader) {
+    return GYM_OUTFIT;
+  }
+  if (landmark === Landmark.EliteFour) {
+    return ELITE_OUTFIT;
+  }
+  if (landmark === Landmark.Champion) {
+    return CHAMPION_OUTFIT;
+  }
+  if (landmark === Landmark.TeamRocket) {
+    if (rank === RocketRank.Giovanni) {
+      return CHAMPION_OUTFIT;
+    }
+    return rank === RocketRank.Executive ? ELITE_OUTFIT : PLAIN_OUTFIT;
+  }
+  return PLAIN_OUTFIT;
+}
+
+/**
  * One of the stop's pokemon as a catch snapshot, so the party is
  * fielded from the same shape a player's is. A grunt's is a shadow —
  * that is what a Team Rocket pokemon is — where a duelling trainer's
@@ -328,6 +378,7 @@ export function createRocketSnapshot(
   spawn: Spawn,
   shadow = true,
   levels: LevelBand = ROCKET_PARTY_LEVELS,
+  outfit: StopOutfit = PLAIN_OUTFIT,
 ): CatchSnapshot {
   const fielded = deriveEncounter(snapshot, spawn, undefined, {
     type: EncounterType.Rocket,
@@ -335,7 +386,20 @@ export function createRocketSnapshot(
     shadow,
   });
   const size = deriveSize(fielded.species, fielded.traitValue);
-  const abilities = shadow ? [fielded.ability, Abilities.Shadow] : [fielded.ability];
+  const second =
+    outfit.abilities > 1
+      ? deriveSecondAbility(fielded.species, fielded.traitValue, fielded.ability)
+      : null;
+  // A set, because a species with one ability to give answers null
+  // and a shadow's own mark rides free of the count either way
+  const abilities = [
+    ...new Set([
+      fielded.ability,
+      ...(second == null ? [] : [second]),
+      ...(shadow ? [Abilities.Shadow] : []),
+    ]),
+  ];
+  const items = getExpertHeldItems(fielded.species, outfit.items);
 
   return {
     // A stop's pokemon stands for no catch record
@@ -356,8 +420,11 @@ export function createRocketSnapshot(
     // A stop buys no PP Ups: what it fields is what the roll gave it
     movePoints: {},
     abilities,
-    items: [],
-    slots: defaultSlots(abilities),
+    items,
+    // Room for exactly what it walked in with. `defaultSlots` already
+    // widens the ability count for a second ability; the item count is
+    // this outfit's own
+    slots: withSlots(defaultSlots(abilities), Slots.Item, Math.max(1, items.length)),
     // A stop's pokemon has no record to have been hurt on: it is
     // made for this fight and arrives whole
     health: getMaxHealth({
@@ -383,6 +450,7 @@ export function createRocketParty(
   spawns: Spawn[],
   shadow = true,
   levels: LevelBand = ROCKET_PARTY_LEVELS,
+  outfit: StopOutfit = PLAIN_OUTFIT,
 ): CatchSnapshot[] {
-  return spawns.map((spawn) => createRocketSnapshot(snapshot, spawn, shadow, levels));
+  return spawns.map((spawn) => createRocketSnapshot(snapshot, spawn, shadow, levels, outfit));
 }

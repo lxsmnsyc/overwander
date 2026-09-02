@@ -150,9 +150,10 @@ export default function challengerOf(
         levels,
         greeting: `${GIOVANNI_NAME} himself bars the way. “So you are the one. Show me what you
           have.”`,
-        stakes: `Six of his at ${saidLevels(levels)} against as many as you bring. Beat him and
-          he leaves one of the six behind, the legendary among them, along with a purse worth
-          the trouble. Lose and you lose nothing but the fight.`,
+        stakes: `Six of his at ${saidLevels(levels)}, each carrying two items and two abilities,
+          against as many as you bring. Beat him and he leaves one of the six behind, the
+          legendary among them, keeping both its abilities and the room for a second item, along
+          with a purse worth the trouble. Lose and you lose nothing but the fight.`,
       };
     }
     if (executive != null) {
@@ -162,9 +163,10 @@ export default function challengerOf(
         name,
         levels,
         greeting: `${name} of Team Rocket blocks the way. “${ROCKET_EXECUTIVE_QUOTES[executive]}”`,
-        stakes: `Six of the country's best at ${saidLevels(levels)} against as many as you
-          bring. Win and they drop a purse, one of the six, and whatever they were carrying.
-          Lose and you lose nothing but the fight. They will be here all window.`,
+        stakes: `Six of the country's best at ${saidLevels(levels)}, each carrying an item and
+          two abilities, against as many as you bring. Win and they drop a purse, one of the six
+          with both its abilities, and whatever they were carrying. Lose and you lose nothing
+          but the fight. They will be here all window.`,
       };
     }
 
@@ -217,9 +219,9 @@ export default function challengerOf(
       name,
       levels: GYM_PARTY_LEVELS,
       greeting: `${name} takes the challenge. “${GYM_LEADER_QUOTES[leader]}”`,
-      stakes: `6 of their best at ${saidLevels(GYM_PARTY_LEVELS)} against as many as you bring.
-        Win and the purse is yours, and the ${badge} with it if you do not hold it yet. Lose and
-        you lose nothing but the fight.`,
+      stakes: `6 of their best at ${saidLevels(GYM_PARTY_LEVELS)}, every one of them holding
+        something, against as many as you bring. Win and the purse is yours, and the ${badge}
+        with it if you do not hold it yet. Lose and you lose nothing but the fight.`,
     };
   }
   if (landmark === Landmark.EliteFour) {
@@ -235,8 +237,9 @@ export default function challengerOf(
       name,
       levels: ELITE_PARTY_LEVELS,
       greeting: `${name} of the Elite Four rises. “${ELITE_QUOTES[member]}”`,
-      stakes: `6 at ${saidLevels(ELITE_PARTY_LEVELS)} against as many as you bring. Win and the
-        purse is yours; beat all 4 of the Elite Four and the Champion will see you. Lose and you
+      stakes: `6 at ${saidLevels(ELITE_PARTY_LEVELS)}, each carrying an item and two abilities,
+        against as many as you bring. Win and the purse is yours, along with something out of
+        their own bag; beat all 4 of the Elite Four and the Champion will see you. Lose and you
         lose nothing but the fight.`,
     };
   }
@@ -253,9 +256,10 @@ export default function challengerOf(
       name,
       levels: CHAMPION_PARTY_LEVELS,
       greeting: CHAMPION_GREETINGS[champion],
-      stakes: `Their own six at ${saidLevels(CHAMPION_PARTY_LEVELS)} against as many as you
-        bring. Win and the title of ${AWARD_NAMES[CHAMPION_TITLES[champion]]} is yours, with a
-        purse to match. Lose and you lose nothing but the fight.`,
+      stakes: `Their own six at ${saidLevels(CHAMPION_PARTY_LEVELS)}, each carrying two items
+        and two abilities, against as many as you bring. Win and the title of
+        ${AWARD_NAMES[CHAMPION_TITLES[champion]]} is yours, with the largest purse a walk pays
+        and something worth keeping besides. Lose and you lose nothing but the fight.`,
     };
   }
   return null;

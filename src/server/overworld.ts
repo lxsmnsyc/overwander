@@ -15,7 +15,9 @@ import deriveEncounter, {
   type EncounterOptions,
   EncounterType,
   SPAWN_LEVELS,
+  deriveSecondAbility,
 } from '../overworld/encounter';
+import { DEFAULT_ITEM_SLOTS, Slots, defaultSlots, withSlots } from '../data/constants/slots';
 import type Weather from '../data/overworld/weather';
 import { DARK_DAY_SHADOW_CHANCE, shadowsWildMeetings } from '../data/overworld/weather';
 import { encounterKey, encounterWindow } from '../overworld/safari';
@@ -656,12 +658,28 @@ export async function startEncounter(
         ? overworld.checkEncounterLevels(id, SPAWN_LEVELS[getSpawnRarity(spawn[0])])
         : undefined),
   });
+  // What a trained pokemon keeps once it changes hands: the second
+  // ability its owner put into it, and the room for the second item
+  // it was carrying. Both are asked for by the caller, since nothing
+  // met in the world has either
+  const second =
+    (options.abilities ?? 1) > 1
+      ? deriveSecondAbility(derived.species, derived.traitValue, derived.ability)
+      : null;
+  const abilities = [...new Set([derived.ability, ...(second == null ? [] : [second])])];
+  const room = Math.max(DEFAULT_ITEM_SLOTS, options.itemSlots ?? DEFAULT_ITEM_SLOTS);
+  // Room for both, or the record would hold a second ability it has
+  // no slot for: the battle counts slots rather than what is on the
+  // list, and the counter would read it as already full
+  const slots = withSlots(defaultSlots(abilities), Slots.Item, room);
   const record: EncounterRecord = {
     ...derived,
     nature: overworld.checkEncounterNature(id, derived.nature),
     gender: overworld.checkEncounterGender(id, derived.gender),
     spawn: id,
     player: uid,
+    ...(abilities.length > 1 ? { abilities } : {}),
+    ...(slots === defaultSlots() ? {} : { slots }),
   };
 
   await tx(async (transaction) => writeEncounter(transaction, record));

@@ -10,6 +10,7 @@ import {
 } from '../data/achievements';
 import { LadderTitle, type Title, lineTitle, trainerTitle, typeTitle } from '../data/ids/titles';
 import { CHARSETS } from '../data/overworld/charsets';
+import { LEGENDS, LEGEND_HONORS } from '../data/overworld/experts';
 import { listAwards } from './awards';
 import { getSql } from './db';
 import { readProgress } from './quest-progress';
@@ -77,6 +78,10 @@ export async function listUnlockedTitles(player: string): Promise<Title[]> {
   }
   if (awards.has(Awards.JohtoChampion)) {
     titles.push(LadderTitle.JohtoChampion);
+  }
+  // One mark is enough: a legend is not a set to be walked through
+  if (LEGENDS.some((legend) => awards.has(LEGEND_HONORS[legend]))) {
+    titles.push(LadderTitle.LegendBreaker);
   }
   return titles;
 }

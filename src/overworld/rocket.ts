@@ -1,3 +1,4 @@
+import { MAX_LEVEL } from '../data/constants/levels';
 import { SHADOW_FRIENDSHIP } from '../data/constants/friendship';
 import AleaRNG from '../core/alea';
 import type { CatchSnapshot } from '../auth/catch-snapshot';
@@ -7,7 +8,12 @@ import { Slots, defaultSlots, withSlots } from '../data/constants/slots';
 import { getExpertHeldItems } from '../data/items/expert-loadout';
 import Abilities from '../data/ids/abilities';
 import Landmark from '../data/overworld/landmark';
-import { CHAMPION_NAMES, ELITE_MEMBER_NAMES, GYM_LEADER_NAMES } from '../data/overworld/experts';
+import {
+  CHAMPION_NAMES,
+  ELITE_MEMBER_NAMES,
+  GYM_LEADER_NAMES,
+  LEGEND_NAMES,
+} from '../data/overworld/experts';
 import Npc, {
   GIOVANNI_NAME,
   NPC_NAMES,
@@ -19,7 +25,7 @@ import type { Items } from '../data/ids/items';
 import { ITEM_POOL, type ItemBandOdds, pickItem } from '../data/overworld/item-pool';
 import type ChunkSnapshot from './chunk-snapshot';
 import { RocketRank, type Spawn } from './chunk-snapshot';
-import deriveEncounter, { EncounterType, deriveSecondAbility, deriveSize } from './encounter';
+import deriveEncounter, { EncounterType, deriveSize, deriveTrainedAbilities } from './encounter';
 import { BOSS_ALLIANCE, PLAYER_ALLIANCE } from './raid';
 
 /**
@@ -48,6 +54,13 @@ export type LevelBand = [minimum: number, maximum: number];
 export const GYM_PARTY_LEVELS: LevelBand = [45, 65];
 export const ELITE_PARTY_LEVELS: LevelBand = [65, 85];
 export const CHAMPION_PARTY_LEVELS: LevelBand = [85, 100];
+
+/**
+ * And the one above the league, which is not a band at all: a legend
+ * fields six of the ceiling, so the only question their fight asks is
+ * what the challenger brought
+ */
+export const LEGEND_PARTY_LEVELS: LevelBand = [MAX_LEVEL, MAX_LEVEL];
 
 /**
  * And the ladder Team Rocket fights on, which is read off the other
@@ -80,6 +93,7 @@ export function stopPartyLevels(
   landmark: Landmark,
   rank: RocketRank,
   trainer?: LevelBand,
+  legend = false,
 ): LevelBand {
   if (landmark === Landmark.GymLeader) {
     return GYM_PARTY_LEVELS;
@@ -88,7 +102,7 @@ export function stopPartyLevels(
     return ELITE_PARTY_LEVELS;
   }
   if (landmark === Landmark.Champion) {
-    return CHAMPION_PARTY_LEVELS;
+    return legend ? LEGEND_PARTY_LEVELS : CHAMPION_PARTY_LEVELS;
   }
   if (landmark === Landmark.Trainer && trainer != null) {
     return trainer;
@@ -152,6 +166,12 @@ export function stopChallenger(
     return named(member == null ? null : ELITE_MEMBER_NAMES[member]);
   }
   if (landmark === Landmark.Champion) {
+    const legend = snapshot.getLegend(cell);
+
+    if (legend != null) {
+      return named(LEGEND_NAMES[legend]);
+    }
+
     const champion = snapshot.getChampion(cell);
 
     return named(champion == null ? null : CHAMPION_NAMES[champion]);
@@ -186,6 +206,7 @@ export const EXECUTIVE_GOLD: GoldBand = [40000, 90000];
 export const ELITE_GOLD: GoldBand = [50000, 110000];
 export const GIOVANNI_GOLD: GoldBand = [120000, 250000];
 export const CHAMPION_GOLD: GoldBand = [150000, 300000];
+export const LEGEND_GOLD: GoldBand = [250000, 500000];
 
 /**
  * Which purse a stop pays, by the same reading its level band takes:
@@ -196,6 +217,7 @@ export function stopGoldBand(
   landmark: Landmark,
   rank: RocketRank,
   trainer?: TrainerClass,
+  legend = false,
 ): GoldBand {
   if (landmark === Landmark.GymLeader) {
     return GYM_GOLD;
@@ -204,7 +226,7 @@ export function stopGoldBand(
     return ELITE_GOLD;
   }
   if (landmark === Landmark.Champion) {
-    return CHAMPION_GOLD;
+    return legend ? LEGEND_GOLD : CHAMPION_GOLD;
   }
   if (landmark === Landmark.Trainer) {
     return trainer === TrainerClass.AceTrainer ? ACE_TRAINER_GOLD : TYPE_TRAINER_GOLD;
@@ -265,6 +287,19 @@ export const CHAMPION_LOOT_ODDS: ItemBandOdds = {
 };
 
 /**
+ * The one exception, and the reason a legend is worth walking into: a
+ * rare or a special at twenty to one. It is the only fight in the
+ * game that reaches the special band, which is what one window in
+ * sixty-four should be worth
+ */
+export const LEGEND_LOOT_ODDS: ItemBandOdds = {
+  special: 1 / 21,
+  prized: 0,
+  rare: 20 / 21,
+  uncommon: 0,
+};
+
+/**
  * The one item a beaten expert leaves, or null for the rungs that
  * leave none: a duelling trainer, a grunt, and the gym leader, whose
  * own gift is a machine
@@ -273,12 +308,13 @@ export function rollStopLoot(
   landmark: Landmark,
   rank: RocketRank,
   random: () => number,
+  legend = false,
 ): Items | null {
   if (landmark === Landmark.EliteFour) {
     return pickItem(ITEM_POOL, random, ELITE_LOOT_ODDS);
   }
   if (landmark === Landmark.Champion) {
-    return pickItem(ITEM_POOL, random, CHAMPION_LOOT_ODDS);
+    return pickItem(ITEM_POOL, random, legend ? LEGEND_LOOT_ODDS : CHAMPION_LOOT_ODDS);
   }
   if (landmark === Landmark.TeamRocket && rank === RocketRank.Executive) {
     return pickItem(ITEM_POOL, random, EXECUTIVE_LOOT_ODDS);
@@ -344,8 +380,11 @@ export const ELITE_OUTFIT: StopOutfit = { abilities: 2, items: 1 };
 /** A champion's, and Giovanni's: two of everything. */
 export const CHAMPION_OUTFIT: StopOutfit = { abilities: 2, items: 2 };
 
+/** A legend's: three of everything, on six at the ceiling. */
+export const LEGEND_OUTFIT: StopOutfit = { abilities: 3, items: 3 };
+
 /** What the party at this stop is fielded with */
-export function stopOutfit(landmark: Landmark, rank: RocketRank): StopOutfit {
+export function stopOutfit(landmark: Landmark, rank: RocketRank, legend = false): StopOutfit {
   if (landmark === Landmark.GymLeader) {
     return GYM_OUTFIT;
   }
@@ -353,7 +392,7 @@ export function stopOutfit(landmark: Landmark, rank: RocketRank): StopOutfit {
     return ELITE_OUTFIT;
   }
   if (landmark === Landmark.Champion) {
-    return CHAMPION_OUTFIT;
+    return legend ? LEGEND_OUTFIT : CHAMPION_OUTFIT;
   }
   if (landmark === Landmark.TeamRocket) {
     if (rank === RocketRank.Giovanni) {
@@ -386,16 +425,17 @@ export function createRocketSnapshot(
     shadow,
   });
   const size = deriveSize(fielded.species, fielded.traitValue);
-  const second =
-    outfit.abilities > 1
-      ? deriveSecondAbility(fielded.species, fielded.traitValue, fielded.ability)
-      : null;
-  // A set, because a species with one ability to give answers null
-  // and a shadow's own mark rides free of the count either way
+  // A set, because a species with fewer abilities than the outfit
+  // asks for carries fewer, and a shadow's own mark rides free of the
+  // count either way
   const abilities = [
     ...new Set([
-      fielded.ability,
-      ...(second == null ? [] : [second]),
+      ...deriveTrainedAbilities(
+        fielded.species,
+        fielded.traitValue,
+        fielded.ability,
+        outfit.abilities,
+      ),
       ...(shadow ? [Abilities.Shadow] : []),
     ]),
   ];

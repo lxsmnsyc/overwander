@@ -162,9 +162,11 @@ const NPC_CHARSETS: Partial<Record<Npc, string[]>> = {
 
 /**
  * The boss himself, when a Team Rocket stop rolls him: not a role of
- * his own, only the grunt's landmark wearing its rarest face
+ * his own, only the grunt's landmark wearing its rarest face. His
+ * Heart Gold coat is the one he runs Team Rocket in; the Fire Red one
+ * belongs to the gym he keeps in Kanto
  */
-export const GIOVANNI_CHARSETS: string[] = ['characters/frlg/giovanni', 'characters/hgss/giovanni'];
+export const GIOVANNI_CHARSETS: string[] = ['characters/hgss/giovanni'];
 
 /** What the boss is called where a screen names him */
 export const GIOVANNI_NAME = 'Giovanni';

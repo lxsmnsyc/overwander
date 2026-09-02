@@ -12,6 +12,10 @@ import {
   GYM_LEADER_BADGES,
   GYM_LEADER_CHARSETS,
   GYM_LEADER_NAMES,
+  LEGENDS,
+  LEGEND_HONORS,
+  LEGEND_NAMES,
+  LEGEND_PRIZE_CHARSETS,
 } from './experts';
 import { ACHIEVEMENT_TRAINERS } from '../achievements';
 import { TRAINER_CHARSETS, TRAINER_NAMES, type TrainerClass } from './trainers';
@@ -94,6 +98,11 @@ function buildCharsets(): Charset[] {
         kind: 'award',
         award: CHAMPION_TITLES[champion],
       });
+    }
+  }
+  for (const legend of LEGENDS) {
+    for (const sheet of LEGEND_PRIZE_CHARSETS[legend]) {
+      add(sheet, LEGEND_NAMES[legend], { kind: 'award', award: LEGEND_HONORS[legend] });
     }
   }
   for (const trainer of ACHIEVEMENT_TRAINERS) {

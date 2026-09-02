@@ -34,6 +34,8 @@ const enum Awards {
   /** Bruno's other seat, in Johto's league */
   JohtoBrunoDefeated = 25,
   JohtoChampion = 26,
+  /** The one above the league, met where a champion would have been */
+  RedDefeated = 27,
 }
 
 export default Awards;
@@ -66,6 +68,7 @@ export const AWARD_NAMES: Record<Awards, string> = {
   [Awards.KarenDefeated]: 'Karen Defeated',
   [Awards.JohtoBrunoDefeated]: 'Bruno Defeated (Johto)',
   [Awards.JohtoChampion]: 'Johto Champion',
+  [Awards.RedDefeated]: 'Red Defeated',
 };
 
 /**

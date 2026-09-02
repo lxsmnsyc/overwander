@@ -85,6 +85,7 @@ import ChunkSnapshot, {
   SNAPSHOT_INTERVAL,
   SPAWN_COUNT,
   type Spawn,
+  WEATHER_INTERVAL,
 } from '../../src/overworld/chunk-snapshot';
 import {
   BANNED_BOSS_SPECIES,
@@ -115,6 +116,8 @@ import {
   GYM_OUTFIT,
   GYM_PARTY_LEVELS,
   type GoldBand,
+  LEGEND_OUTFIT,
+  LEGEND_PARTY_LEVELS,
   PLAIN_OUTFIT,
   ROCKET_GRUNT_GOLD,
   ROCKET_PARTY_LEVELS,
@@ -137,6 +140,7 @@ import {
   EXPERT_PARTY_SIZE,
   GYM_LEADER_CHARSETS,
   GYM_LEADER_TYPES,
+  LEGEND_CHARSETS,
   getEliteMemberRoster,
 } from '../../src/data/overworld/experts';
 import Regions from '../../src/data/ids/regions';
@@ -206,7 +210,7 @@ import {
   resolveNest,
   resolvePhenomenon,
 } from '../../src/overworld/landmarks';
-import { DARK_DAY_LAMP_CELLS } from '../../src/data/overworld/weather';
+import { DARK_DAY_LAMP_CELLS, favorsEverything } from '../../src/data/overworld/weather';
 import { LURE_SPAWN_BONUS } from '../../src/overworld/abilities/__create';
 import {
   COMPOUND_EYES_HELD_BOOST,
@@ -1350,6 +1354,8 @@ describe('world', () => {
     expect(stopOutfit(Landmark.TeamRocket, RocketRank.Executive)).toEqual(ELITE_OUTFIT);
     expect(stopOutfit(Landmark.Champion, RocketRank.Grunt)).toEqual(CHAMPION_OUTFIT);
     expect(stopOutfit(Landmark.TeamRocket, RocketRank.Giovanni)).toEqual(CHAMPION_OUTFIT);
+    // And the one rung above the league, which is three of everything
+    expect(stopOutfit(Landmark.Champion, RocketRank.Grunt, true)).toEqual(LEGEND_OUTFIT);
 
     const fielded = (outfit: typeof PLAIN_OUTFIT, shadow = false): CatchSnapshot[] =>
       createRocketParty(snapshot, spawns, shadow, ELITE_PARTY_LEVELS, outfit);
@@ -1400,6 +1406,25 @@ describe('world', () => {
       expect(countAbilitySlots(member.abilities)).toBeLessThanOrEqual(2);
       expect(getSlots(member.slots, Slots.Ability)).toBe(countAbilitySlots(member.abilities));
     }
+
+    // And a legend's, which is three of each: a species with fewer
+    // than three abilities to give carries what it has, and the items
+    // never run short
+    for (const member of fielded(LEGEND_OUTFIT)) {
+      const pool = new Set([
+        ...getSpeciesAbilityPools(member.species).regular,
+        ...getSpeciesAbilityPools(member.species).hidden,
+      ]);
+
+      expect(member.abilities.length, getSpeciesData(member.species).name).toBe(
+        Math.min(3, pool.size),
+      );
+      expect(new Set(member.abilities).size).toBe(member.abilities.length);
+      expect(member.items).toHaveLength(3);
+      expect(new Set(member.items).size).toBe(3);
+      expect(getSlots(member.slots, Slots.Item)).toBe(3);
+      expect(getSlots(member.slots, Slots.Ability)).toBe(member.abilities.length);
+    }
   });
 
   it('rolls a purse in the stop’s own range, the same on every ask', () => {
@@ -1427,6 +1452,7 @@ describe('world', () => {
       ['the Elite Four', stopGoldBand(Landmark.EliteFour, RocketRank.Grunt)],
       ['Giovanni', stopGoldBand(Landmark.TeamRocket, RocketRank.Giovanni)],
       ['the Champion', stopGoldBand(Landmark.Champion, RocketRank.Grunt)],
+      ['a legend', stopGoldBand(Landmark.Champion, RocketRank.Grunt, undefined, true)],
     ];
 
     for (const [at, [name, [floor, ceiling]]] of rungs.entries()) {
@@ -1511,6 +1537,73 @@ describe('world', () => {
     }
     expect(share(elite, 'prized')).toBeGreaterThan(share(executive, 'prized'));
     expect(share(champion, 'prized')).toBeGreaterThan(share(elite, 'prized'));
+
+    // The one exception, and the whole reason to walk into a legend:
+    // a rare or a special at twenty to one, which is the only draw in
+    // the game that reaches the special band
+    const rng = new AleaRNG('loot-legend');
+    const legend = Array.from({ length: 4200 }, () =>
+      rollStopLoot(Landmark.Champion, RocketRank.Grunt, () => rng.random(), true),
+    ).filter((item): item is Items => item != null);
+
+    expect(legend).toHaveLength(4200);
+    for (const item of legend) {
+      expect(['rare', 'special']).toContain(getItemBand(item));
+    }
+    expect(share(legend, 'special')).toBeGreaterThan(0.02);
+    expect(share(legend, 'special')).toBeLessThan(0.08);
+  });
+
+  it('puts a legend in the champion’s seat now and then, and always under the rarest sky', () => {
+    const world = new World('overworld');
+    const chunk = findChunk(
+      world,
+      (candidate) => new ChunkSnapshot(candidate, 0).getChampionStops().size > 0,
+    );
+
+    expect(chunk).not.toBeNull();
+    if (chunk == null) {
+      return;
+    }
+
+    const [cell] = [...new ChunkSnapshot(chunk, 0).getChampionStops().keys()];
+    let held = 0;
+
+    // The seat is the champion's most windows: the roll is the same
+    // one in sixty-four Giovanni turns up on
+    for (let window = 0; window < 640; window++) {
+      const snapshot = new ChunkSnapshot(chunk, window * NPC_INTERVAL);
+
+      // Under one of the four skies that favour everything the seat
+      // is theirs for certain: those are the rarest weather there is
+      if (favorsEverything(snapshot.npcWeather)) {
+        expect(snapshot.getLegend(cell)).not.toBeNull();
+        continue;
+      }
+      if (snapshot.getLegend(cell) != null) {
+        held++;
+      }
+    }
+    expect(held).toBeGreaterThan(0);
+    expect(held).toBeLessThan(64);
+
+    // The seat holds whoever it holds for the whole window, whatever
+    // the sky does in the middle of it: weather turns over every hour
+    // and the people every three, and a server rebuilding the window
+    // from its timestamp has to find the same person standing there
+    for (let window = 0; window < 32; window++) {
+      const opened = new ChunkSnapshot(chunk, window * NPC_INTERVAL);
+      const later = new ChunkSnapshot(chunk, window * NPC_INTERVAL + 2 * WEATHER_INTERVAL);
+
+      expect(later.getLegend(cell)).toBe(opened.getLegend(cell));
+    }
+
+    // A cell that is nobody's seat holds no legend either
+    const elsewhere = [...chunk.getLandmarkCells()].find(
+      ([, landmark]) => landmark !== Landmark.Champion,
+    );
+
+    expect(new ChunkSnapshot(chunk, 0).getLegend(elsewhere?.[0] ?? 0)).toBeNull();
   });
 
   it('keeps one leader to a gym and fields 6 of their type', () => {
@@ -1542,14 +1635,9 @@ describe('world', () => {
       expect(BIOME_GYM_LEADERS[chunk.biome]).toContain(leader);
       expect(new ChunkSnapshot(chunk, NPC_INTERVAL).getGymLeader(cell)).toBe(leader);
 
-      // Every fielded species carries the gym's type; Blue's gym has
-      // none and takes what it likes
-      const type = GYM_LEADER_TYPES[leader];
-
-      if (type != null) {
-        for (const [species] of party) {
-          expect(getSpeciesData(species).types).toContain(type);
-        }
+      // Every fielded species carries the gym's type
+      for (const [species] of party) {
+        expect(getSpeciesData(species).types).toContain(GYM_LEADER_TYPES[leader]);
       }
       // Dressed as the leader themselves
       expect(GYM_LEADER_CHARSETS[leader]).toContain(snapshot.getWandererCoats().get(cell));
@@ -1605,10 +1693,19 @@ describe('world', () => {
         for (const [species] of party) {
           expect(legendaries.has(species)).toBe(false);
         }
+        // The seat is the champion's, but a legend may have it this
+        // window, and then the coat standing there is theirs
+        const legend = snapshot.getLegend(cell);
+
+        if (legend != null) {
+          expect(LEGEND_CHARSETS[legend]).toContain(snapshot.getWandererCoats().get(cell));
+          continue;
+        }
+
         const champion = snapshot.getChampion(cell);
 
         expect(champion).not.toBeNull();
-        expect(CHAMPION_CHARSETS[champion ?? Champion.Red]).toContain(
+        expect(CHAMPION_CHARSETS[champion ?? Champion.Blue]).toContain(
           snapshot.getWandererCoats().get(cell),
         );
       }
@@ -1619,6 +1716,9 @@ describe('world', () => {
     expect(stopPartyLevels(Landmark.GymLeader, RocketRank.Grunt)).toEqual(GYM_PARTY_LEVELS);
     expect(stopPartyLevels(Landmark.EliteFour, RocketRank.Grunt)).toEqual(ELITE_PARTY_LEVELS);
     expect(stopPartyLevels(Landmark.Champion, RocketRank.Grunt)).toEqual(CHAMPION_PARTY_LEVELS);
+    expect(stopPartyLevels(Landmark.Champion, RocketRank.Grunt, undefined, true)).toEqual(
+      LEGEND_PARTY_LEVELS,
+    );
     // Every rank fields six, so it is the rank rather than the party
     // that says what a Team Rocket cell is worth
     expect(stopPartyLevels(Landmark.TeamRocket, RocketRank.Giovanni)).toEqual(

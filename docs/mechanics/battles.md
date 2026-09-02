@@ -269,13 +269,16 @@ same six harder from their side of the field:
 | Gym leader         | 1         | 1          |
 | Elite Four, executive | 2      | 1          |
 | Champion, Giovanni | 2         | 2          |
+| Legend             | 3         | 3          |
 
 A second ability is the one thing a player cannot get by catching the same
 species: a wild meeting rolls one and keeps it. The gear is the pokemon's own
 rather than the trainer's — a Pikachu on any team holds the Light Ball because it
 is a Pikachu — and it is chosen from what that species is worth carrying, so a
 half-grown one an expert is known for gets the item that answers being
-half-grown.
+half-grown. A legend hands out three apiece, which is deeper than most species'
+own gear goes, so the slots nothing of its own fills are filled with gear that
+suits anybody.
 
 Team Rocket's prizes keep what was put into them. An executive's pokemon walks
 away with **both its abilities**, and Giovanni's with both and the **room for a
@@ -299,6 +302,7 @@ standing at a trainer cell depends on the country; see
 | **Elite Four**        | Five of their own kind, and their signature sixth | 65-85 |
 | **Giovanni**          | Six shadows, one of them a legendary | 85-100 |
 | **Champion**          | Their own signature six              | 85-100 |
+| **Legend**            | Their own signature six              | 100    |
 
 ## Gym seats
 

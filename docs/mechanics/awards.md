@@ -13,6 +13,7 @@ own, and beating one is kept for good.
 | **Gym badge**       | 16       | Beating that gym's leader              |
 | **Elite Four mark** | 8        | Beating that member of the Elite Four  |
 | **Champion**        | 2        | Beating that league's Champion          |
+| **Legend's mark**   | 1        | Beating a legend, who asks for nothing |
 | **Dex medal**       | 1        | Filling the region's dex to 150 caught |
 
 Kanto and Johto keep eight gyms apiece, and their sixteen leaders share the
@@ -23,6 +24,11 @@ walking only one region's gyms earns you the Bruno of that region and that mark
 alone. Each of the **Elite Four asks to see all eight of their own league's
 badges** before they will fight, and each **Champion asks for all four of their
 own league's marks**.
+
+A **legend** stands outside all of that. One turns up in a champion's seat one
+window in sixty-four, and under the rarest skies for certain; no badge case is
+asked for, and beating one leaves their mark. See
+[People you meet](npcs.md).
 
 An award also counts how many times its fight has been won, since a gym can be
 challenged again whenever its window comes round. Winning once puts the badge on
@@ -58,6 +64,7 @@ the tier that unlocked it.
 | **League Challenger** | Every badge in the region           |
 | **Elite Conqueror**   | All four of the Elite Four          |
 | **Champion**          | The Champion's own seat             |
+| **Legend Breaker**    | Any legend's mark                   |
 | A line's title        | That achievement line at **Bronze** |
 | Its Master form       | The same line at **Platinum**       |
 
@@ -81,6 +88,7 @@ titles come from.
 | A gym leader              | That leader's badge             |
 | One of the Elite Four     | Beating that member             |
 | The Champion's other look | The Champion's own seat         |
+| A legend's other looks    | That legend's mark              |
 | A class of trainer        | That class's line at **Bronze** |
 
 So beating Brock lets you go about as Brock, and putting down enough Bug

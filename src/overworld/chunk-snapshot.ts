@@ -38,6 +38,10 @@ import {
   GYM_LEADER_CHARSETS,
   GYM_LEADER_SIGNATURES,
   type GymLeader,
+  LEGENDS,
+  LEGEND_CHARSETS,
+  LEGEND_PARTIES,
+  type Legend,
   getEliteMemberRoster,
   getGymLeaderRoster,
 } from '../data/overworld/experts';
@@ -59,7 +63,11 @@ import {
   rollVendorStock,
 } from '../data/overworld/vendor';
 import type Weather from '../data/overworld/weather';
-import { WEATHER_SPAWN_BOOST, spawnFavoredTypes } from '../data/overworld/weather';
+import {
+  WEATHER_SPAWN_BOOST,
+  favorsEverything,
+  spawnFavoredTypes,
+} from '../data/overworld/weather';
 import getWorld from './current';
 import type Chunk from './chunk';
 import { canStageBoss } from './raid';
@@ -162,6 +170,15 @@ export { RocketRank };
 
 /** One window in eight puts an executive on the cell */
 export const EXECUTIVE_CHANCE = 1 / 8;
+
+/**
+ * How often the seat at the top of a league holds a legend instead of
+ * its champion: the same one window in sixty-four Giovanni turns up
+ * on. Under a sky that favours everything it is every window, since
+ * those four are the rarest weather in the game and a walk that finds
+ * one should find what it is worth
+ */
+export const LEGEND_CHANCE = 1 / 64;
 
 export const SNAPSHOT_INTERVAL = 5 * 60 * 1000;
 
@@ -347,6 +364,26 @@ export default class ChunkSnapshot {
   }
 
   private sky: Weather | null = null;
+
+  /**
+   * The sky the window's people were staged under.
+   *
+   * Weather turns over every hour and the people every three, so the
+   * sky moves under a stop that does not. Anything about who is
+   * standing at a cell reads this rather than `weather`: a stop
+   * staged in one hour has to resolve as the same person in the next,
+   * including on a server rebuilding the window from its timestamp
+   */
+  get npcWeather(): Weather {
+    this.npcSky ??= getWorld().getWeather(
+      this.chunk.x,
+      this.chunk.y,
+      Math.floor(this.npcTimestamp / WEATHER_INTERVAL),
+    );
+    return this.npcSky;
+  }
+
+  private npcSky: Weather | null = null;
 
   /**
    * What the window may roll, crowded by the two things that crowd it:
@@ -796,9 +833,12 @@ export default class ChunkSnapshot {
             dress(cell, ELITE_MEMBER_CHARSETS[member]);
           }
         } else if (landmark === Landmark.Champion) {
-          const champion = this.getChampion(cell);
+          const legend = this.getLegend(cell);
+          const champion = legend == null ? this.getChampion(cell) : null;
 
-          if (champion != null) {
+          if (legend != null) {
+            dress(cell, LEGEND_CHARSETS[legend]);
+          } else if (champion != null) {
             dress(cell, CHAMPION_CHARSETS[champion]);
           }
         } else if (landmark === Landmark.Market) {
@@ -1146,13 +1186,34 @@ export default class ChunkSnapshot {
     return CHAMPIONS[Math.floor(rng.random() * CHAMPIONS.length)] ?? null;
   }
 
+  /**
+   * Which legend has taken the seat at this cell this window, or null
+   * for the windows the champion keeps it. A window roll rather than
+   * a fixture: the seat is the champion's, and a legend is only ever
+   * passing through
+   */
+  getLegend(cell: number): Legend | null {
+    if (this.chunk.getLandmarkCells().get(cell) !== Landmark.Champion) {
+      return null;
+    }
+
+    const rng = new AleaRNG(`${this.key}${this.npcTimestamp}legend${cell}`);
+    const rolled = rng.random();
+
+    if (!favorsEverything(this.npcWeather) && rolled >= LEGEND_CHANCE) {
+      return null;
+    }
+    return LEGENDS[Math.floor(rng.random() * LEGENDS.length)] ?? null;
+  }
+
   private championStops: Map<number, Spawn[]> | null = null;
 
   /**
    * The window's Champion parties, keyed by their landmark cell: the
    * champion's own named six, no shadows, the hardest fair fight there
-   * is. Only what drives their rolls turns over with the window; the
-   * team itself does not
+   * is, or the legend's own six on the windows one has the seat. Only
+   * what drives their rolls turns over with the window; the team
+   * itself does not
    */
   getChampionStops(): Map<number, Spawn[]> {
     if (this.championStops == null) {
@@ -1160,6 +1221,16 @@ export default class ChunkSnapshot {
 
       for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
         if (landmark !== Landmark.Champion) {
+          continue;
+        }
+
+        const legend = this.getLegend(cell);
+
+        if (legend != null) {
+          stops.set(
+            cell,
+            signatureParty(LEGEND_PARTIES[legend], `${this.key}${this.npcTimestamp}legend${cell}`),
+          );
           continue;
         }
 

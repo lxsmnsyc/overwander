@@ -36,7 +36,7 @@ const enum GymLeader {
   Koga = 4,
   Sabrina = 5,
   Blaine = 6,
-  Blue = 7,
+  Giovanni = 7,
   Falkner = 8,
   Bugsy = 9,
   Whitney = 10,
@@ -57,7 +57,7 @@ export const GYM_LEADERS: GymLeader[] = [
   GymLeader.Koga,
   GymLeader.Sabrina,
   GymLeader.Blaine,
-  GymLeader.Blue,
+  GymLeader.Giovanni,
   GymLeader.Falkner,
   GymLeader.Bugsy,
   GymLeader.Whitney,
@@ -76,7 +76,7 @@ export const GYM_LEADER_NAMES: Record<GymLeader, string> = {
   [GymLeader.Koga]: 'Koga',
   [GymLeader.Sabrina]: 'Sabrina',
   [GymLeader.Blaine]: 'Blaine',
-  [GymLeader.Blue]: 'Blue',
+  [GymLeader.Giovanni]: 'Giovanni',
   [GymLeader.Falkner]: 'Falkner',
   [GymLeader.Bugsy]: 'Bugsy',
   [GymLeader.Whitney]: 'Whitney',
@@ -87,11 +87,8 @@ export const GYM_LEADER_NAMES: Record<GymLeader, string> = {
   [GymLeader.Clair]: 'Clair',
 };
 
-/**
- * What each leader fields. Blue is the one leader with no specialty:
- * his gym takes all comers with a party drawn from everything
- */
-export const GYM_LEADER_TYPES: Partial<Record<GymLeader, Types>> = {
+/** What each leader fields. */
+export const GYM_LEADER_TYPES: Record<GymLeader, Types> = {
   [GymLeader.Brock]: Types.Rock,
   [GymLeader.Misty]: Types.Water,
   [GymLeader.LtSurge]: Types.Electric,
@@ -99,6 +96,7 @@ export const GYM_LEADER_TYPES: Partial<Record<GymLeader, Types>> = {
   [GymLeader.Koga]: Types.Poison,
   [GymLeader.Sabrina]: Types.Psychic,
   [GymLeader.Blaine]: Types.Fire,
+  [GymLeader.Giovanni]: Types.Ground,
   [GymLeader.Falkner]: Types.Flying,
   [GymLeader.Bugsy]: Types.Bug,
   [GymLeader.Whitney]: Types.Normal,
@@ -117,7 +115,7 @@ export const GYM_LEADER_BADGES: Record<GymLeader, Awards> = {
   [GymLeader.Koga]: Awards.SoulBadge,
   [GymLeader.Sabrina]: Awards.MarshBadge,
   [GymLeader.Blaine]: Awards.VolcanoBadge,
-  [GymLeader.Blue]: Awards.EarthBadge,
+  [GymLeader.Giovanni]: Awards.EarthBadge,
   [GymLeader.Falkner]: Awards.ZephyrBadge,
   [GymLeader.Bugsy]: Awards.HiveBadge,
   [GymLeader.Whitney]: Awards.PlainBadge,
@@ -136,7 +134,7 @@ export const GYM_LEADER_CHARSETS: Record<GymLeader, string[]> = {
   [GymLeader.Koga]: ['characters/frlg/koga', 'characters/lgpe/koga'],
   [GymLeader.Sabrina]: ['characters/frlg/sabrina', 'characters/lgpe/sabrina'],
   [GymLeader.Blaine]: ['characters/frlg/blaine', 'characters/lgpe/blaine'],
-  [GymLeader.Blue]: ['characters/frlg/blue', 'characters/lgpe/blue'],
+  [GymLeader.Giovanni]: ['characters/frlg/giovanni'],
   [GymLeader.Falkner]: ['characters/hgss/falkner'],
   [GymLeader.Bugsy]: ['characters/hgss/bugsy'],
   [GymLeader.Whitney]: ['characters/hgss/whitney'],
@@ -152,9 +150,8 @@ export const GYM_LEADER_CHARSETS: Record<GymLeader, string[]> = {
  * to the badges: a player hunting Blaine walks to fire country. Two
  * regions of leaders now share those countries, so the list per biome
  * holds both and the chunk's own fixture roll says which gym is
- * whose. Biomes with no leader of their own type go to Blue, whose
- * gym takes all comers; the open seas never roll a people landmark,
- * and are mapped only so the table stays total
+ * whose. The open seas never roll a people landmark, and are mapped
+ * only so the table stays total
  */
 export const BIOME_GYM_LEADERS: Record<Biome, GymLeader[]> = {
   [Biome.DeepOcean]: [GymLeader.Misty, GymLeader.Falkner],
@@ -177,33 +174,38 @@ export const BIOME_GYM_LEADERS: Record<Biome, GymLeader[]> = {
   [Biome.Grassland]: [GymLeader.Erika, GymLeader.Whitney, GymLeader.Bugsy, GymLeader.Falkner],
   [Biome.TemperateForest]: [GymLeader.Erika, GymLeader.Bugsy, GymLeader.Whitney, GymLeader.Morty],
   [Biome.Woodland]: [GymLeader.Erika, GymLeader.Bugsy, GymLeader.Whitney],
-  [Biome.Savanna]: [GymLeader.LtSurge, GymLeader.Falkner, GymLeader.Chuck],
-  [Biome.Steppe]: [GymLeader.LtSurge, GymLeader.Falkner],
-  [Biome.Desert]: [GymLeader.Blaine],
+  [Biome.Savanna]: [GymLeader.LtSurge, GymLeader.Falkner, GymLeader.Chuck, GymLeader.Giovanni],
+  [Biome.Steppe]: [GymLeader.LtSurge, GymLeader.Falkner, GymLeader.Giovanni],
+  [Biome.Desert]: [GymLeader.Blaine, GymLeader.Giovanni],
   [Biome.Volcano]: [GymLeader.Blaine, GymLeader.Jasmine, GymLeader.Clair],
-  [Biome.ColdDesert]: [GymLeader.Brock, GymLeader.Pryce, GymLeader.Jasmine],
-  [Biome.Mountain]: [GymLeader.Brock, GymLeader.Chuck, GymLeader.Jasmine, GymLeader.Clair],
+  [Biome.ColdDesert]: [GymLeader.Brock, GymLeader.Pryce, GymLeader.Jasmine, GymLeader.Giovanni],
+  [Biome.Mountain]: [
+    GymLeader.Brock,
+    GymLeader.Chuck,
+    GymLeader.Jasmine,
+    GymLeader.Clair,
+    GymLeader.Giovanni,
+  ],
   [Biome.AlpineTundra]: [GymLeader.Brock, GymLeader.Pryce, GymLeader.Falkner, GymLeader.Clair],
-  [Biome.Badlands]: [GymLeader.Brock, GymLeader.Chuck, GymLeader.Jasmine],
+  [Biome.Badlands]: [GymLeader.Brock, GymLeader.Chuck, GymLeader.Jasmine, GymLeader.Giovanni],
   [Biome.RockyCoast]: [GymLeader.Brock, GymLeader.Falkner],
   [Biome.TemperateRainforest]: [GymLeader.Sabrina, GymLeader.Bugsy, GymLeader.Morty],
   [Biome.MontaneForest]: [GymLeader.Sabrina, GymLeader.Bugsy],
   [Biome.Beyond]: [GymLeader.Sabrina, GymLeader.Morty, GymLeader.Clair],
-  [Biome.TropicalRainforest]: [GymLeader.Blue, GymLeader.Bugsy],
-  [Biome.Shrubland]: [GymLeader.Blue, GymLeader.Whitney, GymLeader.Bugsy],
-  [Biome.Taiga]: [GymLeader.Blue, GymLeader.Bugsy, GymLeader.Falkner, GymLeader.Pryce],
+  [Biome.TropicalRainforest]: [GymLeader.Bugsy, GymLeader.Erika],
+  [Biome.Shrubland]: [GymLeader.Whitney, GymLeader.Bugsy],
+  [Biome.Taiga]: [GymLeader.Bugsy, GymLeader.Falkner, GymLeader.Pryce],
 };
 
 /**
  * The machine a beaten leader hands over: one of the TMs of their own
- * type, rolled by the caller's draw. Blue, with no specialty, reaches
- * into the whole case. Null only if a type somehow teaches nothing
+ * type, rolled by the caller's draw. Null only if a type somehow
+ * teaches nothing
  */
 export function rollGymMachine(leader: GymLeader, random: () => number): Items | null {
-  const type = GYM_LEADER_TYPES[leader] ?? null;
   const moves = getTeachableMoves().filter(
-    (move) => type == null || getMoveData(move).type === type,
-  );
+  const type = GYM_LEADER_TYPES[leader];
+  const moves = getTeachableMoves().filter((move) => getMoveData(move).type === type);
   const move = moves.at(Math.floor(random() * moves.length));
 
   return move == null ? null : getMachineItem(move);
@@ -350,39 +352,39 @@ export const BIOME_ELITE_MEMBERS: Record<Biome, EliteMember[]> = {
 };
 
 /**
- * The champions, one to a league. Blue runs Kanto's eighth gym here,
- * so the seat at the top of that league is Red's; Johto's is Lance,
- * who also keeps a seat in Kanto's Elite Four and is drawn in his
- * Heart Gold coat when he is standing at the top
+ * The champions, one to a league. Giovanni runs Kanto's eighth gym
+ * here, so the seat at the top of that league is Blue's; Johto's is
+ * Lance, who also keeps a seat in Kanto's Elite Four and is drawn in
+ * his Heart Gold coat when he is standing at the top
  */
 const enum Champion {
-  Red = 0,
+  Blue = 0,
   Lance = 1,
 }
 
 export { Champion };
 
-export const CHAMPIONS: Champion[] = [Champion.Red, Champion.Lance];
+export const CHAMPIONS: Champion[] = [Champion.Blue, Champion.Lance];
 
 export const CHAMPION_NAMES: Record<Champion, string> = {
-  [Champion.Red]: 'Red',
+  [Champion.Blue]: 'Blue',
   [Champion.Lance]: 'Lance',
 };
 
 export const CHAMPION_CHARSETS: Record<Champion, string[]> = {
-  [Champion.Red]: ['characters/frlg/red', 'characters/lgpe/red'],
+  [Champion.Blue]: ['characters/frlg/blue'],
   [Champion.Lance]: ['characters/hgss/lance', 'characters/hgss/lance-2'],
 };
 
 /** The title a champion's seat is worth */
 export const CHAMPION_TITLES: Record<Champion, Awards> = {
-  [Champion.Red]: Awards.KantoChampion,
+  [Champion.Blue]: Awards.KantoChampion,
   [Champion.Lance]: Awards.JohtoChampion,
 };
 
 /** The Elite Four a champion asks to see beaten first */
 export const CHAMPION_HONORS: Record<Champion, Awards[]> = {
-  [Champion.Red]: KANTO_HONORS,
+  [Champion.Blue]: KANTO_HONORS,
   [Champion.Lance]: JOHTO_HONORS,
 };
 
@@ -391,17 +393,18 @@ export const CHAMPION_HONORS: Record<Champion, Awards[]> = {
  *
  * A champion is the one expert who does not draw from a pool: the
  * team is the character, and a player who has walked the whole league
- * to reach them should meet the party they are known for. Red's is
- * his Mt. Silver line-up, and Lance's is the one he defends the
- * Indigo Plateau with, three Dragonite and all
+ * to reach them should meet the party they are known for. Blue's is
+ * the one he takes the Indigo Plateau with in Fire Red, the Blastoise
+ * line-up of the three he has; Lance's is the one he defends it with,
+ * three Dragonite and all
  */
 export const CHAMPION_PARTIES: Record<Champion, Species[]> = {
-  [Champion.Red]: [
-    Species.Pikachu,
-    Species.Lapras,
-    Species.Snorlax,
-    Species.Venusaur,
-    Species.Charizard,
+  [Champion.Blue]: [
+    Species.Pidgeot,
+    Species.Alakazam,
+    Species.Rhydon,
+    Species.Arcanine,
+    Species.Exeggutor,
     Species.Blastoise,
   ],
   [Champion.Lance]: [
@@ -411,6 +414,58 @@ export const CHAMPION_PARTIES: Record<Champion, Species[]> = {
     Species.Dragonite,
     Species.Dragonite,
     Species.Dragonite,
+  ],
+};
+
+/**
+ * The tier above the league.
+ *
+ * A legend keeps no seat and answers to no badge case: they turn up
+ * where a champion would have been, at full level, and anybody
+ * standing there may fight them. There is one so far, which is the
+ * one the mainline puts at the top of a mountain and says nothing
+ * about
+ */
+const enum Legend {
+  Red = 0,
+}
+
+export { Legend };
+
+export const LEGENDS: Legend[] = [Legend.Red];
+
+export const LEGEND_NAMES: Record<Legend, string> = {
+  [Legend.Red]: 'Red',
+};
+
+export const LEGEND_CHARSETS: Record<Legend, string[]> = {
+  [Legend.Red]: ['characters/frlg/red'],
+};
+
+/** The mark beating one is worth, which is the only thing they pay */
+export const LEGEND_HONORS: Record<Legend, Awards> = {
+  [Legend.Red]: Awards.RedDefeated,
+};
+
+/**
+ * And the coats that mark unlocks. Not the one they wander in: Red's
+ * Fire Red sheet is what the game starts everybody as, so a mark that
+ * unlocked it would be worth nothing to wear. These are the other two
+ * of him, the Mt. Silver coat first
+ */
+export const LEGEND_PRIZE_CHARSETS: Record<Legend, string[]> = {
+  [Legend.Red]: ['characters/hgss/red', 'characters/lgpe/red'],
+};
+
+/** A legend's own six, the way a champion's is their own */
+export const LEGEND_PARTIES: Record<Legend, Species[]> = {
+  [Legend.Red]: [
+    Species.Pikachu,
+    Species.Lapras,
+    Species.Snorlax,
+    Species.Venusaur,
+    Species.Charizard,
+    Species.Blastoise,
   ],
 };
 
@@ -503,13 +558,10 @@ export const ELITE_MEMBER_SIGNATURES: Record<EliteMember, Species> = {
 
 /**
  * And what a gym leader fields: their own type and nothing more, read
- * off the table above rather than kept twice. Blue, with no specialty,
- * takes the whole band
+ * off the table above rather than kept twice
  */
 export function getGymLeaderPool(leader: GymLeader): ExpertPool {
-  const type = GYM_LEADER_TYPES[leader];
-
-  return { types: type == null ? [] : [type] };
+  return { types: [GYM_LEADER_TYPES[leader]] };
 }
 
 /**
@@ -527,7 +579,7 @@ export const GYM_LEADER_SIGNATURES: Record<GymLeader, Species> = {
   [GymLeader.Koga]: Species.Weezing,
   [GymLeader.Sabrina]: Species.Alakazam,
   [GymLeader.Blaine]: Species.Arcanine,
-  [GymLeader.Blue]: Species.Pidgeot,
+  [GymLeader.Giovanni]: Species.Rhydon,
   [GymLeader.Falkner]: Species.Pidgeotto,
   [GymLeader.Bugsy]: Species.Scyther,
   [GymLeader.Whitney]: Species.Miltank,

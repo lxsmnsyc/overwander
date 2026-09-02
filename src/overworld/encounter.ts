@@ -332,30 +332,34 @@ export function deriveAbility(species: Species, traitValue: number, boost = 1): 
 }
 
 /**
- * A second ability for the species, or null where it has only one to
- * give.
+ * The abilities a trained pokemon carries, `first` included and at
+ * most `count` of them.
  *
- * The rungs above a gym leader field pokemon carrying two, which is
- * the one thing a player cannot get by catching the same species: a
- * wild meeting rolls one ability and keeps it. Read off the nature
- * slice rather than the ability slice, so which second one a pokemon
- * has is not decided by which first one it rolled
+ * The rungs above a gym leader field pokemon carrying more than one,
+ * which is the one thing a player cannot get by catching the same
+ * species: a wild meeting rolls one ability and keeps it. The extras
+ * are read off the nature slice rather than the ability slice, so
+ * which ones a pokemon has are not decided by which one it rolled,
+ * and a species with nothing left to give simply carries fewer
  */
-export function deriveSecondAbility(
+export function deriveTrainedAbilities(
   species: Species,
   traitValue: number,
   first: Abilities,
-): Abilities | null {
+  count: number,
+): Abilities[] {
   const pools = getSpeciesAbilityPools(species);
-  const rest = [...pools.regular, ...pools.hidden].filter((ability) => ability !== first);
-
-  if (rest.length === 0) {
-    return null;
-  }
-
+  const rest = [...new Set([...pools.regular, ...pools.hidden])].filter(
+    (ability) => ability !== first,
+  );
   const slice = (traitValue >>> (TRAIT_BITS * 3)) & TRAIT_MASK;
+  const cursor = Math.floor((slice / TRAIT_RANGE) * rest.length);
+  const carried = [first];
 
-  return rest[Math.floor((slice / TRAIT_RANGE) * rest.length)];
+  while (carried.length < count && rest.length > 0) {
+    carried.push(...rest.splice(cursor % rest.length, 1));
+  }
+  return carried;
 }
 
 /**

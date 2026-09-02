@@ -15,6 +15,11 @@ import {
   GYM_LEADERS,
   GYM_LEADER_BADGES,
   GYM_LEADER_CHARSETS,
+  LEGENDS,
+  LEGEND_CHARSETS,
+  LEGEND_HONORS,
+  LEGEND_NAMES,
+  LEGEND_PRIZE_CHARSETS,
 } from '../src/data/overworld/experts';
 import { ACHIEVEMENT_TRAINERS } from '../src/data/achievements';
 import { TRAINER_CHARSETS } from '../src/data/overworld/trainers';
@@ -80,14 +85,28 @@ describe('the characters a trainer may wear', () => {
     }
   });
 
-  it('leaves the Champion the one seat that unlocks nothing else', () => {
+  it('pays Kanto’s title in the champion’s own coat', () => {
     const seats = CHARSETS.filter(
       (charset) => charset.lock.kind === 'award' && charset.lock.award === Awards.KantoChampion,
     );
 
-    // Red's free sheet is claimed before the Champion's, so what the
-    // seat is worth is the other style of him
-    expect(seats.map((charset) => charset.sheet)).toEqual(['characters/lgpe/red']);
+    // Blue keeps the seat at the top of Kanto now, so the title is
+    // worth going about as him
+    expect(seats.map((charset) => charset.sheet)).toEqual(['characters/frlg/blue']);
+  });
+
+  it('pays a legend’s mark in coats of the legend', () => {
+    for (const legend of LEGENDS) {
+      for (const sheet of LEGEND_PRIZE_CHARSETS[legend]) {
+        expect(getCharset(sheet)?.lock).toEqual({ kind: 'award', award: LEGEND_HONORS[legend] });
+        expect(getCharset(sheet)?.name).toBe(LEGEND_NAMES[legend]);
+      }
+      // The one they wander in stays free: it is what the game starts
+      // half its players as
+      for (const sheet of LEGEND_CHARSETS[legend]) {
+        expect(getCharset(sheet)?.lock).toEqual({ kind: 'free' });
+      }
+    }
   });
 
   it('says who a sheet is, and which game it is drawn from', () => {

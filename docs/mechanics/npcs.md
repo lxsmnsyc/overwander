@@ -205,11 +205,21 @@ kept for good.
 | **Gym leader** | Five of their gym's type and their signature, 45-65 | Their badge, a purse of 20,000 to 50,000, and a machine of their type |
 | **Elite Four** | Five of their seat's type and their signature, 65-85 | Their mark, an item, and a purse of 50,000 to 110,000 |
 | **Champion**   | Their own named six, 85-100     | Their league's title, an item, and 150,000 to 300,000 |
+| **Legend**     | Their own named six at level 100 | Their mark, a purse of 250,000 to 500,000, and a rare or a special item |
 
 A gym leader's sixth is always the one pokemon they are known for, whatever the
 other five roll, and the five are drawn from every region rather than from the
 one their gym stands in. The Elite Four are built the same way, down to the
 signature.
+
+One window in sixty-four, a **legend** has walked into the champion's seat and is
+standing there instead. There is one so far, and it is Red. A legend keeps no
+league: no badge case is asked for and no title is won, and what is left behind
+is their own mark, the largest purse in the game, and an item off the rare band
+or, one time in twenty-one, the special one. The mark is worth the **Legend
+Breaker** title and the other coats that legend is drawn in. That is the only fight in the game that reaches the
+special band. Under one of the four skies that favour every type at once, the
+rarest weather there is, the seat is a legend's for certain.
 
 A member of the **Elite Four** will not fight anybody who is not carrying all
 eight of their own league's badges, and a **Champion** asks for all four of their

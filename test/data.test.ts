@@ -304,6 +304,13 @@ import {
   GYM_LEADER_SIGNATURES,
   GYM_LEADER_TYPES,
   GymLeader,
+  LEGENDS,
+  LEGEND_CHARSETS,
+  LEGEND_HONORS,
+  LEGEND_NAMES,
+  LEGEND_PARTIES,
+  LEGEND_PRIZE_CHARSETS,
+  Legend,
   getEliteBadges,
   getEliteMemberRoster,
   getGymLeaderRoster,
@@ -4348,6 +4355,21 @@ describe('what an expert hands its party', () => {
     }
   });
 
+  it('fills a legend’s three slots for every species there is', () => {
+    // A legend hands out three, which is one more than any species'
+    // own table is likely to hold: the tail of gear that suits
+    // anybody is what keeps the third slot from coming up empty
+    for (const species of getBaseForms()) {
+      const held = getExpertHeldItems(species, 3);
+
+      expect(held, getSpeciesData(species).name).toHaveLength(3);
+      expect(new Set(held).size, getSpeciesData(species).name).toBe(3);
+      // And the three are still that species': asking for fewer takes
+      // them off the end rather than reshuffling
+      expect(getExpertHeldItems(species, 2)).toEqual(held.slice(0, 2));
+    }
+  });
+
   it('answers for every species, and answers the same every time', () => {
     for (const species of getBaseForms()) {
       const held = getExpertHeldItems(species, 2);
@@ -4414,8 +4436,12 @@ describe('type experts', () => {
         expect(existsSync(`public/sprites/overworld/${sheet}/data.json`), sheet).toBe(true);
       }
     }
-    // Blue is the one gym with no specialty
-    expect(GYM_LEADER_TYPES[GymLeader.Blue]).toBeUndefined();
+    // Every gym is a fight about a type now that Giovanni keeps the
+    // one Blue used to take all comers at
+    expect(new Set(GYM_LEADERS.map((leader) => GYM_LEADER_TYPES[leader])).size).toBe(
+      GYM_LEADERS.length,
+    );
+    expect(GYM_LEADER_TYPES[GymLeader.Giovanni]).toBe(Types.Ground);
     expect(GYM_LEADER_TYPES[GymLeader.Brock]).toBe(Types.Rock);
   });
 
@@ -4509,11 +4535,9 @@ describe('type experts', () => {
       // A leader is their type and nothing else; the wideners are the
       // league's
       for (const species of roster) {
-        const type = GYM_LEADER_TYPES[leader];
-
-        if (type != null) {
-          expect(getSpeciesData(species).types, getSpeciesData(species).name).toContain(type);
-        }
+        expect(getSpeciesData(species).types, getSpeciesData(species).name).toContain(
+          GYM_LEADER_TYPES[leader],
+        );
       }
     }
     // Jasmine's steel is Johto's, and she is seated in countries a
@@ -4524,14 +4548,12 @@ describe('type experts', () => {
   it('gives every leader a signature of their own type', () => {
     for (const leader of GYM_LEADERS) {
       const signature = GYM_LEADER_SIGNATURES[leader];
-      const type = GYM_LEADER_TYPES[leader];
 
       // Registered, so the sixth slot is a pokemon rather than a hole
       expect(getSpeciesData(signature).name.length).toBeGreaterThan(0);
-
-      if (type != null) {
-        expect(getSpeciesData(signature).types, GYM_LEADER_NAMES[leader]).toContain(type);
-      }
+      expect(getSpeciesData(signature).types, GYM_LEADER_NAMES[leader]).toContain(
+        GYM_LEADER_TYPES[leader],
+      );
     }
     // The example the rule is written from: Onix is a middle stage now
     // that a Steelix exists, and Brock brings him anyway
@@ -4642,13 +4664,14 @@ describe('type experts', () => {
   });
 
   it('gives each champion their own six rather than a draw', () => {
-    // Red's Mt. Silver line-up, the version made of Kanto species
-    expect(CHAMPION_PARTIES[Champion.Red]).toEqual([
-      Species.Pikachu,
-      Species.Lapras,
-      Species.Snorlax,
-      Species.Venusaur,
-      Species.Charizard,
+    // Blue's Fire Red line-up, the one he takes the Plateau with when
+    // the player walked out with a Charmander
+    expect(CHAMPION_PARTIES[Champion.Blue]).toEqual([
+      Species.Pidgeot,
+      Species.Alakazam,
+      Species.Rhydon,
+      Species.Arcanine,
+      Species.Exeggutor,
       Species.Blastoise,
     ]);
     // Lance's, three Dragonite and all: a named party may repeat a
@@ -4671,13 +4694,93 @@ describe('type experts', () => {
       expect(CHAMPION_HONORS[champion]).toHaveLength(KANTO_HONORS.length);
       expect(AWARD_NAMES[CHAMPION_TITLES[champion]].length).toBeGreaterThan(0);
     }
-    expect(CHAMPION_HONORS[Champion.Red]).toEqual(KANTO_HONORS);
+    expect(CHAMPION_HONORS[Champion.Blue]).toEqual(KANTO_HONORS);
     expect(CHAMPION_HONORS[Champion.Lance]).toEqual(JOHTO_HONORS);
+  });
+
+  it('keeps the legends outside the league', () => {
+    // Red's Mt. Silver line-up, the version made of Kanto species. He
+    // stands above the league rather than at the top of it: no title
+    // is his to pay and no badge case is asked for
+    expect(LEGEND_PARTIES[Legend.Red]).toEqual([
+      Species.Pikachu,
+      Species.Lapras,
+      Species.Snorlax,
+      Species.Venusaur,
+      Species.Charizard,
+      Species.Blastoise,
+    ]);
+
+    for (const legend of LEGENDS) {
+      expect(LEGEND_PARTIES[legend], LEGEND_NAMES[legend]).toHaveLength(EXPERT_PARTY_SIZE);
+      expect(LEGEND_NAMES[legend].length).toBeGreaterThan(0);
+
+      for (const sheet of LEGEND_CHARSETS[legend]) {
+        expect(existsSync(`public/sprites/overworld/${sheet}/image.png`), sheet).toBe(true);
+      }
+    }
+    // Nobody holds two seats: a legend is not one of the champions
+    const crowned = new Set(CHAMPIONS.map((champion) => CHAMPION_NAMES[champion]));
+
+    for (const legend of LEGENDS) {
+      expect(crowned.has(LEGEND_NAMES[legend])).toBe(false);
+    }
+  });
+
+  it('pays a legend’s mark in a name, a colour and coats worth wearing', () => {
+    const spoken = new Set([
+      ...KANTO_BADGES,
+      ...JOHTO_BADGES,
+      ...KANTO_HONORS,
+      ...JOHTO_HONORS,
+      ...CHAMPIONS.map((champion) => CHAMPION_TITLES[champion]),
+    ]);
+
+    for (const legend of LEGENDS) {
+      const mark = LEGEND_HONORS[legend];
+
+      // Its own award rather than a league's, and one that reads as
+      // something on a shelf
+      expect(spoken.has(mark)).toBe(false);
+      expect(AWARD_NAMES[mark].length).toBeGreaterThan(0);
+
+      // The coats it unlocks are shipped, and none of them is the one
+      // the legend wanders in: that one is free from the start, so a
+      // mark that paid it would pay nothing
+      const worn = new Set(LEGEND_CHARSETS[legend]);
+
+      expect(LEGEND_PRIZE_CHARSETS[legend].length).toBeGreaterThan(0);
+      for (const sheet of LEGEND_PRIZE_CHARSETS[legend]) {
+        expect(worn.has(sheet), sheet).toBe(false);
+        expect(existsSync(`public/sprites/overworld/${sheet}/image.png`), sheet).toBe(true);
+      }
+    }
+  });
+
+  it('gives Kanto’s eighth gym to Giovanni and its crown to Blue', () => {
+    // The Viridian gym is a Ground gym now rather than the one gym
+    // with no specialty, and it is still the Earth Badge that is won
+    // there
+    expect(GYM_LEADER_NAMES[GymLeader.Giovanni]).toBe('Giovanni');
+    expect(GYM_LEADER_BADGES[GymLeader.Giovanni]).toBe(Awards.EarthBadge);
+    expect(GYM_LEADER_SIGNATURES[GymLeader.Giovanni]).toBe(Species.Rhydon);
+    // He keeps the countries his own type answers to
+    for (const biome of [Biome.Desert, Biome.Badlands, Biome.Mountain]) {
+      expect(BIOME_GYM_LEADERS[biome]).toContain(GymLeader.Giovanni);
+    }
+    // And no country is left with an empty gym by his taking Blue's
+    for (const seated of Object.values(BIOME_GYM_LEADERS)) {
+      expect(seated.length).toBeGreaterThan(0);
+    }
+    // Blue answers for Kanto's title, which is what his own six is
+    // fielded for
+    expect(CHAMPION_NAMES[Champion.Blue]).toBe('Blue');
+    expect(CHAMPION_TITLES[Champion.Blue]).toBe(Awards.KantoChampion);
   });
 
   it('hands a beaten leader’s TM out of their own type’s case', () => {
     for (const leader of GYM_LEADERS) {
-      const type = GYM_LEADER_TYPES[leader] ?? null;
+      const type = GYM_LEADER_TYPES[leader];
       const rng = new AleaRNG(`gym-machine-${leader}`);
       const seen = new Set<Items>();
 
@@ -4693,27 +4796,13 @@ describe('type experts', () => {
         const move = getMachineMove(item);
 
         expect(move).not.toBeNull();
-        if (type != null && move != null) {
+        if (move != null) {
           expect(getMoveData(move).type).toBe(type);
         }
       }
       // The case never comes up empty; a thin type may be one disc
       expect(seen.size).toBeGreaterThanOrEqual(1);
     }
-
-    // Blue's case is the whole shelf: his rolls cross types
-    const rng = new AleaRNG('gym-machine-blue');
-    const types = new Set<Types>();
-
-    for (let roll = 0; roll < 64; roll++) {
-      const item = rollGymMachine(GymLeader.Blue, () => rng.random());
-      const move = item == null ? null : getMachineMove(item);
-
-      if (move != null) {
-        types.add(getMoveData(move).type);
-      }
-    }
-    expect(types.size).toBeGreaterThan(1);
   });
 });
 
@@ -4857,6 +4946,7 @@ describe('achievements', () => {
     expect(getTitleName(LadderTitle.LeagueChallenger)).toBe('League Challenger');
     expect(getTitleName(LadderTitle.EliteConqueror)).toBe('Elite Conqueror');
     expect(getTitleName(LadderTitle.KantoChampion)).toBe('Kanto Champion');
+    expect(getTitleName(LadderTitle.LegendBreaker)).toBe('Legend Breaker');
     // A number that names nothing reads as no title
     expect(getTitleName(99)).toBeNull();
     expect(getTitleName(typeTitle(Types.Fairy, false))).toBeNull();

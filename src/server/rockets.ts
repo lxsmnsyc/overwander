@@ -37,6 +37,7 @@ import {
   CHAMPION_TITLES,
   ELITE_MEMBER_HONORS,
   GYM_LEADER_BADGES,
+  LEGEND_HONORS,
   getEliteBadges,
   rollGymMachine,
 } from '../data/overworld/experts';
@@ -186,7 +187,9 @@ export async function enterRocketStop(
       return 'locked';
     }
   }
-  if (landmark === Landmark.Champion) {
+  // A legend standing in a champion's seat asks for nothing: they
+  // keep no league and answer to no badge case
+  if (landmark === Landmark.Champion && snapshot.getLegend(cell) == null) {
     const champion = snapshot.getChampion(cell);
 
     if (champion == null || !(await hasAwards(uid, CHAMPION_HONORS[champion]))) {
@@ -326,10 +329,12 @@ export async function startRocketBattle(
   const shadow = landmark === Landmark.TeamRocket;
   const duellist = snapshot.getTrainerClass(record.cell);
   const rank = snapshot.getRocketRank(record.cell) ?? RocketRank.Grunt;
+  const legend = snapshot.getLegend(record.cell) != null;
   const levels = stopPartyLevels(
     landmark ?? Landmark.TeamRocket,
     rank,
     duellist == null ? undefined : trainerLevels(duellist),
+    legend,
   );
   // Who is standing there, kept on the battle rather than derived
   // again later: the window that rolled them is gone within the hour,
@@ -353,7 +358,7 @@ export async function startRocketBattle(
                   toSpawns(record.party),
                   shadow,
                   levels,
-                  stopOutfit(landmark ?? Landmark.TeamRocket, rank),
+                  stopOutfit(landmark ?? Landmark.TeamRocket, rank, legend),
                 ),
               )})
     `;
@@ -447,6 +452,10 @@ export async function claimRocketReward(uid: string, stop: string): Promise<Rock
   // stored: the party alone no longer says, now that every rank
   // fields six
   const rank = snapshot.getRocketRank(record.cell) ?? RocketRank.Grunt;
+  // And whether the seat at the top holds its champion or a legend,
+  // which is the difference between a title and the only draw in the
+  // game that reaches the special band
+  const legend = snapshot.getLegend(record.cell) != null;
 
   // First claim pays; the guard rides in the statement
   const claimed = await getSql()`
@@ -490,6 +499,7 @@ export async function claimRocketReward(uid: string, stop: string): Promise<Rock
         landmark ?? Landmark.TeamRocket,
         rank,
         snapshot.getTrainerClass(record.cell) ?? undefined,
+        legend,
       ),
     ),
   );
@@ -524,7 +534,7 @@ export async function claimRocketReward(uid: string, stop: string): Promise<Rock
   const leader = landmark === Landmark.GymLeader ? snapshot.getGymLeader(record.cell) : null;
   const item =
     leader == null
-      ? rollStopLoot(landmark ?? Landmark.TeamRocket, rank, () => rng.random())
+      ? rollStopLoot(landmark ?? Landmark.TeamRocket, rank, () => rng.random(), legend)
       : rollGymMachine(leader, () => rng.random());
 
   if (item != null) {
@@ -576,6 +586,15 @@ function awardFor(
     return member == null ? null : ELITE_MEMBER_HONORS[member];
   }
   if (landmark === Landmark.Champion) {
+    // A legend pays their own mark rather than the league's title:
+    // the seat is still the champion's, and beating whoever wandered
+    // into it is not beating the league
+    const legend = snapshot.getLegend(cell);
+
+    if (legend != null) {
+      return LEGEND_HONORS[legend];
+    }
+
     const champion = snapshot.getChampion(cell);
 
     return champion == null ? null : CHAMPION_TITLES[champion];

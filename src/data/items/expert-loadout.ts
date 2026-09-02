@@ -72,7 +72,7 @@ export function isBattleHeldItem(item: Items): boolean {
  * Everything this species could sensibly be handed, best first: its
  * own held table richest slot down, then Eviolite where it still has
  * somewhere to evolve to, then a booster for each of its types, and
- * Leftovers for the ones nothing else fits
+ * gear that suits anybody for the slots nothing else fills
  */
 function preferences(species: Species): Items[] {
   const held = getSpeciesHeldItems(species);
@@ -95,7 +95,11 @@ function preferences(species: Species): Items[] {
     // Then the rest of its own table, richest slot down
     ...own,
     ...boosters,
+    // And then what suits anybody, for the tiers that hand out more
+    // gear than a species has anything of its own to fill
     Items.Leftovers,
+    Items.LifeOrb,
+    Items.FocusBand,
   ];
 }
 

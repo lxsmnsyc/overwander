@@ -47,6 +47,7 @@ import {
   CHAMPION_NAMES,
   ELITE_MEMBER_NAMES,
   GYM_LEADER_NAMES,
+  LEGEND_NAMES,
 } from '../../../data/overworld/experts';
 import type { ItemStack } from '../../../data/overworld/item-pool';
 import Landmark, { LANDMARK_NAMES } from '../../../data/overworld/landmark';
@@ -1063,7 +1064,10 @@ export default function OverworldBoard(props: {
         // there: an elite asks for their own league's badges, a
         // champion for their own league's Elite Four
         const seated = landmark === Landmark.EliteFour ? loaded.snapshot.getEliteMember(at) : null;
-        const crowned = landmark === Landmark.Champion ? loaded.snapshot.getChampion(at) : null;
+        const crowned =
+          landmark === Landmark.Champion && loaded.snapshot.getLegend(at) == null
+            ? loaded.snapshot.getChampion(at)
+            : null;
         let asked: string | null = null;
 
         if (seated != null) {
@@ -1738,6 +1742,12 @@ export default function OverworldBoard(props: {
       return member == null ? LANDMARK_NAMES[landmark] : ELITE_MEMBER_NAMES[member];
     }
     if (landmark === Landmark.Champion) {
+      const legend = loaded?.snapshot.getLegend(index);
+
+      if (legend != null) {
+        return LEGEND_NAMES[legend];
+      }
+
       const champion = loaded?.snapshot.getChampion(index);
 
       return champion == null ? LANDMARK_NAMES[landmark] : CHAMPION_NAMES[champion];

@@ -9,6 +9,9 @@ import {
   GYM_LEADER_BADGES,
   GYM_LEADER_NAMES,
   GymLeader,
+  LEGEND_HONORS,
+  LEGEND_NAMES,
+  Legend,
   getEliteBadges,
 } from '../../../data/overworld/experts';
 import Landmark from '../../../data/overworld/landmark';
@@ -25,6 +28,7 @@ import {
   CHAMPION_PARTY_LEVELS,
   ELITE_PARTY_LEVELS,
   GYM_PARTY_LEVELS,
+  LEGEND_PARTY_LEVELS,
   type LevelBand,
   rocketPartyLevels,
 } from '../../../overworld/rocket';
@@ -56,7 +60,7 @@ const GYM_LEADER_QUOTES: Record<GymLeader, string> = {
   [GymLeader.Koga]: 'A ninja’s poison works slowly. Your defeat will not.',
   [GymLeader.Sabrina]: 'I foresaw this fight. I did not foresee you winning.',
   [GymLeader.Blaine]: 'My fire burns hot! Bring water. It will not help.',
-  [GymLeader.Blue]: 'Smell ya later... after I flatten you, that is.',
+  [GymLeader.Giovanni]: 'You have interfered for the last time. Kneel before me.',
   [GymLeader.Falkner]: 'My father’s birds are watching. Do not embarrass me in front of them.',
   [GymLeader.Bugsy]: 'I have studied bug pokemon my whole life. You have not.',
   [GymLeader.Whitney]: 'You look tough! But I am tougher, and I am not going to cry about it.',
@@ -69,7 +73,7 @@ const GYM_LEADER_QUOTES: Record<GymLeader, string> = {
 
 /** Which league each champion is the top of */
 const CHAMPION_LEAGUES: Record<Champion, string> = {
-  [Champion.Red]: 'Kanto',
+  [Champion.Blue]: 'Kanto',
   [Champion.Lance]: 'Johto',
 };
 
@@ -96,9 +100,14 @@ const ELITE_QUOTES: Record<EliteMember, string> = {
   [EliteMember.JohtoBruno]: 'I have come back stronger. Feel the fists of Johto!',
 };
 
+/** What a legend says, which in the one case there is so far is nothing */
+const LEGEND_GREETINGS: Record<Legend, string> = {
+  [Legend.Red]: 'Red says nothing. He reaches for a ball.',
+};
+
 /** What a champion says as the last fight of their league is put */
 const CHAMPION_GREETINGS: Record<Champion, string> = {
-  [Champion.Red]: 'Red says nothing. He reaches for a ball.',
+  [Champion.Blue]: 'Blue smirks. “I am the Champion here. Smell ya later.”',
   [Champion.Lance]: 'Lance looks you over. “So you made it this far. Show me your best.”',
 };
 
@@ -244,6 +253,21 @@ export default function challengerOf(
     };
   }
   if (landmark === Landmark.Champion) {
+    const legend = snapshot.getLegend(cell);
+
+    if (legend != null) {
+      return {
+        name: LEGEND_NAMES[legend],
+        levels: LEGEND_PARTY_LEVELS,
+        greeting: LEGEND_GREETINGS[legend],
+        stakes: `Their own six at level ${LEGEND_PARTY_LEVELS[0]}, each carrying three items and
+          three abilities, against as many as you bring. No badge is asked for. Win and the mark
+          for ${AWARD_NAMES[LEGEND_HONORS[legend]]} is yours, with the largest purse in the game
+          and something out of the rarest two bands there are. Lose and you lose nothing but the
+          fight.`,
+      };
+    }
+
     const champion = snapshot.getChampion(cell);
 
     if (champion == null) {

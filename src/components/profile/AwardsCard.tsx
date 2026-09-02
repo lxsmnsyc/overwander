@@ -25,6 +25,9 @@ import {
   ELITE_MEMBERS,
   ELITE_MEMBER_CHARSETS,
   ELITE_MEMBER_HONORS,
+  LEGENDS,
+  LEGEND_CHARSETS,
+  LEGEND_HONORS,
 } from '../../data/overworld/experts';
 import NpcSprite from '../overworld/NpcSprite';
 import ExtraSprite from '../sprites/ExtraSprite';
@@ -66,12 +69,17 @@ const AWARD_SPRITES: Partial<Record<Awards, [sheet: string, name: string]>> = {
 };
 
 /**
- * Each elite mark is the member themselves: their first charset, the
- * portrait the challenge dialog uses
+ * Each mark won off a person is that person: their first charset, the
+ * portrait the challenge dialog uses. The Elite Four and the legends
+ * both pay one
  */
-const ELITE_AWARD_SHEETS: Partial<Record<Awards, string>> = Object.fromEntries(
-  ELITE_MEMBERS.map((member) => [ELITE_MEMBER_HONORS[member], ELITE_MEMBER_CHARSETS[member][0]]),
-);
+const PERSON_AWARD_SHEETS: Partial<Record<Awards, string>> = Object.fromEntries([
+  ...ELITE_MEMBERS.map((member): [Awards, string] => [
+    ELITE_MEMBER_HONORS[member],
+    ELITE_MEMBER_CHARSETS[member][0],
+  ]),
+  ...LEGENDS.map((legend): [Awards, string] => [LEGEND_HONORS[legend], LEGEND_CHARSETS[legend][0]]),
+]);
 
 /** The titles that read as a star rather than as a letter */
 const CHAMPION_TITLES_SET = new Set<Awards>(Object.values(CHAMPION_TITLES));
@@ -110,12 +118,14 @@ const AWARD_COLORS: Record<Awards, string> = {
   [Awards.KarenDefeated]: '#5c4f56',
   [Awards.JohtoBrunoDefeated]: '#c98a4b',
   [Awards.JohtoChampion]: '#e0b64f',
+  [Awards.RedDefeated]: '#d0342c',
 };
 
 /**
  * The shelf's order: Kanto's 8 badges, its 4 elite marks, the title
  * and the dex medal, then Johto's 8 badges, its 4 marks and its
- * title. The walk itself, left to right, a region at a time
+ * title, and the legends' marks last, which belong to no region's
+ * walk. The walk itself, left to right, a region at a time
  */
 const SHELF: Awards[] = [
   ...new Set([
@@ -126,6 +136,7 @@ const SHELF: Awards[] = [
     ...JOHTO_BADGES,
     ...JOHTO_HONORS,
     Awards.JohtoChampion,
+    ...LEGENDS.map((legend) => LEGEND_HONORS[legend]),
   ]),
 ];
 
@@ -156,7 +167,7 @@ function Slot(props: { award: Awards; wins: number | null }): JSX.Element {
             keyed
             fallback={
               <Show
-                when={ELITE_AWARD_SHEETS[props.award]}
+                when={PERSON_AWARD_SHEETS[props.award]}
                 keyed
                 fallback={
                   <span

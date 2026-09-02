@@ -15,7 +15,7 @@ import deriveEncounter, {
   type EncounterOptions,
   EncounterType,
   SPAWN_LEVELS,
-  deriveSecondAbility,
+  deriveTrainedAbilities,
 } from '../overworld/encounter';
 import { DEFAULT_ITEM_SLOTS, Slots, defaultSlots, withSlots } from '../data/constants/slots';
 import type Weather from '../data/overworld/weather';
@@ -662,11 +662,16 @@ export async function startEncounter(
   // ability its owner put into it, and the room for the second item
   // it was carrying. Both are asked for by the caller, since nothing
   // met in the world has either
-  const second =
-    (options.abilities ?? 1) > 1
-      ? deriveSecondAbility(derived.species, derived.traitValue, derived.ability)
-      : null;
-  const abilities = [...new Set([derived.ability, ...(second == null ? [] : [second])])];
+  const abilities = [
+    ...new Set(
+      deriveTrainedAbilities(
+        derived.species,
+        derived.traitValue,
+        derived.ability,
+        options.abilities ?? 1,
+      ),
+    ),
+  ];
   const room = Math.max(DEFAULT_ITEM_SLOTS, options.itemSlots ?? DEFAULT_ITEM_SLOTS);
   // Room for both, or the record would hold a second ability it has
   // no slot for: the battle counts slots rather than what is on the

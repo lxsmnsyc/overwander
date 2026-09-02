@@ -239,13 +239,16 @@ game stages is one somebody walked to, filled a lobby for and paid for — which
 made the loop that most wants watching the hardest one to reach. The seed is in
 the URL, so a fight is a link and two people watch the same frames.
 
-Two pages sit beside it under the same rules. [`/demo/move`](../src/routes/demo/move.tsx)
-stages one move in a live engine, and [`/demo/weather`](../src/routes/demo/weather.tsx)
+Three pages sit beside it under the same rules. [`/demo/move`](../src/routes/demo/move.tsx)
+stages one move in a live engine, [`/demo/weather`](../src/routes/demo/weather.tsx)
 draws any of the twenty six skies over any biome's ground, at any strength,
-running or stopped a frame at a time, through both of the board's painters. Both
-carry the thing being looked at in the address, so a link is a demonstration, and
-both are `clientOnly`: a canvas and a frame timer do not exist until a browser is
-here, so the server sends the title and a space for it.
+running or stopped a frame at a time, through both of the board's painters, and
+[`/demo/shadow`](../src/routes/demo/shadow.tsx) throws a shadow at any hour, from
+any camera angle, anywhere between the middle of the world and its edge. That
+last one draws a bar on the ground from the light alone, so a shadow that has
+stopped agreeing with the sun reads as a picture leaning one way and a bar
+pointing another. All three are `clientOnly`: a canvas and a frame timer do not
+exist until a browser is here, so the server sends the title and a space for it.
 
 They also carry no session. `/demo/*` is named in `AuthProvider` as sessionless:
 the provider is still mounted so `useAuth` works anywhere, but it opens no

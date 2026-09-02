@@ -1,4 +1,4 @@
-import { GROUND_SQUASH } from './tilt';
+import { GROUND_DEPTH } from './tilt';
 import type { QuadSheet, QuadSource } from './gl/quad-batch';
 
 /**
@@ -77,65 +77,55 @@ export function shadowCorners(patch: ShadowPatch): { x: number; y: number }[] {
 }
 
 /**
- * How far a shadow settles down the board as it is thrown, as a share
- * of how far it reaches. The board's own squash: a shadow lies on the
- * ground, so it lies the way the ground does.
- *
- * Without it the picture folds onto the very edge it stands on at the
- * hours when the light runs square across the screen. A bearing that
- * is level has no up-and-down left to lay anything down with, and the
- * board being laid back under the camera is not something the sun can
- * say
- */
-const SETTLE = GROUND_SQUASH;
-
-/**
- * The least a shadow ever settles, as the same share. Small: it only
- * has anything to say for a shadow thrown almost straight at the
- * camera, which is the one bearing where the settle would otherwise be
- * cancelled out
- */
-const LEAST = 0.08;
-
-/**
  * The four corners a sprite's own picture lands on when the light
  * throws it flat onto the ground.
  *
- * A skew rather than a turn. The edge under the feet stays square to
- * the picture and where the picture put it, so a shadow is always
- * joined to the thing that cast it; only the far edge leans, and it
- * leans the way the light throws it. A shadow whose near edge swung
- * with the sun comes away from its own feet, which reads as a second
- * thing lying on the floor.
+ * The far edge is thrown exactly where the light says. The near edge
+ * is held square to the light, snapped to the nearest quarter turn,
+ * so the picture keeps its own rows and columns instead of being
+ * drawn at an angle.
+ *
+ * The snap is what stops a shadow disappearing. Held horizontal at
+ * every bearing, the picture has no height left wherever the light
+ * runs square across the screen: a sprite is a flat billboard, and
+ * the shadow of a flat thing edge-on to the light is a line. True,
+ * invisible, and twice a camera turn. Past halfway the picture is
+ * laid on its side instead, and it is the pose that carries the
+ * direction from there.
+ *
+ * The spread is worked out in the ground's own directions and laid
+ * back afterwards, so the picture is foreshortened exactly as much as
+ * the ground it is lying on.
  *
  * Which pose is laid down is the caller's: the light sees the side of
  * whatever it shines on, so a shadow thrown east is cut from the
- * eastward pose. That is what carries the direction, and it is why
- * this only has to lean the picture over
+ * eastward pose
  */
 export function castCorners(
   placed: Pick<SpriteQuad, 'top' | 'width' | 'flip'>,
   patch: Pick<ShadowPatch, 'footX' | 'footY'>,
   cast: { dx: number; dy: number; length: number },
 ): { x: number; y: number }[] {
-  const half = placed.width / 2;
+  const half = (placed.width / 2) * (placed.flip === true ? -1 : 1);
   const high = Math.max(0, patch.footY - placed.top);
   const reach = cast.length * high;
-  const [near, far] =
-    placed.flip === true
-      ? [patch.footX + half, patch.footX - half]
-      : [patch.footX - half, patch.footX + half];
-  const leanX = cast.dx * reach;
-  // Kept clear of the edge it stands on. The drop and the settle are
-  // opposite signs of the same measurement, so on their own they meet
-  // and cancel at whichever bearing makes them equal, and the shadow
-  // has no height left at all there
-  const leanY = Math.min(cast.dy * reach - SETTLE * reach, -LEAST * reach);
+  // How far the throw runs away from the camera before the board lays
+  // it back, which is what the spread has to be square to
+  const depth = cast.dy / GROUND_DEPTH;
+  const alongX = cast.dx * reach;
+  const alongY = cast.dy * reach;
+  // Square to the throw on the **ground**, then snapped to whichever
+  // quarter turn it is nearer, and only then laid back: a spread
+  // worked out on the screen would be foreshortened by the wrong
+  // amount everywhere but the two bearings it agrees at
+  const sideways = Math.abs(depth) < Math.abs(cast.dx);
+  const acrossX = sideways ? 0 : -Math.sign(depth || 1) * half;
+  const acrossY = sideways ? Math.sign(cast.dx) * GROUND_DEPTH * half : 0;
 
   return [
-    { x: near + leanX, y: patch.footY + leanY },
-    { x: far + leanX, y: patch.footY + leanY },
-    { x: far, y: patch.footY },
-    { x: near, y: patch.footY },
+    { x: patch.footX + alongX - acrossX, y: patch.footY + alongY - acrossY },
+    { x: patch.footX + alongX + acrossX, y: patch.footY + alongY + acrossY },
+    { x: patch.footX + acrossX, y: patch.footY + acrossY },
+    { x: patch.footX - acrossX, y: patch.footY - acrossY },
   ];
 }

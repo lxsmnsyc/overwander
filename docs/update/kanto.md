@@ -17,6 +17,22 @@ there, finished and full.
 - Nothing waits for you: the pokemon, the berries, the raids and the people at
   the crossroads all turn over on their own schedules.
 
+## The sky
+
+Twenty-six kinds of weather, drifting across the world rather than rolled per
+chunk. Walking out of the rain is a walk, not a step.
+
+- A sky is kind to a type or two: they turn up **twice as often**, and come out
+  with a floor under every one of their stats.
+- Four skies are kind to **everything**, and each is worth going out in whoever
+  you are raising. A **meteor shower** doubles shiny odds, a **fata morgana**
+  doubles hidden ability odds, a **dark day** meets shadows, and a **fogbow**
+  hands over an egg move.
+- A dark day is the one sky you cannot see across. The board goes black, and you
+  walk from one pool of light to the next.
+- Rain stands in the world rather than on the glass: turn the camera and the
+  whole storm sweeps with it.
+
 ## Pokemon
 
 All 151, and each one is already itself before you walk up to it.
@@ -36,6 +52,23 @@ bag.
 - Miss and it may bolt for good.
 - Fourteen kinds of ball, each good somewhere different: first throw, tenth
   throw, in the dark, in the water.
+- A meeting opens on the ball you last threw, unless you would rather it did
+  not.
+
+## What walks beside you
+
+The pokemon at your side changes what you find, and every ability it has out
+here is one it already had.
+
+- **Arena Trap**, **Illuminate** or **No Guard** draw three more pokemon out.
+  **Stench** keeps two away.
+- **Keen Eye** and **Intimidate** keep the weaklings off; **Hustle**,
+  **Pressure** and **Vital Spirit** draw the strong out.
+- **Compound Eyes** finds what a pokemon is carrying, and **Frisk** tells you
+  before you have thrown anything.
+- **Synchronize** passes on its nature, **Cute Charm** draws out the opposite
+  gender, **Flame Body** halves an egg's walk, and **Pickup** finds things as
+  you go.
 
 ## Battles
 
@@ -45,6 +78,8 @@ Both sides fight at once, in real time. Nobody waits for a turn.
 - Quick pokemon get several hits in before a slow one lands.
 - Your pokemon choose their own moves, and never waste one on a target it
   cannot touch.
+- Switching is a walk across the field, so what was aimed at you lands on
+  whoever took the spot.
 - Conditions and weather carry out of the fight, so a party is something to look
   after.
 
@@ -60,8 +95,8 @@ A lair holds a legendary for a few hours, and anybody may join.
   paid the same.
 - **Mythicals** appear only when somebody spends a relic to call one out.
 - Bring a friend into a lobby, to fight or just to watch.
-- **Team Rocket grunts** block a path with three shadowed pokemon and pay out
-  when you beat them.
+- **Team Rocket grunts** block a path with a shadowed party and pay out when you
+  beat them.
 
 ## The league, and other trainers
 
@@ -157,6 +192,17 @@ Two ways a pokemon changes hands.
 - Four are waiting on day one: Bulbasaur, Charmander, Squirtle, and twenty Poke
   Balls. Take all three starters if you like.
 
+## Getting about
+
+- **Click** where you want to go, or **walk on the keyboard**: arrows or WASD, a
+  cell at a time, held down to keep going.
+- Walking into somebody turns you to face them, and Enter is how you speak to
+  whatever you are facing. The directions, Interact and Menu can all be rebound.
+- **Turn the camera** with a right-drag, or a two-finger twist on a phone. Cards
+  open on a hold where there is nothing to hover with.
+- Signed in twice, one walk: the screen that is not walking stands down and
+  hands its steps over.
+
 ## Where the art comes from
 
 Every pokemon on screen is animated from **SpriteCollab**, the Pokémon Mystery
@@ -172,15 +218,25 @@ comes under.
 
 ## A few promises
 
-- Nothing goes off when you walk over it. You click what you want.
+- Nothing goes off when you walk over it. You act on what you meant to act on.
 - Everyone sees the same world at the same moment.
 - Morning, evening and night are read off your clock, and they change what you
   meet.
 - Nothing timed can be rushed by changing your device.
 - A battle plays back exactly as it happened.
 
+## Since launch
+
+- A fight names and draws whoever you actually fought, in the history and in the
+  replay.
+- A shiny throws its glint as it walks into a fight.
+- The board draws less and draws it faster, on phones especially.
+- A shadow throws its own silhouette, laid the way the light falls.
+- Notices open the panel they are about.
+
 ## See also
 
+- [Johto](johto.md): the release after this one
 - [Player's guide](../mechanics.md): the rules in full
 - [The battle engine](../engine.md): how the fighting is put together
 - [Credits](../credits.md): the people, libraries and art behind it

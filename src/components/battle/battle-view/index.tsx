@@ -19,6 +19,8 @@ import {
   watchBattle,
 } from '../../../auth/battles';
 import { useAuth } from '../../../auth/context';
+import createClientSignal from '../../app/client-signal';
+import { answered } from '../../app/resource-reads';
 import { PLAYER_ALLIANCE, clearRaid, getRaid, getRaidTitle } from '../../../auth/raids';
 import { BattleModes } from '../../../battle/core';
 import BattleKind, { getBattleKind } from '../../../auth/battle-kind';
@@ -282,32 +284,19 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
    * record is cleared the moment the boss goes down — a subscription
    * would watch its own prize delete the title out from under it
    */
-  const [lair, setLair] = createSignal<string | null>(null);
+  const client = createClientSignal();
+  const [staged] = createResource(
+    () => client() && props.active.raid,
+    async (raidId) => getRaid(raidId),
+  );
+  // Read without waiting, since this body declares it: a lair still
+  // arriving leaves the fight named after what kind it is rather than
+  // holding the screen for a subtitle
+  const lair = (): string | null => {
+    const found = answered(staged);
 
-  createEffect(() => {
-    const raidId = props.active.raid;
-
-    if (raidId == null) {
-      return;
-    }
-
-    let cancelled = false;
-
-    getRaid(raidId)
-      .then((staged) => {
-        if (!cancelled && staged != null) {
-          setLair(getRaidTitle(staged));
-        }
-      })
-      .catch(() => {
-        // The fight is the same fight unnamed: it falls back to what
-        // kind of battle it is
-      });
-
-    onCleanup(() => {
-      cancelled = true;
-    });
-  });
+    return found == null ? null : getRaidTitle(found);
+  };
 
   /**
    * Who the other side was, where it belonged to nobody.

@@ -180,6 +180,20 @@ test.describe('the safari', () => {
     await expect(throwBall).toBeVisible();
 
     /**
+     * The canvas, marked so it can be recognised again.
+     *
+     * Ending an encounter re-reads what has run from this player, and
+     * a resource being re-read is a resource that is loading: read the
+     * ordinary way it throws the board back to its boundary, which
+     * tears the canvas down and builds a new one. Nothing is lost by
+     * it and it looks like the world reloading because something ran
+     * off. A rebuilt canvas would not be carrying this
+     */
+    await world.evaluate((canvas) => {
+      canvas.setAttribute('data-standing', 'yes');
+    });
+
+    /**
      * What the ball holding leaves behind: the offer to look at what
      * was caught. The sheet is not opened for the player — it is
      * offered, since one that arrived on its own would land before
@@ -224,5 +238,7 @@ test.describe('the safari', () => {
     await expect(sheet.getByRole('button', { name: /^Lv\. \d+/ })).toBeVisible();
     // And the encounter it came from is gone rather than sitting under it
     await expect(page.getByRole('button', { name: /^Throw / })).toBeHidden();
+    // And the world it happened in is the one that was standing there
+    await expect(page.locator('main canvas[data-standing="yes"]').first()).toBeAttached();
   });
 });

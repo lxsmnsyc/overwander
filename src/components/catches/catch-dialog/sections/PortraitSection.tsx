@@ -49,7 +49,7 @@ export default function PortraitSection(props: PortraitSectionProps): JSX.Elemen
           shiny={!isEgg(props.caught) && isShiny(props.caught)}
           female={!isEgg(props.caught) && props.caught.gender === Genders.Female}
           aura={isEgg(props.caught) ? undefined : catchAura(props.caught)}
-          animation={SpriteAnim.Walk}
+          animation={SpriteAnim.Idle}
           direction="DownLeft"
           scale={4}
           shadow

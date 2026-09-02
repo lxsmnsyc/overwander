@@ -21,6 +21,7 @@ import {
 import { getCatchName, isShadow, isShiny } from '../../../auth/caught-record';
 import { NICKNAME_LIMIT, asNickname } from '../../../auth/nickname';
 import { useAuth } from '../../../auth/context';
+import { answered } from '../../app/resource-reads';
 
 import { canHatch, isEgg } from '../../../auth/egg';
 import { hatchEgg } from '../../../auth/eggs';
@@ -229,7 +230,11 @@ export function CatchSheetBody(
    * the reader has ever held a shiny one
    */
   const dexKnows = (species: Species): { met: boolean; owned: boolean; shiny: boolean } => {
-    const entry = props.dex();
+    // Read without waiting: the answer above is what an unarrived dex
+    // gives, and it is the right one. A sheet held up for it, or one
+    // that flashed the full picture and then hid it, would both be
+    // worse than one that fills in
+    const entry = answered(props.dex);
     const kept = entry?.caught.find((tally) => tally.species === species);
     const seen = entry?.seen.some((tally) => tally.species === species) === true;
 

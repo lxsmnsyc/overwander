@@ -10,6 +10,7 @@ import getWorld from '../overworld/current';
 import { Metric } from '../auth/quest-record';
 import { getSql } from './db';
 import { markProgress } from './quest-progress';
+import { asString } from './read';
 
 /**
  * Where a player is, written with admin credentials.
@@ -83,4 +84,30 @@ export async function readPosition(uid: string): Promise<PositionRecord | null> 
   `;
 
   return rows.at(0) == null ? null : asPositionRecord(rows[0]);
+}
+
+/**
+ * Where several people are standing, keyed by uid, leaving out anybody
+ * who has never walked. One question however long the list, for a
+ * caller showing a page of them
+ */
+export async function readPositions(uids: readonly string[]): Promise<Map<string, PositionRecord>> {
+  const wanted = [...new Set(uids)];
+
+  if (wanted.length === 0) {
+    return new Map();
+  }
+
+  const sql = getSql();
+  const rows = await sql`
+    select player, chunk_x as "chunkX", chunk_y as "chunkY",
+           cell_x as "cellX", cell_y as "cellY", moved_at as "movedAt"
+    from positions where player in ${sql(wanted)}
+  `;
+  const found = new Map<string, PositionRecord>();
+
+  for (const row of rows) {
+    found.set(asString(row.player), asPositionRecord(row));
+  }
+  return found;
 }

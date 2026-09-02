@@ -4,7 +4,7 @@ import type { Species } from '../data/ids/species';
 import getAdminApi from './admin-api';
 import { getSql } from './db';
 import type { PositionRecord } from '../auth/position-record';
-import { readPosition } from './positions';
+import { readPosition, readPositions } from './positions';
 import { asNumber, asRecord, asString } from './read';
 
 /**
@@ -152,11 +152,12 @@ export async function listPlayers(search: string, page: number): Promise<Listing
     .sort((left, right) => right.createdAt - left.createdAt);
   const listing = pageOf(matched, page, capped);
 
-  await Promise.all(
-    listing.rows.map(async (row) => {
-      row.position = await readPosition(row.uid);
-    }),
-  );
+  // The page's positions in one question rather than one a row
+  const standing = await readPositions(listing.rows.map((row) => row.uid));
+
+  for (const row of listing.rows) {
+    row.position = standing.get(row.uid) ?? null;
+  }
   return listing;
 }
 

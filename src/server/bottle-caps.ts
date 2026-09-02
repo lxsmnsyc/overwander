@@ -50,7 +50,9 @@ export default async function useBottleCap(
   }
 
   const capped = await tx(async (transaction) => {
-    const caught = await readCaughtIn(transaction, catchId);
+    // The values a cap polishes are on the row, and so is everything
+    // the refusals ask about
+    const caught = await readCaughtIn(transaction, catchId, true, []);
 
     // A pokemon fights as the snapshot froze it, and an egg is not a
     // pokemon yet: what is inside it was decided when it was found,

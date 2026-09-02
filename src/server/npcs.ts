@@ -331,18 +331,19 @@ export async function visitNurse(
     return null;
   }
 
+  // The whole handover in one read: she takes six at once, and asking
+  // for them one at a time is two round trips each
+  const stored = await readCaughtMany(getSql(), catches);
   const care: [string, Record<string, unknown>, boolean][] = [];
 
-  await tx(async (transaction) => {
-    for (const id of catches) {
-      const caught = await readCaughtIn(transaction, id, false);
-      const done = caught == null ? null : tended(caught, uid);
+  for (const id of catches) {
+    const caught = stored.get(id);
+    const done = caught == null ? null : tended(caught, uid);
 
-      if (done != null) {
-        care.push([id, done.fields, done.purifies]);
-      }
+    if (done != null) {
+      care.push([id, done.fields, done.purifies]);
     }
-  });
+  }
 
   // Nothing of hers to do: a party already whole is handed straight
   // back

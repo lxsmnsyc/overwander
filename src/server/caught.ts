@@ -25,7 +25,8 @@ import type { Species } from '../data/ids/species';
 import { getSpeciesData } from '../data/species';
 import createOverworld from '../overworld/setup';
 import { asBuddy, resolveBuddyCatch } from './buddy';
-import { grantCandy, grantCatchCandy } from './candy';
+import type Families from '../data/ids/families';
+import { catchCandyWorth, grantCandies } from './candy';
 import { getCatchCandy } from '../auth/candy-rules';
 import {
   asLocale,
@@ -34,7 +35,7 @@ import {
   isGuardedRecord,
   zeroEffortValues,
 } from './catch-fields';
-import { readCaughtIn, updateCaughtIn } from './caught-io';
+import { readCaughtIn, readCaughtMany, updateCaughtIn } from './caught-io';
 import { BASE_FRIENDSHIP, SHADOW_FRIENDSHIP } from '../data/constants/friendship';
 import { type Tx, getSql, newDocId, tx } from './db';
 import { readEncounter } from './encounter-io';
@@ -229,28 +230,31 @@ export async function recordCatch(
   const buddy = await resolveBuddyCatch(uid);
   const id = await writeCaughtRecord(uid, encounter, ball, Acquisition.Caught, now, offset, locale);
 
-  await grantCatchCandy(uid, encounter.species, toLocalTime(now, zone));
-
-  // And then whatever the player was carrying when they caught it.
-  // These are paid flat: the species day is already worth four times
-  // the catch's own candy, and a bonus that multiplied with it would
-  // make one day worth a week of them
+  // Everything the catch pays, counted up and written once: the meeting
+  // itself, whatever the player was carrying, and whatever was fed to
+  // it all land on the same piles
   const overworld = createOverworld(uid, buddy == null ? null : asBuddy(buddy[1]));
   const family = getSpeciesData(encounter.species).family;
+  const earned = new Map<Families, number>([
+    [family, catchCandyWorth(encounter.species, toLocalTime(now, zone))],
+  ]);
+  const owe = (owed: Families, count: number): void => {
+    earned.set(owed, (earned.get(owed) ?? 0) + count);
+  };
 
+  // The held items and the berry are paid flat: the species day is
+  // already worth four times the catch's own candy, and a bonus that
+  // multiplied with it would make one day worth a week of them
   for (const [owed, count] of overworld.checkCatchCandy(spawnId, family)) {
-    await grantCandy(uid, owed, count);
+    owe(owed, count);
   }
 
-  // And whatever was fed to it. A Pinap is paid flat for the same
-  // reason the held items are, and off the catch's own worth rather
-  // than a fixed number, so the berry is worth most on what is worth
-  // meeting
   const helpings = encounter.fed == null ? undefined : PINAP_CANDY_HELPINGS.get(encounter.fed);
 
   if (helpings != null) {
-    await grantCandy(uid, family, getCatchCandy(encounter.species) * helpings);
+    owe(family, getCatchCandy(encounter.species) * helpings);
   }
+  await grantCandies(uid, earned);
   await mendWithHealBall(ball, buddy);
   // And it is not standing there any more, for this player. The spawn
   // belongs to the window and the window is everybody's, so it is
@@ -319,7 +323,9 @@ async function setCatchMark(
   on: boolean,
 ): Promise<boolean | null> {
   return tx(async (transaction) => {
-    const caught = await readCaughtIn(transaction, catchId);
+    // Who owns it and whether it is fighting are both on the row: the
+    // lists it keeps are nobody's business here
+    const caught = await readCaughtIn(transaction, catchId, true, []);
 
     if (caught == null || caught.owner !== uid || isCatchLocked(caught)) {
       return null;
@@ -357,7 +363,9 @@ export async function setNickname(
   const named = asNickname(nickname);
 
   return tx(async (transaction) => {
-    const caught = await readCaughtIn(transaction, catchId);
+    // The history, for who first held it; nothing else it keeps is
+    // read to answer a name
+    const caught = await readCaughtIn(transaction, catchId, true, ['history']);
 
     if (caught == null || caught.owner !== uid || isCatchLocked(caught)) {
       return null;
@@ -636,15 +644,25 @@ export async function setCatchMarks(
   const outcome: BulkOutcome = { done: [], refused: [] };
 
   await tx(async (transaction) => {
+    // The lot in one read and one write: marking is a button pressed
+    // over a whole box, and asking after each pokemon in turn is a
+    // round trip a piece
+    const stored = await readCaughtMany(transaction, catchIds, true, []);
+
     for (const catchId of catchIds) {
-      const caught = await readCaughtIn(transaction, catchId);
+      const caught = stored.get(catchId);
 
       if (caught == null || caught.owner !== uid || isCatchLocked(caught)) {
         outcome.refused.push(catchId);
         continue;
       }
-      await updateCaughtIn(transaction, catchId, { [field]: on });
       outcome.done.push(catchId);
+    }
+    if (outcome.done.length > 0) {
+      await transaction`
+        update caught set ${transaction(field)} = ${on}
+        where id = any(${transaction.array(outcome.done)})
+      `;
     }
   });
   return outcome;

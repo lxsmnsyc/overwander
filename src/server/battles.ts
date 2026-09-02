@@ -10,7 +10,7 @@ import BattleOutcome from '../auth/battle-outcome';
 import type Families from '../data/ids/families';
 import { getSpeciesData } from '../data/species';
 import { Metric } from '../auth/quest-record';
-import { grantCandy } from './candy';
+import { grantCandies } from './candy';
 import { getSql, tx } from './db';
 import { readCaughtMany, updateCaughtIn } from './caught-io';
 import { type ProgressBump, bumpProgress } from './quest-progress';
@@ -104,11 +104,18 @@ export default async function recordAftermath(
     return [];
   }
 
-  const fought = await getSql()`
-    select 1 from battle_teams where battle_id = ${battleId} and player = ${uid} limit 1
-  `;
+  // Whether this player fought it and how many did, in one question of
+  // the one table, asked alongside the battle itself
+  const [battles, teams] = await Promise.all([
+    getSql()`select raid_id, outcome from battles where id = ${battleId}`,
+    getSql()`
+      select (count(*) filter (where player = ${uid}))::int as mine,
+             (count(distinct player))::int as players
+      from battle_teams where battle_id = ${battleId}
+    `,
+  ]);
 
-  if (fought.length === 0) {
+  if (asNumber(teams.at(0)?.mine) === 0 || battles.at(0) == null) {
     return [];
   }
 
@@ -119,16 +126,7 @@ export default async function recordAftermath(
   // somebody who is not present — settling it would charge them for a
   // fight they never saw — and any other player-versus-player battle
   // settles for neither side
-  const battles = await getSql()`select raid_id, outcome from battles where id = ${battleId}`;
-  const others = await getSql()`
-    select count(distinct player)::int as players
-    from battle_teams where battle_id = ${battleId} and player is not null
-  `;
-
-  if (battles.at(0) == null) {
-    return [];
-  }
-  if (battles[0].raid_id == null && asNumber(others.at(0)?.players) > 1) {
+  if (battles[0].raid_id == null && asNumber(teams.at(0)?.players) > 1) {
     const challenged = await getSql()`
       select 1 from gym_challenges where battle_id = ${battleId} and challenger = ${uid} limit 1
     `;
@@ -264,9 +262,7 @@ export default async function recordAftermath(
 
     earned.set(family, (earned.get(family) ?? 0) + 1);
   }
-  for (const [family, count] of earned) {
-    await grantCandy(uid, family, count);
-  }
+  await grantCandies(uid, earned);
   return [...earned].map(([family, count]) => ({ family, count }));
 }
 

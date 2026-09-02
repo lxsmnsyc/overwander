@@ -1,5 +1,52 @@
 # overwander
 
+## 1.6.0
+
+### Minor Changes
+
+- 9c34ad9: - A meeting opens on the ball you last threw, where you still carry one, and on
+  the first ball in the bag where you do not.
+  - New setting, Encounters: Keep the last ball, on to start with. Off, every
+    meeting opens on a Poke Ball.
+- 9c34ad9: - The overworld walks on the keyboard again: the arrows or WASD move a cell at a
+  time, and holding a direction keeps walking.
+  - A step into a landmark, a boulder or a tree turns the player to face it
+    without moving them, and Enter reaches for whatever they are facing.
+  - The board's blue keyboard cursor is gone. What Enter acts on is what the
+    player is facing.
+  - New setting, Controls: the four directions, Interact and Menu can be bound to
+    other keys. The arrows always walk whatever they say.
+  - M puts the keyboard on the menu bar.
+  - Escape leaves a battle, the way the Leave button does.
+  - The command bar opens on `/` rather than Ctrl+K.
+
+### Patch Changes
+
+- a3935f6: - The profile's lots and a battle's raid title neither hold their screen up
+  while they arrive nor drop what they had while they are re-read.
+  - `createAsyncMemo` is gone. It was `createResource` rewritten by hand, and
+    nothing imported it.
+- a3935f6: - Evolution rows on a catch sheet draw their pokemon at one size, so a
+  branching line lines up.
+  - The pokemon on a catch sheet idles rather than walking on the spot, and what
+    it turns into faces the same way.
+- a3935f6: - The world stays where it is when a pokemon runs off, instead of blanking to
+  "Reading the world…" while what has fled is re-read.
+  - Taking one pokemon out of a box no longer restarts the idle of every sprite
+    in it.
+  - A catch sheet fills in an evolution registered since it was last opened,
+    instead of holding the silhouette.
+- 0b237cd: - A trade evolution reads one stored answer instead of two stored facts. What a
+  handover opens is settled where the handover happens, so `traded_as` and
+  `traded_for` give way to `can_evolve`.
+  - A traded pokemon keeps what it earned and nothing more: a Machop swapped and
+    then levelled is still a Machoke nobody traded, and a sale still shuts the
+    lines that name a partner.
+- 9c34ad9: The end to end tests read the board off the canvas that carries its name. The
+  chunk is painted on one canvas and pressed on another, the painting one comes
+  first, and it is `aria-hidden`: every question the tests asked the board came
+  back empty, which read as a world that had not loaded.
+
 ## 1.5.0
 
 ### Minor Changes

@@ -10,13 +10,19 @@ own, and beating one is kept for good.
 
 | Award               | How many | Earned by                              |
 | ------------------- | -------- | -------------------------------------- |
-| **Gym badge**       | 8        | Beating that gym's leader              |
-| **Elite Four mark** | 4        | Beating that member of the Elite Four  |
-| **Champion**        | 1        | Beating the Champion                   |
+| **Gym badge**       | 16       | Beating that gym's leader              |
+| **Elite Four mark** | 8        | Beating that member of the Elite Four  |
+| **Champion**        | 2        | Beating that league's Champion          |
 | **Dex medal**       | 1        | Filling the region's dex to 150 caught |
 
-The **Elite Four ask to see every badge** before they will fight, and the
-Champion asks for all four marks.
+Kanto and Johto keep eight gyms apiece, and their sixteen leaders share the
+world's countries: which of them keeps a given gym is fixed for that gym, so a
+badge is always in the same place. Their Elite Fours come to seven people rather
+apiece. Bruno keeps a seat in each, and each is its own fight with its own mark:
+walking only one region's gyms earns you the Bruno of that region and that mark
+alone. Each of the **Elite Four asks to see all eight of their own league's
+badges** before they will fight, and each **Champion asks for all four of their
+own league's marks**.
 
 An award also counts how many times its fight has been won, since a gym can be
 challenged again whenever its window comes round. Winning once puts the badge on

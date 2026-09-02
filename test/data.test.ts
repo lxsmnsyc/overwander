@@ -266,28 +266,42 @@ import {
   registerSpecies,
 } from '../src/data/species';
 import { registerSpecies as registerSpeciesData } from '../src/data/species/__create';
-import Awards, { AWARD_NAMES, KANTO_BADGES, KANTO_HONORS } from '../src/data/ids/awards';
+import Awards, {
+  AWARD_NAMES,
+  JOHTO_BADGES,
+  JOHTO_HONORS,
+  KANTO_BADGES,
+  KANTO_HONORS,
+} from '../src/data/ids/awards';
 import {
   BIOME_ELITE_MEMBERS,
   BIOME_GYM_LEADERS,
+  CHAMPIONS,
   CHAMPION_CHARSETS,
+  CHAMPION_HONORS,
+  CHAMPION_NAMES,
   CHAMPION_PARTIES,
+  CHAMPION_TITLES,
+  Champion,
   ELITE_MEMBERS,
   ELITE_MEMBER_CHARSETS,
   ELITE_MEMBER_HONORS,
   ELITE_MEMBER_NAMES,
   ELITE_MEMBER_POOLS,
+  ELITE_MEMBER_SIGNATURES,
   EXPERT_PARTY_SIZE,
   EliteMember,
   GYM_LEADERS,
   GYM_LEADER_BADGES,
   GYM_LEADER_CHARSETS,
   GYM_LEADER_NAMES,
+  GYM_LEADER_SIGNATURES,
   GYM_LEADER_TYPES,
   GymLeader,
-  getChampionParty,
-  getExpertPool,
-  getGymLeaderPool,
+  getEliteBadges,
+  getEliteMemberRoster,
+  getGymLeaderRoster,
+  getWorldExpertPool,
   rollGymMachine,
 } from '../src/data/overworld/experts';
 import Regions from '../src/data/ids/regions';
@@ -4296,10 +4310,12 @@ describe('biome data', () => {
 describe('type experts', () => {
   it('gives every leader a name, a badge and a shipped wardrobe', () => {
     const badges = GYM_LEADERS.map((leader) => GYM_LEADER_BADGES[leader]);
+    const cases = [...KANTO_BADGES, ...JOHTO_BADGES];
 
-    // The 8 leaders carry the region's 8 badges, one each
-    expect(new Set(badges).size).toBe(KANTO_BADGES.length);
-    expect(badges.every((badge) => KANTO_BADGES.includes(badge))).toBe(true);
+    // Every leader carries a badge of their own, and between the two
+    // regions the leaders account for every badge there is
+    expect(new Set(badges).size).toBe(cases.length);
+    expect(badges.every((badge) => cases.includes(badge))).toBe(true);
 
     for (const leader of GYM_LEADERS) {
       expect(GYM_LEADER_NAMES[leader].length).toBeGreaterThan(0);
@@ -4315,9 +4331,13 @@ describe('type experts', () => {
 
   it('gives every elite a mark and the champion a title', () => {
     const honors = ELITE_MEMBERS.map((member) => ELITE_MEMBER_HONORS[member]);
+    const marks = new Set([...KANTO_HONORS, ...JOHTO_HONORS]);
 
-    expect(new Set(honors).size).toBe(KANTO_HONORS.length);
-    expect(honors.every((honor) => KANTO_HONORS.includes(honor))).toBe(true);
+    // Eight seats between two leagues, four apiece: Bruno keeps one in
+    // each, and no mark is shared between them
+    expect(new Set(honors).size).toBe(marks.size);
+    expect(honors.every((honor) => marks.has(honor))).toBe(true);
+    expect(marks.size).toBe(KANTO_HONORS.length + JOHTO_HONORS.length);
 
     for (const member of ELITE_MEMBERS) {
       expect(ELITE_MEMBER_NAMES[member].length).toBeGreaterThan(0);
@@ -4325,11 +4345,19 @@ describe('type experts', () => {
         expect(existsSync(`public/sprites/overworld/${sheet}/image.png`), sheet).toBe(true);
       }
     }
-    for (const sheet of CHAMPION_CHARSETS) {
-      expect(existsSync(`public/sprites/overworld/${sheet}/image.png`), sheet).toBe(true);
+    for (const champion of CHAMPIONS) {
+      for (const sheet of CHAMPION_CHARSETS[champion]) {
+        expect(existsSync(`public/sprites/overworld/${sheet}/image.png`), sheet).toBe(true);
+      }
     }
     // Every award reads as something on a shelf
-    for (const award of [...KANTO_BADGES, ...KANTO_HONORS, Awards.KantoChampion]) {
+    for (const award of [
+      ...KANTO_BADGES,
+      ...JOHTO_BADGES,
+      ...KANTO_HONORS,
+      ...JOHTO_HONORS,
+      Awards.KantoChampion,
+    ]) {
       expect(AWARD_NAMES[award].length).toBeGreaterThan(0);
     }
   });
@@ -4364,14 +4392,14 @@ describe('type experts', () => {
   });
 
   it('pools every specialty from the region, half-grown and legendaries left out', () => {
-    const open = getExpertPool(Regions.Kanto, { types: [] });
+    const open = getWorldExpertPool({ types: [] });
 
     // The rare band only: what an expert fields is fully evolved or
     // has nowhere to evolve to
     for (const species of open) {
       expect(getSpawnRarity(species), getSpeciesData(species).name).toBe(SpawnRarity.Rare);
     }
-    const psychic = getExpertPool(Regions.Kanto, { types: [Types.Psychic] });
+    const psychic = getWorldExpertPool({ types: [Types.Psychic] });
 
     // Sabrina's pool holds no Mewtwo: lair species belong to raids
     expect(psychic).not.toContain(Species.Mewtwo);
@@ -4381,13 +4409,16 @@ describe('type experts', () => {
     expect(open.length).toBeGreaterThan(50);
     expect(open).not.toContain(Species.Egg);
 
+    // A gym leader reads every region rather than the one their gym
+    // stands in, so a badge is never handed out by somebody with
+    // nothing of their own type to field
     for (const leader of GYM_LEADERS) {
-      const pool = getExpertPool(Regions.Kanto, getGymLeaderPool(leader));
+      const roster = getGymLeaderRoster(leader);
 
-      expect(pool.length, GYM_LEADER_NAMES[leader]).toBeGreaterThan(0);
+      expect(roster.length, GYM_LEADER_NAMES[leader]).toBeGreaterThan(0);
       // A leader is their type and nothing else; the wideners are the
       // league's
-      for (const species of pool) {
+      for (const species of roster) {
         const type = GYM_LEADER_TYPES[leader];
 
         if (type != null) {
@@ -4395,20 +4426,92 @@ describe('type experts', () => {
         }
       }
     }
+    // Jasmine's steel is Johto's, and she is seated in countries a
+    // Kanto-only roster could only answer with Magneton
+    expect(getGymLeaderRoster(GymLeader.Jasmine)).toContain(Species.Steelix);
+  });
+
+  it('gives every leader a signature of their own type', () => {
+    for (const leader of GYM_LEADERS) {
+      const signature = GYM_LEADER_SIGNATURES[leader];
+      const type = GYM_LEADER_TYPES[leader];
+
+      // Registered, so the sixth slot is a pokemon rather than a hole
+      expect(getSpeciesData(signature).name.length).toBeGreaterThan(0);
+
+      if (type != null) {
+        expect(getSpeciesData(signature).types, GYM_LEADER_NAMES[leader]).toContain(type);
+      }
+    }
+    // The example the rule is written from: Onix is a middle stage now
+    // that a Steelix exists, and Brock brings him anyway
+    expect(GYM_LEADER_SIGNATURES[GymLeader.Brock]).toBe(Species.Onix);
+    expect(getGymLeaderRoster(GymLeader.Brock)).not.toContain(Species.Onix);
+  });
+
+  it('takes Bruno for either league on its own, or for both', () => {
+    // Bruno keeps a seat in each league, and each is its own fight
+    // with its own mark. A challenger who has only walked Kanto's gyms
+    // is taken by his Kanto seat and earns that mark alone; walking
+    // Johto's earns the other; walking both earns both
+    const kanto = ELITE_MEMBER_HONORS[EliteMember.Bruno];
+    const johto = ELITE_MEMBER_HONORS[EliteMember.JohtoBruno];
+
+    expect(kanto).not.toBe(johto);
+    expect(KANTO_HONORS).toContain(kanto);
+    expect(JOHTO_HONORS).toContain(johto);
+    expect(KANTO_HONORS).not.toContain(johto);
+    expect(JOHTO_HONORS).not.toContain(kanto);
+
+    // Neither seat asks for the other league's gyms
+    expect(getEliteBadges(EliteMember.Bruno)).toEqual(KANTO_BADGES);
+    expect(getEliteBadges(EliteMember.JohtoBruno)).toEqual(JOHTO_BADGES);
+
+    // He is the same man in both: one name, one type, one signature,
+    // and only the coat and the mark differ
+    expect(ELITE_MEMBER_NAMES[EliteMember.JohtoBruno]).toBe(ELITE_MEMBER_NAMES[EliteMember.Bruno]);
+    expect(ELITE_MEMBER_SIGNATURES[EliteMember.JohtoBruno]).toBe(
+      ELITE_MEMBER_SIGNATURES[EliteMember.Bruno],
+    );
+    expect(ELITE_MEMBER_CHARSETS[EliteMember.JohtoBruno]).toEqual(['characters/hgss/bruno']);
+
+    // And every other seat asks for exactly its own league's gyms
+    for (const member of ELITE_MEMBERS) {
+      const honor = ELITE_MEMBER_HONORS[member];
+      const asked = KANTO_HONORS.includes(honor) ? KANTO_BADGES : JOHTO_BADGES;
+
+      expect(getEliteBadges(member), ELITE_MEMBER_NAMES[member]).toEqual(asked);
+    }
+  });
+
+  it('gives every elite a signature of their own kind', () => {
+    for (const member of ELITE_MEMBERS) {
+      const signature = ELITE_MEMBER_SIGNATURES[member];
+      const pool = ELITE_MEMBER_POOLS[member];
+      const data = getSpeciesData(signature);
+
+      // Their own by some rule of their pool: the type, the egg group
+      // they widen with, or a name
+      expect(
+        data.types.some((type) => pool.types.includes(type)) ||
+          data.eggGroups.some((group) => (pool.eggGroups ?? []).includes(group)) ||
+          (pool.also ?? []).includes(signature),
+        ELITE_MEMBER_NAMES[member],
+      ).toBe(true);
+    }
+    // One man in two leagues brings the same Machamp to both
+    expect(ELITE_MEMBER_SIGNATURES[EliteMember.Bruno]).toBe(Species.Machamp);
   });
 
   it('widens an elite past a type that would field one pokemon', () => {
     const pools = new Map<EliteMember, Species[]>(
-      ELITE_MEMBERS.map((member) => [
-        member,
-        getExpertPool(Regions.Kanto, ELITE_MEMBER_POOLS[member]),
-      ]),
+      ELITE_MEMBERS.map((member) => [member, getEliteMemberRoster(member)]),
     );
     const poolOf = (member: EliteMember): Species[] => pools.get(member) ?? [];
 
-    // Nobody fields six of the same pokemon: Ghost and Dragon each run
-    // to one fully-grown species in Kanto, which is what the wideners
-    // are for
+    // Nobody fields six of the same pokemon: Ghost and Dragon run to
+    // a couple of fully-grown species even across every region, which
+    // is what the wideners are for
     for (const member of ELITE_MEMBERS) {
       expect(poolOf(member).length, ELITE_MEMBER_NAMES[member]).toBeGreaterThan(1);
     }
@@ -4425,11 +4528,9 @@ describe('type experts', () => {
     expect(poolOf(EliteMember.Lance)).toContain(Species.Gyarados);
     expect(getSpeciesData(Species.Gyarados).types).not.toContain(Types.Dragon);
 
-    // Agatha is not a second Koga: the Poison **type** would hand her
-    // his pool entire, so she takes the group her ghosts share
-    const koga = getExpertPool(Regions.Kanto, { types: [Types.Poison] });
-
-    expect(poolOf(EliteMember.Agatha).length).toBeLessThan(koga.length);
+    // Agatha is not a second Koga, who now sits in Johto's league
+    // with the Poison type entire: hers is the group her ghosts share
+    expect(poolOf(EliteMember.Agatha).length).toBeLessThan(poolOf(EliteMember.Koga).length);
     expect(poolOf(EliteMember.Agatha)).not.toContain(Species.Venusaur);
 
     // A name is the one thing that reaches outside the band: Bruno's
@@ -4450,11 +4551,9 @@ describe('type experts', () => {
     }
   });
 
-  it('gives the champion their own six rather than a draw', () => {
-    const party = getChampionParty(Regions.Kanto);
-
+  it('gives each champion their own six rather than a draw', () => {
     // Red's Mt. Silver line-up, the version made of Kanto species
-    expect(party).toEqual([
+    expect(CHAMPION_PARTIES[Champion.Red]).toEqual([
       Species.Pikachu,
       Species.Lapras,
       Species.Snorlax,
@@ -4462,11 +4561,28 @@ describe('type experts', () => {
       Species.Charizard,
       Species.Blastoise,
     ]);
-    // Every champion fields a full party, the same as every other
-    // expert, and nothing is invented for a region with no known team
-    for (const [region, six] of Object.entries(CHAMPION_PARTIES)) {
-      expect(six, region).toHaveLength(EXPERT_PARTY_SIZE);
+    // Lance's, three Dragonite and all: a named party may repeat a
+    // species where the character's own does
+    expect(
+      CHAMPION_PARTIES[Champion.Lance].filter((one) => one === Species.Dragonite),
+    ).toHaveLength(3);
+
+    for (const champion of CHAMPIONS) {
+      // A full party, the same as every other expert, and a shipped
+      // wardrobe to stand in
+      expect(CHAMPION_PARTIES[champion], CHAMPION_NAMES[champion]).toHaveLength(EXPERT_PARTY_SIZE);
+      expect(CHAMPION_NAMES[champion].length).toBeGreaterThan(0);
+
+      for (const sheet of CHAMPION_CHARSETS[champion]) {
+        expect(existsSync(`public/sprites/overworld/${sheet}/image.png`), sheet).toBe(true);
+      }
+      // Each asks for their own league's Elite Four and pays their own
+      // league's title
+      expect(CHAMPION_HONORS[champion]).toHaveLength(KANTO_HONORS.length);
+      expect(AWARD_NAMES[CHAMPION_TITLES[champion]].length).toBeGreaterThan(0);
     }
+    expect(CHAMPION_HONORS[Champion.Red]).toEqual(KANTO_HONORS);
+    expect(CHAMPION_HONORS[Champion.Lance]).toEqual(JOHTO_HONORS);
   });
 
   it('hands a beaten leader’s TM out of their own type’s case', () => {

@@ -75,6 +75,9 @@ export async function listUnlockedTitles(player: string): Promise<Title[]> {
   if (awards.has(Awards.KantoChampion)) {
     titles.push(LadderTitle.KantoChampion);
   }
+  if (awards.has(Awards.JohtoChampion)) {
+    titles.push(LadderTitle.JohtoChampion);
+  }
   return titles;
 }
 

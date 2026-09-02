@@ -20,16 +20,19 @@ import Npc, { GIOVANNI_CHARSETS, NPCS, npcSheets } from '../data/overworld/npc';
 import {
   BIOME_ELITE_MEMBERS,
   BIOME_GYM_LEADERS,
+  CHAMPIONS,
   CHAMPION_CHARSETS,
+  CHAMPION_PARTIES,
+  type Champion,
   ELITE_MEMBER_CHARSETS,
-  ELITE_MEMBER_POOLS,
+  ELITE_MEMBER_SIGNATURES,
   EXPERT_PARTY_SIZE,
   type EliteMember,
   GYM_LEADER_CHARSETS,
+  GYM_LEADER_SIGNATURES,
   type GymLeader,
-  getChampionParty,
-  getExpertPool,
-  getGymLeaderPool,
+  getEliteMemberRoster,
+  getGymLeaderRoster,
 } from '../data/overworld/experts';
 import {
   ACE_PARTY_SIZE,
@@ -59,28 +62,34 @@ import type { PhenomenonReward } from './landmarks';
 import { resolveBerryPatch, resolveItemCache, resolveNest, resolvePhenomenon } from './landmarks';
 
 /**
- * The region a chunk's experts belong to: the whole world is Kanto
- * until another region has enough registered to field a gym. The seam
- * where a real mapping will go when one does
+ * The region a chunk's roadside trainers and its Champion belong to:
+ * the whole world is Kanto until a real mapping goes here. Gym
+ * leaders and the Elite Four no longer ask, since an expert reads
+ * every region for their own kind
  */
 function regionOf(_chunk: Chunk): Regions {
   return Regions.Kanto;
 }
 
 /**
- * A full 6 drawn from an expert's pool, with replacement. It has to
- * be: the pool is one type's fully-grown species, and for Agatha and
- * Lance that is a single pokemon. A doubled Gengar is what an elite's
- * party looks like anyway
+ * An expert's six: five rolled from their kind's band with
+ * replacement, then the one pokemon they are remembered for. The
+ * signature is last, so a challenger meets the rolled five before
+ * the one they came for.
+ *
+ * With replacement because a band runs thin: Agatha's ghosts are two
+ * species, and a doubled Gengar is what an elite's party looks like
+ * anyway
  */
-function expertParty(pool: Species[], seed: string): Spawn[] {
+function expertParty(pool: Species[], signature: Species, seed: string): Spawn[] {
   const rng = new AleaRNG(seed);
-
-  return Array.from({ length: EXPERT_PARTY_SIZE }, (): Spawn => {
+  const rolled = Array.from({ length: EXPERT_PARTY_SIZE - 1 }, (): Spawn => {
     const species = pool[Math.floor(rng.random() * pool.length)];
 
     return [species, rng.int32(), rng.int32()];
   });
+
+  return [...rolled, [signature, rng.int32(), rng.int32()]];
 }
 
 /**
@@ -755,7 +764,11 @@ export default class ChunkSnapshot {
             dress(cell, ELITE_MEMBER_CHARSETS[member]);
           }
         } else if (landmark === Landmark.Champion) {
-          dress(cell, CHAMPION_CHARSETS);
+          const champion = this.getChampion(cell);
+
+          if (champion != null) {
+            dress(cell, CHAMPION_CHARSETS[champion]);
+          }
         } else if (landmark === Landmark.Market) {
           dress(cell, npcSheets(Npc.Vendor));
         }
@@ -964,9 +977,10 @@ export default class ChunkSnapshot {
   private gymStops: Map<number, Spawn[]> | null = null;
 
   /**
-   * The window's gym parties, keyed by their landmark cell: 6 of the
-   * resident leader's own type, re-drawn each window. Blue's gym has
-   * no type and draws from the whole region
+   * The window's gym parties, keyed by their landmark cell: five of
+   * the resident leader's own type re-drawn each window, and their
+   * signature standing last however the five roll. Blue's gym has no
+   * type and draws its five from the whole band
    */
   getGymStops(): Map<number, Spawn[]> {
     if (this.gymStops == null) {
@@ -983,10 +997,17 @@ export default class ChunkSnapshot {
           continue;
         }
 
-        const pool = getExpertPool(regionOf(this.chunk), getGymLeaderPool(leader));
+        const pool = getGymLeaderRoster(leader);
 
         if (pool.length > 0) {
-          stops.set(cell, expertParty(pool, `${this.key}${this.npcTimestamp}gym${cell}`));
+          stops.set(
+            cell,
+            expertParty(
+              pool,
+              GYM_LEADER_SIGNATURES[leader],
+              `${this.key}${this.npcTimestamp}gym${cell}`,
+            ),
+          );
         }
       }
       this.gymStops = stops;
@@ -997,8 +1018,8 @@ export default class ChunkSnapshot {
   private eliteStops: Map<number, Spawn[]> | null = null;
 
   /**
-   * The window's Elite Four parties, keyed by their landmark cell: 6
-   * of the resident member's own type
+   * The window's Elite Four parties, keyed by their landmark cell:
+   * five of the resident member's own kind, and their signature last
    */
   getEliteStops(): Map<number, Spawn[]> {
     if (this.eliteStops == null) {
@@ -1015,15 +1036,38 @@ export default class ChunkSnapshot {
           continue;
         }
 
-        const pool = getExpertPool(regionOf(this.chunk), ELITE_MEMBER_POOLS[member]);
+        const pool = getEliteMemberRoster(member);
 
         if (pool.length > 0) {
-          stops.set(cell, expertParty(pool, `${this.key}${this.npcTimestamp}elite${cell}`));
+          stops.set(
+            cell,
+            expertParty(
+              pool,
+              ELITE_MEMBER_SIGNATURES[member],
+              `${this.key}${this.npcTimestamp}elite${cell}`,
+            ),
+          );
         }
       }
       this.eliteStops = stops;
     }
     return this.eliteStops;
+  }
+
+  /**
+   * Which champion holds the seat at this cell, or null when the cell
+   * holds none. A league rather than a country decides who a champion
+   * is, so unlike the gyms this is a plain fixture roll over the
+   * champions there are, fixed for the cell the way a gym's leader is
+   */
+  getChampion(cell: number): Champion | null {
+    if (this.chunk.getLandmarkCells().get(cell) !== Landmark.Champion) {
+      return null;
+    }
+
+    const rng = new AleaRNG(`${this.chunk.seed}champion${cell}`);
+
+    return CHAMPIONS[Math.floor(rng.random() * CHAMPIONS.length)] ?? null;
   }
 
   private championStops: Map<number, Spawn[]> | null = null;
@@ -1037,13 +1081,22 @@ export default class ChunkSnapshot {
   getChampionStops(): Map<number, Spawn[]> {
     if (this.championStops == null) {
       const stops = new Map<number, Spawn[]>();
-      const party = getChampionParty(regionOf(this.chunk));
 
-      if (party != null) {
-        for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
-          if (landmark === Landmark.Champion) {
-            stops.set(cell, signatureParty(party, `${this.key}${this.npcTimestamp}champ${cell}`));
-          }
+      for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
+        if (landmark !== Landmark.Champion) {
+          continue;
+        }
+
+        const champion = this.getChampion(cell);
+
+        if (champion != null) {
+          stops.set(
+            cell,
+            signatureParty(
+              CHAMPION_PARTIES[champion],
+              `${this.key}${this.npcTimestamp}champ${cell}`,
+            ),
+          );
         }
       }
       this.championStops = stops;

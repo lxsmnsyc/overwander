@@ -1,15 +1,14 @@
 import { SpawnRarity, getSpawnRarity } from '../biome';
 import { Types } from '../constants/types';
-import Awards from '../ids/awards';
+import Awards, { JOHTO_BADGES, JOHTO_HONORS, KANTO_BADGES, KANTO_HONORS } from '../ids/awards';
 import Biome from '../ids/biome';
 import EggGroups from '../ids/egg-groups';
 import { type Items, getMachineItem } from '../ids/items';
-import Regions from '../ids/regions';
 import { Species } from '../ids/species';
 import { getTeachableMoves } from '../items/machines';
 import { getMoveData } from '../moves';
 import { EVERY_LAIR, getLairResidents } from './lair';
-import { getSpeciesByRegion, getSpeciesData, isBaseForm } from '../species';
+import { getRegisteredSpecies, getSpeciesData, isBaseForm } from '../species';
 
 /**
  * The type experts who stand at the fighting landmarks above a plain
@@ -25,6 +24,10 @@ import { getSpeciesByRegion, getSpeciesData, isBaseForm } from '../species';
  */
 export const EXPERT_PARTY_SIZE = 6;
 
+/**
+ * The sixteen leaders of the two regions, numbered Kanto's eight then
+ * Johto's. Which of them a country seats is the table below
+ */
 const enum GymLeader {
   Brock = 0,
   Misty = 1,
@@ -34,6 +37,14 @@ const enum GymLeader {
   Sabrina = 5,
   Blaine = 6,
   Blue = 7,
+  Falkner = 8,
+  Bugsy = 9,
+  Whitney = 10,
+  Morty = 11,
+  Chuck = 12,
+  Jasmine = 13,
+  Pryce = 14,
+  Clair = 15,
 }
 
 export { GymLeader };
@@ -47,6 +58,14 @@ export const GYM_LEADERS: GymLeader[] = [
   GymLeader.Sabrina,
   GymLeader.Blaine,
   GymLeader.Blue,
+  GymLeader.Falkner,
+  GymLeader.Bugsy,
+  GymLeader.Whitney,
+  GymLeader.Morty,
+  GymLeader.Chuck,
+  GymLeader.Jasmine,
+  GymLeader.Pryce,
+  GymLeader.Clair,
 ];
 
 export const GYM_LEADER_NAMES: Record<GymLeader, string> = {
@@ -58,6 +77,14 @@ export const GYM_LEADER_NAMES: Record<GymLeader, string> = {
   [GymLeader.Sabrina]: 'Sabrina',
   [GymLeader.Blaine]: 'Blaine',
   [GymLeader.Blue]: 'Blue',
+  [GymLeader.Falkner]: 'Falkner',
+  [GymLeader.Bugsy]: 'Bugsy',
+  [GymLeader.Whitney]: 'Whitney',
+  [GymLeader.Morty]: 'Morty',
+  [GymLeader.Chuck]: 'Chuck',
+  [GymLeader.Jasmine]: 'Jasmine',
+  [GymLeader.Pryce]: 'Pryce',
+  [GymLeader.Clair]: 'Clair',
 };
 
 /**
@@ -72,6 +99,14 @@ export const GYM_LEADER_TYPES: Partial<Record<GymLeader, Types>> = {
   [GymLeader.Koga]: Types.Poison,
   [GymLeader.Sabrina]: Types.Psychic,
   [GymLeader.Blaine]: Types.Fire,
+  [GymLeader.Falkner]: Types.Flying,
+  [GymLeader.Bugsy]: Types.Bug,
+  [GymLeader.Whitney]: Types.Normal,
+  [GymLeader.Morty]: Types.Ghost,
+  [GymLeader.Chuck]: Types.Fighting,
+  [GymLeader.Jasmine]: Types.Steel,
+  [GymLeader.Pryce]: Types.Ice,
+  [GymLeader.Clair]: Types.Dragon,
 };
 
 export const GYM_LEADER_BADGES: Record<GymLeader, Awards> = {
@@ -83,6 +118,14 @@ export const GYM_LEADER_BADGES: Record<GymLeader, Awards> = {
   [GymLeader.Sabrina]: Awards.MarshBadge,
   [GymLeader.Blaine]: Awards.VolcanoBadge,
   [GymLeader.Blue]: Awards.EarthBadge,
+  [GymLeader.Falkner]: Awards.ZephyrBadge,
+  [GymLeader.Bugsy]: Awards.HiveBadge,
+  [GymLeader.Whitney]: Awards.PlainBadge,
+  [GymLeader.Morty]: Awards.FogBadge,
+  [GymLeader.Chuck]: Awards.StormBadge,
+  [GymLeader.Jasmine]: Awards.MineralBadge,
+  [GymLeader.Pryce]: Awards.GlacierBadge,
+  [GymLeader.Clair]: Awards.RisingBadge,
 };
 
 export const GYM_LEADER_CHARSETS: Record<GymLeader, string[]> = {
@@ -94,48 +137,61 @@ export const GYM_LEADER_CHARSETS: Record<GymLeader, string[]> = {
   [GymLeader.Sabrina]: ['characters/frlg/sabrina', 'characters/lgpe/sabrina'],
   [GymLeader.Blaine]: ['characters/frlg/blaine', 'characters/lgpe/blaine'],
   [GymLeader.Blue]: ['characters/frlg/blue', 'characters/lgpe/blue'],
+  [GymLeader.Falkner]: ['characters/hgss/falkner'],
+  [GymLeader.Bugsy]: ['characters/hgss/bugsy'],
+  [GymLeader.Whitney]: ['characters/hgss/whitney'],
+  [GymLeader.Morty]: ['characters/hgss/morty'],
+  [GymLeader.Chuck]: ['characters/hgss/chuck'],
+  [GymLeader.Jasmine]: ['characters/hgss/jasmine'],
+  [GymLeader.Pryce]: ['characters/hgss/pryce'],
+  [GymLeader.Clair]: ['characters/hgss/clair'],
 };
 
 /**
  * Which leaders keep the gyms of each biome. The country is the map
- * to the badges: a player hunting Blaine walks to fire country. A
- * list per biome, because later regions add leaders who share a
- * country — which gym is whose is then the chunk's own fixture roll
- * over the list. Biomes with no leader of their own type go to Blue,
- * whose gym takes all comers; the open seas never roll a people
- * landmark, and are mapped only so the table stays total
+ * to the badges: a player hunting Blaine walks to fire country. Two
+ * regions of leaders now share those countries, so the list per biome
+ * holds both and the chunk's own fixture roll says which gym is
+ * whose. Biomes with no leader of their own type go to Blue, whose
+ * gym takes all comers; the open seas never roll a people landmark,
+ * and are mapped only so the table stays total
  */
 export const BIOME_GYM_LEADERS: Record<Biome, GymLeader[]> = {
-  [Biome.DeepOcean]: [GymLeader.Misty],
-  [Biome.Ocean]: [GymLeader.Misty],
+  [Biome.DeepOcean]: [GymLeader.Misty, GymLeader.Falkner],
+  [Biome.Ocean]: [GymLeader.Misty, GymLeader.Falkner],
   [Biome.CoralReef]: [GymLeader.Misty],
-  [Biome.Beach]: [GymLeader.Misty],
-  [Biome.Mangrove]: [GymLeader.Misty],
+  [Biome.Beach]: [GymLeader.Misty, GymLeader.Falkner, GymLeader.Whitney],
+  [Biome.Mangrove]: [GymLeader.Koga, GymLeader.Bugsy],
   [Biome.KelpForest]: [GymLeader.Misty],
-  [Biome.PolarOcean]: [GymLeader.Misty],
-  [Biome.Glacier]: [GymLeader.Misty],
-  [Biome.Tundra]: [GymLeader.Misty],
-  [Biome.Swamp]: [GymLeader.Koga],
-  [Biome.Bog]: [GymLeader.Koga],
-  [Biome.TropicalSeasonalForest]: [GymLeader.Erika],
-  [Biome.Grassland]: [GymLeader.Erika],
-  [Biome.TemperateForest]: [GymLeader.Erika],
-  [Biome.Woodland]: [GymLeader.Erika],
-  [Biome.Savanna]: [GymLeader.LtSurge],
-  [Biome.Steppe]: [GymLeader.LtSurge],
+  [Biome.PolarOcean]: [GymLeader.Misty, GymLeader.Falkner, GymLeader.Pryce],
+  [Biome.Glacier]: [GymLeader.Misty, GymLeader.Pryce],
+  [Biome.Tundra]: [GymLeader.Misty, GymLeader.Pryce, GymLeader.Falkner, GymLeader.Whitney],
+  [Biome.Swamp]: [GymLeader.Koga, GymLeader.Morty, GymLeader.Bugsy],
+  [Biome.Bog]: [GymLeader.Koga, GymLeader.Morty],
+  [Biome.TropicalSeasonalForest]: [
+    GymLeader.Erika,
+    GymLeader.Bugsy,
+    GymLeader.Whitney,
+    GymLeader.Falkner,
+  ],
+  [Biome.Grassland]: [GymLeader.Erika, GymLeader.Whitney, GymLeader.Bugsy, GymLeader.Falkner],
+  [Biome.TemperateForest]: [GymLeader.Erika, GymLeader.Bugsy, GymLeader.Whitney, GymLeader.Morty],
+  [Biome.Woodland]: [GymLeader.Erika, GymLeader.Bugsy, GymLeader.Whitney],
+  [Biome.Savanna]: [GymLeader.LtSurge, GymLeader.Falkner, GymLeader.Chuck],
+  [Biome.Steppe]: [GymLeader.LtSurge, GymLeader.Falkner],
   [Biome.Desert]: [GymLeader.Blaine],
-  [Biome.Volcano]: [GymLeader.Blaine],
-  [Biome.ColdDesert]: [GymLeader.Brock],
-  [Biome.Mountain]: [GymLeader.Brock],
-  [Biome.AlpineTundra]: [GymLeader.Brock],
-  [Biome.Badlands]: [GymLeader.Brock],
-  [Biome.RockyCoast]: [GymLeader.Brock],
-  [Biome.TemperateRainforest]: [GymLeader.Sabrina],
-  [Biome.MontaneForest]: [GymLeader.Sabrina],
-  [Biome.Beyond]: [GymLeader.Sabrina],
-  [Biome.TropicalRainforest]: [GymLeader.Blue],
-  [Biome.Shrubland]: [GymLeader.Blue],
-  [Biome.Taiga]: [GymLeader.Blue],
+  [Biome.Volcano]: [GymLeader.Blaine, GymLeader.Jasmine, GymLeader.Clair],
+  [Biome.ColdDesert]: [GymLeader.Brock, GymLeader.Pryce, GymLeader.Jasmine],
+  [Biome.Mountain]: [GymLeader.Brock, GymLeader.Chuck, GymLeader.Jasmine, GymLeader.Clair],
+  [Biome.AlpineTundra]: [GymLeader.Brock, GymLeader.Pryce, GymLeader.Falkner, GymLeader.Clair],
+  [Biome.Badlands]: [GymLeader.Brock, GymLeader.Chuck, GymLeader.Jasmine],
+  [Biome.RockyCoast]: [GymLeader.Brock, GymLeader.Falkner],
+  [Biome.TemperateRainforest]: [GymLeader.Sabrina, GymLeader.Bugsy, GymLeader.Morty],
+  [Biome.MontaneForest]: [GymLeader.Sabrina, GymLeader.Bugsy],
+  [Biome.Beyond]: [GymLeader.Sabrina, GymLeader.Morty, GymLeader.Clair],
+  [Biome.TropicalRainforest]: [GymLeader.Blue, GymLeader.Bugsy],
+  [Biome.Shrubland]: [GymLeader.Blue, GymLeader.Whitney, GymLeader.Bugsy],
+  [Biome.Taiga]: [GymLeader.Blue, GymLeader.Bugsy, GymLeader.Falkner, GymLeader.Pryce],
 };
 
 /**
@@ -153,11 +209,21 @@ export function rollGymMachine(leader: GymLeader, random: () => number): Items |
   return move == null ? null : getMachineItem(move);
 }
 
+/**
+ * The two leagues' Elite Four, numbered Kanto's then Johto's. Bruno
+ * is here twice because he keeps a seat in each: two fights, two
+ * marks, and a challenger who has only walked one region's gyms is
+ * taken by the Bruno of that region alone
+ */
 const enum EliteMember {
   Lorelei = 0,
   Bruno = 1,
   Agatha = 2,
   Lance = 3,
+  Will = 4,
+  Koga = 5,
+  Karen = 6,
+  JohtoBruno = 7,
 }
 
 export { EliteMember };
@@ -167,6 +233,10 @@ export const ELITE_MEMBERS: EliteMember[] = [
   EliteMember.Bruno,
   EliteMember.Agatha,
   EliteMember.Lance,
+  EliteMember.Will,
+  EliteMember.Koga,
+  EliteMember.Karen,
+  EliteMember.JohtoBruno,
 ];
 
 export const ELITE_MEMBER_NAMES: Record<EliteMember, string> = {
@@ -174,6 +244,10 @@ export const ELITE_MEMBER_NAMES: Record<EliteMember, string> = {
   [EliteMember.Bruno]: 'Bruno',
   [EliteMember.Agatha]: 'Agatha',
   [EliteMember.Lance]: 'Lance',
+  [EliteMember.Will]: 'Will',
+  [EliteMember.Koga]: 'Koga',
+  [EliteMember.Karen]: 'Karen',
+  [EliteMember.JohtoBruno]: 'Bruno',
 };
 
 export const ELITE_MEMBER_TYPES: Record<EliteMember, Types> = {
@@ -181,6 +255,10 @@ export const ELITE_MEMBER_TYPES: Record<EliteMember, Types> = {
   [EliteMember.Bruno]: Types.Fighting,
   [EliteMember.Agatha]: Types.Ghost,
   [EliteMember.Lance]: Types.Dragon,
+  [EliteMember.Will]: Types.Psychic,
+  [EliteMember.Koga]: Types.Poison,
+  [EliteMember.Karen]: Types.Dark,
+  [EliteMember.JohtoBruno]: Types.Fighting,
 };
 
 export const ELITE_MEMBER_HONORS: Record<EliteMember, Awards> = {
@@ -188,77 +266,137 @@ export const ELITE_MEMBER_HONORS: Record<EliteMember, Awards> = {
   [EliteMember.Bruno]: Awards.BrunoDefeated,
   [EliteMember.Agatha]: Awards.AgathaDefeated,
   [EliteMember.Lance]: Awards.LanceDefeated,
+  [EliteMember.Will]: Awards.WillDefeated,
+  [EliteMember.Koga]: Awards.KogaDefeated,
+  [EliteMember.Karen]: Awards.KarenDefeated,
+  [EliteMember.JohtoBruno]: Awards.JohtoBrunoDefeated,
 };
+
+/**
+ * The badge case an elite asks to see before they will fight: their
+ * own league's. Bruno asks for both, because his one mark is counted
+ * by both leagues, and a mark that opens two doors is worth two
+ * regions of gyms
+ */
+export function getEliteBadges(member: EliteMember): Awards[] {
+  const honor = ELITE_MEMBER_HONORS[member];
+
+  return [
+    ...(KANTO_HONORS.includes(honor) ? KANTO_BADGES : []),
+    ...(JOHTO_HONORS.includes(honor) ? JOHTO_BADGES : []),
+  ];
+}
 
 export const ELITE_MEMBER_CHARSETS: Record<EliteMember, string[]> = {
   [EliteMember.Lorelei]: ['characters/frlg/lorelei'],
   [EliteMember.Bruno]: ['characters/frlg/bruno', 'characters/lgpe/bruno'],
   [EliteMember.Agatha]: ['characters/frlg/agatha', 'characters/lgpe/agatha'],
   [EliteMember.Lance]: ['characters/frlg/lance', 'characters/lgpe/lance'],
+  [EliteMember.Will]: ['characters/hgss/will'],
+  // His Heart Gold sheet alone. The other two are the gym leader's,
+  // and a sprite is unlocked by one deed: the Soul Badge is what he
+  // is worn off in Kanto, his mark is what he is worn off in Johto
+  [EliteMember.Koga]: ['characters/hgss/koga'],
+  [EliteMember.Karen]: ['characters/hgss/karen'],
+  // His Heart Gold sheet, the way the rest of Johto's league is
+  // drawn. The Kanto seat above keeps the two he is drawn in there
+  [EliteMember.JohtoBruno]: ['characters/hgss/bruno'],
 };
 
 /**
  * Which of the Elite Four hold each biome's seats, by the same rule
  * the gyms follow: ice country is Lorelei's, hard dry ground is
- * Bruno's, the dark and the damp are Agatha's, and everything green
- * or under water is Lance's. A list per biome for the same reason
- * the gyms keep one: later regions seat more elites
+ * Bruno's, the damp is Agatha's, and everything green or under water
+ * is Lance's. Johto's three take the countries their own kind
+ * answers to, so a seat holds seven names between two leagues and the
+ * chunk's fixture roll says whose it is
  */
 export const BIOME_ELITE_MEMBERS: Record<Biome, EliteMember[]> = {
   [Biome.Glacier]: [EliteMember.Lorelei],
   [Biome.Tundra]: [EliteMember.Lorelei],
   [Biome.ColdDesert]: [EliteMember.Lorelei],
   [Biome.AlpineTundra]: [EliteMember.Lorelei],
-  [Biome.Taiga]: [EliteMember.Lorelei],
+  [Biome.Taiga]: [EliteMember.Lorelei, EliteMember.Karen],
   [Biome.PolarOcean]: [EliteMember.Lorelei],
-  [Biome.Mountain]: [EliteMember.Bruno],
-  [Biome.Badlands]: [EliteMember.Bruno],
-  [Biome.Desert]: [EliteMember.Bruno],
-  [Biome.Steppe]: [EliteMember.Bruno],
-  [Biome.Shrubland]: [EliteMember.Bruno],
-  [Biome.Savanna]: [EliteMember.Bruno],
-  [Biome.RockyCoast]: [EliteMember.Bruno],
-  [Biome.Swamp]: [EliteMember.Agatha],
-  [Biome.Bog]: [EliteMember.Agatha],
-  [Biome.Mangrove]: [EliteMember.Agatha],
-  [Biome.TemperateRainforest]: [EliteMember.Agatha],
-  [Biome.Beyond]: [EliteMember.Agatha],
+  [Biome.Mountain]: [EliteMember.Bruno, EliteMember.JohtoBruno],
+  [Biome.Badlands]: [
+    EliteMember.Bruno,
+    EliteMember.JohtoBruno,
+    EliteMember.Koga,
+    EliteMember.Karen,
+  ],
+  [Biome.Desert]: [EliteMember.Bruno, EliteMember.JohtoBruno],
+  [Biome.Steppe]: [EliteMember.Bruno, EliteMember.JohtoBruno],
+  [Biome.Shrubland]: [EliteMember.Bruno, EliteMember.JohtoBruno],
+  [Biome.Savanna]: [EliteMember.Bruno, EliteMember.JohtoBruno],
+  [Biome.RockyCoast]: [EliteMember.Bruno, EliteMember.JohtoBruno],
+  [Biome.Swamp]: [EliteMember.Agatha, EliteMember.Koga],
+  [Biome.Bog]: [EliteMember.Agatha, EliteMember.Koga, EliteMember.Karen],
+  [Biome.Mangrove]: [EliteMember.Agatha, EliteMember.Koga],
+  [Biome.TemperateRainforest]: [EliteMember.Agatha, EliteMember.Will, EliteMember.Karen],
+  [Biome.Beyond]: [EliteMember.Agatha, EliteMember.Will, EliteMember.Karen],
   [Biome.DeepOcean]: [EliteMember.Lance],
   [Biome.Ocean]: [EliteMember.Lance],
   [Biome.CoralReef]: [EliteMember.Lance],
   [Biome.Beach]: [EliteMember.Lance],
-  [Biome.KelpForest]: [EliteMember.Lance],
-  [Biome.TropicalRainforest]: [EliteMember.Lance],
+  [Biome.KelpForest]: [EliteMember.Lance, EliteMember.Will],
+  [Biome.TropicalRainforest]: [EliteMember.Lance, EliteMember.Koga, EliteMember.Will],
   [Biome.TropicalSeasonalForest]: [EliteMember.Lance],
   [Biome.Grassland]: [EliteMember.Lance],
   [Biome.TemperateForest]: [EliteMember.Lance],
   [Biome.Woodland]: [EliteMember.Lance],
-  [Biome.MontaneForest]: [EliteMember.Lance],
+  [Biome.MontaneForest]: [EliteMember.Lance, EliteMember.Will],
   [Biome.Volcano]: [EliteMember.Lance],
 };
 
 /**
- * The Champion of Kanto. Blue runs the 8th gym here, so the seat at
- * the top is Red's
+ * The champions, one to a league. Blue runs Kanto's eighth gym here,
+ * so the seat at the top of that league is Red's; Johto's is Lance,
+ * who also keeps a seat in Kanto's Elite Four and is drawn in his
+ * Heart Gold coat when he is standing at the top
  */
-export const CHAMPION_NAME = 'Red';
+const enum Champion {
+  Red = 0,
+  Lance = 1,
+}
 
-export const CHAMPION_CHARSETS: string[] = ['characters/frlg/red', 'characters/lgpe/red'];
+export { Champion };
+
+export const CHAMPIONS: Champion[] = [Champion.Red, Champion.Lance];
+
+export const CHAMPION_NAMES: Record<Champion, string> = {
+  [Champion.Red]: 'Red',
+  [Champion.Lance]: 'Lance',
+};
+
+export const CHAMPION_CHARSETS: Record<Champion, string[]> = {
+  [Champion.Red]: ['characters/frlg/red', 'characters/lgpe/red'],
+  [Champion.Lance]: ['characters/hgss/lance', 'characters/hgss/lance-2'],
+};
+
+/** The title a champion's seat is worth */
+export const CHAMPION_TITLES: Record<Champion, Awards> = {
+  [Champion.Red]: Awards.KantoChampion,
+  [Champion.Lance]: Awards.JohtoChampion,
+};
+
+/** The Elite Four a champion asks to see beaten first */
+export const CHAMPION_HONORS: Record<Champion, Awards[]> = {
+  [Champion.Red]: KANTO_HONORS,
+  [Champion.Lance]: JOHTO_HONORS,
+};
 
 /**
- * The Champion's own six, by region.
+ * The champion's own six.
  *
  * A champion is the one expert who does not draw from a pool: the
  * team is the character, and a player who has walked the whole league
  * to reach them should meet the party they are known for. Red's is
- * his Mt. Silver line-up from HeartGold and SoulSilver, which is the
- * version of it made entirely of Kanto species.
- *
- * A region with no entry has no champion to stand: nothing is
- * invented for it, and the seat stays empty until the team is known
+ * his Mt. Silver line-up, and Lance's is the one he defends the
+ * Indigo Plateau with, three Dragonite and all
  */
-export const CHAMPION_PARTIES: Partial<Record<Regions, Species[]>> = {
-  [Regions.Kanto]: [
+export const CHAMPION_PARTIES: Record<Champion, Species[]> = {
+  [Champion.Red]: [
     Species.Pikachu,
     Species.Lapras,
     Species.Snorlax,
@@ -266,11 +404,15 @@ export const CHAMPION_PARTIES: Partial<Record<Regions, Species[]>> = {
     Species.Charizard,
     Species.Blastoise,
   ],
+  [Champion.Lance]: [
+    Species.Gyarados,
+    Species.Charizard,
+    Species.Aerodactyl,
+    Species.Dragonite,
+    Species.Dragonite,
+    Species.Dragonite,
+  ],
 };
-
-export function getChampionParty(region: Regions): Species[] | null {
-  return CHAMPION_PARTIES[region] ?? null;
-}
 
 /**
  * What counts as an expert's own.
@@ -332,6 +474,31 @@ export const ELITE_MEMBER_POOLS: Record<EliteMember, ExpertPool> = {
     eggGroups: [EggGroups.Dragon],
     also: [Species.Aerodactyl],
   },
+  // Johto's three each field a type wide enough to stand on its own,
+  // so none of them needs a widener
+  [EliteMember.Will]: { types: [Types.Psychic] },
+  [EliteMember.Koga]: { types: [Types.Poison] },
+  [EliteMember.Karen]: { types: [Types.Dark] },
+  [EliteMember.JohtoBruno]: {
+    types: [Types.Fighting, Types.Ground],
+    also: [Species.Onix],
+  },
+};
+
+/**
+ * The one an elite is remembered for, standing last the way a gym
+ * leader's does. Bruno's is his Machamp in both leagues, since Bruno
+ * is in both
+ */
+export const ELITE_MEMBER_SIGNATURES: Record<EliteMember, Species> = {
+  [EliteMember.Lorelei]: Species.Lapras,
+  [EliteMember.Bruno]: Species.Machamp,
+  [EliteMember.Agatha]: Species.Gengar,
+  [EliteMember.Lance]: Species.Dragonite,
+  [EliteMember.Will]: Species.Xatu,
+  [EliteMember.Koga]: Species.Crobat,
+  [EliteMember.Karen]: Species.Houndoom,
+  [EliteMember.JohtoBruno]: Species.Machamp,
 };
 
 /**
@@ -346,24 +513,53 @@ export function getGymLeaderPool(leader: GymLeader): ExpertPool {
 }
 
 /**
- * The species an expert may field: the **rare** band of their own
- * region, which is the fully-evolved and single-line species, narrowed
+ * The one pokemon a leader is remembered for, which stands in their
+ * sixth slot however the other five roll. It is the mainline ace,
+ * so several of them are below the band the other five are drawn
+ * from: Brock's Onix is a middle stage now that a Steelix exists,
+ * and he brings it anyway
+ */
+export const GYM_LEADER_SIGNATURES: Record<GymLeader, Species> = {
+  [GymLeader.Brock]: Species.Onix,
+  [GymLeader.Misty]: Species.Starmie,
+  [GymLeader.LtSurge]: Species.Raichu,
+  [GymLeader.Erika]: Species.Vileplume,
+  [GymLeader.Koga]: Species.Weezing,
+  [GymLeader.Sabrina]: Species.Alakazam,
+  [GymLeader.Blaine]: Species.Arcanine,
+  [GymLeader.Blue]: Species.Pidgeot,
+  [GymLeader.Falkner]: Species.Pidgeotto,
+  [GymLeader.Bugsy]: Species.Scyther,
+  [GymLeader.Whitney]: Species.Miltank,
+  [GymLeader.Morty]: Species.Gengar,
+  [GymLeader.Chuck]: Species.Poliwrath,
+  [GymLeader.Jasmine]: Species.Steelix,
+  [GymLeader.Pryce]: Species.Piloswine,
+  [GymLeader.Clair]: Species.Kingdra,
+};
+
+/**
+ * The species an expert may field out of a roster: the **rare** band
+ * of it, which is the fully-evolved and single-line species, narrowed
  * to what their pool counts as theirs.
  *
  * The band is the whole of what separates them from a duelling
  * trainer: a leader fielding the same Bellsprout a player meets in the
  * grass is a leader nobody remembers beating. It leaves the babies and
  * the legendaries out with the half-grown, which is right for both.
- * A legendary belongs to its raid, and the egg to nothing at all
+ * A legendary belongs to its raid, and the egg to nothing at all.
+ *
+ * Which roster is the caller's: an elite fields their own region,
+ * a gym leader every region there is
  */
 const LAIR_SPECIES = new Set(EVERY_LAIR.flatMap(getLairResidents));
 
-export function getExpertPool(region: Regions, pool: ExpertPool): Species[] {
+function filterExpertPool(roster: Species[], pool: ExpertPool): Species[] {
   const types = new Set(pool.types);
   const groups = new Set(pool.eggGroups);
   const named = new Set(pool.also);
 
-  return getSpeciesByRegion(region).filter((species) => {
+  return roster.filter((species) => {
     if (species === Species.Egg || LAIR_SPECIES.has(species) || !isBaseForm(species)) {
       return false;
     }
@@ -388,4 +584,22 @@ export function getExpertPool(region: Regions, pool: ExpertPool): Species[] {
       data.eggGroups.some((group) => groups.has(group))
     );
   });
+}
+
+/**
+ * The five an expert rolls, which is their kind's band from every
+ * region rather than the one they are standing in. A gym is a fight
+ * about a type, so a steel gym should reach a Steelix wherever the
+ * badge is handed out, and Karen's dark has nothing at all in Kanto
+ */
+export function getWorldExpertPool(pool: ExpertPool): Species[] {
+  return filterExpertPool(getRegisteredSpecies(), pool);
+}
+
+export function getGymLeaderRoster(leader: GymLeader): Species[] {
+  return getWorldExpertPool(getGymLeaderPool(leader));
+}
+
+export function getEliteMemberRoster(member: EliteMember): Species[] {
+  return getWorldExpertPool(ELITE_MEMBER_POOLS[member]);
 }

@@ -187,12 +187,20 @@ kept for good.
 
 | Who            | What they field                 | What beating them is worth                        |
 | -------------- | ------------------------------- | ------------------------------------------------- |
-| **Gym leader** | Six of their gym's type, 45-65  | Their badge, a purse, and a machine of their type |
-| **Elite Four** | Six of their seat's type, 65-85 | Their mark, and a purse                           |
-| **Champion**   | Six of anything, 85-100         | The region's title, and 10,000 to 50,000          |
+| **Gym leader** | Five of their gym's type and their signature, 45-65 | Their badge, a purse, and a machine of their type |
+| **Elite Four** | Five of their seat's type and their signature, 65-85 | Their mark, and a purse |
+| **Champion**   | Their own named six, 85-100     | Their league's title, and 10,000 to 50,000        |
+
+A gym leader's sixth is always the one pokemon they are known for, whatever the
+other five roll, and the five are drawn from every region rather than from the
+one their gym stands in. The Elite Four are built the same way, down to the
+signature.
 
 A member of the **Elite Four** will not fight anybody who is not carrying all
-eight badges, and the **Champion** asks for all four of their marks first.
+eight of their own league's badges, and a **Champion** asks for all four of their
+own league's marks first. Bruno keeps a seat in each league and each is its own
+fight, so a challenger who has only walked one region meets only that region's
+Bruno.
 
 An award is earned once. Every later win over the same leader counts on the shelf
 and pays its purse again, and a gym leader's machine is rolled per winner, so a

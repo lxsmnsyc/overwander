@@ -29,8 +29,15 @@ import createOverworld from '../overworld/setup';
 import Landmark from '../data/overworld/landmark';
 import Npc from '../data/overworld/npc';
 import { trainerLevels } from '../data/overworld/trainers';
-import Awards, { KANTO_BADGES, KANTO_HONORS } from '../data/ids/awards';
-import { ELITE_MEMBER_HONORS, GYM_LEADER_BADGES, rollGymMachine } from '../data/overworld/experts';
+import type Awards from '../data/ids/awards';
+import {
+  CHAMPION_HONORS,
+  CHAMPION_TITLES,
+  ELITE_MEMBER_HONORS,
+  GYM_LEADER_BADGES,
+  getEliteBadges,
+  rollGymMachine,
+} from '../data/overworld/experts';
 import type { Items } from '../data/ids/items';
 import AleaRNG from '../core/alea';
 import { hasAwards, recordAwardWin } from './awards';
@@ -168,13 +175,21 @@ export async function enterRocketStop(
     return null;
   }
 
-  // The ladder's gates: the Elite Four ask to see the region's whole
+  // The ladder's gates: an elite asks to see their own league's whole
   // badge case, and the Champion asks for the Elite Four themselves
-  if (landmark === Landmark.EliteFour && !(await hasAwards(uid, KANTO_BADGES))) {
-    return 'locked';
+  if (landmark === Landmark.EliteFour) {
+    const member = snapshot.getEliteMember(cell);
+
+    if (member == null || !(await hasAwards(uid, getEliteBadges(member)))) {
+      return 'locked';
+    }
   }
-  if (landmark === Landmark.Champion && !(await hasAwards(uid, KANTO_HONORS))) {
-    return 'locked';
+  if (landmark === Landmark.Champion) {
+    const champion = snapshot.getChampion(cell);
+
+    if (champion == null || !(await hasAwards(uid, CHAMPION_HONORS[champion]))) {
+      return 'locked';
+    }
   }
 
   const stop = rocketStopId(chunk, snapshot.npcTimestamp, cell, zone);
@@ -530,7 +545,9 @@ function awardFor(
     return member == null ? null : ELITE_MEMBER_HONORS[member];
   }
   if (landmark === Landmark.Champion) {
-    return Awards.KantoChampion;
+    const champion = snapshot.getChampion(cell);
+
+    return champion == null ? null : CHAMPION_TITLES[champion];
   }
   return null;
 }

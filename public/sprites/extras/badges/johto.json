@@ -1,0 +1,111 @@
+{
+  "compact": true,
+  "width": 147,
+  "height": 113,
+  "images": [
+    {
+      "name": "Johto",
+      "x": 0,
+      "y": 0,
+      "width": 36,
+      "height": 41,
+      "sourceWidth": 36,
+      "sourceHeight": 41,
+      "trim": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Johto (1)",
+      "x": 0,
+      "y": 41,
+      "width": 38,
+      "height": 38,
+      "sourceWidth": 38,
+      "sourceHeight": 38,
+      "trim": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Johto (2)",
+      "x": 36,
+      "y": 0,
+      "width": 40,
+      "height": 40,
+      "sourceWidth": 40,
+      "sourceHeight": 40,
+      "trim": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Johto (3)",
+      "x": 72,
+      "y": 41,
+      "width": 38,
+      "height": 36,
+      "sourceWidth": 38,
+      "sourceHeight": 36,
+      "trim": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Johto (4)",
+      "x": 0,
+      "y": 79,
+      "width": 39,
+      "height": 34,
+      "sourceWidth": 39,
+      "sourceHeight": 34,
+      "trim": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Johto (5)",
+      "x": 110,
+      "y": 0,
+      "width": 37,
+      "height": 36,
+      "sourceWidth": 37,
+      "sourceHeight": 36,
+      "trim": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Johto (6)",
+      "x": 38,
+      "y": 41,
+      "width": 34,
+      "height": 37,
+      "sourceWidth": 34,
+      "sourceHeight": 37,
+      "trim": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Johto (7)",
+      "x": 76,
+      "y": 0,
+      "width": 34,
+      "height": 39,
+      "sourceWidth": 34,
+      "sourceHeight": 39,
+      "trim": [
+        0,
+        0
+      ]
+    }
+  ]
+}

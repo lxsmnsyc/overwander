@@ -6,7 +6,7 @@ import { Stats } from '../data/constants/stats';
 import { defaultSlots } from '../data/constants/slots';
 import Abilities from '../data/ids/abilities';
 import Landmark from '../data/overworld/landmark';
-import { CHAMPION_NAME, ELITE_MEMBER_NAMES, GYM_LEADER_NAMES } from '../data/overworld/experts';
+import { CHAMPION_NAMES, ELITE_MEMBER_NAMES, GYM_LEADER_NAMES } from '../data/overworld/experts';
 import Npc, { GIOVANNI_NAME, NPC_NAMES, npcSheet } from '../data/overworld/npc';
 import { TRAINER_NAMES } from '../data/overworld/trainers';
 import type ChunkSnapshot from './chunk-snapshot';
@@ -128,7 +128,9 @@ export function stopChallenger(
     return named(member == null ? null : ELITE_MEMBER_NAMES[member]);
   }
   if (landmark === Landmark.Champion) {
-    return named(CHAMPION_NAME);
+    const champion = snapshot.getChampion(cell);
+
+    return named(champion == null ? null : CHAMPION_NAMES[champion]);
   }
   return null;
 }

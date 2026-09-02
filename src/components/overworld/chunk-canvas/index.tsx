@@ -116,7 +116,7 @@ import {
   bakeWord,
   drawPhenomenon,
   facingOf,
-  isFightingLandmark,
+  landmarkCallOut,
   paintPhenomenon,
   paintSparkle,
   phenomenonSpan,
@@ -1844,12 +1844,11 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         // stands, in paint order — so the letter under their feet as
         // well would be the cell saying the same thing twice. What the
         // letter did say is kept as the cell itself, called out in the
-        // game's own two colours: ember for a fight, tide for a
-        // counter, which the coat they are drawn in does not tell
-        // anybody
+        // colour of what walking up to them does, which the coat they
+        // are drawn in does not tell anybody
         if (drawnAsPerson(index)) {
           if (landmark != null) {
-            callOut(outline, isFightingLandmark(landmark) ? COLORS.fight : COLORS.serve);
+            callOut(outline, landmarkCallOut(landmark));
           }
           continue;
         }

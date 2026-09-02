@@ -5,7 +5,7 @@ import Phenomenon from '../../../data/overworld/phenomenon';
 import drawSparkle, { SPARKLE_SPREAD, SPARKLE_STAR_SIZE } from '../../../canvas/sparkle';
 import type Bakery from '../../../canvas/bakery';
 import type { Baked } from '../../../canvas/bakery';
-import { CELL } from './metrics';
+import { CELL, COLORS } from './metrics';
 
 /**
  * What a cell wears besides its scenery: what is going on there, and
@@ -206,6 +206,25 @@ export function drawPhenomenon(
     context.fill();
   }
   context.restore();
+}
+
+/**
+ * The colour a landmark's cell is called out in: the game's two
+ * colours for an ordinary fight and a counter, and one of its own for
+ * each rung of the league. The coat somebody is drawn in does not say
+ * what walking up to them does, so the ground says it
+ */
+export function landmarkCallOut(landmark: Landmark): string {
+  if (landmark === Landmark.GymLeader) {
+    return COLORS.gym;
+  }
+  if (landmark === Landmark.EliteFour) {
+    return COLORS.elite;
+  }
+  if (landmark === Landmark.Champion) {
+    return COLORS.champion;
+  }
+  return isFightingLandmark(landmark) ? COLORS.fight : COLORS.serve;
 }
 
 /**

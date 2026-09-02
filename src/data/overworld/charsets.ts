@@ -1,6 +1,9 @@
-import Awards from '../ids/awards';
+import type Awards from '../ids/awards';
 import {
+  CHAMPIONS,
   CHAMPION_CHARSETS,
+  CHAMPION_NAMES,
+  CHAMPION_TITLES,
   ELITE_MEMBERS,
   ELITE_MEMBER_CHARSETS,
   ELITE_MEMBER_HONORS,
@@ -85,8 +88,13 @@ function buildCharsets(): Charset[] {
       });
     }
   }
-  for (const sheet of CHAMPION_CHARSETS) {
-    add(sheet, 'Champion', { kind: 'award', award: Awards.KantoChampion });
+  for (const champion of CHAMPIONS) {
+    for (const sheet of CHAMPION_CHARSETS[champion]) {
+      add(sheet, CHAMPION_NAMES[champion], {
+        kind: 'award',
+        award: CHAMPION_TITLES[champion],
+      });
+    }
   }
   for (const trainer of ACHIEVEMENT_TRAINERS) {
     for (const sheet of TRAINER_CHARSETS[trainer]) {

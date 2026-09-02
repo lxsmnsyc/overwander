@@ -28,6 +28,7 @@ export const enum LadderTitle {
   EliteConqueror = 1,
   /** The Champion's own seat */
   KantoChampion = 2,
+  JohtoChampion = 3,
 }
 
 const LINE_TITLE_BASE = 100;
@@ -100,6 +101,7 @@ const LADDER_TITLE_NAMES: Record<LadderTitle, string> = {
   [LadderTitle.LeagueChallenger]: 'League Challenger',
   [LadderTitle.EliteConqueror]: 'Elite Conqueror',
   [LadderTitle.KantoChampion]: 'Kanto Champion',
+  [LadderTitle.JohtoChampion]: 'Johto Champion',
 };
 
 /**

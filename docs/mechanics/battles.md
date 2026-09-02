@@ -265,9 +265,9 @@ standing at a trainer cell depends on the country; see
 | **Team Rocket grunt** | Three shadows of the biome's own     | 45-55  |
 | **Type expert**       | Three to five of their own type      | 40-60  |
 | **Ace Trainer**       | Five fully-grown pokemon of any type | 60-80  |
-| **Gym leader**        | Six fully-grown of their gym's type  | 45-65  |
+| **Gym leader**        | Five of their gym's type, and their signature sixth | 45-65 |
 | **Giovanni**          | Six shadows, one of them a legendary | 70-80  |
-| **Elite Four**        | Six fully-grown of their own kind    | 65-85  |
+| **Elite Four**        | Five of their own kind, and their signature sixth | 65-85 |
 | **Champion**          | Their own signature six              | 85-100 |
 
 ## Gym seats

@@ -4,6 +4,8 @@ import { describeItem } from '../../details';
 import { type Journey, describeStash, stateOf } from './journey';
 import { useAuth } from '../../../auth/context';
 import { settled } from '../../app/resource-reads';
+import { type Direction, actionOf, forTheGame } from '../../app/keys';
+import settings from '../../app/settings';
 import { DEFAULT_CHARSET } from '../../../data/overworld/charsets';
 import { watchProfile } from '../../../auth/profile';
 import { type EggWalk, walk } from '../../../auth/eggs';
@@ -104,10 +106,11 @@ import {
 } from './metrics';
 
 /**
- * The overworld as the player walks it: arrow keys or WASD move one
- * cell at a time, stepping off an edge carries them into the
- * adjacent chunk, and landing on a spawn or a landmark triggers its
- * interaction
+ * The overworld as the player walks it: the arrows or the bound keys
+ * move one cell at a time and stepping off an edge carries them into
+ * the adjacent chunk. A step into something that cannot be walked
+ * through turns them to face it, and the interact key is what reaches
+ * for whatever they are facing
  */
 /**
  * The world itself, which is where the relics, the buddy and what has
@@ -1303,6 +1306,35 @@ export default function OverworldBoard(props: {
   };
 
   /**
+   * The way the player is standing, as a step.
+   *
+   * A step into something that cannot be walked through still turns
+   * them to face it, which is the whole of what makes the interact key
+   * mean anything: what is in front of the player is a fact about
+   * where they are looking, not about where they last arrived from
+   */
+  const [facing, setFacing] = createSignal<[number, number]>([0, 1]);
+
+  /**
+   * Whether the ground at a cell can be stood on. The chunk's fixtures
+   * are what stop a walk, and it is the same answer whether the walk
+   * was pressed for or walked with the keyboard
+   */
+  const standable = (loaded: ChunkView, index: number): boolean =>
+    !loaded.landmarks.has(index) && !loaded.decorations.has(index) && !loaded.rocks.has(index);
+
+  /**
+   * The cell one step from where the player stands, or null where that
+   * step is over the edge of the chunk
+   */
+  const ahead = ([dx, dy]: [number, number]): number | null => {
+    const x = cellX() + dx;
+    const y = cellY() + dy;
+
+    return x < 0 || y < 0 || x >= CHUNK_CELLS || y >= CHUNK_CELLS ? null : y * CHUNK_CELLS + x;
+  };
+
+  /**
    * Where the player is walking, if they are.
    *
    * A press says where to be; this is what is left of it while they
@@ -1498,6 +1530,144 @@ export default function OverworldBoard(props: {
     setJourney(index === cell() ? null : { goal: index, exit: null, act: false });
   };
 
+  /** Which way each direction goes, in cells */
+  const STEPS: Record<Direction, [number, number]> = {
+    up: [0, -1],
+    down: [0, 1],
+    left: [-1, 0],
+    right: [1, 0],
+  };
+
+  /**
+   * A step taken on the keyboard: turn that way, and walk if the
+   * ground there can be stood on.
+   *
+   * A step into a landmark or a boulder turns without moving, which is
+   * what a mainline game does and what leaves the interact key
+   * something to act on. Held to the same pace as a pressed walk, so
+   * neither a held key nor a mashed one outruns the other
+   */
+  const stepBy = (step: [number, number]): void => {
+    const loaded = view();
+
+    if (loaded == null || engaged() || Date.now() - steppedAt < STEP_PACE) {
+      return;
+    }
+    setFacing(step);
+    // The keyboard is the player walking themselves, so a walk they
+    // pressed for is dropped rather than raced
+    setJourney(null);
+
+    const target = ahead(step);
+
+    // Nothing ahead is the edge of the chunk, which is a step into the
+    // next one rather than a step into a wall
+    if (target != null && !standable(loaded, target)) {
+      return;
+    }
+    steppedAt = Date.now();
+    move(step[0], step[1]);
+  };
+
+  /**
+   * Reach for whatever the player is facing. Nothing in front of them
+   * is nothing to answer: the key is not a press on the ground they
+   * are standing next to
+   */
+  const reachAhead = (): void => {
+    const loaded = view();
+    const target = ahead(facing());
+
+    if (loaded == null || target == null || !holdsSomething(loaded, target)) {
+      return;
+    }
+    reach(target);
+  };
+
+  /**
+   * Walking with the keyboard, for as long as a key is held.
+   *
+   * The directions held down are kept in the order they were pressed
+   * so that rolling from one onto another without letting go turns the
+   * corner, rather than stopping dead or carrying on the old way. The
+   * browser's own key repeat is ignored: the game keeps the pace, and
+   * the machine's repeat rate is not the game's
+   */
+  onMount(() => {
+    let held: Direction[] = [];
+    let pacing: ReturnType<typeof setInterval> | null = null;
+
+    const stop = (): void => {
+      held = [];
+      if (pacing != null) {
+        clearInterval(pacing);
+        pacing = null;
+      }
+    };
+
+    const onward = (): void => {
+      const going = held.at(-1);
+
+      if (going == null) {
+        stop();
+        return;
+      }
+      stepBy(STEPS[going]);
+    };
+
+    const down = (event: KeyboardEvent): void => {
+      if (event.repeat || !forTheGame(event)) {
+        return;
+      }
+
+      const action = actionOf(event, settings().keys);
+
+      if (action == null) {
+        return;
+      }
+      if (action === 'interact') {
+        event.preventDefault();
+        reachAhead();
+        return;
+      }
+      // The bar along the bottom answers its own key
+      if (action === 'menu') {
+        return;
+      }
+      event.preventDefault();
+      held = [...held.filter((one) => one !== action), action];
+      stepBy(STEPS[action]);
+      pacing ??= setInterval(onward, STEP_PACE);
+    };
+
+    const up = (event: KeyboardEvent): void => {
+      const action = actionOf(event, settings().keys);
+
+      if (action == null) {
+        return;
+      }
+      held = held.filter((one) => one !== action);
+      if (held.length === 0) {
+        stop();
+      }
+    };
+
+    // `globalThis` rather than `window`: the chunk's own snapshot
+    // signal is called that in this body
+    globalThis.addEventListener('keydown', down);
+    globalThis.addEventListener('keyup', up);
+    // A key held while the page goes away is a key that is never
+    // released, and a player who comes back to a board walking on its
+    // own has to press that direction again to stop it
+    globalThis.addEventListener('blur', stop);
+    onCleanup(() => {
+      stop();
+      globalThis.removeEventListener('keydown', down);
+      globalThis.removeEventListener('keyup', up);
+      globalThis.removeEventListener('blur', stop);
+    });
+  });
+
   const titleOf = (index: number): string => {
     // The board on screen rather than the one they are standing in:
     // a cell is named for what is drawn on it
@@ -1623,6 +1793,7 @@ export default function OverworldBoard(props: {
                 // they are standing in the next chunk by then, and
                 // their marker has no business on this one
                 player={frozen()?.player ?? cell()}
+                facing={facing()}
                 crossing={crossing()}
                 landmarks={loaded().landmarks}
                 phenomena={happenings(loaded())}

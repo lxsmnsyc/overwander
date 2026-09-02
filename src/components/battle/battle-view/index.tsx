@@ -7,6 +7,7 @@ import {
   createSignal,
   from,
   onCleanup,
+  onMount,
 } from 'solid-js';
 import type Unit from '../../../battle/unit';
 import {
@@ -20,6 +21,7 @@ import {
 } from '../../../auth/battles';
 import { useAuth } from '../../../auth/context';
 import createClientSignal from '../../app/client-signal';
+import { forTheGame } from '../../app/keys';
 import { answered } from '../../app/resource-reads';
 import { PLAYER_ALLIANCE, clearRaid, getRaid, getRaidTitle } from '../../../auth/raids';
 import { BattleModes } from '../../../battle/core';
@@ -523,6 +525,29 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
     }
     setLeaving(true);
   };
+
+  /**
+   * Escape leaves, the way the button does.
+   *
+   * Read at the window and only while nothing on the page has the
+   * keyboard: a dialog open over the fight answers its own Escape by
+   * closing, and asking to leave underneath it would be answering a
+   * question the player did not ask
+   */
+  onMount(() => {
+    const onKey = (event: KeyboardEvent): void => {
+      if (event.key !== 'Escape' || !forTheGame(event)) {
+        return;
+      }
+      event.preventDefault();
+      askToLeave();
+    };
+
+    window.addEventListener('keydown', onKey);
+    onCleanup(() => {
+      window.removeEventListener('keydown', onKey);
+    });
+  });
 
   // A raid battle is recorded once, by whichever fighter sees it end
   createEffect(() => {

@@ -199,8 +199,8 @@ export const COLORS = {
   /** Under every mark, so one reads on pale ground as well as on dark */
   ringShade: 'rgba(0, 0, 0, 0.28)',
   /**
-   * The keyboard's own pointer, drawn only while the canvas has focus
-   * and never on the cell the player is already standing in
+   * The line round the board while it has the keyboard, which is what
+   * says the camera keys will answer
    */
   cursor: '#3b82f6',
   /**
@@ -400,20 +400,4 @@ export const BEARINGS = new Map<string, string>([
   ['1,0', 'east'],
   ['0,1', 'south'],
   ['-1,0', 'west'],
-]);
-
-/**
- * The keys that move the cursor, and which way. They no longer walk
- * anybody: a walk is a press on where you want to be, and this is that
- * press for a player who is using the keyboard for it
- */
-export const MOVE_KEYS = new Map<string, [number, number]>([
-  ['ArrowUp', [0, -1]],
-  ['ArrowDown', [0, 1]],
-  ['ArrowLeft', [-1, 0]],
-  ['ArrowRight', [1, 0]],
-  ['w', [0, -1]],
-  ['s', [0, 1]],
-  ['a', [-1, 0]],
-  ['d', [1, 0]],
 ]);

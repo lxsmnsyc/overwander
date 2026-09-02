@@ -1,5 +1,22 @@
 # overwander
 
+## 1.6.1
+
+### Patch Changes
+
+- 05c1040: A Utility Belt can be spent on a pokemon.
+
+  The item was findable and the server has always known how to widen a record by
+  a slot, but the bag was never told about it. Nothing matched it, so the picker
+  offered no pokemon to use it on and pressing it through the catch sheet was
+  refused as a remedy that would heal nothing.
+
+  It is offered on any pokemon with room left to add, and spending it says how
+  many held items the pokemon can carry now.
+
+- 4d931d8: Fewer database round trips on the paths players press most: Nurse Joy reads a whole party at once, marking a box of catches is one read and one write, a catch pays all its candy in one write, the battle aftermath asks two questions instead of three, and a guard that only needs to know who owns a pokemon no longer reads its moves, abilities, items and history.
+- 835a0f3: A pokemon that was named before it changed hands keeps that name: only its first trainer may rename it. One that arrives unnamed is still the new owner's to name.
+
 ## 1.6.0
 
 ### Minor Changes

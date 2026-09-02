@@ -13,7 +13,11 @@ const BANNED = new Set<Moves>([Moves.Struggle, Moves.Attack, Moves.Sketch]);
 
 /**
  * Sketch takes the move for good, where Mimic borrows it: the copy
- * replaces Sketch in the move set and there is no getting it back
+ * replaces Sketch in the move set and there is no getting it back.
+ *
+ * One draw a fight, which is what spending Sketch means. Anything
+ * that calls a move it does not own (Metronome, Mirror Move, Sleep
+ * Talk) draws nothing, since the Sketch it would spend is not there
  */
 export default function setupSketch(battle: Battle): void {
   const lastCast = new Map<Unit, Moves>();
@@ -49,7 +53,8 @@ export default function setupSketch(battle: Battle): void {
       return;
     }
 
-    const copied = sketchable(event.source, event.target);
+    const copied =
+      event.source.moves[Moves.Sketch] == null ? undefined : sketchable(event.source, event.target);
 
     if (copied === undefined) {
       event.source.triggerMoveEffectFailed(event.move, event.target, event.steps);

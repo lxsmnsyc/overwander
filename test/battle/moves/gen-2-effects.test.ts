@@ -559,4 +559,44 @@ describe('Sketch', () => {
 
     expect(artist.sketched).toBe(Moves.Surf);
   });
+
+  it('draws one move a fight, whatever calls it after', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const artist = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB);
+
+    artist.addMove(Moves.Sketch);
+    target.addMove(Moves.Surf);
+    target.triggerMove(Moves.Surf, unitTarget(artist), 0);
+    artist.triggerMoveEffect(Moves.Sketch, unitTarget(target), 0);
+
+    // Sketch is spent, so the effect draws nothing however it is
+    // reached: Metronome, Mirror Move and Sleep Talk all call moves
+    // their user does not have to own
+    target.addMove(Moves.Ember);
+    target.triggerMove(Moves.Ember, unitTarget(artist), 0);
+    artist.triggerMoveEffect(Moves.Sketch, unitTarget(target), 0);
+
+    expect(artist.moves[Moves.Ember]).toBeUndefined();
+    expect(artist.sketched).toBe(Moves.Surf);
+  });
+
+  it('is not a move Mimic will borrow', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const thief = createUnit(battle, teamA);
+    const artist = createUnit(battle, teamB);
+
+    thief.addMove(Moves.Mimic);
+    artist.addMove(Moves.Surf);
+    artist.addMove(Moves.Sketch);
+    artist.triggerMove(Moves.Surf, unitTarget(thief), 0);
+    artist.triggerMove(Moves.Sketch, unitTarget(thief), 0);
+
+    thief.triggerMoveEffect(Moves.Mimic, unitTarget(artist), 0);
+
+    // The Surf under it, not the Sketch on top: a borrowed Sketch
+    // would be a free permanent copy
+    expect(thief.moves[Moves.Sketch]).toBeUndefined();
+    expect(thief.moves[Moves.Surf]).toBeDefined();
+  });
 });

@@ -14,6 +14,9 @@ const BANNED_MOVES = new Set<Moves>([
   // fill a move slot with the thing a pokemon already does for free
   // whenever it has nothing better
   Moves.Attack,
+  // Sketch is spent when it is drawn, so a mimicked one would be a
+  // free permanent copy on top of the one its owner paid for
+  Moves.Sketch,
 ]);
 
 export default function setupMimic(battle: Battle): void {

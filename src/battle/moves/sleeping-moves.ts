@@ -14,8 +14,9 @@ import { hasAnyStatus } from '../utils';
 const ASLEEP_ONLY = new Set<Moves>([Moves.Snore, Moves.SleepTalk]);
 
 /**
- * What Sleep Talk will not call on: itself, the two fallbacks, and
- * the other move that only works asleep
+ * What Sleep Talk will not call on: itself, the two fallbacks, the
+ * other move that only works asleep, and Sketch, which is spent when
+ * it is drawn and would otherwise be drawn in its sleep for free
  */
 const NOT_CALLED = new Set<Moves>([
   Moves.SleepTalk,
@@ -24,6 +25,7 @@ const NOT_CALLED = new Set<Moves>([
   Moves.Attack,
   Moves.Metronome,
   Moves.MirrorMove,
+  Moves.Sketch,
 ]);
 
 function isAsleep(unit: Unit): boolean {

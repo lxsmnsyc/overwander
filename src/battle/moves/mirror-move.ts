@@ -4,6 +4,8 @@ import type Battle from '../core';
 import { BattleEvents, MoveTargetType } from '../events';
 import type Unit from '../unit';
 
+const NOT_MIRRORED = new Set<Moves>([Moves.MirrorMove, Moves.Struggle, Moves.Attack, Moves.Sketch]);
+
 // https://bulbapedia.bulbagarden.net/wiki/Mirror_Move_(move)
 export default function setupMirrorMove(battle: Battle): void {
   const lastMove = new Map<Unit, Moves>();
@@ -12,13 +14,10 @@ export default function setupMirrorMove(battle: Battle): void {
   // one of them: mirroring what somebody threw because they had
   // nothing left would charge the mirror a quarter of its own health
   // for the privilege, and mirroring a swing they made while waiting
-  // on a cooldown spends a real move to copy filler
+  // on a cooldown spends a real move to copy filler. Nor Sketch,
+  // which is spent when it is drawn and cannot be drawn twice
   battle.on(BattleEvents.UnitTriggerMove, AttackPriority.Post, (event) => {
-    if (
-      event.move !== Moves.MirrorMove &&
-      event.move !== Moves.Struggle &&
-      event.move !== Moves.Attack
-    ) {
+    if (!NOT_MIRRORED.has(event.move)) {
       lastMove.set(event.source, event.move);
     }
   });

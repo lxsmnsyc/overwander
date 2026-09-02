@@ -303,8 +303,9 @@ export function ringStandings(
  * that never looks at anything — on a ring the thing it is hitting is
  * rarely straight ahead. This is the move it is winding up, the move
  * it has in the air, or nothing while it is standing about. A move
- * aimed at a whole team looks at the first of them, which is where the
- * cluster is
+ * aimed at another whole team looks at the first of them, which is
+ * where the cluster is; one aimed at its own turns nothing, since its
+ * own side is behind it
  */
 function watchedBy(unit: Unit, thrown: Striking | undefined): Unit | null {
   const aim = unit.casting?.target ?? unit.channeling?.target ?? thrown?.at;
@@ -316,7 +317,11 @@ function watchedBy(unit: Unit, thrown: Striking | undefined): Unit | null {
     return aim.unit === unit ? null : aim.unit;
   }
   if (aim.type === MoveTargetType.Team) {
-    return [...aim.team.units].find((other) => other !== unit) ?? null;
+    // Never round at its own side, for the same reason a move aimed at
+    // the caster itself turns nothing
+    return aim.team === unit.team
+      ? null
+      : ([...aim.team.units].find((other) => other !== unit) ?? null);
   }
   return null;
 }

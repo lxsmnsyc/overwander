@@ -13,7 +13,9 @@ import Npc, {
   ROCKET_EXECUTIVE_NAMES,
   npcSheet,
 } from '../data/overworld/npc';
-import { TRAINER_NAMES, TYPE_TRAINER_LEVELS } from '../data/overworld/trainers';
+import { TRAINER_NAMES, TYPE_TRAINER_LEVELS, TrainerClass } from '../data/overworld/trainers';
+import type { Items } from '../data/ids/items';
+import { ITEM_POOL, type ItemBandOdds, pickItem } from '../data/overworld/item-pool';
 import type ChunkSnapshot from './chunk-snapshot';
 import { RocketRank, type Spawn } from './chunk-snapshot';
 import deriveEncounter, { EncounterType, deriveSize } from './encounter';
@@ -156,39 +158,131 @@ export function stopChallenger(
   return null;
 }
 
-export const STOP_GOLD_MIN = 1000;
-export const STOP_GOLD_MAX = 10000;
+/** The range a purse is rolled in, floor and ceiling included. */
+export type GoldBand = [minimum: number, maximum: number];
 
 /**
- * And the boss' purse: one win in sixty-four windows should fund
- * something, not buy a round of potions
+ * What a beaten stop pays, a rung at a time.
+ *
+ * The ladder is the level ladder: a fight worth more is a fight that
+ * hits harder, so the purses climb in the same order the bands do and
+ * a roadside Bug Catcher no longer pays what one of the Elite Four
+ * pays.
+ *
+ * They are read against the **valuables**, which are the only prices
+ * in the game the world sets rather than a shopkeeper: a nugget off
+ * the ground is 10,000 and a Relic Crown is 600,000. A world where
+ * beating the Champion is worth less than a nugget somebody tripped
+ * over is not a world with a league in it, and a chunk holds one gym,
+ * one seat and one champion behind a three-hour window, so nothing
+ * here is farmed in an afternoon
  */
-export const GIOVANNI_GOLD_MIN = 10000;
-export const GIOVANNI_GOLD_MAX = 50000;
+export const TYPE_TRAINER_GOLD: GoldBand = [5000, 15000];
+export const ROCKET_GRUNT_GOLD: GoldBand = [5000, 15000];
+export const GYM_GOLD: GoldBand = [20000, 50000];
+export const ACE_TRAINER_GOLD: GoldBand = [25000, 60000];
+export const EXECUTIVE_GOLD: GoldBand = [40000, 90000];
+export const ELITE_GOLD: GoldBand = [50000, 110000];
+export const GIOVANNI_GOLD: GoldBand = [120000, 250000];
+export const CHAMPION_GOLD: GoldBand = [150000, 300000];
+
+/**
+ * Which purse a stop pays, by the same reading its level band takes:
+ * the landmark, then the rank standing on a Team Rocket cell, then
+ * the duellist's class
+ */
+export function stopGoldBand(
+  landmark: Landmark,
+  rank: RocketRank,
+  trainer?: TrainerClass,
+): GoldBand {
+  if (landmark === Landmark.GymLeader) {
+    return GYM_GOLD;
+  }
+  if (landmark === Landmark.EliteFour) {
+    return ELITE_GOLD;
+  }
+  if (landmark === Landmark.Champion) {
+    return CHAMPION_GOLD;
+  }
+  if (landmark === Landmark.Trainer) {
+    return trainer === TrainerClass.AceTrainer ? ACE_TRAINER_GOLD : TYPE_TRAINER_GOLD;
+  }
+  if (rank === RocketRank.Giovanni) {
+    return GIOVANNI_GOLD;
+  }
+  return rank === RocketRank.Executive ? EXECUTIVE_GOLD : ROCKET_GRUNT_GOLD;
+}
 
 /**
  * The purse a beaten stop pays, seeded so each winner's roll is their
- * own and asking again answers the same. `boss` draws from the top
- * range: Giovanni's, and the Champion's — the two rarest wins a walk
- * can land
+ * own and asking again answers the same
  */
-export function rollStopGold(seed: string, boss: boolean): number {
+export function rollStopGold(seed: string, [floor, ceiling]: GoldBand): number {
   const rng = new AleaRNG(seed);
-  const floor = boss ? GIOVANNI_GOLD_MIN : STOP_GOLD_MIN;
-  const ceiling = boss ? GIOVANNI_GOLD_MAX : STOP_GOLD_MAX;
 
   return floor + Math.floor(rng.random() * (ceiling - floor + 1));
 }
 
 /**
- * Whether a stop's purse is a boss purse: Giovanni on a Team Rocket
- * cell, or the Champion on their own
+ * What the rungs above a gym leave behind besides the purse, as the
+ * bands their one item is rolled off.
+ *
+ * The gym leader is not here: theirs is a TM of their own type rather
+ * than a draw. An executive drops what a thief was carrying, which is
+ * the rare band and little else; the Elite Four reach the prized band
+ * properly; and a champion mostly does.
+ *
+ * **Nobody drops out of the special band.** A chunk keeps a champion's
+ * seat the way it keeps a gym's, and it can be fought again every
+ * window: at that frequency a Master Ball or a Shiny Charm would stop
+ * being a find of a lifetime within a week. The special band stays
+ * the ground's alone.
+ *
+ * Each set sums to 1, so none of them can fall through to the base
+ * band either
  */
-export function isBossPurse(landmark: Landmark, rank: RocketRank): boolean {
-  return (
-    landmark === Landmark.Champion ||
-    (landmark === Landmark.TeamRocket && rank === RocketRank.Giovanni)
-  );
+export const EXECUTIVE_LOOT_ODDS: ItemBandOdds = {
+  special: 0,
+  prized: 0.05,
+  rare: 0.95,
+  uncommon: 0,
+};
+
+export const ELITE_LOOT_ODDS: ItemBandOdds = {
+  special: 0,
+  prized: 0.3,
+  rare: 0.7,
+  uncommon: 0,
+};
+
+export const CHAMPION_LOOT_ODDS: ItemBandOdds = {
+  special: 0,
+  prized: 0.6,
+  rare: 0.4,
+  uncommon: 0,
+};
+
+/**
+ * The one item a beaten expert leaves, or null for the rungs that
+ * leave none: a duelling trainer, a grunt, and the gym leader, whose
+ * own gift is a machine
+ */
+export function rollStopLoot(
+  landmark: Landmark,
+  rank: RocketRank,
+  random: () => number,
+): Items | null {
+  if (landmark === Landmark.EliteFour) {
+    return pickItem(ITEM_POOL, random, ELITE_LOOT_ODDS);
+  }
+  if (landmark === Landmark.Champion) {
+    return pickItem(ITEM_POOL, random, CHAMPION_LOOT_ODDS);
+  }
+  if (landmark === Landmark.TeamRocket && rank === RocketRank.Executive) {
+    return pickItem(ITEM_POOL, random, EXECUTIVE_LOOT_ODDS);
+  }
+  return null;
 }
 
 /**

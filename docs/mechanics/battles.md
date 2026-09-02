@@ -330,20 +330,32 @@ A battle leaves a party as it found it. Lost health, eaten berries and carried
 statuses all persist into the next fight, which is what makes a party something to
 look after rather than a row of levels.
 
+The purse climbs with the fight. It is read against the **valuables**, which are
+the only prices the world sets rather than a shopkeeper: a nugget off the ground
+sells for 10,000, so nothing worth beating pays less than tripping over one.
+
 | Fight                 | Gold                         | What else                                |
 | --------------------- | ---------------------------- | ---------------------------------------- |
-| **Mythical raid**     | 3,000                        | The mythical, at level 30                |
-| **Legendary raid**    | 2,000                        | The legendary, at level 50               |
-| **Shadow raid**       | 1,000                        | A shadow, at level 25                    |
-| **Team Rocket grunt** | 1,000 to 10,000              | One of the three it was not fighting with, at level 10 |
-| **Rocket executive**  | 1,000 to 10,000              | Any one of their six, at level 10        |
-| **Giovanni**          | 10,000 to 50,000             | Any one of his six, the legendary included |
-| **Duelling trainer**  | 1,000 to 10,000              | Nothing: they keep their party           |
-| **Gym leader**        | 1,000 to 10,000              | Their badge, and a machine of their type |
-| **Elite Four**        | 1,000 to 10,000              | Their mark                               |
-| **Champion**          | 10,000 to 50,000             | The region's title                       |
+| **Duelling trainer**  | 5,000 to 15,000              | Nothing: they keep their party           |
+| **Ace Trainer**       | 25,000 to 60,000             | The same                                 |
+| **Team Rocket grunt** | 5,000 to 15,000              | One of the three it was not fighting with, at level 10 |
+| **Rocket executive**  | 40,000 to 90,000             | Any one of their six, and an item they were carrying |
+| **Giovanni**          | 120,000 to 250,000           | Any one of his six, the legendary included |
+| **Gym leader**        | 20,000 to 50,000             | Their badge, and a machine of their type |
+| **Elite Four**        | 50,000 to 110,000            | Their mark, and an item                  |
+| **Champion**          | 150,000 to 300,000           | The league's title, and an item          |
+| **Shadow raid**       | 35,000                       | A shadow, at level 25                    |
+| **Legendary raid**    | 80,000                       | The legendary, at level 50               |
+| **Mythical raid**     | 200,000                      | The mythical, at level 30                |
 | **Gym seat**          | A tenth of the loser's purse | The cell, if you want to sit on it       |
 | **Duel**              | Nothing                      | Nothing                                  |
+
+The item an executive, one of the Elite Four or a Champion leaves is drawn from
+the same pool the ground hides things in, weighted higher the further up the
+ladder the fight is. **Nothing there reaches the rarest band**: a Master Ball or
+a Shiny Charm stays something the world hides, because a champion's seat can be
+fought again every window and a find of a lifetime handed out that often is
+neither.
 
 A raid pays everyone the same: the boss decides the purse, not who landed the
 last hit. Everything else **rolls its own purse per winner** inside the range

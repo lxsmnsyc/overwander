@@ -30,6 +30,7 @@ import registerItems, { getItemData } from '../../src/data/items';
 import { isValuable } from '../../src/data/items/valuables';
 import {
   ITEM_BAND_ODDS,
+  type ItemBand,
   PHENOMENON_BAND_ODDS,
   getItemBand,
   getItemOdds,
@@ -85,10 +86,13 @@ import ChunkSnapshot, {
 import {
   BANNED_BOSS_SPECIES,
   BOSS_ALLIANCE,
+  LEGENDARY_RAID_GOLD,
   LEGENDARY_RAID_REWARD_LEVEL,
+  MYTHICAL_RAID_GOLD,
   MYTHICAL_RAID_REWARD_LEVEL,
   PLAYER_ALLIANCE,
   RAID_BOSS_LEVEL,
+  SHADOW_RAID_GOLD,
   SHADOW_RAID_REWARD_LEVEL,
   canStageBoss,
   createRaidBossSnapshot,
@@ -96,20 +100,24 @@ import {
 } from '../../src/overworld/raid';
 import { collectAftermath, createRaidBattle } from '../../src/overworld/raid-battle';
 import {
+  CHAMPION_GOLD,
   CHAMPION_PARTY_LEVELS,
+  ELITE_GOLD,
   ELITE_PARTY_LEVELS,
-  GIOVANNI_GOLD_MAX,
-  GIOVANNI_GOLD_MIN,
+  GIOVANNI_GOLD,
   GIOVANNI_PARTY_LEVELS,
+  GYM_GOLD,
   GYM_PARTY_LEVELS,
+  type GoldBand,
+  ROCKET_GRUNT_GOLD,
   ROCKET_PARTY_LEVELS,
   ROCKET_REWARD_LEVEL,
-  STOP_GOLD_MAX,
-  STOP_GOLD_MIN,
+  TYPE_TRAINER_GOLD,
   createRocketParty,
-  isBossPurse,
   rocketPartyLevels,
   rollStopGold,
+  rollStopLoot,
+  stopGoldBand,
   stopPartyLevels,
 } from '../../src/overworld/rocket';
 import {
@@ -1312,16 +1320,112 @@ describe('world', () => {
   it('rolls a purse in the stop’s own range, the same on every ask', () => {
     for (let winner = 0; winner < 32; winner++) {
       const seed = `stop:purse:player-${winner}`;
-      const purse = rollStopGold(seed, false);
-      const bounty = rollStopGold(seed, true);
+      const purse = rollStopGold(seed, ROCKET_GRUNT_GOLD);
+      const bounty = rollStopGold(seed, GIOVANNI_GOLD);
 
-      expect(purse).toBeGreaterThanOrEqual(STOP_GOLD_MIN);
-      expect(purse).toBeLessThanOrEqual(STOP_GOLD_MAX);
-      expect(bounty).toBeGreaterThanOrEqual(GIOVANNI_GOLD_MIN);
-      expect(bounty).toBeLessThanOrEqual(GIOVANNI_GOLD_MAX);
+      expect(purse).toBeGreaterThanOrEqual(ROCKET_GRUNT_GOLD[0]);
+      expect(purse).toBeLessThanOrEqual(ROCKET_GRUNT_GOLD[1]);
+      expect(bounty).toBeGreaterThanOrEqual(GIOVANNI_GOLD[0]);
+      expect(bounty).toBeLessThanOrEqual(GIOVANNI_GOLD[1]);
       // Seeded: asking again answers the same
-      expect(rollStopGold(seed, false)).toBe(purse);
+      expect(rollStopGold(seed, ROCKET_GRUNT_GOLD)).toBe(purse);
     }
+  });
+
+  it('climbs the purse with the rung, and pays the ladder in order', () => {
+    const rungs: [name: string, band: GoldBand][] = [
+      ['a type expert', stopGoldBand(Landmark.Trainer, RocketRank.Grunt, TrainerClass.BugCatcher)],
+      ['a grunt', stopGoldBand(Landmark.TeamRocket, RocketRank.Grunt)],
+      ['a gym leader', stopGoldBand(Landmark.GymLeader, RocketRank.Grunt)],
+      ['an Ace Trainer', stopGoldBand(Landmark.Trainer, RocketRank.Grunt, TrainerClass.AceTrainer)],
+      ['an executive', stopGoldBand(Landmark.TeamRocket, RocketRank.Executive)],
+      ['the Elite Four', stopGoldBand(Landmark.EliteFour, RocketRank.Grunt)],
+      ['Giovanni', stopGoldBand(Landmark.TeamRocket, RocketRank.Giovanni)],
+      ['the Champion', stopGoldBand(Landmark.Champion, RocketRank.Grunt)],
+    ];
+
+    for (const [at, [name, [floor, ceiling]]] of rungs.entries()) {
+      expect(floor, name).toBeLessThan(ceiling);
+
+      if (at === 0) {
+        continue;
+      }
+
+      const [below, over] = rungs[at - 1][1];
+
+      // No rung pays less than the one under it, floor and ceiling
+      // alike
+      expect(floor, name).toBeGreaterThanOrEqual(below);
+      expect(ceiling, name).toBeGreaterThanOrEqual(over);
+    }
+
+    // And the ladder actually climbs: the top of it is worth an order
+    // of magnitude more than the bottom
+    expect(CHAMPION_GOLD[0]).toBeGreaterThanOrEqual(TYPE_TRAINER_GOLD[1] * 10);
+
+    // Two rungs share a purse, and it is the two that share a level
+    // band: a grunt is a thief with a roadside party
+    expect(ROCKET_GRUNT_GOLD).toEqual(TYPE_TRAINER_GOLD);
+    expect(ROCKET_PARTY_LEVELS).toEqual(TYPE_TRAINER_LEVELS);
+
+    // A nugget off the ground sells for 10,000, so nothing on the
+    // ladder may be worth less than tripping over one
+    expect(rungs[0][1][1]).toBeGreaterThanOrEqual(getItemData(Items.Nugget).sell);
+
+    // And the raids are read off the same ladder, flat because a raid
+    // pays everybody who fought it
+    expect(SHADOW_RAID_GOLD).toBeGreaterThan(GYM_GOLD[0]);
+    expect(SHADOW_RAID_GOLD).toBeLessThan(GYM_GOLD[1]);
+    expect(LEGENDARY_RAID_GOLD).toBeGreaterThan(ELITE_GOLD[0]);
+    expect(LEGENDARY_RAID_GOLD).toBeLessThan(ELITE_GOLD[1]);
+    // A mythical is the largest purse there is, and still under a
+    // champion's middle
+    expect(MYTHICAL_RAID_GOLD).toBeGreaterThan(LEGENDARY_RAID_GOLD);
+    expect(MYTHICAL_RAID_GOLD).toBeLessThan(CHAMPION_GOLD[1]);
+  });
+
+  it('leaves an item behind only on the rungs that have one', () => {
+    const rolls = (landmark: Landmark, rank: RocketRank): Items[] => {
+      const rng = new AleaRNG(`loot-${landmark}-${rank}`);
+
+      return Array.from({ length: 400 }, () =>
+        rollStopLoot(landmark, rank, () => rng.random()),
+      ).filter((item): item is Items => item != null);
+    };
+
+    // A duelling trainer keeps their party and their pockets, and so
+    // do the two lower Team Rocket ranks. The gym leader is not here
+    // either: theirs is a machine of their own type
+    expect(rollStopLoot(Landmark.Trainer, RocketRank.Grunt, () => 0.5)).toBeNull();
+    expect(rollStopLoot(Landmark.TeamRocket, RocketRank.Grunt, () => 0.5)).toBeNull();
+    expect(rollStopLoot(Landmark.GymLeader, RocketRank.Grunt, () => 0.5)).toBeNull();
+
+    const executive = rolls(Landmark.TeamRocket, RocketRank.Executive);
+    const elite = rolls(Landmark.EliteFour, RocketRank.Grunt);
+    const champion = rolls(Landmark.Champion, RocketRank.Grunt);
+
+    // Every one of them lands something, and never out of the base
+    // band: the odds shut it out
+    for (const drawn of [executive, elite, champion]) {
+      expect(drawn).toHaveLength(400);
+      for (const item of drawn) {
+        expect(getItemBand(item)).not.toBe('base');
+        expect(getItemBand(item)).not.toBe('uncommon');
+      }
+    }
+
+    const share = (items: Items[], band: ItemBand): number =>
+      items.filter((item) => getItemBand(item) === band).length / items.length;
+
+    // A thief carries loot and the league reaches higher, but nobody
+    // reaches the special band: a champion's seat can be fought every
+    // window, and a Master Ball handed out at that rate is not a find
+    // of a lifetime any more
+    for (const drawn of [executive, elite, champion]) {
+      expect(share(drawn, 'special')).toBe(0);
+    }
+    expect(share(elite, 'prized')).toBeGreaterThan(share(executive, 'prized'));
+    expect(share(champion, 'prized')).toBeGreaterThan(share(elite, 'prized'));
   });
 
   it('keeps one leader to a gym and fields 6 of their type', () => {
@@ -1443,14 +1547,13 @@ describe('world', () => {
     );
     expect(stopPartyLevels(Landmark.Trainer, RocketRank.Grunt)).toEqual(ROCKET_PARTY_LEVELS);
 
-    // Only the two rarest wins pay from the top range: a gym would
-    // otherwise be a 6-strong purse farmed every window
-    expect(isBossPurse(Landmark.TeamRocket, RocketRank.Giovanni)).toBe(true);
-    expect(isBossPurse(Landmark.TeamRocket, RocketRank.Executive)).toBe(false);
-    expect(isBossPurse(Landmark.TeamRocket, RocketRank.Grunt)).toBe(false);
-    expect(isBossPurse(Landmark.Champion, RocketRank.Grunt)).toBe(true);
-    expect(isBossPurse(Landmark.EliteFour, RocketRank.Grunt)).toBe(false);
-    expect(isBossPurse(Landmark.GymLeader, RocketRank.Grunt)).toBe(false);
+    // The purse is read the same way, so a Team Rocket cell is priced
+    // by who is standing on it rather than by what they brought
+    expect(stopGoldBand(Landmark.TeamRocket, RocketRank.Giovanni)).toEqual(GIOVANNI_GOLD);
+    expect(stopGoldBand(Landmark.TeamRocket, RocketRank.Grunt)).toEqual(ROCKET_GRUNT_GOLD);
+    expect(stopGoldBand(Landmark.Champion, RocketRank.Grunt)).toEqual(CHAMPION_GOLD);
+    expect(stopGoldBand(Landmark.EliteFour, RocketRank.Grunt)).toEqual(ELITE_GOLD);
+    expect(stopGoldBand(Landmark.GymLeader, RocketRank.Grunt)).toEqual(GYM_GOLD);
   });
 
   it('offers any of the boss’ six as the reward', () => {

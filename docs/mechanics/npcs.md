@@ -153,12 +153,13 @@ Every player fights the cell separately. One player's victory closes nothing for
 anybody else, and losing costs nothing but the attempt: they are still standing
 and may be challenged again until the three hours are up.
 
-Beating one pays a purse rolled between **1,000 and 10,000 gold**, drawn per
-winner so the same fight is worth a different amount to the next player, and
-leaves a pokemon behind, shadowed and at level 10. A grunt leaves one of the
-three it was **not** fighting with — the common and the two uncommons, never its
-best. An executive leaves any of its six. **Giovanni** leaves any of his, the
-legendary included, and pays between 10,000 and 50,000.
+Beating one pays a purse drawn per winner, so the same fight is worth a different
+amount to the next player, and leaves a pokemon behind, shadowed and at level 10.
+A grunt pays **5,000 to 15,000** and leaves one of the three it was **not**
+fighting with — the common and the two uncommons, never its best. An executive
+pays **40,000 to 90,000**, leaves any of its six, and drops an item it was
+carrying besides. **Giovanni** pays **120,000 to 250,000** and leaves any of his,
+the legendary included.
 
 Team Rocket is the one person at a crossroads a player can lose to. See
 [Battles](battles.md) for how the fight itself runs.
@@ -175,8 +176,8 @@ Who turns up decides what they bring:
 
 | Standing there    | What they field                                    |
 | ----------------- | -------------------------------------------------- |
-| **Ace Trainer**   | Five fully-grown pokemon of any type, levels 60-80 |
-| **A type expert** | Three to five of their own type, levels 40-60      |
+| **Ace Trainer**   | Five fully-grown pokemon of any type, levels 60-80. Pays 25,000 to 60,000 |
+| **A type expert** | Three to five of their own type, levels 40-60. Pays 5,000 to 15,000 |
 
 The type experts are the trainer classes: the Bug Catcher, the Swimmer, the Black
 Belt, the Bird Keeper, the Biker, the Hiker, the Poké Maniac, the Channeler, the
@@ -196,9 +197,9 @@ kept for good.
 
 | Who            | What they field                 | What beating them is worth                        |
 | -------------- | ------------------------------- | ------------------------------------------------- |
-| **Gym leader** | Five of their gym's type and their signature, 45-65 | Their badge, a purse, and a machine of their type |
-| **Elite Four** | Five of their seat's type and their signature, 65-85 | Their mark, and a purse |
-| **Champion**   | Their own named six, 85-100     | Their league's title, and 10,000 to 50,000        |
+| **Gym leader** | Five of their gym's type and their signature, 45-65 | Their badge, a purse of 20,000 to 50,000, and a machine of their type |
+| **Elite Four** | Five of their seat's type and their signature, 65-85 | Their mark, an item, and a purse of 50,000 to 110,000 |
+| **Champion**   | Their own named six, 85-100     | Their league's title, an item, and 150,000 to 300,000 |
 
 A gym leader's sixth is always the one pokemon they are known for, whatever the
 other five roll, and the five are drawn from every region rather than from the

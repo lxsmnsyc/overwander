@@ -223,11 +223,16 @@ that its levels did not pay for. See [Raising a pokemon](raising.md#training).
 
 | Source                                               | Amount                       |
 | ---------------------------------------------------- | ---------------------------- |
-| Clearing a mythical raid                             | 3,000                        |
-| Clearing a legendary raid                            | 2,000                        |
-| Clearing a shadow raid                               | 1,000                        |
-| Beating a grunt, a trainer, a gym leader or an elite | 1,000 to 10,000              |
-| Beating Giovanni or the Champion                     | 10,000 to 50,000             |
+| Clearing a mythical raid                             | 200,000                      |
+| Clearing a legendary raid                            | 80,000                       |
+| Clearing a shadow raid                               | 35,000                       |
+| Beating a roadside trainer or a Team Rocket grunt    | 5,000 to 15,000              |
+| Beating a gym leader                                 | 20,000 to 50,000             |
+| Beating an Ace Trainer                               | 25,000 to 60,000             |
+| Beating a Rocket executive                           | 40,000 to 90,000             |
+| Beating one of the Elite Four                        | 50,000 to 110,000            |
+| Beating Giovanni                                     | 120,000 to 250,000           |
+| Beating a Champion                                   | 150,000 to 300,000           |
 | Taking a gym seat                                    | A tenth of the loser's purse |
 | Selling an auction lot                               | The winning bid              |
 | Selling to a vendor or the chef                      | The item's price, per piece  |

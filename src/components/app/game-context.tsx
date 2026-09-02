@@ -641,15 +641,16 @@ export default function GameProvider(props: ParentProps): JSX.Element {
             tone: 'leaf',
           });
         }
-        // A leader's TM rides the same claim as the badge; the disc
-        // is already in the bag by the time there is anything to say
-        if (collected.machine != null) {
-          const machine = collected.machine;
+        // What the fight left besides the purse rides the same claim as
+        // the badge, and is already in the bag by the time there is
+        // anything to say
+        if (collected.item != null) {
+          const won = collected.item;
 
           toast.push({
-            title: getItemData(machine).name,
-            message: 'The leader’s parting gift.',
-            art: () => <ItemSprite item={machine} size={24} label="" />,
+            title: getItemData(won).name,
+            message: 'Left behind by the fight.',
+            art: () => <ItemSprite item={won} size={24} label="" />,
             tone: 'leaf',
           });
         }

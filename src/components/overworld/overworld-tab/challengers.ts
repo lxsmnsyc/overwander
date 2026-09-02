@@ -163,8 +163,8 @@ export default function challengerOf(
         levels,
         greeting: `${name} of Team Rocket blocks the way. “${ROCKET_EXECUTIVE_QUOTES[executive]}”`,
         stakes: `Six of the country's best at ${saidLevels(levels)} against as many as you
-          bring. Win and they drop a purse and one of the six. Lose and you lose nothing but
-          the fight. They will be here all window.`,
+          bring. Win and they drop a purse, one of the six, and whatever they were carrying.
+          Lose and you lose nothing but the fight. They will be here all window.`,
       };
     }
 

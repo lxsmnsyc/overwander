@@ -38,21 +38,23 @@ export const LEGENDARY_RAID_REWARD_LEVEL = 50;
 export const SHADOW_RAID_REWARD_LEVEL = 25;
 
 /**
- * What clearing one pays, on top of the pokemon. A raid is the only
- * thing in the game that hands out gold so far, and it pays each
- * fighter the same purse — the boss decides the amount, not who
- * landed the last hit. The shadow raid, being the commoner of the
- * two, pays half
+ * What clearing one pays, on top of the pokemon.
+ *
+ * A raid pays each fighter the same purse — the boss decides the
+ * amount, not who landed the last hit — so these stay flat where a
+ * stop's is rolled. What they are worth is read off the same ladder
+ * the stops are, at the middle of the rung each raid belongs to: a
+ * shadow raid is a gym leader's afternoon and a legendary is one of
+ * the Elite Four.
+ *
+ * A mythical sits under the Champion's middle rather than on it,
+ * because a raid pays everybody who fought it where a champion pays
+ * one winner. It is still the largest purse in the game, which the
+ * relic spent to open it has to be worth
  */
-export const LEGENDARY_RAID_GOLD = 2000;
-export const SHADOW_RAID_GOLD = 1000;
-
-/**
- * A mythical raid pays the most of the three. The relic that opened
- * it is spent whether or not the boss went down, so what is on the
- * table has to be worth spending one on
- */
-export const MYTHICAL_RAID_GOLD = 3000;
+export const SHADOW_RAID_GOLD = 35000;
+export const LEGENDARY_RAID_GOLD = 80000;
+export const MYTHICAL_RAID_GOLD = 200000;
 
 /**
  * The level a mythical arrives at. Lower than a legendary's, the way

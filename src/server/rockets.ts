@@ -19,9 +19,10 @@ import {
   ROCKET_ALLIANCE,
   ROCKET_REWARD_LEVEL,
   createRocketParty,
-  isBossPurse,
   rollStopGold,
+  rollStopLoot,
   stopChallenger,
+  stopGoldBand,
   stopPartyLevels,
 } from '../overworld/rocket';
 import { encounterKey } from '../overworld/safari';
@@ -381,8 +382,12 @@ export interface RocketReward {
   encounter: EncounterRecord | null;
   gold: number;
   award: Awards | null;
-  /** A gym leader's extra: one TM of their own type, first claim only */
-  machine: Items | null;
+  /**
+   * What the fight left besides the purse: a gym leader's TM of their
+   * own type, or the one item the rungs above them drop. First claim
+   * only, and null for the rungs that leave none
+   */
+  item: Items | null;
 }
 
 /**
@@ -459,7 +464,7 @@ export async function claimRocketReward(uid: string, stop: string): Promise<Rock
       where player = ${uid} and key = ${encounterKey(encounter)}
     `;
 
-    return gone.length > 0 ? null : { encounter, gold: 0, award: null, machine: null };
+    return gone.length > 0 ? null : { encounter, gold: 0, award: null, item: null };
   }
 
   // What the stop is worth — a purse rolled per winner, the top range
@@ -468,7 +473,14 @@ export async function claimRocketReward(uid: string, stop: string): Promise<Rock
   const overworld = createOverworld(uid, await resolveBuddy(uid));
   const gold = overworld.checkGoldReward(
     stop,
-    rollStopGold(`${stop}:purse:${uid}`, isBossPurse(landmark ?? Landmark.TeamRocket, rank)),
+    rollStopGold(
+      `${stop}:purse:${uid}`,
+      stopGoldBand(
+        landmark ?? Landmark.TeamRocket,
+        rank,
+        snapshot.getTrainerClass(record.cell) ?? undefined,
+      ),
+    ),
   );
 
   await grantGold(uid, gold);
@@ -493,25 +505,25 @@ export async function claimRocketReward(uid: string, stop: string): Promise<Rock
   const owed = awardFor(landmark, snapshot, record.cell);
   const award = owed != null && (await recordAwardWin(uid, owed, Date.now())) ? owed : null;
 
-  // A beaten leader also hands over one TM of their own type. Rolled
-  // per winner like the purse, and only on the claim that paid, so a
-  // stop is worth one disc however many times it is claimed
-  let machine: Items | null = null;
+  // A beaten expert also leaves something: a leader's TM of their own
+  // type, or a draw off the pool for the rungs above them. Rolled per
+  // winner like the purse, and only on the claim that paid, so a stop
+  // is worth one of them however many times it is claimed
+  const rng = new AleaRNG(`${stop}:machine:${uid}`);
+  const leader = landmark === Landmark.GymLeader ? snapshot.getGymLeader(record.cell) : null;
+  const item =
+    leader == null
+      ? rollStopLoot(landmark ?? Landmark.TeamRocket, rank, () => rng.random())
+      : rollGymMachine(leader, () => rng.random());
 
-  if (landmark === Landmark.GymLeader) {
-    const leader = snapshot.getGymLeader(record.cell);
-    const rng = new AleaRNG(`${stop}:machine:${uid}`);
-
-    machine = leader == null ? null : rollGymMachine(leader, () => rng.random());
-    if (machine != null) {
-      await grantItem(uid, machine);
-    }
+  if (item != null) {
+    await grantItem(uid, item);
   }
 
   // A trainer's and an expert's purse is the whole of what changes
   // hands: they keep their party
   if (kind === Npc.Trainer) {
-    return { encounter: null, gold, award, machine };
+    return { encounter: null, gold, award, item };
   }
 
   // Fixed rather than rolled, so the same grunt is worth the same to
@@ -523,7 +535,7 @@ export async function claimRocketReward(uid: string, stop: string): Promise<Rock
     shadow: true,
   });
 
-  return { encounter, gold, award, machine };
+  return { encounter, gold, award, item };
 }
 
 /**

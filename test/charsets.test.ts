@@ -23,7 +23,6 @@ import {
   LEGEND_NAMES,
   LEGEND_PRIZE_CHARSETS,
 } from '../src/data/overworld/experts';
-import { ACHIEVEMENT_TRAINERS } from '../src/data/achievements';
 import Npc, {
   GIOVANNI_HONOR,
   ROCKET_EXECUTIVES,
@@ -32,7 +31,7 @@ import Npc, {
   ROCKET_GRUNT_HONOR,
   npcSheets,
 } from '../src/data/overworld/npc';
-import { TRAINER_CHARSETS } from '../src/data/overworld/trainers';
+import { TRAINER_CHARSETS, TRAINER_CLASSES } from '../src/data/overworld/trainers';
 
 /**
  * The characters a trainer may go about as, and what unlocks each.
@@ -92,7 +91,9 @@ describe('the characters a trainer may wear', () => {
   });
 
   it('pairs every trainer class with its own line', () => {
-    for (const trainer of ACHIEVEMENT_TRAINERS) {
+    // Every class, not every trade: Johto's Swimmer coats are opened
+    // by Johto's swimmers
+    for (const trainer of TRAINER_CLASSES) {
       for (const sheet of TRAINER_CHARSETS[trainer]) {
         expect(getCharset(sheet)?.lock).toEqual({ kind: 'trainer', trainer });
       }

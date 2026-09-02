@@ -196,11 +196,15 @@ Burglar, the Rocker, the Psychic and the Lass.
 **A class belongs to a region.** The trades both regions put on the road are on
 it twice: a Swimmer (Kanto) and a Swimmer (Johto) are the same trade in two
 places, drawn differently, fielding what their own region grows. Their wins climb
-one line between them and pay one title, and their coats are earned apart. Johto brings four trades Kanto has none of as well: the Sage, who
-fields grass, the Skier, who fields ice, the Scientist, who fields steel, and
-its own Poké Maniac and Burglar, who field the dragons of the Dragon's Den and
-the dark that works the roads outside it. Between them every type the game grows
-has somebody on the road fielding it.
+one line between them and pay one title, and their coats are earned apart.
+
+Johto brings eleven trades Kanto has none of as well: the **Sage**, who fields
+grass, the **Skier**, ice, the **Scientist**, steel, the **Firebreather**, fire,
+the **Medium**, ghost, the **Teacher**, psychic, the **School Kid**, electric,
+the **Youngster**, ground, the **Camper**, rock, and its own **Poké Maniac** and
+**Burglar**, who field the dragons of the Dragon's Den and the dark that works
+the roads outside it. Johto's road covers every type the game grows; Kanto's
+covers what Kanto grows.
 
 Which of them may be standing on a cell is the country's own: a Swimmer is met on
 the water, a Hiker on hard ground, a Skier in the snow, the same rule the gyms

@@ -4968,25 +4968,39 @@ describe('achievements', () => {
     );
   });
 
-  it('gives Johto the types Kanto had nobody for', () => {
-    const covered = new Set(
-      TRAINER_CLASSES.map((trainer) => TRAINER_TYPES[trainer]).filter(
-        (type): type is Types => type != null,
-      ),
-    );
+  it('puts somebody of Johto’s on the road for every type it grows', () => {
     const johto: [TrainerClass, Types][] = [
       [TrainerClass.Sage, Types.Grass],
       [TrainerClass.Skier, Types.Ice],
       [TrainerClass.Scientist, Types.Steel],
       [TrainerClass.JohtoPokeManiac, Types.Dragon],
       [TrainerClass.JohtoBurglar, Types.Dark],
+      [TrainerClass.Firebreather, Types.Fire],
+      [TrainerClass.Medium, Types.Ghost],
+      [TrainerClass.Teacher, Types.Psychic],
+      [TrainerClass.SchoolKid, Types.Electric],
+      [TrainerClass.Youngster, Types.Ground],
+      [TrainerClass.Camper, Types.Rock],
     ];
 
-    // Grass, ice, steel, dragon and dark all have somebody now
     for (const [trainer, type] of johto) {
       expect(TRAINER_TYPES[trainer], TRAINER_NAMES[trainer]).toBe(type);
-      expect(covered.has(type)).toBe(true);
+      expect(TRAINER_REGIONS[trainer], TRAINER_NAMES[trainer]).toBe(Regions.Johto);
     }
+
+    // Johto's road covers every type there is a line for, which is
+    // more than Kanto's does: five of them Kanto has nobody for
+    const covered = (region: Regions): Set<Types> =>
+      new Set(
+        TRAINER_CLASSES.filter((trainer) => TRAINER_REGIONS[trainer] === region)
+          .map((trainer) => TRAINER_TYPES[trainer])
+          .filter((type): type is Types => type != null),
+      );
+
+    for (const type of ACHIEVEMENT_TYPES) {
+      expect(covered(Regions.Johto).has(type), TYPE_NAMES[type]).toBe(true);
+    }
+    expect(covered(Regions.Kanto).size).toBeLessThan(covered(Regions.Johto).size);
 
     // Every class is drawn and speaks for itself, twins included
     for (const trainer of TRAINER_CLASSES) {

@@ -20,7 +20,6 @@ import {
   LEGEND_NAMES,
   LEGEND_PRIZE_CHARSETS,
 } from './experts';
-import { ACHIEVEMENT_TRAINERS } from '../achievements';
 import Npc, {
   GIOVANNI_CHARSETS,
   GIOVANNI_HONOR,
@@ -33,7 +32,12 @@ import Npc, {
   ROCKET_GRUNT_HONOR,
   npcSheets,
 } from './npc';
-import { TRAINER_BASE_NAMES, TRAINER_CHARSETS, type TrainerClass } from './trainers';
+import {
+  TRAINER_BASE_NAMES,
+  TRAINER_CHARSETS,
+  TRAINER_CLASSES,
+  type TrainerClass,
+} from './trainers';
 
 /**
  * Who a trainer is seen as: the overworld character standing beside
@@ -192,7 +196,9 @@ function buildCharsets(): Charset[] {
       add(sheet, LEGEND_NAMES[legend], { kind: 'award', award: LEGEND_HONORS[legend] });
     }
   }
-  for (const trainer of ACHIEVEMENT_TRAINERS) {
+  // Every class rather than every trade: a coat is one region's own,
+  // and it is that region's wins that open it
+  for (const trainer of TRAINER_CLASSES) {
     for (const sheet of TRAINER_CHARSETS[trainer]) {
       add(sheet, TRAINER_BASE_NAMES[trainer], { kind: 'trainer', trainer });
     }

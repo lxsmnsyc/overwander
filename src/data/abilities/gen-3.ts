@@ -37,6 +37,11 @@ export default function registerGen3Abilities(): void {
     name: 'Minus',
     description: '1.5x Special Attack while a teammate carries Plus or Minus.',
   });
+  // Aron
+  registerAbility(Abilities.HeavyMetal, {
+    name: 'Heavy Metal',
+    description: 'Weighs 2x what it looks like.',
+  });
   // Shroomish
   registerAbility(Abilities.PoisonHeal, {
     name: 'Poison Heal',

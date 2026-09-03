@@ -19,6 +19,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Larvitar, weight: 2 },
         { species: Species.Onix, weight: 10 },
         { species: Species.Meditite, weight: 25 },
+        { species: Species.Aron, weight: 20 },
       ],
       uncommon: [
         { species: Species.Charmeleon, weight: 1 },
@@ -26,6 +27,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Graveler, weight: 5 },
         { species: Species.Quilava, weight: 1 },
         { species: Species.Pupitar, weight: 1 },
+        { species: Species.Lairon, weight: 10 },
       ],
       rare: [
         { species: Species.Charizard, weight: 2 },
@@ -44,6 +46,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Wobbuffet, weight: 5 },
         { species: Species.Steelix, weight: 5 },
         { species: Species.Medicham, weight: 10 },
+        { species: Species.Aggron, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS, { species: Species.Magby, weight: PRIZED_WEIGHT }],
       special: [
@@ -64,6 +67,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Larvitar, weight: 2 },
         { species: Species.Onix, weight: 10 },
         { species: Species.Meditite, weight: 25 },
+        { species: Species.Aron, weight: 20 },
       ],
       uncommon: [
         { species: Species.Charmeleon, weight: 1 },
@@ -71,6 +75,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Graveler, weight: 5 },
         { species: Species.Quilava, weight: 1 },
         { species: Species.Pupitar, weight: 1 },
+        { species: Species.Lairon, weight: 10 },
       ],
       rare: [
         { species: Species.Charizard, weight: 2 },
@@ -89,6 +94,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Wobbuffet, weight: 5 },
         { species: Species.Steelix, weight: 5 },
         { species: Species.Medicham, weight: 10 },
+        { species: Species.Aggron, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS, { species: Species.Magby, weight: PRIZED_WEIGHT }],
       special: [

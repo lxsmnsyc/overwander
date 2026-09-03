@@ -244,6 +244,21 @@ export function createAbsorbStageAbility(
   );
 }
 
+/**
+ * An ability that only changes what its holder weighs: Light Metal
+ * halves it and Heavy Metal doubles it, which the weight-driven moves
+ * then read (a Low Kick lands harder on the heavier one)
+ */
+export function createWeightAbility(ability: Abilities, scale: number): (battle: Battle) => void {
+  return createAbility(ability, (battle) =>
+    battle.on(BattleEvents.CheckUnitWeight, EventPriority.Post, (event) => {
+      if (event.source.hasAbility(ability)) {
+        event.weight *= scale;
+      }
+    }),
+  );
+}
+
 const HUGE_POWER_SCALE = 2;
 
 /**

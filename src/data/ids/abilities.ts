@@ -265,6 +265,8 @@ const enum Abilities {
   PurePower = 155,
   // Electrike
   Minus = 156,
+  // Aron
+  HeavyMetal = 157,
   // Special (non-standard abilities outside the regular pool)
   Boss = 100001,
   Shadow = 100002,

@@ -1,4 +1,5 @@
 import registerLotadSpecies from './lotad';
+import registerAronSpecies from './aron';
 import registerElectrikeSpecies from './electrike';
 import registerMedititeSpecies from './meditite';
 import registerMudkipSpecies from './mudkip';
@@ -12,6 +13,7 @@ import registerSlakothSpecies from './slakoth';
 import registerSurskitSpecies from './surskit';
 import registerTaillowSpecies from './taillow';
 import registerTorchicSpecies from './torchic';
+import registerTrapinchSpecies from './trapinch';
 import registerTreeckoSpecies from './treecko';
 import registerWhismurSpecies from './whismur';
 import registerWingullSpecies from './wingull';
@@ -38,4 +40,6 @@ export default function registerGen3Species(): void {
   registerSkittySpecies();
   registerMedititeSpecies();
   registerElectrikeSpecies();
+  registerAronSpecies();
+  registerTrapinchSpecies();
 }

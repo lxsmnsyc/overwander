@@ -21,6 +21,7 @@ import {
   createHugePowerAbility,
   createLimberAbility,
   createPolarityAbility,
+  createWeightAbility,
   movesOfType,
 } from './__create';
 
@@ -533,13 +534,7 @@ const setupAbilities = [
 
   // Scizor
   // https://bulbapedia.bulbagarden.net/wiki/Light_Metal_(Ability)
-  createAbility(Abilities.LightMetal, (battle) =>
-    battle.on(BattleEvents.CheckUnitWeight, EventPriority.Post, (event) => {
-      if (event.source.hasAbility(Abilities.LightMetal)) {
-        event.weight /= 2;
-      }
-    }),
-  ),
+  createWeightAbility(Abilities.LightMetal, 1 / 2),
 
   // Unown Q
   // The whole side is covered, the way the mainline has it: what the

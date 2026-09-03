@@ -15,6 +15,7 @@ import {
   createAbsorbStageAbility,
   createHugePowerAbility,
   createPolarityAbility,
+  createWeightAbility,
   movesFlagged,
 } from './__create';
 
@@ -123,6 +124,9 @@ const setupAbilities = [
         }),
       ]),
   ),
+
+  // https://bulbapedia.bulbagarden.net/wiki/Heavy_Metal_(Ability)
+  createWeightAbility(Abilities.HeavyMetal, 2),
 
   // https://bulbapedia.bulbagarden.net/wiki/Pure_Power_(Ability)
   createHugePowerAbility(Abilities.PurePower),

@@ -8,11 +8,15 @@ import { PRIZED_WEIGHT, UNOWN_SPAWNS, registerSpawnPool } from './__create';
 export default function registerDesertSpawns(): void {
   registerSpawnPool(Biome.Desert, {
     [TimeOfDay.Morning]: {
-      base: [{ species: Species.Diglett, weight: 20 }],
-      uncommon: [],
+      base: [
+        { species: Species.Diglett, weight: 20 },
+        { species: Species.Trapinch, weight: 20 },
+      ],
+      uncommon: [{ species: Species.Vibrava, weight: 10 }],
       rare: [
         { species: Species.Dugtrio, weight: 10 },
         { species: Species.Magmar, weight: 5 },
+        { species: Species.Flygon, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS, { species: Species.Magby, weight: PRIZED_WEIGHT }],
       special: [{ species: Species.Moltres, weight: 10 }],
@@ -22,13 +26,15 @@ export default function registerDesertSpawns(): void {
         { species: Species.Sandshrew, weight: 20 },
         { species: Species.Diglett, weight: 20 },
         { species: Species.Rhyhorn, weight: 20 },
+        { species: Species.Trapinch, weight: 20 },
       ],
-      uncommon: [],
+      uncommon: [{ species: Species.Vibrava, weight: 10 }],
       rare: [
         { species: Species.Sandslash, weight: 10 },
         { species: Species.Dugtrio, weight: 10 },
         { species: Species.Rhydon, weight: 10 },
         { species: Species.Magmar, weight: 5 },
+        { species: Species.Flygon, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS, { species: Species.Magby, weight: PRIZED_WEIGHT }],
       special: [{ species: Species.Moltres, weight: 10 }],

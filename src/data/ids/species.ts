@@ -417,10 +417,16 @@ export const enum Species {
   Exploud = 295,
   Skitty = 300,
   Delcatty = 301,
+  Aron = 304,
+  Lairon = 305,
+  Aggron = 306,
   Meditite = 307,
   Medicham = 308,
   Electrike = 309,
   Manectric = 310,
+  Trapinch = 328,
+  Vibrava = 329,
+  Flygon = 330,
 }
 
 /**

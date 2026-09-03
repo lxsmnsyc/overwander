@@ -2,17 +2,19 @@ import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Stages, Stats } from '../../data/constants/stats';
 import Abilities from '../../data/ids/abilities';
 import { TYPE_EFFECTIVENESS, TYPE_EFFECTIVENESS_FACTOR, Types } from '../../data/constants/types';
-import { MoveCategories, MoveFlags } from '../../data/ids/moves';
+import { DamageFlags, MoveCategories, MoveFlags } from '../../data/ids/moves';
 import { getMoveData } from '../../data/moves';
 import { Statuses } from '../../data/ids/status';
 import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import { MergedLifecycle } from '../lifecycle';
 import { STATUS_MOVES } from '../moves/status';
+import { unitTarget } from '../utils';
 import type Unit from '../unit';
 import {
   createAbility,
   createAbsorbStageAbility,
+  createClearBodyAbility,
   createHugePowerAbility,
   createPolarityAbility,
   createWeightAbility,
@@ -132,6 +134,43 @@ const setupAbilities = [
           }
         }),
       ]),
+  ),
+
+  // https://bulbapedia.bulbagarden.net/wiki/White_Smoke_(Ability)
+  createClearBodyAbility(Abilities.WhiteSmoke),
+
+  /**
+   * Color Change takes the type of whatever landed on it, and takes
+   * it whole: the holder ends up that one type rather than gaining
+   * it, so a Kecleon struck by a Water move resists what Water
+   * resists from then on
+   * https://bulbapedia.bulbagarden.net/wiki/Color_Change_(Ability)
+   */
+  createAbility(Abilities.ColorChange, (battle) =>
+    battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
+      if (
+        !event.success ||
+        event.flags & DamageFlags.Indirect ||
+        event.cause.type !== EffectType.Move ||
+        event.cause.unit === event.target ||
+        !event.target.hasAbility(Abilities.ColorChange)
+      ) {
+        return;
+      }
+      const holder = event.target;
+      const type = event.cause.unit.checkMoveType(event.cause.move, unitTarget(holder));
+
+      // Already wearing it, and nothing to show
+      if (holder.types.size === 1 && holder.types.has(type)) {
+        return;
+      }
+      holder.triggerAbility(Abilities.ColorChange);
+
+      for (const held of [...holder.types]) {
+        holder.removeType(held);
+      }
+      holder.addType(type);
+    }),
   ),
 
   /**

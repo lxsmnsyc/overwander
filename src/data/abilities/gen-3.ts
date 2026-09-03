@@ -52,6 +52,16 @@ export default function registerGen3Abilities(): void {
     name: 'Battery',
     description: "Lifts its teammates' special moves to 1.3x power.",
   });
+  // Torkoal
+  registerAbility(Abilities.WhiteSmoke, {
+    name: 'White Smoke',
+    description: 'Refuses every stat drop from anybody else.',
+  });
+  // Kecleon
+  registerAbility(Abilities.ColorChange, {
+    name: 'Color Change',
+    description: 'Turns the type of whatever move just hit it.',
+  });
   // Aron
   registerAbility(Abilities.HeavyMetal, {
     name: 'Heavy Metal',

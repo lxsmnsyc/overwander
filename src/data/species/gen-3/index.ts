@@ -5,6 +5,13 @@ import registerFireflySpecies from './fireflies';
 import registerMawileSpecies from './mawile';
 import registerMeteoriteSpecies from './meteorites';
 import registerSableyeSpecies from './sableye';
+import registerAbsolSpecies from './absol';
+import registerKecleonSpecies from './kecleon';
+import registerLuvdiscSpecies from './luvdisc';
+import registerRelicanthSpecies from './relicanth';
+import registerSpindaSpecies from './spinda';
+import registerTorkoalSpecies from './torkoal';
+import registerTropiusSpecies from './tropius';
 import registerAronSpecies from './aron';
 import registerElectrikeSpecies from './electrike';
 import registerMedititeSpecies from './meditite';
@@ -53,5 +60,12 @@ export default function registerGen3Species(): void {
   registerFireflySpecies();
   registerMawileSpecies();
   registerMeteoriteSpecies();
+  registerAbsolSpecies();
+  registerKecleonSpecies();
+  registerLuvdiscSpecies();
+  registerRelicanthSpecies();
+  registerSpindaSpecies();
+  registerTorkoalSpecies();
+  registerTropiusSpecies();
   registerSableyeSpecies();
 }

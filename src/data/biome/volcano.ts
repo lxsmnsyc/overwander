@@ -34,6 +34,7 @@ export default function registerVolcanoSpawns(): void {
         { species: Species.Golem, weight: 5 },
         { species: Species.Typhlosion, weight: 3 },
         { species: Species.Blaziken, weight: 2 },
+        { species: Species.Torkoal, weight: 12 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [
@@ -67,6 +68,7 @@ export default function registerVolcanoSpawns(): void {
         { species: Species.Golem, weight: 5 },
         { species: Species.Typhlosion, weight: 3 },
         { species: Species.Blaziken, weight: 2 },
+        { species: Species.Torkoal, weight: 12 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [

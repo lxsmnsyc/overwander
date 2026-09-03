@@ -71,6 +71,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Delcatty, weight: 10 },
         { species: Species.Plusle, weight: 8 },
         { species: Species.Minun, weight: 8 },
+        { species: Species.Spinda, weight: 12 },
       ],
       prized: [
         ...UNOWN_SPAWNS,
@@ -150,6 +151,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Delcatty, weight: 10 },
         { species: Species.Plusle, weight: 8 },
         { species: Species.Minun, weight: 8 },
+        { species: Species.Spinda, weight: 12 },
       ],
       prized: [
         ...UNOWN_SPAWNS,

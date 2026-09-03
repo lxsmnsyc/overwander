@@ -160,17 +160,30 @@ const enum Families {
   Minun = 155,
   Volbeat = 156,
   Illumise = 157,
-  // 158 through 165 are Roselia's, Gulpin's, Carvanha's, Wailmer's,
-  // Numel's, Torkoal's, Spoink's and Spinda's, in that order: every
-  // one of their dex numbers falls before this, and an id is stored
-  // in a player's candy stacks, so a later family cannot be
-  // renumbered into place
+  // 158 through 162 are Roselia's, Gulpin's, Carvanha's, Wailmer's
+  // and Numel's: every one of their dex numbers falls before this,
+  // and an id is stored in a player's candy stacks, so a later
+  // family cannot be renumbered into place
+  Torkoal = 163,
+  // 164 is Spoink's
+  Spinda = 165,
   Trapinch = 166,
-  // 167 is Cacnea's and 168 Swablu's, for the same reason
+  // 167 is Cacnea's and 168 Swablu's
   Zangoose = 169,
   Seviper = 170,
   Lunatone = 171,
   Solrock = 172,
+  // 173 through 179 are Barboach's, Corphish's, Baltoy's, Lileep's,
+  // Anorith's, Feebas' and Castform's
+  Kecleon = 180,
+  // 181 is Shuppet's and 182 Duskull's
+  Tropius = 183,
+  // 184 is Chimecho's, which starts at the Chingling below it
+  Absol = 185,
+  // 186 is Snorunt's, 187 Spheal's and 188 Clamperl's. Wynaut needs
+  // none: it joins the Wobbuffet family it hatches into
+  Relicanth = 189,
+  Luvdisc = 190,
 }
 
 export default Families;

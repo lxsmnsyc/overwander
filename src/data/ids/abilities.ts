@@ -273,6 +273,10 @@ const enum Abilities {
   ToxicBoost = 159,
   // Plusle
   Battery = 160,
+  // Torkoal
+  WhiteSmoke = 161,
+  // Kecleon
+  ColorChange = 162,
   // Special (non-standard abilities outside the regular pool)
   Boss = 100001,
   Shadow = 100002,

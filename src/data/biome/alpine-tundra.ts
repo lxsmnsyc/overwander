@@ -41,6 +41,7 @@ export default function registerAlpineTundraSpawns(): void {
       rare: [
         { species: Species.Delibird, weight: 5 },
         { species: Species.Sneasel, weight: 5 },
+        { species: Species.Absol, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [{ species: Species.Articuno, weight: 10 }],
@@ -51,6 +52,7 @@ export default function registerAlpineTundraSpawns(): void {
       rare: [
         { species: Species.Delibird, weight: 5 },
         { species: Species.Sneasel, weight: 5 },
+        { species: Species.Absol, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [{ species: Species.Articuno, weight: 10 }],

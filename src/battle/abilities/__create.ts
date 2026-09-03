@@ -245,6 +245,30 @@ export function createAbsorbStageAbility(
 }
 
 /**
+ * An ability that refuses every stat drop somebody else tries to
+ * land: Clear Body and White Smoke, which are one effect printed
+ * under two names. A drop the holder inflicts on itself still lands
+ */
+export function createClearBodyAbility(ability: Abilities): (battle: Battle) => void {
+  return createAbility(ability, (battle) =>
+    battle.on(BattleEvents.CheckUnitCanAddStage, EventPriority.Post, (event) => {
+      if (
+        event.success &&
+        event.value < 0 &&
+        event.source.hasAbility(ability) &&
+        event.cause.type !== EffectType.None &&
+        event.cause.unit !== event.source
+      ) {
+        event.success = false;
+
+        // For visual cues
+        event.source.triggerAbility(ability);
+      }
+    }),
+  );
+}
+
+/**
  * An ability that only changes what its holder weighs: Light Metal
  * halves it and Heavy Metal doubles it, which the weight-driven moves
  * then read (a Low Kick lands harder on the heavier one)

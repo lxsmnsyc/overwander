@@ -48,6 +48,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Medicham, weight: 10 },
         { species: Species.Aggron, weight: 5 },
         { species: Species.Mawile, weight: 8 },
+        { species: Species.Torkoal, weight: 12 },
       ],
       prized: [...UNOWN_SPAWNS, { species: Species.Magby, weight: PRIZED_WEIGHT }],
       special: [
@@ -97,6 +98,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Medicham, weight: 10 },
         { species: Species.Aggron, weight: 5 },
         { species: Species.Mawile, weight: 8 },
+        { species: Species.Torkoal, weight: 12 },
       ],
       prized: [...UNOWN_SPAWNS, { species: Species.Magby, weight: PRIZED_WEIGHT }],
       special: [
@@ -133,6 +135,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Wobbuffet, weight: 5 },
         { species: Species.Crobat, weight: 5 },
         { species: Species.Steelix, weight: 5 },
+        { species: Species.Absol, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS, { species: Species.Magby, weight: PRIZED_WEIGHT }],
       special: [
@@ -177,6 +180,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Wobbuffet, weight: 5 },
         { species: Species.Crobat, weight: 5 },
         { species: Species.Steelix, weight: 5 },
+        { species: Species.Absol, weight: 5 },
       ],
       prized: [
         ...UNOWN_SPAWNS,

@@ -72,6 +72,25 @@ describe('Truant', () => {
   });
 });
 
+describe('Color Change', () => {
+  it('takes the type of whatever just hit it', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const chameleon = createUnit(battle, teamA, [Types.Normal]);
+    const attacker = createUnit(battle, teamB);
+    chameleon.addAbility(Abilities.ColorChange);
+
+    const aim = { type: MoveTargetType.Unit, unit: chameleon } as const;
+    attacker.triggerMoveTarget(Moves.Ember, aim, 0);
+
+    expect([...chameleon.types]).toEqual([Types.Fire]);
+
+    // And it takes the next one whole rather than collecting them
+    attacker.triggerMoveTarget(Moves.WaterGun, aim, 0);
+
+    expect([...chameleon.types]).toEqual([Types.Water]);
+  });
+});
+
 describe('Battery', () => {
   it("lifts a teammate's special moves and never its own", () => {
     const { battle, teamA, teamB } = createBattle();

@@ -430,6 +430,8 @@ export const enum Species {
   Minun = 312,
   Volbeat = 313,
   Illumise = 314,
+  Torkoal = 324,
+  Spinda = 327,
   Trapinch = 328,
   Vibrava = 329,
   Flygon = 330,
@@ -437,6 +439,11 @@ export const enum Species {
   Seviper = 336,
   Lunatone = 337,
   Solrock = 338,
+  Kecleon = 352,
+  Tropius = 357,
+  Absol = 359,
+  Relicanth = 369,
+  Luvdisc = 370,
 }
 
 /**

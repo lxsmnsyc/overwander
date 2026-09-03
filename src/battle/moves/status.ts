@@ -147,6 +147,37 @@ export function hasAttackEffect(move: Moves): boolean {
   );
 }
 
+/**
+ * The moves that flatter somebody into swinging harder while they are
+ * too muddled to aim. Aimed at the far side they are a confusion worth
+ * the stat they hand over; aimed at the player's own side they are the
+ * stat alone, and only for a pokemon that cannot be confused at all
+ * https://bulbapedia.bulbagarden.net/wiki/Swagger_(move)
+ */
+const FLATTERY_MOVES = new Set<Moves>([Moves.Swagger]);
+
+function setupFlatteryMoves(battle: Battle): void {
+  battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Exact, (event) => {
+    if (
+      !event.usable ||
+      !FLATTERY_MOVES.has(event.move) ||
+      event.target.type !== MoveTargetType.Unit
+    ) {
+      return;
+    }
+
+    const target = event.target.unit;
+    const cause = { type: EffectType.Move, move: event.move, unit: event.source } as const;
+    const muddled =
+      target.status[Statuses.Confused] != null ||
+      target.checkStatusImmunity(Statuses.Confused, cause);
+
+    // A teammate is worth flattering only where the confusion cannot
+    // land; anybody else is worth it only where it can
+    event.usable = target.team.alliance === event.source.team.alliance ? muddled : !muddled;
+  });
+}
+
 function setupUnitStatusMoves(battle: Battle): void {
   // A status move against somebody who already carries the status, or
   // who cannot take it at all, applies nothing: the AI is told so
@@ -155,7 +186,14 @@ function setupUnitStatusMoves(battle: Battle): void {
     const status = STATUS_MOVES[event.move];
 
     // Explicit null check: the first Statuses enum member is 0
-    if (!event.usable || status == null || event.target.type !== MoveTargetType.Unit) {
+    if (
+      !event.usable ||
+      status == null ||
+      event.target.type !== MoveTargetType.Unit ||
+      // The flattery moves raise a stat as well as muddling the head,
+      // so whether they are worth casting is their own question
+      FLATTERY_MOVES.has(event.move)
+    ) {
       return;
     }
 
@@ -251,4 +289,5 @@ function setupTeamStatusMoves(battle: Battle): void {
 export function setupStatusMoves(battle: Battle): void {
   setupUnitStatusMoves(battle);
   setupTeamStatusMoves(battle);
+  setupFlatteryMoves(battle);
 }

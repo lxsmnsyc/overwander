@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   BattleEvents,
+  type CheckUnitAIMoveScoreEvent,
   type CheckUnitAIMoveUsableEvent,
   MoveTargetType,
 } from '../../../src/battle/events';
@@ -15,7 +16,11 @@ import { Moves } from '../../../src/data/ids/moves';
 import { Statuses, TeamStatuses } from '../../../src/data/ids/status';
 import { MOVE_DELAY } from '../../../src/battle/mechanics/move';
 import turns from '../../../src/battle/turn';
-import { createBattle, createUnit, pinRandom } from '../harness';
+import { type BattleHarness, createBattle, createUnit, pinRandom } from '../harness';
+import { BASE_SCORE } from '../../../src/battle/ai/score';
+import { setupChooseMoveAI } from '../../../src/battle/ai/choose-move';
+import { getMoveData } from '../../../src/data/moves';
+import { MoveTargetFlags } from '../../../src/data/ids/moves';
 
 function unitTarget(unit: Unit): { readonly type: MoveTargetType.Unit; readonly unit: Unit } {
   return { type: MoveTargetType.Unit, unit } as const;
@@ -680,5 +685,122 @@ describe('Sketch', () => {
     // would be a free permanent copy
     expect(thief.moves[Moves.Sketch]).toBeUndefined();
     expect(thief.moves[Moves.Surf]).toBeDefined();
+  });
+});
+
+describe('what a move may be aimed at on the caster’s own side', () => {
+  function usable(battle: BattleHarness['battle'], source: Unit, move: Moves, aim: Unit): boolean {
+    const event: CheckUnitAIMoveUsableEvent = {
+      id: 'CheckUnitAIMoveUsable',
+      disabled: false,
+      source,
+      move,
+      target: unitTarget(aim),
+      usable: true,
+    };
+
+    battle.emit(BattleEvents.CheckUnitAIMoveUsable, event);
+    return event.usable;
+  }
+
+  function score(battle: BattleHarness['battle'], source: Unit, move: Moves, aim: Unit): number {
+    const event: CheckUnitAIMoveScoreEvent = {
+      id: 'CheckUnitAIMoveScore',
+      disabled: false,
+      source,
+      move,
+      target: unitTarget(aim),
+      score: BASE_SCORE,
+    };
+
+    battle.emit(BattleEvents.CheckUnitAIMoveScore, event);
+    return event.score;
+  }
+
+  it('catches the caster’s own side in what shakes the whole field', () => {
+    for (const move of [Moves.Earthquake, Moves.Surf, Moves.Explosion, Moves.SelfDestruct]) {
+      const flags = getMoveData(move).target;
+
+      expect(flags & MoveTargetFlags.Ally, getMoveData(move).name).toBeTruthy();
+    }
+  });
+
+  it('drops a stat on a teammate only where Contrary turns it round', () => {
+    const { battle, teamA } = createBattle();
+    const caster = createUnit(battle, teamA);
+    const plain = createUnit(battle, teamA);
+    const contrary = createUnit(battle, teamA);
+
+    contrary.addAbility(Abilities.Contrary);
+
+    expect(usable(battle, caster, Moves.Screech, plain)).toBe(false);
+    expect(usable(battle, caster, Moves.Screech, contrary)).toBe(true);
+  });
+
+  it('flatters a teammate only where the confusion cannot land', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const caster = createUnit(battle, teamA);
+    const plain = createUnit(battle, teamA);
+    const steady = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    steady.addAbility(Abilities.OwnTempo);
+
+    expect(usable(battle, caster, Moves.Swagger, plain)).toBe(false);
+    expect(usable(battle, caster, Moves.Swagger, steady)).toBe(true);
+    // And the far side is the other way round: the muddling is the point
+    expect(usable(battle, caster, Moves.Swagger, enemy)).toBe(true);
+  });
+
+  it('reads a hit landing on its own side as a cost', () => {
+    const { battle, teamA, teamB } = createBattle();
+
+    setupChooseMoveAI(battle);
+
+    const caster = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    caster.addMove(Moves.Present);
+    expect(score(battle, caster, Moves.Present, ally)).toBeLessThan(
+      score(battle, caster, Moves.Present, enemy),
+    );
+  });
+
+  it('hands a Present to the teammate that needs feeding', () => {
+    const { battle, teamA } = createBattle();
+    const caster = createUnit(battle, teamA);
+    const whole = createUnit(battle, teamA);
+    const hurt = createUnit(battle, teamA);
+
+    hurt.setHealth(20);
+    expect(score(battle, caster, Moves.Present, hurt)).toBeGreaterThan(
+      score(battle, caster, Moves.Present, whole),
+    );
+  });
+
+  it('copies the teammate who has built the most', () => {
+    const { battle, teamA } = createBattle();
+    const caster = createUnit(battle, teamA);
+    const quiet = createUnit(battle, teamA);
+    const swept = createUnit(battle, teamA);
+
+    swept.addStage(Stages.Attack, 2, { type: 0 });
+    expect(score(battle, caster, Moves.PsychUp, swept)).toBeGreaterThan(
+      score(battle, caster, Moves.PsychUp, quiet),
+    );
+  });
+
+  it('splits its pain with the teammate that can spare it', () => {
+    const { battle, teamA } = createBattle();
+    const caster = createUnit(battle, teamA);
+    const whole = createUnit(battle, teamA);
+    const hurt = createUnit(battle, teamA);
+
+    caster.setHealth(20);
+    hurt.setHealth(60);
+    expect(score(battle, caster, Moves.PainSplit, whole)).toBeGreaterThan(
+      score(battle, caster, Moves.PainSplit, hurt),
+    );
   });
 });

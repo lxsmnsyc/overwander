@@ -219,7 +219,7 @@ export default function registerGen2Moves(): void {
     category: MoveCategories.Status,
     pp: 10,
     accuracy: 100,
-    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Ally | MoveTargetFlags.Unit,
     flags: 0,
     cast: [SpriteAnim.Sound, SpriteAnim.RearUp, SpriteAnim.Shake, SpriteAnim.Charge],
   });
@@ -442,7 +442,7 @@ export default function registerGen2Moves(): void {
     category: MoveCategories.Status,
     pp: 20,
     accuracy: 100,
-    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Ally | MoveTargetFlags.Unit,
     flags: 0,
     cast: [SpriteAnim.Appeal, SpriteAnim.Dance, SpriteAnim.RearUp, SpriteAnim.Charge],
   });
@@ -479,7 +479,7 @@ export default function registerGen2Moves(): void {
     category: MoveCategories.Status,
     pp: 15,
     accuracy: 85,
-    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Ally | MoveTargetFlags.Unit,
     flags: 0,
     cast: [SpriteAnim.Appeal, SpriteAnim.RearUp, SpriteAnim.Dance, SpriteAnim.Charge],
   });
@@ -590,7 +590,7 @@ export default function registerGen2Moves(): void {
     category: MoveCategories.Physical,
     pp: 15,
     accuracy: 90,
-    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Ally | MoveTargetFlags.Unit,
     flags: 0,
     delay: PROJECTILE_DELAY,
     cast: [SpriteAnim.Shoot, SpriteAnim.Swing, SpriteAnim.Attack],
@@ -622,7 +622,7 @@ export default function registerGen2Moves(): void {
     type: Types.Normal,
     category: MoveCategories.Status,
     pp: 20,
-    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Ally | MoveTargetFlags.Unit,
     flags: 0,
     cast: [SpriteAnim.Emit, SpriteAnim.Swell, SpriteAnim.Charge],
   });
@@ -880,7 +880,7 @@ export default function registerGen2Moves(): void {
     type: Types.Normal,
     category: MoveCategories.Status,
     pp: 10,
-    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Ally | MoveTargetFlags.Unit,
     flags: 0,
     cast: [SpriteAnim.RearUp, SpriteAnim.Swell, SpriteAnim.Charge],
   });

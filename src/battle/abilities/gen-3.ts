@@ -34,6 +34,15 @@ function isWeakTo(type: Types, target: Unit): boolean {
   return multiplier > 1;
 }
 
+/** What a poison is worth to an Attack that feeds on it. */
+const TOXIC_BOOST_SCALE = 1.5;
+
+/** What one Battery is worth to everybody else's special moves. */
+const BATTERY_BOOST = 1.3;
+
+/** Either poison counts, the way either one chips. */
+const POISONS_HELD = [Statuses.Poisoned, Statuses.BadlyPoisoned];
+
 /** What a poison hands back instead of taking, per residual. */
 const POISON_HEAL_FRACTION = 1 / 8;
 
@@ -123,6 +132,54 @@ const setupAbilities = [
           }
         }),
       ]),
+  ),
+
+  /**
+   * Stall makes its holder act last within its priority bracket. A
+   * bracket here is a cast time rather than a queue position, so the
+   * one thing it can mean is a slower wind-up
+   * https://bulbapedia.bulbagarden.net/wiki/Stall_(Ability)
+   */
+  createAbility(Abilities.Stall, (battle) =>
+    battle.on(BattleEvents.CheckUnitMovePriority, EventPriority.Post, (event) => {
+      if (event.source.hasAbility(Abilities.Stall)) {
+        event.priority -= 1;
+      }
+    }),
+  ),
+
+  // https://bulbapedia.bulbagarden.net/wiki/Toxic_Boost_(Ability)
+  createAbility(Abilities.ToxicBoost, (battle) =>
+    battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
+      if (
+        event.stat === Stats.Attack &&
+        event.source.hasAbility(Abilities.ToxicBoost) &&
+        POISONS_HELD.some((status) => event.source.status[status] != null)
+      ) {
+        event.value *= TOXIC_BOOST_SCALE;
+      }
+    }),
+  ),
+
+  /**
+   * Battery lifts what everybody else on the side throws, never its
+   * own: a pair of them stand behind each other rather than behind
+   * themselves
+   * https://bulbapedia.bulbagarden.net/wiki/Battery_(Ability)
+   */
+  createAbility(Abilities.Battery, (battle) =>
+    battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
+      if (event.power == null || getMoveData(event.move).category !== MoveCategories.Special) {
+        return;
+      }
+
+      for (const ally of event.source.team.units) {
+        if (ally !== event.source && ally.alive && ally.hasAbility(Abilities.Battery)) {
+          event.power *= BATTERY_BOOST;
+          return;
+        }
+      }
+    }),
   ),
 
   // https://bulbapedia.bulbagarden.net/wiki/Heavy_Metal_(Ability)

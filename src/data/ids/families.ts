@@ -149,16 +149,28 @@ const enum Families {
   // between these, and an id is stored in a player's candy stacks, so
   // a later family cannot be renumbered into place
   Skitty = 148,
-  // 149 is Sableye's and 150 Mawile's, for the same reason. Azurill
-  // needs none: it joins the Marill family it hatches into
+  // Azurill needs no id of its own: it joins the Marill family it
+  // hatches into
+  Sableye = 149,
+  Mawile = 150,
   Aron = 151,
   Meditite = 152,
   Electrike = 153,
-  // 154 through 165 are Plusle's, Minun's, Volbeat's, Illumise's,
-  // Roselia's, Gulpin's, Carvanha's, Wailmer's, Numel's, Torkoal's,
-  // Spoink's and Spinda's, in that order: every one of their dex
-  // numbers falls before this
+  Plusle = 154,
+  Minun = 155,
+  Volbeat = 156,
+  Illumise = 157,
+  // 158 through 165 are Roselia's, Gulpin's, Carvanha's, Wailmer's,
+  // Numel's, Torkoal's, Spoink's and Spinda's, in that order: every
+  // one of their dex numbers falls before this, and an id is stored
+  // in a player's candy stacks, so a later family cannot be
+  // renumbered into place
   Trapinch = 166,
+  // 167 is Cacnea's and 168 Swablu's, for the same reason
+  Zangoose = 169,
+  Seviper = 170,
+  Lunatone = 171,
+  Solrock = 172,
 }
 
 export default Families;

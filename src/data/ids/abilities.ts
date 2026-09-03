@@ -267,6 +267,12 @@ const enum Abilities {
   Minus = 156,
   // Aron
   HeavyMetal = 157,
+  // Sableye
+  Stall = 158,
+  // Zangoose
+  ToxicBoost = 159,
+  // Plusle
+  Battery = 160,
   // Special (non-standard abilities outside the regular pool)
   Boss = 100001,
   Shadow = 100002,

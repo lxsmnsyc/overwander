@@ -417,6 +417,8 @@ export const enum Species {
   Exploud = 295,
   Skitty = 300,
   Delcatty = 301,
+  Sableye = 302,
+  Mawile = 303,
   Aron = 304,
   Lairon = 305,
   Aggron = 306,
@@ -424,9 +426,17 @@ export const enum Species {
   Medicham = 308,
   Electrike = 309,
   Manectric = 310,
+  Plusle = 311,
+  Minun = 312,
+  Volbeat = 313,
+  Illumise = 314,
   Trapinch = 328,
   Vibrava = 329,
   Flygon = 330,
+  Zangoose = 335,
+  Seviper = 336,
+  Lunatone = 337,
+  Solrock = 338,
 }
 
 /**

@@ -8,6 +8,7 @@ import { EffectType, MoveTargetType } from '../../../src/battle/events';
 import type Unit from '../../../src/battle/unit';
 import { Statuses } from '../../../src/data/ids/status';
 import turns from '../../../src/battle/turn';
+import { getMoveData } from '../../../src/data/moves';
 import { createBattle, createUnit } from '../harness';
 
 /** A poison with somebody behind it, which is what chips at all. */
@@ -68,6 +69,38 @@ describe('Truant', () => {
     }
 
     expect(busy.status[Statuses.Recharging]).toBeUndefined();
+  });
+});
+
+describe('Battery', () => {
+  it("lifts a teammate's special moves and never its own", () => {
+    const { battle, teamA, teamB } = createBattle();
+    const cheerleader = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB);
+    cheerleader.addAbility(Abilities.Battery);
+
+    const aim = { type: MoveTargetType.Unit, unit: target } as const;
+    const bare = getMoveData(Moves.Ember).power ?? 0;
+
+    expect(ally.checkMovePower(Moves.Ember, aim)).toBeGreaterThan(bare);
+    expect(cheerleader.checkMovePower(Moves.Ember, aim)).toBe(bare);
+    // Physical moves are nobody's business
+    expect(ally.checkMovePower(Moves.Scratch, aim)).toBe(getMoveData(Moves.Scratch).power ?? 0);
+  });
+});
+
+describe('Toxic Boost', () => {
+  it('feeds on the poison it carries', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const mongoose = createUnit(battle, teamA);
+    const poisoner = createUnit(battle, teamB);
+    mongoose.addAbility(Abilities.ToxicBoost);
+
+    const bare = mongoose.checkStat(Stats.Attack, 0);
+    mongoose.addStatus(Statuses.Poisoned, laidBy(poisoner));
+
+    expect(mongoose.checkStat(Stats.Attack, 0)).toBeGreaterThan(bare);
   });
 });
 

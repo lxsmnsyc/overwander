@@ -1,4 +1,10 @@
 import registerLotadSpecies from './lotad';
+import registerCheeringPairSpecies from './cheering-pair';
+import registerFeudingPairSpecies from './feuding-pair';
+import registerFireflySpecies from './fireflies';
+import registerMawileSpecies from './mawile';
+import registerMeteoriteSpecies from './meteorites';
+import registerSableyeSpecies from './sableye';
 import registerAronSpecies from './aron';
 import registerElectrikeSpecies from './electrike';
 import registerMedititeSpecies from './meditite';
@@ -42,4 +48,10 @@ export default function registerGen3Species(): void {
   registerElectrikeSpecies();
   registerAronSpecies();
   registerTrapinchSpecies();
+  registerCheeringPairSpecies();
+  registerFeudingPairSpecies();
+  registerFireflySpecies();
+  registerMawileSpecies();
+  registerMeteoriteSpecies();
+  registerSableyeSpecies();
 }

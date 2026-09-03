@@ -69,6 +69,8 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Linoone, weight: 10 },
         { species: Species.Swellow, weight: 10 },
         { species: Species.Delcatty, weight: 10 },
+        { species: Species.Plusle, weight: 8 },
+        { species: Species.Minun, weight: 8 },
       ],
       prized: [
         ...UNOWN_SPAWNS,
@@ -146,6 +148,8 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Linoone, weight: 10 },
         { species: Species.Swellow, weight: 10 },
         { species: Species.Delcatty, weight: 10 },
+        { species: Species.Plusle, weight: 8 },
+        { species: Species.Minun, weight: 8 },
       ],
       prized: [
         ...UNOWN_SPAWNS,

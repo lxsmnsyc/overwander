@@ -37,6 +37,21 @@ export default function registerGen3Abilities(): void {
     name: 'Minus',
     description: '1.5x Special Attack while a teammate carries Plus or Minus.',
   });
+  // Sableye
+  registerAbility(Abilities.Stall, {
+    name: 'Stall',
+    description: 'Everything it casts winds up slower than it otherwise would.',
+  });
+  // Zangoose
+  registerAbility(Abilities.ToxicBoost, {
+    name: 'Toxic Boost',
+    description: '1.5x Attack while it is poisoned.',
+  });
+  // Plusle
+  registerAbility(Abilities.Battery, {
+    name: 'Battery',
+    description: "Lifts its teammates' special moves to 1.3x power.",
+  });
   // Aron
   registerAbility(Abilities.HeavyMetal, {
     name: 'Heavy Metal',

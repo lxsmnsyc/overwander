@@ -33,6 +33,7 @@ export {
 } from './day';
 export {
   SUPPORTED_METHODS,
+  canEverEvolve,
   coversHandover,
   coveredByHandover,
   getAvailableEvolutions,

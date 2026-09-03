@@ -384,6 +384,11 @@ export const enum Species {
   Mightyena = 262,
   Zigzagoon = 263,
   Linoone = 264,
+  Wurmple = 265,
+  Silcoon = 266,
+  Beautifly = 267,
+  Cascoon = 268,
+  Dustox = 269,
 }
 
 /**

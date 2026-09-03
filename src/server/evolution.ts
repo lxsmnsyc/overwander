@@ -4,7 +4,7 @@ import { ITEM_STACKS } from '../auth/stacks';
 import { getMaxHealth, getStats, rescaleHealth } from '../auth/health';
 import { getTimeOfDay } from '../data/ids/biome';
 import type { Items } from '../data/ids/items';
-import type { Species } from '../data/ids/species';
+import type { Genders, Species } from '../data/ids/species';
 import type { EvolutionContext } from '../data/species';
 import { getAvailableEvolutions, getConsumedItem, getSpeciesData } from '../data/species';
 import { Metric } from '../auth/quest-record';
@@ -85,6 +85,10 @@ export default async function evolveCatch(
       // The server's clock, not the caller's: a day evolution is not
       // opened by a client saying the sun is up
       time: getTimeOfDay(Date.now()),
+      // Written when it was met and never since: what a Wurmple spins
+      // is settled the moment it is caught
+      // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+      gender: asNumber(caught.gender) as Genders,
     };
     // What is spent as well as what is allowed: a handover that does
     // not cover this evolution pays a Linking Cord for the half it

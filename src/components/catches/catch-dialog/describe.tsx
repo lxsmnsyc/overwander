@@ -8,7 +8,7 @@ import { STAT_NAMES, STAT_ORDER, Stats, getIV, getOtherStat } from '../../../dat
 import Biome from '../../../data/ids/biome';
 import type Natures from '../../../data/ids/natures';
 import { getNatureFactor } from '../../../data/ids/natures';
-import { EvolutionMethod } from '../../../data/ids/species';
+import { EvolutionMethod, GENDER_NAMES } from '../../../data/ids/species';
 import { getLairTitle } from '../../../data/overworld/lair';
 import { type EvolutionData, SUPPORTED_METHODS, getSpeciesData } from '../../../data/species';
 import {
@@ -236,6 +236,9 @@ export function EvolutionCondition(props: { evolution: EvolutionData }): JSX.Ele
         <Show when={has(EvolutionMethod.Level) ? props.evolution.level : null}>
           {(level) => <span>Lv. {level()}</span>}
         </Show>
+        <Show when={has(EvolutionMethod.Gender) ? props.evolution.gender : null}>
+          {(gender) => <span>{GENDER_NAMES[gender()]}</span>}
+        </Show>
         <Show when={has(EvolutionMethod.UsedItem) ? item() : null} keyed>
           {(stone) => (
             <>
@@ -293,6 +296,9 @@ export function describeEvolutionMethod(evolution: EvolutionData, covered = fals
 
   if ((method & EvolutionMethod.Level) !== 0 && evolution.level != null) {
     steps.push(`reach Lv. ${evolution.level}`);
+  }
+  if ((method & EvolutionMethod.Gender) !== 0 && evolution.gender != null) {
+    steps.push(`be ${GENDER_NAMES[evolution.gender].toLowerCase()}`);
   }
   if ((method & EvolutionMethod.UsedItem) !== 0 && item != null) {
     steps.push(`use ${withArticle(describeItem(item))}`);

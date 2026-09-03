@@ -69,6 +69,7 @@ import {
 } from '../src/data/ids/status';
 import {
   EvolutionMethod,
+  Genders,
   Species,
   UNOWN_FORMS,
   getBaseFormSpecies,
@@ -250,6 +251,7 @@ import {
 import { TYPE_BOOSTERS, TYPE_BOOSTER_PRICE } from '../src/data/items/type-boosters';
 import {
   SPECIES_DAY_WEIGHT_BOOST,
+  canEverEvolve,
   coversHandover,
   getAvailableEvolutions,
   getBaseForms,
@@ -1435,6 +1437,7 @@ describe('evolution data', () => {
       canEvolve: false,
       stats: EVEN_STATS,
       friendship: BASE_FRIENDSHIP,
+      gender: Genders.Male,
       time: TimeOfDay.Day,
     };
 
@@ -1453,6 +1456,7 @@ describe('evolution data', () => {
       canEvolve: false,
       stats: EVEN_STATS,
       friendship: BASE_FRIENDSHIP,
+      gender: Genders.Male,
       time: TimeOfDay.Day,
     };
 
@@ -1485,6 +1489,7 @@ describe('evolution data', () => {
       canEvolve: true,
       stats: EVEN_STATS,
       friendship: BASE_FRIENDSHIP,
+      gender: Genders.Male,
       time: TimeOfDay.Day,
     };
 
@@ -1575,6 +1580,7 @@ describe('evolution data', () => {
       held: new Set<Items>(),
       stats: EVEN_STATS,
       friendship: BASE_FRIENDSHIP,
+      gender: Genders.Male,
       time: TimeOfDay.Day,
     };
 
@@ -1618,6 +1624,7 @@ describe('evolution data', () => {
       held: new Set<Items>(),
       stats: EVEN_STATS,
       friendship: BASE_FRIENDSHIP,
+      gender: Genders.Male,
       time: TimeOfDay.Day,
     };
 
@@ -1630,6 +1637,7 @@ describe('evolution data', () => {
         canEvolve: false,
         stats: EVEN_STATS,
         friendship: BASE_FRIENDSHIP,
+        gender: Genders.Male,
         time: TimeOfDay.Day,
       }),
     ).toEqual([]);
@@ -1640,6 +1648,7 @@ describe('evolution data', () => {
         canEvolve: true,
         stats: EVEN_STATS,
         friendship: BASE_FRIENDSHIP,
+        gender: Genders.Male,
         time: TimeOfDay.Day,
       }),
     ).toEqual([{ species: Species.Machamp, method: EvolutionMethod.Trade }]);
@@ -1654,6 +1663,7 @@ describe('evolution data', () => {
         canEvolve: false,
         stats: EVEN_STATS,
         friendship: BASE_FRIENDSHIP,
+        gender: Genders.Male,
         time: TimeOfDay.Day,
       }),
     ).toEqual([]);
@@ -1672,6 +1682,7 @@ describe('evolution data', () => {
           canEvolve: false,
           stats: EVEN_STATS,
           friendship: BASE_FRIENDSHIP,
+          gender: Genders.Male,
           time: TimeOfDay.Day,
         }),
       ).toEqual([]);
@@ -1682,6 +1693,7 @@ describe('evolution data', () => {
           canEvolve: true,
           stats: EVEN_STATS,
           friendship: BASE_FRIENDSHIP,
+          gender: Genders.Male,
           time: TimeOfDay.Day,
         }),
       ).toEqual([{ species: into, method: EvolutionMethod.Trade }]);
@@ -1704,6 +1716,7 @@ describe('evolution data', () => {
       held: new Set<Items>(),
       stats: EVEN_STATS,
       friendship: BASE_FRIENDSHIP,
+      gender: Genders.Male,
       time: TimeOfDay.Day,
     };
 
@@ -1738,6 +1751,7 @@ describe('evolution data', () => {
       canEvolve: false,
       stats: EVEN_STATS,
       friendship: BASE_FRIENDSHIP,
+      gender: Genders.Male,
       time: TimeOfDay.Day,
     };
     const cord = new Set([Items.LinkingCord]);
@@ -1774,6 +1788,7 @@ describe('evolution data', () => {
         canEvolve: false,
         stats: EVEN_STATS,
         friendship: BASE_FRIENDSHIP,
+        gender: Genders.Male,
         time: TimeOfDay.Day,
       }),
     ).toBe(false);
@@ -1788,6 +1803,7 @@ describe('evolution data', () => {
       held: new Set<Items>(),
       canEvolve: false,
       friendship: BASE_FRIENDSHIP,
+      gender: Genders.Male,
       time: TimeOfDay.Day,
     };
     const at = (attack: number, defense: number): Record<Stats, number> => ({
@@ -1817,6 +1833,7 @@ describe('evolution data', () => {
       canEvolve: false,
       stats: EVEN_STATS,
       time: TimeOfDay.Day,
+      gender: Genders.Male,
     };
 
     expect(getAvailableEvolutions({ ...context, friendship: EVOLUTION_FRIENDSHIP - 1 })).toEqual(
@@ -1836,6 +1853,7 @@ describe('evolution data', () => {
       canEvolve: false,
       stats: EVEN_STATS,
       friendship: EVOLUTION_FRIENDSHIP,
+      gender: Genders.Male,
     };
     const into = (time: TimeOfDay): Species[] =>
       getAvailableEvolutions({ ...context, time })
@@ -1857,6 +1875,44 @@ describe('evolution data', () => {
     ).toBe(false);
   });
 
+  it('splits a Wurmple by what it was born as', () => {
+    const context = {
+      species: Species.Wurmple,
+      level: 7,
+      carried: new Set<Items>(),
+      held: new Set<Items>(),
+      canEvolve: false,
+      stats: EVEN_STATS,
+      friendship: BASE_FRIENDSHIP,
+      time: TimeOfDay.Day,
+    };
+    const into = (gender: Genders): Species[] =>
+      getAvailableEvolutions({ ...context, gender }).map((entry) => entry.species);
+
+    expect(into(Genders.Male)).toEqual([Species.Silcoon]);
+    expect(into(Genders.Female)).toEqual([Species.Cascoon]);
+
+    // Neither half is open before the level either way round
+    expect(getAvailableEvolutions({ ...context, level: 6, gender: Genders.Female })).toEqual([]);
+
+    // And the branch it was never going to take is not something to
+    // work towards, so the sheet leaves it out rather than refusing it
+    const rows = (gender: Genders): Species[] =>
+      (getSpeciesData(Species.Wurmple).evolvesInto ?? [])
+        .filter((evolution) => canEverEvolve(evolution, gender))
+        .map((evolution) => evolution.species);
+
+    expect(rows(Genders.Male)).toEqual([Species.Silcoon]);
+    expect(rows(Genders.Female)).toEqual([Species.Cascoon]);
+
+    // A line that asks nothing about gender is shown to both
+    expect(
+      (getSpeciesData(Species.Charmander).evolvesInto ?? []).every((evolution) =>
+        canEverEvolve(evolution, Genders.Female),
+      ),
+    ).toBe(true);
+  });
+
   it('never offers evolutions it cannot verify', () => {
     // Weather and party composition have no stored counterpart, so an
     // evolution asking for one is refused rather than waved through,
@@ -1872,6 +1928,7 @@ describe('evolution data', () => {
           canEvolve: true,
           stats: EVEN_STATS,
           friendship: BASE_FRIENDSHIP,
+          gender: Genders.Male,
           time: TimeOfDay.Day,
         },
       ),

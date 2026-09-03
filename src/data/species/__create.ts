@@ -7,8 +7,7 @@ import type EggGroups from '../ids/egg-groups';
 import type Families from '../ids/families';
 import type { Items } from '../ids/items';
 import type { Moves } from '../ids/moves';
-import type { Species } from '../ids/species';
-import { getBaseFormSpecies } from '../ids/species';
+import { type Genders, type Species, getBaseFormSpecies } from '../ids/species';
 
 /**
  * One way a species evolves: the target species and the required
@@ -45,6 +44,13 @@ export interface EvolutionData {
    * that asks: an Espeon is a day's growing and an Umbreon a night's
    */
   time?: TimeOfDay;
+  /**
+   * The gender the evolution is open to (EvolutionMethod.Gender).
+   * Wurmple is the only line that asks: a male spins a Silcoon and a
+   * female a Cascoon, where the mainline reads a hidden number
+   * instead
+   */
+  gender?: Genders;
   /**
    * Two of its own stats set against each other
    * (EvolutionMethod.StatComparison). Tyrogue is the only line that

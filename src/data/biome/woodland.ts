@@ -26,6 +26,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Scyther, weight: 5 },
         { species: Species.Chansey, weight: 2 },
         { species: Species.Zigzagoon, weight: 25 },
+        { species: Species.Wurmple, weight: 30 },
       ],
       uncommon: [
         { species: Species.Ivysaur, weight: 1 },
@@ -36,6 +37,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Nidorino, weight: 5 },
         { species: Species.Bayleef, weight: 1 },
         { species: Species.Pikachu, weight: 5 },
+        { species: Species.Silcoon, weight: 15 },
       ],
       rare: [
         { species: Species.Venusaur, weight: 2 },
@@ -57,6 +59,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Scizor, weight: 5 },
         { species: Species.Blissey, weight: 5 },
         { species: Species.Linoone, weight: 10 },
+        { species: Species.Beautifly, weight: 10 },
       ],
       prized: [
         ...UNOWN_SPAWNS,
@@ -84,6 +87,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Scyther, weight: 5 },
         { species: Species.Chansey, weight: 2 },
         { species: Species.Zigzagoon, weight: 25 },
+        { species: Species.Wurmple, weight: 30 },
       ],
       uncommon: [
         { species: Species.Ivysaur, weight: 1 },
@@ -94,6 +98,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Nidorino, weight: 5 },
         { species: Species.Bayleef, weight: 1 },
         { species: Species.Pikachu, weight: 5 },
+        { species: Species.Silcoon, weight: 15 },
       ],
       rare: [
         { species: Species.Venusaur, weight: 2 },
@@ -115,6 +120,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Scizor, weight: 5 },
         { species: Species.Blissey, weight: 5 },
         { species: Species.Linoone, weight: 10 },
+        { species: Species.Beautifly, weight: 10 },
       ],
       prized: [
         ...UNOWN_SPAWNS,
@@ -135,6 +141,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Spinarak, weight: 20 },
         { species: Species.Pineco, weight: 20 },
         { species: Species.Zigzagoon, weight: 25 },
+        { species: Species.Wurmple, weight: 30 },
       ],
       uncommon: [
         { species: Species.Nidorina, weight: 5 },
@@ -142,6 +149,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Gloom, weight: 5 },
         { species: Species.Pikachu, weight: 5 },
         { species: Species.Jigglypuff, weight: 10 },
+        { species: Species.Cascoon, weight: 15 },
       ],
       rare: [
         { species: Species.Raticate, weight: 10 },
@@ -162,6 +170,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Bellossom, weight: 5 },
         { species: Species.Umbreon, weight: 5 },
         { species: Species.Linoone, weight: 10 },
+        { species: Species.Dustox, weight: 10 },
       ],
       prized: [
         ...UNOWN_SPAWNS,
@@ -184,6 +193,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Spinarak, weight: 20 },
         { species: Species.Pineco, weight: 20 },
         { species: Species.Zigzagoon, weight: 25 },
+        { species: Species.Wurmple, weight: 30 },
       ],
       uncommon: [
         { species: Species.Nidorina, weight: 5 },
@@ -191,6 +201,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Gloom, weight: 5 },
         { species: Species.Pikachu, weight: 5 },
         { species: Species.Jigglypuff, weight: 10 },
+        { species: Species.Cascoon, weight: 15 },
       ],
       rare: [
         { species: Species.Raticate, weight: 10 },
@@ -214,6 +225,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Bellossom, weight: 5 },
         { species: Species.Umbreon, weight: 5 },
         { species: Species.Linoone, weight: 10 },
+        { species: Species.Dustox, weight: 10 },
       ],
       prized: [
         ...UNOWN_SPAWNS,

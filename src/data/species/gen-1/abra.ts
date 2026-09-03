@@ -168,9 +168,9 @@ export default function registerAbraSpecies(): void {
     activeTimes: TimeOfDay.Day,
     learnSet: {
       level: {
-        43: [Moves.Trick],
-        33: [Moves.RolePlay],
         ...KADABRA_LEVEL_MOVES,
+        33: [Moves.RolePlay],
+        43: [Moves.Trick],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.Dig, Moves.CalmMind, Moves.LightScreen],
     },
@@ -202,9 +202,9 @@ export default function registerAbraSpecies(): void {
     activeTimes: TimeOfDay.Day,
     learnSet: {
       level: {
-        43: [Moves.Trick],
-        33: [Moves.CalmMind],
         ...KADABRA_LEVEL_MOVES,
+        33: [Moves.CalmMind],
+        43: [Moves.Trick],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.Dig, Moves.LightScreen],
     },

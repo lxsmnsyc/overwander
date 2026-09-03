@@ -34,13 +34,14 @@ export default function registerStantlerSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
+        13: [Moves.Astonish],
         1: [Moves.Tackle],
         8: [Moves.Leer],
         15: [Moves.Hypnosis],
         23: [Moves.Stomp],
-        31: [Moves.SandAttack],
+        31: [Moves.SandAttack, Moves.RolePlay],
         40: [Moves.TakeDown],
-        49: [Moves.ConfuseRay],
+        49: [Moves.ConfuseRay, Moves.CalmMind],
       },
       teachable: [
         Moves.Attract,
@@ -70,8 +71,30 @@ export default function registerStantlerSpecies(): void {
         Moves.Swift,
         Moves.Thief,
         Moves.Toxic,
+
+        Moves.BodySlam,
+        Moves.DoubleEdge,
+        Moves.Facade,
+        Moves.IronTail,
+        Moves.Mimic,
+        Moves.SecretPower,
+        Moves.ShadowBall,
+        Moves.ShockWave,
+        Moves.SkillSwap,
+        Moves.SolarBeam,
+        Moves.Substitute,
+        Moves.Thunder,
+        Moves.ThunderWave,
+        Moves.Thunderbolt,
       ],
-      egg: [Moves.Bite, Moves.Disable, Moves.LightScreen, Moves.Reflect, Moves.Spite],
+      egg: [
+        Moves.Bite,
+        Moves.Disable,
+        Moves.LightScreen,
+        Moves.Reflect,
+        Moves.Spite,
+        Moves.Extrasensory,
+      ],
     },
   });
 }

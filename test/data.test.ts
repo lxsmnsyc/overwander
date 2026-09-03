@@ -1044,7 +1044,15 @@ describe('the moves added back to the dex', () => {
     // The fairies come by it from a gen 3 tutor rather than from the
     // machine the other two carry
     expect(new Set(taught)).toEqual(
-      new Set([Species.Clefairy, Species.Clefable, Species.Chansey, Species.Mew]),
+      new Set([
+        Species.Clefairy,
+        Species.Clefable,
+        Species.Chansey,
+        Species.Mew,
+        Species.Cleffa,
+        Species.Togepi,
+        Species.Togetic,
+      ]),
     );
   });
 

@@ -33,6 +33,8 @@ export default function registerMisdreavusSpecies(): void {
     activeTimes: TimeOfDay.Night,
     learnSet: {
       level: {
+        11: [Moves.Astonish],
+        53: [Moves.Grudge],
         1: [Moves.Growl, Moves.Psywave],
         6: [Moves.Spite],
         12: [Moves.ConfuseRay],
@@ -70,8 +72,22 @@ export default function registerMisdreavusSpecies(): void {
         Moves.Thunderbolt,
         Moves.Toxic,
         Moves.ZapCannon,
+
+        Moves.AerialAce,
+        Moves.CalmMind,
+        Moves.DoubleEdge,
+        Moves.Facade,
+        Moves.Mimic,
+        Moves.SecretPower,
+        Moves.ShockWave,
+        Moves.SkillSwap,
+        Moves.Snatch,
+        Moves.Substitute,
+        Moves.Taunt,
+        Moves.ThunderWave,
+        Moves.Torment,
       ],
-      egg: [Moves.DestinyBond, Moves.Screech],
+      egg: [Moves.DestinyBond, Moves.Screech, Moves.Imprison],
     },
   });
 }

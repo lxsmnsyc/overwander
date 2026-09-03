@@ -34,6 +34,8 @@ export default function registerMurkrowSpecies(): void {
     activeTimes: TimeOfDay.Evening | TimeOfDay.Night,
     learnSet: {
       level: {
+        9: [Moves.Astonish],
+        40: [Moves.Taunt],
         1: [Moves.Peck],
         11: [Moves.Pursuit],
         16: [Moves.Haze],
@@ -67,6 +69,17 @@ export default function registerMurkrowSpecies(): void {
         Moves.Swift,
         Moves.Thief,
         Moves.Toxic,
+
+        Moves.AerialAce,
+        Moves.CalmMind,
+        Moves.DoubleEdge,
+        Moves.Facade,
+        Moves.Mimic,
+        Moves.SecretPower,
+        Moves.Snatch,
+        Moves.Substitute,
+        Moves.ThunderWave,
+        Moves.Torment,
       ],
       egg: [
         Moves.DrillPeck,
@@ -75,6 +88,10 @@ export default function registerMurkrowSpecies(): void {
         Moves.SkyAttack,
         Moves.Whirlwind,
         Moves.WingAttack,
+
+        Moves.ConfuseRay,
+        Moves.FeatherDance,
+        Moves.PerishSong,
       ],
     },
   });

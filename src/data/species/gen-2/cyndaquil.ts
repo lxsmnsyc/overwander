@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// GSC TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.Dig,
@@ -34,6 +34,14 @@ const FAMILY_TEACHABLE = [
   Moves.IronTail,
   Moves.HiddenPower,
   Moves.SunnyDay,
+  Moves.AerialAce,
+  Moves.BodySlam,
+  Moves.DoubleEdge,
+  Moves.Facade,
+  Moves.Mimic,
+  Moves.Overheat,
+  Moves.SecretPower,
+  Moves.Substitute,
 ];
 
 // What the two above the base pick up: the machines that ask for a
@@ -82,7 +90,15 @@ export default function registerCyndaquilSpecies(): void {
         46: [Moves.Flamethrower],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.Thrash, Moves.FurySwipes, Moves.Reversal, Moves.Foresight],
+      egg: [
+        Moves.Thrash,
+        Moves.FurySwipes,
+        Moves.Reversal,
+        Moves.Foresight,
+        Moves.Covet,
+        Moves.CrushClaw,
+        Moves.Howl,
+      ],
     },
   });
 
@@ -126,7 +142,7 @@ export default function registerCyndaquilSpecies(): void {
         42: [Moves.Swift],
         54: [Moves.Flamethrower],
       },
-      teachable: [...FAMILY_TEACHABLE, ...GROWN_TEACHABLE],
+      teachable: [...FAMILY_TEACHABLE, ...GROWN_TEACHABLE, Moves.BrickBreak, Moves.FocusPunch],
     },
   });
 
@@ -173,6 +189,14 @@ export default function registerCyndaquilSpecies(): void {
         Moves.FirePunch,
         Moves.ThunderPunch,
         Moves.DynamicPunch,
+
+        Moves.BrickBreak,
+        Moves.Counter,
+        Moves.FocusPunch,
+        Moves.MegaKick,
+        Moves.MegaPunch,
+        Moves.RockSlide,
+        Moves.SeismicToss,
       ],
     },
   });

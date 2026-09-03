@@ -34,7 +34,7 @@ export default function registerSneaselSpecies(): void {
     activeTimes: TimeOfDay.Evening | TimeOfDay.Night,
     learnSet: {
       level: {
-        1: [Moves.Leer, Moves.Scratch],
+        1: [Moves.Leer, Moves.Scratch, Moves.Taunt],
         9: [Moves.QuickAttack],
         17: [Moves.Screech],
         25: [Moves.FeintAttack],
@@ -81,8 +81,29 @@ export default function registerSneaselSpecies(): void {
         Moves.Swift,
         Moves.Thief,
         Moves.Toxic,
+
+        Moves.AerialAce,
+        Moves.BrickBreak,
+        Moves.CalmMind,
+        Moves.DoubleEdge,
+        Moves.Facade,
+        Moves.FocusPunch,
+        Moves.Mimic,
+        Moves.SecretPower,
+        Moves.Snatch,
+        Moves.Substitute,
+        Moves.SwordsDance,
+        Moves.Torment,
       ],
-      egg: [Moves.Bite, Moves.Counter, Moves.Foresight, Moves.Reflect, Moves.Spite],
+      egg: [
+        Moves.Bite,
+        Moves.Counter,
+        Moves.Foresight,
+        Moves.Reflect,
+        Moves.Spite,
+        Moves.CrushClaw,
+        Moves.FakeOut,
+      ],
     },
   });
 }

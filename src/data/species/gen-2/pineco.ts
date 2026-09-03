@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// GSC TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.SolarBeam,
@@ -32,6 +32,15 @@ const FAMILY_TEACHABLE = [
   Moves.RockSmash,
   Moves.Strength,
   Moves.SweetScent,
+  Moves.BodySlam,
+  Moves.Dig,
+  Moves.Earthquake,
+  Moves.Facade,
+  Moves.LightScreen,
+  Moves.Mimic,
+  Moves.RockSlide,
+  Moves.SecretPower,
+  Moves.Substitute,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Sturdy];
@@ -79,7 +88,14 @@ export default function registerPinecoSpecies(): void {
         50: [Moves.DoubleEdge],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.Flail, Moves.PinMissile, Moves.Reflect, Moves.Swift],
+      egg: [
+        Moves.Flail,
+        Moves.PinMissile,
+        Moves.Reflect,
+        Moves.Swift,
+        Moves.Counter,
+        Moves.SandTomb,
+      ],
     },
   });
 
@@ -112,6 +128,7 @@ export default function registerPinecoSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
+        31: [Moves.ZapCannon],
         1: [Moves.Protect, Moves.Tackle, Moves.SelfDestruct],
         15: [Moves.TakeDown],
         22: [Moves.RapidSpin],
@@ -120,7 +137,13 @@ export default function registerPinecoSpecies(): void {
         49: [Moves.Spikes],
         59: [Moves.DoubleEdge],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.Sandstorm, Moves.HyperBeam],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.Sandstorm,
+        Moves.HyperBeam,
+        Moves.Counter,
+        Moves.Reflect,
+      ],
     },
   });
 }

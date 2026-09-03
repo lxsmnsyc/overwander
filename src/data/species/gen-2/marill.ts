@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// GSC TM/HM and tutor moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.IceBeam,
@@ -38,6 +38,18 @@ const FAMILY_TEACHABLE = [
   Moves.DynamicPunch,
   Moves.MudSlap,
   Moves.Swift,
+  Moves.BodySlam,
+  Moves.BrickBreak,
+  Moves.Dig,
+  Moves.Dive,
+  Moves.Facade,
+  Moves.FocusPunch,
+  Moves.MegaKick,
+  Moves.MegaPunch,
+  Moves.Mimic,
+  Moves.SecretPower,
+  Moves.SeismicToss,
+  Moves.WaterPulse,
 ];
 
 const FAMILY_ABILITIES = [Abilities.ThickFat, Abilities.HugePower];
@@ -77,6 +89,7 @@ export default function registerMarillSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
+        45: [Moves.HydroPump],
         1: [Moves.Tackle],
         3: [Moves.DefenseCurl],
         6: [Moves.TailWhip],
@@ -86,7 +99,7 @@ export default function registerMarillSpecies(): void {
         28: [Moves.DoubleEdge],
         36: [Moves.RainDance],
       },
-      teachable: [...FAMILY_TEACHABLE],
+      teachable: [...FAMILY_TEACHABLE, Moves.RockSmash, Moves.Strength],
       egg: [
         Moves.Amnesia,
         Moves.BellyDrum,
@@ -96,6 +109,8 @@ export default function registerMarillSpecies(): void {
         Moves.PerishSong,
         Moves.Present,
         Moves.Supersonic,
+
+        Moves.Substitute,
       ],
     },
   });
@@ -129,13 +144,20 @@ export default function registerMarillSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
+        57: [Moves.HydroPump],
         1: [Moves.Tackle, Moves.DefenseCurl, Moves.TailWhip, Moves.WaterGun],
         15: [Moves.Rollout],
         25: [Moves.BubbleBeam],
         36: [Moves.DoubleEdge],
         48: [Moves.RainDance],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.Strength, Moves.RockSmash, Moves.HyperBeam],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.Strength,
+        Moves.RockSmash,
+        Moves.HyperBeam,
+        Moves.Substitute,
+      ],
     },
   });
 }

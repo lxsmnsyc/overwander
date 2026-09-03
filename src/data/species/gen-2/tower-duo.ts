@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// GSC TM/HM moves shared by both
+// TM, HM and tutor moves shared by both
 const DUO_TEACHABLE = [
   Moves.Toxic,
   Moves.Fly,
@@ -101,6 +101,24 @@ export default function registerTowerDuoSpecies(): void {
         Moves.Blizzard,
         Moves.IronTail,
         Moves.Headbutt,
+
+        Moves.AerialAce,
+        Moves.BodySlam,
+        Moves.CalmMind,
+        Moves.Dive,
+        Moves.DoubleEdge,
+        Moves.Facade,
+        Moves.IceBeam,
+        Moves.LightScreen,
+        Moves.Mimic,
+        Moves.Reflect,
+        Moves.SecretPower,
+        Moves.ShockWave,
+        Moves.SkillSwap,
+        Moves.Substitute,
+        Moves.ThunderWave,
+        Moves.Thunderbolt,
+        Moves.WaterPulse,
       ],
     },
   });
@@ -138,7 +156,26 @@ export default function registerTowerDuoSpecies(): void {
         44: [Moves.FireBlast],
         55: [Moves.SunnyDay],
       },
-      teachable: [...DUO_TEACHABLE, Moves.FireBlast, Moves.SolarBeam, Moves.Flash],
+      teachable: [
+        ...DUO_TEACHABLE,
+        Moves.FireBlast,
+        Moves.SolarBeam,
+        Moves.Flash,
+        Moves.AerialAce,
+        Moves.CalmMind,
+        Moves.DoubleEdge,
+        Moves.Facade,
+        Moves.Flamethrower,
+        Moves.LightScreen,
+        Moves.Mimic,
+        Moves.Overheat,
+        Moves.Reflect,
+        Moves.SecretPower,
+        Moves.ShockWave,
+        Moves.Substitute,
+        Moves.ThunderWave,
+        Moves.Thunderbolt,
+      ],
     },
   });
 }

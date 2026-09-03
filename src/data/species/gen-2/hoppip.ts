@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// GSC TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.SolarBeam,
@@ -30,6 +30,13 @@ const FAMILY_TEACHABLE = [
   Moves.SweetScent,
   Moves.DefenseCurl,
   Moves.Headbutt,
+  Moves.AerialAce,
+  Moves.BulletSeed,
+  Moves.Facade,
+  Moves.Mimic,
+  Moves.SecretPower,
+  Moves.Substitute,
+  Moves.SwordsDance,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Chlorophyll, Abilities.LeafGuard];
@@ -91,6 +98,9 @@ export default function registerHoppipSpecies(): void {
         Moves.Growl,
         Moves.PayDay,
         Moves.Reflect,
+
+        Moves.HelpingHand,
+        Moves.PsychUp,
       ],
     },
   });
@@ -134,7 +144,7 @@ export default function registerHoppipSpecies(): void {
         29: [Moves.CottonSpore],
         36: [Moves.MegaDrain],
       },
-      teachable: [...FAMILY_TEACHABLE],
+      teachable: [...FAMILY_TEACHABLE, Moves.DoubleEdge],
     },
   });
 
@@ -173,7 +183,7 @@ export default function registerHoppipSpecies(): void {
         33: [Moves.CottonSpore],
         44: [Moves.MegaDrain],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
+      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.DoubleEdge],
     },
   });
 }

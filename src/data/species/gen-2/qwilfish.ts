@@ -37,6 +37,8 @@ export default function registerQwilfishSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
+        25: [Moves.Revenge],
+        45: [Moves.DestinyBond],
         1: [Moves.PoisonSting, Moves.Spikes, Moves.Tackle],
         10: [Moves.Harden, Moves.Minimize],
         19: [Moves.WaterGun],
@@ -70,8 +72,20 @@ export default function registerQwilfishSpecies(): void {
         Moves.DefenseCurl,
         Moves.Headbutt,
         Moves.Swift,
+
+        Moves.Dive,
+        Moves.DoubleEdge,
+        Moves.Facade,
+        Moves.Mimic,
+        Moves.SecretPower,
+        Moves.ShadowBall,
+        Moves.ShockWave,
+        Moves.Substitute,
+        Moves.SwordsDance,
+        Moves.ThunderWave,
+        Moves.WaterPulse,
       ],
-      egg: [Moves.BubbleBeam, Moves.Flail, Moves.Haze, Moves.Supersonic],
+      egg: [Moves.BubbleBeam, Moves.Flail, Moves.Haze, Moves.Supersonic, Moves.Astonish],
     },
   });
 }

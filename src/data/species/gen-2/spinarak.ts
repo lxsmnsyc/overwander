@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// GSC TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.SolarBeam,
@@ -31,6 +31,12 @@ const FAMILY_TEACHABLE = [
   Moves.Frustration,
   Moves.HiddenPower,
   Moves.SunnyDay,
+  Moves.BodySlam,
+  Moves.DoubleEdge,
+  Moves.Facade,
+  Moves.Mimic,
+  Moves.SecretPower,
+  Moves.Substitute,
 ];
 
 export default function registerSpinarakSpecies(): void {
@@ -73,11 +79,18 @@ export default function registerSpinarakSpecies(): void {
         23: [Moves.LeechLife],
         30: [Moves.FurySwipes],
         37: [Moves.SpiderWeb],
-        45: [Moves.Screech],
+        45: [Moves.Screech, Moves.Agility],
         53: [Moves.Psychic],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.SonicBoom, Moves.Disable, Moves.Psybeam, Moves.BatonPass, Moves.Pursuit],
+      egg: [
+        Moves.SonicBoom,
+        Moves.Disable,
+        Moves.Psybeam,
+        Moves.BatonPass,
+        Moves.Pursuit,
+        Moves.SignalBeam,
+      ],
     },
   });
 
@@ -115,7 +128,7 @@ export default function registerSpinarakSpecies(): void {
         25: [Moves.LeechLife],
         34: [Moves.FurySwipes],
         43: [Moves.SpiderWeb],
-        53: [Moves.Screech],
+        53: [Moves.Screech, Moves.Agility],
         63: [Moves.Psychic],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],

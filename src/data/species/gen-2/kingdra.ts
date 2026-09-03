@@ -35,6 +35,7 @@ export default function registerKingdraSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
+        62: [Moves.DragonDance],
         1: [Moves.Bubble, Moves.Leer, Moves.SmokeScreen, Moves.WaterGun],
         8: [Moves.SmokeScreen],
         15: [Moves.Leer],
@@ -68,6 +69,15 @@ export default function registerKingdraSpecies(): void {
         Moves.Toxic,
         Moves.Waterfall,
         Moves.Whirlpool,
+
+        Moves.BodySlam,
+        Moves.Dive,
+        Moves.DoubleEdge,
+        Moves.Facade,
+        Moves.Mimic,
+        Moves.SecretPower,
+        Moves.Substitute,
+        Moves.WaterPulse,
       ],
     },
   });

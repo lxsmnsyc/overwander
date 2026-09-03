@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// GSC TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.FirePunch,
   Moves.IcePunch,
@@ -41,6 +41,18 @@ const FAMILY_TEACHABLE = [
   Moves.HiddenPower,
   Moves.SunnyDay,
   Moves.ShadowBall,
+  Moves.BodySlam,
+  Moves.BrickBreak,
+  Moves.Facade,
+  Moves.Flamethrower,
+  Moves.FocusPunch,
+  Moves.IceBeam,
+  Moves.Mimic,
+  Moves.SecretPower,
+  Moves.ShockWave,
+  Moves.SolarBeam,
+  Moves.Thunderbolt,
+  Moves.WaterPulse,
 ];
 
 export default function registerSentretSpecies(): void {
@@ -76,16 +88,26 @@ export default function registerSentretSpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.Tackle],
+        31: [Moves.FollowMe],
+        1: [Moves.Tackle, Moves.Scratch],
         5: [Moves.DefenseCurl],
         11: [Moves.QuickAttack],
-        17: [Moves.FurySwipes],
+        17: [Moves.FurySwipes, Moves.HelpingHand],
         25: [Moves.Slam],
         33: [Moves.Rest],
         41: [Moves.Amnesia],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.DoubleEdge, Moves.FocusEnergy, Moves.Slash, Moves.Reversal, Moves.Pursuit],
+      egg: [
+        Moves.DoubleEdge,
+        Moves.FocusEnergy,
+        Moves.Slash,
+        Moves.Reversal,
+        Moves.Pursuit,
+        Moves.Assist,
+        Moves.Substitute,
+        Moves.Trick,
+      ],
     },
   });
 
@@ -119,13 +141,24 @@ export default function registerSentretSpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
+        19: [Moves.HelpingHand],
+        37: [Moves.FollowMe],
         1: [Moves.Scratch, Moves.QuickAttack, Moves.DefenseCurl],
         18: [Moves.FurySwipes],
         28: [Moves.Slam],
         38: [Moves.Rest],
         48: [Moves.Amnesia],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.Strength],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.HyperBeam,
+        Moves.Strength,
+        Moves.Blizzard,
+        Moves.DoubleEdge,
+        Moves.RockSmash,
+        Moves.Substitute,
+        Moves.Thunder,
+      ],
     },
   });
 }

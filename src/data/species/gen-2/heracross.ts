@@ -37,6 +37,7 @@ export default function registerHeracrossSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
+        23: [Moves.BrickBreak],
         1: [Moves.Leer, Moves.Tackle],
         6: [Moves.HornAttack],
         12: [Moves.Endure],
@@ -69,8 +70,23 @@ export default function registerHeracrossSpecies(): void {
         Moves.Return,
         Moves.Frustration,
         Moves.HiddenPower,
+
+        Moves.BodySlam,
+        Moves.BulkUp,
+        Moves.Dig,
+        Moves.DoubleEdge,
+        Moves.Facade,
+        Moves.FocusPunch,
+        Moves.HyperBeam,
+        Moves.Mimic,
+        Moves.RockSlide,
+        Moves.RockTomb,
+        Moves.SecretPower,
+        Moves.SeismicToss,
+        Moves.Substitute,
+        Moves.SwordsDance,
       ],
-      egg: [Moves.Bide, Moves.Flail, Moves.Harden],
+      egg: [Moves.Bide, Moves.Flail, Moves.Harden, Moves.FalseSwipe],
     },
   });
 }

@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// GSC TM/HM and tutor moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.IceBeam,
@@ -33,6 +33,17 @@ const FAMILY_TEACHABLE = [
   Moves.Swift,
   Moves.MudSlap,
   Moves.DefenseCurl,
+  Moves.Blizzard,
+  Moves.Dive,
+  Moves.DoubleEdge,
+  Moves.Facade,
+  Moves.FireBlast,
+  Moves.Mimic,
+  Moves.Psychic,
+  Moves.SecretPower,
+  Moves.Substitute,
+  Moves.WaterPulse,
+  Moves.Waterfall,
 ];
 
 // The three beams all land together, at the same level up the line
@@ -79,7 +90,14 @@ export default function registerRemoraidSpecies(): void {
         55: [Moves.HyperBeam],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.Haze, Moves.Octazooka, Moves.Screech, Moves.Supersonic],
+      egg: [
+        Moves.Haze,
+        Moves.Octazooka,
+        Moves.Screech,
+        Moves.Supersonic,
+        Moves.RockBlast,
+        Moves.ThunderWave,
+      ],
     },
   });
 
@@ -117,7 +135,13 @@ export default function registerRemoraidSpecies(): void {
         54: [Moves.IceBeam],
         70: [Moves.HyperBeam],
       },
-      teachable: [...FAMILY_TEACHABLE],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.BulletSeed,
+        Moves.SeismicToss,
+        Moves.SludgeBomb,
+        Moves.ThunderWave,
+      ],
     },
   });
 }

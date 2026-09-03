@@ -36,6 +36,7 @@ export default function registerMantineSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
+        43: [Moves.WaterPulse],
         1: [Moves.Bubble, Moves.Tackle],
         10: [Moves.Supersonic],
         18: [Moves.BubbleBeam],
@@ -68,8 +69,25 @@ export default function registerMantineSpecies(): void {
         Moves.Toxic,
         Moves.Waterfall,
         Moves.Whirlpool,
+
+        Moves.AerialAce,
+        Moves.BodySlam,
+        Moves.Dive,
+        Moves.DoubleEdge,
+        Moves.Earthquake,
+        Moves.Facade,
+        Moves.Mimic,
+        Moves.SecretPower,
+        Moves.Substitute,
       ],
-      egg: [Moves.Haze, Moves.HydroPump, Moves.Slam, Moves.Twister],
+      egg: [
+        Moves.Haze,
+        Moves.HydroPump,
+        Moves.Slam,
+        Moves.Twister,
+        Moves.MudSport,
+        Moves.RockSlide,
+      ],
     },
   });
 }

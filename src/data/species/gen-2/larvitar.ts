@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// GSC TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.Earthquake,
@@ -32,6 +32,15 @@ const FAMILY_TEACHABLE = [
   Moves.RainDance,
   Moves.Headbutt,
   Moves.MudSlap,
+  Moves.BodySlam,
+  Moves.BrickBreak,
+  Moves.DoubleEdge,
+  Moves.Facade,
+  Moves.Mimic,
+  Moves.SecretPower,
+  Moves.Substitute,
+  Moves.Taunt,
+  Moves.Torment,
 ];
 
 // The line's own moves come at the same order the whole way up, only
@@ -83,8 +92,15 @@ export default function registerLarvitarSpecies(): void {
         50: [Moves.Earthquake],
         57: [Moves.HyperBeam],
       },
-      teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.AncientPower, Moves.FocusEnergy, Moves.Outrage, Moves.Pursuit, Moves.Stomp],
+      teachable: [...FAMILY_TEACHABLE, Moves.RockSmash],
+      egg: [
+        Moves.AncientPower,
+        Moves.FocusEnergy,
+        Moves.Outrage,
+        Moves.Pursuit,
+        Moves.Stomp,
+        Moves.DragonDance,
+      ],
     },
   });
 
@@ -127,7 +143,7 @@ export default function registerLarvitarSpecies(): void {
         56: [Moves.Earthquake],
         65: [Moves.HyperBeam],
       },
-      teachable: [...FAMILY_TEACHABLE],
+      teachable: [...FAMILY_TEACHABLE, Moves.RockSmash],
     },
   });
 
@@ -184,6 +200,20 @@ export default function registerLarvitarSpecies(): void {
         Moves.IronTail,
         Moves.Nightmare,
         Moves.Roar,
+
+        Moves.AerialAce,
+        Moves.Blizzard,
+        Moves.Counter,
+        Moves.DragonClaw,
+        Moves.FocusPunch,
+        Moves.MegaKick,
+        Moves.MegaPunch,
+        Moves.RockTomb,
+        Moves.SeismicToss,
+        Moves.ShockWave,
+        Moves.Thunder,
+        Moves.ThunderWave,
+        Moves.WaterPulse,
       ],
     },
   });

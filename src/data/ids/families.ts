@@ -137,6 +137,8 @@ const enum Families {
   Wurmple = 135,
   Lotad = 136,
   Seedot = 137,
+  Taillow = 138,
+  Wingull = 139,
 }
 
 export default Families;

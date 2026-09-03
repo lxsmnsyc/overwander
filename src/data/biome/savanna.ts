@@ -17,6 +17,7 @@ export default function registerSavannaSpawns(): void {
         { species: Species.Sunkern, weight: 25 },
         { species: Species.Phanpy, weight: 20 },
         { species: Species.Torchic, weight: 2 },
+        { species: Species.Taillow, weight: 25 },
       ],
       uncommon: [
         { species: Species.Nidorina, weight: 5 },
@@ -32,6 +33,7 @@ export default function registerSavannaSpawns(): void {
         { species: Species.Tauros, weight: 10 },
         { species: Species.Girafarig, weight: 5 },
         { species: Species.Blaziken, weight: 2 },
+        { species: Species.Swellow, weight: 10 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [],
@@ -48,6 +50,7 @@ export default function registerSavannaSpawns(): void {
         { species: Species.Sunkern, weight: 25 },
         { species: Species.Phanpy, weight: 20 },
         { species: Species.Torchic, weight: 2 },
+        { species: Species.Taillow, weight: 25 },
       ],
       uncommon: [
         { species: Species.Nidorina, weight: 5 },
@@ -65,6 +68,7 @@ export default function registerSavannaSpawns(): void {
         { species: Species.Tauros, weight: 10 },
         { species: Species.Girafarig, weight: 5 },
         { species: Species.Blaziken, weight: 2 },
+        { species: Species.Swellow, weight: 10 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [],

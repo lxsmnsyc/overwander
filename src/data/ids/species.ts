@@ -395,6 +395,10 @@ export const enum Species {
   Seedot = 273,
   Nuzleaf = 274,
   Shiftry = 275,
+  Taillow = 276,
+  Swellow = 277,
+  Wingull = 278,
+  Pelipper = 279,
 }
 
 /**

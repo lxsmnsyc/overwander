@@ -14,6 +14,7 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Seel, weight: 20 },
         { species: Species.Slowpoke, weight: 20 },
         { species: Species.Magikarp, weight: 30 },
+        { species: Species.Wingull, weight: 25 },
       ],
       uncommon: [],
       rare: [
@@ -23,6 +24,7 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Slowbro, weight: 10 },
         { species: Species.Shuckle, weight: 5 },
         { species: Species.Qwilfish, weight: 15 },
+        { species: Species.Pelipper, weight: 10 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [],
@@ -34,6 +36,7 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Seel, weight: 20 },
         { species: Species.Slowpoke, weight: 20 },
         { species: Species.Magikarp, weight: 30 },
+        { species: Species.Wingull, weight: 25 },
       ],
       uncommon: [],
       rare: [
@@ -43,6 +46,7 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Slowbro, weight: 10 },
         { species: Species.Shuckle, weight: 5 },
         { species: Species.Qwilfish, weight: 15 },
+        { species: Species.Pelipper, weight: 10 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [],

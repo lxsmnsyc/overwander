@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { NICKNAME_LIMIT, PLAYER_NAME_LIMIT, asNickname, asPlayerName } from '../src/auth/nickname';
+import type { OwnershipRecord } from '../src/auth/caught-record';
+import {
+  Acquisition,
+  isNicknameLocked,
+  isOriginalOwner,
+  originalOwner,
+} from '../src/auth/caught-record';
 
 /**
  * What a name a player writes may be made of: letters of any script,
@@ -59,5 +66,61 @@ describe('asNickname', () => {
     expect(asNickname('🔥')).toBe('');
     expect(asPlayerName('🔥')).toBe('Trainer');
     expect(asPlayerName('')).toBe('Trainer');
+  });
+});
+
+describe('who a name belongs to', () => {
+  const handover = (
+    owners: { owner: string; name?: string }[],
+  ): { history: OwnershipRecord[] } => ({
+    history: owners.map((entry) => ({
+      ...entry,
+      acquiredAt: '2026-01-01T00:00:00Z',
+      kind: Acquisition.Trade,
+      paid: null,
+      ball: null,
+    })),
+  });
+
+  it('answers who first held it', () => {
+    expect(originalOwner(handover([{ owner: 'ash' }, { owner: 'gary' }]))).toBe('ash');
+    expect(originalOwner(handover([]))).toBeNull();
+    expect(isOriginalOwner(handover([{ owner: 'ash' }, { owner: 'gary' }]), 'ash')).toBe(true);
+    expect(isOriginalOwner(handover([{ owner: 'ash' }, { owner: 'gary' }]), 'gary')).toBe(false);
+    // Nobody is the original owner of a record that kept no history
+    expect(isOriginalOwner(handover([]), 'ash')).toBe(false);
+    expect(isOriginalOwner(handover([{ owner: 'ash' }]), '')).toBe(false);
+  });
+
+  it('leaves a traded pokemon the name its first trainer gave it', () => {
+    const passed = { ...handover([{ owner: 'ash' }, { owner: 'gary' }]), nickname: 'Sparky' };
+
+    // The trainer holding it now did not name it
+    expect(isNicknameLocked(passed, 'gary')).toBe(true);
+    // The one who did may still change it, however far it has been
+    expect(isNicknameLocked(passed, 'ash')).toBe(false);
+    // An unnamed one is the new owner's to name: there is nothing
+    // there to overwrite
+    expect(isNicknameLocked({ ...passed, nickname: '' }, 'gary')).toBe(false);
+  });
+
+  it('leaves a pokemon that never changed hands alone', () => {
+    const kept = { ...handover([{ owner: 'ash' }]), nickname: 'Sparky' };
+
+    expect(isNicknameLocked(kept, 'ash')).toBe(false);
+    // And a record from before the history was kept has nothing to
+    // answer with
+    expect(isNicknameLocked({ ...handover([]), nickname: 'Sparky' }, 'gary')).toBe(false);
+  });
+
+  it('keeps the name a distributed pokemon arrived with', () => {
+    // A story's trainer is a name rather than an account, so no player
+    // signed in is the one who named it
+    const distributed = {
+      ...handover([{ owner: 'OT/Kanto', name: 'OT/Kanto' }, { owner: 'gary' }]),
+      nickname: 'Sparky',
+    };
+
+    expect(isNicknameLocked(distributed, 'gary')).toBe(true);
   });
 });

@@ -49,7 +49,9 @@ export default async function useHealingItem(
   item: Items,
 ): Promise<HealthState | null> {
   const used = await tx(async (transaction) => {
-    const caught = await readCaughtIn(transaction, catchId);
+    // What an item mends is on the row: nothing it mends is in a
+    // list
+    const caught = await readCaughtIn(transaction, catchId, true, []);
 
     // A pokemon in a live battle is fighting on a frozen snapshot;
     // healing the record under it would leave the two disagreeing.

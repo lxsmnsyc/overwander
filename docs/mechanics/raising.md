@@ -47,11 +47,18 @@ way out.
 ## Names
 
 A pokemon answers to its species until you name it. **Set nickname** on the catch
-sheet gives it one of up to twelve characters; clearing the box takes the name
+sheet gives it one of up to 24 characters; clearing the box takes the name
 back off, and it goes back to being called by its kind. A name survives evolution
 — that is rather the point of giving one — while a pokemon that was never named
 is called by whatever it has just become. Eggs cannot be named: nothing has been
 introduced yet.
+
+A name belongs to the trainer who gave it. A pokemon that arrives already named,
+won at auction, traded for, or handed over as a gift, keeps the name it came
+with: the entry reads **Named by its first trainer** and does nothing. One that
+arrives unnamed is yours to name, since there is nothing there to write over, and
+a pokemon that finds its way back to the trainer who named it may be renamed by
+them.
 
 ## Evolution
 

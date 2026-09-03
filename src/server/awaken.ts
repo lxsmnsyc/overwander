@@ -53,7 +53,9 @@ export default async function awakenAbility(
   seed: string,
 ): Promise<Awakening | null> {
   return tx(async (transaction) => {
-    const caught = await readCaughtIn(transaction, catchId);
+    // Its abilities, since a second is being drawn beside them; the
+    // rest of what it keeps is not read
+    const caught = await readCaughtIn(transaction, catchId, true, ['abilities']);
 
     // A pokemon fights on the snapshot its battle froze, so an
     // ability written mid-raid lands on a record the fight is not

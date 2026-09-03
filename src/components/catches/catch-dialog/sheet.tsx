@@ -19,7 +19,7 @@ import {
   setNickname,
   takeItem,
 } from '../../../auth/caught';
-import { getCatchName, isShadow, isShiny } from '../../../auth/caught-record';
+import { getCatchName, isNicknameLocked, isShadow, isShiny } from '../../../auth/caught-record';
 import { NICKNAME_LIMIT, asNickname } from '../../../auth/nickname';
 import { useAuth } from '../../../auth/context';
 import { answered } from '../../app/resource-reads';
@@ -722,87 +722,102 @@ export function CatchSheetBody(
    * they open its sheet — and every one of them is refused while it is
    * fighting
    */
-  const actions = (loaded: CaughtPokemon): MenuAction[] => [
-    {
-      label: isFavorite(loaded) ? 'Unfavorite' : 'Favorite',
-      disabled: props.fighting.latest === true,
-      onSelect: () => {
-        favorite(!isFavorite(loaded));
-      },
-    },
-    {
-      label: isGuarded(loaded) ? 'Unlock' : 'Lock',
-      disabled: props.fighting.latest === true,
-      onSelect: () => {
-        guard(!isGuarded(loaded));
-      },
-    },
-    {
-      label: 'Use item',
-      // Dead where there is nothing to spend. The panel it opens says
-      // "Nothing in the bag would do it any good" — which is an
-      // answer, but it appeared at the *top* of the sheet, a screen
-      // away from the menu that was pressed, so the press read as
-      // having done nothing at all. A menu entry that cannot lead
-      // anywhere should say so where the finger already is
-      disabled: frozen() || isEgg(loaded) || !hasUsableItem(),
-      onSelect: () => {
-        setPanel((open) => (open === 'items' ? null : 'items'));
-      },
-    },
-    {
-      label: 'Auction',
-      // A favorite is not to be parted with, and a lot cannot be taken
-      // back off the block once it is on it. Nobody listening for the
-      // listing is the same as nowhere to list it.
-      //
-      // `isAuctionableCatch` is the other half: the block takes one
-      // listing a day off a player, so it is for perfect values, a
-      // shiny or a legendary — anything else a bidder could walk out
-      // and catch. The server asks the same of the stored record
-      // ...and one lot at a time: while the player's own auction is
-      // still taking bids, the block has no room for another
-      disabled:
-        props.onAuction == null ||
-        props.fighting.latest === true ||
-        props.selling() === true ||
-        isFavorite(loaded) ||
-        isEgg(loaded) ||
-        !isAuctionableCatch(loaded),
-      onSelect: () => {
-        const catchId = props.catchId;
+  /**
+   * What the naming entry says: what it would do to *this* pokemon,
+   * or who the name belongs to where it is not this player's to
+   * change
+   */
+  const nameLabel = (loaded: CaughtPokemon, locked: boolean): string => {
+    if (locked) {
+      return 'Named by its first trainer';
+    }
+    return loaded.nickname === '' ? 'Set nickname' : 'Change nickname';
+  };
 
-        if (catchId == null) {
-          return;
-        }
-        // The listing dialog is the parent's to open: this one is
-        // already a dialog, and the pokemon is about to leave the
-        // records this sheet is reading
-        props.onClose();
-        props.onAuction?.(catchId);
+  const actions = (loaded: CaughtPokemon): MenuAction[] => {
+    // A name given before the pokemon changed hands stays its first
+    // trainer's to change
+    const nameLocked = isNicknameLocked(loaded, owned() ?? '');
+
+    return [
+      {
+        label: isFavorite(loaded) ? 'Unfavorite' : 'Favorite',
+        disabled: props.fighting.latest === true,
+        onSelect: () => {
+          favorite(!isFavorite(loaded));
+        },
       },
-    },
-    {
-      // Named for what it does to *this* pokemon: one that has never
-      // been named is being given a name, and one that has is having
-      // the name it answers to changed
-      label: loaded.nickname === '' ? 'Set nickname' : 'Change nickname',
-      // An egg is not named. What is in it has not been met, and a
-      // name given to a shell is a name given to nobody
-      disabled: props.fighting.latest === true || isEgg(loaded),
-      onSelect: () => {
-        // Opened on the name it already has rather than on an empty
-        // box: renaming is far commoner than naming, and a player
-        // fixing one letter should not have to type the other eleven
-        setNaming(loaded.nickname);
+      {
+        label: isGuarded(loaded) ? 'Unlock' : 'Lock',
+        disabled: props.fighting.latest === true,
+        onSelect: () => {
+          guard(!isGuarded(loaded));
+        },
       },
-    },
-    {
-      label: props.buddy.latest === props.catchId ? 'Walking with you' : 'Set buddy',
-      disabled: props.buddy.latest === props.catchId,
-      onSelect: takeAlong,
-    },
-  ];
+      {
+        label: 'Use item',
+        // Dead where there is nothing to spend. The panel it opens says
+        // "Nothing in the bag would do it any good" — which is an
+        // answer, but it appeared at the *top* of the sheet, a screen
+        // away from the menu that was pressed, so the press read as
+        // having done nothing at all. A menu entry that cannot lead
+        // anywhere should say so where the finger already is
+        disabled: frozen() || isEgg(loaded) || !hasUsableItem(),
+        onSelect: () => {
+          setPanel((open) => (open === 'items' ? null : 'items'));
+        },
+      },
+      {
+        label: 'Auction',
+        // A favorite is not to be parted with, and a lot cannot be taken
+        // back off the block once it is on it. Nobody listening for the
+        // listing is the same as nowhere to list it.
+        //
+        // `isAuctionableCatch` is the other half: the block takes one
+        // listing a day off a player, so it is for perfect values, a
+        // shiny or a legendary — anything else a bidder could walk out
+        // and catch. The server asks the same of the stored record
+        // ...and one lot at a time: while the player's own auction is
+        // still taking bids, the block has no room for another
+        disabled:
+          props.onAuction == null ||
+          props.fighting.latest === true ||
+          props.selling() === true ||
+          isFavorite(loaded) ||
+          isEgg(loaded) ||
+          !isAuctionableCatch(loaded),
+        onSelect: () => {
+          const catchId = props.catchId;
+
+          if (catchId == null) {
+            return;
+          }
+          // The listing dialog is the parent's to open: this one is
+          // already a dialog, and the pokemon is about to leave the
+          // records this sheet is reading
+          props.onClose();
+          props.onAuction?.(catchId);
+        },
+      },
+      {
+        label: nameLabel(loaded, nameLocked),
+        // An egg is not named: what is in it has not been met, and a
+        // name given to a shell is a name given to nobody
+        disabled: props.fighting.latest === true || isEgg(loaded) || nameLocked,
+        onSelect: () => {
+          // Opened on the name it already has rather than on an empty
+          // box: renaming is far commoner than naming, and a player
+          // fixing one letter should not have to type the other eleven
+          setNaming(loaded.nickname);
+        },
+      },
+      {
+        label: props.buddy.latest === props.catchId ? 'Walking with you' : 'Set buddy',
+        disabled: props.buddy.latest === props.catchId,
+        onSelect: takeAlong,
+      },
+    ];
+  };
 
   /**
    * The menu's entries as the bar reads them: nothing at all until the

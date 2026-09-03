@@ -1,6 +1,8 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { PLAYER_NAME_LIMIT, asNickname, asPlayerName } from '../../src/auth/nickname';
 import { caughtRow, service, sql } from './clients';
+import { Acquisition } from '../../src/auth/caught-record';
+import { setNickname } from '../../src/server/caught';
 
 /**
  * The nickname columns, which are the half of the rule the app cannot
@@ -69,6 +71,54 @@ describe('the columns refuse what the app would have cleaned', () => {
 
     await sql`update caught set nickname = '' where id = 'nick-1'`;
     await sql`update caught set nickname = ${"Farfetch'd"} where id = 'nick-1'`;
+  });
+});
+
+describe('a name given before a handover', () => {
+  const plant = async (id: string, owner: string, hands: string[]): Promise<void> => {
+    await sql`insert into caught ${sql({ ...caughtRow(id, owner), nickname: 'Sparky' })}`;
+
+    for (const [seq, hand] of hands.entries()) {
+      await sql`
+        insert into caught_history
+          (caught_id, seq, owner, owner_name, acquired_at_local, acquired_at_offset, kind)
+        values (${id}, ${seq}, ${hand}, null, ${new Date('2026-08-20T12:00:00Z')}, 0,
+                ${seq === 0 ? Acquisition.Caught : Acquisition.Trade})
+      `;
+    }
+  };
+
+  it('stays its first trainer’s to change', async () => {
+    const second = await service.auth.admin.createUser({
+      email: `nick-second-${Date.now()}@example.test`,
+      password: 'walking-in-the-tall-grass',
+      email_confirm: true,
+    });
+    const other = second.data.user?.id ?? '';
+
+    // Held by whoever it was handed to, named by whoever caught it
+    await plant('nick-traded', other, [uid, other]);
+    expect(await setNickname(other, 'nick-traded', 'Zap')).toBeNull();
+
+    const [held] = await sql`select nickname from caught where id = 'nick-traded'`;
+
+    expect(held.nickname).toBe('Sparky');
+
+    // The trainer who named it may still change it, and anybody may
+    // name one that answers to nothing
+    await sql`update caught set owner = ${uid} where id = 'nick-traded'`;
+    expect(await setNickname(uid, 'nick-traded', 'Zap')).toBe('Zap');
+
+    await sql`update caught set owner = ${other}, nickname = '' where id = 'nick-traded'`;
+    expect(await setNickname(other, 'nick-traded', 'Zap')).toBe('Zap');
+
+    await sql`delete from caught where id = 'nick-traded'`;
+    await service.auth.admin.deleteUser(other);
+  });
+
+  it('is the holder’s own where the pokemon never changed hands', async () => {
+    await plant('nick-kept', uid, [uid]);
+    expect(await setNickname(uid, 'nick-kept', 'Zap')).toBe('Zap');
   });
 });
 

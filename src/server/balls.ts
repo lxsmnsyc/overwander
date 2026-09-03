@@ -46,7 +46,9 @@ export default async function useBall(
   }
 
   const swapped = await tx(async (transaction) => {
-    const caught = await readCaughtIn(transaction, catchId);
+    // The ball it is in is on the row, and so is everything the
+    // refusals ask about
+    const caught = await readCaughtIn(transaction, catchId, true, []);
 
     // An egg is refused because the ball on an egg is the nest it came
     // from, and a fighting pokemon because the battle is running

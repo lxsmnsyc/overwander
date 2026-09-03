@@ -16,7 +16,7 @@ import { type Tx, tx } from './db';
 import { bumpProgress } from './quest-progress';
 import { isCatchLocked } from './locks';
 import { asNumber } from './read';
-import { grantStack, readStackIn, spendStackIn } from './stacks';
+import { grantStack, grantStacks, readStackIn, spendStackIn } from './stacks';
 
 /**
  * A stored species id, restored the same way the client's converters
@@ -51,11 +51,32 @@ export async function grantCatchCandy(
   timestamp: number,
 ): Promise<number> {
   const { family } = getSpeciesData(species);
-  const earned = getCatchCandy(species);
-  const count = isFeaturedSpecies(species, timestamp) ? earned * SPECIES_DAY_CANDY_BOOST : earned;
+  const count = catchCandyWorth(species, timestamp);
 
   await grantCandy(uid, family, count);
   return count;
+}
+
+/**
+ * What meeting one is worth in candies, before any of it is written:
+ * for a caller paying several piles at once, which is one write
+ * rather than one a pile
+ */
+export function catchCandyWorth(species: Species, timestamp: number): number {
+  const earned = getCatchCandy(species);
+
+  return isFeaturedSpecies(species, timestamp) ? earned * SPECIES_DAY_CANDY_BOOST : earned;
+}
+
+/**
+ * Several families' candies in one write, for a fight or a catch that
+ * pays more than one pile
+ */
+export async function grantCandies(
+  uid: string,
+  earned: Iterable<[Families, number]>,
+): Promise<void> {
+  return grantStacks(CANDY_STACKS, uid, earned);
 }
 
 /**
@@ -117,7 +138,9 @@ async function feed(
   ) => Promise<boolean>,
 ): Promise<number | null> {
   const grown = await tx(async (transaction) => {
-    const caught = await readCaughtIn(transaction, catchId);
+    // A level reads the row it is written on: what the pokemon knows
+    // is not part of feeding it
+    const caught = await readCaughtIn(transaction, catchId, true, []);
 
     if (
       caught == null ||

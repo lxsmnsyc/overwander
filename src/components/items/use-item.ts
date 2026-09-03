@@ -2,19 +2,22 @@ import useBall from '../../auth/balls';
 import useBottleCap from '../../auth/bottle-caps';
 import { useRareCandy } from '../../auth/candy';
 import type { CaughtPokemon } from '../../auth/caught';
-import { getMovePoints, isShadow } from '../../auth/caught-record';
+import { getCatchSlots, getMovePoints, isShadow } from '../../auth/caught-record';
 import { isEgg } from '../../auth/egg';
 import useHealingItem from '../../auth/healing';
 import { healedByItem } from '../../auth/health';
 import usePurifyingGem from '../../auth/purify';
+import useUtilityBelt from '../../auth/utility-belt';
 import { feedEffortBerry, useEffortItem } from '../../auth/training';
 import { MAX_LEVEL } from '../../data/constants/levels';
+import { MAX_SLOTS } from '../../data/constants/slots';
 import { Items, getBall, getMachineMove, isMachineItem } from '../../data/ids/items';
 import type { Moves } from '../../data/ids/moves';
 import { BERRY_EFFORT_DROPS } from '../../data/items/berries';
 import { isBottleCap, isPerfectIVs } from '../../data/items/bottle-caps';
 import { isHerbal } from '../../data/items/medicine';
 import { isPurifyingGem } from '../../data/items/purifying-gem';
+import { UTILITY_BELT_SLOT, isUtilityBelt } from '../../data/items/utility-belt';
 import { isPPItem, isVitamin } from '../../data/items/vitamins';
 import { isWing } from '../../data/items/wings';
 import { PP_UP_LIMIT } from '../../data/moves';
@@ -63,6 +66,12 @@ export function isUsableOn(item: Items, caught: CaughtPokemon): boolean {
   }
   if (isPurifyingGem(item)) {
     return isShadow(caught);
+  }
+  // A belt is offered only where there is room to add: the record's
+  // own count rather than the game's default, since a pokemon that has
+  // worn one already has more
+  if (isUtilityBelt(item)) {
+    return getCatchSlots(caught, UTILITY_BELT_SLOT) < MAX_SLOTS;
   }
   // A machine is offered only where it would teach something: one this
   // species can learn and does not know already
@@ -173,6 +182,14 @@ export default async function spendItemOn(catchId: string, item: Items): Promise
     return ivs == null
       ? refused(item)
       : { said: `The shadow is gone — ${describeIVs(ivs)}.`, tone: 'neutral', level: null };
+  }
+
+  if (isUtilityBelt(item)) {
+    const slots = await useUtilityBelt(catchId);
+
+    return slots == null
+      ? refused(item)
+      : { said: `Room for ${slots} held items now.`, tone: 'neutral', level: null };
   }
 
   if (isEffortItem(item)) {

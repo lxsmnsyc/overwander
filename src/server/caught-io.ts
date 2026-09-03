@@ -51,10 +51,30 @@ export function fromStoredISO(iso: string): { local: Date; offset: number } {
  * transaction: an unlocked read is handed the plain connection so it
  * does not pay a BEGIN and a COMMIT for nothing
  */
+/**
+ * The lists a catch keeps in child tables. A reader names the ones it
+ * reads: a guard that asks who owns a pokemon and whether it is
+ * fighting needs none of them
+ */
+export type CaughtPart = 'moves' | 'abilities' | 'items' | 'history';
+
+/** Everything, which is what a reader that does not choose gets */
+export const ALL_CAUGHT_PARTS: readonly CaughtPart[] = ['moves', 'abilities', 'items', 'history'];
+
+/**
+ * One catch, whole or in part.
+ *
+ * `parts` names the child lists to fetch, and **a part left out is
+ * absent from the record rather than empty**: ask for what is read,
+ * and nothing silently reads as a pokemon that knows no moves. All
+ * four are one round trip together, so choosing matters most where
+ * none of them is wanted at all
+ */
 export async function readCaughtIn(
   transaction: Sql | Tx,
   id: string,
   lock = true,
+  parts: readonly CaughtPart[] = ALL_CAUGHT_PARTS,
 ): Promise<Record<string, unknown> | null> {
   const rows = lock
     ? await transaction`select * from caught where id = ${id} for update`
@@ -64,26 +84,42 @@ export async function readCaughtIn(
   if (row == null) {
     return null;
   }
+  const wanted = new Set(parts);
+
+  if (wanted.size === 0) {
+    return assembleCaught(row, [], [], [], [], wanted);
+  }
 
   const [moves, abilities, items, history] = await Promise.all([
-    transaction`select move, points from caught_moves where caught_id = ${id} order by slot`,
-    transaction`select ability from caught_abilities where caught_id = ${id} order by slot`,
-    transaction`select item from caught_items where caught_id = ${id} order by slot`,
-    transaction`
-      select owner, owner_name, acquired_at_local, acquired_at_offset, kind, paid, ball
-      from caught_history where caught_id = ${id} order by seq
-    `,
+    wanted.has('moves')
+      ? transaction`select move, points from caught_moves where caught_id = ${id} order by slot`
+      : [],
+    wanted.has('abilities')
+      ? transaction`select ability from caught_abilities where caught_id = ${id} order by slot`
+      : [],
+    wanted.has('items')
+      ? transaction`select item from caught_items where caught_id = ${id} order by slot`
+      : [],
+    wanted.has('history')
+      ? transaction`
+          select owner, owner_name, acquired_at_local, acquired_at_offset, kind, paid, ball
+          from caught_history where caught_id = ${id} order by seq
+        `
+      : [],
   ]);
 
-  return assembleCaught(row, moves, abilities, items, history);
+  return assembleCaught(row, moves, abilities, items, history, wanted);
 }
 
 /**
  * Several catches at once, keyed by id, leaving out any that is not
- * there. Five queries however many are asked for, where reading them
- * one at a time is two round trips each: a party of six is the
+ * there. Two round trips however many are asked for, where reading
+ * them one at a time is two trips each: a party of six is the
  * difference between two trips and twelve, and forming one is a
  * button players press before every raid and duel.
+ *
+ * `parts` chooses the child lists, exactly as the single read does,
+ * and a part left out is absent from each record rather than empty.
  *
  * `lock` takes `for update` on the rows, exactly as `readCaughtIn`
  * does, and only means anything inside a transaction
@@ -92,6 +128,7 @@ export async function readCaughtMany(
   sql: Sql | Tx,
   ids: readonly string[],
   lock = false,
+  parts: readonly CaughtPart[] = ALL_CAUGHT_PARTS,
 ): Promise<Map<string, Record<string, unknown>>> {
   const wanted = [...new Set(ids)];
 
@@ -105,17 +142,26 @@ export async function readCaughtMany(
     ? await sql`select * from caught where id = any(${sql.array(wanted)}) for update`
     : await sql`select * from caught where id = any(${sql.array(wanted)})`;
 
+  const asked = new Set(parts);
   const [moves, abilities, items, history] = await Promise.all([
-    sql`select caught_id, move, points from caught_moves
-        where caught_id = any(${sql.array(wanted)}) order by caught_id, slot`,
-    sql`select caught_id, ability from caught_abilities
-        where caught_id = any(${sql.array(wanted)}) order by caught_id, slot`,
-    sql`select caught_id, item from caught_items
-        where caught_id = any(${sql.array(wanted)}) order by caught_id, slot`,
-    sql`select caught_id, owner, owner_name, acquired_at_local, acquired_at_offset,
-               kind, paid, ball
-        from caught_history where caught_id = any(${sql.array(wanted)})
-        order by caught_id, seq`,
+    asked.has('moves')
+      ? sql`select caught_id, move, points from caught_moves
+            where caught_id = any(${sql.array(wanted)}) order by caught_id, slot`
+      : [],
+    asked.has('abilities')
+      ? sql`select caught_id, ability from caught_abilities
+            where caught_id = any(${sql.array(wanted)}) order by caught_id, slot`
+      : [],
+    asked.has('items')
+      ? sql`select caught_id, item from caught_items
+            where caught_id = any(${sql.array(wanted)}) order by caught_id, slot`
+      : [],
+    asked.has('history')
+      ? sql`select caught_id, owner, owner_name, acquired_at_local, acquired_at_offset,
+                   kind, paid, ball
+            from caught_history where caught_id = any(${sql.array(wanted)})
+            order by caught_id, seq`
+      : [],
   ]);
 
   const grouped = (
@@ -148,6 +194,7 @@ export async function readCaughtMany(
         byAbility.get(id) ?? [],
         byItem.get(id) ?? [],
         byHistory.get(id) ?? [],
+        asked,
       ),
     );
   }
@@ -164,6 +211,7 @@ export function assembleCaught(
   abilities: readonly Record<string, unknown>[],
   items: readonly Record<string, unknown>[],
   history: readonly Record<string, unknown>[],
+  parts: ReadonlySet<CaughtPart> = new Set(ALL_CAUGHT_PARTS),
 ): Record<string, unknown> {
   const movePoints: Record<string, number> = {};
 
@@ -194,21 +242,28 @@ export function assembleCaught(
     traded: row.traded,
     canEvolve: row.can_evolve,
     auctionable: row.auctionable,
-    moves: moves.map((entry) => asNumber(entry.move)),
-    movePoints,
-    abilities: abilities.map((entry) => asNumber(entry.ability)),
+    ...(parts.has('moves')
+      ? { moves: moves.map((entry) => asNumber(entry.move)), movePoints }
+      : {}),
+    ...(parts.has('abilities')
+      ? { abilities: abilities.map((entry) => asNumber(entry.ability)) }
+      : {}),
     slots: row.slots,
-    items: items.map((entry) => asNumber(entry.item)),
-    history: history.map((entry) => ({
-      owner: entry.owner == null ? asString(entry.owner_name) : asString(entry.owner),
-      ...(entry.owner == null && entry.owner_name != null
-        ? { name: asString(entry.owner_name) }
-        : {}),
-      acquiredAt: toStoredISO(entry.acquired_at_local, asNumber(entry.acquired_at_offset)),
-      kind: entry.kind,
-      paid: entry.paid == null ? null : asNumber(entry.paid),
-      ball: entry.ball == null ? null : asNumber(entry.ball),
-    })),
+    ...(parts.has('items') ? { items: items.map((entry) => asNumber(entry.item)) } : {}),
+    ...(parts.has('history')
+      ? {
+          history: history.map((entry) => ({
+            owner: entry.owner == null ? asString(entry.owner_name) : asString(entry.owner),
+            ...(entry.owner == null && entry.owner_name != null
+              ? { name: asString(entry.owner_name) }
+              : {}),
+            acquiredAt: toStoredISO(entry.acquired_at_local, asNumber(entry.acquired_at_offset)),
+            kind: entry.kind,
+            paid: entry.paid == null ? null : asNumber(entry.paid),
+            ball: entry.ball == null ? null : asNumber(entry.ball),
+          })),
+        }
+      : {}),
     lockedAt: row.locked_at,
     steps: row.steps,
     hatchSteps: row.hatch_steps,
@@ -342,12 +397,24 @@ export async function updateCaughtIn(
     }
   } else if ('movePoints' in fields) {
     const points = asRecord(fields.movePoints);
+    const spent = Object.entries(points)
+      .map(([move, value]) => [Number(move), asNumber(value)] as const)
+      .filter(([, value]) => value > 0);
 
-    await transaction`update caught_moves set points = 0 where caught_id = ${id}`;
-    for (const [move, value] of Object.entries(points)) {
+    await transaction`
+      update caught_moves set points = 0 where caught_id = ${id} and points <> 0
+    `;
+
+    // The counts land in one statement rather than one a move: a move
+    // list is short, but this is written on every PP Up
+    if (spent.length > 0) {
       await transaction`
-        update caught_moves set points = ${asNumber(value)}
-        where caught_id = ${id} and move = ${Number(move)}
+        update caught_moves set points = spent.points
+        from unnest(
+          ${transaction.array(spent.map(([move]) => move))}::integer[],
+          ${transaction.array(spent.map(([, value]) => value))}::smallint[]
+        ) as spent(move, points)
+        where caught_moves.caught_id = ${id} and caught_moves.move = spent.move
       `;
     }
   }
@@ -387,37 +454,47 @@ export async function updateCaughtIn(
       select count(*)::int as seq from caught_history where caught_id = ${id}
     `;
     const from = asNumber(counted[0]?.seq);
-
-    for (const [at, entry] of history.entries()) {
-      if (at < from) {
-        continue;
-      }
-
+    const rows = history.slice(from).map((entry, at) => {
       const { local, offset } = fromStoredISO(asString(entry.acquiredAt));
       const owner = asString(entry.owner);
       const named = 'name' in entry && entry.name != null;
       // A named entry is a story trainer; a uuid is a real player. The
       // two columns are exclusive
-      const ownerColumn = named || !isUuid(owner) ? null : owner;
-      let ownerNameColumn: string | null = null;
+      let ownerName: string | null = null;
 
       if (named) {
-        ownerNameColumn = asString(entry.name);
+        ownerName = asString(entry.name);
       } else if (!isUuid(owner)) {
-        ownerNameColumn = owner;
+        ownerName = owner;
       }
 
+      return {
+        caught_id: id,
+        seq: from + at,
+        owner: named || !isUuid(owner) ? null : owner,
+        owner_name: ownerName,
+        acquired_at_local: local,
+        acquired_at_offset: offset,
+        kind: asNumber(entry.kind),
+        paid: entry.paid == null ? null : asNumber(entry.paid),
+        ball: entry.ball == null ? null : asNumber(entry.ball),
+      };
+    });
+
+    if (rows.length > 0) {
       await transaction`
-        insert into caught_history
-          (caught_id, seq, owner, owner_name, acquired_at_local, acquired_at_offset,
-           kind, paid, ball)
-        values
-          (${id}, ${at},
-           ${ownerColumn},
-           ${ownerNameColumn},
-           ${local}, ${offset}, ${asNumber(entry.kind)},
-           ${entry.paid == null ? null : asNumber(entry.paid)},
-           ${entry.ball == null ? null : asNumber(entry.ball)})
+        insert into caught_history ${transaction(
+          rows,
+          'caught_id',
+          'seq',
+          'owner',
+          'owner_name',
+          'acquired_at_local',
+          'acquired_at_offset',
+          'kind',
+          'paid',
+          'ball',
+        )}
       `;
     }
   }

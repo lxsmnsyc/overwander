@@ -2255,6 +2255,8 @@ describe('item data', () => {
       Species.Omanyte,
       Species.Kabuto,
       Species.Aerodactyl,
+      Species.Lileep,
+      Species.Anorith,
     ]);
 
     for (const [item, species] of FOSSIL_SPECIES) {
@@ -2276,24 +2278,24 @@ describe('item data', () => {
       expect(getFossilPrice(item)).toBeGreaterThan(0);
 
       // What is inside lives nowhere at all: reviving it is the only
-      // way any of the three is ever met
+      // way any of them is ever met
       expect(listSpeciesHabitats(species).length).toBe(0);
       expect(getSpeciesData(species).biomes).toEqual([]);
     }
 
     // ...and neither do the species they grow into
-    for (const species of [Species.Omastar, Species.Kabutops]) {
+    for (const species of [Species.Omastar, Species.Kabutops, Species.Cradily, Species.Armaldo]) {
       expect(listSpeciesHabitats(species).length).toBe(0);
     }
 
     // Nothing else on the shelf is one
     expect(isFossil(Items.Nugget)).toBe(false);
 
-    // All three are prized: reviving one is irreversible and is the
-    // only way to the species inside, which is what that band is for.
-    // The amber is the thinnest slot of the three, because Aerodactyl
-    // is the rarest thing in them
-    for (const item of [Items.HelixFossil, Items.DomeFossil, Items.OldAmber]) {
+    // Every one of them is prized: reviving one is irreversible and
+    // is the only way to the species inside, which is what that band
+    // is for. The amber is the thinnest slot, because Aerodactyl is
+    // the rarest thing in them
+    for (const item of listFossils()) {
       expect(ITEM_POOL.prized.some((entry) => entry.item === item)).toBe(true);
       expect(getItemBand(item)).toBe('prized');
       expect(isPreciousItem(item)).toBe(true);
@@ -2305,7 +2307,7 @@ describe('item data', () => {
     expect(FOSSIL_REVIVE_LEVEL).toBeGreaterThan(0);
   });
 
-  it('has the maniac carry two of the three, never the same one twice', () => {
+  it('has the maniac carry two of them, never the same one twice', () => {
     const rng = new AleaRNG('fossils');
     const pairs = new Set<string>();
 
@@ -2320,9 +2322,11 @@ describe('item data', () => {
       pairs.add(JSON.stringify([...offer].sort((left, right) => left - right)));
     }
 
-    // Every pairing of the three turns up, so no fossil is one a
-    // player can never be offered
-    expect(pairs.size).toBe(3);
+    // Every pairing turns up, so no fossil is one a player can never
+    // be offered
+    const fossils = listFossils().length;
+
+    expect(pairs.size).toBe((fossils * (fossils - 1)) / 2);
   });
 
   it('keeps the balls and the medicine on counters of their own', () => {

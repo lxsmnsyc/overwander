@@ -5,7 +5,7 @@ import { listFossils } from '../items/fossils';
  * The two people a fossil passes through.
  *
  * The **Fossil Maniac** sells them. He is the only place in the game
- * a fossil can be bought, and he carries two of the three: which two
+ * a fossil can be bought, and he carries two of them: which two
  * is the window's, so a player after a particular one waits for it or
  * walks somewhere else. He deals with a player once while he is
  * standing there — a maniac who sold three fossils an hour would make
@@ -24,10 +24,10 @@ import { listFossils } from '../items/fossils';
  */
 
 /**
- * How many of the three the maniac is carrying. Two, so what he
- * offers is a choice rather than an announcement, and never all of
- * them: a window that could sell a player the whole set would leave
- * nothing for the next one to be worth stopping at
+ * How many the maniac is carrying. Two, so what he offers is a choice
+ * rather than an announcement, and never the whole shelf: a window
+ * that could sell a player every fossil would leave nothing for the
+ * next one to be worth stopping at
  */
 export const FOSSIL_OFFER_KINDS = 2;
 
@@ -41,6 +41,8 @@ export const FOSSIL_PRICES = new Map<Items, number>([
   [Items.HelixFossil, 12_000],
   [Items.DomeFossil, 12_000],
   [Items.OldAmber, 30_000],
+  [Items.RootFossil, 12_000],
+  [Items.ClawFossil, 12_000],
 ]);
 
 /**

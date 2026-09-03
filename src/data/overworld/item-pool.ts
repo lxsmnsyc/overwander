@@ -225,13 +225,15 @@ export const ITEM_POOL: ItemRarityGroups = {
      * than something nobody else will ever see
      */
     { item: Items.SacredAsh, weight: 4 },
-    // The three fossils. Reviving one is irreversible and is the only
-    // way to the species inside, which is the test this band is for;
-    // the maniac sells them, so the pool is the lucky route rather
-    // than the only one. The amber is thinner because Aerodactyl is
+    // The fossils. Reviving one is irreversible and is the only way
+    // to the species inside, which is the test this band is for; the
+    // maniac sells them, so the pool is the lucky route rather than
+    // the only one. The amber is thinner because Aerodactyl is
     { item: Items.HelixFossil, weight: 8 },
     { item: Items.DomeFossil, weight: 8 },
     { item: Items.OldAmber, weight: 5 },
+    { item: Items.RootFossil, weight: 8 },
+    { item: Items.ClawFossil, weight: 8 },
     // Three purses instead of one, for good, and nothing sells one.
     // Here rather than in rare so that parting with it is asked about
     // twice

@@ -822,6 +822,13 @@ export const enum Items {
   PinkApricorn = 387,
   WhiteApricorn = 388,
   BlackApricorn = 389,
+
+  /**
+   * Hoenn's two fossils, numbered after the list rather than beside
+   * the first three: an id reaches a player's bag rows
+   */
+  RootFossil = 390,
+  ClawFossil = 391,
 }
 
 /**

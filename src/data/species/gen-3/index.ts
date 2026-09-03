@@ -1,7 +1,9 @@
 import registerLotadSpecies from './lotad';
+import registerAnorithSpecies from './anorith';
 import registerBagonSpecies from './bagon';
 import registerBeldumSpecies from './beldum';
 import registerCastformSpecies from './castform';
+import registerLileepSpecies from './lileep';
 import registerCheeringPairSpecies from './cheering-pair';
 import registerFeudingPairSpecies from './feuding-pair';
 import registerFireflySpecies from './fireflies';
@@ -74,4 +76,6 @@ export default function registerGen3Species(): void {
   registerCastformSpecies();
   registerBagonSpecies();
   registerBeldumSpecies();
+  registerLileepSpecies();
+  registerAnorithSpecies();
 }

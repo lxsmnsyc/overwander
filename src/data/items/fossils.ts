@@ -6,14 +6,14 @@ import { registerItem } from './__create';
  * The fossils: an extinct pokemon, still in the rock.
  *
  * Each one names exactly one species, and reviving it is the **only**
- * way that species is ever met — nothing that comes out of a fossil
- * spawns in the world any more, which is what makes the three of them
- * worth carrying rather than a curiosity beside the nuggets.
+ * way that species is ever met: nothing that comes out of a fossil
+ * spawns in the world any more, which is what makes them worth
+ * carrying rather than a curiosity beside the nuggets.
  *
  * A fossil is worth nothing to a vendor and cannot be bought from one:
  * it is dug out of the ground or bought off the Fossil Maniac, and
  * spent at the Fossil Scientist's bench. That is the Heart Scale's
- * bargain — an item with exactly one use and no price on it — for the
+ * bargain, an item with exactly one use and no price on it, for the
  * same reason: what paces a fossil should be walking and the window,
  * rather than a purse deep enough to buy the line outright.
  */
@@ -26,6 +26,8 @@ export const FOSSIL_SPECIES = new Map<Items, Species>([
   [Items.HelixFossil, Species.Omanyte],
   [Items.DomeFossil, Species.Kabuto],
   [Items.OldAmber, Species.Aerodactyl],
+  [Items.RootFossil, Species.Lileep],
+  [Items.ClawFossil, Species.Anorith],
 ]);
 
 export function isFossil(item: Items): boolean {
@@ -57,6 +59,8 @@ const NAMES: { [key in Items]?: string } = {
   [Items.HelixFossil]: 'Helix Fossil',
   [Items.DomeFossil]: 'Dome Fossil',
   [Items.OldAmber]: 'Old Amber',
+  [Items.RootFossil]: 'Root Fossil',
+  [Items.ClawFossil]: 'Claw Fossil',
 };
 
 /**
@@ -68,6 +72,8 @@ const ICONS: { [key in Items]?: string } = {
   [Items.HelixFossil]: 'fossils/helix',
   [Items.DomeFossil]: 'fossils/dome',
   [Items.OldAmber]: 'fossils/old-amber',
+  [Items.RootFossil]: 'fossils/root',
+  [Items.ClawFossil]: 'fossils/claw',
 };
 
 export default function registerFossils(): void {

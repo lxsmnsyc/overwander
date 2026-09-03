@@ -1,5 +1,5 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
-import { MoveTargetFlags, Moves } from '../../data/ids/moves';
+import { Moves, MoveTargets } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
 import { getMoveData } from '../../data/moves';
 import type Battle from '../core';
@@ -20,9 +20,7 @@ import type Unit from '../unit';
 
 /** Whether the move is one aimed at a single pokemon */
 function isSingleTarget(move: Moves): boolean {
-  const { target } = getMoveData(move);
-
-  return (target & MoveTargetFlags.Unit) !== 0 && (target & MoveTargetFlags.Multiple) === 0;
+  return getMoveData(move).target === MoveTargets.Unit;
 }
 
 /** The unit on that team drawing everything to itself, if any */

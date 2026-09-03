@@ -315,6 +315,16 @@ const NAMED: Partial<Record<Moves, [winding?: DelayShape, striking?: DelayShape]
   // target until it arrives
   [Moves.FutureSight]: [undefined, 'Charge'],
   [Moves.Outrage]: ['Charge'],
+
+  // Hoenn. Under the water and up under it, up out of reach and down
+  // on it: the same two waits Dig and Fly spend
+  [Moves.Dive]: ['Vanish', 'Surface'],
+  [Moves.Bounce]: ['Vanish', 'Dive'],
+  // Thrown in an arc and coming down on it rather than shot flat
+  [Moves.RockTomb]: [undefined, 'Lobbed'],
+  [Moves.MudShot]: [undefined, 'Lobbed'],
+  // Held over it until it arrives, the way Future Sight is
+  [Moves.DoomDesire]: [undefined, 'Charge'],
 };
 
 /**

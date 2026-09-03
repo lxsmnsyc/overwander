@@ -100,6 +100,8 @@ export type EffectShape =
   | 'Shade'
   | 'Hearts'
   | 'Caltrops'
+  | 'Spout'
+  | 'Roots'
   | 'Whiff';
 
 /** How long each of them takes at ordinary weight, in milliseconds. */
@@ -143,6 +145,8 @@ const SPANS: Record<EffectShape, number> = {
   Shade: 660,
   Hearts: 680,
   Caltrops: 560,
+  Spout: 780,
+  Roots: 660,
   Whiff: 320,
 };
 
@@ -1064,6 +1068,63 @@ const PAINTERS: Record<
       );
     }
   },
+  // Out of the caster and down on it: an eruption is a column, and
+  // what a player sees is the falling half, so the beam drains from
+  // the top as the base fills
+  Spout(context, stage, share, { paint, seed, weight }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale * weight;
+    const top: Point = [at[0], at[1] - size * 4.4];
+
+    beam(context, top, at, Math.min(1, share * 1.8), size * 0.55 * (1 - share * 0.45), {
+      ...paint,
+      alpha: decay(share),
+    });
+    if (share > 0.3) {
+      ripple(context, at, size * (share - 0.3) * 3.4, {
+        ...paint,
+        alpha: decay(share) * 1.3,
+        width: 3 * stage.scale,
+      });
+    }
+    motes(context, at, size * 2.2, many(7, weight), seed, share, {
+      ...paint,
+      alpha: decay(share) * 0.9,
+      width: 2.4 * stage.scale,
+    });
+  },
+  // Pushed up through the floor: several break the surface at once and
+  // go on growing, which is the whole of what the move is
+  Roots(context, stage, share, { paint, seed, weight }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale * weight;
+    const growing = many(5, weight);
+
+    for (let root = 0; root < growing; root += 1) {
+      const held = Math.max(0, Math.min(1, share * 1.5 - (root / growing) * 0.35));
+
+      if (held <= 0) {
+        continue;
+      }
+      // Fanned across the upper half, so they climb out of the ground
+      // rather than lying across it
+      const angle = -Math.PI / 2 + ((root + 0.5) / growing - 0.5) * 2.4 + spread(seed, root) * 0.25;
+      const reach = size * 2.4 * held;
+
+      lash(
+        context,
+        at,
+        [at[0] + Math.cos(angle) * reach, at[1] + Math.sin(angle) * reach],
+        spread(seed, root + 40) * size * 0.5,
+        { ...paint, alpha: 1, width: (3.4 - (root / growing) * 1.4) * stage.scale },
+      );
+    }
+    ripple(context, at, size * (0.5 + share * 1.1), {
+      ...paint,
+      alpha: decay(share) * 0.8,
+      width: 2.4 * stage.scale,
+    });
+  },
   Whiff(context, stage, share, { paint }) {
     const at = landing(stage);
     const size = REACH * stage.scale;
@@ -1148,12 +1209,8 @@ const NAMED: Partial<Record<Moves, EffectShape>> = {
   [Moves.FireSpin]: 'Coil',
   [Moves.LeechSeed]: 'Coil',
 
-  // Heard rather than felt
-  [Moves.Growl]: 'Wave',
-  [Moves.Roar]: 'Wave',
-  [Moves.Screech]: 'Wave',
-  [Moves.Sing]: 'Wave',
-  [Moves.Supersonic]: 'Wave',
+  // Heard rather than felt, without carrying the sound flag: a boom
+  // is a shockwave and a face is pulled
   [Moves.SonicBoom]: 'Wave',
 
   // A point driven in
@@ -1277,11 +1334,6 @@ const NAMED: Partial<Record<Moves, EffectShape>> = {
   [Moves.Moonlight]: 'Mend',
   [Moves.HiddenPower]: 'Dazzle',
 
-  // Heard: a song, a bell, a snore, and the sound a Johto pokemon
-  // makes to hold something still
-  [Moves.PerishSong]: 'Wave',
-  [Moves.HealBell]: 'Wave',
-  [Moves.Snore]: 'Wave',
   [Moves.ScaryFace]: 'Wave',
 
   // Ghost: something closing on it rather than something thrown
@@ -1310,6 +1362,96 @@ const NAMED: Partial<Record<Moves, EffectShape>> = {
   [Moves.PsychUp]: 'Trance',
   [Moves.FutureSight]: 'Warp',
   [Moves.Conversion2]: 'Warp',
+
+  // Hoenn. As with Johto, what is named is what the rules underneath
+  // would have drawn wrong
+  [Moves.Eruption]: 'Spout',
+  [Moves.WaterSpout]: 'Spout',
+  [Moves.Ingrain]: 'Roots',
+  [Moves.FrenzyPlant]: 'Roots',
+
+  // Jets and light, which the type alone would have drawn as a cloud
+  [Moves.HydroCannon]: 'Beam',
+  [Moves.SignalBeam]: 'Beam',
+  [Moves.LusterPurge]: 'Dazzle',
+  [Moves.DoomDesire]: 'Dazzle',
+  [Moves.Extrasensory]: 'Warp',
+  [Moves.PsychoBoost]: 'Blast',
+  [Moves.SpitUp]: 'Blast',
+
+  // Fire that is fire wherever it comes from
+  [Moves.WillOWisp]: 'Flame',
+  [Moves.BlazeKick]: 'Flame',
+
+  // Water spread about rather than shot: a pulse washes over, and a
+  // sport wets the whole field
+  [Moves.WaterPulse]: 'Wave',
+  [Moves.WaterSport]: 'Splash',
+  [Moves.MudSport]: 'Splash',
+  [Moves.MudShot]: 'Splash',
+
+  // Edges and points
+  [Moves.BrickBreak]: 'Claw',
+  [Moves.KnockOff]: 'Claw',
+  [Moves.CrushClaw]: 'Claw',
+  [Moves.DragonClaw]: 'Claw',
+  [Moves.NeedleArm]: 'Spike',
+  [Moves.PoisonTail]: 'Lash',
+  [Moves.MagicalLeaf]: 'Leaves',
+
+  // Arriving faster than it can be seen coming
+  [Moves.FakeOut]: 'Strike',
+  [Moves.SkyUppercut]: 'Strike',
+
+  // Carried on the air
+  [Moves.SilverWind]: 'Blow',
+  [Moves.FeatherDance]: 'Blow',
+
+  // Ground closing round it, and rock coming down on it
+  [Moves.SandTomb]: 'Coil',
+  [Moves.RockTomb]: 'Rocks',
+
+  // Ghost and dark, which close on it rather than strike it
+  [Moves.ShadowPunch]: 'Shade',
+  [Moves.Astonish]: 'Shade',
+  [Moves.Grudge]: 'Shade',
+  [Moves.Memento]: 'Shade',
+  [Moves.Snatch]: 'Shade',
+  [Moves.Torment]: 'Shade',
+
+  // Said to it rather than done to it
+  [Moves.Taunt]: 'Wave',
+  [Moves.FakeTears]: 'Wave',
+  [Moves.Covet]: 'Hearts',
+
+  // Something turning in front of its eyes
+  [Moves.Yawn]: 'Trance',
+  [Moves.Flatter]: 'Trance',
+  [Moves.TeeterDance]: 'Trance',
+
+  // Held between the two of them: an item, an ability, a move
+  [Moves.Trick]: 'Warp',
+  [Moves.RolePlay]: 'Warp',
+  [Moves.SkillSwap]: 'Warp',
+  [Moves.Imprison]: 'Warp',
+
+  // Health coming back, whenever it arrives
+  [Moves.Swallow]: 'Mend',
+  [Moves.SlackOff]: 'Mend',
+  [Moves.Refresh]: 'Mend',
+  [Moves.Aromatherapy]: 'Mend',
+  [Moves.Wish]: 'Mend',
+
+  // Something about the pokemon itself went up
+  [Moves.BulkUp]: 'Boost',
+  [Moves.CalmMind]: 'Boost',
+  [Moves.DragonDance]: 'Boost',
+  [Moves.CosmicPower]: 'Boost',
+  [Moves.TailGlow]: 'Boost',
+  [Moves.Charge]: 'Boost',
+  [Moves.Stockpile]: 'Boost',
+  [Moves.HelpingHand]: 'Boost',
+  [Moves.Recycle]: 'Boost',
 };
 
 /**
@@ -1356,13 +1498,20 @@ export function effectShapeFor(move: Moves): EffectShape {
   if (named != null) {
     return named;
   }
+
+  const data = getMoveData(move);
+
+  // Heard rather than seen, whatever else the move is. Unlike the bite
+  // and the edge below, this one answers status moves too: a song that
+  // puts something to sleep is still a song
+  if ((data.flags & MoveFlags.Sound) !== 0) {
+    return 'Wave';
+  }
   // A move that strikes several times looks like several strikes,
   // whatever else it is
   if (MULTI_HIT_MOVES[move] != null) {
     return 'Volley';
   }
-  const data = getMoveData(move);
-
   if (data.category === MoveCategories.Status) {
     // One on the caster's own side is something put up rather than
     // done to anybody

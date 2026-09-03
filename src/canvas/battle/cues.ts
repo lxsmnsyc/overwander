@@ -449,6 +449,201 @@ const STATUS_CUES: Partial<Record<Statuses, Cue>> = {
     color: '#a8a8a8',
     span: 560,
   },
+  // Hoenn. Most of these forbid something rather than hurt it, so the
+  // mark is a shape held on the body rather than something rising off
+  // it
+  [Statuses.Taunted]: {
+    paint: (context, stage, share, paint) => {
+      chevrons(context, over(stage), REACH * stage.scale * 0.8, 2, 1 - share, {
+        ...paint,
+        alpha: swell(share),
+        width: 3 * stage.scale,
+      });
+    },
+    color: '#705848',
+    span: 560,
+  },
+  // The same thing twice, refused: a ring over the head that closes
+  [Statuses.Tormented]: {
+    paint: (context, stage, share, paint) => {
+      ring(context, over(stage), REACH * stage.scale * (1.2 - share * 0.8), {
+        ...paint,
+        alpha: swell(share),
+        width: 2.8 * stage.scale,
+      });
+    },
+    color: '#5a4a58',
+    span: 620,
+  },
+  // Bars across it, which is what being shut out of its own moves is
+  [Statuses.Imprisoned]: {
+    paint: (context, stage, share, paint) => {
+      const size = REACH * stage.scale;
+
+      context.strokeStyle = fade(paint.color, swell(share) * 0.9);
+      context.lineWidth = 2.4 * stage.scale;
+      context.beginPath();
+      for (let bar = 0; bar < 3; bar += 1) {
+        const along = stage.source[0] + (bar - 1) * size * 0.7;
+
+        context.moveTo(along, stage.source[1] - size * 1.1);
+        context.lineTo(along, stage.source[1] + size * 0.9);
+      }
+      context.stroke();
+    },
+    color: '#f85888',
+    span: 620,
+  },
+  // Down into the floor, where the recovery comes from
+  [Statuses.Rooted]: {
+    paint: (context, stage, share, paint) => {
+      const size = REACH * stage.scale;
+
+      shards(
+        context,
+        [stage.source[0], stage.source[1] + size * 0.7],
+        size * (0.6 + share * 0.8),
+        4,
+        29,
+        share,
+        { ...paint, alpha: swell(share), width: 2.6 * stage.scale },
+      );
+    },
+    color: '#3fa129',
+    span: 620,
+  },
+  // The bubble the mainline draws, swelling until it goes
+  [Statuses.Drowsy]: {
+    paint: (context, stage, share, paint) => {
+      const at = over(stage);
+
+      orb(context, at, REACH * stage.scale * (0.3 + share * 0.7), {
+        ...paint,
+        alpha: swell(share) * 0.8,
+      });
+    },
+    color: '#8fa2d8',
+    span: 700,
+  },
+  // Everything coming to it: rings closing in rather than going out
+  [Statuses.Centered]: {
+    paint: (context, stage, share, paint) => {
+      const size = REACH * stage.scale;
+
+      for (let pull = 0; pull < 2; pull += 1) {
+        const held = (share * 1.3 + pull * 0.5) % 1;
+
+        ring(context, stage.source, size * (2.2 - held * 1.5), {
+          ...paint,
+          alpha: swell(held) * 0.9,
+          width: 2.6 * stage.scale,
+        });
+      }
+    },
+    color: '#f8d030',
+    span: 620,
+  },
+  // A shell, and what came at it going back out
+  [Statuses.Coated]: {
+    paint: (context, stage, share, paint) => {
+      const size = REACH * stage.scale;
+
+      ring(context, stage.source, size * 1.7, {
+        ...paint,
+        alpha: swell(share) * 0.8,
+        width: 3 * stage.scale,
+      });
+      chevrons(context, over(stage, LIFT * 1.4), size * 0.7, 1, share, {
+        ...paint,
+        alpha: swell(share),
+        width: 2.6 * stage.scale,
+      });
+    },
+    color: '#f85888',
+    span: 620,
+  },
+  // Waiting to take it: a mark over the head that darts aside
+  [Statuses.Snatching]: {
+    paint: (context, stage, share, paint) => {
+      const at = over(stage);
+      const size = REACH * stage.scale;
+
+      star(context, [at[0] + share * size * 1.4, at[1]], size * 0.4, share * 4, {
+        ...paint,
+        alpha: swell(share),
+      });
+    },
+    color: '#705848',
+    span: 520,
+  },
+  // Held under it, waiting on whatever knocks it out
+  [Statuses.Grudging]: {
+    paint: (context, stage, share, paint) => {
+      const size = REACH * stage.scale;
+      const at: Point = [stage.source[0], stage.source[1] + size * 0.6];
+
+      ring(context, at, size * (1.4 - swell(share) * 0.4), {
+        ...paint,
+        alpha: swell(share) * 0.9,
+        width: 2.6 * stage.scale,
+      });
+      motes(context, at, size * 1.2, 5, 101, share, {
+        ...paint,
+        alpha: decay(share) * 0.8,
+        width: 2.2 * stage.scale,
+      });
+    },
+    color: '#6a4a7a',
+    span: 660,
+  },
+  // Heard rather than worn: rings leaving it, the way the move lands
+  [Statuses.Uproaring]: {
+    paint: (context, stage, share, paint) => {
+      const size = REACH * stage.scale;
+
+      for (let pulse = 0; pulse < 3; pulse += 1) {
+        const held = (share * 1.4 + pulse * 0.33) % 1;
+
+        ring(context, stage.source, size * (0.5 + held * 1.8), {
+          ...paint,
+          alpha: decay(held) * 0.9,
+          width: 2.4 * stage.scale,
+        });
+      }
+    },
+    color: '#c8b070',
+    span: 720,
+  },
+  // A hand under the next move, lifting it
+  [Statuses.Helped]: {
+    paint: (context, stage, share, paint) => {
+      chevrons(context, stage.source, REACH * stage.scale * 0.9, 2, share, {
+        ...paint,
+        alpha: swell(share),
+        width: 3 * stage.scale,
+      });
+    },
+    color: '#f8d030',
+    span: 560,
+  },
+  // Asleep and staying asleep: the sleeping puffs, held steady rather
+  // than drifting off
+  [Statuses.Comatose]: {
+    paint: (context, stage, share, paint) => {
+      const at = over(stage);
+      const size = REACH * stage.scale;
+
+      for (let puff = 0; puff < 2; puff += 1) {
+        ring(context, [at[0] + puff * size * 0.6, at[1] - puff * size * 0.5], size * 0.3, {
+          ...paint,
+          alpha: swell(share) * 0.8,
+          width: 2 * stage.scale,
+        });
+      }
+    },
+    color: '#7a6a9a',
+    span: 820,
+  },
 };
 
 /** How much quieter a status is each time it bites than when it landed. */

@@ -131,6 +131,9 @@ const SHAPES: [shape: string, move: Moves][] = [
   ['Shade', Moves.ShadowBall],
   ['Hearts', Moves.Attract],
   ['Caltrops', Moves.Spikes],
+  // Hoenn's own two
+  ['Spout', Moves.Eruption],
+  ['Roots', Moves.Ingrain],
 ];
 
 describe('a painted move', () => {
@@ -187,6 +190,34 @@ describe('a painted move', () => {
     expect(effectShapeFor(Moves.Crunch)).toBe('Jaws');
     expect(effectShapeFor(Moves.MetalClaw)).toBe('Claw');
     expect(effectShapeFor(Moves.FalseSwipe)).toBe('Claw');
+    // Sound answers status moves as well, which the other two do not:
+    // a song that puts something to sleep is still a song
+    expect(effectShapeFor(Moves.HyperVoice)).toBe('Wave');
+    expect(effectShapeFor(Moves.Growl)).toBe('Wave');
+    expect(effectShapeFor(Moves.GrassWhistle)).toBe('Wave');
+    expect(effectShapeFor(Moves.MetalSound)).toBe('Wave');
+  });
+
+  it('draws the Hoenn moves the rules alone would have drawn wrong', () => {
+    // Out of the pokemon and down on what it is aimed at, which
+    // nothing else in the game does
+    expect(effectShapeFor(Moves.Eruption)).toBe('Spout');
+    expect(effectShapeFor(Moves.WaterSpout)).toBe('Spout');
+    expect(effectShapeFor(Moves.Ingrain)).toBe('Roots');
+    expect(effectShapeFor(Moves.FrenzyPlant)).toBe('Roots');
+    // A jet rather than a cloud, and light rather than a shadow
+    expect(effectShapeFor(Moves.HydroCannon)).toBe('Beam');
+    expect(effectShapeFor(Moves.LusterPurge)).toBe('Dazzle');
+    // Under the water and up under it, up out of reach and down on it
+    expect(delayShapeFor(Moves.Dive, 1)).toBe('Vanish');
+    expect(delayShapeFor(Moves.Dive, 0)).toBe('Surface');
+    expect(delayShapeFor(Moves.Bounce, 1)).toBe('Vanish');
+    expect(delayShapeFor(Moves.Bounce, 0)).toBe('Dive');
+    // Lobbed rather than shot flat
+    expect(delayShapeFor(Moves.RockTomb, 0)).toBe('Lobbed');
+    expect(delayShapeFor(Moves.MudShot, 0)).toBe('Lobbed');
+    // Held over it until it arrives, the way Future Sight is
+    expect(delayShapeFor(Moves.DoomDesire, 0)).toBe('Charge');
   });
 
   it('spends the gap differently depending on the move', () => {
@@ -401,6 +432,19 @@ describe('the cues', () => {
       Statuses.Cursed,
       Statuses.Encored,
       Statuses.Identified,
+      // Hoenn's own
+      Statuses.Taunted,
+      Statuses.Tormented,
+      Statuses.Imprisoned,
+      Statuses.Rooted,
+      Statuses.Drowsy,
+      Statuses.Centered,
+      Statuses.Coated,
+      Statuses.Snatching,
+      Statuses.Grudging,
+      Statuses.Uproaring,
+      Statuses.Helped,
+      Statuses.Comatose,
     ];
 
     for (const status of carried) {

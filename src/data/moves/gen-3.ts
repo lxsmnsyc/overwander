@@ -522,13 +522,13 @@ export default function registerGen3Moves(): void {
   });
   registerMove(Moves.TeeterDance, {
     name: 'Teeter Dance',
-    description: 'Confuses everything opposite.',
+    description: 'Confuses everything else on the field, its own side included.',
     type: Types.Normal,
     category: MoveCategories.Status,
     pp: 20,
     accuracy: 100,
     target: MoveTargets.None,
-    affects: MoveAffects.Unit | MoveAffects.Enemy,
+    affects: MoveAffects.Unit | MoveAffects.Own | MoveAffects.Enemy,
     flags: 0,
     cast: [SpriteAnim.Dance, SpriteAnim.Twirl, SpriteAnim.Charge],
   });

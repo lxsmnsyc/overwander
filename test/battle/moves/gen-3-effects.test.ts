@@ -597,6 +597,26 @@ describe('the moves the johto branch changed under them', () => {
     expect(user.checkMovePower(Moves.IceBall, unitTarget(target))).toBe(60);
   });
 
+  it('teeters everything else on the field, its own side included', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const dancer = createUnit(battle, teamA);
+    const friend = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    battle.emit(BattleEvents.UnitTriggerMoveEnd, {
+      id: 'UnitTriggerMoveEnd',
+      disabled: false,
+      source: dancer,
+      move: Moves.TeeterDance,
+      target: NONE_TARGET,
+      steps: 0,
+    });
+
+    expect(friend.status[Statuses.Confused]).toBeDefined();
+    expect(enemy.status[Statuses.Confused]).toBeDefined();
+    expect(dancer.status[Statuses.Confused]).toBeUndefined();
+  });
+
   it('flatters a teammate only where the confusion cannot land', () => {
     const { battle, teamA, teamB } = createBattle();
     const caster = createUnit(battle, teamA);

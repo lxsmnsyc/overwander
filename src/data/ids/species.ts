@@ -389,6 +389,12 @@ export const enum Species {
   Beautifly = 267,
   Cascoon = 268,
   Dustox = 269,
+  Lotad = 270,
+  Lombre = 271,
+  Ludicolo = 272,
+  Seedot = 273,
+  Nuzleaf = 274,
+  Shiftry = 275,
 }
 
 /**

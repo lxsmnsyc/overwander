@@ -124,6 +124,12 @@ export const enum MoveFlags {
    * Cuts with a blade or an edge (boosted by e.g. Sharpness)
    */
   Slicing = 0b10000,
+  /**
+   * Rides on the wind (turned away by e.g. Wind Rider). A weather
+   * move that calls up a storm is not one: it is aimed at nobody, so
+   * nothing can stand in its way
+   */
+  Wind = 0b100000,
 }
 
 export const enum MoveAttackFlags {

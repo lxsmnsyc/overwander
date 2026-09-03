@@ -77,7 +77,7 @@ export default function registerGen3Moves(): void {
     accuracy: 90,
     target: MoveTargets.None,
     affects: MoveAffects.Unit | MoveAffects.Enemy,
-    flags: 0,
+    flags: MoveFlags.Wind,
     cast: [SpriteAnim.Emit, SpriteAnim.Gas, SpriteAnim.Charge],
   });
   registerMove(Moves.Torment, {
@@ -722,7 +722,7 @@ export default function registerGen3Moves(): void {
     accuracy: 95,
     target: MoveTargets.None,
     affects: MoveAffects.Unit | MoveAffects.Enemy,
-    flags: MoveFlags.Slicing,
+    flags: MoveFlags.Slicing | MoveFlags.Wind,
     cast: [SpriteAnim.Slice, SpriteAnim.FlapAround, SpriteAnim.Swing],
   });
   registerMove(Moves.Overheat, {
@@ -769,7 +769,7 @@ export default function registerGen3Moves(): void {
     pp: 5,
     accuracy: 100,
     target: MoveTargets.Unit,
-    flags: 0,
+    flags: MoveFlags.Wind,
     cast: [SpriteAnim.Emit, SpriteAnim.FlapAround, SpriteAnim.Charge],
   });
   registerMove(Moves.MetalSound, {

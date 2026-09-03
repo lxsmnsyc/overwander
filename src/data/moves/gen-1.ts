@@ -629,7 +629,7 @@ export default function registerGen1Moves(): void {
     accuracy: 70,
     target: MoveTargets.None,
     affects: MoveAffects.Unit | MoveAffects.Enemy,
-    flags: 0,
+    flags: MoveFlags.Wind,
     cast: [SpriteAnim.Emit, SpriteAnim.Shoot, SpriteAnim.Charge],
   });
   registerMove(Moves.Counter, {
@@ -723,7 +723,7 @@ export default function registerGen1Moves(): void {
     pp: 20,
     priority: -6,
     target: MoveTargets.Unit,
-    flags: 0,
+    flags: MoveFlags.Wind,
     steps: 1,
     cast: [SpriteAnim.FlapAround, SpriteAnim.Swing, SpriteAnim.Twirl, SpriteAnim.Charge],
   });
@@ -866,7 +866,7 @@ export default function registerGen1Moves(): void {
     power: 40,
     accuracy: 100,
     target: MoveTargets.Unit,
-    flags: 0,
+    flags: MoveFlags.Wind,
     cast: [SpriteAnim.FlapAround, SpriteAnim.Swing, SpriteAnim.Shoot, SpriteAnim.Attack],
   });
   registerMove(Moves.SandAttack, {
@@ -926,7 +926,7 @@ export default function registerGen1Moves(): void {
     power: 80,
     accuracy: 100,
     target: MoveTargets.Unit,
-    flags: MoveFlags.Slicing,
+    flags: MoveFlags.Slicing | MoveFlags.Wind,
     steps: 1,
     cast: [SpriteAnim.Shoot, SpriteAnim.Swing, SpriteAnim.Charge],
   });

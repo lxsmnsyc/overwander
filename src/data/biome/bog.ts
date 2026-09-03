@@ -16,11 +16,13 @@ export default function registerBogSpawns(): void {
         { species: Species.Wooper, weight: 25 },
         { species: Species.Marill, weight: 20 },
         { species: Species.Mudkip, weight: 2 },
+        { species: Species.Lotad, weight: 20 },
       ],
       uncommon: [
         { species: Species.Poliwhirl, weight: 5 },
         { species: Species.Weepinbell, weight: 5 },
         { species: Species.Marshtomp, weight: 1 },
+        { species: Species.Lombre, weight: 10 },
       ],
       rare: [
         { species: Species.Poliwrath, weight: 5 },
@@ -29,6 +31,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Azumarill, weight: 5 },
         { species: Species.Yanma, weight: 5 },
         { species: Species.Swampert, weight: 2 },
+        { species: Species.Ludicolo, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [],
@@ -42,11 +45,13 @@ export default function registerBogSpawns(): void {
         { species: Species.Wooper, weight: 25 },
         { species: Species.Marill, weight: 20 },
         { species: Species.Mudkip, weight: 2 },
+        { species: Species.Lotad, weight: 20 },
       ],
       uncommon: [
         { species: Species.Poliwhirl, weight: 5 },
         { species: Species.Weepinbell, weight: 5 },
         { species: Species.Marshtomp, weight: 1 },
+        { species: Species.Lombre, weight: 10 },
       ],
       rare: [
         { species: Species.Poliwrath, weight: 5 },
@@ -55,6 +60,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Azumarill, weight: 5 },
         { species: Species.Yanma, weight: 5 },
         { species: Species.Swampert, weight: 2 },
+        { species: Species.Ludicolo, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [],

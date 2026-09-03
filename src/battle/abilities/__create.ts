@@ -1,7 +1,7 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import type { EventListenerLifecycle } from '../../core/event-emitter';
 import { MAX_STAGE, Stages, Stats } from '../../data/constants/stats';
-import { MoveCategories, type MoveFlags, StatFlags } from '../../data/ids/moves';
+import { MoveCategories, type MoveFlags, type Moves, StatFlags } from '../../data/ids/moves';
 import { getMoveData, getWeatherMove } from '../../data/moves';
 import type { Types } from '../../data/constants/types';
 import type Abilities from '../../data/ids/abilities';
@@ -11,6 +11,7 @@ import type Battle from '../core';
 import type {
   CheckUnitAIMoveScoreEvent,
   CheckUnitCanDamageEvent,
+  MoveTarget,
   UnitAttackEvent,
 } from '../events';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
@@ -109,7 +110,7 @@ export function createContactHazard(
 export function createFeedScoring(
   battle: Battle,
   targetAbility: Abilities,
-  targetType: Types,
+  matches: AbsorbMatcher,
   worth: (holder: Unit) => number,
 ): EventListenerLifecycle<CheckUnitAIMoveScoreEvent> {
   return battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
@@ -119,7 +120,12 @@ export function createFeedScoring(
       event.target.unit.team.alliance !== event.source.team.alliance ||
       getMoveData(event.move).category === MoveCategories.Status ||
       !event.target.unit.hasAbility(targetAbility) ||
-      event.source.checkMoveType(event.move, event.target) !== targetType
+      !matches(
+        event.source,
+        event.move,
+        event.target,
+        event.source.checkMoveType(event.move, event.target),
+      )
     ) {
       return;
     }
@@ -138,7 +144,7 @@ export function createHealFeedScoring(
   targetType: Types,
   fraction: number,
 ): EventListenerLifecycle<CheckUnitAIMoveScoreEvent> {
-  return createFeedScoring(battle, targetAbility, targetType, (holder) =>
+  return createFeedScoring(battle, targetAbility, movesOfType(targetType), (holder) =>
     healWorth(holder, fraction),
   );
 }
@@ -153,8 +159,88 @@ export function createStageFeedScoring(
   targetType: Types,
   stage: Stages,
 ): EventListenerLifecycle<CheckUnitAIMoveScoreEvent> {
-  return createFeedScoring(battle, targetAbility, targetType, (holder) =>
+  return createFeedScoring(battle, targetAbility, movesOfType(targetType), (holder) =>
     holder.stages[stage] >= MAX_STAGE ? 0 : FEED_BONUS,
+  );
+}
+
+/**
+ * Which moves an absorbing ability answers. The type is handed in
+ * already resolved rather than asked for again: the immunity check is
+ * itself an answer to a type question, and re-opening one from inside
+ * it would ask the same listeners the same thing twice
+ */
+export type AbsorbMatcher = (source: Unit, move: Moves, target: MoveTarget, type: Types) => boolean;
+
+/** Moves of one type: Sap Sipper's grass, Motor Drive's electric. */
+export function movesOfType(type: Types): AbsorbMatcher {
+  return (_source, _move, _target, moveType) => moveType === type;
+}
+
+/** Moves carrying one flag, whatever type they come as. */
+export function movesFlagged(flag: MoveFlags): AbsorbMatcher {
+  return (_source, move) => (getMoveData(move).flags & flag) !== 0;
+}
+
+/**
+ * An ability that refuses a move outright and takes a stage from it
+ * instead: Sap Sipper, Motor Drive, Storm Drain, Wind Rider.
+ *
+ * The refusal and the payout are deliberately separate. The immunity
+ * is a pure answer to a question anybody may ask, including the AI's
+ * speculative pass, while only a move that really failed against the
+ * holder pays out, so a chooser weighing a move never raises a stage
+ * by thinking about it
+ */
+export function createAbsorbStageAbility(
+  ability: Abilities,
+  stage: Stages,
+  matches: AbsorbMatcher,
+): (battle: Battle) => void {
+  return createAbility(
+    ability,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Post, (event) => {
+          if (
+            event.target.type === MoveTargetType.Unit &&
+            event.target.unit !== event.source &&
+            event.target.unit.hasAbility(ability) &&
+            matches(event.source, event.move, event.target, event.type)
+          ) {
+            event.immune = true;
+          }
+        }),
+        battle.on(BattleEvents.UnitTriggerMoveFailed, EventPriority.Post, (event) => {
+          const parent = event.parent;
+
+          if (
+            parent.target.type === MoveTargetType.Unit &&
+            parent.target.unit !== parent.source &&
+            parent.target.unit.hasAbility(ability) &&
+            matches(
+              parent.source,
+              parent.move,
+              parent.target,
+              parent.source.checkMoveType(parent.move, parent.target),
+            )
+          ) {
+            parent.target.unit.triggerAbility(ability);
+          }
+        }),
+        createFeedScoring(battle, ability, matches, (holder) =>
+          holder.stages[stage] >= MAX_STAGE ? 0 : FEED_BONUS,
+        ),
+        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
+          if (event.ability === ability) {
+            event.source.addStage(stage, 1, {
+              type: EffectType.Ability,
+              ability,
+              unit: event.source,
+            });
+          }
+        }),
+      ]),
   );
 }
 

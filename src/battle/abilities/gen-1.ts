@@ -58,6 +58,7 @@ import {
   createStageFeedScoring,
   createToughClawsAbility,
   createWaterAbsorbAbility,
+  movesOfType,
 } from './__create';
 import { MergedLifecycle } from '../lifecycle';
 import turns from '../turn';
@@ -897,7 +898,7 @@ const setupAbilities = [
       }),
       // Lighting a teammate's Flash Fire is worth a hit; a second
       // one adds nothing, since the boost does not stack
-      createFeedScoring(battle, Abilities.FlashFire, Types.Fire, (holder) =>
+      createFeedScoring(battle, Abilities.FlashFire, movesOfType(Types.Fire), (holder) =>
         activated.has(holder) ? 0 : FEED_BONUS,
       ),
       // An activated holder's own Fire moves hit harder

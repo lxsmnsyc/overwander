@@ -15,10 +15,11 @@ import { MAJOR_STATUS_CONDITIONS } from '../status';
 import { hasFreeItemSlot, isWeatherSunny, onUnitActs, stealableItem, unitTarget } from '../utils';
 import {
   createAbility,
+  createAbsorbStageAbility,
   createContactHazard,
   createDrizzleAbility,
   createLimberAbility,
-  createStageFeedScoring,
+  movesOfType,
 } from './__create';
 
 const PLUS_BOOST = 1.5;
@@ -202,47 +203,7 @@ const setupAbilities = [
   ),
 
   // https://bulbapedia.bulbagarden.net/wiki/Motor_Drive_(Ability)
-  createAbility(
-    Abilities.MotorDrive,
-    (battle) =>
-      new MergedLifecycle([
-        // Pure query: grants the immunity, no side effects
-        battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Post, (event) => {
-          if (
-            event.type === Types.Electric &&
-            event.target.type === MoveTargetType.Unit &&
-            event.target.unit !== event.source &&
-            event.target.unit.hasAbility(Abilities.MotorDrive)
-          ) {
-            event.immune = true;
-          }
-        }),
-        // Only a move that really failed against the holder pays out,
-        // never a speculative immunity check
-        battle.on(BattleEvents.UnitTriggerMoveFailed, EventPriority.Post, (event) => {
-          const parent = event.parent;
-
-          if (
-            parent.target.type === MoveTargetType.Unit &&
-            parent.target.unit !== parent.source &&
-            parent.target.unit.hasAbility(Abilities.MotorDrive) &&
-            parent.source.checkMoveType(parent.move, parent.target) === Types.Electric
-          ) {
-            parent.target.unit.triggerAbility(Abilities.MotorDrive);
-          }
-        }),
-        createStageFeedScoring(battle, Abilities.MotorDrive, Types.Electric, Stages.Speed),
-        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
-          if (event.ability === Abilities.MotorDrive) {
-            event.source.addStage(Stages.Speed, 1, {
-              type: EffectType.Ability,
-              ability: Abilities.MotorDrive,
-              unit: event.source,
-            });
-          }
-        }),
-      ]),
-  ),
+  createAbsorbStageAbility(Abilities.MotorDrive, Stages.Speed, movesOfType(Types.Electric)),
 
   // https://bulbapedia.bulbagarden.net/wiki/Magma_Armor_(Ability)
   createLimberAbility(Abilities.MagmaArmor, [Statuses.Frozen]),
@@ -386,44 +347,7 @@ const setupAbilities = [
   // The mainline also pulls Water moves aimed elsewhere onto the
   // holder. Nothing here redirects a move away from the target it
   // committed to, so this is the immunity and the boost
-  createAbility(
-    Abilities.StormDrain,
-    (battle) =>
-      new MergedLifecycle([
-        battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Post, (event) => {
-          if (
-            event.type === Types.Water &&
-            event.target.type === MoveTargetType.Unit &&
-            event.target.unit !== event.source &&
-            event.target.unit.hasAbility(Abilities.StormDrain)
-          ) {
-            event.immune = true;
-          }
-        }),
-        battle.on(BattleEvents.UnitTriggerMoveFailed, EventPriority.Post, (event) => {
-          const parent = event.parent;
-
-          if (
-            parent.target.type === MoveTargetType.Unit &&
-            parent.target.unit !== parent.source &&
-            parent.target.unit.hasAbility(Abilities.StormDrain) &&
-            parent.source.checkMoveType(parent.move, parent.target) === Types.Water
-          ) {
-            parent.target.unit.triggerAbility(Abilities.StormDrain);
-          }
-        }),
-        createStageFeedScoring(battle, Abilities.StormDrain, Types.Water, Stages.SpecialAttack),
-        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
-          if (event.ability === Abilities.StormDrain) {
-            event.source.addStage(Stages.SpecialAttack, 1, {
-              type: EffectType.Ability,
-              ability: Abilities.StormDrain,
-              unit: event.source,
-            });
-          }
-        }),
-      ]),
-  ),
+  createAbsorbStageAbility(Abilities.StormDrain, Stages.SpecialAttack, movesOfType(Types.Water)),
 
   // https://bulbapedia.bulbagarden.net/wiki/Mirror_Armor_(Ability)
   // Two holders never volley a drop between them: the bounced call
@@ -464,44 +388,7 @@ const setupAbilities = [
   createDrizzleAbility(Abilities.SandStream, Weathers.Sandstorm),
 
   // https://bulbapedia.bulbagarden.net/wiki/Sap_Sipper_(Ability)
-  createAbility(
-    Abilities.SapSipper,
-    (battle) =>
-      new MergedLifecycle([
-        battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Post, (event) => {
-          if (
-            event.type === Types.Grass &&
-            event.target.type === MoveTargetType.Unit &&
-            event.target.unit !== event.source &&
-            event.target.unit.hasAbility(Abilities.SapSipper)
-          ) {
-            event.immune = true;
-          }
-        }),
-        battle.on(BattleEvents.UnitTriggerMoveFailed, EventPriority.Post, (event) => {
-          const parent = event.parent;
-
-          if (
-            parent.target.type === MoveTargetType.Unit &&
-            parent.target.unit !== parent.source &&
-            parent.target.unit.hasAbility(Abilities.SapSipper) &&
-            parent.source.checkMoveType(parent.move, parent.target) === Types.Grass
-          ) {
-            parent.target.unit.triggerAbility(Abilities.SapSipper);
-          }
-        }),
-        createStageFeedScoring(battle, Abilities.SapSipper, Types.Grass, Stages.Attack),
-        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
-          if (event.ability === Abilities.SapSipper) {
-            event.source.addStage(Stages.Attack, 1, {
-              type: EffectType.Ability,
-              ability: Abilities.SapSipper,
-              unit: event.source,
-            });
-          }
-        }),
-      ]),
-  ),
+  createAbsorbStageAbility(Abilities.SapSipper, Stages.Attack, movesOfType(Types.Grass)),
 
   // https://bulbapedia.bulbagarden.net/wiki/Honey_Gather_(Ability)
   // The mainline finds the jar after the fight, and a fight here has

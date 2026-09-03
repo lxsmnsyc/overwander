@@ -363,7 +363,7 @@ export default function registerGen2Moves(): void {
     accuracy: 95,
     target: MoveTargets.None,
     affects: MoveAffects.Unit | MoveAffects.Enemy,
-    flags: 0,
+    flags: MoveFlags.Wind,
     delay: PROJECTILE_DELAY,
     cast: [SpriteAnim.Emit, SpriteAnim.Gas, SpriteAnim.Charge],
   });
@@ -855,7 +855,7 @@ export default function registerGen2Moves(): void {
     accuracy: 100,
     target: MoveTargets.None,
     affects: MoveAffects.Unit | MoveAffects.Enemy,
-    flags: 0,
+    flags: MoveFlags.Wind,
     cast: [SpriteAnim.Emit, SpriteAnim.Rotate, SpriteAnim.Charge],
   });
   registerMove(Moves.Crunch, {

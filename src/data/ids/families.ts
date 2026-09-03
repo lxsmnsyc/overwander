@@ -135,6 +135,8 @@ const enum Families {
   Poochyena = 133,
   Zigzagoon = 134,
   Wurmple = 135,
+  Lotad = 136,
+  Seedot = 137,
 }
 
 export default Families;

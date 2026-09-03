@@ -848,6 +848,15 @@ describe('world', () => {
       Moves.DestinyBond,
       Moves.Bide,
       Moves.BellyDrum,
+      Moves.RolePlay,
+      Moves.SkillSwap,
+      Moves.Memento,
+      Moves.Grudge,
+      Moves.Endeavor,
+      Moves.Wish,
+      Moves.Ingrain,
+      Moves.SlackOff,
+      Moves.Swallow,
       // Temporary: a boss is immune to Perishing, so the song would
       // only be a slot it wastes
       Moves.PerishSong,

@@ -19,11 +19,23 @@ import { getSpeciesData } from '../species';
  * lands the last hit down with it, which taxes the party for winning
  * rather than making the fight harder.
  *
+ * **Role Play** and **Skill Swap** are Transform by another road:
+ * both hand the abilities about, and the one a boss would give away
+ * is the Boss ability itself. **Memento** spends the whole of its
+ * health rather than a move's worth of it, so a boss that leaves one
+ * ends the raid on its own.
+ *
  * **Bide** returns double everything it was dealt while it channels,
  * and a lobby is up to ten parties: the harder the raid hits, the
  * more certainly the answer wipes it. **Belly Drum** and a Ghost's
  * **Curse** each cost half the pool, and the pool is the fight's
- * clock, so both hand the party half the raid.
+ * clock, so both hand the party half the raid. **Endeavor** fails
+ * while a boss is healthy and fires when it is nearly dead, taking
+ * the party down to a sliver at the moment it has won, and **Grudge**
+ * costs whoever lands the last hit the move that landed it.
+ *
+ * **Wish**, **Ingrain**, **Slack Off** and **Swallow** are the heals
+ * a boss cannot receive at all, so each is a slot it wastes.
  *
  * It is data rather than engine: the list is filtered out of the
  * boss' learnset as the raid is staged, which happens where a raid is
@@ -40,6 +52,15 @@ const BANNED_BOSS_MOVES = new Set<Moves>([
   Moves.DestinyBond,
   Moves.Bide,
   Moves.BellyDrum,
+  Moves.RolePlay,
+  Moves.SkillSwap,
+  Moves.Memento,
+  Moves.Grudge,
+  Moves.Endeavor,
+  Moves.Wish,
+  Moves.Ingrain,
+  Moves.SlackOff,
+  Moves.Swallow,
   // TODO: temporary. A boss is already immune to Perishing, so the
   // song costs it a move slot and does nothing. Drop this line when
   // there is something for it to do

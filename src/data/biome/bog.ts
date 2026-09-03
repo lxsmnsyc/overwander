@@ -15,10 +15,12 @@ export default function registerBogSpawns(): void {
         { species: Species.Magikarp, weight: 30 },
         { species: Species.Wooper, weight: 25 },
         { species: Species.Marill, weight: 20 },
+        { species: Species.Mudkip, weight: 2 },
       ],
       uncommon: [
         { species: Species.Poliwhirl, weight: 5 },
         { species: Species.Weepinbell, weight: 5 },
+        { species: Species.Marshtomp, weight: 1 },
       ],
       rare: [
         { species: Species.Poliwrath, weight: 5 },
@@ -26,6 +28,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Venomoth, weight: 10 },
         { species: Species.Azumarill, weight: 5 },
         { species: Species.Yanma, weight: 5 },
+        { species: Species.Swampert, weight: 2 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [],
@@ -38,10 +41,12 @@ export default function registerBogSpawns(): void {
         { species: Species.Magikarp, weight: 30 },
         { species: Species.Wooper, weight: 25 },
         { species: Species.Marill, weight: 20 },
+        { species: Species.Mudkip, weight: 2 },
       ],
       uncommon: [
         { species: Species.Poliwhirl, weight: 5 },
         { species: Species.Weepinbell, weight: 5 },
+        { species: Species.Marshtomp, weight: 1 },
       ],
       rare: [
         { species: Species.Poliwrath, weight: 5 },
@@ -49,6 +54,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Venomoth, weight: 10 },
         { species: Species.Azumarill, weight: 5 },
         { species: Species.Yanma, weight: 5 },
+        { species: Species.Swampert, weight: 2 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [],

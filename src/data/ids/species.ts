@@ -371,6 +371,15 @@ export const enum Species {
   Lugia = 249,
   HoOh = 250,
   Celebi = 251,
+  Treecko = 252,
+  Grovyle = 253,
+  Sceptile = 254,
+  Torchic = 255,
+  Combusken = 256,
+  Blaziken = 257,
+  Mudkip = 258,
+  Marshtomp = 259,
+  Swampert = 260,
 }
 
 /**

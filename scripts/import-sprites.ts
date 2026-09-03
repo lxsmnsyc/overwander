@@ -40,7 +40,7 @@ const DESTINATION = 'public/sprites/pokemon';
  * game's own answer is `getSpeciesRegion`, which cannot be imported
  * into a script: it is written in `const enum`s, which node refuses
  */
-const REGIONS: Partial<Record<string, string>> = { kanto: 'kanto', johto: 'johto' };
+const REGIONS: Partial<Record<string, string>> = { kanto: 'kanto', johto: 'johto', hoenn: 'hoenn' };
 
 /**
  * The three drawn like pokemon without being pokemon, by the form the
@@ -71,12 +71,10 @@ const MINIMUM = new Set<number>([
 ]);
 
 /**
- * Which species this game has form ids for, and how many forms it
- * knows counting the default. A form past the count is skipped: the
- * ids are `Species` members, and arithmetic alone cannot say whether
- * one was ever written down
+ * Where the ids are written down, read as text: node refuses to
+ * import a `const enum`
  */
-const FORMS: Partial<Record<number, number>> = { 201: 28 };
+const IDS = 'src/data/ids/species.ts';
 
 /**
  * Where form ids start, matching `SPECIES_FORM_BAND` in
@@ -122,32 +120,40 @@ function slotsOf(root: string): Slot[] {
   }));
 }
 
-/** The species id this form is known by here, or nothing for one it is not. */
-function wanted(slot: Slot): Wanted | null {
-  if (slot.region === 'misc' && slot.dex === 0) {
-    const known = MISC[slot.form];
+/**
+ * Every id the `Species` enum holds. A region is written a few lines
+ * at a time, so what the game has an id for is the only thing worth
+ * copying: everything else would ship as art nothing can draw
+ */
+function knownSpecies(): Set<number> {
+  const source = readFileSync(IDS, 'utf8');
+  const body = source.slice(source.indexOf('export const enum Species {'));
+  const ids = new Set<number>();
 
-    return known == null ? null : { ...slot, species: known.species, under: UNKNOWN };
+  for (const [, id] of body.slice(0, body.indexOf('\n}')).matchAll(/= (\d+),/g)) {
+    ids.add(Number(id));
+  }
+  return ids;
+}
+
+/** The species id this form is known by here, or nothing for one it is not. */
+function wanted(slot: Slot, known: Set<number>): Wanted | null {
+  if (slot.region === 'misc' && slot.dex === 0) {
+    const misc = MISC[slot.form];
+
+    return misc == null ? null : { ...slot, species: misc.species, under: UNKNOWN };
   }
   const region = REGIONS[slot.region];
 
   if (region == null) {
     return null;
   }
-  if (slot.form === 0) {
-    return { ...slot, species: slot.dex, under: region };
-  }
 
   // An alternate form is filed beside its species, under the id the
-  // reserved band gives it, and skipped where the game has no id
-  if (slot.form >= (FORMS[slot.dex] ?? 0)) {
-    return null;
-  }
-  return {
-    ...slot,
-    species: FORM_BAND + slot.dex * FORMS_PER_SPECIES + slot.form,
-    under: region,
-  };
+  // reserved band gives it
+  const species = slot.form === 0 ? slot.dex : FORM_BAND + slot.dex * FORMS_PER_SPECIES + slot.form;
+
+  return known.has(species) ? { ...slot, species, under: region } : null;
 }
 
 /** What the clips are called, for a line somebody has to read. */
@@ -181,10 +187,11 @@ export default function importSprites(source: string, dryRun: boolean): void {
     throw new Error(`No compact sheets at ${root}. Build them in the SpriteCollab checkout first`);
   }
   const slots = slotsOf(root);
+  const known = knownSpecies();
   const taking: Wanted[] = [];
 
   for (const slot of slots) {
-    const held = wanted(slot);
+    const held = wanted(slot, known);
 
     if (held != null) {
       taking.push(held);

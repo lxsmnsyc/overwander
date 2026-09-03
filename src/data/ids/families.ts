@@ -129,6 +129,9 @@ const enum Families {
   Lugia = 127,
   HoOh = 128,
   Celebi = 129,
+  Treecko = 130,
+  Torchic = 131,
+  Mudkip = 132,
 }
 
 export default Families;

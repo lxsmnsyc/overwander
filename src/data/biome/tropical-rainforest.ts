@@ -11,12 +11,14 @@ export default function registerTropicalRainforestSpawns(): void {
       base: [
         { species: Species.Exeggcute, weight: 20 },
         { species: Species.Pineco, weight: 20 },
+        { species: Species.Treecko, weight: 2 },
       ],
-      uncommon: [],
+      uncommon: [{ species: Species.Grovyle, weight: 1 }],
       rare: [
         { species: Species.Exeggutor, weight: 10 },
         { species: Species.Aipom, weight: 5 },
         { species: Species.Yanma, weight: 5 },
+        { species: Species.Sceptile, weight: 2 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [{ species: Species.Mew, weight: 10 }],
@@ -25,12 +27,14 @@ export default function registerTropicalRainforestSpawns(): void {
       base: [
         { species: Species.Exeggcute, weight: 20 },
         { species: Species.Pineco, weight: 20 },
+        { species: Species.Treecko, weight: 2 },
       ],
-      uncommon: [],
+      uncommon: [{ species: Species.Grovyle, weight: 1 }],
       rare: [
         { species: Species.Exeggutor, weight: 10 },
         { species: Species.Aipom, weight: 5 },
         { species: Species.Yanma, weight: 5 },
+        { species: Species.Sceptile, weight: 2 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [{ species: Species.Mew, weight: 10 }],

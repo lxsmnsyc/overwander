@@ -67,6 +67,9 @@ export const STARTER_SPECIES: Species[] = [
   Species.Chikorita,
   Species.Cyndaquil,
   Species.Totodile,
+  Species.Treecko,
+  Species.Torchic,
+  Species.Mudkip,
 ];
 
 /**

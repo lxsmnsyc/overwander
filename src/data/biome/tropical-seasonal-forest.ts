@@ -11,11 +11,16 @@ export default function registerTropicalSeasonalForestSpawns(): void {
       base: [
         { species: Species.Bellsprout, weight: 20 },
         { species: Species.Exeggcute, weight: 20 },
+        { species: Species.Treecko, weight: 2 },
       ],
-      uncommon: [{ species: Species.Weepinbell, weight: 5 }],
+      uncommon: [
+        { species: Species.Weepinbell, weight: 5 },
+        { species: Species.Grovyle, weight: 1 },
+      ],
       rare: [
         { species: Species.Victreebel, weight: 5 },
         { species: Species.Exeggutor, weight: 10 },
+        { species: Species.Sceptile, weight: 2 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [],
@@ -24,12 +29,17 @@ export default function registerTropicalSeasonalForestSpawns(): void {
       base: [
         { species: Species.Bellsprout, weight: 20 },
         { species: Species.Exeggcute, weight: 20 },
+        { species: Species.Treecko, weight: 2 },
       ],
-      uncommon: [{ species: Species.Weepinbell, weight: 5 }],
+      uncommon: [
+        { species: Species.Weepinbell, weight: 5 },
+        { species: Species.Grovyle, weight: 1 },
+      ],
       rare: [
         { species: Species.Victreebel, weight: 5 },
         { species: Species.Exeggutor, weight: 10 },
         { species: Species.Pinsir, weight: 5 },
+        { species: Species.Sceptile, weight: 2 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [],

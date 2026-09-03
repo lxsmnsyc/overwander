@@ -12,6 +12,7 @@ const enum Regions {
   Unknown = 0,
   Kanto = 1,
   Johto = 2,
+  Hoenn = 3,
 }
 
 export default Regions;

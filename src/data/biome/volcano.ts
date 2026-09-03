@@ -19,11 +19,13 @@ export default function registerVolcanoSpawns(): void {
         { species: Species.Geodude, weight: 20 },
         { species: Species.Cyndaquil, weight: 6 },
         { species: Species.Slugma, weight: 20 },
+        { species: Species.Torchic, weight: 2 },
       ],
       uncommon: [
         { species: Species.Charmeleon, weight: 3 },
         { species: Species.Graveler, weight: 5 },
         { species: Species.Quilava, weight: 3 },
+        { species: Species.Combusken, weight: 1 },
       ],
       rare: [
         { species: Species.Charizard, weight: 3 },
@@ -31,6 +33,7 @@ export default function registerVolcanoSpawns(): void {
         { species: Species.Magmar, weight: 10 },
         { species: Species.Golem, weight: 5 },
         { species: Species.Typhlosion, weight: 3 },
+        { species: Species.Blaziken, weight: 2 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [
@@ -48,11 +51,13 @@ export default function registerVolcanoSpawns(): void {
         { species: Species.Cyndaquil, weight: 6 },
         { species: Species.Slugma, weight: 20 },
         { species: Species.Onix, weight: 10 },
+        { species: Species.Torchic, weight: 2 },
       ],
       uncommon: [
         { species: Species.Charmeleon, weight: 3 },
         { species: Species.Graveler, weight: 5 },
         { species: Species.Quilava, weight: 3 },
+        { species: Species.Combusken, weight: 1 },
       ],
       rare: [
         { species: Species.Charizard, weight: 3 },
@@ -61,6 +66,7 @@ export default function registerVolcanoSpawns(): void {
         { species: Species.Magmar, weight: 10 },
         { species: Species.Golem, weight: 5 },
         { species: Species.Typhlosion, weight: 3 },
+        { species: Species.Blaziken, weight: 2 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [

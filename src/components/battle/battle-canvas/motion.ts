@@ -1,6 +1,7 @@
 import type { MoveTarget } from '../../../battle/events';
 import type Unit from '../../../battle/unit';
 import type { FieldVisual } from '../../../canvas/battle/moves/__painted';
+import { type SpriteShim, shimFor } from '../../../canvas/battle/sprite-shim';
 import type SpeciesSpriteAnimation from '../../../canvas/species-sprite-animation';
 import { isLoopingCast, pickCast } from '../../../data/constants/cast';
 import pickStatusCast from '../../../data/constants/status-cast';
@@ -89,6 +90,38 @@ export interface Performance {
    */
   duration: number | null;
   loop: boolean;
+  /**
+   * The movement standing in for a clip this sheet has not got, or
+   * nothing where it has the one it was asked for
+   */
+  shim: SpriteShim | null;
+  /** Whether the clip is held on one frame rather than played */
+  still: boolean;
+}
+
+/**
+ * A clip this sheet actually has, with whatever movement stands in for
+ * the one it was asked for. Everything below answers through this, so
+ * a hole in a sheet is patched once rather than at each of the four
+ * places a pokemon can be doing something
+ */
+function performed(
+  wanted: SpriteAnim,
+  sprite: SpeciesSpriteAnimation,
+  duration: number | null,
+  loop: boolean,
+): Performance {
+  const shimmed = shimFor(wanted, (name) => sprite.has(name));
+
+  return {
+    animation: shimmed.animation,
+    // Stretching only means anything for the clip that was asked for:
+    // a stand-in is a loop at its own speed
+    duration: shimmed.animation === wanted ? duration : null,
+    loop: shimmed.animation === wanted ? loop : true,
+    shim: shimmed.shim,
+    still: shimmed.still,
+  };
 }
 
 /**
@@ -127,7 +160,7 @@ export function animationFor(
     // A knocked-out pokemon holds the last frame of being hurt rather
     // than looping it, which is the difference between lying there
     // and writhing for ever
-    return { animation: SpriteAnim.Hurt, duration: null, loop: false };
+    return performed(SpriteAnim.Hurt, sprite, null, false);
   }
 
   /**
@@ -148,7 +181,7 @@ export function animationFor(
     // one drawn as a single movement plays once and holds. Neither is
     // fitted to the flight: the engine's delay says when the hit
     // lands, not how fast a pokemon moves
-    return { animation, duration: null, loop: isLoopingCast(animation) };
+    return performed(animation, sprite, null, isLoopingCast(animation));
   }
 
   /**
@@ -165,7 +198,7 @@ export function animationFor(
   const working = unit.casting ?? unit.channeling;
 
   if (working != null) {
-    return { animation: SpriteAnim.Charge, duration: null, loop: true };
+    return performed(SpriteAnim.Charge, sprite, null, true);
   }
 
   // Standing about is where what is being done **to** it shows: asleep,
@@ -178,7 +211,7 @@ export function animationFor(
   );
 
   if (suffering != null) {
-    return { animation: suffering, duration: null, loop: true };
+    return performed(suffering, sprite, null, true);
   }
-  return { animation: SpriteAnim.Idle, duration: null, loop: true };
+  return performed(SpriteAnim.Idle, sprite, null, true);
 }

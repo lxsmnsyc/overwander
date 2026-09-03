@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import facingToward from '../../src/canvas/facing';
+import facingToward, { facingVector } from '../../src/canvas/facing';
 
 /**
  * The canvas y axis grows downward, so something below another thing
@@ -28,6 +28,21 @@ describe('facing', () => {
     expect(facingToward(0, 0, 100, 10)).toBe('Right');
     // And a steep one is the diagonal rather than the square
     expect(facingToward(0, 0, 100, 70)).toBe('DownRight');
+  });
+
+  it('turns each of the eight back into the way it points', () => {
+    // The round trip: a direction worked out from two points walks
+    // back toward the second of them
+    expect(facingVector(facingToward(0, 0, 0, 100))).toEqual([0, 1]);
+    expect(facingVector(facingToward(0, 0, 0, -100))).toEqual([0, -1]);
+    expect(facingVector(facingToward(0, 0, 100, 0))).toEqual([1, 0]);
+    expect(facingVector(facingToward(0, 0, -100, 0))).toEqual([-1, 0]);
+
+    const [x, y] = facingVector('DownRight');
+
+    expect(Math.hypot(x, y)).toBeCloseTo(1);
+    expect(x).toBeGreaterThan(0);
+    expect(y).toBeGreaterThan(0);
   });
 
   it('answers something for a point looking at itself', () => {

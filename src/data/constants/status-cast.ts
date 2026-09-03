@@ -76,6 +76,10 @@ export default function pickStatusCast(
         return animation;
       }
     }
+    // The status is the one being drawn and the sheet has none of its
+    // clips. The last is the common one, which is the hole the shim
+    // patches
+    return cast.at(-1) ?? null;
   }
   return null;
 }

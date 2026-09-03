@@ -9,6 +9,8 @@ import type Bakery from '../../../canvas/bakery';
 import type QuadBatch from '../../../canvas/gl/quad-batch';
 import type { QuadPoint } from '../../../canvas/gl/quad-batch';
 import { cornersOf, shadowCorners } from '../../../canvas/placement';
+import { facingVector } from '../../../canvas/facing';
+import { SHIM_SPANS, shimMotion } from '../../../canvas/battle/sprite-shim';
 import {
   SHADOW_STAMP,
   bakeShadowDisc,
@@ -19,7 +21,6 @@ import drawSparkle, { SPARKLE_LIFE } from '../../../canvas/sparkle';
 import type { Point } from '../../../canvas/sprite-sheet';
 import { Stats } from '../../../data/constants/stats';
 import Abilities from '../../../data/ids/abilities';
-import { SpriteAnim } from '../../../data/ids/sprite-anims';
 import { getMoveData } from '../../../data/moves';
 
 /**
@@ -180,6 +181,30 @@ function drawLabel(
 /**
  * How much bigger than the sheet a pokemon in this slot is drawn
  */
+/**
+ * A quad turned about a point. The batch takes four corners rather
+ * than a rectangle, so a rotation is the corners moved and nothing
+ * else
+ */
+function turned(
+  quad: { x: number; y: number }[],
+  x: number,
+  y: number,
+  angle: number,
+): { x: number; y: number }[] {
+  if (angle === 0) {
+    return quad;
+  }
+
+  const cos = Math.cos(angle);
+  const sin = Math.sin(angle);
+
+  return quad.map((corner) => ({
+    x: x + (corner.x - x) * cos - (corner.y - y) * sin,
+    y: y + (corner.x - x) * sin + (corner.y - y) * cos,
+  }));
+}
+
 export function scaleOf(slot: Slot): number {
   return slot.radius / SPRITE_SCALE_DIVISOR;
 }
@@ -323,21 +348,46 @@ export function drawSlot(
   // its cast stay, which is what a watcher has to go on
   if (!hidden) {
     if (sprite?.ready === true) {
-      const wanted = animationFor(unit, sprite, striking.get(unit));
-      const playable = sprite.has(wanted.animation) ? wanted.animation : SpriteAnim.Idle;
+      const strike = striking.get(unit);
+      const wanted = animationFor(unit, sprite, strike);
 
-      sprite.play(playable, {
+      sprite.play(wanted.animation, {
         direction: slot.facing,
         loop: wanted.loop,
-        // Stretching only means anything for the clip that was asked
-        // for: a fallback to Idle is a loop at its own speed
-        duration: playable === wanted.animation ? (wanted.duration ?? undefined) : undefined,
+        duration: wanted.duration ?? undefined,
         // A one-shot that has run out while the unit is still working a
         // move has reached the end of *a* window, not the end of the
         // work: the next step of a multi-step move is another pass of
         // the same clip, so it is started again rather than held
         restart: sprite.finished && wanted.duration != null,
       });
+      if (wanted.still) {
+        sprite.stop();
+      }
+      // A clip the sheet has not got is stood in for by moving the
+      // body the way that clip would have. It is written into the
+      // slot's offset, which is what moves a pokemon without taking
+      // its bar and its name along with it
+      if (wanted.shim != null) {
+        const span = SHIM_SPANS[wanted.shim];
+        // A move runs its stand-in once, over the window the engine
+        // holds it for; a status loops it for as long as it is carried
+        const through =
+          strike == null
+            ? (clock % span) / span
+            : Math.min(1, (strike.elapsed ?? 0) / Math.max(1, strike.window));
+        const motion = shimMotion(wanted.shim, through);
+        const size = sprite.frameSize;
+        const scale = scaleOf(slot);
+        const [ahead, down] = facingVector(slot.facing);
+        const reach = motion.along * size.width * scale;
+
+        slot.offset = [
+          slot.offset[0] + ahead * reach,
+          slot.offset[1] + down * reach - motion.lift * size.height * scale,
+        ];
+        slot.spin = motion.spin;
+      }
       // Its body over the middle of the slot, which is the point
       // everything else on the field is measured from: the bars, the
       // name, and whatever a move draws on it.
@@ -387,9 +437,20 @@ export function drawSlot(
       const quad = onto == null ? null : sprite.quadOf(x, y, placement);
 
       if (onto == null || quad == null) {
+        // Turned about the point it stands on, so a spinning pokemon
+        // stays on its own spot rather than orbiting it
+        if (slot.spin !== 0) {
+          context.save();
+          context.translate(x, y);
+          context.rotate(slot.spin);
+          context.translate(-x, -y);
+        }
         sprite.draw(context, x, y, placement);
+        if (slot.spin !== 0) {
+          context.restore();
+        }
       } else {
-        onto.batch.quad(quad.sheet, quad.source, cornersOf(quad), alpha);
+        onto.batch.quad(quad.sheet, quad.source, turned(cornersOf(quad), x, y, slot.spin), alpha);
       }
       if (unit.shiny) {
         sparkle(context, slot, sprite, x, y, clock, onto);

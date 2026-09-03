@@ -145,6 +145,15 @@ const enum Families {
   Slakoth = 143,
   Nincada = 144,
   Whismur = 145,
+  // 146 is Makuhita's and 147 Nosepass's: their dex numbers fall
+  // between these, and an id is stored in a player's candy stacks, so
+  // a later family cannot be renumbered into place
+  Skitty = 148,
+  // 149 is Sableye's, 150 Mawile's and 151 Aron's, for the same
+  // reason. Azurill needs none: it joins the Marill family it hatches
+  // into
+  Meditite = 152,
+  Electrike = 153,
 }
 
 export default Families;

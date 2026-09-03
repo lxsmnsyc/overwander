@@ -15,6 +15,7 @@ export default function registerShrublandSpawns(): void {
         { species: Species.Hoppip, weight: 25 },
         { species: Species.Sunkern, weight: 25 },
         { species: Species.Snubbull, weight: 20 },
+        { species: Species.Skitty, weight: 25 },
       ],
       uncommon: [],
       rare: [
@@ -22,6 +23,7 @@ export default function registerShrublandSpawns(): void {
         { species: Species.Flareon, weight: 5 },
         { species: Species.Smeargle, weight: 5 },
         { species: Species.Miltank, weight: 5 },
+        { species: Species.Delcatty, weight: 10 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [],
@@ -34,6 +36,7 @@ export default function registerShrublandSpawns(): void {
         { species: Species.Hoppip, weight: 25 },
         { species: Species.Sunkern, weight: 25 },
         { species: Species.Snubbull, weight: 20 },
+        { species: Species.Skitty, weight: 25 },
       ],
       uncommon: [],
       rare: [
@@ -41,6 +44,7 @@ export default function registerShrublandSpawns(): void {
         { species: Species.Flareon, weight: 5 },
         { species: Species.Smeargle, weight: 5 },
         { species: Species.Miltank, weight: 5 },
+        { species: Species.Delcatty, weight: 10 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [],

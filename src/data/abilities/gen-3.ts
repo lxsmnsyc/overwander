@@ -22,6 +22,21 @@ export default function registerGen3Abilities(): void {
     description:
       'Only a move it is weak to lands at all. Status moves, poison and the weather still reach it.',
   });
+  // Skitty
+  registerAbility(Abilities.Normalize, {
+    name: 'Normalize',
+    description: 'Everything it uses comes out Normal-type, whatever the move says.',
+  });
+  // Meditite
+  registerAbility(Abilities.PurePower, {
+    name: 'Pure Power',
+    description: '2x Attack.',
+  });
+  // Electrike
+  registerAbility(Abilities.Minus, {
+    name: 'Minus',
+    description: '1.5x Special Attack while a teammate carries Plus or Minus.',
+  });
   // Shroomish
   registerAbility(Abilities.PoisonHeal, {
     name: 'Poison Heal',

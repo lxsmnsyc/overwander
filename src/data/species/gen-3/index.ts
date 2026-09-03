@@ -1,10 +1,13 @@
 import registerLotadSpecies from './lotad';
+import registerElectrikeSpecies from './electrike';
+import registerMedititeSpecies from './meditite';
 import registerMudkipSpecies from './mudkip';
 import registerPoochyenaSpecies from './poochyena';
 import registerNincadaSpecies from './nincada';
 import registerRaltsSpecies from './ralts';
 import registerSeedotSpecies from './seedot';
 import registerShroomishSpecies from './shroomish';
+import registerSkittySpecies from './skitty';
 import registerSlakothSpecies from './slakoth';
 import registerSurskitSpecies from './surskit';
 import registerTaillowSpecies from './taillow';
@@ -32,4 +35,7 @@ export default function registerGen3Species(): void {
   registerShroomishSpecies();
   registerNincadaSpecies();
   registerWhismurSpecies();
+  registerSkittySpecies();
+  registerMedititeSpecies();
+  registerElectrikeSpecies();
 }

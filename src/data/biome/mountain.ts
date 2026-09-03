@@ -18,6 +18,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Slugma, weight: 20 },
         { species: Species.Larvitar, weight: 2 },
         { species: Species.Onix, weight: 10 },
+        { species: Species.Meditite, weight: 25 },
       ],
       uncommon: [
         { species: Species.Charmeleon, weight: 1 },
@@ -42,6 +43,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Sudowoodo, weight: 5 },
         { species: Species.Wobbuffet, weight: 5 },
         { species: Species.Steelix, weight: 5 },
+        { species: Species.Medicham, weight: 10 },
       ],
       prized: [...UNOWN_SPAWNS, { species: Species.Magby, weight: PRIZED_WEIGHT }],
       special: [
@@ -61,6 +63,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Slugma, weight: 20 },
         { species: Species.Larvitar, weight: 2 },
         { species: Species.Onix, weight: 10 },
+        { species: Species.Meditite, weight: 25 },
       ],
       uncommon: [
         { species: Species.Charmeleon, weight: 1 },
@@ -85,6 +88,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Sudowoodo, weight: 5 },
         { species: Species.Wobbuffet, weight: 5 },
         { species: Species.Steelix, weight: 5 },
+        { species: Species.Medicham, weight: 10 },
       ],
       prized: [...UNOWN_SPAWNS, { species: Species.Magby, weight: PRIZED_WEIGHT }],
       special: [

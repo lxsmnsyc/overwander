@@ -12,6 +12,7 @@ export default function registerMontaneForestSpawns(): void {
         { species: Species.Mankey, weight: 20 },
         { species: Species.Teddiursa, weight: 20 },
         { species: Species.Ralts, weight: 20 },
+        { species: Species.Meditite, weight: 25 },
       ],
       uncommon: [{ species: Species.Kirlia, weight: 10 }],
       rare: [
@@ -19,6 +20,7 @@ export default function registerMontaneForestSpawns(): void {
         { species: Species.Heracross, weight: 5 },
         { species: Species.Stantler, weight: 5 },
         { species: Species.Gardevoir, weight: 5 },
+        { species: Species.Medicham, weight: 10 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [],
@@ -28,6 +30,7 @@ export default function registerMontaneForestSpawns(): void {
         { species: Species.Mankey, weight: 20 },
         { species: Species.Teddiursa, weight: 20 },
         { species: Species.Ralts, weight: 20 },
+        { species: Species.Meditite, weight: 25 },
       ],
       uncommon: [{ species: Species.Kirlia, weight: 10 }],
       rare: [
@@ -36,6 +39,7 @@ export default function registerMontaneForestSpawns(): void {
         { species: Species.Heracross, weight: 5 },
         { species: Species.Stantler, weight: 5 },
         { species: Species.Gardevoir, weight: 5 },
+        { species: Species.Medicham, weight: 10 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [],

@@ -71,6 +71,38 @@ describe('Truant', () => {
   });
 });
 
+describe('Normalize', () => {
+  it('turns everything it uses Normal', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const cat = createUnit(battle, teamA);
+    const ghost = createUnit(battle, teamB, [Types.Ghost]);
+    cat.addAbility(Abilities.Normalize);
+
+    const aim = { type: MoveTargetType.Unit, unit: ghost } as const;
+
+    expect(cat.checkMoveType(Moves.Ember, aim)).toBe(Types.Normal);
+    // Which is the cost of it: a ghost takes nothing from a Normal
+    // move, whatever the move was before
+    expect(cat.checkMoveImmunity(Moves.Ember, aim, cat.checkMoveType(Moves.Ember, aim))).toBe(true);
+  });
+});
+
+describe('Minus', () => {
+  it('rises beside either half of the pair', () => {
+    const { battle, teamA } = createBattle();
+    const alone = createUnit(battle, teamA);
+    alone.addAbility(Abilities.Minus);
+
+    const bare = alone.checkStat(Stats.SpecialAttack, 0);
+
+    const partner = createUnit(battle, teamA);
+    partner.addAbility(Abilities.Plus);
+
+    expect(alone.checkStat(Stats.SpecialAttack, 0)).toBeGreaterThan(bare);
+    expect(partner.checkStat(Stats.SpecialAttack, 0)).toBeGreaterThan(bare);
+  });
+});
+
 describe('Wonder Guard', () => {
   it('lets nothing through but what it is weak to', () => {
     const { battle, teamA, teamB } = createBattle();

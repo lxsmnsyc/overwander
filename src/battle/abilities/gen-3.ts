@@ -1,11 +1,7 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Stages, Stats } from '../../data/constants/stats';
 import Abilities from '../../data/ids/abilities';
-import {
-  TYPE_EFFECTIVENESS,
-  TYPE_EFFECTIVENESS_FACTOR,
-  type Types,
-} from '../../data/constants/types';
+import { TYPE_EFFECTIVENESS, TYPE_EFFECTIVENESS_FACTOR, Types } from '../../data/constants/types';
 import { MoveCategories, MoveFlags } from '../../data/ids/moves';
 import { getMoveData } from '../../data/moves';
 import { Statuses } from '../../data/ids/status';
@@ -14,7 +10,13 @@ import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import { MergedLifecycle } from '../lifecycle';
 import { STATUS_MOVES } from '../moves/status';
 import type Unit from '../unit';
-import { createAbility, createAbsorbStageAbility, movesFlagged } from './__create';
+import {
+  createAbility,
+  createAbsorbStageAbility,
+  createHugePowerAbility,
+  createPolarityAbility,
+  movesFlagged,
+} from './__create';
 
 /** Whether the move's type comes to more than the ordinary amount. */
 function isWeakTo(type: Types, target: Unit): boolean {
@@ -120,6 +122,27 @@ const setupAbilities = [
           }
         }),
       ]),
+  ),
+
+  // https://bulbapedia.bulbagarden.net/wiki/Pure_Power_(Ability)
+  createHugePowerAbility(Abilities.PurePower),
+
+  // https://bulbapedia.bulbagarden.net/wiki/Minus_(Ability)
+  createPolarityAbility(Abilities.Minus),
+
+  /**
+   * Normalize rewrites the type on the way out rather than at the
+   * moment of damage, so everything downstream agrees: what it is
+   * weak to, what shrugs it off, and the same-type bonus it now
+   * always gets on a Normal move
+   * https://bulbapedia.bulbagarden.net/wiki/Normalize_(Ability)
+   */
+  createAbility(Abilities.Normalize, (battle) =>
+    battle.on(BattleEvents.CheckUnitMoveType, EventPriority.Post, (event) => {
+      if (event.source.hasAbility(Abilities.Normalize)) {
+        event.type = Types.Normal;
+      }
+    }),
   ),
 
   createAbility(Abilities.Truant, (battle) =>

@@ -4,7 +4,7 @@ import { MAX_STAGE, Stages, Stats } from '../../data/constants/stats';
 import { MoveCategories, type MoveFlags, type Moves, StatFlags } from '../../data/ids/moves';
 import { getMoveData, getWeatherMove } from '../../data/moves';
 import type { Types } from '../../data/constants/types';
-import type Abilities from '../../data/ids/abilities';
+import Abilities from '../../data/ids/abilities';
 import type { Statuses, Weathers } from '../../data/ids/status';
 import { FEED_BONUS, RISKY_PENALTY, healWorth } from '../ai/score';
 import type Battle from '../core';
@@ -242,6 +242,52 @@ export function createAbsorbStageAbility(
         }),
       ]),
   );
+}
+
+const HUGE_POWER_SCALE = 2;
+
+/**
+ * An ability that simply doubles its holder's Attack: Huge Power and
+ * Pure Power, which are one effect printed under two names
+ */
+export function createHugePowerAbility(ability: Abilities): (battle: Battle) => void {
+  return createAbility(ability, (battle) =>
+    battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
+      if (event.stat === Stats.Attack && event.source.hasAbility(ability)) {
+        event.value *= HUGE_POWER_SCALE;
+      }
+    }),
+  );
+}
+
+const POLARITY_BOOST = 1.5;
+
+/**
+ * Plus and Minus, which answer each other rather than themselves: a
+ * holder's Special Attack rises while anybody on its side carries
+ * either of the two. The mainline pairs them that way from Gen 5 on,
+ * and a pair that only answered its own name would leave a lone
+ * Manectric beside a lone Plusle doing nothing
+ */
+export function createPolarityAbility(ability: Abilities): (battle: Battle) => void {
+  return createAbility(ability, (battle) =>
+    battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
+      if (event.stat !== Stats.SpecialAttack || !event.source.hasAbility(ability)) {
+        return;
+      }
+
+      for (const ally of event.source.team.units) {
+        if (ally !== event.source && ally.alive && hasPolarity(ally)) {
+          event.value *= POLARITY_BOOST;
+          return;
+        }
+      }
+    }),
+  );
+}
+
+function hasPolarity(unit: Unit): boolean {
+  return unit.hasAbility(Abilities.Plus) || unit.hasAbility(Abilities.Minus);
 }
 
 /**

@@ -29,6 +29,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Chansey, weight: 2 },
         { species: Species.Zigzagoon, weight: 25 },
         { species: Species.Taillow, weight: 25 },
+        { species: Species.Skitty, weight: 25 },
       ],
       uncommon: [
         { species: Species.Ivysaur, weight: 1 },
@@ -67,6 +68,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Blissey, weight: 5 },
         { species: Species.Linoone, weight: 10 },
         { species: Species.Swellow, weight: 10 },
+        { species: Species.Delcatty, weight: 10 },
       ],
       prized: [
         ...UNOWN_SPAWNS,
@@ -100,6 +102,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Chansey, weight: 2 },
         { species: Species.Zigzagoon, weight: 25 },
         { species: Species.Taillow, weight: 25 },
+        { species: Species.Skitty, weight: 25 },
       ],
       uncommon: [
         { species: Species.Ivysaur, weight: 1 },
@@ -142,6 +145,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Blissey, weight: 5 },
         { species: Species.Linoone, weight: 10 },
         { species: Species.Swellow, weight: 10 },
+        { species: Species.Delcatty, weight: 10 },
       ],
       prized: [
         ...UNOWN_SPAWNS,

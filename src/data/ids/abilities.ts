@@ -259,6 +259,12 @@ const enum Abilities {
   PoisonHeal = 152,
   // Shedinja
   WonderGuard = 153,
+  // Skitty
+  Normalize = 154,
+  // Meditite
+  PurePower = 155,
+  // Electrike
+  Minus = 156,
   // Special (non-standard abilities outside the regular pool)
   Boss = 100001,
   Shadow = 100002,

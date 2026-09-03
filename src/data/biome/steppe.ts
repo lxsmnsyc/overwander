@@ -19,6 +19,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Magnemite, weight: 20 },
         { species: Species.Voltorb, weight: 20 },
         { species: Species.Whismur, weight: 25 },
+        { species: Species.Electrike, weight: 25 },
       ],
       uncommon: [{ species: Species.Loudred, weight: 10 }],
       rare: [
@@ -35,6 +36,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Dunsparce, weight: 10 },
         { species: Species.Girafarig, weight: 5 },
         { species: Species.Exploud, weight: 5 },
+        { species: Species.Manectric, weight: 10 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [{ species: Species.Raikou, weight: 10 }],
@@ -52,6 +54,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Magnemite, weight: 20 },
         { species: Species.Voltorb, weight: 20 },
         { species: Species.Whismur, weight: 25 },
+        { species: Species.Electrike, weight: 25 },
       ],
       uncommon: [{ species: Species.Loudred, weight: 10 }],
       rare: [
@@ -69,6 +72,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Dunsparce, weight: 10 },
         { species: Species.Girafarig, weight: 5 },
         { species: Species.Exploud, weight: 5 },
+        { species: Species.Manectric, weight: 10 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [{ species: Species.Raikou, weight: 10 }],

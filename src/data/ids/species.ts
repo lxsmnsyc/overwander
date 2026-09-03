@@ -415,6 +415,12 @@ export const enum Species {
   Whismur = 293,
   Loudred = 294,
   Exploud = 295,
+  Skitty = 300,
+  Delcatty = 301,
+  Meditite = 307,
+  Medicham = 308,
+  Electrike = 309,
+  Manectric = 310,
 }
 
 /**

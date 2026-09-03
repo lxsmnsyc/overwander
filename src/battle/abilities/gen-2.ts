@@ -18,11 +18,12 @@ import {
   createAbsorbStageAbility,
   createContactHazard,
   createDrizzleAbility,
+  createHugePowerAbility,
   createLimberAbility,
+  createPolarityAbility,
   movesOfType,
 } from './__create';
 
-const PLUS_BOOST = 1.5;
 const FLOWER_GIFT_BOOST = 1.5;
 
 /**
@@ -185,22 +186,7 @@ const setupAbilities = [
   ),
 
   // https://bulbapedia.bulbagarden.net/wiki/Plus_(Ability)
-  // The mainline pairs it with Minus; no registered species has
-  // Minus, so a second Plus on the team is the only partner
-  createAbility(Abilities.Plus, (battle) =>
-    battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
-      if (event.stat !== Stats.SpecialAttack || !event.source.hasAbility(Abilities.Plus)) {
-        return;
-      }
-
-      for (const ally of event.source.team.units) {
-        if (ally !== event.source && ally.alive && ally.hasAbility(Abilities.Plus)) {
-          event.value *= PLUS_BOOST;
-          return;
-        }
-      }
-    }),
-  ),
+  createPolarityAbility(Abilities.Plus),
 
   // https://bulbapedia.bulbagarden.net/wiki/Motor_Drive_(Ability)
   createAbsorbStageAbility(Abilities.MotorDrive, Stages.Speed, movesOfType(Types.Electric)),
@@ -639,13 +625,7 @@ const setupAbilities = [
   // Doubles the stat rather than the blow, so anything reading the
   // Attack it has (Foul Play, a Power Trip) reads the doubled one
   // https://bulbapedia.bulbagarden.net/wiki/Huge_Power_(Ability)
-  createAbility(Abilities.HugePower, (battle) =>
-    battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
-      if (event.stat === Stats.Attack && event.source.hasAbility(Abilities.HugePower)) {
-        event.value *= 2;
-      }
-    }),
-  ),
+  createHugePowerAbility(Abilities.HugePower),
 ];
 
 export default function setupGen2Abilities(battle: Battle): void {

@@ -12,7 +12,7 @@ import type Unit from '../../../src/battle/unit';
 import { MAX_STAGE, Stages, Stats, StatsKind } from '../../../src/data/constants/stats';
 import { Types } from '../../../src/data/constants/types';
 import { MoveTargetFlags, Moves } from '../../../src/data/ids/moves';
-import { Statuses, TeamStatuses } from '../../../src/data/ids/status';
+import { Statuses, TeamStatuses, Weathers } from '../../../src/data/ids/status';
 import { MOVE_DELAY } from '../../../src/battle/mechanics/move';
 import turns from '../../../src/battle/turn';
 import { type BattleHarness, createBattle, createUnit, pinRandom } from '../harness';
@@ -838,6 +838,40 @@ describe('the encore', () => {
     singer.triggerMoveEffect(Moves.Encore, unitTarget(target), 2);
 
     expect(usable(battle, singer, Moves.Encore, target)).toBe(false);
+  });
+
+  it('will not play back a move that winds up', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const singer = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB);
+
+    target.addMove(Moves.Rollout);
+    target.triggerMove(Moves.Rollout, unitTarget(singer), 4);
+    battle.tick(MOVE_DELAY);
+
+    const struck = singer.health;
+
+    expect(usable(battle, singer, Moves.Encore, target)).toBe(false);
+
+    singer.triggerMoveEffect(Moves.Encore, unitTarget(target), 2);
+    battle.tick(MOVE_DELAY);
+
+    // A lone trigger of a roll reads as its last pass, which is the
+    // reason nothing is played back here
+    expect(singer.health).toBe(struck);
+  });
+
+  it('plays back a Solar Beam that no longer winds up', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const singer = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB);
+
+    battle.setWeather(Weathers.Sunny, turns(5));
+    target.addMove(Moves.SolarBeam);
+    target.triggerMove(Moves.SolarBeam, unitTarget(singer), 0);
+    battle.tick(MOVE_DELAY);
+
+    expect(usable(battle, singer, Moves.Encore, target)).toBe(true);
   });
 
   it('is sung to a teammate rather than across the field', () => {

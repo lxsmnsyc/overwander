@@ -702,7 +702,8 @@ export default function registerGen2Moves(): void {
   });
   registerMove(Moves.Encore, {
     name: 'Encore',
-    description: 'Makes the target repeat its last used move 3 times over.',
+    description:
+      'Makes the target repeat its last used move 3 times over. Moves that wind up cannot be repeated.',
     type: Types.Normal,
     category: MoveCategories.Status,
     pp: 5,

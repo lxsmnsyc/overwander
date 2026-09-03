@@ -1,7 +1,8 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Moves } from '../../data/ids/moves';
+import { getMoveData } from '../../data/moves';
 import { Statuses } from '../../data/ids/status';
-import { USELESS_PENALTY } from '../ai/score';
+import { STEP_PENALTY, USELESS_PENALTY } from '../ai/score';
 import type Battle from '../core';
 import { BattleEvents, EffectType, type MoveTarget, MoveTargetType } from '../events';
 import type Unit from '../unit';
@@ -34,10 +35,26 @@ export default function setupEncore(battle: Battle): void {
   /** The last move each unit landed, and what it was aimed at */
   const lastUsed = new Map<Unit, { move: Moves; target: MoveTarget }>();
 
+  /**
+   * Whether a move can be played back at all. A move that spends
+   * steps is spread across them, and one trigger is not the move: a
+   * roll fired on its own reads as its last pass and hits for
+   * sixteen times its power, a rampage hands out its own fatigue,
+   * and a Sky Attack arrives with nothing spent on the wind-up. The
+   * step count is asked of the unit rather than the table, so a Sun
+   * Solar Beam is repeatable while an overcast one is not
+   */
+  function repeatable(unit: Unit, move: Moves, target: MoveTarget): boolean {
+    if (NOT_A_MOVE.has(move)) {
+      return false;
+    }
+    return (getMoveData(move).steps ?? 0) === 0 || unit.checkMoveSteps(move, target) === 0;
+  }
+
   // The effect event is the successful use: a move that missed, or
   // that ran into an immunity, never reaches it
   battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Post, (event) => {
-    if (!NOT_A_MOVE.has(event.move)) {
+    if (repeatable(event.source, event.move, event.target)) {
       lastUsed.set(event.source, { move: event.move, target: event.target });
     }
   });
@@ -90,6 +107,10 @@ export default function setupEncore(battle: Battle): void {
     const friendly = event.target.unit.team.alliance === event.source.team.alliance;
 
     event.score += friendly ? ENCORE_BONUS : -USELESS_PENALTY;
+
+    // Each step plays a repeat rather than winding one up, so the
+    // chooser's per-step charge is handed back
+    event.score += STEP_PENALTY * event.source.checkMoveSteps(event.move, event.target);
   });
 
   battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
@@ -122,9 +143,9 @@ export default function setupEncore(battle: Battle): void {
       return;
     }
 
-    // One trigger, never a cast: the repeat costs the target nothing
-    // and cannot channel, so a multi-step move comes back as its
-    // final step alone
+    // One trigger, never a cast: the repeat costs the target nothing,
+    // and the move is a single-step one, so the trigger is the whole
+    // of it
     target.triggerMove(move, aim, 0);
   });
 }

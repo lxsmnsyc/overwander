@@ -702,13 +702,14 @@ export default function registerGen2Moves(): void {
   });
   registerMove(Moves.Encore, {
     name: 'Encore',
-    description: 'For 6 seconds the target can only cast the move it last used.',
+    description: 'Makes the target repeat its last used move 3 times over.',
     type: Types.Normal,
     category: MoveCategories.Status,
     pp: 5,
     accuracy: 100,
-    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Ally | MoveTargetFlags.Unit,
     flags: 0,
+    steps: 2,
     cast: [SpriteAnim.Dance, SpriteAnim.RearUp, SpriteAnim.Charge],
   });
   registerMove(Moves.Pursuit, {

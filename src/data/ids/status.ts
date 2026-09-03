@@ -74,7 +74,7 @@ export const enum Statuses {
    */
   Cursed = 29,
   /**
-   * The unit can only cast the move it last used (Encore)
+   * The unit is repeating its last move for the crowd (Encore)
    */
   Encored = 30,
   /**

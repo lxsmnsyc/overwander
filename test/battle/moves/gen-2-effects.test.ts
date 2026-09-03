@@ -6,13 +6,12 @@ import {
   MoveTargetType,
 } from '../../../src/battle/events';
 import { beatUpStrikes } from '../../../src/battle/moves/beat-up';
-import { getEncoredMove } from '../../../src/battle/status/encored';
 import Abilities from '../../../src/data/ids/abilities';
 import { PERISH_DURATION } from '../../../src/battle/status/perishing';
 import type Unit from '../../../src/battle/unit';
 import { MAX_STAGE, Stages, Stats, StatsKind } from '../../../src/data/constants/stats';
 import { Types } from '../../../src/data/constants/types';
-import { Moves } from '../../../src/data/ids/moves';
+import { MoveTargetFlags, Moves } from '../../../src/data/ids/moves';
 import { Statuses, TeamStatuses } from '../../../src/data/ids/status';
 import { MOVE_DELAY } from '../../../src/battle/mechanics/move';
 import turns from '../../../src/battle/turn';
@@ -20,13 +19,40 @@ import { type BattleHarness, createBattle, createUnit, pinRandom } from '../harn
 import { BASE_SCORE } from '../../../src/battle/ai/score';
 import { setupChooseMoveAI } from '../../../src/battle/ai/choose-move';
 import { getMoveData } from '../../../src/data/moves';
-import { MoveTargetFlags } from '../../../src/data/ids/moves';
 
 function unitTarget(unit: Unit): { readonly type: MoveTargetType.Unit; readonly unit: Unit } {
   return { type: MoveTargetType.Unit, unit } as const;
 }
 
 const NONE_TARGET = { type: MoveTargetType.None } as const;
+
+function usable(battle: BattleHarness['battle'], source: Unit, move: Moves, aim: Unit): boolean {
+  const event: CheckUnitAIMoveUsableEvent = {
+    id: 'CheckUnitAIMoveUsable',
+    disabled: false,
+    source,
+    move,
+    target: unitTarget(aim),
+    usable: true,
+  };
+
+  battle.emit(BattleEvents.CheckUnitAIMoveUsable, event);
+  return event.usable;
+}
+
+function score(battle: BattleHarness['battle'], source: Unit, move: Moves, aim: Unit): number {
+  const event: CheckUnitAIMoveScoreEvent = {
+    id: 'CheckUnitAIMoveScore',
+    disabled: false,
+    source,
+    move,
+    target: unitTarget(aim),
+    score: BASE_SCORE,
+  };
+
+  battle.emit(BattleEvents.CheckUnitAIMoveScore, event);
+  return event.score;
+}
 
 describe('the guards', () => {
   it('turns away what somebody else aims at the user', () => {
@@ -381,7 +407,7 @@ describe('Spikes', () => {
 
     createUnit(battle, teamB);
 
-    const usable = (): boolean => {
+    const spikesUsable = (): boolean => {
       const event: CheckUnitAIMoveUsableEvent = {
         id: 'CheckUnitAIMoveUsable',
         disabled: false,
@@ -397,16 +423,16 @@ describe('Spikes', () => {
 
     // Everybody is on the field from the start, so there is no bench
     // to weigh: the depth is the whole of the question
-    expect(usable()).toBe(true);
+    expect(spikesUsable()).toBe(true);
 
     for (let laid = 0; laid < 3; laid++) {
       layer.triggerMoveEffect(Moves.Spikes, target, 0);
     }
-    expect(usable()).toBe(false);
+    expect(spikesUsable()).toBe(false);
 
     // Swept away is worth laying again
     createUnit(battle, teamB).triggerMoveEffect(Moves.RapidSpin, unitTarget(layer), 0);
-    expect(usable()).toBe(true);
+    expect(spikesUsable()).toBe(true);
   });
 });
 
@@ -435,19 +461,6 @@ describe('the locks', () => {
 
     expect(held.status[Statuses.Cornered]).toBeDefined();
     expect(held.checkEscape()).toBe(false);
-  });
-
-  it('encores the move the target last used', () => {
-    const { battle, teamA, teamB } = createBattle();
-    const singer = createUnit(battle, teamA);
-    const target = createUnit(battle, teamB);
-
-    target.addMove(Moves.Tackle);
-    target.triggerMove(Moves.Tackle, unitTarget(singer), 0);
-    singer.triggerMoveEffect(Moves.Encore, unitTarget(target), 0);
-
-    expect(target.status[Statuses.Encored]).toBeDefined();
-    expect(getEncoredMove(target)).toBe(Moves.Tackle);
   });
 
   it('stretches the wait on the move Spite lands on', () => {
@@ -689,34 +702,6 @@ describe('Sketch', () => {
 });
 
 describe('what a move may be aimed at on the caster’s own side', () => {
-  function usable(battle: BattleHarness['battle'], source: Unit, move: Moves, aim: Unit): boolean {
-    const event: CheckUnitAIMoveUsableEvent = {
-      id: 'CheckUnitAIMoveUsable',
-      disabled: false,
-      source,
-      move,
-      target: unitTarget(aim),
-      usable: true,
-    };
-
-    battle.emit(BattleEvents.CheckUnitAIMoveUsable, event);
-    return event.usable;
-  }
-
-  function score(battle: BattleHarness['battle'], source: Unit, move: Moves, aim: Unit): number {
-    const event: CheckUnitAIMoveScoreEvent = {
-      id: 'CheckUnitAIMoveScore',
-      disabled: false,
-      source,
-      move,
-      target: unitTarget(aim),
-      score: BASE_SCORE,
-    };
-
-    battle.emit(BattleEvents.CheckUnitAIMoveScore, event);
-    return event.score;
-  }
-
   it('catches the caster’s own side in what shakes the whole field', () => {
     for (const move of [Moves.Earthquake, Moves.Surf, Moves.Explosion, Moves.SelfDestruct]) {
       const flags = getMoveData(move).target;
@@ -801,6 +786,69 @@ describe('what a move may be aimed at on the caster’s own side', () => {
     hurt.setHealth(60);
     expect(score(battle, caster, Moves.PainSplit, whole)).toBeGreaterThan(
       score(battle, caster, Moves.PainSplit, hurt),
+    );
+  });
+});
+
+describe('the encore', () => {
+  it('plays the move the target last landed again', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const singer = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB);
+
+    target.addMove(Moves.Tackle);
+    target.triggerMove(Moves.Tackle, unitTarget(singer), 0);
+    battle.tick(MOVE_DELAY);
+
+    const struck = singer.health;
+
+    singer.triggerMoveEffect(Moves.Encore, unitTarget(target), 2);
+    battle.tick(MOVE_DELAY);
+
+    expect(target.status[Statuses.Encored]).toBeDefined();
+    expect(singer.health).toBeLessThan(struck);
+  });
+
+  it('runs one repeat per step', () => {
+    expect(getMoveData(Moves.Encore).steps).toBe(2);
+  });
+
+  it('has nothing to call for when the target has landed nothing', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const singer = createUnit(battle, teamA);
+    const quiet = createUnit(battle, teamB);
+    const sung = createUnit(battle, teamB);
+
+    sung.addMove(Moves.Tackle);
+    sung.triggerMove(Moves.Tackle, unitTarget(singer), 0);
+    battle.tick(MOVE_DELAY);
+
+    expect(usable(battle, singer, Moves.Encore, quiet)).toBe(false);
+    expect(usable(battle, singer, Moves.Encore, sung)).toBe(true);
+  });
+
+  it('refuses a second encore over the first', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const singer = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB);
+
+    target.addMove(Moves.Tackle);
+    target.triggerMove(Moves.Tackle, unitTarget(singer), 0);
+    battle.tick(MOVE_DELAY);
+    singer.triggerMoveEffect(Moves.Encore, unitTarget(target), 2);
+
+    expect(usable(battle, singer, Moves.Encore, target)).toBe(false);
+  });
+
+  it('is sung to a teammate rather than across the field', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const singer = createUnit(battle, teamA);
+    const friend = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    expect(getMoveData(Moves.Encore).target & MoveTargetFlags.Ally).toBeTruthy();
+    expect(score(battle, singer, Moves.Encore, friend)).toBeGreaterThan(
+      score(battle, singer, Moves.Encore, enemy),
     );
   });
 });

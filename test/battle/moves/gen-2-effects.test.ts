@@ -1,23 +1,58 @@
 import { describe, expect, it } from 'vitest';
-import { MoveTargetType } from '../../../src/battle/events';
+import {
+  BattleEvents,
+  type CheckUnitAIMoveScoreEvent,
+  type CheckUnitAIMoveUsableEvent,
+  MoveTargetType,
+} from '../../../src/battle/events';
 import { beatUpStrikes } from '../../../src/battle/moves/beat-up';
-import { getEncoredMove } from '../../../src/battle/status/encored';
 import Abilities from '../../../src/data/ids/abilities';
 import { PERISH_DURATION } from '../../../src/battle/status/perishing';
 import type Unit from '../../../src/battle/unit';
 import { MAX_STAGE, Stages, Stats, StatsKind } from '../../../src/data/constants/stats';
 import { Types } from '../../../src/data/constants/types';
-import { Moves } from '../../../src/data/ids/moves';
-import { Statuses, TeamStatuses } from '../../../src/data/ids/status';
+import { MoveTargetFlags, Moves } from '../../../src/data/ids/moves';
+import { Statuses, TeamStatuses, Weathers } from '../../../src/data/ids/status';
 import { MOVE_DELAY } from '../../../src/battle/mechanics/move';
 import turns from '../../../src/battle/turn';
-import { createBattle, createUnit, pinRandom } from '../harness';
+import { type BattleHarness, createBattle, createUnit, pinRandom } from '../harness';
+import { BASE_SCORE } from '../../../src/battle/ai/score';
+import { setupChooseMoveAI } from '../../../src/battle/ai/choose-move';
+import { getMoveData } from '../../../src/data/moves';
 
 function unitTarget(unit: Unit): { readonly type: MoveTargetType.Unit; readonly unit: Unit } {
   return { type: MoveTargetType.Unit, unit } as const;
 }
 
 const NONE_TARGET = { type: MoveTargetType.None } as const;
+
+function usable(battle: BattleHarness['battle'], source: Unit, move: Moves, aim: Unit): boolean {
+  const event: CheckUnitAIMoveUsableEvent = {
+    id: 'CheckUnitAIMoveUsable',
+    disabled: false,
+    source,
+    move,
+    target: unitTarget(aim),
+    usable: true,
+  };
+
+  battle.emit(BattleEvents.CheckUnitAIMoveUsable, event);
+  return event.usable;
+}
+
+function score(battle: BattleHarness['battle'], source: Unit, move: Moves, aim: Unit): number {
+  const event: CheckUnitAIMoveScoreEvent = {
+    id: 'CheckUnitAIMoveScore',
+    disabled: false,
+    source,
+    move,
+    target: unitTarget(aim),
+    score: BASE_SCORE,
+  };
+
+  battle.emit(BattleEvents.CheckUnitAIMoveScore, event);
+  return event.score;
+}
 
 describe('the guards', () => {
   it('turns away what somebody else aims at the user', () => {
@@ -250,22 +285,65 @@ describe('the moves that read the fight', () => {
     expect(user.checkMovePower(Moves.Frustration, unitTarget(target))).toBe(102);
   });
 
-  it('doubles Fury Cutter while it keeps landing, and stops at the cap', () => {
+  it('cuts through its own passes, doubling each time', () => {
     const { battle, teamA, teamB } = createBattle();
     pinRandom(battle, 1);
     const user = createUnit(battle, teamA);
     const target = createUnit(battle, teamB);
 
-    expect(user.checkMovePower(Moves.FuryCutter, unitTarget(target))).toBe(40);
+    // Four cuts in one cast, the way a Rollout rolls
+    expect(user.checkMoveSteps(Moves.FuryCutter, unitTarget(target))).toBe(3);
 
-    for (const expected of [80, 160, 320, 320]) {
-      user.triggerMove(Moves.FuryCutter, unitTarget(target), 0);
+    for (const [steps, expected] of [
+      [3, 40],
+      [2, 80],
+      [1, 160],
+      [0, 320],
+    ] as const) {
+      user.triggerMove(Moves.FuryCutter, unitTarget(target), steps);
       expect(user.checkMovePower(Moves.FuryCutter, unitTarget(target))).toBe(expected);
     }
 
-    // Anything else breaks the streak
-    user.triggerMove(Moves.Tackle, unitTarget(target), 0);
+    // And the next cast starts from the first cut again
+    user.triggerMove(Moves.FuryCutter, unitTarget(target), 3);
     expect(user.checkMovePower(Moves.FuryCutter, unitTarget(target))).toBe(40);
+  });
+
+  it('rolls Rollout through its own passes, doubling each time', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const user = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB);
+
+    // Five passes in one cast rather than five casts in a row
+    expect(user.checkMoveSteps(Moves.Rollout, unitTarget(target))).toBe(4);
+
+    for (const [steps, expected] of [
+      [4, 30],
+      [3, 60],
+      [2, 120],
+      [1, 240],
+      [0, 480],
+    ] as const) {
+      user.triggerMove(Moves.Rollout, unitTarget(target), steps);
+      expect(user.checkMovePower(Moves.Rollout, unitTarget(target))).toBe(expected);
+    }
+
+    // And the next cast starts the roll over
+    user.triggerMove(Moves.Rollout, unitTarget(target), 4);
+    expect(user.checkMovePower(Moves.Rollout, unitTarget(target))).toBe(30);
+  });
+
+  it('doubles a Rollout again for the pokemon that curled up first', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const user = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB);
+
+    user.triggerMove(Moves.DefenseCurl, NONE_TARGET, 0);
+    user.triggerMove(Moves.Rollout, unitTarget(target), 4);
+
+    expect(user.checkMovePower(Moves.Rollout, unitTarget(target))).toBe(60);
   });
 
   it('gives Hidden Power a type off the genes', () => {
@@ -321,6 +399,41 @@ describe('Spikes', () => {
     walking.enter();
     expect(walking.health).toBe(160);
   });
+
+  it('is worth laying whoever is standing about, and only stops when it is full', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const layer = createUnit(battle, teamA);
+    const target = { type: MoveTargetType.Team, team: teamB } as const;
+
+    createUnit(battle, teamB);
+
+    const spikesUsable = (): boolean => {
+      const event: CheckUnitAIMoveUsableEvent = {
+        id: 'CheckUnitAIMoveUsable',
+        disabled: false,
+        source: layer,
+        move: Moves.Spikes,
+        target,
+        usable: true,
+      };
+
+      battle.emit(BattleEvents.CheckUnitAIMoveUsable, event);
+      return event.usable;
+    };
+
+    // Everybody is on the field from the start, so there is no bench
+    // to weigh: the depth is the whole of the question
+    expect(spikesUsable()).toBe(true);
+
+    for (let laid = 0; laid < 3; laid++) {
+      layer.triggerMoveEffect(Moves.Spikes, target, 0);
+    }
+    expect(spikesUsable()).toBe(false);
+
+    // Swept away is worth laying again
+    createUnit(battle, teamB).triggerMoveEffect(Moves.RapidSpin, unitTarget(layer), 0);
+    expect(spikesUsable()).toBe(true);
+  });
 });
 
 describe('Thief', () => {
@@ -348,19 +461,6 @@ describe('the locks', () => {
 
     expect(held.status[Statuses.Cornered]).toBeDefined();
     expect(held.checkEscape()).toBe(false);
-  });
-
-  it('encores the move the target last used', () => {
-    const { battle, teamA, teamB } = createBattle();
-    const singer = createUnit(battle, teamA);
-    const target = createUnit(battle, teamB);
-
-    target.addMove(Moves.Tackle);
-    target.triggerMove(Moves.Tackle, unitTarget(singer), 0);
-    singer.triggerMoveEffect(Moves.Encore, unitTarget(target), 0);
-
-    expect(target.status[Statuses.Encored]).toBeDefined();
-    expect(getEncoredMove(target)).toBe(Moves.Tackle);
   });
 
   it('stretches the wait on the move Spite lands on', () => {
@@ -598,5 +698,191 @@ describe('Sketch', () => {
     // would be a free permanent copy
     expect(thief.moves[Moves.Sketch]).toBeUndefined();
     expect(thief.moves[Moves.Surf]).toBeDefined();
+  });
+});
+
+describe('what a move may be aimed at on the caster’s own side', () => {
+  it('catches the caster’s own side in what shakes the whole field', () => {
+    for (const move of [Moves.Earthquake, Moves.Surf, Moves.Explosion, Moves.SelfDestruct]) {
+      const flags = getMoveData(move).target;
+
+      expect(flags & MoveTargetFlags.Ally, getMoveData(move).name).toBeTruthy();
+    }
+  });
+
+  it('drops a stat on a teammate only where Contrary turns it round', () => {
+    const { battle, teamA } = createBattle();
+    const caster = createUnit(battle, teamA);
+    const plain = createUnit(battle, teamA);
+    const contrary = createUnit(battle, teamA);
+
+    contrary.addAbility(Abilities.Contrary);
+
+    expect(usable(battle, caster, Moves.Screech, plain)).toBe(false);
+    expect(usable(battle, caster, Moves.Screech, contrary)).toBe(true);
+  });
+
+  it('flatters a teammate only where the confusion cannot land', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const caster = createUnit(battle, teamA);
+    const plain = createUnit(battle, teamA);
+    const steady = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    steady.addAbility(Abilities.OwnTempo);
+
+    expect(usable(battle, caster, Moves.Swagger, plain)).toBe(false);
+    expect(usable(battle, caster, Moves.Swagger, steady)).toBe(true);
+    // And the far side is the other way round: the muddling is the point
+    expect(usable(battle, caster, Moves.Swagger, enemy)).toBe(true);
+  });
+
+  it('reads a hit landing on its own side as a cost', () => {
+    const { battle, teamA, teamB } = createBattle();
+
+    setupChooseMoveAI(battle);
+
+    const caster = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    caster.addMove(Moves.Present);
+    expect(score(battle, caster, Moves.Present, ally)).toBeLessThan(
+      score(battle, caster, Moves.Present, enemy),
+    );
+  });
+
+  it('hands a Present to the teammate that needs feeding', () => {
+    const { battle, teamA } = createBattle();
+    const caster = createUnit(battle, teamA);
+    const whole = createUnit(battle, teamA);
+    const hurt = createUnit(battle, teamA);
+
+    hurt.setHealth(20);
+    expect(score(battle, caster, Moves.Present, hurt)).toBeGreaterThan(
+      score(battle, caster, Moves.Present, whole),
+    );
+  });
+
+  it('copies the teammate who has built the most', () => {
+    const { battle, teamA } = createBattle();
+    const caster = createUnit(battle, teamA);
+    const quiet = createUnit(battle, teamA);
+    const swept = createUnit(battle, teamA);
+
+    swept.addStage(Stages.Attack, 2, { type: 0 });
+    expect(score(battle, caster, Moves.PsychUp, swept)).toBeGreaterThan(
+      score(battle, caster, Moves.PsychUp, quiet),
+    );
+  });
+
+  it('splits its pain with the teammate that can spare it', () => {
+    const { battle, teamA } = createBattle();
+    const caster = createUnit(battle, teamA);
+    const whole = createUnit(battle, teamA);
+    const hurt = createUnit(battle, teamA);
+
+    caster.setHealth(20);
+    hurt.setHealth(60);
+    expect(score(battle, caster, Moves.PainSplit, whole)).toBeGreaterThan(
+      score(battle, caster, Moves.PainSplit, hurt),
+    );
+  });
+});
+
+describe('the encore', () => {
+  it('plays the move the target last landed again', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const singer = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB);
+
+    target.addMove(Moves.Tackle);
+    target.triggerMove(Moves.Tackle, unitTarget(singer), 0);
+    battle.tick(MOVE_DELAY);
+
+    const struck = singer.health;
+
+    singer.triggerMoveEffect(Moves.Encore, unitTarget(target), 2);
+    battle.tick(MOVE_DELAY);
+
+    expect(target.status[Statuses.Encored]).toBeDefined();
+    expect(singer.health).toBeLessThan(struck);
+  });
+
+  it('runs one repeat per step', () => {
+    expect(getMoveData(Moves.Encore).steps).toBe(2);
+  });
+
+  it('has nothing to call for when the target has landed nothing', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const singer = createUnit(battle, teamA);
+    const quiet = createUnit(battle, teamB);
+    const sung = createUnit(battle, teamB);
+
+    sung.addMove(Moves.Tackle);
+    sung.triggerMove(Moves.Tackle, unitTarget(singer), 0);
+    battle.tick(MOVE_DELAY);
+
+    expect(usable(battle, singer, Moves.Encore, quiet)).toBe(false);
+    expect(usable(battle, singer, Moves.Encore, sung)).toBe(true);
+  });
+
+  it('refuses a second encore over the first', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const singer = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB);
+
+    target.addMove(Moves.Tackle);
+    target.triggerMove(Moves.Tackle, unitTarget(singer), 0);
+    battle.tick(MOVE_DELAY);
+    singer.triggerMoveEffect(Moves.Encore, unitTarget(target), 2);
+
+    expect(usable(battle, singer, Moves.Encore, target)).toBe(false);
+  });
+
+  it('will not play back a move that winds up', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const singer = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB);
+
+    target.addMove(Moves.Rollout);
+    target.triggerMove(Moves.Rollout, unitTarget(singer), 4);
+    battle.tick(MOVE_DELAY);
+
+    const struck = singer.health;
+
+    expect(usable(battle, singer, Moves.Encore, target)).toBe(false);
+
+    singer.triggerMoveEffect(Moves.Encore, unitTarget(target), 2);
+    battle.tick(MOVE_DELAY);
+
+    // A lone trigger of a roll reads as its last pass, which is the
+    // reason nothing is played back here
+    expect(singer.health).toBe(struck);
+  });
+
+  it('plays back a Solar Beam that no longer winds up', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const singer = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB);
+
+    battle.setWeather(Weathers.Sunny, turns(5));
+    target.addMove(Moves.SolarBeam);
+    target.triggerMove(Moves.SolarBeam, unitTarget(singer), 0);
+    battle.tick(MOVE_DELAY);
+
+    expect(usable(battle, singer, Moves.Encore, target)).toBe(true);
+  });
+
+  it('is sung to a teammate rather than across the field', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const singer = createUnit(battle, teamA);
+    const friend = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    expect(getMoveData(Moves.Encore).target & MoveTargetFlags.Ally).toBeTruthy();
+    expect(score(battle, singer, Moves.Encore, friend)).toBeGreaterThan(
+      score(battle, singer, Moves.Encore, enemy),
+    );
   });
 });

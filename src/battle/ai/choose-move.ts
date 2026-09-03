@@ -350,6 +350,15 @@ export function setupChooseMoveAI(battle: Battle): void {
     }
 
     const target = event.target.unit;
+
+    // A hit landing on the player's own side is a cost, never a gain.
+    // The moves that may be aimed there are wanted for the other thing
+    // they do, and each of those says for itself when that is worth it
+    if (target.team.alliance === event.source.team.alliance) {
+      event.score -= USELESS_PENALTY;
+      return;
+    }
+
     const damage = estimateDamage(event.source, event.move, target);
 
     if (damage <= 0) {

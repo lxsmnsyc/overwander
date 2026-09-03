@@ -219,7 +219,7 @@ export default function registerGen2Moves(): void {
     category: MoveCategories.Status,
     pp: 10,
     accuracy: 100,
-    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Ally | MoveTargetFlags.Unit,
     flags: 0,
     cast: [SpriteAnim.Sound, SpriteAnim.RearUp, SpriteAnim.Shake, SpriteAnim.Charge],
   });
@@ -442,14 +442,14 @@ export default function registerGen2Moves(): void {
     category: MoveCategories.Status,
     pp: 20,
     accuracy: 100,
-    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Ally | MoveTargetFlags.Unit,
     flags: 0,
     cast: [SpriteAnim.Appeal, SpriteAnim.Dance, SpriteAnim.RearUp, SpriteAnim.Charge],
   });
   registerMove(Moves.Rollout, {
     name: 'Rollout',
     description:
-      'Doubles in power each time it lands in a row, up to 5 times. Defense Curl doubles it again.',
+      'Rolls 5 times over, each pass twice the power of the last. Defense Curl doubles it again.',
     type: Types.Rock,
     category: MoveCategories.Physical,
     power: 30,
@@ -457,6 +457,7 @@ export default function registerGen2Moves(): void {
     accuracy: 90,
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: MoveFlags.Contact,
+    steps: 4,
     cast: [SpriteAnim.Rotate, SpriteAnim.Slam, SpriteAnim.Attack],
   });
   registerMove(Moves.FalseSwipe, {
@@ -478,7 +479,7 @@ export default function registerGen2Moves(): void {
     category: MoveCategories.Status,
     pp: 15,
     accuracy: 85,
-    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Ally | MoveTargetFlags.Unit,
     flags: 0,
     cast: [SpriteAnim.Appeal, SpriteAnim.RearUp, SpriteAnim.Dance, SpriteAnim.Charge],
   });
@@ -506,7 +507,7 @@ export default function registerGen2Moves(): void {
   });
   registerMove(Moves.FuryCutter, {
     name: 'Fury Cutter',
-    description: 'Doubles in power each time it lands in a row, up to 4 times.',
+    description: 'Cuts 4 times over, each one twice the power of the last.',
     type: Types.Bug,
     category: MoveCategories.Physical,
     power: 40,
@@ -514,6 +515,7 @@ export default function registerGen2Moves(): void {
     accuracy: 95,
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: MoveFlags.Contact | MoveFlags.Slicing,
+    steps: 3,
     cast: [SpriteAnim.Slice, SpriteAnim.QuickStrike, SpriteAnim.Attack],
   });
   registerMove(Moves.SteelWing, {
@@ -588,7 +590,7 @@ export default function registerGen2Moves(): void {
     category: MoveCategories.Physical,
     pp: 15,
     accuracy: 90,
-    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Ally | MoveTargetFlags.Unit,
     flags: 0,
     delay: PROJECTILE_DELAY,
     cast: [SpriteAnim.Shoot, SpriteAnim.Swing, SpriteAnim.Attack],
@@ -620,7 +622,7 @@ export default function registerGen2Moves(): void {
     type: Types.Normal,
     category: MoveCategories.Status,
     pp: 20,
-    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Ally | MoveTargetFlags.Unit,
     flags: 0,
     cast: [SpriteAnim.Emit, SpriteAnim.Swell, SpriteAnim.Charge],
   });
@@ -700,13 +702,15 @@ export default function registerGen2Moves(): void {
   });
   registerMove(Moves.Encore, {
     name: 'Encore',
-    description: 'For 6 seconds the target can only cast the move it last used.',
+    description:
+      'Makes the target repeat its last used move 3 times over. Moves that wind up cannot be repeated.',
     type: Types.Normal,
     category: MoveCategories.Status,
     pp: 5,
     accuracy: 100,
-    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Ally | MoveTargetFlags.Unit,
     flags: 0,
+    steps: 2,
     cast: [SpriteAnim.Dance, SpriteAnim.RearUp, SpriteAnim.Charge],
   });
   registerMove(Moves.Pursuit, {
@@ -878,7 +882,7 @@ export default function registerGen2Moves(): void {
     type: Types.Normal,
     category: MoveCategories.Status,
     pp: 10,
-    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Ally | MoveTargetFlags.Unit,
     flags: 0,
     cast: [SpriteAnim.RearUp, SpriteAnim.Swell, SpriteAnim.Charge],
   });

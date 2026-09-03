@@ -97,7 +97,7 @@ export default function registerGen3Moves(): void {
     category: MoveCategories.Status,
     pp: 15,
     accuracy: 100,
-    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Ally | MoveTargetFlags.Unit,
     flags: 0,
     cast: [SpriteAnim.Appeal, SpriteAnim.Sound, SpriteAnim.Charge],
   });
@@ -120,7 +120,7 @@ export default function registerGen3Moves(): void {
     category: MoveCategories.Status,
     pp: 10,
     accuracy: 100,
-    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Ally | MoveTargetFlags.Unit,
     flags: 0,
     cast: [SpriteAnim.Swell, SpriteAnim.Appeal, SpriteAnim.Charge],
   });
@@ -510,7 +510,7 @@ export default function registerGen3Moves(): void {
     category: MoveCategories.Status,
     pp: 15,
     accuracy: 100,
-    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Ally | MoveTargetFlags.Unit,
     flags: 0,
     cast: [SpriteAnim.FlapAround, SpriteAnim.Dance, SpriteAnim.Charge],
   });
@@ -549,12 +549,14 @@ export default function registerGen3Moves(): void {
   });
   registerMove(Moves.IceBall, {
     name: 'Ice Ball',
-    description: 'Doubles in power each time it lands in a row, up to 4 times.',
+    description:
+      'Rolls 5 times over, each pass twice the power of the last. Defense Curl doubles it again.',
     type: Types.Ice,
     category: MoveCategories.Physical,
     power: 30,
     pp: 20,
     accuracy: 90,
+    steps: 4,
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: MoveFlags.Contact,
     delay: PROJECTILE_DELAY,
@@ -696,7 +698,7 @@ export default function registerGen3Moves(): void {
     category: MoveCategories.Status,
     pp: 20,
     accuracy: 100,
-    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Ally | MoveTargetFlags.Unit,
     flags: 0,
     cast: [SpriteAnim.Appeal, SpriteAnim.Sound, SpriteAnim.Charge],
   });
@@ -766,7 +768,7 @@ export default function registerGen3Moves(): void {
     category: MoveCategories.Status,
     pp: 40,
     accuracy: 85,
-    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Ally | MoveTargetFlags.Unit,
     flags: MoveFlags.Sound,
     cast: [SpriteAnim.Sound, SpriteAnim.Shake, SpriteAnim.Charge],
   });
@@ -788,7 +790,7 @@ export default function registerGen3Moves(): void {
     category: MoveCategories.Status,
     pp: 20,
     accuracy: 100,
-    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Ally | MoveTargetFlags.Unit,
     flags: MoveFlags.Contact,
     cast: [SpriteAnim.Lick, SpriteAnim.Slap, SpriteAnim.Charge],
   });

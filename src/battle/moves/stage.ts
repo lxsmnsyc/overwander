@@ -1,9 +1,11 @@
 import { AttackPriority } from '../../core/event-emitter';
 import { MAX_STAGE, MIN_STAGE, Stages } from '../../data/constants/stats';
+import Abilities from '../../data/ids/abilities';
 import { Moves } from '../../data/ids/moves';
 import type Battle from '../core';
 import { USELESS_PENALTY } from '../ai/score';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
+import type Unit from '../unit';
 
 type StageMovesConfig = { [key in Moves]?: number };
 
@@ -118,6 +120,13 @@ const STAGE_MOVE_GROUPS: [Stages, StageMovesConfig][] = [
 ];
 
 /**
+ * Whether the two are on the same side of the field
+ */
+function isAlly(one: Unit, other: Unit): boolean {
+  return one !== other && one.team.alliance === other.team.alliance;
+}
+
+/**
  * The stage change a move applies, if any (used by e.g. the AI)
  */
 export function getStageMoveEffect(move: Moves): { stage: Stages; value: number } | undefined {
@@ -131,7 +140,33 @@ export function getStageMoveEffect(move: Moves): { stage: Stages; value: number 
   return undefined;
 }
 
+/**
+ * A stat drop aimed at the player's own side is worth casting on one
+ * pokemon only: the one whose Contrary turns every drop into a rise.
+ * Anything else on that side is being made worse for nothing, so the
+ * AI is told so rather than being left to weigh it
+ */
+function setupFriendlyDrops(battle: Battle): void {
+  battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Exact, (event) => {
+    const effect = getStageMoveEffect(event.move);
+
+    if (
+      !event.usable ||
+      effect == null ||
+      effect.value >= 0 ||
+      event.target.type !== MoveTargetType.Unit ||
+      !isAlly(event.source, event.target.unit)
+    ) {
+      return;
+    }
+
+    event.usable = event.target.unit.hasAbility(Abilities.Contrary);
+  });
+}
+
 export default function setupStageMoves(battle: Battle): void {
+  setupFriendlyDrops(battle);
+
   for (const [stage, config] of STAGE_MOVE_GROUPS) {
     createStageMove(stage, config)(battle);
   }

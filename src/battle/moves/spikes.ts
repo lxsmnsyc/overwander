@@ -2,8 +2,7 @@ import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Stats } from '../../data/constants/stats';
 import { Types } from '../../data/constants/types';
 import { DamageFlags, Moves } from '../../data/ids/moves';
-import { Statuses, TeamStatuses } from '../../data/ids/status';
-import { USELESS_PENALTY } from '../ai/score';
+import { TeamStatuses } from '../../data/ids/status';
 import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import type Team from '../team';
@@ -98,25 +97,5 @@ export default function setupSpikes(battle: Battle): void {
       unit.checkStat(Stats.HP, 0) * LAYER_DAMAGE[laid - 1],
       DamageFlags.Indirect | DamageFlags.HealthScaled,
     );
-  });
-
-  // Nothing to lay them under is a cast spent on an empty bench
-  battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
-    if (event.move !== Moves.Spikes || event.target.type !== MoveTargetType.Team) {
-      return;
-    }
-
-    let waiting = 0;
-
-    for (const unit of event.target.team.units) {
-      if (unit.alive && unit.status[Statuses.Switching] == null) {
-        waiting += 1;
-      }
-    }
-
-    // One unit standing there is the one already on the field
-    if (waiting <= 1) {
-      event.score -= USELESS_PENALTY;
-    }
   });
 }

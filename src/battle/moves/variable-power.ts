@@ -2,6 +2,7 @@ import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { MAX_FRIENDSHIP } from '../../data/constants/friendship';
 import { Stats } from '../../data/constants/stats';
 import { Moves } from '../../data/ids/moves';
+import { USELESS_PENALTY } from '../ai/score';
 import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import type Unit from '../unit';
@@ -50,6 +51,12 @@ const FRIENDSHIP_POWER = 102;
  * a gift rather than a hit
  */
 const PRESENT_POWERS = [40, 40, 80, 120];
+
+/** What the gift puts back, and so how hurt a teammate must be */
+const PRESENT_GIFT_SHARE = 0.25;
+
+/** The most handing one to a teammate is worth */
+const GIFT_BONUS = 6;
 
 /**
  * Magnitude reads the ground: 4 through 10, weighted the way the
@@ -102,6 +109,33 @@ export default function setupVariablePowerMoves(battle: Battle): void {
     if (worked != null) {
       event.power = worked(event.source, battle.random());
     }
+  });
+
+  /**
+   * A Present handed to the player's own side is a gamble on the
+   * parcel being food: four times in five it hurts a teammate
+   * instead. Worth it only for one that is hurt enough to want the
+   * quarter, and never for one that is nearly whole
+   */
+  battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
+    if (
+      event.move !== Moves.Present ||
+      event.target.type !== MoveTargetType.Unit ||
+      event.target.unit.team.alliance !== event.source.team.alliance
+    ) {
+      return;
+    }
+
+    const target = event.target.unit;
+    const whole = Math.max(1, target.checkStat(Stats.HP, 0));
+    const missing = (whole - target.health) / whole;
+
+    if (missing < PRESENT_GIFT_SHARE) {
+      event.score -= USELESS_PENALTY;
+      return;
+    }
+
+    event.score += Math.round(GIFT_BONUS * missing);
   });
 
   /**

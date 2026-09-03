@@ -35,6 +35,22 @@ const DRUM_COST = 0.5;
 /** The moves that clear the whole party, however they carry */
 const PARTY_CURES = new Set<Moves>([Moves.HealBell, Moves.Aromatherapy]);
 
+/** The most a Pain Split is worth for the health it is sharing */
+const SHARE_BONUS = 5;
+
+/** The most a Psych Up is worth for the stages it is copying */
+const STAGE_COPY_CAP = 6;
+
+/** What a unit has built up, drops counted against it */
+function totalStages(unit: Unit): number {
+  let total = 0;
+
+  for (const stage of STAGES) {
+    total += unit.stages[stage];
+  }
+  return total;
+}
+
 export default function setupSupportMoves(battle: Battle): void {
   function canDrum(unit: Unit): boolean {
     return (
@@ -93,15 +109,44 @@ export default function setupSupportMoves(battle: Battle): void {
     }
   });
 
-  // It is only worth a cast to the unit that is worse off
+  // It is only worth a cast to the unit that is worse off, and the
+  // fuller the other one is the more there is to share: pointed at
+  // the player's own side that is the healthiest teammate, which is
+  // the one that can spare it
   battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
-    if (
-      event.move === Moves.PainSplit &&
-      event.target.type === MoveTargetType.Unit &&
-      event.source.health >= event.target.unit.health
-    ) {
-      event.score -= USELESS_PENALTY;
+    if (event.move !== Moves.PainSplit || event.target.type !== MoveTargetType.Unit) {
+      return;
     }
+
+    const target = event.target.unit;
+
+    if (event.source.health >= target.health) {
+      event.score -= USELESS_PENALTY;
+      return;
+    }
+
+    const whole = Math.max(1, target.checkStat(Stats.HP, 0));
+
+    event.score += Math.round(SHARE_BONUS * Math.min(1, target.health / whole));
+  });
+
+  // Psych Up copies whatever is worth copying, so what it is worth is
+  // how much better the target's stages are than the user's own. On
+  // the player's own side that picks the teammate who has built the
+  // most, which is what makes it worth aiming there at all
+  battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
+    if (event.move !== Moves.PsychUp || event.target.type !== MoveTargetType.Unit) {
+      return;
+    }
+
+    const gain = totalStages(event.target.unit) - totalStages(event.source);
+
+    if (gain <= 0) {
+      event.score -= USELESS_PENALTY;
+      return;
+    }
+
+    event.score += Math.min(STAGE_COPY_CAP, gain);
   });
 
   // Psych Up: the target's stages, copied over the user's own

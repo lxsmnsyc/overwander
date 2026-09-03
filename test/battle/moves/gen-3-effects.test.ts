@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   BattleEvents,
   type CheckUnitAIMoveScoreEvent,
+  type CheckUnitAIMoveUsableEvent,
   MoveTargetType,
 } from '../../../src/battle/events';
 import { BASE_SCORE } from '../../../src/battle/ai/score';
@@ -16,6 +17,8 @@ import Abilities from '../../../src/data/ids/abilities';
 import turns from '../../../src/battle/turn';
 import Biome from '../../../src/data/ids/biome';
 import { groundMove, groundStatus } from '../../../src/battle/moves/ground';
+import { getMoveData } from '../../../src/data/moves';
+import type Battle from '../../../src/battle/core';
 import { createBattle, createUnit, pinRandom } from '../harness';
 
 function unitTarget(unit: Unit): { readonly type: MoveTargetType.Unit; readonly unit: Unit } {
@@ -23,6 +26,20 @@ function unitTarget(unit: Unit): { readonly type: MoveTargetType.Unit; readonly 
 }
 
 const NONE_TARGET = { type: MoveTargetType.None } as const;
+
+function usable(battle: Battle, source: Unit, move: Moves, aim: Unit): boolean {
+  const event: CheckUnitAIMoveUsableEvent = {
+    id: 'CheckUnitAIMoveUsable',
+    disabled: false,
+    source,
+    move,
+    target: unitTarget(aim),
+    usable: true,
+  };
+
+  battle.emit(BattleEvents.CheckUnitAIMoveUsable, event);
+  return event.usable;
+}
 
 describe('the moves that answer for what is happening around them', () => {
   it('spends a Fake Out on the one surprise a trip onto the field is worth', () => {
@@ -544,5 +561,67 @@ describe('the moves that read the ground', () => {
 
     striker.triggerMoveTarget(Moves.SecretPower, unitTarget(target), 0);
     expect(target.status[Statuses.Paralyzed]).toBeDefined();
+  });
+});
+
+describe('the moves the johto branch changed under them', () => {
+  it('rolls an Ice Ball through its own passes, doubling each time', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const user = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB);
+
+    expect(user.checkMoveSteps(Moves.IceBall, unitTarget(target))).toBe(4);
+
+    for (const [steps, expected] of [
+      [4, 30],
+      [3, 60],
+      [2, 120],
+      [1, 240],
+      [0, 480],
+    ] as const) {
+      user.triggerMove(Moves.IceBall, unitTarget(target), steps);
+      expect(user.checkMovePower(Moves.IceBall, unitTarget(target))).toBe(expected);
+    }
+  });
+
+  it('doubles an Ice Ball again for the pokemon that curled up first', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const user = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB);
+
+    user.triggerMove(Moves.DefenseCurl, unitTarget(user), 0);
+    user.triggerMove(Moves.IceBall, unitTarget(target), 4);
+
+    expect(user.checkMovePower(Moves.IceBall, unitTarget(target))).toBe(60);
+  });
+
+  it('flatters a teammate only where the confusion cannot land', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const caster = createUnit(battle, teamA);
+    const plain = createUnit(battle, teamA);
+    const steady = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    steady.addAbility(Abilities.OwnTempo);
+
+    expect(usable(battle, caster, Moves.Flatter, plain)).toBe(false);
+    expect(usable(battle, caster, Moves.Flatter, steady)).toBe(true);
+    expect(usable(battle, caster, Moves.Flatter, enemy)).toBe(true);
+  });
+
+  it('drops a stat on a teammate only where Contrary turns it round', () => {
+    const { battle, teamA } = createBattle();
+    const caster = createUnit(battle, teamA);
+    const plain = createUnit(battle, teamA);
+    const contrary = createUnit(battle, teamA);
+
+    contrary.addAbility(Abilities.Contrary);
+
+    for (const move of [Moves.Tickle, Moves.FeatherDance, Moves.MetalSound, Moves.FakeTears]) {
+      expect(usable(battle, caster, move, plain), getMoveData(move).name).toBe(false);
+      expect(usable(battle, caster, move, contrary), getMoveData(move).name).toBe(true);
+    }
   });
 });

@@ -449,7 +449,7 @@ export default function registerGen2Moves(): void {
   registerMove(Moves.Rollout, {
     name: 'Rollout',
     description:
-      'Doubles in power each time it lands in a row, up to 5 times. Defense Curl doubles it again.',
+      'Rolls 5 times over, each pass twice the power of the last. Defense Curl doubles it again.',
     type: Types.Rock,
     category: MoveCategories.Physical,
     power: 30,
@@ -457,6 +457,7 @@ export default function registerGen2Moves(): void {
     accuracy: 90,
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: MoveFlags.Contact,
+    steps: 4,
     cast: [SpriteAnim.Rotate, SpriteAnim.Slam, SpriteAnim.Attack],
   });
   registerMove(Moves.FalseSwipe, {

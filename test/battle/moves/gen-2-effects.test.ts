@@ -268,6 +268,51 @@ describe('the moves that read the fight', () => {
     expect(user.checkMovePower(Moves.FuryCutter, unitTarget(target))).toBe(40);
   });
 
+  it('rolls Rollout through its own passes, doubling each time', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const user = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB);
+
+    // Five passes in one cast rather than five casts in a row
+    expect(user.checkMoveSteps(Moves.Rollout, unitTarget(target))).toBe(4);
+
+    for (const [steps, expected] of [
+      [4, 30],
+      [3, 60],
+      [2, 120],
+      [1, 240],
+      [0, 480],
+    ] as const) {
+      user.triggerMove(Moves.Rollout, unitTarget(target), steps);
+      expect(user.checkMovePower(Moves.Rollout, unitTarget(target))).toBe(expected);
+    }
+
+    // And the next cast starts the roll over
+    user.triggerMove(Moves.Rollout, unitTarget(target), 4);
+    expect(user.checkMovePower(Moves.Rollout, unitTarget(target))).toBe(30);
+  });
+
+  it('doubles a Rollout again for the pokemon that curled up first', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const user = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB);
+
+    user.triggerMove(Moves.DefenseCurl, NONE_TARGET, 0);
+    user.triggerMove(Moves.Rollout, unitTarget(target), 4);
+
+    expect(user.checkMovePower(Moves.Rollout, unitTarget(target))).toBe(60);
+  });
+
+  it('leaves Fury Cutter counting casts rather than passes', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const user = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB);
+
+    expect(user.checkMoveSteps(Moves.FuryCutter, unitTarget(target))).toBe(0);
+  });
+
   it('gives Hidden Power a type off the genes', () => {
     const { battle, teamA } = createBattle();
     const user = createUnit(battle, teamA);

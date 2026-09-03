@@ -7,17 +7,14 @@ import type Unit from '../unit';
 
 /**
  * The moves that build while they keep landing, and how many times
- * they may double before they stop growing
+ * they may double before they stop growing.
+ *
+ * The rolling moves used to be here. They double between their own
+ * passes now rather than between casts: see `rolling.ts`
  */
 const ESCALATING_MOVES: { [key in Moves]?: number } = {
   [Moves.FuryCutter]: 3,
-  [Moves.Rollout]: 4,
 };
-
-/**
- * What a Defense Curl is worth to a Rollout that follows it
- */
-const CURLED_FACTOR = 2;
 
 interface Streak {
   move: Moves;
@@ -31,13 +28,8 @@ interface Streak {
  */
 export default function setupEscalatingMoves(battle: Battle): void {
   const streaks = new Map<Unit, Streak>();
-  const curled = new WeakSet<Unit>();
 
   battle.on(BattleEvents.UnitTriggerMove, AttackPriority.Post, (event) => {
-    if (event.move === Moves.DefenseCurl) {
-      curled.add(event.source);
-    }
-
     const cap = ESCALATING_MOVES[event.move];
 
     if (cap == null) {
@@ -66,15 +58,10 @@ export default function setupEscalatingMoves(battle: Battle): void {
     const landed = streak?.move === event.move ? streak.landed : 0;
 
     event.power *= 2 ** landed;
-
-    if (event.move === Moves.Rollout && curled.has(event.source)) {
-      event.power *= CURLED_FACTOR;
-    }
   });
 
   function forget(unit: Unit): void {
     streaks.delete(unit);
-    curled.delete(unit);
   }
 
   battle.on(BattleEvents.UnitFaints, EventPriority.Post, (event) => {

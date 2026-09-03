@@ -46,6 +46,7 @@ import setupRage from './rage';
 import setupRampageMoves from './rampage';
 import setupRechargeMoves from './recharge';
 import setupRecoilMoves from './recoil';
+import setupRollingMoves from './rolling';
 import setupRecoverMoves from './recover';
 import setupRest from './rest';
 import setupSelfDestructMoves from './self-destruct';
@@ -90,6 +91,7 @@ export default function setupMoves(battle: Battle): void {
   setupNonLethalMoves(battle);
   setupThawingMoves(battle);
   setupEscalatingMoves(battle);
+  setupRollingMoves(battle);
   setupVariablePowerMoves(battle);
   setupHiddenPower(battle);
   setupPursuit(battle);

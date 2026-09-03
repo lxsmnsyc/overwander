@@ -37,6 +37,9 @@ function isWeakTo(type: Types, target: Unit): boolean {
   return multiplier > 1;
 }
 
+/** What a smith's hand is worth to a steel move. */
+const STEELWORKER_SCALE = 1.5;
+
 /** What a poison is worth to an Attack that feeds on it. */
 const TOXIC_BOOST_SCALE = 1.5;
 
@@ -311,6 +314,23 @@ const setupAbilities = [
       }),
     ]);
   }),
+  /**
+   * Steelworker reads the type the move is going out as rather than
+   * the one the table lists, so a Normalize or a plate that rewrote
+   * it is answered on what actually lands
+   * https://bulbapedia.bulbagarden.net/wiki/Steelworker_(Ability)
+   */
+  createAbility(Abilities.Steelworker, (battle) =>
+    battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
+      if (
+        event.power != null &&
+        event.source.hasAbility(Abilities.Steelworker) &&
+        event.source.checkMoveType(event.move, event.target) === Types.Steel
+      ) {
+        event.power *= STEELWORKER_SCALE;
+      }
+    }),
+  ),
 ];
 
 export default function setupGen3Abilities(battle: Battle): void {

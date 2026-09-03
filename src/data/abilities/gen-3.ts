@@ -77,4 +77,9 @@ export default function registerGen3Abilities(): void {
     name: 'Forecast',
     description: 'A Castform takes the shape and the type of the sky it stands under.',
   });
+  // Metagross
+  registerAbility(Abilities.Steelworker, {
+    name: 'Steelworker',
+    description: 'Steel moves hit 1.5x, whatever its own types are.',
+  });
 }

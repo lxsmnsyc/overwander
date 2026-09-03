@@ -448,6 +448,12 @@ export const enum Species {
   Absol = 359,
   Relicanth = 369,
   Luvdisc = 370,
+  Bagon = 371,
+  Shelgon = 372,
+  Salamence = 373,
+  Beldum = 374,
+  Metang = 375,
+  Metagross = 376,
 }
 
 /**

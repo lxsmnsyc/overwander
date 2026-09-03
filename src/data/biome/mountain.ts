@@ -59,6 +59,7 @@ export default function registerMountainSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.Bagon, weight: 3 },
         { species: Species.Charmander, weight: 2 },
         { species: Species.Diglett, weight: 20 },
         { species: Species.Mankey, weight: 20 },
@@ -72,6 +73,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Aron, weight: 20 },
       ],
       uncommon: [
+        { species: Species.Shelgon, weight: 1 },
         { species: Species.Charmeleon, weight: 1 },
         { species: Species.Machoke, weight: 5 },
         { species: Species.Graveler, weight: 5 },
@@ -80,6 +82,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Lairon, weight: 10 },
       ],
       rare: [
+        { species: Species.Salamence, weight: 2 },
         { species: Species.Charizard, weight: 2 },
         { species: Species.Dugtrio, weight: 10 },
         { species: Species.Primeape, weight: 10 },
@@ -109,6 +112,7 @@ export default function registerMountainSpawns(): void {
     },
     [TimeOfDay.Evening]: {
       base: [
+        { species: Species.Bagon, weight: 3 },
         { species: Species.Zubat, weight: 30 },
         { species: Species.Diglett, weight: 20 },
         { species: Species.Geodude, weight: 20 },
@@ -117,11 +121,13 @@ export default function registerMountainSpawns(): void {
         { species: Species.Onix, weight: 10 },
       ],
       uncommon: [
+        { species: Species.Shelgon, weight: 1 },
         { species: Species.Graveler, weight: 5 },
         { species: Species.Pupitar, weight: 1 },
         { species: Species.Golbat, weight: 10 },
       ],
       rare: [
+        { species: Species.Salamence, weight: 2 },
         { species: Species.Dugtrio, weight: 10 },
         { species: Species.Golem, weight: 5 },
         { species: Species.Magmar, weight: 5 },

@@ -324,3 +324,22 @@ describe('Forecast', () => {
     expect([...other.types]).toEqual([Types.Normal]);
   });
 });
+
+describe('Steelworker', () => {
+  it('puts half again on a steel move and nothing on the rest', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const smith = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB);
+    const aim = { type: MoveTargetType.Unit, unit: target } as const;
+
+    const steel = getMoveData(Moves.MetalClaw).power ?? 0;
+    const plain = getMoveData(Moves.Scratch).power ?? 0;
+
+    expect(smith.checkMovePower(Moves.MetalClaw, aim)).toBe(steel);
+
+    smith.addAbility(Abilities.Steelworker);
+
+    expect(smith.checkMovePower(Moves.MetalClaw, aim)).toBeCloseTo(steel * 1.5);
+    expect(smith.checkMovePower(Moves.Scratch, aim)).toBe(plain);
+  });
+});

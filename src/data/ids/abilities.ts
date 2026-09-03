@@ -279,6 +279,8 @@ const enum Abilities {
   ColorChange = 162,
   // Castform
   Forecast = 163,
+  // Metagross
+  Steelworker = 164,
   // Special (non-standard abilities outside the regular pool)
   Boss = 100001,
   Shadow = 100002,

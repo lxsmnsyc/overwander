@@ -23,11 +23,16 @@ export default function registerAlpineTundraSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.Bagon, weight: 3 },
         { species: Species.Machop, weight: 20 },
         { species: Species.Swinub, weight: 25 },
       ],
-      uncommon: [{ species: Species.Machoke, weight: 5 }],
+      uncommon: [
+        { species: Species.Shelgon, weight: 1 },
+        { species: Species.Machoke, weight: 5 },
+      ],
       rare: [
+        { species: Species.Salamence, weight: 2 },
         { species: Species.Machamp, weight: 5 },
         { species: Species.Delibird, weight: 5 },
         { species: Species.Skarmory, weight: 5 },
@@ -36,9 +41,13 @@ export default function registerAlpineTundraSpawns(): void {
       special: [{ species: Species.Articuno, weight: 10 }],
     },
     [TimeOfDay.Evening]: {
-      base: [{ species: Species.Swinub, weight: 25 }],
-      uncommon: [],
+      base: [
+        { species: Species.Bagon, weight: 3 },
+        { species: Species.Swinub, weight: 25 },
+      ],
+      uncommon: [{ species: Species.Shelgon, weight: 1 }],
       rare: [
+        { species: Species.Salamence, weight: 2 },
         { species: Species.Delibird, weight: 5 },
         { species: Species.Sneasel, weight: 5 },
         { species: Species.Absol, weight: 5 },

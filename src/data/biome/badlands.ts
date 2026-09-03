@@ -9,6 +9,7 @@ export default function registerBadlandsSpawns(): void {
   registerSpawnPool(Biome.Badlands, {
     [TimeOfDay.Morning]: {
       base: [
+        { species: Species.Beldum, weight: 2 },
         { species: Species.Sandshrew, weight: 20 },
         { species: Species.Ekans, weight: 20 },
         { species: Species.Mankey, weight: 20 },
@@ -23,6 +24,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Trapinch, weight: 20 },
       ],
       uncommon: [
+        { species: Species.Metang, weight: 1 },
         { species: Species.Graveler, weight: 5 },
         { species: Species.Pupitar, weight: 1 },
         { species: Species.Loudred, weight: 10 },
@@ -30,6 +32,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Vibrava, weight: 10 },
       ],
       rare: [
+        { species: Species.Metagross, weight: 1 },
         { species: Species.Sandslash, weight: 10 },
         { species: Species.Arbok, weight: 10 },
         { species: Species.Primeape, weight: 10 },
@@ -50,6 +53,7 @@ export default function registerBadlandsSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.Beldum, weight: 2 },
         { species: Species.Sandshrew, weight: 20 },
         { species: Species.Ekans, weight: 20 },
         { species: Species.Mankey, weight: 20 },
@@ -64,6 +68,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Trapinch, weight: 20 },
       ],
       uncommon: [
+        { species: Species.Metang, weight: 1 },
         { species: Species.Graveler, weight: 5 },
         { species: Species.Pupitar, weight: 1 },
         { species: Species.Loudred, weight: 10 },
@@ -71,6 +76,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Vibrava, weight: 10 },
       ],
       rare: [
+        { species: Species.Metagross, weight: 1 },
         { species: Species.Sandslash, weight: 10 },
         { species: Species.Arbok, weight: 10 },
         { species: Species.Primeape, weight: 10 },
@@ -91,6 +97,7 @@ export default function registerBadlandsSpawns(): void {
     },
     [TimeOfDay.Evening]: {
       base: [
+        { species: Species.Beldum, weight: 2 },
         { species: Species.Zubat, weight: 30 },
         { species: Species.Ekans, weight: 20 },
         { species: Species.Geodude, weight: 20 },
@@ -102,11 +109,13 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Nincada, weight: 25 },
       ],
       uncommon: [
+        { species: Species.Metang, weight: 1 },
         { species: Species.Graveler, weight: 5 },
         { species: Species.Pupitar, weight: 1 },
         { species: Species.Golbat, weight: 10 },
       ],
       rare: [
+        { species: Species.Metagross, weight: 1 },
         { species: Species.Arbok, weight: 10 },
         { species: Species.Marowak, weight: 10 },
         { species: Species.Tyranitar, weight: 2 },
@@ -122,6 +131,7 @@ export default function registerBadlandsSpawns(): void {
     },
     [TimeOfDay.Night]: {
       base: [
+        { species: Species.Beldum, weight: 2 },
         { species: Species.Zubat, weight: 30 },
         { species: Species.Ekans, weight: 20 },
         { species: Species.Geodude, weight: 20 },
@@ -132,11 +142,13 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Nincada, weight: 25 },
       ],
       uncommon: [
+        { species: Species.Metang, weight: 1 },
         { species: Species.Graveler, weight: 5 },
         { species: Species.Pupitar, weight: 1 },
         { species: Species.Golbat, weight: 10 },
       ],
       rare: [
+        { species: Species.Metagross, weight: 1 },
         { species: Species.Marowak, weight: 10 },
         { species: Species.Rhydon, weight: 5 },
         { species: Species.Kangaskhan, weight: 5 },

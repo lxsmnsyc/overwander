@@ -9,12 +9,17 @@ export default function registerColdDesertSpawns(): void {
   registerSpawnPool(Biome.ColdDesert, {
     [TimeOfDay.Morning]: {
       base: [
+        { species: Species.Beldum, weight: 2 },
         { species: Species.Diglett, weight: 20 },
         { species: Species.Geodude, weight: 20 },
         { species: Species.Onix, weight: 10 },
       ],
-      uncommon: [{ species: Species.Graveler, weight: 5 }],
+      uncommon: [
+        { species: Species.Metang, weight: 1 },
+        { species: Species.Graveler, weight: 5 },
+      ],
       rare: [
+        { species: Species.Metagross, weight: 1 },
         { species: Species.Dugtrio, weight: 10 },
         { species: Species.Golem, weight: 5 },
         { species: Species.Steelix, weight: 5 },
@@ -24,12 +29,17 @@ export default function registerColdDesertSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.Beldum, weight: 2 },
         { species: Species.Diglett, weight: 20 },
         { species: Species.Geodude, weight: 20 },
         { species: Species.Onix, weight: 10 },
       ],
-      uncommon: [{ species: Species.Graveler, weight: 5 }],
+      uncommon: [
+        { species: Species.Metang, weight: 1 },
+        { species: Species.Graveler, weight: 5 },
+      ],
       rare: [
+        { species: Species.Metagross, weight: 1 },
         { species: Species.Dugtrio, weight: 10 },
         { species: Species.Golem, weight: 5 },
         { species: Species.Steelix, weight: 5 },
@@ -39,12 +49,17 @@ export default function registerColdDesertSpawns(): void {
     },
     [TimeOfDay.Evening]: {
       base: [
+        { species: Species.Beldum, weight: 2 },
         { species: Species.Diglett, weight: 20 },
         { species: Species.Geodude, weight: 20 },
         { species: Species.Onix, weight: 10 },
       ],
-      uncommon: [{ species: Species.Graveler, weight: 5 }],
+      uncommon: [
+        { species: Species.Metang, weight: 1 },
+        { species: Species.Graveler, weight: 5 },
+      ],
       rare: [
+        { species: Species.Metagross, weight: 1 },
         { species: Species.Dugtrio, weight: 10 },
         { species: Species.Golem, weight: 5 },
         { species: Species.Gligar, weight: 5 },
@@ -56,13 +71,18 @@ export default function registerColdDesertSpawns(): void {
     },
     [TimeOfDay.Night]: {
       base: [
+        { species: Species.Beldum, weight: 2 },
         { species: Species.Diglett, weight: 20 },
         { species: Species.Geodude, weight: 20 },
         { species: Species.Cubone, weight: 20 },
         { species: Species.Onix, weight: 10 },
       ],
-      uncommon: [{ species: Species.Graveler, weight: 5 }],
+      uncommon: [
+        { species: Species.Metang, weight: 1 },
+        { species: Species.Graveler, weight: 5 },
+      ],
       rare: [
+        { species: Species.Metagross, weight: 1 },
         { species: Species.Dugtrio, weight: 10 },
         { species: Species.Golem, weight: 5 },
         { species: Species.Marowak, weight: 10 },

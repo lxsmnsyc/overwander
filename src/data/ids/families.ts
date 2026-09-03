@@ -185,6 +185,8 @@ const enum Families {
   // none: it joins the Wobbuffet family it hatches into
   Relicanth = 189,
   Luvdisc = 190,
+  Bagon = 191,
+  Beldum = 192,
 }
 
 export default Families;

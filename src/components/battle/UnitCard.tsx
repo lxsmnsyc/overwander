@@ -74,6 +74,17 @@ const STATUS_COLORS: Record<Statuses, string> = {
   [Statuses.Encored]: '#c98ab0',
   [Statuses.Identified]: '#a8a8a8',
   [Statuses.Comatose]: '#6b6486',
+  [Statuses.Taunted]: '#a85a7a',
+  [Statuses.Tormented]: '#7a4a6a',
+  [Statuses.Imprisoned]: '#5a5a8a',
+  [Statuses.Rooted]: '#5f8a4a',
+  [Statuses.Drowsy]: '#8a8ac9',
+  [Statuses.Centered]: '#c9a04a',
+  [Statuses.Coated]: '#7a8ac9',
+  [Statuses.Snatching]: '#6a6a4a',
+  [Statuses.Grudging]: '#5a3f5a',
+  [Statuses.Uproaring]: '#c97a4a',
+  [Statuses.Helped]: '#7ac9a0',
 };
 
 const STATUS_NAMES: Record<Statuses, string> = {
@@ -110,6 +121,17 @@ const STATUS_NAMES: Record<Statuses, string> = {
   [Statuses.Encored]: 'Encored',
   [Statuses.Identified]: 'Identified',
   [Statuses.Comatose]: 'Comatose',
+  [Statuses.Taunted]: 'Taunted',
+  [Statuses.Tormented]: 'Tormented',
+  [Statuses.Imprisoned]: 'Imprisoned',
+  [Statuses.Rooted]: 'Rooted',
+  [Statuses.Drowsy]: 'Drowsy',
+  [Statuses.Centered]: 'Centered',
+  [Statuses.Coated]: 'Coated',
+  [Statuses.Snatching]: 'Snatching',
+  [Statuses.Grudging]: 'Grudging',
+  [Statuses.Uproaring]: 'Uproar',
+  [Statuses.Helped]: 'Helped',
 };
 
 /**

@@ -154,7 +154,7 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
         let built: RaidBattle;
 
         if (kind === BattleKind.Raid) {
-          built = createRaidBattle(props.active.id, teams, loaded.limits);
+          built = createRaidBattle(props.active.id, teams, loaded.limits, loaded.biome);
         } else {
           built = createTrainerBattle(
             props.active.id,
@@ -162,6 +162,7 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
             loaded.limits,
             kind === BattleKind.Player ? BattleModes.PvP : BattleModes.Npc,
             loaded.weather,
+            loaded.biome,
           );
         }
 

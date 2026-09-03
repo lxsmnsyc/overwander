@@ -32,6 +32,9 @@ const DRUM_COST = 0.5;
  * two of them together. They share a file because each is a few lines
  * over the same events, not because they share behaviour
  */
+/** The moves that clear the whole party, however they carry */
+const PARTY_CURES = new Set<Moves>([Moves.HealBell, Moves.Aromatherapy]);
+
 export default function setupSupportMoves(battle: Battle): void {
   function canDrum(unit: Unit): boolean {
     return (
@@ -119,13 +122,15 @@ export default function setupSupportMoves(battle: Battle): void {
     }
   });
 
-  // Heal Bell: the whole party is put right, the bench included
+  // Heal Bell and Aromatherapy: the whole party is put right, the
+  // bench included. One is heard and the other is smelled, and here
+  // they are the same move
   battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
-    if (event.move !== Moves.HealBell) {
+    if (!PARTY_CURES.has(event.move)) {
       return;
     }
 
-    const cause = { type: EffectType.Move, move: Moves.HealBell, unit: event.source } as const;
+    const cause = { type: EffectType.Move, move: event.move, unit: event.source } as const;
 
     for (const unit of event.source.team.units) {
       if (unit.alive) {
@@ -134,9 +139,9 @@ export default function setupSupportMoves(battle: Battle): void {
     }
   });
 
-  // Nothing to clear is a cast spent on a sound nobody needed
+  // Nothing to clear is a cast spent on nobody's behalf
   battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
-    if (event.move !== Moves.HealBell) {
+    if (!PARTY_CURES.has(event.move)) {
       return;
     }
 

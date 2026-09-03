@@ -6,6 +6,7 @@
 import setupAbilities from './abilities';
 import setupAI from './ai';
 import Battle, { BattleModes } from './core';
+import type Biome from '../data/ids/biome';
 import setupItems from './items';
 import setupAbilityMechanics from './mechanics/ability';
 import setupAllianceMechanics from './mechanics/alliance';
@@ -34,9 +35,9 @@ import setupStatus from './status';
  */
 export default function createBattle(
   seed: string,
-  options?: { mode?: BattleModes; realtime?: boolean; limits?: number },
+  options?: { mode?: BattleModes; realtime?: boolean; limits?: number; biome?: Biome },
 ): Battle {
-  const battle = new Battle(seed, options?.mode, options?.limits);
+  const battle = new Battle(seed, options?.mode, options?.limits, options?.biome);
 
   setupAllianceMechanics(battle);
   setupTeamMechanics(battle);

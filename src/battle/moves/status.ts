@@ -22,11 +22,25 @@ export const STATUS_MOVES: { [key in Moves]?: Statuses } = {
   [Moves.SweetKiss]: Statuses.Confused,
   [Moves.Attract]: Statuses.Infatuated,
   [Moves.Swagger]: Statuses.Confused,
+  [Moves.WillOWisp]: Statuses.Burned,
+  [Moves.GrassWhistle]: Statuses.Sleeping,
+  [Moves.TeeterDance]: Statuses.Confused,
+  [Moves.Flatter]: Statuses.Confused,
+  [Moves.Taunt]: Statuses.Taunted,
+  [Moves.Torment]: Statuses.Tormented,
+  [Moves.Yawn]: Statuses.Drowsy,
+  [Moves.Imprison]: Statuses.Imprisoned,
+  [Moves.HelpingHand]: Statuses.Helped,
 };
 
 export const SELF_STATUS_MOVES: { [key in Moves]?: Statuses } = {
   [Moves.FocusEnergy]: Statuses.FocusEnergy,
   [Moves.Minimize]: Statuses.Minimized,
+  [Moves.FollowMe]: Statuses.Centered,
+  [Moves.MagicCoat]: Statuses.Coated,
+  [Moves.Snatch]: Statuses.Snatching,
+  [Moves.Grudge]: Statuses.Grudging,
+  [Moves.Ingrain]: Statuses.Rooted,
 };
 
 const EFFECT_STATUS_MOVES: {
@@ -76,6 +90,19 @@ const EFFECT_STATUS_MOVES: {
   [Moves.Twister]: { status: Statuses.Flinched, chance: 20 },
   [Moves.Snore]: { status: Statuses.Flinched, chance: 30 },
   [Moves.Whirlpool]: { status: Statuses.Trapped, chance: 100 },
+  [Moves.FakeOut]: { status: Statuses.Flinched, chance: 100 },
+  [Moves.HeatWave]: { status: Statuses.Burned, chance: 10 },
+  [Moves.BlazeKick]: { status: Statuses.Burned, chance: 10 },
+  [Moves.NeedleArm]: { status: Statuses.Flinched, chance: 30 },
+  [Moves.Astonish]: { status: Statuses.Flinched, chance: 30 },
+  [Moves.Extrasensory]: { status: Statuses.Flinched, chance: 10 },
+  [Moves.PoisonFang]: { status: Statuses.BadlyPoisoned, chance: 50 },
+  [Moves.SignalBeam]: { status: Statuses.Confused, chance: 10 },
+  [Moves.WaterPulse]: { status: Statuses.Confused, chance: 20 },
+  [Moves.PoisonTail]: { status: Statuses.Poisoned, chance: 10 },
+  [Moves.VoltTackle]: { status: Statuses.Paralyzed, chance: 10 },
+  [Moves.Bounce]: { status: Statuses.Paralyzed, chance: 30 },
+  [Moves.SandTomb]: { status: Statuses.Trapped, chance: 100 },
 };
 
 /**
@@ -120,6 +147,35 @@ const EFFECT_STAGE_MOVES: { [key in Moves]?: AttackStageEffect } = {
   [Moves.MetalClaw]: { stage: Stages.Attack, value: 1, chance: 10, self: true },
   [Moves.SteelWing]: { stage: Stages.Defense, value: 1, chance: 10, self: true },
   [Moves.RapidSpin]: { stage: Stages.Speed, value: 1, chance: 100, self: true },
+  [Moves.LusterPurge]: { stage: Stages.SpecialDefense, value: -1, chance: 50 },
+  [Moves.MistBall]: { stage: Stages.SpecialAttack, value: -1, chance: 50 },
+  [Moves.CrushClaw]: { stage: Stages.Defense, value: -1, chance: 50 },
+  [Moves.RockTomb]: { stage: Stages.Speed, value: -1, chance: 100 },
+  [Moves.MudShot]: { stage: Stages.Speed, value: -1, chance: 100 },
+  [Moves.MuddyWater]: { stage: Stages.Accuracy, value: -1, chance: 30 },
+  [Moves.MeteorMash]: { stage: Stages.Attack, value: 1, chance: 20, self: true },
+  // Paid after it lands rather than before: the cost of swinging that
+  // hard is taken out of the swinger
+  [Moves.Superpower]: {
+    stage: [Stages.Attack, Stages.Defense],
+    value: -1,
+    chance: 100,
+    self: true,
+  },
+  [Moves.Overheat]: { stage: Stages.SpecialAttack, value: -2, chance: 100, self: true },
+  [Moves.PsychoBoost]: { stage: Stages.SpecialAttack, value: -2, chance: 100, self: true },
+  [Moves.SilverWind]: {
+    stage: [
+      Stages.Attack,
+      Stages.Defense,
+      Stages.SpecialAttack,
+      Stages.SpecialDefense,
+      Stages.Speed,
+    ],
+    value: 1,
+    chance: 10,
+    self: true,
+  },
   [Moves.AncientPower]: {
     stage: [
       Stages.Attack,

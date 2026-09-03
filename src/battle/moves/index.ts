@@ -62,6 +62,23 @@ import setupSwitchOutMoves from './switch-out';
 import setupWeatherAccuracyMoves from './weather-accuracy';
 import setupWeatherMoves from './weather';
 import setupWeightMoves from './weight';
+import setupAbilityMoves from './ability-moves';
+import setupAssist from './assist';
+import setupBrickBreak from './brick-break';
+import setupCharged from './charged';
+import setupConditionalPowerMoves from './conditional-power';
+import setupCureMoves from './cure';
+import setupFakeOut from './fake-out';
+import setupFocusPunch from './focus-punch';
+import setupFollowMe from './follow-me';
+import setupImprison from './imprison';
+import setupItemMoves from './item-moves';
+import setupMemento from './memento';
+import setupGroundMoves from './ground';
+import setupSports from './sports';
+import setupStockpile from './stockpile';
+import setupUproar from './uproar';
+import setupWish from './wish';
 
 export default function setupMoves(battle: Battle): void {
   // Overarching groups
@@ -133,6 +150,26 @@ export default function setupMoves(battle: Battle): void {
   setupRapidSpin(battle);
   setupThief(battle);
   setupFutureSight(battle);
+
+  // Hoenn: what it brought, and what the fight going on around a move
+  // does to it
+  setupConditionalPowerMoves(battle);
+  setupFakeOut(battle);
+  setupFocusPunch(battle);
+  setupFollowMe(battle);
+  setupStockpile(battle);
+  setupCharged(battle);
+  setupSports(battle);
+  setupCureMoves(battle);
+  setupMemento(battle);
+  setupBrickBreak(battle);
+  setupImprison(battle);
+  setupUproar(battle);
+  setupItemMoves(battle);
+  setupAbilityMoves(battle);
+  setupAssist(battle);
+  setupWish(battle);
+  setupGroundMoves(battle);
 
   // Last, because they are what is left: both fallbacks only answer
   // when every resolver above has declined to pick anything. Attack

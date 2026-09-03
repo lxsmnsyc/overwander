@@ -7,7 +7,12 @@ import { BattleEvents, EffectType } from '../events';
 
 // https://bulbapedia.bulbagarden.net/wiki/Hyper_Beam_(move)
 // Moves that lock the user into a recharge after a successful hit.
-const RECHARGE_MOVES = new Set<Moves>([Moves.HyperBeam]);
+const RECHARGE_MOVES = new Set<Moves>([
+  Moves.HyperBeam,
+  Moves.BlastBurn,
+  Moves.HydroCannon,
+  Moves.FrenzyPlant,
+]);
 
 export default function setupRechargeMoves(battle: Battle): void {
   /**

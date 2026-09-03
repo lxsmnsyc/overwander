@@ -31,6 +31,17 @@ import setupSleepingStatus from './sleeping';
 import setupSubstitutedStatus from './substituted';
 import setupSwitchingStatus from './switching';
 import setupTrappedStatus from './trapped';
+import setupCenteredStatus from './centered';
+import setupCoatedStatus from './coated';
+import setupDrowsyStatus from './drowsy';
+import setupGrudgingStatus from './grudging';
+import setupHelpedStatus from './helped';
+import setupImprisonedStatus from './imprisoned';
+import setupRootedStatus from './rooted';
+import setupSnatchingStatus from './snatching';
+import setupTauntedStatus from './taunted';
+import setupTormentedStatus from './tormented';
+import setupUproaringStatus from './uproaring';
 
 /**
  * The major status conditions (used by Guts, Shed Skin, and similar
@@ -164,6 +175,20 @@ export default function setupStatus(battle: Battle): void {
   setupEncoredStatus(battle);
   setupIdentifiedStatus(battle);
   setupSafeguardStatus(battle);
+
+  // Hoenn's own: the holds a move puts on what somebody may cast, and
+  // the ones that answer for what happens next
+  setupTauntedStatus(battle);
+  setupTormentedStatus(battle);
+  setupImprisonedStatus(battle);
+  setupRootedStatus(battle);
+  setupDrowsyStatus(battle);
+  setupCenteredStatus(battle);
+  setupCoatedStatus(battle);
+  setupSnatchingStatus(battle);
+  setupGrudgingStatus(battle);
+  setupUproaringStatus(battle);
+  setupHelpedStatus(battle);
 
   setupNonRefreshableStatus(battle);
   setupStatusTypeImmunity(battle);

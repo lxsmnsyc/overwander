@@ -19,6 +19,8 @@ const HEAL_FRACTION: { [key in Moves]?: number } = {
   [Moves.SoftBoiled]: 0.5,
   // https://bulbapedia.bulbagarden.net/wiki/Milk_Drink_(move)
   [Moves.MilkDrink]: 0.5,
+  // https://bulbapedia.bulbagarden.net/wiki/Slack_Off_(move)
+  [Moves.SlackOff]: 0.5,
 };
 
 /**

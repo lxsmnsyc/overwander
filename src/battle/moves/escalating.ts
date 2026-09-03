@@ -12,6 +12,7 @@ import type Unit from '../unit';
 const ESCALATING_MOVES: { [key in Moves]?: number } = {
   [Moves.FuryCutter]: 3,
   [Moves.Rollout]: 4,
+  [Moves.IceBall]: 4,
 };
 
 /**

@@ -1,5 +1,6 @@
 import registerGen1Moves from './gen-1';
 import registerGen2Moves from './gen-2';
+import registerGen3Moves from './gen-3';
 import registerWeatherMoves from './weather';
 
 export {
@@ -17,5 +18,6 @@ export { MOVE_WEATHERS, getWeatherMove } from './weather';
 export function registerMoves(): void {
   registerGen1Moves();
   registerGen2Moves();
+  registerGen3Moves();
   registerWeatherMoves();
 }

@@ -78,6 +78,17 @@ export const STATUS_NAMES: Record<Statuses, string> = {
   [Statuses.Encored]: 'Encored',
   [Statuses.Identified]: 'Identified',
   [Statuses.Comatose]: 'Comatose',
+  [Statuses.Taunted]: 'Taunted',
+  [Statuses.Tormented]: 'Tormented',
+  [Statuses.Imprisoned]: 'Imprisoned',
+  [Statuses.Rooted]: 'Rooted',
+  [Statuses.Drowsy]: 'Drowsy',
+  [Statuses.Centered]: 'Centered',
+  [Statuses.Coated]: 'Coated',
+  [Statuses.Snatching]: 'Snatching',
+  [Statuses.Grudging]: 'Grudging',
+  [Statuses.Uproaring]: 'Uproar',
+  [Statuses.Helped]: 'Helped',
 };
 
 /**

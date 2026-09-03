@@ -6,6 +6,7 @@ import Alliance from '../battle/alliance';
 import type Battle from '../battle/core';
 import { BattleModes } from '../battle/core';
 import { EffectType } from '../battle/events';
+import type Biome from '../data/ids/biome';
 import createBattle from '../battle/setup';
 import Team from '../battle/team';
 import Unit from '../battle/unit';
@@ -172,6 +173,7 @@ export function createRaidBattle(
   battleId: string,
   teams: TeamSnapshotRecord[],
   limits = UNLIMITED_BATTLE_LIMITS,
+  biome?: Biome,
 ): RaidBattle {
   // The boss carries Boss (and, in a shadow raid, Shadow) alongside
   // its own rolled ability, so the per-unit limit has to fit all three
@@ -179,6 +181,7 @@ export function createRaidBattle(
     mode: BattleModes.Raid,
     realtime: true,
     limits,
+    biome,
   });
 
   return { battle, ...fieldTeams(battle, teams, BOSS_ALLIANCE) };

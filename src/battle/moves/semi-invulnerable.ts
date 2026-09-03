@@ -34,12 +34,24 @@ const SEMI_INVULNERABLE_MOVES: { [key in Moves]?: SemiInvulnerableConfig } = {
   // https://bulbapedia.bulbagarden.net/wiki/Fly_(move)
   // TODO Hurricane once implemented
   [Moves.Fly]: {
-    bypass: new Set([Moves.Gust, Moves.Thunder, Moves.Twister]),
+    bypass: new Set([Moves.Gust, Moves.Thunder, Moves.Twister, Moves.SkyUppercut]),
     doubled: new Set([Moves.Gust, Moves.Twister]),
     status: Statuses.Floating,
   },
-  // TODO Dive once implemented: bypass Surf/Whirlpool (doubled),
-  // status: Statuses.Submerged
+  // https://bulbapedia.bulbagarden.net/wiki/Dive_(move)
+  [Moves.Dive]: {
+    bypass: new Set([Moves.Surf, Moves.Whirlpool]),
+    doubled: new Set([Moves.Surf, Moves.Whirlpool]),
+    status: Statuses.Submerged,
+  },
+  // Up where Fly goes, so what reaches one reaches the other. Sky
+  // Uppercut is the fist that follows it up there
+  // https://bulbapedia.bulbagarden.net/wiki/Bounce_(move)
+  [Moves.Bounce]: {
+    bypass: new Set([Moves.Gust, Moves.Thunder, Moves.Twister, Moves.SkyUppercut]),
+    doubled: new Set([Moves.Gust, Moves.Twister]),
+    status: Statuses.Floating,
+  },
 };
 
 function getSemiInvulnerableConfig(target: Unit): SemiInvulnerableConfig | undefined {

@@ -38,18 +38,36 @@ const STAGE_MOVE_GROUPS: [Stages, StageMovesConfig][] = [
       // The target is flattered into swinging harder while it is too
       // confused to aim
       [Moves.Swagger]: 2,
+      [Moves.Howl]: 1,
+      [Moves.BulkUp]: 1,
+      [Moves.DragonDance]: 1,
+      [Moves.Tickle]: -1,
+      [Moves.FeatherDance]: -2,
+      [Moves.Memento]: -2,
     },
   ],
   [
     Stages.SpecialAttack,
     {
       [Moves.Growth]: 1,
+      [Moves.TailGlow]: 3,
+      [Moves.CalmMind]: 1,
+      // Flattery: the target is talked into leaning on a stat it
+      // cannot aim with
+      [Moves.Flatter]: 1,
+      [Moves.Memento]: -2,
     },
   ],
   [
     Stages.SpecialDefense,
     {
       [Moves.Amnesia]: 2,
+      [Moves.CalmMind]: 1,
+      [Moves.CosmicPower]: 1,
+      [Moves.Stockpile]: 1,
+      [Moves.Charge]: 1,
+      [Moves.MetalSound]: -2,
+      [Moves.FakeTears]: -2,
     },
   ],
   [
@@ -63,6 +81,11 @@ const STAGE_MOVE_GROUPS: [Stages, StageMovesConfig][] = [
       [Moves.DefenseCurl]: 1,
       [Moves.Barrier]: 2,
       [Moves.AcidArmor]: 2,
+      [Moves.IronDefense]: 2,
+      [Moves.BulkUp]: 1,
+      [Moves.CosmicPower]: 1,
+      [Moves.Stockpile]: 1,
+      [Moves.Tickle]: -1,
     },
   ],
   [
@@ -72,6 +95,7 @@ const STAGE_MOVE_GROUPS: [Stages, StageMovesConfig][] = [
       [Moves.Agility]: 2,
       [Moves.ScaryFace]: -2,
       [Moves.CottonSpore]: -2,
+      [Moves.DragonDance]: 1,
     },
   ],
   [

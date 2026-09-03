@@ -1,5 +1,6 @@
 import type { TeamSnapshotRecord } from '../auth/teams';
 import { BattleModes } from '../battle/core';
+import type Biome from '../data/ids/biome';
 import createBattle from '../battle/setup';
 import { PVP_BATTLE_LIMITS } from '../data/constants/battle-limits';
 import Weather, { toBattleWeather } from '../data/overworld/weather';
@@ -29,11 +30,13 @@ export function createTrainerBattle(
   limits = PVP_BATTLE_LIMITS,
   mode: BattleModes = BattleModes.Npc,
   weather = Weather.Clear,
+  biome?: Biome,
 ): RaidBattle {
   const battle: Battle = createBattle(battleId, {
     mode,
     realtime: true,
     limits,
+    biome,
   });
 
   if (mode === BattleModes.Npc) {
@@ -51,6 +54,7 @@ export function createRocketBattle(
   teams: TeamSnapshotRecord[],
   limits = PVP_BATTLE_LIMITS,
   weather = Weather.Clear,
+  biome?: Biome,
 ): RaidBattle {
-  return createTrainerBattle(battleId, teams, limits, BattleModes.Npc, weather);
+  return createTrainerBattle(battleId, teams, limits, BattleModes.Npc, weather, biome);
 }

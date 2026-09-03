@@ -35,6 +35,10 @@ export const MULTI_HIT_MOVES: { [key in Moves]?: MultiHitConfig } = {
   [Moves.TripleKick]: { min: 3, max: 3, escalating: true },
   // However many of the party pile in, which Beat Up works out itself
   [Moves.BeatUp]: { min: 1, max: 6 },
+  [Moves.ArmThrust]: { min: 2, max: 5 },
+  [Moves.BulletSeed]: { min: 2, max: 5 },
+  [Moves.IcicleSpear]: { min: 2, max: 5 },
+  [Moves.RockBlast]: { min: 2, max: 5 },
 };
 
 // Delay between strikes

@@ -1100,6 +1100,12 @@ describe('move damage', () => {
     Moves.Frustration,
     Moves.Magnitude,
     Moves.Present,
+    // Hoenn's own: power read off what Stockpile stored, off the gap
+    // between the two sides' HP, and off nothing at all for the one
+    // that ends a fight outright
+    Moves.SpitUp,
+    Moves.Endeavor,
+    Moves.SheerCold,
   ]);
 
   it('gives every damaging move something to hit with', () => {

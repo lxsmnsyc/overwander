@@ -34,8 +34,12 @@ import { getSpeciesData } from '../species';
  * the party down to a sliver at the moment it has won, and **Grudge**
  * costs whoever lands the last hit the move that landed it.
  *
- * **Wish**, **Ingrain**, **Slack Off** and **Swallow** are the heals
- * a boss cannot receive at all, so each is a slot it wastes.
+ * The heals are all here for one reason: nothing puts health back on
+ * a boss, so **Recover**, **Soft-Boiled**, **Milk Drink**,
+ * **Moonlight**, **Morning Sun**, **Synthesis**, **Wish**,
+ * **Ingrain**, **Slack Off** and **Swallow** are each a slot it
+ * wastes. **Rest** is worse than wasted: the sleep is self-inflicted
+ * and lands, while the heal it sleeps for does not.
  *
  * It is data rather than engine: the list is filtered out of the
  * boss' learnset as the raid is staged, which happens where a raid is
@@ -61,6 +65,13 @@ const BANNED_BOSS_MOVES = new Set<Moves>([
   Moves.Ingrain,
   Moves.SlackOff,
   Moves.Swallow,
+  Moves.Recover,
+  Moves.SoftBoiled,
+  Moves.MilkDrink,
+  Moves.Moonlight,
+  Moves.MorningSun,
+  Moves.Synthesis,
+  Moves.Rest,
   // TODO: temporary. A boss is already immune to Perishing, so the
   // song costs it a move slot and does nothing. Drop this line when
   // there is something for it to do

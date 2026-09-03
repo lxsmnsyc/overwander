@@ -53,6 +53,12 @@ export interface Slot {
    * the body is furniture nobody can read
    */
   offset: Point;
+  /**
+   * How far the body is turned on the spot, in radians. It is the
+   * stand-in for a Rotate the sheet has not got, and nothing else
+   * turns a pokemon
+   */
+  spin: number;
   /** Whether it is in front of the camera at all. */
   visible: boolean;
 }
@@ -362,6 +368,7 @@ export function project(
         facing: facingToward(on.x, on.y, at.x, at.y),
         depth: on.scale,
         offset: [0, 0] as Point,
+        spin: 0,
         visible: on.visible,
       };
     })

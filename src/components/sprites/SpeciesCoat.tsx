@@ -64,11 +64,15 @@ export interface SpeciesCoatProps {
    * their own sheets comes out ragged. **The box has to be square**
    */
   fill?: boolean;
-  /**
-   * What it should be doing. Something nobody has met is asleep
-   * whatever this says: there is nothing to show off
-   */
+  /** What it should be doing */
   animation?: SpriteAnim;
+  /**
+   * What it does before it has been met, which is not the same
+   * question. A dex entry nobody has found is asleep, since there is
+   * nothing to show off; a silhouette standing in a row of pokemon is
+   * still standing, since the row is read as one picture
+   */
+  unmet?: SpriteAnim;
   /**
    * How long one pass of that animation should take, in milliseconds.
    * A dex turning a pokemon on the spot sets it; everything else
@@ -91,10 +95,11 @@ export default function SpeciesCoat(props: SpeciesCoatProps): JSX.Element {
       species={props.met ? props.species : Species.Missingno}
       shiny={props.met && props.shiny === true}
       female={props.female === true}
-      animation={props.met ? (props.animation ?? SpriteAnim.Idle) : SpriteAnim.Sleep}
-      // The pace belongs to the animation that was asked for. A
-      // species nobody has met is asleep instead, and sleeping at
-      // somebody else's tempo is not what was meant
+      animation={
+        props.met ? (props.animation ?? SpriteAnim.Idle) : (props.unmet ?? SpriteAnim.Sleep)
+      }
+      // The pace belongs to the animation that was asked for. An
+      // unmet coat is doing something else, at somebody else's tempo
       duration={props.met ? props.duration : undefined}
       direction={props.direction ?? 'Down'}
       scale={props.scale}

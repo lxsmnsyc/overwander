@@ -188,5 +188,8 @@ export function pickCast(
       return animation;
     }
   }
-  return has(DEFAULT_CAST) ? DEFAULT_CAST : SpriteAnim.Idle;
+  // Named rather than checked. A sheet without even this is a sheet
+  // with a hole in it, and a hole is the shim's business: it stands in
+  // with Idle and moves the body the way the missing clip would have
+  return DEFAULT_CAST;
 }

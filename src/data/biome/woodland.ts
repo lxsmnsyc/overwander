@@ -25,6 +25,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Snubbull, weight: 20 },
         { species: Species.Scyther, weight: 5 },
         { species: Species.Chansey, weight: 2 },
+        { species: Species.Zigzagoon, weight: 25 },
       ],
       uncommon: [
         { species: Species.Ivysaur, weight: 1 },
@@ -55,6 +56,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Wobbuffet, weight: 5 },
         { species: Species.Scizor, weight: 5 },
         { species: Species.Blissey, weight: 5 },
+        { species: Species.Linoone, weight: 10 },
       ],
       prized: [
         ...UNOWN_SPAWNS,
@@ -81,6 +83,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Snubbull, weight: 20 },
         { species: Species.Scyther, weight: 5 },
         { species: Species.Chansey, weight: 2 },
+        { species: Species.Zigzagoon, weight: 25 },
       ],
       uncommon: [
         { species: Species.Ivysaur, weight: 1 },
@@ -111,6 +114,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Wobbuffet, weight: 5 },
         { species: Species.Scizor, weight: 5 },
         { species: Species.Blissey, weight: 5 },
+        { species: Species.Linoone, weight: 10 },
       ],
       prized: [
         ...UNOWN_SPAWNS,
@@ -130,6 +134,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Hoothoot, weight: 25 },
         { species: Species.Spinarak, weight: 20 },
         { species: Species.Pineco, weight: 20 },
+        { species: Species.Zigzagoon, weight: 25 },
       ],
       uncommon: [
         { species: Species.Nidorina, weight: 5 },
@@ -156,6 +161,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Wobbuffet, weight: 5 },
         { species: Species.Bellossom, weight: 5 },
         { species: Species.Umbreon, weight: 5 },
+        { species: Species.Linoone, weight: 10 },
       ],
       prized: [
         ...UNOWN_SPAWNS,
@@ -177,6 +183,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Hoothoot, weight: 25 },
         { species: Species.Spinarak, weight: 20 },
         { species: Species.Pineco, weight: 20 },
+        { species: Species.Zigzagoon, weight: 25 },
       ],
       uncommon: [
         { species: Species.Nidorina, weight: 5 },
@@ -206,6 +213,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Wobbuffet, weight: 5 },
         { species: Species.Bellossom, weight: 5 },
         { species: Species.Umbreon, weight: 5 },
+        { species: Species.Linoone, weight: 10 },
       ],
       prized: [
         ...UNOWN_SPAWNS,

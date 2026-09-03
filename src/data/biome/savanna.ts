@@ -75,6 +75,7 @@ export default function registerSavannaSpawns(): void {
         { species: Species.NidoranF, weight: 20 },
         { species: Species.NidoranM, weight: 20 },
         { species: Species.Houndour, weight: 20 },
+        { species: Species.Poochyena, weight: 20 },
       ],
       uncommon: [
         { species: Species.Nidorina, weight: 5 },
@@ -85,6 +86,7 @@ export default function registerSavannaSpawns(): void {
         { species: Species.Nidoqueen, weight: 5 },
         { species: Species.Nidoking, weight: 5 },
         { species: Species.Girafarig, weight: 5 },
+        { species: Species.Mightyena, weight: 10 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [],
@@ -95,6 +97,7 @@ export default function registerSavannaSpawns(): void {
         { species: Species.NidoranF, weight: 20 },
         { species: Species.NidoranM, weight: 20 },
         { species: Species.Houndour, weight: 20 },
+        { species: Species.Poochyena, weight: 20 },
       ],
       uncommon: [
         { species: Species.Nidorina, weight: 5 },
@@ -105,6 +108,7 @@ export default function registerSavannaSpawns(): void {
         { species: Species.Nidoqueen, weight: 5 },
         { species: Species.Nidoking, weight: 5 },
         { species: Species.Girafarig, weight: 5 },
+        { species: Species.Mightyena, weight: 10 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [],

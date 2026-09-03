@@ -132,6 +132,8 @@ const enum Families {
   Treecko = 130,
   Torchic = 131,
   Mudkip = 132,
+  Poochyena = 133,
+  Zigzagoon = 134,
 }
 
 export default Families;

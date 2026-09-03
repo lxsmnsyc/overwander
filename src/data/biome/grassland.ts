@@ -27,6 +27,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Snubbull, weight: 20 },
         { species: Species.Scyther, weight: 5 },
         { species: Species.Chansey, weight: 2 },
+        { species: Species.Zigzagoon, weight: 25 },
       ],
       uncommon: [
         { species: Species.Ivysaur, weight: 1 },
@@ -63,6 +64,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Espeon, weight: 5 },
         { species: Species.Scizor, weight: 5 },
         { species: Species.Blissey, weight: 5 },
+        { species: Species.Linoone, weight: 10 },
       ],
       prized: [
         ...UNOWN_SPAWNS,
@@ -94,6 +96,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Snubbull, weight: 20 },
         { species: Species.Scyther, weight: 5 },
         { species: Species.Chansey, weight: 2 },
+        { species: Species.Zigzagoon, weight: 25 },
       ],
       uncommon: [
         { species: Species.Ivysaur, weight: 1 },
@@ -134,6 +137,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Espeon, weight: 5 },
         { species: Species.Scizor, weight: 5 },
         { species: Species.Blissey, weight: 5 },
+        { species: Species.Linoone, weight: 10 },
       ],
       prized: [
         ...UNOWN_SPAWNS,
@@ -151,6 +155,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.NidoranM, weight: 20 },
         { species: Species.Oddish, weight: 20 },
         { species: Species.Eevee, weight: 2 },
+        { species: Species.Zigzagoon, weight: 25 },
       ],
       uncommon: [
         { species: Species.Nidorina, weight: 5 },
@@ -173,6 +178,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Girafarig, weight: 5 },
         { species: Species.Wobbuffet, weight: 5 },
         { species: Species.Bellossom, weight: 5 },
+        { species: Species.Linoone, weight: 10 },
       ],
       prized: [
         ...UNOWN_SPAWNS,
@@ -191,6 +197,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Meowth, weight: 20 },
         { species: Species.Drowzee, weight: 20 },
         { species: Species.Eevee, weight: 2 },
+        { species: Species.Zigzagoon, weight: 25 },
       ],
       uncommon: [
         { species: Species.Nidorina, weight: 5 },
@@ -215,6 +222,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Girafarig, weight: 5 },
         { species: Species.Wobbuffet, weight: 5 },
         { species: Species.Bellossom, weight: 5 },
+        { species: Species.Linoone, weight: 10 },
       ],
       prized: [
         ...UNOWN_SPAWNS,

@@ -49,12 +49,14 @@ export default function registerShrublandSpawns(): void {
       base: [
         { species: Species.Vulpix, weight: 10 },
         { species: Species.Houndour, weight: 20 },
+        { species: Species.Poochyena, weight: 20 },
       ],
       uncommon: [],
       rare: [
         { species: Species.Ninetales, weight: 5 },
         { species: Species.Flareon, weight: 5 },
         { species: Species.Smeargle, weight: 5 },
+        { species: Species.Mightyena, weight: 10 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [],
@@ -63,12 +65,14 @@ export default function registerShrublandSpawns(): void {
       base: [
         { species: Species.Vulpix, weight: 10 },
         { species: Species.Houndour, weight: 20 },
+        { species: Species.Poochyena, weight: 20 },
       ],
       uncommon: [],
       rare: [
         { species: Species.Ninetales, weight: 5 },
         { species: Species.Flareon, weight: 5 },
         { species: Species.Smeargle, weight: 5 },
+        { species: Species.Mightyena, weight: 10 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [],

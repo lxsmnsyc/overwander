@@ -380,6 +380,10 @@ export const enum Species {
   Mudkip = 258,
   Marshtomp = 259,
   Swampert = 260,
+  Poochyena = 261,
+  Mightyena = 262,
+  Zigzagoon = 263,
+  Linoone = 264,
 }
 
 /**

@@ -253,6 +253,8 @@ const enum Abilities {
   Comatose = 149,
   // Shiftry
   WindRider = 150,
+  // Slakoth
+  Truant = 151,
   // Special (non-standard abilities outside the regular pool)
   Boss = 100001,
   Shadow = 100002,

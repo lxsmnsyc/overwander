@@ -11,4 +11,9 @@ export default function registerGen3Abilities(): void {
     name: 'Wind Rider',
     description: 'Takes nothing from a move that rides on the wind, and gains 1 Attack stage.',
   });
+  // Slakoth
+  registerAbility(Abilities.Truant, {
+    name: 'Truant',
+    description: 'Loafs about for 2 seconds after every move it finishes.',
+  });
 }

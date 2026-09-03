@@ -19,6 +19,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Teddiursa, weight: 20 },
         { species: Species.Scyther, weight: 5 },
         { species: Species.Wurmple, weight: 30 },
+        { species: Species.Ralts, weight: 20 },
       ],
       uncommon: [
         { species: Species.Ivysaur, weight: 1 },
@@ -28,6 +29,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Bayleef, weight: 1 },
         { species: Species.Pikachu, weight: 5 },
         { species: Species.Silcoon, weight: 15 },
+        { species: Species.Kirlia, weight: 10 },
       ],
       rare: [
         { species: Species.Venusaur, weight: 2 },
@@ -44,6 +46,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Sudowoodo, weight: 5 },
         { species: Species.Scizor, weight: 5 },
         { species: Species.Beautifly, weight: 10 },
+        { species: Species.Gardevoir, weight: 5 },
       ],
       prized: [
         ...UNOWN_SPAWNS,
@@ -64,6 +67,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Teddiursa, weight: 20 },
         { species: Species.Scyther, weight: 5 },
         { species: Species.Wurmple, weight: 30 },
+        { species: Species.Ralts, weight: 20 },
       ],
       uncommon: [
         { species: Species.Ivysaur, weight: 1 },
@@ -73,6 +77,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Bayleef, weight: 1 },
         { species: Species.Pikachu, weight: 5 },
         { species: Species.Silcoon, weight: 15 },
+        { species: Species.Kirlia, weight: 10 },
       ],
       rare: [
         { species: Species.Venusaur, weight: 2 },
@@ -90,6 +95,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Sudowoodo, weight: 5 },
         { species: Species.Scizor, weight: 5 },
         { species: Species.Beautifly, weight: 10 },
+        { species: Species.Gardevoir, weight: 5 },
       ],
       prized: [
         ...UNOWN_SPAWNS,

@@ -399,6 +399,12 @@ export const enum Species {
   Swellow = 277,
   Wingull = 278,
   Pelipper = 279,
+  Ralts = 280,
+  Kirlia = 281,
+  Gardevoir = 282,
+  Slakoth = 287,
+  Vigoroth = 288,
+  Slaking = 289,
 }
 
 /**

@@ -1,7 +1,9 @@
 import registerLotadSpecies from './lotad';
 import registerMudkipSpecies from './mudkip';
 import registerPoochyenaSpecies from './poochyena';
+import registerRaltsSpecies from './ralts';
 import registerSeedotSpecies from './seedot';
+import registerSlakothSpecies from './slakoth';
 import registerTaillowSpecies from './taillow';
 import registerTorchicSpecies from './torchic';
 import registerTreeckoSpecies from './treecko';
@@ -20,4 +22,6 @@ export default function registerGen3Species(): void {
   registerSeedotSpecies();
   registerTaillowSpecies();
   registerWingullSpecies();
+  registerRaltsSpecies();
+  registerSlakothSpecies();
 }

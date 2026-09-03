@@ -4,7 +4,65 @@ import { Types } from '../../../src/data/constants/types';
 import Abilities from '../../../src/data/ids/abilities';
 import { Moves } from '../../../src/data/ids/moves';
 import { MoveTargetType } from '../../../src/battle/events';
+import { Statuses } from '../../../src/data/ids/status';
+import turns from '../../../src/battle/turn';
 import { createBattle, createUnit } from '../harness';
+
+/** Small enough that a cast is watched rather than jumped over. */
+const STEP = 100;
+
+describe('Truant', () => {
+  it('loafs for a turn after every move it finishes', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const slacker = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB);
+    slacker.addAbility(Abilities.Truant);
+    slacker.addMove(Moves.Scratch);
+
+    const aim = { type: MoveTargetType.Unit, unit: target } as const;
+
+    expect(slacker.checkCanCast(Moves.Scratch, aim)).toBe(true);
+
+    slacker.cast(Moves.Scratch, aim);
+
+    while (slacker.casting != null) {
+      battle.tick(STEP);
+    }
+
+    // The cast is done and it is loafing rather than swinging again
+    expect(slacker.status[Statuses.Recharging]).not.toBeUndefined();
+    expect(slacker.checkCanCast(Moves.Scratch, aim)).toBe(false);
+
+    battle.tick(turns(1));
+
+    expect(slacker.status[Statuses.Recharging]).toBeUndefined();
+
+    // The move's own cooldown is a separate clock, so it is cleared
+    // to show the loafing is what had been in the way
+    slacker.finishCooldown(Moves.Scratch);
+
+    expect(slacker.checkCanCast(Moves.Scratch, aim)).toBe(true);
+  });
+
+  it('leaves anybody else alone', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const slacker = createUnit(battle, teamA);
+    const busy = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB);
+    slacker.addAbility(Abilities.Truant);
+    busy.addMove(Moves.Scratch);
+
+    const aim = { type: MoveTargetType.Unit, unit: target } as const;
+
+    busy.cast(Moves.Scratch, aim);
+
+    while (busy.casting != null) {
+      battle.tick(STEP);
+    }
+
+    expect(busy.status[Statuses.Recharging]).toBeUndefined();
+  });
+});
 
 describe('Wind Rider', () => {
   it('turns a wind move away and takes an Attack stage from it', () => {

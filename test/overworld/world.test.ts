@@ -51,7 +51,11 @@ import {
 import { MAX_LEVEL } from '../../src/data/constants/levels';
 import { WILD_HELD_COMMON, WILD_HELD_UNCOMMON } from '../../src/data/species/held-items';
 import { RaidKind, deriveRaidReward, getRaidTitle } from '../../src/auth/raids';
-import { BANNED_BOSS_MOVES, BOSS_BASE_HEALTH } from '../../src/battle/abilities/special';
+import {
+  BANNED_BOSS_MOVES,
+  BOSS_BASE_HEALTH,
+  getBannedBossMoves,
+} from '../../src/battle/abilities/special';
 import { EffectType } from '../../src/battle/events';
 import { getMaxHealth } from '../../src/auth/health';
 import { isShadow, isShiny } from '../../src/auth/caught-record';
@@ -842,12 +846,19 @@ describe('world', () => {
       Moves.PainSplit,
       Moves.BatonPass,
       Moves.DestinyBond,
+      Moves.Bide,
+      Moves.BellyDrum,
       // Temporary: a boss is immune to Perishing, so the song would
       // only be a slot it wastes
       Moves.PerishSong,
     ]) {
       expect(BANNED_BOSS_MOVES.has(move)).toBe(true);
     }
+
+    // Curse is barred from a Ghost, which pays half a raid pool to
+    // lay it, and left to anything else, which takes the stages
+    expect(getBannedBossMoves(Species.Gengar).has(Moves.Curse)).toBe(true);
+    expect(getBannedBossMoves(Species.Snorlax).has(Moves.Curse)).toBe(false);
 
     // Clefable would otherwise take Metronome, which can call
     // anything registered — Transform included

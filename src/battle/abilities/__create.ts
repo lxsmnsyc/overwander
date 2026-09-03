@@ -1,12 +1,12 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import type { EventListenerLifecycle } from '../../core/event-emitter';
-import { Stages, Stats } from '../../data/constants/stats';
-import { type MoveFlags, StatFlags } from '../../data/ids/moves';
+import { MAX_STAGE, Stages, Stats } from '../../data/constants/stats';
+import { MoveCategories, type MoveFlags, StatFlags } from '../../data/ids/moves';
 import { getMoveData, getWeatherMove } from '../../data/moves';
 import type { Types } from '../../data/constants/types';
 import type Abilities from '../../data/ids/abilities';
 import type { Statuses, Weathers } from '../../data/ids/status';
-import { RISKY_PENALTY } from '../ai/score';
+import { FEED_BONUS, RISKY_PENALTY, healWorth } from '../ai/score';
 import type Battle from '../core';
 import type {
   CheckUnitAIMoveScoreEvent,
@@ -95,6 +95,70 @@ export function createContactHazard(
 }
 
 /**
+ * What feeding this ability is worth to the side that holds it.
+ *
+ * A teammate may aim a move of the absorbed type at the holder, and
+ * the hit lands as whatever the ability pays out instead of as
+ * damage. Nothing else can work that out: the payout rides a failed
+ * move, which the chooser's speculative pass never emits, so without
+ * being told the AI treats the feed as a hit that does nothing.
+ *
+ * The gain is the ability's own, so a healer weighs the health it
+ * would restore and a stage-raiser what the stage is worth
+ */
+export function createFeedScoring(
+  battle: Battle,
+  targetAbility: Abilities,
+  targetType: Types,
+  worth: (holder: Unit) => number,
+): EventListenerLifecycle<CheckUnitAIMoveScoreEvent> {
+  return battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
+    if (
+      event.target.type !== MoveTargetType.Unit ||
+      event.target.unit === event.source ||
+      event.target.unit.team.alliance !== event.source.team.alliance ||
+      getMoveData(event.move).category === MoveCategories.Status ||
+      !event.target.unit.hasAbility(targetAbility) ||
+      event.source.checkMoveType(event.move, event.target) !== targetType
+    ) {
+      return;
+    }
+
+    event.score += worth(event.target.unit);
+  });
+}
+
+/**
+ * Feeding an ability that answers with a heal, weighed by the hole it
+ * would fill
+ */
+export function createHealFeedScoring(
+  battle: Battle,
+  targetAbility: Abilities,
+  targetType: Types,
+  fraction: number,
+): EventListenerLifecycle<CheckUnitAIMoveScoreEvent> {
+  return createFeedScoring(battle, targetAbility, targetType, (holder) =>
+    healWorth(holder, fraction),
+  );
+}
+
+/**
+ * Feeding an ability that answers with a stage, which is worth
+ * nothing once that stage is as high as it goes
+ */
+export function createStageFeedScoring(
+  battle: Battle,
+  targetAbility: Abilities,
+  targetType: Types,
+  stage: Stages,
+): EventListenerLifecycle<CheckUnitAIMoveScoreEvent> {
+  return createFeedScoring(battle, targetAbility, targetType, (holder) =>
+    holder.stages[stage] >= MAX_STAGE ? 0 : FEED_BONUS,
+  );
+}
+
+/**
  * This is a meta ability for Blaze, Overgrow, Swarm and Torrent
  * https://bulbapedia.bulbagarden.net/wiki/Overgrow_(Ability)
  * https://bulbapedia.bulbagarden.net/wiki/Blaze_(Ability)
@@ -172,6 +236,8 @@ export function createHydrationAbility(
  * https://bulbapedia.bulbagarden.net/wiki/Water_Absorb_(Ability)
  * https://bulbapedia.bulbagarden.net/wiki/Volt_Absorb_(Ability)
  */
+export const ABSORB_HEAL_FRACTION = 1 / 4;
+
 export function createWaterAbsorbAbility(
   targetAbility: Abilities,
   targetType: Types,
@@ -204,6 +270,7 @@ export function createWaterAbsorbAbility(
             parent.target.unit.triggerAbility(targetAbility);
           }
         }),
+        createHealFeedScoring(battle, targetAbility, targetType, ABSORB_HEAL_FRACTION),
         // Effect: the quarter-max-health heal rides the trigger
         battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
           if (event.ability === targetAbility) {

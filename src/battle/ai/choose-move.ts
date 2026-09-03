@@ -20,6 +20,7 @@ import {
 import { BattleModes } from '../core';
 import { HEALTH_SCALED_MOVES, estimateFixedDamage } from '../moves/fixed-damage';
 import { estimateMoveHits } from '../moves/multi-hit';
+import { feedsOwnSide } from '../moves/friendly-fire';
 import { getStageMoveEffect } from '../moves/stage';
 import { ACCURACY_PENALTY, BASE_SCORE, STEP_PENALTY, USELESS_PENALTY } from './score';
 import { SELF_STATUS_MOVES, STATUS_MOVES } from '../moves/status';
@@ -195,7 +196,7 @@ export function setupChooseMoveAI(battle: Battle): void {
    * running rather than offered with nothing named, which is how a
    * unit ends up winding up move after move at an empty field
    */
-  function collectTargets(source: Unit, targetFlags: number): MoveTarget[] {
+  function collectTargets(source: Unit, move: Moves, targetFlags: number): MoveTarget[] {
     /**
      * Multi-target moves (and targetless self moves) resolve their own
      * targets on trigger, so they score as a single targetless use.
@@ -232,6 +233,11 @@ export function setupChooseMoveAI(battle: Battle): void {
       }
       if (targetFlags & MoveTargetFlags.Enemy) {
         addUnits(battle.units(ownAlliance), false);
+      }
+      // A plain attack may also be fed to whatever on the caster's
+      // own team absorbs it; the usability rule refuses the rest
+      if (feedsOwnSide(move)) {
+        addUnits(ownTeam.units, true);
       }
     } else if (targetFlags & MoveTargetFlags.Team) {
       if (targetFlags & MoveTargetFlags.Own) {
@@ -292,7 +298,7 @@ export function setupChooseMoveAI(battle: Battle): void {
 
       const data = getMoveData(state.move);
 
-      for (const target of collectTargets(source, data.target)) {
+      for (const target of collectTargets(source, state.move, data.target)) {
         // A move that cannot work here is not a low-scoring option, it
         // is not an option: casting it would spend the cast time, the
         // cooldown and the opening for nothing
@@ -351,11 +357,21 @@ export function setupChooseMoveAI(battle: Battle): void {
 
     const target = event.target.unit;
 
-    // A hit landing on the player's own side is a cost, never a gain.
-    // The moves that may be aimed there are wanted for the other thing
-    // they do, and each of those says for itself when that is worth it
+    // A hit landing on the player's own side is a cost, never a gain,
+    // unless it cannot land at all: what is aimed at a teammate is
+    // aimed at whatever absorbs it, and the ability says what that is
+    // worth. The moves that may be aimed there for some other reason
+    // each say for themselves when it is worth it
     if (target.team.alliance === event.source.team.alliance) {
-      event.score -= USELESS_PENALTY;
+      if (
+        !event.source.checkMoveImmunity(
+          event.move,
+          event.target,
+          event.source.checkMoveType(event.move, event.target),
+        )
+      ) {
+        event.score -= USELESS_PENALTY;
+      }
       return;
     }
 

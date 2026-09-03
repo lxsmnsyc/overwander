@@ -190,7 +190,7 @@ export default function registerGen1Moves(): void {
     type: Types.Normal,
     category: MoveCategories.Status,
     pp: 10,
-    target: MoveTargetFlags.Enemy | MoveTargetFlags.Ally | MoveTargetFlags.Unit,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Own | MoveTargetFlags.Unit,
     flags: 0,
     cast: [SpriteAnim.Twirl, SpriteAnim.Shake, SpriteAnim.Charge],
   });
@@ -487,6 +487,7 @@ export default function registerGen1Moves(): void {
     target:
       MoveTargetFlags.Multiple |
       MoveTargetFlags.Enemy |
+      MoveTargetFlags.Own |
       MoveTargetFlags.Ally |
       MoveTargetFlags.Unit,
     flags: 0,
@@ -650,6 +651,7 @@ export default function registerGen1Moves(): void {
     target:
       MoveTargetFlags.Multiple |
       MoveTargetFlags.Enemy |
+      MoveTargetFlags.Own |
       MoveTargetFlags.Ally |
       MoveTargetFlags.Unit,
     flags: 0,
@@ -777,7 +779,7 @@ export default function registerGen1Moves(): void {
     category: MoveCategories.Status,
     pp: 20,
     accuracy: 100,
-    target: MoveTargetFlags.Enemy | MoveTargetFlags.Ally | MoveTargetFlags.Unit,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Own | MoveTargetFlags.Unit,
     flags: 0,
     cast: [SpriteAnim.Emit, SpriteAnim.Swell, SpriteAnim.Charge],
   });
@@ -871,7 +873,7 @@ export default function registerGen1Moves(): void {
     category: MoveCategories.Status,
     pp: 15,
     accuracy: 100,
-    target: MoveTargetFlags.Enemy | MoveTargetFlags.Ally | MoveTargetFlags.Unit,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Own | MoveTargetFlags.Unit,
     flags: 0,
     delay: PROJECTILE_DELAY,
     cast: [SpriteAnim.Stomp, SpriteAnim.Shake, SpriteAnim.Attack],
@@ -1014,7 +1016,7 @@ export default function registerGen1Moves(): void {
     category: MoveCategories.Status,
     pp: 40,
     accuracy: 85,
-    target: MoveTargetFlags.Enemy | MoveTargetFlags.Ally | MoveTargetFlags.Unit,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Own | MoveTargetFlags.Unit,
     flags: MoveFlags.Sound,
     cast: [SpriteAnim.Sound, SpriteAnim.RearUp, SpriteAnim.Shake, SpriteAnim.Charge],
   });
@@ -1454,6 +1456,7 @@ export default function registerGen1Moves(): void {
       MoveTargetFlags.Multiple |
       MoveTargetFlags.Self |
       MoveTargetFlags.Enemy |
+      MoveTargetFlags.Own |
       MoveTargetFlags.Ally |
       MoveTargetFlags.Unit,
     flags: 0,
@@ -1471,6 +1474,7 @@ export default function registerGen1Moves(): void {
       MoveTargetFlags.Multiple |
       MoveTargetFlags.Self |
       MoveTargetFlags.Enemy |
+      MoveTargetFlags.Own |
       MoveTargetFlags.Ally |
       MoveTargetFlags.Unit,
     flags: 0,
@@ -1832,7 +1836,7 @@ export default function registerGen1Moves(): void {
     category: MoveCategories.Status,
     pp: 20,
     accuracy: 100,
-    target: MoveTargetFlags.Enemy | MoveTargetFlags.Ally | MoveTargetFlags.Unit,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Own | MoveTargetFlags.Unit,
     flags: 0,
     cast: [SpriteAnim.Gas, SpriteAnim.Emit, SpriteAnim.Charge],
   });
@@ -1899,7 +1903,7 @@ export default function registerGen1Moves(): void {
     type: Types.Normal,
     category: MoveCategories.Status,
     pp: 10,
-    target: MoveTargetFlags.Enemy | MoveTargetFlags.Ally | MoveTargetFlags.Unit,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Own | MoveTargetFlags.Unit,
     flags: 0,
     cast: [SpriteAnim.Twirl, SpriteAnim.Swell, SpriteAnim.Charge],
   });
@@ -1943,7 +1947,7 @@ export default function registerGen1Moves(): void {
     category: MoveCategories.Status,
     pp: 15,
     accuracy: 80,
-    target: MoveTargetFlags.Enemy | MoveTargetFlags.Ally | MoveTargetFlags.Unit,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Own | MoveTargetFlags.Unit,
     flags: 0,
     cast: [SpriteAnim.Twirl, SpriteAnim.Shake, SpriteAnim.Charge],
   });

@@ -18,6 +18,7 @@ import {
   createContactHazard,
   createDrizzleAbility,
   createLimberAbility,
+  createStageFeedScoring,
 } from './__create';
 
 const PLUS_BOOST = 1.5;
@@ -230,6 +231,7 @@ const setupAbilities = [
             parent.target.unit.triggerAbility(Abilities.MotorDrive);
           }
         }),
+        createStageFeedScoring(battle, Abilities.MotorDrive, Types.Electric, Stages.Speed),
         battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
           if (event.ability === Abilities.MotorDrive) {
             event.source.addStage(Stages.Speed, 1, {
@@ -410,6 +412,7 @@ const setupAbilities = [
             parent.target.unit.triggerAbility(Abilities.StormDrain);
           }
         }),
+        createStageFeedScoring(battle, Abilities.StormDrain, Types.Water, Stages.SpecialAttack),
         battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
           if (event.ability === Abilities.StormDrain) {
             event.source.addStage(Stages.SpecialAttack, 1, {
@@ -487,6 +490,7 @@ const setupAbilities = [
             parent.target.unit.triggerAbility(Abilities.SapSipper);
           }
         }),
+        createStageFeedScoring(battle, Abilities.SapSipper, Types.Grass, Stages.Attack),
         battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
           if (event.ability === Abilities.SapSipper) {
             event.source.addStage(Stages.Attack, 1, {

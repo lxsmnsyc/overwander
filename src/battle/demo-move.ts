@@ -4,7 +4,7 @@ import { getMaxHealth } from '../auth/health';
 import type { TeamSnapshotRecord } from '../auth/teams';
 import { defaultSlots } from '../data/constants/slots';
 import { PERFECT_IVS, Stats } from '../data/constants/stats';
-import { MoveTargetFlags, type Moves } from '../data/ids/moves';
+import { MoveAffects, MoveTargets, type Moves } from '../data/ids/moves';
 import { Species } from '../data/ids/species';
 import { getMoveData } from '../data/moves';
 import { deriveGender, deriveNature, deriveSize } from '../overworld/encounter';
@@ -87,7 +87,7 @@ export const TARGET_ALLIANCE = 1;
  * — an ally's, the caster's own, a whole team's — is aimed along it
  */
 export function needsAlly(move: Moves): boolean {
-  return (getMoveData(move).target & MoveTargetFlags.Enemy) === 0;
+  return (getMoveData(move).affects & MoveAffects.Enemy) === 0;
 }
 
 /** One dummy, in the shape a battle fields */
@@ -147,17 +147,16 @@ function dummy(species: Species): CatchSnapshot {
  * of its members
  */
 export function aimFor(demo: MoveDemo, move: Moves): MoveTarget {
-  const { target } = getMoveData(move);
-  const across = (target & MoveTargetFlags.Enemy) !== 0;
+  const { target, affects } = getMoveData(move);
+  const across = (affects & MoveAffects.Enemy) !== 0;
 
-  if ((target & MoveTargetFlags.Team) !== 0) {
+  if (target === MoveTargets.Team) {
     return { type: MoveTargetType.Team, team: across ? demo.target.team : demo.caster.team };
   }
-  // Its own and nobody else's. A move that names nobody at all is one
-  // of these too: the engine forwards whatever target it is handed to
-  // moves outside the `Multiple` path, and what most of those do is
-  // act on the caster — a Recover among them
-  if ((target & (MoveTargetFlags.Ally | MoveTargetFlags.Own | MoveTargetFlags.Enemy)) === 0) {
+  // Its own and nobody else's. A move cast at nobody is one of these
+  // too: the engine forwards whatever target it is handed, and what
+  // most of those do is act on the caster, a Recover among them
+  if ((affects & (MoveAffects.Ally | MoveAffects.Own | MoveAffects.Enemy)) === 0) {
     return { type: MoveTargetType.Unit, unit: demo.caster };
   }
   return { type: MoveTargetType.Unit, unit: demo.target };

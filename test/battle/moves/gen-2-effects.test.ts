@@ -11,7 +11,7 @@ import { PERISH_DURATION } from '../../../src/battle/status/perishing';
 import type Unit from '../../../src/battle/unit';
 import { MAX_STAGE, Stages, Stats, StatsKind } from '../../../src/data/constants/stats';
 import { Types } from '../../../src/data/constants/types';
-import { MoveTargetFlags, Moves } from '../../../src/data/ids/moves';
+import { MoveAffects, Moves } from '../../../src/data/ids/moves';
 import { Statuses, TeamStatuses, Weathers } from '../../../src/data/ids/status';
 import { MOVE_DELAY } from '../../../src/battle/mechanics/move';
 import turns from '../../../src/battle/turn';
@@ -704,9 +704,9 @@ describe('Sketch', () => {
 describe('what a move may be aimed at on the caster’s own side', () => {
   it('catches the caster’s own side in what shakes the whole field', () => {
     for (const move of [Moves.Earthquake, Moves.Surf, Moves.Explosion, Moves.SelfDestruct]) {
-      const flags = getMoveData(move).target;
+      const flags = getMoveData(move).affects;
 
-      expect(flags & MoveTargetFlags.Own, getMoveData(move).name).toBeTruthy();
+      expect(flags & MoveAffects.Own, getMoveData(move).name).toBeTruthy();
     }
   });
 
@@ -770,7 +770,7 @@ describe('what a move may be aimed at on the caster’s own side', () => {
     const weaker = createUnit(battle, teamA);
     const stronger = createUnit(battle, teamA);
 
-    expect(getMoveData(Moves.Transform).target & MoveTargetFlags.Own).toBeTruthy();
+    expect(getMoveData(Moves.Transform).affects & MoveAffects.Own).toBeTruthy();
 
     stronger.addStage(Stages.Attack, 2, { type: 0 });
     weaker.addStage(Stages.Attack, -2, { type: 0 });
@@ -785,7 +785,7 @@ describe('what a move may be aimed at on the caster’s own side', () => {
     const artist = createUnit(battle, teamA);
     const friend = createUnit(battle, teamA);
 
-    expect(getMoveData(Moves.Sketch).target & MoveTargetFlags.Own).toBeTruthy();
+    expect(getMoveData(Moves.Sketch).affects & MoveAffects.Own).toBeTruthy();
 
     artist.addMove(Moves.Sketch);
     friend.addMove(Moves.Tackle);
@@ -913,7 +913,7 @@ describe('the encore', () => {
     const friend = createUnit(battle, teamA);
     const enemy = createUnit(battle, teamB);
 
-    expect(getMoveData(Moves.Encore).target & MoveTargetFlags.Own).toBeTruthy();
+    expect(getMoveData(Moves.Encore).affects & MoveAffects.Own).toBeTruthy();
     expect(score(battle, singer, Moves.Encore, friend)).toBeGreaterThan(
       score(battle, singer, Moves.Encore, enemy),
     );

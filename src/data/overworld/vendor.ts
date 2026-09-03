@@ -126,7 +126,7 @@ export function sellPrice(item: Items): number {
  * time would be reading an empty one
  */
 const SHELVES = new Map<VendorKind, () => Items[]>([
-  [VendorKind.Balls, () => [...Object.values(BALL_ITEMS)]],
+  [VendorKind.Balls, () => Object.values(BALL_ITEMS)],
   [VendorKind.Medicine, () => [...MEDICINES.keys()]],
   [VendorKind.Vitamins, () => [...VITAMIN_STATS.keys(), ...PP_ITEMS.keys()]],
   [VendorKind.Incenses, () => [...INCENSES]],

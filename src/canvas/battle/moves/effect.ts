@@ -1,4 +1,4 @@
-import { MoveCategories, MoveFlags, MoveTargetFlags, Moves } from '../../../data/ids/moves';
+import { MoveAffects, MoveCategories, MoveFlags, Moves } from '../../../data/ids/moves';
 import { TYPE_COLORS, Types } from '../../../data/constants/types';
 import { getMoveData } from '../../../data/moves';
 import { MULTI_HIT_MOVES } from '../../../battle/moves/multi-hit';
@@ -1366,7 +1366,7 @@ export function effectShapeFor(move: Moves): EffectShape {
   if (data.category === MoveCategories.Status) {
     // One on the caster's own side is something put up rather than
     // done to anybody
-    if ((data.target & MoveTargetFlags.Enemy) === 0) {
+    if ((data.affects & MoveAffects.Enemy) === 0) {
       return 'Ward';
     }
     // A powder is a powder whether or not it does damage: what a

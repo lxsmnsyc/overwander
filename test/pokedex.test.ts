@@ -62,7 +62,7 @@ describe('pokedex record', () => {
     const seen = listDexTallies(DEX, DEX_SEEN);
 
     expect(seen.map((entry) => entry.species)).toEqual(
-      [...seen.map((entry) => entry.species)].sort((one, other) => one - other),
+      seen.map((entry) => entry.species).sort((one, other) => one - other),
     );
     // A species that only ever sparkled is still in the list: both
     // maps are read, not just the ordinary one

@@ -1,7 +1,13 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { MAX_STAGE, Stats } from '../../data/constants/stats';
 import Abilities from '../../data/ids/abilities';
-import { MoveAttackFlags, MoveCategories, MoveTargetFlags, type Moves } from '../../data/ids/moves';
+import {
+  MoveAffects,
+  MoveAttackFlags,
+  MoveCategories,
+  MoveTargets,
+  type Moves,
+} from '../../data/ids/moves';
 import { getMoveData } from '../../data/moves';
 import type Battle from '../core';
 import {
@@ -177,8 +183,8 @@ export function setupChooseMoveAI(battle: Battle): void {
    * empty air. Anything that reaches its own side always has at least
    * the user to reach
    */
-  function hasLivingTarget(source: Unit, targetFlags: number): boolean {
-    if (!(targetFlags & MoveTargetFlags.Enemy)) {
+  function hasLivingTarget(source: Unit, affects: number): boolean {
+    if (!(affects & MoveAffects.Enemy)) {
       return true;
     }
     for (const unit of battle.units(source.team.alliance)) {
@@ -190,19 +196,27 @@ export function setupChooseMoveAI(battle: Battle): void {
   }
 
   /**
-   * Collect the candidate targets on the field for a move, based on
-   * its configured target flags. **No candidates means the move is not
-   * a candidate**: a move with nothing to aim at is left out of the
-   * running rather than offered with nothing named, which is how a
-   * unit ends up winding up move after move at an empty field
+   * Collect the candidate targets on the field for a move, from the
+   * way it is cast and what it says it reaches. **No candidates means
+   * the move is not a candidate**: a move with nothing to aim at is
+   * left out of the running rather than offered with nothing named,
+   * which is how a unit ends up winding up move after move at an
+   * empty field
    */
-  function collectTargets(source: Unit, move: Moves, targetFlags: number): MoveTarget[] {
+  function collectTargets(source: Unit, move: Moves): MoveTarget[] {
+    // The move's own table, not the resolved targeting: what a
+    // caster may point at is the move's, while what the move reaches
+    // once it goes off is whatever widened it. A boss still aims its
+    // Tackle at one enemy, and the fan-out is what carries it to the
+    // rest, so the chooser still weighs the move per target
+    const { target, affects } = getMoveData(move);
+
     /**
-     * Multi-target moves (and targetless self moves) resolve their own
-     * targets on trigger, so they score as a single targetless use.
+     * A move cast at nobody picks nothing: who it reaches is worked
+     * out when it goes off, so it scores as a single targetless use
      */
-    if (targetFlags & MoveTargetFlags.Multiple || targetFlags === 0) {
-      return hasLivingTarget(source, targetFlags) ? [{ type: MoveTargetType.None }] : [];
+    if (target === MoveTargets.None) {
+      return hasLivingTarget(source, affects) ? [{ type: MoveTargetType.None }] : [];
     }
 
     const targets: MoveTarget[] = [];
@@ -217,21 +231,21 @@ export function setupChooseMoveAI(battle: Battle): void {
       }
     }
 
-    if (targetFlags & MoveTargetFlags.Unit) {
-      if (targetFlags & MoveTargetFlags.Self) {
+    if (target === MoveTargets.Unit) {
+      if (affects & MoveAffects.Self) {
         targets.push({ type: MoveTargetType.Unit, unit: source });
       }
-      if (targetFlags & MoveTargetFlags.Own) {
+      if (affects & MoveAffects.Own) {
         addUnits(ownTeam.units, true);
       }
-      if (targetFlags & MoveTargetFlags.Ally) {
+      if (affects & MoveAffects.Ally) {
         for (const team of ownAlliance.teams) {
           if (team !== ownTeam) {
             addUnits(team.units, false);
           }
         }
       }
-      if (targetFlags & MoveTargetFlags.Enemy) {
+      if (affects & MoveAffects.Enemy) {
         addUnits(battle.units(ownAlliance), false);
       }
       // A plain attack may also be fed to whatever on the caster's
@@ -239,18 +253,18 @@ export function setupChooseMoveAI(battle: Battle): void {
       if (feedsOwnSide(move)) {
         addUnits(ownTeam.units, true);
       }
-    } else if (targetFlags & MoveTargetFlags.Team) {
-      if (targetFlags & MoveTargetFlags.Own) {
+    } else {
+      if (affects & MoveAffects.Own) {
         targets.push({ type: MoveTargetType.Team, team: ownTeam });
       }
-      if (targetFlags & MoveTargetFlags.Ally) {
+      if (affects & MoveAffects.Ally) {
         for (const team of ownAlliance.teams) {
           if (team !== ownTeam) {
             targets.push({ type: MoveTargetType.Team, team });
           }
         }
       }
-      if (targetFlags & MoveTargetFlags.Enemy) {
+      if (affects & MoveAffects.Enemy) {
         for (const team of battle.teams(ownAlliance)) {
           targets.push({ type: MoveTargetType.Team, team });
         }
@@ -296,9 +310,7 @@ export function setupChooseMoveAI(battle: Battle): void {
         continue;
       }
 
-      const data = getMoveData(state.move);
-
-      for (const target of collectTargets(source, state.move, data.target)) {
+      for (const target of collectTargets(source, state.move)) {
         // A move that cannot work here is not a low-scoring option, it
         // is not an option: casting it would spend the cast time, the
         // cooldown and the opening for nothing
@@ -463,7 +475,7 @@ export function setupChooseMoveAI(battle: Battle): void {
     if (
       effect == null ||
       effect.value <= 0 ||
-      getMoveData(event.move).target & MoveTargetFlags.Enemy
+      getMoveData(event.move).affects & MoveAffects.Enemy
     ) {
       return;
     }

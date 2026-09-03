@@ -1,7 +1,13 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Stats } from '../../data/constants/stats';
 import Abilities from '../../data/ids/abilities';
-import { DamageFlags, MoveAttackFlags, MoveTargetFlags, Moves } from '../../data/ids/moves';
+import {
+  DamageFlags,
+  MoveAttackFlags,
+  MoveTargets,
+  Moves,
+  affectsFoesOnly,
+} from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
 import type Battle from '../core';
 import { BattleEvents, type EffectCause, EffectType, MoveTargetType } from '../events';
@@ -273,17 +279,18 @@ const setupAbilities = [
           event.global = true;
         }
       }),
-      // Single-target, enemy-only moves widen to every enemy;
-      // self-affecting components still resolve once (the Self
-      // branch of the fan-out targets the user a single time)
-      battle.on(BattleEvents.CheckUnitMoveTargetFlags, EventPriority.Post, (event) => {
+      // A move the boss casts at one enemy is cast at nobody
+      // instead, so it goes out to the whole far side it already
+      // says it reaches. Anything it does to the boss itself still
+      // resolves once, since the fan-out names the caster a single
+      // time
+      battle.on(BattleEvents.CheckUnitMoveTargeting, EventPriority.Post, (event) => {
         if (
-          !(event.flags & MoveTargetFlags.Multiple) &&
-          event.flags & MoveTargetFlags.Enemy &&
-          !(event.flags & (MoveTargetFlags.Own | MoveTargetFlags.Ally)) &&
+          event.target === MoveTargets.Unit &&
+          affectsFoesOnly(event.affects) &&
           event.source.hasAbility(Abilities.Boss)
         ) {
-          event.flags |= MoveTargetFlags.Multiple;
+          event.target = MoveTargets.None;
         }
       }),
     ]);

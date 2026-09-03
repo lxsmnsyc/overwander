@@ -1,5 +1,5 @@
 import { AttackPriority } from '../../core/event-emitter';
-import { MoveCategories, MoveTargetFlags, type Moves } from '../../data/ids/moves';
+import { MoveCategories, MoveTargets, type Moves, affectsFoesOnly } from '../../data/ids/moves';
 import { getMoveData } from '../../data/moves';
 import type Battle from '../core';
 import { BattleEvents, MoveTargetType } from '../events';
@@ -24,10 +24,8 @@ export function feedsOwnSide(move: Moves): boolean {
 
   return (
     data.category !== MoveCategories.Status &&
-    (data.target & MoveTargetFlags.Unit) !== 0 &&
-    (data.target & MoveTargetFlags.Enemy) !== 0 &&
-    (data.target & MoveTargetFlags.Multiple) === 0 &&
-    (data.target & (MoveTargetFlags.Own | MoveTargetFlags.Ally)) === 0
+    data.target === MoveTargets.Unit &&
+    affectsFoesOnly(data.affects)
   );
 }
 

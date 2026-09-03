@@ -37,7 +37,7 @@ export const BOSS_STAT_SCALE = 2;
 
 // The list a raid is staged against, kept with the data it filters
 // rather than with the ability that made it necessary
-export { default as BANNED_BOSS_MOVES } from '../../data/overworld/boss-moves';
+export { default as BANNED_BOSS_MOVES, getBannedBossMoves } from '../../data/overworld/boss-moves';
 
 /**
  * Statuses a Boss shrugs off unless self-inflicted (e.g. Rest).

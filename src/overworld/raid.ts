@@ -7,7 +7,7 @@ import {
   DEFAULT_MOVE_SLOTS,
   packSlots,
 } from '../data/constants/slots';
-import BANNED_BOSS_MOVES from '../data/overworld/boss-moves';
+import { getBannedBossMoves } from '../data/overworld/boss-moves';
 import { MAX_LEVEL } from '../data/constants/levels';
 import { MAX_IV, PERFECT_IVS, Stats } from '../data/constants/stats';
 import Abilities from '../data/ids/abilities';
@@ -86,7 +86,7 @@ function zeroEffortValues(): Record<Stats, number> {
  * on still comes with a full set
  */
 export function getBossMoves(species: Species): Moves[] {
-  return deriveMoves(species, RAID_BOSS_LEVEL, BANNED_BOSS_MOVES);
+  return deriveMoves(species, RAID_BOSS_LEVEL, getBannedBossMoves(species));
 }
 
 /**
@@ -148,7 +148,7 @@ export function createRaidBossSnapshot(
     shiny: false,
     shadow,
     // A boss is staged without the moves a boss must not have: see
-    // BANNED_BOSS_MOVES for what is on that list and why
+    // getBannedBossMoves for what is on that list and why
     moves: getBossMoves(species),
     // A boss is staged rather than raised, so nothing has been spent
     // on what it knows

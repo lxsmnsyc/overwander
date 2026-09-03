@@ -93,11 +93,12 @@ export default function EvolutionSection(props: EvolutionSectionProps): JSX.Elem
                       // fetched to be hidden
                       shiny={props.shiny && known().shiny}
                       called={props.shiny ? `${getSpeciesData(becomes()).name}, shiny` : undefined}
-                      // Standing the way the pokemon above it stands:
-                      // the row is a sum with that picture, and two of
-                      // them facing different ways read as two
-                      // unrelated drawings
+                      // Standing the way the pokemon above it stands,
+                      // met or not: the row is a sum with that picture,
+                      // and one of them asleep or facing another way
+                      // reads as two unrelated drawings
                       animation={SpriteAnim.Idle}
+                      unmet={SpriteAnim.Idle}
                       direction="DownLeft"
                       fill
                     />

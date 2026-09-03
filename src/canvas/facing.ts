@@ -29,6 +29,26 @@ const FACING_BY_OCTANT: SpriteDirection[] = [
   'UpRight',
 ];
 
+/**
+ * Which way each of the eight is, as a unit vector on the canvas.
+ * `Down` is a larger y, the same way round as everything else here
+ */
+const TOWARD: Record<SpriteDirection, [number, number]> = {
+  Right: [1, 0],
+  DownRight: [Math.SQRT1_2, Math.SQRT1_2],
+  Down: [0, 1],
+  DownLeft: [-Math.SQRT1_2, Math.SQRT1_2],
+  Left: [-1, 0],
+  UpLeft: [-Math.SQRT1_2, -Math.SQRT1_2],
+  Up: [0, -1],
+  UpRight: [Math.SQRT1_2, -Math.SQRT1_2],
+};
+
+/** Where a sprite facing this way would go if it walked forward. */
+export function facingVector(direction: SpriteDirection): [number, number] {
+  return TOWARD[direction];
+}
+
 export default function facingToward(
   fromX: number,
   fromY: number,

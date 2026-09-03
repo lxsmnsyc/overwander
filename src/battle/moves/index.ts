@@ -3,7 +3,6 @@ import setupBeatUp from './beat-up';
 import setupCurse from './curse';
 import setupDestinyBond from './destiny-bond';
 import setupEncore from './encore';
-import setupEscalatingMoves from './escalating';
 import setupForesight from './foresight';
 import setupFutureSight from './future-sight';
 import setupHiddenPower from './hidden-power';
@@ -90,7 +89,6 @@ export default function setupMoves(battle: Battle): void {
   setupNoEscapeMoves(battle);
   setupNonLethalMoves(battle);
   setupThawingMoves(battle);
-  setupEscalatingMoves(battle);
   setupRollingMoves(battle);
   setupVariablePowerMoves(battle);
   setupHiddenPower(battle);

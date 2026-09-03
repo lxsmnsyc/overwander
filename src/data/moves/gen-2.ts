@@ -507,7 +507,7 @@ export default function registerGen2Moves(): void {
   });
   registerMove(Moves.FuryCutter, {
     name: 'Fury Cutter',
-    description: 'Doubles in power each time it lands in a row, up to 4 times.',
+    description: 'Cuts 4 times over, each one twice the power of the last.',
     type: Types.Bug,
     category: MoveCategories.Physical,
     power: 40,
@@ -515,6 +515,7 @@ export default function registerGen2Moves(): void {
     accuracy: 95,
     target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
     flags: MoveFlags.Contact | MoveFlags.Slicing,
+    steps: 3,
     cast: [SpriteAnim.Slice, SpriteAnim.QuickStrike, SpriteAnim.Attack],
   });
   registerMove(Moves.SteelWing, {

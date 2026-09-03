@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { MoveTargetType } from '../../../src/battle/events';
+import {
+  BattleEvents,
+  type CheckUnitAIMoveUsableEvent,
+  MoveTargetType,
+} from '../../../src/battle/events';
 import { beatUpStrikes } from '../../../src/battle/moves/beat-up';
 import { getEncoredMove } from '../../../src/battle/status/encored';
 import Abilities from '../../../src/data/ids/abilities';
@@ -250,21 +254,27 @@ describe('the moves that read the fight', () => {
     expect(user.checkMovePower(Moves.Frustration, unitTarget(target))).toBe(102);
   });
 
-  it('doubles Fury Cutter while it keeps landing, and stops at the cap', () => {
+  it('cuts through its own passes, doubling each time', () => {
     const { battle, teamA, teamB } = createBattle();
     pinRandom(battle, 1);
     const user = createUnit(battle, teamA);
     const target = createUnit(battle, teamB);
 
-    expect(user.checkMovePower(Moves.FuryCutter, unitTarget(target))).toBe(40);
+    // Four cuts in one cast, the way a Rollout rolls
+    expect(user.checkMoveSteps(Moves.FuryCutter, unitTarget(target))).toBe(3);
 
-    for (const expected of [80, 160, 320, 320]) {
-      user.triggerMove(Moves.FuryCutter, unitTarget(target), 0);
+    for (const [steps, expected] of [
+      [3, 40],
+      [2, 80],
+      [1, 160],
+      [0, 320],
+    ] as const) {
+      user.triggerMove(Moves.FuryCutter, unitTarget(target), steps);
       expect(user.checkMovePower(Moves.FuryCutter, unitTarget(target))).toBe(expected);
     }
 
-    // Anything else breaks the streak
-    user.triggerMove(Moves.Tackle, unitTarget(target), 0);
+    // And the next cast starts from the first cut again
+    user.triggerMove(Moves.FuryCutter, unitTarget(target), 3);
     expect(user.checkMovePower(Moves.FuryCutter, unitTarget(target))).toBe(40);
   });
 
@@ -303,14 +313,6 @@ describe('the moves that read the fight', () => {
     user.triggerMove(Moves.Rollout, unitTarget(target), 4);
 
     expect(user.checkMovePower(Moves.Rollout, unitTarget(target))).toBe(60);
-  });
-
-  it('leaves Fury Cutter counting casts rather than passes', () => {
-    const { battle, teamA, teamB } = createBattle();
-    const user = createUnit(battle, teamA);
-    const target = createUnit(battle, teamB);
-
-    expect(user.checkMoveSteps(Moves.FuryCutter, unitTarget(target))).toBe(0);
   });
 
   it('gives Hidden Power a type off the genes', () => {
@@ -365,6 +367,41 @@ describe('Spikes', () => {
     walking.setHealth(160);
     walking.enter();
     expect(walking.health).toBe(160);
+  });
+
+  it('is worth laying whoever is standing about, and only stops when it is full', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const layer = createUnit(battle, teamA);
+    const target = { type: MoveTargetType.Team, team: teamB } as const;
+
+    createUnit(battle, teamB);
+
+    const usable = (): boolean => {
+      const event: CheckUnitAIMoveUsableEvent = {
+        id: 'CheckUnitAIMoveUsable',
+        disabled: false,
+        source: layer,
+        move: Moves.Spikes,
+        target,
+        usable: true,
+      };
+
+      battle.emit(BattleEvents.CheckUnitAIMoveUsable, event);
+      return event.usable;
+    };
+
+    // Everybody is on the field from the start, so there is no bench
+    // to weigh: the depth is the whole of the question
+    expect(usable()).toBe(true);
+
+    for (let laid = 0; laid < 3; laid++) {
+      layer.triggerMoveEffect(Moves.Spikes, target, 0);
+    }
+    expect(usable()).toBe(false);
+
+    // Swept away is worth laying again
+    createUnit(battle, teamB).triggerMoveEffect(Moves.RapidSpin, unitTarget(layer), 0);
+    expect(usable()).toBe(true);
   });
 });
 

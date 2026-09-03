@@ -7,17 +7,17 @@ import { BattleEvents, MoveTargetType } from '../events';
 import type Unit from '../unit';
 
 /**
- * Rollout: one cast that comes round again and again, each pass twice
- * as hard as the last.
+ * The moves that build as they go: one cast that comes round again and
+ * again, each pass twice as hard as the last.
  *
- * The main games run it off a streak of casts, which is a rule about
- * consecutive turns. Nothing here takes turns, and a streak in real
- * time is a streak nobody completes: something else is always off
- * cooldown, and a single flinch resets it. So the roll is one move
- * with steps, the way a Thrash is, and the doubling happens between
- * its own passes rather than between casts.
+ * The main games run these off a streak of casts, which is a rule
+ * about consecutive turns. Nothing here takes turns, and a streak in
+ * real time is a streak nobody completes: something else is always off
+ * cooldown. So the build is one move with steps, the way a Thrash is,
+ * and the doubling happens between its own passes rather than between
+ * casts.
  */
-const ROLLING_MOVES = new Set<Moves>([Moves.Rollout]);
+const ROLLING_MOVES = new Set<Moves>([Moves.Rollout, Moves.FuryCutter]);
 
 /** What a Defense Curl is worth to the roll that follows it */
 const CURLED_FACTOR = 2;

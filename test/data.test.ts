@@ -68,6 +68,7 @@ import {
   unpackStatuses,
 } from '../src/data/ids/status';
 import {
+  CASTFORM_FORMS,
   EvolutionMethod,
   Genders,
   Species,
@@ -269,6 +270,7 @@ import {
   getSpeciesByBiome,
   getSpeciesData,
   getSpeciesForms,
+  getWornForms,
   isBaseForm,
   isFeaturedSpecies,
   meetsEvolutionCriteria,
@@ -636,12 +638,13 @@ describe('species measurements', () => {
 });
 
 describe('species forms', () => {
-  it('treats every registered species but the unowns as a default form', () => {
+  it('treats every registered species but the unowns and the worn castforms as a default form', () => {
     // The flag is absent almost everywhere and answers true rather
     // than being written out three hundred times; the twenty-seven
-    // unowns past A are the only variants registered so far
+    // unowns past A and the three skies a Castform wears are the only
+    // variants registered so far
     const registered = getRegisteredSpecies();
-    const variants = new Set<Species>(UNOWN_FORMS.slice(1));
+    const variants = new Set<Species>([...UNOWN_FORMS.slice(1), ...CASTFORM_FORMS.slice(1)]);
 
     expect(registered.length).toBeGreaterThan(0);
     for (const species of registered) {
@@ -706,6 +709,21 @@ describe('species forms', () => {
     // A species with no variants is a list of one, so a caller never
     // has to know which kind it is holding
     expect(getSpeciesForms(Species.Pikachu)).toEqual([Species.Pikachu]);
+  });
+
+  it('tells a worn shape from a shape that is met', () => {
+    // A letter is caught; a sky is put on. Only the second kind is
+    // filled in off the pokemon wearing it
+    expect(getWornForms(Species.Castform)).toEqual(CASTFORM_FORMS.slice(1));
+    expect(getWornForms(Species.Unown)).toEqual([]);
+    expect(getWornForms(Species.Pikachu)).toEqual([]);
+
+    for (const species of CASTFORM_FORMS.slice(1)) {
+      expect(getSpeciesData(species).worn).toBe(true);
+      // Nowhere at all: a sky is reached through Forecast
+      expect(getSpeciesData(species).biomes).toEqual([]);
+    }
+    expect(getSpeciesData(Species.Castform).worn).toBeUndefined();
   });
 });
 

@@ -129,6 +129,14 @@ export interface SpeciesData {
    */
   baseForm?: boolean;
   /**
+   * Whether the form is **worn rather than met**: a shape something
+   * is put into mid-fight, like the sky a Castform answers. One is
+   * never spawned, caught or stored, so the dex fills it in the
+   * moment its default form is met rather than leaving a square
+   * nobody can ever reach
+   */
+  worn?: boolean;
+  /**
    * The species this pokemon evolves from, if any
    */
   evolvesFrom?: Species;
@@ -307,6 +315,17 @@ export function getSpeciesForms(species: Species): Species[] {
     }
   }
   return formIndex.get(getBaseFormSpecies(species)) ?? [species];
+}
+
+/**
+ * The shapes this pokemon is put into rather than met in, its own
+ * form left out. Empty for almost everything, which is what a caller
+ * asking about any species gets back
+ */
+export function getWornForms(species: Species): Species[] {
+  return getSpeciesForms(species).filter(
+    (form) => form !== species && getSpeciesData(form).worn === true,
+  );
 }
 
 export interface SpeciesAbilityPools {

@@ -6,7 +6,8 @@ import { Moves } from '../../../src/data/ids/moves';
 import type { EffectCause } from '../../../src/battle/events';
 import { EffectType, MoveTargetType } from '../../../src/battle/events';
 import type Unit from '../../../src/battle/unit';
-import { Statuses } from '../../../src/data/ids/status';
+import { Statuses, Weathers } from '../../../src/data/ids/status';
+import { Species } from '../../../src/data/ids/species';
 import turns from '../../../src/battle/turn';
 import { getMoveData } from '../../../src/data/moves';
 import { createBattle, createUnit } from '../harness';
@@ -266,5 +267,60 @@ describe('Wind Rider', () => {
 
     expect(holder.health).toBeLessThan(before);
     expect(holder.stages[Stages.Attack]).toBe(0);
+  });
+});
+
+describe('Forecast', () => {
+  it('dresses a Castform in whatever sky is out', () => {
+    const { battle, teamA } = createBattle();
+    const cloud = createUnit(battle, teamA);
+    cloud.setSpecies(Species.Castform);
+    cloud.addAbility(Abilities.Forecast);
+
+    expect(cloud.species).toBe(Species.Castform);
+    expect(cloud.types.has(Types.Normal)).toBe(true);
+
+    battle.setWeather(Weathers.Sunny);
+
+    expect(cloud.species).toBe(Species.CastformSunny);
+    expect([...cloud.types]).toEqual([Types.Fire]);
+
+    battle.setWeather(Weathers.Hail);
+
+    expect(cloud.species).toBe(Species.CastformSnowy);
+    expect([...cloud.types]).toEqual([Types.Ice]);
+
+    // A sky it has no shape for leaves it plain again
+    battle.setWeather(Weathers.Sandstorm);
+
+    expect(cloud.species).toBe(Species.Castform);
+    expect([...cloud.types]).toEqual([Types.Normal]);
+  });
+
+  it('puts it back when the sky runs out', () => {
+    const { battle, teamA } = createBattle();
+    const cloud = createUnit(battle, teamA);
+    cloud.setSpecies(Species.Castform);
+    cloud.addAbility(Abilities.Forecast);
+
+    cloud.setWeather(Weathers.Rain, turns(1));
+
+    expect(cloud.species).toBe(Species.CastformRainy);
+
+    battle.tick(turns(1));
+
+    expect(cloud.species).toBe(Species.Castform);
+  });
+
+  it('does nothing for anybody who is not a Castform', () => {
+    const { battle, teamA } = createBattle();
+    const other = createUnit(battle, teamA);
+    other.setSpecies(Species.Kecleon);
+    other.addAbility(Abilities.Forecast);
+
+    battle.setWeather(Weathers.Sunny);
+
+    expect(other.species).toBe(Species.Kecleon);
+    expect([...other.types]).toEqual([Types.Normal]);
   });
 });

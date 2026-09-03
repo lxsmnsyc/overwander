@@ -1,4 +1,5 @@
 import registerLotadSpecies from './lotad';
+import registerCastformSpecies from './castform';
 import registerCheeringPairSpecies from './cheering-pair';
 import registerFeudingPairSpecies from './feuding-pair';
 import registerFireflySpecies from './fireflies';
@@ -68,4 +69,5 @@ export default function registerGen3Species(): void {
   registerTorkoalSpecies();
   registerTropiusSpecies();
   registerSableyeSpecies();
+  registerCastformSpecies();
 }

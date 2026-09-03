@@ -439,6 +439,10 @@ export const enum Species {
   Seviper = 336,
   Lunatone = 337,
   Solrock = 338,
+  Castform = 351,
+  CastformSunny = 1035101,
+  CastformRainy = 1035102,
+  CastformSnowy = 1035103,
   Kecleon = 352,
   Tropius = 357,
   Absol = 359,
@@ -543,3 +547,15 @@ const UNOWN_LETTERS = new Map<Species, string>(
 export function unownLetter(species: Species): string | null {
   return UNOWN_LETTERS.get(species) ?? null;
 }
+
+/**
+ * Castform's four shapes, its plain one first. Unlike an unown's,
+ * these are not caught: Forecast puts the holder into whichever the
+ * sky calls for, so only the first is ever spawned or stored
+ */
+export const CASTFORM_FORMS: Species[] = [
+  Species.Castform,
+  Species.CastformSunny,
+  Species.CastformRainy,
+  Species.CastformSnowy,
+];

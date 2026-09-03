@@ -72,4 +72,9 @@ export default function registerGen3Abilities(): void {
     name: 'Poison Heal',
     description: 'Poison restores 1/8 of its HP each time it would take some.',
   });
+  // Castform
+  registerAbility(Abilities.Forecast, {
+    name: 'Forecast',
+    description: 'A Castform takes the shape and the type of the sky it stands under.',
+  });
 }

@@ -16,6 +16,7 @@ export {
   getSpeciesByBiome,
   getSpeciesData,
   getSpeciesForms,
+  getWornForms,
   getTeachableMoves,
   isBaseForm,
 } from './__create';

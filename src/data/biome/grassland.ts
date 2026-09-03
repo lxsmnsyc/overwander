@@ -39,6 +39,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Bayleef, weight: 1 },
       ],
       rare: [
+        { species: Species.Castform, weight: 10 },
         { species: Species.Venusaur, weight: 2 },
         { species: Species.Pidgeot, weight: 5 },
         { species: Species.Raticate, weight: 10 },
@@ -116,6 +117,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Bayleef, weight: 1 },
       ],
       rare: [
+        { species: Species.Castform, weight: 10 },
         { species: Species.Venusaur, weight: 2 },
         { species: Species.Pidgeot, weight: 5 },
         { species: Species.Raticate, weight: 10 },
@@ -178,6 +180,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Jigglypuff, weight: 10 },
       ],
       rare: [
+        { species: Species.Castform, weight: 10 },
         { species: Species.Raticate, weight: 10 },
         { species: Species.Arbok, weight: 10 },
         { species: Species.Nidoqueen, weight: 5 },
@@ -220,6 +223,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Jigglypuff, weight: 10 },
       ],
       rare: [
+        { species: Species.Castform, weight: 10 },
         { species: Species.Raticate, weight: 10 },
         { species: Species.Arbok, weight: 10 },
         { species: Species.Nidoqueen, weight: 5 },

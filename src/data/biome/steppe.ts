@@ -23,6 +23,7 @@ export default function registerSteppeSpawns(): void {
       ],
       uncommon: [{ species: Species.Loudred, weight: 10 }],
       rare: [
+        { species: Species.Castform, weight: 10 },
         { species: Species.Fearow, weight: 10 },
         { species: Species.Arcanine, weight: 5 },
         { species: Species.Rapidash, weight: 10 },
@@ -59,6 +60,7 @@ export default function registerSteppeSpawns(): void {
       ],
       uncommon: [{ species: Species.Loudred, weight: 10 }],
       rare: [
+        { species: Species.Castform, weight: 10 },
         { species: Species.Fearow, weight: 10 },
         { species: Species.Arbok, weight: 10 },
         { species: Species.Arcanine, weight: 5 },
@@ -87,6 +89,7 @@ export default function registerSteppeSpawns(): void {
       ],
       uncommon: [],
       rare: [
+        { species: Species.Castform, weight: 10 },
         { species: Species.Arbok, weight: 10 },
         { species: Species.Magneton, weight: 10 },
         { species: Species.Electrode, weight: 10 },
@@ -105,6 +108,7 @@ export default function registerSteppeSpawns(): void {
       ],
       uncommon: [],
       rare: [
+        { species: Species.Castform, weight: 10 },
         { species: Species.Arbok, weight: 10 },
         { species: Species.Magneton, weight: 10 },
         { species: Species.Electrode, weight: 10 },

@@ -4,7 +4,8 @@ import Abilities from '../../data/ids/abilities';
 import { TYPE_EFFECTIVENESS, TYPE_EFFECTIVENESS_FACTOR, Types } from '../../data/constants/types';
 import { DamageFlags, MoveCategories, MoveFlags } from '../../data/ids/moves';
 import { getMoveData } from '../../data/moves';
-import { Statuses } from '../../data/ids/status';
+import { Statuses, Weathers } from '../../data/ids/status';
+import { Species, getBaseFormSpecies } from '../../data/ids/species';
 import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import { MergedLifecycle } from '../lifecycle';
@@ -47,6 +48,19 @@ const POISONS_HELD = [Statuses.Poisoned, Statuses.BadlyPoisoned];
 
 /** What a poison hands back instead of taking, per residual. */
 const POISON_HEAL_FRACTION = 1 / 8;
+
+/**
+ * Which shape each sky puts a Castform into. A sky nobody listed,
+ * a sandstorm included, leaves it in its plain one
+ */
+const FORECAST_SHAPES = new Map<Weathers, Species>([
+  [Weathers.Sunny, Species.CastformSunny],
+  [Weathers.ExtremeSunny, Species.CastformSunny],
+  [Weathers.Rain, Species.CastformRainy],
+  [Weathers.HeavyRain, Species.CastformRainy],
+  [Weathers.Hail, Species.CastformSnowy],
+  [Weathers.Snow, Species.CastformSnowy],
+]);
 
 /** Both poisons pay out, the way both would otherwise chip. */
 const POISONS = new Set<Statuses>([Statuses.Poisoned, Statuses.BadlyPoisoned]);
@@ -256,6 +270,47 @@ const setupAbilities = [
       }
     }),
   ),
+  /**
+   * Forecast dresses its holder in whichever shape the sky calls for.
+   * Only a Castform has shapes, so anybody else who picks the ability
+   * up carries a dead one
+   * https://bulbapedia.bulbagarden.net/wiki/Forecast_(Ability)
+   */
+  createAbility(Abilities.Forecast, (battle) => {
+    function dress(unit: Unit): void {
+      if (
+        !unit.hasAbility(Abilities.Forecast) ||
+        getBaseFormSpecies(unit.species) !== Species.Castform
+      ) {
+        return;
+      }
+
+      const shape = FORECAST_SHAPES.get(unit.checkWeather()) ?? Species.Castform;
+
+      if (unit.species === shape) {
+        return;
+      }
+      unit.triggerAbility(Abilities.Forecast);
+      // The shape carries the type with it: every form shares one set
+      // of base stats, so nothing else about the unit moves
+      unit.setSpecies(shape);
+    }
+
+    function dressAll(): void {
+      for (const unit of battle.units()) {
+        dress(unit);
+      }
+    }
+
+    return new MergedLifecycle([
+      battle.on(BattleEvents.SetWeather, EventPriority.Post, dressAll),
+      battle.on(BattleEvents.TeamSetWeather, EventPriority.Post, dressAll),
+      // A Castform arriving under a sky that is already out
+      battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+        dress(event.source);
+      }),
+    ]);
+  }),
 ];
 
 export default function setupGen3Abilities(battle: Battle): void {

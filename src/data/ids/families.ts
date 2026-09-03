@@ -173,8 +173,9 @@ const enum Families {
   Seviper = 170,
   Lunatone = 171,
   Solrock = 172,
-  // 173 through 179 are Barboach's, Corphish's, Baltoy's, Lileep's,
-  // Anorith's, Feebas' and Castform's
+  // 173 through 178 are Barboach's, Corphish's, Baltoy's, Lileep's,
+  // Anorith's and Feebas'
+  Castform = 179,
   Kecleon = 180,
   // 181 is Shuppet's and 182 Duskull's
   Tropius = 183,

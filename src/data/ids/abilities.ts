@@ -277,6 +277,8 @@ const enum Abilities {
   WhiteSmoke = 161,
   // Kecleon
   ColorChange = 162,
+  // Castform
+  Forecast = 163,
   // Special (non-standard abilities outside the regular pool)
   Boss = 100001,
   Shadow = 100002,

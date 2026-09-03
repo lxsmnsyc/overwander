@@ -4,6 +4,7 @@ import type { Species } from '../data/ids/species';
 import { FORMS_PER_SPECIES, SPECIES_FORM_BAND } from '../data/ids/species';
 import { DEX_CAUGHT, DEX_SEEN, type DexSpec } from '../auth/pokedex-record';
 import { getRegionSpan } from '../data/species/regions';
+import { getWornForms } from '../data/species';
 import type { Fragment, Sql } from 'postgres';
 import { getSql } from './db';
 import { asNumber } from './read';
@@ -59,6 +60,12 @@ export async function recordSeenSpecies(
   shiny: boolean,
 ): Promise<void> {
   await logSpecies(uid, DEX_SEEN, species, shiny);
+
+  // A worn shape is never met on its own, so meeting the pokemon is
+  // the only chance the dex gets to fill it in
+  for (const worn of getWornForms(species)) {
+    await logSpecies(uid, DEX_SEEN, worn, shiny);
+  }
 }
 
 /**

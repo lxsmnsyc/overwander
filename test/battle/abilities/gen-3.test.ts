@@ -71,6 +71,37 @@ describe('Truant', () => {
   });
 });
 
+describe('Wonder Guard', () => {
+  it('lets nothing through but what it is weak to', () => {
+    const { battle, teamA, teamB } = createBattle();
+    // Bug and Ghost, which is what a Shedinja is: weak to fire,
+    // ordinary to water, and already immune to a normal move
+    const husk = createUnit(battle, teamA, [Types.Bug, Types.Ghost]);
+    const attacker = createUnit(battle, teamB);
+    husk.addAbility(Abilities.WonderGuard);
+
+    const aim = { type: MoveTargetType.Unit, unit: husk } as const;
+
+    expect(attacker.checkMoveImmunity(Moves.Ember, aim, Types.Fire)).toBe(false);
+    expect(attacker.checkMoveImmunity(Moves.WaterGun, aim, Types.Water)).toBe(true);
+    expect(attacker.checkMoveImmunity(Moves.Scratch, aim, Types.Normal)).toBe(true);
+  });
+
+  it('does not stand in the way of a status move', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const husk = createUnit(battle, teamA, [Types.Bug, Types.Ghost]);
+    const attacker = createUnit(battle, teamB);
+    husk.addAbility(Abilities.WonderGuard);
+
+    const aim = { type: MoveTargetType.Unit, unit: husk } as const;
+
+    // Poison is nothing special against Bug and Ghost, so a hit of it
+    // would be turned away; Toxic is not a hit
+    expect(attacker.checkMoveImmunity(Moves.Toxic, aim, Types.Poison)).toBe(false);
+    expect(attacker.checkMoveImmunity(Moves.SludgeBomb, aim, Types.Poison)).toBe(true);
+  });
+});
+
 describe('Poison Heal', () => {
   it('takes the poison back as health', () => {
     const { battle, teamA, teamB } = createBattle();

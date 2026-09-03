@@ -16,6 +16,12 @@ export default function registerGen3Abilities(): void {
     name: 'Truant',
     description: 'Loafs about for 2 seconds after every move it finishes.',
   });
+  // Shedinja
+  registerAbility(Abilities.WonderGuard, {
+    name: 'Wonder Guard',
+    description:
+      'Only a move it is weak to lands at all. Status moves, poison and the weather still reach it.',
+  });
   // Shroomish
   registerAbility(Abilities.PoisonHeal, {
     name: 'Poison Heal',

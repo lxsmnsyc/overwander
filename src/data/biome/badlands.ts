@@ -18,10 +18,12 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Phanpy, weight: 20 },
         { species: Species.Larvitar, weight: 2 },
         { species: Species.Rhyhorn, weight: 10 },
+        { species: Species.Whismur, weight: 25 },
       ],
       uncommon: [
         { species: Species.Graveler, weight: 5 },
         { species: Species.Pupitar, weight: 1 },
+        { species: Species.Loudred, weight: 10 },
       ],
       rare: [
         { species: Species.Sandslash, weight: 10 },
@@ -33,6 +35,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Shuckle, weight: 5 },
         { species: Species.Skarmory, weight: 5 },
         { species: Species.Dunsparce, weight: 10 },
+        { species: Species.Exploud, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [{ species: Species.Entei, weight: 10 }],
@@ -48,10 +51,12 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Phanpy, weight: 20 },
         { species: Species.Larvitar, weight: 2 },
         { species: Species.Rhyhorn, weight: 10 },
+        { species: Species.Whismur, weight: 25 },
       ],
       uncommon: [
         { species: Species.Graveler, weight: 5 },
         { species: Species.Pupitar, weight: 1 },
+        { species: Species.Loudred, weight: 10 },
       ],
       rare: [
         { species: Species.Sandslash, weight: 10 },
@@ -63,6 +68,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Shuckle, weight: 5 },
         { species: Species.Skarmory, weight: 5 },
         { species: Species.Dunsparce, weight: 10 },
+        { species: Species.Exploud, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [{ species: Species.Entei, weight: 10 }],
@@ -77,6 +83,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Houndour, weight: 20 },
         { species: Species.Larvitar, weight: 2 },
         { species: Species.Rhyhorn, weight: 10 },
+        { species: Species.Nincada, weight: 25 },
       ],
       uncommon: [
         { species: Species.Graveler, weight: 5 },
@@ -90,6 +97,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Shuckle, weight: 5 },
         { species: Species.Dunsparce, weight: 10 },
         { species: Species.Gligar, weight: 5 },
+        { species: Species.Ninjask, weight: 10 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [{ species: Species.Entei, weight: 10 }],
@@ -103,6 +111,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Slugma, weight: 20 },
         { species: Species.Houndour, weight: 20 },
         { species: Species.Larvitar, weight: 2 },
+        { species: Species.Nincada, weight: 25 },
       ],
       uncommon: [
         { species: Species.Graveler, weight: 5 },
@@ -118,6 +127,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Misdreavus, weight: 5 },
         { species: Species.Dunsparce, weight: 10 },
         { species: Species.Gligar, weight: 5 },
+        { species: Species.Ninjask, weight: 10 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [{ species: Species.Entei, weight: 10 }],

@@ -257,6 +257,8 @@ const enum Abilities {
   Truant = 151,
   // Shroomish
   PoisonHeal = 152,
+  // Shedinja
+  WonderGuard = 153,
   // Special (non-standard abilities outside the regular pool)
   Boss = 100001,
   Shadow = 100002,

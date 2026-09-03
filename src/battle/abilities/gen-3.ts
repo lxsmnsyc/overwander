@@ -1,13 +1,35 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Stages, Stats } from '../../data/constants/stats';
 import Abilities from '../../data/ids/abilities';
-import { MoveFlags } from '../../data/ids/moves';
+import {
+  TYPE_EFFECTIVENESS,
+  TYPE_EFFECTIVENESS_FACTOR,
+  type Types,
+} from '../../data/constants/types';
+import { MoveCategories, MoveFlags } from '../../data/ids/moves';
+import { getMoveData } from '../../data/moves';
 import { Statuses } from '../../data/ids/status';
 import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import { MergedLifecycle } from '../lifecycle';
 import { STATUS_MOVES } from '../moves/status';
+import type Unit from '../unit';
 import { createAbility, createAbsorbStageAbility, movesFlagged } from './__create';
+
+/** Whether the move's type comes to more than the ordinary amount. */
+function isWeakTo(type: Types, target: Unit): boolean {
+  let multiplier = 1;
+
+  for (const defending of target.types) {
+    const result = TYPE_EFFECTIVENESS[type][defending];
+
+    // Explicit null check: TypeEffectiveness.Effective is 0
+    if (result != null) {
+      multiplier *= TYPE_EFFECTIVENESS_FACTOR[result];
+    }
+  }
+  return multiplier > 1;
+}
 
 /** What a poison hands back instead of taking, per residual. */
 const POISON_HEAL_FRACTION = 1 / 8;
@@ -30,6 +52,27 @@ const POISONS = new Set<Statuses>([Statuses.Poisoned, Statuses.BadlyPoisoned]);
  */
 const setupAbilities = [
   createAbsorbStageAbility(Abilities.WindRider, Stages.Attack, movesFlagged(MoveFlags.Wind)),
+
+  /**
+   * Wonder Guard reads the chart rather than the attack pipeline: it
+   * answers before a hit is resolved, and the only question it has is
+   * whether that hit would have come to more than the ordinary
+   * amount. A status move is not a hit and is not refused
+   * https://bulbapedia.bulbagarden.net/wiki/Wonder_Guard_(Ability)
+   */
+  createAbility(Abilities.WonderGuard, (battle) =>
+    battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Post, (event) => {
+      if (
+        !event.immune &&
+        event.target.type === MoveTargetType.Unit &&
+        event.target.unit.hasAbility(Abilities.WonderGuard) &&
+        getMoveData(event.move).category !== MoveCategories.Status &&
+        !isWeakTo(event.type, event.target.unit)
+      ) {
+        event.immune = true;
+      }
+    }),
+  ),
 
   /**
    * Poison Heal answers the residual rather than the status: the

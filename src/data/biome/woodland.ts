@@ -149,6 +149,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Zigzagoon, weight: 25 },
         { species: Species.Wurmple, weight: 30 },
         { species: Species.Seedot, weight: 20 },
+        { species: Species.Nincada, weight: 25 },
       ],
       uncommon: [
         { species: Species.Nidorina, weight: 5 },
@@ -180,6 +181,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Linoone, weight: 10 },
         { species: Species.Dustox, weight: 10 },
         { species: Species.Shiftry, weight: 5 },
+        { species: Species.Ninjask, weight: 10 },
       ],
       prized: [
         ...UNOWN_SPAWNS,
@@ -204,6 +206,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Zigzagoon, weight: 25 },
         { species: Species.Wurmple, weight: 30 },
         { species: Species.Seedot, weight: 20 },
+        { species: Species.Nincada, weight: 25 },
       ],
       uncommon: [
         { species: Species.Nidorina, weight: 5 },
@@ -238,6 +241,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Linoone, weight: 10 },
         { species: Species.Dustox, weight: 10 },
         { species: Species.Shiftry, weight: 5 },
+        { species: Species.Ninjask, weight: 10 },
       ],
       prized: [
         ...UNOWN_SPAWNS,

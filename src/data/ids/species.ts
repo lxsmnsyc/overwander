@@ -409,6 +409,12 @@ export const enum Species {
   Slakoth = 287,
   Vigoroth = 288,
   Slaking = 289,
+  Nincada = 290,
+  Ninjask = 291,
+  Shedinja = 292,
+  Whismur = 293,
+  Loudred = 294,
+  Exploud = 295,
 }
 
 /**

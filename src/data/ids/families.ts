@@ -143,6 +143,8 @@ const enum Families {
   Surskit = 141,
   Shroomish = 142,
   Slakoth = 143,
+  Nincada = 144,
+  Whismur = 145,
 }
 
 export default Families;

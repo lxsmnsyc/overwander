@@ -9,10 +9,11 @@ import {
 } from '../../data/constants/types';
 import {
   DamageFlags,
+  MoveAffects,
   MoveAttackFlags,
   MoveCategories,
   MoveFlags,
-  MoveTargetFlags,
+  MoveTargets,
   Moves,
   StatFlags,
 } from '../../data/ids/moves';
@@ -640,13 +641,13 @@ export function setupCooldownMechanics(battle: Battle): void {
  * is what is filtered, and the fallen are left out of it unless the
  * move asked for them
  */
-function reaches(flags: number, unit: Unit): boolean {
-  return unit.alive || (flags & MoveTargetFlags.Fainted) !== 0;
+function reaches(affects: number, unit: Unit): boolean {
+  return unit.alive || (affects & MoveAffects.Fainted) !== 0;
 }
 
 /** The same question about a whole team: is there anybody left on it. */
-function reachesTeam(flags: number, team: Team): boolean {
-  if ((flags & MoveTargetFlags.Fainted) !== 0) {
+function reachesTeam(affects: number, team: Team): boolean {
+  if ((affects & MoveAffects.Fainted) !== 0) {
     return true;
   }
   for (const unit of team.units) {
@@ -706,41 +707,47 @@ export function resolveMoveTargets(
   battle: Battle,
   source: Unit,
   aimed: MoveTarget,
-  flags: number,
+  target: MoveTargets,
+  affects: number,
 ): MoveTarget[] {
-  if ((flags & MoveTargetFlags.Multiple) === 0) {
+  // A move cast at one of something lands on the one it was aimed at
+  if (target !== MoveTargets.None) {
     return [aimed];
   }
 
   const found: MoveTarget[] = [];
 
-  if (flags & MoveTargetFlags.Unit) {
-    if (flags & MoveTargetFlags.Self) {
+  if (affects & MoveAffects.Unit) {
+    if (affects & MoveAffects.Self) {
       found.push({ type: MoveTargetType.Unit, unit: source });
     }
-    if (flags & MoveTargetFlags.Own) {
-      teamUnits(source, source.team, flags, found);
+    if (affects & MoveAffects.Own) {
+      teamUnits(source, source.team, affects, found);
     }
-    if (flags & MoveTargetFlags.Ally) {
-      allianceUnits(source, source.team.alliance, flags, found);
+    if (affects & MoveAffects.Ally) {
+      allianceUnits(source, source.team.alliance, affects, found);
     }
-    if (flags & MoveTargetFlags.Enemy) {
+    if (affects & MoveAffects.Enemy) {
       for (const team of battle.teams(source.team.alliance)) {
-        teamUnits(source, team, flags, found);
+        teamUnits(source, team, affects, found);
       }
     }
-  } else if (flags & MoveTargetFlags.Team) {
-    if (flags & MoveTargetFlags.Own) {
-      wholeTeam(source.team, flags, found);
+  } else if (affects & MoveAffects.Team) {
+    if (affects & MoveAffects.Own) {
+      wholeTeam(source.team, affects, found);
     }
-    if (flags & MoveTargetFlags.Ally) {
-      allianceTeams(source, source.team.alliance, flags, found);
+    if (affects & MoveAffects.Ally) {
+      allianceTeams(source, source.team.alliance, affects, found);
     }
-    if (flags & MoveTargetFlags.Enemy) {
+    if (affects & MoveAffects.Enemy) {
       for (const team of battle.teams(source.team.alliance)) {
-        wholeTeam(team, flags, found);
+        wholeTeam(team, affects, found);
       }
     }
+  } else {
+    // A move that reaches nothing in particular still happens: the
+    // weather, the field, and everything a pokemon does to itself
+    return [{ type: MoveTargetType.None }];
   }
   return found;
 }
@@ -834,19 +841,24 @@ export function setupTriggerMoveMechanics(battle: Battle): void {
 
   // The effective target mask resolves through the event engine so
   // abilities (e.g. Boss) can widen it
-  battle.on(BattleEvents.CheckUnitMoveTargetFlags, EventPriority.Exact, (event) => {
-    event.flags = getMoveData(event.move).target;
+  battle.on(BattleEvents.CheckUnitMoveTargeting, EventPriority.Exact, (event) => {
+    const data = getMoveData(event.move);
+
+    event.target = data.target;
+    event.affects = data.affects;
   });
 
   battle.on(BattleEvents.UnitTriggerMoveEnd, EventPriority.Exact, (event) => {
     // A move that goes out to everybody has no pre-picked target: who
     // it lands on is worked out now, from the flags and whoever is
     // still standing
+    const targeting = event.source.checkMoveTargeting(event.move);
     const targets = resolveMoveTargets(
       battle,
       event.source,
       event.target,
-      event.source.checkMoveTargetFlags(event.move),
+      targeting.target,
+      targeting.affects,
     );
 
     for (const target of targets) {

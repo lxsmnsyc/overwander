@@ -5,7 +5,7 @@ import { Stages, StatsKind, createStatsField } from '../data/constants/stats';
 import { Types } from '../data/constants/types';
 import type Abilities from '../data/ids/abilities';
 import type { Items } from '../data/ids/items';
-import type { MoveCategories, Moves } from '../data/ids/moves';
+import { type MoveCategories, MoveTargets, type Moves } from '../data/ids/moves';
 import Natures from '../data/ids/natures';
 import { Genders, Species } from '../data/ids/species';
 import { type Statuses, Weathers } from '../data/ids/status';
@@ -33,7 +33,7 @@ import type {
   CheckUnitMovePowerEvent,
   CheckUnitMovePriorityEvent,
   CheckUnitMoveStepsEvent,
-  CheckUnitMoveTargetFlagsEvent,
+  CheckUnitMoveTargetingEvent,
   CheckUnitMoveTimeEvent,
   CheckUnitMoveTypeEvent,
   CheckUnitStageEvent,
@@ -1268,16 +1268,21 @@ export default class Unit {
     return event.duration;
   }
 
-  checkMoveTargetFlags(move: Moves): number {
-    const event: CheckUnitMoveTargetFlagsEvent = {
-      id: 'CheckUnitMoveTargetFlags',
+  /**
+   * How this unit's cast of the move is aimed, and who it reaches.
+   * The registered pair is the answer unless something widens it
+   */
+  checkMoveTargeting(move: Moves): { target: MoveTargets; affects: number } {
+    const event: CheckUnitMoveTargetingEvent = {
+      id: 'CheckUnitMoveTargeting',
       disabled: false,
       source: this,
       move,
-      flags: 0,
+      target: MoveTargets.None,
+      affects: 0,
     };
-    this.battle.emit(BattleEvents.CheckUnitMoveTargetFlags, event);
-    return event.flags;
+    this.battle.emit(BattleEvents.CheckUnitMoveTargeting, event);
+    return { target: event.target, affects: event.affects };
   }
 
   checkMoveHits(move: Moves, target: MoveTarget, hits: number, max: number): number {

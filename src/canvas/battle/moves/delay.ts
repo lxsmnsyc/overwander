@@ -1,4 +1,4 @@
-import { MoveCategories, MoveFlags, MoveTargetFlags, Moves } from '../../../data/ids/moves';
+import { MoveAffects, MoveCategories, MoveFlags, Moves } from '../../../data/ids/moves';
 import { TYPE_COLORS } from '../../../data/constants/types';
 import { getMoveData } from '../../../data/moves';
 import PaintedVisual, { type Painter } from './__painted';
@@ -342,7 +342,7 @@ export function delayShapeFor(move: Moves, steps: number): DelayShape | null {
     return null;
   }
   if (data.category === MoveCategories.Status) {
-    return (data.target & MoveTargetFlags.Enemy) === 0 ? 'Charge' : 'Reach';
+    return (data.affects & MoveAffects.Enemy) === 0 ? 'Charge' : 'Reach';
   }
   // Something the move itself said takes longer than a swing is
   // something being sent: the data only names a delay for the moves

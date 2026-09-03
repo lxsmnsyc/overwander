@@ -52,7 +52,9 @@ import {
 import {
   MOVE_CATEGORY_COLORS,
   MOVE_CATEGORY_NAMES,
+  MoveAffects,
   MoveCategories,
+  MoveTargets,
   Moves,
 } from '../src/data/ids/moves';
 import {
@@ -1051,6 +1053,37 @@ describe('the moves added back to the dex', () => {
     // the chart, so nothing resists it and nothing is immune to it
     expect(getMoveData(Moves.Struggle).type).toBe(Types.Unknown);
     expect(getMoveData(Moves.Struggle).power).toBe(50);
+  });
+});
+
+describe('how a move is cast and what it reaches', () => {
+  it('names a shape and a side for whatever it lands on', () => {
+    for (const move of getRegisteredMoves()) {
+      const { name, target, affects } = getMoveData(move);
+      const shape = affects & (MoveAffects.Unit | MoveAffects.Team);
+      const sides =
+        affects & (MoveAffects.Self | MoveAffects.Own | MoveAffects.Ally | MoveAffects.Enemy);
+
+      // Nothing lands on units and whole teams at once
+      expect(shape, name).not.toBe(MoveAffects.Unit | MoveAffects.Team);
+
+      if (target === MoveTargets.Unit) {
+        expect(shape, name).toBe(MoveAffects.Unit);
+      } else if (target === MoveTargets.Team) {
+        expect(shape, name).toBe(MoveAffects.Team);
+      }
+
+      // A move that reaches a shape says whose, and one that reaches
+      // no shape reaches nobody in particular: the weather, the
+      // field, whatever the caster does to itself
+      expect(shape === 0, name).toBe(sides === 0);
+    }
+  });
+
+  it('takes the enemy side as the default for whatever it is cast at', () => {
+    expect(getMoveData(Moves.Tackle).affects).toBe(MoveAffects.Unit | MoveAffects.Enemy);
+    expect(getMoveData(Moves.Spikes).affects).toBe(MoveAffects.Team | MoveAffects.Enemy);
+    expect(getMoveData(Moves.SwordsDance).affects).toBe(0);
   });
 });
 

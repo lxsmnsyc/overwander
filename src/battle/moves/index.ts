@@ -4,6 +4,7 @@ import setupCurse from './curse';
 import setupDestinyBond from './destiny-bond';
 import setupEncore from './encore';
 import setupForesight from './foresight';
+import setupFriendlyFire from './friendly-fire';
 import setupFutureSight from './future-sight';
 import setupHiddenPower from './hidden-power';
 import setupLockOn from './lock-on';
@@ -149,6 +150,7 @@ export default function setupMoves(battle: Battle): void {
   setupSpikes(battle);
   setupRapidSpin(battle);
   setupThief(battle);
+  setupFriendlyFire(battle);
   setupFutureSight(battle);
 
   // Hoenn: what it brought, and what the fight going on around a move

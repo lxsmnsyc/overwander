@@ -22,27 +22,50 @@ export const MOVE_CATEGORY_COLORS: Record<MoveCategories, string> = {
   [MoveCategories.Status]: '#8a8a8a',
 };
 
-export const enum MoveTargetFlags {
-  // Target includes the source
+/**
+ * How a move is cast: what the caster points at when the cast opens.
+ *
+ * `Unit` and `Team` name one of each, chosen before the cast starts
+ * and carried through to whatever the move does. `None` names
+ * nobody: a spread move, a field effect and a move on the user
+ * itself are all cast the same way, and who the move reaches is its
+ * `affects` mask instead
+ */
+export const enum MoveTargets {
+  None = 0,
+  Unit = 1,
+  Team = 2,
+}
+
+/**
+ * Who a move reaches. It answers two things at once: the shape it
+ * lands on (`Unit` or `Team`, and neither means the move lands on
+ * nothing in particular) and the sides it reaches.
+ *
+ * For a move cast at one unit or one team the mask is what the
+ * caster may point at; for one cast at nobody it is the fan-out
+ * itself. A move that names no mask takes the default for the way it
+ * is cast, which is the enemy side
+ */
+export const enum MoveAffects {
+  // Reaches the caster itself
   Self = 0b0000001,
 
-  // Target is a unit
+  // Lands on units
   Unit = 0b0000010,
 
-  // Target is a team
+  // Lands on whole teams
   Team = 0b0000100,
 
-  // Target is own unit/team
+  // Reaches the caster's own team: this trainer's party
   Own = 0b0001000,
 
-  // Target is an ally unit/team
+  // Reaches another team under the same alliance: another trainer's
+  // party, which only a co-op raid has
   Ally = 0b0010000,
 
-  // Target is an enemy unit/team
+  // Reaches the other side
   Enemy = 0b0100000,
-
-  // Target multiple units/teams
-  Multiple = 0b1000000,
 
   /**
    * Reaches pokemon that are already down, and teams with nobody left
@@ -59,7 +82,25 @@ export const enum MoveTargetFlags {
    * A move that genuinely wants them — a revival, something that acts
    * on the fallen — says so here
    */
-  Fainted = 0b10000000,
+  Fainted = 0b1000000,
+}
+
+/**
+ * Every side a mask can name, for asking which of them it names
+ */
+export const MOVE_AFFECT_SIDES =
+  MoveAffects.Self | MoveAffects.Own | MoveAffects.Ally | MoveAffects.Enemy;
+
+/**
+ * Whether a mask reaches the other side and nobody else. It is the
+ * question two places ask of an attack: whether pointing it at one's
+ * own side is something the move itself never had in mind
+ */
+export function affectsFoesOnly(affects: number): boolean {
+  // The comparison is between a masked number and one flag of the
+  // enum, which is the whole job of this function
+  // oxlint-disable-next-line typescript/no-unsafe-enum-comparison
+  return (affects & MOVE_AFFECT_SIDES) === MoveAffects.Enemy;
 }
 
 export const enum MoveFlags {

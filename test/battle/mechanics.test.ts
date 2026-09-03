@@ -16,8 +16,8 @@ import { Items } from '../../src/data/ids/items';
 import Natures from '../../src/data/ids/natures';
 import {
   DamageFlags,
+  MoveAffects,
   MoveCategories,
-  MoveTargetFlags,
   Moves,
   StatFlags,
 } from '../../src/data/ids/moves';
@@ -1157,8 +1157,14 @@ describe('who a spread move reaches', () => {
     third.setHealth(0);
     third.faint(caster);
 
-    const flags = caster.checkMoveTargetFlags(Moves.Growl);
-    const reached = resolveMoveTargets(battle, caster, unitTarget(first), flags);
+    const targeting = caster.checkMoveTargeting(Moves.Growl);
+    const reached = resolveMoveTargets(
+      battle,
+      caster,
+      unitTarget(first),
+      targeting.target,
+      targeting.affects,
+    );
     const units = reached.map((target) =>
       target.type === MoveTargetType.Unit ? target.unit : null,
     );
@@ -1175,11 +1181,11 @@ describe('who a spread move reaches', () => {
     const fallen = createUnit(battle, teamB);
 
     caster.addMove(Moves.Growl);
-    // The flags resolve through the event engine, so a move that wants
-    // the fallen is a move whose flags say `Fainted` by the time the
-    // roster is walked
-    battle.on(BattleEvents.CheckUnitMoveTargetFlags, EventPriority.Post, (event) => {
-      event.flags |= MoveTargetFlags.Fainted;
+    // The reach resolves through the event engine, so a move that
+    // wants the fallen is one whose mask says `Fainted` by the time
+    // the roster is walked
+    battle.on(BattleEvents.CheckUnitMoveTargeting, EventPriority.Post, (event) => {
+      event.affects |= MoveAffects.Fainted;
     });
 
     const reached = aimedAt(battle, caster);

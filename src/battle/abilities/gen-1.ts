@@ -14,7 +14,7 @@ import { Genders } from '../../data/ids/species';
 import { Statuses, TeamStatuses, Weathers } from '../../data/ids/status';
 import { getItemData } from '../../data/items';
 import { getMoveData } from '../../data/moves';
-import { RISKY_PENALTY } from '../ai/score';
+import { FEED_BONUS, RISKY_PENALTY } from '../ai/score';
 import { checkUnitRating } from '../ai/rating';
 import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType, type UnitAttackEvent } from '../events';
@@ -41,17 +41,21 @@ import {
   unitTarget,
 } from '../utils';
 import {
+  ABSORB_HEAL_FRACTION,
   chipImmunity,
   createAbility,
   createBlazeAbility,
   createContactHazard,
   createDrizzleAbility,
+  createFeedScoring,
   createFilterAbility,
+  createHealFeedScoring,
   createHydrationAbility,
   createKeenEyeAbility,
   createLimberAbility,
   createSandRushAbility,
   createShellArmorAbility,
+  createStageFeedScoring,
   createToughClawsAbility,
   createWaterAbsorbAbility,
 } from './__create';
@@ -573,6 +577,12 @@ const setupAbilities = [
             parent.target.unit.triggerAbility(Abilities.LightningRod);
           }
         }),
+        createStageFeedScoring(
+          battle,
+          Abilities.LightningRod,
+          Types.Electric,
+          Stages.SpecialAttack,
+        ),
         // The special attack boost rides the trigger
         battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
           if (event.ability === Abilities.LightningRod) {
@@ -885,6 +895,11 @@ const setupAbilities = [
           activated.add(event.source);
         }
       }),
+      // Lighting a teammate's Flash Fire is worth a hit; a second
+      // one adds nothing, since the boost does not stack
+      createFeedScoring(battle, Abilities.FlashFire, Types.Fire, (holder) =>
+        activated.has(holder) ? 0 : FEED_BONUS,
+      ),
       // An activated holder's own Fire moves hit harder
       battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
         if (
@@ -1166,6 +1181,7 @@ const setupAbilities = [
             event.immune = true;
           }
         }),
+        createHealFeedScoring(battle, Abilities.DrySkin, Types.Water, ABSORB_HEAL_FRACTION),
         // Absorbing a real Water move heals a quarter of max health
         battle.on(BattleEvents.UnitTriggerMoveFailed, EventPriority.Post, (event) => {
           const parent = event.parent;
@@ -1183,7 +1199,7 @@ const setupAbilities = [
             holder.heal(
               { type: EffectType.Ability, ability: Abilities.DrySkin, unit: holder },
               holder,
-              holder.checkStat(Stats.HP, 0) / 4,
+              holder.checkStat(Stats.HP, 0) * ABSORB_HEAL_FRACTION,
               0,
             );
           }

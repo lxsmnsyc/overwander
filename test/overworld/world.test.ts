@@ -830,13 +830,18 @@ describe('world', () => {
 
   it('stages a boss without the moves a boss must not have', () => {
     // Transform is banned because a boss that copies a player throws
-    // away the raid-sized pool the whole fight is built around; the
-    // three copying moves are banned because each is a way back to it
+    // away the raid-sized pool the whole fight is built around, and
+    // the four copying moves because each is a way back to it. The
+    // rest are moves a raid pool breaks
     for (const move of [
       Moves.Transform,
       Moves.Metronome,
       Moves.MirrorMove,
       Moves.Mimic,
+      Moves.Sketch,
+      Moves.PainSplit,
+      Moves.BatonPass,
+      Moves.DestinyBond,
       // Temporary: a boss is immune to Perishing, so the song would
       // only be a slot it wastes
       Moves.PerishSong,

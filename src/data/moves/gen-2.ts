@@ -13,7 +13,7 @@ export default function registerGen2Moves(): void {
     type: Types.Normal,
     category: MoveCategories.Status,
     pp: 1,
-    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Ally | MoveTargetFlags.Unit,
     flags: 0,
     cast: [SpriteAnim.RearUp, SpriteAnim.Twirl, SpriteAnim.Charge],
   });

@@ -764,6 +764,39 @@ describe('what a move may be aimed at on the caster’s own side', () => {
     );
   });
 
+  it('takes a teammate’s body only when it is the better one', () => {
+    const { battle, teamA } = createBattle();
+    const copier = createUnit(battle, teamA);
+    const weaker = createUnit(battle, teamA);
+    const stronger = createUnit(battle, teamA);
+
+    expect(getMoveData(Moves.Transform).target & MoveTargetFlags.Ally).toBeTruthy();
+
+    stronger.addStage(Stages.Attack, 2, { type: 0 });
+    weaker.addStage(Stages.Attack, -2, { type: 0 });
+
+    expect(score(battle, copier, Moves.Transform, stronger)).toBeGreaterThan(BASE_SCORE);
+    expect(score(battle, copier, Moves.Transform, weaker)).toBeLessThan(BASE_SCORE);
+    expect(score(battle, copier, Moves.Transform, copier)).toBeLessThan(BASE_SCORE);
+  });
+
+  it('sketches a move off a teammate as readily as off an enemy', () => {
+    const { battle, teamA } = createBattle();
+    const artist = createUnit(battle, teamA);
+    const friend = createUnit(battle, teamA);
+
+    expect(getMoveData(Moves.Sketch).target & MoveTargetFlags.Ally).toBeTruthy();
+
+    artist.addMove(Moves.Sketch);
+    friend.addMove(Moves.Tackle);
+    friend.triggerMove(Moves.Tackle, unitTarget(artist), 0);
+
+    expect(usable(battle, artist, Moves.Sketch, friend)).toBe(true);
+
+    artist.addMove(Moves.Tackle);
+    expect(usable(battle, artist, Moves.Sketch, friend)).toBe(false);
+  });
+
   it('copies the teammate who has built the most', () => {
     const { battle, teamA } = createBattle();
     const caster = createUnit(battle, teamA);

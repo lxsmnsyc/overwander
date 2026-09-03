@@ -1899,7 +1899,7 @@ export default function registerGen1Moves(): void {
     type: Types.Normal,
     category: MoveCategories.Status,
     pp: 10,
-    target: MoveTargetFlags.Enemy | MoveTargetFlags.Unit,
+    target: MoveTargetFlags.Enemy | MoveTargetFlags.Ally | MoveTargetFlags.Unit,
     flags: 0,
     cast: [SpriteAnim.Twirl, SpriteAnim.Swell, SpriteAnim.Charge],
   });

@@ -488,7 +488,6 @@ export default function registerGen1Moves(): void {
       MoveTargetFlags.Multiple |
       MoveTargetFlags.Enemy |
       MoveTargetFlags.Own |
-      MoveTargetFlags.Ally |
       MoveTargetFlags.Unit,
     flags: 0,
     cast: [SpriteAnim.Rumble, SpriteAnim.Stomp, SpriteAnim.Slam, SpriteAnim.Charge],
@@ -652,7 +651,6 @@ export default function registerGen1Moves(): void {
       MoveTargetFlags.Multiple |
       MoveTargetFlags.Enemy |
       MoveTargetFlags.Own |
-      MoveTargetFlags.Ally |
       MoveTargetFlags.Unit,
     flags: 0,
     cast: [SpriteAnim.Emit, SpriteAnim.Swell, SpriteAnim.Charge],
@@ -1457,7 +1455,6 @@ export default function registerGen1Moves(): void {
       MoveTargetFlags.Self |
       MoveTargetFlags.Enemy |
       MoveTargetFlags.Own |
-      MoveTargetFlags.Ally |
       MoveTargetFlags.Unit,
     flags: 0,
     cast: [SpriteAnim.Swell, SpriteAnim.Emit, SpriteAnim.Charge],
@@ -1475,7 +1472,6 @@ export default function registerGen1Moves(): void {
       MoveTargetFlags.Self |
       MoveTargetFlags.Enemy |
       MoveTargetFlags.Own |
-      MoveTargetFlags.Ally |
       MoveTargetFlags.Unit,
     flags: 0,
     cast: [SpriteAnim.Swell, SpriteAnim.Emit, SpriteAnim.Charge],

@@ -348,7 +348,6 @@ export default function registerGen2Moves(): void {
       MoveTargetFlags.Multiple |
       MoveTargetFlags.Enemy |
       MoveTargetFlags.Own |
-      MoveTargetFlags.Ally |
       MoveTargetFlags.Self |
       MoveTargetFlags.Unit,
     flags: MoveFlags.Sound,
@@ -651,7 +650,6 @@ export default function registerGen2Moves(): void {
       MoveTargetFlags.Multiple |
       MoveTargetFlags.Enemy |
       MoveTargetFlags.Own |
-      MoveTargetFlags.Ally |
       MoveTargetFlags.Unit,
     flags: 0,
     cast: [SpriteAnim.Rumble, SpriteAnim.Stomp, SpriteAnim.Shake, SpriteAnim.Attack],

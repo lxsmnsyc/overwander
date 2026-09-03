@@ -16,4 +16,9 @@ export default function registerGen3Abilities(): void {
     name: 'Truant',
     description: 'Loafs about for 2 seconds after every move it finishes.',
   });
+  // Shroomish
+  registerAbility(Abilities.PoisonHeal, {
+    name: 'Poison Heal',
+    description: 'Poison restores 1/8 of its HP each time it would take some.',
+  });
 }

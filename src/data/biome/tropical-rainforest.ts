@@ -54,6 +54,7 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Exeggcute, weight: 20 },
         { species: Species.Spinarak, weight: 20 },
         { species: Species.Pineco, weight: 20 },
+        { species: Species.Shroomish, weight: 25 },
       ],
       uncommon: [],
       rare: [
@@ -61,6 +62,7 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Ariados, weight: 8 },
         { species: Species.Aipom, weight: 5 },
         { species: Species.Yanma, weight: 5 },
+        { species: Species.Breloom, weight: 10 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [{ species: Species.Mew, weight: 10 }],
@@ -70,6 +72,7 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Exeggcute, weight: 20 },
         { species: Species.Spinarak, weight: 20 },
         { species: Species.Pineco, weight: 20 },
+        { species: Species.Shroomish, weight: 25 },
       ],
       uncommon: [],
       rare: [
@@ -77,6 +80,7 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Ariados, weight: 8 },
         { species: Species.Aipom, weight: 5 },
         { species: Species.Yanma, weight: 5 },
+        { species: Species.Breloom, weight: 10 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [{ species: Species.Mew, weight: 10 }],

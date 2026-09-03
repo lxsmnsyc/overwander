@@ -17,6 +17,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Marill, weight: 20 },
         { species: Species.Mudkip, weight: 2 },
         { species: Species.Lotad, weight: 20 },
+        { species: Species.Surskit, weight: 25 },
       ],
       uncommon: [
         { species: Species.Poliwhirl, weight: 5 },
@@ -32,6 +33,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Yanma, weight: 5 },
         { species: Species.Swampert, weight: 2 },
         { species: Species.Ludicolo, weight: 5 },
+        { species: Species.Masquerain, weight: 10 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [],
@@ -46,6 +48,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Marill, weight: 20 },
         { species: Species.Mudkip, weight: 2 },
         { species: Species.Lotad, weight: 20 },
+        { species: Species.Surskit, weight: 25 },
       ],
       uncommon: [
         { species: Species.Poliwhirl, weight: 5 },
@@ -61,6 +64,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Yanma, weight: 5 },
         { species: Species.Swampert, weight: 2 },
         { species: Species.Ludicolo, weight: 5 },
+        { species: Species.Masquerain, weight: 10 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [],

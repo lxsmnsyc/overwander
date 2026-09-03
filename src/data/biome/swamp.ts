@@ -19,6 +19,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Wooper, weight: 25 },
         { species: Species.Marill, weight: 20 },
         { species: Species.Mudkip, weight: 2 },
+        { species: Species.Surskit, weight: 25 },
       ],
       uncommon: [
         { species: Species.Wartortle, weight: 1 },
@@ -39,6 +40,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Politoed, weight: 5 },
         { species: Species.Slowking, weight: 5 },
         { species: Species.Swampert, weight: 2 },
+        { species: Species.Masquerain, weight: 10 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [],
@@ -55,6 +57,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Wooper, weight: 25 },
         { species: Species.Marill, weight: 20 },
         { species: Species.Mudkip, weight: 2 },
+        { species: Species.Surskit, weight: 25 },
       ],
       uncommon: [
         { species: Species.Wartortle, weight: 1 },
@@ -75,6 +78,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Politoed, weight: 5 },
         { species: Species.Slowking, weight: 5 },
         { species: Species.Swampert, weight: 2 },
+        { species: Species.Masquerain, weight: 10 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [],

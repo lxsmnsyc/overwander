@@ -4285,6 +4285,102 @@
         "bytes": 6032
       }
     },
+    "public/sprites/pokemon/hoenn/283/regular.png": {
+      "digest": "721ffc95f04f793b",
+      "bytes": 2630,
+      "width": 71,
+      "height": 218,
+      "compact": {
+        "at": "2026-09-03T18:52:03Z",
+        "as": "already compact",
+        "was": 2630,
+        "bytes": 2630
+      }
+    },
+    "public/sprites/pokemon/hoenn/283/shiny.png": {
+      "digest": "fc66770c833669da",
+      "bytes": 2630,
+      "width": 71,
+      "height": 218,
+      "compact": {
+        "at": "2026-09-03T18:52:03Z",
+        "as": "already compact",
+        "was": 2630,
+        "bytes": 2630
+      }
+    },
+    "public/sprites/pokemon/hoenn/284/regular.png": {
+      "digest": "b545c4d3b1b4d0da",
+      "bytes": 3922,
+      "width": 83,
+      "height": 250,
+      "compact": {
+        "at": "2026-09-03T18:52:03Z",
+        "as": "already compact",
+        "was": 3922,
+        "bytes": 3922
+      }
+    },
+    "public/sprites/pokemon/hoenn/284/shiny.png": {
+      "digest": "bd8f4022b80e0643",
+      "bytes": 4058,
+      "width": 83,
+      "height": 250,
+      "compact": {
+        "at": "2026-09-03T18:52:03Z",
+        "as": "already compact",
+        "was": 4058,
+        "bytes": 4058
+      }
+    },
+    "public/sprites/pokemon/hoenn/285/regular.png": {
+      "digest": "7c338823ca0a85c8",
+      "bytes": 3015,
+      "width": 62,
+      "height": 194,
+      "compact": {
+        "at": "2026-09-03T18:52:03Z",
+        "as": "already compact",
+        "was": 3015,
+        "bytes": 3015
+      }
+    },
+    "public/sprites/pokemon/hoenn/285/shiny.png": {
+      "digest": "f34e7f606bd73e32",
+      "bytes": 3015,
+      "width": 62,
+      "height": 194,
+      "compact": {
+        "at": "2026-09-03T18:52:03Z",
+        "as": "already compact",
+        "was": 3015,
+        "bytes": 3015
+      }
+    },
+    "public/sprites/pokemon/hoenn/286/regular.png": {
+      "digest": "7e1283c3d4087be9",
+      "bytes": 7035,
+      "width": 174,
+      "height": 189,
+      "compact": {
+        "at": "2026-09-03T18:52:03Z",
+        "as": "already compact",
+        "was": 7035,
+        "bytes": 7035
+      }
+    },
+    "public/sprites/pokemon/hoenn/286/shiny.png": {
+      "digest": "ab4d37e0766127c6",
+      "bytes": 6820,
+      "width": 174,
+      "height": 189,
+      "compact": {
+        "at": "2026-09-03T18:52:03Z",
+        "as": "already compact",
+        "was": 6820,
+        "bytes": 6820
+      }
+    },
     "public/sprites/pokemon/hoenn/287/regular.png": {
       "digest": "139e810b9ff81fb4",
       "bytes": 5078,

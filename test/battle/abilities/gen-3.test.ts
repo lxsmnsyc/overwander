@@ -1,12 +1,19 @@
 import { describe, expect, it } from 'vitest';
-import { Stages } from '../../../src/data/constants/stats';
+import { Stages, Stats } from '../../../src/data/constants/stats';
 import { Types } from '../../../src/data/constants/types';
 import Abilities from '../../../src/data/ids/abilities';
 import { Moves } from '../../../src/data/ids/moves';
-import { MoveTargetType } from '../../../src/battle/events';
+import type { EffectCause } from '../../../src/battle/events';
+import { EffectType, MoveTargetType } from '../../../src/battle/events';
+import type Unit from '../../../src/battle/unit';
 import { Statuses } from '../../../src/data/ids/status';
 import turns from '../../../src/battle/turn';
 import { createBattle, createUnit } from '../harness';
+
+/** A poison with somebody behind it, which is what chips at all. */
+function laidBy(unit: Unit): EffectCause {
+  return { type: EffectType.Move, unit, move: Moves.Toxic };
+}
 
 /** Small enough that a cast is watched rather than jumped over. */
 const STEP = 100;
@@ -61,6 +68,38 @@ describe('Truant', () => {
     }
 
     expect(busy.status[Statuses.Recharging]).toBeUndefined();
+  });
+});
+
+describe('Poison Heal', () => {
+  it('takes the poison back as health', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const poisoner = createUnit(battle, teamB);
+    holder.addAbility(Abilities.PoisonHeal);
+
+    holder.setHealth(holder.checkStat(Stats.HP, 0) / 2);
+    holder.addStatus(Statuses.Poisoned, laidBy(poisoner));
+
+    const before = holder.health;
+    battle.tick(turns(1));
+
+    expect(holder.health).toBeGreaterThan(before);
+    // Still poisoned: only the health it takes turns around
+    expect(holder.status[Statuses.Poisoned]).not.toBeUndefined();
+  });
+
+  it('leaves a poisoned pokemon without it alone', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const plain = createUnit(battle, teamA);
+    const poisoner = createUnit(battle, teamB);
+
+    plain.addStatus(Statuses.Poisoned, laidBy(poisoner));
+
+    const before = plain.health;
+    battle.tick(turns(1));
+
+    expect(plain.health).toBeLessThan(before);
   });
 });
 

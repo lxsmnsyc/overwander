@@ -3,7 +3,9 @@ import registerMudkipSpecies from './mudkip';
 import registerPoochyenaSpecies from './poochyena';
 import registerRaltsSpecies from './ralts';
 import registerSeedotSpecies from './seedot';
+import registerShroomishSpecies from './shroomish';
 import registerSlakothSpecies from './slakoth';
+import registerSurskitSpecies from './surskit';
 import registerTaillowSpecies from './taillow';
 import registerTorchicSpecies from './torchic';
 import registerTreeckoSpecies from './treecko';
@@ -24,4 +26,6 @@ export default function registerGen3Species(): void {
   registerWingullSpecies();
   registerRaltsSpecies();
   registerSlakothSpecies();
+  registerSurskitSpecies();
+  registerShroomishSpecies();
 }

@@ -39,11 +39,13 @@ export default function registerTemperateRainforestSpawns(): void {
       base: [
         { species: Species.Venonat, weight: 20 },
         { species: Species.Marill, weight: 20 },
+        { species: Species.Shroomish, weight: 25 },
       ],
       uncommon: [],
       rare: [
         { species: Species.Venomoth, weight: 10 },
         { species: Species.Azumarill, weight: 5 },
+        { species: Species.Breloom, weight: 10 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [],
@@ -52,11 +54,13 @@ export default function registerTemperateRainforestSpawns(): void {
       base: [
         { species: Species.Venonat, weight: 20 },
         { species: Species.Marill, weight: 20 },
+        { species: Species.Shroomish, weight: 25 },
       ],
       uncommon: [],
       rare: [
         { species: Species.Venomoth, weight: 10 },
         { species: Species.Azumarill, weight: 5 },
+        { species: Species.Breloom, weight: 10 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [],

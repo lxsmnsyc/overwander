@@ -140,9 +140,8 @@ const enum Families {
   Taillow = 138,
   Wingull = 139,
   Ralts = 140,
-  // 141 is Surskit's and 142 Shroomish's: their dex numbers fall
-  // between these two, and an id is stored in a player's candy
-  // stacks, so a later family cannot be renumbered into place
+  Surskit = 141,
+  Shroomish = 142,
   Slakoth = 143,
 }
 

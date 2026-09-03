@@ -9,7 +9,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// RBY TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.SwordsDance,
   Moves.Toxic,
@@ -39,6 +39,9 @@ const FAMILY_TEACHABLE = [
   Moves.SweetScent,
   Moves.HiddenPower,
   Moves.SunnyDay,
+  Moves.BulletSeed,
+  Moves.Facade,
+  Moves.SecretPower,
 ];
 
 export default function registerOddishSpecies(): void {
@@ -85,7 +88,14 @@ export default function registerOddishSpecies(): void {
         46: [Moves.SolarBeam],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.SwordsDance, Moves.RazorLeaf, Moves.Flail, Moves.Charm, Moves.Synthesis],
+      egg: [
+        Moves.SwordsDance,
+        Moves.RazorLeaf,
+        Moves.Flail,
+        Moves.Charm,
+        Moves.Synthesis,
+        Moves.Ingrain,
+      ],
     },
   });
 
@@ -164,9 +174,16 @@ export default function registerOddishSpecies(): void {
     activeTimes: TimeOfDay.Evening | TimeOfDay.Night,
     learnSet: {
       level: {
-        1: [Moves.Absorb, Moves.PoisonPowder, Moves.PetalDance, Moves.StunSpore, Moves.SweetScent],
+        1: [
+          Moves.Absorb,
+          Moves.PoisonPowder,
+          Moves.PetalDance,
+          Moves.StunSpore,
+          Moves.SweetScent,
+          Moves.Aromatherapy,
+        ],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
+      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.BodySlam],
     },
   });
 }

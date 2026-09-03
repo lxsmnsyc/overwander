@@ -9,7 +9,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// RBY TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.BodySlam,
@@ -61,6 +61,12 @@ const FAMILY_TEACHABLE = [
   Moves.PsychUp,
   Moves.ShadowBall,
   Moves.Flamethrower,
+  Moves.CalmMind,
+  Moves.Dive,
+  Moves.Facade,
+  Moves.SecretPower,
+  Moves.SkillSwap,
+  Moves.WaterPulse,
 ];
 
 // Slowbro's claws open up the fighting-style TMs
@@ -112,7 +118,7 @@ export default function registerSlowpokeSpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.Confusion, Moves.Tackle, Moves.Curse],
+        1: [Moves.Confusion, Moves.Tackle, Moves.Curse, Moves.Yawn],
         6: [Moves.Growl],
         15: [Moves.WaterGun],
         18: [Moves.Disable],
@@ -121,7 +127,7 @@ export default function registerSlowpokeSpecies(): void {
         48: [Moves.Psychic],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.Stomp, Moves.BellyDrum, Moves.Safeguard, Moves.FutureSight],
+      egg: [Moves.Stomp, Moves.BellyDrum, Moves.Safeguard, Moves.FutureSight, Moves.MudSport],
     },
   });
 
@@ -159,6 +165,7 @@ export default function registerSlowpokeSpecies(): void {
           Moves.WaterGun,
           Moves.Tackle,
           Moves.Curse,
+          Moves.Yawn,
         ],
         37: [Moves.Withdraw],
         44: [Moves.Amnesia],
@@ -172,6 +179,10 @@ export default function registerSlowpokeSpecies(): void {
         Moves.FuryCutter,
         Moves.DynamicPunch,
         Moves.RockSmash,
+
+        Moves.BrickBreak,
+        Moves.FocusPunch,
+        Moves.Safeguard,
       ],
     },
   });

@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// RBY TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.TakeDown,
@@ -40,6 +40,9 @@ const FAMILY_TEACHABLE = [
   Moves.SweetScent,
   Moves.HiddenPower,
   Moves.SunnyDay,
+  Moves.Facade,
+  Moves.SecretPower,
+  Moves.SkillSwap,
 ];
 
 export default function registerVenonatSpecies(): void {
@@ -85,8 +88,8 @@ export default function registerVenonatSpecies(): void {
         36: [Moves.SleepPowder],
         41: [Moves.Psychic],
       },
-      teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.Screech, Moves.GigaDrain, Moves.BatonPass],
+      teachable: [...FAMILY_TEACHABLE, Moves.Flash],
+      egg: [Moves.Screech, Moves.GigaDrain, Moves.BatonPass, Moves.SignalBeam],
     },
   });
 
@@ -116,7 +119,14 @@ export default function registerVenonatSpecies(): void {
     activeTimes: TimeOfDay.Evening | TimeOfDay.Night,
     learnSet: {
       level: {
-        1: [Moves.Tackle, Moves.Disable, Moves.PoisonPowder, Moves.Supersonic, Moves.Foresight],
+        1: [
+          Moves.Tackle,
+          Moves.Disable,
+          Moves.PoisonPowder,
+          Moves.Supersonic,
+          Moves.Foresight,
+          Moves.SilverWind,
+        ],
         17: [Moves.Confusion],
         25: [Moves.LeechLife],
         28: [Moves.StunSpore],
@@ -125,7 +135,7 @@ export default function registerVenonatSpecies(): void {
         42: [Moves.SleepPowder],
         50: [Moves.Psychic],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.Flash],
+      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.Flash, Moves.AerialAce],
     },
   });
 }

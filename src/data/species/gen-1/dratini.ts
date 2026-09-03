@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// RBY TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.BodySlam,
@@ -50,6 +50,10 @@ const FAMILY_TEACHABLE = [
   Moves.HiddenPower,
   Moves.RainDance,
   Moves.Flamethrower,
+  Moves.Facade,
+  Moves.SecretPower,
+  Moves.ShockWave,
+  Moves.WaterPulse,
 ];
 
 export default function registerDratiniSpecies(): void {
@@ -95,7 +99,7 @@ export default function registerDratiniSpecies(): void {
         50: [Moves.HyperBeam, Moves.Outrage],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.FireBlast],
-      egg: [Moves.LightScreen, Moves.Mist, Moves.Haze, Moves.Supersonic],
+      egg: [Moves.LightScreen, Moves.Mist, Moves.Haze, Moves.Supersonic, Moves.DragonDance],
     },
   });
 
@@ -195,6 +199,15 @@ export default function registerDratiniSpecies(): void {
         Moves.DynamicPunch,
         Moves.RockSmash,
         Moves.Whirlpool,
+
+        Moves.AerialAce,
+        Moves.BrickBreak,
+        Moves.Cut,
+        Moves.Dive,
+        Moves.DragonClaw,
+        Moves.FocusPunch,
+        Moves.Roar,
+        Moves.RockTomb,
       ],
     },
   });

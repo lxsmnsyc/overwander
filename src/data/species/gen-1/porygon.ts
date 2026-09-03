@@ -48,7 +48,7 @@ export default function registerPorygonSpecies(): void {
         20: [Moves.Recover],
         32: [Moves.LockOn],
         36: [Moves.TriAttack],
-        44: [Moves.ZapCannon],
+        44: [Moves.ZapCannon, Moves.Recycle],
       },
       teachable: [
         Moves.Toxic,
@@ -92,6 +92,13 @@ export default function registerPorygonSpecies(): void {
         Moves.RainDance,
         Moves.SunnyDay,
         Moves.PsychUp,
+
+        Moves.AerialAce,
+        Moves.Facade,
+        Moves.SecretPower,
+        Moves.ShadowBall,
+        Moves.ShockWave,
+        Moves.SolarBeam,
       ],
     },
   });

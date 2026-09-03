@@ -34,7 +34,7 @@ export default function registerTangelaSpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.Constrict, Moves.Bind],
+        1: [Moves.Constrict, Moves.Bind, Moves.Ingrain],
         4: [Moves.SleepPowder],
         10: [Moves.Absorb],
         13: [Moves.PoisonPowder],
@@ -42,7 +42,7 @@ export default function registerTangelaSpecies(): void {
         31: [Moves.MegaDrain],
         34: [Moves.StunSpore],
         40: [Moves.Slam],
-        46: [Moves.Growth],
+        46: [Moves.Growth, Moves.Tickle],
       },
       teachable: [
         Moves.Toxic,
@@ -78,8 +78,21 @@ export default function registerTangelaSpecies(): void {
         Moves.HiddenPower,
         Moves.SunnyDay,
         Moves.PsychUp,
+
+        Moves.BulletSeed,
+        Moves.Facade,
+        Moves.RockSmash,
+        Moves.SecretPower,
       ],
-      egg: [Moves.MegaDrain, Moves.Confusion, Moves.Reflect, Moves.Amnesia, Moves.Flail],
+      egg: [
+        Moves.MegaDrain,
+        Moves.Confusion,
+        Moves.Reflect,
+        Moves.Amnesia,
+        Moves.Flail,
+        Moves.LeechSeed,
+        Moves.NaturePower,
+      ],
     },
   });
 }

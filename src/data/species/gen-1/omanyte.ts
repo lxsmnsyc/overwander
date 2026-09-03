@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// RBY TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.TakeDown,
@@ -44,6 +44,12 @@ const FAMILY_TEACHABLE = [
   Moves.RainDance,
   Moves.RockSmash,
   Moves.Whirlpool,
+  Moves.Dive,
+  Moves.Facade,
+  Moves.RockTomb,
+  Moves.SecretPower,
+  Moves.WaterPulse,
+  Moves.Waterfall,
 ];
 
 const FAMILY_ABILITIES = [Abilities.SwiftSwim, Abilities.ShellArmor];
@@ -85,15 +91,25 @@ export default function registerOmanyteSpecies(): void {
       level: {
         1: [Moves.WaterGun, Moves.Withdraw, Moves.Constrict],
         13: [Moves.Bite],
+        25: [Moves.MudShot],
         31: [Moves.Leer],
         34: [Moves.HornAttack],
         37: [Moves.Protect],
+        43: [Moves.Tickle],
         46: [Moves.SpikeCannon],
         49: [Moves.AncientPower],
         53: [Moves.HydroPump],
       },
-      teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.Slam, Moves.Supersonic, Moves.BubbleBeam, Moves.AuroraBeam, Moves.Haze],
+      teachable: [...FAMILY_TEACHABLE, Moves.BodySlam],
+      egg: [
+        Moves.Slam,
+        Moves.Supersonic,
+        Moves.BubbleBeam,
+        Moves.AuroraBeam,
+        Moves.Haze,
+        Moves.RockSlide,
+        Moves.Spikes,
+      ],
     },
   });
 
@@ -126,9 +142,11 @@ export default function registerOmanyteSpecies(): void {
     learnSet: {
       level: {
         1: [Moves.WaterGun, Moves.Withdraw, Moves.HornAttack, Moves.Bite, Moves.Constrict],
+        25: [Moves.MudShot],
         31: [Moves.Leer],
         37: [Moves.Protect],
         40: [Moves.SpikeCannon],
+        46: [Moves.Tickle],
         49: [Moves.HydroPump],
         54: [Moves.AncientPower],
       },
@@ -138,6 +156,8 @@ export default function registerOmanyteSpecies(): void {
         Moves.BodySlam,
         Moves.SeismicToss,
         Moves.Submission,
+
+        Moves.RockSlide,
       ],
     },
   });

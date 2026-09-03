@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// RBY TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.MegaPunch,
   Moves.MegaKick,
@@ -57,6 +57,12 @@ const FAMILY_TEACHABLE = [
   Moves.RainDance,
   Moves.RockSmash,
   Moves.Whirlpool,
+  Moves.BrickBreak,
+  Moves.Dive,
+  Moves.Facade,
+  Moves.FocusPunch,
+  Moves.SecretPower,
+  Moves.WaterPulse,
 ];
 
 export default function registerSquirtleSpecies(): void {
@@ -111,6 +117,10 @@ export default function registerSquirtleSpecies(): void {
         Moves.Flail,
         Moves.Foresight,
         Moves.MirrorCoat,
+
+        Moves.MudSport,
+        Moves.Refresh,
+        Moves.Yawn,
       ],
     },
   });
@@ -201,6 +211,8 @@ export default function registerSquirtleSpecies(): void {
         Moves.Earthquake,
         Moves.Fissure,
         Moves.Roar,
+
+        Moves.HydroCannon,
       ],
     },
   });

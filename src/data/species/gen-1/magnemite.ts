@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// RBY TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.TakeDown,
@@ -38,6 +38,9 @@ const FAMILY_TEACHABLE = [
   Moves.Frustration,
   Moves.HiddenPower,
   Moves.RainDance,
+  Moves.Facade,
+  Moves.SecretPower,
+  Moves.ShockWave,
 ];
 
 const FAMILY_ABILITIES = [Abilities.MagnetPull, Abilities.Sturdy];
@@ -75,11 +78,12 @@ export default function registerMagnemiteSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.Tackle],
+        1: [Moves.Tackle, Moves.MetalSound],
         6: [Moves.ThunderShock],
         11: [Moves.Supersonic],
         16: [Moves.SonicBoom],
         21: [Moves.ThunderWave],
+        26: [Moves.Spark],
         27: [Moves.LockOn],
         33: [Moves.Swift],
         39: [Moves.Screech],
@@ -115,8 +119,9 @@ export default function registerMagnemiteSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.Tackle, Moves.SonicBoom, Moves.ThunderShock, Moves.Supersonic],
+        1: [Moves.Tackle, Moves.SonicBoom, Moves.ThunderShock, Moves.Supersonic, Moves.MetalSound],
         21: [Moves.ThunderWave],
+        26: [Moves.Spark],
         27: [Moves.LockOn],
         35: [Moves.Swift, Moves.TriAttack],
         43: [Moves.Screech],

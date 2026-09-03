@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// RBY TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.MegaPunch,
   Moves.SwordsDance,
@@ -54,6 +54,14 @@ const FAMILY_TEACHABLE = [
   Moves.SunnyDay,
   Moves.RockSmash,
   Moves.Flamethrower,
+  Moves.AerialAce,
+  Moves.BrickBreak,
+  Moves.Counter,
+  Moves.DragonClaw,
+  Moves.Facade,
+  Moves.FocusPunch,
+  Moves.Overheat,
+  Moves.SecretPower,
 ];
 
 export default function registerCharmanderSpecies(): void {
@@ -91,7 +99,7 @@ export default function registerCharmanderSpecies(): void {
       level: {
         1: [Moves.Scratch, Moves.Growl],
         7: [Moves.Ember],
-        13: [Moves.SmokeScreen],
+        13: [Moves.SmokeScreen, Moves.MetalClaw],
         15: [Moves.Leer],
         19: [Moves.Rage],
         25: [Moves.ScaryFace],
@@ -108,6 +116,8 @@ export default function registerCharmanderSpecies(): void {
         Moves.Outrage,
         Moves.AncientPower,
         Moves.BeatUp,
+
+        Moves.DragonDance,
       ],
     },
   });
@@ -146,7 +156,7 @@ export default function registerCharmanderSpecies(): void {
     learnSet: {
       level: {
         1: [Moves.Scratch, Moves.Growl, Moves.Ember],
-        13: [Moves.SmokeScreen],
+        13: [Moves.SmokeScreen, Moves.MetalClaw],
         15: [Moves.Leer],
         20: [Moves.Rage],
         27: [Moves.ScaryFace],
@@ -155,7 +165,7 @@ export default function registerCharmanderSpecies(): void {
         48: [Moves.DragonRage],
         55: [Moves.FireSpin],
       },
-      teachable: [...FAMILY_TEACHABLE],
+      teachable: [...FAMILY_TEACHABLE, Moves.RockSlide],
     },
   });
 
@@ -185,7 +195,15 @@ export default function registerCharmanderSpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.Scratch, Moves.Growl, Moves.Ember, Moves.Leer, Moves.SmokeScreen],
+        1: [
+          Moves.Scratch,
+          Moves.Growl,
+          Moves.Ember,
+          Moves.Leer,
+          Moves.SmokeScreen,
+          Moves.HeatWave,
+          Moves.MetalClaw,
+        ],
         20: [Moves.Rage],
         27: [Moves.ScaryFace],
         34: [Moves.Flamethrower],
@@ -202,6 +220,9 @@ export default function registerCharmanderSpecies(): void {
         Moves.Roar,
         Moves.Sandstorm,
         Moves.SteelWing,
+
+        Moves.BlastBurn,
+        Moves.RockSlide,
       ],
     },
   });

@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// RBY TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.MegaPunch,
   Moves.MegaKick,
@@ -57,6 +57,16 @@ const FAMILY_TEACHABLE = [
   Moves.SunnyDay,
   Moves.PsychUp,
   Moves.RockSmash,
+  Moves.AerialAce,
+  Moves.BrickBreak,
+  Moves.BulkUp,
+  Moves.Earthquake,
+  Moves.Facade,
+  Moves.FocusPunch,
+  Moves.Overheat,
+  Moves.RockTomb,
+  Moves.SecretPower,
+  Moves.Taunt,
 ];
 
 export default function registerMankeySpecies(): void {
@@ -109,6 +119,9 @@ export default function registerMankeySpecies(): void {
         Moves.Reversal,
         Moves.Foresight,
         Moves.BeatUp,
+
+        Moves.Revenge,
+        Moves.SmellingSalts,
       ],
     },
   });

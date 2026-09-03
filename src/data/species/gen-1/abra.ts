@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// RBY TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.MegaPunch,
   Moves.MegaKick,
@@ -56,6 +56,16 @@ const FAMILY_TEACHABLE = [
   Moves.SunnyDay,
   Moves.PsychUp,
   Moves.ShadowBall,
+  Moves.Facade,
+  Moves.FocusPunch,
+  Moves.IronTail,
+  Moves.Safeguard,
+  Moves.SecretPower,
+  Moves.ShockWave,
+  Moves.SkillSwap,
+  Moves.Snatch,
+  Moves.Taunt,
+  Moves.Torment,
 ];
 
 const ABRA_STATS = {
@@ -112,7 +122,7 @@ export default function registerAbraSpecies(): void {
       level: {
         1: [Moves.Teleport],
       },
-      teachable: [...FAMILY_TEACHABLE],
+      teachable: [...FAMILY_TEACHABLE, Moves.CalmMind],
       egg: [
         Moves.Barrier,
         Moves.FirePunch,
@@ -120,6 +130,8 @@ export default function registerAbraSpecies(): void {
         Moves.ThunderPunch,
         Moves.LightScreen,
         Moves.Encore,
+
+        Moves.KnockOff,
       ],
     },
   });
@@ -155,8 +167,12 @@ export default function registerAbraSpecies(): void {
     biomes: [Biome.Grassland],
     activeTimes: TimeOfDay.Day,
     learnSet: {
-      level: { ...KADABRA_LEVEL_MOVES },
-      teachable: [...FAMILY_TEACHABLE, Moves.Dig],
+      level: {
+        43: [Moves.Trick],
+        33: [Moves.RolePlay],
+        ...KADABRA_LEVEL_MOVES,
+      },
+      teachable: [...FAMILY_TEACHABLE, Moves.Dig, Moves.CalmMind, Moves.LightScreen],
     },
   });
 
@@ -185,8 +201,12 @@ export default function registerAbraSpecies(): void {
     biomes: [Biome.Grassland],
     activeTimes: TimeOfDay.Day,
     learnSet: {
-      level: { ...KADABRA_LEVEL_MOVES },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.Dig],
+      level: {
+        43: [Moves.Trick],
+        33: [Moves.CalmMind],
+        ...KADABRA_LEVEL_MOVES,
+      },
+      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.Dig, Moves.LightScreen],
     },
   });
 }

@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// RBY TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.MegaPunch,
   Moves.MegaKick,
@@ -54,6 +54,11 @@ const FAMILY_TEACHABLE = [
   Moves.SunnyDay,
   Moves.RockSmash,
   Moves.Flamethrower,
+  Moves.BrickBreak,
+  Moves.Facade,
+  Moves.FocusPunch,
+  Moves.RockTomb,
+  Moves.SecretPower,
 ];
 
 const FAMILY_ABILITIES = [Abilities.RockHead, Abilities.Sturdy];
@@ -92,16 +97,16 @@ export default function registerGeodudeSpecies(): void {
     learnSet: {
       level: {
         1: [Moves.Tackle],
-        6: [Moves.DefenseCurl],
+        6: [Moves.DefenseCurl, Moves.MudSport],
         11: [Moves.RockThrow],
         16: [Moves.Magnitude],
         21: [Moves.SelfDestruct],
         26: [Moves.Harden],
-        31: [Moves.Earthquake, Moves.Rollout],
+        31: [Moves.Earthquake, Moves.Rollout, Moves.RockBlast],
         36: [Moves.Explosion],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.MegaPunch, Moves.RockSlide],
+      egg: [Moves.MegaPunch, Moves.RockSlide, Moves.Block],
     },
   });
 
@@ -137,12 +142,13 @@ export default function registerGeodudeSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.Tackle, Moves.DefenseCurl, Moves.RockThrow],
+        1: [Moves.Tackle, Moves.DefenseCurl, Moves.RockThrow, Moves.MudSport],
         16: [Moves.Magnitude],
         21: [Moves.SelfDestruct],
         27: [Moves.Harden],
         34: [Moves.Rollout],
         36: [Moves.Earthquake],
+        37: [Moves.RockBlast],
         43: [Moves.Explosion],
       },
       teachable: [...FAMILY_TEACHABLE],
@@ -175,11 +181,12 @@ export default function registerGeodudeSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.Tackle, Moves.DefenseCurl, Moves.RockThrow, Moves.Magnitude],
+        1: [Moves.Tackle, Moves.DefenseCurl, Moves.RockThrow, Moves.Magnitude, Moves.MudSport],
         21: [Moves.SelfDestruct],
         27: [Moves.Harden],
         34: [Moves.Rollout],
         36: [Moves.Earthquake],
+        37: [Moves.RockBlast],
         43: [Moves.Explosion],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.Roar, Moves.FuryCutter],

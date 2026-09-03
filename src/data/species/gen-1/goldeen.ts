@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// RBY TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.TakeDown,
@@ -40,6 +40,10 @@ const FAMILY_TEACHABLE = [
   Moves.Frustration,
   Moves.HiddenPower,
   Moves.RainDance,
+  Moves.Dive,
+  Moves.Facade,
+  Moves.SecretPower,
+  Moves.WaterPulse,
 ];
 
 const FAMILY_ABILITIES = [Abilities.SwiftSwim, Abilities.WaterVeil];
@@ -77,7 +81,7 @@ export default function registerGoldeenSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.Peck, Moves.TailWhip],
+        1: [Moves.Peck, Moves.TailWhip, Moves.WaterSport],
         10: [Moves.Supersonic],
         15: [Moves.HornAttack],
         24: [Moves.Flail],
@@ -85,9 +89,10 @@ export default function registerGoldeenSpecies(): void {
         37: [Moves.Waterfall],
         43: [Moves.HornDrill],
         52: [Moves.Agility],
+        57: [Moves.Megahorn],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.Psybeam, Moves.Haze, Moves.HydroPump],
+      egg: [Moves.Psybeam, Moves.Haze, Moves.HydroPump, Moves.MudSport],
     },
   });
 
@@ -117,13 +122,14 @@ export default function registerGoldeenSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.Peck, Moves.TailWhip, Moves.Supersonic],
+        1: [Moves.Peck, Moves.TailWhip, Moves.Supersonic, Moves.WaterSport],
         15: [Moves.HornAttack],
         24: [Moves.Flail],
         29: [Moves.FuryAttack],
         39: [Moves.Waterfall],
         48: [Moves.HornDrill],
         54: [Moves.Agility],
+        69: [Moves.Megahorn],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
     },

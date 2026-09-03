@@ -82,7 +82,7 @@ export default function registerMagikarpSpecies(): void {
         35: [Moves.Twister],
         40: [Moves.HydroPump],
         45: [Moves.RainDance],
-        50: [Moves.HyperBeam],
+        50: [Moves.HyperBeam, Moves.DragonDance],
       },
       teachable: [
         Moves.Toxic,
@@ -127,6 +127,15 @@ export default function registerMagikarpSpecies(): void {
         Moves.RockSmash,
         Moves.Whirlpool,
         Moves.Flamethrower,
+
+        Moves.Dive,
+        Moves.Earthquake,
+        Moves.Facade,
+        Moves.SecretPower,
+        Moves.Taunt,
+        Moves.ThunderWave,
+        Moves.Torment,
+        Moves.WaterPulse,
       ],
     },
   });

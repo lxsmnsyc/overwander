@@ -9,7 +9,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// RBY TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.SwordsDance,
   Moves.Toxic,
@@ -40,6 +40,10 @@ const FAMILY_TEACHABLE = [
   Moves.SweetScent,
   Moves.HiddenPower,
   Moves.SunnyDay,
+  Moves.BulletSeed,
+  Moves.Facade,
+  Moves.SecretPower,
+  Moves.Thief,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Chlorophyll];
@@ -87,7 +91,15 @@ export default function registerBellsproutSpecies(): void {
         42: [Moves.Slam],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.SwordsDance, Moves.Reflect, Moves.LeechLife, Moves.Encore, Moves.Synthesis],
+      egg: [
+        Moves.SwordsDance,
+        Moves.Reflect,
+        Moves.LeechLife,
+        Moves.Encore,
+        Moves.Synthesis,
+        Moves.Ingrain,
+        Moves.MagicalLeaf,
+      ],
     },
   });
 
@@ -169,9 +181,12 @@ export default function registerBellsproutSpecies(): void {
           Moves.RazorLeaf,
           Moves.VineWhip,
           Moves.SweetScent,
+          Moves.SpitUp,
+          Moves.Stockpile,
+          Moves.Swallow,
         ],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
+      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.BodySlam],
     },
   });
 }

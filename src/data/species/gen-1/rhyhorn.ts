@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// RBY TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.HornDrill,
@@ -48,6 +48,11 @@ const FAMILY_TEACHABLE = [
   Moves.SunnyDay,
   Moves.RockSmash,
   Moves.Flamethrower,
+  Moves.Facade,
+  Moves.RockTomb,
+  Moves.SecretPower,
+  Moves.ShockWave,
+  Moves.Thief,
 ];
 
 const FAMILY_ABILITIES = [Abilities.LightningRod, Abilities.RockHead];
@@ -88,11 +93,13 @@ export default function registerRhyhornSpecies(): void {
         1: [Moves.HornAttack, Moves.TailWhip],
         13: [Moves.Stomp],
         19: [Moves.FuryAttack],
+        29: [Moves.RockBlast],
         31: [Moves.ScaryFace],
         37: [Moves.HornDrill],
         49: [Moves.TakeDown],
         50: [Moves.Leer],
         55: [Moves.Earthquake],
+        57: [Moves.Megahorn],
       },
       teachable: [
         ...FAMILY_TEACHABLE,
@@ -109,6 +116,9 @@ export default function registerRhyhornSpecies(): void {
         Moves.Magnitude,
         Moves.Pursuit,
         Moves.Crunch,
+
+        Moves.CrushClaw,
+        Moves.SwordsDance,
       ],
     },
   });
@@ -140,11 +150,13 @@ export default function registerRhyhornSpecies(): void {
     learnSet: {
       level: {
         1: [Moves.HornAttack, Moves.Stomp, Moves.TailWhip, Moves.FuryAttack],
+        29: [Moves.RockBlast],
         31: [Moves.ScaryFace],
         37: [Moves.HornDrill],
         54: [Moves.TakeDown],
         55: [Moves.Leer],
         65: [Moves.Earthquake],
+        66: [Moves.Megahorn],
       },
       teachable: [
         ...FAMILY_TEACHABLE,
@@ -168,6 +180,11 @@ export default function registerRhyhornSpecies(): void {
         Moves.ThunderPunch,
         Moves.FuryCutter,
         Moves.DynamicPunch,
+
+        Moves.BrickBreak,
+        Moves.Cut,
+        Moves.FocusPunch,
+        Moves.SwordsDance,
       ],
     },
   });

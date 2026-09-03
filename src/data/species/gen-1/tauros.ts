@@ -85,6 +85,13 @@ export default function registerTaurosSpecies(): void {
         Moves.SunnyDay,
         Moves.RockSmash,
         Moves.Flamethrower,
+
+        Moves.Facade,
+        Moves.RockTomb,
+        Moves.SecretPower,
+        Moves.ShockWave,
+        Moves.SolarBeam,
+        Moves.WaterPulse,
       ],
     },
   });

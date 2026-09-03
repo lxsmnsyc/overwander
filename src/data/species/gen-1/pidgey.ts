@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// RBY TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.RazorWind,
   Moves.Whirlwind,
@@ -40,6 +40,9 @@ const FAMILY_TEACHABLE = [
   Moves.Frustration,
   Moves.HiddenPower,
   Moves.SunnyDay,
+  Moves.AerialAce,
+  Moves.Facade,
+  Moves.SecretPower,
 ];
 
 export default function registerPidgeySpecies(): void {
@@ -80,11 +83,12 @@ export default function registerPidgeySpecies(): void {
         12: [Moves.QuickAttack],
         19: [Moves.Whirlwind],
         28: [Moves.WingAttack],
+        31: [Moves.FeatherDance],
         36: [Moves.Agility],
         44: [Moves.MirrorMove],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.FeintAttack, Moves.Foresight, Moves.SteelWing, Moves.Pursuit],
+      egg: [Moves.FeintAttack, Moves.Foresight, Moves.SteelWing, Moves.Pursuit, Moves.AirCutter],
     },
   });
 
@@ -125,6 +129,7 @@ export default function registerPidgeySpecies(): void {
         12: [Moves.QuickAttack],
         21: [Moves.Whirlwind],
         31: [Moves.WingAttack],
+        34: [Moves.FeatherDance],
         40: [Moves.Agility],
         49: [Moves.MirrorMove],
       },
@@ -161,6 +166,7 @@ export default function registerPidgeySpecies(): void {
         1: [Moves.Gust, Moves.SandAttack, Moves.QuickAttack, Moves.Tackle],
         21: [Moves.Whirlwind],
         31: [Moves.WingAttack],
+        34: [Moves.FeatherDance],
         44: [Moves.Agility],
         54: [Moves.MirrorMove],
       },

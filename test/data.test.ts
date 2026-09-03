@@ -1036,12 +1036,16 @@ describe('the moves added back to the dex', () => {
     );
   });
 
-  it('teaches Soft-Boiled to Chansey, and to the one who was not supposed to exist', () => {
+  it('teaches Soft-Boiled to Chansey, the fairies and the one who was not supposed to exist', () => {
     const taught = getRegisteredSpecies().filter((species) =>
       new Set(getSpeciesData(species).learnSet.teachable).has(Moves.SoftBoiled),
     );
 
-    expect(new Set(taught)).toEqual(new Set([Species.Chansey, Species.Mew]));
+    // The fairies come by it from a gen 3 tutor rather than from the
+    // machine the other two carry
+    expect(new Set(taught)).toEqual(
+      new Set([Species.Clefairy, Species.Clefable, Species.Chansey, Species.Mew]),
+    );
   });
 
   it('registers all four with data a battle can read', () => {

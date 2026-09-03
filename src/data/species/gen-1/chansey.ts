@@ -42,7 +42,7 @@ export default function registerChanseySpecies(): void {
       level: {
         1: [Moves.Pound, Moves.DoubleSlap],
         5: [Moves.Growl],
-        9: [Moves.TailWhip],
+        9: [Moves.TailWhip, Moves.Refresh],
         13: [Moves.SoftBoiled],
         23: [Moves.Minimize],
         24: [Moves.Sing],
@@ -113,8 +113,21 @@ export default function registerChanseySpecies(): void {
         Moves.ShadowBall,
         Moves.RockSmash,
         Moves.Flamethrower,
+
+        Moves.BrickBreak,
+        Moves.CalmMind,
+        Moves.Earthquake,
+        Moves.Facade,
+        Moves.FocusPunch,
+        Moves.RockTomb,
+        Moves.Safeguard,
+        Moves.SecretPower,
+        Moves.ShockWave,
+        Moves.SkillSwap,
+        Moves.Snatch,
+        Moves.WaterPulse,
       ],
-      egg: [Moves.Metronome, Moves.HealBell, Moves.Present],
+      egg: [Moves.Metronome, Moves.HealBell, Moves.Present, Moves.Aromatherapy],
     },
   });
 }

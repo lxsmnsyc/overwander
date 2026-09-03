@@ -92,6 +92,12 @@ export default function registerElectabuzzSpecies(): void {
         Moves.HiddenPower,
         Moves.RainDance,
         Moves.RockSmash,
+
+        Moves.BrickBreak,
+        Moves.Facade,
+        Moves.FocusPunch,
+        Moves.SecretPower,
+        Moves.ShockWave,
       ],
     },
   });

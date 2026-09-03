@@ -9,7 +9,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// RBY TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.TakeDown,
@@ -43,6 +43,10 @@ const FAMILY_TEACHABLE = [
   Moves.HiddenPower,
   Moves.RainDance,
   Moves.Whirlpool,
+  Moves.Dive,
+  Moves.Facade,
+  Moves.SecretPower,
+  Moves.WaterPulse,
 ];
 
 export default function registerHorseaSpecies(): void {
@@ -85,6 +89,7 @@ export default function registerHorseaSpecies(): void {
         29: [Moves.Twister],
         36: [Moves.Agility],
         43: [Moves.HydroPump],
+        50: [Moves.DragonDance],
       },
       teachable: [...FAMILY_TEACHABLE],
       egg: [
@@ -135,6 +140,7 @@ export default function registerHorseaSpecies(): void {
         29: [Moves.Twister],
         40: [Moves.Agility],
         51: [Moves.HydroPump],
+        62: [Moves.DragonDance],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
     },

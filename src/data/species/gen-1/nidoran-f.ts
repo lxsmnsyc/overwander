@@ -9,7 +9,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// RBY TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.BodySlam,
@@ -46,6 +46,13 @@ const FAMILY_TEACHABLE = [
   Moves.HiddenPower,
   Moves.RainDance,
   Moves.SunnyDay,
+  Moves.AerialAce,
+  Moves.Cut,
+  Moves.Facade,
+  Moves.SecretPower,
+  Moves.ShockWave,
+  Moves.SludgeBomb,
+  Moves.WaterPulse,
 ];
 
 // Additional TM/HM moves for the fully evolved form
@@ -103,10 +110,13 @@ export default function registerNidoranFSpecies(): void {
         12: [Moves.DoubleKick],
         14: [Moves.PoisonSting],
         21: [Moves.TailWhip],
+        23: [Moves.HelpingHand],
         29: [Moves.Bite],
         36: [Moves.FurySwipes],
+        47: [Moves.Crunch],
+        38: [Moves.Flatter],
       },
-      teachable: [...FAMILY_TEACHABLE],
+      teachable: [...FAMILY_TEACHABLE, Moves.Dig, Moves.IceBeam, Moves.RockSmash, Moves.Strength],
       egg: [
         Moves.Supersonic,
         Moves.Disable,
@@ -156,10 +166,20 @@ export default function registerNidoranFSpecies(): void {
         12: [Moves.DoubleKick],
         14: [Moves.PoisonSting],
         23: [Moves.TailWhip],
+        26: [Moves.HelpingHand],
         32: [Moves.Bite],
         41: [Moves.FurySwipes],
+        53: [Moves.Crunch],
+        43: [Moves.Flatter],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.Strength, Moves.RockSmash, Moves.IceBeam],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.Strength,
+        Moves.RockSmash,
+        Moves.IceBeam,
+        Moves.Counter,
+        Moves.Dig,
+      ],
     },
   });
 
@@ -192,6 +212,7 @@ export default function registerNidoranFSpecies(): void {
         1: [Moves.Tackle, Moves.Scratch, Moves.TailWhip, Moves.DoubleKick],
         14: [Moves.PoisonSting],
         23: [Moves.BodySlam],
+        43: [Moves.Superpower],
       },
       teachable: [
         ...FAMILY_TEACHABLE,
@@ -207,6 +228,13 @@ export default function registerNidoranFSpecies(): void {
         Moves.ShadowBall,
         Moves.RockSmash,
         Moves.Flamethrower,
+
+        Moves.BrickBreak,
+        Moves.Counter,
+        Moves.FocusPunch,
+        Moves.RockTomb,
+        Moves.Taunt,
+        Moves.Torment,
       ],
     },
   });

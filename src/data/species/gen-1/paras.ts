@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// RBY TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.SwordsDance,
   Moves.Toxic,
@@ -44,6 +44,10 @@ const FAMILY_TEACHABLE = [
   Moves.HiddenPower,
   Moves.SunnyDay,
   Moves.RockSmash,
+  Moves.AerialAce,
+  Moves.BulletSeed,
+  Moves.Facade,
+  Moves.SecretPower,
 ];
 
 export default function registerParasSpecies(): void {
@@ -87,6 +91,7 @@ export default function registerParasSpecies(): void {
         31: [Moves.Slash],
         37: [Moves.Growth],
         43: [Moves.GigaDrain],
+        49: [Moves.Aromatherapy],
       },
       teachable: [...FAMILY_TEACHABLE],
       egg: [
@@ -133,8 +138,9 @@ export default function registerParasSpecies(): void {
         37: [Moves.Slash],
         46: [Moves.Growth],
         55: [Moves.GigaDrain],
+        59: [Moves.Aromatherapy],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
+      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.Counter],
     },
   });
 }

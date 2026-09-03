@@ -9,7 +9,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// RBY TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.TakeDown,
@@ -52,6 +52,10 @@ const FAMILY_TEACHABLE = [
   Moves.RainDance,
   Moves.PsychUp,
   Moves.Whirlpool,
+  Moves.Dive,
+  Moves.Facade,
+  Moves.SecretPower,
+  Moves.WaterPulse,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Illuminate, Abilities.NaturalCure];
@@ -92,11 +96,11 @@ export default function registerStaryuSpecies(): void {
         1: [Moves.Tackle, Moves.Harden],
         7: [Moves.WaterGun],
         13: [Moves.RapidSpin],
-        19: [Moves.Recover],
+        19: [Moves.Recover, Moves.Camouflage],
         25: [Moves.Swift],
         31: [Moves.BubbleBeam],
         37: [Moves.Minimize],
-        42: [Moves.LightScreen],
+        42: [Moves.LightScreen, Moves.CosmicPower],
         47: [Moves.HydroPump],
       },
       teachable: [...FAMILY_TEACHABLE],
@@ -140,7 +144,14 @@ export default function registerStaryuSpecies(): void {
         ],
         37: [Moves.ConfuseRay],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.DreamEater, Moves.Nightmare],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.HyperBeam,
+        Moves.DreamEater,
+        Moves.Nightmare,
+        Moves.LightScreen,
+        Moves.SkillSwap,
+      ],
     },
   });
 }

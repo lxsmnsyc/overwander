@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// RBY TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.Rage,
@@ -38,6 +38,13 @@ const FAMILY_TEACHABLE = [
   Moves.HiddenPower,
   Moves.SunnyDay,
   Moves.Flamethrower,
+  Moves.Facade,
+  Moves.Flash,
+  Moves.SecretPower,
+  Moves.ShadowBall,
+  Moves.ShockWave,
+  Moves.Taunt,
+  Moves.Torment,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Levitate, Abilities.NeutralizingGas];
@@ -82,9 +89,17 @@ export default function registerKoffingSpecies(): void {
         33: [Moves.Haze],
         41: [Moves.Explosion],
         45: [Moves.DestinyBond],
+        49: [Moves.Memento],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.Psywave, Moves.Screech, Moves.Psybeam, Moves.DestinyBond, Moves.PainSplit],
+      egg: [
+        Moves.Psywave,
+        Moves.Screech,
+        Moves.Psybeam,
+        Moves.DestinyBond,
+        Moves.PainSplit,
+        Moves.WillOWisp,
+      ],
     },
   });
 
@@ -119,6 +134,7 @@ export default function registerKoffingSpecies(): void {
         33: [Moves.Haze],
         44: [Moves.Explosion],
         51: [Moves.DestinyBond],
+        58: [Moves.Memento],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
     },

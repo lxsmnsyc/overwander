@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// RBY TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.TakeDown,
@@ -40,6 +40,12 @@ const FAMILY_TEACHABLE = [
   Moves.Frustration,
   Moves.HiddenPower,
   Moves.RainDance,
+  Moves.Facade,
+  Moves.SecretPower,
+  Moves.ShockWave,
+  Moves.Taunt,
+  Moves.Thief,
+  Moves.Torment,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Soundproof, Abilities.Static];
@@ -77,8 +83,9 @@ export default function registerVoltorbSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.Tackle, Moves.Screech],
+        1: [Moves.Tackle, Moves.Screech, Moves.Charge],
         17: [Moves.SonicBoom],
+        21: [Moves.Spark],
         22: [Moves.SelfDestruct],
         29: [Moves.LightScreen, Moves.Rollout],
         36: [Moves.Swift],
@@ -115,7 +122,8 @@ export default function registerVoltorbSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.Tackle, Moves.Screech, Moves.SonicBoom, Moves.SelfDestruct],
+        1: [Moves.Tackle, Moves.Screech, Moves.SonicBoom, Moves.SelfDestruct, Moves.Charge],
+        21: [Moves.Spark],
         29: [Moves.Rollout],
         31: [Moves.LightScreen],
         40: [Moves.Swift],

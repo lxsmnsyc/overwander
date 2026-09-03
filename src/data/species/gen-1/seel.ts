@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// RBY TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.HornDrill,
@@ -45,6 +45,11 @@ const FAMILY_TEACHABLE = [
   Moves.HiddenPower,
   Moves.RainDance,
   Moves.Whirlpool,
+  Moves.Dive,
+  Moves.Facade,
+  Moves.SecretPower,
+  Moves.Thief,
+  Moves.WaterPulse,
 ];
 
 const FAMILY_ABILITIES = [Abilities.ThickFat, Abilities.Hydration];
@@ -91,7 +96,16 @@ export default function registerSeelSpecies(): void {
         48: [Moves.Safeguard],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.Lick, Moves.Peck, Moves.Disable, Moves.Slam, Moves.PerishSong, Moves.Encore],
+      egg: [
+        Moves.Lick,
+        Moves.Peck,
+        Moves.Disable,
+        Moves.Slam,
+        Moves.PerishSong,
+        Moves.Encore,
+        Moves.FakeOut,
+        Moves.IcicleSpear,
+      ],
     },
   });
 
@@ -121,9 +135,10 @@ export default function registerSeelSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.Headbutt, Moves.Growl, Moves.AuroraBeam],
+        1: [Moves.Headbutt, Moves.Growl, Moves.AuroraBeam, Moves.SignalBeam],
         21: [Moves.Rest],
         32: [Moves.TakeDown],
+        34: [Moves.SheerCold],
         43: [Moves.IceBeam],
         60: [Moves.Safeguard],
       },

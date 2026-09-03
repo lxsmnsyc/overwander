@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// RBY TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.MegaPunch,
@@ -55,6 +55,17 @@ const FAMILY_TEACHABLE = [
   Moves.SunnyDay,
   Moves.PsychUp,
   Moves.ShadowBall,
+  Moves.BrickBreak,
+  Moves.CalmMind,
+  Moves.Facade,
+  Moves.FocusPunch,
+  Moves.Safeguard,
+  Moves.SecretPower,
+  Moves.SkillSwap,
+  Moves.Snatch,
+  Moves.Taunt,
+  Moves.Thief,
+  Moves.Torment,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Insomnia, Abilities.Forewarn];
@@ -103,7 +114,7 @@ export default function registerDrowzeeSpecies(): void {
         45: [Moves.FutureSight],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.Barrier, Moves.LightScreen],
+      egg: [Moves.Barrier, Moves.LightScreen, Moves.Assist, Moves.RolePlay],
     },
   });
 
@@ -141,7 +152,7 @@ export default function registerDrowzeeSpecies(): void {
         55: [Moves.PsychUp],
         60: [Moves.FutureSight],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
+      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.LightScreen],
     },
   });
 }

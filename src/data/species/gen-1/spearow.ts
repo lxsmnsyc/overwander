@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// RBY TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.RazorWind,
   Moves.Whirlwind,
@@ -40,6 +40,8 @@ const FAMILY_TEACHABLE = [
   Moves.Frustration,
   Moves.HiddenPower,
   Moves.SunnyDay,
+  Moves.Facade,
+  Moves.SecretPower,
 ];
 
 export default function registerSpearowSpecies(): void {
@@ -79,7 +81,7 @@ export default function registerSpearowSpecies(): void {
         7: [Moves.Leer],
         13: [Moves.FuryAttack],
         22: [Moves.MirrorMove],
-        25: [Moves.Pursuit],
+        25: [Moves.Pursuit, Moves.AerialAce],
         29: [Moves.DrillPeck],
         36: [Moves.Agility],
       },
@@ -90,6 +92,8 @@ export default function registerSpearowSpecies(): void {
         Moves.ScaryFace,
         Moves.FeintAttack,
         Moves.FalseSwipe,
+
+        Moves.Astonish,
       ],
     },
   });
@@ -126,7 +130,7 @@ export default function registerSpearowSpecies(): void {
         34: [Moves.DrillPeck],
         43: [Moves.Agility],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
+      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.AerialAce],
     },
   });
 }

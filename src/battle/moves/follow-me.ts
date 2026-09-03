@@ -1,5 +1,5 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
-import { Moves, MoveTargets } from '../../data/ids/moves';
+import { MoveTargets, Moves } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
 import { getMoveData } from '../../data/moves';
 import type Battle from '../core';

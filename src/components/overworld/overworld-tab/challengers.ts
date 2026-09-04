@@ -175,6 +175,8 @@ const FRONTIER_GREETINGS: Record<FrontierBrain, string> = {
     'No tricks up here. My three against your three. Begin when you are ready.',
   [FrontierBrain.Spenser]:
     'In my palace nobody takes orders. Bring three whose hearts you already know.',
+  [FrontierBrain.Tucker]:
+    'Show me your three first. The Dome always answers, and the crowd loves an answer.',
 };
 
 /**
@@ -196,6 +198,9 @@ const FRONTIER_RULE_TERMS: Record<FrontierRule, string> = {
      yours comes off it. `,
   [FrontierRule.Natured]: `Nobody fights on orders: every pokemon here picks by its nature, so a
      bold one guards and a brave one swings whatever the field asks for. `,
+  [FrontierRule.Countered]: `The house names nobody until you do: his 3 are drawn against yours
+     the moment they are frozen, one apiece, so a team that covers everything covers nothing
+     here. `,
 };
 
 /** What a Brain's house asks to see: the crown of its region */
@@ -386,6 +391,7 @@ export default function challengerOf(
       levels: FRONTIER_PARTY_LEVELS,
       bring: FRONTIER_TEAM_SIZE,
       rented: FRONTIER_BRAIN_RULES[brain] === FrontierRule.Rented,
+      unseen: FRONTIER_BRAIN_RULES[brain] === FrontierRule.Countered,
       greeting: `${name} keeps the ${FRONTIER_FACILITY_NAMES[brain]}.
         “${FRONTIER_GREETINGS[brain]}”`,
       stakes: `${FRONTIER_RULE_TERMS[FRONTIER_BRAIN_RULES[brain]]} Three of theirs at level

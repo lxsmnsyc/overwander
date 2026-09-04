@@ -20,6 +20,7 @@ import {
   FRONTIER_PARTY_LEVELS,
   ROCKET_ALLIANCE,
   ROCKET_REWARD_LEVEL,
+  counterParty,
   createRocketParty,
   rentedHand,
   rollStopGold,
@@ -68,7 +69,7 @@ import { startEncounter } from './overworld';
 import { grantGold } from './profile';
 import { recordSeenOpponents } from './pokedex';
 import { foughtBattle, readBattle } from './raid-io';
-import { isAnyCatchQueued, publishTeamSnapshot } from './raids';
+import { isAnyCatchQueued, publishTeamSnapshot, readPublishedSpecies } from './raids';
 import { asNumber, asString } from './read';
 
 /** Which BattleWins foe a fighting landmark's resident counts as */
@@ -276,11 +277,16 @@ export async function enterRocketStop(
       trait_value: entry.traitValue,
     }));
 
-    await transaction`
-      insert into rocket_party
-        ${transaction(rows, 'stop_id', 'player', 'slot', 'species', 'individual_value', 'trait_value')}
-      on conflict do nothing
-    `;
+    // The Dome stages nobody, so there is nothing to write: a
+    // multi-row insert with no rows is not an empty insert, it is a
+    // syntax error
+    if (rows.length > 0) {
+      await transaction`
+        insert into rocket_party
+          ${transaction(rows, 'stop_id', 'player', 'slot', 'species', 'individual_value', 'trait_value')}
+        on conflict do nothing
+      `;
+    }
   });
   return [stop, fresh];
 }
@@ -410,6 +416,13 @@ export async function startRocketBattle(
   if (party == null) {
     return null;
   }
+  // The Dome answers what arrived rather than what was asked for: the
+  // freeze leaves behind anything already fighting, so its three are
+  // drawn against the party that actually made the field
+  const fielded =
+    rules === FrontierRule.Countered
+      ? counterParty(stop, await readPublishedSpecies(party))
+      : toSpawns(record.party);
   // The cell's landmark decides what they field: only Team Rocket
   // fields shadows, and it fixes the band — every league seat brings
   // a full 6, so size alone cannot say what the fight is worth, and a
@@ -453,7 +466,7 @@ export async function startRocketBattle(
                 houseParty(
                   createRocketParty(
                     snapshot,
-                    toSpawns(record.party),
+                    fielded,
                     shadow,
                     levels,
                     stopOutfit(
@@ -470,7 +483,7 @@ export async function startRocketBattle(
     await transaction`
       insert into battles (id, raid_id, species, outcome, started_at, biome, weather, limits,
                            rules, opponent, opponent_sprite)
-      values (${battleId}, null, ${record.party[0]?.species ?? 0},
+      values (${battleId}, null, ${fielded.length > 0 ? fielded[0][0] : (record.party[0]?.species ?? 0)},
               ${BattleOutcome.Unfinished}, ${now},
               ${chunk.biome}, ${weather}, ${PVP_BATTLE_LIMITS}, ${rules},
               ${challenger?.name ?? ''}, ${challenger?.sprite ?? ''})

@@ -1,7 +1,7 @@
 import 'server-only';
 import BattleOutcome from '../auth/battle-outcome';
 import { UNLIMITED_BATTLE_LIMITS } from '../data/constants/battle-limits';
-import { type CatchSnapshot, createCatchSnapshot } from '../auth/catch-snapshot';
+import { type CatchSnapshot, asCatchSnapshot, createCatchSnapshot } from '../auth/catch-snapshot';
 import BATTLE_TIMEOUT from '../auth/battle-lock';
 import { asOffset, toLocalTime } from '../auth/local-time';
 import { asCaughtPokemon } from '../auth/caught-record';
@@ -47,6 +47,7 @@ import { bumpProgress } from './quest-progress';
 import { isEggRecord, isGuardedRecord } from './catch-fields';
 import Biome from '../data/ids/biome';
 import { getSpeciesLair } from '../data/overworld/lair';
+import type { Species } from '../data/ids/species';
 import { getSql, jsonOf, newDocId, tx } from './db';
 import { readCaughtMany } from './caught-io';
 import { foughtBattle, readBattle, readRaid, readRaidIn, readTeam, writeRaid } from './raid-io';
@@ -786,6 +787,22 @@ export async function publishTeamSnapshot(
     `;
     return snapshotId;
   });
+}
+
+/**
+ * What a published team snapshot actually fielded, in the order it
+ * was frozen. A freeze leaves behind anything already fighting, so
+ * this is the party rather than the party that was asked for, and a
+ * house answering what was brought has to answer what arrived
+ */
+export async function readPublishedSpecies(snapshotId: string): Promise<Species[]> {
+  const rows = await getSql()`select catches from team_snapshots where id = ${snapshotId}`;
+  const data: unknown = rows[0]?.catches;
+
+  if (!Array.isArray(data)) {
+    return [];
+  }
+  return data.map((value) => asCatchSnapshot(value).species);
 }
 
 /**

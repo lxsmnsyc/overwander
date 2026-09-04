@@ -31,6 +31,7 @@ import {
 } from '../data/overworld/trainers';
 import type { Items } from '../data/ids/items';
 import type { Species } from '../data/ids/species';
+import { TYPE_EFFECTIVENESS, TYPE_EFFECTIVENESS_FACTOR, type Types } from '../data/constants/types';
 import { getSpeciesData } from '../data/species';
 import type Biome from '../data/ids/biome';
 import { type ItemBandOdds, pickItem } from '../data/overworld/item-pool';
@@ -687,4 +688,77 @@ export function rentedHand(stop: string, picks: string[]): Spawn[] | null {
     return null;
   }
   return at.map((one) => offer[one]);
+}
+
+/**
+ * How hard one set of types hits another: the best any of them
+ * manages against the whole combination, so a pokemon is weighed by
+ * the type it would actually reach for
+ */
+function bestFactor(attacking: Types[], defending: Types[]): number {
+  let best = 0;
+
+  for (const type of attacking) {
+    let factor = 1;
+
+    for (const against of defending) {
+      const effect = TYPE_EFFECTIVENESS[type][against];
+
+      if (effect != null) {
+        factor *= TYPE_EFFECTIVENESS_FACTOR[effect];
+      }
+    }
+    best = Math.max(best, factor);
+  }
+  return best;
+}
+
+/**
+ * The three the Dome answers a named party with.
+ *
+ * One per pokemon brought, weighed both ways round: what it does to
+ * that pokemon, less what that pokemon does back. Nobody is picked
+ * twice, so three answers come out however alike the three they are
+ * answering, and the seed is the stop, so the fight restages as the
+ * fight it was
+ */
+export function counterParty(stop: string, against: Species[]): Spawn[] {
+  const rng = new AleaRNG(`${stop}:counter`);
+  const pool = getRentalPool();
+  const taken = new Set<Species>();
+  const party: Spawn[] = [];
+
+  for (const target of against) {
+    const theirs = getSpeciesData(target).types;
+    let best: Species[] = [];
+    let highest = 0;
+
+    for (const species of pool) {
+      if (taken.has(species)) {
+        continue;
+      }
+
+      const mine = getSpeciesData(species).types;
+      const score = bestFactor(mine, theirs) - bestFactor(theirs, mine);
+
+      if (best.length === 0 || score > highest) {
+        best = [species];
+        highest = score;
+      } else if (score === highest) {
+        best.push(species);
+      }
+    }
+
+    // Nothing left in the crate to answer with, which only happens
+    // once the pool is smaller than the party
+    if (best.length === 0) {
+      break;
+    }
+
+    const picked = best[Math.floor(rng.random() * best.length)];
+
+    taken.add(picked);
+    party.push([picked, rng.int32(), rng.int32()]);
+  }
+  return party;
 }

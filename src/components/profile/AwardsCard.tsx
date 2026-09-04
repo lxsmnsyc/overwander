@@ -174,6 +174,8 @@ const AWARD_COLORS: Record<Awards, string> = {
   [Awards.GoldAbilitySymbol]: '#e0b64f',
   [Awards.SilverSpiritsSymbol]: '#b8bcc4',
   [Awards.GoldSpiritsSymbol]: '#e0b64f',
+  [Awards.SilverTacticsSymbol]: '#b8bcc4',
+  [Awards.GoldTacticsSymbol]: '#e0b64f',
 };
 
 /**

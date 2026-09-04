@@ -961,8 +961,7 @@ export function getEliteMemberRoster(member: EliteMember): Species[] {
  * **rule**. A gym is a type, an elite is a type with a widener, a
  * champion is a fixed six; a Brain is a fight held under the house's
  * own terms, and the party is only what those terms are demonstrated
- * with. Six of the seven are open; the Dome is the one still shut,
- * since its rule is a bracket rather than a term
+ * with. All seven are open
  */
 const enum FrontierBrain {
   Brandon = 0,
@@ -971,6 +970,7 @@ const enum FrontierBrain {
   Noland = 3,
   Anabel = 4,
   Spenser = 5,
+  Tucker = 6,
 }
 
 export { FrontierBrain };
@@ -982,6 +982,7 @@ export const FRONTIER_BRAINS: FrontierBrain[] = [
   FrontierBrain.Noland,
   FrontierBrain.Anabel,
   FrontierBrain.Spenser,
+  FrontierBrain.Tucker,
 ];
 
 export const FRONTIER_BRAIN_NAMES: Record<FrontierBrain, string> = {
@@ -991,6 +992,7 @@ export const FRONTIER_BRAIN_NAMES: Record<FrontierBrain, string> = {
   [FrontierBrain.Noland]: 'Noland',
   [FrontierBrain.Anabel]: 'Anabel',
   [FrontierBrain.Spenser]: 'Spenser',
+  [FrontierBrain.Tucker]: 'Tucker',
 };
 
 /** The house each of them keeps, which is what the rule is named for */
@@ -1001,6 +1003,7 @@ export const FRONTIER_FACILITY_NAMES: Record<FrontierBrain, string> = {
   [FrontierBrain.Noland]: 'Battle Factory',
   [FrontierBrain.Anabel]: 'Battle Tower',
   [FrontierBrain.Spenser]: 'Battle Palace',
+  [FrontierBrain.Tucker]: 'Battle Dome',
 };
 
 export const FRONTIER_BRAIN_CHARSETS: Record<FrontierBrain, string[]> = {
@@ -1010,6 +1013,7 @@ export const FRONTIER_BRAIN_CHARSETS: Record<FrontierBrain, string[]> = {
   [FrontierBrain.Noland]: ['characters/rse/noland'],
   [FrontierBrain.Anabel]: ['characters/rse/anabel'],
   [FrontierBrain.Spenser]: ['characters/rse/spenser'],
+  [FrontierBrain.Tucker]: ['characters/rse/tucker'],
 };
 
 /**
@@ -1027,6 +1031,7 @@ export const FRONTIER_BRAIN_SYMBOLS: Record<FrontierBrain, [silver: Awards, gold
   [FrontierBrain.Noland]: [Awards.SilverKnowledgeSymbol, Awards.GoldKnowledgeSymbol],
   [FrontierBrain.Anabel]: [Awards.SilverAbilitySymbol, Awards.GoldAbilitySymbol],
   [FrontierBrain.Spenser]: [Awards.SilverSpiritsSymbol, Awards.GoldSpiritsSymbol],
+  [FrontierBrain.Tucker]: [Awards.SilverTacticsSymbol, Awards.GoldTacticsSymbol],
 };
 
 /**
@@ -1053,6 +1058,9 @@ export const FRONTIER_BRAIN_PARTIES: Record<FrontierBrain, Species[]> = {
   // Three that read as three different temperaments, which is what
   // the Palace is asking about
   [FrontierBrain.Spenser]: [Species.Crobat, Species.Slaking, Species.Lapras],
+  // Nobody's either, and for the opposite reason to Noland's: the
+  // Dome names nobody until the challenger has, and then answers them
+  [FrontierBrain.Tucker]: [],
 };
 
 /**
@@ -1073,6 +1081,7 @@ export const FRONTIER_BRAIN_GOLD_PARTIES: Record<FrontierBrain, Species[]> = {
   [FrontierBrain.Noland]: [],
   [FrontierBrain.Anabel]: [Species.Raikou, Species.Snorlax, Species.Latios],
   [FrontierBrain.Spenser]: [Species.Arcanine, Species.Slaking, Species.Suicune],
+  [FrontierBrain.Tucker]: [],
 };
 
 /**
@@ -1131,6 +1140,13 @@ export const enum FrontierRule {
    * of what they cover
    */
   Natured = 5,
+  /**
+   * The Dome, answered. The house names nobody until the challenger
+   * has: its three are drawn once the party is frozen, one apiece
+   * against what was brought, so a team that covers everything covers
+   * nothing here
+   */
+  Countered = 6,
 }
 
 export const FRONTIER_BRAIN_RULES: Record<FrontierBrain, FrontierRule> = {
@@ -1142,6 +1158,7 @@ export const FRONTIER_BRAIN_RULES: Record<FrontierBrain, FrontierRule> = {
   // fight the other four are read against
   [FrontierBrain.Anabel]: FrontierRule.None,
   [FrontierBrain.Spenser]: FrontierRule.Natured,
+  [FrontierBrain.Tucker]: FrontierRule.Countered,
 };
 
 /**
@@ -1165,6 +1182,7 @@ export const FRONTIER_BRAIN_TITLES: Record<FrontierBrain, Awards> = {
   [FrontierBrain.Noland]: Awards.HoennChampion,
   [FrontierBrain.Anabel]: Awards.HoennChampion,
   [FrontierBrain.Spenser]: Awards.HoennChampion,
+  [FrontierBrain.Tucker]: Awards.HoennChampion,
 };
 
 /**

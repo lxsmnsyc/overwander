@@ -43,6 +43,12 @@ export interface StopChallenge {
    * lays them out itself and the picks are places in that list
    */
   rented?: boolean;
+  /**
+   * Whether the house has named nobody yet. The Dome draws its three
+   * against the party that walks in, so there is no lineup to lay out
+   * until the challenge is taken
+   */
+  unseen?: boolean;
 }
 
 export interface RocketStopDialogProps {
@@ -84,6 +90,7 @@ export default function RocketStopDialog(props: RocketStopDialogProps): JSX.Elem
    */
   const [taken, setTaken] = createSignal<number[]>([]);
   const rented = (): boolean => props.challenger?.rented === true;
+  const unseen = (): boolean => props.challenger?.unseen === true;
   const offer = (): Spawn[] => {
     const id = stop();
 
@@ -225,15 +232,28 @@ export default function RocketStopDialog(props: RocketStopDialogProps): JSX.Elem
                   the player reads their own pokemon in: a lineup laid
                   out the way a box is laid out is one they already
                   know how to read. Nothing here is theirs to press */}
-              <CatchBox
-                entries={lineup(record())}
-                capacity={record().party.length}
-                columns={3}
-                cardOnly
-              />
-              <Meta>
-                {record().party.length} of theirs, levels {levels()[0]} to {levels()[1]}.
-              </Meta>
+              {/* A house that answers what you bring has nothing to
+                  lay out yet, so the space says so rather than
+                  standing empty */}
+              <Show
+                when={!unseen()}
+                fallback={
+                  <Meta>
+                    Nobody named yet. Three of theirs at levels {levels()[0]} to {levels()[1]},
+                    drawn once yours are.
+                  </Meta>
+                }
+              >
+                <CatchBox
+                  entries={lineup(record())}
+                  capacity={record().party.length}
+                  columns={3}
+                  cardOnly
+                />
+                <Meta>
+                  {record().party.length} of theirs, levels {levels()[0]} to {levels()[1]}.
+                </Meta>
+              </Show>
 
               {/* And what the fight is worth, which is the decision the
                   buttons below are asking about */}

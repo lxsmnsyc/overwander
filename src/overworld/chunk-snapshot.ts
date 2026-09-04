@@ -43,8 +43,10 @@ import {
   type EliteMember,
   FRONTIER_BRAINS,
   FRONTIER_BRAIN_CHARSETS,
+  FRONTIER_BRAIN_RULES,
   FRONTIER_TEAM_SIZE,
   type FrontierBrain,
+  FrontierRule,
   GYM_LEADER_CHARSETS,
   GYM_LEADER_SIGNATURES,
   type GymLeader,
@@ -1309,6 +1311,14 @@ export default class ChunkSnapshot {
 
     const seed = `${this.key}${this.npcTimestamp}frontier${key}`;
     const named = frontierParty(brain, gold);
+    // The Dome names nobody in advance: its three are drawn against
+    // the challenger's once those are frozen, which is a question a
+    // chunk cannot answer
+    if (FRONTIER_BRAIN_RULES[brain] === FrontierRule.Countered) {
+      this.frontierStops.set(key, []);
+      return [];
+    }
+
     // A house with no party of its own rents like everybody else:
     // the Factory's keeper draws three out of the crate
     const party =

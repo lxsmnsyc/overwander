@@ -299,12 +299,22 @@ three of yours, under the ordinary rules. She is the house the other four are
 read against, and she brings the hardest hand in the game to make up for having
 no rule to hide behind.
 
+**Tucker** keeps the Battle Dome, and the Dome names nobody in advance. His
+three are drawn the moment your party is frozen, one apiece against what you
+brought: whatever you field, he arrives carrying the answer to it. There is no
+lineup to read before you commit and no cover team that works, which makes his
+the one house where bringing your best three is a worse plan than bringing three
+that are hard to answer. His pokemon come out of the same crate the Factory
+rents from, so the Dome, like the Factory, gets harder with each generation the
+game registers.
+
 A house takes nobody who does not hold the crown of the region it stands in.
 Beating one hangs that facility's **silver symbol** on the shelf, and holding
 that symbol is what brings the Brain's **second three** out the next time you
 walk in. Beating those is the **gold** one. The two symbols are two different
 fights rather than one fight scored twice, and Brandon is the only Brain who
-fields the same three either time.
+fields the same three either time. Noland and Tucker name nobody either time,
+since both of their houses draw a party rather than keeping one.
 
 A member of the **Elite Four** will not fight anybody who is not carrying all
 eight of their own league's badges, and a **Champion** asks for all four of their

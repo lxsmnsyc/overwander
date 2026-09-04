@@ -30,6 +30,7 @@ import Abilities from '../src/data/ids/abilities';
 import {
   TYPE_COLORS,
   TYPE_EFFECTIVENESS,
+  TYPE_EFFECTIVENESS_FACTOR,
   TYPE_NAMES,
   TypeEffectiveness,
   Types,
@@ -357,7 +358,7 @@ import {
 } from '../src/data/overworld/experts';
 import Regions from '../src/data/ids/regions';
 import { FREE_CHARSETS } from '../src/data/overworld/charsets';
-import { rentalOffer, rentedHand } from '../src/overworld/rocket';
+import { counterParty, rentalOffer, rentedHand } from '../src/overworld/rocket';
 import { getRegionSpan, getSpeciesRegion } from '../src/data/species/regions';
 import {
   ACHIEVEMENT_LINES,
@@ -5076,13 +5077,14 @@ describe('type experts', () => {
       expect(FRONTIER_BRAIN_NAMES[brain].length).toBeGreaterThan(0);
       expect(FRONTIER_FACILITY_NAMES[brain].length).toBeGreaterThan(0);
       // Three a side is the Frontier's shape, and what makes a house
-      // rule bite rather than merely annoy. A house that rents names
-      // nobody: its keeper draws out of the crate like the challenger
+      // rule bite rather than merely annoy. Two houses name nobody:
+      // the Factory draws out of the crate like the challenger, and
+      // the Dome waits to be shown a party before it answers one
       const named = FRONTIER_BRAIN_PARTIES[brain];
+      const rules = FRONTIER_BRAIN_RULES[brain];
+      const drawn = rules === FrontierRule.Rented || rules === FrontierRule.Countered;
 
-      expect(named).toHaveLength(
-        FRONTIER_BRAIN_RULES[brain] === FrontierRule.Rented ? 0 : FRONTIER_TEAM_SIZE,
-      );
+      expect(named).toHaveLength(drawn ? 0 : FRONTIER_TEAM_SIZE);
       for (const species of named) {
         expect(getSpeciesData(species).name.length).toBeGreaterThan(0);
       }
@@ -5108,6 +5110,41 @@ describe('type experts', () => {
     expect(FRONTIER_BRAIN_RULES[FrontierBrain.Lucy]).toBe(FrontierRule.Curtained);
     expect(FRONTIER_BRAIN_RULES[FrontierBrain.Noland]).toBe(FrontierRule.Rented);
     expect(FRONTIER_BRAIN_RULES[FrontierBrain.Spenser]).toBe(FrontierRule.Natured);
+    expect(FRONTIER_BRAIN_RULES[FrontierBrain.Tucker]).toBe(FrontierRule.Countered);
+  });
+
+  it('answers a party the Dome is shown with three drawn against it', () => {
+    const stop = 'stop:dome:1';
+    const brought = [Species.Charizard, Species.Blastoise, Species.Venusaur];
+    const answer = counterParty(stop, brought);
+
+    // One apiece, nobody twice, and the same three however many times
+    // the challenge is looked at
+    expect(answer).toHaveLength(brought.length);
+    expect(new Set(answer.map(([species]) => species)).size).toBe(brought.length);
+    expect(counterParty(stop, brought)).toEqual(answer);
+    expect(counterParty('stop:dome:2', brought)).not.toEqual(answer);
+
+    // And each of them is an answer: something it carries hits what it
+    // was drawn against for more than neutral
+    const crate = new Set(getRentalPool());
+
+    answer.forEach(([species], at) => {
+      expect(crate.has(species), getSpeciesData(species).name).toBe(true);
+
+      const theirs = getSpeciesData(brought[at]).types;
+      const best = Math.max(
+        ...getSpeciesData(species).types.map((type) =>
+          theirs.reduce((factor, against) => {
+            const effect = TYPE_EFFECTIVENESS[type][against];
+
+            return effect == null ? factor : factor * TYPE_EFFECTIVENESS_FACTOR[effect];
+          }, 1),
+        ),
+      );
+
+      expect(best, getSpeciesData(species).name).toBeGreaterThan(1);
+    });
   });
 
   it('draws one of the Pike’s curtains for any roll there is', () => {
@@ -5181,7 +5218,11 @@ describe('type experts', () => {
     );
     // Everybody else's second hand is a different fight
     for (const brain of FRONTIER_BRAINS) {
-      if (brain === FrontierBrain.Brandon || brain === FrontierBrain.Noland) {
+      if (
+        brain === FrontierBrain.Brandon ||
+        brain === FrontierBrain.Noland ||
+        brain === FrontierBrain.Tucker
+      ) {
         continue;
       }
       expect(FRONTIER_BRAIN_GOLD_PARTIES[brain], FRONTIER_BRAIN_NAMES[brain]).not.toEqual(

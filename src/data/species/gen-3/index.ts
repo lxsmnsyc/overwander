@@ -1,5 +1,10 @@
 import registerLotadSpecies from './lotad';
 import registerAnorithSpecies from './anorith';
+import registerBarboachSpecies from './barboach';
+import registerCarvanhaSpecies from './carvanha';
+import registerCorphishSpecies from './corphish';
+import registerFeebasSpecies from './feebas';
+import registerWailmerSpecies from './wailmer';
 import registerBagonSpecies from './bagon';
 import registerBeldumSpecies from './beldum';
 import registerCastformSpecies from './castform';
@@ -82,4 +87,9 @@ export default function registerGen3Species(): void {
   registerAnorithSpecies();
   registerSphealSpecies();
   registerClamperlSpecies();
+  registerCarvanhaSpecies();
+  registerWailmerSpecies();
+  registerBarboachSpecies();
+  registerCorphishSpecies();
+  registerFeebasSpecies();
 }

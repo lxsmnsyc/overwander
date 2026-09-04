@@ -23,11 +23,12 @@ import { registerItem } from './__create';
  * the same reason the latent stones do not: a price is what the
  * market charges, and the market does not stock them.
  *
- * The **Deep Sea Tooth** and the **Deep Sea Scale** are the exception
- * now that Clamperl is registered. A shell opens into one of two
- * pokemon and the item is which, so both are priced and listed the
- * way the Linking Cord is: the branch is a choice a player makes,
- * not a thing they wait for.
+ * Three are the exception, because the lines that ask for them are
+ * registered: the **Deep Sea Tooth** and the **Deep Sea Scale**, which
+ * are which of two a Clamperl opens into, and the **Prism Scale** a
+ * Feebas is turned by. All three are priced and listed the way the
+ * Linking Cord is, since what they gate is a choice a player makes
+ * rather than a generation they wait for.
  *
  * One item of the family is deliberately absent: **Metal Coat** is
  * already registered as the Steel type booster it also is, so the
@@ -62,7 +63,6 @@ const TRADE_ITEMS: [item: Items, name: string, icon: string, description: string
   [Items.Electirizer, 'Electirizer', 'electirizer', EVOLVES],
   [Items.Magmarizer, 'Magmarizer', 'magmarizer', EVOLVES],
   [Items.ReaperCloth, 'Reaper Cloth', 'reaper-cloth', EVOLVES],
-  [Items.PrismScale, 'Prism Scale', 'prism-scale', EVOLVES],
   [Items.Sachet, 'Sachet', 'sachet', EVOLVES],
   [Items.WhippedDream, 'Whipped Dream', 'whipped-dream', EVOLVES],
 ];
@@ -79,11 +79,11 @@ const TRADE_ITEMS: [item: Items, name: string, icon: string, description: string
 const HELD_TRADE_ITEMS = new Set<Items>([Items.KingsRock]);
 
 /**
- * The two Clamperl asks for. They are trade items like the rest, and
- * the only ones a player can spend today, so they are stocked and
- * priced where the others are not
+ * The trade items a registered line can spend today. They are trade
+ * items like the rest, so they are stocked and priced where the
+ * others are not
  */
-const CLAMPERL_ITEMS: [item: Items, name: string, icon: string, description: string][] = [
+const SPENDABLE_TRADE_ITEMS: [item: Items, name: string, icon: string, description: string][] = [
   [
     Items.DeepSeaTooth,
     'Deep Sea Tooth',
@@ -96,6 +96,7 @@ const CLAMPERL_ITEMS: [item: Items, name: string, icon: string, description: str
     'deep-sea-scale',
     'Opens a Clamperl into the one with the scales.',
   ],
+  [Items.PrismScale, 'Prism Scale', 'prism-scale', 'Turns a Feebas into what it grows up as.'],
 ];
 
 /**
@@ -147,7 +148,7 @@ export default function registerTradeItems(): void {
     });
   }
 
-  for (const [item, name, icon, description] of CLAMPERL_ITEMS) {
+  for (const [item, name, icon, description] of SPENDABLE_TRADE_ITEMS) {
     registerItem(item, {
       name,
       description,

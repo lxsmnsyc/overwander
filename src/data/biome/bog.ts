@@ -9,6 +9,8 @@ export default function registerBogSpawns(): void {
   registerSpawnPool(Biome.Bog, {
     [TimeOfDay.Morning]: {
       base: [
+        { species: Species.Barboach, weight: 25 },
+        { species: Species.Feebas, weight: 10 },
         { species: Species.Poliwag, weight: 20 },
         { species: Species.Bellsprout, weight: 20 },
         { species: Species.Venonat, weight: 20 },
@@ -26,6 +28,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Lombre, weight: 10 },
       ],
       rare: [
+        { species: Species.Whiscash, weight: 8 },
         { species: Species.Poliwrath, weight: 5 },
         { species: Species.Victreebel, weight: 5 },
         { species: Species.Venomoth, weight: 10 },
@@ -40,6 +43,8 @@ export default function registerBogSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.Barboach, weight: 25 },
+        { species: Species.Feebas, weight: 10 },
         { species: Species.Poliwag, weight: 20 },
         { species: Species.Bellsprout, weight: 20 },
         { species: Species.Venonat, weight: 20 },
@@ -57,6 +62,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Lombre, weight: 10 },
       ],
       rare: [
+        { species: Species.Whiscash, weight: 8 },
         { species: Species.Poliwrath, weight: 5 },
         { species: Species.Victreebel, weight: 5 },
         { species: Species.Venomoth, weight: 10 },
@@ -71,6 +77,8 @@ export default function registerBogSpawns(): void {
     },
     [TimeOfDay.Evening]: {
       base: [
+        { species: Species.Barboach, weight: 25 },
+        { species: Species.Feebas, weight: 10 },
         { species: Species.Poliwag, weight: 20 },
         { species: Species.Venonat, weight: 20 },
         { species: Species.Gastly, weight: 20 },
@@ -83,6 +91,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Haunter, weight: 5 },
       ],
       rare: [
+        { species: Species.Whiscash, weight: 8 },
         { species: Species.Venomoth, weight: 10 },
         { species: Species.Gengar, weight: 5 },
         { species: Species.Muk, weight: 10 },
@@ -96,6 +105,8 @@ export default function registerBogSpawns(): void {
     },
     [TimeOfDay.Night]: {
       base: [
+        { species: Species.Barboach, weight: 25 },
+        { species: Species.Feebas, weight: 10 },
         { species: Species.Poliwag, weight: 20 },
         { species: Species.Oddish, weight: 20 },
         { species: Species.Gastly, weight: 20 },
@@ -110,6 +121,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Haunter, weight: 5 },
       ],
       rare: [
+        { species: Species.Whiscash, weight: 8 },
         { species: Species.Poliwrath, weight: 5 },
         { species: Species.Vileplume, weight: 5 },
         { species: Species.Gengar, weight: 5 },

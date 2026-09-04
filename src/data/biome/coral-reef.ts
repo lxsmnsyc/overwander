@@ -9,12 +9,14 @@ export default function registerCoralReefSpawns(): void {
   registerSpawnPool(Biome.CoralReef, {
     [TimeOfDay.Morning]: {
       base: [
+        { species: Species.Carvanha, weight: 20 },
         { species: Species.Clamperl, weight: 20 },
         { species: Species.Horsea, weight: 20 },
         { species: Species.Remoraid, weight: 20 },
       ],
       uncommon: [{ species: Species.Seadra, weight: 10 }],
       rare: [
+        { species: Species.Sharpedo, weight: 6 },
         { species: Species.Mantine, weight: 5 },
         { species: Species.Kingdra, weight: 5 },
         { species: Species.Corsola, weight: 20 },
@@ -25,12 +27,14 @@ export default function registerCoralReefSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.Carvanha, weight: 20 },
         { species: Species.Clamperl, weight: 20 },
         { species: Species.Horsea, weight: 20 },
         { species: Species.Remoraid, weight: 20 },
       ],
       uncommon: [{ species: Species.Seadra, weight: 10 }],
       rare: [
+        { species: Species.Sharpedo, weight: 6 },
         { species: Species.Mantine, weight: 5 },
         { species: Species.Kingdra, weight: 5 },
         { species: Species.Corsola, weight: 20 },
@@ -41,6 +45,7 @@ export default function registerCoralReefSpawns(): void {
     },
     [TimeOfDay.Evening]: {
       base: [
+        { species: Species.Carvanha, weight: 20 },
         { species: Species.Clamperl, weight: 20 },
         { species: Species.Horsea, weight: 20 },
         { species: Species.Staryu, weight: 20 },
@@ -48,6 +53,7 @@ export default function registerCoralReefSpawns(): void {
       ],
       uncommon: [{ species: Species.Seadra, weight: 10 }],
       rare: [
+        { species: Species.Sharpedo, weight: 6 },
         { species: Species.Starmie, weight: 10 },
         { species: Species.Mantine, weight: 5 },
         { species: Species.Kingdra, weight: 5 },
@@ -58,6 +64,7 @@ export default function registerCoralReefSpawns(): void {
     },
     [TimeOfDay.Night]: {
       base: [
+        { species: Species.Carvanha, weight: 20 },
         { species: Species.Clamperl, weight: 20 },
         { species: Species.Horsea, weight: 20 },
         { species: Species.Staryu, weight: 20 },
@@ -65,6 +72,7 @@ export default function registerCoralReefSpawns(): void {
       ],
       uncommon: [{ species: Species.Seadra, weight: 10 }],
       rare: [
+        { species: Species.Sharpedo, weight: 6 },
         { species: Species.Starmie, weight: 10 },
         { species: Species.Mantine, weight: 5 },
         { species: Species.Kingdra, weight: 5 },

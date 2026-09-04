@@ -9,6 +9,8 @@ export default function registerOceanSpawns(): void {
   registerSpawnPool(Biome.Ocean, {
     [TimeOfDay.Morning]: {
       base: [
+        { species: Species.Carvanha, weight: 20 },
+        { species: Species.Wailmer, weight: 15 },
         { species: Species.Clamperl, weight: 20 },
         { species: Species.Tentacool, weight: 30 },
         { species: Species.Seel, weight: 20 },
@@ -24,6 +26,8 @@ export default function registerOceanSpawns(): void {
         { species: Species.Seadra, weight: 10 },
       ],
       rare: [
+        { species: Species.Sharpedo, weight: 6 },
+        { species: Species.Wailord, weight: 4 },
         { species: Species.Blastoise, weight: 2 },
         { species: Species.Tentacruel, weight: 10 },
         { species: Species.Dewgong, weight: 10 },
@@ -43,6 +47,8 @@ export default function registerOceanSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.Carvanha, weight: 20 },
+        { species: Species.Wailmer, weight: 15 },
         { species: Species.Clamperl, weight: 20 },
         { species: Species.Tentacool, weight: 30 },
         { species: Species.Seel, weight: 20 },
@@ -58,6 +64,8 @@ export default function registerOceanSpawns(): void {
         { species: Species.Seadra, weight: 10 },
       ],
       rare: [
+        { species: Species.Sharpedo, weight: 6 },
+        { species: Species.Wailord, weight: 4 },
         { species: Species.Blastoise, weight: 2 },
         { species: Species.Tentacruel, weight: 10 },
         { species: Species.Dewgong, weight: 10 },
@@ -77,6 +85,8 @@ export default function registerOceanSpawns(): void {
     },
     [TimeOfDay.Evening]: {
       base: [
+        { species: Species.Carvanha, weight: 20 },
+        { species: Species.Wailmer, weight: 15 },
         { species: Species.Clamperl, weight: 20 },
         { species: Species.Tentacool, weight: 30 },
         { species: Species.Seel, weight: 20 },
@@ -92,6 +102,8 @@ export default function registerOceanSpawns(): void {
         { species: Species.Seadra, weight: 10 },
       ],
       rare: [
+        { species: Species.Sharpedo, weight: 6 },
+        { species: Species.Wailord, weight: 4 },
         { species: Species.Tentacruel, weight: 10 },
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Cloyster, weight: 10 },
@@ -109,6 +121,8 @@ export default function registerOceanSpawns(): void {
     },
     [TimeOfDay.Night]: {
       base: [
+        { species: Species.Carvanha, weight: 20 },
+        { species: Species.Wailmer, weight: 15 },
         { species: Species.Clamperl, weight: 20 },
         { species: Species.Tentacool, weight: 30 },
         { species: Species.Seel, weight: 20 },
@@ -124,6 +138,8 @@ export default function registerOceanSpawns(): void {
         { species: Species.Seadra, weight: 10 },
       ],
       rare: [
+        { species: Species.Sharpedo, weight: 6 },
+        { species: Species.Wailord, weight: 4 },
         { species: Species.Tentacruel, weight: 10 },
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Cloyster, weight: 10 },

@@ -1449,6 +1449,40 @@ describe('evolution data', () => {
     [Stats.Speed]: 100,
   };
 
+  it('gives a Feebas two roads to the same shape', () => {
+    const roads = getSpeciesData(Species.Feebas).evolvesInto ?? [];
+
+    expect(roads.map((road) => road.species)).toEqual([Species.Milotic, Species.Milotic]);
+
+    const context = {
+      species: Species.Feebas,
+      level: 40,
+      carried: new Set<Items>(),
+      held: new Set<Items>(),
+      canEvolve: false,
+      stats: EVEN_STATS,
+      friendship: EVOLUTION_FRIENDSHIP,
+      gender: Genders.Female,
+      time: TimeOfDay.Day,
+    };
+
+    // Raised fond enough and grown to 40, with nothing in the bag
+    expect(getAvailableEvolutions(context).map((road) => road.species)).toEqual([Species.Milotic]);
+
+    // The same fish, unloved: the scale is the other road, and it is
+    // the one still open
+    const cold = { ...context, friendship: BASE_FRIENDSHIP };
+
+    expect(getAvailableEvolutions(cold)).toEqual([]);
+    expect(
+      getAvailableEvolutions({ ...cold, held: new Set([Items.PrismScale]), canEvolve: true })
+        .length,
+    ).toBe(1);
+
+    // And a fond one that has not grown up yet stays a Feebas
+    expect(getAvailableEvolutions({ ...context, level: 39 })).toEqual([]);
+  });
+
   it('offers level evolutions once the threshold is reached', () => {
     const context = {
       carried: new Set<Items>(),
@@ -3226,7 +3260,6 @@ describe('item data', () => {
       Items.Electirizer,
       Items.Magmarizer,
       Items.ReaperCloth,
-      Items.PrismScale,
       Items.Sachet,
       Items.WhippedDream,
     ];
@@ -3280,9 +3313,10 @@ describe('item data', () => {
     // registered is the id an evolution will read
     expect(getItemData(Items.MetalCoat).type).toBe(ItemTypes.Held);
 
-    // The two Clamperl asks for are the family's exception: its shell
-    // opens today, so both are stocked and priced like the cord
-    for (const item of [Items.DeepSeaTooth, Items.DeepSeaScale]) {
+    // The three whose lines are registered are the family's
+    // exception: a Clamperl opens and a Feebas turns today, so all
+    // three are stocked and priced like the cord
+    for (const item of [Items.DeepSeaTooth, Items.DeepSeaScale, Items.PrismScale]) {
       const data = getItemData(item);
 
       expect(data.type, data.name).toBe(ItemTypes.Evolution);

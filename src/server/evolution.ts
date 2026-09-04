@@ -5,8 +5,8 @@ import { getMaxHealth, getStats, rescaleHealth } from '../auth/health';
 import { getTimeOfDay } from '../data/ids/biome';
 import type { Items } from '../data/ids/items';
 import type { Genders, Species } from '../data/ids/species';
-import type { EvolutionContext } from '../data/species';
-import { getAvailableEvolutions, getConsumedItem, getSpeciesData } from '../data/species';
+import type { EvolutionContext, EvolutionData } from '../data/species';
+import { getConsumedItem, getSpeciesData, meetsEvolutionCriteria } from '../data/species';
 import { Metric } from '../auth/quest-record';
 import { isEggRecord, isGuardedRecord } from './catch-fields';
 import { recordCaughtSpecies } from './pokedex';
@@ -55,11 +55,14 @@ export default async function evolveCatch(
 
     // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
     const species = asNumber(caught.species) as Species;
-    const evolution = (getSpeciesData(species).evolvesInto ?? []).find(
+    // Every road to that species, since one shape can be reached by
+    // more than one: a Feebas turns on a Prism Scale or on being
+    // raised fond enough
+    const roads = (getSpeciesData(species).evolvesInto ?? []).filter(
       (entry) => entry.species === into,
     );
 
-    if (evolution == null) {
+    if (roads.length === 0) {
       return null;
     }
 
@@ -90,23 +93,30 @@ export default async function evolveCatch(
       // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
       gender: asNumber(caught.gender) as Genders,
     };
-    // What is spent as well as what is allowed: a handover that does
-    // not cover this evolution pays a Linking Cord for the half it
-    // would have covered
-    const consumed = getConsumedItem(evolution, context.canEvolve);
-    // Only the item this evolution actually needs is read; the rest
-    // of the bag has no bearing on the criteria
+    // The road taken is the first one open, which decides what is
+    // spent: a handover that does not cover the evolution pays a
+    // Linking Cord for the half it would have covered
+    let evolution: EvolutionData | null = null;
+    let consumed: Items | null = null;
     let stock = 0;
 
-    if (consumed != null) {
-      stock = await readStackIn(transaction, ITEM_STACKS, uid, consumed);
+    for (const road of roads) {
+      // Only the item this road actually needs is read; the rest of
+      // the bag has no bearing on the criteria
+      const wanted = getConsumedItem(road, context.canEvolve);
+      const held = wanted == null ? 0 : await readStackIn(transaction, ITEM_STACKS, uid, wanted);
 
-      if (stock > 0) {
-        context.carried = new Set([consumed]);
+      context.carried = wanted != null && held > 0 ? new Set([wanted]) : new Set<Items>();
+
+      if (meetsEvolutionCriteria(road, context)) {
+        evolution = road;
+        consumed = wanted;
+        stock = held;
+        break;
       }
     }
 
-    if (!getAvailableEvolutions(context).some((entry) => entry.species === into)) {
+    if (evolution == null) {
       return null;
     }
 

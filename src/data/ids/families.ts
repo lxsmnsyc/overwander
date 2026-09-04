@@ -160,10 +160,12 @@ const enum Families {
   Minun = 155,
   Volbeat = 156,
   Illumise = 157,
-  // 158 through 162 are Roselia's, Gulpin's, Carvanha's, Wailmer's
-  // and Numel's: every one of their dex numbers falls before this,
-  // and an id is stored in a player's candy stacks, so a later
+  // 158 is Roselia's and 159 Gulpin's: both dex numbers fall before
+  // this, and an id is stored in a player's candy stacks, so a later
   // family cannot be renumbered into place
+  Carvanha = 160,
+  Wailmer = 161,
+  // 162 is Numel's
   Torkoal = 163,
   // 164 is Spoink's
   Spinda = 165,
@@ -173,10 +175,12 @@ const enum Families {
   Seviper = 170,
   Lunatone = 171,
   Solrock = 172,
-  // 173 through 175 are Barboach's, Corphish's and Baltoy's
+  Barboach = 173,
+  Corphish = 174,
+  // 175 is Baltoy's
   Lileep = 176,
   Anorith = 177,
-  // 178 is Feebas'
+  Feebas = 178,
   Castform = 179,
   Kecleon = 180,
   // 181 is Shuppet's and 182 Duskull's

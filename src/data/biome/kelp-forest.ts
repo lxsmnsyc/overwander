@@ -18,6 +18,7 @@ export default function registerKelpForestSpawns(): void {
       ],
       uncommon: [{ species: Species.Seadra, weight: 10 }],
       rare: [
+        { species: Species.Milotic, weight: 3 },
         { species: Species.Tentacruel, weight: 10 },
         { species: Species.Starmie, weight: 10 },
         { species: Species.Tangela, weight: 5 },
@@ -38,6 +39,7 @@ export default function registerKelpForestSpawns(): void {
       ],
       uncommon: [{ species: Species.Seadra, weight: 10 }],
       rare: [
+        { species: Species.Milotic, weight: 3 },
         { species: Species.Tentacruel, weight: 10 },
         { species: Species.Starmie, weight: 10 },
         { species: Species.Tangela, weight: 5 },
@@ -58,6 +60,7 @@ export default function registerKelpForestSpawns(): void {
       ],
       uncommon: [{ species: Species.Seadra, weight: 10 }],
       rare: [
+        { species: Species.Milotic, weight: 3 },
         { species: Species.Tentacruel, weight: 10 },
         { species: Species.Starmie, weight: 10 },
         { species: Species.Mantine, weight: 5 },
@@ -77,6 +80,7 @@ export default function registerKelpForestSpawns(): void {
       ],
       uncommon: [{ species: Species.Seadra, weight: 10 }],
       rare: [
+        { species: Species.Milotic, weight: 3 },
         { species: Species.Tentacruel, weight: 10 },
         { species: Species.Starmie, weight: 10 },
         { species: Species.Mantine, weight: 5 },

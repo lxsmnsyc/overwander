@@ -19,6 +19,7 @@ export default function registerDeepOceanSpawns(): void {
   registerSpawnPool(Biome.DeepOcean, {
     [TimeOfDay.Morning]: {
       base: [
+        { species: Species.Wailmer, weight: 15 },
         { species: Species.Tentacool, weight: 20 },
         { species: Species.Horsea, weight: 20 },
         { species: Species.Magikarp, weight: 20 },
@@ -27,6 +28,7 @@ export default function registerDeepOceanSpawns(): void {
       ],
       uncommon: [{ species: Species.Dragonair, weight: 2 }],
       rare: [
+        { species: Species.Wailord, weight: 4 },
         { species: Species.Huntail, weight: 5 },
         { species: Species.Gorebyss, weight: 5 },
         { species: Species.Gyarados, weight: 10 },
@@ -39,6 +41,7 @@ export default function registerDeepOceanSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.Wailmer, weight: 15 },
         { species: Species.Tentacool, weight: 20 },
         { species: Species.Horsea, weight: 20 },
         { species: Species.Magikarp, weight: 20 },
@@ -47,6 +50,7 @@ export default function registerDeepOceanSpawns(): void {
       ],
       uncommon: [{ species: Species.Dragonair, weight: 2 }],
       rare: [
+        { species: Species.Wailord, weight: 4 },
         { species: Species.Huntail, weight: 5 },
         { species: Species.Gorebyss, weight: 5 },
         { species: Species.Gyarados, weight: 10 },
@@ -59,6 +63,7 @@ export default function registerDeepOceanSpawns(): void {
     },
     [TimeOfDay.Evening]: {
       base: [
+        { species: Species.Wailmer, weight: 15 },
         { species: Species.Tentacool, weight: 20 },
         { species: Species.Horsea, weight: 20 },
         { species: Species.Magikarp, weight: 20 },
@@ -67,6 +72,7 @@ export default function registerDeepOceanSpawns(): void {
       ],
       uncommon: [{ species: Species.Dragonair, weight: 2 }],
       rare: [
+        { species: Species.Wailord, weight: 4 },
         { species: Species.Huntail, weight: 5 },
         { species: Species.Gorebyss, weight: 5 },
         { species: Species.Gyarados, weight: 10 },
@@ -78,6 +84,7 @@ export default function registerDeepOceanSpawns(): void {
     },
     [TimeOfDay.Night]: {
       base: [
+        { species: Species.Wailmer, weight: 15 },
         { species: Species.Tentacool, weight: 20 },
         { species: Species.Horsea, weight: 20 },
         { species: Species.Magikarp, weight: 20 },
@@ -86,6 +93,7 @@ export default function registerDeepOceanSpawns(): void {
       ],
       uncommon: [{ species: Species.Dragonair, weight: 2 }],
       rare: [
+        { species: Species.Wailord, weight: 4 },
         { species: Species.Huntail, weight: 5 },
         { species: Species.Gorebyss, weight: 5 },
         { species: Species.Gyarados, weight: 10 },

@@ -65,7 +65,12 @@ export default function setupSeedingStatus(battle: Battle): void {
       if (event.cause.type !== EffectType.None) {
         const seeder = event.cause.unit;
 
-        // Deal damage to the target first
+        // Deal damage to the target first, and drain what it
+        // actually cost them: a seed on something with little left,
+        // or on something that shrugs most of it off, feeds the
+        // seeder what it took rather than what it aimed for
+        const standing = event.source.health;
+
         seeder.damage(
           event.cause,
           event.source,
@@ -73,7 +78,8 @@ export default function setupSeedingStatus(battle: Battle): void {
           DamageFlags.Indirect | DamageFlags.HealthScaled,
         );
 
-        const drained = seeder.checkDrain(event.source, amount);
+        const taken = Math.max(0, standing - event.source.health);
+        const drained = seeder.checkDrain(event.source, taken);
 
         if (drained >= 0) {
           // Heal the source

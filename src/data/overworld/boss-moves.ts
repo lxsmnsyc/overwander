@@ -25,11 +25,11 @@ import { getSpeciesData } from '../species';
  * **Curse** each cost half the pool, and the pool is the fight's
  * clock, so both hand the party half the raid.
  *
- * **Recover**, **Soft-Boiled**, **Milk Drink**, **Moonlight**,
- * **Morning Sun** and **Synthesis** are heals a boss cannot receive
- * at all, so each is a slot it wastes. **Rest** is worse than
- * wasted: the sleep is self-inflicted and lands, while the heal it
- * sleeps for does not.
+ * **Rest** is the one heal still barred. A boss may put back an
+ * eighth of its pool, which is what the other heals are worth to it
+ * now, but Rest buys that eighth with a sleep the boss inflicted on
+ * itself, so it lands in full: the party gets the fight handed to it
+ * while the boss lies there.
  *
  * It is data rather than engine: the list is filtered out of the
  * boss' learnset as the raid is staged, which happens where a raid is
@@ -46,12 +46,6 @@ const BANNED_BOSS_MOVES = new Set<Moves>([
   Moves.DestinyBond,
   Moves.Bide,
   Moves.BellyDrum,
-  Moves.Recover,
-  Moves.SoftBoiled,
-  Moves.MilkDrink,
-  Moves.Moonlight,
-  Moves.MorningSun,
-  Moves.Synthesis,
   Moves.Rest,
   // TODO: temporary. A boss is already immune to Perishing, so the
   // song costs it a move slot and does nothing. Drop this line when

@@ -29,6 +29,21 @@ export const BOSS_HEALTH_SCALE = 20;
 export const BOSS_STAT_SCALE = 2;
 
 /**
+ * The most one indirect hit takes off a boss. A burn, a seed or a
+ * sandstorm counts for something now, and counts the same whatever
+ * pool it is chipping at: a share of a raid pool would be worth more
+ * than the hits the party is landing
+ */
+export const BOSS_INDIRECT_DAMAGE_CAP = 100;
+
+/**
+ * The most a boss puts back at once, as a share of its pool. The pool
+ * is the fight's clock, so a boss may wind it back a little and never
+ * reset it
+ */
+export const BOSS_HEAL_FRACTION = 1 / 8;
+
+/**
  * What a shadow is: sharper and more brittle. The two attacking stats
  * rise and the two defending ones fall, so it hits a quarter harder
  * and takes a third more, and the trade shows on its stat sheet
@@ -73,6 +88,11 @@ const BOSS_BLOCKED_STATUSES = new Set<Statuses>([
  */
 const BOSS_REFUSED_STATUSES = new Set<Statuses>([Statuses.Perishing]);
 
+/** The most this boss may put back in one go */
+function healingRoom(unit: Unit): number {
+  return unit.checkStat(Stats.HP, 0) * BOSS_HEAL_FRACTION;
+}
+
 function isSelfInflicted(cause: EffectCause, source: unknown): boolean {
   return 'unit' in cause && cause.unit === source;
 }
@@ -87,12 +107,13 @@ function refusesStatus(status: Statuses, cause: EffectCause, source: unknown): b
 const setupAbilities = [
   /**
    * Boss: a raid-style stat wall — twentyfold HP, doubled everything
-   * else, immune to negative stage
-   * applications, health-scaling damage (OHKO moves, Super Fang,
-   * residual max-HP fractions), forced switch-outs, trapping, and
-   * disruption statuses (unless self-inflicted), and a Perish Song
-   * whoever sang it. Its single-target enemy moves strike every enemy
-   * instead.
+   * else, immune to negative stage applications, to damage measured
+   * as a share of its pool, to forced switch-outs, trapping and
+   * disruption statuses (unless self-inflicted), and to a Perish Song
+   * whoever sang it. Indirect damage lands for at most
+   * `BOSS_INDIRECT_DAMAGE_CAP`, and it heals at most
+   * `BOSS_HEAL_FRACTION` of its pool at a time. Its single-target
+   * enemy moves strike every enemy instead.
    */
   createAbility(Abilities.Boss, (battle) => {
     // Units that already went through their first-entry dormancy
@@ -170,20 +191,18 @@ const setupAbilities = [
           event.source.triggerAbility(Abilities.Boss);
         }
       }),
-      // Nothing but a hit can take health off a boss: health-scaling
-      // damage never lands, direct or indirect, and neither does
-      // anything indirect — poison, a burn, a seed, the weather, a
-      // crash off a missed Jump Kick.
+      // A share of a raid pool is worth more than anything the party
+      // is landing, so nothing may take one: an OHKO move and a Super
+      // Fang are refused outright.
       //
-      // Two things still get through, deliberately. A **cost** is
-      // paid whatever the payer is: a boss that explodes still dies
-      // by it, and one that puts up a Substitute still pays for it.
-      // And a negative amount is a heal — the drains ride this same
-      // event — so only damage is refused
+      // A **cost** is exempt, and always was: a boss that explodes
+      // still dies by it, and one that puts up a Substitute still
+      // pays for it. So is a negative amount, which is a heal riding
+      // the damage event the way the drains do
       battle.on(BattleEvents.CheckUnitCanDamage, EventPriority.Post, (event) => {
         const refused =
-          event.flags & (DamageFlags.HealthScaled | DamageFlags.Indirect) &&
-          !(event.flags & DamageFlags.Cost);
+          event.flags & DamageFlags.HealthScaled &&
+          !(event.flags & (DamageFlags.Indirect | DamageFlags.Cost));
 
         if (
           event.success &&
@@ -197,16 +216,31 @@ const setupAbilities = [
           event.target.triggerAbility(Abilities.Boss);
         }
       }),
-      // Nothing puts health back on a boss. A raid is a race against a
-      // pool that only goes down, and a boss that drains, rests or
-      // eats a berry is a fight the party cannot finish — the pool is
-      // the timer, so healing it is healing the clock.
-      //
-      // Answered rather than disabled: whatever sent the heal asked
-      // first, so a drain that heals nothing still took what it took
-      battle.on(BattleEvents.CheckUnitCanHeal, EventPriority.Post, (event) => {
-        if (event.success && event.value > 0 && event.target.hasAbility(Abilities.Boss)) {
-          event.success = false;
+      // What is indirect lands, but only for what a hit is worth: a
+      // burn, a seed, the weather and a crash off a missed Jump Kick
+      // all count, and none of them counts as a share of the pool. A
+      // cost is what the boss chose to spend, so it is paid in full,
+      // and a negative amount is a heal, held to the same fraction as
+      // any other
+      battle.on(BattleEvents.UnitDamage, AttackPriority.Pre, (event) => {
+        if (event.flags & DamageFlags.Cost || !event.target.hasAbility(Abilities.Boss)) {
+          return;
+        }
+        if (event.value < 0) {
+          event.value = Math.max(event.value, -healingRoom(event.target));
+          return;
+        }
+        if (event.flags & DamageFlags.Indirect) {
+          event.value = Math.min(event.value, BOSS_INDIRECT_DAMAGE_CAP);
+        }
+      }),
+      // A boss may put health back, an eighth of its pool at a time.
+      // The pool is the fight's clock, so winding it back is allowed
+      // and resetting it is not: a party that stops hitting loses
+      // ground, and one that keeps hitting still gets there
+      battle.on(BattleEvents.UnitHeal, EventPriority.Pre, (event) => {
+        if (event.value > 0 && event.target.hasAbility(Abilities.Boss)) {
+          event.value = Math.min(event.value, healingRoom(event.target));
 
           // For visual cues
           event.target.triggerAbility(Abilities.Boss);

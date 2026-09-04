@@ -859,18 +859,28 @@ describe('world', () => {
       Moves.DestinyBond,
       Moves.Bide,
       Moves.BellyDrum,
-      Moves.Recover,
-      Moves.SoftBoiled,
-      Moves.MilkDrink,
-      Moves.Moonlight,
-      Moves.MorningSun,
-      Moves.Synthesis,
+      // The heal it sleeps for is capped like any other, while the
+      // sleep is self-inflicted and lands in full
       Moves.Rest,
       // Temporary: a boss is immune to Perishing, so the song would
       // only be a slot it wastes
       Moves.PerishSong,
     ]) {
       expect(BANNED_BOSS_MOVES.has(move)).toBe(true);
+    }
+
+    // The heals a boss may keep: each puts back an eighth of the pool
+    // rather than a half, which is worth a slot without stalling the
+    // raid
+    for (const move of [
+      Moves.Recover,
+      Moves.SoftBoiled,
+      Moves.MilkDrink,
+      Moves.Moonlight,
+      Moves.MorningSun,
+      Moves.Synthesis,
+    ]) {
+      expect(BANNED_BOSS_MOVES.has(move)).toBe(false);
     }
 
     // Curse is barred from a Ghost, which pays half a raid pool to

@@ -236,11 +236,17 @@ itself, so a boss that uses Rest really does sleep. Infatuation is excluded twic
 over: a large lobby always contains somebody the boss would fall for, and a
 landed Attract would turn the raid into a queue.
 
-**Only direct hits take health off a boss.** Poison, burns, seeds, weather and
-crash damage from a missed Jump Kick do nothing to it, and neither does damage
-based on a share of its health. Two things still work: a cost the boss pays
-itself, so one that uses Explosion still dies by it, and healing, so draining
-moves work normally.
+**Indirect damage counts, up to 100 a time.** Poison, burns, seeds, weather and
+crash damage from a missed Jump Kick all chip at a boss, and none of them chips
+for more than 100 however large the pool is. Damage measured as a share of its
+health, such as Super Fang, is refused outright. A cost the boss pays itself is
+paid in full, so one that uses Explosion still dies by it.
+
+**A boss heals an eighth of its pool at a time.** Recover, Synthesis and the rest
+are moves it may know again, and each puts back the same eighth however much it
+promises, so a boss winds the clock back without resetting it. Rest stays barred:
+the sleep it buys is self-inflicted, so it lands in full while the healing does
+not.
 
 Four moves are removed from a boss before it is staged. **Transform** is banned
 because a boss that copies a player stops being a boss, throwing away the health

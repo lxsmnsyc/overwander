@@ -733,6 +733,27 @@ describe('weighing a move', () => {
     }
   });
 
+  it('will not sing a Perish Song into a raid', () => {
+    const target: MoveTarget = { type: MoveTargetType.None };
+
+    const open = createAIBattle();
+    const singer = createUnit(open.battle, open.teamA);
+    createUnit(open.battle, open.teamB);
+
+    expect(usableMove(open.battle, singer, Moves.PerishSong, target)).toBe(true);
+
+    // A boss refuses the song, so in a raid the only side still
+    // counting down is the party
+    const raid = createAIBattle(BattleModes.Raid);
+    const partyMember = createUnit(raid.battle, raid.teamA);
+    const boss = createUnit(raid.battle, raid.teamB);
+
+    boss.addAbility(Abilities.Boss);
+
+    expect(usableMove(raid.battle, partyMember, Moves.PerishSong, target)).toBe(false);
+    expect(usableMove(raid.battle, boss, Moves.PerishSong, target)).toBe(false);
+  });
+
   it('will not call up a sky that answers to nobody', () => {
     const { battle, teamA, teamB } = createAIBattle();
     pinRandom(battle, 0.99);

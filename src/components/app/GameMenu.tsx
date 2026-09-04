@@ -32,6 +32,7 @@ import {
   GiftIcon,
   MapIcon,
   MenuIcon,
+  NewsIcon,
   SearchIcon,
   SettingsIcon,
   SparklesIcon,
@@ -100,6 +101,9 @@ const ENTRIES: MenuEntry[] = [
   { label: 'Battle', dialog: GameDialog.Battles, icon: SwordsIcon },
   { label: 'Raids', dialog: GameDialog.Raids, icon: FireIcon },
   { label: 'Settings', dialog: GameDialog.Settings, icon: SettingsIcon },
+  // Added at the end rather than beside Notices: a key that moves is
+  // a key a player has to read again
+  { label: 'News', dialog: GameDialog.News, icon: NewsIcon },
 ];
 
 const TILE =

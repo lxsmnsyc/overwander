@@ -44,6 +44,7 @@
     "server-only": "^0.0.1",
     "sharp": "^0.35.3",
     "solid-js": "^1.9.14",
+    "solid-marked": "^0.8.0",
     "terracotta": "^1.2.4",
     "vite": "^8.0.0",
     "xml-js": "^1.6.11"
@@ -60,6 +61,7 @@
     "tailwindcss": "^4.3.3",
     "typescript": "^7.0.2",
     "vite": "^8.2.1",
+    "vite-plugin-solid-marked": "^0.8.0",
     "vitest": "^4.1.10"
   }
 }

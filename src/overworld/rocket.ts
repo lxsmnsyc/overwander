@@ -1,23 +1,41 @@
+import { MAX_LEVEL } from '../data/constants/levels';
+import { SHADOW_FRIENDSHIP } from '../data/constants/friendship';
 import AleaRNG from '../core/alea';
 import type { CatchSnapshot } from '../auth/catch-snapshot';
 import { getMaxHealth } from '../auth/health';
-import type { TeamSnapshotRecord } from '../auth/teams';
-import type Battle from '../battle/core';
-import { BattleModes } from '../battle/core';
-import createBattle from '../battle/setup';
-import { Stats } from '../data/constants/stats';
-import { PVP_BATTLE_LIMITS } from '../data/constants/battle-limits';
-import { defaultSlots } from '../data/constants/slots';
+import { MAX_EFFORT_PER_STAT, MAX_IV, STAT_ORDER, Stats, setIV } from '../data/constants/stats';
+import { Slots, defaultSlots, withSlots } from '../data/constants/slots';
+import { getExpertHeldItems } from '../data/items/expert-loadout';
 import Abilities from '../data/ids/abilities';
 import Landmark from '../data/overworld/landmark';
-import { CHAMPION_NAME, ELITE_MEMBER_NAMES, GYM_LEADER_NAMES } from '../data/overworld/experts';
-import Npc, { GIOVANNI_NAME, NPC_NAMES, npcSheet } from '../data/overworld/npc';
-import { TRAINER_NAMES } from '../data/overworld/trainers';
-import Weather, { toBattleWeather } from '../data/overworld/weather';
+import {
+  CHAMPION_NAMES,
+  ELITE_MEMBER_NAMES,
+  GYM_LEADER_NAMES,
+  LEGEND_NAMES,
+} from '../data/overworld/experts';
+import Npc, {
+  GIOVANNI_NAME,
+  NPC_NAMES,
+  ROCKET_EXECUTIVE_NAMES,
+  npcSheet,
+} from '../data/overworld/npc';
+import {
+  TRAINER_NAMES,
+  TYPE_TRAINER_LEVELS,
+  type TrainerClass,
+  isAceTrainer,
+} from '../data/overworld/trainers';
+import type { Items } from '../data/ids/items';
+import type { Species } from '../data/ids/species';
+import { getSpeciesData } from '../data/species';
+import type Biome from '../data/ids/biome';
+import { type ItemBandOdds, pickItem } from '../data/overworld/item-pool';
+import { getItemPool } from '../data/overworld/biome-items';
 import type ChunkSnapshot from './chunk-snapshot';
-import { GIOVANNI_PARTY_SIZE, type Spawn } from './chunk-snapshot';
-import deriveEncounter, { EncounterType, deriveSize } from './encounter';
-import { BOSS_ALLIANCE, PLAYER_ALLIANCE, type RaidBattle, fieldTeams } from './raid';
+import { RocketRank, type Spawn } from './chunk-snapshot';
+import deriveEncounter, { EncounterType, deriveSize, deriveTrainedAbilities } from './encounter';
+import { BOSS_ALLIANCE, PLAYER_ALLIANCE } from './raid';
 
 /**
  * The Team Rocket stop: a grunt who bars a cell for the window and
@@ -37,22 +55,6 @@ import { BOSS_ALLIANCE, PLAYER_ALLIANCE, type RaidBattle, fieldTeams } from './r
  */
 export type LevelBand = [minimum: number, maximum: number];
 
-export const ROCKET_PARTY_LEVELS: LevelBand = [45, 55];
-
-/**
- * The boss' six stand well above his grunts: Giovanni is the hardest
- * fight a walk can find that is not a league seat
- */
-export const GIOVANNI_PARTY_LEVELS: LevelBand = [70, 80];
-
-/**
- * The band a stop's party fights in, told apart by its size: only the
- * boss fields a full six
- */
-export function rocketPartyLevels(size: number): LevelBand {
-  return size >= GIOVANNI_PARTY_SIZE ? GIOVANNI_PARTY_LEVELS : ROCKET_PARTY_LEVELS;
-}
-
 /**
  * The ladder the league fights on: a gym leader takes on challengers
  * who have beaten the road, the Elite Four stand above them, and the
@@ -63,12 +65,45 @@ export const ELITE_PARTY_LEVELS: LevelBand = [65, 85];
 export const CHAMPION_PARTY_LEVELS: LevelBand = [85, 100];
 
 /**
- * The band any stop's party fights in, keyed by the landmark it
- * stands on. The league all field 6, so size alone cannot tell a gym
- * from the Champion; a duelling trainer's band is their class', which
- * the caller passes in
+ * And the one above the league, which is not a band at all: a legend
+ * fields six of the ceiling, so the only question their fight asks is
+ * what the challenger brought
  */
-export function stopPartyLevels(landmark: Landmark, size: number, trainer?: LevelBand): LevelBand {
+export const LEGEND_PARTY_LEVELS: LevelBand = [MAX_LEVEL, MAX_LEVEL];
+
+/**
+ * And the ladder Team Rocket fights on, which is read off the other
+ * two rather than picked apart from them. A grunt is a thief with a
+ * roadside party and fights at a roadside trainer's level; an
+ * executive stands where the Elite Four do; and the boss stands where
+ * a Champion does, which is what one window in sixty-four should be
+ * worth walking into
+ */
+export const ROCKET_PARTY_LEVELS: LevelBand = TYPE_TRAINER_LEVELS;
+export const EXECUTIVE_PARTY_LEVELS: LevelBand = ELITE_PARTY_LEVELS;
+export const GIOVANNI_PARTY_LEVELS: LevelBand = CHAMPION_PARTY_LEVELS;
+
+/** The band a stop's party fights in, by whose party it is */
+export function rocketPartyLevels(rank: RocketRank): LevelBand {
+  if (rank === RocketRank.Giovanni) {
+    return GIOVANNI_PARTY_LEVELS;
+  }
+  return rank === RocketRank.Executive ? EXECUTIVE_PARTY_LEVELS : ROCKET_PARTY_LEVELS;
+}
+
+/**
+ * The band any stop's party fights in, keyed by the landmark it
+ * stands on. Everybody fields 6 now, so nothing about the party says
+ * what the fight is: the league is told by its landmark, Team Rocket
+ * by the rank standing there, and a duelling trainer's band is their
+ * class', which the caller passes in
+ */
+export function stopPartyLevels(
+  landmark: Landmark,
+  rank: RocketRank,
+  trainer?: LevelBand,
+  legend = false,
+): LevelBand {
   if (landmark === Landmark.GymLeader) {
     return GYM_PARTY_LEVELS;
   }
@@ -76,12 +111,12 @@ export function stopPartyLevels(landmark: Landmark, size: number, trainer?: Leve
     return ELITE_PARTY_LEVELS;
   }
   if (landmark === Landmark.Champion) {
-    return CHAMPION_PARTY_LEVELS;
+    return legend ? LEGEND_PARTY_LEVELS : CHAMPION_PARTY_LEVELS;
   }
   if (landmark === Landmark.Trainer && trainer != null) {
     return trainer;
   }
-  return rocketPartyLevels(size);
+  return rocketPartyLevels(rank);
 }
 
 /**
@@ -115,7 +150,14 @@ export function stopChallenger(
     name == null ? null : { name, sprite };
 
   if (landmark === Landmark.TeamRocket) {
-    return named(snapshot.isRocketBoss(cell) ? GIOVANNI_NAME : NPC_NAMES[Npc.RocketGrunt]);
+    const executive = snapshot.getRocketExecutive(cell);
+
+    if (snapshot.isRocketBoss(cell)) {
+      return named(GIOVANNI_NAME);
+    }
+    return named(
+      executive == null ? NPC_NAMES[Npc.RocketGrunt] : ROCKET_EXECUTIVE_NAMES[executive],
+    );
   }
   if (landmark === Landmark.Trainer) {
     const trainer = snapshot.getTrainerClass(cell);
@@ -133,44 +175,165 @@ export function stopChallenger(
     return named(member == null ? null : ELITE_MEMBER_NAMES[member]);
   }
   if (landmark === Landmark.Champion) {
-    return named(CHAMPION_NAME);
+    const legend = snapshot.getLegend(cell);
+
+    if (legend != null) {
+      return named(LEGEND_NAMES[legend]);
+    }
+
+    const champion = snapshot.getChampion(cell);
+
+    return named(champion == null ? null : CHAMPION_NAMES[champion]);
   }
   return null;
 }
 
-export const STOP_GOLD_MIN = 1000;
-export const STOP_GOLD_MAX = 10000;
+/** The range a purse is rolled in, floor and ceiling included. */
+export type GoldBand = [minimum: number, maximum: number];
 
 /**
- * And the boss' purse: one win in sixty-four windows should fund
- * something, not buy a round of potions
+ * What a beaten stop pays, a rung at a time.
+ *
+ * The ladder is the level ladder: a fight worth more is a fight that
+ * hits harder, so the purses climb in the same order the bands do and
+ * a roadside Bug Catcher no longer pays what one of the Elite Four
+ * pays.
+ *
+ * They are read against the **valuables**, which are the only prices
+ * in the game the world sets rather than a shopkeeper: a nugget off
+ * the ground is 10,000 and a Relic Crown is 600,000. A world where
+ * beating the Champion is worth less than a nugget somebody tripped
+ * over is not a world with a league in it, and a chunk holds one gym,
+ * one seat and one champion behind a three-hour window, so nothing
+ * here is farmed in an afternoon
  */
-export const GIOVANNI_GOLD_MIN = 10000;
-export const GIOVANNI_GOLD_MAX = 50000;
+export const TYPE_TRAINER_GOLD: GoldBand = [5000, 15000];
+export const ROCKET_GRUNT_GOLD: GoldBand = [5000, 15000];
+export const GYM_GOLD: GoldBand = [20000, 50000];
+export const ACE_TRAINER_GOLD: GoldBand = [25000, 60000];
+export const EXECUTIVE_GOLD: GoldBand = [40000, 90000];
+export const ELITE_GOLD: GoldBand = [50000, 110000];
+export const GIOVANNI_GOLD: GoldBand = [120000, 250000];
+export const CHAMPION_GOLD: GoldBand = [150000, 300000];
+export const LEGEND_GOLD: GoldBand = [250000, 500000];
+
+/**
+ * Which purse a stop pays, by the same reading its level band takes:
+ * the landmark, then the rank standing on a Team Rocket cell, then
+ * the duellist's class
+ */
+export function stopGoldBand(
+  landmark: Landmark,
+  rank: RocketRank,
+  trainer?: TrainerClass,
+  legend = false,
+): GoldBand {
+  if (landmark === Landmark.GymLeader) {
+    return GYM_GOLD;
+  }
+  if (landmark === Landmark.EliteFour) {
+    return ELITE_GOLD;
+  }
+  if (landmark === Landmark.Champion) {
+    return legend ? LEGEND_GOLD : CHAMPION_GOLD;
+  }
+  if (landmark === Landmark.Trainer) {
+    return trainer != null && isAceTrainer(trainer) ? ACE_TRAINER_GOLD : TYPE_TRAINER_GOLD;
+  }
+  if (rank === RocketRank.Giovanni) {
+    return GIOVANNI_GOLD;
+  }
+  return rank === RocketRank.Executive ? EXECUTIVE_GOLD : ROCKET_GRUNT_GOLD;
+}
 
 /**
  * The purse a beaten stop pays, seeded so each winner's roll is their
- * own and asking again answers the same. `boss` draws from the top
- * range: Giovanni's, and the Champion's — the two rarest wins a walk
- * can land
+ * own and asking again answers the same
  */
-export function rollStopGold(seed: string, boss: boolean): number {
+export function rollStopGold(seed: string, [floor, ceiling]: GoldBand): number {
   const rng = new AleaRNG(seed);
-  const floor = boss ? GIOVANNI_GOLD_MIN : STOP_GOLD_MIN;
-  const ceiling = boss ? GIOVANNI_GOLD_MAX : STOP_GOLD_MAX;
 
   return floor + Math.floor(rng.random() * (ceiling - floor + 1));
 }
 
 /**
- * Whether a stop's purse is a boss purse: Giovanni's full six on a
- * Team Rocket cell, or the Champion's on their own
+ * What the rungs above a gym leave behind besides the purse, as the
+ * bands their one item is rolled off.
+ *
+ * The gym leader is not here: theirs is a TM of their own type rather
+ * than a draw. An executive drops what a thief was carrying, which is
+ * the rare band and little else; the Elite Four reach the prized band
+ * properly; and a champion mostly does.
+ *
+ * **Nobody drops out of the special band.** A chunk keeps a champion's
+ * seat the way it keeps a gym's, and it can be fought again every
+ * window: at that frequency a Master Ball or a Shiny Charm would stop
+ * being a find of a lifetime within a week. The special band stays
+ * the ground's alone.
+ *
+ * Each set sums to 1, so none of them can fall through to the base
+ * band either
  */
-export function isBossPurse(landmark: Landmark, size: number): boolean {
-  return (
-    landmark === Landmark.Champion ||
-    (landmark === Landmark.TeamRocket && size >= GIOVANNI_PARTY_SIZE)
-  );
+export const EXECUTIVE_LOOT_ODDS: ItemBandOdds = {
+  special: 0,
+  prized: 0.05,
+  rare: 0.95,
+  uncommon: 0,
+};
+
+export const ELITE_LOOT_ODDS: ItemBandOdds = {
+  special: 0,
+  prized: 0.3,
+  rare: 0.7,
+  uncommon: 0,
+};
+
+export const CHAMPION_LOOT_ODDS: ItemBandOdds = {
+  special: 0,
+  prized: 0.6,
+  rare: 0.4,
+  uncommon: 0,
+};
+
+/**
+ * The one exception, and the reason a legend is worth walking into: a
+ * rare or a special at twenty to one. It is the only fight in the
+ * game that reaches the special band, which is what one window in
+ * sixty-four should be worth
+ */
+export const LEGEND_LOOT_ODDS: ItemBandOdds = {
+  special: 1 / 21,
+  prized: 0,
+  rare: 20 / 21,
+  uncommon: 0,
+};
+
+/**
+ * The one item a beaten expert leaves, or null for the rungs that
+ * leave none: a duelling trainer, a grunt, and the gym leader, whose
+ * own gift is a machine
+ */
+export function rollStopLoot(
+  landmark: Landmark,
+  rank: RocketRank,
+  biome: Biome,
+  random: () => number,
+  legend = false,
+): Items | null {
+  // What they were carrying is what the ground they were beaten on
+  // has to offer, the same as a stash dug up beside them
+  const pool = getItemPool(biome);
+
+  if (landmark === Landmark.EliteFour) {
+    return pickItem(pool, random, ELITE_LOOT_ODDS);
+  }
+  if (landmark === Landmark.Champion) {
+    return pickItem(pool, random, legend ? LEGEND_LOOT_ODDS : CHAMPION_LOOT_ODDS);
+  }
+  if (landmark === Landmark.TeamRocket && rank === RocketRank.Executive) {
+    return pickItem(pool, random, EXECUTIVE_LOOT_ODDS);
+  }
+  return null;
 }
 
 /**
@@ -203,6 +366,160 @@ function zeroEffortValues(): Record<Stats, number> {
 }
 
 /**
+ * What a stop's party is fielded with above what a wild pokemon
+ * carries.
+ *
+ * A league seat and everybody above a Team Rocket grunt field trained
+ * pokemon rather than caught ones: a second ability, which no wild
+ * meeting ever rolls, gear chosen for the species holding it, and the
+ * values and effort of something raised for the fight. The rungs
+ * climb by adding one at a time
+ */
+/**
+ * How the stop's party was raised: what its values were polished to
+ * and what was trained into it, on top of the roll the spawn gave it.
+ *
+ * The polished stats are taken best-first, `polishedStats` order: a
+ * rank that polishes two takes HP and Speed, one that polishes four
+ * takes the side of its own spread the species leans on as well
+ */
+export interface StopTraining {
+  /** Stats raised to a perfect value and trained to the ceiling */
+  polished: number;
+  /** What every other stat is trained to */
+  effort: number;
+  /** What every other value is set to, or null to keep the roll */
+  values: number | null;
+}
+
+/** Nobody raised it: what the roll gave, with nothing spent on it. */
+export const PLAIN_TRAINING: StopTraining = { polished: 0, effort: 0, values: null };
+
+/** A gym leader's party is evenly raised rather than pointed. */
+export const GYM_TRAINING: StopTraining = { polished: 0, effort: 50, values: 10 };
+
+/** The Elite Four's, and the executives': fast and hard to drop. */
+export const ELITE_TRAINING: StopTraining = { polished: 2, effort: 50, values: null };
+
+/** A champion's, and Giovanni's: that, and the side they attack on. */
+export const CHAMPION_TRAINING: StopTraining = { polished: 4, effort: 50, values: null };
+
+/** A legend's: nothing left to raise. */
+export const LEGEND_TRAINING: StopTraining = {
+  polished: STAT_ORDER.length,
+  effort: MAX_EFFORT_PER_STAT,
+  values: MAX_IV,
+};
+
+/**
+ * The six stats in the order a rank polishes them: HP and Speed
+ * first, since every party wants to move first and stay up, then the
+ * attacking and defending stat the species' own spread leans on, then
+ * the two it does not
+ */
+export function polishedStats(species: Species): Stats[] {
+  const base = getSpeciesData(species).stats;
+  const physical = base[Stats.Attack] >= base[Stats.SpecialAttack];
+  const sturdy = base[Stats.Defense] >= base[Stats.SpecialDefense];
+
+  return [
+    Stats.HP,
+    Stats.Speed,
+    physical ? Stats.Attack : Stats.SpecialAttack,
+    sturdy ? Stats.Defense : Stats.SpecialDefense,
+    physical ? Stats.SpecialAttack : Stats.Attack,
+    sturdy ? Stats.SpecialDefense : Stats.Defense,
+  ];
+}
+
+/**
+ * The values and effort one of the stop's pokemon fields. The spawn
+ * tuple is read and never written, so what a beaten stop hands over
+ * is the pokemon the roll made, not the one it raised
+ */
+export function trainStop(
+  species: Species,
+  rolled: number,
+  training: StopTraining,
+): { ivs: number; effortValues: Record<Stats, number> } {
+  const polished = new Set(polishedStats(species).slice(0, training.polished));
+  const effortValues = zeroEffortValues();
+  let ivs = rolled;
+
+  for (const stat of STAT_ORDER) {
+    if (polished.has(stat)) {
+      ivs = setIV(ivs, stat, MAX_IV);
+      effortValues[stat] = MAX_EFFORT_PER_STAT;
+      continue;
+    }
+    if (training.values != null) {
+      ivs = setIV(ivs, stat, training.values);
+    }
+    effortValues[stat] = training.effort;
+  }
+  return { ivs, effortValues };
+}
+
+export interface StopOutfit {
+  /** Ordinary abilities each carries, the Shadow mark aside */
+  abilities: number;
+  /** Held items each carries */
+  items: number;
+  /** What was polished and trained into each */
+  training: StopTraining;
+}
+
+/** What a duelling trainer and a grunt field: what they caught. */
+export const PLAIN_OUTFIT: StopOutfit = { abilities: 1, items: 0, training: PLAIN_TRAINING };
+
+/** A gym leader's party is geared but not doubled. */
+export const GYM_OUTFIT: StopOutfit = { abilities: 1, items: 1, training: GYM_TRAINING };
+
+/**
+ * An Ace Trainer's: what they caught, raised the way the Elite Four
+ * raise theirs. Nothing they field is beyond what a walk could have
+ * met, and all of it is fast and hard to drop
+ */
+export const ACE_OUTFIT: StopOutfit = { abilities: 1, items: 0, training: ELITE_TRAINING };
+
+/** The Elite Four's, and the executives who match them. */
+export const ELITE_OUTFIT: StopOutfit = { abilities: 2, items: 1, training: ELITE_TRAINING };
+
+/** A champion's, and Giovanni's: two of everything. */
+export const CHAMPION_OUTFIT: StopOutfit = { abilities: 2, items: 2, training: CHAMPION_TRAINING };
+
+/** A legend's: three of everything, on six at the ceiling. */
+export const LEGEND_OUTFIT: StopOutfit = { abilities: 3, items: 3, training: LEGEND_TRAINING };
+
+/** What the party at this stop is fielded with */
+export function stopOutfit(
+  landmark: Landmark,
+  rank: RocketRank,
+  legend = false,
+  duellist?: TrainerClass,
+): StopOutfit {
+  if (landmark === Landmark.Trainer && duellist != null && isAceTrainer(duellist)) {
+    return ACE_OUTFIT;
+  }
+  if (landmark === Landmark.GymLeader) {
+    return GYM_OUTFIT;
+  }
+  if (landmark === Landmark.EliteFour) {
+    return ELITE_OUTFIT;
+  }
+  if (landmark === Landmark.Champion) {
+    return legend ? LEGEND_OUTFIT : CHAMPION_OUTFIT;
+  }
+  if (landmark === Landmark.TeamRocket) {
+    if (rank === RocketRank.Giovanni) {
+      return CHAMPION_OUTFIT;
+    }
+    return rank === RocketRank.Executive ? ELITE_OUTFIT : PLAIN_OUTFIT;
+  }
+  return PLAIN_OUTFIT;
+}
+
+/**
  * One of the stop's pokemon as a catch snapshot, so the party is
  * fielded from the same shape a player's is. A grunt's is a shadow —
  * that is what a Team Rocket pokemon is — where a duelling trainer's
@@ -216,6 +533,7 @@ export function createRocketSnapshot(
   spawn: Spawn,
   shadow = true,
   levels: LevelBand = ROCKET_PARTY_LEVELS,
+  outfit: StopOutfit = PLAIN_OUTFIT,
 ): CatchSnapshot {
   const fielded = deriveEncounter(snapshot, spawn, undefined, {
     type: EncounterType.Rocket,
@@ -223,15 +541,32 @@ export function createRocketSnapshot(
     shadow,
   });
   const size = deriveSize(fielded.species, fielded.traitValue);
-  const abilities = shadow ? [fielded.ability, Abilities.Shadow] : [fielded.ability];
+  // A set, because a species with fewer abilities than the outfit
+  // asks for carries fewer, and a shadow's own mark rides free of the
+  // count either way
+  const abilities = [
+    ...new Set([
+      ...deriveTrainedAbilities(
+        fielded.species,
+        fielded.traitValue,
+        fielded.ability,
+        outfit.abilities,
+      ),
+      ...(shadow ? [Abilities.Shadow] : []),
+    ]),
+  ];
+  const items = getExpertHeldItems(fielded.species, outfit.items);
+  // Read off the roll rather than over it: the spawn tuple is what a
+  // beaten stop hands over, and raising a party must not touch it
+  const { ivs, effortValues } = trainStop(fielded.species, fielded.ivs, outfit.training);
 
   return {
     // A stop's pokemon stands for no catch record
     caught: '',
     species: fielded.species,
     level: fielded.level,
-    ivs: fielded.ivs,
-    effortValues: zeroEffortValues(),
+    ivs,
+    effortValues,
     nature: fielded.nature,
     gender: fielded.gender,
     height: size.height,
@@ -244,16 +579,21 @@ export function createRocketSnapshot(
     // A stop buys no PP Ups: what it fields is what the roll gave it
     movePoints: {},
     abilities,
-    items: [],
-    slots: defaultSlots(abilities),
+    items,
+    // Room for exactly what it walked in with. `defaultSlots` already
+    // widens the ability count for a second ability; the item count is
+    // this outfit's own
+    slots: withSlots(defaultSlots(abilities), Slots.Item, Math.max(1, items.length)),
     // A stop's pokemon has no record to have been hurt on: it is
     // made for this fight and arrives whole
     health: getMaxHealth({
       species: fielded.species,
       level: fielded.level,
-      ivs: fielded.ivs,
-      effortValues: zeroEffortValues(),
+      ivs,
+      effortValues,
     }),
+    // A shadow has been made to fight and nothing else
+    friendship: SHADOW_FRIENDSHIP,
     statuses: 0,
   };
 }
@@ -261,57 +601,15 @@ export function createRocketSnapshot(
 /**
  * The stop's whole party, weakest first: shadows for a grunt or the
  * boss, ordinary pokemon for a duelling trainer or a league seat. The
- * band defaults to what the party's size says, for the callers that
- * predate the league; theirs is the landmark's to fix
+ * band defaults to a grunt's, for the callers that predate the
+ * league; theirs is the landmark's to fix
  */
 export function createRocketParty(
   snapshot: ChunkSnapshot,
   spawns: Spawn[],
   shadow = true,
-  levels: LevelBand = rocketPartyLevels(spawns.length),
+  levels: LevelBand = ROCKET_PARTY_LEVELS,
+  outfit: StopOutfit = PLAIN_OUTFIT,
 ): CatchSnapshot[] {
-  return spawns.map((spawn) => createRocketSnapshot(snapshot, spawn, shadow, levels));
-}
-
-/**
- * Assemble a trainer fight from its stored team snapshots: no raid
- * rules, under whichever non-raid mode the fight was, a grunt's by
- * default, a player's when both sides are somebody's.
- *
- * The sky is laid before the teams are fielded, so a pokemon that
- * reads the weather as it arrives reads the one it is standing in.
- * It holds for the whole fight rather than running out, since it is
- * the world's sky and not a move's, and it only reaches a fight
- * against the world: two players meet under nothing
- */
-export function createTrainerBattle(
-  battleId: string,
-  teams: TeamSnapshotRecord[],
-  limits = PVP_BATTLE_LIMITS,
-  mode: BattleModes = BattleModes.Npc,
-  weather = Weather.Clear,
-): RaidBattle {
-  const battle: Battle = createBattle(battleId, {
-    mode,
-    realtime: true,
-    limits,
-  });
-
-  if (mode === BattleModes.Npc) {
-    battle.setWeather(toBattleWeather(weather));
-  }
-  return { battle, ...fieldTeams(battle, teams, null) };
-}
-
-/**
- * A grunt's fight: an ordinary trainer battle whose per-unit ability
- * limit only has to fit the rolled ability alongside Shadow
- */
-export function createRocketBattle(
-  battleId: string,
-  teams: TeamSnapshotRecord[],
-  limits = PVP_BATTLE_LIMITS,
-  weather = Weather.Clear,
-): RaidBattle {
-  return createTrainerBattle(battleId, teams, limits, BattleModes.Npc, weather);
+  return spawns.map((spawn) => createRocketSnapshot(snapshot, spawn, shadow, levels, outfit));
 }

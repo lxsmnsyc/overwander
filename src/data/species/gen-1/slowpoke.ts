@@ -4,6 +4,7 @@ import Abilities from '../../ids/abilities';
 import Biome, { TimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
+import { Items } from '../../ids/items';
 import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
@@ -36,6 +37,30 @@ const FAMILY_TEACHABLE = [
   Moves.Surf,
   Moves.Strength,
   Moves.Flash,
+  Moves.Headbutt,
+  Moves.Earthquake,
+  Moves.Swift,
+  Moves.DreamEater,
+  Moves.Nightmare,
+  Moves.Snore,
+  Moves.Curse,
+  Moves.Protect,
+  Moves.MudSlap,
+  Moves.ZapCannon,
+  Moves.IcyWind,
+  Moves.Endure,
+  Moves.Swagger,
+  Moves.Attract,
+  Moves.SleepTalk,
+  Moves.Return,
+  Moves.Frustration,
+  Moves.IronTail,
+  Moves.HiddenPower,
+  Moves.RainDance,
+  Moves.SunnyDay,
+  Moves.PsychUp,
+  Moves.ShadowBall,
+  Moves.Flamethrower,
 ];
 
 // Slowbro's claws open up the fighting-style TMs
@@ -58,6 +83,11 @@ export default function registerSlowpokeSpecies(): void {
         method: EvolutionMethod.Level,
         level: 37,
       },
+      {
+        species: Species.Slowking,
+        method: EvolutionMethod.Trade | EvolutionMethod.HeldItem,
+        item: Items.KingsRock,
+      },
     ],
     name: 'Slowpoke',
     category: 'Dopey Pokemon',
@@ -78,19 +108,20 @@ export default function registerSlowpokeSpecies(): void {
     eggGroups: [EggGroups.Monster, EggGroups.Water1],
     genderRatio: [1, 1],
     catchRate: 190,
-    biomes: [Biome.Beach, Biome.Swamp, Biome.Mangrove],
+    biomes: [Biome.Beach, Biome.Swamp, Biome.Mangrove, Biome.RockyCoast],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.Confusion],
+        1: [Moves.Confusion, Moves.Tackle, Moves.Curse],
+        6: [Moves.Growl],
+        15: [Moves.WaterGun],
         18: [Moves.Disable],
         22: [Moves.Headbutt],
-        27: [Moves.Growl],
-        33: [Moves.WaterGun],
         40: [Moves.Amnesia],
         48: [Moves.Psychic],
       },
       teachable: [...FAMILY_TEACHABLE],
+      egg: [Moves.Stomp, Moves.BellyDrum, Moves.Safeguard, Moves.FutureSight],
     },
   });
 
@@ -116,20 +147,32 @@ export default function registerSlowpokeSpecies(): void {
     eggGroups: [EggGroups.Monster, EggGroups.Water1],
     genderRatio: [1, 1],
     catchRate: 75,
-    biomes: [Biome.Beach, Biome.Swamp, Biome.Mangrove],
+    biomes: [Biome.Beach, Biome.Swamp, Biome.Mangrove, Biome.RockyCoast],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.Confusion, Moves.Disable, Moves.Headbutt],
-        18: [Moves.Disable],
-        22: [Moves.Headbutt],
-        27: [Moves.Growl],
-        33: [Moves.WaterGun],
+        1: [
+          Moves.Confusion,
+          Moves.Disable,
+          Moves.Headbutt,
+          Moves.Growl,
+          Moves.WaterGun,
+          Moves.Tackle,
+          Moves.Curse,
+        ],
         37: [Moves.Withdraw],
         44: [Moves.Amnesia],
-        55: [Moves.Psychic],
+        54: [Moves.Psychic],
       },
-      teachable: [...FAMILY_TEACHABLE, ...EVOLVED_TEACHABLE, Moves.HyperBeam],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        ...EVOLVED_TEACHABLE,
+        Moves.HyperBeam,
+        Moves.IcePunch,
+        Moves.FuryCutter,
+        Moves.DynamicPunch,
+        Moves.RockSmash,
+      ],
     },
   });
 }

@@ -17,10 +17,14 @@ import { nameToIcon, registerItem } from './__create';
  * mythical rare — see
  * [`src/data/overworld/item-pool.ts`](../overworld/item-pool.ts).
  */
-export const RAID_ITEMS = new Map<Items, Species>([[Items.OldSeaMap, Species.Mew]]);
+export const RAID_ITEMS = new Map<Items, Species>([
+  [Items.OldSeaMap, Species.Mew],
+  [Items.GSBall, Species.Celebi],
+]);
 
 const NAMES: { [key in Items]?: string } = {
   [Items.OldSeaMap]: 'Old Sea Map',
+  [Items.GSBall]: 'GS Ball',
 };
 
 /**
@@ -30,6 +34,7 @@ const NAMES: { [key in Items]?: string } = {
  */
 const PLACES: { [key in Items]?: string } = {
   [Items.OldSeaMap]: 'the island it charts, far out to sea',
+  [Items.GSBall]: 'the shrine in the forest it was left at',
 };
 
 /**

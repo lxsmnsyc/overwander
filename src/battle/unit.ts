@@ -1,10 +1,11 @@
+import { BASE_FRIENDSHIP } from '../data/constants/friendship';
 import { type Slots, defaultSlots, getSlots } from '../data/constants/slots';
 import type { Stats } from '../data/constants/stats';
 import { Stages, StatsKind, createStatsField } from '../data/constants/stats';
 import { Types } from '../data/constants/types';
 import type Abilities from '../data/ids/abilities';
 import type { Items } from '../data/ids/items';
-import type { MoveCategories, Moves } from '../data/ids/moves';
+import { type MoveCategories, MoveTargets, type Moves } from '../data/ids/moves';
 import Natures from '../data/ids/natures';
 import { Genders, Species } from '../data/ids/species';
 import { type Statuses, Weathers } from '../data/ids/status';
@@ -32,7 +33,7 @@ import type {
   CheckUnitMovePowerEvent,
   CheckUnitMovePriorityEvent,
   CheckUnitMoveStepsEvent,
-  CheckUnitMoveTargetFlagsEvent,
+  CheckUnitMoveTargetingEvent,
   CheckUnitMoveTimeEvent,
   CheckUnitMoveTypeEvent,
   CheckUnitStageEvent,
@@ -66,6 +67,19 @@ export default class Unit {
   ) {}
 
   level = 0;
+
+  /**
+   * What the pokemon thinks of its owner, copied off the record it
+   * was built from. Two moves read it and nothing in a fight moves
+   * it: friendship is walked for, not fought for
+   */
+  friendship = BASE_FRIENDSHIP;
+
+  /**
+   * What a Sketch turned into, if one did. A sketch is permanent in
+   * the mainline, so the fight reports it and the record keeps it
+   */
+  sketched?: Moves;
 
   setLevel(value: number): void {
     this.battle.emit(BattleEvents.UnitSetLevel, {
@@ -872,7 +886,7 @@ export default class Unit {
     [Stages.Speed]: 0,
   };
 
-  checkCanAddStage(stage: Stages, value: number, cause: EffectCause): boolean {
+  checkCanAddStage(stage: Stages, value: number, cause: EffectCause, simulated = false): boolean {
     const event: CheckUnitCanUpdateStageEvent = {
       id: 'CheckUnitCanAddStage',
       disabled: false,
@@ -881,6 +895,7 @@ export default class Unit {
       value,
       cause,
       success: true,
+      simulated,
     };
     this.battle.emit(BattleEvents.CheckUnitCanAddStage, event);
     return event.success;
@@ -899,7 +914,12 @@ export default class Unit {
     }
   }
 
-  checkCanRemoveStage(stage: Stages, value: number, cause: EffectCause): boolean {
+  checkCanRemoveStage(
+    stage: Stages,
+    value: number,
+    cause: EffectCause,
+    simulated = false,
+  ): boolean {
     const event: CheckUnitCanUpdateStageEvent = {
       id: 'CheckUnitCanRemoveStage',
       disabled: false,
@@ -908,6 +928,7 @@ export default class Unit {
       value,
       cause,
       success: true,
+      simulated,
     };
     this.battle.emit(BattleEvents.CheckUnitCanRemoveStage, event);
     return event.success;
@@ -1254,16 +1275,21 @@ export default class Unit {
     return event.duration;
   }
 
-  checkMoveTargetFlags(move: Moves): number {
-    const event: CheckUnitMoveTargetFlagsEvent = {
-      id: 'CheckUnitMoveTargetFlags',
+  /**
+   * How this unit's cast of the move is aimed, and who it reaches.
+   * The registered pair is the answer unless something widens it
+   */
+  checkMoveTargeting(move: Moves): { target: MoveTargets; affects: number } {
+    const event: CheckUnitMoveTargetingEvent = {
+      id: 'CheckUnitMoveTargeting',
       disabled: false,
       source: this,
       move,
-      flags: 0,
+      target: MoveTargets.None,
+      affects: 0,
     };
-    this.battle.emit(BattleEvents.CheckUnitMoveTargetFlags, event);
-    return event.flags;
+    this.battle.emit(BattleEvents.CheckUnitMoveTargeting, event);
+    return { target: event.target, affects: event.affects };
   }
 
   checkMoveHits(move: Moves, target: MoveTarget, hits: number, max: number): number {

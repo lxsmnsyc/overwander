@@ -23,7 +23,7 @@ into, **Team Rocket** stops, a **gym seat** another player is holding, and a
 | **Cooldown**    | That move cannot be used again | Set by the move's PP                          |
 
 **A move is in the air for a moment.** Most take a quarter of a second between
-going off and landing — the time a swing takes — while anything thrown names its
+going off and landing, which is the time a swing takes. Anything thrown names its
 own flight time, twice that, and is drawn crossing the field. It is a real gap: a
 pokemon that faints or interrupts the attacker during it does so before the hit
 arrives.
@@ -65,30 +65,47 @@ raid boss does not do this: it attacks.
 
 **Nothing stands still.** Every pokemon fights knowing one move more than it was
 brought in with: a plain **Attack**, ten power, back about once a second, and
-thrown as whatever the pokemon is — a Charmander's swing is Fire, a Geodude's is
+thrown as whatever the pokemon is. A Charmander's swing is Fire, a Geodude's is
 Rock. Nothing teaches it and it is in no learn set; it is simply what a pokemon
 does with its hands. It is far too weak to be worth choosing, which is the point:
 it is what fills the gaps while the real moves cool, and it never displaces one
 of them.
 
-A pokemon shut out of its move set entirely — everything disabled, the swing
-included — **Struggles** instead, and pays a quarter of its health for it.
+A pokemon shut out of its move set entirely, the swing included, **Struggles**
+instead, and pays a quarter of its health for it.
 Waiting on a cooldown and having nothing at all are different states, and they
 get different answers.
 
 ### Animation
 
 A pokemon **winding up** gathers itself: one gesture, repeated, for however long
-the wind-up lasts. What it is about to throw makes no difference to it — the
+the wind-up lasts. What it is about to throw makes no difference to it, since the
 throw is the next part.
 
 A pokemon **throwing** plays the closest thing to that move its sheet actually
 has, fitted to the moment the move is in the air so the gesture ends as the hit
-lands. Sprite sheets differ — a Machop has a punch, a Magikarp does not — so a
+lands. Sprite sheets differ, since a Machop has a punch and a Magikarp does not, so a
 Fire Punch punches on one pokemon and swings on another.
 
 The visible result is that speed can be seen: a slow move is a long gathering,
 and Quick Attack is a short one.
+
+**A move looks like what it is.** A contact move lands as a jab, a hit, a slam or
+a fist, picked by its type and its power. A guard closes in, a boost runs upward,
+a drain pulls health back, sound carries across the gap, powder drifts, and a
+psychic move already has hold of its target on the way over. A stat change is
+drawn as chevrons on whoever moved, rising for a raise and falling for a drop,
+coloured by which stat it was. Reflect, Light Screen and Safeguard put up a pane
+of coloured glass over the middle of the team.
+
+**A blow is drawn in the type that dealt it.** The mark is lit for a weakness,
+drained toward grey for a resistance, and the type's own colour in between. A
+move that strikes five times lands five marks, and only a move that never landed
+leaves a colourless one.
+
+Weather arrives over the field rather than over whoever called for it. In a raid
+it is drawn over the side that called it, since that is the side it is doing
+anything for.
 
 None of this affects the fight itself.
 
@@ -120,8 +137,8 @@ against Special Defence. A few fixed-damage moves ignore the formula entirely.
 
 ## Statuses and weather
 
-There are twenty-two statuses. Six of them — poison, bad poison, sleep,
-paralysis, burn and freeze — **follow a pokemon out of the battle**. The rest,
+There are twenty-two statuses. Six of them **follow a pokemon out of the
+battle**: poison, bad poison, sleep, paralysis, burn and freeze. The rest,
 including confusion, flinching, seeding, trapping, hiding and floating, end with
 the fight. A pokemon can leave a raid both poisoned and asleep.
 
@@ -147,6 +164,7 @@ A status that runs out on its own runs out on that clock too:
 | Reflect, Light Screen, Mist | 10 seconds                                |
 | Weather                     | 10 seconds                                |
 | A disabled move             | 8 seconds                                 |
+| Perish Song                 | 8 seconds, and then whoever heard it falls |
 
 Poison, bad poison, burn and paralysis have no clock at all: they last until
 something cures them. A full-paralysis stumble costs the pokemon 2 seconds
@@ -161,7 +179,7 @@ under a clear sky whatever the world is doing.
 
 There are nine kinds of weather, from plain sun and rain up to the extreme forms.
 In a **raid**, a pokemon that changes the weather changes it only for its own
-party — unless the boss changed it, in which case it applies to everybody.
+party, unless the boss changed it, in which case it applies to everybody.
 Otherwise one player could impose rain on a lobby of strangers.
 
 ## How a fight ends
@@ -173,7 +191,7 @@ that is alive but permanently unable to do anything.
 | Situation                           | Result                                                                  |
 | ----------------------------------- | ----------------------------------------------------------------------- |
 | One side still standing             | That side wins                                                          |
-| Nobody standing, in a raid          | The party wins — a boss taken down with the last of the party is beaten |
+| Nobody standing, in a raid          | The party wins. A boss taken down with the last of the party is beaten |
 | Nobody standing, anywhere else      | A draw                                                                  |
 | Both sides standing, nobody can act | A draw                                                                  |
 
@@ -189,6 +207,13 @@ A raid is a party of players against a single **boss**. It is staged by a
 it, and the raid is named after the place, so two Articuno raids in one chunk
 carry different names.
 
+A lair can hold more than one resident, and the raid rolls which of them is at
+home. The **Burned Tower** is the one that does: Raikou, Entei and Suicune all
+live there. The rest hold one legendary each, at the **Seafoam Islands**, the
+**Power Plant**, **Mt. Ember**, **Cerulean Cave**, the **Whirl Islands** and the
+**Bell Tower**. **Faraway Island** and the **Ilex Forest** hold the two
+mythicals, and no walk ever stages those.
+
 A lobby stands for the whole three-hour raid window and anyone may join it; the
 host starts it. Each player brings up to **six** pokemon, and a lobby holds
 **twenty players**. Somebody fielding two parties still fills one place, and
@@ -199,17 +224,20 @@ the lair until the next window. A raid that is lost, or left unfinished for ten
 minutes, restages in place with a new host.
 
 A **mythical raid** is not staged by the world at all. It is called out by
-spending a relic, and the world never produces a mythical on its own.
+spending a relic, and the world never produces a mythical on its own. There are
+two: an **Old Sea Map** calls Mew to the island it names, and a **GS Ball**
+calls Celebi to the shrine in the forest it was left at.
 
 A **shadow raid** usually stages one of the biome's rare species, but one time in
 eight it reaches past them and stages a legendary instead.
 
 ### The raid boss
 
-A boss is a **maxed legendary with perfect individual stats**, and every player
+A boss is a **maxed legendary, perfect in every individual stat and trained to
+the cap in every one**, and every player
 in the lobby fights exactly the same one. Its raid form gives it:
 
-- A raid-sized health pool: 5,000 plus ten times what the species would have had.
+- A raid-sized health pool: twenty times what the species would have had.
 - Double every other stat.
 - Wind-ups that take twice as long, and that nothing short of fainting can
   interrupt.
@@ -221,16 +249,26 @@ cannot act, which is the party's window to arrive, buff up and land the opening
 hits. Sent out again later in the same fight, it skips the warm-up.
 
 It shrugs off everything that would take the fight away rather than make it
-harder — sleep, freeze, flinch, trapping and infatuation — unless it did it to
-itself, so a boss that uses Rest really does sleep. Infatuation is excluded twice
+harder, such as sleep, freeze, flinch, trapping and infatuation, unless it did it to
+itself, so a boss that uses Rest really does sleep. **Perish Song** is the same
+case at its most extreme: a boss never hears it, its own singing included, and
+nobody sings it in a raid at all, since the only side left counting would be the
+party. Infatuation is excluded twice
 over: a large lobby always contains somebody the boss would fall for, and a
 landed Attract would turn the raid into a queue.
 
-**Only direct hits take health off a boss.** Poison, burns, seeds, weather and
-crash damage from a missed Jump Kick do nothing to it, and neither does damage
-based on a share of its health. Two things still work: a cost the boss pays
-itself, so one that uses Explosion still dies by it, and healing, so draining
-moves work normally.
+**Indirect damage counts, up to 100 a time.** Poison, burns, seeds, weather and
+crash damage from a missed Jump Kick all chip at a boss, and none of them chips
+for more than 100 however large the pool is. Damage measured as a share of its
+health, such as Super Fang, is refused outright. A cost the boss pays itself is
+paid in full, so one that uses Explosion still dies by it.
+
+**A boss heals an eighth of its pool a second.** Recover, Synthesis and the rest
+are moves it may know again, and the allowance is what it can take back in a
+second rather than per heal, so several drains landing together are worth one of
+them. It refills as the fight runs, so a boss winds the clock back without
+resetting it. Rest stays barred: the sleep it buys is self-inflicted, so it lands
+in full while the healing does not.
 
 Four moves are removed from a boss before it is staged. **Transform** is banned
 because a boss that copies a player stops being a boss, throwing away the health
@@ -238,19 +276,71 @@ pool the fight is built around, and **Metronome**, **Mirror Move** and **Mimic**
 follow it because each is a route back to Transform. **Ditto** is never staged as
 a boss at all.
 
-## Team Rocket grunts
+## Team Rocket
 
-A grunt stands at a Team Rocket cell for three hours at a time; see
-[People you meet](npcs.md).
+Somebody from Team Rocket stands at their cell for three hours at a time, and
+which of them it is turns over with the window; see [People you meet](npcs.md).
 
-The grunt fields three pokemon — one common, one uncommon and one rare from that
-biome — all shadowed, each rolling its own level between **45 and 55**. It is an
-ordinary trainer battle: neither side is a boss, so a simultaneous knockout is a
-draw. Giovanni, on the rare window that stages him, fields six at **70-80**.
+All three ranks field six shadowed pokemon of that biome's own, each rolling its
+own level, and what changes is where the six come from and how hard they hit. A
+**grunt** brings one common, two uncommon and three rare at **40-60**. An
+**executive** brings six of the rare band at **65-85**, which is where the Elite
+Four stand. **Giovanni** brings five of the rare band and a legendary at
+**85-100**, which is where a Champion stands.
 
-Every player fights the grunt separately. Winning closes nothing for anybody else,
-and losing costs nothing but the attempt — the grunt is still there and may be
-fought again until the window turns over.
+It is an ordinary trainer battle whoever is standing there: neither side is a
+boss, so a simultaneous knockout is a draw.
+
+Every player fights the cell separately. Winning closes nothing for anybody else,
+and losing costs nothing but the attempt. They are still there and may be fought
+again until the window turns over.
+
+### What an expert's party carries
+
+A duelling trainer and a Team Rocket grunt field what they caught. Everybody
+above them fields pokemon that were **trained**, which is most of what makes the
+same six harder from their side of the field:
+
+| Whose party        | Abilities | Held items | Individual values | Training |
+| ------------------ | --------- | ---------- | ----------------- | -------- |
+| Trainer, grunt     | 1         | None       | Rolled, like anything wild | None |
+| Ace Trainer        | 1         | None       | Perfect HP and Speed, the rest rolled | 252 in those two, 50 in the rest |
+| Gym leader         | 1         | 1          | A flat 10 in every stat | 50 in every stat |
+| Elite Four, executive | 2      | 1          | Perfect HP and Speed, the rest rolled | 252 in those two, 50 in the rest |
+| Champion, Giovanni | 2         | 2          | Perfect HP, Speed and its better attacking and defending stat, the rest rolled | 252 in those four, 50 in the rest |
+| Legend             | 3         | 3          | Perfect, all six | 252 in every stat |
+
+Which stats an expert polishes is read off the species rather than picked: HP and
+Speed first, since every party wants to move first and stay standing, then the
+attacking and defending side its own spread already leans on, so a Steelix is
+raised to take physical hits and an Alakazam to take special ones. A type expert and a grunt have had nothing
+spent on them, and a gym leader's flat 10s are **below** what a lucky roll gives,
+so the ladder's early rungs are beatable on a good catch alone. An **Ace Trainer**
+is the exception on the road: they bring no gear and no second ability, but their
+six are raised the way the Elite Four's are, which is why they hit above the cell
+they stand on.
+
+Above them it is not. An expert is trained past what the five-points-a-level
+budget would ever allow a player's own pokemon, which is the ladder's answer to a
+player who breeds and trains: see [Raising a pokemon](raising.md) for what that
+budget is.
+
+What a Team Rocket prize is worth is untouched by any of this. The pokemon handed
+over is the one the roll made, values and all, not the one that was raised to
+fight.
+
+A second ability is the one thing a player cannot get by catching the same
+species: a wild meeting rolls one and keeps it. The gear is the pokemon's own
+rather than the trainer's, so a Pikachu on any team holds the Light Ball because
+it is a Pikachu. It is chosen from what that species is worth carrying, so a
+half-grown one an expert is known for gets the item that answers being
+half-grown. A legend hands out three apiece, which is deeper than most species'
+own gear goes, so the slots nothing of its own fills are filled with gear that
+suits anybody.
+
+Team Rocket's prizes keep what was put into them. An executive's pokemon walks
+away with **both its abilities**, and Giovanni's with both and the **room for a
+second held item**, which nothing else outside a Utility Belt hands over.
 
 ## Trainers and the league
 
@@ -262,13 +352,15 @@ standing at a trainer cell depends on the country; see
 
 | Who                   | What they field                      | Levels |
 | --------------------- | ------------------------------------ | ------ |
-| **Team Rocket grunt** | Three shadows of the biome's own     | 45-55  |
 | **Type expert**       | Three to five of their own type      | 40-60  |
+| **Team Rocket grunt** | Six shadows: one common, two uncommon, three rare | 40-60 |
+| **Gym leader**        | Five of their gym's type, and their signature sixth | 45-65 |
 | **Ace Trainer**       | Five fully-grown pokemon of any type | 60-80  |
-| **Gym leader**        | Six fully-grown of their gym's type  | 45-65  |
-| **Giovanni**          | Six shadows, one of them a legendary | 70-80  |
-| **Elite Four**        | Six fully-grown of their own kind    | 65-85  |
+| **Rocket executive**  | Six shadows of the biome's rare band | 65-85  |
+| **Elite Four**        | Five of their own kind, and their signature sixth | 65-85 |
+| **Giovanni**          | Six shadows, one of them a legendary | 85-100 |
 | **Champion**          | Their own signature six              | 85-100 |
+| **Legend**            | Their own signature six              | 100    |
 
 ## Gym seats
 
@@ -324,19 +416,32 @@ A battle leaves a party as it found it. Lost health, eaten berries and carried
 statuses all persist into the next fight, which is what makes a party something to
 look after rather than a row of levels.
 
+The purse climbs with the fight. It is read against the **valuables**, which are
+the only prices the world sets rather than a shopkeeper: a nugget off the ground
+sells for 10,000, so nothing worth beating pays less than tripping over one.
+
 | Fight                 | Gold                         | What else                                |
 | --------------------- | ---------------------------- | ---------------------------------------- |
-| **Mythical raid**     | 3,000                        | The mythical, at level 30                |
-| **Legendary raid**    | 2,000                        | The legendary, at level 50               |
-| **Shadow raid**       | 1,000                        | A shadow, at level 25                    |
-| **Team Rocket grunt** | 1,000 to 10,000              | A shadowed common pokemon, at level 10   |
-| **Giovanni**          | 10,000 to 50,000             | The same                                 |
-| **Duelling trainer**  | 1,000 to 10,000              | Nothing: they keep their party           |
-| **Gym leader**        | 1,000 to 10,000              | Their badge, and a machine of their type |
-| **Elite Four**        | 1,000 to 10,000              | Their mark                               |
-| **Champion**          | 10,000 to 50,000             | The region's title                       |
+| **Duelling trainer**  | 5,000 to 15,000              | Nothing: they keep their party           |
+| **Ace Trainer**       | 25,000 to 60,000             | The same                                 |
+| **Team Rocket grunt** | 5,000 to 15,000              | One of the three it was not fighting with, at level 10 |
+| **Rocket executive**  | 40,000 to 90,000             | Any one of their six, and an item they were carrying |
+| **Giovanni**          | 120,000 to 250,000           | Any one of his six, the legendary included |
+| **Gym leader**        | 20,000 to 50,000             | Their badge, and a machine of their type |
+| **Elite Four**        | 50,000 to 110,000            | Their mark, and an item                  |
+| **Champion**          | 150,000 to 300,000           | The league's title, and an item          |
+| **Shadow raid**       | 35,000                       | A shadow, at level 25                    |
+| **Legendary raid**    | 80,000                       | The legendary, at level 50               |
+| **Mythical raid**     | 200,000                      | The mythical, at level 30                |
 | **Gym seat**          | A tenth of the loser's purse | The cell, if you want to sit on it       |
 | **Duel**              | Nothing                      | Nothing                                  |
+
+The item an executive, one of the Elite Four or a Champion leaves is drawn from
+the same pool the ground hides things in, weighted higher the further up the
+ladder the fight is. **Nothing there reaches the rarest band**: a Master Ball or
+a Shiny Charm stays something the world hides, because a champion's seat can be
+fought again every window and a find of a lifetime handed out that often is
+neither.
 
 A raid pays everyone the same: the boss decides the purse, not who landed the
 last hit. Everything else **rolls its own purse per winner** inside the range

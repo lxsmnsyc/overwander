@@ -4,8 +4,6 @@ import processExtras from '../server/sprites/extras';
 import type { Drawing } from '../server/sprites/files';
 import type { PokengineGrid, PokengineResult } from '../server/sprites/pokengine';
 import processPokengine, { parseOrder } from '../server/sprites/pokengine';
-import type { Coats, PmdResult } from '../server/sprites/pmd';
-import processPmd from '../server/sprites/pmd';
 import type { GraftResult } from '../server/sprites/graft';
 import graftWall, { parseBiomes } from '../server/sprites/graft';
 import type { RecolorResult } from '../server/sprites/recolor';
@@ -32,12 +30,10 @@ import { requireAdmin } from '../server/roles';
  */
 
 export type {
-  Coats,
   Drawing,
   PokengineGrid,
   PokengineResult,
   DrawnRole,
-  PmdResult,
   ProcessResult,
   RecolorResult,
   TerrainBlock,
@@ -70,66 +66,12 @@ function flag(form: FormData, name: string): boolean {
   return form.get(name) === 'on';
 }
 
-/** A number typed into the form, refused rather than rounded to nothing. */
-function count(form: FormData, name: string): number {
-  const value = Number.parseInt(String(form.get(name) ?? ''), 10);
-
-  if (!Number.isFinite(value) || value <= 0) {
-    throw new Error('The sheet needs a species number');
-  }
-  return value;
-}
-
-/** What both halves ask for: which pokemon, and how it is packed. */
-function naming(form: FormData): { species: number; compact: boolean } {
-  return { species: count(form, 'species'), compact: flag(form, 'compact') };
-}
-
 function asFile(value: FormDataEntryValue | null, what: string): File {
   if (typeof value === 'string' || value == null) {
     throw new Error(`No ${what} to process`);
   }
   return value;
 }
-
-/**
- * One field's file as bytes, or nothing where the picker was left
- * alone. An empty picker still posts a file — one of no name and no
- * length — so emptiness is read off the file rather than off the field
- */
-async function fileBytes(form: FormData, name: string): Promise<Uint8Array | undefined> {
-  const value = form.get(name);
-
-  if (typeof value === 'string' || value == null || value.size === 0) {
-    return undefined;
-  }
-  return new Uint8Array(await value.arrayBuffer());
-}
-
-/**
- * A pokemon's coats into its sheets under `public/sprites/pokemon`.
- *
- * One archive a coat, since that is how the collab site hands them
- * out. Only the plain one has to be there: a species with no female
- * form has two, and the four are packed to one layout because the
- * game keeps one description for all of them
- */
-export const packPmd = action(async (form: FormData): Promise<PmdResult> => {
-  'use server';
-  await requireAdmin(String(form.get('token') ?? ''));
-
-  const coats: Coats = {
-    regular: await fileBytes(form, 'regular'),
-    shiny: await fileBytes(form, 'shiny'),
-    female: await fileBytes(form, 'female'),
-    shinyFemale: await fileBytes(form, 'shinyFemale'),
-  };
-
-  return processPmd(coats, {
-    ...naming(form),
-    anims: String(form.get('anims') ?? '').split(/\s+/),
-  });
-}, 'sprites/pmd');
 
 /**
  * A Pokengine community charset into its own folder under

@@ -1,5 +1,5 @@
 import { type ChunkView, buildChunkView, naming } from './chunk-view';
-import challengerOf from './challengers';
+import challengerOf, { championGate, eliteGate } from './challengers';
 import { describeItem } from '../../details';
 import { type Journey, describeStash, stateOf } from './journey';
 import { useAuth } from '../../../auth/context';
@@ -23,6 +23,7 @@ import { claimRocketReward, enterRocketStop } from '../../../auth/rockets';
 import { createSafariSession, isEncounterRetired } from '../../../auth/safari';
 import type { SnapshotRecord } from '../../../auth/snapshot-record';
 import {
+  claimApricornTree,
   claimBerryPatch,
   claimItemCache,
   claimNest,
@@ -44,9 +45,10 @@ import type { Items } from '../../../data/ids/items';
 import type { Species } from '../../../data/ids/species';
 import { DECORATION_NAMES } from '../../../data/overworld/decoration';
 import {
-  CHAMPION_NAME,
+  CHAMPION_NAMES,
   ELITE_MEMBER_NAMES,
   GYM_LEADER_NAMES,
+  LEGEND_NAMES,
 } from '../../../data/overworld/experts';
 import type { ItemStack } from '../../../data/overworld/item-pool';
 import Landmark, { LANDMARK_NAMES } from '../../../data/overworld/landmark';
@@ -493,6 +495,14 @@ export default function OverworldBoard(props: {
    * player is standing in
    */
   const shown = (): ChunkView | null => frozen()?.view ?? view();
+
+  /**
+   * What every plant on the board is bearing: the berry patches and
+   * the apricorn trees together, since the canvas draws both the same
+   * way and a cell is one or the other
+   */
+  const fruiting = (snapshot: ChunkSnapshot): Map<number, ItemStack> =>
+    new Map([...snapshot.getBerryPatches(), ...snapshot.getApricornTrees()]);
 
   /**
    * The cells whose happening this player has already walked into.
@@ -1049,6 +1059,15 @@ export default function OverworldBoard(props: {
       announce(at, 'Bare bushes. Come back next window.', berries == null ? null : [berries]);
       return null;
     }
+    if (landmark === Landmark.ApricornTree) {
+      const apricorns = await claimApricornTree(loaded.snapshot, at);
+
+      // Picked either way, and worth saying what they are for: an
+      // apricorn is nothing until Kurt has it
+      setPicked((cells) => new Set(cells).add(at));
+      announce(at, 'Picked bare. Come back next window.', apricorns == null ? null : [apricorns]);
+      return null;
+    }
     // The landmarks somebody fights at share one flow: Team Rocket's
     // ambush, the trainer's duel, and the experts' ladder, all put in
     // the challenge dialog rather than the wanderer's
@@ -1059,9 +1078,24 @@ export default function OverworldBoard(props: {
       const stop = await enterRocketStop(loaded.snapshot, at);
 
       if (stop === 'locked') {
-        return landmark === Landmark.EliteFour
-          ? `${who} only faces challengers holding all 8 Kanto badges.`
-          : `${who} only faces challengers who have beaten the Elite Four.`;
+        // The ladder's two gates, each named by whoever is standing
+        // there: an elite asks for their own league's badges, a
+        // champion for their own league's Elite Four
+        const seated = landmark === Landmark.EliteFour ? loaded.snapshot.getEliteMember(at) : null;
+        const crowned =
+          landmark === Landmark.Champion && loaded.snapshot.getLegend(at) == null
+            ? loaded.snapshot.getChampion(at)
+            : null;
+        let asked: string | null = null;
+
+        if (seated != null) {
+          asked = eliteGate(seated);
+        } else if (crowned != null) {
+          asked = championGate(crowned);
+        }
+        return asked == null
+          ? `${who} is not taking challengers.`
+          : `${who} only faces challengers ${asked}.`;
       }
       if (stop === 'beaten') {
         // A beaten grunt may still owe the pokemon they left:
@@ -1726,7 +1760,15 @@ export default function OverworldBoard(props: {
       return member == null ? LANDMARK_NAMES[landmark] : ELITE_MEMBER_NAMES[member];
     }
     if (landmark === Landmark.Champion) {
-      return CHAMPION_NAME;
+      const legend = loaded?.snapshot.getLegend(index);
+
+      if (legend != null) {
+        return LEGEND_NAMES[legend];
+      }
+
+      const champion = loaded?.snapshot.getChampion(index);
+
+      return champion == null ? LANDMARK_NAMES[landmark] : CHAMPION_NAMES[champion];
     }
     return LANDMARK_NAMES[landmark];
   };
@@ -1807,7 +1849,7 @@ export default function OverworldBoard(props: {
                 // own map rather than one built here: a prop is a
                 // getter, and the draw loop reads this once a cell a
                 // frame
-                berries={loaded().snapshot.getBerryPatches()}
+                berries={fruiting(loaded().snapshot)}
                 picked={picked()}
                 dug={dug()}
                 decorations={loaded().decorations}

@@ -9,6 +9,8 @@ import registerBiomeSpawns, {
   SpawnRarity,
   getSpawnPool,
   getSpawnRarity,
+  isGrownSpecies,
+  spawnRanks,
 } from '../../src/data/biome';
 import Biome, {
   BIOME_CONFIGS,
@@ -20,16 +22,20 @@ import Biome, {
 import Lairs, {
   EVERY_LAIR,
   getBiomeLairs,
-  getLairSpecies,
+  getLairResidents,
   getLairTitle,
   getSpeciesLair,
 } from '../../src/data/overworld/lair';
 import Natures from '../../src/data/ids/natures';
-import { ItemTypes, Items } from '../../src/data/ids/items';
+import { APRICORNS, ItemTypes, Items } from '../../src/data/ids/items';
 import registerItems, { getItemData } from '../../src/data/items';
 import { isValuable } from '../../src/data/items/valuables';
+import { getExpertHeldItems } from '../../src/data/items/expert-loadout';
+import { Slots, countAbilitySlots, getSlots } from '../../src/data/constants/slots';
+import type { CatchSnapshot } from '../../src/auth/catch-snapshot';
 import {
   ITEM_BAND_ODDS,
+  type ItemBand,
   PHENOMENON_BAND_ODDS,
   getItemBand,
   getItemOdds,
@@ -47,13 +53,29 @@ import {
 import { MAX_LEVEL } from '../../src/data/constants/levels';
 import { WILD_HELD_COMMON, WILD_HELD_UNCOMMON } from '../../src/data/species/held-items';
 import { RaidKind, deriveRaidReward, getRaidTitle } from '../../src/auth/raids';
-import { BANNED_BOSS_MOVES, BOSS_BASE_HEALTH } from '../../src/battle/abilities/special';
+import {
+  BANNED_BOSS_MOVES,
+  BOSS_HEALTH_SCALE,
+  getBannedBossMoves,
+} from '../../src/battle/abilities/special';
 import { EffectType } from '../../src/battle/events';
 import { getMaxHealth } from '../../src/auth/health';
 import { isShadow, isShiny } from '../../src/auth/caught-record';
-import { PERFECT_IVS, Stats, unpackIVs } from '../../src/data/constants/stats';
+import {
+  MAX_EFFORT_PER_STAT,
+  MAX_IV,
+  PERFECT_IVS,
+  STAT_ORDER,
+  Stats,
+  getIV,
+  unpackIVs,
+} from '../../src/data/constants/stats';
 import { Statuses, packStatuses } from '../../src/data/ids/status';
-import { type RocketRecord, deriveRocketReward } from '../../src/auth/rocket-record';
+import {
+  type RocketRecord,
+  deriveRocketReward,
+  rocketRewardOffer,
+} from '../../src/auth/rocket-record';
 import { seatId } from '../../src/auth/gym-seat-record';
 import type Chunk from '../../src/overworld/chunk';
 import {
@@ -66,58 +88,78 @@ import {
 import { CARDINALS } from '../../src/overworld/path';
 import { getBiomeDecorations } from '../../src/data/overworld/decoration';
 import ChunkSnapshot, {
+  EXECUTIVE_CHANCE,
   LANDMARK_INTERVAL,
   MAX_PHENOMENA,
   NEST_INTERVAL,
   NPC_INTERVAL,
   PHENOMENON_INTERVAL,
   RAID_INTERVAL,
+  ROCKET_PARTY_SIZE,
+  RocketRank,
   SNAPSHOT_INTERVAL,
   SPAWN_COUNT,
   type Spawn,
+  WEATHER_INTERVAL,
 } from '../../src/overworld/chunk-snapshot';
 import {
   BANNED_BOSS_SPECIES,
   BOSS_ALLIANCE,
+  LEGENDARY_RAID_GOLD,
   LEGENDARY_RAID_REWARD_LEVEL,
+  MYTHICAL_RAID_GOLD,
   MYTHICAL_RAID_REWARD_LEVEL,
   PLAYER_ALLIANCE,
   RAID_BOSS_LEVEL,
+  SHADOW_RAID_GOLD,
   SHADOW_RAID_REWARD_LEVEL,
   canStageBoss,
-  collectAftermath,
-  createRaidBattle,
   createRaidBossSnapshot,
   getBossMoves,
 } from '../../src/overworld/raid';
+import { collectAftermath, createRaidBattle } from '../../src/overworld/raid-battle';
 import {
+  ACE_OUTFIT,
+  CHAMPION_GOLD,
+  CHAMPION_OUTFIT,
   CHAMPION_PARTY_LEVELS,
+  ELITE_GOLD,
+  ELITE_OUTFIT,
   ELITE_PARTY_LEVELS,
-  GIOVANNI_GOLD_MAX,
-  GIOVANNI_GOLD_MIN,
+  GIOVANNI_GOLD,
   GIOVANNI_PARTY_LEVELS,
+  GYM_GOLD,
+  GYM_OUTFIT,
   GYM_PARTY_LEVELS,
+  type GoldBand,
+  LEGEND_OUTFIT,
+  LEGEND_PARTY_LEVELS,
+  PLAIN_OUTFIT,
+  ROCKET_GRUNT_GOLD,
   ROCKET_PARTY_LEVELS,
   ROCKET_REWARD_LEVEL,
-  STOP_GOLD_MAX,
-  STOP_GOLD_MIN,
+  TYPE_TRAINER_GOLD,
   createRocketParty,
-  isBossPurse,
+  polishedStats,
+  rocketPartyLevels,
   rollStopGold,
+  rollStopLoot,
+  stopGoldBand,
+  stopOutfit,
   stopPartyLevels,
 } from '../../src/overworld/rocket';
 import {
   BIOME_ELITE_MEMBERS,
   BIOME_GYM_LEADERS,
   CHAMPION_CHARSETS,
+  Champion,
   ELITE_MEMBER_CHARSETS,
-  ELITE_MEMBER_POOLS,
   EXPERT_PARTY_SIZE,
   GYM_LEADER_CHARSETS,
   GYM_LEADER_TYPES,
-  getExpertPool,
+  LEGEND_CHARSETS,
+  getEliteMemberRoster,
 } from '../../src/data/overworld/experts';
-import Regions from '../../src/data/ids/regions';
 import {
   ACE_PARTY_SIZE,
   ACE_TRAINER_LEVELS,
@@ -131,6 +173,7 @@ import {
   TrainerClass,
   getBiomeTrainers,
   getTrainerPool,
+  isAceTrainer,
   trainerLevels,
 } from '../../src/data/overworld/trainers';
 import pickStartPosition, { START_AREA, pickFreeCell } from '../../src/overworld/start';
@@ -142,12 +185,12 @@ import deriveEncounter, {
   MIN_SIZE_SCALE,
   MOVE_LIMIT,
   RAID_FAMILY_DAY_MIN_IV,
-  SPAWN_LEVELS,
   deriveAbility,
   deriveMoves,
   deriveNature,
   deriveSize,
   deriveSizeScale,
+  getSpawnLevels,
   isRaidEncounter,
   isShinyFor,
 } from '../../src/overworld/encounter';
@@ -156,7 +199,13 @@ import { FOSSIL_OFFER_KINDS, getFossilPrice } from '../../src/data/overworld/fos
 import { isFossil } from '../../src/data/items/fossils';
 import Landmark from '../../src/data/overworld/landmark';
 import { findPortal, findPortals, getPortalCell } from '../../src/overworld/portal';
-import Npc, { GIOVANNI_CHARSETS, NPCS, npcSheets } from '../../src/data/overworld/npc';
+import Npc, {
+  GIOVANNI_CHARSETS,
+  NPCS,
+  ROCKET_EXECUTIVE_CHARSETS,
+  ROCKET_EXECUTIVE_NAMES,
+  npcSheets,
+} from '../../src/data/overworld/npc';
 import Phenomenon, {
   BIOME_PHENOMENA,
   getPhenomenonGroups,
@@ -173,11 +222,13 @@ import {
 import {
   MAX_BERRY_PICK,
   MIN_BERRY_PICK,
+  resolveApricornColour,
+  resolveApricornTree,
   resolveBerryPatch,
   resolveNest,
   resolvePhenomenon,
 } from '../../src/overworld/landmarks';
-import { DARK_DAY_LAMP_CELLS } from '../../src/data/overworld/weather';
+import { DARK_DAY_LAMP_CELLS, favorsEverything } from '../../src/data/overworld/weather';
 import { LURE_SPAWN_BONUS } from '../../src/overworld/abilities/__create';
 import {
   COMPOUND_EYES_HELD_BOOST,
@@ -608,11 +659,12 @@ describe('world', () => {
       return;
     }
 
-    // A mountain holds two: the volcano and the cave under it. Every
-    // window stages one of them, and whoever is at home in it
+    // A mountain holds three: the volcano, the cave under it and the
+    // tower on it. Every window stages one of them, and whoever is at
+    // home in it
     const hosted = new Set(getBiomeLairs(Biome.Mountain));
 
-    expect(hosted).toEqual(new Set([Lairs.MtEmber, Lairs.CeruleanCave]));
+    expect(hosted).toEqual(new Set([Lairs.MtEmber, Lairs.CeruleanCave, Lairs.BellTower]));
 
     for (let window = 0; window < 12; window++) {
       for (const roll of new ChunkSnapshot(chunk, window * RAID_INTERVAL)
@@ -620,7 +672,7 @@ describe('world', () => {
         .values()) {
         expect(roll.lair).not.toBeNull();
         expect(hosted.has(roll.lair ?? Lairs.FarawayIsland)).toBe(true);
-        expect(roll.species).toBe(getLairSpecies(roll.lair ?? Lairs.FarawayIsland));
+        expect(getLairResidents(roll.lair ?? Lairs.FarawayIsland)).toContain(roll.species);
       }
     }
   });
@@ -707,12 +759,20 @@ describe('world', () => {
     expect(genders.size).toBeGreaterThan(1);
   });
 
-  it('builds the raid boss with perfect IVs and no items', () => {
+  it('builds the raid boss trained as far as anything goes, and with no items', () => {
     const boss = createRaidBossSnapshot(Species.Articuno, 0x12345678);
+    const trained = MAX_EFFORT_PER_STAT;
 
     expect(boss.level).toBe(RAID_BOSS_LEVEL);
     expect(boss.ivs).toBe(PERFECT_IVS);
-    expect(Object.values(boss.effortValues)).toEqual([0, 0, 0, 0, 0, 0]);
+    expect(Object.values(boss.effortValues)).toEqual([
+      trained,
+      trained,
+      trained,
+      trained,
+      trained,
+      trained,
+    ]);
     expect(boss.items).toEqual([]);
     expect(boss.caught).toBe('');
 
@@ -785,11 +845,48 @@ describe('world', () => {
 
   it('stages a boss without the moves a boss must not have', () => {
     // Transform is banned because a boss that copies a player throws
-    // away the raid-sized pool the whole fight is built around; the
-    // three copying moves are banned because each is a way back to it
-    for (const move of [Moves.Transform, Moves.Metronome, Moves.MirrorMove, Moves.Mimic]) {
+    // away the raid-sized pool the whole fight is built around, and
+    // the four copying moves because each is a way back to it. The
+    // rest are moves a raid pool breaks
+    for (const move of [
+      Moves.Transform,
+      Moves.Metronome,
+      Moves.MirrorMove,
+      Moves.Mimic,
+      Moves.Sketch,
+      Moves.PainSplit,
+      Moves.BatonPass,
+      Moves.DestinyBond,
+      Moves.Bide,
+      Moves.BellyDrum,
+      // The heal it sleeps for is capped like any other, while the
+      // sleep is self-inflicted and lands in full
+      Moves.Rest,
+      // Temporary: a boss is immune to Perishing, so the song would
+      // only be a slot it wastes
+      Moves.PerishSong,
+    ]) {
       expect(BANNED_BOSS_MOVES.has(move)).toBe(true);
     }
+
+    // The heals a boss may keep: each puts back an eighth of the pool
+    // rather than a half, which is worth a slot without stalling the
+    // raid
+    for (const move of [
+      Moves.Recover,
+      Moves.SoftBoiled,
+      Moves.MilkDrink,
+      Moves.Moonlight,
+      Moves.MorningSun,
+      Moves.Synthesis,
+    ]) {
+      expect(BANNED_BOSS_MOVES.has(move)).toBe(false);
+    }
+
+    // Curse is barred from a Ghost, which pays half a raid pool to
+    // lay it, and left to anything else, which takes the stages
+    expect(getBannedBossMoves(Species.Gengar).has(Moves.Curse)).toBe(true);
+    expect(getBannedBossMoves(Species.Snorlax).has(Moves.Curse)).toBe(false);
 
     // Clefable would otherwise take Metronome, which can call
     // anything registered — Transform included
@@ -867,12 +964,11 @@ describe('world', () => {
 
     // A Boss carries a raid-sized pool its record knows nothing
     // about, so the stored figure is read as a share and applied to
-    // the pool it actually fights with — a boss at full is at full,
-    // not at a tenth of itself
+    // the pool it actually fights with: a boss at full is at full,
+    // not at a twentieth of itself
     const pool = bossUnits[0].checkStat(Stats.HP, 0);
 
-    expect(pool).toBeGreaterThan(BOSS_BASE_HEALTH);
-    expect(pool).toBeGreaterThan(getMaxHealth(boss) * 2);
+    expect(pool).toBe(getMaxHealth(boss) * BOSS_HEALTH_SCALE);
     expect(bossUnits[0].health).toBe(pool);
   });
 
@@ -968,19 +1064,38 @@ describe('world', () => {
       // A stop stands at Team Rocket's own landmark now
       expect(chunk.getLandmarkCells().get(cell)).toBe(Landmark.TeamRocket);
 
-      if (snapshot.isRocketBoss(cell)) {
-        // The boss fields six: five rares and a legendary at the end
-        expect(party).toHaveLength(6);
+      // Everybody fields six, whatever the rank
+      expect(party).toHaveLength(ROCKET_PARTY_SIZE);
+
+      const rank = snapshot.getRocketRank(cell);
+      const [young, middle, grown] = spawnRanks(pool);
+      const bandOf = (band: typeof pool.base): typeof pool.base =>
+        band.length > 0 ? band : [young, middle, grown].flat();
+      const drawnFrom = (at: number, band: typeof pool.base): void => {
+        expect(new Set(bandOf(band).map((entry) => entry.species)).has(party[at][0])).toBe(true);
+      };
+
+      if (rank === RocketRank.Giovanni) {
+        // Five grown ones and a legendary at the end
+        for (let at = 0; at < ROCKET_PARTY_SIZE - 1; at++) {
+          drawnFrom(at, grown);
+        }
         continue;
       }
-      // Three pokemon, weakest first: one from each of the biome's
-      // base, uncommon and rare bands — a band the window leaves empty
-      // borrows from the commonest one that is not
-      expect(party).toHaveLength(3);
-      for (const [at, band] of [pool.base, pool.uncommon, pool.rare].entries()) {
-        const drawn = band.length > 0 ? band : [pool.base, pool.uncommon, pool.rare].flat();
+      if (rank === RocketRank.Executive) {
+        // Six grown ones and nothing softer
+        for (let at = 0; at < ROCKET_PARTY_SIZE; at++) {
+          drawnFrom(at, grown);
+        }
+        continue;
+      }
+      // A grunt's six, weakest first: one commoner, two of the
+      // uncommon band and three of the rare. A band the window leaves
+      // empty borrows from the commonest one that is not
+      const bands = [young, middle, middle, grown, grown, grown];
 
-        expect(new Set(drawn.map((entry) => entry.species)).has(party[at][0])).toBe(true);
+      for (const [at, band] of bands.entries()) {
+        drawnFrom(at, band);
       }
     }
 
@@ -1007,7 +1122,7 @@ describe('world', () => {
     const [spawns] = [...snapshot.getRocketStops().values()];
     const party = createRocketParty(snapshot, spawns);
 
-    expect(party).toHaveLength(3);
+    expect(party).toHaveLength(ROCKET_PARTY_SIZE);
     for (const [at, member] of party.entries()) {
       // Every one rolls its level inside the grunt's band whatever
       // its species would have rolled, and every one is a shadow
@@ -1021,12 +1136,12 @@ describe('world', () => {
       expect(member.items).toEqual([]);
     }
 
-    // The traits are the spawn's own, so the three are not clones of
+    // The traits are the spawn's own, so the six are not clones of
     // one build
     expect(new Set(party.map((member) => member.nature)).size).toBeGreaterThanOrEqual(1);
     expect(party.map((member) => member.ivs)).not.toEqual([]);
 
-    // A duelling trainer fields the same three as their ordinary
+    // A duelling trainer fields the same pokemon as their ordinary
     // selves: same species and level, nothing shadowed
     const duel = createRocketParty(snapshot, spawns, false);
 
@@ -1052,7 +1167,7 @@ describe('world', () => {
     }
 
     const snapshot = new ChunkSnapshot(chunk, 0);
-    const lairSpecies = new Set(EVERY_LAIR.map((lair) => getLairSpecies(lair)));
+    const lairSpecies = new Set(EVERY_LAIR.flatMap((lair) => getLairResidents(lair)));
 
     for (const [cell, party] of snapshot.getTrainerStops()) {
       expect(chunk.getLandmarkCells().get(cell)).toBe(Landmark.Trainer);
@@ -1069,10 +1184,10 @@ describe('world', () => {
       expect(getBiomeTrainers(chunk.biome)).toContain(trainer);
 
       // The Ace fields five of anything; a type expert three to five
-      // of their own type, and nothing of the biome's choosing
-      const type = TRAINER_TYPES[trainer];
+      // of their own kind, and nothing of the biome's choosing
+      const types = new Set(TRAINER_TYPES[trainer]);
 
-      if (trainer === TrainerClass.AceTrainer) {
+      if (isAceTrainer(trainer)) {
         expect(party).toHaveLength(ACE_PARTY_SIZE);
       } else {
         expect(party.length).toBeGreaterThanOrEqual(TYPE_TRAINER_PARTY_MIN);
@@ -1080,10 +1195,13 @@ describe('world', () => {
       }
       for (const [species] of party) {
         // Fully grown, never a legendary, and of the class' type
-        expect(getSpawnRarity(species)).toBe(SpawnRarity.Rare);
+        expect(isGrownSpecies(species), getSpeciesData(species).name).toBe(true);
         expect(lairSpecies.has(species)).toBe(false);
-        if (type != null) {
-          expect(getSpeciesData(species).types).toContain(type);
+        if (types.size > 0) {
+          expect(
+            getSpeciesData(species).types.some((one) => types.has(one)),
+            getSpeciesData(species).name,
+          ).toBe(true);
         }
       }
       // Dressed from their own class' wardrobe rather than the
@@ -1096,17 +1214,21 @@ describe('world', () => {
     for (const trainer of TRAINER_CLASSES) {
       expect(TRAINER_NAMES[trainer]).not.toBe('');
       expect(TRAINER_CHARSETS[trainer].length).toBeGreaterThan(0);
-      expect(getTrainerPool(Regions.Kanto, trainer).length).toBeGreaterThan(0);
+      expect(getTrainerPool(trainer).length).toBeGreaterThan(0);
       expect(trainerLevels(trainer)).toEqual(
-        trainer === TrainerClass.AceTrainer ? ACE_TRAINER_LEVELS : TYPE_TRAINER_LEVELS,
+        isAceTrainer(trainer) ? ACE_TRAINER_LEVELS : TYPE_TRAINER_LEVELS,
       );
     }
 
-    // One class per type at most, and only the Ace has none
-    const claimed = TRAINER_CLASSES.map((trainer) => TRAINER_TYPES[trainer]);
+    // Two trades may want the same type now, so what has to be one
+    // class' own is the coat: no sheet is worn twice
+    const worn = TRAINER_CLASSES.flatMap((trainer) => TRAINER_CHARSETS[trainer]);
 
-    expect(new Set(claimed).size).toBe(claimed.length);
-    expect(claimed.filter((type) => type == null)).toHaveLength(1);
+    expect(new Set(worn).size).toBe(worn.length);
+    // And only the two Aces field everything there is
+    expect(TRAINER_CLASSES.filter((trainer) => TRAINER_TYPES[trainer].length === 0)).toHaveLength(
+      2,
+    );
   });
 
   it('rolls Giovanni once in a long while, six strong', () => {
@@ -1143,7 +1265,7 @@ describe('world', () => {
     }
 
     const party = staged.snapshot.getRocketStops().get(staged.cell) ?? [];
-    const legendaries = new Set(EVERY_LAIR.map((lair) => getLairSpecies(lair)));
+    const legendaries = new Set(EVERY_LAIR.flatMap((lair) => getLairResidents(lair)));
 
     // Six strong: five of the biome's rares and a legendary at the end
     expect(party).toHaveLength(6);
@@ -1152,8 +1274,15 @@ describe('world', () => {
     // Dressed as the boss himself
     expect(GIOVANNI_CHARSETS).toContain(staged.snapshot.getWandererCoats().get(staged.cell));
 
-    // Fielded at his own level, all shadows
-    const fielded = createRocketParty(staged.snapshot, party);
+    // Fielded at his own level, all shadows. The band is the stop's to
+    // pass now that every rank fields six: nothing about the party
+    // says whose it is
+    const fielded = createRocketParty(
+      staged.snapshot,
+      party,
+      true,
+      rocketPartyLevels(RocketRank.Giovanni),
+    );
 
     for (const member of fielded) {
       expect(member.level).toBeGreaterThanOrEqual(GIOVANNI_PARTY_LEVELS[0]);
@@ -1162,19 +1291,484 @@ describe('world', () => {
     }
   });
 
+  it('ranks a Team Rocket cell into a grunt, an executive or the boss', () => {
+    const world = new World('overworld');
+    const seen = new Map<RocketRank, number>();
+    let windows = 0;
+    let executive: { snapshot: ChunkSnapshot; cell: number } | null = null;
+
+    for (let x = 0; x < 24; x++) {
+      for (let y = 0; y < 6; y++) {
+        const chunk = world.getChunk(x, y);
+
+        for (const [cell, landmark] of chunk.getLandmarkCells()) {
+          if (landmark !== Landmark.TeamRocket) {
+            continue;
+          }
+          for (let window = 0; window < 24; window++) {
+            const snapshot = new ChunkSnapshot(chunk, window * NPC_INTERVAL);
+            const rank = snapshot.getRocketRank(cell);
+
+            expect(rank).not.toBeNull();
+            if (rank == null) {
+              continue;
+            }
+            seen.set(rank, (seen.get(rank) ?? 0) + 1);
+            windows += 1;
+
+            // The three are one draw, so they cannot overlap: only the
+            // boss reads as the boss, and only an executive names one
+            expect(snapshot.isRocketBoss(cell)).toBe(rank === RocketRank.Giovanni);
+            expect(snapshot.getRocketExecutive(cell) != null).toBe(rank === RocketRank.Executive);
+
+            if (rank === RocketRank.Executive && executive == null) {
+              executive = { snapshot, cell };
+            }
+          }
+        }
+      }
+    }
+
+    expect(windows).toBeGreaterThan(500);
+
+    // Roughly the stated odds: a grunt most of the time, an executive
+    // about one window in eight, the boss far rarer than either
+    const share = (rank: RocketRank): number => (seen.get(rank) ?? 0) / windows;
+
+    expect(share(RocketRank.Grunt)).toBeGreaterThan(0.7);
+    expect(share(RocketRank.Executive)).toBeGreaterThan(EXECUTIVE_CHANCE / 2);
+    expect(share(RocketRank.Executive)).toBeLessThan(EXECUTIVE_CHANCE * 2);
+    expect(share(RocketRank.Giovanni)).toBeLessThan(EXECUTIVE_CHANCE);
+
+    // And an executive stands there as one of the four, dressed as
+    // themselves, fielding six of the country's rares at the Elite
+    // Four's level
+    expect(executive).not.toBeNull();
+    if (executive == null) {
+      return;
+    }
+
+    const who = executive.snapshot.getRocketExecutive(executive.cell);
+
+    expect(who).not.toBeNull();
+    if (who == null) {
+      return;
+    }
+    expect(ROCKET_EXECUTIVE_CHARSETS[who]).toContain(
+      executive.snapshot.getWandererCoats().get(executive.cell),
+    );
+    expect(ROCKET_EXECUTIVE_NAMES[who].length).toBeGreaterThan(0);
+
+    const party = executive.snapshot.getRocketStops().get(executive.cell) ?? [];
+    const rares = new Set(
+      spawnRanks(
+        getSpawnPool(executive.snapshot.chunk.biome, getTimeOfDay(executive.snapshot.npcTimestamp)),
+      )[2].map((entry) => entry.species),
+    );
+
+    expect(party).toHaveLength(ROCKET_PARTY_SIZE);
+    for (const [species] of party) {
+      expect(rares.has(species)).toBe(true);
+    }
+
+    const fielded = createRocketParty(
+      executive.snapshot,
+      party,
+      true,
+      rocketPartyLevels(RocketRank.Executive),
+    );
+
+    for (const member of fielded) {
+      expect(member.level).toBeGreaterThanOrEqual(ELITE_PARTY_LEVELS[0]);
+      expect(member.level).toBeLessThanOrEqual(ELITE_PARTY_LEVELS[1]);
+      expect(member.shadow).toBe(true);
+    }
+    // And their whole six is on offer, where a grunt's is only the
+    // half they were not fighting with
+    expect(rocketRewardOffer(RocketRank.Executive)).toBe(ROCKET_PARTY_SIZE);
+    expect(rocketRewardOffer(RocketRank.Giovanni)).toBe(ROCKET_PARTY_SIZE);
+    expect(rocketRewardOffer(RocketRank.Grunt)).toBe(ROCKET_PARTY_SIZE / 2);
+  });
+
+  it('fields an expert’s party trained rather than caught', () => {
+    const world = new World('overworld');
+    const chunk = findChunk(
+      world,
+      (candidate) => new ChunkSnapshot(candidate, 0).getRocketStops().size > 0,
+    );
+
+    expect(chunk).not.toBeNull();
+    if (chunk == null) {
+      return;
+    }
+
+    const snapshot = new ChunkSnapshot(chunk, 0);
+    const [spawns] = [...snapshot.getRocketStops().values()];
+
+    // What each rung fields above what it caught: a gym leader gears
+    // its six, the Elite Four and the executives train a second
+    // ability into them, and a champion and Giovanni do both twice
+    expect(stopOutfit(Landmark.Trainer, RocketRank.Grunt)).toEqual(PLAIN_OUTFIT);
+    // An Ace Trainer catches what anybody catches and raises it the
+    // way the Elite Four do
+    expect(stopOutfit(Landmark.Trainer, RocketRank.Grunt, false, TrainerClass.AceTrainer)).toEqual(
+      ACE_OUTFIT,
+    );
+    expect(ACE_OUTFIT.training).toBe(ELITE_OUTFIT.training);
+    expect(
+      stopOutfit(Landmark.Trainer, RocketRank.Grunt, false, TrainerClass.JohtoAceTrainer),
+    ).toEqual(ACE_OUTFIT);
+    expect(stopOutfit(Landmark.Trainer, RocketRank.Grunt, false, TrainerClass.Swimmer)).toEqual(
+      PLAIN_OUTFIT,
+    );
+    expect(stopOutfit(Landmark.TeamRocket, RocketRank.Grunt)).toEqual(PLAIN_OUTFIT);
+    expect(stopOutfit(Landmark.GymLeader, RocketRank.Grunt)).toEqual(GYM_OUTFIT);
+    expect(stopOutfit(Landmark.EliteFour, RocketRank.Grunt)).toEqual(ELITE_OUTFIT);
+    expect(stopOutfit(Landmark.TeamRocket, RocketRank.Executive)).toEqual(ELITE_OUTFIT);
+    expect(stopOutfit(Landmark.Champion, RocketRank.Grunt)).toEqual(CHAMPION_OUTFIT);
+    expect(stopOutfit(Landmark.TeamRocket, RocketRank.Giovanni)).toEqual(CHAMPION_OUTFIT);
+    // And the one rung above the league, which is three of everything
+    expect(stopOutfit(Landmark.Champion, RocketRank.Grunt, true)).toEqual(LEGEND_OUTFIT);
+
+    const fielded = (outfit: typeof PLAIN_OUTFIT, shadow = false): CatchSnapshot[] =>
+      createRocketParty(snapshot, spawns, shadow, ELITE_PARTY_LEVELS, outfit);
+
+    // A duelling trainer's six is what a walk would have met
+    for (const member of fielded(PLAIN_OUTFIT)) {
+      expect(member.abilities).toHaveLength(1);
+      expect(member.items).toEqual([]);
+      expect(getSlots(member.slots, Slots.Item)).toBe(1);
+      expect(getSlots(member.slots, Slots.Ability)).toBe(1);
+    }
+
+    for (const member of fielded(GYM_OUTFIT)) {
+      expect(member.abilities).toHaveLength(1);
+      // One item, and the one that species would want
+      expect(member.items).toEqual(getExpertHeldItems(member.species, 1));
+      expect(getSlots(member.slots, Slots.Item)).toBe(1);
+    }
+
+    for (const member of fielded(ELITE_OUTFIT)) {
+      // Two abilities, which nothing met in the world ever has, and
+      // room counted for both
+      expect(member.abilities.length, getSpeciesData(member.species).name).toBe(
+        Math.min(
+          2,
+          new Set([
+            ...getSpeciesAbilityPools(member.species).regular,
+            ...getSpeciesAbilityPools(member.species).hidden,
+          ]).size,
+        ),
+      );
+      expect(getSlots(member.slots, Slots.Ability)).toBe(member.abilities.length);
+      expect(member.items).toHaveLength(1);
+    }
+
+    for (const member of fielded(CHAMPION_OUTFIT)) {
+      expect(member.items).toHaveLength(2);
+      expect(new Set(member.items).size).toBe(2);
+      // The room is the outfit's, which is what a Utility Belt would
+      // otherwise have to buy
+      expect(getSlots(member.slots, Slots.Item)).toBe(2);
+    }
+
+    // A shadow's own mark rides free of the ability count, so
+    // Giovanni's six carry two abilities and the Shadow besides
+    for (const member of fielded(CHAMPION_OUTFIT, true)) {
+      expect(new Set(member.abilities).has(Abilities.Shadow)).toBe(true);
+      expect(countAbilitySlots(member.abilities)).toBeLessThanOrEqual(2);
+      expect(getSlots(member.slots, Slots.Ability)).toBe(countAbilitySlots(member.abilities));
+    }
+
+    // And a legend's, which is three of each: a species with fewer
+    // than three abilities to give carries what it has, and the items
+    // never run short
+    for (const member of fielded(LEGEND_OUTFIT)) {
+      const pool = new Set([
+        ...getSpeciesAbilityPools(member.species).regular,
+        ...getSpeciesAbilityPools(member.species).hidden,
+      ]);
+
+      expect(member.abilities.length, getSpeciesData(member.species).name).toBe(
+        Math.min(3, pool.size),
+      );
+      expect(new Set(member.abilities).size).toBe(member.abilities.length);
+      expect(member.items).toHaveLength(3);
+      expect(new Set(member.items).size).toBe(3);
+      expect(getSlots(member.slots, Slots.Item)).toBe(3);
+      expect(getSlots(member.slots, Slots.Ability)).toBe(member.abilities.length);
+    }
+  });
+
+  it('raises an expert’s party by its rung', () => {
+    const world = new World('overworld');
+    const chunk = findChunk(
+      world,
+      (candidate) => new ChunkSnapshot(candidate, 0).getRocketStops().size > 0,
+    );
+
+    expect(chunk).not.toBeNull();
+    if (chunk == null) {
+      return;
+    }
+
+    const snapshot = new ChunkSnapshot(chunk, 0);
+    const [spawns] = [...snapshot.getRocketStops().values()];
+    const fielded = (outfit: typeof PLAIN_OUTFIT): CatchSnapshot[] =>
+      createRocketParty(snapshot, spawns, false, ELITE_PARTY_LEVELS, outfit);
+    const rolled = createRocketParty(snapshot, spawns, false, ELITE_PARTY_LEVELS, PLAIN_OUTFIT);
+
+    // A duelling trainer's and a grunt's is what the roll gave, with
+    // nothing spent on it
+    for (const member of rolled) {
+      for (const stat of STAT_ORDER) {
+        expect(member.effortValues[stat]).toBe(0);
+      }
+    }
+
+    // A gym leader's is evenly raised and evenly valued, which is
+    // below what a lucky roll would have given
+    for (const member of fielded(GYM_OUTFIT)) {
+      for (const stat of STAT_ORDER) {
+        expect(getIV(member.ivs, stat)).toBe(10);
+        expect(member.effortValues[stat]).toBe(50);
+      }
+    }
+
+    for (const [outfit, polished] of [
+      [ELITE_OUTFIT, 2],
+      [CHAMPION_OUTFIT, 4],
+      [LEGEND_OUTFIT, 6],
+    ] as const) {
+      const party = fielded(outfit);
+
+      for (const [index, member] of party.entries()) {
+        const best = new Set(polishedStats(member.species).slice(0, polished));
+
+        for (const stat of STAT_ORDER) {
+          if (best.has(stat)) {
+            expect(getIV(member.ivs, stat)).toBe(MAX_IV);
+            expect(member.effortValues[stat]).toBe(MAX_EFFORT_PER_STAT);
+            continue;
+          }
+          // Everything else is the roll, untouched, and the rung's
+          // even share of training on top
+          expect(getIV(member.ivs, stat)).toBe(getIV(rolled[index].ivs, stat));
+          expect(member.effortValues[stat]).toBe(50);
+        }
+        // HP and Speed are what every rung above a gym polishes first
+        expect(best.has(Stats.HP)).toBe(true);
+        expect(best.has(Stats.Speed)).toBe(true);
+      }
+    }
+
+    // A legend leaves nothing to raise
+    for (const member of fielded(LEGEND_OUTFIT)) {
+      expect(member.ivs).toBe(PERFECT_IVS);
+    }
+  });
+
+  it('polishes the side of its own spread a species leans on', () => {
+    // Steelix attacks and defends physically; Alakazam does neither
+    expect(polishedStats(Species.Steelix).slice(0, 4)).toEqual([
+      Stats.HP,
+      Stats.Speed,
+      Stats.Attack,
+      Stats.Defense,
+    ]);
+    expect(polishedStats(Species.Alakazam).slice(0, 4)).toEqual([
+      Stats.HP,
+      Stats.Speed,
+      Stats.SpecialAttack,
+      Stats.SpecialDefense,
+    ]);
+    // All six, once, however the spread falls
+    for (const species of [Species.Steelix, Species.Alakazam, Species.Snorlax]) {
+      expect(new Set(polishedStats(species)).size).toBe(STAT_ORDER.length);
+    }
+  });
+
   it('rolls a purse in the stop’s own range, the same on every ask', () => {
     for (let winner = 0; winner < 32; winner++) {
       const seed = `stop:purse:player-${winner}`;
-      const purse = rollStopGold(seed, false);
-      const bounty = rollStopGold(seed, true);
+      const purse = rollStopGold(seed, ROCKET_GRUNT_GOLD);
+      const bounty = rollStopGold(seed, GIOVANNI_GOLD);
 
-      expect(purse).toBeGreaterThanOrEqual(STOP_GOLD_MIN);
-      expect(purse).toBeLessThanOrEqual(STOP_GOLD_MAX);
-      expect(bounty).toBeGreaterThanOrEqual(GIOVANNI_GOLD_MIN);
-      expect(bounty).toBeLessThanOrEqual(GIOVANNI_GOLD_MAX);
+      expect(purse).toBeGreaterThanOrEqual(ROCKET_GRUNT_GOLD[0]);
+      expect(purse).toBeLessThanOrEqual(ROCKET_GRUNT_GOLD[1]);
+      expect(bounty).toBeGreaterThanOrEqual(GIOVANNI_GOLD[0]);
+      expect(bounty).toBeLessThanOrEqual(GIOVANNI_GOLD[1]);
       // Seeded: asking again answers the same
-      expect(rollStopGold(seed, false)).toBe(purse);
+      expect(rollStopGold(seed, ROCKET_GRUNT_GOLD)).toBe(purse);
     }
+  });
+
+  it('climbs the purse with the rung, and pays the ladder in order', () => {
+    const rungs: [name: string, band: GoldBand][] = [
+      ['a type expert', stopGoldBand(Landmark.Trainer, RocketRank.Grunt, TrainerClass.BugCatcher)],
+      ['a grunt', stopGoldBand(Landmark.TeamRocket, RocketRank.Grunt)],
+      ['a gym leader', stopGoldBand(Landmark.GymLeader, RocketRank.Grunt)],
+      ['an Ace Trainer', stopGoldBand(Landmark.Trainer, RocketRank.Grunt, TrainerClass.AceTrainer)],
+      ['an executive', stopGoldBand(Landmark.TeamRocket, RocketRank.Executive)],
+      ['the Elite Four', stopGoldBand(Landmark.EliteFour, RocketRank.Grunt)],
+      ['Giovanni', stopGoldBand(Landmark.TeamRocket, RocketRank.Giovanni)],
+      ['the Champion', stopGoldBand(Landmark.Champion, RocketRank.Grunt)],
+      ['a legend', stopGoldBand(Landmark.Champion, RocketRank.Grunt, undefined, true)],
+    ];
+
+    for (const [at, [name, [floor, ceiling]]] of rungs.entries()) {
+      expect(floor, name).toBeLessThan(ceiling);
+
+      if (at === 0) {
+        continue;
+      }
+
+      const [below, over] = rungs[at - 1][1];
+
+      // No rung pays less than the one under it, floor and ceiling
+      // alike
+      expect(floor, name).toBeGreaterThanOrEqual(below);
+      expect(ceiling, name).toBeGreaterThanOrEqual(over);
+    }
+
+    // And the ladder actually climbs: the top of it is worth an order
+    // of magnitude more than the bottom
+    expect(CHAMPION_GOLD[0]).toBeGreaterThanOrEqual(TYPE_TRAINER_GOLD[1] * 10);
+
+    // Two rungs share a purse, and it is the two that share a level
+    // band: a grunt is a thief with a roadside party
+    expect(ROCKET_GRUNT_GOLD).toEqual(TYPE_TRAINER_GOLD);
+    expect(ROCKET_PARTY_LEVELS).toEqual(TYPE_TRAINER_LEVELS);
+
+    // A nugget off the ground sells for 10,000, so nothing on the
+    // ladder may be worth less than tripping over one
+    expect(rungs[0][1][1]).toBeGreaterThanOrEqual(getItemData(Items.Nugget).sell);
+
+    // And the raids are read off the same ladder, flat because a raid
+    // pays everybody who fought it
+    expect(SHADOW_RAID_GOLD).toBeGreaterThan(GYM_GOLD[0]);
+    expect(SHADOW_RAID_GOLD).toBeLessThan(GYM_GOLD[1]);
+    expect(LEGENDARY_RAID_GOLD).toBeGreaterThan(ELITE_GOLD[0]);
+    expect(LEGENDARY_RAID_GOLD).toBeLessThan(ELITE_GOLD[1]);
+    // A mythical is the largest purse there is, and still under a
+    // champion's middle
+    expect(MYTHICAL_RAID_GOLD).toBeGreaterThan(LEGENDARY_RAID_GOLD);
+    expect(MYTHICAL_RAID_GOLD).toBeLessThan(CHAMPION_GOLD[1]);
+  });
+
+  it('leaves an item behind only on the rungs that have one', () => {
+    const rolls = (landmark: Landmark, rank: RocketRank): Items[] => {
+      const rng = new AleaRNG(`loot-${landmark}-${rank}`);
+
+      return Array.from({ length: 400 }, () =>
+        rollStopLoot(landmark, rank, Biome.Grassland, () => rng.random()),
+      ).filter((item): item is Items => item != null);
+    };
+
+    // A duelling trainer keeps their party and their pockets, and so
+    // do the two lower Team Rocket ranks. The gym leader is not here
+    // either: theirs is a machine of their own type
+    expect(rollStopLoot(Landmark.Trainer, RocketRank.Grunt, Biome.Grassland, () => 0.5)).toBeNull();
+    expect(
+      rollStopLoot(Landmark.TeamRocket, RocketRank.Grunt, Biome.Grassland, () => 0.5),
+    ).toBeNull();
+    expect(
+      rollStopLoot(Landmark.GymLeader, RocketRank.Grunt, Biome.Grassland, () => 0.5),
+    ).toBeNull();
+
+    const executive = rolls(Landmark.TeamRocket, RocketRank.Executive);
+    const elite = rolls(Landmark.EliteFour, RocketRank.Grunt);
+    const champion = rolls(Landmark.Champion, RocketRank.Grunt);
+
+    // Every one of them lands something, and never out of the base
+    // band: the odds shut it out
+    for (const drawn of [executive, elite, champion]) {
+      expect(drawn).toHaveLength(400);
+      for (const item of drawn) {
+        expect(getItemBand(item)).not.toBe('base');
+        expect(getItemBand(item)).not.toBe('uncommon');
+      }
+    }
+
+    const share = (items: Items[], band: ItemBand): number =>
+      items.filter((item) => getItemBand(item) === band).length / items.length;
+
+    // A thief carries loot and the league reaches higher, but nobody
+    // reaches the special band: a champion's seat can be fought every
+    // window, and a Master Ball handed out at that rate is not a find
+    // of a lifetime any more
+    for (const drawn of [executive, elite, champion]) {
+      expect(share(drawn, 'special')).toBe(0);
+    }
+    expect(share(elite, 'prized')).toBeGreaterThan(share(executive, 'prized'));
+    expect(share(champion, 'prized')).toBeGreaterThan(share(elite, 'prized'));
+
+    // The one exception, and the whole reason to walk into a legend:
+    // a rare or a special at twenty to one, which is the only draw in
+    // the game that reaches the special band
+    const rng = new AleaRNG('loot-legend');
+    const legend = Array.from({ length: 4200 }, () =>
+      rollStopLoot(Landmark.Champion, RocketRank.Grunt, Biome.Grassland, () => rng.random(), true),
+    ).filter((item): item is Items => item != null);
+
+    expect(legend).toHaveLength(4200);
+    for (const item of legend) {
+      expect(['rare', 'special']).toContain(getItemBand(item));
+    }
+    expect(share(legend, 'special')).toBeGreaterThan(0.02);
+    expect(share(legend, 'special')).toBeLessThan(0.08);
+  });
+
+  it('puts a legend in the champion’s seat now and then, and always under the rarest sky', () => {
+    const world = new World('overworld');
+    const chunk = findChunk(
+      world,
+      (candidate) => new ChunkSnapshot(candidate, 0).getChampionStops().size > 0,
+    );
+
+    expect(chunk).not.toBeNull();
+    if (chunk == null) {
+      return;
+    }
+
+    const [cell] = [...new ChunkSnapshot(chunk, 0).getChampionStops().keys()];
+    let held = 0;
+
+    // The seat is the champion's most windows: the roll is the same
+    // one in sixty-four Giovanni turns up on
+    for (let window = 0; window < 640; window++) {
+      const snapshot = new ChunkSnapshot(chunk, window * NPC_INTERVAL);
+
+      // Under one of the four skies that favour everything the seat
+      // is theirs for certain: those are the rarest weather there is
+      if (favorsEverything(snapshot.npcWeather)) {
+        expect(snapshot.getLegend(cell)).not.toBeNull();
+        continue;
+      }
+      if (snapshot.getLegend(cell) != null) {
+        held++;
+      }
+    }
+    expect(held).toBeGreaterThan(0);
+    expect(held).toBeLessThan(64);
+
+    // The seat holds whoever it holds for the whole window, whatever
+    // the sky does in the middle of it: weather turns over every hour
+    // and the people every three, and a server rebuilding the window
+    // from its timestamp has to find the same person standing there
+    for (let window = 0; window < 32; window++) {
+      const opened = new ChunkSnapshot(chunk, window * NPC_INTERVAL);
+      const later = new ChunkSnapshot(chunk, window * NPC_INTERVAL + 2 * WEATHER_INTERVAL);
+
+      expect(later.getLegend(cell)).toBe(opened.getLegend(cell));
+    }
+
+    // A cell that is nobody's seat holds no legend either
+    const elsewhere = [...chunk.getLandmarkCells()].find(
+      ([, landmark]) => landmark !== Landmark.Champion,
+    );
+
+    expect(new ChunkSnapshot(chunk, 0).getLegend(elsewhere?.[0] ?? 0)).toBeNull();
   });
 
   it('keeps one leader to a gym and fields 6 of their type', () => {
@@ -1206,14 +1800,9 @@ describe('world', () => {
       expect(BIOME_GYM_LEADERS[chunk.biome]).toContain(leader);
       expect(new ChunkSnapshot(chunk, NPC_INTERVAL).getGymLeader(cell)).toBe(leader);
 
-      // Every fielded species carries the gym's type; Blue's gym has
-      // none and takes what it likes
-      const type = GYM_LEADER_TYPES[leader];
-
-      if (type != null) {
-        for (const [species] of party) {
-          expect(getSpeciesData(species).types).toContain(type);
-        }
+      // Every fielded species carries the gym's type
+      for (const [species] of party) {
+        expect(getSpeciesData(species).types).toContain(GYM_LEADER_TYPES[leader]);
       }
       // Dressed as the leader themselves
       expect(GYM_LEADER_CHARSETS[leader]).toContain(snapshot.getWandererCoats().get(cell));
@@ -1244,7 +1833,7 @@ describe('world', () => {
         // Their own pool rather than their type alone: an elite whose
         // type runs to one fully-grown species is widened by kinship
         // or by name, so the party is checked against the pool
-        const pool = new Set(getExpertPool(Regions.Kanto, ELITE_MEMBER_POOLS[member]));
+        const pool = new Set(getEliteMemberRoster(member));
 
         for (const [species] of party) {
           expect(pool.has(species), getSpeciesData(species).name).toBe(true);
@@ -1261,7 +1850,7 @@ describe('world', () => {
     expect(champChunk).not.toBeNull();
     if (champChunk != null) {
       const snapshot = new ChunkSnapshot(champChunk, 0);
-      const legendaries = new Set(EVERY_LAIR.map((lair) => getLairSpecies(lair)));
+      const legendaries = new Set(EVERY_LAIR.flatMap((lair) => getLairResidents(lair)));
 
       for (const [cell, party] of snapshot.getChampionStops()) {
         expect(party).toHaveLength(EXPERT_PARTY_SIZE);
@@ -1269,28 +1858,52 @@ describe('world', () => {
         for (const [species] of party) {
           expect(legendaries.has(species)).toBe(false);
         }
-        expect(CHAMPION_CHARSETS).toContain(snapshot.getWandererCoats().get(cell));
+        // The seat is the champion's, but a legend may have it this
+        // window, and then the coat standing there is theirs
+        const legend = snapshot.getLegend(cell);
+
+        if (legend != null) {
+          expect(LEGEND_CHARSETS[legend]).toContain(snapshot.getWandererCoats().get(cell));
+          continue;
+        }
+
+        const champion = snapshot.getChampion(cell);
+
+        expect(champion).not.toBeNull();
+        expect(CHAMPION_CHARSETS[champion ?? Champion.Blue]).toContain(
+          snapshot.getWandererCoats().get(cell),
+        );
       }
     }
   });
 
   it('prices every rank of stop by its landmark', () => {
-    expect(stopPartyLevels(Landmark.GymLeader, 6)).toEqual(GYM_PARTY_LEVELS);
-    expect(stopPartyLevels(Landmark.EliteFour, 6)).toEqual(ELITE_PARTY_LEVELS);
-    expect(stopPartyLevels(Landmark.Champion, 6)).toEqual(CHAMPION_PARTY_LEVELS);
-    expect(stopPartyLevels(Landmark.TeamRocket, 6)).toEqual(GIOVANNI_PARTY_LEVELS);
-    expect(stopPartyLevels(Landmark.TeamRocket, 3)).toEqual(ROCKET_PARTY_LEVELS);
+    expect(stopPartyLevels(Landmark.GymLeader, RocketRank.Grunt)).toEqual(GYM_PARTY_LEVELS);
+    expect(stopPartyLevels(Landmark.EliteFour, RocketRank.Grunt)).toEqual(ELITE_PARTY_LEVELS);
+    expect(stopPartyLevels(Landmark.Champion, RocketRank.Grunt)).toEqual(CHAMPION_PARTY_LEVELS);
+    expect(stopPartyLevels(Landmark.Champion, RocketRank.Grunt, undefined, true)).toEqual(
+      LEGEND_PARTY_LEVELS,
+    );
+    // Every rank fields six, so it is the rank rather than the party
+    // that says what a Team Rocket cell is worth
+    expect(stopPartyLevels(Landmark.TeamRocket, RocketRank.Giovanni)).toEqual(
+      CHAMPION_PARTY_LEVELS,
+    );
+    expect(stopPartyLevels(Landmark.TeamRocket, RocketRank.Executive)).toEqual(ELITE_PARTY_LEVELS);
+    expect(stopPartyLevels(Landmark.TeamRocket, RocketRank.Grunt)).toEqual(TYPE_TRAINER_LEVELS);
     // A duellist's band is their class', which the caller passes in
-    expect(stopPartyLevels(Landmark.Trainer, 3, ACE_TRAINER_LEVELS)).toEqual(ACE_TRAINER_LEVELS);
-    expect(stopPartyLevels(Landmark.Trainer, 3)).toEqual(ROCKET_PARTY_LEVELS);
+    expect(stopPartyLevels(Landmark.Trainer, RocketRank.Grunt, ACE_TRAINER_LEVELS)).toEqual(
+      ACE_TRAINER_LEVELS,
+    );
+    expect(stopPartyLevels(Landmark.Trainer, RocketRank.Grunt)).toEqual(ROCKET_PARTY_LEVELS);
 
-    // Only the two rarest wins pay from the top range: a gym would
-    // otherwise be a 6-strong purse farmed every window
-    expect(isBossPurse(Landmark.TeamRocket, 6)).toBe(true);
-    expect(isBossPurse(Landmark.TeamRocket, 3)).toBe(false);
-    expect(isBossPurse(Landmark.Champion, 6)).toBe(true);
-    expect(isBossPurse(Landmark.EliteFour, 6)).toBe(false);
-    expect(isBossPurse(Landmark.GymLeader, 6)).toBe(false);
+    // The purse is read the same way, so a Team Rocket cell is priced
+    // by who is standing on it rather than by what they brought
+    expect(stopGoldBand(Landmark.TeamRocket, RocketRank.Giovanni)).toEqual(GIOVANNI_GOLD);
+    expect(stopGoldBand(Landmark.TeamRocket, RocketRank.Grunt)).toEqual(ROCKET_GRUNT_GOLD);
+    expect(stopGoldBand(Landmark.Champion, RocketRank.Grunt)).toEqual(CHAMPION_GOLD);
+    expect(stopGoldBand(Landmark.EliteFour, RocketRank.Grunt)).toEqual(ELITE_GOLD);
+    expect(stopGoldBand(Landmark.GymLeader, RocketRank.Grunt)).toEqual(GYM_GOLD);
   });
 
   it('offers any of the boss’ six as the reward', () => {
@@ -1318,25 +1931,33 @@ describe('world', () => {
     const met = new Set<Species>();
 
     for (let winner = 0; winner < 64; winner++) {
-      const [, spawn] = deriveRocketReward(record, 'stop-id', `player-${winner}`);
+      const [, spawn] = deriveRocketReward(
+        record,
+        'stop-id',
+        `player-${winner}`,
+        RocketRank.Giovanni,
+      );
 
       met.add(spawn[0]);
     }
-    // Not the commoner pair alone: the back of the party is on offer,
+    // Not the weaker half alone: the back of the party is on offer,
     // the legendary included
-    expect(met.size).toBeGreaterThan(2);
+    expect(met.size).toBeGreaterThan(3);
     expect(
-      [...met].some((species) => record.party.slice(2).some((entry) => entry.species === species)),
+      [...met].some((species) => record.party.slice(3).some((entry) => entry.species === species)),
     ).toBe(true);
   });
 
-  it('pays a beaten grunt out in one of its two commoner species', () => {
+  it('pays a beaten grunt out of the half it was not fighting with', () => {
     const record: RocketRecord = {
       player: 'red',
       party: [
         { species: Species.Rattata, individualValue: 1, traitValue: 2 },
         { species: Species.Pidgey, individualValue: 3, traitValue: 4 },
-        { species: Species.Kangaskhan, individualValue: 5, traitValue: 6 },
+        { species: Species.Ekans, individualValue: 5, traitValue: 6 },
+        { species: Species.Kangaskhan, individualValue: 7, traitValue: 8 },
+        { species: Species.Lapras, individualValue: 9, traitValue: 10 },
+        { species: Species.Snorlax, individualValue: 11, traitValue: 12 },
       ],
       battle: 'battle-id',
       timestamp: 0,
@@ -1353,22 +1974,26 @@ describe('world', () => {
         record,
         'stop-id',
         uid,
+        RocketRank.Grunt,
       );
 
-      // Never the rare one: a grunt does not hand over its best
+      // Never one of the three rares: a grunt does not hand over what
+      // it was actually fighting with
       expect(species).not.toBe(Species.Kangaskhan);
+      expect(species).not.toBe(Species.Lapras);
+      expect(species).not.toBe(Species.Snorlax);
       offered.add(species);
       expect(id).toBe('stop-id$reward');
       // Each winner meets their own individual of it
       expect(individualValue).not.toBe(traitValue);
     }
 
-    // Both commoners come up across enough winners
-    expect(offered.size).toBe(2);
+    // All three of the weaker half come up across enough winners
+    expect(offered.size).toBe(3);
 
     // A player's own reward is the same however often it is derived
-    expect(deriveRocketReward(record, 'stop-id', 'red')).toEqual(
-      deriveRocketReward(record, 'stop-id', 'red'),
+    expect(deriveRocketReward(record, 'stop-id', 'red', RocketRank.Grunt)).toEqual(
+      deriveRocketReward(record, 'stop-id', 'red', RocketRank.Grunt),
     );
   });
 
@@ -1394,8 +2019,8 @@ describe('world', () => {
 
       if (roll.lair == null) {
         // No named place behind it, so it is one of the biome's own
-        // rare species and it is called after the ground
-        expect(pool.rare.some((entry) => entry.species === roll.species)).toBe(true);
+        // grown species and it is called after the ground
+        expect(spawnRanks(pool)[2].some((entry) => entry.species === roll.species)).toBe(true);
         expect(getLairTitle(roll.lair, chunk.biome, true)).toBe(
           `Shadow ${BIOME_NAMES[chunk.biome]} Lair`,
         );
@@ -1405,7 +2030,7 @@ describe('world', () => {
       // Otherwise it has taken over one of the biome's own lairs, and
       // is called that place with a word in front of it
       expect(hosted.has(roll.lair)).toBe(true);
-      expect(roll.species).toBe(getLairSpecies(roll.lair));
+      expect(getLairResidents(roll.lair)).toContain(roll.species);
       expect(getSpawnRarity(roll.species)).toBe(SpawnRarity.Special);
     }
 
@@ -2396,6 +3021,65 @@ describe('world', () => {
     expect(resolveBerryPatch(rolls([0.5, 0, 0.5]))?.amount).toBe(4);
   });
 
+  it('stands apricorn trees on the ground, one colour to a tree', () => {
+    const world = new World('overworld');
+    const chunk = findChunk(world, (candidate) =>
+      new Set(candidate.getLandmarkCells().values()).has(Landmark.ApricornTree),
+    );
+
+    expect(chunk).not.toBeNull();
+    if (chunk == null) {
+      return;
+    }
+
+    const snapshot = new ChunkSnapshot(chunk, 0);
+    const trees = snapshot.getApricornTrees();
+
+    expect(trees.size).toBeGreaterThan(0);
+    for (const [cell, crop] of trees) {
+      expect(chunk.getLandmarkCells().get(cell)).toBe(Landmark.ApricornTree);
+      expect(APRICORNS).toContain(crop.item);
+      expect(crop.amount).toBeGreaterThanOrEqual(MIN_BERRY_PICK);
+      expect(crop.amount).toBeLessThanOrEqual(MAX_BERRY_PICK);
+      // The colour is the tree's own, and the same one the cell reads
+      expect(snapshot.getApricornTree(cell)).toBe(crop.item);
+    }
+
+    // A tree keeps its colour through every window, since the tree
+    // itself is what is drawn, and its crop turns over on the berry
+    // clock
+    const later = new ChunkSnapshot(chunk, LANDMARK_INTERVAL * 4);
+
+    for (const [cell, crop] of trees) {
+      expect(later.getApricornTrees().get(cell)?.item).toBe(crop.item);
+    }
+    expect(new ChunkSnapshot(chunk, LANDMARK_INTERVAL - 1).getApricornTrees()).toEqual(trees);
+
+    // A cell that holds no tree bears nothing
+    const elsewhere = [...chunk.getLandmarkCells()].find(
+      ([, landmark]) => landmark !== Landmark.ApricornTree,
+    );
+
+    expect(snapshot.getApricornTree(elsewhere?.[0] ?? 0)).toBeNull();
+  });
+
+  it('bears one apricorn colour a tree, and a handful of it', () => {
+    const draw = (value: number) => () => value;
+
+    // No rarer colour to hunt: an apricorn is a ball nobody has
+    // carved yet, and the seven balls are worth about the same as
+    // each other, so every colour is equally likely
+    expect(resolveApricornColour(draw(0))).toBe(APRICORNS[0]);
+    expect(resolveApricornColour(draw(0.999))).toBe(APRICORNS[APRICORNS.length - 1]);
+
+    // Two draws on two clocks: the colour is the tree's for good and
+    // the crop is the window's, so a good season cannot repaint it
+    expect(resolveApricornTree(draw(0), draw(0)).item).toBe(APRICORNS[0]);
+    expect(resolveApricornTree(draw(0), draw(0.999)).item).toBe(APRICORNS[0]);
+    expect(resolveApricornTree(draw(0), draw(0)).amount).toBe(MIN_BERRY_PICK);
+    expect(resolveApricornTree(draw(0), draw(0.999)).amount).toBe(MAX_BERRY_PICK);
+  });
+
   it('resolves a phenomenon into a meeting, a find or an egg', () => {
     const rolls = (values: number[]) => () => values.shift() ?? 0.999;
     const grotto = Phenomenon.HiddenGrotto;
@@ -2410,7 +3094,7 @@ describe('world', () => {
       expect(getSpeciesData(egg.species).evolvesFrom).toBeUndefined();
     }
 
-    // The pokemon branch is 1/8 rare, the rest uncommon, and never
+    // The pokemon branch is 1/8 grown, the rest half-grown, and never
     // reaches the legendary tier
     const rare = resolvePhenomenon(grotto, Biome.Grassland, TimeOfDay.Morning, rolls([0.9, 0, 0]));
     const uncommon = resolvePhenomenon(
@@ -2422,11 +3106,11 @@ describe('world', () => {
 
     expect(rare?.kind).toBe('pokemon');
     if (rare?.kind === 'pokemon') {
-      expect(getSpawnRarity(rare.species)).toBe(SpawnRarity.Rare);
+      expect(isGrownSpecies(rare.species)).toBe(true);
     }
     expect(uncommon?.kind).toBe('pokemon');
     if (uncommon?.kind === 'pokemon') {
-      expect(getSpawnRarity(uncommon.species)).toBe(SpawnRarity.Uncommon);
+      expect(getSpawnRarity(uncommon.species)).toBe(SpawnRarity.Rare);
     }
 
     // The other three are half a meeting and half a find, and what
@@ -3047,28 +3731,22 @@ describe('chunk snapshot', () => {
     // A zero trait value bottoms out the level and all-ones tops it —
     // within the band the species belongs to, which is what keeps a
     // level 90 Rattata out of the first field somebody walks into
-    const [lowest, highest] = SPAWN_LEVELS[getSpawnRarity(spawn[0])];
+    const [lowest, highest] = getSpawnLevels(spawn[0]);
 
     expect(maxed.level).toBe(lowest);
     expect(deriveEncounter(snapshot, [spawn[0], 0, 0xffffffff]).level).toBe(highest);
 
-    // Every band, at both ends. A special is the exception: one of
-    // each exists, and it may be met at any strength at all
-    for (const rarity of [
-      SpawnRarity.Base,
-      SpawnRarity.Uncommon,
-      SpawnRarity.Rare,
-      SpawnRarity.Prized,
-      SpawnRarity.Special,
-    ]) {
-      const [floor, ceiling] = SPAWN_LEVELS[rarity];
+    // Every species, at both ends. A legendary is the exception: one
+    // of each exists, and it may be met at any strength at all
+    for (const one of getRegisteredSpecies()) {
+      const [floor, ceiling] = getSpawnLevels(one);
+      const rarity = getSpawnRarity(one);
+      const legend = rarity === SpawnRarity.Special || rarity === SpawnRarity.Mythical;
 
-      expect(ceiling).toBeGreaterThan(floor);
+      expect(ceiling, getSpeciesData(one).name).toBeGreaterThan(floor);
       expect(floor).toBeGreaterThanOrEqual(1);
       expect(ceiling).toBeLessThanOrEqual(100);
-      // The specials alone are the whole range: one of each exists,
-      // and a legendary with a known strength is a solved one
-      expect(rarity === SpawnRarity.Special).toBe(floor === 1 && ceiling === 100);
+      expect(legend).toBe(floor === 1 && ceiling === 100);
     }
 
     // Sex-locked species never roll the other gender, whatever the
@@ -3327,8 +4005,13 @@ describe('chunk snapshot', () => {
     // The moves follow the fixed level, not the rolled one
     expect(legendary.moves).toEqual(deriveMoves(Species.Gyarados, 50));
 
-    // A wild meeting still rolls its level from the trait value
-    expect(deriveEncounter(snapshot, [...spawn], 'trainer-red').level).not.toBe(50);
+    // A wild meeting still rolls its level from the trait value, and
+    // rolls it inside the band its own line names
+    const wild = deriveEncounter(snapshot, [...spawn], 'trainer-red');
+    const [floor, ceiling] = getSpawnLevels(Species.Gyarados);
+
+    expect(wild.level).toBeGreaterThanOrEqual(floor);
+    expect(wild.level).toBeLessThanOrEqual(ceiling);
   });
 
   it('drops what a grunt owes at its own level, under its own kind', () => {

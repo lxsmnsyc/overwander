@@ -1,4 +1,5 @@
 import { Title } from '@solidjs/meta';
+import { clientOnly } from '@solidjs/start';
 import { type Accessor, type JSX, Show, createSignal, from } from 'solid-js';
 import { AuctionLot } from '../auth/auctions';
 import { type Profile, watchProfile } from '../auth/profile';
@@ -9,7 +10,7 @@ import { useAuth } from '../auth/context';
 import type { PlayerIdentity } from '../auth/user';
 import AuctionDialog from '../components/auctions/AuctionDialog';
 import AuctionTab from '../components/auctions/auction-tab';
-import BattleView from '../components/battle/battle-view';
+import BattleData from '../components/app/battle-data';
 import CatchDialog from '../components/catches/catch-dialog';
 import CatchesList from '../components/catches/catches-list';
 import GameMenu from '../components/app/GameMenu';
@@ -19,6 +20,7 @@ import LoginForm from '../components/app/LoginForm';
 import GiftsTab from '../components/gifts/GiftsTab';
 import NotificationsTab from '../components/notifications/NotificationsTab';
 import DexEntryDialog from '../components/dex/dex-entry-dialog';
+import SpeciesFormsDialog from '../components/dex/SpeciesFormsDialog';
 import DuelsTab from '../components/duels/DuelsTab';
 import OverworldTab from '../components/overworld/overworld-tab';
 import PokedexTab from '../components/dex/PokedexTab';
@@ -31,6 +33,25 @@ import TradeOfferDialog from '../components/trades/TradeOfferDialog';
 import { ThemeToggle } from '../components/app/theme';
 import WorldMapDialog from '../components/overworld/WorldMapDialog';
 import { Button, Dialog, DialogActions, Note } from '../components/styled';
+
+/**
+ * The fight, fetched when there is one, and only in a browser.
+ *
+ * It pulls the engine, its canvas and the registries behind them: the
+ * largest thing in the app, none of it read to walk around, and none
+ * of it able to run on the server — a battle is played rather than
+ * rendered
+ */
+const BattleView = clientOnly(async () => import('../components/battle/battle-view'));
+
+/**
+ * The news feed, fetched when it is opened.
+ *
+ * It carries every release page there has ever been, compiled: a panel
+ * that grows with the game, opened when a release lands rather than
+ * while playing
+ */
+const NewsTab = clientOnly(async () => import('../components/news/NewsTab'));
 
 /**
  * The game is the world.
@@ -60,7 +81,8 @@ type Panelled =
   | GameDialog.Gifts
   | GameDialog.Quests
   | GameDialog.Battles
-  | GameDialog.Settings;
+  | GameDialog.Settings
+  | GameDialog.News;
 
 const TITLES: Record<Panelled, string> = {
   [GameDialog.Notifications]: 'Notifications',
@@ -68,12 +90,13 @@ const TITLES: Record<Panelled, string> = {
   [GameDialog.Raids]: 'Raids',
   [GameDialog.Auctions]: 'Auctions',
   [GameDialog.Catches]: 'Catches',
-  [GameDialog.Inventory]: 'Inventory',
+  [GameDialog.Inventory]: 'Bag',
   [GameDialog.Pokedex]: 'Pokedex',
   [GameDialog.Gifts]: 'Gifts',
   [GameDialog.Quests]: 'Quests',
   [GameDialog.Battles]: 'Battle',
   [GameDialog.Settings]: 'Settings',
+  [GameDialog.News]: 'News',
 };
 
 const DESCRIPTIONS: Record<Panelled, string> = {
@@ -90,6 +113,7 @@ const DESCRIPTIONS: Record<Panelled, string> = {
   [GameDialog.Battles]:
     'The private fights you have been called into, and the one you are hosting.',
   [GameDialog.Settings]: 'How the game is set up for you, and what it is made of.',
+  [GameDialog.News]: 'What the game has shipped, newest first.',
 };
 
 /**
@@ -148,7 +172,9 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
             title={TITLES[GameDialog.Catches]}
             description={DESCRIPTIONS[GameDialog.Catches]}
           >
-            <CatchesList player={props.user.uid} />
+            <BattleData>
+              <CatchesList player={props.user.uid} />
+            </BattleData>
             <DialogActions>
               <Button onClick={close}>Close</Button>
             </DialogActions>
@@ -163,7 +189,9 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
             title={TITLES[GameDialog.Pokedex]}
             description={DESCRIPTIONS[GameDialog.Pokedex]}
           >
-            <PokedexTab player={props.user.uid} />
+            <BattleData>
+              <PokedexTab player={props.user.uid} />
+            </BattleData>
             <DialogActions>
               <Button onClick={close}>Close</Button>
             </DialogActions>
@@ -177,7 +205,9 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
             title={TITLES[GameDialog.Inventory]}
             description={DESCRIPTIONS[GameDialog.Inventory]}
           >
-            <InventoryList player={props.user.uid} />
+            <BattleData>
+              <InventoryList player={props.user.uid} />
+            </BattleData>
             <DialogActions>
               <Button onClick={close}>Close</Button>
             </DialogActions>
@@ -193,7 +223,9 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
             title={TITLES[GameDialog.Gifts]}
             description={DESCRIPTIONS[GameDialog.Gifts]}
           >
-            <GiftsTab />
+            <BattleData>
+              <GiftsTab />
+            </BattleData>
             <DialogActions>
               <Button onClick={close}>Close</Button>
             </DialogActions>
@@ -209,7 +241,9 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
             title={TITLES[GameDialog.Quests]}
             description={DESCRIPTIONS[GameDialog.Quests]}
           >
-            <QuestsTab isOpen={showing(GameDialog.Quests)} onClose={close} />
+            <BattleData>
+              <QuestsTab isOpen={showing(GameDialog.Quests)} onClose={close} />
+            </BattleData>
             <DialogActions>
               <Button onClick={close}>Close</Button>
             </DialogActions>
@@ -243,6 +277,22 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
             description={DESCRIPTIONS[GameDialog.Settings]}
           >
             <SettingsTab />
+            <DialogActions>
+              <Button onClick={close}>Close</Button>
+            </DialogActions>
+          </Dialog>
+
+          {/* The release pages, read as a feed. Like the settings, it
+              is written into the build rather than fetched */}
+          <Dialog
+            isOpen={showing(GameDialog.News)}
+            onClose={close}
+            width="wide"
+            terse
+            title={TITLES[GameDialog.News]}
+            description={DESCRIPTIONS[GameDialog.News]}
+          >
+            <NewsTab />
             <DialogActions>
               <Button onClick={close}>Close</Button>
             </DialogActions>
@@ -373,6 +423,21 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
             }}
           />
 
+          {/* Which form was meant, for a row that stands for several.
+              It hands over to the entry rather than opening beside it:
+              the two are one road, not two screens */}
+          <SpeciesFormsDialog
+            player={props.user.uid}
+            species={game.dexForms()}
+            onClose={() => {
+              game.setDexForms(null);
+            }}
+            onSpecies={(species) => {
+              game.setDexForms(null);
+              game.setDexEntry(species);
+            }}
+          />
+
           {/* One species in full, opened out of the dex and over it:
               an entry is a screen rather than a panel on a panel */}
           <DexEntryDialog
@@ -420,7 +485,11 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
     >
       {/* A battle is the whole page while it is running, the same way
           the world is when one is not */}
-      {(active) => <BattleView active={active} />}
+      {(active) => (
+        <BattleData>
+          <BattleView active={active} />
+        </BattleData>
+      )}
     </Show>
   );
 }

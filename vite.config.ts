@@ -2,6 +2,7 @@
 import { solidStart } from '@solidjs/start/config';
 import tailwindcss from '@tailwindcss/vite';
 import { nitro } from 'nitro/vite';
+import solidMarked from 'vite-plugin-solid-marked';
 import { defineConfig } from 'vite';
 
 /**
@@ -26,6 +27,11 @@ export default defineConfig({
   // config file of its own, so the plugin is all the wiring there is
   plugins: [
     tailwindcss(),
+    // The release pages under docs/ are imported as components, and
+    // this is what turns them into JSX. It runs before SolidStart's
+    // own plugin because what it emits is JSX for that to compile,
+    // and it is what keeps a markdown parser out of the browser
+    solidMarked({}),
     solidStart({
       devOverlay: false,
     }),
@@ -60,6 +66,19 @@ export default defineConfig({
     noExternal: ['server-only'],
   },
   test: {
+    /**
+     * The battle engine and the modules that field it are
+     * `client-only`: they are played in a browser and nothing on the
+     * server replays them. Vitest is neither browser nor server, and
+     * the marker's own body throws, so it is resolved to nothing for
+     * the tests that exercise the engine directly
+     */
+    alias: [
+      {
+        find: /^client-only$/,
+        replacement: new URL('./test/stubs/client-only.ts', import.meta.url).pathname,
+      },
+    ],
     /**
      * `test/rls` needs the local Supabase stack and clears it between
      * cases — run inside `pnpm test` it fails on a machine with no

@@ -44,6 +44,8 @@ export const NPC_QUOTES: Record<Npc, string> = {
   [Npc.Chef]: 'Fresh off the stove and out of the icebox. Your pokemon carries it, it eats well.',
   [Npc.Channeler]:
     'There is more in it than it knows. One Heart Scale and I will call it up. What answers is not mine to choose.',
+  [Npc.Kurt]:
+    'Apricorns, is it? Hand them over. One ball for each, and the colour decides which. No charge, you did the picking.',
 };
 
 /**

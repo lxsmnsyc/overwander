@@ -105,7 +105,12 @@ export interface SpeciesDexEntry {
 
 /**
  * One species' entry, for a sheet that is showing that species rather
- * than the whole dex
+ * than the whole dex.
+ *
+ * A form answers for **itself**, not for the set it belongs to: each
+ * shape has a page of its own, reached from the shapes grid, and an
+ * Unown Q that reported the alphabet's numbers would be reporting
+ * somebody else's
  */
 export async function getSpeciesDexEntry(uid: string, species: Species): Promise<SpeciesDexEntry> {
   const stored = await readPokedex(uid);

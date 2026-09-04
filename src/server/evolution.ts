@@ -1,7 +1,8 @@
 import 'server-only';
 import { asCaughtPokemon, isAuctionableCatch } from '../auth/caught-record';
 import { ITEM_STACKS } from '../auth/stacks';
-import { getMaxHealth, rescaleHealth } from '../auth/health';
+import { getMaxHealth, getStats, rescaleHealth } from '../auth/health';
+import { getTimeOfDay } from '../data/ids/biome';
 import type { Items } from '../data/ids/items';
 import type { Species } from '../data/ids/species';
 import type { EvolutionContext } from '../data/species';
@@ -77,6 +78,13 @@ export default async function evolveCatch(
       // Settled at the handover rather than re-read here: the server
       // wrote it, so a client saying it was traded changes nothing
       canEvolve: asBoolean(caught.canEvolve),
+      // Derived from the stored record rather than reported: what a
+      // Tyrogue becomes is decided by the numbers the server holds
+      stats: getStats(asCaughtPokemon(caught)),
+      friendship: asNumber(caught.friendship),
+      // The server's clock, not the caller's: a day evolution is not
+      // opened by a client saying the sun is up
+      time: getTimeOfDay(Date.now()),
     };
     // What is spent as well as what is allowed: a handover that does
     // not cover this evolution pays a Linking Cord for the half it

@@ -1,6 +1,12 @@
 import { asOffset, toZoneKey } from '../auth/local-time';
 import AleaRNG from '../core/alea';
-import { boostFamilyWeights, boostTypeWeights, getSpawnPool, pickSpawn } from '../data/biome';
+import {
+  boostFamilyWeights,
+  boostTypeWeights,
+  getSpawnPool,
+  pickSpawn,
+  spawnRanks,
+} from '../data/biome';
 import type { SpawnRarityGroups } from '../data/biome';
 import { SPECIES_DAY_WEIGHT_BOOST, getFeaturedFamily } from '../data/species';
 import { TimeOfDay, getTimeOfDay, isWaterBiome } from '../data/ids/biome';
@@ -10,32 +16,51 @@ import { Species } from '../data/ids/species';
 import { rollFossilOffer } from '../data/overworld/fossil';
 import Landmark from '../data/overworld/landmark';
 import type Lairs from '../data/overworld/lair';
-import { EVERY_STAGED_LAIR, getBiomeLairs, getLairSpecies } from '../data/overworld/lair';
-import Npc, { GIOVANNI_CHARSETS, NPCS, npcSheets } from '../data/overworld/npc';
+import {
+  EVERY_STAGED_LAIR,
+  getBiomeLairs,
+  getLairResidents,
+  pickLairSpecies,
+} from '../data/overworld/lair';
+import Npc, {
+  GIOVANNI_CHARSETS,
+  NPCS,
+  ROCKET_EXECUTIVES,
+  ROCKET_EXECUTIVE_CHARSETS,
+  type RocketExecutive,
+  npcSheets,
+} from '../data/overworld/npc';
 import {
   BIOME_ELITE_MEMBERS,
   BIOME_GYM_LEADERS,
+  CHAMPIONS,
   CHAMPION_CHARSETS,
+  CHAMPION_PARTIES,
+  type Champion,
   ELITE_MEMBER_CHARSETS,
-  ELITE_MEMBER_POOLS,
+  ELITE_MEMBER_SIGNATURES,
   EXPERT_PARTY_SIZE,
   type EliteMember,
   GYM_LEADER_CHARSETS,
+  GYM_LEADER_SIGNATURES,
   type GymLeader,
-  getChampionParty,
-  getExpertPool,
-  getGymLeaderPool,
+  LEGENDS,
+  LEGEND_CHARSETS,
+  LEGEND_PARTIES,
+  type Legend,
+  getEliteMemberRoster,
+  getGymLeaderRoster,
 } from '../data/overworld/experts';
 import {
   ACE_PARTY_SIZE,
   TRAINER_CHARSETS,
   TYPE_TRAINER_PARTY_MAX,
   TYPE_TRAINER_PARTY_MIN,
-  TrainerClass,
+  type TrainerClass,
   getBiomeTrainers,
   getTrainerPool,
+  isAceTrainer,
 } from '../data/overworld/trainers';
-import Regions from '../data/ids/regions';
 import Phenomenon, { BIOME_PHENOMENA } from '../data/overworld/phenomenon';
 import {
   VENDOR_KINDS,
@@ -44,38 +69,45 @@ import {
   rollVendorStock,
 } from '../data/overworld/vendor';
 import type Weather from '../data/overworld/weather';
-import { WEATHER_SPAWN_BOOST, spawnFavoredTypes } from '../data/overworld/weather';
+import {
+  WEATHER_SPAWN_BOOST,
+  favorsEverything,
+  spawnFavoredTypes,
+} from '../data/overworld/weather';
 import getWorld from './current';
 import type Chunk from './chunk';
 import { canStageBoss } from './raid';
 import { CELL_COUNT, CHUNK_CELLS, PLACEMENT_AREA, centeredCells, neighborCells } from './chunk';
 import { getPortalCell } from './portal';
 import type { PhenomenonReward } from './landmarks';
-import { resolveBerryPatch, resolveItemCache, resolveNest, resolvePhenomenon } from './landmarks';
+import {
+  resolveApricornColour,
+  resolveApricornTree,
+  resolveBerryPatch,
+  resolveItemCache,
+  resolveNest,
+  resolvePhenomenon,
+} from './landmarks';
 
 /**
- * The region a chunk's experts belong to: the whole world is Kanto
- * until another region's species exist to field. The seam where a
- * real mapping will go when one does
+ * An expert's six: five rolled from their kind's band with
+ * replacement, then the one pokemon they are remembered for. The
+ * signature is last, so a challenger meets the rolled five before
+ * the one they came for.
+ *
+ * With replacement because a band runs thin: Agatha's ghosts are two
+ * species, and a doubled Gengar is what an elite's party looks like
+ * anyway
  */
-function regionOf(_chunk: Chunk): Regions {
-  return Regions.Kanto;
-}
-
-/**
- * A full 6 drawn from an expert's pool, with replacement. It has to
- * be: the pool is one type's fully-grown species, and for Agatha and
- * Lance that is a single pokemon. A doubled Gengar is what an elite's
- * party looks like anyway
- */
-function expertParty(pool: Species[], seed: string): Spawn[] {
+function expertParty(pool: Species[], signature: Species, seed: string): Spawn[] {
   const rng = new AleaRNG(seed);
-
-  return Array.from({ length: EXPERT_PARTY_SIZE }, (): Spawn => {
+  const rolled = Array.from({ length: EXPERT_PARTY_SIZE - 1 }, (): Spawn => {
     const species = pool[Math.floor(rng.random() * pool.length)];
 
     return [species, rng.int32(), rng.int32()];
   });
+
+  return [...rolled, [signature, rng.int32(), rng.int32()]];
 }
 
 /**
@@ -120,10 +152,36 @@ export const PORTAL_KEEPER_CHANCE = 1 / 8;
 export const GIOVANNI_CHANCE = 1 / 64;
 
 /**
- * How many the boss fields: a full six against the player's six,
- * where a grunt makes do with three
+ * How many a Team Rocket stop fields, whoever is standing there: a
+ * full six against the player's six. What changes with the rank is
+ * what the six are drawn from and what level they fight at
  */
-export const GIOVANNI_PARTY_SIZE = 6;
+export const ROCKET_PARTY_SIZE = 6;
+
+/**
+ * Who is standing at a Team Rocket cell this window. Rolled once per
+ * cell from one draw, so the three are disjoint: the boss, then his
+ * executives, then the rank and file who hold everything else
+ */
+const enum RocketRank {
+  Grunt = 0,
+  Executive = 1,
+  Giovanni = 2,
+}
+
+export { RocketRank };
+
+/** One window in eight puts an executive on the cell */
+export const EXECUTIVE_CHANCE = 1 / 8;
+
+/**
+ * How often the seat at the top of a league holds a legend instead of
+ * its champion: the same one window in sixty-four Giovanni turns up
+ * on. Under a sky that favours everything it is every window, since
+ * those four are the rarest weather in the game and a walk that finds
+ * one should find what it is worth
+ */
+export const LEGEND_CHANCE = 1 / 64;
 
 export const SNAPSHOT_INTERVAL = 5 * 60 * 1000;
 
@@ -311,6 +369,26 @@ export default class ChunkSnapshot {
   private sky: Weather | null = null;
 
   /**
+   * The sky the window's people were staged under.
+   *
+   * Weather turns over every hour and the people every three, so the
+   * sky moves under a stop that does not. Anything about who is
+   * standing at a cell reads this rather than `weather`: a stop
+   * staged in one hour has to resolve as the same person in the next,
+   * including on a server rebuilding the window from its timestamp
+   */
+  get npcWeather(): Weather {
+    this.npcSky ??= getWorld().getWeather(
+      this.chunk.x,
+      this.chunk.y,
+      Math.floor(this.npcTimestamp / WEATHER_INTERVAL),
+    );
+    return this.npcSky;
+  }
+
+  private npcSky: Weather | null = null;
+
+  /**
    * What the window may roll, crowded by the two things that crowd it:
    * the featured family for the day, and the sky for the hour
    */
@@ -457,7 +535,7 @@ export default class ChunkSnapshot {
       for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
         if (landmark === Landmark.ItemCache) {
           const rng = new AleaRNG(`${this.groundKey}${this.landmarkTimestamp}cache${cell}`);
-          const stash = resolveItemCache(() => rng.random());
+          const stash = resolveItemCache(this.chunk.biome, () => rng.random());
 
           if (stash.length > 0) {
             caches.set(cell, stash);
@@ -497,6 +575,54 @@ export default class ChunkSnapshot {
   }
 
   /**
+   * Which apricorn the tree at this cell bears, or null where the cell
+   * holds no tree. A fixture of the chunk rather than the window's:
+   * the tree is drawn in its own colour, and one that turned over
+   * every quarter-hour would be a different tree each time
+   */
+  getApricornTree(cell: number): Items | null {
+    if (this.chunk.getLandmarkCells().get(cell) !== Landmark.ApricornTree) {
+      return null;
+    }
+
+    const rng = new AleaRNG(`${this.chunk.seed}apricorn${cell}`);
+
+    return resolveApricornColour(() => rng.random());
+  }
+
+  private apricornTrees: Map<number, ItemStack> | null = null;
+
+  /**
+   * The window's ripe apricorns, keyed by the landmark cell: the
+   * colour the tree bears and how many of them are on it. The crop
+   * turns over on the same clock a berry patch fruits on
+   */
+  getApricornTrees(): Map<number, ItemStack> {
+    if (this.apricornTrees == null) {
+      const trees = new Map<number, ItemStack>();
+
+      for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
+        if (landmark !== Landmark.ApricornTree) {
+          continue;
+        }
+
+        const colour = new AleaRNG(`${this.chunk.seed}apricorn${cell}`);
+        const crop = new AleaRNG(`${this.groundKey}${this.landmarkTimestamp}apricorn${cell}`);
+
+        trees.set(
+          cell,
+          resolveApricornTree(
+            () => colour.random(),
+            () => crop.random(),
+          ),
+        );
+      }
+      this.apricornTrees = trees;
+    }
+    return this.apricornTrees;
+  }
+
+  /**
    * The three-hour window the chunk's raids belong to. A raid far
    * outlives the spawn window, so every snapshot taken within the
    * same stretch stages the same legendary and a party has time to
@@ -521,7 +647,7 @@ export default class ChunkSnapshot {
     if (this.raids == null) {
       const raids = new Map<number, RaidRoll>();
       const lairs = getBiomeLairs(this.chunk.biome).filter((lair) =>
-        canStageBoss(getLairSpecies(lair)),
+        getLairResidents(lair).some(canStageBoss),
       );
 
       if (lairs.length > 0) {
@@ -532,7 +658,11 @@ export default class ChunkSnapshot {
             // its resident's nature and ability derive from
             const lair = lairs[Math.floor(rng.random() * lairs.length)];
 
-            raids.set(cell, { lair, species: getLairSpecies(lair), traitValue: rng.int32() });
+            raids.set(cell, {
+              lair,
+              species: pickLairSpecies(lair, canStageBoss, rng.int32()),
+              traitValue: rng.int32(),
+            });
           }
         }
       }
@@ -558,12 +688,12 @@ export default class ChunkSnapshot {
       const raids = new Map<number, RaidRoll>();
       const pool = getSpawnPool(this.chunk.biome, getTimeOfDay(this.raidTimestamp));
       const lairs = getBiomeLairs(this.chunk.biome).filter((lair) =>
-        canStageBoss(getLairSpecies(lair)),
+        getLairResidents(lair).some(canStageBoss),
       );
       // A species with nothing left to cast once the boss bans are
       // applied is no boss: it is left out of the draw rather than
       // staged with an empty move list
-      const rare = pool.rare.filter((entry) => canStageBoss(entry.species));
+      const rare = spawnRanks(pool)[2].filter((entry) => canStageBoss(entry.species));
 
       for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
         if (landmark !== Landmark.ShadowLair) {
@@ -579,7 +709,11 @@ export default class ChunkSnapshot {
         if (taken) {
           const lair = lairs[Math.floor(rng.random() * lairs.length)];
 
-          raids.set(cell, { lair, species: getLairSpecies(lair), traitValue: rng.int32() });
+          raids.set(cell, {
+            lair,
+            species: pickLairSpecies(lair, canStageBoss, rng.int32()),
+            traitValue: rng.int32(),
+          });
           continue;
         }
         if (rare.length === 0) {
@@ -728,7 +862,15 @@ export default class ChunkSnapshot {
 
           dress(cell, trainer == null ? npcSheets(Npc.Trainer) : TRAINER_CHARSETS[trainer]);
         } else if (landmark === Landmark.TeamRocket) {
-          dress(cell, this.isRocketBoss(cell) ? GIOVANNI_CHARSETS : npcSheets(Npc.RocketGrunt));
+          const executive = this.getRocketExecutive(cell);
+
+          if (this.isRocketBoss(cell)) {
+            dress(cell, GIOVANNI_CHARSETS);
+          } else if (executive == null) {
+            dress(cell, npcSheets(Npc.RocketGrunt));
+          } else {
+            dress(cell, ROCKET_EXECUTIVE_CHARSETS[executive]);
+          }
         } else if (landmark === Landmark.GymLeader) {
           const leader = this.getGymLeader(cell);
 
@@ -742,7 +884,14 @@ export default class ChunkSnapshot {
             dress(cell, ELITE_MEMBER_CHARSETS[member]);
           }
         } else if (landmark === Landmark.Champion) {
-          dress(cell, CHAMPION_CHARSETS);
+          const legend = this.getLegend(cell);
+          const champion = legend == null ? this.getChampion(cell) : null;
+
+          if (legend != null) {
+            dress(cell, LEGEND_CHARSETS[legend]);
+          } else if (champion != null) {
+            dress(cell, CHAMPION_CHARSETS[champion]);
+          }
         } else if (landmark === Landmark.Market) {
           dress(cell, npcSheets(Npc.Vendor));
         }
@@ -753,17 +902,42 @@ export default class ChunkSnapshot {
   }
 
   /**
-   * Whether this Team Rocket stop rolled the boss himself this
-   * window: one draw in sixty-four, the rarest thing a walk meets
+   * Who is barring this Team Rocket cell this window, or null where
+   * the cell is not one. One draw settles all three ranks, so they
+   * cannot overlap: the boss at one in sixty-four, an executive at
+   * one in eight, and a grunt the rest of the time
    */
-  isRocketBoss(cell: number): boolean {
+  getRocketRank(cell: number): RocketRank | null {
     if (this.chunk.getLandmarkCells().get(cell) !== Landmark.TeamRocket) {
-      return false;
+      return null;
     }
 
-    const rng = new AleaRNG(`${this.key}${this.npcTimestamp}boss${cell}`);
+    const rolled = new AleaRNG(`${this.key}${this.npcTimestamp}boss${cell}`).random();
 
-    return rng.random() < GIOVANNI_CHANCE;
+    if (rolled < GIOVANNI_CHANCE) {
+      return RocketRank.Giovanni;
+    }
+    return rolled < GIOVANNI_CHANCE + EXECUTIVE_CHANCE ? RocketRank.Executive : RocketRank.Grunt;
+  }
+
+  /**
+   * Which of the four executives it is, once the rank says one is
+   * standing there. Rolled apart from the rank, so adding a fifth
+   * does not move anybody's odds of meeting one at all
+   */
+  getRocketExecutive(cell: number): RocketExecutive | null {
+    if (this.getRocketRank(cell) !== RocketRank.Executive) {
+      return null;
+    }
+
+    const rng = new AleaRNG(`${this.key}${this.npcTimestamp}executive${cell}`);
+
+    return ROCKET_EXECUTIVES[Math.floor(rng.random() * ROCKET_EXECUTIVES.length)] ?? null;
+  }
+
+  /** Whether this Team Rocket stop rolled the boss himself */
+  isRocketBoss(cell: number): boolean {
+    return this.getRocketRank(cell) === RocketRank.Giovanni;
   }
 
   /**
@@ -786,7 +960,7 @@ export default class ChunkSnapshot {
 
     for (const time of times) {
       const pool = getSpawnPool(this.chunk.biome, time);
-      const bands = [pool.base, pool.uncommon, pool.rare];
+      const bands = spawnRanks(pool);
       const stocked = bands.find((band) => band.length > 0);
 
       if (stocked != null) {
@@ -799,12 +973,14 @@ export default class ChunkSnapshot {
   private rocketStops: Map<number, Spawn[]> | null = null;
 
   /**
-   * The window's Team Rocket stops, keyed by their landmark cell. A
-   * grunt fields three: one from each of the biome's base, uncommon
-   * and rare bands. The window that rolled Giovanni fields six: five
-   * from the rare band and a legendary — the biome's own lair where
-   * it has one, any lair at all where it does not. Each draw carries
-   * its own rolls but no level, which the fight fixes for the party
+   * The window's Team Rocket stops, keyed by their landmark cell.
+   * Everybody fields six, weakest first, and the rank says out of
+   * what: a grunt takes one commoner, two of the uncommon band and
+   * three of the rare, an executive takes six of the rare band, and
+   * Giovanni takes five of it and a legendary — the biome's own lair
+   * where it has one, any lair at all where it does not. Each draw
+   * carries its own rolls but no level, which the fight fixes for the
+   * party
    */
   getRocketStops(): Map<number, Spawn[]> {
     if (this.rocketStops == null) {
@@ -824,19 +1000,36 @@ export default class ChunkSnapshot {
             return [entry.species, rng.int32(), rng.int32()];
           };
 
-          if (this.isRocketBoss(cell)) {
-            const rares = fielded[fielded.length - 1];
+          const [commons, uncommons, rares] = fielded;
+          const rank = this.getRocketRank(cell);
+
+          if (rank === RocketRank.Giovanni) {
             const lairs = getBiomeLairs(this.chunk.biome);
             // Any lair the world stages, never a mythical's: nothing
             // but its relic ever calls one of those out
             const homes = lairs.length > 0 ? lairs : EVERY_STAGED_LAIR;
             const lair = homes[Math.floor(rng.random() * homes.length)];
-            const party = Array.from({ length: GIOVANNI_PARTY_SIZE - 1 }, () => draw(rares));
+            const party = Array.from({ length: ROCKET_PARTY_SIZE - 1 }, () => draw(rares));
 
-            party.push([getLairSpecies(lair), rng.int32(), rng.int32()]);
+            party.push([pickLairSpecies(lair, () => true, rng.int32()), rng.int32(), rng.int32()]);
             stops.set(cell, party);
+          } else if (rank === RocketRank.Executive) {
+            stops.set(
+              cell,
+              Array.from({ length: ROCKET_PARTY_SIZE }, () => draw(rares)),
+            );
           } else {
-            stops.set(cell, fielded.map(draw));
+            // Weakest first, which is also the half a beaten grunt
+            // hands over: the commoner and the two uncommons, never
+            // the three they were actually fighting with
+            stops.set(cell, [
+              draw(commons),
+              draw(uncommons),
+              draw(uncommons),
+              draw(rares),
+              draw(rares),
+              draw(rares),
+            ]);
           }
         }
       }
@@ -886,18 +1079,17 @@ export default class ChunkSnapshot {
           continue;
         }
 
-        const pool = getTrainerPool(regionOf(this.chunk), trainer);
+        const pool = getTrainerPool(trainer);
 
         if (pool.length === 0) {
           continue;
         }
 
         const rng = new AleaRNG(`${this.key}${this.npcTimestamp}duel${cell}`);
-        const size =
-          trainer === TrainerClass.AceTrainer
-            ? ACE_PARTY_SIZE
-            : TYPE_TRAINER_PARTY_MIN +
-              Math.floor(rng.random() * (TYPE_TRAINER_PARTY_MAX - TYPE_TRAINER_PARTY_MIN + 1));
+        const size = isAceTrainer(trainer)
+          ? ACE_PARTY_SIZE
+          : TYPE_TRAINER_PARTY_MIN +
+            Math.floor(rng.random() * (TYPE_TRAINER_PARTY_MAX - TYPE_TRAINER_PARTY_MIN + 1));
 
         stops.set(
           cell,
@@ -953,9 +1145,10 @@ export default class ChunkSnapshot {
   private gymStops: Map<number, Spawn[]> | null = null;
 
   /**
-   * The window's gym parties, keyed by their landmark cell: 6 of the
-   * resident leader's own type, re-drawn each window. Blue's gym has
-   * no type and draws from the whole region
+   * The window's gym parties, keyed by their landmark cell: five of
+   * the resident leader's own type re-drawn each window, and their
+   * signature standing last however the five roll. Blue's gym has no
+   * type and draws its five from the whole band
    */
   getGymStops(): Map<number, Spawn[]> {
     if (this.gymStops == null) {
@@ -972,10 +1165,17 @@ export default class ChunkSnapshot {
           continue;
         }
 
-        const pool = getExpertPool(regionOf(this.chunk), getGymLeaderPool(leader));
+        const pool = getGymLeaderRoster(leader);
 
         if (pool.length > 0) {
-          stops.set(cell, expertParty(pool, `${this.key}${this.npcTimestamp}gym${cell}`));
+          stops.set(
+            cell,
+            expertParty(
+              pool,
+              GYM_LEADER_SIGNATURES[leader],
+              `${this.key}${this.npcTimestamp}gym${cell}`,
+            ),
+          );
         }
       }
       this.gymStops = stops;
@@ -986,8 +1186,8 @@ export default class ChunkSnapshot {
   private eliteStops: Map<number, Spawn[]> | null = null;
 
   /**
-   * The window's Elite Four parties, keyed by their landmark cell: 6
-   * of the resident member's own type
+   * The window's Elite Four parties, keyed by their landmark cell:
+   * five of the resident member's own kind, and their signature last
    */
   getEliteStops(): Map<number, Spawn[]> {
     if (this.eliteStops == null) {
@@ -1004,10 +1204,17 @@ export default class ChunkSnapshot {
           continue;
         }
 
-        const pool = getExpertPool(regionOf(this.chunk), ELITE_MEMBER_POOLS[member]);
+        const pool = getEliteMemberRoster(member);
 
         if (pool.length > 0) {
-          stops.set(cell, expertParty(pool, `${this.key}${this.npcTimestamp}elite${cell}`));
+          stops.set(
+            cell,
+            expertParty(
+              pool,
+              ELITE_MEMBER_SIGNATURES[member],
+              `${this.key}${this.npcTimestamp}elite${cell}`,
+            ),
+          );
         }
       }
       this.eliteStops = stops;
@@ -1015,24 +1222,80 @@ export default class ChunkSnapshot {
     return this.eliteStops;
   }
 
+  /**
+   * Which champion holds the seat at this cell, or null when the cell
+   * holds none. A league rather than a country decides who a champion
+   * is, so unlike the gyms this is a plain fixture roll over the
+   * champions there are, fixed for the cell the way a gym's leader is
+   */
+  getChampion(cell: number): Champion | null {
+    if (this.chunk.getLandmarkCells().get(cell) !== Landmark.Champion) {
+      return null;
+    }
+
+    const rng = new AleaRNG(`${this.chunk.seed}champion${cell}`);
+
+    return CHAMPIONS[Math.floor(rng.random() * CHAMPIONS.length)] ?? null;
+  }
+
+  /**
+   * Which legend has taken the seat at this cell this window, or null
+   * for the windows the champion keeps it. A window roll rather than
+   * a fixture: the seat is the champion's, and a legend is only ever
+   * passing through
+   */
+  getLegend(cell: number): Legend | null {
+    if (this.chunk.getLandmarkCells().get(cell) !== Landmark.Champion) {
+      return null;
+    }
+
+    const rng = new AleaRNG(`${this.key}${this.npcTimestamp}legend${cell}`);
+    const rolled = rng.random();
+
+    if (!favorsEverything(this.npcWeather) && rolled >= LEGEND_CHANCE) {
+      return null;
+    }
+    return LEGENDS[Math.floor(rng.random() * LEGENDS.length)] ?? null;
+  }
+
   private championStops: Map<number, Spawn[]> | null = null;
 
   /**
    * The window's Champion parties, keyed by their landmark cell: the
    * champion's own named six, no shadows, the hardest fair fight there
-   * is. Only what drives their rolls turns over with the window; the
-   * team itself does not
+   * is, or the legend's own six on the windows one has the seat. Only
+   * what drives their rolls turns over with the window; the team
+   * itself does not
    */
   getChampionStops(): Map<number, Spawn[]> {
     if (this.championStops == null) {
       const stops = new Map<number, Spawn[]>();
-      const party = getChampionParty(regionOf(this.chunk));
 
-      if (party != null) {
-        for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
-          if (landmark === Landmark.Champion) {
-            stops.set(cell, signatureParty(party, `${this.key}${this.npcTimestamp}champ${cell}`));
-          }
+      for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
+        if (landmark !== Landmark.Champion) {
+          continue;
+        }
+
+        const legend = this.getLegend(cell);
+
+        if (legend != null) {
+          stops.set(
+            cell,
+            signatureParty(LEGEND_PARTIES[legend], `${this.key}${this.npcTimestamp}legend${cell}`),
+          );
+          continue;
+        }
+
+        const champion = this.getChampion(cell);
+
+        if (champion != null) {
+          stops.set(
+            cell,
+            signatureParty(
+              CHAMPION_PARTIES[champion],
+              `${this.key}${this.npcTimestamp}champ${cell}`,
+            ),
+          );
         }
       }
       this.championStops = stops;

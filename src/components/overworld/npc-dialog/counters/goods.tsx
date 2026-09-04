@@ -3,6 +3,7 @@ import type { InventoryEntry } from '../../../../auth/inventory';
 import type { Items } from '../../../../data/ids/items';
 import { FOSSIL_REVIVE_LEVEL, getFossilPrice } from '../../../../data/overworld/fossil';
 import ItemGrid from '../../../items/ItemGrid';
+import InventoryPicker from '../../../items/InventoryPicker';
 import { describeItem } from '../../../details';
 import { Badge, Detail, DialogSection, Meta, Note, Row } from '../../../styled';
 import { CENTRED } from '../shared';
@@ -104,6 +105,66 @@ export function ReviveCounter(props: ReviveCounterProps): JSX.Element {
             — a party picked around it is worth planning before the
             fossil is spent */}
         <Meta class="block">Whatever is in there comes out at level {FOSSIL_REVIVE_LEVEL}.</Meta>
+      </Show>
+    </DialogSection>
+  );
+}
+
+export interface KurtCounterProps {
+  /** The apricorns in the player's own bag, which is all he works on */
+  apricorns: InventoryEntry[];
+  busy: boolean;
+  /** What the apricorn on a square becomes, said in the corner of it */
+  ballName: (item: Items) => string;
+  onCarve: (item: Items, amount: number) => void;
+}
+
+/**
+ * Kurt's bench. What he takes is in the bag rather than in a crate, so
+ * the bag itself is the counter: the apricorns are on it from the
+ * moment he is spoken to, the way the nurse's party is. He charges
+ * nothing and the colour has already settled which ball, so how many
+ * is the only thing left to decide, and the tray asks that where the
+ * square was pressed
+ */
+export function KurtCounter(props: KurtCounterProps): JSX.Element {
+  const carrying = (): number => props.apricorns.reduce((total, entry) => total + entry.amount, 0);
+
+  return (
+    <DialogSection class={CENTRED}>
+      <Show
+        when={props.apricorns.length > 0}
+        fallback={<Note>You are carrying nothing he can carve.</Note>}
+      >
+        <Row class="justify-center">
+          <Badge tone="leaf">{carrying()} apricorns</Badge>
+        </Row>
+        <InventoryPicker
+          inline
+          counts
+          entries={props.apricorns}
+          disabled={props.busy}
+          value={null}
+          verb="Carve"
+          note={(entry) => props.ballName(entry.item)}
+          card={(entry) => <Detail label="Becomes">{props.ballName(entry.item)}</Detail>}
+          // He works through as many as are handed over, so the bag is
+          // the only limit there is
+          most={(entry) => entry.amount}
+          sum={(item, amount) => (
+            <Meta>
+              {amount} × {describeItem(item)} ={' '}
+              <strong>
+                {amount} {props.ballName(item)}
+              </strong>
+            </Meta>
+          )}
+          onPick={(item, amount) => {
+            if (item != null && amount > 0) {
+              props.onCarve(item, amount);
+            }
+          }}
+        />
       </Show>
     </DialogSection>
   );

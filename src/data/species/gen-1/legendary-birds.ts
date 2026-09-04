@@ -26,6 +26,23 @@ const BIRD_TEACHABLE = [
   Moves.Rest,
   Moves.Substitute,
   Moves.Fly,
+  Moves.Roar,
+  Moves.Snore,
+  Moves.Curse,
+  Moves.Protect,
+  Moves.MudSlap,
+  Moves.Detect,
+  Moves.Sandstorm,
+  Moves.Endure,
+  Moves.Swagger,
+  Moves.SteelWing,
+  Moves.SleepTalk,
+  Moves.Return,
+  Moves.Frustration,
+  Moves.HiddenPower,
+  Moves.RainDance,
+  Moves.SunnyDay,
+  Moves.RockSmash,
 ];
 
 export default function registerLegendaryBirdSpecies(): void {
@@ -54,10 +71,12 @@ export default function registerLegendaryBirdSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.Peck, Moves.IceBeam],
+        1: [Moves.Peck, Moves.IceBeam, Moves.Gust, Moves.PowderSnow],
+        13: [Moves.Mist],
+        25: [Moves.Agility],
+        37: [Moves.MindReader],
         51: [Moves.Blizzard],
-        55: [Moves.Agility],
-        60: [Moves.Mist],
+        61: [Moves.Reflect],
       },
       teachable: [
         ...BIRD_TEACHABLE,
@@ -66,6 +85,7 @@ export default function registerLegendaryBirdSpecies(): void {
         Moves.BubbleBeam,
         Moves.WaterGun,
         Moves.Surf,
+        Moves.IcyWind,
       ],
     },
   });
@@ -95,9 +115,11 @@ export default function registerLegendaryBirdSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.ThunderShock, Moves.DrillPeck],
+        1: [Moves.ThunderShock, Moves.DrillPeck, Moves.Peck],
+        13: [Moves.ThunderWave],
+        25: [Moves.Agility],
+        37: [Moves.Detect],
         51: [Moves.Thunder],
-        55: [Moves.Agility],
         60: [Moves.LightScreen],
       },
       teachable: [
@@ -106,6 +128,7 @@ export default function registerLegendaryBirdSpecies(): void {
         Moves.Thunder,
         Moves.ThunderWave,
         Moves.Flash,
+        Moves.ZapCannon,
       ],
     },
   });
@@ -131,16 +154,19 @@ export default function registerLegendaryBirdSpecies(): void {
     eggGroups: [EggGroups.NoEggsDiscovered],
     genderRatio: undefined,
     catchRate: 3,
-    biomes: [Biome.Mountain, Biome.Desert],
+    biomes: [Biome.Mountain, Biome.Desert, Biome.Volcano],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.Peck, Moves.FireSpin],
+        1: [Moves.Peck, Moves.FireSpin, Moves.WingAttack, Moves.Ember],
+        25: [Moves.Agility],
+        37: [Moves.Endure],
+        49: [Moves.Flamethrower],
         51: [Moves.Leer],
-        55: [Moves.Agility],
         60: [Moves.SkyAttack],
+        61: [Moves.Safeguard],
       },
-      teachable: [...BIRD_TEACHABLE, Moves.FireBlast],
+      teachable: [...BIRD_TEACHABLE, Moves.FireBlast, Moves.Flamethrower],
     },
   });
 }

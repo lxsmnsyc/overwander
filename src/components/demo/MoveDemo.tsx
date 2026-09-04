@@ -1,9 +1,14 @@
 import { useSearchParams } from '@solidjs/router';
 import { type JSX, Show, createEffect, createMemo, createSignal, onCleanup } from 'solid-js';
 import { MoveTargetType } from '../../battle/events';
-import { type MoveDemo as Staged, aimFor, createMoveDemo } from '../../battle/demo-move';
+import {
+  type DemoRules,
+  type MoveDemo as Staged,
+  aimFor,
+  createMoveDemo,
+} from '../../battle/demo-move';
 import BattleField from '../battle/BattleField';
-import { Badge, Button, Combobox, Meta, Note, Row } from '../styled';
+import { Badge, Button, Combobox, Meta, Note, Row, Switch } from '../styled';
 import { MOVE_CATEGORY_NAMES, type Moves } from '../../data/ids/moves';
 import { TYPE_NAMES } from '../../data/constants/types';
 import { getMoveData, getRegisteredMoves } from '../../data/moves';
@@ -70,6 +75,15 @@ export default function MoveDemo(): JSX.Element {
     return moves().find((entry) => entry.label === wanted)?.value ?? null;
   };
 
+  /**
+   * What the demo bends, handed to every battle this page stages.
+   * One object rather than a signal read while staging: turning a
+   * switch should change the next cast, not tear the fight down and
+   * build it again
+   */
+  const rules: DemoRules = { alwaysHits: true };
+  const [hits, setHits] = createSignal(rules.alwaysHits);
+
   const [staged, setStaged] = createSignal<Staged | null>(null);
   const [revision, setRevision] = createSignal(0);
   const [restaged, setRestaged] = createSignal(0);
@@ -84,7 +98,7 @@ export default function MoveDemo(): JSX.Element {
       return;
     }
 
-    const demo = createMoveDemo(move);
+    const demo = createMoveDemo(move, rules);
 
     // Initialized but not started: the field starts it once every
     // sheet has arrived, the way a real fight waits
@@ -133,8 +147,13 @@ export default function MoveDemo(): JSX.Element {
           <Show when={data.power != null}>
             <Badge tone="ember">{data.power} power</Badge>
           </Show>
+          {/* Said as the move has it, and again as the page is
+              currently resolving it: a switch that quietly makes the
+              number above it wrong is worse than no switch */}
           <Badge tone="gold">
-            {data.accuracy == null ? 'never misses' : `${data.accuracy}% accurate`}
+            {data.accuracy == null
+              ? 'never misses'
+              : `${data.accuracy}% accurate${hits() ? ', forced' : ''}`}
           </Badge>
           <Meta>{data.pp} PP</Meta>
         </Row>
@@ -233,6 +252,17 @@ export default function MoveDemo(): JSX.Element {
       </div>
 
       {detail()}
+
+      <Switch
+        label="Always hits"
+        description="Every cast passes its accuracy roll. A Fissure lands three casts in ten, which is
+          a lottery rather than a demonstration."
+        checked={hits()}
+        onChange={(on) => {
+          rules.alwaysHits = on;
+          setHits(on);
+        }}
+      />
 
       <Row>
         <Button tone="primary" disabled={!standing() || !ready()} onClick={cast}>

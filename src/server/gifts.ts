@@ -54,12 +54,20 @@ export const STARTER_LEVEL = 5;
 export const STARTER_BALLS = 20;
 
 /**
- * The three a trainer has always started from. They are offered to
- * everybody rather than rolled per player: what a first partner is
- * should be a choice somebody makes rather than a die the game throws
- * for them
+ * The ones a trainer may start from: a region's grass, fire and water,
+ * for every region whose starters are registered. They are offered to
+ * everybody rather than rolled per player, since what a first partner
+ * is should be a choice somebody makes rather than a die the game
+ * throws for them
  */
-export const STARTER_SPECIES: Species[] = [Species.Bulbasaur, Species.Charmander, Species.Squirtle];
+export const STARTER_SPECIES: Species[] = [
+  Species.Bulbasaur,
+  Species.Charmander,
+  Species.Squirtle,
+  Species.Chikorita,
+  Species.Cyndaquil,
+  Species.Totodile,
+];
 
 /**
  * Which gifts these are, and the ids of the rows that hold them. They
@@ -142,6 +150,33 @@ export async function offer(player: string | null, offers: Offer[], now: number)
 }
 
 /**
+ * The same, gift by gift: whatever is not on the shelf already is put
+ * there and the rest is left where it stands.
+ *
+ * A giving that grows needs this. An all-or-none write is refused
+ * outright once any part of it exists, so a starter added after the
+ * first three would never reach a database that already holds them.
+ *
+ * One statement, and the conflict is what settles a race: two tabs
+ * signing in together both write, and the second writes nothing
+ */
+async function offerEach(player: string | null, offers: Offer[], now: number): Promise<void> {
+  const sql = getSql();
+  const rows = offers.map((entry) => ({
+    id: entry.id,
+    player,
+    offered_at: now,
+    gift: jsonOf(sql, entry.gift),
+    encounter: entry.encounter == null ? null : jsonOf(sql, entry.encounter),
+  }));
+
+  await sql`
+    insert into gifts ${sql(rows, 'id', 'player', 'offered_at', 'gift', 'encounter')}
+    on conflict (id) do nothing
+  `;
+}
+
+/**
  * The chunk a gift's rolls are drawn against.
  *
  * A fateful meeting happened at no coordinate anybody walked to, and
@@ -211,14 +246,14 @@ function rollGift(observer: string, gift: CatchGift | EncounterGift, now: number
 }
 
 /**
- * Put the three starters on every shelf, with the balls to throw at
- * the next one.
+ * Put the starters on every shelf, with the balls to throw at the next
+ * one.
  *
  * They are open offers rather than a roll per player: what a first
- * partner is should be a choice, and the same three should be waiting
- * for everybody. The write is all-or-none and refused once the rows
- * exist, so the first player to ask is what creates them and every
- * later ask is a read
+ * partner is should be a choice, and the same ones should be waiting
+ * for everybody. Written gift by gift rather than all-or-none, because
+ * the list grows: a region added later has to reach the shelves the
+ * first three are already standing on
  */
 async function ensureStarterGifts(now: number): Promise<void> {
   const offers: Offer[] = STARTER_SPECIES.map((species) => {
@@ -261,7 +296,7 @@ async function ensureStarterGifts(now: number): Promise<void> {
     };
   });
 
-  await offer(
+  await offerEach(
     null,
     [
       ...offers,

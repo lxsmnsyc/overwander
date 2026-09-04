@@ -12,6 +12,7 @@ import { requireUid } from '../server/auth';
 import { consumeItem } from '../server/inventory';
 import { stampFeed } from '../server/encounter-io';
 import { retireSpawn } from '../server/overworld';
+import { resolveBuddy } from './buddy';
 import { hasCaughtSpecies } from './caught';
 import { syncServerClock } from './clock';
 import { getLocalOffset, getLocale } from './local-time';
@@ -35,7 +36,21 @@ export async function createSafariSession(
   // The Repeat Ball needs to know whether this species is already in
   // the player's records; it is read once, when the session opens
   const speciesCaught = await hasCaughtSpecies(user.uid, encounter.species);
-  const session = new SafariSession(encounter, () => rng.random(), { speciesCaught });
+  // The Level and Love Balls are thrown from behind the buddy, so who
+  // that is is read once here alongside it. A player walking alone
+  // throws both as plain balls
+  const walking = await resolveBuddy(user.uid);
+  const session = new SafariSession(encounter, () => rng.random(), {
+    speciesCaught,
+    buddy:
+      walking == null
+        ? undefined
+        : {
+            species: walking[1].species,
+            gender: walking[1].gender,
+            level: walking[1].level,
+          },
+  });
 
   // What the bag holds is the session's own business only so far as
   // knowing whether there is anything left to throw; the throw itself

@@ -1,9 +1,11 @@
+import { getTimeOfDay } from '../data/ids/biome';
 import type { Species } from '../data/ids/species';
-import { getSpeciesData, meetsEvolutionCriteria } from '../data/species';
+import { coveredByHandover, getSpeciesData, meetsEvolutionCriteria } from '../data/species';
 import type { EvolutionData } from '../data/species';
 import evolveOnServerSide from '../server/evolution';
 import { requireUid } from '../server/auth';
 import { getCaught } from './caught';
+import { getStats } from './health';
 import { getInventory } from './inventory';
 import getIdToken from './session';
 
@@ -18,6 +20,12 @@ export interface EvolutionOption {
    * stone in the bag, the item in its hands
    */
   available: boolean;
+  /**
+   * Whether a handover has already settled what this one asks. There
+   * is nothing left to work towards, and nothing left to show: the
+   * swap happened and took the item it wanted with it
+   */
+  covered: boolean;
 }
 
 /**
@@ -48,11 +56,15 @@ export async function listEvolutionOptions(
     carried: new Set(inventory.filter((entry) => entry.amount > 0).map((entry) => entry.item)),
     held: new Set(caught.items),
     canEvolve: caught.canEvolve,
+    stats: getStats(caught),
+    friendship: caught.friendship,
+    time: getTimeOfDay(Date.now()),
   };
 
   return (getSpeciesData(caught.species).evolvesInto ?? []).map((evolution) => ({
     evolution,
     available: meetsEvolutionCriteria(evolution, context),
+    covered: coveredByHandover(evolution, context),
   }));
 }
 

@@ -15,14 +15,13 @@ import { asSpriteCoats, coatOf, drawn, stamped } from '../src/canvas/sprite-coat
 const ROOT = 'public/sprites/pokemon';
 const LIST = `${ROOT}/coats.json`;
 
-/**
- * What a directory holds, or nothing where there is no such directory.
- * A region drawn in one coat only — the three that are not pokemon
- * have no shiny — has no folder for the other
- */
-function filesIn(path: string): string[] {
-  return existsSync(path) ? readdirSync(path) : [];
-}
+/** What each coat's drawing is called inside a pokemon's folder. */
+const COATS: [Coat, string][] = [
+  ['regular', 'regular.png'],
+  ['shiny', 'shiny.png'],
+  ['female', 'female.png'],
+  ['shinyFemale', 'shiny_female.png'],
+];
 
 /** What is actually on disk, worked out the same way the game asks. */
 function onDisk(): Map<string, Set<Coat>> {
@@ -33,20 +32,15 @@ function onDisk(): Map<string, Set<Coat>> {
     .map((entry) => entry.name);
 
   for (const region of regions) {
-    for (const [directory, plain, female] of [
-      ['regular', 'regular', 'female'],
-      ['shiny', 'shiny', 'shinyFemale'],
-    ] as const) {
-      for (const file of filesIn(`${ROOT}/${region}/${directory}`)) {
-        const named = /^(\d+)(_f)?\.png$/.exec(file);
+    for (const folder of readdirSync(`${ROOT}/${region}`)) {
+      if (!/^\d+$/.test(folder)) {
+        continue;
+      }
+      const held = new Set(readdirSync(`${ROOT}/${region}/${folder}`));
+      const coats = new Set(COATS.filter(([, file]) => held.has(file)).map(([coat]) => coat));
 
-        if (named == null) {
-          continue;
-        }
-        const held = found.get(named[1]) ?? new Set<Coat>();
-
-        held.add(file.endsWith('_f.png') ? female : plain);
-        found.set(named[1], held);
+      if (coats.size > 0) {
+        found.set(folder, coats);
       }
     }
   }
@@ -104,12 +98,12 @@ describe('the coat list', () => {
     const marks = Object.values(listed.stamps);
 
     expect(new Set(marks).size, 'stamps collide').toBe(marks.length);
-    expect(stamped('/sprites/pokemon/kanto/meta/1.json', listed, 1)).toBe(
-      `/sprites/pokemon/kanto/meta/1.json?v=${listed.stamps['1']}`,
+    expect(stamped('/sprites/pokemon/kanto/1/sheet.json', listed, 1)).toBe(
+      `/sprites/pokemon/kanto/1/sheet.json?v=${listed.stamps['1']}`,
     );
     // A sheet nobody has recorded is asked for by its plain address
-    expect(stamped('/sprites/pokemon/kanto/meta/9999.json', listed, 9999)).toBe(
-      '/sprites/pokemon/kanto/meta/9999.json',
+    expect(stamped('/sprites/pokemon/kanto/9999/sheet.json', listed, 9999)).toBe(
+      '/sprites/pokemon/kanto/9999/sheet.json',
     );
   });
 

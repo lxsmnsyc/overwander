@@ -1,12 +1,16 @@
 import { readFileSync, readdirSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import SpeciesSpriteAnimation from '../../src/canvas/species-sprite-animation';
-import asSpriteSheetJSON from '../../src/canvas/sprite-sheet';
+import asSpriteSheetJSON, { readFrameTable } from '../../src/canvas/sprite-sheet';
 import { MoveTargetType } from '../../src/battle/events';
 import {
   COMMON_CAST,
   type CastAnimation,
+  DEFAULT_CAST,
+  MINIMUM_CAST,
+  isCommonCast,
   isLoopingCast,
+  isMinimumCast,
   pickCast,
 } from '../../src/data/constants/cast';
 import { Moves } from '../../src/data/ids/moves';
@@ -35,35 +39,50 @@ import { SpriteAnim, spriteAnimName } from '../../src/data/ids/sprite-anims';
  */
 const ROOT = 'public/sprites/pokemon';
 
-/** Every description that ships, whichever region it is filed under. */
-function described(): { species: number; path: string }[] {
-  return readdirSync(ROOT, { withFileTypes: true })
-    .filter((entry) => entry.isDirectory())
-    .flatMap((region) =>
-      readdirSync(`${ROOT}/${region.name}/meta`)
-        .filter((name) => name.endsWith('.json'))
-        .map((name) => ({
-          species: Number.parseInt(name, 10),
-          path: `${ROOT}/${region.name}/meta/${name}`,
-        })),
-    );
-}
+/**
+ * Every pokemon that ships, whichever region it is filed under. A
+ * pokemon is a folder named after its species id, and every coat of it
+ * is drawn against the one description inside
+ */
+const SHIPPED: { species: number; region: string }[] = readdirSync(ROOT, { withFileTypes: true })
+  .filter((entry) => entry.isDirectory())
+  .flatMap((region) =>
+    readdirSync(`${ROOT}/${region.name}`)
+      .filter((name) => /^\d+$/.test(name))
+      .map((name) => ({ species: Number(name), region: region.name })),
+  )
+  .sort((one, two) => one.species - two.species);
 
-const PATHS = new Map(described().map((entry) => [entry.species, entry.path]));
+/**
+ * Read once, since every case here loads several sheets and the
+ * frames are inflated on the way in
+ */
+const DESCRIBED = new Map(
+  await Promise.all(
+    SHIPPED.map(async ({ species, region }) => {
+      const folder = `${ROOT}/${region}/${species}`;
+      const frames = await readFrameTable(readFileSync(`${folder}/frames.bin`));
+
+      return [
+        species,
+        asSpriteSheetJSON(JSON.parse(readFileSync(`${folder}/sheet.json`, 'utf8')), frames),
+      ] as const;
+    }),
+  ),
+);
 
 function loaded(species: number): SpeciesSpriteAnimation {
-  const data = asSpriteSheetJSON(JSON.parse(readFileSync(PATHS.get(species) ?? '', 'utf8')));
+  const data = DESCRIBED.get(species);
+
+  if (data == null) {
+    throw new Error(`No sheet ships for ${species}`);
+  }
   const sprite = new SpeciesSpriteAnimation(`${species}.png`, data);
 
   // oxlint-disable-next-line typescript/no-unsafe-type-assertion
   (sprite as unknown as { image: unknown }).image = {};
   return sprite;
 }
-
-const SHIPPED = described()
-  .filter((entry) => readFileSync(entry.path, 'utf8').trim().length > 0)
-  .map((entry) => entry.species)
-  .sort((one, two) => one - two);
 
 /**
  * Sheets that ship without one of the clips every sheet is supposed to
@@ -74,17 +93,11 @@ const SHIPPED = described()
  * to Idle, and the pokemon stands there through its own attack — so a
  * gap is worth knowing about even when nothing has tripped over it yet
  */
-const KNOWN_GAPS: Record<number, SpriteAnim[] | undefined> = {
-  // The Clefairy line's upstream sheets were drawn without a Shoot;
-  // their ranged casts stand in an Attack
-  35: [SpriteAnim.Shoot],
-  36: [SpriteAnim.Shoot],
-  100001: [SpriteAnim.Shoot],
-};
+const KNOWN_GAPS: Record<number, SpriteAnim[] | undefined> = {};
 
 describe('cast clips', () => {
   it('builds every common clip on every sheet that ships', () => {
-    for (const species of SHIPPED) {
+    for (const { species } of SHIPPED) {
       const sprite = loaded(species);
       const missing = COMMON_CAST.filter((name) => !sprite.has(name));
 
@@ -96,11 +109,38 @@ describe('cast clips', () => {
     }
   });
 
-  it('stands in an Attack for a sheet that has no Shoot', () => {
+  it('leaves no sheet short of the bare minimum', () => {
+    // The six a pokemon cannot be put on screen without: nothing here
+    // is allowed a gap, however forgiving the list above is about the
+    // other four
+    for (const { species } of SHIPPED) {
+      const sprite = loaded(species);
+
+      expect(
+        MINIMUM_CAST.filter((name) => !sprite.has(name)).map(spriteAnimName),
+        `${species} is missing`,
+      ).toEqual([]);
+    }
+  });
+
+  it('ends every walk on a clip the minimum carries', () => {
+    // `pickCast` gives up on the default and then on Idle, so both of
+    // them have to be clips a sheet is guaranteed to hold
+    expect(isMinimumCast(DEFAULT_CAST)).toBe(true);
+    expect(isMinimumCast(SpriteAnim.Idle)).toBe(true);
+    // And what a sheet is guaranteed to hold is a clip a list may end
+    // on
+    for (const name of MINIMUM_CAST) {
+      expect(isCommonCast(name), spriteAnimName(name)).toBe(true);
+    }
+  });
+
+  it('falls past a Shoot the sheet was drawn without', () => {
+    // The Clefairy and Togepi lines throw nothing, which is why Shoot
+    // is not one of the clips a list may end on
     const short = loaded(100001);
 
-    expect(short.has(SpriteAnim.Shoot), 'the gap is still there').toBe(false);
-    // A list that ends on Shoot used to fall through to Idle here
+    expect(short.has(SpriteAnim.Shoot)).toBe(false);
     expect(pickCast([SpriteAnim.Emit, SpriteAnim.Shoot], (name) => short.has(name))).toBe(
       SpriteAnim.Attack,
     );
@@ -185,7 +225,7 @@ describe('what the field shows while a move is cast', () => {
 
   it('knows how long a gesture takes, so it is not cut off', () => {
     const gengar = loaded(94);
-    const strike = gengar.data.anims.anims.find((anim) => anim.name === SpriteAnim.Strike);
+    const strike = gengar.data.anims.find((anim) => anim.name === SpriteAnim.Strike);
     const ticks = strike?.durations.reduce((sum, held) => sum + held, 0) ?? 0;
 
     // A clip runs for as long as its frames say, at the 24 a second

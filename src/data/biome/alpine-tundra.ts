@@ -1,6 +1,6 @@
 import Biome, { TimeOfDay } from '../ids/biome';
 import { Species } from '../ids/species';
-import { registerSpawnPool } from './__create';
+import { UNOWN_SPAWNS, registerSpawnPool } from './__create';
 
 /**
  * AlpineTundra spawn pool, grouped by day-cycle period and rarity band
@@ -8,27 +8,55 @@ import { registerSpawnPool } from './__create';
 export default function registerAlpineTundraSpawns(): void {
   registerSpawnPool(Biome.AlpineTundra, {
     [TimeOfDay.Morning]: {
-      base: [{ species: Species.Machop, weight: 20 }],
-      uncommon: [{ species: Species.Machoke, weight: 5 }],
-      rare: [{ species: Species.Machamp, weight: 5 }],
+      base: [
+        { species: Species.Machop, weight: 20 },
+        { species: Species.Swinub, weight: 25 },
+      ],
+      uncommon: [],
+      rare: [
+        { species: Species.Machoke, weight: 5 },
+        { species: Species.Piloswine, weight: 5 },
+      ],
+      elusive: [
+        { species: Species.Machamp, weight: 5 },
+        { species: Species.Delibird, weight: 5 },
+        { species: Species.Skarmory, weight: 5 },
+      ],
+      prized: [...UNOWN_SPAWNS],
       special: [{ species: Species.Articuno, weight: 10 }],
     },
     [TimeOfDay.Day]: {
-      base: [{ species: Species.Machop, weight: 20 }],
-      uncommon: [{ species: Species.Machoke, weight: 5 }],
-      rare: [{ species: Species.Machamp, weight: 5 }],
+      base: [
+        { species: Species.Machop, weight: 20 },
+        { species: Species.Swinub, weight: 25 },
+      ],
+      uncommon: [],
+      rare: [
+        { species: Species.Machoke, weight: 5 },
+        { species: Species.Piloswine, weight: 5 },
+      ],
+      elusive: [
+        { species: Species.Machamp, weight: 5 },
+        { species: Species.Delibird, weight: 5 },
+        { species: Species.Skarmory, weight: 5 },
+      ],
+      prized: [...UNOWN_SPAWNS],
       special: [{ species: Species.Articuno, weight: 10 }],
     },
     [TimeOfDay.Evening]: {
-      base: [],
-      uncommon: [],
-      rare: [],
+      base: [{ species: Species.Swinub, weight: 25 }],
+      uncommon: [{ species: Species.Sneasel, weight: 5 }],
+      rare: [{ species: Species.Piloswine, weight: 5 }],
+      elusive: [{ species: Species.Delibird, weight: 5 }],
+      prized: [...UNOWN_SPAWNS],
       special: [{ species: Species.Articuno, weight: 10 }],
     },
     [TimeOfDay.Night]: {
-      base: [],
-      uncommon: [],
-      rare: [],
+      base: [{ species: Species.Swinub, weight: 25 }],
+      uncommon: [{ species: Species.Sneasel, weight: 5 }],
+      rare: [{ species: Species.Piloswine, weight: 5 }],
+      elusive: [{ species: Species.Delibird, weight: 5 }],
+      prized: [...UNOWN_SPAWNS],
       special: [{ species: Species.Articuno, weight: 10 }],
     },
   });

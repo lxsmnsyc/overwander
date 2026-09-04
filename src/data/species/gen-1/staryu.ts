@@ -35,6 +35,23 @@ const FAMILY_TEACHABLE = [
   Moves.Substitute,
   Moves.Surf,
   Moves.Flash,
+  Moves.Thunder,
+  Moves.Waterfall,
+  Moves.Snore,
+  Moves.Curse,
+  Moves.Protect,
+  Moves.ZapCannon,
+  Moves.IcyWind,
+  Moves.Endure,
+  Moves.Swagger,
+  Moves.Attract,
+  Moves.SleepTalk,
+  Moves.Return,
+  Moves.Frustration,
+  Moves.HiddenPower,
+  Moves.RainDance,
+  Moves.PsychUp,
+  Moves.Whirlpool,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Illuminate, Abilities.NaturalCure];
@@ -68,20 +85,22 @@ export default function registerStaryuSpecies(): void {
     eggGroups: [EggGroups.Water3],
     genderRatio: undefined,
     catchRate: 225,
-    biomes: [Biome.Beach, Biome.CoralReef],
+    biomes: [Biome.Beach, Biome.CoralReef, Biome.RockyCoast, Biome.KelpForest],
     activeTimes: TimeOfDay.Evening | TimeOfDay.Night,
     learnSet: {
       level: {
-        1: [Moves.Tackle],
-        17: [Moves.WaterGun],
-        22: [Moves.Harden],
-        27: [Moves.Recover],
-        32: [Moves.Swift],
+        1: [Moves.Tackle, Moves.Harden],
+        7: [Moves.WaterGun],
+        13: [Moves.RapidSpin],
+        19: [Moves.Recover],
+        25: [Moves.Swift],
+        31: [Moves.BubbleBeam],
         37: [Moves.Minimize],
         42: [Moves.LightScreen],
         47: [Moves.HydroPump],
       },
       teachable: [...FAMILY_TEACHABLE],
+      egg: [Moves.Supersonic, Moves.AuroraBeam, Moves.Barrier],
     },
   });
 
@@ -107,13 +126,21 @@ export default function registerStaryuSpecies(): void {
     eggGroups: [EggGroups.Water3],
     genderRatio: undefined,
     catchRate: 60,
-    biomes: [Biome.Beach, Biome.CoralReef],
+    biomes: [Biome.Beach, Biome.CoralReef, Biome.RockyCoast, Biome.KelpForest],
     activeTimes: TimeOfDay.Evening | TimeOfDay.Night,
     learnSet: {
       level: {
-        1: [Moves.Tackle, Moves.WaterGun, Moves.Harden],
+        1: [
+          Moves.Tackle,
+          Moves.WaterGun,
+          Moves.Harden,
+          Moves.BubbleBeam,
+          Moves.Recover,
+          Moves.RapidSpin,
+        ],
+        37: [Moves.ConfuseRay],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
+      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.DreamEater, Moves.Nightmare],
     },
   });
 }

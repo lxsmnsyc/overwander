@@ -25,6 +25,21 @@ const FAMILY_TEACHABLE = [
   Moves.Rest,
   Moves.Substitute,
   Moves.Fly,
+  Moves.Thief,
+  Moves.Snore,
+  Moves.Curse,
+  Moves.Protect,
+  Moves.MudSlap,
+  Moves.Detect,
+  Moves.Endure,
+  Moves.Swagger,
+  Moves.SteelWing,
+  Moves.Attract,
+  Moves.SleepTalk,
+  Moves.Return,
+  Moves.Frustration,
+  Moves.HiddenPower,
+  Moves.SunnyDay,
 ];
 
 export default function registerSpearowSpecies(): void {
@@ -61,13 +76,21 @@ export default function registerSpearowSpecies(): void {
     learnSet: {
       level: {
         1: [Moves.Peck, Moves.Growl],
-        9: [Moves.Leer],
-        15: [Moves.FuryAttack],
+        7: [Moves.Leer],
+        13: [Moves.FuryAttack],
         22: [Moves.MirrorMove],
+        25: [Moves.Pursuit],
         29: [Moves.DrillPeck],
         36: [Moves.Agility],
       },
       teachable: [...FAMILY_TEACHABLE],
+      egg: [
+        Moves.QuickAttack,
+        Moves.TriAttack,
+        Moves.ScaryFace,
+        Moves.FeintAttack,
+        Moves.FalseSwipe,
+      ],
     },
   });
 
@@ -97,10 +120,9 @@ export default function registerSpearowSpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.Peck, Moves.Growl, Moves.Leer],
-        9: [Moves.Leer],
-        15: [Moves.FuryAttack],
+        1: [Moves.Peck, Moves.Growl, Moves.Leer, Moves.FuryAttack],
         25: [Moves.MirrorMove],
+        26: [Moves.Pursuit],
         34: [Moves.DrillPeck],
         43: [Moves.Agility],
       },

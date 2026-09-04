@@ -6,6 +6,9 @@ import { Types } from '../data/constants/types';
 import { TimeOfDay, getTimeOfDay, isWaterBiome } from '../data/ids/biome';
 import { Balls, Items } from '../data/ids/items';
 import { getNatureFactor } from '../data/ids/natures';
+import { Genders } from '../data/ids/species';
+import type { Species } from '../data/ids/species';
+
 import {
   BAIT_BERRY_NAMES,
   BAIT_CATCH_BONUS,
@@ -13,7 +16,13 @@ import {
   PRIZE_BERRY_NAMES,
   RAZZ_CATCH_BONUS,
 } from '../data/items/berries';
-import { SPECIES_DAY_CATCH_BOOST, getSpeciesData, isFeaturedSpecies } from '../data/species';
+import {
+  SPECIES_DAY_CATCH_BOOST,
+  getSpeciesData,
+  isFeaturedSpecies,
+  lineEvolvesByItem,
+} from '../data/species';
+import Phenomenon from '../data/overworld/phenomenon';
 import { type Encounter, EncounterType, isRaidEncounter } from './encounter';
 
 export const enum SafariState {
@@ -103,6 +112,13 @@ export const BALL_MODIFIERS: Record<Balls, number> = {
   [Balls.TimerBall]: 1,
   [Balls.QuickBall]: 1,
   [Balls.DuskBall]: 1,
+  [Balls.LevelBall]: 1,
+  [Balls.LureBall]: 1,
+  [Balls.MoonBall]: 1,
+  [Balls.FriendBall]: 1,
+  [Balls.LoveBall]: 1,
+  [Balls.HeavyBall]: 1,
+  [Balls.FastBall]: 1,
 };
 
 /**
@@ -128,6 +144,55 @@ const NET_BALL_MODIFIER = 3.5;
  * stands in for all three
  */
 const DIVE_BALL_MODIFIER = 3.5;
+
+/**
+ * Mainline Fast Ball: shines on whatever would have outrun it
+ */
+const FAST_BALL_MODIFIER = 4;
+const FAST_BALL_SPEED = 100;
+
+/**
+ * Mainline Moon Ball: shines on the line a Moon Stone answers
+ */
+const MOON_BALL_MODIFIER = 4;
+
+/**
+ * The Lure Ball is the fishing ball, and nothing here fishes. What a
+ * ripple brings up is the nearest thing the world has: something that
+ * was under the water a moment ago and is not now
+ */
+const LURE_BALL_MODIFIER = 5;
+
+/**
+ * Mainline Love Ball: the buddy's own species, the other way round.
+ * Genderless meets nothing the other way round, so it never fires
+ */
+const LOVE_BALL_MODIFIER = 8;
+
+/**
+ * The Level Ball's ladder, the mainline's own: four times the
+ * encounter's level, twice it, and merely above it. The last rung is
+ * **strictly** above, so a buddy standing level with what it is
+ * thrown at buys nothing
+ */
+const LEVEL_BALL_FOUR = 8;
+const LEVEL_BALL_TWICE = 4;
+const LEVEL_BALL_ABOVE = 2;
+
+/**
+ * The Heavy Ball by weight, in kilograms, heaviest first.
+ *
+ * The mainline **adds** to a catch rate here rather than multiplying
+ * it, which is a different arithmetic from everything else in this
+ * safari: on a catch rate of 3 its +40 is worth fourteen throws, and
+ * on 255 it is worth nothing at all. So it is a multiplier like its
+ * seven siblings, and the bands are the mainline's weights
+ */
+const HEAVY_BALL_BANDS: [kilograms: number, modifier: number][] = [
+  [300, 4],
+  [200, 3],
+  [100, 2],
+];
 
 /**
  * Mainline Nest Ball: (41 - level) / 10, strongest against the
@@ -161,6 +226,17 @@ export interface SafariContext {
    * reads it. Unknown counts as not owned
    */
   speciesCaught?: boolean;
+  /**
+   * The pokemon walking beside the player, for the two balls that
+   * throw from behind one: the Level Ball measures the encounter
+   * against it and the Love Ball wants its own species back the
+   * other way round.
+   *
+   * Absent for a player walking alone, and both balls are then worth
+   * what a Poke Ball is: a ball that reads a buddy has nothing to
+   * read
+   */
+  buddy?: { species: Species; gender: Genders; level: number };
 }
 
 /**
@@ -374,7 +450,12 @@ export default class SafariSession<
    * patience, the Net Ball answers Bug and Water types, the Dive
    * Ball the water biomes, the Nest Ball low levels, the Repeat Ball
    * a species already owned, and the Dusk Ball the dark hours.
-   * Everything else takes its flat multiplier
+   *
+   * Kurt's seven read further afield: the Fast and Heavy Balls read
+   * the species' own numbers, the Moon Ball its evolution, the Lure
+   * Ball what startled it out, and the Level and Love Balls the
+   * buddy walking beside the player. Everything else takes its flat
+   * multiplier
    */
   getBallModifier(ball = this.ball): number {
     switch (ball) {
@@ -398,6 +479,49 @@ export default class SafariSession<
         return this.context.speciesCaught === true ? REPEAT_BALL_MODIFIER : 1;
       case Balls.DuskBall:
         return (getTimeOfDay(this.encounter.timestamp) & DUSK_TIMES) === 0 ? 1 : DUSK_BALL_MODIFIER;
+      case Balls.FastBall:
+        return getSpeciesData(this.encounter.species).stats[Stats.Speed] >= FAST_BALL_SPEED
+          ? FAST_BALL_MODIFIER
+          : 1;
+      case Balls.MoonBall:
+        return lineEvolvesByItem(this.encounter.species, Items.MoonStone) ? MOON_BALL_MODIFIER : 1;
+      case Balls.LureBall:
+        return this.encounter.phenomenon === Phenomenon.RipplingWater ? LURE_BALL_MODIFIER : 1;
+      case Balls.HeavyBall: {
+        const { weight } = getSpeciesData(this.encounter.species);
+
+        return HEAVY_BALL_BANDS.find(([kilograms]) => weight >= kilograms)?.[1] ?? 1;
+      }
+      case Balls.LevelBall: {
+        const { buddy } = this.context;
+
+        if (buddy == null) {
+          return 1;
+        }
+        const { level } = this.encounter;
+
+        if (buddy.level >= level * 4) {
+          return LEVEL_BALL_FOUR;
+        }
+        if (buddy.level >= level * 2) {
+          return LEVEL_BALL_TWICE;
+        }
+        return buddy.level > level ? LEVEL_BALL_ABOVE : 1;
+      }
+      case Balls.LoveBall: {
+        const { buddy } = this.context;
+        const { gender } = this.encounter;
+
+        // Neither may be genderless: "the other way round" has to
+        // have another way round to it
+        return buddy != null &&
+          buddy.species === this.encounter.species &&
+          buddy.gender !== Genders.Genderless &&
+          gender !== Genders.Genderless &&
+          buddy.gender !== gender
+          ? LOVE_BALL_MODIFIER
+          : 1;
+      }
       // The unconditional balls: their multiplier never moves
       case Balls.PokeBall:
       case Balls.GreatBall:
@@ -406,6 +530,10 @@ export default class SafariSession<
       case Balls.PremierBall:
       case Balls.HealBall:
       case Balls.LuxuryBall:
+      // The Friend Ball is here for the same reason the Luxury Ball
+      // is: what it is thrown for happens after the catch
+      // eslint-disable-next-line no-fallthrough
+      case Balls.FriendBall:
       default:
         return BALL_MODIFIERS[ball];
     }

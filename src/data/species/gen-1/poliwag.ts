@@ -29,6 +29,23 @@ const FAMILY_TEACHABLE = [
   Moves.Psywave,
   Moves.Substitute,
   Moves.Surf,
+  Moves.Headbutt,
+  Moves.DefenseCurl,
+  Moves.Waterfall,
+  Moves.Thief,
+  Moves.Snore,
+  Moves.Curse,
+  Moves.Protect,
+  Moves.IcyWind,
+  Moves.Endure,
+  Moves.Swagger,
+  Moves.Attract,
+  Moves.SleepTalk,
+  Moves.Return,
+  Moves.Frustration,
+  Moves.HiddenPower,
+  Moves.RainDance,
+  Moves.Whirlpool,
 ];
 
 // The evolved forms grow arms: fighting-style TMs and HM Strength
@@ -40,6 +57,11 @@ const EVOLVED_TEACHABLE = [
   Moves.SeismicToss,
   Moves.Metronome,
   Moves.Strength,
+  Moves.IcePunch,
+  Moves.Earthquake,
+  Moves.MudSlap,
+  Moves.Detect,
+  Moves.RockSmash,
 ];
 
 export default function registerPoliwagSpecies(): void {
@@ -71,20 +93,22 @@ export default function registerPoliwagSpecies(): void {
     eggGroups: [EggGroups.Water1],
     genderRatio: [1, 1],
     catchRate: 255,
-    biomes: [Biome.Swamp],
+    biomes: [Biome.Swamp, Biome.Bog],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
         1: [Moves.Bubble],
-        16: [Moves.Hypnosis],
-        19: [Moves.WaterGun],
-        25: [Moves.DoubleSlap],
+        7: [Moves.Hypnosis],
+        13: [Moves.WaterGun],
+        19: [Moves.DoubleSlap],
+        25: [Moves.RainDance],
         31: [Moves.BodySlam],
+        37: [Moves.BellyDrum],
         38: [Moves.Amnesia],
-        45: [Moves.HydroPump],
+        43: [Moves.HydroPump],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.Mist, Moves.Splash],
+      egg: [Moves.Mist, Moves.Splash, Moves.BubbleBeam, Moves.Haze, Moves.MindReader],
     },
   });
 
@@ -95,6 +119,11 @@ export default function registerPoliwagSpecies(): void {
         species: Species.Poliwrath,
         method: EvolutionMethod.UsedItem,
         item: Items.WaterStone,
+      },
+      {
+        species: Species.Politoed,
+        method: EvolutionMethod.Trade | EvolutionMethod.HeldItem,
+        item: Items.KingsRock,
       },
     ],
     name: 'Poliwhirl',
@@ -117,16 +146,16 @@ export default function registerPoliwagSpecies(): void {
     eggGroups: [EggGroups.Water1],
     genderRatio: [1, 1],
     catchRate: 120,
-    biomes: [Biome.Swamp],
+    biomes: [Biome.Swamp, Biome.Bog],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
         1: [Moves.Bubble, Moves.Hypnosis, Moves.WaterGun],
-        16: [Moves.Hypnosis],
-        19: [Moves.WaterGun],
-        26: [Moves.DoubleSlap],
+        19: [Moves.DoubleSlap],
+        27: [Moves.RainDance],
         33: [Moves.BodySlam],
         41: [Moves.Amnesia],
+        43: [Moves.BellyDrum],
         49: [Moves.HydroPump],
       },
       teachable: [...FAMILY_TEACHABLE, ...EVOLVED_TEACHABLE],
@@ -155,13 +184,14 @@ export default function registerPoliwagSpecies(): void {
     eggGroups: [EggGroups.Water1],
     genderRatio: [1, 1],
     catchRate: 45,
-    biomes: [Biome.Swamp],
+    biomes: [Biome.Swamp, Biome.Bog],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.Hypnosis, Moves.WaterGun, Moves.DoubleSlap, Moves.BodySlam],
+        1: [Moves.Hypnosis, Moves.WaterGun, Moves.DoubleSlap, Moves.BodySlam, Moves.Submission],
+        51: [Moves.MindReader],
       },
-      teachable: [...FAMILY_TEACHABLE, ...EVOLVED_TEACHABLE, Moves.HyperBeam],
+      teachable: [...FAMILY_TEACHABLE, ...EVOLVED_TEACHABLE, Moves.HyperBeam, Moves.DynamicPunch],
     },
   });
 }

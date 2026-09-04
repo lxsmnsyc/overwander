@@ -1,27 +1,18 @@
+import { readFileSync } from 'node:fs';
+import { type Credits, asCredits, groupCredits } from '../../src/data/credits';
+import { withCredit } from '../../src/server/sprites/credits';
 import { describe, expect, it } from 'vitest';
-import readAnimData from '../../src/server/sprites/anim-data';
-import markersFor from '../../src/server/sprites/markers';
 import pack from '../../src/server/sprites/packing';
-import { blank, blit } from '../../src/server/sprites/raster';
+import { blank, blit, opaque } from '../../src/server/sprites/raster';
 import type { Raster } from '../../src/server/sprites/raster';
 import computeTrim from '../../src/server/sprites/trim';
-import { animFilter } from '../../src/server/sprites/pmd';
-import deduper, { drawPictures } from '../../src/server/sprites/dedupe';
 import {
   extraDestination,
   overworldDestination,
   overworldSlug,
-  pokemonDestination,
 } from '../../src/server/sprites/files';
-import {
-  FACINGS,
-  GRID_NAME,
-  packPokengine,
-  parseOrder,
-  withCredit,
-} from '../../src/server/sprites/pokengine';
+import { FACINGS, GRID_NAME, packPokengine, parseOrder } from '../../src/server/sprites/pokengine';
 import { storedAs } from '../../src/components/admin/sprite-processor/shared';
-import { SpriteAnim } from '../../src/data/ids/sprite-anims';
 
 /**
  * The sprite processor's arithmetic.
@@ -148,147 +139,7 @@ describe('trimming', () => {
   });
 });
 
-describe('the marks beside a frame', () => {
-  it('averages a blob rather than taking its first pixel', () => {
-    const shadow = drawn(16, 16, { x: 4, y: 8, width: 4, height: 2 });
-    const found = markersFor(shadow, null, { x: 0, y: 0, width: 16, height: 16 }, [0, 0]);
-
-    // The middle of a 4 × 2 blob at (4, 8), rounded
-    expect(found.shadow).toEqual([6, 9]);
-    expect(found.head, 'no offsets image to read').toBeNull();
-  });
-
-  it('tells the anchors apart by their channel', () => {
-    const offsets = blank(16, 16);
-    const put = (x: number, y: number, color: [number, number, number, number]): void => {
-      blit(
-        offsets,
-        drawn(1, 1, { x: 0, y: 0, width: 1, height: 1 }, color),
-        {
-          x: 0,
-          y: 0,
-          width: 1,
-          height: 1,
-        },
-        { x, y },
-      );
-    };
-
-    put(1, 1, [255, 0, 0, 255]);
-    put(2, 3, [0, 255, 0, 255]);
-    put(4, 5, [0, 0, 255, 255]);
-    put(6, 7, [255, 255, 255, 255]);
-
-    const found = markersFor(null, offsets, { x: 0, y: 0, width: 16, height: 16 }, [0, 0]);
-
-    expect(found.head).toEqual([1, 1]);
-    expect(found.left).toEqual([2, 3]);
-    expect(found.right).toEqual([4, 5]);
-    expect(found.center).toEqual([6, 7]);
-  });
-
-  it('lets a mark fall outside the frame it was trimmed to', () => {
-    // A shadow drawn below the feet is cropped off the picture, and its
-    // anchor is negative rather than lost
-    const shadow = drawn(16, 16, { x: 8, y: 1, width: 1, height: 1 });
-    const found = markersFor(shadow, null, { x: 0, y: 0, width: 16, height: 16 }, [4, 6]);
-
-    expect(found.shadow).toEqual([4, -5]);
-  });
-});
-
-describe('AnimData.xml', () => {
-  const SOURCE = `<?xml version="1.0"?>
-<AnimData>
-  <ShadowSize>2</ShadowSize>
-  <Anims>
-    <Anim>
-      <Name>Walk</Name>
-      <Index>0</Index>
-      <FrameWidth>24</FrameWidth>
-      <FrameHeight>32</FrameHeight>
-      <Durations><Duration>4</Duration><Duration>6</Duration></Durations>
-    </Anim>
-    <Anim>
-      <Name>Strike</Name>
-      <Index>5</Index>
-      <CopyOf>Walk</CopyOf>
-    </Anim>
-    <Anim>
-      <Name>Sleep</Name>
-      <Index>7</Index>
-      <FrameWidth>16</FrameWidth>
-      <FrameHeight>16</FrameHeight>
-      <Durations><Duration>10</Duration></Durations>
-    </Anim>
-  </Anims>
-</AnimData>`;
-
-  it('reads the sizes and the frame times', () => {
-    const data = readAnimData(SOURCE, animFilter(['Walk']));
-    const walk = data.anims.find((anim) => anim.name === SpriteAnim.Walk);
-
-    expect(data.shadowSize).toBe(2);
-    expect(walk).toMatchObject({
-      name: SpriteAnim.Walk,
-      frameWidth: 24,
-      frameHeight: 32,
-      durations: [4, 6],
-      target: SpriteAnim.Walk,
-    });
-  });
-
-  it('resolves a copy against the animation it copies', () => {
-    const data = readAnimData(SOURCE, animFilter(['Walk', 'Sleep']));
-    const strike = data.anims.find((anim) => anim.name === SpriteAnim.Strike);
-
-    // Kept because what it is *drawn from* is kept: a copy has no
-    // image of its own
-    expect(strike).toMatchObject({
-      frameWidth: 24,
-      frameHeight: 32,
-      index: 5,
-      target: SpriteAnim.Walk,
-    });
-  });
-
-  it('drops what the filter does not name', () => {
-    const data = readAnimData(SOURCE, animFilter(['Sleep']));
-
-    // Filtered by the image an animation is *drawn from*, so a copy
-    // rides in on whatever it copied and nothing else does
-    expect(data.anims.map((anim) => anim.name)).toEqual([SpriteAnim.Sleep]);
-    expect(readAnimData(SOURCE, animFilter(['Walk'])).anims.map((anim) => anim.name)).toEqual([
-      SpriteAnim.Walk,
-      SpriteAnim.Strike,
-    ]);
-  });
-
-  it('refuses a filter that names nothing', () => {
-    expect(() => animFilter([' '])).toThrow();
-  });
-});
-
 describe('where a sheet is written', () => {
-  it('files a pokemon under its coat, with one description for both', () => {
-    expect(pokemonDestination({ species: 94, female: false, shiny: false })).toEqual({
-      image: 'sprites/pokemon/kanto/regular/94.png',
-      meta: 'sprites/pokemon/kanto/meta/94.json',
-    });
-    expect(pokemonDestination({ species: 94, female: false, shiny: true }).image).toBe(
-      'sprites/pokemon/kanto/shiny/94.png',
-    );
-  });
-
-  it('marks a female drawing on the coat and not on the description', () => {
-    // Both coats share one description, so the suffix belongs to the
-    // drawing alone
-    const written = pokemonDestination({ species: 3, female: true, shiny: true });
-
-    expect(written.image).toBe('sprites/pokemon/kanto/shiny/3_f.png');
-    expect(written.meta).toBe('sprites/pokemon/kanto/meta/3.json');
-  });
-
   it('keeps anything else out of the pokemon tree', () => {
     expect(extraDestination('Battle Effects!')).toEqual({
       image: 'sprites/extras/battle-effects.png',
@@ -305,33 +156,6 @@ describe('where a sheet is written', () => {
     // nothing and is refused rather than climbing out
     expect(() => extraDestination('../loose')).toThrow();
     expect(() => extraDestination('ui//loose')).toThrow();
-  });
-
-  it('names all four drawings of one pokemon', () => {
-    const four = [
-      { female: false, shiny: false },
-      { female: false, shiny: true },
-      { female: true, shiny: false },
-      { female: true, shiny: true },
-    ].map((coat) => pokemonDestination({ species: 3, ...coat }));
-
-    expect(four.map((written) => written.image)).toEqual([
-      'sprites/pokemon/kanto/regular/3.png',
-      'sprites/pokemon/kanto/shiny/3.png',
-      'sprites/pokemon/kanto/regular/3_f.png',
-      'sprites/pokemon/kanto/shiny/3_f.png',
-    ]);
-    // One description for the lot of them, which is why they have to
-    // be packed to one layout
-    expect(new Set(four.map((written) => written.meta)).size).toBe(1);
-  });
-
-  it('never lets a species number reach the path as anything but a number', () => {
-    // The only thing the caller decides about a path, and it is cut to
-    // a whole number before it is written into one
-    expect(pokemonDestination({ species: 7.9, female: false, shiny: false }).image).toBe(
-      'sprites/pokemon/kanto/regular/7.png',
-    );
   });
 });
 
@@ -504,46 +328,94 @@ describe('cutting a pokengine charset down', () => {
   });
 });
 
-describe('crediting a pokengine sheet', () => {
-  const page = [
-    '## Art',
-    '',
-    '### Pokengine community',
-    '',
-    'Where the charsets come from.',
-    '',
-    '| Sheet | Credit |',
-    '| ----- | ------ |',
-    '',
-    '> The note after the table stays.',
-    '',
-    '## The rules',
-    '',
-  ].join('\n');
+describe('the credits list', () => {
+  const listed: Credits = {
+    version: 1,
+    sources: [],
+    packages: [],
+    sprites: [],
+    overworld: [],
+    scenery: [],
+  };
 
-  it('adds a row and keeps the rest of the page', () => {
-    const credited = withCredit(page, 'rocket-grunt', 'Artist');
-
-    expect(credited).toContain('| `rocket-grunt` | Artist |');
-    expect(credited).toContain('> The note after the table stays.');
-    expect(credited).toContain('## The rules');
+  it('adds a row for a charset it has just packed', () => {
+    expect(withCredit(listed, 'rocket-grunt', 'Artist').overworld).toEqual([
+      { work: 'rocket-grunt', credit: 'Artist' },
+    ]);
   });
 
   it('updates a re-packed sheet rather than adding a second row', () => {
-    const twice = withCredit(withCredit(page, 'rocket-grunt', 'Artist'), 'rocket-grunt', 'Other');
+    const twice = withCredit(withCredit(listed, 'rocket-grunt', 'Artist'), 'rocket-grunt', 'Other');
 
-    expect(twice).toContain('| `rocket-grunt` | Other |');
-    expect(twice).not.toContain('| Artist |');
+    expect(twice.overworld).toEqual([{ work: 'rocket-grunt', credit: 'Other' }]);
   });
 
   it('keeps the rows sorted by sheet', () => {
-    const credited = withCredit(withCredit(page, 'zubat-keeper', 'Z'), 'aide', 'A');
+    const credited = withCredit(withCredit(listed, 'zubat-keeper', 'Z'), 'aide', 'A');
 
-    expect(credited.indexOf('`aide`')).toBeLessThan(credited.indexOf('`zubat-keeper`'));
+    expect(credited.overworld.map((row) => row.work)).toEqual(['aide', 'zubat-keeper']);
   });
 
-  it('refuses a page with no section to credit into', () => {
-    expect(() => withCredit('# Credits\n', 'rocket-grunt', 'Artist')).toThrow(/Pokengine/);
+  it('leaves every hand-written section alone', () => {
+    const held: Credits = {
+      ...listed,
+      sources: [{ what: 'Art', who: 'Somebody', href: 'https://example.test', terms: 'CC BY-NC' }],
+      scenery: ['Kyle-Dove'],
+    };
+
+    const credited = withCredit(held, 'rocket-grunt', 'Artist');
+
+    expect(credited.sources).toEqual(held.sources);
+    expect(credited.scenery).toEqual(held.scenery);
+  });
+
+  it('is shipped filled in, with every section standing up', () => {
+    const shipped = asCredits(JSON.parse(readFileSync('public/credits.json', 'utf8')) as unknown);
+
+    expect(shipped.sources.length).toBeGreaterThan(0);
+    expect(shipped.packages.length).toBeGreaterThan(0);
+    expect(shipped.scenery.length).toBeGreaterThan(0);
+
+    for (const source of shipped.sources) {
+      expect(source.who.length, source.what).toBeGreaterThan(0);
+      expect(source.terms.length, source.what).toBeGreaterThan(0);
+      expect(source.href.startsWith('https://'), source.what).toBe(true);
+    }
+    for (const one of shipped.packages) {
+      expect(one.licence.length, one.name).toBeGreaterThan(0);
+      expect(one.what.length, one.name).toBeGreaterThan(0);
+    }
+
+    // Nobody ships uncredited: every sheet on disk names somebody, and
+    // an empty credit would be a name nobody can read
+    for (const row of [...shipped.sprites, ...shipped.overworld]) {
+      expect(row.credit.length, row.work).toBeGreaterThan(0);
+      expect(row.work.length).toBeGreaterThan(0);
+    }
+    expect(shipped.sprites.length).toBeGreaterThan(200);
+  });
+
+  it('names an artist for every pokemon sheet that ships', () => {
+    const shipped = asCredits(JSON.parse(readFileSync('public/credits.json', 'utf8')) as unknown);
+    const credited = new Set(shipped.sprites.map((row) => row.work));
+
+    // The scan reads the name off the sheet, so a sheet copied in
+    // without a credits block would quietly go uncredited
+    expect(credited.has('Unown')).toBe(true);
+    expect(credited.has('Bulbasaur')).toBe(true);
+  });
+
+  it('gathers the works of one artist, most first', () => {
+    expect(
+      groupCredits([
+        { work: 'Abra', credit: 'CHUNSOFT' },
+        { work: 'Zubat', credit: 'CHUNSOFT' },
+        { work: 'Abra', credit: 'Tacocoa' },
+      ]),
+    ).toEqual([
+      { name: 'CHUNSOFT', works: ['Abra', 'Zubat'] },
+      { name: 'Tacocoa', works: ['Abra'] },
+    ]);
   });
 });
 
@@ -601,64 +473,33 @@ describe('what the page says a drawing cost', () => {
   });
 });
 
-describe('drawing an animation into the sheet', () => {
-  /** One column of two frames, each 4 × 4 with only its top half drawn. */
-  function twoFrames(): Raster {
-    const raster = blank(4, 8);
-    const paint = (top: number, value: number): void => {
-      for (let y = top; y < top + 2; y += 1) {
-        for (let x = 0; x < 4; x += 1) {
-          const at = (y * 4 + x) * 4;
+describe('copying a rectangle', () => {
+  it('drops what hangs off the left rather than wrapping it', () => {
+    const target = blank(4, 2);
 
-          raster.data[at] = value;
-          raster.data[at + 3] = 255;
-        }
-      }
-    };
-
-    paint(0, 40);
-    paint(4, 90);
-    return raster;
-  }
-
-  it('copies each frame out of its own cell when the grid was cropped', () => {
-    const sheet = blank(4, 4);
-    const source = twoFrames();
-    const grid = {
-      x: 0,
-      y: 0,
-      pitchX: 4,
-      // Cropped at the bottom only, which is the case that used to
-      // take a whole-image shortcut: the untrimmed picture was copied
-      // into a box sized for the shorter frames, so the second frame
-      // landed too low and the sheet lost its bottom
-      pitchY: 4,
-      offsetX: 0,
-      offsetY: 0,
-      frameWidth: 4,
-      frameHeight: 2,
-      columns: 1,
-      rows: 2,
-    };
-    // Uncropped, so each frame is the whole of its box: the shortcut
-    // this guards against is about where a box lands, not what is lit
-    const kept = deduper(false);
-
-    kept.add([{ raster: source, grid }], 0, 'one');
-    drawPictures(
-      sheet,
-      kept.pictures,
-      [
-        { x: 0, y: 0 },
-        { x: 0, y: 2 },
-      ],
-      () => source,
+    blit(
+      target,
+      drawn(4, 2, { x: 0, y: 0, width: 4, height: 2 }),
+      {
+        x: 0,
+        y: 0,
+        width: 4,
+        height: 2,
+      },
+      { x: -2, y: 0 },
     );
 
-    const at = (y: number): number => sheet.data[y * 4 * 4];
+    // The right half of the source, landed at the left of the target,
+    // and nothing wrapped round onto the row above
+    const lit: string[] = [];
 
-    expect(kept.pictures, 'two different frames, both kept').toHaveLength(2);
-    expect([at(0), at(1)], 'the first frame').toEqual([40, 40]);
-    expect([at(2), at(3)], 'the second frame, not the first frame padding').toEqual([90, 90]);
+    for (let y = 0; y < 2; y += 1) {
+      for (let x = 0; x < 4; x += 1) {
+        if (opaque(target, x, y)) {
+          lit.push(`${x},${y}`);
+        }
+      }
+    }
+    expect(lit).toEqual(['0,0', '1,0', '0,1', '1,1']);
   });
 });

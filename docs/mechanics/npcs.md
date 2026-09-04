@@ -4,20 +4,21 @@ Some chunks contain a **Wandering NPC** cell. The cell itself never moves, but
 whoever is standing on it changes every **three hours**, so the same spot may
 offer a breeder in the morning and a daycare lady by midday.
 
-Ten people wander: the breeder, the daycare lady, Nurse Joy, the groomer, the
-Move Reminder, the Move Tutor, the chef, the Fossil Maniac, the Fossil Scientist
-and the Channeler. The vendor, the Team Rocket grunt and the duelling trainers
-each keep a landmark of their own, further down. A cell is a crossroads rather
-than a shop, so walking up to one does not reveal in advance which of the ten is
-there.
+Eleven people wander: the breeder, the daycare lady, Nurse Joy, the groomer, the
+Move Reminder, the Move Tutor, the chef, the Fossil Maniac, the Fossil Scientist,
+the Channeler and Kurt. The vendor, the Team Rocket grunt and the duelling
+trainers each keep a landmark of their own, further down. A cell is a crossroads
+rather than a shop, so walking up to one does not reveal in advance which of the
+eleven is there.
 
 ## The once-per-window rule
 
-Every traveller except **Nurse Joy**, the **chef** and the **Fossil Scientist**
-helps a player once per three-hour window, and asking again before it turns over
-is refused whatever the player can pay. Nurse Joy takes up to six pokemon in one
-handover and turns nobody away while she is standing there; the chef and the
-scientist are paced by a purse and by how many fossils have been dug up.
+Every traveller except **Nurse Joy**, the **chef**, the **Fossil Scientist** and
+**Kurt** helps a player once per three-hour window, and asking again before it
+turns over is refused whatever the player can pay. Nurse Joy takes up to six
+pokemon in one handover and turns nobody away while she is standing there. The
+chef is paced by a purse, the scientist by how many fossils have been dug up, and
+Kurt by how many apricorns have been picked.
 
 The limit applies per cell, so walking to another wandering cell finds somebody
 who has not served that player yet. That walk is what a second egg costs.
@@ -89,6 +90,7 @@ evolution stones, by contrast, do carry a price, so a spare one is worth gold.
 | **Fossil Maniac**    | 12,000 gold, or 30,000 for the Old Amber | One of the two fossils he is carrying      |
 | **Fossil Scientist** | A fossil, free                           | The pokemon inside it, at level 20         |
 | **Channeler**        | One pokemon, one Heart Scale             | An extra ability slot, filled at once      |
+| **Kurt**             | A basket of apricorns, free              | One ball per apricorn, of that colour      |
 
 **Nurse Joy** charges nothing and heals everything: full health, statuses
 cleared, and any shadow pokemon purified on the way. Six pokemon to a handover,
@@ -118,6 +120,13 @@ She refuses a pokemon whose family has nothing left it does not already carry,
 and she refuses one that has run out of room. A shadow's mark and a boss's do not
 count against that room, so a shadow is not punished for carrying one.
 
+**Kurt** carves apricorns into balls, one ball per apricorn, and charges nothing.
+Each colour makes its own ball, and the seven he carves are stocked nowhere:
+Level, Love, Lure, Moon, Fast, Heavy and Friend. Hand him a basket and the only
+decision is how many to hand over. What paces him is picking, so he is worth
+walking to with a full bag. See [Catching](catching.md#balls) for what each ball
+answers.
+
 **The Chef** keeps the one shelf no vendor stocks: the region's drinks and its
 treats, six of them a window. Like the vendor, he serves as often as a purse
 holds out rather than once per window.
@@ -134,24 +143,44 @@ elsewhere.
 emerges belongs to the fossil, and it arrives at level 20. Like the vendor, he has
 no once-per-window limit: what paces him is how many fossils have been dug up.
 
-## The Team Rocket grunt
+## Team Rocket
 
-The grunt bars the cell and fights whoever accepts, with three shadowed pokemon of
-the biome's own — one common, one uncommon and one rare, each somewhere between
-**level 45 and 55**. It is an ordinary trainer battle, so a simultaneous knockout is
-a draw.
+Somebody from Team Rocket bars the cell and fights whoever accepts. Who it is is
+rolled per cell per window, and the three cannot overlap:
 
-Every player fights the grunt separately. One player's victory closes nothing for
-anybody else, and losing costs nothing but the attempt: the grunt is still
-standing and may be challenged again until the three hours are up.
+| Standing there        | How often | What they field                                                 |
+| --------------------- | --------- | --------------------------------------------------------------- |
+| **Grunt**             | The rest  | One common, two uncommon and three rare of the biome's, 40-60    |
+| **Rocket executive**  | 1 in 8    | Six of the biome's rare band, 65-85                              |
+| **Giovanni**          | 1 in 64   | Five of the rare band and a legendary, 85-100                    |
 
-Beating one pays a purse rolled between **1,000 and 10,000 gold**, drawn per
-winner so the same grunt is worth a different amount to the next player, and
-leaves behind one of the two commoners it fielded, never the rare one, shadowed
-and at level 10. **Giovanni**, who fields six with a legendary among them, pays
-between 10,000 and 50,000.
+The executives are **Archer**, **Ariana**, **Proton** and **Petrel**, and which
+of the four turns up is its own roll. Everything they field is shadowed, and it
+is an ordinary trainer battle, so a simultaneous knockout is a draw.
 
-The grunt is the one person at a crossroads a player can lose to. See
+Every player fights the cell separately. One player's victory closes nothing for
+anybody else, and losing costs nothing but the attempt: they are still standing
+and may be challenged again until the three hours are up.
+
+Beating one pays a purse drawn per winner, so the same fight is worth a different
+amount to the next player, and leaves a pokemon behind, shadowed and at level 10.
+A grunt pays **5,000 to 15,000** and leaves one of the three it was **not**
+fighting with, one of the common and uncommon pair rather than its best. An executive
+pays **40,000 to 90,000**, leaves any of its six, and drops an item it was
+carrying besides. **Giovanni** pays **120,000 to 250,000**, his own mark and any
+of his, the legendary included. The mark is worth the coat he runs Team Rocket
+in; the gym he keeps in Kanto is a different fight with a badge of its own.
+
+Every rank leaves a mark on the shelf as well, one apiece: the rank and file
+share one between them, each executive has their own, and so does the boss. Each
+is worth going about in that person's coat. See [Awards and titles](awards.md).
+
+The executives and Giovanni field trained pokemon rather than caught ones, and
+what they leave behind keeps it: an executive's prize walks away with both its
+abilities, and Giovanni's with both and room for a second held item. See
+[Battles](battles.md).
+
+Team Rocket is the one person at a crossroads a player can lose to. See
 [Battles](battles.md) for how the fight itself runs.
 
 ## Duelling trainers
@@ -166,17 +195,37 @@ Who turns up decides what they bring:
 
 | Standing there    | What they field                                    |
 | ----------------- | -------------------------------------------------- |
-| **Ace Trainer**   | Five fully-grown pokemon of any type, levels 60-80 |
-| **A type expert** | Three to five of their own type, levels 40-60      |
+| **Ace Trainer**   | Five fully-grown pokemon of any type, levels 60-80, raised the way the Elite Four raise theirs. Pays 25,000 to 60,000 |
+| **A type expert** | Three to five of their own type, levels 40-60. Pays 5,000 to 15,000 |
 
-The type experts are the trainer classes: the Bug Catcher, the Swimmer, the Black
-Belt, the Bird Keeper, the Biker, the Hiker, the Poké Maniac, the Channeler, the
-Burglar, the Rocker, the Psychic and the Lass. Which of them may be standing on a
-cell is the country's own: a Swimmer is met on the water, a Hiker on hard ground,
-a Channeler in the swamps — the same rule the gyms follow, so a player hunting one
-class knows where to walk. What they field is their type and nothing else,
-wherever they are met, and it is drawn from the whole region rather than from the
-country they are standing in.
+The type experts are the trainer classes, and both regions' are on the road:
+Kanto's Bug Catcher, Swimmer, Black Belt, Bird Keeper, Biker, Hiker, Poké Maniac,
+Channeler, Burglar, Rocker, Psychic, Lass, Beauty, Fisherman, Sailor, Gentleman,
+Super Nerd, Juggler, Tamer, Engineer and Gambler.
+
+**A class is not one type only.** Most field one, some field the pair the
+mainline gives them (a Sailor brings water and fighting, an Engineer steel and
+electric), and two trades may want the same type: what tells a Beauty from a Lass
+is who they are rather than what they carry.
+
+**A class belongs to a region.** The trades both regions put on the road are on
+it twice: a Swimmer (Kanto) and a Swimmer (Johto) are the same trade in two
+places, drawn differently, fielding what their own region grows. Their wins climb
+one line between them and pay one title, and their coats are earned apart.
+
+Johto brings a dozen trades Kanto has none of as well: the **Sage**, who fields
+grass, the **Skier** and the **Boarder**, ice, the **Scientist**, steel, the
+**Firebreather**, fire, the **Medium**, ghost, the **Teacher**, psychic, the
+**School Kid**, electric, the **Youngster**, ground, the **Camper**, rock, and
+its own **Poké Maniac** and **Burglar**, who field the dragons of the Dragon's
+Den and the dark that works the roads outside it. Johto's road covers every type
+the game grows; Kanto's covers what Kanto grows.
+
+Which of them may be standing on a cell is the country's own: a Swimmer is met on
+the water, a Hiker on hard ground, a Skier in the snow, the same rule the gyms
+follow, so a player hunting one class knows where to walk. What they field is
+their type and nothing else, wherever they are met, and it is drawn from their
+own region rather than from the country they are standing in.
 
 The **Ace Trainer** belongs to no country and may turn up anywhere.
 
@@ -187,12 +236,30 @@ kept for good.
 
 | Who            | What they field                 | What beating them is worth                        |
 | -------------- | ------------------------------- | ------------------------------------------------- |
-| **Gym leader** | Six of their gym's type, 45-65  | Their badge, a purse, and a machine of their type |
-| **Elite Four** | Six of their seat's type, 65-85 | Their mark, and a purse                           |
-| **Champion**   | Six of anything, 85-100         | The region's title, and 10,000 to 50,000          |
+| **Gym leader** | Five of their gym's type and their signature, 45-65 | Their badge, a purse of 20,000 to 50,000, and a machine of their type |
+| **Elite Four** | Five of their seat's type and their signature, 65-85 | Their mark, an item, and a purse of 50,000 to 110,000 |
+| **Champion**   | Their own named six, 85-100     | Their league's title, an item, and 150,000 to 300,000 |
+| **Legend**     | Their own named six at level 100 | Their mark, a purse of 250,000 to 500,000, and a rare or a special item |
+
+A gym leader's sixth is always the one pokemon they are known for, whatever the
+other five roll, and the five are drawn from every region rather than from the
+one their gym stands in. The Elite Four are built the same way, down to the
+signature.
+
+One window in sixty-four, a **legend** has walked into the champion's seat and is
+standing there instead. There is one so far, and it is Red. A legend keeps no
+league: no badge case is asked for and no title is won, and what is left behind
+is their own mark, the largest purse in the game, and an item off the rare band
+or, one time in twenty-one, the special one. The mark is worth the **Legend
+Breaker** title and the other coats that legend is drawn in. That is the only fight in the game that reaches the
+special band. Under one of the four skies that favour every type at once, the
+rarest weather there is, the seat is a legend's for certain.
 
 A member of the **Elite Four** will not fight anybody who is not carrying all
-eight badges, and the **Champion** asks for all four of their marks first.
+eight of their own league's badges, and a **Champion** asks for all four of their
+own league's marks first. Bruno keeps a seat in each league and each is its own
+fight, so a challenger who has only walked one region meets only that region's
+Bruno.
 
 An award is earned once. Every later win over the same leader counts on the shelf
 and pays its purse again, and a gym leader's machine is rolled per winner, so a

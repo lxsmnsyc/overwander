@@ -19,6 +19,9 @@ export const STATUS_MOVES: { [key in Moves]?: Statuses } = {
   [Moves.ConfuseRay]: Statuses.Confused,
   [Moves.Spore]: Statuses.Sleeping,
   [Moves.Hypnosis]: Statuses.Sleeping,
+  [Moves.SweetKiss]: Statuses.Confused,
+  [Moves.Attract]: Statuses.Infatuated,
+  [Moves.Swagger]: Statuses.Confused,
 };
 
 export const SELF_STATUS_MOVES: { [key in Moves]?: Statuses } = {
@@ -62,6 +65,17 @@ const EFFECT_STATUS_MOVES: {
   [Moves.Smog]: { status: Statuses.Poisoned, chance: 40 },
   [Moves.DizzyPunch]: { status: Statuses.Confused, chance: 20 },
   [Moves.Waterfall]: { status: Statuses.Flinched, chance: 20 },
+  [Moves.FlameWheel]: { status: Statuses.Burned, chance: 10 },
+  [Moves.SacredFire]: { status: Statuses.Burned, chance: 50 },
+  [Moves.PowderSnow]: { status: Statuses.Frozen, chance: 10 },
+  [Moves.Spark]: { status: Statuses.Paralyzed, chance: 30 },
+  [Moves.DragonBreath]: { status: Statuses.Paralyzed, chance: 30 },
+  [Moves.SludgeBomb]: { status: Statuses.Poisoned, chance: 30 },
+  [Moves.ZapCannon]: { status: Statuses.Paralyzed, chance: 100 },
+  [Moves.DynamicPunch]: { status: Statuses.Confused, chance: 100 },
+  [Moves.Twister]: { status: Statuses.Flinched, chance: 20 },
+  [Moves.Snore]: { status: Statuses.Flinched, chance: 30 },
+  [Moves.Whirlpool]: { status: Statuses.Trapped, chance: 100 },
 };
 
 /**
@@ -78,15 +92,46 @@ export const TRAPPING_MOVES = new Set<Moves>(
     .map(([move]) => Number(move) as Moves),
 );
 
-const EFFECT_STAGE_MOVES: {
-  [key in Moves]?: { stage: Stages; value: number; chance: number };
-} = {
+/**
+ * A stage a move pushes on the side as it lands. `self` is which side:
+ * a Metal Claw sharpens its own claws, an Iron Tail dents what it hit
+ */
+interface AttackStageEffect {
+  stage: Stages | Stages[];
+  value: number;
+  chance: number;
+  self?: boolean;
+}
+
+const EFFECT_STAGE_MOVES: { [key in Moves]?: AttackStageEffect } = {
   [Moves.Bubble]: { stage: Stages.Speed, value: -1, chance: 10 },
   [Moves.BubbleBeam]: { stage: Stages.Speed, value: -1, chance: 10 },
   [Moves.Psychic]: { stage: Stages.SpecialDefense, value: -1, chance: 10 },
   [Moves.Acid]: { stage: Stages.SpecialDefense, value: -1, chance: 10 },
   [Moves.Constrict]: { stage: Stages.Speed, value: -1, chance: 10 },
   [Moves.AuroraBeam]: { stage: Stages.Attack, value: -1, chance: 10 },
+  [Moves.Crunch]: { stage: Stages.Defense, value: -1, chance: 20 },
+  [Moves.IronTail]: { stage: Stages.Defense, value: -1, chance: 30 },
+  [Moves.RockSmash]: { stage: Stages.Defense, value: -1, chance: 50 },
+  [Moves.ShadowBall]: { stage: Stages.SpecialDefense, value: -1, chance: 20 },
+  [Moves.MudSlap]: { stage: Stages.Accuracy, value: -1, chance: 100 },
+  [Moves.Octazooka]: { stage: Stages.Accuracy, value: -1, chance: 50 },
+  [Moves.IcyWind]: { stage: Stages.Speed, value: -1, chance: 100 },
+  [Moves.MetalClaw]: { stage: Stages.Attack, value: 1, chance: 10, self: true },
+  [Moves.SteelWing]: { stage: Stages.Defense, value: 1, chance: 10, self: true },
+  [Moves.RapidSpin]: { stage: Stages.Speed, value: 1, chance: 100, self: true },
+  [Moves.AncientPower]: {
+    stage: [
+      Stages.Attack,
+      Stages.Defense,
+      Stages.SpecialAttack,
+      Stages.SpecialDefense,
+      Stages.Speed,
+    ],
+    value: 1,
+    chance: 10,
+    self: true,
+  },
 };
 
 /**
@@ -102,6 +147,37 @@ export function hasAttackEffect(move: Moves): boolean {
   );
 }
 
+/**
+ * The moves that flatter somebody into swinging harder while they are
+ * too muddled to aim. Aimed at the far side they are a confusion worth
+ * the stat they hand over; aimed at the player's own side they are the
+ * stat alone, and only for a pokemon that cannot be confused at all
+ * https://bulbapedia.bulbagarden.net/wiki/Swagger_(move)
+ */
+const FLATTERY_MOVES = new Set<Moves>([Moves.Swagger]);
+
+function setupFlatteryMoves(battle: Battle): void {
+  battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Exact, (event) => {
+    if (
+      !event.usable ||
+      !FLATTERY_MOVES.has(event.move) ||
+      event.target.type !== MoveTargetType.Unit
+    ) {
+      return;
+    }
+
+    const target = event.target.unit;
+    const cause = { type: EffectType.Move, move: event.move, unit: event.source } as const;
+    const muddled =
+      target.status[Statuses.Confused] != null ||
+      target.checkStatusImmunity(Statuses.Confused, cause);
+
+    // A teammate is worth flattering only where the confusion cannot
+    // land; anybody else is worth it only where it can
+    event.usable = target.team.alliance === event.source.team.alliance ? muddled : !muddled;
+  });
+}
+
 function setupUnitStatusMoves(battle: Battle): void {
   // A status move against somebody who already carries the status, or
   // who cannot take it at all, applies nothing: the AI is told so
@@ -110,7 +186,14 @@ function setupUnitStatusMoves(battle: Battle): void {
     const status = STATUS_MOVES[event.move];
 
     // Explicit null check: the first Statuses enum member is 0
-    if (!event.usable || status == null || event.target.type !== MoveTargetType.Unit) {
+    if (
+      !event.usable ||
+      status == null ||
+      event.target.type !== MoveTargetType.Unit ||
+      // The flattery moves raise a stat as well as muddling the head,
+      // so whether they are worth casting is their own question
+      FLATTERY_MOVES.has(event.move)
+    ) {
       return;
     }
 
@@ -174,7 +257,11 @@ function setupUnitStatusMoves(battle: Battle): void {
     const stage = EFFECT_STAGE_MOVES[event.parent.move];
 
     if (stage) {
-      event.parent.target.addStage(stage.stage, stage.value, cause);
+      const receiver = stage.self ? event.parent.source : event.parent.target;
+
+      for (const one of Array.isArray(stage.stage) ? stage.stage : [stage.stage]) {
+        receiver.addStage(one, stage.value, cause);
+      }
     }
   });
 }
@@ -183,6 +270,7 @@ const TEAM_STATUS_MOVES: { [key in Moves]?: TeamStatuses } = {
   [Moves.Reflect]: TeamStatuses.Reflect,
   [Moves.LightScreen]: TeamStatuses.LightScreen,
   [Moves.Mist]: TeamStatuses.Mist,
+  [Moves.Safeguard]: TeamStatuses.Safeguard,
 };
 
 function setupTeamStatusMoves(battle: Battle): void {
@@ -197,9 +285,22 @@ function setupTeamStatusMoves(battle: Battle): void {
       });
     }
   });
+
+  // A veil already over the side changes nothing, the way calling up
+  // a sky already out does not. The AI is told before it spends the
+  // cast rather than after
+  battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Exact, (event) => {
+    const status = TEAM_STATUS_MOVES[event.move];
+
+    // Explicit null check: the first TeamStatuses enum member is 0
+    if (event.usable && status != null && event.source.team.status[status] != null) {
+      event.usable = false;
+    }
+  });
 }
 
 export function setupStatusMoves(battle: Battle): void {
   setupUnitStatusMoves(battle);
   setupTeamStatusMoves(battle);
+  setupFlatteryMoves(battle);
 }

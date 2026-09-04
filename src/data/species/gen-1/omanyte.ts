@@ -26,6 +26,24 @@ const FAMILY_TEACHABLE = [
   Moves.Rest,
   Moves.Substitute,
   Moves.Surf,
+  Moves.Headbutt,
+  Moves.Thief,
+  Moves.Snore,
+  Moves.Curse,
+  Moves.Protect,
+  Moves.IcyWind,
+  Moves.Sandstorm,
+  Moves.Endure,
+  Moves.Rollout,
+  Moves.Swagger,
+  Moves.Attract,
+  Moves.SleepTalk,
+  Moves.Return,
+  Moves.Frustration,
+  Moves.HiddenPower,
+  Moves.RainDance,
+  Moves.RockSmash,
+  Moves.Whirlpool,
 ];
 
 const FAMILY_ABILITIES = [Abilities.SwiftSwim, Abilities.ShellArmor];
@@ -65,13 +83,17 @@ export default function registerOmanyteSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.WaterGun, Moves.Withdraw],
+        1: [Moves.WaterGun, Moves.Withdraw, Moves.Constrict],
+        13: [Moves.Bite],
+        31: [Moves.Leer],
         34: [Moves.HornAttack],
-        39: [Moves.Leer],
+        37: [Moves.Protect],
         46: [Moves.SpikeCannon],
+        49: [Moves.AncientPower],
         53: [Moves.HydroPump],
       },
       teachable: [...FAMILY_TEACHABLE],
+      egg: [Moves.Slam, Moves.Supersonic, Moves.BubbleBeam, Moves.AuroraBeam, Moves.Haze],
     },
   });
 
@@ -103,11 +125,12 @@ export default function registerOmanyteSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.WaterGun, Moves.Withdraw, Moves.HornAttack],
-        34: [Moves.HornAttack],
-        39: [Moves.Leer],
-        44: [Moves.SpikeCannon],
+        1: [Moves.WaterGun, Moves.Withdraw, Moves.HornAttack, Moves.Bite, Moves.Constrict],
+        31: [Moves.Leer],
+        37: [Moves.Protect],
+        40: [Moves.SpikeCannon],
         49: [Moves.HydroPump],
+        54: [Moves.AncientPower],
       },
       teachable: [
         ...FAMILY_TEACHABLE,

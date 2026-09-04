@@ -38,6 +38,25 @@ export const HATCHED_FRIENDSHIP = 120;
 export const SHADOW_FRIENDSHIP = 0;
 
 /**
+ * What a Friend Ball hands over: a pokemon already fond of whoever
+ * caught it. The mainline number, and most of the way to the two
+ * hundred and twenty a friendship evolution asks for
+ */
+export const FRIEND_BALL_FRIENDSHIP = 200;
+
+/**
+ * What a pokemon thinks of the player the moment it is caught. Every
+ * ball but one hands over a stranger's opinion, and a shadow arrives
+ * thinking nothing of anybody whatever it was caught in
+ */
+export function caughtFriendship(ball: Balls, shadow: boolean): number {
+  if (shadow) {
+    return SHADOW_FRIENDSHIP;
+  }
+  return ball === Balls.FriendBall ? FRIEND_BALL_FRIENDSHIP : BASE_FRIENDSHIP;
+}
+
+/**
  * What purifying hands back: the base arrival a shadow never got, on
  * top of whatever it has since earned. A pokemon put right stands
  * where a fresh catch stands and keeps every step it walked as a
@@ -48,6 +67,13 @@ export const PURIFIED_FRIENDSHIP_BONUS = BASE_FRIENDSHIP;
 export function purifiedFriendship(friendship: number): number {
   return Math.min(MAX_FRIENDSHIP, Math.max(0, friendship) + PURIFIED_FRIENDSHIP_BONUS);
 }
+
+/**
+ * What a pokemon has to think of the player before a friendship
+ * evolution is offered. It is the mainline's Gen 2 number, and it is
+ * also where `describeFriendship` starts saying "inseparable"
+ */
+export const EVOLUTION_FRIENDSHIP = 220;
 
 /**
  * How far a buddy walks between one point of friendship and the next

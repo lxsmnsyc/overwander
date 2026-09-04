@@ -28,6 +28,24 @@ const FAMILY_TEACHABLE = [
   Moves.SkullBash,
   Moves.Rest,
   Moves.Substitute,
+  Moves.Headbutt,
+  Moves.DefenseCurl,
+  Moves.Thief,
+  Moves.Snore,
+  Moves.Curse,
+  Moves.Protect,
+  Moves.MudSlap,
+  Moves.Detect,
+  Moves.Endure,
+  Moves.Swagger,
+  Moves.Attract,
+  Moves.SleepTalk,
+  Moves.Return,
+  Moves.Frustration,
+  Moves.IronTail,
+  Moves.HiddenPower,
+  Moves.RainDance,
+  Moves.SunnyDay,
 ];
 
 // Additional TM/HM moves for the fully evolved form
@@ -82,14 +100,22 @@ export default function registerNidoranFSpecies(): void {
       level: {
         1: [Moves.Growl, Moves.Tackle],
         8: [Moves.Scratch],
+        12: [Moves.DoubleKick],
         14: [Moves.PoisonSting],
         21: [Moves.TailWhip],
         29: [Moves.Bite],
         36: [Moves.FurySwipes],
-        43: [Moves.DoubleKick],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.Supersonic, Moves.Disable, Moves.TakeDown],
+      egg: [
+        Moves.Supersonic,
+        Moves.Disable,
+        Moves.TakeDown,
+        Moves.Counter,
+        Moves.FocusEnergy,
+        Moves.Charm,
+        Moves.BeatUp,
+      ],
     },
   });
 
@@ -127,14 +153,13 @@ export default function registerNidoranFSpecies(): void {
     learnSet: {
       level: {
         1: [Moves.Growl, Moves.Tackle, Moves.Scratch],
-        8: [Moves.Scratch],
+        12: [Moves.DoubleKick],
         14: [Moves.PoisonSting],
         23: [Moves.TailWhip],
         32: [Moves.Bite],
         41: [Moves.FurySwipes],
-        50: [Moves.DoubleKick],
       },
-      teachable: [...FAMILY_TEACHABLE],
+      teachable: [...FAMILY_TEACHABLE, Moves.Strength, Moves.RockSmash, Moves.IceBeam],
     },
   });
 
@@ -164,12 +189,25 @@ export default function registerNidoranFSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.Tackle, Moves.Scratch, Moves.TailWhip],
-        8: [Moves.Scratch],
+        1: [Moves.Tackle, Moves.Scratch, Moves.TailWhip, Moves.DoubleKick],
         14: [Moves.PoisonSting],
         23: [Moves.BodySlam],
       },
-      teachable: [...FAMILY_TEACHABLE, ...EVOLVED_TEACHABLE],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        ...EVOLVED_TEACHABLE,
+        Moves.FirePunch,
+        Moves.IcePunch,
+        Moves.ThunderPunch,
+        Moves.Roar,
+        Moves.IcyWind,
+        Moves.Sandstorm,
+        Moves.FuryCutter,
+        Moves.DynamicPunch,
+        Moves.ShadowBall,
+        Moves.RockSmash,
+        Moves.Flamethrower,
+      ],
     },
   });
 }

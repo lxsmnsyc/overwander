@@ -1,0 +1,91 @@
+import { Stats } from '../../constants/stats';
+import { Types } from '../../constants/types';
+import Abilities from '../../ids/abilities';
+import Biome, { TimeOfDay } from '../../ids/biome';
+import EggGroups from '../../ids/egg-groups';
+import Families from '../../ids/families';
+import { Moves } from '../../ids/moves';
+import { Species } from '../../ids/species';
+import { registerSpecies } from '../__create';
+
+export default function registerBlisseySpecies(): void {
+  registerSpecies(Species.Blissey, {
+    dexNumber: 242,
+    name: 'Blissey',
+    category: 'Happiness Pokemon',
+    height: 1.5,
+    weight: 46.8,
+    family: Families.Chansey,
+    evolvesFrom: Species.Chansey,
+    stats: {
+      [Stats.HP]: 255,
+      [Stats.Attack]: 10,
+      [Stats.Defense]: 10,
+      [Stats.SpecialAttack]: 75,
+      [Stats.SpecialDefense]: 135,
+      [Stats.Speed]: 55,
+    },
+    types: [Types.Normal],
+    abilities: [Abilities.NaturalCure, Abilities.SereneGrace],
+    hiddenAbilities: [Abilities.Healer],
+    eggGroups: [EggGroups.Fairy],
+    genderRatio: [0, 1],
+    catchRate: 30,
+    biomes: [Biome.Grassland, Biome.Woodland],
+    activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
+    learnSet: {
+      level: {
+        1: [Moves.Pound],
+        4: [Moves.Growl],
+        7: [Moves.TailWhip],
+        10: [Moves.SoftBoiled],
+        13: [Moves.DoubleSlap],
+        18: [Moves.Minimize],
+        23: [Moves.Sing],
+        28: [Moves.EggBomb],
+        33: [Moves.DefenseCurl],
+        40: [Moves.LightScreen],
+        47: [Moves.DoubleEdge],
+      },
+      teachable: [
+        Moves.Attract,
+        Moves.Blizzard,
+        Moves.Curse,
+        Moves.DefenseCurl,
+        Moves.DoubleTeam,
+        Moves.DreamEater,
+        Moves.DynamicPunch,
+        Moves.Endure,
+        Moves.FireBlast,
+        Moves.Flamethrower,
+        Moves.Flash,
+        Moves.Frustration,
+        Moves.Headbutt,
+        Moves.HiddenPower,
+        Moves.HyperBeam,
+        Moves.IceBeam,
+        Moves.IcyWind,
+        Moves.MudSlap,
+        Moves.Protect,
+        Moves.Psychic,
+        Moves.RainDance,
+        Moves.Rest,
+        Moves.Return,
+        Moves.RockSmash,
+        Moves.Rollout,
+        Moves.Sandstorm,
+        Moves.ShadowBall,
+        Moves.SleepTalk,
+        Moves.Snore,
+        Moves.SolarBeam,
+        Moves.Strength,
+        Moves.SunnyDay,
+        Moves.Swagger,
+        Moves.Thunder,
+        Moves.Thunderbolt,
+        Moves.Toxic,
+        Moves.ZapCannon,
+      ],
+    },
+  });
+}

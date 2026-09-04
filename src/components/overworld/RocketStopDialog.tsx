@@ -2,9 +2,9 @@ import type { PlayerIdentity } from '../../auth/user';
 import { type JSX, Show, createEffect, createSignal } from 'solid-js';
 import type { RocketRecord } from '../../auth/rocket-record';
 import { startRocketBattle } from '../../auth/rockets';
-import Npc, { GIOVANNI_NAME, NPC_NAMES, npcSheet } from '../../data/overworld/npc';
+import Npc, { NPC_NAMES, npcSheet } from '../../data/overworld/npc';
 import { getSpeciesData } from '../../data/species';
-import { type LevelBand, rocketPartyLevels } from '../../overworld/rocket';
+import { type LevelBand, ROCKET_PARTY_LEVELS } from '../../overworld/rocket';
 import { levelInBand } from '../../overworld/encounter';
 import { NPC_QUOTES } from './npc-dialog/shared';
 import TeamPickerDialog from '../battle/TeamPickerDialog';
@@ -37,7 +37,11 @@ export interface RocketStopDialogProps {
   npc: Npc;
   /** The style they were wandering in, so the portrait matches */
   sheet?: string;
-  /** Set for everybody but the Team Rocket grunt, whom this names itself */
+  /**
+   * Who is standing there, which the board works out. The fallbacks
+   * below are for a stop opened with nobody named, and read as the
+   * rank and file
+   */
   challenger?: StopChallenge | null;
   onClose: () => void;
 }
@@ -60,9 +64,8 @@ export default function RocketStopDialog(props: RocketStopDialogProps): JSX.Elem
    * be read out by, and a stop's party is neither hurt nor hatching
    */
   /** The band the fielded party rolls its levels in: the
-      challenger's own, or what the party's size says */
-  const levels = (record: RocketRecord): LevelBand =>
-    props.challenger?.levels ?? rocketPartyLevels(record.party.length);
+      challenger's own, or a grunt's where nobody was named */
+  const levels = (): LevelBand => props.challenger?.levels ?? ROCKET_PARTY_LEVELS;
 
   const lineup = (record: RocketRecord): BoxEntry[] =>
     record.party.map((entry, at) => ({
@@ -72,11 +75,8 @@ export default function RocketStopDialog(props: RocketStopDialogProps): JSX.Elem
       egg: false,
       progress: 0,
       fainted: false,
-      label: `${getSpeciesData(entry.species).name}, Lv. ${levelInBand(entry.traitValue, levels(record))}`,
+      label: `${getSpeciesData(entry.species).name}, Lv. ${levelInBand(entry.traitValue, levels())}`,
     }));
-
-  /** The boss fields six; everybody else makes do with three. */
-  const boss = (): boolean => (props.challenge?.[1].party.length ?? 0) > 3;
 
   /**
    * Who the fight is against, in a name and a face. It travels with
@@ -85,7 +85,7 @@ export default function RocketStopDialog(props: RocketStopDialogProps): JSX.Elem
    * those parties belongs to nobody
    */
   const opponent = (): { name: string; sprite: string } => ({
-    name: props.challenger?.name ?? (boss() ? GIOVANNI_NAME : NPC_NAMES[Npc.RocketGrunt]),
+    name: props.challenger?.name ?? NPC_NAMES[Npc.RocketGrunt],
     // The style they were standing in, so the summary shows the same
     // person the player walked up to
     sprite: props.sheet ?? npcSheet(props.npc),
@@ -97,9 +97,6 @@ export default function RocketStopDialog(props: RocketStopDialogProps): JSX.Elem
     if (challenger != null) {
       return challenger.greeting;
     }
-    if (boss()) {
-      return 'Giovanni himself bars the way. “So you are the one. Show me what you have.”';
-    }
     return `A Team Rocket grunt blocks the way. “${NPC_QUOTES[Npc.RocketGrunt]}”`;
   };
 
@@ -109,12 +106,7 @@ export default function RocketStopDialog(props: RocketStopDialogProps): JSX.Elem
     if (challenger != null) {
       return challenger.stakes;
     }
-    if (boss()) {
-      return `Six of his against as many as you bring. Beat him and he leaves one of the six
-        behind, along with a purse worth the trouble. Lose and you lose nothing but the
-        fight. He is not going anywhere this window.`;
-    }
-    return `Three of theirs against as many as you bring. Win and the grunt drops a purse and
+    return `Six of theirs against as many as you bring. Win and the grunt drops a purse and
       whatever they were carrying. Lose and you lose nothing but the fight. They will be
       here all window.`;
   };
@@ -185,8 +177,7 @@ export default function RocketStopDialog(props: RocketStopDialogProps): JSX.Elem
                 cardOnly
               />
               <Meta>
-                {record().party.length} of theirs, levels {levels(record())[0]} to{' '}
-                {levels(record())[1]}.
+                {record().party.length} of theirs, levels {levels()[0]} to {levels()[1]}.
               </Meta>
 
               {/* And what the fight is worth, which is the decision the

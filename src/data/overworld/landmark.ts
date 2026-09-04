@@ -95,11 +95,19 @@ const enum Landmark {
    * which board is walked to
    */
   AuctionBoard = 15,
+  /**
+   * A tree bearing one of Kurt's seven apricorns. A berry patch that
+   * bears balls rather than fruit: what is picked off it does nothing
+   * on its own, and Kurt is what turns it into something.
+   *
+   * **Not in `LANDMARKS` yet**, so nothing generates one. The trees
+   * are drawn per colour the way berry plants are, under
+   * `landmarks-apricorn/{colour}`, and that art has not been made: a
+   * landmark in the roll with nothing to draw is a cell a player
+   * walks up to and finds empty
+   */
+  ApricornTree = 16,
 
-  // TODO: Apricorn Tree, with Johto. Kurt's seven apricorns grow on
-  // trees and each becomes a ball sold nowhere, so it is a berry
-  // patch that bears balls rather than fruit. Needs the seven
-  // apricorn items and the seven balls, none of them registered.
   //
   // TODO: Honey Tree, with Sinnoh. Honey is slathered on and the tree
   // left alone; something is waiting at it hours later, which makes
@@ -144,6 +152,7 @@ export const LANDMARKS: Landmark[] = [
   Landmark.Market,
   Landmark.GymSeat,
   Landmark.AuctionBoard,
+  Landmark.ApricornTree,
 ];
 
 /**
@@ -165,4 +174,5 @@ export const LANDMARK_NAMES: Record<Landmark, string> = {
   [Landmark.Market]: 'Market',
   [Landmark.GymSeat]: 'Gym Seat',
   [Landmark.AuctionBoard]: 'Auction Board',
+  [Landmark.ApricornTree]: 'Apricorn Tree',
 };

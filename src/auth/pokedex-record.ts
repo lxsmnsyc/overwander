@@ -1,4 +1,5 @@
 import type { Species } from '../data/ids/species';
+import { getBaseFormSpecies } from '../data/ids/species';
 import { isRecord } from './__normalize';
 
 /**
@@ -134,10 +135,15 @@ export function listDexTallies(dex: unknown, spec: DexSpec): DexTally[] {
 
 /**
  * How many distinct species the tally holds — the figure a dex is
- * counted by, rather than how many individuals passed through
+ * counted by, rather than how many individuals passed through.
+ *
+ * **Forms count once.** A row is kept per form, since which letters
+ * somebody has found is worth knowing, but a dex is counted in
+ * pokemon: an Unown B and an Unown Q are one entry filled in, the
+ * same way the printed dex prints one row for them
  */
 export function countDexSpecies(dex: unknown, spec: DexSpec): number {
-  return listDexTallies(dex, spec).length;
+  return new Set(listDexTallies(dex, spec).map((tally) => getBaseFormSpecies(tally.species))).size;
 }
 
 /**

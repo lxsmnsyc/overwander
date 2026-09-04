@@ -1,0 +1,88 @@
+import { Stats } from '../../constants/stats';
+import { Types } from '../../constants/types';
+import Abilities from '../../ids/abilities';
+import Biome, { TimeOfDay } from '../../ids/biome';
+import EggGroups from '../../ids/egg-groups';
+import Families from '../../ids/families';
+import { Moves } from '../../ids/moves';
+import { Species } from '../../ids/species';
+import { registerSpecies } from '../__create';
+
+export default function registerSneaselSpecies(): void {
+  registerSpecies(Species.Sneasel, {
+    dexNumber: 215,
+    name: 'Sneasel',
+    category: 'Sharp Claw Pokemon',
+    height: 0.9,
+    weight: 28,
+    family: Families.Sneasel,
+    stats: {
+      [Stats.HP]: 55,
+      [Stats.Attack]: 95,
+      [Stats.Defense]: 55,
+      [Stats.SpecialAttack]: 35,
+      [Stats.SpecialDefense]: 75,
+      [Stats.Speed]: 115,
+    },
+    types: [Types.Dark, Types.Ice],
+    abilities: [Abilities.InnerFocus, Abilities.KeenEye],
+    hiddenAbilities: [Abilities.Pickpocket],
+    eggGroups: [EggGroups.Field],
+    genderRatio: [1, 1],
+    catchRate: 60,
+    biomes: [Biome.AlpineTundra, Biome.Tundra, Biome.Glacier],
+    activeTimes: TimeOfDay.Evening | TimeOfDay.Night,
+    learnSet: {
+      level: {
+        1: [Moves.Leer, Moves.Scratch],
+        9: [Moves.QuickAttack],
+        17: [Moves.Screech],
+        25: [Moves.FeintAttack],
+        33: [Moves.FurySwipes],
+        41: [Moves.Agility],
+        49: [Moves.Slash],
+        57: [Moves.BeatUp],
+        65: [Moves.MetalClaw],
+      },
+      teachable: [
+        Moves.Attract,
+        Moves.Blizzard,
+        Moves.Curse,
+        Moves.Cut,
+        Moves.DefenseCurl,
+        Moves.Detect,
+        Moves.Dig,
+        Moves.DoubleTeam,
+        Moves.DreamEater,
+        Moves.DynamicPunch,
+        Moves.Endure,
+        Moves.Frustration,
+        Moves.FuryCutter,
+        Moves.Headbutt,
+        Moves.HiddenPower,
+        Moves.IceBeam,
+        Moves.IcePunch,
+        Moves.IcyWind,
+        Moves.IronTail,
+        Moves.MudSlap,
+        Moves.Nightmare,
+        Moves.Protect,
+        Moves.PsychUp,
+        Moves.RainDance,
+        Moves.Rest,
+        Moves.Return,
+        Moves.RockSmash,
+        Moves.ShadowBall,
+        Moves.SleepTalk,
+        Moves.Snore,
+        Moves.Strength,
+        Moves.Surf,
+        Moves.Swagger,
+        Moves.Swift,
+        Moves.Thief,
+        Moves.Toxic,
+      ],
+      egg: [Moves.Bite, Moves.Counter, Moves.Foresight, Moves.Reflect, Moves.Spite],
+    },
+  });
+}

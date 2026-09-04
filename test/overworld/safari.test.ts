@@ -3,7 +3,9 @@ import { MAX_IV, Stats, getIV, getOtherStat, setIV } from '../../src/data/consta
 import Biome from '../../src/data/ids/biome';
 import Natures, { getNatureFactor } from '../../src/data/ids/natures';
 import { Balls, Items } from '../../src/data/ids/items';
-import { Species } from '../../src/data/ids/species';
+import { Genders, Species } from '../../src/data/ids/species';
+import Phenomenon from '../../src/data/overworld/phenomenon';
+import { BASE_FRIENDSHIP, caughtFriendship } from '../../src/data/constants/friendship';
 import { registerSpecies } from '../../src/data/species';
 import ChunkSnapshot from '../../src/overworld/chunk-snapshot';
 import deriveEncounter, { type Encounter, EncounterType } from '../../src/overworld/encounter';
@@ -186,6 +188,98 @@ describe('safari session', () => {
     expect(sea.getBallModifier(Balls.DiveBall)).toBe(3.5);
     expect(swamp.getBallModifier(Balls.DiveBall)).toBe(3.5);
     expect(beach.getBallModifier(Balls.DiveBall)).toBe(1);
+  });
+
+  it("answers the Fast, Heavy and Moon Balls off the species' own numbers", () => {
+    // Tauros is 110 base Speed; Caterpie is 45
+    expect(new SafariSession(makeEncounter(), rolls([])).getBallModifier(Balls.FastBall)).toBe(4);
+    expect(
+      new SafariSession(makeEncounter(Species.Caterpie), rolls([])).getBallModifier(Balls.FastBall),
+    ).toBe(1);
+
+    // Caterpie is 2.9 kg, Tauros 88.4, Snorlax 460
+    expect(
+      new SafariSession(makeEncounter(Species.Caterpie), rolls([])).getBallModifier(
+        Balls.HeavyBall,
+      ),
+    ).toBe(1);
+    expect(new SafariSession(makeEncounter(), rolls([])).getBallModifier(Balls.HeavyBall)).toBe(1);
+    expect(
+      new SafariSession(makeEncounter(Species.Snorlax), rolls([])).getBallModifier(Balls.HeavyBall),
+    ).toBe(4);
+
+    // The Moon Ball answers a whole line: Clefairy takes the stone,
+    // and Clefable above it and Cleffa below it are its relatives
+    for (const species of [Species.Clefairy, Species.Clefable, Species.Cleffa]) {
+      expect(
+        new SafariSession(makeEncounter(species), rolls([])).getBallModifier(Balls.MoonBall),
+        String(species),
+      ).toBe(4);
+    }
+    expect(new SafariSession(makeEncounter(), rolls([])).getBallModifier(Balls.MoonBall)).toBe(1);
+  });
+
+  it('gives the Lure Ball whatever a ripple brought up', () => {
+    const walked = new SafariSession(makeEncounter(), rolls([]));
+    const rippled = new SafariSession(
+      { ...makeEncounter(), phenomenon: Phenomenon.RipplingWater },
+      rolls([]),
+    );
+    const dusty = new SafariSession(
+      { ...makeEncounter(), phenomenon: Phenomenon.DustCloud },
+      rolls([]),
+    );
+
+    expect(walked.getBallModifier(Balls.LureBall)).toBe(1);
+    expect(rippled.getBallModifier(Balls.LureBall)).toBe(5);
+    expect(dusty.getBallModifier(Balls.LureBall)).toBe(1);
+  });
+
+  it('throws the Level and Love Balls from behind the buddy', () => {
+    const encounter = { ...makeEncounter(), level: 10, gender: Genders.Female };
+    const alone = new SafariSession(encounter, rolls([]));
+
+    // A player walking alone has no buddy to measure against, so both
+    // are worth what a plain ball is
+    expect(alone.getBallModifier(Balls.LevelBall)).toBe(1);
+    expect(alone.getBallModifier(Balls.LoveBall)).toBe(1);
+
+    const behind = (
+      level: number,
+      species = Species.Tauros,
+      gender = Genders.Male,
+    ): SafariSession =>
+      new SafariSession(encounter, rolls([]), { buddy: { species, gender, level } });
+
+    // The mainline ladder: four times over, twice over, above it, and
+    // level with it
+    expect(behind(40).getBallModifier(Balls.LevelBall)).toBe(8);
+    expect(behind(20).getBallModifier(Balls.LevelBall)).toBe(4);
+    expect(behind(11).getBallModifier(Balls.LevelBall)).toBe(2);
+    expect(behind(10).getBallModifier(Balls.LevelBall)).toBe(1);
+
+    // The Love Ball wants its own species back the other way round
+    expect(behind(10).getBallModifier(Balls.LoveBall)).toBe(8);
+    expect(behind(10, Species.Tauros, Genders.Female).getBallModifier(Balls.LoveBall)).toBe(1);
+    expect(behind(10, Species.Caterpie).getBallModifier(Balls.LoveBall)).toBe(1);
+
+    // Neither side may be genderless: there is no other way round
+    const genderless = { ...makeEncounter(Species.Magnemite), gender: Genders.Genderless };
+
+    expect(
+      new SafariSession(genderless, rolls([]), {
+        buddy: { species: Species.Magnemite, gender: Genders.Genderless, level: 10 },
+      }).getBallModifier(Balls.LoveBall),
+    ).toBe(1);
+  });
+
+  it('catches with the Friend Ball as with a plain one', () => {
+    // What it is thrown for happens after the catch
+    expect(new SafariSession(makeEncounter(), rolls([])).getBallModifier(Balls.FriendBall)).toBe(1);
+    expect(caughtFriendship(Balls.FriendBall, false)).toBe(200);
+    expect(caughtFriendship(Balls.PokeBall, false)).toBe(BASE_FRIENDSHIP);
+    // A shadow arrives thinking nothing of anybody, Friend Ball or not
+    expect(caughtFriendship(Balls.FriendBall, true)).toBe(0);
   });
 
   it('scales the Nest Ball by level and the Repeat Ball by ownership', () => {

@@ -1,6 +1,6 @@
 import type { CastAnimation } from '../constants/cast';
 import type { Types } from '../constants/types';
-import type { MoveCategories, Moves } from '../ids/moves';
+import { MoveAffects, type MoveCategories, MoveTargets, type Moves } from '../ids/moves';
 
 export interface MoveData {
   name: string;
@@ -28,7 +28,17 @@ export interface MoveData {
 
   pp: number;
 
-  target: number;
+  /**
+   * How the move is cast: at one unit, at one team, or at nobody
+   */
+  target: MoveTargets;
+
+  /**
+   * Who the move reaches, as a `MoveAffects` mask. Filled in
+   * from the way the move is cast when its entry leaves it out, so
+   * anything reading a registered move always has a mask
+   */
+  affects: number;
 
   flags: number;
 
@@ -60,10 +70,28 @@ export interface MoveData {
   cast: CastAnimation[];
 }
 
+/**
+ * A move as it is written down: everything `MoveData` holds, except
+ * that the reach may be left to the way the move is cast
+ */
+export type RegisterMoveData = Omit<MoveData, 'affects'> & { affects?: number };
+
+/**
+ * What a move reaches when its entry says nothing: one enemy of
+ * whatever shape it was cast at, and nothing at all for a move cast
+ * at nobody, which is what a field effect and a move on the user
+ * itself both want
+ */
+const DEFAULT_AFFECTS: { [key in MoveTargets]: number } = {
+  [MoveTargets.None]: 0,
+  [MoveTargets.Unit]: MoveAffects.Unit | MoveAffects.Enemy,
+  [MoveTargets.Team]: MoveAffects.Team | MoveAffects.Enemy,
+};
+
 const MOVE_DATA = new Map<Moves, MoveData>();
 
-export function registerMove(move: Moves, data: MoveData): void {
-  MOVE_DATA.set(move, data);
+export function registerMove(move: Moves, data: RegisterMoveData): void {
+  MOVE_DATA.set(move, { ...data, affects: data.affects ?? DEFAULT_AFFECTS[data.target] });
 }
 
 export function getRegisteredMoves(): Moves[] {

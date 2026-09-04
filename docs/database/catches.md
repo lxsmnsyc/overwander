@@ -118,10 +118,10 @@ and a test fails where one is missing.
 The box uses the vocabulary three ways. It finishes the word the caret is in,
 offering field names before the colon and that field's values after it, with Tab
 taking the highlighted offer or filling in as far as every offer agrees. It keeps
-every finished term as a badge **inside the box**, coloured by what the term does
-— blue narrows, amber refuses, grey arranges, red is a field nobody has a reading
-for, which matches nothing rather than being ignored — and each badge carries a
-cross that takes the term back off. A term becomes a badge once a space follows
+every finished term as a badge **inside the box**, coloured by what the term does.
+Blue narrows, amber refuses, grey arranges, and red is a field nobody has a
+reading for, which matches nothing rather than being ignored. Each badge carries
+a cross that takes the term back off. A term becomes a badge once a space follows
 it, and Backspace at the head of the box takes the last one apart to be edited.
 And it carries the grammar itself on a card behind the information icon, written
 in the vocabulary's own words so the card attached to the bag is about the bag.
@@ -135,15 +135,15 @@ rather than a faster one. What that leaves is:
 | Kind               | Terms                                                                            | How                                                       |
 | ------------------ | -------------------------------------------------------------------------------- | --------------------------------------------------------- |
 | Columns of the row | `level`, `friendship`, `walked`, `steps`, `hatch`, `hp`, `bonus`, `iv`, `caught` | A comparison each, or a pair for a range                  |
-| Names of ids       | `species`, `family`, `nature`, `gender`, `ball`, `met`, `biome`, `lair`          | `eq` for one, `in` for several — with no cap on how many  |
+| Names of ids       | `species`, `family`, `nature`, `gender`, `ball`, `met`, `biome`, `lair`          | `eq` for one, `in` for several, with no cap on how many   |
 | Substrings         | `nickname`, `place`, `locale`                                                    | `ilike`, on the trigram indexes                           |
 | Child tables       | `move`, `ability`, `item`, `got`, `from`, `paid`, `pp`                           | An inner join, one alias per term                         |
 | Rows elsewhere     | `is:buddy`, `is:listed`, `is:raiding`                                            | An inner join on `profiles`, `auctions` or `team_catches` |
 | Marks              | every `is:`/`not:` word with a column behind it                                  | An equality on that column                                |
 
 Each joined term gets an **alias of its own** (`q0`, `q1`), for two reasons.
-Two terms over one table are two rows — `move:ember move:growl` is a pokemon
-that knows both, not one move that is somehow both — and the aliased join sits
+Two terms over one table are two rows, so `move:ember move:growl` is a pokemon
+that knows both rather than one move that is somehow both. The aliased join sits
 beside the embed the reader unpacks rather than filtering it, so a pokemon does
 not come back holding only the move that was searched for.
 
@@ -190,15 +190,15 @@ a filter.
 #### What a search cannot be told
 
 `is:buddy`, `is:listed`, `is:raiding` and `is:duplicate` are not in the record.
-The box reads them once beside its rows — `readCatchContext` for the first three,
-`findDuplicates` over what was loaded for the last — and passes them in as a
+The box reads them once beside its rows, with `readCatchContext` for the first
+three and `findDuplicates` over what was loaded for the last, and passes them in as a
 `CatchContext`. A list that read none of them answers those marks **no**, which
 is the same answer an unknown field gets and for the same reason: a term that
 cannot be answered hides the row rather than being quietly dropped.
 
 The **bag** takes the same grammar and has no query half at all: it is one row
 per stack, read whole however much is in it, and every term is answered over what
-came back — see [`src/data/items/search.ts`](../../src/data/items/search.ts).
+came back. See [`src/data/items/search.ts`](../../src/data/items/search.ts).
 
 ## Training and friendship
 
@@ -220,7 +220,7 @@ Three server calls in [`src/server/training.ts`](../../src/server/training.ts)
 move it, each in one transaction:
 
 - **`trainEffort`** spends unused points into a stat, or takes them back out with
-  a negative amount. Nothing is consumed — the points came with the levels.
+  a negative amount. Nothing is consumed, since the points came with the levels.
 - **`useWing`** spends a wing for `WING_EFFORT` (3) points in the wing's own stat
   and raises `effortBonus` by the same, so a wing grants training rather than
   spending the pool. That is what makes one worth the same at level 5 as at 100.
@@ -252,11 +252,11 @@ something horrible and shrugs, while one that trusted them takes it badly.
 
 Every **gain** above is doubled for a pokemon whose `ball` is a **Luxury Ball**
 (`friendshipFactor`); neither loss is. The ball is a field of the record, so the
-bonus follows whatever ball the pokemon is in now — and since `useBall`
+bonus follows whatever ball the pokemon is in now, and since `useBall`
 ([`balls.ts`](../../src/server/balls.ts)) lets an owner spend a spare ball to
 replace it, the bonus can be bought for a pokemon that was caught in something
-else. What a ball did at the moment of the catch — a Heal Ball mending it, the
-odds a Dusk Ball improved — was settled then and is not revisited.
+else. What a ball did at the moment of the catch, such as a Heal Ball mending it or
+the odds a Dusk Ball improved, was settled then and is not revisited.
 
 ### Packed fields
 
@@ -272,8 +272,8 @@ wants, and each is one call away in either direction
 | `statuses` | `Statuses[]`                   | `statusFlag` / `unpackStatuses` |
 | `slots`    | Three shared constants         | `getSlots` / `withSlots`        |
 
-`slots` is how much room this pokemon has for each of its three lists —
-abilities, held items, moves — three bits each, stored **0-based** so a count of
+`slots` is how much room this pokemon has for each of its three lists: abilities,
+held items and moves. Three bits each, stored **0-based** so a count of
 one reads out of a zero. A ceiling belongs to the individual rather than to the
 game: a shadow carries two abilities where everything else carries one, and it
 keeps that room once purified. The defaults are 1 ability (2 for a shadow), 1
@@ -285,15 +285,15 @@ constant: `giveItem` asks `Slots.Item` before it hands anything over, and
 or costs one. A record written before the field existed reads its old defaults
 from its own abilities, so nothing needs backfilling.
 
-`statuses` is a bitfield of its own — `StatusFlags`, six flags starting at the
-first bit — rather than shifts of the battle engine's `Statuses` enum. A stored
+`statuses` is a bitfield of its own, `StatusFlags` with six flags starting at the
+first bit, rather than shifts of the battle engine's `Statuses` enum. A stored
 record should not have its layout decided by where a status happens to sit in an
 enum the engine owns. A volatile status has no bit at all, so a report claiming a
 pokemon is confused cannot be written even by accident. `statusFlag` and
 `flagStatus` are the only place the two numberings meet.
 
 The reason is the same in each case: a set of named things compares, unions and
-masks as an integer — what a Full Heal takes off is one AND, not a filtered list —
+masks as an integer, so what a Full Heal takes off is one AND rather than a filtered list,
 and the shape a reader wants is one call away.
 
 ### The marks are columns, not bits
@@ -323,7 +323,7 @@ Two rules keep it from rotting into a lie:
 
 - **Every write that moves an input rewrites it.** Catching, writing an egg, a
   bottle cap (`ivs`), purifying (`ivs`, all six up by two), evolving (`species`).
-  Nothing else can change any of the three — `shiny` is fixed at the encounter,
+  Nothing else can change any of the three. `shiny` is fixed at the encounter,
   and hatching only lifts the shell. Both cap paths matter in _both_ directions: a
   cap can complete a perfect set, and it can also break a blank one, which is the
   only way a catch stops being auctionable.
@@ -351,8 +351,8 @@ caller.
 
 Which evolutions are offered comes from
 [`src/data/species/evolution.ts`](../../src/data/species/evolution.ts). Four
-methods can be verified against what is stored — `Level`, `UsedItem`, `HeldItem`
-and `Trade` — so an evolution carrying any other flag, such as friendship or
+methods can be verified against what is stored: `Level`, `UsedItem`, `HeldItem`
+and `Trade`. An evolution carrying any other flag, such as friendship or
 weather, is never offered rather than waved through. A held item is required but
 not consumed; only a used item is spent.
 
@@ -382,7 +382,7 @@ encounter its owner starts.
 
 A battle leaves a party where it left it. A pokemon walks out of a raid at
 whatever health it had when the boss fell, still burned if it was burned, and
-walks into the next fight that way — which is what makes a party something a
+walks into the next fight that way, which is what makes a party something a
 player looks after rather than a row of levels. The report that writes it is
 [`battle_aftermaths`](raids.md#battle_aftermaths), and the rules both
 sides read are in [`src/auth/health.ts`](../../src/auth/health.ts).
@@ -395,11 +395,11 @@ field.
 
 **When the maximum moves, the share moves with it.** A pokemon at 50 of 100 comes
 out of an evolution at 60 of 120, and out of a bottle cap the same way. Two edges
-are deliberate: a pokemon that was down stays down — an evolution is not a revival
-— and one that was up never falls to zero on a rounding step.
+are deliberate. A pokemon that was down stays down, since an evolution is not a
+revival, and one that was up never falls to zero on a rounding step.
 
 The same rescaling happens **into** a battle. An ability can change what a unit's
-pool is worth — a `Boss` carries a raid-sized one — and the record it was copied
+pool is worth, and a `Boss` carries a raid-sized one, and the record it was copied
 from knows nothing about that, so the stored health is read against the stored
 maximum and applied against the pool the unit actually fights with. A boss at full
 takes the field at full rather than at a tenth of itself, and a half-hurt pokemon
@@ -408,7 +408,7 @@ stays half hurt whatever its pool turns out to be.
 **Only non-volatile statuses survive, and all of them do.** Poison, bad poison,
 sleep, paralysis, a burn and ice are carried out; confusion, flinching, a
 substitute and the field's own effects end with the battle. A unit can hold
-several at once — poisoned and asleep is an ordinary way to come out of a raid —
+several at once, since poisoned and asleep is an ordinary way to come out of a raid,
 so the record keeps the whole list, and a berry clears everything it covers rather
 than the first thing it finds. Stored statuses are applied to the unit when it is
 fielded, through the ordinary path, so an immunity refuses one and a held Rawst
@@ -418,8 +418,8 @@ Berry eats itself to cure the burn before the first turn.
 `publishTeamSnapshot` drops one from the freeze. A team that fields nothing is no
 team, so a party of fainted pokemon cannot start a battle at all.
 
-Three things put a pokemon right, and they all run through one call —
-`useHealingItem` ([`src/server/healing.ts`](../../src/server/healing.ts)) — with
+Three things put a pokemon right, and they all run through one call,
+`useHealingItem` ([`src/server/healing.ts`](../../src/server/healing.ts)), with
 `healedByItem` deciding what any given item is worth to any given pokemon:
 
 - **A berry**, from the table in
@@ -431,11 +431,11 @@ Three things put a pokemon right, and they all run through one call —
   [`src/data/items/medicine.ts`](../../src/data/items/medicine.ts): a potion
   (20 / 60 / 120 / the whole pool), a cure for one status or a Full Heal for all
   of them, a Full Restore for both, and a revive that lifts a fainted pokemon on
-  half a pool — a Max Revive on a whole one. None of it is holdable, which is what
+  half a pool, and a Max Revive on a whole one. None of it is holdable, which is what
   keeps a berry worth carrying into a raid, and all of it is `Marketable`.
 - **Herbal medicine**, the same file's last four entries: cheaper than the bottle
-  each competes with and better at the job — Energy Powder 50 points, Energy Root
-  200, Heal Powder every status, Revival Herb a whole pool off the floor — and
+  each competes with and better at the job. Energy Powder is 50 points, Energy
+  Root 200, Heal Powder every status and Revival Herb a whole pool off the floor, and
   paid for in `friendship`. `bitter` is how many mouthfuls it counts as, and
   `useHealingItem` docks `gainFriendship(current, 'herb', mouthfuls)` in the
   **same write** as the healing, so the cure and its cost cannot come apart. No
@@ -444,7 +444,7 @@ Three things put a pokemon right, and they all run through one call —
   health and a clean slate.
 
 Two rules cut across all of it. **A revive is the only thing that reaches a
-fainted pokemon**, and the only thing that does nothing to one still standing — a
+fainted pokemon**, and the only thing that does nothing to one still standing. A
 potion poured over a pokemon that is already down does nothing, exactly as in the
 mainline games. And **an item that would change nothing is refused rather than
 spent**: the wrong cure, a pokemon already whole, or a Leppa or Persim, whose
@@ -456,7 +456,7 @@ A record written before these fields existed has neither, and reading a missing
 
 ## What the player sets
 
-Four of the six `PokemonFlags` are the game's own — shiny, shadow, egg, and the
+Four of the six `PokemonFlags` are the game's own: shiny, shadow, egg, and the
 battle lock. Two are the player's, set from the catch dialog and cleared the same
 way, and neither says anything about the pokemon itself:
 
@@ -480,14 +480,14 @@ that only ever adds to the pokemon is left alone.
 Refused: `useCandy` (a level), `trainEffort`, `useWing` and `feedEffortBerry`
 (effort), `useBottleCap` (values), `evolveCatch`, `useHealingItem`,
 `usePurifyingGem`, `visitNurse` (she heals and purifies), `joinRaid`, and both
-`giveItem` and `takeItem` — a locked pokemon is not reached into in either
+`giveItem` and `takeItem`, since a locked pokemon is not reached into in either
 direction, so what it is holding stays what it was holding.
 `publishTeamSnapshot` drops it from a party the way it drops an egg or a fainted
 pokemon, so a rocket fight leaves it behind too.
 
 Still allowed: walking as the **buddy** and the steps that come with it,
 **friendship** from every source that grants it, and standing as a **parent** at
-the breeder — `breedCatches` consumes neither parent and writes the egg as a third
+the breeder. `breedCatches` consumes neither parent and writes the egg as a third
 record, so a locked pokemon comes back from the breeder exactly as it left.
 `groomCatch` is allowed for the same reason: friendship is the one field a lock
 does not fence off.
@@ -500,15 +500,15 @@ _locked_, so the refusal is visible before the press.
 
 `setFavorite` and `setGuarded`
 ([`src/server/caught.ts`](../../src/server/caught.ts)) write through `withFlag`,
-so setting one cannot drop another — a shiny shadow stays a shiny shadow — and
+so setting one cannot drop another, and a shiny shadow stays a shiny shadow, and
 both refuse while the pokemon is **fighting**, the way every other edit to a live
 record does.
 
 ## Whose hands it has passed through
 
 `history` is one entry per owner, oldest first. Each says **when** that owner
-received it — a local ISO 8601 string in _their_ own zone, the way a catch date is
-— and **how**:
+received it, as a local ISO 8601 string in _their_ own zone the way a catch date
+is, and **how**:
 
 | `Acquisition` | Written by         | What it means                                  |
 | ------------- | ------------------ | ---------------------------------------------- |
@@ -531,9 +531,9 @@ field today.
 
 An entry also carries `paid`: what that owner spent in gold, where the handover
 cost gold at all. Only `claimAuction` writes it, with the winning bid. It belongs
-to the **handover** rather than to the pokemon — a Mewtwo may come round the block
-twice, and what the second winner paid says nothing about what the first did — and
-it is the only place the figure survives, since the lot is settled and gone a
+to the **handover** rather than to the pokemon. A Mewtwo may come round the block
+twice, and what the second winner paid says nothing about what the first did. It
+is the only place the figure survives, since the lot is settled and gone a
 moment later. A sale written before the price was kept reads as `null`, which is
 not the same as a lot won for nothing.
 
@@ -544,8 +544,8 @@ written before the ball was kept reads as `null`.
 
 A record written before the field existed still reads correctly, because both
 cases are knowable. The **first** entry is where the pokemon began, which the
-record's `type` already says — `Hatched` means an egg, anything else means a catch
-— and every entry **after** it can only be a sale, since the auction house has
+record's `type` already says, where `Hatched` means an egg and anything else
+means a catch. Every entry **after** it can only be a sale, since the auction house has
 been the one thing that ever appended one. `reclaimAuction` appends nothing: an
 unsold lot came back to the same person.
 
@@ -558,8 +558,8 @@ pokemon, and a missing profile must not quietly shorten its history.
 
 ## Where it came from
 
-`type` says how a pokemon was met — see
-[Encounter kinds](encounters.md#encounter-kinds) — and for a raid prize `lair`
+`type` says how a pokemon was met, listed in
+[Encounter kinds](encounters.md#encounter-kinds), and for a raid prize `lair`
 says **where**. It is the same field the lobby was named after
 ([Raids](raids.md)), so a record reads the way the raid did: a Mewtwo won under a
 mountain says `Cerulean Cave`, and a shadow raid that stood in no named place says
@@ -572,8 +572,8 @@ A **mythical** goes further: its `origin.biome` is `Biome.Beyond`, a biome that 
 nowhere on the map. No climate targets it (`BIOME_CONFIGS` excludes it by type, so
 `getBiome` cannot return it), no spawn pool is registered for it, and nothing is
 ever generated there. A relic is spent wherever the player happens to be standing,
-but that chunk is not where the pokemon came from — walking back to it finds
-nothing — so the record says `Beyond` rather than naming a place that would be a
+but that chunk is not where the pokemon came from, and walking back to it finds
+nothing, so the record says `Beyond` rather than naming a place that would be a
 lie.
 
 ## Bottle caps
@@ -599,24 +599,24 @@ neither is holdable, and each is consumed by the use. The rules both sides read
 live in [`src/data/items/bottle-caps.ts`](../../src/data/items/bottle-caps.ts).
 
 Only stats below `MAX_IV` are drawn from, so a plain cap never lands on a stat
-that needed nothing — the item is spent either way, and a pick that could waste it
+that needed nothing, since the item is spent either way and a pick that could waste it
 would make the cap worse the closer a pokemon came to perfect. A pokemon that is
 **already perfect** is refused outright on both sides: the dialog hides the buttons
 and the server returns null without touching the bag.
 
 The use is refused for the same reasons every other catch write is: the catch is
-not the player's, it is locked into a live battle, or it is still an egg — what is
+not the player's, it is locked into a live battle, or it is still an egg. What is
 inside an egg was decided when it was found and stays that way until it hatches.
 
 `individualValue` is not rewritten. It is the roll the encounter was staged from,
-and the stored per-stat values are what every reader uses — the same reason a bred
-egg's `ivs` can disagree with it.
+and the stored per-stat values are what every reader uses, which is the same
+reason a bred egg's `ivs` can disagree with it.
 
 ## Purifying a shadow
 
 A shadow catch comes out of a shadow raid carrying the `Shadow` ability for good
-and paying twice the candy at every level. The **Purifying Gem** — a rare find in
-the overworld item pool, never stocked — undoes that trade, and the rules for it
+and paying twice the candy at every level. The **Purifying Gem**, a rare find in
+the overworld item pool that is never stocked, undoes that trade, and the rules for it
 live in
 [`src/data/items/purifying-gem.ts`](../../src/data/items/purifying-gem.ts).
 
@@ -626,7 +626,7 @@ Three fields move, in one transaction with the gem leaving the bag
 | Field       | Before             | After                                  |
 | ----------- | ------------------ | -------------------------------------- |
 | `abilities` | `[rolled, Shadow]` | `[rolled, Purified]`                   |
-| `shadow`    | `true`             | `false` — the candy cost reverts       |
+| `shadow`    | `true`             | `false`, and the candy cost reverts    |
 | `ivs`       | as rolled          | every value `+PURIFY_IV_BOOST`, capped |
 
 `Purified` is **entirely cosmetic**: no listener reads it, and nothing in a battle
@@ -642,11 +642,11 @@ shiny.
 
 Health is rescaled with the change, since two more HP points is a bigger pool and
 the share of it the pokemon was carrying is what it keeps. A pokemon that is not a
-shadow is refused outright — a gem spent on nothing would be a rare item wasted —
-as is one that is not the player's, is locked into a battle, or is still an egg.
+shadow is refused outright, since a gem spent on nothing would be a rare item
+wasted, as is one that is not the player's, is locked into a battle, or is still an egg.
 
 The gem is not the only way. **Nurse Joy** purifies for free, along with the
-healing, once per NPC window — see [Wandering NPCs](overworld.md#wandering-npcs).
+healing, once per NPC window. See [Wandering NPCs](overworld.md#wandering-npcs).
 
 ## Releasing
 
@@ -655,14 +655,14 @@ the row rather than flagging it: a released pokemon is gone, and nothing in
 the game reads a catch its owner no longer has. Three things move with it, in the
 same transaction, so nothing is left pointing at a record that has vanished:
 
-- whatever it was holding goes back to the bag — the item was the player's, not
-  the pokemon's;
+- whatever it was holding goes back to the bag, since the item was the player's
+  rather than the pokemon's;
 - the profile's `buddy` is cleared when it named the released catch;
 - a catch that is **locked** into a live battle is refused outright, since the
   fight is running on a snapshot of a record that has to still be there when it
   ends.
 
-Releasing pays the family `getCatchCandy` of the released species — the same
+Releasing pays the family `getCatchCandy` of the released species, the same
 rarity-scaled amount catching it paid, and written inside the same transaction as
 the deletion, so a record cannot vanish without the candy landing. The family-day
 bonus is not paid again: it belongs to meeting the pokemon, not to parting with
@@ -682,32 +682,32 @@ everyone else by the checks that were already there, while staying **readable**,
 which is what lets a bidder see what they are bidding on.
 
 Collecting the lot writes the winner's uid into `owner`, appends the sale to
-`history` — with what it went for in `paid` — and resets `friendship` to
+`history`, with what it went for in `paid`, and resets `friendship` to
 `BASE_FRIENDSHIP`: the pokemon has just met
 its new trainer, and what it thought of the last one was theirs. A lot nobody bid
 on goes back to the seller instead, which restores `owner` and leaves both
-`history` and `friendship` alone — it never changed hands. See
+`history` and `friendship` alone, since it never changed hands. See
 [Auctions](auctions.md).
 
 ## Eggs
 
 An egg is an ordinary catch record with `egg` still set. Everything about the
-pokemon inside it — species, rolls, the move it inherited — is written by
+pokemon inside it, its species and rolls and the move it inherited, is written by
 `grantNestEgg` ([`src/server/eggs.ts`](../../src/server/eggs.ts)) the moment the
 nest is claimed, so hatching reveals rather than rolls: asking again cannot
 produce a better pokemon than the nest gave. Every egg starts at level 1 and holds
 nothing.
 
 What the record does not do is show it. The catch dialog hides everything read off
-the species — the name, gender, abilities, moves, size — until the flag comes off,
+the species, so the name, gender, abilities, moves and size are all hidden until the flag comes off,
 and the list, the team picker and the buddy line all say only "Egg". This is
 presentation, not secrecy: catch rows are readable, so a determined player can
 read the species straight out of the table, and nothing is staked on them not
 doing so.
 
 An egg is refused everywhere a pokemon is expected. `giveItem`, `useCandy` and
-`evolveCatch` turn it down, `openAuction` will not put one on the block — a bidder
-cannot see into one and the seller can — `publishTeamSnapshot` leaves it out of the
+`evolveCatch` turn it down, `openAuction` will not put one on the block, since a
+bidder cannot see into one and the seller can, `publishTeamSnapshot` leaves it out of the
 party it freezes, and `resolveBuddy` reports no buddy effects for one, since it is
 carried rather than accompanied.
 
@@ -720,8 +720,8 @@ line can only inherit are passed on by whichever parent actually knows them, whi
 is what makes breeding a way to _teach_ a move rather than roll one. Its nature,
 ability and gender are its own.
 
-A shadow parent may pass the shadow on — a coin toss, so breeding two of them is no
-more certain than one. An egg that inherits it is written `shadow: true`, hatches
+A shadow parent may pass the shadow on, on a coin toss, so breeding two of them
+is no more certain than one. An egg that inherits it is written `shadow: true`, hatches
 with the Shadow ability for good, costs double candy to raise afterwards, and takes
 `SHADOW_HATCH_FACTOR` (2×) the usual steps to open: what is in there should not be,
 and it takes longer to come out.
@@ -731,8 +731,8 @@ same two left with the breeder again are a different egg, and no egg can be
 re-rolled by asking twice.
 
 One thing to know about the record: a bred egg's `ivs` are the **inheritance**, so
-they are no longer slices of its `individualValue`. Everything that matters — the
-battle snapshot, the dialog — reads the stored `ivs`, and nothing re-derives them
+they are no longer slices of its `individualValue`. Everything that matters, the battle
+snapshot and the dialog, reads the stored `ivs`, and nothing re-derives them
 from the roll.
 
 ### Walking
@@ -740,15 +740,15 @@ from the roll.
 Only the buddy walks. The client counts cells crossed and reports them in batches
 of eight through `walk` ([`src/auth/eggs.ts`](../../src/auth/eggs.ts)).
 `recordSteps` credits them **against the server's own clock**, so a report buys no
-more than `(now - steppedAt) / MIN_STEP_INTERVAL` steps whatever it claims — 250 ms
-a pace, capped at 64 a report, and never past `hatchSteps`. The stamp moves on
+more than `(now - steppedAt) / MIN_STEP_INTERVAL` steps whatever it claims, at
+250 ms a pace, capped at 64 a report, and never past `hatchSteps`. The stamp moves on
 every report, credited or not, so a refused one banks no time for the next. That is
 why `stepped_at` lives on the catch row, which only the server writes, rather than
 beside the profile's `buddy_id`, which the player writes.
 
 `hatchSteps` is settled when the egg is written. It starts from the **species'
-own** hatch cycles — `getEggHatchSteps`, at `STEPS_PER_EGG_CYCLE` (128) a cycle,
-so a Magikarp's 5 cycles are 640 steps and a Mewtwo's 120 are 15,360 — and two
+own** hatch cycles. `getEggHatchSteps` runs at `STEPS_PER_EGG_CYCLE` (128) a
+cycle, so a Magikarp's 5 cycles are 640 steps and a Mewtwo's 120 are 15,360. Two
 things move it from there: a shadow egg doubles it, and a **Flame Body** buddy
 standing beside the player at the pick-up halves it. Both are frozen onto the
 record rather than asked again during the walk, since once an egg is being carried
@@ -765,8 +765,8 @@ find cannot be reported twice or lost between the walk and the bag.
 
 `hatchEgg` takes the flag off once `steps` has reached `hatchSteps` and pays the
 family's candy, exactly as meeting the pokemon any other way would have. The shared
-rules both sides read — `getEggHatchSteps`, `canHatch`, `creditableSteps` and
-`creditedEggSteps` — are in [`src/auth/egg.ts`](../../src/auth/egg.ts).
+rules both sides read, `getEggHatchSteps`, `canHatch`, `creditableSteps` and
+`creditedEggSteps`, are in [`src/auth/egg.ts`](../../src/auth/egg.ts).
 
 ## Catches are locked while they fight
 
@@ -776,9 +776,9 @@ not cosmetic: a player who pulls a berry back into the bag mid-raid would have i
 eaten in the battle and still be holding it afterwards.
 
 So `startRaid` sets `lock` as it freezes each team, in the **same transaction** as
-the snapshot, and every write that edits a catch — `giveItem`, `takeItem`,
-`useCandy`, `evolveCatch`, and `joinRaid`, which will not field a pokemon already
-fighting elsewhere — refuses while the lock holds. Trading will ask the same
+the snapshot, and every write that edits a catch refuses while the lock
+holds: `giveItem`, `takeItem`, `useCandy`, `evolveCatch`, and `joinRaid`, which
+will not field a pokemon already fighting elsewhere. Trading will ask the same
 question: a locked pokemon is not up for trade.
 
 `isCatchLocked` ([`src/server/locks.ts`](../../src/server/locks.ts)) answers from
@@ -788,8 +788,8 @@ things end a lock:
 - **The fight.** `finishBattle` stamps the outcome and then calls
   `releaseBattleLocks`, which frees every catch its team snapshots name.
 - **The clock.** A lock is ignored once `BATTLE_TIMEOUT` (10 minutes) has passed
-  since `lockedAt`, so a battle nobody ever reports — a closed tab, a party that
-  walked out — does not hold pokemon forever. It is the same window that decides an
+  since `lockedAt`, so a battle nobody ever reports, from a closed tab or a party
+  that walked out, does not hold pokemon forever. It is the same window that decides an
   abandoned raid may be restaged.
 
 `lockedAt` is the battle's own `startedAt`, which is what keeps the release honest:
@@ -797,7 +797,7 @@ it frees only catches whose lock still carries **that** stamp, so a late report
 cannot unlock a pokemon that has since been taken by a newer fight.
 
 Because freezing a team locks it, `startRaid` **claims the raid first** and freezes
-afterwards — a start that loses the race to another host holds nothing. A claim
+afterwards, and a start that loses the race to another host holds nothing. A claim
 whose teams then field nothing leaves the raid pointing at a battle row that was
 never written, which reads as lost and restages.
 

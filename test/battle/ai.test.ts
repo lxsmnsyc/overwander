@@ -6,6 +6,7 @@ import { checkTeamUnit, checkUnitRating } from '../../src/battle/ai/rating';
 import {
   BattleEvents,
   type CheckUnitAIMoveScoreEvent,
+  type CheckUnitAIMoveUsableEvent,
   EffectType,
   type MoveTarget,
   MoveTargetType,
@@ -18,7 +19,7 @@ import { Stages } from '../../src/data/constants/stats';
 import { Types } from '../../src/data/constants/types';
 import { MoveTargetPriorities, Moves } from '../../src/data/ids/moves';
 import { Items } from '../../src/data/ids/items';
-import { Statuses, Weathers } from '../../src/data/ids/status';
+import { Statuses, TeamStatuses, Weathers } from '../../src/data/ids/status';
 import { type BattleHarness, createBattle, createUnit, pinRandom } from './harness';
 
 const NONE_CAUSE = { type: EffectType.None } as const;
@@ -686,6 +687,153 @@ describe('weighing a move', () => {
     return event.score;
   }
 
+  /** Whether the move is offered at all against this target */
+  function usableMove(
+    battle: BattleHarness['battle'],
+    source: Unit,
+    move: Moves,
+    target: MoveTarget,
+  ): boolean {
+    const event: CheckUnitAIMoveUsableEvent = {
+      id: 'CheckUnitAIMoveUsable',
+      disabled: false,
+      source,
+      move,
+      target,
+      usable: true,
+    };
+    battle.emit(BattleEvents.CheckUnitAIMoveUsable, event);
+    return event.usable;
+  }
+
+  it('will not put up a veil the side already has', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    pinRandom(battle, 0.99);
+    const unit = createUnit(battle, teamA);
+    createUnit(battle, teamB);
+    const target: MoveTarget = { type: MoveTargetType.None };
+
+    // Safeguard rides the same table as the screens, so one rule
+    // covers all four
+    for (const move of [Moves.Reflect, Moves.LightScreen, Moves.Mist, Moves.Safeguard]) {
+      expect(usableMove(battle, unit, move, target), 'fresh').toBe(true);
+    }
+
+    for (const status of [
+      TeamStatuses.Reflect,
+      TeamStatuses.LightScreen,
+      TeamStatuses.Mist,
+      TeamStatuses.Safeguard,
+    ]) {
+      teamA.addStatus(status, NONE_CAUSE);
+    }
+
+    for (const move of [Moves.Reflect, Moves.LightScreen, Moves.Mist, Moves.Safeguard]) {
+      expect(usableMove(battle, unit, move, target), 'already up').toBe(false);
+    }
+  });
+
+  it('will not sing a Perish Song into a raid', () => {
+    const target: MoveTarget = { type: MoveTargetType.None };
+
+    const open = createAIBattle();
+    const singer = createUnit(open.battle, open.teamA);
+    createUnit(open.battle, open.teamB);
+
+    expect(usableMove(open.battle, singer, Moves.PerishSong, target)).toBe(true);
+
+    // A boss refuses the song, so in a raid the only side still
+    // counting down is the party
+    const raid = createAIBattle(BattleModes.Raid);
+    const partyMember = createUnit(raid.battle, raid.teamA);
+    const boss = createUnit(raid.battle, raid.teamB);
+
+    boss.addAbility(Abilities.Boss);
+
+    expect(usableMove(raid.battle, partyMember, Moves.PerishSong, target)).toBe(false);
+    expect(usableMove(raid.battle, boss, Moves.PerishSong, target)).toBe(false);
+  });
+
+  it('will not call up a sky that answers to nobody', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    pinRandom(battle, 0.99);
+    const unit = createUnit(battle, teamA);
+    createUnit(battle, teamB);
+    const target: MoveTarget = { type: MoveTargetType.None };
+
+    expect(usableMove(battle, unit, Moves.SunnyDay, target)).toBe(true);
+
+    // A primal sky is one the move cannot change, the way a sky
+    // already out is
+    battle.setWeather(Weathers.HeavyRain);
+
+    expect(usableMove(battle, unit, Moves.SunnyDay, target)).toBe(false);
+  });
+
+  it('sees a stage held rather than only one pinned', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    pinRandom(battle, 0.99);
+    const unit = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    const target: MoveTarget = { type: MoveTargetType.Unit, unit: enemy };
+
+    const open = scoreMove(battle, unit, Moves.Screech, target);
+
+    // Mist answers the engine's own can-this-stage-move question, so
+    // the AI reads it without keeping a list of what blocks a stage
+    enemy.team.addStatus(TeamStatuses.Mist, NONE_CAUSE);
+
+    expect(open - scoreMove(battle, unit, Moves.Screech, target)).toBe(USELESS_PENALTY);
+  });
+
+  it('declines a stat drop a boss will not take', () => {
+    const { battle, teamA, teamB } = createAIBattle(BattleModes.Raid);
+    pinRandom(battle, 0.99);
+    const unit = createUnit(battle, teamA);
+    const boss = createUnit(battle, teamB);
+    const target: MoveTarget = { type: MoveTargetType.Unit, unit: boss };
+
+    boss.addAbility(Abilities.Boss);
+
+    // Under the base score rather than a fixed distance from it: a
+    // boss draws the focus its bulk earns as well as the refusal, and
+    // the refusal is the larger of the two
+    expect(scoreMove(battle, unit, Moves.Screech, target)).toBeLessThan(BASE_SCORE);
+  });
+
+  it('asks about a stage without setting off what refuses it', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    pinRandom(battle, 0.99);
+    const unit = createUnit(battle, teamA);
+    const boss = createUnit(battle, teamB);
+    const target: MoveTarget = { type: MoveTargetType.Unit, unit: boss };
+
+    boss.addAbility(Abilities.Boss);
+
+    let cues = 0;
+
+    battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Post, () => {
+      cues += 1;
+    });
+
+    scoreMove(battle, unit, Moves.Screech, target);
+
+    expect(cues).toBe(0);
+  });
+
+  it('keeps its own knees while weighing a drop that would bounce', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    pinRandom(battle, 0.99);
+    const unit = createUnit(battle, teamA);
+    const mirror = createUnit(battle, teamB);
+    const target: MoveTarget = { type: MoveTargetType.Unit, unit: mirror };
+
+    mirror.addAbility(Abilities.MirrorArmor);
+    scoreMove(battle, unit, Moves.Screech, target);
+
+    expect(unit.stages[Stages.Defense]).toBe(0);
+  });
+
   it('does not eat the target berry it asks about', () => {
     const { battle, teamA, teamB } = createAIBattle();
     pinRandom(battle, 0.99);
@@ -743,6 +891,23 @@ describe('weighing a move', () => {
     unit.addStage(Stages.Accuracy, 6, NONE_CAUSE);
 
     expect(scoreMove(battle, unit, Moves.Fissure, target)).toBeGreaterThan(unaided);
+  });
+
+  it('finishes rather than chips, even from behind a wind-up', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    pinRandom(battle, 0.99);
+    const unit = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    unit.removeMove(Moves.Attack);
+    unit.addMove(Moves.SolarBeam);
+    unit.addMove(Moves.Tackle);
+    // Low enough that Solar Beam kills and Tackle takes most of what
+    // is left, which is the widest a chip can score
+    enemy.setHealth(24);
+
+    // The step Solar Beam spends charging is a real cost, but never
+    // enough of one to make leaving the target standing look better
+    expect(chooseMove(battle, unit)?.move).toBe(Moves.SolarBeam);
   });
 
   it('pays for the step a move spends winding up', () => {

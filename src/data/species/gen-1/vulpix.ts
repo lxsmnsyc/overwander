@@ -25,6 +25,21 @@ const FAMILY_TEACHABLE = [
   Moves.SkullBash,
   Moves.Rest,
   Moves.Substitute,
+  Moves.Headbutt,
+  Moves.Swift,
+  Moves.Snore,
+  Moves.Curse,
+  Moves.Protect,
+  Moves.Endure,
+  Moves.Swagger,
+  Moves.Attract,
+  Moves.SleepTalk,
+  Moves.Return,
+  Moves.Frustration,
+  Moves.IronTail,
+  Moves.HiddenPower,
+  Moves.SunnyDay,
+  Moves.Flamethrower,
 ];
 
 export default function registerVulpixSpecies(): void {
@@ -56,19 +71,20 @@ export default function registerVulpixSpecies(): void {
     eggGroups: [EggGroups.Field],
     genderRatio: [1, 3],
     catchRate: 190,
-    biomes: [Biome.Woodland, Biome.Shrubland, Biome.Taiga],
+    biomes: [Biome.Woodland, Biome.Shrubland, Biome.Taiga, Biome.Volcano],
     activeTimes: TimeOfDay.Evening | TimeOfDay.Night,
     learnSet: {
       level: {
         1: [Moves.Ember, Moves.TailWhip],
-        16: [Moves.QuickAttack],
-        21: [Moves.Roar],
-        28: [Moves.ConfuseRay],
-        35: [Moves.Flamethrower],
-        42: [Moves.FireSpin],
+        7: [Moves.QuickAttack],
+        13: [Moves.Roar],
+        19: [Moves.ConfuseRay],
+        25: [Moves.Safeguard],
+        31: [Moves.Flamethrower],
+        37: [Moves.FireSpin],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.Hypnosis, Moves.Disable],
+      egg: [Moves.Hypnosis, Moves.Disable, Moves.Flail, Moves.Spite, Moves.FeintAttack],
     },
   });
 
@@ -94,13 +110,21 @@ export default function registerVulpixSpecies(): void {
     eggGroups: [EggGroups.Field],
     genderRatio: [1, 3],
     catchRate: 75,
-    biomes: [Biome.Woodland, Biome.Shrubland, Biome.Taiga],
+    biomes: [Biome.Woodland, Biome.Shrubland, Biome.Taiga, Biome.Volcano],
     activeTimes: TimeOfDay.Evening | TimeOfDay.Night,
     learnSet: {
       level: {
-        1: [Moves.Ember, Moves.TailWhip, Moves.QuickAttack, Moves.Roar],
+        1: [
+          Moves.Ember,
+          Moves.TailWhip,
+          Moves.QuickAttack,
+          Moves.Roar,
+          Moves.ConfuseRay,
+          Moves.Safeguard,
+        ],
+        43: [Moves.FireSpin],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
+      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.Roar],
     },
   });
 }

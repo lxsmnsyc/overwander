@@ -28,6 +28,24 @@ const FAMILY_TEACHABLE = [
   Moves.Rest,
   Moves.Substitute,
   Moves.Strength,
+  Moves.Headbutt,
+  Moves.Swift,
+  Moves.Thief,
+  Moves.Snore,
+  Moves.Curse,
+  Moves.Protect,
+  Moves.MudSlap,
+  Moves.Detect,
+  Moves.Endure,
+  Moves.Swagger,
+  Moves.Attract,
+  Moves.SleepTalk,
+  Moves.Return,
+  Moves.Frustration,
+  Moves.DynamicPunch,
+  Moves.HiddenPower,
+  Moves.SunnyDay,
+  Moves.RockSmash,
 ];
 
 export default function registerTyrogueSpecies(): void {
@@ -38,6 +56,7 @@ export default function registerTyrogueSpecies(): void {
     height: 1.5,
     weight: 49.8,
     family: Families.Tyrogue,
+    evolvesFrom: Species.Tyrogue,
     stats: {
       [Stats.HP]: 50,
       [Stats.Attack]: 120,
@@ -57,11 +76,15 @@ export default function registerTyrogueSpecies(): void {
     learnSet: {
       level: {
         1: [Moves.DoubleKick, Moves.Meditate],
-        33: [Moves.RollingKick],
-        38: [Moves.JumpKick],
-        43: [Moves.FocusEnergy],
-        48: [Moves.HiJumpKick],
-        53: [Moves.MegaKick],
+        11: [Moves.RollingKick],
+        16: [Moves.JumpKick],
+        21: [Moves.FocusEnergy],
+        26: [Moves.HiJumpKick],
+        31: [Moves.MindReader],
+        36: [Moves.Foresight],
+        41: [Moves.Endure],
+        46: [Moves.MegaKick],
+        51: [Moves.Reversal],
       },
       teachable: [...FAMILY_TEACHABLE],
     },
@@ -74,6 +97,7 @@ export default function registerTyrogueSpecies(): void {
     height: 1.4,
     weight: 50.2,
     family: Families.Tyrogue,
+    evolvesFrom: Species.Tyrogue,
     stats: {
       [Stats.HP]: 50,
       [Stats.Attack]: 105,
@@ -93,13 +117,14 @@ export default function registerTyrogueSpecies(): void {
     learnSet: {
       level: {
         1: [Moves.CometPunch, Moves.Agility],
-        33: [Moves.FirePunch],
-        38: [Moves.IcePunch],
-        43: [Moves.ThunderPunch],
-        48: [Moves.MegaPunch],
-        53: [Moves.Counter],
+        13: [Moves.Pursuit],
+        26: [Moves.FirePunch, Moves.IcePunch, Moves.ThunderPunch],
+        32: [Moves.MachPunch],
+        38: [Moves.MegaPunch],
+        44: [Moves.Detect],
+        50: [Moves.Counter],
       },
-      teachable: [...FAMILY_TEACHABLE],
+      teachable: [...FAMILY_TEACHABLE, Moves.FirePunch, Moves.IcePunch, Moves.ThunderPunch],
     },
   });
 }

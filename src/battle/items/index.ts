@@ -4,6 +4,7 @@ import setupBerries from './berries';
 import setupDrinks from './drinks';
 import setupGear from './gear';
 import setupGems from './gems';
+import setupHoney from './honey';
 import setupIncenses from './incenses';
 import setupOneShots from './one-shots';
 import setupOrbs from './orbs';
@@ -25,4 +26,5 @@ export default function setupItems(battle: Battle): void {
   setupSacredAsh(battle);
   setupDrinks(battle);
   setupTreats(battle);
+  setupHoney(battle);
 }

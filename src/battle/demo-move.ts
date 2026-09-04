@@ -1,13 +1,14 @@
+import { BASE_FRIENDSHIP } from '../data/constants/friendship';
 import type { CatchSnapshot } from '../auth/catch-snapshot';
 import { getMaxHealth } from '../auth/health';
 import type { TeamSnapshotRecord } from '../auth/teams';
 import { defaultSlots } from '../data/constants/slots';
 import { PERFECT_IVS, Stats } from '../data/constants/stats';
-import { MoveTargetFlags, type Moves } from '../data/ids/moves';
+import { MoveAffects, MoveTargets, type Moves } from '../data/ids/moves';
 import { Species } from '../data/ids/species';
 import { getMoveData } from '../data/moves';
 import { deriveGender, deriveNature, deriveSize } from '../overworld/encounter';
-import { fieldTeams } from '../overworld/raid';
+import { fieldTeams } from '../overworld/raid-battle';
 import { UNLIMITED_BATTLE_LIMITS } from '../data/constants/battle-limits';
 import { BattleEvents, type MoveTarget, MoveTargetType } from './events';
 import { BattleModes } from './core';
@@ -86,7 +87,7 @@ export const TARGET_ALLIANCE = 1;
  * — an ally's, the caster's own, a whole team's — is aimed along it
  */
 export function needsAlly(move: Moves): boolean {
-  return (getMoveData(move).target & MoveTargetFlags.Enemy) === 0;
+  return (getMoveData(move).affects & MoveAffects.Enemy) === 0;
 }
 
 /** One dummy, in the shape a battle fields */
@@ -129,6 +130,8 @@ function dummy(species: Species): CatchSnapshot {
     items: [],
     slots: defaultSlots(),
     health: getMaxHealth({ species, level: DEMO_LEVEL, ivs: PERFECT_IVS, effortValues }),
+    // Nothing has raised it, so it thinks of nobody
+    friendship: BASE_FRIENDSHIP,
     statuses: 0,
   };
 }
@@ -144,20 +147,32 @@ function dummy(species: Species): CatchSnapshot {
  * of its members
  */
 export function aimFor(demo: MoveDemo, move: Moves): MoveTarget {
-  const { target } = getMoveData(move);
-  const across = (target & MoveTargetFlags.Enemy) !== 0;
+  const { target, affects } = getMoveData(move);
+  const across = (affects & MoveAffects.Enemy) !== 0;
 
-  if ((target & MoveTargetFlags.Team) !== 0) {
+  if (target === MoveTargets.Team) {
     return { type: MoveTargetType.Team, team: across ? demo.target.team : demo.caster.team };
   }
-  // Its own and nobody else's. A move that names nobody at all is one
-  // of these too: the engine forwards whatever target it is handed to
-  // moves outside the `Multiple` path, and what most of those do is
-  // act on the caster — a Recover among them
-  if ((target & (MoveTargetFlags.Ally | MoveTargetFlags.Own | MoveTargetFlags.Enemy)) === 0) {
+  // Its own and nobody else's. A move cast at nobody is one of these
+  // too: the engine forwards whatever target it is handed, and what
+  // most of those do is act on the caster, a Recover among them
+  if ((affects & (MoveAffects.Ally | MoveAffects.Own | MoveAffects.Enemy)) === 0) {
     return { type: MoveTargetType.Unit, unit: demo.caster };
   }
   return { type: MoveTargetType.Unit, unit: demo.target };
+}
+
+/**
+ * What the demo bends, which the page can change while it is staged.
+ * Read at the moment it matters rather than when the battle was built,
+ * so a switch takes effect on the next cast rather than on a restage
+ */
+export interface DemoRules {
+  /**
+   * Whether every cast passes its accuracy roll. A Fissure lands three
+   * casts in ten, which is a lottery rather than a demonstration
+   */
+  alwaysHits: boolean;
 }
 
 export interface MoveDemo {
@@ -168,6 +183,8 @@ export interface MoveDemo {
   target: Unit;
   /** Whether the two are standing on the same side */
   allied: boolean;
+  /** The dials the page turns while it watches */
+  rules: DemoRules;
 }
 
 /**
@@ -177,7 +194,7 @@ export interface MoveDemo {
  * uses, so the units on the field are built the way the game builds
  * them rather than the way a demo might find convenient
  */
-export function createMoveDemo(move: Moves): MoveDemo {
+export function createMoveDemo(move: Moves, rules: DemoRules = { alwaysHits: true }): MoveDemo {
   const allied = needsAlly(move);
   const battle = createBattle(`demo-move:${move}`, {
     mode: BattleModes.Demo,
@@ -224,5 +241,13 @@ export function createMoveDemo(move: Moves): MoveDemo {
       event.success = false;
     }
   });
-  return { battle, caster: casting, target: receiving, allied };
+  // Settled before the roll rather than instead of the rules after it:
+  // the cast passes its accuracy check, and anything that would still
+  // stop it landing, a target gone underground, goes on stopping it
+  battle.on(BattleEvents.UnitTriggerMoveRollHit, EventPriority.Pre, (event) => {
+    if (rules.alwaysHits) {
+      event.hit = true;
+    }
+  });
+  return { battle, caster: casting, target: receiving, allied, rules };
 }

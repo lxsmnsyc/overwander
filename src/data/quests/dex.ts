@@ -36,6 +36,8 @@ export const REGION_DEXES: Partial<Record<Regions, RegionDex>> = {
   // 151 to find. A sixth of them, half of them, and all but Mew, who
   // is nobody's to walk into
   [Regions.Kanto]: { milestones: [25, 75, 150], medal: Awards.KantoDexMedal },
+  // 100 more, and the same shape: a fifth, half, and all but Celebi
+  [Regions.Johto]: { milestones: [20, 50, 99], medal: Awards.JohtoDexMedal },
 };
 
 /**

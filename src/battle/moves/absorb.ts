@@ -6,6 +6,7 @@ import { HEAL_BONUS } from '../ai/score';
 import type Battle from '../core';
 import type { MoveTarget } from '../events';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
+import { ASLEEP_STATUSES } from '../status';
 import { hasAnyStatus } from '../utils';
 
 /**
@@ -18,6 +19,7 @@ export const ABSORB_MOVES = new Set<Moves>([
   Moves.MegaDrain,
   Moves.LeechLife,
   Moves.DreamEater,
+  Moves.GigaDrain,
 ]);
 
 const HEALING_FACTOR = 0.5;
@@ -41,7 +43,7 @@ const DRAIN_BONUS = Math.round(HEAL_BONUS / 2);
  * weight against the only thing in the room is a raid where nobody
  * brings it
  */
-const DREAMING = new Set<Statuses>([Statuses.Sleeping, Statuses.Dormant]);
+const DREAMING = new Set<Statuses>([...ASLEEP_STATUSES, Statuses.Dormant]);
 
 /**
  * Dream Eater eats a dream, so there has to be one: it does nothing at

@@ -48,20 +48,34 @@ export function getDayOfYear(timestamp: number): number {
 }
 
 /**
- * The family in the spotlight today: the one whose family number is
- * the day of the year. Family numbers run far short of a year, so
- * most days feature nobody — a blank day is the normal case, and the
- * rule stays a plain equality no matter how many generations are
- * registered later
+ * How many days the timestamp's year holds, 365 or 366
+ */
+export function getDaysInYear(timestamp: number): number {
+  const year = new Date(timestamp).getUTCFullYear();
+
+  return Math.round((Date.UTC(year + 1, 0, 1) - Date.UTC(year, 0, 1)) / DAY);
+}
+
+/**
+ * The family in the spotlight today: the day of the year counted
+ * around the roster, so every day features somebody and every family
+ * comes up.
+ *
+ * The year is longer than the roster while the game is this young, so
+ * the count wraps and a family is featured two or three times a year.
+ * Once the families outnumber the days the wrap stops mattering: the
+ * day of the year is already smaller than the roster, so it indexes
+ * straight into it and the ones past the end wait for a longer year
+ * that never comes. Counting by position rather than by family number
+ * is what keeps a reserved gap in the numbering from costing a day
  */
 export function getFeaturedFamily(timestamp: number): Families | null {
-  const day = getDayOfYear(timestamp);
+  const families = getRegisteredFamilies();
 
-  // The day of the year is compared against the family's own
-  // numbering, which is the whole rule — there is no enum member to
-  // compare it to
-  // oxlint-disable-next-line typescript/no-unsafe-enum-comparison
-  return getRegisteredFamilies().find((family) => family === day) ?? null;
+  if (families.length === 0) {
+    return null;
+  }
+  return families[getDayOfYear(timestamp) % families.length];
 }
 
 /**

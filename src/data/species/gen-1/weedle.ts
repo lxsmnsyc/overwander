@@ -80,7 +80,6 @@ export default function registerWeedleSpecies(): void {
     learnSet: {
       level: {
         1: [Moves.Harden],
-        7: [Moves.Harden],
       },
       teachable: [],
     },
@@ -113,11 +112,10 @@ export default function registerWeedleSpecies(): void {
     learnSet: {
       level: {
         1: [Moves.FuryAttack],
-        12: [Moves.FuryAttack],
-        16: [Moves.FocusEnergy],
+        15: [Moves.FocusEnergy],
         20: [Moves.Twineedle],
         25: [Moves.Rage],
-        30: [Moves.PinMissile],
+        30: [Moves.PinMissile, Moves.Pursuit],
         35: [Moves.Agility],
       },
       teachable: [
@@ -136,6 +134,21 @@ export default function registerWeedleSpecies(): void {
         Moves.Rest,
         Moves.Substitute,
         Moves.Cut,
+        Moves.Snore,
+        Moves.Curse,
+        Moves.Protect,
+        Moves.SludgeBomb,
+        Moves.GigaDrain,
+        Moves.Endure,
+        Moves.Swagger,
+        Moves.FuryCutter,
+        Moves.Attract,
+        Moves.SleepTalk,
+        Moves.Return,
+        Moves.Frustration,
+        Moves.SweetScent,
+        Moves.HiddenPower,
+        Moves.SunnyDay,
       ],
     },
   });

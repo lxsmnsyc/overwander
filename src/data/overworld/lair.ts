@@ -29,6 +29,19 @@ const enum Lairs {
    * a name, and this is the one it has always had
    */
   FarawayIsland = 4,
+  /**
+   * Where the three beasts were burned and brought back. It is the
+   * one lair with more than one resident, which is what the games
+   * say: they were made together and set loose together, and no
+   * place belongs to any one of them
+   */
+  BurnedTower = 5,
+  WhirlIslands = 6,
+  BellTower = 7,
+  /**
+   * Celebi's shrine. A mythical's lair, so the world never stages it
+   */
+  IlexForest = 8,
 }
 
 export const LAIR_NAMES: Record<Lairs, string> = {
@@ -37,19 +50,28 @@ export const LAIR_NAMES: Record<Lairs, string> = {
   [Lairs.MtEmber]: 'Mt. Ember',
   [Lairs.CeruleanCave]: 'Cerulean Cave',
   [Lairs.FarawayIsland]: 'Faraway Island',
+  [Lairs.BurnedTower]: 'Burned Tower',
+  [Lairs.WhirlIslands]: 'Whirl Islands',
+  [Lairs.BellTower]: 'Bell Tower',
+  [Lairs.IlexForest]: 'Ilex Forest',
 };
 
 /**
- * Who lives in each one. A lair stages its own legendary and no
- * other, which is what makes travelling to a particular lair worth
- * doing
+ * Who lives in each one. A lair stages its own residents and no
+ * others, which is what makes travelling to a particular lair worth
+ * doing. Nearly all of them hold a single legendary; the Burned Tower
+ * holds the three beasts, so which one is at home is a roll
  */
-export const LAIR_SPECIES: Record<Lairs, Species> = {
-  [Lairs.SeafoamIslands]: Species.Articuno,
-  [Lairs.PowerPlant]: Species.Zapdos,
-  [Lairs.MtEmber]: Species.Moltres,
-  [Lairs.CeruleanCave]: Species.Mewtwo,
-  [Lairs.FarawayIsland]: Species.Mew,
+export const LAIR_SPECIES: Record<Lairs, Species[]> = {
+  [Lairs.SeafoamIslands]: [Species.Articuno],
+  [Lairs.PowerPlant]: [Species.Zapdos],
+  [Lairs.MtEmber]: [Species.Moltres],
+  [Lairs.CeruleanCave]: [Species.Mewtwo],
+  [Lairs.FarawayIsland]: [Species.Mew],
+  [Lairs.BurnedTower]: [Species.Raikou, Species.Entei, Species.Suicune],
+  [Lairs.WhirlIslands]: [Species.Lugia],
+  [Lairs.BellTower]: [Species.HoOh],
+  [Lairs.IlexForest]: [Species.Celebi],
 };
 
 /**
@@ -61,6 +83,10 @@ export const EVERY_LAIR: Lairs[] = [
   Lairs.MtEmber,
   Lairs.CeruleanCave,
   Lairs.FarawayIsland,
+  Lairs.BurnedTower,
+  Lairs.WhirlIslands,
+  Lairs.BellTower,
+  Lairs.IlexForest,
 ];
 
 /**
@@ -73,8 +99,8 @@ export const EVERY_LAIR: Lairs[] = [
  * since a pool that has to keep lair species out has to know about
  * every lair there is
  */
-export const EVERY_STAGED_LAIR: Lairs[] = EVERY_LAIR.filter(
-  (lair) => !isMythicalSpecies(LAIR_SPECIES[lair]),
+export const EVERY_STAGED_LAIR: Lairs[] = EVERY_LAIR.filter((lair) =>
+  LAIR_SPECIES[lair].every((species) => !isMythicalSpecies(species)),
 );
 
 const STAGED_LAIRS = new Set<Lairs>(EVERY_STAGED_LAIR);
@@ -91,13 +117,15 @@ const STAGED_LAIRS = new Set<Lairs>(EVERY_STAGED_LAIR);
  * legendary
  */
 const BIOME_LAIRS: { [key in Biome]?: Lairs[] } = {
-  [Biome.DeepOcean]: [Lairs.SeafoamIslands],
+  [Biome.DeepOcean]: [Lairs.SeafoamIslands, Lairs.WhirlIslands],
+  [Biome.Ocean]: [Lairs.WhirlIslands],
   [Biome.PolarOcean]: [Lairs.SeafoamIslands],
   [Biome.Glacier]: [Lairs.SeafoamIslands],
-  [Biome.Grassland]: [Lairs.PowerPlant],
+  [Biome.Grassland]: [Lairs.PowerPlant, Lairs.BurnedTower],
+  [Biome.Woodland]: [Lairs.BurnedTower],
   [Biome.Steppe]: [Lairs.PowerPlant],
   [Biome.Desert]: [Lairs.MtEmber],
-  [Biome.Mountain]: [Lairs.MtEmber, Lairs.CeruleanCave],
+  [Biome.Mountain]: [Lairs.MtEmber, Lairs.CeruleanCave, Lairs.BellTower],
   [Biome.AlpineTundra]: [Lairs.CeruleanCave],
 };
 
@@ -114,10 +142,25 @@ export function getBiomeLairs(biome: Biome): Lairs[] {
 }
 
 /**
- * The legendary at home in the lair
+ * Everyone at home in the lair
  */
-export function getLairSpecies(lair: Lairs): Species {
+export function getLairResidents(lair: Lairs): Species[] {
   return LAIR_SPECIES[lair];
+}
+
+/**
+ * Which of a lair's residents a raid stages, from a roll the whole
+ * chunk shares. `allowed` narrows to the ones that can be staged at
+ * all, and the caller has already checked that one of them can be
+ */
+export function pickLairSpecies(
+  lair: Lairs,
+  allowed: (species: Species) => boolean,
+  roll: number,
+): Species {
+  const residents = getLairResidents(lair).filter(allowed);
+
+  return residents[Math.abs(roll) % residents.length];
 }
 
 /**
@@ -128,7 +171,7 @@ export function getLairSpecies(lair: Lairs): Species {
  */
 export function getSpeciesLair(species: Species): Lairs | null {
   for (const lair of EVERY_LAIR) {
-    if (LAIR_SPECIES[lair] === species) {
+    if (LAIR_SPECIES[lair].includes(species)) {
       return lair;
     }
   }

@@ -1,6 +1,6 @@
 import Biome, { TimeOfDay } from '../ids/biome';
 import { Species } from '../ids/species';
-import { registerSpawnPool } from './__create';
+import { PRIZED_WEIGHT, UNOWN_SPAWNS, registerSpawnPool } from './__create';
 
 /**
  * Glacier spawn pool, grouped by day-cycle period and rarity band
@@ -8,27 +8,41 @@ import { registerSpawnPool } from './__create';
 export default function registerGlacierSpawns(): void {
   registerSpawnPool(Biome.Glacier, {
     [TimeOfDay.Morning]: {
-      base: [],
+      base: [{ species: Species.Swinub, weight: 25 }],
       uncommon: [],
-      rare: [],
+      rare: [{ species: Species.Piloswine, weight: 5 }],
+      elusive: [{ species: Species.Delibird, weight: 5 }],
+      prized: [...UNOWN_SPAWNS],
       special: [{ species: Species.Articuno, weight: 10 }],
     },
     [TimeOfDay.Day]: {
-      base: [],
+      base: [{ species: Species.Swinub, weight: 25 }],
       uncommon: [],
-      rare: [],
+      rare: [{ species: Species.Piloswine, weight: 5 }],
+      elusive: [{ species: Species.Delibird, weight: 5 }],
+      prized: [...UNOWN_SPAWNS],
       special: [{ species: Species.Articuno, weight: 10 }],
     },
     [TimeOfDay.Evening]: {
-      base: [],
-      uncommon: [],
-      rare: [{ species: Species.Jynx, weight: 5 }],
+      base: [{ species: Species.Swinub, weight: 25 }],
+      uncommon: [{ species: Species.Sneasel, weight: 5 }],
+      rare: [{ species: Species.Piloswine, weight: 5 }],
+      elusive: [
+        { species: Species.Jynx, weight: 5 },
+        { species: Species.Delibird, weight: 5 },
+      ],
+      prized: [...UNOWN_SPAWNS, { species: Species.Smoochum, weight: PRIZED_WEIGHT }],
       special: [{ species: Species.Articuno, weight: 10 }],
     },
     [TimeOfDay.Night]: {
-      base: [],
-      uncommon: [],
-      rare: [{ species: Species.Jynx, weight: 5 }],
+      base: [{ species: Species.Swinub, weight: 25 }],
+      uncommon: [{ species: Species.Sneasel, weight: 5 }],
+      rare: [{ species: Species.Piloswine, weight: 5 }],
+      elusive: [
+        { species: Species.Jynx, weight: 5 },
+        { species: Species.Delibird, weight: 5 },
+      ],
+      prized: [...UNOWN_SPAWNS, { species: Species.Smoochum, weight: PRIZED_WEIGHT }],
       special: [{ species: Species.Articuno, weight: 10 }],
     },
   });

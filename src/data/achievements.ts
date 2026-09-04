@@ -1,7 +1,12 @@
 import { Landmark, Metric } from '../auth/quest-record';
 import { Types } from './constants/types';
 import Npc from './overworld/npc';
-import { TRAINER_CLASSES, type TrainerClass } from './overworld/trainers';
+import {
+  TRAINER_CLASSES,
+  TRAINER_TRADES,
+  type TrainerClass,
+  getTradeClasses,
+} from './overworld/trainers';
 import type { Species } from './ids/species';
 import { getSpeciesData } from './species';
 
@@ -187,12 +192,13 @@ export const ACHIEVEMENT_TYPES: Types[] = [
 export const TYPE_TIERS: [number, number, number, number] = [10, 50, 250, 1000];
 
 /**
- * The trainer lines: one per class of duelling trainer, counting
- * lifetime wins against that class. A stop stands for one window and
- * pays once per player, so these climb far more slowly than a catch
- * counter — the thresholds are priced for that
+ * The trainer lines: one per **trade** rather than per class, so both
+ * regions' Swimmers climb the same line and pay the same title. A
+ * stop stands for one window and pays once per player, so these climb
+ * far more slowly than a catch counter — the thresholds are priced
+ * for that
  */
-export const ACHIEVEMENT_TRAINERS: TrainerClass[] = TRAINER_CLASSES;
+export const ACHIEVEMENT_TRAINERS: TrainerClass[] = TRAINER_TRADES;
 
 export const TRAINER_TIERS: [number, number, number, number] = [3, 10, 50, 200];
 
@@ -288,7 +294,13 @@ function typeCounts(counters: Counters): Map<Types, number> {
 export interface Achievements {
   lines: Map<AchievementLine, AchievementStanding>;
   types: Map<Types, AchievementStanding>;
+  /** One per trade: both regions' Swimmers on one line */
   trainers: Map<TrainerClass, AchievementStanding>;
+  /**
+   * And one per class, which nothing is shown for: it is what says
+   * whether a region's own coats are worn yet
+   */
+  variants: Map<TrainerClass, AchievementStanding>;
 }
 
 /**
@@ -299,6 +311,7 @@ export function deriveAchievements(counters: Counters): Achievements {
   const lines = new Map<AchievementLine, AchievementStanding>();
   const types = new Map<Types, AchievementStanding>();
   const trainers = new Map<TrainerClass, AchievementStanding>();
+  const variants = new Map<TrainerClass, AchievementStanding>();
 
   for (const line of ACHIEVEMENT_LINES) {
     lines.set(line, standingOf(lineCount(counters, LINE_ASKS[line]), LINE_TIERS[line]));
@@ -312,8 +325,17 @@ export function deriveAchievements(counters: Counters): Achievements {
 
   const beaten = counters.get(Metric.TrainerWins) ?? new Map<number, number>();
 
-  for (const trainer of ACHIEVEMENT_TRAINERS) {
-    trainers.set(trainer, standingOf(beaten.get(trainer) ?? 0, TRAINER_TIERS));
+  for (const trainer of TRAINER_CLASSES) {
+    variants.set(trainer, standingOf(beaten.get(trainer) ?? 0, TRAINER_TIERS));
   }
-  return { lines, types, trainers };
+  for (const trade of ACHIEVEMENT_TRAINERS) {
+    // The trade's own count is every region's put together
+    const beatenAcross = getTradeClasses(trade).reduce(
+      (total, trainer) => total + (beaten.get(trainer) ?? 0),
+      0,
+    );
+
+    trainers.set(trade, standingOf(beatenAcross, TRAINER_TIERS));
+  }
+  return { lines, types, trainers, variants };
 }

@@ -1,43 +1,7 @@
 import getIdToken from '../../../auth/session';
 import type { Drawing } from '../../../auth/sprites';
-import { Species } from '../../../data/ids/species';
-import { getRegisteredSpecies, getSpeciesData } from '../../../data/species';
-import { Combobox, Field, FormGrid, Note, Switch } from '../../styled';
+import { Field, Note } from '../../styled';
 import { For, type JSX, Show, createEffect, createSignal, onMount } from 'solid-js';
-
-/** How a sheet is named. */
-export interface Naming {
-  species: Species | null;
-  female: boolean;
-  compact: boolean;
-}
-
-export const START: Naming = { species: null, female: false, compact: true };
-
-/**
- * The three that appear on a field without being anybody's pokemon.
- * They have sheets and dex numbers of their own but no species entry,
- * so a list built from the registry alone cannot name them
- */
-const NAMELESS: { value: Species; label: string }[] = [
-  { value: Species.Missingno, label: 'Missingno' },
-  { value: Species.Egg, label: 'Egg' },
-  { value: Species.Substitute, label: 'Substitute' },
-];
-
-/** Everything a sheet can be filed under, by the name it is known by. */
-function speciesOptions(): { value: Species; label: string }[] {
-  return [
-    ...getRegisteredSpecies().map((species) => ({
-      value: species,
-      // The number is in the label as well as the value: the files are
-      // named after it, and it is what somebody checking a sheet on
-      // disk has in front of them
-      label: `${getSpeciesData(species).name} · ${species}`,
-    })),
-    ...NAMELESS.map((entry) => ({ ...entry, label: `${entry.label} · ${entry.value}` })),
-  ];
-}
 
 /** The file picker, dressed like the rest of the forms. */
 export function FilePicker(props: {
@@ -64,67 +28,6 @@ export function FilePicker(props: {
       />
       <Show when={props.hint}>{(said) => <span class="text-xs text-muted">{said()}</span>}</Show>
     </Field>
-  );
-}
-
-/**
- * What a sheet is called and how it is packed.
- *
- * The PMD half says nothing about coats here: which drawing a sheet is
- * follows from **which picker it was put in**, since all four are
- * packed together
- */
-export function NamingFields(props: {
-  naming: Naming;
-  onChange: (naming: Naming) => void;
-  /** Whether this half has a female sheet to name rather than pack. */
-  female: boolean;
-}): JSX.Element {
-  const set = (change: Partial<Naming>): void => {
-    props.onChange({ ...props.naming, ...change });
-  };
-
-  return (
-    <FormGrid>
-      {/* The controls above are the game's own rather than native
-          inputs, so what the form actually posts is written out
-          beside them: a toggle carries the same `on` a checkbox would */}
-      <input type="hidden" name="species" value={props.naming.species ?? ''} />
-      <Show when={props.female}>
-        <input type="hidden" name="female" value={props.naming.female ? 'on' : ''} />
-      </Show>
-      <input type="hidden" name="compact" value={props.naming.compact ? 'on' : ''} />
-      <Combobox
-        label="Species"
-        required
-        value={props.naming.species}
-        options={speciesOptions()}
-        placeholder="Search species"
-        onChange={(value) => {
-          set({ species: value });
-        }}
-        hint="What the sheet is filed under. Its number is what names the files."
-      />
-      <Show when={props.female}>
-        <Switch
-          label="Female"
-          description="A separate drawing of the same species, written beside the ordinary one
-            as _f."
-          checked={props.naming.female}
-          onChange={(value) => {
-            set({ female: value });
-          }}
-        />
-      </Show>
-      <Switch
-        label="Compact"
-        description="Crop every frame to the tightest rectangle that still holds all of them."
-        checked={props.naming.compact}
-        onChange={(value) => {
-          set({ compact: value });
-        }}
-      />
-    </FormGrid>
   );
 }
 
@@ -278,19 +181,3 @@ export function refusalOf(error: unknown): string {
   // Anything that is not an `Error` says as little as it is worth
   return error == null ? '' : 'The sheet could not be processed';
 }
-
-/**
- * The four drawings, in the order they are filed. Only the plain one
- * has to be there: a species with no female form has two of these, and
- * one still being drawn may have one
- */
-export const COATS: { name: string; label: string; hint: string }[] = [
-  {
-    name: 'regular',
-    label: 'Regular',
-    hint: 'The ordinary coat. Everything else is packed to it.',
-  },
-  { name: 'shiny', label: 'Shiny', hint: 'Optional.' },
-  { name: 'female', label: 'Female', hint: 'Optional. Written beside the ordinary one as _f.' },
-  { name: 'shinyFemale', label: 'Shiny female', hint: 'Optional.' },
-];

@@ -7,8 +7,8 @@ overworld is the game's supply of items and raids are its supply of gold.
 ## Using what you carry
 
 The bag is a tray of pictures. Resting on one brings up a card saying what the
-thing is, what it does and how many are carried, and — for anything that is spent
-on a pokemon rather than held, sold or handed to somebody — a **Use** button.
+thing is, what it does and how many are carried. Anything that is spent on a
+pokemon rather than held, sold or handed to somebody also gets a **Use** button.
 Pressing it asks which pokemon, offering only the ones the item would do some
 good, and that press spends it: what it came to is said over the bag. Two items
 ask a question back first, because neither can be undone. A **machine** asks
@@ -18,8 +18,8 @@ answered.
 
 ## Where items come from
 
-Three landmarks give items — the **item cache**, the **berry patch** and the
-**phenomenon** — and a buddy with **Pickup** finds them while walking. Each source
+Three landmarks give items: the **item cache**, the **berry patch** and the
+**phenomenon**. A buddy with **Pickup** finds them while walking. Each source
 rolls first for a rarity band:
 
 | Band     | Odds     |
@@ -36,18 +36,43 @@ rolls first for a rarity band:
 | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Base**     | Poke, Great, Premier, Heal and Luxury Balls; Pearls, Stardust, shoal salt and shells, Pretty Wings, Tiny Mushrooms, Relic Copper; Black Sludge and a Sticky Barb; the everyday medicine; Energy and Heal Powder                                                                                                   |
 | **Uncommon** | The eight utility balls; Big Pearls, Star Pieces, Big Mushrooms, Rare Bones, Relic Silver; Super and Hyper Potions, Full Heals, Energy Roots; Heart Scales; the six wings; the sixteen one-shot answers, from a Focus Sash to a Weakness Policy; the Everstone; the four weather rocks, Light Clay and a Big Root |
-| **Rare**     | The five evolution stones; Nuggets and the richer valuables; Max Potions, Full Restores, Revives, Revival Herbs; the species relics; the seventeen plates and the type-boosting gear; the choice items, the vest and the Eviolite; the three orbs; Leftovers, a Shed Shell and the rest of the battle gear        |
+| **Rare**     | The six evolution stones; Nuggets and the richer valuables; Max Potions, Full Restores, Revives, Revival Herbs; the species relics; the seventeen plates and the type-boosting gear; the choice items, the vest and the Eviolite; the three orbs; Leftovers, a Shed Shell and the rest of the battle gear        |
 | **Prized**   | Bottle Caps, the Purifying Gem, the Utility Belt, Max Revives, the Sacred Ash, the Portal Key, the Amulet Coin, the six power items, all three fossils, the ruins                                                                                                                                                 |
-| **Special**  | Master Ball, Shiny Charm, Golden Bottle Cap, the raid relics, the Relic Crown                                                                                                                                                                                                                                     |
+| **Special**  | Master Ball, Shiny Charm, Golden Bottle Cap, the two raid relics (the Old Sea Map and the **GS Ball**), the Relic Crown                                                                                                                                                                                          |
 
 The line between rare and prized is **permanence**. Rare is where a walk turns up
 something that gets a party through the next fight: a stone, a Revive, a plate.
 Prized is where it turns up something that changes a pokemon for good and cannot
-be undone — a Bottle Cap fixes what a pokemon was born with, a Purifying Gem
+be undone. A Bottle Cap fixes what a pokemon was born with, a Purifying Gem
 removes a shadow, a Max Revive answers a lost _party_ rather than a lost fight.
 
 A prized find is not unique. A stash may hold two, and they come in stacks like
 anything else.
+
+### The ground decides what is buried in it
+
+Balls, medicine and battle gear are buried everywhere. The rest belong to a
+landscape, so a stone is a reason to cross the map rather than a slot in a table.
+
+| What                                        | Where it is buried                             |
+| ------------------------------------------- | ------------------------------------------------ |
+| **Fire Stone**, **Heat Rock**               | Volcano, badlands and desert                    |
+| **Water Stone**, **Pearls**, **shoal salt and shells** | Every water and every shore            |
+| **Thunder Stone**                           | Open country, and the mountain                  |
+| **Leaf Stone**, **mushrooms**               | Forests, and the wetlands for the small ones    |
+| **Moon Stone**                              | Cold country, and the mountain                  |
+| **Sun Stone**                               | Savanna, desert and tropical seasonal forest    |
+| **Damp Rock**                               | Wetlands and rainforest                         |
+| **Icy Rock**                                | Cold country                                    |
+| **Smooth Rock**                             | Arid country                                    |
+| **Rare Bones**                              | Arid country, highlands and the glacier         |
+| **Stardust**, **Star Pieces**, **Comet Shards** | Dry and cold country under clear skies      |
+| **Pretty Wings**                            | Open country, highlands and forests             |
+
+The world is one map with no edges, so nothing here is out of reach. It is a
+walk, not a wall.
+
+Everything a **beaten trainer** leaves behind follows the same ground.
 
 Two placements are deliberate. **Valuables sit one band below what they are
 worth**, making them a steady trickle of gold rather than a jackpot, and
@@ -64,8 +89,8 @@ The **Heart Scale** is the one item gold cannot substitute for. No vendor stocks
 one or takes one, so a scale is worth exactly one forgotten move, restored by the
 [Move Reminder](npcs.md).
 
-The **fossils** are the only items worth a pokemon. Each names one species — a
-Helix Fossil an Omanyte, a Dome Fossil a Kabuto, an Old Amber an Aerodactyl — and
+The **fossils** are the only items worth a pokemon. Each names one species: a
+Helix Fossil an Omanyte, a Dome Fossil a Kabuto, an Old Amber an Aerodactyl, and
 none of those three appears anywhere in the world, so reviving one at the
 [Fossil Scientist](npcs.md) is the only way to meet them. All three sit in the
 **prized** band, with the amber the thinnest slot of the three.
@@ -82,8 +107,32 @@ stops a good dig being the same three slots every time.
 Each kind comes in up to **three pieces**.
 
 A stash can be a Master Ball and two stones. Two things it can never be: **two
-specials**, and **more than one piece** of a special — a Master Ball found three
+specials**, and **more than one piece** of a special. A Master Ball found three
 at a time would stop being a Master Ball.
+
+### What each landscape hides
+
+Most of the pool is buried everywhere. Some of it belongs to particular ground
+and is found there and nowhere else, so where a player walks decides what they
+dig up:
+
+| What                                       | Where                                                  |
+| ------------------------------------------ | ------------------------------------------------------ |
+| Fire Stone, Heat Rock                       | Volcano, Badlands, Desert                              |
+| Sun Stone                                   | Savanna, Desert, tropical seasonal forest              |
+| Water Stone, pearls, shoal salt and shells  | The seas and the shores                                |
+| Thunder Stone                               | Grassland, Savanna, Steppe, Shrubland, Mountain        |
+| Leaf Stone, mushrooms                       | The forests, and the wetlands for the smaller mushrooms |
+| Moon Stone, Icy Rock                        | The cold: glacier, tundra, taiga, cold desert, mountain |
+| Damp Rock                                   | Swamp, bog, mangrove, rainforest                       |
+| Smooth Rock, Star Pieces, Comet Shards      | The dry and the clear-skied                            |
+| Rare Bones                                  | Dry ground, high ground and glacier                    |
+| Pretty Wings                                | Open ground, high ground and the forests               |
+
+Balls, medicine, gear and everything else are dug up wherever a player happens
+to be standing. A trainer beaten at a landmark hands over what the ground they
+were beaten on holds; a **Pickup** buddy draws from the whole shelf, since what
+it finds is scavenged rather than dug.
 
 ### Berry patches
 
@@ -97,6 +146,17 @@ next window grows something new.
 | **Uncommon** | Leppa, Oran, Persim, and the five bitter berries                        |
 | **Rare**     | Lum, Sitrus, the five that answer a blow, and the eighteen type-resists |
 | **Special**  | The pinch berries, and the six silver and gold prize berries            |
+
+### Apricorn trees
+
+A tree bears **one colour** of apricorn and **three to five** of them, on the
+same 15-minute clock a berry patch fruits on. The colour is the tree's own and
+never changes: the tree is drawn bearing it, so a red one is a landmark you can
+walk back to.
+
+An apricorn is worth nothing on its own. **Kurt**, who passes through the
+wandering cells, carves one into the ball it stands for: seven colours, seven
+balls, none of them for sale anywhere.
 
 ### Phenomena
 
@@ -124,7 +184,7 @@ Ball or a Shiny Charm.
 
 The **dust cloud is the richest** phenomenon: it is the only source of a stone or
 a plate outside an item cache, and the only ordinary source of gems. The
-**grotto** pays in pokemon instead — it never leaves an item at all, and one
+**grotto** pays in pokemon instead. It never leaves an item at all, and one
 grotto in sixty-four holds an egg of the biome, which is the same egg a nest
 would have laid without the half-day wait.
 
@@ -186,6 +246,11 @@ are carried into a fight rather than spent out of one.
 Both are cheaper than the bottle they stand in for, and both sell back at half
 like anything else on a counter.
 
+**Honey** works the same way and is not on any counter. A buddy with **Honey
+Gather** comes up with a jar the first time it acts in a fight, if it has a hand
+free, and the jar restores 40 points to whoever holds it once they drop to a
+quarter.
+
 ## Berries
 
 A berry is what a pokemon carries into a fight when it is not carrying gear. No
@@ -223,11 +288,16 @@ that its levels did not pay for. See [Raising a pokemon](raising.md#training).
 
 | Source                                               | Amount                       |
 | ---------------------------------------------------- | ---------------------------- |
-| Clearing a mythical raid                             | 3,000                        |
-| Clearing a legendary raid                            | 2,000                        |
-| Clearing a shadow raid                               | 1,000                        |
-| Beating a grunt, a trainer, a gym leader or an elite | 1,000 to 10,000              |
-| Beating Giovanni or the Champion                     | 10,000 to 50,000             |
+| Clearing a mythical raid                             | 200,000                      |
+| Clearing a legendary raid                            | 80,000                       |
+| Clearing a shadow raid                               | 35,000                       |
+| Beating a roadside trainer or a Team Rocket grunt    | 5,000 to 15,000              |
+| Beating a gym leader                                 | 20,000 to 50,000             |
+| Beating an Ace Trainer                               | 25,000 to 60,000             |
+| Beating a Rocket executive                           | 40,000 to 90,000             |
+| Beating one of the Elite Four                        | 50,000 to 110,000            |
+| Beating Giovanni                                     | 120,000 to 250,000           |
+| Beating a Champion                                   | 150,000 to 300,000           |
 | Taking a gym seat                                    | A tenth of the loser's purse |
 | Selling an auction lot                               | The winning bid              |
 | Selling to a vendor or the chef                      | The item's price, per piece  |
@@ -251,7 +321,7 @@ doubles it, and an **Amulet Coin** trebles it.
 The four paid travellers set the pace as much as the price, since each helps a
 player once per three-hour window at a given cell: gold buys convenience rather
 than volume. The maniac's fossil is the most expensive because it is the only
-purchase that buys a **pokemon** — one of the three the world does not produce at
+purchase that buys a **pokemon**, one of the three the world does not produce at
 all.
 
 ## Auctions
@@ -267,7 +337,7 @@ from your profile, but answering it costs the same walk the first bid did.
 Your own side of it stays on your profile. **Bids** holds everything you have
 bid on and where each one stands, and is where a lot you won is collected.
 **Selling** holds everything you have put up: what is still on the block, what
-sold, and — the one that matters — anything that closed with nobody bidding. A lot nobody bid on comes
+sold, and the one that matters: anything that closed with nobody bidding. A lot nobody bid on comes
 back only when you ask for it, so until you do, the pokemon sits in escrow
 belonging to nobody. The Selling tab counts those on the tab itself, because
 nothing else in the game will ever mention one.

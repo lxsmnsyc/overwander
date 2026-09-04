@@ -38,6 +38,7 @@ createAbility(
 - Effect listeners on `UnitTriggerAbility` use `EventPriority.Exact` — the trigger's canonical resolution. Post stays free for observers (visual layer, tests).
 - The effect may only use `event.source`, `event.ability`, and the ability's closure state (e.g. Flash Fire's `activated` set). Chance rolls and condition guards belong in detection.
 - `Unit.triggerAbility` already checks the unit has the ability, so the effect listener needs only the ability-id match.
+- A lifecycle wrapper around a **single** listener is noise: return the `battle.on(...)` itself. `MergedLifecycle` is for two or more, or for a spread whose length is not known at the call site.
 - Self-boosts guard against re-triggering naturally when the detection condition can't match the effect (e.g. Defiant detects negative stage deltas; its own boost is positive).
 
 ## Field-presence abilities

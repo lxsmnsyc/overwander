@@ -121,3 +121,76 @@ export default function pack<T extends Box>(boxes: T[]): Packed<T> {
 
   return { width: root.w, height: root.h, placed };
 }
+
+/**
+ * How far from square a sheet may be.
+ *
+ * Rows at every width will happily find a strip one picture wide, which
+ * is the tightest fit and the worst sheet: a texture that is 40 pixels
+ * across and 4000 down wastes more in memory than it saves on paper
+ */
+const MAX_ASPECT = 2.5;
+
+/**
+ * Every box laid in rows of a given width, tallest first, or nothing
+ * where one box is wider than the row
+ */
+function shelve<T extends Box>(boxes: T[], width: number): Packed<T> | null {
+  const order = [...boxes].sort((one, two) => two.h - one.h);
+  const placed: Placed<T>[] = [];
+  let x = 0;
+  let y = 0;
+  let tallest = 0;
+
+  for (const box of order) {
+    if (box.w > width) {
+      return null;
+    }
+    if (x + box.w > width) {
+      x = 0;
+      y += tallest;
+      tallest = 0;
+    }
+    placed.push({ box, x, y });
+    x += box.w;
+    tallest = Math.max(tallest, box.h);
+  }
+  return { width, height: y + tallest, placed };
+}
+
+/**
+ * The smallest sheet these boxes fit on: the tree above, and rows at
+ * every width worth trying, whichever comes out smallest.
+ *
+ * The tree grows the sheet around whatever it is handed and keeps the
+ * result roughly square, which is the right instinct for boxes of every
+ * size and the wrong one for a sprite sheet: a pokemon's frames are all
+ * about one size, and boxes of one size want rows. Trying both is
+ * cheaper than choosing wrong, and the widths are few enough to
+ * enumerate
+ */
+export function packSmallest<T extends Box>(boxes: T[]): Packed<T> {
+  let best = pack(boxes);
+
+  if (boxes.length === 0) {
+    return best;
+  }
+  const widest = Math.max(...boxes.map((box) => box.w));
+  const across = boxes.reduce((sum, box) => sum + box.w, 0);
+
+  for (let width = widest; width <= across; width += 1) {
+    const rows = shelve(boxes, width);
+
+    if (rows == null) {
+      continue;
+    }
+    const long = Math.max(rows.width, rows.height);
+    const short = Math.min(rows.width, rows.height);
+
+    if (long > short * MAX_ASPECT || rows.width * rows.height >= best.width * best.height) {
+      continue;
+    }
+    best = rows;
+  }
+  return best;
+}

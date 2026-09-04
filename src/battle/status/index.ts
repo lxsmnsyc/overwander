@@ -3,19 +3,29 @@ import { Types } from '../../data/constants/types';
 import { Statuses, TeamStatuses } from '../../data/ids/status';
 import type Battle from '../core';
 import { BattleEvents } from '../events';
+import setupBondedStatus from './bonded';
 import setupBurnedStatus from './burned';
+import setupCorneredStatus from './cornered';
 import setupConfusedStatus from './confused';
+import setupCursedStatus from './cursed';
 import setupDormantStatus from './dormant';
+import setupEncoredStatus from './encored';
+import setupEnduringStatus from './enduring';
 import setupFlinchedStatus from './flinched';
 import setupFocusEnergyStatus from './focus-energy';
 import setupFrozenStatus from './frozen';
 import setupGroundedStatus from './grounded';
+import setupIdentifiedStatus from './identified';
 import setupInfatuatedStatus from './infatuated';
 import setupMistStatus from './mist';
+import setupNightmaredStatus from './nightmared';
 import setupParalyzedStatus from './paralyzed';
+import setupPerishingStatus from './perishing';
+import setupProtectedStatus from './protected';
 import { setupBadlyPoisonedStatus, setupPoisonedStatus } from './poisoned';
 import setupRechargingStatus from './recharging';
 import setupScreenStatus from './reflect';
+import setupSafeguardStatus from './safeguard';
 import setupSeedingStatus from './seeding';
 import setupSleepingStatus from './sleeping';
 import setupSubstitutedStatus from './substituted';
@@ -34,6 +44,18 @@ export const MAJOR_STATUS_CONDITIONS = new Set<Statuses>([
   Statuses.Sleeping,
   Statuses.Frozen,
 ]);
+
+/**
+ * What counts as asleep to anything that **preys** on a sleeper:
+ * Dream Eater, Nightmare, Bad Dreams, and the two moves only a
+ * sleeper can cast.
+ *
+ * Comatose is in it and ordinary sleep's other readers are not. A
+ * comatose unit still acts, so it is deliberately out of
+ * `MOVE_LOCKING_STATUS`, and it is not a status condition, so it is
+ * out of `MAJOR_STATUS_CONDITIONS` and never feeds Guts or Facade
+ */
+export const ASLEEP_STATUSES = new Set<Statuses>([Statuses.Sleeping, Statuses.Comatose]);
 
 /**
  * Statuses that block the unit from casting moves (each hooks
@@ -132,6 +154,16 @@ export default function setupStatus(battle: Battle): void {
   setupDormantStatus(battle);
   setupSwitchingStatus(battle);
   setupMistStatus(battle);
+  setupProtectedStatus(battle);
+  setupEnduringStatus(battle);
+  setupCorneredStatus(battle);
+  setupNightmaredStatus(battle);
+  setupPerishingStatus(battle);
+  setupBondedStatus(battle);
+  setupCursedStatus(battle);
+  setupEncoredStatus(battle);
+  setupIdentifiedStatus(battle);
+  setupSafeguardStatus(battle);
 
   setupNonRefreshableStatus(battle);
   setupStatusTypeImmunity(battle);

@@ -4,13 +4,21 @@ import Abilities from '../../ids/abilities';
 import Biome, { TimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
+import { Items } from '../../ids/items';
 import { Moves } from '../../ids/moves';
-import { Species } from '../../ids/species';
+import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 export default function registerScytherSpecies(): void {
   registerSpecies(Species.Scyther, {
     dexNumber: 123,
+    evolvesInto: [
+      {
+        species: Species.Scizor,
+        method: EvolutionMethod.Trade | EvolutionMethod.HeldItem,
+        item: Items.MetalCoat,
+      },
+    ],
     name: 'Scyther',
     category: 'Mantis Pokemon',
     height: 1.5,
@@ -34,13 +42,14 @@ export default function registerScytherSpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.QuickAttack],
-        17: [Moves.Leer],
-        20: [Moves.FocusEnergy],
-        24: [Moves.DoubleTeam],
+        1: [Moves.QuickAttack, Moves.Leer],
+        6: [Moves.FocusEnergy],
+        12: [Moves.Pursuit],
+        18: [Moves.FalseSwipe],
+        24: [Moves.DoubleTeam, Moves.Agility],
         29: [Moves.Slash],
+        30: [Moves.WingAttack],
         35: [Moves.SwordsDance],
-        42: [Moves.Agility],
       },
       teachable: [
         Moves.Toxic,
@@ -55,8 +64,32 @@ export default function registerScytherSpecies(): void {
         Moves.Rest,
         Moves.Substitute,
         Moves.Cut,
+        Moves.Headbutt,
+        Moves.Thief,
+        Moves.Snore,
+        Moves.Curse,
+        Moves.Protect,
+        Moves.Detect,
+        Moves.Endure,
+        Moves.Swagger,
+        Moves.FuryCutter,
+        Moves.SteelWing,
+        Moves.Attract,
+        Moves.SleepTalk,
+        Moves.Return,
+        Moves.Frustration,
+        Moves.HiddenPower,
+        Moves.SunnyDay,
+        Moves.RockSmash,
       ],
-      egg: [Moves.Counter, Moves.LightScreen],
+      egg: [
+        Moves.Counter,
+        Moves.LightScreen,
+        Moves.RazorWind,
+        Moves.Reversal,
+        Moves.Safeguard,
+        Moves.BatonPass,
+      ],
     },
   });
 }

@@ -46,7 +46,7 @@ test.describe('the starter gift', () => {
     await expect(box.getByRole('button', { name: /Lv\. \d+/ })).toHaveCount(1);
     await page.getByRole('button', { name: 'Close' }).last().click();
 
-    const bag = await openPanel(page, 'Inventory');
+    const bag = await openPanel(page, 'Bag');
 
     await expect(bag.getByRole('button', { name: /Poke Ball, \d+ carried/ })).toBeVisible();
   });

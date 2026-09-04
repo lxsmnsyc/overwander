@@ -5,12 +5,18 @@ import Biome, { TimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
-import { Species } from '../../ids/species';
+import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 export default function registerChanseySpecies(): void {
   registerSpecies(Species.Chansey, {
     dexNumber: 113,
+    evolvesInto: [
+      {
+        species: Species.Blissey,
+        method: EvolutionMethod.Friendship,
+      },
+    ],
     name: 'Chansey',
     category: 'Egg Pokemon',
     height: 1.1,
@@ -35,10 +41,13 @@ export default function registerChanseySpecies(): void {
     learnSet: {
       level: {
         1: [Moves.Pound, Moves.DoubleSlap],
+        5: [Moves.Growl],
+        9: [Moves.TailWhip],
+        13: [Moves.SoftBoiled],
+        23: [Moves.Minimize],
         24: [Moves.Sing],
-        30: [Moves.Growl],
-        38: [Moves.Minimize],
-        44: [Moves.DefenseCurl],
+        35: [Moves.EggBomb],
+        41: [Moves.DefenseCurl],
         48: [Moves.LightScreen],
         54: [Moves.DoubleEdge],
       },
@@ -76,12 +85,36 @@ export default function registerChanseySpecies(): void {
         Moves.Substitute,
         Moves.Strength,
         Moves.Flash,
-        // Chansey's egg, and the machine that teaches it. The man who
-        // hands the TM out says only a Chansey can learn it, which is
-        // nearly true — Mew can as well, and was not supposed to be
-        // spoken of
         Moves.SoftBoiled,
+        Moves.Headbutt,
+        Moves.SolarBeam,
+        Moves.DefenseCurl,
+        Moves.DreamEater,
+        Moves.Snore,
+        Moves.Curse,
+        Moves.Protect,
+        Moves.MudSlap,
+        Moves.ZapCannon,
+        Moves.IcyWind,
+        Moves.Sandstorm,
+        Moves.Endure,
+        Moves.Rollout,
+        Moves.Swagger,
+        Moves.Attract,
+        Moves.SleepTalk,
+        Moves.Return,
+        Moves.Frustration,
+        Moves.DynamicPunch,
+        Moves.IronTail,
+        Moves.HiddenPower,
+        Moves.RainDance,
+        Moves.SunnyDay,
+        Moves.PsychUp,
+        Moves.ShadowBall,
+        Moves.RockSmash,
+        Moves.Flamethrower,
       ],
+      egg: [Moves.Metronome, Moves.HealBell, Moves.Present],
     },
   });
 }

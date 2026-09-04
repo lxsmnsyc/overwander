@@ -1,6 +1,6 @@
 import Biome, { TimeOfDay } from '../ids/biome';
 import { Species } from '../ids/species';
-import { registerSpawnPool } from './__create';
+import { UNOWN_SPAWNS, registerSpawnPool } from './__create';
 
 /**
  * Savanna spawn pool, grouped by day-cycle period and rarity band
@@ -11,80 +11,120 @@ export default function registerSavannaSpawns(): void {
       base: [
         { species: Species.NidoranF, weight: 20 },
         { species: Species.NidoranM, weight: 20 },
-        { species: Species.Growlithe, weight: 10 },
-        { species: Species.Doduo, weight: 20 },
       ],
       uncommon: [
+        { species: Species.Growlithe, weight: 10 },
+        { species: Species.Doduo, weight: 20 },
+        { species: Species.Natu, weight: 20 },
+        { species: Species.Sunkern, weight: 25 },
+        { species: Species.Phanpy, weight: 20 },
+        { species: Species.Girafarig, weight: 5 },
+      ],
+      rare: [
         { species: Species.Nidorina, weight: 5 },
         { species: Species.Nidorino, weight: 5 },
       ],
-      rare: [
-        { species: Species.Nidoqueen, weight: 5 },
-        { species: Species.Nidoking, weight: 5 },
+      scarce: [
         { species: Species.Arcanine, weight: 5 },
         { species: Species.Dodrio, weight: 10 },
+        { species: Species.Xatu, weight: 5 },
+        { species: Species.Sunflora, weight: 5 },
+        { species: Species.Donphan, weight: 5 },
+      ],
+      elusive: [
+        { species: Species.Nidoqueen, weight: 5 },
+        { species: Species.Nidoking, weight: 5 },
         { species: Species.Kangaskhan, weight: 5 },
         { species: Species.Tauros, weight: 10 },
       ],
+      prized: [...UNOWN_SPAWNS],
       special: [],
     },
     [TimeOfDay.Day]: {
       base: [
-        { species: Species.Ekans, weight: 20 },
         { species: Species.NidoranF, weight: 20 },
         { species: Species.NidoranM, weight: 20 },
-        { species: Species.Growlithe, weight: 10 },
-        { species: Species.Doduo, weight: 20 },
         { species: Species.Rhyhorn, weight: 20 },
       ],
       uncommon: [
-        { species: Species.Nidorina, weight: 5 },
-        { species: Species.Nidorino, weight: 5 },
+        { species: Species.Ekans, weight: 20 },
+        { species: Species.Growlithe, weight: 10 },
+        { species: Species.Doduo, weight: 20 },
+        { species: Species.Natu, weight: 20 },
+        { species: Species.Sunkern, weight: 25 },
+        { species: Species.Phanpy, weight: 20 },
+        { species: Species.Girafarig, weight: 5 },
       ],
       rare: [
+        { species: Species.Nidorina, weight: 5 },
+        { species: Species.Nidorino, weight: 5 },
+        { species: Species.Rhydon, weight: 10 },
+      ],
+      scarce: [
         { species: Species.Arbok, weight: 10 },
-        { species: Species.Nidoqueen, weight: 5 },
-        { species: Species.Nidoking, weight: 5 },
         { species: Species.Arcanine, weight: 5 },
         { species: Species.Dodrio, weight: 10 },
-        { species: Species.Rhydon, weight: 10 },
+        { species: Species.Xatu, weight: 5 },
+        { species: Species.Sunflora, weight: 5 },
+        { species: Species.Donphan, weight: 5 },
+      ],
+      elusive: [
+        { species: Species.Nidoqueen, weight: 5 },
+        { species: Species.Nidoking, weight: 5 },
         { species: Species.Kangaskhan, weight: 5 },
         { species: Species.Tauros, weight: 10 },
       ],
+      prized: [...UNOWN_SPAWNS],
       special: [],
     },
     [TimeOfDay.Evening]: {
       base: [
-        { species: Species.Ekans, weight: 20 },
         { species: Species.NidoranF, weight: 20 },
         { species: Species.NidoranM, weight: 20 },
       ],
       uncommon: [
+        { species: Species.Ekans, weight: 20 },
+        { species: Species.Houndour, weight: 20 },
+        { species: Species.Girafarig, weight: 5 },
+      ],
+      rare: [
         { species: Species.Nidorina, weight: 5 },
         { species: Species.Nidorino, weight: 5 },
       ],
-      rare: [
+      scarce: [
         { species: Species.Arbok, weight: 10 },
+        { species: Species.Houndoom, weight: 5 },
+      ],
+      elusive: [
         { species: Species.Nidoqueen, weight: 5 },
         { species: Species.Nidoking, weight: 5 },
       ],
+      prized: [...UNOWN_SPAWNS],
       special: [],
     },
     [TimeOfDay.Night]: {
       base: [
-        { species: Species.Ekans, weight: 20 },
         { species: Species.NidoranF, weight: 20 },
         { species: Species.NidoranM, weight: 20 },
       ],
       uncommon: [
+        { species: Species.Ekans, weight: 20 },
+        { species: Species.Houndour, weight: 20 },
+        { species: Species.Girafarig, weight: 5 },
+      ],
+      rare: [
         { species: Species.Nidorina, weight: 5 },
         { species: Species.Nidorino, weight: 5 },
       ],
-      rare: [
+      scarce: [
         { species: Species.Arbok, weight: 10 },
+        { species: Species.Houndoom, weight: 5 },
+      ],
+      elusive: [
         { species: Species.Nidoqueen, weight: 5 },
         { species: Species.Nidoking, weight: 5 },
       ],
+      prized: [...UNOWN_SPAWNS],
       special: [],
     },
   });

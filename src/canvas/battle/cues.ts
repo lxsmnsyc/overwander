@@ -309,6 +309,146 @@ const STATUS_CUES: Partial<Record<Statuses, Cue>> = {
     color: '#fac000',
     span: 640,
   },
+
+  // The Johto statuses. A guard is a shell, a brace is a stance, a
+  // hold is a ring nothing crosses, and the ghost pair are marks that
+  // hang rather than rise
+  [Statuses.Protected]: {
+    paint: (context, stage, share, paint) => {
+      ring(context, stage.source, REACH * stage.scale * (1.6 + swell(share) * 0.3), {
+        ...paint,
+        alpha: swell(share),
+        width: 3.2 * stage.scale,
+      });
+    },
+    color: '#6fa8c9',
+    span: 520,
+  },
+  [Statuses.Enduring]: {
+    paint: (context, stage, share, paint) => {
+      chevrons(context, stage.source, REACH * stage.scale, 2, 1 - share, {
+        ...paint,
+        alpha: swell(share),
+        width: 3 * stage.scale,
+      });
+    },
+    color: '#b98a4a',
+    span: 520,
+  },
+  // Drawn under it rather than over it: what a hold takes away is the
+  // ground it would have walked off on
+  [Statuses.Cornered]: {
+    paint: (context, stage, share, paint) => {
+      ring(
+        context,
+        [stage.source[0], stage.source[1] + REACH * stage.scale * 0.4],
+        REACH * stage.scale * (1.9 - share * 0.5),
+        {
+          ...paint,
+          alpha: swell(share) * 0.9,
+          width: 2.6 * stage.scale,
+        },
+      );
+    },
+    color: '#6a5a7a',
+    span: 620,
+  },
+  [Statuses.Nightmared]: {
+    paint: (context, stage, share, paint) => {
+      const at = over(stage);
+      const size = REACH * stage.scale;
+
+      orb(context, at, size * (0.6 + swell(share) * 0.5), { ...paint, alpha: swell(share) * 0.8 });
+      motes(context, at, size * 1.4, 6, 83, share, {
+        ...paint,
+        alpha: decay(share) * 0.8,
+        width: 2.2 * stage.scale,
+      });
+    },
+    color: '#4a3f6a',
+    span: 720,
+  },
+  // A count rather than a condition: rings arriving one after another
+  [Statuses.Perishing]: {
+    paint: (context, stage, share, paint) => {
+      const size = REACH * stage.scale;
+
+      for (let beat = 0; beat < 3; beat += 1) {
+        const held = (share * 1.3 + beat * 0.33) % 1;
+
+        ring(context, over(stage), size * (0.5 + held * 1.4), {
+          ...paint,
+          alpha: decay(held) * 0.9,
+          width: 2.2 * stage.scale,
+        });
+      }
+    },
+    color: '#8a4a6a',
+    span: 820,
+  },
+  // Two of them tied together, which is the whole of what it says
+  [Statuses.Bonded]: {
+    paint: (context, stage, share, paint) => {
+      const size = REACH * stage.scale;
+
+      for (let knot = 0; knot < 2; knot += 1) {
+        ring(context, [stage.source[0] + (knot - 0.5) * size * 1.2, stage.source[1]], size * 0.8, {
+          ...paint,
+          alpha: swell(share) * 0.9,
+          width: 2.6 * stage.scale,
+        });
+      }
+    },
+    color: '#5a4a7a',
+    span: 620,
+  },
+  [Statuses.Cursed]: {
+    paint: (context, stage, share, paint) => {
+      const size = REACH * stage.scale;
+
+      // A nail driven down into it, which is what the mainline draws
+      context.strokeStyle = fade(paint.color, swell(share));
+      context.lineWidth = 3 * stage.scale;
+      context.beginPath();
+      context.moveTo(stage.source[0], stage.source[1] - size * (2.2 - share * 1.2));
+      context.lineTo(stage.source[0], stage.source[1] - size * 0.2);
+      context.stroke();
+      ring(context, stage.source, size * (1.4 - share * 0.4), {
+        ...paint,
+        alpha: swell(share) * 0.8,
+        width: 2.2 * stage.scale,
+      });
+    },
+    color: '#6a2f5a',
+    span: 720,
+  },
+  [Statuses.Encored]: {
+    paint: (context, stage, share, paint) => {
+      chevrons(context, over(stage), REACH * stage.scale * 0.9, 3, share, {
+        ...paint,
+        alpha: swell(share),
+        width: 2.2 * stage.scale,
+      });
+    },
+    color: '#c98ab0',
+    span: 620,
+  },
+  // Pointed out: a mark that opens over it and stays open
+  [Statuses.Identified]: {
+    paint: (context, stage, share, paint) => {
+      const at = over(stage);
+      const size = REACH * stage.scale;
+
+      ring(context, at, size * (0.4 + share * 0.6), {
+        ...paint,
+        alpha: swell(share),
+        width: 2.4 * stage.scale,
+      });
+      orb(context, at, size * 0.22, { ...paint, alpha: swell(share) });
+    },
+    color: '#a8a8a8',
+    span: 560,
+  },
 };
 
 /** How much quieter a status is each time it bites than when it landed. */
@@ -534,6 +674,8 @@ const STATUS_TRIGGERS: Partial<Record<Statuses, Cue>> = {
   },
 
   // The residuals: health leaving on the status's own clock
+  [Statuses.Cursed]: { paint: bitten(7, 89), color: '#6a2f5a', span: 620 },
+  [Statuses.Nightmared]: { paint: bitten(7, 97), color: '#4a3f6a', span: 620 },
   [Statuses.Poisoned]: { paint: bitten(6, 61), color: '#9141cb', span: 560 },
   [Statuses.BadlyPoisoned]: { paint: bitten(9, 67), color: '#6e2f9c', span: 620 },
   [Statuses.Burned]: { paint: bitten(6, 71), color: '#e62829', span: 560 },

@@ -62,7 +62,7 @@ describe('pokedex record', () => {
     const seen = listDexTallies(DEX, DEX_SEEN);
 
     expect(seen.map((entry) => entry.species)).toEqual(
-      [...seen.map((entry) => entry.species)].sort((one, other) => one - other),
+      seen.map((entry) => entry.species).sort((one, other) => one - other),
     );
     // A species that only ever sparkled is still in the list: both
     // maps are read, not just the ordinary one
@@ -99,6 +99,25 @@ describe('pokedex record', () => {
       expect(listDexTallies(stored, DEX_CAUGHT)).toEqual([]);
       expect(hasSeenSpecies(stored, Species.Pidgey)).toBe(false);
     }
+  });
+
+  it('counts a pokemon once however many of its shapes were met', () => {
+    // A row is kept per form, since which letters somebody has found
+    // is worth knowing; a dex is counted in pokemon, and the printed
+    // dex has one Unown in it
+    const dex = {
+      seen: { [Species.Unown]: 1, [Species.UnownB]: 4, [Species.UnownQ]: 2, [Species.Pidgey]: 1 },
+      seenShiny: { [Species.UnownZ]: 1 },
+      caught: { [Species.UnownB]: 1 },
+      caughtShiny: {},
+    };
+
+    expect(listDexTallies(dex, DEX_SEEN).length).toBe(5);
+    expect(countDexSpecies(dex, DEX_SEEN)).toBe(2);
+
+    // An unown nobody has is still an Unown caught, since the entry
+    // the dex prints is the one being filled in
+    expect(countDexSpecies(dex, DEX_CAUGHT)).toBe(1);
   });
 
   it('ignores anything in the maps that is not a count', () => {

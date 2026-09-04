@@ -81,6 +81,8 @@ export const enum Landmark {
   Phenomenon = 3,
   /** A portal crossed, key and all */
   Portal = 4,
+  /** An apricorn picked off a tree, which is not a berry */
+  Apricorn = 5,
 }
 
 /** The foes the BattleWins metric counts, as its params */

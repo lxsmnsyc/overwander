@@ -11,13 +11,35 @@ import {
   tierName,
 } from '../../data/achievements';
 import { TYPE_COLORS, TYPE_NAMES } from '../../data/constants/types';
-import { TRAINER_NAMES, TRAINER_TYPES, type TrainerClass } from '../../data/overworld/trainers';
-import Awards, { AWARD_NAMES, KANTO_BADGES, KANTO_HONORS } from '../../data/ids/awards';
-import Npc from '../../data/overworld/npc';
 import {
+  TRAINER_BASE_NAMES,
+  TRAINER_TYPES,
+  type TrainerClass,
+} from '../../data/overworld/trainers';
+import Awards, {
+  AWARD_NAMES,
+  JOHTO_BADGES,
+  JOHTO_HONORS,
+  KANTO_BADGES,
+  KANTO_HONORS,
+} from '../../data/ids/awards';
+import Npc, {
+  GIOVANNI_CHARSETS,
+  GIOVANNI_HONOR,
+  ROCKET_EXECUTIVES,
+  ROCKET_EXECUTIVE_CHARSETS,
+  ROCKET_EXECUTIVE_HONORS,
+  ROCKET_GRUNT_HONOR,
+  npcSheet,
+} from '../../data/overworld/npc';
+import {
+  CHAMPION_TITLES,
   ELITE_MEMBERS,
   ELITE_MEMBER_CHARSETS,
   ELITE_MEMBER_HONORS,
+  LEGENDS,
+  LEGEND_CHARSETS,
+  LEGEND_HONORS,
 } from '../../data/overworld/experts';
 import NpcSprite from '../overworld/NpcSprite';
 import ExtraSprite from '../sprites/ExtraSprite';
@@ -34,28 +56,51 @@ import { Card, Detail, HoverCard, Meta, Note } from '../styled';
  * charset; an unearned slot sits greyed
  */
 
-/** Where each award's picture sits on the badges sheet, where one ships */
-const AWARD_SHEET = 'badges/kanto';
-
-const AWARD_SPRITES: Partial<Record<Awards, string>> = {
-  [Awards.BoulderBadge]: 'Kanto',
-  [Awards.CascadeBadge]: 'Kanto (1)',
-  [Awards.ThunderBadge]: 'Kanto (2)',
-  [Awards.RainbowBadge]: 'Kanto (3)',
-  [Awards.SoulBadge]: 'Kanto (4)',
-  [Awards.MarshBadge]: 'Kanto (5)',
-  [Awards.VolcanoBadge]: 'Kanto (6)',
-  [Awards.EarthBadge]: 'Kanto (7)',
-  [Awards.KantoChampion]: 'Champion Ribbon',
+/**
+ * Where each award's picture sits, where one ships: the extras sheet
+ * and the name on it. A region's badges are one sheet, in gym order
+ */
+const AWARD_SPRITES: Partial<Record<Awards, [sheet: string, name: string]>> = {
+  [Awards.BoulderBadge]: ['badges/kanto', 'Kanto'],
+  [Awards.CascadeBadge]: ['badges/kanto', 'Kanto (1)'],
+  [Awards.ThunderBadge]: ['badges/kanto', 'Kanto (2)'],
+  [Awards.RainbowBadge]: ['badges/kanto', 'Kanto (3)'],
+  [Awards.SoulBadge]: ['badges/kanto', 'Kanto (4)'],
+  [Awards.MarshBadge]: ['badges/kanto', 'Kanto (5)'],
+  [Awards.VolcanoBadge]: ['badges/kanto', 'Kanto (6)'],
+  [Awards.EarthBadge]: ['badges/kanto', 'Kanto (7)'],
+  [Awards.KantoChampion]: ['badges/kanto', 'Champion Ribbon'],
+  [Awards.ZephyrBadge]: ['badges/johto', 'Johto'],
+  [Awards.HiveBadge]: ['badges/johto', 'Johto (1)'],
+  [Awards.PlainBadge]: ['badges/johto', 'Johto (2)'],
+  [Awards.FogBadge]: ['badges/johto', 'Johto (3)'],
+  [Awards.StormBadge]: ['badges/johto', 'Johto (4)'],
+  [Awards.MineralBadge]: ['badges/johto', 'Johto (5)'],
+  [Awards.GlacierBadge]: ['badges/johto', 'Johto (6)'],
+  [Awards.RisingBadge]: ['badges/johto', 'Johto (7)'],
 };
 
 /**
- * Each elite mark is the member themselves: their first charset, the
- * portrait the challenge dialog uses
+ * Each mark won off a person is that person: their first charset, the
+ * portrait the challenge dialog uses: the Elite Four, the legends and
+ * Team Rocket's boss all pay one
  */
-const ELITE_AWARD_SHEETS: Partial<Record<Awards, string>> = Object.fromEntries(
-  ELITE_MEMBERS.map((member) => [ELITE_MEMBER_HONORS[member], ELITE_MEMBER_CHARSETS[member][0]]),
-);
+const PERSON_AWARD_SHEETS: Partial<Record<Awards, string>> = Object.fromEntries([
+  ...ELITE_MEMBERS.map((member): [Awards, string] => [
+    ELITE_MEMBER_HONORS[member],
+    ELITE_MEMBER_CHARSETS[member][0],
+  ]),
+  ...LEGENDS.map((legend): [Awards, string] => [LEGEND_HONORS[legend], LEGEND_CHARSETS[legend][0]]),
+  [GIOVANNI_HONOR, GIOVANNI_CHARSETS[0]],
+  ...ROCKET_EXECUTIVES.map((executive): [Awards, string] => [
+    ROCKET_EXECUTIVE_HONORS[executive],
+    ROCKET_EXECUTIVE_CHARSETS[executive][0],
+  ]),
+  [ROCKET_GRUNT_HONOR, npcSheet(Npc.RocketGrunt)],
+]);
+
+/** The titles that read as a star rather than as a letter */
+const CHAMPION_TITLES_SET = new Set<Awards>(Object.values(CHAMPION_TITLES));
 
 /** The height an elite stands at inside their slot */
 const ELITE_SPRITE_SIZE = 48;
@@ -78,17 +123,50 @@ const AWARD_COLORS: Record<Awards, string> = {
   [Awards.LanceDefeated]: '#5a78c9',
   [Awards.KantoChampion]: '#e0b64f',
   [Awards.KantoDexMedal]: '#d0342c',
+  [Awards.ZephyrBadge]: '#8fb8d8',
+  [Awards.HiveBadge]: '#d0a63c',
+  [Awards.PlainBadge]: '#d97b8f',
+  [Awards.FogBadge]: '#8c7fb8',
+  [Awards.StormBadge]: '#c96b3c',
+  [Awards.MineralBadge]: '#7f9aa8',
+  [Awards.GlacierBadge]: '#6fb4d9',
+  [Awards.RisingBadge]: '#5f9e6a',
+  [Awards.WillDefeated]: '#b48fd0',
+  [Awards.KogaDefeated]: '#8f5fa8',
+  [Awards.KarenDefeated]: '#5c4f56',
+  [Awards.JohtoBrunoDefeated]: '#c98a4b',
+  [Awards.JohtoChampion]: '#e0b64f',
+  [Awards.RedDefeated]: '#d0342c',
+  [Awards.GiovanniDefeated]: '#b0453c',
+  [Awards.ArcherDefeated]: '#6f7fa8',
+  [Awards.ArianaDefeated]: '#c2536f',
+  [Awards.ProtonDefeated]: '#4f8f7a',
+  [Awards.PetrelDefeated]: '#7a6f8f',
+  [Awards.RocketGruntDefeated]: '#3f4550',
+  [Awards.JohtoDexMedal]: '#d0a63c',
 };
 
 /**
- * The shelf's order: the 8 badges, the 4 elite marks, the title, and
- * the dex medal at the end — the walk itself, left to right
+ * The shelf's order: Kanto's 8 badges, its 4 elite marks, the title
+ * and the dex medal, then Johto's 8 badges, its 4 marks and its
+ * title and its medal, then the marks that belong to no region's
+ * walk: Team Rocket's, from the rank and file up, and the legends'. The walk itself, left to right, a region at a time
  */
 const SHELF: Awards[] = [
-  ...KANTO_BADGES,
-  ...KANTO_HONORS,
-  Awards.KantoChampion,
-  Awards.KantoDexMedal,
+  ...new Set([
+    ...KANTO_BADGES,
+    ...KANTO_HONORS,
+    Awards.KantoChampion,
+    Awards.KantoDexMedal,
+    ...JOHTO_BADGES,
+    ...JOHTO_HONORS,
+    Awards.JohtoChampion,
+    Awards.JohtoDexMedal,
+    ROCKET_GRUNT_HONOR,
+    ...ROCKET_EXECUTIVES.map((executive) => ROCKET_EXECUTIVE_HONORS[executive]),
+    GIOVANNI_HONOR,
+    ...LEGENDS.map((legend) => LEGEND_HONORS[legend]),
+  ]),
 ];
 
 const GRID_COLUMNS = 6;
@@ -96,7 +174,7 @@ const GRID_COLUMNS = 6;
 function Slot(props: { award: Awards; wins: number | null }): JSX.Element {
   const name = (): string => AWARD_NAMES[props.award];
   const held = (): boolean => props.wins != null;
-  const mark = (): string => (props.award === Awards.KantoChampion ? '★' : name().slice(0, 1));
+  const mark = (): string => (CHAMPION_TITLES_SET.has(props.award) ? '★' : name().slice(0, 1));
 
   return (
     <HoverCard
@@ -118,7 +196,7 @@ function Slot(props: { award: Awards; wins: number | null }): JSX.Element {
             keyed
             fallback={
               <Show
-                when={ELITE_AWARD_SHEETS[props.award]}
+                when={PERSON_AWARD_SHEETS[props.award]}
                 keyed
                 fallback={
                   <span
@@ -148,8 +226,8 @@ function Slot(props: { award: Awards; wins: number | null }): JSX.Element {
           >
             {(sprite) => (
               <ExtraSprite
-                sheet={AWARD_SHEET}
-                name={sprite}
+                sheet={sprite[0]}
+                name={sprite[1]}
                 label=""
                 class={`pointer-events-none ${held() ? '' : 'opacity-40 grayscale'}`}
               />
@@ -192,6 +270,8 @@ function Shelf(props: { held: Resource<AwardRecord[]> }): JSX.Element {
     new Map((props.held() ?? []).map((entry) => [entry.award, entry.wins]));
   const badges = (): number => KANTO_BADGES.filter((badge) => wins().has(badge)).length;
   const honors = (): number => KANTO_HONORS.filter((honor) => wins().has(honor)).length;
+  const johto = (): number => JOHTO_BADGES.filter((badge) => wins().has(badge)).length;
+  const marks = (): number => JOHTO_HONORS.filter((honor) => wins().has(honor)).length;
 
   const empties = (): number[] =>
     Array.from(
@@ -219,7 +299,9 @@ function Shelf(props: { held: Resource<AwardRecord[]> }): JSX.Element {
       </div>
       <Meta>
         Kanto: {badges()} of {KANTO_BADGES.length} badges, {honors()} of {KANTO_HONORS.length} of
-        the Elite Four{wins().has(Awards.KantoChampion) ? ', Champion' : ''}.
+        the Elite Four{wins().has(Awards.KantoChampion) ? ', Champion' : ''}. Johto: {johto()} of{' '}
+        {JOHTO_BADGES.length} badges, {marks()} of {JOHTO_HONORS.length} of the Elite Four
+        {wins().has(Awards.JohtoChampion) ? ', Champion' : ''}.
       </Meta>
     </div>
   );
@@ -311,9 +393,11 @@ function Filler(): JSX.Element {
  * fields anything, so theirs is left in the tray's own colour
  */
 function tintOf(trainer: TrainerClass): string | undefined {
-  const type = TRAINER_TYPES[trainer];
+  // The first of what they field, since a slot is one colour and the
+  // Aces field everything
+  const [type] = TRAINER_TYPES[trainer];
 
-  return type == null ? undefined : TYPE_COLORS[type];
+  return TRAINER_TYPES[trainer].length === 0 ? undefined : TYPE_COLORS[type];
 }
 
 function AchievementShelves(props: { sheet: Resource<AchievementSheet> }): JSX.Element {
@@ -356,8 +440,8 @@ function AchievementShelves(props: { sheet: Resource<AchievementSheet> }): JSX.E
         <For each={props.sheet()?.trainers ?? []}>
           {([trainer, standing]) => (
             <LineSlot
-              name={TRAINER_NAMES[trainer]}
-              deed={`${TRAINER_NAMES[trainer]}s beaten`}
+              name={TRAINER_BASE_NAMES[trainer]}
+              deed={`${TRAINER_BASE_NAMES[trainer]}s beaten`}
               standing={standing}
               tint={tintOf(trainer)}
             />

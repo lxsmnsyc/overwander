@@ -1,8 +1,9 @@
 import { type JSX, Suspense, createResource } from 'solid-js';
+import BattleData from '../../app/battle-data';
 import { getCandyCount } from '../../../auth/candy';
 import { getSpeciesDexEntry } from '../../../auth/pokedex';
 import type { Species } from '../../../data/ids/species';
-import { getSpeciesData } from '../../../data/species';
+import { getSpeciesData, getSpeciesForms } from '../../../data/species';
 import { hasFemaleSheet } from '../../../canvas/species-sprites';
 import { Button, Dialog, DialogActions, Note, StepButton } from '../../styled';
 import { DexEntryBody, type DexEntryDialogProps } from './body';
@@ -58,10 +59,15 @@ export default function DexEntryDialog(props: DexEntryDialogProps): JSX.Element 
   );
 
   /**
-   * The entry either side of this one. The ends of the dex are ends
-   * rather than a loop: somebody pressing "next" through the whole of
-   * it should stop at the last one instead of finding themselves back
-   * at the first wondering what they missed
+   * The entry either side of this one. The ends are ends rather than a
+   * loop: somebody pressing "next" through the whole of it should stop
+   * at the last one instead of finding themselves back at the first
+   * wondering what they missed.
+   *
+   * **Which list is being walked depends on what was opened.** A
+   * pokemon with forms was reached through its forms grid, so the
+   * arrows walk the alphabet and stop at either end of it; everything
+   * else walks the printed dex
    */
   const neighbour = (step: number): Species | null => {
     const species = props.species;
@@ -70,7 +76,8 @@ export default function DexEntryDialog(props: DexEntryDialogProps): JSX.Element 
       return null;
     }
 
-    const listed = dexOrder();
+    const shapes = getSpeciesForms(species);
+    const listed = shapes.length > 1 ? shapes : dexOrder();
     const at = listed.indexOf(species);
     const wanted = at + step;
 
@@ -106,7 +113,11 @@ export default function DexEntryDialog(props: DexEntryDialogProps): JSX.Element 
       description="One species in full: what it is, where it lives, and everything it can learn."
     >
       <Suspense fallback={<Note>Reading the dex…</Note>}>
-        <DexEntryBody {...props} dex={dex} candy={candy} female={female} />
+        {/* An entry lists what it can learn and what it can hold, so
+            it waits for the two registries the walk does not */}
+        <BattleData fallback={<Note>Reading the dex…</Note>}>
+          <DexEntryBody {...props} dex={dex} candy={candy} female={female} />
+        </BattleData>
       </Suspense>
 
       <DialogActions>

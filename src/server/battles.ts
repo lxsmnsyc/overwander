@@ -15,6 +15,31 @@ import { getSql, tx } from './db';
 import { readCaughtMany, updateCaughtIn } from './caught-io';
 import { type ProgressBump, bumpProgress } from './quest-progress';
 import { asNumber, asNumberArray } from './read';
+import type { CaughtPokemon } from '../auth/caught';
+import { Moves } from '../data/ids/moves';
+import { getRegisteredMoves } from '../data/moves';
+
+/**
+ * What a Sketch leaves behind: the move set to write, or nothing when
+ * the report does not describe a sketch this record could have drawn.
+ *
+ * The report is the client's word, so the only change allowed is the
+ * one Sketch makes: the record has to still know Sketch, the move
+ * drawn has to be a real one it does not already carry, and every
+ * other slot stays exactly where it was
+ */
+function settleSketch(record: CaughtPokemon, sketched: Moves | undefined): Moves[] | undefined {
+  if (
+    sketched == null ||
+    !record.moves.includes(Moves.Sketch) ||
+    record.moves.includes(sketched) ||
+    !new Set(getRegisteredMoves()).has(sketched)
+  ) {
+    return undefined;
+  }
+
+  return record.moves.map((move) => (move === Moves.Sketch ? sketched : move));
+}
 
 /**
  * What a battle leaves behind, written over the owner connection. A
@@ -126,7 +151,9 @@ export default async function recordAftermath(
   // somebody who is not present — settling it would charge them for a
   // fight they never saw — and any other player-versus-player battle
   // settles for neither side
-  if (battles[0].raid_id == null && asNumber(teams.at(0)?.players) > 1) {
+  const versus = battles[0].raid_id == null && asNumber(teams.at(0)?.players) > 1;
+
+  if (versus) {
     const challenged = await getSql()`
       select 1 from gym_challenges where battle_id = ${battleId} and challenger = ${uid} limit 1
     `;
@@ -210,10 +237,21 @@ export default async function recordAftermath(
       // written, one of each: confusion and the rest ended with the
       // battle
       const statuses = settleStatuses(carriedStatuses(target.statuses));
+      // A sketch is kept out of every fight between players, the gym
+      // challenger's included: what it costs the loser is a move set,
+      // and only the world's own fights may change one
+      const drawn = versus ? undefined : settleSketch(record, target.sketched);
+      // What was spent on Sketch was spent on Sketch: the move drawn
+      // over it starts on the PP it is registered with
+      const sketchSlot = String(Moves.Sketch);
+      const points = Object.fromEntries(
+        Object.entries(record.movePoints).filter(([move]) => move !== sketchSlot),
+      );
 
       await updateCaughtIn(transaction, target.caught, {
         health,
         statuses,
+        ...(drawn == null ? {} : { moves: drawn, movePoints: points }),
         ...(taken.size > 0 ? { items: remaining } : {}),
         // A pokemon that was carried out of the fight thinks a little
         // less of whoever took it in there. It is one point, and the

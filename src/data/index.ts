@@ -5,10 +5,19 @@ import { registerMoves } from './moves';
 import { registerSpecies } from './species';
 
 /**
- * Fill every runtime registry. The data modules only describe
- * themselves — nothing is queryable until it is registered — so the
- * app calls this once at startup. Registration is an idempotent map
- * overwrite, so calling it again is harmless
+ * Fill every runtime registry at once, synchronously.
+ *
+ * The app does **not** call this: it registers the world at boot and
+ * loads what a fight needs when something needs it, which is what
+ * keeps two thirds of the data out of the first frame. See
+ * [`world.ts`](./world.ts) and
+ * [`battle-data.ts`](./battle-data.ts).
+ *
+ * What is left for this is everything that has no first frame to
+ * protect: a test, a script, a tool that wants the whole dex in one
+ * call. Importing it pulls every registry in eagerly, which is the
+ * point of it and the reason nothing on the app's own path may
+ * import it
  */
 export default function registerGameData(): void {
   registerMoves();

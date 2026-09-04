@@ -9,10 +9,10 @@ import computeTrim from './trim';
 /**
  * Loose images into one sheet.
  *
- * The plain half of the packer tool: whatever was picked goes in, each
- * image is one picture, and the description says where each of them
- * landed. Nothing here knows about animations — that is the PMD side,
- * which has `AnimData.xml` to tell it what a frame is.
+ * Whatever was picked goes in, each image is one picture, and the
+ * description says where each of them landed. Nothing here knows about
+ * animations: a pokemon's sheet is packed in the SpriteCollab checkout
+ * beside this repository, not here.
  */
 
 /** One file as it arrives from the page. */

@@ -14,7 +14,7 @@ import { Genders } from '../../data/ids/species';
 import { Statuses, TeamStatuses, Weathers } from '../../data/ids/status';
 import { getItemData } from '../../data/items';
 import { getMoveData } from '../../data/moves';
-import { RISKY_PENALTY } from '../ai/score';
+import { FEED_BONUS, RISKY_PENALTY } from '../ai/score';
 import { checkUnitRating } from '../ai/rating';
 import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType, type UnitAttackEvent } from '../events';
@@ -26,7 +26,7 @@ import { SELF_DESTRUCT_MOVES } from '../moves/self-destruct';
 import { STATUS_MOVES, hasAttackEffect } from '../moves/status';
 import { transformUnit } from '../moves/transform';
 import { PROTECTED_ABILITIES } from './special';
-import { MAJOR_STATUS_CONDITIONS } from '../status';
+import { ASLEEP_STATUSES, MAJOR_STATUS_CONDITIONS } from '../status';
 import type Team from '../team';
 import type Unit from '../unit';
 import {
@@ -41,17 +41,21 @@ import {
   unitTarget,
 } from '../utils';
 import {
+  ABSORB_HEAL_FRACTION,
   chipImmunity,
   createAbility,
   createBlazeAbility,
   createContactHazard,
   createDrizzleAbility,
+  createFeedScoring,
   createFilterAbility,
+  createHealFeedScoring,
   createHydrationAbility,
   createKeenEyeAbility,
   createLimberAbility,
   createSandRushAbility,
   createShellArmorAbility,
+  createStageFeedScoring,
   createToughClawsAbility,
   createWaterAbsorbAbility,
 } from './__create';
@@ -307,8 +311,11 @@ const setupAbilities = [
       ) {
         event.success = false;
 
-        // For visual cues
-        event.source.triggerAbility(Abilities.BigPecks);
+        // A cue is something a watcher sees, so it waits for a real
+        // attempt rather than the AI weighing one
+        if (!event.simulated) {
+          event.source.triggerAbility(Abilities.BigPecks);
+        }
       }
     }),
   ),
@@ -573,6 +580,12 @@ const setupAbilities = [
             parent.target.unit.triggerAbility(Abilities.LightningRod);
           }
         }),
+        createStageFeedScoring(
+          battle,
+          Abilities.LightningRod,
+          Types.Electric,
+          Stages.SpecialAttack,
+        ),
         // The special attack boost rides the trigger
         battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
           if (event.ability === Abilities.LightningRod) {
@@ -885,6 +898,11 @@ const setupAbilities = [
           activated.add(event.source);
         }
       }),
+      // Lighting a teammate's Flash Fire is worth a hit; a second
+      // one adds nothing, since the boost does not stack
+      createFeedScoring(battle, Abilities.FlashFire, Types.Fire, (holder) =>
+        activated.has(holder) ? 0 : FEED_BONUS,
+      ),
       // An activated holder's own Fire moves hit harder
       battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
         if (
@@ -1031,7 +1049,12 @@ const setupAbilities = [
             event.source.hasAbility(Abilities.InnerFocus)
           ) {
             event.success = false;
-            event.source.triggerAbility(Abilities.InnerFocus);
+
+            // A cue is something a watcher sees, so it waits for a real
+            // attempt rather than the AI weighing one
+            if (!event.simulated) {
+              event.source.triggerAbility(Abilities.InnerFocus);
+            }
           }
         }),
       ]),
@@ -1166,6 +1189,7 @@ const setupAbilities = [
             event.immune = true;
           }
         }),
+        createHealFeedScoring(battle, Abilities.DrySkin, Types.Water, ABSORB_HEAL_FRACTION),
         // Absorbing a real Water move heals a quarter of max health
         battle.on(BattleEvents.UnitTriggerMoveFailed, EventPriority.Post, (event) => {
           const parent = event.parent;
@@ -1183,7 +1207,7 @@ const setupAbilities = [
             holder.heal(
               { type: EffectType.Ability, ability: Abilities.DrySkin, unit: holder },
               holder,
-              holder.checkStat(Stats.HP, 0) / 4,
+              holder.checkStat(Stats.HP, 0) * ABSORB_HEAL_FRACTION,
               0,
             );
           }
@@ -1696,8 +1720,11 @@ const setupAbilities = [
       ) {
         event.success = false;
 
-        // For visual cues
-        event.source.triggerAbility(Abilities.ClearBody);
+        // A cue is something a watcher sees, so it waits for a real
+        // attempt rather than the AI weighing one
+        if (!event.simulated) {
+          event.source.triggerAbility(Abilities.ClearBody);
+        }
       }
     }),
   ),
@@ -1899,7 +1926,12 @@ const setupAbilities = [
             event.source.hasAbility(Abilities.OwnTempo)
           ) {
             event.success = false;
-            event.source.triggerAbility(Abilities.OwnTempo);
+
+            // A cue is something a watcher sees, so it waits for a real
+            // attempt rather than the AI weighing one
+            if (!event.simulated) {
+              event.source.triggerAbility(Abilities.OwnTempo);
+            }
           }
         }),
         // Gaining the ability also cures the blocked status
@@ -2379,7 +2411,7 @@ const setupAbilities = [
             if (
               unit.alive &&
               unit.team.alliance !== event.source.team.alliance &&
-              unit.status[Statuses.Sleeping] != null
+              hasAnyStatus(unit, ASLEEP_STATUSES)
             ) {
               unit.damage(
                 {
@@ -2411,8 +2443,11 @@ const setupAbilities = [
       ) {
         event.success = false;
 
-        // For visual cues
-        event.source.triggerAbility(Abilities.HyperCutter);
+        // A cue is something a watcher sees, so it waits for a real
+        // attempt rather than the AI weighing one
+        if (!event.simulated) {
+          event.source.triggerAbility(Abilities.HyperCutter);
+        }
       }
     }),
   ),
@@ -2797,7 +2832,11 @@ const setupAbilities = [
           ) {
             event.success = false;
 
-            event.source.triggerAbility(Abilities.Scrappy);
+            // A cue is something a watcher sees, so it waits for a real
+            // attempt rather than the AI weighing one
+            if (!event.simulated) {
+              event.source.triggerAbility(Abilities.Scrappy);
+            }
           }
         }),
       ]),

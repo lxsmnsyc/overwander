@@ -28,14 +28,14 @@ interface SemiInvulnerableConfig {
 const SEMI_INVULNERABLE_MOVES: { [key in Moves]?: SemiInvulnerableConfig } = {
   // https://bulbapedia.bulbagarden.net/wiki/Dig_(move)
   [Moves.Dig]: {
-    bypass: new Set([Moves.Earthquake, Moves.Fissure]),
-    doubled: new Set([Moves.Earthquake]),
+    bypass: new Set([Moves.Earthquake, Moves.Fissure, Moves.Magnitude]),
+    doubled: new Set([Moves.Earthquake, Moves.Magnitude]),
   },
   // https://bulbapedia.bulbagarden.net/wiki/Fly_(move)
-  // TODO Twister (doubled), Hurricane once implemented
+  // TODO Hurricane once implemented
   [Moves.Fly]: {
-    bypass: new Set([Moves.Gust, Moves.Thunder]),
-    doubled: new Set([Moves.Gust]),
+    bypass: new Set([Moves.Gust, Moves.Thunder, Moves.Twister]),
+    doubled: new Set([Moves.Gust, Moves.Twister]),
     status: Statuses.Floating,
   },
   // TODO Dive once implemented: bypass Surf/Whirlpool (doubled),

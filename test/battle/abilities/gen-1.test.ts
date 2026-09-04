@@ -8,6 +8,13 @@ import {
   type UnitAttackEvent,
   type UnitAttackResolveCriticalEvent,
 } from '../../../src/battle/events';
+import {
+  BOSS_HEAL_FRACTION,
+  BOSS_HEAL_WINDOW,
+  BOSS_INDIRECT_DAMAGE_CAP,
+  SHADOW_DEFENSE_SCALE,
+  SHADOW_OFFENSE_SCALE,
+} from '../../../src/battle/abilities/special';
 import { MOVE_DELAY } from '../../../src/battle/mechanics/move';
 import turns from '../../../src/battle/turn';
 import type Unit from '../../../src/battle/unit';
@@ -1949,13 +1956,13 @@ describe('Weak Armor', () => {
 });
 
 describe('Boss', () => {
-  it('multiplies stats: a flat pool plus tenfold HP, doubled otherwise', () => {
+  it('multiplies stats: twentyfold HP, doubled otherwise', () => {
     const { battle, teamA } = createBattle();
     const boss = createUnit(battle, teamA);
     boss.addAbility(Abilities.Boss);
 
-    // 5000 + 160 * 10, so even a frail species is raid-sized
-    expect(boss.checkStat(Stats.HP, 0)).toBe(6600);
+    // 160 * 20, so a raid is as long as the species is bulky
+    expect(boss.checkStat(Stats.HP, 0)).toBe(3200);
     expect(boss.checkStat(Stats.Attack, 0)).toBe(210);
     expect(boss.checkStat(Stats.Speed, 0)).toBe(210);
   });
@@ -1979,106 +1986,115 @@ describe('Boss', () => {
     expect(boss.stages[Stages.Attack]).toBe(1);
   });
 
-  it('cannot be healed', () => {
+  it('heals an eighth of its pool a second, however many heals land', () => {
     const { battle, teamA, teamB } = createBattle();
     const boss = createUnit(battle, teamA);
     const ally = createUnit(battle, teamB);
     const cause = { type: EffectType.Move, move: Moves.Recover, unit: boss } as const;
 
     boss.addAbility(Abilities.Boss);
-    boss.setHealth(boss.checkStat(Stats.HP, 0) - 1000);
-    ally.setHealth(ally.checkStat(Stats.HP, 0) - 100);
+
+    const pool = boss.checkStat(Stats.HP, 0);
+    const rate = pool * BOSS_HEAL_FRACTION;
+
+    boss.setHealth(pool - 1000);
 
     const hurt = boss.health;
 
-    boss.heal(cause, boss, 500, 0);
-    // The pool is the timer a raid is run against, so nothing puts it
-    // back — but everybody else heals as they always did
-    expect(boss.health).toBe(hurt);
+    // A Recover asks for half the pool and is answered with an eighth:
+    // the pool is the fight's clock, so a boss winds it back rather
+    // than resetting it
+    boss.heal(cause, boss, pool / 2, 0);
+    expect(boss.health).toBe(hurt + rate);
 
+    // A second heal in the same breath is worth nothing: the
+    // allowance is spent until the fight runs on
+    boss.heal(cause, boss, pool / 2, 0);
+    expect(boss.health).toBe(hurt + rate);
+
+    // Half a second buys back half of it
+    battle.tick(BOSS_HEAL_WINDOW / 2);
+    boss.setHealth(hurt);
+    boss.heal(cause, boss, pool / 2, 0);
+    expect(boss.health).toBeCloseTo(hurt + rate / 2);
+
+    // And a whole second buys the lot
+    battle.tick(BOSS_HEAL_WINDOW);
+    boss.setHealth(hurt);
+    boss.heal(cause, boss, 10, 0);
+    expect(boss.health).toBe(hurt + 10);
+
+    // Everybody else heals as they always did
+    ally.setHealth(ally.checkStat(Stats.HP, 0) - 100);
     ally.heal(cause, ally, 50, 0);
-    expect(ally.health).toBeGreaterThan(ally.checkStat(Stats.HP, 0) - 100);
+    expect(ally.health).toBe(ally.checkStat(Stats.HP, 0) - 50);
   });
 
-  it('gets nothing back from Rest either', () => {
+  it('drains back no more than it heals', () => {
     const { battle, teamA } = createBattle();
     const boss = createUnit(battle, teamA);
 
     boss.addAbility(Abilities.Boss);
-    boss.setHealth(boss.checkStat(Stats.HP, 0) - 1000);
+
+    const pool = boss.checkStat(Stats.HP, 0);
+    const rate = pool * BOSS_HEAL_FRACTION;
+
+    boss.setHealth(pool - 1000);
 
     const hurt = boss.health;
 
-    boss.triggerMoveEffect(Moves.Rest, { type: MoveTargetType.Unit, unit: boss }, 0);
-    // Rest used to put the health on directly, which asked nobody
-    expect(boss.health).toBe(hurt);
-    // It still sleeps: what the ability refuses is the healing
-    expect(boss.getStatus(Statuses.Sleeping)).not.toBeUndefined();
+    // A drain rides the damage event as a negative amount, and it
+    // draws on the same allowance the heals do
+    boss.damage(NONE_CAUSE, boss, -pool, DamageFlags.Indirect);
+    expect(boss.health).toBe(hurt + rate);
+
+    boss.damage(NONE_CAUSE, boss, -pool, DamageFlags.Indirect);
+    expect(boss.health).toBe(hurt + rate);
   });
 
-  it('is immune to health-scaling damage', () => {
+  it('is immune to damage measured as a share of its pool', () => {
     const { battle, teamA, teamB } = createBattle();
     pinRandom(battle, 1);
     const attacker = createUnit(battle, teamA);
     const boss = createUnit(battle, teamB);
     boss.addAbility(Abilities.Boss);
+
+    const pool = boss.checkStat(Stats.HP, 0);
+
+    boss.setHealth(pool);
 
     // Super Fang halves health; the boss shrugs it off
     attacker.triggerMoveEffect(Moves.SuperFang, { type: MoveTargetType.Unit, unit: boss }, 0);
-    expect(boss.health).toBe(160);
-
-    // Health-scaled indirect damage (e.g. residuals) is ignored too
-    attacker.damage(NONE_CAUSE, boss, 10, DamageFlags.Indirect | DamageFlags.HealthScaled);
-    expect(boss.health).toBe(160);
+    expect(boss.health).toBe(pool);
 
     // Plain damage still lands
     attacker.damage(NONE_CAUSE, boss, 10, 0);
-    expect(boss.health).toBe(150);
+    expect(boss.health).toBe(pool - 10);
   });
 
-  it('is immune to indirect damage, crashes included', () => {
+  it('takes indirect damage, capped at what a hit is worth', () => {
     const { battle, teamA, teamB } = createBattle();
     pinRandom(battle, 1);
     const attacker = createUnit(battle, teamA);
     const boss = createUnit(battle, teamB);
     boss.addAbility(Abilities.Boss);
 
-    // Whatever the source — a burn, a seed, the weather — nothing
-    // indirect takes health off a boss
+    const pool = boss.checkStat(Stats.HP, 0);
+
+    boss.setHealth(pool);
+
+    // A burn, a seed or the weather all count for something now, and
+    // a residual measured against a raid pool counts for the cap
     attacker.damage(NONE_CAUSE, boss, 10, DamageFlags.Indirect);
-    expect(boss.health).toBe(160);
+    expect(boss.health).toBe(pool - 10);
 
-    // A crash off a missed Jump Kick is its own damage, and it is
-    // refused the same way — a plain unit would be down to half here
-    boss.addMove(Moves.JumpKick);
-    battle.emit(BattleEvents.UnitTriggerMoveMissed, {
-      id: 'UnitTriggerMoveMissed',
-      disabled: false,
-      parent: {
-        id: 'UnitTriggerMove',
-        disabled: false,
-        source: boss,
-        move: Moves.JumpKick,
-        target: { type: MoveTargetType.Unit, unit: attacker },
-        steps: 0,
-      },
-    });
-    expect(boss.health).toBe(160);
+    attacker.damage(NONE_CAUSE, boss, pool / 8, DamageFlags.Indirect | DamageFlags.HealthScaled);
+    expect(boss.health).toBe(pool - 10 - BOSS_INDIRECT_DAMAGE_CAP);
 
-    // A drain rides the same event as a negative amount, so healing
-    // still reaches it — a boss' pool is far above the health these
-    // units are built with, so there is room to climb
-    boss.damage(NONE_CAUSE, boss, -10, DamageFlags.Indirect);
-    expect(boss.health).toBe(170);
-
-    // A hit still lands
-    attacker.damage(NONE_CAUSE, boss, 30, 0);
-    expect(boss.health).toBe(140);
-
-    // What a boss spends on purpose it still pays: a Substitute's
+    // What a boss spends on purpose it pays in full: a Substitute's
     // price and an Explosion's own life are costs, not damage
-    boss.damage(NONE_CAUSE, boss, 20, DamageFlags.Indirect | DamageFlags.Cost);
-    expect(boss.health).toBe(120);
+    boss.damage(NONE_CAUSE, boss, 500, DamageFlags.Indirect | DamageFlags.Cost);
+    expect(boss.health).toBe(pool - 510 - BOSS_INDIRECT_DAMAGE_CAP);
   });
 
   it('shrugs off disruption statuses unless self-inflicted', () => {
@@ -2239,10 +2255,16 @@ describe('Boss', () => {
 
     expect(boss.status[Statuses.Dormant]).toBeDefined();
 
-    // A dent that leaves it above half leaves it sleeping
-    const half = boss.checkStat(Stats.HP, 0) / 2;
+    // Standing at the pool the ability gives it, rather than the one
+    // its record was built with
+    const pool = boss.checkStat(Stats.HP, 0);
 
-    attacker.damage({ type: EffectType.None }, boss, boss.health - Math.floor(half) - 1, 0);
+    boss.setHealth(pool);
+
+    // A dent that leaves it above half leaves it sleeping
+    const half = Math.floor(pool / 2);
+
+    attacker.damage({ type: EffectType.None }, boss, boss.health - half - 1, 0);
 
     expect(boss.status[Statuses.Dormant]).toBeDefined();
 
@@ -2277,60 +2299,46 @@ describe('Boss', () => {
 });
 
 describe('Shadow', () => {
-  function resolveDamage(battle: Battle, parent: UnitAttackEvent, value: number): number {
-    const event = {
-      id: 'UnitAttackResolveDamage',
-      disabled: false,
-      parent,
-      value,
-    } as const;
-
-    battle.emit(BattleEvents.UnitAttackResolveDamage, event);
-
-    return event.value;
-  }
-
-  it('amplifies damage dealt and received by 20%', () => {
+  it('sharpens what it attacks with and wears down what it stands behind', () => {
     const { battle, teamA, teamB } = createBattle();
-    pinRandom(battle, 1);
     const shadow = createUnit(battle, teamA);
-    const other = createUnit(battle, teamB);
-    const plainA = createUnit(battle, teamA);
-    const plainB = createUnit(battle, teamB);
+    const plain = createUnit(battle, teamB);
     shadow.addAbility(Abilities.Shadow);
 
-    const baseline = resolveDamage(
-      battle,
-      makeAttack(plainA, plainB, Moves.Tackle, Types.Normal, MoveCategories.Physical),
-      40,
+    expect(shadow.checkStat(Stats.Attack, 0)).toBeCloseTo(
+      plain.checkStat(Stats.Attack, 0) * SHADOW_OFFENSE_SCALE,
+    );
+    expect(shadow.checkStat(Stats.SpecialAttack, 0)).toBeCloseTo(
+      plain.checkStat(Stats.SpecialAttack, 0) * SHADOW_OFFENSE_SCALE,
+    );
+    expect(shadow.checkStat(Stats.Defense, 0)).toBeCloseTo(
+      plain.checkStat(Stats.Defense, 0) * SHADOW_DEFENSE_SCALE,
+    );
+    expect(shadow.checkStat(Stats.SpecialDefense, 0)).toBeCloseTo(
+      plain.checkStat(Stats.SpecialDefense, 0) * SHADOW_DEFENSE_SCALE,
     );
 
-    const dealt = makeAttack(shadow, other, Moves.Tackle, Types.Normal, MoveCategories.Physical);
-    expect(resolveDamage(battle, dealt, 40)).toBeCloseTo(baseline * 1.2);
-
-    const received = makeAttack(other, shadow, Moves.Tackle, Types.Normal, MoveCategories.Physical);
-    expect(resolveDamage(battle, received, 40)).toBeCloseTo(baseline * 1.2);
+    // What it is made of otherwise is its own: a shadow is no
+    // faster and no harder to knock down
+    expect(shadow.checkStat(Stats.HP, 0)).toBe(plain.checkStat(Stats.HP, 0));
+    expect(shadow.checkStat(Stats.Speed, 0)).toBe(plain.checkStat(Stats.Speed, 0));
   });
 
-  it('stacks between two shadow units', () => {
+  it('stands under its stages rather than beside them', () => {
     const { battle, teamA, teamB } = createBattle();
-    pinRandom(battle, 1);
     const shadow = createUnit(battle, teamA);
-    const mirror = createUnit(battle, teamB);
-    const plainA = createUnit(battle, teamA);
-    const plainB = createUnit(battle, teamB);
+    const plain = createUnit(battle, teamB);
     shadow.addAbility(Abilities.Shadow);
-    mirror.addAbility(Abilities.Shadow);
 
-    const baseline = resolveDamage(
-      battle,
-      makeAttack(plainA, plainB, Moves.Tackle, Types.Normal, MoveCategories.Physical),
-      40,
+    const cause = { type: EffectType.Move, move: Moves.SwordsDance, unit: shadow } as const;
+
+    shadow.addStage(Stages.Attack, 2, cause);
+    plain.addStage(Stages.Attack, 2, cause);
+
+    // The stage multiplies what the shadow already sharpened
+    expect(shadow.resolveStat(Stats.Attack, 0)).toBeCloseTo(
+      plain.resolveStat(Stats.Attack, 0) * SHADOW_OFFENSE_SCALE,
     );
-
-    const attack = makeAttack(shadow, mirror, Moves.Tackle, Types.Normal, MoveCategories.Physical);
-
-    expect(resolveDamage(battle, attack, 40)).toBeCloseTo(baseline * 1.44);
   });
 });
 

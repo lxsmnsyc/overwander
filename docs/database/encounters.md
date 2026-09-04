@@ -23,14 +23,14 @@ The three raids are kept apart because they are not the same prize:
 - A **mythical raid** stages what a relic called and hands it over at level 30,
   once.
 
-Where they are alike — the species-day IV floor (`RAID_FAMILY_DAY_MIN_IV`) and a
-prize that never bolts from a safari throw — `isRaidEncounter` covers all three,
+Where they are alike, in the species-day IV floor (`RAID_FAMILY_DAY_MIN_IV`) and
+in a prize that never bolts from a safari throw, `isRaidEncounter` covers all three,
 so nothing has to list them separately to treat them the same.
 
 A **fateful** meeting is the one nobody met anywhere: it never bolts, and the
-first ball that reaches it catches it. Three fields exist for it alone — `place`, the
+first ball that reaches it catches it. Three fields exist for it alone: `place`, the
 name it says it happened at, `slots`, the room it walks in with, and `abilities`,
-the whole list where it walks in with more than the one it rolled — and all
+the whole list where it walks in with more than the one it rolled. All
 three are absent from everything met in the world. They ride the encounter rather
 than the gift so a pokemon caught out of a gift keeps them: the catch that writes
 the record knows nothing about gifts.

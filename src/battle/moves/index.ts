@@ -1,9 +1,33 @@
 import type Battle from '../core';
+import setupBeatUp from './beat-up';
+import setupCurse from './curse';
+import setupDestinyBond from './destiny-bond';
+import setupEncore from './encore';
+import setupForesight from './foresight';
+import setupFriendlyFire from './friendly-fire';
+import setupFutureSight from './future-sight';
+import setupHiddenPower from './hidden-power';
+import setupLockOn from './lock-on';
+import setupNightmare from './nightmare';
+import setupNoEscapeMoves from './no-escape';
+import setupNonLethalMoves from './non-lethal';
+import setupPerishSong from './perish-song';
+import setupProtectMoves from './protect';
+import setupPursuit from './pursuit';
+import setupRapidSpin from './rapid-spin';
+import setupSketch from './sketch';
+import setupSleepingMoves from './sleeping-moves';
+import setupSpikes from './spikes';
+import setupSpite from './spite';
+import setupSupportMoves from './support';
+import setupThawingMoves from './thaw';
+import setupThief from './thief';
+import setupVariablePowerMoves from './variable-power';
 import setupAbsorb from './absorb';
 import setupBide from './bide';
 import setupBodySlam from './body-slam';
 import setupChargeMoves from './charge';
-import setupConversion from './conversion';
+import setupConversion, { setupConversion2 } from './conversion';
 import setupCounter from './counter';
 import setupCrashMoves from './crash';
 import setupDisable from './disable';
@@ -22,6 +46,7 @@ import setupRage from './rage';
 import setupRampageMoves from './rampage';
 import setupRechargeMoves from './recharge';
 import setupRecoilMoves from './recoil';
+import setupRollingMoves from './rolling';
 import setupRecoverMoves from './recover';
 import setupRest from './rest';
 import setupSelfDestructMoves from './self-destruct';
@@ -60,6 +85,17 @@ export default function setupMoves(battle: Battle): void {
   setupMultiHitMoves(battle);
   setupWeightMoves(battle);
 
+  // Johto: the groups it brought with it
+  setupProtectMoves(battle);
+  setupNoEscapeMoves(battle);
+  setupNonLethalMoves(battle);
+  setupThawingMoves(battle);
+  setupRollingMoves(battle);
+  setupVariablePowerMoves(battle);
+  setupHiddenPower(battle);
+  setupPursuit(battle);
+  setupBeatUp(battle);
+
   // Variations
   setupSolarBeam(battle);
   setupLeechSeed(battle);
@@ -82,6 +118,23 @@ export default function setupMoves(battle: Battle): void {
   setupWeatherAccuracyMoves(battle);
   setupWeatherMoves(battle);
   setupConversion(battle);
+  setupConversion2(battle);
+  setupCurse(battle);
+  setupNightmare(battle);
+  setupPerishSong(battle);
+  setupDestinyBond(battle);
+  setupEncore(battle);
+  setupSpite(battle);
+  setupForesight(battle);
+  setupLockOn(battle);
+  setupSupportMoves(battle);
+  setupSleepingMoves(battle);
+  setupSketch(battle);
+  setupSpikes(battle);
+  setupRapidSpin(battle);
+  setupThief(battle);
+  setupFriendlyFire(battle);
+  setupFutureSight(battle);
 
   // Last, because they are what is left: both fallbacks only answer
   // when every resolver above has declined to pick anything. Attack

@@ -9,6 +9,7 @@ import { type SnapshotRecord, asSnapshotRecord, spawnId } from './snapshot-recor
 import { requireUid } from '../server/auth';
 import {
   type NestOffer,
+  claimApricornTree as claimApricornOnServerSide,
   claimBerryPatch as claimBerryOnServerSide,
   claimItemCache as claimCacheOnServerSide,
   claimNest as claimNestOnServerSide,
@@ -272,6 +273,41 @@ async function claimBerryOnServer(
 ): Promise<ItemStack | null> {
   'use server';
   return claimBerryOnServerSide(
+    await requireUid(token),
+    x,
+    y,
+    cell,
+    await syncServerClock(),
+    offset,
+  );
+}
+
+/**
+ * Pick an apricorn tree: everything ripe on it lands in the player's
+ * bag, once per window, guarded the way a berry patch is
+ */
+export async function claimApricornTree(
+  snapshot: ChunkSnapshot,
+  cell: number,
+): Promise<ItemStack | null> {
+  return claimApricornOnServer(
+    await getIdToken(),
+    snapshot.chunk.x,
+    snapshot.chunk.y,
+    cell,
+    snapshot.offset,
+  );
+}
+
+async function claimApricornOnServer(
+  token: string,
+  x: number,
+  y: number,
+  cell: number,
+  offset: number,
+): Promise<ItemStack | null> {
+  'use server';
+  return claimApricornOnServerSide(
     await requireUid(token),
     x,
     y,

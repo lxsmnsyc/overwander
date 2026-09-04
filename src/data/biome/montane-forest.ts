@@ -1,6 +1,6 @@
 import Biome, { TimeOfDay } from '../ids/biome';
 import { Species } from '../ids/species';
-import { registerSpawnPool } from './__create';
+import { UNOWN_SPAWNS, registerSpawnPool } from './__create';
 
 /**
  * MontaneForest spawn pool, grouped by day-cycle period and rarity band
@@ -8,36 +8,68 @@ import { registerSpawnPool } from './__create';
 export default function registerMontaneForestSpawns(): void {
   registerSpawnPool(Biome.MontaneForest, {
     [TimeOfDay.Morning]: {
-      base: [{ species: Species.Mankey, weight: 20 }],
-      uncommon: [],
-      rare: [{ species: Species.Primeape, weight: 10 }],
+      base: [
+        { species: Species.Mankey, weight: 20 },
+        { species: Species.Teddiursa, weight: 20 },
+      ],
+      uncommon: [{ species: Species.Stantler, weight: 5 }],
+      rare: [
+        { species: Species.Primeape, weight: 10 },
+        { species: Species.Ursaring, weight: 5 },
+      ],
+      elusive: [{ species: Species.Heracross, weight: 5 }],
+      prized: [...UNOWN_SPAWNS],
       special: [],
     },
     [TimeOfDay.Day]: {
-      base: [{ species: Species.Mankey, weight: 20 }],
-      uncommon: [],
+      base: [
+        { species: Species.Mankey, weight: 20 },
+        { species: Species.Teddiursa, weight: 20 },
+      ],
+      uncommon: [{ species: Species.Stantler, weight: 5 }],
       rare: [
         { species: Species.Primeape, weight: 10 },
-        { species: Species.Pinsir, weight: 5 },
+        { species: Species.Ursaring, weight: 5 },
       ],
+      elusive: [
+        { species: Species.Pinsir, weight: 5 },
+        { species: Species.Heracross, weight: 5 },
+      ],
+      prized: [...UNOWN_SPAWNS],
       special: [],
     },
     [TimeOfDay.Evening]: {
       base: [{ species: Species.Zubat, weight: 30 }],
-      uncommon: [],
+      uncommon: [
+        { species: Species.Hoothoot, weight: 25 },
+        { species: Species.Stantler, weight: 5 },
+      ],
       rare: [{ species: Species.Golbat, weight: 10 }],
+      scarce: [{ species: Species.Noctowl, weight: 10 }],
+      elusive: [
+        { species: Species.Heracross, weight: 5 },
+        { species: Species.Crobat, weight: 5 },
+      ],
+      prized: [...UNOWN_SPAWNS],
       special: [],
     },
     [TimeOfDay.Night]: {
-      base: [
-        { species: Species.Zubat, weight: 30 },
+      base: [{ species: Species.Zubat, weight: 30 }],
+      uncommon: [
         { species: Species.Paras, weight: 20 },
+        { species: Species.Hoothoot, weight: 25 },
+        { species: Species.Stantler, weight: 5 },
       ],
-      uncommon: [],
-      rare: [
-        { species: Species.Golbat, weight: 10 },
+      rare: [{ species: Species.Golbat, weight: 10 }],
+      scarce: [
         { species: Species.Parasect, weight: 10 },
+        { species: Species.Noctowl, weight: 10 },
       ],
+      elusive: [
+        { species: Species.Heracross, weight: 5 },
+        { species: Species.Crobat, weight: 5 },
+      ],
+      prized: [...UNOWN_SPAWNS],
       special: [],
     },
   });

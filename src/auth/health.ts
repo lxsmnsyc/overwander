@@ -1,5 +1,6 @@
-import { Stats, getHealthStat, getIV } from '../data/constants/stats';
+import { Stats, getHealthStat, getIV, getOtherStat } from '../data/constants/stats';
 import type { Items } from '../data/ids/items';
+import { getNatureFactor } from '../data/ids/natures';
 import { NON_VOLATILE_MASK, NON_VOLATILE_STATUSES, Statuses, statusFlag } from '../data/ids/status';
 import type { Species } from '../data/ids/species';
 import { BERRY_HEALS, BERRY_STATUS_CURES } from '../data/items/berries';
@@ -67,6 +68,16 @@ export const STATUS_NAMES: Record<Statuses, string> = {
   [Statuses.Submerged]: 'Submerged',
   [Statuses.Dormant]: 'Dormant',
   [Statuses.Switching]: 'Switching',
+  [Statuses.Protected]: 'Protected',
+  [Statuses.Enduring]: 'Enduring',
+  [Statuses.Cornered]: 'Cornered',
+  [Statuses.Nightmared]: 'Nightmare',
+  [Statuses.Perishing]: 'Perishing',
+  [Statuses.Bonded]: 'Bonded',
+  [Statuses.Cursed]: 'Cursed',
+  [Statuses.Encored]: 'Encored',
+  [Statuses.Identified]: 'Identified',
+  [Statuses.Comatose]: 'Comatose',
 };
 
 /**
@@ -95,6 +106,41 @@ export function getMaxHealth(source: HealthSource): number {
     getIV(source.ivs, Stats.HP),
     source.effortValues[Stats.HP],
   );
+}
+
+/**
+ * Everything the six stats are derived from: a health source plus the
+ * nature that tilts five of them
+ */
+export interface StatsSource extends HealthSource {
+  nature: number;
+}
+
+/**
+ * What its six stats actually come to. Derived the same way maximum
+ * health is, and for the same reason: a level or a polished value
+ * moves them on its own. It is what an evolution asking about a stat
+ * is measured against
+ */
+export function getStats(source: StatsSource): Record<Stats, number> {
+  const base = getSpeciesData(source.species).stats;
+  const one = (stat: Stats): number => {
+    const value = getIV(source.ivs, stat);
+    const effort = source.effortValues[stat];
+
+    return stat === Stats.HP
+      ? getHealthStat(source.level, base[stat], value, effort)
+      : getOtherStat(source.level, base[stat], value, effort, getNatureFactor(source.nature, stat));
+  };
+
+  return {
+    [Stats.HP]: one(Stats.HP),
+    [Stats.Attack]: one(Stats.Attack),
+    [Stats.Defense]: one(Stats.Defense),
+    [Stats.SpecialAttack]: one(Stats.SpecialAttack),
+    [Stats.SpecialDefense]: one(Stats.SpecialDefense),
+    [Stats.Speed]: one(Stats.Speed),
+  };
 }
 
 /**

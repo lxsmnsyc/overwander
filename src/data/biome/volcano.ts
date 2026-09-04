@@ -1,6 +1,6 @@
 import Biome, { TimeOfDay } from '../ids/biome';
 import { Species } from '../ids/species';
-import { registerSpawnPool } from './__create';
+import { UNOWN_SPAWNS, registerSpawnPool } from './__create';
 
 /**
  * Volcano spawn pool, grouped by day-cycle period and rarity band.
@@ -15,70 +15,109 @@ export default function registerVolcanoSpawns(): void {
     [TimeOfDay.Morning]: {
       base: [
         { species: Species.Charmander, weight: 6 },
-        { species: Species.Growlithe, weight: 20 },
         { species: Species.Geodude, weight: 20 },
+        { species: Species.Cyndaquil, weight: 6 },
       ],
       uncommon: [
-        { species: Species.Charmeleon, weight: 3 },
-        { species: Species.Graveler, weight: 5 },
+        { species: Species.Magmar, weight: 10 },
+        { species: Species.Growlithe, weight: 20 },
+        { species: Species.Slugma, weight: 20 },
       ],
       rare: [
-        { species: Species.Charizard, weight: 3 },
-        { species: Species.Arcanine, weight: 5 },
-        { species: Species.Magmar, weight: 10 },
-        { species: Species.Golem, weight: 5 },
+        { species: Species.Charmeleon, weight: 3 },
+        { species: Species.Graveler, weight: 5 },
+        { species: Species.Quilava, weight: 3 },
       ],
-      special: [{ species: Species.Moltres, weight: 10 }],
+      scarce: [
+        { species: Species.Arcanine, weight: 5 },
+        { species: Species.Magcargo, weight: 5 },
+      ],
+      elusive: [
+        { species: Species.Charizard, weight: 3 },
+        { species: Species.Golem, weight: 5 },
+        { species: Species.Typhlosion, weight: 3 },
+      ],
+      prized: [...UNOWN_SPAWNS],
+      special: [
+        { species: Species.Moltres, weight: 10 },
+        { species: Species.Entei, weight: 10 },
+        { species: Species.HoOh, weight: 10 },
+      ],
     },
     [TimeOfDay.Day]: {
       base: [
         { species: Species.Charmander, weight: 6 },
+        { species: Species.Geodude, weight: 20 },
+        { species: Species.Cyndaquil, weight: 6 },
+      ],
+      uncommon: [
+        { species: Species.Magmar, weight: 10 },
         { species: Species.Growlithe, weight: 20 },
         { species: Species.Ponyta, weight: 20 },
-        { species: Species.Geodude, weight: 20 },
-      ],
-      uncommon: [
-        { species: Species.Charmeleon, weight: 3 },
-        { species: Species.Graveler, weight: 5 },
-      ],
-      rare: [
-        { species: Species.Charizard, weight: 3 },
-        { species: Species.Arcanine, weight: 5 },
-        { species: Species.Rapidash, weight: 5 },
-        { species: Species.Magmar, weight: 10 },
-        { species: Species.Golem, weight: 5 },
+        { species: Species.Slugma, weight: 20 },
         { species: Species.Onix, weight: 10 },
       ],
-      special: [{ species: Species.Moltres, weight: 10 }],
+      rare: [
+        { species: Species.Charmeleon, weight: 3 },
+        { species: Species.Graveler, weight: 5 },
+        { species: Species.Quilava, weight: 3 },
+      ],
+      scarce: [
+        { species: Species.Arcanine, weight: 5 },
+        { species: Species.Rapidash, weight: 5 },
+        { species: Species.Magcargo, weight: 5 },
+      ],
+      elusive: [
+        { species: Species.Charizard, weight: 3 },
+        { species: Species.Golem, weight: 5 },
+        { species: Species.Typhlosion, weight: 3 },
+      ],
+      prized: [...UNOWN_SPAWNS],
+      special: [
+        { species: Species.Moltres, weight: 10 },
+        { species: Species.Entei, weight: 10 },
+        { species: Species.HoOh, weight: 10 },
+      ],
     },
     [TimeOfDay.Evening]: {
-      base: [
-        { species: Species.Charmander, weight: 6 },
-        { species: Species.Vulpix, weight: 20 },
-        { species: Species.Ponyta, weight: 20 },
-      ],
+      base: [],
       uncommon: [
-        { species: Species.Charmeleon, weight: 3 },
-        { species: Species.Ninetales, weight: 5 },
-      ],
-      rare: [
-        { species: Species.Charizard, weight: 3 },
-        { species: Species.Rapidash, weight: 5 },
         { species: Species.Magmar, weight: 10 },
+        { species: Species.Vulpix, weight: 20 },
+        { species: Species.Slugma, weight: 20 },
       ],
-      special: [{ species: Species.Moltres, weight: 10 }],
+      rare: [],
+      scarce: [
+        { species: Species.Ninetales, weight: 5 },
+        { species: Species.Magcargo, weight: 10 },
+      ],
+      prized: [...UNOWN_SPAWNS],
+      special: [
+        { species: Species.Moltres, weight: 10 },
+        { species: Species.Entei, weight: 10 },
+        { species: Species.HoOh, weight: 10 },
+      ],
     },
     [TimeOfDay.Night]: {
-      base: [
+      base: [],
+      uncommon: [
+        { species: Species.Magmar, weight: 10 },
         { species: Species.Vulpix, weight: 20 },
         { species: Species.Koffing, weight: 20 },
+        { species: Species.Slugma, weight: 20 },
       ],
-      uncommon: [{ species: Species.Ninetales, weight: 5 }],
-      rare: [
+      rare: [],
+      scarce: [
         { species: Species.Weezing, weight: 5 },
-        { species: Species.Magmar, weight: 10 },
+        { species: Species.Ninetales, weight: 5 },
+        { species: Species.Magcargo, weight: 5 },
       ],
-      special: [{ species: Species.Moltres, weight: 10 }],
+      prized: [...UNOWN_SPAWNS],
+      special: [
+        { species: Species.Moltres, weight: 10 },
+        { species: Species.Entei, weight: 10 },
+        { species: Species.HoOh, weight: 10 },
+      ],
     },
   });
 }

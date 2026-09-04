@@ -43,8 +43,17 @@ import { Genders, type Species } from '../../../data/ids/species';
 
 import type { Statuses } from '../../../data/ids/status';
 import { getMoveData } from '../../../data/moves';
-import { bodyOf, boxOf, drawSlot, scaleOf, withinSlot } from './draw';
-import { type Slot, lobbyCamera, project, readField, ringStandings } from './field';
+import { bodyOf, boxOf, drawAim, drawSlot, scaleOf, withinSlot } from './draw';
+import {
+  type Slot,
+  aimedAt,
+  lobbyCamera,
+  project,
+  readField,
+  ringStandings,
+  skiesOver,
+  unitsOf,
+} from './field';
 import { COLORS, FIELD_UNIT, HEIGHT, LOADING_LABEL, TURN_SLOP, WIDTH } from './metrics';
 import {
   CUE_GAP,
@@ -512,6 +521,30 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
 
       const onto = batch == null ? undefined : { batch, bakery };
 
+      // Who is aiming at whom, under the bodies: a field of four
+      // winding up says who is busy and nothing about who is about to
+      // be hit. Only what is being worked on now, so a move already in
+      // the air is left to its own picture
+      for (const slot of slots) {
+        const aim = aimedAt(slot.unit);
+
+        if (aim == null || !slot.unit.alive) {
+          continue;
+        }
+        // The colour of the bar it is filling, so the line and the bar
+        // are read as one thing
+        const colour = slot.unit.casting == null ? COLORS.channel : COLORS.cast;
+        const casts = bodyOf(slot);
+
+        for (const on of unitsOf(aim)) {
+          const target = on === slot.unit ? null : at.get(on);
+
+          if (target != null && on.alive) {
+            drawAim(context, casts, bodyOf(target), colour, clock, onto);
+          }
+        }
+      }
+
       for (const slot of slots) {
         drawSlot(context, slot, striking, clock, gone.has(slot.unit), onto);
       }
@@ -520,17 +553,32 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       // weather is the field's own state rather than anybody's move,
       // and it belongs behind the thing being watched.
       //
-      // Asked of a pokemon rather than of the battle, because outside
-      // a fight between players the weather is the **team's**: a raid
-      // has one side standing in rain and the other in the dry, and
-      // what the viewer should see is the sky over their own side
-      const watcher = slots.find((slot) => slot.unit.alive);
-      const sky = watcher == null ? props.battle.weather.current : watcher.unit.checkWeather();
+      // One patch per sky rather than one over the picture. Outside a
+      // fight between players the weather is the **team's**: a raid
+      // has one side standing in its own sunshine and the other in the
+      // dry, and only a boss puts weather over everybody
+      const skies = skiesOver(slots, props.battle, { width: WIDTH, height: HEIGHT });
 
       if (batch == null) {
-        paintWeather(context, sky, { width: WIDTH, height: HEIGHT }, clock);
+        for (const patch of skies) {
+          context.save();
+          context.translate(patch.x, patch.y);
+          paintWeather(context, patch.weather, patch, clock);
+          context.restore();
+        }
       } else {
-        batchWeather(batch, sky, { width: WIDTH, height: HEIGHT }, clock);
+        for (const patch of skies) {
+          // Carried rather than clipped: the batch has no scissor, and
+          // the painters lay their sky out from their own origin
+          batch.carry(
+            stage.offsetX + patch.x * stage.scale,
+            stage.offsetY + patch.y * stage.scale,
+            1,
+            stage.scale,
+          );
+          batchWeather(batch, patch.weather, patch, clock);
+        }
+        batch.carry(stage.offsetX, stage.offsetY, 1, stage.scale);
         // Everything the field is made of is written now. What follows
         // is the move effects, which stay painted: they are the one
         // thing here drawn as art rather than as pictures, and there

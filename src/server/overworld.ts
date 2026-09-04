@@ -10,12 +10,13 @@ import ChunkSnapshot, {
   type Spawn,
 } from '../overworld/chunk-snapshot';
 import getWorld from '../overworld/current';
-import { getSpawnRarity } from '../data/biome';
 import deriveEncounter, {
   type EncounterOptions,
   EncounterType,
-  SPAWN_LEVELS,
+  deriveTrainedAbilities,
+  getSpawnLevels,
 } from '../overworld/encounter';
+import { DEFAULT_ITEM_SLOTS, Slots, defaultSlots, withSlots } from '../data/constants/slots';
 import type Weather from '../data/overworld/weather';
 import { DARK_DAY_SHADOW_CHANCE, shadowsWildMeetings } from '../data/overworld/weather';
 import { encounterKey, encounterWindow } from '../overworld/safari';
@@ -315,6 +316,46 @@ export async function claimBerryPatch(
 }
 
 /**
+ * Pick an apricorn tree: everything ripe on it lands in the bag, the
+ * way a berry patch's does.
+ *
+ * It shares the berry ledger rather than keeping one of its own: a
+ * marker names a cell in a window, a cell is a patch or a tree and
+ * never both, and what is written down either way is a handful of one
+ * item picked off a plant
+ */
+export async function claimApricornTree(
+  uid: string,
+  x: number,
+  y: number,
+  cell: number,
+  now: number,
+  offset: number,
+): Promise<ItemStack | null> {
+  const snapshot = await resolveSnapshot(x, y, now, offset);
+  const picked = snapshot?.getApricornTrees().get(cell);
+
+  if (snapshot == null || picked == null) {
+    return null;
+  }
+
+  const id = `${berryPrefix(snapshot)}${cell}`;
+
+  if (
+    !(await claim('berry_claims', id, {
+      player: uid,
+      item: picked.item,
+      amount: picked.amount,
+    }))
+  ) {
+    return null;
+  }
+  await grantItem(uid, picked.item, picked.amount);
+  await bumpProgress(uid, [[Metric.Landmarks, Landmark.Apricorn, 1]]);
+  return picked;
+}
+
+/**
  * The claim marker one player's visit to one nest, in one half-day
  * window, is written against. Both the peek and the claim name it, so
  * looking and taking cannot disagree about which egg is in question
@@ -559,7 +600,15 @@ export async function claimPhenomenon(
   );
   const spawn: Spawn = [reward.species, rng.int32(), rng.int32()];
 
-  return { kind: 'encounter', encounter: await startEncounter(uid, snapshot, key, spawn) };
+  // What startled it out travels with the meeting: the Lure Ball is
+  // thrown at whatever came up out of a ripple, and by the time it is
+  // thrown the cell is long behind the player
+  return {
+    kind: 'encounter',
+    encounter: await startEncounter(uid, snapshot, key, spawn, {
+      phenomenon: snapshot.getPhenomena().get(cell),
+    }),
+  };
 }
 
 /**
@@ -645,15 +694,36 @@ export async function startEncounter(
     levels:
       options.levels ??
       (options.level == null && (options.type ?? EncounterType.Wild) === EncounterType.Wild
-        ? overworld.checkEncounterLevels(id, SPAWN_LEVELS[getSpawnRarity(spawn[0])])
+        ? overworld.checkEncounterLevels(id, getSpawnLevels(spawn[0]))
         : undefined),
   });
+  // What a trained pokemon keeps once it changes hands: the second
+  // ability its owner put into it, and the room for the second item
+  // it was carrying. Both are asked for by the caller, since nothing
+  // met in the world has either
+  const abilities = [
+    ...new Set(
+      deriveTrainedAbilities(
+        derived.species,
+        derived.traitValue,
+        derived.ability,
+        options.abilities ?? 1,
+      ),
+    ),
+  ];
+  const room = Math.max(DEFAULT_ITEM_SLOTS, options.itemSlots ?? DEFAULT_ITEM_SLOTS);
+  // Room for both, or the record would hold a second ability it has
+  // no slot for: the battle counts slots rather than what is on the
+  // list, and the counter would read it as already full
+  const slots = withSlots(defaultSlots(abilities), Slots.Item, room);
   const record: EncounterRecord = {
     ...derived,
     nature: overworld.checkEncounterNature(id, derived.nature),
     gender: overworld.checkEncounterGender(id, derived.gender),
     spawn: id,
     player: uid,
+    ...(abilities.length > 1 ? { abilities } : {}),
+    ...(slots === defaultSlots() ? {} : { slots }),
   };
 
   await tx(async (transaction) => writeEncounter(transaction, record));

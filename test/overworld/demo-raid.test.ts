@@ -12,8 +12,8 @@ import {
   PLAYER_ALLIANCE,
   RAID_BOSS_LEVEL,
   canStageBoss,
-  createRaidBattle,
 } from '../../src/overworld/raid';
+import { createRaidBattle } from '../../src/overworld/raid-battle';
 import { Species } from '../../src/data/ids/species';
 import { PERFECT_IVS } from '../../src/data/constants/stats';
 import { isFullyEvolved } from '../../src/data/species';

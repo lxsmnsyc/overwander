@@ -1,62 +1,52 @@
+import type { Coat } from './sprite-coats';
 import type { SpriteAnim } from '../data/ids/sprite-anims';
 import { asSpriteAnim } from '../data/ids/sprite-anims';
 
 /**
- * What a pokemon's sprite metadata says, and how to read it safely.
+ * What a pokemon's sprite sheet says, and how to read it safely.
  *
- * A pokemon ships as three files: a drawing per coat —
- * `regular/{species}.png` and `shiny/{species}.png` — and one
- * description of the animation they share, `meta/{species}.json`. The
- * description used to sit beside each drawing, which meant two
- * byte-identical copies of it per pokemon and two things to keep in
- * step; a shiny is the same animation in different colours, so there
- * is one copy of it now and the coat folders hold nothing but pictures.
+ * A pokemon is a folder: one `sheet.json` describing the layout, one
+ * `frames.bin` holding the numbers, and a PNG per coat. Every coat is
+ * packed to the same layout, so `regular.png` and `shiny.png` are two
+ * drawings over one description and swapping one for the other changes
+ * nothing else.
  *
- * The description is the sprite collection's own, sanitised: the sheet
- * is packed, so `sheet.pictures` says where every distinct drawing
- * landed on it, `anims.anims` says how long each frame is held and
- * which clip it plays from, and `sprites` carries the part no other
- * layout has — **anchor points**, per frame, for where the parts of the
- * pokemon are.
+ * The folders are built by the SpriteCollab checkout beside this
+ * repository and copied in whole, so this module reads that format
+ * rather than one of its own: `compact/README.md` there is the
+ * authority on it.
  *
- * The two halves disagree about how big a frame is, on purpose.
- * `anims.anims` is faithful to the `AnimData.xml` it came from and
- * names the cell the artist drew in; `sprites` names what is actually
- * on the sheet, which on a `compact` sheet has been **trimmed** to the
- * pixels that are lit and packed at that size. `sprites` is the half to
- * draw from: its `frameWidth`, `frameHeight` and anchors are all in the
- * trimmed frame's own coordinates, and `trim` says where that frame sat
- * in the authored cell for anything that needs the original box back.
- * An untrimmed sheet is the same shape with a trim of nothing, so
- * nothing downstream has to ask which kind it has.
+ * `sheet.pictures` says where every distinct drawing landed, `anims`
+ * says how long each frame is held and which grid it plays from, and
+ * `sprites` says which frames belong to a clip. The frames themselves
+ * are in `frames.bin`, deduplicated: a pose held for ten frames is one
+ * record that ten frames point at.
  *
- * An anchor can fall **outside** the trimmed frame, and a few hundred
- * of them do: trimming crops to what is drawn, and a flying pokemon's
- * shadow is on the ground below everything drawn. They are still inside
- * the authored cell, and a point below a frame is a perfectly good
- * point to hang a sprite from — so nothing clamps them.
- *
- * The anchors come from the collection's `offset.png`, which paints one
- * pixel per part on a copy of the sheet. They are what a canvas needs
- * to place a pokemon rather than guess at it: the shadow marker is the
+ * The part no other layout has is the **anchor points**, for where the
+ * parts of the pokemon are: the shadow, the body, the head and both
+ * hands, in the frame box's own pixels. They come from the
+ * collection's `-Offsets` images, and they are what a canvas needs to
+ * place a pokemon rather than guess at it. The shadow marker is the
  * point that sits on the ground, so a sprite whose shadow lands on a
  * cell is standing on that cell however much empty frame there is
- * under its feet. That empty band used to be measured in the browser
- * by drawing a frame into a scratch canvas and reading the pixels
- * back, which Safari and Firefox both refuse when their fingerprinting
- * protections are on — and which was a guess even when it worked,
- * since a whisker hanging below the body is not what a pokemon stands
- * on.
+ * under its feet.
+ *
+ * An anchor can fall **outside** the frame, and a few hundred do:
+ * frames are cropped to what is drawn, and a flying pokemon's shadow
+ * is on the ground below everything drawn. Nothing clamps them.
+ *
+ * The two halves disagree about how big a frame is, on purpose.
+ * `anims` is faithful to the `AnimData.xml` it came from and names the
+ * cell the artist drew in; `sprites` names what is on the sheet, which
+ * has been trimmed to the pixels that are lit. `sprites` is the half
+ * to draw from, and `trim` says where that frame sat in the authored
+ * cell for anything that needs the original box back.
  *
  * This module is the contract and nothing else: no canvas, no
  * playhead, no drawing. [`SpeciesSpriteAnimation`](./species-sprite-animation.ts)
  * is what plays it.
  */
 
-/**
- * Row order of PMD sprite sheets: one row per orientation, `Down`
- * first, rotating counter-clockwise
- */
 /**
  * How many frames of a drawn animation go by in a second.
  *
@@ -67,8 +57,8 @@ import { asSpriteAnim } from '../data/ids/sprite-anims';
  * rather than move.
  *
  * It is the speed a clip plays at when nobody has asked for a length.
- * Anything fitted to a window — a thrown move ending as its hit lands
- * — is stretched from here rather than counted in it
+ * Anything fitted to a window, a thrown move ending as its hit lands,
+ * is stretched from here rather than counted in it
  */
 export const SPRITE_FPS = 24;
 
@@ -172,8 +162,6 @@ export interface SheetData {
 export interface AnimData {
   /** Which animation this is. */
   name: SpriteAnim;
-  frameWidth: number;
-  frameHeight: number;
   /** Animation id from `AnimData.xml`. */
   index: number;
   /**
@@ -183,56 +171,50 @@ export interface AnimData {
   durations: number[];
   /**
    * Animation image the frames come from. Equals `name` unless the
-   * anim is a `CopyOf` — a Strike is drawn from the Attack grid
+   * anim is a copy of another — a Strike is drawn from the Attack grid
    */
   target: SpriteAnim;
-}
-
-export interface SanitizedAnimData {
-  shadowSize: number;
-  anims: AnimData[];
 }
 
 /**
  * Which part of a pokemon an anchor marks.
  *
- * `left` and `right` are the **pokemon's**, so on a frame facing the
- * camera the left hand is the one on the right of the picture
+ * `left` and `right` are the archive's own names for its red and its
+ * blue mark. Red is the one on the left of a frame that faces the
+ * camera, which is the pokemon's own right hand: the names are the
+ * screen's
  */
 export type SpriteAnchor = 'shadow' | 'center' | 'head' | 'left' | 'right';
 
-/** Anchors of a single frame, relative to that frame's top-left corner. */
+/**
+ * One frame: which picture it draws, where in its box, and where the
+ * parts of the pokemon are while it is showing.
+ *
+ * Every anchor is in the frame box's own pixels and may be missing:
+ * two markers landing on one pixel leaves whichever was painted last,
+ * and not every pokemon has hands to mark. `null` is a real answer
+ * here rather than a broken file, and the caller decides what to do
+ * about it
+ */
 export interface SpriteFrameData {
-  /** Shadow center. */
   shadow: Point | null;
-  /** Body center. */
   center: Point | null;
   head: Point | null;
   left: Point | null;
   right: Point | null;
   /**
-   * Which packed picture this frame is drawn from, as an index into
-   * the clip's `cells` grid.
+   * Which packed picture this frame draws, as an index into
+   * `sheet.pictures`.
    *
-   * Half of a sheet is the same picture twice — a pose held for ten
-   * frames, a left-facing row that is the right-facing one mirrored —
-   * so the pictures are packed once and the frames point at them. A
-   * sheet packed before that says nothing here, and its frames are its
-   * pictures: see `cells`
+   * Half of a sheet is the same picture twice, a pose held for ten
+   * frames or a left-facing row that is the right-facing one mirrored,
+   * so the pictures are packed once and the frames point at them
    */
-  cell: number | null;
-  /** Whether that picture is drawn mirrored to make this frame. */
+  cell: number;
+  /** Whether that picture is drawn mirrored about its own axis. */
   flip: boolean;
-  /**
-   * Where that picture's corner sits inside the frame's box, as
-   * `[x, y]`.
-   *
-   * Pictures are cropped to what is drawn in them and a clip's box is
-   * as wide as its widest reach, so a frame is a small picture hung
-   * somewhere in a large box. Nothing here means the picture fills the
-   * box, which is what an untrimmed sheet has
-   */
-  at: Point | null;
+  /** Where that picture's corner sits inside the frame's box. */
+  at: Point;
 }
 
 export interface SpriteTargetData {
@@ -242,17 +224,15 @@ export interface SpriteTargetData {
   /** Frame size before trimming, as authored in `AnimData.xml`. */
   sourceFrameWidth: number;
   sourceFrameHeight: number;
-  /**
-   * Where the trimmed frame sits inside the source cell. `[0, 0]` with a
-   * frame size equal to the source size means this image was left
-   * untrimmed
-   */
+  /** Where the trimmed frame sits inside the source cell. */
   trim: Point;
   /** Frames per orientation. */
   columns: number;
-  /** Orientations, in `directions` order. */
+  /**
+   * Orientations, which are the first `rows` of `SPRITE_DIRECTIONS`.
+   * A sleeping pokemon faces nowhere and has one
+   */
   rows: number;
-  directions: SpriteDirection[];
   /**
    * Row-major, `rows * columns` entries. The frame for a given
    * orientation and frame index sits at `direction * columns + frame`
@@ -261,14 +241,16 @@ export interface SpriteTargetData {
 }
 
 export interface SpriteSheetJSON {
-  /** Whether frames were trimmed to their content before packing. */
-  compact: boolean;
+  /** Which shape the file was written in. */
+  version: number;
+  /** Which drawings of this pokemon the folder holds. */
+  coats: Coat[];
+  /** Small, ordinary or large, as the archive graded it. */
+  shadowSize: number;
   sheet: SheetData;
-  /**
-   * Faithful to `AnimData.xml` — frame sizes here are always untrimmed
-   */
-  anims: SanitizedAnimData;
-  /** Reach an entry through `anims.anims[].target` */
+  /** Faithful to `AnimData.xml`: frame sizes here are untrimmed. */
+  anims: AnimData[];
+  /** Reach an entry through `anims[].target`. */
   sprites: Partial<Record<SpriteAnim, SpriteTargetData>>;
 }
 
@@ -284,96 +266,163 @@ function asNumber(value: unknown): number {
   return typeof value === 'number' && Number.isFinite(value) ? value : 0;
 }
 
-function asString(value: unknown): string {
-  return typeof value === 'string' ? value : '';
-}
-
 function asArray(value: unknown): unknown[] {
   return Array.isArray(value) ? value : [];
 }
 
-/**
- * An anchor, or nothing. A marker can be missing: two of them landing
- * on one pixel leaves whichever was painted last, and not every
- * pokemon has hands to mark — so `null` is a real answer here rather
- * than a broken file, and the caller decides what to do about it
- */
 function asPoint(value: unknown): Point | null {
   const pair = asArray(value);
 
   return pair.length >= 2 ? [asNumber(pair[0]), asNumber(pair[1])] : null;
 }
 
-/** The pictures of a sheet, each written as `[x, y, width, height]`. */
-function asPictures(value: unknown): SheetRect[] {
-  return asArray(value).map((entry) => {
-    const rect = asArray(entry);
+const COAT_NAMES = new Set<string>(['regular', 'shiny', 'female', 'shinyFemale']);
 
-    return {
-      x: asNumber(rect[0]),
-      y: asNumber(rect[1]),
-      width: asNumber(rect[2]),
-      height: asNumber(rect[3]),
-    };
-  });
+function asCoats(value: unknown): Coat[] {
+  return asArray(value).filter(
+    (coat): coat is Coat => typeof coat === 'string' && COAT_NAMES.has(coat),
+  );
 }
 
 /**
- * Where each part of a frame sits in the array a description writes it
- * as. The names are worth nothing in a file that repeats them a
- * hundred thousand times, so the order **is** the contract
- */
-const FRAME_SHADOW = 0;
-const FRAME_CENTER = 1;
-const FRAME_HEAD = 2;
-const FRAME_LEFT = 3;
-const FRAME_RIGHT = 4;
-const FRAME_CELL = 5;
-const FRAME_FLIP = 6;
-const FRAME_AT = 7;
-
-function asFrame(value: unknown): SpriteFrameData {
-  const held = asArray(value);
-  const cell = held[FRAME_CELL];
-
-  return {
-    shadow: asPoint(held[FRAME_SHADOW]),
-    center: asPoint(held[FRAME_CENTER]),
-    head: asPoint(held[FRAME_HEAD]),
-    left: asPoint(held[FRAME_LEFT]),
-    right: asPoint(held[FRAME_RIGHT]),
-    cell: typeof cell === 'number' ? cell : null,
-    flip: held[FRAME_FLIP] === 1,
-    at: asPoint(held[FRAME_AT]),
-  };
-}
-
-function asDirections(value: unknown): SpriteDirection[] {
-  const known = new Set<string>(SPRITE_DIRECTIONS);
-
-  return asArray(value)
-    .map(asString)
-    .filter((name): name is SpriteDirection => known.has(name));
-}
-
-/**
- * A fetched `meta/{species}.json`, read into the shape this game
- * expects.
+ * `frames.bin`: a header, then one deflated block holding the frame
+ * records and the stream of indices pointing at them.
  *
- * The files are assets rather than input, but they are still JSON
- * arriving over the wire: a description with a missing field should
- * draw nothing rather than throw somewhere inside a draw call sixty
- * times a second
+ * The table is **column-major**, so column `c` of record `r` sits at
+ * `table[c * records + r]`. Fourteen columns, in this order
  */
-export default function asSpriteSheetJSON(value: unknown): SpriteSheetJSON {
+const COLUMN_SHADOW = 0;
+const COLUMN_CENTER = 2;
+const COLUMN_HEAD = 4;
+const COLUMN_LEFT = 6;
+const COLUMN_RIGHT = 8;
+const COLUMN_CELL = 10;
+const COLUMN_FLIP = 11;
+const COLUMN_AT = 12;
+const COLUMNS = 14;
+
+/** An anchor that was never painted, in both of its slots. */
+const ABSENT = -32768;
+
+/** Bytes of header before the deflated block. */
+const HEADER = 12;
+
+/** What this reader knows how to read. */
+const FRAMES_VERSION = 2;
+
+/** The frames of one pokemon, and the stream that points at them. */
+export interface FrameTable {
+  records: SpriteFrameData[];
+  indices: Uint16Array;
+}
+
+const NO_FRAMES: FrameTable = { records: [], indices: new Uint16Array(0) };
+
+/**
+ * Inflates the deflated half of `frames.bin`.
+ *
+ * `DecompressionStream` is the platform's own inflate and costs
+ * nothing to ship, but it is recent: Safari before 16.4 and Firefox
+ * before 113 have no inflate at all. Those load `fflate` instead, and
+ * they load it **only then** — the import is dynamic, so a browser
+ * with the built-in never fetches the chunk
+ */
+async function inflate(bytes: Uint8Array): Promise<Uint8Array> {
+  // Copied into a buffer of its own: what arrives is usually a view
+  // over a larger one, which is neither a Blob part nor safe for
+  // `fflate` to hold on to
+  const held = new Uint8Array(bytes);
+
+  if (typeof DecompressionStream === 'undefined') {
+    const { unzlibSync } = await import('fflate');
+
+    return unzlibSync(held);
+  }
+  const stream = new Blob([held]).stream().pipeThrough(new DecompressionStream('deflate'));
+
+  return new Uint8Array(await new Response(stream).arrayBuffer());
+}
+
+function pointAt(table: Int16Array, records: number, record: number, column: number): Point | null {
+  const x = table[column * records + record];
+  const y = table[(column + 1) * records + record];
+
+  return x === ABSENT || y === ABSENT ? null : [x, y];
+}
+
+/**
+ * Reads `frames.bin`.
+ *
+ * The records are read into objects once and shared: a clip's frames
+ * are references into this array, so ten frames holding one pose are
+ * ten pointers rather than ten copies. Anything that does not parse
+ * reads as no frames at all, which draws nothing rather than drawing a
+ * slice of whatever happens to sit at those coordinates
+ */
+export async function readFrameTable(bytes: Uint8Array): Promise<FrameTable> {
+  if (bytes.length < HEADER) {
+    return NO_FRAMES;
+  }
+  const head = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+  const magic = String.fromCharCode(bytes[0], bytes[1], bytes[2], bytes[3]);
+
+  if (magic !== 'PMDF' || head.getUint16(4, true) !== FRAMES_VERSION) {
+    return NO_FRAMES;
+  }
+  const records = head.getUint16(6, true);
+  const count = head.getUint32(8, true);
+  let body: Uint8Array;
+
+  try {
+    body = await inflate(bytes.subarray(HEADER));
+  } catch {
+    return NO_FRAMES;
+  }
+  const tableBytes = records * COLUMNS * 2;
+
+  if (body.length < tableBytes + count * 2) {
+    return NO_FRAMES;
+  }
+  // Copied rather than viewed in place: what comes out of the
+  // decompressor is not promised to be two-byte aligned
+  const table = new Int16Array(body.buffer.slice(body.byteOffset, body.byteOffset + tableBytes));
+  const indices = new Uint16Array(
+    body.buffer.slice(body.byteOffset + tableBytes, body.byteOffset + tableBytes + count * 2),
+  );
+  const frames: SpriteFrameData[] = [];
+
+  for (let record = 0; record < records; record += 1) {
+    frames.push({
+      shadow: pointAt(table, records, record, COLUMN_SHADOW),
+      center: pointAt(table, records, record, COLUMN_CENTER),
+      head: pointAt(table, records, record, COLUMN_HEAD),
+      left: pointAt(table, records, record, COLUMN_LEFT),
+      right: pointAt(table, records, record, COLUMN_RIGHT),
+      cell: table[COLUMN_CELL * records + record],
+      flip: table[COLUMN_FLIP * records + record] === 1,
+      at: [table[COLUMN_AT * records + record], table[(COLUMN_AT + 1) * records + record]],
+    });
+  }
+  return { records: frames, indices };
+}
+
+/**
+ * A fetched `sheet.json` and its `frames.bin`, read into the shape
+ * this game draws from.
+ *
+ * The files are assets rather than input, but they are still arriving
+ * over the wire: a description with a missing field should draw
+ * nothing rather than throw somewhere inside a draw call sixty times a
+ * second
+ */
+export default function asSpriteSheetJSON(value: unknown, table: FrameTable): SpriteSheetJSON {
   const root = asRecord(value);
   const sheet = asRecord(root.sheet);
-  const anims = asRecord(root.anims);
-  const sprites: Record<string, SpriteTargetData> = {};
+  const sprites: Partial<Record<SpriteAnim, SpriteTargetData>> = {};
 
-  for (const [key, entry] of Object.entries(asRecord(root.sprites))) {
-    const name = asSpriteAnim(Number.parseInt(key, 10));
+  for (const entry of asArray(root.sprites)) {
     const target = asRecord(entry);
+    const name = asSpriteAnim(asNumber(target.anim));
 
     // An animation this game has no number for is one it could not ask
     // to play, so there is nothing to keep
@@ -382,51 +431,68 @@ export default function asSpriteSheetJSON(value: unknown): SpriteSheetJSON {
     }
     const frameWidth = asNumber(target.frameWidth);
     const frameHeight = asNumber(target.frameHeight);
+    const span = asArray(target.frames);
+    const from = asNumber(span[0]);
+    const count = asNumber(span[1]);
+    const frames: SpriteFrameData[] = [];
+
+    for (let at = from; at < from + count; at += 1) {
+      // A span that runs off the end of the stream describes frames
+      // that are not there, which is a file this reader will not
+      // invent pixels for
+      const frame = at < table.indices.length ? table.records[table.indices[at]] : undefined;
+
+      if (frame != null) {
+        frames.push(frame);
+      }
+    }
 
     sprites[name] = {
       frameWidth,
       frameHeight,
-      // A description written before the packer learned to trim says
-      // nothing about a source cell, and its frames *are* the source
-      // cells — so an untrimmed sheet reads as a trim of nothing, and
-      // everything downstream has one case to handle instead of two
       sourceFrameWidth: asNumber(target.sourceFrameWidth) || frameWidth,
       sourceFrameHeight: asNumber(target.sourceFrameHeight) || frameHeight,
       trim: asPoint(target.trim) ?? [0, 0],
       columns: asNumber(target.columns),
       rows: asNumber(target.rows),
-      directions: asDirections(target.directions),
-      frames: asArray(target.frames).map(asFrame),
+      frames,
     };
   }
 
   return {
-    compact: root.compact === true,
+    version: asNumber(root.version),
+    coats: asCoats(root.coats),
+    shadowSize: asNumber(root.shadowSize),
     sheet: {
       width: asNumber(sheet.width),
       height: asNumber(sheet.height),
-      pictures: asPictures(sheet.pictures),
-    },
-    anims: {
-      shadowSize: asNumber(anims.shadowSize),
-      anims: asArray(anims.anims)
-        .map((entry) => {
-          const anim = asRecord(entry);
-          const name = asSpriteAnim(asNumber(anim.name));
+      pictures: asArray(sheet.pictures).map((entry) => {
+        const rect = asArray(entry);
 
-          return {
-            name,
-            frameWidth: asNumber(anim.frameWidth),
-            frameHeight: asNumber(anim.frameHeight),
-            index: asNumber(anim.index),
-            durations: asArray(anim.durations).map(asNumber),
-            // An anim with no target of its own plays from the grid
-            // named after it
-            target: asSpriteAnim(asNumber(anim.target)) ?? name,
-          };
-        })
-        .filter((anim): anim is AnimData => anim.name != null && anim.target != null),
+        return {
+          x: asNumber(rect[0]),
+          y: asNumber(rect[1]),
+          width: asNumber(rect[2]),
+          height: asNumber(rect[3]),
+        };
+      }),
     },
+    anims: asArray(root.anims)
+      .map((entry) => {
+        const anim = asRecord(entry);
+        const name = asSpriteAnim(asNumber(anim.anim));
+
+        return {
+          name,
+          index: asNumber(anim.index),
+          durations: asArray(anim.durations).map(asNumber),
+          // An anim with no target of its own plays from the grid
+          // named after it, which is how a file leaves the two out
+          // where they agree
+          target: anim.target == null ? name : asSpriteAnim(asNumber(anim.target)),
+        };
+      })
+      .filter((anim): anim is AnimData => anim.name != null && anim.target != null),
     sprites,
   };
 }

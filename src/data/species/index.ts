@@ -1,4 +1,5 @@
 import registerGen1Species from './gen-1';
+import registerGen2Species from './gen-2';
 
 export {
   getBaseForms,
@@ -8,11 +9,13 @@ export {
   getLearnableMoves,
   getLevelUpMoves,
   getMovesLearnedAt,
+  getRegisteredFamilies,
   getRegisteredSpecies,
   getSpeciesAbilities,
   getSpeciesAbilityPools,
   getSpeciesByBiome,
   getSpeciesData,
+  getSpeciesForms,
   getTeachableMoves,
   isBaseForm,
 } from './__create';
@@ -25,21 +28,25 @@ export {
   SPECIES_DAY_STEP_BOOST,
   SPECIES_DAY_WEIGHT_BOOST,
   getDayOfYear,
+  getDaysInYear,
   getFeaturedFamily,
   isFeaturedSpecies,
 } from './day';
 export {
   SUPPORTED_METHODS,
   coversHandover,
-  opensTradeEvolution,
+  coveredByHandover,
   getAvailableEvolutions,
   getConsumedItem,
   isFullyEvolved,
+  lineEvolvesByItem,
   meetsEvolutionCriteria,
+  settleHandover,
 } from './evolution';
-export type { EvolutionContext } from './evolution';
+export type { EvolutionContext, Handover } from './evolution';
 export { REGIONS, REGION_NAMES, getSpeciesByRegion, getSpeciesRegion } from './regions';
 
 export function registerSpecies(): void {
   registerGen1Species();
+  registerGen2Species();
 }

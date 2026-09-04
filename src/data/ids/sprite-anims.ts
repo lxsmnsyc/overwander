@@ -2,15 +2,15 @@
  * The animations a sprite sheet can carry, as numbers.
  *
  * A PMD archive names its animations, and the names are a closed
- * vocabulary the whole collection draws from. Numbering them is what
- * lets a sheet's description say `7` where it used to say `"Idle"` —
- * once per clip and once per anim, on a hundred and fifty sheets.
+ * vocabulary the whole collection draws from. These are the
+ * collection's own numbers for them, the ones every `sheet.json` is
+ * written in.
  *
- * **The numbers are written into every `meta/{species}.json`, so they
- * are append-only.** A new animation takes the next free number; an
- * existing one never moves, and nothing is ever removed. The archive's
- * own `Index` is no use for this — it numbers within one archive, so
- * half a dozen different animations are all `2`.
+ * **The numbers are on disk, so they are append-only.** A new
+ * animation takes the next free number; an existing one never moves,
+ * and nothing is ever removed. The archive's own `Index` is no use for
+ * this: it numbers within one archive, so half a dozen different
+ * animations are all `2`.
  *
  * Written as a frozen object rather than as an `enum`, unlike its
  * neighbours here, for two reasons: the names come back out of it, so
@@ -18,12 +18,14 @@
  * under `node`, which refuses a file that declares an enum
  */
 export const SpriteAnim = {
-  // The eleven every sheet carries — see `COMMON_CAST`
+  // The ten every sheet carries, see `COMMON_CAST`
   Idle: 0,
   Sleep: 1,
   Hurt: 2,
   Attack: 3,
   Charge: 4,
+  // Numbered among them and not one of them: a handful of sheets ship
+  // without a Shoot, and a number can never move
   Shoot: 5,
   Double: 6,
   Hop: 7,
@@ -60,6 +62,14 @@ export const SpriteAnim = {
   Hover: 37,
   Rumble: 38,
   Sound: 39,
+  FlapAround: 40,
+  TailWhip: 41,
+  Scratch: 42,
+  CarefulWalk: 43,
+  RaiseArms: 44,
+  Sing: 45,
+  Yawn: 46,
+  Slap: 47,
 } as const;
 
 export type SpriteAnim = (typeof SpriteAnim)[keyof typeof SpriteAnim];

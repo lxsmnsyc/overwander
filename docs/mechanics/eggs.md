@@ -17,19 +17,19 @@ A **Nest** landmark holds one egg every **twelve hours**, refilling at local
 midnight and noon, so each player may take one per half day.
 
 What lies in it is drawn from the pokemon that hatch in that biome at that time
-of day, always the first stage of its line — a nest holds what hatches, not what
+of day, always the first stage of its line. A nest holds what hatches, not what
 it grows into. A biome where several stages of one line live is a biome where
 that egg is correspondingly more likely.
 
 No nest ever holds a legendary, and none holds an unown: unowns are met rather
 than hatched.
 
-Eleven species are held back as well, because the stage in front of them is a
-baby this game has not registered yet and a nest would otherwise lay their second
-stage: Pikachu, Clefairy, Jigglypuff, Hitmonlee, Hitmonchan, Jynx, Electabuzz,
-Magmar, Chansey, Mr. Mime and Snorlax. Each returns the day its baby does.
-Nothing else about them changes: they are still met in the wild, still bred and
-still evolved, and every biome still has nests.
+Seven species are held back as well, because the stage in front of them is a
+baby this game has not registered yet and a nest would otherwise lay their
+second stage: Marill, Wobbuffet, Sudowoodo, Mantine, Chansey, Mr. Mime and
+Snorlax. Each returns the day its baby does. Nothing else about them changes:
+they are still met in the wild, still bred and still evolved, and every biome
+still has nests.
 
 A nest egg is guaranteed **one egg move**, which is the main reason to walk one.
 It is placed first in the move list, so the four-move limit cannot displace it.
@@ -74,7 +74,7 @@ the walk to hatch.
 Only the **buddy** walks, so an egg must be the buddy for its steps to count.
 
 **How far depends on the species.** An egg is counted in hatch cycles, and one
-cycle is **128 steps**. Most of the dex takes 20 cycles — 2,560 steps — but a
+cycle is **128 steps**. Most of the dex takes 20 cycles, or 2,560 steps, but a
 Magikarp is out after 5 (640 steps) and a Mewtwo takes 120 (15,360).
 
 | Egg                  | Cycles | Steps         |

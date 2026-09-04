@@ -12,7 +12,7 @@ import { BattleEvents, EffectType, MoveTargetType } from '../events';
  * the user confused. The shared hit handler already covers the final
  * step's strike, so only the earlier steps strike here.
  */
-const RAMPAGE_MOVES = new Set<Moves>([Moves.Thrash, Moves.PetalDance]);
+const RAMPAGE_MOVES = new Set<Moves>([Moves.Thrash, Moves.PetalDance, Moves.Outrage]);
 
 export default function setupRampageMoves(battle: Battle): void {
   battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {

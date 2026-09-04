@@ -22,27 +22,50 @@ export const MOVE_CATEGORY_COLORS: Record<MoveCategories, string> = {
   [MoveCategories.Status]: '#8a8a8a',
 };
 
-export const enum MoveTargetFlags {
-  // Target includes the source
+/**
+ * How a move is cast: what the caster points at when the cast opens.
+ *
+ * `Unit` and `Team` name one of each, chosen before the cast starts
+ * and carried through to whatever the move does. `None` names
+ * nobody: a spread move, a field effect and a move on the user
+ * itself are all cast the same way, and who the move reaches is its
+ * `affects` mask instead
+ */
+export const enum MoveTargets {
+  None = 0,
+  Unit = 1,
+  Team = 2,
+}
+
+/**
+ * Who a move reaches. It answers two things at once: the shape it
+ * lands on (`Unit` or `Team`, and neither means the move lands on
+ * nothing in particular) and the sides it reaches.
+ *
+ * For a move cast at one unit or one team the mask is what the
+ * caster may point at; for one cast at nobody it is the fan-out
+ * itself. A move that names no mask takes the default for the way it
+ * is cast, which is the enemy side
+ */
+export const enum MoveAffects {
+  // Reaches the caster itself
   Self = 0b0000001,
 
-  // Target is a unit
+  // Lands on units
   Unit = 0b0000010,
 
-  // Target is a team
+  // Lands on whole teams
   Team = 0b0000100,
 
-  // Target is own unit/team
+  // Reaches the caster's own team: this trainer's party
   Own = 0b0001000,
 
-  // Target is an ally unit/team
+  // Reaches another team under the same alliance: another trainer's
+  // party, which only a co-op raid has
   Ally = 0b0010000,
 
-  // Target is an enemy unit/team
+  // Reaches the other side
   Enemy = 0b0100000,
-
-  // Target multiple units/teams
-  Multiple = 0b1000000,
 
   /**
    * Reaches pokemon that are already down, and teams with nobody left
@@ -59,7 +82,25 @@ export const enum MoveTargetFlags {
    * A move that genuinely wants them — a revival, something that acts
    * on the fallen — says so here
    */
-  Fainted = 0b10000000,
+  Fainted = 0b1000000,
+}
+
+/**
+ * Every side a mask can name, for asking which of them it names
+ */
+export const MOVE_AFFECT_SIDES =
+  MoveAffects.Self | MoveAffects.Own | MoveAffects.Ally | MoveAffects.Enemy;
+
+/**
+ * Whether a mask reaches the other side and nobody else. It is the
+ * question two places ask of an attack: whether pointing it at one's
+ * own side is something the move itself never had in mind
+ */
+export function affectsFoesOnly(affects: number): boolean {
+  // The comparison is between a masked number and one flag of the
+  // enum, which is the whole job of this function
+  // oxlint-disable-next-line typescript/no-unsafe-enum-comparison
+  return (affects & MOVE_AFFECT_SIDES) === MoveAffects.Enemy;
 }
 
 export const enum MoveFlags {
@@ -355,4 +396,94 @@ export const enum Moves {
   SunnyDay = 166,
   Sandstorm = 167,
   Hail = 168,
+
+  /**
+   * The Johto moves. Two new types arrive with them, Dark and Steel,
+   * and with them the first moves that read the sky rather than only
+   * making it: Solar Beam had the weather, these have the healing
+   * that follows it
+   */
+  Sketch = 169,
+  TripleKick = 170,
+  Thief = 171,
+  SpiderWeb = 172,
+  MindReader = 173,
+  Nightmare = 174,
+  FlameWheel = 175,
+  Snore = 176,
+  Curse = 177,
+  Flail = 178,
+  Conversion2 = 179,
+  Aeroblast = 180,
+  CottonSpore = 181,
+  Reversal = 182,
+  Spite = 183,
+  PowderSnow = 184,
+  Protect = 185,
+  MachPunch = 186,
+  ScaryFace = 187,
+  FeintAttack = 188,
+  SweetKiss = 189,
+  BellyDrum = 190,
+  SludgeBomb = 191,
+  MudSlap = 192,
+  Octazooka = 193,
+  Spikes = 194,
+  ZapCannon = 195,
+  Foresight = 196,
+  DestinyBond = 197,
+  PerishSong = 198,
+  IcyWind = 199,
+  Detect = 200,
+  BoneRush = 201,
+  LockOn = 202,
+  Outrage = 203,
+  GigaDrain = 204,
+  Endure = 205,
+  Charm = 206,
+  Rollout = 207,
+  FalseSwipe = 208,
+  Swagger = 209,
+  MilkDrink = 210,
+  Spark = 211,
+  FuryCutter = 212,
+  SteelWing = 213,
+  MeanLook = 214,
+  Attract = 215,
+  SleepTalk = 216,
+  HealBell = 217,
+  Return = 218,
+  Present = 219,
+  Frustration = 220,
+  Safeguard = 221,
+  PainSplit = 222,
+  SacredFire = 223,
+  Magnitude = 224,
+  DynamicPunch = 225,
+  Megahorn = 226,
+  DragonBreath = 227,
+  BatonPass = 228,
+  Encore = 229,
+  Pursuit = 230,
+  RapidSpin = 231,
+  SweetScent = 232,
+  IronTail = 233,
+  MetalClaw = 234,
+  VitalThrow = 235,
+  MorningSun = 236,
+  Synthesis = 237,
+  Moonlight = 238,
+  HiddenPower = 239,
+  CrossChop = 240,
+  Twister = 241,
+  Crunch = 242,
+  MirrorCoat = 243,
+  PsychUp = 244,
+  ExtremeSpeed = 245,
+  AncientPower = 246,
+  ShadowBall = 247,
+  FutureSight = 248,
+  RockSmash = 249,
+  Whirlpool = 250,
+  BeatUp = 251,
 }

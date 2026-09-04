@@ -1,18 +1,29 @@
+import { EVOLUTION_FRIENDSHIP } from '../constants/friendship';
+import type { TimeOfDay } from '../ids/biome';
+import type { Stats } from '../constants/stats';
 import { Items } from '../ids/items';
 import { EvolutionMethod, type Species } from '../ids/species';
-import { type EvolutionData, getSpeciesData } from './__create';
+import {
+  type EvolutionData,
+  type StatComparison,
+  getBaseSpecies,
+  getSpeciesData,
+} from './__create';
 
 /**
  * The conditions the game can actually verify today. Everything else
- * — friendship, weather, party composition — has no stored
- * counterpart yet, so an evolution requiring it is never offered
- * rather than silently treated as met
+ * (weather, party composition, a place) has nothing to measure
+ * against yet, so an evolution requiring it is never offered rather
+ * than silently treated as met
  */
 export const SUPPORTED_METHODS =
   EvolutionMethod.Level |
   EvolutionMethod.UsedItem |
   EvolutionMethod.HeldItem |
-  EvolutionMethod.Trade;
+  EvolutionMethod.Trade |
+  EvolutionMethod.Friendship |
+  EvolutionMethod.TimeOfDay |
+  EvolutionMethod.StatComparison;
 
 /**
  * What an evolution check is measured against: the catch itself, its
@@ -38,15 +49,32 @@ export interface EvolutionContext {
    * this game has nowhere to put: an evolution here is something a
    * player asks for from the catch sheet. So a handover opens the
    * evolution rather than performing it, and the answer is worked out
-   * once, there, by `opensTradeEvolution`
+   * once, there, by `settleHandover`
    */
   canEvolve: boolean;
+  /**
+   * What its stats actually come to, level and values and nature
+   * included, rather than its species' base numbers. Only the pair a
+   * registered evolution names is ever read, and today one line names
+   * any: a Tyrogue's Attack against its Defense
+   */
+  stats: Record<Stats, number>;
+  /**
+   * What it thinks of its owner. The three Kanto babies ask for it,
+   * and nothing else does yet
+   */
+  friendship: number;
+  /**
+   * The period of the day it is being asked in. Eevee is the only
+   * line that reads it
+   */
+  time: TimeOfDay;
 }
 
 /**
- * Whether a handover of this species, against whatever came the other
- * way, opens one of its trade evolutions. Asked at the handover, and
- * the answer is the whole of what the record keeps.
+ * What a handover settles for this pokemon: whether it opens one of
+ * its trade evolutions, and the held item that evolution spends
+ * there.
  *
  * Two questions, and a bare "has been traded" answers neither. It has
  * to have changed hands **as what it is now**: four Gen 1 lines evolve
@@ -57,13 +85,40 @@ export interface EvolutionContext {
  * a fact about somebody else's pokemon and the only one of its kind in
  * the family.
  *
+ * An evolution asking for a **held item** is covered only while the
+ * pokemon is actually holding it, and the swap takes it: an Onix
+ * traded in a Metal Coat arrives a coat lighter and ready, which is
+ * where the mainline spends it too.
+ *
  * One answer covers every trade evolution a species has, which is
  * enough while no species has two of them
  */
-export function opensTradeEvolution(species: Species, partner: Species | null): boolean {
-  return (getSpeciesData(species).evolvesInto ?? []).some((evolution) =>
-    coversHandover(evolution, partner),
-  );
+export interface Handover {
+  /** Whether the swap met everything one of its trade evolutions asks */
+  opens: boolean;
+  /** The held item the swap took for it, where one was asked */
+  spends: Items | null;
+}
+
+export function settleHandover(
+  species: Species,
+  partner: Species | null,
+  held: ReadonlySet<Items>,
+): Handover {
+  for (const evolution of getSpeciesData(species).evolvesInto ?? []) {
+    if (coversHandover(evolution, partner)) {
+      const wants =
+        (evolution.method & EvolutionMethod.HeldItem) === 0 ? null : (evolution.item ?? null);
+
+      if (wants == null) {
+        return { opens: true, spends: null };
+      }
+      if (held.has(wants)) {
+        return { opens: true, spends: wants };
+      }
+    }
+  }
+  return { opens: false, spends: null };
 }
 
 /**
@@ -113,8 +168,21 @@ export function meetsEvolutionCriteria(
       return false;
     }
   }
-  if ((method & EvolutionMethod.HeldItem) !== 0) {
+  if ((method & EvolutionMethod.HeldItem) !== 0 && !coveredByHandover(evolution, context)) {
     if (evolution.item == null || !context.held.has(evolution.item)) {
+      return false;
+    }
+  }
+  if ((method & EvolutionMethod.Friendship) !== 0 && context.friendship < EVOLUTION_FRIENDSHIP) {
+    return false;
+  }
+  if ((method & EvolutionMethod.TimeOfDay) !== 0) {
+    if (evolution.time == null || (evolution.time & context.time) === 0) {
+      return false;
+    }
+  }
+  if ((method & EvolutionMethod.StatComparison) !== 0) {
+    if (evolution.compare == null || !comparesStats(evolution.compare, context)) {
       return false;
     }
   }
@@ -126,6 +194,34 @@ export function meetsEvolutionCriteria(
     return false;
   }
   return true;
+}
+
+/**
+ * Whether the handover this pokemon has already been through covered
+ * this evolution. It settles both halves at once: the swap itself, and
+ * the item the swap took, which is why the held item is not asked for
+ * a second time here
+ */
+export function coveredByHandover(evolution: EvolutionData, context: EvolutionContext): boolean {
+  return context.canEvolve && (evolution.method & EvolutionMethod.Trade) !== 0;
+}
+
+/**
+ * Whether the pair of stats came out the way the evolution asks. The
+ * three orders are exhaustive, so a line branching on all of them
+ * always has exactly one answer
+ */
+function comparesStats(compare: StatComparison, context: EvolutionContext): boolean {
+  const stat = context.stats[compare.stat];
+  const against = context.stats[compare.against];
+
+  if (compare.order === 'greater') {
+    return stat > against;
+  }
+  if (compare.order === 'lesser') {
+    return stat < against;
+  }
+  return stat === against;
 }
 
 /**
@@ -158,6 +254,38 @@ function pullsCord(evolution: EvolutionData, context: EvolutionContext): boolean
  * carrying. It is what "still growing" means to an Eviolite, and what
  * a demo means by wanting a field of finished pokemon
  */
+/**
+ * Whether an item is what any stage of this pokemon's **line**
+ * evolves on: the species itself, whatever it came from, and whatever
+ * any of those grow into.
+ *
+ * The whole line rather than the one stage, because that is the
+ * question a caller has: a Moon Ball answers a Clefairy, and it
+ * answers a Cleffa and a Clefable with it. The walk starts at the
+ * stage the line hatches at and goes forwards from there
+ */
+export function lineEvolvesByItem(species: Species, item: Items): boolean {
+  const seen = new Set<Species>();
+  const walking = [getBaseSpecies(species)];
+
+  while (walking.length > 0) {
+    const current = walking.pop();
+
+    if (current == null || seen.has(current)) {
+      continue;
+    }
+    seen.add(current);
+
+    for (const evolution of getSpeciesData(current).evolvesInto ?? []) {
+      if ((evolution.method & EvolutionMethod.UsedItem) !== 0 && evolution.item === item) {
+        return true;
+      }
+      walking.push(evolution.species);
+    }
+  }
+  return false;
+}
+
 export function isFullyEvolved(species: Species): boolean {
   return (getSpeciesData(species).evolvesInto ?? []).length === 0;
 }
@@ -180,7 +308,7 @@ export function getAvailableEvolutions(context: EvolutionContext): EvolutionData
  * Cord instead. It is answered from that one fact rather than from a
  * whole context, because the caller reads the bag for whatever comes
  * back from here and cannot know what to read until it does — see
- * `opensTradeEvolution` for who works the fact out
+ * `settleHandover` for who works the fact out
  */
 export function getConsumedItem(evolution: EvolutionData, covered = false): Items | null {
   const { method } = evolution;

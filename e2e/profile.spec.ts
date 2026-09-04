@@ -61,7 +61,7 @@ test.describe('the profile', () => {
   });
 
   test('carries the balls a new player was handed', async ({ page }) => {
-    const bag = await openPanel(page, 'Inventory');
+    const bag = await openPanel(page, 'Bag');
 
     // The bag names nothing on its face: a square says what it holds
     // to whoever is listening, and shows it to everyone else

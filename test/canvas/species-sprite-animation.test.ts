@@ -1,71 +1,64 @@
-import { existsSync, readFileSync, readdirSync } from 'node:fs';
-import { describe, expect, it } from 'vitest';
+import { deflateSync } from 'node:zlib';
+import { readFileSync, readdirSync } from 'node:fs';
+import { describe, expect, it, vi } from 'vitest';
 import SpeciesSpriteAnimation, { SPRITE_TICK } from '../../src/canvas/species-sprite-animation';
-import { spriteImagePath, spriteMetaPath } from '../../src/canvas/species-sprites';
+import {
+  spriteFramesPath,
+  spriteImagePath,
+  spriteSheetPath,
+} from '../../src/canvas/species-sprites';
+import type { Coat } from '../../src/canvas/sprite-coats';
 import asSpriteSheetJSON, {
+  type FrameTable,
   type Point,
   SPRITE_DIRECTIONS,
+  type SheetRect,
   type SpriteSheetJSON,
   type SpriteTargetData,
+  readFrameTable,
 } from '../../src/canvas/sprite-sheet';
 import { Species } from '../../src/data/ids/species';
-import { SpriteAnim, asSpriteAnim } from '../../src/data/ids/sprite-anims';
+import { SpriteAnim, asSpriteAnim, spriteAnimName } from '../../src/data/ids/sprite-anims';
 
 /**
  * The real thing: whatever is under `public/sprites` is what the
  * canvases will be handed, so the tests read one rather than a fixture
  * that agrees with the code by construction.
  *
- * A pokemon ships as `regular/{species}.png`, `shiny/{species}.png` and
- * one `meta/{species}.json` describing the animation both coats share.
- * The species id is its dex number — Bulbasaur is 1 — except for
- * Missingno, an egg and a substitute, which are numbered past a hundred
- * thousand because they are not pokemon and have no dex number of their
- * own
+ * A pokemon is a folder named after its species id, holding one
+ * `sheet.json`, one `frames.bin` and a PNG per coat. The species id is
+ * its dex number, Bulbasaur is 1, except for Missingno, an egg and a
+ * substitute, which are numbered past a hundred thousand because they
+ * are not pokemon and have no dex number of their own
  */
 const ROOT = 'public/sprites/pokemon';
-
-/**
- * What a directory holds, or nothing where there is no such
- * directory. A region drawn in one coat only — the three that are not
- * pokemon have no shiny — has no folder for the other
- */
-function filesIn(path: string): string[] {
-  return existsSync(path) ? readdirSync(path) : [];
-}
-
-function speciesOf(file: string): number {
-  return Number(file.slice(0, -'.json'.length));
-}
 
 /** Every region with sheets under it: `kanto`, and whatever follows. */
 const REGIONS = readdirSync(ROOT, { withFileTypes: true })
   .filter((entry) => entry.isDirectory())
   .map((entry) => entry.name);
 
-const META_FILES = REGIONS.flatMap((region) =>
-  readdirSync(`${ROOT}/${region}/meta`)
-    .filter((name) => name.endsWith('.json'))
-    .map((name) => ({ region, name })),
-).sort((one, two) => speciesOf(one.name) - speciesOf(two.name));
+/** A pokemon's folder is its species id and nothing else. */
+const FOLDER = /^\d+$/;
 
-/**
- * The descriptions that ship, in species order.
- *
- * A file with nothing in it is one the sprite pipeline has not written
- * yet, and it is left out rather than failed on: an empty description
- * is a pokemon the game draws as Missingno, which is exactly what the
- * loader does with it
- */
-const DESCRIBED: { species: number; data: SpriteSheetJSON }[] = META_FILES.map((file) => ({
-  species: speciesOf(file.name),
-  raw: readFileSync(`${ROOT}/${file.region}/meta/${file.name}`, 'utf8'),
-}))
-  .filter((entry) => entry.raw.trim().length > 0)
-  .map((entry) => ({
-    species: entry.species,
-    data: asSpriteSheetJSON(JSON.parse(entry.raw) as unknown),
-  }));
+const SHIPPED = REGIONS.flatMap((region) =>
+  readdirSync(`${ROOT}/${region}`)
+    .filter((name) => FOLDER.test(name))
+    .map((name) => ({ region, species: Number(name) })),
+).sort((one, two) => one.species - two.species);
+
+/** One pokemon read the way the game reads it. */
+async function described(region: string, species: number): Promise<SpriteSheetJSON> {
+  const folder = `${ROOT}/${region}/${species}`;
+  const frames = await readFrameTable(readFileSync(`${folder}/frames.bin`));
+
+  return asSpriteSheetJSON(JSON.parse(readFileSync(`${folder}/sheet.json`, 'utf8')), frames);
+}
+
+/** The descriptions that ship, in species order. */
+const DESCRIBED: { species: number; region: string; data: SpriteSheetJSON }[] = await Promise.all(
+  SHIPPED.map(async (found) => ({ ...found, data: await described(found.region, found.species) })),
+);
 
 const SAMPLE = DESCRIBED[0].data;
 
@@ -135,7 +128,7 @@ function loaded(data: SpriteSheetJSON = SAMPLE): SpeciesSpriteAnimation {
  * since which pokemon ships first is not this test's business
  */
 function travelling(data: SpriteSheetJSON): { anim: SpriteAnim; row: number; at: number } {
-  for (const anim of data.anims.anims) {
+  for (const anim of data.anims) {
     const target = data.sprites[anim.target];
 
     if (target == null) {
@@ -167,7 +160,7 @@ describe('sprite metadata', () => {
     for (const { species, data } of DESCRIBED) {
       expect(data.sheet.width, `${species} sheet width`).toBeGreaterThan(0);
       expect(data.sheet.pictures.length, `${species} pictures`).toBeGreaterThan(0);
-      expect(data.anims.anims.length, `${species} animations`).toBeGreaterThan(0);
+      expect(data.anims.length, `${species} animations`).toBeGreaterThan(0);
       expect(Object.keys(data.sprites).length, `${species} anchor grids`).toBeGreaterThan(0);
     }
   });
@@ -185,7 +178,7 @@ describe('sprite metadata', () => {
         expect(picture.y + picture.height, corner).toBeLessThanOrEqual(data.sheet.height);
       }
 
-      for (const anim of data.anims.anims) {
+      for (const anim of data.anims) {
         const target = data.sprites[anim.target];
 
         expect(target, `${species} ${anim.name} has anchors`).toBeDefined();
@@ -198,17 +191,19 @@ describe('sprite metadata', () => {
         expect(target.frames.length, `${species} ${anim.target} frames`).toBe(
           target.rows * target.columns,
         );
-        expect(target.directions.length, `${species} ${anim.target} rows`).toBe(target.rows);
+        expect(target.rows, `${species} ${anim.target} rows`).toBeLessThanOrEqual(
+          SPRITE_DIRECTIONS.length,
+        );
         expect(anim.durations.length, `${species} ${anim.name} durations`).toBe(target.columns);
 
         // Every frame is drawn from one of the sheet's pictures, hung
         // somewhere inside its box
         for (const frame of target.frames) {
-          const cell = frame.cell == null ? null : pictures[frame.cell];
+          const cell = pictures[frame.cell] as SheetRect | undefined;
 
           expect(cell, `${species} ${anim.target} cell`).toBeDefined();
 
-          if (cell == null || frame.at == null) {
+          if (cell == null) {
             continue;
           }
           const hangs = `${species} ${anim.target} hangs`;
@@ -216,37 +211,48 @@ describe('sprite metadata', () => {
           expect(frame.at[0] + cell.width, hangs).toBeLessThanOrEqual(target.frameWidth);
           expect(frame.at[1] + cell.height, hangs).toBeLessThanOrEqual(target.frameHeight);
         }
-        // `anims` stays faithful to the file it came from, so its sizes
-        // are the untrimmed ones however the sheet was packed
-        expect(anim.frameWidth, `${species} ${anim.name} source width`).toBe(
-          target.sourceFrameWidth,
-        );
-        expect(anim.frameHeight, `${species} ${anim.name} source height`).toBe(
-          target.sourceFrameHeight,
-        );
       }
+    }
+  }, 60_000);
+
+  it('is written in the shape the reader packs for', () => {
+    // The collection stamps every sheet it builds, and a shape this
+    // reader does not know is a sheet copied in from an older build of
+    // it. This is what says so before a canvas draws nothing
+    for (const { species, data } of DESCRIBED) {
+      expect(data.version, `${species}`).toBe(2);
     }
   });
 
+  /**
+   * A clip drawn past the cell its `AnimData.xml` declares.
+   *
+   * Heracross' female coat reaches one column further than the eighty
+   * the archive says the Attack cell is, and the frame box is the
+   * union of every coat: the drawing wins over the declaration. Kept
+   * as a list so a second one shows up as a failure rather than as
+   * nothing
+   */
+  const OVERDRAWN = new Set(['214 Attack']);
+
   it('trims frames into the cell they were drawn in', () => {
+    const past: string[] = [];
+
     for (const { species, data } of DESCRIBED) {
       for (const [name, target] of clipsOf(data)) {
-        expect(target.frameWidth, `${species} ${name} width`).toBeLessThanOrEqual(
-          target.sourceFrameWidth,
-        );
-        expect(target.frameHeight, `${species} ${name} height`).toBeLessThanOrEqual(
-          target.sourceFrameHeight,
-        );
-        // The trimmed frame sits inside the cell, so putting it back
-        // where it came from cannot fall off the edge
-        expect(target.trim[0] + target.frameWidth).toBeLessThanOrEqual(target.sourceFrameWidth);
-        expect(target.trim[1] + target.frameHeight).toBeLessThanOrEqual(target.sourceFrameHeight);
-
-        if (!data.compact) {
-          expect(target.trim, `${species} ${name} untrimmed`).toEqual([0, 0]);
+        if (
+          target.trim[0] + target.frameWidth > target.sourceFrameWidth ||
+          target.trim[1] + target.frameHeight > target.sourceFrameHeight
+        ) {
+          past.push(`${species} ${spriteAnimName(name)}`);
         }
+        // Whatever the cell says, a frame is cut out of the drawing
+        // rather than out of the air
+        expect(target.trim[0], `${species} ${name} trim`).toBeGreaterThanOrEqual(0);
+        expect(target.trim[1], `${species} ${name} trim`).toBeGreaterThanOrEqual(0);
       }
     }
+    expect(past).toEqual([...OVERDRAWN]);
   });
 
   it('marks where the parts of a pokemon are, on every frame', () => {
@@ -299,25 +305,169 @@ describe('sprite metadata', () => {
   });
 
   it('fills in what a broken description leaves out rather than throwing', () => {
-    const empty = asSpriteSheetJSON({
-      anims: { anims: [{ name: SpriteAnim.Idle }] },
-      sprites: { [SpriteAnim.Idle]: { frameWidth: 24, frameHeight: 32 } },
-    });
+    const empty = asSpriteSheetJSON(
+      {
+        anims: [{ anim: SpriteAnim.Idle }],
+        sprites: [{ anim: SpriteAnim.Idle, frameWidth: 24, frameHeight: 32 }],
+      },
+      { records: [], indices: new Uint16Array(0) },
+    );
     const idle = empty.sprites[SpriteAnim.Idle];
 
     expect(empty.sheet.pictures).toEqual([]);
-    expect(empty.anims.anims[0].durations).toEqual([]);
+    expect(empty.anims[0].durations).toEqual([]);
     // An animation with no target of its own plays from the grid named
     // after it
-    expect(empty.anims.anims[0].target).toBe(SpriteAnim.Idle);
+    expect(empty.anims[0].target).toBe(SpriteAnim.Idle);
     expect(idle?.frames).toEqual([]);
-    expect(asSpriteSheetJSON(null).anims.anims).toEqual([]);
+    expect(asSpriteSheetJSON(null, { records: [], indices: new Uint16Array(0) }).anims).toEqual([]);
     // A description that says nothing about trimming describes an
-    // untrimmed sheet, so its frames are their own source cells
-    expect(empty.compact).toBe(false);
+    // untrimmed sheet
     expect(idle?.trim).toEqual([0, 0]);
     expect(idle?.sourceFrameWidth).toBe(24);
     expect(idle?.sourceFrameHeight).toBe(32);
+  });
+});
+
+/**
+ * `frames.bin`, which is where every frame actually is.
+ *
+ * The file is built in the SpriteCollab checkout, so a reader that
+ * disagrees with it by a byte reads whole pokemon as gibberish. These
+ * build one by hand from the format the collection documents
+ */
+describe('reading frames.bin', () => {
+  const COLUMNS = 14;
+  const ABSENT = -32768;
+
+  /** A file in the shape `compact/README.md` describes. */
+  function bin(records: number[][], indices: number[], version = 2, magic = 'PMDF'): Uint8Array {
+    const head = Buffer.alloc(12);
+
+    head.write(magic, 0, 'ascii');
+    head.writeUInt16LE(version, 4);
+    head.writeUInt16LE(records.length, 6);
+    head.writeUInt32LE(indices.length, 8);
+
+    const table = Buffer.alloc(records.length * COLUMNS * 2);
+
+    // Column-major: every record's column 0, then every record's
+    // column 1, which is what makes one column of the whole sheet
+    // compress
+    for (let column = 0; column < COLUMNS; column += 1) {
+      for (const [record, held] of records.entries()) {
+        table.writeInt16LE(held[column], (column * records.length + record) * 2);
+      }
+    }
+    const stream = Buffer.alloc(indices.length * 2);
+
+    for (const [at, index] of indices.entries()) {
+      stream.writeUInt16LE(index, at * 2);
+    }
+    return Uint8Array.from(Buffer.concat([head, deflateSync(Buffer.concat([table, stream]))]));
+  }
+
+  /** One record with every anchor painted, and one with none. */
+  const marked = [3, 20, 4, 12, 5, 2, 1, 9, 8, 9, 7, 1, 2, 3];
+  const bare = [
+    ABSENT,
+    ABSENT,
+    ABSENT,
+    ABSENT,
+    ABSENT,
+    ABSENT,
+    ABSENT,
+    ABSENT,
+    ABSENT,
+    ABSENT,
+    4,
+    0,
+    0,
+    0,
+  ];
+
+  it('reads a frame back out of the table', async () => {
+    const table = await readFrameTable(bin([marked], [0]));
+
+    expect(table.records).toHaveLength(1);
+    expect(table.records[0]).toEqual({
+      shadow: [3, 20],
+      center: [4, 12],
+      head: [5, 2],
+      left: [1, 9],
+      right: [8, 9],
+      cell: 7,
+      flip: true,
+      at: [2, 3],
+    });
+  });
+
+  it('reads an unpainted anchor as nothing rather than as a corner', async () => {
+    const table = await readFrameTable(bin([bare], [0]));
+
+    expect(table.records[0].shadow).toBeNull();
+    expect(table.records[0].center).toBeNull();
+    // Its picture is still there: a frame with no marks is drawn, it
+    // just has to be placed by a fallback
+    expect(table.records[0].cell).toBe(4);
+  });
+
+  it('hands every frame holding one pose the same record', async () => {
+    const table = await readFrameTable(bin([marked, bare], [0, 0, 1, 0]));
+
+    expect([...table.indices]).toEqual([0, 0, 1, 0]);
+    expect(table.records[table.indices[0]]).toBe(table.records[table.indices[1]]);
+  });
+
+  it('reads the same frames without the platform inflate', async () => {
+    // Safari before 16.4 and Firefox before 113 have no
+    // `DecompressionStream`, and fall back to `fflate`
+    const file = bin([marked, bare], [0, 1]);
+    const platform = await readFrameTable(file);
+
+    vi.stubGlobal('DecompressionStream', undefined);
+    try {
+      expect((await readFrameTable(file)).records).toEqual(platform.records);
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
+
+  it('reads a file it does not know as no frames at all', async () => {
+    // Drawing from a file whose shape is a guess is drawing a slice of
+    // whatever happens to sit at those coordinates
+    expect((await readFrameTable(bin([marked], [0], 1))).records).toEqual([]);
+    expect((await readFrameTable(bin([marked], [0], 2, 'JUNK'))).records).toEqual([]);
+    expect((await readFrameTable(new Uint8Array(4))).records).toEqual([]);
+  });
+
+  it('gives a clip the frames its span points at', async () => {
+    const table: FrameTable = await readFrameTable(bin([marked, bare], [1, 0, 0]));
+    const data = asSpriteSheetJSON(
+      {
+        version: 2,
+        sheet: { width: 8, height: 8, pictures: [[0, 0, 4, 4]] },
+        anims: [{ anim: SpriteAnim.Idle, index: 0, durations: [1, 1] }],
+        sprites: [
+          {
+            anim: SpriteAnim.Idle,
+            frameWidth: 8,
+            frameHeight: 8,
+            columns: 2,
+            rows: 1,
+            frames: [1, 2],
+          },
+        ],
+      },
+      table,
+    );
+    const frames = data.sprites[SpriteAnim.Idle]?.frames ?? [];
+
+    // The span starts at 1, so the record the first index names is not
+    // this clip's business
+    expect(frames).toHaveLength(2);
+    expect(frames[0].cell).toBe(7);
+    expect(frames[1].cell).toBe(7);
   });
 });
 
@@ -335,7 +485,7 @@ describe('species sprite animation', () => {
 
   it('stretches a clip over a window somebody else decided', () => {
     const sprite = loaded();
-    const idle = SAMPLE.anims.anims.find((anim) => anim.name === SpriteAnim.Idle);
+    const idle = SAMPLE.anims.find((anim) => anim.name === SpriteAnim.Idle);
     const drawn = (idle?.durations ?? []).reduce(
       (total, held) => total + Math.max(1, held) * SPRITE_TICK,
       0,
@@ -398,7 +548,7 @@ describe('species sprite animation', () => {
 
   it('holds each frame for the duration the sheet gives it', () => {
     const sprite = loaded();
-    const idle = SAMPLE.anims.anims.find((anim) => anim.name === SpriteAnim.Idle);
+    const idle = SAMPLE.anims.find((anim) => anim.name === SpriteAnim.Idle);
 
     expect(idle).toBeDefined();
     expect(sprite.play(SpriteAnim.Idle)).toBe(true);
@@ -530,7 +680,7 @@ describe('where the parts of a pokemon are', () => {
     sprite.play(SpriteAnim.Idle, { direction: 'Down' });
 
     const idle = SAMPLE.sprites[SpriteAnim.Idle]!;
-    const down = idle.frames[idle.directions.indexOf('Down') * idle.columns];
+    const down = idle.frames[SPRITE_DIRECTIONS.indexOf('Down') * idle.columns];
 
     expect(sprite.anchor('shadow')).toEqual(down.shadow);
     expect(sprite.anchor('head')).toEqual(down.head);
@@ -540,45 +690,69 @@ describe('where the parts of a pokemon are', () => {
     // stands differently in its box
     sprite.setDirection('Up');
 
-    const up = idle.frames[idle.directions.indexOf('Up') * idle.columns];
+    const up = idle.frames[SPRITE_DIRECTIONS.indexOf('Up') * idle.columns];
 
     expect(sprite.anchor('shadow')).toEqual(up.shadow);
   });
 
-  it('falls back to somewhere every frame has', () => {
+  it('places by the body mark the sheet carries', () => {
     const sprite = loaded();
 
     sprite.play(SpriteAnim.Idle, { direction: 'Down' });
 
-    const shadow = sprite.anchor('shadow');
-    const head = sprite.anchor('head');
-    const center = sprite.anchor('center');
     const idle = SAMPLE.sprites[SpriteAnim.Idle]!;
-    const frame = idle.frames[idle.directions.indexOf('Down') * idle.columns];
+    const frame = idle.frames[SPRITE_DIRECTIONS.indexOf('Down') * idle.columns];
 
-    expect(shadow).not.toBeNull();
-    expect(head).not.toBeNull();
-    // No sheet marks the body centre yet, so it is the middle of the
-    // parts that are marked: the head and the two hands, which sit
-    // around the body rather than on it
-    expect(frame.center).toBeNull();
+    expect(frame.center).not.toBeNull();
+    expect(sprite.anchor('center')).toEqual(frame.center);
+    expect(sprite.anchor('head')).toEqual(frame.head);
+    // Which is above where it stands, on every sheet that ships
+    expect(sprite.anchor('center')?.[1]).toBeLessThan(sprite.anchor('shadow')?.[1] ?? 0);
+  });
 
-    // Said as a type guard rather than left to be inferred: a plain
-    // `!= null` filter still hands back an array that might hold one,
-    // and the average below reads into every point it is given
-    const marked = [frame.head, frame.left, frame.right].filter(
-      (point): point is Point => point != null,
+  it('falls back to somewhere every frame has', () => {
+    // Two markers landing on one pixel leaves whichever was painted
+    // last, so a frame can reach the game with no body mark on it. The
+    // head and the two hands sit around the body, so their middle is
+    // the body however they are arranged
+    const head: Point = [4, 2];
+    const left: Point = [2, 6];
+    const right: Point = [8, 6];
+    const data = asSpriteSheetJSON(
+      {
+        version: 2,
+        sheet: { width: 12, height: 12, pictures: [[0, 0, 12, 12]] },
+        anims: [{ anim: SpriteAnim.Idle, index: 0, durations: [1] }],
+        sprites: [
+          {
+            anim: SpriteAnim.Idle,
+            frameWidth: 12,
+            frameHeight: 12,
+            columns: 1,
+            rows: 1,
+            frames: [0, 1],
+          },
+        ],
+      },
+      {
+        records: [
+          { shadow: [5, 11], center: null, head, left, right, cell: 0, flip: false, at: [0, 0] },
+        ],
+        indices: Uint16Array.from([0]),
+      },
     );
+    const sprite = loaded(data);
 
-    expect(marked.length).toBe(3);
-    expect(center?.[0]).toBeCloseTo(
+    sprite.play(SpriteAnim.Idle, { direction: 'Down' });
+
+    const marked = [head, left, right];
+
+    expect(sprite.anchor('center')?.[0]).toBeCloseTo(
       marked.reduce((total, point) => total + point[0], 0) / marked.length,
     );
-    expect(center?.[1]).toBeCloseTo(
+    expect(sprite.anchor('center')?.[1]).toBeCloseTo(
       marked.reduce((total, point) => total + point[1], 0) / marked.length,
     );
-    // Which is above where it stands, on every sheet that ships
-    expect(center?.[1]).toBeLessThan(shadow?.[1] ?? 0);
   });
 
   it('ignores a facing a clip has no row for', () => {
@@ -741,7 +915,7 @@ describe('drawing a pokemon somewhere', () => {
     // wingspan down to a tucked-in pose does not shrink the shadow
     // under it
     expect(across).toBeCloseTo(
-      sprite.sourceFrameSize.width * (SAMPLE.anims.shadowSize === 2 ? 0.28 : 0.22) * 2,
+      sprite.sourceFrameSize.width * (SAMPLE.shadowSize === 2 ? 0.28 : 0.22) * 2,
     );
     // Flatter than it is wide: it is lying on the ground
     expect(down).toBeLessThan(across);
@@ -774,66 +948,68 @@ describe('where the sheets are', () => {
    * as Missingno rather than anything failing.
    *
    * So every file that ships is walked back through the path builders
-   * and has to come out as itself. That is what makes moving the tree —
-   * the sheets are `{species}.png` beside each other now, rather than a
-   * folder each with an `image.png` in it — something the tests notice
+   * and has to come out as itself
    */
-  it('builds the path of every drawing that ships', () => {
-    for (const [coat, shiny] of [
-      ['regular', false],
-      ['shiny', true],
-    ] as const) {
-      const files = REGIONS.flatMap((region) =>
-        filesIn(`${ROOT}/${region}/${coat}`)
-          .filter((name) => name.endsWith('.png'))
-          .map((name) => ({ region, name })),
-      );
+  const COATS: [coat: Coat, file: string, shiny: boolean, female: boolean][] = [
+    ['regular', 'regular.png', false, false],
+    ['shiny', 'shiny.png', true, false],
+    ['female', 'female.png', false, true],
+    ['shinyFemale', 'shiny_female.png', true, true],
+  ];
 
-      expect(files.length, `${coat} drawings should ship`).toBeGreaterThan(0);
+  it('builds the path of every file that ships', () => {
+    let drawings = 0;
 
-      for (const file of files) {
-        // A drawing suffixed `_f` is the female form of the same
-        // species, not a species of its own
-        const name = file.name.slice(0, -'.png'.length);
-        const female = name.endsWith('_f');
-        const species = Number(female ? name.slice(0, -'_f'.length) : name);
+    for (const { region, species } of SHIPPED) {
+      const held = new Set(readdirSync(`${ROOT}/${region}/${species}`));
+      const folder = `/sprites/pokemon/${region}/${species}`;
 
-        // Filed under its region, which the path builder works out
-        // from the dex number rather than being told
-        expect(spriteImagePath(species, shiny, female)).toBe(
-          `/sprites/pokemon/${file.region}/${coat}/${file.name}`,
-        );
-      }
-    }
-  });
+      // Filed under its region, which the path builder works out from
+      // the dex number rather than being told
+      expect(spriteSheetPath(species)).toBe(`${folder}/sheet.json`);
+      expect(spriteFramesPath(species)).toBe(`${folder}/frames.bin`);
+      expect(held.has('sheet.json'), `${species} is described`).toBe(true);
+      expect(held.has('frames.bin'), `${species} has frames`).toBe(true);
 
-  it('describes every drawing that ships exactly once', () => {
-    const described = new Set(META_FILES.map((file) => speciesOf(file.name)));
-
-    for (const coat of ['regular', 'shiny']) {
-      for (const region of REGIONS) {
-        for (const file of filesIn(`${ROOT}/${region}/${coat}`)) {
-          const name = file.slice(0, -'.png'.length);
-          const species = Number(name.endsWith('_f') ? name.slice(0, -'_f'.length) : name);
-
-          // Every drawing of a species is a drawing of the one
-          // animation — two coats, and a female form where there is
-          // one — so the description is none of theirs: it is the
-          // species'
-          expect(described.has(species), `${region}/${coat}/${file} has a description`).toBe(true);
-          expect(spriteMetaPath(species)).toBe(`/sprites/pokemon/${region}/meta/${species}.json`);
+      for (const [, file, shiny, female] of COATS) {
+        if (!held.has(file)) {
+          continue;
         }
+        expect(spriteImagePath(species, shiny, female)).toBe(`${folder}/${file}`);
+        drawings += 1;
       }
+      // Every coat that is there is one of the four, and nothing else
+      // in the folder is a drawing
+      expect([...held].filter((name) => name.endsWith('.png')).length).toBe(
+        COATS.filter(([, file]) => held.has(file)).length,
+      );
+    }
+    expect(drawings).toBeGreaterThan(0);
+  });
+
+  it('says which coats a pokemon was drawn in', () => {
+    for (const { region, species, data } of DESCRIBED) {
+      const held = new Set(readdirSync(`${ROOT}/${region}/${species}`));
+
+      // The description lists them, and the folder has to hold exactly
+      // those: a coat listed and not drawn is a request that 404s
+      expect(data.coats, `${species} coats`).toEqual(
+        COATS.filter(([, file]) => held.has(file)).map(([coat]) => coat),
+      );
     }
   });
 
-  it('keeps the two coats, and the two forms, apart', () => {
+  it('keeps the coats apart, and shares one description between them', () => {
     expect(spriteImagePath(Species.Bulbasaur)).not.toBe(spriteImagePath(Species.Bulbasaur, true));
     expect(spriteImagePath(Species.Bulbasaur)).not.toBe(
       spriteImagePath(Species.Bulbasaur, false, true),
     );
-    // ...and both of them share the one description
-    expect(spriteMetaPath(Species.Bulbasaur)).toBe('/sprites/pokemon/kanto/meta/1.json');
+    // Every coat is packed to one layout, so there is one description
+    // for the pokemon rather than one per coat
+    expect(spriteSheetPath(Species.Bulbasaur)).toBe('/sprites/pokemon/kanto/1/sheet.json');
+    expect(spriteImagePath(Species.Bulbasaur, true, true)).toBe(
+      '/sprites/pokemon/kanto/1/shiny_female.png',
+    );
   });
 
   it('lays the sheets out in the order the rows are drawn', () => {
@@ -841,9 +1017,7 @@ describe('where the sheets are', () => {
     // the order everything that works out a facing counts in
     for (const { species, data } of DESCRIBED) {
       for (const [name, target] of clipsOf(data)) {
-        expect(target.directions, `${species} ${name}`).toEqual(
-          SPRITE_DIRECTIONS.slice(0, target.rows),
-        );
+        expect(target.rows, `${species} ${name}`).toBeLessThanOrEqual(SPRITE_DIRECTIONS.length);
       }
     }
   });
@@ -908,7 +1082,7 @@ describe('drawing from a deduped sheet', () => {
       expect(rects, `${species} ${name} drew once`).toHaveLength(1);
 
       const [left, top, width, height] = rects[0];
-      const picture = data.sheet.pictures[target.frames[0].cell ?? 0];
+      const picture = data.sheet.pictures[target.frames[0].cell];
 
       expect(width).toBe(picture.width);
       expect(height).toBe(picture.height);
@@ -929,13 +1103,13 @@ describe('drawing from a deduped sheet', () => {
           continue;
         }
         const sprite = loaded(data);
-        const direction = target.directions[Math.floor(at / target.columns)];
+        const direction = SPRITE_DIRECTIONS[Math.floor(at / target.columns)];
 
         sprite.play(name, { loop: true, direction });
 
         const frame = sprite.frameBox;
         const showing = target.frames[Math.floor(at / target.columns) * target.columns];
-        const picture = data.sheet.pictures[showing.cell ?? 0];
+        const picture = data.sheet.pictures[showing.cell];
 
         // The same rectangle `draw` reads, and the same answer about
         // whether it is stored the other way round: a background has
@@ -960,7 +1134,7 @@ describe('drawing from a deduped sheet', () => {
           continue;
         }
         const sprite = loaded(data);
-        const direction = target.directions[Math.floor(at / target.columns)];
+        const direction = SPRITE_DIRECTIONS[Math.floor(at / target.columns)];
 
         sprite.play(name, { loop: true, direction });
 

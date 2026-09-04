@@ -4,13 +4,21 @@ import Abilities from '../../ids/abilities';
 import Biome, { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
+import { Items } from '../../ids/items';
 import { Moves } from '../../ids/moves';
-import { Species } from '../../ids/species';
+import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 export default function registerPorygonSpecies(): void {
   registerSpecies(Species.Porygon, {
     dexNumber: 137,
+    evolvesInto: [
+      {
+        species: Species.Porygon2,
+        method: EvolutionMethod.Trade | EvolutionMethod.HeldItem,
+        item: Items.UpGrade,
+      },
+    ],
     name: 'Porygon',
     category: 'Virtual Pokemon',
     height: 0.8,
@@ -33,14 +41,14 @@ export default function registerPorygonSpecies(): void {
     biomes: [Biome.Grassland],
     activeTimes: AnyTimeOfDay,
     learnSet: {
-      // Conversion is Porygon's own move and always has been: it is
-      // switched on knowing it, alongside the other two it starts with
       level: {
-        1: [Moves.Tackle, Moves.Sharpen, Moves.Conversion],
-        23: [Moves.Psybeam],
-        28: [Moves.Recover],
-        35: [Moves.Agility],
-        42: [Moves.TriAttack],
+        1: [Moves.Tackle, Moves.Sharpen, Moves.Conversion, Moves.Conversion2],
+        9: [Moves.Agility],
+        12: [Moves.Psybeam],
+        20: [Moves.Recover],
+        32: [Moves.LockOn],
+        36: [Moves.TriAttack],
+        44: [Moves.ZapCannon],
       },
       teachable: [
         Moves.Toxic,
@@ -66,6 +74,24 @@ export default function registerPorygonSpecies(): void {
         Moves.TriAttack,
         Moves.Substitute,
         Moves.Flash,
+        Moves.DreamEater,
+        Moves.Thief,
+        Moves.Nightmare,
+        Moves.Snore,
+        Moves.Curse,
+        Moves.Protect,
+        Moves.ZapCannon,
+        Moves.IcyWind,
+        Moves.Endure,
+        Moves.Swagger,
+        Moves.SleepTalk,
+        Moves.Return,
+        Moves.Frustration,
+        Moves.IronTail,
+        Moves.HiddenPower,
+        Moves.RainDance,
+        Moves.SunnyDay,
+        Moves.PsychUp,
       ],
     },
   });

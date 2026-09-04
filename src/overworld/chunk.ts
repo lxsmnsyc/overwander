@@ -69,6 +69,7 @@ const MAX_WATER_SPOTS = 3;
  */
 const SEA_PEOPLE = new Set([
   Landmark.BerryPatch,
+  Landmark.ApricornTree,
   Landmark.WanderingNpc,
   Landmark.TeamRocket,
   Landmark.Trainer,

@@ -1,6 +1,6 @@
 import Biome, { TimeOfDay } from '../ids/biome';
 import { Species } from '../ids/species';
-import { registerSpawnPool } from './__create';
+import { UNOWN_SPAWNS, registerSpawnPool } from './__create';
 
 /**
  * RockyCoast spawn pool, grouped by day-cycle period and rarity band
@@ -8,71 +8,95 @@ import { registerSpawnPool } from './__create';
 export default function registerRockyCoastSpawns(): void {
   registerSpawnPool(Biome.RockyCoast, {
     [TimeOfDay.Morning]: {
-      base: [
+      base: [],
+      uncommon: [
         { species: Species.Krabby, weight: 20 },
         { species: Species.Shellder, weight: 20 },
         { species: Species.Seel, weight: 20 },
         { species: Species.Slowpoke, weight: 20 },
         { species: Species.Magikarp, weight: 30 },
       ],
-      uncommon: [],
-      rare: [
+      rare: [],
+      scarce: [
         { species: Species.Kingler, weight: 10 },
         { species: Species.Cloyster, weight: 10 },
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Slowbro, weight: 10 },
       ],
+      elusive: [
+        { species: Species.Shuckle, weight: 5 },
+        { species: Species.Qwilfish, weight: 15 },
+      ],
+      prized: [...UNOWN_SPAWNS],
       special: [],
     },
     [TimeOfDay.Day]: {
-      base: [
+      base: [],
+      uncommon: [
         { species: Species.Krabby, weight: 20 },
         { species: Species.Shellder, weight: 20 },
         { species: Species.Seel, weight: 20 },
         { species: Species.Slowpoke, weight: 20 },
         { species: Species.Magikarp, weight: 30 },
       ],
-      uncommon: [],
-      rare: [
+      rare: [],
+      scarce: [
         { species: Species.Kingler, weight: 10 },
         { species: Species.Cloyster, weight: 10 },
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Slowbro, weight: 10 },
       ],
+      elusive: [
+        { species: Species.Shuckle, weight: 5 },
+        { species: Species.Qwilfish, weight: 15 },
+      ],
+      prized: [...UNOWN_SPAWNS],
       special: [],
     },
     [TimeOfDay.Evening]: {
-      base: [
+      base: [],
+      uncommon: [
         { species: Species.Krabby, weight: 20 },
         { species: Species.Shellder, weight: 20 },
         { species: Species.Seel, weight: 20 },
         { species: Species.Staryu, weight: 20 },
         { species: Species.Magikarp, weight: 30 },
       ],
-      uncommon: [],
-      rare: [
+      rare: [],
+      scarce: [
         { species: Species.Kingler, weight: 10 },
         { species: Species.Cloyster, weight: 10 },
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Starmie, weight: 10 },
       ],
+      elusive: [
+        { species: Species.Shuckle, weight: 5 },
+        { species: Species.Qwilfish, weight: 15 },
+      ],
+      prized: [...UNOWN_SPAWNS],
       special: [],
     },
     [TimeOfDay.Night]: {
-      base: [
+      base: [],
+      uncommon: [
         { species: Species.Krabby, weight: 20 },
         { species: Species.Shellder, weight: 20 },
         { species: Species.Seel, weight: 20 },
         { species: Species.Staryu, weight: 20 },
         { species: Species.Magikarp, weight: 30 },
       ],
-      uncommon: [],
-      rare: [
+      rare: [],
+      scarce: [
         { species: Species.Kingler, weight: 10 },
         { species: Species.Cloyster, weight: 10 },
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Starmie, weight: 10 },
       ],
+      elusive: [
+        { species: Species.Shuckle, weight: 5 },
+        { species: Species.Qwilfish, weight: 15 },
+      ],
+      prized: [...UNOWN_SPAWNS],
       special: [],
     },
   });

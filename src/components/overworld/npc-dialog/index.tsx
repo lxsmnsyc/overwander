@@ -13,6 +13,7 @@ import {
   breed,
   buyFossil,
   buyFromVendor,
+  carveApricorns,
   channelAbility,
   groomCatch,
   hasVisited,
@@ -23,8 +24,9 @@ import {
   visitNurse,
 } from '../../../auth/npcs';
 import type { Items } from '../../../data/ids/items';
+import { getApricornBall } from '../../../data/ids/items';
 import type { Moves } from '../../../data/ids/moves';
-import { isFossil } from '../../../data/items';
+import { getItemData, isFossil } from '../../../data/items';
 
 import { getFossilPrice } from '../../../data/overworld/fossil';
 import { Species } from '../../../data/ids/species';
@@ -59,7 +61,7 @@ import {
   GroomerCounter,
   NurseCounter,
 } from './counters/care';
-import { FossilCounter, ReviveCounter, VendorCounter } from './counters/goods';
+import { FossilCounter, KurtCounter, ReviveCounter, VendorCounter } from './counters/goods';
 import { ReminderCounter, TutorCounter } from './counters/moves';
 import { NPC_QUOTES, asParent, priceOf } from './shared';
 
@@ -274,6 +276,62 @@ function NpcCounter(
    */
   const fossils = (): InventoryEntry[] =>
     (props.bag.latest ?? []).filter((entry) => isFossil(entry.item) && entry.amount > 0);
+
+  /** What the apricorn on this square becomes, for the tray to say. */
+  const ballName = (item: Items): string => {
+    const ball = getApricornBall(item);
+
+    return ball == null ? '' : getItemData(ball).name;
+  };
+
+  const apricorns = (): InventoryEntry[] =>
+    (props.bag.latest ?? []).filter(
+      (entry) => getApricornBall(entry.item) != null && entry.amount > 0,
+    );
+
+  /**
+   * Hand him a basket of one colour. The bag is re-read afterwards
+   * the way a trade re-reads it: the apricorns went from it and the
+   * balls arrived in it
+   */
+  const carve = (item: Items, amount: number): void => {
+    const snapshot = props.snapshot;
+    const standing = props.standing;
+
+    if (snapshot == null || standing == null) {
+      return;
+    }
+    setStatus(null);
+    setBusy(true);
+    carveApricorns(snapshot, standing[0], item, amount)
+      .then((done) => {
+        setBusy(false);
+
+        if (done == null) {
+          toast.push({
+            message: 'He turned the basket over and handed it straight back.',
+            tone: 'ember',
+          });
+          return;
+        }
+        // What came back rather than what he did with it: the bench is
+        // still open behind this, and the next basket is the next
+        // press
+        toast.push({
+          title: `${getItemData(done.ball).name}${done.amount > 1 ? ` ×${done.amount}` : ''}`,
+          message: `−${amount} ${describeItem(item)}`,
+          art: () => <ItemSprite item={done.ball} size={24} label="" />,
+          tone: 'leaf',
+        });
+        props.onTraded();
+        props.onServed();
+        props.onChange?.();
+      })
+      .catch(() => {
+        setBusy(false);
+        toast.push({ message: 'The bench went quiet. Nothing changed hands.', tone: 'ember' });
+      });
+  };
 
   const close = (): void => {
     setStatus(null);
@@ -711,10 +769,10 @@ function NpcCounter(
       );
     }
     if (npc !== Npc.Vendor && npc !== Npc.Chef) {
-      // The daycare lady, the groomer, the channeler, the maniac and
-      // the scientist act the moment something is pressed, so there is
-      // nothing left to agree to: a button here would only ask the
-      // question twice
+      // The daycare lady, the groomer, the channeler, the maniac, the
+      // scientist and Kurt act the moment something is pressed, so
+      // there is nothing left to agree to: a button here would only
+      // ask the question twice
       return null;
     }
 
@@ -900,6 +958,15 @@ function NpcCounter(
 
               <Show when={standing()[1] === Npc.FossilScientist}>
                 <ReviveCounter fossils={fossils()} busy={busy()} onRevive={openRock} />
+              </Show>
+
+              <Show when={standing()[1] === Npc.Kurt}>
+                <KurtCounter
+                  apricorns={apricorns()}
+                  busy={busy()}
+                  ballName={ballName}
+                  onCarve={carve}
+                />
               </Show>
 
               <Show when={standing()[1] === Npc.Vendor || standing()[1] === Npc.Chef}>

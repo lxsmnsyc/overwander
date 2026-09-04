@@ -66,6 +66,14 @@ export const enum Balls {
   TimerBall = 11,
   QuickBall = 12,
   DuskBall = 13,
+  // Kurt's seven, which the mainline turns out of apricorns
+  LevelBall = 14,
+  LureBall = 15,
+  MoonBall = 16,
+  FriendBall = 17,
+  LoveBall = 18,
+  HeavyBall = 19,
+  FastBall = 20,
 }
 
 export const enum Items {
@@ -101,6 +109,16 @@ export const enum Items {
   TimerBall = 26,
   QuickBall = 27,
   DuskBall = 28,
+  // Kurt's seven keep the ids reserved for them rather than joining
+  // the run above: an id in a stored record outlives the code that
+  // wrote it, so nothing already numbered may shift to make room
+  LevelBall = 311,
+  LureBall = 312,
+  MoonBall = 313,
+  FriendBall = 314,
+  LoveBall = 315,
+  HeavyBall = 316,
+  FastBall = 317,
   // Key items
   ShinyCharm = 29,
   // Valuables: found in the overworld, worth only what they sell for
@@ -654,13 +672,6 @@ export const enum Items {
   /**
    * TODO: ball variants the existing catch-rate hooks already cover
    */
-  LevelBall = 311,
-  LureBall = 312,
-  MoonBall = 313,
-  FriendBall = 314,
-  LoveBall = 315,
-  HeavyBall = 316,
-  FastBall = 317,
   SafariBall = 318,
   SportBall = 319,
 
@@ -795,6 +806,48 @@ export const enum Items {
    * [`src/data/items/trade-items.ts`](../items/trade-items.ts)
    */
   LinkingCord = 381,
+  // Celebi's relic, numbered after the list rather than beside the
+  // Old Sea Map: 54 was spoken for
+  GSBall = 382,
+
+  /**
+   * The seven apricorns, picked off a tree and carried to Kurt, who
+   * turns each into the ball its colour makes. They do nothing else:
+   * an apricorn is a ball that has not been carved yet
+   */
+  RedApricorn = 383,
+  BlueApricorn = 384,
+  YellowApricorn = 385,
+  GreenApricorn = 386,
+  PinkApricorn = 387,
+  WhiteApricorn = 388,
+  BlackApricorn = 389,
+}
+
+/**
+ * Which ball each apricorn is carved into, in the mainline's own
+ * pairing. It is read both ways — a basket names the ball it would
+ * become, and a ball names the apricorn it wants — so the reverse is
+ * derived rather than written twice
+ */
+export const APRICORN_BALLS: Partial<Record<number, Items>> = {
+  [Items.RedApricorn]: Items.LevelBall,
+  [Items.BlueApricorn]: Items.LureBall,
+  [Items.YellowApricorn]: Items.MoonBall,
+  [Items.GreenApricorn]: Items.FriendBall,
+  [Items.PinkApricorn]: Items.LoveBall,
+  [Items.WhiteApricorn]: Items.FastBall,
+  [Items.BlackApricorn]: Items.HeavyBall,
+};
+
+/** Every apricorn, in the order their colours are listed above. */
+export const APRICORNS: Items[] = (Object.keys(APRICORN_BALLS).map(Number) as Items[]).sort(
+  (one, other) => one - other,
+);
+
+/** The ball this apricorn becomes, or null for anything that is not one. */
+export function getApricornBall(item: Items): Items | null {
+  return APRICORN_BALLS[item] ?? null;
 }
 
 /**
@@ -848,6 +901,13 @@ export const BALL_ITEMS: Record<Balls, Items> = {
   [Balls.TimerBall]: Items.TimerBall,
   [Balls.QuickBall]: Items.QuickBall,
   [Balls.DuskBall]: Items.DuskBall,
+  [Balls.LevelBall]: Items.LevelBall,
+  [Balls.LureBall]: Items.LureBall,
+  [Balls.MoonBall]: Items.MoonBall,
+  [Balls.FriendBall]: Items.FriendBall,
+  [Balls.LoveBall]: Items.LoveBall,
+  [Balls.HeavyBall]: Items.HeavyBall,
+  [Balls.FastBall]: Items.FastBall,
 };
 
 const BALLS_BY_ITEM = new Map<Items, Balls>(

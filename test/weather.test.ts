@@ -30,7 +30,7 @@ import { MAX_IV, STAT_ORDER, getIV } from '../src/data/constants/stats';
 import registerGameData from '../src/data';
 import { BattleModes } from '../src/battle/core';
 import { Weathers } from '../src/data/ids/status';
-import { createTrainerBattle } from '../src/overworld/rocket';
+import { createTrainerBattle } from '../src/overworld/rocket-battle';
 import { getEggMoves, getSpeciesData } from '../src/data/species';
 
 /**

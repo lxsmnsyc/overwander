@@ -199,6 +199,58 @@ const enum Abilities {
   Drizzle = 123,
   // Mew
   Protean = 124,
+  // Cyndaquil
+  Berserk = 125,
+  // Natu
+  MagicBounce = 126,
+  // Mareep
+  Plus = 127,
+  MotorDrive = 128,
+  // Sunkern
+  FlowerGift = 129,
+  // Slugma
+  MagmaArmor = 130,
+  // Remoraid
+  SuctionCups = 131,
+  Moody = 132,
+  // Phanpy
+  Stamina = 133,
+  /**
+   * From here on an id is allocated in the order the ability is added
+   * rather than by the dex number of the line that introduces it. The
+   * ones above were renumbered once while they were hours old; an id
+   * reaches a player's caught rows, so that cannot happen again
+   */
+  // Togepi
+  SuperLuck = 134,
+  // Shuckle
+  Contrary = 135,
+  // Corsola
+  StormDrain = 136,
+  // Skarmory
+  MirrorArmor = 137,
+  // Smeargle
+  Prankster = 138,
+  // Larvitar
+  SandStream = 139,
+  // Heracross
+  SapSipper = 140,
+  // Teddiursa
+  HoneyGather = 141,
+  // Marill
+  HugePower = 142,
+  // Yanma
+  SpeedBoost = 143,
+  // Sneasel
+  Pickpocket = 144,
+  // Wobbuffet
+  ShadowTag = 145,
+  Telepathy = 146,
+  // Scizor
+  LightMetal = 147,
+  // Unown
+  QueenlyMajesty = 148,
+  Comatose = 149,
   // Special (non-standard abilities outside the regular pool)
   Boss = 100001,
   Shadow = 100002,

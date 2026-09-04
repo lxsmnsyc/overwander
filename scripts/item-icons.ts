@@ -1,7 +1,7 @@
 import { readFileSync, renameSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import decode, { type Image, encodeSmallest } from '../src/server/sprites/png.ts';
-import pack from '../src/server/sprites/packing.ts';
+import { packSmallest } from '../src/server/sprites/packing.ts';
 
 /**
  * Item pictures that no rip drew.
@@ -156,19 +156,6 @@ function areaOf(layout: Layout): number {
 }
 
 /**
- * How far from square a sheet may be. Rows at every width will happily
- * find a strip one picture wide, which is the tightest fit and the
- * worst sheet: the ones already in `public/` are all within about this
- */
-const MAX_ASPECT = 2.5;
-
-function shapely(layout: Layout): boolean {
-  return (
-    Math.max(layout.width, layout.height) <= Math.min(layout.width, layout.height) * MAX_ASPECT
-  );
-}
-
-/**
  * Every picture kept exactly where it is, with the new ones dropped
  * into the gaps and the sheet grown only when nothing fits
  */
@@ -209,60 +196,20 @@ function keptInPlace(sheet: Sheet): Layout {
 }
 
 /**
- * Every picture laid in rows of a given width, tallest first. Rows
- * rather than a tree, because a sheet of pictures that are all about a
- * cell wide packs into rows almost perfectly and the tree will not
- * find that: it keeps the sheet square, and eight belts want one long
- * strip
- */
-function shelved(pictures: Picture[], width: number): Layout | null {
-  const order = [...pictures].sort((one, two) => two.image.height - one.image.height);
-  const places = new Map<string, [number, number]>();
-  let x = 0;
-  let y = 0;
-  let tallest = 0;
-
-  for (const picture of order) {
-    if (picture.image.width > width) {
-      return null;
-    }
-    if (x + picture.image.width > width) {
-      x = 0;
-      y += tallest;
-      tallest = 0;
-    }
-    places.set(picture.name, [x, y]);
-    x += picture.image.width;
-    tallest = Math.max(tallest, picture.image.height);
-  }
-  return { places, width, height: y + tallest };
-}
-
-/**
  * Every picture placed again from scratch, nothing kept: the tree
  * packer, and rows at every width worth trying, whichever comes out
  * smallest
  */
 function packedAfresh(sheet: Sheet): Layout {
-  const packed = pack(
+  const packed = packSmallest(
     sheet.pictures.map((one) => ({ one, w: one.image.width, h: one.image.height })),
   );
-  let best: Layout = {
+
+  return {
     places: new Map(packed.placed.map(({ box, x, y }) => [box.one.name, [x, y]])),
     width: packed.width,
     height: packed.height,
   };
-  const widest = Math.max(...sheet.pictures.map((one) => one.image.width));
-  const across = sheet.pictures.reduce((sum, one) => sum + one.image.width, 0);
-
-  for (let width = widest; width <= across; width += 1) {
-    const rows = shelved(sheet.pictures, width);
-
-    if (rows != null && shapely(rows) && areaOf(rows) < areaOf(best)) {
-      best = rows;
-    }
-  }
-  return best;
 }
 
 /**
@@ -364,6 +311,14 @@ interface Tint {
   why: string;
   /** `#rrggbb` to `#rrggbb`. Every colour of the source must be named. */
   swaps: Record<string, string>;
+  /**
+   * Pixels painted over the swap afterwards, one row of the picture to
+   * a string, a dot for a pixel the swap already got right. A swap can
+   * only say what a colour becomes everywhere it appears, and a mark
+   * drawn on one part of an object is not a colour: this is for those.
+   * A pixel the source left empty stays empty
+   */
+  paint?: { rows: string[]; colours: Record<string, string> };
 }
 
 const TINTS: Tint[] = [
@@ -438,6 +393,57 @@ const TINTS: Tint[] = [
     },
   },
   {
+    from: 'balls/park',
+    to: 'key/gs-ball',
+    why: 'the relic is a ball, and the park ball is the one already drawn gold over white',
+    // The gold and the white are the park ball's own. What changes is
+    // the band, which is black rather than blue, and the button, which
+    // is glass rather than orange
+    swaps: {
+      '#202020': '#202020',
+      '#f6d552': '#f6d552',
+      '#ffe68b': '#ffe68b',
+      '#ffffff': '#ffffff',
+      '#de9c29': '#de9c29',
+      '#296acd': '#39393f',
+      '#7b7b83': '#2a2a2f',
+      '#94739c': '#31313a',
+      '#ac5a18': '#a4a4c5',
+      '#ff8b31': '#f6f6ff',
+      '#decdf6': '#decdf6',
+      '#a4a4c5': '#a4a4c5',
+    },
+    paint: {
+      // The park ball's blue is a wide sweep rather than a band, so
+      // most of it is given back to the lower half: a GS ball is a
+      // band, a button and two hemispheres. The hook is the mark on
+      // its gold, which is as much of the pair as eighteen pixels
+      // hold, since the lower half is a third of the height and a
+      // second glyph there reads as a smudge
+      rows: [
+        '..................',
+        '..................',
+        '..................',
+        '..................',
+        '..................',
+        '...KKKK...........',
+        '...K..............',
+        '...K..............',
+        '...KKK............',
+        '.....K............',
+        '..................',
+        '..................',
+        '..........wwwwws..',
+        '........wwwwwws...',
+        '.....ssswwwwws....',
+        '..................',
+        '..................',
+        '..................',
+      ],
+      colours: { K: '#202020', w: '#decdf6', s: '#a4a4c5' },
+    },
+  },
+  {
     from: 'ev-items/power-lens',
     to: 'ev-items/utility-belt',
     why: 'the power lens is worn by a pokemon that is already holding it',
@@ -458,6 +464,45 @@ const TINTS: Tint[] = [
     },
   },
 ];
+
+/**
+ * The marks a swap cannot make, painted on where the picture already
+ * has a pixel. Nothing is drawn outside the silhouette: a mark is on
+ * an object rather than beside it, and painting past the edge would
+ * change the shape the picture was borrowed for
+ */
+function painted(
+  name: string,
+  image: Image,
+  paint: { rows: string[]; colours: Record<string, string> },
+): void {
+  if (paint.rows.length !== image.height) {
+    throw new Error(`${name} paints ${paint.rows.length} rows over ${image.height}`);
+  }
+
+  for (let y = 0; y < image.height; y += 1) {
+    if (paint.rows[y].length !== image.width) {
+      throw new Error(`${name} paints ${paint.rows[y].length} pixels across ${image.width}`);
+    }
+
+    for (let x = 0; x < image.width; x += 1) {
+      const key = paint.rows[y][x];
+      const at = (y * image.width + x) * 4;
+
+      if (key === '.' || image.rgba[at + 3] === 0) {
+        continue;
+      }
+      if (!Object.hasOwn(paint.colours, key)) {
+        throw new Error(`${name} paints with ${key}, which it does not name`);
+      }
+      const packedColour = Number.parseInt(paint.colours[key].slice(1), 16);
+
+      image.rgba[at] = (packedColour >> 16) & 0xff;
+      image.rgba[at + 1] = (packedColour >> 8) & 0xff;
+      image.rgba[at + 2] = packedColour & 0xff;
+    }
+  }
+}
 
 function tinted(tint: Tint, sheets: Map<string, Sheet>): Picture {
   const [fromSheet, fromName] = tint.from.split('/');
@@ -491,6 +536,9 @@ function tinted(tint: Tint, sheets: Map<string, Sheet>): Picture {
   }
   if (missed.size > 0) {
     throw new Error(`${tint.to} says nothing about ${[...missed].sort().join(' ')}`);
+  }
+  if (tint.paint != null) {
+    painted(tint.to, image, tint.paint);
   }
   return { name: tint.to.split('/')[1], image, trim: [source.trim[0], source.trim[1]] };
 }

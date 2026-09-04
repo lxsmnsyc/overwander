@@ -28,6 +28,25 @@ const FAMILY_TEACHABLE = [
   Moves.SkullBash,
   Moves.Rest,
   Moves.Substitute,
+  Moves.Headbutt,
+  Moves.DefenseCurl,
+  Moves.Thief,
+  Moves.Snore,
+  Moves.Curse,
+  Moves.Protect,
+  Moves.MudSlap,
+  Moves.IcyWind,
+  Moves.Endure,
+  Moves.Swagger,
+  Moves.Attract,
+  Moves.SleepTalk,
+  Moves.Return,
+  Moves.Frustration,
+  Moves.IronTail,
+  Moves.HiddenPower,
+  Moves.SunnyDay,
+  Moves.ShadowBall,
+  Moves.RockSmash,
 ];
 
 export default function registerRattataSpecies(): void {
@@ -65,12 +84,20 @@ export default function registerRattataSpecies(): void {
       level: {
         1: [Moves.Tackle, Moves.TailWhip],
         7: [Moves.QuickAttack],
-        14: [Moves.HyperFang],
-        23: [Moves.FocusEnergy],
+        13: [Moves.HyperFang],
+        20: [Moves.FocusEnergy],
+        27: [Moves.Pursuit],
         34: [Moves.SuperFang],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.Screech],
+      egg: [
+        Moves.Screech,
+        Moves.Bite,
+        Moves.Counter,
+        Moves.FurySwipes,
+        Moves.FlameWheel,
+        Moves.Reversal,
+      ],
     },
   });
 
@@ -101,12 +128,20 @@ export default function registerRattataSpecies(): void {
     learnSet: {
       level: {
         1: [Moves.Tackle, Moves.TailWhip, Moves.QuickAttack],
-        7: [Moves.QuickAttack],
-        14: [Moves.HyperFang],
+        13: [Moves.HyperFang],
+        20: [Moves.ScaryFace],
         27: [Moves.FocusEnergy],
-        41: [Moves.SuperFang],
+        30: [Moves.Pursuit],
+        40: [Moves.SuperFang],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.IceBeam, Moves.HyperBeam],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.IceBeam,
+        Moves.HyperBeam,
+        Moves.Cut,
+        Moves.Roar,
+        Moves.Strength,
+      ],
     },
   });
 }

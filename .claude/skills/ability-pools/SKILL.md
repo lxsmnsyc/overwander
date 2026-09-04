@@ -40,12 +40,36 @@ Check the ability against PokeAPI rather than writing it from recall.
 
 ## Inventing a filler ability
 
-**A newly added final evolution that cannot reach four abilities gets filler suggestions before it is written down:** as many as it is short, plus one alternative to choose from. Count what it reaches by walking up the chain, with Megas and alternate forms left out of the count.
+**A newly added final evolution that cannot reach four abilities gets filler suggestions before it is written down:** as many as it is short, plus one alternative to choose from. Count what it reaches by walking up the chain, with Megas and alternate forms left out of the count, and count against every generation rather than the one being written.
 
 A species short of four abilities can be given one the mainline never gave it. It goes in `hiddenAbilities`, never in `abilities`: an invented ability should be rare to hatch, and the hidden band is what makes it rare. The band does not widen with the list, so a species with three hidden abilities rolls hidden as often as one with a single one and splits the band between them.
 
-Two slots are already spoken for and must not be spent.
+**Suggest from every generation, not from the enum.** The candidates are all the abilities the mainline has ever printed, and most of them are not in `src/data/ids/abilities.ts` yet. An unregistered one is a normal answer: taking it means adding the id, a registry entry with its player-facing description, and the battle implementation, which is what Plus and Magic Bounce each cost when the Johto lines landed. Say what a suggestion would cost, and let that weigh on the recommendation rather than shorten the list.
 
-**What the species' own Mega or another of its forms carries.** Mega Charizard X's Tough Claws belongs to Charizard the day Megas land, so do not hand Charizard some other ability into that slot and do not hand it Tough Claws early either. An Alolan or Galarian form's ability is not a suggestion either, for the separate reason that it belongs to a different pokemon.
+### Count what a later generation already gives it
+
+**Read the species' whole dex entry, not the generation being written.** A pokemon added here in its Gen 2 shape still carries every ability the mainline has given it since: Sentret has Frisk because Gen 5 handed out hidden abilities wholesale, not because Gen 2 had them. PokeAPI's ability list is the current generation's, so it is already the right answer; ask it before counting anything short.
+
+A species is only short of four once that whole list is in hand. Most of the ones that look short are not.
+
+### Three kinds of slot are already spoken for
+
+None of them may be spent, and each is a reason to leave a species alone rather than fill it. All three are stages of the same line, because a stage is the only thing that shares a pool.
 
 **What a future baby pre-evolution carries.** A baby stage added in a later generation sits below the species and its abilities walk straight up. Tyrogue brings Guts, Steadfast and Vital Spirit to both Hitmons, Smoochum brings Hydration to Jynx, Munchlax brings Pickup to Snorlax, Happiny brings Friend Guard to Chansey, Mime Jr. brings its set to Mr. Mime, Cleffa and Igglybuff bring Friend Guard to their lines. Those species fill themselves up and need nothing invented.
+
+That holds only where the baby brings something new. Bonsly, Wynaut and Mantyke each carry exactly their adult's list, so Sudowoodo, Wobbuffet and Mantine gain nothing the day those babies land and would stay short forever. Read the baby's own abilities before deciding a slot is spoken for; where they match, the species is filled now. It is safe because pools walk **up** only: a filler on the adult can never leak down to the baby, and a baby is a first stage rather than a final evolution, so it never has to reach four itself.
+
+**What a future evolution carries.** A species that gains an evolution in a later generation is not a final evolution and is not filled at all: that is the same rule as the Kanto caveat above. Handing Gligar a Poison Heal because Gliscor will have it breaks the pool the day Gliscor lands, since a pre-evolution's abilities walk up and the exclusivity is gone.
+
+**What that future evolution will itself need filling with.** An evolution added later may be short of four on its own, and whatever is invented for it then has to be an ability the stage below cannot already reach. Spending a good fit on the pre-evolution today takes it off the table twice.
+
+### A form reserves nothing
+
+A Mega Evolution or a regional form is **not** one of those slots, and it never lowers the number of fillers a species is owed. A Mega's ability is not stored on the base species at all, so there is nothing there to keep free: Ampharos reaches Static and Plus, and is short **two**, with Mega Ampharos' Mold Breaker counting for nothing.
+
+The one thing a form forbids is narrow: do not hand the base species that form's own ability early. Charizard is not given Tough Claws before Mega Charizard X exists, and a Kantonian Marowak is never given an Alolan Marowak's Cursed Body. Everything else is fair, and the species still has to reach four.
+
+### How to check
+
+Ask PokeAPI for the species and read three things: its **current abilities**, which is every generation's; its **varieties**, which names any Mega, regional or convergent form; and its **evolution chain**, which says whether anything was added above or below it. Varieties only rule specific abilities out, so the count comes from the ability list and the chain: a species with nothing new above or below and three abilities is short of one, and one with two is short of two. Something added above or below it is the reason to stop.

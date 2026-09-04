@@ -51,6 +51,13 @@ export function blit(
   from: { x: number; y: number; width: number; height: number },
   to: { x: number; y: number },
 ): void {
+  // Whatever hangs off the left of either image is dropped rather than
+  // wrapping onto the row above, which is what a negative index does to
+  // a flat buffer
+  const skip = Math.max(0, -from.x, -to.x);
+  const sourceX = from.x + skip;
+  const targetX = to.x + skip;
+
   for (let row = 0; row < from.height; row += 1) {
     const sourceY = from.y + row;
     const targetY = to.y + row;
@@ -58,14 +65,21 @@ export function blit(
     if (sourceY < 0 || sourceY >= source.height || targetY < 0 || targetY >= target.height) {
       continue;
     }
-    const width = Math.min(from.width, source.width - from.x, target.width - to.x);
+    const width = Math.min(from.width - skip, source.width - sourceX, target.width - targetX);
 
     if (width <= 0) {
       continue;
     }
-    const start = (sourceY * source.width + from.x) * 4;
+    const start = (sourceY * source.width + sourceX) * 4;
+    // Against the buffer rather than against the stated height: a
+    // drawing whose size does not match what it is being read as
+    // should come out short, not throw out of a copy
+    const end = Math.min(start + width * 4, source.data.length);
 
-    source.data.copy(target.data, (targetY * target.width + to.x) * 4, start, start + width * 4);
+    if (end <= start) {
+      continue;
+    }
+    source.data.copy(target.data, (targetY * target.width + targetX) * 4, start, end);
   }
 }
 

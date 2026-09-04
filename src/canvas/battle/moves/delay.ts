@@ -1,4 +1,4 @@
-import { MoveCategories, MoveFlags, MoveTargetFlags, Moves } from '../../../data/ids/moves';
+import { MoveAffects, MoveCategories, MoveFlags, Moves } from '../../../data/ids/moves';
 import { TYPE_COLORS } from '../../../data/constants/types';
 import { getMoveData } from '../../../data/moves';
 import PaintedVisual, { type Painter } from './__painted';
@@ -8,6 +8,7 @@ import {
   between,
   bone,
   bubble,
+  chevrons,
   decay,
   motes,
   noise,
@@ -15,8 +16,10 @@ import {
   ring,
   ripple,
   shards,
+  spiral,
   swell,
 } from './__paint';
+import { type EffectShape, effectShapeFor } from './effect';
 
 /**
  * What a move looks like in the gap before it lands.
@@ -38,6 +41,13 @@ const REACH = 22;
 /** Every way a move can spend the gap. */
 export type DelayShape =
   | 'Thrown'
+  | 'Brace'
+  | 'Focus'
+  | 'Gather'
+  | 'Gaze'
+  | 'Call'
+  | 'Drift'
+  | 'Flare'
   | 'Bubbles'
   | 'Spun'
   | 'Lobbed'
@@ -226,6 +236,138 @@ const PAINTERS: Record<
     }
   },
 
+  // Drawn in rather than sent out: what the caster is taking, from
+  // wherever it is taking it. Aimed at itself, that is where it stands
+  Gather(context, stage, share, paint, seed) {
+    const size = REACH * stage.scale;
+
+    for (let mote = 0; mote < 7; mote += 1) {
+      const held = (share * 1.5 + noise(seed, mote)) % 1;
+      const at = between(landing(stage), stage.source, held);
+      // Wide where it started and tight where it arrives, so the
+      // motes read as converging rather than as a line of dots
+      const off = (noise(seed, mote + 12) - 0.5) * size * 1.6 * (1 - held);
+
+      orb(context, [at[0] + off, at[1] + off], 2.6 * stage.scale, {
+        ...paint,
+        alpha: swell(held) * 0.9,
+      });
+    }
+  },
+
+  // Something closing around the caster. The shells arrive from
+  // outside rather than leaving, which is what makes it a guard
+  Brace(context, stage, share, paint) {
+    const size = REACH * stage.scale;
+
+    for (let shell = 0; shell < 3; shell += 1) {
+      const held = (share * 1.2 + shell * 0.33) % 1;
+
+      ring(context, stage.source, size * (2.2 - held * 1.1), {
+        ...paint,
+        alpha: swell(held) * 0.7,
+        width: 2.2 * stage.scale,
+      });
+    }
+  },
+
+  // Winding itself up rather than winding anything up to throw:
+  // everything here runs upward off the caster
+  Focus(context, stage, share, paint, seed) {
+    const size = REACH * stage.scale;
+
+    chevrons(context, stage.source, size * 1.1, 3, share, {
+      ...paint,
+      alpha: swell(share) * 0.9,
+      width: 2.4 * stage.scale,
+    });
+    for (let mote = 0; mote < 5; mote += 1) {
+      const held = (share * 1.4 + noise(seed, mote)) % 1;
+      const x = stage.source[0] + (noise(seed, mote + 9) - 0.5) * size * 1.8;
+
+      orb(context, [x, stage.source[1] + size - held * size * 2], 2.2 * stage.scale, {
+        ...paint,
+        alpha: swell(held) * 0.8,
+      });
+    }
+  },
+
+  // Held rather than sent: the move is already turning on what it is
+  // aimed at before anything has happened to it
+  Gaze(context, stage, share, paint) {
+    const size = REACH * stage.scale;
+
+    spiral(context, landing(stage), size * (0.6 + share * 0.7), 2, share, {
+      ...paint,
+      alpha: swell(share) * 0.8,
+      width: 2 * stage.scale,
+    });
+    ring(context, stage.source, size * 0.5 * (1 + swell(share) * 0.3), {
+      ...paint,
+      alpha: swell(share) * 0.5,
+      width: 2 * stage.scale,
+    });
+  },
+
+  // Sound leaves the caster in every direction and only happens to
+  // reach what the move was aimed at
+  Call(context, stage, share, paint) {
+    const size = REACH * stage.scale;
+
+    for (let pulse = 0; pulse < 3; pulse += 1) {
+      const held = (share * 1.5 + pulse * 0.33) % 1;
+
+      ring(context, stage.source, size * (0.3 + held * 2.4), {
+        ...paint,
+        alpha: decay(held) * 0.75,
+        width: 2.4 * stage.scale,
+      });
+    }
+  },
+
+  // A cloud rather than a thing thrown: it spreads as it goes and
+  // arrives wider than it left
+  Drift(context, stage, share, paint, seed) {
+    const size = REACH * stage.scale;
+
+    for (let puff = 0; puff < 9; puff += 1) {
+      const held = Math.min(1, share * 1.2 - noise(seed, puff) * 0.25);
+
+      if (held <= 0) {
+        continue;
+      }
+      const at = between(stage.source, landing(stage), held);
+      const wide = size * held * 1.2;
+
+      orb(
+        context,
+        [
+          at[0] + (noise(seed, puff + 21) - 0.5) * wide,
+          at[1] + (noise(seed, puff + 44) - 0.5) * wide,
+        ],
+        (2 + noise(seed, puff) * 2.4) * stage.scale,
+        { ...paint, alpha: 0.65 * (1 - held * 0.5) },
+      );
+    }
+  },
+
+  // Light: it is at the far end the instant it is let go, so what
+  // there is to draw is the blowing out rather than the crossing
+  Flare(context, stage, share, paint) {
+    const size = REACH * stage.scale;
+    const out = Math.min(1, share * 2.5);
+
+    orb(context, stage.source, size * (0.4 + out * 0.9), {
+      ...paint,
+      alpha: decay(share) * 0.9,
+    });
+    ring(context, stage.source, size * (0.6 + out * 3.4), {
+      ...paint,
+      alpha: decay(share),
+      width: 3 * stage.scale,
+    });
+  },
+
   // A status crossing the gap: nothing is thrown, but something
   // reaches — so it is drawn as rings arriving rather than as a thing
   Reach(context, stage, share, paint) {
@@ -303,6 +445,43 @@ const NAMED: Partial<Record<Moves, [winding?: DelayShape, striking?: DelayShape]
   [Moves.Earthquake]: [undefined, 'Rise'],
   [Moves.Fissure]: [undefined, 'Rise'],
   [Moves.Sandstorm]: [undefined, 'Rise'],
+
+  // Johto. A bomb and a parcel are lobbed, a bone tumbles, and the
+  // ground answers a Magnitude the way it answers an Earthquake
+  [Moves.SludgeBomb]: [undefined, 'Lobbed'],
+  [Moves.Present]: [undefined, 'Lobbed'],
+  [Moves.BoneRush]: [undefined, 'Spun'],
+  [Moves.Magnitude]: [undefined, 'Rise'],
+  [Moves.Spikes]: [undefined, 'Lobbed'],
+  // Held rather than sent: the wait is the strike hanging over the
+  // target until it arrives
+  [Moves.FutureSight]: [undefined, 'Charge'],
+  [Moves.Outrage]: ['Charge'],
+
+  // Their landing is the stat falling, so what the move itself was
+  // stays here: sand and smoke drift across, and light blows out
+  [Moves.SandAttack]: [undefined, 'Drift'],
+  [Moves.SmokeScreen]: [undefined, 'Drift'],
+  [Moves.Flash]: [undefined, 'Flare'],
+};
+
+/**
+ * How the gap is spent where the landing already says it.
+ *
+ * A cloud, a sound and health coming back each want their own wait,
+ * and the shape they land as is what tells them apart: keying off it
+ * splits the one charge that most of the game used to share
+ */
+const BY_LANDING: Partial<Record<EffectShape, DelayShape>> = {
+  Haze: 'Drift',
+  Mend: 'Gather',
+  Drain: 'Gather',
+  Ward: 'Brace',
+  Screen: 'Brace',
+  Boost: 'Focus',
+  Trance: 'Gaze',
+  Warp: 'Gaze',
+  Wave: 'Call',
 };
 
 /**
@@ -329,13 +508,29 @@ export function delayShapeFor(move: Moves, steps: number): DelayShape | null {
   if ((data.flags & MoveFlags.Contact) !== 0) {
     return null;
   }
-  if (data.category === MoveCategories.Status) {
-    return (data.target & MoveTargetFlags.Enemy) === 0 ? 'Charge' : 'Reach';
+  // Sound and powder cross the gap as themselves, whatever the move
+  // turns out to do at the far end of it
+  if ((data.flags & MoveFlags.Sound) !== 0) {
+    return 'Call';
+  }
+  if ((data.flags & MoveFlags.Powder) !== 0) {
+    return 'Drift';
   }
   // Something the move itself said takes longer than a swing is
   // something being sent: the data only names a delay for the moves
   // that are shot or thrown
-  return data.delay == null ? 'Charge' : 'Thrown';
+  if (data.category !== MoveCategories.Status && data.delay != null) {
+    return 'Thrown';
+  }
+  const landed = BY_LANDING[effectShapeFor(move)];
+
+  if (landed != null) {
+    return landed;
+  }
+  if (data.category === MoveCategories.Status) {
+    return (data.affects & MoveAffects.Enemy) === 0 ? 'Charge' : 'Reach';
+  }
+  return 'Charge';
 }
 
 /**

@@ -1,4 +1,4 @@
-import { RARE_SPAWN_ODDS, SPECIAL_SPAWN_ODDS, UNCOMMON_SPAWN_ODDS } from '../biome/__create';
+import { SPECIAL_SPAWN_ODDS } from '../biome/__create';
 import { Items } from '../ids/items';
 import { MARKET_GEAR } from '../items/gear';
 import { ONE_SHOTS } from '../items/one-shots';
@@ -49,7 +49,13 @@ export interface ItemRarityGroups {
  * for a crown. The crown sits in the rarest band as the exception:
  * everything else there is something gold cannot buy.
  *
- * Machines are deliberately absent: they are bought, never found
+ * Machines are deliberately absent: they are bought, never found.
+ *
+ * This is the whole ladder, and what a band and its odds are read
+ * off. Where each thing is buried is a separate question, answered by
+ * [`biome-items.ts`](./biome-items.ts): a stash draws from what its
+ * own ground holds, which is this pool less whatever belongs
+ * somewhere else
  */
 export const ITEM_POOL: ItemRarityGroups = {
   base: [
@@ -144,6 +150,7 @@ export const ITEM_POOL: ItemRarityGroups = {
     { item: Items.ThunderStone, weight: 10 },
     { item: Items.LeafStone, weight: 10 },
     { item: Items.MoonStone, weight: 10 },
+    { item: Items.SunStone, weight: 10 },
     { item: Items.Nugget, weight: 8 },
     // The middle of the ladder, thinning as it climbs
     // Cut off a Slowpoke, and worth more than the nugget it is found
@@ -259,6 +266,7 @@ export const ITEM_POOL: ItemRarityGroups = {
     // The only way a mythical is ever fought: the relic is found
     // here or not at all
     { item: Items.OldSeaMap, weight: 6 },
+    { item: Items.GSBall, weight: 6 },
     // Six stats made perfect at once. Nothing else undoes a bad roll,
     // so it belongs with the things gold cannot buy
     { item: Items.GoldenBottleCap, weight: 8 },
@@ -333,15 +341,23 @@ export interface ItemBandOdds {
 export const PRIZED_ITEM_ODDS = 1 / 512;
 
 /**
- * The default bands. The three ordinary ones mirror the spawn pool's;
+ * The item pool's own ordinary bands. They are the ladder the spawn
+ * pools used to run on, kept here because a thing on the ground has
+ * no stages to be dealt into
+ */
+export const UNCOMMON_ITEM_ODDS = 1 / 8;
+export const RARE_ITEM_ODDS = 1 / 64;
+
+/**
+ * The default bands. The three ordinary ones are the item pool's;
  * the prized band is the item pool's own, since a species has no
  * equivalent of a thing that changes a pokemon for good
  */
 export const ITEM_BAND_ODDS: ItemBandOdds = {
   special: SPECIAL_SPAWN_ODDS,
   prized: PRIZED_ITEM_ODDS,
-  rare: RARE_SPAWN_ODDS,
-  uncommon: UNCOMMON_SPAWN_ODDS,
+  rare: RARE_ITEM_ODDS,
+  uncommon: UNCOMMON_ITEM_ODDS,
 };
 
 /**
@@ -415,8 +431,8 @@ export const PHENOMENON_BAND_ODDS: ItemBandOdds = {
 export const PICKUP_BAND_ODDS: ItemBandOdds = {
   special: 0,
   prized: 0,
-  rare: RARE_SPAWN_ODDS,
-  uncommon: UNCOMMON_SPAWN_ODDS,
+  rare: RARE_ITEM_ODDS,
+  uncommon: UNCOMMON_ITEM_ODDS,
 };
 
 /**

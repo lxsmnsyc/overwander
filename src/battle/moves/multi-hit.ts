@@ -8,6 +8,11 @@ import type Unit from '../unit';
 interface MultiHitConfig {
   min: number;
   max: number;
+  /**
+   * Each strike lands harder than the last, by its own number: a
+   * Triple Kick's third kick is three times the first
+   */
+  escalating?: boolean;
 }
 
 /**
@@ -26,6 +31,10 @@ export const MULTI_HIT_MOVES: { [key in Moves]?: MultiHitConfig } = {
   [Moves.Barrage]: { min: 2, max: 5 },
   [Moves.Bonemerang]: { min: 2, max: 2 },
   [Moves.CometPunch]: { min: 2, max: 5 },
+  [Moves.BoneRush]: { min: 2, max: 5 },
+  [Moves.TripleKick]: { min: 3, max: 3, escalating: true },
+  // However many of the party pile in, which Beat Up works out itself
+  [Moves.BeatUp]: { min: 1, max: 6 },
 };
 
 // Delay between strikes
@@ -50,6 +59,8 @@ export function estimateMoveHits(move: Moves): number {
 
 interface MultiHitInstance {
   source: Unit;
+  /** Which strike is next, counting from one */
+  strike: number;
   target: Unit;
   moveTarget: MoveTarget;
   move: Moves;
@@ -61,16 +72,20 @@ export default function setupMultiHitMoves(battle: Battle): void {
   const instances = new Set<MultiHitInstance>();
 
   function strike(instance: MultiHitInstance): void {
+    const power = instance.source.checkMovePower(instance.move, instance.moveTarget) ?? 0;
+    const escalating = MULTI_HIT_MOVES[instance.move]?.escalating === true;
+
     instance.source.attack(
       instance.target,
       instance.move,
-      instance.source.checkMovePower(instance.move, instance.moveTarget) ?? 0,
+      escalating ? power * instance.strike : power,
       instance.source.checkMoveType(instance.move, instance.moveTarget),
       getMoveData(instance.move).category,
       MoveAttackFlags.Critical,
     );
 
     instance.remaining -= 1;
+    instance.strike += 1;
   }
 
   function isFinished(instance: MultiHitInstance): boolean {
@@ -152,6 +167,7 @@ export default function setupMultiHitMoves(battle: Battle): void {
         target: event.target.unit,
         moveTarget: event.target,
         move: event.move,
+        strike: 1,
         // The roll resolves through the event engine so abilities
         // (e.g. Skill Link) can adjust it
         remaining: event.source.checkMoveHits(

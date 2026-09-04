@@ -355,7 +355,11 @@ function PickerList(
   };
 
   return (
-    <div class="flex flex-col gap-3">
+    // Full width rather than shrink-to-fit: inline, this is a flex
+    // item of whatever laid the counter out, and a counter that
+    // centres its column would otherwise squeeze the tray to the width
+    // of its own squares
+    <div class="flex w-full flex-col gap-3">
       {/* Searching and the shelves belong to the tray, which lays them
           out the same way wherever the bag is opened */}
       <Show

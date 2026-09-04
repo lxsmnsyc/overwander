@@ -35,6 +35,18 @@ export function isEggRecord(caught: Record<string, unknown>): boolean {
 }
 
 /**
+ * The held items a pokemon is left with once one of them is spent.
+ *
+ * One copy, not every copy: a pokemon carrying two of something that
+ * pays for one of them keeps the other
+ */
+export function withoutHeld(items: readonly number[], spent: number): number[] {
+  const at = items.indexOf(spent);
+
+  return at < 0 ? [...items] : [...items.slice(0, at), ...items.slice(at + 1)];
+}
+
+/**
  * Whether the player has marked it as one they are keeping, read
  * straight off the stored row. A favorite is refused by everything
  * that would part them with it: a release, an auction, and a trade

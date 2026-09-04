@@ -2,11 +2,13 @@ import type { Stats } from '../constants/stats';
 import type { Types } from '../constants/types';
 import type Abilities from '../ids/abilities';
 import type Biome from '../ids/biome';
+import type { TimeOfDay } from '../ids/biome';
 import type EggGroups from '../ids/egg-groups';
 import type Families from '../ids/families';
 import type { Items } from '../ids/items';
 import type { Moves } from '../ids/moves';
 import type { Species } from '../ids/species';
+import { getBaseFormSpecies } from '../ids/species';
 
 /**
  * One way a species evolves: the target species and the required
@@ -37,6 +39,29 @@ export interface EvolutionData {
    * evolution is satisfied by any handover at all
    */
   partner?: Species;
+  /**
+   * The periods of the day the evolution is open in
+   * (EvolutionMethod.TimeOfDay), as a bitmask. Eevee is the only line
+   * that asks: an Espeon is a day's growing and an Umbreon a night's
+   */
+  time?: TimeOfDay;
+  /**
+   * Two of its own stats set against each other
+   * (EvolutionMethod.StatComparison). Tyrogue is the only line that
+   * asks: its Attack against its Defense decides which of the three
+   * it becomes, and the tie is a branch of its own rather than a
+   * fallback
+   */
+  compare?: StatComparison;
+}
+
+/**
+ * One stat measured against another, and which way it has to come out
+ */
+export interface StatComparison {
+  stat: Stats;
+  against: Stats;
+  order: 'greater' | 'lesser' | 'equal';
 }
 
 export interface LearnSetData {
@@ -165,6 +190,12 @@ let biomeIndex: Map<Biome, Species[]> | null = null;
 let familyIndex: Families[] | null = null;
 
 /**
+ * Lazily built base form -> every form of it index, invalidated by
+ * registration the way the others are
+ */
+let formIndex: Map<Species, Species[]> | null = null;
+
+/**
  * What each family is called, worked out the first time it is asked
  * for. See `getFamilyName`
  */
@@ -174,6 +205,7 @@ export function registerSpecies(species: Species, data: SpeciesData): void {
   SPECIES_MAP.set(species, data);
   biomeIndex = null;
   familyIndex = null;
+  formIndex = null;
   // A line that has just gained a member may have gained a new base
   // stage, and the name is that stage's
   familyNames.clear();
@@ -246,6 +278,29 @@ export function isBaseForm(species: Species): boolean {
  */
 export function getBaseForms(): Species[] {
   return [...SPECIES_MAP.keys()].filter((species) => isBaseForm(species));
+}
+
+/**
+ * Every registered form of whatever this is, its own default form
+ * first, in id order. A species with no variants answers a list of
+ * one, so a caller can ask without knowing which kind it holds
+ */
+export function getSpeciesForms(species: Species): Species[] {
+  if (formIndex == null) {
+    formIndex = new Map();
+
+    for (const one of SPECIES_MAP.keys()) {
+      const base = getBaseFormSpecies(one);
+      const held = formIndex.get(base);
+
+      if (held) {
+        held.push(one);
+      } else {
+        formIndex.set(base, [one]);
+      }
+    }
+  }
+  return formIndex.get(getBaseFormSpecies(species)) ?? [species];
 }
 
 export interface SpeciesAbilityPools {

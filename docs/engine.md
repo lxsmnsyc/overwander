@@ -33,7 +33,7 @@ why it settles nothing and pays nothing.
 | **Channel**  | The remaining steps of a multi-step move | The cast time again, per step  |
 | **Cooldown** | That one move being unusable again       | `180 / PP` seconds             |
 
-A base cast is 104 frames — about 1.73 seconds — and each point of move priority
+A base cast is 104 frames, about 1.73 seconds, and each point of move priority
 takes 16 frames off it, so priority is the mainline number doing real-time work.
 
 Cooldown is derived from **PP**, which has no other job here: `PP_COOLDOWN_BASIS`
@@ -65,7 +65,7 @@ it with.
 
 A move with `steps` triggers once as its cast ends and then **channels** the
 rest, one trigger per step, each step running as long as the wind-up that opened
-it — the engine's stand-in for a turn. Moves that want longer say so on top of
+it, which is the engine's stand-in for a turn. Moves that want longer say so on top of
 it: Bide doubles its step. A channel is not a second cast, so it is not gated on
 the move's cooldown; that cooldown started when the cast finished, and the
 channel is the rest of that same use.
@@ -73,8 +73,8 @@ channel is the rest of that same use.
 This half of the engine was dead until recently. The channel asked
 `CheckUnitCanCast` instead of `CheckUnitCanChannel`, which refused it on the
 cooldown its own cast had just started, and the tick that advances a channel was
-guarded on `casting`. So **no multi-step move ever ran past its first step** —
-and since the first step of Dig, Fly and Teleport is the one that hides the user,
+guarded on `casting`. So **no multi-step move ever ran past its first step**.
+Since the first step of Dig, Fly and Teleport is the one that hides the user,
 a pokemon that teleported was invulnerable for the rest of the fight. Both halves
 are tested now by stepping a battle a frame at a time rather than leaping over
 the phase boundary.
@@ -82,8 +82,8 @@ the phase boundary.
 ## The AI
 
 Units are driven by the AI in [`src/battle/ai/`](../src/battle/ai/). Every tick,
-each **idle** unit — alive, not casting, not channelling, no triggered move still
-pending, not locked out by a status — picks its best move and casts it. The idle
+each **idle** unit picks its best move and casts it. Idle means alive, not
+casting, not channelling, with no triggered move pending and no status locking it out. The idle
 set is maintained by the lifecycle events rather than rescanned, and the outcome
 check deliberately never asks the AI what it _would_ do, since consuming a random
 would pull every replay off its seed.
@@ -97,8 +97,8 @@ event that started it, so a listener marking the trigger pending afterwards woul
 run once the end had gone by and leave its unit pending for the rest of the fight.
 
 **Pending triggers are counted rather than flagged**, because one move can put
-several in the air at once — Mirror Move casts its copy from inside the trigger it
-is finishing — and a flag cleared by the first to land would free the unit while
+several in the air at once, since Mirror Move casts its copy from inside the
+trigger it is finishing, and a flag cleared by the first to land would free the unit while
 the rest were still coming.
 
 The tick loop walks a copy of the set and re-asks the check before letting
@@ -114,7 +114,7 @@ nothing.
 The first question is whether there is anybody to aim at. A move that reaches
 only the far side has nothing to do once the far side is down, and a move with no
 candidate target is left **out of the running** rather than offered with nothing
-named — which is how a unit ends up winding up move after move at an empty field
+named, which is how a unit ends up winding up move after move at an empty field
 forever. What reaches its own side always has the user to reach, so a survivor
 can still buff itself.
 
@@ -128,7 +128,7 @@ bench, and anything a boss shrugs off. A unit whose every move is refused casts
 nothing that tick and asks again on the next one: the field, not the unit, is
 what has to change.
 
-Both AI questions — is it usable, and what is it worth — run on the
+Both AI questions, whether it is usable and what it is worth, run on the
 **`AttackPriority`** scale, the one with a `Prepare`/`Cleanup` bracket that
 always closes. That is what lets an ability scope the AI's guess the same way it
 scopes the real thing: **Mold Breaker** opens its suppression window around the
@@ -140,24 +140,49 @@ Breaker ignores.
 
 Most abilities need no such wiring, because the speculative pass already asks
 what they answer: every immunity query, and the whole damage pipeline behind the
-score. Two thirds of the roster reaches the AI that way — Levitate, the absorbs,
+score. Two thirds of the roster reaches the AI that way: Levitate, the absorbs,
 Thick Fat, Filter, Multiscale, Guts, Technician, the weather ones. What does not
 is anything that only acts when a move **actually resolves**, and five of those
 change what a good pick is. Each says so itself, next to the effect:
 
 | Ability                              | What the AI is told                                 |
 | ------------------------------------ | --------------------------------------------------- |
-| **Damp**                             | The move cannot be cast at all — refused            |
-| **Magic Guard**                      | A poison that will take no health — refused         |
-| **Liquid Ooze**                      | A drain that comes back the other way — discouraged |
-| **Synchronize**                      | A status that lands on the user too — discouraged   |
-| **Static** and the contact punishers | Touching costs something — discouraged              |
+| **Damp**                             | The move cannot be cast at all, refused             |
+| **Magic Guard**                      | A poison that will take no health, refused          |
+| **Liquid Ooze**                      | A drain that comes back the other way, discouraged  |
+| **Synchronize**                      | A status that lands on the user too, discouraged    |
+| **Static** and the contact punishers | Touching costs something, discouraged               |
 
 Discouraged rather than refused, for the last three: the move still does its job,
 so it loses to an equally good one that is free and beats standing about. Damp is
 the odd one, because its veto lives on the cast check and the AI **cannot ask
-that** — infatuation answers the same question with a coin toss, and a
+that**. Infatuation answers the same question with a coin toss, and a
 speculative flip would pull every replay off its seed.
+
+### A kill outweighs a chip
+
+Taking a unit off the field is worth `KILL_BONUS` (8), which sits above the
+widest chip and above a heal, and far enough above both that no wind-up a killing
+move has to pay makes chipping look better than finishing. Getting there first is
+worth `PRIORITY_KILL_BONUS` (2) more.
+
+A hit that leaves the target standing is scored on the share of the remaining
+health it takes, out of `DAMAGE_SCALE` (5). Such a hit falls short of a kill by
+definition, so the band tops out one below it, at 4. Scoring it against a top the
+hit can actually reach is what makes a near miss count for more than it used to.
+
+The AI also drops a cast that would change nothing: a screen or a veil its side
+already holds, weather under a sky nobody answers to, and a stat drop the far
+side is holding off, whether by a raid boss or by Mist, Clear Body, Hyper Cutter
+or Big Pecks.
+
+### A speculative question leaves no mark
+
+Every `Check*` event carries `simulated`, which is true while the AI is weighing
+a move it has not cast. A listener may still answer the question, and must do
+nothing else: **no cue, no stage of its own, nothing a watcher could see.** An
+ability that shrugs a stat drop off flashes when the drop is really aimed at it,
+not each time the AI wonders about it.
 
 ### Setting up is for the side that has to last
 
@@ -165,8 +190,8 @@ In a raid the AI adds a bonus to friendly stage boosts, big enough to outbid any
 non-lethal damage: a party facing a health pool that size wants its first casts
 spent making the rest of them count.
 
-**The boss is exempt.** It is not a side that has to survive a long fight — it is
-the clock everybody else is racing — and its casts are already doubled, so one
+**The boss is exempt.** It is not a side that has to survive a long fight, it is
+the clock everybody else is racing, and its casts are already doubled, so one
 spent winding up a Withdraw is one handed to the lobby.
 
 ## Animation
@@ -177,26 +202,27 @@ spent winding up a Withdraw is one handed to the lobby.
 | Channel   | The same clip again, stretched over **each step**       |
 | Otherwise | `Idle`, or `Hurt` once knocked out                      |
 
-A move carries a **`cast`** list — animation clip names, most wanted first — and
+A move carries a **`cast`** list of animation clip names, most wanted first, and
 the battle plays the first one the sprite in front of it actually has.
 
-Sprite sheets are not uniform. Every one of them carries eleven **common** clips
-(`Idle`, `Sleep`, `Hurt`, `Attack`, `Charge`, `Shoot`, `Double`, `Hop`, `Rotate`,
-`Walk`, `Swing`); twenty-three more are there or not depending on what the pokemon
-was drawn doing. A Machop has a `Punch`; a Magikarp does not. Naming one clip per
+Sprite sheets are not uniform. Six clips are the **bare minimum**, which a sheet
+cannot be drawn at all without (`Idle`, `Attack`, `Walk`, `Sleep`, `Hurt`, `Hop`);
+four more make up the ten a renderer may assume (`Charge`, `Double`, `Rotate`,
+`Swing`); thirty-eight more are there or not depending on what the pokemon was
+drawn doing. A Machop has a `Punch`; a Magikarp does not. Naming one clip per
 move would mean either every move looking the same or half the roster playing
 nothing, so a move names a **preference** instead:
 
 | Move        | Asks for                        | On a sheet without `Punch` |
 | ----------- | ------------------------------- | -------------------------- |
 | Fire Punch  | `Punch` → `Uppercut` → `Attack` | Swings                     |
-| Blizzard    | `Emit` → `Shoot` → `Charge`     | —                          |
-| Thunderbolt | `Shock` → `Emit` → `Attack`     | —                          |
+| Blizzard    | `Emit` → `Shoot` → `Charge`     | None                       |
+| Thunderbolt | `Shock` → `Emit` → `Attack`     | None                       |
 
 The last entry is always a common clip, so the walk cannot run off the end;
 [a registry test](../test/data.test.ts) checks that for every registered move,
-along with no repeats and no invented names. The sprite is asked directly —
-`SpeciesSpriteAnimation.has` — rather than keeping a table of which species owns
+along with no repeats and no invented names. The sprite is asked directly, with
+`SpeciesSpriteAnimation.has`, rather than keeping a table of which species owns
 which clip, since the sheet is the truth and a second copy of it would rot.
 
 ### Stretched, not looped
@@ -207,15 +233,15 @@ looping would run a short clip two and a half times and leave it part-way throug
 at the moment the move fires, which reads as a twitch rather than a wind-up.
 
 `play(name, { duration })` scales the playhead so one pass takes exactly that
-long — every frame held proportionally longer or shorter, nothing dropped. The
+long, with every frame held proportionally longer or shorter and nothing dropped. The
 canvas passes the **whole** window rather than what is left of it: a rate worked
 out afresh from the remainder on every frame is a rate that climbs as the
 remainder shrinks, and a clip driven that way races to its end about two thirds
 of the way through.
 
 **Channelling is drawn the same way.** `ChannelingData extends CastingData`, so
-the rest of a multi-step move carries the same two things a cast does — which
-move, and how long this window runs — and neither needs its own case. The clip
+the rest of a multi-step move carries the same two things a cast does, which move
+and how long this window runs, and neither needs its own case. The clip
 gets one pass per **step**, so a Fury Swipes is five swipes rather than one swipe
 and four seconds of standing about. A one-shot that has run out while the unit is
 still working is `restart`ed for the next step rather than held on its last
@@ -234,17 +260,21 @@ real lobby publishes. It writes nothing, settles no raid and pays nobody.
 
 It exists because the engine and the sprite canvas are the two parts of the game
 that need a **fight** before they can be looked at at all, and every fight the
-game stages is one somebody walked to, filled a lobby for and paid for — which
+game stages is one somebody walked to, filled a lobby for and paid for, which
 made the loop that most wants watching the hardest one to reach. The seed is in
 the URL, so a fight is a link and two people watch the same frames.
 
-Two pages sit beside it under the same rules. [`/demo/move`](../src/routes/demo/move.tsx)
-stages one move in a live engine, and [`/demo/weather`](../src/routes/demo/weather.tsx)
+Three pages sit beside it under the same rules. [`/demo/move`](../src/routes/demo/move.tsx)
+stages one move in a live engine, with an **Always hits** switch on by default so
+a Fissure can be watched without waiting out its accuracy, [`/demo/weather`](../src/routes/demo/weather.tsx)
 draws any of the twenty six skies over any biome's ground, at any strength,
-running or stopped a frame at a time, through both of the board's painters. Both
-carry the thing being looked at in the address, so a link is a demonstration, and
-both are `clientOnly`: a canvas and a frame timer do not exist until a browser is
-here, so the server sends the title and a space for it.
+running or stopped a frame at a time, through both of the board's painters, and
+[`/demo/shadow`](../src/routes/demo/shadow.tsx) throws a shadow at any hour, from
+any camera angle, anywhere between the middle of the world and its edge. That
+last one draws a bar on the ground from the light alone, so a shadow that has
+stopped agreeing with the sun reads as a picture leaning one way and a bar
+pointing another. All three are `clientOnly`: a canvas and a frame timer do not
+exist until a browser is here, so the server sends the title and a space for it.
 
 They also carry no session. `/demo/*` is named in `AuthProvider` as sessionless:
 the provider is still mounted so `useAuth` works anywhere, but it opens no
@@ -257,15 +287,15 @@ chunk of its own, asked for only by the pages that have a player.
 It earned its keep immediately: nothing had ever called `unit.enter()` when a
 battle was built, so the AI's idle set started empty and **no unit in any raid
 ever acted**. A built battle and a working battle look identical until somebody
-watches one for five seconds. `addUnit` now enters each unit once it is finished —
+watches one for five seconds. `addUnit` now enters each unit once it is finished,
 after its health and statuses are set, since a unit announced before its health
 is not alive yet and would be left out of the idle set for the same reason.
 
 Watching it for another five turned up the next one: every unit acted **once**
 and then stood still forever, because a move that resolves in the frame it
 triggers closed its pending trigger before the AI had opened it. Both are the
-same class of bug — a fight that is being run but not watched looks exactly like
-a fight that works — and both are now held down by a test that steps a battle and
+same class of bug, where a fight that is being run but not watched looks exactly
+like a fight that works, and both are now held down by a test that steps a battle and
 counts what happens rather than only checking that it was built.
 
 The parties are rolled between `DEMO_MIN_LEVEL` (70) and `DEMO_MAX_LEVEL` (80),
@@ -275,23 +305,34 @@ since at level 70 a Caterpie would have evolved twice over long ago. Eight full
 parties is a lobby the canvas can draw as eight points of a circle, and a crowd
 besides: whatever the canvas does with a busy field, it does here first.
 
+### A blow is its own picture
+
+A move's picture says what the move **is**. What it did to this pokemon is a
+separate mark, drawn where it landed, in the type that dealt it:
+[`attack.ts`](../src/canvas/battle/attack.ts) lights the colour for a weakness,
+mixes it toward grey for a resistance, and leaves it colourless for a blow that
+never landed. A move that strikes five times lands five marks.
+
+It is drawn small on purpose. A raid is forty-eight pokemon trading blows, and a
+mark the size of a pokemon turned the field into a wall of white rings.
+
 ## Two ways to draw a field
 
 A player watches a fight from behind their own party, so the canvas draws two
 rows: the viewer's below, what it is up against above, and everybody else's team
-left out — a full raid would otherwise be forty-eight pokemon, most of them
+left out, since a full raid would otherwise be forty-eight pokemon, most of them
 nobody's business.
 
 A **spectator** of a raid has no party to stand behind and no reason to leave
 anybody out, so they get the fight as it actually is: the **boss in the middle**,
 the parties on an ellipse around it, each party a small ring of its own, and every
-pokemon turned to face the middle. It says two things a pair of rows cannot — who
+pokemon turned to face the middle. It says two things a pair of rows cannot: who
 came with whom, and what the fight is: one thing with a lobby closed around it.
 
 Facing is worked out per unit by [`facingToward`](../src/canvas/facing.ts), which
 rounds the angle to the boss to one of the eight rows a sheet carries. It sits in
-its own module with its own test because a canvas y axis grows **downward** —
-`down` is the larger y — and getting that backwards turns a lobby inside out,
+its own module with its own test because a canvas y axis grows **downward**, so
+`down` is the larger y, and getting that backwards turns a lobby inside out,
 everybody looking away from the thing they came for, without anything failing.
 
 A slot too small to hold its own name no longer prints one, and its bars are drawn
@@ -300,7 +341,7 @@ readout underneath names every one of them anyway.
 
 **The canvas and the readout bind to the battle they are mounted with.** Both hang
 their listeners on it once and hold the roster they read off it, so a new fight
-needs new ones — which is why the demo renders them under a **keyed** `Show`.
+needs new ones, which is why the demo renders them under a **keyed** `Show`.
 Rolling another seed without that ends the old battle and then goes on drawing it,
 which looks exactly like a demo that has frozen.
 
@@ -310,11 +351,11 @@ Rather than watching for knockouts, the engine asks after every tick whether the
 fight can still go anywhere: is anything mid-cast or mid-channel, and could any
 unit still act against a living enemy? Once neither holds, the battle is over.
 
-Reading it that way settles fights a knockout watcher would miss — a side that is
+Reading it that way settles fights a knockout watcher would miss, such as a side that is
 alive but permanently unable to act ends the battle exactly as a wiped one does.
 
 Both questions are asked **only while more than one side is standing**, since that
-is the only time the answer can still change anything. One side left — or none —
+is the only time the answer can still change anything. One side left, or none,
 is a decided fight whatever anybody is still winding up. Waiting for the field to
 fall quiet instead is waiting for something that may never come: a survivor can
 buff itself on an empty field forever, and a lobby of forty-eight of them is never

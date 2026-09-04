@@ -14,8 +14,8 @@ contents refresh on several independent timers.
 
 ### Biomes
 
-Three qualities decide the climate of a place — how wet it is, how high it is and
-how warm it is — and together they select one of the **25 biomes**, which range
+Three qualities decide the climate of a place: how wet it is, how high it is and
+how warm it is. Together they select one of the **25 biomes**, which range
 from deep ocean and coral reef through savanna, desert and temperate forest to
 volcano, glacier and polar ocean. Climate changes gradually, so a biome typically runs
 about two dozen chunks across before giving way to another.
@@ -44,20 +44,20 @@ ground with nothing on it.
 
 Scenery and landmarks keep a clear cell on every side of them, diagonals
 included: no two fixtures are ever adjacent, so there is always somewhere to
-stand beside whatever a player has walked over to. Pokemon keep no such berth —
-they take any cell a fixture is not standing on, and a walk goes straight
+stand beside whatever a player has walked over to. Pokemon keep no such berth.
+They take any cell a fixture is not standing on, and a walk goes straight
 through one rather than round it. Scenery and landmarks are walked round: both
 are standing there, so a route goes past them.
 
-The three kinds are laid down in order — **scenery, then landmarks, then
-pokemon** — because the first two are fixed forever and the last is rolled again
-every few minutes. A window's pokemon fit themselves around the chunk rather
+The three kinds are laid down in order: **scenery, then landmarks, then
+pokemon**. The first two are fixed forever and the last is rolled again every
+few minutes. A window's pokemon fit themselves around the chunk rather
 than the chunk being rearranged around them.
 
 ## Scenery
 
 Every chunk carries **eight to twelve** pieces of scenery: trees, rocks, cactus,
-reeds, ice — whatever its biome is made of. None of it can be pressed and none
+reeds, ice, whatever its biome is made of. None of it can be pressed and none
 of it does anything; it is there so a taiga looks like a taiga. Like landmarks,
 scenery belongs to the chunk permanently.
 
@@ -72,28 +72,36 @@ few are one to a chunk, marked below.
 | ------------------- | --------------------------------------------------------------- |
 | **Item Cache**      | A buried stash of items                                         |
 | **Berry Patch**     | A bush bearing one kind of berry                                |
+| **Apricorn Tree**   | A tree bearing one colour of apricorn, for Kurt to carve        |
 | **Nest**            | An egg of a local species                                       |
 | **Legendary Raid**  | A legendary's lair; the raid is named after the place           |
 | **Shadow Raid**     | A lair with something wrong in it                               |
 | **Wandering NPC**   | Whoever is passing through: a breeder, a nurse, a chef          |
 | **Market**          | A vendor's stall, behind one of the trade's four counters       |
 | **Auction Board**   | The region's lots, and the only way to them. One to a chunk     |
-| **Team Rocket**     | A grunt barring the cell, and once in a while Giovanni          |
+| **Team Rocket**     | A grunt barring the cell, one window in eight an executive, and once in a while Giovanni |
 | **Trainer**         | A duelling trainer: an Ace, or an expert in one type            |
 | **Gym Seat**        | A team another player left standing, to be fought. One to a chunk |
-| **Gym Leader**      | One of the region's eight, with a badge on the line. One to a chunk |
-| **Elite Four**      | One of the region's four, for a challenger holding every badge  |
-| **Champion**        | The region's title, for whoever has beaten the Elite Four. They field the team they are known for. One to a chunk |
+| **Gym Leader**      | One of the sixteen, with a badge on the line. One to a chunk |
+| **Elite Four**      | One of the eight, for a challenger holding their league's badges  |
+| **Champion**        | Blue or Lance, for whoever has beaten their league's Elite Four. They field the team they are known for, and one window in sixty-four a legend has the seat instead. One to a chunk |
 | **Portal**          | A way through to another portal, for the price of a Portal Key. One to a chunk |
 
 Walking up to a wandering cell does not reveal in advance which specialist is
 standing there. The market, the board and the seat are fixtures: a stall is
 always a stall, though which counter it set up changes with the window.
 
+**The ring under somebody's feet says what walking up to them does**, which the
+coat they are drawn in does not. Blue for a counter and red for a roadside duel,
+crimson for a cell Team Rocket is barring, and then a colour apiece for the three
+rungs of the league: amber for a gym, violet for a seat of the Elite Four, gold
+for a champion. A player short of one badge can pick the cell out without walking
+the chunk.
+
 **Phenomena are not landmarks.** A grotto, a dust cloud, rippling water or a
 shadow overhead is something *happening* rather than somewhere to go, so it is
 not fixed to a cell. Up to two are rolled across a chunk's open ground each
-hour and are somewhere else the next one — a chunk you know is still worth
+hour and are somewhere else the next one, so a chunk you know is still worth
 looking over. They take dry ground where a chunk has any, which is why a marsh
 still hides grottos and the open sea, having no ground at all, only ever
 ripples. Once you have walked into one it stops being drawn for you; somebody
@@ -113,7 +121,7 @@ to obtain, the sooner it returns.
 | What changes                                    | How often  |
 | ----------------------------------------------- | ---------- |
 | The pokemon standing in a chunk                 | 5 minutes  |
-| Item caches and berry patches                   | 15 minutes |
+| Item caches, berry patches and apricorn trees   | 15 minutes |
 | Where things are happening, and what they are   | 1 hour     |
 | The weather over a chunk                        | 1 hour     |
 | Legendary and shadow raids                      | 3 hours    |

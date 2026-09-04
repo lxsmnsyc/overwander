@@ -1,5 +1,7 @@
 import { Index, type JSX, Show } from 'solid-js';
 import type { Species } from '../../data/ids/species';
+import { unownLetter } from '../../data/ids/species';
+import { getSpeciesData } from '../../data/species';
 import AnimatedSprite from '../sprites/AnimatedSprite';
 
 /**
@@ -70,11 +72,25 @@ export interface DexEntry {
    * one counts as having seen it
    */
   caught: boolean;
+  /**
+   * What the corner says instead of the dex number. Forms share one
+   * number, so a box of unowns marked #201 twenty-eight times says
+   * nothing; the letter is what tells them apart
+   */
+  label?: string;
 }
 
 export interface PokedexGridProps {
   entries: DexEntry[];
   onOpen: (species: Species) => void;
+  /**
+   * How many squares to draw, whatever the page holds. The dex pages
+   * at thirty and keeps all five rows so the buttons under them stay
+   * put; a grid that does not page asks for its own length instead
+   */
+  squares?: number;
+  /** What the box is announced as, for a grid that is not the dex. */
+  label?: string;
 }
 
 /**
@@ -86,22 +102,37 @@ export function dexLabel(dexNumber: number): string {
 }
 
 /**
+ * What the corner of a form's square says. Forms share a dex number, so
+ * the number tells them apart from nothing: an unown is known by the
+ * character it is shaped like, and anything else that gains forms falls
+ * back to its own name
+ */
+export function formLabel(species: Species): string {
+  return unownLetter(species) ?? getSpeciesData(species).name;
+}
+
+/**
  * What one square is announced as. An unmet species says only its number
  * — a dex that read out the names of everything left to find would be
  * doing the finding
  */
 export function describeDexEntry(entry: DexEntry): string {
+  const marked = entry.label ?? dexLabel(entry.dexNumber);
+
   if (entry.caught) {
-    return `${dexLabel(entry.dexNumber)} ${entry.name}, caught`;
+    return `${marked} ${entry.name}, caught`;
   }
   if (entry.seen) {
-    return `${dexLabel(entry.dexNumber)} ${entry.name}, seen`;
+    return `${marked} ${entry.name}, seen`;
   }
-  return `${dexLabel(entry.dexNumber)}, not yet met`;
+  return `${marked}, not yet met`;
 }
 
 export default function PokedexGrid(props: PokedexGridProps): JSX.Element {
   const entryAt = (index: number): DexEntry | undefined => props.entries.at(index);
+
+  const squares = (): null[] =>
+    props.squares == null ? SQUARES : Array.from({ length: props.squares }, () => null);
 
   return (
     // Narrower than the catch box, because the dex carries two rows of
@@ -110,11 +141,11 @@ export default function PokedexGrid(props: PokedexGridProps): JSX.Element {
     // the bar at the foot of a laptop screen
     <div
       role="group"
-      aria-label={`Pokedex, ${props.entries.length} species on this page.`}
+      aria-label={props.label ?? `Pokedex, ${props.entries.length} species on this page.`}
       class="mx-auto grid w-full max-w-sm grid-cols-6 gap-1.5 rounded-xl border-4 border-tide
         bg-parchment p-1.5 shadow-pop"
     >
-      <Index each={SQUARES}>
+      <Index each={squares()}>
         {(_, index) => (
           <Show
             when={entryAt(index)}
@@ -148,7 +179,7 @@ export default function PokedexGrid(props: PokedexGridProps): JSX.Element {
                   class={`pointer-events-none absolute top-0.5 left-0.5 text-[9px] leading-tight
                     font-bold ${entry().seen || entry().caught ? 'text-muted' : 'text-muted/70'}`}
                 >
-                  {dexLabel(entry().dexNumber)}
+                  {entry().label ?? dexLabel(entry().dexNumber)}
                 </span>
 
                 <Show when={entry().seen || entry().caught}>

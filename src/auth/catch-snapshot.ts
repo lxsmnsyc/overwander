@@ -87,6 +87,11 @@ export interface CatchSnapshot {
    * mask of `StatusFlags`
    */
   statuses: number;
+  /**
+   * What it thought of its owner when the snapshot was taken. Return
+   * and Frustration read it, so a fight has to carry it
+   */
+  friendship: number;
 }
 
 /**
@@ -133,7 +138,7 @@ export function previewSnapshot(snapshot: CatchSnapshot): CaughtPokemon {
     effortValues: snapshot.effortValues,
     effortBonus: 0,
     walked: 0,
-    friendship: BASE_FRIENDSHIP,
+    friendship: snapshot.friendship,
     health: snapshot.health,
     origin: { timestamp: 0, x: 0, y: 0, biome: Biome.Beyond },
   };
@@ -166,6 +171,7 @@ export function createCatchSnapshot(id: string, caught: CaughtPokemon): CatchSna
     slots: caught.slots,
     health: caught.health,
     statuses: caught.statuses,
+    friendship: caught.friendship,
   };
 }
 
@@ -205,6 +211,9 @@ export function asCatchSnapshot(value: unknown): CatchSnapshot {
     // first turn: missing means whole
     health: data.health == null ? getMaxHealth(asHealthSource(data)) : asNumber(data.health),
     statuses: asNumber(data.statuses),
+    // A snapshot written before the field existed reads as a stranger's
+    // catch, which is what Return and Frustration answer to
+    friendship: data.friendship == null ? BASE_FRIENDSHIP : asNumber(data.friendship),
   };
 }
 

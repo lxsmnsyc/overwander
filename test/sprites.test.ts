@@ -2,8 +2,10 @@ import { createHash } from 'node:crypto';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { ItemTypes, Items } from '../src/data/ids/items';
+import { APRICORNS, ItemTypes, Items } from '../src/data/ids/items';
 import registerItems, { ITEM_TYPE_ORDER, getItemData, listItemsByType } from '../src/data/items';
+import decodePng, { type Image } from '../src/server/sprites/png';
+import apricornTreeSheet, { apricornColour } from '../src/data/overworld/apricorn-tree';
 import berryPlantSheet, { berryPlantName } from '../src/data/overworld/berry-plant';
 import { BIOME_NAMES } from '../src/data/biome/names';
 import Biome from '../src/data/ids/biome';
@@ -218,6 +220,111 @@ describe('the berry plants that ship', () => {
   });
 });
 
+describe('the apricorn trees that ship', () => {
+  const ROOT = `${SPRITE_ROOT}/overworld/landmarks-apricorn`;
+
+  /** Every colour lit between two rows of a sheet, as `r,g,b`. */
+  function coloursIn(image: Image, from: number, to: number): Set<string> {
+    const found = new Set<string>();
+
+    for (let y = from; y < Math.min(to, image.height); y += 1) {
+      for (let x = 0; x < image.width; x += 1) {
+        const at = (y * image.width + x) * 4;
+
+        if (image.rgba[at + 3] > 0) {
+          found.add(`${image.rgba[at]},${image.rgba[at + 1]},${image.rgba[at + 2]}`);
+        }
+      }
+    }
+    return found;
+  }
+
+  /** Every apricorn, by the colour its folder is called. */
+  function registered(): { item: Items; colour: string }[] {
+    return APRICORNS.map((item) => ({ item, colour: apricornColour(item) })).sort((one, two) =>
+      one.colour.localeCompare(two.colour),
+    );
+  }
+
+  it('names a folder after the colour, the way the icons are named', () => {
+    expect(apricornTreeSheet(Items.RedApricorn)).toBe('landmarks-apricorn/red');
+
+    for (const { item, colour } of registered()) {
+      expect(getItemData(item).icon, colour).toBe(`apricorn/${colour}`);
+    }
+  });
+
+  it('has a tree for all seven, and nothing else', () => {
+    const known = registered().map((one) => one.colour);
+
+    expect(known).toHaveLength(7);
+    expect(
+      known.filter((colour) => !existsSync(`${ROOT}/${colour}/image.png`)),
+      'run `pnpm apricorn-trees`',
+    ).toEqual([]);
+    expect(readdirSync(ROOT).filter((folder) => !known.includes(folder))).toEqual([]);
+  });
+
+  it('keeps the plant it was grown from, stages and all', () => {
+    // The donor is a berry plant, so a tree is laid out and placed like
+    // one: the canvas draws both the same way
+    const donor = JSON.parse(
+      readFileSync(`${SPRITE_ROOT}/overworld/landmarks-berry/nanab/data.json`, 'utf8'),
+    ) as unknown;
+
+    for (const { colour } of registered()) {
+      const described = JSON.parse(readFileSync(`${ROOT}/${colour}/data.json`, 'utf8')) as unknown;
+
+      expect(described, colour).toEqual(donor);
+    }
+  });
+
+  it('bears a differently coloured fruit on each, and one canopy on all', () => {
+    // What the ripe stage is drawn in, which is where an apricorn's
+    // colour is: the bare stage is the same tree seven times, and the
+    // colours it does not share with the bare stage are the fruit
+    const fruit = new Map<string, string>();
+
+    for (const { colour } of registered()) {
+      const image = decodePng(readFileSync(`${ROOT}/${colour}/image.png`));
+      const described = JSON.parse(readFileSync(`${ROOT}/${colour}/data.json`, 'utf8')) as unknown;
+      const stage = Number(fieldOf(fieldOf(described, 'grid'), 'frameHeight'));
+      const bare = coloursIn(image, 0, stage);
+      const ripe = coloursIn(image, stage * 2, image.height);
+
+      expect(bare.size, `${colour} bare`).toBeGreaterThan(0);
+      fruit.set(
+        colour,
+        [...ripe]
+          .filter((one) => !bare.has(one))
+          .sort()
+          .join(' '),
+      );
+    }
+
+    // Seven fruits, no two alike
+    expect(new Set(fruit.values()).size).toBe(7);
+    for (const [colour, painted] of fruit) {
+      expect(painted, `${colour} bears fruit`).not.toBe('');
+    }
+  });
+
+  it('is green wherever it is not fruit', () => {
+    // The Nanab's canopy is blue and an apricorn tree's is not, so the
+    // leaves are the one thing that had to change on every tree
+    for (const { colour } of registered()) {
+      const image = decodePng(readFileSync(`${ROOT}/${colour}/image.png`));
+      const described = JSON.parse(readFileSync(`${ROOT}/${colour}/data.json`, 'utf8')) as unknown;
+      const stage = Number(fieldOf(fieldOf(described, 'grid'), 'frameHeight'));
+      const leaves = [...coloursIn(image, 0, stage)]
+        .map((one) => one.split(',').map(Number))
+        .filter(([r, g, b]) => Math.max(r, g, b) - Math.min(r, g, b) > 25 && g > r && g > b);
+
+      expect(leaves.length, `${colour} canopy`).toBeGreaterThan(3);
+    }
+  });
+});
+
 interface Packed {
   name: string;
   width: number;
@@ -264,8 +371,9 @@ describe('the landmarks that ship', () => {
       Landmark.Champion,
       Landmark.TeamRocket,
       Landmark.WanderingNpc,
-      // And the patch grows its own bush
+      // And the patch grows its own bush, the way a tree grows its own
       Landmark.BerryPatch,
+      Landmark.ApricornTree,
     ]) {
       expect(hasLandmarkPicture(kind), LANDMARK_NAMES[kind]).toBe(false);
       expect(landmarkPicture(kind, Biome.Grassland), LANDMARK_NAMES[kind]).toBe(null);

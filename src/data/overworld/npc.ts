@@ -1,4 +1,5 @@
 import { countsAgainstSlots } from '../constants/slots';
+import Awards from '../ids/awards';
 import type Abilities from '../ids/abilities';
 import { Items } from '../ids/items';
 import type { Moves } from '../ids/moves';
@@ -98,6 +99,13 @@ const enum Npc {
    * player met it
    */
   Channeler = 12,
+  /**
+   * Takes apricorns and carves them into the balls their colours
+   * make: one apricorn, one ball, and he works through as many as a
+   * player is carrying. He charges nothing, since the picking is the
+   * price, and his seven balls are sold nowhere else at all
+   */
+  Kurt = 13,
 }
 
 export default Npc;
@@ -122,6 +130,7 @@ export const NPCS: Npc[] = [
   Npc.MoveTutor,
   Npc.Chef,
   Npc.Channeler,
+  Npc.Kurt,
 ];
 
 /**
@@ -149,16 +158,85 @@ const NPC_CHARSETS: Partial<Record<Npc, string[]>> = {
   ],
   [Npc.Chef]: ['characters/frlg/chef'],
   [Npc.Channeler]: ['characters/lgpe/channeler'],
+  [Npc.Kurt]: ['characters/hgss/kurt'],
 };
 
 /**
  * The boss himself, when a Team Rocket stop rolls him: not a role of
- * his own, only the grunt's landmark wearing its rarest face
+ * his own, only the grunt's landmark wearing its rarest face. His
+ * Heart Gold coat is the one he runs Team Rocket in; the Fire Red one
+ * belongs to the gym he keeps in Kanto
  */
-export const GIOVANNI_CHARSETS: string[] = ['characters/frlg/giovanni', 'characters/hgss/giovanni'];
+export const GIOVANNI_CHARSETS: string[] = ['characters/hgss/giovanni'];
 
 /** What the boss is called where a screen names him */
 export const GIOVANNI_NAME = 'Giovanni';
+
+/**
+ * The mark putting him down is worth. He keeps a gym in Kanto as
+ * well, and that is a different fight with a badge of its own: this
+ * one is Team Rocket's boss, met one window in sixty-four
+ */
+export const GIOVANNI_HONOR: Awards = Awards.GiovanniDefeated;
+
+/**
+ * And the mark for clearing a cell of the rank and file. One mark
+ * however many grunts are put down: they are a uniform rather than a
+ * person, which is the whole of what a grunt is
+ */
+export const ROCKET_GRUNT_HONOR: Awards = Awards.RocketGruntDefeated;
+
+/**
+ * The four who answer to him. Like Giovanni they are the grunt's
+ * landmark wearing a rarer face rather than a role of their own, and
+ * they stand between him and the rank and file in every way: what
+ * they field, what level it fights at, and how often one is met
+ */
+const enum RocketExecutive {
+  Archer = 0,
+  Ariana = 1,
+  Proton = 2,
+  Petrel = 3,
+}
+
+export { RocketExecutive };
+
+export const ROCKET_EXECUTIVES: RocketExecutive[] = [
+  RocketExecutive.Archer,
+  RocketExecutive.Ariana,
+  RocketExecutive.Proton,
+  RocketExecutive.Petrel,
+];
+
+export const ROCKET_EXECUTIVE_NAMES: Record<RocketExecutive, string> = {
+  [RocketExecutive.Archer]: 'Archer',
+  [RocketExecutive.Ariana]: 'Ariana',
+  [RocketExecutive.Proton]: 'Proton',
+  [RocketExecutive.Petrel]: 'Petrel',
+};
+
+export const ROCKET_EXECUTIVE_CHARSETS: Record<RocketExecutive, string[]> = {
+  [RocketExecutive.Archer]: ['characters/hgss/archer', 'characters/lgpe/archer'],
+  [RocketExecutive.Ariana]: ['characters/hgss/ariana'],
+  [RocketExecutive.Proton]: ['characters/hgss/proton'],
+  [RocketExecutive.Petrel]: ['characters/hgss/petrel'],
+};
+
+/** The mark putting one of them down is worth, one to each */
+export const ROCKET_EXECUTIVE_HONORS: Record<RocketExecutive, Awards> = {
+  [RocketExecutive.Archer]: Awards.ArcherDefeated,
+  [RocketExecutive.Ariana]: Awards.ArianaDefeated,
+  [RocketExecutive.Proton]: Awards.ProtonDefeated,
+  [RocketExecutive.Petrel]: Awards.PetrelDefeated,
+};
+
+/** What each says as they bar the cell */
+export const ROCKET_EXECUTIVE_QUOTES: Record<RocketExecutive, string> = {
+  [RocketExecutive.Archer]: 'I run this operation. You are an inconvenience in it.',
+  [RocketExecutive.Ariana]: 'A child playing hero. I will enjoy putting you down.',
+  [RocketExecutive.Proton]: 'I am the cruellest of the executives. Ask anyone who is left.',
+  [RocketExecutive.Petrel]: 'Hehe, you thought I was the boss? Close enough for you.',
+};
 
 /**
  * Every charset a wanderer of this role may be drawn with
@@ -190,6 +268,7 @@ export const NPC_NAMES: Record<Npc, string> = {
   [Npc.Trainer]: 'Trainer',
   [Npc.Chef]: 'Chef',
   [Npc.Channeler]: 'Channeler',
+  [Npc.Kurt]: 'Kurt',
 };
 
 /**

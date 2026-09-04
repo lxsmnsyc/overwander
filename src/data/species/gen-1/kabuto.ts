@@ -26,6 +26,23 @@ const FAMILY_TEACHABLE = [
   Moves.Rest,
   Moves.Substitute,
   Moves.Surf,
+  Moves.Thief,
+  Moves.Snore,
+  Moves.Curse,
+  Moves.Protect,
+  Moves.IcyWind,
+  Moves.Sandstorm,
+  Moves.GigaDrain,
+  Moves.Endure,
+  Moves.Rollout,
+  Moves.Swagger,
+  Moves.Attract,
+  Moves.SleepTalk,
+  Moves.Return,
+  Moves.Frustration,
+  Moves.HiddenPower,
+  Moves.RainDance,
+  Moves.RockSmash,
 ];
 
 const FAMILY_ABILITIES = [Abilities.SwiftSwim, Abilities.BattleArmor];
@@ -66,12 +83,17 @@ export default function registerKabutoSpecies(): void {
     learnSet: {
       level: {
         1: [Moves.Scratch, Moves.Harden],
-        34: [Moves.Absorb],
+        10: [Moves.Absorb],
+        19: [Moves.Leer],
+        28: [Moves.SandAttack],
+        37: [Moves.Endure],
         39: [Moves.Slash],
-        44: [Moves.Leer],
+        46: [Moves.MegaDrain],
         49: [Moves.HydroPump],
+        55: [Moves.AncientPower],
       },
       teachable: [...FAMILY_TEACHABLE],
+      egg: [Moves.BubbleBeam, Moves.AuroraBeam, Moves.Dig, Moves.Flail, Moves.RapidSpin],
     },
   });
 
@@ -104,10 +126,13 @@ export default function registerKabutoSpecies(): void {
     learnSet: {
       level: {
         1: [Moves.Scratch, Moves.Harden, Moves.Absorb],
-        34: [Moves.Absorb],
+        19: [Moves.Leer],
+        28: [Moves.SandAttack],
+        37: [Moves.Endure],
         39: [Moves.Slash],
-        46: [Moves.Leer],
+        51: [Moves.MegaDrain],
         53: [Moves.HydroPump],
+        65: [Moves.AncientPower],
       },
       teachable: [
         ...FAMILY_TEACHABLE,
@@ -117,6 +142,9 @@ export default function registerKabutoSpecies(): void {
         Moves.Submission,
         Moves.RazorWind,
         Moves.Cut,
+        Moves.Headbutt,
+        Moves.FuryCutter,
+        Moves.Whirlpool,
       ],
     },
   });

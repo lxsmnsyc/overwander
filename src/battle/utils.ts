@@ -11,6 +11,7 @@ import {
   type UnitCastEvent,
   type UnitChannelEvent,
 } from './events';
+import type Team from './team';
 import type Unit from './unit';
 
 /**
@@ -53,6 +54,23 @@ export function countHeldItems(unit: Unit): number {
  */
 export function hasFreeItemSlot(unit: Unit): boolean {
   return countHeldItems(unit) < unit.checkSlots(Slots.Item);
+}
+
+/**
+ * The one item a thief could walk off with, or nothing when the unit's
+ * hands are empty. The first one found is the one taken: which of two
+ * held items goes is nobody's decision
+ */
+export function stealableItem(unit: Unit): Items | undefined {
+  for (const [item, carried] of Object.entries(unit.items)) {
+    if (carried) {
+      // The bag is keyed by the item enum, which comes back as a
+      // string from Object.entries
+      // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+      return Number(item) as Items;
+    }
+  }
+  return undefined;
 }
 
 /**
@@ -117,6 +135,26 @@ const PRIMAL_WEATHERS = new Set<Weathers>([
 
 export function isPrimalWeather(weather: Weathers): boolean {
   return PRIMAL_WEATHERS.has(weather);
+}
+
+/**
+ * The sky over a team: the field's own weather where there is one, and
+ * the team's otherwise.
+ *
+ * It is what is **drawn**, which is not what a unit stands under. A
+ * unit's own answer can be cleared by what it carries, and an umbrella
+ * is not a hole in the clouds
+ */
+export function skyOverTeam(team: Team): Weathers {
+  const battle = team.battle;
+
+  if (!battle.weather.disabled && battle.weather.current !== Weathers.None) {
+    return battle.weather.current;
+  }
+  if (!team.weather.disabled && team.weather.current !== Weathers.None) {
+    return team.weather.current;
+  }
+  return Weathers.None;
 }
 
 export function isWeatherSunny(unit: Unit): boolean {

@@ -4,7 +4,7 @@ import type { Stages, Stats, StatsKind } from '../data/constants/stats';
 import type { Types } from '../data/constants/types';
 import type Abilities from '../data/ids/abilities';
 import type { Items } from '../data/ids/items';
-import type { MoveCategories, MoveTargetPriorities, Moves } from '../data/ids/moves';
+import type { MoveCategories, MoveTargetPriorities, MoveTargets, Moves } from '../data/ids/moves';
 import type Natures from '../data/ids/natures';
 import type { Genders, Species } from '../data/ids/species';
 import type { Statuses, TeamStatuses, Weathers } from '../data/ids/status';
@@ -197,7 +197,7 @@ export const enum BattleEvents {
   UnitUpdateStatusTimer = 123,
   CheckUnitMoveHits = 124,
   CheckUnitGrounded = 125,
-  CheckUnitMoveTargetFlags = 126,
+  CheckUnitMoveTargeting = 126,
   UnitSetWeather = 127,
   CheckUnitAbility = 128,
   UnitSetNature = 129,
@@ -444,11 +444,14 @@ export interface CheckUnitGroundedEvent extends UnitEvent {
 }
 
 /**
- * Resolves the effective MoveTargetFlags mask a move uses when its
- * targets resolve; listeners (e.g. Boss) may widen it
+ * Resolves how a move is cast and who it reaches, which is the pair
+ * `MoveTargets` and `MoveAffects`. Listeners may widen either:
+ * Boss turns a move cast at one enemy into one cast at nobody, so it
+ * fans out over the whole far side
  */
-export interface CheckUnitMoveTargetFlagsEvent extends UnitMoveEvent {
-  flags: number;
+export interface CheckUnitMoveTargetingEvent extends UnitMoveEvent {
+  target: MoveTargets;
+  affects: number;
 }
 
 /**
@@ -673,6 +676,13 @@ export interface UnitUpdateStatusTimerEvent extends UnitStatusEvent {
  */
 export interface CheckUnitCanUpdateStageEvent extends UnitUpdateStageEvent {
   success: boolean;
+  /**
+   * The question is being asked speculatively, by the AI weighing a
+   * move it has not cast. A listener may still answer it, but must do
+   * nothing else: no cue, no stage of its own, nothing a watcher
+   * could see
+   */
+  simulated: boolean;
 }
 
 export interface UnitDamageEvent extends UnitEvent {
@@ -926,7 +936,7 @@ export interface BattleEventMap extends EventMap {
   [BattleEvents.CheckUnitMoveContact]: [CheckUnitMoveContactEvent, EventPriority];
   [BattleEvents.UnitRevives]: [UnitSetValueEvent, EventPriority];
   [BattleEvents.UnitSetSlots]: [UnitSetValueEvent, EventPriority];
-  [BattleEvents.CheckUnitMoveTargetFlags]: [CheckUnitMoveTargetFlagsEvent, EventPriority];
+  [BattleEvents.CheckUnitMoveTargeting]: [CheckUnitMoveTargetingEvent, EventPriority];
   [BattleEvents.UnitSetWeather]: [UnitSetWeatherEvent, EventPriority];
   [BattleEvents.CheckUnitAbility]: [CheckUnitAbilityEvent, EventPriority];
   [BattleEvents.CheckUnitItem]: [CheckUnitItemEvent, EventPriority];

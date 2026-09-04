@@ -108,7 +108,7 @@ export interface CaughtPokemon {
    * for. `traded` alone cannot answer it: a Machop traded and then
    * levelled is not a Machoke that was traded, and a Karrablast
    * becomes an Escavalier only against a Shelmet. Both questions are
-   * settled at the handover, by `opensTradeEvolution`, so what is
+   * settled at the handover, by `settleHandover`, so what is
    * kept here is the answer rather than the evidence.
    *
    * Spent by the evolution it opens and cleared by any other change

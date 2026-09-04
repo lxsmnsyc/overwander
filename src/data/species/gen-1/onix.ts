@@ -4,13 +4,21 @@ import Abilities from '../../ids/abilities';
 import Biome, { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
+import { Items } from '../../ids/items';
 import { Moves } from '../../ids/moves';
-import { Species } from '../../ids/species';
+import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 export default function registerOnixSpecies(): void {
   registerSpecies(Species.Onix, {
     dexNumber: 95,
+    evolvesInto: [
+      {
+        species: Species.Steelix,
+        method: EvolutionMethod.Trade | EvolutionMethod.HeldItem,
+        item: Items.MetalCoat,
+      },
+    ],
     name: 'Onix',
     category: 'Rock Snake Pokemon',
     height: 8.8,
@@ -30,16 +38,17 @@ export default function registerOnixSpecies(): void {
     eggGroups: [EggGroups.Mineral],
     genderRatio: [1, 1],
     catchRate: 45,
-    biomes: [Biome.Mountain, Biome.ColdDesert],
+    biomes: [Biome.Mountain, Biome.ColdDesert, Biome.Volcano],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
         1: [Moves.Tackle, Moves.Screech],
-        15: [Moves.Bind],
-        19: [Moves.RockThrow],
+        10: [Moves.Bind],
+        14: [Moves.RockThrow],
+        23: [Moves.Harden],
         25: [Moves.Rage],
         33: [Moves.Slam],
-        43: [Moves.Harden],
+        36: [Moves.Sandstorm],
       },
       teachable: [
         Moves.Toxic,
@@ -61,8 +70,25 @@ export default function registerOnixSpecies(): void {
         Moves.Fissure,
         Moves.Dig,
         Moves.Strength,
+        Moves.Headbutt,
+        Moves.Roar,
+        Moves.Snore,
+        Moves.Curse,
+        Moves.Protect,
+        Moves.MudSlap,
+        Moves.Sandstorm,
+        Moves.Endure,
+        Moves.Swagger,
+        Moves.Attract,
+        Moves.SleepTalk,
+        Moves.Return,
+        Moves.Frustration,
+        Moves.IronTail,
+        Moves.HiddenPower,
+        Moves.SunnyDay,
+        Moves.RockSmash,
       ],
-      egg: [Moves.RockSlide],
+      egg: [Moves.RockSlide, Moves.Flail],
     },
   });
 }

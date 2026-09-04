@@ -1,5 +1,6 @@
 import { Stats } from '../../data/constants/stats';
 import type { CheckUnitAIMoveScoreEvent } from '../events';
+import type Unit from '../unit';
 
 /**
  * The vocabulary a scoring listener writes in. It lives apart from the
@@ -37,7 +38,7 @@ export const RISKY_PENALTY = 3;
  * A move whose steps are not idle — a rampage strikes on every one of
  * them — hands this back itself
  */
-export const STEP_PENALTY = 4;
+export const STEP_PENALTY = 3;
 
 /**
  * The most a move can lose to being unreliable, at zero accuracy. Set
@@ -52,9 +53,31 @@ export const ACCURACY_PENALTY = 8;
 export const HEAL_BONUS = 7;
 
 /**
+ * What a hit aimed at one's own side is worth when the target
+ * absorbs it into a stage rather than a heal. Enough to beat an
+ * ordinary swing at an enemy, since the stage lasts the fight
+ */
+export const FEED_BONUS = 5;
+
+/**
  * How little a unit can be missing before healing is a wasted cast
  */
 const HEAL_WASTE_THRESHOLD = 0.1;
+
+/**
+ * What healing a unit by that fraction of its HP is worth: nothing
+ * while it is near full, and the whole bonus once the hole is as
+ * deep as the heal is big
+ */
+export function healWorth(unit: Unit, fraction: number): number {
+  const maxHP = Math.max(1, unit.checkStat(Stats.HP, 0));
+  const missing = (maxHP - unit.health) / maxHP;
+
+  if (missing < HEAL_WASTE_THRESHOLD) {
+    return 0;
+  }
+  return Math.round(HEAL_BONUS * Math.min(1, missing / fraction));
+}
 
 /**
  * Weigh a self-heal by what it would actually restore: a heal that
@@ -63,14 +86,7 @@ const HEAL_WASTE_THRESHOLD = 0.1;
  * only the fraction it restores differs
  */
 export function scoreSelfHeal(event: CheckUnitAIMoveScoreEvent, fraction: number): void {
-  const source = event.source;
-  const maxHP = Math.max(1, source.checkStat(Stats.HP, 0));
-  const missing = (maxHP - source.health) / maxHP;
+  const worth = healWorth(event.source, fraction);
 
-  if (missing < HEAL_WASTE_THRESHOLD) {
-    event.score -= USELESS_PENALTY;
-    return;
-  }
-
-  event.score += Math.round(HEAL_BONUS * Math.min(1, missing / fraction));
+  event.score += worth === 0 ? -USELESS_PENALTY : worth;
 }

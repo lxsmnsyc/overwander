@@ -11,6 +11,20 @@ description: >
 
 This repository releases through [changesets](https://github.com/changesets/changesets). Writing one is part of finishing the work, not a step somebody has to ask for.
 
+## What gets one
+
+A changeset describes what changed **against `main`**, not what changed against
+the last commit.
+
+A branch often introduces something and then corrects it a few commits later.
+Nobody reading `CHANGELOG.md` ever saw the broken version, so that correction
+gets **no changeset of its own**. Amend the feature's own changeset instead, if
+it now claims something untrue.
+
+The test is one question: did the behaviour being fixed ever reach `main`? A fix
+for something players have today, or anything `main` does not have at all, gets a
+changeset as usual.
+
 ## The bump level
 
 The question is not how big the change looks or how visible it is on screen. It is **whether the thing existed before**.

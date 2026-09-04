@@ -2,4 +2,4 @@
 'overwander': patch
 ---
 
-A raid boss is never staged with Destiny Bond, Pain Split, Sketch, Baton Pass, Bide or Belly Drum, and a Ghost boss is never staged with Curse.
+A raid boss is never staged with a move that would take the fight away rather than make it harder: Bide, Belly Drum, Destiny Bond, Pain Split, Sketch and Baton Pass, and Curse on a Ghost.

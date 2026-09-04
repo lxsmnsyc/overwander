@@ -343,3 +343,27 @@ describe('Steelworker', () => {
     expect(smith.checkMovePower(Moves.Scratch, aim)).toBe(plain);
   });
 });
+
+describe('Simple', () => {
+  it('counts every stat change twice', () => {
+    const { battle, teamA } = createBattle();
+    const plain = createUnit(battle, teamA);
+    const simple = createUnit(battle, teamA);
+    simple.addAbility(Abilities.Simple);
+
+    const cause = { type: EffectType.None } as const;
+
+    plain.addStage(Stages.Attack, 1, cause);
+    simple.addStage(Stages.Attack, 1, cause);
+
+    expect(plain.stages[Stages.Attack]).toBe(1);
+    expect(simple.stages[Stages.Attack]).toBe(2);
+
+    // A drop counts twice over as well: it takes what it is given
+    plain.addStage(Stages.Defense, -1, cause);
+    simple.addStage(Stages.Defense, -1, cause);
+
+    expect(plain.stages[Stages.Defense]).toBe(-1);
+    expect(simple.stages[Stages.Defense]).toBe(-2);
+  });
+});

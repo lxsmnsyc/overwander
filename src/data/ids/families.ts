@@ -145,9 +145,10 @@ const enum Families {
   Slakoth = 143,
   Nincada = 144,
   Whismur = 145,
-  // 146 is Makuhita's and 147 Nosepass's: their dex numbers fall
-  // between these, and an id is stored in a player's candy stacks, so
-  // a later family cannot be renumbered into place
+  Makuhita = 146,
+  // 147 is Nosepass's: its dex number falls between these, and an id
+  // is stored in a player's candy stacks, so a later family cannot be
+  // renumbered into place
   Skitty = 148,
   // Azurill needs no id of its own: it joins the Marill family it
   // hatches into
@@ -160,35 +161,38 @@ const enum Families {
   Minun = 155,
   Volbeat = 156,
   Illumise = 157,
-  // 158 is Roselia's and 159 Gulpin's: both dex numbers fall before
-  // this, and an id is stored in a player's candy stacks, so a later
-  // family cannot be renumbered into place
+  // 158 is Roselia's: its dex number falls before this, and an id is
+  // stored in a player's candy stacks, so a later family cannot be
+  // renumbered into place
+  Gulpin = 159,
   Carvanha = 160,
   Wailmer = 161,
-  // 162 is Numel's
+  Numel = 162,
   Torkoal = 163,
-  // 164 is Spoink's
+  Spoink = 164,
   Spinda = 165,
   Trapinch = 166,
-  // 167 is Cacnea's and 168 Swablu's
+  Cacnea = 167,
+  Swablu = 168,
   Zangoose = 169,
   Seviper = 170,
   Lunatone = 171,
   Solrock = 172,
   Barboach = 173,
   Corphish = 174,
-  // 175 is Baltoy's
+  Baltoy = 175,
   Lileep = 176,
   Anorith = 177,
   Feebas = 178,
   Castform = 179,
   Kecleon = 180,
-  // 181 is Shuppet's and 182 Duskull's
+  Shuppet = 181,
+  Duskull = 182,
   Tropius = 183,
   // 184 is Chimecho's, which starts at the Chingling below it
   Absol = 185,
-  // 186 is Snorunt's. Wynaut needs none: it joins the Wobbuffet
-  // family it hatches into
+  // Wynaut needs none: it joins the Wobbuffet family it hatches into
+  Snorunt = 186,
   Spheal = 187,
   Clamperl = 188,
   Relicanth = 189,

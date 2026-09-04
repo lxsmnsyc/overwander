@@ -9,6 +9,9 @@ export default function registerMountainSpawns(): void {
   registerSpawnPool(Biome.Mountain, {
     [TimeOfDay.Morning]: {
       base: [
+        { species: Species.Makuhita, weight: 20 },
+        { species: Species.Spoink, weight: 20 },
+        { species: Species.Swablu, weight: 22 },
         { species: Species.Charmander, weight: 2 },
         { species: Species.Diglett, weight: 20 },
         { species: Species.Mankey, weight: 20 },
@@ -30,6 +33,9 @@ export default function registerMountainSpawns(): void {
         { species: Species.Lairon, weight: 10 },
       ],
       rare: [
+        { species: Species.Hariyama, weight: 6 },
+        { species: Species.Grumpig, weight: 6 },
+        { species: Species.Altaria, weight: 5 },
         { species: Species.Charizard, weight: 2 },
         { species: Species.Dugtrio, weight: 10 },
         { species: Species.Primeape, weight: 10 },
@@ -59,6 +65,9 @@ export default function registerMountainSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.Makuhita, weight: 20 },
+        { species: Species.Spoink, weight: 20 },
+        { species: Species.Swablu, weight: 22 },
         { species: Species.Bagon, weight: 3 },
         { species: Species.Charmander, weight: 2 },
         { species: Species.Diglett, weight: 20 },
@@ -82,6 +91,9 @@ export default function registerMountainSpawns(): void {
         { species: Species.Lairon, weight: 10 },
       ],
       rare: [
+        { species: Species.Hariyama, weight: 6 },
+        { species: Species.Grumpig, weight: 6 },
+        { species: Species.Altaria, weight: 5 },
         { species: Species.Salamence, weight: 2 },
         { species: Species.Charizard, weight: 2 },
         { species: Species.Dugtrio, weight: 10 },

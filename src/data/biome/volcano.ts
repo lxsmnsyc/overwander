@@ -14,6 +14,7 @@ export default function registerVolcanoSpawns(): void {
   registerSpawnPool(Biome.Volcano, {
     [TimeOfDay.Morning]: {
       base: [
+        { species: Species.Numel, weight: 20 },
         { species: Species.Charmander, weight: 6 },
         { species: Species.Growlithe, weight: 20 },
         { species: Species.Geodude, weight: 20 },
@@ -28,6 +29,7 @@ export default function registerVolcanoSpawns(): void {
         { species: Species.Combusken, weight: 1 },
       ],
       rare: [
+        { species: Species.Camerupt, weight: 6 },
         { species: Species.Charizard, weight: 3 },
         { species: Species.Arcanine, weight: 5 },
         { species: Species.Magmar, weight: 10 },
@@ -45,6 +47,7 @@ export default function registerVolcanoSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.Numel, weight: 20 },
         { species: Species.Charmander, weight: 6 },
         { species: Species.Growlithe, weight: 20 },
         { species: Species.Ponyta, weight: 20 },
@@ -61,6 +64,7 @@ export default function registerVolcanoSpawns(): void {
         { species: Species.Combusken, weight: 1 },
       ],
       rare: [
+        { species: Species.Camerupt, weight: 6 },
         { species: Species.Charizard, weight: 3 },
         { species: Species.Arcanine, weight: 5 },
         { species: Species.Rapidash, weight: 5 },

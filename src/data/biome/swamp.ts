@@ -9,6 +9,7 @@ export default function registerSwampSpawns(): void {
   registerSpawnPool(Biome.Swamp, {
     [TimeOfDay.Morning]: {
       base: [
+        { species: Species.Gulpin, weight: 22 },
         { species: Species.Barboach, weight: 25 },
         { species: Species.Corphish, weight: 25 },
         { species: Species.Feebas, weight: 10 },
@@ -31,6 +32,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Marshtomp, weight: 1 },
       ],
       rare: [
+        { species: Species.Swalot, weight: 7 },
         { species: Species.Whiscash, weight: 8 },
         { species: Species.Crawdaunt, weight: 8 },
         { species: Species.Golduck, weight: 10 },
@@ -52,6 +54,7 @@ export default function registerSwampSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.Gulpin, weight: 22 },
         { species: Species.Barboach, weight: 25 },
         { species: Species.Corphish, weight: 25 },
         { species: Species.Feebas, weight: 10 },
@@ -74,6 +77,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Marshtomp, weight: 1 },
       ],
       rare: [
+        { species: Species.Swalot, weight: 7 },
         { species: Species.Whiscash, weight: 8 },
         { species: Species.Crawdaunt, weight: 8 },
         { species: Species.Golduck, weight: 10 },
@@ -95,6 +99,7 @@ export default function registerSwampSpawns(): void {
     },
     [TimeOfDay.Evening]: {
       base: [
+        { species: Species.Gulpin, weight: 22 },
         { species: Species.Barboach, weight: 25 },
         { species: Species.Corphish, weight: 25 },
         { species: Species.Feebas, weight: 10 },
@@ -106,6 +111,7 @@ export default function registerSwampSpawns(): void {
       ],
       uncommon: [{ species: Species.Poliwhirl, weight: 5 }],
       rare: [
+        { species: Species.Swalot, weight: 7 },
         { species: Species.Whiscash, weight: 8 },
         { species: Species.Crawdaunt, weight: 8 },
         { species: Species.Poliwrath, weight: 5 },
@@ -119,6 +125,7 @@ export default function registerSwampSpawns(): void {
     },
     [TimeOfDay.Night]: {
       base: [
+        { species: Species.Gulpin, weight: 22 },
         { species: Species.Barboach, weight: 25 },
         { species: Species.Corphish, weight: 25 },
         { species: Species.Feebas, weight: 10 },
@@ -132,6 +139,7 @@ export default function registerSwampSpawns(): void {
       ],
       uncommon: [{ species: Species.Poliwhirl, weight: 5 }],
       rare: [
+        { species: Species.Swalot, weight: 7 },
         { species: Species.Whiscash, weight: 8 },
         { species: Species.Crawdaunt, weight: 8 },
         { species: Species.Poliwrath, weight: 5 },

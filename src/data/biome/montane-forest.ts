@@ -9,6 +9,7 @@ export default function registerMontaneForestSpawns(): void {
   registerSpawnPool(Biome.MontaneForest, {
     [TimeOfDay.Morning]: {
       base: [
+        { species: Species.Makuhita, weight: 20 },
         { species: Species.Mankey, weight: 20 },
         { species: Species.Teddiursa, weight: 20 },
         { species: Species.Ralts, weight: 20 },
@@ -16,6 +17,7 @@ export default function registerMontaneForestSpawns(): void {
       ],
       uncommon: [{ species: Species.Kirlia, weight: 10 }],
       rare: [
+        { species: Species.Hariyama, weight: 6 },
         { species: Species.Primeape, weight: 10 },
         { species: Species.Heracross, weight: 5 },
         { species: Species.Stantler, weight: 5 },
@@ -28,6 +30,7 @@ export default function registerMontaneForestSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.Makuhita, weight: 20 },
         { species: Species.Mankey, weight: 20 },
         { species: Species.Teddiursa, weight: 20 },
         { species: Species.Ralts, weight: 20 },
@@ -35,6 +38,7 @@ export default function registerMontaneForestSpawns(): void {
       ],
       uncommon: [{ species: Species.Kirlia, weight: 10 }],
       rare: [
+        { species: Species.Hariyama, weight: 6 },
         { species: Species.Primeape, weight: 10 },
         { species: Species.Pinsir, weight: 5 },
         { species: Species.Heracross, weight: 5 },

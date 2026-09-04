@@ -82,4 +82,9 @@ export default function registerGen3Abilities(): void {
     name: 'Steelworker',
     description: 'Steel moves hit 1.5x, whatever its own types are.',
   });
+  // Numel
+  registerAbility(Abilities.Simple, {
+    name: 'Simple',
+    description: 'Every stat change it takes counts 2x, its own and anybody else’s.',
+  });
 }

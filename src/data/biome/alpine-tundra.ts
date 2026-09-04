@@ -9,11 +9,13 @@ export default function registerAlpineTundraSpawns(): void {
   registerSpawnPool(Biome.AlpineTundra, {
     [TimeOfDay.Morning]: {
       base: [
+        { species: Species.Snorunt, weight: 22 },
         { species: Species.Machop, weight: 20 },
         { species: Species.Swinub, weight: 25 },
       ],
       uncommon: [{ species: Species.Machoke, weight: 5 }],
       rare: [
+        { species: Species.Glalie, weight: 6 },
         { species: Species.Machamp, weight: 5 },
         { species: Species.Delibird, weight: 5 },
         { species: Species.Skarmory, weight: 5 },
@@ -23,6 +25,7 @@ export default function registerAlpineTundraSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.Snorunt, weight: 22 },
         { species: Species.Bagon, weight: 3 },
         { species: Species.Machop, weight: 20 },
         { species: Species.Swinub, weight: 25 },
@@ -32,6 +35,7 @@ export default function registerAlpineTundraSpawns(): void {
         { species: Species.Machoke, weight: 5 },
       ],
       rare: [
+        { species: Species.Glalie, weight: 6 },
         { species: Species.Salamence, weight: 2 },
         { species: Species.Machamp, weight: 5 },
         { species: Species.Delibird, weight: 5 },
@@ -42,11 +46,13 @@ export default function registerAlpineTundraSpawns(): void {
     },
     [TimeOfDay.Evening]: {
       base: [
+        { species: Species.Snorunt, weight: 22 },
         { species: Species.Bagon, weight: 3 },
         { species: Species.Swinub, weight: 25 },
       ],
       uncommon: [{ species: Species.Shelgon, weight: 1 }],
       rare: [
+        { species: Species.Glalie, weight: 6 },
         { species: Species.Salamence, weight: 2 },
         { species: Species.Delibird, weight: 5 },
         { species: Species.Sneasel, weight: 5 },
@@ -56,9 +62,13 @@ export default function registerAlpineTundraSpawns(): void {
       special: [{ species: Species.Articuno, weight: 10 }],
     },
     [TimeOfDay.Night]: {
-      base: [{ species: Species.Swinub, weight: 25 }],
+      base: [
+        { species: Species.Snorunt, weight: 22 },
+        { species: Species.Swinub, weight: 25 },
+      ],
       uncommon: [],
       rare: [
+        { species: Species.Glalie, weight: 6 },
         { species: Species.Delibird, weight: 5 },
         { species: Species.Sneasel, weight: 5 },
         { species: Species.Absol, weight: 5 },

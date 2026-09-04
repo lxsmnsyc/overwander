@@ -137,6 +137,7 @@ export default function registerWoodlandSpawns(): void {
     },
     [TimeOfDay.Evening]: {
       base: [
+        { species: Species.Shuppet, weight: 20 },
         { species: Species.Rattata, weight: 30 },
         { species: Species.NidoranF, weight: 20 },
         { species: Species.NidoranM, weight: 20 },
@@ -161,6 +162,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Nuzleaf, weight: 10 },
       ],
       rare: [
+        { species: Species.Banette, weight: 6 },
         { species: Species.Raticate, weight: 10 },
         { species: Species.Raichu, weight: 5 },
         { species: Species.Nidoqueen, weight: 5 },
@@ -192,6 +194,7 @@ export default function registerWoodlandSpawns(): void {
     },
     [TimeOfDay.Night]: {
       base: [
+        { species: Species.Shuppet, weight: 20 },
         { species: Species.Rattata, weight: 30 },
         { species: Species.NidoranF, weight: 20 },
         { species: Species.NidoranM, weight: 20 },
@@ -218,6 +221,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Nuzleaf, weight: 10 },
       ],
       rare: [
+        { species: Species.Banette, weight: 6 },
         { species: Species.Raticate, weight: 10 },
         { species: Species.Raichu, weight: 5 },
         { species: Species.Nidoqueen, weight: 5 },

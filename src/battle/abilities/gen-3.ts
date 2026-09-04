@@ -18,6 +18,7 @@ import {
   createClearBodyAbility,
   createHugePowerAbility,
   createPolarityAbility,
+  createRestageAbility,
   createWeightAbility,
   movesFlagged,
 } from './__create';
@@ -36,6 +37,9 @@ function isWeakTo(type: Types, target: Unit): boolean {
   }
   return multiplier > 1;
 }
+
+/** What a stat change is worth to a mind that takes it plainly. */
+const SIMPLE_SCALE = 2;
 
 /** What a smith's hand is worth to a steel move. */
 const STEELWORKER_SCALE = 1.5;
@@ -331,6 +335,8 @@ const setupAbilities = [
       }
     }),
   ),
+  // https://bulbapedia.bulbagarden.net/wiki/Simple_(Ability)
+  createRestageAbility(Abilities.Simple, (value) => value * SIMPLE_SCALE),
 ];
 
 export default function setupGen3Abilities(battle: Battle): void {

@@ -9,11 +9,14 @@ export default function registerDesertSpawns(): void {
   registerSpawnPool(Biome.Desert, {
     [TimeOfDay.Morning]: {
       base: [
+        { species: Species.Cacnea, weight: 20 },
+        { species: Species.Baltoy, weight: 22 },
         { species: Species.Diglett, weight: 20 },
         { species: Species.Trapinch, weight: 20 },
       ],
       uncommon: [{ species: Species.Vibrava, weight: 10 }],
       rare: [
+        { species: Species.Claydol, weight: 6 },
         { species: Species.Dugtrio, weight: 10 },
         { species: Species.Magmar, weight: 5 },
         { species: Species.Flygon, weight: 5 },
@@ -24,6 +27,8 @@ export default function registerDesertSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.Cacnea, weight: 20 },
+        { species: Species.Baltoy, weight: 22 },
         { species: Species.Sandshrew, weight: 20 },
         { species: Species.Diglett, weight: 20 },
         { species: Species.Rhyhorn, weight: 20 },
@@ -31,6 +36,7 @@ export default function registerDesertSpawns(): void {
       ],
       uncommon: [{ species: Species.Vibrava, weight: 10 }],
       rare: [
+        { species: Species.Claydol, weight: 6 },
         { species: Species.Sandslash, weight: 10 },
         { species: Species.Dugtrio, weight: 10 },
         { species: Species.Rhydon, weight: 10 },
@@ -43,11 +49,14 @@ export default function registerDesertSpawns(): void {
     },
     [TimeOfDay.Evening]: {
       base: [
+        { species: Species.Baltoy, weight: 22 },
         { species: Species.Sandshrew, weight: 20 },
         { species: Species.Diglett, weight: 20 },
       ],
       uncommon: [],
       rare: [
+        { species: Species.Cacturne, weight: 6 },
+        { species: Species.Claydol, weight: 6 },
         { species: Species.Sandslash, weight: 10 },
         { species: Species.Dugtrio, weight: 10 },
         { species: Species.Magmar, weight: 5 },
@@ -57,11 +66,14 @@ export default function registerDesertSpawns(): void {
     },
     [TimeOfDay.Night]: {
       base: [
+        { species: Species.Baltoy, weight: 22 },
         { species: Species.Diglett, weight: 20 },
         { species: Species.Cubone, weight: 20 },
       ],
       uncommon: [],
       rare: [
+        { species: Species.Cacturne, weight: 6 },
+        { species: Species.Claydol, weight: 6 },
         { species: Species.Dugtrio, weight: 10 },
         { species: Species.Marowak, weight: 10 },
         { species: Species.Magmar, weight: 5 },

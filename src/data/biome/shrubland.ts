@@ -9,6 +9,7 @@ export default function registerShrublandSpawns(): void {
   registerSpawnPool(Biome.Shrubland, {
     [TimeOfDay.Morning]: {
       base: [
+        { species: Species.Spoink, weight: 20 },
         { species: Species.Spearow, weight: 20 },
         { species: Species.Natu, weight: 20 },
         { species: Species.Mareep, weight: 25 },
@@ -19,6 +20,7 @@ export default function registerShrublandSpawns(): void {
       ],
       uncommon: [],
       rare: [
+        { species: Species.Grumpig, weight: 6 },
         { species: Species.Fearow, weight: 10 },
         { species: Species.Flareon, weight: 5 },
         { species: Species.Smeargle, weight: 5 },
@@ -30,6 +32,7 @@ export default function registerShrublandSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.Spoink, weight: 20 },
         { species: Species.Spearow, weight: 20 },
         { species: Species.Natu, weight: 20 },
         { species: Species.Mareep, weight: 25 },
@@ -40,6 +43,7 @@ export default function registerShrublandSpawns(): void {
       ],
       uncommon: [],
       rare: [
+        { species: Species.Grumpig, weight: 6 },
         { species: Species.Fearow, weight: 10 },
         { species: Species.Flareon, weight: 5 },
         { species: Species.Smeargle, weight: 5 },

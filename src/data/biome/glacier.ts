@@ -9,11 +9,13 @@ export default function registerGlacierSpawns(): void {
   registerSpawnPool(Biome.Glacier, {
     [TimeOfDay.Morning]: {
       base: [
+        { species: Species.Snorunt, weight: 22 },
         { species: Species.Spheal, weight: 25 },
         { species: Species.Swinub, weight: 25 },
       ],
       uncommon: [{ species: Species.Sealeo, weight: 8 }],
       rare: [
+        { species: Species.Glalie, weight: 6 },
         { species: Species.Walrein, weight: 5 },
         { species: Species.Delibird, weight: 5 },
       ],
@@ -22,11 +24,13 @@ export default function registerGlacierSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.Snorunt, weight: 22 },
         { species: Species.Spheal, weight: 25 },
         { species: Species.Swinub, weight: 25 },
       ],
       uncommon: [{ species: Species.Sealeo, weight: 8 }],
       rare: [
+        { species: Species.Glalie, weight: 6 },
         { species: Species.Walrein, weight: 5 },
         { species: Species.Delibird, weight: 5 },
       ],
@@ -35,11 +39,13 @@ export default function registerGlacierSpawns(): void {
     },
     [TimeOfDay.Evening]: {
       base: [
+        { species: Species.Snorunt, weight: 22 },
         { species: Species.Spheal, weight: 25 },
         { species: Species.Swinub, weight: 25 },
       ],
       uncommon: [{ species: Species.Sealeo, weight: 8 }],
       rare: [
+        { species: Species.Glalie, weight: 6 },
         { species: Species.Walrein, weight: 5 },
         { species: Species.Jynx, weight: 5 },
         { species: Species.Delibird, weight: 5 },
@@ -50,11 +56,13 @@ export default function registerGlacierSpawns(): void {
     },
     [TimeOfDay.Night]: {
       base: [
+        { species: Species.Snorunt, weight: 22 },
         { species: Species.Spheal, weight: 25 },
         { species: Species.Swinub, weight: 25 },
       ],
       uncommon: [{ species: Species.Sealeo, weight: 8 }],
       rare: [
+        { species: Species.Glalie, weight: 6 },
         { species: Species.Walrein, weight: 5 },
         { species: Species.Jynx, weight: 5 },
         { species: Species.Delibird, weight: 5 },

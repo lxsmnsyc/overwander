@@ -106,6 +106,7 @@ export default function registerTemperateForestSpawns(): void {
     },
     [TimeOfDay.Evening]: {
       base: [
+        { species: Species.Shuppet, weight: 20 },
         { species: Species.Oddish, weight: 20 },
         { species: Species.Venonat, weight: 20 },
         { species: Species.Hoothoot, weight: 25 },
@@ -119,6 +120,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Cascoon, weight: 15 },
       ],
       rare: [
+        { species: Species.Banette, weight: 6 },
         { species: Species.Raichu, weight: 5 },
         { species: Species.Vileplume, weight: 5 },
         { species: Species.Venomoth, weight: 10 },
@@ -140,6 +142,7 @@ export default function registerTemperateForestSpawns(): void {
     },
     [TimeOfDay.Night]: {
       base: [
+        { species: Species.Shuppet, weight: 20 },
         { species: Species.Oddish, weight: 20 },
         { species: Species.Paras, weight: 20 },
         { species: Species.Venonat, weight: 20 },
@@ -154,6 +157,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Cascoon, weight: 15 },
       ],
       rare: [
+        { species: Species.Banette, weight: 6 },
         { species: Species.Raichu, weight: 5 },
         { species: Species.Vileplume, weight: 5 },
         { species: Species.Parasect, weight: 10 },

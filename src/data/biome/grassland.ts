@@ -9,6 +9,7 @@ export default function registerGrasslandSpawns(): void {
   registerSpawnPool(Biome.Grassland, {
     [TimeOfDay.Morning]: {
       base: [
+        { species: Species.Swablu, weight: 22 },
         { species: Species.Bulbasaur, weight: 2 },
         { species: Species.Pidgey, weight: 30 },
         { species: Species.Rattata, weight: 30 },
@@ -39,6 +40,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Bayleef, weight: 1 },
       ],
       rare: [
+        { species: Species.Altaria, weight: 5 },
         { species: Species.Castform, weight: 10 },
         { species: Species.Venusaur, weight: 2 },
         { species: Species.Pidgeot, weight: 5 },
@@ -84,6 +86,7 @@ export default function registerGrasslandSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.Swablu, weight: 22 },
         { species: Species.Bulbasaur, weight: 2 },
         { species: Species.Pidgey, weight: 30 },
         { species: Species.Rattata, weight: 30 },
@@ -117,6 +120,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Bayleef, weight: 1 },
       ],
       rare: [
+        { species: Species.Altaria, weight: 5 },
         { species: Species.Castform, weight: 10 },
         { species: Species.Venusaur, weight: 2 },
         { species: Species.Pidgeot, weight: 5 },

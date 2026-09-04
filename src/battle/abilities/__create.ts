@@ -726,6 +726,46 @@ export function createFilterAbility(targetAbility: Abilities): (battle: Battle) 
 }
 
 /**
+ * Meta ability for the two that rewrite a stat change on its way in
+ * (Contrary, Simple). The change is refused and re-made through
+ * `restage`, with the holder held aside so the second call does not
+ * come straight back through here
+ * https://bulbapedia.bulbagarden.net/wiki/Contrary_(Ability)
+ * https://bulbapedia.bulbagarden.net/wiki/Simple_(Ability)
+ */
+export function createRestageAbility(
+  targetAbility: Abilities,
+  restage: (value: number) => number,
+): (battle: Battle) => void {
+  return createAbility(targetAbility, (battle) => {
+    const rewriting = new Set<Unit>();
+
+    return new MergedLifecycle([
+      battle.on(BattleEvents.CheckUnitCanAddStage, EventPriority.Post, (event) => {
+        if (
+          !event.success ||
+          event.value === 0 ||
+          rewriting.has(event.source) ||
+          !event.source.hasAbility(targetAbility)
+        ) {
+          return;
+        }
+
+        event.success = false;
+        event.source.triggerAbility(targetAbility);
+
+        rewriting.add(event.source);
+        event.source.addStage(event.stage, restage(event.value), event.cause);
+        rewriting.delete(event.source);
+      }),
+      battle.on(BattleEvents.UnitLeavesField, EventPriority.Post, (event) => {
+        rewriting.delete(event.source);
+      }),
+    ]);
+  });
+}
+
+/**
  * Meta ability for the move-flag power boosters (Tough Claws, Strong
  * Jaw, Sharpness): moves carrying the flag hit harder
  * https://bulbapedia.bulbagarden.net/wiki/Tough_Claws_(Ability)

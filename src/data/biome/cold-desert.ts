@@ -9,6 +9,7 @@ export default function registerColdDesertSpawns(): void {
   registerSpawnPool(Biome.ColdDesert, {
     [TimeOfDay.Morning]: {
       base: [
+        { species: Species.Cacnea, weight: 20 },
         { species: Species.Beldum, weight: 2 },
         { species: Species.Diglett, weight: 20 },
         { species: Species.Geodude, weight: 20 },
@@ -29,6 +30,7 @@ export default function registerColdDesertSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.Cacnea, weight: 20 },
         { species: Species.Beldum, weight: 2 },
         { species: Species.Diglett, weight: 20 },
         { species: Species.Geodude, weight: 20 },
@@ -59,6 +61,7 @@ export default function registerColdDesertSpawns(): void {
         { species: Species.Graveler, weight: 5 },
       ],
       rare: [
+        { species: Species.Cacturne, weight: 6 },
         { species: Species.Metagross, weight: 1 },
         { species: Species.Dugtrio, weight: 10 },
         { species: Species.Golem, weight: 5 },
@@ -82,6 +85,7 @@ export default function registerColdDesertSpawns(): void {
         { species: Species.Graveler, weight: 5 },
       ],
       rare: [
+        { species: Species.Cacturne, weight: 6 },
         { species: Species.Metagross, weight: 1 },
         { species: Species.Dugtrio, weight: 10 },
         { species: Species.Golem, weight: 5 },

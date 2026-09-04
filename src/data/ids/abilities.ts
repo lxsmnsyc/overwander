@@ -281,6 +281,8 @@ const enum Abilities {
   Forecast = 163,
   // Metagross
   Steelworker = 164,
+  // Numel
+  Simple = 165,
   // Special (non-standard abilities outside the regular pool)
   Boss = 100001,
   Shadow = 100002,

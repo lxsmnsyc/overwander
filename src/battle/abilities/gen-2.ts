@@ -21,6 +21,7 @@ import {
   createHugePowerAbility,
   createLimberAbility,
   createPolarityAbility,
+  createRestageAbility,
   createWeightAbility,
   movesOfType,
 } from './__create';
@@ -301,34 +302,7 @@ const setupAbilities = [
   ),
 
   // https://bulbapedia.bulbagarden.net/wiki/Contrary_(Ability)
-  createAbility(Abilities.Contrary, (battle) => {
-    // Holders part-way through a flipped change: the flip is a fresh
-    // call and would otherwise come straight back through here
-    const inverting = new Set<Unit>();
-
-    return new MergedLifecycle([
-      battle.on(BattleEvents.CheckUnitCanAddStage, EventPriority.Post, (event) => {
-        if (
-          !event.success ||
-          event.value === 0 ||
-          inverting.has(event.source) ||
-          !event.source.hasAbility(Abilities.Contrary)
-        ) {
-          return;
-        }
-
-        event.success = false;
-        event.source.triggerAbility(Abilities.Contrary);
-
-        inverting.add(event.source);
-        event.source.addStage(event.stage, -event.value, event.cause);
-        inverting.delete(event.source);
-      }),
-      battle.on(BattleEvents.UnitLeavesField, EventPriority.Post, (event) => {
-        inverting.delete(event.source);
-      }),
-    ]);
-  }),
+  createRestageAbility(Abilities.Contrary, (value) => -value),
 
   // https://bulbapedia.bulbagarden.net/wiki/Storm_Drain_(Ability)
   // The mainline also pulls Water moves aimed elsewhere onto the

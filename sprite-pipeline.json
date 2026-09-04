@@ -349,6 +349,18 @@
         "bytes": 19940
       }
     },
+    "public/sprites/extras/badges/frontier-emerald.png": {
+      "digest": "39f0e47f710bb99e",
+      "bytes": 150120,
+      "width": 400,
+      "height": 400,
+      "compact": {
+        "at": "2026-09-04T11:50:15Z",
+        "as": "already compact",
+        "was": 150120,
+        "bytes": 150120
+      }
+    },
     "public/sprites/extras/badges/hoenn.png": {
       "digest": "d37217190c64c510",
       "bytes": 3043,
@@ -3217,6 +3229,18 @@
         "bytes": 1133
       }
     },
+    "public/sprites/overworld/characters/rse/anabel/image.png": {
+      "digest": "7d7ecbe9537d864a",
+      "bytes": 1014,
+      "width": 45,
+      "height": 80,
+      "compact": {
+        "at": "2026-09-04T11:50:15Z",
+        "as": "already compact",
+        "was": 1014,
+        "bytes": 1014
+      }
+    },
     "public/sprites/overworld/characters/rse/aqua-grunt-f/image.png": {
       "digest": "6a30cbdbe10a0bcd",
       "bytes": 1091,
@@ -3251,6 +3275,18 @@
         "as": "already compact",
         "was": 1047,
         "bytes": 1047
+      }
+    },
+    "public/sprites/overworld/characters/rse/brandon/image.png": {
+      "digest": "8756e2a3ec8c34c5",
+      "bytes": 1120,
+      "width": 48,
+      "height": 84,
+      "compact": {
+        "at": "2026-09-04T11:50:15Z",
+        "as": "already compact",
+        "was": 1120,
+        "bytes": 1120
       }
     },
     "public/sprites/overworld/characters/rse/brawly/image.png": {
@@ -3325,6 +3361,18 @@
         "bytes": 1792
       }
     },
+    "public/sprites/overworld/characters/rse/greta/image.png": {
+      "digest": "2e3714e19d995ea5",
+      "bytes": 919,
+      "width": 42,
+      "height": 80,
+      "compact": {
+        "at": "2026-09-04T11:50:15Z",
+        "as": "already compact",
+        "was": 919,
+        "bytes": 919
+      }
+    },
     "public/sprites/overworld/characters/rse/juan/image.png": {
       "digest": "7ce32f03d52276a9",
       "bytes": 1183,
@@ -3347,6 +3395,18 @@
         "as": "already compact",
         "was": 1260,
         "bytes": 1260
+      }
+    },
+    "public/sprites/overworld/characters/rse/lucy/image.png": {
+      "digest": "06c82f6ff89ba662",
+      "bytes": 1007,
+      "width": 48,
+      "height": 84,
+      "compact": {
+        "at": "2026-09-04T11:50:15Z",
+        "as": "already compact",
+        "was": 1007,
+        "bytes": 1007
       }
     },
     "public/sprites/overworld/characters/rse/magma-grunt-f/image.png": {
@@ -3433,6 +3493,18 @@
         "bytes": 1059
       }
     },
+    "public/sprites/overworld/characters/rse/noland/image.png": {
+      "digest": "4c9fe99638ebc833",
+      "bytes": 841,
+      "width": 42,
+      "height": 84,
+      "compact": {
+        "at": "2026-09-04T11:50:15Z",
+        "as": "already compact",
+        "was": 841,
+        "bytes": 841
+      }
+    },
     "public/sprites/overworld/characters/rse/norman/image.png": {
       "digest": "79b897194db3964d",
       "bytes": 1143,
@@ -3469,6 +3541,18 @@
         "bytes": 1379
       }
     },
+    "public/sprites/overworld/characters/rse/spenser/image.png": {
+      "digest": "22a9bea84de1a412",
+      "bytes": 833,
+      "width": 48,
+      "height": 80,
+      "compact": {
+        "at": "2026-09-04T11:50:15Z",
+        "as": "already compact",
+        "was": 833,
+        "bytes": 833
+      }
+    },
     "public/sprites/overworld/characters/rse/tate/image.png": {
       "digest": "51d0fbe9366b0d89",
       "bytes": 1237,
@@ -3479,6 +3563,18 @@
         "as": "already compact",
         "was": 1237,
         "bytes": 1237
+      }
+    },
+    "public/sprites/overworld/characters/rse/tucker/image.png": {
+      "digest": "28ad835d4916c665",
+      "bytes": 1010,
+      "width": 48,
+      "height": 84,
+      "compact": {
+        "at": "2026-09-04T11:50:15Z",
+        "as": "already compact",
+        "was": 1010,
+        "bytes": 1010
       }
     },
     "public/sprites/overworld/characters/rse/wallace/image.png": {

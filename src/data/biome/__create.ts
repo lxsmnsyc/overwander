@@ -587,7 +587,7 @@ export function isPrizedSpecies(species: Species): boolean {
  * not a stage: it has a band of its own, and the line behind it is
  * the one its family walks
  */
-function stageOf(species: Species): number {
+export function getLineStage(species: Species): number {
   let at = species;
   let stage = 0;
 
@@ -624,7 +624,7 @@ function stagesBelow(species: Species): number {
 }
 
 /** How long this species' line is, from its first stage to its last */
-function countStages(species: Species): number {
+export function countLineStages(species: Species): number {
   let root = species;
 
   for (let from = getSpeciesData(root).evolvesFrom; from != null;) {
@@ -653,8 +653,8 @@ export function getSpawnRarity(species: Species): SpawnRarity {
   // The band is where this stage stands in its line and how long that
   // line is: the bottom of a long walk is met more often than the
   // bottom of a short one, and the end of either is met least
-  const stages = countStages(species);
-  const at = stageOf(species);
+  const stages = countLineStages(species);
+  const at = getLineStage(species);
 
   if (stages >= 3) {
     if (at === 1) {

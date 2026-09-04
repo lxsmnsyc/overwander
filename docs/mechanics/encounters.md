@@ -61,16 +61,24 @@ A prized pokemon is not unique. Unlike a legendary, a second one may be met.
 Level depends on the rarity band, so a first field does not hand out a level 90
 Rattata and a legendary is never trivial:
 
-Level follows the stage rather than the band: a first stage is young whichever
-length of line it stands at the bottom of.
+Level comes from the line itself: a stage is met between the level it can first
+exist at and the level it stops being itself at. A Charmander is 5–16, a
+Charmeleon 16–36, a Charizard 36–60.
 
-| Band              | Level range |
-| ----------------- | ----------- |
-| Base, Uncommon    | 5–15        |
-| Prized            | 5–15        |
-| Rare              | 15–30       |
-| Scarce, Elusive   | 30–45       |
-| Special, Mythical | 1–100       |
+| What was met                                | Level range                        |
+| ------------------------------------------- | ---------------------------------- |
+| A first stage that evolves at a level        | 5 to that level                    |
+| A first stage that evolves some other way    | 5–30                               |
+| A middle stage that evolves at a level       | The level it arrived at, to that level |
+| A middle stage that evolves some other way   | 30–50                              |
+| The end of a two-stage line                  | The level it arrived at, to 50     |
+| The end of a three-stage line                | The level it arrived at, to 60     |
+| A species that never evolves                 | 10–50                              |
+| A baby or an unown                           | 5–10                               |
+| A legendary or a mythical                    | 1–100                              |
+
+Where no level is named, because the step was a stone, a trade or an evolution
+a later generation holds, the stage starts at 30 instead.
 
 A buddy can move the edges of that band. **Keen Eye** or **Intimidate** keeps
 what is far below it away, lifting the bottom by three levels; **Hustle**,

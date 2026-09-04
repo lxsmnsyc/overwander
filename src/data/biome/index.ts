@@ -33,6 +33,8 @@ export {
   boostFamilyWeights,
   boostTypeEntries,
   boostTypeWeights,
+  countLineStages,
+  getLineStage,
   getEggPool,
   getSpawnPool,
   getSpawnRarity,

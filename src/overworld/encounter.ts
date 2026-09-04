@@ -1,5 +1,5 @@
 import AleaRNG from '../core/alea';
-import { SpawnRarity, getSpawnRarity } from '../data/biome';
+import { SpawnRarity, countLineStages, getLineStage, getSpawnRarity } from '../data/biome';
 import type Lairs from '../data/overworld/lair';
 import type Phenomenon from '../data/overworld/phenomenon';
 import type Weather from '../data/overworld/weather';
@@ -16,8 +16,9 @@ import type Biome from '../data/ids/biome';
 import type { Moves } from '../data/ids/moves';
 import type Natures from '../data/ids/natures';
 import type { Items } from '../data/ids/items';
-import { Genders } from '../data/ids/species';
+import { EvolutionMethod, Genders } from '../data/ids/species';
 import type { Species } from '../data/ids/species';
+import type { EvolutionData } from '../data/species';
 import {
   SPECIES_DAY_HIDDEN_ABILITY_BOOST,
   SPECIES_DAY_SHINY_BOOST,
@@ -209,33 +210,110 @@ const TRAIT_MASK = 0xff;
 const TRAIT_RANGE = 256;
 
 /**
- * What level a wild pokemon may be, by how rare it is. Rarity already
- * says roughly where a species belongs in a game, so it sets the band
- * too — otherwise a level 90 Rattata turns up in the first field.
- *
- * Specials get the whole range on purpose: there is one of each in the
- * world, and one that could only be met at a known strength is a
- * legendary with a known answer
+ * What a baby or an unown is met at: they are rare to find rather
+ * than far along, so they are the youngest thing in the grass
  */
-export const SPAWN_LEVELS: Record<SpawnRarity, [minimum: number, maximum: number]> = {
-  // Level follows the stage rather than the band: a first stage is
-  // young whichever length of line it stands at the bottom of, and
-  // the end of a two-stage line is as grown as the end of a
-  // three-stage one
-  [SpawnRarity.Base]: [5, 15],
-  [SpawnRarity.Uncommon]: [5, 15],
-  [SpawnRarity.Rare]: [15, 30],
-  [SpawnRarity.Scarce]: [30, 45],
-  [SpawnRarity.Elusive]: [30, 45],
-  // The babies and the unowns are met the way a base spawn is: they
-  // are rare to *find*, not far along
-  [SpawnRarity.Prized]: [5, 15],
-  [SpawnRarity.Special]: [1, 100],
-  // Never rolled: a mythical arrives at the level its raid hands it
-  // over at. The band is here so the record is total rather than
-  // because anything reads it
-  [SpawnRarity.Mythical]: [1, 100],
-};
+export const PRIZED_SPAWN_LEVELS: [minimum: number, maximum: number] = [5, 10];
+
+/**
+ * A legendary covers the whole range on purpose: there is one of each
+ * in the world, and one that could only be met at a known strength is
+ * a legendary with a known answer
+ */
+export const SPECIAL_SPAWN_LEVELS: [minimum: number, maximum: number] = [1, 100];
+
+/** What a species that never evolves at all is met at */
+export const SINGLE_SPAWN_LEVELS: [minimum: number, maximum: number] = [10, 50];
+
+/**
+ * Where a stage starts when nothing in its line names a level: a
+ * stone, a trade or an evolution a later gen holds
+ */
+const UNNAMED_FLOOR = 30;
+
+/** As high as the wild goes, short of a legendary */
+const GROWN_CEILING = 60;
+
+/** As high as anything that is not the end of its line goes */
+const HALF_GROWN_CEILING = 50;
+
+/** The first stage of any line starts here */
+const YOUNG_FLOOR = 5;
+
+/** Where a first stage stops when nothing names the level it evolves at */
+const YOUNG_CEILING = 30;
+
+/** The highest level named on a set of evolution roads, if any names one */
+function namedLevel(roads: EvolutionData[]): number | null {
+  const levels = roads
+    .filter((road) => (road.method & EvolutionMethod.Level) !== 0 && road.level != null)
+    .map((road) => road.level ?? 0);
+
+  return levels.length === 0 ? null : Math.max(...levels);
+}
+
+/** The level this pokemon is handed over at, if it is reached by one */
+function arrivalLevel(species: Species): number | null {
+  const from = getSpeciesData(species).evolvesFrom;
+
+  if (from == null) {
+    return null;
+  }
+  return namedLevel(
+    (getSpeciesData(from).evolvesInto ?? []).filter((road) => road.species === species),
+  );
+}
+
+/**
+ * What level a wild pokemon may be: where it stands in its line, and
+ * the levels its line names.
+ *
+ * A stage is met between the level it can first exist at and the
+ * level it stops being itself at, so a Charmander is 5 to 16, a
+ * Charmeleon 16 to 36 and a Charizard 36 to 60. Where no level is
+ * named, because the next step is a stone or a trade or an evolution
+ * a later gen holds, the stage takes the flat range for its place in
+ * the line instead
+ */
+export function getSpawnLevels(species: Species): [minimum: number, maximum: number] {
+  const rarity = getSpawnRarity(species);
+
+  if (rarity === SpawnRarity.Special || rarity === SpawnRarity.Mythical) {
+    return SPECIAL_SPAWN_LEVELS;
+  }
+  if (rarity === SpawnRarity.Prized) {
+    return PRIZED_SPAWN_LEVELS;
+  }
+
+  const stages = countLineStages(species);
+
+  if (stages === 1) {
+    return SINGLE_SPAWN_LEVELS;
+  }
+
+  const at = getLineStage(species);
+  const next = namedLevel(getSpeciesData(species).evolvesInto ?? []);
+  const arrived = arrivalLevel(species);
+
+  // A first stage is always young, and stops where its evolution
+  // starts
+  if (at === 1) {
+    return [YOUNG_FLOOR, next ?? YOUNG_CEILING];
+  }
+  // The middle of a three-stage line: from where it arrived to where
+  // it leaves, unless it leaves by something that is not a level
+  if (at === 2 && stages >= 3) {
+    return next == null
+      ? [UNNAMED_FLOOR, HALF_GROWN_CEILING]
+      : [arrived ?? UNNAMED_FLOOR, Math.max(arrived ?? UNNAMED_FLOOR, next)];
+  }
+  // The end of a two-stage line has nothing above it to stop at, so
+  // it stops short of the ceiling a longer line earns
+  if (at === 2) {
+    return [arrived ?? UNNAMED_FLOOR, HALF_GROWN_CEILING];
+  }
+  return [arrived ?? UNNAMED_FLOOR, GROWN_CEILING];
+}
 
 /**
  * The held-item roll reads sixteen bits rather than eight: a slot
@@ -667,7 +745,7 @@ export default function deriveEncounter(
   // the level are read by the derive helpers above
   const levelSlice = traitValue & TRAIT_MASK;
 
-  const [lowest, highest] = options.levels ?? SPAWN_LEVELS[getSpawnRarity(species)];
+  const [lowest, highest] = options.levels ?? getSpawnLevels(species);
   const level =
     options.level ?? lowest + Math.floor((levelSlice / TRAIT_RANGE) * (highest - lowest + 1));
 

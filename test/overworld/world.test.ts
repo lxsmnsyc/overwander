@@ -185,12 +185,12 @@ import deriveEncounter, {
   MIN_SIZE_SCALE,
   MOVE_LIMIT,
   RAID_FAMILY_DAY_MIN_IV,
-  SPAWN_LEVELS,
   deriveAbility,
   deriveMoves,
   deriveNature,
   deriveSize,
   deriveSizeScale,
+  getSpawnLevels,
   isRaidEncounter,
   isShinyFor,
 } from '../../src/overworld/encounter';
@@ -3710,28 +3710,22 @@ describe('chunk snapshot', () => {
     // A zero trait value bottoms out the level and all-ones tops it —
     // within the band the species belongs to, which is what keeps a
     // level 90 Rattata out of the first field somebody walks into
-    const [lowest, highest] = SPAWN_LEVELS[getSpawnRarity(spawn[0])];
+    const [lowest, highest] = getSpawnLevels(spawn[0]);
 
     expect(maxed.level).toBe(lowest);
     expect(deriveEncounter(snapshot, [spawn[0], 0, 0xffffffff]).level).toBe(highest);
 
-    // Every band, at both ends. A special is the exception: one of
-    // each exists, and it may be met at any strength at all
-    for (const rarity of [
-      SpawnRarity.Base,
-      SpawnRarity.Uncommon,
-      SpawnRarity.Rare,
-      SpawnRarity.Prized,
-      SpawnRarity.Special,
-    ]) {
-      const [floor, ceiling] = SPAWN_LEVELS[rarity];
+    // Every species, at both ends. A legendary is the exception: one
+    // of each exists, and it may be met at any strength at all
+    for (const one of getRegisteredSpecies()) {
+      const [floor, ceiling] = getSpawnLevels(one);
+      const rarity = getSpawnRarity(one);
+      const legend = rarity === SpawnRarity.Special || rarity === SpawnRarity.Mythical;
 
-      expect(ceiling).toBeGreaterThan(floor);
+      expect(ceiling, getSpeciesData(one).name).toBeGreaterThan(floor);
       expect(floor).toBeGreaterThanOrEqual(1);
       expect(ceiling).toBeLessThanOrEqual(100);
-      // The specials alone are the whole range: one of each exists,
-      // and a legendary with a known strength is a solved one
-      expect(rarity === SpawnRarity.Special).toBe(floor === 1 && ceiling === 100);
+      expect(legend).toBe(floor === 1 && ceiling === 100);
     }
 
     // Sex-locked species never roll the other gender, whatever the
@@ -3990,8 +3984,13 @@ describe('chunk snapshot', () => {
     // The moves follow the fixed level, not the rolled one
     expect(legendary.moves).toEqual(deriveMoves(Species.Gyarados, 50));
 
-    // A wild meeting still rolls its level from the trait value
-    expect(deriveEncounter(snapshot, [...spawn], 'trainer-red').level).not.toBe(50);
+    // A wild meeting still rolls its level from the trait value, and
+    // rolls it inside the band its own line names
+    const wild = deriveEncounter(snapshot, [...spawn], 'trainer-red');
+    const [floor, ceiling] = getSpawnLevels(Species.Gyarados);
+
+    expect(wild.level).toBeGreaterThanOrEqual(floor);
+    expect(wild.level).toBeLessThanOrEqual(ceiling);
   });
 
   it('drops what a grunt owes at its own level, under its own kind', () => {

@@ -444,6 +444,52 @@ const TINTS: Tint[] = [
     },
   },
   {
+    from: 'key/member-card',
+    to: 'key/wish-tag',
+    why: 'the member card is a card, and a wish tag is a paper strip of the same shape',
+    // Paper rather than plastic: the card's warm face goes pale sky
+    // and its gilt edge goes indigo, which is the sky the comet the
+    // tag is written for passes over. The gold the face gives up is
+    // what the star is painted in
+    swaps: {
+      '#202020': '#202020',
+      '#ffde83': '#d5e9ff',
+      '#f6b47b': '#94b4de',
+      '#ffe6b4': '#f6fbff',
+      '#946a18': '#31528b',
+      '#9c8b20': '#294a7b',
+      '#626262': '#8ba4c5',
+    },
+    paint: {
+      // The wish itself, as much of it as five pixels hold: a star on
+      // the face of the tag, in the gold the card was drawn in. A
+      // written wish would be a smudge at this size
+      rows: [
+        '.....................',
+        '.....................',
+        '.....................',
+        '.....................',
+        '.....................',
+        '.....................',
+        '.....................',
+        '.....................',
+        '.....................',
+        '.........s...........',
+        '........sss..........',
+        '.........s...........',
+        '.....................',
+        '.....................',
+        '.....................',
+        '.....................',
+        '.....................',
+        '.....................',
+        '.....................',
+        '.....................',
+      ],
+      colours: { s: '#ffde83' },
+    },
+  },
+  {
     from: 'ev-items/power-lens',
     to: 'ev-items/utility-belt',
     why: 'the power lens is worn by a pokemon that is already holding it',

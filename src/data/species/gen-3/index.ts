@@ -8,6 +8,7 @@ import registerWailmerSpecies from './wailmer';
 import registerBaltoySpecies from './baltoy';
 import registerCacneaSpecies from './cacnea';
 import registerDeoxysSpecies from './deoxys';
+import registerJirachiSpecies from './jirachi';
 import registerDuskullSpecies from './duskull';
 import registerGulpinSpecies from './gulpin';
 import registerMakuhitaSpecies from './makuhita';
@@ -119,5 +120,6 @@ export default function registerGen3Species(): void {
   registerRegiSpecies();
   registerEonDuoSpecies();
   registerWeatherTrioSpecies();
+  registerJirachiSpecies();
   registerDeoxysSpecies();
 }

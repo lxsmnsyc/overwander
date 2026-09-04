@@ -425,7 +425,12 @@ const LEGENDARY_SPECIES = new Set<Species>([
  * will not roll one — the only way to face a mythical is to carry the
  * relic that calls it, which is what a raid item is
  */
-const MYTHICAL_SPECIES = new Set<Species>([Species.Mew, Species.Celebi, Species.Deoxys]);
+const MYTHICAL_SPECIES = new Set<Species>([
+  Species.Mew,
+  Species.Celebi,
+  Species.Jirachi,
+  Species.Deoxys,
+]);
 
 /**
  * Whether the species is a legendary, the only kind a legendary raid

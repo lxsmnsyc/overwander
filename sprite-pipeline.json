@@ -6949,6 +6949,30 @@
         "bytes": 34255
       }
     },
+    "public/sprites/pokemon/hoenn/385/regular.png": {
+      "digest": "d033733bcab037c5",
+      "bytes": 4822,
+      "width": 190,
+      "height": 141,
+      "compact": {
+        "at": "2026-09-04T09:13:06Z",
+        "as": "already compact",
+        "was": 4822,
+        "bytes": 4822
+      }
+    },
+    "public/sprites/pokemon/hoenn/385/shiny.png": {
+      "digest": "29a3aab9ce6d2364",
+      "bytes": 4856,
+      "width": 190,
+      "height": 141,
+      "compact": {
+        "at": "2026-09-04T09:13:06Z",
+        "as": "already compact",
+        "was": 4856,
+        "bytes": 4856
+      }
+    },
     "public/sprites/pokemon/hoenn/386/regular.png": {
       "digest": "bbe324a5a3410621",
       "bytes": 7015,
@@ -14376,15 +14400,15 @@
       }
     },
     "public/sprites/ui/items/key/image.png": {
-      "digest": "7036061966e130f0",
-      "bytes": 54519,
+      "digest": "4bdebfa3686f2d79",
+      "bytes": 54857,
       "width": 328,
-      "height": 326,
+      "height": 346,
       "compact": {
-        "at": "2026-09-01T03:50:07Z",
+        "at": "2026-09-04T09:10:32Z",
         "as": "already compact",
-        "was": 54519,
-        "bytes": 54519
+        "was": 54857,
+        "bytes": 54857
       }
     },
     "public/sprites/ui/items/medicine/image.png": {

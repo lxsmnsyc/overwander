@@ -211,8 +211,8 @@ A lair can hold more than one resident, and the raid rolls which of them is at
 home. The **Burned Tower** is the one that does: Raikou, Entei and Suicune all
 live there. The rest hold one legendary each, at the **Seafoam Islands**, the
 **Power Plant**, **Mt. Ember**, **Cerulean Cave**, the **Whirl Islands** and the
-**Bell Tower**. **Faraway Island** and the **Ilex Forest** hold the two
-mythicals, and no walk ever stages those.
+**Bell Tower**. **Faraway Island**, the **Ilex Forest**, **Forina** and
+**Birth Island** hold the mythicals, and no walk ever stages those.
 
 A lobby stands for the whole three-hour raid window and anyone may join it; the
 host starts it. Each player brings up to **six** pokemon, and a lobby holds
@@ -225,8 +225,10 @@ minutes, restages in place with a new host.
 
 A **mythical raid** is not staged by the world at all. It is called out by
 spending a relic, and the world never produces a mythical on its own. There are
-two: an **Old Sea Map** calls Mew to the island it names, and a **GS Ball**
-calls Celebi to the shrine in the forest it was left at.
+four: an **Old Sea Map** calls Mew to the island it names, a **GS Ball**
+calls Celebi to the shrine in the forest it was left at, a **Wish Tag** calls
+Jirachi to the valley the comet passes over, and an **Aurora Ticket** calls
+Deoxys to the island it admits one passenger to.
 
 A **shadow raid** usually stages one of the biome's rare species, but one time in
 eight it reaches past them and stages a legendary instead.

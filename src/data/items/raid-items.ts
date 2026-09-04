@@ -21,12 +21,14 @@ export const RAID_ITEMS = new Map<Items, Species>([
   [Items.OldSeaMap, Species.Mew],
   [Items.GSBall, Species.Celebi],
   [Items.AuroraTicket, Species.Deoxys],
+  [Items.WishTag, Species.Jirachi],
 ]);
 
 const NAMES: { [key in Items]?: string } = {
   [Items.OldSeaMap]: 'Old Sea Map',
   [Items.GSBall]: 'GS Ball',
   [Items.AuroraTicket]: 'Aurora Ticket',
+  [Items.WishTag]: 'Wish Tag',
 };
 
 /**
@@ -38,6 +40,7 @@ const PLACES: { [key in Items]?: string } = {
   [Items.OldSeaMap]: 'the island it charts, far out to sea',
   [Items.GSBall]: 'the shrine in the forest it was left at',
   [Items.AuroraTicket]: 'the island it admits one passenger to',
+  [Items.WishTag]: 'the valley the comet passes over',
 };
 
 /**

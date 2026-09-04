@@ -502,6 +502,7 @@ export const enum Species {
   Kyogre = 382,
   Groudon = 383,
   Rayquaza = 384,
+  Jirachi = 385,
   Deoxys = 386,
   DeoxysAttack = 1038601,
   DeoxysDefense = 1038602,

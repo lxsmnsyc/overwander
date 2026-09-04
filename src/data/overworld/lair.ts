@@ -68,6 +68,11 @@ const enum Lairs {
    * ticket is the only way there
    */
   BirthIsland = 16,
+  /**
+   * The valley a Jirachi sleeps under, woken by the comet that passes
+   * over it. A mythical's lair, so no biome hosts it
+   */
+  Forina = 17,
 }
 
 export const LAIR_NAMES: Record<Lairs, string> = {
@@ -88,6 +93,7 @@ export const LAIR_NAMES: Record<Lairs, string> = {
   [Lairs.TerraCave]: 'Terra Cave',
   [Lairs.SkyPillar]: 'Sky Pillar',
   [Lairs.BirthIsland]: 'Birth Island',
+  [Lairs.Forina]: 'Forina',
 };
 
 /**
@@ -114,6 +120,7 @@ export const LAIR_SPECIES: Record<Lairs, Species[]> = {
   [Lairs.TerraCave]: [Species.Groudon],
   [Lairs.SkyPillar]: [Species.Rayquaza],
   [Lairs.BirthIsland]: [Species.Deoxys],
+  [Lairs.Forina]: [Species.Jirachi],
 };
 
 /**
@@ -137,6 +144,7 @@ export const EVERY_LAIR: Lairs[] = [
   Lairs.TerraCave,
   Lairs.SkyPillar,
   Lairs.BirthIsland,
+  Lairs.Forina,
 ];
 
 /**

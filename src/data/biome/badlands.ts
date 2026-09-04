@@ -57,6 +57,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Registeel, weight: 10 },
         { species: Species.Entei, weight: 10 },
       ],
+      mythical: [{ species: Species.Jirachi, weight: 10 }],
     },
     [TimeOfDay.Day]: {
       base: [
@@ -114,6 +115,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Registeel, weight: 10 },
         { species: Species.Entei, weight: 10 },
       ],
+      mythical: [{ species: Species.Jirachi, weight: 10 }],
     },
     [TimeOfDay.Evening]: {
       base: [
@@ -157,6 +159,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Registeel, weight: 10 },
         { species: Species.Entei, weight: 10 },
       ],
+      mythical: [{ species: Species.Jirachi, weight: 10 }],
     },
     [TimeOfDay.Night]: {
       base: [
@@ -204,6 +207,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Registeel, weight: 10 },
         { species: Species.Entei, weight: 10 },
       ],
+      mythical: [{ species: Species.Jirachi, weight: 10 }],
     },
   });
 }

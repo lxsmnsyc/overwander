@@ -499,6 +499,9 @@ export const enum Species {
   Registeel = 379,
   Latias = 380,
   Latios = 381,
+  Kyogre = 382,
+  Groudon = 383,
+  Rayquaza = 384,
 }
 
 /**

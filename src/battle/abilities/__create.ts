@@ -5,7 +5,7 @@ import { MoveCategories, type MoveFlags, type Moves, StatFlags } from '../../dat
 import { getMoveData, getWeatherMove } from '../../data/moves';
 import type { Types } from '../../data/constants/types';
 import Abilities from '../../data/ids/abilities';
-import type { Statuses, Weathers } from '../../data/ids/status';
+import { type Statuses, Weathers } from '../../data/ids/status';
 import { FEED_BONUS, RISKY_PENALTY, healWorth } from '../ai/score';
 import type Battle from '../core';
 import type {
@@ -719,6 +719,48 @@ export function createFilterAbility(targetAbility: Abilities): (battle: Battle) 
 
         if (total != null && total > 1) {
           event.value *= FACTOR;
+        }
+      }),
+    ]);
+  });
+}
+
+/**
+ * Meta ability for the weather blinds (Cloud Nine, Air Lock): while a
+ * holder is on the field, nothing stands under any sky at all. The
+ * holders are kept as a set so the weather check is one size lookup
+ * rather than a scan of every unit
+ * https://bulbapedia.bulbagarden.net/wiki/Cloud_Nine_(Ability)
+ * https://bulbapedia.bulbagarden.net/wiki/Air_Lock_(Ability)
+ */
+export function createCloudNineAbility(targetAbility: Abilities): (battle: Battle) => void {
+  return createAbility(targetAbility, (battle) => {
+    const holders = new Set<Unit>();
+
+    return new MergedLifecycle([
+      battle.on(BattleEvents.CheckUnitWeather, EventPriority.Post, (event) => {
+        if (holders.size > 0) {
+          event.weather = Weathers.None;
+        }
+      }),
+      battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+        if (event.source.hasAbility(targetAbility)) {
+          holders.add(event.source);
+
+          // Announce on entry
+          event.source.triggerAbility(targetAbility);
+        }
+      }),
+      battle.on(BattleEvents.UnitLeavesField, EventPriority.Post, (event) => {
+        holders.delete(event.source);
+      }),
+      battle.on(BattleEvents.UnitFaints, EventPriority.Post, (event) => {
+        holders.delete(event.source);
+      }),
+      // Losing the ability mid-battle also lifts the suppression
+      battle.on(BattleEvents.UnitRemoveAbility, EventPriority.Post, (event) => {
+        if (event.ability === targetAbility) {
+          holders.delete(event.source);
         }
       }),
     ]);

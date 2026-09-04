@@ -13,6 +13,7 @@ import registerMakuhitaSpecies from './makuhita';
 import registerNumelSpecies from './numel';
 import registerEonDuoSpecies from './eon-duo';
 import registerRegiSpecies from './regis';
+import registerWeatherTrioSpecies from './weather-trio';
 import registerShuppetSpecies from './shuppet';
 import registerSnoruntSpecies from './snorunt';
 import registerSpoinkSpecies from './spoink';
@@ -116,4 +117,5 @@ export default function registerGen3Species(): void {
   registerSwabluSpecies();
   registerRegiSpecies();
   registerEonDuoSpecies();
+  registerWeatherTrioSpecies();
 }

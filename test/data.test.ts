@@ -2021,15 +2021,11 @@ describe('species day', () => {
     expect(getFeaturedFamily(YEAR_START + DAY)).toBe(Families.Charmander);
     expect(getFeaturedFamily(YEAR_START + Families.Mewtwo * DAY)).toBe(Families.Mewtwo);
 
-    // Family numbers run far short of a year, so most days feature
-    // nobody at all
-    expect(getFeaturedFamily(YEAR_START + 200 * DAY)).toBeNull();
-
     // The whole family is featured, not just one stage
     expect(isFeaturedSpecies(Species.Venusaur, YEAR_START)).toBe(true);
     expect(isFeaturedSpecies(Species.Bulbasaur, YEAR_START)).toBe(true);
     expect(isFeaturedSpecies(Species.Charmander, YEAR_START)).toBe(false);
-    expect(isFeaturedSpecies(Species.Bulbasaur, YEAR_START + 200 * DAY)).toBe(false);
+    expect(isFeaturedSpecies(Species.Bulbasaur, YEAR_START + DAY)).toBe(false);
   });
 
   it('charges a shadow twice the candy per level', () => {

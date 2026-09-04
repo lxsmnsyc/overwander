@@ -204,6 +204,9 @@ const enum Families {
   Registeel = 195,
   Latias = 196,
   Latios = 197,
+  Kyogre = 198,
+  Groudon = 199,
+  Rayquaza = 200,
 }
 
 export default Families;

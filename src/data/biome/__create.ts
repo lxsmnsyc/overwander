@@ -333,6 +333,9 @@ const LEGENDARY_SPECIES = new Set<Species>([
   Species.Registeel,
   Species.Latias,
   Species.Latios,
+  Species.Kyogre,
+  Species.Groudon,
+  Species.Rayquaza,
 ]);
 
 /**

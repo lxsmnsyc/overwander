@@ -6805,6 +6805,78 @@
         "bytes": 10051
       }
     },
+    "public/sprites/pokemon/hoenn/382/regular.png": {
+      "digest": "a5d79fea8a9c6adb",
+      "bytes": 16503,
+      "width": 287,
+      "height": 326,
+      "compact": {
+        "at": "2026-09-04T03:22:07Z",
+        "as": "already compact",
+        "was": 16503,
+        "bytes": 16503
+      }
+    },
+    "public/sprites/pokemon/hoenn/382/shiny.png": {
+      "digest": "670f62646e798ace",
+      "bytes": 16517,
+      "width": 287,
+      "height": 326,
+      "compact": {
+        "at": "2026-09-04T03:22:07Z",
+        "as": "already compact",
+        "was": 16517,
+        "bytes": 16517
+      }
+    },
+    "public/sprites/pokemon/hoenn/383/regular.png": {
+      "digest": "0c56b59c97a9576d",
+      "bytes": 17154,
+      "width": 256,
+      "height": 360,
+      "compact": {
+        "at": "2026-09-04T03:22:07Z",
+        "as": "already compact",
+        "was": 17154,
+        "bytes": 17154
+      }
+    },
+    "public/sprites/pokemon/hoenn/383/shiny.png": {
+      "digest": "e7c8b3d29dff0660",
+      "bytes": 17154,
+      "width": 256,
+      "height": 360,
+      "compact": {
+        "at": "2026-09-04T03:22:07Z",
+        "as": "already compact",
+        "was": 17154,
+        "bytes": 17154
+      }
+    },
+    "public/sprites/pokemon/hoenn/384/regular.png": {
+      "digest": "99175f0b0415e476",
+      "bytes": 34255,
+      "width": 663,
+      "height": 344,
+      "compact": {
+        "at": "2026-09-04T03:22:07Z",
+        "as": "already compact",
+        "was": 34255,
+        "bytes": 34255
+      }
+    },
+    "public/sprites/pokemon/hoenn/384/shiny.png": {
+      "digest": "35db255fb9914b42",
+      "bytes": 34255,
+      "width": 663,
+      "height": 344,
+      "compact": {
+        "at": "2026-09-04T03:22:07Z",
+        "as": "already compact",
+        "was": 34255,
+        "bytes": 34255
+      }
+    },
     "public/sprites/pokemon/johto/1020101/regular.png": {
       "digest": "56c4813faee238f2",
       "bytes": 1095,

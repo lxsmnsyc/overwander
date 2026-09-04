@@ -283,6 +283,8 @@ const enum Abilities {
   Steelworker = 164,
   // Numel
   Simple = 165,
+  // Rayquaza
+  AirLock = 166,
   // Special (non-standard abilities outside the regular pool)
   Boss = 100001,
   Shadow = 100002,

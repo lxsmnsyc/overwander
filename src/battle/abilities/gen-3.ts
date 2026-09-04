@@ -16,6 +16,7 @@ import {
   createAbility,
   createAbsorbStageAbility,
   createClearBodyAbility,
+  createCloudNineAbility,
   createHugePowerAbility,
   createPolarityAbility,
   createRestageAbility,
@@ -337,6 +338,8 @@ const setupAbilities = [
   ),
   // https://bulbapedia.bulbagarden.net/wiki/Simple_(Ability)
   createRestageAbility(Abilities.Simple, (value) => value * SIMPLE_SCALE),
+  // https://bulbapedia.bulbagarden.net/wiki/Air_Lock_(Ability)
+  createCloudNineAbility(Abilities.AirLock),
 ];
 
 export default function setupGen3Abilities(battle: Battle): void {

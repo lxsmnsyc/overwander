@@ -87,4 +87,9 @@ export default function registerGen3Abilities(): void {
     name: 'Simple',
     description: 'Every stat change it takes counts 2x, its own and anybody else’s.',
   });
+  // Rayquaza
+  registerAbility(Abilities.AirLock, {
+    name: 'Air Lock',
+    description: 'Weather does nothing to anybody while it is up.',
+  });
 }

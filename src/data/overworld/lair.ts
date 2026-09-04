@@ -55,6 +55,13 @@ const enum Lairs {
    * roll
    */
   SouthernIsland = 12,
+  /**
+   * The three the weather trio sleep in: a cavern that floods, one
+   * that fills with heat, and the tower the sky is reached from
+   */
+  MarineCave = 13,
+  TerraCave = 14,
+  SkyPillar = 15,
 }
 
 export const LAIR_NAMES: Record<Lairs, string> = {
@@ -71,6 +78,9 @@ export const LAIR_NAMES: Record<Lairs, string> = {
   [Lairs.IslandCave]: 'Island Cave',
   [Lairs.AncientTomb]: 'Ancient Tomb',
   [Lairs.SouthernIsland]: 'Southern Island',
+  [Lairs.MarineCave]: 'Marine Cave',
+  [Lairs.TerraCave]: 'Terra Cave',
+  [Lairs.SkyPillar]: 'Sky Pillar',
 };
 
 /**
@@ -93,6 +103,9 @@ export const LAIR_SPECIES: Record<Lairs, Species[]> = {
   [Lairs.IslandCave]: [Species.Regice],
   [Lairs.AncientTomb]: [Species.Registeel],
   [Lairs.SouthernIsland]: [Species.Latias, Species.Latios],
+  [Lairs.MarineCave]: [Species.Kyogre],
+  [Lairs.TerraCave]: [Species.Groudon],
+  [Lairs.SkyPillar]: [Species.Rayquaza],
 };
 
 /**
@@ -112,6 +125,9 @@ export const EVERY_LAIR: Lairs[] = [
   Lairs.IslandCave,
   Lairs.AncientTomb,
   Lairs.SouthernIsland,
+  Lairs.MarineCave,
+  Lairs.TerraCave,
+  Lairs.SkyPillar,
 ];
 
 /**
@@ -128,7 +144,7 @@ export const EVERY_LAIR: Lairs[] = [
  * legendary
  */
 const BIOME_LAIRS: { [key in Biome]?: Lairs[] } = {
-  [Biome.DeepOcean]: [Lairs.SeafoamIslands, Lairs.WhirlIslands],
+  [Biome.DeepOcean]: [Lairs.SeafoamIslands, Lairs.WhirlIslands, Lairs.MarineCave],
   [Biome.Ocean]: [Lairs.WhirlIslands, Lairs.SouthernIsland],
   [Biome.PolarOcean]: [Lairs.SeafoamIslands, Lairs.IslandCave],
   [Biome.Glacier]: [Lairs.SeafoamIslands, Lairs.IslandCave],
@@ -137,8 +153,15 @@ const BIOME_LAIRS: { [key in Biome]?: Lairs[] } = {
   [Biome.Steppe]: [Lairs.PowerPlant],
   [Biome.Desert]: [Lairs.MtEmber, Lairs.DesertRuins],
   [Biome.Badlands]: [Lairs.DesertRuins, Lairs.AncientTomb],
-  [Biome.Mountain]: [Lairs.MtEmber, Lairs.CeruleanCave, Lairs.BellTower, Lairs.AncientTomb],
+  [Biome.Mountain]: [
+    Lairs.MtEmber,
+    Lairs.CeruleanCave,
+    Lairs.BellTower,
+    Lairs.AncientTomb,
+    Lairs.SkyPillar,
+  ],
   [Biome.AlpineTundra]: [Lairs.CeruleanCave],
+  [Biome.Volcano]: [Lairs.TerraCave],
 };
 
 /**

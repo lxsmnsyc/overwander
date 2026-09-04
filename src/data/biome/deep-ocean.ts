@@ -37,7 +37,10 @@ export default function registerDeepOceanSpawns(): void {
         { species: Species.Relicanth, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS],
-      special: [{ species: Species.Lugia, weight: 10 }],
+      special: [
+        { species: Species.Kyogre, weight: 10 },
+        { species: Species.Lugia, weight: 10 },
+      ],
     },
     [TimeOfDay.Day]: {
       base: [
@@ -59,7 +62,10 @@ export default function registerDeepOceanSpawns(): void {
         { species: Species.Relicanth, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS],
-      special: [{ species: Species.Lugia, weight: 10 }],
+      special: [
+        { species: Species.Kyogre, weight: 10 },
+        { species: Species.Lugia, weight: 10 },
+      ],
     },
     [TimeOfDay.Evening]: {
       base: [
@@ -80,7 +86,10 @@ export default function registerDeepOceanSpawns(): void {
         { species: Species.Dragonite, weight: 2 },
       ],
       prized: [...UNOWN_SPAWNS],
-      special: [{ species: Species.Lugia, weight: 10 }],
+      special: [
+        { species: Species.Kyogre, weight: 10 },
+        { species: Species.Lugia, weight: 10 },
+      ],
     },
     [TimeOfDay.Night]: {
       base: [
@@ -101,7 +110,10 @@ export default function registerDeepOceanSpawns(): void {
         { species: Species.Dragonite, weight: 2 },
       ],
       prized: [...UNOWN_SPAWNS],
-      special: [{ species: Species.Lugia, weight: 10 }],
+      special: [
+        { species: Species.Kyogre, weight: 10 },
+        { species: Species.Lugia, weight: 10 },
+      ],
     },
   });
 }

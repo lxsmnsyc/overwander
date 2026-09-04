@@ -43,8 +43,16 @@ import { Genders, type Species } from '../../../data/ids/species';
 
 import type { Statuses } from '../../../data/ids/status';
 import { getMoveData } from '../../../data/moves';
-import { bodyOf, boxOf, drawSlot, scaleOf, withinSlot } from './draw';
-import { type Slot, lobbyCamera, project, readField, ringStandings } from './field';
+import { bodyOf, boxOf, drawAim, drawSlot, scaleOf, withinSlot } from './draw';
+import {
+  type Slot,
+  aimedAt,
+  lobbyCamera,
+  project,
+  readField,
+  ringStandings,
+  unitsOf,
+} from './field';
 import { COLORS, FIELD_UNIT, HEIGHT, LOADING_LABEL, TURN_SLOP, WIDTH } from './metrics';
 import {
   CUE_GAP,
@@ -511,6 +519,30 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       placed = slots;
 
       const onto = batch == null ? undefined : { batch, bakery };
+
+      // Who is aiming at whom, under the bodies: a field of four
+      // winding up says who is busy and nothing about who is about to
+      // be hit. Only what is being worked on now, so a move already in
+      // the air is left to its own picture
+      for (const slot of slots) {
+        const aim = aimedAt(slot.unit);
+
+        if (aim == null || !slot.unit.alive) {
+          continue;
+        }
+        // The colour of the bar it is filling, so the line and the bar
+        // are read as one thing
+        const colour = slot.unit.casting == null ? COLORS.channel : COLORS.cast;
+        const casts = bodyOf(slot);
+
+        for (const on of unitsOf(aim)) {
+          const target = on === slot.unit ? null : at.get(on);
+
+          if (target != null && on.alive) {
+            drawAim(context, casts, bodyOf(target), colour, clock, onto);
+          }
+        }
+      }
 
       for (const slot of slots) {
         drawSlot(context, slot, striking, clock, gone.has(slot.unit), onto);

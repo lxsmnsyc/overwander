@@ -56,6 +56,7 @@ import { getSql, jsonOf, newDocId, tx } from './db';
 import { readEncounter } from './encounter-io';
 import { startEncounter } from './overworld';
 import { grantGold } from './profile';
+import { recordSeenOpponents } from './pokedex';
 import { foughtBattle, readBattle } from './raid-io';
 import { isAnyCatchQueued, publishTeamSnapshot } from './raids';
 import { asNumber, asString } from './read';
@@ -388,6 +389,10 @@ export async function startRocketBattle(
       where stop_id = ${stop} and player = ${uid}
     `;
   });
+
+  // What the stop put on the field is now something the player has
+  // seen, whatever the fight comes to
+  await recordSeenOpponents(battleId, [uid]);
 
   return battleId;
 }

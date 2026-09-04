@@ -44,6 +44,7 @@ export {
   isPrizedSpecies,
   pickFromEntries,
   pickSpawn,
+  MYTHICAL_SPAWN_ODDS,
   PRIZED_SPAWN_ODDS,
   PRIZED_WEIGHT,
   RARE_SPAWN_ODDS,

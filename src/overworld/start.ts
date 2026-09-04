@@ -26,8 +26,9 @@ export interface StartPosition {
  * name. It is drawn once — the position is written down as soon as it
  * is picked, so returning is returning rather than being re-rolled.
  *
- * The cell is free: landmarks are skipped, so nobody opens the game
- * already standing on a raid
+ * The cell is free: landmarks, scenery and rock are all skipped, so
+ * nobody opens the game already standing on a raid or inside a
+ * boulder
  */
 export default function pickStartPosition(world: World, seed: string): StartPosition {
   const rng = new AleaRNG(`${seed}start`);
@@ -40,12 +41,15 @@ export default function pickStartPosition(world: World, seed: string): StartPosi
 }
 
 /**
- * A cell in this chunk with no landmark on it.
+ * A cell in this chunk that can actually be stood on.
  *
  * Anything that puts somebody down somewhere they did not walk to
- * wants one: arriving already standing on a raid is not an arrival.
- * A chunk paved with landmarks has no free cell and answers with its
- * middle, which is somewhere rather than nowhere
+ * wants one: arriving already standing on a raid is not an arrival,
+ * and arriving inside a boulder is somewhere a walk could never have
+ * reached. Every fixture a route walks round is skipped, which is the
+ * same set the board refuses to path through. A chunk with no free
+ * cell at all answers with its middle, which is somewhere rather than
+ * nowhere
  */
 export function pickFreeCell(
   world: World,
@@ -53,7 +57,12 @@ export function pickFreeCell(
   chunkY: number,
   rng: AleaRNG,
 ): { cellX: number; cellY: number } {
-  const occupied = world.getChunk(chunkX, chunkY).getLandmarkCells();
+  const chunk = world.getChunk(chunkX, chunkY);
+  const occupied = new Set([
+    ...chunk.getLandmarkCells().keys(),
+    ...chunk.getDecorationCells().keys(),
+    ...chunk.getRockCells(),
+  ]);
   const free: number[] = [];
 
   for (let cell = 0; cell < CELL_COUNT; cell++) {

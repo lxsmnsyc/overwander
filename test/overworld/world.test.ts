@@ -78,6 +78,7 @@ import { seatId } from '../../src/auth/gym-seat-record';
 import type Chunk from '../../src/overworld/chunk';
 import {
   CELL_COUNT,
+  CHUNK_CELLS,
   PLACEMENT_AREA,
   centeredCells,
   neighborCells,
@@ -173,7 +174,7 @@ import {
   isAceTrainer,
   trainerLevels,
 } from '../../src/data/overworld/trainers';
-import pickStartPosition, { START_AREA } from '../../src/overworld/start';
+import pickStartPosition, { START_AREA, pickFreeCell } from '../../src/overworld/start';
 import { Moves } from '../../src/data/ids/moves';
 import deriveEncounter, {
   ENCOUNTER_TYPE_NAMES,
@@ -2071,11 +2072,22 @@ describe('world', () => {
     expect(start.chunkY).toBeGreaterThanOrEqual(-START_AREA / 2);
     expect(start.chunkY).toBeLessThan(START_AREA / 2);
 
-    // Never on a landmark: nobody opens the game already standing on
-    // a raid
+    // Never on a fixture: nobody opens the game already standing on a
+    // raid, and nobody opens it inside a boulder either
     const chunk = world.getChunk(start.chunkX, start.chunkY);
 
     expect(chunk.getLandmarkAt(start.cellX, start.cellY)).toBeNull();
+    // The same holds wherever anything is put down without walking
+    // there, which is what a teleport is
+    for (let at = 0; at < 100; at++) {
+      const ground = world.getChunk(at - 50, at * 3);
+      const where = pickFreeCell(world, at - 50, at * 3, new AleaRNG(`free-${at}`));
+      const cell = where.cellY * CHUNK_CELLS + where.cellX;
+
+      expect(ground.getLandmarkCells().has(cell)).toBe(false);
+      expect(ground.getDecorationCells().has(cell)).toBe(false);
+      expect(ground.getRockCells().has(cell)).toBe(false);
+    }
 
     // The same player lands in the same place every time, and
     // different players spread out

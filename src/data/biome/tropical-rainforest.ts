@@ -19,7 +19,8 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Yanma, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS],
-      special: [{ species: Species.Mew, weight: 10 }],
+      special: [],
+      mythical: [{ species: Species.Mew, weight: 10 }],
     },
     [TimeOfDay.Day]: {
       base: [
@@ -33,7 +34,8 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Yanma, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS],
-      special: [{ species: Species.Mew, weight: 10 }],
+      special: [],
+      mythical: [{ species: Species.Mew, weight: 10 }],
     },
     [TimeOfDay.Evening]: {
       base: [
@@ -49,7 +51,8 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Yanma, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS],
-      special: [{ species: Species.Mew, weight: 10 }],
+      special: [],
+      mythical: [{ species: Species.Mew, weight: 10 }],
     },
     [TimeOfDay.Night]: {
       base: [
@@ -65,7 +68,8 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Yanma, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS],
-      special: [{ species: Species.Mew, weight: 10 }],
+      special: [],
+      mythical: [{ species: Species.Mew, weight: 10 }],
     },
   });
 }

@@ -1,4 +1,5 @@
 import Biome from '../ids/biome';
+import { isMythicalSpecies } from '../biome';
 import { BIOME_NAMES } from '../biome/names';
 import { Species } from '../ids/species';
 
@@ -89,6 +90,22 @@ export const EVERY_LAIR: Lairs[] = [
 ];
 
 /**
+ * The lairs the **world** may stage: every one whose residents are
+ * legendaries.
+ *
+ * A mythical's lair is left out, because a relic is the only way to
+ * one. It is what keeps a Mew off the end of Giovanni's party, and
+ * what a landmark draws from. `EVERY_LAIR` still holds all of them,
+ * since a pool that has to keep lair species out has to know about
+ * every lair there is
+ */
+export const EVERY_STAGED_LAIR: Lairs[] = EVERY_LAIR.filter((lair) =>
+  LAIR_SPECIES[lair].every((species) => !isMythicalSpecies(species)),
+);
+
+const STAGED_LAIRS = new Set<Lairs>(EVERY_STAGED_LAIR);
+
+/**
  * Which lairs a biome can host. A lair is a place, so it sits where
  * that place would be: the Seafoam Islands are a sea cave in cold
  * water, Mt. Ember is a volcano, Cerulean Cave is deep under a
@@ -113,10 +130,15 @@ const BIOME_LAIRS: { [key in Biome]?: Lairs[] } = {
 };
 
 /**
- * The lairs this biome can host, in the order they are drawn from
+ * The lairs this biome can host, in the order they are drawn from.
+ * Filtered rather than trusted: a mythical's lair listed here by
+ * mistake would put one on the map, and the relic is the only way to
+ * one
  */
 export function getBiomeLairs(biome: Biome): Lairs[] {
-  return BIOME_LAIRS[biome] ?? [];
+  const hosted = BIOME_LAIRS[biome] ?? [];
+
+  return hosted.filter((lair) => STAGED_LAIRS.has(lair));
 }
 
 /**

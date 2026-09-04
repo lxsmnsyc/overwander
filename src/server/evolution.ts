@@ -9,7 +9,7 @@ import type { EvolutionContext } from '../data/species';
 import { getAvailableEvolutions, getConsumedItem, getSpeciesData } from '../data/species';
 import { Metric } from '../auth/quest-record';
 import { isEggRecord, isGuardedRecord } from './catch-fields';
-import { recordCaughtSpecies } from './pokedex';
+import { recordFoundSpecies } from './pokedex';
 import { type ProgressBump, bumpProgress } from './quest-progress';
 import { readStackIn, writeStackIn } from './stacks';
 import { readCaughtIn, updateCaughtIn } from './caught-io';
@@ -140,9 +140,9 @@ export default async function evolveCatch(
   // oxlint-disable-next-line typescript/no-unnecessary-condition
   if (evolved != null && from != null) {
     // The dex counts what the player has held, and after this they
-    // hold one of these. Nothing else logs it: an evolution is the
-    // one way a species arrives without a catch or a hatch
-    await recordCaughtSpecies(uid, evolved, sparkles);
+    // hold one of these. Seen is written alongside caught: nothing
+    // ever staged a meeting with the shape it just became
+    await recordFoundSpecies(uid, evolved, sparkles);
     await bumpProgress(uid, [
       [Metric.Evolutions, from, 1],
       // oxlint-disable-next-line typescript/no-unnecessary-condition

@@ -30,6 +30,7 @@ import { resolveSnapshot } from './overworld';
 import { bumpProgress } from './quest-progress';
 import { foughtBattle, readBattle } from './raid-io';
 import { isAnyCatchQueued, publishTeamSnapshot } from './raids';
+import { recordSeenOpponents } from './pokedex';
 import { asNumber, asString } from './read';
 
 /**
@@ -561,6 +562,12 @@ export async function challengeGymSeat(
     `;
     return true;
   });
+
+  if (staged) {
+    // The challenger has met the seat's party. The holder is not
+    // present for it, so nothing is written on their side
+    await recordSeenOpponents(battleId, [uid]);
+  }
 
   return staged ? battleId : null;
 }

@@ -11,7 +11,7 @@ import { rollFossilOffer } from '../data/overworld/fossil';
 import Landmark from '../data/overworld/landmark';
 import type Lairs from '../data/overworld/lair';
 import {
-  EVERY_LAIR,
+  EVERY_STAGED_LAIR,
   getBiomeLairs,
   getLairResidents,
   pickLairSpecies,
@@ -999,7 +999,9 @@ export default class ChunkSnapshot {
 
           if (rank === RocketRank.Giovanni) {
             const lairs = getBiomeLairs(this.chunk.biome);
-            const homes = lairs.length > 0 ? lairs : EVERY_LAIR;
+            // Any lair the world stages, never a mythical's: nothing
+            // but its relic ever calls one of those out
+            const homes = lairs.length > 0 ? lairs : EVERY_STAGED_LAIR;
             const lair = homes[Math.floor(rng.random() * homes.length)];
             const party = Array.from({ length: ROCKET_PARTY_SIZE - 1 }, () => draw(rares));
 

@@ -3,7 +3,9 @@ import { describe, expect, it } from 'vitest';
 import { asBasicSpriteData } from '../src/canvas/basic-sprite';
 import registerBiomeSpawns, {
   BIOME_NAMES,
+  MYTHICAL_SPAWN_ODDS,
   PRIZED_WEIGHT,
+  SPECIAL_SPAWN_ODDS,
   SpawnRarity,
   TIMES_OF_DAY,
   boostFamilyWeights,
@@ -854,18 +856,28 @@ describe('where a species lives', () => {
     }
   });
 
-  it('puts the one-per-world species in the band they are drawn from', () => {
-    // Every registered species stands in some pool, a mythical
-    // included — what makes one of those rare is the band rather than
-    // the absence of a home
-    expect(isMythicalSpecies(Species.Mew)).toBe(true);
+  it('gives the two one-per-world classes a band each', () => {
+    // A legendary stands in the special band of the biomes it lives
+    // in: the world stages one, rarely
+    const legendary = listSpeciesHabitats(Species.Articuno);
 
-    const habitats = listSpeciesHabitats(Species.Mew);
-
-    expect(habitats.length).toBeGreaterThan(0);
-    for (const habitat of habitats) {
+    expect(legendary.length).toBeGreaterThan(0);
+    for (const habitat of legendary) {
       expect(habitat.rarity).toBe(SpawnRarity.Special);
     }
+
+    // A mythical stands in a band of its own, one place apiece and as
+    // thin as the legendary band. The relic is the other way to one,
+    // not the only way
+    expect(isMythicalSpecies(Species.Mew)).toBe(true);
+
+    const mythical = listSpeciesHabitats(Species.Mew);
+
+    expect(mythical.length).toBeGreaterThan(0);
+    for (const habitat of mythical) {
+      expect(habitat.rarity).toBe(SpawnRarity.Mythical);
+    }
+    expect(MYTHICAL_SPAWN_ODDS).toBe(SPECIAL_SPAWN_ODDS);
   });
 
   it('says the same thing the pools do about every species', () => {
@@ -884,6 +896,7 @@ describe('where a species lives', () => {
           groups.rare,
           groups.prized ?? [],
           groups.special,
+          groups.mythical ?? [],
         ]) {
           for (const entry of band) {
             counted.set(entry.species, (counted.get(entry.species) ?? 0) + 1);
@@ -4114,8 +4127,11 @@ describe('biome data', () => {
     expect(getSpawnRarity(Species.Pidgeot)).toBe(SpawnRarity.Rare);
     expect(getSpawnRarity(Species.Ditto)).toBe(SpawnRarity.Rare);
 
-    // One-per-world class
-    expect(getSpawnRarity(Species.Mew)).toBe(SpawnRarity.Special);
+    // The two one-per-world classes, which are told apart: a
+    // legendary is staged by the world at a lair, a mythical only
+    // ever by the relic that calls it
+    expect(getSpawnRarity(Species.Articuno)).toBe(SpawnRarity.Special);
+    expect(getSpawnRarity(Species.Mew)).toBe(SpawnRarity.Mythical);
 
     // The prized band is between the two, and the babies are what is
     // in it. Nothing about the shape of a line reads as one, which is

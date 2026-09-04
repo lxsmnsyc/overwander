@@ -26,6 +26,8 @@ export const CANDY_BY_RARITY: Record<SpawnRarity, number> = {
   [SpawnRarity.Rare]: 3,
   [SpawnRarity.Prized]: 4,
   [SpawnRarity.Special]: 5,
+  // A rung above a legendary: one relic, one fight, one of them
+  [SpawnRarity.Mythical]: 6,
 };
 
 /**

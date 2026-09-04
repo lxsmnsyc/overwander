@@ -38,7 +38,7 @@ rolls first for a rarity band:
 | **Uncommon** | The eight utility balls; Big Pearls, Star Pieces, Big Mushrooms, Rare Bones, Relic Silver; Super and Hyper Potions, Full Heals, Energy Roots; Heart Scales; the six wings; the sixteen one-shot answers, from a Focus Sash to a Weakness Policy; the Everstone; the four weather rocks, Light Clay and a Big Root |
 | **Rare**     | The six evolution stones; Nuggets and the richer valuables; Max Potions, Full Restores, Revives, Revival Herbs; the species relics; the seventeen plates and the type-boosting gear; the choice items, the vest and the Eviolite; the three orbs; Leftovers, a Shed Shell and the rest of the battle gear        |
 | **Prized**   | Bottle Caps, the Purifying Gem, the Utility Belt, Max Revives, the Sacred Ash, the Portal Key, the Amulet Coin, the six power items, all three fossils, the ruins                                                                                                                                                 |
-| **Special**  | Master Ball, Shiny Charm, Golden Bottle Cap, the raid relics, the Relic Crown                                                                                                                                                                                                                                     |
+| **Special**  | Master Ball, Shiny Charm, Golden Bottle Cap, the two raid relics (the Old Sea Map and the **GS Ball**), the Relic Crown                                                                                                                                                                                          |
 
 The line between rare and prized is **permanence**. Rare is where a walk turns up
 something that gets a party through the next fight: a stone, a Revive, a plate.
@@ -48,6 +48,31 @@ removes a shadow, a Max Revive answers a lost _party_ rather than a lost fight.
 
 A prized find is not unique. A stash may hold two, and they come in stacks like
 anything else.
+
+### The ground decides what is buried in it
+
+Balls, medicine and battle gear are buried everywhere. The rest belong to a
+landscape, so a stone is a reason to cross the map rather than a slot in a table.
+
+| What                                        | Where it is buried                             |
+| ------------------------------------------- | ------------------------------------------------ |
+| **Fire Stone**, **Heat Rock**               | Volcano, badlands and desert                    |
+| **Water Stone**, **Pearls**, **shoal salt and shells** | Every water and every shore            |
+| **Thunder Stone**                           | Open country, and the mountain                  |
+| **Leaf Stone**, **mushrooms**               | Forests, and the wetlands for the small ones    |
+| **Moon Stone**                              | Cold country, and the mountain                  |
+| **Sun Stone**                               | Savanna, desert and tropical seasonal forest    |
+| **Damp Rock**                               | Wetlands and rainforest                         |
+| **Icy Rock**                                | Cold country                                    |
+| **Smooth Rock**                             | Arid country                                    |
+| **Rare Bones**                              | Arid country, highlands and the glacier         |
+| **Stardust**, **Star Pieces**, **Comet Shards** | Dry and cold country under clear skies      |
+| **Pretty Wings**                            | Open country, highlands and forests             |
+
+The world is one map with no edges, so nothing here is out of reach. It is a
+walk, not a wall.
+
+Everything a **beaten trainer** leaves behind follows the same ground.
 
 Two placements are deliberate. **Valuables sit one band below what they are
 worth**, making them a steady trickle of gold rather than a jackpot, and
@@ -220,6 +245,11 @@ are carried into a fight rather than spent out of one.
 
 Both are cheaper than the bottle they stand in for, and both sell back at half
 like anything else on a counter.
+
+**Honey** works the same way and is not on any counter. A buddy with **Honey
+Gather** comes up with a jar the first time it acts in a fight, if it has a hand
+free, and the jar restores 40 points to whoever holds it once they drop to a
+quarter.
 
 ## Berries
 

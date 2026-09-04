@@ -69,7 +69,7 @@ had not been counted.
 
 ### Balls
 
-Nine of the fourteen balls only help under the right conditions, and the
+There are twenty-one balls, and most only help under the right conditions. The
 condition is tested at the moment of the throw rather than when the ball was
 chosen.
 
@@ -86,6 +86,22 @@ chosen.
 | **Ultra Ball**                     | ×2       | Always                                     |
 | **Great Ball**                     | ×1.5     | Always                                     |
 | **Poke / Premier / Heal / Luxury** | ×1       | Always                                     |
+
+**Kurt's seven** are carved from apricorns rather than bought, and each answers
+something the shop balls cannot. See [People you meet](npcs.md).
+
+| Ball             | Bonus    | Condition                                        |
+| ---------------- | -------- | ------------------------------------------------ |
+| **Level Ball**   | up to ×8 | Something far below the buddy walking beside you |
+| **Love Ball**    | ×8       | The buddy's own species, opposite gender         |
+| **Lure Ball**    | ×5       | Something startled out of rippling water         |
+| **Moon Ball**    | ×4       | A species a Moon Stone evolves                   |
+| **Fast Ball**    | ×4       | A species with 100 base Speed or more            |
+| **Heavy Ball**   | up to ×4 | By weight, from 2x at 100 kg                     |
+| **Friend Ball**  | ×1       | Catches like a Poke Ball                         |
+
+A **Friend Ball** is worth throwing for what happens afterwards: what it holds
+arrives at **200 friendship**, which is most of the way to inseparable.
 
 The Premier, Heal and Luxury Balls catch exactly like a Poke Ball. Two of them
 are worth throwing for what happens afterwards:

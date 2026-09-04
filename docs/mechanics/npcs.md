@@ -4,20 +4,21 @@ Some chunks contain a **Wandering NPC** cell. The cell itself never moves, but
 whoever is standing on it changes every **three hours**, so the same spot may
 offer a breeder in the morning and a daycare lady by midday.
 
-Ten people wander: the breeder, the daycare lady, Nurse Joy, the groomer, the
-Move Reminder, the Move Tutor, the chef, the Fossil Maniac, the Fossil Scientist
-and the Channeler. The vendor, the Team Rocket grunt and the duelling trainers
-each keep a landmark of their own, further down. A cell is a crossroads rather
-than a shop, so walking up to one does not reveal in advance which of the ten is
-there.
+Eleven people wander: the breeder, the daycare lady, Nurse Joy, the groomer, the
+Move Reminder, the Move Tutor, the chef, the Fossil Maniac, the Fossil Scientist,
+the Channeler and Kurt. The vendor, the Team Rocket grunt and the duelling
+trainers each keep a landmark of their own, further down. A cell is a crossroads
+rather than a shop, so walking up to one does not reveal in advance which of the
+eleven is there.
 
 ## The once-per-window rule
 
-Every traveller except **Nurse Joy**, the **chef** and the **Fossil Scientist**
-helps a player once per three-hour window, and asking again before it turns over
-is refused whatever the player can pay. Nurse Joy takes up to six pokemon in one
-handover and turns nobody away while she is standing there; the chef and the
-scientist are paced by a purse and by how many fossils have been dug up.
+Every traveller except **Nurse Joy**, the **chef**, the **Fossil Scientist** and
+**Kurt** helps a player once per three-hour window, and asking again before it
+turns over is refused whatever the player can pay. Nurse Joy takes up to six
+pokemon in one handover and turns nobody away while she is standing there. The
+chef is paced by a purse, the scientist by how many fossils have been dug up, and
+Kurt by how many apricorns have been picked.
 
 The limit applies per cell, so walking to another wandering cell finds somebody
 who has not served that player yet. That walk is what a second egg costs.
@@ -89,6 +90,7 @@ evolution stones, by contrast, do carry a price, so a spare one is worth gold.
 | **Fossil Maniac**    | 12,000 gold, or 30,000 for the Old Amber | One of the two fossils he is carrying      |
 | **Fossil Scientist** | A fossil, free                           | The pokemon inside it, at level 20         |
 | **Channeler**        | One pokemon, one Heart Scale             | An extra ability slot, filled at once      |
+| **Kurt**             | A basket of apricorns, free              | One ball per apricorn, of that colour      |
 
 **Nurse Joy** charges nothing and heals everything: full health, statuses
 cleared, and any shadow pokemon purified on the way. Six pokemon to a handover,
@@ -117,6 +119,13 @@ to decide, not yours.
 She refuses a pokemon whose family has nothing left it does not already carry,
 and she refuses one that has run out of room. A shadow's mark and a boss's do not
 count against that room, so a shadow is not punished for carrying one.
+
+**Kurt** carves apricorns into balls, one ball per apricorn, and charges nothing.
+Each colour makes its own ball, and the seven he carves are stocked nowhere:
+Level, Love, Lure, Moon, Fast, Heavy and Friend. Hand him a basket and the only
+decision is how many to hand over. What paces him is picking, so he is worth
+walking to with a full bag. See [Catching](catching.md#balls) for what each ball
+answers.
 
 **The Chef** keeps the one shelf no vendor stocks: the region's drinks and its
 treats, six of them a window. Like the vendor, he serves as often as a purse

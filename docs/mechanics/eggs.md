@@ -24,12 +24,12 @@ that egg is correspondingly more likely.
 No nest ever holds a legendary, and none holds an unown: unowns are met rather
 than hatched.
 
-Eleven species are held back as well, because the stage in front of them is a
-baby this game has not registered yet and a nest would otherwise lay their second
-stage: Pikachu, Clefairy, Jigglypuff, Hitmonlee, Hitmonchan, Jynx, Electabuzz,
-Magmar, Chansey, Mr. Mime and Snorlax. Each returns the day its baby does.
-Nothing else about them changes: they are still met in the wild, still bred and
-still evolved, and every biome still has nests.
+Seven species are held back as well, because the stage in front of them is a
+baby this game has not registered yet and a nest would otherwise lay their
+second stage: Marill, Wobbuffet, Sudowoodo, Mantine, Chansey, Mr. Mime and
+Snorlax. Each returns the day its baby does. Nothing else about them changes:
+they are still met in the wild, still bred and still evolved, and every biome
+still has nests.
 
 A nest egg is guaranteed **one egg move**, which is the main reason to walk one.
 It is placed first in the move list, so the four-move limit cannot displace it.

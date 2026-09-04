@@ -54,12 +54,21 @@ band down, so nothing is lost. The player meets a commoner instead.
 
 A prized pokemon is not unique. Unlike a legendary, a second one may be met.
 
+### Forms
+
+A species can come in more than one shape. **Unown** is the one that does: all
+twenty-eight letters stand in the prized band of every biome at equal weight, so
+which letter turns up is the roll and where you walked is not.
+
+A form is its own pokemon. It has its own sprite, its own abilities and its own
+dex entry. The printed dex still keeps **one row** for the species, and that row
+fills in the moment any form of it is met; pressing the row opens a grid of every
+form, and pressing one of those opens that form's own entry. A dex quest counts
+the species once, however many of its forms you have met.
+
 ## What a pokemon comes with
 
 ### Level
-
-Level depends on the rarity band, so a first field does not hand out a level 90
-Rattata and a legendary is never trivial:
 
 Level comes from the line itself: a stage is met between the level it can first
 exist at and the level it stops being itself at. A Charmander is 5–16, a

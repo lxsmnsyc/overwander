@@ -68,13 +68,16 @@ them.
 Only evolutions the game can verify are offered. The rest are never offered
 rather than being waved through.
 
-| Method                     | Supported | Notes                                     |
-| -------------------------- | --------- | ----------------------------------------- |
-| **By level**               | Yes       | Checked against the pokemon's level       |
-| **Using an item**          | Yes       | The stone is consumed                     |
-| **Holding an item**        | Yes       | The item is required, not consumed        |
-| **By trade**               | Yes       | A pokemon that changed hands as what it is |
-| Friendship, weather, party | No        | Nothing stores the answer, so not offered |
+| Method                | Supported | Notes                                             |
+| --------------------- | --------- | -------------------------------------------------- |
+| **By level**          | Yes       | Checked against the pokemon's level               |
+| **Using an item**     | Yes       | The stone is consumed                             |
+| **Holding an item**   | Yes       | Held at the moment of evolving                    |
+| **By trade**          | Yes       | A pokemon that changed hands as what it is        |
+| **By friendship**     | Yes       | The three Kanto babies ask for 220                |
+| **By time of day**    | Yes       | An Espeon by day, an Umbreon by night             |
+| **By one stat against another** | Yes | A Tyrogue at level 20, its Attack against its Defense |
+| Weather, party, place | No        | Nothing stores the answer, so it is never offered |
 
 A **trade evolution** opens the moment a pokemon changes hands, and what it opens
 is the evolution of whatever the pokemon was at that moment. A Machoke that was
@@ -83,6 +86,11 @@ into a Machoke is not, because nobody ever traded a Machoke: it wants a handover
 of its own. The mainline evolves one during the trade itself, which is a moment
 this game has nowhere to put, so changing hands opens the evolution rather than
 performing it, and it stays open until it is taken.
+
+A trade evolution that also asks for a **held item** spends it at the handover.
+An Onix traded in a Metal Coat arrives without the coat and with nothing left to
+ask for. An Onix nobody traded still has to hold one, and spends a **Linking
+Cord** as well.
 
 An **Everstone** refuses every evolution while the pokemon holds it. It is not
 held back from anything else: it still levels, learns and fights.

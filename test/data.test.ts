@@ -317,6 +317,7 @@ import {
   EliteMember,
   FRONTIER_BRAINS,
   FRONTIER_BRAIN_CHARSETS,
+  FRONTIER_BRAIN_GOLD_PARTIES,
   FRONTIER_BRAIN_NAMES,
   FRONTIER_BRAIN_PARTIES,
   FRONTIER_BRAIN_RULES,
@@ -347,6 +348,7 @@ import {
   PikeCurtain,
   getEliteBadges,
   getEliteMemberRoster,
+  getFrontierParty,
   getGymLeaderRoster,
   getRentalPool,
   getWorldExpertPool,
@@ -5087,17 +5089,24 @@ describe('type experts', () => {
       for (const sheet of FRONTIER_BRAIN_CHARSETS[brain]) {
         expect(existsSync(`public/sprites/overworld/${sheet}/image.png`), sheet).toBe(true);
       }
-      // A house is a rule: a Brain with none would be a champion who
-      // brings three
-      expect(FRONTIER_BRAIN_RULES[brain]).not.toBe(FrontierRule.None);
+      // Every house but the Tower is a rule of its own, and the
+      // Tower's asking nothing is what the others are read against
+      expect(FRONTIER_BRAIN_RULES[brain] === FrontierRule.None).toBe(
+        brain === FrontierBrain.Anabel,
+      );
       // And the Frontier stands past a league, so each asks for a crown
       expect(CHAMPIONS.map((champion) => CHAMPION_TITLES[champion])).toContain(
         FRONTIER_BRAIN_TITLES[brain],
       );
     }
-    // The two open houses, and the rules they are open on
+    // No two houses run the same fight
+    const rules = FRONTIER_BRAINS.map((one) => FRONTIER_BRAIN_RULES[one]);
+
+    expect(new Set(rules).size).toBe(rules.length);
     expect(FRONTIER_BRAIN_RULES[FrontierBrain.Brandon]).toBe(FrontierRule.Bare);
     expect(FRONTIER_BRAIN_RULES[FrontierBrain.Greta]).toBe(FrontierRule.Timed);
+    expect(FRONTIER_BRAIN_RULES[FrontierBrain.Lucy]).toBe(FrontierRule.Curtained);
+    expect(FRONTIER_BRAIN_RULES[FrontierBrain.Noland]).toBe(FrontierRule.Rented);
   });
 
   it('draws one of the Pike’s curtains for any roll there is', () => {
@@ -5146,6 +5155,37 @@ describe('type experts', () => {
     // twice, or a place that is not on the table
     for (const picks of [['0'], ['0', '1', '2', '3'], ['1', '1', '2'], ['0', '1', '9']]) {
       expect(rentedHand(stop, picks), picks.join(',')).toBeNull();
+    }
+  });
+
+  it('keeps a second three for whoever already took the house', () => {
+    for (const brain of FRONTIER_BRAINS) {
+      const first = FRONTIER_BRAIN_PARTIES[brain];
+      const second = FRONTIER_BRAIN_GOLD_PARTIES[brain];
+
+      // Both hands are the house's own shape, and a house that rents
+      // names nobody either time
+      expect(second).toHaveLength(first.length);
+      expect(getFrontierParty(brain, false)).toEqual(first);
+      expect(getFrontierParty(brain, true)).toEqual(second);
+      for (const species of second) {
+        expect(getSpeciesData(species).name.length).toBeGreaterThan(0);
+      }
+    }
+    // The Pyramid brings the same three either time, which is the
+    // mainline's own answer: what changes is the level and the
+    // loadout rather than who is in the crate
+    expect(FRONTIER_BRAIN_GOLD_PARTIES[FrontierBrain.Brandon]).toEqual(
+      FRONTIER_BRAIN_PARTIES[FrontierBrain.Brandon],
+    );
+    // Everybody else's second hand is a different fight
+    for (const brain of FRONTIER_BRAINS) {
+      if (brain === FrontierBrain.Brandon || brain === FrontierBrain.Noland) {
+        continue;
+      }
+      expect(FRONTIER_BRAIN_GOLD_PARTIES[brain], FRONTIER_BRAIN_NAMES[brain]).not.toEqual(
+        FRONTIER_BRAIN_PARTIES[brain],
+      );
     }
   });
 

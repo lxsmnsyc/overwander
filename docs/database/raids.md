@@ -355,15 +355,9 @@ and awards nothing.
 | `battle_id`  | `text`   | The battle it settled for |
 | `player`     | `uuid`   | The player settled        |
 | `settled_at` | `bigint` | When they settled         |
-| `fainted`    | `smallint` | How many of their party ended it down |
 
 The pair is the primary key, and a `write_once` trigger refuses any rewrite, so a
 battle settles once per player however many times it is reported.
-
-`fainted` is how many of that player's side were down when the report arrived. It
-counts the **team** rather than the records, so a party the Battle Factory lent
-counts too: such a fight settles nothing onto a record and still writes this row,
-which is the only thing it has to say.
 It is the client's word, like the health beside it, and the Frontier is what
 reads it: a facility hangs its gold symbol on taking the house without losing a
 pokemon.

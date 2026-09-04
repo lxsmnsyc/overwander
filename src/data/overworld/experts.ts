@@ -969,6 +969,7 @@ const enum FrontierBrain {
   Greta = 1,
   Lucy = 2,
   Noland = 3,
+  Anabel = 4,
 }
 
 export { FrontierBrain };
@@ -978,6 +979,7 @@ export const FRONTIER_BRAINS: FrontierBrain[] = [
   FrontierBrain.Greta,
   FrontierBrain.Lucy,
   FrontierBrain.Noland,
+  FrontierBrain.Anabel,
 ];
 
 export const FRONTIER_BRAIN_NAMES: Record<FrontierBrain, string> = {
@@ -985,6 +987,7 @@ export const FRONTIER_BRAIN_NAMES: Record<FrontierBrain, string> = {
   [FrontierBrain.Greta]: 'Greta',
   [FrontierBrain.Lucy]: 'Lucy',
   [FrontierBrain.Noland]: 'Noland',
+  [FrontierBrain.Anabel]: 'Anabel',
 };
 
 /** The house each of them keeps, which is what the rule is named for */
@@ -993,6 +996,7 @@ export const FRONTIER_FACILITY_NAMES: Record<FrontierBrain, string> = {
   [FrontierBrain.Greta]: 'Battle Arena',
   [FrontierBrain.Lucy]: 'Battle Pike',
   [FrontierBrain.Noland]: 'Battle Factory',
+  [FrontierBrain.Anabel]: 'Battle Tower',
 };
 
 export const FRONTIER_BRAIN_CHARSETS: Record<FrontierBrain, string[]> = {
@@ -1000,17 +1004,23 @@ export const FRONTIER_BRAIN_CHARSETS: Record<FrontierBrain, string[]> = {
   [FrontierBrain.Greta]: ['characters/rse/greta'],
   [FrontierBrain.Lucy]: ['characters/rse/lucy'],
   [FrontierBrain.Noland]: ['characters/rse/noland'],
+  [FrontierBrain.Anabel]: ['characters/rse/anabel'],
 };
 
 /**
- * The pair each facility hangs on the shelf: silver for beating the
- * Brain, gold for beating them with the whole party still standing
+ * The pair each facility hangs on the shelf.
+ *
+ * Silver for taking the house. Holding it is what brings the Brain's
+ * second three out the next time, and taking **that** is the gold
+ * one: the two symbols are two different fights rather than one
+ * fight scored two ways
  */
 export const FRONTIER_BRAIN_SYMBOLS: Record<FrontierBrain, [silver: Awards, gold: Awards]> = {
   [FrontierBrain.Brandon]: [Awards.SilverBraveSymbol, Awards.GoldBraveSymbol],
   [FrontierBrain.Greta]: [Awards.SilverGutsSymbol, Awards.GoldGutsSymbol],
   [FrontierBrain.Lucy]: [Awards.SilverLuckSymbol, Awards.GoldLuckSymbol],
   [FrontierBrain.Noland]: [Awards.SilverKnowledgeSymbol, Awards.GoldKnowledgeSymbol],
+  [FrontierBrain.Anabel]: [Awards.SilverAbilitySymbol, Awards.GoldAbilitySymbol],
 };
 
 /**
@@ -1030,7 +1040,38 @@ export const FRONTIER_BRAIN_PARTIES: Record<FrontierBrain, Species[]> = {
   // Nobody's: the Factory rents to its own keeper too, so his three
   // are rolled out of the same crate the challenger's come from
   [FrontierBrain.Noland]: [],
+  // The Tower's own three, and the hardest hand in the game: an
+  // Entei among them, which is what a house with no rule has instead
+  // of one
+  [FrontierBrain.Anabel]: [Species.Alakazam, Species.Entei, Species.Snorlax],
 };
+
+/**
+ * And the second hand, fielded once the challenger holds that
+ * house's silver symbol.
+ *
+ * A Brain is fought twice in the mainline and the second meeting is
+ * its own fight rather than a rematch, so it is its own party here
+ * too. Brandon's three are the same either time, which is the
+ * mainline's own answer: what he changes between them is the level
+ * and the loadout, not who is in the crate. Noland names nobody
+ * twice over, since the Factory rents both meetings
+ */
+export const FRONTIER_BRAIN_GOLD_PARTIES: Record<FrontierBrain, Species[]> = {
+  [FrontierBrain.Brandon]: [Species.Regirock, Species.Regice, Species.Registeel],
+  [FrontierBrain.Greta]: [Species.Gengar, Species.Breloom, Species.Umbreon],
+  [FrontierBrain.Lucy]: [Species.Seviper, Species.Steelix, Species.Gyarados],
+  [FrontierBrain.Noland]: [],
+  [FrontierBrain.Anabel]: [Species.Raikou, Species.Snorlax, Species.Latios],
+};
+
+/**
+ * What a house fields against this challenger: its second three where
+ * they already hold its silver symbol, its first where they do not
+ */
+export function getFrontierParty(brain: FrontierBrain, gold: boolean): Species[] {
+  return gold ? FRONTIER_BRAIN_GOLD_PARTIES[brain] : FRONTIER_BRAIN_PARTIES[brain];
+}
 
 /**
  * How many a side a Frontier fight is fought with, the house's rather
@@ -1080,6 +1121,9 @@ export const FRONTIER_BRAIN_RULES: Record<FrontierBrain, FrontierRule> = {
   [FrontierBrain.Greta]: FrontierRule.Timed,
   [FrontierBrain.Lucy]: FrontierRule.Curtained,
   [FrontierBrain.Noland]: FrontierRule.Rented,
+  // The Tower asks nothing, which is the point of it: it is the
+  // fight the other four are read against
+  [FrontierBrain.Anabel]: FrontierRule.None,
 };
 
 /**
@@ -1101,6 +1145,7 @@ export const FRONTIER_BRAIN_TITLES: Record<FrontierBrain, Awards> = {
   [FrontierBrain.Greta]: Awards.HoennChampion,
   [FrontierBrain.Lucy]: Awards.HoennChampion,
   [FrontierBrain.Noland]: Awards.HoennChampion,
+  [FrontierBrain.Anabel]: Awards.HoennChampion,
 };
 
 /**

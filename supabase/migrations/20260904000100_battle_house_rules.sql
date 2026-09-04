@@ -16,15 +16,3 @@ alter table battles
 comment on column battles.rules is
   'The Frontier house rule the fight was held under; 0 for an ordinary fight';
 
--- How many of the reporting player's party were down when the fight
--- ended.
---
--- The Frontier hangs a gold symbol on taking a house without losing a
--- pokemon, and the report that settles a battle is the only place
--- that knows. It is the client's word, like the health beside it, and
--- it is written once per player per battle by the same marker row.
-alter table battle_aftermaths
-  add column fainted smallint not null default 0;
-
-comment on column battle_aftermaths.fainted is
-  'How many of that player''s party ended the fight down; what a gold symbol is judged on';

@@ -281,10 +281,17 @@ with, so nothing of yours is hurt, spent or fed candy for it. The crate is every
 species an expert could field, from every region, so the Factory gets harder
 with each generation the game registers rather than easier.
 
+**Anabel** keeps the Battle Tower, and asks nothing at all: three of hers against
+three of yours, under the ordinary rules. She is the house the other four are
+read against, and she brings the hardest hand in the game to make up for having
+no rule to hide behind.
+
 A house takes nobody who does not hold the crown of the region it stands in.
-Beating one hangs that facility's **silver symbol** on the shelf; beating it
-without losing a pokemon hangs the **gold** one instead, so collecting both means
-walking in twice.
+Beating one hangs that facility's **silver symbol** on the shelf, and holding
+that symbol is what brings the Brain's **second three** out the next time you
+walk in. Beating those is the **gold** one. The two symbols are two different
+fights rather than one fight scored twice, and Brandon is the only Brain who
+fields the same three either time.
 
 A member of the **Elite Four** will not fight anybody who is not carrying all
 eight of their own league's badges, and a **Champion** asks for all four of their

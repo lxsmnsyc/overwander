@@ -157,6 +157,7 @@ function stagedParty(
   snapshot: ChunkSnapshot,
   landmark: Landmark | undefined,
   cell: number,
+  gold = false,
 ): Spawn[] | null {
   if (landmark === Landmark.Trainer) {
     return snapshot.getTrainerStops().get(cell) ?? null;
@@ -171,7 +172,7 @@ function stagedParty(
     return snapshot.getChampionStops().get(cell) ?? null;
   }
   if (landmark === Landmark.FrontierBrain) {
-    return snapshot.getFrontierStops().get(cell) ?? null;
+    return snapshot.getFrontierStop(cell, gold);
   }
   return snapshot.getRocketStops().get(cell) ?? null;
 }
@@ -190,7 +191,13 @@ export async function enterRocketStop(
   // The cell's landmark says whose stop this is: Team Rocket's, the
   // duelling trainer's, or one of the experts'
   const landmark = chunk.getLandmarkCells().get(cell);
-  const party = stagedParty(snapshot, landmark, cell);
+  // A house that has already been taken brings its second three out
+  // the next time: the silver symbol on the shelf is what asks for
+  // them, so the party is the player's own question rather than the
+  // chunk's
+  const brain = landmark === Landmark.FrontierBrain ? snapshot.getFrontierBrain(cell) : null;
+  const gold = brain != null && (await hasAwards(uid, [FRONTIER_BRAIN_SYMBOLS[brain][0]]));
+  const party = stagedParty(snapshot, landmark, cell, gold);
 
   if (party == null) {
     return null;
@@ -218,8 +225,6 @@ export async function enterRocketStop(
   // And the Frontier's own gate: a house stands past the league, so
   // it takes nobody who has not taken that region's crown
   if (landmark === Landmark.FrontierBrain) {
-    const brain = snapshot.getFrontierBrain(cell);
-
     if (brain == null || !(await hasAwards(uid, [FRONTIER_BRAIN_TITLES[brain]]))) {
       return 'locked';
     }
@@ -627,7 +632,16 @@ export async function claimRocketReward(uid: string, stop: string): Promise<Rock
   // leader's badge, the elite's mark, or the region's title. Each is
   // earned once for good; every win counts on the shelf, and only
   // the earning one reports the award
-  const owed = awardFor(landmark, snapshot, record.cell, await fellFighting(record.battle, uid));
+  // Which of the house's pair this win earned: the one they were
+  // already holding is what brought the second three out, so holding
+  // it is what makes this the gold fight. Asked before the award is
+  // written, so the win that earns silver is not read as a gold one
+  const owed = awardFor(
+    landmark,
+    snapshot,
+    record.cell,
+    await tookTheHouse(uid, snapshot, record.cell),
+  );
   const award = owed != null && (await recordAwardWin(uid, owed, Date.now())) ? owed : null;
 
   // A beaten expert also leaves something: a leader's TM of their own
@@ -676,18 +690,19 @@ export async function claimRocketReward(uid: string, stop: string): Promise<Rock
 }
 
 /**
- * How many of the winner's party ended the fight down, off the report
- * that settled it. A fight nobody reported reads as a costly one: the
- * gold symbol is for a clean win somebody actually stood for
+ * Whether this player had already taken the house standing at the
+ * cell. It is what decides both halves of a Frontier win: the second
+ * three are fielded against somebody holding the silver symbol, and
+ * beating them is what the gold one is for
  */
-async function fellFighting(battleId: string, player: string): Promise<number> {
-  const rows = await getSql()`
-    select fainted from battle_aftermaths
-    where battle_id = ${battleId} and player = ${player}
-  `;
-  const row = rows.at(0);
+async function tookTheHouse(
+  player: string,
+  snapshot: ChunkSnapshot,
+  cell: number,
+): Promise<boolean> {
+  const brain = snapshot.getFrontierBrain(cell);
 
-  return row == null ? 1 : asNumber(row.fainted);
+  return brain != null && (await hasAwards(player, [FRONTIER_BRAIN_SYMBOLS[brain][0]]));
 }
 
 /**
@@ -700,7 +715,7 @@ function awardFor(
   landmark: Landmark | undefined,
   snapshot: ChunkSnapshot,
   cell: number,
-  fainted: number,
+  gold: boolean,
 ): Awards | null {
   if (landmark === Landmark.FrontierBrain) {
     const brain = snapshot.getFrontierBrain(cell);
@@ -709,12 +724,12 @@ function awardFor(
       return null;
     }
 
-    // Silver for taking the house, gold for taking it without losing
-    // a pokemon. Two symbols is two wins, which is what the Frontier
-    // asks of anybody who wants both
-    const [silver, gold] = FRONTIER_BRAIN_SYMBOLS[brain];
+    // Two symbols for two fights: the first win takes the house, and
+    // the second is against the three the house only brings out for
+    // somebody who has
+    const pair = FRONTIER_BRAIN_SYMBOLS[brain];
 
-    return fainted === 0 ? gold : silver;
+    return gold ? pair[1] : pair[0];
   }
   if (landmark === Landmark.TeamRocket) {
     if (snapshot.getRocketRank(cell) === RocketRank.Giovanni) {

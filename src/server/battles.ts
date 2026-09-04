@@ -124,8 +124,10 @@ export default async function recordAftermath(
   battleId: string,
   aftermath: BattleAftermath[],
   defeated: number,
-  fallen = 0,
 ): Promise<CandyEarned[]> {
+  if (aftermath.length === 0) {
+    return [];
+  }
   // Whether this player fought it and how many did, in one question of
   // the one table, asked alongside the battle itself
   const [battles, teams] = await Promise.all([
@@ -163,17 +165,10 @@ export default async function recordAftermath(
   const fielded = await readFielded(battleId, uid);
   const reported = aftermath.filter((entry) => fielded.has(entry.caught));
 
-  // A fight with nothing of the player's on the field still settles:
-  // the Battle Factory lends both sides their three, so there is
-  // nothing to write onto a record and still something to record — how
-  // many of the lent three fell, which is what a gold symbol is judged
-  // on. Everything below this is about records, so it is skipped
+  // A rented fight reports nothing, since none of what it fielded
+  // stands for a record: there is nothing to settle onto and nothing
+  // to settle it with
   if (reported.length === 0) {
-    await getSql()`
-      insert into battle_aftermaths (battle_id, player, settled_at, fainted)
-      values (${battleId}, ${uid}, ${Date.now()}, ${Math.max(0, Math.floor(fallen))})
-      on conflict do nothing
-    `;
     return [];
   }
 
@@ -190,8 +185,8 @@ export default async function recordAftermath(
     // The marker is the whole race: one battle settles one player
     // exactly once, however many times the report arrives
     const claimed = await transaction`
-      insert into battle_aftermaths (battle_id, player, settled_at, fainted)
-      values (${battleId}, ${uid}, ${Date.now()}, ${Math.max(0, Math.floor(fallen))})
+      insert into battle_aftermaths (battle_id, player, settled_at)
+      values (${battleId}, ${uid}, ${Date.now()})
       on conflict do nothing
     `;
 

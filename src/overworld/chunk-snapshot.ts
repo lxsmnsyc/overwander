@@ -43,7 +43,6 @@ import {
   type EliteMember,
   FRONTIER_BRAINS,
   FRONTIER_BRAIN_CHARSETS,
-  FRONTIER_BRAIN_PARTIES,
   FRONTIER_TEAM_SIZE,
   type FrontierBrain,
   GYM_LEADER_CHARSETS,
@@ -53,6 +52,7 @@ import {
   LEGEND_CHARSETS,
   LEGEND_PARTIES,
   type Legend,
+  getFrontierParty as frontierParty,
   getEliteMemberRoster,
   getGymLeaderRoster,
   getRentalPool,
@@ -1282,40 +1282,42 @@ export default class ChunkSnapshot {
     return FRONTIER_BRAINS[Math.floor(rng.random() * FRONTIER_BRAINS.length)] ?? null;
   }
 
-  private frontierStops: Map<number, Spawn[]> | null = null;
+  private readonly frontierStops = new Map<string, Spawn[]>();
 
   /**
-   * What the facilities of this chunk field: the Brain's own three,
-   * which is the house's shape rather than the league's six
+   * What the facility at this cell fields, or null where the cell
+   * keeps none.
+   *
+   * `gold` is whether the challenger already holds this house's
+   * silver symbol, which is what brings the Brain's second three out;
+   * it is the caller's question, since a chunk is the same for
+   * everybody and a badge case is not
    */
-  getFrontierStops(): Map<number, Spawn[]> {
-    if (this.frontierStops == null) {
-      const stops = new Map<number, Spawn[]>();
+  getFrontierStop(cell: number, gold = false): Spawn[] | null {
+    const brain = this.getFrontierBrain(cell);
 
-      for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
-        if (landmark !== Landmark.FrontierBrain) {
-          continue;
-        }
-
-        const brain = this.getFrontierBrain(cell);
-
-        if (brain != null) {
-          const seed = `${this.key}${this.npcTimestamp}frontier${cell}`;
-          const named = FRONTIER_BRAIN_PARTIES[brain];
-
-          // A house with no party of its own rents like everybody
-          // else: the Factory's keeper draws three out of the crate
-          stops.set(
-            cell,
-            named.length > 0
-              ? signatureParty(named, seed)
-              : rentedParty(getRentalPool(), FRONTIER_TEAM_SIZE, seed),
-          );
-        }
-      }
-      this.frontierStops = stops;
+    if (brain == null) {
+      return null;
     }
-    return this.frontierStops;
+
+    const key = `${cell}:${gold ? 'gold' : 'silver'}`;
+    const held = this.frontierStops.get(key);
+
+    if (held != null) {
+      return held;
+    }
+
+    const seed = `${this.key}${this.npcTimestamp}frontier${key}`;
+    const named = frontierParty(brain, gold);
+    // A house with no party of its own rents like everybody else:
+    // the Factory's keeper draws three out of the crate
+    const party =
+      named.length > 0
+        ? signatureParty(named, seed)
+        : rentedParty(getRentalPool(), FRONTIER_TEAM_SIZE, seed);
+
+    this.frontierStops.set(key, party);
+    return party;
   }
 
   /**

@@ -171,23 +171,27 @@ const FRONTIER_GREETINGS: Record<FrontierBrain, string> = {
   [FrontierBrain.Lucy]: 'Pick a curtain. What is behind it is not my doing, and I do not care.',
   [FrontierBrain.Noland]:
     'Nothing here is yours and nothing here is mine. Pick three and let us see.',
+  [FrontierBrain.Anabel]:
+    'No tricks up here. My three against your three. Begin when you are ready.',
 };
 
 /**
  * The house rule, said first, because it is the whole of what makes a
- * Frontier fight different from the Champion's
+ * Frontier fight different from the Champion's. Each ends in a space:
+ * the Tower has no rule at all, and its line opens on the party
+ * instead of on a gap
  */
 const FRONTIER_RULE_TERMS: Record<FrontierRule, string> = {
   [FrontierRule.None]: '',
-  [FrontierRule.Bare]: 'Nothing is held: no items on either side.',
+  [FrontierRule.Bare]: 'Nothing is held: no items on either side. ',
   [FrontierRule.Timed]: `Judged after ${FRONTIER_TIME_TURNS} turns: whoever has more of their
-     party left standing takes it.`,
+     party left standing takes it. `,
   [FrontierRule.Curtained]: `A curtain is drawn as you walk in, and one room in
      ${PIKE_CURTAINS.length} is kind: your three arrive poisoned, burned, paralysed, asleep, or
-     mended. Hers arrive as they are.`,
+     mended. Hers arrive as they are. `,
   [FrontierRule.Rented]: `The house lends both sides: pick 3 of the ${FRONTIER_RENTAL_OFFER} on
      the table and leave your own box alone. Nothing of yours is on the field, so nothing of
-     yours comes off it.`,
+     yours comes off it. `,
 };
 
 /** What a Brain's house asks to see: the crown of its region */
@@ -382,9 +386,9 @@ export default function challengerOf(
         “${FRONTIER_GREETINGS[brain]}”`,
       stakes: `${FRONTIER_RULE_TERMS[FRONTIER_BRAIN_RULES[brain]]} Three of theirs at level
         ${FRONTIER_PARTY_LEVELS[0]}, each carrying two items and two abilities, against three of
-        yours. Win and the ${AWARD_NAMES[silver]} is yours, with a purse to match the rank; take
-        the house without losing a pokemon and it is the ${AWARD_NAMES[gold]} instead. Lose and
-        you lose nothing but the fight.`,
+        yours. Win and the ${AWARD_NAMES[silver]} is yours, with a purse to match the rank. Hold
+        it and they bring their second three out next time, which is what the
+        ${AWARD_NAMES[gold]} is for. Lose and you lose nothing but the fight.`,
     };
   }
   return null;

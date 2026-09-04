@@ -227,9 +227,8 @@ export async function recordAftermath(
   id: string,
   aftermath: BattleAftermath[],
   defeated: number,
-  fallen: number,
 ): Promise<CandyEarned[]> {
-  return recordAftermathOnServer(await getIdToken(), id, aftermath, defeated, fallen);
+  return recordAftermathOnServer(await getIdToken(), id, aftermath, defeated);
 }
 
 async function recordAftermathOnServer(
@@ -237,10 +236,9 @@ async function recordAftermathOnServer(
   id: string,
   aftermath: BattleAftermath[],
   defeated: number,
-  fallen: number,
 ): Promise<CandyEarned[]> {
   'use server';
-  return recordOnServer(await requireUid(token), id, aftermath, defeated, fallen);
+  return recordOnServer(await requireUid(token), id, aftermath, defeated);
 }
 
 /**

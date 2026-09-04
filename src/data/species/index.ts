@@ -9,6 +9,7 @@ export {
   getLearnableMoves,
   getLevelUpMoves,
   getMovesLearnedAt,
+  getRegisteredFamilies,
   getRegisteredSpecies,
   getSpeciesAbilities,
   getSpeciesAbilityPools,
@@ -27,6 +28,7 @@ export {
   SPECIES_DAY_STEP_BOOST,
   SPECIES_DAY_WEIGHT_BOOST,
   getDayOfYear,
+  getDaysInYear,
   getFeaturedFamily,
   isFeaturedSpecies,
 } from './day';

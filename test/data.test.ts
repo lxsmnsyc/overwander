@@ -260,11 +260,13 @@ import {
   getBaseSpecies,
   getConsumedItem,
   getDayOfYear,
+  getDaysInYear,
   getEggMoves,
   getFeaturedFamily,
   getLearnableMoves,
   getLevelUpMoves,
   getMovesLearnedAt,
+  getRegisteredFamilies,
   getRegisteredSpecies,
   getSpeciesAbilities,
   getSpeciesAbilityPools,
@@ -1965,22 +1967,35 @@ describe('species day', () => {
     expect(getDayOfYear(YEAR_START + 364 * DAY)).toBe(364);
   });
 
-  it('features the family whose number is the day of the year', () => {
+  it('features a family every day, counting the year around the roster', () => {
+    const roster = getRegisteredFamilies();
+
     // Family 0 is Bulbasaur's, so it opens the year; family 1 is
     // Charmander's, and so on
     expect(getFeaturedFamily(YEAR_START)).toBe(Families.Bulbasaur);
     expect(getFeaturedFamily(YEAR_START + DAY)).toBe(Families.Charmander);
     expect(getFeaturedFamily(YEAR_START + Families.Mewtwo * DAY)).toBe(Families.Mewtwo);
 
-    // Family numbers run far short of a year, so most days feature
-    // nobody at all
-    expect(getFeaturedFamily(YEAR_START + 200 * DAY)).toBeNull();
+    // The roster runs short of a year, so it comes round again rather
+    // than leaving the rest of the year blank
+    expect(getFeaturedFamily(YEAR_START + roster.length * DAY)).toBe(Families.Bulbasaur);
+    for (let day = 0; day < getDaysInYear(YEAR_START); day++) {
+      expect(getFeaturedFamily(YEAR_START + day * DAY)).not.toBeNull();
+    }
+
+    // Every family gets its day, the ones past a reserved gap in the
+    // numbering included
+    const featured = new Set(
+      Array.from({ length: roster.length }, (_, day) => getFeaturedFamily(YEAR_START + day * DAY)),
+    );
+
+    expect(featured.size).toBe(roster.length);
 
     // The whole family is featured, not just one stage
     expect(isFeaturedSpecies(Species.Venusaur, YEAR_START)).toBe(true);
     expect(isFeaturedSpecies(Species.Bulbasaur, YEAR_START)).toBe(true);
     expect(isFeaturedSpecies(Species.Charmander, YEAR_START)).toBe(false);
-    expect(isFeaturedSpecies(Species.Bulbasaur, YEAR_START + 200 * DAY)).toBe(false);
+    expect(isFeaturedSpecies(Species.Bulbasaur, YEAR_START + DAY)).toBe(false);
   });
 
   it('charges a shadow twice the candy per level', () => {

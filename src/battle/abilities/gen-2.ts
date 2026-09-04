@@ -370,6 +370,13 @@ const setupAbilities = [
         }
 
         event.success = false;
+
+        // The refusal is the whole answer for the AI weighing a move:
+        // the rise itself belongs to a cast that actually happened
+        if (event.simulated) {
+          return;
+        }
+
         event.source.triggerAbility(Abilities.Contrary);
 
         inverting.add(event.source);
@@ -442,6 +449,14 @@ const setupAbilities = [
       }
 
       event.success = false;
+
+      // Only a real drop is bounced back. Weighing one is not throwing
+      // it, and a caster that lost a stage to a move it merely
+      // considered would be answering a question with its own knees
+      if (event.simulated) {
+        return;
+      }
+
       event.source.triggerAbility(Abilities.MirrorArmor);
 
       event.cause.unit.addStage(event.stage, event.value, event.cause);

@@ -370,8 +370,11 @@ export function createKeenEyeAbility(targetAbility: Abilities): (battle: Battle)
           ) {
             event.success = false;
 
-            // For visual cues
-            event.source.triggerAbility(targetAbility);
+            // A cue is something a watcher sees, so it waits for a real
+            // attempt rather than the AI weighing one
+            if (!event.simulated) {
+              event.source.triggerAbility(targetAbility);
+            }
           }
         }),
         // The holder's attacks ignore the target's evasion stages:

@@ -165,11 +165,13 @@ export default function setupStageMoves(battle: Battle): void {
 
     if (
       pinned ||
-      !receiver.checkCanAddStage(effect.stage, effect.value, {
-        type: EffectType.Move,
-        move: event.move,
-        unit: event.source,
-      })
+      !receiver.checkCanAddStage(
+        effect.stage,
+        effect.value,
+        { type: EffectType.Move, move: event.move, unit: event.source },
+        // Speculative: the AI is weighing the move, not casting it
+        true,
+      )
     ) {
       event.score -= USELESS_PENALTY;
     }

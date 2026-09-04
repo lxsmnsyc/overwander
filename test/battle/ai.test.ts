@@ -786,6 +786,54 @@ describe('weighing a move', () => {
     expect(open - scoreMove(battle, unit, Moves.Screech, target)).toBe(USELESS_PENALTY);
   });
 
+  it('declines a stat drop a boss will not take', () => {
+    const { battle, teamA, teamB } = createAIBattle(BattleModes.Raid);
+    pinRandom(battle, 0.99);
+    const unit = createUnit(battle, teamA);
+    const boss = createUnit(battle, teamB);
+    const target: MoveTarget = { type: MoveTargetType.Unit, unit: boss };
+
+    boss.addAbility(Abilities.Boss);
+
+    // Under the base score rather than a fixed distance from it: a
+    // boss draws the focus its bulk earns as well as the refusal, and
+    // the refusal is the larger of the two
+    expect(scoreMove(battle, unit, Moves.Screech, target)).toBeLessThan(BASE_SCORE);
+  });
+
+  it('asks about a stage without setting off what refuses it', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    pinRandom(battle, 0.99);
+    const unit = createUnit(battle, teamA);
+    const boss = createUnit(battle, teamB);
+    const target: MoveTarget = { type: MoveTargetType.Unit, unit: boss };
+
+    boss.addAbility(Abilities.Boss);
+
+    let cues = 0;
+
+    battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Post, () => {
+      cues += 1;
+    });
+
+    scoreMove(battle, unit, Moves.Screech, target);
+
+    expect(cues).toBe(0);
+  });
+
+  it('keeps its own knees while weighing a drop that would bounce', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    pinRandom(battle, 0.99);
+    const unit = createUnit(battle, teamA);
+    const mirror = createUnit(battle, teamB);
+    const target: MoveTarget = { type: MoveTargetType.Unit, unit: mirror };
+
+    mirror.addAbility(Abilities.MirrorArmor);
+    scoreMove(battle, unit, Moves.Screech, target);
+
+    expect(unit.stages[Stages.Defense]).toBe(0);
+  });
+
   it('does not eat the target berry it asks about', () => {
     const { battle, teamA, teamB } = createAIBattle();
     pinRandom(battle, 0.99);

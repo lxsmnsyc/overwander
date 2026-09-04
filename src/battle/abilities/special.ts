@@ -205,16 +205,22 @@ const setupAbilities = [
         if (event.success && event.value < 0 && event.source.hasAbility(Abilities.Boss)) {
           event.success = false;
 
-          // For visual cues
-          event.source.triggerAbility(Abilities.Boss);
+          // A cue is something a watcher sees, so it waits for a real
+          // attempt rather than the AI weighing one
+          if (!event.simulated) {
+            event.source.triggerAbility(Abilities.Boss);
+          }
         }
       }),
       battle.on(BattleEvents.CheckUnitCanRemoveStage, EventPriority.Post, (event) => {
         if (event.success && event.value > 0 && event.source.hasAbility(Abilities.Boss)) {
           event.success = false;
 
-          // For visual cues
-          event.source.triggerAbility(Abilities.Boss);
+          // A cue is something a watcher sees, so it waits for a real
+          // attempt rather than the AI weighing one
+          if (!event.simulated) {
+            event.source.triggerAbility(Abilities.Boss);
+          }
         }
       }),
       // A share of a raid pool is worth more than anything the party

@@ -886,7 +886,7 @@ export default class Unit {
     [Stages.Speed]: 0,
   };
 
-  checkCanAddStage(stage: Stages, value: number, cause: EffectCause): boolean {
+  checkCanAddStage(stage: Stages, value: number, cause: EffectCause, simulated = false): boolean {
     const event: CheckUnitCanUpdateStageEvent = {
       id: 'CheckUnitCanAddStage',
       disabled: false,
@@ -895,6 +895,7 @@ export default class Unit {
       value,
       cause,
       success: true,
+      simulated,
     };
     this.battle.emit(BattleEvents.CheckUnitCanAddStage, event);
     return event.success;
@@ -913,7 +914,7 @@ export default class Unit {
     }
   }
 
-  checkCanRemoveStage(stage: Stages, value: number, cause: EffectCause): boolean {
+  checkCanRemoveStage(stage: Stages, value: number, cause: EffectCause, simulated = false): boolean {
     const event: CheckUnitCanUpdateStageEvent = {
       id: 'CheckUnitCanRemoveStage',
       disabled: false,
@@ -922,6 +923,7 @@ export default class Unit {
       value,
       cause,
       success: true,
+      simulated,
     };
     this.battle.emit(BattleEvents.CheckUnitCanRemoveStage, event);
     return event.success;

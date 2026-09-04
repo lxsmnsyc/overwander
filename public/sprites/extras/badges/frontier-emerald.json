@@ -1,16 +1,16 @@
 {
   "compact": true,
-  "width": 400,
-  "height": 400,
+  "width": 92,
+  "height": 92,
   "images": [
     {
       "name": "ability-gold",
       "x": 0,
       "y": 0,
-      "width": 100,
-      "height": 100,
-      "sourceWidth": 100,
-      "sourceHeight": 100,
+      "width": 22,
+      "height": 22,
+      "sourceWidth": 22,
+      "sourceHeight": 22,
       "trim": [
         0,
         0
@@ -18,12 +18,12 @@
     },
     {
       "name": "ability-silver",
-      "x": 100,
+      "x": 23,
       "y": 0,
-      "width": 100,
-      "height": 100,
-      "sourceWidth": 100,
-      "sourceHeight": 100,
+      "width": 22,
+      "height": 22,
+      "sourceWidth": 22,
+      "sourceHeight": 22,
       "trim": [
         0,
         0
@@ -32,11 +32,11 @@
     {
       "name": "brave-gold",
       "x": 0,
-      "y": 100,
-      "width": 100,
-      "height": 100,
-      "sourceWidth": 100,
-      "sourceHeight": 100,
+      "y": 23,
+      "width": 22,
+      "height": 22,
+      "sourceWidth": 22,
+      "sourceHeight": 22,
       "trim": [
         0,
         0
@@ -44,12 +44,12 @@
     },
     {
       "name": "brave-silver",
-      "x": 100,
-      "y": 100,
-      "width": 100,
-      "height": 100,
-      "sourceWidth": 100,
-      "sourceHeight": 100,
+      "x": 23,
+      "y": 23,
+      "width": 22,
+      "height": 22,
+      "sourceWidth": 22,
+      "sourceHeight": 22,
       "trim": [
         0,
         0
@@ -57,12 +57,12 @@
     },
     {
       "name": "guts-gold",
-      "x": 200,
+      "x": 46,
       "y": 0,
-      "width": 100,
-      "height": 100,
-      "sourceWidth": 100,
-      "sourceHeight": 100,
+      "width": 22,
+      "height": 22,
+      "sourceWidth": 22,
+      "sourceHeight": 22,
       "trim": [
         0,
         0
@@ -70,12 +70,12 @@
     },
     {
       "name": "guts-silver",
-      "x": 200,
-      "y": 100,
-      "width": 100,
-      "height": 100,
-      "sourceWidth": 100,
-      "sourceHeight": 100,
+      "x": 46,
+      "y": 23,
+      "width": 22,
+      "height": 22,
+      "sourceWidth": 22,
+      "sourceHeight": 22,
       "trim": [
         0,
         0
@@ -84,11 +84,11 @@
     {
       "name": "knowledge-gold",
       "x": 0,
-      "y": 200,
-      "width": 100,
-      "height": 100,
-      "sourceWidth": 100,
-      "sourceHeight": 100,
+      "y": 46,
+      "width": 22,
+      "height": 22,
+      "sourceWidth": 22,
+      "sourceHeight": 22,
       "trim": [
         0,
         0
@@ -96,12 +96,12 @@
     },
     {
       "name": "knowledge-silver",
-      "x": 100,
-      "y": 200,
-      "width": 100,
-      "height": 100,
-      "sourceWidth": 100,
-      "sourceHeight": 100,
+      "x": 23,
+      "y": 46,
+      "width": 22,
+      "height": 22,
+      "sourceWidth": 22,
+      "sourceHeight": 22,
       "trim": [
         0,
         0
@@ -109,12 +109,12 @@
     },
     {
       "name": "luck-gold",
-      "x": 200,
-      "y": 200,
-      "width": 100,
-      "height": 100,
-      "sourceWidth": 100,
-      "sourceHeight": 100,
+      "x": 46,
+      "y": 46,
+      "width": 22,
+      "height": 22,
+      "sourceWidth": 22,
+      "sourceHeight": 22,
       "trim": [
         0,
         0
@@ -122,12 +122,12 @@
     },
     {
       "name": "luck-silver",
-      "x": 300,
+      "x": 69,
       "y": 0,
-      "width": 100,
-      "height": 100,
-      "sourceWidth": 100,
-      "sourceHeight": 100,
+      "width": 22,
+      "height": 22,
+      "sourceWidth": 22,
+      "sourceHeight": 22,
       "trim": [
         0,
         0
@@ -135,12 +135,12 @@
     },
     {
       "name": "spirits-gold",
-      "x": 300,
-      "y": 200,
-      "width": 100,
-      "height": 100,
-      "sourceWidth": 100,
-      "sourceHeight": 100,
+      "x": 69,
+      "y": 46,
+      "width": 22,
+      "height": 22,
+      "sourceWidth": 22,
+      "sourceHeight": 22,
       "trim": [
         0,
         0
@@ -148,12 +148,12 @@
     },
     {
       "name": "spirits-silver",
-      "x": 300,
-      "y": 100,
-      "width": 100,
-      "height": 100,
-      "sourceWidth": 100,
-      "sourceHeight": 100,
+      "x": 69,
+      "y": 23,
+      "width": 22,
+      "height": 22,
+      "sourceWidth": 22,
+      "sourceHeight": 22,
       "trim": [
         0,
         0
@@ -162,11 +162,11 @@
     {
       "name": "tactics-gold",
       "x": 0,
-      "y": 300,
-      "width": 100,
-      "height": 100,
-      "sourceWidth": 100,
-      "sourceHeight": 100,
+      "y": 69,
+      "width": 22,
+      "height": 22,
+      "sourceWidth": 22,
+      "sourceHeight": 22,
       "trim": [
         0,
         0
@@ -174,12 +174,12 @@
     },
     {
       "name": "tactics-silver",
-      "x": 100,
-      "y": 300,
-      "width": 100,
-      "height": 100,
-      "sourceWidth": 100,
-      "sourceHeight": 100,
+      "x": 23,
+      "y": 69,
+      "width": 22,
+      "height": 22,
+      "sourceWidth": 22,
+      "sourceHeight": 22,
       "trim": [
         0,
         0

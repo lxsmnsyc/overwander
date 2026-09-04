@@ -350,15 +350,15 @@
       }
     },
     "public/sprites/extras/badges/frontier-emerald.png": {
-      "digest": "39f0e47f710bb99e",
-      "bytes": 150120,
-      "width": 400,
-      "height": 400,
+      "digest": "11456fce8161686c",
+      "bytes": 1564,
+      "width": 92,
+      "height": 92,
       "compact": {
-        "at": "2026-09-04T11:50:15Z",
+        "at": "2026-09-04T11:57:20Z",
         "as": "already compact",
-        "was": 150120,
-        "bytes": 150120
+        "was": 1564,
+        "bytes": 1564
       }
     },
     "public/sprites/extras/badges/hoenn.png": {

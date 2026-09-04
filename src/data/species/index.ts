@@ -17,6 +17,7 @@ export {
   getSpeciesData,
   getSpeciesForms,
   getWornForms,
+  isWornForm,
   getTeachableMoves,
   isBaseForm,
 } from './__create';

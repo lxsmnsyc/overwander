@@ -7,7 +7,7 @@ import { defaultSlots } from '../data/constants/slots';
 import { MAX_LEVEL } from '../data/constants/levels';
 import { MAX_IV, Stats, packIVs } from '../data/constants/stats';
 import { Species } from '../data/ids/species';
-import { getRegisteredSpecies, isFullyEvolved } from '../data/species';
+import { getRegisteredSpecies, isFullyEvolved, isWornForm } from '../data/species';
 import { deriveAbility, deriveGender, deriveMoves, deriveNature, deriveSize } from './encounter';
 import { BOSS_ALLIANCE, PLAYER_ALLIANCE, canStageBoss, createRaidBossSnapshot } from './raid';
 
@@ -59,9 +59,13 @@ function getRollableSpecies(): Species[] {
   rollable ??= getRegisteredSpecies().filter(
     // Fully evolved only. The parties are rolled at level 70 and up,
     // where a Caterpie is a pokemon that would have evolved twice
-    // over long ago — and a field of finished pokemon is a field of
-    // the sprites and the movesets worth looking at
-    (species) => !PLACEHOLDERS.has(species) && isFullyEvolved(species),
+    // over long ago, and a field of finished pokemon is a field of
+    // the sprites and the movesets worth looking at.
+    //
+    // A worn shape is left out for a different reason: nothing is
+    // ever met as one, and staging a Rainy Castform would put a
+    // pokemon on the field that Forecast would immediately undress
+    (species) => !PLACEHOLDERS.has(species) && isFullyEvolved(species) && !isWornForm(species),
   );
   return rollable;
 }

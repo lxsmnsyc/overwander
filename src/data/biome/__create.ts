@@ -331,6 +331,8 @@ const LEGENDARY_SPECIES = new Set<Species>([
   Species.Regirock,
   Species.Regice,
   Species.Registeel,
+  Species.Latias,
+  Species.Latios,
 ]);
 
 /**

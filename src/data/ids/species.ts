@@ -497,6 +497,8 @@ export const enum Species {
   Regirock = 377,
   Regice = 378,
   Registeel = 379,
+  Latias = 380,
+  Latios = 381,
 }
 
 /**

@@ -49,6 +49,12 @@ const enum Lairs {
   DesertRuins = 9,
   IslandCave = 10,
   AncientTomb = 11,
+  /**
+   * The island the eon pair keep to, well out in open water. Like the
+   * Burned Tower it holds two, so which of the pair is at home is a
+   * roll
+   */
+  SouthernIsland = 12,
 }
 
 export const LAIR_NAMES: Record<Lairs, string> = {
@@ -64,6 +70,7 @@ export const LAIR_NAMES: Record<Lairs, string> = {
   [Lairs.DesertRuins]: 'Desert Ruins',
   [Lairs.IslandCave]: 'Island Cave',
   [Lairs.AncientTomb]: 'Ancient Tomb',
+  [Lairs.SouthernIsland]: 'Southern Island',
 };
 
 /**
@@ -85,6 +92,7 @@ export const LAIR_SPECIES: Record<Lairs, Species[]> = {
   [Lairs.DesertRuins]: [Species.Regirock],
   [Lairs.IslandCave]: [Species.Regice],
   [Lairs.AncientTomb]: [Species.Registeel],
+  [Lairs.SouthernIsland]: [Species.Latias, Species.Latios],
 };
 
 /**
@@ -103,6 +111,7 @@ export const EVERY_LAIR: Lairs[] = [
   Lairs.DesertRuins,
   Lairs.IslandCave,
   Lairs.AncientTomb,
+  Lairs.SouthernIsland,
 ];
 
 /**
@@ -120,7 +129,7 @@ export const EVERY_LAIR: Lairs[] = [
  */
 const BIOME_LAIRS: { [key in Biome]?: Lairs[] } = {
   [Biome.DeepOcean]: [Lairs.SeafoamIslands, Lairs.WhirlIslands],
-  [Biome.Ocean]: [Lairs.WhirlIslands],
+  [Biome.Ocean]: [Lairs.WhirlIslands, Lairs.SouthernIsland],
   [Biome.PolarOcean]: [Lairs.SeafoamIslands, Lairs.IslandCave],
   [Biome.Glacier]: [Lairs.SeafoamIslands, Lairs.IslandCave],
   [Biome.Grassland]: [Lairs.PowerPlant, Lairs.BurnedTower],

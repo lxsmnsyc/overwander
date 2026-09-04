@@ -318,6 +318,15 @@ export function getSpeciesForms(species: Species): Species[] {
 }
 
 /**
+ * Whether the form is one something is put into mid-fight rather than
+ * one that is met. Nothing stages a worn shape: it is reached through
+ * whatever wears it
+ */
+export function isWornForm(species: Species): boolean {
+  return getSpeciesData(species).worn === true;
+}
+
+/**
  * The shapes this pokemon is put into rather than met in, its own
  * form left out. Empty for almost everything, which is what a caller
  * asking about any species gets back

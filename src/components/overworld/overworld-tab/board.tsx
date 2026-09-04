@@ -98,6 +98,7 @@ import {
 import {
   CROSSING_LIMIT,
   FIGHT_LANDMARKS,
+  HARVEST_LANDMARKS,
   ICON_SIZE,
   PUBLISHED_SPAWNS,
   REFRESH_DEBOUNCE,
@@ -589,6 +590,29 @@ export default function OverworldBoard(props: {
       live = false;
     });
   });
+
+  /**
+   * The cells whose claim is still with the server.
+   *
+   * A cache, a patch, a tree and a happening all pay out on the press
+   * itself: nothing opens over the board to stop a second press, and
+   * the cell goes on looking exactly as it did until the answer comes
+   * back. Held shut until it does, so a mashed cell is claimed once
+   */
+  const [claiming, setClaiming] = createSignal<Set<number>>(new Set());
+
+  const holdCell = (index: number, held: boolean): void => {
+    setClaiming((cells) => {
+      const next = new Set(cells);
+
+      if (held) {
+        next.add(index);
+      } else {
+        next.delete(index);
+      }
+      return next;
+    });
+  };
 
   /**
    * What is going on at a cell, once what this player has already had
@@ -1289,7 +1313,18 @@ export default function OverworldBoard(props: {
    */
   const holdsSomething = (loaded: ChunkView | null, index: number): boolean =>
     loaded != null &&
+    !claiming().has(index) &&
     (loaded.spawns.has(index) || loaded.landmarks.has(index) || showing(loaded, index) != null);
+
+  /**
+   * Whether pressing the cell spends it on the spot, rather than
+   * opening something the player answers afterwards
+   */
+  const paysOnPress = (loaded: ChunkView, index: number): boolean => {
+    const landmark = loaded.landmarks.get(index);
+
+    return (landmark != null && HARVEST_LANDMARKS.has(landmark)) || showing(loaded, index) != null;
+  };
 
   /**
    * Whether the player can reach the cell from where they stand: the
@@ -1317,6 +1352,14 @@ export default function OverworldBoard(props: {
       return;
     }
     setBusy(true);
+    // Held shut for as long as the answer takes: `busy` is dropped the
+    // moment this one lands, and the cell would be pressable again
+    // before the board had any reason to look different
+    const spends = paysOnPress(loaded, index);
+
+    if (spends) {
+      holdCell(index, true);
+    }
     // Whatever the cell had to say, said in passing.
     //
     // It used to be a line pinned over the bottom of the map, and it
@@ -1336,6 +1379,9 @@ export default function OverworldBoard(props: {
       })
       .finally(() => {
         setBusy(false);
+        if (spends) {
+          holdCell(index, false);
+        }
       });
   };
 
@@ -1533,7 +1579,10 @@ export default function OverworldBoard(props: {
   const press = (target: BoardCell): void => {
     const loaded = view();
 
-    if (loaded == null || engaged()) {
+    // A press while a claim is in flight is a second press on it: the
+    // board looks the same, and dropping it here leaves the walk it
+    // would otherwise have cancelled alone
+    if (loaded == null || engaged() || busy()) {
       return;
     }
 

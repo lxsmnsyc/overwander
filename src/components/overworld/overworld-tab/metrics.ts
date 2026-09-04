@@ -16,6 +16,17 @@ export const FIGHT_LANDMARKS = new Set([
 ]);
 
 /**
+ * The landmarks that pay out on the press itself, with nothing opened
+ * in between. Their claim is the whole interaction, so the cell has to
+ * be held shut while the call is in flight
+ */
+export const HARVEST_LANDMARKS = new Set([
+  Landmark.ItemCache,
+  Landmark.BerryPatch,
+  Landmark.ApricornTree,
+]);
+
+/**
  * How many spawns a visit publishes: the ordinary eight plus the
  * three a lure draws in, rolled for every window so that a lure
  * changes who can see them rather than whether they exist

@@ -6,7 +6,7 @@ offer a breeder in the morning and a daycare lady by midday.
 
 Eleven people wander: the breeder, the daycare lady, Nurse Joy, the groomer, the
 Move Reminder, the Move Tutor, the chef, the Fossil Maniac, the Fossil Scientist,
-the Channeler and Kurt. The vendor, the Team Rocket grunt and the duelling
+the Channeler and Kurt. The vendor, the syndicate grunt and the duelling
 trainers each keep a landmark of their own, further down. A cell is a crossroads
 rather than a shop, so walking up to one does not reveal in advance which of the
 eleven is there.
@@ -143,20 +143,36 @@ elsewhere.
 emerges belongs to the fossil, and it arrives at level 20. Like the vendor, he has
 no once-per-window limit: what paces him is how many fossils have been dug up.
 
-## Team Rocket
+## The syndicates
 
-Somebody from Team Rocket bars the cell and fights whoever accepts. Who it is is
-rolled per cell per window, and the three cannot overlap:
+Somebody from a criminal organisation bars the cell and fights whoever accepts.
+Who it is is rolled per cell per window, and the three ranks cannot overlap:
 
-| Standing there        | How often | What they field                                                 |
-| --------------------- | --------- | --------------------------------------------------------------- |
-| **Grunt**             | The rest  | One common, two uncommon and three rare of the biome's, 40-60    |
-| **Rocket executive**  | 1 in 8    | Six of the biome's rare band, 65-85                              |
-| **Giovanni**          | 1 in 64   | Five of the rare band and a legendary, 85-100                    |
+| Standing there | How often | What they field                                               |
+| -------------- | --------- | ------------------------------------------------------------- |
+| **Grunt**      | The rest  | One common, two uncommon and three rare of the biome's, 40-60 |
+| **Executive**  | 1 in 8    | Six of the biome's rare band, 65-85                           |
+| **The boss**   | 1 in 64   | Five of the rare band and a legendary, 85-100                 |
 
-The executives are **Archer**, **Ariana**, **Proton** and **Petrel**, and which
-of the four turns up is its own roll. Everything they field is shadowed, and it
-is an ordinary trainer battle, so a simultaneous knockout is a draw.
+**Which organisation** it is is not rolled at all: it is the biome's, and it
+never changes. **Team Aqua** holds the water, every ocean, reef, kelp forest,
+beach, rocky coast, mangrove, swamp and bog. **Team Magma** holds the fire and
+the high dry country: volcanoes, mountains, alpine tundra, badlands and both
+deserts. **Team Rocket** holds everywhere else, and holds any biome added later
+until somebody says otherwise. So a player who learns that the coast is Aqua's
+has learned something about the world rather than about this window.
+
+| Team            | Its boss            | Its executives                      |
+| --------------- | ------------------- | ----------------------------------- |
+| **Team Rocket** | Boss **Giovanni**   | Archer, Ariana, Proton, Petrel      |
+| **Team Magma**  | Leader **Maxie**    | Admins Tabitha and Courtney         |
+| **Team Aqua**   | Leader **Archie**   | Admins Matt and Shelly              |
+
+Which executive turns up is its own roll, so a team with two of them is no
+likelier to field one than a team with four. Everybody is introduced team first
+and rank before the name, so **Team Aqua Leader Archie** says which organisation
+and how far up it in one line. Everything all three field is shadowed, and it is
+an ordinary trainer battle, so a simultaneous knockout is a draw.
 
 Every player fights the cell separately. One player's victory closes nothing for
 anybody else, and losing costs nothing but the attempt: they are still standing
@@ -167,20 +183,22 @@ amount to the next player, and leaves a pokemon behind, shadowed and at level 10
 A grunt pays **5,000 to 15,000** and leaves one of the three it was **not**
 fighting with, one of the common and uncommon pair rather than its best. An executive
 pays **40,000 to 90,000**, leaves any of its six, and drops an item it was
-carrying besides. **Giovanni** pays **120,000 to 250,000**, his own mark and any
-of his, the legendary included. The mark is worth the coat he runs Team Rocket
-in; the gym he keeps in Kanto is a different fight with a badge of its own.
+carrying besides. A **boss** pays **120,000 to 250,000**, their own mark and any
+of theirs, the legendary included. Giovanni's mark is worth the coat he runs Team
+Rocket in; the gym he keeps in Kanto is a different fight with a badge of its own.
 
-Every rank leaves a mark on the shelf as well, one apiece: the rank and file
-share one between them, each executive has their own, and so does the boss. Each
-is worth going about in that person's coat. See [Awards and titles](awards.md).
+Every rank leaves a mark on the shelf as well, and every team's marks are its
+own: the rank and file of one team share one between them, each executive has
+their own, and so does each boss. Each is worth going about in that person's
+coat, so the three uniforms are three different unlocks. See
+[Awards and titles](awards.md).
 
-The executives and Giovanni field trained pokemon rather than caught ones, and
+The executives and the bosses field trained pokemon rather than caught ones, and
 what they leave behind keeps it: an executive's prize walks away with both its
-abilities, and Giovanni's with both and room for a second held item. See
+abilities, and a boss' with both and room for a second held item. See
 [Battles](battles.md).
 
-Team Rocket is the one person at a crossroads a player can lose to. See
+A syndicate is the one person at a crossroads a player can lose to. See
 [Battles](battles.md) for how the fight itself runs.
 
 ## Duelling trainers

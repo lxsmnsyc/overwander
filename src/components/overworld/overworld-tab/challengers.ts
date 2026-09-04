@@ -26,17 +26,18 @@ import {
   getEliteBadges,
 } from '../../../data/overworld/experts';
 import Landmark from '../../../data/overworld/landmark';
-import Npc, {
-  GIOVANNI_HONOR,
-  GIOVANNI_NAME,
-  NPC_NAMES,
-  ROCKET_EXECUTIVE_HONORS,
-  ROCKET_EXECUTIVE_NAMES,
-  ROCKET_EXECUTIVE_QUOTES,
-  ROCKET_GRUNT_HONOR,
-} from '../../../data/overworld/npc';
+import { EXECUTIVE_HONORS, EXECUTIVE_QUOTES } from '../../../data/overworld/npc';
+import {
+  SYNDICATE_BOSS_HONORS,
+  SYNDICATE_BOSS_QUOTES,
+  SYNDICATE_GRUNT_HONORS,
+  SYNDICATE_GRUNT_QUOTES,
+  SYNDICATE_NAMES,
+  bossName,
+  executiveName,
+  gruntName,
+} from '../../../data/overworld/syndicate';
 import { RocketRank } from '../../../overworld/chunk-snapshot';
-import { NPC_QUOTES } from '../npc-dialog/shared';
 import type ChunkSnapshot from '../../../overworld/chunk-snapshot';
 import {
   CHAMPION_PARTY_LEVELS,
@@ -239,45 +240,51 @@ export default function challengerOf(
 
     const executive = snapshot.getRocketExecutive(cell);
     const levels = rocketPartyLevels(rank);
+    // Which of the three keeps this cell is the biome's answer, so
+    // every line below names the team standing here
+    const syndicate = snapshot.getSyndicate();
+    const team = SYNDICATE_NAMES[syndicate];
 
-    if (rank === RocketRank.Giovanni) {
+    if (rank === RocketRank.Boss) {
+      const boss = bossName(syndicate);
+
       return {
-        name: GIOVANNI_NAME,
+        name: boss,
         levels,
-        greeting: `${GIOVANNI_NAME} himself bars the way. “So you are the one. Show me what you
-          have.”`,
+        greeting: `${boss} himself bars the way. “${SYNDICATE_BOSS_QUOTES[syndicate]}”`,
         stakes: `Six of his at ${saidLevels(levels)}, each carrying two items and two abilities,
           against as many as you bring. Beat him and he leaves one of the six behind, the
           legendary among them, keeping both its abilities and the room for a second item, along
-          with a purse worth the trouble and the mark for ${AWARD_NAMES[GIOVANNI_HONOR]}. Lose and
-          you lose nothing but the fight.`,
+          with a purse worth the trouble and the mark for
+          ${AWARD_NAMES[SYNDICATE_BOSS_HONORS[syndicate]]}. Lose and you lose nothing but the
+          fight.`,
       };
     }
     if (executive != null) {
-      const name = ROCKET_EXECUTIVE_NAMES[executive];
+      const name = executiveName(syndicate, executive);
 
       return {
         name,
         levels,
-        greeting: `${name} of Team Rocket blocks the way. “${ROCKET_EXECUTIVE_QUOTES[executive]}”`,
+        greeting: `${name} of ${team} blocks the way. “${EXECUTIVE_QUOTES[executive]}”`,
         stakes: `Six of the country's best at ${saidLevels(levels)}, each carrying an item and
           two abilities, against as many as you bring. Win and they drop a purse, one of the six
           with both its abilities, whatever they were carrying, and the mark for
-          ${AWARD_NAMES[ROCKET_EXECUTIVE_HONORS[executive]]}. Lose and you lose nothing but the
+          ${AWARD_NAMES[EXECUTIVE_HONORS[executive]]}. Lose and you lose nothing but the
           fight. They will be here all window.`,
       };
     }
 
-    const name = NPC_NAMES[Npc.RocketGrunt];
+    const name = gruntName(syndicate);
 
     return {
       name,
       levels,
-      greeting: `A ${name} blocks the way. “${NPC_QUOTES[Npc.RocketGrunt]}”`,
+      greeting: `A ${name} blocks the way. “${SYNDICATE_GRUNT_QUOTES[syndicate]}”`,
       stakes: `Six of theirs at ${saidLevels(levels)} against as many as you bring. Win and the
         grunt drops a purse, one of the three they were not fighting with, and the mark for
-        ${AWARD_NAMES[ROCKET_GRUNT_HONOR]} if you do not hold it yet. Lose and you lose nothing
-        but the fight. They will be here all window.`,
+        ${AWARD_NAMES[SYNDICATE_GRUNT_HONORS[syndicate]]} if you do not hold it yet. Lose and you
+        lose nothing but the fight. They will be here all window.`,
     };
   }
   if (landmark === Landmark.Trainer) {

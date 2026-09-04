@@ -15,7 +15,7 @@ own, and beating one is kept for good.
 | **Champion**        | 3        | Beating that league's Champion          |
 | **Legend's mark**   | 2        | Beating a legend, who asks for nothing |
 | **Frontier symbol** | 14       | Taking a facility: silver for the win, gold for its second three |
-| **Team Rocket marks** | 6      | Beating a grunt, one of the four executives, or Giovanni |
+| **Syndicate marks** | 14       | Beating a grunt, an executive or the boss of Team Rocket, Team Magma or Team Aqua |
 | **Dex medal**       | 3        | Filling that region's dex                |
 
 Kanto, Johto and Hoenn keep eight gyms apiece, and their leaders share the
@@ -100,9 +100,9 @@ titles come from.
 | One of the Elite Four     | Beating that member             |
 | The Champion's other look | The Champion's own seat         |
 | A legend's other looks    | That legend's mark              |
-| Team Rocket's boss        | Beating Giovanni at a Rocket cell |
-| A Rocket executive        | Beating that executive          |
-| A Rocket grunt's uniform  | Beating any grunt               |
+| A syndicate's boss        | Beating Giovanni, Maxie or Archie |
+| A syndicate executive     | Beating that executive          |
+| A syndicate's uniform     | Beating any of that team's grunts |
 | **Professor Oak**         | Kanto's dex filled              |
 | **Professor Elm**         | Johto's dex filled              |
 | **Professor Birch**       | Hoenn's dex filled              |

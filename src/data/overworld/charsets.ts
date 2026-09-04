@@ -20,18 +20,18 @@ import {
   LEGEND_NAMES,
   LEGEND_PRIZE_CHARSETS,
 } from './experts';
-import Npc, {
-  GIOVANNI_CHARSETS,
-  GIOVANNI_HONOR,
-  GIOVANNI_NAME,
-  NPC_NAMES,
-  ROCKET_EXECUTIVES,
-  ROCKET_EXECUTIVE_CHARSETS,
-  ROCKET_EXECUTIVE_HONORS,
-  ROCKET_EXECUTIVE_NAMES,
-  ROCKET_GRUNT_HONOR,
-  npcSheets,
-} from './npc';
+import { EXECUTIVE_CHARSETS, EXECUTIVE_HONORS } from './npc';
+import {
+  SYNDICATES,
+  SYNDICATE_BOSS_CHARSETS,
+  SYNDICATE_BOSS_HONORS,
+  SYNDICATE_EXECUTIVES,
+  SYNDICATE_GRUNT_CHARSETS,
+  SYNDICATE_GRUNT_HONORS,
+  bossName,
+  executiveName,
+  gruntName,
+} from './syndicate';
 import {
   TRAINER_BASE_NAMES,
   TRAINER_CHARSETS,
@@ -162,19 +162,29 @@ function buildCharsets(): Charset[] {
       });
     }
   }
-  for (const sheet of GIOVANNI_CHARSETS) {
-    add(sheet, GIOVANNI_NAME, { kind: 'award', award: GIOVANNI_HONOR });
-  }
-  for (const executive of ROCKET_EXECUTIVES) {
-    for (const sheet of ROCKET_EXECUTIVE_CHARSETS[executive]) {
-      add(sheet, ROCKET_EXECUTIVE_NAMES[executive], {
+  // Every coat the three syndicates pay: the boss', each executive's,
+  // and the uniform the rank and file are met in
+  for (const syndicate of SYNDICATES) {
+    for (const sheet of SYNDICATE_BOSS_CHARSETS[syndicate]) {
+      add(sheet, bossName(syndicate), {
         kind: 'award',
-        award: ROCKET_EXECUTIVE_HONORS[executive],
+        award: SYNDICATE_BOSS_HONORS[syndicate],
       });
     }
-  }
-  for (const sheet of npcSheets(Npc.RocketGrunt)) {
-    add(sheet, NPC_NAMES[Npc.RocketGrunt], { kind: 'award', award: ROCKET_GRUNT_HONOR });
+    for (const executive of SYNDICATE_EXECUTIVES[syndicate]) {
+      for (const sheet of EXECUTIVE_CHARSETS[executive]) {
+        add(sheet, executiveName(syndicate, executive), {
+          kind: 'award',
+          award: EXECUTIVE_HONORS[executive],
+        });
+      }
+    }
+    for (const sheet of SYNDICATE_GRUNT_CHARSETS[syndicate]) {
+      add(sheet, gruntName(syndicate), {
+        kind: 'award',
+        award: SYNDICATE_GRUNT_HONORS[syndicate],
+      });
+    }
   }
   for (const { sheet, name, awards } of AWARDED_CHARSETS) {
     add(

@@ -22,14 +22,14 @@ import {
   getLairResidents,
   pickLairSpecies,
 } from '../data/overworld/lair';
-import Npc, {
-  GIOVANNI_CHARSETS,
-  NPCS,
-  ROCKET_EXECUTIVES,
-  ROCKET_EXECUTIVE_CHARSETS,
-  type RocketExecutive,
-  npcSheets,
-} from '../data/overworld/npc';
+import Npc, { EXECUTIVE_CHARSETS, type Executive, NPCS, npcSheets } from '../data/overworld/npc';
+import {
+  SYNDICATE_BOSS_CHARSETS,
+  SYNDICATE_EXECUTIVES,
+  SYNDICATE_GRUNT_CHARSETS,
+  type Syndicate,
+  getSyndicate,
+} from '../data/overworld/syndicate';
 import {
   BIOME_ELITE_MEMBERS,
   BIOME_GYM_LEADERS,
@@ -190,7 +190,7 @@ export const ROCKET_PARTY_SIZE = 6;
 const enum RocketRank {
   Grunt = 0,
   Executive = 1,
-  Giovanni = 2,
+  Boss = 2,
 }
 
 export { RocketRank };
@@ -886,14 +886,15 @@ export default class ChunkSnapshot {
 
           dress(cell, trainer == null ? npcSheets(Npc.Trainer) : TRAINER_CHARSETS[trainer]);
         } else if (landmark === Landmark.TeamRocket) {
+          const syndicate = this.getSyndicate();
           const executive = this.getRocketExecutive(cell);
 
           if (this.isRocketBoss(cell)) {
-            dress(cell, GIOVANNI_CHARSETS);
+            dress(cell, SYNDICATE_BOSS_CHARSETS[syndicate]);
           } else if (executive == null) {
-            dress(cell, npcSheets(Npc.RocketGrunt));
+            dress(cell, SYNDICATE_GRUNT_CHARSETS[syndicate]);
           } else {
-            dress(cell, ROCKET_EXECUTIVE_CHARSETS[executive]);
+            dress(cell, EXECUTIVE_CHARSETS[executive]);
           }
         } else if (landmark === Landmark.GymLeader) {
           const leader = this.getGymLeader(cell);
@@ -945,29 +946,39 @@ export default class ChunkSnapshot {
     const rolled = new AleaRNG(`${this.key}${this.npcTimestamp}boss${cell}`).random();
 
     if (rolled < GIOVANNI_CHANCE) {
-      return RocketRank.Giovanni;
+      return RocketRank.Boss;
     }
     return rolled < GIOVANNI_CHANCE + EXECUTIVE_CHANCE ? RocketRank.Executive : RocketRank.Grunt;
   }
 
   /**
-   * Which of the four executives it is, once the rank says one is
-   * standing there. Rolled apart from the rank, so adding a fifth
-   * does not move anybody's odds of meeting one at all
+   * Which organisation keeps the crime landmark in this chunk. A
+   * fixture of the biome rather than a roll: the coast is Team
+   * Aqua's every window, and the volcanoes are Team Magma's
    */
-  getRocketExecutive(cell: number): RocketExecutive | null {
+  getSyndicate(): Syndicate {
+    return getSyndicate(this.chunk.biome);
+  }
+
+  /**
+   * Which of that team's executives it is, once the rank says one is
+   * standing there. Rolled apart from the rank, so a team with two
+   * of them is no likelier to field one than a team with four
+   */
+  getRocketExecutive(cell: number): Executive | null {
     if (this.getRocketRank(cell) !== RocketRank.Executive) {
       return null;
     }
 
     const rng = new AleaRNG(`${this.key}${this.npcTimestamp}executive${cell}`);
+    const roster = SYNDICATE_EXECUTIVES[this.getSyndicate()];
 
-    return ROCKET_EXECUTIVES[Math.floor(rng.random() * ROCKET_EXECUTIVES.length)] ?? null;
+    return roster[Math.floor(rng.random() * roster.length)] ?? null;
   }
 
   /** Whether this Team Rocket stop rolled the boss himself */
   isRocketBoss(cell: number): boolean {
-    return this.getRocketRank(cell) === RocketRank.Giovanni;
+    return this.getRocketRank(cell) === RocketRank.Boss;
   }
 
   /**
@@ -1033,7 +1044,7 @@ export default class ChunkSnapshot {
           const [commons, uncommons, rares] = fielded;
           const rank = this.getRocketRank(cell);
 
-          if (rank === RocketRank.Giovanni) {
+          if (rank === RocketRank.Boss) {
             const lairs = getBiomeLairs(this.chunk.biome);
             // Any lair the world stages, never a mythical's: nothing
             // but its relic ever calls one of those out

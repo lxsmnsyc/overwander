@@ -219,14 +219,13 @@ import { isPortalKey } from '../src/data/items/portal-key';
 import { isHeartScale } from '../src/data/items/heart-scale';
 import Landmark, { LANDMARKS, LANDMARK_NAMES } from '../src/data/overworld/landmark';
 import Npc, {
-  GIOVANNI_CHARSETS,
+  EXECUTIVE_CHARSETS,
+  EXECUTIVE_HONORS,
+  EXECUTIVE_NAMES,
+  EXECUTIVE_QUOTES,
   NPCS,
   NPC_NAMES,
   REMINDER_FEE,
-  ROCKET_EXECUTIVES,
-  ROCKET_EXECUTIVE_CHARSETS,
-  ROCKET_EXECUTIVE_NAMES,
-  ROCKET_EXECUTIVE_QUOTES,
   getRecallableMoves,
   npcSheet,
   npcSheets,
@@ -359,6 +358,24 @@ import {
 import Regions from '../src/data/ids/regions';
 import { FREE_CHARSETS } from '../src/data/overworld/charsets';
 import { counterParty, rentalOffer, rentedHand } from '../src/overworld/stop';
+import {
+  SYNDICATES,
+  SYNDICATE_BOSS_CHARSETS,
+  SYNDICATE_BOSS_HONORS,
+  SYNDICATE_BOSS_NAMES,
+  SYNDICATE_BOSS_QUOTES,
+  SYNDICATE_EXECUTIVES,
+  SYNDICATE_GRUNT_CHARSETS,
+  SYNDICATE_GRUNT_HONORS,
+  SYNDICATE_GRUNT_QUOTES,
+  SYNDICATE_HONORS,
+  SYNDICATE_NAMES,
+  Syndicate,
+  bossName,
+  executiveName,
+  getSyndicate,
+  gruntName,
+} from '../src/data/overworld/syndicate';
 import { BEST_MOVE_COUNT, BEST_MOVE_OVERRIDES, getBestMoves } from '../src/data/species/best-moves';
 import { getRegionSpan, getSpeciesRegion } from '../src/data/species/regions';
 import {
@@ -4830,23 +4847,76 @@ describe('what an expert hands its party', () => {
   });
 });
 
-describe('Team Rocket', () => {
-  it('gives every executive a name, a quote and a shipped wardrobe', () => {
-    for (const executive of ROCKET_EXECUTIVES) {
-      expect(ROCKET_EXECUTIVE_NAMES[executive].length).toBeGreaterThan(0);
-      expect(ROCKET_EXECUTIVE_QUOTES[executive].length).toBeGreaterThan(0);
-      expect(ROCKET_EXECUTIVE_CHARSETS[executive].length).toBeGreaterThan(0);
+describe('the syndicates', () => {
+  it('gives every team a boss, a uniform and executives of its own', () => {
+    const marks = new Set<Awards>();
+    const worn = new Set<string>();
 
-      for (const sheet of ROCKET_EXECUTIVE_CHARSETS[executive]) {
+    for (const syndicate of SYNDICATES) {
+      const sheets = [
+        ...SYNDICATE_BOSS_CHARSETS[syndicate],
+        ...SYNDICATE_GRUNT_CHARSETS[syndicate],
+        ...SYNDICATE_EXECUTIVES[syndicate].flatMap((one) => EXECUTIVE_CHARSETS[one]),
+      ];
+      const named = SYNDICATE_NAMES[syndicate];
+
+      expect(named.length).toBeGreaterThan(0);
+      expect(SYNDICATE_BOSS_QUOTES[syndicate].length).toBeGreaterThan(0);
+      expect(SYNDICATE_GRUNT_QUOTES[syndicate].length).toBeGreaterThan(0);
+      for (const executive of SYNDICATE_EXECUTIVES[syndicate]) {
+        expect(EXECUTIVE_QUOTES[executive].length, EXECUTIVE_NAMES[executive]).toBeGreaterThan(0);
+      }
+      expect(SYNDICATE_EXECUTIVES[syndicate].length).toBeGreaterThan(0);
+
+      // Every coat is shipped, and nobody in the world wears somebody
+      // else's: a coat is what says which team put you down
+      for (const sheet of sheets) {
         expect(existsSync(`public/sprites/overworld/${sheet}/image.png`), sheet).toBe(true);
         expect(existsSync(`public/sprites/overworld/${sheet}/data.json`), sheet).toBe(true);
+        expect(worn.has(sheet), sheet).toBe(false);
+        worn.add(sheet);
+      }
+
+      // And every mark is its own, so a shelf says which team as well
+      // as which rank
+      for (const award of [
+        SYNDICATE_GRUNT_HONORS[syndicate],
+        ...SYNDICATE_EXECUTIVES[syndicate].map((one) => EXECUTIVE_HONORS[one]),
+        SYNDICATE_BOSS_HONORS[syndicate],
+      ]) {
+        expect(marks.has(award), AWARD_NAMES[award]).toBe(false);
+        marks.add(award);
+      }
+
+      // A person is introduced team first, then rank, then name
+      expect(bossName(syndicate).startsWith(named)).toBe(true);
+      expect(bossName(syndicate).endsWith(SYNDICATE_BOSS_NAMES[syndicate])).toBe(true);
+      expect(gruntName(syndicate)).toBe(`${named} Grunt`);
+      for (const executive of SYNDICATE_EXECUTIVES[syndicate]) {
+        expect(executiveName(syndicate, executive).startsWith(named)).toBe(true);
+        expect(executiveName(syndicate, executive).endsWith(EXECUTIVE_NAMES[executive])).toBe(true);
       }
     }
-    // Four of them, each in a coat nobody else wears
-    const worn = ROCKET_EXECUTIVES.flatMap((one) => ROCKET_EXECUTIVE_CHARSETS[one]);
+    expect([...marks]).toEqual(SYNDICATE_HONORS);
+  });
 
-    expect(new Set(worn).size).toBe(worn.length);
-    expect(new Set(worn).has(GIOVANNI_CHARSETS[0])).toBe(false);
+  it('gives every biome exactly one team, and leaves the rest to Rocket', () => {
+    const seen = new Map<Syndicate, number>();
+
+    for (const biome of WILD_BIOMES) {
+      const syndicate = getSyndicate(biome);
+
+      seen.set(syndicate, (seen.get(syndicate) ?? 0) + 1);
+    }
+
+    // All three are somewhere, and the water and the fire are the two
+    // that were claimed
+    for (const syndicate of SYNDICATES) {
+      expect(seen.get(syndicate) ?? 0, SYNDICATE_NAMES[syndicate]).toBeGreaterThan(0);
+    }
+    expect(getSyndicate(Biome.Ocean)).toBe(Syndicate.Aqua);
+    expect(getSyndicate(Biome.Volcano)).toBe(Syndicate.Magma);
+    expect(getSyndicate(Biome.Grassland)).toBe(Syndicate.Rocket);
   });
 });
 

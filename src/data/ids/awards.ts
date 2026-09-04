@@ -81,6 +81,14 @@ const enum Awards {
   GoldSpiritsSymbol = 61,
   SilverTacticsSymbol = 62,
   GoldTacticsSymbol = 63,
+  MagmaGruntDefeated = 64,
+  TabithaDefeated = 65,
+  CourtneyDefeated = 66,
+  MaxieDefeated = 67,
+  AquaGruntDefeated = 68,
+  MattDefeated = 69,
+  ShellyDefeated = 70,
+  ArchieDefeated = 71,
 }
 
 export default Awards;
@@ -150,6 +158,14 @@ export const AWARD_NAMES: Record<Awards, string> = {
   [Awards.GoldSpiritsSymbol]: 'Gold Spirits Symbol',
   [Awards.SilverTacticsSymbol]: 'Silver Tactics Symbol',
   [Awards.GoldTacticsSymbol]: 'Gold Tactics Symbol',
+  [Awards.MagmaGruntDefeated]: 'Team Magma Repelled',
+  [Awards.TabithaDefeated]: 'Tabitha Defeated',
+  [Awards.CourtneyDefeated]: 'Courtney Defeated',
+  [Awards.MaxieDefeated]: 'Maxie Defeated',
+  [Awards.AquaGruntDefeated]: 'Team Aqua Repelled',
+  [Awards.MattDefeated]: 'Matt Defeated',
+  [Awards.ShellyDefeated]: 'Shelly Defeated',
+  [Awards.ArchieDefeated]: 'Archie Defeated',
 };
 
 /**

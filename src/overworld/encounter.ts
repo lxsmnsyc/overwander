@@ -52,7 +52,7 @@ export const enum EncounterType {
    */
   Fateful = 3,
   /**
-   * Taken off a beaten Team Rocket grunt: fought alone, a commoner at
+   * Taken off a beaten syndicate grunt: fought alone, a commoner at
    * a fixed low level, and shadowed. Not a raid, and a record calling
    * it one would say the wrong thing about where it came from
    */
@@ -105,7 +105,7 @@ export const ENCOUNTER_TYPE_NAMES: Record<EncounterType, string> = {
   [EncounterType.Hatched]: 'Hatched',
   [EncounterType.LegendaryRaid]: 'Legendary Raid',
   [EncounterType.Fateful]: 'Fateful encounter',
-  [EncounterType.Rocket]: 'Team Rocket',
+  [EncounterType.Rocket]: 'Taken from a syndicate',
   [EncounterType.ShadowRaid]: 'Shadow Raid',
   [EncounterType.MythicalRaid]: 'Mythical Raid',
   [EncounterType.Revived]: 'Revived from a fossil',

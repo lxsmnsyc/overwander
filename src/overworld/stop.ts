@@ -18,12 +18,8 @@ import { getExpertHeldItems } from '../data/items/expert-loadout';
 import { getBestMoves } from '../data/species/best-moves';
 import Abilities from '../data/ids/abilities';
 import Landmark from '../data/overworld/landmark';
-import Npc, {
-  GIOVANNI_NAME,
-  NPC_NAMES,
-  ROCKET_EXECUTIVE_NAMES,
-  npcSheet,
-} from '../data/overworld/npc';
+import Npc, { npcSheet } from '../data/overworld/npc';
+import { bossName, executiveName, gruntName } from '../data/overworld/syndicate';
 import {
   TRAINER_NAMES,
   TYPE_TRAINER_LEVELS,
@@ -104,7 +100,7 @@ export const GIOVANNI_PARTY_LEVELS: LevelBand = CHAMPION_PARTY_LEVELS;
 
 /** The band a stop's party fights in, by whose party it is */
 export function rocketPartyLevels(rank: RocketRank): LevelBand {
-  if (rank === RocketRank.Giovanni) {
+  if (rank === RocketRank.Boss) {
     return GIOVANNI_PARTY_LEVELS;
   }
   return rank === RocketRank.Executive ? EXECUTIVE_PARTY_LEVELS : ROCKET_PARTY_LEVELS;
@@ -171,14 +167,15 @@ export function stopChallenger(
     name == null ? null : { name, sprite };
 
   if (landmark === Landmark.TeamRocket) {
+    // Kept on the battle row, so a fight read back afterwards still
+    // names the team that was standing there
+    const syndicate = snapshot.getSyndicate();
     const executive = snapshot.getRocketExecutive(cell);
 
     if (snapshot.isRocketBoss(cell)) {
-      return named(GIOVANNI_NAME);
+      return named(bossName(syndicate));
     }
-    return named(
-      executive == null ? NPC_NAMES[Npc.RocketGrunt] : ROCKET_EXECUTIVE_NAMES[executive],
-    );
+    return named(executive == null ? gruntName(syndicate) : executiveName(syndicate, executive));
   }
   if (landmark === Landmark.Trainer) {
     const trainer = snapshot.getTrainerClass(cell);
@@ -271,7 +268,7 @@ export function stopGoldBand(
   if (landmark === Landmark.Trainer) {
     return trainer != null && isAceTrainer(trainer) ? ACE_TRAINER_GOLD : TYPE_TRAINER_GOLD;
   }
-  if (rank === RocketRank.Giovanni) {
+  if (rank === RocketRank.Boss) {
     return GIOVANNI_GOLD;
   }
   return rank === RocketRank.Executive ? EXECUTIVE_GOLD : ROCKET_GRUNT_GOLD;
@@ -581,7 +578,7 @@ export function stopOutfit(
     return FRONTIER_OUTFIT;
   }
   if (landmark === Landmark.TeamRocket) {
-    if (rank === RocketRank.Giovanni) {
+    if (rank === RocketRank.Boss) {
       return CHAMPION_OUTFIT;
     }
     return rank === RocketRank.Executive ? ELITE_OUTFIT : PLAIN_OUTFIT;

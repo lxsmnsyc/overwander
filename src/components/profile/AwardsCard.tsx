@@ -26,15 +26,16 @@ import Awards, {
   KANTO_BADGES,
   KANTO_HONORS,
 } from '../../data/ids/awards';
-import Npc, {
-  GIOVANNI_CHARSETS,
-  GIOVANNI_HONOR,
-  ROCKET_EXECUTIVES,
-  ROCKET_EXECUTIVE_CHARSETS,
-  ROCKET_EXECUTIVE_HONORS,
-  ROCKET_GRUNT_HONOR,
-  npcSheet,
-} from '../../data/overworld/npc';
+import Npc, { EXECUTIVE_CHARSETS, EXECUTIVE_HONORS } from '../../data/overworld/npc';
+import {
+  SYNDICATES,
+  SYNDICATE_BOSS_CHARSETS,
+  SYNDICATE_BOSS_HONORS,
+  SYNDICATE_EXECUTIVES,
+  SYNDICATE_GRUNT_CHARSETS,
+  SYNDICATE_GRUNT_HONORS,
+  SYNDICATE_HONORS,
+} from '../../data/overworld/syndicate';
 import {
   CHAMPION_TITLES,
   ELITE_MEMBERS,
@@ -94,12 +95,14 @@ const PERSON_AWARD_SHEETS: Partial<Record<Awards, string>> = Object.fromEntries(
     ELITE_MEMBER_CHARSETS[member][0],
   ]),
   ...LEGENDS.map((legend): [Awards, string] => [LEGEND_HONORS[legend], LEGEND_CHARSETS[legend][0]]),
-  [GIOVANNI_HONOR, GIOVANNI_CHARSETS[0]],
-  ...ROCKET_EXECUTIVES.map((executive): [Awards, string] => [
-    ROCKET_EXECUTIVE_HONORS[executive],
-    ROCKET_EXECUTIVE_CHARSETS[executive][0],
+  ...SYNDICATES.flatMap((syndicate): [Awards, string][] => [
+    [SYNDICATE_BOSS_HONORS[syndicate], SYNDICATE_BOSS_CHARSETS[syndicate][0]],
+    [SYNDICATE_GRUNT_HONORS[syndicate], SYNDICATE_GRUNT_CHARSETS[syndicate][0]],
+    ...SYNDICATE_EXECUTIVES[syndicate].map((executive): [Awards, string] => [
+      EXECUTIVE_HONORS[executive],
+      EXECUTIVE_CHARSETS[executive][0],
+    ]),
   ]),
-  [ROCKET_GRUNT_HONOR, npcSheet(Npc.RocketGrunt)],
 ]);
 
 /** The titles that read as a star rather than as a letter */
@@ -176,6 +179,14 @@ const AWARD_COLORS: Record<Awards, string> = {
   [Awards.GoldSpiritsSymbol]: '#e0b64f',
   [Awards.SilverTacticsSymbol]: '#b8bcc4',
   [Awards.GoldTacticsSymbol]: '#e0b64f',
+  [Awards.MagmaGruntDefeated]: '#8c3a2a',
+  [Awards.TabithaDefeated]: '#b0553c',
+  [Awards.CourtneyDefeated]: '#c96b5a',
+  [Awards.MaxieDefeated]: '#a83a2a',
+  [Awards.AquaGruntDefeated]: '#2a5a8c',
+  [Awards.MattDefeated]: '#3c7ab0',
+  [Awards.ShellyDefeated]: '#5a95c9',
+  [Awards.ArchieDefeated]: '#2a4a9e',
 };
 
 /**
@@ -201,9 +212,7 @@ const SHELF: Awards[] = [
     Awards.HoennChampion,
     Awards.HoennDexMedal,
     ...FRONTIER_SYMBOLS,
-    ROCKET_GRUNT_HONOR,
-    ...ROCKET_EXECUTIVES.map((executive) => ROCKET_EXECUTIVE_HONORS[executive]),
-    GIOVANNI_HONOR,
+    ...SYNDICATE_HONORS,
     ...LEGENDS.map((legend) => LEGEND_HONORS[legend]),
   ]),
 ];

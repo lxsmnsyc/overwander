@@ -33,11 +33,8 @@ import {
 import { encounterKey } from '../overworld/safari';
 import createOverworld from '../overworld/setup';
 import Landmark from '../data/overworld/landmark';
-import Npc, {
-  GIOVANNI_HONOR,
-  ROCKET_EXECUTIVE_HONORS,
-  ROCKET_GRUNT_HONOR,
-} from '../data/overworld/npc';
+import Npc, { EXECUTIVE_HONORS } from '../data/overworld/npc';
+import { SYNDICATE_BOSS_HONORS, SYNDICATE_GRUNT_HONORS } from '../data/overworld/syndicate';
 import { trainerLevels } from '../data/overworld/trainers';
 import type Awards from '../data/ids/awards';
 import type { CatchSnapshot } from '../auth/catch-snapshot';
@@ -750,15 +747,19 @@ function awardFor(
     return gold ? pair[1] : pair[0];
   }
   if (landmark === Landmark.TeamRocket) {
-    if (snapshot.getRocketRank(cell) === RocketRank.Giovanni) {
-      return GIOVANNI_HONOR;
+    // Which of the three teams keeps this cell is the biome's, so the
+    // mark is theirs rather than Team Rocket's everywhere
+    const syndicate = snapshot.getSyndicate();
+
+    if (snapshot.getRocketRank(cell) === RocketRank.Boss) {
+      return SYNDICATE_BOSS_HONORS[syndicate];
     }
 
     const executive = snapshot.getRocketExecutive(cell);
 
     // The rank and file share one mark: a grunt is a uniform rather
     // than a person, and the coat it pays is that uniform
-    return executive == null ? ROCKET_GRUNT_HONOR : ROCKET_EXECUTIVE_HONORS[executive];
+    return executive == null ? SYNDICATE_GRUNT_HONORS[syndicate] : EXECUTIVE_HONORS[executive];
   }
   if (landmark === Landmark.GymLeader) {
     const leader = snapshot.getGymLeader(cell);

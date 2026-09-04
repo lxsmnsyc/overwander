@@ -173,6 +173,8 @@ const FRONTIER_GREETINGS: Record<FrontierBrain, string> = {
     'Nothing here is yours and nothing here is mine. Pick three and let us see.',
   [FrontierBrain.Anabel]:
     'No tricks up here. My three against your three. Begin when you are ready.',
+  [FrontierBrain.Spenser]:
+    'In my palace nobody takes orders. Bring three whose hearts you already know.',
 };
 
 /**
@@ -192,6 +194,8 @@ const FRONTIER_RULE_TERMS: Record<FrontierRule, string> = {
   [FrontierRule.Rented]: `The house lends both sides: pick 3 of the ${FRONTIER_RENTAL_OFFER} on
      the table and leave your own box alone. Nothing of yours is on the field, so nothing of
      yours comes off it. `,
+  [FrontierRule.Natured]: `Nobody fights on orders: every pokemon here picks by its nature, so a
+     bold one guards and a brave one swings whatever the field asks for. `,
 };
 
 /** What a Brain's house asks to see: the crown of its region */

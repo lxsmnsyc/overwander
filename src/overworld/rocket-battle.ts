@@ -42,6 +42,9 @@ export function createTrainerBattle(
     // The Arena is the one house that stops a fight rather than
     // waiting for it to end
     timeLimit: rules === FrontierRule.Timed ? FRONTIER_TIME_LIMIT : 0,
+    // And the Palace, where nobody is fighting on orders: the units
+    // pick by temperament instead
+    byNature: rules === FrontierRule.Natured,
   });
 
   if (mode === BattleModes.Npc) {

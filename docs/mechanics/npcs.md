@@ -281,6 +281,19 @@ with, so nothing of yours is hurt, spent or fed candy for it. The crate is every
 species an expert could field, from every region, so the Factory gets harder
 with each generation the game registers rather than easier.
 
+**Spenser** keeps the Battle Palace, where nobody fights on orders. Every pokemon
+on the field, his and yours, picks its moves by its own **nature**: one whose
+nature raises Attack, Special Attack or Speed leans towards attacking, one whose
+nature raises a defence leans towards status and setting up, and the five neutral
+natures have no leaning and fight as they always do. A nature decides who is
+aimed at as well: everywhere else a pokemon concentrates fire on the biggest
+threat on the field, but an attacking nature goes the other way and picks off
+whatever is nearest to going down, while a defensive one leans harder into the
+threat. A leaning is a preference and not a rule, so nobody walks past a
+finishing blow and nobody casts something that would do nothing. It makes the
+Palace the one house where which three you bring is a question of who they are
+rather than of what they cover.
+
 **Anabel** keeps the Battle Tower, and asks nothing at all: three of hers against
 three of yours, under the ordinary rules. She is the house the other four are
 read against, and she brings the hardest hand in the game to make up for having

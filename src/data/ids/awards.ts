@@ -77,6 +77,8 @@ const enum Awards {
   GoldKnowledgeSymbol = 57,
   SilverAbilitySymbol = 58,
   GoldAbilitySymbol = 59,
+  SilverSpiritsSymbol = 60,
+  GoldSpiritsSymbol = 61,
 }
 
 export default Awards;
@@ -142,6 +144,8 @@ export const AWARD_NAMES: Record<Awards, string> = {
   [Awards.GoldKnowledgeSymbol]: 'Gold Knowledge Symbol',
   [Awards.SilverAbilitySymbol]: 'Silver Ability Symbol',
   [Awards.GoldAbilitySymbol]: 'Gold Ability Symbol',
+  [Awards.SilverSpiritsSymbol]: 'Silver Spirits Symbol',
+  [Awards.GoldSpiritsSymbol]: 'Gold Spirits Symbol',
 };
 
 /**
@@ -240,4 +244,6 @@ export const FRONTIER_SYMBOLS: Awards[] = [
   Awards.GoldKnowledgeSymbol,
   Awards.SilverAbilitySymbol,
   Awards.GoldAbilitySymbol,
+  Awards.SilverSpiritsSymbol,
+  Awards.GoldSpiritsSymbol,
 ];

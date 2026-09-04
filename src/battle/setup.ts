@@ -41,6 +41,7 @@ export default function createBattle(
     limits?: number;
     biome?: Biome;
     timeLimit?: number;
+    byNature?: boolean;
   },
 ): Battle {
   const battle = new Battle(
@@ -72,7 +73,7 @@ export default function createBattle(
   // side left is a field somebody wanted to look at rather than a
   // fight that is over
   if (battle.mode !== BattleModes.Demo) {
-    setupAI(battle);
+    setupAI(battle, options?.byNature === true);
     // Last, so the scan sees a tick's actions already settled
     setupOutcomeMechanics(battle);
   }

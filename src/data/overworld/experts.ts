@@ -961,8 +961,8 @@ export function getEliteMemberRoster(member: EliteMember): Species[] {
  * **rule**. A gym is a type, an elite is a type with a widener, a
  * champion is a fixed six; a Brain is a fight held under the house's
  * own terms, and the party is only what those terms are demonstrated
- * with. Two facilities are open so far, and the other five are the
- * rules that cost more than a party does
+ * with. Six of the seven are open; the Dome is the one still shut,
+ * since its rule is a bracket rather than a term
  */
 const enum FrontierBrain {
   Brandon = 0,
@@ -970,6 +970,7 @@ const enum FrontierBrain {
   Lucy = 2,
   Noland = 3,
   Anabel = 4,
+  Spenser = 5,
 }
 
 export { FrontierBrain };
@@ -980,6 +981,7 @@ export const FRONTIER_BRAINS: FrontierBrain[] = [
   FrontierBrain.Lucy,
   FrontierBrain.Noland,
   FrontierBrain.Anabel,
+  FrontierBrain.Spenser,
 ];
 
 export const FRONTIER_BRAIN_NAMES: Record<FrontierBrain, string> = {
@@ -988,6 +990,7 @@ export const FRONTIER_BRAIN_NAMES: Record<FrontierBrain, string> = {
   [FrontierBrain.Lucy]: 'Lucy',
   [FrontierBrain.Noland]: 'Noland',
   [FrontierBrain.Anabel]: 'Anabel',
+  [FrontierBrain.Spenser]: 'Spenser',
 };
 
 /** The house each of them keeps, which is what the rule is named for */
@@ -997,6 +1000,7 @@ export const FRONTIER_FACILITY_NAMES: Record<FrontierBrain, string> = {
   [FrontierBrain.Lucy]: 'Battle Pike',
   [FrontierBrain.Noland]: 'Battle Factory',
   [FrontierBrain.Anabel]: 'Battle Tower',
+  [FrontierBrain.Spenser]: 'Battle Palace',
 };
 
 export const FRONTIER_BRAIN_CHARSETS: Record<FrontierBrain, string[]> = {
@@ -1005,6 +1009,7 @@ export const FRONTIER_BRAIN_CHARSETS: Record<FrontierBrain, string[]> = {
   [FrontierBrain.Lucy]: ['characters/rse/lucy'],
   [FrontierBrain.Noland]: ['characters/rse/noland'],
   [FrontierBrain.Anabel]: ['characters/rse/anabel'],
+  [FrontierBrain.Spenser]: ['characters/rse/spenser'],
 };
 
 /**
@@ -1021,6 +1026,7 @@ export const FRONTIER_BRAIN_SYMBOLS: Record<FrontierBrain, [silver: Awards, gold
   [FrontierBrain.Lucy]: [Awards.SilverLuckSymbol, Awards.GoldLuckSymbol],
   [FrontierBrain.Noland]: [Awards.SilverKnowledgeSymbol, Awards.GoldKnowledgeSymbol],
   [FrontierBrain.Anabel]: [Awards.SilverAbilitySymbol, Awards.GoldAbilitySymbol],
+  [FrontierBrain.Spenser]: [Awards.SilverSpiritsSymbol, Awards.GoldSpiritsSymbol],
 };
 
 /**
@@ -1044,6 +1050,9 @@ export const FRONTIER_BRAIN_PARTIES: Record<FrontierBrain, Species[]> = {
   // Entei among them, which is what a house with no rule has instead
   // of one
   [FrontierBrain.Anabel]: [Species.Alakazam, Species.Entei, Species.Snorlax],
+  // Three that read as three different temperaments, which is what
+  // the Palace is asking about
+  [FrontierBrain.Spenser]: [Species.Crobat, Species.Slaking, Species.Lapras],
 };
 
 /**
@@ -1063,6 +1072,7 @@ export const FRONTIER_BRAIN_GOLD_PARTIES: Record<FrontierBrain, Species[]> = {
   [FrontierBrain.Lucy]: [Species.Seviper, Species.Steelix, Species.Gyarados],
   [FrontierBrain.Noland]: [],
   [FrontierBrain.Anabel]: [Species.Raikou, Species.Snorlax, Species.Latios],
+  [FrontierBrain.Spenser]: [Species.Arcanine, Species.Slaking, Species.Suicune],
 };
 
 /**
@@ -1114,6 +1124,13 @@ export const enum FrontierRule {
    * with three pokemon they have never met
    */
   Rented = 4,
+  /**
+   * The Palace, fought on temperament. Every pokemon on the field
+   * picks by its own nature rather than on the merits of the move,
+   * so which three are brought is a question of who they are and not
+   * of what they cover
+   */
+  Natured = 5,
 }
 
 export const FRONTIER_BRAIN_RULES: Record<FrontierBrain, FrontierRule> = {
@@ -1124,6 +1141,7 @@ export const FRONTIER_BRAIN_RULES: Record<FrontierBrain, FrontierRule> = {
   // The Tower asks nothing, which is the point of it: it is the
   // fight the other four are read against
   [FrontierBrain.Anabel]: FrontierRule.None,
+  [FrontierBrain.Spenser]: FrontierRule.Natured,
 };
 
 /**
@@ -1146,6 +1164,7 @@ export const FRONTIER_BRAIN_TITLES: Record<FrontierBrain, Awards> = {
   [FrontierBrain.Lucy]: Awards.HoennChampion,
   [FrontierBrain.Noland]: Awards.HoennChampion,
   [FrontierBrain.Anabel]: Awards.HoennChampion,
+  [FrontierBrain.Spenser]: Awards.HoennChampion,
 };
 
 /**

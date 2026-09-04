@@ -19,6 +19,7 @@ import {
 import Awards, {
   AWARD_NAMES,
   HOENN_BADGES,
+  HOENN_HONORS,
   JOHTO_BADGES,
   JOHTO_HONORS,
   KANTO_BADGES,
@@ -154,6 +155,10 @@ const AWARD_COLORS: Record<Awards, string> = {
   [Awards.MindBadge]: '#c96fa8',
   [Awards.RainBadge]: '#4a8fd0',
   [Awards.HoennDexMedal]: '#3f9e6a',
+  [Awards.SidneyDefeated]: '#5c4f56',
+  [Awards.PhoebeDefeated]: '#8f6fb8',
+  [Awards.GlaciaDefeated]: '#9fd7e8',
+  [Awards.DrakeDefeated]: '#c9603c',
 };
 
 /**
@@ -175,6 +180,7 @@ const SHELF: Awards[] = [
     Awards.JohtoChampion,
     Awards.JohtoDexMedal,
     ...HOENN_BADGES,
+    ...HOENN_HONORS,
     Awards.HoennDexMedal,
     ROCKET_GRUNT_HONOR,
     ...ROCKET_EXECUTIVES.map((executive) => ROCKET_EXECUTIVE_HONORS[executive]),

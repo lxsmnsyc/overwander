@@ -290,6 +290,7 @@ import { registerSpecies as registerSpeciesData } from '../src/data/species/__cr
 import Awards, {
   AWARD_NAMES,
   HOENN_BADGES,
+  HOENN_HONORS,
   JOHTO_BADGES,
   JOHTO_HONORS,
   KANTO_BADGES,
@@ -4868,13 +4869,13 @@ describe('type experts', () => {
 
   it('gives every elite a mark and the champion a title', () => {
     const honors = ELITE_MEMBERS.map((member) => ELITE_MEMBER_HONORS[member]);
-    const marks = new Set([...KANTO_HONORS, ...JOHTO_HONORS]);
+    const marks = new Set([...KANTO_HONORS, ...JOHTO_HONORS, ...HOENN_HONORS]);
 
-    // Eight seats between two leagues, four apiece: Bruno keeps one in
-    // each, and no mark is shared between them
+    // Twelve seats between three leagues, four apiece: Bruno keeps one
+    // in each of the first two, and no mark is shared between them
     expect(new Set(honors).size).toBe(marks.size);
     expect(honors.every((honor) => marks.has(honor))).toBe(true);
-    expect(marks.size).toBe(KANTO_HONORS.length + JOHTO_HONORS.length);
+    expect(marks.size).toBe(KANTO_HONORS.length + JOHTO_HONORS.length + HOENN_HONORS.length);
 
     for (const member of ELITE_MEMBERS) {
       expect(ELITE_MEMBER_NAMES[member].length).toBeGreaterThan(0);
@@ -4894,6 +4895,7 @@ describe('type experts', () => {
       ...HOENN_BADGES,
       ...KANTO_HONORS,
       ...JOHTO_HONORS,
+      ...HOENN_HONORS,
       Awards.KantoChampion,
     ]) {
       expect(AWARD_NAMES[award].length).toBeGreaterThan(0);
@@ -5010,12 +5012,34 @@ describe('type experts', () => {
     expect(ELITE_MEMBER_CHARSETS[EliteMember.JohtoBruno]).toEqual(['characters/hgss/bruno']);
 
     // And every other seat asks for exactly its own league's gyms
+    const leagues = [
+      [KANTO_HONORS, KANTO_BADGES],
+      [JOHTO_HONORS, JOHTO_BADGES],
+      [HOENN_HONORS, HOENN_BADGES],
+    ] as const;
+
     for (const member of ELITE_MEMBERS) {
       const honor = ELITE_MEMBER_HONORS[member];
-      const asked = KANTO_HONORS.includes(honor) ? KANTO_BADGES : JOHTO_BADGES;
+      const league = leagues.find(([marked]) => marked.includes(honor));
 
-      expect(getEliteBadges(member), ELITE_MEMBER_NAMES[member]).toEqual(asked);
+      expect(league, ELITE_MEMBER_NAMES[member]).toBeDefined();
+      expect(getEliteBadges(member), ELITE_MEMBER_NAMES[member]).toEqual(league?.[1]);
     }
+  });
+
+  it('seats Hoenn’s four on Hoenn’s badges, with no crown above them', () => {
+    for (const member of [
+      EliteMember.Sidney,
+      EliteMember.Phoebe,
+      EliteMember.Glacia,
+      EliteMember.Drake,
+    ]) {
+      expect(HOENN_HONORS).toContain(ELITE_MEMBER_HONORS[member]);
+      expect(getEliteBadges(member), ELITE_MEMBER_NAMES[member]).toEqual(HOENN_BADGES);
+    }
+    // The region's league stops there for now: no champion asks for
+    // these four marks the way the other two leagues' do
+    expect(CHAMPIONS.map((champion) => CHAMPION_HONORS[champion])).not.toContainEqual(HOENN_HONORS);
   });
 
   it('gives every elite a signature of their own kind', () => {

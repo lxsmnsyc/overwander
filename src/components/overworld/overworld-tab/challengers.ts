@@ -107,6 +107,10 @@ const ELITE_MEMBER_LEAGUES: Record<EliteMember, string> = {
   [EliteMember.Koga]: 'Johto',
   [EliteMember.Karen]: 'Johto',
   [EliteMember.JohtoBruno]: 'Johto',
+  [EliteMember.Sidney]: 'Hoenn',
+  [EliteMember.Phoebe]: 'Hoenn',
+  [EliteMember.Glacia]: 'Hoenn',
+  [EliteMember.Drake]: 'Hoenn',
 };
 
 const ELITE_QUOTES: Record<EliteMember, string> = {
@@ -118,6 +122,10 @@ const ELITE_QUOTES: Record<EliteMember, string> = {
   [EliteMember.Koga]: 'Fufufu! You are already standing in my poison. Shall we begin?',
   [EliteMember.Karen]: 'Strong pokemon. Weak pokemon. Only your favourites matter. Show me yours.',
   [EliteMember.JohtoBruno]: 'I have come back stronger. Feel the fists of Johto!',
+  [EliteMember.Sidney]: 'No hard feelings, right? Let us just enjoy the fight.',
+  [EliteMember.Phoebe]: 'I trained with the spirits on Mt. Pyre. They are still with me.',
+  [EliteMember.Glacia]: 'I came here for warmth, and my ice only grew fiercer. See it.',
+  [EliteMember.Drake]: 'Do you know what it means to fight beside a dragon? Show me.',
 };
 
 /** What a legend says, which in the one case there is so far is nothing */

@@ -11,7 +11,7 @@ own, and beating one is kept for good.
 | Award               | How many | Earned by                              |
 | ------------------- | -------- | -------------------------------------- |
 | **Gym badge**       | 24       | Beating that gym's leader              |
-| **Elite Four mark** | 8        | Beating that member of the Elite Four  |
+| **Elite Four mark** | 12       | Beating that member of the Elite Four  |
 | **Champion**        | 2        | Beating that league's Champion          |
 | **Legend's mark**   | 1        | Beating a legend, who asks for nothing |
 | **Team Rocket marks** | 6      | Beating a grunt, one of the four executives, or Giovanni |
@@ -20,13 +20,15 @@ own, and beating one is kept for good.
 Kanto, Johto and Hoenn keep eight gyms apiece, and their leaders share the
 world's countries: which of them keeps a given gym is fixed for that gym, so a
 badge is always in the same place. Hoenn seats nine people for its eight, since
-Tate and Liza keep one gym between them and pay the one badge either way. Hoenn
-has no league of its own yet, so its badges open no seat. Their Elite Fours come to seven people rather
+Tate and Liza keep one gym between them and pay the one badge either way.
+
+Kanto's and Johto's Elite Fours come to seven people rather than eight, four
 apiece. Bruno keeps a seat in each, and each is its own fight with its own mark:
 walking only one region's gyms earns you the Bruno of that region and that mark
-alone. Each of the **Elite Four asks to see all eight of their own league's
-badges** before they will fight, and each **Champion asks for all four of their
-own league's marks**.
+alone. Hoenn's four are its own four people. Each of the **Elite Four asks to
+see all eight of their own league's badges** before they will fight, and each
+**Champion asks for all four of their own league's marks**. Hoenn has no
+champion yet, so its four marks are the top of that region's walk.
 
 A **legend** stands outside all of that. One turns up in a champion's seat one
 window in sixty-four, and under the rarest skies for certain; no badge case is

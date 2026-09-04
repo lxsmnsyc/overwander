@@ -56,6 +56,10 @@ const enum Awards {
   RainBadge = 42,
   /** Hoenn's dex filled to 133 caught */
   HoennDexMedal = 43,
+  SidneyDefeated = 44,
+  PhoebeDefeated = 45,
+  GlaciaDefeated = 46,
+  DrakeDefeated = 47,
 }
 
 export default Awards;
@@ -105,6 +109,10 @@ export const AWARD_NAMES: Record<Awards, string> = {
   [Awards.MindBadge]: 'Mind Badge',
   [Awards.RainBadge]: 'Rain Badge',
   [Awards.HoennDexMedal]: 'Hoenn Dex Medal',
+  [Awards.SidneyDefeated]: 'Sidney Defeated',
+  [Awards.PhoebeDefeated]: 'Phoebe Defeated',
+  [Awards.GlaciaDefeated]: 'Glacia Defeated',
+  [Awards.DrakeDefeated]: 'Drake Defeated',
 };
 
 /**
@@ -175,4 +183,15 @@ export const HOENN_BADGES: Awards[] = [
   Awards.FeatherBadge,
   Awards.MindBadge,
   Awards.RainBadge,
+];
+
+/**
+ * And Hoenn's 4. Its league has no champion yet, so these four marks
+ * are the top of that region's walk for now
+ */
+export const HOENN_HONORS: Awards[] = [
+  Awards.SidneyDefeated,
+  Awards.PhoebeDefeated,
+  Awards.GlaciaDefeated,
+  Awards.DrakeDefeated,
 ];

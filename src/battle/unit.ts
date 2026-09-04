@@ -914,7 +914,12 @@ export default class Unit {
     }
   }
 
-  checkCanRemoveStage(stage: Stages, value: number, cause: EffectCause, simulated = false): boolean {
+  checkCanRemoveStage(
+    stage: Stages,
+    value: number,
+    cause: EffectCause,
+    simulated = false,
+  ): boolean {
     const event: CheckUnitCanUpdateStageEvent = {
       id: 'CheckUnitCanRemoveStage',
       disabled: false,

@@ -93,15 +93,38 @@ function addUnit(battle: Battle, team: Team, snapshot: CatchSnapshot): Unit {
     unit.addStatus(status, { type: EffectType.None });
   }
 
-  // On the field at last, and said so — **after** everything above,
-  // which is the whole reason it is here rather than beside
-  // `addUnit`. Entering is what puts a unit in the AI's idle set and
-  // what fires the abilities that read the field on arrival, and both
-  // want a finished pokemon: a unit announced before its health was
-  // set is not alive yet, so it is never counted idle and never acts
-  unit.enter();
-
   return unit;
+}
+
+/**
+ * Walk the built units onto the field, fastest first.
+ *
+ * Entering is what puts a unit in the AI's idle set and what fires
+ * the abilities that read the field on arrival, so the order it
+ * happens in is the order the first move is cast in. Speed decides
+ * it, which is the answer a mainline turn would give.
+ *
+ * A raid orders each party on its own: the parties arrive side by
+ * side, and whose Crobat is quickest says nothing about who should
+ * act ahead of another player. Every other fight is one field, so
+ * the whole of it is ordered together.
+ *
+ * It runs after every unit is built, not beside each one: a unit
+ * announced before its health was set is not alive yet, so it is
+ * never counted idle and never acts
+ */
+function enterBySpeed(battle: Battle, parties: Unit[][]): void {
+  const fields = battle.mode === BattleModes.Raid ? parties : [parties.flat()];
+
+  for (const field of fields) {
+    // Sorted on a copy, so what a caller was handed keeps the order
+    // the snapshots were stored in
+    for (const unit of [...field].sort(
+      (one, two) => two.checkStat(Stats.Speed, 0) - one.checkStat(Stats.Speed, 0),
+    )) {
+      unit.enter();
+    }
+  }
 }
 
 export interface RaidBattle {
@@ -133,6 +156,7 @@ export function fieldTeams(
 ): Omit<RaidBattle, 'battle'> {
   const alliances = new Map<number, Alliance>();
   const units = new Map<number, Unit[]>();
+  const parties: Unit[][] = [];
 
   for (const record of teams) {
     let alliance = alliances.get(record.alliance);
@@ -152,12 +176,14 @@ export function fieldTeams(
     alliance.addTeam(team);
 
     const fielded = units.get(record.alliance) ?? [];
+    const party = record.catches.map((snapshot) => addUnit(battle, team, snapshot));
 
-    for (const snapshot of record.catches) {
-      fielded.push(addUnit(battle, team, snapshot));
-    }
+    parties.push(party);
+    fielded.push(...party);
     units.set(record.alliance, fielded);
   }
+
+  enterBySpeed(battle, parties);
 
   return { units, alliances };
 }

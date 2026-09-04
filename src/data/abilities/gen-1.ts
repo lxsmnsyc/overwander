@@ -659,11 +659,11 @@ export default function registerGen1Abilities(): void {
   registerAbility(Abilities.Boss, {
     name: 'Boss',
     description:
-      '5,000 HP plus 10x its own, every other stat 2x. Shrugs off disabling statuses, and nothing heals it.',
+      '20x its own HP, every other stat 2x. Shrugs off disabling statuses, and nothing heals it.',
   });
   registerAbility(Abilities.Shadow, {
     name: 'Shadow',
-    description: '1.2x damage dealt, and 1.2x damage taken.',
+    description: '1.2x Attack and Special Attack, 0.8x Defense and Special Defense.',
   });
   registerAbility(Abilities.Purified, {
     name: 'Purified',

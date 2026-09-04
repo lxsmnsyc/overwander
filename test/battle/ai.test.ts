@@ -745,6 +745,23 @@ describe('weighing a move', () => {
     expect(scoreMove(battle, unit, Moves.Fissure, target)).toBeGreaterThan(unaided);
   });
 
+  it('finishes rather than chips, even from behind a wind-up', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    pinRandom(battle, 0.99);
+    const unit = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    unit.removeMove(Moves.Attack);
+    unit.addMove(Moves.SolarBeam);
+    unit.addMove(Moves.Tackle);
+    // Low enough that Solar Beam kills and Tackle takes most of what
+    // is left, which is the widest a chip can score
+    enemy.setHealth(24);
+
+    // The step Solar Beam spends charging is a real cost, but never
+    // enough of one to make leaving the target standing look better
+    expect(chooseMove(battle, unit)?.move).toBe(Moves.SolarBeam);
+  });
+
   it('pays for the step a move spends winding up', () => {
     const { battle, teamA, teamB } = createAIBattle();
     pinRandom(battle, 0.99);

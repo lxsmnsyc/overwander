@@ -8,6 +8,7 @@ import {
   type UnitAttackEvent,
   type UnitAttackResolveCriticalEvent,
 } from '../../../src/battle/events';
+import { SHADOW_DEFENSE_SCALE, SHADOW_OFFENSE_SCALE } from '../../../src/battle/abilities/special';
 import { MOVE_DELAY } from '../../../src/battle/mechanics/move';
 import turns from '../../../src/battle/turn';
 import type Unit from '../../../src/battle/unit';
@@ -2277,60 +2278,46 @@ describe('Boss', () => {
 });
 
 describe('Shadow', () => {
-  function resolveDamage(battle: Battle, parent: UnitAttackEvent, value: number): number {
-    const event = {
-      id: 'UnitAttackResolveDamage',
-      disabled: false,
-      parent,
-      value,
-    } as const;
-
-    battle.emit(BattleEvents.UnitAttackResolveDamage, event);
-
-    return event.value;
-  }
-
-  it('amplifies damage dealt and received by 20%', () => {
+  it('sharpens what it attacks with and wears down what it stands behind', () => {
     const { battle, teamA, teamB } = createBattle();
-    pinRandom(battle, 1);
     const shadow = createUnit(battle, teamA);
-    const other = createUnit(battle, teamB);
-    const plainA = createUnit(battle, teamA);
-    const plainB = createUnit(battle, teamB);
+    const plain = createUnit(battle, teamB);
     shadow.addAbility(Abilities.Shadow);
 
-    const baseline = resolveDamage(
-      battle,
-      makeAttack(plainA, plainB, Moves.Tackle, Types.Normal, MoveCategories.Physical),
-      40,
+    expect(shadow.checkStat(Stats.Attack, 0)).toBeCloseTo(
+      plain.checkStat(Stats.Attack, 0) * SHADOW_OFFENSE_SCALE,
+    );
+    expect(shadow.checkStat(Stats.SpecialAttack, 0)).toBeCloseTo(
+      plain.checkStat(Stats.SpecialAttack, 0) * SHADOW_OFFENSE_SCALE,
+    );
+    expect(shadow.checkStat(Stats.Defense, 0)).toBeCloseTo(
+      plain.checkStat(Stats.Defense, 0) * SHADOW_DEFENSE_SCALE,
+    );
+    expect(shadow.checkStat(Stats.SpecialDefense, 0)).toBeCloseTo(
+      plain.checkStat(Stats.SpecialDefense, 0) * SHADOW_DEFENSE_SCALE,
     );
 
-    const dealt = makeAttack(shadow, other, Moves.Tackle, Types.Normal, MoveCategories.Physical);
-    expect(resolveDamage(battle, dealt, 40)).toBeCloseTo(baseline * 1.2);
-
-    const received = makeAttack(other, shadow, Moves.Tackle, Types.Normal, MoveCategories.Physical);
-    expect(resolveDamage(battle, received, 40)).toBeCloseTo(baseline * 1.2);
+    // What it is made of otherwise is its own: a shadow is no
+    // faster and no harder to knock down
+    expect(shadow.checkStat(Stats.HP, 0)).toBe(plain.checkStat(Stats.HP, 0));
+    expect(shadow.checkStat(Stats.Speed, 0)).toBe(plain.checkStat(Stats.Speed, 0));
   });
 
-  it('stacks between two shadow units', () => {
+  it('stands under its stages rather than beside them', () => {
     const { battle, teamA, teamB } = createBattle();
-    pinRandom(battle, 1);
     const shadow = createUnit(battle, teamA);
-    const mirror = createUnit(battle, teamB);
-    const plainA = createUnit(battle, teamA);
-    const plainB = createUnit(battle, teamB);
+    const plain = createUnit(battle, teamB);
     shadow.addAbility(Abilities.Shadow);
-    mirror.addAbility(Abilities.Shadow);
 
-    const baseline = resolveDamage(
-      battle,
-      makeAttack(plainA, plainB, Moves.Tackle, Types.Normal, MoveCategories.Physical),
-      40,
+    const cause = { type: EffectType.Move, move: Moves.SwordsDance, unit: shadow } as const;
+
+    shadow.addStage(Stages.Attack, 2, cause);
+    plain.addStage(Stages.Attack, 2, cause);
+
+    // The stage multiplies what the shadow already sharpened
+    expect(shadow.resolveStat(Stats.Attack, 0)).toBeCloseTo(
+      plain.resolveStat(Stats.Attack, 0) * SHADOW_OFFENSE_SCALE,
     );
-
-    const attack = makeAttack(shadow, mirror, Moves.Tackle, Types.Normal, MoveCategories.Physical);
-
-    expect(resolveDamage(battle, attack, 40)).toBeCloseTo(baseline * 1.44);
   });
 });
 

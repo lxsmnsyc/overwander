@@ -38,7 +38,7 @@ export const RISKY_PENALTY = 3;
  * A move whose steps are not idle — a rampage strikes on every one of
  * them — hands this back itself
  */
-export const STEP_PENALTY = 4;
+export const STEP_PENALTY = 3;
 
 /**
  * The most a move can lose to being unreliable, at zero accuracy. Set

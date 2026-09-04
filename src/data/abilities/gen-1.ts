@@ -659,7 +659,7 @@ export default function registerGen1Abilities(): void {
   registerAbility(Abilities.Boss, {
     name: 'Boss',
     description:
-      '20x its own HP, every other stat 2x. Shrugs off disabling statuses, takes at most 100 from any indirect hit, and heals at most 1/8 of its HP at a time.',
+      '20x its own HP, every other stat 2x. Shrugs off disabling statuses, takes at most 100 from any indirect hit, and heals at most 1/8 of its HP each second.',
   });
   registerAbility(Abilities.Shadow, {
     name: 'Shadow',

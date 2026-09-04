@@ -242,11 +242,12 @@ for more than 100 however large the pool is. Damage measured as a share of its
 health, such as Super Fang, is refused outright. A cost the boss pays itself is
 paid in full, so one that uses Explosion still dies by it.
 
-**A boss heals an eighth of its pool at a time.** Recover, Synthesis and the rest
-are moves it may know again, and each puts back the same eighth however much it
-promises, so a boss winds the clock back without resetting it. Rest stays barred:
-the sleep it buys is self-inflicted, so it lands in full while the healing does
-not.
+**A boss heals an eighth of its pool a second.** Recover, Synthesis and the rest
+are moves it may know again, and the allowance is what it can take back in a
+second rather than per heal, so several drains landing together are worth one of
+them. It refills as the fight runs, so a boss winds the clock back without
+resetting it. Rest stays barred: the sleep it buys is self-inflicted, so it lands
+in full while the healing does not.
 
 Four moves are removed from a boss before it is staged. **Transform** is banned
 because a boss that copies a player stops being a boss, throwing away the health

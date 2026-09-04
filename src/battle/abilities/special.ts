@@ -37,11 +37,14 @@ export const BOSS_STAT_SCALE = 2;
 export const BOSS_INDIRECT_DAMAGE_CAP = 100;
 
 /**
- * The most a boss puts back at once, as a share of its pool. The pool
- * is the fight's clock, so a boss may wind it back a little and never
- * reset it
+ * The most a boss puts back in a second, as a share of its pool. The
+ * pool is the fight's clock, so a boss may wind it back a little and
+ * never reset it, and a stack of heals landing together is worth no
+ * more than one: the allowance refills as the fight runs rather than
+ * being handed out per heal
  */
 export const BOSS_HEAL_FRACTION = 1 / 8;
+export const BOSS_HEAL_WINDOW = 1000;
 
 /**
  * What a shadow is: sharper and more brittle. The two attacking stats
@@ -88,8 +91,8 @@ const BOSS_BLOCKED_STATUSES = new Set<Statuses>([
  */
 const BOSS_REFUSED_STATUSES = new Set<Statuses>([Statuses.Perishing]);
 
-/** The most this boss may put back in one go */
-function healingRoom(unit: Unit): number {
+/** The most this boss may put back in a second */
+function healingRate(unit: Unit): number {
   return unit.checkStat(Stats.HP, 0) * BOSS_HEAL_FRACTION;
 }
 
@@ -118,8 +121,31 @@ const setupAbilities = [
   createAbility(Abilities.Boss, (battle) => {
     // Units that already went through their first-entry dormancy
     const awakened = new Set<Unit>();
+    // How much of its allowance each boss has spent. It drains as the
+    // fight runs, so healing is capped by the second rather than by
+    // the heal: ten drains landing at once are worth one
+    const spent = new Map<Unit, number>();
+
+    /** What this boss may still take back, and what taking it costs */
+    function takeHealing(unit: Unit, wanted: number): number {
+      const taken = Math.max(0, Math.min(wanted, healingRate(unit) - (spent.get(unit) ?? 0)));
+
+      spent.set(unit, (spent.get(unit) ?? 0) + taken);
+      return taken;
+    }
 
     return new MergedLifecycle([
+      battle.on(BattleEvents.Tick, EventPriority.Post, (event) => {
+        for (const [unit, used] of spent) {
+          const refilled = used - (healingRate(unit) * event.duration) / BOSS_HEAL_WINDOW;
+
+          if (refilled <= 0) {
+            spent.delete(unit);
+          } else {
+            spent.set(unit, refilled);
+          }
+        }
+      }),
       battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
         if (event.source.hasAbility(Abilities.Boss)) {
           event.value =
@@ -227,20 +253,20 @@ const setupAbilities = [
           return;
         }
         if (event.value < 0) {
-          event.value = Math.max(event.value, -healingRoom(event.target));
+          event.value = -takeHealing(event.target, -event.value);
           return;
         }
         if (event.flags & DamageFlags.Indirect) {
           event.value = Math.min(event.value, BOSS_INDIRECT_DAMAGE_CAP);
         }
       }),
-      // A boss may put health back, an eighth of its pool at a time.
+      // A boss may put health back, an eighth of its pool a second.
       // The pool is the fight's clock, so winding it back is allowed
       // and resetting it is not: a party that stops hitting loses
       // ground, and one that keeps hitting still gets there
       battle.on(BattleEvents.UnitHeal, EventPriority.Pre, (event) => {
         if (event.value > 0 && event.target.hasAbility(Abilities.Boss)) {
-          event.value = Math.min(event.value, healingRoom(event.target));
+          event.value = takeHealing(event.target, event.value);
 
           // For visual cues
           event.target.triggerAbility(Abilities.Boss);

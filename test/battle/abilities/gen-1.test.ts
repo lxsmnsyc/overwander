@@ -10,6 +10,7 @@ import {
 } from '../../../src/battle/events';
 import {
   BOSS_HEAL_FRACTION,
+  BOSS_HEAL_WINDOW,
   BOSS_INDIRECT_DAMAGE_CAP,
   SHADOW_DEFENSE_SCALE,
   SHADOW_OFFENSE_SCALE,
@@ -1985,7 +1986,7 @@ describe('Boss', () => {
     expect(boss.stages[Stages.Attack]).toBe(1);
   });
 
-  it('heals an eighth of its pool at a time and no more', () => {
+  it('heals an eighth of its pool a second, however many heals land', () => {
     const { battle, teamA, teamB } = createBattle();
     const boss = createUnit(battle, teamA);
     const ally = createUnit(battle, teamB);
@@ -1994,7 +1995,7 @@ describe('Boss', () => {
     boss.addAbility(Abilities.Boss);
 
     const pool = boss.checkStat(Stats.HP, 0);
-    const room = pool * BOSS_HEAL_FRACTION;
+    const rate = pool * BOSS_HEAL_FRACTION;
 
     boss.setHealth(pool - 1000);
 
@@ -2004,14 +2005,26 @@ describe('Boss', () => {
     // the pool is the fight's clock, so a boss winds it back rather
     // than resetting it
     boss.heal(cause, boss, pool / 2, 0);
-    expect(boss.health).toBe(hurt + room);
+    expect(boss.health).toBe(hurt + rate);
 
-    // Anything under the cap lands whole
+    // A second heal in the same breath is worth nothing: the
+    // allowance is spent until the fight runs on
+    boss.heal(cause, boss, pool / 2, 0);
+    expect(boss.health).toBe(hurt + rate);
+
+    // Half a second buys back half of it
+    battle.tick(BOSS_HEAL_WINDOW / 2);
+    boss.setHealth(hurt);
+    boss.heal(cause, boss, pool / 2, 0);
+    expect(boss.health).toBeCloseTo(hurt + rate / 2);
+
+    // And a whole second buys the lot
+    battle.tick(BOSS_HEAL_WINDOW);
     boss.setHealth(hurt);
     boss.heal(cause, boss, 10, 0);
     expect(boss.health).toBe(hurt + 10);
 
-    // And everybody else heals as they always did
+    // Everybody else heals as they always did
     ally.setHealth(ally.checkStat(Stats.HP, 0) - 100);
     ally.heal(cause, ally, 50, 0);
     expect(ally.health).toBe(ally.checkStat(Stats.HP, 0) - 50);
@@ -2024,16 +2037,19 @@ describe('Boss', () => {
     boss.addAbility(Abilities.Boss);
 
     const pool = boss.checkStat(Stats.HP, 0);
-    const room = pool * BOSS_HEAL_FRACTION;
+    const rate = pool * BOSS_HEAL_FRACTION;
 
     boss.setHealth(pool - 1000);
 
     const hurt = boss.health;
 
-    // A drain rides the damage event as a negative amount, and the
-    // same eighth caps it
+    // A drain rides the damage event as a negative amount, and it
+    // draws on the same allowance the heals do
     boss.damage(NONE_CAUSE, boss, -pool, DamageFlags.Indirect);
-    expect(boss.health).toBe(hurt + room);
+    expect(boss.health).toBe(hurt + rate);
+
+    boss.damage(NONE_CAUSE, boss, -pool, DamageFlags.Indirect);
+    expect(boss.health).toBe(hurt + rate);
   });
 
   it('is immune to damage measured as a share of its pool', () => {

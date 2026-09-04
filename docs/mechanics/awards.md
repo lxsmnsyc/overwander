@@ -10,16 +10,18 @@ own, and beating one is kept for good.
 
 | Award               | How many | Earned by                              |
 | ------------------- | -------- | -------------------------------------- |
-| **Gym badge**       | 16       | Beating that gym's leader              |
+| **Gym badge**       | 24       | Beating that gym's leader              |
 | **Elite Four mark** | 8        | Beating that member of the Elite Four  |
 | **Champion**        | 2        | Beating that league's Champion          |
 | **Legend's mark**   | 1        | Beating a legend, who asks for nothing |
 | **Team Rocket marks** | 6      | Beating a grunt, one of the four executives, or Giovanni |
 | **Dex medal**       | 2        | Filling that region's dex                |
 
-Kanto and Johto keep eight gyms apiece, and their sixteen leaders share the
+Kanto, Johto and Hoenn keep eight gyms apiece, and their leaders share the
 world's countries: which of them keeps a given gym is fixed for that gym, so a
-badge is always in the same place. Their Elite Fours come to seven people rather
+badge is always in the same place. Hoenn seats nine people for its eight, since
+Tate and Liza keep one gym between them and pay the one badge either way. Hoenn
+has no league of its own yet, so its badges open no seat. Their Elite Fours come to seven people rather
 apiece. Bruno keeps a seat in each, and each is its own fight with its own mark:
 walking only one region's gyms earns you the Bruno of that region and that mark
 alone. Each of the **Elite Four asks to see all eight of their own league's

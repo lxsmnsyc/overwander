@@ -25,8 +25,11 @@ import { getRegisteredSpecies, getSpeciesData, isBaseForm } from '../species';
 export const EXPERT_PARTY_SIZE = 6;
 
 /**
- * The sixteen leaders of the two regions, numbered Kanto's eight then
- * Johto's. Which of them a country seats is the table below
+ * The leaders of the three regions, numbered Kanto's eight, Johto's,
+ * then Hoenn's. Which of them a country seats is the table below.
+ *
+ * Hoenn seats nine for eight gyms: Mossdeep is kept by two people,
+ * so Tate and Liza are a leader each and share the one badge
  */
 const enum GymLeader {
   Brock = 0,
@@ -45,6 +48,15 @@ const enum GymLeader {
   Jasmine = 13,
   Pryce = 14,
   Clair = 15,
+  Roxanne = 16,
+  Brawly = 17,
+  Wattson = 18,
+  Flannery = 19,
+  Norman = 20,
+  Winona = 21,
+  Tate = 22,
+  Liza = 23,
+  Juan = 24,
 }
 
 export { GymLeader };
@@ -66,6 +78,15 @@ export const GYM_LEADERS: GymLeader[] = [
   GymLeader.Jasmine,
   GymLeader.Pryce,
   GymLeader.Clair,
+  GymLeader.Roxanne,
+  GymLeader.Brawly,
+  GymLeader.Wattson,
+  GymLeader.Flannery,
+  GymLeader.Norman,
+  GymLeader.Winona,
+  GymLeader.Tate,
+  GymLeader.Liza,
+  GymLeader.Juan,
 ];
 
 export const GYM_LEADER_NAMES: Record<GymLeader, string> = {
@@ -85,6 +106,15 @@ export const GYM_LEADER_NAMES: Record<GymLeader, string> = {
   [GymLeader.Jasmine]: 'Jasmine',
   [GymLeader.Pryce]: 'Pryce',
   [GymLeader.Clair]: 'Clair',
+  [GymLeader.Roxanne]: 'Roxanne',
+  [GymLeader.Brawly]: 'Brawly',
+  [GymLeader.Wattson]: 'Wattson',
+  [GymLeader.Flannery]: 'Flannery',
+  [GymLeader.Norman]: 'Norman',
+  [GymLeader.Winona]: 'Winona',
+  [GymLeader.Tate]: 'Tate',
+  [GymLeader.Liza]: 'Liza',
+  [GymLeader.Juan]: 'Juan',
 };
 
 /** What each leader fields. */
@@ -105,6 +135,15 @@ export const GYM_LEADER_TYPES: Record<GymLeader, Types> = {
   [GymLeader.Jasmine]: Types.Steel,
   [GymLeader.Pryce]: Types.Ice,
   [GymLeader.Clair]: Types.Dragon,
+  [GymLeader.Roxanne]: Types.Rock,
+  [GymLeader.Brawly]: Types.Fighting,
+  [GymLeader.Wattson]: Types.Electric,
+  [GymLeader.Flannery]: Types.Fire,
+  [GymLeader.Norman]: Types.Normal,
+  [GymLeader.Winona]: Types.Flying,
+  [GymLeader.Tate]: Types.Psychic,
+  [GymLeader.Liza]: Types.Psychic,
+  [GymLeader.Juan]: Types.Water,
 };
 
 export const GYM_LEADER_BADGES: Record<GymLeader, Awards> = {
@@ -124,6 +163,17 @@ export const GYM_LEADER_BADGES: Record<GymLeader, Awards> = {
   [GymLeader.Jasmine]: Awards.MineralBadge,
   [GymLeader.Pryce]: Awards.GlacierBadge,
   [GymLeader.Clair]: Awards.RisingBadge,
+  [GymLeader.Roxanne]: Awards.StoneBadge,
+  [GymLeader.Brawly]: Awards.KnuckleBadge,
+  [GymLeader.Wattson]: Awards.DynamoBadge,
+  [GymLeader.Flannery]: Awards.HeatBadge,
+  [GymLeader.Norman]: Awards.BalanceBadge,
+  [GymLeader.Winona]: Awards.FeatherBadge,
+  // One gym, two people: whichever of them a chunk seats, the badge
+  // that gym pays is the same one
+  [GymLeader.Tate]: Awards.MindBadge,
+  [GymLeader.Liza]: Awards.MindBadge,
+  [GymLeader.Juan]: Awards.RainBadge,
 };
 
 export const GYM_LEADER_CHARSETS: Record<GymLeader, string[]> = {
@@ -143,6 +193,15 @@ export const GYM_LEADER_CHARSETS: Record<GymLeader, string[]> = {
   [GymLeader.Jasmine]: ['characters/hgss/jasmine'],
   [GymLeader.Pryce]: ['characters/hgss/pryce'],
   [GymLeader.Clair]: ['characters/hgss/clair'],
+  [GymLeader.Roxanne]: ['characters/rse/roxanne', 'characters/oras/roxanne'],
+  [GymLeader.Brawly]: ['characters/rse/brawly'],
+  [GymLeader.Wattson]: ['characters/rse/wattson'],
+  [GymLeader.Flannery]: ['characters/rse/flannery', 'characters/oras/flannery'],
+  [GymLeader.Norman]: ['characters/rse/norman'],
+  [GymLeader.Winona]: ['characters/rse/winona'],
+  [GymLeader.Tate]: ['characters/rse/tate', 'characters/oras/tate'],
+  [GymLeader.Liza]: ['characters/rse/liza', 'characters/oras/liza'],
+  [GymLeader.Juan]: ['characters/rse/juan'],
 };
 
 /**
@@ -184,47 +243,132 @@ export const GYM_LEADER_LATER_CHARSETS: Partial<Record<GymLeader, string[]>> = {
  * only so the table stays total
  */
 export const BIOME_GYM_LEADERS: Record<Biome, GymLeader[]> = {
-  [Biome.DeepOcean]: [GymLeader.Misty, GymLeader.Falkner],
-  [Biome.Ocean]: [GymLeader.Misty, GymLeader.Falkner],
-  [Biome.CoralReef]: [GymLeader.Misty],
-  [Biome.Beach]: [GymLeader.Misty, GymLeader.Falkner, GymLeader.Whitney],
-  [Biome.Mangrove]: [GymLeader.Koga, GymLeader.Bugsy],
-  [Biome.KelpForest]: [GymLeader.Misty],
-  [Biome.PolarOcean]: [GymLeader.Misty, GymLeader.Falkner, GymLeader.Pryce],
-  [Biome.Glacier]: [GymLeader.Misty, GymLeader.Pryce],
-  [Biome.Tundra]: [GymLeader.Misty, GymLeader.Pryce, GymLeader.Falkner, GymLeader.Whitney],
-  [Biome.Swamp]: [GymLeader.Koga, GymLeader.Morty, GymLeader.Bugsy],
-  [Biome.Bog]: [GymLeader.Koga, GymLeader.Morty],
+  [Biome.DeepOcean]: [GymLeader.Misty, GymLeader.Falkner, GymLeader.Winona, GymLeader.Juan],
+  [Biome.Ocean]: [GymLeader.Misty, GymLeader.Falkner, GymLeader.Winona, GymLeader.Juan],
+  [Biome.CoralReef]: [GymLeader.Misty, GymLeader.Juan],
+  [Biome.Beach]: [
+    GymLeader.Misty,
+    GymLeader.Falkner,
+    GymLeader.Whitney,
+    GymLeader.Juan,
+    GymLeader.Winona,
+    GymLeader.Norman,
+    GymLeader.Brawly,
+  ],
+  [Biome.Mangrove]: [GymLeader.Koga, GymLeader.Bugsy, GymLeader.Norman],
+  [Biome.KelpForest]: [GymLeader.Misty, GymLeader.Juan],
+  [Biome.PolarOcean]: [
+    GymLeader.Misty,
+    GymLeader.Falkner,
+    GymLeader.Pryce,
+    GymLeader.Winona,
+    GymLeader.Juan,
+  ],
+  [Biome.Glacier]: [GymLeader.Misty, GymLeader.Pryce, GymLeader.Juan],
+  [Biome.Tundra]: [
+    GymLeader.Misty,
+    GymLeader.Pryce,
+    GymLeader.Falkner,
+    GymLeader.Whitney,
+    GymLeader.Juan,
+    GymLeader.Winona,
+    GymLeader.Norman,
+  ],
+  [Biome.Swamp]: [GymLeader.Koga, GymLeader.Morty, GymLeader.Bugsy, GymLeader.Norman],
+  [Biome.Bog]: [GymLeader.Koga, GymLeader.Morty, GymLeader.Norman],
   [Biome.TropicalSeasonalForest]: [
     GymLeader.Erika,
     GymLeader.Bugsy,
     GymLeader.Whitney,
     GymLeader.Falkner,
+    GymLeader.Norman,
+    GymLeader.Winona,
   ],
-  [Biome.Grassland]: [GymLeader.Erika, GymLeader.Whitney, GymLeader.Bugsy, GymLeader.Falkner],
-  [Biome.TemperateForest]: [GymLeader.Erika, GymLeader.Bugsy, GymLeader.Whitney, GymLeader.Morty],
-  [Biome.Woodland]: [GymLeader.Erika, GymLeader.Bugsy, GymLeader.Whitney],
-  [Biome.Savanna]: [GymLeader.LtSurge, GymLeader.Falkner, GymLeader.Chuck, GymLeader.Giovanni],
-  [Biome.Steppe]: [GymLeader.LtSurge, GymLeader.Falkner, GymLeader.Giovanni],
-  [Biome.Desert]: [GymLeader.Blaine, GymLeader.Giovanni],
-  [Biome.Volcano]: [GymLeader.Blaine, GymLeader.Jasmine, GymLeader.Clair],
-  [Biome.ColdDesert]: [GymLeader.Brock, GymLeader.Pryce, GymLeader.Jasmine, GymLeader.Giovanni],
+  [Biome.Grassland]: [
+    GymLeader.Erika,
+    GymLeader.Whitney,
+    GymLeader.Bugsy,
+    GymLeader.Falkner,
+    GymLeader.Norman,
+    GymLeader.Winona,
+  ],
+  [Biome.TemperateForest]: [
+    GymLeader.Erika,
+    GymLeader.Bugsy,
+    GymLeader.Whitney,
+    GymLeader.Morty,
+    GymLeader.Norman,
+  ],
+  [Biome.Woodland]: [GymLeader.Erika, GymLeader.Bugsy, GymLeader.Whitney, GymLeader.Norman],
+  [Biome.Savanna]: [
+    GymLeader.LtSurge,
+    GymLeader.Falkner,
+    GymLeader.Chuck,
+    GymLeader.Giovanni,
+    GymLeader.Wattson,
+    GymLeader.Winona,
+    GymLeader.Brawly,
+  ],
+  [Biome.Steppe]: [
+    GymLeader.LtSurge,
+    GymLeader.Falkner,
+    GymLeader.Giovanni,
+    GymLeader.Wattson,
+    GymLeader.Winona,
+  ],
+  [Biome.Desert]: [GymLeader.Blaine, GymLeader.Giovanni, GymLeader.Flannery],
+  [Biome.Volcano]: [GymLeader.Blaine, GymLeader.Jasmine, GymLeader.Clair, GymLeader.Flannery],
+  [Biome.ColdDesert]: [
+    GymLeader.Brock,
+    GymLeader.Pryce,
+    GymLeader.Jasmine,
+    GymLeader.Giovanni,
+    GymLeader.Roxanne,
+  ],
   [Biome.Mountain]: [
     GymLeader.Brock,
     GymLeader.Chuck,
     GymLeader.Jasmine,
     GymLeader.Clair,
     GymLeader.Giovanni,
+    GymLeader.Roxanne,
+    GymLeader.Brawly,
   ],
-  [Biome.AlpineTundra]: [GymLeader.Brock, GymLeader.Pryce, GymLeader.Falkner, GymLeader.Clair],
-  [Biome.Badlands]: [GymLeader.Brock, GymLeader.Chuck, GymLeader.Jasmine, GymLeader.Giovanni],
-  [Biome.RockyCoast]: [GymLeader.Brock, GymLeader.Falkner],
-  [Biome.TemperateRainforest]: [GymLeader.Sabrina, GymLeader.Bugsy, GymLeader.Morty],
-  [Biome.MontaneForest]: [GymLeader.Sabrina, GymLeader.Bugsy],
-  [Biome.Beyond]: [GymLeader.Sabrina, GymLeader.Morty, GymLeader.Clair],
-  [Biome.TropicalRainforest]: [GymLeader.Bugsy, GymLeader.Erika],
-  [Biome.Shrubland]: [GymLeader.Whitney, GymLeader.Bugsy],
-  [Biome.Taiga]: [GymLeader.Bugsy, GymLeader.Falkner, GymLeader.Pryce],
+  [Biome.AlpineTundra]: [
+    GymLeader.Brock,
+    GymLeader.Pryce,
+    GymLeader.Falkner,
+    GymLeader.Clair,
+    GymLeader.Roxanne,
+    GymLeader.Winona,
+  ],
+  [Biome.Badlands]: [
+    GymLeader.Brock,
+    GymLeader.Chuck,
+    GymLeader.Jasmine,
+    GymLeader.Giovanni,
+    GymLeader.Roxanne,
+    GymLeader.Brawly,
+  ],
+  [Biome.RockyCoast]: [GymLeader.Brock, GymLeader.Falkner, GymLeader.Roxanne, GymLeader.Winona],
+  [Biome.TemperateRainforest]: [
+    GymLeader.Sabrina,
+    GymLeader.Bugsy,
+    GymLeader.Morty,
+    GymLeader.Tate,
+    GymLeader.Liza,
+  ],
+  [Biome.MontaneForest]: [GymLeader.Sabrina, GymLeader.Bugsy, GymLeader.Tate, GymLeader.Liza],
+  [Biome.Beyond]: [
+    GymLeader.Sabrina,
+    GymLeader.Morty,
+    GymLeader.Clair,
+    GymLeader.Tate,
+    GymLeader.Liza,
+  ],
+  [Biome.TropicalRainforest]: [GymLeader.Bugsy, GymLeader.Erika, GymLeader.Norman],
+  [Biome.Shrubland]: [GymLeader.Whitney, GymLeader.Bugsy, GymLeader.Norman, GymLeader.Wattson],
+  [Biome.Taiga]: [GymLeader.Bugsy, GymLeader.Falkner, GymLeader.Pryce, GymLeader.Winona],
 };
 
 /**
@@ -627,6 +771,17 @@ export const GYM_LEADER_SIGNATURES: Record<GymLeader, Species> = {
   [GymLeader.Jasmine]: Species.Steelix,
   [GymLeader.Pryce]: Species.Piloswine,
   [GymLeader.Clair]: Species.Kingdra,
+  [GymLeader.Roxanne]: Species.Nosepass,
+  [GymLeader.Brawly]: Species.Hariyama,
+  [GymLeader.Wattson]: Species.Manectric,
+  [GymLeader.Flannery]: Species.Torkoal,
+  [GymLeader.Norman]: Species.Slaking,
+  [GymLeader.Winona]: Species.Altaria,
+  [GymLeader.Tate]: Species.Solrock,
+  [GymLeader.Liza]: Species.Lunatone,
+  // The same ace Clair brings, which is the mainline's own doing:
+  // two water-and-dragon gyms, one Kingdra between them
+  [GymLeader.Juan]: Species.Kingdra,
 };
 
 /**

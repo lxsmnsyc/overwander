@@ -80,6 +80,15 @@ const GYM_LEADER_QUOTES: Record<GymLeader, string> = {
   [GymLeader.Jasmine]: 'Um... I am sorry. My steel pokemon do not go down easily.',
   [GymLeader.Pryce]: 'I have seen ninety winters. You will not last one of them.',
   [GymLeader.Clair]: 'I am the greatest dragon master. Try to prove otherwise.',
+  [GymLeader.Roxanne]: 'I studied rock pokemon at the academy. Let us see what you studied.',
+  [GymLeader.Brawly]: 'I am a big wave in the making! Come and wipe out on me!',
+  [GymLeader.Wattson]: 'Wahahaha! My machines run on my pokemon. Mind the shock!',
+  [GymLeader.Flannery]: 'My grandfather left me this gym. I intend to keep it hot.',
+  [GymLeader.Norman]: 'I am somebody’s father, and I do not go easy on anybody. Come.',
+  [GymLeader.Winona]: 'I have flown with birds all my life. You will not touch us.',
+  [GymLeader.Tate]: 'My sister knows what I am about to do. Do you?',
+  [GymLeader.Liza]: 'My brother and I share one badge. You still have to earn it.',
+  [GymLeader.Juan]: 'Water is elegance, and elegance is strength. Observe.',
 };
 
 /** Which league each champion is the top of */

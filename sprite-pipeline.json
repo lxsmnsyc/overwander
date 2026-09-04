@@ -349,6 +349,18 @@
         "bytes": 19940
       }
     },
+    "public/sprites/extras/badges/hoenn.png": {
+      "digest": "d37217190c64c510",
+      "bytes": 3043,
+      "width": 159,
+      "height": 128,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 3043,
+        "bytes": 3043
+      }
+    },
     "public/sprites/extras/badges/johto.png": {
       "digest": "88a5f47ce062ce64",
       "bytes": 1887,
@@ -2291,6 +2303,1230 @@
         "as": "already compact",
         "was": 1248,
         "bytes": 1248
+      }
+    },
+    "public/sprites/overworld/characters/oras/ace-trainer-f/image.png": {
+      "digest": "3e1ebca2ea8776b1",
+      "bytes": 1552,
+      "width": 63,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1552,
+        "bytes": 1552
+      }
+    },
+    "public/sprites/overworld/characters/oras/ace-trainer/image.png": {
+      "digest": "672a4c08427581e6",
+      "bytes": 1179,
+      "width": 57,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1179,
+        "bytes": 1179
+      }
+    },
+    "public/sprites/overworld/characters/oras/anabel/image.png": {
+      "digest": "5740aab1a1beff6a",
+      "bytes": 1258,
+      "width": 57,
+      "height": 112,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1258,
+        "bytes": 1258
+      }
+    },
+    "public/sprites/overworld/characters/oras/aqua-grunt-f/image.png": {
+      "digest": "680d9870b7428224",
+      "bytes": 1447,
+      "width": 57,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1447,
+        "bytes": 1447
+      }
+    },
+    "public/sprites/overworld/characters/oras/aqua-grunt-m/image.png": {
+      "digest": "d744a1924de2c3f8",
+      "bytes": 1520,
+      "width": 63,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1520,
+        "bytes": 1520
+      }
+    },
+    "public/sprites/overworld/characters/oras/archie/image.png": {
+      "digest": "49a60d66e5a0f112",
+      "bytes": 1547,
+      "width": 63,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1547,
+        "bytes": 1547
+      }
+    },
+    "public/sprites/overworld/characters/oras/aroma-lady/image.png": {
+      "digest": "be4f180fa1582752",
+      "bytes": 1214,
+      "width": 54,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1214,
+        "bytes": 1214
+      }
+    },
+    "public/sprites/overworld/characters/oras/battle-girl/image.png": {
+      "digest": "55c311eeff20c83f",
+      "bytes": 1710,
+      "width": 81,
+      "height": 116,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1710,
+        "bytes": 1710
+      }
+    },
+    "public/sprites/overworld/characters/oras/beauty/image.png": {
+      "digest": "7980e86a2f4ab4d6",
+      "bytes": 1165,
+      "width": 69,
+      "height": 100,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1165,
+        "bytes": 1165
+      }
+    },
+    "public/sprites/overworld/characters/oras/birch/image.png": {
+      "digest": "8088f686fc55d162",
+      "bytes": 1548,
+      "width": 63,
+      "height": 108,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1548,
+        "bytes": 1548
+      }
+    },
+    "public/sprites/overworld/characters/oras/bird-keeper/image.png": {
+      "digest": "035ddb95e6fe893e",
+      "bytes": 1280,
+      "width": 63,
+      "height": 116,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1280,
+        "bytes": 1280
+      }
+    },
+    "public/sprites/overworld/characters/oras/breeder-f/image.png": {
+      "digest": "408ddf733409c634",
+      "bytes": 1330,
+      "width": 69,
+      "height": 108,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1330,
+        "bytes": 1330
+      }
+    },
+    "public/sprites/overworld/characters/oras/breeder-m/image.png": {
+      "digest": "46be29bd2e92ff77",
+      "bytes": 1289,
+      "width": 63,
+      "height": 112,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1289,
+        "bytes": 1289
+      }
+    },
+    "public/sprites/overworld/characters/oras/brendan/image.png": {
+      "digest": "f3f04c82d36c66e7",
+      "bytes": 1450,
+      "width": 66,
+      "height": 108,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1450,
+        "bytes": 1450
+      }
+    },
+    "public/sprites/overworld/characters/oras/briney/image.png": {
+      "digest": "705f0f8f98af30f9",
+      "bytes": 995,
+      "width": 51,
+      "height": 100,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 995,
+        "bytes": 995
+      }
+    },
+    "public/sprites/overworld/characters/oras/bug-catcher/image.png": {
+      "digest": "99adb5cf0330a566",
+      "bytes": 1202,
+      "width": 63,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1202,
+        "bytes": 1202
+      }
+    },
+    "public/sprites/overworld/characters/oras/bug-maniac/image.png": {
+      "digest": "ab78bc8a970e2318",
+      "bytes": 1266,
+      "width": 63,
+      "height": 112,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1266,
+        "bytes": 1266
+      }
+    },
+    "public/sprites/overworld/characters/oras/cameraman/image.png": {
+      "digest": "f23138a1fc93d435",
+      "bytes": 1104,
+      "width": 63,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1104,
+        "bytes": 1104
+      }
+    },
+    "public/sprites/overworld/characters/oras/camper/image.png": {
+      "digest": "b375832d2107c650",
+      "bytes": 1125,
+      "width": 57,
+      "height": 100,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1125,
+        "bytes": 1125
+      }
+    },
+    "public/sprites/overworld/characters/oras/collector/image.png": {
+      "digest": "f131bda27f0f8c7c",
+      "bytes": 1379,
+      "width": 57,
+      "height": 108,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1379,
+        "bytes": 1379
+      }
+    },
+    "public/sprites/overworld/characters/oras/couple-f/image.png": {
+      "digest": "782814410a97e925",
+      "bytes": 1301,
+      "width": 81,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1301,
+        "bytes": 1301
+      }
+    },
+    "public/sprites/overworld/characters/oras/couple-m/image.png": {
+      "digest": "252f0c5e4e3d4e24",
+      "bytes": 1268,
+      "width": 57,
+      "height": 116,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1268,
+        "bytes": 1268
+      }
+    },
+    "public/sprites/overworld/characters/oras/courtney/image.png": {
+      "digest": "94703a369d8121c7",
+      "bytes": 1102,
+      "width": 57,
+      "height": 108,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1102,
+        "bytes": 1102
+      }
+    },
+    "public/sprites/overworld/characters/oras/dragon-tamer/image.png": {
+      "digest": "be0817525f744cc0",
+      "bytes": 1276,
+      "width": 63,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1276,
+        "bytes": 1276
+      }
+    },
+    "public/sprites/overworld/characters/oras/drake/image.png": {
+      "digest": "29952ae65bd51d69",
+      "bytes": 1222,
+      "width": 51,
+      "height": 108,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1222,
+        "bytes": 1222
+      }
+    },
+    "public/sprites/overworld/characters/oras/expert/image.png": {
+      "digest": "12d2e5d70637a68f",
+      "bytes": 1356,
+      "width": 57,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1356,
+        "bytes": 1356
+      }
+    },
+    "public/sprites/overworld/characters/oras/fisher/image.png": {
+      "digest": "48fb19ee014dc0af",
+      "bytes": 1103,
+      "width": 54,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1103,
+        "bytes": 1103
+      }
+    },
+    "public/sprites/overworld/characters/oras/flannery/image.png": {
+      "digest": "029224ef0036f36e",
+      "bytes": 1782,
+      "width": 90,
+      "height": 116,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1782,
+        "bytes": 1782
+      }
+    },
+    "public/sprites/overworld/characters/oras/gentleman/image.png": {
+      "digest": "107f56ab37b8356c",
+      "bytes": 966,
+      "width": 51,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 966,
+        "bytes": 966
+      }
+    },
+    "public/sprites/overworld/characters/oras/glacia/image.png": {
+      "digest": "21780d01a94f8c9a",
+      "bytes": 1311,
+      "width": 57,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1311,
+        "bytes": 1311
+      }
+    },
+    "public/sprites/overworld/characters/oras/guitarist/image.png": {
+      "digest": "b6330a7e35ce2231",
+      "bytes": 1309,
+      "width": 51,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1309,
+        "bytes": 1309
+      }
+    },
+    "public/sprites/overworld/characters/oras/joseph-stone/image.png": {
+      "digest": "cd1b3337739672c2",
+      "bytes": 1270,
+      "width": 57,
+      "height": 112,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1270,
+        "bytes": 1270
+      }
+    },
+    "public/sprites/overworld/characters/oras/kindler/image.png": {
+      "digest": "ab1ccc0f5bf34cf5",
+      "bytes": 1470,
+      "width": 63,
+      "height": 112,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1470,
+        "bytes": 1470
+      }
+    },
+    "public/sprites/overworld/characters/oras/lady/image.png": {
+      "digest": "0f58adc7488689c6",
+      "bytes": 1504,
+      "width": 57,
+      "height": 112,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1504,
+        "bytes": 1504
+      }
+    },
+    "public/sprites/overworld/characters/oras/lass/image.png": {
+      "digest": "763975d707b7762c",
+      "bytes": 1216,
+      "width": 63,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1216,
+        "bytes": 1216
+      }
+    },
+    "public/sprites/overworld/characters/oras/lisia/image.png": {
+      "digest": "0d191072c2ae687e",
+      "bytes": 1905,
+      "width": 93,
+      "height": 124,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1905,
+        "bytes": 1905
+      }
+    },
+    "public/sprites/overworld/characters/oras/liza/image.png": {
+      "digest": "790d057b114ce8c2",
+      "bytes": 1261,
+      "width": 63,
+      "height": 112,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1261,
+        "bytes": 1261
+      }
+    },
+    "public/sprites/overworld/characters/oras/magma-grunt/image.png": {
+      "digest": "c55facd3922c6d69",
+      "bytes": 1062,
+      "width": 51,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1062,
+        "bytes": 1062
+      }
+    },
+    "public/sprites/overworld/characters/oras/man-2/image.png": {
+      "digest": "9b0c17a1e9a0f1c0",
+      "bytes": 1080,
+      "width": 51,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1080,
+        "bytes": 1080
+      }
+    },
+    "public/sprites/overworld/characters/oras/man/image.png": {
+      "digest": "c5a7f35be94f3918",
+      "bytes": 1185,
+      "width": 57,
+      "height": 108,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1185,
+        "bytes": 1185
+      }
+    },
+    "public/sprites/overworld/characters/oras/matt/image.png": {
+      "digest": "3d4ff98fb9e27dea",
+      "bytes": 1812,
+      "width": 69,
+      "height": 116,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1812,
+        "bytes": 1812
+      }
+    },
+    "public/sprites/overworld/characters/oras/maxie/image.png": {
+      "digest": "3f0180319be51c3a",
+      "bytes": 1220,
+      "width": 51,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1220,
+        "bytes": 1220
+      }
+    },
+    "public/sprites/overworld/characters/oras/may/image.png": {
+      "digest": "e5e5d6455bb2f1d9",
+      "bytes": 1953,
+      "width": 75,
+      "height": 108,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1953,
+        "bytes": 1953
+      }
+    },
+    "public/sprites/overworld/characters/oras/mom/image.png": {
+      "digest": "beec988c93ef2618",
+      "bytes": 1428,
+      "width": 57,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1428,
+        "bytes": 1428
+      }
+    },
+    "public/sprites/overworld/characters/oras/ninja-boy/image.png": {
+      "digest": "90a5fd6fe6f268f5",
+      "bytes": 1059,
+      "width": 69,
+      "height": 88,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1059,
+        "bytes": 1059
+      }
+    },
+    "public/sprites/overworld/characters/oras/parasol-lady/image.png": {
+      "digest": "32ade63975b6ef79",
+      "bytes": 1023,
+      "width": 63,
+      "height": 112,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1023,
+        "bytes": 1023
+      }
+    },
+    "public/sprites/overworld/characters/oras/phoebe/image.png": {
+      "digest": "763ef5fe1340dc88",
+      "bytes": 1373,
+      "width": 57,
+      "height": 112,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1373,
+        "bytes": 1373
+      }
+    },
+    "public/sprites/overworld/characters/oras/picnicker/image.png": {
+      "digest": "910464a8b1c00505",
+      "bytes": 1154,
+      "width": 57,
+      "height": 100,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1154,
+        "bytes": 1154
+      }
+    },
+    "public/sprites/overworld/characters/oras/pokefan-f/image.png": {
+      "digest": "c6a2f874aee8f2ff",
+      "bytes": 1374,
+      "width": 51,
+      "height": 108,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1374,
+        "bytes": 1374
+      }
+    },
+    "public/sprites/overworld/characters/oras/pokefan-m/image.png": {
+      "digest": "e020b41c03bd7366",
+      "bytes": 1335,
+      "width": 72,
+      "height": 108,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1335,
+        "bytes": 1335
+      }
+    },
+    "public/sprites/overworld/characters/oras/ranger-f/image.png": {
+      "digest": "2420e6ff63347e45",
+      "bytes": 1450,
+      "width": 72,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1450,
+        "bytes": 1450
+      }
+    },
+    "public/sprites/overworld/characters/oras/ranger-m/image.png": {
+      "digest": "e69fdf86de88aeb9",
+      "bytes": 1216,
+      "width": 51,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1216,
+        "bytes": 1216
+      }
+    },
+    "public/sprites/overworld/characters/oras/reporter/image.png": {
+      "digest": "c9b69943f9cb313d",
+      "bytes": 1247,
+      "width": 51,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1247,
+        "bytes": 1247
+      }
+    },
+    "public/sprites/overworld/characters/oras/rich-boy/image.png": {
+      "digest": "aac385d743662019",
+      "bytes": 1174,
+      "width": 63,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1174,
+        "bytes": 1174
+      }
+    },
+    "public/sprites/overworld/characters/oras/roxanne/image.png": {
+      "digest": "deaff2330c5d7130",
+      "bytes": 1186,
+      "width": 63,
+      "height": 100,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1186,
+        "bytes": 1186
+      }
+    },
+    "public/sprites/overworld/characters/oras/ruin-maniac/image.png": {
+      "digest": "6dbfd2a0c6222d3b",
+      "bytes": 1345,
+      "width": 63,
+      "height": 108,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1345,
+        "bytes": 1345
+      }
+    },
+    "public/sprites/overworld/characters/oras/sailor/image.png": {
+      "digest": "a92dac19a23e19c5",
+      "bytes": 1324,
+      "width": 51,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1324,
+        "bytes": 1324
+      }
+    },
+    "public/sprites/overworld/characters/oras/schoolkid-f/image.png": {
+      "digest": "c5903ef5758cf169",
+      "bytes": 1326,
+      "width": 75,
+      "height": 112,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1326,
+        "bytes": 1326
+      }
+    },
+    "public/sprites/overworld/characters/oras/schoolkid-m/image.png": {
+      "digest": "304b4337bd928a79",
+      "bytes": 1160,
+      "width": 57,
+      "height": 100,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1160,
+        "bytes": 1160
+      }
+    },
+    "public/sprites/overworld/characters/oras/shelly/image.png": {
+      "digest": "6938e72b764a818d",
+      "bytes": 2029,
+      "width": 93,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 2029,
+        "bytes": 2029
+      }
+    },
+    "public/sprites/overworld/characters/oras/sidney/image.png": {
+      "digest": "cffd50fe8bfd0635",
+      "bytes": 1027,
+      "width": 51,
+      "height": 108,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1027,
+        "bytes": 1027
+      }
+    },
+    "public/sprites/overworld/characters/oras/steven/image.png": {
+      "digest": "cb47e24422ca2bf8",
+      "bytes": 1556,
+      "width": 63,
+      "height": 112,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1556,
+        "bytes": 1556
+      }
+    },
+    "public/sprites/overworld/characters/oras/street-thug/image.png": {
+      "digest": "43eee7159377c433",
+      "bytes": 1305,
+      "width": 63,
+      "height": 112,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1305,
+        "bytes": 1305
+      }
+    },
+    "public/sprites/overworld/characters/oras/swimmer/image.png": {
+      "digest": "85e18193381b26fb",
+      "bytes": 1571,
+      "width": 63,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1571,
+        "bytes": 1571
+      }
+    },
+    "public/sprites/overworld/characters/oras/tabitha/image.png": {
+      "digest": "36d1db89d7998f40",
+      "bytes": 1411,
+      "width": 63,
+      "height": 112,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1411,
+        "bytes": 1411
+      }
+    },
+    "public/sprites/overworld/characters/oras/tate/image.png": {
+      "digest": "477437e1547ad885",
+      "bytes": 1254,
+      "width": 63,
+      "height": 112,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1254,
+        "bytes": 1254
+      }
+    },
+    "public/sprites/overworld/characters/oras/teammates-1/image.png": {
+      "digest": "26ea5a3557af78d9",
+      "bytes": 1297,
+      "width": 63,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1297,
+        "bytes": 1297
+      }
+    },
+    "public/sprites/overworld/characters/oras/teammates-2/image.png": {
+      "digest": "42ffc6c6cd0f952a",
+      "bytes": 1270,
+      "width": 60,
+      "height": 108,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1270,
+        "bytes": 1270
+      }
+    },
+    "public/sprites/overworld/characters/oras/triathlete-2/image.png": {
+      "digest": "08747442f2bb2f3e",
+      "bytes": 1152,
+      "width": 57,
+      "height": 112,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1152,
+        "bytes": 1152
+      }
+    },
+    "public/sprites/overworld/characters/oras/triathlete-3/image.png": {
+      "digest": "ed622517b9022619",
+      "bytes": 1197,
+      "width": 60,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1197,
+        "bytes": 1197
+      }
+    },
+    "public/sprites/overworld/characters/oras/triathlete/image.png": {
+      "digest": "a702569a2741c35f",
+      "bytes": 1259,
+      "width": 57,
+      "height": 112,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1259,
+        "bytes": 1259
+      }
+    },
+    "public/sprites/overworld/characters/oras/tuber-f/image.png": {
+      "digest": "413937460f0770ff",
+      "bytes": 762,
+      "width": 51,
+      "height": 92,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 762,
+        "bytes": 762
+      }
+    },
+    "public/sprites/overworld/characters/oras/tuber-m/image.png": {
+      "digest": "e4d3c4309caed6aa",
+      "bytes": 925,
+      "width": 45,
+      "height": 88,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 925,
+        "bytes": 925
+      }
+    },
+    "public/sprites/overworld/characters/oras/wallace/image.png": {
+      "digest": "ab7474ca529a920a",
+      "bytes": 1844,
+      "width": 69,
+      "height": 112,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1844,
+        "bytes": 1844
+      }
+    },
+    "public/sprites/overworld/characters/oras/wally/image.png": {
+      "digest": "51037fa2eac99702",
+      "bytes": 1263,
+      "width": 63,
+      "height": 108,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1263,
+        "bytes": 1263
+      }
+    },
+    "public/sprites/overworld/characters/oras/youngster/image.png": {
+      "digest": "d2b6628ab5ff7e30",
+      "bytes": 1133,
+      "width": 63,
+      "height": 100,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1133,
+        "bytes": 1133
+      }
+    },
+    "public/sprites/overworld/characters/rse/aqua-grunt-f/image.png": {
+      "digest": "6a30cbdbe10a0bcd",
+      "bytes": 1091,
+      "width": 63,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1091,
+        "bytes": 1091
+      }
+    },
+    "public/sprites/overworld/characters/rse/aqua-grunt-m/image.png": {
+      "digest": "cf502191a43e8d33",
+      "bytes": 1052,
+      "width": 63,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1052,
+        "bytes": 1052
+      }
+    },
+    "public/sprites/overworld/characters/rse/archie/image.png": {
+      "digest": "fce6665d3bcb3a3e",
+      "bytes": 1047,
+      "width": 57,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1047,
+        "bytes": 1047
+      }
+    },
+    "public/sprites/overworld/characters/rse/brawly/image.png": {
+      "digest": "e7c00ca1cf2122dd",
+      "bytes": 1275,
+      "width": 66,
+      "height": 112,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1275,
+        "bytes": 1275
+      }
+    },
+    "public/sprites/overworld/characters/rse/brendan-2/image.png": {
+      "digest": "6a21b8a46515deb6",
+      "bytes": 1349,
+      "width": 69,
+      "height": 112,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1349,
+        "bytes": 1349
+      }
+    },
+    "public/sprites/overworld/characters/rse/brendan/image.png": {
+      "digest": "a868381afe236737",
+      "bytes": 1458,
+      "width": 66,
+      "height": 112,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1458,
+        "bytes": 1458
+      }
+    },
+    "public/sprites/overworld/characters/rse/chef/image.png": {
+      "digest": "89595544fffe9c1d",
+      "bytes": 1294,
+      "width": 63,
+      "height": 120,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1294,
+        "bytes": 1294
+      }
+    },
+    "public/sprites/overworld/characters/rse/devon-researcher/image.png": {
+      "digest": "2776ea0c4447ec7f",
+      "bytes": 1073,
+      "width": 57,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1073,
+        "bytes": 1073
+      }
+    },
+    "public/sprites/overworld/characters/rse/flannery/image.png": {
+      "digest": "a40c141dc91dd42b",
+      "bytes": 1792,
+      "width": 90,
+      "height": 116,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1792,
+        "bytes": 1792
+      }
+    },
+    "public/sprites/overworld/characters/rse/juan/image.png": {
+      "digest": "7ce32f03d52276a9",
+      "bytes": 1183,
+      "width": 57,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1183,
+        "bytes": 1183
+      }
+    },
+    "public/sprites/overworld/characters/rse/liza/image.png": {
+      "digest": "146e5661f526b3d9",
+      "bytes": 1260,
+      "width": 72,
+      "height": 112,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1260,
+        "bytes": 1260
+      }
+    },
+    "public/sprites/overworld/characters/rse/magma-grunt-f/image.png": {
+      "digest": "7ba5a74a828d68db",
+      "bytes": 1060,
+      "width": 51,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1060,
+        "bytes": 1060
+      }
+    },
+    "public/sprites/overworld/characters/rse/magma-grunt-m/image.png": {
+      "digest": "597c9084cc942745",
+      "bytes": 991,
+      "width": 51,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 991,
+        "bytes": 991
+      }
+    },
+    "public/sprites/overworld/characters/rse/man-2/image.png": {
+      "digest": "4974444e5cc70f71",
+      "bytes": 1098,
+      "width": 57,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1098,
+        "bytes": 1098
+      }
+    },
+    "public/sprites/overworld/characters/rse/man/image.png": {
+      "digest": "147ecb0e03801453",
+      "bytes": 1063,
+      "width": 51,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1063,
+        "bytes": 1063
+      }
+    },
+    "public/sprites/overworld/characters/rse/may-2/image.png": {
+      "digest": "acbcb7d28cf65aff",
+      "bytes": 1353,
+      "width": 78,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1353,
+        "bytes": 1353
+      }
+    },
+    "public/sprites/overworld/characters/rse/may/image.png": {
+      "digest": "626dd2a6d6e9b681",
+      "bytes": 1367,
+      "width": 78,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1367,
+        "bytes": 1367
+      }
+    },
+    "public/sprites/overworld/characters/rse/ninja-boy/image.png": {
+      "digest": "90a5fd6fe6f268f5",
+      "bytes": 1059,
+      "width": 69,
+      "height": 88,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1059,
+        "bytes": 1059
+      }
+    },
+    "public/sprites/overworld/characters/rse/norman/image.png": {
+      "digest": "79b897194db3964d",
+      "bytes": 1143,
+      "width": 51,
+      "height": 104,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1143,
+        "bytes": 1143
+      }
+    },
+    "public/sprites/overworld/characters/rse/roxanne/image.png": {
+      "digest": "989cdfa21d59ab1a",
+      "bytes": 1176,
+      "width": 57,
+      "height": 100,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1176,
+        "bytes": 1176
+      }
+    },
+    "public/sprites/overworld/characters/rse/scott/image.png": {
+      "digest": "ad28a8d9709526d0",
+      "bytes": 1379,
+      "width": 63,
+      "height": 116,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1379,
+        "bytes": 1379
+      }
+    },
+    "public/sprites/overworld/characters/rse/tate/image.png": {
+      "digest": "51d0fbe9366b0d89",
+      "bytes": 1237,
+      "width": 72,
+      "height": 112,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1237,
+        "bytes": 1237
+      }
+    },
+    "public/sprites/overworld/characters/rse/wallace/image.png": {
+      "digest": "26834a3ef820a9b0",
+      "bytes": 1164,
+      "width": 57,
+      "height": 116,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1164,
+        "bytes": 1164
+      }
+    },
+    "public/sprites/overworld/characters/rse/wally/image.png": {
+      "digest": "2beda1cfeb827a0c",
+      "bytes": 1280,
+      "width": 63,
+      "height": 108,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1280,
+        "bytes": 1280
+      }
+    },
+    "public/sprites/overworld/characters/rse/wattson/image.png": {
+      "digest": "65f4304f6f16302a",
+      "bytes": 1263,
+      "width": 63,
+      "height": 112,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1263,
+        "bytes": 1263
+      }
+    },
+    "public/sprites/overworld/characters/rse/winona/image.png": {
+      "digest": "1a022acb64242ff6",
+      "bytes": 1340,
+      "width": 63,
+      "height": 116,
+      "compact": {
+        "at": "2026-09-04T11:12:51Z",
+        "as": "already compact",
+        "was": 1340,
+        "bytes": 1340
       }
     },
     "public/sprites/overworld/decorations/image.png": {

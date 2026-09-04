@@ -18,6 +18,7 @@ import {
 } from '../../data/overworld/trainers';
 import Awards, {
   AWARD_NAMES,
+  HOENN_BADGES,
   JOHTO_BADGES,
   JOHTO_HONORS,
   KANTO_BADGES,
@@ -144,13 +145,23 @@ const AWARD_COLORS: Record<Awards, string> = {
   [Awards.PetrelDefeated]: '#7a6f8f',
   [Awards.RocketGruntDefeated]: '#3f4550',
   [Awards.JohtoDexMedal]: '#d0a63c',
+  [Awards.StoneBadge]: '#a9a29a',
+  [Awards.KnuckleBadge]: '#c96b4a',
+  [Awards.DynamoBadge]: '#e8c34a',
+  [Awards.HeatBadge]: '#d9542f',
+  [Awards.BalanceBadge]: '#b8894a',
+  [Awards.FeatherBadge]: '#8fb8d0',
+  [Awards.MindBadge]: '#c96fa8',
+  [Awards.RainBadge]: '#4a8fd0',
 };
 
 /**
  * The shelf's order: Kanto's 8 badges, its 4 elite marks, the title
  * and the dex medal, then Johto's 8 badges, its 4 marks and its
- * title and its medal, then the marks that belong to no region's
- * walk: Team Rocket's, from the rank and file up, and the legends'. The walk itself, left to right, a region at a time
+ * title and its medal, then Hoenn's 8 badges, which is all that
+ * region pays so far, then the marks that belong to no region's
+ * walk: Team Rocket's, from the rank and file up, and the legends'.
+ * The walk itself, left to right, a region at a time
  */
 const SHELF: Awards[] = [
   ...new Set([
@@ -162,6 +173,7 @@ const SHELF: Awards[] = [
     ...JOHTO_HONORS,
     Awards.JohtoChampion,
     Awards.JohtoDexMedal,
+    ...HOENN_BADGES,
     ROCKET_GRUNT_HONOR,
     ...ROCKET_EXECUTIVES.map((executive) => ROCKET_EXECUTIVE_HONORS[executive]),
     GIOVANNI_HONOR,
@@ -272,6 +284,7 @@ function Shelf(props: { held: Resource<AwardRecord[]> }): JSX.Element {
   const honors = (): number => KANTO_HONORS.filter((honor) => wins().has(honor)).length;
   const johto = (): number => JOHTO_BADGES.filter((badge) => wins().has(badge)).length;
   const marks = (): number => JOHTO_HONORS.filter((honor) => wins().has(honor)).length;
+  const hoenn = (): number => HOENN_BADGES.filter((badge) => wins().has(badge)).length;
 
   const empties = (): number[] =>
     Array.from(
@@ -301,7 +314,8 @@ function Shelf(props: { held: Resource<AwardRecord[]> }): JSX.Element {
         Kanto: {badges()} of {KANTO_BADGES.length} badges, {honors()} of {KANTO_HONORS.length} of
         the Elite Four{wins().has(Awards.KantoChampion) ? ', Champion' : ''}. Johto: {johto()} of{' '}
         {JOHTO_BADGES.length} badges, {marks()} of {JOHTO_HONORS.length} of the Elite Four
-        {wins().has(Awards.JohtoChampion) ? ', Champion' : ''}.
+        {wins().has(Awards.JohtoChampion) ? ', Champion' : ''}. Hoenn: {hoenn()} of{' '}
+        {HOENN_BADGES.length} badges.
       </Meta>
     </div>
   );

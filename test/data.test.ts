@@ -289,6 +289,7 @@ import {
 import { registerSpecies as registerSpeciesData } from '../src/data/species/__create';
 import Awards, {
   AWARD_NAMES,
+  HOENN_BADGES,
   JOHTO_BADGES,
   JOHTO_HONORS,
   KANTO_BADGES,
@@ -4825,12 +4826,15 @@ describe('Team Rocket', () => {
 describe('type experts', () => {
   it('gives every leader a name, a badge and a shipped wardrobe', () => {
     const badges = GYM_LEADERS.map((leader) => GYM_LEADER_BADGES[leader]);
-    const cases = [...KANTO_BADGES, ...JOHTO_BADGES];
+    const cases = [...KANTO_BADGES, ...JOHTO_BADGES, ...HOENN_BADGES];
 
-    // Every leader carries a badge of their own, and between the two
-    // regions the leaders account for every badge there is
+    // Every leader carries a badge, and between the three regions the
+    // leaders account for every badge there is. There is one leader
+    // more than there are badges, because Mossdeep is kept by two
+    // people who pay the same one
     expect(new Set(badges).size).toBe(cases.length);
     expect(badges.every((badge) => cases.includes(badge))).toBe(true);
+    expect(GYM_LEADER_BADGES[GymLeader.Tate]).toBe(GYM_LEADER_BADGES[GymLeader.Liza]);
 
     for (const leader of GYM_LEADERS) {
       expect(GYM_LEADER_NAMES[leader].length).toBeGreaterThan(0);
@@ -4840,10 +4844,23 @@ describe('type experts', () => {
       }
     }
     // Every gym is a fight about a type now that Giovanni keeps the
-    // one Blue used to take all comers at
-    expect(new Set(GYM_LEADERS.map((leader) => GYM_LEADER_TYPES[leader])).size).toBe(
-      GYM_LEADERS.length,
-    );
+    // one Blue used to take all comers at, and no region runs the
+    // same fight twice. Across regions they repeat: Roxanne's gym is
+    // Brock's fight in another country
+    for (const region of [KANTO_BADGES, JOHTO_BADGES, HOENN_BADGES]) {
+      const held = new Map<Awards, Set<Types>>();
+
+      for (const leader of GYM_LEADERS.filter((one) => region.includes(GYM_LEADER_BADGES[one]))) {
+        const badge = GYM_LEADER_BADGES[leader];
+
+        held.set(badge, (held.get(badge) ?? new Set<Types>()).add(GYM_LEADER_TYPES[leader]));
+      }
+      // One badge is one type, whoever of its keepers a chunk seats
+      for (const [badge, types] of held) {
+        expect(types.size, AWARD_NAMES[badge]).toBe(1);
+      }
+      expect(new Set([...held.values()].flatMap((types) => [...types])).size).toBe(region.length);
+    }
     expect(GYM_LEADER_TYPES[GymLeader.Giovanni]).toBe(Types.Ground);
     expect(GYM_LEADER_TYPES[GymLeader.Brock]).toBe(Types.Rock);
   });
@@ -4873,6 +4890,7 @@ describe('type experts', () => {
     for (const award of [
       ...KANTO_BADGES,
       ...JOHTO_BADGES,
+      ...HOENN_BADGES,
       ...KANTO_HONORS,
       ...JOHTO_HONORS,
       Awards.KantoChampion,

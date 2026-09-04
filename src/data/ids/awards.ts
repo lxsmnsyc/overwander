@@ -46,6 +46,14 @@ const enum Awards {
   RocketGruntDefeated = 33,
   /** Johto's dex filled to 99 caught */
   JohtoDexMedal = 34,
+  StoneBadge = 35,
+  KnuckleBadge = 36,
+  DynamoBadge = 37,
+  HeatBadge = 38,
+  BalanceBadge = 39,
+  FeatherBadge = 40,
+  MindBadge = 41,
+  RainBadge = 42,
 }
 
 export default Awards;
@@ -86,6 +94,14 @@ export const AWARD_NAMES: Record<Awards, string> = {
   [Awards.PetrelDefeated]: 'Petrel Defeated',
   [Awards.RocketGruntDefeated]: 'Team Rocket Repelled',
   [Awards.JohtoDexMedal]: 'Johto Dex Medal',
+  [Awards.StoneBadge]: 'Stone Badge',
+  [Awards.KnuckleBadge]: 'Knuckle Badge',
+  [Awards.DynamoBadge]: 'Dynamo Badge',
+  [Awards.HeatBadge]: 'Heat Badge',
+  [Awards.BalanceBadge]: 'Balance Badge',
+  [Awards.FeatherBadge]: 'Feather Badge',
+  [Awards.MindBadge]: 'Mind Badge',
+  [Awards.RainBadge]: 'Rain Badge',
 };
 
 /**
@@ -141,4 +157,19 @@ export const JOHTO_HONORS: Awards[] = [
   Awards.KogaDefeated,
   Awards.JohtoBrunoDefeated,
   Awards.KarenDefeated,
+];
+
+/**
+ * And Hoenn's 8, in gym order. The Mind Badge is one badge for one
+ * gym, which two people keep between them
+ */
+export const HOENN_BADGES: Awards[] = [
+  Awards.StoneBadge,
+  Awards.KnuckleBadge,
+  Awards.DynamoBadge,
+  Awards.HeatBadge,
+  Awards.BalanceBadge,
+  Awards.FeatherBadge,
+  Awards.MindBadge,
+  Awards.RainBadge,
 ];

@@ -1620,8 +1620,6 @@ const NAMED: Partial<Record<Moves, EffectShape>> = {
   [Moves.Moonlight]: 'Mend',
   [Moves.HiddenPower]: 'Dazzle',
 
-  [Moves.ScaryFace]: 'Wave',
-
   // Ghost: something closing on it rather than something thrown
   [Moves.ShadowBall]: 'Shade',
   [Moves.Nightmare]: 'Shade',
@@ -1691,7 +1689,6 @@ const NAMED: Partial<Record<Moves, EffectShape>> = {
 
   // Carried on the air
   [Moves.SilverWind]: 'Blow',
-  [Moves.FeatherDance]: 'Blow',
 
   // Ground closing round it, and rock coming down on it
   [Moves.SandTomb]: 'Coil',
@@ -1701,18 +1698,15 @@ const NAMED: Partial<Record<Moves, EffectShape>> = {
   [Moves.ShadowPunch]: 'Shade',
   [Moves.Astonish]: 'Shade',
   [Moves.Grudge]: 'Shade',
-  [Moves.Memento]: 'Shade',
   [Moves.Snatch]: 'Shade',
   [Moves.Torment]: 'Shade',
 
   // Said to it rather than done to it
   [Moves.Taunt]: 'Wave',
-  [Moves.FakeTears]: 'Wave',
   [Moves.Covet]: 'Hearts',
 
   // Something turning in front of its eyes
   [Moves.Yawn]: 'Trance',
-  [Moves.Flatter]: 'Trance',
   [Moves.TeeterDance]: 'Trance',
 
   // Held between the two of them: an item, an ability, a move
@@ -1728,14 +1722,8 @@ const NAMED: Partial<Record<Moves, EffectShape>> = {
   [Moves.Aromatherapy]: 'Mend',
   [Moves.Wish]: 'Mend',
 
-  // Something about the pokemon itself went up
-  [Moves.BulkUp]: 'Boost',
-  [Moves.CalmMind]: 'Boost',
-  [Moves.DragonDance]: 'Boost',
-  [Moves.CosmicPower]: 'Boost',
-  [Moves.TailGlow]: 'Boost',
-  [Moves.Charge]: 'Boost',
-  [Moves.Stockpile]: 'Boost',
+  // Something the pokemon did for itself that moves no stat, so the
+  // stat rule above never sees it
   [Moves.HelpingHand]: 'Boost',
   [Moves.Recycle]: 'Boost',
 };

@@ -55,7 +55,7 @@ import { WILD_HELD_COMMON, WILD_HELD_UNCOMMON } from '../../src/data/species/hel
 import { RaidKind, deriveRaidReward, getRaidTitle } from '../../src/auth/raids';
 import {
   BANNED_BOSS_MOVES,
-  BOSS_BASE_HEALTH,
+  BOSS_HEALTH_SCALE,
   getBannedBossMoves,
 } from '../../src/battle/abilities/special';
 import { EffectType } from '../../src/battle/events';
@@ -946,12 +946,11 @@ describe('world', () => {
 
     // A Boss carries a raid-sized pool its record knows nothing
     // about, so the stored figure is read as a share and applied to
-    // the pool it actually fights with — a boss at full is at full,
-    // not at a tenth of itself
+    // the pool it actually fights with: a boss at full is at full,
+    // not at a twentieth of itself
     const pool = bossUnits[0].checkStat(Stats.HP, 0);
 
-    expect(pool).toBeGreaterThan(BOSS_BASE_HEALTH);
-    expect(pool).toBeGreaterThan(getMaxHealth(boss) * 2);
+    expect(pool).toBe(getMaxHealth(boss) * BOSS_HEALTH_SCALE);
     expect(bossUnits[0].health).toBe(pool);
   });
 

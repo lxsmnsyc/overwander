@@ -1949,13 +1949,13 @@ describe('Weak Armor', () => {
 });
 
 describe('Boss', () => {
-  it('multiplies stats: a flat pool plus tenfold HP, doubled otherwise', () => {
+  it('multiplies stats: twentyfold HP, doubled otherwise', () => {
     const { battle, teamA } = createBattle();
     const boss = createUnit(battle, teamA);
     boss.addAbility(Abilities.Boss);
 
-    // 5000 + 160 * 10, so even a frail species is raid-sized
-    expect(boss.checkStat(Stats.HP, 0)).toBe(6600);
+    // 160 * 20, so a raid is as long as the species is bulky
+    expect(boss.checkStat(Stats.HP, 0)).toBe(3200);
     expect(boss.checkStat(Stats.Attack, 0)).toBe(210);
     expect(boss.checkStat(Stats.Speed, 0)).toBe(210);
   });

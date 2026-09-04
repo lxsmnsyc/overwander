@@ -23,12 +23,11 @@ import { createAbility } from './__create';
 export const PROTECTED_ABILITIES = new Set<Abilities>([Abilities.Boss, Abilities.Shadow]);
 
 /**
- * A Boss' health is a flat raid pool plus a tenfold multiple of what
- * the species would otherwise have, so even a frail legendary takes
- * a party to bring down
+ * A Boss' health is twentyfold what the species would otherwise have,
+ * so a raid takes a party to bring down and a bulky boss is a longer
+ * fight than a frail one all the way up
  */
-export const BOSS_BASE_HEALTH = 5000;
-export const BOSS_HEALTH_SCALE = 10;
+export const BOSS_HEALTH_SCALE = 20;
 
 /**
  * Every other stat simply doubles
@@ -78,8 +77,8 @@ function refusesStatus(status: Statuses, cause: EffectCause, source: unknown): b
 
 const setupAbilities = [
   /**
-   * Boss: a raid-style stat wall — a flat health pool on top of
-   * tenfold HP, doubled everything else, immune to negative stage
+   * Boss: a raid-style stat wall — twentyfold HP, doubled everything
+   * else, immune to negative stage
    * applications, health-scaling damage (OHKO moves, Super Fang,
    * residual max-HP fractions), forced switch-outs, trapping, and
    * disruption statuses (unless self-inflicted), and a Perish Song
@@ -93,11 +92,9 @@ const setupAbilities = [
     return new MergedLifecycle([
       battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
         if (event.source.hasAbility(Abilities.Boss)) {
-          // The flat term is what keeps an early raid from being
-          // burst down: a frail species still has a raid-sized pool
           event.value =
             event.stat === Stats.HP
-              ? BOSS_BASE_HEALTH + event.value * BOSS_HEALTH_SCALE
+              ? event.value * BOSS_HEALTH_SCALE
               : event.value * BOSS_STAT_SCALE;
         }
       }),

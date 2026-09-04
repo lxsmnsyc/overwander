@@ -359,6 +359,7 @@ import {
 import Regions from '../src/data/ids/regions';
 import { FREE_CHARSETS } from '../src/data/overworld/charsets';
 import { counterParty, rentalOffer, rentedHand } from '../src/overworld/rocket';
+import { BEST_MOVE_COUNT, BEST_MOVE_OVERRIDES, getBestMoves } from '../src/data/species/best-moves';
 import { getRegionSpan, getSpeciesRegion } from '../src/data/species/regions';
 import {
   ACHIEVEMENT_LINES,
@@ -5228,6 +5229,74 @@ describe('type experts', () => {
       expect(FRONTIER_BRAIN_GOLD_PARTIES[brain], FRONTIER_BRAIN_NAMES[brain]).not.toEqual(
         FRONTIER_BRAIN_PARTIES[brain],
       );
+    }
+  });
+
+  it('builds every species an expert can field with four moves it can learn', () => {
+    for (const species of getRentalPool()) {
+      const built = getBestMoves(species);
+      const legal = new Set(getLearnableMoves(species));
+      const name = getSpeciesData(species).name;
+
+      expect(built.length, name).toBeLessThanOrEqual(BEST_MOVE_COUNT);
+      expect(new Set(built).size, name).toBe(built.length);
+
+      let quiet = 0;
+
+      for (const move of built) {
+        expect(legal.has(move), `${name}: ${getMoveData(move).name}`).toBe(true);
+
+        if (getMoveData(move).category === MoveCategories.Status) {
+          quiet += 1;
+        }
+      }
+      // Four ways to do nothing is not a party: at most one slot goes
+      // to a move that deals no damage
+      expect(quiet, name).toBeLessThanOrEqual(1);
+
+      // And nothing that takes the pokemon off the field with it
+      expect(built).not.toContain(Moves.Explosion);
+      expect(built).not.toContain(Moves.SelfDestruct);
+    }
+  });
+
+  it('builds the same set twice, and a different one for a different ability', () => {
+    expect(getBestMoves(Species.Metagross)).toEqual(getBestMoves(Species.Metagross));
+
+    // Huge Power doubles the attack stat, which is what decides which
+    // half of the split is worth casting from
+    expect(getBestMoves(Species.Azumarill, [Abilities.HugePower])).not.toEqual(
+      getBestMoves(Species.Azumarill),
+    );
+
+    // A boost is worth what the stat it raises is worth: Latios never
+    // swings, so it is never handed a Dragon Dance
+    const latios = getBestMoves(Species.Latios);
+
+    expect(latios).toContain(Moves.CalmMind);
+    expect(latios).not.toContain(Moves.DragonDance);
+  });
+
+  it('hands an expert gear that follows what it actually attacks with', () => {
+    // Latios is special and its best set is Psychic, Ice and Water, so
+    // the booster is for one of those rather than for its Dragon half
+    const moves = getBestMoves(Species.Latios);
+    const [item] = getExpertHeldItems(Species.Latios, 1, moves);
+    const boosted = TYPE_BOOSTERS.get(item);
+
+    expect(boosted).not.toBeUndefined();
+    expect(moves.map((move) => getMoveData(move).type)).toContain(boosted);
+  });
+
+  it('keeps every written override to something its species can learn', () => {
+    for (const [key, moves] of Object.entries(BEST_MOVE_OVERRIDES)) {
+      const species: Species = Number(key);
+      const legal = new Set(getLearnableMoves(species));
+
+      expect(moves, getSpeciesData(species).name).toHaveLength(BEST_MOVE_COUNT);
+      for (const move of moves) {
+        expect(legal.has(move), `${getSpeciesData(species).name}: ${move}`).toBe(true);
+      }
     }
   });
 

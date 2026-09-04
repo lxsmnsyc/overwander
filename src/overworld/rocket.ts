@@ -15,6 +15,7 @@ import { getMaxHealth } from '../auth/health';
 import { MAX_EFFORT_PER_STAT, MAX_IV, STAT_ORDER, Stats, setIV } from '../data/constants/stats';
 import { Slots, defaultSlots, withSlots } from '../data/constants/slots';
 import { getExpertHeldItems } from '../data/items/expert-loadout';
+import { getBestMoves } from '../data/species/best-moves';
 import Abilities from '../data/ids/abilities';
 import Landmark from '../data/overworld/landmark';
 import Npc, {
@@ -491,6 +492,15 @@ export interface StopOutfit {
   items: number;
   /** What was polished and trained into each */
   training: StopTraining;
+  /**
+   * Whether each is built rather than rolled: the four moves its
+   * species is best with instead of the last four it levelled into.
+   *
+   * The ladder's top rungs only. A gym leader and everybody below
+   * fields what a walk could have met, which is the difference
+   * between a badge and a crown
+   */
+  best?: boolean;
 }
 
 /** What a duelling trainer and a grunt field: what they caught. */
@@ -507,13 +517,28 @@ export const GYM_OUTFIT: StopOutfit = { abilities: 1, items: 1, training: GYM_TR
 export const ACE_OUTFIT: StopOutfit = { abilities: 1, items: 0, training: ELITE_TRAINING };
 
 /** The Elite Four's, and the executives who match them. */
-export const ELITE_OUTFIT: StopOutfit = { abilities: 2, items: 1, training: ELITE_TRAINING };
+export const ELITE_OUTFIT: StopOutfit = {
+  abilities: 2,
+  items: 1,
+  training: ELITE_TRAINING,
+  best: true,
+};
 
 /** A champion's, and Giovanni's: two of everything. */
-export const CHAMPION_OUTFIT: StopOutfit = { abilities: 2, items: 2, training: CHAMPION_TRAINING };
+export const CHAMPION_OUTFIT: StopOutfit = {
+  abilities: 2,
+  items: 2,
+  training: CHAMPION_TRAINING,
+  best: true,
+};
 
 /** A legend's: three of everything, on six at the ceiling. */
-export const LEGEND_OUTFIT: StopOutfit = { abilities: 3, items: 3, training: LEGEND_TRAINING };
+export const LEGEND_OUTFIT: StopOutfit = {
+  abilities: 3,
+  items: 3,
+  training: LEGEND_TRAINING,
+  best: true,
+};
 
 /**
  * A Frontier Brain's: a champion's training on three, and the items
@@ -524,6 +549,7 @@ export const FRONTIER_OUTFIT: StopOutfit = {
   abilities: 2,
   items: 2,
   training: CHAMPION_TRAINING,
+  best: true,
 };
 
 /** What the party at this stop is fielded with */
@@ -593,7 +619,11 @@ export function createRocketSnapshot(
       ...(shadow ? [Abilities.Shadow] : []),
     ]),
   ];
-  const items = getExpertHeldItems(fielded.species, outfit.items);
+  // The ranks that are meant to be hard field a built pokemon rather
+  // than a rolled one: the four moves its species is best with, and
+  // gear that follows those rather than its type line
+  const moves = outfit.best === true ? getBestMoves(fielded.species, abilities) : fielded.moves;
+  const items = getExpertHeldItems(fielded.species, outfit.items, moves);
   // Read off the roll rather than over it: the spawn tuple is what a
   // beaten stop hands over, and raising a party must not touch it
   const { ivs, effortValues } = trainStop(fielded.species, fielded.ivs, outfit.training);
@@ -613,7 +643,7 @@ export function createRocketSnapshot(
     // pays, not what it fields
     shiny: false,
     shadow,
-    moves: fielded.moves,
+    moves,
     // A stop buys no PP Ups: what it fields is what the roll gave it
     movePoints: {},
     abilities,

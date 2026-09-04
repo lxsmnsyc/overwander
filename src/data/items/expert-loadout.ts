@@ -1,5 +1,8 @@
 import { Items } from '../ids/items';
+import { MoveCategories, type Moves } from '../ids/moves';
 import type { Species } from '../ids/species';
+import type { Types } from '../constants/types';
+import { getMoveData } from '../moves/__create';
 import { GENERAL_STAT_BOOSTERS } from './stat-boosters';
 import { MARKET_GEAR } from './gear';
 import { ORBS } from './orbs';
@@ -74,9 +77,26 @@ export function isBattleHeldItem(item: Items): boolean {
  * somewhere to evolve to, then a booster for each of its types, and
  * gear that suits anybody for the slots nothing else fills
  */
-function preferences(species: Species): Items[] {
+function preferences(species: Species, moves: Moves[]): Items[] {
   const held = getSpeciesHeldItems(species);
-  const boosters = getSpeciesData(species).types.flatMap((type) =>
+  // What the pokemon actually swings with, richest type first. A
+  // booster is only worth a slot for a type the set reaches for, so a
+  // Gyarados carrying no Water move is handed no Mystic Water
+  const swung = new Map<Types, number>();
+
+  for (const move of moves) {
+    const data = getMoveData(move);
+
+    if (data.category !== MoveCategories.Status) {
+      swung.set(data.type, (swung.get(data.type) ?? 0) + (data.power ?? 0));
+    }
+  }
+
+  const types =
+    swung.size > 0
+      ? [...swung].sort((one, two) => two[1] - one[1]).map(([type]) => type)
+      : getSpeciesData(species).types;
+  const boosters = types.flatMap((type) =>
     [...TYPE_BOOSTERS].filter(([, boosted]) => boosted === type).map(([item]) => item),
   );
 
@@ -106,16 +126,20 @@ function preferences(species: Species): Items[] {
 /**
  * The items one of an expert's pokemon holds, at most `count` of
  * them. Deterministic: the same species on two teams carries the same
- * gear, because what suits it does not change with whose team it is
+ * gear, because what suits it does not change with whose team it is.
+ *
+ * `moves` is the set it is fielding, where the caller has built one:
+ * a type booster follows what the pokemon actually attacks with
+ * rather than what its species is listed as
  */
-export function getExpertHeldItems(species: Species, count: number): Items[] {
+export function getExpertHeldItems(species: Species, count: number, moves: Moves[] = []): Items[] {
   if (count <= 0) {
     return [];
   }
 
   const chosen: Items[] = [];
 
-  for (const item of preferences(species)) {
+  for (const item of preferences(species, moves)) {
     if (chosen.length >= count) {
       break;
     }

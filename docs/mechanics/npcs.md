@@ -308,6 +308,16 @@ that are hard to answer. His pokemon come out of the same crate the Factory
 rents from, so the Dome, like the Factory, gets harder with each generation the
 game registers.
 
+From the **Elite Four upwards**, a trainer's pokemon are **built rather than
+caught**: the four moves their species is best with, worked out from everything
+it can ever learn and weighed against its own types, which of its two attacking
+stats is the real one, and the ability it is fighting with. The gear follows the
+moves rather than the species, so a type booster is for something the pokemon
+actually attacks with. It reaches the Elite Four, the Champions, the legends,
+Giovanni and his executives, and all seven Frontier houses, the Factory's rented
+crate included. A gym leader and everybody below still field what they levelled
+into, which is most of what separates a badge from a crown.
+
 A house takes nobody who does not hold the crown of the region it stands in.
 Beating one hangs that facility's **silver symbol** on the shelf, and holding
 that symbol is what brings the Brain's **second three** out the next time you

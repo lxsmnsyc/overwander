@@ -73,6 +73,8 @@ const enum Awards {
   GoldGutsSymbol = 53,
   SilverLuckSymbol = 54,
   GoldLuckSymbol = 55,
+  SilverKnowledgeSymbol = 56,
+  GoldKnowledgeSymbol = 57,
 }
 
 export default Awards;
@@ -134,6 +136,8 @@ export const AWARD_NAMES: Record<Awards, string> = {
   [Awards.GoldGutsSymbol]: 'Gold Guts Symbol',
   [Awards.SilverLuckSymbol]: 'Silver Luck Symbol',
   [Awards.GoldLuckSymbol]: 'Gold Luck Symbol',
+  [Awards.SilverKnowledgeSymbol]: 'Silver Knowledge Symbol',
+  [Awards.GoldKnowledgeSymbol]: 'Gold Knowledge Symbol',
 };
 
 /**
@@ -218,7 +222,7 @@ export const HOENN_HONORS: Awards[] = [
 
 /**
  * The Frontier's symbols, silver then gold, in facility order. Its
- * three open facilities so far: the rest of the Brains are still to
+ * four open facilities so far: the rest of the Brains are still to
  * come, and each brings a pair of its own
  */
 export const FRONTIER_SYMBOLS: Awards[] = [
@@ -228,4 +232,6 @@ export const FRONTIER_SYMBOLS: Awards[] = [
   Awards.GoldGutsSymbol,
   Awards.SilverLuckSymbol,
   Awards.GoldLuckSymbol,
+  Awards.SilverKnowledgeSymbol,
+  Awards.GoldKnowledgeSymbol,
 ];

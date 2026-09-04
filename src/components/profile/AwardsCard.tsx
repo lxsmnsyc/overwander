@@ -168,6 +168,8 @@ const AWARD_COLORS: Record<Awards, string> = {
   [Awards.GoldGutsSymbol]: '#e0b64f',
   [Awards.SilverLuckSymbol]: '#b8bcc4',
   [Awards.GoldLuckSymbol]: '#e0b64f',
+  [Awards.SilverKnowledgeSymbol]: '#b8bcc4',
+  [Awards.GoldKnowledgeSymbol]: '#e0b64f',
 };
 
 /**

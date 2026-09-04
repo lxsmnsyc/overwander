@@ -44,6 +44,7 @@ import {
   FRONTIER_BRAINS,
   FRONTIER_BRAIN_CHARSETS,
   FRONTIER_BRAIN_PARTIES,
+  FRONTIER_TEAM_SIZE,
   type FrontierBrain,
   GYM_LEADER_CHARSETS,
   GYM_LEADER_SIGNATURES,
@@ -54,6 +55,7 @@ import {
   type Legend,
   getEliteMemberRoster,
   getGymLeaderRoster,
+  getRentalPool,
 } from '../data/overworld/experts';
 import {
   ACE_PARTY_SIZE,
@@ -112,6 +114,22 @@ function expertParty(pool: Species[], signature: Species, seed: string): Spawn[]
   });
 
   return [...rolled, [signature, rng.int32(), rng.int32()]];
+}
+
+/**
+ * A party out of the crate: the species are drawn as well as the
+ * values, which is what makes a rented three a rented three. With
+ * replacement, since the crate is what it is and two of a kind is a
+ * hand the house can deal
+ */
+function rentedParty(pool: Species[], size: number, seed: string): Spawn[] {
+  const rng = new AleaRNG(seed);
+
+  return Array.from({ length: size }, (): Spawn => [
+    pool[Math.floor(rng.random() * pool.length)],
+    rng.int32(),
+    rng.int32(),
+  ]);
 }
 
 /**
@@ -1282,12 +1300,16 @@ export default class ChunkSnapshot {
         const brain = this.getFrontierBrain(cell);
 
         if (brain != null) {
+          const seed = `${this.key}${this.npcTimestamp}frontier${cell}`;
+          const named = FRONTIER_BRAIN_PARTIES[brain];
+
+          // A house with no party of its own rents like everybody
+          // else: the Factory's keeper draws three out of the crate
           stops.set(
             cell,
-            signatureParty(
-              FRONTIER_BRAIN_PARTIES[brain],
-              `${this.key}${this.npcTimestamp}frontier${cell}`,
-            ),
+            named.length > 0
+              ? signatureParty(named, seed)
+              : rentedParty(getRentalPool(), FRONTIER_TEAM_SIZE, seed),
           );
         }
       }

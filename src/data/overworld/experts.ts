@@ -968,6 +968,7 @@ const enum FrontierBrain {
   Brandon = 0,
   Greta = 1,
   Lucy = 2,
+  Noland = 3,
 }
 
 export { FrontierBrain };
@@ -976,12 +977,14 @@ export const FRONTIER_BRAINS: FrontierBrain[] = [
   FrontierBrain.Brandon,
   FrontierBrain.Greta,
   FrontierBrain.Lucy,
+  FrontierBrain.Noland,
 ];
 
 export const FRONTIER_BRAIN_NAMES: Record<FrontierBrain, string> = {
   [FrontierBrain.Brandon]: 'Brandon',
   [FrontierBrain.Greta]: 'Greta',
   [FrontierBrain.Lucy]: 'Lucy',
+  [FrontierBrain.Noland]: 'Noland',
 };
 
 /** The house each of them keeps, which is what the rule is named for */
@@ -989,12 +992,14 @@ export const FRONTIER_FACILITY_NAMES: Record<FrontierBrain, string> = {
   [FrontierBrain.Brandon]: 'Battle Pyramid',
   [FrontierBrain.Greta]: 'Battle Arena',
   [FrontierBrain.Lucy]: 'Battle Pike',
+  [FrontierBrain.Noland]: 'Battle Factory',
 };
 
 export const FRONTIER_BRAIN_CHARSETS: Record<FrontierBrain, string[]> = {
   [FrontierBrain.Brandon]: ['characters/rse/brandon'],
   [FrontierBrain.Greta]: ['characters/rse/greta'],
   [FrontierBrain.Lucy]: ['characters/rse/lucy'],
+  [FrontierBrain.Noland]: ['characters/rse/noland'],
 };
 
 /**
@@ -1005,6 +1010,7 @@ export const FRONTIER_BRAIN_SYMBOLS: Record<FrontierBrain, [silver: Awards, gold
   [FrontierBrain.Brandon]: [Awards.SilverBraveSymbol, Awards.GoldBraveSymbol],
   [FrontierBrain.Greta]: [Awards.SilverGutsSymbol, Awards.GoldGutsSymbol],
   [FrontierBrain.Lucy]: [Awards.SilverLuckSymbol, Awards.GoldLuckSymbol],
+  [FrontierBrain.Noland]: [Awards.SilverKnowledgeSymbol, Awards.GoldKnowledgeSymbol],
 };
 
 /**
@@ -1021,6 +1027,9 @@ export const FRONTIER_BRAIN_PARTIES: Record<FrontierBrain, Species[]> = {
   [FrontierBrain.Brandon]: [Species.Regirock, Species.Regice, Species.Registeel],
   [FrontierBrain.Greta]: [Species.Umbreon, Species.Hariyama, Species.Shedinja],
   [FrontierBrain.Lucy]: [Species.Seviper, Species.Shuckle, Species.Milotic],
+  // Nobody's: the Factory rents to its own keeper too, so his three
+  // are rolled out of the same crate the challenger's come from
+  [FrontierBrain.Noland]: [],
 };
 
 /**
@@ -1056,12 +1065,21 @@ export const enum FrontierRule {
    * party alone: the house is not walking through its own rooms
    */
   Curtained = 3,
+  /**
+   * The Factory, fought with three the house lends. Neither side
+   * brings its own, so nothing of the challenger's is on the field
+   * and nothing of theirs comes off it: no health lost, no item
+   * spent, no candy earned. What is being tested is what they can do
+   * with three pokemon they have never met
+   */
+  Rented = 4,
 }
 
 export const FRONTIER_BRAIN_RULES: Record<FrontierBrain, FrontierRule> = {
   [FrontierBrain.Brandon]: FrontierRule.Bare,
   [FrontierBrain.Greta]: FrontierRule.Timed,
   [FrontierBrain.Lucy]: FrontierRule.Curtained,
+  [FrontierBrain.Noland]: FrontierRule.Rented,
 };
 
 /**
@@ -1082,6 +1100,7 @@ export const FRONTIER_BRAIN_TITLES: Record<FrontierBrain, Awards> = {
   [FrontierBrain.Brandon]: Awards.HoennChampion,
   [FrontierBrain.Greta]: Awards.HoennChampion,
   [FrontierBrain.Lucy]: Awards.HoennChampion,
+  [FrontierBrain.Noland]: Awards.HoennChampion,
 };
 
 /**
@@ -1144,3 +1163,24 @@ export function pickPikeCurtain(roll: number): PikeCurtain {
 
   return PIKE_CURTAINS[Math.min(at, PIKE_CURTAINS.length - 1)];
 }
+
+/**
+ * What the Factory has in its crate.
+ *
+ * Everything an expert could field, from every region: the fully
+ * evolved and the single-line species, legendaries and lair residents
+ * left out the way every expert pool leaves them out. It is the one
+ * pool that widens on its own — every generation registered puts more
+ * in the crate, and the house is the harder for it, which is the
+ * right way round for a rented fight
+ */
+export function getRentalPool(): Species[] {
+  return getWorldExpertPool({ types: [] });
+}
+
+/**
+ * How many the Factory lays out for the challenger to choose from.
+ * Six for three: the choice is the fight, since nothing in the crate
+ * is anybody's and none of it can be looked up beforehand
+ */
+export const FRONTIER_RENTAL_OFFER = 6;

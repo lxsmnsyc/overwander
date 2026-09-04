@@ -30,6 +30,7 @@ import {
   type RaidBattle,
   collectAftermath,
   countDefeated,
+  countFallen,
   createRaidBattle,
 } from '../../../overworld/raid-battle';
 import { createTrainerBattle } from '../../../overworld/rocket-battle';
@@ -464,10 +465,11 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
     // Counted here too, before the teardown: conceding still pays for
     // whatever the party managed to put down first
     const defeated = built != null && user != null ? countDefeated(built, user.uid) : 0;
+    const fallen = built != null && user != null ? countFallen(built, user.uid) : 0;
 
     (async () => {
       if (aftermath.length > 0) {
-        sayCandy(await recordAftermath(props.active.id, aftermath, defeated));
+        sayCandy(await recordAftermath(props.active.id, aftermath, defeated, fallen));
       }
       await finishBattle(props.active.id, BattleOutcome.Lost);
     })().catch(() => {
@@ -587,7 +589,12 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
 
         if (aftermath.length > 0) {
           sayCandy(
-            await recordAftermath(props.active.id, aftermath, countDefeated(built, user.uid)),
+            await recordAftermath(
+              props.active.id,
+              aftermath,
+              countDefeated(built, user.uid),
+              countFallen(built, user.uid),
+            ),
           );
         }
       }

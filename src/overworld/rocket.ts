@@ -1,6 +1,15 @@
 import { MAX_LEVEL } from '../data/constants/levels';
 import { SHADOW_FRIENDSHIP } from '../data/constants/friendship';
 import AleaRNG from '../core/alea';
+import {
+  CHAMPION_NAMES,
+  ELITE_MEMBER_NAMES,
+  FRONTIER_RENTAL_OFFER,
+  FRONTIER_TEAM_SIZE,
+  GYM_LEADER_NAMES,
+  LEGEND_NAMES,
+  getRentalPool,
+} from '../data/overworld/experts';
 import type { CatchSnapshot } from '../auth/catch-snapshot';
 import { getMaxHealth } from '../auth/health';
 import { MAX_EFFORT_PER_STAT, MAX_IV, STAT_ORDER, Stats, setIV } from '../data/constants/stats';
@@ -8,12 +17,6 @@ import { Slots, defaultSlots, withSlots } from '../data/constants/slots';
 import { getExpertHeldItems } from '../data/items/expert-loadout';
 import Abilities from '../data/ids/abilities';
 import Landmark from '../data/overworld/landmark';
-import {
-  CHAMPION_NAMES,
-  ELITE_MEMBER_NAMES,
-  GYM_LEADER_NAMES,
-  LEGEND_NAMES,
-} from '../data/overworld/experts';
 import Npc, {
   GIOVANNI_NAME,
   NPC_NAMES,
@@ -646,4 +649,42 @@ export function createRocketParty(
   outfit: StopOutfit = PLAIN_OUTFIT,
 ): CatchSnapshot[] {
   return spawns.map((spawn) => createRocketSnapshot(snapshot, spawn, shadow, levels, outfit));
+}
+
+/**
+ * The six the Factory lays out for one challenge.
+ *
+ * Derived from the stop rather than stored: the dialog that offers
+ * them and the server that fields them run the same roll, so what is
+ * on the table cannot be rerolled by walking away and back, and a
+ * pick is an index into a list both sides already agree on
+ */
+export function rentalOffer(stop: string): Spawn[] {
+  const rng = new AleaRNG(`${stop}:rental`);
+  const pool = getRentalPool();
+
+  return Array.from({ length: FRONTIER_RENTAL_OFFER }, (): Spawn => [
+    pool[Math.floor(rng.random() * pool.length)],
+    rng.int32(),
+    rng.int32(),
+  ]);
+}
+
+/**
+ * The three a challenger took off the table, or null for a hand that
+ * is not three distinct ones off it. The picks are indexes into
+ * `rentalOffer`, which is what a rented fight carries instead of
+ * catch ids
+ */
+export function rentedHand(stop: string, picks: string[]): Spawn[] | null {
+  const offer = rentalOffer(stop);
+  const at = picks.map(Number);
+
+  if (at.length !== FRONTIER_TEAM_SIZE || new Set(at).size !== at.length) {
+    return null;
+  }
+  if (at.some((one) => !Number.isInteger(one) || one < 0 || one >= offer.length)) {
+    return null;
+  }
+  return at.map((one) => offer[one]);
 }

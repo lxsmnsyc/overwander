@@ -274,6 +274,13 @@ one, and it heals whatever walked in. Hers arrive as they are, since the house
 does not walk through its own rooms. What the curtain leaves comes out with the
 party the way any status does, so a poisoned three walk out poisoned.
 
+**Noland** keeps the Battle Factory, where nothing on the field belongs to
+anybody. He lays 6 rented pokemon on the table, you pick 3, and he draws his own
+3 out of the same crate. Your box stays where it is: nothing of yours is fought
+with, so nothing of yours is hurt, spent or fed candy for it. The crate is every
+species an expert could field, from every region, so the Factory gets harder
+with each generation the game registers rather than easier.
+
 A house takes nobody who does not hold the crown of the region it stands in.
 Beating one hangs that facility's **silver symbol** on the shelf; beating it
 without losing a pokemon hangs the **gold** one instead, so collecting both means

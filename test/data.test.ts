@@ -323,6 +323,7 @@ import {
   FRONTIER_BRAIN_SYMBOLS,
   FRONTIER_BRAIN_TITLES,
   FRONTIER_FACILITY_NAMES,
+  FRONTIER_RENTAL_OFFER,
   FRONTIER_TEAM_SIZE,
   FrontierBrain,
   FrontierRule,
@@ -347,12 +348,14 @@ import {
   getEliteBadges,
   getEliteMemberRoster,
   getGymLeaderRoster,
+  getRentalPool,
   getWorldExpertPool,
   pickPikeCurtain,
   rollGymMachine,
 } from '../src/data/overworld/experts';
 import Regions from '../src/data/ids/regions';
 import { FREE_CHARSETS } from '../src/data/overworld/charsets';
+import { rentalOffer, rentedHand } from '../src/overworld/rocket';
 import { getRegionSpan, getSpeciesRegion } from '../src/data/species/regions';
 import {
   ACHIEVEMENT_LINES,
@@ -5071,9 +5074,14 @@ describe('type experts', () => {
       expect(FRONTIER_BRAIN_NAMES[brain].length).toBeGreaterThan(0);
       expect(FRONTIER_FACILITY_NAMES[brain].length).toBeGreaterThan(0);
       // Three a side is the Frontier's shape, and what makes a house
-      // rule bite rather than merely annoy
-      expect(FRONTIER_BRAIN_PARTIES[brain]).toHaveLength(FRONTIER_TEAM_SIZE);
-      for (const species of FRONTIER_BRAIN_PARTIES[brain]) {
+      // rule bite rather than merely annoy. A house that rents names
+      // nobody: its keeper draws out of the crate like the challenger
+      const named = FRONTIER_BRAIN_PARTIES[brain];
+
+      expect(named).toHaveLength(
+        FRONTIER_BRAIN_RULES[brain] === FrontierRule.Rented ? 0 : FRONTIER_TEAM_SIZE,
+      );
+      for (const species of named) {
         expect(getSpeciesData(species).name.length).toBeGreaterThan(0);
       }
       for (const sheet of FRONTIER_BRAIN_CHARSETS[brain]) {
@@ -5111,6 +5119,33 @@ describe('type experts', () => {
     expect(kind).toEqual([PikeCurtain.Healed]);
     for (const curtain of PIKE_CURTAINS) {
       expect(PIKE_CURTAIN_NAMES[curtain].length).toBeGreaterThan(0);
+    }
+  });
+
+  it('lays six on the Factory’s table and takes three off it', () => {
+    const stop = 'stop:factory:1';
+    const offer = rentalOffer(stop);
+
+    // The same table every time it is looked at: walking away and
+    // back is not a reroll
+    expect(offer).toHaveLength(FRONTIER_RENTAL_OFFER);
+    expect(rentalOffer(stop)).toEqual(offer);
+    expect(rentalOffer('stop:factory:2')).not.toEqual(offer);
+
+    // Everything on it is something an expert could field
+    const crate = new Set(getRentalPool());
+
+    for (const [species] of offer) {
+      expect(crate.has(species), getSpeciesData(species).name).toBe(true);
+    }
+
+    // Three off the table, in the order they were taken
+    expect(rentedHand(stop, ['4', '0', '2'])).toEqual([offer[4], offer[0], offer[2]]);
+
+    // And nothing else is a hand: too few, too many, the same one
+    // twice, or a place that is not on the table
+    for (const picks of [['0'], ['0', '1', '2', '3'], ['1', '1', '2'], ['0', '1', '9']]) {
+      expect(rentedHand(stop, picks), picks.join(',')).toBeNull();
     }
   });
 

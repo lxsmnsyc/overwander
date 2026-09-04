@@ -11,6 +11,7 @@ import {
   FRONTIER_BRAIN_SYMBOLS,
   FRONTIER_BRAIN_TITLES,
   FRONTIER_FACILITY_NAMES,
+  FRONTIER_RENTAL_OFFER,
   FRONTIER_TEAM_SIZE,
   FRONTIER_TIME_TURNS,
   FrontierBrain,
@@ -168,6 +169,8 @@ const FRONTIER_GREETINGS: Record<FrontierBrain, string> = {
   [FrontierBrain.Brandon]: 'You came to my pyramid. Leave everything at the door and climb.',
   [FrontierBrain.Greta]: 'The clock is running. Fight like it matters, because it is judged.',
   [FrontierBrain.Lucy]: 'Pick a curtain. What is behind it is not my doing, and I do not care.',
+  [FrontierBrain.Noland]:
+    'Nothing here is yours and nothing here is mine. Pick three and let us see.',
 };
 
 /**
@@ -182,6 +185,9 @@ const FRONTIER_RULE_TERMS: Record<FrontierRule, string> = {
   [FrontierRule.Curtained]: `A curtain is drawn as you walk in, and one room in
      ${PIKE_CURTAINS.length} is kind: your three arrive poisoned, burned, paralysed, asleep, or
      mended. Hers arrive as they are.`,
+  [FrontierRule.Rented]: `The house lends both sides: pick 3 of the ${FRONTIER_RENTAL_OFFER} on
+     the table and leave your own box alone. Nothing of yours is on the field, so nothing of
+     yours comes off it.`,
 };
 
 /** What a Brain's house asks to see: the crown of its region */
@@ -371,6 +377,7 @@ export default function challengerOf(
       name,
       levels: FRONTIER_PARTY_LEVELS,
       bring: FRONTIER_TEAM_SIZE,
+      rented: FRONTIER_BRAIN_RULES[brain] === FrontierRule.Rented,
       greeting: `${name} keeps the ${FRONTIER_FACILITY_NAMES[brain]}.
         “${FRONTIER_GREETINGS[brain]}”`,
       stakes: `${FRONTIER_RULE_TERMS[FRONTIER_BRAIN_RULES[brain]]} Three of theirs at level

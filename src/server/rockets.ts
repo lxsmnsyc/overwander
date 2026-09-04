@@ -16,9 +16,12 @@ import getWorld from '../overworld/current';
 import { EncounterType } from '../overworld/encounter';
 import { PLAYER_ALLIANCE } from '../overworld/raid';
 import {
+  FRONTIER_OUTFIT,
+  FRONTIER_PARTY_LEVELS,
   ROCKET_ALLIANCE,
   ROCKET_REWARD_LEVEL,
   createRocketParty,
+  rentedHand,
   rollStopGold,
   rollStopLoot,
   stopChallenger,
@@ -313,7 +316,9 @@ export async function startRocketBattle(
   catches: string[],
   now: number,
 ): Promise<string | null> {
-  if (catches.length === 0 || catches.length > TEAM_SIZE) {
+  // A rented fight brings nothing, so an empty party is the ordinary
+  // way into one. Everywhere else it is a fight with nobody in it
+  if (catches.length > TEAM_SIZE) {
     return null;
   }
   if (new Set(catches).size !== catches.length) {
@@ -360,6 +365,10 @@ export async function startRocketBattle(
     return null;
   }
 
+  if (catches.length === 0 && rules !== FrontierRule.Rented) {
+    return null;
+  }
+
   const battleId = newDocId();
   // The Pyramid is walked with nothing in hand, so the party is
   // frozen without what it was holding: the items stay on the
@@ -371,10 +380,27 @@ export async function startRocketBattle(
     rules === FrontierRule.Curtained
       ? pickPikeCurtain(new AleaRNG(`${stop}:curtain`).random())
       : undefined;
-  const party = await publishTeamSnapshot(uid, catches, PLAYER_ALLIANCE, now, {
-    bare: rules === FrontierRule.Bare,
-    curtain,
-  });
+  // The Factory lends both sides their three, so there is nothing of
+  // the player's to freeze: the crate is drawn from once for the
+  // challenge and the row belongs to them without standing for any
+  // record of theirs
+  const hand = rules === FrontierRule.Rented ? rentedHand(stop, catches) : null;
+
+  if (rules === FrontierRule.Rented && hand == null) {
+    return null;
+  }
+
+  const rented =
+    hand == null
+      ? null
+      : createRocketParty(snapshot, hand, false, FRONTIER_PARTY_LEVELS, FRONTIER_OUTFIT);
+  const party =
+    rented == null
+      ? await publishTeamSnapshot(uid, catches, PLAYER_ALLIANCE, now, {
+          bare: rules === FrontierRule.Bare,
+          curtain,
+        })
+      : newDocId();
 
   if (party == null) {
     return null;
@@ -405,6 +431,14 @@ export async function startRocketBattle(
   const weather = getWorld().getWeather(record.chunk.x, record.chunk.y, snapshot.weatherWindow);
 
   await tx(async (transaction) => {
+    // A rented party is the player's to field and nobody's to keep:
+    // the row is theirs, and every pokemon in it stands for no record
+    if (rented != null) {
+      await transaction`
+        insert into team_snapshots (id, player, alliance, catches)
+        values (${party}, ${uid}, ${PLAYER_ALLIANCE}, ${jsonOf(transaction, rented)})
+      `;
+    }
     // The stop's party belongs to nobody, the way a raid boss' does
     await transaction`
       insert into team_snapshots (id, player, alliance, catches)

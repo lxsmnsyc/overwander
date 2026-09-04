@@ -247,6 +247,27 @@ export function collectAftermath(built: RaidBattle, player: string): BattleAfter
 }
 
 /**
+ * How many of the player's own side ended the fight down.
+ *
+ * It counts the **team** rather than the records, so a party the
+ * house lent counts too: nothing of the player's is on the field in a
+ * rented fight, and the Frontier still has to know whether they got
+ * through it whole
+ */
+export function countFallen(built: RaidBattle, player: string): number {
+  let fallen = 0;
+
+  for (const fielded of built.units.values()) {
+    for (const unit of fielded) {
+      if (unit.team.player === player && unit.health <= 0) {
+        fallen += 1;
+      }
+    }
+  }
+  return fallen;
+}
+
+/**
  * How many of the other side this player's team put down.
  *
  * A lost fight still pays for what it beat, and this is the count it

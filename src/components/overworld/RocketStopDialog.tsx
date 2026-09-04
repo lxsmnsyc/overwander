@@ -4,7 +4,14 @@ import type { RocketRecord } from '../../auth/rocket-record';
 import { startRocketBattle } from '../../auth/rockets';
 import Npc, { NPC_NAMES, npcSheet } from '../../data/overworld/npc';
 import { getSpeciesData } from '../../data/species';
-import { type LevelBand, ROCKET_PARTY_LEVELS } from '../../overworld/rocket';
+import {
+  FRONTIER_PARTY_LEVELS,
+  type LevelBand,
+  ROCKET_PARTY_LEVELS,
+  rentalOffer,
+} from '../../overworld/rocket';
+import { FRONTIER_TEAM_SIZE } from '../../data/overworld/experts';
+import type { Spawn } from '../../overworld/chunk-snapshot';
 import { levelInBand } from '../../overworld/encounter';
 import { NPC_QUOTES } from './npc-dialog/shared';
 import TeamPickerDialog from '../battle/TeamPickerDialog';
@@ -30,6 +37,12 @@ export interface StopChallenge {
    * game's own six
    */
   bring?: number;
+  /**
+   * Whether the house lends the party rather than taking the
+   * player's. The six on offer are drawn off the stop, so the dialog
+   * lays them out itself and the picks are places in that list
+   */
+  rented?: boolean;
 }
 
 export interface RocketStopDialogProps {
@@ -63,6 +76,41 @@ export default function RocketStopDialog(props: RocketStopDialogProps): JSX.Elem
   const [status, setStatus] = createSignal<string | null>(null);
 
   const stop = (): string | null => props.challenge?.[0] ?? null;
+
+  /**
+   * The six the Factory has on the table, and the places the player
+   * has taken off it. Both are read off the stop rather than stored,
+   * so walking away and back deals the same hand
+   */
+  const [taken, setTaken] = createSignal<number[]>([]);
+  const rented = (): boolean => props.challenger?.rented === true;
+  const offer = (): Spawn[] => {
+    const id = stop();
+
+    return id == null || !rented() ? [] : rentalOffer(id);
+  };
+  const crate = (): BoxEntry[] =>
+    offer().map(([species, , traitValue], at) => ({
+      id: `${at}`,
+      species,
+      shiny: false,
+      egg: false,
+      progress: 0,
+      fainted: false,
+      mark: taken().includes(at) ? ('picked' as const) : undefined,
+      label: `${getSpeciesData(species).name}, Lv. ${levelInBand(traitValue, FRONTIER_PARTY_LEVELS)}`,
+    }));
+
+  const toggle = (id: string): void => {
+    const at = Number(id);
+
+    setTaken((held) => {
+      if (held.includes(at)) {
+        return held.filter((one) => one !== at);
+      }
+      return held.length >= FRONTIER_TEAM_SIZE ? held : [...held, at];
+    });
+  };
 
   /**
    * The fielded party as squares. They are not catches and have no
@@ -130,6 +178,7 @@ export default function RocketStopDialog(props: RocketStopDialogProps): JSX.Elem
   createEffect(() => {
     if (props.challenge != null) {
       setStatus(null);
+      setTaken([]);
     }
   });
 
@@ -193,10 +242,27 @@ export default function RocketStopDialog(props: RocketStopDialogProps): JSX.Elem
           )}
         </Show>
 
+        {/* What the house has on the table, where it lends the
+            party: the six are laid out with the fight rather than
+            behind a second dialog, and the button waits for three */}
+        <Show when={rented()}>
+          <div class="flex flex-col items-center gap-2 py-2 text-center">
+            <CatchBox entries={crate()} capacity={crate().length} columns={3} onOpen={toggle} />
+            <Meta>
+              Pick {FRONTIER_TEAM_SIZE} of {crate().length} to rent. {taken().length} taken.
+            </Meta>
+          </div>
+        </Show>
+
         <DialogActions>
           <Button
             tone="primary"
+            disabled={rented() && taken().length !== FRONTIER_TEAM_SIZE}
             onClick={() => {
+              if (rented()) {
+                accept(taken().map(String));
+                return;
+              }
               setPicking(true);
             }}
           >

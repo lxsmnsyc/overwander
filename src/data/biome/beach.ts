@@ -8,15 +8,15 @@ import { UNOWN_SPAWNS, registerSpawnPool } from './__create';
 export default function registerBeachSpawns(): void {
   registerSpawnPool(Biome.Beach, {
     [TimeOfDay.Morning]: {
-      base: [
-        { species: Species.Squirtle, weight: 2 },
+      base: [{ species: Species.Squirtle, weight: 2 }],
+      uncommon: [
+        { species: Species.Wartortle, weight: 1 },
         { species: Species.Psyduck, weight: 20 },
         { species: Species.Slowpoke, weight: 20 },
         { species: Species.Shellder, weight: 20 },
         { species: Species.Krabby, weight: 20 },
         { species: Species.Goldeen, weight: 20 },
       ],
-      uncommon: [{ species: Species.Wartortle, weight: 1 }],
       rare: [
         { species: Species.Blastoise, weight: 2 },
         { species: Species.Golduck, weight: 10 },
@@ -31,15 +31,15 @@ export default function registerBeachSpawns(): void {
       special: [],
     },
     [TimeOfDay.Day]: {
-      base: [
-        { species: Species.Squirtle, weight: 2 },
+      base: [{ species: Species.Squirtle, weight: 2 }],
+      uncommon: [
+        { species: Species.Wartortle, weight: 1 },
         { species: Species.Psyduck, weight: 20 },
         { species: Species.Slowpoke, weight: 20 },
         { species: Species.Shellder, weight: 20 },
         { species: Species.Krabby, weight: 20 },
         { species: Species.Goldeen, weight: 20 },
       ],
-      uncommon: [{ species: Species.Wartortle, weight: 1 }],
       rare: [
         { species: Species.Blastoise, weight: 2 },
         { species: Species.Golduck, weight: 10 },
@@ -54,13 +54,13 @@ export default function registerBeachSpawns(): void {
       special: [],
     },
     [TimeOfDay.Evening]: {
-      base: [
+      base: [],
+      uncommon: [
         { species: Species.Shellder, weight: 20 },
         { species: Species.Krabby, weight: 20 },
         { species: Species.Goldeen, weight: 20 },
         { species: Species.Staryu, weight: 20 },
       ],
-      uncommon: [],
       rare: [
         { species: Species.Kingler, weight: 10 },
         { species: Species.Seaking, weight: 10 },
@@ -72,13 +72,13 @@ export default function registerBeachSpawns(): void {
       special: [],
     },
     [TimeOfDay.Night]: {
-      base: [
+      base: [],
+      uncommon: [
         { species: Species.Shellder, weight: 20 },
         { species: Species.Krabby, weight: 20 },
         { species: Species.Goldeen, weight: 20 },
         { species: Species.Staryu, weight: 20 },
       ],
-      uncommon: [],
       rare: [
         { species: Species.Kingler, weight: 10 },
         { species: Species.Seaking, weight: 10 },

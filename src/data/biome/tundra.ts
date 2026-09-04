@@ -9,7 +9,7 @@ export default function registerTundraSpawns(): void {
   registerSpawnPool(Biome.Tundra, {
     [TimeOfDay.Morning]: {
       base: [{ species: Species.Swinub, weight: 25 }],
-      uncommon: [],
+      uncommon: [{ species: Species.Piloswine, weight: 10 }],
       rare: [
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Delibird, weight: 5 },
@@ -19,7 +19,7 @@ export default function registerTundraSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [{ species: Species.Swinub, weight: 25 }],
-      uncommon: [],
+      uncommon: [{ species: Species.Piloswine, weight: 10 }],
       rare: [
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Delibird, weight: 5 },
@@ -29,24 +29,28 @@ export default function registerTundraSpawns(): void {
     },
     [TimeOfDay.Evening]: {
       base: [{ species: Species.Swinub, weight: 25 }],
-      uncommon: [],
+      uncommon: [
+        { species: Species.Piloswine, weight: 5 },
+        { species: Species.Sneasel, weight: 5 },
+      ],
       rare: [
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Jynx, weight: 5 },
         { species: Species.Delibird, weight: 5 },
-        { species: Species.Sneasel, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS, { species: Species.Smoochum, weight: PRIZED_WEIGHT }],
       special: [{ species: Species.Suicune, weight: 10 }],
     },
     [TimeOfDay.Night]: {
       base: [{ species: Species.Swinub, weight: 25 }],
-      uncommon: [],
+      uncommon: [
+        { species: Species.Piloswine, weight: 5 },
+        { species: Species.Sneasel, weight: 5 },
+      ],
       rare: [
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Jynx, weight: 5 },
         { species: Species.Delibird, weight: 5 },
-        { species: Species.Sneasel, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS, { species: Species.Smoochum, weight: PRIZED_WEIGHT }],
       special: [{ species: Species.Suicune, weight: 10 }],

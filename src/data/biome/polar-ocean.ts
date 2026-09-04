@@ -8,8 +8,8 @@ import { UNOWN_SPAWNS, registerSpawnPool } from './__create';
 export default function registerPolarOceanSpawns(): void {
   registerSpawnPool(Biome.PolarOcean, {
     [TimeOfDay.Morning]: {
-      base: [{ species: Species.Seel, weight: 20 }],
-      uncommon: [],
+      base: [],
+      uncommon: [{ species: Species.Seel, weight: 20 }],
       rare: [
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Cloyster, weight: 10 },
@@ -19,8 +19,8 @@ export default function registerPolarOceanSpawns(): void {
       special: [{ species: Species.Articuno, weight: 10 }],
     },
     [TimeOfDay.Day]: {
-      base: [{ species: Species.Seel, weight: 20 }],
-      uncommon: [],
+      base: [],
+      uncommon: [{ species: Species.Seel, weight: 20 }],
       rare: [
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Cloyster, weight: 10 },
@@ -30,8 +30,8 @@ export default function registerPolarOceanSpawns(): void {
       special: [{ species: Species.Articuno, weight: 10 }],
     },
     [TimeOfDay.Evening]: {
-      base: [{ species: Species.Seel, weight: 20 }],
-      uncommon: [],
+      base: [],
+      uncommon: [{ species: Species.Seel, weight: 20 }],
       rare: [
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Cloyster, weight: 10 },
@@ -41,8 +41,8 @@ export default function registerPolarOceanSpawns(): void {
       special: [{ species: Species.Articuno, weight: 10 }],
     },
     [TimeOfDay.Night]: {
-      base: [{ species: Species.Seel, weight: 20 }],
-      uncommon: [],
+      base: [],
+      uncommon: [{ species: Species.Seel, weight: 20 }],
       rare: [
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Cloyster, weight: 10 },

@@ -8,64 +8,68 @@ import { UNOWN_SPAWNS, registerSpawnPool } from './__create';
 export default function registerTropicalRainforestSpawns(): void {
   registerSpawnPool(Biome.TropicalRainforest, {
     [TimeOfDay.Morning]: {
-      base: [
+      base: [],
+      uncommon: [
         { species: Species.Exeggcute, weight: 20 },
         { species: Species.Pineco, weight: 20 },
-      ],
-      uncommon: [],
-      rare: [
-        { species: Species.Exeggutor, weight: 10 },
         { species: Species.Aipom, weight: 5 },
         { species: Species.Yanma, weight: 5 },
+      ],
+      rare: [
+        { species: Species.Exeggutor, weight: 10 },
+        { species: Species.Forretress, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [],
       mythical: [{ species: Species.Mew, weight: 10 }],
     },
     [TimeOfDay.Day]: {
-      base: [
+      base: [],
+      uncommon: [
         { species: Species.Exeggcute, weight: 20 },
         { species: Species.Pineco, weight: 20 },
-      ],
-      uncommon: [],
-      rare: [
-        { species: Species.Exeggutor, weight: 10 },
         { species: Species.Aipom, weight: 5 },
         { species: Species.Yanma, weight: 5 },
+      ],
+      rare: [
+        { species: Species.Exeggutor, weight: 10 },
+        { species: Species.Forretress, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [],
       mythical: [{ species: Species.Mew, weight: 10 }],
     },
     [TimeOfDay.Evening]: {
-      base: [
+      base: [],
+      uncommon: [
         { species: Species.Exeggcute, weight: 20 },
         { species: Species.Spinarak, weight: 20 },
         { species: Species.Pineco, weight: 20 },
+        { species: Species.Aipom, weight: 5 },
+        { species: Species.Yanma, weight: 5 },
       ],
-      uncommon: [],
       rare: [
         { species: Species.Exeggutor, weight: 10 },
         { species: Species.Ariados, weight: 8 },
-        { species: Species.Aipom, weight: 5 },
-        { species: Species.Yanma, weight: 5 },
+        { species: Species.Forretress, weight: 8 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [],
       mythical: [{ species: Species.Mew, weight: 10 }],
     },
     [TimeOfDay.Night]: {
-      base: [
+      base: [],
+      uncommon: [
         { species: Species.Exeggcute, weight: 20 },
         { species: Species.Spinarak, weight: 20 },
         { species: Species.Pineco, weight: 20 },
+        { species: Species.Aipom, weight: 5 },
+        { species: Species.Yanma, weight: 5 },
       ],
-      uncommon: [],
       rare: [
         { species: Species.Exeggutor, weight: 10 },
         { species: Species.Ariados, weight: 8 },
-        { species: Species.Aipom, weight: 5 },
-        { species: Species.Yanma, weight: 5 },
+        { species: Species.Forretress, weight: 8 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [],

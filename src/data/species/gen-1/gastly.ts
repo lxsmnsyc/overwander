@@ -94,7 +94,7 @@ export default function registerGastlySpecies(): void {
     eggGroups: [EggGroups.Amorphous],
     genderRatio: [1, 1],
     catchRate: 190,
-    biomes: [Biome.Mountain],
+    biomes: [Biome.Mountain, Biome.Bog],
     activeTimes: TimeOfDay.Night,
     learnSet: {
       level: {
@@ -137,7 +137,7 @@ export default function registerGastlySpecies(): void {
     eggGroups: [EggGroups.Amorphous],
     genderRatio: [1, 1],
     catchRate: 90,
-    biomes: [Biome.Mountain],
+    biomes: [Biome.Mountain, Biome.Bog],
     activeTimes: TimeOfDay.Night,
     learnSet: {
       level: {
@@ -166,7 +166,7 @@ export default function registerGastlySpecies(): void {
     eggGroups: [EggGroups.Amorphous],
     genderRatio: [1, 1],
     catchRate: 45,
-    biomes: [Biome.Mountain],
+    biomes: [Biome.Mountain, Biome.Bog],
     activeTimes: TimeOfDay.Night,
     learnSet: {
       level: {

@@ -12,7 +12,10 @@ export default function registerAlpineTundraSpawns(): void {
         { species: Species.Machop, weight: 20 },
         { species: Species.Swinub, weight: 25 },
       ],
-      uncommon: [{ species: Species.Machoke, weight: 5 }],
+      uncommon: [
+        { species: Species.Machoke, weight: 5 },
+        { species: Species.Piloswine, weight: 5 },
+      ],
       rare: [
         { species: Species.Machamp, weight: 5 },
         { species: Species.Delibird, weight: 5 },
@@ -26,7 +29,10 @@ export default function registerAlpineTundraSpawns(): void {
         { species: Species.Machop, weight: 20 },
         { species: Species.Swinub, weight: 25 },
       ],
-      uncommon: [{ species: Species.Machoke, weight: 5 }],
+      uncommon: [
+        { species: Species.Machoke, weight: 5 },
+        { species: Species.Piloswine, weight: 5 },
+      ],
       rare: [
         { species: Species.Machamp, weight: 5 },
         { species: Species.Delibird, weight: 5 },
@@ -37,21 +43,21 @@ export default function registerAlpineTundraSpawns(): void {
     },
     [TimeOfDay.Evening]: {
       base: [{ species: Species.Swinub, weight: 25 }],
-      uncommon: [],
-      rare: [
-        { species: Species.Delibird, weight: 5 },
+      uncommon: [
+        { species: Species.Piloswine, weight: 5 },
         { species: Species.Sneasel, weight: 5 },
       ],
+      rare: [{ species: Species.Delibird, weight: 5 }],
       prized: [...UNOWN_SPAWNS],
       special: [{ species: Species.Articuno, weight: 10 }],
     },
     [TimeOfDay.Night]: {
       base: [{ species: Species.Swinub, weight: 25 }],
-      uncommon: [],
-      rare: [
-        { species: Species.Delibird, weight: 5 },
+      uncommon: [
+        { species: Species.Piloswine, weight: 5 },
         { species: Species.Sneasel, weight: 5 },
       ],
+      rare: [{ species: Species.Delibird, weight: 5 }],
       prized: [...UNOWN_SPAWNS],
       special: [{ species: Species.Articuno, weight: 10 }],
     },

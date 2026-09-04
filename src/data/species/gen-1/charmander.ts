@@ -85,7 +85,7 @@ export default function registerCharmanderSpecies(): void {
     eggGroups: [EggGroups.Monster, EggGroups.Dragon],
     genderRatio: [7, 1],
     catchRate: 45,
-    biomes: [Biome.Mountain],
+    biomes: [Biome.Mountain, Biome.Volcano],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
@@ -141,7 +141,7 @@ export default function registerCharmanderSpecies(): void {
     eggGroups: [EggGroups.Monster, EggGroups.Dragon],
     genderRatio: [7, 1],
     catchRate: 45,
-    biomes: [Biome.Mountain],
+    biomes: [Biome.Mountain, Biome.Volcano],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
@@ -181,7 +181,7 @@ export default function registerCharmanderSpecies(): void {
     eggGroups: [EggGroups.Monster, EggGroups.Dragon],
     genderRatio: [7, 1],
     catchRate: 45,
-    biomes: [Biome.Mountain],
+    biomes: [Biome.Mountain, Biome.Volcano],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {

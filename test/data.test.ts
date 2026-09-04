@@ -14,6 +14,8 @@ import registerBiomeSpawns, {
   getSpawnPool,
   getSpawnRarity,
   isAwaitingBaby,
+  isGrownSpecies,
+  isLegendarySpecies,
   isMythicalSpecies,
   isPrizedSpecies,
   listSpeciesHabitats,
@@ -851,8 +853,9 @@ describe('where a species lives', () => {
     expect(grassland.map((habitat) => habitat.time).sort()).toEqual(
       [TimeOfDay.Morning, TimeOfDay.Day, TimeOfDay.Evening, TimeOfDay.Night].sort(),
     );
+    // Two stages, so it stands one band up from the bottom
     for (const habitat of grassland) {
-      expect(habitat.rarity).toBe(SpawnRarity.Base);
+      expect(habitat.rarity).toBe(SpawnRarity.Uncommon);
     }
   });
 
@@ -869,13 +872,15 @@ describe('where a species lives', () => {
     // A mythical stands in a band of its own, one place apiece and as
     // thin as the legendary band. The relic is the other way to one,
     // not the only way
-    expect(isMythicalSpecies(Species.Mew)).toBe(true);
+    for (const species of [Species.Mew, Species.Celebi]) {
+      expect(isMythicalSpecies(species)).toBe(true);
 
-    const mythical = listSpeciesHabitats(Species.Mew);
+      const mythical = listSpeciesHabitats(species);
 
-    expect(mythical.length).toBeGreaterThan(0);
-    for (const habitat of mythical) {
-      expect(habitat.rarity).toBe(SpawnRarity.Mythical);
+      expect(mythical.length).toBeGreaterThan(0);
+      for (const habitat of mythical) {
+        expect(habitat.rarity).toBe(SpawnRarity.Mythical);
+      }
     }
     expect(MYTHICAL_SPAWN_ODDS).toBe(SPECIAL_SPAWN_ODDS);
   });
@@ -907,6 +912,66 @@ describe('where a species lives', () => {
 
     for (const species of getRegisteredSpecies()) {
       expect(listSpeciesHabitats(species).length).toBe(counted.get(species) ?? 0);
+    }
+  });
+
+  it('stages nothing where or when its species does not live', () => {
+    for (const biome of Object.keys(BIOME_NAMES).map(Number) as Biome[]) {
+      for (const time of TIMES_OF_DAY) {
+        const groups = getSpawnPool(biome, time);
+
+        // The prized band is the alphabet and the babies, which stand
+        // in every biome by design
+        for (const band of [
+          groups.base,
+          groups.uncommon,
+          groups.rare,
+          groups.special,
+          groups.mythical ?? [],
+        ]) {
+          for (const entry of band) {
+            const data = getSpeciesData(entry.species);
+
+            expect(data.biomes, `${data.name} in ${BIOME_NAMES[biome]}`).toContain(biome);
+            expect(data.activeTimes & time, `${data.name} at ${time}`).not.toBe(0);
+          }
+        }
+      }
+    }
+  });
+
+  it('stages every species that says it lives somewhere', () => {
+    // Porygon is made rather than met: it stands beside a portal and
+    // in no pool, and what it evolves into is met the same way
+    const unstaged = new Set<Species>([Species.Porygon, Species.Porygon2]);
+    const staged = new Set<Species>();
+
+    for (const biome of Object.keys(BIOME_NAMES).map(Number) as Biome[]) {
+      for (const time of TIMES_OF_DAY) {
+        const groups = getSpawnPool(biome, time);
+
+        for (const band of [
+          groups.base,
+          groups.uncommon,
+          groups.rare,
+          groups.prized ?? [],
+          groups.special,
+          groups.mythical ?? [],
+        ]) {
+          for (const entry of band) {
+            staged.add(entry.species);
+          }
+        }
+      }
+    }
+
+    for (const biome of Object.keys(BIOME_NAMES).map(Number) as Biome[]) {
+      for (const species of getSpeciesByBiome(biome)) {
+        if (unstaged.has(species) || isLegendarySpecies(species) || isMythicalSpecies(species)) {
+          continue;
+        }
+        expect(staged.has(species), getSpeciesData(species).name).toBe(true);
+      }
     }
   });
 });
@@ -4080,7 +4145,7 @@ describe('biome data', () => {
   });
 
   it('assigns habitat biomes to species', () => {
-    expect(getSpeciesData(Species.Sandshrew).biomes).toEqual([Biome.Desert]);
+    expect(getSpeciesData(Species.Sandshrew).biomes).toEqual([Biome.Desert, Biome.Badlands]);
     expect(getSpeciesData(Species.Lapras).biomes).toEqual([
       Biome.Ocean,
       Biome.DeepOcean,
@@ -4115,13 +4180,15 @@ describe('biome data', () => {
   });
 
   it('classifies spawn rarity tiers', () => {
-    // Unevolved, can still evolve
+    // The bottom of a three-stage line
     expect(getSpawnRarity(Species.Pidgey)).toBe(SpawnRarity.Base);
-    expect(getSpawnRarity(Species.Omanyte)).toBe(SpawnRarity.Base);
+    expect(getSpawnRarity(Species.Bulbasaur)).toBe(SpawnRarity.Base);
 
-    // Middle evolutions
+    // Middle evolutions, and the first stage of a two-stage line,
+    // which is the same one step from finished
     expect(getSpawnRarity(Species.Ivysaur)).toBe(SpawnRarity.Uncommon);
     expect(getSpawnRarity(Species.Haunter)).toBe(SpawnRarity.Uncommon);
+    expect(getSpawnRarity(Species.Omanyte)).toBe(SpawnRarity.Uncommon);
 
     // Fully evolved and single-line
     expect(getSpawnRarity(Species.Pidgeot)).toBe(SpawnRarity.Rare);
@@ -4199,7 +4266,7 @@ describe('biome data', () => {
     // Diurnal fliers sleep through the night; prowlers come out
     const night = getSpawnPool(Biome.Grassland, TimeOfDay.Night);
     expect(night.base.some((entry) => entry.species === Species.Pidgey)).toBe(false);
-    expect(night.base.some((entry) => entry.species === Species.Meowth)).toBe(true);
+    expect(night.uncommon.some((entry) => entry.species === Species.Meowth)).toBe(true);
 
     // Legendaries sit in their own section
     const peak = getSpawnPool(Biome.Mountain, TimeOfDay.Night);
@@ -4639,10 +4706,10 @@ describe('type experts', () => {
   it('pools every specialty from the region, half-grown and legendaries left out', () => {
     const open = getWorldExpertPool({ types: [] });
 
-    // The rare band only: what an expert fields is fully evolved or
-    // has nowhere to evolve to
+    // What an expert fields is fully evolved, or has nowhere to
+    // evolve to until a later gen gives it one
     for (const species of open) {
-      expect(getSpawnRarity(species), getSpeciesData(species).name).toBe(SpawnRarity.Rare);
+      expect(isGrownSpecies(species), getSpeciesData(species).name).toBe(true);
     }
     const psychic = getWorldExpertPool({ types: [Types.Psychic] });
 
@@ -4786,7 +4853,7 @@ describe('type experts', () => {
       }
       for (const species of poolOf(member)) {
         if (!names.has(species)) {
-          expect(getSpawnRarity(species), getSpeciesData(species).name).toBe(SpawnRarity.Rare);
+          expect(isGrownSpecies(species), getSpeciesData(species).name).toBe(true);
         }
       }
     }

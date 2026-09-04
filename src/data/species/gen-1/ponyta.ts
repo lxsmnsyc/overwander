@@ -71,7 +71,7 @@ export default function registerPonytaSpecies(): void {
     eggGroups: [EggGroups.Field],
     genderRatio: [1, 1],
     catchRate: 190,
-    biomes: [Biome.Grassland, Biome.Steppe],
+    biomes: [Biome.Grassland, Biome.Steppe, Biome.Volcano],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
@@ -118,7 +118,7 @@ export default function registerPonytaSpecies(): void {
     eggGroups: [EggGroups.Field],
     genderRatio: [1, 1],
     catchRate: 60,
-    biomes: [Biome.Grassland, Biome.Steppe],
+    biomes: [Biome.Grassland, Biome.Steppe, Biome.Volcano],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {

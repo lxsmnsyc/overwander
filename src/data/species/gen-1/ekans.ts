@@ -74,7 +74,7 @@ export default function registerEkansSpecies(): void {
     eggGroups: [EggGroups.Field, EggGroups.Dragon],
     genderRatio: [1, 1],
     catchRate: 255,
-    biomes: [Biome.Grassland, Biome.Savanna, Biome.Steppe],
+    biomes: [Biome.Grassland, Biome.Savanna, Biome.Steppe, Biome.Badlands],
     activeTimes: TimeOfDay.Day | TimeOfDay.Evening | TimeOfDay.Night,
     learnSet: {
       level: {
@@ -113,7 +113,7 @@ export default function registerEkansSpecies(): void {
     eggGroups: [EggGroups.Field, EggGroups.Dragon],
     genderRatio: [1, 1],
     catchRate: 90,
-    biomes: [Biome.Grassland, Biome.Savanna, Biome.Steppe],
+    biomes: [Biome.Grassland, Biome.Savanna, Biome.Steppe, Biome.Badlands],
     activeTimes: TimeOfDay.Day | TimeOfDay.Evening | TimeOfDay.Night,
     learnSet: {
       level: {

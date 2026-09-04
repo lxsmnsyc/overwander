@@ -37,6 +37,8 @@ export {
   getSpawnPool,
   getSpawnRarity,
   isAwaitingBaby,
+  isAwaitingEvolution,
+  isGrownSpecies,
   isLegendarySpecies,
   listSpeciesHabitats,
   TIMES_OF_DAY,

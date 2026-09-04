@@ -88,7 +88,7 @@ export default function registerMankeySpecies(): void {
     eggGroups: [EggGroups.Field],
     genderRatio: [1, 1],
     catchRate: 190,
-    biomes: [Biome.Mountain, Biome.MontaneForest],
+    biomes: [Biome.Mountain, Biome.MontaneForest, Biome.Badlands],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
@@ -135,7 +135,7 @@ export default function registerMankeySpecies(): void {
     eggGroups: [EggGroups.Field],
     genderRatio: [1, 1],
     catchRate: 75,
-    biomes: [Biome.Mountain, Biome.MontaneForest],
+    biomes: [Biome.Mountain, Biome.MontaneForest, Biome.Badlands],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {

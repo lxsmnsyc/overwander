@@ -8,55 +8,54 @@ import { PRIZED_WEIGHT, UNOWN_SPAWNS, registerSpawnPool } from './__create';
 export default function registerDesertSpawns(): void {
   registerSpawnPool(Biome.Desert, {
     [TimeOfDay.Morning]: {
-      base: [{ species: Species.Diglett, weight: 20 }],
-      uncommon: [],
-      rare: [
-        { species: Species.Dugtrio, weight: 10 },
+      base: [],
+      uncommon: [
         { species: Species.Magmar, weight: 5 },
+        { species: Species.Diglett, weight: 20 },
       ],
+      rare: [{ species: Species.Dugtrio, weight: 10 }],
       prized: [...UNOWN_SPAWNS, { species: Species.Magby, weight: PRIZED_WEIGHT }],
       special: [{ species: Species.Moltres, weight: 10 }],
     },
     [TimeOfDay.Day]: {
-      base: [
+      base: [{ species: Species.Rhyhorn, weight: 20 }],
+      uncommon: [
+        { species: Species.Rhydon, weight: 10 },
+        { species: Species.Magmar, weight: 5 },
         { species: Species.Sandshrew, weight: 20 },
         { species: Species.Diglett, weight: 20 },
-        { species: Species.Rhyhorn, weight: 20 },
       ],
-      uncommon: [],
       rare: [
         { species: Species.Sandslash, weight: 10 },
         { species: Species.Dugtrio, weight: 10 },
-        { species: Species.Rhydon, weight: 10 },
-        { species: Species.Magmar, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS, { species: Species.Magby, weight: PRIZED_WEIGHT }],
       special: [{ species: Species.Moltres, weight: 10 }],
     },
     [TimeOfDay.Evening]: {
-      base: [
+      base: [],
+      uncommon: [
+        { species: Species.Magmar, weight: 5 },
         { species: Species.Sandshrew, weight: 20 },
         { species: Species.Diglett, weight: 20 },
       ],
-      uncommon: [],
       rare: [
         { species: Species.Sandslash, weight: 10 },
         { species: Species.Dugtrio, weight: 10 },
-        { species: Species.Magmar, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS, { species: Species.Magby, weight: PRIZED_WEIGHT }],
       special: [{ species: Species.Moltres, weight: 10 }],
     },
     [TimeOfDay.Night]: {
-      base: [
+      base: [],
+      uncommon: [
+        { species: Species.Magmar, weight: 5 },
         { species: Species.Diglett, weight: 20 },
         { species: Species.Cubone, weight: 20 },
       ],
-      uncommon: [],
       rare: [
         { species: Species.Dugtrio, weight: 10 },
         { species: Species.Marowak, weight: 10 },
-        { species: Species.Magmar, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS, { species: Species.Magby, weight: PRIZED_WEIGHT }],
       special: [{ species: Species.Moltres, weight: 10 }],

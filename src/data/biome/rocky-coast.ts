@@ -8,14 +8,14 @@ import { UNOWN_SPAWNS, registerSpawnPool } from './__create';
 export default function registerRockyCoastSpawns(): void {
   registerSpawnPool(Biome.RockyCoast, {
     [TimeOfDay.Morning]: {
-      base: [
+      base: [],
+      uncommon: [
         { species: Species.Krabby, weight: 20 },
         { species: Species.Shellder, weight: 20 },
         { species: Species.Seel, weight: 20 },
         { species: Species.Slowpoke, weight: 20 },
         { species: Species.Magikarp, weight: 30 },
       ],
-      uncommon: [],
       rare: [
         { species: Species.Kingler, weight: 10 },
         { species: Species.Cloyster, weight: 10 },
@@ -28,14 +28,14 @@ export default function registerRockyCoastSpawns(): void {
       special: [],
     },
     [TimeOfDay.Day]: {
-      base: [
+      base: [],
+      uncommon: [
         { species: Species.Krabby, weight: 20 },
         { species: Species.Shellder, weight: 20 },
         { species: Species.Seel, weight: 20 },
         { species: Species.Slowpoke, weight: 20 },
         { species: Species.Magikarp, weight: 30 },
       ],
-      uncommon: [],
       rare: [
         { species: Species.Kingler, weight: 10 },
         { species: Species.Cloyster, weight: 10 },
@@ -48,14 +48,14 @@ export default function registerRockyCoastSpawns(): void {
       special: [],
     },
     [TimeOfDay.Evening]: {
-      base: [
+      base: [],
+      uncommon: [
         { species: Species.Krabby, weight: 20 },
         { species: Species.Shellder, weight: 20 },
         { species: Species.Seel, weight: 20 },
         { species: Species.Staryu, weight: 20 },
         { species: Species.Magikarp, weight: 30 },
       ],
-      uncommon: [],
       rare: [
         { species: Species.Kingler, weight: 10 },
         { species: Species.Cloyster, weight: 10 },
@@ -68,14 +68,14 @@ export default function registerRockyCoastSpawns(): void {
       special: [],
     },
     [TimeOfDay.Night]: {
-      base: [
+      base: [],
+      uncommon: [
         { species: Species.Krabby, weight: 20 },
         { species: Species.Shellder, weight: 20 },
         { species: Species.Seel, weight: 20 },
         { species: Species.Staryu, weight: 20 },
         { species: Species.Magikarp, weight: 30 },
       ],
-      uncommon: [],
       rare: [
         { species: Species.Kingler, weight: 10 },
         { species: Species.Cloyster, weight: 10 },

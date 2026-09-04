@@ -30,7 +30,7 @@ export default function registerKangaskhanSpecies(): void {
     eggGroups: [EggGroups.Monster],
     genderRatio: [0, 1],
     catchRate: 45,
-    biomes: [Biome.Savanna, Biome.Steppe],
+    biomes: [Biome.Savanna, Biome.Steppe, Biome.Badlands],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {

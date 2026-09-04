@@ -73,7 +73,12 @@ export default function registerBellsproutSpecies(): void {
     eggGroups: [EggGroups.Grass],
     genderRatio: [1, 1],
     catchRate: 255,
-    biomes: [Biome.TemperateForest, Biome.TropicalSeasonalForest, Biome.TemperateRainforest],
+    biomes: [
+      Biome.TemperateForest,
+      Biome.TropicalSeasonalForest,
+      Biome.TemperateRainforest,
+      Biome.Bog,
+    ],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
@@ -120,7 +125,12 @@ export default function registerBellsproutSpecies(): void {
     eggGroups: [EggGroups.Grass],
     genderRatio: [1, 1],
     catchRate: 120,
-    biomes: [Biome.TemperateForest, Biome.TropicalSeasonalForest, Biome.TemperateRainforest],
+    biomes: [
+      Biome.TemperateForest,
+      Biome.TropicalSeasonalForest,
+      Biome.TemperateRainforest,
+      Biome.Bog,
+    ],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
@@ -158,7 +168,12 @@ export default function registerBellsproutSpecies(): void {
     eggGroups: [EggGroups.Grass],
     genderRatio: [1, 1],
     catchRate: 45,
-    biomes: [Biome.TemperateForest, Biome.TropicalSeasonalForest, Biome.TemperateRainforest],
+    biomes: [
+      Biome.TemperateForest,
+      Biome.TropicalSeasonalForest,
+      Biome.TemperateRainforest,
+      Biome.Bog,
+    ],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {

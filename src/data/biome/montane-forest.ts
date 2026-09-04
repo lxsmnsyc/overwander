@@ -12,12 +12,12 @@ export default function registerMontaneForestSpawns(): void {
         { species: Species.Mankey, weight: 20 },
         { species: Species.Teddiursa, weight: 20 },
       ],
-      uncommon: [],
-      rare: [
+      uncommon: [
         { species: Species.Primeape, weight: 10 },
-        { species: Species.Heracross, weight: 5 },
+        { species: Species.Ursaring, weight: 5 },
         { species: Species.Stantler, weight: 5 },
       ],
+      rare: [{ species: Species.Heracross, weight: 5 }],
       prized: [...UNOWN_SPAWNS],
       special: [],
     },
@@ -26,43 +26,45 @@ export default function registerMontaneForestSpawns(): void {
         { species: Species.Mankey, weight: 20 },
         { species: Species.Teddiursa, weight: 20 },
       ],
-      uncommon: [],
-      rare: [
+      uncommon: [
         { species: Species.Primeape, weight: 10 },
+        { species: Species.Ursaring, weight: 5 },
+        { species: Species.Stantler, weight: 5 },
+      ],
+      rare: [
         { species: Species.Pinsir, weight: 5 },
         { species: Species.Heracross, weight: 5 },
-        { species: Species.Stantler, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [],
     },
     [TimeOfDay.Evening]: {
-      base: [
-        { species: Species.Zubat, weight: 30 },
+      base: [{ species: Species.Zubat, weight: 30 }],
+      uncommon: [
+        { species: Species.Golbat, weight: 10 },
         { species: Species.Hoothoot, weight: 25 },
+        { species: Species.Stantler, weight: 5 },
       ],
-      uncommon: [{ species: Species.Golbat, weight: 10 }],
       rare: [
         { species: Species.Noctowl, weight: 10 },
         { species: Species.Heracross, weight: 5 },
-        { species: Species.Stantler, weight: 5 },
         { species: Species.Crobat, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [],
     },
     [TimeOfDay.Night]: {
-      base: [
-        { species: Species.Zubat, weight: 30 },
+      base: [{ species: Species.Zubat, weight: 30 }],
+      uncommon: [
+        { species: Species.Golbat, weight: 10 },
         { species: Species.Paras, weight: 20 },
         { species: Species.Hoothoot, weight: 25 },
+        { species: Species.Stantler, weight: 5 },
       ],
-      uncommon: [{ species: Species.Golbat, weight: 10 }],
       rare: [
         { species: Species.Parasect, weight: 10 },
         { species: Species.Noctowl, weight: 10 },
         { species: Species.Heracross, weight: 5 },
-        { species: Species.Stantler, weight: 5 },
         { species: Species.Crobat, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS],

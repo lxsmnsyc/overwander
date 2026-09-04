@@ -71,7 +71,7 @@ export default function registerMagnemiteSpecies(): void {
     eggGroups: [EggGroups.Mineral],
     genderRatio: undefined,
     catchRate: 190,
-    biomes: [Biome.Grassland],
+    biomes: [Biome.Grassland, Biome.Steppe],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
@@ -111,7 +111,7 @@ export default function registerMagnemiteSpecies(): void {
     eggGroups: [EggGroups.Mineral],
     genderRatio: undefined,
     catchRate: 60,
-    biomes: [Biome.Grassland],
+    biomes: [Biome.Grassland, Biome.Steppe],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {

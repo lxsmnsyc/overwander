@@ -31,7 +31,7 @@ export default function registerMagmarSpecies(): void {
     eggGroups: [EggGroups.HumanLike],
     genderRatio: [3, 1],
     catchRate: 45,
-    biomes: [Biome.Mountain, Biome.Desert],
+    biomes: [Biome.Mountain, Biome.Desert, Biome.Volcano],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {

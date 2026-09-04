@@ -455,6 +455,64 @@ export function isAwaitingBaby(species: Species): boolean {
 }
 
 /**
+ * Species whose evolution the game does not have yet.
+ *
+ * A later gen gives each of these somewhere to go, so the band they
+ * belong in is the one a middle stage sits in rather than the one a
+ * finished pokemon does. Without this a Togetic would be drawn as
+ * rarely as a Nidoking and then turn out to be a stage short.
+ *
+ * A regional form's evolution does not count: a Sirfetch'd is a
+ * Galarian Farfetch'd's, and the one this game stages has nowhere to
+ * go. Every entry leaves this list the moment its evolution is
+ * registered
+ */
+const AWAITING_EVOLUTION_SPECIES = new Set<Species>([
+  // Gen 4 evolutions
+  Species.Magneton,
+  Species.Lickitung,
+  Species.Rhydon,
+  Species.Tangela,
+  Species.Electabuzz,
+  Species.Magmar,
+  Species.Togetic,
+  Species.Aipom,
+  Species.Yanma,
+  Species.Murkrow,
+  Species.Misdreavus,
+  Species.Gligar,
+  Species.Sneasel,
+  Species.Piloswine,
+  Species.Porygon2,
+  // Gen 8 evolutions
+  Species.Ursaring,
+  Species.Stantler,
+  // Gen 9 evolutions
+  Species.Primeape,
+  Species.Girafarig,
+  Species.Dunsparce,
+]);
+
+/**
+ * Whether the species evolves into something the game has not
+ * registered yet, which is what keeps it out of the rare band
+ */
+export function isAwaitingEvolution(species: Species): boolean {
+  return AWAITING_EVOLUTION_SPECIES.has(species);
+}
+
+/**
+ * Whether the species is the end of its line as the registry stands,
+ * which is the pokemon a trainer walks with. The rare band is most of
+ * them, and one whose evolution is still waiting on a later gen is
+ * the rest: a Misdreavus is grown here, whatever a Mismagius would
+ * make of it
+ */
+export function isGrownSpecies(species: Species): boolean {
+  return getSpawnRarity(species) === SpawnRarity.Rare || isAwaitingEvolution(species);
+}
+
+/**
  * Whether the species is one of the prized band's — a baby or an
  * unown. Both are listed rather than derived, because neither is
  * anything the shape of a line can be read off
@@ -481,10 +539,21 @@ export function getSpawnRarity(species: Species): SpawnRarity {
 
   const data = getSpeciesData(species);
 
-  if (data.evolvesInto == null) {
+  // One whose evolution is only waiting on a later gen is banded as
+  // the stage it is, not as the end of its line
+  if (data.evolvesInto == null && !isAwaitingEvolution(species)) {
     return SpawnRarity.Rare;
   }
   if (data.evolvesFrom != null) {
+    return SpawnRarity.Uncommon;
+  }
+  // A line only two stages long has no middle, so its first stage
+  // stands where a middle stage would: one step from finished is
+  // worth more than the bottom of a three-stage line
+  const carries = (one: Species): boolean =>
+    getSpeciesData(one).evolvesInto != null || isAwaitingEvolution(one);
+
+  if ((data.evolvesInto ?? []).every((entry) => !carries(entry.species))) {
     return SpawnRarity.Uncommon;
   }
   return SpawnRarity.Base;
@@ -530,13 +599,16 @@ const SPAWN_BANDS: [band: keyof SpawnRarityGroups, odds: number][] = [
 
 /**
  * Roll one spawn from a period's rarity groups: the first draw picks
- * the band (1/32768 mythical, 1/4096 special, 1/512 prized, 1/64
+ * the band (1/4096 mythical, 1/4096 special, 1/512 prized, 1/64
  * rare, 1/8 uncommon, base otherwise), the second draw picks within
  * the band by weight.
  *
  * A roll landing in a band this biome keeps nothing in falls to the
  * next band down rather than to base, which is what lets most biomes
- * leave the prized band out altogether and still roll their rares
+ * leave the prized band out altogether and still roll their rares.
+ * An empty base band falls the other way, up to the richest band that
+ * holds anything: a coast whose every pokemon is one stage from
+ * finished still has pokemon on it
  */
 export function pickSpawn(groups: SpawnRarityGroups, random: () => number): Species | null {
   const roll = random();
@@ -551,5 +623,16 @@ export function pickSpawn(groups: SpawnRarityGroups, random: () => number): Spec
       return pickFromEntries(tier, random);
     }
   }
-  return pickFromEntries(groups.base, random);
+  if (groups.base.length > 0) {
+    return pickFromEntries(groups.base, random);
+  }
+
+  for (const [band] of [...SPAWN_BANDS].reverse()) {
+    const tier = spawnBand(groups, band);
+
+    if (tier.length > 0) {
+      return pickFromEntries(tier, random);
+    }
+  }
+  return null;
 }

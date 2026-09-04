@@ -85,7 +85,7 @@ export default function registerStaryuSpecies(): void {
     eggGroups: [EggGroups.Water3],
     genderRatio: undefined,
     catchRate: 225,
-    biomes: [Biome.Beach, Biome.CoralReef],
+    biomes: [Biome.Beach, Biome.CoralReef, Biome.RockyCoast, Biome.KelpForest],
     activeTimes: TimeOfDay.Evening | TimeOfDay.Night,
     learnSet: {
       level: {
@@ -126,7 +126,7 @@ export default function registerStaryuSpecies(): void {
     eggGroups: [EggGroups.Water3],
     genderRatio: undefined,
     catchRate: 60,
-    biomes: [Biome.Beach, Biome.CoralReef],
+    biomes: [Biome.Beach, Biome.CoralReef, Biome.RockyCoast, Biome.KelpForest],
     activeTimes: TimeOfDay.Evening | TimeOfDay.Night,
     learnSet: {
       level: {

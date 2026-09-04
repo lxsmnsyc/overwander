@@ -108,7 +108,7 @@ export default function registerSlowpokeSpecies(): void {
     eggGroups: [EggGroups.Monster, EggGroups.Water1],
     genderRatio: [1, 1],
     catchRate: 190,
-    biomes: [Biome.Beach, Biome.Swamp, Biome.Mangrove],
+    biomes: [Biome.Beach, Biome.Swamp, Biome.Mangrove, Biome.RockyCoast],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
@@ -147,7 +147,7 @@ export default function registerSlowpokeSpecies(): void {
     eggGroups: [EggGroups.Monster, EggGroups.Water1],
     genderRatio: [1, 1],
     catchRate: 75,
-    biomes: [Biome.Beach, Biome.Swamp, Biome.Mangrove],
+    biomes: [Biome.Beach, Biome.Swamp, Biome.Mangrove, Biome.RockyCoast],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {

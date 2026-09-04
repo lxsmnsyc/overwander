@@ -19,68 +19,80 @@ export default function registerDeepOceanSpawns(): void {
   registerSpawnPool(Biome.DeepOcean, {
     [TimeOfDay.Morning]: {
       base: [
-        { species: Species.Tentacool, weight: 20 },
         { species: Species.Horsea, weight: 20 },
-        { species: Species.Magikarp, weight: 20 },
         { species: Species.Dratini, weight: 4 },
+      ],
+      uncommon: [
+        { species: Species.Dragonair, weight: 2 },
+        { species: Species.Tentacool, weight: 20 },
+        { species: Species.Magikarp, weight: 20 },
         { species: Species.Chinchou, weight: 20 },
       ],
-      uncommon: [{ species: Species.Dragonair, weight: 2 }],
       rare: [
         { species: Species.Gyarados, weight: 10 },
         { species: Species.Lapras, weight: 5 },
         { species: Species.Dragonite, weight: 2 },
+        { species: Species.Lanturn, weight: 10 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [{ species: Species.Lugia, weight: 10 }],
     },
     [TimeOfDay.Day]: {
       base: [
-        { species: Species.Tentacool, weight: 20 },
         { species: Species.Horsea, weight: 20 },
-        { species: Species.Magikarp, weight: 20 },
         { species: Species.Dratini, weight: 4 },
+      ],
+      uncommon: [
+        { species: Species.Dragonair, weight: 2 },
+        { species: Species.Tentacool, weight: 20 },
+        { species: Species.Magikarp, weight: 20 },
         { species: Species.Chinchou, weight: 20 },
       ],
-      uncommon: [{ species: Species.Dragonair, weight: 2 }],
       rare: [
         { species: Species.Gyarados, weight: 10 },
         { species: Species.Lapras, weight: 5 },
         { species: Species.Dragonite, weight: 2 },
+        { species: Species.Lanturn, weight: 10 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [{ species: Species.Lugia, weight: 10 }],
     },
     [TimeOfDay.Evening]: {
       base: [
-        { species: Species.Tentacool, weight: 20 },
         { species: Species.Horsea, weight: 20 },
-        { species: Species.Magikarp, weight: 20 },
         { species: Species.Dratini, weight: 4 },
+      ],
+      uncommon: [
+        { species: Species.Dragonair, weight: 2 },
+        { species: Species.Tentacool, weight: 20 },
+        { species: Species.Magikarp, weight: 20 },
         { species: Species.Chinchou, weight: 20 },
       ],
-      uncommon: [{ species: Species.Dragonair, weight: 2 }],
       rare: [
         { species: Species.Gyarados, weight: 10 },
         { species: Species.Lapras, weight: 5 },
         { species: Species.Dragonite, weight: 2 },
+        { species: Species.Lanturn, weight: 10 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [{ species: Species.Lugia, weight: 10 }],
     },
     [TimeOfDay.Night]: {
       base: [
-        { species: Species.Tentacool, weight: 20 },
         { species: Species.Horsea, weight: 20 },
-        { species: Species.Magikarp, weight: 20 },
         { species: Species.Dratini, weight: 4 },
+      ],
+      uncommon: [
+        { species: Species.Dragonair, weight: 2 },
+        { species: Species.Tentacool, weight: 20 },
+        { species: Species.Magikarp, weight: 20 },
         { species: Species.Chinchou, weight: 20 },
       ],
-      uncommon: [{ species: Species.Dragonair, weight: 2 }],
       rare: [
         { species: Species.Gyarados, weight: 10 },
         { species: Species.Lapras, weight: 5 },
         { species: Species.Dragonite, weight: 2 },
+        { species: Species.Lanturn, weight: 10 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [{ species: Species.Lugia, weight: 10 }],

@@ -80,7 +80,7 @@ export default function registerGrimerSpecies(): void {
     eggGroups: [EggGroups.Amorphous],
     genderRatio: [1, 1],
     catchRate: 190,
-    biomes: [Biome.Swamp],
+    biomes: [Biome.Swamp, Biome.Bog],
     activeTimes: TimeOfDay.Night,
     learnSet: {
       level: {
@@ -119,7 +119,7 @@ export default function registerGrimerSpecies(): void {
     eggGroups: [EggGroups.Amorphous],
     genderRatio: [1, 1],
     catchRate: 75,
-    biomes: [Biome.Swamp],
+    biomes: [Biome.Swamp, Biome.Bog],
     activeTimes: TimeOfDay.Night,
     learnSet: {
       level: {

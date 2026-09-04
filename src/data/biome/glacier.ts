@@ -9,36 +9,40 @@ export default function registerGlacierSpawns(): void {
   registerSpawnPool(Biome.Glacier, {
     [TimeOfDay.Morning]: {
       base: [{ species: Species.Swinub, weight: 25 }],
-      uncommon: [],
+      uncommon: [{ species: Species.Piloswine, weight: 5 }],
       rare: [{ species: Species.Delibird, weight: 5 }],
       prized: [...UNOWN_SPAWNS],
       special: [{ species: Species.Articuno, weight: 10 }],
     },
     [TimeOfDay.Day]: {
       base: [{ species: Species.Swinub, weight: 25 }],
-      uncommon: [],
+      uncommon: [{ species: Species.Piloswine, weight: 5 }],
       rare: [{ species: Species.Delibird, weight: 5 }],
       prized: [...UNOWN_SPAWNS],
       special: [{ species: Species.Articuno, weight: 10 }],
     },
     [TimeOfDay.Evening]: {
       base: [{ species: Species.Swinub, weight: 25 }],
-      uncommon: [],
+      uncommon: [
+        { species: Species.Piloswine, weight: 5 },
+        { species: Species.Sneasel, weight: 5 },
+      ],
       rare: [
         { species: Species.Jynx, weight: 5 },
         { species: Species.Delibird, weight: 5 },
-        { species: Species.Sneasel, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS, { species: Species.Smoochum, weight: PRIZED_WEIGHT }],
       special: [{ species: Species.Articuno, weight: 10 }],
     },
     [TimeOfDay.Night]: {
       base: [{ species: Species.Swinub, weight: 25 }],
-      uncommon: [],
+      uncommon: [
+        { species: Species.Piloswine, weight: 5 },
+        { species: Species.Sneasel, weight: 5 },
+      ],
       rare: [
         { species: Species.Jynx, weight: 5 },
         { species: Species.Delibird, weight: 5 },
-        { species: Species.Sneasel, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS, { species: Species.Smoochum, weight: PRIZED_WEIGHT }],
       special: [{ species: Species.Articuno, weight: 10 }],

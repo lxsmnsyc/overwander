@@ -8,58 +8,66 @@ import { UNOWN_SPAWNS, registerSpawnPool } from './__create';
 export default function registerMangroveSpawns(): void {
   registerSpawnPool(Biome.Mangrove, {
     [TimeOfDay.Morning]: {
-      base: [
+      base: [{ species: Species.Totodile, weight: 2 }],
+      uncommon: [
+        { species: Species.Croconaw, weight: 1 },
         { species: Species.Slowpoke, weight: 20 },
         { species: Species.Krabby, weight: 20 },
-        { species: Species.Totodile, weight: 2 },
         { species: Species.Wooper, weight: 25 },
       ],
-      uncommon: [{ species: Species.Croconaw, weight: 1 }],
       rare: [
         { species: Species.Slowbro, weight: 10 },
         { species: Species.Farfetchd, weight: 5 },
         { species: Species.Kingler, weight: 10 },
         { species: Species.Feraligatr, weight: 2 },
         { species: Species.Slowking, weight: 5 },
+        { species: Species.Quagsire, weight: 10 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [],
     },
     [TimeOfDay.Day]: {
-      base: [
+      base: [{ species: Species.Totodile, weight: 2 }],
+      uncommon: [
+        { species: Species.Croconaw, weight: 1 },
         { species: Species.Slowpoke, weight: 20 },
         { species: Species.Krabby, weight: 20 },
-        { species: Species.Totodile, weight: 2 },
         { species: Species.Wooper, weight: 25 },
       ],
-      uncommon: [{ species: Species.Croconaw, weight: 1 }],
       rare: [
         { species: Species.Slowbro, weight: 10 },
         { species: Species.Farfetchd, weight: 5 },
         { species: Species.Kingler, weight: 10 },
         { species: Species.Feraligatr, weight: 2 },
         { species: Species.Slowking, weight: 5 },
+        { species: Species.Quagsire, weight: 10 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [],
     },
     [TimeOfDay.Evening]: {
-      base: [
+      base: [],
+      uncommon: [
         { species: Species.Krabby, weight: 20 },
         { species: Species.Wooper, weight: 25 },
       ],
-      uncommon: [],
-      rare: [{ species: Species.Kingler, weight: 10 }],
+      rare: [
+        { species: Species.Kingler, weight: 10 },
+        { species: Species.Quagsire, weight: 10 },
+      ],
       prized: [...UNOWN_SPAWNS],
       special: [],
     },
     [TimeOfDay.Night]: {
-      base: [
+      base: [],
+      uncommon: [
         { species: Species.Krabby, weight: 20 },
         { species: Species.Wooper, weight: 25 },
       ],
-      uncommon: [],
-      rare: [{ species: Species.Kingler, weight: 10 }],
+      rare: [
+        { species: Species.Kingler, weight: 10 },
+        { species: Species.Quagsire, weight: 10 },
+      ],
       prized: [...UNOWN_SPAWNS],
       special: [],
     },

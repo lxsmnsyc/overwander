@@ -19,6 +19,7 @@ export default function registerShrublandSpawns(): void {
         { species: Species.Sunkern, weight: 25 },
         { species: Species.Snubbull, weight: 20 },
         { species: Species.Skitty, weight: 25 },
+        { species: Species.Roselia, weight: 20 },
       ],
       rare: [
         { species: Species.Flaaffy, weight: 5 },
@@ -54,6 +55,7 @@ export default function registerShrublandSpawns(): void {
         { species: Species.Sunkern, weight: 25 },
         { species: Species.Snubbull, weight: 20 },
         { species: Species.Skitty, weight: 25 },
+        { species: Species.Roselia, weight: 20 },
       ],
       rare: [
         { species: Species.Flaaffy, weight: 5 },
@@ -83,6 +85,7 @@ export default function registerShrublandSpawns(): void {
         { species: Species.Vulpix, weight: 10 },
         { species: Species.Houndour, weight: 20 },
         { species: Species.Poochyena, weight: 20 },
+        { species: Species.Roselia, weight: 20 },
       ],
       rare: [{ species: Species.Nuzleaf, weight: 10 }],
       scarce: [
@@ -104,6 +107,7 @@ export default function registerShrublandSpawns(): void {
         { species: Species.Vulpix, weight: 10 },
         { species: Species.Houndour, weight: 20 },
         { species: Species.Poochyena, weight: 20 },
+        { species: Species.Roselia, weight: 20 },
       ],
       rare: [{ species: Species.Nuzleaf, weight: 10 }],
       scarce: [

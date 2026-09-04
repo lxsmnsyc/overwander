@@ -23,6 +23,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Slugma, weight: 20 },
         { species: Species.Phanpy, weight: 20 },
         { species: Species.Dunsparce, weight: 10 },
+        { species: Species.Nosepass, weight: 20 },
       ],
       rare: [
         { species: Species.Metang, weight: 1 },
@@ -78,6 +79,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Slugma, weight: 20 },
         { species: Species.Phanpy, weight: 20 },
         { species: Species.Dunsparce, weight: 10 },
+        { species: Species.Nosepass, weight: 20 },
       ],
       rare: [
         { species: Species.Metang, weight: 1 },
@@ -132,6 +134,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Nincada, weight: 25 },
         { species: Species.Dunsparce, weight: 10 },
         { species: Species.Gligar, weight: 5 },
+        { species: Species.Nosepass, weight: 20 },
       ],
       rare: [
         { species: Species.Metang, weight: 1 },
@@ -167,9 +170,9 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Zubat, weight: 30 },
         { species: Species.Geodude, weight: 20 },
         { species: Species.Larvitar, weight: 2 },
+        { species: Species.Duskull, weight: 20 },
       ],
       uncommon: [
-        { species: Species.Duskull, weight: 20 },
         { species: Species.Baltoy, weight: 22 },
         { species: Species.Ekans, weight: 20 },
         { species: Species.Cubone, weight: 20 },
@@ -179,15 +182,16 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Misdreavus, weight: 5 },
         { species: Species.Dunsparce, weight: 10 },
         { species: Species.Gligar, weight: 5 },
+        { species: Species.Nosepass, weight: 20 },
       ],
       rare: [
         { species: Species.Metang, weight: 1 },
         { species: Species.Graveler, weight: 5 },
         { species: Species.Pupitar, weight: 1 },
         { species: Species.Golbat, weight: 10 },
+        { species: Species.Dusclops, weight: 8 },
       ],
       scarce: [
-        { species: Species.Dusclops, weight: 8 },
         { species: Species.Claydol, weight: 6 },
         { species: Species.Marowak, weight: 10 },
         { species: Species.Ninjask, weight: 10 },

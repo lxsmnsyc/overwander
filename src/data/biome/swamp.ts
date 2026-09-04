@@ -1,6 +1,6 @@
 import Biome, { TimeOfDay } from '../ids/biome';
 import { Species } from '../ids/species';
-import { UNOWN_SPAWNS, registerSpawnPool } from './__create';
+import { PRIZED_WEIGHT, UNOWN_SPAWNS, registerSpawnPool } from './__create';
 
 /**
  * Swamp spawn pool, grouped by day-cycle period and rarity band
@@ -54,7 +54,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Politoed, weight: 5 },
         { species: Species.Swampert, weight: 2 },
       ],
-      prized: [...UNOWN_SPAWNS],
+      prized: [...UNOWN_SPAWNS, { species: Species.Azurill, weight: PRIZED_WEIGHT }],
       special: [],
     },
     [TimeOfDay.Day]: {
@@ -104,7 +104,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Politoed, weight: 5 },
         { species: Species.Swampert, weight: 2 },
       ],
-      prized: [...UNOWN_SPAWNS],
+      prized: [...UNOWN_SPAWNS, { species: Species.Azurill, weight: PRIZED_WEIGHT }],
       special: [],
     },
     [TimeOfDay.Evening]: {
@@ -133,7 +133,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Poliwrath, weight: 5 },
         { species: Species.Politoed, weight: 5 },
       ],
-      prized: [...UNOWN_SPAWNS],
+      prized: [...UNOWN_SPAWNS, { species: Species.Azurill, weight: PRIZED_WEIGHT }],
       special: [],
     },
     [TimeOfDay.Night]: {
@@ -166,7 +166,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Poliwrath, weight: 5 },
         { species: Species.Politoed, weight: 5 },
       ],
-      prized: [...UNOWN_SPAWNS],
+      prized: [...UNOWN_SPAWNS, { species: Species.Azurill, weight: PRIZED_WEIGHT }],
       special: [],
     },
   });

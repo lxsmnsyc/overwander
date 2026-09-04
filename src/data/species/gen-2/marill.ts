@@ -59,6 +59,7 @@ const FAMILY_BIOMES = [Biome.Bog, Biome.Swamp, Biome.TemperateRainforest];
 export default function registerMarillSpecies(): void {
   registerSpecies(Species.Marill, {
     dexNumber: 183,
+    evolvesFrom: Species.Azurill,
     evolvesInto: [
       {
         species: Species.Azumarill,
@@ -100,18 +101,6 @@ export default function registerMarillSpecies(): void {
         36: [Moves.RainDance],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.RockSmash, Moves.Strength],
-      egg: [
-        Moves.Amnesia,
-        Moves.BellyDrum,
-        Moves.Foresight,
-        Moves.FutureSight,
-        Moves.LightScreen,
-        Moves.PerishSong,
-        Moves.Present,
-        Moves.Supersonic,
-
-        Moves.Substitute,
-      ],
     },
   });
 

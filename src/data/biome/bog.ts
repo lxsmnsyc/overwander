@@ -1,6 +1,6 @@
 import Biome, { TimeOfDay } from '../ids/biome';
 import { Species } from '../ids/species';
-import { UNOWN_SPAWNS, registerSpawnPool } from './__create';
+import { PRIZED_WEIGHT, UNOWN_SPAWNS, registerSpawnPool } from './__create';
 
 /**
  * Bog spawn pool, grouped by day-cycle period and rarity band
@@ -43,7 +43,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Swampert, weight: 2 },
         { species: Species.Ludicolo, weight: 5 },
       ],
-      prized: [...UNOWN_SPAWNS],
+      prized: [...UNOWN_SPAWNS, { species: Species.Azurill, weight: PRIZED_WEIGHT }],
       special: [],
     },
     [TimeOfDay.Day]: {
@@ -82,7 +82,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Swampert, weight: 2 },
         { species: Species.Ludicolo, weight: 5 },
       ],
-      prized: [...UNOWN_SPAWNS],
+      prized: [...UNOWN_SPAWNS, { species: Species.Azurill, weight: PRIZED_WEIGHT }],
       special: [],
     },
     [TimeOfDay.Evening]: {
@@ -109,7 +109,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Volbeat, weight: 8 },
         { species: Species.Illumise, weight: 8 },
       ],
-      prized: [...UNOWN_SPAWNS],
+      prized: [...UNOWN_SPAWNS, { species: Species.Azurill, weight: PRIZED_WEIGHT }],
       special: [],
     },
     [TimeOfDay.Night]: {
@@ -147,7 +147,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Volbeat, weight: 8 },
         { species: Species.Illumise, weight: 8 },
       ],
-      prized: [...UNOWN_SPAWNS],
+      prized: [...UNOWN_SPAWNS, { species: Species.Azurill, weight: PRIZED_WEIGHT }],
       special: [],
     },
   });

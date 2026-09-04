@@ -27,6 +27,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Meditite, weight: 25 },
         { species: Species.Magmar, weight: 5 },
         { species: Species.Dunsparce, weight: 10 },
+        { species: Species.Nosepass, weight: 20 },
       ],
       rare: [
         { species: Species.Charmeleon, weight: 1 },
@@ -60,8 +61,13 @@ export default function registerMountainSpawns(): void {
         { species: Species.Aggron, weight: 5 },
         { species: Species.Mawile, weight: 8 },
         { species: Species.Torkoal, weight: 12 },
+        { species: Species.Chimecho, weight: 5 },
       ],
-      prized: [...UNOWN_SPAWNS, { species: Species.Magby, weight: PRIZED_WEIGHT }],
+      prized: [
+        ...UNOWN_SPAWNS,
+        { species: Species.Magby, weight: PRIZED_WEIGHT },
+        { species: Species.Wynaut, weight: PRIZED_WEIGHT },
+      ],
       special: [
         { species: Species.Rayquaza, weight: 10 },
         { species: Species.Registeel, weight: 10 },
@@ -91,6 +97,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Meditite, weight: 25 },
         { species: Species.Magmar, weight: 5 },
         { species: Species.Dunsparce, weight: 10 },
+        { species: Species.Nosepass, weight: 20 },
       ],
       rare: [
         { species: Species.Shelgon, weight: 1 },
@@ -126,8 +133,13 @@ export default function registerMountainSpawns(): void {
         { species: Species.Aggron, weight: 5 },
         { species: Species.Mawile, weight: 8 },
         { species: Species.Torkoal, weight: 12 },
+        { species: Species.Chimecho, weight: 5 },
       ],
-      prized: [...UNOWN_SPAWNS, { species: Species.Magby, weight: PRIZED_WEIGHT }],
+      prized: [
+        ...UNOWN_SPAWNS,
+        { species: Species.Magby, weight: PRIZED_WEIGHT },
+        { species: Species.Wynaut, weight: PRIZED_WEIGHT },
+      ],
       special: [
         { species: Species.Rayquaza, weight: 10 },
         { species: Species.Registeel, weight: 10 },
@@ -151,6 +163,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Murkrow, weight: 5 },
         { species: Species.Dunsparce, weight: 10 },
         { species: Species.Gligar, weight: 5 },
+        { species: Species.Nosepass, weight: 20 },
       ],
       rare: [
         { species: Species.Shelgon, weight: 1 },
@@ -173,8 +186,13 @@ export default function registerMountainSpawns(): void {
         { species: Species.Wobbuffet, weight: 5 },
         { species: Species.Crobat, weight: 5 },
         { species: Species.Absol, weight: 5 },
+        { species: Species.Chimecho, weight: 5 },
       ],
-      prized: [...UNOWN_SPAWNS, { species: Species.Magby, weight: PRIZED_WEIGHT }],
+      prized: [
+        ...UNOWN_SPAWNS,
+        { species: Species.Magby, weight: PRIZED_WEIGHT },
+        { species: Species.Wynaut, weight: PRIZED_WEIGHT },
+      ],
       special: [
         { species: Species.Rayquaza, weight: 10 },
         { species: Species.Registeel, weight: 10 },
@@ -201,6 +219,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Misdreavus, weight: 5 },
         { species: Species.Dunsparce, weight: 10 },
         { species: Species.Gligar, weight: 5 },
+        { species: Species.Nosepass, weight: 20 },
       ],
       rare: [
         { species: Species.Graveler, weight: 5 },
@@ -225,11 +244,13 @@ export default function registerMountainSpawns(): void {
         { species: Species.Wobbuffet, weight: 5 },
         { species: Species.Crobat, weight: 5 },
         { species: Species.Absol, weight: 5 },
+        { species: Species.Chimecho, weight: 5 },
       ],
       prized: [
         ...UNOWN_SPAWNS,
         { species: Species.Cleffa, weight: PRIZED_WEIGHT },
         { species: Species.Magby, weight: PRIZED_WEIGHT },
+        { species: Species.Wynaut, weight: PRIZED_WEIGHT },
       ],
       special: [
         { species: Species.Rayquaza, weight: 10 },

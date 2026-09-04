@@ -146,9 +146,7 @@ const enum Families {
   Nincada = 144,
   Whismur = 145,
   Makuhita = 146,
-  // 147 is Nosepass's: its dex number falls between these, and an id
-  // is stored in a player's candy stacks, so a later family cannot be
-  // renumbered into place
+  Nosepass = 147,
   Skitty = 148,
   // Azurill needs no id of its own: it joins the Marill family it
   // hatches into
@@ -161,9 +159,7 @@ const enum Families {
   Minun = 155,
   Volbeat = 156,
   Illumise = 157,
-  // 158 is Roselia's: its dex number falls before this, and an id is
-  // stored in a player's candy stacks, so a later family cannot be
-  // renumbered into place
+  Roselia = 158,
   Gulpin = 159,
   Carvanha = 160,
   Wailmer = 161,
@@ -189,7 +185,7 @@ const enum Families {
   Shuppet = 181,
   Duskull = 182,
   Tropius = 183,
-  // 184 is Chimecho's, which starts at the Chingling below it
+  Chimecho = 184,
   Absol = 185,
   // Wynaut needs none: it joins the Wobbuffet family it hatches into
   Snorunt = 186,

@@ -1,6 +1,6 @@
 import Biome, { TimeOfDay } from '../ids/biome';
 import { Species } from '../ids/species';
-import { UNOWN_SPAWNS, registerSpawnPool } from './__create';
+import { PRIZED_WEIGHT, UNOWN_SPAWNS, registerSpawnPool } from './__create';
 
 /**
  * TemperateRainforest spawn pool, grouped by day-cycle period and rarity band
@@ -16,7 +16,7 @@ export default function registerTemperateRainforestSpawns(): void {
       rare: [{ species: Species.Weepinbell, weight: 5 }],
       scarce: [{ species: Species.Azumarill, weight: 5 }],
       elusive: [{ species: Species.Victreebel, weight: 5 }],
-      prized: [...UNOWN_SPAWNS],
+      prized: [...UNOWN_SPAWNS, { species: Species.Azurill, weight: PRIZED_WEIGHT }],
       special: [],
     },
     [TimeOfDay.Day]: {
@@ -28,7 +28,7 @@ export default function registerTemperateRainforestSpawns(): void {
       rare: [{ species: Species.Weepinbell, weight: 5 }],
       scarce: [{ species: Species.Azumarill, weight: 5 }],
       elusive: [{ species: Species.Victreebel, weight: 5 }],
-      prized: [...UNOWN_SPAWNS],
+      prized: [...UNOWN_SPAWNS, { species: Species.Azurill, weight: PRIZED_WEIGHT }],
       special: [],
     },
     [TimeOfDay.Evening]: {
@@ -45,7 +45,7 @@ export default function registerTemperateRainforestSpawns(): void {
         { species: Species.Breloom, weight: 10 },
       ],
       elusive: [],
-      prized: [...UNOWN_SPAWNS],
+      prized: [...UNOWN_SPAWNS, { species: Species.Azurill, weight: PRIZED_WEIGHT }],
       special: [],
     },
     [TimeOfDay.Night]: {
@@ -62,7 +62,7 @@ export default function registerTemperateRainforestSpawns(): void {
         { species: Species.Breloom, weight: 10 },
       ],
       elusive: [],
-      prized: [...UNOWN_SPAWNS],
+      prized: [...UNOWN_SPAWNS, { species: Species.Azurill, weight: PRIZED_WEIGHT }],
       special: [],
     },
   });

@@ -1,13 +1,7 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Stats } from '../../data/constants/stats';
 import Abilities from '../../data/ids/abilities';
-import {
-  DamageFlags,
-  MoveAttackFlags,
-  MoveTargets,
-  Moves,
-  affectsFoesOnly,
-} from '../../data/ids/moves';
+import { DamageFlags, MoveTargets, Moves, affectsFoesOnly } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
 import type Battle from '../core';
 import { BattleEvents, type EffectCause, EffectType, MoveTargetType } from '../events';
@@ -33,6 +27,21 @@ export const BOSS_HEALTH_SCALE = 20;
  * Every other stat simply doubles
  */
 export const BOSS_STAT_SCALE = 2;
+
+/**
+ * What a shadow is: sharper and more brittle. The two attacking stats
+ * rise and the two defending ones fall, so it hits a quarter harder
+ * and takes a third more, and the trade shows on its stat sheet
+ */
+export const SHADOW_OFFENSE_SCALE = 1.25;
+export const SHADOW_DEFENSE_SCALE = 0.75;
+
+const SHADOW_STAT_SCALES = new Map<Stats, number>([
+  [Stats.Attack, SHADOW_OFFENSE_SCALE],
+  [Stats.SpecialAttack, SHADOW_OFFENSE_SCALE],
+  [Stats.Defense, SHADOW_DEFENSE_SCALE],
+  [Stats.SpecialDefense, SHADOW_DEFENSE_SCALE],
+]);
 
 // The list a raid is staged against, kept with the data it filters
 // rather than with the ability that made it necessary
@@ -294,27 +303,24 @@ const setupAbilities = [
   }),
 
   /**
-   * Shadow: a glass-cannon aura — attack damage dealt and received
-   * both rise by 20% (stacking to 44% when both sides carry it).
-   * Pure attacks (fixed damage) stay exact.
+   * Shadow: a glass cannon written into the stats. What it hits with
+   * is sharpened and what it stands behind is worn thin, so it is
+   * read off the sheet rather than felt only in the numbers a fight
+   * prints
    */
-  createAbility(Abilities.Shadow, (battle) => {
-    const FACTOR = 1.2;
-
-    return battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, (event) => {
-      if (event.parent.flags & MoveAttackFlags.Pure) {
+  createAbility(Abilities.Shadow, (battle) =>
+    battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
+      if (!event.source.hasAbility(Abilities.Shadow)) {
         return;
       }
 
-      if (event.parent.source.hasAbility(Abilities.Shadow)) {
-        event.value *= FACTOR;
-      }
+      const factor = SHADOW_STAT_SCALES.get(event.stat);
 
-      if (event.parent.target.hasAbility(Abilities.Shadow)) {
-        event.value *= FACTOR;
+      if (factor != null) {
+        event.value *= factor;
       }
-    });
-  }),
+    }),
+  ),
 ];
 
 export default function setupSpecialAbilities(battle: Battle): void {

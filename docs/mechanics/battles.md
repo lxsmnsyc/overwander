@@ -215,7 +215,8 @@ eight it reaches past them and stages a legendary instead.
 
 ### The raid boss
 
-A boss is a **maxed legendary with perfect individual stats**, and every player
+A boss is a **maxed legendary, perfect in every individual stat and trained to
+the cap in every one**, and every player
 in the lobby fights exactly the same one. Its raid form gives it:
 
 - A raid-sized health pool: twenty times what the species would have had.

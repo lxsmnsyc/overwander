@@ -192,6 +192,10 @@ Both caps are found in the overworld and nowhere else; no shop stocks either.
 A shadow pokemon comes from a shadow raid or from a Team Rocket grunt. It keeps
 the **Shadow** ability permanently and costs **double candy** at every level.
 
+Shadow is a glass cannon written into the stats: **1.25x Attack and Special
+Attack, 0.75x Defense and Special Defense**. It hits a quarter harder and takes
+a third more, and the trade is visible on its stat sheet.
+
 Two things undo that: a **Purifying Gem**, which is a prized find, and **Nurse
 Joy**, who does it free of charge along with her healing.
 

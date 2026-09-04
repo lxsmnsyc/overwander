@@ -84,7 +84,7 @@ few are one to a chunk, marked below.
 | **Gym Seat**        | A team another player left standing, to be fought. One to a chunk |
 | **Gym Leader**      | One of the twenty-five, with a badge on the line. One to a chunk |
 | **Elite Four**      | One of the twelve, for a challenger holding their league's badges |
-| **Champion**        | Blue or Lance, for whoever has beaten their league's Elite Four. They field the team they are known for, and one window in sixty-four a legend has the seat instead. One to a chunk |
+| **Champion**        | Blue, Lance or Wallace, for whoever has beaten their league's Elite Four. They field the team they are known for, and one window in sixty-four a legend has the seat instead. One to a chunk |
 | **Portal**          | A way through to another portal, for the price of a Portal Key. One to a chunk |
 
 Walking up to a wandering cell does not reveal in advance which specialist is

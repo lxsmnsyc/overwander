@@ -12,8 +12,8 @@ own, and beating one is kept for good.
 | ------------------- | -------- | -------------------------------------- |
 | **Gym badge**       | 24       | Beating that gym's leader              |
 | **Elite Four mark** | 12       | Beating that member of the Elite Four  |
-| **Champion**        | 2        | Beating that league's Champion          |
-| **Legend's mark**   | 1        | Beating a legend, who asks for nothing |
+| **Champion**        | 3        | Beating that league's Champion          |
+| **Legend's mark**   | 2        | Beating a legend, who asks for nothing |
 | **Team Rocket marks** | 6      | Beating a grunt, one of the four executives, or Giovanni |
 | **Dex medal**       | 3        | Filling that region's dex                |
 
@@ -27,8 +27,7 @@ apiece. Bruno keeps a seat in each, and each is its own fight with its own mark:
 walking only one region's gyms earns you the Bruno of that region and that mark
 alone. Hoenn's four are its own four people. Each of the **Elite Four asks to
 see all eight of their own league's badges** before they will fight, and each
-**Champion asks for all four of their own league's marks**. Hoenn has no
-champion yet, so its four marks are the top of that region's walk.
+**Champion asks for all four of their own league's marks**.
 
 A **legend** stands outside all of that. One turns up in a champion's seat one
 window in sixty-four, and under the rarest skies for certain; no badge case is

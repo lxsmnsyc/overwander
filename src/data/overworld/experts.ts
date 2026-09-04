@@ -589,26 +589,32 @@ export const BIOME_ELITE_MEMBERS: Record<Biome, EliteMember[]> = {
 const enum Champion {
   Blue = 0,
   Lance = 1,
+  Wallace = 2,
 }
 
 export { Champion };
 
-export const CHAMPIONS: Champion[] = [Champion.Blue, Champion.Lance];
+export const CHAMPIONS: Champion[] = [Champion.Blue, Champion.Lance, Champion.Wallace];
 
 export const CHAMPION_NAMES: Record<Champion, string> = {
   [Champion.Blue]: 'Blue',
   [Champion.Lance]: 'Lance',
+  [Champion.Wallace]: 'Wallace',
 };
 
 export const CHAMPION_CHARSETS: Record<Champion, string[]> = {
   [Champion.Blue]: ['characters/frlg/blue'],
   [Champion.Lance]: ['characters/hgss/lance', 'characters/hgss/lance-2'],
+  // Sootopolis' gym is Juan's here, so Wallace is only ever the man
+  // at the top, in both coats he is drawn in
+  [Champion.Wallace]: ['characters/rse/wallace', 'characters/oras/wallace'],
 };
 
 /** The title a champion's seat is worth */
 export const CHAMPION_TITLES: Record<Champion, Awards> = {
   [Champion.Blue]: Awards.KantoChampion,
   [Champion.Lance]: Awards.JohtoChampion,
+  [Champion.Wallace]: Awards.HoennChampion,
 };
 
 /**
@@ -625,6 +631,7 @@ export const CHAMPION_PRIZE_CHARSETS: Partial<Record<Champion, string[]>> = {
 export const CHAMPION_HONORS: Record<Champion, Awards[]> = {
   [Champion.Blue]: KANTO_HONORS,
   [Champion.Lance]: JOHTO_HONORS,
+  [Champion.Wallace]: HOENN_HONORS,
 };
 
 /**
@@ -654,6 +661,15 @@ export const CHAMPION_PARTIES: Record<Champion, Species[]> = {
     Species.Dragonite,
     Species.Dragonite,
   ],
+  // The six he defends Ever Grande with in Emerald, Milotic last
+  [Champion.Wallace]: [
+    Species.Wailord,
+    Species.Tentacruel,
+    Species.Ludicolo,
+    Species.Whiscash,
+    Species.Gyarados,
+    Species.Milotic,
+  ],
 };
 
 /**
@@ -667,33 +683,41 @@ export const CHAMPION_PARTIES: Record<Champion, Species[]> = {
  */
 const enum Legend {
   Red = 0,
+  Steven = 1,
 }
 
 export { Legend };
 
-export const LEGENDS: Legend[] = [Legend.Red];
+export const LEGENDS: Legend[] = [Legend.Red, Legend.Steven];
 
 export const LEGEND_NAMES: Record<Legend, string> = {
   [Legend.Red]: 'Red',
+  [Legend.Steven]: 'Steven',
 };
 
 export const LEGEND_CHARSETS: Record<Legend, string[]> = {
   [Legend.Red]: ['characters/frlg/red'],
+  [Legend.Steven]: ['characters/oras/steven'],
 };
 
 /** The mark beating one is worth, which is the only thing they pay */
 export const LEGEND_HONORS: Record<Legend, Awards> = {
   [Legend.Red]: Awards.RedDefeated,
+  [Legend.Steven]: Awards.StevenDefeated,
 };
 
 /**
- * And the coats that mark unlocks. Not the one they wander in: Red's
- * Fire Red sheet is what the game starts everybody as, so a mark that
- * unlocked it would be worth nothing to wear. These are the other two
- * of him, the Mt. Silver coat first
+ * And the coats that mark unlocks.
+ *
+ * Red's Fire Red sheet is left out because it is what the game starts
+ * everybody as, so a mark that unlocked it would be worth nothing to
+ * wear; what is left is the other two of him, the Mt. Silver coat
+ * first. Steven's one coat is nobody's starting look, so his mark
+ * pays the sheet he is standing there in
  */
 export const LEGEND_PRIZE_CHARSETS: Record<Legend, string[]> = {
   [Legend.Red]: ['characters/hgss/red', 'characters/lgpe/red'],
+  [Legend.Steven]: ['characters/oras/steven'],
 };
 
 /** A legend's own six, the way a champion's is their own */
@@ -705,6 +729,16 @@ export const LEGEND_PARTIES: Record<Legend, Species[]> = {
     Species.Venusaur,
     Species.Charizard,
     Species.Blastoise,
+  ],
+  // The steel he is met with on the mountain in Omega Ruby, Metagross
+  // last
+  [Legend.Steven]: [
+    Species.Skarmory,
+    Species.Claydol,
+    Species.Aggron,
+    Species.Cradily,
+    Species.Armaldo,
+    Species.Metagross,
   ],
 };
 

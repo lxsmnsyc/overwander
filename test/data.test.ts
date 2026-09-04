@@ -335,6 +335,7 @@ import {
   rollGymMachine,
 } from '../src/data/overworld/experts';
 import Regions from '../src/data/ids/regions';
+import { FREE_CHARSETS } from '../src/data/overworld/charsets';
 import { getRegionSpan, getSpeciesRegion } from '../src/data/species/regions';
 import {
   ACHIEVEMENT_LINES,
@@ -5037,9 +5038,9 @@ describe('type experts', () => {
       expect(HOENN_HONORS).toContain(ELITE_MEMBER_HONORS[member]);
       expect(getEliteBadges(member), ELITE_MEMBER_NAMES[member]).toEqual(HOENN_BADGES);
     }
-    // The region's league stops there for now: no champion asks for
-    // these four marks the way the other two leagues' do
-    expect(CHAMPIONS.map((champion) => CHAMPION_HONORS[champion])).not.toContainEqual(HOENN_HONORS);
+    // And Wallace stands above them, asking for all four
+    expect(CHAMPION_HONORS[Champion.Wallace]).toEqual(HOENN_HONORS);
+    expect(CHAMPION_TITLES[Champion.Wallace]).toBe(Awards.HoennChampion);
   });
 
   it('gives every elite a signature of their own kind', () => {
@@ -5177,8 +5178,10 @@ describe('type experts', () => {
     const spoken = new Set([
       ...KANTO_BADGES,
       ...JOHTO_BADGES,
+      ...HOENN_BADGES,
       ...KANTO_HONORS,
       ...JOHTO_HONORS,
+      ...HOENN_HONORS,
       ...CHAMPIONS.map((champion) => CHAMPION_TITLES[champion]),
     ]);
 
@@ -5190,14 +5193,12 @@ describe('type experts', () => {
       expect(spoken.has(mark)).toBe(false);
       expect(AWARD_NAMES[mark].length).toBeGreaterThan(0);
 
-      // The coats it unlocks are shipped, and none of them is the one
-      // the legend wanders in: that one is free from the start, so a
-      // mark that paid it would pay nothing
-      const worn = new Set(LEGEND_CHARSETS[legend]);
-
+      // The coats it unlocks are shipped, and none of them is free
+      // from the start: a mark that paid a starting look would pay
+      // nothing
       expect(LEGEND_PRIZE_CHARSETS[legend].length).toBeGreaterThan(0);
       for (const sheet of LEGEND_PRIZE_CHARSETS[legend]) {
-        expect(worn.has(sheet), sheet).toBe(false);
+        expect(FREE_CHARSETS.includes(sheet), sheet).toBe(false);
         expect(existsSync(`public/sprites/overworld/${sheet}/image.png`), sheet).toBe(true);
       }
     }

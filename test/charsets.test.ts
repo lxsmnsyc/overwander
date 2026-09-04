@@ -140,10 +140,16 @@ describe('the characters a trainer may wear', () => {
         expect(getCharset(sheet)?.lock).toEqual({ kind: 'award', award: LEGEND_HONORS[legend] });
         expect(getCharset(sheet)?.name).toBe(LEGEND_NAMES[legend]);
       }
-      // The one they wander in stays free: it is what the game starts
-      // half its players as
+      // A coat the game starts players in stays free whoever wears it
+      // in the world, so Red's mark pays his other two and not that
+      // one. Steven's is nobody's starting look, so his mark pays the
+      // sheet he is standing there in
       for (const sheet of LEGEND_CHARSETS[legend]) {
-        expect(getCharset(sheet)?.lock).toEqual({ kind: 'free' });
+        expect(getCharset(sheet)?.lock).toEqual(
+          FREE_CHARSETS.includes(sheet)
+            ? { kind: 'free' }
+            : { kind: 'award', award: LEGEND_HONORS[legend] },
+        );
       }
     }
   });

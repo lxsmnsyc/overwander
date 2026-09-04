@@ -247,8 +247,8 @@ one their gym stands in. The Elite Four are built the same way, down to the
 signature.
 
 One window in sixty-four, a **legend** has walked into the champion's seat and is
-standing there instead. There is one so far, and it is Red. A legend keeps no
-league: no badge case is asked for and no title is won, and what is left behind
+standing there instead. There are two: Red, and Steven, who kept Hoenn's crown
+before Wallace did. A legend keeps no league: no badge case is asked for and no title is won, and what is left behind
 is their own mark, the largest purse in the game, and an item off the rare band
 or, one time in twenty-one, the special one. The mark is worth the **Legend
 Breaker** title and the other coats that legend is drawn in. That is the only fight in the game that reaches the

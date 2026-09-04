@@ -95,6 +95,7 @@ const GYM_LEADER_QUOTES: Record<GymLeader, string> = {
 const CHAMPION_LEAGUES: Record<Champion, string> = {
   [Champion.Blue]: 'Kanto',
   [Champion.Lance]: 'Johto',
+  [Champion.Wallace]: 'Hoenn',
 };
 
 /** Which league each seat belongs to, for the copy that names it */
@@ -128,15 +129,17 @@ const ELITE_QUOTES: Record<EliteMember, string> = {
   [EliteMember.Drake]: 'Do you know what it means to fight beside a dragon? Show me.',
 };
 
-/** What a legend says, which in the one case there is so far is nothing */
+/** What a legend says, where they say anything at all */
 const LEGEND_GREETINGS: Record<Legend, string> = {
   [Legend.Red]: 'Red says nothing. He reaches for a ball.',
+  [Legend.Steven]: 'Steven turns a stone over in his hand. “I was hoping for a real fight.”',
 };
 
 /** What a champion says as the last fight of their league is put */
 const CHAMPION_GREETINGS: Record<Champion, string> = {
   [Champion.Blue]: 'Blue smirks. “I am the Champion here. Smell ya later.”',
   [Champion.Lance]: 'Lance looks you over. “So you made it this far. Show me your best.”',
+  [Champion.Wallace]: 'Wallace bows. “Let us make this beautiful, and let us make it brief.”',
 };
 
 /**

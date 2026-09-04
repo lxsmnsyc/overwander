@@ -159,6 +159,8 @@ const AWARD_COLORS: Record<Awards, string> = {
   [Awards.PhoebeDefeated]: '#8f6fb8',
   [Awards.GlaciaDefeated]: '#9fd7e8',
   [Awards.DrakeDefeated]: '#c9603c',
+  [Awards.HoennChampion]: '#e0b64f',
+  [Awards.StevenDefeated]: '#7f9aa8',
 };
 
 /**
@@ -181,6 +183,7 @@ const SHELF: Awards[] = [
     Awards.JohtoDexMedal,
     ...HOENN_BADGES,
     ...HOENN_HONORS,
+    Awards.HoennChampion,
     Awards.HoennDexMedal,
     ROCKET_GRUNT_HONOR,
     ...ROCKET_EXECUTIVES.map((executive) => ROCKET_EXECUTIVE_HONORS[executive]),

@@ -60,6 +60,9 @@ const enum Awards {
   PhoebeDefeated = 45,
   GlaciaDefeated = 46,
   DrakeDefeated = 47,
+  HoennChampion = 48,
+  /** The one above Hoenn's league, met where a champion would be */
+  StevenDefeated = 49,
 }
 
 export default Awards;
@@ -113,6 +116,8 @@ export const AWARD_NAMES: Record<Awards, string> = {
   [Awards.PhoebeDefeated]: 'Phoebe Defeated',
   [Awards.GlaciaDefeated]: 'Glacia Defeated',
   [Awards.DrakeDefeated]: 'Drake Defeated',
+  [Awards.HoennChampion]: 'Hoenn Champion',
+  [Awards.StevenDefeated]: 'Steven Defeated',
 };
 
 /**
@@ -186,8 +191,7 @@ export const HOENN_BADGES: Awards[] = [
 ];
 
 /**
- * And Hoenn's 4. Its league has no champion yet, so these four marks
- * are the top of that region's walk for now
+ * And Hoenn's 4, which its champion asks to see
  */
 export const HOENN_HONORS: Awards[] = [
   Awards.SidneyDefeated,

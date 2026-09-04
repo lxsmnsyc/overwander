@@ -183,8 +183,10 @@ const enum Families {
   Tropius = 183,
   // 184 is Chimecho's, which starts at the Chingling below it
   Absol = 185,
-  // 186 is Snorunt's, 187 Spheal's and 188 Clamperl's. Wynaut needs
-  // none: it joins the Wobbuffet family it hatches into
+  // 186 is Snorunt's. Wynaut needs none: it joins the Wobbuffet
+  // family it hatches into
+  Spheal = 187,
+  Clamperl = 188,
   Relicanth = 189,
   Luvdisc = 190,
   Bagon = 191,

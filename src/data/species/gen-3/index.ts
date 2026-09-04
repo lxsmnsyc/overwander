@@ -3,6 +3,7 @@ import registerAnorithSpecies from './anorith';
 import registerBagonSpecies from './bagon';
 import registerBeldumSpecies from './beldum';
 import registerCastformSpecies from './castform';
+import registerClamperlSpecies from './clamperl';
 import registerLileepSpecies from './lileep';
 import registerCheeringPairSpecies from './cheering-pair';
 import registerFeudingPairSpecies from './feuding-pair';
@@ -14,6 +15,7 @@ import registerAbsolSpecies from './absol';
 import registerKecleonSpecies from './kecleon';
 import registerLuvdiscSpecies from './luvdisc';
 import registerRelicanthSpecies from './relicanth';
+import registerSphealSpecies from './spheal';
 import registerSpindaSpecies from './spinda';
 import registerTorkoalSpecies from './torkoal';
 import registerTropiusSpecies from './tropius';
@@ -78,4 +80,6 @@ export default function registerGen3Species(): void {
   registerBeldumSpecies();
   registerLileepSpecies();
   registerAnorithSpecies();
+  registerSphealSpecies();
+  registerClamperlSpecies();
 }

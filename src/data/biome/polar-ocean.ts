@@ -8,9 +8,13 @@ import { UNOWN_SPAWNS, registerSpawnPool } from './__create';
 export default function registerPolarOceanSpawns(): void {
   registerSpawnPool(Biome.PolarOcean, {
     [TimeOfDay.Morning]: {
-      base: [{ species: Species.Seel, weight: 20 }],
-      uncommon: [],
+      base: [
+        { species: Species.Spheal, weight: 25 },
+        { species: Species.Seel, weight: 20 },
+      ],
+      uncommon: [{ species: Species.Sealeo, weight: 8 }],
       rare: [
+        { species: Species.Walrein, weight: 5 },
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Cloyster, weight: 10 },
         { species: Species.Lapras, weight: 5 },
@@ -19,9 +23,13 @@ export default function registerPolarOceanSpawns(): void {
       special: [{ species: Species.Articuno, weight: 10 }],
     },
     [TimeOfDay.Day]: {
-      base: [{ species: Species.Seel, weight: 20 }],
-      uncommon: [],
+      base: [
+        { species: Species.Spheal, weight: 25 },
+        { species: Species.Seel, weight: 20 },
+      ],
+      uncommon: [{ species: Species.Sealeo, weight: 8 }],
       rare: [
+        { species: Species.Walrein, weight: 5 },
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Cloyster, weight: 10 },
         { species: Species.Lapras, weight: 5 },
@@ -30,9 +38,13 @@ export default function registerPolarOceanSpawns(): void {
       special: [{ species: Species.Articuno, weight: 10 }],
     },
     [TimeOfDay.Evening]: {
-      base: [{ species: Species.Seel, weight: 20 }],
-      uncommon: [],
+      base: [
+        { species: Species.Spheal, weight: 25 },
+        { species: Species.Seel, weight: 20 },
+      ],
+      uncommon: [{ species: Species.Sealeo, weight: 8 }],
       rare: [
+        { species: Species.Walrein, weight: 5 },
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Cloyster, weight: 10 },
         { species: Species.Lapras, weight: 5 },
@@ -41,9 +53,13 @@ export default function registerPolarOceanSpawns(): void {
       special: [{ species: Species.Articuno, weight: 10 }],
     },
     [TimeOfDay.Night]: {
-      base: [{ species: Species.Seel, weight: 20 }],
-      uncommon: [],
+      base: [
+        { species: Species.Spheal, weight: 25 },
+        { species: Species.Seel, weight: 20 },
+      ],
+      uncommon: [{ species: Species.Sealeo, weight: 8 }],
       rare: [
+        { species: Species.Walrein, weight: 5 },
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Cloyster, weight: 10 },
         { species: Species.Lapras, weight: 5 },

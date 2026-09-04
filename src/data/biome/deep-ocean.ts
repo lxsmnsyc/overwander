@@ -27,6 +27,8 @@ export default function registerDeepOceanSpawns(): void {
       ],
       uncommon: [{ species: Species.Dragonair, weight: 2 }],
       rare: [
+        { species: Species.Huntail, weight: 5 },
+        { species: Species.Gorebyss, weight: 5 },
         { species: Species.Gyarados, weight: 10 },
         { species: Species.Lapras, weight: 5 },
         { species: Species.Dragonite, weight: 2 },
@@ -45,6 +47,8 @@ export default function registerDeepOceanSpawns(): void {
       ],
       uncommon: [{ species: Species.Dragonair, weight: 2 }],
       rare: [
+        { species: Species.Huntail, weight: 5 },
+        { species: Species.Gorebyss, weight: 5 },
         { species: Species.Gyarados, weight: 10 },
         { species: Species.Lapras, weight: 5 },
         { species: Species.Dragonite, weight: 2 },
@@ -63,6 +67,8 @@ export default function registerDeepOceanSpawns(): void {
       ],
       uncommon: [{ species: Species.Dragonair, weight: 2 }],
       rare: [
+        { species: Species.Huntail, weight: 5 },
+        { species: Species.Gorebyss, weight: 5 },
         { species: Species.Gyarados, weight: 10 },
         { species: Species.Lapras, weight: 5 },
         { species: Species.Dragonite, weight: 2 },
@@ -80,6 +86,8 @@ export default function registerDeepOceanSpawns(): void {
       ],
       uncommon: [{ species: Species.Dragonair, weight: 2 }],
       rare: [
+        { species: Species.Huntail, weight: 5 },
+        { species: Species.Gorebyss, weight: 5 },
         { species: Species.Gyarados, weight: 10 },
         { species: Species.Lapras, weight: 5 },
         { species: Species.Dragonite, weight: 2 },

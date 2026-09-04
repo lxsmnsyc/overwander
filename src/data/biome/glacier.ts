@@ -8,23 +8,39 @@ import { PRIZED_WEIGHT, UNOWN_SPAWNS, registerSpawnPool } from './__create';
 export default function registerGlacierSpawns(): void {
   registerSpawnPool(Biome.Glacier, {
     [TimeOfDay.Morning]: {
-      base: [{ species: Species.Swinub, weight: 25 }],
-      uncommon: [],
-      rare: [{ species: Species.Delibird, weight: 5 }],
+      base: [
+        { species: Species.Spheal, weight: 25 },
+        { species: Species.Swinub, weight: 25 },
+      ],
+      uncommon: [{ species: Species.Sealeo, weight: 8 }],
+      rare: [
+        { species: Species.Walrein, weight: 5 },
+        { species: Species.Delibird, weight: 5 },
+      ],
       prized: [...UNOWN_SPAWNS],
       special: [{ species: Species.Articuno, weight: 10 }],
     },
     [TimeOfDay.Day]: {
-      base: [{ species: Species.Swinub, weight: 25 }],
-      uncommon: [],
-      rare: [{ species: Species.Delibird, weight: 5 }],
+      base: [
+        { species: Species.Spheal, weight: 25 },
+        { species: Species.Swinub, weight: 25 },
+      ],
+      uncommon: [{ species: Species.Sealeo, weight: 8 }],
+      rare: [
+        { species: Species.Walrein, weight: 5 },
+        { species: Species.Delibird, weight: 5 },
+      ],
       prized: [...UNOWN_SPAWNS],
       special: [{ species: Species.Articuno, weight: 10 }],
     },
     [TimeOfDay.Evening]: {
-      base: [{ species: Species.Swinub, weight: 25 }],
-      uncommon: [],
+      base: [
+        { species: Species.Spheal, weight: 25 },
+        { species: Species.Swinub, weight: 25 },
+      ],
+      uncommon: [{ species: Species.Sealeo, weight: 8 }],
       rare: [
+        { species: Species.Walrein, weight: 5 },
         { species: Species.Jynx, weight: 5 },
         { species: Species.Delibird, weight: 5 },
         { species: Species.Sneasel, weight: 5 },
@@ -33,9 +49,13 @@ export default function registerGlacierSpawns(): void {
       special: [{ species: Species.Articuno, weight: 10 }],
     },
     [TimeOfDay.Night]: {
-      base: [{ species: Species.Swinub, weight: 25 }],
-      uncommon: [],
+      base: [
+        { species: Species.Spheal, weight: 25 },
+        { species: Species.Swinub, weight: 25 },
+      ],
+      uncommon: [{ species: Species.Sealeo, weight: 8 }],
       rare: [
+        { species: Species.Walrein, weight: 5 },
         { species: Species.Jynx, weight: 5 },
         { species: Species.Delibird, weight: 5 },
         { species: Species.Sneasel, weight: 5 },

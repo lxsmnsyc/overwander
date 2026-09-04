@@ -17,11 +17,17 @@ import { registerItem } from './__create';
  * this way, so this is the shape of most of the family rather than a
  * corner of it.
  *
- * None of them can be spent yet: every line that asks for one — a
- * Slowking, a Steelix, a Porygon2 — belongs to a generation that is
- * not registered. They carry no price and no market listing until one
- * is, for the same reason the latent stones do not: a price is what
- * the market charges, and the market does not stock them.
+ * Most of them cannot be spent yet: the line that asks for one, a
+ * Slowking or a Steelix or a Porygon2, belongs to a generation that
+ * is not registered. Those carry no price and no market listing, for
+ * the same reason the latent stones do not: a price is what the
+ * market charges, and the market does not stock them.
+ *
+ * The **Deep Sea Tooth** and the **Deep Sea Scale** are the exception
+ * now that Clamperl is registered. A shell opens into one of two
+ * pokemon and the item is which, so both are priced and listed the
+ * way the Linking Cord is: the branch is a choice a player makes,
+ * not a thing they wait for.
  *
  * One item of the family is deliberately absent: **Metal Coat** is
  * already registered as the Steel type booster it also is, so the
@@ -57,8 +63,6 @@ const TRADE_ITEMS: [item: Items, name: string, icon: string, description: string
   [Items.Magmarizer, 'Magmarizer', 'magmarizer', EVOLVES],
   [Items.ReaperCloth, 'Reaper Cloth', 'reaper-cloth', EVOLVES],
   [Items.PrismScale, 'Prism Scale', 'prism-scale', EVOLVES],
-  [Items.DeepSeaTooth, 'Deep Sea Tooth', 'deep-sea-tooth', EVOLVES],
-  [Items.DeepSeaScale, 'Deep Sea Scale', 'deep-sea-scale', EVOLVES],
   [Items.Sachet, 'Sachet', 'sachet', EVOLVES],
   [Items.WhippedDream, 'Whipped Dream', 'whipped-dream', EVOLVES],
 ];
@@ -73,6 +77,26 @@ const TRADE_ITEMS: [item: Items, name: string, icon: string, description: string
  * [`src/battle/items/gear.ts`](../../battle/items/gear.ts)
  */
 const HELD_TRADE_ITEMS = new Set<Items>([Items.KingsRock]);
+
+/**
+ * The two Clamperl asks for. They are trade items like the rest, and
+ * the only ones a player can spend today, so they are stocked and
+ * priced where the others are not
+ */
+const CLAMPERL_ITEMS: [item: Items, name: string, icon: string, description: string][] = [
+  [
+    Items.DeepSeaTooth,
+    'Deep Sea Tooth',
+    'deep-sea-tooth',
+    'Opens a Clamperl into the one with the teeth.',
+  ],
+  [
+    Items.DeepSeaScale,
+    'Deep Sea Scale',
+    'deep-sea-scale',
+    'Opens a Clamperl into the one with the scales.',
+  ],
+];
 
 /**
  * The two that were filed here and are not trade items at all.
@@ -120,6 +144,18 @@ export default function registerTradeItems(): void {
       flags: HELD_TRADE_ITEMS.has(item) ? ItemFlags.Usable | ItemFlags.Holdable : ItemFlags.Usable,
       buy: 0,
       sell: 0,
+    });
+  }
+
+  for (const [item, name, icon, description] of CLAMPERL_ITEMS) {
+    registerItem(item, {
+      name,
+      description,
+      type: ItemTypes.Evolution,
+      icon: `evolutions/${icon}`,
+      flags: ItemFlags.Usable | ItemFlags.Marketable,
+      buy: 3000,
+      sell: 1500,
     });
   }
 

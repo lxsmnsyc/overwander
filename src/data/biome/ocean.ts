@@ -9,6 +9,7 @@ export default function registerOceanSpawns(): void {
   registerSpawnPool(Biome.Ocean, {
     [TimeOfDay.Morning]: {
       base: [
+        { species: Species.Clamperl, weight: 20 },
         { species: Species.Tentacool, weight: 30 },
         { species: Species.Seel, weight: 20 },
         { species: Species.Shellder, weight: 20 },
@@ -42,6 +43,7 @@ export default function registerOceanSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.Clamperl, weight: 20 },
         { species: Species.Tentacool, weight: 30 },
         { species: Species.Seel, weight: 20 },
         { species: Species.Shellder, weight: 20 },
@@ -75,6 +77,7 @@ export default function registerOceanSpawns(): void {
     },
     [TimeOfDay.Evening]: {
       base: [
+        { species: Species.Clamperl, weight: 20 },
         { species: Species.Tentacool, weight: 30 },
         { species: Species.Seel, weight: 20 },
         { species: Species.Shellder, weight: 20 },
@@ -106,6 +109,7 @@ export default function registerOceanSpawns(): void {
     },
     [TimeOfDay.Night]: {
       base: [
+        { species: Species.Clamperl, weight: 20 },
         { species: Species.Tentacool, weight: 30 },
         { species: Species.Seel, weight: 20 },
         { species: Species.Shellder, weight: 20 },

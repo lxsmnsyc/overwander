@@ -9,6 +9,7 @@ export default function registerCoralReefSpawns(): void {
   registerSpawnPool(Biome.CoralReef, {
     [TimeOfDay.Morning]: {
       base: [
+        { species: Species.Clamperl, weight: 20 },
         { species: Species.Horsea, weight: 20 },
         { species: Species.Remoraid, weight: 20 },
       ],
@@ -24,6 +25,7 @@ export default function registerCoralReefSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.Clamperl, weight: 20 },
         { species: Species.Horsea, weight: 20 },
         { species: Species.Remoraid, weight: 20 },
       ],
@@ -39,6 +41,7 @@ export default function registerCoralReefSpawns(): void {
     },
     [TimeOfDay.Evening]: {
       base: [
+        { species: Species.Clamperl, weight: 20 },
         { species: Species.Horsea, weight: 20 },
         { species: Species.Staryu, weight: 20 },
         { species: Species.Remoraid, weight: 20 },
@@ -55,6 +58,7 @@ export default function registerCoralReefSpawns(): void {
     },
     [TimeOfDay.Night]: {
       base: [
+        { species: Species.Clamperl, weight: 20 },
         { species: Species.Horsea, weight: 20 },
         { species: Species.Staryu, weight: 20 },
         { species: Species.Remoraid, weight: 20 },

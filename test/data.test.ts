@@ -3227,8 +3227,6 @@ describe('item data', () => {
       Items.Magmarizer,
       Items.ReaperCloth,
       Items.PrismScale,
-      Items.DeepSeaTooth,
-      Items.DeepSeaScale,
       Items.Sachet,
       Items.WhippedDream,
     ];
@@ -3281,6 +3279,17 @@ describe('item data', () => {
     // Metal Coat is not duplicated: the Steel booster already
     // registered is the id an evolution will read
     expect(getItemData(Items.MetalCoat).type).toBe(ItemTypes.Held);
+
+    // The two Clamperl asks for are the family's exception: its shell
+    // opens today, so both are stocked and priced like the cord
+    for (const item of [Items.DeepSeaTooth, Items.DeepSeaScale]) {
+      const data = getItemData(item);
+
+      expect(data.type, data.name).toBe(ItemTypes.Evolution);
+      expect(data.flags & ItemFlags.Marketable, data.name).not.toBe(0);
+      expect(data.buy, data.name).toBeGreaterThan(0);
+      expect(data.sell, data.name).toBeGreaterThan(0);
+    }
   });
 
   it('spends a portal key on the crossing', () => {

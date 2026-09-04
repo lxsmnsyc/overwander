@@ -1,5 +1,34 @@
 # overwander
 
+## 1.6.2
+
+### Patch Changes
+
+- e5baf44: Dex bookkeeping, and the line between a legendary and a mythical.
+
+  - A pokemon that arrives without ever being met is written to both tallies, so
+    the caught column can no longer climb past the seen one. Evolving and
+    hatching were the two ways it could.
+  - Every battle now writes down what the other side fielded, staged rather than
+    settled: a raid boss, a Team Rocket party, a gym seat's holder or a duelling
+    player's team is met by standing in front of it. It is one statement inside
+    one transaction, however many were on the field.
+  - **Legendaries and mythicals are separate tiers**, with a band each. A
+    legendary sits in the special band at 1/4096; a mythical sits in a band of
+    its own, eight times thinner at 1/32768, in the one place it lives.
+  - Giovanni's sixth is drawn from the lairs the world stages, so his party can
+    no longer end in a mythical.
+  - Changes world generation.
+
+- 621336d: A pokemon whose sheet is missing a clip no longer stands still through it in a fight. It plays the clip it has and the field moves the body instead: a lunge for a missing attack, a knock back for a hurt, a bounce for a hop, a spring for a double, a turn for a rotate.
+- 621336d: The evolutions in a catch's sheet stand the way the pokemon above them stands, whether or not they have been met. They used to be drawn asleep until one was registered.
+- e9f60e5: A mythical spawns at the same 1/4096 as a legendary, rather than 1/32768.
+
+  Changes world generation.
+
+- 9098acb: A first entrance and an admin teleport put the player on ground they can stand on, rather than possibly inside scenery or rock.
+- e9f60e5: A battle logs every fighter's sightings in one transaction, rather than one per player.
+
 ## 1.6.1
 
 ### Patch Changes

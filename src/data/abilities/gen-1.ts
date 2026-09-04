@@ -663,7 +663,7 @@ export default function registerGen1Abilities(): void {
   });
   registerAbility(Abilities.Shadow, {
     name: 'Shadow',
-    description: '1.2x Attack and Special Attack, 0.8x Defense and Special Defense.',
+    description: '1.25x Attack and Special Attack, 0.75x Defense and Special Defense.',
   });
   registerAbility(Abilities.Purified, {
     name: 'Purified',

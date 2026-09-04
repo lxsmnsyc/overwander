@@ -182,6 +182,33 @@ describe('a painted move', () => {
     }
   });
 
+  it('opens a fissure and closes it again', () => {
+    // The hole is a shape to fill rather than two lines to stroke, so
+    // what says it opened is that the fill widens and goes again
+    const gape = (at: number): number => {
+      const spans: number[] = [];
+      const { context } = canvas();
+      const visual = moveEffectVisual(Moves.Fissure);
+
+      const gradient = { addColorStop: () => {} } as CanvasGradient;
+
+      context.createLinearGradient = (_x, top, _to, bottom): CanvasGradient => {
+        spans.push(Math.abs(bottom - top));
+        return gradient;
+      };
+
+      if (visual == null) {
+        return 0;
+      }
+      visual.advance(visual.duration * at);
+      visual.draw(context, STAGE);
+      return Math.max(...spans, 0);
+    };
+
+    expect(gape(0.45)).toBeGreaterThan(gape(0.1));
+    expect(gape(0.98)).toBeLessThan(gape(0.45));
+  });
+
   it('reads the move flags rather than naming every move that carries one', () => {
     // A bite is teeth and a cut is an edge, whatever else the move is
     expect(effectShapeFor(Moves.Crunch)).toBe('Jaws');

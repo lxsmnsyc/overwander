@@ -18,6 +18,7 @@ import {
   heart,
   jaw,
   lash,
+  lighten,
   motes,
   noise,
   orb,
@@ -51,6 +52,16 @@ import {
 
 /** How big an effect is, in canvas pixels before the field's scale. */
 const REACH = 26;
+
+/**
+ * The fissure: how much of its span is spent tearing open, how far it
+ * runs and how wide it gapes in sizes, and how many points its lips
+ * are drawn from
+ */
+const CHASM_TEAR = 0.45;
+const CHASM_RUN = 2.4;
+const CHASM_GAPE = 0.5;
+const CHASM_STEPS = 7;
 
 /**
  * How many strikes a barrage is drawn as. The engine rolls two to five
@@ -136,7 +147,7 @@ const SPANS: Record<EffectShape, number> = {
   Warp: 620,
   Lash: 420,
   Boost: 560,
-  Chasm: 720,
+  Chasm: 820,
   Leaves: 560,
   Stars: 620,
   Blow: 620,
@@ -893,29 +904,68 @@ const PAINTERS: Record<
   Chasm(context, stage, share, { paint, seed, weight }) {
     const at = landing(stage);
     const size = REACH * stage.scale * weight;
-    const open = Math.min(1, share * 1.8);
-
-    // A crack drawn as two lips parting: the dark between them is the
-    // whole of the picture, so it widens rather than moving
-    context.beginPath();
-    for (const lip of [-1, 1]) {
-      context.moveTo(at[0] - size * 2, at[1]);
-      for (let step = 1; step <= 6; step += 1) {
-        const along = step / 6;
+    // Torn open at once and closed again by the end, so the ground it
+    // is left standing on is whole
+    const open =
+      share < CHASM_TEAR
+        ? share / CHASM_TEAR
+        : Math.max(0, 1 - (share - CHASM_TEAR) / (1 - CHASM_TEAR));
+    const half = size * CHASM_RUN;
+    const gape = size * CHASM_GAPE * open;
+    // Along the top lip and back along the bottom one, which closes
+    // the shape: the hole is a thing to fill, not two lines to stroke
+    const rim = (): void => {
+      context.beginPath();
+      context.moveTo(at[0] - half, at[1]);
+      for (let step = 1; step <= CHASM_STEPS; step += 1) {
+        const along = step / CHASM_STEPS;
 
         context.lineTo(
-          at[0] - size * 2 + along * size * 4,
-          at[1] + lip * open * size * 0.6 * Math.sin(Math.PI * along) + spread(seed, step) * 2,
+          at[0] - half + along * half * 2,
+          at[1] - gape * Math.sin(Math.PI * along) + spread(seed, step) * stage.scale,
         );
       }
-    }
-    context.strokeStyle = fade(paint.color, 0.9);
-    context.lineWidth = 2.5 * stage.scale;
+      for (let step = CHASM_STEPS - 1; step >= 0; step -= 1) {
+        const along = step / CHASM_STEPS;
+
+        context.lineTo(
+          at[0] - half + along * half * 2,
+          at[1] + gape * Math.sin(Math.PI * along) + spread(seed, step + 20) * stage.scale,
+        );
+      }
+      context.closePath();
+    };
+
+    // The dark is the move. A Fissure is not a mark on the ground, it
+    // is the ground not being there any more
+    rim();
+    const depth = context.createLinearGradient(at[0], at[1] - gape, at[0], at[1] + gape);
+
+    depth.addColorStop(0, fade('#0a0705', 0.55 * open));
+    depth.addColorStop(0.5, fade('#0a0705', 0.95 * open));
+    depth.addColorStop(1, fade('#0a0705', 0.7 * open));
+    context.fillStyle = depth;
+    context.fill();
+    // Broken earth around the hole rather than a drawn outline
+    context.strokeStyle = fade(lighten(paint.color, 0.3), open);
+    context.lineWidth = 2.4 * stage.scale;
     context.stroke();
-    shards(context, at, size * 1.6, many(5, weight), seed, share, {
+
+    // The jolt that opened it, and what it threw up
+    ripple(context, at, half * (0.5 + share * 1.1), {
+      ...paint,
+      alpha: decay(share) * 0.7,
+      width: 2.4 * stage.scale,
+    });
+    shards(context, at, half * 0.9, many(6, weight), seed, Math.min(1, share * 1.5), {
       ...paint,
       alpha: decay(share),
       width: 2.6 * stage.scale,
+    });
+    motes(context, at, half * 0.8, many(8, weight), seed + 31, share, {
+      ...paint,
+      alpha: swell(share) * 0.45,
+      width: 2.2 * stage.scale,
     });
   },
 

@@ -759,12 +759,20 @@ describe('world', () => {
     expect(genders.size).toBeGreaterThan(1);
   });
 
-  it('builds the raid boss with perfect IVs and no items', () => {
+  it('builds the raid boss trained as far as anything goes, and with no items', () => {
     const boss = createRaidBossSnapshot(Species.Articuno, 0x12345678);
+    const trained = MAX_EFFORT_PER_STAT;
 
     expect(boss.level).toBe(RAID_BOSS_LEVEL);
     expect(boss.ivs).toBe(PERFECT_IVS);
-    expect(Object.values(boss.effortValues)).toEqual([0, 0, 0, 0, 0, 0]);
+    expect(Object.values(boss.effortValues)).toEqual([
+      trained,
+      trained,
+      trained,
+      trained,
+      trained,
+      trained,
+    ]);
     expect(boss.items).toEqual([]);
     expect(boss.caught).toBe('');
 

@@ -270,6 +270,7 @@ const TEAM_STATUS_MOVES: { [key in Moves]?: TeamStatuses } = {
   [Moves.Reflect]: TeamStatuses.Reflect,
   [Moves.LightScreen]: TeamStatuses.LightScreen,
   [Moves.Mist]: TeamStatuses.Mist,
+  [Moves.Safeguard]: TeamStatuses.Safeguard,
 };
 
 function setupTeamStatusMoves(battle: Battle): void {
@@ -282,6 +283,18 @@ function setupTeamStatusMoves(battle: Battle): void {
         move: event.move,
         unit: event.source,
       });
+    }
+  });
+
+  // A veil already over the side changes nothing, the way calling up
+  // a sky already out does not. The AI is told before it spends the
+  // cast rather than after
+  battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Exact, (event) => {
+    const status = TEAM_STATUS_MOVES[event.move];
+
+    // Explicit null check: the first TeamStatuses enum member is 0
+    if (event.usable && status != null && event.source.team.status[status] != null) {
+      event.usable = false;
     }
   });
 }

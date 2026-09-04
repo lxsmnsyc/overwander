@@ -9,7 +9,7 @@ import {
 } from '../data/constants/slots';
 import { getBannedBossMoves } from '../data/overworld/boss-moves';
 import { MAX_LEVEL } from '../data/constants/levels';
-import { MAX_IV, PERFECT_IVS, Stats } from '../data/constants/stats';
+import { MAX_EFFORT_PER_STAT, MAX_IV, PERFECT_IVS, Stats } from '../data/constants/stats';
 import Abilities from '../data/ids/abilities';
 import type { Moves } from '../data/ids/moves';
 import { Species } from '../data/ids/species';
@@ -68,14 +68,19 @@ export const MYTHICAL_RAID_REWARD_LEVEL = 30;
  */
 export const PERFECT_IV = MAX_IV;
 
-function zeroEffortValues(): Record<Stats, number> {
+/**
+ * A boss is trained as far as anything can be. Nothing raised it, so
+ * there is nobody for the effort to have come from: it is what a raid
+ * is, the species at the most it could ever be
+ */
+function maxEffortValues(): Record<Stats, number> {
   return {
-    [Stats.HP]: 0,
-    [Stats.Attack]: 0,
-    [Stats.Defense]: 0,
-    [Stats.SpecialAttack]: 0,
-    [Stats.SpecialDefense]: 0,
-    [Stats.Speed]: 0,
+    [Stats.HP]: MAX_EFFORT_PER_STAT,
+    [Stats.Attack]: MAX_EFFORT_PER_STAT,
+    [Stats.Defense]: MAX_EFFORT_PER_STAT,
+    [Stats.SpecialAttack]: MAX_EFFORT_PER_STAT,
+    [Stats.SpecialDefense]: MAX_EFFORT_PER_STAT,
+    [Stats.Speed]: MAX_EFFORT_PER_STAT,
   };
 }
 
@@ -136,7 +141,7 @@ export function createRaidBossSnapshot(
     species,
     level: RAID_BOSS_LEVEL,
     ivs: PERFECT_IVS,
-    effortValues: zeroEffortValues(),
+    effortValues: maxEffortValues(),
     nature: deriveNature(traitValue),
     // The boss reads its own gender ratio, the same way a spawn
     // does; only a genderless species comes out genderless
@@ -169,7 +174,7 @@ export function createRaidBossSnapshot(
       species,
       level: RAID_BOSS_LEVEL,
       ivs: PERFECT_IVS,
-      effortValues: zeroEffortValues(),
+      effortValues: maxEffortValues(),
     }),
     // Nothing has raised it, so it thinks of nobody
     friendship: BASE_FRIENDSHIP,

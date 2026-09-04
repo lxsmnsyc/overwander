@@ -83,12 +83,19 @@ export default function setupWeatherMoves(battle: Battle): void {
     hold(event.team, event.weather, event.duration);
   });
 
-  // Calling up weather already out changes nothing, so the AI is told
-  // before it spends a cast on it
+  // The same two refusals the effect above makes: a sky already out
+  // is unchanged by being called up, and a primal one answers to
+  // nobody. Told to the AI before it spends the cast rather than after
   battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Exact, (event) => {
     const weather = MOVE_WEATHERS.get(event.move);
 
-    if (event.usable && weather != null && event.source.checkWeather() === weather) {
+    if (!event.usable || weather == null) {
+      return;
+    }
+
+    const sky = event.source.checkWeather();
+
+    if (sky === weather || isPrimalWeather(sky)) {
       event.usable = false;
     }
   });

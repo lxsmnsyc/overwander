@@ -6,6 +6,7 @@ import { checkTeamUnit, checkUnitRating } from '../../src/battle/ai/rating';
 import {
   BattleEvents,
   type CheckUnitAIMoveScoreEvent,
+  type CheckUnitAIMoveUsableEvent,
   EffectType,
   type MoveTarget,
   MoveTargetType,
@@ -18,7 +19,7 @@ import { Stages } from '../../src/data/constants/stats';
 import { Types } from '../../src/data/constants/types';
 import { MoveTargetPriorities, Moves } from '../../src/data/ids/moves';
 import { Items } from '../../src/data/ids/items';
-import { Statuses, Weathers } from '../../src/data/ids/status';
+import { Statuses, TeamStatuses, Weathers } from '../../src/data/ids/status';
 import { type BattleHarness, createBattle, createUnit, pinRandom } from './harness';
 
 const NONE_CAUSE = { type: EffectType.None } as const;
@@ -685,6 +686,84 @@ describe('weighing a move', () => {
     battle.emit(BattleEvents.CheckUnitAIMoveScore, event);
     return event.score;
   }
+
+  /** Whether the move is offered at all against this target */
+  function usableMove(
+    battle: BattleHarness['battle'],
+    source: Unit,
+    move: Moves,
+    target: MoveTarget,
+  ): boolean {
+    const event: CheckUnitAIMoveUsableEvent = {
+      id: 'CheckUnitAIMoveUsable',
+      disabled: false,
+      source,
+      move,
+      target,
+      usable: true,
+    };
+    battle.emit(BattleEvents.CheckUnitAIMoveUsable, event);
+    return event.usable;
+  }
+
+  it('will not put up a veil the side already has', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    pinRandom(battle, 0.99);
+    const unit = createUnit(battle, teamA);
+    createUnit(battle, teamB);
+    const target: MoveTarget = { type: MoveTargetType.None };
+
+    // Safeguard rides the same table as the screens, so one rule
+    // covers all four
+    for (const move of [Moves.Reflect, Moves.LightScreen, Moves.Mist, Moves.Safeguard]) {
+      expect(usableMove(battle, unit, move, target), 'fresh').toBe(true);
+    }
+
+    for (const status of [
+      TeamStatuses.Reflect,
+      TeamStatuses.LightScreen,
+      TeamStatuses.Mist,
+      TeamStatuses.Safeguard,
+    ]) {
+      teamA.addStatus(status, NONE_CAUSE);
+    }
+
+    for (const move of [Moves.Reflect, Moves.LightScreen, Moves.Mist, Moves.Safeguard]) {
+      expect(usableMove(battle, unit, move, target), 'already up').toBe(false);
+    }
+  });
+
+  it('will not call up a sky that answers to nobody', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    pinRandom(battle, 0.99);
+    const unit = createUnit(battle, teamA);
+    createUnit(battle, teamB);
+    const target: MoveTarget = { type: MoveTargetType.None };
+
+    expect(usableMove(battle, unit, Moves.SunnyDay, target)).toBe(true);
+
+    // A primal sky is one the move cannot change, the way a sky
+    // already out is
+    battle.setWeather(Weathers.HeavyRain);
+
+    expect(usableMove(battle, unit, Moves.SunnyDay, target)).toBe(false);
+  });
+
+  it('sees a stage held rather than only one pinned', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    pinRandom(battle, 0.99);
+    const unit = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    const target: MoveTarget = { type: MoveTargetType.Unit, unit: enemy };
+
+    const open = scoreMove(battle, unit, Moves.Screech, target);
+
+    // Mist answers the engine's own can-this-stage-move question, so
+    // the AI reads it without keeping a list of what blocks a stage
+    enemy.team.addStatus(TeamStatuses.Mist, NONE_CAUSE);
+
+    expect(open - scoreMove(battle, unit, Moves.Screech, target)).toBe(USELESS_PENALTY);
+  });
 
   it('does not eat the target berry it asks about', () => {
     const { battle, teamA, teamB } = createAIBattle();

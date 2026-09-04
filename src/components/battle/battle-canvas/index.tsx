@@ -51,6 +51,7 @@ import {
   project,
   readField,
   ringStandings,
+  skiesOver,
   unitsOf,
 } from './field';
 import { COLORS, FIELD_UNIT, HEIGHT, LOADING_LABEL, TURN_SLOP, WIDTH } from './metrics';
@@ -552,17 +553,32 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       // weather is the field's own state rather than anybody's move,
       // and it belongs behind the thing being watched.
       //
-      // Asked of a pokemon rather than of the battle, because outside
-      // a fight between players the weather is the **team's**: a raid
-      // has one side standing in rain and the other in the dry, and
-      // what the viewer should see is the sky over their own side
-      const watcher = slots.find((slot) => slot.unit.alive);
-      const sky = watcher == null ? props.battle.weather.current : watcher.unit.checkWeather();
+      // One patch per sky rather than one over the picture. Outside a
+      // fight between players the weather is the **team's**: a raid
+      // has one side standing in its own sunshine and the other in the
+      // dry, and only a boss puts weather over everybody
+      const skies = skiesOver(slots, props.battle, { width: WIDTH, height: HEIGHT });
 
       if (batch == null) {
-        paintWeather(context, sky, { width: WIDTH, height: HEIGHT }, clock);
+        for (const patch of skies) {
+          context.save();
+          context.translate(patch.x, patch.y);
+          paintWeather(context, patch.weather, patch, clock);
+          context.restore();
+        }
       } else {
-        batchWeather(batch, sky, { width: WIDTH, height: HEIGHT }, clock);
+        for (const patch of skies) {
+          // Carried rather than clipped: the batch has no scissor, and
+          // the painters lay their sky out from their own origin
+          batch.carry(
+            stage.offsetX + patch.x * stage.scale,
+            stage.offsetY + patch.y * stage.scale,
+            1,
+            stage.scale,
+          );
+          batchWeather(batch, patch.weather, patch, clock);
+        }
+        batch.carry(stage.offsetX, stage.offsetY, 1, stage.scale);
         // Everything the field is made of is written now. What follows
         // is the move effects, which stay painted: they are the one
         // thing here drawn as art rather than as pictures, and there

@@ -3,6 +3,7 @@ import type { Striking } from './motion';
 import type Battle from '../../../battle/core';
 import { type MoveTarget, MoveTargetType } from '../../../battle/events';
 import type Team from '../../../battle/team';
+import { Weathers } from '../../../data/ids/status';
 import type Unit from '../../../battle/unit';
 import projectField, {
   type FieldPoint,
@@ -347,6 +348,78 @@ function watchedBy(unit: Unit, thrown: Striking | undefined): Unit | null {
     return oneOf(aim.team, unit);
   }
   return null;
+}
+
+/**
+ * A patch of sky, and the part of the picture it is painted over.
+ * Everything is in the picture's own coordinates, which is what both
+ * the painted pass and the batch draw in
+ */
+export interface SkyPatch {
+  weather: Weathers;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+/** How far past a team's own bodies its weather reaches, in radii. */
+const SKY_MARGIN = 1.8;
+
+/**
+ * What sky to draw and where.
+ *
+ * Weather over the whole field covers the picture, which is every
+ * fight but a raid: only a raid keeps a team's own weather to that
+ * team, and only a boss puts weather over everybody. A team's own sky
+ * is drawn as a shaft coming down over its cluster, so a side standing
+ * in its own sunshine is visibly the side that called for it
+ */
+export function skiesOver(
+  slots: Slot[],
+  battle: Battle,
+  picture: { width: number; height: number },
+): SkyPatch[] {
+  const overhead = battle.weather.disabled ? Weathers.None : battle.weather.current;
+
+  if (overhead !== Weathers.None) {
+    return [{ weather: overhead, x: 0, y: 0, width: picture.width, height: picture.height }];
+  }
+
+  const sides = new Map<Team, Slot[]>();
+
+  for (const slot of slots) {
+    const its = sides.get(slot.unit.team);
+
+    if (its == null) {
+      sides.set(slot.unit.team, [slot]);
+    } else {
+      its.push(slot);
+    }
+  }
+
+  const patches: SkyPatch[] = [];
+
+  for (const [team, its] of sides) {
+    const weather = team.weather.disabled ? Weathers.None : team.weather.current;
+
+    if (weather === Weathers.None) {
+      continue;
+    }
+
+    const reach = Math.max(...its.map((slot) => slot.radius)) * SKY_MARGIN;
+    const left = Math.max(0, Math.min(...its.map((slot) => slot.x)) - reach);
+    const right = Math.min(picture.width, Math.max(...its.map((slot) => slot.x)) + reach);
+    // From the top of the picture down past their feet: weather comes
+    // out of the sky, so a patch floating in the middle of the field
+    // reads as a cloud rather than as the weather over them
+    const bottom = Math.min(picture.height, Math.max(...its.map((slot) => slot.y)) + reach);
+
+    if (right > left && bottom > 0) {
+      patches.push({ weather, x: left, y: 0, width: right - left, height: bottom });
+    }
+  }
+  return patches;
 }
 
 /**

@@ -86,6 +86,11 @@ export const enum GameDialog {
    * screen that says an invitation has landed
    */
   Notifications = 12,
+  /**
+   * What the game has shipped, newest first: the release pages, read
+   * as a feed rather than as documentation
+   */
+  News = 13,
 }
 
 /**

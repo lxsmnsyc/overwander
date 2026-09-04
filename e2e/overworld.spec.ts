@@ -44,6 +44,7 @@ test.describe('the overworld', () => {
       'Battle',
       'Raids',
       'Settings',
+      'News',
     ]) {
       await expect(menu.getByRole('button', { name: label, exact: true })).toBeEnabled();
     }

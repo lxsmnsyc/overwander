@@ -45,6 +45,15 @@ import { Button, Dialog, DialogActions, Note } from '../components/styled';
 const BattleView = clientOnly(async () => import('../components/battle/battle-view'));
 
 /**
+ * The news feed, fetched when it is opened.
+ *
+ * It carries every release page there has ever been, compiled: a panel
+ * that grows with the game, opened when a release lands rather than
+ * while playing
+ */
+const NewsTab = clientOnly(async () => import('../components/news/NewsTab'));
+
+/**
  * The game is the world.
  *
  * There is one page and it is the chunk the player is standing in,
@@ -72,7 +81,8 @@ type Panelled =
   | GameDialog.Gifts
   | GameDialog.Quests
   | GameDialog.Battles
-  | GameDialog.Settings;
+  | GameDialog.Settings
+  | GameDialog.News;
 
 const TITLES: Record<Panelled, string> = {
   [GameDialog.Notifications]: 'Notifications',
@@ -86,6 +96,7 @@ const TITLES: Record<Panelled, string> = {
   [GameDialog.Quests]: 'Quests',
   [GameDialog.Battles]: 'Battle',
   [GameDialog.Settings]: 'Settings',
+  [GameDialog.News]: 'News',
 };
 
 const DESCRIPTIONS: Record<Panelled, string> = {
@@ -102,6 +113,7 @@ const DESCRIPTIONS: Record<Panelled, string> = {
   [GameDialog.Battles]:
     'The private fights you have been called into, and the one you are hosting.',
   [GameDialog.Settings]: 'How the game is set up for you, and what it is made of.',
+  [GameDialog.News]: 'What the game has shipped, newest first.',
 };
 
 /**
@@ -265,6 +277,22 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
             description={DESCRIPTIONS[GameDialog.Settings]}
           >
             <SettingsTab />
+            <DialogActions>
+              <Button onClick={close}>Close</Button>
+            </DialogActions>
+          </Dialog>
+
+          {/* The release pages, read as a feed. Like the settings, it
+              is written into the build rather than fetched */}
+          <Dialog
+            isOpen={showing(GameDialog.News)}
+            onClose={close}
+            width="wide"
+            terse
+            title={TITLES[GameDialog.News]}
+            description={DESCRIPTIONS[GameDialog.News]}
+          >
+            <NewsTab />
             <DialogActions>
               <Button onClick={close}>Close</Button>
             </DialogActions>

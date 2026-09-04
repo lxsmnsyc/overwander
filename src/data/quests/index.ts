@@ -274,7 +274,11 @@ const WRITTEN_QUESTS: Record<Quests, QuestData> = {
   },
   [Quests.FarAfield]: {
     name: 'Far Afield',
-    requirements: [ask(Metric.Biomes, 8)],
+    // Doors rather than biomes. A counter behind a prerequisite is
+    // measured from the moment it opens, and there are only 29 biomes
+    // in the world, so a player who had already seen most of them
+    // could never find another eight
+    requirements: [ask(Metric.Landmarks, 5, { landmark: Landmark.Portal })],
     rewards: [{ kind: QuestRewardKind.Item, item: Items.PearlString, amount: 1 }],
   },
 

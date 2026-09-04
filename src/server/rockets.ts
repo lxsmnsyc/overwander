@@ -543,7 +543,13 @@ export async function claimRocketReward(uid: string, stop: string): Promise<Rock
   const leader = landmark === Landmark.GymLeader ? snapshot.getGymLeader(record.cell) : null;
   const item =
     leader == null
-      ? rollStopLoot(landmark ?? Landmark.TeamRocket, rank, () => rng.random(), legend)
+      ? rollStopLoot(
+          landmark ?? Landmark.TeamRocket,
+          rank,
+          snapshot.chunk.biome,
+          () => rng.random(),
+          legend,
+        )
       : rollGymMachine(leader, () => rng.random());
 
   if (item != null) {

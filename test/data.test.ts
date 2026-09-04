@@ -132,6 +132,7 @@ import {
 import pickStatusCast, { STATUS_CAST } from '../src/data/constants/status-cast';
 import AleaRNG from '../src/core/alea';
 import type { ItemPoolEntry } from '../src/data/overworld/item-pool';
+import { getItemBiomes, getItemPool } from '../src/data/overworld/biome-items';
 import {
   ITEM_POOL,
   MAX_KINDS,
@@ -3182,7 +3183,7 @@ describe('item data', () => {
     // not gold
     expect(sellPrice(Items.HeartScale)).toBe(0);
     expect(sellPrice(Items.PortalKey)).toBe(0);
-    expect(sellPrice(Items.SunStone)).toBe(0);
+    expect(sellPrice(Items.IceStone)).toBe(0);
   });
 
   it('registers the stones and trade items nothing can spend yet', () => {
@@ -3190,7 +3191,6 @@ describe('item data', () => {
     // has not registered, so they are named, drawn and priceless
     // rather than stocked or buried
     const latent = [
-      Items.SunStone,
       Items.ShinyStone,
       Items.DuskStone,
       Items.DawnStone,
@@ -4345,6 +4345,55 @@ describe('biome data', () => {
     for (const band of ['base', 'uncommon', 'rare', 'prized', 'special'] as const) {
       for (const entry of ITEM_POOL[band]) {
         expect(getItemBand(entry.item)).toBe(band);
+      }
+    }
+  });
+
+  it('buries what belongs to a landscape only in that landscape', () => {
+    const holds = (biome: Biome, item: Items): boolean =>
+      (['base', 'uncommon', 'rare', 'prized', 'special'] as const).some((band) =>
+        getItemPool(biome)[band].some((entry) => entry.item === item),
+      );
+
+    // A stone is a reason to cross the map: it is dug up where its
+    // element is and nowhere else. A Sunkern asks for the sun one, so
+    // the savanna is where a Sunflora comes from
+    expect(holds(Biome.Savanna, Items.SunStone)).toBe(true);
+    expect(holds(Biome.Glacier, Items.SunStone)).toBe(false);
+    expect(holds(Biome.Volcano, Items.FireStone)).toBe(true);
+    expect(holds(Biome.Ocean, Items.FireStone)).toBe(false);
+    expect(holds(Biome.Ocean, Items.WaterStone)).toBe(true);
+    expect(holds(Biome.Desert, Items.WaterStone)).toBe(false);
+    expect(holds(Biome.Woodland, Items.LeafStone)).toBe(true);
+    expect(holds(Biome.Glacier, Items.MoonStone)).toBe(true);
+
+    // An item that names no ground is buried on all of it
+    expect(getItemBiomes(Items.PokeBall)).toHaveLength(0);
+    expect(getItemBiomes(Items.WaterStone).length).toBeGreaterThan(0);
+
+    // What the whole world buries is in every pool there is
+    for (const biome of Object.keys(BIOME_NAMES).map(Number) as Biome[]) {
+      expect(holds(biome, Items.PokeBall), BIOME_NAMES[biome]).toBe(true);
+      expect(holds(biome, Items.MasterBall), BIOME_NAMES[biome]).toBe(true);
+    }
+
+    // Nothing is buried nowhere, and no biome is left with an empty
+    // band: a stash has something to hand over wherever it is dug
+    for (const entry of [
+      ...ITEM_POOL.base,
+      ...ITEM_POOL.uncommon,
+      ...ITEM_POOL.rare,
+      ...ITEM_POOL.prized,
+      ...ITEM_POOL.special,
+    ]) {
+      expect(
+        (Object.keys(BIOME_NAMES).map(Number) as Biome[]).some((biome) => holds(biome, entry.item)),
+        getItemData(entry.item).name,
+      ).toBe(true);
+    }
+    for (const biome of Object.keys(BIOME_NAMES).map(Number) as Biome[]) {
+      for (const band of ['base', 'uncommon', 'rare', 'prized', 'special'] as const) {
+        expect(getItemPool(biome)[band].length, `${BIOME_NAMES[biome]} ${band}`).toBeGreaterThan(0);
       }
     }
   });

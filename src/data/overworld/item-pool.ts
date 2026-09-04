@@ -49,7 +49,13 @@ export interface ItemRarityGroups {
  * for a crown. The crown sits in the rarest band as the exception:
  * everything else there is something gold cannot buy.
  *
- * Machines are deliberately absent: they are bought, never found
+ * Machines are deliberately absent: they are bought, never found.
+ *
+ * This is the whole ladder, and what a band and its odds are read
+ * off. Where each thing is buried is a separate question, answered by
+ * [`biome-items.ts`](./biome-items.ts): a stash draws from what its
+ * own ground holds, which is this pool less whatever belongs
+ * somewhere else
  */
 export const ITEM_POOL: ItemRarityGroups = {
   base: [
@@ -144,6 +150,7 @@ export const ITEM_POOL: ItemRarityGroups = {
     { item: Items.ThunderStone, weight: 10 },
     { item: Items.LeafStone, weight: 10 },
     { item: Items.MoonStone, weight: 10 },
+    { item: Items.SunStone, weight: 10 },
     { item: Items.Nugget, weight: 8 },
     // The middle of the ladder, thinning as it climbs
     // Cut off a Slowpoke, and worth more than the nugget it is found

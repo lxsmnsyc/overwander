@@ -535,7 +535,7 @@ export default class ChunkSnapshot {
       for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
         if (landmark === Landmark.ItemCache) {
           const rng = new AleaRNG(`${this.groundKey}${this.landmarkTimestamp}cache${cell}`);
-          const stash = resolveItemCache(() => rng.random());
+          const stash = resolveItemCache(this.chunk.biome, () => rng.random());
 
           if (stash.length > 0) {
             caches.set(cell, stash);

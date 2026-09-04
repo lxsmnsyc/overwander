@@ -29,7 +29,9 @@ import {
 import type { Items } from '../data/ids/items';
 import type { Species } from '../data/ids/species';
 import { getSpeciesData } from '../data/species';
-import { ITEM_POOL, type ItemBandOdds, pickItem } from '../data/overworld/item-pool';
+import type Biome from '../data/ids/biome';
+import { type ItemBandOdds, pickItem } from '../data/overworld/item-pool';
+import { getItemPool } from '../data/overworld/biome-items';
 import type ChunkSnapshot from './chunk-snapshot';
 import { RocketRank, type Spawn } from './chunk-snapshot';
 import deriveEncounter, { EncounterType, deriveSize, deriveTrainedAbilities } from './encounter';
@@ -314,17 +316,22 @@ export const LEGEND_LOOT_ODDS: ItemBandOdds = {
 export function rollStopLoot(
   landmark: Landmark,
   rank: RocketRank,
+  biome: Biome,
   random: () => number,
   legend = false,
 ): Items | null {
+  // What they were carrying is what the ground they were beaten on
+  // has to offer, the same as a stash dug up beside them
+  const pool = getItemPool(biome);
+
   if (landmark === Landmark.EliteFour) {
-    return pickItem(ITEM_POOL, random, ELITE_LOOT_ODDS);
+    return pickItem(pool, random, ELITE_LOOT_ODDS);
   }
   if (landmark === Landmark.Champion) {
-    return pickItem(ITEM_POOL, random, legend ? LEGEND_LOOT_ODDS : CHAMPION_LOOT_ODDS);
+    return pickItem(pool, random, legend ? LEGEND_LOOT_ODDS : CHAMPION_LOOT_ODDS);
   }
   if (landmark === Landmark.TeamRocket && rank === RocketRank.Executive) {
-    return pickItem(ITEM_POOL, random, EXECUTIVE_LOOT_ODDS);
+    return pickItem(pool, random, EXECUTIVE_LOOT_ODDS);
   }
   return null;
 }

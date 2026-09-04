@@ -36,7 +36,7 @@ rolls first for a rarity band:
 | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Base**     | Poke, Great, Premier, Heal and Luxury Balls; Pearls, Stardust, shoal salt and shells, Pretty Wings, Tiny Mushrooms, Relic Copper; Black Sludge and a Sticky Barb; the everyday medicine; Energy and Heal Powder                                                                                                   |
 | **Uncommon** | The eight utility balls; Big Pearls, Star Pieces, Big Mushrooms, Rare Bones, Relic Silver; Super and Hyper Potions, Full Heals, Energy Roots; Heart Scales; the six wings; the sixteen one-shot answers, from a Focus Sash to a Weakness Policy; the Everstone; the four weather rocks, Light Clay and a Big Root |
-| **Rare**     | The five evolution stones; Nuggets and the richer valuables; Max Potions, Full Restores, Revives, Revival Herbs; the species relics; the seventeen plates and the type-boosting gear; the choice items, the vest and the Eviolite; the three orbs; Leftovers, a Shed Shell and the rest of the battle gear        |
+| **Rare**     | The six evolution stones; Nuggets and the richer valuables; Max Potions, Full Restores, Revives, Revival Herbs; the species relics; the seventeen plates and the type-boosting gear; the choice items, the vest and the Eviolite; the three orbs; Leftovers, a Shed Shell and the rest of the battle gear        |
 | **Prized**   | Bottle Caps, the Purifying Gem, the Utility Belt, Max Revives, the Sacred Ash, the Portal Key, the Amulet Coin, the six power items, all three fossils, the ruins                                                                                                                                                 |
 | **Special**  | Master Ball, Shiny Charm, Golden Bottle Cap, the raid relics, the Relic Crown                                                                                                                                                                                                                                     |
 
@@ -84,6 +84,30 @@ Each kind comes in up to **three pieces**.
 A stash can be a Master Ball and two stones. Two things it can never be: **two
 specials**, and **more than one piece** of a special — a Master Ball found three
 at a time would stop being a Master Ball.
+
+### What each landscape hides
+
+Most of the pool is buried everywhere. Some of it belongs to particular ground
+and is found there and nowhere else, so where a player walks decides what they
+dig up:
+
+| What                                       | Where                                                  |
+| ------------------------------------------ | ------------------------------------------------------ |
+| Fire Stone, Heat Rock                       | Volcano, Badlands, Desert                              |
+| Sun Stone                                   | Savanna, Desert, tropical seasonal forest              |
+| Water Stone, pearls, shoal salt and shells  | The seas and the shores                                |
+| Thunder Stone                               | Grassland, Savanna, Steppe, Shrubland, Mountain        |
+| Leaf Stone, mushrooms                       | The forests, and the wetlands for the smaller mushrooms |
+| Moon Stone, Icy Rock                        | The cold: glacier, tundra, taiga, cold desert, mountain |
+| Damp Rock                                   | Swamp, bog, mangrove, rainforest                       |
+| Smooth Rock, Star Pieces, Comet Shards      | The dry and the clear-skied                            |
+| Rare Bones                                  | Dry ground, high ground and glacier                    |
+| Pretty Wings                                | Open ground, high ground and the forests               |
+
+Balls, medicine, gear and everything else are dug up wherever a player happens
+to be standing. A trainer beaten at a landmark hands over what the ground they
+were beaten on holds; a **Pickup** buddy draws from the whole shelf, since what
+it finds is scavenged rather than dug.
 
 ### Berry patches
 

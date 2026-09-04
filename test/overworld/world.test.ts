@@ -1644,16 +1644,20 @@ describe('world', () => {
       const rng = new AleaRNG(`loot-${landmark}-${rank}`);
 
       return Array.from({ length: 400 }, () =>
-        rollStopLoot(landmark, rank, () => rng.random()),
+        rollStopLoot(landmark, rank, Biome.Grassland, () => rng.random()),
       ).filter((item): item is Items => item != null);
     };
 
     // A duelling trainer keeps their party and their pockets, and so
     // do the two lower Team Rocket ranks. The gym leader is not here
     // either: theirs is a machine of their own type
-    expect(rollStopLoot(Landmark.Trainer, RocketRank.Grunt, () => 0.5)).toBeNull();
-    expect(rollStopLoot(Landmark.TeamRocket, RocketRank.Grunt, () => 0.5)).toBeNull();
-    expect(rollStopLoot(Landmark.GymLeader, RocketRank.Grunt, () => 0.5)).toBeNull();
+    expect(rollStopLoot(Landmark.Trainer, RocketRank.Grunt, Biome.Grassland, () => 0.5)).toBeNull();
+    expect(
+      rollStopLoot(Landmark.TeamRocket, RocketRank.Grunt, Biome.Grassland, () => 0.5),
+    ).toBeNull();
+    expect(
+      rollStopLoot(Landmark.GymLeader, RocketRank.Grunt, Biome.Grassland, () => 0.5),
+    ).toBeNull();
 
     const executive = rolls(Landmark.TeamRocket, RocketRank.Executive);
     const elite = rolls(Landmark.EliteFour, RocketRank.Grunt);
@@ -1687,7 +1691,7 @@ describe('world', () => {
     // the game that reaches the special band
     const rng = new AleaRNG('loot-legend');
     const legend = Array.from({ length: 4200 }, () =>
-      rollStopLoot(Landmark.Champion, RocketRank.Grunt, () => rng.random(), true),
+      rollStopLoot(Landmark.Champion, RocketRank.Grunt, Biome.Grassland, () => rng.random(), true),
     ).filter((item): item is Items => item != null);
 
     expect(legend).toHaveLength(4200);

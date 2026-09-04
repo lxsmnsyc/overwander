@@ -587,7 +587,7 @@ export async function claimStopReward(uid: string, stop: string): Promise<StopRe
     where stop_id = ${stop} and player = ${uid} and not defeated
   `;
 
-  const [spawnId, spawn] = deriveStopReward(record, stop, uid, rank);
+  const [spawnId, spawn] = deriveStopReward(record, stop, uid);
 
   if (claimed.count === 0) {
     // Paid already: the only thing possibly still owed is a grunt's

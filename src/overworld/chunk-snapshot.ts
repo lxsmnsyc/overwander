@@ -1060,14 +1060,16 @@ export default class ChunkSnapshot {
               Array.from({ length: ROCKET_PARTY_SIZE }, () => draw(rares)),
             );
           } else {
-            // Weakest first, which is also the half a beaten grunt
-            // hands over: the commoner and the two uncommons, never
-            // the three they were actually fighting with
+            // Weakest first, and two out of each of the biome's three
+            // bands: a grunt is the one rank that reaches the whole
+            // pool rather than the top of it, which is what makes the
+            // commonest fight in the world the only way to meet some
+            // of what lives there
             stops.set(cell, [
+              draw(commons),
               draw(commons),
               draw(uncommons),
               draw(uncommons),
-              draw(rares),
               draw(rares),
               draw(rares),
             ]);

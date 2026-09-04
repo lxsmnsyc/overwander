@@ -5,7 +5,7 @@
 import AleaRNG from '../core/alea';
 import type { Species } from '../data/ids/species';
 import type Chunk from '../overworld/chunk';
-import { RocketRank, type Spawn } from '../overworld/chunk-snapshot';
+import type { Spawn } from '../overworld/chunk-snapshot';
 import { asNumber, asRecord, asString } from './__normalize';
 import { toZoneKey } from './local-time';
 
@@ -129,34 +129,19 @@ export function stopIdOf(chunk: Chunk, npcTimestamp: number, cell: number, offse
 }
 
 /**
- * How many of a Team Rocket stop's six are on offer once it is
- * beaten. A grunt hands over the weaker half of what they were
- * carrying, which is the commoner and the two uncommons rather than
- * the three they were actually fighting with; an executive and the
- * boss put their whole party up, the legendary among Giovanni's.
- *
- * Nobody else leaves a pokemon behind, so nobody else asks
- */
-export function stopRewardOffer(rank: RocketRank): number {
-  return rank === RocketRank.Grunt ? 3 : 6;
-}
-
-/**
  * What a beaten stop leaves behind, as a spawn the player then has to
  * catch.
+ *
+ * Every rank puts its whole party up, the legendary among a boss'.
+ * Nobody else leaves a pokemon behind, so nobody else asks.
  *
  * The rolls are seeded by the stop and the player, so each winner
  * meets their own individual of it, and meeting it again resolves the
  * same one
  */
-export function deriveStopReward(
-  record: StopRecord,
-  id: string,
-  uid: string,
-  rank: RocketRank,
-): [string, Spawn] {
+export function deriveStopReward(record: StopRecord, id: string, uid: string): [string, Spawn] {
   const rng = new AleaRNG(`${id}:reward:${uid}`);
-  const offered = toSpawns(record.party).slice(0, stopRewardOffer(rank));
+  const offered = toSpawns(record.party);
   const [species] = offered[Math.floor(rng.random() * offered.length)];
 
   return [`${id}$reward`, [species, rng.int32(), rng.int32()]];

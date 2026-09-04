@@ -150,7 +150,7 @@ Who it is is rolled per cell per window, and the three ranks cannot overlap:
 
 | Standing there | How often | What they field                                               |
 | -------------- | --------- | ------------------------------------------------------------- |
-| **Grunt**      | The rest  | One common, two uncommon and three rare of the biome's, 40-60 |
+| **Grunt**      | The rest  | Two of each of the biome's three bands, 40-60                 |
 | **Executive**  | 1 in 8    | Six of the biome's rare band, 65-85                           |
 | **The boss**   | 1 in 64   | Five of the rare band and a legendary, 85-100                 |
 
@@ -180,8 +180,9 @@ and may be challenged again until the three hours are up.
 
 Beating one pays a purse drawn per winner, so the same fight is worth a different
 amount to the next player, and leaves a pokemon behind, shadowed and at level 10.
-A grunt pays **5,000 to 15,000** and leaves one of the three it was **not**
-fighting with, one of the common and uncommon pair rather than its best. An executive
+A grunt pays **5,000 to 15,000** and leaves any one of its six, which is what
+makes the commonest fight in the world the only place some of a biome's pokemon
+can be met as a shadow at all. An executive
 pays **40,000 to 90,000**, leaves any of its six, and drops an item it was
 carrying besides. A **boss** pays **120,000 to 250,000**, their own mark and any
 of theirs, the legendary included. Giovanni's mark is worth the coat he runs Team

@@ -71,7 +71,7 @@ import {
   unpackIVs,
 } from '../../src/data/constants/stats';
 import { Statuses, packStatuses } from '../../src/data/ids/status';
-import { type StopRecord, deriveStopReward, stopRewardOffer } from '../../src/auth/stop-record';
+import { type StopRecord, deriveStopReward } from '../../src/auth/stop-record';
 import { seatId } from '../../src/auth/gym-seat-record';
 import type Chunk from '../../src/overworld/chunk';
 import {
@@ -1059,7 +1059,7 @@ describe('world', () => {
     expect(collectAftermath(built, '')).toEqual([]);
   });
 
-  it('stands a Team Rocket grunt on one band of each rarity', () => {
+  it('stands a syndicate grunt on two of each of the biome’s bands', () => {
     const world = new World('overworld');
     const chunk = findChunk(
       world,
@@ -1105,10 +1105,11 @@ describe('world', () => {
         }
         continue;
       }
-      // A grunt's six, weakest first: one commoner, two of the
-      // uncommon band and three of the rare. A band the window leaves
-      // empty borrows from the commonest one that is not
-      const bands = [young, middle, middle, grown, grown, grown];
+      // A grunt's six, weakest first: two out of each of the biome's
+      // three bands, so the rank that is met most often is the one
+      // that reaches the whole pool. A band the window leaves empty
+      // borrows from the commonest one that is not
+      const bands = [young, young, middle, middle, grown, grown];
 
       for (const [at, band] of bands.entries()) {
         drawnFrom(at, band);
@@ -1401,11 +1402,6 @@ describe('world', () => {
       expect(member.level).toBeLessThanOrEqual(ELITE_PARTY_LEVELS[1]);
       expect(member.shadow).toBe(true);
     }
-    // And their whole six is on offer, where a grunt's is only the
-    // half they were not fighting with
-    expect(stopRewardOffer(RocketRank.Executive)).toBe(ROCKET_PARTY_SIZE);
-    expect(stopRewardOffer(RocketRank.Boss)).toBe(ROCKET_PARTY_SIZE);
-    expect(stopRewardOffer(RocketRank.Grunt)).toBe(ROCKET_PARTY_SIZE / 2);
   });
 
   it('fields an expert’s party trained rather than caught', () => {
@@ -1953,7 +1949,7 @@ describe('world', () => {
     const met = new Set<Species>();
 
     for (let winner = 0; winner < 64; winner++) {
-      const [, spawn] = deriveStopReward(record, 'stop-id', `player-${winner}`, RocketRank.Boss);
+      const [, spawn] = deriveStopReward(record, 'stop-id', `player-${winner}`);
 
       met.add(spawn[0]);
     }
@@ -1987,30 +1983,21 @@ describe('world', () => {
     const offered = new Set<Species>();
 
     for (const uid of ['red', 'blue', 'green', 'yellow', 'gold', 'silver']) {
-      const [id, [species, individualValue, traitValue]] = deriveStopReward(
-        record,
-        'stop-id',
-        uid,
-        RocketRank.Grunt,
-      );
+      const [id, [species, individualValue, traitValue]] = deriveStopReward(record, 'stop-id', uid);
 
-      // Never one of the three rares: a grunt does not hand over what
-      // it was actually fighting with
-      expect(species).not.toBe(Species.Kangaskhan);
-      expect(species).not.toBe(Species.Lapras);
-      expect(species).not.toBe(Species.Snorlax);
       offered.add(species);
       expect(id).toBe('stop-id$reward');
       // Each winner meets their own individual of it
       expect(individualValue).not.toBe(traitValue);
     }
 
-    // All three of the weaker half come up across enough winners
-    expect(offered.size).toBe(3);
+    // Every one of the six comes up across enough winners: a grunt
+    // puts its whole party up the way the ranks above it do
+    expect(offered.size).toBeGreaterThan(1);
 
     // A player's own reward is the same however often it is derived
-    expect(deriveStopReward(record, 'stop-id', 'red', RocketRank.Grunt)).toEqual(
-      deriveStopReward(record, 'stop-id', 'red', RocketRank.Grunt),
+    expect(deriveStopReward(record, 'stop-id', 'red')).toEqual(
+      deriveStopReward(record, 'stop-id', 'red'),
     );
   });
 

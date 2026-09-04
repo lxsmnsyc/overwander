@@ -311,9 +311,15 @@ game registers.
 From the **Elite Four upwards**, a trainer's pokemon are **built rather than
 caught**: the four moves their species is best with, worked out from everything
 it can ever learn and weighed against its own types, which of its two attacking
-stats is the real one, and the ability it is fighting with. The gear follows the
-moves rather than the species, so a type booster is for something the pokemon
-actually attacks with. It reaches the Elite Four, the Champions, the legends,
+stats is the real one, and the ability it is fighting with. Their gear is priced the same way, on one
+scale, so a 1.5x on half of what a pokemon throws can be weighed against a 1.2x
+on all of it: a hard hitter is handed a Life Orb, a pokemon built around one blow
+is handed a Choice item, a wall is handed Leftovers, and an orb only goes to
+something whose ability turns the status into a gain. A relic like the Light Ball
+or the Thick Club still beats everything for the one species it belongs to, and
+nobody carries two of a kind. Below the league the gear is chosen the way it
+always was, off the species' own table, so a gym leader's party still reads as
+that leader's rather than as the best answer to a question. It reaches the Elite Four, the Champions, the legends,
 Giovanni and his executives, and all seven Frontier houses, the Factory's rented
 crate included. A gym leader and everybody below still field what they levelled
 into, which is most of what separates a badge from a crown.

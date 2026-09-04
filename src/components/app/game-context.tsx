@@ -14,7 +14,7 @@ import type Weather from '../../data/overworld/weather';
 import type { EncounterRecord } from '../../auth/encounter-record';
 import { type Notice, watchNotifications } from '../../auth/notifications';
 import { claimRaidReward } from '../../auth/raids';
-import { claimRocketReward } from '../../auth/rockets';
+import { claimStopReward } from '../../auth/stops';
 import { settleGymChallenge } from '../../auth/gym-seats';
 import type { PositionRecord } from '../../auth/position-record';
 import type { Species } from '../../data/ids/species';
@@ -102,9 +102,9 @@ export interface ActiveBattle {
    */
   raid?: string;
   /**
-   * The Team Rocket stop the battle was accepted at
+   * The stop the battle was accepted at, whoever was standing there
    */
-  rocket?: string;
+  stop?: string;
   /**
    * Who the stop staged, for the screens that name the other side:
    * the summary, the title, the word a win is announced with. A stop
@@ -623,7 +623,7 @@ export default function GameProvider(props: ParentProps): JSX.Element {
         });
       return;
     }
-    claimRocketReward(owed.stop)
+    claimStopReward(owed.stop)
       .then((collected) => {
         if (collected == null) {
           return;

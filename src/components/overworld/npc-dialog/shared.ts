@@ -30,7 +30,7 @@ export const NPC_QUOTES: Record<Npc, string> = {
   [Npc.MoveReminder]:
     'Forgotten? Hah. Nothing is ever forgotten. One Heart Scale and I will prove it.',
   // The grunt never opens this dialog: walking up to one puts the
-  // challenge in `RocketStopDialog`, which says this line instead.
+  // challenge in `StopDialog`, which says this line instead.
   // They are still one of the people a cell can draw, so their words
   // live with the rest
   [Npc.RocketGrunt]: 'Wrong path, kid. Three of mine say so.',
@@ -38,7 +38,7 @@ export const NPC_QUOTES: Record<Npc, string> = {
     'Dug these up myself! Two beauties, and I will part with one. Just one, mind.',
   [Npc.FossilScientist]: 'A fossil? Marvelous! Hand it over. It has waited in there long enough.',
   [Npc.MoveTutor]: 'Some moves are taught, never grown into. One Heart Scale buys the lesson.',
-  // The trainer opens `RocketStopDialog` too: a duel is put the same
+  // The trainer opens `StopDialog` too: a duel is put the same
   // way an ambush is, only asked rather than sprung
   [Npc.Trainer]: 'You look strong. Prove it. Three of the local best, purse to the winner.',
   [Npc.Chef]: 'Fresh off the stove and out of the icebox. Your pokemon carries it, it eats well.',

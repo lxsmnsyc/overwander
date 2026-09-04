@@ -358,7 +358,7 @@ import {
 } from '../src/data/overworld/experts';
 import Regions from '../src/data/ids/regions';
 import { FREE_CHARSETS } from '../src/data/overworld/charsets';
-import { counterParty, rentalOffer, rentedHand } from '../src/overworld/rocket';
+import { counterParty, rentalOffer, rentedHand } from '../src/overworld/stop';
 import { BEST_MOVE_COUNT, BEST_MOVE_OVERRIDES, getBestMoves } from '../src/data/species/best-moves';
 import { getRegionSpan, getSpeciesRegion } from '../src/data/species/regions';
 import {
@@ -4760,7 +4760,7 @@ describe('what an expert hands its party', () => {
     expect(getExpertHeldItems(Species.Farfetchd, 1)).toEqual([Items.Stick]);
 
     // A second item is the next thing down rather than the same one
-    // twice, and it is still that species'
+    // twice
     const pikachu = getExpertHeldItems(Species.Pikachu, 2);
 
     expect(pikachu).toHaveLength(2);
@@ -5277,15 +5277,66 @@ describe('type experts', () => {
     expect(latios).not.toContain(Moves.DragonDance);
   });
 
-  it('hands an expert gear that follows what it actually attacks with', () => {
-    // Latios is special and its best set is Psychic, Ice and Water, so
-    // the booster is for one of those rather than for its Dragon half
-    const moves = getBestMoves(Species.Latios);
-    const [item] = getExpertHeldItems(Species.Latios, 1, moves);
-    const boosted = TYPE_BOOSTERS.get(item);
+  it('prices gear above the league and orders it below', () => {
+    const moves = getBestMoves(Species.Gengar, [Abilities.Levitate]);
 
-    expect(boosted).not.toBeUndefined();
-    expect(moves.map((move) => getMoveData(move).type)).toContain(boosted);
+    // A gym leader's Gengar is handed what suits a Gengar, off its own
+    // table. An elite's is handed the best answer there is
+    expect(getExpertHeldItems(Species.Gengar, 1, { moves })).not.toEqual(
+      getExpertHeldItems(Species.Gengar, 1, { moves, best: true }),
+    );
+    expect(getExpertHeldItems(Species.Gengar, 1, { moves, best: true })).toEqual([Items.LifeOrb]);
+  });
+
+  it('hands an expert gear priced against what it actually is', () => {
+    const hitter = getExpertHeldItems(Species.Gengar, 2, {
+      moves: getBestMoves(Species.Gengar, [Abilities.Levitate]),
+      best: true,
+    });
+    const wall = getExpertHeldItems(Species.Blissey, 2, {
+      moves: getBestMoves(Species.Blissey, [Abilities.NaturalCure]),
+      best: true,
+    });
+
+    // Health spent for damage suits something that hits hard enough
+    // for the damage to be worth more than the health
+    expect(hitter).toContain(Items.LifeOrb);
+    expect(wall).not.toContain(Items.LifeOrb);
+
+    // And an orb is a cost until an ability turns the status into a
+    // gain, which is the only thing that ever asks for one
+    const guts = getBestMoves(Species.Machamp, [Abilities.Guts]);
+
+    expect(
+      getExpertHeldItems(Species.Machamp, 1, {
+        moves: guts,
+        abilities: [Abilities.Guts],
+        best: true,
+      }),
+    ).toEqual([Items.ToxicOrb]);
+    expect(
+      getExpertHeldItems(Species.Machamp, 3, {
+        moves: guts,
+        abilities: [Abilities.NoGuard],
+        best: true,
+      }),
+    ).not.toContain(Items.ToxicOrb);
+  });
+
+  it('never hands out two of a kind of gear', () => {
+    const locking = new Set([Items.ChoiceBand, Items.ChoiceSpecs, Items.ChoiceScarf]);
+    const orbs = new Set([Items.FlameOrb, Items.ToxicOrb]);
+
+    for (const species of getRentalPool()) {
+      const held = getExpertHeldItems(species, 3, { moves: getBestMoves(species), best: true });
+      const name = getSpeciesData(species).name;
+
+      // Two Choice items lock twice and pay once, two orbs leave one
+      // status, and a second booster is for the lesser type
+      expect(held.filter((item) => locking.has(item)).length, name).toBeLessThanOrEqual(1);
+      expect(held.filter((item) => orbs.has(item)).length, name).toBeLessThanOrEqual(1);
+      expect(held.filter((item) => TYPE_BOOSTERS.has(item)).length, name).toBeLessThanOrEqual(1);
+    }
   });
 
   it('keeps every written override to something its species can learn', () => {

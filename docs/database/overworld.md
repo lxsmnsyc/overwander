@@ -324,7 +324,8 @@ for. A player who needs a breeder and finds a daycare lady waits for the next
 window or walks to another one.
 
 `NPCS` holds **nine** of them. `Npc.RocketGrunt` bars the cell and fights whoever
-accepts, and its state lives in [`rocket_stops`](raids.md#rocket_stops) rather
+accepts, and its state lives in [`rocket_stops`](raids.md#rocket_stops), the
+stop table every fighting landmark shares, rather
 than in a claim marker. The
 eight who do something to a pokemon are below.
 

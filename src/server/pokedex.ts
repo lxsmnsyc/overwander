@@ -156,7 +156,7 @@ export async function recordSeenParty(
  * settled, for the same reason an encounter is: a fight walked away
  * from is still a fight the player stood in. The other side is read
  * off the team snapshots the server froze, so it covers every kind of
- * battle at once, a raid boss and a rocket's party and another
+ * battle at once, a raid boss and a stop's party and another
  * player's team alike.
  *
  * A whole lobby is logged in one read and one write, however many

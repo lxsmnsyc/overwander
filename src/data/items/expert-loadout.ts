@@ -1,6 +1,8 @@
+import Abilities from '../ids/abilities';
 import { Items } from '../ids/items';
-import { MoveCategories, type Moves } from '../ids/moves';
+import { MoveCategories, Moves } from '../ids/moves';
 import type { Species } from '../ids/species';
+import { Stats } from '../constants/stats';
 import type { Types } from '../constants/types';
 import { getMoveData } from '../moves/__create';
 import { GENERAL_STAT_BOOSTERS } from './stat-boosters';
@@ -72,10 +74,218 @@ export function isBattleHeldItem(item: Items): boolean {
 }
 
 /**
+ * What a pokemon's built set is made of, by share: how much of its
+ * damage is physical, how much is special, and how much comes off
+ * each type. Gear is priced against this rather than against the
+ * species, since what a pokemon is listed as and what it actually
+ * swings with are different questions
+ */
+interface Split {
+  physical: number;
+  special: number;
+  types: Map<Types, number>;
+  /**
+   * The biggest share any one type carries. It is what says whether
+   * being locked to a single move costs the pokemon much: a set built
+   * around one blow gives up almost nothing, a set of four answers
+   * gives up three of them
+   */
+  focus: number;
+}
+
+function splitOf(species: Species, moves: Moves[]): Split {
+  const types = new Map<Types, number>();
+  let physical = 0;
+  let special = 0;
+
+  for (const move of moves) {
+    const data = getMoveData(move);
+
+    if (data.category === MoveCategories.Status) {
+      continue;
+    }
+
+    const power = data.power ?? 0;
+
+    types.set(data.type, (types.get(data.type) ?? 0) + power);
+
+    if (data.category === MoveCategories.Physical) {
+      physical += power;
+    } else {
+      special += power;
+    }
+  }
+
+  const total = physical + special;
+
+  // Nothing to weigh: a set with no attacks in it is read off the
+  // species, so a wall is still handed something for its own types
+  if (total === 0) {
+    const listed = getSpeciesData(species).types;
+
+    for (const type of listed) {
+      types.set(type, 1 / listed.length);
+    }
+    return { physical: 0.5, special: 0.5, types, focus: 1 / listed.length };
+  }
+
+  for (const [type, power] of types) {
+    types.set(type, power / total);
+  }
+  return {
+    physical: physical / total,
+    special: special / total,
+    types,
+    focus: Math.max(...types.values()),
+  };
+}
+
+/**
+ * What locking a pokemon to one move costs, against what it buys.
+ *
+ * Steep, because this engine picks a move per cast rather than per
+ * turn: a locked pokemon gives up the coverage its other three slots
+ * were chosen for, on every cast, for the whole fight
+ */
+const LOCK_FACTOR = 0.35;
+
+/**
+ * How hard the species hits, from its better attacking stat, where 1
+ * is as hard as anything in the game hits. Gear that costs health to
+ * deal more damage is priced against it
+ */
+const FULL_PRESSURE = 120;
+
+function pressure(species: Species): number {
+  const stats = getSpeciesData(species).stats;
+
+  return Math.min(1, Math.max(stats[Stats.Attack], stats[Stats.SpecialAttack]) / FULL_PRESSURE);
+}
+
+/**
+ * The share of a locking item's face value this set actually keeps.
+ * A set that leans on one blow keeps all of it; one spread evenly
+ * across four keeps half of that
+ */
+function lockFactor(split: Split): number {
+  return LOCK_FACTOR * Math.min(1, split.focus * 2);
+}
+
+/**
+ * What every unpriced piece of battle gear is worth: enough to fill a
+ * slot nothing better wants, and never enough to take one
+ */
+const PLAIN_WORTH = 0.02;
+
+/**
+ * What one item is worth to this pokemon, as the share of a fight it
+ * changes. Everything is on the one scale, so a 1.5x on half of what
+ * a pokemon throws beats a 1.2x on all of it and neither has to be
+ * ranked against the other by hand
+ */
+/**
+ * The gear whose worth is the same in anybody's hands: what it buys
+ * does not depend on what the pokemon is
+ */
+const FLAT_WORTH: Partial<Record<Items, number>> = {
+  [Items.Leftovers]: 0.12,
+  [Items.ExpertBelt]: 0.08,
+  [Items.ScopeLens]: 0.07,
+  [Items.ShellBell]: 0.06,
+  [Items.FocusBand]: 0.05,
+  [Items.BrightPowder]: 0.05,
+  [Items.WideLens]: 0.05,
+  [Items.QuickClaw]: 0.04,
+  [Items.RockyHelmet]: 0.04,
+};
+
+function itemWorth(
+  species: Species,
+  item: Items,
+  split: Split,
+  moves: Moves[],
+  abilities: Abilities[],
+): number {
+  // A relic doubles a stat for one species and is worth nothing to
+  // anybody else, which is why it is never put behind anything
+  if (SPECIES_RELICS.has(item)) {
+    return 0.9;
+  }
+  if (item === Items.Eviolite) {
+    return isFullyEvolved(species) ? 0 : 0.6;
+  }
+
+  const boosted = TYPE_BOOSTERS.get(item);
+
+  if (boosted != null) {
+    return 0.2 * (split.types.get(boosted) ?? 0);
+  }
+
+  // The Choice band and its kin: half again on one half of what a
+  // pokemon throws, against being stuck with the move it opened on
+  if (item === Items.ChoiceBand) {
+    return 0.5 * split.physical * lockFactor(split);
+  }
+  if (item === Items.ChoiceSpecs) {
+    return 0.5 * split.special * lockFactor(split);
+  }
+  if (item === Items.ChoiceScarf) {
+    return 0.25 * lockFactor(split);
+  }
+
+  // Everything it throws, at a price paid in its own health: worth it
+  // to something that hits hard enough for the extra to cover the
+  // recoil, and a slow way to die for anything else
+  if (item === Items.LifeOrb) {
+    return 0.3 * pressure(species) - 0.16;
+  }
+  if (item === Items.MuscleBand) {
+    return 0.1 * split.physical;
+  }
+  if (item === Items.WiseGlasses) {
+    return 0.1 * split.special;
+  }
+
+  // The orbs are a cost until something turns the status into a gain,
+  // and then they are most of what the pokemon is doing. A burn takes
+  // the attack stat down with it, so the poison is the better half of
+  // the same trick
+  if (item === Items.FlameOrb || item === Items.ToxicOrb) {
+    const full = item === Items.ToxicOrb ? 0.3 : 0.2;
+    const guts = abilities.includes(Abilities.Guts) ? full * split.physical : 0;
+
+    return guts + (moves.includes(Moves.Facade) ? 0.1 : 0);
+  }
+  return FLAT_WORTH[item] ?? PLAIN_WORTH;
+}
+
+/**
+ * The gear a pokemon can only usefully hold one of the kind of.
+ *
+ * Two Choice items lock twice over and pay once, two orbs leave one
+ * status, and a second type booster is for the type the first one
+ * already said was the lesser. Worth is what picks inside a group,
+ * and a group is picked from once
+ */
+function groupOf(item: Items): string | null {
+  if (item === Items.ChoiceBand || item === Items.ChoiceSpecs || item === Items.ChoiceScarf) {
+    return 'lock';
+  }
+  if (item === Items.FlameOrb || item === Items.ToxicOrb) {
+    return 'orb';
+  }
+  return TYPE_BOOSTERS.has(item) ? 'booster' : null;
+}
+
+/**
  * Everything this species could sensibly be handed, best first: its
  * own held table richest slot down, then Eviolite where it still has
  * somewhere to evolve to, then a booster for each of its types, and
- * gear that suits anybody for the slots nothing else fills
+ * gear that suits anybody for the slots nothing else fills.
+ *
+ * What the ranks below the league are handed. It leans on the wild
+ * held-item table, so a gym leader's party still reads as that
+ * leader's rather than as the best answer to a question
  */
 function preferences(species: Species, moves: Moves[]): Items[] {
   const held = getSpeciesHeldItems(species);
@@ -124,28 +334,93 @@ function preferences(species: Species, moves: Moves[]): Items[] {
 }
 
 /**
+ * Everything the pricing is allowed to reach for. A relic belongs to
+ * one species and is only offered where its own table says so;
+ * everything else that acts in a fight is offered to everybody, and
+ * the worth is what decides
+ */
+function candidates(species: Species): Items[] {
+  const held = getSpeciesHeldItems(species);
+  const own = new Set(
+    [held?.rare, held?.uncommon, held?.common].filter((item): item is Items => item != null),
+  );
+
+  return [...BATTLE_HELD].filter((item) => !SPECIES_RELICS.has(item) || own.has(item));
+}
+
+/**
  * The items one of an expert's pokemon holds, at most `count` of
  * them. Deterministic: the same species on two teams carries the same
  * gear, because what suits it does not change with whose team it is.
  *
- * `moves` is the set it is fielding, where the caller has built one:
- * a type booster follows what the pokemon actually attacks with
- * rather than what its species is listed as
+ * The gear follows what the pokemon is fielding rather than what its
+ * species is listed as. Above the league it is priced, so the answer
+ * is the best one there is; below it, it is ordered off the species'
+ * own table, so a party still reads as that trainer's
  */
-export function getExpertHeldItems(species: Species, count: number, moves: Moves[] = []): Items[] {
+export interface HeldLoadout {
+  /** The set it is fielding, which the gear is chosen against */
+  moves?: Moves[];
+  /** What it is fighting with, which is what asks for an orb */
+  abilities?: Abilities[];
+  /**
+   * Whether the gear is priced rather than ordered. The ladder's top
+   * rungs are handed the best answer there is; everybody below is
+   * handed what suits their species, which is what keeps a gym
+   * leader's party reading as theirs
+   */
+  best?: boolean;
+}
+
+export function getExpertHeldItems(
+  species: Species,
+  count: number,
+  loadout: HeldLoadout = {},
+): Items[] {
   if (count <= 0) {
     return [];
   }
 
-  const chosen: Items[] = [];
+  const moves = loadout.moves ?? [];
+  const abilities = loadout.abilities ?? [];
 
-  for (const item of preferences(species, moves)) {
+  if (loadout.best !== true) {
+    const chosen: Items[] = [];
+
+    for (const item of preferences(species, moves)) {
+      if (chosen.length >= count) {
+        break;
+      }
+      if (isBattleHeldItem(item) && !chosen.includes(item)) {
+        chosen.push(item);
+      }
+    }
+    return chosen;
+  }
+
+  const split = splitOf(species, moves);
+  const ranked = candidates(species)
+    .map((item) => ({ item, worth: itemWorth(species, item, split, moves, abilities) }))
+    .filter((entry) => entry.worth > 0)
+    .sort((one, two) => two.worth - one.worth || one.item - two.item);
+
+  const chosen: Items[] = [];
+  const taken = new Set<string>();
+
+  for (const { item } of ranked) {
     if (chosen.length >= count) {
       break;
     }
-    if (isBattleHeldItem(item) && !chosen.includes(item)) {
-      chosen.push(item);
+
+    const group = groupOf(item);
+
+    if (group != null) {
+      if (taken.has(group)) {
+        continue;
+      }
+      taken.add(group);
     }
+    chosen.push(item);
   }
   return chosen;
 }

@@ -1,7 +1,7 @@
 import type { PlayerIdentity } from '../../auth/user';
 import { type JSX, Show, createEffect, createSignal } from 'solid-js';
-import type { RocketRecord } from '../../auth/rocket-record';
-import { startRocketBattle } from '../../auth/rockets';
+import type { StopRecord } from '../../auth/stop-record';
+import { startStopBattle } from '../../auth/stops';
 import Npc, { NPC_NAMES, npcSheet } from '../../data/overworld/npc';
 import { getSpeciesData } from '../../data/species';
 import {
@@ -9,7 +9,7 @@ import {
   type LevelBand,
   ROCKET_PARTY_LEVELS,
   rentalOffer,
-} from '../../overworld/rocket';
+} from '../../overworld/stop';
 import { FRONTIER_TEAM_SIZE } from '../../data/overworld/experts';
 import type { Spawn } from '../../overworld/chunk-snapshot';
 import { levelInBand } from '../../overworld/encounter';
@@ -51,14 +51,14 @@ export interface StopChallenge {
   unseen?: boolean;
 }
 
-export interface RocketStopDialogProps {
+export interface StopDialogProps {
   user: PlayerIdentity;
   /**
    * The stop's id and what is being fielded, or null when the player
    * is not standing in front of one
    */
-  challenge: [string, RocketRecord] | null;
-  /** Who put the challenge: the grunt's ambush or the trainer's duel */
+  challenge: [string, StopRecord] | null;
+  /** Who put the challenge: a grunt's ambush, a duel, a league seat */
   npc: Npc;
   /** The style they were wandering in, so the portrait matches */
   sheet?: string;
@@ -72,11 +72,12 @@ export interface RocketStopDialogProps {
 }
 
 /**
- * The grunt's challenge, put to the player. Accepting picks a party
- * and drops straight into the fight; declining walks away, and the
- * grunt is still there to be fought again while the window lasts
+ * The stop's challenge, put to the player. Accepting picks a party and
+ * drops straight into the fight; declining walks away, and whoever is
+ * standing there is still there to be fought again while the window
+ * lasts
  */
-export default function RocketStopDialog(props: RocketStopDialogProps): JSX.Element {
+export default function StopDialog(props: StopDialogProps): JSX.Element {
   const game = useGame();
   const [picking, setPicking] = createSignal(false);
   const [status, setStatus] = createSignal<string | null>(null);
@@ -128,7 +129,7 @@ export default function RocketStopDialog(props: RocketStopDialogProps): JSX.Elem
       challenger's own, or a grunt's where nobody was named */
   const levels = (): LevelBand => props.challenger?.levels ?? ROCKET_PARTY_LEVELS;
 
-  const lineup = (record: RocketRecord): BoxEntry[] =>
+  const lineup = (record: StopRecord): BoxEntry[] =>
     record.party.map((entry, at) => ({
       id: `${at}`,
       species: entry.species,
@@ -197,14 +198,14 @@ export default function RocketStopDialog(props: RocketStopDialogProps): JSX.Elem
     }
     setPicking(false);
     setStatus(null);
-    startRocketBattle(id, catches)
+    startStopBattle(id, catches)
       .then((battle) => {
         if (battle == null) {
           setStatus(refusal());
           return;
         }
         props.onClose();
-        game.setBattle({ id: battle, replay: false, rocket: id, opponent: opponent() });
+        game.setBattle({ id: battle, replay: false, stop: id, opponent: opponent() });
       })
       .catch((caught: unknown) => {
         setStatus(caught instanceof Error ? caught.message : String(caught));

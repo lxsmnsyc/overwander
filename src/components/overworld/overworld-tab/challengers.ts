@@ -46,7 +46,7 @@ import {
   LEGEND_PARTY_LEVELS,
   type LevelBand,
   rocketPartyLevels,
-} from '../../../overworld/rocket';
+} from '../../../overworld/stop';
 import {
   TRAINER_NAMES,
   TRAINER_QUOTES,
@@ -54,7 +54,7 @@ import {
   trainerLevels,
 } from '../../../data/overworld/trainers';
 import { TYPE_NAMES, type Types } from '../../../data/constants/types';
-import type { StopChallenge } from '../RocketStopDialog';
+import type { StopChallenge } from '../StopDialog';
 
 /** The types a class fields, said as a list: "Water and Fighting" */
 function saidTypes(types: Types[]): string {

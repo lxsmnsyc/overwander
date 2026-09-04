@@ -4,12 +4,12 @@ import { PVP_BATTLE_LIMITS } from '../data/constants/battle-limits';
 import { type EncounterRecord, asEncounterRecord } from '../auth/encounter-record';
 import { asOffset, toLocalTime } from '../auth/local-time';
 import {
-  type RocketRecord,
-  asRocketRecord,
-  deriveRocketReward,
-  rocketStopId,
+  type StopRecord,
+  asStopRecord,
+  deriveStopReward,
+  stopIdOf,
   toSpawns,
-} from '../auth/rocket-record';
+} from '../auth/stop-record';
 import { TEAM_SIZE } from '../auth/teams';
 import ChunkSnapshot, { NPC_INTERVAL, RocketRank, type Spawn } from '../overworld/chunk-snapshot';
 import getWorld from '../overworld/current';
@@ -18,10 +18,10 @@ import { PLAYER_ALLIANCE } from '../overworld/raid';
 import {
   FRONTIER_OUTFIT,
   FRONTIER_PARTY_LEVELS,
-  ROCKET_ALLIANCE,
   ROCKET_REWARD_LEVEL,
+  STOP_ALLIANCE,
   counterParty,
-  createRocketParty,
+  createStopParty,
   rentedHand,
   rollStopGold,
   rollStopLoot,
@@ -29,7 +29,7 @@ import {
   stopGoldBand,
   stopOutfit,
   stopPartyLevels,
-} from '../overworld/rocket';
+} from '../overworld/stop';
 import { encounterKey } from '../overworld/safari';
 import createOverworld from '../overworld/setup';
 import Landmark from '../data/overworld/landmark';
@@ -82,10 +82,19 @@ const FOE_OF: Partial<Record<Landmark, Foe>> = {
 };
 
 /**
- * Team Rocket stops, written with admin credentials. A grunt hands
- * over gold and a pokemon, so what it fields, whether it was beaten,
- * and what beating it paid are all decided here — a client reports
- * the outcome of the fight and nothing else about it
+ * The stops, written with admin credentials.
+ *
+ * A stop is any cell that bars the way with somebody who fights: a
+ * Team Rocket grunt, a duelling trainer, a gym leader, one of the
+ * Elite Four, the Champion or a Frontier Brain. What it fields,
+ * whether it was beaten and what beating it paid are all decided
+ * here; a client reports the outcome of the fight and nothing else
+ * about it.
+ *
+ * The tables are still called `rocket_stops` and `rocket_party`,
+ * since Team Rocket was the only kind when they were written. They
+ * hold every kind now, and renaming them would mean renaming what a
+ * scheduled sweep deletes from.
  */
 
 /**
@@ -95,22 +104,18 @@ const FOE_OF: Partial<Record<Landmark, Foe>> = {
 const asOutcome = (value: unknown): BattleOutcome => asNumber(value) as BattleOutcome;
 
 /**
- * Walk up to a Team Rocket stop. The grunt's party comes from the
- * chunk's own roll for the window, so it is the one the world staged
- * wherever the caller says they are standing, and the record is
- * created on first approach.
+ * Walk up to a stop. Its party comes from the chunk's own roll for
+ * the window, so it is the one the world staged wherever the caller
+ * says they are standing, and the record is created on first
+ * approach.
  *
  * Resolves the stop id and the player's state of it, or null when the
- * cell stages no grunt this window or the player has already beaten
- * the
- * one it stages
+ * cell stages nobody this window or the player has already beaten
+ * whoever it stages
  */
 
 /** One stop for one player, in the record shape, or null */
-async function readRocketStop(
-  stop: string,
-  player: string,
-): Promise<Record<string, unknown> | null> {
+async function readStop(stop: string, player: string): Promise<Record<string, unknown> | null> {
   const sql = getSql();
   const rows = await sql`
     select * from rocket_stops where stop_id = ${stop} and player = ${player}
@@ -148,7 +153,7 @@ async function readRocketStop(
  * on at all, which is what a stale client's board looks like from
  * here
  */
-export type RocketStopEntry = [string, RocketRecord] | 'beaten' | 'locked' | null;
+export type StopEntry = [string, StopRecord] | 'beaten' | 'locked' | null;
 
 /**
  * The party a fighting landmark stages at this cell this window, or
@@ -178,14 +183,14 @@ function stagedParty(
   return snapshot.getRocketStops().get(cell) ?? null;
 }
 
-export async function enterRocketStop(
+export async function enterStop(
   uid: string,
   x: number,
   y: number,
   cell: number,
   now: number,
   offset: number,
-): Promise<RocketStopEntry> {
+): Promise<StopEntry> {
   const chunk = getWorld().getChunk(x, y);
   const zone = asOffset(offset);
   const snapshot = new ChunkSnapshot(chunk, toLocalTime(now, zone), zone);
@@ -231,18 +236,18 @@ export async function enterRocketStop(
     }
   }
 
-  const stop = rocketStopId(chunk, snapshot.npcTimestamp, cell, zone);
-  const stored = await readRocketStop(stop, uid);
+  const stop = stopIdOf(chunk, snapshot.npcTimestamp, cell, zone);
+  const stored = await readStop(stop, uid);
 
   if (stored != null) {
-    const existing = asRocketRecord(stored);
+    const existing = asStopRecord(stored);
 
     // A grunt already beaten is gone for the window; a grunt that won
     // is still standing there, and can be fought again
     return existing.defeated ? 'beaten' : [stop, existing];
   }
 
-  const fresh: RocketRecord = {
+  const fresh: StopRecord = {
     player: uid,
     party: party.map(([species, individualValue, traitValue]) => ({
       species,
@@ -321,7 +326,7 @@ async function isBattleUnfinished(battleId: string): Promise<boolean> {
  *
  * Resolves the battle id, or null when the challenge cannot be taken
  */
-export async function startRocketBattle(
+export async function startStopBattle(
   uid: string,
   stop: string,
   catches: string[],
@@ -336,13 +341,13 @@ export async function startRocketBattle(
     return null;
   }
 
-  const stored = await readRocketStop(stop, uid);
+  const stored = await readStop(stop, uid);
 
   if (stored == null) {
     return null;
   }
 
-  const record = asRocketRecord(stored);
+  const record = asStopRecord(stored);
 
   if (record.player !== uid || record.defeated) {
     return null;
@@ -404,7 +409,7 @@ export async function startRocketBattle(
   const rented =
     hand == null
       ? null
-      : createRocketParty(snapshot, hand, false, FRONTIER_PARTY_LEVELS, FRONTIER_OUTFIT);
+      : createStopParty(snapshot, hand, false, FRONTIER_PARTY_LEVELS, FRONTIER_OUTFIT);
   const party =
     rented == null
       ? await publishTeamSnapshot(uid, catches, PLAYER_ALLIANCE, now, {
@@ -460,11 +465,11 @@ export async function startRocketBattle(
     // The stop's party belongs to nobody, the way a raid boss' does
     await transaction`
       insert into team_snapshots (id, player, alliance, catches)
-      values (${gruntId}, null, ${ROCKET_ALLIANCE},
+      values (${gruntId}, null, ${STOP_ALLIANCE},
               ${jsonOf(
                 transaction,
                 houseParty(
-                  createRocketParty(
+                  createStopParty(
                     snapshot,
                     fielded,
                     shadow,
@@ -516,7 +521,7 @@ export async function startRocketBattle(
  * out no award, so their reward is the purse alone; `award` is only
  * ever the one this win earned, never one already held
  */
-export interface RocketReward {
+export interface StopReward {
   encounter: EncounterRecord | null;
   gold: number;
   award: Awards | null;
@@ -540,14 +545,14 @@ export interface RocketReward {
  * Resolves null when the fight was not won, was somebody else's, or
  * the pokemon is already caught and the gold already paid
  */
-export async function claimRocketReward(uid: string, stop: string): Promise<RocketReward | null> {
-  const stored = await readRocketStop(stop, uid);
+export async function claimStopReward(uid: string, stop: string): Promise<StopReward | null> {
+  const stored = await readStop(stop, uid);
 
   if (stored == null) {
     return null;
   }
 
-  const record = asRocketRecord(stored);
+  const record = asStopRecord(stored);
 
   if (record.player !== uid || record.battle == null) {
     return null;
@@ -585,7 +590,7 @@ export async function claimRocketReward(uid: string, stop: string): Promise<Rock
     where stop_id = ${stop} and player = ${uid} and not defeated
   `;
 
-  const [spawnId, spawn] = deriveRocketReward(record, stop, uid, rank);
+  const [spawnId, spawn] = deriveStopReward(record, stop, uid, rank);
 
   if (claimed.count === 0) {
     // Paid already: the only thing possibly still owed is a grunt's

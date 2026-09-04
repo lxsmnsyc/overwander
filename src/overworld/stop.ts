@@ -43,14 +43,21 @@ import deriveEncounter, { EncounterType, deriveSize, deriveTrainedAbilities } fr
 import { BOSS_ALLIANCE, PLAYER_ALLIANCE } from './raid';
 
 /**
- * The Team Rocket stop: a grunt who bars a cell for the window and
- * fights whoever accepts.
+ * A stop: somebody who bars a cell for the window and fights whoever
+ * accepts.
  *
- * It is a trainer battle rather than a raid — three pokemon a side,
- * nobody flagged as a boss, and the party is the player's own — but
- * everything under it is the same machinery: the grunt's team is
- * frozen into snapshots exactly as a player's is, and the fight runs
- * from the battle id like any other.
+ * Six landmarks stage one, and the differences between them are all
+ * numbers rather than machinery: a Team Rocket grunt, executive or
+ * Giovanni, a duelling trainer, a gym leader, one of the Elite Four,
+ * the Champion or a legend in that seat, and a Frontier Brain. What
+ * changes with the landmark is the party's level band, the purse, the
+ * loot and how the party was raised; what does not change is any of
+ * the rest, which is why they share this file.
+ *
+ * It is a trainer battle rather than a raid: six a side, nobody
+ * flagged as a boss, and the party is the player's own. The stop's
+ * team is frozen into snapshots exactly as a player's is, and the
+ * fight runs from the battle id like any other.
  */
 
 /**
@@ -135,9 +142,8 @@ export function stopPartyLevels(
 }
 
 /**
- * What beating a grunt or a duelling trainer pays: a purse rolled in
- * this range rather than a flat fee, so a stop is worth walking to
- * and no two wins feel quite alike
+ * What beating one pays: a purse rolled in a range rather than a flat
+ * fee, so a stop is worth walking to and no two wins feel quite alike
  */
 /**
  * Who is standing at a fighting landmark, in a name and a face.
@@ -335,8 +341,8 @@ export const LEGEND_LOOT_ODDS: ItemBandOdds = {
 
 /**
  * The one item a beaten expert leaves, or null for the rungs that
- * leave none: a duelling trainer, a grunt, and the gym leader, whose
- * own gift is a machine
+ * leave none: a duelling trainer, a Team Rocket grunt, and the gym
+ * leader, whose own gift is a machine
  */
 export function rollStopLoot(
   landmark: Landmark,
@@ -370,12 +376,12 @@ export function rollStopLoot(
 export const ROCKET_REWARD_LEVEL = 10;
 
 /**
- * The alliance the grunt's party fights under — the side opposite the
+ * The alliance a stop's party fights under: the side opposite the
  * player, the same number a raid boss takes. Nothing marks it as a
  * boss, so a fight that ends with nobody standing is a draw rather
  * than a win
  */
-export const ROCKET_ALLIANCE = BOSS_ALLIANCE;
+export const STOP_ALLIANCE = BOSS_ALLIANCE;
 
 export { PLAYER_ALLIANCE };
 
@@ -503,7 +509,7 @@ export interface StopOutfit {
   best?: boolean;
 }
 
-/** What a duelling trainer and a grunt field: what they caught. */
+/** What a duelling trainer and a Team Rocket grunt field: what they caught. */
 export const PLAIN_OUTFIT: StopOutfit = { abilities: 1, items: 0, training: PLAIN_TRAINING };
 
 /** A gym leader's party is geared but not doubled. */
@@ -585,14 +591,16 @@ export function stopOutfit(
 
 /**
  * One of the stop's pokemon as a catch snapshot, so the party is
- * fielded from the same shape a player's is. A grunt's is a shadow —
- * that is what a Team Rocket pokemon is — where a duelling trainer's
- * is its ordinary self; either rolls its level inside the band it was
- * staged with rather than the one its species would have taken. Its
- * IVs, nature, gender, ability and moves are the ones the spawn tuple
- * gives, so no two stops field the same three pokemon
+ * fielded from the same shape a player's is.
+ *
+ * Team Rocket's are shadows, which is what a Team Rocket pokemon is;
+ * everybody else's is its ordinary self. Either rolls its level
+ * inside the band it was staged with rather than the one its species
+ * would have taken, and its IVs, nature, gender, ability and moves
+ * are the ones the spawn tuple gives, so no two stops field the same
+ * six
  */
-export function createRocketSnapshot(
+export function createStopSnapshot(
   snapshot: ChunkSnapshot,
   spawn: Spawn,
   shadow = true,
@@ -623,7 +631,11 @@ export function createRocketSnapshot(
   // than a rolled one: the four moves its species is best with, and
   // gear that follows those rather than its type line
   const moves = outfit.best === true ? getBestMoves(fielded.species, abilities) : fielded.moves;
-  const items = getExpertHeldItems(fielded.species, outfit.items, moves);
+  const items = getExpertHeldItems(fielded.species, outfit.items, {
+    moves,
+    abilities,
+    best: outfit.best === true,
+  });
   // Read off the roll rather than over it: the spawn tuple is what a
   // beaten stop hands over, and raising a party must not touch it
   const { ivs, effortValues } = trainStop(fielded.species, fielded.ivs, outfit.training);
@@ -667,19 +679,19 @@ export function createRocketSnapshot(
 }
 
 /**
- * The stop's whole party, weakest first: shadows for a grunt or the
- * boss, ordinary pokemon for a duelling trainer or a league seat. The
- * band defaults to a grunt's, for the callers that predate the
- * league; theirs is the landmark's to fix
+ * The stop's whole party, weakest first: shadows for Team Rocket,
+ * ordinary pokemon for everybody else. The band defaults to a grunt's,
+ * for the callers that predate the league; theirs is the landmark's
+ * to fix
  */
-export function createRocketParty(
+export function createStopParty(
   snapshot: ChunkSnapshot,
   spawns: Spawn[],
   shadow = true,
   levels: LevelBand = ROCKET_PARTY_LEVELS,
   outfit: StopOutfit = PLAIN_OUTFIT,
 ): CatchSnapshot[] {
-  return spawns.map((spawn) => createRocketSnapshot(snapshot, spawn, shadow, levels, outfit));
+  return spawns.map((spawn) => createStopSnapshot(snapshot, spawn, shadow, levels, outfit));
 }
 
 /**

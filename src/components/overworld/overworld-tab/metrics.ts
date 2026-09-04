@@ -5,7 +5,7 @@ import { SPAWN_COUNT } from '../../../overworld/chunk-snapshot';
 
 /**
  * The landmarks a player fights somebody at, all served by the one
- * challenge dialog and the rocket-stop machinery under it
+ * challenge dialog and the stop machinery under it
  */
 export const FIGHT_LANDMARKS = new Set([
   Landmark.TeamRocket,

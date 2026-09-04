@@ -71,11 +71,7 @@ import {
   unpackIVs,
 } from '../../src/data/constants/stats';
 import { Statuses, packStatuses } from '../../src/data/ids/status';
-import {
-  type RocketRecord,
-  deriveRocketReward,
-  rocketRewardOffer,
-} from '../../src/auth/rocket-record';
+import { type StopRecord, deriveStopReward, stopRewardOffer } from '../../src/auth/stop-record';
 import { seatId } from '../../src/auth/gym-seat-record';
 import type Chunk from '../../src/overworld/chunk';
 import {
@@ -139,7 +135,7 @@ import {
   ROCKET_PARTY_LEVELS,
   ROCKET_REWARD_LEVEL,
   TYPE_TRAINER_GOLD,
-  createRocketParty,
+  createStopParty,
   polishedStats,
   rocketPartyLevels,
   rollStopGold,
@@ -147,7 +143,7 @@ import {
   stopGoldBand,
   stopOutfit,
   stopPartyLevels,
-} from '../../src/overworld/rocket';
+} from '../../src/overworld/stop';
 import {
   BIOME_ELITE_MEMBERS,
   BIOME_GYM_LEADERS,
@@ -1140,7 +1136,7 @@ describe('world', () => {
 
     const snapshot = new ChunkSnapshot(chunk, 0);
     const [spawns] = [...snapshot.getRocketStops().values()];
-    const party = createRocketParty(snapshot, spawns);
+    const party = createStopParty(snapshot, spawns);
 
     expect(party).toHaveLength(ROCKET_PARTY_SIZE);
     for (const [at, member] of party.entries()) {
@@ -1163,7 +1159,7 @@ describe('world', () => {
 
     // A duelling trainer fields the same pokemon as their ordinary
     // selves: same species and level, nothing shadowed
-    const duel = createRocketParty(snapshot, spawns, false);
+    const duel = createStopParty(snapshot, spawns, false);
 
     for (const [at, member] of duel.entries()) {
       expect(member.level).toBeGreaterThanOrEqual(ROCKET_PARTY_LEVELS[0]);
@@ -1297,7 +1293,7 @@ describe('world', () => {
     // Fielded at his own level, all shadows. The band is the stop's to
     // pass now that every rank fields six: nothing about the party
     // says whose it is
-    const fielded = createRocketParty(
+    const fielded = createStopParty(
       staged.snapshot,
       party,
       true,
@@ -1391,7 +1387,7 @@ describe('world', () => {
       expect(rares.has(species)).toBe(true);
     }
 
-    const fielded = createRocketParty(
+    const fielded = createStopParty(
       executive.snapshot,
       party,
       true,
@@ -1405,9 +1401,9 @@ describe('world', () => {
     }
     // And their whole six is on offer, where a grunt's is only the
     // half they were not fighting with
-    expect(rocketRewardOffer(RocketRank.Executive)).toBe(ROCKET_PARTY_SIZE);
-    expect(rocketRewardOffer(RocketRank.Giovanni)).toBe(ROCKET_PARTY_SIZE);
-    expect(rocketRewardOffer(RocketRank.Grunt)).toBe(ROCKET_PARTY_SIZE / 2);
+    expect(stopRewardOffer(RocketRank.Executive)).toBe(ROCKET_PARTY_SIZE);
+    expect(stopRewardOffer(RocketRank.Giovanni)).toBe(ROCKET_PARTY_SIZE);
+    expect(stopRewardOffer(RocketRank.Grunt)).toBe(ROCKET_PARTY_SIZE / 2);
   });
 
   it('fields an expert’s party trained rather than caught', () => {
@@ -1451,7 +1447,7 @@ describe('world', () => {
     expect(stopOutfit(Landmark.Champion, RocketRank.Grunt, true)).toEqual(LEGEND_OUTFIT);
 
     const fielded = (outfit: typeof PLAIN_OUTFIT, shadow = false): CatchSnapshot[] =>
-      createRocketParty(snapshot, spawns, shadow, ELITE_PARTY_LEVELS, outfit);
+      createStopParty(snapshot, spawns, shadow, ELITE_PARTY_LEVELS, outfit);
 
     // A duelling trainer's six is what a walk would have met
     for (const member of fielded(PLAIN_OUTFIT)) {
@@ -1463,8 +1459,14 @@ describe('world', () => {
 
     for (const member of fielded(GYM_OUTFIT)) {
       expect(member.abilities).toHaveLength(1);
-      // One item, and the one that species would want
-      expect(member.items).toEqual(getExpertHeldItems(member.species, 1));
+      // One item, and the one that pokemon would want, which is a
+      // question about the set it is fielding rather than its species
+      expect(member.items).toEqual(
+        getExpertHeldItems(member.species, 1, {
+          moves: member.moves,
+          abilities: member.abilities,
+        }),
+      );
       expect(getSlots(member.slots, Slots.Item)).toBe(1);
     }
 
@@ -1535,8 +1537,8 @@ describe('world', () => {
     const snapshot = new ChunkSnapshot(chunk, 0);
     const [spawns] = [...snapshot.getRocketStops().values()];
     const fielded = (outfit: typeof PLAIN_OUTFIT): CatchSnapshot[] =>
-      createRocketParty(snapshot, spawns, false, ELITE_PARTY_LEVELS, outfit);
-    const rolled = createRocketParty(snapshot, spawns, false, ELITE_PARTY_LEVELS, PLAIN_OUTFIT);
+      createStopParty(snapshot, spawns, false, ELITE_PARTY_LEVELS, outfit);
+    const rolled = createStopParty(snapshot, spawns, false, ELITE_PARTY_LEVELS, PLAIN_OUTFIT);
 
     // A duelling trainer's and a grunt's is what the roll gave, with
     // nothing spent on it
@@ -1927,7 +1929,7 @@ describe('world', () => {
   });
 
   it('offers any of the boss’ six as the reward', () => {
-    const record: RocketRecord = {
+    const record: StopRecord = {
       player: 'red',
       party: [
         Species.Magnemite,
@@ -1951,7 +1953,7 @@ describe('world', () => {
     const met = new Set<Species>();
 
     for (let winner = 0; winner < 64; winner++) {
-      const [, spawn] = deriveRocketReward(
+      const [, spawn] = deriveStopReward(
         record,
         'stop-id',
         `player-${winner}`,
@@ -1969,7 +1971,7 @@ describe('world', () => {
   });
 
   it('pays a beaten grunt out of the half it was not fighting with', () => {
-    const record: RocketRecord = {
+    const record: StopRecord = {
       player: 'red',
       party: [
         { species: Species.Rattata, individualValue: 1, traitValue: 2 },
@@ -1990,7 +1992,7 @@ describe('world', () => {
     const offered = new Set<Species>();
 
     for (const uid of ['red', 'blue', 'green', 'yellow', 'gold', 'silver']) {
-      const [id, [species, individualValue, traitValue]] = deriveRocketReward(
+      const [id, [species, individualValue, traitValue]] = deriveStopReward(
         record,
         'stop-id',
         uid,
@@ -2012,8 +2014,8 @@ describe('world', () => {
     expect(offered.size).toBe(3);
 
     // A player's own reward is the same however often it is derived
-    expect(deriveRocketReward(record, 'stop-id', 'red', RocketRank.Grunt)).toEqual(
-      deriveRocketReward(record, 'stop-id', 'red', RocketRank.Grunt),
+    expect(deriveStopReward(record, 'stop-id', 'red', RocketRank.Grunt)).toEqual(
+      deriveStopReward(record, 'stop-id', 'red', RocketRank.Grunt),
     );
   });
 

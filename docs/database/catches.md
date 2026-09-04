@@ -483,7 +483,7 @@ Refused: `useCandy` (a level), `trainEffort`, `useWing` and `feedEffortBerry`
 `giveItem` and `takeItem`, since a locked pokemon is not reached into in either
 direction, so what it is holding stays what it was holding.
 `publishTeamSnapshot` drops it from a party the way it drops an egg or a fainted
-pokemon, so a rocket fight leaves it behind too.
+pokemon, so a stop fight leaves it behind too.
 
 Still allowed: walking as the **buddy** and the steps that come with it,
 **friendship** from every source that grants it, and standing as a **parent** at

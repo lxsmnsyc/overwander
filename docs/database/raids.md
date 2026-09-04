@@ -50,7 +50,7 @@ join it, and it is fought, cleared and claimed through the same calls.
 
 A fourth fight is not a raid at all: a **Team Rocket grunt** at a `WanderingNpc`
 cell, which runs on the three-hour `NPC_INTERVAL` rather than a raid window. It is
-described under [`rocketStops`](#rocket_stops) below.
+described under [`rocket_stops`](#rocket_stops) below.
 
 ## `raids`
 
@@ -317,7 +317,7 @@ amount is a heal, so drains reach it as they would anything else.
 grunt's fight takes the chunk the stop stands in, and a fight with no place of
 its own is left at Beyond, which draws the plain field. It is stored rather than
 looked up for the same reason `limits` is. A raid lobby is cleared when the raid
-ends and a rocket stop is a row of the player's own, so a battle that had to
+ends and a stop is a row of the player's own, so a battle that had to
 chase either would lose its setting the moment somebody watched it back.
 
 `rules` is the house rule a Battle Frontier fight was held under, and 0 for every
@@ -398,59 +398,67 @@ window in which a berry could be pulled back into the bag and kept.
 
 ## `rocket_stops`
 
-A **Team Rocket grunt** (`Npc.RocketGrunt`) stands at a `TeamRocket` cell for
-`NPC_INTERVAL` (3 hours), the window that decides who is at one.
+A **stop** is any landmark cell that bars the way with somebody who fights. Six
+of them stage one: `TeamRocket`, `Trainer`, `GymLeader`, `EliteFour`, `Champion`
+and `FrontierBrain`. Whoever is standing there holds the cell for `NPC_INTERVAL`
+(3 hours), the window that decides who is at one.
 
-Unlike a raid it is not a lobby. The grunt fights each passer-by on their own, so
+The two tables are still named for Team Rocket because it was the only kind when
+they were written. They hold every kind now, and the code that reads them lives
+in `src/server/stops.ts`. Renaming them would mean renaming what a scheduled
+sweep deletes from, so the names stay and this note stands in their place.
+
+Unlike a raid a stop is not a lobby. It fights each passer-by on their own, so
 the state is **per player**, and one player's victory closes nothing for anybody
 else.
 
 The stop id is `{chunkSeed}{zone}@{npcTimestamp}$rocket{cell}`, and the row is
-keyed by that and the player.
+keyed by that and the player. The `rocket` in it is a stored key rather than a
+word: every stop row already written is keyed by it.
 
-| Column                             | Type             | Notes                                        |
-| ---------------------------------- | ---------------- | -------------------------------------------- |
-| `stop_id`                          | `text`           | The stop and its window                      |
-| `player`                           | `uuid`           | Who this state belongs to                    |
-| `battle_id`                        | `text`           | The fight under way, or the last one fought  |
-| `window_at`                        | `bigint`         | The local NPC window the grunt was rolled in |
-| `utc_offset`                       | `smallint`       | Minutes east of UTC                          |
-| `chunk_seed`, `chunk_x`, `chunk_y` | `text`/`integer` | Where the stop stands                        |
-| `cell`                             | `integer`        | The landmark cell                            |
-| `defeated`                         | `boolean`        | Set when the grunt goes down                 |
+| Column                             | Type             | Notes                                       |
+| ---------------------------------- | ---------------- | ------------------------------------------- |
+| `stop_id`                          | `text`           | The stop and its window                     |
+| `player`                           | `uuid`           | Who this state belongs to                   |
+| `battle_id`                        | `text`           | The fight under way, or the last one fought |
+| `window_at`                        | `bigint`         | The local NPC window it was rolled in       |
+| `utc_offset`                       | `smallint`       | Minutes east of UTC                         |
+| `chunk_seed`, `chunk_x`, `chunk_y` | `text`/`integer` | Where the stop stands                       |
+| `cell`                             | `integer`        | The landmark cell                           |
+| `defeated`                         | `boolean`        | Set when whoever stands there goes down     |
 
-The grunt's three ride in `rocket_party`, one row per slot, weakest first:
-`(slot, species, individual_value, trait_value)`.
+The party rides in `rocket_party`, one row per slot, weakest first:
+`(slot, species, individual_value, trait_value)`. Everybody fields six.
 
-`enterRocketStop` rolls the party from the chunk itself: one from the biome's
-**base**, **uncommon** and **rare** bands for the window, each with its own
-individual and trait values. A band the window leaves empty borrows from the
-commonest one that is not. The record is written on first approach.
+`enterStop` rolls the party from the chunk itself, and what it rolls is the
+landmark's business: a grunt takes one commoner, two uncommons and three rares,
+an executive six rares, Giovanni five and a legendary, and a league seat or a
+duelling trainer fields what their own list says. The record is written on first
+approach.
 
-`startRocketBattle` freezes the player's party exactly as `startRaid` does, with
+`startStopBattle` freezes the player's party exactly as `startRaid` does, with
 the same snapshot, the same lock and the same refusal of a pokemon already
-fighting or waiting in a lobby. It freezes the grunt's three beside it at
-`ROCKET_PARTY_LEVEL` (50), all shadowed, and writes a battle with no raid. It is an ordinary trainer
-battle: `BattleModes.PvP`, and **no side is flagged as a boss**, so a mutual
-knockout is a draw rather than a win.
+fighting or waiting in a lobby. It freezes the stop's six beside it in the level
+band `stopPartyLevels` gives for that landmark, shadowed only for Team Rocket,
+and writes a battle with no raid. It is an ordinary trainer battle:
+`BattleModes.PvP`, and **no side is flagged as a boss**, so a mutual knockout is
+a draw rather than a win.
 
 The party is stored rather than re-derived because a party frozen at the fight
 should stay what it was, whatever the window does afterwards.
 
-The prize is recorded as **`EncounterType.Rocket`**. A grunt is fought alone, pays
-a fixed low-level commoner and hands over a shadow, so a catch record that called
-it a raid prize would be saying the wrong thing about where it came from. See
-[Encounter kinds](encounters.md#encounter-kinds).
+Losing changes nothing: whoever was standing there still is, and the stop can be
+fought again until the window turns over. Winning is what closes it.
+`claimStopReward` pays a purse rolled in the landmark's own band, and for the
+rungs above a grunt it also rolls one item off the biome's pool. The `defeated`
+flag is both the record of the win and the marker guarding it: it is set inside a
+transaction, and only the call that sets it pays.
 
-Losing changes nothing: the grunt is still standing, and the stop can be fought
-again until the window turns over. Winning is what closes it.
-`claimRocketReward` pays `ROCKET_STOP_GOLD` (500) and stages one of the grunt's
-two **commoner** species as an encounter, never the rare one, shadowed and at a
-fixed `ROCKET_REWARD_LEVEL` (10). The same grunt is therefore worth
-the same to everyone who put them down, and what is handed over is a commoner
-taken off a thief rather than anything like the level-50 party it came from. The
-`defeated` flag is both the record of the win and the marker guarding it: it is
-set inside a transaction, and only the call that sets it pays.
+Only a Team Rocket stop leaves a pokemon behind. It is recorded as
+**`EncounterType.Rocket`**, shadowed and at a fixed `ROCKET_REWARD_LEVEL` (10),
+so the same grunt is worth the same to everyone who put them down. A catch record
+that called it a raid prize would be saying the wrong thing about where it came
+from. See [Encounter kinds](encounters.md#encounter-kinds).
 
 ## `raid_rewards`
 

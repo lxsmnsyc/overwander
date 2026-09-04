@@ -18,8 +18,8 @@ import {
   hostMythicalRaid,
   peekRaid,
 } from '../../../auth/raids';
-import { type RocketRecord, rocketStopId } from '../../../auth/rocket-record';
-import { claimRocketReward, enterRocketStop } from '../../../auth/rockets';
+import { type StopRecord, stopIdOf } from '../../../auth/stop-record';
+import { claimStopReward, enterStop } from '../../../auth/stops';
 import { createSafariSession, isEncounterRetired } from '../../../auth/safari';
 import type { SnapshotRecord } from '../../../auth/snapshot-record';
 import {
@@ -75,7 +75,7 @@ import RaidDialog from '../../raids/RaidDialog';
 import { Badge, Button, Note, useToast } from '../../styled';
 import NestDialog, { type EggSource, type EggState } from '../NestDialog';
 import PortalDialog from '../PortalDialog';
-import RocketStopDialog, { type StopChallenge } from '../RocketStopDialog';
+import StopDialog, { type StopChallenge } from '../StopDialog';
 import SafariDialog from '../SafariDialog';
 import ChunkCanvas, {
   CROSSING_IN,
@@ -236,7 +236,7 @@ export default function OverworldBoard(props: {
    * into one: the stop's id and what it is fielding, until the
    * challenge is taken or declined
    */
-  const [challenge, setChallenge] = createSignal<[string, RocketRecord] | null>(null);
+  const [challenge, setChallenge] = createSignal<[string, StopRecord] | null>(null);
 
   /**
    * Who put the challenge: the grunt's ambush or the trainer's duel.
@@ -1075,7 +1075,7 @@ export default function OverworldBoard(props: {
       const grunt = landmark === Landmark.TeamRocket;
       const staged = challengerOf(loaded.snapshot, landmark, at);
       const who = staged?.name ?? 'Team Rocket';
-      const stop = await enterRocketStop(loaded.snapshot, at);
+      const stop = await enterStop(loaded.snapshot, at);
 
       if (stop === 'locked') {
         // The ladder's three gates, each named by whoever is standing
@@ -1107,8 +1107,8 @@ export default function OverworldBoard(props: {
         // claiming again pays nothing and hands it back until it is
         // caught. Everybody else owed only the purse
         const owed = grunt
-          ? await claimRocketReward(
-              rocketStopId(
+          ? await claimStopReward(
+              stopIdOf(
                 loaded.snapshot.chunk,
                 loaded.snapshot.npcTimestamp,
                 at,
@@ -1962,7 +1962,7 @@ export default function OverworldBoard(props: {
                 props.onFled();
               }}
             />
-            <RocketStopDialog
+            <StopDialog
               user={user()}
               challenge={challenge()}
               npc={challengerNpc()}

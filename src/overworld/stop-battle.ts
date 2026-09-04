@@ -16,7 +16,7 @@ import { type RaidBattle, fieldTeams } from './raid-battle';
 
 /**
  * Assemble a trainer fight from its stored team snapshots: no raid
- * rules, under whichever non-raid mode the fight was, a grunt's by
+ * rules, under whichever non-raid mode the fight was, a stop's by
  * default, a player's when both sides are somebody's.
  *
  * The sky is laid before the teams are fielded, so a pokemon that
@@ -57,7 +57,7 @@ export function createTrainerBattle(
  * A grunt's fight: an ordinary trainer battle whose per-unit ability
  * limit only has to fit the rolled ability alongside Shadow
  */
-export function createRocketBattle(
+export function createStopBattle(
   battleId: string,
   teams: TeamSnapshotRecord[],
   limits = PVP_BATTLE_LIMITS,

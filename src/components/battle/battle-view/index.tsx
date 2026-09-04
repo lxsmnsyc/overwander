@@ -32,7 +32,7 @@ import {
   countDefeated,
   createRaidBattle,
 } from '../../../overworld/raid-battle';
-import { createTrainerBattle } from '../../../overworld/rocket-battle';
+import { createTrainerBattle } from '../../../overworld/stop-battle';
 import BattleField from '../BattleField';
 import VerdictDialog from './VerdictDialog';
 import { type Contribution, type SideSummary, readContributions, readSides } from './summary';
@@ -322,7 +322,7 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
   };
 
   const title = (): string => {
-    if (props.active.rocket != null) {
+    if (props.active.stop != null) {
       // A stop is not only a grunt: a duelling trainer, a gym leader
       // and the Champion are all fought from one, and each was named
       // on the way in
@@ -345,7 +345,7 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
     if (props.active.replay) {
       return 'The other side went down.';
     }
-    if (props.active.rocket != null) {
+    if (props.active.stop != null) {
       const beaten = opponent()?.name ?? 'The grunt';
 
       return `${beaten} is beaten. What was left behind is waiting in the overworld.`;
@@ -561,7 +561,7 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
     }
 
     const won = result === 'won';
-    const stop = props.active.rocket;
+    const stop = props.active.stop;
     const seat = props.active.seat;
     const built = instance();
     const user = auth.user();

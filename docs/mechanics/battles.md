@@ -23,7 +23,7 @@ into, **Team Rocket** stops, a **gym seat** another player is holding, and a
 | **Cooldown**    | That move cannot be used again | Set by the move's PP                          |
 
 **A move is in the air for a moment.** Most take a quarter of a second between
-going off and landing — the time a swing takes — while anything thrown names its
+going off and landing, which is the time a swing takes. Anything thrown names its
 own flight time, twice that, and is drawn crossing the field. It is a real gap: a
 pokemon that faints or interrupts the attacker during it does so before the hit
 arrives.
@@ -65,26 +65,26 @@ raid boss does not do this: it attacks.
 
 **Nothing stands still.** Every pokemon fights knowing one move more than it was
 brought in with: a plain **Attack**, ten power, back about once a second, and
-thrown as whatever the pokemon is — a Charmander's swing is Fire, a Geodude's is
+thrown as whatever the pokemon is. A Charmander's swing is Fire, a Geodude's is
 Rock. Nothing teaches it and it is in no learn set; it is simply what a pokemon
 does with its hands. It is far too weak to be worth choosing, which is the point:
 it is what fills the gaps while the real moves cool, and it never displaces one
 of them.
 
-A pokemon shut out of its move set entirely — everything disabled, the swing
-included — **Struggles** instead, and pays a quarter of its health for it.
+A pokemon shut out of its move set entirely, the swing included, **Struggles**
+instead, and pays a quarter of its health for it.
 Waiting on a cooldown and having nothing at all are different states, and they
 get different answers.
 
 ### Animation
 
 A pokemon **winding up** gathers itself: one gesture, repeated, for however long
-the wind-up lasts. What it is about to throw makes no difference to it — the
+the wind-up lasts. What it is about to throw makes no difference to it, since the
 throw is the next part.
 
 A pokemon **throwing** plays the closest thing to that move its sheet actually
 has, fitted to the moment the move is in the air so the gesture ends as the hit
-lands. Sprite sheets differ — a Machop has a punch, a Magikarp does not — so a
+lands. Sprite sheets differ, since a Machop has a punch and a Magikarp does not, so a
 Fire Punch punches on one pokemon and swings on another.
 
 The visible result is that speed can be seen: a slow move is a long gathering,
@@ -120,8 +120,8 @@ against Special Defence. A few fixed-damage moves ignore the formula entirely.
 
 ## Statuses and weather
 
-There are twenty-two statuses. Six of them — poison, bad poison, sleep,
-paralysis, burn and freeze — **follow a pokemon out of the battle**. The rest,
+There are twenty-two statuses. Six of them **follow a pokemon out of the
+battle**: poison, bad poison, sleep, paralysis, burn and freeze. The rest,
 including confusion, flinching, seeding, trapping, hiding and floating, end with
 the fight. A pokemon can leave a raid both poisoned and asleep.
 
@@ -161,7 +161,7 @@ under a clear sky whatever the world is doing.
 
 There are nine kinds of weather, from plain sun and rain up to the extreme forms.
 In a **raid**, a pokemon that changes the weather changes it only for its own
-party — unless the boss changed it, in which case it applies to everybody.
+party, unless the boss changed it, in which case it applies to everybody.
 Otherwise one player could impose rain on a lobby of strangers.
 
 ## How a fight ends
@@ -173,7 +173,7 @@ that is alive but permanently unable to do anything.
 | Situation                           | Result                                                                  |
 | ----------------------------------- | ----------------------------------------------------------------------- |
 | One side still standing             | That side wins                                                          |
-| Nobody standing, in a raid          | The party wins — a boss taken down with the last of the party is beaten |
+| Nobody standing, in a raid          | The party wins. A boss taken down with the last of the party is beaten |
 | Nobody standing, anywhere else      | A draw                                                                  |
 | Both sides standing, nobody can act | A draw                                                                  |
 
@@ -221,7 +221,7 @@ cannot act, which is the party's window to arrive, buff up and land the opening
 hits. Sent out again later in the same fight, it skips the warm-up.
 
 It shrugs off everything that would take the fight away rather than make it
-harder — sleep, freeze, flinch, trapping and infatuation — unless it did it to
+harder, such as sleep, freeze, flinch, trapping and infatuation, unless it did it to
 itself, so a boss that uses Rest really does sleep. Infatuation is excluded twice
 over: a large lobby always contains somebody the boss would fall for, and a
 landed Attract would turn the raid into a queue.
@@ -254,7 +254,7 @@ It is an ordinary trainer battle whoever is standing there: neither side is a
 boss, so a simultaneous knockout is a draw.
 
 Every player fights the cell separately. Winning closes nothing for anybody else,
-and losing costs nothing but the attempt — they are still there and may be fought
+and losing costs nothing but the attempt. They are still there and may be fought
 again until the window turns over.
 
 ### What an expert's party carries
@@ -293,8 +293,8 @@ fight.
 
 A second ability is the one thing a player cannot get by catching the same
 species: a wild meeting rolls one and keeps it. The gear is the pokemon's own
-rather than the trainer's — a Pikachu on any team holds the Light Ball because it
-is a Pikachu — and it is chosen from what that species is worth carrying, so a
+rather than the trainer's, so a Pikachu on any team holds the Light Ball because
+it is a Pikachu. It is chosen from what that species is worth carrying, so a
 half-grown one an expert is known for gets the item that answers being
 half-grown. A legend hands out three apiece, which is deeper than most species'
 own gear goes, so the slots nothing of its own fills are filled with gear that

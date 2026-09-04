@@ -42,7 +42,7 @@ A **Rare Candy** is the exception to the family rule: used from the bag on any
 pokemon, it buys one level no matter what family the pokemon belongs to and no
 matter what its levels normally cost. Nothing sells them; they are prizes.
 
-Releasing a pokemon pays its family the same candy catching it did — rarity and
+Releasing a pokemon pays its family the same candy catching it did, rarity and
 all, though never the family-day bonus. Letting one go is a decision about space
 rather than a punishment, and what the pokemon was worth does not change on the
 way out.
@@ -51,9 +51,9 @@ way out.
 
 A pokemon answers to its species until you name it. **Set nickname** on the catch
 sheet gives it one of up to 24 characters; clearing the box takes the name
-back off, and it goes back to being called by its kind. A name survives evolution
-— that is rather the point of giving one — while a pokemon that was never named
-is called by whatever it has just become. Eggs cannot be named: nothing has been
+back off, and it goes back to being called by its kind. A name survives evolution,
+which is rather the point of giving one. A pokemon that was never named is
+called by whatever it has just become. Eggs cannot be named: nothing has been
 introduced yet.
 
 A name belongs to the trainer who gave it. A pokemon that arrives already named,
@@ -173,8 +173,8 @@ already-raised pokemon worth an item of its own.
 | **Golden Bottle Cap** | Special | Raises every stat to perfect                   |
 | **Bottle Cap**        | Prized  | Raises one stat, drawn from the imperfect ones |
 
-The stat a plain cap lands on is not the player's choice — otherwise it would not
-be a cap. It never lands on a stat that was already perfect, and a pokemon that
+The stat a plain cap lands on is not the player's choice, or it would not be a
+cap. It never lands on a stat that was already perfect, and a pokemon that
 is perfect all round is refused before it can waste one.
 
 Both caps are found in the overworld and nowhere else; no shop stocks either.
@@ -250,8 +250,8 @@ amount to a free Move Reminder and the Heart Scale would be worth nothing.
 
 Two rules apply throughout. **A revive is the only thing that reaches a fainted
 pokemon**, and the only thing that does nothing for one still standing. And
-**anything that would change nothing is refused rather than consumed** — the
-wrong cure, or a pokemon already at full health.
+**anything that would change nothing is refused rather than consumed**, such as
+the wrong cure or a pokemon already at full health.
 
 A fainted pokemon cannot fight. A raid refuses a party containing one, and a
 party of fainted pokemon cannot start a battle at all.
@@ -259,12 +259,12 @@ party of fainted pokemon cannot start a battle at all.
 ## Held items
 
 A pokemon holds **one** item at a time, and only items meant to be held. A
-**Utility Belt** — a prized find, spent on use — gives one pokemon a second slot
-permanently.
+**Utility Belt**, a prized find that is spent on use, gives one pokemon a second
+slot permanently.
 
 That single slot is what makes the held items a genuine choice: a Shiny Charm, an
 Exp. Share, a Lucky Egg, a Luck Incense, a Pure Incense and an Amulet Coin all
-want the same slot on the same buddy — and a berry or a piece of battle gear
+want the same slot on the same buddy, and a berry or a piece of battle gear
 wants it during a raid.
 
 ## Abilities

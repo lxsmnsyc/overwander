@@ -7,8 +7,8 @@ overworld is the game's supply of items and raids are its supply of gold.
 ## Using what you carry
 
 The bag is a tray of pictures. Resting on one brings up a card saying what the
-thing is, what it does and how many are carried, and — for anything that is spent
-on a pokemon rather than held, sold or handed to somebody — a **Use** button.
+thing is, what it does and how many are carried. Anything that is spent on a
+pokemon rather than held, sold or handed to somebody also gets a **Use** button.
 Pressing it asks which pokemon, offering only the ones the item would do some
 good, and that press spends it: what it came to is said over the bag. Two items
 ask a question back first, because neither can be undone. A **machine** asks
@@ -18,8 +18,8 @@ answered.
 
 ## Where items come from
 
-Three landmarks give items — the **item cache**, the **berry patch** and the
-**phenomenon** — and a buddy with **Pickup** finds them while walking. Each source
+Three landmarks give items: the **item cache**, the **berry patch** and the
+**phenomenon**. A buddy with **Pickup** finds them while walking. Each source
 rolls first for a rarity band:
 
 | Band     | Odds     |
@@ -43,7 +43,7 @@ rolls first for a rarity band:
 The line between rare and prized is **permanence**. Rare is where a walk turns up
 something that gets a party through the next fight: a stone, a Revive, a plate.
 Prized is where it turns up something that changes a pokemon for good and cannot
-be undone — a Bottle Cap fixes what a pokemon was born with, a Purifying Gem
+be undone. A Bottle Cap fixes what a pokemon was born with, a Purifying Gem
 removes a shadow, a Max Revive answers a lost _party_ rather than a lost fight.
 
 A prized find is not unique. A stash may hold two, and they come in stacks like
@@ -64,8 +64,8 @@ The **Heart Scale** is the one item gold cannot substitute for. No vendor stocks
 one or takes one, so a scale is worth exactly one forgotten move, restored by the
 [Move Reminder](npcs.md).
 
-The **fossils** are the only items worth a pokemon. Each names one species — a
-Helix Fossil an Omanyte, a Dome Fossil a Kabuto, an Old Amber an Aerodactyl — and
+The **fossils** are the only items worth a pokemon. Each names one species: a
+Helix Fossil an Omanyte, a Dome Fossil a Kabuto, an Old Amber an Aerodactyl, and
 none of those three appears anywhere in the world, so reviving one at the
 [Fossil Scientist](npcs.md) is the only way to meet them. All three sit in the
 **prized** band, with the amber the thinnest slot of the three.
@@ -82,7 +82,7 @@ stops a good dig being the same three slots every time.
 Each kind comes in up to **three pieces**.
 
 A stash can be a Master Ball and two stones. Two things it can never be: **two
-specials**, and **more than one piece** of a special — a Master Ball found three
+specials**, and **more than one piece** of a special. A Master Ball found three
 at a time would stop being a Master Ball.
 
 ### What each landscape hides
@@ -159,7 +159,7 @@ Ball or a Shiny Charm.
 
 The **dust cloud is the richest** phenomenon: it is the only source of a stone or
 a plate outside an item cache, and the only ordinary source of gems. The
-**grotto** pays in pokemon instead — it never leaves an item at all, and one
+**grotto** pays in pokemon instead. It never leaves an item at all, and one
 grotto in sixty-four holds an egg of the biome, which is the same egg a nest
 would have laid without the half-day wait.
 
@@ -291,7 +291,7 @@ doubles it, and an **Amulet Coin** trebles it.
 The four paid travellers set the pace as much as the price, since each helps a
 player once per three-hour window at a given cell: gold buys convenience rather
 than volume. The maniac's fossil is the most expensive because it is the only
-purchase that buys a **pokemon** — one of the three the world does not produce at
+purchase that buys a **pokemon**, one of the three the world does not produce at
 all.
 
 ## Auctions
@@ -307,7 +307,7 @@ from your profile, but answering it costs the same walk the first bid did.
 Your own side of it stays on your profile. **Bids** holds everything you have
 bid on and where each one stands, and is where a lot you won is collected.
 **Selling** holds everything you have put up: what is still on the block, what
-sold, and — the one that matters — anything that closed with nobody bidding. A lot nobody bid on comes
+sold, and the one that matters: anything that closed with nobody bidding. A lot nobody bid on comes
 back only when you ask for it, so until you do, the pokemon sits in escrow
 belonging to nobody. The Selling tab counts those on the tab itself, because
 nothing else in the game will ever mention one.

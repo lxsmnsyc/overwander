@@ -11,8 +11,8 @@ The dialog shows the species, level and gender at the top, the pokemon itself in
 the middle, and three buttons at the bottom: **Items**, **Throw** and **Run
 away**.
 
-- **Throw** sends whatever is in hand — a ball, which is a catch attempt, or a
-  berry, which is fed to the pokemon.
+- **Throw** sends whatever is in hand. A ball is a catch attempt, and a berry is
+  fed to the pokemon.
 - **Items** opens the bag filtered to balls and berries. Choosing a ball sets
   what the session throws from then on; choosing a berry puts it in hand for the
   next action only.
@@ -24,7 +24,7 @@ player may not be carrying.
 No odds are displayed. The catch chance, the flee chance and the feeding bonus
 are all live and all hidden, on the principle that a player deciding whether a
 pokemon is worth their remaining Ultra Balls should be looking at the pokemon.
-What it is actually worth — its stats, nature and ability — is discovered by
+What it is actually worth, its stats and nature and ability, is discovered by
 catching it.
 
 ## Catch chance
@@ -53,8 +53,8 @@ The penalty is flat rather than scaling, because the reason has nothing to do
 with the species or its level: the same thing is wrong with every shadow. It
 multiplies with everything else, so a better ball buys exactly what it always
 bought. Nothing a shadow was given is taken away by it either, and a shadow that
-was fought for rather than found — a grunt's parting gift, a raid prize — still
-never flees, so the only cost is balls.
+was fought for rather than found, such as a grunt's parting gift or a raid prize,
+still never flees, so the only cost is balls.
 
 ### Level
 
@@ -105,8 +105,8 @@ A pokemon can be moved into a different ball at any time: open its sheet, choose
 was in is gone.
 
 Mostly this is for how a pokemon looks in its records, but a Luxury Ball is worth
-moving into — the friendship bonus follows whatever ball the pokemon is in now,
-not the one it was caught in. What a ball did at the moment of the catch does
+moving into, because the friendship bonus follows whatever ball the pokemon is
+in now rather than the one it was caught in. What a ball did at the moment of the catch does
 not come back: putting a pokemon in a Heal Ball today heals nobody.
 
 The record remembers regardless. Each line of a pokemon's history shows the ball
@@ -162,7 +162,7 @@ first throw. The resulting rhythm is feed, throw, feed, throw.
 ## Fleeing
 
 Every ball that fails to catch gives the pokemon a chance to bolt. What decides
-it is that individual's **own Speed** — its level, its individual stats and its
+it is that individual's **own Speed**. Its level, its individual stats and its
 nature all count, not merely its species' reputation. Effort training is not
 counted, since nothing wild has trained.
 
@@ -172,7 +172,7 @@ time, so nothing is impossible to keep.
 
 Three pokemon never flee: a **raid prize**, the pokemon a **beaten Team Rocket
 grunt** hands over, and one that arrives as a **gift**. The first two were
-already fought for, and the third was set aside for you — a gift that could run
+already fought for, and the third was set aside for you. A gift that could run
 off would be a gift taken back. A gifted pokemon is also caught by the first ball
 that reaches it, whichever ball that is: the throw is a formality, and the ball
 you use is the one the record ends up naming.
@@ -186,8 +186,8 @@ Every ball already thrown at a pokemon makes the next one worth about **1% more*
 compounding. It amounts to little at first and then adds up: ten balls in, a
 throw is worth a tenth more than the first; seventy balls in, twice as much.
 
-It never rescues a hopeless attempt — a Mewtwo would take hundreds of balls
-before the effect mattered — but a long, stubborn session genuinely does improve
+It never rescues a hopeless attempt, since a Mewtwo would take hundreds of balls
+before the effect mattered. A long, stubborn session genuinely does improve
 rather than merely feeling unlucky.
 
 How many balls a player is carrying changes nothing at all. A full bag throws

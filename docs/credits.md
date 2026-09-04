@@ -20,7 +20,7 @@ written a row at a time by the sprite processor as it packs a charset.
 
 ## The game
 
-Overwander is written by **Alexis H. Munsayac**, and the code is MIT licensed —
+Overwander is written by **Alexis H. Munsayac**, and the code is MIT licensed.
 see [LICENSE](../LICENSE). That covers the source in `src/`, `test/`, `e2e/`
 and `scripts/`, and the documentation in `docs/`. It does not cover the art, or
 anything named in the notice below.
@@ -134,8 +134,8 @@ them drew which tile, and inventing that mapping would be worse than not having
 it.
 
 > **What is still missing.** Three of the sheets under `pokemon` are not pokemon
-> — the Missingno placeholder, an egg and a substitute, numbered past a hundred
-> thousand — and nobody wrote down which entry of which pack each came from. The
+> (the Missingno placeholder, an egg and a substitute, numbered past a hundred
+> thousand) and nobody wrote down which entry of which pack each came from. The
 > source of the three move-category marks is also unrecorded. Both need filling
 > in before this is published anywhere.
 >
@@ -146,15 +146,15 @@ it.
 
 ## The rules
 
-The dex is Gen 1 — 151 species and their moves, abilities and items — but the
+The dex is Gen 1, with 151 species and their moves, abilities and items, but the
 mechanics are the modern ones wherever the two disagree: the special split, the
 current type chart, natures, effort values, abilities, held items and
 friendship. All of that is the mainline games' design, reimplemented here from
 the published behaviour rather than copied from anything. The tables in
 `src/data/` are typed out, and what they mean is worked out again in
-`src/battle/` and `src/overworld/`. Where this game departs on purpose —
+`src/battle/` and `src/overworld/`. Where this game departs on purpose, such as
 real-time battles instead of turns, a derived world instead of a drawn one,
-candy and raids and auctions — [the mechanics pages](mechanics.md) say so and
+candy and raids and auctions, [the mechanics pages](mechanics.md) say so and
 say why.
 
 The world itself owes nothing to the series. The terrain is Perlin noise sorted

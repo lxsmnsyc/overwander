@@ -66,6 +66,6 @@ same result, which is why a replay costs nothing and pays nothing.
 ## See also
 
 - [Releases](update.md): what each major release brought
-- [The battle engine](engine.md) — how the real-time engine is built
+- [The battle engine](engine.md), for how the real-time engine is built
 - [The database](database.md): what the game stores and who may write it
-- [Credits](credits.md) — the people, libraries and art behind the game
+- [Credits](credits.md), for the people, libraries and art behind the game

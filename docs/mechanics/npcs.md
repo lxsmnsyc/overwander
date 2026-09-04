@@ -156,7 +156,7 @@ and may be challenged again until the three hours are up.
 Beating one pays a purse drawn per winner, so the same fight is worth a different
 amount to the next player, and leaves a pokemon behind, shadowed and at level 10.
 A grunt pays **5,000 to 15,000** and leaves one of the three it was **not**
-fighting with — the common and the two uncommons, never its best. An executive
+fighting with, one of the common and uncommon pair rather than its best. An executive
 pays **40,000 to 90,000**, leaves any of its six, and drops an item it was
 carrying besides. **Giovanni** pays **120,000 to 250,000**, his own mark and any
 of his, the legendary included. The mark is worth the coat he runs Team Rocket

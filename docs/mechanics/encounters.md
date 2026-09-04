@@ -4,8 +4,8 @@ Wild pokemon stand on the cells of a chunk and are met by walking up to one and
 clicking it. Every five minutes a chunk produces a fresh set of them, and every
 player who passes through the chunk during those five minutes sees the same set.
 
-Everything about a wild pokemon — its level, nature, gender, ability, individual
-stats, size and moves — is decided before the player arrives and never changes.
+Everything about a wild pokemon is decided before the player arrives and never
+changes: its level, nature, gender, ability, individual stats, size and moves.
 Whether it is **shiny**, however, depends on the player looking at it.
 
 ## How many appear
@@ -50,7 +50,7 @@ biome and the time of day. That is why one field is full of Rattata while a
 Chansey is a story worth telling.
 
 If a biome holds nothing in the band a roll landed on, the roll falls to the next
-band down, so nothing is lost — the player meets a commoner instead.
+band down, so nothing is lost. The player meets a commoner instead.
 
 A prized pokemon is not unique. Unlike a legendary, a second one may be met.
 
@@ -93,7 +93,7 @@ strength would be a legendary with a known answer.
 
 A wild pokemon carries one of its species' ordinary abilities about seven times
 in eight; the remaining eighth is its hidden ability. Nature is one of the usual
-25, and gender follows the species' own ratio — a species with no ratio is
+25, and gender follows the species' own ratio. A species with no ratio is
 genderless.
 
 ### Moves
@@ -199,8 +199,8 @@ from the buddy's ability, others from what it is holding.
 
 Cute Charm does nothing when either pokemon is genderless.
 
-None of these change _which_ species are standing in the chunk — everybody sees
-the same ones — only how many a player can reach, and what the ones they meet
+None of these change _which_ species are standing in the chunk, since everybody
+sees the same ones. They change how many a player can reach, and what the ones they meet
 turn out to be.
 
 An **egg** may be the buddy, and must be for its steps to count, but an egg

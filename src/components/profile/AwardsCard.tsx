@@ -153,6 +153,7 @@ const AWARD_COLORS: Record<Awards, string> = {
   [Awards.FeatherBadge]: '#8fb8d0',
   [Awards.MindBadge]: '#c96fa8',
   [Awards.RainBadge]: '#4a8fd0',
+  [Awards.HoennDexMedal]: '#3f9e6a',
 };
 
 /**
@@ -174,6 +175,7 @@ const SHELF: Awards[] = [
     Awards.JohtoChampion,
     Awards.JohtoDexMedal,
     ...HOENN_BADGES,
+    Awards.HoennDexMedal,
     ROCKET_GRUNT_HONOR,
     ...ROCKET_EXECUTIVES.map((executive) => ROCKET_EXECUTIVE_HONORS[executive]),
     GIOVANNI_HONOR,

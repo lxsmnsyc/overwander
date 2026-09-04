@@ -15,7 +15,7 @@ own, and beating one is kept for good.
 | **Champion**        | 2        | Beating that league's Champion          |
 | **Legend's mark**   | 1        | Beating a legend, who asks for nothing |
 | **Team Rocket marks** | 6      | Beating a grunt, one of the four executives, or Giovanni |
-| **Dex medal**       | 2        | Filling that region's dex                |
+| **Dex medal**       | 3        | Filling that region's dex                |
 
 Kanto, Johto and Hoenn keep eight gyms apiece, and their leaders share the
 world's countries: which of them keeps a given gym is fixed for that gym, so a
@@ -103,6 +103,7 @@ titles come from.
 | A Rocket grunt's uniform  | Beating any grunt               |
 | **Professor Oak**         | Kanto's dex filled              |
 | **Professor Elm**         | Johto's dex filled              |
+| **Professor Birch**       | Hoenn's dex filled              |
 | Oak in Johto              | Both dexes filled               |
 | A Kanto leader's later look | That badge **and** Johto's crown |
 | A class of trainer        | That region's class at **Bronze** |
@@ -121,8 +122,8 @@ of those asks for that gym's badge and Johto's crown. By then Fuchsia's gym is
 Janine's rather than her father's, so the Soul Badge is what pays her.
 
 The professors are earned by filling a dex rather than by fighting: Kanto's pays
-Oak in the two looks he is drawn in there, Johto's pays Elm, and holding both
-pays Oak as he is drawn in Johto.
+Oak in the two looks he is drawn in there, Johto's pays Elm, Hoenn's pays Birch,
+and holding both of the first two pays Oak as he is drawn in Johto.
 
 ## See also
 

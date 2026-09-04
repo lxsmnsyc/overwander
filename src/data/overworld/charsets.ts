@@ -105,6 +105,7 @@ const AWARDED_CHARSETS: { sheet: string; name: string; awards: Awards[] }[] = [
     name: 'Professor Oak',
     awards: [Awards.KantoDexMedal, Awards.JohtoDexMedal],
   },
+  { sheet: 'characters/oras/birch', name: 'Professor Birch', awards: [Awards.HoennDexMedal] },
 ];
 
 /**

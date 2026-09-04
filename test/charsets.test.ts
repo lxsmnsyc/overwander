@@ -193,6 +193,11 @@ describe('the characters a trainer may wear', () => {
       kind: 'awards',
       awards: [Awards.KantoDexMedal, Awards.JohtoDexMedal],
     });
+    expect(getCharset('characters/oras/birch')?.lock).toEqual({
+      kind: 'award',
+      award: Awards.HoennDexMedal,
+    });
+    expect(getCharset('characters/oras/birch')?.name).toBe('Professor Birch');
   });
 
   it('says who a sheet is, and which game it is drawn from', () => {

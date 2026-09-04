@@ -334,7 +334,7 @@ import {
   rollGymMachine,
 } from '../src/data/overworld/experts';
 import Regions from '../src/data/ids/regions';
-import { getSpeciesRegion } from '../src/data/species/regions';
+import { getRegionSpan, getSpeciesRegion } from '../src/data/species/regions';
 import {
   ACHIEVEMENT_LINES,
   ACHIEVEMENT_TRAINERS,
@@ -395,6 +395,7 @@ import {
 } from '../src/data/quests';
 import {
   DEX_QUEST_BASE,
+  REGION_DEXES,
   dexChainId,
   dexQuestId,
   getDexChain,
@@ -5621,6 +5622,31 @@ describe('a region’s pokedex chain', () => {
         (reward) => reward.kind === QuestRewardKind.Award && reward.award === Awards.JohtoDexMedal,
       ),
     ).toBe(true);
+  });
+
+  it('gives Hoenn its own ladder, all but the two mythicals', () => {
+    expect(getDexRegions()).toContain(Regions.Hoenn);
+    expect(CHAINS[dexChainId(Regions.Hoenn)].name).toBe('Hoenn Pokedex');
+
+    const last = getDexQuests(Regions.Hoenn).get(dexQuestId(Regions.Hoenn, 2));
+
+    expect(last?.name).toBe('Hoenn Complete');
+    expect(
+      last?.rewards.some(
+        (reward) => reward.kind === QuestRewardKind.Award && reward.award === Awards.HoennDexMedal,
+      ),
+    ).toBe(true);
+
+    // The top rung asks for every dex number of the region but the
+    // two a relic calls, which is the ask the other two regions carry
+    const [from, to] = getRegionSpan(Regions.Hoenn) ?? [0, 0];
+    const walked = getRegisteredSpecies().filter((species) => {
+      const dex = getSpeciesData(species).dexNumber;
+
+      return isBaseForm(species) && !isMythicalSpecies(species) && dex >= from && dex <= to;
+    });
+
+    expect(REGION_DEXES[Regions.Hoenn]?.milestones.at(-1)).toBe(walked.length);
   });
 
   it('leaves a region with no dex alone rather than inventing one', () => {

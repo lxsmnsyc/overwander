@@ -54,6 +54,8 @@ const enum Awards {
   FeatherBadge = 40,
   MindBadge = 41,
   RainBadge = 42,
+  /** Hoenn's dex filled to 133 caught */
+  HoennDexMedal = 43,
 }
 
 export default Awards;
@@ -102,6 +104,7 @@ export const AWARD_NAMES: Record<Awards, string> = {
   [Awards.FeatherBadge]: 'Feather Badge',
   [Awards.MindBadge]: 'Mind Badge',
   [Awards.RainBadge]: 'Rain Badge',
+  [Awards.HoennDexMedal]: 'Hoenn Dex Medal',
 };
 
 /**

@@ -324,11 +324,11 @@ export const PRIZED_SPAWN_ODDS = 1 / 512;
 export const SPECIAL_SPAWN_ODDS = 1 / 4096;
 
 /**
- * And the band above it: eight times thinner again, because the
- * pokemon in it are one apiece and the walk that finds one is the
- * story of that save
+ * And the band above it, as wide as the special one: a mythical is
+ * one apiece the way a legendary is, so the walk that finds either is
+ * the same walk
  */
-export const MYTHICAL_SPAWN_ODDS = 1 / 32768;
+export const MYTHICAL_SPAWN_ODDS = SPECIAL_SPAWN_ODDS;
 
 /**
  * The one-per-world class: Gen 1 legendaries and Mew. Future gens

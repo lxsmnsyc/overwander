@@ -44,30 +44,32 @@ async function logSpecies(
   `;
 }
 
+/** What one battle put in front of one player, by species */
+type Sightings = Map<Species, { seen: number; shiny: number }>;
+
 /**
- * Add one sighting each to a whole list, in **one statement**.
+ * Add one sighting each to a whole list of players, in **one
+ * statement**.
  *
- * A species appears at most once in it: postgres refuses an upsert
- * that would touch the same row twice, and a party fielding six
+ * A species appears at most once per player: postgres refuses an
+ * upsert that would touch the same row twice, and a party fielding six
  * Rattata is one Rattata met anyway. The two coats are separate
  * columns of that one row, so a species met in both is a single row
  * carrying a 1 in each
  */
-async function logSightings(
-  uid: string,
-  met: Map<Species, { seen: number; shiny: number }>,
-  sql: Sql | Tx = getSql(),
-): Promise<void> {
-  if (met.size === 0) {
+async function logSightings(met: Map<string, Sightings>, sql: Sql | Tx = getSql()): Promise<void> {
+  const rows = [...met].flatMap(([player, sighted]) =>
+    [...sighted].map(([species, coats]) => ({
+      player,
+      species,
+      seen: coats.seen,
+      seen_shiny: coats.shiny,
+    })),
+  );
+
+  if (rows.length === 0) {
     return;
   }
-
-  const rows = [...met].map(([species, coats]) => ({
-    player: uid,
-    species,
-    seen: coats.seen,
-    seen_shiny: coats.shiny,
-  }));
 
   await sql`
     insert into pokedex_entries ${sql(rows, 'player', 'species', 'seen', 'seen_shiny')}
@@ -75,6 +77,16 @@ async function logSightings(
       seen = pokedex_entries.seen + excluded.seen,
       seen_shiny = pokedex_entries.seen_shiny + excluded.seen_shiny
   `;
+}
+
+/** Fold a party into the tally, one meeting per species and coat */
+function tallyParty(met: Sightings, party: CatchSnapshot[]): void {
+  for (const one of party) {
+    met.set(one.species, {
+      seen: one.shiny ? (met.get(one.species)?.seen ?? 0) : 1,
+      shiny: one.shiny ? 1 : (met.get(one.species)?.shiny ?? 0),
+    });
+  }
 }
 
 /**
@@ -122,47 +134,61 @@ export async function recordSeenParty(
   party: CatchSnapshot[],
   sql?: Sql | Tx,
 ): Promise<void> {
-  const met = new Map<Species, { seen: number; shiny: number }>();
+  const met: Sightings = new Map();
 
-  for (const one of party) {
-    met.set(one.species, {
-      seen: one.shiny ? (met.get(one.species)?.seen ?? 0) : 1,
-      shiny: one.shiny ? 1 : (met.get(one.species)?.shiny ?? 0),
-    });
-  }
-  await logSightings(uid, met, sql);
+  tallyParty(met, party);
+  await logSightings(new Map([[uid, met]]), sql);
 }
 
 /**
  * Write down everything the other side of a battle fielded against
- * this player.
+ * each of these players.
  *
  * It is called where a battle is **staged** rather than where one is
  * settled, for the same reason an encounter is: a fight walked away
  * from is still a fight the player stood in. The other side is read
  * off the team snapshots the server froze, so it covers every kind of
  * battle at once, a raid boss and a rocket's party and another
- * player's team alike
+ * player's team alike.
+ *
+ * A whole lobby is logged in one read and one write, however many
+ * fought it. Only the players named here are credited: a gym seat's
+ * holder fields a frozen copy of their party and was never there
  */
-export async function recordSeenOpponents(battleId: string, uid: string): Promise<void> {
-  // One transaction, two statements: the other side is read and the
-  // sightings are written together, so a dex cannot be left holding
-  // half a battle
+export async function recordSeenOpponents(battleId: string, players: string[]): Promise<void> {
+  if (players.length === 0) {
+    return;
+  }
+
+  // One transaction, two statements: every side is read and every
+  // player's sightings are written together, so a dex cannot be left
+  // holding half a battle
   await tx(async (transaction) => {
     const rows = await transaction`
-      select ts.catches
+      select bt.player, ts.catches
       from battle_teams bt
       join team_snapshots ts on ts.id = bt.snapshot_id
-      where bt.battle_id = ${battleId} and (bt.player is null or bt.player <> ${uid})
+      where bt.battle_id = ${battleId}
     `;
-    const fielded: CatchSnapshot[] = [];
+    const sides = rows.map((row) => ({
+      player: typeof row.player === 'string' ? row.player : null,
+      party: Array.isArray(row.catches) ? row.catches.map((value) => asCatchSnapshot(value)) : [],
+    }));
+    const met = new Map<string, Sightings>();
 
-    for (const row of rows) {
-      if (Array.isArray(row.catches)) {
-        fielded.push(...row.catches.map((value) => asCatchSnapshot(value)));
+    for (const player of new Set(players)) {
+      const sighted: Sightings = new Map();
+
+      // Their own side is the one thing a fight does not introduce them
+      // to
+      for (const side of sides) {
+        if (side.player !== player) {
+          tallyParty(sighted, side.party);
+        }
       }
+      met.set(player, sighted);
     }
-    await recordSeenParty(uid, fielded, transaction);
+    await logSightings(met, transaction);
   });
 }
 

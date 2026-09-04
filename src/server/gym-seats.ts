@@ -566,7 +566,7 @@ export async function challengeGymSeat(
   if (staged) {
     // The challenger has met the seat's party. The holder is not
     // present for it, so nothing is written on their side
-    await recordSeenOpponents(battleId, uid);
+    await recordSeenOpponents(battleId, [uid]);
   }
 
   return staged ? battleId : null;

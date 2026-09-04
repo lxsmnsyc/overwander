@@ -544,9 +544,10 @@ export async function startDuel(uid: string, id: string, now: number): Promise<s
   });
 
   // Each side has met whatever the other brought
-  for (const [player] of fielded) {
-    await recordSeenOpponents(battleId, player);
-  }
+  await recordSeenOpponents(
+    battleId,
+    fielded.map(([player]) => player),
+  );
 
   return battleId;
 }

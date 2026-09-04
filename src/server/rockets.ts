@@ -356,7 +356,7 @@ export async function startRocketBattle(
 
   // What the stop put on the field is now something the player has
   // seen, whatever the fight comes to
-  await recordSeenOpponents(battleId, uid);
+  await recordSeenOpponents(battleId, [uid]);
 
   return battleId;
 }

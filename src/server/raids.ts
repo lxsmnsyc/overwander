@@ -839,9 +839,10 @@ export async function startRaid(uid: string, lobby: string, now: number): Promis
 
   // Everybody in the lobby has now stood in front of it, which is the
   // only way most of them will ever meet one
-  for (const [player] of fielded) {
-    await recordSeenOpponents(battleId, player);
-  }
+  await recordSeenOpponents(
+    battleId,
+    fielded.map(([player]) => player),
+  );
 
   return battleId;
 }

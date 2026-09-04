@@ -656,9 +656,9 @@ describe('where a species lives', () => {
       expect(habitat.rarity).toBe(SpawnRarity.Special);
     }
 
-    // A mythical stands in a band of its own, one place apiece and
-    // eight times thinner. The relic is the other way to one, not the
-    // only way
+    // A mythical stands in a band of its own, one place apiece and as
+    // thin as the legendary band. The relic is the other way to one,
+    // not the only way
     expect(isMythicalSpecies(Species.Mew)).toBe(true);
 
     const mythical = listSpeciesHabitats(Species.Mew);
@@ -667,7 +667,7 @@ describe('where a species lives', () => {
     for (const habitat of mythical) {
       expect(habitat.rarity).toBe(SpawnRarity.Mythical);
     }
-    expect(MYTHICAL_SPAWN_ODDS).toBeLessThan(SPECIAL_SPAWN_ODDS);
+    expect(MYTHICAL_SPAWN_ODDS).toBe(SPECIAL_SPAWN_ODDS);
   });
 
   it('says the same thing the pools do about every species', () => {

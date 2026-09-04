@@ -20,7 +20,10 @@ export default function registerGlacierSpawns(): void {
         { species: Species.Delibird, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS],
-      special: [{ species: Species.Articuno, weight: 10 }],
+      special: [
+        { species: Species.Regice, weight: 10 },
+        { species: Species.Articuno, weight: 10 },
+      ],
     },
     [TimeOfDay.Day]: {
       base: [
@@ -35,7 +38,10 @@ export default function registerGlacierSpawns(): void {
         { species: Species.Delibird, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS],
-      special: [{ species: Species.Articuno, weight: 10 }],
+      special: [
+        { species: Species.Regice, weight: 10 },
+        { species: Species.Articuno, weight: 10 },
+      ],
     },
     [TimeOfDay.Evening]: {
       base: [
@@ -52,7 +58,10 @@ export default function registerGlacierSpawns(): void {
         { species: Species.Sneasel, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS, { species: Species.Smoochum, weight: PRIZED_WEIGHT }],
-      special: [{ species: Species.Articuno, weight: 10 }],
+      special: [
+        { species: Species.Regice, weight: 10 },
+        { species: Species.Articuno, weight: 10 },
+      ],
     },
     [TimeOfDay.Night]: {
       base: [
@@ -69,7 +78,10 @@ export default function registerGlacierSpawns(): void {
         { species: Species.Sneasel, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS, { species: Species.Smoochum, weight: PRIZED_WEIGHT }],
-      special: [{ species: Species.Articuno, weight: 10 }],
+      special: [
+        { species: Species.Regice, weight: 10 },
+        { species: Species.Articuno, weight: 10 },
+      ],
     },
   });
 }

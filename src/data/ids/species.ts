@@ -494,6 +494,9 @@ export const enum Species {
   Beldum = 374,
   Metang = 375,
   Metagross = 376,
+  Regirock = 377,
+  Regice = 378,
+  Registeel = 379,
 }
 
 /**

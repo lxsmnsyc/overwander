@@ -588,9 +588,8 @@ describe('world', () => {
 
   it('stages legendary raids on the raid window', () => {
     const world = new World('overworld');
-    // Alpine tundra stages Articuno; the raid roll only reads the
-    // A lair is a place: the polar ocean holds the Seafoam Islands,
-    // and what is at home there is Articuno
+    // A lair is a place: the polar ocean holds the Seafoam Islands
+    // and the Island Cave, and each stages whoever is at home in it
     const chunk = findChunk(
       world,
       (candidate) =>
@@ -606,10 +605,14 @@ describe('world', () => {
     const raids = new ChunkSnapshot(chunk, 0).getLegendaryLairs();
 
     expect(raids.size).toBeGreaterThan(0);
+    const hosted = new Set(getBiomeLairs(Biome.PolarOcean));
+
+    expect(hosted).toEqual(new Set([Lairs.SeafoamIslands, Lairs.IslandCave]));
     for (const [cell, roll] of raids) {
       expect(chunk.getLandmarkCells().get(cell)).toBe(Landmark.LegendaryLair);
-      expect(roll.lair).toBe(Lairs.SeafoamIslands);
-      expect(roll.species).toBe(Species.Articuno);
+      expect(roll.lair).not.toBeNull();
+      expect(hosted.has(roll.lair ?? Lairs.FarawayIsland)).toBe(true);
+      expect(getLairResidents(roll.lair ?? Lairs.FarawayIsland)).toContain(roll.species);
     }
 
     // Every spawn window inside the raid's three hours stages the
@@ -656,12 +659,14 @@ describe('world', () => {
       return;
     }
 
-    // A mountain holds three: the volcano, the cave under it and the
-    // tower on it. Every window stages one of them, and whoever is at
-    // home in it
+    // A mountain holds four: the volcano, the cave under it, the
+    // tower on it and the tomb cut into it. Every window stages one
+    // of them, and whoever is at home in it
     const hosted = new Set(getBiomeLairs(Biome.Mountain));
 
-    expect(hosted).toEqual(new Set([Lairs.MtEmber, Lairs.CeruleanCave, Lairs.BellTower]));
+    expect(hosted).toEqual(
+      new Set([Lairs.MtEmber, Lairs.CeruleanCave, Lairs.BellTower, Lairs.AncientTomb]),
+    );
 
     for (let window = 0; window < 12; window++) {
       for (const roll of new ChunkSnapshot(chunk, window * RAID_INTERVAL)

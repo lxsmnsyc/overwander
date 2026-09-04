@@ -199,6 +199,9 @@ const enum Families {
   Luvdisc = 190,
   Bagon = 191,
   Beldum = 192,
+  Regirock = 193,
+  Regice = 194,
+  Registeel = 195,
 }
 
 export default Families;

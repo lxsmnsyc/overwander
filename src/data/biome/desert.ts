@@ -23,7 +23,10 @@ export default function registerDesertSpawns(): void {
         { species: Species.Solrock, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS, { species: Species.Magby, weight: PRIZED_WEIGHT }],
-      special: [{ species: Species.Moltres, weight: 10 }],
+      special: [
+        { species: Species.Regirock, weight: 10 },
+        { species: Species.Moltres, weight: 10 },
+      ],
     },
     [TimeOfDay.Day]: {
       base: [
@@ -45,7 +48,10 @@ export default function registerDesertSpawns(): void {
         { species: Species.Solrock, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS, { species: Species.Magby, weight: PRIZED_WEIGHT }],
-      special: [{ species: Species.Moltres, weight: 10 }],
+      special: [
+        { species: Species.Regirock, weight: 10 },
+        { species: Species.Moltres, weight: 10 },
+      ],
     },
     [TimeOfDay.Evening]: {
       base: [
@@ -62,7 +68,10 @@ export default function registerDesertSpawns(): void {
         { species: Species.Magmar, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS, { species: Species.Magby, weight: PRIZED_WEIGHT }],
-      special: [{ species: Species.Moltres, weight: 10 }],
+      special: [
+        { species: Species.Regirock, weight: 10 },
+        { species: Species.Moltres, weight: 10 },
+      ],
     },
     [TimeOfDay.Night]: {
       base: [
@@ -79,7 +88,10 @@ export default function registerDesertSpawns(): void {
         { species: Species.Magmar, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS, { species: Species.Magby, weight: PRIZED_WEIGHT }],
-      special: [{ species: Species.Moltres, weight: 10 }],
+      special: [
+        { species: Species.Regirock, weight: 10 },
+        { species: Species.Moltres, weight: 10 },
+      ],
     },
   });
 }

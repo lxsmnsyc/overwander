@@ -53,7 +53,11 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Solrock, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS],
-      special: [{ species: Species.Entei, weight: 10 }],
+      special: [
+        { species: Species.Regirock, weight: 10 },
+        { species: Species.Registeel, weight: 10 },
+        { species: Species.Entei, weight: 10 },
+      ],
     },
     [TimeOfDay.Day]: {
       base: [
@@ -101,7 +105,11 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Solrock, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS],
-      special: [{ species: Species.Entei, weight: 10 }],
+      special: [
+        { species: Species.Regirock, weight: 10 },
+        { species: Species.Registeel, weight: 10 },
+        { species: Species.Entei, weight: 10 },
+      ],
     },
     [TimeOfDay.Evening]: {
       base: [
@@ -137,7 +145,11 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Lunatone, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS],
-      special: [{ species: Species.Entei, weight: 10 }],
+      special: [
+        { species: Species.Regirock, weight: 10 },
+        { species: Species.Registeel, weight: 10 },
+        { species: Species.Entei, weight: 10 },
+      ],
     },
     [TimeOfDay.Night]: {
       base: [
@@ -174,7 +186,11 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Lunatone, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS],
-      special: [{ species: Species.Entei, weight: 10 }],
+      special: [
+        { species: Species.Regirock, weight: 10 },
+        { species: Species.Registeel, weight: 10 },
+        { species: Species.Entei, weight: 10 },
+      ],
     },
   });
 }

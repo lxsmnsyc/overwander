@@ -20,7 +20,10 @@ export default function registerPolarOceanSpawns(): void {
         { species: Species.Lapras, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS],
-      special: [{ species: Species.Articuno, weight: 10 }],
+      special: [
+        { species: Species.Regice, weight: 10 },
+        { species: Species.Articuno, weight: 10 },
+      ],
     },
     [TimeOfDay.Day]: {
       base: [
@@ -35,7 +38,10 @@ export default function registerPolarOceanSpawns(): void {
         { species: Species.Lapras, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS],
-      special: [{ species: Species.Articuno, weight: 10 }],
+      special: [
+        { species: Species.Regice, weight: 10 },
+        { species: Species.Articuno, weight: 10 },
+      ],
     },
     [TimeOfDay.Evening]: {
       base: [
@@ -50,7 +56,10 @@ export default function registerPolarOceanSpawns(): void {
         { species: Species.Lapras, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS],
-      special: [{ species: Species.Articuno, weight: 10 }],
+      special: [
+        { species: Species.Regice, weight: 10 },
+        { species: Species.Articuno, weight: 10 },
+      ],
     },
     [TimeOfDay.Night]: {
       base: [
@@ -65,7 +74,10 @@ export default function registerPolarOceanSpawns(): void {
         { species: Species.Lapras, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS],
-      special: [{ species: Species.Articuno, weight: 10 }],
+      special: [
+        { species: Species.Regice, weight: 10 },
+        { species: Species.Articuno, weight: 10 },
+      ],
     },
   });
 }

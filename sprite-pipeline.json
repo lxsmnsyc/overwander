@@ -6685,6 +6685,78 @@
         "bytes": 7021
       }
     },
+    "public/sprites/pokemon/hoenn/377/regular.png": {
+      "digest": "a882030da5088d36",
+      "bytes": 10599,
+      "width": 177,
+      "height": 247,
+      "compact": {
+        "at": "2026-09-04T02:55:26Z",
+        "as": "already compact",
+        "was": 10599,
+        "bytes": 10599
+      }
+    },
+    "public/sprites/pokemon/hoenn/377/shiny.png": {
+      "digest": "2d07f4eb84bbbfff",
+      "bytes": 10599,
+      "width": 177,
+      "height": 247,
+      "compact": {
+        "at": "2026-09-04T02:55:26Z",
+        "as": "already compact",
+        "was": 10599,
+        "bytes": 10599
+      }
+    },
+    "public/sprites/pokemon/hoenn/378/regular.png": {
+      "digest": "65f38eb74b528665",
+      "bytes": 6688,
+      "width": 157,
+      "height": 214,
+      "compact": {
+        "at": "2026-09-04T02:55:26Z",
+        "as": "already compact",
+        "was": 6688,
+        "bytes": 6688
+      }
+    },
+    "public/sprites/pokemon/hoenn/378/shiny.png": {
+      "digest": "66cdfa1a27d01b7c",
+      "bytes": 6688,
+      "width": 157,
+      "height": 214,
+      "compact": {
+        "at": "2026-09-04T02:55:26Z",
+        "as": "already compact",
+        "was": 6688,
+        "bytes": 6688
+      }
+    },
+    "public/sprites/pokemon/hoenn/379/regular.png": {
+      "digest": "58769e23e90a2fdd",
+      "bytes": 6930,
+      "width": 177,
+      "height": 201,
+      "compact": {
+        "at": "2026-09-04T02:55:26Z",
+        "as": "already compact",
+        "was": 6930,
+        "bytes": 6930
+      }
+    },
+    "public/sprites/pokemon/hoenn/379/shiny.png": {
+      "digest": "987393737ab2693d",
+      "bytes": 7130,
+      "width": 177,
+      "height": 201,
+      "compact": {
+        "at": "2026-09-04T02:55:26Z",
+        "as": "already compact",
+        "was": 7130,
+        "bytes": 7130
+      }
+    },
     "public/sprites/pokemon/johto/1020101/regular.png": {
       "digest": "56c4813faee238f2",
       "bytes": 1095,

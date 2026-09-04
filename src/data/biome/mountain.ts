@@ -58,6 +58,7 @@ export default function registerMountainSpawns(): void {
       ],
       prized: [...UNOWN_SPAWNS, { species: Species.Magby, weight: PRIZED_WEIGHT }],
       special: [
+        { species: Species.Registeel, weight: 10 },
         { species: Species.Zapdos, weight: 10 },
         { species: Species.Moltres, weight: 10 },
         { species: Species.HoOh, weight: 10 },
@@ -117,6 +118,7 @@ export default function registerMountainSpawns(): void {
       ],
       prized: [...UNOWN_SPAWNS, { species: Species.Magby, weight: PRIZED_WEIGHT }],
       special: [
+        { species: Species.Registeel, weight: 10 },
         { species: Species.Zapdos, weight: 10 },
         { species: Species.Moltres, weight: 10 },
         { species: Species.HoOh, weight: 10 },
@@ -157,6 +159,7 @@ export default function registerMountainSpawns(): void {
       ],
       prized: [...UNOWN_SPAWNS, { species: Species.Magby, weight: PRIZED_WEIGHT }],
       special: [
+        { species: Species.Registeel, weight: 10 },
         { species: Species.Zapdos, weight: 10 },
         { species: Species.Moltres, weight: 10 },
         { species: Species.HoOh, weight: 10 },
@@ -206,6 +209,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Magby, weight: PRIZED_WEIGHT },
       ],
       special: [
+        { species: Species.Registeel, weight: 10 },
         { species: Species.Zapdos, weight: 10 },
         { species: Species.Moltres, weight: 10 },
         { species: Species.Mewtwo, weight: 10 },

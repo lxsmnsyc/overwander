@@ -41,6 +41,14 @@ const enum Lairs {
    * Celebi's shrine. A mythical's lair, so the world never stages it
    */
   IlexForest = 8,
+  /**
+   * The three sealed chambers, one golem apiece. Unlike the Burned
+   * Tower, which holds three, each of these holds exactly one: they
+   * were sealed separately and are opened separately
+   */
+  DesertRuins = 9,
+  IslandCave = 10,
+  AncientTomb = 11,
 }
 
 export const LAIR_NAMES: Record<Lairs, string> = {
@@ -53,6 +61,9 @@ export const LAIR_NAMES: Record<Lairs, string> = {
   [Lairs.WhirlIslands]: 'Whirl Islands',
   [Lairs.BellTower]: 'Bell Tower',
   [Lairs.IlexForest]: 'Ilex Forest',
+  [Lairs.DesertRuins]: 'Desert Ruins',
+  [Lairs.IslandCave]: 'Island Cave',
+  [Lairs.AncientTomb]: 'Ancient Tomb',
 };
 
 /**
@@ -71,6 +82,9 @@ export const LAIR_SPECIES: Record<Lairs, Species[]> = {
   [Lairs.WhirlIslands]: [Species.Lugia],
   [Lairs.BellTower]: [Species.HoOh],
   [Lairs.IlexForest]: [Species.Celebi],
+  [Lairs.DesertRuins]: [Species.Regirock],
+  [Lairs.IslandCave]: [Species.Regice],
+  [Lairs.AncientTomb]: [Species.Registeel],
 };
 
 /**
@@ -86,14 +100,19 @@ export const EVERY_LAIR: Lairs[] = [
   Lairs.WhirlIslands,
   Lairs.BellTower,
   Lairs.IlexForest,
+  Lairs.DesertRuins,
+  Lairs.IslandCave,
+  Lairs.AncientTomb,
 ];
 
 /**
  * Which lairs a biome can host. A lair is a place, so it sits where
  * that place would be: the Seafoam Islands are a sea cave in cold
  * water, Mt. Ember is a volcano, Cerulean Cave is deep under a
- * mountain, and the Power Plant is the one building among them —
- * abandoned on flat ground, which is where the plains are.
+ * mountain, and the Power Plant is the one building among them,
+ * abandoned on flat ground, which is where the plains are. The three
+ * sealed chambers sit where their doors were cut: ruins in the sand,
+ * a cave in the ice, a tomb under the rock.
  *
  * A biome with no lair stages no legendary lair at all, which is most
  * of them: a legendary the whole world could walk to is not a
@@ -102,13 +121,14 @@ export const EVERY_LAIR: Lairs[] = [
 const BIOME_LAIRS: { [key in Biome]?: Lairs[] } = {
   [Biome.DeepOcean]: [Lairs.SeafoamIslands, Lairs.WhirlIslands],
   [Biome.Ocean]: [Lairs.WhirlIslands],
-  [Biome.PolarOcean]: [Lairs.SeafoamIslands],
-  [Biome.Glacier]: [Lairs.SeafoamIslands],
+  [Biome.PolarOcean]: [Lairs.SeafoamIslands, Lairs.IslandCave],
+  [Biome.Glacier]: [Lairs.SeafoamIslands, Lairs.IslandCave],
   [Biome.Grassland]: [Lairs.PowerPlant, Lairs.BurnedTower],
   [Biome.Woodland]: [Lairs.BurnedTower],
   [Biome.Steppe]: [Lairs.PowerPlant],
-  [Biome.Desert]: [Lairs.MtEmber],
-  [Biome.Mountain]: [Lairs.MtEmber, Lairs.CeruleanCave, Lairs.BellTower],
+  [Biome.Desert]: [Lairs.MtEmber, Lairs.DesertRuins],
+  [Biome.Badlands]: [Lairs.DesertRuins, Lairs.AncientTomb],
+  [Biome.Mountain]: [Lairs.MtEmber, Lairs.CeruleanCave, Lairs.BellTower, Lairs.AncientTomb],
   [Biome.AlpineTundra]: [Lairs.CeruleanCave],
 };
 

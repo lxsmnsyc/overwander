@@ -11,6 +11,7 @@ import registerDuskullSpecies from './duskull';
 import registerGulpinSpecies from './gulpin';
 import registerMakuhitaSpecies from './makuhita';
 import registerNumelSpecies from './numel';
+import registerRegiSpecies from './regis';
 import registerShuppetSpecies from './shuppet';
 import registerSnoruntSpecies from './snorunt';
 import registerSpoinkSpecies from './spoink';
@@ -112,4 +113,5 @@ export default function registerGen3Species(): void {
   registerSnoruntSpecies();
   registerSpoinkSpecies();
   registerSwabluSpecies();
+  registerRegiSpecies();
 }

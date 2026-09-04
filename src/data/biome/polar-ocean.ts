@@ -10,44 +10,48 @@ export default function registerPolarOceanSpawns(): void {
     [TimeOfDay.Morning]: {
       base: [],
       uncommon: [{ species: Species.Seel, weight: 20 }],
-      rare: [
+      rare: [],
+      scarce: [
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Cloyster, weight: 10 },
-        { species: Species.Lapras, weight: 5 },
       ],
+      elusive: [{ species: Species.Lapras, weight: 5 }],
       prized: [...UNOWN_SPAWNS],
       special: [{ species: Species.Articuno, weight: 10 }],
     },
     [TimeOfDay.Day]: {
       base: [],
       uncommon: [{ species: Species.Seel, weight: 20 }],
-      rare: [
+      rare: [],
+      scarce: [
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Cloyster, weight: 10 },
-        { species: Species.Lapras, weight: 5 },
       ],
+      elusive: [{ species: Species.Lapras, weight: 5 }],
       prized: [...UNOWN_SPAWNS],
       special: [{ species: Species.Articuno, weight: 10 }],
     },
     [TimeOfDay.Evening]: {
       base: [],
       uncommon: [{ species: Species.Seel, weight: 20 }],
-      rare: [
+      rare: [],
+      scarce: [
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Cloyster, weight: 10 },
-        { species: Species.Lapras, weight: 5 },
       ],
+      elusive: [{ species: Species.Lapras, weight: 5 }],
       prized: [...UNOWN_SPAWNS],
       special: [{ species: Species.Articuno, weight: 10 }],
     },
     [TimeOfDay.Night]: {
       base: [],
       uncommon: [{ species: Species.Seel, weight: 20 }],
-      rare: [
+      rare: [],
+      scarce: [
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Cloyster, weight: 10 },
-        { species: Species.Lapras, weight: 5 },
       ],
+      elusive: [{ species: Species.Lapras, weight: 5 }],
       prized: [...UNOWN_SPAWNS],
       special: [{ species: Species.Articuno, weight: 10 }],
     },

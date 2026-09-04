@@ -52,6 +52,8 @@ export {
   RARE_SPAWN_ODDS,
   registerSpawnPool,
   spawnBand,
+  spawnRanks,
+  SPAWN_BAND_KEYS,
   SPECIAL_SPAWN_ODDS,
   SpawnRarity,
 } from './__create';

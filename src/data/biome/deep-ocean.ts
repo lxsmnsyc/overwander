@@ -23,16 +23,18 @@ export default function registerDeepOceanSpawns(): void {
         { species: Species.Dratini, weight: 4 },
       ],
       uncommon: [
-        { species: Species.Dragonair, weight: 2 },
         { species: Species.Tentacool, weight: 20 },
         { species: Species.Magikarp, weight: 20 },
         { species: Species.Chinchou, weight: 20 },
       ],
-      rare: [
+      rare: [{ species: Species.Dragonair, weight: 2 }],
+      scarce: [
         { species: Species.Gyarados, weight: 10 },
+        { species: Species.Lanturn, weight: 10 },
+      ],
+      elusive: [
         { species: Species.Lapras, weight: 5 },
         { species: Species.Dragonite, weight: 2 },
-        { species: Species.Lanturn, weight: 10 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [{ species: Species.Lugia, weight: 10 }],
@@ -43,16 +45,18 @@ export default function registerDeepOceanSpawns(): void {
         { species: Species.Dratini, weight: 4 },
       ],
       uncommon: [
-        { species: Species.Dragonair, weight: 2 },
         { species: Species.Tentacool, weight: 20 },
         { species: Species.Magikarp, weight: 20 },
         { species: Species.Chinchou, weight: 20 },
       ],
-      rare: [
+      rare: [{ species: Species.Dragonair, weight: 2 }],
+      scarce: [
         { species: Species.Gyarados, weight: 10 },
+        { species: Species.Lanturn, weight: 10 },
+      ],
+      elusive: [
         { species: Species.Lapras, weight: 5 },
         { species: Species.Dragonite, weight: 2 },
-        { species: Species.Lanturn, weight: 10 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [{ species: Species.Lugia, weight: 10 }],
@@ -63,16 +67,18 @@ export default function registerDeepOceanSpawns(): void {
         { species: Species.Dratini, weight: 4 },
       ],
       uncommon: [
-        { species: Species.Dragonair, weight: 2 },
         { species: Species.Tentacool, weight: 20 },
         { species: Species.Magikarp, weight: 20 },
         { species: Species.Chinchou, weight: 20 },
       ],
-      rare: [
+      rare: [{ species: Species.Dragonair, weight: 2 }],
+      scarce: [
         { species: Species.Gyarados, weight: 10 },
+        { species: Species.Lanturn, weight: 10 },
+      ],
+      elusive: [
         { species: Species.Lapras, weight: 5 },
         { species: Species.Dragonite, weight: 2 },
-        { species: Species.Lanturn, weight: 10 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [{ species: Species.Lugia, weight: 10 }],
@@ -83,16 +89,18 @@ export default function registerDeepOceanSpawns(): void {
         { species: Species.Dratini, weight: 4 },
       ],
       uncommon: [
-        { species: Species.Dragonair, weight: 2 },
         { species: Species.Tentacool, weight: 20 },
         { species: Species.Magikarp, weight: 20 },
         { species: Species.Chinchou, weight: 20 },
       ],
-      rare: [
+      rare: [{ species: Species.Dragonair, weight: 2 }],
+      scarce: [
         { species: Species.Gyarados, weight: 10 },
+        { species: Species.Lanturn, weight: 10 },
+      ],
+      elusive: [
         { species: Species.Lapras, weight: 5 },
         { species: Species.Dragonite, weight: 2 },
-        { species: Species.Lanturn, weight: 10 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [{ species: Species.Lugia, weight: 10 }],

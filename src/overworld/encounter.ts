@@ -218,9 +218,15 @@ const TRAIT_RANGE = 256;
  * legendary with a known answer
  */
 export const SPAWN_LEVELS: Record<SpawnRarity, [minimum: number, maximum: number]> = {
+  // Level follows the stage rather than the band: a first stage is
+  // young whichever length of line it stands at the bottom of, and
+  // the end of a two-stage line is as grown as the end of a
+  // three-stage one
   [SpawnRarity.Base]: [5, 15],
-  [SpawnRarity.Uncommon]: [15, 30],
-  [SpawnRarity.Rare]: [30, 45],
+  [SpawnRarity.Uncommon]: [5, 15],
+  [SpawnRarity.Rare]: [15, 30],
+  [SpawnRarity.Scarce]: [30, 45],
+  [SpawnRarity.Elusive]: [30, 45],
   // The babies and the unowns are met the way a base spawn is: they
   // are rare to *find*, not far along
   [SpawnRarity.Prized]: [5, 15],

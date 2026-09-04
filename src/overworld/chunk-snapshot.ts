@@ -1,6 +1,12 @@
 import { asOffset, toZoneKey } from '../auth/local-time';
 import AleaRNG from '../core/alea';
-import { boostFamilyWeights, boostTypeWeights, getSpawnPool, pickSpawn } from '../data/biome';
+import {
+  boostFamilyWeights,
+  boostTypeWeights,
+  getSpawnPool,
+  pickSpawn,
+  spawnRanks,
+} from '../data/biome';
 import type { SpawnRarityGroups } from '../data/biome';
 import { SPECIES_DAY_WEIGHT_BOOST, getFeaturedFamily } from '../data/species';
 import { TimeOfDay, getTimeOfDay, isWaterBiome } from '../data/ids/biome';
@@ -687,7 +693,7 @@ export default class ChunkSnapshot {
       // A species with nothing left to cast once the boss bans are
       // applied is no boss: it is left out of the draw rather than
       // staged with an empty move list
-      const rare = pool.rare.filter((entry) => canStageBoss(entry.species));
+      const rare = spawnRanks(pool)[2].filter((entry) => canStageBoss(entry.species));
 
       for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
         if (landmark !== Landmark.ShadowLair) {
@@ -954,7 +960,7 @@ export default class ChunkSnapshot {
 
     for (const time of times) {
       const pool = getSpawnPool(this.chunk.biome, time);
-      const bands = [pool.base, pool.uncommon, pool.rare];
+      const bands = spawnRanks(pool);
       const stocked = bands.find((band) => band.length > 0);
 
       if (stocked != null) {

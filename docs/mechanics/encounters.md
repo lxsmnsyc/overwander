@@ -30,13 +30,20 @@ without one can neither see nor reach the last three.
 Each pokemon that appears rolls first for a rarity band, then for a species
 within that band.
 
-| Band     | Odds     | What is in it                           |
-| -------- | -------- | --------------------------------------- |
-| Special  | 1/4096   | Legendaries and mythicals               |
-| Prized   | 1/512    | Babies and unowns                       |
-| Rare     | 1/64     | Fully-evolved and single-stage species  |
-| Uncommon | 1/8      | Middle evolutions                       |
-| Base     | The rest | Unevolved species that can still evolve |
+| Band     | Odds     | What is in it                                              |
+| -------- | -------- | ---------------------------------------------------------- |
+| Mythical | 1/4096   | Mythicals                                                  |
+| Special  | 1/4096   | Legendaries                                                |
+| Prized   | 1/512    | Babies and unowns                                          |
+| Elusive  | 1/32     | The end of a three-stage line, and species that never evolve |
+| Scarce   | 1/16     | The end of a two-stage line                                |
+| Rare     | 1/8      | The middle of a three-stage line                           |
+| Uncommon | 1/4      | The first stage of a two-stage line                        |
+| Base     | The rest | The first stage of a three-stage line                      |
+
+A baby is not counted as a stage: it has a band of its own, so the line behind
+it is one stage shorter. Pichu is prized, Pikachu is the first stage of a
+two-stage line, and Raichu is the end of one.
 
 Which species appear inside a band, and how often each does, depends on the
 biome and the time of day. That is why one field is full of Rattata while a
@@ -54,13 +61,16 @@ A prized pokemon is not unique. Unlike a legendary, a second one may be met.
 Level depends on the rarity band, so a first field does not hand out a level 90
 Rattata and a legendary is never trivial:
 
-| Band     | Level range |
-| -------- | ----------- |
-| Base     | 5–15        |
-| Prized   | 5–15        |
-| Uncommon | 15–30       |
-| Rare     | 30–45       |
-| Special  | 1–100       |
+Level follows the stage rather than the band: a first stage is young whichever
+length of line it stands at the bottom of.
+
+| Band              | Level range |
+| ----------------- | ----------- |
+| Base, Uncommon    | 5–15        |
+| Prized            | 5–15        |
+| Rare              | 15–30       |
+| Scarce, Elusive   | 30–45       |
+| Special, Mythical | 1–100       |
 
 A buddy can move the edges of that band. **Keen Eye** or **Intimidate** keeps
 what is far below it away, lifting the bottom by three levels; **Hustle**,

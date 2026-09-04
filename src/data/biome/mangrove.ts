@@ -10,18 +10,20 @@ export default function registerMangroveSpawns(): void {
     [TimeOfDay.Morning]: {
       base: [{ species: Species.Totodile, weight: 2 }],
       uncommon: [
-        { species: Species.Croconaw, weight: 1 },
         { species: Species.Slowpoke, weight: 20 },
         { species: Species.Krabby, weight: 20 },
         { species: Species.Wooper, weight: 25 },
       ],
-      rare: [
+      rare: [{ species: Species.Croconaw, weight: 1 }],
+      scarce: [
         { species: Species.Slowbro, weight: 10 },
-        { species: Species.Farfetchd, weight: 5 },
         { species: Species.Kingler, weight: 10 },
-        { species: Species.Feraligatr, weight: 2 },
         { species: Species.Slowking, weight: 5 },
         { species: Species.Quagsire, weight: 10 },
+      ],
+      elusive: [
+        { species: Species.Farfetchd, weight: 5 },
+        { species: Species.Feraligatr, weight: 2 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [],
@@ -29,18 +31,20 @@ export default function registerMangroveSpawns(): void {
     [TimeOfDay.Day]: {
       base: [{ species: Species.Totodile, weight: 2 }],
       uncommon: [
-        { species: Species.Croconaw, weight: 1 },
         { species: Species.Slowpoke, weight: 20 },
         { species: Species.Krabby, weight: 20 },
         { species: Species.Wooper, weight: 25 },
       ],
-      rare: [
+      rare: [{ species: Species.Croconaw, weight: 1 }],
+      scarce: [
         { species: Species.Slowbro, weight: 10 },
-        { species: Species.Farfetchd, weight: 5 },
         { species: Species.Kingler, weight: 10 },
-        { species: Species.Feraligatr, weight: 2 },
         { species: Species.Slowking, weight: 5 },
         { species: Species.Quagsire, weight: 10 },
+      ],
+      elusive: [
+        { species: Species.Farfetchd, weight: 5 },
+        { species: Species.Feraligatr, weight: 2 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [],
@@ -51,7 +55,8 @@ export default function registerMangroveSpawns(): void {
         { species: Species.Krabby, weight: 20 },
         { species: Species.Wooper, weight: 25 },
       ],
-      rare: [
+      rare: [],
+      scarce: [
         { species: Species.Kingler, weight: 10 },
         { species: Species.Quagsire, weight: 10 },
       ],
@@ -64,7 +69,8 @@ export default function registerMangroveSpawns(): void {
         { species: Species.Krabby, weight: 20 },
         { species: Species.Wooper, weight: 25 },
       ],
-      rare: [
+      rare: [],
+      scarce: [
         { species: Species.Kingler, weight: 10 },
         { species: Species.Quagsire, weight: 10 },
       ],

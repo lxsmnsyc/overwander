@@ -10,64 +10,64 @@ export default function registerColdDesertSpawns(): void {
     [TimeOfDay.Morning]: {
       base: [{ species: Species.Geodude, weight: 20 }],
       uncommon: [
-        { species: Species.Graveler, weight: 5 },
         { species: Species.Diglett, weight: 20 },
         { species: Species.Onix, weight: 10 },
       ],
-      rare: [
+      rare: [{ species: Species.Graveler, weight: 5 }],
+      scarce: [
         { species: Species.Dugtrio, weight: 10 },
-        { species: Species.Golem, weight: 5 },
         { species: Species.Steelix, weight: 5 },
       ],
+      elusive: [{ species: Species.Golem, weight: 5 }],
       prized: [...UNOWN_SPAWNS],
       special: [],
     },
     [TimeOfDay.Day]: {
       base: [{ species: Species.Geodude, weight: 20 }],
       uncommon: [
-        { species: Species.Graveler, weight: 5 },
         { species: Species.Diglett, weight: 20 },
         { species: Species.Onix, weight: 10 },
       ],
-      rare: [
+      rare: [{ species: Species.Graveler, weight: 5 }],
+      scarce: [
         { species: Species.Dugtrio, weight: 10 },
-        { species: Species.Golem, weight: 5 },
         { species: Species.Steelix, weight: 5 },
       ],
+      elusive: [{ species: Species.Golem, weight: 5 }],
       prized: [...UNOWN_SPAWNS],
       special: [],
     },
     [TimeOfDay.Evening]: {
       base: [{ species: Species.Geodude, weight: 20 }],
       uncommon: [
-        { species: Species.Graveler, weight: 5 },
         { species: Species.Diglett, weight: 20 },
         { species: Species.Onix, weight: 10 },
         { species: Species.Gligar, weight: 5 },
       ],
-      rare: [
+      rare: [{ species: Species.Graveler, weight: 5 }],
+      scarce: [
         { species: Species.Dugtrio, weight: 10 },
-        { species: Species.Golem, weight: 5 },
         { species: Species.Steelix, weight: 5 },
       ],
+      elusive: [{ species: Species.Golem, weight: 5 }],
       prized: [...UNOWN_SPAWNS],
       special: [],
     },
     [TimeOfDay.Night]: {
       base: [{ species: Species.Geodude, weight: 20 }],
       uncommon: [
-        { species: Species.Graveler, weight: 5 },
         { species: Species.Diglett, weight: 20 },
         { species: Species.Cubone, weight: 20 },
         { species: Species.Onix, weight: 10 },
         { species: Species.Gligar, weight: 5 },
       ],
-      rare: [
+      rare: [{ species: Species.Graveler, weight: 5 }],
+      scarce: [
         { species: Species.Dugtrio, weight: 10 },
-        { species: Species.Golem, weight: 5 },
         { species: Species.Marowak, weight: 10 },
         { species: Species.Steelix, weight: 5 },
       ],
+      elusive: [{ species: Species.Golem, weight: 5 }],
       prized: [...UNOWN_SPAWNS],
       special: [],
     },

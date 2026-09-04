@@ -5,6 +5,7 @@ import registerBiomeSpawns, {
   BIOME_NAMES,
   MYTHICAL_SPAWN_ODDS,
   PRIZED_WEIGHT,
+  SPAWN_BAND_KEYS,
   SPECIAL_SPAWN_ODDS,
   SpawnRarity,
   TIMES_OF_DAY,
@@ -897,15 +898,8 @@ describe('where a species lives', () => {
       for (const time of TIMES_OF_DAY) {
         const groups = getSpawnPool(biome, time);
 
-        for (const band of [
-          groups.base,
-          groups.uncommon,
-          groups.rare,
-          groups.prized ?? [],
-          groups.special,
-          groups.mythical ?? [],
-        ]) {
-          for (const entry of band) {
+        for (const band of SPAWN_BAND_KEYS) {
+          for (const entry of spawnBand(groups, band)) {
             counted.set(entry.species, (counted.get(entry.species) ?? 0) + 1);
           }
         }
@@ -924,14 +918,8 @@ describe('where a species lives', () => {
 
         // The prized band is the alphabet and the babies, which stand
         // in every biome by design
-        for (const band of [
-          groups.base,
-          groups.uncommon,
-          groups.rare,
-          groups.special,
-          groups.mythical ?? [],
-        ]) {
-          for (const entry of band) {
+        for (const band of SPAWN_BAND_KEYS.filter((key) => key !== 'prized')) {
+          for (const entry of spawnBand(groups, band)) {
             const data = getSpeciesData(entry.species);
 
             expect(data.biomes, `${data.name} in ${BIOME_NAMES[biome]}`).toContain(biome);
@@ -952,15 +940,8 @@ describe('where a species lives', () => {
       for (const time of TIMES_OF_DAY) {
         const groups = getSpawnPool(biome, time);
 
-        for (const band of [
-          groups.base,
-          groups.uncommon,
-          groups.rare,
-          groups.prized ?? [],
-          groups.special,
-          groups.mythical ?? [],
-        ]) {
-          for (const entry of band) {
+        for (const band of SPAWN_BAND_KEYS) {
+          for (const entry of spawnBand(groups, band)) {
             staged.add(entry.species);
           }
         }
@@ -2010,9 +1991,9 @@ describe('species day', () => {
     // One for a first stage, one more for every band above it, five
     // for a legendary — the same order the spawn pools sort them in
     expect(getCatchCandy(Species.Bulbasaur)).toBe(1);
-    expect(getCatchCandy(Species.Ivysaur)).toBe(2);
-    expect(getCatchCandy(Species.Venusaur)).toBe(3);
-    expect(getCatchCandy(Species.Mewtwo)).toBe(5);
+    expect(getCatchCandy(Species.Ivysaur)).toBe(3);
+    expect(getCatchCandy(Species.Venusaur)).toBe(5);
+    expect(getCatchCandy(Species.Mewtwo)).toBe(7);
   });
 
   it('pays four times over for a catch on the family day', () => {
@@ -4195,19 +4176,32 @@ describe('biome data', () => {
   });
 
   it('classifies spawn rarity tiers', () => {
-    // The bottom of a three-stage line
+    // The bottom of a three-stage line, and the bottom of a two-stage
+    // one, which is a shorter walk to a finished pokemon
     expect(getSpawnRarity(Species.Pidgey)).toBe(SpawnRarity.Base);
     expect(getSpawnRarity(Species.Bulbasaur)).toBe(SpawnRarity.Base);
-
-    // Middle evolutions, and the first stage of a two-stage line,
-    // which is the same one step from finished
-    expect(getSpawnRarity(Species.Ivysaur)).toBe(SpawnRarity.Uncommon);
-    expect(getSpawnRarity(Species.Haunter)).toBe(SpawnRarity.Uncommon);
     expect(getSpawnRarity(Species.Omanyte)).toBe(SpawnRarity.Uncommon);
+    expect(getSpawnRarity(Species.Ekans)).toBe(SpawnRarity.Uncommon);
 
-    // Fully evolved and single-line
-    expect(getSpawnRarity(Species.Pidgeot)).toBe(SpawnRarity.Rare);
-    expect(getSpawnRarity(Species.Ditto)).toBe(SpawnRarity.Rare);
+    // The middle of a three-stage line
+    expect(getSpawnRarity(Species.Ivysaur)).toBe(SpawnRarity.Rare);
+    expect(getSpawnRarity(Species.Haunter)).toBe(SpawnRarity.Rare);
+
+    // The end of a two-stage line
+    expect(getSpawnRarity(Species.Omastar)).toBe(SpawnRarity.Scarce);
+    expect(getSpawnRarity(Species.Arbok)).toBe(SpawnRarity.Scarce);
+
+    // The end of a three-stage line, and a species that never evolves
+    expect(getSpawnRarity(Species.Pidgeot)).toBe(SpawnRarity.Elusive);
+    expect(getSpawnRarity(Species.Venusaur)).toBe(SpawnRarity.Elusive);
+    expect(getSpawnRarity(Species.Ditto)).toBe(SpawnRarity.Elusive);
+
+    // A baby leaves the rest of its line standing one stage shorter:
+    // Pikachu is the bottom of a two-stage line rather than the
+    // middle of a three-stage one, and a Jynx is grown on its own
+    expect(getSpawnRarity(Species.Pikachu)).toBe(SpawnRarity.Uncommon);
+    expect(getSpawnRarity(Species.Raichu)).toBe(SpawnRarity.Scarce);
+    expect(getSpawnRarity(Species.Jynx)).toBe(SpawnRarity.Elusive);
 
     // The two one-per-world classes, which are told apart: a
     // legendary is staged by the world at a lair, a mythical only
@@ -4250,12 +4244,12 @@ describe('biome data', () => {
     };
 
     // Richest first, each slice as wide as its own odds: special owns
-    // the opening 1/4096, prized the 1/512 after it, then rare, then
-    // uncommon, and whatever is left falls to base
+    // the opening 1/4096, prized the 1/512 after it, then the bands a
+    // line's stages are dealt into, and whatever is left falls to base
     expect(pickSpawn(groups, rolls([0]))).toBe(Species.Mew);
     expect(pickSpawn(groups, rolls([1 / 1024, 0]))).toBe(Species.Eevee);
     expect(pickSpawn(groups, rolls([1 / 128, 0]))).toBe(Species.Ditto);
-    expect(pickSpawn(groups, rolls([1 / 16, 0]))).toBe(Species.Ivysaur);
+    expect(pickSpawn(groups, rolls([0.3, 0]))).toBe(Species.Ivysaur);
     expect(pickSpawn(groups, rolls([0.9, 0]))).toBe(Species.Pidgey);
 
     // A pool that leaves the band out is every pool in the game
@@ -4515,11 +4509,13 @@ describe('biome data', () => {
     // A sub-1/4096 band roll lands in the special section
     expect(getSpawnRarity(pickSpawn(pool, rolls([0, 0]))!)).toBe(SpawnRarity.Special);
 
-    // A sub-1/64 band roll lands in the rare section
-    expect(getSpawnRarity(pickSpawn(pool, rolls([0.01, 0]))!)).toBe(SpawnRarity.Rare);
-
-    // A sub-1/8 band roll lands in the uncommon section
-    expect(getSpawnRarity(pickSpawn(pool, rolls([0.05, 0]))!)).toBe(SpawnRarity.Uncommon);
+    // Then the ladder down: prized, the two grown bands, the middle
+    // of a line, and the first stages
+    expect(getSpawnRarity(pickSpawn(pool, rolls([1 / 1024, 0]))!)).toBe(SpawnRarity.Prized);
+    expect(getSpawnRarity(pickSpawn(pool, rolls([0.01, 0]))!)).toBe(SpawnRarity.Elusive);
+    expect(getSpawnRarity(pickSpawn(pool, rolls([0.05, 0]))!)).toBe(SpawnRarity.Scarce);
+    expect(getSpawnRarity(pickSpawn(pool, rolls([0.15, 0]))!)).toBe(SpawnRarity.Rare);
+    expect(getSpawnRarity(pickSpawn(pool, rolls([0.3, 0]))!)).toBe(SpawnRarity.Uncommon);
 
     // Everything else lands in the base section
     expect(getSpawnRarity(pickSpawn(pool, rolls([0.5, 0]))!)).toBe(SpawnRarity.Base);

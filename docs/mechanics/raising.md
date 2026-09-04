@@ -11,7 +11,7 @@ anything else in it: catching Caterpies levels a Butterfree.
 
 | Rule                     | Value                     |
 | ------------------------ | ------------------------- |
-| Candy a catch pays       | 1 to 5, by how rare it is |
+| Candy a catch pays       | 1 to 8, by how rare it is |
 | On that family's own day | ×4                        |
 | Candy one level costs    | 1, or **2** for a shadow  |
 | Highest level            | 100                       |
@@ -19,13 +19,16 @@ anything else in it: catching Caterpies levels a Butterfree.
 What a catch pays depends on how hard it was to meet, since a candy is a level
 and a level of a legendary is worth more work than a level of a Rattata:
 
-| What was caught                      | Candy |
-| ------------------------------------ | ----- |
-| A first stage that can still evolve  | 1     |
-| A middle evolution                   | 2     |
-| A final evolution, or a one-off line | 3     |
-| A baby or an unown                   | 4     |
-| A legendary or mythical              | 5     |
+| What was caught                         | Candy |
+| --------------------------------------- | ----- |
+| The first stage of a three-stage line    | 1     |
+| The first stage of a two-stage line      | 2     |
+| The middle of a three-stage line         | 3     |
+| The end of a two-stage line              | 4     |
+| The end of a three-stage line, or a one-off | 5  |
+| A baby or an unown                       | 6     |
+| A legendary                              | 7     |
+| A mythical                               | 8     |
 
 Two held items pay extra candy, each about half the time. An **Exp. Share** pays
 the buddy's family, so everything caught feeds the one pokemon being raised. A

@@ -9,6 +9,8 @@ import registerBiomeSpawns, {
   SpawnRarity,
   getSpawnPool,
   getSpawnRarity,
+  isGrownSpecies,
+  spawnRanks,
 } from '../../src/data/biome';
 import Biome, {
   BIOME_CONFIGS,
@@ -1049,30 +1051,31 @@ describe('world', () => {
       expect(party).toHaveLength(ROCKET_PARTY_SIZE);
 
       const rank = snapshot.getRocketRank(cell);
+      const [young, middle, grown] = spawnRanks(pool);
       const bandOf = (band: typeof pool.base): typeof pool.base =>
-        band.length > 0 ? band : [pool.base, pool.uncommon, pool.rare].flat();
+        band.length > 0 ? band : [young, middle, grown].flat();
       const drawnFrom = (at: number, band: typeof pool.base): void => {
         expect(new Set(bandOf(band).map((entry) => entry.species)).has(party[at][0])).toBe(true);
       };
 
       if (rank === RocketRank.Giovanni) {
-        // Five of the rare band and a legendary at the end
+        // Five grown ones and a legendary at the end
         for (let at = 0; at < ROCKET_PARTY_SIZE - 1; at++) {
-          drawnFrom(at, pool.rare);
+          drawnFrom(at, grown);
         }
         continue;
       }
       if (rank === RocketRank.Executive) {
-        // Six of the rare band and nothing softer
+        // Six grown ones and nothing softer
         for (let at = 0; at < ROCKET_PARTY_SIZE; at++) {
-          drawnFrom(at, pool.rare);
+          drawnFrom(at, grown);
         }
         continue;
       }
       // A grunt's six, weakest first: one commoner, two of the
       // uncommon band and three of the rare. A band the window leaves
       // empty borrows from the commonest one that is not
-      const bands = [pool.base, pool.uncommon, pool.uncommon, pool.rare, pool.rare, pool.rare];
+      const bands = [young, middle, middle, grown, grown, grown];
 
       for (const [at, band] of bands.entries()) {
         drawnFrom(at, band);
@@ -1175,7 +1178,7 @@ describe('world', () => {
       }
       for (const [species] of party) {
         // Fully grown, never a legendary, and of the class' type
-        expect(getSpawnRarity(species)).toBe(SpawnRarity.Rare);
+        expect(isGrownSpecies(species), getSpeciesData(species).name).toBe(true);
         expect(lairSpecies.has(species)).toBe(false);
         if (types.size > 0) {
           expect(
@@ -1341,10 +1344,9 @@ describe('world', () => {
 
     const party = executive.snapshot.getRocketStops().get(executive.cell) ?? [];
     const rares = new Set(
-      getSpawnPool(
-        executive.snapshot.chunk.biome,
-        getTimeOfDay(executive.snapshot.npcTimestamp),
-      ).rare.map((entry) => entry.species),
+      spawnRanks(
+        getSpawnPool(executive.snapshot.chunk.biome, getTimeOfDay(executive.snapshot.npcTimestamp)),
+      )[2].map((entry) => entry.species),
     );
 
     expect(party).toHaveLength(ROCKET_PARTY_SIZE);
@@ -1996,8 +1998,8 @@ describe('world', () => {
 
       if (roll.lair == null) {
         // No named place behind it, so it is one of the biome's own
-        // rare species and it is called after the ground
-        expect(pool.rare.some((entry) => entry.species === roll.species)).toBe(true);
+        // grown species and it is called after the ground
+        expect(spawnRanks(pool)[2].some((entry) => entry.species === roll.species)).toBe(true);
         expect(getLairTitle(roll.lair, chunk.biome, true)).toBe(
           `Shadow ${BIOME_NAMES[chunk.biome]} Lair`,
         );
@@ -3071,7 +3073,7 @@ describe('world', () => {
       expect(getSpeciesData(egg.species).evolvesFrom).toBeUndefined();
     }
 
-    // The pokemon branch is 1/8 rare, the rest uncommon, and never
+    // The pokemon branch is 1/8 grown, the rest half-grown, and never
     // reaches the legendary tier
     const rare = resolvePhenomenon(grotto, Biome.Grassland, TimeOfDay.Morning, rolls([0.9, 0, 0]));
     const uncommon = resolvePhenomenon(
@@ -3083,11 +3085,11 @@ describe('world', () => {
 
     expect(rare?.kind).toBe('pokemon');
     if (rare?.kind === 'pokemon') {
-      expect(getSpawnRarity(rare.species)).toBe(SpawnRarity.Rare);
+      expect(isGrownSpecies(rare.species)).toBe(true);
     }
     expect(uncommon?.kind).toBe('pokemon');
     if (uncommon?.kind === 'pokemon') {
-      expect(getSpawnRarity(uncommon.species)).toBe(SpawnRarity.Uncommon);
+      expect(getSpawnRarity(uncommon.species)).toBe(SpawnRarity.Rare);
     }
 
     // The other three are half a meeting and half a find, and what

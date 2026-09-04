@@ -4,6 +4,7 @@ import {
   getEggPool,
   getSpawnPool,
   pickFromEntries,
+  spawnRanks,
 } from '../data/biome';
 import type { SpawnEntry } from '../data/biome';
 import type Biome from '../data/ids/biome';
@@ -176,10 +177,11 @@ function startled(
       : boostFamilyWeights(biomePool, featured, SPECIES_DAY_WEIGHT_BOOST);
   const groups = PHENOMENON_EGG_GROUPS[phenomenon];
   const rare = random() < PHENOMENON_RARE_CHANCE;
-  const preferred = rare ? pool.rare : pool.uncommon;
-  const fallback = rare ? pool.uncommon : pool.rare;
-  // Either band, so a thin rare band borrows the uncommon one. What is
-  // never borrowed is a species of the wrong kind
+  const [, middle, grown] = spawnRanks(pool);
+  const preferred = rare ? grown : middle;
+  const fallback = rare ? middle : grown;
+  // Either rank, so a biome with nothing half-grown borrows what is
+  // grown. What is never borrowed is a species of the wrong kind
   const bands =
     groups == null
       ? [preferred, fallback]

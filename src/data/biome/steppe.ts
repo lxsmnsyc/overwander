@@ -13,8 +13,6 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Magnemite, weight: 20 },
       ],
       uncommon: [
-        { species: Species.Flaaffy, weight: 5 },
-        { species: Species.Magneton, weight: 10 },
         { species: Species.Spearow, weight: 20 },
         { species: Species.Growlithe, weight: 10 },
         { species: Species.Ponyta, weight: 10 },
@@ -26,16 +24,22 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Girafarig, weight: 5 },
       ],
       rare: [
+        { species: Species.Flaaffy, weight: 5 },
+        { species: Species.Magneton, weight: 10 },
+      ],
+      scarce: [
         { species: Species.Fearow, weight: 10 },
         { species: Species.Arcanine, weight: 5 },
         { species: Species.Rapidash, weight: 10 },
         { species: Species.Dodrio, weight: 10 },
-        { species: Species.Kangaskhan, weight: 5 },
-        { species: Species.Tauros, weight: 10 },
         { species: Species.Electrode, weight: 10 },
         { species: Species.Furret, weight: 10 },
-        { species: Species.Miltank, weight: 5 },
         { species: Species.Donphan, weight: 10 },
+      ],
+      elusive: [
+        { species: Species.Kangaskhan, weight: 5 },
+        { species: Species.Tauros, weight: 10 },
+        { species: Species.Miltank, weight: 5 },
         { species: Species.Ampharos, weight: 10 },
       ],
       prized: [...UNOWN_SPAWNS],
@@ -47,8 +51,6 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Magnemite, weight: 20 },
       ],
       uncommon: [
-        { species: Species.Flaaffy, weight: 5 },
-        { species: Species.Magneton, weight: 10 },
         { species: Species.Spearow, weight: 20 },
         { species: Species.Ekans, weight: 20 },
         { species: Species.Growlithe, weight: 10 },
@@ -61,17 +63,23 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Girafarig, weight: 5 },
       ],
       rare: [
+        { species: Species.Flaaffy, weight: 5 },
+        { species: Species.Magneton, weight: 10 },
+      ],
+      scarce: [
         { species: Species.Fearow, weight: 10 },
         { species: Species.Arbok, weight: 10 },
         { species: Species.Arcanine, weight: 5 },
         { species: Species.Rapidash, weight: 10 },
         { species: Species.Dodrio, weight: 10 },
-        { species: Species.Kangaskhan, weight: 5 },
-        { species: Species.Tauros, weight: 10 },
         { species: Species.Electrode, weight: 10 },
         { species: Species.Furret, weight: 10 },
-        { species: Species.Miltank, weight: 5 },
         { species: Species.Donphan, weight: 10 },
+      ],
+      elusive: [
+        { species: Species.Kangaskhan, weight: 5 },
+        { species: Species.Tauros, weight: 10 },
+        { species: Species.Miltank, weight: 5 },
         { species: Species.Ampharos, weight: 10 },
       ],
       prized: [...UNOWN_SPAWNS],
@@ -80,13 +88,13 @@ export default function registerSteppeSpawns(): void {
     [TimeOfDay.Evening]: {
       base: [{ species: Species.Magnemite, weight: 20 }],
       uncommon: [
-        { species: Species.Magneton, weight: 10 },
         { species: Species.Ekans, weight: 20 },
         { species: Species.Voltorb, weight: 20 },
         { species: Species.Dunsparce, weight: 10 },
         { species: Species.Girafarig, weight: 5 },
       ],
-      rare: [
+      rare: [{ species: Species.Magneton, weight: 10 }],
+      scarce: [
         { species: Species.Arbok, weight: 10 },
         { species: Species.Electrode, weight: 10 },
       ],
@@ -96,13 +104,13 @@ export default function registerSteppeSpawns(): void {
     [TimeOfDay.Night]: {
       base: [{ species: Species.Magnemite, weight: 20 }],
       uncommon: [
-        { species: Species.Magneton, weight: 10 },
         { species: Species.Ekans, weight: 20 },
         { species: Species.Voltorb, weight: 20 },
         { species: Species.Dunsparce, weight: 10 },
         { species: Species.Girafarig, weight: 5 },
       ],
-      rare: [
+      rare: [{ species: Species.Magneton, weight: 10 }],
+      scarce: [
         { species: Species.Arbok, weight: 10 },
         { species: Species.Electrode, weight: 10 },
       ],

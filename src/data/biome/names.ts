@@ -99,6 +99,8 @@ export const SPAWN_RARITY_NAMES: Record<SpawnRarity, string> = {
   [SpawnRarity.Base]: 'Common',
   [SpawnRarity.Uncommon]: 'Uncommon',
   [SpawnRarity.Rare]: 'Rare',
+  [SpawnRarity.Scarce]: 'Scarce',
+  [SpawnRarity.Elusive]: 'Elusive',
   [SpawnRarity.Prized]: 'Prized',
   [SpawnRarity.Special]: 'Legendary',
   [SpawnRarity.Mythical]: 'Mythical',

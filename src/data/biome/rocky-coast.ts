@@ -16,11 +16,14 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Slowpoke, weight: 20 },
         { species: Species.Magikarp, weight: 30 },
       ],
-      rare: [
+      rare: [],
+      scarce: [
         { species: Species.Kingler, weight: 10 },
         { species: Species.Cloyster, weight: 10 },
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Slowbro, weight: 10 },
+      ],
+      elusive: [
         { species: Species.Shuckle, weight: 5 },
         { species: Species.Qwilfish, weight: 15 },
       ],
@@ -36,11 +39,14 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Slowpoke, weight: 20 },
         { species: Species.Magikarp, weight: 30 },
       ],
-      rare: [
+      rare: [],
+      scarce: [
         { species: Species.Kingler, weight: 10 },
         { species: Species.Cloyster, weight: 10 },
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Slowbro, weight: 10 },
+      ],
+      elusive: [
         { species: Species.Shuckle, weight: 5 },
         { species: Species.Qwilfish, weight: 15 },
       ],
@@ -56,11 +62,14 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Staryu, weight: 20 },
         { species: Species.Magikarp, weight: 30 },
       ],
-      rare: [
+      rare: [],
+      scarce: [
         { species: Species.Kingler, weight: 10 },
         { species: Species.Cloyster, weight: 10 },
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Starmie, weight: 10 },
+      ],
+      elusive: [
         { species: Species.Shuckle, weight: 5 },
         { species: Species.Qwilfish, weight: 15 },
       ],
@@ -76,11 +85,14 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Staryu, weight: 20 },
         { species: Species.Magikarp, weight: 30 },
       ],
-      rare: [
+      rare: [],
+      scarce: [
         { species: Species.Kingler, weight: 10 },
         { species: Species.Cloyster, weight: 10 },
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Starmie, weight: 10 },
+      ],
+      elusive: [
         { species: Species.Shuckle, weight: 5 },
         { species: Species.Qwilfish, weight: 15 },
       ],

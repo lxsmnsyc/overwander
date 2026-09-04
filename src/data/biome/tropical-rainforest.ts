@@ -15,7 +15,8 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Aipom, weight: 5 },
         { species: Species.Yanma, weight: 5 },
       ],
-      rare: [
+      rare: [],
+      scarce: [
         { species: Species.Exeggutor, weight: 10 },
         { species: Species.Forretress, weight: 5 },
       ],
@@ -31,7 +32,8 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Aipom, weight: 5 },
         { species: Species.Yanma, weight: 5 },
       ],
-      rare: [
+      rare: [],
+      scarce: [
         { species: Species.Exeggutor, weight: 10 },
         { species: Species.Forretress, weight: 5 },
       ],
@@ -48,7 +50,8 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Aipom, weight: 5 },
         { species: Species.Yanma, weight: 5 },
       ],
-      rare: [
+      rare: [],
+      scarce: [
         { species: Species.Exeggutor, weight: 10 },
         { species: Species.Ariados, weight: 8 },
         { species: Species.Forretress, weight: 8 },
@@ -66,7 +69,8 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Aipom, weight: 5 },
         { species: Species.Yanma, weight: 5 },
       ],
-      rare: [
+      rare: [],
+      scarce: [
         { species: Species.Exeggutor, weight: 10 },
         { species: Species.Ariados, weight: 8 },
         { species: Species.Forretress, weight: 8 },

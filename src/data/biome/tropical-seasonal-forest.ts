@@ -9,26 +9,20 @@ export default function registerTropicalSeasonalForestSpawns(): void {
   registerSpawnPool(Biome.TropicalSeasonalForest, {
     [TimeOfDay.Morning]: {
       base: [{ species: Species.Bellsprout, weight: 20 }],
-      uncommon: [
-        { species: Species.Weepinbell, weight: 5 },
-        { species: Species.Exeggcute, weight: 20 },
-      ],
-      rare: [
-        { species: Species.Victreebel, weight: 5 },
-        { species: Species.Exeggutor, weight: 10 },
-      ],
+      uncommon: [{ species: Species.Exeggcute, weight: 20 }],
+      rare: [{ species: Species.Weepinbell, weight: 5 }],
+      scarce: [{ species: Species.Exeggutor, weight: 10 }],
+      elusive: [{ species: Species.Victreebel, weight: 5 }],
       prized: [...UNOWN_SPAWNS],
       special: [],
     },
     [TimeOfDay.Day]: {
       base: [{ species: Species.Bellsprout, weight: 20 }],
-      uncommon: [
-        { species: Species.Weepinbell, weight: 5 },
-        { species: Species.Exeggcute, weight: 20 },
-      ],
-      rare: [
+      uncommon: [{ species: Species.Exeggcute, weight: 20 }],
+      rare: [{ species: Species.Weepinbell, weight: 5 }],
+      scarce: [{ species: Species.Exeggutor, weight: 10 }],
+      elusive: [
         { species: Species.Victreebel, weight: 5 },
-        { species: Species.Exeggutor, weight: 10 },
         { species: Species.Pinsir, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS],
@@ -37,14 +31,16 @@ export default function registerTropicalSeasonalForestSpawns(): void {
     [TimeOfDay.Evening]: {
       base: [],
       uncommon: [{ species: Species.Exeggcute, weight: 20 }],
-      rare: [{ species: Species.Exeggutor, weight: 10 }],
+      rare: [],
+      scarce: [{ species: Species.Exeggutor, weight: 10 }],
       prized: [...UNOWN_SPAWNS],
       special: [],
     },
     [TimeOfDay.Night]: {
       base: [],
       uncommon: [{ species: Species.Exeggcute, weight: 20 }],
-      rare: [{ species: Species.Exeggutor, weight: 10 }],
+      rare: [],
+      scarce: [{ species: Species.Exeggutor, weight: 10 }],
       prized: [...UNOWN_SPAWNS],
       special: [],
     },

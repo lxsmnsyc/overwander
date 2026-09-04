@@ -159,6 +159,31 @@ the odd one, because its veto lives on the cast check and the AI **cannot ask
 that**. Infatuation answers the same question with a coin toss, and a
 speculative flip would pull every replay off its seed.
 
+### A kill outweighs a chip
+
+Taking a unit off the field is worth `KILL_BONUS` (8), which sits above the
+widest chip and above a heal, and far enough above both that no wind-up a killing
+move has to pay makes chipping look better than finishing. Getting there first is
+worth `PRIORITY_KILL_BONUS` (2) more.
+
+A hit that leaves the target standing is scored on the share of the remaining
+health it takes, out of `DAMAGE_SCALE` (5). Such a hit falls short of a kill by
+definition, so the band tops out one below it, at 4. Scoring it against a top the
+hit can actually reach is what makes a near miss count for more than it used to.
+
+The AI also drops a cast that would change nothing: a screen or a veil its side
+already holds, weather under a sky nobody answers to, and a stat drop the far
+side is holding off, whether by a raid boss or by Mist, Clear Body, Hyper Cutter
+or Big Pecks.
+
+### A speculative question leaves no mark
+
+Every `Check*` event carries `simulated`, which is true while the AI is weighing
+a move it has not cast. A listener may still answer the question, and must do
+nothing else: **no cue, no stage of its own, nothing a watcher could see.** An
+ability that shrugs a stat drop off flashes when the drop is really aimed at it,
+not each time the AI wonders about it.
+
 ### Setting up is for the side that has to last
 
 In a raid the AI adds a bonus to friendly stage boosts, big enough to outbid any
@@ -240,7 +265,8 @@ made the loop that most wants watching the hardest one to reach. The seed is in
 the URL, so a fight is a link and two people watch the same frames.
 
 Three pages sit beside it under the same rules. [`/demo/move`](../src/routes/demo/move.tsx)
-stages one move in a live engine, [`/demo/weather`](../src/routes/demo/weather.tsx)
+stages one move in a live engine, with an **Always hits** switch on by default so
+a Fissure can be watched without waiting out its accuracy, [`/demo/weather`](../src/routes/demo/weather.tsx)
 draws any of the twenty six skies over any biome's ground, at any strength,
 running or stopped a frame at a time, through both of the board's painters, and
 [`/demo/shadow`](../src/routes/demo/shadow.tsx) throws a shadow at any hour, from
@@ -278,6 +304,17 @@ worth watching, and out of the **fully evolved** species only (81 of the 151),
 since at level 70 a Caterpie would have evolved twice over long ago. Eight full
 parties is a lobby the canvas can draw as eight points of a circle, and a crowd
 besides: whatever the canvas does with a busy field, it does here first.
+
+### A blow is its own picture
+
+A move's picture says what the move **is**. What it did to this pokemon is a
+separate mark, drawn where it landed, in the type that dealt it:
+[`attack.ts`](../src/canvas/battle/attack.ts) lights the colour for a weakness,
+mixes it toward grey for a resistance, and leaves it colourless for a blow that
+never landed. A move that strikes five times lands five marks.
+
+It is drawn small on purpose. A raid is forty-eight pokemon trading blows, and a
+mark the size of a pokemon turned the field into a wall of white rings.
 
 ## Two ways to draw a field
 

@@ -99,6 +99,51 @@ teammates stand beside each other rather than on a bench.
   payout is worth a cast.
 - **Transform, Sketch, Mimic and Encore** can all be aimed at a teammate.
 
+## A raid boss is the species at its most
+
+- Its health is **twenty times** what the species would have had, so a bulky boss
+  is a longer fight than a frail one all the way up.
+- It is perfect in every value and **trained to the cap** in every stat.
+- **Indirect damage counts**, up to 100 a time: poison, burns, seeds, weather and
+  the crash off a missed move. Damage measured as a share of its health is still
+  refused, and a cost it pays itself is still paid in full.
+- It **heals at most an eighth of its pool a second**, spent from an allowance
+  that refills as the fight runs, so the healing moves are back in its learnset
+  and a stack of drains is worth one of them.
+- It never hears **Perish Song**, its own singing included.
+
+## Shadows trade defence for attack
+
+A shadow is a stat change rather than an aura. It carries **1.25x Attack and
+Special Attack** and **0.75x Defense and Special Defense**, so it hits a quarter
+harder and takes a third more, and its stat sheet says so. Fixed-damage moves are
+unaffected.
+
+## The fight is easier to read
+
+- **A blow is drawn in the type that dealt it**, lit for a weakness and drained
+  toward grey for a resistance.
+- **A stat change is drawn as the stat**, chevrons rising or falling on whoever
+  moved, coloured by which one it was.
+- **A contact move lands as a jab, a hit, a slam or a fist**, chosen by its type
+  and power.
+- A move spends the gap before it lands as what it turns out to be: a guard
+  closes in, a boost runs upward, health is drawn back, sound carries, powder
+  drifts, and a psychic move already has hold of its target.
+- **Weather arrives over the field** rather than over whoever called for it, and
+  in a raid it is drawn over the side that called it.
+- Reflect, Light Screen and Safeguard put up a pane of coloured glass over the
+  team, and **Fissure** tears the ground open under what it hits.
+
+## The AI plays better
+
+- **A kill outweighs a chip**, including when the killing move has to wind up
+  first, and a priority move is worth more again for it.
+- A hit that leaves the target standing is weighed on a band it can actually
+  reach, so a near miss counts for more than it did.
+- It will not spend a cast on nothing: a screen its side already holds, weather
+  under a sky that answers to nobody, or a stat drop the far side is holding off.
+
 ## A second league
 
 **Sixteen gyms**, eight badges in each region, and two champions.
@@ -227,6 +272,8 @@ drawing for each coat over it.
 - The menu keypad is laid out in themed rows, and **Inventory is called Bag**.
 - **Seven Kanto spawns** filed in the wrong band are put right.
 - The dashboard stops waiting forever on an account that is not there.
+- The move demo has an **Always hits** switch, so a Fissure can be watched
+  without waiting out its accuracy.
 
 ## See also
 

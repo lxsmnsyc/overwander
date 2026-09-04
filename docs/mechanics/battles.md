@@ -90,6 +90,23 @@ Fire Punch punches on one pokemon and swings on another.
 The visible result is that speed can be seen: a slow move is a long gathering,
 and Quick Attack is a short one.
 
+**A move looks like what it is.** A contact move lands as a jab, a hit, a slam or
+a fist, picked by its type and its power. A guard closes in, a boost runs upward,
+a drain pulls health back, sound carries across the gap, powder drifts, and a
+psychic move already has hold of its target on the way over. A stat change is
+drawn as chevrons on whoever moved, rising for a raise and falling for a drop,
+coloured by which stat it was. Reflect, Light Screen and Safeguard put up a pane
+of coloured glass over the middle of the team.
+
+**A blow is drawn in the type that dealt it.** The mark is lit for a weakness,
+drained toward grey for a resistance, and the type's own colour in between. A
+move that strikes five times lands five marks, and only a move that never landed
+leaves a colourless one.
+
+Weather arrives over the field rather than over whoever called for it. In a raid
+it is drawn over the side that called it, since that is the side it is doing
+anything for.
+
 None of this affects the fight itself.
 
 ## Damage
@@ -147,6 +164,7 @@ A status that runs out on its own runs out on that clock too:
 | Reflect, Light Screen, Mist | 10 seconds                                |
 | Weather                     | 10 seconds                                |
 | A disabled move             | 8 seconds                                 |
+| Perish Song                 | 8 seconds, and then whoever heard it falls |
 
 Poison, bad poison, burn and paralysis have no clock at all: they last until
 something cures them. A full-paralysis stumble costs the pokemon 2 seconds
@@ -232,7 +250,10 @@ hits. Sent out again later in the same fight, it skips the warm-up.
 
 It shrugs off everything that would take the fight away rather than make it
 harder, such as sleep, freeze, flinch, trapping and infatuation, unless it did it to
-itself, so a boss that uses Rest really does sleep. Infatuation is excluded twice
+itself, so a boss that uses Rest really does sleep. **Perish Song** is the same
+case at its most extreme: a boss never hears it, its own singing included, and
+nobody sings it in a raid at all, since the only side left counting would be the
+party. Infatuation is excluded twice
 over: a large lobby always contains somebody the boss would fall for, and a
 landed Attract would turn the raid into a queue.
 

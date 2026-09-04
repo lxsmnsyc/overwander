@@ -9,13 +9,16 @@ export default function registerGlacierSpawns(): void {
   registerSpawnPool(Biome.Glacier, {
     [TimeOfDay.Morning]: {
       base: [
-        { species: Species.Snorunt, weight: 22 },
         { species: Species.Spheal, weight: 25 },
         { species: Species.Swinub, weight: 25 },
       ],
-      uncommon: [{ species: Species.Sealeo, weight: 8 }],
+      uncommon: [{ species: Species.Snorunt, weight: 22 }],
       rare: [
-        { species: Species.Glalie, weight: 6 },
+        { species: Species.Sealeo, weight: 8 },
+        { species: Species.Piloswine, weight: 5 },
+      ],
+      scarce: [{ species: Species.Glalie, weight: 6 }],
+      elusive: [
         { species: Species.Walrein, weight: 5 },
         { species: Species.Delibird, weight: 5 },
       ],
@@ -27,13 +30,16 @@ export default function registerGlacierSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
-        { species: Species.Snorunt, weight: 22 },
         { species: Species.Spheal, weight: 25 },
         { species: Species.Swinub, weight: 25 },
       ],
-      uncommon: [{ species: Species.Sealeo, weight: 8 }],
+      uncommon: [{ species: Species.Snorunt, weight: 22 }],
       rare: [
-        { species: Species.Glalie, weight: 6 },
+        { species: Species.Sealeo, weight: 8 },
+        { species: Species.Piloswine, weight: 5 },
+      ],
+      scarce: [{ species: Species.Glalie, weight: 6 }],
+      elusive: [
         { species: Species.Walrein, weight: 5 },
         { species: Species.Delibird, weight: 5 },
       ],
@@ -45,17 +51,22 @@ export default function registerGlacierSpawns(): void {
     },
     [TimeOfDay.Evening]: {
       base: [
-        { species: Species.Snorunt, weight: 22 },
         { species: Species.Spheal, weight: 25 },
         { species: Species.Swinub, weight: 25 },
       ],
-      uncommon: [{ species: Species.Sealeo, weight: 8 }],
+      uncommon: [
+        { species: Species.Snorunt, weight: 22 },
+        { species: Species.Sneasel, weight: 5 },
+      ],
       rare: [
-        { species: Species.Glalie, weight: 6 },
+        { species: Species.Sealeo, weight: 8 },
+        { species: Species.Piloswine, weight: 5 },
+      ],
+      scarce: [{ species: Species.Glalie, weight: 6 }],
+      elusive: [
         { species: Species.Walrein, weight: 5 },
         { species: Species.Jynx, weight: 5 },
         { species: Species.Delibird, weight: 5 },
-        { species: Species.Sneasel, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS, { species: Species.Smoochum, weight: PRIZED_WEIGHT }],
       special: [
@@ -65,17 +76,22 @@ export default function registerGlacierSpawns(): void {
     },
     [TimeOfDay.Night]: {
       base: [
-        { species: Species.Snorunt, weight: 22 },
         { species: Species.Spheal, weight: 25 },
         { species: Species.Swinub, weight: 25 },
       ],
-      uncommon: [{ species: Species.Sealeo, weight: 8 }],
+      uncommon: [
+        { species: Species.Snorunt, weight: 22 },
+        { species: Species.Sneasel, weight: 5 },
+      ],
       rare: [
-        { species: Species.Glalie, weight: 6 },
+        { species: Species.Sealeo, weight: 8 },
+        { species: Species.Piloswine, weight: 5 },
+      ],
+      scarce: [{ species: Species.Glalie, weight: 6 }],
+      elusive: [
         { species: Species.Walrein, weight: 5 },
         { species: Species.Jynx, weight: 5 },
         { species: Species.Delibird, weight: 5 },
-        { species: Species.Sneasel, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS, { species: Species.Smoochum, weight: PRIZED_WEIGHT }],
       special: [

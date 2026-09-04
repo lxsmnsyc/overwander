@@ -2,6 +2,8 @@ import { MoveAffects, MoveCategories, MoveFlags, Moves } from '../../../data/ids
 import { TYPE_COLORS, Types } from '../../../data/constants/types';
 import { getMoveData } from '../../../data/moves';
 import { MULTI_HIT_MOVES } from '../../../battle/moves/multi-hit';
+import { getStageMoveEffect } from '../../../battle/moves/stage';
+import { Stages } from '../../../data/constants/stats';
 import PaintedVisual, { type Painter } from './__painted';
 import type { Point, Stage } from '../stage';
 import {
@@ -18,9 +20,11 @@ import {
   heart,
   jaw,
   lash,
+  lighten,
   motes,
   noise,
   orb,
+  pane,
   ring,
   ripple,
   shards,
@@ -53,6 +57,16 @@ import {
 const REACH = 26;
 
 /**
+ * The fissure: how much of its span is spent tearing open, how far it
+ * runs and how wide it gapes in sizes, and how many points its lips
+ * are drawn from
+ */
+const CHASM_TEAR = 0.45;
+const CHASM_RUN = 2.4;
+const CHASM_GAPE = 0.5;
+const CHASM_STEPS = 7;
+
+/**
  * How many strikes a barrage is drawn as. The engine rolls two to five
  * and this is the middle of it: the picture says "several, in a row",
  * which is the part a player reads
@@ -62,6 +76,9 @@ const STRIKES = 4;
 /** Every way a move can land. */
 export type EffectShape =
   | 'Impact'
+  | 'Jab'
+  | 'Slam'
+  | 'Brawl'
   | 'Blast'
   | 'Bloom'
   | 'Beam'
@@ -76,6 +93,8 @@ export type EffectShape =
   | 'Mark'
   | 'Mend'
   | 'Ward'
+  | 'Screen'
+  | 'Sky'
   | 'Quake'
   | 'Drain'
   | 'Volley'
@@ -93,6 +112,10 @@ export type EffectShape =
   | 'Warp'
   | 'Lash'
   | 'Boost'
+  | 'Drop'
+  | 'Nerve'
+  | 'Drum'
+  | 'Relay'
   | 'Chasm'
   | 'Leaves'
   | 'Stars'
@@ -107,6 +130,9 @@ export type EffectShape =
 /** How long each of them takes at ordinary weight, in milliseconds. */
 const SPANS: Record<EffectShape, number> = {
   Impact: 400,
+  Jab: 300,
+  Slam: 620,
+  Brawl: 460,
   Blast: 700,
   Bloom: 520,
   Beam: 560,
@@ -121,6 +147,8 @@ const SPANS: Record<EffectShape, number> = {
   Mark: 560,
   Mend: 700,
   Ward: 620,
+  Screen: 900,
+  Sky: 760,
   Quake: 780,
   Drain: 700,
   Volley: 900,
@@ -138,7 +166,11 @@ const SPANS: Record<EffectShape, number> = {
   Warp: 620,
   Lash: 420,
   Boost: 560,
-  Chasm: 720,
+  Drop: 560,
+  Nerve: 620,
+  Drum: 720,
+  Relay: 640,
+  Chasm: 820,
   Leaves: 560,
   Stars: 620,
   Blow: 620,
@@ -195,6 +227,25 @@ function landing(stage: Stage): Point {
   return stage.targets[0] ?? stage.source;
 }
 
+/**
+ * The shapes that are about a side rather than about a body. They are
+ * drawn once, in the middle of everyone they reached, rather than
+ * once on each of them: a screen is one pane over the team
+ */
+const OVER_A_SIDE = new Set<EffectShape>(['Screen']);
+
+/** The point in the middle of everything given. */
+function middle(points: Point[]): Point {
+  let x = 0;
+  let y = 0;
+
+  for (const point of points) {
+    x += point[0];
+    y += point[1];
+  }
+  return [x / points.length, y / points.length];
+}
+
 const PAINTERS: Record<
   EffectShape,
   (context: CanvasRenderingContext2D, stage: Stage, share: number, draw: Draw) => void
@@ -222,6 +273,98 @@ const PAINTERS: Record<
         width: 2 * stage.scale,
       });
     }
+  },
+
+  // A hit that is over before it opened: the moves whose whole point
+  // is that they land first
+  Jab(context, stage, share, { paint, seed, weight }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale * weight;
+    // Out at once rather than growing, which is the difference a
+    // player reads between a jab and a swing
+    const out = Math.min(1, share * 3);
+
+    burst(context, at, size * (0.3 + out * 0.5), 3, seed, {
+      ...paint,
+      alpha: decay(share),
+      width: 2 * stage.scale,
+    });
+    orb(context, at, size * 0.22 * decay(share), { ...paint, alpha: decay(share) });
+  },
+
+  // The whole body arriving. What says it is heavy is the floor
+  // answering, not a bigger version of the same burst
+  Slam(context, stage, share, { paint, seed, weight }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale * weight;
+
+    ripple(context, at, size * (0.5 + share * 2.2), {
+      ...paint,
+      alpha: decay(share) * 0.9,
+      width: 3.4 * stage.scale,
+    });
+    burst(context, at, size * (0.5 + share * 0.7), many(5, weight), seed, {
+      ...paint,
+      alpha: decay(share),
+      width: 3.6 * stage.scale * weight,
+    });
+    // Kicked up rather than thrown off: the dust of something big
+    // coming down on the floor
+    motes(context, at, size * 1.9, many(8, weight), seed, share, {
+      ...paint,
+      alpha: decay(share) * 0.7,
+      width: 2.4 * stage.scale,
+    });
+  },
+
+  // A fist or a foot: one point hit hard, with the swing that brought
+  // it in still drawn behind it
+  Brawl(context, stage, share, { paint, seed, weight }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale * weight;
+    // Square to where it came from, so the blow reads as thrown
+    // rather than as something that happened on the spot
+    const swing = Math.atan2(at[1] - stage.source[1], at[0] - stage.source[0]) + Math.PI / 2;
+
+    if (share < 0.4) {
+      slash(context, at, size * (1.4 - share), swing, {
+        ...paint,
+        alpha: (0.4 - share) * 2,
+        width: 3 * stage.scale,
+      });
+    }
+    ring(context, at, size * (0.2 + Math.min(1, share * 2.4) * 0.8), {
+      ...paint,
+      alpha: decay(share),
+      width: 4 * stage.scale * weight,
+    });
+    burst(context, at, size * (0.4 + share * 0.6), many(4, weight), seed, {
+      ...paint,
+      alpha: decay(share) * 0.9,
+      width: 3 * stage.scale * weight,
+    });
+  },
+
+  // Weather setting in. It comes down over the field rather than
+  // landing on anybody, so nothing here is drawn on the target
+  Sky(context, stage, share, { paint, seed }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale;
+
+    for (let fall = 0; fall < 9; fall += 1) {
+      const held = (share * 1.2 + noise(seed, fall)) % 1;
+      const x = at[0] + (noise(seed, fall + 40) - 0.5) * size * 5;
+
+      orb(context, [x, at[1] - size * 5 + held * size * 5], 2.4 * stage.scale, {
+        ...paint,
+        alpha: swell(held) * 0.85,
+      });
+    }
+    ripple(context, at, size * (1.4 + swell(share) * 1.2), {
+      ...paint,
+      alpha: swell(share) * 0.45,
+      width: 2 * stage.scale,
+    });
   },
 
   // A hit that takes the ground with it
@@ -479,6 +622,37 @@ const PAINTERS: Record<
         ...paint,
         alpha: swell(share) * (0.8 - shell * 0.2),
         width: 2 * stage.scale,
+      });
+    }
+  },
+
+  // A screen: a pane of coloured glass put up over the pokemon it is
+  // for, rather than a shell closing on it. It goes up fast and then
+  // stands, because standing there is the whole of what it does
+  Screen(context, stage, share, { paint }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale;
+    const up = Math.min(1, share * 3);
+    // Held bright and taken away at the end, so what is read is a
+    // wall rather than a flash
+    const alpha = share < 0.8 ? 0.55 + up * 0.35 : decay(share) * 4.5;
+    const foot: Point = [at[0], at[1] + size * 0.7];
+    const height = size * 3.2 * up;
+
+    pane(context, foot, size * 1.8, height, {
+      ...paint,
+      alpha,
+      width: 2.6 * stage.scale,
+    });
+    // The light running across the face of it, which is what says
+    // glass rather than paper
+    if (up >= 1) {
+      const along = ((share - 0.33) / 0.67) * 2 - 0.5;
+      const x = at[0] + (along - 0.5) * size * 3.6;
+
+      beam(context, [x, foot[1]], [x + size * 0.9, foot[1] - height], 1, size * 0.16, {
+        ...paint,
+        alpha: alpha * 0.5,
       });
     }
   },
@@ -881,6 +1055,7 @@ const PAINTERS: Record<
   },
 
   // Something about the pokemon itself went up
+  // A stat going up, on whoever it went up on
   Boost(context, stage, share, { paint }) {
     const at = landing(stage);
     const size = REACH * stage.scale;
@@ -892,34 +1067,154 @@ const PAINTERS: Record<
     });
   },
 
+  // And going down: the same picture turned over, so a rise and a
+  // drop are one thing read two ways rather than two pictures
+  Drop(context, stage, share, { paint }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale;
+
+    chevrons(
+      context,
+      at,
+      size,
+      3,
+      share,
+      { ...paint, alpha: swell(share) + 0.2, width: 2.8 * stage.scale },
+      -1,
+    );
+  },
+
+  // Steadying itself: the spokes come in rather than out, and what is
+  // left is a core held tight
+  Nerve(context, stage, share, { paint, seed }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale;
+
+    burst(context, at, size * (2 - swell(share) * 1.2), 6, seed, {
+      ...paint,
+      alpha: swell(share) * 0.8,
+      width: 2.4 * stage.scale,
+    });
+    ring(context, at, size * (1.4 - swell(share) * 0.6), {
+      ...paint,
+      alpha: swell(share) * 0.7,
+      width: 2.6 * stage.scale,
+    });
+    orb(context, at, size * (0.2 + swell(share) * 0.3), { ...paint, alpha: swell(share) });
+  },
+
+  // Struck, three times. Each beat leaves at once and fades, so what
+  // reads is the rhythm rather than one swell
+  Drum(context, stage, share, { paint }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale;
+
+    for (let beat = 0; beat < 3; beat += 1) {
+      const held = share * 3 - beat;
+
+      if (held <= 0 || held >= 1) {
+        continue;
+      }
+      ring(context, at, size * (0.4 + held * 2.2), {
+        ...paint,
+        alpha: decay(held),
+        width: 4 * stage.scale,
+      });
+      ripple(context, at, size * (0.5 + held * 1.8), {
+        ...paint,
+        alpha: decay(held) * 0.6,
+        width: 3 * stage.scale,
+      });
+    }
+  },
+
+  // Handed on: what the pokemon was carrying lifts off it rather than
+  // going off on it
+  Relay(context, stage, share, { paint, seed }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale;
+    const lift: Point = [at[0], at[1] - size * 2.4 * swell(share)];
+
+    orb(context, lift, size * 0.32, { ...paint, alpha: 1 - share * 0.4 });
+    ring(context, lift, size * (0.5 + share * 0.7), {
+      ...paint,
+      alpha: decay(share) * 0.8,
+      width: 2.4 * stage.scale,
+    });
+    motes(context, at, size * 1.2, 5, seed, share, {
+      ...paint,
+      alpha: decay(share) * 0.7,
+      width: 2 * stage.scale,
+    });
+  },
+
   // The ground splitting open underneath it. What a one-hit knockout
   // by burial looks like is a hole, not a hit
   Chasm(context, stage, share, { paint, seed, weight }) {
     const at = landing(stage);
     const size = REACH * stage.scale * weight;
-    const open = Math.min(1, share * 1.8);
-
-    // A crack drawn as two lips parting: the dark between them is the
-    // whole of the picture, so it widens rather than moving
-    context.beginPath();
-    for (const lip of [-1, 1]) {
-      context.moveTo(at[0] - size * 2, at[1]);
-      for (let step = 1; step <= 6; step += 1) {
-        const along = step / 6;
+    // Torn open at once and closed again by the end, so the ground it
+    // is left standing on is whole
+    const open =
+      share < CHASM_TEAR
+        ? share / CHASM_TEAR
+        : Math.max(0, 1 - (share - CHASM_TEAR) / (1 - CHASM_TEAR));
+    const half = size * CHASM_RUN;
+    const gape = size * CHASM_GAPE * open;
+    // Along the top lip and back along the bottom one, which closes
+    // the shape: the hole is a thing to fill, not two lines to stroke
+    const rim = (): void => {
+      context.beginPath();
+      context.moveTo(at[0] - half, at[1]);
+      for (let step = 1; step <= CHASM_STEPS; step += 1) {
+        const along = step / CHASM_STEPS;
 
         context.lineTo(
-          at[0] - size * 2 + along * size * 4,
-          at[1] + lip * open * size * 0.6 * Math.sin(Math.PI * along) + spread(seed, step) * 2,
+          at[0] - half + along * half * 2,
+          at[1] - gape * Math.sin(Math.PI * along) + spread(seed, step) * stage.scale,
         );
       }
-    }
-    context.strokeStyle = fade(paint.color, 0.9);
-    context.lineWidth = 2.5 * stage.scale;
+      for (let step = CHASM_STEPS - 1; step >= 0; step -= 1) {
+        const along = step / CHASM_STEPS;
+
+        context.lineTo(
+          at[0] - half + along * half * 2,
+          at[1] + gape * Math.sin(Math.PI * along) + spread(seed, step + 20) * stage.scale,
+        );
+      }
+      context.closePath();
+    };
+
+    // The dark is the move. A Fissure is not a mark on the ground, it
+    // is the ground not being there any more
+    rim();
+    const depth = context.createLinearGradient(at[0], at[1] - gape, at[0], at[1] + gape);
+
+    depth.addColorStop(0, fade('#0a0705', 0.55 * open));
+    depth.addColorStop(0.5, fade('#0a0705', 0.95 * open));
+    depth.addColorStop(1, fade('#0a0705', 0.7 * open));
+    context.fillStyle = depth;
+    context.fill();
+    // Broken earth around the hole rather than a drawn outline
+    context.strokeStyle = fade(lighten(paint.color, 0.3), open);
+    context.lineWidth = 2.4 * stage.scale;
     context.stroke();
-    shards(context, at, size * 1.6, many(5, weight), seed, share, {
+
+    // The jolt that opened it, and what it threw up
+    ripple(context, at, half * (0.5 + share * 1.1), {
+      ...paint,
+      alpha: decay(share) * 0.7,
+      width: 2.4 * stage.scale,
+    });
+    shards(context, at, half * 0.9, many(6, weight), seed, Math.min(1, share * 1.5), {
       ...paint,
       alpha: decay(share),
       width: 2.6 * stage.scale,
+    });
+    motes(context, at, half * 0.8, many(8, weight), seed + 31, share, {
+      ...paint,
+      alpha: swell(share) * 0.45,
+      width: 2.2 * stage.scale,
     });
   },
 
@@ -1231,7 +1526,6 @@ const NAMED: Partial<Record<Moves, EffectShape>> = {
   [Moves.Fissure]: 'Chasm',
   [Moves.RazorLeaf]: 'Leaves',
   [Moves.Swift]: 'Stars',
-  [Moves.SandAttack]: 'Haze',
   [Moves.ThunderWave]: 'Wave',
   [Moves.Whirlwind]: 'Blow',
   [Moves.Haze]: 'Haze',
@@ -1239,7 +1533,13 @@ const NAMED: Partial<Record<Moves, EffectShape>> = {
 
   // Wind
   [Moves.Gust]: 'Swirl',
-  [Moves.Sandstorm]: 'Swirl',
+
+  // Weather, which arrives over the field rather than on whoever
+  // called for it
+  [Moves.Sandstorm]: 'Sky',
+  [Moves.RainDance]: 'Sky',
+  [Moves.SunnyDay]: 'Sky',
+  [Moves.Hail]: 'Sky',
 
   // Something turning in front of its eyes
   [Moves.Hypnosis]: 'Trance',
@@ -1259,8 +1559,6 @@ const NAMED: Partial<Record<Moves, EffectShape>> = {
   // The air bending
   [Moves.Psychic]: 'Warp',
   [Moves.NightShade]: 'Warp',
-  [Moves.Amnesia]: 'Warp',
-  [Moves.Kinesis]: 'Warp',
   [Moves.Teleport]: 'Warp',
 
   // Reaching out and striking with something long
@@ -1276,18 +1574,9 @@ const NAMED: Partial<Record<Moves, EffectShape>> = {
   // falling out of the sky onto it
   [Moves.EggBomb]: 'Blast',
 
-  // Light, seen rather than felt: no wave crossing anything
-  [Moves.Flash]: 'Dazzle',
-
-  // Something about the pokemon itself went up
-  [Moves.SwordsDance]: 'Boost',
-  [Moves.Growth]: 'Boost',
-  [Moves.Agility]: 'Boost',
-  [Moves.Sharpen]: 'Boost',
-  [Moves.Meditate]: 'Boost',
-  [Moves.DoubleTeam]: 'Boost',
-  [Moves.FocusEnergy]: 'Boost',
-  [Moves.Minimize]: 'Boost',
+  // Steadying itself rather than raising a stat, which is why it is
+  // not drawn as one
+  [Moves.FocusEnergy]: 'Nerve',
 
   // The rest: moves whose one picture the data cannot describe
   [Moves.Thunder]: 'Strike',
@@ -1297,12 +1586,9 @@ const NAMED: Partial<Record<Moves, EffectShape>> = {
   [Moves.Recover]: 'Mend',
   [Moves.Rest]: 'Mend',
   [Moves.SoftBoiled]: 'Mend',
-  [Moves.Reflect]: 'Ward',
-  [Moves.LightScreen]: 'Ward',
-  [Moves.Barrier]: 'Ward',
-  [Moves.Withdraw]: 'Ward',
-  [Moves.Harden]: 'Ward',
-  [Moves.AcidArmor]: 'Ward',
+  [Moves.Reflect]: 'Screen',
+  [Moves.LightScreen]: 'Screen',
+  [Moves.Safeguard]: 'Screen',
   [Moves.Substitute]: 'Ward',
   [Moves.Surf]: 'Splash',
   [Moves.Blizzard]: 'Frost',
@@ -1346,15 +1632,15 @@ const NAMED: Partial<Record<Moves, EffectShape>> = {
   // What the target is feeling
   [Moves.Attract]: 'Hearts',
   [Moves.SweetKiss]: 'Hearts',
-  [Moves.Charm]: 'Hearts',
 
   // Laid on the ground for whatever walks in next
   [Moves.Spikes]: 'Caltrops',
 
-  // Something the pokemon itself did
-  [Moves.BellyDrum]: 'Boost',
-  [Moves.BatonPass]: 'Boost',
-  [Moves.Swagger]: 'Boost',
+  // Something the pokemon itself did. The stat moves are drawn by
+  // what they do to the stat, so what is left here is the three whose
+  // picture is the act
+  [Moves.BellyDrum]: 'Drum',
+  [Moves.BatonPass]: 'Relay',
 
   // Something turning in front of its eyes, or behind them
   [Moves.MeanLook]: 'Trance',
@@ -1461,6 +1747,21 @@ const NAMED: Partial<Record<Moves, EffectShape>> = {
  * throws — but health coming back is about health whatever move sent
  * it, and a miss is about nothing at all
  */
+/**
+ * A stat, by colour. A stage picture says which way it went by which
+ * way it points, and which stat it was by this: the two together are
+ * the whole of what a player needs off one flash
+ */
+const STAGE_COLORS: Record<Stages, string> = {
+  [Stages.Attack]: '#e2603f',
+  [Stages.Defense]: '#5c8fd6',
+  [Stages.SpecialAttack]: '#b06ad9',
+  [Stages.SpecialDefense]: '#4bb58a',
+  [Stages.Speed]: '#e8c34a',
+  [Stages.Accuracy]: '#7fd0d8',
+  [Stages.Evasion]: '#d38ac0',
+};
+
 const BY_SHAPE: Partial<Record<EffectShape, string>> = {
   // The colour of the health bar, which is what it is refilling
   Mend: '#4cc46a',
@@ -1491,8 +1792,45 @@ const WINDING_UP = new Set<Moves>([
   Moves.Bide,
 ]);
 
+/**
+ * Where a contact hit stops being a jab and where it becomes a whole
+ * body arriving, by weight
+ */
+const JAB = 0.95;
+const SLAM = 1.4;
+
+/**
+ * What a contact hit looks like.
+ *
+ * It is the commonest thing in the game, and one burst for all of it
+ * left a Quick Attack and a Double Edge as the same picture at two
+ * sizes. What separates them is how the hit was thrown, which the
+ * move's type and power already say
+ */
+function contactShape(move: Moves, type: Types): EffectShape {
+  // A fist or a foot rather than a body, whatever it weighs
+  if (type === Types.Fighting) {
+    return 'Brawl';
+  }
+  const weight = weightOf(move);
+
+  if (weight >= SLAM) {
+    return 'Slam';
+  }
+  return weight <= JAB ? 'Jab' : 'Impact';
+}
+
 /** What this move does when it lands. */
 export function effectShapeFor(move: Moves): EffectShape {
+  // A move that moves a stat is drawn by what it did to it, ahead of
+  // anything else it looks like: one picture for every rise and the
+  // same turned over for every drop, on whoever it landed on. What
+  // the move was, a growl or a flash, is the gap it crossed
+  const stage = getStageMoveEffect(move);
+
+  if (stage != null) {
+    return stage.value > 0 ? 'Boost' : 'Drop';
+  }
   const named = NAMED[move];
 
   if (named != null) {
@@ -1531,13 +1869,46 @@ export function effectShapeFor(move: Moves): EffectShape {
     return 'Claw';
   }
   if (data.category === MoveCategories.Physical) {
-    return (data.flags & MoveFlags.Contact) === 0 ? (BY_TYPE[data.type] ?? 'Impact') : 'Impact';
+    return (data.flags & MoveFlags.Contact) === 0
+      ? (BY_TYPE[data.type] ?? 'Impact')
+      : contactShape(move, data.type);
   }
   return BY_TYPE[data.type] ?? 'Bloom';
 }
 
+/**
+ * What a landing is coloured. A move is its own type, except where
+ * the shape is about something else: health coming back is the health
+ * bar's green, and a stat is whichever stat it was
+ */
+/**
+ * The two screens, by what each holds off: the same blue and green
+ * the Defense and Sp. Defense stages are drawn in, so a screen and
+ * the stat it stands in for read as one thing
+ */
+const SCREEN_COLORS: Partial<Record<Moves, string>> = {
+  [Moves.Reflect]: STAGE_COLORS[Stages.Defense],
+  [Moves.LightScreen]: STAGE_COLORS[Stages.SpecialDefense],
+};
+
+function colorOf(move: Moves, shape: EffectShape): string {
+  const screen = SCREEN_COLORS[move];
+
+  if (screen != null) {
+    return screen;
+  }
+  if (shape === 'Boost' || shape === 'Drop') {
+    const stage = getStageMoveEffect(move);
+
+    if (stage != null) {
+      return STAGE_COLORS[stage.stage];
+    }
+  }
+  return BY_SHAPE[shape] ?? TYPE_COLORS[getMoveData(move).type];
+}
+
 function painted(shape: EffectShape, move: Moves, weight: number): PaintedVisual {
-  const paint: Painted = { color: BY_SHAPE[shape] ?? TYPE_COLORS[getMoveData(move).type] };
+  const paint: Painted = { color: colorOf(move, shape) };
   const painter: Painter = (context, stage, share) => {
     // Once per pokemon it reached. A move aimed at a whole team lands
     // on all of them at once, and the shape has no idea how many that
@@ -1545,6 +1916,15 @@ function painted(shape: EffectShape, move: Moves, weight: number): PaintedVisual
     // moves with the target so a spread move scatters differently on
     // each of them rather than stamping the same picture out
     const landings = stage.targets.length > 0 ? stage.targets : [stage.source];
+
+    if (OVER_A_SIDE.has(shape)) {
+      PAINTERS[shape](context, { ...stage, targets: [middle(landings)] }, share, {
+        paint,
+        seed: move + 1,
+        weight,
+      });
+      return;
+    }
 
     for (let at = 0; at < landings.length; at += 1) {
       PAINTERS[shape](

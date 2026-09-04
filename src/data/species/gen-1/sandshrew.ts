@@ -90,7 +90,7 @@ export default function registerSandshrewSpecies(): void {
     eggGroups: [EggGroups.Field],
     genderRatio: [1, 1],
     catchRate: 255,
-    biomes: [Biome.Desert],
+    biomes: [Biome.Desert, Biome.Badlands],
     activeTimes: TimeOfDay.Day | TimeOfDay.Evening,
     learnSet: {
       level: {
@@ -138,7 +138,7 @@ export default function registerSandshrewSpecies(): void {
     eggGroups: [EggGroups.Field],
     genderRatio: [1, 1],
     catchRate: 90,
-    biomes: [Biome.Desert],
+    biomes: [Biome.Desert, Biome.Badlands],
     activeTimes: TimeOfDay.Day | TimeOfDay.Evening,
     learnSet: {
       level: {

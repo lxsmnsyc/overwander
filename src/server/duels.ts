@@ -21,6 +21,7 @@ import { getSql, newDocId, tx } from './db';
 import { isEggRecord, isGuardedRecord } from './catch-fields';
 import { isAnyCatchLocked } from './locks';
 import { isAnyCatchQueued, publishTeamSnapshot } from './raids';
+import { recordSeenOpponents } from './pokedex';
 import { readCaughtMany } from './caught-io';
 import { asNumber, asString } from './read';
 import { findPlayerByCode } from './friends';
@@ -541,6 +542,12 @@ export async function startDuel(uid: string, id: string, now: number): Promise<s
       insert into battle_teams ${transaction(rows, 'battle_id', 'position', 'snapshot_id', 'player')}
     `;
   });
+
+  // Each side has met whatever the other brought
+  await recordSeenOpponents(
+    battleId,
+    fielded.map(([player]) => player),
+  );
 
   return battleId;
 }

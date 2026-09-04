@@ -38,7 +38,7 @@ export default function registerOnixSpecies(): void {
     eggGroups: [EggGroups.Mineral],
     genderRatio: [1, 1],
     catchRate: 45,
-    biomes: [Biome.Mountain, Biome.ColdDesert],
+    biomes: [Biome.Mountain, Biome.ColdDesert, Biome.Volcano],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {

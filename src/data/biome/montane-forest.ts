@@ -9,20 +9,27 @@ export default function registerMontaneForestSpawns(): void {
   registerSpawnPool(Biome.MontaneForest, {
     [TimeOfDay.Morning]: {
       base: [
-        { species: Species.Makuhita, weight: 20 },
         { species: Species.Mankey, weight: 20 },
         { species: Species.Teddiursa, weight: 20 },
         { species: Species.Ralts, weight: 20 },
-        { species: Species.Meditite, weight: 25 },
       ],
-      uncommon: [{ species: Species.Kirlia, weight: 10 }],
-      rare: [
-        { species: Species.Hariyama, weight: 6 },
-        { species: Species.Primeape, weight: 10 },
-        { species: Species.Heracross, weight: 5 },
+      uncommon: [
+        { species: Species.Makuhita, weight: 20 },
+        { species: Species.Meditite, weight: 25 },
         { species: Species.Stantler, weight: 5 },
-        { species: Species.Gardevoir, weight: 5 },
+      ],
+      rare: [
+        { species: Species.Kirlia, weight: 10 },
+        { species: Species.Primeape, weight: 10 },
+        { species: Species.Ursaring, weight: 5 },
+      ],
+      scarce: [
+        { species: Species.Hariyama, weight: 6 },
         { species: Species.Medicham, weight: 10 },
+      ],
+      elusive: [
+        { species: Species.Heracross, weight: 5 },
+        { species: Species.Gardevoir, weight: 5 },
         { species: Species.Spinda, weight: 12 },
       ],
       prized: [...UNOWN_SPAWNS],
@@ -30,36 +37,43 @@ export default function registerMontaneForestSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
-        { species: Species.Makuhita, weight: 20 },
         { species: Species.Mankey, weight: 20 },
         { species: Species.Teddiursa, weight: 20 },
         { species: Species.Ralts, weight: 20 },
-        { species: Species.Meditite, weight: 25 },
       ],
-      uncommon: [{ species: Species.Kirlia, weight: 10 }],
+      uncommon: [
+        { species: Species.Makuhita, weight: 20 },
+        { species: Species.Meditite, weight: 25 },
+        { species: Species.Stantler, weight: 5 },
+      ],
       rare: [
-        { species: Species.Hariyama, weight: 6 },
+        { species: Species.Kirlia, weight: 10 },
         { species: Species.Primeape, weight: 10 },
+        { species: Species.Ursaring, weight: 5 },
+      ],
+      scarce: [
+        { species: Species.Hariyama, weight: 6 },
+        { species: Species.Medicham, weight: 10 },
+      ],
+      elusive: [
         { species: Species.Pinsir, weight: 5 },
         { species: Species.Heracross, weight: 5 },
-        { species: Species.Stantler, weight: 5 },
         { species: Species.Gardevoir, weight: 5 },
-        { species: Species.Medicham, weight: 10 },
         { species: Species.Spinda, weight: 12 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [],
     },
     [TimeOfDay.Evening]: {
-      base: [
-        { species: Species.Zubat, weight: 30 },
+      base: [{ species: Species.Zubat, weight: 30 }],
+      uncommon: [
         { species: Species.Hoothoot, weight: 25 },
-      ],
-      uncommon: [{ species: Species.Golbat, weight: 10 }],
-      rare: [
-        { species: Species.Noctowl, weight: 10 },
-        { species: Species.Heracross, weight: 5 },
         { species: Species.Stantler, weight: 5 },
+      ],
+      rare: [{ species: Species.Golbat, weight: 10 }],
+      scarce: [{ species: Species.Noctowl, weight: 10 }],
+      elusive: [
+        { species: Species.Heracross, weight: 5 },
         { species: Species.Crobat, weight: 5 },
         { species: Species.Sableye, weight: 8 },
       ],
@@ -67,17 +81,19 @@ export default function registerMontaneForestSpawns(): void {
       special: [],
     },
     [TimeOfDay.Night]: {
-      base: [
-        { species: Species.Zubat, weight: 30 },
+      base: [{ species: Species.Zubat, weight: 30 }],
+      uncommon: [
         { species: Species.Paras, weight: 20 },
         { species: Species.Hoothoot, weight: 25 },
+        { species: Species.Stantler, weight: 5 },
       ],
-      uncommon: [{ species: Species.Golbat, weight: 10 }],
-      rare: [
+      rare: [{ species: Species.Golbat, weight: 10 }],
+      scarce: [
         { species: Species.Parasect, weight: 10 },
         { species: Species.Noctowl, weight: 10 },
+      ],
+      elusive: [
         { species: Species.Heracross, weight: 5 },
-        { species: Species.Stantler, weight: 5 },
         { species: Species.Crobat, weight: 5 },
         { species: Species.Sableye, weight: 8 },
       ],

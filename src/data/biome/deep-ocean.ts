@@ -19,19 +19,24 @@ export default function registerDeepOceanSpawns(): void {
   registerSpawnPool(Biome.DeepOcean, {
     [TimeOfDay.Morning]: {
       base: [
+        { species: Species.Horsea, weight: 20 },
+        { species: Species.Dratini, weight: 4 },
+      ],
+      uncommon: [
         { species: Species.Wailmer, weight: 15 },
         { species: Species.Tentacool, weight: 20 },
-        { species: Species.Horsea, weight: 20 },
         { species: Species.Magikarp, weight: 20 },
-        { species: Species.Dratini, weight: 4 },
         { species: Species.Chinchou, weight: 20 },
       ],
-      uncommon: [{ species: Species.Dragonair, weight: 2 }],
-      rare: [
+      rare: [{ species: Species.Dragonair, weight: 2 }],
+      scarce: [
         { species: Species.Wailord, weight: 4 },
         { species: Species.Huntail, weight: 5 },
         { species: Species.Gorebyss, weight: 5 },
         { species: Species.Gyarados, weight: 10 },
+        { species: Species.Lanturn, weight: 10 },
+      ],
+      elusive: [
         { species: Species.Lapras, weight: 5 },
         { species: Species.Dragonite, weight: 2 },
         { species: Species.Relicanth, weight: 5 },
@@ -44,19 +49,24 @@ export default function registerDeepOceanSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.Horsea, weight: 20 },
+        { species: Species.Dratini, weight: 4 },
+      ],
+      uncommon: [
         { species: Species.Wailmer, weight: 15 },
         { species: Species.Tentacool, weight: 20 },
-        { species: Species.Horsea, weight: 20 },
         { species: Species.Magikarp, weight: 20 },
-        { species: Species.Dratini, weight: 4 },
         { species: Species.Chinchou, weight: 20 },
       ],
-      uncommon: [{ species: Species.Dragonair, weight: 2 }],
-      rare: [
+      rare: [{ species: Species.Dragonair, weight: 2 }],
+      scarce: [
         { species: Species.Wailord, weight: 4 },
         { species: Species.Huntail, weight: 5 },
         { species: Species.Gorebyss, weight: 5 },
         { species: Species.Gyarados, weight: 10 },
+        { species: Species.Lanturn, weight: 10 },
+      ],
+      elusive: [
         { species: Species.Lapras, weight: 5 },
         { species: Species.Dragonite, weight: 2 },
         { species: Species.Relicanth, weight: 5 },
@@ -69,19 +79,24 @@ export default function registerDeepOceanSpawns(): void {
     },
     [TimeOfDay.Evening]: {
       base: [
+        { species: Species.Horsea, weight: 20 },
+        { species: Species.Dratini, weight: 4 },
+      ],
+      uncommon: [
         { species: Species.Wailmer, weight: 15 },
         { species: Species.Tentacool, weight: 20 },
-        { species: Species.Horsea, weight: 20 },
         { species: Species.Magikarp, weight: 20 },
-        { species: Species.Dratini, weight: 4 },
         { species: Species.Chinchou, weight: 20 },
       ],
-      uncommon: [{ species: Species.Dragonair, weight: 2 }],
-      rare: [
+      rare: [{ species: Species.Dragonair, weight: 2 }],
+      scarce: [
         { species: Species.Wailord, weight: 4 },
         { species: Species.Huntail, weight: 5 },
         { species: Species.Gorebyss, weight: 5 },
         { species: Species.Gyarados, weight: 10 },
+        { species: Species.Lanturn, weight: 10 },
+      ],
+      elusive: [
         { species: Species.Lapras, weight: 5 },
         { species: Species.Dragonite, weight: 2 },
       ],
@@ -93,19 +108,24 @@ export default function registerDeepOceanSpawns(): void {
     },
     [TimeOfDay.Night]: {
       base: [
+        { species: Species.Horsea, weight: 20 },
+        { species: Species.Dratini, weight: 4 },
+      ],
+      uncommon: [
         { species: Species.Wailmer, weight: 15 },
         { species: Species.Tentacool, weight: 20 },
-        { species: Species.Horsea, weight: 20 },
         { species: Species.Magikarp, weight: 20 },
-        { species: Species.Dratini, weight: 4 },
         { species: Species.Chinchou, weight: 20 },
       ],
-      uncommon: [{ species: Species.Dragonair, weight: 2 }],
-      rare: [
+      rare: [{ species: Species.Dragonair, weight: 2 }],
+      scarce: [
         { species: Species.Wailord, weight: 4 },
         { species: Species.Huntail, weight: 5 },
         { species: Species.Gorebyss, weight: 5 },
         { species: Species.Gyarados, weight: 10 },
+        { species: Species.Lanturn, weight: 10 },
+      ],
+      elusive: [
         { species: Species.Lapras, weight: 5 },
         { species: Species.Dragonite, weight: 2 },
       ],

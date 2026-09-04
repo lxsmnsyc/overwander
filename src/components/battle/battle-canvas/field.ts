@@ -1,8 +1,9 @@
 import { BOSS_RADIUS, COLORS, MIN_RADIUS, PARTY_SLOT } from './metrics';
 import type { Striking } from './motion';
 import type Battle from '../../../battle/core';
-import { MoveTargetType } from '../../../battle/events';
+import { type MoveTarget, MoveTargetType } from '../../../battle/events';
 import type Team from '../../../battle/team';
+import { Weathers } from '../../../data/ids/status';
 import type Unit from '../../../battle/unit';
 import projectField, {
   type FieldPoint,
@@ -303,18 +304,39 @@ export function ringStandings(
 }
 
 /**
+ * What this unit is aiming at, or nothing while it is standing about.
+ * The move it is winding up, then the one it has in the air
+ */
+export function aimedAt(unit: Unit, thrown?: Striking): MoveTarget | null {
+  return unit.casting?.target ?? unit.channeling?.target ?? thrown?.at ?? null;
+}
+
+/** Everybody a target names, which for a team is all of it. */
+export function unitsOf(target: MoveTarget): Unit[] {
+  if (target.type === MoveTargetType.Unit) {
+    return [target.unit];
+  }
+  return target.type === MoveTargetType.Team ? [...target.team.units] : [];
+}
+
+/** Whichever of a team the caster looks at, preferring one still up. */
+function oneOf(team: Team, besides: Unit): Unit | null {
+  const others = [...team.units].filter((other) => other !== besides);
+
+  return others.find((other) => other.alive) ?? others.at(0) ?? null;
+}
+
+/**
  * What a unit is turned toward: whatever it is aiming at.
  *
  * A pokemon that faces the middle of the field all fight is a pokemon
- * that never looks at anything — on a ring the thing it is hitting is
- * rarely straight ahead. This is the move it is winding up, the move
- * it has in the air, or nothing while it is standing about. A move
- * aimed at another whole team looks at the first of them, which is
- * where the cluster is; one aimed at its own turns nothing, since its
- * own side is behind it
+ * that never looks at anything: on a ring the thing it is hitting is
+ * rarely straight ahead. A move aimed at a whole team looks at one of
+ * them, which is where the cluster is, and its own side counts, since
+ * a pokemon helping a teammate is looking at the teammate
  */
 function watchedBy(unit: Unit, thrown: Striking | undefined): Unit | null {
-  const aim = unit.casting?.target ?? unit.channeling?.target ?? thrown?.at;
+  const aim = aimedAt(unit, thrown);
 
   if (aim == null) {
     return null;
@@ -323,13 +345,81 @@ function watchedBy(unit: Unit, thrown: Striking | undefined): Unit | null {
     return aim.unit === unit ? null : aim.unit;
   }
   if (aim.type === MoveTargetType.Team) {
-    // Never round at its own side, for the same reason a move aimed at
-    // the caster itself turns nothing
-    return aim.team === unit.team
-      ? null
-      : ([...aim.team.units].find((other) => other !== unit) ?? null);
+    return oneOf(aim.team, unit);
   }
   return null;
+}
+
+/**
+ * A patch of sky, and the part of the picture it is painted over.
+ * Everything is in the picture's own coordinates, which is what both
+ * the painted pass and the batch draw in
+ */
+export interface SkyPatch {
+  weather: Weathers;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+/** How far past a team's own bodies its weather reaches, in radii. */
+const SKY_MARGIN = 1.8;
+
+/**
+ * What sky to draw and where.
+ *
+ * Weather over the whole field covers the picture, which is every
+ * fight but a raid: only a raid keeps a team's own weather to that
+ * team, and only a boss puts weather over everybody. A team's own sky
+ * is drawn as a shaft coming down over its cluster, so a side standing
+ * in its own sunshine is visibly the side that called for it
+ */
+export function skiesOver(
+  slots: Slot[],
+  battle: Battle,
+  picture: { width: number; height: number },
+): SkyPatch[] {
+  const overhead = battle.weather.disabled ? Weathers.None : battle.weather.current;
+
+  if (overhead !== Weathers.None) {
+    return [{ weather: overhead, x: 0, y: 0, width: picture.width, height: picture.height }];
+  }
+
+  const sides = new Map<Team, Slot[]>();
+
+  for (const slot of slots) {
+    const its = sides.get(slot.unit.team);
+
+    if (its == null) {
+      sides.set(slot.unit.team, [slot]);
+    } else {
+      its.push(slot);
+    }
+  }
+
+  const patches: SkyPatch[] = [];
+
+  for (const [team, its] of sides) {
+    const weather = team.weather.disabled ? Weathers.None : team.weather.current;
+
+    if (weather === Weathers.None) {
+      continue;
+    }
+
+    const reach = Math.max(...its.map((slot) => slot.radius)) * SKY_MARGIN;
+    const left = Math.max(0, Math.min(...its.map((slot) => slot.x)) - reach);
+    const right = Math.min(picture.width, Math.max(...its.map((slot) => slot.x)) + reach);
+    // From the top of the picture down past their feet: weather comes
+    // out of the sky, so a patch floating in the middle of the field
+    // reads as a cloud rather than as the weather over them
+    const bottom = Math.min(picture.height, Math.max(...its.map((slot) => slot.y)) + reach);
+
+    if (right > left && bottom > 0) {
+      patches.push({ weather, x: left, y: 0, width: right - left, height: bottom });
+    }
+  }
+  return patches;
 }
 
 /**

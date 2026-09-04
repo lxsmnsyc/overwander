@@ -12,10 +12,10 @@ import type { Species } from '../data/ids/species';
  * What one catch is worth in candies, by how hard it was to meet.
  *
  * A candy is a level, and a level of a legendary is worth more work
- * than a level of a Rattata — so the reward is the rarity band the
- * spawn pools sort a species into, counted from one. A base-stage
- * pokemon pays one, a legendary pays five, and the bands between them
- * pay what they are worth.
+ * than a level of a Rattata, so the reward is the rarity band the
+ * spawn pools sort a species into, counted from one. The bottom of a
+ * three-stage line pays one, a legendary pays seven, and the bands
+ * between them pay what they are worth.
  *
  * It is also what makes the rarer end of the dex worth chasing twice:
  * the pokemon, and the candies that raise the rest of its family
@@ -24,8 +24,12 @@ export const CANDY_BY_RARITY: Record<SpawnRarity, number> = {
   [SpawnRarity.Base]: 1,
   [SpawnRarity.Uncommon]: 2,
   [SpawnRarity.Rare]: 3,
-  [SpawnRarity.Prized]: 4,
-  [SpawnRarity.Special]: 5,
+  [SpawnRarity.Scarce]: 4,
+  [SpawnRarity.Elusive]: 5,
+  [SpawnRarity.Prized]: 6,
+  [SpawnRarity.Special]: 7,
+  // A rung above a legendary: one relic, one fight, one of them
+  [SpawnRarity.Mythical]: 8,
 };
 
 /**

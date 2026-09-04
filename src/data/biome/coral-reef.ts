@@ -8,15 +8,18 @@ import { UNOWN_SPAWNS, registerSpawnPool } from './__create';
 export default function registerCoralReefSpawns(): void {
   registerSpawnPool(Biome.CoralReef, {
     [TimeOfDay.Morning]: {
-      base: [
+      base: [{ species: Species.Horsea, weight: 20 }],
+      uncommon: [
         { species: Species.Carvanha, weight: 20 },
         { species: Species.Clamperl, weight: 20 },
-        { species: Species.Horsea, weight: 20 },
         { species: Species.Remoraid, weight: 20 },
       ],
-      uncommon: [{ species: Species.Seadra, weight: 10 }],
-      rare: [
+      rare: [{ species: Species.Seadra, weight: 10 }],
+      scarce: [
         { species: Species.Sharpedo, weight: 6 },
+        { species: Species.Octillery, weight: 5 },
+      ],
+      elusive: [
         { species: Species.Mantine, weight: 5 },
         { species: Species.Kingdra, weight: 5 },
         { species: Species.Corsola, weight: 20 },
@@ -26,15 +29,18 @@ export default function registerCoralReefSpawns(): void {
       special: [],
     },
     [TimeOfDay.Day]: {
-      base: [
+      base: [{ species: Species.Horsea, weight: 20 }],
+      uncommon: [
         { species: Species.Carvanha, weight: 20 },
         { species: Species.Clamperl, weight: 20 },
-        { species: Species.Horsea, weight: 20 },
         { species: Species.Remoraid, weight: 20 },
       ],
-      uncommon: [{ species: Species.Seadra, weight: 10 }],
-      rare: [
+      rare: [{ species: Species.Seadra, weight: 10 }],
+      scarce: [
         { species: Species.Sharpedo, weight: 6 },
+        { species: Species.Octillery, weight: 5 },
+      ],
+      elusive: [
         { species: Species.Mantine, weight: 5 },
         { species: Species.Kingdra, weight: 5 },
         { species: Species.Corsola, weight: 20 },
@@ -44,17 +50,20 @@ export default function registerCoralReefSpawns(): void {
       special: [],
     },
     [TimeOfDay.Evening]: {
-      base: [
+      base: [{ species: Species.Horsea, weight: 20 }],
+      uncommon: [
         { species: Species.Carvanha, weight: 20 },
         { species: Species.Clamperl, weight: 20 },
-        { species: Species.Horsea, weight: 20 },
         { species: Species.Staryu, weight: 20 },
         { species: Species.Remoraid, weight: 20 },
       ],
-      uncommon: [{ species: Species.Seadra, weight: 10 }],
-      rare: [
+      rare: [{ species: Species.Seadra, weight: 10 }],
+      scarce: [
         { species: Species.Sharpedo, weight: 6 },
         { species: Species.Starmie, weight: 10 },
+        { species: Species.Octillery, weight: 10 },
+      ],
+      elusive: [
         { species: Species.Mantine, weight: 5 },
         { species: Species.Kingdra, weight: 5 },
         { species: Species.Corsola, weight: 20 },
@@ -63,17 +72,20 @@ export default function registerCoralReefSpawns(): void {
       special: [],
     },
     [TimeOfDay.Night]: {
-      base: [
+      base: [{ species: Species.Horsea, weight: 20 }],
+      uncommon: [
         { species: Species.Carvanha, weight: 20 },
         { species: Species.Clamperl, weight: 20 },
-        { species: Species.Horsea, weight: 20 },
         { species: Species.Staryu, weight: 20 },
         { species: Species.Remoraid, weight: 20 },
       ],
-      uncommon: [{ species: Species.Seadra, weight: 10 }],
-      rare: [
+      rare: [{ species: Species.Seadra, weight: 10 }],
+      scarce: [
         { species: Species.Sharpedo, weight: 6 },
         { species: Species.Starmie, weight: 10 },
+        { species: Species.Octillery, weight: 10 },
+      ],
+      elusive: [
         { species: Species.Mantine, weight: 5 },
         { species: Species.Kingdra, weight: 5 },
         { species: Species.Corsola, weight: 20 },

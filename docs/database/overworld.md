@@ -237,7 +237,7 @@ place the chunk seed fixed forever; something happening is not, so `getPhenomena
 rolls up to `MAX_PHENOMENA` of them across the chunk's open ground each hour and
 they fall elsewhere the next one. Cells already carrying scenery, a landmark or a
 rock are excluded, and dry ground is taken first where a chunk has any, so a
-marsh still hides grottos while the open sea — which has none — only ripples.
+marsh still hides grottos while the open sea, which has none, only ripples.
 What each one is comes from `BIOME_PHENOMENA[biome]`
 ([`src/data/overworld/phenomenon.ts`](../../src/data/overworld/phenomenon.ts)), so
 water only ripples where there is water and dust only rises where there is dust.
@@ -252,7 +252,7 @@ load-bearing. The claim marker and the startled pokemon's rolls are both named
 for `(chunk, hour, cell)`, so a cell that moved inside the hour would let the
 same player claim the same event again. `getPhenomenonReward(cell)` resolves what
 one turns out to be, seeded the same way, so every visitor of that cell this hour
-finds the same thing — and `listClaimedPhenomena` tells a board which of them
+finds the same thing. `listClaimedPhenomena` tells a board which of them
 this player has already taken, so a spent one stops being drawn for them alone.
 
 | Phenomenon         | Half the time                     | The other half                         |

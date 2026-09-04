@@ -314,8 +314,11 @@ const setupAbilities = [
       ) {
         event.success = false;
 
-        // For visual cues
-        event.source.triggerAbility(Abilities.BigPecks);
+        // A cue is something a watcher sees, so it waits for a real
+        // attempt rather than the AI weighing one
+        if (!event.simulated) {
+          event.source.triggerAbility(Abilities.BigPecks);
+        }
       }
     }),
   ),
@@ -1049,7 +1052,12 @@ const setupAbilities = [
             event.source.hasAbility(Abilities.InnerFocus)
           ) {
             event.success = false;
-            event.source.triggerAbility(Abilities.InnerFocus);
+
+            // A cue is something a watcher sees, so it waits for a real
+            // attempt rather than the AI weighing one
+            if (!event.simulated) {
+              event.source.triggerAbility(Abilities.InnerFocus);
+            }
           }
         }),
       ]),
@@ -1866,7 +1874,12 @@ const setupAbilities = [
             event.source.hasAbility(Abilities.OwnTempo)
           ) {
             event.success = false;
-            event.source.triggerAbility(Abilities.OwnTempo);
+
+            // A cue is something a watcher sees, so it waits for a real
+            // attempt rather than the AI weighing one
+            if (!event.simulated) {
+              event.source.triggerAbility(Abilities.OwnTempo);
+            }
           }
         }),
         // Gaining the ability also cures the blocked status
@@ -2378,8 +2391,11 @@ const setupAbilities = [
       ) {
         event.success = false;
 
-        // For visual cues
-        event.source.triggerAbility(Abilities.HyperCutter);
+        // A cue is something a watcher sees, so it waits for a real
+        // attempt rather than the AI weighing one
+        if (!event.simulated) {
+          event.source.triggerAbility(Abilities.HyperCutter);
+        }
       }
     }),
   ),
@@ -2764,7 +2780,11 @@ const setupAbilities = [
           ) {
             event.success = false;
 
-            event.source.triggerAbility(Abilities.Scrappy);
+            // A cue is something a watcher sees, so it waits for a real
+            // attempt rather than the AI weighing one
+            if (!event.simulated) {
+              event.source.triggerAbility(Abilities.Scrappy);
+            }
           }
         }),
       ]),

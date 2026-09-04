@@ -1,4 +1,4 @@
-import { SpawnRarity, getSpawnRarity } from '../biome';
+import { isGrownSpecies } from '../biome';
 import { Types } from '../constants/types';
 import Biome from '../ids/biome';
 import Regions from '../ids/regions';
@@ -882,7 +882,7 @@ export function getTrainerPool(trainer: TrainerClass): Species[] {
     // "Rare" is the shape of the line rather than the odds of meeting
     // one: a species nothing evolves into is what a trainer this far
     // along would be walking with
-    if (getSpawnRarity(species) !== SpawnRarity.Rare) {
+    if (!isGrownSpecies(species)) {
       return false;
     }
     // An empty list is every type there is, which is the Ace's

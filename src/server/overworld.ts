@@ -10,12 +10,11 @@ import ChunkSnapshot, {
   type Spawn,
 } from '../overworld/chunk-snapshot';
 import getWorld from '../overworld/current';
-import { getSpawnRarity } from '../data/biome';
 import deriveEncounter, {
   type EncounterOptions,
   EncounterType,
-  SPAWN_LEVELS,
   deriveTrainedAbilities,
+  getSpawnLevels,
 } from '../overworld/encounter';
 import { DEFAULT_ITEM_SLOTS, Slots, defaultSlots, withSlots } from '../data/constants/slots';
 import type Weather from '../data/overworld/weather';
@@ -695,7 +694,7 @@ export async function startEncounter(
     levels:
       options.levels ??
       (options.level == null && (options.type ?? EncounterType.Wild) === EncounterType.Wild
-        ? overworld.checkEncounterLevels(id, SPAWN_LEVELS[getSpawnRarity(spawn[0])])
+        ? overworld.checkEncounterLevels(id, getSpawnLevels(spawn[0]))
         : undefined),
   });
   // What a trained pokemon keeps once it changes hands: the second

@@ -261,8 +261,11 @@ export function createClearBodyAbility(ability: Abilities): (battle: Battle) => 
       ) {
         event.success = false;
 
-        // For visual cues
-        event.source.triggerAbility(ability);
+        // A cue is something a watcher sees, so it waits for a real
+        // attempt rather than the AI weighing one
+        if (!event.simulated) {
+          event.source.triggerAbility(ability);
+        }
       }
     }),
   );
@@ -541,8 +544,11 @@ export function createKeenEyeAbility(targetAbility: Abilities): (battle: Battle)
           ) {
             event.success = false;
 
-            // For visual cues
-            event.source.triggerAbility(targetAbility);
+            // A cue is something a watcher sees, so it waits for a real
+            // attempt rather than the AI weighing one
+            if (!event.simulated) {
+              event.source.triggerAbility(targetAbility);
+            }
           }
         }),
         // The holder's attacks ignore the target's evasion stages:
@@ -794,6 +800,12 @@ export function createRestageAbility(
         }
 
         event.success = false;
+
+        // The refusal is the whole answer for the AI weighing a move:
+        // the rewritten change belongs to a cast that actually happened
+        if (event.simulated) {
+          return;
+        }
         event.source.triggerAbility(targetAbility);
 
         rewriting.add(event.source);

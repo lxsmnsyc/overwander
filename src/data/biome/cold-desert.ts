@@ -9,42 +9,50 @@ export default function registerColdDesertSpawns(): void {
   registerSpawnPool(Biome.ColdDesert, {
     [TimeOfDay.Morning]: {
       base: [
-        { species: Species.Cacnea, weight: 20 },
         { species: Species.Beldum, weight: 2 },
-        { species: Species.Diglett, weight: 20 },
         { species: Species.Geodude, weight: 20 },
-        { species: Species.Onix, weight: 10 },
       ],
       uncommon: [
+        { species: Species.Cacnea, weight: 20 },
+        { species: Species.Diglett, weight: 20 },
+        { species: Species.Onix, weight: 10 },
+      ],
+      rare: [
         { species: Species.Metang, weight: 1 },
         { species: Species.Graveler, weight: 5 },
       ],
-      rare: [
-        { species: Species.Metagross, weight: 1 },
+      scarce: [
         { species: Species.Dugtrio, weight: 10 },
-        { species: Species.Golem, weight: 5 },
         { species: Species.Steelix, weight: 5 },
+      ],
+      elusive: [
+        { species: Species.Metagross, weight: 1 },
+        { species: Species.Golem, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [],
     },
     [TimeOfDay.Day]: {
       base: [
-        { species: Species.Cacnea, weight: 20 },
         { species: Species.Beldum, weight: 2 },
-        { species: Species.Diglett, weight: 20 },
         { species: Species.Geodude, weight: 20 },
-        { species: Species.Onix, weight: 10 },
       ],
       uncommon: [
+        { species: Species.Cacnea, weight: 20 },
+        { species: Species.Diglett, weight: 20 },
+        { species: Species.Onix, weight: 10 },
+      ],
+      rare: [
         { species: Species.Metang, weight: 1 },
         { species: Species.Graveler, weight: 5 },
       ],
-      rare: [
-        { species: Species.Metagross, weight: 1 },
+      scarce: [
         { species: Species.Dugtrio, weight: 10 },
-        { species: Species.Golem, weight: 5 },
         { species: Species.Steelix, weight: 5 },
+      ],
+      elusive: [
+        { species: Species.Metagross, weight: 1 },
+        { species: Species.Golem, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [],
@@ -52,21 +60,25 @@ export default function registerColdDesertSpawns(): void {
     [TimeOfDay.Evening]: {
       base: [
         { species: Species.Beldum, weight: 2 },
-        { species: Species.Diglett, weight: 20 },
         { species: Species.Geodude, weight: 20 },
-        { species: Species.Onix, weight: 10 },
       ],
       uncommon: [
+        { species: Species.Diglett, weight: 20 },
+        { species: Species.Onix, weight: 10 },
+        { species: Species.Gligar, weight: 5 },
+      ],
+      rare: [
         { species: Species.Metang, weight: 1 },
         { species: Species.Graveler, weight: 5 },
       ],
-      rare: [
+      scarce: [
         { species: Species.Cacturne, weight: 6 },
-        { species: Species.Metagross, weight: 1 },
         { species: Species.Dugtrio, weight: 10 },
-        { species: Species.Golem, weight: 5 },
-        { species: Species.Gligar, weight: 5 },
         { species: Species.Steelix, weight: 5 },
+      ],
+      elusive: [
+        { species: Species.Metagross, weight: 1 },
+        { species: Species.Golem, weight: 5 },
         { species: Species.Lunatone, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS],
@@ -75,23 +87,27 @@ export default function registerColdDesertSpawns(): void {
     [TimeOfDay.Night]: {
       base: [
         { species: Species.Beldum, weight: 2 },
-        { species: Species.Diglett, weight: 20 },
         { species: Species.Geodude, weight: 20 },
-        { species: Species.Cubone, weight: 20 },
-        { species: Species.Onix, weight: 10 },
       ],
       uncommon: [
+        { species: Species.Diglett, weight: 20 },
+        { species: Species.Cubone, weight: 20 },
+        { species: Species.Onix, weight: 10 },
+        { species: Species.Gligar, weight: 5 },
+      ],
+      rare: [
         { species: Species.Metang, weight: 1 },
         { species: Species.Graveler, weight: 5 },
       ],
-      rare: [
+      scarce: [
         { species: Species.Cacturne, weight: 6 },
-        { species: Species.Metagross, weight: 1 },
         { species: Species.Dugtrio, weight: 10 },
-        { species: Species.Golem, weight: 5 },
         { species: Species.Marowak, weight: 10 },
-        { species: Species.Gligar, weight: 5 },
         { species: Species.Steelix, weight: 5 },
+      ],
+      elusive: [
+        { species: Species.Metagross, weight: 1 },
+        { species: Species.Golem, weight: 5 },
         { species: Species.Lunatone, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS],

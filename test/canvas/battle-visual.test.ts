@@ -91,7 +91,12 @@ function canvas(): {
 
 /** One move that lands as each shape, so every shape is exercised. */
 const SHAPES: [shape: string, move: Moves][] = [
-  ['Impact', Moves.Tackle],
+  // A contact hit is drawn by how it was thrown, so the commonest
+  // thing in the game is four pictures rather than one
+  ['Impact', Moves.BodySlam],
+  ['Jab', Moves.Tackle],
+  ['Slam', Moves.DoubleEdge],
+  ['Brawl', Moves.KarateChop],
   ['Blast', Moves.Explosion],
   ['Bloom', Moves.DragonRage],
   ['Beam', Moves.HyperBeam],
@@ -104,17 +109,19 @@ const SHAPES: [shape: string, move: Moves][] = [
   ['Haze', Moves.PoisonPowder],
   ['Mark', Moves.Glare],
   ['Mend', Moves.Recover],
-  ['Ward', Moves.Harden],
+  ['Ward', Moves.Substitute],
+  ['Screen', Moves.Reflect],
+  ['Sky', Moves.RainDance],
   ['Quake', Moves.Earthquake],
   ['Drain', Moves.Absorb],
   ['Volley', Moves.PinMissile],
   ['Bubbles', Moves.BubbleBeam],
   ['Boomerang', Moves.Bonemerang],
-  ['Dazzle', Moves.Flash],
+  ['Dazzle', Moves.HiddenPower],
   ['Jaws', Moves.Bite],
   ['Claw', Moves.Scratch],
   ['Coil', Moves.Wrap],
-  ['Wave', Moves.Growl],
+  ['Wave', Moves.Supersonic],
   ['Chasm', Moves.Fissure],
   ['Leaves', Moves.RazorLeaf],
   ['Stars', Moves.Swift],
@@ -127,6 +134,10 @@ const SHAPES: [shape: string, move: Moves][] = [
   ['Warp', Moves.Psychic],
   ['Lash', Moves.VineWhip],
   ['Boost', Moves.SwordsDance],
+  ['Drop', Moves.Leer],
+  ['Nerve', Moves.FocusEnergy],
+  ['Drum', Moves.BellyDrum],
+  ['Relay', Moves.BatonPass],
   // Johto's own three
   ['Shade', Moves.ShadowBall],
   ['Hearts', Moves.Attract],
@@ -168,8 +179,17 @@ describe('a painted move', () => {
       ['Vanish', Moves.Dig, 1],
       ['Surface', Moves.Dig, 0],
       ['Dive', Moves.Fly, 0],
-      ['Reach', Moves.Growl, 0],
+      ['Reach', Moves.Leer, 0],
       ['Rise', Moves.Earthquake, 0],
+      // The gaps the landing chose, rather than one charge for all
+      // of them
+      ['Brace', Moves.Substitute, 0],
+      ['Focus', Moves.SwordsDance, 0],
+      ['Gather', Moves.Recover, 0],
+      ['Gaze', Moves.Hypnosis, 0],
+      ['Call', Moves.Growl, 0],
+      ['Drift', Moves.PoisonPowder, 0],
+      ['Flare', Moves.Flash, 0],
     ];
 
     for (const [shape, move, steps] of gaps) {
@@ -185,6 +205,33 @@ describe('a painted move', () => {
     }
   });
 
+  it('opens a fissure and closes it again', () => {
+    // The hole is a shape to fill rather than two lines to stroke, so
+    // what says it opened is that the fill widens and goes again
+    const gape = (at: number): number => {
+      const spans: number[] = [];
+      const { context } = canvas();
+      const visual = moveEffectVisual(Moves.Fissure);
+
+      const gradient = { addColorStop: () => {} } as CanvasGradient;
+
+      context.createLinearGradient = (_x, top, _to, bottom): CanvasGradient => {
+        spans.push(Math.abs(bottom - top));
+        return gradient;
+      };
+
+      if (visual == null) {
+        return 0;
+      }
+      visual.advance(visual.duration * at);
+      visual.draw(context, STAGE);
+      return Math.max(...spans, 0);
+    };
+
+    expect(gape(0.45)).toBeGreaterThan(gape(0.1));
+    expect(gape(0.98)).toBeLessThan(gape(0.45));
+  });
+
   it('reads the move flags rather than naming every move that carries one', () => {
     // A bite is teeth and a cut is an edge, whatever else the move is
     expect(effectShapeFor(Moves.Crunch)).toBe('Jaws');
@@ -193,9 +240,14 @@ describe('a painted move', () => {
     // Sound answers status moves as well, which the other two do not:
     // a song that puts something to sleep is still a song
     expect(effectShapeFor(Moves.HyperVoice)).toBe('Wave');
-    expect(effectShapeFor(Moves.Growl)).toBe('Wave');
     expect(effectShapeFor(Moves.GrassWhistle)).toBe('Wave');
-    expect(effectShapeFor(Moves.MetalSound)).toBe('Wave');
+
+    // Unless it moved a stat, which is drawn as the stat. What the
+    // move was is the gap it crossed, so a growl still carries as
+    // sound on the way over
+    expect(effectShapeFor(Moves.Growl)).toBe('Drop');
+    expect(effectShapeFor(Moves.MetalSound)).toBe('Drop');
+    expect(delayShapeFor(Moves.Growl, 0)).toBe('Call');
   });
 
   it('draws the Hoenn moves the rules alone would have drawn wrong', () => {
@@ -234,9 +286,19 @@ describe('a painted move', () => {
     // Still winding up: one step left to run
     expect(delayShapeFor(Moves.Thrash, 1)).toBe('Charge');
     // Nothing is thrown, but something reaches
-    expect(delayShapeFor(Moves.Growl, 0)).toBe('Reach');
-    // Its own side: nothing crosses anything
-    expect(delayShapeFor(Moves.Harden, 0)).toBe('Charge');
+    expect(delayShapeFor(Moves.Leer, 0)).toBe('Reach');
+    // Heard rather than reaching, and drifting rather than sent
+    expect(delayShapeFor(Moves.Growl, 0)).toBe('Call');
+    expect(delayShapeFor(Moves.PoisonPowder, 0)).toBe('Drift');
+    // What it lands as says how it spends the wait: a guard closes
+    // in, a boost runs upward, health is drawn back
+    expect(delayShapeFor(Moves.Reflect, 0)).toBe('Brace');
+    expect(delayShapeFor(Moves.SwordsDance, 0)).toBe('Focus');
+    expect(delayShapeFor(Moves.Recover, 0)).toBe('Gather');
+    expect(delayShapeFor(Moves.Absorb, 0)).toBe('Gather');
+    expect(delayShapeFor(Moves.Hypnosis, 0)).toBe('Gaze');
+    // Still a plain wind-up where the landing says nothing about it
+    expect(delayShapeFor(Moves.Thunderbolt, 0)).toBe('Charge');
     // Lobbed rather than shot flat, and laid rather than thrown at
     expect(delayShapeFor(Moves.SludgeBomb, 0)).toBe('Lobbed');
     expect(delayShapeFor(Moves.Spikes, 0)).toBe('Lobbed');
@@ -264,8 +326,108 @@ describe('a painted move', () => {
     expect(weightOf(Moves.HornDrill)).toBeGreaterThan(weightOf(Moves.HyperBeam));
   });
 
+  it('tells contact hits apart by how they were thrown', () => {
+    // One burst for every contact move made a Quick Attack and a
+    // Double Edge the same picture at two sizes
+    expect(effectShapeFor(Moves.Tackle)).toBe('Jab');
+    expect(effectShapeFor(Moves.QuickAttack)).toBe('Jab');
+    expect(effectShapeFor(Moves.BodySlam)).toBe('Impact');
+    expect(effectShapeFor(Moves.DoubleEdge)).toBe('Slam');
+    // Variable power is the loudest thing the data can say, so it is
+    // drawn as the heaviest
+    expect(effectShapeFor(Moves.Flail)).toBe('Slam');
+    // A fist or a foot rather than a body, whatever it weighs
+    expect(effectShapeFor(Moves.KarateChop)).toBe('Brawl');
+    expect(effectShapeFor(Moves.HiJumpKick)).toBe('Brawl');
+    // Nothing made contact, so the type picks as it always did
+    expect(effectShapeFor(Moves.RockThrow)).toBe('Rocks');
+  });
+
+  it('draws a stat move as the stat, on whoever it landed on', () => {
+    // One picture for every rise and the same turned over for every
+    // drop, ahead of whatever else the move looks like
+    expect(effectShapeFor(Moves.SwordsDance)).toBe('Boost');
+    expect(effectShapeFor(Moves.Harden)).toBe('Boost');
+    expect(effectShapeFor(Moves.Amnesia)).toBe('Boost');
+    expect(effectShapeFor(Moves.Leer)).toBe('Drop');
+    expect(effectShapeFor(Moves.Growl)).toBe('Drop');
+    expect(effectShapeFor(Moves.Charm)).toBe('Drop');
+    // Raising the target's Attack is still a rise, and it is drawn on
+    // the target rather than on whoever cast it
+    expect(effectShapeFor(Moves.Swagger)).toBe('Boost');
+    // What the move itself was is what crosses the gap, so nothing is
+    // lost by the landing being the stat
+    expect(delayShapeFor(Moves.Growl, 0)).toBe('Call');
+    expect(delayShapeFor(Moves.SandAttack, 0)).toBe('Drift');
+    expect(delayShapeFor(Moves.Flash, 0)).toBe('Flare');
+  });
+
+  it('draws the stat where the stat moved', () => {
+    // The engine says a landing once per pokemon it reached, and the
+    // picture goes on that one: a drop aimed at an enemy is drawn on
+    // the enemy, and a rise aimed at nobody on the caster
+    const on = (move: Moves, targets: [number, number][]): string => {
+      const { context, trace } = canvas();
+      const visual = moveEffectVisual(move);
+
+      visual?.advance(visual.duration * 0.4);
+      visual?.draw(context, { ...STAGE, targets });
+      return trace();
+    };
+
+    expect(on(Moves.Leer, [[300, 100]])).not.toBe(on(Moves.Leer, [[500, 400]]));
+    expect(on(Moves.SwordsDance, [])).not.toBe(on(Moves.SwordsDance, [[300, 100]]));
+  });
+
+  it('colours a stat move by which stat it moved', () => {
+    // Which way it points says up or down, and the colour says which
+    // of the seven it was
+    const shade = (move: Moves): string => {
+      const { context } = canvas();
+      const visual = moveEffectVisual(move);
+
+      visual?.advance(visual.duration * 0.4);
+      visual?.draw(context, STAGE);
+      return String(context.strokeStyle);
+    };
+
+    // The same picture in two colours
+    expect(shade(Moves.SwordsDance)).not.toBe(shade(Moves.Harden));
+    // And two moves that move the same stat the same way match
+    expect(shade(Moves.Harden)).toBe(shade(Moves.Withdraw));
+  });
+
+  it('puts a screen over the side rather than on each of them', () => {
+    // A screen is aimed at the team, so the engine says it landed on
+    // every pokemon there. One pane, in the middle of them
+    const drew = (targets: [number, number][]): string => {
+      const { context, trace } = canvas();
+      const visual = moveEffectVisual(Moves.Reflect);
+
+      visual?.advance(visual.duration * 0.5);
+      visual?.draw(context, { ...STAGE, targets });
+      return trace();
+    };
+    const one = drew([[200, 200]]);
+    const three = drew([
+      [100, 200],
+      [200, 200],
+      [300, 200],
+    ]);
+
+    // Three of them cost no more drawing than one of them
+    expect(three.split('|').length).toBe(one.split('|').length);
+    // And the pane stands in the middle rather than on the first
+    expect(three).toBe(drew([[200, 200]]));
+  });
+
+  it('puts the weather over the field rather than on the caster', () => {
+    expect(effectShapeFor(Moves.RainDance)).toBe('Sky');
+    expect(effectShapeFor(Moves.SunnyDay)).toBe('Sky');
+    expect(effectShapeFor(Moves.Hail)).toBe('Sky');
+  });
+
   it('lands as what the move is, read off its own data', () => {
-    expect(effectShapeFor(Moves.Tackle)).toBe('Impact');
     expect(effectShapeFor(Moves.Ember)).toBe('Flame');
     expect(effectShapeFor(Moves.WaterGun)).toBe('Splash');
     expect(effectShapeFor(Moves.Thunderbolt)).toBe('Zap');
@@ -273,8 +435,8 @@ describe('a painted move', () => {
     expect(effectShapeFor(Moves.Absorb)).toBe('Drain');
     expect(effectShapeFor(Moves.Recover)).toBe('Mend');
     // Named, because the shape can say the move rather than only its
-    // element: a growl is heard
-    expect(effectShapeFor(Moves.Growl)).toBe('Wave');
+    // element: a supersonic is heard
+    expect(effectShapeFor(Moves.Supersonic)).toBe('Wave');
     expect(effectShapeFor(Moves.Bite)).toBe('Jaws');
     // A bubble move sprays rather than shooting one jet, in the gap
     // and where it lands alike
@@ -286,18 +448,21 @@ describe('a painted move', () => {
     expect(effectShapeFor(Moves.EggBomb)).toBe('Blast');
     expect(delayShapeFor(Moves.EggBomb, 0)).toBe('Lobbed');
     // Light, which nothing crosses the field to deliver
-    expect(effectShapeFor(Moves.Flash)).toBe('Dazzle');
+    expect(effectShapeFor(Moves.HiddenPower)).toBe('Dazzle');
     expect(effectShapeFor(Moves.Wrap)).toBe('Coil');
     // A fury of swipes is claws, drawn several times over — the
     // barrage shape is for the moves whose repeat is the whole point
     expect(effectShapeFor(Moves.FurySwipes)).toBe('Claw');
     expect(effectShapeFor(Moves.PinMissile)).toBe('Volley');
     expect(effectShapeFor(Moves.Glare)).toBe('Mark');
-    expect(effectShapeFor(Moves.Harden)).toBe('Ward');
+    expect(effectShapeFor(Moves.Substitute)).toBe('Ward');
+    // A screen is a pane put up rather than a shell closing in, and
+    // it is coloured by the stat it stands in for
+    expect(effectShapeFor(Moves.Reflect)).toBe('Screen');
+    expect(effectShapeFor(Moves.LightScreen)).toBe('Screen');
     // Drawn the way the mainline draws them, rather than the way their
     // type and category would have picked
     expect(effectShapeFor(Moves.Fissure)).toBe('Chasm');
-    expect(effectShapeFor(Moves.SandAttack)).toBe('Haze');
     expect(effectShapeFor(Moves.ThunderWave)).toBe('Wave');
     expect(effectShapeFor(Moves.Haze)).toBe('Haze');
   });
@@ -375,6 +540,33 @@ describe('a blow landing', () => {
         expect(marks(), `${JSON.stringify(way)} at ${at}`).toBeGreaterThan(0);
       }
     }
+  });
+
+  it('reads a blow as the type that dealt it', () => {
+    const shade = (way: typeof landed): string => {
+      const { context } = canvas();
+      const mark = attackMarkVisual(way);
+
+      mark.advance(mark.duration * 0.4);
+      mark.draw(context, STAGE);
+      return String(context.strokeStyle);
+    };
+
+    // One white for every blow said nothing about what hit them
+    expect(shade({ ...landed, type: Types.Fire })).not.toBe(
+      shade({ ...landed, type: Types.Water }),
+    );
+    // The same type three ways: lit for a weakness, drained for a
+    // resistance, and the colour itself in between
+    const plain = shade({ ...landed, type: Types.Fire });
+    const weak = shade({ ...landed, type: Types.Fire, effectiveness: 2 });
+    const resisted = shade({ ...landed, type: Types.Fire, effectiveness: 0.5 });
+
+    expect(new Set([plain, weak, resisted]).size).toBe(3);
+    // Nothing landed, so there is no type left to show
+    expect(shade({ ...landed, type: Types.Fire, struck: false })).toBe(
+      shade({ ...landed, type: Types.Water, struck: false }),
+    );
   });
 
   it('draws a heavier blow bigger than a graze', () => {

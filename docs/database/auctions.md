@@ -3,7 +3,7 @@
 The auction house is the one place something passes from one player to another.
 The server decides everything about it in
 [`src/server/auctions.ts`](../../src/server/auctions.ts). The rules both sides
-read — what a bid must clear, when bidding closes, who may collect — live in
+read, covering what a bid must clear, when bidding closes and who may collect, live in
 [`src/auth/auction-record.ts`](../../src/auth/auction-record.ts), and the browser
 reads the board through [`src/auth/auctions.ts`](../../src/auth/auctions.ts).
 
@@ -100,11 +100,11 @@ judgement and the rest is learned by winning. A pokemon the player already owns
 still shows all six.
 
 Clicking a catch lot opens the **catch dialog read-only** (`readOnly`): the whole
-record — values, nature, abilities, moves, friendship, origin and the ownership
-chain — and nothing to press. The prop drops the dialog's owner check, since a lot
+record, with values, nature, abilities, moves, friendship, origin and the
+ownership chain, and nothing to press. The prop drops the dialog's owner check, since a lot
 in escrow is owned by nobody and requiring a match would show an empty dialog, and
-it leaves out every section that writes. It is not a permission — the server
-refuses all of those writes anyway — it is so the buttons are never offered.
+it leaves out every section that writes. It is not a permission, since the server
+refuses all of those writes anyway. It is so the buttons are never offered.
 
 An **egg** lot shows none of it. What is inside one is hidden from everybody but
 its owner, and a board is not the place to give it away, which is also why
@@ -132,7 +132,7 @@ answered over what it read.
 | `is:`, `not:`                 | `item`, `pokemon`, `mine`, `bidding`, `bid`, `unbid`, `live`, `ended`, `settled`, `shiny`, `shadow` |
 | `sort:`, `order:`             | `name`, `seller`, `price`, `start`, `ends`, `listed`, `level`                                       |
 
-What the board writes for itself — the lot's name and the seller's — is handed
+What the board writes for itself, the lot's name and the seller's, is handed
 to the search as context rather than derived twice, along with the escrowed
 pokemon and where the reader stands on the lot. A lot whose pokemon has not
 loaded yet answers nothing about it, and stays on the board rather than
@@ -180,7 +180,7 @@ the real limit, and it is checked where the gold moves.
 The pair is the primary key, so bidding again rewrites rather than appending.
 
 The auction keeps only the bid that is standing. That is all a lot needs in order
-to settle — who to hand it to, and what to pay the seller — and a lot that kept
+to settle, who to hand it to and what to pay the seller, and a lot that kept
 everybody who ever bid on it would grow a list nothing settling it ever reads.
 
 A player's history is a different question asked by a different reader, so it
@@ -289,7 +289,7 @@ it:
 - A **special-tier species** is a legendary or a mythical, which the world stages
   on its own schedule.
 
-Anything else — a rare, a fully-evolved anything — a bidder can walk out and
+Anything else, a rare or a fully-evolved anything, a bidder can walk out and
 catch, which is what makes it not worth a day of the board.
 
 Both rules live in
@@ -300,7 +300,7 @@ asks again from the **stored** record before it takes the lot.
 The catch rule is also a **stored field**. `auctionable` on the catch record is
 `isAuctionableCatch` written down, so the sell picker asks
 `listCaughtMarked(player, 'auctionable')` instead of reading a whole box to find
-the few rows that qualify — see
+the few rows that qualify. See
 [The marks are fields](catches.md#auctionable-is-the-sixth-and-a-different-kind).
 The field is an index and never an authority: the picker re-checks every row it
 returns, and `openAuction` derives the answer from `ivs`, `shiny` and `species`

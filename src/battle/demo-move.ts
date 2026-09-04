@@ -162,6 +162,19 @@ export function aimFor(demo: MoveDemo, move: Moves): MoveTarget {
   return { type: MoveTargetType.Unit, unit: demo.target };
 }
 
+/**
+ * What the demo bends, which the page can change while it is staged.
+ * Read at the moment it matters rather than when the battle was built,
+ * so a switch takes effect on the next cast rather than on a restage
+ */
+export interface DemoRules {
+  /**
+   * Whether every cast passes its accuracy roll. A Fissure lands three
+   * casts in ten, which is a lottery rather than a demonstration
+   */
+  alwaysHits: boolean;
+}
+
 export interface MoveDemo {
   battle: Battle;
   /** The one that knows the move */
@@ -170,6 +183,8 @@ export interface MoveDemo {
   target: Unit;
   /** Whether the two are standing on the same side */
   allied: boolean;
+  /** The dials the page turns while it watches */
+  rules: DemoRules;
 }
 
 /**
@@ -179,7 +194,7 @@ export interface MoveDemo {
  * uses, so the units on the field are built the way the game builds
  * them rather than the way a demo might find convenient
  */
-export function createMoveDemo(move: Moves): MoveDemo {
+export function createMoveDemo(move: Moves, rules: DemoRules = { alwaysHits: true }): MoveDemo {
   const allied = needsAlly(move);
   const battle = createBattle(`demo-move:${move}`, {
     mode: BattleModes.Demo,
@@ -226,5 +241,13 @@ export function createMoveDemo(move: Moves): MoveDemo {
       event.success = false;
     }
   });
-  return { battle, caster: casting, target: receiving, allied };
+  // Settled before the roll rather than instead of the rules after it:
+  // the cast passes its accuracy check, and anything that would still
+  // stop it landing, a target gone underground, goes on stopping it
+  battle.on(BattleEvents.UnitTriggerMoveRollHit, EventPriority.Pre, (event) => {
+    if (rules.alwaysHits) {
+      event.hit = true;
+    }
+  });
+  return { battle, caster: casting, target: receiving, allied, rules };
 }

@@ -86,7 +86,7 @@ export default function registerRhyhornSpecies(): void {
     eggGroups: [EggGroups.Monster, EggGroups.Field],
     genderRatio: [1, 1],
     catchRate: 120,
-    biomes: [Biome.Savanna, Biome.Desert],
+    biomes: [Biome.Savanna, Biome.Desert, Biome.Badlands],
     activeTimes: TimeOfDay.Day,
     learnSet: {
       level: {
@@ -145,7 +145,7 @@ export default function registerRhyhornSpecies(): void {
     eggGroups: [EggGroups.Monster, EggGroups.Field],
     genderRatio: [1, 1],
     catchRate: 60,
-    biomes: [Biome.Savanna, Biome.Desert],
+    biomes: [Biome.Savanna, Biome.Desert, Biome.Badlands],
     activeTimes: TimeOfDay.Day,
     learnSet: {
       level: {

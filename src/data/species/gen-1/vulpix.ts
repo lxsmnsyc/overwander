@@ -74,7 +74,7 @@ export default function registerVulpixSpecies(): void {
     eggGroups: [EggGroups.Field],
     genderRatio: [1, 3],
     catchRate: 190,
-    biomes: [Biome.Woodland, Biome.Shrubland, Biome.Taiga],
+    biomes: [Biome.Woodland, Biome.Shrubland, Biome.Taiga, Biome.Volcano],
     activeTimes: TimeOfDay.Evening | TimeOfDay.Night,
     learnSet: {
       level: {
@@ -123,7 +123,7 @@ export default function registerVulpixSpecies(): void {
     eggGroups: [EggGroups.Field],
     genderRatio: [1, 3],
     catchRate: 75,
-    biomes: [Biome.Woodland, Biome.Shrubland, Biome.Taiga],
+    biomes: [Biome.Woodland, Biome.Shrubland, Biome.Taiga, Biome.Volcano],
     activeTimes: TimeOfDay.Evening | TimeOfDay.Night,
     learnSet: {
       level: {

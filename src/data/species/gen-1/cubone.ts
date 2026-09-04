@@ -97,7 +97,7 @@ export default function registerCuboneSpecies(): void {
     eggGroups: [EggGroups.Monster],
     genderRatio: [1, 1],
     catchRate: 190,
-    biomes: [Biome.Mountain, Biome.Desert, Biome.ColdDesert],
+    biomes: [Biome.Mountain, Biome.Desert, Biome.ColdDesert, Biome.Badlands],
     activeTimes: TimeOfDay.Night,
     learnSet: {
       level: {
@@ -147,7 +147,7 @@ export default function registerCuboneSpecies(): void {
     eggGroups: [EggGroups.Monster],
     genderRatio: [1, 1],
     catchRate: 75,
-    biomes: [Biome.Mountain, Biome.Desert, Biome.ColdDesert],
+    biomes: [Biome.Mountain, Biome.Desert, Biome.ColdDesert, Biome.Badlands],
     activeTimes: TimeOfDay.Night,
     learnSet: {
       level: {

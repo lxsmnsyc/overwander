@@ -4,6 +4,7 @@ import {
   getEggPool,
   getSpawnPool,
   pickFromEntries,
+  spawnRanks,
 } from '../data/biome';
 import type { SpawnEntry } from '../data/biome';
 import type Biome from '../data/ids/biome';
@@ -14,7 +15,8 @@ import type Families from '../data/ids/families';
 import type { Species } from '../data/ids/species';
 import BERRY_POOL from '../data/overworld/berry-pool';
 import type { ItemBandOdds, ItemStack } from '../data/overworld/item-pool';
-import { ITEM_POOL, PHENOMENON_BAND_ODDS, pickItem, pickItems } from '../data/overworld/item-pool';
+import { PHENOMENON_BAND_ODDS, pickItem, pickItems } from '../data/overworld/item-pool';
+import { getItemPool } from '../data/overworld/biome-items';
 import Phenomenon, {
   GROTTO_EGG_CHANCE,
   PHENOMENON_ITEM_CHANCE,
@@ -58,14 +60,18 @@ export function resolveNest(
 }
 
 /**
- * An item cache landmark: a stash from the overworld item pool. It
- * holds up to three kinds — one rare, one uncommon, one base — of up
- * to `MAX_STACK` pieces each, or a single piece of one special when
- * the roll reaches that far. Answers an empty list for a cache that
- * came up with nothing
+ * An item cache landmark: a stash from the ground it is buried in,
+ * which is the shared shelf plus whatever this biome hides of its
+ * own. It holds up to three kinds of up to `MAX_STACK` pieces each,
+ * or a single piece of one special when the roll reaches that far.
+ * Answers an empty list for a cache that came up with nothing
  */
-export function resolveItemCache(random: () => number, odds?: ItemBandOdds): ItemStack[] {
-  return pickItems(ITEM_POOL, random, odds);
+export function resolveItemCache(
+  biome: Biome,
+  random: () => number,
+  odds?: ItemBandOdds,
+): ItemStack[] {
+  return pickItems(getItemPool(biome), random, odds);
 }
 
 /**
@@ -176,10 +182,11 @@ function startled(
       : boostFamilyWeights(biomePool, featured, SPECIES_DAY_WEIGHT_BOOST);
   const groups = PHENOMENON_EGG_GROUPS[phenomenon];
   const rare = random() < PHENOMENON_RARE_CHANCE;
-  const preferred = rare ? pool.rare : pool.uncommon;
-  const fallback = rare ? pool.uncommon : pool.rare;
-  // Either band, so a thin rare band borrows the uncommon one. What is
-  // never borrowed is a species of the wrong kind
+  const [, middle, grown] = spawnRanks(pool);
+  const preferred = rare ? grown : middle;
+  const fallback = rare ? middle : grown;
+  // Either rank, so a biome with nothing half-grown borrows what is
+  // grown. What is never borrowed is a species of the wrong kind
   const bands =
     groups == null
       ? [preferred, fallback]

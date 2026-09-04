@@ -676,6 +676,13 @@ export interface UnitUpdateStatusTimerEvent extends UnitStatusEvent {
  */
 export interface CheckUnitCanUpdateStageEvent extends UnitUpdateStageEvent {
   success: boolean;
+  /**
+   * The question is being asked speculatively, by the AI weighing a
+   * move it has not cast. A listener may still answer it, but must do
+   * nothing else: no cue, no stage of its own, nothing a watcher
+   * could see
+   */
+  simulated: boolean;
 }
 
 export interface UnitDamageEvent extends UnitEvent {

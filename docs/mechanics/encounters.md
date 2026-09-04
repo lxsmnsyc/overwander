@@ -4,8 +4,8 @@ Wild pokemon stand on the cells of a chunk and are met by walking up to one and
 clicking it. Every five minutes a chunk produces a fresh set of them, and every
 player who passes through the chunk during those five minutes sees the same set.
 
-Everything about a wild pokemon — its level, nature, gender, ability, individual
-stats, size and moves — is decided before the player arrives and never changes.
+Everything about a wild pokemon is decided before the player arrives and never
+changes: its level, nature, gender, ability, individual stats, size and moves.
 Whether it is **shiny**, however, depends on the player looking at it.
 
 ## How many appear
@@ -30,37 +30,64 @@ without one can neither see nor reach the last three.
 Each pokemon that appears rolls first for a rarity band, then for a species
 within that band.
 
-| Band     | Odds     | What is in it                           |
-| -------- | -------- | --------------------------------------- |
-| Special  | 1/4096   | Legendaries and mythicals               |
-| Prized   | 1/512    | Babies and unowns                       |
-| Rare     | 1/64     | Fully-evolved and single-stage species  |
-| Uncommon | 1/8      | Middle evolutions                       |
-| Base     | The rest | Unevolved species that can still evolve |
+| Band     | Odds     | What is in it                                              |
+| -------- | -------- | ---------------------------------------------------------- |
+| Mythical | 1/4096   | Mythicals                                                  |
+| Special  | 1/4096   | Legendaries                                                |
+| Prized   | 1/512    | Babies and unowns                                          |
+| Elusive  | 1/32     | The end of a three-stage line, and species that never evolve |
+| Scarce   | 1/16     | The end of a two-stage line                                |
+| Rare     | 1/8      | The middle of a three-stage line                           |
+| Uncommon | 1/4      | The first stage of a two-stage line                        |
+| Base     | The rest | The first stage of a three-stage line                      |
+
+A baby is not counted as a stage: it has a band of its own, so the line behind
+it is one stage shorter. Pichu is prized, Pikachu is the first stage of a
+two-stage line, and Raichu is the end of one.
 
 Which species appear inside a band, and how often each does, depends on the
 biome and the time of day. That is why one field is full of Rattata while a
 Chansey is a story worth telling.
 
 If a biome holds nothing in the band a roll landed on, the roll falls to the next
-band down, so nothing is lost — the player meets a commoner instead.
+band down, so nothing is lost. The player meets a commoner instead.
 
 A prized pokemon is not unique. Unlike a legendary, a second one may be met.
+
+### Forms
+
+A species can come in more than one shape. **Unown** is the one that does: all
+twenty-eight letters stand in the prized band of every biome at equal weight, so
+which letter turns up is the roll and where you walked is not.
+
+A form is its own pokemon. It has its own sprite, its own abilities and its own
+dex entry. The printed dex still keeps **one row** for the species, and that row
+fills in the moment any form of it is met; pressing the row opens a grid of every
+form, and pressing one of those opens that form's own entry. A dex quest counts
+the species once, however many of its forms you have met.
 
 ## What a pokemon comes with
 
 ### Level
 
-Level depends on the rarity band, so a first field does not hand out a level 90
-Rattata and a legendary is never trivial:
+Level comes from the line itself: a stage is met between the level it can first
+exist at and the level it stops being itself at. A Charmander is 5–16, a
+Charmeleon 16–36, a Charizard 36–60.
 
-| Band     | Level range |
-| -------- | ----------- |
-| Base     | 5–15        |
-| Prized   | 5–15        |
-| Uncommon | 15–30       |
-| Rare     | 30–45       |
-| Special  | 1–100       |
+| What was met                                | Level range                        |
+| ------------------------------------------- | ---------------------------------- |
+| A first stage that evolves at a level        | 5 to that level                    |
+| A first stage that evolves some other way    | 5–30                               |
+| A middle stage that evolves at a level       | The level it arrived at, to that level |
+| A middle stage that evolves some other way   | 30–50                              |
+| The end of a two-stage line                  | The level it arrived at, to 50     |
+| The end of a three-stage line                | The level it arrived at, to 60     |
+| A species that never evolves                 | 10–50                              |
+| A baby or an unown                           | 5–10                               |
+| A legendary or a mythical                    | 1–100                              |
+
+Where no level is named, because the step was a stone, a trade or an evolution
+a later generation holds, the stage starts at 30 instead.
 
 A buddy can move the edges of that band. **Keen Eye** or **Intimidate** keeps
 what is far below it away, lifting the bottom by three levels; **Hustle**,
@@ -75,7 +102,7 @@ strength would be a legendary with a known answer.
 
 A wild pokemon carries one of its species' ordinary abilities about seven times
 in eight; the remaining eighth is its hidden ability. Nature is one of the usual
-25, and gender follows the species' own ratio — a species with no ratio is
+25, and gender follows the species' own ratio. A species with no ratio is
 genderless.
 
 ### Moves
@@ -181,8 +208,8 @@ from the buddy's ability, others from what it is holding.
 
 Cute Charm does nothing when either pokemon is genderless.
 
-None of these change _which_ species are standing in the chunk — everybody sees
-the same ones — only how many a player can reach, and what the ones they meet
+None of these change _which_ species are standing in the chunk, since everybody
+sees the same ones. They change how many a player can reach, and what the ones they meet
 turn out to be.
 
 An **egg** may be the buddy, and must be for its steps to count, but an egg

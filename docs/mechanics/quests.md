@@ -69,9 +69,11 @@ opening with something a new trainer would do anyway:
 | **The Wide World**    | Biomes, and the portals between them          | 3     |
 | **Better Together**   | Friends, and a fair swap                      | 2     |
 
-One more chain is the **dex** itself. Kanto's asks for 25 caught, then 75, then
-150, and the last rung hangs the region's medal on the shelf along with a Master
-Ball. Mew is not among the 150: nobody walks into one.
+One more chain is the **dex** itself, and there is one per region. Kanto's asks
+for 25 caught, then 75, then 150. Johto's asks for 20, then 50, then 99. The last
+rung of each hangs that region's medal on the shelf along with a Master Ball. The
+last rung is every species of the region but its mythical: Mew and Celebi are
+nobody's to walk into.
 
 ## See also
 

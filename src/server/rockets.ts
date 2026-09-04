@@ -56,6 +56,7 @@ import { getSql, jsonOf, newDocId, tx } from './db';
 import { readEncounter } from './encounter-io';
 import { startEncounter } from './overworld';
 import { grantGold } from './profile';
+import { recordSeenOpponents } from './pokedex';
 import { foughtBattle, readBattle } from './raid-io';
 import { isAnyCatchQueued, publishTeamSnapshot } from './raids';
 import { asNumber, asString } from './read';
@@ -389,6 +390,10 @@ export async function startRocketBattle(
     `;
   });
 
+  // What the stop put on the field is now something the player has
+  // seen, whatever the fight comes to
+  await recordSeenOpponents(battleId, [uid]);
+
   return battleId;
 }
 
@@ -538,7 +543,13 @@ export async function claimRocketReward(uid: string, stop: string): Promise<Rock
   const leader = landmark === Landmark.GymLeader ? snapshot.getGymLeader(record.cell) : null;
   const item =
     leader == null
-      ? rollStopLoot(landmark ?? Landmark.TeamRocket, rank, () => rng.random(), legend)
+      ? rollStopLoot(
+          landmark ?? Landmark.TeamRocket,
+          rank,
+          snapshot.chunk.biome,
+          () => rng.random(),
+          legend,
+        )
       : rollGymMachine(leader, () => rng.random());
 
   if (item != null) {

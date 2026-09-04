@@ -11,7 +11,7 @@ anything else in it: catching Caterpies levels a Butterfree.
 
 | Rule                     | Value                     |
 | ------------------------ | ------------------------- |
-| Candy a catch pays       | 1 to 5, by how rare it is |
+| Candy a catch pays       | 1 to 8, by how rare it is |
 | On that family's own day | ×4                        |
 | Candy one level costs    | 1, or **2** for a shadow  |
 | Highest level            | 100                       |
@@ -19,13 +19,16 @@ anything else in it: catching Caterpies levels a Butterfree.
 What a catch pays depends on how hard it was to meet, since a candy is a level
 and a level of a legendary is worth more work than a level of a Rattata:
 
-| What was caught                      | Candy |
-| ------------------------------------ | ----- |
-| A first stage that can still evolve  | 1     |
-| A middle evolution                   | 2     |
-| A final evolution, or a one-off line | 3     |
-| A baby or an unown                   | 4     |
-| A legendary or mythical              | 5     |
+| What was caught                         | Candy |
+| --------------------------------------- | ----- |
+| The first stage of a three-stage line    | 1     |
+| The first stage of a two-stage line      | 2     |
+| The middle of a three-stage line         | 3     |
+| The end of a two-stage line              | 4     |
+| The end of a three-stage line, or a one-off | 5  |
+| A baby or an unown                       | 6     |
+| A legendary                              | 7     |
+| A mythical                               | 8     |
 
 Two held items pay extra candy, each about half the time. An **Exp. Share** pays
 the buddy's family, so everything caught feeds the one pokemon being raised. A
@@ -39,7 +42,7 @@ A **Rare Candy** is the exception to the family rule: used from the bag on any
 pokemon, it buys one level no matter what family the pokemon belongs to and no
 matter what its levels normally cost. Nothing sells them; they are prizes.
 
-Releasing a pokemon pays its family the same candy catching it did — rarity and
+Releasing a pokemon pays its family the same candy catching it did, rarity and
 all, though never the family-day bonus. Letting one go is a decision about space
 rather than a punishment, and what the pokemon was worth does not change on the
 way out.
@@ -48,9 +51,9 @@ way out.
 
 A pokemon answers to its species until you name it. **Set nickname** on the catch
 sheet gives it one of up to 24 characters; clearing the box takes the name
-back off, and it goes back to being called by its kind. A name survives evolution
-— that is rather the point of giving one — while a pokemon that was never named
-is called by whatever it has just become. Eggs cannot be named: nothing has been
+back off, and it goes back to being called by its kind. A name survives evolution,
+which is rather the point of giving one. A pokemon that was never named is
+called by whatever it has just become. Eggs cannot be named: nothing has been
 introduced yet.
 
 A name belongs to the trainer who gave it. A pokemon that arrives already named,
@@ -65,13 +68,16 @@ them.
 Only evolutions the game can verify are offered. The rest are never offered
 rather than being waved through.
 
-| Method                     | Supported | Notes                                     |
-| -------------------------- | --------- | ----------------------------------------- |
-| **By level**               | Yes       | Checked against the pokemon's level       |
-| **Using an item**          | Yes       | The stone is consumed                     |
-| **Holding an item**        | Yes       | The item is required, not consumed        |
-| **By trade**               | Yes       | A pokemon that changed hands as what it is |
-| Friendship, weather, party | No        | Nothing stores the answer, so not offered |
+| Method                | Supported | Notes                                             |
+| --------------------- | --------- | -------------------------------------------------- |
+| **By level**          | Yes       | Checked against the pokemon's level               |
+| **Using an item**     | Yes       | The stone is consumed                             |
+| **Holding an item**   | Yes       | Held at the moment of evolving                    |
+| **By trade**          | Yes       | A pokemon that changed hands as what it is        |
+| **By friendship**     | Yes       | The three Kanto babies ask for 220                |
+| **By time of day**    | Yes       | An Espeon by day, an Umbreon by night             |
+| **By one stat against another** | Yes | A Tyrogue at level 20, its Attack against its Defense |
+| Weather, party, place | No        | Nothing stores the answer, so it is never offered |
 
 A **trade evolution** opens the moment a pokemon changes hands, and what it opens
 is the evolution of whatever the pokemon was at that moment. A Machoke that was
@@ -80,6 +86,11 @@ into a Machoke is not, because nobody ever traded a Machoke: it wants a handover
 of its own. The mainline evolves one during the trade itself, which is a moment
 this game has nowhere to put, so changing hands opens the evolution rather than
 performing it, and it stays open until it is taken.
+
+A trade evolution that also asks for a **held item** spends it at the handover.
+An Onix traded in a Metal Coat arrives without the coat and with nothing left to
+ask for. An Onix nobody traded still has to hold one, and spends a **Linking
+Cord** as well.
 
 An **Everstone** refuses every evolution while the pokemon holds it. It is not
 held back from anything else: it still levels, learns and fights.
@@ -170,8 +181,8 @@ already-raised pokemon worth an item of its own.
 | **Golden Bottle Cap** | Special | Raises every stat to perfect                   |
 | **Bottle Cap**        | Prized  | Raises one stat, drawn from the imperfect ones |
 
-The stat a plain cap lands on is not the player's choice — otherwise it would not
-be a cap. It never lands on a stat that was already perfect, and a pokemon that
+The stat a plain cap lands on is not the player's choice, or it would not be a
+cap. It never lands on a stat that was already perfect, and a pokemon that
 is perfect all round is refused before it can waste one.
 
 Both caps are found in the overworld and nowhere else; no shop stocks either.
@@ -180,6 +191,10 @@ Both caps are found in the overworld and nowhere else; no shop stocks either.
 
 A shadow pokemon comes from a shadow raid or from a Team Rocket grunt. It keeps
 the **Shadow** ability permanently and costs **double candy** at every level.
+
+Shadow is a glass cannon written into the stats: **1.25x Attack and Special
+Attack, 0.75x Defense and Special Defense**. It hits a quarter harder and takes
+a third more, and the trade is visible on its stat sheet.
 
 Two things undo that: a **Purifying Gem**, which is a prized find, and **Nurse
 Joy**, who does it free of charge along with her healing.
@@ -247,8 +262,8 @@ amount to a free Move Reminder and the Heart Scale would be worth nothing.
 
 Two rules apply throughout. **A revive is the only thing that reaches a fainted
 pokemon**, and the only thing that does nothing for one still standing. And
-**anything that would change nothing is refused rather than consumed** — the
-wrong cure, or a pokemon already at full health.
+**anything that would change nothing is refused rather than consumed**, such as
+the wrong cure or a pokemon already at full health.
 
 A fainted pokemon cannot fight. A raid refuses a party containing one, and a
 party of fainted pokemon cannot start a battle at all.
@@ -256,12 +271,12 @@ party of fainted pokemon cannot start a battle at all.
 ## Held items
 
 A pokemon holds **one** item at a time, and only items meant to be held. A
-**Utility Belt** — a prized find, spent on use — gives one pokemon a second slot
-permanently.
+**Utility Belt**, a prized find that is spent on use, gives one pokemon a second
+slot permanently.
 
 That single slot is what makes the held items a genuine choice: a Shiny Charm, an
 Exp. Share, a Lucky Egg, a Luck Incense, a Pure Incense and an Amulet Coin all
-want the same slot on the same buddy — and a berry or a piece of battle gear
+want the same slot on the same buddy, and a berry or a piece of battle gear
 wants it during a raid.
 
 ## Abilities

@@ -8,8 +8,8 @@ import { UNOWN_SPAWNS, registerSpawnPool } from './__create';
 export default function registerBeachSpawns(): void {
   registerSpawnPool(Biome.Beach, {
     [TimeOfDay.Morning]: {
-      base: [
-        { species: Species.Squirtle, weight: 2 },
+      base: [{ species: Species.Squirtle, weight: 2 }],
+      uncommon: [
         { species: Species.Psyduck, weight: 20 },
         { species: Species.Slowpoke, weight: 20 },
         { species: Species.Shellder, weight: 20 },
@@ -17,25 +17,27 @@ export default function registerBeachSpawns(): void {
         { species: Species.Goldeen, weight: 20 },
         { species: Species.Wingull, weight: 25 },
       ],
-      uncommon: [{ species: Species.Wartortle, weight: 1 }],
-      rare: [
-        { species: Species.Blastoise, weight: 2 },
+      rare: [{ species: Species.Wartortle, weight: 1 }],
+      scarce: [
         { species: Species.Golduck, weight: 10 },
         { species: Species.Slowbro, weight: 10 },
         { species: Species.Kingler, weight: 10 },
         { species: Species.Seaking, weight: 10 },
         { species: Species.Vaporeon, weight: 5 },
         { species: Species.Slowking, weight: 5 },
-        { species: Species.Corsola, weight: 20 },
         { species: Species.Pelipper, weight: 10 },
+      ],
+      elusive: [
+        { species: Species.Blastoise, weight: 2 },
+        { species: Species.Corsola, weight: 20 },
         { species: Species.Luvdisc, weight: 15 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [],
     },
     [TimeOfDay.Day]: {
-      base: [
-        { species: Species.Squirtle, weight: 2 },
+      base: [{ species: Species.Squirtle, weight: 2 }],
+      uncommon: [
         { species: Species.Psyduck, weight: 20 },
         { species: Species.Slowpoke, weight: 20 },
         { species: Species.Shellder, weight: 20 },
@@ -43,55 +45,59 @@ export default function registerBeachSpawns(): void {
         { species: Species.Goldeen, weight: 20 },
         { species: Species.Wingull, weight: 25 },
       ],
-      uncommon: [{ species: Species.Wartortle, weight: 1 }],
-      rare: [
-        { species: Species.Blastoise, weight: 2 },
+      rare: [{ species: Species.Wartortle, weight: 1 }],
+      scarce: [
         { species: Species.Golduck, weight: 10 },
         { species: Species.Slowbro, weight: 10 },
         { species: Species.Kingler, weight: 10 },
         { species: Species.Seaking, weight: 10 },
         { species: Species.Vaporeon, weight: 5 },
         { species: Species.Slowking, weight: 5 },
-        { species: Species.Corsola, weight: 20 },
         { species: Species.Pelipper, weight: 10 },
+      ],
+      elusive: [
+        { species: Species.Blastoise, weight: 2 },
+        { species: Species.Corsola, weight: 20 },
         { species: Species.Luvdisc, weight: 15 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [],
     },
     [TimeOfDay.Evening]: {
-      base: [
+      base: [],
+      uncommon: [
         { species: Species.Shellder, weight: 20 },
         { species: Species.Krabby, weight: 20 },
         { species: Species.Goldeen, weight: 20 },
         { species: Species.Staryu, weight: 20 },
       ],
-      uncommon: [],
-      rare: [
+      rare: [],
+      scarce: [
         { species: Species.Kingler, weight: 10 },
         { species: Species.Seaking, weight: 10 },
         { species: Species.Starmie, weight: 10 },
         { species: Species.Vaporeon, weight: 5 },
-        { species: Species.Corsola, weight: 20 },
       ],
+      elusive: [{ species: Species.Corsola, weight: 20 }],
       prized: [...UNOWN_SPAWNS],
       special: [],
     },
     [TimeOfDay.Night]: {
-      base: [
+      base: [],
+      uncommon: [
         { species: Species.Shellder, weight: 20 },
         { species: Species.Krabby, weight: 20 },
         { species: Species.Goldeen, weight: 20 },
         { species: Species.Staryu, weight: 20 },
       ],
-      uncommon: [],
-      rare: [
+      rare: [],
+      scarce: [
         { species: Species.Kingler, weight: 10 },
         { species: Species.Seaking, weight: 10 },
         { species: Species.Starmie, weight: 10 },
         { species: Species.Vaporeon, weight: 5 },
-        { species: Species.Corsola, weight: 20 },
       ],
+      elusive: [{ species: Species.Corsola, weight: 20 }],
       prized: [...UNOWN_SPAWNS],
       special: [],
     },

@@ -79,7 +79,7 @@ export default function registerShellderSpecies(): void {
     eggGroups: [EggGroups.Water3],
     genderRatio: [1, 1],
     catchRate: 190,
-    biomes: [Biome.Ocean, Biome.Beach],
+    biomes: [Biome.Ocean, Biome.Beach, Biome.RockyCoast],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
@@ -119,7 +119,7 @@ export default function registerShellderSpecies(): void {
     eggGroups: [EggGroups.Water3],
     genderRatio: [1, 1],
     catchRate: 60,
-    biomes: [Biome.Ocean, Biome.PolarOcean],
+    biomes: [Biome.Ocean, Biome.PolarOcean, Biome.RockyCoast],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {

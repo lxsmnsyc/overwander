@@ -55,6 +55,23 @@ export function fade(color: string, alpha: number): string {
  * A lighter version of a colour, for the hot middle of anything: a
  * flame's core, a bolt's centre, the head of a beam
  */
+/**
+ * One colour moved partway toward another. Both are `#rrggbb`, and so
+ * is what comes back, so a mixed colour can still be faded
+ */
+export function mix(color: string, toward: string, amount: number): string {
+  const part = (at: number): string => {
+    const from = Number.parseInt(color.slice(at, at + 2), 16);
+    const to = Number.parseInt(toward.slice(at, at + 2), 16);
+
+    return Math.round(from + (to - from) * amount)
+      .toString(16)
+      .padStart(2, '0');
+  };
+
+  return `#${part(1)}${part(3)}${part(5)}`;
+}
+
 export function lighten(color: string, amount: number): string {
   const toward = (at: number): string => {
     const value = Number.parseInt(color.slice(at, at + 2), 16);
@@ -428,8 +445,36 @@ export function star(
 }
 
 /**
- * Chevrons stacked up a line, for anything rising: a stat going up, a
- * pokemon getting quicker
+ * A flat pane standing over a point: a screen, a wall of glass. The
+ * top edge is drawn shorter than the foot, which is what makes it
+ * stand in the field rather than lie across the lens
+ */
+export function pane(
+  context: CanvasRenderingContext2D,
+  [x, y]: Point,
+  width: number,
+  height: number,
+  painted: Painted,
+): void {
+  const top = width * 0.86;
+
+  context.beginPath();
+  context.moveTo(x - top, y - height);
+  context.lineTo(x + top, y - height);
+  context.lineTo(x + width, y);
+  context.lineTo(x - width, y);
+  context.closePath();
+  context.fillStyle = fade(painted.color, (painted.alpha ?? 1) * 0.3);
+  context.fill();
+  context.strokeStyle = fade(painted.color, painted.alpha ?? 1);
+  context.lineWidth = painted.width ?? 2;
+  context.stroke();
+}
+
+/**
+ * Chevrons running up a line, for anything rising: a stat going up, a
+ * pokemon getting quicker. `way` turns the whole thing over, points
+ * and travel together, for the things that fall
  */
 export function chevrons(
   context: CanvasRenderingContext2D,
@@ -438,18 +483,19 @@ export function chevrons(
   count: number,
   share: number,
   painted: Painted,
+  way: 1 | -1 = 1,
 ): void {
   context.strokeStyle = fade(painted.color, painted.alpha ?? 1);
   context.lineWidth = painted.width ?? 2;
   context.lineCap = 'round';
   for (let mark = 0; mark < count; mark += 1) {
     const held = (share * 1.4 + mark / count) % 1;
-    const at = y + size - held * size * 2;
+    const at = y + (size - held * size * 2) * way;
 
     context.beginPath();
-    context.moveTo(x - size * 0.5, at + size * 0.3);
+    context.moveTo(x - size * 0.5, at + size * 0.3 * way);
     context.lineTo(x, at);
-    context.lineTo(x + size * 0.5, at + size * 0.3);
+    context.lineTo(x + size * 0.5, at + size * 0.3 * way);
     context.stroke();
   }
   context.lineCap = 'butt';

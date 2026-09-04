@@ -14,25 +14,30 @@ export default function registerVolcanoSpawns(): void {
   registerSpawnPool(Biome.Volcano, {
     [TimeOfDay.Morning]: {
       base: [
-        { species: Species.Numel, weight: 20 },
         { species: Species.Charmander, weight: 6 },
-        { species: Species.Growlithe, weight: 20 },
         { species: Species.Geodude, weight: 20 },
         { species: Species.Cyndaquil, weight: 6 },
-        { species: Species.Slugma, weight: 20 },
         { species: Species.Torchic, weight: 2 },
       ],
       uncommon: [
+        { species: Species.Numel, weight: 20 },
+        { species: Species.Growlithe, weight: 20 },
+        { species: Species.Slugma, weight: 20 },
+        { species: Species.Magmar, weight: 10 },
+      ],
+      rare: [
         { species: Species.Charmeleon, weight: 3 },
         { species: Species.Graveler, weight: 5 },
         { species: Species.Quilava, weight: 3 },
         { species: Species.Combusken, weight: 1 },
       ],
-      rare: [
+      scarce: [
         { species: Species.Camerupt, weight: 6 },
-        { species: Species.Charizard, weight: 3 },
         { species: Species.Arcanine, weight: 5 },
-        { species: Species.Magmar, weight: 10 },
+        { species: Species.Magcargo, weight: 5 },
+      ],
+      elusive: [
+        { species: Species.Charizard, weight: 3 },
         { species: Species.Golem, weight: 5 },
         { species: Species.Typhlosion, weight: 3 },
         { species: Species.Blaziken, weight: 2 },
@@ -48,28 +53,33 @@ export default function registerVolcanoSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
-        { species: Species.Numel, weight: 20 },
         { species: Species.Charmander, weight: 6 },
-        { species: Species.Growlithe, weight: 20 },
-        { species: Species.Ponyta, weight: 20 },
         { species: Species.Geodude, weight: 20 },
         { species: Species.Cyndaquil, weight: 6 },
-        { species: Species.Slugma, weight: 20 },
-        { species: Species.Onix, weight: 10 },
         { species: Species.Torchic, weight: 2 },
       ],
       uncommon: [
+        { species: Species.Numel, weight: 20 },
+        { species: Species.Growlithe, weight: 20 },
+        { species: Species.Ponyta, weight: 20 },
+        { species: Species.Slugma, weight: 20 },
+        { species: Species.Onix, weight: 10 },
+        { species: Species.Magmar, weight: 10 },
+      ],
+      rare: [
         { species: Species.Charmeleon, weight: 3 },
         { species: Species.Graveler, weight: 5 },
         { species: Species.Quilava, weight: 3 },
         { species: Species.Combusken, weight: 1 },
       ],
-      rare: [
+      scarce: [
         { species: Species.Camerupt, weight: 6 },
-        { species: Species.Charizard, weight: 3 },
         { species: Species.Arcanine, weight: 5 },
         { species: Species.Rapidash, weight: 5 },
-        { species: Species.Magmar, weight: 10 },
+        { species: Species.Magcargo, weight: 5 },
+      ],
+      elusive: [
+        { species: Species.Charizard, weight: 3 },
         { species: Species.Golem, weight: 5 },
         { species: Species.Typhlosion, weight: 3 },
         { species: Species.Blaziken, weight: 2 },
@@ -84,19 +94,18 @@ export default function registerVolcanoSpawns(): void {
       ],
     },
     [TimeOfDay.Evening]: {
-      base: [
-        { species: Species.Charmander, weight: 6 },
+      base: [],
+      uncommon: [
         { species: Species.Vulpix, weight: 20 },
-        { species: Species.Ponyta, weight: 20 },
         { species: Species.Slugma, weight: 20 },
-      ],
-      uncommon: [{ species: Species.Charmeleon, weight: 3 }],
-      rare: [
-        { species: Species.Charizard, weight: 3 },
-        { species: Species.Rapidash, weight: 5 },
         { species: Species.Magmar, weight: 10 },
-        { species: Species.Ninetales, weight: 5 },
       ],
+      rare: [],
+      scarce: [
+        { species: Species.Ninetales, weight: 5 },
+        { species: Species.Magcargo, weight: 10 },
+      ],
+      elusive: [],
       prized: [...UNOWN_SPAWNS],
       special: [
         { species: Species.Groudon, weight: 10 },
@@ -106,17 +115,20 @@ export default function registerVolcanoSpawns(): void {
       ],
     },
     [TimeOfDay.Night]: {
-      base: [
+      base: [],
+      uncommon: [
         { species: Species.Vulpix, weight: 20 },
         { species: Species.Koffing, weight: 20 },
         { species: Species.Slugma, weight: 20 },
-      ],
-      uncommon: [],
-      rare: [
-        { species: Species.Weezing, weight: 5 },
         { species: Species.Magmar, weight: 10 },
-        { species: Species.Ninetales, weight: 5 },
       ],
+      rare: [],
+      scarce: [
+        { species: Species.Weezing, weight: 5 },
+        { species: Species.Ninetales, weight: 5 },
+        { species: Species.Magcargo, weight: 5 },
+      ],
+      elusive: [],
       prized: [...UNOWN_SPAWNS],
       special: [
         { species: Species.Groudon, weight: 10 },

@@ -2,7 +2,7 @@ import type { Moves } from '../../data/ids/moves';
 import { TYPE_COLORS, type Types } from '../../data/constants/types';
 import PaintedVisual, { type Painter } from './moves/__painted';
 import type { Point, Stage } from './stage';
-import { burst, decay, lighten, ring, star, swell } from './moves/__paint';
+import { burst, decay, lighten, mix, ring, star, swell } from './moves/__paint';
 
 /**
  * What one blow looks like where it lands.
@@ -51,24 +51,27 @@ function landing(stage: Stage): Point {
   return stage.targets[0] ?? stage.source;
 }
 
+/** The grey a blow is drained toward when the type shrugged it off. */
+const DULL = '#8a91a0';
+
 /**
  * What colour the blow reads as.
  *
- * A weakness is drawn hot and a resistance grey, because that is the
- * one thing a player is reading a hit for — the move's own colour is
- * already all over the field
+ * It is the move's own type, so a fight of mixed types reads as one:
+ * a weakness is that colour lit, a resistance the same colour drained
+ * toward grey, and only a blow that never landed has no type left to
+ * show
  */
 function tone(landed: Landed): string {
   if (!landed.struck || landed.effectiveness === 0) {
     return '#7c8496';
   }
+  const color = TYPE_COLORS[landed.type];
+
   if (landed.effectiveness > 1) {
-    return lighten(TYPE_COLORS[landed.type], 0.35);
+    return lighten(color, 0.35);
   }
-  if (landed.effectiveness < 1) {
-    return '#9aa0ad';
-  }
-  return '#e6ecf5';
+  return landed.effectiveness < 1 ? mix(color, DULL, 0.6) : color;
 }
 
 export default function attackMarkVisual(landed: Landed): PaintedVisual {

@@ -1,6 +1,12 @@
 import { asOffset, toZoneKey } from '../auth/local-time';
 import AleaRNG from '../core/alea';
-import { boostFamilyWeights, boostTypeWeights, getSpawnPool, pickSpawn } from '../data/biome';
+import {
+  boostFamilyWeights,
+  boostTypeWeights,
+  getSpawnPool,
+  pickSpawn,
+  spawnRanks,
+} from '../data/biome';
 import type { SpawnRarityGroups } from '../data/biome';
 import { SPECIES_DAY_WEIGHT_BOOST, getFeaturedFamily } from '../data/species';
 import { TimeOfDay, getTimeOfDay, isWaterBiome } from '../data/ids/biome';
@@ -11,7 +17,7 @@ import { rollFossilOffer } from '../data/overworld/fossil';
 import Landmark from '../data/overworld/landmark';
 import type Lairs from '../data/overworld/lair';
 import {
-  EVERY_LAIR,
+  EVERY_STAGED_LAIR,
   getBiomeLairs,
   getLairResidents,
   pickLairSpecies,
@@ -529,7 +535,7 @@ export default class ChunkSnapshot {
       for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
         if (landmark === Landmark.ItemCache) {
           const rng = new AleaRNG(`${this.groundKey}${this.landmarkTimestamp}cache${cell}`);
-          const stash = resolveItemCache(() => rng.random());
+          const stash = resolveItemCache(this.chunk.biome, () => rng.random());
 
           if (stash.length > 0) {
             caches.set(cell, stash);
@@ -687,7 +693,7 @@ export default class ChunkSnapshot {
       // A species with nothing left to cast once the boss bans are
       // applied is no boss: it is left out of the draw rather than
       // staged with an empty move list
-      const rare = pool.rare.filter((entry) => canStageBoss(entry.species));
+      const rare = spawnRanks(pool)[2].filter((entry) => canStageBoss(entry.species));
 
       for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
         if (landmark !== Landmark.ShadowLair) {
@@ -954,7 +960,7 @@ export default class ChunkSnapshot {
 
     for (const time of times) {
       const pool = getSpawnPool(this.chunk.biome, time);
-      const bands = [pool.base, pool.uncommon, pool.rare];
+      const bands = spawnRanks(pool);
       const stocked = bands.find((band) => band.length > 0);
 
       if (stocked != null) {
@@ -999,7 +1005,9 @@ export default class ChunkSnapshot {
 
           if (rank === RocketRank.Giovanni) {
             const lairs = getBiomeLairs(this.chunk.biome);
-            const homes = lairs.length > 0 ? lairs : EVERY_LAIR;
+            // Any lair the world stages, never a mythical's: nothing
+            // but its relic ever calls one of those out
+            const homes = lairs.length > 0 ? lairs : EVERY_STAGED_LAIR;
             const lair = homes[Math.floor(rng.random() * homes.length)];
             const party = Array.from({ length: ROCKET_PARTY_SIZE - 1 }, () => draw(rares));
 

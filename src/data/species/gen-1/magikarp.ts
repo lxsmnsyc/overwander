@@ -37,7 +37,14 @@ export default function registerMagikarpSpecies(): void {
     eggGroups: [EggGroups.Water2, EggGroups.Dragon],
     genderRatio: [1, 1],
     catchRate: 255,
-    biomes: [Biome.Swamp, Biome.Ocean, Biome.DeepOcean],
+    biomes: [
+      Biome.Swamp,
+      Biome.Ocean,
+      Biome.DeepOcean,
+      Biome.RockyCoast,
+      Biome.Bog,
+      Biome.KelpForest,
+    ],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {

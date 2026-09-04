@@ -23,7 +23,7 @@ into, **Team Rocket** stops, a **gym seat** another player is holding, and a
 | **Cooldown**    | That move cannot be used again | Set by the move's PP                          |
 
 **A move is in the air for a moment.** Most take a quarter of a second between
-going off and landing — the time a swing takes — while anything thrown names its
+going off and landing, which is the time a swing takes. Anything thrown names its
 own flight time, twice that, and is drawn crossing the field. It is a real gap: a
 pokemon that faints or interrupts the attacker during it does so before the hit
 arrives.
@@ -65,30 +65,47 @@ raid boss does not do this: it attacks.
 
 **Nothing stands still.** Every pokemon fights knowing one move more than it was
 brought in with: a plain **Attack**, ten power, back about once a second, and
-thrown as whatever the pokemon is — a Charmander's swing is Fire, a Geodude's is
+thrown as whatever the pokemon is. A Charmander's swing is Fire, a Geodude's is
 Rock. Nothing teaches it and it is in no learn set; it is simply what a pokemon
 does with its hands. It is far too weak to be worth choosing, which is the point:
 it is what fills the gaps while the real moves cool, and it never displaces one
 of them.
 
-A pokemon shut out of its move set entirely — everything disabled, the swing
-included — **Struggles** instead, and pays a quarter of its health for it.
+A pokemon shut out of its move set entirely, the swing included, **Struggles**
+instead, and pays a quarter of its health for it.
 Waiting on a cooldown and having nothing at all are different states, and they
 get different answers.
 
 ### Animation
 
 A pokemon **winding up** gathers itself: one gesture, repeated, for however long
-the wind-up lasts. What it is about to throw makes no difference to it — the
+the wind-up lasts. What it is about to throw makes no difference to it, since the
 throw is the next part.
 
 A pokemon **throwing** plays the closest thing to that move its sheet actually
 has, fitted to the moment the move is in the air so the gesture ends as the hit
-lands. Sprite sheets differ — a Machop has a punch, a Magikarp does not — so a
+lands. Sprite sheets differ, since a Machop has a punch and a Magikarp does not, so a
 Fire Punch punches on one pokemon and swings on another.
 
 The visible result is that speed can be seen: a slow move is a long gathering,
 and Quick Attack is a short one.
+
+**A move looks like what it is.** A contact move lands as a jab, a hit, a slam or
+a fist, picked by its type and its power. A guard closes in, a boost runs upward,
+a drain pulls health back, sound carries across the gap, powder drifts, and a
+psychic move already has hold of its target on the way over. A stat change is
+drawn as chevrons on whoever moved, rising for a raise and falling for a drop,
+coloured by which stat it was. Reflect, Light Screen and Safeguard put up a pane
+of coloured glass over the middle of the team.
+
+**A blow is drawn in the type that dealt it.** The mark is lit for a weakness,
+drained toward grey for a resistance, and the type's own colour in between. A
+move that strikes five times lands five marks, and only a move that never landed
+leaves a colourless one.
+
+Weather arrives over the field rather than over whoever called for it. In a raid
+it is drawn over the side that called it, since that is the side it is doing
+anything for.
 
 None of this affects the fight itself.
 
@@ -120,8 +137,8 @@ against Special Defence. A few fixed-damage moves ignore the formula entirely.
 
 ## Statuses and weather
 
-There are twenty-two statuses. Six of them — poison, bad poison, sleep,
-paralysis, burn and freeze — **follow a pokemon out of the battle**. The rest,
+There are twenty-two statuses. Six of them **follow a pokemon out of the
+battle**: poison, bad poison, sleep, paralysis, burn and freeze. The rest,
 including confusion, flinching, seeding, trapping, hiding and floating, end with
 the fight. A pokemon can leave a raid both poisoned and asleep.
 
@@ -147,6 +164,7 @@ A status that runs out on its own runs out on that clock too:
 | Reflect, Light Screen, Mist | 10 seconds                                |
 | Weather                     | 10 seconds                                |
 | A disabled move             | 8 seconds                                 |
+| Perish Song                 | 8 seconds, and then whoever heard it falls |
 
 Poison, bad poison, burn and paralysis have no clock at all: they last until
 something cures them. A full-paralysis stumble costs the pokemon 2 seconds
@@ -161,7 +179,7 @@ under a clear sky whatever the world is doing.
 
 There are nine kinds of weather, from plain sun and rain up to the extreme forms.
 In a **raid**, a pokemon that changes the weather changes it only for its own
-party — unless the boss changed it, in which case it applies to everybody.
+party, unless the boss changed it, in which case it applies to everybody.
 Otherwise one player could impose rain on a lobby of strangers.
 
 ## How a fight ends
@@ -173,7 +191,7 @@ that is alive but permanently unable to do anything.
 | Situation                           | Result                                                                  |
 | ----------------------------------- | ----------------------------------------------------------------------- |
 | One side still standing             | That side wins                                                          |
-| Nobody standing, in a raid          | The party wins — a boss taken down with the last of the party is beaten |
+| Nobody standing, in a raid          | The party wins. A boss taken down with the last of the party is beaten |
 | Nobody standing, anywhere else      | A draw                                                                  |
 | Both sides standing, nobody can act | A draw                                                                  |
 
@@ -189,6 +207,13 @@ A raid is a party of players against a single **boss**. It is staged by a
 it, and the raid is named after the place, so two Articuno raids in one chunk
 carry different names.
 
+A lair can hold more than one resident, and the raid rolls which of them is at
+home. The **Burned Tower** is the one that does: Raikou, Entei and Suicune all
+live there. The rest hold one legendary each, at the **Seafoam Islands**, the
+**Power Plant**, **Mt. Ember**, **Cerulean Cave**, the **Whirl Islands** and the
+**Bell Tower**. **Faraway Island** and the **Ilex Forest** hold the two
+mythicals, and no walk ever stages those.
+
 A lobby stands for the whole three-hour raid window and anyone may join it; the
 host starts it. Each player brings up to **six** pokemon, and a lobby holds
 **twenty players**. Somebody fielding two parties still fills one place, and
@@ -199,17 +224,20 @@ the lair until the next window. A raid that is lost, or left unfinished for ten
 minutes, restages in place with a new host.
 
 A **mythical raid** is not staged by the world at all. It is called out by
-spending a relic, and the world never produces a mythical on its own.
+spending a relic, and the world never produces a mythical on its own. There are
+two: an **Old Sea Map** calls Mew to the island it names, and a **GS Ball**
+calls Celebi to the shrine in the forest it was left at.
 
 A **shadow raid** usually stages one of the biome's rare species, but one time in
 eight it reaches past them and stages a legendary instead.
 
 ### The raid boss
 
-A boss is a **maxed legendary with perfect individual stats**, and every player
+A boss is a **maxed legendary, perfect in every individual stat and trained to
+the cap in every one**, and every player
 in the lobby fights exactly the same one. Its raid form gives it:
 
-- A raid-sized health pool: 5,000 plus ten times what the species would have had.
+- A raid-sized health pool: twenty times what the species would have had.
 - Double every other stat.
 - Wind-ups that take twice as long, and that nothing short of fainting can
   interrupt.
@@ -221,16 +249,26 @@ cannot act, which is the party's window to arrive, buff up and land the opening
 hits. Sent out again later in the same fight, it skips the warm-up.
 
 It shrugs off everything that would take the fight away rather than make it
-harder — sleep, freeze, flinch, trapping and infatuation — unless it did it to
-itself, so a boss that uses Rest really does sleep. Infatuation is excluded twice
+harder, such as sleep, freeze, flinch, trapping and infatuation, unless it did it to
+itself, so a boss that uses Rest really does sleep. **Perish Song** is the same
+case at its most extreme: a boss never hears it, its own singing included, and
+nobody sings it in a raid at all, since the only side left counting would be the
+party. Infatuation is excluded twice
 over: a large lobby always contains somebody the boss would fall for, and a
 landed Attract would turn the raid into a queue.
 
-**Only direct hits take health off a boss.** Poison, burns, seeds, weather and
-crash damage from a missed Jump Kick do nothing to it, and neither does damage
-based on a share of its health. Two things still work: a cost the boss pays
-itself, so one that uses Explosion still dies by it, and healing, so draining
-moves work normally.
+**Indirect damage counts, up to 100 a time.** Poison, burns, seeds, weather and
+crash damage from a missed Jump Kick all chip at a boss, and none of them chips
+for more than 100 however large the pool is. Damage measured as a share of its
+health, such as Super Fang, is refused outright. A cost the boss pays itself is
+paid in full, so one that uses Explosion still dies by it.
+
+**A boss heals an eighth of its pool a second.** Recover, Synthesis and the rest
+are moves it may know again, and the allowance is what it can take back in a
+second rather than per heal, so several drains landing together are worth one of
+them. It refills as the fight runs, so a boss winds the clock back without
+resetting it. Rest stays barred: the sleep it buys is self-inflicted, so it lands
+in full while the healing does not.
 
 Four moves are removed from a boss before it is staged. **Transform** is banned
 because a boss that copies a player stops being a boss, throwing away the health
@@ -254,7 +292,7 @@ It is an ordinary trainer battle whoever is standing there: neither side is a
 boss, so a simultaneous knockout is a draw.
 
 Every player fights the cell separately. Winning closes nothing for anybody else,
-and losing costs nothing but the attempt — they are still there and may be fought
+and losing costs nothing but the attempt. They are still there and may be fought
 again until the window turns over.
 
 ### What an expert's party carries
@@ -293,8 +331,8 @@ fight.
 
 A second ability is the one thing a player cannot get by catching the same
 species: a wild meeting rolls one and keeps it. The gear is the pokemon's own
-rather than the trainer's — a Pikachu on any team holds the Light Ball because it
-is a Pikachu — and it is chosen from what that species is worth carrying, so a
+rather than the trainer's, so a Pikachu on any team holds the Light Ball because
+it is a Pikachu. It is chosen from what that species is worth carrying, so a
 half-grown one an expert is known for gets the item that answers being
 half-grown. A legend hands out three apiece, which is deeper than most species'
 own gear goes, so the slots nothing of its own fills are filled with gear that

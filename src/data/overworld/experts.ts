@@ -1,4 +1,4 @@
-import { SpawnRarity, getSpawnRarity } from '../biome';
+import { isGrownSpecies } from '../biome';
 import { Types } from '../constants/types';
 import Awards, { JOHTO_BADGES, JOHTO_HONORS, KANTO_BADGES, KANTO_HONORS } from '../ids/awards';
 import Biome from '../ids/biome';
@@ -660,7 +660,7 @@ function filterExpertPool(roster: Species[], pool: ExpertPool): Species[] {
     if (named.has(species)) {
       return true;
     }
-    if (getSpawnRarity(species) !== SpawnRarity.Rare) {
+    if (!isGrownSpecies(species)) {
       return false;
     }
     // An expert with no specialty takes the band whole

@@ -205,6 +205,69 @@ function turned(
   }));
 }
 
+/**
+ * How many marks run from a caster to what it is aiming at, how long
+ * one takes to travel the whole way, and how long each one is as a
+ * share of the gap
+ */
+const AIM_MARKS = 6;
+const AIM_PACE = 1100;
+const AIM_MARK = 0.09;
+const AIM_WIDTH = 2;
+
+/**
+ * What a pokemon is aiming at, drawn as marks running from it to what
+ * it has picked.
+ *
+ * A field of four winding up says who is busy and nothing about who is
+ * about to be hit, and that is the one thing worth reading in the gap
+ * before a move lands. The marks run toward the target and fade out as
+ * they arrive, so which end is the caster is never in doubt
+ */
+export function drawAim(
+  context: CanvasRenderingContext2D,
+  from: Point,
+  to: Point,
+  colour: string,
+  clock: number,
+  onto?: SlotBatch,
+): void {
+  const across = to[0] - from[0];
+  const down = to[1] - from[1];
+
+  // Aimed at itself, or at somebody standing on the same spot
+  if (Math.hypot(across, down) < 1) {
+    return;
+  }
+
+  const rolling = (clock % AIM_PACE) / AIM_PACE;
+
+  context.lineCap = 'round';
+  context.lineWidth = AIM_WIDTH;
+  for (let mark = 0; mark < AIM_MARKS; mark += 1) {
+    const held = (rolling + mark / AIM_MARKS) % 1;
+    const tail = Math.max(0, held - AIM_MARK);
+    // Faint at both ends: a mark leaves the caster rather than being
+    // stuck to it, and arrives rather than piling up on the target
+    const alpha = Math.sin(Math.PI * held) * 0.7;
+    const head: QuadPoint = { x: from[0] + across * held, y: from[1] + down * held };
+    const back: QuadPoint = { x: from[0] + across * tail, y: from[1] + down * tail };
+
+    if (onto == null) {
+      context.strokeStyle = colour;
+      context.globalAlpha = alpha;
+      context.beginPath();
+      context.moveTo(back.x, back.y);
+      context.lineTo(head.x, head.y);
+      context.stroke();
+    } else {
+      onto.batch.line(colour, back, head, AIM_WIDTH, alpha);
+    }
+  }
+  context.globalAlpha = 1;
+  context.lineCap = 'butt';
+}
+
 export function scaleOf(slot: Slot): number {
   return slot.radius / SPRITE_SCALE_DIVISOR;
 }

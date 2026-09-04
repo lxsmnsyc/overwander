@@ -34,9 +34,27 @@ import type Unit from '../unit';
 
 /**
  * Raid battles favor setting up: enough to outbid any non-KO damage
- * bonus (which caps at +4)
+ * bonus, which caps at +4
  */
 const RAID_BUFF_BONUS = 6;
+
+/**
+ * What taking a unit off the field is worth. Above the widest chip,
+ * above a heal, and far enough above both that no wind-up a killing
+ * move has to pay can make chipping look better than finishing
+ */
+const KILL_BONUS = 8;
+
+/** Extra for getting there first */
+const PRIORITY_KILL_BONUS = 2;
+
+/**
+ * The scale a hit that leaves the target standing is weighed on: what
+ * share of the target's remaining health it takes, out of this. Such a
+ * hit falls short of a kill by definition, so the band tops out one
+ * below, at 4
+ */
+const DAMAGE_SCALE = 5;
 
 /**
  * Pick the best move for a unit. Internal to the AI module; the idle
@@ -346,6 +364,18 @@ export function setupChooseMoveAI(battle: Battle): void {
       return;
     }
 
+    // A hit offered to one's own side asks the opposite question, and
+    // the friendly fire group answers it: there an immunity is the
+    // reason to aim rather than the reason not to, since the hit lands
+    // as whatever the teammate's ability pays out instead
+    if (
+      event.target.unit !== event.source &&
+      event.target.unit.team.alliance === event.source.team.alliance &&
+      feedsOwnSide(event.move)
+    ) {
+      return;
+    }
+
     const type = event.source.checkMoveType(event.move, event.target);
 
     if (event.source.checkMoveImmunity(event.move, event.target, type)) {
@@ -397,18 +427,18 @@ export function setupChooseMoveAI(battle: Battle): void {
 
     if (damage >= target.health) {
       // Gen 4 "try to KO" bonus
-      event.score += 6;
+      event.score += KILL_BONUS;
 
       // Priority moves are extra attractive for the kill
       if ((data.priority ?? 0) > 0) {
-        event.score += 2;
+        event.score += PRIORITY_KILL_BONUS;
       }
       return;
     }
 
     // Stand-in for the "highest expected damage" bonus: scale by how
     // much of the target's remaining health the hit removes
-    event.score += Math.min(4, Math.floor((4 * damage) / target.health));
+    event.score += Math.floor((DAMAGE_SCALE * damage) / target.health);
   });
 
   // Status-inflicting moves: a target that cannot receive the status

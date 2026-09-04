@@ -327,6 +327,14 @@ const setupAbilities = [
       }
 
       event.success = false;
+
+      // Only a real drop is bounced back. Weighing one is not throwing
+      // it, and a caster that lost a stage to a move it merely
+      // considered would be answering a question with its own knees
+      if (event.simulated) {
+        return;
+      }
+
       event.source.triggerAbility(Abilities.MirrorArmor);
 
       event.cause.unit.addStage(event.stage, event.value, event.cause);

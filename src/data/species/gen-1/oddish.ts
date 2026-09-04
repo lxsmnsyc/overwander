@@ -73,7 +73,7 @@ export default function registerOddishSpecies(): void {
     eggGroups: [EggGroups.Grass],
     genderRatio: [1, 1],
     catchRate: 255,
-    biomes: [Biome.Grassland, Biome.TemperateForest, Biome.Woodland],
+    biomes: [Biome.Grassland, Biome.TemperateForest, Biome.Woodland, Biome.Bog],
     activeTimes: TimeOfDay.Evening | TimeOfDay.Night,
     learnSet: {
       level: {
@@ -133,7 +133,7 @@ export default function registerOddishSpecies(): void {
     eggGroups: [EggGroups.Grass],
     genderRatio: [1, 1],
     catchRate: 120,
-    biomes: [Biome.Grassland, Biome.TemperateForest, Biome.Woodland],
+    biomes: [Biome.Grassland, Biome.TemperateForest, Biome.Woodland, Biome.Bog],
     activeTimes: TimeOfDay.Evening | TimeOfDay.Night,
     learnSet: {
       level: {
@@ -170,7 +170,7 @@ export default function registerOddishSpecies(): void {
     eggGroups: [EggGroups.Grass],
     genderRatio: [1, 1],
     catchRate: 45,
-    biomes: [Biome.Grassland, Biome.TemperateForest, Biome.Woodland],
+    biomes: [Biome.Grassland, Biome.TemperateForest, Biome.Woodland, Biome.Bog],
     activeTimes: TimeOfDay.Evening | TimeOfDay.Night,
     learnSet: {
       level: {

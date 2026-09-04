@@ -3,7 +3,10 @@ import { describe, expect, it } from 'vitest';
 import { asBasicSpriteData } from '../src/canvas/basic-sprite';
 import registerBiomeSpawns, {
   BIOME_NAMES,
+  MYTHICAL_SPAWN_ODDS,
   PRIZED_WEIGHT,
+  SPAWN_BAND_KEYS,
+  SPECIAL_SPAWN_ODDS,
   SpawnRarity,
   TIMES_OF_DAY,
   boostFamilyWeights,
@@ -12,6 +15,8 @@ import registerBiomeSpawns, {
   getSpawnPool,
   getSpawnRarity,
   isAwaitingBaby,
+  isGrownSpecies,
+  isLegendarySpecies,
   isMythicalSpecies,
   isPrizedSpecies,
   listSpeciesHabitats,
@@ -130,6 +135,7 @@ import {
 import pickStatusCast, { STATUS_CAST } from '../src/data/constants/status-cast';
 import AleaRNG from '../src/core/alea';
 import type { ItemPoolEntry } from '../src/data/overworld/item-pool';
+import { getItemBiomes, getItemPool } from '../src/data/overworld/biome-items';
 import {
   ITEM_POOL,
   MAX_KINDS,
@@ -260,11 +266,13 @@ import {
   getBaseSpecies,
   getConsumedItem,
   getDayOfYear,
+  getDaysInYear,
   getEggMoves,
   getFeaturedFamily,
   getLearnableMoves,
   getLevelUpMoves,
   getMovesLearnedAt,
+  getRegisteredFamilies,
   getRegisteredSpecies,
   getSpeciesAbilities,
   getSpeciesAbilityPools,
@@ -874,23 +882,36 @@ describe('where a species lives', () => {
     expect(grassland.map((habitat) => habitat.time).sort()).toEqual(
       [TimeOfDay.Morning, TimeOfDay.Day, TimeOfDay.Evening, TimeOfDay.Night].sort(),
     );
+    // Two stages, so it stands one band up from the bottom
     for (const habitat of grassland) {
-      expect(habitat.rarity).toBe(SpawnRarity.Base);
+      expect(habitat.rarity).toBe(SpawnRarity.Uncommon);
     }
   });
 
-  it('puts the one-per-world species in the band they are drawn from', () => {
-    // Every registered species stands in some pool, a mythical
-    // included — what makes one of those rare is the band rather than
-    // the absence of a home
-    expect(isMythicalSpecies(Species.Mew)).toBe(true);
+  it('gives the two one-per-world classes a band each', () => {
+    // A legendary stands in the special band of the biomes it lives
+    // in: the world stages one, rarely
+    const legendary = listSpeciesHabitats(Species.Articuno);
 
-    const habitats = listSpeciesHabitats(Species.Mew);
-
-    expect(habitats.length).toBeGreaterThan(0);
-    for (const habitat of habitats) {
+    expect(legendary.length).toBeGreaterThan(0);
+    for (const habitat of legendary) {
       expect(habitat.rarity).toBe(SpawnRarity.Special);
     }
+
+    // A mythical stands in a band of its own, one place apiece and as
+    // thin as the legendary band. The relic is the other way to one,
+    // not the only way
+    for (const species of [Species.Mew, Species.Celebi]) {
+      expect(isMythicalSpecies(species)).toBe(true);
+
+      const mythical = listSpeciesHabitats(species);
+
+      expect(mythical.length).toBeGreaterThan(0);
+      for (const habitat of mythical) {
+        expect(habitat.rarity).toBe(SpawnRarity.Mythical);
+      }
+    }
+    expect(MYTHICAL_SPAWN_ODDS).toBe(SPECIAL_SPAWN_ODDS);
   });
 
   it('says the same thing the pools do about every species', () => {
@@ -903,14 +924,8 @@ describe('where a species lives', () => {
       for (const time of TIMES_OF_DAY) {
         const groups = getSpawnPool(biome, time);
 
-        for (const band of [
-          groups.base,
-          groups.uncommon,
-          groups.rare,
-          groups.prized ?? [],
-          groups.special,
-        ]) {
-          for (const entry of band) {
+        for (const band of SPAWN_BAND_KEYS) {
+          for (const entry of spawnBand(groups, band)) {
             counted.set(entry.species, (counted.get(entry.species) ?? 0) + 1);
           }
         }
@@ -919,6 +934,53 @@ describe('where a species lives', () => {
 
     for (const species of getRegisteredSpecies()) {
       expect(listSpeciesHabitats(species).length).toBe(counted.get(species) ?? 0);
+    }
+  });
+
+  it('stages nothing where or when its species does not live', () => {
+    for (const biome of Object.keys(BIOME_NAMES).map(Number) as Biome[]) {
+      for (const time of TIMES_OF_DAY) {
+        const groups = getSpawnPool(biome, time);
+
+        // The prized band is the alphabet and the babies, which stand
+        // in every biome by design
+        for (const band of SPAWN_BAND_KEYS.filter((key) => key !== 'prized')) {
+          for (const entry of spawnBand(groups, band)) {
+            const data = getSpeciesData(entry.species);
+
+            expect(data.biomes, `${data.name} in ${BIOME_NAMES[biome]}`).toContain(biome);
+            expect(data.activeTimes & time, `${data.name} at ${time}`).not.toBe(0);
+          }
+        }
+      }
+    }
+  });
+
+  it('stages every species that says it lives somewhere', () => {
+    // Porygon is made rather than met: it stands beside a portal and
+    // in no pool, and what it evolves into is met the same way
+    const unstaged = new Set<Species>([Species.Porygon, Species.Porygon2]);
+    const staged = new Set<Species>();
+
+    for (const biome of Object.keys(BIOME_NAMES).map(Number) as Biome[]) {
+      for (const time of TIMES_OF_DAY) {
+        const groups = getSpawnPool(biome, time);
+
+        for (const band of SPAWN_BAND_KEYS) {
+          for (const entry of spawnBand(groups, band)) {
+            staged.add(entry.species);
+          }
+        }
+      }
+    }
+
+    for (const biome of Object.keys(BIOME_NAMES).map(Number) as Biome[]) {
+      for (const species of getSpeciesByBiome(biome)) {
+        if (unstaged.has(species) || isLegendarySpecies(species) || isMythicalSpecies(species)) {
+          continue;
+        }
+        expect(staged.has(species), getSpeciesData(species).name).toBe(true);
+      }
     }
   });
 });
@@ -2019,12 +2081,29 @@ describe('species day', () => {
     expect(getDayOfYear(YEAR_START + 364 * DAY)).toBe(364);
   });
 
-  it('features the family whose number is the day of the year', () => {
+  it('features a family every day, counting the year around the roster', () => {
+    const roster = getRegisteredFamilies();
+
     // Family 0 is Bulbasaur's, so it opens the year; family 1 is
     // Charmander's, and so on
     expect(getFeaturedFamily(YEAR_START)).toBe(Families.Bulbasaur);
     expect(getFeaturedFamily(YEAR_START + DAY)).toBe(Families.Charmander);
     expect(getFeaturedFamily(YEAR_START + Families.Mewtwo * DAY)).toBe(Families.Mewtwo);
+
+    // The roster runs short of a year, so it comes round again rather
+    // than leaving the rest of the year blank
+    expect(getFeaturedFamily(YEAR_START + roster.length * DAY)).toBe(Families.Bulbasaur);
+    for (let day = 0; day < getDaysInYear(YEAR_START); day++) {
+      expect(getFeaturedFamily(YEAR_START + day * DAY)).not.toBeNull();
+    }
+
+    // Every family gets its day, the ones past a reserved gap in the
+    // numbering included
+    const featured = new Set(
+      Array.from({ length: roster.length }, (_, day) => getFeaturedFamily(YEAR_START + day * DAY)),
+    );
+
+    expect(featured.size).toBe(roster.length);
 
     // The whole family is featured, not just one stage
     expect(isFeaturedSpecies(Species.Venusaur, YEAR_START)).toBe(true);
@@ -2045,9 +2124,9 @@ describe('species day', () => {
     // One for a first stage, one more for every band above it, five
     // for a legendary — the same order the spawn pools sort them in
     expect(getCatchCandy(Species.Bulbasaur)).toBe(1);
-    expect(getCatchCandy(Species.Ivysaur)).toBe(2);
-    expect(getCatchCandy(Species.Venusaur)).toBe(3);
-    expect(getCatchCandy(Species.Mewtwo)).toBe(5);
+    expect(getCatchCandy(Species.Ivysaur)).toBe(3);
+    expect(getCatchCandy(Species.Venusaur)).toBe(5);
+    expect(getCatchCandy(Species.Mewtwo)).toBe(7);
   });
 
   it('pays four times over for a catch on the family day', () => {
@@ -3241,7 +3320,7 @@ describe('item data', () => {
     // not gold
     expect(sellPrice(Items.HeartScale)).toBe(0);
     expect(sellPrice(Items.PortalKey)).toBe(0);
-    expect(sellPrice(Items.SunStone)).toBe(0);
+    expect(sellPrice(Items.IceStone)).toBe(0);
   });
 
   it('registers the stones and trade items nothing can spend yet', () => {
@@ -3249,7 +3328,6 @@ describe('item data', () => {
     // has not registered, so they are named, drawn and priceless
     // rather than stocked or buried
     const latent = [
-      Items.SunStone,
       Items.ShinyStone,
       Items.DuskStone,
       Items.DawnStone,
@@ -4209,7 +4287,7 @@ describe('biome data', () => {
   });
 
   it('assigns habitat biomes to species', () => {
-    expect(getSpeciesData(Species.Sandshrew).biomes).toEqual([Biome.Desert]);
+    expect(getSpeciesData(Species.Sandshrew).biomes).toEqual([Biome.Desert, Biome.Badlands]);
     expect(getSpeciesData(Species.Lapras).biomes).toEqual([
       Biome.Ocean,
       Biome.DeepOcean,
@@ -4244,20 +4322,38 @@ describe('biome data', () => {
   });
 
   it('classifies spawn rarity tiers', () => {
-    // Unevolved, can still evolve
+    // The bottom of a three-stage line, and the bottom of a two-stage
+    // one, which is a shorter walk to a finished pokemon
     expect(getSpawnRarity(Species.Pidgey)).toBe(SpawnRarity.Base);
-    expect(getSpawnRarity(Species.Omanyte)).toBe(SpawnRarity.Base);
+    expect(getSpawnRarity(Species.Bulbasaur)).toBe(SpawnRarity.Base);
+    expect(getSpawnRarity(Species.Omanyte)).toBe(SpawnRarity.Uncommon);
+    expect(getSpawnRarity(Species.Ekans)).toBe(SpawnRarity.Uncommon);
 
-    // Middle evolutions
-    expect(getSpawnRarity(Species.Ivysaur)).toBe(SpawnRarity.Uncommon);
-    expect(getSpawnRarity(Species.Haunter)).toBe(SpawnRarity.Uncommon);
+    // The middle of a three-stage line
+    expect(getSpawnRarity(Species.Ivysaur)).toBe(SpawnRarity.Rare);
+    expect(getSpawnRarity(Species.Haunter)).toBe(SpawnRarity.Rare);
 
-    // Fully evolved and single-line
-    expect(getSpawnRarity(Species.Pidgeot)).toBe(SpawnRarity.Rare);
-    expect(getSpawnRarity(Species.Ditto)).toBe(SpawnRarity.Rare);
+    // The end of a two-stage line
+    expect(getSpawnRarity(Species.Omastar)).toBe(SpawnRarity.Scarce);
+    expect(getSpawnRarity(Species.Arbok)).toBe(SpawnRarity.Scarce);
 
-    // One-per-world class
-    expect(getSpawnRarity(Species.Mew)).toBe(SpawnRarity.Special);
+    // The end of a three-stage line, and a species that never evolves
+    expect(getSpawnRarity(Species.Pidgeot)).toBe(SpawnRarity.Elusive);
+    expect(getSpawnRarity(Species.Venusaur)).toBe(SpawnRarity.Elusive);
+    expect(getSpawnRarity(Species.Ditto)).toBe(SpawnRarity.Elusive);
+
+    // A baby leaves the rest of its line standing one stage shorter:
+    // Pikachu is the bottom of a two-stage line rather than the
+    // middle of a three-stage one, and a Jynx is grown on its own
+    expect(getSpawnRarity(Species.Pikachu)).toBe(SpawnRarity.Uncommon);
+    expect(getSpawnRarity(Species.Raichu)).toBe(SpawnRarity.Scarce);
+    expect(getSpawnRarity(Species.Jynx)).toBe(SpawnRarity.Elusive);
+
+    // The two one-per-world classes, which are told apart: a
+    // legendary is staged by the world at a lair, a mythical only
+    // ever by the relic that calls it
+    expect(getSpawnRarity(Species.Articuno)).toBe(SpawnRarity.Special);
+    expect(getSpawnRarity(Species.Mew)).toBe(SpawnRarity.Mythical);
 
     // The prized band is between the two, and the babies are what is
     // in it. Nothing about the shape of a line reads as one, which is
@@ -4294,12 +4390,12 @@ describe('biome data', () => {
     };
 
     // Richest first, each slice as wide as its own odds: special owns
-    // the opening 1/4096, prized the 1/512 after it, then rare, then
-    // uncommon, and whatever is left falls to base
+    // the opening 1/4096, prized the 1/512 after it, then the bands a
+    // line's stages are dealt into, and whatever is left falls to base
     expect(pickSpawn(groups, rolls([0]))).toBe(Species.Mew);
     expect(pickSpawn(groups, rolls([1 / 1024, 0]))).toBe(Species.Eevee);
     expect(pickSpawn(groups, rolls([1 / 128, 0]))).toBe(Species.Ditto);
-    expect(pickSpawn(groups, rolls([1 / 16, 0]))).toBe(Species.Ivysaur);
+    expect(pickSpawn(groups, rolls([0.3, 0]))).toBe(Species.Ivysaur);
     expect(pickSpawn(groups, rolls([0.9, 0]))).toBe(Species.Pidgey);
 
     // A pool that leaves the band out is every pool in the game
@@ -4325,7 +4421,7 @@ describe('biome data', () => {
     // Diurnal fliers sleep through the night; prowlers come out
     const night = getSpawnPool(Biome.Grassland, TimeOfDay.Night);
     expect(night.base.some((entry) => entry.species === Species.Pidgey)).toBe(false);
-    expect(night.base.some((entry) => entry.species === Species.Meowth)).toBe(true);
+    expect(night.uncommon.some((entry) => entry.species === Species.Meowth)).toBe(true);
 
     // Legendaries sit in their own section
     const peak = getSpawnPool(Biome.Mountain, TimeOfDay.Night);
@@ -4395,6 +4491,55 @@ describe('biome data', () => {
     for (const band of ['base', 'uncommon', 'rare', 'prized', 'special'] as const) {
       for (const entry of ITEM_POOL[band]) {
         expect(getItemBand(entry.item)).toBe(band);
+      }
+    }
+  });
+
+  it('buries what belongs to a landscape only in that landscape', () => {
+    const holds = (biome: Biome, item: Items): boolean =>
+      (['base', 'uncommon', 'rare', 'prized', 'special'] as const).some((band) =>
+        getItemPool(biome)[band].some((entry) => entry.item === item),
+      );
+
+    // A stone is a reason to cross the map: it is dug up where its
+    // element is and nowhere else. A Sunkern asks for the sun one, so
+    // the savanna is where a Sunflora comes from
+    expect(holds(Biome.Savanna, Items.SunStone)).toBe(true);
+    expect(holds(Biome.Glacier, Items.SunStone)).toBe(false);
+    expect(holds(Biome.Volcano, Items.FireStone)).toBe(true);
+    expect(holds(Biome.Ocean, Items.FireStone)).toBe(false);
+    expect(holds(Biome.Ocean, Items.WaterStone)).toBe(true);
+    expect(holds(Biome.Desert, Items.WaterStone)).toBe(false);
+    expect(holds(Biome.Woodland, Items.LeafStone)).toBe(true);
+    expect(holds(Biome.Glacier, Items.MoonStone)).toBe(true);
+
+    // An item that names no ground is buried on all of it
+    expect(getItemBiomes(Items.PokeBall)).toHaveLength(0);
+    expect(getItemBiomes(Items.WaterStone).length).toBeGreaterThan(0);
+
+    // What the whole world buries is in every pool there is
+    for (const biome of Object.keys(BIOME_NAMES).map(Number) as Biome[]) {
+      expect(holds(biome, Items.PokeBall), BIOME_NAMES[biome]).toBe(true);
+      expect(holds(biome, Items.MasterBall), BIOME_NAMES[biome]).toBe(true);
+    }
+
+    // Nothing is buried nowhere, and no biome is left with an empty
+    // band: a stash has something to hand over wherever it is dug
+    for (const entry of [
+      ...ITEM_POOL.base,
+      ...ITEM_POOL.uncommon,
+      ...ITEM_POOL.rare,
+      ...ITEM_POOL.prized,
+      ...ITEM_POOL.special,
+    ]) {
+      expect(
+        (Object.keys(BIOME_NAMES).map(Number) as Biome[]).some((biome) => holds(biome, entry.item)),
+        getItemData(entry.item).name,
+      ).toBe(true);
+    }
+    for (const biome of Object.keys(BIOME_NAMES).map(Number) as Biome[]) {
+      for (const band of ['base', 'uncommon', 'rare', 'prized', 'special'] as const) {
+        expect(getItemPool(biome)[band].length, `${BIOME_NAMES[biome]} ${band}`).toBeGreaterThan(0);
       }
     }
   });
@@ -4559,11 +4704,13 @@ describe('biome data', () => {
     // A sub-1/4096 band roll lands in the special section
     expect(getSpawnRarity(pickSpawn(pool, rolls([0, 0]))!)).toBe(SpawnRarity.Special);
 
-    // A sub-1/64 band roll lands in the rare section
-    expect(getSpawnRarity(pickSpawn(pool, rolls([0.01, 0]))!)).toBe(SpawnRarity.Rare);
-
-    // A sub-1/8 band roll lands in the uncommon section
-    expect(getSpawnRarity(pickSpawn(pool, rolls([0.05, 0]))!)).toBe(SpawnRarity.Uncommon);
+    // Then the ladder down: prized, the two grown bands, the middle
+    // of a line, and the first stages
+    expect(getSpawnRarity(pickSpawn(pool, rolls([1 / 1024, 0]))!)).toBe(SpawnRarity.Prized);
+    expect(getSpawnRarity(pickSpawn(pool, rolls([0.01, 0]))!)).toBe(SpawnRarity.Elusive);
+    expect(getSpawnRarity(pickSpawn(pool, rolls([0.05, 0]))!)).toBe(SpawnRarity.Scarce);
+    expect(getSpawnRarity(pickSpawn(pool, rolls([0.15, 0]))!)).toBe(SpawnRarity.Rare);
+    expect(getSpawnRarity(pickSpawn(pool, rolls([0.3, 0]))!)).toBe(SpawnRarity.Uncommon);
 
     // Everything else lands in the base section
     expect(getSpawnRarity(pickSpawn(pool, rolls([0.5, 0]))!)).toBe(SpawnRarity.Base);
@@ -4765,10 +4912,10 @@ describe('type experts', () => {
   it('pools every specialty from the region, half-grown and legendaries left out', () => {
     const open = getWorldExpertPool({ types: [] });
 
-    // The rare band only: what an expert fields is fully evolved or
-    // has nowhere to evolve to
+    // What an expert fields is fully evolved, or has nowhere to
+    // evolve to until a later gen gives it one
     for (const species of open) {
-      expect(getSpawnRarity(species), getSpeciesData(species).name).toBe(SpawnRarity.Rare);
+      expect(isGrownSpecies(species), getSpeciesData(species).name).toBe(true);
     }
     const psychic = getWorldExpertPool({ types: [Types.Psychic] });
 
@@ -4912,7 +5059,7 @@ describe('type experts', () => {
       }
       for (const species of poolOf(member)) {
         if (!names.has(species)) {
-          expect(getSpawnRarity(species), getSpeciesData(species).name).toBe(SpawnRarity.Rare);
+          expect(isGrownSpecies(species), getSpeciesData(species).name).toBe(true);
         }
       }
     }

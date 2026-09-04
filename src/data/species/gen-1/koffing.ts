@@ -78,7 +78,7 @@ export default function registerKoffingSpecies(): void {
     eggGroups: [EggGroups.Amorphous],
     genderRatio: [1, 1],
     catchRate: 190,
-    biomes: [Biome.Swamp],
+    biomes: [Biome.Swamp, Biome.Volcano],
     activeTimes: TimeOfDay.Night,
     learnSet: {
       level: {
@@ -125,7 +125,7 @@ export default function registerKoffingSpecies(): void {
     eggGroups: [EggGroups.Amorphous],
     genderRatio: [1, 1],
     catchRate: 60,
-    biomes: [Biome.Swamp],
+    biomes: [Biome.Swamp, Biome.Volcano],
     activeTimes: TimeOfDay.Night,
     learnSet: {
       level: {

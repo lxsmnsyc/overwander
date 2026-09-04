@@ -171,8 +171,11 @@ export default function setupStageMoves(battle: Battle): void {
     createStageMove(stage, config)(battle);
   }
 
-  // A stage already pinned at the end it is being pushed towards has
-  // nowhere to go, so the move spends a cast changing nothing
+  // A stage that will not move is a cast spent changing nothing. It is
+  // pinned at the end it is being pushed towards, or something is
+  // holding it: a Mist over the far side, a Clear Body under the hand.
+  // The engine is asked about the second rather than the AI keeping
+  // its own list of what blocks a stage
   battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
     const effect = getStageMoveEffect(event.move);
 
@@ -182,8 +185,18 @@ export default function setupStageMoves(battle: Battle): void {
 
     const receiver = event.target.type === MoveTargetType.Unit ? event.target.unit : event.source;
     const current = receiver.stages[effect.stage];
+    const pinned = effect.value > 0 ? current >= MAX_STAGE : current <= MIN_STAGE;
 
-    if (effect.value > 0 ? current >= MAX_STAGE : current <= MIN_STAGE) {
+    if (
+      pinned ||
+      !receiver.checkCanAddStage(
+        effect.stage,
+        effect.value,
+        { type: EffectType.Move, move: event.move, unit: event.source },
+        // Speculative: the AI is weighing the move, not casting it
+        true,
+      )
+    ) {
       event.score -= USELESS_PENALTY;
     }
   });

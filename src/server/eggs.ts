@@ -56,7 +56,7 @@ import {
 import createOverworld from '../overworld/setup';
 import resolveBuddy from './buddy';
 import { isCatchLocked } from './locks';
-import { recordCaughtSpecies } from './pokedex';
+import { recordFoundSpecies } from './pokedex';
 
 /**
  * Eggs, written with admin credentials.
@@ -527,10 +527,11 @@ export async function hatchEgg(
     return null;
   }
   await grantCatchCandy(uid, hatched.species, toLocalTime(now, asOffset(offset)));
-  // The dex is told here rather than where the egg was picked up: what
-  // is inside a shell is not something the player has met, and an egg
-  // that never hatches is a species they never saw
-  await recordCaughtSpecies(uid, hatched.species, hatched.shiny);
+  // The dex is told here rather than where the egg was picked up:
+  // what is inside a shell is not something the player has met, and an
+  // egg that never hatches is a species they never saw. Both tallies
+  // are written, since the hatching is the meeting
+  await recordFoundSpecies(uid, hatched.species, hatched.shiny);
   await bumpProgress(uid, [[Metric.Hatches, hatched.species, 1]]);
   return hatched.species;
 }

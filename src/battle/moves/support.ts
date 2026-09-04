@@ -1,7 +1,6 @@
 import { AttackPriority } from '../../core/event-emitter';
 import { MAX_STAGE, Stages, Stats } from '../../data/constants/stats';
 import { DamageFlags, Moves } from '../../data/ids/moves';
-import { TeamStatuses } from '../../data/ids/status';
 import { USELESS_PENALTY } from '../ai/score';
 import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
@@ -202,17 +201,6 @@ export default function setupSupportMoves(battle: Battle): void {
 
     if (!carrying) {
       event.score -= USELESS_PENALTY;
-    }
-  });
-
-  // Safeguard: a screen against statuses rather than against damage
-  battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
-    if (event.move === Moves.Safeguard) {
-      event.source.team.addStatus(TeamStatuses.Safeguard, {
-        type: EffectType.Move,
-        move: Moves.Safeguard,
-        unit: event.source,
-      });
     }
   });
 }

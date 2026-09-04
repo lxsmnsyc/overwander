@@ -98,7 +98,7 @@ export default function registerPoliwagSpecies(): void {
     eggGroups: [EggGroups.Water1],
     genderRatio: [1, 1],
     catchRate: 255,
-    biomes: [Biome.Swamp],
+    biomes: [Biome.Swamp, Biome.Bog],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
@@ -159,7 +159,7 @@ export default function registerPoliwagSpecies(): void {
     eggGroups: [EggGroups.Water1],
     genderRatio: [1, 1],
     catchRate: 120,
-    biomes: [Biome.Swamp],
+    biomes: [Biome.Swamp, Biome.Bog],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
@@ -197,7 +197,7 @@ export default function registerPoliwagSpecies(): void {
     eggGroups: [EggGroups.Water1],
     genderRatio: [1, 1],
     catchRate: 45,
-    biomes: [Biome.Swamp],
+    biomes: [Biome.Swamp, Biome.Bog],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {

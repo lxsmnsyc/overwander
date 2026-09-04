@@ -74,7 +74,7 @@ export default function registerVenonatSpecies(): void {
     eggGroups: [EggGroups.Bug],
     genderRatio: [1, 1],
     catchRate: 190,
-    biomes: [Biome.TemperateForest, Biome.TemperateRainforest],
+    biomes: [Biome.TemperateForest, Biome.TemperateRainforest, Biome.Bog],
     activeTimes: TimeOfDay.Evening | TimeOfDay.Night,
     learnSet: {
       level: {
@@ -115,7 +115,7 @@ export default function registerVenonatSpecies(): void {
     eggGroups: [EggGroups.Bug],
     genderRatio: [1, 1],
     catchRate: 75,
-    biomes: [Biome.TemperateForest, Biome.TemperateRainforest],
+    biomes: [Biome.TemperateForest, Biome.TemperateRainforest, Biome.Bog],
     activeTimes: TimeOfDay.Evening | TimeOfDay.Night,
     learnSet: {
       level: {

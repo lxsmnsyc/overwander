@@ -83,7 +83,7 @@ export default function registerSeelSpecies(): void {
     eggGroups: [EggGroups.Water1, EggGroups.Field],
     genderRatio: [1, 1],
     catchRate: 190,
-    biomes: [Biome.Ocean, Biome.PolarOcean],
+    biomes: [Biome.Ocean, Biome.PolarOcean, Biome.RockyCoast],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
@@ -131,7 +131,7 @@ export default function registerSeelSpecies(): void {
     eggGroups: [EggGroups.Water1, EggGroups.Field],
     genderRatio: [1, 1],
     catchRate: 75,
-    biomes: [Biome.Ocean, Biome.PolarOcean, Biome.Tundra],
+    biomes: [Biome.Ocean, Biome.PolarOcean, Biome.Tundra, Biome.RockyCoast],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {

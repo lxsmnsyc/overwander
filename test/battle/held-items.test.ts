@@ -44,7 +44,7 @@ import { Stages, Stats } from '../../src/data/constants/stats';
 import { Types } from '../../src/data/constants/types';
 import { Items } from '../../src/data/ids/items';
 import { MoveCategories, Moves } from '../../src/data/ids/moves';
-import { Genders, Species } from '../../src/data/ids/species';
+import { DEOXYS_FORMS, Genders, Species } from '../../src/data/ids/species';
 import { Statuses, TeamStatuses, Weathers } from '../../src/data/ids/status';
 import { getMoveData } from '../../src/data/moves';
 import { packSlots } from '../../src/data/constants/slots';
@@ -1710,5 +1710,48 @@ describe('the regional treats', () => {
 
     expect(holder.status[Statuses.Burned]).toBeDefined();
     expect(holder.items[Items.RageCandyBar]).toBe(true);
+  });
+});
+
+describe('Meteorite', () => {
+  it('rearranges a Deoxys as it reaches the field, and nobody else', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const deoxys = createUnit(battle, teamA);
+    const other = createUnit(battle, teamB);
+
+    deoxys.setSpecies(Species.Deoxys);
+    deoxys.addItem(Items.Meteorite);
+    other.setSpecies(Species.Kecleon);
+    other.addItem(Items.Meteorite);
+
+    // Pinned so the roll lands on the last of the four rather than
+    // wherever the seed happened to point
+    pinRandom(battle, 0.99);
+    deoxys.enter();
+    other.enter();
+
+    expect(deoxys.species).toBe(Species.DeoxysSpeed);
+    // The shape carries its own numbers: the speed one is the fastest
+    // of the four and the frailest but one
+    expect(deoxys.checkStat(Stats.Speed, 0)).toBeGreaterThan(0);
+    // A rock in anybody else's hands does nothing at all
+    expect(other.species).toBe(Species.Kecleon);
+  });
+
+  it('rolls a shape rather than settling on one', () => {
+    const { battle, teamA } = createBattle();
+    const shapes = new Set<Species>();
+
+    for (const [at, roll] of [0, 0.3, 0.55, 0.99].entries()) {
+      const deoxys = createUnit(battle, teamA);
+
+      deoxys.setSpecies(Species.Deoxys);
+      deoxys.addItem(Items.Meteorite);
+      pinRandom(battle, roll);
+      deoxys.enter();
+      shapes.add(deoxys.species);
+      expect(DEOXYS_FORMS[at]).toBe(deoxys.species);
+    }
+    expect(shapes.size).toBe(DEOXYS_FORMS.length);
   });
 });

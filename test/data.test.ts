@@ -69,6 +69,7 @@ import {
 } from '../src/data/ids/status';
 import {
   CASTFORM_FORMS,
+  DEOXYS_FORMS,
   EvolutionMethod,
   Genders,
   Species,
@@ -638,13 +639,17 @@ describe('species measurements', () => {
 });
 
 describe('species forms', () => {
-  it('treats every registered species but the unowns and the worn castforms as a default form', () => {
+  it('treats every registered species but the unowns and the worn shapes as a default form', () => {
     // The flag is absent almost everywhere and answers true rather
     // than being written out three hundred times; the twenty-seven
-    // unowns past A and the three skies a Castform wears are the only
-    // variants registered so far
+    // unowns past A, the three skies a Castform wears and the three
+    // shapes a Deoxys rearranges into are the only variants so far
     const registered = getRegisteredSpecies();
-    const variants = new Set<Species>([...UNOWN_FORMS.slice(1), ...CASTFORM_FORMS.slice(1)]);
+    const variants = new Set<Species>([
+      ...UNOWN_FORMS.slice(1),
+      ...CASTFORM_FORMS.slice(1),
+      ...DEOXYS_FORMS.slice(1),
+    ]);
 
     expect(registered.length).toBeGreaterThan(0);
     for (const species of registered) {
@@ -3092,6 +3097,7 @@ describe('item data', () => {
       Items.ShinyCharm,
       Items.OldSeaMap,
       Items.GSBall,
+      Items.AuroraTicket,
       Items.GoldenBottleCap,
       // The one thing in the band that is only gold, and there because
       // it is more of it than anything else in the game pays

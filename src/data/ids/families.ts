@@ -207,6 +207,8 @@ const enum Families {
   Kyogre = 198,
   Groudon = 199,
   Rayquaza = 200,
+  // 201 is Jirachi's, the one mythical of the region still to come
+  Deoxys = 202,
 }
 
 export default Families;

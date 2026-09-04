@@ -62,6 +62,11 @@ const enum Lairs {
   MarineCave = 13,
   TerraCave = 14,
   SkyPillar = 15,
+  /**
+   * Deoxys' island. A mythical's lair, so no biome lists it: the
+   * ticket is the only way there
+   */
+  BirthIsland = 16,
 }
 
 export const LAIR_NAMES: Record<Lairs, string> = {
@@ -81,6 +86,7 @@ export const LAIR_NAMES: Record<Lairs, string> = {
   [Lairs.MarineCave]: 'Marine Cave',
   [Lairs.TerraCave]: 'Terra Cave',
   [Lairs.SkyPillar]: 'Sky Pillar',
+  [Lairs.BirthIsland]: 'Birth Island',
 };
 
 /**
@@ -106,6 +112,7 @@ export const LAIR_SPECIES: Record<Lairs, Species[]> = {
   [Lairs.MarineCave]: [Species.Kyogre],
   [Lairs.TerraCave]: [Species.Groudon],
   [Lairs.SkyPillar]: [Species.Rayquaza],
+  [Lairs.BirthIsland]: [Species.Deoxys],
 };
 
 /**
@@ -128,6 +135,7 @@ export const EVERY_LAIR: Lairs[] = [
   Lairs.MarineCave,
   Lairs.TerraCave,
   Lairs.SkyPillar,
+  Lairs.BirthIsland,
 ];
 
 /**

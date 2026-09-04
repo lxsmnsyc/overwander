@@ -234,6 +234,10 @@ export const ITEM_POOL: ItemRarityGroups = {
     { item: Items.OldAmber, weight: 5 },
     { item: Items.RootFossil, weight: 8 },
     { item: Items.ClawFossil, weight: 8 },
+    // The rock a Deoxys rearranges itself around. Prized rather than
+    // special: it is worth nothing to anybody who has not been to
+    // the island, and everything to whoever has
+    { item: Items.Meteorite, weight: 4 },
     // Three purses instead of one, for good, and nothing sells one.
     // Here rather than in rare so that parting with it is asked about
     // twice
@@ -262,6 +266,7 @@ export const ITEM_POOL: ItemRarityGroups = {
     // here or not at all
     { item: Items.OldSeaMap, weight: 6 },
     { item: Items.GSBall, weight: 6 },
+    { item: Items.AuroraTicket, weight: 6 },
     // Six stats made perfect at once. Nothing else undoes a bad roll,
     // so it belongs with the things gold cannot buy
     { item: Items.GoldenBottleCap, weight: 8 },

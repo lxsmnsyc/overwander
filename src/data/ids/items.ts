@@ -829,6 +829,10 @@ export const enum Items {
    */
   RootFossil = 390,
   ClawFossil = 391,
+
+  /** The ticket a Deoxys is reached with, and the rock that moves it */
+  AuroraTicket = 392,
+  Meteorite = 393,
 }
 
 /**

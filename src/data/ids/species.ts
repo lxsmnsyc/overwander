@@ -502,6 +502,10 @@ export const enum Species {
   Kyogre = 382,
   Groudon = 383,
   Rayquaza = 384,
+  Deoxys = 386,
+  DeoxysAttack = 1038601,
+  DeoxysDefense = 1038602,
+  DeoxysSpeed = 1038603,
 }
 
 /**
@@ -612,4 +616,16 @@ export const CASTFORM_FORMS: Species[] = [
   Species.CastformSunny,
   Species.CastformRainy,
   Species.CastformSnowy,
+];
+
+/**
+ * Deoxys and the three shapes it rearranges itself into. Like a
+ * Castform's skies they are worn rather than met: a Meteorite in its
+ * hands is what moves it between them
+ */
+export const DEOXYS_FORMS: Species[] = [
+  Species.Deoxys,
+  Species.DeoxysAttack,
+  Species.DeoxysDefense,
+  Species.DeoxysSpeed,
 ];

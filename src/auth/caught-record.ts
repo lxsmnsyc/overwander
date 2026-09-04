@@ -323,7 +323,9 @@ export function isAuctionableCatch(caught: {
     isPerfectIVs(caught.ivs) ||
     isZeroIVs(caught.ivs) ||
     isShiny(caught) ||
-    getSpawnRarity(caught.species) === SpawnRarity.Special
+    // Both one-per-world classes, however differently they are met
+    getSpawnRarity(caught.species) === SpawnRarity.Special ||
+    getSpawnRarity(caught.species) === SpawnRarity.Mythical
   );
 }
 

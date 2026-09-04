@@ -31,6 +31,12 @@ export interface SpawnRarityGroups {
    */
   prized?: SpawnEntry[];
   special: SpawnEntry[];
+  /**
+   * Above special, and **optional** the way prized is: the mythicals,
+   * which live in one place apiece and are met there about as often
+   * as never. A biome that is nobody's home leaves the band out
+   */
+  mythical?: SpawnEntry[];
 }
 
 /**
@@ -224,9 +230,16 @@ export const enum SpawnRarity {
    */
   Prized = 3,
   /**
-   * Mythicals, legendaries and other one-per-world class species
+   * The legendaries: one-per-world species the world itself stages,
+   * at a lair
    */
   Special = 4,
+  /**
+   * The mythicals: one place apiece and no lair, so a raid never
+   * stages one. The relic calls one out to be fought; the band is the
+   * other way, and it is eight times thinner than a legendary's
+   */
+  Mythical = 5,
 }
 
 /**
@@ -240,6 +253,7 @@ const BAND_RARITIES: [band: keyof SpawnRarityGroups, rarity: SpawnRarity][] = [
   ['rare', SpawnRarity.Rare],
   ['prized', SpawnRarity.Prized],
   ['special', SpawnRarity.Special],
+  ['mythical', SpawnRarity.Mythical],
 ];
 
 /**
@@ -310,6 +324,13 @@ export const PRIZED_SPAWN_ODDS = 1 / 512;
 export const SPECIAL_SPAWN_ODDS = 1 / 4096;
 
 /**
+ * And the band above it: eight times thinner again, because the
+ * pokemon in it are one apiece and the walk that finds one is the
+ * story of that save
+ */
+export const MYTHICAL_SPAWN_ODDS = 1 / 32768;
+
+/**
  * The one-per-world class: Gen 1 legendaries and Mew. Future gens
  * add their legendaries, mythicals, unowns, ultra beasts and
  * paradoxes here
@@ -331,8 +352,6 @@ const LEGENDARY_SPECIES = new Set<Species>([
  * relic that calls it, which is what a raid item is
  */
 const MYTHICAL_SPECIES = new Set<Species>([Species.Mew]);
-
-const SPECIAL_SPECIES = new Set<Species>([...LEGENDARY_SPECIES, ...MYTHICAL_SPECIES]);
 
 /**
  * Whether the species is a legendary, the only kind a legendary raid
@@ -415,7 +434,13 @@ export function isPrizedSpecies(species: Species): boolean {
 }
 
 export function getSpawnRarity(species: Species): SpawnRarity {
-  if (SPECIAL_SPECIES.has(species)) {
+  // The two are asked apart rather than together: what stages one is
+  // a lair and what stages the other is a relic, and everything that
+  // reads a rarity wants to know which
+  if (MYTHICAL_SPECIES.has(species)) {
+    return SpawnRarity.Mythical;
+  }
+  if (LEGENDARY_SPECIES.has(species)) {
     return SpawnRarity.Special;
   }
   // Asked before the shape of the line is, since a baby evolves like
@@ -466,6 +491,7 @@ export function pickFromEntries(entries: SpawnEntry[], random: () => number): Sp
  * **base** and leaves every other band as wide as it was
  */
 const SPAWN_BANDS: [band: keyof SpawnRarityGroups, odds: number][] = [
+  ['mythical', MYTHICAL_SPAWN_ODDS],
   ['special', SPECIAL_SPAWN_ODDS],
   ['prized', PRIZED_SPAWN_ODDS],
   ['rare', RARE_SPAWN_ODDS],
@@ -474,8 +500,9 @@ const SPAWN_BANDS: [band: keyof SpawnRarityGroups, odds: number][] = [
 
 /**
  * Roll one spawn from a period's rarity groups: the first draw picks
- * the band (1/4096 special, 1/512 prized, 1/64 rare, 1/8 uncommon,
- * base otherwise), the second draw picks within the band by weight.
+ * the band (1/32768 mythical, 1/4096 special, 1/512 prized, 1/64
+ * rare, 1/8 uncommon, base otherwise), the second draw picks within
+ * the band by weight.
  *
  * A roll landing in a band this biome keeps nothing in falls to the
  * next band down rather than to base, which is what lets most biomes

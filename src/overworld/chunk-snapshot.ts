@@ -10,7 +10,7 @@ import { Species } from '../data/ids/species';
 import { rollFossilOffer } from '../data/overworld/fossil';
 import Landmark from '../data/overworld/landmark';
 import type Lairs from '../data/overworld/lair';
-import { EVERY_LAIR, getBiomeLairs, getLairSpecies } from '../data/overworld/lair';
+import { EVERY_STAGED_LAIR, getBiomeLairs, getLairSpecies } from '../data/overworld/lair';
 import Npc, { GIOVANNI_CHARSETS, NPCS, npcSheets } from '../data/overworld/npc';
 import {
   BIOME_ELITE_MEMBERS,
@@ -827,7 +827,9 @@ export default class ChunkSnapshot {
           if (this.isRocketBoss(cell)) {
             const rares = fielded[fielded.length - 1];
             const lairs = getBiomeLairs(this.chunk.biome);
-            const homes = lairs.length > 0 ? lairs : EVERY_LAIR;
+            // Any lair the world stages, never a mythical's: nothing
+            // but its relic ever calls one of those out
+            const homes = lairs.length > 0 ? lairs : EVERY_STAGED_LAIR;
             const lair = homes[Math.floor(rng.random() * homes.length)];
             const party = Array.from({ length: GIOVANNI_PARTY_SIZE - 1 }, () => draw(rares));
 

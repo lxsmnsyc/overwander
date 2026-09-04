@@ -11,25 +11,29 @@ export default function registerTropicalRainforestSpawns(): void {
       base: [{ species: Species.Exeggcute, weight: 20 }],
       uncommon: [],
       rare: [{ species: Species.Exeggutor, weight: 10 }],
-      special: [{ species: Species.Mew, weight: 10 }],
+      special: [],
+      mythical: [{ species: Species.Mew, weight: 10 }],
     },
     [TimeOfDay.Day]: {
       base: [{ species: Species.Exeggcute, weight: 20 }],
       uncommon: [],
       rare: [{ species: Species.Exeggutor, weight: 10 }],
-      special: [{ species: Species.Mew, weight: 10 }],
+      special: [],
+      mythical: [{ species: Species.Mew, weight: 10 }],
     },
     [TimeOfDay.Evening]: {
       base: [{ species: Species.Exeggcute, weight: 20 }],
       uncommon: [],
       rare: [{ species: Species.Exeggutor, weight: 10 }],
-      special: [{ species: Species.Mew, weight: 10 }],
+      special: [],
+      mythical: [{ species: Species.Mew, weight: 10 }],
     },
     [TimeOfDay.Night]: {
       base: [{ species: Species.Exeggcute, weight: 20 }],
       uncommon: [],
       rare: [{ species: Species.Exeggutor, weight: 10 }],
-      special: [{ species: Species.Mew, weight: 10 }],
+      special: [],
+      mythical: [{ species: Species.Mew, weight: 10 }],
     },
   });
 }

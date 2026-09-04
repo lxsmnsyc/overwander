@@ -215,6 +215,10 @@ export const SPAWN_LEVELS: Record<SpawnRarity, [minimum: number, maximum: number
   // are rare to *find*, not far along
   [SpawnRarity.Prized]: [5, 15],
   [SpawnRarity.Special]: [1, 100],
+  // Never rolled: a mythical arrives at the level its raid hands it
+  // over at. The band is here so the record is total rather than
+  // because anything reads it
+  [SpawnRarity.Mythical]: [1, 100],
 };
 
 /**

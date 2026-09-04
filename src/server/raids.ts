@@ -54,6 +54,7 @@ import { asNumber, asString } from './read';
 import { hasAnyCaught } from './caught';
 import { startEncounter } from './overworld';
 import { grantGold } from './profile';
+import { recordSeenOpponents } from './pokedex';
 
 /**
  * What each kind of lobby pays, hands over, and records itself as
@@ -835,6 +836,12 @@ export async function startRaid(uid: string, lobby: string, now: number): Promis
   // stale row per raid ever staged, and `isAnyCatchQueued` would go on
   // finding parties that are fighting rather than waiting
   await getSql()`delete from teams where id = any(${raid.teams})`;
+
+  // Everybody in the lobby has now stood in front of it, which is the
+  // only way most of them will ever meet one
+  for (const [player] of fielded) {
+    await recordSeenOpponents(battleId, player);
+  }
 
   return battleId;
 }

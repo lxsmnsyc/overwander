@@ -183,8 +183,9 @@ export default async function recordAftermath(
     // The marker is the whole race: one battle settles one player
     // exactly once, however many times the report arrives
     const claimed = await transaction`
-      insert into battle_aftermaths (battle_id, player, settled_at)
-      values (${battleId}, ${uid}, ${Date.now()})
+      insert into battle_aftermaths (battle_id, player, settled_at, fainted)
+      values (${battleId}, ${uid}, ${Date.now()},
+              ${reported.filter((entry) => entry.health <= 0).length})
       on conflict do nothing
     `;
 

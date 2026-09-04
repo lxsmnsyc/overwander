@@ -289,6 +289,7 @@ import {
 import { registerSpecies as registerSpeciesData } from '../src/data/species/__create';
 import Awards, {
   AWARD_NAMES,
+  FRONTIER_SYMBOLS,
   HOENN_BADGES,
   HOENN_HONORS,
   JOHTO_BADGES,
@@ -314,6 +315,17 @@ import {
   ELITE_MEMBER_SIGNATURES,
   EXPERT_PARTY_SIZE,
   EliteMember,
+  FRONTIER_BRAINS,
+  FRONTIER_BRAIN_CHARSETS,
+  FRONTIER_BRAIN_NAMES,
+  FRONTIER_BRAIN_PARTIES,
+  FRONTIER_BRAIN_RULES,
+  FRONTIER_BRAIN_SYMBOLS,
+  FRONTIER_BRAIN_TITLES,
+  FRONTIER_FACILITY_NAMES,
+  FRONTIER_TEAM_SIZE,
+  FrontierBrain,
+  FrontierRule,
   GYM_LEADERS,
   GYM_LEADER_BADGES,
   GYM_LEADER_CHARSETS,
@@ -5041,6 +5053,38 @@ describe('type experts', () => {
     // And Wallace stands above them, asking for all four
     expect(CHAMPION_HONORS[Champion.Wallace]).toEqual(HOENN_HONORS);
     expect(CHAMPION_TITLES[Champion.Wallace]).toBe(Awards.HoennChampion);
+  });
+
+  it('gives every Frontier Brain a house, a rule and a pair of symbols', () => {
+    const symbols = FRONTIER_BRAINS.flatMap((brain) => FRONTIER_BRAIN_SYMBOLS[brain]);
+
+    // Two apiece and no sharing: a facility is its own pair
+    expect(new Set(symbols).size).toBe(symbols.length);
+    expect(symbols.every((symbol) => FRONTIER_SYMBOLS.includes(symbol))).toBe(true);
+
+    for (const brain of FRONTIER_BRAINS) {
+      expect(FRONTIER_BRAIN_NAMES[brain].length).toBeGreaterThan(0);
+      expect(FRONTIER_FACILITY_NAMES[brain].length).toBeGreaterThan(0);
+      // Three a side is the Frontier's shape, and what makes a house
+      // rule bite rather than merely annoy
+      expect(FRONTIER_BRAIN_PARTIES[brain]).toHaveLength(FRONTIER_TEAM_SIZE);
+      for (const species of FRONTIER_BRAIN_PARTIES[brain]) {
+        expect(getSpeciesData(species).name.length).toBeGreaterThan(0);
+      }
+      for (const sheet of FRONTIER_BRAIN_CHARSETS[brain]) {
+        expect(existsSync(`public/sprites/overworld/${sheet}/image.png`), sheet).toBe(true);
+      }
+      // A house is a rule: a Brain with none would be a champion who
+      // brings three
+      expect(FRONTIER_BRAIN_RULES[brain]).not.toBe(FrontierRule.None);
+      // And the Frontier stands past a league, so each asks for a crown
+      expect(CHAMPIONS.map((champion) => CHAMPION_TITLES[champion])).toContain(
+        FRONTIER_BRAIN_TITLES[brain],
+      );
+    }
+    // The two open houses, and the rules they are open on
+    expect(FRONTIER_BRAIN_RULES[FrontierBrain.Brandon]).toBe(FrontierRule.Bare);
+    expect(FRONTIER_BRAIN_RULES[FrontierBrain.Greta]).toBe(FrontierRule.Timed);
   });
 
   it('gives every elite a signature of their own kind', () => {

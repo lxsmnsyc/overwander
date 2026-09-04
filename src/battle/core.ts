@@ -58,13 +58,24 @@ export default class Battle extends EventEngine<BattleEventMap> {
    */
   biome?: Biome;
 
-  constructor(seed: string, mode = BattleModes.PvP, limits?: number, biome?: Biome) {
+  /**
+   * How long the fight is given before it is judged, in
+   * milliseconds, or 0 for a fight that runs until a side is down.
+   *
+   * A house rule rather than the engine's own: the Battle Arena
+   * stops a fight on the clock and gives it to whoever has more of
+   * their party left standing
+   */
+  timeLimit: number;
+
+  constructor(seed: string, mode = BattleModes.PvP, limits?: number, biome?: Biome, timeLimit = 0) {
     super();
     this.rng = new AleaRNG(seed);
     this.mode = mode;
     this.limits =
       limits ?? (mode === BattleModes.Raid ? UNLIMITED_BATTLE_LIMITS : PVP_BATTLE_LIMITS);
     this.biome = biome;
+    this.timeLimit = timeLimit;
   }
 
   /**

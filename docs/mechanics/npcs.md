@@ -231,7 +231,7 @@ The **Ace Trainer** belongs to no country and may turn up anywhere.
 
 ## The league
 
-Three more landmarks fight rather than help, and each is worth something that is
+Four more landmarks fight rather than help, and each is worth something that is
 kept for good.
 
 | Who            | What they field                 | What beating them is worth                        |
@@ -240,6 +240,7 @@ kept for good.
 | **Elite Four** | Five of their seat's type and their signature, 65-85 | Their mark, an item, and a purse of 50,000 to 110,000 |
 | **Champion**   | Their own named six, 85-100     | Their league's title, an item, and 150,000 to 300,000 |
 | **Legend**     | Their own named six at level 100 | Their mark, a purse of 250,000 to 500,000, and a rare or a special item |
+| **Frontier Brain** | Their own three at level 100   | A symbol, silver or gold, and a purse of 200,000 to 400,000 |
 
 A gym leader's sixth is always the one pokemon they are known for, whatever the
 other five roll, and the five are drawn from every region rather than from the
@@ -254,6 +255,22 @@ or, one time in twenty-one, the special one. The mark is worth the **Legend
 Breaker** title and the other coats that legend is drawn in. That is the only fight in the game that reaches the
 special band. Under one of the four skies that favour every type at once, the
 rarest weather there is, the seat is a legend's for certain.
+
+Past the league stands the **Battle Frontier**. A facility is kept by its Brain,
+and what makes one different from a champion is not the party but the **rule**: a
+Frontier fight is **three a side**, and the house adds its own terms on top.
+**Brandon** keeps the Battle Pyramid, which is walked with nothing in hand: no
+held item on either side counts for the length of the fight, and what a pokemon
+is holding is not spent, only left at the door. **Greta** keeps the Battle Arena,
+which is judged rather than waited out: after 10 turns the fight stops and
+whichever side has kept the greater **share** of what it brought takes it, so
+bringing something enormous is worth nothing on its own and an even fight is a
+draw.
+
+A house takes nobody who does not hold the crown of the region it stands in.
+Beating one hangs that facility's **silver symbol** on the shelf; beating it
+without losing a pokemon hangs the **gold** one instead, so collecting both means
+walking in twice.
 
 A member of the **Elite Four** will not fight anybody who is not carrying all
 eight of their own league's badges, and a **Champion** asks for all four of their

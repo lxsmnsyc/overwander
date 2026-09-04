@@ -6,6 +6,15 @@ import {
   Champion,
   ELITE_MEMBER_NAMES,
   EliteMember,
+  FRONTIER_BRAIN_NAMES,
+  FRONTIER_BRAIN_RULES,
+  FRONTIER_BRAIN_SYMBOLS,
+  FRONTIER_BRAIN_TITLES,
+  FRONTIER_FACILITY_NAMES,
+  FRONTIER_TEAM_SIZE,
+  FRONTIER_TIME_TURNS,
+  FrontierBrain,
+  FrontierRule,
   GYM_LEADER_BADGES,
   GYM_LEADER_NAMES,
   GymLeader,
@@ -30,6 +39,7 @@ import type ChunkSnapshot from '../../../overworld/chunk-snapshot';
 import {
   CHAMPION_PARTY_LEVELS,
   ELITE_PARTY_LEVELS,
+  FRONTIER_PARTY_LEVELS,
   GYM_PARTY_LEVELS,
   LEGEND_PARTY_LEVELS,
   type LevelBand,
@@ -150,6 +160,28 @@ export function championGate(champion: Champion): string {
   const league = CHAMPION_LEAGUES[champion];
 
   return `who have beaten all ${CHAMPION_HONORS[champion].length} of ${league}'s Elite Four`;
+}
+
+/** What a Brain says as the house is entered */
+const FRONTIER_GREETINGS: Record<FrontierBrain, string> = {
+  [FrontierBrain.Brandon]: 'You came to my pyramid. Leave everything at the door and climb.',
+  [FrontierBrain.Greta]: 'The clock is running. Fight like it matters, because it is judged.',
+};
+
+/**
+ * The house rule, said first, because it is the whole of what makes a
+ * Frontier fight different from the Champion's
+ */
+const FRONTIER_RULE_TERMS: Record<FrontierRule, string> = {
+  [FrontierRule.None]: '',
+  [FrontierRule.Bare]: 'Nothing is held: no items on either side.',
+  [FrontierRule.Timed]: `Judged after ${FRONTIER_TIME_TURNS} turns: whoever has more of their
+     party left standing takes it.`,
+};
+
+/** What a Brain's house asks to see: the crown of its region */
+export function frontierGate(brain: FrontierBrain): string {
+  return `holding the title of ${AWARD_NAMES[FRONTIER_BRAIN_TITLES[brain]]}`;
 }
 
 /**
@@ -318,6 +350,29 @@ export default function challengerOf(
         and two abilities, against as many as you bring. Win and the title of
         ${AWARD_NAMES[CHAMPION_TITLES[champion]]} is yours, with the largest purse a walk pays
         and something worth keeping besides. Lose and you lose nothing but the fight.`,
+    };
+  }
+  if (landmark === Landmark.FrontierBrain) {
+    const brain = snapshot.getFrontierBrain(cell);
+
+    if (brain == null) {
+      return null;
+    }
+
+    const name = FRONTIER_BRAIN_NAMES[brain];
+    const [silver, gold] = FRONTIER_BRAIN_SYMBOLS[brain];
+
+    return {
+      name,
+      levels: FRONTIER_PARTY_LEVELS,
+      bring: FRONTIER_TEAM_SIZE,
+      greeting: `${name} keeps the ${FRONTIER_FACILITY_NAMES[brain]}.
+        “${FRONTIER_GREETINGS[brain]}”`,
+      stakes: `${FRONTIER_RULE_TERMS[FRONTIER_BRAIN_RULES[brain]]} Three of theirs at level
+        ${FRONTIER_PARTY_LEVELS[0]}, each carrying two items and two abilities, against three of
+        yours. Win and the ${AWARD_NAMES[silver]} is yours, with a purse to match the rank; take
+        the house without losing a pokemon and it is the ${AWARD_NAMES[gold]} instead. Lose and
+        you lose nothing but the fight.`,
     };
   }
   return null;

@@ -13,6 +13,7 @@ export const FIGHT_LANDMARKS = new Set([
   Landmark.GymLeader,
   Landmark.EliteFour,
   Landmark.Champion,
+  Landmark.FrontierBrain,
 ]);
 
 /**

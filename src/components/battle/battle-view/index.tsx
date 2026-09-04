@@ -163,6 +163,7 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
             kind === BattleKind.Player ? BattleModes.PvP : BattleModes.Npc,
             loaded.weather,
             loaded.biome,
+            loaded.rules,
           );
         }
 

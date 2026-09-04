@@ -7,6 +7,7 @@ import createRaidBattle from '../../src/battle/setup';
 import Team from '../../src/battle/team';
 import { Moves } from '../../src/data/ids/moves';
 import { Statuses } from '../../src/data/ids/status';
+import turns from '../../src/battle/turn';
 import { createBattle, createUnit } from './harness';
 
 const NONE_CAUSE = { type: EffectType.None } as const;
@@ -144,6 +145,78 @@ describe('outcome mechanics', () => {
     battle.tick(GRACE);
     expect(battle.settled).toBe(true);
     expect(battle.winner).toBeNull();
+  });
+});
+
+describe('a fight the house judges', () => {
+  /** The Arena's own ten turns, written here rather than guessed at */
+  const LIMIT = turns(10);
+
+  function createJudgedBattle(): ReturnType<typeof createBattle> {
+    const harness = createBattle('arena-seed', undefined, undefined, LIMIT);
+
+    setupOutcomeMechanics(harness.battle);
+    return harness;
+  }
+
+  it('runs to the clock and gives it to whoever kept more of their party', () => {
+    const { battle, allianceA, teamA, teamB } = createJudgedBattle();
+    const kept = createUnit(battle, teamA);
+    const spent = createUnit(battle, teamB);
+
+    // Both still standing, one of them barely: an ordinary fight
+    // would run on, and the house calls it
+    spent.damage(NONE_CAUSE, spent, spent.health / 2, 0);
+
+    battle.tick(LIMIT - 16);
+    expect(battle.settled).toBe(false);
+
+    battle.tick(16);
+    expect(battle.settled).toBe(true);
+    expect(battle.winner).toBe(allianceA);
+    expect(kept.alive).toBe(true);
+    expect(spent.alive).toBe(true);
+  });
+
+  it('calls an even fight a draw', () => {
+    const { battle, teamA, teamB } = createJudgedBattle();
+
+    createUnit(battle, teamA);
+    createUnit(battle, teamB);
+
+    battle.tick(LIMIT);
+    expect(battle.settled).toBe(true);
+    expect(battle.winner).toBeNull();
+  });
+
+  it('is the share rather than the number, so a bigger side wins nothing', () => {
+    const { battle, allianceB, teamA, teamB } = createJudgedBattle();
+    const first = createUnit(battle, teamA);
+    const second = createUnit(battle, teamA);
+    const alone = createUnit(battle, teamB);
+
+    // Two of them at a quarter each against one at a half: the two
+    // sides hold exactly the same health between them, and one of
+    // them has kept twice as much of what it brought
+    for (const unit of [first, second]) {
+      unit.damage(NONE_CAUSE, unit, unit.health * 0.75, 0);
+    }
+    alone.damage(NONE_CAUSE, alone, alone.health * 0.5, 0);
+
+    battle.tick(LIMIT);
+    expect(battle.settled).toBe(true);
+    expect(first.health + second.health).toBe(alone.health);
+    expect(battle.winner).toBe(allianceB);
+  });
+
+  it('leaves an ordinary fight running past the clock', () => {
+    const { battle, teamA, teamB } = createSettledBattle();
+
+    createUnit(battle, teamA);
+    createUnit(battle, teamB);
+
+    battle.tick(LIMIT * 2);
+    expect(battle.settled).toBe(false);
   });
 });
 

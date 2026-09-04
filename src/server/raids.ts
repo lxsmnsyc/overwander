@@ -692,6 +692,14 @@ export async function publishTeamSnapshot(
   catches: string[],
   alliance: number,
   startedAt: number,
+  options?: {
+    /**
+     * Freeze the party carrying nothing, for a fight whose house bars
+     * held items. The records keep their items: this is what was
+     * taken onto the field, not what was taken off the pokemon
+     */
+    bare?: boolean;
+  },
 ): Promise<string | null> {
   if (catches.length === 0) {
     return null;
@@ -722,7 +730,9 @@ export async function publishTeamSnapshot(
         !isGuardedRecord(data) &&
         !isFainted(asCaughtPokemon(data))
       ) {
-        fielded.push(createCatchSnapshot(id, asCaughtPokemon(data)));
+        const frozen = createCatchSnapshot(id, asCaughtPokemon(data));
+
+        fielded.push(options?.bare === true ? { ...frozen, items: [] } : frozen);
         locking.push(id);
       }
     }

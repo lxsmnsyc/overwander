@@ -35,9 +35,21 @@ import setupStatus from './status';
  */
 export default function createBattle(
   seed: string,
-  options?: { mode?: BattleModes; realtime?: boolean; limits?: number; biome?: Biome },
+  options?: {
+    mode?: BattleModes;
+    realtime?: boolean;
+    limits?: number;
+    biome?: Biome;
+    timeLimit?: number;
+  },
 ): Battle {
-  const battle = new Battle(seed, options?.mode, options?.limits, options?.biome);
+  const battle = new Battle(
+    seed,
+    options?.mode,
+    options?.limits,
+    options?.biome,
+    options?.timeLimit,
+  );
 
   setupAllianceMechanics(battle);
   setupTeamMechanics(battle);

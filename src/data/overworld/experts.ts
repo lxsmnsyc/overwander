@@ -1,3 +1,4 @@
+import turns from '../../battle/turn';
 import { isGrownSpecies } from '../biome';
 import { Types } from '../constants/types';
 import Awards, {
@@ -950,3 +951,116 @@ export function getGymLeaderRoster(leader: GymLeader): Species[] {
 export function getEliteMemberRoster(member: EliteMember): Species[] {
   return getWorldExpertPool(ELITE_MEMBER_POOLS[member]);
 }
+
+/**
+ * The Frontier Brains: the house champion of a facility, and the
+ * rank above the league.
+ *
+ * What sets them apart from every seat below is not the party but the
+ * **rule**. A gym is a type, an elite is a type with a widener, a
+ * champion is a fixed six; a Brain is a fight held under the house's
+ * own terms, and the party is only what those terms are demonstrated
+ * with. Two facilities are open so far, and the other five are the
+ * rules that cost more than a party does
+ */
+const enum FrontierBrain {
+  Brandon = 0,
+  Greta = 1,
+}
+
+export { FrontierBrain };
+
+export const FRONTIER_BRAINS: FrontierBrain[] = [FrontierBrain.Brandon, FrontierBrain.Greta];
+
+export const FRONTIER_BRAIN_NAMES: Record<FrontierBrain, string> = {
+  [FrontierBrain.Brandon]: 'Brandon',
+  [FrontierBrain.Greta]: 'Greta',
+};
+
+/** The house each of them keeps, which is what the rule is named for */
+export const FRONTIER_FACILITY_NAMES: Record<FrontierBrain, string> = {
+  [FrontierBrain.Brandon]: 'Battle Pyramid',
+  [FrontierBrain.Greta]: 'Battle Arena',
+};
+
+export const FRONTIER_BRAIN_CHARSETS: Record<FrontierBrain, string[]> = {
+  [FrontierBrain.Brandon]: ['characters/rse/brandon'],
+  [FrontierBrain.Greta]: ['characters/rse/greta'],
+};
+
+/**
+ * The pair each facility hangs on the shelf: silver for beating the
+ * Brain, gold for beating them with the whole party still standing
+ */
+export const FRONTIER_BRAIN_SYMBOLS: Record<FrontierBrain, [silver: Awards, gold: Awards]> = {
+  [FrontierBrain.Brandon]: [Awards.SilverBraveSymbol, Awards.GoldBraveSymbol],
+  [FrontierBrain.Greta]: [Awards.SilverGutsSymbol, Awards.GoldGutsSymbol],
+};
+
+/**
+ * The three they field.
+ *
+ * Three rather than six is the Frontier's own shape, and it is the
+ * whole reason a house rule bites: fighting bare across three
+ * pokemon is a constraint, across six it is a nuisance. Both are the
+ * teams they defend their houses with in Emerald
+ */
+export const FRONTIER_BRAIN_PARTIES: Record<FrontierBrain, Species[]> = {
+  // The Pyramid King fields the three that were sealed in chambers,
+  // which is the one party in the game a legendary belongs to
+  [FrontierBrain.Brandon]: [Species.Regirock, Species.Regice, Species.Registeel],
+  [FrontierBrain.Greta]: [Species.Umbreon, Species.Hariyama, Species.Shedinja],
+};
+
+/**
+ * How many a side a Frontier fight is fought with, the house's rather
+ * than the league's
+ */
+export const FRONTIER_TEAM_SIZE = 3;
+
+/**
+ * The house rules, one per facility.
+ *
+ * A rule is stored on the battle it was fought under, the way the
+ * limits and the sky are, so a fight replays as the fight it was
+ */
+export const enum FrontierRule {
+  /** No rule at all: the fight is the ordinary one */
+  None = 0,
+  /**
+   * The Pyramid, walked with nothing in hand. Neither side holds an
+   * item, so a Focus Sash and a bag of berries are worth nothing and
+   * the three pokemon are the whole of what was brought
+   */
+  Bare = 1,
+  /**
+   * The Arena, judged. The fight is stopped on the clock, and the
+   * side with the greater share of its health still standing takes
+   * it, which is the closest a real-time fight comes to being scored
+   */
+  Timed = 2,
+}
+
+export const FRONTIER_BRAIN_RULES: Record<FrontierBrain, FrontierRule> = {
+  [FrontierBrain.Brandon]: FrontierRule.Bare,
+  [FrontierBrain.Greta]: FrontierRule.Timed,
+};
+
+/**
+ * How long the Arena gives a fight before it is judged. Ten mainline
+ * turns, which is the shape the facility judges in: long enough for
+ * three a side to commit to something, short enough that stalling is
+ * a decision rather than a plan
+ */
+export const FRONTIER_TIME_TURNS = 10;
+export const FRONTIER_TIME_LIMIT = turns(FRONTIER_TIME_TURNS);
+
+/**
+ * What a Brain asks to see: the crown of the region their house
+ * stands in. The Frontier is what a league is walked to reach, so
+ * nobody is admitted who has not taken one
+ */
+export const FRONTIER_BRAIN_TITLES: Record<FrontierBrain, Awards> = {
+  [FrontierBrain.Brandon]: Awards.HoennChampion,
+  [FrontierBrain.Greta]: Awards.HoennChampion,
+};

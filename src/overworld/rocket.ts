@@ -72,6 +72,13 @@ export const CHAMPION_PARTY_LEVELS: LevelBand = [85, 100];
 export const LEGEND_PARTY_LEVELS: LevelBand = [MAX_LEVEL, MAX_LEVEL];
 
 /**
+ * And a Frontier Brain's, which is a legend's for the same reason:
+ * the house fields three rather than six, so nothing about the party
+ * grades the fight and the ceiling is the honest answer
+ */
+export const FRONTIER_PARTY_LEVELS: LevelBand = [MAX_LEVEL, MAX_LEVEL];
+
+/**
  * And the ladder Team Rocket fights on, which is read off the other
  * two rather than picked apart from them. A grunt is a thief with a
  * roadside party and fights at a roadside trainer's level; an
@@ -112,6 +119,9 @@ export function stopPartyLevels(
   }
   if (landmark === Landmark.Champion) {
     return legend ? LEGEND_PARTY_LEVELS : CHAMPION_PARTY_LEVELS;
+  }
+  if (landmark === Landmark.FrontierBrain) {
+    return FRONTIER_PARTY_LEVELS;
   }
   if (landmark === Landmark.Trainer && trainer != null) {
     return trainer;
@@ -218,6 +228,13 @@ export const CHAMPION_GOLD: GoldBand = [150000, 300000];
 export const LEGEND_GOLD: GoldBand = [250000, 500000];
 
 /**
+ * And a house's, between a champion's purse and a legend's: the rank
+ * is above the league, and what is really being paid for is a fight
+ * under somebody else's rules
+ */
+export const FRONTIER_GOLD: GoldBand = [200000, 400000];
+
+/**
  * Which purse a stop pays, by the same reading its level band takes:
  * the landmark, then the rank standing on a Team Rocket cell, then
  * the duellist's class
@@ -236,6 +253,9 @@ export function stopGoldBand(
   }
   if (landmark === Landmark.Champion) {
     return legend ? LEGEND_GOLD : CHAMPION_GOLD;
+  }
+  if (landmark === Landmark.FrontierBrain) {
+    return FRONTIER_GOLD;
   }
   if (landmark === Landmark.Trainer) {
     return trainer != null && isAceTrainer(trainer) ? ACE_TRAINER_GOLD : TYPE_TRAINER_GOLD;
@@ -491,6 +511,17 @@ export const CHAMPION_OUTFIT: StopOutfit = { abilities: 2, items: 2, training: C
 /** A legend's: three of everything, on six at the ceiling. */
 export const LEGEND_OUTFIT: StopOutfit = { abilities: 3, items: 3, training: LEGEND_TRAINING };
 
+/**
+ * A Frontier Brain's: a champion's training on three, and the items
+ * are the house's business. The Pyramid bars them on both sides, and
+ * the caller strips them there rather than here
+ */
+export const FRONTIER_OUTFIT: StopOutfit = {
+  abilities: 2,
+  items: 2,
+  training: CHAMPION_TRAINING,
+};
+
 /** What the party at this stop is fielded with */
 export function stopOutfit(
   landmark: Landmark,
@@ -509,6 +540,9 @@ export function stopOutfit(
   }
   if (landmark === Landmark.Champion) {
     return legend ? LEGEND_OUTFIT : CHAMPION_OUTFIT;
+  }
+  if (landmark === Landmark.FrontierBrain) {
+    return FRONTIER_OUTFIT;
   }
   if (landmark === Landmark.TeamRocket) {
     if (rank === RocketRank.Giovanni) {

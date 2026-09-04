@@ -24,6 +24,12 @@ export interface StopChallenge {
   levels: LevelBand;
   greeting: string;
   stakes: string;
+  /**
+   * The most this fight takes, where the house sets it: a Frontier
+   * facility is three a side. Absent everywhere else, which is the
+   * game's own six
+   */
+  bring?: number;
 }
 
 export interface RocketStopDialogProps {
@@ -203,6 +209,7 @@ export default function RocketStopDialog(props: RocketStopDialogProps): JSX.Elem
 
       <TeamPickerDialog
         player={props.user.uid}
+        max={props.challenger?.bring}
         isOpen={picking()}
         onClose={() => {
           setPicking(false);

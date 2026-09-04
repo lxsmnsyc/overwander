@@ -311,6 +311,7 @@ amount is a heal, so drains reach it as they would anything else.
 | `biome`      | `smallint` | The ground it is fought on; Beyond (24) for nowhere |
 | `weather`    | `smallint` | The sky it was started under; Clear (0) for none    |
 | `limits`     | `integer`  | The engine limits the fight ran under               |
+| `rules`      | `smallint` | The Frontier house rule it was held under; 0 for none |
 
 `biome` is what the field draws its ground from: a raid takes its lobby's, a
 grunt's fight takes the chunk the stop stands in, and a fight with no place of
@@ -318,6 +319,13 @@ its own is left at Beyond, which draws the plain field. It is stored rather than
 looked up for the same reason `limits` is. A raid lobby is cleared when the raid
 ends and a rocket stop is a row of the player's own, so a battle that had to
 chase either would lose its setting the moment somebody watched it back.
+
+`rules` is the house rule a Battle Frontier fight was held under, and 0 for every
+other fight in the game. A rule changes what the engine does — the Battle Arena
+stops a fight on the clock — so it is stored for the reason `limits` is: the
+window that staged the Brain who set it is gone within the hour, and a fight
+replays as the fight it was. See `FrontierRule` in
+[`src/data/overworld/experts.ts`](../../src/data/overworld/experts.ts).
 
 `weather` is the sky the fight was started under, and only an overworld trainer's
 fight carries one. It is stored for the reason `biome` is and for one of its own:
@@ -347,9 +355,15 @@ and awards nothing.
 | `battle_id`  | `text`   | The battle it settled for |
 | `player`     | `uuid`   | The player settled        |
 | `settled_at` | `bigint` | When they settled         |
+| `fainted`    | `smallint` | How many of their party ended it down |
 
 The pair is the primary key, and a `write_once` trigger refuses any rewrite, so a
 battle settles once per player however many times it is reported.
+
+`fainted` is how many of that player's party were down when the report arrived.
+It is the client's word, like the health beside it, and the Frontier is what
+reads it: a facility hangs its gold symbol on taking the house without losing a
+pokemon.
 
 A battle costs a party three things, and all three stick: the items it spent, the
 health it lost and the statuses it walked out with. A berry eaten in a raid comes

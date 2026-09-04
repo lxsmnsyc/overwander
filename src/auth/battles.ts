@@ -6,6 +6,7 @@ import { requireUid } from '../server/auth';
 import BattleOutcome from './battle-outcome';
 import Biome from '../data/ids/biome';
 import Weather from '../data/overworld/weather';
+import { FrontierRule } from '../data/overworld/experts';
 import recordOnServer, { type CandyEarned } from '../server/battles';
 import { finishBattle as finishOnServer } from '../server/raids';
 import type BattleAftermath from './battle-aftermath';
@@ -65,6 +66,15 @@ export interface BattleRecord {
    */
   limits: number;
   /**
+   * The Frontier house rule the fight was held under, or
+   * `FrontierRule.None` for every fight that is not one of theirs.
+   *
+   * Stored for the reason the limits are: a rule is what the fight
+   * *was*, and the window that staged the Brain who set it is gone
+   * within the hour
+   */
+  rules: FrontierRule;
+  /**
    * Who the fight was against, where the other side belonged to
    * nobody: a grunt, Giovanni, a duelling trainer, a gym leader.
    *
@@ -120,6 +130,8 @@ function fromBattleRow(row: Record<string, unknown>): BattleRecord {
     // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
     weather: (row.weather == null ? Weather.Clear : asNumber(row.weather)) as Weather,
     limits: row.limits == null ? UNLIMITED_BATTLE_LIMITS : asNumber(row.limits),
+    // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+    rules: (row.rules == null ? FrontierRule.None : asNumber(row.rules)) as FrontierRule,
     opponent: asString(row.opponent),
     opponentSprite: asString(row.opponent_sprite),
   };

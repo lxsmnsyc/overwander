@@ -41,6 +41,10 @@ import {
   ELITE_MEMBER_SIGNATURES,
   EXPERT_PARTY_SIZE,
   type EliteMember,
+  FRONTIER_BRAINS,
+  FRONTIER_BRAIN_CHARSETS,
+  FRONTIER_BRAIN_PARTIES,
+  type FrontierBrain,
   GYM_LEADER_CHARSETS,
   GYM_LEADER_SIGNATURES,
   type GymLeader,
@@ -892,6 +896,12 @@ export default class ChunkSnapshot {
           } else if (champion != null) {
             dress(cell, CHAMPION_CHARSETS[champion]);
           }
+        } else if (landmark === Landmark.FrontierBrain) {
+          const brain = this.getFrontierBrain(cell);
+
+          if (brain != null) {
+            dress(cell, FRONTIER_BRAIN_CHARSETS[brain]);
+          }
         } else if (landmark === Landmark.Market) {
           dress(cell, npcSheets(Npc.Vendor));
         }
@@ -1236,6 +1246,54 @@ export default class ChunkSnapshot {
     const rng = new AleaRNG(`${this.chunk.seed}champion${cell}`);
 
     return CHAMPIONS[Math.floor(rng.random() * CHAMPIONS.length)] ?? null;
+  }
+
+  /**
+   * Which Brain keeps the facility at this cell, or null when the
+   * cell holds none. A facility is a building rather than a country,
+   * so which house stands here is a plain fixture roll, fixed for the
+   * cell the way a gym's leader is
+   */
+  getFrontierBrain(cell: number): FrontierBrain | null {
+    if (this.chunk.getLandmarkCells().get(cell) !== Landmark.FrontierBrain) {
+      return null;
+    }
+
+    const rng = new AleaRNG(`${this.chunk.seed}frontier${cell}`);
+
+    return FRONTIER_BRAINS[Math.floor(rng.random() * FRONTIER_BRAINS.length)] ?? null;
+  }
+
+  private frontierStops: Map<number, Spawn[]> | null = null;
+
+  /**
+   * What the facilities of this chunk field: the Brain's own three,
+   * which is the house's shape rather than the league's six
+   */
+  getFrontierStops(): Map<number, Spawn[]> {
+    if (this.frontierStops == null) {
+      const stops = new Map<number, Spawn[]>();
+
+      for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
+        if (landmark !== Landmark.FrontierBrain) {
+          continue;
+        }
+
+        const brain = this.getFrontierBrain(cell);
+
+        if (brain != null) {
+          stops.set(
+            cell,
+            signatureParty(
+              FRONTIER_BRAIN_PARTIES[brain],
+              `${this.key}${this.npcTimestamp}frontier${cell}`,
+            ),
+          );
+        }
+      }
+      this.frontierStops = stops;
+    }
+    return this.frontierStops;
   }
 
   /**

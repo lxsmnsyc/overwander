@@ -79,6 +79,7 @@ const SEA_PEOPLE = new Set([
   Landmark.Market,
   Landmark.GymSeat,
   Landmark.AuctionBoard,
+  Landmark.FrontierBrain,
 ]);
 
 const SEA_LANDMARKS = LANDMARKS.filter((kind) => !SEA_PEOPLE.has(kind));

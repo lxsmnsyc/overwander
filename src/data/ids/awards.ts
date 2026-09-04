@@ -63,6 +63,14 @@ const enum Awards {
   HoennChampion = 48,
   /** The one above Hoenn's league, met where a champion would be */
   StevenDefeated = 49,
+  /**
+   * The Frontier's symbols, silver for the win and gold for taking
+   * one without losing a pokemon
+   */
+  SilverBraveSymbol = 50,
+  GoldBraveSymbol = 51,
+  SilverGutsSymbol = 52,
+  GoldGutsSymbol = 53,
 }
 
 export default Awards;
@@ -118,6 +126,10 @@ export const AWARD_NAMES: Record<Awards, string> = {
   [Awards.DrakeDefeated]: 'Drake Defeated',
   [Awards.HoennChampion]: 'Hoenn Champion',
   [Awards.StevenDefeated]: 'Steven Defeated',
+  [Awards.SilverBraveSymbol]: 'Silver Brave Symbol',
+  [Awards.GoldBraveSymbol]: 'Gold Brave Symbol',
+  [Awards.SilverGutsSymbol]: 'Silver Guts Symbol',
+  [Awards.GoldGutsSymbol]: 'Gold Guts Symbol',
 };
 
 /**
@@ -198,4 +210,16 @@ export const HOENN_HONORS: Awards[] = [
   Awards.PhoebeDefeated,
   Awards.GlaciaDefeated,
   Awards.DrakeDefeated,
+];
+
+/**
+ * The Frontier's symbols, silver then gold, in facility order. Its
+ * two open facilities so far: the rest of the Brains are still to
+ * come, and each brings a pair of its own
+ */
+export const FRONTIER_SYMBOLS: Awards[] = [
+  Awards.SilverBraveSymbol,
+  Awards.GoldBraveSymbol,
+  Awards.SilverGutsSymbol,
+  Awards.GoldGutsSymbol,
 ];

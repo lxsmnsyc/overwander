@@ -4,6 +4,7 @@ import type Biome from '../data/ids/biome';
 import createBattle from '../battle/setup';
 import { PVP_BATTLE_LIMITS } from '../data/constants/battle-limits';
 import Weather, { toBattleWeather } from '../data/overworld/weather';
+import { FRONTIER_TIME_LIMIT, FrontierRule } from '../data/overworld/experts';
 import type Battle from '../battle/core';
 import { type RaidBattle, fieldTeams } from './raid-battle';
 
@@ -31,12 +32,16 @@ export function createTrainerBattle(
   mode: BattleModes = BattleModes.Npc,
   weather = Weather.Clear,
   biome?: Biome,
+  rules = FrontierRule.None,
 ): RaidBattle {
   const battle: Battle = createBattle(battleId, {
     mode,
     realtime: true,
     limits,
     biome,
+    // The Arena is the one house that stops a fight rather than
+    // waiting for it to end
+    timeLimit: rules === FrontierRule.Timed ? FRONTIER_TIME_LIMIT : 0,
   });
 
   if (mode === BattleModes.Npc) {

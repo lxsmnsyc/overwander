@@ -36,10 +36,16 @@ import Npc, {
 } from '../data/overworld/npc';
 import { trainerLevels } from '../data/overworld/trainers';
 import type Awards from '../data/ids/awards';
+import type { CatchSnapshot } from '../auth/catch-snapshot';
 import {
   CHAMPION_HONORS,
   CHAMPION_TITLES,
   ELITE_MEMBER_HONORS,
+  FRONTIER_BRAIN_RULES,
+  FRONTIER_BRAIN_SYMBOLS,
+  FRONTIER_BRAIN_TITLES,
+  FRONTIER_TEAM_SIZE,
+  FrontierRule,
   GYM_LEADER_BADGES,
   LEGEND_HONORS,
   getEliteBadges,
@@ -160,6 +166,9 @@ function stagedParty(
   if (landmark === Landmark.Champion) {
     return snapshot.getChampionStops().get(cell) ?? null;
   }
+  if (landmark === Landmark.FrontierBrain) {
+    return snapshot.getFrontierStops().get(cell) ?? null;
+  }
   return snapshot.getRocketStops().get(cell) ?? null;
 }
 
@@ -198,6 +207,16 @@ export async function enterRocketStop(
     const champion = snapshot.getChampion(cell);
 
     if (champion == null || !(await hasAwards(uid, CHAMPION_HONORS[champion]))) {
+      return 'locked';
+    }
+  }
+
+  // And the Frontier's own gate: a house stands past the league, so
+  // it takes nobody who has not taken that region's crown
+  if (landmark === Landmark.FrontierBrain) {
+    const brain = snapshot.getFrontierBrain(cell);
+
+    if (brain == null || !(await hasAwards(uid, [FRONTIER_BRAIN_TITLES[brain]]))) {
       return 'locked';
     }
   }
@@ -255,6 +274,14 @@ export async function enterRocketStop(
     `;
   });
   return [stop, fresh];
+}
+
+/**
+ * The house's own three, under its own rule. Only the Pyramid changes
+ * them: it bars held items, and it bars them on both sides
+ */
+function houseParty(party: CatchSnapshot[], rules: FrontierRule): CatchSnapshot[] {
+  return rules === FrontierRule.Bare ? party.map((one) => ({ ...one, items: [] })) : party;
 }
 
 /**
@@ -317,15 +344,32 @@ export async function startRocketBattle(
     return null;
   }
 
+  const chunk = getWorld().getChunk(record.chunk.x, record.chunk.y);
+  const snapshot = new ChunkSnapshot(chunk, record.timestamp, record.offset);
+  const brain =
+    chunk.getLandmarkCells().get(record.cell) === Landmark.FrontierBrain
+      ? snapshot.getFrontierBrain(record.cell)
+      : null;
+  const rules = brain == null ? FrontierRule.None : FRONTIER_BRAIN_RULES[brain];
+
+  // A house fight is three a side. The cap is refused rather than
+  // trimmed: which three were brought is the player's decision, and
+  // silently dropping the rest would field a party they did not pick
+  if (brain != null && catches.length > FRONTIER_TEAM_SIZE) {
+    return null;
+  }
+
   const battleId = newDocId();
-  const party = await publishTeamSnapshot(uid, catches, PLAYER_ALLIANCE, now);
+  // The Pyramid is walked with nothing in hand, so the party is
+  // frozen without what it was holding: the items stay on the
+  // records, they are simply not carried into this fight
+  const party = await publishTeamSnapshot(uid, catches, PLAYER_ALLIANCE, now, {
+    bare: rules === FrontierRule.Bare,
+  });
 
   if (party == null) {
     return null;
   }
-
-  const chunk = getWorld().getChunk(record.chunk.x, record.chunk.y);
-  const snapshot = new ChunkSnapshot(chunk, record.timestamp, record.offset);
   // The cell's landmark decides what they field: only Team Rocket
   // fields shadows, and it fixes the band — every league seat brings
   // a full 6, so size alone cannot say what the fight is worth, and a
@@ -358,21 +402,29 @@ export async function startRocketBattle(
       values (${gruntId}, null, ${ROCKET_ALLIANCE},
               ${jsonOf(
                 transaction,
-                createRocketParty(
-                  snapshot,
-                  toSpawns(record.party),
-                  shadow,
-                  levels,
-                  stopOutfit(landmark ?? Landmark.TeamRocket, rank, legend, duellist ?? undefined),
+                houseParty(
+                  createRocketParty(
+                    snapshot,
+                    toSpawns(record.party),
+                    shadow,
+                    levels,
+                    stopOutfit(
+                      landmark ?? Landmark.TeamRocket,
+                      rank,
+                      legend,
+                      duellist ?? undefined,
+                    ),
+                  ),
+                  rules,
                 ),
               )})
     `;
     await transaction`
       insert into battles (id, raid_id, species, outcome, started_at, biome, weather, limits,
-                           opponent, opponent_sprite)
+                           rules, opponent, opponent_sprite)
       values (${battleId}, null, ${record.party[0]?.species ?? 0},
               ${BattleOutcome.Unfinished}, ${now},
-              ${chunk.biome}, ${weather}, ${PVP_BATTLE_LIMITS},
+              ${chunk.biome}, ${weather}, ${PVP_BATTLE_LIMITS}, ${rules},
               ${challenger?.name ?? ''}, ${challenger?.sprite ?? ''})
     `;
 
@@ -532,7 +584,7 @@ export async function claimRocketReward(uid: string, stop: string): Promise<Rock
   // leader's badge, the elite's mark, or the region's title. Each is
   // earned once for good; every win counts on the shelf, and only
   // the earning one reports the award
-  const owed = awardFor(landmark, snapshot, record.cell);
+  const owed = awardFor(landmark, snapshot, record.cell, await fellFighting(record.battle, uid));
   const award = owed != null && (await recordAwardWin(uid, owed, Date.now())) ? owed : null;
 
   // A beaten expert also leaves something: a leader's TM of their own
@@ -581,6 +633,21 @@ export async function claimRocketReward(uid: string, stop: string): Promise<Rock
 }
 
 /**
+ * How many of the winner's party ended the fight down, off the report
+ * that settled it. A fight nobody reported reads as a costly one: the
+ * gold symbol is for a clean win somebody actually stood for
+ */
+async function fellFighting(battleId: string, player: string): Promise<number> {
+  const rows = await getSql()`
+    select fainted from battle_aftermaths
+    where battle_id = ${battleId} and player = ${player}
+  `;
+  const row = rows.at(0);
+
+  return row == null ? 1 : asNumber(row.fainted);
+}
+
+/**
  * The award a fighting landmark pays, or null where it pays none: a
  * badge is the resident leader's, a mark the resident elite's, the
  * title the region's, and Team Rocket's is whoever was standing on
@@ -590,7 +657,22 @@ function awardFor(
   landmark: Landmark | undefined,
   snapshot: ChunkSnapshot,
   cell: number,
+  fainted: number,
 ): Awards | null {
+  if (landmark === Landmark.FrontierBrain) {
+    const brain = snapshot.getFrontierBrain(cell);
+
+    if (brain == null) {
+      return null;
+    }
+
+    // Silver for taking the house, gold for taking it without losing
+    // a pokemon. Two symbols is two wins, which is what the Frontier
+    // asks of anybody who wants both
+    const [silver, gold] = FRONTIER_BRAIN_SYMBOLS[brain];
+
+    return fainted === 0 ? gold : silver;
+  }
   if (landmark === Landmark.TeamRocket) {
     if (snapshot.getRocketRank(cell) === RocketRank.Giovanni) {
       return GIOVANNI_HONOR;

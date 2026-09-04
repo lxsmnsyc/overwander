@@ -18,6 +18,7 @@ import {
 } from '../../data/overworld/trainers';
 import Awards, {
   AWARD_NAMES,
+  FRONTIER_SYMBOLS,
   HOENN_BADGES,
   HOENN_HONORS,
   JOHTO_BADGES,
@@ -161,6 +162,10 @@ const AWARD_COLORS: Record<Awards, string> = {
   [Awards.DrakeDefeated]: '#c9603c',
   [Awards.HoennChampion]: '#e0b64f',
   [Awards.StevenDefeated]: '#7f9aa8',
+  [Awards.SilverBraveSymbol]: '#b8bcc4',
+  [Awards.GoldBraveSymbol]: '#e0b64f',
+  [Awards.SilverGutsSymbol]: '#b8bcc4',
+  [Awards.GoldGutsSymbol]: '#e0b64f',
 };
 
 /**
@@ -185,6 +190,7 @@ const SHELF: Awards[] = [
     ...HOENN_HONORS,
     Awards.HoennChampion,
     Awards.HoennDexMedal,
+    ...FRONTIER_SYMBOLS,
     ROCKET_GRUNT_HONOR,
     ...ROCKET_EXECUTIVES.map((executive) => ROCKET_EXECUTIVE_HONORS[executive]),
     GIOVANNI_HONOR,

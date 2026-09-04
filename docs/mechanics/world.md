@@ -85,6 +85,7 @@ few are one to a chunk, marked below.
 | **Gym Leader**      | One of the twenty-five, with a badge on the line. One to a chunk |
 | **Elite Four**      | One of the twelve, for a challenger holding their league's badges |
 | **Champion**        | Blue, Lance or Wallace, for whoever has beaten their league's Elite Four. They field the team they are known for, and one window in sixty-four a legend has the seat instead. One to a chunk |
+| **Frontier Brain**  | The house champion of a Battle Frontier facility, for whoever holds that region's crown. Three a side, under the house's own rule |
 | **Portal**          | A way through to another portal, for the price of a Portal Key. One to a chunk |
 
 Walking up to a wandering cell does not reveal in advance which specialist is

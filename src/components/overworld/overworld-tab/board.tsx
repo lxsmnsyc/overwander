@@ -1,5 +1,5 @@
 import { type ChunkView, buildChunkView, naming } from './chunk-view';
-import challengerOf, { championGate, eliteGate } from './challengers';
+import challengerOf, { championGate, eliteGate, frontierGate } from './challengers';
 import { describeItem } from '../../details';
 import { type Journey, describeStash, stateOf } from './journey';
 import { useAuth } from '../../../auth/context';
@@ -1078,20 +1078,25 @@ export default function OverworldBoard(props: {
       const stop = await enterRocketStop(loaded.snapshot, at);
 
       if (stop === 'locked') {
-        // The ladder's two gates, each named by whoever is standing
+        // The ladder's three gates, each named by whoever is standing
         // there: an elite asks for their own league's badges, a
-        // champion for their own league's Elite Four
+        // champion for their own league's Elite Four, and a Frontier
+        // house for the crown of the region it stands in
         const seated = landmark === Landmark.EliteFour ? loaded.snapshot.getEliteMember(at) : null;
         const crowned =
           landmark === Landmark.Champion && loaded.snapshot.getLegend(at) == null
             ? loaded.snapshot.getChampion(at)
             : null;
+        const housed =
+          landmark === Landmark.FrontierBrain ? loaded.snapshot.getFrontierBrain(at) : null;
         let asked: string | null = null;
 
         if (seated != null) {
           asked = eliteGate(seated);
         } else if (crowned != null) {
           asked = championGate(crowned);
+        } else if (housed != null) {
+          asked = frontierGate(housed);
         }
         return asked == null
           ? `${who} is not taking challengers.`

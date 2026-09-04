@@ -14,7 +14,7 @@ own, and beating one is kept for good.
 | **Elite Four mark** | 12       | Beating that member of the Elite Four  |
 | **Champion**        | 3        | Beating that league's Champion          |
 | **Legend's mark**   | 2        | Beating a legend, who asks for nothing |
-| **Frontier symbol** | 4        | Taking a facility: silver for the win, gold for a clean one |
+| **Frontier symbol** | 6        | Taking a facility: silver for the win, gold for a clean one |
 | **Team Rocket marks** | 6      | Beating a grunt, one of the four executives, or Giovanni |
 | **Dex medal**       | 3        | Filling that region's dex                |
 

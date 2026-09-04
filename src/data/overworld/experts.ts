@@ -10,6 +10,7 @@ import Awards, {
   KANTO_HONORS,
 } from '../ids/awards';
 import Biome from '../ids/biome';
+import { Statuses } from '../ids/status';
 import EggGroups from '../ids/egg-groups';
 import { type Items, getMachineItem } from '../ids/items';
 import { Species } from '../ids/species';
@@ -966,26 +967,34 @@ export function getEliteMemberRoster(member: EliteMember): Species[] {
 const enum FrontierBrain {
   Brandon = 0,
   Greta = 1,
+  Lucy = 2,
 }
 
 export { FrontierBrain };
 
-export const FRONTIER_BRAINS: FrontierBrain[] = [FrontierBrain.Brandon, FrontierBrain.Greta];
+export const FRONTIER_BRAINS: FrontierBrain[] = [
+  FrontierBrain.Brandon,
+  FrontierBrain.Greta,
+  FrontierBrain.Lucy,
+];
 
 export const FRONTIER_BRAIN_NAMES: Record<FrontierBrain, string> = {
   [FrontierBrain.Brandon]: 'Brandon',
   [FrontierBrain.Greta]: 'Greta',
+  [FrontierBrain.Lucy]: 'Lucy',
 };
 
 /** The house each of them keeps, which is what the rule is named for */
 export const FRONTIER_FACILITY_NAMES: Record<FrontierBrain, string> = {
   [FrontierBrain.Brandon]: 'Battle Pyramid',
   [FrontierBrain.Greta]: 'Battle Arena',
+  [FrontierBrain.Lucy]: 'Battle Pike',
 };
 
 export const FRONTIER_BRAIN_CHARSETS: Record<FrontierBrain, string[]> = {
   [FrontierBrain.Brandon]: ['characters/rse/brandon'],
   [FrontierBrain.Greta]: ['characters/rse/greta'],
+  [FrontierBrain.Lucy]: ['characters/rse/lucy'],
 };
 
 /**
@@ -995,6 +1004,7 @@ export const FRONTIER_BRAIN_CHARSETS: Record<FrontierBrain, string[]> = {
 export const FRONTIER_BRAIN_SYMBOLS: Record<FrontierBrain, [silver: Awards, gold: Awards]> = {
   [FrontierBrain.Brandon]: [Awards.SilverBraveSymbol, Awards.GoldBraveSymbol],
   [FrontierBrain.Greta]: [Awards.SilverGutsSymbol, Awards.GoldGutsSymbol],
+  [FrontierBrain.Lucy]: [Awards.SilverLuckSymbol, Awards.GoldLuckSymbol],
 };
 
 /**
@@ -1010,6 +1020,7 @@ export const FRONTIER_BRAIN_PARTIES: Record<FrontierBrain, Species[]> = {
   // which is the one party in the game a legendary belongs to
   [FrontierBrain.Brandon]: [Species.Regirock, Species.Regice, Species.Registeel],
   [FrontierBrain.Greta]: [Species.Umbreon, Species.Hariyama, Species.Shedinja],
+  [FrontierBrain.Lucy]: [Species.Seviper, Species.Shuckle, Species.Milotic],
 };
 
 /**
@@ -1039,11 +1050,18 @@ export const enum FrontierRule {
    * it, which is the closest a real-time fight comes to being scored
    */
   Timed = 2,
+  /**
+   * The Pike, walked through a curtain. What is behind it is rolled
+   * when the challenge is taken and it lands on the challenger's
+   * party alone: the house is not walking through its own rooms
+   */
+  Curtained = 3,
 }
 
 export const FRONTIER_BRAIN_RULES: Record<FrontierBrain, FrontierRule> = {
   [FrontierBrain.Brandon]: FrontierRule.Bare,
   [FrontierBrain.Greta]: FrontierRule.Timed,
+  [FrontierBrain.Lucy]: FrontierRule.Curtained,
 };
 
 /**
@@ -1063,4 +1081,66 @@ export const FRONTIER_TIME_LIMIT = turns(FRONTIER_TIME_TURNS);
 export const FRONTIER_BRAIN_TITLES: Record<FrontierBrain, Awards> = {
   [FrontierBrain.Brandon]: Awards.HoennChampion,
   [FrontierBrain.Greta]: Awards.HoennChampion,
+  [FrontierBrain.Lucy]: Awards.HoennChampion,
 };
+
+/**
+ * What is behind the Pike's curtain.
+ *
+ * The mainline's rooms come to the same handful of things: something
+ * is wrong with your party on the far side, or somebody was kind. The
+ * roll is taken when the challenge is accepted and baked into the
+ * party as it is frozen, so what the curtain did is part of the fight
+ * rather than something rolled again on every watch
+ */
+export const enum PikeCurtain {
+  Poisoned = 0,
+  Burned = 1,
+  Paralysed = 2,
+  Asleep = 3,
+  /** The kind room: the party walks out mended, whatever it walked in as */
+  Healed = 4,
+}
+
+/**
+ * The curtains, in the order they are drawn from. Four of the five
+ * cost something and one of them gives, which is the Pike's whole
+ * character: it is the one house where walking in is a gamble rather
+ * than a test
+ */
+export const PIKE_CURTAINS: PikeCurtain[] = [
+  PikeCurtain.Poisoned,
+  PikeCurtain.Burned,
+  PikeCurtain.Paralysed,
+  PikeCurtain.Asleep,
+  PikeCurtain.Healed,
+];
+
+/** The status each curtain leaves on the party, or null for the kind one */
+export const PIKE_CURTAIN_STATUSES: Record<PikeCurtain, Statuses | null> = {
+  [PikeCurtain.Poisoned]: Statuses.Poisoned,
+  [PikeCurtain.Burned]: Statuses.Burned,
+  [PikeCurtain.Paralysed]: Statuses.Paralyzed,
+  [PikeCurtain.Asleep]: Statuses.Sleeping,
+  [PikeCurtain.Healed]: null,
+};
+
+/** What each curtain is called, for the line the fight is announced with */
+export const PIKE_CURTAIN_NAMES: Record<PikeCurtain, string> = {
+  [PikeCurtain.Poisoned]: 'poisoned',
+  [PikeCurtain.Burned]: 'burned',
+  [PikeCurtain.Paralysed]: 'paralysed',
+  [PikeCurtain.Asleep]: 'put to sleep',
+  [PikeCurtain.Healed]: 'mended',
+};
+
+/**
+ * Which curtain a roll in [0, 1) draws. Taken from the stop rather
+ * than from the clock, so the same challenge is the same room however
+ * many times it is looked at
+ */
+export function pickPikeCurtain(roll: number): PikeCurtain {
+  const at = Math.floor(Math.abs(roll) * PIKE_CURTAINS.length);
+
+  return PIKE_CURTAINS[Math.min(at, PIKE_CURTAINS.length - 1)];
+}

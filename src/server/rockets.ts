@@ -49,6 +49,7 @@ import {
   GYM_LEADER_BADGES,
   LEGEND_HONORS,
   getEliteBadges,
+  pickPikeCurtain,
   rollGymMachine,
 } from '../data/overworld/experts';
 import type { Items } from '../data/ids/items';
@@ -363,8 +364,16 @@ export async function startRocketBattle(
   // The Pyramid is walked with nothing in hand, so the party is
   // frozen without what it was holding: the items stay on the
   // records, they are simply not carried into this fight
+  // And the Pike's room, drawn once for the challenge rather than
+  // per watch: the stop is the seed, so everybody who watches the
+  // fight back walks through the curtain the challenger did
+  const curtain =
+    rules === FrontierRule.Curtained
+      ? pickPikeCurtain(new AleaRNG(`${stop}:curtain`).random())
+      : undefined;
   const party = await publishTeamSnapshot(uid, catches, PLAYER_ALLIANCE, now, {
     bare: rules === FrontierRule.Bare,
+    curtain,
   });
 
   if (party == null) {

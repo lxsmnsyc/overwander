@@ -340,10 +340,15 @@ import {
   LEGEND_PARTIES,
   LEGEND_PRIZE_CHARSETS,
   Legend,
+  PIKE_CURTAINS,
+  PIKE_CURTAIN_NAMES,
+  PIKE_CURTAIN_STATUSES,
+  PikeCurtain,
   getEliteBadges,
   getEliteMemberRoster,
   getGymLeaderRoster,
   getWorldExpertPool,
+  pickPikeCurtain,
   rollGymMachine,
 } from '../src/data/overworld/experts';
 import Regions from '../src/data/ids/regions';
@@ -5085,6 +5090,28 @@ describe('type experts', () => {
     // The two open houses, and the rules they are open on
     expect(FRONTIER_BRAIN_RULES[FrontierBrain.Brandon]).toBe(FrontierRule.Bare);
     expect(FRONTIER_BRAIN_RULES[FrontierBrain.Greta]).toBe(FrontierRule.Timed);
+  });
+
+  it('draws one of the Pike’s curtains for any roll there is', () => {
+    const drawn = new Set<PikeCurtain>();
+
+    // The whole range lands inside the list, the top of it included:
+    // a roll of exactly 1 is the last curtain rather than nothing
+    for (let at = 0; at <= 1000; at += 1) {
+      drawn.add(pickPikeCurtain(at / 1000));
+    }
+    expect(drawn.size).toBe(PIKE_CURTAINS.length);
+    expect(pickPikeCurtain(1)).toBe(PIKE_CURTAINS.at(-1));
+    expect(pickPikeCurtain(0)).toBe(PIKE_CURTAINS[0]);
+
+    // Four rooms cost something and one gives, which is what makes
+    // walking in a gamble rather than a test
+    const kind = PIKE_CURTAINS.filter((curtain) => PIKE_CURTAIN_STATUSES[curtain] == null);
+
+    expect(kind).toEqual([PikeCurtain.Healed]);
+    for (const curtain of PIKE_CURTAINS) {
+      expect(PIKE_CURTAIN_NAMES[curtain].length).toBeGreaterThan(0);
+    }
   });
 
   it('gives every elite a signature of their own kind', () => {

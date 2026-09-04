@@ -21,6 +21,7 @@ import {
   LEGEND_HONORS,
   LEGEND_NAMES,
   Legend,
+  PIKE_CURTAINS,
   getEliteBadges,
 } from '../../../data/overworld/experts';
 import Landmark from '../../../data/overworld/landmark';
@@ -166,6 +167,7 @@ export function championGate(champion: Champion): string {
 const FRONTIER_GREETINGS: Record<FrontierBrain, string> = {
   [FrontierBrain.Brandon]: 'You came to my pyramid. Leave everything at the door and climb.',
   [FrontierBrain.Greta]: 'The clock is running. Fight like it matters, because it is judged.',
+  [FrontierBrain.Lucy]: 'Pick a curtain. What is behind it is not my doing, and I do not care.',
 };
 
 /**
@@ -177,6 +179,9 @@ const FRONTIER_RULE_TERMS: Record<FrontierRule, string> = {
   [FrontierRule.Bare]: 'Nothing is held: no items on either side.',
   [FrontierRule.Timed]: `Judged after ${FRONTIER_TIME_TURNS} turns: whoever has more of their
      party left standing takes it.`,
+  [FrontierRule.Curtained]: `A curtain is drawn as you walk in, and one room in
+     ${PIKE_CURTAINS.length} is kind: your three arrive poisoned, burned, paralysed, asleep, or
+     mended. Hers arrive as they are.`,
 };
 
 /** What a Brain's house asks to see: the crown of its region */

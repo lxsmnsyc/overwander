@@ -5,7 +5,9 @@ import { type CatchSnapshot, createCatchSnapshot } from '../auth/catch-snapshot'
 import BATTLE_TIMEOUT from '../auth/battle-lock';
 import { asOffset, toLocalTime } from '../auth/local-time';
 import { asCaughtPokemon } from '../auth/caught-record';
-import { isFainted } from '../auth/health';
+import { getMaxHealth, isFainted } from '../auth/health';
+import { PIKE_CURTAIN_STATUSES, PikeCurtain } from '../data/overworld/experts';
+import { packStatuses } from '../data/ids/status';
 
 import type { EncounterRecord } from '../auth/encounter-record';
 import {
@@ -687,6 +689,33 @@ export async function joinRaid(
  * Resolves the snapshot id, or null when the team fields nothing — an
  * empty side must not stand in a battle
  */
+/**
+ * One pokemon as the house's rule leaves it: carrying nothing where
+ * items are barred, and whatever the Pike's curtain did on top. The
+ * kind room mends what walked in, which is the only thing in the game
+ * that heals a party by fighting
+ */
+function behindTheCurtain(
+  frozen: CatchSnapshot,
+  options?: { bare?: boolean; curtain?: PikeCurtain },
+): CatchSnapshot {
+  const carried = options?.bare === true ? { ...frozen, items: [] } : frozen;
+  const curtain = options?.curtain;
+
+  if (curtain == null) {
+    return carried;
+  }
+  if (curtain === PikeCurtain.Healed) {
+    return { ...carried, health: getMaxHealth(carried), statuses: 0 };
+  }
+
+  const status = PIKE_CURTAIN_STATUSES[curtain];
+
+  return status == null
+    ? carried
+    : { ...carried, statuses: carried.statuses | packStatuses([status]) };
+}
+
 export async function publishTeamSnapshot(
   player: string,
   catches: string[],
@@ -699,6 +728,13 @@ export async function publishTeamSnapshot(
      * taken onto the field, not what was taken off the pokemon
      */
     bare?: boolean;
+    /**
+     * What the Pike's curtain did to the party on the way in. It is
+     * baked into the frozen snapshot rather than applied at the
+     * field, so the room is part of the fight and a replay walks
+     * through the same one
+     */
+    curtain?: PikeCurtain;
   },
 ): Promise<string | null> {
   if (catches.length === 0) {
@@ -732,7 +768,7 @@ export async function publishTeamSnapshot(
       ) {
         const frozen = createCatchSnapshot(id, asCaughtPokemon(data));
 
-        fielded.push(options?.bare === true ? { ...frozen, items: [] } : frozen);
+        fielded.push(behindTheCurtain(frozen, options));
         locking.push(id);
       }
     }

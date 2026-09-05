@@ -50,7 +50,7 @@ import { ActionsIcon, LockIcon, StarIcon } from '../../icons';
 import InventoryPicker from '../../items/InventoryPicker';
 
 import { describeItem } from '../../details';
-import spendItemOn, { getLevelMoves, isUsableOn } from '../../items/use-item';
+import spendItemOn, { getLevelMovesBetween, isUsableOn } from '../../items/use-item';
 
 import {
   Badge,
@@ -331,14 +331,20 @@ export function CatchSheetBody(
     if (caught == null) {
       return;
     }
-    const learning: Moves[] = [];
+    const learning = getLevelMovesBetween(caught, from, to);
 
-    for (let level = from; level <= to; level++) {
-      learning.push(...getLevelMoves(caught, level));
+    if (learning.length === 0) {
+      return;
     }
-    if (learning.length > 0) {
-      setTeaching({ move: learning[0], rest: learning.slice(1), levelled: true });
-    }
+    // Queued behind whatever is already being asked rather than over
+    // it: a second handful of candy landing while the player is still
+    // answering the first would otherwise throw the rest of that queue
+    // away, and those levels are paid for
+    setTeaching((asked) =>
+      asked == null
+        ? { move: learning[0], rest: learning.slice(1), levelled: true }
+        : { ...asked, rest: [...asked.rest, ...learning] },
+    );
   };
 
   /**
@@ -418,7 +424,11 @@ export function CatchSheetBody(
     if (catchId == null || levels < 1) {
       return;
     }
-    const from = view()?.level ?? 0;
+    // What the sheet already knows it has reached, not only what the
+    // record says: a second handover sent before the first was read
+    // back would otherwise start its range at a level already grown
+    // through, and offer those moves a second time
+    const from = Math.max(view()?.level ?? 0, reached());
 
     useCandy(catchId, levels)
       .then((level) => {

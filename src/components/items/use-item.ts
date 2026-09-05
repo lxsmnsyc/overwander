@@ -122,6 +122,34 @@ export function getLevelMoves(caught: CaughtPokemon, level: number): Moves[] {
   return getMovesLearnedAt(caught.species, level).filter((learned) => !knows.has(learned));
 }
 
+/**
+ * The same, for every level in a run of them: what a pokemon fed
+ * twenty candies at once passed through, in the order it grew.
+ *
+ * A jump is not a level: the candy button gathers a run of presses
+ * into one feeding, and the moves of the levels it went **through**
+ * are as much the pokemon's as the one it stopped on. `from` and `to`
+ * are both inclusive, so a grow from 5 to 25 asks for 6 through 25.
+ *
+ * A move listed at two of those levels is offered once, since being
+ * asked the same question twice in one run is the same nuisance as
+ * being asked about a move the pokemon already knows
+ */
+export function getLevelMovesBetween(caught: CaughtPokemon, from: number, to: number): Moves[] {
+  const learning: Moves[] = [];
+  const seen = new Set<Moves>();
+
+  for (let level = from; level <= to; level++) {
+    for (const move of getLevelMoves(caught, level)) {
+      if (!seen.has(move)) {
+        seen.add(move);
+        learning.push(move);
+      }
+    }
+  }
+  return learning;
+}
+
 /** What spending it came to */
 export interface Spent {
   said: string;

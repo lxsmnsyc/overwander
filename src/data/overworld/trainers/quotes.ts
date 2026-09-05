@@ -1,0 +1,83 @@
+import { TrainerClass } from './classes';
+
+/** What each says as the duel is put to the player */
+const TRAINER_QUOTES: Record<TrainerClass, string> = {
+  [TrainerClass.AceTrainer]: 'I only travel with the best. Let us see what you travel with.',
+  [TrainerClass.Lass]: 'Hi! Do you want to battle? I have been practising.',
+  [TrainerClass.BlackBelt]: 'My pokemon train as hard as I do. Try them.',
+  [TrainerClass.BirdKeeper]: 'My birds have been circling you since you came into view.',
+  [TrainerClass.Biker]: 'Nice road. It is ours. Fight us for it.',
+  [TrainerClass.Hiker]: 'I walked up here. You can walk through me.',
+  [TrainerClass.PokeManiac]: 'You have not seen a rock type until you have seen mine!',
+  [TrainerClass.BugCatcher]: 'I caught every one of these myself. Every single one!',
+  [TrainerClass.Channeler]: 'Something is standing behind you. It is mine.',
+  [TrainerClass.Burglar]: 'I take what I want. Today I want your win streak.',
+  [TrainerClass.Swimmer]: 'I swam here. Fighting you is the easy part.',
+  [TrainerClass.Rocker]: 'Turn it up! My pokemon like it loud and shocking.',
+  [TrainerClass.Psychic]: 'You will decide to battle me. I have already seen it.',
+  [TrainerClass.Sage]: 'The tower teaches patience. My pokemon have more of it than you.',
+  [TrainerClass.Skier]: 'I came down this slope faster than you can think. Keep up.',
+  [TrainerClass.Scientist]: 'My pokemon are steel. Yours are, at best, interesting data.',
+  [TrainerClass.JohtoPokeManiac]:
+    'I have raised dragons since I could walk. Show me what you raised.',
+  [TrainerClass.JohtoBurglar]: 'Nothing good happens on this road after dark. I am the reason.',
+  [TrainerClass.JohtoAceTrainer]: 'I have walked both regions. You have walked into me.',
+  [TrainerClass.JohtoLass]: 'Everyone back home says I am the best. Let us find out!',
+  [TrainerClass.JohtoBlackBelt]: 'I train at the falls under Chuck. You will feel it.',
+  [TrainerClass.JohtoBirdKeeper]: 'My birds fly the whole coast. Yours have seen one road.',
+  [TrainerClass.JohtoBiker]: 'We ride these roads at night. Move or fight.',
+  [TrainerClass.JohtoBugCatcher]:
+    'The contest is over but I never stopped catching. Look at these!',
+  [TrainerClass.JohtoSwimmer]: 'The water is colder here. It has not slowed me down.',
+  [TrainerClass.Firebreather]: 'I breathe fire for a living. My pokemon do it better.',
+  [TrainerClass.Medium]: 'The dead are chatty tonight. They are all saying your name.',
+  [TrainerClass.Teacher]: 'Class is in session. Today’s lesson is losing gracefully.',
+  [TrainerClass.SchoolKid]: 'I did the maths on this battle. You will not like the answer.',
+  [TrainerClass.Youngster]: 'I have been digging in the dirt since sunrise. Look what came up!',
+  [TrainerClass.Camper]: 'Been up this mountain three days. Found rocks. Found these.',
+  [TrainerClass.Beauty]: 'You are staring. Battle me instead, it is less rude.',
+  [TrainerClass.Fisherman]: 'I have been sat here since dawn. Something finally bit.',
+  [TrainerClass.Sailor]: 'I have hauled rope in worse weather than you have walked in.',
+  [TrainerClass.Gentleman]: 'A wager, then? No? A battle will do just as well.',
+  [TrainerClass.SuperNerd]: 'I have read every paper on this. You have read none of them.',
+  [TrainerClass.Juggler]: 'Keep your eyes on the balls. That was the trick, and you looked away.',
+  [TrainerClass.Tamer]: 'Mine do as they are told. Let us see about yours.',
+  [TrainerClass.Engineer]: 'I built half the machines on this road. Meet the rest.',
+  [TrainerClass.Gambler]: 'Double or nothing on this one. You do not get a say.',
+  [TrainerClass.JohtoGentleman]: 'I keep a house in Goldenrod and a temper on the road.',
+  [TrainerClass.JohtoSuperNerd]: 'My notes say you lose in four minutes. Let us test that.',
+  [TrainerClass.JohtoJuggler]: 'Six in the air, and not one of them dropped. Watch this.',
+  [TrainerClass.Boarder]: 'I came down that face sideways. Standing still is the hard part.',
+  [TrainerClass.NinjaBoy]: 'You walked past me twice. My pokemon did not move either time.',
+  [TrainerClass.Tuber]: 'I am not getting out of the water. Battle me from the shore!',
+  [TrainerClass.PokeFan]: 'I have a photograph of every one of these. Would you like to be in one?',
+  [TrainerClass.HoennAceTrainer]:
+    'I have crossed this region on foot. Nothing on the road has surprised me yet.',
+  [TrainerClass.HoennLass]:
+    'Mum said not to talk to strangers. She said nothing about battling them.',
+  [TrainerClass.HoennBirdKeeper]:
+    'Mine ride the sea wind. Yours have only felt the one off the road.',
+  [TrainerClass.HoennBugCatcher]: 'The woods here are thick with them. I took the best three.',
+  [TrainerClass.HoennSwimmer]: 'The current out here does half the work. The rest of it is mine.',
+  [TrainerClass.HoennYoungster]:
+    'I dug this one out from under the ash. I bet you have never seen one.',
+  [TrainerClass.HoennSchoolKid]: 'We are testing conductivity today. You are the experiment.',
+  [TrainerClass.HoennCamper]:
+    'Three nights on this rock and the only thing I have missed is a battle.',
+  [TrainerClass.HoennBeauty]: 'The sea air keeps them glossy. Do not let that fool you.',
+  [TrainerClass.HoennFisherman]: 'Cast since dawn and caught nothing. You will do.',
+  [TrainerClass.HoennSailor]: 'I have crossed to Slateport in worse weather than this. Try me.',
+  [TrainerClass.HoennGentleman]: 'I keep a house on the coast and a temper on the road.',
+  [TrainerClass.HoennScientist]: 'Devon pays for this field work. Consider yourself data.',
+  [TrainerClass.Guitarist]: 'Plug in and stand back. This one gets loud.',
+  [TrainerClass.Kindler]: 'The mountain is hot enough already. My pokemon make it worse.',
+  [TrainerClass.BattleGirl]: 'I train under the falls at Dewford. You are about to feel it.',
+  [TrainerClass.Expert]: 'I saw how this ends before you spoke. Come on anyway.',
+  [TrainerClass.RuinManiac]: 'I dug these tunnels myself. Look what was sleeping in one.',
+  [TrainerClass.StreetThug]: 'This road is ours after dark. You are paying the toll in wins.',
+  [TrainerClass.DragonTamer]:
+    'Raised from an egg out in the sand. It listens to me and nobody else.',
+  [TrainerClass.AromaLady]: 'Breathe in. My pokemon grew up in this, and they are stronger for it.',
+};
+
+export default TRAINER_QUOTES;

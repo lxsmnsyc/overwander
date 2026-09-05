@@ -90,6 +90,11 @@ const DEFAULT_AFFECTS: { [key in MoveTargets]: number } = {
 
 const MOVE_DATA = new Map<Moves, MoveData>();
 
+/**
+ * Flight time of a thrown or shot projectile before its impact cue
+ */
+export const PROJECTILE_DELAY = 500;
+
 export function registerMove(move: Moves, data: RegisterMoveData): void {
   MOVE_DATA.set(move, { ...data, affects: data.affects ?? DEFAULT_AFFECTS[data.target] });
 }

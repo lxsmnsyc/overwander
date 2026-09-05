@@ -2553,6 +2553,38 @@ describe('world', () => {
     expect(snapshot.nestTimestamp).toBe(0);
   });
 
+  it('keeps the same person and the same visit through every spawn window', () => {
+    // What a counter held open across a 5-minute boundary depends on:
+    // the server derives who is standing there from its own clock
+    // rather than from the published spawn window, and both have to
+    // answer the same for as long as the passer-by stands there
+    const world = new World('overworld');
+    const chunk = findChunk(world, (candidate) =>
+      new Set(candidate.getLandmarkCells().values()).has(Landmark.WanderingNpc),
+    );
+
+    expect(chunk).not.toBeNull();
+    if (chunk == null) {
+      return;
+    }
+
+    const opened = new ChunkSnapshot(chunk, NPC_INTERVAL);
+    const cell = [...opened.getWanderingNpcs().keys()][0];
+
+    for (let at = 0; at < NPC_INTERVAL; at += SNAPSHOT_INTERVAL) {
+      const later = new ChunkSnapshot(chunk, NPC_INTERVAL + at);
+
+      expect(later.getStandingNpc(cell)).toBe(opened.getStandingNpc(cell));
+      expect(later.visitMarker('daycare', cell)).toBe(opened.visitMarker('daycare', cell));
+    }
+
+    // And the window after it is somebody else's business: a marker
+    // from this one buys nothing there
+    const next = new ChunkSnapshot(chunk, NPC_INTERVAL * 2);
+
+    expect(next.visitMarker('daycare', cell)).not.toBe(opened.visitMarker('daycare', cell));
+  });
+
   it('puts a different passer-by on a wandering cell each window', () => {
     const world = new World('overworld');
     const chunk = findChunk(world, (candidate) =>

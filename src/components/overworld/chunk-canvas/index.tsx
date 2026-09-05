@@ -1898,7 +1898,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
           bearing != null &&
           (landmark === Landmark.BerryPatch || landmark === Landmark.ApricornTree)
         ) {
-          callOut(outline, plantCallOut(landmark, bearing.item));
+          callOut(outline, plantCallOut(landmark));
           continue;
         }
         if (plantOn(index) != null) {

@@ -6,7 +6,7 @@ import {
   type MovePointsResult,
   type TrainingResult,
   feedEffortBerry as feedOnServerSide,
-  trainEffort as trainOnServerSide,
+  trainEfforts as trainOnServerSide,
   useEffortItem as useEffortItemOnServerSide,
   usePPItem as usePPItemOnServerSide,
 } from '../server/training';
@@ -23,25 +23,27 @@ import getIdToken from './session';
 export type { MovePointsResult, TrainingResult } from '../server/training';
 
 /**
- * Put unspent effort into a stat, or take it back out with a negative
- * amount. Nothing is consumed either way
+ * Put unspent effort into several stats at once, or take it back out
+ * with negative amounts. Nothing is consumed either way.
+ *
+ * A spread rather than a stat: the sheet lets a player lay out where
+ * every point goes and saves the lot in one press, so six stats cost
+ * one round trip
  */
-export async function trainEffort(
+export async function trainEfforts(
   catchId: string,
-  stat: Stats,
-  amount: number,
+  spread: Partial<Record<Stats, number>>,
 ): Promise<TrainingResult | null> {
-  return trainEffortOnServer(await getIdToken(), catchId, stat, amount);
+  return trainEffortsOnServer(await getIdToken(), catchId, spread);
 }
 
-async function trainEffortOnServer(
+async function trainEffortsOnServer(
   token: string,
   catchId: string,
-  stat: Stats,
-  amount: number,
+  spread: Partial<Record<Stats, number>>,
 ): Promise<TrainingResult | null> {
   'use server';
-  return trainOnServerSide(await requireUid(token), catchId, stat, amount);
+  return trainOnServerSide(await requireUid(token), catchId, spread);
 }
 
 /**

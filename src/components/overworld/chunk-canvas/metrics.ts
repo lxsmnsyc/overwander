@@ -236,6 +236,15 @@ export const COLORS = {
   elite: 'rgba(155, 93, 229, 0.85)',
   champion: 'rgba(255, 226, 138, 0.95)',
   rocket: 'rgba(190, 30, 110, 0.9)',
+  /**
+   * The two crops, told apart from each other and from everything
+   * else that is worth pressing. One colour each rather than one per
+   * fruit: a player needs to know a bush from a tree, and the
+   * seventy-odd berries are a drawing on the cell rather than a
+   * shade of it. Leaf green for a patch, bark brown for a tree
+   */
+  berry: 'rgba(63, 158, 77, 0.85)',
+  apricorn: 'rgba(150, 96, 47, 0.9)',
   /** Under every mark, so one reads on pale ground as well as on dark */
   ringShade: 'rgba(0, 0, 0, 0.28)',
   /**

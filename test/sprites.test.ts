@@ -4,6 +4,9 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { APRICORNS, ItemTypes, Items } from '../src/data/ids/items';
 import registerItems, { ITEM_TYPE_ORDER, getItemData, listItemsByType } from '../src/data/items';
+import Families from '../src/data/ids/families';
+import { getRegisteredFamilies, registerSpecies } from '../src/data/species';
+import familyCandyIcon from '../src/data/species/family-candy';
 import decodePng, { type Image } from '../src/server/sprites/png';
 import apricornTreeSheet, { apricornColour } from '../src/data/overworld/apricorn-tree';
 import berryPlantSheet, { berryPlantName } from '../src/data/overworld/berry-plant';
@@ -45,6 +48,10 @@ import decorationPicture, {
 const SPRITE_ROOT = 'public/sprites';
 
 registerItems();
+registerSpecies();
+
+/** The outline the candy drawing is drawn in, which no swap repaints. */
+const CANDY_OUTLINE = '41,41,41';
 
 const LEDGER_PATH = 'sprite-pipeline.json';
 
@@ -749,5 +756,136 @@ describe('the item pictures that ship', () => {
         .filter(([, names]) => names.length > 1)
         .map(([icon, names]) => `${icon}: ${names.join(', ')}`),
     ).toEqual([]);
+  });
+});
+
+describe('the family candies that ship', () => {
+  const ROOT = `${SPRITE_ROOT}/ui/candies`;
+
+  /** One region's sheet, as the pictures it holds by name. */
+  function sheetOf(region: string): { image: Image; images: Map<string, unknown> } {
+    const described: unknown = JSON.parse(readFileSync(`${ROOT}/${region}/data.json`, 'utf8'));
+    const held = fieldOf(described, 'images');
+
+    return {
+      image: decodePng(readFileSync(`${ROOT}/${region}/image.png`)),
+      images: new Map(
+        (Array.isArray(held) ? held : []).map((entry: unknown) => [
+          String(fieldOf(entry, 'name')),
+          entry,
+        ]),
+      ),
+    };
+  }
+
+  const sheets = new Map(readdirSync(ROOT).map((region) => [region, sheetOf(region)]));
+
+  /** Where one family's candy is, by the icon the family names. */
+  function candyOf(family: Families): { sheet: string; entry: unknown } {
+    const icon = familyCandyIcon(family);
+    const cut = icon.lastIndexOf('/');
+    const region = icon.slice(icon.indexOf('/') + 1, cut);
+
+    return { sheet: region, entry: sheets.get(region)?.images.get(icon.slice(cut + 1)) };
+  }
+
+  /** The colour one candy is mostly drawn in, which is its ball. */
+  function ballOf(family: Families): [number, number, number] {
+    const { sheet, entry } = candyOf(family);
+    const image = sheets.get(sheet)?.image;
+    const counts = new Map<string, number>();
+
+    if (image == null) {
+      return [0, 0, 0];
+    }
+    const [left, top] = [Number(fieldOf(entry, 'x')), Number(fieldOf(entry, 'y'))];
+
+    for (let y = 0; y < Number(fieldOf(entry, 'height')); y += 1) {
+      for (let x = 0; x < Number(fieldOf(entry, 'width')); x += 1) {
+        const at = ((top + y) * image.width + left + x) * 4;
+        const key = `${image.rgba[at]},${image.rgba[at + 1]},${image.rgba[at + 2]}`;
+
+        if (image.rgba[at + 3] > 0 && key !== CANDY_OUTLINE) {
+          counts.set(key, (counts.get(key) ?? 0) + 1);
+        }
+      }
+    }
+    const most = [...counts].sort((one, two) => two[1] - one[1])[0][0];
+    const [red, green, blue] = most.split(',').map(Number);
+
+    return [red, green, blue];
+  }
+
+  /** Where on the colour wheel a colour sits, in degrees, or -1 for a grey. */
+  function hueOf([red, green, blue]: [number, number, number]): number {
+    const high = Math.max(red, green, blue);
+    const low = Math.min(red, green, blue);
+
+    if (high === low) {
+      return -1;
+    }
+    if (high === red) {
+      const turn = (green - blue) / (high - low);
+
+      return (turn < 0 ? turn + 6 : turn) * 60;
+    }
+    if (high === green) {
+      return ((blue - red) / (high - low) + 2) * 60;
+    }
+    return ((red - green) / (high - low) + 4) * 60;
+  }
+
+  /** Whether a hue falls in a band, which may run through red. */
+  function within(hue: number, from: number, to: number): boolean {
+    const turn = hue < from ? hue + 360 : hue;
+
+    return turn >= from && turn <= to;
+  }
+
+  it('draws one for every family, and nothing else', () => {
+    const families = getRegisteredFamilies();
+    const drawn = new Set([...sheets.values()].flatMap((sheet) => [...sheet.images.keys()]));
+
+    expect(
+      families.filter((family) => candyOf(family).entry == null),
+      'run `pnpm family-candies`',
+    ).toEqual([]);
+    expect([...drawn].filter((name) => !families.includes(Number(name)))).toEqual([]);
+  });
+
+  it('files a line where it first appeared, not where its baby is from', () => {
+    // Pichu names the Pikachu family and is a Johto pokemon, but the
+    // line is Kanto's and so is the sheet its candy is on
+    expect(familyCandyIcon(Families.Pikachu)).toBe('candies/kanto/9');
+    expect(familyCandyIcon(Families.Chikorita)).toBe('candies/johto/78');
+  });
+
+  it('keeps the drawing every candy is a swap of', () => {
+    for (const family of getRegisteredFamilies()) {
+      const { entry } = candyOf(family);
+
+      // The cell is an item's, because a candy is drawn beside items
+      expect(fieldOf(entry, 'sourceWidth'), String(family)).toBe(32);
+      expect(fieldOf(entry, 'sourceHeight'), String(family)).toBe(32);
+      expect(trimOf(entry), String(family)).toEqual([8, 12]);
+      expect(fieldOf(entry, 'width'), String(family)).toBe(16);
+      expect(fieldOf(entry, 'height'), String(family)).toBe(16);
+    }
+  });
+
+  it('paints the ball in the colour its family is drawn in', () => {
+    // A hue rather than a colour: the swap keeps the drawing's own
+    // shading, so what carries over is which colour it is
+    const bands: [Families, number, number][] = [
+      [Families.Bulbasaur, 70, 160],
+      [Families.Charmander, 0, 40],
+      [Families.Squirtle, 170, 260],
+      [Families.Magikarp, 340, 380],
+      [Families.Abra, 40, 65],
+    ];
+
+    for (const [family, from, to] of bands) {
+      expect(within(hueOf(ballOf(family)), from, to), String(family)).toBe(true);
+    }
   });
 });

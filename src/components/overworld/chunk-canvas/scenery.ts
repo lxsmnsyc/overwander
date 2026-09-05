@@ -1,9 +1,6 @@
 import { SPRITE_FACINGS } from '../../../canvas/board';
 import type { Species } from '../../../data/ids/species';
-import type { Items } from '../../../data/ids/items';
 import Landmark from '../../../data/overworld/landmark';
-import { apricornHex } from '../../../data/overworld/apricorn-tree';
-import { berryColour } from '../../../data/overworld/berry-plant';
 import Phenomenon from '../../../data/overworld/phenomenon';
 import drawSparkle, { SPARKLE_SPREAD, SPARKLE_STAR_SIZE } from '../../../canvas/sparkle';
 import type Bakery from '../../../canvas/bakery';
@@ -240,15 +237,13 @@ export function landmarkCallOut(landmark: Landmark): string {
 }
 
 /**
- * The colour a plant's cell is called out in: the fruit's own, so a
- * chunk's patches read as a crop apiece from across the board rather
- * than as a row of identical bushes. A plant nobody has a colour for
- * is called out in the landmark's own colour
+ * The colour a plant's cell is called out in: one for a berry patch
+ * and one for an apricorn tree, the way a landmark's cell says what
+ * kind of person is standing on it. Which berry or which apricorn is
+ * the plant drawn on the cell, not a shade of the ring
  */
-export function plantCallOut(landmark: Landmark, item: Items): string {
-  const colour = landmark === Landmark.ApricornTree ? apricornHex(item) : berryColour(item);
-
-  return colour ?? COLORS.serve;
+export function plantCallOut(landmark: Landmark): string {
+  return landmark === Landmark.ApricornTree ? COLORS.apricorn : COLORS.berry;
 }
 
 /**

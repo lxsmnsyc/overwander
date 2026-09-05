@@ -82,22 +82,30 @@ export async function getCandyCount(uid: string, family: Families): Promise<numb
  */
 
 /**
- * Spend candies to raise a catch of the same family by a level — one
- * for an ordinary catch, two for a shadow. The server does the
- * spending: the candy and the level move together in one
- * transaction, so a candy can never be spent without the level
- * landing, and the caller is whoever their token says. Resolves the
- * new level, or null when the feeding is refused: the catch is not
- * theirs, the stack cannot cover the cost, or the catch already sits
- * at MAX_LEVEL
+ * Spend candies to raise a catch of the same family — one candy a
+ * level for an ordinary catch, two for a shadow, and as many levels
+ * as are asked for. The server does the spending: the candy and the
+ * levels move together in one transaction, so a candy can never be
+ * spent without the level landing, and the caller is whoever their
+ * token says.
+ *
+ * Resolves the level it reached, which is **not** always the one the
+ * caller asked for: it grows as far as the pile stretches and stops
+ * at the cap. Null when the feeding is refused outright: the catch is
+ * not theirs, the pile cannot cover one level, or it already sits at
+ * MAX_LEVEL
  */
-export async function useCandy(catchId: string): Promise<number | null> {
-  return feedCandyOnServer(await getIdToken(), catchId);
+export async function useCandy(catchId: string, levels = 1): Promise<number | null> {
+  return feedCandyOnServer(await getIdToken(), catchId, levels);
 }
 
-async function feedCandyOnServer(token: string, catchId: string): Promise<number | null> {
+async function feedCandyOnServer(
+  token: string,
+  catchId: string,
+  levels: number,
+): Promise<number | null> {
   'use server';
-  return feedOnServer(await requireUid(token), catchId);
+  return feedOnServer(await requireUid(token), catchId, levels);
 }
 
 /**

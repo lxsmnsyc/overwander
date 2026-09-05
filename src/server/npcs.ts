@@ -39,7 +39,7 @@ import { LearnRefusal, type LearnResult, isRefusal } from '../auth/learn-refusal
 import { readStacksIn, writeStackIn } from './stacks';
 import { ITEM_STACKS } from '../auth/stacks';
 import { isCatchLocked } from './locks';
-import { claim, resolveSnapshot } from './overworld';
+import { claim, liveSnapshot } from './overworld';
 import { grantGold, spendGold } from './profile';
 import { purifiedFields } from './purify';
 import { Metric } from '../auth/quest-record';
@@ -79,22 +79,29 @@ export async function countVisit<T>(uid: string, npc: Npc, served: T): Promise<T
  */
 
 /**
- * Who is standing at the cell this window, or null when the player is
- * not at a live window, the cell holds no wandering NPC, or somebody
- * else is standing there
+ * Who is standing at the cell this window, or null when the cell
+ * holds no wandering NPC or somebody else is standing there.
+ *
+ * Derived from the server's own clock rather than read from the
+ * stored spawn window. A passer-by stands for 3 hours and comes from
+ * the chunk, the zone and the hour, so nothing here needs the
+ * 5-minute publication, and needing it made a counter left open
+ * across a boundary go dead: the board only republishes on a press,
+ * and a press is refused while the counter is up. Every visit marker
+ * still hangs off the person's own window, so what a player has
+ * already had this window is unchanged
  */
-async function resolveNpc(
+function resolveNpc(
   x: number,
   y: number,
   cell: number,
   now: number,
   offset: number,
   expected: Npc,
-): Promise<ChunkSnapshot | null> {
-  const snapshot = await resolveSnapshot(x, y, now, offset);
-  const standing = snapshot?.getStandingNpc(cell);
+): ChunkSnapshot | null {
+  const snapshot = liveSnapshot(x, y, now, offset);
 
-  return snapshot != null && standing === expected ? snapshot : null;
+  return snapshot.getStandingNpc(cell) === expected ? snapshot : null;
 }
 
 /**
@@ -199,7 +206,7 @@ export async function breedCatches(
     return null;
   }
 
-  const snapshot = await resolveNpc(x, y, cell, now, offset, Npc.Breeder);
+  const snapshot = resolveNpc(x, y, cell, now, offset, Npc.Breeder);
 
   if (snapshot == null) {
     return null;
@@ -325,7 +332,7 @@ export async function visitNurse(
     return null;
   }
 
-  const snapshot = await resolveNpc(x, y, cell, now, offset, Npc.NurseJoy);
+  const snapshot = resolveNpc(x, y, cell, now, offset, Npc.NurseJoy);
 
   if (snapshot == null) {
     return null;
@@ -386,7 +393,7 @@ export async function boostEgg(
   now: number,
   offset: number,
 ): Promise<number | null> {
-  const snapshot = await resolveNpc(x, y, cell, now, offset, Npc.DaycareLady);
+  const snapshot = resolveNpc(x, y, cell, now, offset, Npc.DaycareLady);
 
   if (snapshot == null) {
     return null;
@@ -449,7 +456,7 @@ export async function groomCatch(
   now: number,
   offset: number,
 ): Promise<number | null> {
-  const snapshot = await resolveNpc(x, y, cell, now, offset, Npc.Groomer);
+  const snapshot = resolveNpc(x, y, cell, now, offset, Npc.Groomer);
 
   if (snapshot == null) {
     return null;
@@ -531,7 +538,7 @@ export async function remindMove(
   now: number,
   offset: number,
 ): Promise<LearnResult> {
-  const snapshot = await resolveNpc(x, y, cell, now, offset, Npc.MoveReminder);
+  const snapshot = resolveNpc(x, y, cell, now, offset, Npc.MoveReminder);
 
   if (snapshot == null) {
     return { refused: LearnRefusal.Gone };
@@ -567,7 +574,7 @@ export async function tutorMove(
   now: number,
   offset: number,
 ): Promise<LearnResult> {
-  const snapshot = await resolveNpc(x, y, cell, now, offset, Npc.MoveTutor);
+  const snapshot = resolveNpc(x, y, cell, now, offset, Npc.MoveTutor);
 
   if (snapshot == null) {
     return { refused: LearnRefusal.Gone };
@@ -601,7 +608,7 @@ export async function channelAbility(
   now: number,
   offset: number,
 ): Promise<Awakening | null> {
-  const snapshot = await resolveNpc(x, y, cell, now, offset, Npc.Channeler);
+  const snapshot = resolveNpc(x, y, cell, now, offset, Npc.Channeler);
 
   if (snapshot == null) {
     return null;
@@ -743,7 +750,7 @@ export async function buyFromVendor(
     return null;
   }
 
-  const snapshot = await resolveNpc(x, y, cell, now, offset, trader);
+  const snapshot = resolveNpc(x, y, cell, now, offset, trader);
 
   if (snapshot == null) {
     return null;
@@ -787,7 +794,7 @@ export async function sellToVendor(
     return null;
   }
 
-  const snapshot = await resolveNpc(x, y, cell, now, offset, trader);
+  const snapshot = resolveNpc(x, y, cell, now, offset, trader);
 
   if (snapshot == null) {
     return null;
@@ -833,7 +840,7 @@ export async function buyFossil(
   now: number,
   offset: number,
 ): Promise<TradeResult | null> {
-  const snapshot = await resolveNpc(x, y, cell, now, offset, Npc.FossilManiac);
+  const snapshot = resolveNpc(x, y, cell, now, offset, Npc.FossilManiac);
 
   if (snapshot == null) {
     return null;
@@ -916,7 +923,7 @@ export async function carveApricorns(
   now: number,
   offset: number,
 ): Promise<{ ball: Items; amount: number } | null> {
-  const snapshot = await resolveNpc(x, y, cell, now, offset, Npc.Kurt);
+  const snapshot = resolveNpc(x, y, cell, now, offset, Npc.Kurt);
   const ball = getApricornBall(item);
   const carving = Math.floor(amount);
 
@@ -947,7 +954,7 @@ export async function reviveFossil(
   offset: number,
   locale: string,
 ): Promise<RevivedFossil | null> {
-  const snapshot = await resolveNpc(x, y, cell, now, offset, Npc.FossilScientist);
+  const snapshot = resolveNpc(x, y, cell, now, offset, Npc.FossilScientist);
   const species = FOSSIL_SPECIES.get(item);
 
   if (snapshot == null || species == null) {

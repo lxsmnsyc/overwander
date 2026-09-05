@@ -5,23 +5,29 @@ import { registerItem } from './__create';
  * The trade items: what the mainline hands a pokemon before passing it
  * to somebody else, and what this game will ask for alongside a trade.
  *
- * They are **evolution items** here rather than held ones. The
- * mainline reads them at the moment of the trade, which is a moment
- * with nowhere to live in a game where an evolution is something a
- * player asks for from the catch sheet; what this game has instead is
- * a catch that remembers having changed hands. So a Kingdra is a
- * Seadra that has been traded *and* is handed a Dragon Scale, and both
- * halves are conditions the record can answer for itself.
+ * Every one of them is **held**, not used. The mainline reads them at
+ * the moment of the trade, which is a moment with nowhere to live in a
+ * game where an evolution is something a player asks for from the
+ * catch sheet; what this game has instead is a catch that remembers
+ * having changed hands. So a Kingdra is a Seadra that has been traded
+ * *and* is holding a Dragon Scale, and both halves are conditions the
+ * record can answer for itself. That is why they carry Holdable rather
+ * than Usable: the evolution asks what the pokemon is holding, and a
+ * pokemon can only be handed a holdable item.
  *
  * Sixteen of the mainline's twenty-seven trade evolutions want an item
  * this way, so this is the shape of most of the family rather than a
  * corner of it.
  *
- * None of them can be spent yet: every line that asks for one — a
- * Slowking, a Steelix, a Porygon2 — belongs to a generation that is
- * not registered. They carry no price and no market listing until one
- * is, for the same reason the latent stones do not: a price is what
- * the market charges, and the market does not stock them.
+ * Four of them are asked for today: a King's Rock by Slowking and
+ * Politoed, a Dragon Scale by Kingdra, an Up-Grade by Porygon2, and a
+ * Metal Coat (registered elsewhere, see below) by Steelix and Scizor.
+ * Each is worn off a wild pokemon of the line that wants it. The rest
+ * wait on the generations that ask for them.
+ *
+ * None of them carries a price or a market listing, for the same
+ * reason the latent stones do not: a price is what the market charges,
+ * and the market does not stock them.
  *
  * One item of the family is deliberately absent: **Metal Coat** is
  * already registered as the Steel type booster it also is, so the
@@ -40,7 +46,7 @@ import { registerItem } from './__create';
  * with. They share a shape because they share everything else — the
  * type, the flags and the pricelessness are the same for all of them
  */
-const EVOLVES = 'Evolves the pokemon it is used on, where a line asks for it.';
+const EVOLVES = 'Evolves the pokemon holding it through a trade, where a line asks for it.';
 
 const TRADE_ITEMS: [item: Items, name: string, icon: string, description: string][] = [
   [
@@ -62,17 +68,6 @@ const TRADE_ITEMS: [item: Items, name: string, icon: string, description: string
   [Items.Sachet, 'Sachet', 'sachet', EVOLVES],
   [Items.WhippedDream, 'Whipped Dream', 'whipped-dream', EVOLVES],
 ];
-
-/**
- * The trade items that are also held items.
- *
- * A King's Rock leaves the target flinching, and that is true whether
- * or not the evolution it also gates is reachable yet. So it carries
- * the Holdable flag alongside the rest of the family's, the way Metal
- * Coat is one id doing two jobs. The battle half is in
- * [`src/battle/items/gear.ts`](../../battle/items/gear.ts)
- */
-const HELD_TRADE_ITEMS = new Set<Items>([Items.KingsRock]);
 
 /**
  * The two that were filed here and are not trade items at all.
@@ -117,7 +112,7 @@ export default function registerTradeItems(): void {
       description,
       type: ItemTypes.Evolution,
       icon: `evolutions/${icon}`,
-      flags: HELD_TRADE_ITEMS.has(item) ? ItemFlags.Usable | ItemFlags.Holdable : ItemFlags.Usable,
+      flags: ItemFlags.Holdable,
       buy: 0,
       sell: 0,
     });

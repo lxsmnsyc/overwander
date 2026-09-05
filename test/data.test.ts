@@ -153,6 +153,7 @@ import {
 } from '../src/data/overworld/fossil';
 import { FOSSIL_SPECIES, isFossil, listFossils } from '../src/data/items/fossils';
 import {
+  MOVE_STOCK_KINDS,
   VENDOR_KINDS,
   VENDOR_KIND_NAMES,
   VENDOR_STAPLES,
@@ -161,7 +162,9 @@ import {
   getChefGoods,
   getVendorGoods,
   isMarketable,
+  rollVendorStock,
   sellPrice,
+  vendorStockSize,
 } from '../src/data/overworld/vendor';
 import { VALUABLE_SELL, isValuable } from '../src/data/items/valuables';
 import { PP_ITEMS, VITAMIN_STATS } from '../src/data/items/vitamins';
@@ -2438,16 +2441,49 @@ describe('item data', () => {
     // its whole hand
     for (const kind of VENDOR_KINDS) {
       expect(getVendorGoods(kind).length, VENDOR_KIND_NAMES[kind]).toBeGreaterThan(
-        VENDOR_STOCK_KINDS,
+        vendorStockSize(kind),
       );
     }
 
     // The two a player plans a walk around, and nothing else
     expect(VENDOR_STAPLES[VendorKind.Balls]).toEqual([Items.PokeBall]);
     expect(VENDOR_STAPLES[VendorKind.Medicine]).toEqual([Items.Potion]);
-    for (const kind of [VendorKind.Vitamins, VendorKind.Incenses, VendorKind.BattleItems]) {
+    for (const kind of [
+      VendorKind.Vitamins,
+      VendorKind.Incenses,
+      VendorKind.BattleItems,
+      VendorKind.Moves,
+    ]) {
       expect(VENDOR_STAPLES[kind], VENDOR_KIND_NAMES[kind]).toBeUndefined();
     }
+  });
+
+  it('lays out a dozen machines on the machine stall', () => {
+    // Every machine in the game is on its shelf, and nothing else is:
+    // one per teachable move, which is where machines come from
+    expect(new Set(getVendorGoods(VendorKind.Moves))).toEqual(
+      new Set(getTeachableMoves().map((move) => getMachineItem(move))),
+    );
+    for (const item of getVendorGoods(VendorKind.Moves)) {
+      expect(isMachineItem(item), getItemData(item).name).toBe(true);
+    }
+
+    // Twice the usual crate, drawn without repeats, and the same crate
+    // for every player who walks up to that window's stall
+    const rng = new AleaRNG('machine-stall');
+    const crate = rollVendorStock(() => rng.random(), VendorKind.Moves);
+    const elsewhere = new AleaRNG('another-stall');
+
+    expect(crate).toHaveLength(MOVE_STOCK_KINDS);
+    expect(new Set(crate).size).toBe(MOVE_STOCK_KINDS);
+    expect(rollVendorStock(() => elsewhere.random(), VendorKind.Moves)).not.toEqual(crate);
+    for (const item of crate) {
+      expect(isMachineItem(item), getItemData(item).name).toBe(true);
+    }
+
+    // Six is what everybody else lays out
+    expect(vendorStockSize(VendorKind.Balls)).toBe(VENDOR_STOCK_KINDS);
+    expect(vendorStockSize(VendorKind.Moves)).toBe(MOVE_STOCK_KINDS);
   });
 
   it('stocks the other counters from their own shelves', () => {

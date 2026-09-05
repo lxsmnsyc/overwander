@@ -218,6 +218,7 @@ import {
   getChefGoods,
   getVendorGoods,
   isMarketable,
+  vendorStockSize,
 } from '../../src/data/overworld/vendor';
 import {
   MAX_BERRY_PICK,
@@ -2733,8 +2734,11 @@ describe('world', () => {
         found++;
         crates.add(JSON.stringify(stock));
 
-        // Six kinds, none of them twice
-        expect(stock.length).toBe(VENDOR_STOCK_KINDS);
+        // As many kinds as that counter lays out, none of them twice:
+        // six for everybody, a dozen off the machine stall's long shelf
+        const kind = npc === Npc.Chef ? null : snapshot.getVendorKind(cell);
+
+        expect(stock.length).toBe(kind == null ? VENDOR_STOCK_KINDS : vendorStockSize(kind));
         expect(new Set(stock).size).toBe(stock.length);
 
         if (npc === Npc.Chef) {
@@ -2747,8 +2751,6 @@ describe('world', () => {
           }
         } else {
           // A vendor's crate is his counter's shelf and nothing else
-          const kind = snapshot.getVendorKind(cell);
-
           expect(kind).not.toBeNull();
           if (kind == null) {
             continue;

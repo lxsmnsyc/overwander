@@ -212,7 +212,8 @@ Three things change what a pokemon knows after it has been obtained:
   learns something at, that move is offered. It costs nothing; the candy already
   paid for it.
 - **A technical machine.** There is one machine per teachable move, and it works
-  on any species able to learn it.
+  on any species able to learn it. A gym leader hands one over, and a stall that
+  set up as a **machine stall** sells a dozen of them.
 - **The Move Reminder**, who restores a move the pokemon learned by levelling and
   has since lost. His price is one **Heart Scale**, which is dug out of the ground
   and which no shop buys or sells. See [People you meet](npcs.md).

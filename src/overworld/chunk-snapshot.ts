@@ -1325,9 +1325,10 @@ export default class ChunkSnapshot {
    *
    * It is drawn from the same seed the person was drawn from, so the
    * crate is part of who walked up rather than something stored: every
-   * player who reaches this trader this window is offered the same six
+   * player who reaches this trader this window is offered the same
    * things, and the next window brings a different one with a
-   * different crate
+   * different crate. How many things that is belongs to the counter:
+   * the machine stall lays out a dozen where the rest carry six
    */
   getVendorStock(cell: number): Items[] {
     const standing = this.getStandingNpc(cell);

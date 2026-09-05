@@ -102,7 +102,9 @@ range (`level:30-60`, `caught:2026-01..2026-06`) as well as an exact number.
 `sort:` and `order:` are the exception to all of it: they arrange the answers
 rather than narrowing them, so a matcher skips them and `orderCatches` applies
 them last, over whatever the predicate kept. A `sort:` word nothing has a
-reading for leaves the box in the order it arrived. There is no `limit:`: a box
+reading for leaves the box in the order it arrived. A box and a bag arrange
+**descending** unless an `order:asc` says otherwise, since somebody sorting one
+is looking for the best of what is in it. There is no `limit:`: a box
 that already pages has nothing to do with one.
 
 #### What the box offers

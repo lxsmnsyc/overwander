@@ -1,7 +1,8 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import { Items, getMachineItem } from '../src/data/ids/items';
 import { Moves } from '../src/data/ids/moves';
-import matchesItem, { ITEM_VOCABULARY } from '../src/data/items/search';
+import matchesItem, { ITEM_VOCABULARY, orderItems } from '../src/data/items/search';
+import { getItemData } from '../src/data/items';
 import registerGameData from '../src/data';
 
 beforeAll(() => {
@@ -91,5 +92,17 @@ describe('what the bag says it can be asked', () => {
 
     expect(named).toContain('sort');
     expect(named).toContain('order');
+  });
+
+  it('arranges from the top end unless the search says otherwise', () => {
+    const bag = [Items.Potion, Items.MasterBall, Items.PokeBall].map((item) => ({ item }));
+    const prices = (query: string): number[] =>
+      orderItems(bag, query, (row) => row).map((row) => getItemData(row.item).sell);
+
+    // Dearest first: a bag sorted by what it is worth is being asked
+    // what the good things in it are
+    expect(prices('sort:sell')).toEqual([...prices('sort:sell')].sort((one, two) => two - one));
+    expect(prices('sort:sell order:asc')).toEqual([...prices('sort:sell')].reverse());
+    expect(prices('sort:sell order:desc')).toEqual(prices('sort:sell'));
   });
 });

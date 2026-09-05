@@ -295,8 +295,15 @@ export interface QueryControls {
   descending: boolean;
 }
 
-export function parseControls(query: string): QueryControls {
-  const controls: QueryControls = { sort: '', descending: false };
+/**
+ * `descending` is which way round a list arranges when nobody said.
+ * A box of pokemon or of items is asked "which is the best one" far
+ * more often than "which is the worst", so those two start at the top
+ * end; a list read as a roll starts at the other. An `order:` term
+ * overrides it either way
+ */
+export function parseControls(query: string, descending = false): QueryControls {
+  const controls: QueryControls = { sort: '', descending };
 
   for (const term of parseQuery(query)) {
     const value = term.value.trim().toLowerCase();

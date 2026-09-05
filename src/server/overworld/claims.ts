@@ -41,6 +41,32 @@ export async function resolveSnapshot(
 }
 
 /**
+ * The chunk as it stands right now, derived rather than read.
+ *
+ * `resolveSnapshot` above answers from the **stored** window and
+ * answers nothing once that window has run out, which is right for
+ * anything the store holds: the spawns are one publication that
+ * everybody in the zone is looking at, and a claim against a window
+ * that has turned over is a claim against a landmark that is no
+ * longer there.
+ *
+ * Nothing on a longer window is published that way. Who is standing
+ * at a wandering cell comes from the chunk, the zone and the hour,
+ * and the 5-minute boundaries divide the longer windows exactly, so
+ * this derives the same person every other observer sees.
+ *
+ * It exists because the board republishes the window only when the
+ * player presses something, and a press is refused while a dialog is
+ * open: a counter held open across a boundary would otherwise find no
+ * window at all and quietly stop working until it was closed
+ */
+export function liveSnapshot(x: number, y: number, now: number, offset: number): ChunkSnapshot {
+  const zone = asOffset(offset);
+
+  return new ChunkSnapshot(getWorld().getChunk(x, y), toLocalTime(now, zone), zone);
+}
+
+/**
  * Take a claim marker, or find it already taken. One marker per
  * landmark, window and player, so a landmark pays each player once
  * per window and regenerates with the next one

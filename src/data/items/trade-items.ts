@@ -5,30 +5,38 @@ import { registerItem } from './__create';
  * The trade items: what the mainline hands a pokemon before passing it
  * to somebody else, and what this game will ask for alongside a trade.
  *
- * They are **evolution items** here rather than held ones. The
- * mainline reads them at the moment of the trade, which is a moment
- * with nowhere to live in a game where an evolution is something a
- * player asks for from the catch sheet; what this game has instead is
- * a catch that remembers having changed hands. So a Kingdra is a
- * Seadra that has been traded *and* is handed a Dragon Scale, and both
- * halves are conditions the record can answer for itself.
+ * Most of them are **held**, not used. The mainline reads them at the
+ * moment of the trade, which is a moment with nowhere to live in a
+ * game where an evolution is something a player asks for from the
+ * catch sheet; what this game has instead is a catch that remembers
+ * having changed hands. So a Kingdra is a Seadra that has been traded
+ * *and* is holding a Dragon Scale, and both halves are conditions the
+ * record can answer for itself. That is why they carry Holdable rather
+ * than Usable: the evolution asks what the pokemon is holding, and a
+ * pokemon can only be handed a holdable item.
  *
  * Sixteen of the mainline's twenty-seven trade evolutions want an item
  * this way, so this is the shape of most of the family rather than a
  * corner of it.
  *
- * Most of them cannot be spent yet: the line that asks for one, a
- * Slowking or a Steelix or a Porygon2, belongs to a generation that
- * is not registered. Those carry no price and no market listing, for
- * the same reason the latent stones do not: a price is what the
- * market charges, and the market does not stock them.
+ * Seven of them are asked for today. Four are **held** through a
+ * trade: a King's Rock by Slowking and Politoed, a Dragon Scale by
+ * Kingdra, an Up-Grade by Porygon2, and a Metal Coat (registered
+ * elsewhere, see below) by Steelix and Scizor. Each is worn off a wild
+ * pokemon of the line that wants it, and none of them is priced: the
+ * market does not stock what a pokemon is carrying about.
  *
- * Three are the exception, because the lines that ask for them are
- * registered: the **Deep Sea Tooth** and the **Deep Sea Scale**, which
- * are which of two a Clamperl opens into, and the **Prism Scale** a
- * Feebas is turned by. All three are priced and listed the way the
- * Linking Cord is, since what they gate is a choice a player makes
- * rather than a generation they wait for.
+ * Three of them are also **stocked**, priced and listed the way the
+ * Linking Cord is: the **Deep Sea Tooth** and the **Deep Sea Scale**,
+ * which are which of two a Clamperl opens into, and the **Prism
+ * Scale** a Feebas is turned by. What they gate is a choice a player
+ * makes rather than a generation they wait for, so the market carries
+ * them; they are held through the trade like the rest of the family.
+ *
+ * The rest wait on the generations that ask for them, and carry no
+ * price and no market listing until then, for the same reason the
+ * latent stones do not: a price is what the market charges, and the
+ * market does not stock them.
  *
  * One item of the family is deliberately absent: **Metal Coat** is
  * already registered as the Steel type booster it also is, so the
@@ -47,7 +55,7 @@ import { registerItem } from './__create';
  * with. They share a shape because they share everything else — the
  * type, the flags and the pricelessness are the same for all of them
  */
-const EVOLVES = 'Evolves the pokemon it is used on, where a line asks for it.';
+const EVOLVES = 'Evolves the pokemon holding it through a trade, where a line asks for it.';
 
 const TRADE_ITEMS: [item: Items, name: string, icon: string, description: string][] = [
   [
@@ -68,35 +76,31 @@ const TRADE_ITEMS: [item: Items, name: string, icon: string, description: string
 ];
 
 /**
- * The trade items that are also held items.
- *
- * A King's Rock leaves the target flinching, and that is true whether
- * or not the evolution it also gates is reachable yet. So it carries
- * the Holdable flag alongside the rest of the family's, the way Metal
- * Coat is one id doing two jobs. The battle half is in
- * [`src/battle/items/gear.ts`](../../battle/items/gear.ts)
- */
-const HELD_TRADE_ITEMS = new Set<Items>([Items.KingsRock]);
-
 /**
- * The trade items a registered line can spend today. They are trade
- * items like the rest, so they are stocked and priced where the
- * others are not
+ * The trade items a registered line asks for today. They are held
+ * like the rest of the family; what sets them apart is that the
+ * market carries them, since the choice they gate is one a player can
+ * actually make
  */
-const SPENDABLE_TRADE_ITEMS: [item: Items, name: string, icon: string, description: string][] = [
+const STOCKED_TRADE_ITEMS: [item: Items, name: string, icon: string, description: string][] = [
   [
     Items.DeepSeaTooth,
     'Deep Sea Tooth',
     'deep-sea-tooth',
-    'Opens a Clamperl into the one with the teeth.',
+    'A Clamperl traded holding it opens into the one with the teeth.',
   ],
   [
     Items.DeepSeaScale,
     'Deep Sea Scale',
     'deep-sea-scale',
-    'Opens a Clamperl into the one with the scales.',
+    'A Clamperl traded holding it opens into the one with the scales.',
   ],
-  [Items.PrismScale, 'Prism Scale', 'prism-scale', 'Turns a Feebas into what it grows up as.'],
+  [
+    Items.PrismScale,
+    'Prism Scale',
+    'prism-scale',
+    'A Feebas traded holding it turns into what it grows up as.',
+  ],
 ];
 
 /**
@@ -142,19 +146,23 @@ export default function registerTradeItems(): void {
       description,
       type: ItemTypes.Evolution,
       icon: `evolutions/${icon}`,
-      flags: HELD_TRADE_ITEMS.has(item) ? ItemFlags.Usable | ItemFlags.Holdable : ItemFlags.Usable,
+      flags: ItemFlags.Holdable,
       buy: 0,
       sell: 0,
     });
   }
 
-  for (const [item, name, icon, description] of SPENDABLE_TRADE_ITEMS) {
+  for (const [item, name, icon, description] of STOCKED_TRADE_ITEMS) {
     registerItem(item, {
       name,
       description,
       type: ItemTypes.Evolution,
       icon: `evolutions/${icon}`,
-      flags: ItemFlags.Usable | ItemFlags.Marketable,
+      // Held like every other trade item, and on the shelf besides:
+      // the evolution reads what the pokemon is holding, so an item
+      // that could be bought and never handed over would gate the
+      // line shut
+      flags: ItemFlags.Holdable | ItemFlags.Marketable,
       buy: 3000,
       sell: 1500,
     });

@@ -42,7 +42,7 @@ export async function remindMove(
   now: number,
   offset: number,
 ): Promise<LearnResult> {
-  const snapshot = await resolveNpc(x, y, cell, now, offset, Npc.MoveReminder);
+  const snapshot = resolveNpc(x, y, cell, now, offset, Npc.MoveReminder);
 
   if (snapshot == null) {
     return { refused: LearnRefusal.Gone };
@@ -78,7 +78,7 @@ export async function tutorMove(
   now: number,
   offset: number,
 ): Promise<LearnResult> {
-  const snapshot = await resolveNpc(x, y, cell, now, offset, Npc.MoveTutor);
+  const snapshot = resolveNpc(x, y, cell, now, offset, Npc.MoveTutor);
 
   if (snapshot == null) {
     return { refused: LearnRefusal.Gone };
@@ -112,7 +112,7 @@ export async function channelAbility(
   now: number,
   offset: number,
 ): Promise<Awakening | null> {
-  const snapshot = await resolveNpc(x, y, cell, now, offset, Npc.Channeler);
+  const snapshot = resolveNpc(x, y, cell, now, offset, Npc.Channeler);
 
   if (snapshot == null) {
     return null;

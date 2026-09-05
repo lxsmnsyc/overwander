@@ -93,12 +93,22 @@ export async function grantCandies(
  * catch is not the player's, the stack cannot cover the cost, or the
  * catch already sits at MAX_LEVEL
  */
-export async function useCandy(uid: string, catchId: string): Promise<number | null> {
-  return feed(uid, catchId, async (transaction, caught, record) => {
+export async function useCandy(uid: string, catchId: string, levels = 1): Promise<number | null> {
+  return feed(uid, catchId, levels, async (transaction, caught, record, wanted) => {
     const { family } = getSpeciesData(asSpecies(caught.species));
     const held = await readStackIn(transaction, CANDY_STACKS, uid, family);
+    const cost = getCandyCost(record);
+    // As many as the pile covers rather than all or nothing: the sheet
+    // asks for what the player pressed for, and a pile that has since
+    // been spent elsewhere should still buy what it can
+    const grown = Math.min(wanted, Math.floor(held / cost));
 
-    return spendStackIn(transaction, CANDY_STACKS, uid, family, held, getCandyCost(record));
+    if (grown < 1) {
+      return 0;
+    }
+    return (await spendStackIn(transaction, CANDY_STACKS, uid, family, held, grown * cost))
+      ? grown
+      : 0;
   });
 }
 
@@ -111,10 +121,10 @@ export async function useCandy(uid: string, catchId: string): Promise<number | n
  * same reasons a family candy is, or the bag holds none
  */
 export async function useRareCandy(uid: string, catchId: string): Promise<number | null> {
-  const level = await feed(uid, catchId, async (transaction) => {
+  const level = await feed(uid, catchId, 1, async (transaction) => {
     const held = await readStackIn(transaction, ITEM_STACKS, uid, Items.RareCandy);
 
-    return spendStackIn(transaction, ITEM_STACKS, uid, Items.RareCandy, held, 1);
+    return (await spendStackIn(transaction, ITEM_STACKS, uid, Items.RareCandy, held, 1)) ? 1 : 0;
   });
 
   if (level != null) {
@@ -124,18 +134,21 @@ export async function useRareCandy(uid: string, catchId: string): Promise<number
 }
 
 /**
- * The feeding both candies share: the same refusals, the same level,
+ * The feeding both candies share: the same refusals, the same levels,
  * the same transaction. `pay` is the only difference (which stack
- * covers it), and a payment that fails leaves everything unwritten
+ * covers it, and how many levels it could cover), and a payment that
+ * fails leaves everything unwritten
  */
 async function feed(
   uid: string,
   catchId: string,
+  levels: number,
   pay: (
     transaction: Tx,
     caught: Record<string, unknown>,
     record: CaughtPokemon,
-  ) => Promise<boolean>,
+    wanted: number,
+  ) => Promise<number>,
 ): Promise<number | null> {
   const grown = await tx(async (transaction) => {
     // A level reads the row it is written on: what the pokemon knows
@@ -160,15 +173,23 @@ async function feed(
     }
 
     const record = asCaughtPokemon(caught);
+    // Never past the cap, however many were asked for
+    const wanted = Math.min(Math.trunc(levels), MAX_LEVEL - record.level);
 
-    // The candy and the level land together or not at all: a candy
-    // spent without the level is the failure this transaction exists
-    // to prevent
-    if (!(await pay(transaction, caught, record))) {
+    if (wanted < 1) {
       return null;
     }
 
-    const level = record.level + 1;
+    // The candy and the levels land together or not at all: a candy
+    // spent without the level is the failure this transaction exists
+    // to prevent
+    const paid = await pay(transaction, caught, record, wanted);
+
+    if (paid < 1) {
+      return null;
+    }
+
+    const level = record.level + paid;
     await updateCaughtIn(transaction, catchId, {
       level,
       // A level restores what the last fight took, status and all
@@ -178,13 +199,13 @@ async function feed(
       // think well of somebody — and the level pays for five more
       // points of effort, which the sheet works out from the level
       // itself rather than storing twice
-      friendship: gainFriendship(record.friendship, 'level', 1, friendshipFactor(record.ball)),
+      friendship: gainFriendship(record.friendship, 'level', paid, friendshipFactor(record.ball)),
     });
-    return level;
+    return { level, paid };
   });
 
   if (grown != null) {
-    await bumpProgress(uid, [[Metric.LevelUps, 0, 1]]);
+    await bumpProgress(uid, [[Metric.LevelUps, 0, grown.paid]]);
   }
-  return grown;
+  return grown?.level ?? null;
 }

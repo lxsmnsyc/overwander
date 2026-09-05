@@ -1,7 +1,7 @@
 import 'server-only';
 import { asCaughtPokemon, getMovePoints } from '../auth/caught-record';
 import { ITEM_STACKS } from '../auth/stacks';
-import { assignEffort as assignedValues, unusedEffort } from '../auth/effort';
+import { assignEfforts as assignedValues, unusedEffort } from '../auth/effort';
 import { getMaxHealth, rescaleHealth } from '../auth/health';
 import { MAX_EFFORT_PER_STAT, type Stats } from '../data/constants/stats';
 import type { Moves } from '../data/ids/moves';
@@ -64,23 +64,25 @@ function asResult(caught: {
 }
 
 /**
- * Put some of a pokemon's unspent effort into one stat, or take some
- * back out of it.
+ * Put some of a pokemon's unspent effort into its stats, or take some
+ * back out of them. A whole spread at once, since the sheet lets a
+ * player lay out where every point goes and saves the lot in one
+ * press.
  *
  * Nothing is spent to do this and nothing is consumed: the points came
  * with the levels, and moving them about is the player's to do. What
  * it will not do is invent points — the budget is worked out here from
- * the stored level and the stored wings.
+ * the stored level and the stored wings, against the **total** of the
+ * spread rather than a stat at a time.
  *
  * Resolves what the pokemon now has, or null when the move is refused:
  * the catch is not the player's, it is fighting, it is still an egg,
  * or the pokemon has not got the points
  */
-export async function trainEffort(
+export async function trainEfforts(
   uid: string,
   catchId: string,
-  stat: Stats,
-  amount: number,
+  spread: Partial<Record<Stats, number>>,
 ): Promise<TrainingResult | null> {
   const result = await tx(async (transaction) => {
     const stored = await readCaughtIn(transaction, catchId);
@@ -100,7 +102,7 @@ export async function trainEffort(
     }
 
     const record = asCaughtPokemon(stored);
-    const effortValues = assignedValues(record, stat, amount);
+    const effortValues = assignedValues(record, spread);
 
     if (effortValues == null) {
       return null;
@@ -119,8 +121,10 @@ export async function trainEffort(
 
   // Only putting points in counts: taking them back out is tidying,
   // not training
-  if (result != null && amount > 0) {
-    await bumpProgress(uid, [[Metric.EffortAssigned, 0, amount]]);
+  const added = Object.values(spread).reduce((total, step) => total + Math.max(0, step), 0);
+
+  if (result != null && added > 0) {
+    await bumpProgress(uid, [[Metric.EffortAssigned, 0, added]]);
   }
   return result;
 }

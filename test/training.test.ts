@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   type EffortTrained,
   assignEffort,
+  assignEfforts,
   assignableEffort,
   effortBudget,
   effortSpent,
@@ -128,6 +129,37 @@ describe('assigning effort', () => {
   it('refuses to take back more than is there', () => {
     expect(assignEffort(trained(20, { [Stats.Attack]: 4 }), Stats.Attack, -8)).toBeNull();
     expect(assignEffort(trained(20), Stats.Attack, 0)).toBeNull();
+  });
+});
+
+describe('assigning a spread', () => {
+  it('moves points into several stats at once', () => {
+    const caught = trained(20);
+    const spread = assignEfforts(caught, { [Stats.Attack]: 40, [Stats.Speed]: 20 });
+
+    expect(spread?.[Stats.Attack]).toBe(40);
+    expect(spread?.[Stats.Speed]).toBe(20);
+  });
+
+  it('weighs the whole spread against the budget, not each stat', () => {
+    // Sixty points, and two stats that could each take sixty on their
+    // own: the pair is what has to be refused
+    const caught = trained(12);
+
+    expect(unusedEffort(caught)).toBe(60);
+    expect(assignEfforts(caught, { [Stats.Attack]: 60 })).not.toBeNull();
+    expect(assignEfforts(caught, { [Stats.Attack]: 60, [Stats.Speed]: 60 })).toBeNull();
+  });
+
+  it('refuses a spread that would take one stat past its own cap', () => {
+    const caught = trained(100, { [Stats.Attack]: MAX_EFFORT_PER_STAT - 2 });
+
+    expect(assignEfforts(caught, { [Stats.Attack]: 4 })).toBeNull();
+  });
+
+  it('says nothing was asked for when the spread is empty', () => {
+    expect(assignEfforts(trained(20), {})).toBeNull();
+    expect(assignEfforts(trained(20), { [Stats.Attack]: 0 })).toBeNull();
   });
 });
 

@@ -40,11 +40,29 @@ export const SPECIES_DAY_CANDY_BOOST = 4;
 
 /**
  * What meeting this species pays in its family's candy, before any
- * bonus. Releasing one pays the same: what a pokemon is worth does
- * not depend on which end of the record it is being counted at
+ * bonus
  */
 export function getCatchCandy(species: Species): number {
   return CANDY_BY_RARITY[getSpawnRarity(species)];
+}
+
+/**
+ * How many levels one candy of the release reward stands for
+ */
+export const RELEASE_CANDY_LEVELS = 25;
+
+/**
+ * What letting a pokemon go pays in its family's candy.
+ *
+ * The level rather than the rarity: what a released pokemon is worth
+ * is the raising that went into it, since that is what the candy
+ * bought and what the next one will need. Four bands of 25 levels, so
+ * anything from 76 up pays 4 and a fresh catch pays 1. It is a
+ * fraction of what a level cost, which is the point: releasing is
+ * somewhere for a spare pokemon to go, never a way to farm candy
+ */
+export function getReleaseCandy(caught: { level: number }): number {
+  return Math.max(1, Math.ceil(caught.level / RELEASE_CANDY_LEVELS));
 }
 
 /**

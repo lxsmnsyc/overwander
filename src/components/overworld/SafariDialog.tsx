@@ -143,6 +143,16 @@ function SafariBody(
   // The session mutates in place, so the view needs a nudge after
   // every action to re-read its state, turn count and bonus
   const [revision, setRevision] = createSignal(0);
+  /**
+   * Whether a throw is with the server.
+   *
+   * Nothing on screen moves between the press and the answer, and the
+   * throw is what spends the ball and rolls the pokemon's turn: a
+   * mashed button threw the bag at one encounter. The actions are shut
+   * for the length of the call, running away with them, since leaving
+   * mid-throw settles the session under the answer coming back
+   */
+  const [throwing, setThrowing] = createSignal(false);
 
   /**
    * The session as the panel shows it, held one beat past the end.
@@ -183,6 +193,7 @@ function SafariBody(
         setRummaging(false);
         setTreat(null);
         setCaught(null);
+        setThrowing(false);
       },
     ),
   );
@@ -272,10 +283,17 @@ function SafariBody(
   };
 
   const act = (action: () => Promise<string | null>): void => {
+    if (throwing()) {
+      return;
+    }
+    setThrowing(true);
     action()
       .then(settle)
       .catch((failure: unknown) => {
         setStatus(failure instanceof Error ? failure.message : String(failure));
+      })
+      .finally(() => {
+        setThrowing(false);
       });
   };
 
@@ -400,6 +418,10 @@ function SafariBody(
   const leave = (): void => {
     const active = props.session;
 
+    if (throwing()) {
+      return;
+    }
+
     if (active != null && active.state === SafariState.Active) {
       active.runAway();
     }
@@ -515,6 +537,7 @@ function SafariBody(
             fallback={
               <>
                 <Button
+                  disabled={throwing()}
                   onClick={() => {
                     setStatus(null);
                     setRummaging(true);
@@ -535,7 +558,7 @@ function SafariBody(
                     others */}
                 <Button
                   tone="primary"
-                  disabled={stockOf(inHand()) === 0}
+                  disabled={throwing() || stockOf(inHand()) === 0}
                   label={`Throw ${describeItem(inHand())}, ${stockOf(inHand())} left`}
                   onClick={hurl}
                 >
@@ -563,7 +586,11 @@ function SafariBody(
             Have a look
           </Button>
         </Show>
-        <Button tone={session()?.state === SafariState.Active ? 'danger' : 'ghost'} onClick={leave}>
+        <Button
+          tone={session()?.state === SafariState.Active ? 'danger' : 'ghost'}
+          disabled={throwing()}
+          onClick={leave}
+        >
           {session()?.state === SafariState.Active ? 'Run away' : 'Close'}
         </Button>
       </DialogActions>

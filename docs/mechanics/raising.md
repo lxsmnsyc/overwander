@@ -42,10 +42,11 @@ A **Rare Candy** is the exception to the family rule: used from the bag on any
 pokemon, it buys one level no matter what family the pokemon belongs to and no
 matter what its levels normally cost. Nothing sells them; they are prizes.
 
-Releasing a pokemon pays its family the same candy catching it did, rarity and
-all, though never the family-day bonus. Letting one go is a decision about space
-rather than a punishment, and what the pokemon was worth does not change on the
-way out.
+Releasing a pokemon pays its family 1 candy for every 25 levels it reached,
+rounded up: 1 for anything up to level 25, and 4 for a pokemon at 76 or above.
+What comes back is the raising rather than the rarity, and it is a fraction of
+what those levels cost, so letting one go is a decision about space rather than a
+way of stocking up.
 
 ## Names
 
@@ -211,7 +212,8 @@ Three things change what a pokemon knows after it has been obtained:
   learns something at, that move is offered. It costs nothing; the candy already
   paid for it.
 - **A technical machine.** There is one machine per teachable move, and it works
-  on any species able to learn it.
+  on any species able to learn it. A gym leader hands one over, and a stall that
+  set up as a **machine stall** sells a dozen of them.
 - **The Move Reminder**, who restores a move the pokemon learned by levelling and
   has since lost. His price is one **Heart Scale**, which is dug out of the ground
   and which no shop buys or sells. See [People you meet](npcs.md).

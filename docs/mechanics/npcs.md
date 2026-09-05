@@ -41,7 +41,7 @@ and the button that buys or sells it at the price on the square.
 
 ### What he sells
 
-A stall sets up **one counter** per window, drawn from five:
+A stall sets up **one counter** per window, drawn from six:
 
 | Counter          | What is on it                                                |
 | ---------------- | ------------------------------------------------------------ |
@@ -50,13 +50,19 @@ A stall sets up **one counter** per window, drawn from five:
 | **Vitamins**     | The six vitamins, and the PP Ups                             |
 | **Incenses**     | The incenses a buddy carries                                 |
 | **Battle items** | The one-fight boosters                                       |
+| **Machines**     | The machines, and the only place one is sold                 |
 
-Six kinds off that counter, drawn without repeats. The balls and the medicine
-open with a staple, a **Poke Ball** and a **Potion**, and everything else varies.
-What a stall carries is part of who set it up rather than anything a player can
-influence, and every player who reaches it in that window is offered the same six.
-A player who wants an Ultra Ball walks until they find a ball counter carrying
-one.
+Six kinds off that counter, drawn without repeats, or **12** off the machine
+stall, whose shelf is one machine per move any pokemon can be taught. The
+balls and the medicine open with a staple, a **Poke Ball** and a **Potion**, and
+everything else varies. What a stall carries is part of who set it up rather than
+anything a player can influence, and every player who reaches it in that window
+is offered the same crate. A player who wants an Ultra Ball, or a particular
+machine, walks until they find a counter carrying one.
+
+A machine is priced by the move on it: 2,000 gold for a status move or a weak
+one, 5,000 for a solid attack, 12,000 for the heaviest. Until now a gym was the
+only place one came from.
 
 The counter is rolled apart from the crate, so a shelf added to the game later
 does not reshuffle every stall in the world.

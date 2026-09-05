@@ -28,6 +28,7 @@ import { Genders } from '../../data/ids/species';
 import { EncounterType } from '../../overworld/encounter';
 import { getMaxHealth } from '../../auth/health';
 import { getSpeciesData } from '../../data/species';
+import sayItems from '../items/say-items';
 import CatchCard from '../catches/CatchCard';
 import type { BoxEntry } from '../catches/CatchBox';
 import CatchGrid, { type CatchGridEntry } from '../catches/CatchGrid';
@@ -283,7 +284,13 @@ function GiftShelf(props: {
           game.setEncounter(claimed.encounter);
           return;
         }
-        say(`Received ${describeGift(claimed.gift)}.`, 'leaf');
+        // An item is drawn rather than named, the way every other
+        // payout in the game says what it handed over
+        if (claimed.gift.kind === GiftKind.Item) {
+          sayItems(toast, [claimed.gift], 'Mystery gift');
+        } else {
+          say(`Received ${describeGift(claimed.gift)}.`, 'leaf');
+        }
         // A pokemon out of a gift is a new record, and the box behind
         // this panel is showing the old list
         game.touchRecords();

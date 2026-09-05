@@ -79,7 +79,7 @@ export default async function breedCatches(
     return null;
   }
 
-  const snapshot = await resolveNpc(x, y, cell, now, offset, Npc.Breeder);
+  const snapshot = resolveNpc(x, y, cell, now, offset, Npc.Breeder);
 
   if (snapshot == null) {
     return null;

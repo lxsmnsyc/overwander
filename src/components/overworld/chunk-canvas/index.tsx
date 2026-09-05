@@ -91,6 +91,7 @@ import {
   type Crossing,
   GROUND_DEPTH,
   GROUND_SQUASH,
+  HOVER_GLOW,
   LOADING_LABEL,
   LOADING_SIZE,
   MARK_WEIGHT,
@@ -100,6 +101,11 @@ import {
   PLANT_PHASES,
   PLAYER_SHEET,
   QUARTER_TURN,
+  RIPPLE_ALPHA,
+  RIPPLE_PERIOD,
+  RIPPLE_POINTS,
+  RIPPLE_RINGS,
+  RIPPLE_SPREAD,
   SCENERY_CELLS,
   SNAP_CELLS,
   SPRITE_STANDS,
@@ -121,6 +127,7 @@ import {
   paintPhenomenon,
   paintSparkle,
   phenomenonSpan,
+  plantCallOut,
 } from './scenery';
 
 export { CROSSING_IN, CROSSING_OUT, type Crossing, type SpawnCoat, isTurningPress, slideGain };
@@ -1828,8 +1835,21 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       /** Which phenomena have been repainted for this frame already */
       const repainted = new Set<Phenomenon>();
 
+      /** The cell the cursor is over, once this frame */
+      const under = hovered();
+      /**
+       * Whether the cursor is over this square. Read against the
+       * board's own coordinates rather than the chunk's, so a
+       * threshold lights up the same way a cell does
+       */
+      const beneath = (square: BoardCell): boolean =>
+        under != null && under.x === square.x && under.y === square.y;
+      /** The square the cursor is over, kept to ring once the grid is laid */
+      let hoveredOutline: ProjectedPoint[] | null = null;
+
       for (const square of squares) {
         const outline = projectBoardCellQuad(square, yaw()).map(at);
+        const hot = beneath(square);
 
         // A threshold that goes through keeps the grid, so it reads
         // as ground that can be walked, and breathes a little light
@@ -1838,11 +1858,17 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         // the grid stopping is what says where the walkable ends
         if (isBorderCell(square)) {
           if (borderExit(square) != null) {
-            rule(outline, 0.1 + 0.05 * Math.sin(clock / 600));
+            rule(outline, hot ? HOVER_GLOW : 0.1 + 0.05 * Math.sin(clock / 600));
+            if (hot) {
+              hoveredOutline = outline;
+            }
           }
           continue;
         }
-        rule(outline, 0);
+        rule(outline, hot ? HOVER_GLOW : 0);
+        if (hot) {
+          hoveredOutline = outline;
+        }
 
         const index = square.y * CHUNK_CELLS + square.x;
         const landmark = props.landmarks.get(index);
@@ -1860,6 +1886,19 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
           if (landmark != null) {
             callOut(outline, landmarkCallOut(landmark));
           }
+          continue;
+        }
+        // A patch and a tree are called out in what they bear, which
+        // is the one thing about them worth knowing from a distance.
+        // Read off the bearing rather than off the plant, so a cell
+        // whose drawing is still loading is already coded
+        const bearing = props.berries.get(index);
+
+        if (
+          bearing != null &&
+          (landmark === Landmark.BerryPatch || landmark === Landmark.ApricornTree)
+        ) {
+          callOut(outline, plantCallOut(landmark));
           continue;
         }
         if (plantOn(index) != null) {
@@ -1912,6 +1951,75 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
        * lines, so four corners are the whole of a rectangle however
        * the board is turned
        */
+      /**
+       * The day's featured family, saying so from the ground: rings
+       * travelling out of the cell it is standing on.
+       *
+       * Drawn as a circle in the world rather than a circle on the
+       * screen, so it lies on the board with everything else on it and
+       * turns when the camera does. Under whatever is standing there,
+       * since it is a fact about the ground
+       */
+      const ripple = (index: number, spread: number, alpha: number): void => {
+        const spot = boardCellOf(index);
+        const midU = (spot.x + 0.5) / CHUNK_CELLS;
+        const midV = (spot.y + 0.5) / CHUNK_CELLS;
+        const radius = spread / CHUNK_CELLS / 2;
+        const ring: ProjectedPoint[] = [];
+
+        for (let step = 0; step < RIPPLE_POINTS; step++) {
+          const angle = (step / RIPPLE_POINTS) * Math.PI * 2;
+
+          ring.push(
+            at(
+              projectGround(
+                { u: midU + Math.cos(angle) * radius, v: midV + Math.sin(angle) * radius },
+                yaw(),
+              ),
+            ),
+          );
+        }
+        if (batch != null) {
+          batch.outline(COLORS.featured, ring, 2, alpha);
+          return;
+        }
+        context.beginPath();
+        context.moveTo(ring[0].x, ring[0].y);
+        for (const corner of ring.slice(1)) {
+          context.lineTo(corner.x, corner.y);
+        }
+        context.closePath();
+
+        const prior = context.globalAlpha;
+
+        context.globalAlpha = prior * alpha;
+        context.strokeStyle = COLORS.featured;
+        context.lineWidth = 2;
+        context.stroke();
+        context.lineWidth = 1;
+        context.globalAlpha = prior;
+      };
+
+      for (const [index, standing] of props.spawns) {
+        if (!standing.featured) {
+          continue;
+        }
+        // Two rings in the air at once, half a period apart, so the
+        // cell is never without one
+        for (let ring = 0; ring < RIPPLE_RINGS; ring++) {
+          const phase = (clock / RIPPLE_PERIOD + ring / RIPPLE_RINGS) % 1;
+
+          ripple(index, 0.2 + phase * RIPPLE_SPREAD, (1 - phase) * RIPPLE_ALPHA);
+        }
+      }
+
+      // The cell under the cursor, ruled after the whole grid is laid:
+      // its neighbours draw their own edges over it, so a ring left in
+      // the loop would come out with two sides missing
+      if (hoveredOutline != null) {
+        callOut(hoveredOutline, COLORS.highlight);
+      }
+
       const reach = reachOutline();
 
       if (reach != null) {
@@ -2438,7 +2546,9 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
             setHovered(null);
             return;
           }
-          setHovered(cellAt(event));
+          // A finger is not a cursor: a tap ends with the board lit
+          // under wherever it landed, and nothing takes it away again
+          setHovered(event.pointerType === 'touch' ? null : cellAt(event));
         }}
         onPointerUp={(event) => {
           twist.up(event);

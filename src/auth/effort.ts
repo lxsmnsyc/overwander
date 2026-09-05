@@ -67,6 +67,42 @@ export function assignableEffort(caught: EffortTrained, stat: Stats): number {
 }
 
 /**
+ * The six values with a whole spread of points moved into them, or
+ * null when the spread is not one the pokemon can make.
+ *
+ * The catch sheet spends in one go rather than a press at a time, so
+ * the budget has to be checked against the **total** rather than
+ * against each stat in turn: six presses that are each affordable
+ * alone are not six presses the pokemon can pay for
+ */
+export function assignEfforts(
+  caught: EffortTrained,
+  spread: Partial<Record<Stats, number>>,
+): Record<Stats, number> | null {
+  const values = { ...caught.effortValues };
+  let total = 0;
+
+  for (const stat of STAT_ORDER) {
+    const step = Math.trunc(spread[stat] ?? 0);
+
+    if (step === 0) {
+      continue;
+    }
+    const wanted = values[stat] + step;
+
+    if (wanted < 0 || wanted > MAX_EFFORT_PER_STAT) {
+      return null;
+    }
+    values[stat] = wanted;
+    total += step;
+  }
+  if (total === 0 || total > unusedEffort(caught)) {
+    return null;
+  }
+  return values;
+}
+
+/**
  * The six values with `amount` moved into one stat, or null when the
  * move is not one the pokemon can make.
  *

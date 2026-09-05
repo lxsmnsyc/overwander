@@ -1,7 +1,7 @@
 import 'server-only';
 import { ITEM_STACKS } from '../auth/stacks';
 import type { Items } from '../data/ids/items';
-import { grantStack, grantStacks, spendStack } from './stacks';
+import { grantStack, grantStacks, readStack, spendStack } from './stacks';
 
 /**
  * The bag, written over the owner connection. Items are value: a
@@ -31,6 +31,15 @@ export async function grantItem(uid: string, item: Items, count = 1): Promise<vo
  */
 export async function consumeItem(uid: string, item: Items, count = 1): Promise<boolean> {
   return spendStack(ITEM_STACKS, uid, item, count);
+}
+
+/**
+ * Whether the player carries any of it. A check rather than a spend,
+ * for the places that ask to be holding something before doing
+ * anything with it
+ */
+export async function holdsItem(uid: string, item: Items): Promise<boolean> {
+  return (await readStack(ITEM_STACKS, uid, item)) > 0;
 }
 
 /**

@@ -27,6 +27,12 @@ import { CELL, COLORS } from './metrics';
 export interface SpawnCoat {
   species: Species;
   shiny: boolean;
+  /**
+   * Whether it belongs to the day's featured family. The board rings
+   * the cell to say so: the crowded pool and the eight-fold shininess
+   * are the reason to walk over rather than past
+   */
+  featured: boolean;
 }
 
 /**
@@ -228,6 +234,16 @@ export function landmarkCallOut(landmark: Landmark): string {
     return COLORS.rocket;
   }
   return isFightingLandmark(landmark) ? COLORS.fight : COLORS.serve;
+}
+
+/**
+ * The colour a plant's cell is called out in: one for a berry patch
+ * and one for an apricorn tree, the way a landmark's cell says what
+ * kind of person is standing on it. Which berry or which apricorn is
+ * the plant drawn on the cell, not a shade of the ring
+ */
+export function plantCallOut(landmark: Landmark): string {
+  return landmark === Landmark.ApricornTree ? COLORS.apricorn : COLORS.berry;
 }
 
 /**

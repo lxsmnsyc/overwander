@@ -114,7 +114,7 @@ export async function buyFromVendor(
     return null;
   }
 
-  const snapshot = await resolveNpc(x, y, cell, now, offset, trader);
+  const snapshot = resolveNpc(x, y, cell, now, offset, trader);
 
   if (snapshot == null) {
     return null;
@@ -158,7 +158,7 @@ export async function sellToVendor(
     return null;
   }
 
-  const snapshot = await resolveNpc(x, y, cell, now, offset, trader);
+  const snapshot = resolveNpc(x, y, cell, now, offset, trader);
 
   if (snapshot == null) {
     return null;

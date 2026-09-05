@@ -1,5 +1,6 @@
 import { isHoldable } from './describe';
 import BattleData from '../../app/battle-data';
+import CandySprite from '../../sprites/CandySprite';
 import BattleSection from './sections/BattleSection';
 import EvolutionSection from './sections/EvolutionSection';
 import HistorySection from './sections/HistorySection';
@@ -7,7 +8,7 @@ import PortraitSection from './sections/PortraitSection';
 import StatsSection from './sections/StatsSection';
 import { isAuctionableCatch } from '../../../auth/auctions';
 import { setBuddy } from '../../../auth/buddy';
-import { getCandyCost, getCatchCandy, useCandy } from '../../../auth/candy';
+import { getCandyCost, getReleaseCandy, useCandy } from '../../../auth/candy';
 import {
   type CaughtPokemon,
   giveItem,
@@ -30,7 +31,7 @@ import { type EvolutionOption, evolveCatch } from '../../../auth/evolution';
 import type { InventoryEntry } from '../../../auth/inventory';
 import { learnLevelUpMove } from '../../../auth/moves';
 import type { PokedexView } from '../../../auth/pokedex';
-import { trainEffort } from '../../../auth/training';
+import { trainEfforts } from '../../../auth/training';
 
 import { MAX_LEVEL } from '../../../data/constants/levels';
 
@@ -69,7 +70,7 @@ import {
 import IncreasePPDialog from '../IncreasePPDialog';
 import TeachMoveDialog from '../TeachMoveDialog';
 
-import { type JSX, type Resource, Show, createSignal } from 'solid-js';
+import { type JSX, type Resource, Show, createEffect, createSignal, onCleanup } from 'solid-js';
 
 /**
  * Re-exported from where the battle card reads them too: an ability on
@@ -123,6 +124,16 @@ export interface CatchDialogProps {
    */
   readOnly?: boolean;
 }
+
+/**
+ * How long the sheet waits after the last candy press before sending
+ * them. Long enough to gather a run of presses, short enough that a
+ * player who pressed once and looked away is not left wondering
+ */
+const CANDY_SETTLE = 500;
+
+/** How large a candy is drawn on the toast that says a release paid it */
+const CANDY_ART = 24;
 
 /**
  * One catch in full, shown over the list it was opened from
@@ -314,14 +325,97 @@ export function CatchSheetBody(
    * Saying no is allowed and costs nothing. It is only final once the
    * next candy takes the pokemon past the level
    */
-  const offerLevelMoves = (level: number): void => {
+  const offerLevelMoves = (from: number, to: number = from): void => {
     const caught = view();
-    const learning = caught == null ? [] : getLevelMoves(caught, level);
 
+    if (caught == null) {
+      return;
+    }
+    const learning: Moves[] = [];
+
+    for (let level = from; level <= to; level++) {
+      learning.push(...getLevelMoves(caught, level));
+    }
     if (learning.length > 0) {
       setTeaching({ move: learning[0], rest: learning.slice(1), levelled: true });
     }
   };
+
+  /**
+   * Levels pressed for but not yet sent, and the level the server last
+   * said it reached.
+   *
+   * A candy is pressed several times in a row, and one call a press
+   * meant a round trip between each of them: the number crawled up
+   * behind the finger. The presses are counted here instead, shown at
+   * once, and sent as one call when the player stops. `reached` holds
+   * the answer until the record catches up with it, so the level does
+   * not fall back for the moment between the two
+   */
+  const [queued, setQueued] = createSignal(0);
+  const [reached, setReached] = createSignal(0);
+  let feeding: ReturnType<typeof setTimeout> | null = null;
+
+  // A different pokemon on the sheet is a different pile of presses
+  createEffect(() => {
+    props.catchId;
+    setQueued(0);
+    setReached(0);
+  });
+
+  /** The level as the sheet is showing it, presses and all */
+  const shownLevel = (): number => Math.max(view()?.level ?? 0, reached()) + queued();
+
+  /** The pile as the sheet is showing it, with what the presses would spend taken off */
+  const shownCandies = (): number =>
+    Math.max(0, (props.candies.latest ?? 0) - queued() * getCandyCost(view() ?? { shadow: false }));
+
+  /**
+   * Hand over every press at once. The server grows as far as the pile
+   * actually stretches and answers with the level it reached, so a
+   * sheet that counted further than the bag goes back to the truth
+   */
+  const flushCandy = (): void => {
+    const catchId = props.catchId;
+    const levels = queued();
+
+    feeding = null;
+    if (catchId == null || levels < 1) {
+      return;
+    }
+    const from = view()?.level ?? 0;
+
+    useCandy(catchId, levels)
+      .then((level) => {
+        setQueued((waiting) => Math.max(0, waiting - levels));
+        setReached(level ?? 0);
+        say(level == null ? 'That candy could not be used.' : `Grew to level ${level}.`);
+        props.onRecordChanged();
+        props.onCandiesChanged();
+        props.onEvolutionsChanged();
+        props.onChange?.();
+
+        // Every level it passed through, not only the one it stopped
+        // on: a jump of five can cross five moves
+        if (level != null) {
+          offerLevelMoves(from + 1, level);
+        }
+      })
+      .catch((caught: unknown) => {
+        setQueued((waiting) => Math.max(0, waiting - levels));
+        say(caught instanceof Error ? caught.message : String(caught), 'ember');
+        props.onRecordChanged();
+        props.onCandiesChanged();
+      });
+  };
+
+  // Whatever is still counted when the sheet goes is still owed
+  onCleanup(() => {
+    if (feeding != null) {
+      clearTimeout(feeding);
+      flushCandy();
+    }
+  });
 
   const feedCandy = (): void => {
     const uid = owned();
@@ -330,21 +424,11 @@ export function CatchSheetBody(
     if (uid == null || catchId == null) {
       return;
     }
-    useCandy(catchId)
-      .then((level) => {
-        say(level == null ? 'That candy could not be used.' : `Grew to level ${level}.`);
-        props.onRecordChanged();
-        props.onCandiesChanged();
-        props.onEvolutionsChanged();
-        props.onChange?.();
-
-        if (level != null) {
-          offerLevelMoves(level);
-        }
-      })
-      .catch((caught: unknown) => {
-        say(caught instanceof Error ? caught.message : String(caught), 'ember');
-      });
+    setQueued((waiting) => waiting + 1);
+    if (feeding != null) {
+      clearTimeout(feeding);
+    }
+    feeding = setTimeout(flushCandy, CANDY_SETTLE);
   };
 
   /**
@@ -404,22 +488,21 @@ export function CatchSheetBody(
   };
 
   /**
-   * Spend effort on one stat. The server decides it against the stored
-   * record and the sheet re-reads rather than trusting its own
-   * arithmetic.
+   * Spend effort, a whole spread at once. The server decides it
+   * against the stored record and the sheet re-reads rather than
+   * trusting its own arithmetic.
    *
-   * Nothing is said when it lands: the bar, the number beside it and
-   * the remaining total are all on screen and all move, so a toast
-   * repeating them is a second answer to a question already answered
-   * — and these are pressed a point at a time
+   * One call rather than one per press: the pane holds what has been
+   * laid out and hands it over when the player saves, so filling six
+   * stats costs one round trip instead of thirty
    */
-  const train = (stat: Stats, amount: number): void => {
+  const train = (spread: Partial<Record<Stats, number>>): void => {
     const catchId = props.catchId;
 
     if (owned() == null || catchId == null) {
       return;
     }
-    trainEffort(catchId, stat, amount)
+    trainEfforts(catchId, spread)
       .then((result) => {
         if (result == null) {
           say('Those points could not be moved.', 'ember');
@@ -610,7 +693,10 @@ export function CatchSheetBody(
     // Read before the record goes: once the release lands there is
     // nothing left to ask what it was
     const { family, name } = getSpeciesData(going.species);
-    const paid = getCatchCandy(going.species);
+    const paid = getReleaseCandy(going);
+    // A released pokemon hands back whatever it was carrying, which is
+    // easy to forget and impossible to undo
+    const held = going.items.length;
 
     if (!releasing()) {
       setReleasing(true);
@@ -630,7 +716,9 @@ export function CatchSheetBody(
         // The family is named — candy is held per family, so "1 candy"
         // on its own does not say which pile grew
         toast.push({
-          message: `${name} was let go. ${paid} ${getFamilyName(family)} candy.`,
+          title: `${paid} ${getFamilyName(family)} candy`,
+          message: `${name} was let go.${held > 0 ? ' What it was holding is back in the bag.' : ''}`,
+          art: () => <CandySprite family={family} size={CANDY_ART} label="" />,
           tone: 'leaf',
         });
         // The record is gone, so there is nothing left for this
@@ -966,28 +1054,32 @@ export function CatchSheetBody(
                       when={owned() != null && !isEgg(loaded())}
                       fallback={<Badge tone="leaf">Lv. {loaded().level}</Badge>}
                     >
+                      {/* Pressed as often as the player likes: the
+                        level and the pile move at once and the
+                        presses are sent together when they stop */}
                       <Button
                         tone="primary"
                         disabled={
-                          (props.candies.latest ?? 0) < getCandyCost(loaded()) ||
-                          loaded().level >= MAX_LEVEL ||
+                          shownCandies() < getCandyCost(loaded()) ||
+                          shownLevel() >= MAX_LEVEL ||
                           frozen()
                         }
                         onClick={feedCandy}
                       >
-                        {loaded().level >= MAX_LEVEL
-                          ? `Lv. ${loaded().level} — at the cap`
-                          : `Lv. ${loaded().level} → ${loaded().level + 1} (${getCandyCost(
-                              loaded(),
-                            )})`}
+                        {shownLevel() >= MAX_LEVEL
+                          ? `Lv. ${shownLevel()} — at the cap`
+                          : `Lv. ${shownLevel()} → ${shownLevel() + 1} (${getCandyCost(loaded())})`}
                       </Button>
                     </Show>
                     <Show when={!isEgg(loaded())}>
                       <Badge>{NATURE_NAMES[loaded().nature]}</Badge>
                     </Show>
+                    {/* The family's own sweets, drawn: a number beside
+                      the word said neither which family nor what a
+                      pile of them looks like */}
                     <Badge tone="gold">
-                      {props.candies.latest ?? 0}{' '}
-                      {(props.candies.latest ?? 0) === 1 ? 'candy' : 'candies'}
+                      <CandySprite family={getSpeciesData(loaded().species).family} label="" />
+                      {shownCandies()} {shownCandies() === 1 ? 'candy' : 'candies'}
                     </Badge>
                   </Row>
 
@@ -1112,7 +1204,7 @@ export function CatchSheetBody(
                           onClick={release}
                         >
                           {releasing()
-                            ? `Let it go for ${getCatchCandy(loaded().species)} candy?`
+                            ? `Let it go for ${getReleaseCandy(loaded())} candy?`
                             : 'Release'}
                         </Button>
                         <Show when={releasing()}>
@@ -1125,6 +1217,19 @@ export function CatchSheetBody(
                           </Button>
                         </Show>
                       </Row>
+                      {/* What letting it go pays, before the second
+                          press rather than after it. What it is
+                          holding comes back too, which is the half a
+                          player forgets */}
+                      <Show when={releasing() && loaded().items.length > 0}>
+                        <Meta>
+                          What it is holding comes back to the bag:{' '}
+                          {loaded()
+                            .items.map((item) => describeItem(item))
+                            .join(', ')}
+                          .
+                        </Meta>
+                      </Show>
                       <Show when={isFavorite(loaded())}>
                         <Meta>A favorite cannot be released. Unfavorite it first.</Meta>
                       </Show>

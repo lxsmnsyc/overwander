@@ -199,13 +199,15 @@ async function enterRaidOnServer(
 
 /**
  * Open a mythical raid with a raid item, where the player is
- * standing. The relic is spent in the calling — a mythical raid is
- * fought once, won or lost — so the server checks that it is carried
- * and takes it before the lobby exists.
+ * standing. Opening costs nothing: the server checks the relic is
+ * carried and leaves it in the bag, and it is spent when the raid
+ * starts, so a mythical is fought once, won or lost. One relic opens
+ * one lobby a window, so pressing it again is the way back into a
+ * lobby that was walked away from.
  *
  * Resolves the lobby id and its record, or null when the item calls
  * nothing, is not carried, the player owns no pokemon to field, or
- * the relic has already been spent on this window's lobby
+ * this window's lobby for it has already been fought out
  */
 export async function hostMythicalRaid(
   snapshot: ChunkSnapshot,

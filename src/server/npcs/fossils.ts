@@ -40,7 +40,7 @@ export async function buyFossil(
   now: number,
   offset: number,
 ): Promise<TradeResult | null> {
-  const snapshot = await resolveNpc(x, y, cell, now, offset, Npc.FossilManiac);
+  const snapshot = resolveNpc(x, y, cell, now, offset, Npc.FossilManiac);
 
   if (snapshot == null) {
     return null;
@@ -123,7 +123,7 @@ export async function carveApricorns(
   now: number,
   offset: number,
 ): Promise<{ ball: Items; amount: number } | null> {
-  const snapshot = await resolveNpc(x, y, cell, now, offset, Npc.Kurt);
+  const snapshot = resolveNpc(x, y, cell, now, offset, Npc.Kurt);
   const ball = getApricornBall(item);
   const carving = Math.floor(amount);
 
@@ -154,7 +154,7 @@ export async function reviveFossil(
   offset: number,
   locale: string,
 ): Promise<RevivedFossil | null> {
-  const snapshot = await resolveNpc(x, y, cell, now, offset, Npc.FossilScientist);
+  const snapshot = resolveNpc(x, y, cell, now, offset, Npc.FossilScientist);
   const species = FOSSIL_SPECIES.get(item);
 
   if (snapshot == null || species == null) {

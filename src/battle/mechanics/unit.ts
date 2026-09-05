@@ -174,13 +174,21 @@ function setupUnitStatMechancis(battle: Battle): void {
   });
 
   battle.on(BattleEvents.UnitSetStat, EventPriority.Exact, (event) => {
-    // when changing HP stat, scale current health
-    if (event.stat === Stats.HP) {
-      const max = event.source.checkStat(event.stat, 0);
-      const current = event.source.health;
-      event.source.setHealth((current / max) * event.value);
-    }
+    // A moved pool keeps the share, not the number. What is being
+    // written is a base stat, an individual value or an effort value,
+    // never a pool of its own, so the share is taken against the old
+    // maximum, the stat lands, and the health is measured against
+    // what the three now come to. A unit that was down stays down
+    const share =
+      event.stat === Stats.HP
+        ? event.source.health / Math.max(1, event.source.checkStat(Stats.HP, 0))
+        : 0;
+
     event.source.stats[event.kind][event.stat] = event.value;
+
+    if (event.stat === Stats.HP) {
+      event.source.setHealth(share * event.source.checkStat(Stats.HP, 0));
+    }
   });
 
   battle.on(BattleEvents.CheckUnitStat, EventPriority.Exact, (event) => {

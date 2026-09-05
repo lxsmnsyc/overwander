@@ -1,10 +1,11 @@
 import 'server-only';
 import BattleOutcome from '../../auth/battle-outcome';
 import { UNLIMITED_BATTLE_LIMITS } from '../../data/constants/battle-limits';
-import { RaidKind, type RaidRecord, asRaidRecord } from '../../auth/raid-record';
+import { RaidKind, type RaidRecord, asRaidRecord, mythicalRelicOf } from '../../auth/raid-record';
 import { BOSS_ALLIANCE, PLAYER_ALLIANCE, createRaidBossSnapshot } from '../../overworld/raid';
 import { getSql, jsonOf, newDocId, tx } from '../db';
 import { foughtBattle, readBattle, readRaid, readTeam } from '../raid-io';
+import { consumeItem } from '../inventory';
 import { releaseBattleLocks } from '../locks';
 import { recordSeenOpponents } from '../pokedex';
 import { asOutcome } from './outcome';
@@ -45,6 +46,26 @@ export async function startRaid(uid: string, lobby: string, now: number): Promis
     const current = await readRaid(lobby);
 
     return typeof current?.battle === 'string' ? current.battle : null;
+  }
+
+  // The relic is spent here rather than at the calling: a lobby that
+  // never started costs nothing, and the one that does costs the
+  // relic whichever way the fight goes.
+  //
+  // After the claim, so two starts racing cannot both eat it, and the
+  // claim is given back when the relic is not there to spend: this
+  // start is the only one holding that battle id, so putting it back
+  // is safe and leaves the lobby exactly as it was found
+  if (raid.kind === RaidKind.Mythical) {
+    const relic = mythicalRelicOf(lobby);
+
+    if (relic == null || !(await consumeItem(uid, relic))) {
+      await getSql()`
+        update raids set battle_id = null
+        where id = ${lobby} and battle_id = ${battleId}
+      `;
+      return null;
+    }
   }
 
   // Every party at once. Each freezes a whole team of its own and

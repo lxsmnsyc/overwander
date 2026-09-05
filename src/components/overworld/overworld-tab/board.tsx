@@ -1,7 +1,7 @@
 import { type ChunkView, buildChunkView, naming } from './chunk-view';
 import challengerOf, { championGate, eliteGate, frontierGate } from './challengers';
 import { describeItem } from '../../details';
-import { type Journey, describeStash, stateOf } from './journey';
+import { type Journey, stateOf } from './journey';
 import { useAuth } from '../../../auth/context';
 import { settled } from '../../app/resource-reads';
 import { type Direction, actionOf, forTheGame } from '../../app/keys';
@@ -60,6 +60,7 @@ import { VENDOR_KIND_NAMES } from '../../../data/overworld/vendor';
 import type Phenomenon from '../../../data/overworld/phenomenon';
 import { PHENOMENON_NAMES } from '../../../data/overworld/phenomenon';
 import { getSpeciesData } from '../../../data/species';
+import { isFeaturedSpecies } from '../../../data/species/day';
 import { CHUNK_CELLS } from '../../../overworld/chunk';
 import type ChunkSnapshot from '../../../overworld/chunk-snapshot';
 import type { Buddy } from '../../../overworld/core';
@@ -71,6 +72,7 @@ import { GameDialog, useGame } from '../../app/game-context';
 import { createCellNotes } from '../cell-notes';
 import watchLive from '../../app/watch';
 import ItemSprite from '../../items/ItemSprite';
+import sayItems from '../../items/say-items';
 import RaidDialog from '../../raids/RaidDialog';
 import { Badge, Button, Note, useToast } from '../../styled';
 import NestDialog, { type EggSource, type EggState } from '../NestDialog';
@@ -98,6 +100,7 @@ import {
 import {
   CROSSING_LIMIT,
   FIGHT_LANDMARKS,
+  HARVEST_LANDMARKS,
   ICON_SIZE,
   PUBLISHED_SPAWNS,
   REFRESH_DEBOUNCE,
@@ -591,6 +594,29 @@ export default function OverworldBoard(props: {
   });
 
   /**
+   * The cells whose claim is still with the server.
+   *
+   * A cache, a patch, a tree and a happening all pay out on the press
+   * itself: nothing opens over the board to stop a second press, and
+   * the cell goes on looking exactly as it did until the answer comes
+   * back. Held shut until it does, so a mashed cell is claimed once
+   */
+  const [claiming, setClaiming] = createSignal<Set<number>>(new Set());
+
+  const holdCell = (index: number, held: boolean): void => {
+    setClaiming((cells) => {
+      const next = new Set(cells);
+
+      if (held) {
+        next.add(index);
+      } else {
+        next.delete(index);
+      }
+      return next;
+    });
+  };
+
+  /**
    * What is going on at a cell, once what this player has already had
    * is taken out of it
    */
@@ -844,7 +870,7 @@ export default function OverworldBoard(props: {
         // the player is looking at the map rather than at their
         // inventory, and nothing else would tell them
         if (report != null && report.picked.length > 0) {
-          remark(`Your buddy picked up ${describeStash(report.picked)}.`, 'leaf');
+          sayItems(toast, report.picked, 'Your buddy found');
         }
       })
       .catch(() => {
@@ -1247,6 +1273,21 @@ export default function OverworldBoard(props: {
       // leaves no lobby standing behind them
       const standing = await peekRaid(loaded.snapshot, at, kind);
 
+      // Their own lobby, walked back into. The dialog exists to put
+      // the lair to somebody deciding about it, and a host has already
+      // decided: it opened with a Join button on a raid they were
+      // standing in. Straight through to the lobby, or to the fight
+      // where they have already started it
+      if (standing?.hosting === true) {
+        if (standing.battle != null) {
+          game.setBattle({ id: standing.battle, replay: true });
+          return null;
+        }
+        game.setRaid(standing.lobby);
+        game.setDialog(GameDialog.Raids);
+        return null;
+      }
+
       // Either the window stages no raid here, it has been cleared, or
       // there is nothing standing and nothing to stage it with. The
       // dialog opens for all of it: a player who pressed a lair is
@@ -1294,7 +1335,18 @@ export default function OverworldBoard(props: {
    */
   const holdsSomething = (loaded: ChunkView | null, index: number): boolean =>
     loaded != null &&
+    !claiming().has(index) &&
     (loaded.spawns.has(index) || loaded.landmarks.has(index) || showing(loaded, index) != null);
+
+  /**
+   * Whether pressing the cell spends it on the spot, rather than
+   * opening something the player answers afterwards
+   */
+  const paysOnPress = (loaded: ChunkView, index: number): boolean => {
+    const landmark = loaded.landmarks.get(index);
+
+    return (landmark != null && HARVEST_LANDMARKS.has(landmark)) || showing(loaded, index) != null;
+  };
 
   /**
    * Whether the player can reach the cell from where they stand: the
@@ -1322,6 +1374,14 @@ export default function OverworldBoard(props: {
       return;
     }
     setBusy(true);
+    // Held shut for as long as the answer takes: `busy` is dropped the
+    // moment this one lands, and the cell would be pressable again
+    // before the board had any reason to look different
+    const spends = paysOnPress(loaded, index);
+
+    if (spends) {
+      holdCell(index, true);
+    }
     // Whatever the cell had to say, said in passing.
     //
     // It used to be a line pinned over the bottom of the map, and it
@@ -1341,6 +1401,9 @@ export default function OverworldBoard(props: {
       })
       .finally(() => {
         setBusy(false);
+        if (spends) {
+          holdCell(index, false);
+        }
       });
   };
 
@@ -1538,7 +1601,10 @@ export default function OverworldBoard(props: {
   const press = (target: BoardCell): void => {
     const loaded = view();
 
-    if (loaded == null || engaged()) {
+    // A press while a claim is in flight is a second press on it: the
+    // board looks the same, and dropping it here leaves the walk it
+    // would otherwise have cancelled alone
+    if (loaded == null || engaged() || busy()) {
       return;
     }
 
@@ -1862,7 +1928,13 @@ export default function OverworldBoard(props: {
                   new Map(
                     [...loaded().spawns].map(([at, standing]) => [
                       at,
-                      { species: standing.spawn[0], shiny: standing.shiny },
+                      {
+                        species: standing.spawn[0],
+                        shiny: standing.shiny,
+                        // Against the window's own instant, which is
+                        // what the server weighted the pool by
+                        featured: isFeaturedSpecies(standing.spawn[0], loaded().snapshot.timestamp),
+                      },
                     ]),
                   )
                 }

@@ -662,11 +662,11 @@ same transaction, so nothing is left pointing at a record that has vanished:
   fight is running on a snapshot of a record that has to still be there when it
   ends.
 
-Releasing pays the family `getCatchCandy` of the released species, the same
-rarity-scaled amount catching it paid, and written inside the same transaction as
-the deletion, so a record cannot vanish without the candy landing. The family-day
-bonus is not paid again: it belongs to meeting the pokemon, not to parting with
-it.
+Releasing pays the family `getReleaseCandy` of the released record, one candy per
+25 levels rounded up, so a level 76 to 100 pokemon pays 4 and a fresh catch pays
+1. It is written inside the same transaction as the deletion, so a record cannot
+vanish without the candy landing. Rarity has no say on the way out, and neither
+does the family-day bonus: that one belongs to meeting the pokemon.
 
 The dialog asks twice before calling it, and there is no undo.
 

@@ -1,11 +1,11 @@
 import { LockedCard, QuestCard, RotationCard } from './cards';
-import { describePayout } from './describe';
+import { describeReward } from './describe';
 import type { QuestStanding } from '../../../auth/quest-record';
 import { claimQuest } from '../../../auth/quests';
 import { type RotationBoard, type RotationScope, claimRotation } from '../../../auth/rotations';
 import { CHAINS, CHAIN_ORDER, type Chains, type Quests } from '../../../data/quests';
+import { QuestRewardKind } from '../../../data/quests/types';
 import { GameDialog, useGame } from '../../app/game-context';
-import { describeItem } from '../../details';
 import { Badge, DialogSection, type ToastTone, useToast } from '../../styled';
 import { For, Index, type JSX, type Resource, Show, createEffect, createSignal } from 'solid-js';
 import {
@@ -16,6 +16,7 @@ import {
   AccordionPanel,
 } from 'terracotta';
 import { ChevronRightIcon } from '../../icons';
+import sayItems from '../../items/say-items';
 
 export default function QuestBoard(props: {
   standings: Resource<QuestStanding[]>;
@@ -102,10 +103,9 @@ export default function QuestBoard(props: {
           say('That quest is not ready to claim.', 'ember');
           return;
         }
-        say(
-          `Received ${paid.map((one) => `${one.amount} × ${describeItem(one.item)}`).join(', ')}.`,
-          'leaf',
-        );
+        // One line per kind with the item drawn beside it, the way a
+        // stash out of the ground is said
+        sayItems(toast, paid, 'Quest reward');
       })
       .catch(() => {
         say('That could not be claimed.', 'ember');
@@ -127,7 +127,16 @@ export default function QuestBoard(props: {
           say('That quest is not ready to claim.', 'ember');
           return;
         }
-        say(`Received ${describePayout(payout)}.`, 'leaf');
+        // The items are drawn rather than listed; whatever else a quest
+        // pays is a sentence, since a meeting and an egg arrive by
+        // themselves anyway
+        const paid = payout.rewards.filter((one) => one.kind === QuestRewardKind.Item);
+        const rest = payout.rewards.filter((one) => one.kind !== QuestRewardKind.Item);
+
+        sayItems(toast, paid, 'Quest reward');
+        if (rest.length > 0) {
+          say(`Received ${rest.map(describeReward).join(', ')}.`, 'leaf');
+        }
 
         if (payout.egg != null) {
           game.touchRecords();

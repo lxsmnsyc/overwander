@@ -32,8 +32,10 @@ import {
   countDefeated,
   createRaidBattle,
 } from '../../../overworld/raid-battle';
+import Npc from '../../../data/overworld/npc';
 import { createTrainerBattle } from '../../../overworld/stop-battle';
 import BattleField from '../BattleField';
+import CandySprite from '../../sprites/CandySprite';
 import VerdictDialog from './VerdictDialog';
 import { type Contribution, type SideSummary, readContributions, readSides } from './summary';
 import CatchDialog from '../../catches/catch-dialog';
@@ -76,27 +78,28 @@ export interface BattleViewProps {
  * leaves the legendary waiting in the overworld. A replay settles
  * nothing and can be walked out of at any point
  */
+/** How large a candy is drawn on the toast that says a fight paid it */
+const CANDY_ART = 24;
+
 export default function BattleView(props: BattleViewProps): JSX.Element {
   const game = useGame();
   const auth = useAuth();
   const toast = useToast();
 
   /**
-   * What the team brought home for having fought: a candy each, said
-   * once rather than a line per pokemon
+   * What the team brought home for having fought: a pile a family,
+   * each drawn as the family's own candy. One line per pile rather
+   * than a sentence listing them, since which pile grew is the thing
+   * being reported
    */
   const sayCandy = (earned: CandyEarned[]): void => {
-    if (earned.length === 0) {
-      return;
+    for (const pile of earned) {
+      toast.push({
+        title: `${pile.count} ${getFamilyName(pile.family)} candy`,
+        art: () => <CandySprite family={pile.family} size={CANDY_ART} label="" />,
+        tone: 'leaf',
+      });
     }
-
-    const total = earned.reduce((sum, one) => sum + one.count, 0);
-
-    toast.push({
-      title: `${total} candy`,
-      message: earned.map((one) => `${getFamilyName(one.family)} × ${one.count}`).join(', '),
-      tone: 'leaf',
-    });
   };
 
   // Followed rather than read once: the outcome is stamped by
@@ -346,9 +349,15 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
       return 'The other side went down.';
     }
     if (props.active.stop != null) {
-      const beaten = opponent()?.name ?? 'The grunt';
-
-      return `${beaten} is beaten. What was left behind is waiting in the overworld.`;
+      // Only a grunt leaves the pokemon they were beaten with. A
+      // duelling trainer, a gym leader and the three rungs above them
+      // keep their party and pay a purse, so a win at one of those
+      // stops must not send the player looking for something standing
+      // in the overworld
+      if (props.active.npc === Npc.Trainer) {
+        return `${opponent()?.name ?? 'The trainer'} is beaten. They keep their party, and the purse is yours.`;
+      }
+      return `${opponent()?.name ?? 'The grunt'} is beaten. What was left behind is waiting in the overworld.`;
     }
     // A fight between players pays nothing on purpose, so what a win
     // says is the win itself

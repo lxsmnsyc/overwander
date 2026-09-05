@@ -85,12 +85,14 @@ import {
   speciesFormIndex,
   unownLetter,
 } from '../src/data/ids/species';
+import { MAX_LEVEL } from '../src/data/constants/levels';
 import {
   CANDY_PER_LEVEL,
   SHADOW_CANDY_MULTIPLIER,
   SPECIES_DAY_CANDY_BOOST,
   getCandyCost,
   getCatchCandy,
+  getReleaseCandy,
 } from '../src/auth/candy';
 import registerItems, {
   ITEM_TYPE_NAMES,
@@ -155,6 +157,7 @@ import {
 } from '../src/data/overworld/fossil';
 import { FOSSIL_SPECIES, isFossil, listFossils } from '../src/data/items/fossils';
 import {
+  MOVE_STOCK_KINDS,
   VENDOR_KINDS,
   VENDOR_KIND_NAMES,
   VENDOR_STAPLES,
@@ -163,7 +166,9 @@ import {
   getChefGoods,
   getVendorGoods,
   isMarketable,
+  rollVendorStock,
   sellPrice,
+  vendorStockSize,
 } from '../src/data/overworld/vendor';
 import { VALUABLE_SELL, isValuable } from '../src/data/items/valuables';
 import { PP_ITEMS, VITAMIN_STATS } from '../src/data/items/vitamins';
@@ -2176,6 +2181,21 @@ describe('species day', () => {
     expect(getCatchCandy(Species.Mewtwo)).toBe(7);
   });
 
+  it('pays a release by the levels that went into it', () => {
+    // One candy per 25 levels, rounded up: four bands, the top of
+    // which is anything from 76 to the cap
+    expect(getReleaseCandy({ level: 1 })).toBe(1);
+    expect(getReleaseCandy({ level: 25 })).toBe(1);
+    expect(getReleaseCandy({ level: 26 })).toBe(2);
+    expect(getReleaseCandy({ level: 75 })).toBe(3);
+    expect(getReleaseCandy({ level: 76 })).toBe(4);
+    expect(getReleaseCandy({ level: MAX_LEVEL })).toBe(4);
+
+    // What it took to raise is always more than what letting it go
+    // hands back, so releasing is never a way to stock up
+    expect(getReleaseCandy({ level: MAX_LEVEL })).toBeLessThan(MAX_LEVEL * CANDY_PER_LEVEL);
+  });
+
   it('pays four times over for a catch on the family day', () => {
     // The catch reward and the spawn weight share the same fourfold
     // bonus, so a family day is worth the same wherever it lands
@@ -2604,16 +2624,49 @@ describe('item data', () => {
     // its whole hand
     for (const kind of VENDOR_KINDS) {
       expect(getVendorGoods(kind).length, VENDOR_KIND_NAMES[kind]).toBeGreaterThan(
-        VENDOR_STOCK_KINDS,
+        vendorStockSize(kind),
       );
     }
 
     // The two a player plans a walk around, and nothing else
     expect(VENDOR_STAPLES[VendorKind.Balls]).toEqual([Items.PokeBall]);
     expect(VENDOR_STAPLES[VendorKind.Medicine]).toEqual([Items.Potion]);
-    for (const kind of [VendorKind.Vitamins, VendorKind.Incenses, VendorKind.BattleItems]) {
+    for (const kind of [
+      VendorKind.Vitamins,
+      VendorKind.Incenses,
+      VendorKind.BattleItems,
+      VendorKind.Moves,
+    ]) {
       expect(VENDOR_STAPLES[kind], VENDOR_KIND_NAMES[kind]).toBeUndefined();
     }
+  });
+
+  it('lays out a dozen machines on the machine stall', () => {
+    // Every machine in the game is on its shelf, and nothing else is:
+    // one per teachable move, which is where machines come from
+    expect(new Set(getVendorGoods(VendorKind.Moves))).toEqual(
+      new Set(getTeachableMoves().map((move) => getMachineItem(move))),
+    );
+    for (const item of getVendorGoods(VendorKind.Moves)) {
+      expect(isMachineItem(item), getItemData(item).name).toBe(true);
+    }
+
+    // Twice the usual crate, drawn without repeats, and the same crate
+    // for every player who walks up to that window's stall
+    const rng = new AleaRNG('machine-stall');
+    const crate = rollVendorStock(() => rng.random(), VendorKind.Moves);
+    const elsewhere = new AleaRNG('another-stall');
+
+    expect(crate).toHaveLength(MOVE_STOCK_KINDS);
+    expect(new Set(crate).size).toBe(MOVE_STOCK_KINDS);
+    expect(rollVendorStock(() => elsewhere.random(), VendorKind.Moves)).not.toEqual(crate);
+    for (const item of crate) {
+      expect(isMachineItem(item), getItemData(item).name).toBe(true);
+    }
+
+    // Six is what everybody else lays out
+    expect(vendorStockSize(VendorKind.Balls)).toBe(VENDOR_STOCK_KINDS);
+    expect(vendorStockSize(VendorKind.Moves)).toBe(MOVE_STOCK_KINDS);
   });
 
   it('stocks the other counters from their own shelves', () => {
@@ -3375,11 +3428,8 @@ describe('item data', () => {
     // Every line that asks for one belongs to a generation this game
     // has not registered, so they are named, drawn and priceless
     // rather than stocked or buried
-    const latent = [
-      Items.ShinyStone,
-      Items.DuskStone,
-      Items.DawnStone,
-      Items.IceStone,
+    const stones = [Items.ShinyStone, Items.DuskStone, Items.DawnStone, Items.IceStone];
+    const traded = [
       Items.KingsRock,
       Items.DragonScale,
       Items.UpGrade,
@@ -3391,13 +3441,12 @@ describe('item data', () => {
       Items.Sachet,
       Items.WhippedDream,
     ];
+    const latent = [...stones, ...traded];
 
     for (const item of latent) {
       const data = getItemData(item);
 
-      // Spent on a pokemon, the way the five Kanto stones are
       expect(data.type).toBe(ItemTypes.Evolution);
-      expect(data.flags & ItemFlags.Usable).not.toBe(0);
       // Nothing stocks one, nothing buys one back, and the ground
       // hides none of them
       expect(data.flags & ItemFlags.Marketable).toBe(0);
@@ -3410,17 +3459,20 @@ describe('item data', () => {
       expect(new Set(getVendorGoods()).has(item)).toBe(false);
     }
 
-    // A trade item is used on the pokemon rather than held by it: the
-    // mainline reads one during the trade, and here the trade is a
-    // condition the record answers on its own
-    expect(getItemData(Items.DragonScale).flags & ItemFlags.Holdable).toBe(0);
-    expect(getItemData(Items.DragonScale).flags & ItemFlags.Usable).not.toBe(0);
+    // A stone is spent on the pokemon, the way the five Kanto ones are
+    for (const item of stones) {
+      expect(getItemData(item).flags & ItemFlags.Usable, getItemData(item).name).not.toBe(0);
+    }
 
-    // The King's Rock is the exception, and is both: the evolution it
-    // gates is still out of reach, but what it does in a fight — a
-    // chance of leaving whoever was hit reeling — works today
-    expect(getItemData(Items.KingsRock).flags & ItemFlags.Holdable).not.toBe(0);
-    expect(getItemData(Items.KingsRock).flags & ItemFlags.Usable).not.toBe(0);
+    // A trade item is held rather than spent: the evolution asks what
+    // the pokemon is holding, and only a holdable item can be handed
+    // to one at all
+    for (const item of traded) {
+      const data = getItemData(item);
+
+      expect(data.flags & ItemFlags.Holdable, data.name).not.toBe(0);
+      expect(data.flags & ItemFlags.Usable, data.name).toBe(0);
+    }
 
     // A Razor Claw and a Razor Fang are not trade items at all: what
     // a Weavile and a Gliscor want is a level at night with one in
@@ -3451,6 +3503,22 @@ describe('item data', () => {
       expect(data.flags & ItemFlags.Marketable, data.name).not.toBe(0);
       expect(data.buy, data.name).toBeGreaterThan(0);
       expect(data.sell, data.name).toBeGreaterThan(0);
+    }
+  });
+
+  it('keeps every item an evolution asks to be held holdable', () => {
+    // What broke a Kingdra: the evolution reads what the pokemon
+    // holds, and a pokemon can only be handed a holdable item, so an
+    // item that is asked for and cannot be held gates the line shut
+    for (const species of getRegisteredSpecies()) {
+      for (const evolution of getSpeciesData(species).evolvesInto ?? []) {
+        if ((evolution.method & EvolutionMethod.HeldItem) === 0 || evolution.item == null) {
+          continue;
+        }
+        const data = getItemData(evolution.item);
+
+        expect(data.flags & ItemFlags.Holdable, data.name).not.toBe(0);
+      }
     }
   });
 

@@ -1,9 +1,9 @@
 import {
-  For,
   type JSX,
   type Resource,
   Show,
   Suspense,
+  createEffect,
   createResource,
   createSignal,
 } from 'solid-js';
@@ -11,18 +11,18 @@ import { type CandyStack, getCandies } from '../../auth/candy';
 import { getCaught } from '../../auth/caught';
 import { ItemFlags, type Items, getMachineMove, isMachineItem } from '../../data/ids/items';
 import type { Moves } from '../../data/ids/moves';
-import { getFamilyName } from '../../data/species';
 import { isPPItem } from '../../data/items/vitamins';
 import { type InventoryEntry, getInventory } from '../../auth/inventory';
 import { getItemData } from '../../data/items';
 import CatchPicker from '../catches/catch-picker';
 import IncreasePPDialog from '../catches/IncreasePPDialog';
 import TeachMoveDialog from '../catches/TeachMoveDialog';
+import CandyGrid from './CandyGrid';
 import ItemGrid from './ItemGrid';
 import { describeItem } from '../details';
 import spendItemOn, { getLevelMoves, isUsableOn } from './use-item';
 import { useGame } from '../app/game-context';
-import { Badge, List, ListRow, Note, useToast } from '../styled';
+import { Note, useToast } from '../styled';
 
 export interface InventoryListProps {
   player: string;
@@ -73,6 +73,18 @@ function BagBody(
    * because that is the order the player is thinking in
    */
   const [using, setUsing] = createSignal<Items | null>(null);
+  /**
+   * Bumped after every spend, so the picker re-reads: a potion that
+   * filled a pokemon up should take it out of the list, and the list
+   * is what says there is anything left to use it on
+   */
+  const [spent, setSpent] = createSignal(0);
+  /**
+   * Whether the picker is closing because something was picked rather
+   * than because it was dismissed. A repeatable item leaves it open,
+   * and the picker closes itself either way
+   */
+  let repeating = false;
   const [teaching, setTeaching] = createSignal<Teaching | null>(null);
   const [bottling, setBottling] = createSignal<{ catchId: string; item: Items } | null>(null);
 
@@ -83,8 +95,26 @@ function BagBody(
   /** Everything that was looking at the pokemon it changed */
   const changed = (): void => {
     props.onSpent();
+    setSpent((count) => count + 1);
     game.touchRecords();
   };
+
+  /**
+   * Whether spending it leaves the player where they can spend another
+   * straight away. A machine and a bottle both open a question of
+   * their own, and the picker cannot stand behind it
+   */
+  const repeatable = (item: Items): boolean => !isMachineItem(item) && !isPPItem(item);
+
+  // Nothing left to spend is nothing to keep the picker open for
+  createEffect(() => {
+    const item = using();
+    const carried = props.items.latest;
+
+    if (item != null && carried != null && !carried.some((entry) => entry.item === item)) {
+      setUsing(null);
+    }
+  });
 
   /** Move on to the next move the level offered, or shut the dialog */
   const nextTeaching = (): void => {
@@ -183,33 +213,40 @@ function BagBody(
 
             return item != null && !option.fighting && isUsableOn(item, option.caught);
           }}
+          revision={spent()}
+          // A potion is used on one pokemon after another, so the list
+          // stays up: it is the same question with a different answer,
+          // and closing it after each meant reopening the bag, finding
+          // the same square and pressing it again for every one
           onClose={() => {
+            if (repeating) {
+              repeating = false;
+              return;
+            }
             setUsing(null);
           }}
           onPick={(catchId) => {
             const item = using();
 
-            setUsing(null);
-            if (catchId != null && item != null) {
-              spend(catchId, item);
+            if (catchId == null || item == null) {
+              setUsing(null);
+              return;
             }
+            repeating = repeatable(item);
+            spend(catchId, item);
           }}
         />
       </Show>
 
       <h4>Candies</h4>
-      <Show when={props.candies()?.length} fallback={<Note>No candies.</Note>}>
-        <List>
-          <For each={props.candies()}>
-            {(stack) => (
-              <ListRow>
-                <span class="grow">{getFamilyName(stack.family)} Candy</span>
-                <Badge tone="gold">× {stack.count}</Badge>
-              </ListRow>
-            )}
-          </For>
-        </List>
-      </Show>
+      {/* The same tray the items are in, in the jar's own colours: a
+          pile is a picture and a number, not a line of text */}
+      <CandyGrid
+        piles={(props.candies() ?? []).map((stack) => ({
+          family: stack.family,
+          count: stack.count,
+        }))}
+      />
 
       {/* A machine asks which move is given up for it, and a level
           asks whether a new one is taken at all. Both are the same

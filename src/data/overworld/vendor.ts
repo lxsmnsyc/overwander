@@ -1,8 +1,9 @@
-import { BALL_ITEMS, ItemFlags, Items } from '../ids/items';
+import { BALL_ITEMS, ItemFlags, Items, getMachineItem } from '../ids/items';
 import { getItemData } from '../items';
 import { BATTLE_ITEMS } from '../items/battle-items';
 import { DRINKS } from '../items/drinks';
 import { INCENSES } from '../items/incenses';
+import { getTeachableMoves } from '../items/machines';
 import { MEDICINES } from '../items/medicine';
 import { TREATS } from '../items/treats';
 import { PP_ITEMS, VITAMIN_STATS } from '../items/vitamins';
@@ -13,8 +14,9 @@ import { PP_ITEMS, VITAMIN_STATS } from '../items/vitamins';
  * A vendor comes in **kinds** now: the window that rolls him onto the
  * cell also rolls which counter he set up. The original one deals in
  * balls and medicine; the others each carry one shelf the mainline
- * kept behind a department-store counter — vitamins, incenses, or the
- * X items. The rule for what may be sold stays the registry's own: an
+ * kept behind a department-store counter, the vitamins, the incenses,
+ * the X items, or the machines. The rule for what may be sold stays
+ * the registry's own: an
  * item is stocked only if it is **Marketable**, which is what keeps
  * the Master Ball and the Berry Juice out of the crates that would
  * otherwise list them.
@@ -42,6 +44,14 @@ export const enum VendorKind {
    * after a Revive were both told to come back later
    */
   Balls = 4,
+  /**
+   * The machines, which nothing else sells: a gym hands one over, and
+   * until now that was the whole of how a player came by them. His
+   * crate is twice everybody else's, since the shelf holds one machine
+   * per teachable move in the game and six off a shelf that long is
+   * too thin a slice to plan a walk around
+   */
+  Moves = 5,
 }
 
 export const VENDOR_KINDS: VendorKind[] = [
@@ -50,6 +60,7 @@ export const VENDOR_KINDS: VendorKind[] = [
   VendorKind.Vitamins,
   VendorKind.Incenses,
   VendorKind.BattleItems,
+  VendorKind.Moves,
 ];
 
 /**
@@ -62,6 +73,7 @@ export const VENDOR_KIND_NAMES: Record<VendorKind, string> = {
   [VendorKind.Vitamins]: 'Vitamin Stall',
   [VendorKind.Incenses]: 'Incense Stall',
   [VendorKind.BattleItems]: 'Battle Item Stall',
+  [VendorKind.Moves]: 'Machine Stall',
 };
 
 /**
@@ -70,6 +82,20 @@ export const VENDOR_KIND_NAMES: Record<VendorKind, string> = {
  * rather than an offer
  */
 export const VENDOR_STOCK_KINDS = 6;
+
+/**
+ * What the machine stall lays out instead. Its shelf is every teachable
+ * move in the game, so six of them is a slice thin enough that
+ * looking for a particular machine is not worth the walk
+ */
+export const MOVE_STOCK_KINDS = 12;
+
+/**
+ * How many kinds this counter's crate holds
+ */
+export function vendorStockSize(kind: VendorKind): number {
+  return kind === VendorKind.Moves ? MOVE_STOCK_KINDS : VENDOR_STOCK_KINDS;
+}
 
 /**
  * What a counter always carries, whatever else the window rolled.
@@ -131,6 +157,7 @@ const SHELVES = new Map<VendorKind, () => Items[]>([
   [VendorKind.Vitamins, () => [...VITAMIN_STATS.keys(), ...PP_ITEMS.keys()]],
   [VendorKind.Incenses, () => [...INCENSES]],
   [VendorKind.BattleItems, () => [...BATTLE_ITEMS]],
+  [VendorKind.Moves, () => getTeachableMoves().map((move) => getMachineItem(move))],
 ]);
 
 const stocked = new Map<VendorKind, Items[]>();
@@ -160,7 +187,7 @@ export function rollVendorStock(
   random: () => number,
   kind: VendorKind = VendorKind.Balls,
 ): Items[] {
-  return fillCrate(VENDOR_STAPLES[kind] ?? [], getVendorGoods(kind), random);
+  return fillCrate(VENDOR_STAPLES[kind] ?? [], getVendorGoods(kind), random, vendorStockSize(kind));
 }
 
 /**
@@ -180,19 +207,19 @@ export function getChefGoods(): Items[] {
  * drawn the way a vendor's crate is
  */
 export function rollChefStock(random: () => number): Items[] {
-  return fillCrate([], getChefGoods(), random);
+  return fillCrate([], getChefGoods(), random, VENDOR_STOCK_KINDS);
 }
 
 /**
  * A crate off a shelf: the staples first, then draws without repeats
  * until it is full or the shelf runs out
  */
-function fillCrate(staples: Items[], goods: Items[], random: () => number): Items[] {
+function fillCrate(staples: Items[], goods: Items[], random: () => number, size: number): Items[] {
   const held = new Set(staples);
   const rest = goods.filter((item) => !held.has(item));
   const stock = [...staples];
 
-  while (stock.length < VENDOR_STOCK_KINDS && rest.length > 0) {
+  while (stock.length < size && rest.length > 0) {
     const at = Math.floor(random() * rest.length);
 
     stock.push(rest[at]);

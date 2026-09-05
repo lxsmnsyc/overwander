@@ -15697,6 +15697,42 @@
         "bytes": 2080
       }
     },
+    "public/sprites/ui/candies/hoenn/image.png": {
+      "digest": "bf0b7f93b704f67b",
+      "bytes": 8754,
+      "width": 144,
+      "height": 144,
+      "compact": {
+        "at": "2026-09-05T12:52:21Z",
+        "as": "already compact",
+        "was": 8754,
+        "bytes": 8754
+      }
+    },
+    "public/sprites/ui/candies/johto/image.png": {
+      "digest": "e57386c8628f51f9",
+      "bytes": 7013,
+      "width": 128,
+      "height": 112,
+      "compact": {
+        "at": "2026-09-05T12:52:21Z",
+        "as": "already compact",
+        "was": 7013,
+        "bytes": 7013
+      }
+    },
+    "public/sprites/ui/candies/kanto/image.png": {
+      "digest": "3fbcff8890c7942f",
+      "bytes": 9694,
+      "width": 144,
+      "height": 144,
+      "compact": {
+        "at": "2026-09-05T11:28:02Z",
+        "as": "already compact",
+        "was": 9694,
+        "bytes": 9694
+      }
+    },
     "public/sprites/ui/items/apricorn/image.png": {
       "digest": "308d7f1a496a2385",
       "bytes": 833,

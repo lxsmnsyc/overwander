@@ -27,13 +27,14 @@ import {
   List,
   ListRow,
   Meta,
+  Row,
   TabBar,
   TabButton,
   TabGroup,
   TabPane,
 } from '../../../styled';
 
-import { For, type JSX, Show } from 'solid-js';
+import { For, type JSX, Show, createEffect, createSignal, on } from 'solid-js';
 
 /**
  * The three readings of one set of six numbers: what the pokemon has
@@ -55,10 +56,59 @@ export interface StatsSectionProps {
   owned: boolean;
   /** Whether the record is being held still, by a lock or by a fight */
   frozen: boolean;
-  onTrain: (stat: Stats, amount: number) => void;
+  /**
+   * Save a whole spread at once. The pane lays the points out and
+   * hands them over on one press, so six stats are one round trip
+   */
+  onTrain: (spread: Partial<Record<Stats, number>>) => void;
 }
 
 export default function StatsSection(props: StatsSectionProps): JSX.Element {
+  /**
+   * Points laid out but not yet saved, by stat. They are the pane's
+   * own until Save is pressed: nothing has been asked of the server,
+   * so Undo costs nothing
+   */
+  const [pending, setPending] = createSignal<Partial<Record<Stats, number>>>({});
+
+  // A different pokemon on the sheet is a different set of points
+  createEffect(
+    on(
+      () => props.caught,
+      () => {
+        setPending({});
+      },
+    ),
+  );
+
+  /** How many points are laid out across all six */
+  const spent = (): number => STAT_ORDER.reduce((total, stat) => total + (pending()[stat] ?? 0), 0);
+
+  /** What is left of the budget once what is laid out is counted */
+  const left = (): number => unusedEffort(props.caught) - spent();
+
+  /** The six values as the pane is showing them, saved or not */
+  const laidOut = (): Record<Stats, number> => {
+    const values = { ...props.caught.effortValues };
+
+    for (const stat of STAT_ORDER) {
+      values[stat] += pending()[stat] ?? 0;
+    }
+    return values;
+  };
+
+  /**
+   * How much more this stat can take right now: what the stat has room
+   * for and what the budget has left, both counting what is already
+   * laid out
+   */
+  const room = (stat: Stats): number =>
+    Math.min(left(), assignableEffort(props.caught, stat) - (pending()[stat] ?? 0));
+
+  const add = (stat: Stats): void => {
+    setPending((laid) => ({ ...laid, [stat]: (laid[stat] ?? 0) + EFFORT_STEP }));
+  };
+
   return (
     <DialogSection title="Stats">
       <TabGroup horizontal defaultValue={StatView.Total} class="flex flex-col gap-2">
@@ -191,12 +241,18 @@ export default function StatsSection(props: StatsSectionProps): JSX.Element {
                     <div
                       class="h-full rounded-full bg-leaf"
                       style={{
-                        width: `${(props.caught.effortValues[stat] / MAX_EFFORT_PER_STAT) * 100}%`,
+                        width: `${(laidOut()[stat] / MAX_EFFORT_PER_STAT) * 100}%`,
                       }}
                     />
                   </div>
                   <Meta class="w-12 text-right tabular-nums">
                     {props.caught.effortValues[stat]}
+                    {/* What is laid out but not saved, kept apart from
+    what the record says: the bar above
+    already shows the two added up */}
+                    <Show when={(pending()[stat] ?? 0) > 0}>
+                      <span class="text-leaf-dark"> +{pending()[stat]}</span>
+                    </Show>
                   </Meta>
                   {/* Only up. Effort is taken back off a
     stat by feeding the pokemon a bitter
@@ -208,9 +264,9 @@ export default function StatsSection(props: StatsSectionProps): JSX.Element {
                   <Show when={props.owned}>
                     <Button
                       tone="primary"
-                      disabled={props.frozen || assignableEffort(props.caught, stat) < EFFORT_STEP}
+                      disabled={props.frozen || room(stat) < EFFORT_STEP}
                       onClick={() => {
-                        props.onTrain(stat, EFFORT_STEP);
+                        add(stat);
                       }}
                     >
                       +{EFFORT_STEP}
@@ -225,7 +281,36 @@ export default function StatsSection(props: StatsSectionProps): JSX.Element {
               because it is the answer to "can I press
               these", which is a question asked after
               reading them rather than before */}
-          <Meta class="block text-right">Remaining: {unusedEffort(props.caught)}</Meta>
+          <Meta class="block text-right">Remaining: {left()}</Meta>
+
+          {/* Nothing has left the sheet until this is pressed. The
+              points are laid out first and saved once, so a player
+              filling out six stats waits on one answer rather than
+              thirty — and can change their mind for free until then */}
+          <Show when={props.owned && spent() > 0}>
+            <Row class="justify-end">
+              <Meta>{spent()} to spend</Meta>
+              <Button
+                onClick={() => {
+                  setPending({});
+                }}
+              >
+                Undo
+              </Button>
+              <Button
+                tone="primary"
+                disabled={props.frozen}
+                onClick={() => {
+                  const laid = pending();
+
+                  setPending({});
+                  props.onTrain(laid);
+                }}
+              >
+                Save
+              </Button>
+            </Row>
+          </Show>
         </TabPane>
       </TabGroup>
     </DialogSection>

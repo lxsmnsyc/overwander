@@ -42,8 +42,9 @@ export const enum RaidKind {
   Shadow = 1,
   /**
    * A mythical called out by a raid item. It stands on no landmark:
-   * the relic that opened it is what staged it, and the relic is
-   * spent, so the lobby is fought once whatever the outcome
+   * the relic that opened it is what staged it, and starting the
+   * fight spends the relic, so the lobby is fought once whatever the
+   * outcome
    */
   Mythical = 2,
 }
@@ -161,6 +162,12 @@ export interface RaidView {
    * How many parties have gathered so far
    */
   teams: number;
+  /**
+   * Whether this player is the one hosting what is standing there.
+   * A host walking back into their own lair is walking into their own
+   * lobby, so there is nothing to put to them
+   */
+  hosting: boolean;
 }
 
 /**
@@ -216,20 +223,40 @@ export function raidId(
   return `${chunk.seed}${toZoneKey(offset)}@${raidTimestamp}$${tag}${cell}`;
 }
 /**
- * The lobby id of a mythical raid: the window, the zone, the relic that
- * called it and whoever spent it. A mythical stands on no landmark,
- * so there is no cell to name — what identifies it is the item and
- * the player who used it, which also means one relic opens one lobby
- * a window rather than a lobby per attempt
+ * The lobby id of a mythical raid: the window, the zone, the relic
+ * that called it and whoever spent it.
+ *
+ * The chunk is deliberately **not** in it, unlike every other raid id.
+ * A landmark raid is a place, so its id says which one; a mythical is
+ * called out of a relic to somewhere the world does not contain, and
+ * the ground the player happened to be standing on is only where the
+ * calling happened. Keying on it let one relic open a lobby per
+ * chunk: a host who walked a chunk over and pressed again opened a
+ * second, and somebody carrying two of a kind could run both in one
+ * window. One relic, one window, one lobby.
+ *
+ * Where it was called from is still on the record, since the prize is
+ * staged against that chunk's own weather
  */
 export function mythicalRaidId(
-  chunk: Chunk,
   raidTimestamp: number,
   item: Items,
   uid: string,
   offset = 0,
 ): string {
-  return `${chunk.seed}${toZoneKey(offset)}@${raidTimestamp}$mythical${item}:${uid}`;
+  return `${toZoneKey(offset)}@${raidTimestamp}$mythical${item}:${uid}`;
+}
+
+/**
+ * Which relic opened a mythical lobby, read back out of its id. The
+ * item is not a column on the raid: the id is built from it, and the
+ * id is what every caller already has in hand. Null for any other
+ * kind of lobby
+ */
+export function mythicalRelicOf(id: string): Items | null {
+  const found = /\$mythical(\d+):/.exec(id);
+
+  return found == null ? null : (Number(found[1]) as Items);
 }
 
 /**

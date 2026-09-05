@@ -86,7 +86,7 @@ export async function visitNurse(
     return null;
   }
 
-  const snapshot = await resolveNpc(x, y, cell, now, offset, Npc.NurseJoy);
+  const snapshot = resolveNpc(x, y, cell, now, offset, Npc.NurseJoy);
 
   if (snapshot == null) {
     return null;
@@ -147,7 +147,7 @@ export async function boostEgg(
   now: number,
   offset: number,
 ): Promise<number | null> {
-  const snapshot = await resolveNpc(x, y, cell, now, offset, Npc.DaycareLady);
+  const snapshot = resolveNpc(x, y, cell, now, offset, Npc.DaycareLady);
 
   if (snapshot == null) {
     return null;

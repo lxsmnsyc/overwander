@@ -132,6 +132,14 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
    * names the panel rather than the word "Raids"
    */
   const [lobby, setLobby] = createSignal<string | null>(null);
+  /**
+   * Whether that lobby is the player's own. A host who dismisses the
+   * panel leaves a lobby standing with their name on it and nobody in
+   * it, and for a mythical the relic that opened it is already spent,
+   * so the overlay and Escape are refused and the way out is the
+   * button that actually walks them out
+   */
+  const [hosting, setHosting] = createSignal(false);
   /** The same, for the battle lobby a player is standing in */
   const [duelling, setDuelling] = createSignal<string | null>(null);
   const close = (): void => {
@@ -315,6 +323,7 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
           <Dialog
             isOpen={showing(GameDialog.Raids)}
             onClose={close}
+            insistent={hosting()}
             width="wide"
             // Named for the lair while the player is standing in one,
             // and "Raids" while they are only looking at the list.
@@ -333,6 +342,9 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
               user={props.user}
               onTitle={(named) => {
                 setLobby(named);
+              }}
+              onHosting={(own) => {
+                setHosting(own);
               }}
             />
             <Show when={lobby() == null}>

@@ -205,7 +205,13 @@ export default function StopDialog(props: StopDialogProps): JSX.Element {
           return;
         }
         props.onClose();
-        game.setBattle({ id: battle, replay: false, stop: id, opponent: opponent() });
+        game.setBattle({
+          id: battle,
+          replay: false,
+          stop: id,
+          opponent: opponent(),
+          npc: props.npc,
+        });
       })
       .catch((caught: unknown) => {
         setStatus(caught instanceof Error ? caught.message : String(caught));

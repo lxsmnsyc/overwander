@@ -5,7 +5,7 @@ import 'server-only';
  * nests, whatever is going on there, and the pokemon met on the way
  */
 
-export { claim, resolveSnapshot } from './claims';
+export { claim, liveSnapshot, resolveSnapshot } from './claims';
 export type { ClaimRecord } from './claims';
 export { claimItemCache, listClaimedItemCaches } from './caches';
 export { claimApricornTree, claimBerryPatch, listPickedBerryPatches } from './berries';

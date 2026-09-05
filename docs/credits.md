@@ -111,7 +111,10 @@ land in `public/` without its artists landing on the credits screen. Most are
 are its 32×32 inventory sprites, named the way that project names them, which is
 why an `Exp. Share` is `exp-share.png` on the `held` sheet. The eighteen **type
 badges** and the three **move category marks**, physical, special and status, are
-its `misc` set. Its README is explicit that the code and the data are MIT and
+its `misc` set. The **family candies** under `public/sprites/ui/candies` are its
+`poke-candy` sprite recoloured: one drawing, one palette swap per evolution
+family, painted in the colours of the family's own pokemon sheet by `pnpm
+family-candies`. Its README is explicit that the code and the data are MIT and
 **the sprite images are not**: they are © Nintendo/Creatures Inc./GAME FREAK
 Inc., like the names in `src/data`.
 

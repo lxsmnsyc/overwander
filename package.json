@@ -1,6 +1,6 @@
 {
   "name": "overwander",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "private": true,
   "type": "module",
   "publishConfig": {
@@ -17,6 +17,7 @@
     "graft-walls": "node scripts/graft-walls.ts",
     "apricorn-trees": "node scripts/apricorn-trees.ts",
     "item-icons": "node scripts/item-icons.ts",
+    "family-candies": "node scripts/family-candies.ts",
     "import-sprites": "node scripts/import-sprites.ts",
     "test": "vitest run",
     "test:rules": "vitest run --config vitest.rules.ts",

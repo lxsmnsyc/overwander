@@ -3,7 +3,7 @@ import type Npc from '../../data/overworld/npc';
 import type ChunkSnapshot from '../../overworld/chunk-snapshot';
 import { getSql } from '../db';
 import { isRefusal } from '../../auth/learn-refusal';
-import { claim, resolveSnapshot } from '../overworld';
+import { claim, liveSnapshot } from '../overworld';
 import { Metric } from '../../auth/quest-record';
 import { bumpProgress } from '../quest-progress';
 
@@ -45,22 +45,29 @@ export async function countVisit<T>(uid: string, npc: Npc, served: T): Promise<T
  */
 
 /**
- * Who is standing at the cell this window, or null when the player is
- * not at a live window, the cell holds no wandering NPC, or somebody
- * else is standing there
+ * Who is standing at the cell this window, or null when the cell
+ * holds no wandering NPC or somebody else is standing there.
+ *
+ * Derived from the server's own clock rather than read from the
+ * stored spawn window. A passer-by stands for 3 hours and comes from
+ * the chunk, the zone and the hour, so nothing here needs the
+ * 5-minute publication, and needing it made a counter left open
+ * across a boundary go dead: the board only republishes on a press,
+ * and a press is refused while the counter is up. Every visit marker
+ * still hangs off the person's own window, so what a player has
+ * already had this window is unchanged
  */
-export async function resolveNpc(
+export function resolveNpc(
   x: number,
   y: number,
   cell: number,
   now: number,
   offset: number,
   expected: Npc,
-): Promise<ChunkSnapshot | null> {
-  const snapshot = await resolveSnapshot(x, y, now, offset);
-  const standing = snapshot?.getStandingNpc(cell);
+): ChunkSnapshot | null {
+  const snapshot = liveSnapshot(x, y, now, offset);
 
-  return snapshot != null && standing === expected ? snapshot : null;
+  return snapshot.getStandingNpc(cell) === expected ? snapshot : null;
 }
 
 /**

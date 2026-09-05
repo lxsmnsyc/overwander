@@ -1,9 +1,11 @@
-import { type JSX, Show, createSignal } from 'solid-js';
-import { getCatchCandy } from '../../../auth/candy';
+import { For, type JSX, Show, createSignal } from 'solid-js';
+import { getReleaseCandy } from '../../../auth/candy';
 import { isFavorite, isGuarded } from '../../../auth/caught-record';
+import type Families from '../../../data/ids/families';
 import { getFamilyName, getSpeciesData } from '../../../data/species';
+import CandySprite from '../../sprites/CandySprite';
 import type { CatchOption } from '../catch-picker';
-import { Button, Meta, Row } from '../../styled';
+import { Badge, Button, Meta, Row } from '../../styled';
 
 /**
  * What to do with a handful of pokemon at once.
@@ -58,17 +60,24 @@ function tally(chosen: CatchOption[]): string {
  * say which pile grows, and which pile grows is most of the reason to
  * do it
  */
-function candyLine(going: CatchOption[]): string {
-  const piles = new Map<string, number>();
+function candyPiles(going: CatchOption[]): [Families, number][] {
+  const piles = new Map<Families, number>();
 
   for (const option of going) {
     const { family } = getSpeciesData(option.caught.species);
-    const name = getFamilyName(family);
 
-    piles.set(name, (piles.get(name) ?? 0) + getCatchCandy(option.caught.species));
+    piles.set(family, (piles.get(family) ?? 0) + getReleaseCandy(option.caught));
   }
-  return [...piles].map(([name, count]) => `${count} ${name} candy`).join(', ');
+  return [...piles];
 }
+
+/** How many of them are carrying something that would come back */
+function holding(going: CatchOption[]): number {
+  return going.reduce((total, option) => total + option.caught.items.length, 0);
+}
+
+/** How large a candy is drawn in the bar */
+const CANDY_SIZE = 16;
 
 export default function CatchActions(props: CatchActionsProps): JSX.Element {
   /** Whether Release has been pressed once. There is no undoing it */
@@ -135,7 +144,24 @@ export default function CatchActions(props: CatchActionsProps): JSX.Element {
 
       {/* What the price is, before the decision rather than after it */}
       <Show when={releasing() && going().length > 0}>
-        <Meta>{candyLine(going())}</Meta>
+        <Row class="justify-center">
+          <For each={candyPiles(going())}>
+            {([family, paid]) => (
+              <Badge tone="gold">
+                <CandySprite family={family} size={CANDY_SIZE} label="" />
+                {paid} {getFamilyName(family)}
+              </Badge>
+            )}
+          </For>
+        </Row>
+        {/* The half a player forgets: a released pokemon hands back
+            whatever it was carrying, and there is no undoing either */}
+        <Show when={holding(going()) > 0}>
+          <Meta>
+            {holding(going())} held item{holding(going()) === 1 ? '' : 's'} come
+            {holding(going()) === 1 ? 's' : ''} back to the bag.
+          </Meta>
+        </Show>
       </Show>
 
       {/* Which of the picked ones Release will step over, and why. The

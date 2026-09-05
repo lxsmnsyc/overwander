@@ -30,7 +30,7 @@ export default async function groomCatch(
   now: number,
   offset: number,
 ): Promise<number | null> {
-  const snapshot = await resolveNpc(x, y, cell, now, offset, Npc.Groomer);
+  const snapshot = resolveNpc(x, y, cell, now, offset, Npc.Groomer);
 
   if (snapshot == null) {
     return null;

@@ -27,7 +27,7 @@ import createOverworld from '../overworld/setup';
 import { asBuddy, resolveBuddyCatch } from './buddy';
 import type Families from '../data/ids/families';
 import { catchCandyWorth, grantCandies } from './candy';
-import { getCatchCandy } from '../auth/candy-rules';
+import { getCatchCandy, getReleaseCandy } from '../auth/candy-rules';
 import {
   asLocale,
   isEggRecord,
@@ -492,7 +492,7 @@ export async function takeItem(uid: string, catchId: string, item: Items): Promi
  * is gone, and nothing in the game reads a catch it no longer owns.
  * Whatever it was holding goes back to the bag in the same transaction
  * (the item was the player's, not the pokemon's), and its family's
- * candy is paid once more as it goes. The buddy field clears itself: it
+ * candy is paid for the levels it took, one per 25 of them. The buddy field clears itself: it
  * is a foreign key that nulls on delete.
  *
  * A **favorite** and a **locked** one are both refused. Releasing
@@ -527,7 +527,7 @@ async function releaseCatchIn(
     returning.set(item, (returning.get(item) ?? 0) + 1);
   }
 
-  // What the pokemon was worth meeting, paid once more as it goes
+  // What the raising it took is worth, paid back as it goes
   const record = asCaughtPokemon(caught);
   const { family } = getSpeciesData(record.species);
 
@@ -541,13 +541,7 @@ async function releaseCatchIn(
 
   const candies = await readStackIn(transaction, CANDY_STACKS, uid, family);
 
-  await writeStackIn(
-    transaction,
-    CANDY_STACKS,
-    uid,
-    family,
-    candies + getCatchCandy(record.species),
-  );
+  await writeStackIn(transaction, CANDY_STACKS, uid, family, candies + getReleaseCandy(record));
   await transaction`delete from caught where id = ${catchId}`;
   return record.species;
 }

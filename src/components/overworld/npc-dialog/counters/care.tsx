@@ -6,8 +6,8 @@ import { MAX_SLOTS, Slots, countAbilitySlots } from '../../../../data/constants/
 import type { Items } from '../../../../data/ids/items';
 import { getAwakenableAbilities } from '../../../../data/overworld/npc';
 import CatchPicker, { type CatchOption } from '../../../catches/catch-picker';
-import ItemSprite from '../../../items/ItemSprite';
-import { Badge, DialogSection, Meta, Status } from '../../../styled';
+import Price from './price';
+import { DialogSection, Meta, Status } from '../../../styled';
 import { canLayEggs } from '../../../../overworld/breeding';
 import { CENTRED } from '../shared';
 
@@ -222,6 +222,8 @@ function hasSomethingLeft(caught: CatchOption['caught']): boolean {
 export function ChannelerCounter(props: ChannelerCounterProps): JSX.Element {
   return (
     <DialogSection class={CENTRED}>
+      <Price fee={props.fee} scales={props.scales} />
+
       {/* One press, one pokemon widened. What comes out is the line's
           rather than the player's, so there is nothing to choose after
           picking who — and a pokemon whose line has nothing left is
@@ -245,15 +247,13 @@ export function ChannelerCounter(props: ChannelerCounterProps): JSX.Element {
           }
         }}
       />
-      {/* What it costs, and whether it is in the bag: the squares go
-          grey without a scale, and this is the reason why */}
+      {/* The squares go grey without a scale, and this is the reason
+          why: the badge above says the bag is empty, not what that
+          stops */}
       <Status message={props.scales < 1 ? 'She wants a Heart Scale, and you have none.' : null} />
-      <Meta class="block">
-        <Badge tone="gold">
-          <ItemSprite item={props.fee} size={16} label="" />1
-        </Badge>{' '}
-        once while she is here.
-      </Meta>
+      {/* What she charges, said the way the groomer says his fee. The
+          badge is what is in the bag, which is a different question */}
+      <Meta class="block">One Heart Scale, once while she is here.</Meta>
     </DialogSection>
   );
 }

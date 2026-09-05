@@ -169,6 +169,28 @@ export const LOADING_SIZE = 18;
  */
 export const MARK_WEIGHT = 3;
 
+/**
+ * The ripple a featured family's cell throws: how long one ring takes
+ * to travel out, how many are travelling at once, how far out they get
+ * in cells, and how much they are worth when they leave. Slow and
+ * faint on purpose, since the cell already has a pokemon standing on
+ * it and the ripple is only there to say the day is about this one
+ */
+export const RIPPLE_PERIOD = 2000;
+export const RIPPLE_RINGS = 2;
+export const RIPPLE_SPREAD = 1.3;
+export const RIPPLE_ALPHA = 0.55;
+
+/** How many points one ring is drawn round. A ground circle, projected */
+export const RIPPLE_POINTS = 16;
+
+/**
+ * How much light the cell under the cursor takes. Enough to be found
+ * on snow, light enough that whatever is standing on the cell is
+ * still the thing being looked at
+ */
+export const HOVER_GLOW = 0.22;
+
 export const COLORS = {
   grid: 'rgba(0, 0, 0, 0.12)',
   /**
@@ -182,6 +204,11 @@ export const COLORS = {
    */
   highlight: '#ffffff',
   spawn: '#2b2b2b',
+  /**
+   * The ripple under a pokemon of the day's featured family. Gold,
+   * which is what the game says "today, this one" in everywhere else
+   */
+  featured: '#ffcf5c',
   glyph: '#1c1c1c',
   landmark: 'rgba(255, 255, 255, 0.65)',
   /**
@@ -209,6 +236,15 @@ export const COLORS = {
   elite: 'rgba(155, 93, 229, 0.85)',
   champion: 'rgba(255, 226, 138, 0.95)',
   rocket: 'rgba(190, 30, 110, 0.9)',
+  /**
+   * The two crops, told apart from each other and from everything
+   * else that is worth pressing. One colour each rather than one per
+   * fruit: a player needs to know a bush from a tree, and the
+   * seventy-odd berries are a drawing on the cell rather than a
+   * shade of it. Leaf green for a patch, bark brown for a tree
+   */
+  berry: 'rgba(63, 158, 77, 0.85)',
+  apricorn: 'rgba(150, 96, 47, 0.9)',
   /** Under every mark, so one reads on pale ground as well as on dark */
   ringShade: 'rgba(0, 0, 0, 0.28)',
   /**

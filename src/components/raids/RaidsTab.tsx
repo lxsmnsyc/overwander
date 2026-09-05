@@ -27,6 +27,12 @@ export interface RaidsTabProps {
    * list of them
    */
   onTitle?: (title: string | null) => void;
+  /**
+   * Whether the lobby the player is standing in is their own, so the
+   * dialog around the tab can refuse to be dismissed out from under a
+   * host
+   */
+  onHosting?: (hosting: boolean) => void;
 }
 
 /**
@@ -154,7 +160,14 @@ function RaidList(props: RaidsTabProps & { window: Resource<number>; zone: numbe
           </Show>
         }
       >
-        {(id) => <RaidLobby user={props.user} raidId={id()} onTitle={props.onTitle} />}
+        {(id) => (
+          <RaidLobby
+            user={props.user}
+            raidId={id()}
+            onTitle={props.onTitle}
+            onHosting={props.onHosting}
+          />
+        )}
       </Show>
     </Panel>
   );
@@ -184,7 +197,13 @@ export default function RaidsTab(props: RaidsTabProps): JSX.Element {
         </Panel>
       }
     >
-      <RaidList user={props.user} onTitle={props.onTitle} window={window} zone={zone} />
+      <RaidList
+        user={props.user}
+        onTitle={props.onTitle}
+        onHosting={props.onHosting}
+        window={window}
+        zone={zone}
+      />
     </Suspense>
   );
 }

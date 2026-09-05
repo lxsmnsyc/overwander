@@ -105,15 +105,14 @@ export default function SpeciesCoat(props: SpeciesCoatProps): JSX.Element {
       scale={props.scale}
       fill={props.fill}
       shadow
-      // Black by day and white by night: a silhouette is the shape
-      // with the colour taken out of it, and "no colour" is a
-      // different colour on a page that is paper in one theme and
-      // night sky in the other.
+      // Black in either theme: a silhouette is the shape with the
+      // colour taken out of it, and one that turned white by night
+      // read as a second coat rather than as the same absence.
       //
       // Missingno is shadowed too. It is a picture of a pokemon that
       // is not there, and drawn in full it reads as a pokemon whose
       // sprite failed to load rather than as an absence
-      class={props.revealed ? '' : 'opacity-70 brightness-0 dark:invert'}
+      class={props.revealed ? '' : 'brightness-0'}
       label={describeCoat(props.met, props.revealed, named())}
     />
   );

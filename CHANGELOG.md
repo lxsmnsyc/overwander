@@ -1,5 +1,46 @@
 # overwander
 
+## 2.1.0
+
+### Minor Changes
+
+- f4c121a: A stall can set up as a machine stall, laying out 12 machines drawn from every move a pokemon can be taught: the first place besides a gym leader that a machine comes from.
+
+  Changes world generation.
+
+- 2089d5b: Every family's candy is drawn as its own sweet: the bag holds a tray of them instead of a list, and the catch sheet, the fight's payout and a release all show the pile they pay.
+
+### Patch Changes
+
+- 2089d5b: A wandering NPC's counter keeps working when the 5-minute spawn window turns over under it, rather than going dead until it is closed and the person is walked up to again.
+- 2089d5b: Releasing says that what the pokemon was holding comes back to the bag, on the sheet and on the box's own bar.
+- 2089d5b: A berry patch and an apricorn tree are called out in one colour each, so the board says which crop it is rather than which fruit.
+- 2089d5b: - The bag keeps the "use it on" list open after a potion or a candy, so several can be spent without reopening it.
+  - Effort points are laid out across the stats and saved in one press, rather than a round trip per +4.
+  - Candy presses on the catch sheet gather up and are sent together when you stop pressing.
+
+## 2.0.1
+
+### Patch Changes
+
+- 94e3154: Letting a pokemon go pays 1 family candy for every 25 levels it reached rather than its rarity, so a pokemon at level 76 or above hands back 4.
+- 94e3154: - A raid relic is spent when the raid starts, not when the lobby opens, so a lobby you walk out of costs you nothing.
+  - A host who leaves a lobby other people are still in hands it over to whoever joined first, rather than leaving a raid nobody can start.
+  - One relic opens one lobby a window wherever you press it, rather than a separate lobby in every chunk.
+- 37b6506: A silhouetted coat is solid black in both themes, rather than a faded shape that turned white at night.
+- 5b56147: Trade evolution items can be held, so a Kingdra and a Porygon2 are reachable: a Dragon Scale or an Up-Grade could be carried but never handed to the pokemon that needed one.
+- ea21abe: Beating a trainer, a gym leader or one of the league says the purse is yours, rather than sending you to look for a pokemon waiting in the overworld that only a Rocket fight leaves.
+- 94e3154: A quest reward, a mystery gift and a buddy's find each draw the item they handed over, the way a cache and a berry patch already did.
+- e19ac57: A pokemon whose health pool changes mid-battle keeps the share of health it had, rather than being set to whatever number moved the pool.
+- cf9a3a3: A throw shuts the encounter's buttons until the server answers it, and a cache, a berry patch, an apricorn tree or a happening cannot be pressed again while its claim is in flight.
+- ea21abe: - A berry patch and an apricorn tree are called out in the colour of what they bear.
+  - A pokemon of the day's featured family ripples on the board.
+  - Walking back into a raid you host opens the lobby, rather than asking about the lair first.
+  - A lobby you host is not dismissed by a press on the overlay or by Escape.
+  - The teach and tutor move lists show the move category badge.
+- 37b6506: The cell under the cursor lights up on the chunk board.
+- 8800c74: The Channeler shows the heart scales in your bag and states her fee in words, the way the tutor and the reminder do, instead of a badge reading "1" with a sentence hanging off it.
+
 ## 2.0.0
 
 ### Major Changes

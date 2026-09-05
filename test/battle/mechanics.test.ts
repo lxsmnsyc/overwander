@@ -126,6 +126,34 @@ describe('stat and stage mechanics', () => {
     expect(unit.checkStat(Stats.Attack, 0)).toBe(105);
   });
 
+  it('keeps the share of health when the pool itself moves', () => {
+    const { battle, teamA } = createBattle();
+    const unit = createUnit(battle, teamA);
+
+    // A bigger species: 150 base health is a pool of 210 at level 50
+    unit.setStat(StatsKind.Base, Stats.HP, 150);
+    expect(unit.checkStat(Stats.HP, 0)).toBe(210);
+    // Whole before, whole after — and not the 150 that was written,
+    // which is a base stat rather than a pool
+    expect(unit.health).toBe(210);
+
+    // Half of 210 taken back down to the pool of 160 is half of that
+    unit.setHealth(105);
+    unit.setStat(StatsKind.Base, Stats.HP, 100);
+    expect(unit.checkStat(Stats.HP, 0)).toBe(160);
+    expect(unit.health).toBe(80);
+  });
+
+  it('leaves a unit that was down at zero when the pool moves', () => {
+    const { battle, teamA } = createBattle();
+    const unit = createUnit(battle, teamA);
+
+    unit.setHealth(0);
+    unit.setStat(StatsKind.Base, Stats.HP, 150);
+
+    expect(unit.health).toBe(0);
+  });
+
   it('clamps stages at plus and minus six', () => {
     const { battle, teamA } = createBattle();
     const unit = createUnit(battle, teamA);

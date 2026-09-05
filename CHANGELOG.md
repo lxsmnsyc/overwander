@@ -1,5 +1,24 @@
 # overwander
 
+## 2.1.0
+
+### Minor Changes
+
+- f4c121a: A stall can set up as a machine stall, laying out 12 machines drawn from every move a pokemon can be taught: the first place besides a gym leader that a machine comes from.
+
+  Changes world generation.
+
+- 2089d5b: Every family's candy is drawn as its own sweet: the bag holds a tray of them instead of a list, and the catch sheet, the fight's payout and a release all show the pile they pay.
+
+### Patch Changes
+
+- 2089d5b: A wandering NPC's counter keeps working when the 5-minute spawn window turns over under it, rather than going dead until it is closed and the person is walked up to again.
+- 2089d5b: Releasing says that what the pokemon was holding comes back to the bag, on the sheet and on the box's own bar.
+- 2089d5b: A berry patch and an apricorn tree are called out in one colour each, so the board says which crop it is rather than which fruit.
+- 2089d5b: - The bag keeps the "use it on" list open after a potion or a candy, so several can be spent without reopening it.
+  - Effort points are laid out across the stats and saved in one press, rather than a round trip per +4.
+  - Candy presses on the catch sheet gather up and are sent together when you stop pressing.
+
 ## 2.0.1
 
 ### Patch Changes

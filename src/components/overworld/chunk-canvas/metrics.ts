@@ -169,6 +169,13 @@ export const LOADING_SIZE = 18;
  */
 export const MARK_WEIGHT = 3;
 
+/**
+ * How much light the cell under the cursor takes. Enough to be found
+ * on snow, light enough that whatever is standing on the cell is
+ * still the thing being looked at
+ */
+export const HOVER_GLOW = 0.22;
+
 export const COLORS = {
   grid: 'rgba(0, 0, 0, 0.12)',
   /**

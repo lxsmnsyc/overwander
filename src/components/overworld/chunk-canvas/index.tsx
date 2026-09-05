@@ -91,6 +91,7 @@ import {
   type Crossing,
   GROUND_DEPTH,
   GROUND_SQUASH,
+  HOVER_GLOW,
   LOADING_LABEL,
   LOADING_SIZE,
   MARK_WEIGHT,
@@ -1828,8 +1829,21 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       /** Which phenomena have been repainted for this frame already */
       const repainted = new Set<Phenomenon>();
 
+      /** The cell the cursor is over, once this frame */
+      const under = hovered();
+      /**
+       * Whether the cursor is over this square. Read against the
+       * board's own coordinates rather than the chunk's, so a
+       * threshold lights up the same way a cell does
+       */
+      const beneath = (square: BoardCell): boolean =>
+        under != null && under.x === square.x && under.y === square.y;
+      /** The square the cursor is over, kept to ring once the grid is laid */
+      let hoveredOutline: ProjectedPoint[] | null = null;
+
       for (const square of squares) {
         const outline = projectBoardCellQuad(square, yaw()).map(at);
+        const hot = beneath(square);
 
         // A threshold that goes through keeps the grid, so it reads
         // as ground that can be walked, and breathes a little light
@@ -1838,11 +1852,17 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         // the grid stopping is what says where the walkable ends
         if (isBorderCell(square)) {
           if (borderExit(square) != null) {
-            rule(outline, 0.1 + 0.05 * Math.sin(clock / 600));
+            rule(outline, hot ? HOVER_GLOW : 0.1 + 0.05 * Math.sin(clock / 600));
+            if (hot) {
+              hoveredOutline = outline;
+            }
           }
           continue;
         }
-        rule(outline, 0);
+        rule(outline, hot ? HOVER_GLOW : 0);
+        if (hot) {
+          hoveredOutline = outline;
+        }
 
         const index = square.y * CHUNK_CELLS + square.x;
         const landmark = props.landmarks.get(index);
@@ -1912,6 +1932,13 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
        * lines, so four corners are the whole of a rectangle however
        * the board is turned
        */
+      // The cell under the cursor, ruled after the whole grid is laid:
+      // its neighbours draw their own edges over it, so a ring left in
+      // the loop would come out with two sides missing
+      if (hoveredOutline != null) {
+        callOut(hoveredOutline, COLORS.highlight);
+      }
+
       const reach = reachOutline();
 
       if (reach != null) {
@@ -2438,7 +2465,9 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
             setHovered(null);
             return;
           }
-          setHovered(cellAt(event));
+          // A finger is not a cursor: a tap ends with the board lit
+          // under wherever it landed, and nothing takes it away again
+          setHovered(event.pointerType === 'touch' ? null : cellAt(event));
         }}
         onPointerUp={(event) => {
           twist.up(event);

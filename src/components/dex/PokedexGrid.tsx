@@ -53,7 +53,7 @@ const SQUARE =
  * flat. A shadow says "you know what shape this is and nothing else",
  * which is exactly what having seen one means
  */
-const SILHOUETTE = 'opacity-60 [filter:brightness(0)]';
+const SILHOUETTE = '[filter:brightness(0)]';
 
 /**
  * One square: a species, and how much of it the player has earned the

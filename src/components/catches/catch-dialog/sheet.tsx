@@ -7,7 +7,7 @@ import PortraitSection from './sections/PortraitSection';
 import StatsSection from './sections/StatsSection';
 import { isAuctionableCatch } from '../../../auth/auctions';
 import { setBuddy } from '../../../auth/buddy';
-import { getCandyCost, getCatchCandy, useCandy } from '../../../auth/candy';
+import { getCandyCost, getReleaseCandy, useCandy } from '../../../auth/candy';
 import {
   type CaughtPokemon,
   giveItem,
@@ -610,7 +610,7 @@ export function CatchSheetBody(
     // Read before the record goes: once the release lands there is
     // nothing left to ask what it was
     const { family, name } = getSpeciesData(going.species);
-    const paid = getCatchCandy(going.species);
+    const paid = getReleaseCandy(going);
 
     if (!releasing()) {
       setReleasing(true);
@@ -1112,7 +1112,7 @@ export function CatchSheetBody(
                           onClick={release}
                         >
                           {releasing()
-                            ? `Let it go for ${getCatchCandy(loaded().species)} candy?`
+                            ? `Let it go for ${getReleaseCandy(loaded())} candy?`
                             : 'Release'}
                         </Button>
                         <Show when={releasing()}>

@@ -1,6 +1,4 @@
-import type { ItemStack } from '../../../data/overworld/item-pool';
 import type { NestOffer } from '../../../server/overworld';
-import { describeItem } from '../../details';
 import type { EggState } from '../NestDialog';
 
 /**
@@ -26,22 +24,6 @@ export interface Journey {
    * on it, so the walk ends beside it and reaches out
    */
   act: boolean;
-}
-
-/**
- * What a stash came to, read out: "3 Poke Ball, 2 Ultra Ball and a
- * Fire Stone". A single piece is named without a count, since one of
- * something is what a cache used to always be
- */
-export function describeStash(stash: ItemStack[]): string {
-  const parts = stash.map(({ item, amount }) =>
-    amount === 1 ? describeItem(item) : `${amount} × ${describeItem(item)}`,
-  );
-
-  if (parts.length <= 1) {
-    return parts[0] ?? 'nothing';
-  }
-  return `${parts.slice(0, -1).join(', ')} and ${parts[parts.length - 1]}`;
 }
 
 /**

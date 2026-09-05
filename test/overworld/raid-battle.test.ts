@@ -13,6 +13,9 @@ import { BattleEvents } from '../../src/battle/events';
 import createBattle from '../../src/battle/setup';
 import type Unit from '../../src/battle/unit';
 import { fieldTeams } from '../../src/overworld/raid-battle';
+import { mythicalRaidId, mythicalRelicOf } from '../../src/auth/raid-record';
+import { Items } from '../../src/data/ids/items';
+import World from '../../src/overworld/world';
 
 registerGameData();
 
@@ -114,5 +117,20 @@ describe('who walks on first', () => {
     );
 
     expect(fielded.units.get(0)?.map((unit) => unit.species)).toEqual(ONE);
+  });
+});
+
+describe('mythical lobby ids', () => {
+  it('reads back the relic that opened one', () => {
+    // A seed that reads like the tag itself, since the id is built by
+    // pasting one onto the other
+    const chunk = new World('seed$mythical9').getChunk(1, 2);
+    const id = mythicalRaidId(chunk, 1_700_000_000_000, Items.GSBall, 'player-1', 60);
+
+    expect(mythicalRelicOf(id)).toBe(Items.GSBall);
+  });
+
+  it('says nothing for a lobby no relic opened', () => {
+    expect(mythicalRelicOf('seed@1700000000000$legendary42')).toBeNull();
   });
 });

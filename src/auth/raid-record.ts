@@ -42,8 +42,9 @@ export const enum RaidKind {
   Shadow = 1,
   /**
    * A mythical called out by a raid item. It stands on no landmark:
-   * the relic that opened it is what staged it, and the relic is
-   * spent, so the lobby is fought once whatever the outcome
+   * the relic that opened it is what staged it, and starting the
+   * fight spends the relic, so the lobby is fought once whatever the
+   * outcome
    */
   Mythical = 2,
 }
@@ -236,6 +237,20 @@ export function mythicalRaidId(
   offset = 0,
 ): string {
   return `${chunk.seed}${toZoneKey(offset)}@${raidTimestamp}$mythical${item}:${uid}`;
+}
+
+/**
+ * Which relic opened a mythical lobby, read back out of its id.
+ *
+ * The item is not a column on the raid: the id is built from it, and
+ * the id is what every caller already has in hand. Read from the last
+ * `$mythical` in the string, since a world seed is free to contain
+ * anything. Null for any other kind of lobby
+ */
+export function mythicalRelicOf(id: string): Items | null {
+  const found = /\$mythical(\d+):/.exec(id.slice(id.lastIndexOf('$mythical')));
+
+  return found == null ? null : (Number(found[1]) as Items);
 }
 
 /**

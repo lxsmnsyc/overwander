@@ -16,6 +16,7 @@ export {
   SHADOW_CANDY_MULTIPLIER,
   SPECIES_DAY_CANDY_BOOST,
   getCatchCandy,
+  getReleaseCandy,
 } from './candy-rules';
 export { default as getCandyCost } from './candy-rules';
 

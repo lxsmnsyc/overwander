@@ -42,10 +42,11 @@ A **Rare Candy** is the exception to the family rule: used from the bag on any
 pokemon, it buys one level no matter what family the pokemon belongs to and no
 matter what its levels normally cost. Nothing sells them; they are prizes.
 
-Releasing a pokemon pays its family the same candy catching it did, rarity and
-all, though never the family-day bonus. Letting one go is a decision about space
-rather than a punishment, and what the pokemon was worth does not change on the
-way out.
+Releasing a pokemon pays its family 1 candy for every 25 levels it reached,
+rounded up: 1 for anything up to level 25, and 4 for a pokemon at 76 or above.
+What comes back is the raising rather than the rarity, and it is a fraction of
+what those levels cost, so letting one go is a decision about space rather than a
+way of stocking up.
 
 ## Names
 

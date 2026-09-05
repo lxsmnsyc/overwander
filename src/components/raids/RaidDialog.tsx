@@ -33,7 +33,7 @@ const ACTION_LABELS: Record<RaidAction, string> = {
  */
 function describeRaid(view: RaidView): string {
   if (view.kind === RaidKind.Mythical) {
-    return 'The relic that called it is already spent — this raid happens once, won or lost.';
+    return 'Starting the raid spends the relic that called it, and it happens once, won or lost.';
   }
   if (view.kind === RaidKind.Shadow) {
     return 'A shadow raid: what it leaves behind is stronger and costs twice the candy to raise.';

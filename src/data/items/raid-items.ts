@@ -9,8 +9,9 @@ import { nameToIcon, registerItem } from './__create';
  * The world never stages a mythical of its own — a landmark rolls
  * legendaries and rare species, and nothing else — so carrying the
  * relic is the only way to face one. Each item names exactly which
- * species it calls, and it is spent in the calling: the raid it opens
- * happens once, won or lost.
+ * species it calls. Opening the lobby costs nothing; the relic is
+ * spent when the raid starts, and that raid happens once, won or
+ * lost.
  *
  * They cannot be bought. A raid item is found in the special band of
  * the overworld item pool and nowhere else, which is what keeps a
@@ -49,14 +50,14 @@ export function getRaidSpecies(item: Items): Species | null {
 
 /**
  * Register the raid items. They are key items rather than valuables —
- * nothing sells one — and consumable, since calling a mythical spends
+ * nothing sells one — and consumable, since starting the raid spends
  * the relic that called it
  */
 export default function registerRaidItems(): void {
   for (const item of RAID_ITEMS.keys()) {
     registerItem(item, {
       name: NAMES[item] ?? `Item #${item}`,
-      description: `Opens a raid at ${PLACES[item] ?? 'the place it leads to'}. Spent on use.`,
+      description: `Opens a raid at ${PLACES[item] ?? 'the place it leads to'}. Spent when the raid starts.`,
       type: ItemTypes.KeyItem,
       icon: nameToIcon('key', NAMES[item] ?? ''),
       // Used to open a raid, and gone once it has been

@@ -1,5 +1,5 @@
 import { type JSX, Show, createSignal } from 'solid-js';
-import { getCatchCandy } from '../../../auth/candy';
+import { getReleaseCandy } from '../../../auth/candy';
 import { isFavorite, isGuarded } from '../../../auth/caught-record';
 import { getFamilyName, getSpeciesData } from '../../../data/species';
 import type { CatchOption } from '../catch-picker';
@@ -65,7 +65,7 @@ function candyLine(going: CatchOption[]): string {
     const { family } = getSpeciesData(option.caught.species);
     const name = getFamilyName(family);
 
-    piles.set(name, (piles.get(name) ?? 0) + getCatchCandy(option.caught.species));
+    piles.set(name, (piles.get(name) ?? 0) + getReleaseCandy(option.caught));
   }
   return [...piles].map(([name, count]) => `${count} ${name} candy`).join(', ');
 }

@@ -17,6 +17,7 @@ import {
   asRaidRecord,
   deriveRaidReward,
   mythicalRaidId,
+  mythicalRelicOf,
   raidId,
 } from '../auth/raid-record';
 import { LobbyRole } from '../auth/lobby-role';
@@ -48,7 +49,7 @@ import { getSpeciesLair } from '../data/overworld/lair';
 import { getSql, jsonOf, newDocId, tx } from './db';
 import { readCaughtMany } from './caught-io';
 import { foughtBattle, readBattle, readRaid, readRaidIn, readTeam, writeRaid } from './raid-io';
-import { consumeItem } from './inventory';
+import { consumeItem, holdsItem } from './inventory';
 import { isAnyCatchLocked, isCatchLocked, releaseBattleLocks } from './locks';
 import { asNumber, asString } from './read';
 import { hasAnyCaught } from './caught';
@@ -299,20 +300,23 @@ export async function enterRaid(
 }
 
 /**
- * Open a mythical raid with a raid item. The relic names the species
- * — the world never stages a mythical of its own — and it is **spent
- * in the calling**: the stack comes down by one before the lobby is
- * written, so a mythical is fought once whether the boss goes down or
- * walks away. Nothing restages it, unlike a landmark raid a party
- * failed.
+ * Open a mythical raid with a raid item. The relic names the species,
+ * since the world never stages a mythical of its own.
+ *
+ * Opening a lobby does **not** spend it: the relic is spent when the
+ * raid starts, so a host who opens a lobby and thinks better of it
+ * still has the relic to call with. What the calling costs is
+ * therefore nothing until there is a fight, and once there is one it
+ * is fought once, won or lost. Nothing restages it, unlike a landmark
+ * raid a party failed.
  *
  * The lobby stands where the player was standing, for the window they
  * were standing there in, and is joinable by anyone the way any other
  * lobby is.
  *
  * Resolves the lobby id and its record, or null when the item calls
- * nothing, is not carried, or has already been spent on this window's
- * lobby
+ * nothing, is not carried, or its lobby for this window is already
+ * fought out
  */
 export async function hostMythicalRaid(
   uid: string,
@@ -334,20 +338,21 @@ export async function hostMythicalRaid(
   const id = mythicalRaidId(chunk, snapshot.raidTimestamp, item, uid, zone);
   const stored = await readRaid(id);
 
-  // The relic was already spent on this window's lobby: whatever became
-  // of it — gathering, fought, lost — is what there is
+  // The relic already opened this window's lobby: whatever became of
+  // it, gathering or fought or lost, is what there is
   if (stored != null) {
     const existing = asRaidRecord(stored);
 
     return existing.cleared ? null : [id, existing];
   }
-  // A player with nothing of their own cannot host: an empty lobby
-  // would spend the relic on a raid nobody can start
+  // A player with nothing of their own cannot host: an empty lobby is
+  // one nobody can start
   if (!(await hasAnyCaught(uid))) {
     return null;
   }
-  // Spent before the lobby exists, so a relic can never open two
-  if (!(await consumeItem(uid, item))) {
+  // Carried rather than spent. The stack comes down in `startRaid`,
+  // which is the moment the mythical is actually called out
+  if (!(await holdsItem(uid, item))) {
     return null;
   }
 
@@ -392,7 +397,14 @@ export async function hostMythicalRaid(
  *
  * A **cleared** lobby is the one empty one that stays: it is the
  * record of the boss having been met, and it is what keeps the
- * landmark shut for the rest of the window
+ * landmark shut for the rest of the window.
+ *
+ * A host walking out of a lobby other people are still in hands it
+ * over to whoever joined first, since only the host may start a raid
+ * and a lobby nobody can start is a lobby standing until the window
+ * turns over. A **mythical** lobby is taken down instead: the relic is
+ * the host's own and is spent by the start, so there is nobody else
+ * whose raid it could become
  */
 export async function leaveRaid(uid: string, lobby: string): Promise<void> {
   await tx(async (transaction) => {
@@ -410,7 +422,7 @@ export async function leaveRaid(uid: string, lobby: string): Promise<void> {
 
     const record = asRaidRecord(raid);
     const rows = await transaction`
-      select id, player from teams where raid_id = ${lobby}
+      select id, player from teams where raid_id = ${lobby} order by joined_seq
     `;
     const mine = new Set(
       rows.filter((entry) => entry.player === uid).map((entry) => asString(entry.id)),
@@ -429,6 +441,17 @@ export async function leaveRaid(uid: string, lobby: string): Promise<void> {
     if (left.length === 0 && !record.cleared && (mine.size > 0 || record.host === uid)) {
       await transaction`delete from raids where id = ${lobby}`;
       return;
+    }
+    // The host is walking out and the room is not empty: somebody has
+    // to be able to start it
+    if (record.host === uid && left.length > 0) {
+      if (record.kind === RaidKind.Mythical) {
+        await transaction`delete from raids where id = ${lobby}`;
+        return;
+      }
+      await transaction`
+        update raids set host = ${asString(left[0].player)} where id = ${lobby}
+      `;
     }
     if (mine.size === 0) {
       return;
@@ -777,6 +800,26 @@ export async function startRaid(uid: string, lobby: string, now: number): Promis
     const current = await readRaid(lobby);
 
     return typeof current?.battle === 'string' ? current.battle : null;
+  }
+
+  // The relic is spent here rather than at the calling: a lobby that
+  // never started costs nothing, and the one that does costs the
+  // relic whichever way the fight goes.
+  //
+  // After the claim, so two starts racing cannot both eat it, and the
+  // claim is given back when the relic is not there to spend: this
+  // start is the only one holding that battle id, so putting it back
+  // is safe and leaves the lobby exactly as it was found
+  if (raid.kind === RaidKind.Mythical) {
+    const relic = mythicalRelicOf(lobby);
+
+    if (relic == null || !(await consumeItem(uid, relic))) {
+      await getSql()`
+        update raids set battle_id = null
+        where id = ${lobby} and battle_id = ${battleId}
+      `;
+      return null;
+    }
   }
 
   // Every party at once. Each freezes a whole team of its own and

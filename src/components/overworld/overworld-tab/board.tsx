@@ -1,7 +1,7 @@
 import { type ChunkView, buildChunkView, naming } from './chunk-view';
 import challengerOf, { championGate, eliteGate } from './challengers';
 import { describeItem } from '../../details';
-import { type Journey, describeStash, stateOf } from './journey';
+import { type Journey, stateOf } from './journey';
 import { useAuth } from '../../../auth/context';
 import { settled } from '../../app/resource-reads';
 import { type Direction, actionOf, forTheGame } from '../../app/keys';
@@ -72,6 +72,7 @@ import { GameDialog, useGame } from '../../app/game-context';
 import { createCellNotes } from '../cell-notes';
 import watchLive from '../../app/watch';
 import ItemSprite from '../../items/ItemSprite';
+import sayItems from '../../items/say-items';
 import RaidDialog from '../../raids/RaidDialog';
 import { Badge, Button, Note, useToast } from '../../styled';
 import NestDialog, { type EggSource, type EggState } from '../NestDialog';
@@ -869,7 +870,7 @@ export default function OverworldBoard(props: {
         // the player is looking at the map rather than at their
         // inventory, and nothing else would tell them
         if (report != null && report.picked.length > 0) {
-          remark(`Your buddy picked up ${describeStash(report.picked)}.`, 'leaf');
+          sayItems(toast, report.picked, 'Your buddy found');
         }
       })
       .catch(() => {

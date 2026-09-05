@@ -81,12 +81,14 @@ import {
   speciesFormIndex,
   unownLetter,
 } from '../src/data/ids/species';
+import { MAX_LEVEL } from '../src/data/constants/levels';
 import {
   CANDY_PER_LEVEL,
   SHADOW_CANDY_MULTIPLIER,
   SPECIES_DAY_CANDY_BOOST,
   getCandyCost,
   getCatchCandy,
+  getReleaseCandy,
 } from '../src/auth/candy';
 import registerItems, {
   ITEM_TYPE_NAMES,
@@ -1995,6 +1997,21 @@ describe('species day', () => {
     expect(getCatchCandy(Species.Ivysaur)).toBe(3);
     expect(getCatchCandy(Species.Venusaur)).toBe(5);
     expect(getCatchCandy(Species.Mewtwo)).toBe(7);
+  });
+
+  it('pays a release by the levels that went into it', () => {
+    // One candy per 25 levels, rounded up: four bands, the top of
+    // which is anything from 76 to the cap
+    expect(getReleaseCandy({ level: 1 })).toBe(1);
+    expect(getReleaseCandy({ level: 25 })).toBe(1);
+    expect(getReleaseCandy({ level: 26 })).toBe(2);
+    expect(getReleaseCandy({ level: 75 })).toBe(3);
+    expect(getReleaseCandy({ level: 76 })).toBe(4);
+    expect(getReleaseCandy({ level: MAX_LEVEL })).toBe(4);
+
+    // What it took to raise is always more than what letting it go
+    // hands back, so releasing is never a way to stock up
+    expect(getReleaseCandy({ level: MAX_LEVEL })).toBeLessThan(MAX_LEVEL * CANDY_PER_LEVEL);
   });
 
   it('pays four times over for a catch on the family day', () => {

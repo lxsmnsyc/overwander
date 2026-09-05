@@ -73,38 +73,39 @@ export interface NurseCounterProps {
   busy: boolean;
   /** Whether this one has anything she could see to */
   needsCare: (option: CatchOption) => boolean;
-  onHeal: (catchId: string) => void;
+  onHeal: (picked: string[]) => void;
 }
 
 export function NurseCounter(props: NurseCounterProps): JSX.Element {
   return (
     <DialogSection class={CENTRED}>
-      {/* One press, one pokemon seen to. She is free and turns nobody
-          away, so there is nothing to weigh up before handing one over
-          — a counter that took a party first and a button second was
-          two presses for a decision nobody makes */}
+      {/* A party at a time rather than one pokemon at a time. She is
+          free and turns nobody away, so what a player wants is
+          everything they are carrying seen to, and handing them over
+          one press each was a round trip apiece for a decision nobody
+          makes.
+
+          A shadow is left out entirely: purifying one is permanent and
+          is the Purifying Gem's business, not something to be swept up
+          in a heal of six */}
       <CatchPicker
         inline
+        multiple
         disabled={props.busy}
         options={props.options}
-        value={null}
+        value={[]}
         verb="Heal"
         empty="You have nothing for her to look at."
-        filter={(option) => !isEgg(option.caught) && !option.fighting && props.needsCare(option)}
-        reason={(option) => (isGuarded(option.caught) ? 'locked' : null)}
-        note={(option) => (isShadow(option.caught) ? 'shadow, she would purify it' : null)}
-        // Handing her a shadow is the one thing at this counter that
-        // cannot be taken back, and it happens on the way to something
-        // as ordinary as a heal
-        confirm={(option) => isShadow(option.caught)}
-        warn={(option) =>
-          isShadow(option.caught)
-            ? 'She will purify this one along with the heal. The Shadow ability goes for good, and it stops being a shadow.'
-            : null
+        filter={(option) =>
+          !isEgg(option.caught) &&
+          !option.fighting &&
+          !isShadow(option.caught) &&
+          props.needsCare(option)
         }
-        onPick={(id) => {
-          if (id != null) {
-            props.onHeal(id);
+        reason={(option) => (isGuarded(option.caught) ? 'locked' : null)}
+        onPick={(picked) => {
+          if (Array.isArray(picked) && picked.length > 0) {
+            props.onHeal(picked);
           }
         }}
       />

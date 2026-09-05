@@ -2,7 +2,6 @@ import { type JSX, type Resource, Show, createMemo, createResource, createSignal
 import { isLockLive } from '../../../auth/battle-lock';
 import { type CaughtPokemon, listCaught } from '../../../auth/caught';
 import { syncServerClock } from '../../../auth/clock';
-import { isShadow } from '../../../auth/caught-record';
 import { getMaxHealth } from '../../../auth/health';
 
 import { describeFriendship } from '../../../data/constants/friendship';
@@ -53,7 +52,16 @@ import NpcSprite from '../NpcSprite';
 import AnimatedSprite from '../../sprites/AnimatedSprite';
 import ItemSprite from '../../items/ItemSprite';
 import TeachMoveDialog from '../../catches/TeachMoveDialog';
-import { Badge, Button, Detail, Dialog, DialogActions, Meta, Status, useToast } from '../../styled';
+import {
+  Badge,
+  Button,
+  Detail,
+  Dialog,
+  DialogActions,
+  Meta,
+  type ToastTone,
+  useToast,
+} from '../../styled';
 import {
   BreederCounter,
   ChannelerCounter,
@@ -122,7 +130,18 @@ function NpcCounter(
   },
 ): JSX.Element {
   const toast = useToast();
-  const [status, setStatus] = createSignal<string | null>(null);
+  /**
+   * What just happened, said in passing.
+   *
+   * A counter reports in a toast rather than in a line at the foot of
+   * its own panel: the player is looking at the button they pressed
+   * and at what it acted on, and a dialog that closes takes its own
+   * status line with it. What stays on the panel is what is read
+   * *before* pressing — the fee, the bag, why a square is grey
+   */
+  const said = (message: string, tone: ToastTone = 'leaf'): void => {
+    toast.push({ message, tone });
+  };
   const [chosen, setChosen] = createSignal<string[]>([]);
   const [busy, setBusy] = createSignal(false);
   // Which side of the counter is being looked at, or null while the
@@ -237,18 +256,19 @@ function NpcCounter(
   };
 
   /**
+   * Whether Nurse Joy would do anything to it: patch it up or take a
+   * status off. A shadow is not hers to put right, so it is not one
+   * of the answers here; one that is already whole she looks over and
+   * hands straight back, so it is left out of her list rather than
+   * offered
+   */
+  const needsCare = (caught: CaughtPokemon): boolean =>
+    caught.statuses !== 0 || caught.health < getMaxHealth(caught);
+
+  /**
    * How many Heart Scales are in the bag. It is the reminder's whole
    * price, and it is read off the same bag the vendor's picker reads
    */
-  /**
-   * Whether Nurse Joy would do anything to it: patch it up, take a
-   * status off, or put a shadow right. One that is already whole she
-   * looks over and hands straight back, spending the window on
-   * nothing, so it is left out of her list rather than offered
-   */
-  const needsCare = (caught: CaughtPokemon): boolean =>
-    isShadow(caught) || caught.statuses !== 0 || caught.health < getMaxHealth(caught);
-
   const scales = (): number =>
     (props.bag.latest ?? []).find((entry) => entry.item === REMINDER_FEE)?.amount ?? 0;
 
@@ -301,7 +321,6 @@ function NpcCounter(
     if (snapshot == null || standing == null) {
       return;
     }
-    setStatus(null);
     setBusy(true);
     carveApricorns(snapshot, standing[0], item, amount)
       .then((done) => {
@@ -334,7 +353,6 @@ function NpcCounter(
   };
 
   const close = (): void => {
-    setStatus(null);
     setChosen([]);
     setCounter(null);
     forget();
@@ -351,7 +369,6 @@ function NpcCounter(
     if (snapshot == null || standing == null || chosenPair == null) {
       return;
     }
-    setStatus(null);
     setBusy(true);
     breed(snapshot, standing[0], [chosenPair[0].id, chosenPair[1].id])
       .then((egg) => {
@@ -378,7 +395,7 @@ function NpcCounter(
       })
       .catch((caught: unknown) => {
         setBusy(false);
-        setStatus(caught instanceof Error ? caught.message : String(caught));
+        said(caught instanceof Error ? caught.message : String(caught), 'ember');
       });
   };
 
@@ -389,22 +406,22 @@ function NpcCounter(
     if (snapshot == null || standing == null || picked.length === 0) {
       return;
     }
-    setStatus(null);
     setBusy(true);
     visitNurse(snapshot, standing[0], picked)
       .then((tended) => {
         setBusy(false);
-        setStatus(
+        said(
           tended == null
-            ? 'She handed it straight back. Nothing to heal.'
-            : 'She looked after it. Right as rain.',
+            ? 'She handed them straight back. Nothing to heal.'
+            : 'She looked after them. Right as rain.',
+          tended == null ? 'ember' : 'leaf',
         );
         props.onServed();
         props.onChange?.();
       })
       .catch((caught: unknown) => {
         setBusy(false);
-        setStatus(caught instanceof Error ? caught.message : String(caught));
+        said(caught instanceof Error ? caught.message : String(caught), 'ember');
       });
   };
 
@@ -415,7 +432,6 @@ function NpcCounter(
     if (snapshot == null || standing == null) {
       return;
     }
-    setStatus(null);
     setBusy(true);
     boostEgg(snapshot, standing[0], id)
       .then((steps) => {
@@ -457,22 +473,22 @@ function NpcCounter(
     if (snapshot == null || standing == null) {
       return;
     }
-    setStatus(null);
     setBusy(true);
     groomCatch(snapshot, standing[0], id)
       .then((friendship) => {
         setBusy(false);
-        setStatus(
+        said(
           friendship == null
             ? 'He would not take it. A shadow, a friend already, or he has seen you this while.'
             : `Brushed, fussed over and handed back ${describeFriendship(friendship)}. (−${GROOMING_FEE} gold)`,
+          friendship == null ? 'ember' : 'leaf',
         );
         props.onServed();
         props.onChange?.();
       })
       .catch((caught: unknown) => {
         setBusy(false);
-        setStatus(caught instanceof Error ? caught.message : String(caught));
+        said(caught instanceof Error ? caught.message : String(caught), 'ember');
       });
   };
 
@@ -491,15 +507,15 @@ function NpcCounter(
     if (snapshot == null || standing == null) {
       return;
     }
-    setStatus(null);
     setBusy(true);
     channelAbility(snapshot, standing[0], id)
       .then((drawn) => {
         setBusy(false);
 
         if (drawn == null) {
-          setStatus(
+          said(
             'Nothing answered. No scale, a pokemon she cannot reach, or she has seen you this while.',
+            'ember',
           );
           return;
         }
@@ -514,7 +530,7 @@ function NpcCounter(
       })
       .catch((caught: unknown) => {
         setBusy(false);
-        setStatus(caught instanceof Error ? caught.message : String(caught));
+        said(caught instanceof Error ? caught.message : String(caught), 'ember');
       });
   };
 
@@ -544,7 +560,6 @@ function NpcCounter(
 
     const picks: ItemAmount[] = [[item, amount]];
 
-    setStatus(null);
     setBusy(true);
     (buyingIt
       ? buyFromVendor(snapshot, standing[0], picks, standing[1])
@@ -571,7 +586,7 @@ function NpcCounter(
       })
       .catch((caught: unknown) => {
         setBusy(false);
-        setStatus(caught instanceof Error ? caught.message : String(caught));
+        said(caught instanceof Error ? caught.message : String(caught), 'ember');
       });
   };
 
@@ -588,7 +603,6 @@ function NpcCounter(
     if (snapshot == null || standing == null) {
       return;
     }
-    setStatus(null);
     setBusy(true);
     buyFossil(snapshot, standing[0], item)
       .then((done) => {
@@ -609,7 +623,7 @@ function NpcCounter(
       })
       .catch((caught: unknown) => {
         setBusy(false);
-        setStatus(caught instanceof Error ? caught.message : String(caught));
+        said(caught instanceof Error ? caught.message : String(caught), 'ember');
       });
   };
 
@@ -625,7 +639,6 @@ function NpcCounter(
     if (snapshot == null || standing == null) {
       return;
     }
-    setStatus(null);
     setBusy(true);
     reviveFossil(snapshot, standing[0], item)
       .then((revived) => {
@@ -785,7 +798,6 @@ function NpcCounter(
           tone="primary"
           disabled={busy()}
           onClick={() => {
-            setStatus(null);
             setCounter('buy');
           }}
         >
@@ -794,7 +806,6 @@ function NpcCounter(
         <Button
           disabled={busy()}
           onClick={() => {
-            setStatus(null);
             setCounter('sell');
           }}
         >
@@ -810,7 +821,7 @@ function NpcCounter(
    */
   const remembered = (): void => {
     forget();
-    setStatus('He hummed, tapped its head, and it remembered. (−1 Heart Scale)');
+    said('He hummed, tapped its head, and it remembered. (−1 Heart Scale)');
     props.onTraded();
     props.onServed();
     props.onChange?.();
@@ -822,7 +833,7 @@ function NpcCounter(
    */
   const tutored = (): void => {
     forget();
-    setStatus('One lesson, well spent. (−1 Heart Scale)');
+    said('One lesson, well spent. (−1 Heart Scale)');
     props.onTraded();
     props.onServed();
     props.onChange?.();
@@ -868,7 +879,6 @@ function NpcCounter(
                   chosen={chosen()}
                   compatible={compatible()}
                   onPick={(picked) => {
-                    setStatus(null);
                     setChosen(picked);
                   }}
                 />
@@ -878,9 +888,7 @@ function NpcCounter(
                   options={offers()}
                   busy={busy()}
                   needsCare={(option) => needsCare(option.caught)}
-                  onHeal={(id) => {
-                    tendParty([id]);
-                  }}
+                  onHeal={tendParty}
                 />
               </Show>
               <Show when={standing()[1] === Npc.DaycareLady}>
@@ -917,7 +925,6 @@ function NpcCounter(
                   chosen={recall()}
                   busy={busy()}
                   onPick={(id) => {
-                    setStatus(null);
                     setRecall(null);
                     setRemindee(id);
                   }}
@@ -936,7 +943,6 @@ function NpcCounter(
                   chosen={lesson()}
                   busy={busy()}
                   onPick={(id) => {
-                    setStatus(null);
                     setLesson(null);
                     setTutee(id);
                   }}
@@ -972,8 +978,6 @@ function NpcCounter(
               <Show when={standing()[1] === Npc.Vendor || standing()[1] === Npc.Chef}>
                 <VendorCounter gold={props.gold.latest ?? 0} />
               </Show>
-
-              <Status message={status()} />
             </>
           )}
         </Show>

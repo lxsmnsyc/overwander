@@ -322,6 +322,9 @@ const SCALAR_COLUMNS: Record<string, string> = {
   hatchSteps: 'hatch_steps',
   steppedAt: 'stepped_at',
   health: 'health',
+  // Written only by what the maximum is derived from; `hurt` is
+  // generated off it, so a plain heal passes `health` alone
+  maxHealth: 'max_health',
   statuses: 'statuses',
   lair: 'lair',
   ball: 'ball',

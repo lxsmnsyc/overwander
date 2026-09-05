@@ -260,9 +260,19 @@ export async function countCaught(owner: string): Promise<number> {
  * record, and it is **derived** from three of its own fields — see
  * `isAuctionableCatch`. It is stored regardless, because "perfect
  * **or** blank **or** shiny **or** legendary" is a disjunction, and a
- * disjunction cannot be asked of a box in one query
+ * disjunction cannot be asked of a box in one query.
+ *
+ * `hurt` is derived too, and is the store's own: the column is
+ * generated from the health against the maximum stored beside it
  */
-export type CatchMark = 'shiny' | 'shadow' | 'egg' | 'favorite' | 'guarded' | 'auctionable';
+export type CatchMark =
+  | 'shiny'
+  | 'shadow'
+  | 'egg'
+  | 'favorite'
+  | 'guarded'
+  | 'auctionable'
+  | 'hurt';
 
 /**
  * The player's pokemon that answer yes to one of them — their shinies,

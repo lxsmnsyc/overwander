@@ -294,10 +294,13 @@ function tended(
   // Purifying raises the pool, and she fills whatever the pool ends up
   // being: the two are one visit, so the order they are written in
   // must not leave the pokemon short
+  const filled = getMaxHealth({ ...record, ivs: purifyIVs(record.ivs) });
+
   return {
     fields: {
       ...purified,
-      health: getMaxHealth({ ...record, ivs: purifyIVs(record.ivs) }),
+      health: filled,
+      maxHealth: filled,
       statuses: 0,
     },
     purifies: purified != null,

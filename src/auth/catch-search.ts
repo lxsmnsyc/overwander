@@ -260,11 +260,12 @@ const MARKS = new Map<string, Mark>(
       ],
     },
     // What a fight left it as, beside being down: `is:hurt` is missing
-    // health and `is:sick` is carrying something. Only the second is a
-    // column, since a maximum is derived rather than stored
+    // health and `is:sick` is carrying something. Both are columns,
+    // the first because the maximum is stored beside the health for
+    // exactly this
     hurt: {
       of: (caught) => caught.health < getMaxHealth(caught),
-      constrain: () => [],
+      constrain: (wanted) => flag('hurt', wanted),
     },
     sick: {
       of: (caught) => caught.statuses !== 0,

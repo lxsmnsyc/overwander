@@ -115,6 +115,7 @@ export async function trainEfforts(
       // Effort in health is a bigger pool, and the share of it the
       // pokemon was carrying is what it keeps
       health: rescaleHealth(record.health, getMaxHealth(record), getMaxHealth(trained)),
+      maxHealth: getMaxHealth(trained),
     });
     return asResult(trained);
   });
@@ -210,6 +211,7 @@ export async function useEffortItem(
       effortValues,
       effortBonus: trained.effortBonus,
       health: rescaleHealth(record.health, getMaxHealth(record), getMaxHealth(trained)),
+      maxHealth: getMaxHealth(trained),
     });
     return asResult(trained);
   });
@@ -367,6 +369,7 @@ export async function feedEffortBerry(
       // A smaller pool takes the same share of health with it, so a
       // pokemon is never left holding more than it can
       health: rescaleHealth(record.health, getMaxHealth(record), getMaxHealth(trained)),
+      maxHealth: getMaxHealth(trained),
     });
     return asResult(trained);
   });

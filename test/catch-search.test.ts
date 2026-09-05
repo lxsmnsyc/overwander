@@ -304,6 +304,12 @@ describe('the fields added for the query builder', () => {
     expect(planCatchSearch('is:fainted')).toEqual([
       { on: 'row', column: 'health', op: 'eq', value: 0 },
     ]);
+    expect(planCatchSearch('is:hurt')).toEqual([
+      { on: 'row', column: 'hurt', op: 'eq', value: true },
+    ]);
+    expect(planCatchSearch('not:hurt')).toEqual([
+      { on: 'row', column: 'hurt', op: 'eq', value: false },
+    ]);
     expect(planCatchSearch('friendship:150-255')).toEqual([
       { on: 'row', column: 'friendship', op: 'gte', value: 150 },
       { on: 'row', column: 'friendship', op: 'lte', value: 255 },

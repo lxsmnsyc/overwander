@@ -165,13 +165,22 @@ async function writeEgg(
     fields.hatchSteps,
   );
 
+  // What is in the shell is whole, and the maximum it is measured
+  // against is stored beside it so `hurt` can be a column
+  const whole = getMaxHealth({
+    species: fields.species,
+    level: EGG_LEVEL,
+    ivs: fields.ivs,
+    effortValues: zeroEffortValues(),
+  });
+
   await tx(async (transaction) => {
     await transaction`
       insert into caught (
         id, owner, type, species, nickname, level, individual_value, trait_value,
         ivs, gender, nature, shiny, shadow, egg, favorite, guarded, traded,
         auctionable, slots, locked_at, steps, hatch_steps, stepped_at, health,
-        statuses, lair, ball, caught_at_local, caught_at_offset, locale,
+        max_health, statuses, lair, ball, caught_at_local, caught_at_offset, locale,
         effort_bonus, walked, friendship,
         origin_timestamp, origin_x, origin_y, origin_biome, origin_place
       ) values (
@@ -186,12 +195,7 @@ async function writeEgg(
         })},
         ${packSlots(DEFAULT_ABILITY_SLOTS, DEFAULT_ITEM_SLOTS, DEFAULT_MOVE_SLOTS)},
         0, 0, ${hatchSteps}, ${now},
-        ${getMaxHealth({
-          species: fields.species,
-          level: EGG_LEVEL,
-          ivs: fields.ivs,
-          effortValues: zeroEffortValues(),
-        })},
+        ${whole}, ${whole},
         0, null, ${fields.ball},
         ${new Date(toLocalTime(now, zone))}, ${zone}, ${asLocale(locale)},
         0, 0, ${fields.shadow ? SHADOW_FRIENDSHIP : BASE_FRIENDSHIP},

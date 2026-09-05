@@ -20,7 +20,7 @@ into, **Team Rocket** stops, a **gym seat** another player is holding, and a
 | **Travel**      | The move is on its way         | A quarter second, or the flight time it names |
 | **Landing**     | It hits, and the effect lands  | Instant                                       |
 | **Carrying on** | Multi-step moves continue      | Another wind-up per step                      |
-| **Cooldown**    | That move cannot be used again | Set by the move's PP                          |
+| **Cooldown**    | That move cannot be used again | Set by the move's PP, less what Speed buys off |
 
 **A move is in the air for a moment.** Most take a quarter of a second between
 going off and landing, which is the time a swing takes. Anything thrown names its
@@ -36,6 +36,15 @@ earlier.
 be used its full PP's worth of times every three minutes: a 35 PP Tackle returns
 about every five seconds, a 5 PP Hyper Beam about every thirty-six. Strong moves
 are rationed by the clock.
+
+**Speed shortens every cooldown.** There is no turn order to win in a real-time
+fight, so what Speed buys is throwing the same move oftener: every 512 points of
+Speed halves what is left of the wait, closing on 95% off without ever quite
+getting there. A pokemon at 170 waits a fifth less than the move asks, one at 500
+waits half as long, and one at 1,500 is down to a sixth. Nothing is ever wasted
+on a stat that has run out of room. It is the stat as it stands at that moment,
+so an Agility, a Choice Scarf, Swift Swim under rain and paralysis all show up in
+how often a pokemon acts.
 
 **A wind-up can be interrupted.** Flinching stops it, and so does the target
 fainting. A move that has already landed cannot be taken back.

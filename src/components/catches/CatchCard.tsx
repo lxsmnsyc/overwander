@@ -11,10 +11,10 @@ import {
   isShiny,
 } from '../../auth/caught-record';
 import { isEgg } from '../../auth/egg';
-import { getMaxHealth, isFainted } from '../../auth/health';
+import { getMaxHealth, getStats, isFainted } from '../../auth/health';
 import getSigil from '../../data/constants/sigil';
 import { LockIcon, MoonIcon, SparklesIcon, StarIcon, SunIcon } from '../icons';
-import { MAX_IV_STARS, getIVStars } from '../../data/constants/stats';
+import { MAX_IV_STARS, Stats, getIVStars } from '../../data/constants/stats';
 import { Slots } from '../../data/constants/slots';
 import type { Items } from '../../data/ids/items';
 import { NATURE_NAMES } from '../../data/ids/natures';
@@ -212,7 +212,12 @@ export default function CatchCard(props: CatchCardProps): JSX.Element {
             <For each={caught().moves} fallback={<Meta>No move</Meta>}>
               {(move) => (
                 <li>
-                  <MoveHoverCard class="block" move={move} points={getMovePoints(caught(), move)}>
+                  <MoveHoverCard
+                    class="block"
+                    move={move}
+                    points={getMovePoints(caught(), move)}
+                    speed={getStats(caught())[Stats.Speed]}
+                  >
                     <span class="block truncate rounded border border-line-soft bg-line-soft px-1 py-0.5">
                       {describeMove(move)}
                     </span>

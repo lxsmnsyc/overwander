@@ -1385,6 +1385,23 @@ export default class Unit {
     return event.duration;
   }
 
+  /**
+   * What this move's wait comes to for this unit: its PP against the
+   * clock, less whatever the unit's Speed buys off it
+   */
+  checkMoveCooldown(move: Moves, target: MoveTarget): number {
+    const event: CheckUnitMoveTimeEvent = {
+      id: 'CheckUnitMoveCooldown',
+      disabled: false,
+      source: this,
+      move,
+      duration: 0,
+      target,
+    };
+    this.battle.emit(BattleEvents.CheckUnitMoveCooldown, event);
+    return event.duration;
+  }
+
   checkMoveChannelTime(move: Moves, target: MoveTarget): number {
     const event: CheckUnitMoveTimeEvent = {
       id: 'CheckUnitMoveChannelTime',

@@ -149,9 +149,37 @@ export function getMovePP(move: Moves, points = 0): number {
 export const PP_COOLDOWN_BASIS = 180;
 
 /**
- * How long a move takes to come back, in milliseconds, for a pokemon
- * that has spent `points` on it
+ * What Speed buys off a wait.
+ *
+ * Speed is the one mainline stat a real-time fight has no turn order
+ * to spend, so it is spent here instead: a fast pokemon throws the
+ * same move oftener rather than sooner, and the wind-up stays
+ * priority's job.
+ *
+ * Every `SPEED_COOLDOWN_HALVING` points halves what is left of the
+ * wait above the floor, so the curve approaches
+ * `MAX_SPEED_COOLDOWN_CUT` without ever arriving and no point of
+ * Speed is ever wasted. `SPEED_COOLDOWN_CEILING` is where it has
+ * effectively landed: eight halvings, within half a point of the
+ * floor, and past what anything in the game reaches without stacking
+ * every multiplier it has
  */
-export function getMoveCooldown(move: Moves, points = 0): number {
-  return (PP_COOLDOWN_BASIS / getMovePP(move, points)) * 1000;
+export const SPEED_COOLDOWN_HALVING = 512;
+export const SPEED_COOLDOWN_CEILING = 4096;
+export const MAX_SPEED_COOLDOWN_CUT = 0.95;
+
+/** What a wait is multiplied by at this Speed */
+export function getSpeedCooldownFactor(speed: number): number {
+  const floor = 1 - MAX_SPEED_COOLDOWN_CUT;
+
+  return floor + (1 - floor) * 2 ** (-Math.max(0, speed) / SPEED_COOLDOWN_HALVING);
+}
+
+/**
+ * How long a move takes to come back, in milliseconds, for a pokemon
+ * that has spent `points` on it and moves at `speed`. Speed is
+ * optional because a card over a move list has a move and no pokemon
+ */
+export function getMoveCooldown(move: Moves, points = 0, speed = 0): number {
+  return (PP_COOLDOWN_BASIS / getMovePP(move, points)) * 1000 * getSpeedCooldownFactor(speed);
 }

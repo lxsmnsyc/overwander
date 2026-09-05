@@ -23,7 +23,13 @@ import {
 } from '../../src/data/ids/moves';
 import { Species } from '../../src/data/ids/species';
 import { Statuses, Weathers } from '../../src/data/ids/status';
-import { PP_UP_LIMIT, getMoveData } from '../../src/data/moves';
+import {
+  MAX_SPEED_COOLDOWN_CUT,
+  PP_UP_LIMIT,
+  SPEED_COOLDOWN_CEILING,
+  getMoveData,
+  getSpeedCooldownFactor,
+} from '../../src/data/moves';
 import { FULL_INCENSE_PRIORITY, LAX_INCENSE_EVASION } from '../../src/battle/items/incenses';
 import { RELIC_BOOST_FACTOR, STAT_BOOST_FACTOR } from '../../src/battle/items/stat-boosters';
 import { TYPE_BOOSTER_FACTOR } from '../../src/battle/items/type-boosters';
@@ -539,8 +545,11 @@ describe('casting flow', () => {
     attacker.cast(Moves.Tackle, unitTarget(defender));
     advance(battle, 1800);
 
-    // 180 seconds' worth of uses divided by Tackle's 35 PP
-    expect(attacker.moves[Moves.Tackle]?.cooldown?.duration).toBeCloseTo((180 / 35) * 1000);
+    // 180 seconds' worth of uses divided by Tackle's 35 PP, less what
+    // the caster's own Speed buys off the wait
+    expect(attacker.moves[Moves.Tackle]?.cooldown?.duration).toBeCloseTo(
+      (180 / 35) * 1000 * getSpeedCooldownFactor(attacker.resolveStat(Stats.Speed, 0)),
+    );
     expect(attacker.checkCanCast(Moves.Tackle, unitTarget(defender))).toBe(false);
   });
 
@@ -560,7 +569,59 @@ describe('casting flow', () => {
     // Tackle's 35 PP plus three fifths of it: 56, and the wait comes
     // down in proportion
     expect(attacker.moves[Moves.Tackle]?.points).toBe(PP_UP_LIMIT);
-    expect(attacker.moves[Moves.Tackle]?.cooldown?.duration).toBeCloseTo((180 / 56) * 1000);
+    expect(attacker.moves[Moves.Tackle]?.cooldown?.duration).toBeCloseTo(
+      (180 / 56) * 1000 * getSpeedCooldownFactor(attacker.resolveStat(Stats.Speed, 0)),
+    );
+  });
+
+  it('a faster pokemon gets the same move back sooner', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const attacker = createUnit(battle, teamA);
+    const defender = createUnit(battle, teamB);
+    const target = unitTarget(defender);
+
+    const plain = attacker.checkMoveCooldown(Moves.Tackle, target);
+    const walking = attacker.resolveStat(Stats.Speed, 0);
+
+    // Read with stages in, so an Agility is worth something
+    attacker.addStage(Stages.Speed, 2, NONE_CAUSE);
+
+    const running = attacker.resolveStat(Stats.Speed, 0);
+    const quickened = attacker.checkMoveCooldown(Moves.Tackle, target);
+
+    expect(running).toBeCloseTo(walking * 2);
+    expect(quickened).toBeLessThan(plain);
+    expect(quickened).toBeCloseTo(
+      plain * (getSpeedCooldownFactor(running) / getSpeedCooldownFactor(walking)),
+    );
+  });
+
+  it('approaches nineteen twentieths off without ever reaching it', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const attacker = createUnit(battle, teamA);
+    const defender = createUnit(battle, teamB);
+    const target = unitTarget(defender);
+    const asked = (180 / 35) * 1000;
+    const floor = asked * (1 - MAX_SPEED_COOLDOWN_CUT);
+
+    // Nothing the game can field reaches the floor, however it is
+    // stacked: the fastest build in the roster is under 6000
+    expect(getSpeedCooldownFactor(10_000)).toBeGreaterThan(1 - MAX_SPEED_COOLDOWN_CUT);
+
+    attacker.setStat(StatsKind.Base, Stats.Speed, 255);
+    attacker.addStage(Stages.Speed, 6, NONE_CAUSE);
+
+    const fast = attacker.checkMoveCooldown(Moves.Tackle, target);
+
+    expect(fast).toBeGreaterThan(floor);
+    expect(fast).toBeLessThan(asked * 0.3);
+
+    // At the ceiling the curve has effectively landed: eight
+    // halvings, within half a point of the floor
+    expect(1 - getSpeedCooldownFactor(SPEED_COOLDOWN_CEILING)).toBeCloseTo(
+      MAX_SPEED_COOLDOWN_CUT,
+      2,
+    );
   });
 
   it('spends no points on a move the unit does not know', () => {

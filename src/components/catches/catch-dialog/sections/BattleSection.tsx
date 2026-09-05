@@ -3,6 +3,8 @@ import { ITEM_SPRITE, isHoldable, itemSlots } from '../describe';
 import type { CaughtPokemon } from '../../../../auth/caught';
 
 import { getMovePoints } from '../../../../auth/caught-record';
+import { getStats } from '../../../../auth/health';
+import { Stats } from '../../../../data/constants/stats';
 
 import type { InventoryEntry } from '../../../../auth/inventory';
 
@@ -61,6 +63,7 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
                       class="block"
                       move={move}
                       points={getMovePoints(props.caught, move)}
+                      speed={getStats(props.caught)[Stats.Speed]}
                     >
                       {/* The name and nothing else: what
                       kind it is and what it does are

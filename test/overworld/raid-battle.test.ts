@@ -15,7 +15,6 @@ import type Unit from '../../src/battle/unit';
 import { fieldTeams } from '../../src/overworld/raid-battle';
 import { mythicalRaidId, mythicalRelicOf } from '../../src/auth/raid-record';
 import { Items } from '../../src/data/ids/items';
-import World from '../../src/overworld/world';
 
 registerGameData();
 
@@ -122,12 +121,20 @@ describe('who walks on first', () => {
 
 describe('mythical lobby ids', () => {
   it('reads back the relic that opened one', () => {
-    // A seed that reads like the tag itself, since the id is built by
-    // pasting one onto the other
-    const chunk = new World('seed$mythical9').getChunk(1, 2);
-    const id = mythicalRaidId(chunk, 1_700_000_000_000, Items.GSBall, 'player-1', 60);
+    const id = mythicalRaidId(1_700_000_000_000, Items.GSBall, 'player-1', 60);
 
     expect(mythicalRelicOf(id)).toBe(Items.GSBall);
+  });
+
+  it('names one lobby for a relic and a window, wherever it was spent', () => {
+    // The chunk is not in it on purpose: a relic pressed a chunk over
+    // opens the lobby it already has rather than a second one
+    expect(mythicalRaidId(1_700_000_000_000, Items.OldSeaMap, 'player-1', 60)).toBe(
+      mythicalRaidId(1_700_000_000_000, Items.OldSeaMap, 'player-1', 60),
+    );
+    expect(mythicalRaidId(1_700_000_000_000, Items.OldSeaMap, 'player-1', 60)).not.toBe(
+      mythicalRaidId(1_700_010_800_000, Items.OldSeaMap, 'player-1', 60),
+    );
   });
 
   it('says nothing for a lobby no relic opened', () => {

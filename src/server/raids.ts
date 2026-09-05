@@ -310,9 +310,11 @@ export async function enterRaid(
  * is fought once, won or lost. Nothing restages it, unlike a landmark
  * raid a party failed.
  *
- * The lobby stands where the player was standing, for the window they
- * were standing there in, and is joinable by anyone the way any other
- * lobby is.
+ * The lobby stands where the player was standing when they first
+ * called, for that window, and is joinable by anyone the way any
+ * other lobby is. Pressing the relic again hands back the same lobby
+ * wherever they have walked to since: one relic opens one lobby a
+ * window, so a host who was cut off is a press away from theirs.
  *
  * Resolves the lobby id and its record, or null when the item calls
  * nothing, is not carried, or its lobby for this window is already
@@ -335,7 +337,7 @@ export async function hostMythicalRaid(
   const chunk = getWorld().getChunk(x, y);
   const zone = asOffset(offset);
   const snapshot = new ChunkSnapshot(chunk, toLocalTime(now, zone), zone);
-  const id = mythicalRaidId(chunk, snapshot.raidTimestamp, item, uid, zone);
+  const id = mythicalRaidId(snapshot.raidTimestamp, item, uid, zone);
   const stored = await readRaid(id);
 
   // The relic already opened this window's lobby: whatever became of

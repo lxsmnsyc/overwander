@@ -6,8 +6,8 @@ import type { Moves } from '../../../../data/ids/moves';
 import { getRecallableMoves, getTutorableMoves } from '../../../../data/overworld/npc';
 import CatchPicker, { type CatchOption } from '../../../catches/catch-picker';
 import { MoveLine } from '../../../catches/TeachMoveDialog';
-import ItemSprite from '../../../items/ItemSprite';
-import { Badge, DialogSection, List, ListRow, Meta, Note, Row, RowButton } from '../../../styled';
+import Price from './price';
+import { DialogSection, List, ListRow, Meta, Note, RowButton } from '../../../styled';
 import { CENTRED } from '../shared';
 
 /**
@@ -28,18 +28,6 @@ interface MoveCounterProps {
   busy: boolean;
   onPick: (catchId: string | null) => void;
   onChoose: (move: Moves) => void;
-}
-
-/** The fee, drawn rather than spelled out: the bag draws it the same way */
-function Price(props: { fee: Items; scales: number }): JSX.Element {
-  return (
-    <Row>
-      <Badge tone={props.scales > 0 ? 'leaf' : 'ember'}>
-        <ItemSprite item={props.fee} size={20} label="" />
-        {props.scales} Heart {props.scales === 1 ? 'Scale' : 'Scales'}
-      </Badge>
-    </Row>
-  );
 }
 
 /**

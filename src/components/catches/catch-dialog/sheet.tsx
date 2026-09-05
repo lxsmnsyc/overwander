@@ -356,19 +356,54 @@ export function CatchSheetBody(
   const [reached, setReached] = createSignal(0);
   let feeding: ReturnType<typeof setTimeout> | null = null;
 
+  /**
+   * The pile as it was when the last handover went out, and what it
+   * should come to now that it has landed.
+   *
+   * `reached` does this for the level; the pile needs it for the same
+   * reason. The presses are shown by taking them off what the bag last
+   * said, so the moment the presses are counted as spent the number
+   * jumps back up to the old pile and only falls again when the re-read
+   * lands: five presses on twenty candies read 15, then 20, then 15.
+   * Holding what it should be until the bag says something new is what
+   * keeps it still
+   */
+  const [settling, setSettling] = createSignal<{ was: number; now: number } | null>(null);
+
   // A different pokemon on the sheet is a different pile of presses
   createEffect(() => {
     props.catchId;
     setQueued(0);
     setReached(0);
+    setSettling(null);
+  });
+
+  // The re-read landed, so the bag is the truth again
+  createEffect(() => {
+    const settled = settling();
+
+    if (settled != null && (props.candies.latest ?? 0) !== settled.was) {
+      setSettling(null);
+    }
   });
 
   /** The level as the sheet is showing it, presses and all */
   const shownLevel = (): number => Math.max(view()?.level ?? 0, reached()) + queued();
 
+  /**
+   * What the pile is worth right now: the bag's own number, or what
+   * the last handover left it at while the bag is still being re-read
+   */
+  const heldCandies = (): number => {
+    const held = props.candies.latest ?? 0;
+    const settled = settling();
+
+    return settled?.was === held ? settled.now : held;
+  };
+
   /** The pile as the sheet is showing it, with what the presses would spend taken off */
   const shownCandies = (): number =>
-    Math.max(0, (props.candies.latest ?? 0) - queued() * getCandyCost(view() ?? { shadow: false }));
+    Math.max(0, heldCandies() - queued() * getCandyCost(view() ?? { shadow: false }));
 
   /**
    * Hand over every press at once. The server grows as far as the pile
@@ -389,6 +424,17 @@ export function CatchSheetBody(
       .then((level) => {
         setQueued((waiting) => Math.max(0, waiting - levels));
         setReached(level ?? 0);
+        // What it actually cost: the levels the pile stretched to
+        // rather than the presses, since a pile that ran out grows
+        // fewer than were asked for. Taken off what the sheet already
+        // believes, so a second handover sent before the first was
+        // read back does not spend the same candies twice
+        const grown = Math.max(0, (level ?? from) - from);
+
+        setSettling({
+          was: props.candies.latest ?? 0,
+          now: Math.max(0, heldCandies() - grown * getCandyCost(view() ?? { shadow: false })),
+        });
         say(level == null ? 'That candy could not be used.' : `Grew to level ${level}.`);
         props.onRecordChanged();
         props.onCandiesChanged();

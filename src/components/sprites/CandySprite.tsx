@@ -15,8 +15,16 @@ import { getFamilyName } from '../../data/species';
  * as the pokemon they feed.
  */
 
-/** The sheets are cut at sixteen, so this is one to one */
-const DEFAULT_SIZE = 16;
+/**
+ * How wide the box is by default.
+ *
+ * The candies are packed as items are, a 16-pixel drawing sitting in
+ * the middle of an item's 32-pixel cell, and the box is the cell. So
+ * this is `ItemSprite`'s own default and draws a candy the size the
+ * Rare Candy beside it in the bag is drawn: asking for 16 here fits
+ * the whole cell into 16 and leaves the drawing itself at 8
+ */
+const DEFAULT_SIZE = 32;
 
 export interface CandySpriteProps {
   family: Families;

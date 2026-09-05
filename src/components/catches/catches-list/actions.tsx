@@ -76,9 +76,6 @@ function holding(going: CatchOption[]): number {
   return going.reduce((total, option) => total + option.caught.items.length, 0);
 }
 
-/** How large a candy is drawn in the bar */
-const CANDY_SIZE = 16;
-
 export default function CatchActions(props: CatchActionsProps): JSX.Element {
   /** Whether Release has been pressed once. There is no undoing it */
   const [releasing, setReleasing] = createSignal(false);
@@ -148,7 +145,7 @@ export default function CatchActions(props: CatchActionsProps): JSX.Element {
           <For each={candyPiles(going())}>
             {([family, paid]) => (
               <Badge tone="gold">
-                <CandySprite family={family} size={CANDY_SIZE} label="" />
+                <CandySprite family={family} label="" />
                 {paid} {getFamilyName(family)}
               </Badge>
             )}

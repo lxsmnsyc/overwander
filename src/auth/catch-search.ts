@@ -1281,7 +1281,11 @@ export const CATCH_VOCABULARY: QueryVocabulary = {
  * the list in the order it arrived, which is the box's own
  */
 export function orderCatches<T>(rows: T[], query: string, of: (row: T) => CaughtPokemon): T[] {
-  const controls = parseControls(query);
+  // Highest first unless the search says otherwise: somebody who
+  // sorts a box by level, by values or by friendship is looking for
+  // the best of them, and having to add `order:desc` every time to
+  // see it was the box asking the question backwards
+  const controls = parseControls(query, true);
   const read = SORTS.get(controls.sort);
 
   if (read == null) {

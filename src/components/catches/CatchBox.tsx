@@ -1,6 +1,7 @@
 import { type Accessor, Index, type JSX, Show } from 'solid-js';
+import type { AuraKind } from '../../canvas/auras';
 import { Species } from '../../data/ids/species';
-import { LockIcon, SparklesIcon, StarIcon } from '../icons';
+import { LockIcon, MoonIcon, SparklesIcon, StarIcon, SunIcon } from '../icons';
 import AnimatedSprite from '../sprites/AnimatedSprite';
 
 /**
@@ -85,6 +86,12 @@ export interface BoxEntry {
   egg: boolean;
   progress: number;
   fainted: boolean;
+  /**
+   * The light it stands in, where it stands in one: a shadow's haze or
+   * a purified one's glow. The square is too small for the aura the
+   * portrait paints, so it says the same thing with a mark
+   */
+  aura?: AuraKind;
   /**
    * The two marks a player puts on one themselves: put away, and kept.
    * Left out by a caller drawing something that is nobody's yet — a
@@ -240,6 +247,15 @@ export default function CatchBox(props: CatchBoxProps): JSX.Element {
       <span class="pointer-events-none absolute top-0.5 right-0.5 flex flex-col items-end gap-0.5">
         <Show when={entry().shiny}>
           <SparklesIcon aria-hidden="true" class="size-3.5 text-gold" />
+        </Show>
+        {/* And what it stands in, which the square cannot paint: a
+            shadow is worth knowing before it is fielded, and a
+            purified one is worth knowing it was put right */}
+        <Show when={entry().aura === 'shadow'}>
+          <MoonIcon aria-hidden="true" class="size-3.5 text-arcane" />
+        </Show>
+        <Show when={entry().aura === 'purified'}>
+          <SunIcon aria-hidden="true" class="size-3.5 text-gold" />
         </Show>
       </span>
 

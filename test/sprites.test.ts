@@ -867,9 +867,12 @@ describe('the family candies that ship', () => {
       // The cell is an item's, because a candy is drawn beside items
       expect(fieldOf(entry, 'sourceWidth'), String(family)).toBe(32);
       expect(fieldOf(entry, 'sourceHeight'), String(family)).toBe(32);
-      expect(trimOf(entry), String(family)).toEqual([8, 12]);
       expect(fieldOf(entry, 'width'), String(family)).toBe(16);
       expect(fieldOf(entry, 'height'), String(family)).toBe(16);
+      // Centred in that cell rather than sitting low in it the way an
+      // item does: a candy is drawn beside a line of words as often as
+      // in a tray, and one nudged low reads as a picture that slipped
+      expect(trimOf(entry), String(family)).toEqual([8, 8]);
     }
   });
 

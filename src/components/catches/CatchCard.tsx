@@ -6,13 +6,14 @@ import {
   getMovePoints,
   isFavorite,
   isGuarded,
+  isPurified,
   isShadow,
   isShiny,
 } from '../../auth/caught-record';
 import { isEgg } from '../../auth/egg';
 import { getMaxHealth, isFainted } from '../../auth/health';
 import getSigil from '../../data/constants/sigil';
-import { LockIcon, MoonIcon, SparklesIcon, StarIcon } from '../icons';
+import { LockIcon, MoonIcon, SparklesIcon, StarIcon, SunIcon } from '../icons';
 import { MAX_IV_STARS, getIVStars } from '../../data/constants/stats';
 import { Slots } from '../../data/constants/slots';
 import type { Items } from '../../data/ids/items';
@@ -141,6 +142,9 @@ export default function CatchCard(props: CatchCardProps): JSX.Element {
         </Show>
         <Show when={!egg() && isShadow(caught())}>
           <MoonIcon aria-hidden="true" class="size-3.5 shrink-0 text-arcane" />
+        </Show>
+        <Show when={!egg() && isPurified(caught())}>
+          <SunIcon aria-hidden="true" class="size-3.5 shrink-0 text-gold" />
         </Show>
         <Show when={isFavorite(caught())}>
           <StarIcon aria-hidden="true" class="size-3.5 shrink-0 text-gold" />

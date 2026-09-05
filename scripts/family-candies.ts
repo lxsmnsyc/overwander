@@ -36,6 +36,12 @@ const SPRITE_ROOT = 'public/sprites/pokemon';
 
 const OUT = 'public/sprites/ui/candies';
 
+/**
+ * The cell a candy is packed into: an item's, so a candy sits in a
+ * tray of them without being the odd one out
+ */
+const CELL = 32;
+
 /** The drawing every candy is a recolour of. */
 const TEMPLATE = { sheet: 'public/sprites/ui/items/candies', picture: 'red.png' };
 
@@ -575,11 +581,15 @@ function write(region: string, candies: Candy[]): void {
       y,
       width: box.image.width,
       height: box.image.height,
-      // The candy is drawn small inside an item's cell, the way the
-      // sheet it was cut from has it
-      sourceWidth: 32,
-      sourceHeight: 32,
-      trim: [8, 12],
+      // An item's cell, since a candy is drawn beside items, with the
+      // drawing **centred** in it rather than sitting where the sheet
+      // it was cut from left it. An item icon sits low in its cell
+      // because it is drawn resting on something; a candy is as often
+      // beside a line of words, where four pixels low reads as a
+      // picture that slipped
+      sourceWidth: CELL,
+      sourceHeight: CELL,
+      trim: [Math.round((CELL - box.image.width) / 2), Math.round((CELL - box.image.height) / 2)],
     });
   }
 

@@ -1,5 +1,5 @@
 import type { CaughtPokemon } from '../../auth/caught';
-import { isFavorite, isGuarded, isShiny } from '../../auth/caught-record';
+import { catchAura, isFavorite, isGuarded, isShiny } from '../../auth/caught-record';
 import { isEgg } from '../../auth/egg';
 import { STATUS_NAMES, getMaxHealth, isFainted } from '../../auth/health';
 import { Genders } from '../../data/ids/species';
@@ -45,6 +45,10 @@ export function describeCatch(caught: CaughtPokemon): string {
 
   const { name } = getSpeciesData(caught.species);
   const shiny = isShiny(caught) ? '✦ ' : '';
+  // The mark on the square said in words, since a line read aloud
+  // carries no icons
+  const aura = catchAura(caught);
+  const stands = aura == null ? '' : ` · ${aura === 'shadow' ? 'shadow' : 'purified'}`;
   // What it is carrying out of its last fight, since that is what
   // decides whether it can be brought into the next one
   const hurt =
@@ -54,7 +58,7 @@ export function describeCatch(caught: CaughtPokemon): string {
     .join('');
   const condition = isFainted(caught) ? ' · fainted' : `${hurt}${carried}`;
 
-  return `${shiny}${name} · Lv. ${caught.level}${condition}`;
+  return `${shiny}${name} · Lv. ${caught.level}${stands}${condition}`;
 }
 
 /**
@@ -77,6 +81,8 @@ export function asBoxEntry([id, caught]: [string, CaughtPokemon]): BoxEntry {
     egg: isEgg(caught),
     progress: hatchProgress(caught),
     fainted: isFainted(caught),
+    // An egg says nothing about what is in it, a shadow included
+    aura: isEgg(caught) ? undefined : catchAura(caught),
     locked: isGuarded(caught),
     favorite: isFavorite(caught),
     label: describeCatch(caught),

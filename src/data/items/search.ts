@@ -158,7 +158,10 @@ export function orderItems<T>(
   query: string,
   of: (row: T) => { item: Items; holding?: ItemHolding },
 ): T[] {
-  const controls = parseControls(query);
+  // Highest first unless the search says otherwise, the way a box of
+  // pokemon arranges: what a bag sorted by price or by count is being
+  // asked is which there is most of
+  const controls = parseControls(query, true);
   const read = SORTS.get(controls.sort);
 
   if (read == null) {

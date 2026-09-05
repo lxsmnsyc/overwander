@@ -387,12 +387,17 @@ describe('the grammar a term is written in', () => {
   it('puts the answers in the order the search asked for', () => {
     const box = [pokemon({ level: 10 }), pokemon({ level: 50 }), pokemon({ level: 30 })];
 
+    // Highest first when nobody said which way round: a box sorted by
+    // level is being asked which the best one is
     expect(orderCatches(box, 'sort:level', (one) => one).map((one) => one.level)).toEqual([
-      10, 30, 50,
+      50, 30, 10,
     ]);
     expect(
       orderCatches(box, 'sort:level order:desc', (one) => one).map((one) => one.level),
     ).toEqual([50, 30, 10]);
+    expect(orderCatches(box, 'sort:level order:asc', (one) => one).map((one) => one.level)).toEqual(
+      [10, 30, 50],
+    );
     // A word nothing reads leaves the box in the order it arrived
     expect(orderCatches(box, 'sort:colour', (one) => one).map((one) => one.level)).toEqual([
       10, 50, 30,

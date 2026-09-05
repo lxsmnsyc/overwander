@@ -520,7 +520,10 @@ export default function Search(props: SearchProps): JSX.Element {
                 ref={(element: HTMLElement) => {
                   guide = element;
                 }}
-                class="absolute top-1/2 right-2 -translate-y-1/2"
+                // A flex box rather than a line: the icon inside is
+                // inline, and a line box leaves descender space under
+                // it, so centring the span left the mark sitting high
+                class="absolute top-1/2 right-2 flex -translate-y-1/2"
               >
                 <SearchGuide vocabulary={vocabulary()} example={props.example} />
               </span>

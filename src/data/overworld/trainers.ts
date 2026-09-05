@@ -36,7 +36,7 @@ const enum TrainerClass {
   Sage = 13,
   Skier = 14,
   Scientist = 15,
-  /** Johto's own of the trades both regions put on the road */
+  /** Johto's own of the trades Kanto already put on the road */
   JohtoPokeManiac = 16,
   JohtoBurglar = 17,
   JohtoAceTrainer = 18,
@@ -65,21 +65,56 @@ const enum TrainerClass {
   JohtoSuperNerd = 41,
   JohtoJuggler = 42,
   Boarder = 43,
+
+  /**
+   * Hoenn's own three, and the only new **trades** it brings. A trade
+   * carries a title numbered `300 + trade * 2`, and the professors'
+   * titles start at 400, so a trade past 49 would answer to one of
+   * theirs: new trades take the free low numbers, and every class
+   * after them is one region's version of a trade that already exists
+   */
+  NinjaBoy = 44,
+  Tuber = 45,
+  PokeFan = 46,
+  /** Hoenn's own of the trades already on the road, under its name for them */
+  HoennAceTrainer = 47,
+  HoennLass = 48,
+  HoennBirdKeeper = 49,
+  HoennBugCatcher = 50,
+  HoennSwimmer = 51,
+  HoennYoungster = 52,
+  HoennSchoolKid = 53,
+  HoennCamper = 54,
+  HoennBeauty = 55,
+  HoennFisherman = 56,
+  HoennSailor = 57,
+  HoennGentleman = 58,
+  HoennScientist = 59,
+  // The same trades under Hoenn's own names: a guitarist is a
+  // rocker, an aroma lady a sage, a street thug a burglar
+  Guitarist = 60,
+  Kindler = 61,
+  BattleGirl = 62,
+  Expert = 63,
+  RuinManiac = 64,
+  StreetThug = 65,
+  DragonTamer = 66,
+  AromaLady = 67,
 }
 
 export { TrainerClass };
 
 /**
- * A class belongs to a region, and the trades both regions have are
- * here twice: a Swimmer met on Kanto's water and one met on Johto's
- * are the same trade in two places, drawn differently and fielding
- * what their own region grows.
+ * A class belongs to a region, and a trade several regions have is
+ * here once for each: a Swimmer met on Kanto's water, on Johto's and
+ * on Hoenn's is the same trade in three places, drawn differently and
+ * fielding what its own region grows.
  *
- * Johto's own answer the types Kanto had nobody for besides: its
- * sages field the Bellsprout of Sprout Tower, its skiers the ice of
- * the north, its scientists the steel it is the first region to
- * grow, its maniacs the dragons of the Den, and its burglars the
- * dark that works the roads outside it
+ * A region's own classes answer the types the ones before it had
+ * nobody for: Johto's sages field the Bellsprout of Sprout Tower and
+ * its skiers the ice of the north, and Hoenn's answer under local
+ * names, so its guitarist is the rocker's trade and its aroma lady
+ * the sage's
  */
 export const TRAINER_CLASSES: TrainerClass[] = [
   TrainerClass.AceTrainer,
@@ -126,6 +161,30 @@ export const TRAINER_CLASSES: TrainerClass[] = [
   TrainerClass.JohtoSuperNerd,
   TrainerClass.JohtoJuggler,
   TrainerClass.Boarder,
+  TrainerClass.NinjaBoy,
+  TrainerClass.Tuber,
+  TrainerClass.PokeFan,
+  TrainerClass.HoennAceTrainer,
+  TrainerClass.HoennLass,
+  TrainerClass.HoennBirdKeeper,
+  TrainerClass.HoennBugCatcher,
+  TrainerClass.HoennSwimmer,
+  TrainerClass.HoennYoungster,
+  TrainerClass.HoennSchoolKid,
+  TrainerClass.HoennCamper,
+  TrainerClass.HoennBeauty,
+  TrainerClass.HoennFisherman,
+  TrainerClass.HoennSailor,
+  TrainerClass.HoennGentleman,
+  TrainerClass.HoennScientist,
+  TrainerClass.Guitarist,
+  TrainerClass.Kindler,
+  TrainerClass.BattleGirl,
+  TrainerClass.Expert,
+  TrainerClass.RuinManiac,
+  TrainerClass.StreetThug,
+  TrainerClass.DragonTamer,
+  TrainerClass.AromaLady,
 ];
 
 /**
@@ -178,6 +237,30 @@ export const TRAINER_BASE_NAMES: Record<TrainerClass, string> = {
   [TrainerClass.JohtoSuperNerd]: 'Super Nerd',
   [TrainerClass.JohtoJuggler]: 'Juggler',
   [TrainerClass.Boarder]: 'Boarder',
+  [TrainerClass.NinjaBoy]: 'Ninja Boy',
+  [TrainerClass.Tuber]: 'Tuber',
+  [TrainerClass.PokeFan]: 'Poké Fan',
+  [TrainerClass.HoennAceTrainer]: 'Ace Trainer',
+  [TrainerClass.HoennLass]: 'Lass',
+  [TrainerClass.HoennBirdKeeper]: 'Bird Keeper',
+  [TrainerClass.HoennBugCatcher]: 'Bug Catcher',
+  [TrainerClass.HoennSwimmer]: 'Swimmer',
+  [TrainerClass.HoennYoungster]: 'Youngster',
+  [TrainerClass.HoennSchoolKid]: 'School Kid',
+  [TrainerClass.HoennCamper]: 'Camper',
+  [TrainerClass.HoennBeauty]: 'Beauty',
+  [TrainerClass.HoennFisherman]: 'Fisherman',
+  [TrainerClass.HoennSailor]: 'Sailor',
+  [TrainerClass.HoennGentleman]: 'Gentleman',
+  [TrainerClass.HoennScientist]: 'Scientist',
+  [TrainerClass.Guitarist]: 'Guitarist',
+  [TrainerClass.Kindler]: 'Kindler',
+  [TrainerClass.BattleGirl]: 'Battle Girl',
+  [TrainerClass.Expert]: 'Expert',
+  [TrainerClass.RuinManiac]: 'Ruin Maniac',
+  [TrainerClass.StreetThug]: 'Street Thug',
+  [TrainerClass.DragonTamer]: 'Dragon Tamer',
+  [TrainerClass.AromaLady]: 'Aroma Lady',
 };
 
 /**
@@ -231,6 +314,30 @@ export const TRAINER_REGIONS: Record<TrainerClass, Regions> = {
   [TrainerClass.JohtoSuperNerd]: Regions.Johto,
   [TrainerClass.JohtoJuggler]: Regions.Johto,
   [TrainerClass.Boarder]: Regions.Johto,
+  [TrainerClass.NinjaBoy]: Regions.Hoenn,
+  [TrainerClass.Tuber]: Regions.Hoenn,
+  [TrainerClass.PokeFan]: Regions.Hoenn,
+  [TrainerClass.HoennAceTrainer]: Regions.Hoenn,
+  [TrainerClass.HoennLass]: Regions.Hoenn,
+  [TrainerClass.HoennBirdKeeper]: Regions.Hoenn,
+  [TrainerClass.HoennBugCatcher]: Regions.Hoenn,
+  [TrainerClass.HoennSwimmer]: Regions.Hoenn,
+  [TrainerClass.HoennYoungster]: Regions.Hoenn,
+  [TrainerClass.HoennSchoolKid]: Regions.Hoenn,
+  [TrainerClass.HoennCamper]: Regions.Hoenn,
+  [TrainerClass.HoennBeauty]: Regions.Hoenn,
+  [TrainerClass.HoennFisherman]: Regions.Hoenn,
+  [TrainerClass.HoennSailor]: Regions.Hoenn,
+  [TrainerClass.HoennGentleman]: Regions.Hoenn,
+  [TrainerClass.HoennScientist]: Regions.Hoenn,
+  [TrainerClass.Guitarist]: Regions.Hoenn,
+  [TrainerClass.Kindler]: Regions.Hoenn,
+  [TrainerClass.BattleGirl]: Regions.Hoenn,
+  [TrainerClass.Expert]: Regions.Hoenn,
+  [TrainerClass.RuinManiac]: Regions.Hoenn,
+  [TrainerClass.StreetThug]: Regions.Hoenn,
+  [TrainerClass.DragonTamer]: Regions.Hoenn,
+  [TrainerClass.AromaLady]: Regions.Hoenn,
 };
 
 /**
@@ -287,6 +394,30 @@ export const TRAINER_TRADE: Record<TrainerClass, TrainerClass> = {
   [TrainerClass.JohtoSuperNerd]: TrainerClass.SuperNerd,
   [TrainerClass.JohtoJuggler]: TrainerClass.Juggler,
   [TrainerClass.Boarder]: TrainerClass.Boarder,
+  [TrainerClass.NinjaBoy]: TrainerClass.NinjaBoy,
+  [TrainerClass.Tuber]: TrainerClass.Tuber,
+  [TrainerClass.PokeFan]: TrainerClass.PokeFan,
+  [TrainerClass.HoennAceTrainer]: TrainerClass.AceTrainer,
+  [TrainerClass.HoennLass]: TrainerClass.Lass,
+  [TrainerClass.HoennBirdKeeper]: TrainerClass.BirdKeeper,
+  [TrainerClass.HoennBugCatcher]: TrainerClass.BugCatcher,
+  [TrainerClass.HoennSwimmer]: TrainerClass.Swimmer,
+  [TrainerClass.HoennYoungster]: TrainerClass.Youngster,
+  [TrainerClass.HoennSchoolKid]: TrainerClass.SchoolKid,
+  [TrainerClass.HoennCamper]: TrainerClass.Camper,
+  [TrainerClass.HoennBeauty]: TrainerClass.Beauty,
+  [TrainerClass.HoennFisherman]: TrainerClass.Fisherman,
+  [TrainerClass.HoennSailor]: TrainerClass.Sailor,
+  [TrainerClass.HoennGentleman]: TrainerClass.Gentleman,
+  [TrainerClass.HoennScientist]: TrainerClass.Scientist,
+  [TrainerClass.Guitarist]: TrainerClass.Rocker,
+  [TrainerClass.Kindler]: TrainerClass.Firebreather,
+  [TrainerClass.BattleGirl]: TrainerClass.BlackBelt,
+  [TrainerClass.Expert]: TrainerClass.Psychic,
+  [TrainerClass.RuinManiac]: TrainerClass.PokeManiac,
+  [TrainerClass.StreetThug]: TrainerClass.Burglar,
+  [TrainerClass.DragonTamer]: TrainerClass.Tamer,
+  [TrainerClass.AromaLady]: TrainerClass.Sage,
 };
 
 /**
@@ -305,8 +436,8 @@ export function getTradeClasses(trade: TrainerClass): TrainerClass[] {
 
 /**
  * What a screen calls each class: the mainline name, with the region
- * after it only where both regions put the same trade on the road.
- * A name nobody shares is the mainline's own
+ * after it only where more than one region puts that name on the
+ * road. A name nobody shares is the mainline's own
  */
 export const TRAINER_NAMES: Record<TrainerClass, string> = buildTrainerNames();
 
@@ -396,6 +527,35 @@ export const TRAINER_TYPES: Record<TrainerClass, Types[]> = {
   [TrainerClass.JohtoSuperNerd]: [Types.Poison, Types.Electric],
   [TrainerClass.JohtoJuggler]: [Types.Psychic],
   [TrainerClass.Boarder]: [Types.Ice],
+  // Hoenn's own three: the ninja keeps what hides, the tuber what
+  // the sea keeps cold, and the fan whatever is worth a photograph
+  [TrainerClass.NinjaBoy]: [Types.Poison, Types.Ghost],
+  [TrainerClass.Tuber]: [Types.Water, Types.Ice],
+  [TrainerClass.PokeFan]: [Types.Normal, Types.Electric],
+  [TrainerClass.HoennAceTrainer]: [],
+  [TrainerClass.HoennLass]: [Types.Normal],
+  [TrainerClass.HoennBirdKeeper]: [Types.Flying],
+  [TrainerClass.HoennBugCatcher]: [Types.Bug],
+  [TrainerClass.HoennSwimmer]: [Types.Water],
+  [TrainerClass.HoennYoungster]: [Types.Ground],
+  [TrainerClass.HoennSchoolKid]: [Types.Electric],
+  [TrainerClass.HoennCamper]: [Types.Rock],
+  [TrainerClass.HoennBeauty]: [Types.Normal, Types.Water],
+  [TrainerClass.HoennFisherman]: [Types.Water],
+  [TrainerClass.HoennSailor]: [Types.Water, Types.Fighting],
+  [TrainerClass.HoennGentleman]: [Types.Fire, Types.Electric],
+  // Devon's researchers, who are where Hoenn's steel is made
+  [TrainerClass.HoennScientist]: [Types.Steel],
+  [TrainerClass.Guitarist]: [Types.Electric],
+  [TrainerClass.Kindler]: [Types.Fire],
+  [TrainerClass.BattleGirl]: [Types.Fighting],
+  // Hoenn has nobody who only reads minds, and its old masters
+  // field the Medicham that is both
+  [TrainerClass.Expert]: [Types.Psychic, Types.Fighting],
+  [TrainerClass.RuinManiac]: [Types.Rock, Types.Ground],
+  [TrainerClass.StreetThug]: [Types.Dark],
+  [TrainerClass.DragonTamer]: [Types.Dragon],
+  [TrainerClass.AromaLady]: [Types.Grass],
 };
 
 /**
@@ -461,6 +621,30 @@ export const TRAINER_CHARSETS: Record<TrainerClass, string[]> = {
   [TrainerClass.JohtoSuperNerd]: ['characters/hgss/super-nerd'],
   [TrainerClass.JohtoJuggler]: ['characters/hgss/juggler'],
   [TrainerClass.Boarder]: ['characters/hgss/boarder'],
+  [TrainerClass.NinjaBoy]: ['characters/oras/ninja-boy', 'characters/rse/ninja-boy'],
+  [TrainerClass.Tuber]: ['characters/oras/tuber-f', 'characters/oras/tuber-m'],
+  [TrainerClass.PokeFan]: ['characters/oras/pokefan-f', 'characters/oras/pokefan-m'],
+  [TrainerClass.HoennAceTrainer]: ['characters/oras/ace-trainer', 'characters/oras/ace-trainer-f'],
+  [TrainerClass.HoennLass]: ['characters/oras/lass'],
+  [TrainerClass.HoennBirdKeeper]: ['characters/oras/bird-keeper'],
+  [TrainerClass.HoennBugCatcher]: ['characters/oras/bug-catcher'],
+  [TrainerClass.HoennSwimmer]: ['characters/oras/swimmer'],
+  [TrainerClass.HoennYoungster]: ['characters/oras/youngster'],
+  [TrainerClass.HoennSchoolKid]: ['characters/oras/schoolkid-f', 'characters/oras/schoolkid-m'],
+  [TrainerClass.HoennCamper]: ['characters/oras/camper', 'characters/oras/picnicker'],
+  [TrainerClass.HoennBeauty]: ['characters/oras/beauty'],
+  [TrainerClass.HoennFisherman]: ['characters/oras/fisher'],
+  [TrainerClass.HoennSailor]: ['characters/oras/sailor'],
+  [TrainerClass.HoennGentleman]: ['characters/oras/gentleman'],
+  [TrainerClass.HoennScientist]: ['characters/rse/devon-researcher'],
+  [TrainerClass.Guitarist]: ['characters/oras/guitarist'],
+  [TrainerClass.Kindler]: ['characters/oras/kindler'],
+  [TrainerClass.BattleGirl]: ['characters/oras/battle-girl'],
+  [TrainerClass.Expert]: ['characters/oras/expert'],
+  [TrainerClass.RuinManiac]: ['characters/oras/ruin-maniac'],
+  [TrainerClass.StreetThug]: ['characters/oras/street-thug'],
+  [TrainerClass.DragonTamer]: ['characters/oras/dragon-tamer'],
+  [TrainerClass.AromaLady]: ['characters/oras/aroma-lady'],
 };
 
 /**
@@ -479,6 +663,10 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.JohtoBirdKeeper,
     TrainerClass.Fisherman,
     TrainerClass.Sailor,
+    TrainerClass.HoennSwimmer,
+    TrainerClass.HoennBirdKeeper,
+    TrainerClass.HoennFisherman,
+    TrainerClass.HoennSailor,
   ],
   [Biome.Ocean]: [
     TrainerClass.Swimmer,
@@ -487,12 +675,19 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.JohtoBirdKeeper,
     TrainerClass.Fisherman,
     TrainerClass.Sailor,
+    TrainerClass.HoennSwimmer,
+    TrainerClass.HoennFisherman,
+    TrainerClass.HoennSailor,
+    TrainerClass.Tuber,
   ],
   [Biome.CoralReef]: [
     TrainerClass.Swimmer,
     TrainerClass.PokeManiac,
     TrainerClass.JohtoSwimmer,
     TrainerClass.Fisherman,
+    TrainerClass.HoennSwimmer,
+    TrainerClass.HoennFisherman,
+    TrainerClass.Tuber,
   ],
   [Biome.Beach]: [
     TrainerClass.Swimmer,
@@ -504,6 +699,11 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.Beauty,
     TrainerClass.Fisherman,
     TrainerClass.Sailor,
+    TrainerClass.HoennSwimmer,
+    TrainerClass.HoennLass,
+    TrainerClass.HoennBeauty,
+    TrainerClass.HoennSailor,
+    TrainerClass.Tuber,
   ],
   [Biome.Mangrove]: [
     TrainerClass.Swimmer,
@@ -515,6 +715,10 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.Fisherman,
     TrainerClass.SuperNerd,
     TrainerClass.JohtoSuperNerd,
+    TrainerClass.HoennSwimmer,
+    TrainerClass.HoennBugCatcher,
+    TrainerClass.HoennFisherman,
+    TrainerClass.NinjaBoy,
   ],
   [Biome.KelpForest]: [
     TrainerClass.Swimmer,
@@ -523,6 +727,9 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.Teacher,
     TrainerClass.Fisherman,
     TrainerClass.Juggler,
+    TrainerClass.HoennSwimmer,
+    TrainerClass.HoennFisherman,
+    TrainerClass.Expert,
   ],
   [Biome.PolarOcean]: [
     TrainerClass.Swimmer,
@@ -531,6 +738,9 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.JohtoSwimmer,
     TrainerClass.JohtoBirdKeeper,
     TrainerClass.Boarder,
+    TrainerClass.HoennSwimmer,
+    TrainerClass.HoennBirdKeeper,
+    TrainerClass.Tuber,
   ],
   [Biome.Glacier]: [
     TrainerClass.Swimmer,
@@ -538,6 +748,8 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.Skier,
     TrainerClass.JohtoSwimmer,
     TrainerClass.Boarder,
+    TrainerClass.HoennSwimmer,
+    TrainerClass.Tuber,
   ],
   [Biome.Tundra]: [
     TrainerClass.Hiker,
@@ -547,6 +759,9 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.JohtoBirdKeeper,
     TrainerClass.JohtoLass,
     TrainerClass.Boarder,
+    TrainerClass.HoennBirdKeeper,
+    TrainerClass.HoennLass,
+    TrainerClass.Tuber,
   ],
   [Biome.Swamp]: [
     TrainerClass.Biker,
@@ -558,6 +773,9 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.Medium,
     TrainerClass.SuperNerd,
     TrainerClass.JohtoSuperNerd,
+    TrainerClass.HoennBugCatcher,
+    TrainerClass.NinjaBoy,
+    TrainerClass.StreetThug,
   ],
   [Biome.Bog]: [
     TrainerClass.Biker,
@@ -567,6 +785,8 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.Medium,
     TrainerClass.SuperNerd,
     TrainerClass.JohtoSuperNerd,
+    TrainerClass.NinjaBoy,
+    TrainerClass.StreetThug,
   ],
   [Biome.TropicalSeasonalForest]: [
     TrainerClass.BugCatcher,
@@ -576,6 +796,10 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.JohtoBugCatcher,
     TrainerClass.JohtoLass,
     TrainerClass.JohtoBirdKeeper,
+    TrainerClass.HoennBugCatcher,
+    TrainerClass.HoennLass,
+    TrainerClass.HoennBirdKeeper,
+    TrainerClass.AromaLady,
   ],
   [Biome.Grassland]: [
     TrainerClass.Lass,
@@ -588,6 +812,12 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.Youngster,
     TrainerClass.Beauty,
     TrainerClass.Gambler,
+    TrainerClass.HoennLass,
+    TrainerClass.HoennBugCatcher,
+    TrainerClass.HoennBirdKeeper,
+    TrainerClass.HoennYoungster,
+    TrainerClass.AromaLady,
+    TrainerClass.PokeFan,
   ],
   [Biome.TemperateForest]: [
     TrainerClass.BugCatcher,
@@ -597,6 +827,10 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.JohtoBugCatcher,
     TrainerClass.JohtoLass,
     TrainerClass.Medium,
+    TrainerClass.HoennBugCatcher,
+    TrainerClass.HoennLass,
+    TrainerClass.AromaLady,
+    TrainerClass.NinjaBoy,
   ],
   [Biome.Woodland]: [
     TrainerClass.BugCatcher,
@@ -606,6 +840,10 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.JohtoBugCatcher,
     TrainerClass.JohtoLass,
     TrainerClass.Beauty,
+    TrainerClass.HoennBugCatcher,
+    TrainerClass.HoennLass,
+    TrainerClass.HoennBeauty,
+    TrainerClass.AromaLady,
   ],
   [Biome.Savanna]: [
     TrainerClass.BirdKeeper,
@@ -616,6 +854,10 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.Youngster,
     TrainerClass.Sailor,
     TrainerClass.Tamer,
+    TrainerClass.HoennBirdKeeper,
+    TrainerClass.HoennYoungster,
+    TrainerClass.HoennSailor,
+    TrainerClass.BattleGirl,
   ],
   [Biome.Steppe]: [
     TrainerClass.BirdKeeper,
@@ -625,6 +867,10 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.SchoolKid,
     TrainerClass.Youngster,
     TrainerClass.Tamer,
+    TrainerClass.HoennBirdKeeper,
+    TrainerClass.HoennYoungster,
+    TrainerClass.HoennSchoolKid,
+    TrainerClass.Guitarist,
   ],
   [Biome.Desert]: [
     TrainerClass.Hiker,
@@ -636,6 +882,11 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.JohtoGentleman,
     TrainerClass.Tamer,
     TrainerClass.Gambler,
+    TrainerClass.HoennYoungster,
+    TrainerClass.HoennGentleman,
+    TrainerClass.RuinManiac,
+    TrainerClass.Kindler,
+    TrainerClass.DragonTamer,
   ],
   [Biome.Volcano]: [
     TrainerClass.Burglar,
@@ -647,6 +898,10 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.Gentleman,
     TrainerClass.JohtoGentleman,
     TrainerClass.Engineer,
+    TrainerClass.HoennGentleman,
+    TrainerClass.HoennScientist,
+    TrainerClass.RuinManiac,
+    TrainerClass.Kindler,
   ],
   [Biome.ColdDesert]: [
     TrainerClass.Hiker,
@@ -656,6 +911,9 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.Camper,
     TrainerClass.Engineer,
     TrainerClass.Boarder,
+    TrainerClass.HoennCamper,
+    TrainerClass.HoennScientist,
+    TrainerClass.RuinManiac,
   ],
   [Biome.Mountain]: [
     TrainerClass.Hiker,
@@ -668,6 +926,11 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.Sailor,
     TrainerClass.Tamer,
     TrainerClass.Engineer,
+    TrainerClass.HoennCamper,
+    TrainerClass.HoennScientist,
+    TrainerClass.RuinManiac,
+    TrainerClass.BattleGirl,
+    TrainerClass.DragonTamer,
   ],
   [Biome.AlpineTundra]: [
     TrainerClass.Hiker,
@@ -675,6 +938,8 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.Skier,
     TrainerClass.JohtoBirdKeeper,
     TrainerClass.Boarder,
+    TrainerClass.HoennBirdKeeper,
+    TrainerClass.HoennCamper,
   ],
   [Biome.Badlands]: [
     TrainerClass.PokeManiac,
@@ -692,6 +957,12 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.SuperNerd,
     TrainerClass.JohtoSuperNerd,
     TrainerClass.JohtoGentleman,
+    TrainerClass.HoennYoungster,
+    TrainerClass.HoennScientist,
+    TrainerClass.RuinManiac,
+    TrainerClass.BattleGirl,
+    TrainerClass.Kindler,
+    TrainerClass.StreetThug,
   ],
   [Biome.RockyCoast]: [
     TrainerClass.PokeManiac,
@@ -702,6 +973,11 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.Camper,
     TrainerClass.Fisherman,
     TrainerClass.Sailor,
+    TrainerClass.HoennSwimmer,
+    TrainerClass.HoennFisherman,
+    TrainerClass.HoennSailor,
+    TrainerClass.HoennCamper,
+    TrainerClass.RuinManiac,
   ],
   [Biome.TemperateRainforest]: [
     TrainerClass.BugCatcher,
@@ -712,6 +988,10 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.Teacher,
     TrainerClass.Juggler,
     TrainerClass.JohtoJuggler,
+    TrainerClass.HoennBugCatcher,
+    TrainerClass.AromaLady,
+    TrainerClass.NinjaBoy,
+    TrainerClass.Expert,
   ],
   [Biome.MontaneForest]: [
     TrainerClass.Psychic,
@@ -722,6 +1002,10 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.Teacher,
     TrainerClass.Juggler,
     TrainerClass.JohtoJuggler,
+    TrainerClass.HoennBugCatcher,
+    TrainerClass.HoennCamper,
+    TrainerClass.AromaLady,
+    TrainerClass.Expert,
   ],
   [Biome.Beyond]: [
     TrainerClass.Psychic,
@@ -735,6 +1019,11 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.SchoolKid,
     TrainerClass.Juggler,
     TrainerClass.JohtoJuggler,
+    TrainerClass.HoennSchoolKid,
+    TrainerClass.HoennScientist,
+    TrainerClass.Expert,
+    TrainerClass.Guitarist,
+    TrainerClass.StreetThug,
   ],
   [Biome.TropicalRainforest]: [
     TrainerClass.BugCatcher,
@@ -747,6 +1036,10 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.SuperNerd,
     TrainerClass.Juggler,
     TrainerClass.JohtoJuggler,
+    TrainerClass.HoennBugCatcher,
+    TrainerClass.AromaLady,
+    TrainerClass.NinjaBoy,
+    TrainerClass.Expert,
   ],
   [Biome.Shrubland]: [
     TrainerClass.Lass,
@@ -758,6 +1051,12 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.SchoolKid,
     TrainerClass.Beauty,
     TrainerClass.Gambler,
+    TrainerClass.HoennLass,
+    TrainerClass.HoennBugCatcher,
+    TrainerClass.HoennSchoolKid,
+    TrainerClass.AromaLady,
+    TrainerClass.Guitarist,
+    TrainerClass.PokeFan,
   ],
   [Biome.Taiga]: [
     TrainerClass.Hiker,
@@ -768,6 +1067,10 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.JohtoBugCatcher,
     TrainerClass.JohtoBirdKeeper,
     TrainerClass.Boarder,
+    TrainerClass.HoennBugCatcher,
+    TrainerClass.HoennBirdKeeper,
+    TrainerClass.HoennCamper,
+    TrainerClass.StreetThug,
   ],
 };
 
@@ -776,7 +1079,12 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
  * Ace, who belongs to no country
  */
 export function getBiomeTrainers(biome: Biome): TrainerClass[] {
-  return [TrainerClass.AceTrainer, TrainerClass.JohtoAceTrainer, ...BIOME_TRAINERS[biome]];
+  return [
+    TrainerClass.AceTrainer,
+    TrainerClass.JohtoAceTrainer,
+    TrainerClass.HoennAceTrainer,
+    ...BIOME_TRAINERS[biome],
+  ];
 }
 
 /** What each says as the duel is put to the player */
@@ -827,6 +1135,36 @@ export const TRAINER_QUOTES: Record<TrainerClass, string> = {
   [TrainerClass.JohtoSuperNerd]: 'My notes say you lose in four minutes. Let us test that.',
   [TrainerClass.JohtoJuggler]: 'Six in the air, and not one of them dropped. Watch this.',
   [TrainerClass.Boarder]: 'I came down that face sideways. Standing still is the hard part.',
+  [TrainerClass.NinjaBoy]: 'You walked past me twice. My pokemon did not move either time.',
+  [TrainerClass.Tuber]: 'I am not getting out of the water. Battle me from the shore!',
+  [TrainerClass.PokeFan]: 'I have a photograph of every one of these. Would you like to be in one?',
+  [TrainerClass.HoennAceTrainer]:
+    'I have crossed this region on foot. Nothing on the road has surprised me yet.',
+  [TrainerClass.HoennLass]:
+    'Mum said not to talk to strangers. She said nothing about battling them.',
+  [TrainerClass.HoennBirdKeeper]:
+    'Mine ride the sea wind. Yours have only felt the one off the road.',
+  [TrainerClass.HoennBugCatcher]: 'The woods here are thick with them. I took the best three.',
+  [TrainerClass.HoennSwimmer]: 'The current out here does half the work. The rest of it is mine.',
+  [TrainerClass.HoennYoungster]:
+    'I dug this one out from under the ash. I bet you have never seen one.',
+  [TrainerClass.HoennSchoolKid]: 'We are testing conductivity today. You are the experiment.',
+  [TrainerClass.HoennCamper]:
+    'Three nights on this rock and the only thing I have missed is a battle.',
+  [TrainerClass.HoennBeauty]: 'The sea air keeps them glossy. Do not let that fool you.',
+  [TrainerClass.HoennFisherman]: 'Cast since dawn and caught nothing. You will do.',
+  [TrainerClass.HoennSailor]: 'I have crossed to Slateport in worse weather than this. Try me.',
+  [TrainerClass.HoennGentleman]: 'I keep a house on the coast and a temper on the road.',
+  [TrainerClass.HoennScientist]: 'Devon pays for this field work. Consider yourself data.',
+  [TrainerClass.Guitarist]: 'Plug in and stand back. This one gets loud.',
+  [TrainerClass.Kindler]: 'The mountain is hot enough already. My pokemon make it worse.',
+  [TrainerClass.BattleGirl]: 'I train under the falls at Dewford. You are about to feel it.',
+  [TrainerClass.Expert]: 'I saw how this ends before you spoke. Come on anyway.',
+  [TrainerClass.RuinManiac]: 'I dug these tunnels myself. Look what was sleeping in one.',
+  [TrainerClass.StreetThug]: 'This road is ours after dark. You are paying the toll in wins.',
+  [TrainerClass.DragonTamer]:
+    'Raised from an egg out in the sand. It listens to me and nobody else.',
+  [TrainerClass.AromaLady]: 'Breathe in. My pokemon grew up in this, and they are stronger for it.',
 };
 
 /**
@@ -853,7 +1191,11 @@ export const TYPE_TRAINER_LEVELS: [minimum: number, maximum: number] = [40, 60];
  * five fully-grown, and the levels and the purse to match
  */
 export function isAceTrainer(trainer: TrainerClass): boolean {
-  return trainer === TrainerClass.AceTrainer || trainer === TrainerClass.JohtoAceTrainer;
+  return (
+    trainer === TrainerClass.AceTrainer ||
+    trainer === TrainerClass.JohtoAceTrainer ||
+    trainer === TrainerClass.HoennAceTrainer
+  );
 }
 
 /** The level band a class fights in */

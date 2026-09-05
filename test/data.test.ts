@@ -397,6 +397,7 @@ import {
   getTitleName,
   lineTitle,
   professorTitle,
+  titleTrainer,
   trainerTitle,
   typeTitle,
 } from '../src/data/ids/titles';
@@ -415,6 +416,7 @@ import {
   getBiomeTrainers,
   getTradeClasses,
   getTrainerPool,
+  isAceTrainer,
 } from '../src/data/overworld/trainers';
 import { Metric, Landmark as QuestLandmark } from '../src/auth/quest-record';
 import {
@@ -5741,6 +5743,7 @@ describe('achievements', () => {
     expect(getTradeClasses(TrainerClass.Swimmer)).toEqual([
       TrainerClass.Swimmer,
       TrainerClass.JohtoSwimmer,
+      TrainerClass.HoennSwimmer,
     ]);
     expect(TRAINER_TRADES).not.toContain(TrainerClass.JohtoSwimmer);
     expect(ACHIEVEMENT_TRAINERS).toEqual(TRAINER_TRADES);
@@ -5765,7 +5768,7 @@ describe('achievements', () => {
     expect(standings.variants.get(TrainerClass.Swimmer)?.tier).toBe(AchievementTier.None);
     expect(standings.variants.get(TrainerClass.JohtoSwimmer)?.count).toBe(2);
     // A trade only one region has counts the way it always did
-    expect(getTradeClasses(TrainerClass.Sage)).toEqual([TrainerClass.Sage]);
+    expect(getTradeClasses(TrainerClass.Channeler)).toEqual([TrainerClass.Channeler]);
   });
 
   it('names a trade twice over by the region it is met in', () => {
@@ -5871,15 +5874,56 @@ describe('achievements', () => {
       expect(getBiomeTrainers(biome)).toEqual([
         TrainerClass.AceTrainer,
         TrainerClass.JohtoAceTrainer,
+        TrainerClass.HoennAceTrainer,
         ...standing,
       ]);
     }
 
-    // No class is written out of the world, the two Aces aside
+    // No class is written out of the world, the Aces aside
     for (const trainer of TRAINER_CLASSES) {
-      if (trainer !== TrainerClass.AceTrainer && trainer !== TrainerClass.JohtoAceTrainer) {
+      if (!isAceTrainer(trainer)) {
         expect(roads.has(trainer), TRAINER_NAMES[trainer]).toBe(true);
       }
+    }
+  });
+
+  it('puts somebody of Hoenn’s on the road for every type it grows', () => {
+    const hoenn: [TrainerClass, Types][] = [
+      [TrainerClass.AromaLady, Types.Grass],
+      [TrainerClass.Tuber, Types.Ice],
+      [TrainerClass.HoennScientist, Types.Steel],
+      [TrainerClass.DragonTamer, Types.Dragon],
+      [TrainerClass.StreetThug, Types.Dark],
+      [TrainerClass.Kindler, Types.Fire],
+      [TrainerClass.NinjaBoy, Types.Ghost],
+      [TrainerClass.Expert, Types.Psychic],
+      [TrainerClass.Guitarist, Types.Electric],
+      [TrainerClass.RuinManiac, Types.Ground],
+      [TrainerClass.BattleGirl, Types.Fighting],
+    ];
+
+    for (const [trainer, type] of hoenn) {
+      expect(TRAINER_TYPES[trainer], TRAINER_NAMES[trainer]).toContain(type);
+      expect(TRAINER_REGIONS[trainer], TRAINER_NAMES[trainer]).toBe(Regions.Hoenn);
+    }
+
+    const covered = new Set(
+      TRAINER_CLASSES.filter((trainer) => TRAINER_REGIONS[trainer] === Regions.Hoenn).flatMap(
+        (trainer) => TRAINER_TYPES[trainer],
+      ),
+    );
+
+    for (const type of ACHIEVEMENT_TYPES) {
+      expect(covered.has(type), TYPE_NAMES[type]).toBe(true);
+    }
+  });
+
+  it('numbers every trade inside the band its title is read from', () => {
+    // A title is `300 + trade * 2`, and the professors' start at 400,
+    // so a trade numbered past 49 would answer to one of theirs
+    for (const trade of TRAINER_TRADES) {
+      expect(titleTrainer(trainerTitle(trade, false)), TRAINER_NAMES[trade]).toBe(trade);
+      expect(titleTrainer(trainerTitle(trade, true)), TRAINER_NAMES[trade]).toBe(trade);
     }
   });
 

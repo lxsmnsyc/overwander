@@ -1242,9 +1242,9 @@ describe('world', () => {
     const worn = TRAINER_CLASSES.flatMap((trainer) => TRAINER_CHARSETS[trainer]);
 
     expect(new Set(worn).size).toBe(worn.length);
-    // And only the two Aces field everything there is
-    expect(TRAINER_CLASSES.filter((trainer) => TRAINER_TYPES[trainer].length === 0)).toHaveLength(
-      2,
+    // And only the Aces field everything there is, one to a region
+    expect(TRAINER_CLASSES.filter((trainer) => TRAINER_TYPES[trainer].length === 0)).toEqual(
+      TRAINER_CLASSES.filter(isAceTrainer),
     );
   });
 

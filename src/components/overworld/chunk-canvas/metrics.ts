@@ -170,6 +170,21 @@ export const LOADING_SIZE = 18;
 export const MARK_WEIGHT = 3;
 
 /**
+ * The ripple a featured family's cell throws: how long one ring takes
+ * to travel out, how many are travelling at once, how far out they get
+ * in cells, and how much they are worth when they leave. Slow and
+ * faint on purpose, since the cell already has a pokemon standing on
+ * it and the ripple is only there to say the day is about this one
+ */
+export const RIPPLE_PERIOD = 2000;
+export const RIPPLE_RINGS = 2;
+export const RIPPLE_SPREAD = 1.3;
+export const RIPPLE_ALPHA = 0.55;
+
+/** How many points one ring is drawn round. A ground circle, projected */
+export const RIPPLE_POINTS = 16;
+
+/**
  * How much light the cell under the cursor takes. Enough to be found
  * on snow, light enough that whatever is standing on the cell is
  * still the thing being looked at
@@ -189,6 +204,11 @@ export const COLORS = {
    */
   highlight: '#ffffff',
   spawn: '#2b2b2b',
+  /**
+   * The ripple under a pokemon of the day's featured family. Gold,
+   * which is what the game says "today, this one" in everywhere else
+   */
+  featured: '#ffcf5c',
   glyph: '#1c1c1c',
   landmark: 'rgba(255, 255, 255, 0.65)',
   /**

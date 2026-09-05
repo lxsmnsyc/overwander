@@ -60,6 +60,7 @@ import { VENDOR_KIND_NAMES } from '../../../data/overworld/vendor';
 import type Phenomenon from '../../../data/overworld/phenomenon';
 import { PHENOMENON_NAMES } from '../../../data/overworld/phenomenon';
 import { getSpeciesData } from '../../../data/species';
+import { isFeaturedSpecies } from '../../../data/species/day';
 import { CHUNK_CELLS } from '../../../overworld/chunk';
 import type ChunkSnapshot from '../../../overworld/chunk-snapshot';
 import type { Buddy } from '../../../overworld/core';
@@ -1266,6 +1267,21 @@ export default function OverworldBoard(props: {
       // leaves no lobby standing behind them
       const standing = await peekRaid(loaded.snapshot, at, kind);
 
+      // Their own lobby, walked back into. The dialog exists to put
+      // the lair to somebody deciding about it, and a host has already
+      // decided: it opened with a Join button on a raid they were
+      // standing in. Straight through to the lobby, or to the fight
+      // where they have already started it
+      if (standing?.hosting === true) {
+        if (standing.battle != null) {
+          game.setBattle({ id: standing.battle, replay: true });
+          return null;
+        }
+        game.setRaid(standing.lobby);
+        game.setDialog(GameDialog.Raids);
+        return null;
+      }
+
       // Either the window stages no raid here, it has been cleared, or
       // there is nothing standing and nothing to stage it with. The
       // dialog opens for all of it: a player who pressed a lair is
@@ -1906,7 +1922,13 @@ export default function OverworldBoard(props: {
                   new Map(
                     [...loaded().spawns].map(([at, standing]) => [
                       at,
-                      { species: standing.spawn[0], shiny: standing.shiny },
+                      {
+                        species: standing.spawn[0],
+                        shiny: standing.shiny,
+                        // Against the window's own instant, which is
+                        // what the server weighted the pool by
+                        featured: isFeaturedSpecies(standing.spawn[0], loaded().snapshot.timestamp),
+                      },
                     ]),
                   )
                 }

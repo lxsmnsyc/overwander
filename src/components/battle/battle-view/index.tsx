@@ -32,6 +32,7 @@ import {
   countDefeated,
   createRaidBattle,
 } from '../../../overworld/raid-battle';
+import Npc from '../../../data/overworld/npc';
 import { createTrainerBattle } from '../../../overworld/rocket-battle';
 import BattleField from '../BattleField';
 import VerdictDialog from './VerdictDialog';
@@ -344,9 +345,15 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
       return 'The other side went down.';
     }
     if (props.active.rocket != null) {
-      const beaten = opponent()?.name ?? 'The grunt';
-
-      return `${beaten} is beaten. What was left behind is waiting in the overworld.`;
+      // Only a grunt leaves the pokemon they were beaten with. A
+      // duelling trainer, a gym leader and the three rungs above them
+      // keep their party and pay a purse, so a win at one of those
+      // stops must not send the player looking for something standing
+      // in the overworld
+      if (props.active.npc === Npc.Trainer) {
+        return `${opponent()?.name ?? 'The trainer'} is beaten. They keep their party, and the purse is yours.`;
+      }
+      return `${opponent()?.name ?? 'The grunt'} is beaten. What was left behind is waiting in the overworld.`;
     }
     // A fight between players pays nothing on purpose, so what a win
     // says is the win itself

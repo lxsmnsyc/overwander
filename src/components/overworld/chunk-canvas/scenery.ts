@@ -1,6 +1,9 @@
 import { SPRITE_FACINGS } from '../../../canvas/board';
 import type { Species } from '../../../data/ids/species';
+import type { Items } from '../../../data/ids/items';
 import Landmark from '../../../data/overworld/landmark';
+import { apricornHex } from '../../../data/overworld/apricorn-tree';
+import { berryColour } from '../../../data/overworld/berry-plant';
 import Phenomenon from '../../../data/overworld/phenomenon';
 import drawSparkle, { SPARKLE_SPREAD, SPARKLE_STAR_SIZE } from '../../../canvas/sparkle';
 import type Bakery from '../../../canvas/bakery';
@@ -27,6 +30,12 @@ import { CELL, COLORS } from './metrics';
 export interface SpawnCoat {
   species: Species;
   shiny: boolean;
+  /**
+   * Whether it belongs to the day's featured family. The board rings
+   * the cell to say so: the crowded pool and the eight-fold shininess
+   * are the reason to walk over rather than past
+   */
+  featured: boolean;
 }
 
 /**
@@ -228,6 +237,18 @@ export function landmarkCallOut(landmark: Landmark): string {
     return COLORS.rocket;
   }
   return isFightingLandmark(landmark) ? COLORS.fight : COLORS.serve;
+}
+
+/**
+ * The colour a plant's cell is called out in: the fruit's own, so a
+ * chunk's patches read as a crop apiece from across the board rather
+ * than as a row of identical bushes. A plant nobody has a colour for
+ * is called out in the landmark's own colour
+ */
+export function plantCallOut(landmark: Landmark, item: Items): string {
+  const colour = landmark === Landmark.ApricornTree ? apricornHex(item) : berryColour(item);
+
+  return colour ?? COLORS.serve;
 }
 
 /**

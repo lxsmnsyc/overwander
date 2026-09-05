@@ -10,6 +10,7 @@ import {
   useContext,
 } from 'solid-js';
 import { useAuth } from '../../auth/context';
+import type Npc from '../../data/overworld/npc';
 import type Weather from '../../data/overworld/weather';
 import type { EncounterRecord } from '../../auth/encounter-record';
 import { type Notice, watchNotifications } from '../../auth/notifications';
@@ -119,6 +120,12 @@ export interface ActiveBattle {
    * fight rather than being worked out again from a stop id
    */
   opponent?: { name: string; sprite: string };
+  /**
+   * What kind of person the stop staged. A grunt leaves the pokemon
+   * they were beaten with and everybody else keeps their party, so
+   * this is what a win is allowed to promise
+   */
+  npc?: Npc;
   /**
    * The gym seat the battle was a challenge for. A win moves the
    * seat, so the settlement is the seat's rather than a purse's

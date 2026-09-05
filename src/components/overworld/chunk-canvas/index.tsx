@@ -101,6 +101,11 @@ import {
   PLANT_PHASES,
   PLAYER_SHEET,
   QUARTER_TURN,
+  RIPPLE_ALPHA,
+  RIPPLE_PERIOD,
+  RIPPLE_POINTS,
+  RIPPLE_RINGS,
+  RIPPLE_SPREAD,
   SCENERY_CELLS,
   SNAP_CELLS,
   SPRITE_STANDS,
@@ -122,6 +127,7 @@ import {
   paintPhenomenon,
   paintSparkle,
   phenomenonSpan,
+  plantCallOut,
 } from './scenery';
 
 export { CROSSING_IN, CROSSING_OUT, type Crossing, type SpawnCoat, isTurningPress, slideGain };
@@ -1882,6 +1888,19 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
           }
           continue;
         }
+        // A patch and a tree are called out in what they bear, which
+        // is the one thing about them worth knowing from a distance.
+        // Read off the bearing rather than off the plant, so a cell
+        // whose drawing is still loading is already coded
+        const bearing = props.berries.get(index);
+
+        if (
+          bearing != null &&
+          (landmark === Landmark.BerryPatch || landmark === Landmark.ApricornTree)
+        ) {
+          callOut(outline, plantCallOut(landmark, bearing.item));
+          continue;
+        }
         if (plantOn(index) != null) {
           continue;
         }
@@ -1932,6 +1951,68 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
        * lines, so four corners are the whole of a rectangle however
        * the board is turned
        */
+      /**
+       * The day's featured family, saying so from the ground: rings
+       * travelling out of the cell it is standing on.
+       *
+       * Drawn as a circle in the world rather than a circle on the
+       * screen, so it lies on the board with everything else on it and
+       * turns when the camera does. Under whatever is standing there,
+       * since it is a fact about the ground
+       */
+      const ripple = (index: number, spread: number, alpha: number): void => {
+        const spot = boardCellOf(index);
+        const midU = (spot.x + 0.5) / CHUNK_CELLS;
+        const midV = (spot.y + 0.5) / CHUNK_CELLS;
+        const radius = spread / CHUNK_CELLS / 2;
+        const ring: ProjectedPoint[] = [];
+
+        for (let step = 0; step < RIPPLE_POINTS; step++) {
+          const angle = (step / RIPPLE_POINTS) * Math.PI * 2;
+
+          ring.push(
+            at(
+              projectGround(
+                { u: midU + Math.cos(angle) * radius, v: midV + Math.sin(angle) * radius },
+                yaw(),
+              ),
+            ),
+          );
+        }
+        if (batch != null) {
+          batch.outline(COLORS.featured, ring, 2, alpha);
+          return;
+        }
+        context.beginPath();
+        context.moveTo(ring[0].x, ring[0].y);
+        for (const corner of ring.slice(1)) {
+          context.lineTo(corner.x, corner.y);
+        }
+        context.closePath();
+
+        const prior = context.globalAlpha;
+
+        context.globalAlpha = prior * alpha;
+        context.strokeStyle = COLORS.featured;
+        context.lineWidth = 2;
+        context.stroke();
+        context.lineWidth = 1;
+        context.globalAlpha = prior;
+      };
+
+      for (const [index, standing] of props.spawns) {
+        if (!standing.featured) {
+          continue;
+        }
+        // Two rings in the air at once, half a period apart, so the
+        // cell is never without one
+        for (let ring = 0; ring < RIPPLE_RINGS; ring++) {
+          const phase = (clock / RIPPLE_PERIOD + ring / RIPPLE_RINGS) % 1;
+
+          ripple(index, 0.2 + phase * RIPPLE_SPREAD, (1 - phase) * RIPPLE_ALPHA);
+        }
+      }
+
       // The cell under the cursor, ruled after the whole grid is laid:
       // its neighbours draw their own edges over it, so a ring left in
       // the loop would come out with two sides missing

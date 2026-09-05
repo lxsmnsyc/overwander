@@ -142,7 +142,13 @@ export default function RocketStopDialog(props: RocketStopDialogProps): JSX.Elem
           return;
         }
         props.onClose();
-        game.setBattle({ id: battle, replay: false, rocket: id, opponent: opponent() });
+        game.setBattle({
+          id: battle,
+          replay: false,
+          rocket: id,
+          opponent: opponent(),
+          npc: props.npc,
+        });
       })
       .catch((caught: unknown) => {
         setStatus(caught instanceof Error ? caught.message : String(caught));

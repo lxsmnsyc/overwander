@@ -161,6 +161,12 @@ export interface RaidView {
    * How many parties have gathered so far
    */
   teams: number;
+  /**
+   * Whether this player is the one hosting what is standing there.
+   * A host walking back into their own lair is walking into their own
+   * lobby, so there is nothing to put to them
+   */
+  hosting: boolean;
 }
 
 /**

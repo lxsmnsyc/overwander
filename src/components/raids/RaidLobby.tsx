@@ -63,6 +63,12 @@ export interface RaidLobbyProps {
    * the dialog's own heading rather than anything this can draw
    */
   onTitle?: (title: string | null) => void;
+  /**
+   * Whether the player is hosting what they are standing in, reported
+   * upwards for the panel around it: a host's lobby is not dismissed
+   * by a stray press on the overlay
+   */
+  onHosting?: (hosting: boolean) => void;
 }
 
 /**
@@ -104,6 +110,15 @@ function LobbyRows(
     const record = raid();
 
     props.onTitle?.(record == null ? null : getRaidTitle(record));
+  });
+
+  // And whether it is theirs, for the same reason: the panel around
+  // this is what the overlay closes
+  createEffect(() => {
+    props.onHosting?.(isHost());
+    onCleanup(() => {
+      props.onHosting?.(false);
+    });
   });
 
   /**

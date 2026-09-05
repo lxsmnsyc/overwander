@@ -204,6 +204,7 @@ export async function peekRaid(
     species: existing?.species ?? roll.species,
     battle: existing?.battle ?? null,
     teams: existing?.teams.length ?? 0,
+    hosting: existing?.host === uid,
   };
 }
 

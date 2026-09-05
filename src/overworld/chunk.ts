@@ -1,6 +1,6 @@
 import AleaRNG from '../core/alea';
 import type Biome from '../data/ids/biome';
-import { isOpenSea, isWaterBiome } from '../data/ids/biome';
+import { growsBerries, growsTrees, isOpenSea, isWaterBiome } from '../data/ids/biome';
 import type Decoration from '../data/overworld/decoration';
 import {
   MAX_DECORATIONS,
@@ -82,7 +82,36 @@ const SEA_PEOPLE = new Set([
   Landmark.FrontierBrain,
 ]);
 
-const SEA_LANDMARKS = LANDMARKS.filter((kind) => !SEA_PEOPLE.has(kind));
+const BIOME_LANDMARKS = new Map<Biome, Landmark[]>();
+
+/**
+ * The pool a biome rolls its landmarks from: what cannot stand or
+ * grow there is out. A barren or frozen chunk bears no berries and a
+ * treeless one no apricorns, so those rolls go to something else
+ * rather than putting a bush on the lava
+ */
+function biomeLandmarks(biome: Biome): Landmark[] {
+  const held = BIOME_LANDMARKS.get(biome);
+
+  if (held != null) {
+    return held;
+  }
+  const pool = LANDMARKS.filter((kind) => {
+    if (isOpenSea(biome) && SEA_PEOPLE.has(kind)) {
+      return false;
+    }
+    if (kind === Landmark.BerryPatch) {
+      return growsBerries(biome);
+    }
+    if (kind === Landmark.ApricornTree) {
+      return growsTrees(biome);
+    }
+    return true;
+  });
+
+  BIOME_LANDMARKS.set(biome, pool);
+  return pool;
+}
 
 /**
  * The landmarks a chunk holds at most one of: a second portal goes
@@ -538,10 +567,10 @@ export default class Chunk {
       const rng = new AleaRNG(`${this.seed}landmarks`);
       const count = MIN_LANDMARKS + Math.floor(rng.random() * (MAX_LANDMARKS - MIN_LANDMARKS + 1));
       const water = this.wetCells();
-      // Nothing stands in a rock's reach, and the open seas roll from
-      // a pool without the landmarks that need ground under them
+      // Nothing stands in a rock's reach, and each biome rolls from a
+      // pool without the landmarks that cannot be there
       const rocks = this.rockArea();
-      const base = isOpenSea(this.biome) ? SEA_LANDMARKS : LANDMARKS;
+      const base = biomeLandmarks(this.biome);
       const order = shuffled(rng, centeredCells(PLACEMENT_AREA));
       const cells = new Map<number, Landmark>();
       const taken = new Set<number>();

@@ -71,8 +71,8 @@ few are one to a chunk, marked below.
 | Landmark            | Description                                                     |
 | ------------------- | --------------------------------------------------------------- |
 | **Item Cache**      | A buried stash of items                                         |
-| **Berry Patch**     | A bush bearing one kind of berry                                |
-| **Apricorn Tree**   | A tree bearing one colour of apricorn, for Kurt to carve        |
+| **Berry Patch**     | A bush bearing one kind of berry. Not on ground nothing roots in |
+| **Apricorn Tree**   | A tree bearing one colour of apricorn, for Kurt to carve. Not above the tree line |
 | **Nest**            | An egg of a local species                                       |
 | **Legendary Raid**  | A legendary's lair; the raid is named after the place           |
 | **Shadow Raid**     | A lair with something wrong in it                               |

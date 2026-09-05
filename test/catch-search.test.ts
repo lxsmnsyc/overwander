@@ -446,6 +446,19 @@ describe('what the box learned to be asked', () => {
     ]);
   });
 
+  it('doubles a backslash in a pattern and leaves the wildcards alone', () => {
+    // An unfinished escape is a pattern the store refuses, which came
+    // back as a box with nothing in it
+    expect(planCatchSearch('place:route\\')).toEqual([
+      { on: 'row', column: 'origin_place', op: 'ilike', value: '%route\\\\%' },
+    ]);
+    // A wildcard only ever widens what the store sends, and the second
+    // pass refuses the extras
+    expect(planCatchSearch('nickname:100%')).toEqual([
+      { on: 'row', column: 'nickname', op: 'ilike', value: '%100%%' },
+    ]);
+  });
+
   it('reads the values one stat at a time, and all six together', () => {
     const rolled = pokemon({ ivs: packIVs({ 0: 31, 1: 0, 2: 20, 3: 31, 4: 10, 5: 31 }) });
 

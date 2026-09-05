@@ -1,6 +1,7 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Stats } from '../../data/constants/stats';
-import { DamageFlags, Moves } from '../../data/ids/moves';
+import { DamageFlags } from '../../data/ids/moves';
+import { RECOIL_MOVES } from '../../data/moves/recoil';
 import { RISKY_PENALTY, USELESS_PENALTY } from '../ai/score';
 import type Battle from '../core';
 import {
@@ -10,12 +11,7 @@ import {
   type UnitDamageEvent,
 } from '../events';
 
-export const RECOIL_MOVES: { [key in Moves]?: number } = {
-  [Moves.TakeDown]: 1 / 4,
-  [Moves.DoubleEdge]: 1 / 3,
-  [Moves.Submission]: 1 / 4,
-  [Moves.VoltTackle]: 1 / 3,
-};
+export { RECOIL_MOVES } from '../../data/moves/recoil';
 
 /**
  * The share of its health below which a unit cannot afford to be hurt

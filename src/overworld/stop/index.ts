@@ -3,7 +3,8 @@ import type { CatchSnapshot } from '../../auth/catch-snapshot';
 import { getMaxHealth } from '../../auth/health';
 import { Slots, defaultSlots, withSlots } from '../../data/constants/slots';
 import { getExpertHeldItems } from '../../data/items/expert-loadout';
-import { getBestMoves } from '../../data/species/best-moves';
+import { BuildRole } from '../../data/species/best-moves';
+import { type BestBuild, getBestBuild, getBestParty } from '../../data/species/best-build';
 import Abilities from '../../data/ids/abilities';
 import type ChunkSnapshot from '../chunk-snapshot';
 import type { Spawn } from '../chunk-snapshot';
@@ -49,6 +50,7 @@ export function createStopSnapshot(
   shadow = true,
   levels: LevelBand = ROCKET_PARTY_LEVELS,
   outfit: StopOutfit = PLAIN_OUTFIT,
+  composed?: BestBuild,
 ): CatchSnapshot {
   const fielded = deriveEncounter(snapshot, spawn, undefined, {
     type: EncounterType.Rocket,
@@ -56,27 +58,34 @@ export function createStopSnapshot(
     shadow,
   });
   const size = deriveSize(fielded.species, fielded.traitValue);
+  // The ranks that are meant to be hard field a built pokemon rather
+  // than a rolled one: the abilities its species is best with in the
+  // job the party gave it, the four moves those abilities are worth,
+  // the nature those moves want, and gear that follows all of it
+  const built =
+    outfit.best === true
+      ? (composed ?? getBestBuild(fielded.species, BuildRole.Core, outfit.abilities))
+      : undefined;
   // A set, because a species with fewer abilities than the outfit
   // asks for carries fewer, and a shadow's own mark rides free of the
   // count either way
   const abilities = [
     ...new Set([
-      ...deriveTrainedAbilities(
-        fielded.species,
-        fielded.traitValue,
-        fielded.ability,
-        outfit.abilities,
-      ),
+      ...(built?.abilities ??
+        deriveTrainedAbilities(
+          fielded.species,
+          fielded.traitValue,
+          fielded.ability,
+          outfit.abilities,
+        )),
       ...(shadow ? [Abilities.Shadow] : []),
     ]),
   ];
-  // The ranks that are meant to be hard field a built pokemon rather
-  // than a rolled one: the four moves its species is best with, and
-  // gear that follows those rather than its type line
-  const moves = outfit.best === true ? getBestMoves(fielded.species, abilities) : fielded.moves;
+  const moves = built?.moves ?? fielded.moves;
   const items = getExpertHeldItems(fielded.species, outfit.items, {
     moves,
     abilities,
+    role: built?.role,
     best: outfit.best === true,
   });
   // Read off the roll rather than over it: the spawn tuple is what a
@@ -90,7 +99,7 @@ export function createStopSnapshot(
     level: fielded.level,
     ivs,
     effortValues,
-    nature: fielded.nature,
+    nature: built?.nature ?? fielded.nature,
     gender: fielded.gender,
     height: size.height,
     weight: size.weight,
@@ -134,7 +143,22 @@ export function createStopParty(
   levels: LevelBand = ROCKET_PARTY_LEVELS,
   outfit: StopOutfit = PLAIN_OUTFIT,
 ): CatchSnapshot[] {
-  return spawns.map((spawn) => createStopSnapshot(snapshot, spawn, shadow, levels, outfit));
+  // A built party is composed rather than assembled one at a time:
+  // the jobs are handed out, the sky is settled once for all six, and
+  // each member is built knowing both and knowing what the ones
+  // before it brought. A rolled party has none of that to do, and
+  // fields what it caught
+  const composed =
+    outfit.best === true
+      ? getBestParty(
+          spawns.map(([species]) => species),
+          outfit.abilities,
+        )
+      : undefined;
+
+  return spawns.map((spawn, at) =>
+    createStopSnapshot(snapshot, spawn, shadow, levels, outfit, composed?.[at]),
+  );
 }
 
 export {

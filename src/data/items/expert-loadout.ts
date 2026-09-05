@@ -4,12 +4,13 @@ import { MoveCategories, Moves } from '../ids/moves';
 import type { Species } from '../ids/species';
 import { Stats } from '../constants/stats';
 import type { Types } from '../constants/types';
-import { getMoveData } from '../moves/__create';
+import { getMoveData, getSpeedCooldownFactor } from '../moves/__create';
 import { GENERAL_STAT_BOOSTERS } from './stat-boosters';
 import { MARKET_GEAR } from './gear';
 import { ORBS } from './orbs';
 import { TYPE_BOOSTERS } from './type-boosters';
 import { getSpeciesData } from '../species/__create';
+import { BuildRole } from '../species/best-moves';
 import { getSpeciesHeldItems } from '../species/held-items';
 import { isFullyEvolved } from '../species/evolution';
 
@@ -156,6 +157,33 @@ const LOCK_FACTOR = 0.35;
  */
 const FULL_PRESSURE = 120;
 
+/**
+ * What a Life Orb costs its holder, per fight.
+ *
+ * It takes a tenth of the holder's health for every blow that lands,
+ * and how many blows that is depends on how fast the holder is: Speed
+ * buys cooldown here, so a quick attacker pays the tenth far oftener
+ * than a slow one for the same fight. A support pays it as well
+ * without doing the attacking that would earn it back
+ */
+const ORB_COST = 0.12;
+const SUPPORT_ORB_COST = 1.6;
+
+/**
+ * A rough level-100 Speed stat from the base one, trained but with no
+ * nature on it. The loadout knows the species rather than the record,
+ * and what it needs is the size of the number rather than the number
+ */
+function trainedSpeed(species: Species): number {
+  return 2 * getSpeciesData(species).stats[Stats.Speed] + 99;
+}
+
+function orbCost(species: Species, role: BuildRole): number {
+  const acting = 1 / getSpeedCooldownFactor(trainedSpeed(species));
+
+  return ORB_COST * acting * (role === BuildRole.Support ? SUPPORT_ORB_COST : 1);
+}
+
 function pressure(species: Species): number {
   const stats = getSpeciesData(species).stats;
 
@@ -167,8 +195,26 @@ function pressure(species: Species): number {
  * A set that leans on one blow keeps all of it; one spread evenly
  * across four keeps half of that
  */
-function lockFactor(split: Split): number {
-  return LOCK_FACTOR * Math.min(1, split.focus * 2);
+function lockFactor(split: Split, moves: Moves[]): number {
+  return LOCK_FACTOR * Math.min(1, split.focus * 2) * castable(moves);
+}
+
+/**
+ * What share of a locked pokemon's sheet it can still throw.
+ *
+ * A lock takes the first move it casts and keeps it, so every quiet
+ * move on the sheet is a move it may never reach: a Tentacruel
+ * carrying a Rain Dance and a Reflect behind Choice Specs is a
+ * Tentacruel that either never sets the rain or never attacks.
+ * Squared, because losing half the sheet is worse than half as good
+ */
+function castable(moves: Moves[]): number {
+  if (moves.length === 0) {
+    return 1;
+  }
+  const quiet = moves.filter((move) => getMoveData(move).category === MoveCategories.Status).length;
+
+  return ((moves.length - quiet) / moves.length) ** 2;
 }
 
 /**
@@ -205,6 +251,7 @@ function itemWorth(
   split: Split,
   moves: Moves[],
   abilities: Abilities[],
+  role: BuildRole,
 ): number {
   // A relic doubles a stat for one species and is worth nothing to
   // anybody else, which is why it is never put behind anything
@@ -224,20 +271,20 @@ function itemWorth(
   // The Choice band and its kin: half again on one half of what a
   // pokemon throws, against being stuck with the move it opened on
   if (item === Items.ChoiceBand) {
-    return 0.5 * split.physical * lockFactor(split);
+    return 0.5 * split.physical * lockFactor(split, moves);
   }
   if (item === Items.ChoiceSpecs) {
-    return 0.5 * split.special * lockFactor(split);
+    return 0.5 * split.special * lockFactor(split, moves);
   }
   if (item === Items.ChoiceScarf) {
-    return 0.25 * lockFactor(split);
+    return 0.25 * lockFactor(split, moves);
   }
 
   // Everything it throws, at a price paid in its own health: worth it
   // to something that hits hard enough for the extra to cover the
   // recoil, and a slow way to die for anything else
   if (item === Items.LifeOrb) {
-    return 0.3 * pressure(species) - 0.16;
+    return 0.3 * pressure(species) - orbCost(species, role);
   }
   if (item === Items.MuscleBand) {
     return 0.1 * split.physical;
@@ -364,6 +411,11 @@ export interface HeldLoadout {
   /** What it is fighting with, which is what asks for an orb */
   abilities?: Abilities[];
   /**
+   * The job the party gave it. Gear that buys damage with health is
+   * for the two doing the attacking, not the four behind them
+   */
+  role?: BuildRole;
+  /**
    * Whether the gear is priced rather than ordered. The ladder's top
    * rungs are handed the best answer there is; everybody below is
    * handed what suits their species, which is what keeps a gym
@@ -399,8 +451,9 @@ export function getExpertHeldItems(
   }
 
   const split = splitOf(species, moves);
+  const role = loadout.role ?? BuildRole.Core;
   const ranked = candidates(species)
-    .map((item) => ({ item, worth: itemWorth(species, item, split, moves, abilities) }))
+    .map((item) => ({ item, worth: itemWorth(species, item, split, moves, abilities, role) }))
     .filter((entry) => entry.worth > 0)
     .sort((one, two) => two.worth - one.worth || one.item - two.item);
 

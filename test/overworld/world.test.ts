@@ -12,6 +12,13 @@ import registerBiomeSpawns, {
   isGrownSpecies,
   spawnRanks,
 } from '../../src/data/biome';
+import { BuildRole } from '../../src/data/species/best-moves';
+import {
+  CORE_COUNT,
+  assignBuildRoles,
+  getBestNature,
+  getBestParty,
+} from '../../src/data/species/best-build';
 import Biome, {
   BIOME_CONFIGS,
   TimeOfDay,
@@ -138,6 +145,7 @@ import {
   ROCKET_REWARD_LEVEL,
   TYPE_TRAINER_GOLD,
   createStopParty,
+  createStopSnapshot,
   polishedStats,
   rocketPartyLevels,
   rollStopGold,
@@ -1520,6 +1528,50 @@ describe('world', () => {
       expect(new Set(member.items).size).toBe(3);
       expect(getSlots(member.slots, Slots.Item)).toBe(3);
       expect(getSlots(member.slots, Slots.Ability)).toBe(member.abilities.length);
+    }
+  });
+
+  it('fields a built party as two cores behind four supports', () => {
+    const world = new World('overworld');
+    const chunk = findChunk(
+      world,
+      (candidate) => new ChunkSnapshot(candidate, 0).getRocketStops().size > 0,
+    );
+
+    expect(chunk).not.toBeNull();
+    if (chunk == null) {
+      return;
+    }
+    const snapshot = new ChunkSnapshot(chunk, 0);
+    const spawns = [...snapshot.getRocketStops().values()][0];
+    const party = createStopParty(snapshot, spawns, false, ELITE_PARTY_LEVELS, ELITE_OUTFIT);
+    const roles = assignBuildRoles(party.map((member) => member.species));
+    const composed = getBestParty(
+      party.map((member) => member.species),
+      ELITE_OUTFIT.abilities,
+    );
+
+    expect(roles.filter((role) => role === BuildRole.Core)).toHaveLength(
+      Math.min(CORE_COUNT, party.length),
+    );
+
+    for (const [at, member] of party.entries()) {
+      // Everything chosen rather than rolled comes off the party's
+      // own plan: the jobs, the sky, the abilities, the moves and the
+      // nature those moves want
+      expect(member.abilities, getSpeciesData(member.species).name).toEqual(composed[at].abilities);
+      expect(member.moves).toEqual(composed[at].moves);
+      expect(member.nature).toBe(getBestNature(member.species, roles[at], member.moves));
+    }
+
+    // A rolled party has no jobs to hand out, so nothing about it
+    // moves when the builder changes
+    const rolled = createStopParty(snapshot, spawns, false, ELITE_PARTY_LEVELS, PLAIN_OUTFIT);
+
+    for (const [at, member] of rolled.entries()) {
+      expect(member.nature).toBe(
+        createStopSnapshot(snapshot, spawns[at], false, ELITE_PARTY_LEVELS, PLAIN_OUTFIT).nature,
+      );
     }
   });
 

@@ -381,7 +381,23 @@ import {
   getSyndicate,
   gruntName,
 } from '../src/data/overworld/syndicate';
-import { BEST_MOVE_COUNT, BEST_MOVE_OVERRIDES, getBestMoves } from '../src/data/species/best-moves';
+import {
+  BEST_MOVE_COUNT,
+  BEST_MOVE_OVERRIDES,
+  BuildRole,
+  SETUP_MOVES,
+  getBestMoves,
+} from '../src/data/species/best-moves';
+import {
+  CORE_COUNT,
+  assignBuildRoles,
+  getBestAbilities,
+  getBestBuild,
+  getBestNature,
+  getBestParty,
+} from '../src/data/species/best-build';
+import { NATURE_EFFECTS } from '../src/data/ids/natures';
+import { isRecoilMove } from '../src/data/moves/recoil';
 import { getRegionSpan, getSpeciesRegion } from '../src/data/species/regions';
 import {
   ACHIEVEMENT_LINES,
@@ -5390,9 +5406,15 @@ describe('type experts', () => {
           quiet += 1;
         }
       }
-      // Four ways to do nothing is not a party: at most one slot goes
-      // to a move that deals no damage
-      expect(quiet, name).toBeLessThanOrEqual(1);
+      // Four ways to do nothing is not a party: a core gives one slot
+      // to a move that deals no damage, and takes more only where the
+      // species has too few attacks to fill the sheet, which is what
+      // a Wobbuffet is
+      const hits =
+        legal.size -
+        [...legal].filter((move) => getMoveData(move).category === MoveCategories.Status).length;
+
+      expect(quiet, name).toBeLessThanOrEqual(Math.max(1, BEST_MOVE_COUNT - hits));
 
       // And nothing that takes the pokemon off the field with it
       expect(built).not.toContain(Moves.Explosion);
@@ -5463,6 +5485,36 @@ describe('type experts', () => {
     ).not.toContain(Items.ToxicOrb);
   });
 
+  it('sells the orb to the two doing the attacking', () => {
+    const moves = getBestMoves(Species.Gengar, [Abilities.Levitate]);
+    const core = getExpertHeldItems(Species.Gengar, 2, { moves, best: true });
+    const support = getExpertHeldItems(Species.Gengar, 2, {
+      moves,
+      role: BuildRole.Support,
+      best: true,
+    });
+
+    // A Life Orb takes a tenth of its holder for every blow that
+    // lands, which is a price the four behind the cores pay without
+    // doing the attacking that earns it back
+    expect(core).toContain(Items.LifeOrb);
+    expect(support).not.toContain(Items.LifeOrb);
+  });
+
+  it('never locks a pokemon out of half its own sheet', () => {
+    const locking = new Set([Items.ChoiceBand, Items.ChoiceSpecs, Items.ChoiceScarf]);
+    // Two quiet moves and a lock is a pokemon that either never sets
+    // its rain or never attacks
+    const quiet = getExpertHeldItems(Species.Tentacruel, 3, {
+      moves: [Moves.RainDance, Moves.Surf, Moves.Reflect, Moves.SludgeBomb],
+      best: true,
+    });
+
+    for (const item of quiet) {
+      expect(locking.has(item), getItemData(item).name).toBe(false);
+    }
+  });
+
   it('never hands out two of a kind of gear', () => {
     const locking = new Set([Items.ChoiceBand, Items.ChoiceSpecs, Items.ChoiceScarf]);
     const orbs = new Set([Items.FlameOrb, Items.ToxicOrb]);
@@ -5477,6 +5529,325 @@ describe('type experts', () => {
       expect(held.filter((item) => orbs.has(item)).length, name).toBeLessThanOrEqual(1);
       expect(held.filter((item) => TYPE_BOOSTERS.has(item)).length, name).toBeLessThanOrEqual(1);
     }
+  });
+
+  it('builds a support out of the same species as a core', () => {
+    for (const species of getRentalPool()) {
+      const name = getSpeciesData(species).name;
+      const legal = new Set(getLearnableMoves(species));
+      const support = getBestMoves(species, [], { role: BuildRole.Support });
+      const quiet = (moves: Moves[]): number =>
+        moves.filter((move) => getMoveData(move).category === MoveCategories.Status).length;
+
+      for (const move of support) {
+        expect(legal.has(move), `${name}: ${move}`).toBe(true);
+      }
+      // Half a sheet of quiet moves at most: a support that cannot
+      // hurt anybody is one the far side walks past. A species with
+      // nothing to hit with is its own answer to that, and there is
+      // exactly one of those
+      const hits = [...legal].filter(
+        (move) => getMoveData(move).category !== MoveCategories.Status,
+      ).length;
+
+      expect(quiet(support), name).toBeLessThanOrEqual(2);
+      expect(support.length - quiet(support), name).toBeGreaterThanOrEqual(Math.min(2, hits));
+    }
+
+    // A wall asked to attack still attacks, and asked to hold the
+    // fight open it reaches for what holds it open
+    const core = getBestMoves(Species.Blissey, [Abilities.NaturalCure]);
+    const support = getBestMoves(Species.Blissey, [Abilities.NaturalCure], {
+      role: BuildRole.Support,
+    });
+
+    expect(support).not.toEqual(core);
+    expect(support).toContain(Moves.SoftBoiled);
+  });
+
+  it('takes the sky and what waits under it together', () => {
+    // Nobody casts a Sunny Day for its own sake: what pays for the
+    // slot is the Chlorophyll behind it and the Solar Beam that stops
+    // winding up
+    const sun = getBestMoves(Species.Venusaur, [Abilities.Chlorophyll]);
+
+    expect(sun).toContain(Moves.SunnyDay);
+    expect(sun).toContain(Moves.SolarBeam);
+    expect(getBestMoves(Species.Venusaur)).not.toContain(Moves.SunnyDay);
+
+    // A sky an ability already brings is a sky nothing has to cast,
+    // and Thunder under it stops missing
+    const rain = getBestMoves(Species.Kyogre, [Abilities.Drizzle]);
+
+    expect(rain).not.toContain(Moves.RainDance);
+    expect(rain).toContain(Moves.Thunder);
+  });
+
+  it('pays for a move that cannot miss at all', () => {
+    // Accuracy is rolled against evasion, so a written 100 is a
+    // promise a Double Team breaks and a move with no accuracy is
+    // not. Read flat the two tied, and the older move id won
+    const charizard = getBestMoves(Species.Charizard, [Abilities.Blaze]);
+
+    expect(charizard).toContain(Moves.AerialAce);
+    expect(charizard).not.toContain(Moves.WingAttack);
+  });
+
+  it('does not hand the same move to half the party', () => {
+    // Four Earthquakes answer one wall four times and everything else
+    // never, so a repeat has to lose to the second-best move of its
+    // own type. A move the pokemon gets its own bonus from is barely
+    // docked: three Dragon types all carrying their own Dragon Claw
+    // is three pokemon casting what they are best at
+    for (const party of [...Object.values(CHAMPION_PARTIES), ...Object.values(LEGEND_PARTIES)]) {
+      const carried = new Map<Moves, number>();
+      const borrowed = new Map<Moves, number>();
+
+      for (const [at, build] of getBestParty(party, 3).entries()) {
+        const types = getSpeciesData(party[at]).types;
+
+        for (const move of build.moves) {
+          carried.set(move, (carried.get(move) ?? 0) + 1);
+          if (!types.includes(getMoveData(move).type)) {
+            borrowed.set(move, (borrowed.get(move) ?? 0) + 1);
+          }
+        }
+      }
+      for (const [move, count] of carried) {
+        expect(count, getMoveData(move).name).toBeLessThanOrEqual(3);
+      }
+      for (const [move, count] of borrowed) {
+        expect(count, getMoveData(move).name).toBeLessThanOrEqual(2);
+      }
+    }
+  });
+
+  it('lets the cores decide the sky', () => {
+    const weatherMoves = new Set([Moves.SunnyDay, Moves.RainDance, Moves.Sandstorm, Moves.Hail]);
+    const casts = (built: { moves: Moves[] }[]): number =>
+      built.filter((one) => one.moves.some((move) => weatherMoves.has(move))).length;
+
+    // Red's two cores are a Chlorophyll Venusaur and a Solar Power
+    // Charizard, and what the sun costs is two Water pokemon standing
+    // behind them. The cores carry the party, so the sun is called
+    const red = getBestParty(LEGEND_PARTIES[Legend.Red], 3);
+
+    expect(casts(red)).toBe(1);
+    expect(red.some((build) => build.moves.includes(Moves.SunnyDay))).toBe(true);
+
+    // Turn it around: the same want on a support, against a core that
+    // loses half of what it is best at, and the sky is left alone
+    const damped = getBestParty(
+      [
+        Species.Charizard,
+        Species.Salamence,
+        Species.Ludicolo,
+        Species.Blastoise,
+        Species.Blissey,
+        Species.Skarmory,
+      ],
+      3,
+    );
+
+    expect(casts(damped)).toBe(0);
+  });
+
+  it('does not hand the same move to half the party', () => {
+    // Four Earthquakes answer one wall four times and everything else
+    // never, so a repeat has to lose to the second-best move of its
+    // own type. A move the pokemon gets its own bonus from is barely
+    // docked: three Dragon types all carrying their own Dragon Claw
+    // is three pokemon casting what they are best at
+    for (const party of [...Object.values(CHAMPION_PARTIES), ...Object.values(LEGEND_PARTIES)]) {
+      const carried = new Map<Moves, number>();
+      const borrowed = new Map<Moves, number>();
+
+      for (const [at, build] of getBestParty(party, 3).entries()) {
+        const types = getSpeciesData(party[at]).types;
+
+        for (const move of build.moves) {
+          carried.set(move, (carried.get(move) ?? 0) + 1);
+          if (!types.includes(getMoveData(move).type)) {
+            borrowed.set(move, (borrowed.get(move) ?? 0) + 1);
+          }
+        }
+      }
+      for (const [move, count] of carried) {
+        expect(count, getMoveData(move).name).toBeLessThanOrEqual(3);
+      }
+      for (const [move, count] of borrowed) {
+        expect(count, getMoveData(move).name).toBeLessThanOrEqual(2);
+      }
+    }
+  });
+
+  it('spends a support slot on the two in front of it', () => {
+    // Every fight here stands the whole party up at once, so a move
+    // aimed at an ally has somebody to aim at
+    const support = getBestMoves(Species.Espeon, [], { role: BuildRole.Support });
+
+    expect(support).toContain(Moves.HelpingHand);
+    // A core spending a cast on somebody else's hit is a core not
+    // taking its own
+    expect(getBestMoves(Species.Espeon)).not.toContain(Moves.HelpingHand);
+
+    // And nothing passes a baton with nothing raised to pass
+    for (const species of getRentalPool()) {
+      for (const role of [BuildRole.Core, BuildRole.Support]) {
+        const built = getBestMoves(species, [], { role });
+
+        if (built.includes(Moves.BatonPass)) {
+          expect(
+            built.some((move) => SETUP_MOVES.has(move)),
+            getSpeciesData(species).name,
+          ).toBe(true);
+        }
+      }
+    }
+  });
+
+  it('never promises what the rest of the sheet cannot keep', () => {
+    for (const species of getRentalPool()) {
+      for (const role of [BuildRole.Core, BuildRole.Support]) {
+        const built = getBestMoves(species, [], { role });
+        const name = getSpeciesData(species).name;
+
+        // Dream Eater against somebody awake is a wasted cast, so it
+        // is only ever taken beside something that puts them to sleep
+        if (built.includes(Moves.DreamEater)) {
+          expect(
+            built.some((move) =>
+              [
+                Moves.Spore,
+                Moves.SleepPowder,
+                Moves.Hypnosis,
+                Moves.LovelyKiss,
+                Moves.Sing,
+                Moves.Yawn,
+              ].includes(move),
+            ),
+            name,
+          ).toBe(true);
+        }
+        if (built.includes(Moves.SleepTalk)) {
+          expect(built, name).toContain(Moves.Rest);
+        }
+      }
+    }
+  });
+
+  it('awakens the abilities the job asks for', () => {
+    // The sky it brings with it is the whole of what a Groudon is
+    expect(getBestAbilities(Species.Groudon, 1, BuildRole.Core)).toEqual([Abilities.Drought]);
+
+    // The same species leans one way as a core and the other behind
+    // one: what sharpens a hit against what survives one
+    expect(getBestAbilities(Species.Salamence, 1, BuildRole.Core)).not.toEqual(
+      getBestAbilities(Species.Salamence, 1, BuildRole.Support),
+    );
+
+    // A species with fewer than asked carries what it has, and never
+    // the same one twice
+    for (const species of getRentalPool()) {
+      const pool = new Set([
+        ...getSpeciesAbilityPools(species).regular,
+        ...getSpeciesAbilityPools(species).hidden,
+      ]);
+      const held = getBestAbilities(species, 3, BuildRole.Support);
+
+      expect(held.length, getSpeciesData(species).name).toBe(Math.min(3, pool.size));
+      expect(new Set(held).size).toBe(held.length);
+      for (const ability of held) {
+        expect(pool.has(ability)).toBe(true);
+      }
+    }
+  });
+
+  it('docks a move that pays for the swing out of the swinger', () => {
+    // Overheat halves the stat it just fired from, and a fight here is
+    // cast after cast rather than turn after turn, so its face value
+    // is a price paid once and collected once
+    const arcanine = getBestMoves(Species.Arcanine, [Abilities.Intimidate]);
+
+    expect(arcanine).toContain(Moves.FireBlast);
+    expect(arcanine).not.toContain(Moves.Overheat);
+  });
+
+  it('never awakens an ability the sheet never asks for', () => {
+    // Reckless lifts a move that hurts its user, and a sheet with
+    // none is a sheet it does nothing on. The two are picked apart,
+    // so the abilities are priced again once the moves are known
+    expect(
+      getBestAbilities(Species.Arcanine, 1, BuildRole.Core, undefined, [Moves.DoubleEdge]),
+    ).toEqual([Abilities.Reckless]);
+    expect(
+      getBestAbilities(Species.Arcanine, 1, BuildRole.Core, undefined, [Moves.Overheat]),
+    ).not.toEqual([Abilities.Reckless]);
+
+    // And what the builder actually fields agrees with its own sheet
+    const built = getBestBuild(Species.Arcanine, BuildRole.Core, 2);
+
+    if (built.abilities.includes(Abilities.Reckless)) {
+      expect(built.moves.some((move) => isRecoilMove(move))).toBe(true);
+    }
+  });
+
+  it('picks the nature the sheet it built actually wants', () => {
+    const machamp = getBestBuild(Species.Machamp, BuildRole.Core, 1);
+    const gengar = getBestBuild(Species.Gengar, BuildRole.Core, 1);
+
+    // The drop belongs on the side it never casts from
+    expect(NATURE_EFFECTS[machamp.nature]?.up).toBe(Stats.Attack);
+    expect(NATURE_EFFECTS[machamp.nature]?.down).toBe(Stats.SpecialAttack);
+    expect(NATURE_EFFECTS[gengar.nature]?.up).toBe(Stats.SpecialAttack);
+    expect(NATURE_EFFECTS[gengar.nature]?.down).toBe(Stats.Attack);
+
+    // A support is bought defence rather than power, and never pays
+    // for it with the defence it is there for
+    for (const species of getRentalPool()) {
+      const nature = getBestNature(
+        species,
+        BuildRole.Support,
+        getBestMoves(species, [], {
+          role: BuildRole.Support,
+        }),
+      );
+      const effect = NATURE_EFFECTS[nature];
+      const name = getSpeciesData(species).name;
+
+      expect(effect, name).toBeDefined();
+      expect([Stats.Defense, Stats.SpecialDefense, Stats.Speed], name).toContain(effect?.up);
+    }
+    // And the same species answers the same way twice
+    expect(getBestNature(Species.Machamp, BuildRole.Core)).toBe(
+      getBestNature(Species.Machamp, BuildRole.Core),
+    );
+  });
+
+  it('fields two cores behind four supports', () => {
+    const six = [
+      Species.Blissey,
+      Species.Skarmory,
+      Species.Salamence,
+      Species.Metagross,
+      Species.Milotic,
+      Species.Gengar,
+    ];
+    const roles = assignBuildRoles(six);
+
+    expect(roles.filter((role) => role === BuildRole.Core)).toHaveLength(CORE_COUNT);
+    // Read off the species rather than the slot: the two that can
+    // take something off the field are the two asked to
+    expect(roles[six.indexOf(Species.Salamence)]).toBe(BuildRole.Core);
+    expect(roles[six.indexOf(Species.Blissey)]).toBe(BuildRole.Support);
+
+    // A house that fields three has one, since two attackers and one
+    // support is not a plan
+    expect(
+      assignBuildRoles([Species.Blissey, Species.Salamence, Species.Skarmory]).filter(
+        (role) => role === BuildRole.Core,
+      ),
+    ).toHaveLength(1);
   });
 
   it('keeps every written override to something its species can learn', () => {

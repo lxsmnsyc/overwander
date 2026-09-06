@@ -37,3 +37,23 @@ export function createLureAbility(ability: Abilities): (overworld: Overworld) =>
     });
   });
 }
+
+/**
+ * What a buddy that pins things down leaves of the flee roll. Half,
+ * the same as a Silver Nanab, so the two stack into a quarter rather
+ * than either one settling it: a meeting that can never run is a
+ * safari without a throw worth making
+ */
+export const TRAP_FLEE_FACTOR = 0.5;
+
+/**
+ * Arena Trap and Shadow Tag: nothing standing in front of the player
+ * gets far, so a failed throw is half as likely to be the last one
+ */
+export function createTrapAbility(ability: Abilities): (overworld: Overworld) => void {
+  return createBuddyAbility(ability, (overworld) => {
+    overworld.on(OverworldEvents.CheckFleeChance, EventPriority.Exact, (event) => {
+      event.factor *= TRAP_FLEE_FACTOR;
+    });
+  });
+}

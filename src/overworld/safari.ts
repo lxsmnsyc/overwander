@@ -247,6 +247,14 @@ export interface SafariContext {
    * ask. One means the player brought nothing that helps
    */
   charm?: number;
+  /**
+   * What a buddy that pins a meeting down leaves of its flee roll,
+   * which today is Arena Trap or Shadow Tag and nothing else.
+   *
+   * Answered by the overworld alongside `charm`, once, for the same
+   * reason. One means nothing is holding the encounter in place
+   */
+  trap?: number;
 }
 
 /**
@@ -609,9 +617,10 @@ export default class SafariSession<
   /**
    * The chance it flees after a failed throw: the faster it is the
    * readier it bolts, capped so even the fastest stays catchable. It
-   * grows with level as the catch chance shrinks. Anything fought for
-   * or given — a raid prize, a grunt's parting gift, a distribution —
-   * never bolts
+   * grows with level as the catch chance shrinks. A treat and a buddy
+   * that pins it down both cut what is left, and stack. Anything
+   * fought for or given (a raid prize, a grunt's parting gift, a
+   * distribution) never bolts
    */
   getFleeChance(): number {
     if (
@@ -624,9 +633,10 @@ export default class SafariSession<
       return 0;
     }
     const calm = this.fedItem == null ? null : NANAB_FLEE_FACTOR.get(this.fedItem);
+    const pinned = this.context.trap ?? 1;
     const chance = Math.min(MAX_FLEE_CHANCE, this.getSpeed() / CATCH_RATE_SCALE);
 
-    return calm == null ? chance : chance * calm;
+    return chance * (calm ?? 1) * pinned;
   }
 
   /**

@@ -41,13 +41,14 @@ export async function createSafariSession(
   // that is is read once here alongside it. A player walking alone
   // throws both as plain balls
   const walking = await resolveBuddy(user.uid);
-  // What the player brought along, asked once: the Catching Charm is
-  // the only thing that answers today, and what a buddy carries cannot
-  // change while a ball is in the air
+  // What the player brought along, asked once: the Catching Charm on
+  // the throw and a buddy that pins the meeting down on the bolt.
+  // Neither can change while a ball is in the air
   const overworld = createOverworld(user.uid, walking == null ? null : buddyEffectsOf(walking[1]));
   const session = new SafariSession(encounter, () => rng.random(), {
     speciesCaught,
     charm: overworld.checkCatchChance(encounterKey(encounter)),
+    trap: overworld.checkFleeChance(encounterKey(encounter)),
     buddy:
       walking == null
         ? undefined

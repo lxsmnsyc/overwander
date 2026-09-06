@@ -192,6 +192,7 @@ from the buddy's ability, others from what it is holding.
 | **Cute Charm**                               | Ability   | Two in three come out the opposite gender to the buddy    |
 | **Arena Trap**, **Illuminate**, **No Guard** | Ability   | Three extra pokemon become visible and meetable           |
 | **Illuminate**                               | Ability   | A lantern as well: sees more than twice as far in the dark |
+| **Arena Trap**, **Shadow Tag**               | Ability   | A wild pokemon is half as likely to bolt from a failed throw |
 | **Stench**                                   | Ability   | Two fewer pokemon come near                               |
 | **Keen Eye**, **Intimidate**                 | Ability   | The bottom of the level band lifts by three               |
 | **Hustle**, **Pressure**, **Vital Spirit**   | Ability   | The top of the level band lifts by three                  |

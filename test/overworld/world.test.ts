@@ -237,7 +237,7 @@ import {
   resolvePhenomenon,
 } from '../../src/overworld/landmarks';
 import { DARK_DAY_LAMP_CELLS, favorsEverything } from '../../src/data/overworld/weather';
-import { LURE_SPAWN_BONUS } from '../../src/overworld/abilities/__create';
+import { LURE_SPAWN_BONUS, TRAP_FLEE_FACTOR } from '../../src/overworld/abilities/__create';
 import {
   COMPOUND_EYES_HELD_BOOST,
   FLAME_BODY_FACTOR,
@@ -2350,6 +2350,28 @@ describe('world', () => {
     // The two charms answer different questions, so neither is worth
     // anything on the other's
     expect(charmed.checkEncounterShiny('spawn#0')).toBe(1);
+  });
+
+  it('holds a meeting still for a buddy that traps', () => {
+    const alone = createOverworld('player-uid', null);
+
+    expect(alone.checkFleeChance('spawn#0')).toBe(1);
+    expect(createOverworld('player-uid', buddyWith([])).checkFleeChance('spawn#0')).toBe(1);
+
+    for (const trap of [Abilities.ArenaTrap, Abilities.ShadowTag]) {
+      expect(createOverworld('player-uid', buddyWith([trap])).checkFleeChance('spawn#0')).toBe(
+        TRAP_FLEE_FACTOR,
+      );
+    }
+
+    // Arena Trap is a lure as well, and the two answers are separate:
+    // neither ability reads on the other's question
+    expect(
+      createOverworld('player-uid', buddyWith([Abilities.ShadowTag])).checkSpawnCount(SPAWN_COUNT),
+    ).toBe(SPAWN_COUNT);
+    expect(
+      createOverworld('player-uid', buddyWith([Abilities.Illuminate])).checkFleeChance('spawn#0'),
+    ).toBe(1);
   });
 
   it('pays candy for what a buddy is carrying, to the right family', () => {

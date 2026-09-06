@@ -15,6 +15,7 @@ import {
   type CheckEncounterLevelsEvent,
   type CheckEncounterNatureEvent,
   type CheckEncounterShinyEvent,
+  type CheckFleeChanceEvent,
   type CheckGoldRewardEvent,
   type CheckLampReachEvent,
   type CheckRevealsHeldEvent,
@@ -340,5 +341,23 @@ export default class Overworld extends EventEngine<OverworldEventMap> {
 
     this.emit(OverworldEvents.CheckCatchChance, event);
     return event.boost;
+  }
+
+  /**
+   * What a wild pokemon's readiness to bolt is multiplied by, asked
+   * once when a safari session opens for the same reason the catch
+   * boost is: what walks beside the player cannot change mid-throw
+   */
+  checkFleeChance(spawn: string, factor = 1): number {
+    const event: CheckFleeChanceEvent = {
+      id: 'CheckFleeChance',
+      disabled: false,
+      overworld: this,
+      random: this.random(spawn, 'flee'),
+      factor,
+    };
+
+    this.emit(OverworldEvents.CheckFleeChance, event);
+    return Math.max(0, event.factor);
   }
 }

@@ -3,7 +3,7 @@ import Abilities from '../../data/ids/abilities';
 import { Genders } from '../../data/ids/species';
 import type Overworld from '../core';
 import { OverworldEvents } from '../events';
-import { createBuddyAbility, createLureAbility } from './__create';
+import { createBuddyAbility, createLureAbility, createTrapAbility } from './__create';
 
 /**
  * The field abilities: what a pokemon changes about the world by
@@ -212,13 +212,17 @@ const setupFrisk = createBuddyAbility(Abilities.Frisk, (overworld) => {
 
 /**
  * The lures, which draw `LURE_SPAWN_BONUS` more pokemon into a chunk,
- * the two abilities that decide what an encounter comes out as, and
- * the two that pay a walk rather than a meeting
+ * the two that hold a meeting still, the two abilities that decide
+ * what an encounter comes out as, and the two that pay a walk rather
+ * than a meeting
  */
 const FIELD_ABILITIES: ((overworld: Overworld) => void)[] = [
   createLureAbility(Abilities.ArenaTrap),
   createLureAbility(Abilities.Illuminate),
   createLureAbility(Abilities.NoGuard),
+
+  createTrapAbility(Abilities.ArenaTrap),
+  createTrapAbility(Abilities.ShadowTag),
 
   setupIlluminate,
   setupStench,

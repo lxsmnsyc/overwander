@@ -20,6 +20,7 @@ import SafariSession, {
   levelCatchFactor,
 } from '../../src/overworld/safari';
 import { CATCHING_CHARM_BOOST } from '../../src/overworld/items/key-items';
+import { TRAP_FLEE_FACTOR } from '../../src/overworld/abilities/__create';
 import World from '../../src/overworld/world';
 
 registerSpecies();
@@ -459,6 +460,21 @@ describe('safari session', () => {
 
     expect(stayed.throwBall()).toBe(ThrowResult.BrokeFree);
     expect(stayed.state).toBe(SafariState.Active);
+  });
+
+  it('holds a meeting down for a buddy that traps, on top of a treat', () => {
+    const plain = new SafariSession(makeEncounter(), rolls([]));
+    const pinned = new SafariSession(makeEncounter(), rolls([0.99, 0.4]), {
+      trap: TRAP_FLEE_FACTOR,
+    });
+
+    expect(pinned.getFleeChance()).toBeCloseTo(plain.getFleeChance() * TRAP_FLEE_FACTOR);
+
+    // A treat cuts what the buddy left rather than replacing it, so
+    // the roll that would have fled from a trap alone breaks free
+    expect(pinned.feed(Items.SilverNanabBerry)).toBe(true);
+    expect(pinned.getFleeChance()).toBeCloseTo(plain.getFleeChance() * TRAP_FLEE_FACTOR * 0.5);
+    expect(pinned.throwBall()).toBe(ThrowResult.BrokeFree);
   });
 
   it('reads the individual rather than the species for a flee', () => {

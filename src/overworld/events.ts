@@ -80,6 +80,11 @@ export const enum OverworldEvents {
    * what answers it
    */
   CheckCatchChance = 12,
+  /**
+   * How ready a wild pokemon is to bolt from a failed throw. The
+   * buddies that pin one down are what answer it
+   */
+  CheckFleeChance = 13,
 }
 
 /**
@@ -204,6 +209,14 @@ export interface CheckCatchChanceEvent extends OverworldEvent {
   boost: number;
 }
 
+export interface CheckFleeChanceEvent extends OverworldEvent {
+  /**
+   * What the encounter's own flee chance is multiplied by. Zero is a
+   * meeting that cannot run at all
+   */
+  factor: number;
+}
+
 export interface OverworldEventMap extends EventMap {
   [OverworldEvents.CheckSpawnCount]: [CheckSpawnCountEvent, EventPriority];
   [OverworldEvents.CheckEncounterNature]: [CheckEncounterNatureEvent, EventPriority];
@@ -218,4 +231,5 @@ export interface OverworldEventMap extends EventMap {
   [OverworldEvents.CheckEncounterHeld]: [CheckEncounterHeldEvent, EventPriority];
   [OverworldEvents.CheckRevealsHeld]: [CheckRevealsHeldEvent, EventPriority];
   [OverworldEvents.CheckCatchChance]: [CheckCatchChanceEvent, EventPriority];
+  [OverworldEvents.CheckFleeChance]: [CheckFleeChanceEvent, EventPriority];
 }

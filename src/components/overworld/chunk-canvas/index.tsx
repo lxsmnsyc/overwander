@@ -1,4 +1,5 @@
-import { type JSX, createEffect, createSignal, onCleanup, onMount } from 'solid-js';
+import { type JSX, createEffect, createMemo, createSignal, onCleanup, onMount } from 'solid-js';
+import LRUMap from '../../../core/lru-map';
 import {
   ASPECT,
   BORDER_CELLS,
@@ -300,6 +301,20 @@ export interface CellSpot {
   scale: number;
 }
 
+/**
+ * How many sheets of one kind are held before the least recently used
+ * one is let go of.
+ *
+ * Sheets are kept across chunks so walking back into country whose
+ * pokemon have already been met draws at once. What that is not is a
+ * reason to hold every coat met since the page opened: a player who
+ * has crossed a hundred chunks would be carrying hundreds of decoded
+ * sheets for the handful standing in front of them. Comfortably more
+ * than any one chunk needs, and enough history to cover walking back
+ * the way you came
+ */
+const SHEET_LIMIT = 48;
+
 export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
   let canvas: HTMLCanvasElement | undefined;
   let layer: HTMLCanvasElement | undefined;
@@ -339,16 +354,24 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
    * and one playhead — they are scenery, and scenery need not be out
    * of step to be believed
    */
-  // Keyed by the coat rather than by the species: a shiny Rattata is
-  // a different sheet from the plain one standing beside it, and the
-  // two have to be able to stand in the same chunk
-  const sprites = new Map<string, SpeciesSpriteAnimation | null>();
-
   /**
    * The load behind each coat, so one that is already on its way is
    * waited on rather than asked for again
    */
   const pending = new Map<string, Promise<void>>();
+
+  // Keyed by the coat rather than by the species: a shiny Rattata is
+  // a different sheet from the plain one standing beside it, and the
+  // two have to be able to stand in the same chunk.
+  //
+  // Held newest-first and bounded. Each drawn coat is read every
+  // frame, which is what keeps what is on screen at the front of the
+  // list and out of reach of the drop
+  const sprites = new LRUMap<string, SpeciesSpriteAnimation | null>(SHEET_LIMIT, (key) => {
+    // The load goes with the sheet. A promise left behind is what a
+    // later ask would be answered with, instead of a fetch
+    pending.delete(key);
+  });
 
   const coatKey = (coat: SpawnCoat): string => `${coat.species}:${coat.shiny ? 'shiny' : 'plain'}`;
 
@@ -388,9 +411,11 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
    * charsets, and a chunk holding two of the same trade should not
    * fetch it twice
    */
-  const people = new Map<string, OWCharSprite | null>();
-
   const arriving = new Map<string, Promise<void>>();
+
+  const people = new LRUMap<string, OWCharSprite | null>(SHEET_LIMIT, (key) => {
+    arriving.delete(key);
+  });
 
   /**
    * The berry plants, by the folder they are in. Shared rather than
@@ -830,6 +855,27 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
    */
   const [loading, setLoading] = createSignal(true);
 
+  /**
+   * The coat keys standing in this chunk right now.
+   *
+   * Only these are advanced each frame, and only these survive a cut
+   * back: the cache holds every sheet met since the page opened, and
+   * walking a playhead nobody is looking at costs a frame for every
+   * chunk ever visited
+   */
+  const drawnCoats = createMemo(
+    () => new Set([...props.spawns.values()].map((coat) => coatKey(coat))),
+  );
+
+  /** The charsets worn in this chunk, which is everybody drawn as a person */
+  const worn = createMemo(
+    () =>
+      new Set([
+        ...props.coats.values(),
+        ...[...props.wanderers.values()].map((npc) => npcSheet(npc)),
+      ]),
+  );
+
   createEffect(() => {
     const coats = [...props.spawns.values()];
     let live = true;
@@ -842,12 +888,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
     // same way the pokemon are, so the board waits for their sheets
     // too. The coats carry everyone — wanderers and the fighting
     // landmarks alike
-    const wearing = [
-      ...new Set([
-        ...props.coats.values(),
-        ...[...props.wanderers.values()].map((npc) => npcSheet(npc)),
-      ]),
-    ];
+    const wearing = [...worn()];
 
     // Nothing to wait for is not a wait: an empty chunk is finished
     if (
@@ -1341,8 +1382,11 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       last = now;
       clock += elapsed;
 
-      for (const sprite of sprites.values()) {
-        sprite?.update(elapsed);
+      // Only what is standing here. The cache outlives the chunk, so
+      // walking every playhead in it means paying for every chunk
+      // ever visited on every frame of the one in front
+      for (const key of drawnCoats()) {
+        sprites.get(key)?.update(elapsed);
       }
 
       // The player's slide toward wherever the tab says they are, and

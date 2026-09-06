@@ -21,6 +21,12 @@
  * it already knows.
  */
 
+/**
+ * What a `Map`'s own walkers hand back, read off `Map` rather than
+ * named: the global the lib calls them is not in scope here
+ */
+type Walk<T> = ReturnType<Map<T, T>['keys']>;
+
 interface Node<K, V> {
   key: K;
   value: V;
@@ -188,7 +194,7 @@ export default class LRUMap<K, V> implements Map<K, V> {
    * yielded, so a caller deleting as it goes walks the whole chain the
    * way it would with a `Map`
    */
-  *entries(): MapIterator<[K, V]> {
+  *entries(): Walk<[K, V]> {
     let node = this.head;
 
     while (node != null) {
@@ -199,19 +205,19 @@ export default class LRUMap<K, V> implements Map<K, V> {
     }
   }
 
-  *keys(): MapIterator<K> {
+  *keys(): Walk<K> {
     for (const [key] of this.entries()) {
       yield key;
     }
   }
 
-  *values(): MapIterator<V> {
+  *values(): Walk<V> {
     for (const [, value] of this.entries()) {
       yield value;
     }
   }
 
-  [Symbol.iterator](): MapIterator<[K, V]> {
+  [Symbol.iterator](): Walk<[K, V]> {
     return this.entries();
   }
 

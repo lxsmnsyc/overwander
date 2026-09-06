@@ -410,6 +410,26 @@ describe('the grammar a term is written in', () => {
     ]);
   });
 
+  it('arranges by what the caller asked for until the search says otherwise', () => {
+    const box = [pokemon({ level: 10 }), pokemon({ level: 50 }), pokemon({ level: 30 })];
+
+    // A picker opened to form a team wants its strongest at the top
+    // without anybody typing for them
+    expect(orderCatches(box, '', (one) => one, 'level').map((one) => one.level)).toEqual([
+      50, 30, 10,
+    ]);
+    // A search that names its own sort is still the last word, and so
+    // is the direction it names
+    expect(orderCatches(box, 'sort:name', (one) => one, 'level').map((one) => one.level)).toEqual([
+      10, 50, 30,
+    ]);
+    expect(orderCatches(box, 'order:asc', (one) => one, 'level').map((one) => one.level)).toEqual([
+      10, 30, 50,
+    ]);
+    // And a caller that asks for nothing leaves the box as it arrived
+    expect(orderCatches(box, '', (one) => one).map((one) => one.level)).toEqual([10, 50, 30]);
+  });
+
   it('only pushes a refusal the store can state exactly', () => {
     expect(planCatchSearch('!is:shiny')).toEqual([
       { on: 'row', column: 'shiny', op: 'neq', value: true },

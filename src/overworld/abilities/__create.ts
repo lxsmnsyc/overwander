@@ -1,5 +1,8 @@
 import { EventPriority } from '../../core/event-emitter';
 import type Abilities from '../../data/ids/abilities';
+import type { Types } from '../../data/constants/types';
+import { getSpeciesData } from '../../data/species';
+import type { Encounter } from '../encounter/shape';
 import type Overworld from '../core';
 import { OverworldEvents } from '../events';
 
@@ -54,6 +57,27 @@ export function createTrapAbility(ability: Abilities): (overworld: Overworld) =>
   return createBuddyAbility(ability, (overworld) => {
     overworld.on(OverworldEvents.CheckFleeChance, EventPriority.Exact, (event) => {
       event.factor *= TRAP_FLEE_FACTOR;
+    });
+  });
+}
+
+/**
+ * Whether the meeting is of the type the buddy has a hold over
+ */
+function isType(encounter: Encounter, type: Types): boolean {
+  return new Set(getSpeciesData(encounter.species).types).has(type);
+}
+
+/**
+ * Magnet Pull and its kind: nothing of the type they pull on gets
+ * away at all, and everything else walks off as it pleases
+ */
+export function createPullAbility(ability: Abilities, type: Types): (overworld: Overworld) => void {
+  return createBuddyAbility(ability, (overworld) => {
+    overworld.on(OverworldEvents.CheckFleeChance, EventPriority.Exact, (event) => {
+      if (isType(event.encounter, type)) {
+        event.factor = 0;
+      }
     });
   });
 }

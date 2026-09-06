@@ -255,6 +255,17 @@ export interface SafariContext {
    * reason. One means nothing is holding the encounter in place
    */
   trap?: number;
+  /**
+   * How far feeding can carry a throw before more of it stops
+   * counting. A Gluttony buddy lifts it; absent is `MAX_CATCH_BONUS`
+   */
+  cap?: number;
+  /**
+   * Whether a fed treat goes on working after a throw that missed. A
+   * Harvest buddy grows it back, and the meeting will still take a
+   * fresh one on top of it
+   */
+  keeps?: boolean;
 }
 
 /**
@@ -343,6 +354,32 @@ export function levelCatchFactor(level: number): number {
  * Even the fastest species stays catchable: flee rolls cap here
  */
 const MAX_FLEE_CHANCE = 0.5;
+
+/**
+ * How ready a meeting is to run, said in words rather than in a
+ * number: what a Forewarn buddy passes on is a feeling about the
+ * pokemon standing there, not a table. Read richest first, each band
+ * naming what is left of `MAX_FLEE_CHANCE`
+ */
+export const FLIGHT_WORDS: [above: number, said: string][] = [
+  [0.25, 'Ready to bolt'],
+  [0.1, 'Watching the exit'],
+  [0, 'Standing its ground'],
+];
+
+/**
+ * Which of `FLIGHT_WORDS` describes a chance to flee. Nothing that
+ * cannot run at all is described as anything: a raid prize and a
+ * settled meeting are both simply staying
+ */
+export function describeFlight(chance: number): string {
+  for (const [above, said] of FLIGHT_WORDS) {
+    if (chance > above) {
+      return said;
+    }
+  }
+  return 'Not going anywhere';
+}
 
 /**
  * A stable identity for an overworld encounter: the chunk cell
@@ -736,7 +773,9 @@ function setupSafariMechanics(session: SafariSession): void {
     const bonus = FEED_CATCH_BONUS[event.item];
 
     if (bonus != null) {
-      event.session.catchBonus = Math.min(MAX_CATCH_BONUS, event.session.catchBonus * bonus);
+      const cap = event.session.context.cap ?? MAX_CATCH_BONUS;
+
+      event.session.catchBonus = Math.min(cap, event.session.catchBonus * bonus);
       event.bonus = event.session.catchBonus;
       // It has a mouthful; nothing else is offered until a throw
       // misses
@@ -772,7 +811,11 @@ function setupSafariMechanics(session: SafariSession): void {
     // nobody
     if (event.result !== ThrowResult.Caught) {
       event.session.fed = false;
-      event.session.fedItem = null;
+      // What a Harvest buddy grows back: the last treat goes on
+      // working, and a fresh one may still be offered over it
+      if (event.session.context.keeps !== true) {
+        event.session.fedItem = null;
+      }
     }
   });
 }

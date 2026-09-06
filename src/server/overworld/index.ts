@@ -12,4 +12,4 @@ export { claimApricornTree, claimBerryPatch, listPickedBerryPatches } from './be
 export { claimNest, peekNest } from './nests';
 export type { NestOffer, PhenomenonClaim } from './nests';
 export { claimPhenomenon, listClaimedPhenomena, peekPhenomenonEgg } from './phenomena';
-export { FLED_MEMORY, meetSpawn, retireSpawn, startEncounter } from './spawns';
+export { FLED_MEMORY, meetSpawn, pocketFled, retireSpawn, startEncounter } from './spawns';

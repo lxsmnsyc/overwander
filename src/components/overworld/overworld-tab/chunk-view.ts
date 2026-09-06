@@ -46,6 +46,11 @@ export interface ChunkView {
    * throw anything at it. A Frisk buddy is what looks
    */
   revealsHeld: boolean;
+  /**
+   * Whether how ready a meeting is to run is said before the first
+   * ball. A Forewarn buddy is what knows
+   */
+  revealsFlight: boolean;
   snapshot: ChunkSnapshot;
   landmarks: Map<number, Landmark>;
   /**
@@ -107,6 +112,7 @@ export function buildChunkView(
   const visible = overworld.checkSpawnCount(SPAWN_COUNT);
   const lamp = overworld.checkLampReach(DARK_DAY_LAMP_CELLS);
   const revealsHeld = overworld.checkRevealsHeld();
+  const revealsFlight = overworld.checkRevealsFlight();
 
   cells.forEach(([cell], index) => {
     // Roll order and publication order are the same, so the nth
@@ -155,6 +161,7 @@ export function buildChunkView(
     weather: world.getWeather(x, y, snapshot.weatherWindow),
     lamp,
     revealsHeld,
+    revealsFlight,
     snapshot,
     landmarks: chunk.getLandmarkCells(),
     spots: chunk.getSpotCells(),

@@ -185,6 +185,7 @@ import {
 } from '../../src/data/overworld/trainers';
 import pickStartPosition, { START_AREA, pickFreeCell } from '../../src/overworld/start';
 import { Moves } from '../../src/data/ids/moves';
+import type { Encounter } from '../../src/overworld/encounter/shape';
 import deriveEncounter, {
   ENCOUNTER_TYPE_NAMES,
   EncounterType,
@@ -201,7 +202,12 @@ import deriveEncounter, {
   isRaidEncounter,
   isShinyFor,
 } from '../../src/overworld/encounter';
-import { encounterKey, encounterWindow } from '../../src/overworld/safari';
+import {
+  MAX_CATCH_BONUS,
+  SHADOW_CATCH_FACTOR,
+  encounterKey,
+  encounterWindow,
+} from '../../src/overworld/safari';
 import { FOSSIL_OFFER_KINDS, getFossilPrice } from '../../src/data/overworld/fossil';
 import { isFossil } from '../../src/data/items/fossils';
 import Landmark from '../../src/data/overworld/landmark';
@@ -241,10 +247,13 @@ import { LURE_SPAWN_BONUS, TRAP_FLEE_FACTOR } from '../../src/overworld/abilitie
 import {
   COMPOUND_EYES_HELD_BOOST,
   FLAME_BODY_FACTOR,
+  GLUTTONY_FEAST,
+  HONEY_STEP_INTERVAL,
   ILLUMINATE_LAMP_CELLS,
   LEVEL_CEILING_LIFT,
   LEVEL_FLOOR_LIFT,
   PICKUP_STEP_INTERVAL,
+  PURIFIED_SHADOW_RELIEF,
   STENCH_QUIET,
 } from '../../src/overworld/abilities/gen-1';
 import { EGG_HATCH_STEPS } from '../../src/auth/egg';
@@ -323,6 +332,33 @@ function buddyWith(abilities: Abilities[]): Buddy {
     items: [],
     nature: Natures.Adamant,
     gender: Genders.Male,
+  };
+}
+
+/**
+ * A meeting standing in front of the player, for the questions asked
+ * of one rather than of the chunk that staged it
+ */
+function metWild(species: Species, shadow = false): Encounter {
+  return {
+    type: EncounterType.Wild,
+    species,
+    level: 10,
+    individualValue: 0,
+    traitValue: 0,
+    ivs: 0,
+    nature: Natures.Adamant,
+    ability: Abilities.Overgrow,
+    gender: Genders.Male,
+    lair: null,
+    shiny: false,
+    shadow,
+    moves: [],
+    items: [],
+    timestamp: 0,
+    x: 0,
+    y: 0,
+    biome: Biome.Grassland,
   };
 }
 
@@ -2344,9 +2380,11 @@ describe('world', () => {
       items: [Items.CatchingCharm],
     });
 
-    expect(createOverworld('player-uid', null).checkCatchChance('spawn#0')).toBe(1);
-    expect(plain.checkCatchChance('spawn#0')).toBe(1);
-    expect(charmed.checkCatchChance('spawn#0')).toBe(CATCHING_CHARM_BOOST);
+    const wild = metWild(Species.Rattata);
+
+    expect(createOverworld('player-uid', null).checkCatchChance('spawn#0', wild)).toBe(1);
+    expect(plain.checkCatchChance('spawn#0', wild)).toBe(1);
+    expect(charmed.checkCatchChance('spawn#0', wild)).toBe(CATCHING_CHARM_BOOST);
     // The two charms answer different questions, so neither is worth
     // anything on the other's
     expect(charmed.checkEncounterShiny('spawn#0')).toBe(1);
@@ -2354,14 +2392,15 @@ describe('world', () => {
 
   it('holds a meeting still for a buddy that traps', () => {
     const alone = createOverworld('player-uid', null);
+    const wild = metWild(Species.Rattata);
 
-    expect(alone.checkFleeChance('spawn#0')).toBe(1);
-    expect(createOverworld('player-uid', buddyWith([])).checkFleeChance('spawn#0')).toBe(1);
+    expect(alone.checkFleeChance('spawn#0', wild)).toBe(1);
+    expect(createOverworld('player-uid', buddyWith([])).checkFleeChance('spawn#0', wild)).toBe(1);
 
     for (const trap of [Abilities.ArenaTrap, Abilities.ShadowTag]) {
-      expect(createOverworld('player-uid', buddyWith([trap])).checkFleeChance('spawn#0')).toBe(
-        TRAP_FLEE_FACTOR,
-      );
+      expect(
+        createOverworld('player-uid', buddyWith([trap])).checkFleeChance('spawn#0', wild),
+      ).toBe(TRAP_FLEE_FACTOR);
     }
 
     // Arena Trap is a lure as well, and the two answers are separate:
@@ -2370,8 +2409,93 @@ describe('world', () => {
       createOverworld('player-uid', buddyWith([Abilities.ShadowTag])).checkSpawnCount(SPAWN_COUNT),
     ).toBe(SPAWN_COUNT);
     expect(
-      createOverworld('player-uid', buddyWith([Abilities.Illuminate])).checkFleeChance('spawn#0'),
+      createOverworld('player-uid', buddyWith([Abilities.Illuminate])).checkFleeChance(
+        'spawn#0',
+        wild,
+      ),
     ).toBe(1);
+  });
+
+  it('pins down what a Magnet Pull buddy has a hold on, and nothing else', () => {
+    const magnetic = createOverworld('player-uid', buddyWith([Abilities.MagnetPull]));
+
+    // Magnemite is a Steel type and Rattata is not, so one of them
+    // cannot get away at all and the other leaves when it likes
+    expect(magnetic.checkFleeChance('spawn#0', metWild(Species.Magnemite))).toBe(0);
+    expect(magnetic.checkFleeChance('spawn#0', metWild(Species.Rattata))).toBe(1);
+    expect(
+      createOverworld('player-uid', buddyWith([])).checkFleeChance(
+        'spawn#0',
+        metWild(Species.Magnemite),
+      ),
+    ).toBe(1);
+  });
+
+  it('throws truer at a shadow for a buddy that has been one', () => {
+    const purified = createOverworld('player-uid', buddyWith([Abilities.Purified]));
+    const plain = createOverworld('player-uid', buddyWith([]));
+
+    expect(purified.checkCatchChance('spawn#0', metWild(Species.Rattata, true))).toBe(
+      PURIFIED_SHADOW_RELIEF,
+    );
+    // Nothing changes for a meeting whose heart was never closed
+    expect(purified.checkCatchChance('spawn#0', metWild(Species.Rattata))).toBe(1);
+    expect(plain.checkCatchChance('spawn#0', metWild(Species.Rattata, true))).toBe(1);
+    // And it gives back less than the shadow took, so a shadow stays
+    // the harder catch
+    expect(PURIFIED_SHADOW_RELIEF * SHADOW_CATCH_FACTOR).toBeLessThan(1);
+  });
+
+  it('carries a bagful of treats further, and grows the last one back', () => {
+    const plain = createOverworld('player-uid', buddyWith([]));
+    const greedy = createOverworld('player-uid', buddyWith([Abilities.Gluttony]));
+    const grower = createOverworld('player-uid', buddyWith([Abilities.Harvest]));
+
+    expect(plain.checkTreats('spawn#0', MAX_CATCH_BONUS)).toEqual({
+      cap: MAX_CATCH_BONUS,
+      keeps: false,
+    });
+    expect(greedy.checkTreats('spawn#0', MAX_CATCH_BONUS).cap).toBe(
+      MAX_CATCH_BONUS * GLUTTONY_FEAST,
+    );
+    expect(greedy.checkTreats('spawn#0', MAX_CATCH_BONUS).keeps).toBe(false);
+    expect(grower.checkTreats('spawn#0', MAX_CATCH_BONUS)).toEqual({
+      cap: MAX_CATCH_BONUS,
+      keeps: true,
+    });
+  });
+
+  it('comes back from the hedges with a Honey Gather buddy', () => {
+    const gatherer = createOverworld('player-uid', buddyWith([Abilities.HoneyGather]));
+    const far = HONEY_STEP_INTERVAL * 4;
+
+    expect(gatherer.checkWalkPickup('buddy', 0, far).gathered).toBe(4);
+    // What grows is not what is dropped: it finds nothing on the
+    // ground, the way a Pickup buddy finds nothing on a bush
+    expect(gatherer.checkWalkPickup('buddy', 0, far).found).toBe(0);
+    expect(gatherer.checkWalkPickup('buddy', 0, HONEY_STEP_INTERVAL - 1).gathered).toBe(0);
+  });
+
+  it('reads a meeting for a Forewarn buddy and its pockets for a Pickpocket one', () => {
+    const plain = createOverworld('player-uid', buddyWith([]));
+
+    expect(plain.checkRevealsFlight()).toBe(false);
+    expect(plain.checkPockets('spawn#0')).toBe(false);
+    // The two readers answer alike: out here there is one thing to
+    // read about a meeting, and both of them read it
+    for (const reader of [Abilities.Forewarn, Abilities.Anticipation]) {
+      expect(createOverworld('player-uid', buddyWith([reader])).checkRevealsFlight()).toBe(true);
+    }
+    expect(
+      createOverworld('player-uid', buddyWith([Abilities.Pickpocket])).checkPockets('spawn#0'),
+    ).toBe(true);
+    // Neither reads on the other's question, nor on Frisk's
+    expect(createOverworld('player-uid', buddyWith([Abilities.Frisk])).checkRevealsFlight()).toBe(
+      false,
+    );
+    expect(createOverworld('player-uid', buddyWith([Abilities.Forewarn])).checkRevealsHeld()).toBe(
+      false,
+    );
   });
 
   it('pays candy for what a buddy is carrying, to the right family', () => {
@@ -2456,17 +2580,20 @@ describe('world', () => {
     const plain = createOverworld('player-uid', buddyWith([Abilities.Overgrow]));
     const far = PICKUP_STEP_INTERVAL * 3;
 
-    expect(finder.checkWalkPickup('buddy', 0, far)).toBe(3);
-    expect(plain.checkWalkPickup('buddy', 0, far)).toBe(0);
+    expect(finder.checkWalkPickup('buddy', 0, far).found).toBe(3);
+    expect(plain.checkWalkPickup('buddy', 0, far).found).toBe(0);
+    // Nothing off a bush either: the ground and the hedges are two
+    // pools, and Pickup only reads one of them
+    expect(finder.checkWalkPickup('buddy', 0, far).gathered).toBe(0);
     // Short of the first mark is nothing at all
-    expect(finder.checkWalkPickup('buddy', 0, PICKUP_STEP_INTERVAL - 1)).toBe(0);
+    expect(finder.checkWalkPickup('buddy', 0, PICKUP_STEP_INTERVAL - 1).found).toBe(0);
 
     // It counts marks crossed rather than steps reported, so walking
     // the same distance in handfuls finds exactly as much
     let piecemeal = 0;
 
     for (let at = 0; at < far; at += 64) {
-      piecemeal += finder.checkWalkPickup('buddy', at, Math.min(far, at + 64));
+      piecemeal += finder.checkWalkPickup('buddy', at, Math.min(far, at + 64)).found;
     }
     expect(piecemeal).toBe(3);
   });

@@ -2035,6 +2035,7 @@ export default function OverworldBoard(props: {
               // A Frisk buddy reads what is standing there before
               // anything is thrown at it
               revealsHeld={view()?.revealsHeld === true}
+              revealsFlight={view()?.revealsFlight === true}
               onCaught={(catchId) => {
                 // The encounter is finished the moment it is caught, so
                 // the safari closes and the sheet for what was caught

@@ -12,10 +12,12 @@ import deriveEncounter, { type Encounter, EncounterType } from '../../src/overwo
 import { EventPriority } from '../../src/core/event-emitter';
 import SafariSession, {
   LEVEL_CATCH_FLOOR,
+  MAX_CATCH_BONUS,
   SHADOW_CATCH_FACTOR,
   SafariEvents,
   SafariState,
   ThrowResult,
+  describeFlight,
   encounterKey,
   levelCatchFactor,
 } from '../../src/overworld/safari';
@@ -475,6 +477,46 @@ describe('safari session', () => {
     expect(pinned.feed(Items.SilverNanabBerry)).toBe(true);
     expect(pinned.getFleeChance()).toBeCloseTo(plain.getFleeChance() * TRAP_FLEE_FACTOR * 0.5);
     expect(pinned.throwBall()).toBe(ThrowResult.BrokeFree);
+  });
+
+  it('carries feeding further, and keeps a treat that grows back', () => {
+    // Bait is worth half again, so four helpings is where the plain
+    // cap stops it and a Gluttony buddy is what carries it past
+    const greedy = new SafariSession(makeEncounter(), rolls([]), {
+      cap: MAX_CATCH_BONUS * 2,
+    });
+
+    // Only one treat at a time, so the throw between them is what lets
+    // the next one in. Fed far enough, one of those throws holds, and
+    // the run stops there
+    while (greedy.catchBonus <= MAX_CATCH_BONUS) {
+      greedy.feed(Items.RazzBerry);
+      if (greedy.state !== SafariState.Active) {
+        break;
+      }
+      greedy.throwBall();
+    }
+    expect(greedy.catchBonus).toBeGreaterThan(MAX_CATCH_BONUS);
+    expect(greedy.catchBonus).toBeLessThanOrEqual(MAX_CATCH_BONUS * 2);
+
+    // A treat that grows back goes on working through the miss, and
+    // the meeting will still take a fresh one over it
+    const grower = new SafariSession(makeEncounter(), rolls([]), { keeps: true });
+
+    grower.feed(Items.SilverNanabBerry);
+    grower.throwBall();
+    expect(grower.fedItem).toBe(Items.SilverNanabBerry);
+    expect(grower.getFleeChance()).toBeCloseTo((grower.getSpeed() / 255) * 0.5);
+    expect(grower.canFeed()).toBe(true);
+  });
+
+  it('says how ready a meeting is to run in words', () => {
+    expect(describeFlight(0.4)).toBe('Ready to bolt');
+    expect(describeFlight(0.2)).toBe('Watching the exit');
+    expect(describeFlight(0.05)).toBe('Standing its ground');
+    // Nothing that cannot run at all is described as staying put for
+    // any other reason
+    expect(describeFlight(0)).toBe('Not going anywhere');
   });
 
   it('reads the individual rather than the species for a flee', () => {

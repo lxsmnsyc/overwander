@@ -193,6 +193,13 @@ from the buddy's ability, others from what it is holding.
 | **Arena Trap**, **Illuminate**, **No Guard** | Ability   | Three extra pokemon become visible and meetable           |
 | **Illuminate**                               | Ability   | A lantern as well: sees more than twice as far in the dark |
 | **Arena Trap**, **Shadow Tag**               | Ability   | A wild pokemon is half as likely to bolt from a failed throw |
+| **Magnet Pull**                              | Ability   | A Steel type cannot bolt at all                            |
+| **Purified**                                 | Ability   | Balls thrown at a shadow hold half again as often          |
+| **Gluttony**                                 | Ability   | Feeding carries a throw half again as far before it stops counting |
+| **Harvest**                                  | Ability   | A fed treat goes on working after a missed throw           |
+| **Honey Gather**                             | Ability   | Finds a berry every 384 steps walked                       |
+| **Forewarn**, **Anticipation**               | Ability   | Says how ready a wild pokemon is to run, before the first ball |
+| **Pickpocket**                               | Ability   | A pokemon that runs off leaves what it was carrying        |
 | **Stench**                                   | Ability   | Two fewer pokemon come near                               |
 | **Keen Eye**, **Intimidate**                 | Ability   | The bottom of the level band lifts by three               |
 | **Hustle**, **Pressure**, **Vital Spirit**   | Ability   | The top of the level band lifts by three                  |

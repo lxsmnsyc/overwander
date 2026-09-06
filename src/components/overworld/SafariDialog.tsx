@@ -19,7 +19,7 @@ import { Genders } from '../../data/ids/species';
 import { isShadow, isShiny } from '../../auth/caught-record';
 import { getSpeciesData } from '../../data/species';
 import type SafariSession from '../../overworld/safari';
-import { FEED_CATCH_BONUS, SafariState, ThrowResult } from '../../overworld/safari';
+import { FEED_CATCH_BONUS, SafariState, ThrowResult, describeFlight } from '../../overworld/safari';
 import { describeItem } from '../details';
 import InventoryPicker from '../items/InventoryPicker';
 import ItemSprite from '../items/ItemSprite';
@@ -92,6 +92,12 @@ export interface SafariDialogProps {
    * a held item is found when the pokemon is caught
    */
   revealsHeld?: boolean;
+  /**
+   * Whether how ready it is to run is said before the first ball. A
+   * Forewarn buddy is what knows; without one the meeting is read off
+   * the pokemon itself
+   */
+  revealsFlight?: boolean;
   onClose: () => void;
   /**
    * Fired with the new record the moment a throw lands.
@@ -356,6 +362,12 @@ function SafariBody(
       if (thrownAt.catchId != null) {
         setCaught(thrownAt.catchId);
       }
+      // What a Pickpocket buddy came away with, said where the flight
+      // itself is said: it is the same moment, and the consolation
+      // reads as part of it rather than as a second announcement
+      if (thrownAt.pocketed != null) {
+        return `It fled, and dropped its ${describeItem(thrownAt.pocketed)}.`;
+      }
       return THROW_MESSAGES[thrownAt.result];
     });
   };
@@ -463,8 +475,8 @@ function SafariBody(
                       the pokemon standing there, and it is the one
                       thing that decides whether this meeting is worth
                       the ball */}
-                  <Show when={props.revealsHeld === true && active().encounter.items.length > 0}>
-                    <span class="absolute top-0 left-0 flex flex-col items-start gap-1">
+                  <span class="absolute top-0 left-0 flex flex-col items-start gap-1">
+                    <Show when={props.revealsHeld === true}>
                       <For each={active().encounter.items}>
                         {(item) => (
                           <Badge tone="tide">
@@ -473,8 +485,15 @@ function SafariBody(
                           </Badge>
                         )}
                       </For>
-                    </span>
-                  </Show>
+                    </Show>
+                    {/* What a Forewarn buddy passes on: a word for how
+                        ready it is to be gone, in the corner the held
+                        item is named in, since both are things known
+                        about the meeting before the first ball */}
+                    <Show when={props.revealsFlight === true}>
+                      <Badge tone="ember">{describeFlight(active().getFleeChance())}</Badge>
+                    </Show>
+                  </span>
                   <AnimatedSprite
                     species={active().encounter.species}
                     shiny={isShiny(active().encounter)}

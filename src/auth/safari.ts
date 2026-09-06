@@ -3,6 +3,7 @@ import AleaRNG from '../core/alea';
 import { BALL_ITEMS, type Balls, type Items } from '../data/ids/items';
 import SafariSession, {
   FEED_CATCH_BONUS,
+  MAX_CATCH_BONUS,
   SafariState,
   ThrowResult,
   encounterKey,
@@ -11,7 +12,7 @@ import { recordCatch } from '../server/caught';
 import { requireUid } from '../server/auth';
 import { consumeItem } from '../server/inventory';
 import { stampFeed } from '../server/encounter-io';
-import { retireSpawn } from '../server/overworld';
+import { pocketFled, retireSpawn } from '../server/overworld';
 import createOverworld from '../overworld/setup';
 import { buddyEffectsOf, resolveBuddy } from './buddy';
 import { hasCaughtSpecies } from './caught';
@@ -45,10 +46,13 @@ export async function createSafariSession(
   // the throw and a buddy that pins the meeting down on the bolt.
   // Neither can change while a ball is in the air
   const overworld = createOverworld(user.uid, walking == null ? null : buddyEffectsOf(walking[1]));
+  const treats = overworld.checkTreats(encounterKey(encounter), MAX_CATCH_BONUS);
   const session = new SafariSession(encounter, () => rng.random(), {
     speciesCaught,
-    charm: overworld.checkCatchChance(encounterKey(encounter)),
-    trap: overworld.checkFleeChance(encounterKey(encounter)),
+    cap: treats.cap,
+    keeps: treats.keeps,
+    charm: overworld.checkCatchChance(encounterKey(encounter), encounter),
+    trap: overworld.checkFleeChance(encounterKey(encounter), encounter),
     buddy:
       walking == null
         ? undefined
@@ -149,9 +153,16 @@ async function keepCatch(
  * Retire an encounter that fled. The key is recomputed server-side
  * from the stored encounter
  */
-async function retireEncounter(token: string, spawn: string): Promise<void> {
+async function retireEncounter(token: string, spawn: string): Promise<Items | null> {
   'use server';
-  await retireSpawn(await requireUid(token), spawn);
+
+  const uid = await requireUid(token);
+
+  // Only the call that actually retires it pays: a meeting is retired
+  // rather than deleted, so what it was carrying stays readable, and a
+  // client reporting the same flight twice would otherwise be paid
+  // twice for it
+  return (await retireSpawn(uid, spawn)) ? pocketFled(uid, spawn) : null;
 }
 
 /**
@@ -165,6 +176,11 @@ async function retireEncounter(token: string, spawn: string): Promise<void> {
 export interface ThrowOutcome {
   result: ThrowResult;
   catchId: string | null;
+  /**
+   * What the pokemon left behind as it ran, for a player whose buddy
+   * picks pockets. Null for every other throw
+   */
+  pocketed?: Items | null;
 }
 
 /**
@@ -202,7 +218,7 @@ export async function throwBall(
     };
   }
   if (result === ThrowResult.Fled) {
-    await retireEncounter(token, spawn);
+    return { result, catchId: null, pocketed: await retireEncounter(token, spawn) };
   }
   return { result, catchId: null };
 }

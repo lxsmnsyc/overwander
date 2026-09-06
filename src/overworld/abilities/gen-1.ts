@@ -1,9 +1,16 @@
 import { EventPriority } from '../../core/event-emitter';
 import Abilities from '../../data/ids/abilities';
 import { Genders } from '../../data/ids/species';
+import { Types } from '../../data/constants/types';
+import { SHADOW_CATCH_FACTOR } from '../safari';
 import type Overworld from '../core';
 import { OverworldEvents } from '../events';
-import { createBuddyAbility, createLureAbility, createTrapAbility } from './__create';
+import {
+  createBuddyAbility,
+  createLureAbility,
+  createPullAbility,
+  createTrapAbility,
+} from './__create';
 
 /**
  * The field abilities: what a pokemon changes about the world by
@@ -211,6 +218,100 @@ const setupFrisk = createBuddyAbility(Abilities.Frisk, (overworld) => {
 });
 
 /**
+ * What a purified buddy gives back of what a closed heart takes. Half
+ * of it: a shadow is still a shadow, and the pokemon that walked out
+ * of one is the one thing in the world that has done it before
+ */
+export const PURIFIED_SHADOW_RELIEF = 1 / SHADOW_CATCH_FACTOR / 2;
+
+/**
+ * Purified: a shadow throws truer for somebody who has already been
+ * brought back from one. Nothing changes for anything else met
+ */
+const setupPurified = createBuddyAbility(Abilities.Purified, (overworld) => {
+  overworld.on(OverworldEvents.CheckCatchChance, EventPriority.Exact, (event) => {
+    if (event.encounter.shadow) {
+      event.boost *= PURIFIED_SHADOW_RELIEF;
+    }
+  });
+});
+
+/**
+ * How far a Honey Gather buddy walks between one bush and the next.
+ * Shorter than Pickup's stretch, since what it comes back with is one
+ * pool rather than the whole ladder of the world's finds
+ */
+export const HONEY_STEP_INTERVAL = 384;
+
+/**
+ * Honey Gather: it comes back from the hedges with something. What it
+ * brings is what grows rather than what was dropped, so it is counted
+ * apart from a Pickup buddy's finds
+ */
+const setupHoneyGather = createBuddyAbility(Abilities.HoneyGather, (overworld) => {
+  overworld.on(OverworldEvents.CheckWalkPickup, EventPriority.Exact, (event) => {
+    event.gathered +=
+      Math.floor(event.to / HONEY_STEP_INTERVAL) - Math.floor(event.from / HONEY_STEP_INTERVAL);
+  });
+});
+
+/**
+ * How much further a Gluttony buddy carries a bagful of treats. It
+ * lifts the ceiling rather than the treat: a berry is worth what a
+ * berry is worth, and what changes is that the encounter is still
+ * listening after the point where anything else would have stopped
+ */
+export const GLUTTONY_FEAST = 1.5;
+
+/**
+ * Gluttony: it eats past where the rest stop, so a player willing to
+ * spend the bag gets further with it
+ */
+const setupGluttony = createBuddyAbility(Abilities.Gluttony, (overworld) => {
+  overworld.on(OverworldEvents.CheckTreats, EventPriority.Exact, (event) => {
+    event.cap *= GLUTTONY_FEAST;
+  });
+});
+
+/**
+ * Harvest: the treat grows back. What was fed goes on working through
+ * the throw that missed, and the meeting will still take a fresh one
+ * on top, so a Nanab's calm lasts the session rather than one ball
+ */
+const setupHarvest = createBuddyAbility(Abilities.Harvest, (overworld) => {
+  overworld.on(OverworldEvents.CheckTreats, EventPriority.Exact, (event) => {
+    event.keeps = true;
+  });
+});
+
+/**
+ * Pickpocket: a pokemon that got away did not get away with what it
+ * was holding. It is the one thing that pays for a flight, and it
+ * pays nothing where the meeting was carrying nothing
+ */
+const setupPickpocket = createBuddyAbility(Abilities.Pickpocket, (overworld) => {
+  overworld.on(OverworldEvents.CheckPockets, EventPriority.Exact, (event) => {
+    event.taken = true;
+  });
+});
+
+/**
+ * Forewarn and Anticipation: how ready the thing in front of the
+ * player is to bolt is known before the first ball, so a meeting worth
+ * a Nanab can be told from one worth throwing straight at.
+ *
+ * Both read the meeting rather than the fight, and out here that is
+ * the one thing there is to read, so they answer alike
+ */
+function createReadingAbility(ability: Abilities): (overworld: Overworld) => void {
+  return createBuddyAbility(ability, (overworld) => {
+    overworld.on(OverworldEvents.CheckRevealsFlight, EventPriority.Exact, (event) => {
+      event.shown = true;
+    });
+  });
+}
+
+/**
  * The lures, which draw `LURE_SPAWN_BONUS` more pokemon into a chunk,
  * the two that hold a meeting still, the two abilities that decide
  * what an encounter comes out as, and the two that pay a walk rather
@@ -223,6 +324,12 @@ const FIELD_ABILITIES: ((overworld: Overworld) => void)[] = [
 
   createTrapAbility(Abilities.ArenaTrap),
   createTrapAbility(Abilities.ShadowTag),
+  createPullAbility(Abilities.MagnetPull, Types.Steel),
+
+  setupPurified,
+  setupGluttony,
+  setupHarvest,
+  setupHoneyGather,
 
   setupIlluminate,
   setupStench,
@@ -236,6 +343,10 @@ const FIELD_ABILITIES: ((overworld: Overworld) => void)[] = [
 
   setupCompoundEyes,
   setupFrisk,
+  createReadingAbility(Abilities.Forewarn),
+  createReadingAbility(Abilities.Anticipation),
+
+  setupPickpocket,
 
   setupSynchronize,
   setupCuteCharm,

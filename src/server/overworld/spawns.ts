@@ -12,6 +12,7 @@ import deriveEncounter, {
   getSpawnLevels,
 } from '../../overworld/encounter';
 import { DEFAULT_ITEM_SLOTS, Slots, defaultSlots, withSlots } from '../../data/constants/slots';
+import type { Items } from '../../data/ids/items';
 import type Weather from '../../data/overworld/weather';
 import { DARK_DAY_SHADOW_CHANCE, shadowsWildMeetings } from '../../data/overworld/weather';
 import { encounterKey, encounterWindow } from '../../overworld/safari';
@@ -20,6 +21,7 @@ import type { Buddy } from '../../overworld/core';
 import resolveBuddy from '../buddy';
 import { getSql, tx } from '../db';
 import { readEncounter, writeEncounter } from '../encounter-io';
+import { grantItem } from '../inventory';
 import { recordSeenSpecies } from '../pokedex';
 import { toZoneKey } from '../../auth/local-time';
 import { resolveSnapshot } from './claims';
@@ -234,22 +236,59 @@ function spawnIndex(spawnId: string): number {
  * shared window, so what changes is only what this player is drawn.
  *
  * The key is recomputed from the stored encounter rather than taken
- * from the caller, so a player cannot retire a meeting they never had
+ * from the caller, so a player cannot retire a meeting they never had.
+ * Resolves whether this call is what retired it
  */
-export async function retireSpawn(uid: string, spawnId: string): Promise<void> {
+export async function retireSpawn(uid: string, spawnId: string): Promise<boolean> {
   const stored = await readEncounter(spawnId, uid);
 
   if (stored == null) {
-    return;
+    return false;
   }
 
   const key = encounterKey(asEncounterRecord(stored));
-
-  await getSql()`
+  // What comes back says whether this is the first time: a meeting
+  // already retired pays nothing a second time, which is what stops a
+  // client reporting the same flight over and over
+  const rows = await getSql()`
     insert into fled_encounters (player, key, window_at)
     values (${uid}, ${key}, ${encounterWindow(key)})
     on conflict do nothing
+    returning key
   `;
+
+  return rows.length > 0;
+}
+
+/**
+ * Take what a meeting that ran off was carrying.
+ *
+ * Only a buddy that picks pockets comes away with anything, and only
+ * where the meeting was holding something in the first place. It is
+ * read from the stored encounter rather than from the caller, so what
+ * is paid out is what the world actually staged
+ */
+export async function pocketFled(uid: string, spawnId: string): Promise<Items | null> {
+  const stored = await readEncounter(spawnId, uid);
+
+  if (stored == null) {
+    return null;
+  }
+
+  const encounter = asEncounterRecord(stored);
+  const item = encounter.items.at(0);
+
+  if (item == null) {
+    return null;
+  }
+
+  const overworld = createOverworld(uid, await resolveBuddy(uid));
+
+  if (!overworld.checkPockets(spawnId)) {
+    return null;
+  }
+  await grantItem(uid, item);
+  return item;
 }
 
 /**

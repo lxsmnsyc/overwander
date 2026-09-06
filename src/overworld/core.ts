@@ -6,6 +6,7 @@ import type { Items } from '../data/ids/items';
 import type Natures from '../data/ids/natures';
 import type { Genders, Species } from '../data/ids/species';
 import { getSpeciesData } from '../data/species';
+import type { Encounter } from './encounter/shape';
 import {
   type CheckCatchCandyEvent,
   type CheckCatchChanceEvent,
@@ -18,8 +19,11 @@ import {
   type CheckFleeChanceEvent,
   type CheckGoldRewardEvent,
   type CheckLampReachEvent,
+  type CheckPocketsEvent,
+  type CheckRevealsFlightEvent,
   type CheckRevealsHeldEvent,
   type CheckSpawnCountEvent,
+  type CheckTreatsEvent,
   type CheckWalkPickupEvent,
   type OverworldEventMap,
   OverworldEvents,
@@ -229,11 +233,11 @@ export default class Overworld extends EventEngine<OverworldEventMap> {
 
   /**
    * What the buddy picked up over the stretch just walked, counted in
-   * whole finds. It is asked with where the walk stood before and
+   * whole finds: what was off the ground and what was off a bush. It is asked with where the walk stood before and
    * after, so an effect that fires every so many paces counts the
    * marks it crossed rather than trusting the size of the report
    */
-  checkWalkPickup(subject: string, from: number, to: number): number {
+  checkWalkPickup(subject: string, from: number, to: number): { found: number; gathered: number } {
     const event: CheckWalkPickupEvent = {
       id: 'CheckWalkPickup',
       disabled: false,
@@ -242,10 +246,14 @@ export default class Overworld extends EventEngine<OverworldEventMap> {
       from,
       to,
       found: 0,
+      gathered: 0,
     };
 
     this.emit(OverworldEvents.CheckWalkPickup, event);
-    return Math.max(0, Math.floor(event.found));
+    return {
+      found: Math.max(0, Math.floor(event.found)),
+      gathered: Math.max(0, Math.floor(event.gathered)),
+    };
   }
 
   /**
@@ -325,17 +333,51 @@ export default class Overworld extends EventEngine<OverworldEventMap> {
   }
 
   /**
+   * Whether what a meeting that ran off was carrying stays behind
+   */
+  checkPockets(spawn: string): boolean {
+    const event: CheckPocketsEvent = {
+      id: 'CheckPockets',
+      disabled: false,
+      overworld: this,
+      random: this.random(spawn, 'pockets'),
+      taken: false,
+    };
+
+    this.emit(OverworldEvents.CheckPockets, event);
+    return event.taken;
+  }
+
+  /**
+   * Whether how ready a meeting is to bolt is said before a ball is
+   * thrown at it
+   */
+  checkRevealsFlight(): boolean {
+    const event: CheckRevealsFlightEvent = {
+      id: 'CheckRevealsFlight',
+      disabled: false,
+      overworld: this,
+      random: this.random('flee', 'shown'),
+      shown: false,
+    };
+
+    this.emit(OverworldEvents.CheckRevealsFlight, event);
+    return event.shown;
+  }
+
+  /**
    * What every throw of this player's is multiplied by, before the
    * ball, the treat and the encounter itself have their say. It is
    * asked once when a safari session opens rather than at each throw:
    * what the buddy carries cannot change while the ball is in the air
    */
-  checkCatchChance(spawn: string, boost = 1): number {
+  checkCatchChance(spawn: string, encounter: Encounter, boost = 1): number {
     const event: CheckCatchChanceEvent = {
       id: 'CheckCatchChance',
       disabled: false,
       overworld: this,
       random: this.random(spawn, 'catch'),
+      encounter,
       boost,
     };
 
@@ -348,16 +390,36 @@ export default class Overworld extends EventEngine<OverworldEventMap> {
    * once when a safari session opens for the same reason the catch
    * boost is: what walks beside the player cannot change mid-throw
    */
-  checkFleeChance(spawn: string, factor = 1): number {
+  checkFleeChance(spawn: string, encounter: Encounter, factor = 1): number {
     const event: CheckFleeChanceEvent = {
       id: 'CheckFleeChance',
       disabled: false,
       overworld: this,
       random: this.random(spawn, 'flee'),
+      encounter,
       factor,
     };
 
     this.emit(OverworldEvents.CheckFleeChance, event);
     return Math.max(0, event.factor);
+  }
+
+  /**
+   * What feeding is worth to this player across a whole meeting. Asked
+   * once when the session opens, like the other two, since a bag is
+   * emptied into one encounter rather than a buddy changed mid-throw
+   */
+  checkTreats(spawn: string, cap: number): { cap: number; keeps: boolean } {
+    const event: CheckTreatsEvent = {
+      id: 'CheckTreats',
+      disabled: false,
+      overworld: this,
+      random: this.random(spawn, 'treats'),
+      cap,
+      keeps: false,
+    };
+
+    this.emit(OverworldEvents.CheckTreats, event);
+    return { cap: Math.max(1, event.cap), keeps: event.keeps };
   }
 }

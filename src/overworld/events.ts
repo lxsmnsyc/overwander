@@ -75,6 +75,11 @@ export const enum OverworldEvents {
    * throw anything at it. Frisk is what does the looking
    */
   CheckRevealsHeld = 11,
+  /**
+   * How much likelier a thrown ball is to hold. The Catching Charm is
+   * what answers it
+   */
+  CheckCatchChance = 12,
 }
 
 /**
@@ -190,6 +195,15 @@ export interface CheckRevealsHeldEvent extends OverworldEvent {
   shown: boolean;
 }
 
+export interface CheckCatchChanceEvent extends OverworldEvent {
+  /**
+   * What every throw's chance is multiplied by. The chance is capped
+   * at certainty afterwards, so this can never make a ball hold on
+   * something a player has no business catching
+   */
+  boost: number;
+}
+
 export interface OverworldEventMap extends EventMap {
   [OverworldEvents.CheckSpawnCount]: [CheckSpawnCountEvent, EventPriority];
   [OverworldEvents.CheckEncounterNature]: [CheckEncounterNatureEvent, EventPriority];
@@ -203,4 +217,5 @@ export interface OverworldEventMap extends EventMap {
   [OverworldEvents.CheckEncounterLevels]: [CheckEncounterLevelsEvent, EventPriority];
   [OverworldEvents.CheckEncounterHeld]: [CheckEncounterHeldEvent, EventPriority];
   [OverworldEvents.CheckRevealsHeld]: [CheckRevealsHeldEvent, EventPriority];
+  [OverworldEvents.CheckCatchChance]: [CheckCatchChanceEvent, EventPriority];
 }

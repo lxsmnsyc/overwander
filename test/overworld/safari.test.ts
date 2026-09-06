@@ -19,6 +19,7 @@ import SafariSession, {
   encounterKey,
   levelCatchFactor,
 } from '../../src/overworld/safari';
+import { CATCHING_CHARM_BOOST } from '../../src/overworld/items/key-items';
 import World from '../../src/overworld/world';
 
 registerSpecies();
@@ -75,6 +76,22 @@ describe('safari session', () => {
     calmed.feed(Items.SilverNanabBerry);
     expect(calmed.getCatchChance()).toBeCloseTo(pull(encounter) * 1.5);
     expect(session.getCatchChance()).toBeCloseTo(pull(encounter) * 2 * 1.25);
+  });
+
+  it('puts what the player brought along on every throw', () => {
+    const encounter = makeEncounter();
+    const plain = new SafariSession(encounter, rolls([]));
+    const charmed = new SafariSession(encounter, rolls([]), {
+      charm: CATCHING_CHARM_BOOST,
+    });
+
+    expect(plain.getCatchChance()).toBeCloseTo(pull(encounter));
+    expect(charmed.getCatchChance()).toBeCloseTo(pull(encounter) * CATCHING_CHARM_BOOST);
+
+    // It rides on top of the ball rather than replacing it: a charm is
+    // what the player brought, not what they threw
+    charmed.chooseBall(Balls.UltraBall);
+    expect(charmed.getCatchChance()).toBeCloseTo(pull(encounter) * 2 * CATCHING_CHARM_BOOST);
   });
 
   it('leaves half a throw at a shadow', () => {

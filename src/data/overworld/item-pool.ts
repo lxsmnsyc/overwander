@@ -269,6 +269,10 @@ export const ITEM_POOL: ItemRarityGroups = {
   special: [
     { item: Items.MasterBall, weight: 10 },
     { item: Items.ShinyCharm, weight: 10 },
+    // Beside the Shiny Charm and a little readier to turn up: what it
+    // is worth is half again on a throw rather than eight times a
+    // roll, so it is the lesser of the two charms in every sense
+    { item: Items.CatchingCharm, weight: 12 },
     // The only way a mythical is ever fought: the relic is found
     // here or not at all
     { item: Items.OldSeaMap, weight: 6 },

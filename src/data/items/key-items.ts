@@ -19,4 +19,16 @@ export default function registerKeyItems(): void {
     buy: 0,
     sell: 0,
   });
+
+  // Held by the player's buddy, it puts half again on every throw
+  // whatever the ball and whatever it is thrown at
+  registerItem(Items.CatchingCharm, {
+    name: 'Catching Charm',
+    description: 'Half again on every catch chance, while your buddy carries it.',
+    type: ItemTypes.KeyItem,
+    icon: 'key/catching-charm',
+    flags: ItemFlags.Holdable,
+    buy: 0,
+    sell: 0,
+  });
 }

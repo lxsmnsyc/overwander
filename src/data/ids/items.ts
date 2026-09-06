@@ -718,8 +718,8 @@ export const enum Items {
   RedFlute = 341,
 
   /**
-   * TODO: the charms, all shaped like the Shiny Charm that is already
-   * written
+   * TODO: the rest of the charms, all shaped like the Shiny Charm and
+   * the Catching Charm that are already written
    */
   ExpCharm = 342,
   OvalCharm = 343,

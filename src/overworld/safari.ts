@@ -237,6 +237,16 @@ export interface SafariContext {
    * read
    */
   buddy?: { species: Species; gender: Genders; level: number };
+  /**
+   * What everything the player brought along is worth on a throw,
+   * which today is the Catching Charm and nothing else.
+   *
+   * Answered by the overworld once, when the session opens, rather
+   * than asked at each throw: what the buddy is carrying cannot change
+   * while a ball is in the air, and the session has no overworld to
+   * ask. One means the player brought nothing that helps
+   */
+  charm?: number;
 }
 
 /**
@@ -549,9 +559,10 @@ export default class SafariSession<
 
   /**
    * The chance the next throw lands: species catch rate, ball
-   * modifier, accumulated feeding bonus, how grown the thing standing
-   * there is, the family day's own bonus, whether its heart is closed,
-   * and how many balls it has already shaken off
+   * modifier, accumulated feeding bonus, whatever the player is
+   * carrying, how grown the thing standing there is, the family day's
+   * own bonus, whether its heart is closed, and how many balls it has
+   * already shaken off
    */
   getCatchChance(): number {
     // A distributed pokemon is a gift, and a gift that could break out
@@ -563,6 +574,8 @@ export default class SafariSession<
 
     const rate = getSpeciesData(this.encounter.species).catchRate;
     const day = this.isFeatured() ? SPECIES_DAY_CATCH_BOOST : 1;
+    // What the player walked in carrying, the Catching Charm today
+    const brought = this.context.charm ?? 1;
     const grown = levelCatchFactor(this.encounter.level);
     // A shadow resists whatever it is and whoever is throwing
     const closed = this.encounter.shadow ? SHADOW_CATCH_FACTOR : 1;
@@ -572,7 +585,7 @@ export default class SafariSession<
 
     return Math.min(
       1,
-      (rate * this.getBallModifier() * this.catchBonus * day * grown * closed * wearing) /
+      (rate * this.getBallModifier() * this.catchBonus * brought * day * grown * closed * wearing) /
         CATCH_RATE_SCALE,
     );
   }

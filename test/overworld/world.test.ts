@@ -252,7 +252,7 @@ import type { Buddy } from '../../src/overworld/core';
 import { CANDY_ITEM_BONUS } from '../../src/overworld/items/candy-items';
 import { LUCK_INCENSE_BONUS, PURE_INCENSE_QUIET } from '../../src/overworld/items/incenses';
 import { AMULET_COIN_BONUS, CLEANSE_TAG_QUIET } from '../../src/overworld/items/trinkets';
-import { SHINY_CHARM_BOOST } from '../../src/overworld/items/key-items';
+import { CATCHING_CHARM_BOOST, SHINY_CHARM_BOOST } from '../../src/overworld/items/key-items';
 import createOverworld from '../../src/overworld/setup';
 import World, {
   WORLD_MAX,
@@ -2334,6 +2334,21 @@ describe('world', () => {
     expect(createOverworld('player-uid', null).checkEncounterShiny('spawn#0')).toBe(1);
     expect(plain.checkEncounterShiny('spawn#0')).toBe(1);
     expect(charmed.checkEncounterShiny('spawn#0')).toBe(SHINY_CHARM_BOOST);
+  });
+
+  it('lifts every throw for a buddy holding the catching charm', () => {
+    const plain = createOverworld('player-uid', buddyWith([]));
+    const charmed = createOverworld('player-uid', {
+      ...buddyWith([]),
+      items: [Items.CatchingCharm],
+    });
+
+    expect(createOverworld('player-uid', null).checkCatchChance('spawn#0')).toBe(1);
+    expect(plain.checkCatchChance('spawn#0')).toBe(1);
+    expect(charmed.checkCatchChance('spawn#0')).toBe(CATCHING_CHARM_BOOST);
+    // The two charms answer different questions, so neither is worth
+    // anything on the other's
+    expect(charmed.checkEncounterShiny('spawn#0')).toBe(1);
   });
 
   it('pays candy for what a buddy is carrying, to the right family', () => {

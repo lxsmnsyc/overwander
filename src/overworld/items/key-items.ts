@@ -27,7 +27,27 @@ const setupShinyCharm = createHeldItem(Items.ShinyCharm, (overworld) => {
   });
 });
 
-const HELD_ITEMS: ((overworld: Overworld) => void)[] = [setupShinyCharm];
+/**
+ * What the Catching Charm is worth: half again on every throw. It is
+ * deliberately nothing like the Shiny Charm's eightfold — a shiny is a
+ * roll a player cannot influence, while a catch is already theirs to
+ * work at with the right ball and a berry, and a charm that made the
+ * throw a formality would take the safari with it
+ */
+export const CATCHING_CHARM_BOOST = 1.5;
+
+/**
+ * Catching Charm: held, not used. Every ball its owner throws sits a
+ * little truer, whatever it is thrown at and whatever it is thrown
+ * with
+ */
+const setupCatchingCharm = createHeldItem(Items.CatchingCharm, (overworld) => {
+  overworld.on(OverworldEvents.CheckCatchChance, EventPriority.Exact, (event) => {
+    event.boost *= CATCHING_CHARM_BOOST;
+  });
+});
+
+const HELD_ITEMS: ((overworld: Overworld) => void)[] = [setupShinyCharm, setupCatchingCharm];
 
 /**
  * Register every field item effect; each drops out on its own when

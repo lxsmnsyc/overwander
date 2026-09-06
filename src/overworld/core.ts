@@ -8,6 +8,7 @@ import type { Genders, Species } from '../data/ids/species';
 import { getSpeciesData } from '../data/species';
 import {
   type CheckCatchCandyEvent,
+  type CheckCatchChanceEvent,
   type CheckEggStepsEvent,
   type CheckEncounterGenderEvent,
   type CheckEncounterHeldEvent,
@@ -320,5 +321,24 @@ export default class Overworld extends EventEngine<OverworldEventMap> {
 
     this.emit(OverworldEvents.CheckRevealsHeld, event);
     return event.shown;
+  }
+
+  /**
+   * What every throw of this player's is multiplied by, before the
+   * ball, the treat and the encounter itself have their say. It is
+   * asked once when a safari session opens rather than at each throw:
+   * what the buddy carries cannot change while the ball is in the air
+   */
+  checkCatchChance(spawn: string, boost = 1): number {
+    const event: CheckCatchChanceEvent = {
+      id: 'CheckCatchChance',
+      disabled: false,
+      overworld: this,
+      random: this.random(spawn, 'catch'),
+      boost,
+    };
+
+    this.emit(OverworldEvents.CheckCatchChance, event);
+    return event.boost;
   }
 }

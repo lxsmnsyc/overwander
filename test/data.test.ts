@@ -3290,6 +3290,7 @@ describe('item data', () => {
     expect(ITEM_POOL.special.map((entry) => entry.item)).toEqual([
       Items.MasterBall,
       Items.ShinyCharm,
+      Items.CatchingCharm,
       Items.OldSeaMap,
       Items.GSBall,
       Items.AuroraTicket,

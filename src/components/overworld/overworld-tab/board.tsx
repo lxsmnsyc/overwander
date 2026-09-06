@@ -421,11 +421,22 @@ export default function OverworldBoard(props: {
     });
   });
 
+  /**
+   * A window with the chunk it belongs to. The record itself says only
+   * when it was rolled and what it rolled, so the coordinates ride
+   * beside it rather than being read again where it is used
+   */
+  interface WatchedWindow {
+    x: number;
+    y: number;
+    record: SnapshotRecord;
+  }
+
   // One subscription for the whole window: what time it is here and
   // what is standing in the chunk arrive together, since they are one
   // document. A spawn caught by another player disappears from every
   // screen the moment the window is rewritten
-  const window = watchLive<SnapshotRecord>((set) => {
+  const window = watchLive<WatchedWindow>((set) => {
     // Nothing is watched until the player has been put somewhere:
     // chunk 0,0 is not where they are, and publishing its window
     // would be a visit nobody made. Being placed is what opens it,
@@ -435,9 +446,17 @@ export default function OverworldBoard(props: {
     if (!placed()) {
       return null;
     }
-    return watchSnapshotWindow(getWorld().getChunk(chunkX(), chunkY()), zone, (record) => {
+
+    // Read once, here, and carried with whatever arrives. `watchLive`
+    // lets go of the old value in an effect, which runs after the
+    // update that moved the player: for that gap a record read live
+    // would be paired with the chunk it is not about
+    const x = chunkX();
+    const y = chunkY();
+
+    return watchSnapshotWindow(getWorld().getChunk(x, y), zone, (record) => {
       if (record != null) {
-        set(record);
+        set({ x, y, record });
       }
     });
   });
@@ -453,20 +472,24 @@ export default function OverworldBoard(props: {
   const fled = (): Set<string> | undefined => settled(props.fled);
 
   const view = (): ChunkView | null => {
-    const record = window();
+    const held = window();
 
-    return record == null
-      ? null
-      : buildChunkView(
-          chunkX(),
-          chunkY(),
-          record.timestamp,
-          zone,
-          record.spawns,
-          auth.user()?.uid ?? null,
-          buddy() ?? null,
-          fled() ?? new Set(),
-        );
+    // A window is about the chunk it was opened for and no other. A
+    // record left over from the chunk behind draws the last one's
+    // pokemon standing on this one's ground
+    if (held == null || held.x !== chunkX() || held.y !== chunkY()) {
+      return null;
+    }
+    return buildChunkView(
+      held.x,
+      held.y,
+      held.record.timestamp,
+      zone,
+      held.record.spawns,
+      auth.user()?.uid ?? null,
+      buddy() ?? null,
+      fled() ?? new Set(),
+    );
   };
 
   /**

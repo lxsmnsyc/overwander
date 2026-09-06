@@ -1,5 +1,39 @@
 # overwander
 
+## 2.1.1
+
+### Patch Changes
+
+- 96e3489: A box of pokemon and a bag arrange from the top end when a search sorts them, so `sort:level` opens with the highest rather than the lowest. `order:asc` turns it around.
+- 48b00b1: The breeder, the groomer and the Channeler put their box away once they have done their one thing for the window, and say so instead.
+- 528faca: - Nurse Joy takes a whole party at once and sees to them on one press, and no longer offers to purify a shadow along the way.
+  - An NPC counter reports what happened in a toast rather than in a line at the foot of its panel.
+  - The auction's sell box lists only what can actually go up, rather than greying out the rest.
+- a325d01: - A battle holds where it is while the page is hidden or another window has the focus, and picks up from there rather than playing out the time away.
+  - A stalled frame hands the fight a moment at most, so a tab coming back from the background no longer fights minutes of the battle in one frame with nobody at the controls.
+- f37ad4c: - A run of candy presses stops on each level that has a move to offer and waits there until the question is answered, so a queued move can actually be learned.
+  - The question comes up as soon as the presses reach the level that offers it, rather than after the presses settle.
+  - The candy button is held while a levelled move is waiting on an answer, since pressing past it would take the offer away.
+- 94eb1a2: The buddy card's sprite opens that pokemon's sheet.
+  A trainer in a friends or requests list is opened by pressing their face and name, and the View button beside them is gone.
+- 448e984: Searching the box for `is:hurt` narrows on the server rather than in the browser.
+- 4f85ee1: A move queued from a run of candy presses can now be learned: the levels are handed over one at a time, so each is offered against the level the pokemon is standing on rather than only the last of the run.
+- bfcca8a: - A candy is drawn the size the items beside it are, rather than at half of it.
+  - A box square marks a shadow and a purified pokemon, the way it already marks a shiny one, and the line it is named by says so too.
+- 69d4ebe: Walking into a chunk no longer shows the previous one's pokemon standing on it for a moment: a window is drawn only against the chunk it was opened for.
+- 4f85ee1: Effort is typed as a total per stat, held between what is already saved and 252, rather than pressed up four at a time.
+  Training can no longer take effort back off a stat, which is a bitter berry's job.
+- 043c619: A run of candy presses offers the moves of every level it grew through, and a second handful landing mid-question queues behind it rather than replacing what was still being asked.
+- 69d4ebe: The overworld no longer slows down as more of the world is walked: each frame advances only the pokemon standing in the chunk on screen, and the sheets are held in a bounded cache that lets go of what has not been drawn lately.
+- 21ac61f: - A box of pokemon reads every row rather than stopping at the store's page cap, so a large collection no longer loses a different handful of them on each read.
+  - A read the store refuses says so, rather than drawing as a box with nothing in it.
+  - The box waits for the move, ability and item data before searching, so `move:`, `ability:`, `item:` and `ball:` find what they name on a cold open.
+  - A backslash typed into `place:`, `nickname:` or `from:` is searched for rather than emptying the box.
+- bfcca8a: The candy pile on a catch sheet stays where the levels left it, instead of jumping back to what it was before the presses and falling again when the bag is read back.
+- 4f85ee1: The safari's bag names what is in a square with a tooltip rather than a hover card.
+- 96e3489: - A candy sits in the middle of its square, rather than four pixels low.
+  - The search box's information mark sits on the middle of the field rather than above it.
+
 ## 2.1.0
 
 ### Minor Changes

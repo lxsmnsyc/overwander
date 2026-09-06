@@ -1,6 +1,7 @@
 import Weather from '../../data/overworld/weather';
 import type QuadBatch from '../gl/quad-batch';
 import { BLENDS, MODES, type WashMode } from './wash';
+import { sheetOf, tintOf } from './field';
 
 /** The sheen laid over a wet or a frozen ground */
 /**
@@ -113,13 +114,9 @@ const SHEEN_TALL = 64;
 const SHEEN_TURN = 0.5;
 
 /** A `#rrggbb` tint as three numbers, so the field can mix with it */
-function tintOf(colour: string): [number, number, number] {
-  const value = Number.parseInt(colour.slice(1), 16);
-
-  return [(value >> 16) & 0xff, (value >> 8) & 0xff, value & 0xff];
-}
 
 let sheenSheet: HTMLCanvasElement | null = null;
+let sheenPixels: ImageData | null = null;
 
 /**
  * The field, written a pixel at a time. Colour goes in the pixel and
@@ -127,10 +124,8 @@ let sheenSheet: HTMLCanvasElement | null = null;
  * rather than read back
  */
 function sheenField(sheen: Sheen, clock: number, yaw: number): HTMLCanvasElement | null {
-  const made = sheenSheet ?? document.createElement('canvas');
+  const made = sheetOf(sheenSheet, SHEEN_WIDE, SHEEN_TALL);
 
-  made.width = SHEEN_WIDE;
-  made.height = SHEEN_TALL;
   sheenSheet = made;
 
   const into = made.getContext('2d');
@@ -138,7 +133,11 @@ function sheenField(sheen: Sheen, clock: number, yaw: number): HTMLCanvasElement
   if (into == null) {
     return null;
   }
-  const image = into.createImageData(SHEEN_WIDE, SHEEN_TALL);
+  // Kept rather than made each frame: every pixel of it is written
+  // below, so what it arrives holding does not matter
+  const image = sheenPixels ?? into.createImageData(SHEEN_WIDE, SHEEN_TALL);
+
+  sheenPixels = image;
   const seconds = clock / 1000;
   const slide = seconds * sheen.pace + yaw * SHEEN_TURN;
   const [tintRed, tintGreen, tintBlue] = tintOf(sheen.tint);

@@ -197,6 +197,105 @@ describe('the sky over the board', () => {
         fieldOf(Weather.Rainbow, 320, 240).size,
       );
     });
+
+    /**
+     * An aurora is written the same way a bow is, for the same reason:
+     * it was drawn fold by fold, which is a blit apiece and a hundred
+     * and twenty of them for one sky
+     */
+    it('writes an aurora as a field too, and keeps its colour', () => {
+      const aurora = fieldOf(Weather.Aurora);
+
+      // Green low and violet at the crown, so there is real colour in
+      // it rather than a white smear
+      expect(aurora.spread).toBeGreaterThan(0x20);
+      // It hangs rather than filling the picture: the sky above and
+      // below a band is untouched, and the folds are brightest where
+      // the band is deepest
+      expect(aurora.alpha[0]).toBe(0);
+      expect(aurora.alpha[1]).toBeGreaterThan(0.1);
+      expect(aurora.size).toEqual(fieldOf(Weather.Aurora, 320, 240).size);
+    });
+
+    it('draws an aurora in one blit however many folds it has', () => {
+      let blits = 0;
+      const context = stubContext();
+
+      // oxlint-disable-next-line typescript/no-unsafe-type-assertion
+      (context as unknown as { drawImage: () => void }).drawImage = () => {
+        blits += 1;
+      };
+      paintSky(context, 960, 540, Weather.Aurora, 4000);
+      expect(blits).toBe(1);
+    });
+
+    it('burns over the far ground and is gone by the time it comes round', () => {
+      painted.length = 0;
+      paintSky(stubContext(), 960, 540, Weather.Aurora, 4000);
+
+      const field = painted.at(-1);
+
+      if (field == null) {
+        throw new Error('the aurora wrote no field');
+      }
+
+      /** The brightest pixel of a column, and how far down it reaches */
+      const column = (x: number): { light: number; foot: number } => {
+        let light = 0;
+        let foot = 0;
+
+        for (let y = 0; y < field.height; y++) {
+          const alpha = field.data[(y * field.width + x) * 4 + 3];
+
+          if (alpha > 0) {
+            light = Math.max(light, alpha);
+            foot = y;
+          }
+        }
+        return { light, foot };
+      };
+      // The middle of the field is the far side of the ring the folds
+      // used to hang on, and its edges are where one has come round in
+      // front of the player
+      const far = column(Math.floor(field.width / 2));
+      const round = column(0);
+
+      expect(far.light).toBeGreaterThan(0x40);
+      // Gone rather than dimmed: a curtain standing between the player
+      // and the board read as a hoop around the chunk
+      expect(round.light).toBe(0);
+      // And what is far off hangs high and short, the way distance
+      // takes a thing rather than the way a fade does
+      expect(far.foot).toBeLessThan(field.height / 2);
+    });
+
+    it('slides the folds along as the camera comes round', () => {
+      /** The aurora's field with the camera facing a given way */
+      const facing = (yaw: number): Uint8ClampedArray => {
+        painted.length = 0;
+        paintSky(stubContext(), 960, 540, Weather.Aurora, 4000, 1, [], {
+          x: 0,
+          y: 0,
+          width: 960,
+          height: 540,
+          yaw,
+        });
+
+        const field = painted.at(-1);
+
+        if (field == null) {
+          throw new Error('a turned aurora wrote no field');
+        }
+        return field.data.slice();
+      };
+      const ahead = facing(0);
+      const round = facing(Math.PI / 2);
+
+      // The same sky seen from somewhere else: the folds have walked
+      // rather than the whole picture being rebuilt or standing still
+      expect(round.length).toBe(ahead.length);
+      expect(round).not.toEqual(ahead);
+    });
   });
 
   it('costs about the same however large the window is', () => {

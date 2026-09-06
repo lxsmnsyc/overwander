@@ -3,14 +3,12 @@ import type QuadBatch from '../gl/quad-batch';
 import type { QuadPoint } from '../gl/quad-batch';
 import {
   CURTAINS,
-  CURTAIN_STEPS,
+  CURTAIN_TALL,
+  CURTAIN_WIDE,
   DROP_RADIUS,
   DROP_SIZE,
-  batchCurtainOver,
-  curtainStrip,
+  curtainField,
   paintCurtain,
-  paintCurtainOver,
-  ribAt,
   roundDrop,
 } from './curtain';
 import { type SkyCamera, eachDrop, eachWorldDrop, paintFall, zoomFor } from './drops';
@@ -42,44 +40,25 @@ function batchLights(
   const curtain = CURTAINS[weather];
   const sheen = SHEENS[weather];
 
-  if (curtain != null && camera != null) {
-    batchCurtainOver(batch, curtain, camera, clock, strength);
-  } else if (curtain != null) {
-    const seconds = clock / 1000;
-    const across = width / curtain.ribs;
+  if (curtain != null) {
+    const field = curtainField(curtain, clock, camera?.yaw ?? 0);
 
-    for (let band = 0; band < curtain.bands; band++) {
-      const shift = Math.sin(seconds * 0.12 + band) * 0.5 + 0.5;
-      const strip = curtainStrip(band, shift, curtain);
-
-      if (strip == null) {
-        continue;
-      }
-      const top = height * (curtain.top + band * curtain.gap);
-      const deep = height * curtain.deep;
-
-      batch.invalidate(strip);
-      for (let rib = 0; rib < curtain.ribs; rib++) {
-        const { foot, light } = ribAt(curtain, band, rib, seconds);
-        const wide = across * curtain.spread;
-        const left = rib * across - (wide - across) / 2;
-        const bottom = top + deep * foot;
-
-        batch.quad(
-          strip,
-          { x: 0, y: 0, width: 1, height: CURTAIN_STEPS },
-          [
-            { x: left, y: top },
-            { x: left + wide, y: top },
-            { x: left + wide, y: bottom },
-            { x: left, y: bottom },
-          ],
-          strength * light,
-          undefined,
-          'smooth',
-          'screen',
-        );
-      }
+    if (field != null) {
+      batch.invalidate(field);
+      batch.quad(
+        field,
+        { x: 0, y: 0, width: CURTAIN_WIDE, height: CURTAIN_TALL },
+        [
+          { x: 0, y: 0 },
+          { x: width, y: 0 },
+          { x: width, y: height },
+          { x: 0, y: height },
+        ],
+        strength,
+        undefined,
+        'smooth',
+        'screen',
+      );
     }
   }
   const shower = SHOWERS[weather];
@@ -326,11 +305,7 @@ export default function paintSky(
   const lit = flashAt(weather, clock / 1000);
 
   if (curtain != null) {
-    if (camera == null) {
-      paintCurtain(context, width, height, curtain, clock);
-    } else {
-      paintCurtainOver(context, curtain, camera, clock);
-    }
+    paintCurtain(context, width, height, curtain, clock, camera?.yaw ?? 0);
   }
   if (sheen != null) {
     paintSheen(context, width, height, sheen, clock, camera?.yaw ?? 0, strength);

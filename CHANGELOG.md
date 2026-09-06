@@ -1,5 +1,13 @@
 # overwander
 
+## 2.1.2
+
+### Patch Changes
+
+- 4f293c5: A pokemon claimed from a gift can be released again. Letting one go came back refused with "gift_claims only backfill catch_id once", because the claim's pointer at the catch nulls itself on delete and the write-once guard read that as a second backfill.
+- 9d8a176: The team picker opens sorted by level, highest first, for both raids and duels. Typing a `sort:` of your own still overrides it.
+- 4c028ed: The aurora is worked out into a field and drawn in one pass, the way a rainbow already was, instead of a blit per fold per band. Its colours and the way it hangs are unchanged.
+
 ## 2.1.1
 
 ### Patch Changes

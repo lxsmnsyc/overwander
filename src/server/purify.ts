@@ -42,6 +42,7 @@ import { asNumber } from './read';
 export function purifiedFields(caught: Record<string, unknown>): Record<string, unknown> {
   const record = asCaughtPokemon(caught);
   const ivs = purifyIVs(record.ivs);
+  const whole = getMaxHealth({ ...record, ivs });
 
   return {
     ivs,
@@ -54,7 +55,8 @@ export function purifiedFields(caught: Record<string, unknown>): Record<string, 
     abilities: purifyAbilities(record.abilities),
     // Better values mean a bigger pool, and the share of it the
     // pokemon was carrying is what it keeps
-    health: rescaleHealth(record.health, getMaxHealth(record), getMaxHealth({ ...record, ivs })),
+    health: rescaleHealth(record.health, getMaxHealth(record), whole),
+    maxHealth: whole,
     // And it is handed the arrival a shadow never got, on top of
     // whatever it walked for while it was one
     friendship: purifiedFriendship(record.friendship),

@@ -8,6 +8,7 @@ import {
   type CatchContext,
   planCatchSearch,
 } from '../../../auth/catch-search';
+import ensureBattleData from '../../../data/battle-data';
 import { Button, Dialog, DialogActions, Note } from '../../styled';
 import PickerBox from './box';
 import type { CatchOption, CatchPickerProps } from './options';
@@ -46,6 +47,20 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
 
   const showing = (): boolean => props.inline === true || (props.open ?? opened());
 
+  /**
+   * The move, ability and item registries, which the app loads behind
+   * the first frame.
+   *
+   * The search reads names out of them: `move:ember` is a move id by
+   * the time the store sees it. Asked before they land, every one of
+   * those terms narrows to nothing on both passes and the box draws
+   * as an empty collection rather than as one still loading, so
+   * nothing is planned or shown until they are here
+   */
+  const [registries] = createResource(ensureBattleData);
+  /** The same, read without suspending the page the picker sits on */
+  const ready = (): boolean => registries.state === 'ready';
+
   const [own, setOwn] = createSignal('');
   /** The caller's query where it holds one, ours otherwise */
   const query = (): string => props.search ?? own();
@@ -64,14 +79,18 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
    * changes only the part the runtime filters — a name, a second type
    * — leaves this the same and reads nothing
    */
-  const narrowing = createMemo<CatchConstraint[]>(() => planCatchSearch(query()), [], {
-    equals: (before: CatchConstraint[], after: CatchConstraint[]) =>
-      JSON.stringify(before) === JSON.stringify(after),
-  });
+  const narrowing = createMemo<CatchConstraint[]>(
+    () => (ready() ? planCatchSearch(query()) : []),
+    [],
+    {
+      equals: (before: CatchConstraint[], after: CatchConstraint[]) =>
+        JSON.stringify(before) === JSON.stringify(after),
+    },
+  );
 
   const [owned] = createResource(
     () =>
-      showing() && props.options == null
+      showing() && ready() && props.options == null
         ? ([owner(), props.revision, handled(), narrowing()] as const)
         : null,
     async ([player, , , narrowed]): Promise<CatchOption[]> => {
@@ -121,22 +140,38 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
     props.onClose?.();
   };
 
+  /**
+   * What went wrong reading the box, or nothing. A refused read leaves
+   * the last list standing, since the box shows `latest` rather than
+   * suspending on every keystroke, and a stale box with no word about
+   * it reads as a search that found nothing
+   */
+  const trouble = (): boolean => registries.error != null || owned.error != null;
+
   const box = (): JSX.Element => (
     <Suspense fallback={<Note>Looking them over…</Note>}>
-      <PickerBox
-        {...props}
-        owned={owned}
-        around={around}
-        showing={showing()}
-        search={query()}
-        onSearch={(typed) => {
-          setQuery(typed);
-        }}
-        onHandled={() => {
-          setHandled((count) => count + 1);
-        }}
-        onDone={close}
-      />
+      <Show when={trouble()}>
+        <Note>Could not read your pokemon just now. Try again in a moment.</Note>
+      </Show>
+      {/* Nothing is drawn against half-filled registries: a box whose
+          search cannot name a move says so instead of answering it
+          with an empty collection */}
+      <Show when={ready()} fallback={<Note>Looking them over…</Note>}>
+        <PickerBox
+          {...props}
+          owned={owned}
+          around={around}
+          showing={showing()}
+          search={query()}
+          onSearch={(typed) => {
+            setQuery(typed);
+          }}
+          onHandled={() => {
+            setHandled((count) => count + 1);
+          }}
+          onDone={close}
+        />
+      </Show>
     </Suspense>
   );
 

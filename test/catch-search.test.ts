@@ -304,6 +304,12 @@ describe('the fields added for the query builder', () => {
     expect(planCatchSearch('is:fainted')).toEqual([
       { on: 'row', column: 'health', op: 'eq', value: 0 },
     ]);
+    expect(planCatchSearch('is:hurt')).toEqual([
+      { on: 'row', column: 'hurt', op: 'eq', value: true },
+    ]);
+    expect(planCatchSearch('not:hurt')).toEqual([
+      { on: 'row', column: 'hurt', op: 'eq', value: false },
+    ]);
     expect(planCatchSearch('friendship:150-255')).toEqual([
       { on: 'row', column: 'friendship', op: 'gte', value: 150 },
       { on: 'row', column: 'friendship', op: 'lte', value: 255 },
@@ -437,6 +443,19 @@ describe('what the box learned to be asked', () => {
     expect(matchesCatch(met, 'locale:en-ph')).toBe(true);
     expect(planCatchSearch('place:pallet')).toEqual([
       { on: 'row', column: 'origin_place', op: 'ilike', value: '%pallet%' },
+    ]);
+  });
+
+  it('doubles a backslash in a pattern and leaves the wildcards alone', () => {
+    // An unfinished escape is a pattern the store refuses, which came
+    // back as a box with nothing in it
+    expect(planCatchSearch('place:route\\')).toEqual([
+      { on: 'row', column: 'origin_place', op: 'ilike', value: '%route\\\\%' },
+    ]);
+    // A wildcard only ever widens what the store sends, and the second
+    // pass refuses the extras
+    expect(planCatchSearch('nickname:100%')).toEqual([
+      { on: 'row', column: 'nickname', op: 'ilike', value: '%100%%' },
     ]);
   });
 

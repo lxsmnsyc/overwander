@@ -4,8 +4,8 @@ import type { Items } from '../../../../data/ids/items';
 import { getFossilPrice } from '../../../../data/overworld/fossil';
 import { describeItem } from '../../../details';
 import ItemSprite from '../../../items/ItemSprite';
-import { DialogActions, Status, useToast } from '../../../styled';
-import { type CounterProps, refusal } from '../shared';
+import { DialogActions, useToast } from '../../../styled';
+import { type CounterProps, refusal, useSaying } from '../shared';
 import { FossilCounter } from './goods';
 
 /**
@@ -16,8 +16,8 @@ import { FossilCounter } from './goods';
  * takes a coin
  */
 export default function Maniac(props: CounterProps): JSX.Element {
+  const said = useSaying();
   const toast = useToast();
-  const [status, setStatus] = createSignal<string | null>(null);
   const [busy, setBusy] = createSignal(false);
 
   const offer = (): Items[] => {
@@ -39,7 +39,6 @@ export default function Maniac(props: CounterProps): JSX.Element {
     if (snapshot == null || standing == null) {
       return;
     }
-    setStatus(null);
     setBusy(true);
     buyFossil(snapshot, standing[0], item)
       .then((done) => {
@@ -58,7 +57,7 @@ export default function Maniac(props: CounterProps): JSX.Element {
       })
       .catch((caught: unknown) => {
         setBusy(false);
-        setStatus(refusal(caught));
+        said(refusal(caught), 'ember');
       });
   };
 
@@ -71,7 +70,6 @@ export default function Maniac(props: CounterProps): JSX.Element {
         sold={props.visited.latest === true}
         onBuy={buyRock}
       />
-      <Status message={status()} />
       <DialogActions>{props.walkOn()}</DialogActions>
     </>
   );

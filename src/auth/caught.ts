@@ -13,6 +13,7 @@ import {
 } from '../server/caught';
 import { requireUid } from '../server/auth';
 import type { CatchConstraint, CatchContext, RowConstraint } from './catch-search';
+import type { PostgrestError } from '@supabase/supabase-js';
 import { asRecord, asRecordArray } from './__normalize';
 import type { CaughtPokemon } from './caught-record';
 import { CAUGHT_EMBED, fromCaughtRow } from './caught-rows';
@@ -32,8 +33,61 @@ export type { CaughtPokemon, OwnershipRecord } from './caught-record';
 const CAUGHT_TABLE = 'caught';
 
 /** Rows out of a dynamic select, paired as [id, record] */
-function rowsToPairs(data: unknown): [string, CaughtPokemon][] {
-  return asRecordArray(data).map((row) => [String(row.id), fromCaughtRow(row)]);
+function rowsToPairs(rows: Record<string, unknown>[]): [string, CaughtPokemon][] {
+  return rows.map((row) => [String(row.id), fromCaughtRow(row)]);
+}
+
+/**
+ * A refused read, raised rather than answered as nothing.
+ *
+ * A query the store turned down and a box with nothing in it came
+ * back the same way, so a bad filter drew as "no pokemon" and the
+ * player was told their collection was empty
+ */
+function raise(error: PostgrestError | null): void {
+  if (error != null) {
+    throw new Error(error.message);
+  }
+}
+
+/**
+ * How many rows one page of a box asks for. It sits under the store's
+ * own ceiling (`max_rows` in
+ * [config.toml](../../supabase/config.toml)), so a short page is
+ * proof there are no more rather than the ceiling cutting in
+ */
+const BOX_PAGE = 500;
+
+/** What one page of a box read answers */
+type RowPage = PromiseLike<{ data: unknown; error: PostgrestError | null }>;
+
+/**
+ * Every row a box query answers, read as ordered pages.
+ *
+ * The store caps a single response, and a capped response is not an
+ * error: it arrives as a short box that looks complete. Worse, an
+ * unordered query has no reason to cut the same rows twice, so the
+ * pokemon that went missing were different ones each read. Ordering
+ * by the key makes the pages a partition, so nothing is read twice or
+ * skipped
+ */
+async function everyRow(
+  page: (from: number, to: number) => RowPage,
+): Promise<Record<string, unknown>[]> {
+  const rows: Record<string, unknown>[] = [];
+
+  for (let from = 0; ; from += BOX_PAGE) {
+    const { data, error } = await page(from, from + BOX_PAGE - 1);
+
+    raise(error);
+
+    const batch = asRecordArray(data);
+
+    rows.push(...batch);
+    if (batch.length < BOX_PAGE) {
+      return rows;
+    }
+  }
 }
 
 /**
@@ -44,12 +98,13 @@ function rowsToPairs(data: unknown): [string, CaughtPokemon][] {
  */
 
 export async function getCaught(id: string): Promise<CaughtPokemon | null> {
-  const { data } = await getSupabase()
+  const { data, error } = await getSupabase()
     .from(CAUGHT_TABLE)
     .select(CAUGHT_EMBED)
     .eq('id', id)
     .maybeSingle();
 
+  raise(error);
   return data == null ? null : fromCaughtRow(asRecord(data));
 }
 
@@ -76,9 +131,7 @@ const caughtRows = (owner: string) =>
   getSupabase().from(CAUGHT_TABLE).select(ROW_SELECTION).eq('owner', owner);
 
 export async function listCaught(owner: string): Promise<[string, CaughtPokemon][]> {
-  const { data } = await caughtRows(owner);
-
-  return rowsToPairs(data);
+  return rowsToPairs(await everyRow((from, to) => caughtRows(owner).order('id').range(from, to)));
 }
 
 /**
@@ -121,21 +174,34 @@ export async function searchCaught(
       (narrowed): narrowed is Exclude<CatchConstraint, RowConstraint> => narrowed.on !== 'row',
     )
     .map((narrowed) => `${narrowed.alias}:${narrowed.table}!inner(${JOIN_KEYS[narrowed.table]})`);
-  let request = getSupabase()
-    .from(CAUGHT_TABLE)
-    .select([ROW_SELECTION, ...joins].join(', '))
-    .eq('owner', owner);
+  const selection = [ROW_SELECTION, ...joins].join(', ');
 
-  for (const narrowed of narrowing) {
-    request = applyConstraint(request, narrowed);
-  }
+  // Built afresh per page rather than once and re-awaited: a range is
+  // a header on the request, and moving it means a new request
+  return rowsToPairs(
+    await everyRow((from, to) => {
+      let request = getSupabase().from(CAUGHT_TABLE).select(selection).eq('owner', owner);
 
-  const { data } = await request;
-
-  return rowsToPairs(data);
+      for (const narrowed of narrowing) {
+        request = applyConstraint(request, narrowed);
+      }
+      return request.order('id').range(from, to);
+    }),
+  );
 }
 
 type Chain = ReturnType<typeof caughtRows>;
+
+/**
+ * One value of a hand-written list, as PostgREST reads one. A comma
+ * or a bracket in an unquoted value ends the list early, which is a
+ * different query rather than a failed one
+ */
+function quoted(value: string | number | boolean): string {
+  return typeof value === 'string' && /[,()"\\]/.test(value)
+    ? `"${value.replace(/(["\\])/g, '\\$1')}"`
+    : String(value);
+}
 
 /**
  * One planned constraint, applied to the running query. A joined one
@@ -159,7 +225,9 @@ function applyConstraint(request: Chain, narrowed: CatchConstraint): Chain {
     case 'in':
       return request.in(column, listed);
     case 'nin':
-      return request.not(column, 'in', `(${listed.join(',')})`);
+      // Written out by hand rather than through `.in`, which has no
+      // negated twin, so the quoting `.in` does is done here too
+      return request.not(column, 'in', `(${listed.map(quoted).join(',')})`);
     case 'neq':
       return request.neq(column, narrowed.value);
     case 'gt':
@@ -194,6 +262,10 @@ export async function readCatchContext(owner: string): Promise<CatchContext> {
     supabase.from('auctions').select('caught_id').eq('seller', owner).eq('settled', false),
     supabase.from('teams').select('team_catches(caught_id)').eq('player', owner),
   ]);
+
+  raise(profile.error);
+  raise(lots.error);
+  raise(drafted.error);
 
   const listed = new Set<string>();
   const raiding = new Set<string>();
@@ -243,11 +315,12 @@ export function findDuplicates(box: readonly CaughtPokemon[]): Set<Species> {
  * for a player with three hundred
  */
 export async function countCaught(owner: string): Promise<number> {
-  const { count } = await getSupabase()
+  const { count, error } = await getSupabase()
     .from(CAUGHT_TABLE)
     .select('id', { count: 'exact', head: true })
     .eq('owner', owner);
 
+  raise(error);
   return count ?? 0;
 }
 
@@ -260,9 +333,19 @@ export async function countCaught(owner: string): Promise<number> {
  * record, and it is **derived** from three of its own fields — see
  * `isAuctionableCatch`. It is stored regardless, because "perfect
  * **or** blank **or** shiny **or** legendary" is a disjunction, and a
- * disjunction cannot be asked of a box in one query
+ * disjunction cannot be asked of a box in one query.
+ *
+ * `hurt` is derived too, and is the store's own: the column is
+ * generated from the health against the maximum stored beside it
  */
-export type CatchMark = 'shiny' | 'shadow' | 'egg' | 'favorite' | 'guarded' | 'auctionable';
+export type CatchMark =
+  | 'shiny'
+  | 'shadow'
+  | 'egg'
+  | 'favorite'
+  | 'guarded'
+  | 'auctionable'
+  | 'hurt';
 
 /**
  * The player's pokemon that answer yes to one of them — their shinies,
@@ -276,13 +359,17 @@ export async function listCaughtMarked(
   owner: string,
   mark: CatchMark,
 ): Promise<[string, CaughtPokemon][]> {
-  const { data } = await getSupabase()
-    .from(CAUGHT_TABLE)
-    .select(`id, ${CAUGHT_EMBED}`)
-    .eq('owner', owner)
-    .eq(mark, true);
-
-  return rowsToPairs(data);
+  return rowsToPairs(
+    await everyRow((from, to) =>
+      getSupabase()
+        .from(CAUGHT_TABLE)
+        .select(`id, ${CAUGHT_EMBED}`)
+        .eq('owner', owner)
+        .eq(mark, true)
+        .order('id')
+        .range(from, to),
+    ),
+  );
 }
 
 /**
@@ -304,12 +391,13 @@ export async function listOwned(owner: string, ids: string[]): Promise<Set<strin
     return new Set();
   }
 
-  const { data } = await getSupabase()
+  const { data, error } = await getSupabase()
     .from(CAUGHT_TABLE)
     .select('id')
     .eq('owner', owner)
     .in('id', ids);
 
+  raise(error);
   return new Set(((data ?? []) as { id: unknown }[]).map((row) => String(row.id)));
 }
 
@@ -319,11 +407,12 @@ export async function listOwned(owner: string, ids: string[]): Promise<Set<strin
  * is a yes or no
  */
 export async function hasAnyCaught(owner: string): Promise<boolean> {
-  const { count } = await getSupabase()
+  const { count, error } = await getSupabase()
     .from(CAUGHT_TABLE)
     .select('id', { count: 'exact', head: true })
     .eq('owner', owner);
 
+  raise(error);
   return (count ?? 0) > 0;
 }
 
@@ -332,12 +421,13 @@ export async function hasAnyCaught(owner: string): Promise<boolean> {
  * row, since the answer is a yes or no: the Repeat Ball's condition
  */
 export async function hasCaughtSpecies(owner: string, species: Species): Promise<boolean> {
-  const { count } = await getSupabase()
+  const { count, error } = await getSupabase()
     .from(CAUGHT_TABLE)
     .select('id', { count: 'exact', head: true })
     .eq('owner', owner)
     .eq('species', species);
 
+  raise(error);
   return (count ?? 0) > 0;
 }
 

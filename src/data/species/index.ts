@@ -10,6 +10,7 @@ export {
   getLearnableMoves,
   getLevelUpMoves,
   getMovesLearnedAt,
+  getMovesLearnedBetween,
   getRegisteredFamilies,
   getRegisteredSpecies,
   getSpeciesAbilities,

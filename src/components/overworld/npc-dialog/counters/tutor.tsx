@@ -4,8 +4,8 @@ import { tutorMove } from '../../../../auth/npcs';
 import type { Moves } from '../../../../data/ids/moves';
 import { TUTOR_FEE } from '../../../../data/overworld/npc';
 import ItemSprite from '../../../items/ItemSprite';
-import { Badge, Button, DialogActions, Status } from '../../../styled';
-import { type CounterProps, optionsOf, scalesIn } from '../shared';
+import { Badge, Button, DialogActions } from '../../../styled';
+import { type CounterProps, optionsOf, scalesIn, useSaying } from '../shared';
 import { TutorCounter } from './moves';
 
 /**
@@ -14,7 +14,7 @@ import { TutorCounter } from './moves';
  * is written in, so a refusal costs nothing
  */
 export default function Tutor(props: CounterProps): JSX.Element {
-  const [status, setStatus] = createSignal<string | null>(null);
+  const said = useSaying();
   const [picked, setPicked] = createSignal<string | null>(null);
   const [chosen, setChosen] = createSignal<Moves | null>(null);
 
@@ -32,7 +32,7 @@ export default function Tutor(props: CounterProps): JSX.Element {
   const tutored = (): void => {
     setPicked(null);
     setChosen(null);
-    setStatus('One lesson, well spent. (−1 Heart Scale)');
+    said('One lesson, well spent. (−1 Heart Scale)');
     props.onTraded();
     props.onServed();
     props.onChange?.();
@@ -48,7 +48,6 @@ export default function Tutor(props: CounterProps): JSX.Element {
         chosen={chosen()}
         busy={false}
         onPick={(id) => {
-          setStatus(null);
           setChosen(null);
           setPicked(id);
         }}
@@ -56,7 +55,6 @@ export default function Tutor(props: CounterProps): JSX.Element {
           setChosen(move);
         }}
       />
-      <Status message={status()} />
       <DialogActions>
         <Button
           tone="primary"

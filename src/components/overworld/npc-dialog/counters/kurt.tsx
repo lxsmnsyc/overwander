@@ -5,7 +5,7 @@ import { type Items, getApricornBall } from '../../../../data/ids/items';
 import { getItemData } from '../../../../data/items';
 import { describeItem } from '../../../details';
 import ItemSprite from '../../../items/ItemSprite';
-import { DialogActions, Status, useToast } from '../../../styled';
+import { DialogActions, useToast } from '../../../styled';
 import type { CounterProps } from '../shared';
 import { KurtCounter } from './goods';
 
@@ -15,7 +15,6 @@ import { KurtCounter } from './goods';
  */
 export default function Kurt(props: CounterProps): JSX.Element {
   const toast = useToast();
-  const [status, setStatus] = createSignal<string | null>(null);
   const [busy, setBusy] = createSignal(false);
 
   /** What the apricorn on this square becomes, for the tray to say */
@@ -41,7 +40,6 @@ export default function Kurt(props: CounterProps): JSX.Element {
     if (snapshot == null || standing == null) {
       return;
     }
-    setStatus(null);
     setBusy(true);
     carveApricorns(snapshot, standing[0], item, amount)
       .then((done) => {
@@ -76,7 +74,6 @@ export default function Kurt(props: CounterProps): JSX.Element {
   return (
     <>
       <KurtCounter apricorns={apricorns()} busy={busy()} ballName={ballName} onCarve={carve} />
-      <Status message={status()} />
       <DialogActions>{props.walkOn()}</DialogActions>
     </>
   );

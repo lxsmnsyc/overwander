@@ -21,7 +21,7 @@ import { UTILITY_BELT_SLOT, isUtilityBelt } from '../../data/items/utility-belt'
 import { isPPItem, isVitamin } from '../../data/items/vitamins';
 import { isWing } from '../../data/items/wings';
 import { PP_UP_LIMIT } from '../../data/moves';
-import { getMovesLearnedAt, getSpeciesData } from '../../data/species';
+import { getMovesLearnedAt, getMovesLearnedBetween, getSpeciesData } from '../../data/species';
 import type { ToastTone } from '../styled';
 import { describeItem } from '../details';
 import { describeIVs, withArticle } from '../catches/catch-dialog/describe';
@@ -120,6 +120,33 @@ export function getLevelMoves(caught: CaughtPokemon, level: number): Moves[] {
   const knows = new Set(caught.moves);
 
   return getMovesLearnedAt(caught.species, level).filter((learned) => !knows.has(learned));
+}
+
+/**
+ * The same, for every level in a run of them: what a pokemon fed
+ * twenty candies at once passed through, in the order it grew.
+ *
+ * A jump is not a level: the candy button gathers a run of presses
+ * into one feeding, and the moves of the levels it went **through**
+ * are as much the pokemon's as the one it stopped on. `from` and `to`
+ * are both inclusive, so a grow from 5 to 25 asks for 6 through 25.
+ *
+ * A move listed at two of those levels is offered once, since being
+ * asked the same question twice in one run is the same nuisance as
+ * being asked about a move the pokemon already knows.
+ *
+ * It is the run the server judges a level-up move against, so both
+ * read `getMovesLearnedBetween` rather than each walking the levels
+ * their own way
+ */
+export function getLevelMovesBetween(caught: CaughtPokemon, from: number, to: number): Moves[] {
+  if (isEgg(caught)) {
+    return [];
+  }
+
+  const knows = new Set(caught.moves);
+
+  return getMovesLearnedBetween(caught.species, from, to).filter((learned) => !knows.has(learned));
 }
 
 /** What spending it came to */

@@ -4,8 +4,8 @@ import { remindMove } from '../../../../auth/npcs';
 import type { Moves } from '../../../../data/ids/moves';
 import { REMINDER_FEE } from '../../../../data/overworld/npc';
 import ItemSprite from '../../../items/ItemSprite';
-import { Badge, Button, DialogActions, Status } from '../../../styled';
-import { type CounterProps, optionsOf, scalesIn } from '../shared';
+import { Badge, Button, DialogActions } from '../../../styled';
+import { type CounterProps, optionsOf, scalesIn, useSaying } from '../shared';
 import { ReminderCounter } from './moves';
 
 /**
@@ -16,7 +16,7 @@ import { ReminderCounter } from './moves';
  * one modal over another fights it for the closing click
  */
 export default function Reminder(props: CounterProps): JSX.Element {
-  const [status, setStatus] = createSignal<string | null>(null);
+  const said = useSaying();
   const [picked, setPicked] = createSignal<string | null>(null);
   const [chosen, setChosen] = createSignal<Moves | null>(null);
 
@@ -39,7 +39,7 @@ export default function Reminder(props: CounterProps): JSX.Element {
   const remembered = (): void => {
     setPicked(null);
     setChosen(null);
-    setStatus('He hummed, tapped its head, and it remembered. (−1 Heart Scale)');
+    said('He hummed, tapped its head, and it remembered. (−1 Heart Scale)');
     props.onTraded();
     props.onServed();
     props.onChange?.();
@@ -55,7 +55,6 @@ export default function Reminder(props: CounterProps): JSX.Element {
         chosen={chosen()}
         busy={false}
         onPick={(id) => {
-          setStatus(null);
           setChosen(null);
           setPicked(id);
         }}
@@ -63,7 +62,6 @@ export default function Reminder(props: CounterProps): JSX.Element {
           setChosen(move);
         }}
       />
-      <Status message={status()} />
       <DialogActions>
         <Button
           tone="primary"

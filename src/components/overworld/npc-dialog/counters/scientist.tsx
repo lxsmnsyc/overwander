@@ -6,7 +6,7 @@ import { isFossil } from '../../../../data/items';
 import { getSpeciesData } from '../../../../data/species';
 import { describeItem } from '../../../details';
 import AnimatedSprite from '../../../sprites/AnimatedSprite';
-import { DialogActions, Status, useToast } from '../../../styled';
+import { DialogActions, useToast } from '../../../styled';
 import { type CounterProps, refusal } from '../shared';
 import { ReviveCounter } from './goods';
 
@@ -17,7 +17,6 @@ import { ReviveCounter } from './goods';
  */
 export default function Scientist(props: CounterProps): JSX.Element {
   const toast = useToast();
-  const [status, setStatus] = createSignal<string | null>(null);
   const [busy, setBusy] = createSignal(false);
 
   /** What is in the bag that he can open */
@@ -31,7 +30,6 @@ export default function Scientist(props: CounterProps): JSX.Element {
     if (snapshot == null || standing == null) {
       return;
     }
-    setStatus(null);
     setBusy(true);
     reviveFossil(snapshot, standing[0], item)
       .then((revived) => {
@@ -79,7 +77,6 @@ export default function Scientist(props: CounterProps): JSX.Element {
   return (
     <>
       <ReviveCounter fossils={fossils()} busy={busy()} onRevive={openRock} />
-      <Status message={status()} />
       <DialogActions>{props.walkOn()}</DialogActions>
     </>
   );

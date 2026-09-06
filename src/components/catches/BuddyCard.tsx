@@ -1,4 +1,12 @@
-import { type JSX, type Resource, Show, Suspense, createResource, createSignal } from 'solid-js';
+import {
+  type JSX,
+  type ParentProps,
+  type Resource,
+  Show,
+  Suspense,
+  createResource,
+  createSignal,
+} from 'solid-js';
 import { resolveBuddy, setBuddy } from '../../auth/buddy';
 import { isShiny } from '../../auth/caught-record';
 import { isEgg } from '../../auth/egg';
@@ -64,6 +72,35 @@ function Gauge(props: {
   );
 }
 
+/**
+ * The picture's own box, which becomes a button where the card has a
+ * sheet to open. No fixed size: the sprite is taller than a box would
+ * be, so one only ever decided where the *bottom* of an overflowing
+ * picture went, and the row lines it up with the words beside it
+ */
+function Sprung(props: ParentProps<{ open?: (catchId: string) => void; at: string }>): JSX.Element {
+  return (
+    <Show
+      when={props.open}
+      fallback={<div class="flex shrink-0 items-end justify-center">{props.children}</div>}
+    >
+      {(open) => (
+        <button
+          type="button"
+          class="flex shrink-0 cursor-pointer items-end justify-center rounded-lg border-0
+            bg-transparent p-0 shadow-none transition-transform hover:-translate-y-0.5
+            active:translate-y-0"
+          onClick={() => {
+            open()(props.at);
+          }}
+        >
+          {props.children}
+        </button>
+      )}
+    </Show>
+  );
+}
+
 export interface BuddyCardProps {
   player: string;
   /**
@@ -78,6 +115,12 @@ export interface BuddyCardProps {
    * it are left out
    */
   viewOnly?: boolean;
+  /**
+   * Open the buddy's own sheet. The card says a great deal about the
+   * pokemon and stops short of the rest of it, and the picture is the
+   * thing on the card a player reaches for
+   */
+  onOpen?: (catchId: string) => void;
 }
 
 /**
@@ -157,7 +200,7 @@ function BuddyBody(
                   profile rather than the subject of a screen — and
                   half of three is not a whole number of pixels, which
                   for pixel art is the one scale that looks wrong */}
-              <div class="flex shrink-0 items-end justify-center">
+              <Sprung open={props.onOpen} at={pair()[0]}>
                 <AnimatedSprite
                   species={isEgg(pair()[1]) ? Species.Egg : pair()[1].species}
                   shiny={!isEgg(pair()[1]) && isShiny(pair()[1])}
@@ -172,7 +215,7 @@ function BuddyBody(
                       : `${getSpeciesData(pair()[1].species).name}, walking with ${walker()}`
                   }
                 />
-              </div>
+              </Sprung>
 
               <div class="flex grow flex-col gap-1">
                 <Show

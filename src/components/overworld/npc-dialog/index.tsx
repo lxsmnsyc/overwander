@@ -39,6 +39,23 @@ export interface NpcDialogProps {
 }
 
 /**
+ * The ones who do their one thing once a window, and the visit the
+ * server takes for it. Each of these counters asks a pokemon out of
+ * the box, so a dialog that kept the box up after the press was
+ * offering something the server could only refuse.
+ *
+ * The daycare lady and the fossil maniac are the same rule read their
+ * own way: hers greys the box rather than hiding it, since an egg
+ * still has a count worth reading, and his is a crate rather than a
+ * box
+ */
+const ONCE_A_WINDOW = new Map<Npc, string>([
+  [Npc.Breeder, 'breed'],
+  [Npc.Groomer, 'groom'],
+  [Npc.Channeler, 'channel'],
+]);
+
+/**
  * Somebody standing out in the world with an offer.
  *
  * The box, the purse and the bag are read one component down, under
@@ -96,6 +113,21 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
     async ([snapshot, cell]) => hasVisited(snapshot, 'daycare', cell),
   );
 
+  // Whether the one standing here has already done their one thing.
+  // Each of these takes a visit on the server, so a counter that kept
+  // offering its box after the press was offering something the server
+  // could only refuse
+  const [spent] = createResource(
+    () => {
+      const tag = props.standing == null ? undefined : ONCE_A_WINDOW.get(props.standing[1]);
+
+      return props.snapshot == null || props.standing == null || tag == null
+        ? null
+        : ([props.snapshot, props.standing[0], tag, served()] as const);
+    },
+    async ([snapshot, cell, tag]) => hasVisited(snapshot, tag, cell),
+  );
+
   return (
     <NpcCounter
       {...props}
@@ -104,6 +136,7 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
       bag={bag}
       visited={visited}
       warmed={warmed}
+      spent={spent}
       onServed={() => {
         setServed((count) => count + 1);
         Promise.resolve(refetch()).catch(() => undefined);

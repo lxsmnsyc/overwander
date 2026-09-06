@@ -1,4 +1,4 @@
-import type { JSX } from 'solid-js';
+import { type JSX, Show } from 'solid-js';
 import { boostedSteps, isEgg, stepsRemaining } from '../../../../auth/egg';
 import { getCatchSlots, isGuarded, isShadow } from '../../../../auth/caught-record';
 import { groomedFriendship } from '../../../../data/constants/friendship';
@@ -24,46 +24,56 @@ export interface BreederCounterProps {
   chosen: string[];
   /** Whether the two picked will have anything to do with each other */
   compatible: boolean;
+  /** Whether he has already bred a pair for this player this window */
+  done: boolean;
   onPick: (picked: string[]) => void;
 }
 
 export function BreederCounter(props: BreederCounterProps): JSX.Element {
   return (
     <DialogSection class={CENTRED}>
-      {/* The pair is picked with the same list every other part of the
-          game picks a pokemon with; what makes it a breeding pair is
-          the two, and the rule about what can be one.
+      {/* The box goes once he has bred his one pair. The egg is in the
+          box by then, and a list still offering a second pair is a
+          press the server would only refuse */}
+      <Show
+        when={!props.done}
+        fallback={<Meta class="block">He has bred his one pair for you this while.</Meta>}
+      >
+        {/* The pair is picked with the same list every other part of
+            the game picks a pokemon with; what makes it a breeding
+            pair is the two, and the rule about what can be one.
 
-          Live, so the picker draws no confirm of its own: "Leave 2/2"
-          and "Leave them" were two buttons for one press, and the
-          second was the only one that did anything */}
-      <CatchPicker
-        inline
-        multiple
-        live
-        max={2}
-        options={props.options}
-        value={props.chosen}
-        verb="Breed"
-        empty="You have nothing to breed."
-        filter={(option) =>
-          // The undiscovered group is left out rather than shown and
-          // refused: a legendary is unbreedable whatever it stands
-          // beside, so a square for it is a press that can never come
-          // to anything
-          !isEgg(option.caught) && !option.fighting && canLayEggs(option.caught.species)
-        }
-        onPick={props.onPick}
-      />
-      {/* The pairing is checked here only so the button can say so
-          first; the refusal itself is the server's */}
-      <Status
-        message={
-          props.chosen.length === 2 && !props.compatible
-            ? 'Those two will have nothing to do with each other.'
-            : null
-        }
-      />
+            Live, so the picker draws no confirm of its own: "Leave
+            2/2" and "Leave them" were two buttons for one press, and
+            the second was the only one that did anything */}
+        <CatchPicker
+          inline
+          multiple
+          live
+          max={2}
+          options={props.options}
+          value={props.chosen}
+          verb="Breed"
+          empty="You have nothing to breed."
+          filter={(option) =>
+            // The undiscovered group is left out rather than shown and
+            // refused: a legendary is unbreedable whatever it stands
+            // beside, so a square for it is a press that can never come
+            // to anything
+            !isEgg(option.caught) && !option.fighting && canLayEggs(option.caught.species)
+          }
+          onPick={props.onPick}
+        />
+        {/* The pairing is checked here only so the button can say so
+            first; the refusal itself is the server's */}
+        <Status
+          message={
+            props.chosen.length === 2 && !props.compatible
+              ? 'Those two will have nothing to do with each other.'
+              : null
+          }
+        />
+      </Show>
     </DialogSection>
   );
 }
@@ -73,38 +83,39 @@ export interface NurseCounterProps {
   busy: boolean;
   /** Whether this one has anything she could see to */
   needsCare: (option: CatchOption) => boolean;
-  onHeal: (catchId: string) => void;
+  onHeal: (picked: string[]) => void;
 }
 
 export function NurseCounter(props: NurseCounterProps): JSX.Element {
   return (
     <DialogSection class={CENTRED}>
-      {/* One press, one pokemon seen to. She is free and turns nobody
-          away, so there is nothing to weigh up before handing one over
-          — a counter that took a party first and a button second was
-          two presses for a decision nobody makes */}
+      {/* A party at a time rather than one pokemon at a time. She is
+          free and turns nobody away, so what a player wants is
+          everything they are carrying seen to, and handing them over
+          one press each was a round trip apiece for a decision nobody
+          makes.
+
+          A shadow is left out entirely: purifying one is permanent and
+          is the Purifying Gem's business, not something to be swept up
+          in a heal of six */}
       <CatchPicker
         inline
+        multiple
         disabled={props.busy}
         options={props.options}
-        value={null}
+        value={[]}
         verb="Heal"
         empty="You have nothing for her to look at."
-        filter={(option) => !isEgg(option.caught) && !option.fighting && props.needsCare(option)}
-        reason={(option) => (isGuarded(option.caught) ? 'locked' : null)}
-        note={(option) => (isShadow(option.caught) ? 'shadow, she would purify it' : null)}
-        // Handing her a shadow is the one thing at this counter that
-        // cannot be taken back, and it happens on the way to something
-        // as ordinary as a heal
-        confirm={(option) => isShadow(option.caught)}
-        warn={(option) =>
-          isShadow(option.caught)
-            ? 'She will purify this one along with the heal. The Shadow ability goes for good, and it stops being a shadow.'
-            : null
+        filter={(option) =>
+          !isEgg(option.caught) &&
+          !option.fighting &&
+          !isShadow(option.caught) &&
+          props.needsCare(option)
         }
-        onPick={(id) => {
-          if (id != null) {
-            props.onHeal(id);
+        reason={(option) => (isGuarded(option.caught) ? 'locked' : null)}
+        onPick={(picked) => {
+          if (Array.isArray(picked) && picked.length > 0) {
+            props.onHeal(picked);
           }
         }}
       />
@@ -160,40 +171,51 @@ export function DaycareCounter(props: DaycareCounterProps): JSX.Element {
 export interface GroomerCounterProps {
   options: CatchOption[];
   fee: number;
+  /** Whether he has already seen to one for this player this window */
+  done: boolean;
   onGroom: (catchId: string) => void;
 }
 
 export function GroomerCounter(props: GroomerCounterProps): JSX.Element {
   return (
     <DialogSection class={CENTRED}>
-      {/* The note is what the fee actually buys this pokemon: half of
-          what it has left to give, which is a great deal to one just
-          out of its ball and next to nothing to one that already
-          adores its owner */}
-      <CatchPicker
-        inline
-        options={props.options}
-        value={null}
-        verb="Groom"
-        empty="You have nothing for him to see to."
-        filter={(option) =>
-          !isEgg(option.caught) &&
-          !option.fighting &&
-          !isShadow(option.caught) &&
-          groomedFriendship(option.caught.friendship) > option.caught.friendship
-        }
-        note={(option) =>
-          `${option.caught.friendship} → ${groomedFriendship(option.caught.friendship)}`
-        }
-        onPick={(id) => {
-          if (id != null) {
-            props.onGroom(id);
+      {/* The box goes once he has done his one thing. What is left is
+          what he charges and what he said, which is what a player who
+          has just been served is reading */}
+      <Show when={!props.done}>
+        {/* The note is what the fee actually buys this pokemon: half of
+            what it has left to give, which is a great deal to one just
+            out of its ball and next to nothing to one that already
+            adores its owner */}
+        <CatchPicker
+          inline
+          options={props.options}
+          value={null}
+          verb="Groom"
+          empty="You have nothing for him to see to."
+          filter={(option) =>
+            !isEgg(option.caught) &&
+            !option.fighting &&
+            !isShadow(option.caught) &&
+            groomedFriendship(option.caught.friendship) > option.caught.friendship
           }
-        }}
-      />
+          note={(option) =>
+            `${option.caught.friendship} → ${groomedFriendship(option.caught.friendship)}`
+          }
+          onPick={(id) => {
+            if (id != null) {
+              props.onGroom(id);
+            }
+          }}
+        />
+      </Show>
       {/* What it costs. The rest of what he is for is said in his own
           words under him */}
-      <Meta class="block">{props.fee} gold, once while he is here.</Meta>
+      <Meta class="block">
+        {props.done
+          ? 'He has seen to his one for you this while.'
+          : `${props.fee} gold, once while he is here.`}
+      </Meta>
     </DialogSection>
   );
 }
@@ -204,6 +226,8 @@ export interface ChannelerCounterProps {
   scales: number;
   fee: Items;
   busy: boolean;
+  /** Whether she has already called one up for this player this window */
+  done: boolean;
   onChannel: (catchId: string) => void;
 }
 
@@ -224,36 +248,45 @@ export function ChannelerCounter(props: ChannelerCounterProps): JSX.Element {
     <DialogSection class={CENTRED}>
       <Price fee={props.fee} scales={props.scales} />
 
-      {/* One press, one pokemon widened. What comes out is the line's
-          rather than the player's, so there is nothing to choose after
-          picking who — and a pokemon whose line has nothing left is
-          filtered out rather than shown and refused */}
-      <CatchPicker
-        inline
-        disabled={props.busy || props.scales < 1}
-        options={props.options}
-        value={null}
-        verb="Call up"
-        empty="You have nothing she can reach."
-        filter={(option) =>
-          !isEgg(option.caught) && !option.fighting && hasSomethingLeft(option.caught)
-        }
-        note={(option) =>
-          `${option.caught.abilities.length} → ${option.caught.abilities.length + 1}`
-        }
-        onPick={(id) => {
-          if (id != null) {
-            props.onChannel(id);
+      {/* The box goes once she has called one up. She has nothing left
+          to offer this while, and a box standing under a spent price is
+          a press the server would only refuse */}
+      <Show when={!props.done}>
+        {/* One press, one pokemon widened. What comes out is the line's
+            rather than the player's, so there is nothing to choose
+            after picking who — and a pokemon whose line has nothing
+            left is filtered out rather than shown and refused */}
+        <CatchPicker
+          inline
+          disabled={props.busy || props.scales < 1}
+          options={props.options}
+          value={null}
+          verb="Call up"
+          empty="You have nothing she can reach."
+          filter={(option) =>
+            !isEgg(option.caught) && !option.fighting && hasSomethingLeft(option.caught)
           }
-        }}
-      />
-      {/* The squares go grey without a scale, and this is the reason
-          why: the badge above says the bag is empty, not what that
-          stops */}
-      <Status message={props.scales < 1 ? 'She wants a Heart Scale, and you have none.' : null} />
+          note={(option) =>
+            `${option.caught.abilities.length} → ${option.caught.abilities.length + 1}`
+          }
+          onPick={(id) => {
+            if (id != null) {
+              props.onChannel(id);
+            }
+          }}
+        />
+        {/* The squares go grey without a scale, and this is the reason
+            why: the badge above says the bag is empty, not what that
+            stops */}
+        <Status message={props.scales < 1 ? 'She wants a Heart Scale, and you have none.' : null} />
+      </Show>
       {/* What she charges, said the way the groomer says his fee. The
           badge is what is in the bag, which is a different question */}
-      <Meta class="block">One Heart Scale, once while she is here.</Meta>
+      <Meta class="block">
+        {props.done
+          ? 'She has called up her one for you this while.'
+          : 'One Heart Scale, once while she is here.'}
+      </Meta>
     </DialogSection>
   );
 }

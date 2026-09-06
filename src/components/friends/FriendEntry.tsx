@@ -18,6 +18,13 @@ export interface FriendEntryProps extends ParentProps {
   since?: number;
   /** What that date means: "Friends since", "Asked" */
   when?: string;
+  /**
+   * Open their profile. The face and the name become the way in, so a
+   * row that had a View button beside three others is a row with one
+   * fewer button and a plate that does what pressing a trainer looks
+   * like it should
+   */
+  onOpen?: () => void;
 }
 
 export default function FriendEntry(props: FriendEntryProps): JSX.Element {
@@ -35,8 +42,31 @@ export default function FriendEntry(props: FriendEntryProps): JSX.Element {
 
   return (
     <ListRow>
-      <PlayerFace sprite={profile()?.sprite} />
-      <span class="grow truncate font-semibold">{called()}</span>
+      <Show
+        when={props.onOpen}
+        fallback={
+          <>
+            <PlayerFace sprite={profile()?.sprite} />
+            <span class="grow truncate font-semibold">{called()}</span>
+          </>
+        }
+      >
+        {(open) => (
+          <button
+            type="button"
+            class="flex min-w-0 grow cursor-pointer items-center gap-2 rounded-lg border-0
+              bg-transparent p-0 text-left shadow-none transition-colors hover:text-tide-dark
+              active:translate-y-0"
+            aria-label={`${called()}, open their profile`}
+            onClick={() => {
+              open()();
+            }}
+          >
+            <PlayerFace sprite={profile()?.sprite} />
+            <span class="min-w-0 grow truncate font-semibold">{called()}</span>
+          </button>
+        )}
+      </Show>
       <Show when={props.when != null && (props.since ?? 0) > 0}>
         <Meta>
           {props.when} {new Date(props.since ?? 0).toLocaleDateString()}

@@ -44,6 +44,11 @@ export default function NpcCounter(
     visited: Resource<boolean>;
     /** Whether the daycare lady has already warmed an egg this window */
     warmed: Resource<boolean>;
+    /**
+     * Whether the one standing here has already done their one thing
+     * for this player this window
+     */
+    spent: Resource<boolean>;
     onServed: () => void;
     onTraded: () => void;
   },
@@ -92,6 +97,7 @@ export default function NpcCounter(
     bag: props.bag,
     visited: props.visited,
     warmed: props.warmed,
+    spent: props.spent,
     onServed: props.onServed,
     onTraded: props.onTraded,
     onChange: props.onChange,

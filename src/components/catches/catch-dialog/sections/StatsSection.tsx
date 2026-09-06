@@ -12,7 +12,7 @@ import {
 
 import type { CaughtPokemon } from '../../../../auth/caught';
 
-import { assignableEffort, unusedEffort } from '../../../../auth/effort';
+import { unusedEffort } from '../../../../auth/effort';
 
 import { STATUS_NAMES } from '../../../../auth/health';
 
@@ -52,7 +52,7 @@ const enum StatView {
  */
 export interface StatsSectionProps {
   caught: CaughtPokemon;
-  /** Whether the reader owns it, which is what the +4 buttons need */
+  /** Whether the reader owns it, which is what the effort boxes need */
   owned: boolean;
   /** Whether the record is being held still, by a lock or by a fight */
   frozen: boolean;
@@ -98,15 +98,32 @@ export default function StatsSection(props: StatsSectionProps): JSX.Element {
   };
 
   /**
-   * How much more this stat can take right now: what the stat has room
-   * for and what the budget has left, both counting what is already
-   * laid out
+   * The lowest this stat may be typed down to: what is already saved
+   * into it. Effort only comes back off a stat by feeding the pokemon
+   * a bitter berry, which costs an item and earns the pokemon's
+   * regard, so the box will not undo that for free
    */
-  const room = (stat: Stats): number =>
-    Math.min(left(), assignableEffort(props.caught, stat) - (pending()[stat] ?? 0));
+  const floorOf = (stat: Stats): number => props.caught.effortValues[stat];
 
-  const add = (stat: Stats): void => {
-    setPending((laid) => ({ ...laid, [stat]: (laid[stat] ?? 0) + EFFORT_STEP }));
+  /**
+   * The highest it may be typed up to: the stat's own ceiling, or what
+   * the budget stretches to once the other five have taken their share
+   */
+  const ceilingOf = (stat: Stats): number =>
+    Math.min(MAX_EFFORT_PER_STAT, floorOf(stat) + left() + (pending()[stat] ?? 0));
+
+  /**
+   * Lay this stat out at a typed total, held inside what it may be.
+   * The bottom is `0` while the box is being typed in and the saved
+   * value once it is left: a box that snapped up to what is already
+   * saved on every keystroke could not be typed a smaller number
+   * before a larger one
+   */
+  const aim = (stat: Stats, wanted: number, settled: boolean): void => {
+    const bottom = settled ? floorOf(stat) : 0;
+    const held = Math.min(ceilingOf(stat), Math.max(bottom, Math.trunc(wanted)));
+
+    setPending((laid) => ({ ...laid, [stat]: held - floorOf(stat) }));
   };
 
   return (
@@ -245,32 +262,42 @@ export default function StatsSection(props: StatsSectionProps): JSX.Element {
                       }}
                     />
                   </div>
-                  <Meta class="w-12 text-right tabular-nums">
-                    {props.caught.effortValues[stat]}
-                    {/* What is laid out but not saved, kept apart from
-    what the record says: the bar above
-    already shows the two added up */}
-                    <Show when={(pending()[stat] ?? 0) > 0}>
-                      <span class="text-leaf-dark"> +{pending()[stat]}</span>
-                    </Show>
-                  </Meta>
-                  {/* Only up. Effort is taken back off a
-    stat by feeding the pokemon a bitter
-    berry — a Pomeg for health, a Kelpsy
-    for attack — which costs an item and
-    earns the pokemon's regard. A button
-    here undid all of that for free, and
-    made six berries pointless */}
-                  <Show when={props.owned}>
-                    <Button
-                      tone="primary"
-                      disabled={props.frozen || room(stat) < EFFORT_STEP}
-                      onClick={() => {
-                        add(stat);
+                  {/* Typed rather than stepped: two hundred and
+                      fifty-two points is sixty-three presses of a
+                      button, and a player filling one stat out knows
+                      the number they are after before they start. The
+                      arrows still move in fours, which is what one
+                      point of the stat costs */}
+                  <Show
+                    when={props.owned}
+                    fallback={
+                      <Meta class="w-12 text-right tabular-nums">
+                        {props.caught.effortValues[stat]}
+                      </Meta>
+                    }
+                  >
+                    <input
+                      type="number"
+                      class="w-16 text-center tabular-nums"
+                      min={floorOf(stat)}
+                      max={ceilingOf(stat)}
+                      step={EFFORT_STEP}
+                      value={laidOut()[stat]}
+                      disabled={props.frozen}
+                      aria-label={`${STAT_LABELS[stat]} effort, ${floorOf(stat)} saved`}
+                      onInput={(event) => {
+                        aim(stat, Number(event.currentTarget.value), false);
                       }}
-                    >
-                      +{EFFORT_STEP}
-                    </Button>
+                      onChange={(event) => {
+                        aim(stat, Number(event.currentTarget.value), true);
+                      }}
+                    />
+                    {/* What is laid out but not saved, kept apart from
+                        the box: the box says where the stat is headed
+                        and this says how much of that is unpaid */}
+                    <Meta class="w-10 text-left tabular-nums text-leaf-dark">
+                      <Show when={(pending()[stat] ?? 0) > 0}>+{pending()[stat]}</Show>
+                    </Meta>
                   </Show>
                 </ListRow>
               )}
@@ -301,7 +328,13 @@ export default function StatsSection(props: StatsSectionProps): JSX.Element {
                 tone="primary"
                 disabled={props.frozen}
                 onClick={() => {
-                  const laid = pending();
+                  // Only what is actually going in: a box left
+                  // mid-typing can be standing below what is saved,
+                  // and the server refuses a spread that takes any
+                  // back out
+                  const laid = Object.fromEntries(
+                    Object.entries(pending()).filter(([, step]) => step > 0),
+                  );
 
                   setPending({});
                   props.onTrain(laid);

@@ -102,14 +102,14 @@ function Roster(props: {
       <List>
         <For each={roster.shown()}>
           {(uid) => (
-            <FriendEntry uid={uid} since={props.made.get(uid)} when="Friends since">
-              <Button
-                onClick={() => {
-                  game.setVisiting(uid);
-                }}
-              >
-                View
-              </Button>
+            <FriendEntry
+              uid={uid}
+              since={props.made.get(uid)}
+              when="Friends since"
+              onOpen={() => {
+                game.setVisiting(uid);
+              }}
+            >
               <Button
                 onClick={() => {
                   game.setTrading(uid);

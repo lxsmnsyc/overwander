@@ -85,6 +85,9 @@ export default async function useBottleCap(
     }
 
     await writeStackIn(transaction, ITEM_STACKS, uid, item, stock - 1);
+
+    const whole = getMaxHealth({ ...record, ivs: polished });
+
     // Only the per-stat values move. `individualValue` is the roll the
     // encounter was staged from and stays the record of it — the
     // stored stats are what every reader uses, which is what lets a
@@ -96,11 +99,8 @@ export default async function useBottleCap(
       auctionable: isAuctionableCatch({ ...record, ivs: polished }),
       // A polished health value is a bigger pool, and the share of it
       // the pokemon was carrying is what it keeps
-      health: rescaleHealth(
-        record.health,
-        getMaxHealth(record),
-        getMaxHealth({ ...record, ivs: polished }),
-      ),
+      health: rescaleHealth(record.health, getMaxHealth(record), whole),
+      maxHealth: whole,
     });
     return polished;
   });

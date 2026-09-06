@@ -132,6 +132,8 @@ export default async function evolveCatch(
 
     sparkles = record.shiny;
 
+    const whole = getMaxHealth({ ...record, species: into });
+
     await updateCaughtIn(transaction, catchId, {
       species: into,
       // Spent by the evolution it opened, and cleared by any other
@@ -142,11 +144,8 @@ export default async function evolveCatch(
       // nothing today. It is written anyway because the day a line
       // does, a silent wrong answer here would be very hard to see
       auctionable: isAuctionableCatch({ ...record, species: into }),
-      health: rescaleHealth(
-        record.health,
-        getMaxHealth(record),
-        getMaxHealth({ ...record, species: into }),
-      ),
+      health: rescaleHealth(record.health, getMaxHealth(record), whole),
+      maxHealth: whole,
     });
     return into;
   });

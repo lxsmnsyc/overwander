@@ -2,8 +2,8 @@ import { type JSX, createSignal } from 'solid-js';
 import { channelAbility } from '../../../../auth/npcs';
 import { getAbilityData } from '../../../../data/abilities';
 import { CHANNELER_FEE } from '../../../../data/overworld/npc';
-import { DialogActions, Status, useToast } from '../../../styled';
-import { type CounterProps, optionsOf, refusal, scalesIn } from '../shared';
+import { DialogActions, useToast } from '../../../styled';
+import { type CounterProps, optionsOf, refusal, scalesIn, useSaying } from '../shared';
 import { ChannelerCounter } from './care';
 
 /**
@@ -15,8 +15,8 @@ import { ChannelerCounter } from './care';
  * is the one thing the picker behind it cannot show
  */
 export default function Channeler(props: CounterProps): JSX.Element {
+  const said = useSaying();
   const toast = useToast();
-  const [status, setStatus] = createSignal<string | null>(null);
   const [busy, setBusy] = createSignal(false);
 
   const channel = (id: string): void => {
@@ -26,15 +26,15 @@ export default function Channeler(props: CounterProps): JSX.Element {
     if (snapshot == null || standing == null) {
       return;
     }
-    setStatus(null);
     setBusy(true);
     channelAbility(snapshot, standing[0], id)
       .then((drawn) => {
         setBusy(false);
 
         if (drawn == null) {
-          setStatus(
+          said(
             'Nothing answered. No scale, a pokemon she cannot reach, or she has seen you this while.',
+            'ember',
           );
           return;
         }
@@ -49,20 +49,20 @@ export default function Channeler(props: CounterProps): JSX.Element {
       })
       .catch((caught: unknown) => {
         setBusy(false);
-        setStatus(refusal(caught));
+        said(refusal(caught), 'ember');
       });
   };
 
   return (
     <>
       <ChannelerCounter
+        done={props.spent.latest === true}
         options={optionsOf(props)}
         scales={scalesIn(props)}
         fee={CHANNELER_FEE}
         busy={busy()}
         onChannel={channel}
       />
-      <Status message={status()} />
       <DialogActions>{props.walkOn()}</DialogActions>
     </>
   );

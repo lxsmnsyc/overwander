@@ -115,12 +115,13 @@ export async function trainEfforts(
       // Effort in health is a bigger pool, and the share of it the
       // pokemon was carrying is what it keeps
       health: rescaleHealth(record.health, getMaxHealth(record), getMaxHealth(trained)),
+      maxHealth: getMaxHealth(trained),
     });
     return asResult(trained);
   });
 
-  // Only putting points in counts: taking them back out is tidying,
-  // not training
+  // Every point of a spread goes in, since a spread cannot take any
+  // back out
   const added = Object.values(spread).reduce((total, step) => total + Math.max(0, step), 0);
 
   if (result != null && added > 0) {
@@ -210,6 +211,7 @@ export async function useEffortItem(
       effortValues,
       effortBonus: trained.effortBonus,
       health: rescaleHealth(record.health, getMaxHealth(record), getMaxHealth(trained)),
+      maxHealth: getMaxHealth(trained),
     });
     return asResult(trained);
   });
@@ -367,6 +369,7 @@ export async function feedEffortBerry(
       // A smaller pool takes the same share of health with it, so a
       // pokemon is never left holding more than it can
       health: rescaleHealth(record.health, getMaxHealth(record), getMaxHealth(trained)),
+      maxHealth: getMaxHealth(trained),
     });
     return asResult(trained);
   });

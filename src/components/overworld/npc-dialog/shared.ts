@@ -12,6 +12,7 @@ import type { InventoryEntry } from '../../../auth/inventory';
 import type { CatchOption } from '../../catches/catch-picker';
 import type { Moves } from '../../../data/ids/moves';
 import type { LearnResult } from '../../../auth/learn-refusal';
+import { type ToastTone, useToast } from '../../styled';
 
 /**
  * What the person standing there actually says.
@@ -110,6 +111,12 @@ export interface CounterProps {
   visited: Resource<boolean>;
   /** Whether the daycare lady has already warmed an egg this window */
   warmed: Resource<boolean>;
+  /**
+   * Whether the one standing here has already done their one thing for
+   * this player this window. Only the counters in `ONCE_A_WINDOW` are
+   * asked, so the rest read it as false
+   */
+  spent: Resource<boolean>;
   onServed: () => void;
   onTraded: () => void;
   onChange?: () => void;
@@ -152,6 +159,25 @@ export function scalesIn(props: CounterProps): number {
 /** What went wrong, said the way every counter says it */
 export function refusal(caught: unknown): string {
   return caught instanceof Error ? caught.message : String(caught);
+}
+
+/**
+ * How a counter reports what just happened: in a toast, never in a
+ * line at the foot of its own panel.
+ *
+ * A player who has pressed a counter's button is looking at the button
+ * and at the pokemon or item it acted on, not at the bottom of the
+ * dialog, and a panel that is about to close takes its own status line
+ * with it. A toast outlives the dialog and stacks when several things
+ * landed. What stays on the panel is what is read *before* pressing:
+ * the fee, what is in the bag, why a square is grey
+ */
+export function useSaying(): (message: string, tone?: ToastTone) => void {
+  const toast = useToast();
+
+  return (message, tone = 'leaf') => {
+    toast.push({ message, tone });
+  };
 }
 
 /**

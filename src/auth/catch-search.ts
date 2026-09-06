@@ -260,11 +260,12 @@ const MARKS = new Map<string, Mark>(
       ],
     },
     // What a fight left it as, beside being down: `is:hurt` is missing
-    // health and `is:sick` is carrying something. Only the second is a
-    // column, since a maximum is derived rather than stored
+    // health and `is:sick` is carrying something. Both are columns,
+    // the first because the maximum is stored beside the health for
+    // exactly this
     hurt: {
       of: (caught) => caught.health < getMaxHealth(caught),
-      constrain: () => [],
+      constrain: (wanted) => flag('hurt', wanted),
     },
     sick: {
       of: (caught) => caught.statuses !== 0,
@@ -908,11 +909,24 @@ function pushSpan(column: string, value: string): CatchConstraint[] {
   return pushed;
 }
 
+/**
+ * A typed word as a pattern that looks for it.
+ *
+ * Only the backslash is escaped. The wildcards are left alone on
+ * purpose: they can only widen what the store sends back, and the
+ * runtime refuses the extras anyway, where a lone trailing backslash
+ * is an unfinished escape the store refuses outright, taking the
+ * whole box with it
+ */
+function pattern(word: string): string {
+  return `%${word.replace(/\\/g, '\\\\')}%`;
+}
+
 /** A substring match on one of the row's own columns */
 function likeRow(column: string, value: string): CatchConstraint[] {
   const words = alternatives(value);
 
-  return words.length === 1 ? [{ on: 'row', column, op: 'ilike', value: `%${words[0]}%` }] : [];
+  return words.length === 1 ? [{ on: 'row', column, op: 'ilike', value: pattern(words[0]) }] : [];
 }
 
 /** The same, over a child table joined under an alias of its own */
@@ -920,7 +934,7 @@ function likeChild(alias: string, table: string, column: string, value: string):
   const words = alternatives(value);
 
   return words.length === 1
-    ? [{ on: 'child', alias, table, column, op: 'ilike', value: `%${words[0]}%` }]
+    ? [{ on: 'child', alias, table, column, op: 'ilike', value: pattern(words[0]) }]
     : [];
 }
 

@@ -1,11 +1,11 @@
 import { For, Index, type JSX, Show, createEffect, createSignal } from 'solid-js';
 import type { Items } from '../../data/ids/items';
-import { describeItem } from '../details';
+import { describeItem, detailItem } from '../details';
 import { ArrowLeftIcon, ArrowRightIcon } from '../icons';
 import ItemCard from './ItemCard';
 import ItemSprite from './ItemSprite';
 import matchesItem, { ITEM_VOCABULARY, orderItems } from '../../data/items/search';
-import { Button, HoverCard, Meta, Note, Row, Search } from '../styled';
+import { Button, HoverCard, Meta, Note, Row, Search, TooltipHost } from '../styled';
 
 /**
  * The bag as a tray of pictures rather than a column of names.
@@ -130,6 +130,15 @@ export interface ItemGridProps {
    * rather than opening a window the card would stand on top of
    */
   keepCards?: boolean;
+  /**
+   * Whether a square says what it is in a tooltip rather than a hover
+   * card. For a tray the player is reading between presses rather than
+   * acting from: a card is a window that covers the thing under it,
+   * and a safari's bag is opened to check what is in hand. A square's
+   * `footer` has nowhere to go on this path, so a caller with buttons
+   * of its own wants the card
+   */
+  tips?: boolean;
   onPress?: (item: Items) => void;
 }
 
@@ -193,6 +202,63 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
     props.onPress?.(cell.item);
   };
 
+  /**
+   * One square of the tray, drawn the same whether a hover card or a
+   * tooltip is standing over it
+   */
+  const square = (cell: ItemCell): JSX.Element => (
+    <button
+      type="button"
+      disabled={props.disabled === true || cell.blocked != null}
+      aria-label={
+        cell.said ??
+        `${props.verb == null ? '' : `${props.verb} `}${describeItem(cell.item)}${
+          cell.amount == null ? '' : `, ${cell.amount} carried`
+        }${cell.blocked == null ? '' : ` — ${cell.blocked}`}`
+      }
+      aria-pressed={cell.selected === true}
+      onClick={() => {
+        if (props.cardOnly !== true) {
+          press(cell);
+        }
+      }}
+      class={`relative flex aspect-square w-full items-center justify-center rounded-lg border-2
+        p-1 transition-colors disabled:cursor-not-allowed ${
+          cell.selected === true
+            ? 'border-leaf bg-leaf-soft'
+            : 'border-line bg-paper hover:bg-line-soft'
+        } ${handOf(cell)}`}
+    >
+      {/* Laid over the square rather than inside it: the picture is a
+          fixed number of pixels and the square is a sixth of whatever
+          the tray was given, so an icon in the flow would stretch a
+          narrow square taller than it is wide */}
+      <span class="pointer-events-none absolute inset-1.5 flex items-center justify-center">
+        <ItemSprite item={cell.item} fill label="" />
+      </span>
+      {/* How many, in the corner the games put it in */}
+      <Show when={cell.amount != null}>
+        <span
+          class="pointer-events-none absolute right-0.5 bottom-0.5 rounded-full border border-line
+            bg-paper px-1 text-[10px] leading-tight font-bold text-ink"
+        >
+          {cell.amount}
+        </span>
+      </Show>
+      {/* And the asking price, where there is one */}
+      <Show when={cell.note} keyed>
+        {(note) => (
+          <span
+            class="pointer-events-none absolute top-0.5 left-0.5 max-w-full truncate rounded-full
+              border border-gold bg-gold-soft px-1 text-[10px] leading-tight font-bold text-gold"
+          >
+            {note}
+          </span>
+        )}
+      </Show>
+    </button>
+  );
+
   return (
     <div class="mx-auto flex w-full max-w-lg flex-col gap-2">
       {/* What narrows the tray stands above it, and is drawn whatever
@@ -229,79 +295,33 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
             DOM stays put and only the numbers on it change */}
         <Index each={shown()}>
           {(cell) => (
-            // A window rather than a label, because what a square is
-            // worth doing is a button rather than a sentence: use it,
-            // buy it, sell it
-            <HoverCard
-              class="block w-full"
-              title="Info"
-              stayOnPress={props.keepCards}
-              // What a square is for is the square: pressing the
-              // picture is the whole of it, and the card says what the
-              // thing is. Only a caller with buttons of its own — bid,
-              // collect, take it back — puts anything in the foot
-              footer={<Show when={cell().footer}>{(foot) => foot()()}</Show>}
-              trigger={
-                <button
-                  type="button"
-                  disabled={props.disabled === true || cell().blocked != null}
-                  aria-label={
-                    cell().said ??
-                    `${props.verb == null ? '' : `${props.verb} `}${describeItem(cell().item)}${
-                      cell().amount == null ? '' : `, ${cell().amount} carried`
-                    }${cell().blocked == null ? '' : ` — ${cell().blocked}`}`
-                  }
-                  aria-pressed={cell().selected === true}
-                  onClick={() => {
-                    if (props.cardOnly !== true) {
-                      press(cell());
-                    }
-                  }}
-                  class={`relative flex aspect-square w-full items-center justify-center rounded-lg
-                    border-2 p-1 transition-colors disabled:cursor-not-allowed ${
-                      cell().selected === true
-                        ? 'border-leaf bg-leaf-soft'
-                        : 'border-line bg-paper hover:bg-line-soft'
-                    } ${handOf(cell())}`}
-                >
-                  {/* Laid over the square rather than inside it: the
-                      picture is a fixed number of pixels and the square
-                      is a sixth of whatever the tray was given, so an
-                      icon in the flow would stretch a narrow square
-                      taller than it is wide */}
-                  <span
-                    class="pointer-events-none absolute inset-1.5 flex items-center
-                      justify-center"
-                  >
-                    <ItemSprite item={cell().item} fill label="" />
-                  </span>
-                  {/* How many, in the corner the games put it in */}
-                  <Show when={cell().amount != null}>
-                    <span
-                      class="pointer-events-none absolute right-0.5 bottom-0.5 rounded-full border
-                        border-line bg-paper px-1 text-[10px] leading-tight font-bold text-ink"
-                    >
-                      {cell().amount}
-                    </span>
-                  </Show>
-                  {/* And the asking price, where there is one */}
-                  <Show when={cell().note} keyed>
-                    {(note) => (
-                      <span
-                        class="pointer-events-none absolute top-0.5 left-0.5 max-w-full truncate
-                          rounded-full border border-gold bg-gold-soft px-1 text-[10px]
-                          leading-tight font-bold text-gold"
-                      >
-                        {note}
-                      </span>
-                    )}
-                  </Show>
-                </button>
+            <Show
+              when={props.tips !== true}
+              fallback={
+                <TooltipHost class="block w-full" {...detailItem(cell().item)} extra={cell().card}>
+                  {square(cell())}
+                </TooltipHost>
               }
             >
-              <ItemCard item={cell().item} carried={cell().carried ?? cell().amount} />
-              {cell().card?.()}
-            </HoverCard>
+              {/* A window rather than a label, because what a square is
+                  worth doing is a button rather than a sentence: use
+                  it, buy it, sell it */}
+              <HoverCard
+                class="block w-full"
+                title="Info"
+                stayOnPress={props.keepCards}
+                // What a square is for is the square: pressing the
+                // picture is the whole of it, and the card says what
+                // the thing is. Only a caller with buttons of its own —
+                // bid, collect, take it back — puts anything in the
+                // foot
+                footer={<Show when={cell().footer}>{(foot) => foot()()}</Show>}
+                trigger={square(cell())}
+              >
+                <ItemCard item={cell().item} carried={cell().carried ?? cell().amount} />
+                {cell().card?.()}
+              </HoverCard>
+            </Show>
           )}
         </Index>
         {/* The rest of the tray, drawn empty rather than left out: a

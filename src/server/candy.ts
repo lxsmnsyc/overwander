@@ -190,10 +190,13 @@ async function feed(
     }
 
     const level = record.level + paid;
+    const whole = getMaxHealth({ ...record, level });
+
     await updateCaughtIn(transaction, catchId, {
       level,
       // A level restores what the last fight took, status and all
-      health: getMaxHealth({ ...record, level }),
+      health: whole,
+      maxHealth: whole,
       statuses: 0,
       // Growing up together is the surest way a pokemon comes to
       // think well of somebody — and the level pays for five more

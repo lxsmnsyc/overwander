@@ -1,16 +1,15 @@
-import { type JSX, createSignal } from 'solid-js';
+import type { JSX } from 'solid-js';
 import { boostEgg } from '../../../../auth/npcs';
 import { Species } from '../../../../data/ids/species';
 import { DAYCARE_FEE } from '../../../../data/overworld/npc';
 import AnimatedSprite from '../../../sprites/AnimatedSprite';
-import { DialogActions, Status, useToast } from '../../../styled';
+import { DialogActions, useToast } from '../../../styled';
 import { type CounterProps, optionsOf, refusal } from '../shared';
 import { DaycareCounter } from './care';
 
 /** The daycare lady: one egg, one fee, and it hatches that much sooner */
 export default function Daycare(props: CounterProps): JSX.Element {
   const toast = useToast();
-  const [status, setStatus] = createSignal<string | null>(null);
 
   const pushEgg = (id: string): void => {
     const snapshot = props.snapshot;
@@ -19,7 +18,6 @@ export default function Daycare(props: CounterProps): JSX.Element {
     if (snapshot == null || standing == null) {
       return;
     }
-    setStatus(null);
     boostEgg(snapshot, standing[0], id)
       .then((steps) => {
         if (steps == null) {
@@ -57,7 +55,6 @@ export default function Daycare(props: CounterProps): JSX.Element {
         fee={DAYCARE_FEE}
         onWarm={pushEgg}
       />
-      <Status message={status()} />
       <DialogActions>{props.walkOn()}</DialogActions>
     </>
   );

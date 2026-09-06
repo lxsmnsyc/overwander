@@ -386,13 +386,18 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
             title={TITLES[GameDialog.Auctions]}
             description={DESCRIPTIONS[GameDialog.Auctions]}
           >
-            <AuctionTab
-              player={props.user.uid}
-              adding={selling()}
-              onAdding={(open) => {
-                setSelling(open);
-              }}
-            />
+            {/* The board draws pokemon as squares and searches them
+                by move and by held item, which are names out of the
+                registries loaded behind the first frame */}
+            <BattleData>
+              <AuctionTab
+                player={props.user.uid}
+                adding={selling()}
+                onAdding={(open) => {
+                  setSelling(open);
+                }}
+              />
+            </BattleData>
             <DialogActions>
               {/* The one thing the board is for that is not looking
                   at it. Selling takes the whole panel rather than a

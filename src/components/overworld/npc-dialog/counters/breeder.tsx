@@ -3,8 +3,8 @@ import { breed } from '../../../../auth/npcs';
 import { BREEDING_FEE } from '../../../../data/overworld/npc';
 import { canBreed } from '../../../../overworld/breeding';
 import type { CatchOption } from '../../../catches/catch-picker';
-import { Badge, Button, DialogActions, Status, useToast } from '../../../styled';
-import { type CounterProps, asParent, optionsOf, refusal } from '../shared';
+import { Badge, Button, DialogActions, useToast } from '../../../styled';
+import { type CounterProps, asParent, optionsOf, refusal, useSaying } from '../shared';
 import { BreederCounter } from './care';
 
 /**
@@ -12,8 +12,8 @@ import { BreederCounter } from './care';
  * have anything to do with each other
  */
 export default function Breeder(props: CounterProps): JSX.Element {
+  const said = useSaying();
   const toast = useToast();
-  const [status, setStatus] = createSignal<string | null>(null);
   const [chosen, setChosen] = createSignal<string[]>([]);
   const [busy, setBusy] = createSignal(false);
 
@@ -45,7 +45,6 @@ export default function Breeder(props: CounterProps): JSX.Element {
     if (snapshot == null || standing == null || chosenPair == null) {
       return;
     }
-    setStatus(null);
     setBusy(true);
     breed(snapshot, standing[0], [chosenPair[0].id, chosenPair[1].id])
       .then((egg) => {
@@ -72,22 +71,21 @@ export default function Breeder(props: CounterProps): JSX.Element {
       })
       .catch((caught: unknown) => {
         setBusy(false);
-        setStatus(refusal(caught));
+        said(refusal(caught), 'ember');
       });
   };
 
   return (
     <>
       <BreederCounter
+        done={props.spent.latest === true}
         options={optionsOf(props)}
         chosen={chosen()}
         compatible={compatible()}
         onPick={(picked) => {
-          setStatus(null);
           setChosen(picked);
         }}
       />
-      <Status message={status()} />
       <DialogActions>
         <Button tone="primary" disabled={busy() || !compatible()} onClick={submitPair}>
           Breed <Badge tone="gold">{BREEDING_FEE} gold</Badge>

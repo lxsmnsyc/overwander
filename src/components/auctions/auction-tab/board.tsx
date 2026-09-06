@@ -168,24 +168,25 @@ export function AuctionBoard(
    */
   const [query, setQuery] = createSignal('');
 
-  const sellingReason = (option: CatchOption): string | null => {
+  /**
+   * Whether the block would take it at all.
+   *
+   * Everything that would be refused is left out of the box rather
+   * than drawn and greyed: the sell card is a shelf of what can go up,
+   * and a square that can never be pressed is only a question about
+   * why. The reasons themselves are said where the mark was put on —
+   * the sheet says a favorite cannot be sold
+   */
+  const mayGoUp = (option: CatchOption): boolean =>
     // A lot leaves its owner's hands as it is listed, so the last one
     // may not be listed at all — the same rule that stops it being
     // released
-    if (onlyOne() === true) {
-      return 'your only pokemon';
-    }
-    if (option.fighting) {
-      return 'in a raid';
-    }
-    if (isEgg(option.caught)) {
-      return 'still an egg';
-    }
-    if (isFavorite(option.caught)) {
-      return 'a favorite';
-    }
-    return buddy() === option.id ? 'your buddy' : null;
-  };
+    onlyOne() !== true &&
+    !option.fighting &&
+    !isEgg(option.caught) &&
+    !isFavorite(option.caught) &&
+    buddy() !== option.id &&
+    isAuctionableCatch(option.caught);
 
   /**
    * What the player has picked to put up, if anything. Picking is the
@@ -594,8 +595,7 @@ export function AuctionBoard(
               value={null}
               verb="Sell"
               empty="Nothing of yours is rare enough for the block."
-              filter={(option) => isAuctionableCatch(option.caught)}
-              reason={sellingReason}
+              filter={mayGoUp}
               onPick={(picked) => {
                 if (picked != null) {
                   setOffered({ lot: AuctionLot.Catch, catchId: picked });

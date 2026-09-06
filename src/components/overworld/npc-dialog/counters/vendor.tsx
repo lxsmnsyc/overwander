@@ -6,8 +6,8 @@ import { VENDOR_TRADE_LIMIT } from '../../../../data/overworld/vendor';
 import { describeItem } from '../../../details';
 import InventoryPicker, { type ItemAmount } from '../../../items/InventoryPicker';
 import ItemSprite from '../../../items/ItemSprite';
-import { Badge, Button, Detail, DialogActions, Meta, Status, useToast } from '../../../styled';
-import { type CounterProps, priceOf, refusal } from '../shared';
+import { Badge, Button, Detail, DialogActions, Meta, useToast } from '../../../styled';
+import { type CounterProps, priceOf, refusal, useSaying } from '../shared';
 import { VendorCounter } from './goods';
 
 /**
@@ -18,8 +18,8 @@ import { VendorCounter } from './goods';
  * off the screen
  */
 export default function Vendor(props: CounterProps): JSX.Element {
+  const said = useSaying();
   const toast = useToast();
-  const [status, setStatus] = createSignal<string | null>(null);
   const [busy, setBusy] = createSignal(false);
   // Which side of the counter is being looked at, or null while the
   // player has only been offered the two words
@@ -73,7 +73,6 @@ export default function Vendor(props: CounterProps): JSX.Element {
 
     const picks: ItemAmount[] = [[item, amount]];
 
-    setStatus(null);
     setBusy(true);
     (buyingIt
       ? buyFromVendor(snapshot, standing[0], picks, standing[1])
@@ -100,14 +99,13 @@ export default function Vendor(props: CounterProps): JSX.Element {
       })
       .catch((caught: unknown) => {
         setBusy(false);
-        setStatus(refusal(caught));
+        said(refusal(caught), 'ember');
       });
   };
 
   return (
     <>
       <VendorCounter gold={props.gold.latest ?? 0} />
-      <Status message={status()} />
       {/* Both windows are opened from here and what is picked in one
           is agreed to in another, so the bar itself only ever offers
           the two words */}
@@ -116,7 +114,6 @@ export default function Vendor(props: CounterProps): JSX.Element {
           tone="primary"
           disabled={busy()}
           onClick={() => {
-            setStatus(null);
             setCounter('buy');
           }}
         >
@@ -125,7 +122,6 @@ export default function Vendor(props: CounterProps): JSX.Element {
         <Button
           disabled={busy()}
           onClick={() => {
-            setStatus(null);
             setCounter('sell');
           }}
         >

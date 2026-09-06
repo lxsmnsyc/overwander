@@ -20,7 +20,7 @@ import { isShadow, isShiny } from '../../auth/caught-record';
 import { getSpeciesData } from '../../data/species';
 import type SafariSession from '../../overworld/safari';
 import { FEED_CATCH_BONUS, SafariState, ThrowResult, describeFlight } from '../../overworld/safari';
-import { describeItem } from '../details';
+import { describeAbility, describeItem } from '../details';
 import InventoryPicker from '../items/InventoryPicker';
 import ItemSprite from '../items/ItemSprite';
 import AnimatedSprite from '../sprites/AnimatedSprite';
@@ -113,6 +113,11 @@ export interface SafariDialogProps {
    * the pokemon itself
    */
   revealsFlight?: boolean;
+  /**
+   * Whether what it can do is read before it is caught. A Trace buddy
+   * is what reads it; without one the ability is found by catching it
+   */
+  revealsAbility?: boolean;
   onClose: () => void;
   /**
    * Fired with the new record the moment a throw lands.
@@ -550,6 +555,12 @@ function SafariBody(
                         about the meeting before the first ball */}
                     <Show when={props.revealsFlight === true}>
                       <Badge tone="ember">{describeFlight(active().getFleeChance())}</Badge>
+                    </Show>
+                    {/* And what a Trace buddy reads off it: the one
+                        thing that tells two of a species apart before
+                        either is in a ball */}
+                    <Show when={props.revealsAbility === true}>
+                      <Badge tone="leaf">{describeAbility(active().encounter.ability)}</Badge>
                     </Show>
                   </span>
                   {/* The ball stands where the pokemon does, and the

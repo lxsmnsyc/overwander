@@ -7,6 +7,7 @@ import type Overworld from '../core';
 import { OverworldEvents } from '../events';
 import {
   createBuddyAbility,
+  createKinshipAbility,
   createLureAbility,
   createPullAbility,
   createTrapAbility,
@@ -70,7 +71,7 @@ const setupCuteCharm = createBuddyAbility(Abilities.CuteCharm, (overworld) => {
 });
 
 /**
- * What a Flame Body buddy takes off the walk an egg needs. Half is
+ * What a warm buddy takes off the walk an egg needs. Half is
  * the mainline's own figure, and it is applied to the requirement
  * rather than to the steps, so it is settled once instead of being
  * asked again every few paces
@@ -78,20 +79,22 @@ const setupCuteCharm = createBuddyAbility(Abilities.CuteCharm, (overworld) => {
 export const FLAME_BODY_FACTOR = 0.5;
 
 /**
- * Flame Body: an egg picked up beside something warm has less far to
- * go.
+ * Flame Body and Magma Armor: an egg picked up beside something warm
+ * has less far to go.
  *
  * It reads the buddy at the moment the egg is found, because that is
- * the only moment there is one to read — walking an egg means carrying
+ * the only moment there is one to read: walking an egg means carrying
  * the egg as the buddy, so nothing is beside the player afterwards.
  * The answer is frozen onto the egg's `hatchSteps`, which is the same
  * field a shadow egg has already doubled
  */
-const setupFlameBody = createBuddyAbility(Abilities.FlameBody, (overworld) => {
-  overworld.on(OverworldEvents.CheckEggSteps, EventPriority.Exact, (event) => {
-    event.steps *= FLAME_BODY_FACTOR;
+function createWarmAbility(ability: Abilities): (overworld: Overworld) => void {
+  return createBuddyAbility(ability, (overworld) => {
+    overworld.on(OverworldEvents.CheckEggSteps, EventPriority.Exact, (event) => {
+      event.steps *= FLAME_BODY_FACTOR;
+    });
   });
-});
+}
 
 /**
  * How far a Pickup buddy walks between one find and the next
@@ -322,6 +325,21 @@ const setupSniper = createBuddyAbility(Abilities.Sniper, (overworld) => {
 });
 
 /**
+ * Trace: what the pokemon standing there can do is read off it before
+ * a ball is thrown.
+ *
+ * It is the last thing about a meeting that a catch used to be the
+ * only way to learn, and it is the one that decides whether this
+ * particular Rattata is worth keeping: two of a species are the same
+ * pokemon until their abilities differ
+ */
+const setupTrace = createBuddyAbility(Abilities.Trace, (overworld) => {
+  overworld.on(OverworldEvents.CheckRevealsAbility, EventPriority.Exact, (event) => {
+    event.shown = true;
+  });
+});
+
+/**
  * Pickpocket: a pokemon that got away did not get away with what it
  * was holding. It is the one thing that pays for a flight, and it
  * pays nothing where the meeting was carrying nothing
@@ -363,6 +381,14 @@ const FIELD_ABILITIES: ((overworld: Overworld) => void)[] = [
   createTrapAbility(Abilities.ShadowTag),
   createPullAbility(Abilities.MagnetPull, Types.Steel),
 
+  createKinshipAbility(Abilities.LightningRod, Types.Electric),
+  createKinshipAbility(Abilities.MotorDrive, Types.Electric),
+  createKinshipAbility(Abilities.VoltAbsorb, Types.Electric),
+  createKinshipAbility(Abilities.StormDrain, Types.Water),
+  createKinshipAbility(Abilities.WaterAbsorb, Types.Water),
+  createKinshipAbility(Abilities.SapSipper, Types.Grass),
+  createKinshipAbility(Abilities.FlashFire, Types.Fire),
+
   setupPurified,
   setupGluttony,
   setupHarvest,
@@ -382,6 +408,7 @@ const FIELD_ABILITIES: ((overworld: Overworld) => void)[] = [
   setupFrisk,
   createReadingAbility(Abilities.Forewarn),
   createReadingAbility(Abilities.Anticipation),
+  setupTrace,
 
   setupPickpocket,
 
@@ -390,7 +417,8 @@ const FIELD_ABILITIES: ((overworld: Overworld) => void)[] = [
 
   setupSynchronize,
   setupCuteCharm,
-  setupFlameBody,
+  createWarmAbility(Abilities.FlameBody),
+  createWarmAbility(Abilities.MagmaArmor),
   setupPickup,
 ];
 

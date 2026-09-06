@@ -62,6 +62,36 @@ export function createTrapAbility(ability: Abilities): (overworld: Overworld) =>
 }
 
 /**
+ * What a meeting is worth on a throw to a buddy that speaks its own
+ * element. Half again, the same as the Catching Charm: it is a
+ * pokemon that trusts what is standing beside the player, not one
+ * that has stopped being wild
+ */
+export const KINSHIP_CATCH_BOOST = 1.5;
+
+/**
+ * The absorbers: Lightning Rod, Storm Drain and their kind. What they
+ * take in from a fight is what they get on with out here, so a meeting
+ * of their own element goes in a ball more readily.
+ *
+ * They lift the throw rather than pinning the meeting down, which is
+ * what separates them from Magnet Pull: taking an element in is not
+ * the same as holding it in place
+ */
+export function createKinshipAbility(
+  ability: Abilities,
+  type: Types,
+): (overworld: Overworld) => void {
+  return createBuddyAbility(ability, (overworld) => {
+    overworld.on(OverworldEvents.CheckCatchChance, EventPriority.Exact, (event) => {
+      if (isType(event.encounter, type)) {
+        event.boost *= KINSHIP_CATCH_BOOST;
+      }
+    });
+  });
+}
+
+/**
  * Whether the meeting is of the type the buddy has a hold over
  */
 function isType(encounter: Encounter, type: Types): boolean {

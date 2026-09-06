@@ -243,7 +243,11 @@ import {
   resolvePhenomenon,
 } from '../../src/overworld/landmarks';
 import { DARK_DAY_LAMP_CELLS, favorsEverything } from '../../src/data/overworld/weather';
-import { LURE_SPAWN_BONUS, TRAP_FLEE_FACTOR } from '../../src/overworld/abilities/__create';
+import {
+  KINSHIP_CATCH_BOOST,
+  LURE_SPAWN_BONUS,
+  TRAP_FLEE_FACTOR,
+} from '../../src/overworld/abilities/__create';
 import {
   COMPOUND_EYES_HELD_BOOST,
   FLAME_BODY_FACTOR,
@@ -2500,6 +2504,42 @@ describe('world', () => {
     );
   });
 
+  it('lifts a throw at what a buddy shares an element with', () => {
+    const water = metWild(Species.Squirtle);
+    const plain = metWild(Species.Rattata);
+
+    for (const kin of [Abilities.StormDrain, Abilities.WaterAbsorb]) {
+      const buddy = createOverworld('player-uid', buddyWith([kin]));
+
+      expect(buddy.checkCatchChance('spawn#0', water)).toBe(KINSHIP_CATCH_BOOST);
+      // Nothing for a meeting that shares nothing with it
+      expect(buddy.checkCatchChance('spawn#0', plain)).toBe(1);
+      // And it lifts the throw rather than holding the meeting down,
+      // which is what separates it from Magnet Pull
+      expect(buddy.checkFleeChance('spawn#0', water)).toBe(1);
+    }
+    expect(
+      createOverworld('player-uid', buddyWith([Abilities.SapSipper])).checkCatchChance(
+        'spawn#0',
+        water,
+      ),
+    ).toBe(1);
+  });
+
+  it('reads what a meeting can do for a Trace buddy', () => {
+    expect(createOverworld('player-uid', buddyWith([])).checkRevealsAbility()).toBe(false);
+    expect(createOverworld('player-uid', buddyWith([Abilities.Trace])).checkRevealsAbility()).toBe(
+      true,
+    );
+    // Three readers, three separate questions
+    expect(createOverworld('player-uid', buddyWith([Abilities.Trace])).checkRevealsHeld()).toBe(
+      false,
+    );
+    expect(createOverworld('player-uid', buddyWith([Abilities.Frisk])).checkRevealsAbility()).toBe(
+      false,
+    );
+  });
+
   it('sharpens a throw for a buddy that knows where to aim', () => {
     const wild = metWild(Species.Rattata);
 
@@ -2595,11 +2635,18 @@ describe('world', () => {
     }
   });
 
-  it('warms an egg picked up beside a Flame Body buddy', () => {
+  it('warms an egg picked up beside a Flame Body or Magma Armor buddy', () => {
     const warm = createOverworld('player-uid', buddyWith([Abilities.FlameBody]));
     const plain = createOverworld('player-uid', buddyWith([Abilities.Overgrow]));
 
     expect(warm.checkEggSteps('egg', EGG_HATCH_STEPS)).toBe(EGG_HATCH_STEPS * FLAME_BODY_FACTOR);
+    // The other warm one is worth exactly the same walk
+    expect(
+      createOverworld('player-uid', buddyWith([Abilities.MagmaArmor])).checkEggSteps(
+        'egg',
+        EGG_HATCH_STEPS,
+      ),
+    ).toBe(EGG_HATCH_STEPS * FLAME_BODY_FACTOR);
     expect(plain.checkEggSteps('egg', EGG_HATCH_STEPS)).toBe(EGG_HATCH_STEPS);
     expect(createOverworld('player-uid', null).checkEggSteps('egg', EGG_HATCH_STEPS)).toBe(
       EGG_HATCH_STEPS,

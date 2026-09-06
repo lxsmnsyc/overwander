@@ -207,7 +207,9 @@ from the buddy's ability, others from what it is holding.
 | **Hustle**, **Pressure**, **Vital Spirit**   | Ability   | The top of the level band lifts by three                  |
 | **Compound Eyes**                            | Ability   | The two rare held-item slots turn up two and a half times as often |
 | **Frisk**                                    | Ability   | Shows what a wild pokemon is carrying before a throw      |
-| **Flame Body**                               | Ability   | An egg picked up beside it hatches in half the walk       |
+| **Trace**                                    | Ability   | Shows what a wild pokemon's ability is before a throw     |
+| **Lightning Rod**, **Motor Drive**, **Volt Absorb**, **Storm Drain**, **Water Absorb**, **Sap Sipper**, **Flash Fire** | Ability | Balls thrown at a pokemon of their own type hold half again as often |
+| **Flame Body**, **Magma Armor**              | Ability   | An egg picked up beside it hatches in half the walk       |
 | **Pickup**                                   | Ability   | Finds an item every 512 steps walked                      |
 | **Shiny Charm**                              | Held item | Eight times the shiny odds                                |
 | **Exp. Share**                               | Held item | Half of catches also pay candy to the _buddy's_ family    |

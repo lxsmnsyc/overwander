@@ -21,6 +21,7 @@ import {
   type CheckGoldRewardEvent,
   type CheckLampReachEvent,
   type CheckPocketsEvent,
+  type CheckRevealsAbilityEvent,
   type CheckRevealsFlightEvent,
   type CheckRevealsHeldEvent,
   type CheckSpawnCountEvent,
@@ -347,6 +348,22 @@ export default class Overworld extends EventEngine<OverworldEventMap> {
 
     this.emit(OverworldEvents.CheckPockets, event);
     return event.taken;
+  }
+
+  /**
+   * Whether what a meeting can do is read before it is caught
+   */
+  checkRevealsAbility(): boolean {
+    const event: CheckRevealsAbilityEvent = {
+      id: 'CheckRevealsAbility',
+      disabled: false,
+      overworld: this,
+      random: this.random('ability', 'shown'),
+      shown: false,
+    };
+
+    this.emit(OverworldEvents.CheckRevealsAbility, event);
+    return event.shown;
   }
 
   /**

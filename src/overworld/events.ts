@@ -106,6 +106,11 @@ export const enum OverworldEvents {
    * shake rather than three
    */
   CheckCriticalCatch = 17,
+  /**
+   * Whether what a wild pokemon can do is read before it is caught.
+   * Trace is what reads it
+   */
+  CheckRevealsAbility = 18,
 }
 
 /**
@@ -288,6 +293,10 @@ export interface CheckCriticalCatchEvent extends CheckEncounterEvent {
   aims: number;
 }
 
+export interface CheckRevealsAbilityEvent extends OverworldEvent {
+  shown: boolean;
+}
+
 export interface OverworldEventMap extends EventMap {
   [OverworldEvents.CheckSpawnCount]: [CheckSpawnCountEvent, EventPriority];
   [OverworldEvents.CheckEncounterNature]: [CheckEncounterNatureEvent, EventPriority];
@@ -307,4 +316,5 @@ export interface OverworldEventMap extends EventMap {
   [OverworldEvents.CheckRevealsFlight]: [CheckRevealsFlightEvent, EventPriority];
   [OverworldEvents.CheckPockets]: [CheckPocketsEvent, EventPriority];
   [OverworldEvents.CheckCriticalCatch]: [CheckCriticalCatchEvent, EventPriority];
+  [OverworldEvents.CheckRevealsAbility]: [CheckRevealsAbilityEvent, EventPriority];
 }

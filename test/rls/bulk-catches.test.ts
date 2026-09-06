@@ -2,7 +2,7 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { type Actor, actor, caughtRow, clearAll, sql } from './clients';
 import { Species } from '../../src/data/ids/species';
 import registerData from '../../src/data';
-import { getCatchCandy } from '../../src/auth/candy-rules';
+import { getReleaseCandy } from '../../src/auth/candy-rules';
 import { getSpeciesData } from '../../src/data/species';
 import { releaseCatch, releaseCatches, setCatchMarks } from '../../src/server/caught';
 import { Items } from '../../src/data/ids/items';
@@ -18,6 +18,9 @@ import { Items } from '../../src/data/ids/items';
  */
 
 let player: Actor;
+
+/** What `caughtRow` puts a fixture at, which is what its release pays for */
+const FIXTURE_LEVEL = 5;
 
 /** Two families, so the candy can be checked per pile */
 const KIND: Record<string, Species> = {
@@ -41,6 +44,8 @@ beforeEach(async () => {
   await sql`delete from bag_items`;
   await sql`delete from bag_candies`;
   await sql`delete from caught_items`;
+  await sql`delete from gift_claims`;
+  await sql`delete from gifts`;
   await sql`delete from caught`;
 });
 
@@ -103,9 +108,13 @@ describe('letting several go at once', () => {
     expect(outcome.done).toEqual(['bulk-a', 'bulk-b', 'bulk-c']);
     expect(outcome.refused).toEqual([]);
     expect(await remaining()).toEqual(['bulk-d']);
-    // Two Pidgey and one Rattata, each paying what meeting it pays
-    expect(await candyFor(Species.Pidgey)).toBe(getCatchCandy(Species.Pidgey) * 2);
-    expect(await candyFor(Species.Rattata)).toBe(getCatchCandy(Species.Rattata));
+    // A release pays for the raising that went into it rather than for
+    // meeting it, so a fresh level-5 catch is worth one candy whatever
+    // it is. Two Pidgey and one Rattata, each paid into its own family
+    const paid = getReleaseCandy({ level: FIXTURE_LEVEL });
+
+    expect(await candyFor(Species.Pidgey)).toBe(paid * 2);
+    expect(await candyFor(Species.Rattata)).toBe(paid);
     // The belt was the player's all along, so it comes back whole
     expect(await bagCount(Items.Potion)).toBe(2);
   });
@@ -133,6 +142,36 @@ describe('letting several go at once', () => {
     expect(outcome.done).toEqual(['bulk-d']);
     expect(outcome.refused).toEqual(['bulk-a', 'bulk-b', 'bulk-c']);
     expect(await remaining()).toEqual(['bulk-a', 'bulk-b', 'bulk-c']);
+  });
+
+  it('lets go of one that came out of a gift', async () => {
+    const id = await put('a');
+
+    await put('b');
+    // A claim points at what the gift turned into, and the pointer is
+    // a foreign key that nulls when the pokemon goes. That null-out is
+    // a write on a row the database guards as write-once, and it used
+    // to take the whole release down with it
+    await sql`
+      insert into gifts (id, player, offered_at, gift)
+      values ('bulk-gift', ${player.uid}, ${Date.now()}, ${sql.json({ kind: 'catch' })})
+    `;
+    await sql`
+      insert into gift_claims (gift_id, player, claimed_at, catch_id)
+      values ('bulk-gift', ${player.uid}, ${Date.now()}, ${id})
+    `;
+
+    expect(await releaseCatch(player.uid, id)).toBe(true);
+    expect(await remaining()).toEqual(['bulk-b']);
+
+    // The claim outlives the pokemon: it still says this player took
+    // this gift, so the gift cannot be taken twice
+    const claims = await sql`
+      select catch_id from gift_claims where gift_id = 'bulk-gift' and player = ${player.uid}
+    `;
+
+    expect(claims).toHaveLength(1);
+    expect(claims.at(0)?.catch_id).toBeNull();
   });
 
   it('refuses a pokemon that is not theirs', async () => {

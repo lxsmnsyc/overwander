@@ -157,7 +157,7 @@ server cannot break them either:
 | `dex_monotonic`                       | Pokedex counts only rise                                                                 |
 | `trades_open_pair`                    | One open trade offer per direction of a pair                                             |
 | `buddy_owner` / `buddy_follows_owner` | A buddy must be an owned catch, and stops following when the catch changes hands         |
-| `gift_claims` backfill guard          | A claim may be updated exactly once, to record the catch it became                       |
+| `gift_claims` backfill guard          | A claim may be updated exactly once, to record the catch it became, and again to lose that pointer when the pokemon is released |
 | Column checks                         | Gold never negative, levels 1 to 100, friendship 0 to 255, a bid above zero              |
 | Foreign keys                          | A team names a real catch; deleting an account takes its rows with it                    |
 

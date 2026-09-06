@@ -358,7 +358,13 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
           page that changes what happens outside it: a buddy draws
           spawns in, earns the candy, and is what an egg is counted
           against */}
-      <BuddyCard player={props.player} viewOnly={props.viewOnly} />
+      <BuddyCard
+        player={props.player}
+        viewOnly={props.viewOnly}
+        onOpen={(catchId) => {
+          game.setSheet({ catchId, readOnly: props.viewOnly === true });
+        }}
+      />
 
       {/* Visited, this is the whole of the bottom half: what they have
           fought, with no bar over it. The tabs are back the moment the

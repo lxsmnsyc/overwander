@@ -53,16 +53,6 @@ export default function RequestsTab(props: RequestsTabProps): JSX.Element {
       });
   };
 
-  const view = (uid: string): JSX.Element => (
-    <Button
-      onClick={() => {
-        game.setVisiting(uid);
-      }}
-    >
-      View
-    </Button>
-  );
-
   return (
     <>
       <Show
@@ -72,8 +62,14 @@ export default function RequestsTab(props: RequestsTabProps): JSX.Element {
         <List>
           <For each={received.shown()}>
             {(uid) => (
-              <FriendEntry uid={uid} since={asked().get(uid)} when="Asked">
-                {view(uid)}
+              <FriendEntry
+                uid={uid}
+                since={asked().get(uid)}
+                when="Asked"
+                onOpen={() => {
+                  game.setVisiting(uid);
+                }}
+              >
                 <Button
                   tone="primary"
                   disabled={busy() === uid}
@@ -104,8 +100,14 @@ export default function RequestsTab(props: RequestsTabProps): JSX.Element {
         <List>
           <For each={sent.shown()}>
             {(uid) => (
-              <FriendEntry uid={uid} since={asked().get(uid)} when="Asked">
-                {view(uid)}
+              <FriendEntry
+                uid={uid}
+                since={asked().get(uid)}
+                when="Asked"
+                onOpen={() => {
+                  game.setVisiting(uid);
+                }}
+              >
                 <Button
                   disabled={busy() === uid}
                   onClick={() => {

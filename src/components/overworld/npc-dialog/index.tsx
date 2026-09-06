@@ -102,11 +102,22 @@ export interface NpcDialogProps {
 }
 
 /**
- * The person a player has walked up to. A breeder wants two pokemon
- * and a fee; a daycare lady wants an egg and a fee; Nurse Joy wants
- * nothing at all, and gives a party back whole once a window. Any of
- * them can be walked away from
+ * The ones who do their one thing once a window, and the visit the
+ * server takes for it. Both counters ask a pokemon out of the box, so
+ * a dialog that kept the box up after the press was offering something
+ * the server could only refuse.
+ *
+ * The daycare lady and the fossil maniac are the same rule read their
+ * own way: hers greys the box rather than hiding it, since an egg
+ * still has a count worth reading, and his is a crate rather than a
+ * box
  */
+const ONCE_A_WINDOW = new Map<Npc, string>([
+  [Npc.Breeder, 'breed'],
+  [Npc.Groomer, 'groom'],
+  [Npc.Channeler, 'channel'],
+]);
+
 /**
  * What the person has to offer, which is where the box, the purse and
  * the bag are all read.
@@ -125,6 +136,11 @@ function NpcCounter(
     visited: Resource<boolean>;
     /** Whether the daycare lady has already warmed an egg this window */
     warmed: Resource<boolean>;
+    /**
+     * Whether the one standing here has already done their one thing
+     * for this player this window. See `ONCE_A_WINDOW`
+     */
+    spent: Resource<boolean>;
     onServed: () => void;
     onTraded: () => void;
   },
@@ -878,6 +894,7 @@ function NpcCounter(
                   options={offers()}
                   chosen={chosen()}
                   compatible={compatible()}
+                  done={props.spent.latest === true}
                   onPick={(picked) => {
                     setChosen(picked);
                   }}
@@ -903,7 +920,12 @@ function NpcCounter(
                 />
               </Show>
               <Show when={standing()[1] === Npc.Groomer}>
-                <GroomerCounter options={offers()} fee={GROOMING_FEE} onGroom={groom} />
+                <GroomerCounter
+                  options={offers()}
+                  fee={GROOMING_FEE}
+                  done={props.spent.latest === true}
+                  onGroom={groom}
+                />
               </Show>
 
               <Show when={standing()[1] === Npc.Channeler}>
@@ -912,6 +934,7 @@ function NpcCounter(
                   scales={scales()}
                   fee={CHANNELER_FEE}
                   busy={busy()}
+                  done={props.spent.latest === true}
                   onChannel={channel}
                 />
               </Show>
@@ -1184,6 +1207,21 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
     async ([snapshot, cell]) => hasVisited(snapshot, 'daycare', cell),
   );
 
+  // Whether the one standing here has already done their one thing.
+  // Both of these take a visit on the server, so a dialog that kept
+  // offering the box after the press was offering something the server
+  // could only refuse
+  const [spent] = createResource(
+    () => {
+      const tag = props.standing == null ? undefined : ONCE_A_WINDOW.get(props.standing[1]);
+
+      return props.snapshot == null || props.standing == null || tag == null
+        ? null
+        : ([props.snapshot, props.standing[0], tag, served()] as const);
+    },
+    async ([snapshot, cell, tag]) => hasVisited(snapshot, tag, cell),
+  );
+
   return (
     <NpcCounter
       {...props}
@@ -1192,6 +1230,7 @@ export default function NpcDialog(props: NpcDialogProps): JSX.Element {
       bag={bag}
       visited={visited}
       warmed={warmed}
+      spent={spent}
       onServed={() => {
         setServed((count) => count + 1);
         Promise.resolve(refetch()).catch(() => undefined);

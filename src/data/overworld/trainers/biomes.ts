@@ -1,5 +1,7 @@
-import Biome from '../../ids/biome';
-import { TrainerClass } from './classes';
+import Biome, { isOpenSea } from '../../ids/biome';
+import { Types } from '../../constants/types';
+import { TRAINER_CLASSES, TrainerClass } from './classes';
+import TRAINER_TYPES from './types';
 
 /**
  * Which type experts a country puts on the road. A Swimmer is met on
@@ -429,10 +431,32 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
 };
 
 /**
+ * The classes that can be met out on the water, which are the ones
+ * that field it: a swimmer swims, a fisherman and a sailor have a
+ * boat under them, a tuber a float. Read off the type table rather
+ * than listed again here, so a class added to it is afloat with it
+ */
+const SEAFARING = new Set<TrainerClass>();
+
+for (const trainer of TRAINER_CLASSES) {
+  if (new Set(TRAINER_TYPES[trainer]).has(Types.Water)) {
+    SEAFARING.add(trainer);
+  }
+}
+
+/**
  * Who may be duelling in this country: its own type experts, and the
- * Ace, who belongs to no country
+ * Ace, who belongs to no country.
+ *
+ * The open seas take only the country's seafarers. A bird keeper
+ * watching the ocean does it from a shore, and an Ace fields every
+ * type without fielding water in particular, so neither has a way of
+ * being out there
  */
 export function getBiomeTrainers(biome: Biome): TrainerClass[] {
+  if (isOpenSea(biome)) {
+    return BIOME_TRAINERS[biome].filter((trainer) => SEAFARING.has(trainer));
+  }
   return [
     TrainerClass.AceTrainer,
     TrainerClass.JohtoAceTrainer,

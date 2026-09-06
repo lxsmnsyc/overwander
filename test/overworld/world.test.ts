@@ -68,6 +68,7 @@ import {
   getBannedBossMoves,
 } from '../../src/battle/abilities/special';
 import { EffectType } from '../../src/battle/events';
+import { Types } from '../../src/data/constants/types';
 import { getMaxHealth } from '../../src/auth/health';
 import { isShadow, isShiny } from '../../src/auth/caught-record';
 import {
@@ -4434,6 +4435,46 @@ describe('the open seas', () => {
       }
     }
     expect(seen).toBeGreaterThan(0);
+  });
+
+  it('puts a duel afloat, and only somebody who could be out there', () => {
+    const world = new World('overworld');
+    let duels = 0;
+    let seen = 0;
+
+    for (let x = -100; x < 100 && seen < 24; x += 2) {
+      for (let y = -100; y < 100 && seen < 24; y += 25) {
+        const chunk = world.getChunk(x, y);
+
+        if (!isOpenSea(chunk.biome)) {
+          continue;
+        }
+        seen += 1;
+
+        const snapshot = new ChunkSnapshot(chunk, 0);
+
+        for (const [cell, landmark] of chunk.getLandmarkCells()) {
+          if (landmark !== Landmark.Trainer) {
+            continue;
+          }
+          duels += 1;
+
+          const trainer = snapshot.getTrainerClass(cell);
+
+          expect(trainer).not.toBeNull();
+          if (trainer == null) {
+            continue;
+          }
+          // A swimmer swims and a sailor has a boat. Nobody who needs
+          // ground under them is met out here, the Aces included
+          expect(new Set(TRAINER_TYPES[trainer]).has(Types.Water)).toBe(true);
+          expect(isAceTrainer(trainer)).toBe(false);
+        }
+      }
+    }
+    expect(seen).toBeGreaterThan(0);
+    // The seas are not empty of them: the landmark rolls out here now
+    expect(duels).toBeGreaterThan(0);
   });
 
   it('keeps everything out of the rocks, and mixes shallows in around them', () => {

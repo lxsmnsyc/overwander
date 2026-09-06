@@ -65,14 +65,17 @@ const MAX_WATER_SPOTS = 3;
 /**
  * The roll pool on the open seas: a berry bush cannot grow on water
  * and people have nowhere to stand, so neither bushes nor any of the
- * landmarks somebody stands at is rolled there
+ * landmarks somebody stands at is rolled there.
+ *
+ * The duel is the exception. A trainer out here is a swimmer, a
+ * sailor or somebody on a float, which `getBiomeTrainers` narrows the
+ * country's list down to, and none of them needs ground
  */
 const SEA_PEOPLE = new Set([
   Landmark.BerryPatch,
   Landmark.ApricornTree,
   Landmark.WanderingNpc,
   Landmark.TeamRocket,
-  Landmark.Trainer,
   Landmark.GymLeader,
   Landmark.EliteFour,
   Landmark.Champion,

@@ -6310,13 +6310,30 @@ describe('achievements', () => {
         roads.add(trainer);
       }
       // What may actually be met there: the country's own, plus the
-      // two Aces, who belong to no country
-      expect(getBiomeTrainers(biome)).toEqual([
-        TrainerClass.AceTrainer,
-        TrainerClass.JohtoAceTrainer,
-        TrainerClass.HoennAceTrainer,
-        ...standing,
-      ]);
+      // two Aces, who belong to no country. Out on the water it is
+      // the seafarers among them and nobody else
+      if (isOpenSea(biome)) {
+        const afloat = getBiomeTrainers(biome);
+
+        expect(afloat.length).toBeGreaterThan(0);
+        for (const trainer of afloat) {
+          expect(standing, TRAINER_NAMES[trainer]).toContain(trainer);
+          expect(TRAINER_TYPES[trainer], TRAINER_NAMES[trainer]).toContain(Types.Water);
+        }
+        // And nobody who would need ground to stand on
+        for (const trainer of standing) {
+          if (!new Set(TRAINER_TYPES[trainer]).has(Types.Water)) {
+            expect(afloat, TRAINER_NAMES[trainer]).not.toContain(trainer);
+          }
+        }
+      } else {
+        expect(getBiomeTrainers(biome)).toEqual([
+          TrainerClass.AceTrainer,
+          TrainerClass.JohtoAceTrainer,
+          TrainerClass.HoennAceTrainer,
+          ...standing,
+        ]);
+      }
     }
 
     // No class is written out of the world, the Aces aside

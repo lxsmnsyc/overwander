@@ -1086,7 +1086,8 @@ export default class ChunkSnapshot {
    * holds no duelling landmark. The class turns over with the window
    * the way a grunt's party does, and it is drawn from what this
    * country puts on the road: a Swimmer stands on the water and a
-   * Hiker on hard ground, with the Ace anywhere at all
+   * Hiker on hard ground, with the Ace anywhere there is ground. Out
+   * on the open sea it is the seafarers among them and nobody else
    */
   getTrainerClass(cell: number): TrainerClass | null {
     if (this.chunk.getLandmarkCells().get(cell) !== Landmark.Trainer) {

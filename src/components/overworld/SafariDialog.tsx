@@ -499,6 +499,10 @@ function SafariBody(
                   encounter is still chewing the last one */}
               <InventoryPicker
                 inline
+                // A card would stand over the tray the player is
+                // picking from, and what is in the bag is checked
+                // between throws rather than read
+                tips
                 player={props.user.uid}
                 value={inHand()}
                 empty="Nothing in the bag to throw."

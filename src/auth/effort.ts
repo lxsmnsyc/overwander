@@ -73,7 +73,13 @@ export function assignableEffort(caught: EffortTrained, stat: Stats): number {
  * The catch sheet spends in one go rather than a press at a time, so
  * the budget has to be checked against the **total** rather than
  * against each stat in turn: six presses that are each affordable
- * alone are not six presses the pokemon can pay for
+ * alone are not six presses the pokemon can pay for.
+ *
+ * Only upward. Effort comes back off a stat by feeding the pokemon a
+ * bitter berry, which costs an item and earns the pokemon's regard,
+ * and a spread that could lower a stat would undo all of that for
+ * free. `assignEffort` is the one that may go down, and a berry is its
+ * only caller
  */
 export function assignEfforts(
   caught: EffortTrained,
@@ -88,9 +94,12 @@ export function assignEfforts(
     if (step === 0) {
       continue;
     }
+    if (step < 0) {
+      return null;
+    }
     const wanted = values[stat] + step;
 
-    if (wanted < 0 || wanted > MAX_EFFORT_PER_STAT) {
+    if (wanted > MAX_EFFORT_PER_STAT) {
       return null;
     }
     values[stat] = wanted;

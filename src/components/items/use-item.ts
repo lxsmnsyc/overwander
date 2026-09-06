@@ -21,7 +21,7 @@ import { UTILITY_BELT_SLOT, isUtilityBelt } from '../../data/items/utility-belt'
 import { isPPItem, isVitamin } from '../../data/items/vitamins';
 import { isWing } from '../../data/items/wings';
 import { PP_UP_LIMIT } from '../../data/moves';
-import { getMovesLearnedAt, getSpeciesData } from '../../data/species';
+import { getMovesLearnedAt, getMovesLearnedBetween, getSpeciesData } from '../../data/species';
 import type { ToastTone } from '../styled';
 import { describeItem } from '../details';
 import { describeIVs, withArticle } from '../catches/catch-dialog/describe';
@@ -133,21 +133,20 @@ export function getLevelMoves(caught: CaughtPokemon, level: number): Moves[] {
  *
  * A move listed at two of those levels is offered once, since being
  * asked the same question twice in one run is the same nuisance as
- * being asked about a move the pokemon already knows
+ * being asked about a move the pokemon already knows.
+ *
+ * It is the run the server judges a level-up move against, so both
+ * read `getMovesLearnedBetween` rather than each walking the levels
+ * their own way
  */
 export function getLevelMovesBetween(caught: CaughtPokemon, from: number, to: number): Moves[] {
-  const learning: Moves[] = [];
-  const seen = new Set<Moves>();
-
-  for (let level = from; level <= to; level++) {
-    for (const move of getLevelMoves(caught, level)) {
-      if (!seen.has(move)) {
-        seen.add(move);
-        learning.push(move);
-      }
-    }
+  if (isEgg(caught)) {
+    return [];
   }
-  return learning;
+
+  const knows = new Set(caught.moves);
+
+  return getMovesLearnedBetween(caught.species, from, to).filter((learned) => !knows.has(learned));
 }
 
 /** What spending it came to */

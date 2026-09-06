@@ -412,7 +412,41 @@ export function CatchSheetBody(
     Math.max(0, heldCandies() - queued() * getCandyCost(view() ?? { shadow: false }));
 
   /**
-   * Hand over every press at once. The server grows as far as the pile
+   * Hand the presses over a level at a time, stopping at the first one
+   * the pile cannot cover.
+   *
+   * One call a level rather than one for the run. What the store will
+   * teach a pokemon that has just grown is the level it is standing on
+   * and no other, so a call that crossed five levels could only ever
+   * offer the fifth: the other four came back as moves the species
+   * cannot learn. The presses are still counted and shown at once, so
+   * the number does not crawl up behind the finger; it is the
+   * handovers that are one each.
+   *
+   * Each level's moves are offered as that level lands, and the
+   * questions queue behind one another
+   */
+  const feedByLevel = async (catchId: string, levels: number): Promise<number | null> => {
+    let last: number | null = null;
+
+    for (let spent = 0; spent < levels; spent++) {
+      const from = Math.max(view()?.level ?? 0, reached(), last ?? 0);
+      const grown = await useCandy(catchId, 1);
+
+      // The pile ran out, or it is already at the cap. What has landed
+      // so far stands
+      if (grown == null) {
+        break;
+      }
+      last = grown;
+      setReached(grown);
+      offerLevelMoves(from + 1, grown);
+    }
+    return last;
+  };
+
+  /**
+   * Hand over every press. The server grows as far as the pile
    * actually stretches and answers with the level it reached, so a
    * sheet that counted further than the bag goes back to the truth
    */
@@ -430,7 +464,7 @@ export function CatchSheetBody(
     // through, and offer those moves a second time
     const from = Math.max(view()?.level ?? 0, reached());
 
-    useCandy(catchId, levels)
+    feedByLevel(catchId, levels)
       .then((level) => {
         setQueued((waiting) => Math.max(0, waiting - levels));
         setReached(level ?? 0);
@@ -450,12 +484,6 @@ export function CatchSheetBody(
         props.onCandiesChanged();
         props.onEvolutionsChanged();
         props.onChange?.();
-
-        // Every level it passed through, not only the one it stopped
-        // on: a jump of five can cross five moves
-        if (level != null) {
-          offerLevelMoves(from + 1, level);
-        }
       })
       .catch((caught: unknown) => {
         setQueued((waiting) => Math.max(0, waiting - levels));

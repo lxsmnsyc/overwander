@@ -107,6 +107,11 @@ interface InventoryPickerCommonProps {
    */
   inline?: boolean;
   /**
+   * Whether a square says what it is in a tooltip rather than a hover
+   * card. See `ItemGrid`
+   */
+  tips?: boolean;
+  /**
    * Whether the dialog is open. Leave it out and the picker opens and
    * shuts itself from its own button
    */
@@ -374,6 +379,7 @@ function PickerList(
           // A list that stays up is traded with square after square,
           // so the card being pressed from stays up with it
           keepCards={props.keepOpen}
+          tips={props.tips}
           onPress={(item) => {
             const entry = offered().find((one) => one.item === item);
 

@@ -120,8 +120,8 @@ export async function trainEfforts(
     return asResult(trained);
   });
 
-  // Only putting points in counts: taking them back out is tidying,
-  // not training
+  // Every point of a spread goes in, since a spread cannot take any
+  // back out
   const added = Object.values(spread).reduce((total, step) => total + Math.max(0, step), 0);
 
   if (result != null && added > 0) {

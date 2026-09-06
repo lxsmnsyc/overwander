@@ -358,6 +358,30 @@ export function getMovesLearnedAt(species: Species, level: number): Moves[] {
 }
 
 /**
+ * What the species learns across a run of levels, both ends included,
+ * in the order it learns them.
+ *
+ * A jump is not a level: a feeding gathers a run of candy presses into
+ * one call, and the moves of the levels it went **through** are as
+ * much the pokemon's as the one it stopped on. A move listed at two of
+ * those levels comes back once, at the earliest of them
+ */
+export function getMovesLearnedBetween(species: Species, from: number, to: number): Moves[] {
+  const learned: Moves[] = [];
+  const seen = new Set<Moves>();
+
+  for (let level = from; level <= to; level++) {
+    for (const move of getMovesLearnedAt(species, level)) {
+      if (!seen.has(move)) {
+        seen.add(move);
+        learned.push(move);
+      }
+    }
+  }
+  return learned;
+}
+
+/**
  * Everything the species learns by levelling, up to and including a
  * level, in the order it learns them.
  *

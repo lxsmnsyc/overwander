@@ -161,6 +161,14 @@ describe('assigning a spread', () => {
     expect(assignEfforts(trained(20), {})).toBeNull();
     expect(assignEfforts(trained(20), { [Stats.Attack]: 0 })).toBeNull();
   });
+
+  it('refuses to take any back out, which is a berry\u2019s job', () => {
+    const caught = trained(50, { [Stats.Attack]: 40 });
+
+    expect(assignEfforts(caught, { [Stats.Attack]: -4 })).toBeNull();
+    // And refuses the whole spread, not merely the stat going down
+    expect(assignEfforts(caught, { [Stats.Attack]: -4, [Stats.Speed]: 8 })).toBeNull();
+  });
 });
 
 describe('grooming', () => {

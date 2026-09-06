@@ -50,7 +50,11 @@ import { ActionsIcon, LockIcon, StarIcon } from '../../icons';
 import InventoryPicker from '../../items/InventoryPicker';
 
 import { describeItem } from '../../details';
-import spendItemOn, { getLevelMovesBetween, isUsableOn } from '../../items/use-item';
+import spendItemOn, {
+  getLevelMovesBetween,
+  isUsableOn,
+  nextOfferLevel,
+} from '../../items/use-item';
 
 import {
   Badge,
@@ -299,18 +303,41 @@ export function CatchSheetBody(
   const [bottle, setBottle] = createSignal<Items | null>(null);
 
   /**
+   * Whoever is waiting for the last question to be answered.
+   *
+   * A run of candy presses cannot go on until the level it is
+   * standing on is settled: the store teaches a levelled move only
+   * while the pokemon is on the level that offers it, so the next
+   * candy would take the offer away before it was answered
+   */
+  let answering: (() => void) | null = null;
+
+  /** Resolves once nothing is being asked */
+  const awaitTeaching = async (): Promise<void> => {
+    if (teaching() == null) {
+      return;
+    }
+    return new Promise<void>((resolve) => {
+      answering = resolve;
+    });
+  };
+
+  /**
    * Move on to the next thing the level offered, or close the dialog
    * when that was the last of them
    */
   const nextTeaching = (): void => {
     const current = teaching();
     const queued = current?.rest ?? [];
+    const done = current == null || queued.length === 0;
 
-    setTeaching(
-      current == null || queued.length === 0
-        ? null
-        : { ...current, move: queued[0], rest: queued.slice(1) },
-    );
+    setTeaching(done ? null : { ...current, move: queued[0], rest: queued.slice(1) });
+    if (done) {
+      const waiting = answering;
+
+      answering = null;
+      waiting?.();
+    }
   };
 
   /**
@@ -412,38 +439,52 @@ export function CatchSheetBody(
     Math.max(0, heldCandies() - queued() * getCandyCost(view() ?? { shadow: false }));
 
   /**
-   * Hand the presses over a level at a time, stopping at the first one
-   * the pile cannot cover.
+   * Hand the presses over, stopping on every level that has a move to
+   * offer and waiting there until it is answered.
    *
-   * One call a level rather than one for the run. What the store will
-   * teach a pokemon that has just grown is the level it is standing on
-   * and no other, so a call that crossed five levels could only ever
-   * offer the fifth: the other four came back as moves the species
-   * cannot learn. The presses are still counted and shown at once, so
-   * the number does not crawl up behind the finger; it is the
-   * handovers that are one each.
+   * The store teaches a levelled move only while the pokemon is
+   * standing on the level that offers it, so a run has to land on
+   * each of those levels and settle it before going further: a call
+   * that crossed five offers could teach the fifth and nothing else.
+   * Everything between two offers goes over in one call, since a
+   * stretch that asks nothing has nothing to lose — which for most
+   * feedings is the whole run.
    *
-   * Each level's moves are offered as that level lands, and the
-   * questions queue behind one another
+   * The presses are still counted and shown at once, so the number
+   * does not crawl up behind the finger
    */
-  const feedByLevel = async (catchId: string, levels: number): Promise<number | null> => {
+  const feedRun = async (catchId: string, levels: number): Promise<number | null> => {
+    let at = Math.max(view()?.level ?? 0, reached());
+    let left = levels;
     let last: number | null = null;
 
-    for (let spent = 0; spent < levels; spent++) {
-      const from = Math.max(view()?.level ?? 0, reached(), last ?? 0);
-      const grown = await useCandy(catchId, 1);
+    while (left > 0) {
+      const caught = view();
+      const asks = caught == null ? null : nextOfferLevel(caught, at);
+      // Land exactly on the next level with a move in it, or take the
+      // rest of the run in one go when nothing above asks anything
+      const step = asks == null ? left : Math.min(left, asks - at);
+      const grown = await useCandy(catchId, step);
 
       // The pile ran out, or it is already at the cap. What has landed
       // so far stands
       if (grown == null) {
         break;
       }
+      left -= grown - at;
+      at = grown;
       last = grown;
       setReached(grown);
-      offerLevelMoves(from + 1, grown);
+      offerLevelMoves(grown);
+      await awaitTeaching();
     }
     return last;
   };
+
+  /** Whether a run is already out, so a second does not overlap it */
+  let running = false;
+  /** Whether the sheet is gone, so nothing schedules itself after it */
+  let closed = false;
 
   /**
    * Hand over every press. The server grows as far as the pile
@@ -455,7 +496,7 @@ export function CatchSheetBody(
     const levels = queued();
 
     feeding = null;
-    if (catchId == null || levels < 1) {
+    if (catchId == null || levels < 1 || running) {
       return;
     }
     // What the sheet already knows it has reached, not only what the
@@ -464,7 +505,8 @@ export function CatchSheetBody(
     // through, and offer those moves a second time
     const from = Math.max(view()?.level ?? 0, reached());
 
-    feedByLevel(catchId, levels)
+    running = true;
+    feedRun(catchId, levels)
       .then((level) => {
         setQueued((waiting) => Math.max(0, waiting - levels));
         setReached(level ?? 0);
@@ -490,11 +532,26 @@ export function CatchSheetBody(
         say(caught instanceof Error ? caught.message : String(caught), 'ember');
         props.onRecordChanged();
         props.onCandiesChanged();
+      })
+      .finally(() => {
+        running = false;
+        // Presses made while the run was out, or while a question was
+        // up, are still owed
+        if (!closed && queued() > 0) {
+          feeding = setTimeout(flushCandy, 0);
+        }
       });
   };
 
   // Whatever is still counted when the sheet goes is still owed
   onCleanup(() => {
+    closed = true;
+    // A run parked on a question the player will never see now: let
+    // it finish rather than leaving it holding the promise
+    const waiting = answering;
+
+    answering = null;
+    waiting?.();
     if (feeding != null) {
       clearTimeout(feeding);
       flushCandy();
@@ -511,6 +568,19 @@ export function CatchSheetBody(
     setQueued((waiting) => waiting + 1);
     if (feeding != null) {
       clearTimeout(feeding);
+      feeding = null;
+    }
+
+    const caught = view();
+    const at = Math.max(caught?.level ?? 0, reached());
+    const asks = caught == null ? null : nextOfferLevel(caught, at);
+
+    // A press that reaches a level with a move in it goes at once.
+    // Settling first only delays the question, and the question is
+    // the thing the player pressed for
+    if (asks != null && at + queued() >= asks) {
+      flushCandy();
+      return;
     }
     feeding = setTimeout(flushCandy, CANDY_SETTLE);
   };
@@ -1146,6 +1216,10 @@ export function CatchSheetBody(
                         disabled={
                           shownCandies() < getCandyCost(loaded()) ||
                           shownLevel() >= MAX_LEVEL ||
+                          // A level already paid for is waiting on an
+                          // answer, and pressing past it would take
+                          // the offer away
+                          teaching()?.levelled === true ||
                           frozen()
                         }
                         onClick={feedCandy}

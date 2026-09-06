@@ -149,6 +149,32 @@ export function getLevelMovesBetween(caught: CaughtPokemon, from: number, to: nu
   return getMovesLearnedBetween(caught.species, from, to).filter((learned) => !knows.has(learned));
 }
 
+/**
+ * The next level that would ask a question: the lowest one above
+ * `above` where the species learns something this pokemon does not
+ * know, or null where the rest of the way to the cap asks nothing.
+ *
+ * It is what lets a run of candy presses be batched at all. The store
+ * teaches a levelled move only while the pokemon is standing on the
+ * level that offers it, so a call that crosses several offers can
+ * teach the last of them and no more. A stretch with no offer in it
+ * has nothing to lose, and goes over in one call
+ */
+export function nextOfferLevel(caught: CaughtPokemon, above: number): number | null {
+  if (isEgg(caught)) {
+    return null;
+  }
+
+  const knows = new Set(caught.moves);
+
+  for (let level = above + 1; level <= MAX_LEVEL; level++) {
+    if (getMovesLearnedAt(caught.species, level).some((move) => !knows.has(move))) {
+      return level;
+    }
+  }
+  return null;
+}
+
 /** What spending it came to */
 export interface Spent {
   said: string;

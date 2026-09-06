@@ -156,7 +156,6 @@ export interface BattleEventMap extends EventMap {
   [BattleEvents.UnitRemoveType]: [UnitTypeEvent, EventPriority];
 
   [BattleEvents.UnitAddStage]: [UnitUpdateStageEvent, EventPriority];
-  [BattleEvents.UnitRemoveStage]: [UnitUpdateStageEvent, EventPriority];
   [BattleEvents.UnitCheckStage]: [UnitStageEvent, EventPriority];
 
   [BattleEvents.UnitAttack]: [UnitAttackEvent, AttackPriority];
@@ -286,5 +285,4 @@ export interface BattleEventMap extends EventMap {
   [BattleEvents.CheckUnitWeatherDuration]: [CheckUnitWeatherDurationEvent, EventPriority];
   [BattleEvents.UnitUpdateStatusTimer]: [UnitUpdateStatusTimerEvent, EventPriority];
   [BattleEvents.CheckUnitCanAddStage]: [CheckUnitCanUpdateStageEvent, EventPriority];
-  [BattleEvents.CheckUnitCanRemoveStage]: [CheckUnitCanUpdateStageEvent, EventPriority];
 }

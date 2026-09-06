@@ -5,7 +5,7 @@ import { BattleEvents, EffectType, MoveTargetType } from '../../src/battle/event
 import type Battle from '../../src/battle/core';
 import Team from '../../src/battle/team';
 import type Unit from '../../src/battle/unit';
-import { MOVE_DELAY, resolveMoveTargets } from '../../src/battle/mechanics/move';
+import { MOVE_DELAY, criticalChance, resolveMoveTargets } from '../../src/battle/mechanics/move';
 import { SWITCHING_SPAN } from '../../src/battle/status/switching';
 import turns from '../../src/battle/turn';
 import { Slots, packSlots } from '../../src/data/constants/slots';
@@ -17,6 +17,7 @@ import Natures from '../../src/data/ids/natures';
 import {
   DamageFlags,
   MoveAffects,
+  MoveAttackFlags,
   MoveCategories,
   Moves,
   StatFlags,
@@ -64,6 +65,25 @@ function attackerIsHidden(unit: Unit): boolean {
   return unit.status[Statuses.Invulnerable] != null;
 }
 
+describe('roster mechanics', () => {
+  it('takes a unit off its team', () => {
+    const { battle, teamA } = createBattle();
+    const unit = createUnit(battle, teamA);
+
+    expect(teamA.units.has(unit)).toBe(true);
+    teamA.removeUnit(unit);
+    expect(teamA.units.has(unit)).toBe(false);
+  });
+
+  it('takes a team out of its alliance', () => {
+    const { allianceA, teamA } = createBattle();
+
+    expect(allianceA.teams.has(teamA)).toBe(true);
+    allianceA.removeTeam(teamA);
+    expect(allianceA.teams.has(teamA)).toBe(false);
+  });
+});
+
 describe('damage mechanics', () => {
   it('lethal damage clamps to zero and faints the target', () => {
     const { battle, teamA, teamB } = createBattle();
@@ -110,6 +130,22 @@ describe('damage mechanics', () => {
     attacker.damage(NONE_CAUSE, ally, 30, 0);
 
     expect(attacker.dealt).toBe(0);
+  });
+
+  it('keeps a secondary off a target that took nothing', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0);
+    const thief = createUnit(battle, teamA);
+    const holder = createUnit(battle, teamB);
+
+    holder.addItem(Items.Leftovers);
+    holder.addStatus(Statuses.Substituted, { type: EffectType.None });
+
+    thief.triggerMoveTarget(Moves.Thief, unitTarget(holder), 0);
+
+    // The substitute ate the blow, so there was no blow to steal on
+    expect(holder.items[Items.Leftovers]).toBe(true);
+    expect(thief.items[Items.Leftovers]).toBeUndefined();
   });
 
   it('healing clamps at max health', () => {
@@ -219,6 +255,18 @@ describe('type effectiveness and STAB', () => {
     expect(ghost.health).toBe(160);
   });
 
+  it('leaves a status move out of the chart and the bonus', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const attacker = createUnit(battle, teamA, [Types.Electric]);
+    const target = createUnit(battle, teamB, [Types.Water]);
+
+    // Electric on Water is doubled, and same-type again on top. A
+    // status move carries no damage for either to be a factor of
+    attacker.attack(target, Moves.ThunderWave, 40, Types.Electric, MoveCategories.Status, 0);
+
+    expect(160 - target.health).toBe(40);
+  });
+
   it('boosts same-type moves by 1.5', () => {
     const { battle, teamA, teamB } = createBattle();
     pinRandom(battle, 1);
@@ -248,6 +296,36 @@ describe('critical hits', () => {
     );
 
     expect(160 - defender.health).toBeCloseTo(19.6 * 2 * 0.85);
+  });
+
+  it('is even money two stages up and certain three', () => {
+    expect(criticalChance(0)).toBe(1 / 16);
+    expect(criticalChance(1)).toBe(1 / 8);
+    expect(criticalChance(2)).toBe(0.5);
+    expect(criticalChance(3)).toBe(1);
+    expect(criticalChance(9)).toBe(1);
+  });
+
+  it('lands one on an even roll once the ratio is two stages up', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0.4);
+    const attacker = createUnit(battle, teamA);
+    const defender = createUnit(battle, teamB);
+
+    battle.on(BattleEvents.UnitAttackCheckCriticalRatio, EventPriority.Post, (event) => {
+      event.value += 2;
+    });
+
+    attacker.attack(
+      defender,
+      Moves.Tackle,
+      40,
+      Types.Normal,
+      MoveCategories.Physical,
+      MoveAttackFlags.Critical,
+    );
+
+    expect(160 - defender.health).toBeCloseTo(19.6 * 2 * 0.91);
   });
 });
 

@@ -11,8 +11,12 @@ const DURATION = turns(5);
 
 const setupTimer = createTimedStatus(Statuses.Imprisoned, DURATION);
 
-/** What each imprisoned unit is shut out of */
-const sealed = new Map<Unit, Set<Moves>>();
+/**
+ * What each imprisoned unit is shut out of. Module-scope because the
+ * move fills it in and the status reads it, and weakly keyed so a
+ * finished battle's units are not held open by it
+ */
+const sealed = new WeakMap<Unit, Set<Moves>>();
 
 export function setImprisonedMoves(unit: Unit, moves: Iterable<Moves>): void {
   sealed.set(unit, new Set(moves));

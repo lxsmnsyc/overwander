@@ -281,14 +281,10 @@ const setupEjectButton = createHeldItem(Items.EjectButton, (battle) =>
 );
 
 // An Eject Pack answers a stat going down rather than a blow landing
-const setupEjectPack = createHeldItem(
-  Items.EjectPack,
-  (battle) =>
-    new MergedLifecycle(
-      lowering(battle, (unit) => {
-        bench(battle, unit, Items.EjectPack, unit, MoveTargetPriorities.Strongest, false);
-      }),
-    ),
+const setupEjectPack = createHeldItem(Items.EjectPack, (battle) =>
+  lowering(battle, (unit) => {
+    bench(battle, unit, Items.EjectPack, unit, MoveTargetPriorities.Strongest, false);
+  }),
 );
 
 // A Blunder Policy pays for a swing that hit nothing: the holder is
@@ -324,22 +320,18 @@ const setupThroatSpray = createHeldItem(Items.ThroatSpray, (battle) =>
  * Intimidate's own trigger, which fires on the one doing it — and
  * whether the holder's Attack actually fell is beside the point
  */
-const setupAdrenalineOrb = createHeldItem(
-  Items.AdrenalineOrb,
-  (battle) =>
-    new MergedLifecycle(
-      lowering(battle, (unit, _stage, cause) => {
-        if (cause.type !== EffectType.Ability || cause.ability !== Abilities.Intimidate) {
-          return;
-        }
+const setupAdrenalineOrb = createHeldItem(Items.AdrenalineOrb, (battle) =>
+  lowering(battle, (unit, _stage, cause) => {
+    if (cause.type !== EffectType.Ability || cause.ability !== Abilities.Intimidate) {
+      return;
+    }
 
-        const spent = spendItem(unit, Items.AdrenalineOrb);
+    const spent = spendItem(unit, Items.AdrenalineOrb);
 
-        if (spent) {
-          unit.addStage(Stages.Speed, REACTION_STAGES, spent);
-        }
-      }),
-    ),
+    if (spent) {
+      unit.addStage(Stages.Speed, REACTION_STAGES, spent);
+    }
+  }),
 );
 
 /**
@@ -348,28 +340,24 @@ const setupAdrenalineOrb = createHeldItem(
  * which is what makes it worth a slot against anything that lowers
  * stats twice
  */
-const setupWhiteHerb = createHeldItem(
-  Items.WhiteHerb,
-  (battle) =>
-    new MergedLifecycle(
-      lowering(battle, (unit) => {
-        const taken = ALL_STAGES.filter((stage) => unit.stages[stage] < 0);
+const setupWhiteHerb = createHeldItem(Items.WhiteHerb, (battle) =>
+  lowering(battle, (unit) => {
+    const taken = ALL_STAGES.filter((stage) => unit.stages[stage] < 0);
 
-        if (taken.length === 0 || !holds(unit, Items.WhiteHerb)) {
-          return;
-        }
+    if (taken.length === 0 || !holds(unit, Items.WhiteHerb)) {
+      return;
+    }
 
-        const cause = spendItem(unit, Items.WhiteHerb);
+    const cause = spendItem(unit, Items.WhiteHerb);
 
-        if (cause == null) {
-          return;
-        }
+    if (cause == null) {
+      return;
+    }
 
-        for (const stage of taken) {
-          unit.addStage(stage, -unit.stages[stage], cause);
-        }
-      }),
-    ),
+    for (const stage of taken) {
+      unit.addStage(stage, -unit.stages[stage], cause);
+    }
+  }),
 );
 
 // A Mental Herb clears the holder's head the moment it is turned

@@ -41,7 +41,12 @@ export default function setupSnatchingStatus(battle: Battle): void {
         }
 
         unit.removeStatus(Statuses.Snatching, waiting);
-        event.target = { type: MoveTargetType.Unit, unit };
+        // The snatcher casts it rather than merely being aimed at: a
+        // self-cast move is written against whoever threw it, so a
+        // Recover redirected by its target alone would still heal the
+        // pokemon it was taken from
+        event.disabled = true;
+        unit.triggerMoveEffect(event.move, { type: MoveTargetType.Unit, unit }, event.steps);
         return;
       }
     }

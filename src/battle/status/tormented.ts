@@ -18,9 +18,6 @@ const setupTimer = createTimedStatus(Statuses.Tormented, DURATION);
  */
 const NOT_A_MOVE = new Set<Moves>([Moves.Struggle, Moves.Attack]);
 
-/** What each tormented unit last cast, and so cannot cast again */
-const lastCast = new Map<Unit, Moves>();
-
 /**
  * Tormented: the same move twice over is what it cannot do. Anything
  * else, including going back to the first move after a second one, is
@@ -29,6 +26,12 @@ const lastCast = new Map<Unit, Moves>();
  */
 export default function setupTormentedStatus(battle: Battle): void {
   setupTimer(battle);
+
+  /**
+   * What each tormented unit last cast, and so cannot cast again. Per
+   * battle, so nothing here outlives the fight it was recorded in
+   */
+  const lastCast = new Map<Unit, Moves>();
 
   battle.on(BattleEvents.UnitTriggerMove, AttackPriority.Post, (event) => {
     if (!NOT_A_MOVE.has(event.move)) {

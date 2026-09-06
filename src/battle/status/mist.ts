@@ -65,16 +65,4 @@ export default function setupMistStatus(battle: Battle): void {
       event.success = false;
     }
   });
-
-  battle.on(BattleEvents.CheckUnitCanRemoveStage, EventPriority.Post, (event) => {
-    if (
-      event.success &&
-      event.value > 0 &&
-      event.source.team.status[TeamStatuses.Mist] != null &&
-      'unit' in event.cause &&
-      event.cause.unit !== event.source
-    ) {
-      event.success = false;
-    }
-  });
 }

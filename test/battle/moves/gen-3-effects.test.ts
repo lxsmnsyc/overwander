@@ -18,6 +18,7 @@ import turns from '../../../src/battle/turn';
 import Biome from '../../../src/data/ids/biome';
 import { groundMove, groundStatus } from '../../../src/battle/moves/ground';
 import { getMoveData } from '../../../src/data/moves';
+import { MOVE_DELAY } from '../../../src/battle/mechanics/move';
 import type Battle from '../../../src/battle/core';
 import { createBattle, createUnit, pinRandom } from '../harness';
 
@@ -456,6 +457,53 @@ describe('the moves that stand in somebody else’s way', () => {
 
     expect(thief.checkStage(Stages.Attack, 0)).toBe(2);
     expect(caster.checkStage(Stages.Attack, 0)).toBe(0);
+  });
+
+  it('takes a move written against its caster as well', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const thief = createUnit(battle, teamA);
+    const caster = createUnit(battle, teamB);
+
+    thief.setHealth(20);
+    caster.setHealth(20);
+
+    thief.triggerMoveEffect(Moves.Snatch, NONE_TARGET, 0);
+    caster.triggerMoveTarget(Moves.Recover, unitTarget(caster), 0);
+
+    expect(thief.health).toBe(20 + thief.checkStat(Stats.HP, 0) * 0.5);
+    expect(caster.health).toBe(20);
+  });
+
+  it('lends a hand worth half as much again on the ally’s next move', () => {
+    function landed(lend: boolean): number {
+      const { battle, teamA, teamB } = createBattle();
+      pinRandom(battle, 0.5);
+      const helper = createUnit(battle, teamA);
+      const attacker = createUnit(battle, teamA);
+      const target = createUnit(battle, teamB);
+
+      if (lend) {
+        helper.triggerMoveEffect(Moves.HelpingHand, unitTarget(attacker), 0);
+        expect(attacker.checkMovePower(Moves.Tackle, unitTarget(target))).toBe(
+          (getMoveData(Moves.Tackle).power ?? 0) * 1.5,
+        );
+      }
+
+      const before = target.health;
+
+      attacker.triggerMove(Moves.Tackle, unitTarget(target), 0);
+      battle.tick(MOVE_DELAY);
+
+      // Spent on the one move it was lent to
+      expect(attacker.status[Statuses.Helped]).toBeUndefined();
+
+      return before - target.health;
+    }
+
+    // The hand has to still be there where the power is read, a delay
+    // after the move was thrown. Not itself half as much again: the
+    // damage formula adds two after dividing the power out
+    expect(landed(true)).toBeGreaterThan(landed(false));
   });
 });
 

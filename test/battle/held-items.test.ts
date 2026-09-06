@@ -602,7 +602,7 @@ describe('a Clear Amulet', () => {
 
     holder.addStage(Stages.Attack, 2, moveCause(holder, Moves.SwordsDance));
     holder.addItem(Items.ClearAmulet);
-    holder.removeStage(Stages.Attack, 2, moveCause(enemy, Moves.Growl));
+    holder.addStage(Stages.Attack, -2, moveCause(enemy, Moves.Growl));
 
     expect(holder.stages[Stages.Attack]).toBe(2);
   });
@@ -826,7 +826,7 @@ describe('one-shots', () => {
 
     holder.addItem(Items.WhiteHerb);
     holder.addStage(Stages.Speed, 2, cause);
-    holder.removeStage(Stages.Attack, 2, cause);
+    holder.addStage(Stages.Attack, -2, cause);
 
     expect(holder.stages[Stages.Attack]).toBe(0);
     expect(holder.items[Items.WhiteHerb]).toBeUndefined();
@@ -1108,7 +1108,7 @@ describe('the one-shots that put somebody on the bench', () => {
 
     const switches = recordSwitches(battle);
 
-    holder.removeStage(Stages.Attack, 1, {
+    holder.addStage(Stages.Attack, -1, {
       type: EffectType.Move,
       move: Moves.Growl,
       unit: attacker,
@@ -1349,7 +1349,7 @@ describe('the battle items', () => {
     const attacker = createUnit(battle, teamB);
 
     holder.addItem(Items.XAttack);
-    holder.removeStage(Stages.Attack, 1, moveCause(attacker, Moves.Growl));
+    holder.addStage(Stages.Attack, -1, moveCause(attacker, Moves.Growl));
 
     // Down one, then up two: the item is worth carrying only if
     // answering a drop leaves the holder ahead
@@ -1363,7 +1363,7 @@ describe('the battle items', () => {
     const attacker = createUnit(battle, teamB);
 
     holder.addItem(Items.XAttack);
-    holder.removeStage(Stages.Speed, 1, moveCause(attacker, Moves.StringShot));
+    holder.addStage(Stages.Speed, -1, moveCause(attacker, Moves.StringShot));
 
     expect(holder.stages[Stages.Speed]).toBe(-1);
     expect(holder.items[Items.XAttack]).toBe(true);
@@ -1391,7 +1391,7 @@ describe('the battle items', () => {
     const bare = createUnit(battle, teamB);
 
     holder.addItem(Items.DireHit);
-    holder.removeStage(Stages.Defense, 1, moveCause(hit, Moves.TailWhip));
+    holder.addStage(Stages.Defense, -1, moveCause(hit, Moves.TailWhip));
 
     expect(holder.items[Items.DireHit]).toBeUndefined();
 
@@ -1413,13 +1413,13 @@ describe('the battle items', () => {
     const attacker = createUnit(battle, teamB);
 
     holder.addItem(Items.GuardSpec);
-    holder.removeStage(Stages.Attack, 1, moveCause(attacker, Moves.Growl));
+    holder.addStage(Stages.Attack, -1, moveCause(attacker, Moves.Growl));
 
     expect(holder.stages[Stages.Attack]).toBe(0);
     expect(holder.items[Items.GuardSpec]).toBeUndefined();
 
     // And it is spent: the next one lands
-    holder.removeStage(Stages.Attack, 1, moveCause(attacker, Moves.Growl));
+    holder.addStage(Stages.Attack, -1, moveCause(attacker, Moves.Growl));
     expect(holder.stages[Stages.Attack]).toBe(-1);
   });
 
@@ -1430,7 +1430,7 @@ describe('the battle items', () => {
     // A Belly Drum sort of price is the holder's own choice, and a
     // guard against everybody else is no reason to refuse it
     holder.addItem(Items.GuardSpec);
-    holder.removeStage(Stages.Defense, 1, {
+    holder.addStage(Stages.Defense, -1, {
       type: EffectType.Move,
       move: Moves.Growl,
       unit: holder,

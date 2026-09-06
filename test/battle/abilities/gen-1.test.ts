@@ -1976,7 +1976,7 @@ describe('Boss', () => {
     const cause = { type: EffectType.Move, move: Moves.Growl, unit: enemy } as const;
 
     boss.addStage(Stages.Attack, -1, cause);
-    boss.removeStage(Stages.Defense, 1, cause);
+    boss.addStage(Stages.Defense, -1, cause);
 
     expect(boss.stages[Stages.Attack]).toBe(0);
     expect(boss.stages[Stages.Defense]).toBe(0);

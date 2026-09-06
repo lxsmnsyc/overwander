@@ -11,4 +11,4 @@ export { default as setupChannelingMechanics } from './channelling';
 export { default as setupCooldownMechanics } from './cooldown';
 export { default as resolveMoveTargets } from './targeting';
 export { default as setupTriggerMoveMechanics } from './trigger';
-export { default as setupAttackMechanics } from './attack';
+export { default as setupAttackMechanics, criticalChance } from './attack';

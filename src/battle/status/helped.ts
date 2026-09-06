@@ -1,4 +1,4 @@
-import { AttackPriority, EventPriority } from '../../core/event-emitter';
+import { EventPriority } from '../../core/event-emitter';
 import { Statuses } from '../../data/ids/status';
 import type Battle from '../core';
 import { BattleEvents } from '../events';
@@ -27,7 +27,10 @@ export default function setupHelpedStatus(battle: Battle): void {
     }
   });
 
-  battle.on(BattleEvents.UnitTriggerMove, AttackPriority.Post, (event) => {
+  // Spent where the move resolves rather than where it is thrown: the
+  // power is read a delay later, so a hand taken back at the throw is a
+  // hand that was never lent
+  battle.on(BattleEvents.UnitTriggerMoveEnd, EventPriority.Post, (event) => {
     const helped = event.source.status[Statuses.Helped];
 
     if (helped != null) {

@@ -3,8 +3,7 @@ import { Items } from '../../../data/ids/items';
 import { MoveCategories } from '../../../data/ids/moves';
 import { Statuses } from '../../../data/ids/status';
 import type Battle from '../../core';
-import { BattleEvents, type CheckUnitCanUpdateStageEvent, EffectType } from '../../events';
-import { MergedLifecycle } from '../../lifecycle';
+import { BattleEvents, EffectType } from '../../events';
 import { createHeldItem, holds } from '../__create';
 import { KINGS_ROCK_CHANCE, RAZOR_CLAW_CRITICAL_STAGES } from './worths';
 
@@ -58,25 +57,16 @@ export const setupRazorClaw = createHeldItem(Items.RazorClaw, (battle) =>
  * stat drop somebody else tries, for as long as it is carried, and
  * says nothing about what its holder does to itself
  */
-export const setupClearAmulet = createHeldItem(Items.ClearAmulet, (battle) => {
-  function refuse(event: CheckUnitCanUpdateStageEvent, lowered: boolean): void {
+export const setupClearAmulet = createHeldItem(Items.ClearAmulet, (battle) =>
+  battle.on(BattleEvents.CheckUnitCanAddStage, EventPriority.Post, (event) => {
     if (
       event.success &&
-      lowered &&
+      event.value < 0 &&
       event.cause.type !== EffectType.None &&
       event.cause.unit !== event.source &&
       holds(event.source, Items.ClearAmulet)
     ) {
       event.success = false;
     }
-  }
-
-  return new MergedLifecycle([
-    battle.on(BattleEvents.CheckUnitCanAddStage, EventPriority.Post, (event) => {
-      refuse(event, event.value < 0);
-    }),
-    battle.on(BattleEvents.CheckUnitCanRemoveStage, EventPriority.Post, (event) => {
-      refuse(event, event.value > 0);
-    }),
-  ]);
-});
+  }),
+);

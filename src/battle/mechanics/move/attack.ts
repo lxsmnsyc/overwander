@@ -22,6 +22,22 @@ import type Unit from '../../unit';
 /** The middle of the damage range, for a simulated attack */
 const SIMULATED_DAMAGE_ROLL = 0.925;
 
+/**
+ * What each critical hit stage is worth, gen VI onwards: one in
+ * sixteen bare, and a certainty three stages up
+ * https://bulbapedia.bulbagarden.net/wiki/Critical_hit
+ */
+const CRITICAL_CHANCES = [1 / 16, 1 / 8, 1 / 2, 1];
+
+/**
+ * The odds of a critical hit at the given stage. Exported because the
+ * tests pin the roll against it, and a table written out twice is a
+ * table that goes out of step
+ */
+export function criticalChance(stage: number): number {
+  return CRITICAL_CHANCES[Math.min(Math.max(0, Math.floor(stage)), CRITICAL_CHANCES.length - 1)];
+}
+
 /** A blow landing: what it is worth, what it is doubled or halved by, and what it leaves behind */
 export default function setupAttackMechanics(battle: Battle): void {
   function resolveCriticalHitRatio(parent: UnitAttackEvent): number {
@@ -130,7 +146,7 @@ export default function setupAttackMechanics(battle: Battle): void {
   });
 
   battle.on(BattleEvents.UnitAttackResolveCriticalChance, EventPriority.Exact, (event) => {
-    event.value = (1 / 16) * 2 ** Math.min(Math.max(0, resolveCriticalHitRatio(event.parent)), 4);
+    event.value = criticalChance(resolveCriticalHitRatio(event.parent));
   });
 
   function resolveCriticalHitChance(parent: UnitAttackEvent): number {
@@ -164,81 +180,83 @@ export default function setupAttackMechanics(battle: Battle): void {
 
     const category = parent.category;
 
-    // multiply to effective attack stat
-    if (event.parent.flags & MoveAttackFlags.Pure) {
-      // do nothing
-    } else {
-      if (category !== MoveCategories.Status) {
-        // Base amount
-        let base = (2 * source.level) / 5 + 2;
-
-        // multiply to power
-        base *= event.value;
-
-        let isCritical = false;
-
-        // If critical is enabled, roll for a hit
-        if (event.parent.flags & MoveAttackFlags.Critical) {
-          isCritical = resolveCriticalHit(event.parent);
-        }
-
-        // Get stat stage
-        const preferredAttackStat =
-          category === MoveCategories.Physical ? Stats.Attack : Stats.SpecialAttack;
-        const preferredDefenseStat =
-          category === MoveCategories.Physical ? Stats.Defense : Stats.SpecialDefense;
-
-        let statFlag = StatFlags.Attack;
-
-        // For critical hit, set a flag that ignores the negative attack/positive defense stages
-        if (isCritical) {
-          statFlag |= StatFlags.Critical;
-        }
-
-        const attackStat = resolveAttackStat(
-          parent,
-          source,
-          preferredAttackStat,
-          source.resolveStat(preferredAttackStat, statFlag),
-        );
-        const defenseStat = resolveAttackStat(
-          parent,
-          target,
-          preferredDefenseStat,
-          target.resolveStat(preferredDefenseStat, statFlag),
-        );
-
-        base *= attackStat / Math.max(1, defenseStat);
-        base = base / 50 + 2;
-
-        event.value = base;
-
-        if (isCritical) {
-          event.value *= resolveCriticalMult(parent);
-        }
-
-        // Random factor: 85% to 100%. A simulation takes the middle
-        // of that range instead of rolling: the AI runs this pipeline
-        // once per move it is weighing, so a roll here would both make
-        // its estimates noisy enough to flip a KO and tie the fight's
-        // random stream to how many moves it had to consider
-        event.value *=
-          parent.flags & MoveAttackFlags.Simulated
-            ? SIMULATED_DAMAGE_ROLL
-            : battle.randomRange(0.85, 1);
-      }
-
-      if (event.parent.flags & MoveAttackFlags.Confused) {
-        return;
-      }
-      // Calculate type effectiveness
-      for (const type of target.types) {
-        event.value *= resolveEffectiveness(parent, type);
-      }
-
-      // STAB
-      event.value *= resolveSTAB(parent);
+    // A fixed-damage move is handed the number it takes off, and a
+    // status move carries no damage at all: neither has anything for
+    // the type chart or the stab to be a factor of
+    if (parent.flags & MoveAttackFlags.Pure || category === MoveCategories.Status) {
+      return;
     }
+
+    // Base amount
+    let base = (2 * source.level) / 5 + 2;
+
+    // multiply to power
+    base *= event.value;
+
+    let isCritical = false;
+
+    // If critical is enabled, roll for a hit
+    if (parent.flags & MoveAttackFlags.Critical) {
+      isCritical = resolveCriticalHit(parent);
+    }
+
+    // Get stat stage
+    const preferredAttackStat =
+      category === MoveCategories.Physical ? Stats.Attack : Stats.SpecialAttack;
+    const preferredDefenseStat =
+      category === MoveCategories.Physical ? Stats.Defense : Stats.SpecialDefense;
+
+    let statFlag = StatFlags.Attack;
+
+    // For critical hit, set a flag that ignores the negative attack/positive defense stages
+    if (isCritical) {
+      statFlag |= StatFlags.Critical;
+    }
+
+    const attackStat = resolveAttackStat(
+      parent,
+      source,
+      preferredAttackStat,
+      source.resolveStat(preferredAttackStat, statFlag),
+    );
+    const defenseStat = resolveAttackStat(
+      parent,
+      target,
+      preferredDefenseStat,
+      target.resolveStat(preferredDefenseStat, statFlag),
+    );
+
+    base *= attackStat / Math.max(1, defenseStat);
+    base = base / 50 + 2;
+
+    event.value = base;
+
+    if (isCritical) {
+      event.value *= resolveCriticalMult(parent);
+    }
+
+    // Random factor: 85% to 100%. A simulation takes the middle
+    // of that range instead of rolling: the AI runs this pipeline
+    // once per move it is weighing, so a roll here would both make
+    // its estimates noisy enough to flip a KO and tie the fight's
+    // random stream to how many moves it had to consider
+    event.value *=
+      parent.flags & MoveAttackFlags.Simulated
+        ? SIMULATED_DAMAGE_ROLL
+        : battle.randomRange(0.85, 1);
+
+    // A confused pokemon hits itself with nobody's type behind it
+    if (parent.flags & MoveAttackFlags.Confused) {
+      return;
+    }
+
+    // Calculate type effectiveness
+    for (const type of target.types) {
+      event.value *= resolveEffectiveness(parent, type);
+    }
+
+    // STAB
+    event.value *= resolveSTAB(parent);
   });
 
   function runAttackEffect(parent: UnitAttackEvent): void {
@@ -272,7 +290,13 @@ export default function setupAttackMechanics(battle: Battle): void {
   }
 
   battle.on(BattleEvents.CheckUnitAttackEffect, EventPriority.Exact, (event) => {
-    event.success = event.parent.source.alive && event.parent.target.alive;
+    if (event.success) {
+      // A blow that never landed carries no secondary either: an
+      // immunity and a substitute stop the effect the way they stop
+      // the damage
+      event.success =
+        event.parent.success && event.parent.source.alive && event.parent.target.alive;
+    }
   });
 
   battle.on(BattleEvents.UnitAttack, AttackPriority.Exact, (event) => {

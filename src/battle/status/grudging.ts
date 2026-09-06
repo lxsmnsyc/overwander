@@ -18,15 +18,18 @@ const SPENT = turns(60);
 
 const setupTimer = createTimedStatus(Statuses.Grudging, DURATION);
 
-/** Who last hit each unit with a move, and which move it was */
-const struckBy = new Map<Unit, { unit: Unit; move: Moves }>();
-
 /**
  * Grudging: whoever knocks this unit out loses the move that did it
  * https://bulbapedia.bulbagarden.net/wiki/Grudge_(move)
  */
 export default function setupGrudgingStatus(battle: Battle): void {
   setupTimer(battle);
+
+  /**
+   * Who last hit each unit with a move, and which move it was. Per
+   * battle, so nothing here outlives the fight it was recorded in
+   */
+  const struckBy = new Map<Unit, { unit: Unit; move: Moves }>();
 
   battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
     if (event.success && event.cause.type === EffectType.Move) {

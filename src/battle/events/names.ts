@@ -112,7 +112,6 @@ const enum BattleEvents {
   UnitTriggerStatus = 77,
 
   UnitAddStage = 78,
-  UnitRemoveStage = 79,
   UnitCheckStage = 80,
 
   UnitAddMove = 81,
@@ -183,7 +182,6 @@ const enum BattleEvents {
    * be spent answering one
    */
   CheckUnitCanAddStage = 120,
-  CheckUnitCanRemoveStage = 121,
   CheckUnitStatusDuration = 122,
   UnitUpdateStatusTimer = 123,
   CheckUnitMoveHits = 124,

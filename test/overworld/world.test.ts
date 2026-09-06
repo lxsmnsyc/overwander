@@ -255,6 +255,7 @@ import {
   LEVEL_FLOOR_LIFT,
   PICKUP_STEP_INTERVAL,
   PURIFIED_SHADOW_RELIEF,
+  SNIPER_AIMS,
   STENCH_QUIET,
 } from '../../src/overworld/abilities/gen-1';
 import { EGG_HATCH_STEPS } from '../../src/auth/egg';
@@ -2501,14 +2502,27 @@ describe('world', () => {
 
   it('sharpens a throw for a buddy that knows where to aim', () => {
     const wild = metWild(Species.Rattata);
-    const plain = createOverworld('player-uid', buddyWith([]));
 
-    expect(plain.checkCriticalCatch('spawn#0', wild)).toBe(1);
-    for (const keen of [Abilities.SuperLuck, Abilities.Sniper]) {
-      expect(
-        createOverworld('player-uid', buddyWith([keen])).checkCriticalCatch('spawn#0', wild),
-      ).toBe(KEEN_CRITICAL_BOOST);
-    }
+    expect(
+      createOverworld('player-uid', buddyWith([])).checkCriticalCatch('spawn#0', wild),
+    ).toEqual({ boost: 1, aims: 1 });
+
+    // The two are halves rather than copies: Super Luck is how often a
+    // throw comes out critical, Sniper is how well the one it gets
+    // goes
+    expect(
+      createOverworld('player-uid', buddyWith([Abilities.SuperLuck])).checkCriticalCatch(
+        'spawn#0',
+        wild,
+      ),
+    ).toEqual({ boost: KEEN_CRITICAL_BOOST, aims: 1 });
+    expect(
+      createOverworld('player-uid', buddyWith([Abilities.Sniper])).checkCriticalCatch(
+        'spawn#0',
+        wild,
+      ),
+    ).toEqual({ boost: 1, aims: SNIPER_AIMS });
+
     // It is its own question: neither of them lifts an ordinary throw
     expect(
       createOverworld('player-uid', buddyWith([Abilities.SuperLuck])).checkCatchChance(

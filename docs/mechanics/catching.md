@@ -50,8 +50,11 @@ How often one happens depends on how full the player's pokedex is. A trainer who
 has caught nothing never throws one; the chance climbs in bands from thirty
 species owned to six hundred, and it also rides the throw's own chance, so a
 critical throw at a Chansey with a Poke Ball is still nearly hopeless. It can
-never happen more than 15% of the time. A **Super Luck** or **Sniper** buddy
-doubles it.
+never happen more than 15% of the time. A **Super Luck** buddy doubles it.
+
+**Sniper** is the other half: critical throws come no oftener, but the single
+shake behind one gets two chances instead of one, the better deciding. Walking
+with both means more critical throws and better ones.
 
 Nothing about a critical throw changes what is caught, and it is announced only
 after the fact.

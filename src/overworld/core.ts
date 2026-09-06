@@ -406,9 +406,14 @@ export default class Overworld extends EventEngine<OverworldEventMap> {
   }
 
   /**
-   * How much likelier this player's throws are to come out critical
+   * How much likelier this player's throws are to come out critical,
+   * and how many chances the shake behind one gets
    */
-  checkCriticalCatch(spawn: string, encounter: Encounter, boost = 1): number {
+  checkCriticalCatch(
+    spawn: string,
+    encounter: Encounter,
+    boost = 1,
+  ): { boost: number; aims: number } {
     const event: CheckCriticalCatchEvent = {
       id: 'CheckCriticalCatch',
       disabled: false,
@@ -416,10 +421,11 @@ export default class Overworld extends EventEngine<OverworldEventMap> {
       random: this.random(spawn, 'critical'),
       encounter,
       boost,
+      aims: 1,
     };
 
     this.emit(OverworldEvents.CheckCriticalCatch, event);
-    return Math.max(0, event.boost);
+    return { boost: Math.max(0, event.boost), aims: Math.max(1, Math.floor(event.aims)) };
   }
 
   /**

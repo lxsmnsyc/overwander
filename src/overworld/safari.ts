@@ -288,6 +288,11 @@ export interface SafariContext {
    * means the player walks with nothing that helps
    */
   keen?: number;
+  /**
+   * How many chances the one shake of a critical throw gets, the
+   * better of them deciding. A Sniper buddy is what aims twice
+   */
+  aims?: number;
 }
 
 /**
@@ -882,6 +887,20 @@ export default class SafariSession<
 }
 
 /**
+ * Whether the ball holds through one shake, given as many aims at it
+ * as the player brought. The rolls stop at the first that holds, so a
+ * second aim costs a roll only where the first one missed
+ */
+function holds(session: SafariSession, chance: number, aims: number): boolean {
+  for (let aim = 0; aim < aims; aim++) {
+    if (session.random() < chance) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
  * The session's mechanics, battle-style: every action's effect
  * rides its event at Exact, so Pre listeners can veto any action by
  * disabling its event and UIs observe settled events at Post
@@ -916,12 +935,17 @@ function setupSafariMechanics(session: SafariSession): void {
     event.critical = critical > 0 && target.random() < critical;
 
     const needed = event.critical ? CRITICAL_SHAKES : SHAKES;
+    // A second aim is worth having only where there is one shot to
+    // take it on, so it rides the critical throw and nothing else:
+    // handed to an ordinary throw it would be three shakes rolled
+    // twice over, which is a different game
+    const aims = event.critical ? (target.context.aims ?? 1) : 1;
 
     // Each shake is its own check at the same odds, and the first one
     // to fail is where the ball opens. Rolled one at a time rather
     // than as a single draw so the count means something: it is how
     // near the throw came, and it is all the player is ever told
-    while (event.shakes < needed && target.random() < shake) {
+    while (event.shakes < needed && holds(target, shake, aims)) {
       event.shakes += 1;
     }
 

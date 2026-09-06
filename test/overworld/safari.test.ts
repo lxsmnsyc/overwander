@@ -586,6 +586,25 @@ describe('safari session', () => {
     expect(missed.throwBall()).toBe(ThrowResult.BrokeFree);
     expect(missed.critical).toBe(true);
     expect(missed.shakes).toBe(0);
+
+    // A second aim is a second chance at that one shake: the same
+    // rolls that missed above hold on the retry
+    const sniped = new SafariSession(encounter, rolls([0, 0.999, 0]), {
+      mastery: masteryOf(600),
+      aims: 2,
+    });
+
+    expect(sniped.throwBall()).toBe(ThrowResult.Caught);
+    expect(sniped.shakes).toBe(CRITICAL_SHAKES);
+
+    // It is spent on the critical shake alone. The stream below holds,
+    // misses, then holds: an ordinary throw stops at the miss, where a
+    // retried one would take the third roll and rock twice
+    const ordinary = new SafariSession(encounter, rolls([0, 0.999, 0]), { aims: 2 });
+
+    ordinary.throwBall();
+    expect(ordinary.critical).toBe(false);
+    expect(ordinary.shakes).toBe(1);
   });
 
   it('says how ready a meeting is to run in words', () => {

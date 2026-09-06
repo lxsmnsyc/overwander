@@ -285,24 +285,41 @@ const setupHarvest = createBuddyAbility(Abilities.Harvest, (overworld) => {
 });
 
 /**
- * What a sharp-eyed buddy adds to how often a throw comes out
- * critical. It multiplies a chance that is small to begin with and
- * capped after, so the pair of them is a better eye rather than a
- * different game
+ * What Super Luck adds to how often a throw comes out critical. It
+ * multiplies a chance that is small to begin with and capped after, so
+ * it is a better eye rather than a different game
  */
 export const KEEN_CRITICAL_BOOST = 2;
 
 /**
- * Super Luck and Sniper: the two that know where the weak point is.
- * Out here that is the throw that holds on the first shake
+ * Super Luck: the throw that holds on the first shake comes along
+ * twice as often. It is the mainline's raised critical ratio, and it
+ * changes how often rather than how well
  */
-function createKeenAbility(ability: Abilities): (overworld: Overworld) => void {
-  return createBuddyAbility(ability, (overworld) => {
-    overworld.on(OverworldEvents.CheckCriticalCatch, EventPriority.Exact, (event) => {
-      event.boost *= KEEN_CRITICAL_BOOST;
-    });
+const setupSuperLuck = createBuddyAbility(Abilities.SuperLuck, (overworld) => {
+  overworld.on(OverworldEvents.CheckCriticalCatch, EventPriority.Exact, (event) => {
+    event.boost *= KEEN_CRITICAL_BOOST;
   });
-}
+});
+
+/**
+ * How many chances a Sniper buddy gives the one shake a critical
+ * throw gets. Two aims, the better deciding, which is the mainline's
+ * heavier critical hit said in the terms a ball has
+ */
+export const SNIPER_AIMS = 2;
+
+/**
+ * Sniper: critical throws come no oftener, and the ones that come are
+ * far likelier to hold. It is the other half of Super Luck rather than
+ * a second copy of it, so a player walking with either knows which
+ * they are walking with
+ */
+const setupSniper = createBuddyAbility(Abilities.Sniper, (overworld) => {
+  overworld.on(OverworldEvents.CheckCriticalCatch, EventPriority.Exact, (event) => {
+    event.aims = SNIPER_AIMS;
+  });
+});
 
 /**
  * Pickpocket: a pokemon that got away did not get away with what it
@@ -368,8 +385,8 @@ const FIELD_ABILITIES: ((overworld: Overworld) => void)[] = [
 
   setupPickpocket,
 
-  createKeenAbility(Abilities.SuperLuck),
-  createKeenAbility(Abilities.Sniper),
+  setupSuperLuck,
+  setupSniper,
 
   setupSynchronize,
   setupCuteCharm,

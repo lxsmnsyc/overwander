@@ -280,6 +280,12 @@ export interface CheckCriticalCatchEvent extends CheckEncounterEvent {
    * capped afterwards, so nothing here makes every ball a critical one
    */
   boost: number;
+  /**
+   * How many chances the one shake of a critical throw gets, the best
+   * of them deciding. One is a single aim, which is what a player
+   * walking with nothing that helps takes
+   */
+  aims: number;
 }
 
 export interface OverworldEventMap extends EventMap {

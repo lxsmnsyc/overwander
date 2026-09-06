@@ -53,12 +53,14 @@ export async function createSafariSession(
   // the first shake, so a player who has caught a great many things
   // throws like somebody who has
   const dex = await getCaughtSpeciesCount(user.uid);
+  const critical = overworld.checkCriticalCatch(encounterKey(encounter), encounter);
   const session = new SafariSession(encounter, () => rng.random(), {
     speciesCaught,
     cap: treats.cap,
     keeps: treats.keeps,
     mastery: masteryOf(dex),
-    keen: overworld.checkCriticalCatch(encounterKey(encounter), encounter),
+    keen: critical.boost,
+    aims: critical.aims,
     charm: overworld.checkCatchChance(encounterKey(encounter), encounter),
     trap: overworld.checkFleeChance(encounterKey(encounter), encounter),
     buddy:

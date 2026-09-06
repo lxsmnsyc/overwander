@@ -1,7 +1,7 @@
 import { EventPriority } from '../../../core/event-emitter';
 import { Slots } from '../../../data/constants/slots';
 import { TYPE_EFFECTIVENESS, TypeEffectiveness, Types } from '../../../data/constants/types';
-import { MoveFlags, Moves } from '../../../data/ids/moves';
+import { MoveCategories, MoveFlags, Moves } from '../../../data/ids/moves';
 import { PP_UP_LIMIT, getMoveData, getMovePP } from '../../../data/moves';
 import type Battle from '../../core';
 import type { MoveState } from '../../events';
@@ -24,6 +24,20 @@ function isUnitImmune(unit: Unit, offending: Types): boolean {
     }
   }
   return false;
+}
+
+/**
+ * The status moves that answer the type chart anyway. Every other one
+ * that deals no damage ignores it (modern mechanics): a Ghost is
+ * immune to Normal damage, not to a Growl or a Foresight, and the few
+ * moves that do fail against a type say so themselves. Toxic and the
+ * powders reach the same answer through their own rules
+ */
+const TYPED_STATUS_MOVES = new Set<Moves>([Moves.ThunderWave]);
+
+/** Whether the chart has anything to say about this move landing */
+function answersTypeChart(move: Moves): boolean {
+  return getMoveData(move).category !== MoveCategories.Status || TYPED_STATUS_MOVES.has(move);
 }
 
 function createMoveState(source: Unit, move: Moves): MoveState {
@@ -117,7 +131,7 @@ export default function setupMoveMechanics(battle: Battle): void {
     event.type = getMoveData(event.move).type;
   });
   battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Exact, (event) => {
-    if (event.target.type === MoveTargetType.Unit) {
+    if (event.target.type === MoveTargetType.Unit && answersTypeChart(event.move)) {
       event.immune = isUnitImmune(event.target.unit, event.type);
     }
   });

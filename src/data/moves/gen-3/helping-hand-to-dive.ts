@@ -43,11 +43,12 @@ export default function registerHelpingHandToDive(): void {
   });
   registerMove(Moves.Wish, {
     name: 'Wish',
-    description: "Heals 1/2 the user's HP 4 seconds later.",
+    description: 'Heals the user or a party member 1/2 its HP 4 seconds later.',
     type: Types.Normal,
     category: MoveCategories.Status,
     pp: 10,
-    target: MoveTargets.None,
+    target: MoveTargets.Unit,
+    affects: MoveAffects.Unit | MoveAffects.Self | MoveAffects.Own,
     flags: 0,
     cast: [SpriteAnim.Appeal, SpriteAnim.RaiseArms, SpriteAnim.Charge],
   });

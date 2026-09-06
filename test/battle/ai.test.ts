@@ -991,4 +991,23 @@ describe('weighing a move', () => {
 
     expect(scoreMove(battle, unit, Moves.Recover, target)).toBe(BASE_SCORE + HEAL_BONUS);
   });
+
+  it('weighs a hand-over heal against whoever is getting it', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    pinRandom(battle, 0.99);
+    const healer = createUnit(battle, teamA);
+    const hurt = createUnit(battle, teamA);
+    createUnit(battle, teamB);
+
+    hurt.setHealth(60);
+
+    // The caster is full, so topping itself off is the wasted cast and
+    // the same heal handed over is worth the whole bonus
+    expect(
+      scoreMove(battle, healer, Moves.SoftBoiled, { type: MoveTargetType.Unit, unit: healer }),
+    ).toBe(BASE_SCORE - USELESS_PENALTY);
+    expect(
+      scoreMove(battle, healer, Moves.SoftBoiled, { type: MoveTargetType.Unit, unit: hurt }),
+    ).toBe(BASE_SCORE + HEAL_BONUS);
+  });
 });

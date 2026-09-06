@@ -255,6 +255,38 @@ describe('type effectiveness and STAB', () => {
     expect(ghost.health).toBe(160);
   });
 
+  it('lets a status move through a type that stops the damage', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const growler = createUnit(battle, teamA);
+    const ghost = createUnit(battle, teamB, [Types.Ghost]);
+    const normal = createUnit(battle, teamB, [Types.Normal]);
+    const dark = createUnit(battle, teamB, [Types.Dark]);
+
+    // Normal on a Ghost, Ghost on a Normal, Psychic on a Dark: all
+    // stop the damage and none of them stop the move
+    growler.triggerMoveTarget(Moves.Growl, unitTarget(ghost), 0);
+    expect(ghost.checkStage(Stages.Attack, 0)).toBe(-1);
+
+    growler.triggerMoveTarget(Moves.Foresight, unitTarget(ghost), 0);
+    expect(ghost.status[Statuses.Identified]).toBeDefined();
+
+    growler.triggerMoveTarget(Moves.ConfuseRay, unitTarget(normal), 0);
+    expect(normal.status[Statuses.Confused]).toBeDefined();
+
+    growler.triggerMoveTarget(Moves.Hypnosis, unitTarget(dark), 0);
+    expect(dark.status[Statuses.Sleeping]).toBeDefined();
+  });
+
+  it('still refuses the status moves that answer the chart themselves', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const zapper = createUnit(battle, teamA);
+    const ground = createUnit(battle, teamB, [Types.Ground]);
+
+    zapper.triggerMoveTarget(Moves.ThunderWave, unitTarget(ground), 0);
+
+    expect(ground.status[Statuses.Paralyzed]).toBeUndefined();
+  });
+
   it('leaves a status move out of the chart and the bonus', () => {
     const { battle, teamA, teamB } = createBattle();
     const attacker = createUnit(battle, teamA, [Types.Electric]);

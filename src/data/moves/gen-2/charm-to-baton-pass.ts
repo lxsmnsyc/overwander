@@ -60,11 +60,12 @@ export default function registerCharmToBatonPass(): void {
   });
   registerMove(Moves.MilkDrink, {
     name: 'Milk Drink',
-    description: 'Heals the user 1/2 its HP.',
+    description: 'Heals the user or a party member 1/2 its HP.',
     type: Types.Normal,
     category: MoveCategories.Status,
     pp: 5,
-    target: MoveTargets.None,
+    target: MoveTargets.Unit,
+    affects: MoveAffects.Unit | MoveAffects.Self | MoveAffects.Own,
     flags: 0,
     cast: [SpriteAnim.Swell, SpriteAnim.RearUp, SpriteAnim.Charge],
   });

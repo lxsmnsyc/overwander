@@ -2,10 +2,10 @@ import { AttackPriority } from '../../core/event-emitter';
 import { Stats } from '../../data/constants/stats';
 import { Moves } from '../../data/ids/moves';
 import { Weathers } from '../../data/ids/status';
-import { scoreSelfHeal } from '../ai/score';
+import { scoreHeal } from '../ai/score';
 import type Battle from '../core';
 import type Unit from '../unit';
-import { BattleEvents, EffectType } from '../events';
+import { BattleEvents, EffectType, type MoveTarget, MoveTargetType } from '../events';
 import { isWeatherSunny } from '../utils';
 
 /**
@@ -50,27 +50,37 @@ function healFraction(unit: Unit, move: Moves): number | undefined {
   return unit.checkWeather() === Weathers.None ? CLEAR_HEAL : OVERCAST_HEAL;
 }
 
+/**
+ * Who the heal lands on. The two a pokemon can hand over are cast at a
+ * unit; the rest are cast at nobody and come back to the caster
+ */
+function healedUnit(source: Unit, target: MoveTarget): Unit {
+  return target.type === MoveTargetType.Unit ? target.unit : source;
+}
+
 export default function setupRecoverMoves(battle: Battle): void {
   battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
     const fraction = healFraction(event.source, event.move);
 
     if (fraction != null) {
+      const healed = healedUnit(event.source, event.target);
+
       event.source.heal(
         { type: EffectType.Move, move: event.move, unit: event.source },
-        event.source,
-        event.source.checkStat(Stats.HP, 0) * fraction,
+        healed,
+        healed.checkStat(Stats.HP, 0) * fraction,
         0,
       );
     }
   });
 
-  // Worth what it would actually put back, so a full unit does not
-  // spend a cast topping itself off
+  // Worth what it would actually put back for whoever is getting it, so
+  // a full unit is not topped off with a whole cast
   battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
     const fraction = healFraction(event.source, event.move);
 
     if (fraction != null) {
-      scoreSelfHeal(event, fraction);
+      scoreHeal(event, healedUnit(event.source, event.target), fraction);
     }
   });
 }

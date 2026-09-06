@@ -7,6 +7,7 @@ import SafariSession, {
   SafariState,
   ThrowResult,
   encounterKey,
+  masteryOf,
 } from '../overworld/safari';
 import { recordCatch } from '../server/caught';
 import { requireUid } from '../server/auth';
@@ -16,6 +17,7 @@ import { pocketFled, retireSpawn } from '../server/overworld';
 import createOverworld from '../overworld/setup';
 import { buddyEffectsOf, resolveBuddy } from './buddy';
 import { hasCaughtSpecies } from './caught';
+import { getCaughtSpeciesCount } from './pokedex';
 import { syncServerClock } from './clock';
 import { getLocalOffset, getLocale } from './local-time';
 import type { EncounterRecord } from './encounter-record';
@@ -47,10 +49,16 @@ export async function createSafariSession(
   // Neither can change while a ball is in the air
   const overworld = createOverworld(user.uid, walking == null ? null : buddyEffectsOf(walking[1]));
   const treats = overworld.checkTreats(encounterKey(encounter), MAX_CATCH_BONUS);
+  // How much of the dex is filled decides how often a ball holds on
+  // the first shake, so a player who has caught a great many things
+  // throws like somebody who has
+  const dex = await getCaughtSpeciesCount(user.uid);
   const session = new SafariSession(encounter, () => rng.random(), {
     speciesCaught,
     cap: treats.cap,
     keeps: treats.keeps,
+    mastery: masteryOf(dex),
+    keen: overworld.checkCriticalCatch(encounterKey(encounter), encounter),
     charm: overworld.checkCatchChance(encounterKey(encounter), encounter),
     trap: overworld.checkFleeChance(encounterKey(encounter), encounter),
     buddy:
@@ -177,6 +185,16 @@ export interface ThrowOutcome {
   result: ThrowResult;
   catchId: string | null;
   /**
+   * How far the ball got before it opened, out of `SHAKES`. A catch
+   * held through all of them
+   */
+  shakes: number;
+  /**
+   * Whether the ball came out critical, and so held on one shake
+   * rather than three
+   */
+  critical: boolean;
+  /**
    * What the pokemon left behind as it ran, for a player whose buddy
    * picks pockets. Null for every other throw
    */
@@ -191,6 +209,7 @@ export interface ThrowOutcome {
  */
 export async function throwBall(
   session: SafariSession<EncounterRecord>,
+  watch?: (shakes: number, result: ThrowResult) => void,
 ): Promise<ThrowOutcome | null> {
   if (session.state !== SafariState.Active) {
     return null;
@@ -209,18 +228,31 @@ export async function throwBall(
   const result = session.throwBall();
   const spawn = session.encounter.spawn;
 
+  // Handed over the moment it is rolled, before the record is written:
+  // the ball is what the player is watching, and the writing is what
+  // it should be watched over rather than after
+  watch?.(session.shakes, result);
+
   if (result === ThrowResult.Caught) {
     // The catch is stamped in the catcher's own zone and carries the
     // locale it was made in, so its date reads as the day they had
     return {
       result,
+      shakes: session.shakes,
+      critical: session.critical,
       catchId: await keepCatch(token, spawn, session.ball, getLocalOffset(), getLocale()),
     };
   }
   if (result === ThrowResult.Fled) {
-    return { result, catchId: null, pocketed: await retireEncounter(token, spawn) };
+    return {
+      result,
+      shakes: session.shakes,
+      critical: session.critical,
+      catchId: null,
+      pocketed: await retireEncounter(token, spawn),
+    };
   }
-  return { result, catchId: null };
+  return { result, shakes: session.shakes, critical: session.critical, catchId: null };
 }
 
 /**

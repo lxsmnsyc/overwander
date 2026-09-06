@@ -76,6 +76,17 @@ export interface SafariFeedEvent extends SafariEvent {
 export interface SafariThrowEvent extends SafariEvent {
   ball: Balls;
   result: ThrowResult;
+  /**
+   * How many times the ball held before it opened, out of `SHAKES`.
+   * All of them is a catch, and anything less is what the meeting is
+   * telling the player about how close the throw came
+   */
+  shakes: number;
+  /**
+   * Whether the ball came out critical, and so had to hold once
+   * rather than three times
+   */
+  critical: boolean;
 }
 
 export interface SafariEndEvent extends SafariEvent {
@@ -266,6 +277,17 @@ export interface SafariContext {
    * fresh one on top of it
    */
   keeps?: boolean;
+  /**
+   * What the player's dex is worth on a critical throw, from
+   * `masteryOf`. Absent, or zero, is a player whose balls never come
+   * out critical: they have not caught enough for it yet
+   */
+  mastery?: number;
+  /**
+   * What a buddy adds to how often a throw comes out critical. One
+   * means the player walks with nothing that helps
+   */
+  keen?: number;
 }
 
 /**
@@ -319,6 +341,65 @@ export const MAX_CATCH_BONUS = 4;
 const THROW_DRIFT = 1.01;
 
 const CATCH_RATE_SCALE = 255;
+
+/**
+ * How many times a ball has to hold before it holds for good.
+ *
+ * The catch is not rolled and then acted out: it is rolled *as* the
+ * shakes, each an independent check at the same odds, and all of them
+ * have to pass. That leaves the chance of a catch exactly what
+ * `getCatchChance` says, and buys the one thing a safari can honestly
+ * tell a player about the odds: two shakes and a burst says the throw
+ * was close, where a table would have said it in numbers
+ */
+export const SHAKES = 3;
+
+/**
+ * What a critical throw is: a ball that has to hold **once** rather
+ * than three times, at the same odds each. A one-in-ten catch holds on
+ * a critical throw very nearly one time in two, which is why the
+ * chance of getting one is small
+ */
+export const CRITICAL_SHAKES = 1;
+
+/**
+ * What share of a throw's own chance is the chance of that throw being
+ * a critical one, before the player's dex has its say. A sixth is the
+ * mainline's figure and it is kept: a good ball at an easy species is
+ * where a critical throw belongs, and a hopeless throw stays hopeless
+ */
+export const CRITICAL_SHARE = 1 / 6;
+
+/**
+ * However far a dex reaches, this is as often as a throw comes out
+ * critical
+ */
+export const MAX_CRITICAL_CHANCE = 0.15;
+
+/**
+ * What a dex is worth on a critical throw, by how many species the
+ * player has ever owned. A trainer who has caught nothing throws no
+ * critical balls at all: the whole point of it is that it is what
+ * experience looks like from the outside
+ */
+export const MASTERY_BANDS: [caught: number, worth: number][] = [
+  [600, 2.5],
+  [450, 2],
+  [300, 1.5],
+  [150, 1],
+  [60, 0.5],
+  [30, 0.25],
+];
+
+/** Which band a player's dex falls in */
+export function masteryOf(caught: number): number {
+  for (const [held, worth] of MASTERY_BANDS) {
+    if (caught >= held) {
+      return worth;
+    }
+  }
+  return 0;
+}
 
 /**
  * What is left of a throw at a shadow.
@@ -439,6 +520,16 @@ export default class SafariSession<
    * The accumulated feeding bonus; grown by the Feed mechanics
    */
   catchBonus = 1;
+
+  /**
+   * How far the last ball thrown got, out of `SHAKES`. It is what the
+   * dialog plays out, and it is kept on the session because a throw
+   * hands back its result rather than its event
+   */
+  shakes = 0;
+
+  /** Whether the last ball thrown came out critical */
+  critical = false;
 
   /**
    * Turns elapsed in this session: every resolved throw or feeding
@@ -677,6 +768,35 @@ export default class SafariSession<
   }
 
   /**
+   * How often a throw comes out critical: a ball that holds on one
+   * shake rather than three.
+   *
+   * It rides the throw's own chance, so everything already counted
+   * counts here too, and it is nothing at all for a player whose dex
+   * has not filled enough to earn it
+   */
+  getCriticalChance(): number {
+    const mastery = this.context.mastery ?? 0;
+
+    if (mastery <= 0) {
+      return 0;
+    }
+    return Math.min(
+      MAX_CRITICAL_CHANCE,
+      this.getCatchChance() * CRITICAL_SHARE * mastery * (this.context.keen ?? 1),
+    );
+  }
+
+  /**
+   * What one shake of the ball is worth. Three of them multiply back
+   * to the whole catch chance, so the sequence is the roll rather
+   * than a picture of one
+   */
+  getShakeChance(): number {
+    return this.getCatchChance() ** (1 / SHAKES);
+  }
+
+  /**
    * Whether the encounter would take a treat right now: it has to be
    * standing there, and it has to have finished the last one
    */
@@ -717,6 +837,8 @@ export default class SafariSession<
       session: this,
       ball: this.ball,
       result: ThrowResult.BrokeFree,
+      shakes: 0,
+      critical: false,
     };
 
     this.emit(SafariEvents.Throw, event);
@@ -786,8 +908,24 @@ function setupSafariMechanics(session: SafariSession): void {
 
   session.on(SafariEvents.Throw, EventPriority.Exact, (event) => {
     const target = event.session;
+    const shake = target.getShakeChance();
+    const critical = target.getCriticalChance();
 
-    if (target.random() < target.getCatchChance()) {
+    // Rolled only where it can happen, so a player who has not earned
+    // a critical throw yet is not silently spending a roll on one
+    event.critical = critical > 0 && target.random() < critical;
+
+    const needed = event.critical ? CRITICAL_SHAKES : SHAKES;
+
+    // Each shake is its own check at the same odds, and the first one
+    // to fail is where the ball opens. Rolled one at a time rather
+    // than as a single draw so the count means something: it is how
+    // near the throw came, and it is all the player is ever told
+    while (event.shakes < needed && target.random() < shake) {
+      event.shakes += 1;
+    }
+
+    if (event.shakes >= needed) {
       event.result = ThrowResult.Caught;
     } else if (target.random() < target.getFleeChance()) {
       event.result = ThrowResult.Fled;
@@ -806,6 +944,8 @@ function setupSafariMechanics(session: SafariSession): void {
   session.on(SafariEvents.Throw, EventPriority.Post, (event) => {
     event.session.turn += 1;
     event.session.throws += 1;
+    event.session.shakes = event.shakes;
+    event.session.critical = event.critical;
     // A ball it shook off leaves it open to another treat. A catch
     // ends the session, so clearing the flag there would be for
     // nobody

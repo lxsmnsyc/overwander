@@ -199,6 +199,7 @@ from the buddy's ability, others from what it is holding.
 | **Harvest**                                  | Ability   | A fed treat goes on working after a missed throw           |
 | **Honey Gather**                             | Ability   | Finds a berry every 384 steps walked                       |
 | **Forewarn**, **Anticipation**               | Ability   | Says how ready a wild pokemon is to run, before the first ball |
+| **Super Luck**, **Sniper**                   | Ability   | Twice as often, a ball holds on the first shake            |
 | **Pickpocket**                               | Ability   | A pokemon that runs off leaves what it was carrying        |
 | **Stench**                                   | Ability   | Two fewer pokemon come near                               |
 | **Keen Eye**, **Intimidate**                 | Ability   | The bottom of the level band lifts by three               |

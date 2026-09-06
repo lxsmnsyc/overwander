@@ -101,6 +101,11 @@ export const enum OverworldEvents {
    * Pickpocket is what takes it
    */
   CheckPockets = 16,
+  /**
+   * How much likelier a throw is to come out critical, holding on one
+   * shake rather than three
+   */
+  CheckCriticalCatch = 17,
 }
 
 /**
@@ -269,6 +274,14 @@ export interface CheckPocketsEvent extends OverworldEvent {
   taken: boolean;
 }
 
+export interface CheckCriticalCatchEvent extends CheckEncounterEvent {
+  /**
+   * What the chance of a critical throw is multiplied by. It is
+   * capped afterwards, so nothing here makes every ball a critical one
+   */
+  boost: number;
+}
+
 export interface OverworldEventMap extends EventMap {
   [OverworldEvents.CheckSpawnCount]: [CheckSpawnCountEvent, EventPriority];
   [OverworldEvents.CheckEncounterNature]: [CheckEncounterNatureEvent, EventPriority];
@@ -287,4 +300,5 @@ export interface OverworldEventMap extends EventMap {
   [OverworldEvents.CheckTreats]: [CheckTreatsEvent, EventPriority];
   [OverworldEvents.CheckRevealsFlight]: [CheckRevealsFlightEvent, EventPriority];
   [OverworldEvents.CheckPockets]: [CheckPocketsEvent, EventPriority];
+  [OverworldEvents.CheckCriticalCatch]: [CheckCriticalCatchEvent, EventPriority];
 }

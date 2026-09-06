@@ -63,6 +63,21 @@ const HELD_SPRITE = 16;
 
 const THROW_SPRITE = 28;
 
+/** How large the thrown ball is drawn where the pokemon was standing */
+const BALL_SPRITE = 48;
+
+/**
+ * How long the ball takes to land, how long one shake of it takes, and
+ * the beat it is left still before the answer is said.
+ *
+ * The whole of it runs while the catch is being written down, so the
+ * player waits no longer than they already do: what changes is that
+ * the wait is the ball rocking rather than a static sprite
+ */
+const BALL_LAND = 260;
+const BALL_SHAKE = 420;
+const BALL_SETTLE = 320;
+
 const STATE_MESSAGES: Record<SafariState, string> = {
   [SafariState.Active]: '',
   [SafariState.Caught]: 'Caught. It is yours.',
@@ -161,6 +176,35 @@ function SafariBody(
   const [throwing, setThrowing] = createSignal(false);
 
   /**
+   * The ball on screen, as how many times it is set to rock. Null
+   * while nothing is thrown, which is what puts the pokemon back
+   */
+  const [rocking, setRocking] = createSignal<number | null>(null);
+
+  /**
+   * Play the ball landing and rocking, and resolve when it is done.
+   *
+   * It is awaited alongside the write rather than after it, so the
+   * animation costs nothing: a throw was already this long. Somebody
+   * who has asked for less motion is shown the ball and told the
+   * answer without the wait
+   */
+  const rock = async (shakes: number): Promise<void> => {
+    // Somebody who has asked for less motion is shown the ball for a
+    // beat and told the answer. The rocking is where the near miss is
+    // said, and there is nowhere else to say it that would not also
+    // say it to everybody the animation already told
+    const held = settings().reduceMotion
+      ? BALL_SETTLE
+      : BALL_LAND + shakes * BALL_SHAKE + BALL_SETTLE;
+
+    setRocking(shakes);
+    await new Promise<void>((resolve) => {
+      setTimeout(resolve, held);
+    });
+  };
+
+  /**
    * The session as the panel shows it, held one beat past the end.
    *
    * Running away empties the prop at once, and the dialog is still on
@@ -200,6 +244,7 @@ function SafariBody(
         setTreat(null);
         setCaught(null);
         setThrowing(false);
+        setRocking(null);
       },
     ),
   );
@@ -345,8 +390,16 @@ function SafariBody(
       }
 
       const spent = active.ball;
-      const thrownAt = await throwBall(active);
+      // The ball is played out as the record is written: `throwBall`
+      // hands the shakes over the moment they are rolled, and what is
+      // awaited here is both halves finishing
+      let played: Promise<void> = Promise.resolve();
+      const thrownAt = await throwBall(active, (shakes) => {
+        played = rock(shakes);
+      });
 
+      await played;
+      setRocking(null);
       if (thrownAt == null) {
         return 'No ball of that kind to throw.';
       }
@@ -365,6 +418,11 @@ function SafariBody(
       // What a Pickpocket buddy came away with, said where the flight
       // itself is said: it is the same moment, and the consolation
       // reads as part of it rather than as a second announcement
+      // A ball that held on the first shake is the one throw worth
+      // saying anything more about than that it worked
+      if (thrownAt.critical && thrownAt.result === ThrowResult.Caught) {
+        return 'Caught, first shake!';
+      }
       if (thrownAt.pocketed != null) {
         return `It fled, and dropped its ${describeItem(thrownAt.pocketed)}.`;
       }
@@ -494,21 +552,54 @@ function SafariBody(
                       <Badge tone="ember">{describeFlight(active().getFleeChance())}</Badge>
                     </Show>
                   </span>
-                  <AnimatedSprite
-                    species={active().encounter.species}
-                    shiny={isShiny(active().encounter)}
-                    female={active().encounter.gender === Genders.Female}
-                    // What the sparkles in the title are about, said
-                    // by the pokemon instead: one standing in front of
-                    // the player is the encounter worth spending the
-                    // whole bag on
-                    sparkle={isShiny(active().encounter)}
-                    aura={isShadow(active().encounter) ? 'shadow' : undefined}
-                    animation={SpriteAnim.Idle}
-                    direction="Down"
-                    scale={4}
-                    label={`${getSpeciesData(active().encounter.species).name}, standing in front of you`}
-                  />
+                  {/* The ball stands where the pokemon does, and the
+                      pokemon is taken off the panel while it rocks:
+                      what is inside the ball is not standing in the
+                      field, and a sprite left behind it would say the
+                      throw had already failed */}
+                  <Show
+                    when={rocking() != null}
+                    fallback={
+                      <AnimatedSprite
+                        species={active().encounter.species}
+                        shiny={isShiny(active().encounter)}
+                        female={active().encounter.gender === Genders.Female}
+                        // What the sparkles in the title are about,
+                        // said by the pokemon instead: one standing in
+                        // front of the player is the encounter worth
+                        // spending the whole bag on
+                        sparkle={isShiny(active().encounter)}
+                        aura={isShadow(active().encounter) ? 'shadow' : undefined}
+                        animation={SpriteAnim.Idle}
+                        direction="Down"
+                        scale={4}
+                        label={`${getSpeciesData(active().encounter.species).name}, standing in front of you`}
+                      />
+                    }
+                  >
+                    {/* The ball stands where the pokemon did, and the
+                        pokemon comes off the panel while it rocks:
+                        what is inside the ball is not also in the
+                        field, and a sprite left behind it would give
+                        the answer away before the last shake */}
+                    <span
+                      class="block pb-8"
+                      style={{ animation: `ball-land ${BALL_LAND}ms ease-out both` }}
+                    >
+                      <span
+                        class="block"
+                        style={{
+                          animation: `ball-shake ${BALL_SHAKE}ms ease-in-out ${BALL_LAND}ms ${rocking() ?? 0} both`,
+                        }}
+                      >
+                        <ItemSprite
+                          item={BALL_ITEMS[active().ball]}
+                          size={BALL_SPRITE}
+                          label="The ball rocks"
+                        />
+                      </span>
+                    </span>
+                  </Show>
                 </div>
               }
             >

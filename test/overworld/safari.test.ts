@@ -11,15 +11,20 @@ import ChunkSnapshot from '../../src/overworld/chunk-snapshot';
 import deriveEncounter, { type Encounter, EncounterType } from '../../src/overworld/encounter';
 import { EventPriority } from '../../src/core/event-emitter';
 import SafariSession, {
+  CRITICAL_SHAKES,
+  CRITICAL_SHARE,
   LEVEL_CATCH_FLOOR,
   MAX_CATCH_BONUS,
+  MAX_CRITICAL_CHANCE,
   SHADOW_CATCH_FACTOR,
+  SHAKES,
   SafariEvents,
   SafariState,
   ThrowResult,
   describeFlight,
   encounterKey,
   levelCatchFactor,
+  masteryOf,
 } from '../../src/overworld/safari';
 import { CATCHING_CHARM_BOOST } from '../../src/overworld/items/key-items';
 import { TRAP_FLEE_FACTOR } from '../../src/overworld/abilities/__create';
@@ -156,7 +161,8 @@ describe('safari session', () => {
     expect(session.catchBonus).toBeCloseTo(1.25 * 1.25);
 
     // A caught encounter is not hungry, whatever the flag says
-    const caught = new SafariSession(makeEncounter(), rolls([0]));
+    // Three shakes, so three rolls the ball holds through
+    const caught = new SafariSession(makeEncounter(), rolls([0, 0, 0]));
 
     expect(caught.throwBall()).toBe(ThrowResult.Caught);
     expect(caught.canFeed()).toBe(false);
@@ -510,6 +516,78 @@ describe('safari session', () => {
     expect(grower.canFeed()).toBe(true);
   });
 
+  it('rolls the catch as its shakes, and says how far the ball got', () => {
+    const encounter = makeEncounter();
+    const measured = new SafariSession(encounter, rolls([]));
+    // Three shakes at the same odds multiply back to the whole chance,
+    // so the sequence is the roll rather than a picture of one
+    const shake = measured.getShakeChance();
+
+    expect(shake ** SHAKES).toBeCloseTo(measured.getCatchChance());
+    expect(shake).toBeGreaterThan(measured.getCatchChance());
+
+    // Two that hold and a third that does not is a ball that opens,
+    // and the count is what the meeting has to say about how close it
+    // came
+    const nearly = new SafariSession(encounter, rolls([0, 0, 0.999, 0.999]));
+
+    expect(nearly.throwBall()).toBe(ThrowResult.BrokeFree);
+    expect(nearly.shakes).toBe(SHAKES - 1);
+
+    // Not even one, which is the same throw as far as the rules go
+    const wide = new SafariSession(encounter, rolls([0.999, 0.999]));
+
+    expect(wide.throwBall()).toBe(ThrowResult.BrokeFree);
+    expect(wide.shakes).toBe(0);
+
+    // And the flee roll is the one after the shakes stop, so a throw
+    // that came close can still be the last one
+    const gone = new SafariSession(encounter, rolls([0, 0.999, 0]));
+
+    expect(gone.throwBall()).toBe(ThrowResult.Fled);
+    expect(gone.shakes).toBe(1);
+  });
+
+  it('holds on one shake for a critical throw, and only for a filled dex', () => {
+    const encounter = makeEncounter();
+
+    // A player who has caught nothing throws no critical balls, and
+    // rolls nothing for one either: the stream is untouched, so three
+    // rolls are still three shakes
+    const green = new SafariSession(encounter, rolls([0, 0, 0]));
+
+    expect(green.getCriticalChance()).toBe(0);
+    expect(green.throwBall()).toBe(ThrowResult.Caught);
+    expect(green.critical).toBe(false);
+
+    // A dex worth something is what buys the chance, and it rides the
+    // throw's own odds rather than replacing them
+    const veteran = new SafariSession(encounter, rolls([]), { mastery: masteryOf(600) });
+
+    expect(veteran.getCriticalChance()).toBeCloseTo(
+      Math.min(MAX_CRITICAL_CHANCE, veteran.getCatchChance() * CRITICAL_SHARE * masteryOf(600)),
+    );
+    expect(masteryOf(0)).toBe(0);
+    expect(masteryOf(600)).toBeGreaterThan(masteryOf(60));
+
+    // Rolled critical, one shake is the whole of it
+    const lucky = new SafariSession(encounter, rolls([0, 0]), { mastery: masteryOf(600) });
+
+    expect(lucky.throwBall()).toBe(ThrowResult.Caught);
+    expect(lucky.critical).toBe(true);
+    expect(lucky.shakes).toBe(CRITICAL_SHAKES);
+
+    // And a critical throw is still a throw: the one shake can fail,
+    // and what follows is the same flee roll as any other miss
+    const missed = new SafariSession(encounter, rolls([0, 0.999, 0.999]), {
+      mastery: masteryOf(600),
+    });
+
+    expect(missed.throwBall()).toBe(ThrowResult.BrokeFree);
+    expect(missed.critical).toBe(true);
+    expect(missed.shakes).toBe(0);
+  });
+
   it('says how ready a meeting is to run in words', () => {
     expect(describeFlight(0.4)).toBe('Ready to bolt');
     expect(describeFlight(0.2)).toBe('Watching the exit');
@@ -587,7 +665,9 @@ describe('safari session', () => {
   });
 
   it('emits events a UI can hook into', () => {
-    const session = new SafariSession(makeEncounter(), rolls([0.99, 0.99, 0]));
+    // The first throw opens on the first shake and does not flee; the
+    // second holds through all three
+    const session = new SafariSession(makeEncounter(), rolls([0.99, 0.99, 0, 0, 0]));
     const log: string[] = [];
 
     session.on(SafariEvents.ChooseBall, EventPriority.Post, (event) => {

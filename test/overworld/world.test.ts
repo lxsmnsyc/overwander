@@ -250,6 +250,7 @@ import {
   GLUTTONY_FEAST,
   HONEY_STEP_INTERVAL,
   ILLUMINATE_LAMP_CELLS,
+  KEEN_CRITICAL_BOOST,
   LEVEL_CEILING_LIFT,
   LEVEL_FLOOR_LIFT,
   PICKUP_STEP_INTERVAL,
@@ -2496,6 +2497,25 @@ describe('world', () => {
     expect(createOverworld('player-uid', buddyWith([Abilities.Forewarn])).checkRevealsHeld()).toBe(
       false,
     );
+  });
+
+  it('sharpens a throw for a buddy that knows where to aim', () => {
+    const wild = metWild(Species.Rattata);
+    const plain = createOverworld('player-uid', buddyWith([]));
+
+    expect(plain.checkCriticalCatch('spawn#0', wild)).toBe(1);
+    for (const keen of [Abilities.SuperLuck, Abilities.Sniper]) {
+      expect(
+        createOverworld('player-uid', buddyWith([keen])).checkCriticalCatch('spawn#0', wild),
+      ).toBe(KEEN_CRITICAL_BOOST);
+    }
+    // It is its own question: neither of them lifts an ordinary throw
+    expect(
+      createOverworld('player-uid', buddyWith([Abilities.SuperLuck])).checkCatchChance(
+        'spawn#0',
+        wild,
+      ),
+    ).toBe(1);
   });
 
   it('pays candy for what a buddy is carrying, to the right family', () => {

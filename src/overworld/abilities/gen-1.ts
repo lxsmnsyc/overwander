@@ -285,6 +285,26 @@ const setupHarvest = createBuddyAbility(Abilities.Harvest, (overworld) => {
 });
 
 /**
+ * What a sharp-eyed buddy adds to how often a throw comes out
+ * critical. It multiplies a chance that is small to begin with and
+ * capped after, so the pair of them is a better eye rather than a
+ * different game
+ */
+export const KEEN_CRITICAL_BOOST = 2;
+
+/**
+ * Super Luck and Sniper: the two that know where the weak point is.
+ * Out here that is the throw that holds on the first shake
+ */
+function createKeenAbility(ability: Abilities): (overworld: Overworld) => void {
+  return createBuddyAbility(ability, (overworld) => {
+    overworld.on(OverworldEvents.CheckCriticalCatch, EventPriority.Exact, (event) => {
+      event.boost *= KEEN_CRITICAL_BOOST;
+    });
+  });
+}
+
+/**
  * Pickpocket: a pokemon that got away did not get away with what it
  * was holding. It is the one thing that pays for a flight, and it
  * pays nothing where the meeting was carrying nothing
@@ -347,6 +367,9 @@ const FIELD_ABILITIES: ((overworld: Overworld) => void)[] = [
   createReadingAbility(Abilities.Anticipation),
 
   setupPickpocket,
+
+  createKeenAbility(Abilities.SuperLuck),
+  createKeenAbility(Abilities.Sniper),
 
   setupSynchronize,
   setupCuteCharm,

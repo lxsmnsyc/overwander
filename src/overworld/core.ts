@@ -10,6 +10,7 @@ import type { Encounter } from './encounter/shape';
 import {
   type CheckCatchCandyEvent,
   type CheckCatchChanceEvent,
+  type CheckCriticalCatchEvent,
   type CheckEggStepsEvent,
   type CheckEncounterGenderEvent,
   type CheckEncounterHeldEvent,
@@ -402,6 +403,23 @@ export default class Overworld extends EventEngine<OverworldEventMap> {
 
     this.emit(OverworldEvents.CheckFleeChance, event);
     return Math.max(0, event.factor);
+  }
+
+  /**
+   * How much likelier this player's throws are to come out critical
+   */
+  checkCriticalCatch(spawn: string, encounter: Encounter, boost = 1): number {
+    const event: CheckCriticalCatchEvent = {
+      id: 'CheckCriticalCatch',
+      disabled: false,
+      overworld: this,
+      random: this.random(spawn, 'critical'),
+      encounter,
+      boost,
+    };
+
+    this.emit(OverworldEvents.CheckCriticalCatch, event);
+    return Math.max(0, event.boost);
   }
 
   /**

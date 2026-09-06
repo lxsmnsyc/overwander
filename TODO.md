@@ -71,3 +71,8 @@ is still short of the mainline, in rough order of how much it matters:
 ## True Species
 
 - Pre-existing species with new types
+
+## Non-canon abilities
+
+- Add non-canon abilities per family.
+  

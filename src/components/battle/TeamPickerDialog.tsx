@@ -58,6 +58,10 @@ export default function TeamPickerDialog(props: TeamPickerDialogProps): JSX.Elem
       value={[]}
       max={props.max ?? TEAM_SIZE}
       title="Form a team"
+      // Strongest first. A team is picked for what it can win, and a
+      // box arriving newest-first made the player hunt for the six
+      // they would have chosen anyway
+      sort="level"
       verb="Join with"
       empty="No catches to bring."
       reason={heldBack}

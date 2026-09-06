@@ -102,6 +102,12 @@ interface CatchPickerCommonProps {
   search?: string;
   onSearch?: (typed: string) => void;
   /**
+   * What to arrange the box by where the player has typed no `sort:`
+   * of their own, as one of the search's own sort words. Left out, the
+   * box arrives newest first, which is how the profile shows it
+   */
+  sort?: string;
+  /**
    * What stands beside the box's search: the button that turns picking
    * on, for a caller whose box is both things at once
    */

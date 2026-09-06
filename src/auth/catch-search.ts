@@ -1292,15 +1292,27 @@ export const CATCH_VOCABULARY: QueryVocabulary = {
  *
  * The two arranging terms hide nothing, so this runs over what the
  * predicate already kept. A `sort:` nobody has a reading for leaves
- * the list in the order it arrived, which is the box's own
+ * the list in the order it arrived, which is the box's own.
+ *
+ * `fallback` is what to arrange by where the search names nothing: a
+ * picker opened to form a team wants its strongest at the top without
+ * the player having to ask for them
  */
-export function orderCatches<T>(rows: T[], query: string, of: (row: T) => CaughtPokemon): T[] {
+export function orderCatches<T>(
+  rows: T[],
+  query: string,
+  of: (row: T) => CaughtPokemon,
+  fallback = '',
+): T[] {
   // Highest first unless the search says otherwise: somebody who
   // sorts a box by level, by values or by friendship is looking for
   // the best of them, and having to add `order:desc` every time to
   // see it was the box asking the question backwards
   const controls = parseControls(query, true);
-  const read = SORTS.get(controls.sort);
+  // A box opened for a particular job arranges itself for that job
+  // until the player says otherwise: a `sort:` typed into the search
+  // is still the last word
+  const read = SORTS.get(controls.sort === '' ? fallback : controls.sort);
 
   if (read == null) {
     return rows;

@@ -148,8 +148,9 @@ export default function PickerBox(
    * drafted stays drafted while it is out of sight, so typing to find
    * the sixth party member cannot quietly drop the other five.
    *
-   * A `sort:` is applied last, over what is left, and overrides the
-   * newest-first order the box arrives in
+   * A `sort:` is applied last, over what is left, and overrides both
+   * the newest-first order the box arrives in and whatever the caller
+   * asked it to be arranged by
    */
   const options = createMemo<CatchOption[]>(() =>
     orderCatches(
@@ -162,6 +163,7 @@ export default function PickerBox(
       ),
       query(),
       (option) => option.caught,
+      props.sort,
     ),
   );
 

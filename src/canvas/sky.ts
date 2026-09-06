@@ -907,12 +907,6 @@ interface Curtain {
    * sky where some rays are half the brightness of their neighbours
    */
   grain: number;
-  /**
-   * How much wider a fold is drawn than its share of the picture.
-   * Screened over each other they blend; drawn edge to edge they read
-   * as the row of rectangles they are
-   */
-  spread: number;
   /** How much a fold's foot rises and falls, as a share of its depth */
   sway: number;
   /** The light down one band, top to bottom */
@@ -942,7 +936,6 @@ const CURTAINS: Partial<Record<Weather, Curtain>> = {
     ribs: 40,
     sway: 0.22,
     grain: 0.45,
-    spread: 2.6,
     stops: [
       { at: 0, colour: '#b06cff', alpha: 0 },
       { at: 0.16, colour: '#b06cff', alpha: 0.1 },
@@ -981,9 +974,200 @@ function ribAt(
 }
 
 /**
- * A curtain sky, drawn rib by rib. The gradient down a band is a strip
- * one pixel across, stretched over each rib, so the ribs of one band
- * share one picture
+ * How large a curtain's field is worked out at.
+ *
+ * Wider than a bow's, and for the one reason: a bow has three bands
+ * across the picture where a curtain has forty folds. At the bow's
+ * width a fold would be two pixels across and would crawl as the wave
+ * moved it, which is the one thing the ribs exist to avoid
+ */
+const CURTAIN_WIDE = 256;
+const CURTAIN_TALL = 96;
+
+/** How far a curtain slides as the camera comes round, in fields per turn */
+const CURTAIN_TURN = 0.5;
+
+/**
+ * What a fold over the far ground keeps of a near one's depth, and how
+ * much higher it hangs. Distance foreshortens it: further off is
+ * shorter and higher in the picture
+ */
+const CURTAIN_FAR = 0.45;
+const CURTAIN_LIFT = 0.3;
+
+/**
+ * Where a fold starts to go, and how quickly, as it comes round in
+ * front of the player.
+ *
+ * Bright over the far ground and gone by the time it is overhead,
+ * which is what the ring did: without it the half of the curtain
+ * standing between the player and the board read as a hoop around the
+ * chunk rather than a sky over it
+ */
+const CURTAIN_FACE = 0.85;
+const CURTAIN_FADE = 0.45;
+
+let curtainSheet: HTMLCanvasElement | null = null;
+let curtainPixels: ImageData | null = null;
+/** The light down one band, sampled into steps rather than interpolated per pixel */
+const ramps: Float32Array[] = [];
+
+/**
+ * The light down a band, as `CURTAIN_STEPS` rungs of red, green, blue
+ * and alpha.
+ *
+ * The stops are the curtain's own, so the colour is exactly what the
+ * ribs were drawn in. Sampled once per band per frame and read by
+ * every pixel of it, since a gradient down a band is one dimension and
+ * this is that dimension
+ */
+function curtainRamp(curtain: Curtain, band: number, shift: number): Float32Array {
+  const ramp = ramps[band] ?? new Float32Array(CURTAIN_STEPS * 4);
+  // The middle of the band breathes up and down it, which is what
+  // keeps a curtain from being a picture that happens to move
+  const stops = curtain.stops.map((stop) => ({
+    at: stop.at <= 0 || stop.at >= 1 ? stop.at : Math.min(0.98, stop.at + shift * 0.08),
+    rgb: tintOf(stop.colour),
+    alpha: stop.alpha,
+  }));
+
+  ramps[band] = ramp;
+  for (let step = 0; step < CURTAIN_STEPS; step++) {
+    const at = step / (CURTAIN_STEPS - 1);
+    let below = stops[0];
+    let above = stops[stops.length - 1];
+
+    for (let which = 0; which < stops.length - 1; which++) {
+      if (at >= stops[which].at && at <= stops[which + 1].at) {
+        below = stops[which];
+        above = stops[which + 1];
+        break;
+      }
+    }
+
+    const span = above.at - below.at;
+    const mix = span <= 0 ? 0 : (at - below.at) / span;
+    const into = step * 4;
+
+    for (let channel = 0; channel < 3; channel++) {
+      ramp[into + channel] = below.rgb[channel] + (above.rgb[channel] - below.rgb[channel]) * mix;
+    }
+    ramp[into + 3] = below.alpha + (above.alpha - below.alpha) * mix;
+  }
+  return ramp;
+}
+
+/**
+ * A curtain worked out into a field, the way a bow is.
+ *
+ * It was drawn rib by rib once, which is one blit per fold per band
+ * and a fresh gradient behind each of them: a hundred and twenty draws
+ * a frame for one sky. The folds are a travelling wave, and a wave is
+ * arithmetic, so the whole curtain is worked out into a small picture
+ * and stretched over the board. One draw, at any window size.
+ *
+ * The fold is sampled continuously rather than per rib, so what was a
+ * row of strips is now the same wave read between them, and the light
+ * a fold carries still rises and falls with its own depth
+ */
+/**
+ * A canvas of this size, made once and kept.
+ *
+ * Sized only where it is not already, because assigning `width` resets
+ * the bitmap whatever it is assigned to: written every frame it is a
+ * fresh allocation every frame, for a picture that is about to be
+ * overwritten whole anyway
+ */
+function sheetOf(held: HTMLCanvasElement | null, wide: number, tall: number): HTMLCanvasElement {
+  const made = held ?? document.createElement('canvas');
+
+  if (made.width !== wide || made.height !== tall) {
+    made.width = wide;
+    made.height = tall;
+  }
+  return made;
+}
+
+function curtainField(curtain: Curtain, clock: number, yaw: number): HTMLCanvasElement | null {
+  const made = sheetOf(curtainSheet, CURTAIN_WIDE, CURTAIN_TALL);
+
+  curtainSheet = made;
+
+  const into = made.getContext('2d');
+
+  if (into == null) {
+    return null;
+  }
+
+  const image = curtainPixels ?? into.createImageData(CURTAIN_WIDE, CURTAIN_TALL);
+
+  curtainPixels = image;
+  image.data.fill(0);
+
+  const seconds = clock / 1000;
+  const slide = yaw * CURTAIN_TURN * curtain.ribs;
+
+  for (let band = 0; band < curtain.bands; band++) {
+    const ramp = curtainRamp(curtain, band, Math.sin(seconds * 0.12 + band) * 0.5 + 0.5);
+    const top = curtain.top + band * curtain.gap;
+
+    for (let x = 0; x < CURTAIN_WIDE; x++) {
+      const across = x / CURTAIN_WIDE;
+      // Where this column falls between the folds. Read as a real
+      // number rather than a fold's index, which is what turns a row
+      // of strips into one wave
+      const { foot, light } = ribAt(curtain, band, across * curtain.ribs + slide, seconds);
+      /**
+       * Which way this column is turned, and so how far off it is.
+       *
+       * The curtain hung on a ring in the world once, and turning the
+       * camera walked the player through it: the far half ran off the
+       * top of the frame while the near half hung over the board.
+       * There is no ring any more, so the ring's two answers are read
+       * off the column instead. One turn of the camera is one lap of
+       * it, and a column at the back is small, high and faint where
+       * one at the front is deep and bright
+       */
+      const round = Math.cos((across + yaw / (Math.PI * 2)) * Math.PI * 2);
+      const near = 0.5 + 0.5 * round;
+      // Bright over the far ground and going as it comes round, which
+      // is the ring's own answer rather than a fade invented for the
+      // field
+      const facing = Math.min(1, Math.max(0, (CURTAIN_FACE - near) / CURTAIN_FADE));
+
+      if (facing <= 0) {
+        continue;
+      }
+      const deep = curtain.deep * foot * (CURTAIN_FAR + (1 - CURTAIN_FAR) * near);
+      // And it hangs from higher up the further off it is, which is
+      // what the ring's far half did by running off the top
+      const head = top * (CURTAIN_LIFT + (1 - CURTAIN_LIFT) * near);
+      const from = Math.max(0, Math.ceil(head * (CURTAIN_TALL - 1)));
+      const to = Math.min(CURTAIN_TALL - 1, Math.floor((head + deep) * (CURTAIN_TALL - 1)));
+
+      for (let y = from; y <= to; y++) {
+        const down = (y / (CURTAIN_TALL - 1) - head) / deep;
+        const rung =
+          Math.min(CURTAIN_STEPS - 1, Math.max(0, Math.round(down * (CURTAIN_STEPS - 1)))) * 4;
+        const lit = ramp[rung + 3] * light * facing;
+        const at = (y * CURTAIN_WIDE + x) * 4;
+
+        // Added rather than laid over, the way the ribs screened over
+        // each other: two folds meeting is more light, not the nearer
+        // one winning
+        image.data[at] += ramp[rung] * lit;
+        image.data[at + 1] += ramp[rung + 1] * lit;
+        image.data[at + 2] += ramp[rung + 2] * lit;
+        image.data[at + 3] += lit * 0xff;
+      }
+    }
+  }
+  into.putImageData(image, 0, 0);
+  return made;
+}
+
+/**
+ * A curtain sky: one field, stretched over the picture
  */
 function paintCurtain(
   context: CanvasRenderingContext2D,
@@ -991,33 +1175,15 @@ function paintCurtain(
   height: number,
   curtain: Curtain,
   clock: number,
+  yaw = 0,
 ): void {
-  const seconds = clock / 1000;
-  const across = width / curtain.ribs;
-  const held = context.globalAlpha;
+  const field = curtainField(curtain, clock, yaw);
 
-  context.globalCompositeOperation = 'screen';
-  for (let band = 0; band < curtain.bands; band++) {
-    const shift = Math.sin(seconds * 0.12 + band) * 0.5 + 0.5;
-    const strip = curtainStrip(band, shift, curtain);
-
-    if (strip == null) {
-      continue;
-    }
-
-    const top = height * (curtain.top + band * curtain.gap);
-    const deep = height * curtain.deep;
-
-    for (let rib = 0; rib < curtain.ribs; rib++) {
-      const { foot, light } = ribAt(curtain, band, rib, seconds);
-
-      context.globalAlpha = held * light;
-      // A hair wider than its share, so two ribs meet rather than
-      // leaving a seam of ground between them
-      context.drawImage(strip, 0, 0, 1, CURTAIN_STEPS, rib * across, top, across + 1, deep * foot);
-    }
+  if (field == null) {
+    return;
   }
-  context.globalAlpha = held;
+  context.globalCompositeOperation = 'screen';
+  context.drawImage(field, 0, 0, width, height);
 }
 
 /**
@@ -1088,18 +1254,6 @@ function paintShower(
  * draped over the board rather than standing behind it.
  */
 
-/**
- * How deep a world point is once the camera has been walked round: 0
- * at the board's far edge and 1 at the near one, and past either end
- * beyond it
- */
-function turned(u: number, v: number, yaw: number): number {
-  const cos = Math.cos(yaw);
-  const sin = Math.sin(yaw);
-
-  return (u - 0.5) * sin + (v - 0.5) * cos + 0.5;
-}
-
 /** A world point in the canvas' own pixels */
 function airOn(camera: SkyCamera, u: number, v: number, h: number): QuadPoint & { scale: number } {
   const point = projectAir({ u, v }, h, camera.yaw);
@@ -1109,168 +1263,6 @@ function airOn(camera: SkyCamera, u: number, v: number, h: number): QuadPoint & 
     y: camera.y + point.y * camera.height,
     scale: point.scale,
   };
-}
-
-/**
- * The ring a curtain hangs on: a circle **inside** the board's own
- * footprint, hanging above the ground the player walks on.
- *
- * It has to be there and nowhere else. The board's far edge is already
- * at the very top of the picture, so a ring set outside it is off the
- * frame at ground level before any height is added at all — this
- * camera looks down, and the sky it leaves is a band a few dozen
- * pixels deep. Drawn over the board there is room, and the ring's far
- * half runs off the top while its near half hangs where it can be
- * seen, which is what turning the camera walks the player through
- */
-const RING = { radius: 0.5, foot: 0.32, head: 1.05, spread: 1.06 };
-
-/** One fold of a curtain, laid out ready for either painter */
-interface Fold {
-  corners: QuadPoint[];
-  light: number;
-  band: number;
-  scale: number;
-}
-
-/**
- * Every fold of a curtain, back to front.
- *
- * The head is held level and the foot sways, which is the way the flat
- * curtain does it: swaying the head instead gives a boiling top edge,
- * because the folds of a band no longer agree about where the band
- * begins
- */
-function foldsOf(curtain: Curtain, camera: SkyCamera, clock: number): Fold[] {
-  const seconds = clock / 1000;
-  const folds: Fold[] = [];
-  // The whole circle, so some of it is over the board whichever way
-  // the camera is facing
-  const step = (Math.PI * 2) / curtain.ribs;
-
-  for (let band = 0; band < curtain.bands; band++) {
-    const out = RING.radius + band * RING.radius * curtain.gap;
-
-    for (let rib = 0; rib < curtain.ribs; rib++) {
-      const { foot, light } = ribAt(curtain, band, rib, seconds);
-      const one = step * rib;
-      // A hair wider than its share, so two folds meet rather than
-      // leaving a seam of sky between them
-      const two = one + step * RING.spread;
-      // The head is held level and the foot sways. Swaying the head
-      // instead gives a boiling top edge, because the folds of a band
-      // stop agreeing about where the band begins
-      const low = RING.foot * foot;
-
-      const oneU = 0.5 + Math.cos(one) * out;
-      const oneV = 0.5 + Math.sin(one) * out;
-      const twoU = 0.5 + Math.cos(two) * out;
-      const twoV = 0.5 + Math.sin(two) * out;
-      const near = airOn(camera, oneU, oneV, low);
-
-      if (near.scale <= 0.05) {
-        continue;
-      }
-      /**
-       * Bright over the far ground and gone by the time it has come
-       * round in front. The ring is closed so that something is always
-       * over the horizon whichever way the player faces; without this
-       * the half of it standing between the player and the board reads
-       * as a hoop around the chunk rather than a curtain over it
-       */
-      const round = turned(oneU, oneV, camera.yaw);
-      const facing = Math.min(1, Math.max(0, (0.85 - round) / 0.45));
-
-      if (facing <= 0) {
-        continue;
-      }
-      folds.push({
-        corners: [
-          airOn(camera, oneU, oneV, RING.head),
-          airOn(camera, twoU, twoV, RING.head),
-          airOn(camera, twoU, twoV, low),
-          near,
-        ],
-        light: light * facing,
-        band,
-        scale: near.scale,
-      });
-    }
-  }
-  // Behind first, so a near fold is drawn over the far one it hides
-  folds.sort((one, other) => one.scale - other.scale);
-  return folds;
-}
-
-function paintCurtainOver(
-  context: CanvasRenderingContext2D,
-  curtain: Curtain,
-  camera: SkyCamera,
-  clock: number,
-): void {
-  const held = context.globalAlpha;
-
-  context.globalCompositeOperation = 'screen';
-  for (const fold of foldsOf(curtain, camera, clock)) {
-    /**
-     * Built from this fold's own top and bottom rather than once for
-     * the whole band. The folds are drawn in depth order and stand at
-     * different heights, so a gradient built for one of them and used
-     * for the next is a picture that jumps every time the sort shuffles
-     */
-    const strip = context.createLinearGradient(0, fold.corners[0].y, 0, fold.corners[3].y);
-
-    for (const stop of curtain.stops) {
-      strip.addColorStop(
-        stop.at,
-        `${stop.colour}${Math.round(stop.alpha * 0xff)
-          .toString(16)
-          .padStart(2, '0')}`,
-      );
-    }
-    context.globalAlpha = held * fold.light;
-    context.fillStyle = strip;
-    context.beginPath();
-    context.moveTo(fold.corners[0].x, fold.corners[0].y);
-    for (const corner of fold.corners.slice(1)) {
-      context.lineTo(corner.x, corner.y);
-    }
-    context.closePath();
-    context.fill();
-  }
-  context.globalAlpha = held;
-}
-
-function batchCurtainOver(
-  batch: QuadBatch,
-  curtain: Curtain,
-  camera: SkyCamera,
-  clock: number,
-  strength: number,
-): void {
-  const seconds = clock / 1000;
-
-  for (const fold of foldsOf(curtain, camera, clock)) {
-    const strip = curtainStrip(
-      fold.band,
-      Math.sin(seconds * 0.12 + fold.band) * 0.5 + 0.5,
-      curtain,
-    );
-
-    if (strip == null) {
-      continue;
-    }
-    batch.invalidate(strip);
-    batch.quad(
-      strip,
-      { x: 0, y: 0, width: 1, height: CURTAIN_STEPS },
-      fold.corners,
-      strength * fold.light,
-      undefined,
-      'smooth',
-      'screen',
-    );
-  }
 }
 
 /**
@@ -1357,45 +1349,6 @@ function roundDrop(): HTMLCanvasElement | null {
   into.fill();
   drop = made;
   return made;
-}
-
-const curtains: (HTMLCanvasElement | null)[] = [];
-
-/**
- * One band's light, repainted where it stands this frame. Its stops
- * drift, so it is drawn again every frame: a strip this size costs a
- * quarter of a kilobyte to hand over
- */
-function curtainStrip(band: number, shift: number, curtain: Curtain): HTMLCanvasElement | null {
-  const held = curtains[band] ?? document.createElement('canvas');
-
-  held.width = 1;
-  held.height = CURTAIN_STEPS;
-
-  const into = held.getContext('2d');
-
-  if (into == null) {
-    return null;
-  }
-  const light = into.createLinearGradient(0, 0, 0, CURTAIN_STEPS);
-
-  for (const stop of curtain.stops) {
-    // The middle of the band breathes up and down it, which is what
-    // keeps a curtain from being a picture that happens to move
-    const at = stop.at <= 0 || stop.at >= 1 ? stop.at : Math.min(0.98, stop.at + shift * 0.08);
-
-    light.addColorStop(
-      at,
-      `${stop.colour}${Math.round(stop.alpha * 0xff)
-        .toString(16)
-        .padStart(2, '0')}`,
-    );
-  }
-  into.clearRect(0, 0, 1, CURTAIN_STEPS);
-  into.fillStyle = light;
-  into.fillRect(0, 0, 1, CURTAIN_STEPS);
-  curtains[band] = held;
-  return held;
 }
 
 /**
@@ -1515,6 +1468,7 @@ function tintOf(colour: string): [number, number, number] {
 }
 
 let sheenSheet: HTMLCanvasElement | null = null;
+let sheenPixels: ImageData | null = null;
 
 /**
  * The field, written a pixel at a time. Colour goes in the pixel and
@@ -1522,10 +1476,8 @@ let sheenSheet: HTMLCanvasElement | null = null;
  * rather than read back
  */
 function sheenField(sheen: Sheen, clock: number, yaw: number): HTMLCanvasElement | null {
-  const made = sheenSheet ?? document.createElement('canvas');
+  const made = sheetOf(sheenSheet, SHEEN_WIDE, SHEEN_TALL);
 
-  made.width = SHEEN_WIDE;
-  made.height = SHEEN_TALL;
   sheenSheet = made;
 
   const into = made.getContext('2d');
@@ -1533,7 +1485,12 @@ function sheenField(sheen: Sheen, clock: number, yaw: number): HTMLCanvasElement
   if (into == null) {
     return null;
   }
-  const image = into.createImageData(SHEEN_WIDE, SHEEN_TALL);
+  // Kept rather than made each frame: every pixel of it is written
+  // below, so what it arrives holding does not matter
+  const image = sheenPixels ?? into.createImageData(SHEEN_WIDE, SHEEN_TALL);
+
+  sheenPixels = image;
+
   const seconds = clock / 1000;
   const slide = seconds * sheen.pace + yaw * SHEEN_TURN;
   const [tintRed, tintGreen, tintBlue] = tintOf(sheen.tint);
@@ -1635,44 +1592,25 @@ function batchLights(
   const curtain = CURTAINS[weather];
   const sheen = SHEENS[weather];
 
-  if (curtain != null && camera != null) {
-    batchCurtainOver(batch, curtain, camera, clock, strength);
-  } else if (curtain != null) {
-    const seconds = clock / 1000;
-    const across = width / curtain.ribs;
+  if (curtain != null) {
+    const field = curtainField(curtain, clock, camera?.yaw ?? 0);
 
-    for (let band = 0; band < curtain.bands; band++) {
-      const shift = Math.sin(seconds * 0.12 + band) * 0.5 + 0.5;
-      const strip = curtainStrip(band, shift, curtain);
-
-      if (strip == null) {
-        continue;
-      }
-      const top = height * (curtain.top + band * curtain.gap);
-      const deep = height * curtain.deep;
-
-      batch.invalidate(strip);
-      for (let rib = 0; rib < curtain.ribs; rib++) {
-        const { foot, light } = ribAt(curtain, band, rib, seconds);
-        const wide = across * curtain.spread;
-        const left = rib * across - (wide - across) / 2;
-        const bottom = top + deep * foot;
-
-        batch.quad(
-          strip,
-          { x: 0, y: 0, width: 1, height: CURTAIN_STEPS },
-          [
-            { x: left, y: top },
-            { x: left + wide, y: top },
-            { x: left + wide, y: bottom },
-            { x: left, y: bottom },
-          ],
-          strength * light,
-          undefined,
-          'smooth',
-          'screen',
-        );
-      }
+    if (field != null) {
+      batch.invalidate(field);
+      batch.quad(
+        field,
+        { x: 0, y: 0, width: CURTAIN_WIDE, height: CURTAIN_TALL },
+        [
+          { x: 0, y: 0 },
+          { x: width, y: 0 },
+          { x: width, y: height },
+          { x: 0, y: height },
+        ],
+        strength,
+        undefined,
+        'smooth',
+        'screen',
+      );
     }
   }
   const shower = SHOWERS[weather];
@@ -1919,11 +1857,7 @@ export default function paintSky(
   const lit = flashAt(weather, clock / 1000);
 
   if (curtain != null) {
-    if (camera == null) {
-      paintCurtain(context, width, height, curtain, clock);
-    } else {
-      paintCurtainOver(context, curtain, camera, clock);
-    }
+    paintCurtain(context, width, height, curtain, clock, camera?.yaw ?? 0);
   }
   if (sheen != null) {
     paintSheen(context, width, height, sheen, clock, camera?.yaw ?? 0, strength);

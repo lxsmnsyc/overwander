@@ -6,9 +6,14 @@ import { getTimeOfDay } from '../data/ids/biome';
 import type { Items } from '../data/ids/items';
 import type { Genders, Species } from '../data/ids/species';
 import type { EvolutionContext, EvolutionData } from '../data/species';
-import { getConsumedItem, getSpeciesData, meetsEvolutionCriteria } from '../data/species';
+import {
+  getConsumedItem,
+  getSpeciesData,
+  getSpentHeldItem,
+  meetsEvolutionCriteria,
+} from '../data/species';
 import { Metric } from '../auth/quest-record';
-import { isEggRecord, isGuardedRecord } from './catch-fields';
+import { isEggRecord, isGuardedRecord, withoutHeld } from './catch-fields';
 import { recordFoundSpecies } from './pokedex';
 import { type ProgressBump, bumpProgress } from './quest-progress';
 import { readStackIn, writeStackIn } from './stacks';
@@ -133,9 +138,14 @@ export default async function evolveCatch(
     sparkles = record.shiny;
 
     const whole = getMaxHealth({ ...record, species: into });
+    // The swap would have eaten it, so the cord standing in for the
+    // swap does: a Seadra that pulled the cord arrives without its
+    // Dragon Scale, the way a traded one does
+    const worn = getSpentHeldItem(evolution, context.canEvolve);
 
     await updateCaughtIn(transaction, catchId, {
       species: into,
+      ...(worn == null ? {} : { items: withoutHeld(record.items, worn) }),
       // Spent by the evolution it opened, and cleared by any other
       // change of shape: a handover earned by one species is never
       // read by the next one up

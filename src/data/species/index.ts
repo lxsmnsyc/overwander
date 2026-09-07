@@ -43,6 +43,7 @@ export {
   coveredByHandover,
   getAvailableEvolutions,
   getConsumedItem,
+  getSpentHeldItem,
   isFullyEvolved,
   lineEvolvesByItem,
   meetsEvolutionCriteria,

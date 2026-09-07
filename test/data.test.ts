@@ -284,6 +284,7 @@ import {
   getSpeciesByBiome,
   getSpeciesData,
   getSpeciesForms,
+  getSpentHeldItem,
   getWornForms,
   isBaseForm,
   isFeaturedSpecies,
@@ -2121,6 +2122,23 @@ describe('evolution data', () => {
         },
       ),
     ).toBe(false);
+  });
+
+  it('spends the held item where a cord stands in for the trade', () => {
+    const [scale] = getSpeciesData(Species.Seadra).evolvesInto ?? [];
+
+    // The bag pays the cord, and the pokemon pays the scale: a swap
+    // would have taken both halves too
+    expect(getConsumedItem(scale, false)).toBe(Items.LinkingCord);
+    expect(getSpentHeldItem(scale, false)).toBe(Items.DragonScale);
+
+    // A real handover already took the scale at the swap
+    expect(getSpentHeldItem(scale, true)).toBeNull();
+
+    // And a line asking for nothing held has nothing to take
+    expect(
+      getSpentHeldItem({ species: Species.Machamp, method: EvolutionMethod.Trade }, false),
+    ).toBeNull();
   });
 
   it('spends the used item and leaves a held one alone', () => {

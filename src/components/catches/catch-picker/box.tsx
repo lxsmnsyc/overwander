@@ -131,9 +131,10 @@ export default function PickerBox(
   };
 
   /**
-   * A search hides rows rather than refusing them: a pokemon already
-   * drafted stays drafted while it is out of sight, so typing to find
-   * the sixth party member cannot quietly drop the other five
+   * What a search kept, which is what the grid shows and everything
+   * else hides. A pokemon already drafted stays drafted while it is
+   * out of sight, so typing to find the sixth party member cannot
+   * quietly drop the other five
    */
   /**
    * What the whole box says about itself, which no single record
@@ -144,26 +145,25 @@ export default function PickerBox(
   const duplicates = createMemo(() => findDuplicates(offered().map((option) => option.caught)));
 
   /**
-   * A search hides rows rather than refusing them: a pokemon already
-   * drafted stays drafted while it is out of sight, so typing to find
-   * the sixth party member cannot quietly drop the other five.
+   * How the squares are laid out, which is every pokemon on offer
+   * rather than only the ones a search kept: the grid draws them all
+   * and hides what does not match, so the order has to be the whole
+   * list's.
    *
-   * A `sort:` is applied last, over what is left, and overrides both
-   * the newest-first order the box arrives in and whatever the caller
-   * asked it to be arranged by
+   * A `sort:` overrides both the newest-first order the box arrives in
+   * and whatever the caller asked it to be arranged by
    */
+  const arranged = createMemo<CatchOption[]>(() =>
+    orderCatches(offered(), query(), (option) => option.caught, props.sort),
+  );
+
   const options = createMemo<CatchOption[]>(() =>
-    orderCatches(
-      offered().filter((option) =>
-        matchesCatch(option.caught, query(), {
-          ...props.around.latest,
-          id: option.id,
-          duplicates: duplicates(),
-        }),
-      ),
-      query(),
-      (option) => option.caught,
-      props.sort,
+    arranged().filter((option) =>
+      matchesCatch(option.caught, query(), {
+        ...props.around.latest,
+        id: option.id,
+        duplicates: duplicates(),
+      }),
     ),
   );
 
@@ -316,7 +316,7 @@ export default function PickerBox(
    * wonder where it went
    */
   const entries = createMemo<CatchGridEntry[]>(() =>
-    offered().map((option) => {
+    arranged().map((option) => {
       const refused = props.reason?.(option) ?? null;
       const taken = props.multiple === true ? isDrafted(option.id) : props.value === option.id;
       const square = asBoxEntry([option.id, option.caught]);

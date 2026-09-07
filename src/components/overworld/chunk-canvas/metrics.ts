@@ -172,14 +172,29 @@ export const MARK_WEIGHT = 3;
 /**
  * The ripple a featured family's cell throws: how long one ring takes
  * to travel out, how many are travelling at once, how far out they get
- * in cells, and how much they are worth when they leave. Slow and
- * faint on purpose, since the cell already has a pokemon standing on
- * it and the ripple is only there to say the day is about this one
+ * in cells, and how much they are worth when they leave.
+ *
+ * It reaches past its own cell on purpose. A pokemon is standing on
+ * that cell and the rings are drawn under it, so one that only widened
+ * to a cell across spent its whole life behind the sprite: what says
+ * "today, this one" has to get out from under it to be seen at all.
+ * Slow still, since it is a mark on the ground rather than something
+ * happening
  */
 export const RIPPLE_PERIOD = 2000;
-export const RIPPLE_RINGS = 2;
-export const RIPPLE_SPREAD = 1.3;
-export const RIPPLE_ALPHA = 0.55;
+export const RIPPLE_RINGS = 3;
+export const RIPPLE_SPREAD = 2.4;
+export const RIPPLE_ALPHA = 0.85;
+
+/**
+ * How a ring gives up its light as it goes. Under one, so it holds
+ * most of the way out and goes near the end: fading evenly, half of
+ * every ring on screen is already too faint to make out
+ */
+export const RIPPLE_FADE = 0.6;
+
+/** How thick a ring is drawn, in pixels */
+export const RIPPLE_WEIGHT = 3;
 
 /** How many points one ring is drawn round. A ground circle, projected */
 export const RIPPLE_POINTS = 16;

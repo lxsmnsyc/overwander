@@ -260,12 +260,14 @@ describe('the sky over the board', () => {
       const far = column(Math.floor(field.width / 2));
       const round = column(0);
 
-      expect(far.light).toBeGreaterThan(0x40);
-      // Gone rather than dimmed: a curtain standing between the player
-      // and the board read as a hoop around the chunk
-      expect(round.light).toBe(0);
-      // And what is far off hangs high and short, the way distance
-      // takes a thing rather than the way a fade does
+      // Brightest over the far ground, which is the middle of the view
+      expect(far.light).toBeGreaterThan(round.light);
+      // But never blank at the edges: the picture spans the arc in
+      // front rather than a whole lap of the ring, so a column that
+      // has come round is dimmer and longer, not missing
+      expect(round.light).toBeGreaterThan(0);
+      expect(round.foot).toBeGreaterThan(far.foot);
+      // And what is far off hangs high, the way distance takes a thing
       expect(far.foot).toBeLessThan(field.height / 2);
     });
 

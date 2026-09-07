@@ -245,9 +245,9 @@ export async function chooseAction(page: Page, sheet: Locator, action: string): 
 }
 
 /**
- * Take one gift off the shelf. The square is a picture and the Claim
- * button is in the card over it, so it is taken the way a player takes
- * one: hover, wait for the card, press it
+ * Take one pokemon off the shelf. Its square carries a card, and the
+ * button is in there, so it is taken the way a player takes one:
+ * hover, wait for the card, press it
  */
 async function claimGift(
   page: Page,
@@ -279,6 +279,28 @@ async function claimGift(
     if (landed != null) {
       await expect.poll(landed, { timeout: SETTLED }).toBe(true);
     }
+  }).toPass({ timeout: CLAIMED });
+}
+
+/**
+ * And one item, whose square is the button: claiming is the only
+ * thing a shelf square of the bag's tray does, so it says what it is
+ * in a tooltip and presses
+ */
+async function claimItemGift(
+  page: Page,
+  square: Locator,
+  landed: () => Promise<boolean>,
+): Promise<void> {
+  await expect(async () => {
+    if (await landed()) {
+      return;
+    }
+    // Out of the way first, so a card left over another square is not
+    // standing between the pointer and this one
+    await page.mouse.move(0, 0);
+    await square.click({ timeout: 2000 });
+    await expect.poll(landed, { timeout: SETTLED }).toBe(true);
   }).toPass({ timeout: CLAIMED });
 }
 
@@ -319,7 +341,7 @@ export async function claimStarter(page: Page): Promise<void> {
   const balls = gifts.getByRole('button', { name: /^Claim \d+ × / });
 
   await expect(balls).toBeVisible();
-  await claimGift(page, balls, async () => (await balls.count()) === 0);
+  await claimItemGift(page, balls, async () => (await balls.count()) === 0);
 
   await gifts.getByRole('button', { name: 'Close' }).click();
   await expectShut(gifts);

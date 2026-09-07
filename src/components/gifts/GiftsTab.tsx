@@ -380,39 +380,31 @@ function GiftShelf(props: {
         <DialogSection title="Items">
           <ItemGrid
             bare
-            // The card carries one button, so the square presses it
-            // too; a visited tray has nothing to press anywhere
-            cardOnly={props.viewOnly === true}
             entries={things().map(({ gift, note }) => ({
               item: gift.item,
               amount: gift.amount,
               said: `${props.viewOnly === true ? '' : 'Claim '}${describeGift(gift)}`,
-              onPress:
+              // Claiming is the only thing a shelf square does, so the
+              // square is the button. A visited tray has none at all
+              actions:
                 props.viewOnly === true
-                  ? undefined
-                  : () => {
-                      take(gift.id);
-                    },
+                  ? []
+                  : [
+                      {
+                        label: 'Claim',
+                        tone: 'primary' as const,
+                        disabled: taking() != null,
+                        onPress: () => {
+                          take(gift.id);
+                        },
+                      },
+                    ],
               card: () => (
                 <>
                   <Meta>{gift.reason}</Meta>
                   <Show when={note}>{(said) => <Meta>{said()}</Meta>}</Show>
                 </>
               ),
-              footer: () =>
-                props.viewOnly === true ? (
-                  <></>
-                ) : (
-                  <Button
-                    tone="primary"
-                    disabled={taking() != null}
-                    onClick={() => {
-                      take(gift.id);
-                    }}
-                  >
-                    Claim
-                  </Button>
-                ),
             }))}
           />
         </DialogSection>

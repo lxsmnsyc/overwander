@@ -181,26 +181,35 @@ export function CatchSheetBody(
     toast.push({ message, tone });
   };
 
-  const view = (): CaughtPokemon | null => {
+  /**
+   * The record for one particular catch, or null once the sheet is
+   * looking at another. Everything that was started for a pokemon
+   * reads this rather than `view`: a run of candy and the question it
+   * raised belong to the pokemon they were begun on, whatever the
+   * player clicked on in the meantime
+   */
+  const recordOf = (catchId: string): CaughtPokemon | null => {
     // `latest` rather than the resource itself: everything on this
-    // sheet that writes re-reads the record afterwards, and a read that
-    // suspends unmounts the panel — and, through the boundary the page
-    // is under, the page behind it. Keeping the last record on screen
-    // while the next one arrives is what makes a favorite land without
-    // the screen blinking. It is only kept while it is about the
-    // pokemon being looked at
+    // sheet that writes re-reads the record afterwards, and a read
+    // that suspends unmounts the panel, and through the boundary the
+    // page is under, the page behind it. Keeping the last record on
+    // screen while the next one arrives is what makes a favorite land
+    // without the screen blinking
     const held = props.detail.latest;
-    const loaded = held?.id === props.catchId ? held.caught : null;
+    const loaded = held?.id === catchId ? held.caught : null;
 
     if (loaded == null) {
       return null;
     }
-    // A catch belongs to exactly one player; one opened under
-    // someone else's list is a wrong address, not a peek. Looking at
-    // one on the block is the exception: it is owned by nobody while
-    // it is there, and being able to look is the point of a board
+    // A catch belongs to exactly one player; one opened under someone
+    // else's list is a wrong address, not a peek. Looking at one on
+    // the block is the exception: it is owned by nobody while it is
+    // there, and being able to look is the point of a board
     return props.readOnly === true || loaded.owner === props.player ? loaded : null;
   };
+
+  /** The record the sheet is showing, whichever pokemon that is now */
+  const view = (): CaughtPokemon | null => (props.catchId == null ? null : recordOf(props.catchId));
 
   /**
    * Evolutions are only offered to the owner: they depend on what
@@ -286,6 +295,13 @@ export function CatchSheetBody(
    * is its own question, asked one after the other
    */
   interface Teaching {
+    /**
+     * Whose question it is. The sheet closes while the dialog is up,
+     * which leaves the grid behind it live: a press that lands there
+     * moves the sheet on, and a question that read the sheet's catch
+     * would then be asked of whoever was clicked
+     */
+    catchId: string;
     move: Moves;
     rest: Moves[];
     /**
@@ -301,7 +317,7 @@ export function CatchSheetBody(
    * and unlike everything else in the bag, it is not spent until the
    * question is answered
    */
-  const [bottle, setBottle] = createSignal<Items | null>(null);
+  const [bottle, setBottle] = createSignal<{ item: Items; catchId: string } | null>(null);
 
   /**
    * Whoever is waiting for the last question to be answered.
@@ -353,9 +369,12 @@ export function CatchSheetBody(
    * Saying no is allowed and costs nothing. It is only final once the
    * next candy takes the pokemon past the level
    */
-  const offerLevelMoves = (from: number, to: number = from): void => {
-    const caught = view();
-
+  const offerLevelMoves = (
+    catchId: string,
+    caught: CaughtPokemon | null,
+    from: number,
+    to: number = from,
+  ): void => {
     if (caught == null) {
       return;
     }
@@ -367,10 +386,11 @@ export function CatchSheetBody(
     // Queued behind whatever is already being asked rather than over
     // it: a second handful of candy landing while the player is still
     // answering the first would otherwise throw the rest of that queue
-    // away, and those levels are paid for
+    // away, and those levels are paid for. Only behind a question
+    // about the same pokemon: two of them cannot be asked at once
     setTeaching((asked) =>
-      asked == null
-        ? { move: learning[0], rest: learning.slice(1), levelled: true }
+      asked == null || asked.catchId !== catchId
+        ? { catchId, move: learning[0], rest: learning.slice(1), levelled: true }
         : { ...asked, rest: [...asked.rest, ...learning] },
     );
   };
@@ -403,6 +423,13 @@ export function CatchSheetBody(
    * keeps it still
    */
   const [settling, setSettling] = createSignal<{ was: number; now: number } | null>(null);
+
+  /**
+   * Whose presses are being counted. A press is made on the pokemon
+   * on the sheet at the time, and the candy has to go to that one
+   * however long the player waits before letting go
+   */
+  let feedingFor: string | null = null;
 
   // A different pokemon on the sheet is a different pile of presses
   createEffect(() => {
@@ -455,12 +482,19 @@ export function CatchSheetBody(
    * does not crawl up behind the finger
    */
   const feedRun = async (catchId: string, levels: number): Promise<number | null> => {
-    let at = Math.max(view()?.level ?? 0, reached());
+    // Held rather than read every time round: a press on the grid
+    // behind the sheet moves the record on, and the run still owes
+    // this pokemon the levels it was paid for
+    let known = recordOf(catchId);
+    let at = Math.max(known?.level ?? 0, reached());
     let left = levels;
     let last: number | null = null;
 
     while (left > 0) {
-      const caught = view();
+      const caught = recordOf(catchId) ?? known;
+
+      known = caught;
+
       const asks = caught == null ? null : nextOfferLevel(caught, at);
       // Land exactly on the next level with a move in it, or take the
       // rest of the run in one go when nothing above asks anything
@@ -475,8 +509,10 @@ export function CatchSheetBody(
       left -= grown - at;
       at = grown;
       last = grown;
-      setReached(grown);
-      offerLevelMoves(grown);
+      if (props.catchId === catchId) {
+        setReached(grown);
+      }
+      offerLevelMoves(catchId, caught, grown);
       await awaitTeaching();
     }
     return last;
@@ -493,7 +529,7 @@ export function CatchSheetBody(
    * sheet that counted further than the bag goes back to the truth
    */
   const flushCandy = (): void => {
-    const catchId = props.catchId;
+    const catchId = feedingFor;
     const levels = queued();
 
     feeding = null;
@@ -504,11 +540,26 @@ export function CatchSheetBody(
     // record says: a second handover sent before the first was read
     // back would otherwise start its range at a level already grown
     // through, and offer those moves a second time
-    const from = Math.max(view()?.level ?? 0, reached());
+    const from = Math.max(recordOf(catchId)?.level ?? 0, reached());
+    /**
+     * Whether the sheet is still on the pokemon the run was made for.
+     * The level and the pile it shows are that pokemon's, so a run
+     * that lands after the player has clicked on another must not
+     * write its numbers over theirs
+     */
+    const showing = (): boolean => props.catchId === catchId;
 
     running = true;
     feedRun(catchId, levels)
       .then((level) => {
+        if (!showing()) {
+          say(level == null ? 'That candy could not be used.' : `Grew to level ${level}.`);
+          props.onRecordChanged();
+          props.onCandiesChanged();
+          props.onEvolutionsChanged();
+          props.onChange?.();
+          return;
+        }
         setQueued((waiting) => Math.max(0, waiting - levels));
         setReached(level ?? 0);
         // What it actually cost: the levels the pile stretched to
@@ -529,7 +580,9 @@ export function CatchSheetBody(
         props.onChange?.();
       })
       .catch((caught: unknown) => {
-        setQueued((waiting) => Math.max(0, waiting - levels));
+        if (showing()) {
+          setQueued((waiting) => Math.max(0, waiting - levels));
+        }
         say(caught instanceof Error ? caught.message : String(caught), 'ember');
         props.onRecordChanged();
         props.onCandiesChanged();
@@ -566,6 +619,7 @@ export function CatchSheetBody(
     if (uid == null || catchId == null) {
       return;
     }
+    feedingFor = catchId;
     setQueued((waiting) => waiting + 1);
     if (feeding != null) {
       clearTimeout(feeding);
@@ -934,11 +988,11 @@ export function CatchSheetBody(
     const move = isMachineItem(item) ? getMachineMove(item) : null;
 
     if (move != null) {
-      setTeaching({ move, rest: [], levelled: false });
+      setTeaching({ catchId, move, rest: [], levelled: false });
       return;
     }
     if (isPPItem(item)) {
-      setBottle(item);
+      setBottle({ item, catchId });
       return;
     }
 
@@ -951,7 +1005,7 @@ export function CatchSheetBody(
         props.onChange?.();
 
         if (result.level != null) {
-          offerLevelMoves(result.level);
+          offerLevelMoves(catchId, recordOf(catchId), result.level);
         }
       })
       .catch((caught: unknown) => {
@@ -1431,7 +1485,7 @@ export function CatchSheetBody(
           straight back to the sheet, since a level can hand over two
           moves at once and each is its own decision */}
       <TeachMoveDialog
-        catchId={teaching() == null ? null : props.catchId}
+        catchId={teaching()?.catchId ?? null}
         move={teaching()?.move ?? null}
         cost={teaching()?.levelled === true ? 'Nothing' : undefined}
         teach={teaching()?.levelled === true ? learnLevelUpMove : undefined}
@@ -1554,8 +1608,8 @@ export function CatchSheetBody(
           and nothing takes the points back, so it asks which before it
           leaves the bag */}
       <IncreasePPDialog
-        catchId={bottle() == null ? null : props.catchId}
-        item={bottle()}
+        catchId={bottle()?.catchId ?? null}
+        item={bottle()?.item ?? null}
         onClose={() => {
           setBottle(null);
         }}

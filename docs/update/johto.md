@@ -277,6 +277,7 @@ drawing for each coat over it.
 
 ## See also
 
+- [Hoenn](hoenn.md), the release after this one.
 - [Kanto](kanto.md), the first release.
 - [Player's guide](../mechanics.md), for the rules in full.
 - [Credits](../credits.md), for the people, libraries and art behind it.

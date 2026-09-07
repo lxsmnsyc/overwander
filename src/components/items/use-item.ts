@@ -1,8 +1,14 @@
 import useBall from '../../auth/balls';
 import useBottleCap from '../../auth/bottle-caps';
 import { useRareCandy } from '../../auth/candy';
-import type { CaughtPokemon } from '../../auth/caught';
-import { getCatchSlots, getMovePoints, isShadow } from '../../auth/caught-record';
+import { type CaughtPokemon, getCaught } from '../../auth/caught';
+import {
+  getCatchName,
+  getCatchSlots,
+  getMovePoints,
+  isShadow,
+  isShiny,
+} from '../../auth/caught-record';
 import { isEgg } from '../../auth/egg';
 import useHealingItem from '../../auth/healing';
 import { healedByItem } from '../../auth/health';
@@ -10,16 +16,18 @@ import usePurifyingGem from '../../auth/purify';
 import useUtilityBelt from '../../auth/utility-belt';
 import { feedEffortBerry, useEffortItem } from '../../auth/training';
 import { MAX_LEVEL } from '../../data/constants/levels';
+import type { Stats } from '../../data/constants/stats';
 import { MAX_SLOTS } from '../../data/constants/slots';
 import { Items, getBall, getMachineMove, isMachineItem } from '../../data/ids/items';
 import type { Moves } from '../../data/ids/moves';
+import { Genders, type Species } from '../../data/ids/species';
 import { BERRY_EFFORT_DROPS } from '../../data/items/berries';
 import { isBottleCap, isPerfectIVs } from '../../data/items/bottle-caps';
 import { isHerbal } from '../../data/items/medicine';
 import { isPurifyingGem } from '../../data/items/purifying-gem';
 import { UTILITY_BELT_SLOT, isUtilityBelt } from '../../data/items/utility-belt';
-import { isPPItem, isVitamin } from '../../data/items/vitamins';
-import { isWing } from '../../data/items/wings';
+import { VITAMIN_STATS, isPPItem, isVitamin } from '../../data/items/vitamins';
+import { WING_STATS, isWing } from '../../data/items/wings';
 import { PP_UP_LIMIT } from '../../data/moves';
 import { getMovesLearnedAt, getMovesLearnedBetween, getSpeciesData } from '../../data/species';
 import type { ToastTone } from '../styled';
@@ -175,6 +183,14 @@ export function nextOfferLevel(caught: CaughtPokemon, above: number): number | n
   return null;
 }
 
+/**
+ * Which stat an item trains, for the two kinds that train one. Null
+ * for everything else, which is most of the bag
+ */
+export function effortStatOf(item: Items): Stats | null {
+  return VITAMIN_STATS.get(item) ?? WING_STATS.get(item) ?? BERRY_EFFORT_DROPS.get(item) ?? null;
+}
+
 /** What spending it came to */
 export interface Spent {
   said: string;
@@ -184,6 +200,42 @@ export interface Spent {
    * have a move waiting behind it: see `getLevelMoves`
    */
   level: number | null;
+  /**
+   * Who it was spent on, so the report can show them rather than name
+   * them. Left out where nothing about the pokemon is worth drawing
+   */
+  about?: { species: Species; shiny: boolean; female: boolean; name: string };
+  /**
+   * What one stat's effort was and what it is now, for an item that
+   * moved one. It is the whole of what a vitamin does, and reporting
+   * it as "points it did not have to earn" left the player to open the
+   * stats pane to find out whether anything had happened
+   */
+  trained?: { stat: Stats; from: number; to: number };
+}
+
+/**
+ * The two halves of a training report: who it happened to, and what
+ * moved. Both are left out where the item trained nothing or the
+ * record could not be read, so a caller can spread this in blind
+ */
+function trainedBy(
+  stat: Stats | null,
+  before: CaughtPokemon | null,
+  after: { effortValues: Record<Stats, number> },
+): Partial<Spent> {
+  if (stat == null || before == null) {
+    return {};
+  }
+  return {
+    about: {
+      species: before.species,
+      shiny: isShiny(before),
+      female: before.gender === Genders.Female,
+      name: getCatchName(before),
+    },
+    trained: { stat, from: before.effortValues[stat], to: after.effortValues[stat] },
+  };
 }
 
 const refused = (item: Items): Spent => ({
@@ -245,6 +297,13 @@ export default async function spendItemOn(catchId: string, item: Items): Promise
       : { said: `Room for ${slots} held items now.`, tone: 'neutral', level: null };
   }
 
+  // Both of these move one stat's effort, and what the player wants to
+  // know is which way and by how much. The record is read first so the
+  // report can say where it started: the server hands back only where
+  // it ended up
+  const stat = effortStatOf(item);
+  const training = stat == null ? null : await getCaught(catchId);
+
   if (isEffortItem(item)) {
     const result = await useEffortItem(catchId, item);
 
@@ -254,6 +313,7 @@ export default async function spendItemOn(catchId: string, item: Items): Promise
           said: `${describeItem(item)} — points it did not have to earn.`,
           tone: 'neutral',
           level: null,
+          ...trainedBy(stat, training, result),
         };
   }
 
@@ -266,6 +326,7 @@ export default async function spendItemOn(catchId: string, item: Items): Promise
           said: `Bitter, and good for it — ${result.unused} points back to spend, and it thinks the better of you.`,
           tone: 'neutral',
           level: null,
+          ...trainedBy(stat, training, result),
         };
   }
 

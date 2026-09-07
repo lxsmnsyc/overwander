@@ -231,6 +231,7 @@ import {
 } from '../../src/overworld/landmarks';
 import { DARK_DAY_LAMP_CELLS, favorsEverything } from '../../src/data/overworld/weather';
 import { LURE_SPAWN_BONUS } from '../../src/overworld/abilities/__create';
+import { PUBLISHED_SPAWNS } from '../../src/auth/snapshots';
 import {
   COMPOUND_EYES_HELD_BOOST,
   FLAME_BODY_FACTOR,
@@ -2117,6 +2118,13 @@ describe('world', () => {
     // different players spread out
     expect(pickStartPosition(world, 'player-uid')).toEqual(start);
     expect(pickStartPosition(world, 'other-uid')).not.toEqual(start);
+  });
+
+  it('publishes room for the lure as well as the ordinary spawns', () => {
+    // What a visit writes has to hold the extras, since the window
+    // publishes them for everybody and a lure only decides who may
+    // reach them. It is one figure, kept beside the publishing
+    expect(PUBLISHED_SPAWNS).toBe(SPAWN_COUNT + LURE_SPAWN_BONUS);
   });
 
   it('draws two more spawns out for a buddy that lures', () => {

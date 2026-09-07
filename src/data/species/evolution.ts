@@ -301,8 +301,10 @@ export function getAvailableEvolutions(context: EvolutionContext): EvolutionData
 }
 
 /**
- * The item this evolution spends, if any. Only a used item is
- * consumed: a held item stays with the pokemon.
+ * The item this evolution spends out of the **bag**, if any.
+ *
+ * A used item is spent as itself; a held item is spent off the
+ * pokemon instead, which `getSpentHeldItem` answers.
  *
  * A trade evolution whose handover does not cover it spends a Linking
  * Cord instead. It is answered from that one fact rather than from a
@@ -320,4 +322,29 @@ export function getConsumedItem(evolution: EvolutionData, covered = false): Item
     return Items.LinkingCord;
   }
   return null;
+}
+
+/**
+ * The held item this evolution takes off the pokemon, if any.
+ *
+ * The swap is what spends it, which `settleHandover` writes at the
+ * handover, so a covered evolution has nothing left to take. A cord
+ * standing in for that swap has to take it here instead: a Seadra
+ * evolved out of the bag would otherwise arrive a Kingdra still
+ * holding the Dragon Scale the trade would have eaten.
+ *
+ * A held item asked for without a swap is left alone, the way the
+ * mainline leaves one: nothing registered asks for that yet
+ */
+export function getSpentHeldItem(evolution: EvolutionData, covered = false): Items | null {
+  const { method } = evolution;
+
+  if (
+    covered ||
+    (method & EvolutionMethod.HeldItem) === 0 ||
+    (method & EvolutionMethod.Trade) === 0
+  ) {
+    return null;
+  }
+  return evolution.item ?? null;
 }

@@ -18,6 +18,7 @@ import { type Actor, actor, caughtRow, clearAll, sql } from './clients';
 let player: Actor;
 
 const MACHOP = 'trade-evolution-machop';
+const SEADRA = 'trade-evolution-seadra';
 
 beforeAll(async () => {
   registerData();
@@ -107,5 +108,35 @@ describe('a trade and the stage it was made at', () => {
     `;
 
     expect(stock).toBeUndefined();
+  });
+
+  it('takes the Dragon Scale off the Seadra the cord evolved', async () => {
+    await sql`
+      insert into caught ${sql({
+        ...caughtRow(SEADRA, player.uid),
+        species: Species.Seadra,
+        level: 40,
+        can_evolve: false,
+      })}
+    `;
+    await sql`
+      insert into caught_items (caught_id, slot, item)
+      values (${SEADRA}, 0, ${Items.DragonScale})
+    `;
+    await sql`
+      insert into bag_items (player, item, count)
+      values (${player.uid}, ${Items.LinkingCord}, 1)
+    `;
+
+    expect(await evolveCatch(player.uid, SEADRA, Species.Kingdra)).toBe(Species.Kingdra);
+
+    // Both halves are paid: the bag's cord and the scale it was
+    // holding, which is what the swap it stood in for would have taken
+    const [cord] = await sql`
+      select count from bag_items where player = ${player.uid} and item = ${Items.LinkingCord}
+    `;
+
+    expect(cord).toBeUndefined();
+    expect(await sql`select item from caught_items where caught_id = ${SEADRA}`).toEqual([]);
   });
 });

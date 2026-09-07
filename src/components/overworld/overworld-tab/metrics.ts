@@ -1,7 +1,5 @@
 import Landmark from '../../../data/overworld/landmark';
-import { LURE_SPAWN_BONUS } from '../../../overworld/abilities/__create';
 import { CHUNK_CELLS } from '../../../overworld/chunk';
-import { SPAWN_COUNT } from '../../../overworld/chunk-snapshot';
 
 /**
  * The landmarks a player fights somebody at, all served by the one
@@ -28,11 +26,11 @@ export const HARVEST_LANDMARKS = new Set([
 ]);
 
 /**
- * How many spawns a visit publishes: the ordinary eight plus the
- * three a lure draws in, rolled for every window so that a lure
- * changes who can see them rather than whether they exist
+ * How many spawns a visit publishes. It is the publisher's own figure,
+ * re-exported here because the board reads it beside its other
+ * measurements
  */
-export const PUBLISHED_SPAWNS = SPAWN_COUNT + LURE_SPAWN_BONUS;
+export { PUBLISHED_SPAWNS } from '../../../auth/snapshots';
 
 /**
  * Where a player entering a chunk without a stored position starts

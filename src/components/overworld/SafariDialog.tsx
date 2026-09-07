@@ -21,6 +21,7 @@ import { getSpeciesData } from '../../data/species';
 import type SafariSession from '../../overworld/safari';
 import { FEED_CATCH_BONUS, SafariState, ThrowResult, describeFlight } from '../../overworld/safari';
 import { describeAbility, describeItem } from '../details';
+import playEffect, { Effect } from '../app/sound';
 import InventoryPicker from '../items/InventoryPicker';
 import ItemSprite from '../items/ItemSprite';
 import AnimatedSprite from '../sprites/AnimatedSprite';
@@ -250,6 +251,12 @@ function SafariBody(
         setCaught(null);
         setThrowing(false);
         setRocking(null);
+        // Said as the meeting opens rather than only drawn: the
+        // sparkles in the title and on the sprite are easy to walk
+        // past, and this is the one encounter worth the whole bag
+        if (isShiny(active.encounter)) {
+          playEffect(Effect.ShinySparkle);
+        }
       },
     ),
   );

@@ -130,8 +130,29 @@ const CURTAIN_TURN = 0.5;
  * much higher it hangs. Distance foreshortens it: further off is
  * shorter and higher in the picture
  */
-const CURTAIN_FAR = 0.45;
+const CURTAIN_FAR = 0.7;
 const CURTAIN_LIFT = 0.3;
+
+/**
+ * How much of the ring the picture spans, in laps.
+ *
+ * Half of one, because a picture never showed the whole ring: the
+ * folds behind the player were behind the player. Mapping a full lap
+ * across the field put a quarter of the columns past the fade and
+ * blanked them, which is a curtain with a hole where the middle of
+ * the view is
+ */
+const CURTAIN_ARC = 0.5;
+
+/**
+ * What the folds are worth together.
+ *
+ * Each was drawn half again wider than its share once, so any point of
+ * the sky had two or three of them screening over it. The field reads
+ * the wave once where the ribs overlapped, so the light they piled up
+ * is put back here rather than pretended at with a width
+ */
+const CURTAIN_GAIN = 1.6;
 
 /**
  * Where a fold starts to go, and how quickly, as it comes round in
@@ -252,8 +273,12 @@ export function curtainField(
        * it, and a column at the back is small, high and faint where
        * one at the front is deep and bright
        */
-      const round = Math.cos((across + yaw / (Math.PI * 2)) * Math.PI * 2);
-      const near = 0.5 + 0.5 * round;
+      // Where along the arc this column looks. It is the column's
+      // alone, not the camera's: the middle of the picture is the far
+      // side of the arc whichever way the player faces, and turning
+      // walks different folds through it rather than tipping the arc
+      const round = Math.cos((across - 0.5) * CURTAIN_ARC * Math.PI * 2);
+      const near = 0.5 - 0.5 * round;
       // Bright over the far ground and going as it comes round, which
       // is the ring's own answer rather than a fade invented for the
       // field
@@ -273,7 +298,7 @@ export function curtainField(
         const down = (y / (CURTAIN_TALL - 1) - head) / deep;
         const rung =
           Math.min(CURTAIN_STEPS - 1, Math.max(0, Math.round(down * (CURTAIN_STEPS - 1)))) * 4;
-        const lit = ramp[rung + 3] * light * facing;
+        const lit = ramp[rung + 3] * light * facing * CURTAIN_GAIN;
         const at = (y * CURTAIN_WIDE + x) * 4;
 
         // Added rather than laid over, the way the ribs screened over

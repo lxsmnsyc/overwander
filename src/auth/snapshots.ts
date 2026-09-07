@@ -4,7 +4,12 @@
 // oxlint-disable typescript/no-unnecessary-type-assertion
 import type { ItemStack } from '../data/overworld/item-pool';
 import type Chunk from '../overworld/chunk';
-import ChunkSnapshot, { SNAPSHOT_INTERVAL, type Spawn } from '../overworld/chunk-snapshot';
+import ChunkSnapshot, {
+  SNAPSHOT_INTERVAL,
+  SPAWN_COUNT,
+  type Spawn,
+} from '../overworld/chunk-snapshot';
+import { LURE_SPAWN_BONUS } from '../overworld/abilities/__create';
 import { type SnapshotRecord, asSnapshotRecord, spawnId } from './snapshot-record';
 import { requireUid } from '../server/auth';
 import {
@@ -57,6 +62,36 @@ function fromSnapshotRow(row: Record<string, unknown>): SnapshotRecord {
       traitValue: entry.trait_value,
     })),
   });
+}
+
+/**
+ * How many spawns a visit publishes: the ordinary eight plus the
+ * three a lure draws in, rolled for every window so that a lure
+ * changes who can see them rather than whether they exist.
+ *
+ * It lives beside the publishing rather than with the board's own
+ * measurements, because a claim refreshes the window too and has no
+ * business knowing how the board is laid out
+ */
+export const PUBLISHED_SPAWNS = SPAWN_COUNT + LURE_SPAWN_BONUS;
+
+/**
+ * Make sure the chunk's window is live before a landmark is claimed.
+ *
+ * A claim against a window that has turned over is refused, and the
+ * window is republished only when the player presses the ground. So a
+ * player standing at a cache when the boundary passed pressed it, was
+ * told there was nothing there, and had to walk out of the chunk and
+ * back in before the same cache would pay. Landmarks run on a longer
+ * window than spawns do, so the cache is nearly always still there:
+ * what had run out was the publication, not the thing
+ */
+async function freshenWindow(snapshot: ChunkSnapshot): Promise<void> {
+  await syncServerClock();
+  if (toLocalTime(serverNow(), snapshot.offset) < snapshot.timestamp + SNAPSHOT_INTERVAL) {
+    return;
+  }
+  await resolveSnapshotWindow(snapshot.chunk, snapshot.offset, PUBLISHED_SPAWNS);
 }
 
 /**
@@ -219,6 +254,7 @@ export async function claimItemCache(
   snapshot: ChunkSnapshot,
   cell: number,
 ): Promise<ItemStack[] | null> {
+  await freshenWindow(snapshot);
   return claimCacheOnServer(
     await getIdToken(),
     snapshot.chunk.x,
@@ -255,6 +291,7 @@ export async function claimBerryPatch(
   snapshot: ChunkSnapshot,
   cell: number,
 ): Promise<ItemStack | null> {
+  await freshenWindow(snapshot);
   return claimBerryOnServer(
     await getIdToken(),
     snapshot.chunk.x,
@@ -290,6 +327,7 @@ export async function claimApricornTree(
   snapshot: ChunkSnapshot,
   cell: number,
 ): Promise<ItemStack | null> {
+  await freshenWindow(snapshot);
   return claimApricornOnServer(
     await getIdToken(),
     snapshot.chunk.x,
@@ -330,6 +368,7 @@ async function claimApricornOnServer(
  * about the species comes back: that is what an egg is
  */
 export async function peekNest(snapshot: ChunkSnapshot, cell: number): Promise<NestOffer | null> {
+  await freshenWindow(snapshot);
   return peekNestOnServer(
     await getIdToken(),
     snapshot.chunk.x,
@@ -358,6 +397,7 @@ export async function peekPhenomenonEgg(
   snapshot: ChunkSnapshot,
   cell: number,
 ): Promise<NestOffer | null> {
+  await freshenWindow(snapshot);
   return peekPhenomenonEggOnServer(
     await getIdToken(),
     snapshot.chunk.x,
@@ -484,6 +524,7 @@ async function listDugCachesOnServer(
  * Resolves the new egg's catch id, or null when the nest is empty
  */
 export async function claimNest(snapshot: ChunkSnapshot, cell: number): Promise<string | null> {
+  await freshenWindow(snapshot);
   return claimNestOnServer(
     await getIdToken(),
     snapshot.chunk.x,
@@ -537,6 +578,7 @@ export async function claimPhenomenon(
   snapshot: ChunkSnapshot,
   cell: number,
 ): Promise<PhenomenonClaim | null> {
+  await freshenWindow(snapshot);
   return claimPhenomenonOnServer(
     await getIdToken(),
     snapshot.chunk.x,

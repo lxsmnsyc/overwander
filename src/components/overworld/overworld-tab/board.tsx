@@ -109,6 +109,7 @@ import {
   STEP_PACE,
   STEP_REPORT_SIZE,
 } from './metrics';
+import playEffect, { Effect } from '../../app/sound';
 
 /**
  * The overworld as the player walks it: the arrows or the bound keys
@@ -491,6 +492,65 @@ export default function OverworldBoard(props: {
       fled() ?? new Set(),
     );
   };
+
+  /**
+   * Which chunk the player is being shown, and which window of it the
+   * sparkle has already been played for.
+   *
+   * Walking out and back in is a fresh arrival: the sprites are drawn
+   * again, sparkles and all, so the sound belongs with them. What the
+   * window is for is the other case, where nothing has moved and the
+   * board is only being redrawn
+   */
+  let visited = '';
+  let sparkled = '';
+
+  /**
+   * A shiny standing in the chunk, said out loud.
+   *
+   * Keyed by the visit and the window rather than by what the view
+   * holds: the view is rebuilt whenever the buddy or a flight changes,
+   * and the sparkle is about the pokemon being there to see, not about
+   * the board being redrawn. The build is untracked for the same
+   * reason, so this listens to the window and nothing else
+   */
+  createEffect(() => {
+    const held = window();
+
+    if (held == null) {
+      return;
+    }
+
+    const spot = `${held.x},${held.y}`;
+
+    // Come back to a chunk and its shiny is arriving again, whether or
+    // not the window it stands in has turned over since
+    if (spot !== visited) {
+      visited = spot;
+      sparkled = '';
+    }
+
+    const key = `${spot}@${held.record.timestamp}`;
+
+    if (key === sparkled) {
+      return;
+    }
+    untrack(() => {
+      const loaded = view();
+
+      // Nothing yet: the record is a chunk ahead of where the player
+      // is standing, which happens for a beat while they cross. The
+      // window is left unmarked so its shiny is still heard when the
+      // two agree
+      if (loaded == null) {
+        return;
+      }
+      sparkled = key;
+      if ([...loaded.spawns.values()].some((standing) => standing.shiny)) {
+        playEffect(Effect.ShinySparkle);
+      }
+    });
+  });
 
   /**
    * The board being left behind, while it is being left behind.

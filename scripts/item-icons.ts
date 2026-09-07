@@ -1,5 +1,6 @@
 import { readFileSync, renameSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
+import sharp from 'sharp';
 import decode, { type Image, encodeSmallest } from '../src/server/sprites/png.ts';
 import { packSmallest } from '../src/server/sprites/packing.ts';
 
@@ -225,6 +226,13 @@ function packedAfresh(sheet: Sheet): Layout {
 const WORTH_REPACKING = 0.85;
 
 /**
+ * How full a sheet has to be to be left as it is. A picture that
+ * changed size leaves a hole its replacement does not fit in, so a
+ * sheet can end up a fifth empty without ever growing
+ */
+const WORTH_TIDYING = 0.9;
+
+/**
  * Puts the new pictures on the sheet and writes it back.
  *
  * Keeping what is already placed is the first choice: these sheets
@@ -236,9 +244,14 @@ const WORTH_REPACKING = 0.85;
  */
 function writeSheet(name: string, sheet: Sheet): void {
   const kept = keptInPlace(sheet);
+  const lit = sheet.pictures.reduce((sum, one) => sum + one.image.width * one.image.height, 0);
   const grew = kept.width !== sheet.atlas.width || kept.height !== sheet.atlas.height;
-  const afresh = grew ? packedAfresh(sheet) : null;
-  const layout = afresh != null && areaOf(afresh) < areaOf(kept) * WORTH_REPACKING ? afresh : kept;
+  const loose = lit / areaOf(kept) < WORTH_TIDYING;
+  const afresh = grew || loose ? packedAfresh(sheet) : null;
+  // A sheet that is already wasting a fifth of itself has nothing to
+  // keep, so any smaller layout wins rather than a much smaller one
+  const layout =
+    afresh != null && areaOf(afresh) < areaOf(kept) * (loose ? 1 : WORTH_REPACKING) ? afresh : kept;
   const atlas: Image = {
     width: layout.width,
     height: layout.height,
@@ -291,8 +304,6 @@ function writeSheet(name: string, sheet: Sheet): void {
       2,
     )}\n`,
   );
-
-  const lit = sheet.pictures.reduce((sum, one) => sum + one.image.width * one.image.height, 0);
 
   console.log(
     `${name}: ${sheet.pictures.length} pictures, ${atlas.width}x${atlas.height}, ` +
@@ -590,124 +601,119 @@ function tinted(tint: Tint, sheets: Map<string, Sheet>): Picture {
 }
 
 /**
- * The one picture drawn here rather than made out of another.
+ * The one picture that comes in from outside rather than off another
+ * sheet.
  *
- * An omamori: a paper charm on a cord, which is the shape the item is
- * named for and one no sheet carries. It is built out of three pieces
- * rather than one grid, because a grid wide enough to hold all of it
- * is counted by hand and miscounted by hand.
+ * A clear amulet: no rip has one, and the render it is drawn from is a
+ * hundred and sixty pixels of smooth gradient. So it is shrunk to an
+ * item's cell here, and the ramp the shrinking leaves behind is
+ * flattened back to a few tones, which is how the rest of the sheet is
+ * drawn.
  */
-const AMULET_COLOURS: Record<string, string> = {
-  K: '#241c2d',
-  // The cord, the only saturated thing on it
-  r: '#c5294a',
-  R: '#ee5a73',
-  d: '#8b1839',
-  // The card behind, which is what "clear" means here: it has no
-  // colour of its own and takes whatever the light is doing
-  w: '#fff6ff',
-  p: '#ffcdee',
-  c: '#b4eeff',
-  v: '#d5c5ff',
-  // The mark on it
-  g: '#ffbd18',
-  G: '#ffe694',
-  b: '#c58310',
-};
+
+/** Where the renders these are made from are kept. */
+const ART = 'art';
 
 /**
- * The loop it hangs by: an arch of cord off the card's top edge, open
- * at the bottom because that is where it goes into the card
+ * How far apart two colours have to be to be two tones rather than one
+ * blurred. Under this a downscale's gradient reads as one flat colour
  */
-const AMULET_CORD = [
-  '......KKKKKK......',
-  '.....KrRRRRrK.....',
-  '....KrR....RrK....',
-  '....KrR....RrK....',
-  '....KrR....RrK....',
-  '....KdR....RdK....',
-  '....KdrK..KrdK....',
-];
+const TONE_APART = 50;
+
+/** Under this much lightness a tone is the outline, whatever it is. */
+const OUTLINE_LIGHT = 0.24;
+
+interface Shrunk {
+  /** The file under `art`, without its extension. */
+  from: string;
+  to: string;
+  /** How wide the picture ends up, which the height follows. */
+  wide: number;
+}
+
+const SHRUNK: Shrunk[] = [{ from: 'clear-amulet', to: 'held/clear-amulet', wide: 21 }];
+
+function lightnessOf(colour: number[]): number {
+  return (Math.max(...colour) + Math.min(...colour)) / 510;
+}
+
+function apart(one: number[], two: number[]): number {
+  return Math.hypot(one[0] - two[0], one[1] - two[1], one[2] - two[2]);
+}
 
 /**
- * The mark stamped on the card. Typed as its gold alone: the dark line
- * round it is drawn afterwards, which is the only way an outline stays
- * one pixel everywhere
+ * One render, shrunk and flattened.
+ *
+ * The alpha is cut rather than kept: a soft edge round a twenty pixel
+ * icon is a grey halo, and the colours are divided back out of it so an
+ * edge pixel keeps its own colour rather than the one it was blended
+ * toward. Every dark tone then becomes the same dark tone, which is
+ * what makes the outline read as a line
  */
-const AMULET_MARK = [
-  '....gg....',
-  '....gg....',
-  '....gg....',
-  'GGGGGGGGGG',
-  'gggggggggg',
-  '....gg....',
-  '....gg....',
-  '...gggg...',
-  '..gg..gg..',
-  '.bg....gb.',
-];
+async function shrunk(art: Shrunk): Promise<Picture> {
+  const trimmed = await sharp(join(ART, `${art.from}.png`))
+    .trim({ threshold: 1 })
+    .toBuffer();
+  const source = await sharp(trimmed).metadata();
+  const tall = Math.round((source.height / source.width) * art.wide);
+  const { data } = await sharp(trimmed)
+    .resize(art.wide, tall, { kernel: 'lanczos3' })
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+  const image: Image = { width: art.wide, height: tall, rgba: Buffer.alloc(art.wide * tall * 4) };
+  const counts = new Map<string, number>();
 
-/**
- * The card's own colour, corner to corner. Banded on the diagonal
- * rather than in stripes, which is the difference between a prism and
- * a flag
- */
-const AMULET_BANDS = ['w', 'p', 'c', 'v'];
+  for (let at = 0; at < image.rgba.length; at += 4) {
+    const alpha = data[at + 3];
 
-const CARD = 18;
-const MARK_INK = new Set(['g', 'G', 'b']);
+    if (alpha < 128) {
+      continue;
+    }
+    for (let part = 0; part < 3; part += 1) {
+      image.rgba[at + part] = Math.min(255, Math.round((data[at + part] * 255) / alpha));
+    }
+    image.rgba[at + 3] = 255;
 
-/**
- * The charm, as a grid of letters: the cord, then the card under it,
- * then the mark on the card, then a line drawn round the mark
- */
-function amulet(): string[] {
-  const rows = [...AMULET_CORD];
-  const top = rows.length;
+    const key = hexOf(image, at);
 
-  const inner = CARD - 4;
-
-  for (let y = 0; y < CARD; y += 1) {
-    const inside = Array.from({ length: inner }, (_, x) => {
-      const along = (x / (inner - 1) + y / (CARD - 1)) / 2;
-
-      return AMULET_BANDS[Math.min(AMULET_BANDS.length - 1, Math.floor(along * 4))];
-    });
-
-    rows.push(y === 0 || y === CARD - 1 ? `..${'K'.repeat(inner)}..` : `.K${inside.join('')}K.`);
+    counts.set(key, (counts.get(key) ?? 0) + 1);
   }
 
-  const grid = rows.map((row) => row.padEnd(CARD, '.').split(''));
-  const markLeft = Math.floor((CARD - AMULET_MARK[0].length) / 2);
-  const markTop = top + Math.floor((CARD - AMULET_MARK.length) / 2);
+  const tones: { colour: number[]; pixels: number }[] = [];
 
-  AMULET_MARK.forEach((row, y) => {
-    for (let x = 0; x < row.length; x += 1) {
-      if (row[x] !== '.') {
-        grid[markTop + y][markLeft + x] = row[x];
-      }
-    }
-  });
+  for (const [key, pixels] of [...counts].sort((one, two) => two[1] - one[1])) {
+    const colour = [1, 3, 5].map((cut) => Number.parseInt(key.slice(cut, cut + 2), 16));
+    const near = tones.find((tone) => apart(tone.colour, colour) < TONE_APART);
 
-  // The line round the mark, laid only over the card so the card's own
-  // border keeps its shape
-  const under = grid.map((row) => [...row.values()]);
-
-  for (let y = 0; y < grid.length; y += 1) {
-    for (let x = 0; x < CARD; x += 1) {
-      if (MARK_INK.has(under[y][x]) || !'wpcv'.includes(under[y][x])) {
-        continue;
-      }
-      const beside = [-1, 0, 1].some((dy) =>
-        [-1, 0, 1].some((dx) => MARK_INK.has(under[y + dy]?.[x + dx] ?? '.')),
-      );
-
-      if (beside) {
-        grid[y][x] = 'K';
-      }
+    if (near == null) {
+      tones.push({ colour, pixels });
+    } else {
+      near.pixels += pixels;
     }
   }
-  return grid.map((row) => row.join(''));
+  const dark = tones
+    .filter((tone) => lightnessOf(tone.colour) < OUTLINE_LIGHT)
+    .sort((one, two) => two.pixels - one.pixels);
+
+  for (let at = 0; at < image.rgba.length; at += 4) {
+    if (image.rgba[at + 3] === 0) {
+      continue;
+    }
+    const colour = [image.rgba[at], image.rgba[at + 1], image.rgba[at + 2]];
+    const nearest = tones.reduce((best, tone) =>
+      apart(tone.colour, colour) < apart(best.colour, colour) ? tone : best,
+    );
+    const into = dark.length > 0 && lightnessOf(nearest.colour) < OUTLINE_LIGHT ? dark[0] : nearest;
+
+    image.rgba[at] = into.colour[0];
+    image.rgba[at + 1] = into.colour[1];
+    image.rgba[at + 2] = into.colour[2];
+  }
+  return {
+    name: art.to.split('/')[1],
+    image,
+    trim: [Math.floor((CELL - image.width) / 2), Math.floor((CELL - image.height) / 2)],
+  };
 }
 
 /** The grid with the empty rows and columns round it taken off. */
@@ -900,15 +906,16 @@ function cord(): string[] {
 }
 
 const DRAWN: { to: string; rows: string[]; colours: Record<string, string> }[] = [
-  { to: 'held/clear-amulet', rows: amulet(), colours: AMULET_COLOURS },
   { to: 'evolutions/linking-cord', rows: cord(), colours: CORD_COLOURS },
 ];
 
 const sheets = new Map<string, Sheet>();
 const reading = new Set(
-  [...TINTS.flatMap((one) => [one.from, one.to]), ...DRAWN.map((one) => one.to)].map(
-    (spec) => spec.split('/')[0],
-  ),
+  [
+    ...TINTS.flatMap((one) => [one.from, one.to]),
+    ...DRAWN.map((one) => one.to),
+    ...SHRUNK.map((one) => one.to),
+  ].map((spec) => spec.split('/')[0]),
 );
 
 for (const name of reading) {
@@ -946,6 +953,9 @@ for (const tint of TINTS) {
 }
 for (const one of DRAWN) {
   put(one.to.split('/')[0], drawn(one.to.split('/')[1], one.rows, one.colours));
+}
+for (const one of SHRUNK) {
+  put(one.to.split('/')[0], await shrunk(one));
 }
 for (const name of touched) {
   const sheet = sheets.get(name);

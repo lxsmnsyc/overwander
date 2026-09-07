@@ -103,10 +103,12 @@ import {
   PLAYER_SHEET,
   QUARTER_TURN,
   RIPPLE_ALPHA,
+  RIPPLE_FADE,
   RIPPLE_PERIOD,
   RIPPLE_POINTS,
   RIPPLE_RINGS,
   RIPPLE_SPREAD,
+  RIPPLE_WEIGHT,
   SCENERY_CELLS,
   SNAP_CELLS,
   SPRITE_STANDS,
@@ -2024,7 +2026,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
           );
         }
         if (batch != null) {
-          batch.outline(COLORS.featured, ring, 2, alpha);
+          batch.outline(COLORS.featured, ring, RIPPLE_WEIGHT, alpha);
           return;
         }
         context.beginPath();
@@ -2038,7 +2040,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
 
         context.globalAlpha = prior * alpha;
         context.strokeStyle = COLORS.featured;
-        context.lineWidth = 2;
+        context.lineWidth = RIPPLE_WEIGHT;
         context.stroke();
         context.lineWidth = 1;
         context.globalAlpha = prior;
@@ -2048,12 +2050,12 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         if (!standing.featured) {
           continue;
         }
-        // Two rings in the air at once, half a period apart, so the
-        // cell is never without one
+        // Several rings in the air at once, evenly apart, so the cell
+        // is never without one and never has only a spent one
         for (let ring = 0; ring < RIPPLE_RINGS; ring++) {
           const phase = (clock / RIPPLE_PERIOD + ring / RIPPLE_RINGS) % 1;
 
-          ripple(index, 0.2 + phase * RIPPLE_SPREAD, (1 - phase) * RIPPLE_ALPHA);
+          ripple(index, 0.2 + phase * RIPPLE_SPREAD, (1 - phase) ** RIPPLE_FADE * RIPPLE_ALPHA);
         }
       }
 

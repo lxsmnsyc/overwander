@@ -16,12 +16,7 @@ import { Species } from '../data/ids/species';
 import { rollFossilOffer } from '../data/overworld/fossil';
 import Landmark from '../data/overworld/landmark';
 import type Lairs from '../data/overworld/lair';
-import {
-  EVERY_STAGED_LAIR,
-  getBiomeLairs,
-  getLairResidents,
-  pickLairSpecies,
-} from '../data/overworld/lair';
+import { getBiomeLairs, getLairResidents, pickLairSpecies } from '../data/overworld/lair';
 import Npc, { EXECUTIVE_CHARSETS, type Executive, NPCS, npcSheets } from '../data/overworld/npc';
 import {
   SYNDICATE_BOSS_CHARSETS,
@@ -1018,10 +1013,9 @@ export default class ChunkSnapshot {
    * Everybody fields six, weakest first, and the rank says out of
    * what: a grunt takes one commoner, two of the uncommon band and
    * three of the rare, an executive takes six of the rare band, and
-   * Giovanni takes five of it and a legendary — the biome's own lair
-   * where it has one, any lair at all where it does not. Each draw
-   * carries its own rolls but no level, which the fight fixes for the
-   * party
+   * Giovanni takes five of it and the legendary of a lair this biome
+   * hosts, or a sixth rare where it hosts none. Each draw carries its
+   * own rolls but no level, which the fight fixes for the party
    */
   getRocketStops(): Map<number, Spawn[]> {
     if (this.rocketStops == null) {
@@ -1045,14 +1039,24 @@ export default class ChunkSnapshot {
           const rank = this.getRocketRank(cell);
 
           if (rank === RocketRank.Boss) {
-            const lairs = getBiomeLairs(this.chunk.biome);
-            // Any lair the world stages, never a mythical's: nothing
-            // but its relic ever calls one of those out
-            const homes = lairs.length > 0 ? lairs : EVERY_STAGED_LAIR;
-            const lair = homes[Math.floor(rng.random() * homes.length)];
+            // The ground they are standing on, and nowhere else: a
+            // lair is a place, so a biome that hosts none has no
+            // legendary to have been taken from it and the boss
+            // fields a sixth rare
+            const homes = getBiomeLairs(this.chunk.biome);
             const party = Array.from({ length: ROCKET_PARTY_SIZE - 1 }, () => draw(rares));
 
-            party.push([pickLairSpecies(lair, () => true, rng.int32()), rng.int32(), rng.int32()]);
+            if (homes.length > 0) {
+              const lair = homes[Math.floor(rng.random() * homes.length)];
+
+              party.push([
+                pickLairSpecies(lair, () => true, rng.int32()),
+                rng.int32(),
+                rng.int32(),
+              ]);
+            } else {
+              party.push(draw(rares));
+            }
             stops.set(cell, party);
           } else if (rank === RocketRank.Executive) {
             stops.set(

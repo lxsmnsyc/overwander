@@ -50,6 +50,7 @@ import { ActionsIcon, LockIcon, StarIcon } from '../../icons';
 import InventoryPicker from '../../items/InventoryPicker';
 
 import { describeItem } from '../../details';
+import spentToast from '../../items/spent-toast';
 import spendItemOn, {
   getLevelMovesBetween,
   isUsableOn,
@@ -943,7 +944,7 @@ export function CatchSheetBody(
 
     spendItemOn(catchId, item)
       .then((result) => {
-        say(result.said, result.tone);
+        toast.push(spentToast(item, result));
         props.onRecordChanged();
         props.onBagChanged();
         props.onEvolutionsChanged();

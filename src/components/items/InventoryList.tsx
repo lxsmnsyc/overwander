@@ -21,6 +21,7 @@ import CandyGrid from './CandyGrid';
 import ItemGrid from './ItemGrid';
 import { describeItem } from '../details';
 import spendItemOn, { getLevelMoves, isUsableOn } from './use-item';
+import spentToast from './spent-toast';
 import { useGame } from '../app/game-context';
 import { Note, useToast } from '../styled';
 
@@ -150,7 +151,7 @@ function BagBody(
 
     spendItemOn(catchId, item)
       .then(async (result) => {
-        said(result.said, result.tone);
+        toast.push(spentToast(item, result));
         changed();
 
         // A candy can grow it into a move, which is the one question

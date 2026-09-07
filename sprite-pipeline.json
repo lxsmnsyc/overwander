@@ -15816,15 +15816,15 @@
       }
     },
     "public/sprites/ui/items/evolutions/image.png": {
-      "digest": "5390e0556826a4c6",
-      "bytes": 10610,
+      "digest": "77f34883c8555e58",
+      "bytes": 10544,
       "width": 121,
-      "height": 157,
+      "height": 140,
       "compact": {
-        "at": "2026-08-29T05:37:11Z",
+        "at": "2026-09-07T07:18:34Z",
         "as": "already compact",
-        "was": 10610,
-        "bytes": 10610
+        "was": 10544,
+        "bytes": 10544
       }
     },
     "public/sprites/ui/items/flutes/image.png": {
@@ -15864,15 +15864,15 @@
       }
     },
     "public/sprites/ui/items/held/image.png": {
-      "digest": "73e6abbc67435f9b",
-      "bytes": 21494,
+      "digest": "6fc1bc86c8957e78",
+      "bytes": 21875,
       "width": 301,
-      "height": 138,
+      "height": 143,
       "compact": {
-        "at": "2026-08-27T19:35:59Z",
+        "at": "2026-09-07T07:18:34Z",
         "as": "already compact",
-        "was": 21494,
-        "bytes": 21494
+        "was": 21875,
+        "bytes": 21875
       }
     },
     "public/sprites/ui/items/incense/image.png": {

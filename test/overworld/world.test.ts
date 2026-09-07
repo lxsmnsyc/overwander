@@ -248,6 +248,7 @@ import {
   LURE_SPAWN_BONUS,
   TRAP_FLEE_FACTOR,
 } from '../../src/overworld/abilities/__create';
+import { PUBLISHED_SPAWNS } from '../../src/auth/snapshots';
 import {
   COMPOUND_EYES_HELD_BOOST,
   FLAME_BODY_FACTOR,
@@ -1337,10 +1338,14 @@ describe('world', () => {
 
     const party = staged.snapshot.getRocketStops().get(staged.cell) ?? [];
     const legendaries = new Set(EVERY_LAIR.flatMap((lair) => getLairResidents(lair)));
+    const homes = getBiomeLairs(staged.snapshot.chunk.biome);
+    const endemic = new Set(homes.flatMap((lair) => getLairResidents(lair)));
 
-    // Six strong: five of the biome's rares and a legendary at the end
+    // Six strong: five of the biome's rares, and at the end a
+    // legendary that lives here. A biome hosting no lair has none for
+    // him to have taken, so the sixth is another rare
     expect(party).toHaveLength(6);
-    expect(legendaries.has(party[5][0])).toBe(true);
+    expect(homes.length > 0 ? endemic.has(party[5][0]) : !legendaries.has(party[5][0])).toBe(true);
 
     // Dressed as the boss himself
     expect(SYNDICATE_BOSS_CHARSETS[staged.snapshot.getSyndicate()]).toContain(
@@ -1362,6 +1367,56 @@ describe('world', () => {
       expect(member.level).toBeLessThanOrEqual(GIOVANNI_PARTY_LEVELS[1]);
       expect(member.shadow).toBe(true);
     }
+  });
+
+  it('never fields Giovanni a legendary the biome cannot host', () => {
+    const world = new World('overworld');
+    const legendaries = new Set(EVERY_LAIR.flatMap((lair) => getLairResidents(lair)));
+    let bosses = 0;
+    let barren = 0;
+
+    for (let x = 0; x < 48; x++) {
+      for (let y = 0; y < 8; y++) {
+        const chunk = world.getChunk(x, y);
+        const homes = getBiomeLairs(chunk.biome);
+        const endemic = new Set(homes.flatMap((lair) => getLairResidents(lair)));
+
+        for (const [cell, landmark] of chunk.getLandmarkCells()) {
+          if (landmark !== Landmark.TeamRocket) {
+            continue;
+          }
+          for (let window = 0; window < 16; window++) {
+            const snapshot = new ChunkSnapshot(chunk, window * NPC_INTERVAL);
+
+            if (!snapshot.isRocketBoss(cell)) {
+              continue;
+            }
+
+            const party = snapshot.getRocketStops().get(cell);
+
+            if (party == null) {
+              continue;
+            }
+            bosses += 1;
+
+            const last = party[party.length - 1][0];
+
+            if (homes.length > 0) {
+              expect(endemic.has(last)).toBe(true);
+              continue;
+            }
+            // Nowhere here for one to have come from, so the sixth is
+            // a rare like the five in front of it
+            barren += 1;
+            expect(legendaries.has(last)).toBe(false);
+          }
+        }
+      }
+    }
+
+    // Both sides of it are actually walked: most biomes host no lair
+    expect(bosses).toBeGreaterThan(0);
+    expect(barren).toBeGreaterThan(0);
   });
 
   it('ranks a Team Rocket cell into a grunt, an executive or the boss', () => {
@@ -2218,6 +2273,13 @@ describe('world', () => {
     // different players spread out
     expect(pickStartPosition(world, 'player-uid')).toEqual(start);
     expect(pickStartPosition(world, 'other-uid')).not.toEqual(start);
+  });
+
+  it('publishes room for the lure as well as the ordinary spawns', () => {
+    // What a visit writes has to hold the extras, since the window
+    // publishes them for everybody and a lure only decides who may
+    // reach them. It is one figure, kept beside the publishing
+    expect(PUBLISHED_SPAWNS).toBe(SPAWN_COUNT + LURE_SPAWN_BONUS);
   });
 
   it('draws two more spawns out for a buddy that lures', () => {

@@ -187,10 +187,10 @@ function GeneralPane(): JSX.Element {
       </Card>
 
       <Card title="Audio">
-        <Note>Nothing makes a sound yet. These are kept for when something does.</Note>
+        <Note>Music is kept for when there is some. Sound is what the world does now.</Note>
         <Slider
           label="Sound"
-          description="Throws, hits, and everything the world does in passing."
+          description="What the world says in passing, a shiny sparkling among it."
           value={settings().sound}
           onChange={(level) => {
             setSetting('sound', level);

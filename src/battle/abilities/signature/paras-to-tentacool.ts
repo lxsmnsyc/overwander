@@ -2,14 +2,15 @@ import { AttackPriority, EventPriority } from '../../../core/event-emitter';
 import { Stats } from '../../../data/constants/stats';
 import { Types } from '../../../data/constants/types';
 import Abilities from '../../../data/ids/abilities';
-import { MoveAttackFlags } from '../../../data/ids/moves';
+import { DamageFlags, MoveAttackFlags } from '../../../data/ids/moves';
 import type Battle from '../../core';
-import { BattleEvents, EffectType } from '../../events';
+import { BattleEvents, EffectType, MoveTargetType } from '../../events';
 import { MergedLifecycle } from '../../lifecycle';
 import { MAJOR_STATUS_CONDITIONS } from '../../status';
 import type Unit from '../../unit';
-import { hasAnyStatus, stealableItem } from '../../utils';
+import { hasAnyStatus, stealableItem, unitTarget } from '../../utils';
 import { createAbility } from '../__create';
+import { createNextCastPenalty } from './__create';
 
 /** What one status landed is worth to the fungus */
 export const FUNGAL_BLOOM_FRACTION = 1 / 8;
@@ -31,6 +32,27 @@ export const HEADACHE_BURST_SCALE = 1.5;
 
 /** The share of health the headache peaks at */
 export const HEADACHE_BURST_THRESHOLD = 1 / 2;
+
+/** What blind rage is worth, and what it costs in aim */
+export const BLIND_RAGE_ATTACK_SCALE = 1.4;
+export const BLIND_RAGE_ACCURACY_SCALE = 0.85;
+
+/** What a target already going down is worth to the chase */
+export const CHASE_DOWN_SCALE = 1.5;
+
+/** The share of health that marks a target as quarry */
+export const CHASE_DOWN_THRESHOLD = 1 / 3;
+
+/** What the spiral adds to the next thing an attacker reaches for */
+export const HYPNOTIC_SPIRAL_CAST_SCALE = 1.3;
+
+/** How long it takes to gather itself for another blink */
+export const TELEPORT_GUARD_WINDOW = 10000;
+
+/** Whether the target is far enough gone to be run down */
+function isQuarry(unit: Unit): boolean {
+  return unit.health <= unit.checkStat(Stats.HP, 0) * CHASE_DOWN_THRESHOLD;
+}
 
 /** Whether the head is bad enough for the burst */
 function isSplitting(unit: Unit): boolean {
@@ -211,6 +233,159 @@ const parasToTentacool = [
         }),
       ]),
   ),
+
+  // Mankey: it fights past sense. The aim goes, the healing stops, and
+  // what is left is the swing. Annihilape's rage, written early
+  createAbility(
+    Abilities.BlindRage,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
+          if (event.stat === Stats.Attack && event.source.hasAbility(Abilities.BlindRage)) {
+            event.value *= BLIND_RAGE_ATTACK_SCALE;
+          }
+        }),
+        battle.on(BattleEvents.CheckUnitMoveAccuracy, EventPriority.Post, (event) => {
+          if (event.accuracy != null && event.source.hasAbility(Abilities.BlindRage)) {
+            event.accuracy *= BLIND_RAGE_ACCURACY_SCALE;
+          }
+        }),
+        // Refused rather than reduced: rage is a wound that will not
+        // close, whoever offers to close it
+        battle.on(BattleEvents.CheckUnitCanHeal, EventPriority.Post, (event) => {
+          if (event.success && event.target.hasAbility(Abilities.BlindRage)) {
+            event.success = false;
+
+            event.target.triggerAbility(Abilities.BlindRage);
+          }
+        }),
+      ]),
+  ),
+
+  // Growlithe: a hunting dog finishes what runs. Below a third it is
+  // quarry, and quarry does not get to leave
+  createAbility(
+    Abilities.ChaseDown,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.UnitAttackResolveStat, EventPriority.Post, (event) => {
+          const parent = event.parent;
+
+          if (
+            event.unit === parent.source &&
+            (event.stat === Stats.Attack || event.stat === Stats.SpecialAttack) &&
+            parent.source.hasAbility(Abilities.ChaseDown) &&
+            isQuarry(parent.target)
+          ) {
+            event.value *= CHASE_DOWN_SCALE;
+          }
+        }),
+        battle.on(BattleEvents.CheckUnitEscape, EventPriority.Post, (event) => {
+          const source = event.source;
+
+          if (!event.success || !isQuarry(source)) {
+            return;
+          }
+
+          for (const hunter of battle.units(source.team.alliance)) {
+            if (hunter.alive && hunter.hasAbility(Abilities.ChaseDown)) {
+              event.success = false;
+
+              // Every holder reacts, not just the first
+              hunter.triggerAbility(Abilities.ChaseDown);
+            }
+          }
+        }),
+      ]),
+  ),
+
+  // Poliwag: the spiral on its belly catches whoever comes close, so
+  // the next thing they reach for comes slower
+  createAbility(Abilities.HypnoticSpiral, (battle) => {
+    const spiral = createNextCastPenalty(battle, HYPNOTIC_SPIRAL_CAST_SCALE);
+
+    return new MergedLifecycle([
+      battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
+        const target = event.target;
+        const cause = event.cause;
+
+        if (
+          !event.success ||
+          event.flags & DamageFlags.Indirect ||
+          cause.type !== EffectType.Move ||
+          cause.unit === target ||
+          !target.hasAbility(Abilities.HypnoticSpiral) ||
+          !cause.unit.checkMoveContact(cause.move, unitTarget(target))
+        ) {
+          return;
+        }
+
+        target.triggerAbility(Abilities.HypnoticSpiral);
+
+        spiral.mark(cause.unit);
+      }),
+      ...spiral.lifecycles,
+    ]);
+  }),
+
+  // Abra: it is not there when the blow arrives. One blink, then it
+  // has to gather itself again
+  createAbility(Abilities.TeleportGuard, (battle) => {
+    const gathering = new Map<Unit, number>();
+
+    const clock = battle.on(BattleEvents.Tick, EventPriority.Post, (event) => {
+      const ready: Unit[] = [];
+
+      for (const [unit, left] of gathering) {
+        const next = left - event.duration;
+
+        if (next <= 0) {
+          ready.push(unit);
+        } else {
+          gathering.set(unit, next);
+        }
+      }
+
+      for (const unit of ready) {
+        gathering.delete(unit);
+      }
+
+      if (gathering.size === 0) {
+        clock.stop();
+      }
+    });
+
+    clock.stop();
+
+    return new MergedLifecycle([
+      clock,
+      battle.on(BattleEvents.UnitTriggerMoveRollHit, EventPriority.Post, (event) => {
+        const parent = event.parent;
+
+        if (parent.target.type !== MoveTargetType.Unit) {
+          return;
+        }
+
+        const target = parent.target.unit;
+
+        if (
+          !event.hit ||
+          target === parent.source ||
+          gathering.has(target) ||
+          !target.hasAbility(Abilities.TeleportGuard)
+        ) {
+          return;
+        }
+
+        event.hit = false;
+
+        gathering.set(target, TELEPORT_GUARD_WINDOW);
+        clock.start();
+
+        target.triggerAbility(Abilities.TeleportGuard);
+      }),
+    ]);
+  }),
 ];
 
 export default parasToTentacool;

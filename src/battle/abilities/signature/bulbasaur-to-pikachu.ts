@@ -26,6 +26,7 @@ import { unitTarget } from '../../utils';
 import { createAbility } from '../__create';
 import {
   createDamageTaken,
+  createNextCastPenalty,
   createUnitCounter,
   createUnitState,
   fieldHasAbility,
@@ -383,9 +384,7 @@ const bulbasaurToPikachu = [
   // Ekans: the coils are the whole fight. What it wraps stays wrapped,
   // which is the Cornered status a bind already puts on
   createAbility(Abilities.Constrict, (battle) => {
-    // Whoever is still winding up under the coils. Cleared as the cast
-    // begins rather than as it is asked about, since the AI asks often
-    const wound = new Set<Unit>();
+    const coils = createNextCastPenalty(battle, CONSTRICT_CAST_SCALE);
 
     return new MergedLifecycle([
       battle.on(BattleEvents.UnitAttack, AttackPriority.Post, (event) => {
@@ -403,7 +402,7 @@ const bulbasaurToPikachu = [
 
         source.triggerAbility(Abilities.Constrict);
 
-        wound.add(event.target);
+        coils.mark(event.target);
 
         event.target.addStatus(Statuses.Cornered, {
           type: EffectType.Ability,
@@ -411,14 +410,7 @@ const bulbasaurToPikachu = [
           unit: source,
         });
       }),
-      battle.on(BattleEvents.CheckUnitMoveCastTime, EventPriority.Post, (event) => {
-        if (wound.has(event.source)) {
-          event.duration *= CONSTRICT_CAST_SCALE;
-        }
-      }),
-      battle.on(BattleEvents.UnitCast, EventPriority.Post, (event) => {
-        wound.delete(event.source);
-      }),
+      ...coils.lifecycles,
     ]);
   }),
 

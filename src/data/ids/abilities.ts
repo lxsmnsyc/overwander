@@ -324,6 +324,10 @@ const enum Abilities {
   Undermine = 200021,
   Cutpurse = 200022,
   HeadacheBurst = 200023,
+  BlindRage = 200024,
+  ChaseDown = 200025,
+  HypnoticSpiral = 200026,
+  TeleportGuard = 200027,
 }
 
 export default Abilities;

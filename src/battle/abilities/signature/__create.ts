@@ -131,3 +131,35 @@ const PSEUDO_MOVES = new Set<Moves>([Moves._Confused, Moves.Struggle, Moves.Atta
 export function isPhysicalMove(move: Moves): boolean {
   return !PSEUDO_MOVES.has(move) && getMoveData(move).category === MoveCategories.Physical;
 }
+
+/**
+ * The shared half of every effect that slows down the next thing a
+ * unit reaches for: a coil, a spiral, a blow to the head. The mark is
+ * dropped as the cast begins rather than as it is asked about, since
+ * the AI asks about a cast time many times before one starts
+ */
+export function createNextCastPenalty(
+  battle: Battle,
+  scale: number,
+): {
+  mark(unit: Unit): void;
+  lifecycles: Lifecycle[];
+} {
+  const marked = new Set<Unit>();
+
+  return {
+    mark(unit) {
+      marked.add(unit);
+    },
+    lifecycles: [
+      battle.on(BattleEvents.CheckUnitMoveCastTime, EventPriority.Post, (event) => {
+        if (marked.has(event.source)) {
+          event.duration *= scale;
+        }
+      }),
+      battle.on(BattleEvents.UnitCast, EventPriority.Post, (event) => {
+        marked.delete(event.source);
+      }),
+    ],
+  };
+}

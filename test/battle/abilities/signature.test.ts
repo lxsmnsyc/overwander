@@ -17,10 +17,16 @@ import {
   TWIN_STINGER_POWER_SCALE,
 } from '../../../src/battle/abilities/signature/bulbasaur-to-pikachu';
 import {
+  BLIND_RAGE_ACCURACY_SCALE,
+  BLIND_RAGE_ATTACK_SCALE,
+  CHASE_DOWN_SCALE,
+  CHASE_DOWN_THRESHOLD,
   DUST_STORM_MAX_STACKS,
   DUST_STORM_STEP,
   FUNGAL_BLOOM_FRACTION,
   HEADACHE_BURST_SCALE,
+  HYPNOTIC_SPIRAL_CAST_SCALE,
+  TELEPORT_GUARD_WINDOW,
   UNDERMINE_MAX_STACKS,
   UNDERMINE_STEP,
 } from '../../../src/battle/abilities/signature/paras-to-tentacool';
@@ -238,6 +244,25 @@ function resolveAttackStat(
   };
   battle.emit(BattleEvents.UnitAttackResolveStat, event);
   return event.value;
+}
+
+/** Whether the blow lands once every listener has answered for it */
+function rolled(battle: Battle, source: Unit, target: Unit, move: Moves): boolean {
+  const event = {
+    id: 'UnitTriggerMoveRollHit',
+    disabled: false,
+    parent: {
+      id: 'UnitTriggerMove',
+      disabled: false,
+      source,
+      move,
+      target: { type: MoveTargetType.Unit, unit: target } as const,
+      steps: 0,
+    },
+    hit: true,
+  };
+  battle.emit(BattleEvents.UnitTriggerMoveRollHit, event);
+  return event.hit;
 }
 
 /** One resolved use of a move, landed or missed */
@@ -1027,5 +1052,107 @@ describe('Headache Burst', () => {
 
     // A move of another type still has to land the ordinary way
     expect(holder.checkMoveAccuracy(Moves.WaterGun, target)).not.toBeUndefined();
+  });
+});
+
+describe('Blind Rage', () => {
+  it('swings harder, aims worse, and refuses every heal', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.BlindRage);
+
+    const target = { type: MoveTargetType.Unit, unit: enemy } as const;
+    const bareAttack = createUnit(battle, teamB).checkStat(Stats.Attack, 0);
+
+    expect(holder.checkStat(Stats.Attack, 0)).toBeCloseTo(bareAttack * BLIND_RAGE_ATTACK_SCALE, 5);
+    expect(holder.checkMoveAccuracy(Moves.Pound, target)).toBeCloseTo(
+      100 * BLIND_RAGE_ACCURACY_SCALE,
+      5,
+    );
+
+    holder.setHealth(10);
+    holder.heal(NONE_CAUSE, holder, 50, 0);
+
+    expect(holder.health).toBe(10);
+  });
+});
+
+describe('Chase Down', () => {
+  it('hits quarry harder and will not let it leave', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.ChaseDown);
+
+    const parent = makeAttack(holder, enemy, Moves.Pound, Types.Normal, MoveCategories.Physical);
+
+    expect(resolveAttackStat(battle, parent, holder, Stats.Attack, 100)).toBe(100);
+    expect(enemy.checkEscape()).toBe(true);
+
+    enemy.setHealth(enemy.checkStat(Stats.HP, 0) * CHASE_DOWN_THRESHOLD);
+
+    expect(resolveAttackStat(battle, parent, holder, Stats.Attack, 100)).toBeCloseTo(
+      100 * CHASE_DOWN_SCALE,
+      5,
+    );
+    expect(enemy.checkEscape()).toBe(false);
+  });
+});
+
+describe('Hypnotic Spiral', () => {
+  it('slows the next cast of whoever touches it', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.HypnoticSpiral);
+
+    const target = { type: MoveTargetType.None } as const;
+    const bare = enemy.checkMoveCastTime(Moves.Flamethrower, target);
+
+    // A ranged move leaves the spiral out of reach
+    enemy.attack(holder, Moves.Ember, 40, Types.Fire, MoveCategories.Special, 0);
+
+    expect(enemy.checkMoveCastTime(Moves.Flamethrower, target)).toBe(bare);
+
+    enemy.attack(holder, Moves.Pound, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(enemy.checkMoveCastTime(Moves.Flamethrower, target)).toBeCloseTo(
+      bare * HYPNOTIC_SPIRAL_CAST_SCALE,
+      5,
+    );
+
+    battle.emit(BattleEvents.UnitCast, {
+      id: 'UnitCast',
+      disabled: false,
+      source: enemy,
+      move: Moves.Flamethrower,
+      target,
+    });
+
+    expect(enemy.checkMoveCastTime(Moves.Flamethrower, target)).toBe(bare);
+  });
+});
+
+describe('Teleport Guard', () => {
+  it('blinks away from one attack, then has to gather itself', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.TeleportGuard);
+
+    // The blow that would have landed does not
+    rollMove(battle, enemy, holder, Moves.Pound, true);
+
+    // The next one lands: the blink is spent
+    const second = rolled(battle, enemy, holder, Moves.Pound);
+
+    expect(second).toBe(true);
+
+    battle.tick(TELEPORT_GUARD_WINDOW);
+
+    expect(rolled(battle, enemy, holder, Moves.Pound)).toBe(false);
   });
 });

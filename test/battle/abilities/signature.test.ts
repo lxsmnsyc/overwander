@@ -3,22 +3,35 @@ import { AttackPriority } from '../../../src/core/event-emitter';
 import {
   AFTERBURN_MAX_STACKS,
   AFTERBURN_STEP,
+  CHAIN_LIGHTNING_FRACTION,
+  CONSTRICT_CAST_SCALE,
   NIBBLE_FRACTION,
   OVERPRESSURE_COOLDOWN_STEP,
   OVERPRESSURE_MAX_STACKS,
   OVERPRESSURE_POWER_SCALE,
+  RELENTLESS_MAX_STACKS,
+  RELENTLESS_STEP,
+  SAND_COAT_DEFENSE_SCALE,
+  SAND_COAT_EXPOSED_SCALE,
+  SAND_COAT_POWER_SCALE,
   SEED_CACHE_BANK_FRACTION,
   SEED_CACHE_CAP_FRACTION,
   SLIPSTREAM_SCALE,
   TWIN_STINGER_POWER_SCALE,
 } from '../../../src/battle/abilities/signature/bulbasaur-to-pikachu';
 import type Battle from '../../../src/battle/core';
-import { BattleEvents, EffectType, MoveTargetType } from '../../../src/battle/events';
+import {
+  BattleEvents,
+  EffectType,
+  MoveTargetType,
+  type UnitAttackEvent,
+} from '../../../src/battle/events';
 import type Unit from '../../../src/battle/unit';
 import { Stats } from '../../../src/data/constants/stats';
 import { Types } from '../../../src/data/constants/types';
 import Abilities from '../../../src/data/ids/abilities';
 import { MoveCategories, MoveTargets, Moves } from '../../../src/data/ids/moves';
+import { Statuses, Weathers } from '../../../src/data/ids/status';
 import { createBattle, createUnit, pinRandom } from '../harness';
 
 const NONE_CAUSE = { type: EffectType.None } as const;
@@ -151,6 +164,47 @@ describe('Seed Cache', () => {
     expect(spent - plain).toBeCloseTo(maxHP * SEED_CACHE_CAP_FRACTION, 5);
   });
 });
+
+/** A synthetic blow, for the resolvers that answer questions about one */
+function makeAttack(
+  source: Unit,
+  target: Unit,
+  move: Moves,
+  type: Types,
+  category: MoveCategories,
+): UnitAttackEvent {
+  return {
+    id: 'UnitAttack',
+    disabled: false,
+    source,
+    target,
+    move,
+    value: 0,
+    category,
+    type,
+    flags: 0,
+    success: false,
+  };
+}
+
+function resolveAttackStat(
+  battle: Battle,
+  parent: UnitAttackEvent,
+  unit: Unit,
+  stat: Stats,
+  value: number,
+): number {
+  const event = {
+    id: 'UnitAttackResolveStat',
+    disabled: false,
+    parent,
+    unit,
+    stat,
+    value,
+  };
+  battle.emit(BattleEvents.UnitAttackResolveStat, event);
+  return event.value;
+}
 
 /** One resolved use of a move, landed or missed */
 function rollMove(battle: Battle, source: Unit, target: Unit, move: Moves, hit: boolean): void {
@@ -432,5 +486,150 @@ describe('Twin Stinger', () => {
     holder.attack(enemy, Moves.Ember, 40, Types.Fire, MoveCategories.Special, 0);
 
     expect(landed).toBe(1);
+  });
+});
+
+describe('Relentless', () => {
+  it('presses one target harder each time it lands, and starts over on another', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const holder = createUnit(battle, teamA);
+    const first = createUnit(battle, teamB);
+    const second = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Relentless);
+
+    const atFirst = { type: MoveTargetType.Unit, unit: first } as const;
+    const atSecond = { type: MoveTargetType.Unit, unit: second } as const;
+
+    expect(holder.checkMovePower(Moves.Tackle, atFirst)).toBe(40);
+
+    for (let landed = 1; landed <= RELENTLESS_MAX_STACKS + 1; landed += 1) {
+      holder.attack(first, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
+      first.setHealth(first.checkStat(Stats.HP, 0));
+
+      expect(holder.checkMovePower(Moves.Tackle, atFirst)).toBeCloseTo(
+        40 * (1 + RELENTLESS_STEP * Math.min(RELENTLESS_MAX_STACKS, landed)),
+        5,
+      );
+
+      // Nothing carries over to anybody else
+      expect(holder.checkMovePower(Moves.Tackle, atSecond)).toBe(40);
+    }
+
+    holder.attack(second, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(holder.checkMovePower(Moves.Tackle, atFirst)).toBe(40);
+  });
+});
+
+describe('Constrict', () => {
+  it('corners what it touches and slows what that target reaches for next', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Constrict);
+
+    const target = { type: MoveTargetType.None } as const;
+    const bare = enemy.checkMoveCastTime(Moves.Flamethrower, target);
+
+    holder.attack(enemy, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(enemy.status[Statuses.Cornered]).not.toBeUndefined();
+    expect(enemy.checkEscape()).toBe(false);
+    expect(enemy.checkMoveCastTime(Moves.Flamethrower, target)).toBeCloseTo(
+      bare * CONSTRICT_CAST_SCALE,
+      5,
+    );
+
+    // The coils only hold the one cast
+    battle.emit(BattleEvents.UnitCast, {
+      id: 'UnitCast',
+      disabled: false,
+      source: enemy,
+      move: Moves.Flamethrower,
+      target,
+    });
+
+    expect(enemy.checkMoveCastTime(Moves.Flamethrower, target)).toBe(bare);
+  });
+
+  it('needs contact to catch anything', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Constrict);
+
+    holder.attack(enemy, Moves.Ember, 40, Types.Fire, MoveCategories.Special, 0);
+
+    expect(enemy.status[Statuses.Cornered]).toBeUndefined();
+  });
+});
+
+describe('Chain Lightning', () => {
+  it('arcs a third of the blow to the next enemy along', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const holder = createUnit(battle, teamA);
+    const struck = createUnit(battle, teamB);
+    const next = createUnit(battle, teamB);
+    holder.addAbility(Abilities.ChainLightning);
+
+    const before = next.health;
+    const dealt = dealDamage(
+      holder,
+      struck,
+      Moves.ThunderShock,
+      40,
+      Types.Electric,
+      MoveCategories.Special,
+    );
+
+    expect(before - next.health).toBeCloseTo(dealt * CHAIN_LIGHTNING_FRACTION, 5);
+  });
+
+  it('does not arc off a move of another type', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const holder = createUnit(battle, teamA);
+    const struck = createUnit(battle, teamB);
+    const next = createUnit(battle, teamB);
+    holder.addAbility(Abilities.ChainLightning);
+
+    const before = next.health;
+
+    dealDamage(holder, struck, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical);
+
+    expect(next.health).toBe(before);
+  });
+});
+
+describe('Sand Coat', () => {
+  it('is armour in a storm and dead weight in clear air', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.SandCoat);
+
+    const target = { type: MoveTargetType.None } as const;
+    const bareDefense = holder.checkStat(Stats.Defense, 0);
+    const incoming = makeAttack(enemy, holder, Moves.Tackle, Types.Normal, MoveCategories.Physical);
+
+    // No sand up: no coat, and everything lands harder
+    expect(holder.checkMovePower(Moves.Dig, target)).toBe(80);
+    expect(resolveAttackStat(battle, incoming, enemy, Stats.Attack, 100)).toBeCloseTo(
+      100 * SAND_COAT_EXPOSED_SCALE,
+      5,
+    );
+
+    teamA.weather.current = Weathers.Sandstorm;
+
+    expect(holder.checkStat(Stats.Defense, 0)).toBeCloseTo(
+      bareDefense * SAND_COAT_DEFENSE_SCALE,
+      5,
+    );
+    expect(holder.checkMovePower(Moves.Dig, target)).toBeCloseTo(80 * SAND_COAT_POWER_SCALE, 5);
+    expect(resolveAttackStat(battle, incoming, enemy, Stats.Attack, 100)).toBe(100);
   });
 });

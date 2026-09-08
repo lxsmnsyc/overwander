@@ -1,15 +1,37 @@
-import { EventPriority } from '../../../core/event-emitter';
+import { AttackPriority, EventPriority } from '../../../core/event-emitter';
 import type Abilities from '../../../data/ids/abilities';
 import type Battle from '../../core';
-import { BattleEvents } from '../../events';
+import { BattleEvents, type UnitDamageEvent } from '../../events';
 import type { Lifecycle } from '../../lifecycle';
 import type Unit from '../../unit';
 
 /**
- * What the counting signature abilities share. A tally kept per unit,
- * emptied when its holder arrives on the field or falls: an ability
- * lifting and settling again is not an arrival
+ * What the signature abilities that remember something share: state
+ * kept per unit and dropped when that unit arrives on the field or
+ * falls. An ability lifting and settling again is not an arrival
  */
+export function createUnitState<T>(battle: Battle): {
+  state: Map<Unit, T>;
+  lifecycles: Lifecycle[];
+} {
+  const state = new Map<Unit, T>();
+
+  return {
+    state,
+    lifecycles: [
+      battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+        if (!event.reactivation) {
+          state.delete(event.source);
+        }
+      }),
+      battle.on(BattleEvents.UnitFaints, EventPriority.Post, (event) => {
+        state.delete(event.source);
+      }),
+    ],
+  };
+}
+
+/** A tally per unit, with an unwritten one reading zero */
 export interface UnitCounter {
   get(unit: Unit): number;
   set(unit: Unit, value: number): void;
@@ -20,26 +42,48 @@ export function createUnitCounter(battle: Battle): {
   counter: UnitCounter;
   lifecycles: Lifecycle[];
 } {
-  const counts = new Map<Unit, number>();
+  const { state, lifecycles } = createUnitState<number>(battle);
 
   return {
     counter: {
-      get: (unit) => counts.get(unit) ?? 0,
+      get: (unit) => state.get(unit) ?? 0,
       set(unit, value) {
-        counts.set(unit, value);
+        state.set(unit, value);
       },
       clear(unit) {
-        counts.delete(unit);
+        state.delete(unit);
       },
     },
+    lifecycles,
+  };
+}
+
+/**
+ * What a blow actually took off, which is not what it asked for:
+ * overkill and a non-lethal clamp both settle out of the health
+ * standing before it. Read it from a UnitDamage listener at Post
+ */
+export function createDamageTaken(battle: Battle): {
+  taken(event: UnitDamageEvent): number | undefined;
+  lifecycles: Lifecycle[];
+} {
+  const standing = new WeakMap<object, number>();
+
+  return {
+    taken(event) {
+      const before = standing.get(event);
+
+      if (before == null) {
+        return undefined;
+      }
+
+      standing.delete(event);
+
+      return Math.max(0, before - event.target.health);
+    },
     lifecycles: [
-      battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
-        if (!event.reactivation) {
-          counts.delete(event.source);
-        }
-      }),
-      battle.on(BattleEvents.UnitFaints, EventPriority.Post, (event) => {
-        counts.delete(event.source);
+      battle.on(BattleEvents.UnitDamage, AttackPriority.Pre, (event) => {
+        standing.set(event, event.target.health);
       }),
     ],
   };

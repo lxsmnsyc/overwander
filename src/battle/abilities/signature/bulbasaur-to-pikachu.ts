@@ -11,12 +11,20 @@ import {
   affectsFoesOnly,
 } from '../../../data/ids/moves';
 import { getMoveData } from '../../../data/moves';
-import { BattleEvents, type CheckUnitMoveTimeEvent, EffectType } from '../../events';
+import { Statuses } from '../../../data/ids/status';
+import type Battle from '../../core';
+import {
+  BattleEvents,
+  type CheckUnitMoveTimeEvent,
+  EffectType,
+  MoveTargetType,
+} from '../../events';
 import { MergedLifecycle } from '../../lifecycle';
 import { MULTI_HIT_MOVES } from '../../moves/multi-hit';
 import type Unit from '../../unit';
+import { isWeatherSandstorm, unitTarget } from '../../utils';
 import { createAbility } from '../__create';
-import { createUnitCounter, fieldHasAbility } from './__create';
+import { createDamageTaken, createUnitCounter, createUnitState, fieldHasAbility } from './__create';
 
 /**
  * The moves the second needle never applies to: a confused unit
@@ -68,34 +76,56 @@ export const SLIPSTREAM_SCALE = 0.8;
 /** What a bite takes off the target, over and above the blow */
 export const NIBBLE_FRACTION = 1 / 32;
 
+/** What one blow on the same target as the last is worth */
+export const RELENTLESS_STEP = 0.1;
+
+/** How far it presses one target before it can press no harder */
+export const RELENTLESS_MAX_STACKS = 4;
+
+/** What the coils add to the next thing the target reaches for */
+export const CONSTRICT_CAST_SCALE = 1.2;
+
+/** What the arc carries to the next enemy along */
+export const CHAIN_LIGHTNING_FRACTION = 1 / 3;
+
+/** What the desert coat is worth where there is sand to fill it */
+export const SAND_COAT_DEFENSE_SCALE = 1.5;
+export const SAND_COAT_POWER_SCALE = 1.2;
+
+/** What it costs to wear a sand coat with no sand in the air */
+export const SAND_COAT_EXPOSED_SCALE = 1.1;
+
+/**
+ * Who the arc jumps to: the next enemy still standing that is not the
+ * one already struck
+ */
+function nextAlongTheArc(battle: Battle, source: Unit, struck: Unit): Unit | undefined {
+  for (const unit of battle.units(source.team.alliance)) {
+    if (unit !== struck && unit.alive) {
+      return unit;
+    }
+  }
+
+  return undefined;
+}
+
 const bulbasaurToPikachu = [
   // Bulbasaur: the seed on its back grows on what it is fed, so
   // punching it is what loads the shot it fires back
   createAbility(Abilities.SeedCache, (battle) => {
     const { counter, lifecycles } = createUnitCounter(battle);
-
-    // Health standing before the blow, so only what was actually
-    // taken is banked: overkill and a non-lethal clamp settle out of
-    // the difference
-    const standing = new WeakMap<object, number>();
+    const damage = createDamageTaken(battle);
 
     return new MergedLifecycle([
-      battle.on(BattleEvents.UnitDamage, AttackPriority.Pre, (event) => {
-        if (event.target.hasAbility(Abilities.SeedCache)) {
-          standing.set(event, event.target.health);
-        }
-      }),
+      ...damage.lifecycles,
       battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
-        const before = standing.get(event);
+        const taken = damage.taken(event);
 
-        if (!event.success || before == null) {
+        if (!event.success || taken == null || !event.target.hasAbility(Abilities.SeedCache)) {
           return;
         }
 
-        standing.delete(event);
-
         const target = event.target;
-        const taken = Math.max(0, before - target.health);
         const cap = target.checkStat(Stats.HP, 0) * SEED_CACHE_CAP_FRACTION;
 
         counter.set(target, Math.min(cap, counter.get(target) + taken * SEED_CACHE_BANK_FRACTION));
@@ -317,6 +347,173 @@ const bulbasaurToPikachu = [
         );
       }
     }),
+  ),
+  // Spearow: it picks one thing and does not let go, so a fight it
+  // keeps on one target is worth more than a fight it spreads
+  createAbility(Abilities.Relentless, (battle) => {
+    const { state, lifecycles } = createUnitState<{ target: Unit; stacks: number }>(battle);
+
+    return new MergedLifecycle([
+      battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
+        const held = state.get(event.source);
+
+        if (
+          event.power != null &&
+          held != null &&
+          event.target.type === MoveTargetType.Unit &&
+          event.target.unit === held.target &&
+          event.source.hasAbility(Abilities.Relentless)
+        ) {
+          event.power *= 1 + RELENTLESS_STEP * held.stacks;
+        }
+      }),
+      battle.on(BattleEvents.UnitAttack, AttackPriority.Post, (event) => {
+        const source = event.source;
+
+        if (
+          !event.success ||
+          event.flags & MoveAttackFlags.Simulated ||
+          !source.hasAbility(Abilities.Relentless)
+        ) {
+          return;
+        }
+
+        const held = state.get(source);
+
+        if (held?.target === event.target) {
+          held.stacks = Math.min(RELENTLESS_MAX_STACKS, held.stacks + 1);
+        } else {
+          state.set(source, { target: event.target, stacks: 1 });
+        }
+
+        source.triggerAbility(Abilities.Relentless);
+      }),
+      ...lifecycles,
+    ]);
+  }),
+
+  // Ekans: the coils are the whole fight. What it wraps stays wrapped,
+  // which is the Cornered status a bind already puts on
+  createAbility(Abilities.Constrict, (battle) => {
+    // Whoever is still winding up under the coils. Cleared as the cast
+    // begins rather than as it is asked about, since the AI asks often
+    const wound = new Set<Unit>();
+
+    return new MergedLifecycle([
+      battle.on(BattleEvents.UnitAttack, AttackPriority.Post, (event) => {
+        const source = event.source;
+
+        if (
+          !event.success ||
+          !event.target.alive ||
+          event.flags & MoveAttackFlags.Simulated ||
+          !source.hasAbility(Abilities.Constrict) ||
+          !source.checkMoveContact(event.move, unitTarget(event.target))
+        ) {
+          return;
+        }
+
+        source.triggerAbility(Abilities.Constrict);
+
+        wound.add(event.target);
+
+        event.target.addStatus(Statuses.Cornered, {
+          type: EffectType.Ability,
+          ability: Abilities.Constrict,
+          unit: source,
+        });
+      }),
+      battle.on(BattleEvents.CheckUnitMoveCastTime, EventPriority.Post, (event) => {
+        if (wound.has(event.source)) {
+          event.duration *= CONSTRICT_CAST_SCALE;
+        }
+      }),
+      battle.on(BattleEvents.UnitCast, EventPriority.Post, (event) => {
+        wound.delete(event.source);
+      }),
+    ]);
+  }),
+
+  // Pikachu: the charge does not stop at what it was aimed at. The arc
+  // is indirect, so it neither crits nor carries the move's rider
+  createAbility(Abilities.ChainLightning, (battle) => {
+    const damage = createDamageTaken(battle);
+
+    return new MergedLifecycle([
+      ...damage.lifecycles,
+      battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
+        const taken = damage.taken(event);
+        const cause = event.cause;
+        const source = event.source;
+
+        if (
+          !event.success ||
+          taken == null ||
+          taken <= 0 ||
+          event.flags & DamageFlags.Indirect ||
+          cause.type !== EffectType.Move ||
+          !source.hasAbility(Abilities.ChainLightning) ||
+          source.checkMoveType(cause.move, unitTarget(event.target)) !== Types.Electric
+        ) {
+          return;
+        }
+
+        const next = nextAlongTheArc(battle, source, event.target);
+
+        if (!next) {
+          return;
+        }
+
+        source.triggerAbility(Abilities.ChainLightning);
+
+        source.damage(
+          { type: EffectType.Ability, ability: Abilities.ChainLightning, unit: source },
+          next,
+          taken * CHAIN_LIGHTNING_FRACTION,
+          DamageFlags.Indirect,
+        );
+      }),
+    ]);
+  }),
+
+  // Sandshrew: the coat is packed with sand, so it is armour in a
+  // storm and dead weight in clear air
+  createAbility(
+    Abilities.SandCoat,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
+          if (
+            event.stat === Stats.Defense &&
+            event.source.hasAbility(Abilities.SandCoat) &&
+            isWeatherSandstorm(event.source)
+          ) {
+            event.value *= SAND_COAT_DEFENSE_SCALE;
+          }
+        }),
+        battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
+          if (
+            event.power != null &&
+            event.source.hasAbility(Abilities.SandCoat) &&
+            isWeatherSandstorm(event.source) &&
+            event.source.checkMoveType(event.move, event.target) === Types.Ground
+          ) {
+            event.power *= SAND_COAT_POWER_SCALE;
+          }
+        }),
+        battle.on(BattleEvents.UnitAttackResolveStat, EventPriority.Post, (event) => {
+          const parent = event.parent;
+
+          if (
+            event.unit === parent.source &&
+            (event.stat === Stats.Attack || event.stat === Stats.SpecialAttack) &&
+            parent.target.hasAbility(Abilities.SandCoat) &&
+            !isWeatherSandstorm(parent.target)
+          ) {
+            event.value *= SAND_COAT_EXPOSED_SCALE;
+          }
+        }),
+      ]),
   ),
 ];
 

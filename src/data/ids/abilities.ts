@@ -308,6 +308,10 @@ const enum Abilities {
   TwinStinger = 200005,
   Slipstream = 200006,
   Nibble = 200007,
+  Relentless = 200008,
+  Constrict = 200009,
+  ChainLightning = 200010,
+  SandCoat = 200011,
 }
 
 export default Abilities;

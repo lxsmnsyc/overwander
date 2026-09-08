@@ -61,7 +61,7 @@ import {
 import { BIOME_COLORS } from '../../../data/biome';
 import type Biome from '../../../data/ids/biome';
 import type { TerrainRole } from '../../../data/overworld/terrain';
-import boardTerrain from '../../../overworld/terrain';
+import boardTerrain, { maskAround } from '../../../overworld/terrain';
 import type { BoardGround } from '../../../overworld/ground';
 import { rotateMask } from '../../../data/overworld/autotile';
 import { SpriteAnim } from '../../../data/ids/sprite-anims';
@@ -1730,24 +1730,43 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
 
       /**
        * A town's streets, over the ground and under everything that
-       * stands on it. A wash rather than a tile: there is no road art
-       * packed for any country, and washing the cell keeps the biome's
-       * own floor showing through so a street belongs to the place it
-       * is in. Grown by a hair the way the tiles are, since two washes
-       * meeting on a hairline leave a seam down the middle of a road
+       * stands on it.
+       *
+       * Tiled from the country's own path terrain, which is cut to the
+       * same 47 neighbourhoods as its water and laid over the ground
+       * the same way, so a street turns a corner and ends in a stub
+       * rather than in a square. A country with no path packed is
+       * washed in flat colour as it always was, grown by a hair since
+       * two washes meeting on a hairline leave a seam down the middle
        */
       for (const square of painted) {
         if (!ground.road(square.x, square.y)) {
           continue;
         }
+        const corners = projectBoardCellQuad(shifted(square), yaw()).map(at);
+        const tiles = sheets.get(ground.biome(square.x, square.y));
+        const spot =
+          tiles?.tileAt(
+            'path',
+            rotateMask(
+              maskAround(square.x, square.y, (x, y) => ground.road(x, y)),
+              turns,
+            ),
+            variantAt(props.origin[0] + square.x, props.origin[1] + square.y, tiles.data.variants),
+            clock,
+          ) ?? null;
 
-        const corners = grownQuad(projectBoardCellQuad(shifted(square), yaw()).map(at));
-
-        if (batch != null) {
-          batch.solid(COLORS.road, corners);
+        if (tiles != null && spot != null) {
+          lay(tiles, spot, corners);
           continue;
         }
-        traceQuad(corners);
+        const washed = grownQuad(corners);
+
+        if (batch != null) {
+          batch.solid(COLORS.road, washed);
+          continue;
+        }
+        traceQuad(washed);
         context.fillStyle = COLORS.road;
         context.fill();
       }

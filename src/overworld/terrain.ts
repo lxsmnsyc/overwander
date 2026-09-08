@@ -36,19 +36,34 @@ const NEIGHBOURS: [dx: number, dy: number, bit: number][] = [
   [-1, -1, Around.NorthWest],
 ];
 
+/**
+ * Which of a terrain's tiles a cell gets, from a question asked of its
+ * eight neighbours. The question is whatever the caller is tiling: the
+ * ground asks what its neighbours are made of, a street asks whether
+ * the street runs on
+ */
+export function maskAround(
+  x: number,
+  y: number,
+  joined: (x: number, y: number) => boolean,
+): number {
+  let mask = 0;
+
+  for (const [dx, dy, bit] of NEIGHBOURS) {
+    if (joined(x + dx, y + dy)) {
+      mask |= bit;
+    }
+  }
+  return canonicalMask(mask);
+}
+
 export default function boardTerrain(at: (x: number, y: number) => TerrainRole): BoardTerrain {
   return {
     at,
     maskAt: (x, y) => {
       const self = at(x, y);
-      let mask = 0;
 
-      for (const [dx, dy, bit] of NEIGHBOURS) {
-        if (joins(self, at(x + dx, y + dy))) {
-          mask |= bit;
-        }
-      }
-      return canonicalMask(mask);
+      return maskAround(x, y, (nx, ny) => joins(self, at(nx, ny)));
     },
   };
 }

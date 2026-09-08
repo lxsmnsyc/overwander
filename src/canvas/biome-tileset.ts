@@ -66,7 +66,7 @@ export interface TilesetData {
   palettes: TilesetPalette[];
 }
 
-const ROLES: TerrainRole[] = ['wall', 'ground', 'water', 'other'];
+const ROLES: TerrainRole[] = ['wall', 'ground', 'water', 'path', 'other'];
 
 function roleOf(value: unknown): TerrainRole {
   return ROLES.find((role) => role === value) ?? 'other';
@@ -149,9 +149,10 @@ export function variantAt(x: number, y: number, variants: number): number {
 interface Drawn {
   /**
    * The role it was picked for, which is not always its own: a biome
-   * may name a column the reader filed as something else
+   * may name a column the reader filed as something else, and the
+   * shore overlay is filed under the water it laps against
    */
-  role: DrawnRole;
+  role: TerrainRole;
   block: TerrainBlock;
   /** The rows it has nothing for, ready to be asked. */
   gaps: Set<number>;
@@ -227,6 +228,24 @@ export default class BiomeTileset {
         role,
         block,
         gaps: new Set(block.missing),
+        count: Math.max(1, palette?.frames.length ?? 1),
+        speed: palette?.speed ?? 8,
+        frames: [],
+      });
+    }
+
+    // A path is drawn over the ground rather than instead of it, so it
+    // is not one of the roles the board fills and is picked here
+    // instead. Every country that has ground has one
+    const track = data.terrains.find((block) => block.role === 'path');
+
+    if (track != null) {
+      const palette = this.paletteOf(track);
+
+      this.drawn.push({
+        role: 'path',
+        block: track,
+        gaps: new Set(track.missing),
         count: Math.max(1, palette?.frames.length ?? 1),
         speed: palette?.speed ?? 8,
         frames: [],

@@ -26,123 +26,123 @@
       }
     },
     "public/sprites/biome/10/image.png": {
-      "digest": "deefa7a85634de17",
-      "bytes": 17750,
-      "width": 168,
-      "height": 1128,
-      "compact": {
-        "at": "2026-08-27T17:10:37Z",
-        "as": "already compact",
-        "was": 17750,
-        "bytes": 17750
-      }
-    },
-    "public/sprites/biome/11/image.png": {
-      "digest": "d80da526ba9cfbb9",
-      "bytes": 19588,
-      "width": 216,
-      "height": 1128,
-      "compact": {
-        "at": "2026-08-27T17:10:37Z",
-        "as": "already compact",
-        "was": 19588,
-        "bytes": 19588
-      }
-    },
-    "public/sprites/biome/12/image.png": {
-      "digest": "c493fef73ad3c3c7",
-      "bytes": 22199,
-      "width": 216,
-      "height": 1128,
-      "compact": {
-        "at": "2026-08-27T17:10:37Z",
-        "as": "already compact",
-        "was": 22199,
-        "bytes": 22199
-      }
-    },
-    "public/sprites/biome/13/image.png": {
-      "digest": "5c5a8c81ee71ad92",
-      "bytes": 21028,
-      "width": 216,
-      "height": 1128,
-      "compact": {
-        "at": "2026-08-27T17:10:37Z",
-        "as": "already compact",
-        "was": 21028,
-        "bytes": 21028
-      }
-    },
-    "public/sprites/biome/14/image.png": {
-      "digest": "5f55a474fcb15aba",
-      "bytes": 17513,
-      "width": 216,
-      "height": 1128,
-      "compact": {
-        "at": "2026-08-25T05:23:03Z",
-        "as": "already compact",
-        "was": 17513,
-        "bytes": 17513
-      }
-    },
-    "public/sprites/biome/15/image.png": {
-      "digest": "3bb3f94719c48572",
-      "bytes": 20335,
+      "digest": "656567e080ad2227",
+      "bytes": 21035,
       "width": 192,
       "height": 1128,
       "compact": {
-        "at": "2026-08-27T17:10:37Z",
+        "at": "2026-09-08T11:28:56Z",
         "as": "already compact",
-        "was": 20335,
-        "bytes": 20335
+        "was": 21035,
+        "bytes": 21035
+      }
+    },
+    "public/sprites/biome/11/image.png": {
+      "digest": "a581b729c4ca38d5",
+      "bytes": 21930,
+      "width": 240,
+      "height": 1128,
+      "compact": {
+        "at": "2026-09-08T11:28:56Z",
+        "as": "already compact",
+        "was": 21930,
+        "bytes": 21930
+      }
+    },
+    "public/sprites/biome/12/image.png": {
+      "digest": "3ebb99ba40d325c7",
+      "bytes": 24678,
+      "width": 240,
+      "height": 1128,
+      "compact": {
+        "at": "2026-09-08T11:28:56Z",
+        "as": "already compact",
+        "was": 24678,
+        "bytes": 24678
+      }
+    },
+    "public/sprites/biome/13/image.png": {
+      "digest": "04446619eb2058c0",
+      "bytes": 23436,
+      "width": 240,
+      "height": 1128,
+      "compact": {
+        "at": "2026-09-08T11:28:56Z",
+        "as": "already compact",
+        "was": 23436,
+        "bytes": 23436
+      }
+    },
+    "public/sprites/biome/14/image.png": {
+      "digest": "39586011eaf9b5ef",
+      "bytes": 19773,
+      "width": 240,
+      "height": 1128,
+      "compact": {
+        "at": "2026-09-08T11:28:56Z",
+        "as": "already compact",
+        "was": 19773,
+        "bytes": 19773
+      }
+    },
+    "public/sprites/biome/15/image.png": {
+      "digest": "45df98cc5933f57d",
+      "bytes": 22709,
+      "width": 216,
+      "height": 1128,
+      "compact": {
+        "at": "2026-09-08T11:28:56Z",
+        "as": "already compact",
+        "was": 22709,
+        "bytes": 22709
       }
     },
     "public/sprites/biome/16/image.png": {
-      "digest": "90369fc895632a03",
-      "bytes": 17563,
-      "width": 216,
+      "digest": "86b0a225331eef58",
+      "bytes": 19875,
+      "width": 240,
       "height": 1128,
       "compact": {
-        "at": "2026-08-25T05:23:03Z",
+        "at": "2026-09-08T11:28:56Z",
         "as": "already compact",
-        "was": 17563,
-        "bytes": 17563
+        "was": 19875,
+        "bytes": 19875
       }
     },
     "public/sprites/biome/17/image.png": {
-      "digest": "bdb2c27d7ff690ab",
-      "bytes": 20325,
-      "width": 216,
+      "digest": "562108e57b7c2fe3",
+      "bytes": 22692,
+      "width": 240,
       "height": 1128,
       "compact": {
-        "at": "2026-08-25T05:23:03Z",
+        "at": "2026-09-08T11:28:56Z",
         "as": "already compact",
-        "was": 20325,
-        "bytes": 20325
+        "was": 22692,
+        "bytes": 22692
       }
     },
     "public/sprites/biome/18/image.png": {
-      "digest": "2580104139056fce",
-      "bytes": 16461,
-      "width": 216,
+      "digest": "9a2fa36e71c57d99",
+      "bytes": 18497,
+      "width": 240,
       "height": 1128,
       "compact": {
-        "at": "2026-08-25T05:23:03Z",
+        "at": "2026-09-08T11:28:56Z",
         "as": "already compact",
-        "was": 16461,
-        "bytes": 16461
+        "was": 18497,
+        "bytes": 18497
       }
     },
     "public/sprites/biome/19/image.png": {
-      "digest": "e0f82fa46a3fce4a",
-      "bytes": 17719,
-      "width": 168,
+      "digest": "6b82bde79968cea4",
+      "bytes": 21095,
+      "width": 192,
       "height": 1128,
       "compact": {
-        "at": "2026-08-22T10:34:53Z",
+        "at": "2026-09-08T11:28:56Z",
         "as": "already compact",
-        "was": 17719,
-        "bytes": 17719
+        "was": 21095,
+        "bytes": 21095
       }
     },
     "public/sprites/biome/2/image.png": {
@@ -158,39 +158,39 @@
       }
     },
     "public/sprites/biome/20/image.png": {
-      "digest": "d24c7fc32727d126",
-      "bytes": 23142,
-      "width": 192,
-      "height": 1128,
-      "compact": {
-        "at": "2026-08-27T17:10:37Z",
-        "as": "already compact",
-        "was": 23142,
-        "bytes": 23142
-      }
-    },
-    "public/sprites/biome/21/image.png": {
-      "digest": "a43fde42ccd87f48",
-      "bytes": 17563,
+      "digest": "a17b6a2063d0f2d6",
+      "bytes": 25413,
       "width": 216,
       "height": 1128,
       "compact": {
-        "at": "2026-08-22T10:34:53Z",
+        "at": "2026-09-08T11:28:56Z",
         "as": "already compact",
-        "was": 17563,
-        "bytes": 17563
+        "was": 25413,
+        "bytes": 25413
+      }
+    },
+    "public/sprites/biome/21/image.png": {
+      "digest": "95d6e7fbbf3fb7be",
+      "bytes": 19753,
+      "width": 240,
+      "height": 1128,
+      "compact": {
+        "at": "2026-09-08T11:28:56Z",
+        "as": "already compact",
+        "was": 19753,
+        "bytes": 19753
       }
     },
     "public/sprites/biome/22/image.png": {
-      "digest": "65236d6e093bfe41",
-      "bytes": 23674,
-      "width": 192,
+      "digest": "f810d388d54fcfb4",
+      "bytes": 26058,
+      "width": 216,
       "height": 1128,
       "compact": {
-        "at": "2026-08-27T17:10:37Z",
+        "at": "2026-09-08T11:28:56Z",
         "as": "already compact",
-        "was": 23674,
-        "bytes": 23674
+        "was": 26058,
+        "bytes": 26058
       }
     },
     "public/sprites/biome/23/image.png": {
@@ -206,51 +206,51 @@
       }
     },
     "public/sprites/biome/25/image.png": {
-      "digest": "d80577dca1a75c76",
-      "bytes": 21574,
-      "width": 240,
+      "digest": "3c407ae254380207",
+      "bytes": 24280,
+      "width": 264,
       "height": 1128,
       "compact": {
-        "at": "2026-08-25T05:23:03Z",
+        "at": "2026-09-08T11:28:56Z",
         "as": "already compact",
-        "was": 21574,
-        "bytes": 21574
+        "was": 24280,
+        "bytes": 24280
       }
     },
     "public/sprites/biome/26/image.png": {
-      "digest": "25986dfe540b132d",
-      "bytes": 18790,
-      "width": 216,
+      "digest": "7eb2d9dc3cf277be",
+      "bytes": 21266,
+      "width": 240,
       "height": 1128,
       "compact": {
-        "at": "2026-08-25T05:23:03Z",
+        "at": "2026-09-08T11:28:56Z",
         "as": "already compact",
-        "was": 18790,
-        "bytes": 18790
+        "was": 21266,
+        "bytes": 21266
       }
     },
     "public/sprites/biome/27/image.png": {
-      "digest": "0efd63ce052ecada",
-      "bytes": 22242,
-      "width": 216,
+      "digest": "f392be096b2a526f",
+      "bytes": 24674,
+      "width": 240,
       "height": 1128,
       "compact": {
-        "at": "2026-09-08T09:55:24Z",
+        "at": "2026-09-08T11:28:56Z",
         "as": "already compact",
-        "was": 22242,
-        "bytes": 22242
+        "was": 24674,
+        "bytes": 24674
       }
     },
     "public/sprites/biome/28/image.png": {
-      "digest": "f809e4969bc87d8b",
-      "bytes": 18755,
-      "width": 192,
+      "digest": "89e9f8713f45fa40",
+      "bytes": 20925,
+      "width": 216,
       "height": 1128,
       "compact": {
-        "at": "2026-08-27T17:10:37Z",
+        "at": "2026-09-08T11:28:56Z",
         "as": "already compact",
-        "was": 18755,
-        "bytes": 18755
+        "was": 20925,
+        "bytes": 20925
       }
     },
     "public/sprites/biome/29/image.png": {
@@ -266,87 +266,87 @@
       }
     },
     "public/sprites/biome/3/image.png": {
-      "digest": "0ed4a448b71fffa7",
-      "bytes": 12598,
-      "width": 144,
+      "digest": "0a5840cd3f93a9f5",
+      "bytes": 14471,
+      "width": 168,
       "height": 1128,
       "compact": {
-        "at": "2026-08-26T17:38:27Z",
-        "as": "indexed 8-bit, none",
-        "was": 27602,
-        "bytes": 12598
+        "at": "2026-09-08T11:28:56Z",
+        "as": "already compact",
+        "was": 14471,
+        "bytes": 14471
       }
     },
     "public/sprites/biome/4/image.png": {
-      "digest": "c75dc7e4677b41f3",
-      "bytes": 22157,
-      "width": 216,
-      "height": 1128,
-      "compact": {
-        "at": "2026-08-27T17:10:37Z",
-        "as": "already compact",
-        "was": 22157,
-        "bytes": 22157
-      }
-    },
-    "public/sprites/biome/5/image.png": {
-      "digest": "96fa271680bc51bc",
-      "bytes": 19502,
-      "width": 216,
-      "height": 1128,
-      "compact": {
-        "at": "2026-08-25T05:23:03Z",
-        "as": "already compact",
-        "was": 19502,
-        "bytes": 19502
-      }
-    },
-    "public/sprites/biome/6/image.png": {
-      "digest": "dd829bc68ba8aab9",
-      "bytes": 23415,
+      "digest": "607315a33161e709",
+      "bytes": 24635,
       "width": 240,
       "height": 1128,
       "compact": {
-        "at": "2026-08-27T17:10:37Z",
+        "at": "2026-09-08T11:28:56Z",
         "as": "already compact",
-        "was": 23415,
-        "bytes": 23415
+        "was": 24635,
+        "bytes": 24635
+      }
+    },
+    "public/sprites/biome/5/image.png": {
+      "digest": "d9e4293e72add6f2",
+      "bytes": 21952,
+      "width": 240,
+      "height": 1128,
+      "compact": {
+        "at": "2026-09-08T11:28:56Z",
+        "as": "already compact",
+        "was": 21952,
+        "bytes": 21952
+      }
+    },
+    "public/sprites/biome/6/image.png": {
+      "digest": "36802c92d894ba7c",
+      "bytes": 26048,
+      "width": 264,
+      "height": 1128,
+      "compact": {
+        "at": "2026-09-08T11:28:56Z",
+        "as": "already compact",
+        "was": 26048,
+        "bytes": 26048
       }
     },
     "public/sprites/biome/7/image.png": {
-      "digest": "df66e4b25d5ff696",
-      "bytes": 22189,
-      "width": 216,
+      "digest": "0332e418d8d434f1",
+      "bytes": 24588,
+      "width": 240,
       "height": 1128,
       "compact": {
-        "at": "2026-08-27T17:10:37Z",
+        "at": "2026-09-08T11:28:56Z",
         "as": "already compact",
-        "was": 22189,
-        "bytes": 22189
+        "was": 24588,
+        "bytes": 24588
       }
     },
     "public/sprites/biome/8/image.png": {
-      "digest": "cf2bfcd38ae9250f",
-      "bytes": 22755,
-      "width": 192,
-      "height": 1128,
-      "compact": {
-        "at": "2026-08-27T17:10:37Z",
-        "as": "already compact",
-        "was": 22755,
-        "bytes": 22755
-      }
-    },
-    "public/sprites/biome/9/image.png": {
-      "digest": "8ed1a5a11a247ada",
-      "bytes": 19940,
+      "digest": "a4f93f7d6445114a",
+      "bytes": 25118,
       "width": 216,
       "height": 1128,
       "compact": {
-        "at": "2026-08-22T10:34:53Z",
+        "at": "2026-09-08T11:28:56Z",
         "as": "already compact",
-        "was": 19940,
-        "bytes": 19940
+        "was": 25118,
+        "bytes": 25118
+      }
+    },
+    "public/sprites/biome/9/image.png": {
+      "digest": "79a54907dff6de60",
+      "bytes": 22370,
+      "width": 240,
+      "height": 1128,
+      "compact": {
+        "at": "2026-09-08T11:28:56Z",
+        "as": "already compact",
+        "was": 22370,
+        "bytes": 22370
       }
     },
     "public/sprites/extras/badges/johto.png": {

@@ -361,3 +361,42 @@ describe('where a tileset is served from', () => {
     expect(biomeTilesetPath(11)).toBe('/sprites/biome/11');
   });
 });
+
+describe('a country with a path packed', () => {
+  /** The description the path script writes: a terrain of its own, still. */
+  const laid = { name: 'path', role: 'path', column: 15, palette: -1, missing: [] };
+
+  function paved(): BiomeTileset {
+    const held = asTilesetData(described()).terrains;
+
+    return tileset({ terrains: [...held, laid] });
+  }
+
+  it('takes the path without it standing in for the ground or the water', () => {
+    const sheet = paved();
+
+    expect(sheet.has('path')).toBe(true);
+    expect(sheet.drawnAs('path')).toBe('path');
+    expect(sheet.drawnAs('ground')).toBe('ground-a');
+    expect(sheet.drawnAs('water')).toBe('water');
+  });
+
+  it('tiles it by neighbourhood, the way the water is tiled', () => {
+    const sheet = paved();
+
+    expect(sheet.spot('path', ALONE, 0)).toEqual({ x: 0, y: autotileRow(ALONE) * TILE });
+    expect(sheet.spot('path', SURROUNDED, 2)).toEqual({
+      x: 2 * TILE,
+      y: autotileRow(SURROUNDED) * TILE,
+    });
+  });
+
+  it('holds one frame, since a track is not water and does not move', () => {
+    expect(paved().framesFor('path')).toBe(1);
+  });
+
+  it('answers nothing where no path was packed', () => {
+    expect(tileset().has('path')).toBe(false);
+    expect(tileset().spot('path', SURROUNDED, 0)).toBeNull();
+  });
+});

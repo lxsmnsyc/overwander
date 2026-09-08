@@ -1,7 +1,7 @@
 {
   "biome": 19,
   "tile": 24,
-  "width": 168,
+  "width": 192,
   "height": 1128,
   "variants": 1,
   "cases": [
@@ -281,6 +281,15 @@
       "column": 6,
       "palette": 0,
       "missing": []
+    },
+    {
+      "name": "path",
+      "role": "path",
+      "column": 7,
+      "palette": -1,
+      "missing": [],
+      "borrowed": 21,
+      "shaped": 11
     }
   ],
   "palettes": [

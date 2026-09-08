@@ -3,7 +3,7 @@ import { Around, SURROUNDED, canonicalMask } from '../../src/data/overworld/auto
 import type { TerrainRole } from '../../src/data/overworld/terrain';
 import { joins } from '../../src/data/overworld/terrain';
 import { CHUNK_CELLS } from '../../src/overworld/chunk';
-import boardTerrain from '../../src/overworld/terrain';
+import boardTerrain, { maskAround } from '../../src/overworld/terrain';
 
 /** Open country, whichever cell is asked about */
 const plain = boardTerrain((): TerrainRole => 'ground');
@@ -69,5 +69,33 @@ describe('water beside ground', () => {
   it('keeps a wall a wall against either of them', () => {
     expect(joins('wall', 'ground')).toBe(false);
     expect(joins('ground', 'wall')).toBe(false);
+  });
+});
+
+describe('a street tiling itself', () => {
+  /** A street running east from the middle, one cell wide */
+  const road = (x: number, y: number): boolean => y === 8 && x >= 8 && x <= 11;
+
+  it('joins the cells the street runs on and nothing else', () => {
+    expect(maskAround(9, 8, road) & Around.East).toBe(Around.East);
+    expect(maskAround(9, 8, road) & Around.West).toBe(Around.West);
+    expect(maskAround(9, 8, road) & Around.North).toBe(0);
+  });
+
+  it('ends in a stub, since nothing carries on past the last cell', () => {
+    expect(maskAround(11, 8, road) & Around.East).toBe(0);
+    expect(maskAround(8, 8, road) & Around.West).toBe(0);
+  });
+
+  it('asks only for neighbourhoods the tiles were cut for', () => {
+    for (let y = 6; y <= 10; y += 1) {
+      for (let x = 6; x <= 13; x += 1) {
+        expect(canonicalMask(maskAround(x, y, road))).toBe(maskAround(x, y, road));
+      }
+    }
+  });
+
+  it('reads a cell off the street as surrounded by nothing', () => {
+    expect(maskAround(0, 0, road)).toBe(0);
   });
 });

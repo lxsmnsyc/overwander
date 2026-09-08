@@ -5,15 +5,21 @@
  * palettes. A board wants one of each, so every terrain column is
  * filed under what it is for and the board asks by that rather than by
  * the name the artist gave it.
+ *
+ * A **path** is the one role no rip drew: it is made from the water's
+ * own outline and another country's earth by
+ * [`scripts/paths.ts`](../../../scripts/paths.ts), and it is laid over
+ * the ground rather than instead of it.
  */
 
-export type TerrainRole = 'wall' | 'ground' | 'water' | 'other';
+export type TerrainRole = 'wall' | 'ground' | 'water' | 'path' | 'other';
 
 /** The word in a terrain's name that says what it is. */
 const NAMED: [word: string, role: TerrainRole][] = [
   ['wall', 'wall'],
   ['ground', 'ground'],
   ['water', 'water'],
+  ['path', 'path'],
 ];
 
 /**

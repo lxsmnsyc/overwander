@@ -4,7 +4,7 @@
     "water": "lava"
   },
   "tile": 24,
-  "width": 240,
+  "width": 264,
   "height": 1128,
   "variants": 1,
   "cases": [
@@ -439,6 +439,15 @@
       "column": 9,
       "palette": 2,
       "missing": []
+    },
+    {
+      "name": "path",
+      "role": "path",
+      "column": 10,
+      "palette": -1,
+      "missing": [],
+      "borrowed": 21,
+      "shaped": 11
     }
   ],
   "palettes": [

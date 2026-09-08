@@ -129,6 +129,11 @@ land in `public/` without its artist landing in the list. A sheet missing from
 it predates the step and came from ripped Gen 4 overworlds; those are being
 replaced.
 
+The **paths** a town's streets are drawn with are not ripped at all: no rip
+carries one. Each is built by `pnpm paths` out of pieces that are, one biome's
+water column for the outline and another biome's ground for the surface, so the
+credit for a path belongs to whoever drew those two.
+
 ### Landmarks, decorations and trees
 
 The tiles the world is drawn out of are fan-made too, and are listed in

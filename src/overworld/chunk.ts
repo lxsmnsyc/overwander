@@ -441,9 +441,8 @@ export default class Chunk {
       // is rolled: a town is planned and the country around it is not,
       // so the country fits round the town rather than the other way
       const town = townOverChunk(this.world, this.x, this.y);
-      // The region's portal, wherever it fell. In a town it is one of
-      // the lots below and this puts it down twice, harmlessly, on the
-      // same cell
+      // The region's portal, wherever it fell: the middle of the plaza
+      // in a town, and out in the country where the region has none
       const gate = portalCellIn(this.world, this.x, this.y);
 
       if (gate != null) {

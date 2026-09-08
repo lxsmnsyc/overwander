@@ -1,7 +1,8 @@
 import type Biome from '../data/ids/biome';
 import { isOpenSea, isWaterBiome } from '../data/ids/biome';
 import { STONE_FREQUENCY, isRock, isWaterAt, rockLevel } from './fields';
-import { isTownAt } from './town';
+import { ORTHOGONAL } from './grid';
+import { isRoadAt, isTownAt } from './town';
 import type World from './world';
 
 /**
@@ -26,14 +27,6 @@ export type GroundRole = 'ground' | 'water' | 'wall';
  * outcrops rather than sitting in patches of their own
  */
 const SHELF_REACH = 0.1;
-
-/** The four cells straight out of one */
-const ORTHOGONAL: [dx: number, dy: number][] = [
-  [0, -1],
-  [1, 0],
-  [0, 1],
-  [-1, 0],
-];
 
 /**
  * How near the rock level a cell has to be to count as a gap in an
@@ -190,6 +183,12 @@ export interface BoardGround {
   biome: (x: number, y: number) => Biome;
   /** Whether the water here is drawn with the lighter shelf tiles */
   shelf: (x: number, y: number) => boolean;
+  /**
+   * Whether a town's street runs through here. It is drawn over the
+   * ground rather than being a kind of ground, so nothing about
+   * walking, spawning or building reads it
+   */
+  road: (x: number, y: number) => boolean;
 }
 
 const ROLE_ORDER: GroundRole[] = ['ground', 'water', 'wall'];
@@ -209,6 +208,7 @@ export function readBoardGround(
   const roles = new Uint8Array(span * span);
   const biomes = new Uint8Array(span * span);
   const shelves = new Uint8Array(span * span);
+  const roads = new Uint8Array(span * span);
   const inside = (x: number, y: number): boolean =>
     x >= -margin && y >= -margin && x < cells + margin && y < cells + margin;
   const key = (x: number, y: number): number => (y + margin) * span + (x + margin);
@@ -219,6 +219,7 @@ export function readBoardGround(
 
       roles[key(x, y)] = ROLE_ORDER.indexOf(role);
       biomes[key(x, y)] = biome;
+      roads[key(x, y)] = isRoadAt(world, originX + x, originY + y) ? 1 : 0;
     }
   }
   for (let y = -margin; y < cells + margin; y++) {
@@ -239,5 +240,7 @@ export function readBoardGround(
       inside(x, y) ? biomes[key(x, y)] : world.getCellBiome(originX + x, originY + y),
     shelf: (x, y) =>
       inside(x, y) ? shelves[key(x, y)] === 1 : isShelfAt(world, originX + x, originY + y),
+    road: (x, y) =>
+      inside(x, y) ? roads[key(x, y)] === 1 : isRoadAt(world, originX + x, originY + y),
   };
 }

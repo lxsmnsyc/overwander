@@ -71,16 +71,33 @@ for: things to forage, things to fight, nests and lairs.
 | Gym Leader, Elite Four, Champion                  | Nest, Trainer, Team Rocket              |
 | Portal                                            | Legendary and Shadow Raid lairs         |
 
-Every town has a portal, which is what keeps the network even. The rest is the
-town's charter and no two are alike: about half have an auction board, about
-half a gym seat, a third a gym leader, and a champion sits in perhaps one town
-in twelve. A place that had everything would be a place nobody left.
+The portal stands dead centre, on the plaza, which is what keeps the network
+even and means a player stepping out of the gate is looking down every street at
+once. Around it a town holds **nine to fourteen** lots, and no two towns are
+alike: about half have an auction board, about half a gym seat, a third a gym
+leader, and a champion sits in perhaps one town in twelve. The rest is trade. A
+place that had everything would be a place nobody left.
 
 A town levels the ground it stands on: no lakes, no rivers and no rock inside
 the footprint, though it stops at the shore rather than draining the sea. No
 wild pokemon stand in one and nothing is going on there, so a town is somewhere
 to put your guard down. The portal's keeper is the exception, since the keeper
 belongs to the portal.
+
+The plaza is paved and a street runs out of it to each lot, stopping at the door
+rather than paving it, so nobody is ever standing in the road and following one
+always arrives somewhere rather than at the edge of town. No street crosses
+another lot on its way: one that would goes round, so a road never stops dead at
+somebody's back wall. Streets run north,
+south, east and west and turn square corners, never diagonally, so a town is a
+couple of avenues out of the plaza with short branches off them to the doors. A
+street is paving and nothing more: it does not decide where anybody may walk,
+and the ground under it is the same levelled ground the rest of the town is.
+
+Towns are marked on the world map, drawn at the size they really are, so a place
+worth walking to is visible from across the country rather than found by
+accident. The mark says a settlement is there and nothing more: which town it is
+and what it holds are what walking to it is for.
 
 ### Inside a chunk
 

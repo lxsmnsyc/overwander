@@ -4,7 +4,7 @@ import { Badge, Button, Meta, Note, Row, Switch } from '../styled';
 import World from '../../overworld/world';
 import { CHUNK_CELLS } from '../../overworld/chunk';
 import { readGround } from '../../overworld/ground';
-import { isTownAt } from '../../overworld/town';
+import { isRoadAt, isTownAt } from '../../overworld/town';
 import type Biome from '../../data/ids/biome';
 
 /**
@@ -32,6 +32,9 @@ const ROCK: [number, number, number] = [64, 60, 58];
 
 /** And what a town is drawn as, so the settled ground stands out */
 const TOWN: [number, number, number] = [214, 196, 164];
+
+/** A town's streets, darker than the ground they run over */
+const ROAD: [number, number, number] = [150, 122, 88];
 
 /** How the chunk grid is drawn over it */
 const GRID_COLOR = 'rgba(255, 255, 255, 0.25)';
@@ -106,7 +109,7 @@ export default function WorldDemo(): JSX.Element {
           let shade: number[] = ROCK;
 
           if (isTownAt(world, x0 + x, y0 + y) && role === 'ground') {
-            shade = TOWN;
+            shade = isRoadAt(world, x0 + x, y0 + y) ? ROAD : TOWN;
           } else if (role !== 'wall') {
             shade = channels(BIOME_COLORS[biome]).map((one) =>
               role === 'water' ? Math.round(one * WATER_SHADE) : one,

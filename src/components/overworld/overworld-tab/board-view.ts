@@ -1,4 +1,5 @@
 import { type SnapshotRecord, spawnId } from '../../../auth/snapshot-record';
+import { toLocalTime } from '../../../auth/local-time';
 import type Biome from '../../../data/ids/biome';
 import type Weather from '../../../data/overworld/weather';
 import type Decoration from '../../../data/overworld/decoration';
@@ -173,17 +174,10 @@ export function buildBoardView(
   player: string | null,
   buddy: Buddy | null,
   fled: Set<string>,
-): BoardView | null {
+): BoardView {
   const world = getWorld();
-  const playerX = chunkOfCell(originX + BOARD_CELLS / 2);
-  const playerY = chunkOfCell(originY + BOARD_CELLS / 2);
-  const standing = records.get(`${playerX},${playerY}`);
-
-  // The chunk under the player is the one whose window everything not
-  // tied to a cell is read from, so nothing is drawn until it lands
-  if (standing == null) {
-    return null;
-  }
+  const playerX = chunkOfCell(originX + BOARD_CENTER);
+  const playerY = chunkOfCell(originY + BOARD_CENTER);
 
   // The same engine the server stages encounters with: a lure decides
   // how many of a window's rolls are there for this player
@@ -320,18 +314,21 @@ export function buildBoardView(
     }
   }
 
-  const under = covering.get(`${playerX},${playerY}`);
-
-  if (under == null) {
-    return null;
-  }
+  // The window under the player, or the one it is about to be. A
+  // window's instant snaps to its interval, so a snapshot rolled off
+  // the clock is the same window the server publishes; walking into a
+  // chunk is not a reason to take the whole board away while its
+  // record crosses the wire
+  const under =
+    covering.get(`${playerX},${playerY}`) ??
+    new ChunkSnapshot(world.getChunk(playerX, playerY), toLocalTime(Date.now(), offset), offset);
 
   return {
     originX,
     originY,
     chunkX: playerX,
     chunkY: playerY,
-    biome: world.getCellBiome(originX + BOARD_CELLS / 2, originY + BOARD_CELLS / 2),
+    biome: world.getCellBiome(originX + BOARD_CENTER, originY + BOARD_CENTER),
     weather: world.getWeather(playerX, playerY, under.weatherWindow),
     lamp: overworld.checkLampReach(DARK_DAY_LAMP_CELLS),
     revealsHeld: overworld.checkRevealsHeld(),

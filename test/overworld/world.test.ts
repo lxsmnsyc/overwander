@@ -2990,8 +2990,15 @@ describe('world', () => {
 
   it('gives the fossil maniac two of the three, drawn with his window', () => {
     const world = new World('overworld');
-    const chunk = findChunk(world, (candidate) =>
-      new Set(candidate.getLandmarkCells().values()).has(Landmark.WanderingNpc),
+    // Several of them rather than any: a chunk with one wanderer in it
+    // draws the maniac a handful of times over forty-eight windows,
+    // which is too few to say anything about what he varies
+    const chunk = findChunk(
+      world,
+      (candidate) =>
+        [...candidate.getLandmarkCells().values()].filter(
+          (landmark) => landmark === Landmark.WanderingNpc,
+        ).length >= 3,
     );
 
     expect(chunk).not.toBeNull();

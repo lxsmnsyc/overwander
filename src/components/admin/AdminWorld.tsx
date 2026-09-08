@@ -14,7 +14,7 @@ import type Biome from '../../data/ids/biome';
 import { LANDMARK_NAMES } from '../../data/overworld/landmark';
 import type { SnapshotRecord } from '../../auth/snapshot-record';
 import { WORLD_MAX, WORLD_MIN, isInWorld } from '../../overworld/world';
-import WorldMapCanvas from '../overworld/WorldMapCanvas';
+import WorldMapCanvas, { townsInView } from '../overworld/WorldMapCanvas';
 import { getSpeciesData } from '../../data/species';
 import getWorld from '../../overworld/current';
 import { listChunkWindows } from '../../auth/snapshots';
@@ -171,6 +171,7 @@ export default function AdminWorld(): JSX.Element {
           originX={centerX() - HALF}
           originY={centerY() - HALF}
           biomes={biomes()}
+          towns={townsInView(centerX() - HALF, centerY() - HALF, SPAN)}
           playerX={standing()?.chunkX ?? Number.NaN}
           playerY={standing()?.chunkY ?? Number.NaN}
           pickedX={picked()?.x}

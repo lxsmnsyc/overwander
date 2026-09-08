@@ -1729,6 +1729,30 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       }
 
       /**
+       * A town's streets, over the ground and under everything that
+       * stands on it. A wash rather than a tile: there is no road art
+       * packed for any country, and washing the cell keeps the biome's
+       * own floor showing through so a street belongs to the place it
+       * is in. Grown by a hair the way the tiles are, since two washes
+       * meeting on a hairline leave a seam down the middle of a road
+       */
+      for (const square of painted) {
+        if (!ground.road(square.x, square.y)) {
+          continue;
+        }
+
+        const corners = grownQuad(projectBoardCellQuad(shifted(square), yaw()).map(at));
+
+        if (batch != null) {
+          batch.solid(COLORS.road, corners);
+          continue;
+        }
+        traceQuad(corners);
+        context.fillStyle = COLORS.road;
+        context.fill();
+      }
+
+      /**
        * A piece of baked art, stamped on the point it belongs to.
        * Answers whether it drew, since a piece the sheet had no room
        * for is drawn the way it always was

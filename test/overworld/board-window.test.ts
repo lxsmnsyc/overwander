@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { CHUNK_CELLS, cellInChunk, chunkOfCell, worldCell } from '../../src/overworld/chunk';
-import { boardChunks, viewChunks } from '../../src/components/overworld/overworld-tab/board-view';
+import {
+  boardChunks,
+  buildBoardView,
+  viewChunks,
+} from '../../src/components/overworld/overworld-tab/board-view';
 import { BOARD_CENTER, BOARD_RADIUS } from '../../src/components/overworld/overworld-tab/metrics';
 
 /**
@@ -64,6 +68,42 @@ describe('the chunks a board asks for windows on', () => {
       [CHUNK_CELLS - 1, CHUNK_CELLS - 1],
     ]) {
       expect(boardChunks(x, y).length).toBeLessThan(viewChunks(x, y).length);
+    }
+  });
+});
+
+/**
+ * The board's fixtures are the world seed's answer, so a window that
+ * has not landed is a chunk with nothing standing in it rather than a
+ * board with nothing on it. Walking into a chunk used to take the
+ * whole picture away while its record crossed the wire
+ */
+describe('a board whose windows have not landed', () => {
+  it('still draws the ground it is standing on', () => {
+    const view = buildBoardView(0, 0, new Map(), 0, null, null, new Set());
+
+    expect(view.snapshot).not.toBeNull();
+    expect(view.walls).toBeInstanceOf(Set);
+    expect(view.landmarks.size).toBeGreaterThan(0);
+    // Nothing is published, so nothing is standing there
+    expect(view.spawns.size).toBe(0);
+    expect(view.chunks).toHaveLength(0);
+  });
+
+  it('names the chunk the middle of the board falls in', () => {
+    for (const at of [0, 8, 16, 40, -16, -33]) {
+      const view = buildBoardView(
+        at - BOARD_CENTER,
+        at - BOARD_CENTER,
+        new Map(),
+        0,
+        null,
+        null,
+        new Set(),
+      );
+
+      expect(view.chunkX).toBe(chunkOfCell(at));
+      expect(view.chunkY).toBe(chunkOfCell(at));
     }
   });
 });

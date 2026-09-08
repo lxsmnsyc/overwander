@@ -2,7 +2,7 @@ import AleaRNG from '../core/alea';
 import { isOpenSea } from '../data/ids/biome';
 import { isRock, isWaterAt } from './fields';
 import Landmark from '../data/overworld/landmark';
-import { CHUNK_CELLS } from './grid';
+import { CHUNK_CELLS, ORTHOGONAL } from './grid';
 import type World from './world';
 
 /**
@@ -41,12 +41,16 @@ const REGION_CELLS = TOWN_REGION * CHUNK_CELLS;
  */
 const SITE_INSET = REGION_CELLS / 4;
 
-/** The middle of a town keeps a clear plaza: somewhere to arrive */
+/**
+ * How far the plaza reaches out of the middle, as a square. Nothing is
+ * built on it but the portal at its centre, which is what a plaza is:
+ * where a town is arrived in
+ */
 const PLAZA_RADIUS = 2;
 
 /** How many lots a town holds */
-const MIN_LOTS = 5;
-const MAX_LOTS = 8;
+const MIN_LOTS = 9;
+const MAX_LOTS = 14;
 
 /**
  * How many spots in a region are tried before it is left without a
@@ -157,6 +161,7 @@ function isBuildable(world: World, x: number, y: number): boolean {
  */
 const sited = new WeakMap<World, Map<number, Town | null>>();
 const laid = new WeakMap<World, Map<number, Lot[]>>();
+const paved = new WeakMap<World, Map<number, Set<number>>>();
 
 /**
  * A region as one number. Every cell of the world asks this on its
@@ -239,12 +244,11 @@ const PORTAL_TRIES = 6;
 export function portalSpot(world: World, regionX: number, regionY: number): [x: number, y: number] {
   const town = townIn(world, regionX, regionY);
 
+  // Dead centre of the plaza, which is where every one of its streets
+  // begins: a player stepping out of the gate is looking down all of
+  // them at once
   if (town != null) {
-    // The portal is the first lot a town lays, so a town always has
-    // one and it is always the same one
-    const [lot] = getTownLots(world, town);
-
-    return [lot.x, lot.y];
+    return [town.x, town.y];
   }
 
   const rng = new AleaRNG(`${world.seed}portal(${regionX}, ${regionY})`);
@@ -340,9 +344,13 @@ export function getTownLots(world: World, town: Town): Lot[] {
 
   for (let dy = -TOWN_RADIUS; dy <= TOWN_RADIUS; dy++) {
     for (let dx = -TOWN_RADIUS; dx <= TOWN_RADIUS; dx++) {
-      const reach = Math.hypot(dx, dy);
-
-      if (reach > TOWN_RADIUS - 1 || reach <= PLAZA_RADIUS) {
+      // Off the rim, and off the whole of the paved plaza rather than
+      // a circle inside it: a stall on a paved corner would be a stall
+      // in the middle of the square
+      if (
+        Math.hypot(dx, dy) > TOWN_RADIUS - 1 ||
+        Math.max(Math.abs(dx), Math.abs(dy)) <= PLAZA_RADIUS
+      ) {
         continue;
       }
 
@@ -364,12 +372,11 @@ export function getTownLots(world: World, town: Town): Lot[] {
   }
 
   const count = MIN_LOTS + Math.floor(rng.random() * (MAX_LOTS - MIN_LOTS + 1));
-  // What this town is: the portal first, since every region has one
-  // and a town is where it stands, then its charter, so a town short
-  // of room keeps what makes it worth walking to and loses a stall
+  // What this town is: its charter first, so a town short of room
+  // keeps what makes it worth walking to and loses a stall. The portal
+  // is no lot of theirs, it stands on the plaza
   const chartered = CHARTER.filter(([, chance]) => rng.random() < chance).map(([kind]) => kind);
   const wanted = [
-    Landmark.Portal,
     ...chartered,
     ...Array.from(
       { length: Math.max(0, count - chartered.length) },
@@ -392,4 +399,220 @@ export function getTownLots(world: World, town: Town): Lot[] {
   }
   held.set(key, lots);
   return lots;
+}
+
+/** How wide a town's own square of cells is, roads and all */
+const FOOTPRINT = TOWN_RADIUS * 2 + 1;
+
+/** A cell of a town as an offset into its footprint, so roads pack into numbers */
+function pavedKey(town: Town, x: number, y: number): number {
+  return (y - town.y + TOWN_RADIUS) * FOOTPRINT + (x - town.x + TOWN_RADIUS);
+}
+
+/**
+ * The streets of a town, as offsets into its footprint.
+ *
+ * The plaza is paved whole and a street runs out of it to each lot,
+ * stopping at the door rather than paving it, so a town is read by
+ * following a road rather than by crossing an open field looking for
+ * what is on it and nobody is ever standing in one. Streets only run
+ * north, south, east or west, turning a square corner where they turn
+ * at all, and no street crosses a lot: one that would goes round.
+ *
+ * They are laid over the ground rather than cut into it, so a road is
+ * a thing to walk along and never a thing that decides where a player
+ * may walk
+ */
+export function getTownRoads(world: World, town: Town): Set<number> {
+  const held = paved.get(world) ?? new Map<number, Set<number>>();
+  const key = regionKey(regionOf(town.x), regionOf(town.y));
+
+  paved.set(world, held);
+
+  const known = held.get(key);
+
+  if (known != null) {
+    return known;
+  }
+
+  const roads = new Set<number>();
+  const lots = getTownLots(world, town);
+  const doors = new Set(lots.map((lot) => pavedKey(town, lot.x, lot.y)));
+
+  /**
+   * Whether a street may run here: inside the town, off the water for
+   * the reason the town stops at the shore, and off every lot. A
+   * street that ran under a building would be a street a building
+   * stood in the middle of
+   */
+  const open = (x: number, y: number): boolean =>
+    Math.hypot(x - town.x, y - town.y) <= TOWN_RADIUS &&
+    !isOpenSea(world.getCellBiome(x, y)) &&
+    !doors.has(pavedKey(town, x, y));
+
+  const lay = (path: [x: number, y: number][]): void => {
+    for (const [x, y] of path) {
+      roads.add(pavedKey(town, x, y));
+    }
+  };
+
+  // A square rather than a disc: the streets meeting it are square,
+  // and a round plaza between them reads as a mistake
+  for (let dy = -PLAZA_RADIUS; dy <= PLAZA_RADIUS; dy++) {
+    for (let dx = -PLAZA_RADIUS; dx <= PLAZA_RADIUS; dx++) {
+      if (open(town.x + dx, town.y + dy)) {
+        roads.add(pavedKey(town, town.x + dx, town.y + dy));
+      }
+    }
+  }
+
+  /** One straight run of street, ends included, which is the only kind a town has */
+  const run = (
+    fromX: number,
+    fromY: number,
+    toX: number,
+    toY: number,
+  ): [x: number, y: number][] => {
+    const stepX = Math.sign(toX - fromX);
+    const stepY = Math.sign(toY - fromY);
+    // Every run is along one axis, so the two distances never add up
+    // to anything but the one that moved
+    const steps = Math.abs(toX - fromX) + Math.abs(toY - fromY);
+    const cells: [number, number][] = [];
+
+    for (let step = 0; step <= steps; step++) {
+      cells.push([fromX + stepX * step, fromY + stepY * step]);
+    }
+    return cells;
+  };
+
+  /**
+   * The plaza to a lot's door in two straight runs, turning once. The
+   * long side first is what makes a town read as avenues out of the
+   * plaza with short branches off them, rather than a lane per lot
+   * fanning out of the middle
+   */
+  const elbow = (lot: Lot, alongX: boolean): [x: number, y: number][] => {
+    const cornerX = alongX ? lot.x : town.x;
+    const cornerY = alongX ? town.y : lot.y;
+
+    return [
+      ...run(town.x, town.y, cornerX, cornerY),
+      ...run(cornerX, cornerY, lot.x, lot.y),
+      // The door itself is never paved: whoever stands at a lot
+      // stands at their own place rather than in the road
+    ].slice(0, -1);
+  };
+
+  /**
+   * A way round, for a lot neither elbow can reach: the street from
+   * the plaza to its door that crosses the least fresh ground, and the
+   * shortest of those. Paving already laid is free to walk, so a way
+   * round joins the street it meets and runs along it rather than
+   * laying a second lane one cell over
+   */
+  const around = (lot: Lot): [x: number, y: number][] | null => {
+    const start = pavedKey(town, town.x, town.y);
+    const fresh = new Map<number, number>([[start, 0]]);
+    const walked = new Map<number, number>([[start, 0]]);
+    const from = new Map<number, number>();
+    // A deque: a step onto paving costs nothing and goes to the front,
+    // so the cheapest ways out are always the ones walked next
+    const queue: [x: number, y: number][] = [[town.x, town.y]];
+
+    while (queue.length > 0) {
+      const step = queue.shift();
+
+      if (step == null) {
+        break;
+      }
+
+      const [x, y] = step;
+      const here = pavedKey(town, x, y);
+
+      for (const [offX, offY] of ORTHOGONAL) {
+        const stepX = x + offX;
+        const stepY = y + offY;
+
+        if (!open(stepX, stepY)) {
+          continue;
+        }
+
+        const next = pavedKey(town, stepX, stepY);
+        const paving = roads.has(next);
+        const price = (fresh.get(here) ?? 0) + (paving ? 0 : 1);
+        const steps = (walked.get(here) ?? 0) + 1;
+        const cheapest = fresh.get(next);
+
+        if (
+          cheapest != null &&
+          (cheapest < price || (cheapest === price && (walked.get(next) ?? 0) <= steps))
+        ) {
+          continue;
+        }
+        fresh.set(next, price);
+        walked.set(next, steps);
+        from.set(next, here);
+        if (paving) {
+          queue.unshift([stepX, stepY]);
+        } else {
+          queue.push([stepX, stepY]);
+        }
+      }
+    }
+
+    // The door is not walked to, it is arrived beside: the cheapest
+    // cell that touches it is where the street ends
+    let door: number | null = null;
+    let cheapestDoor = Number.POSITIVE_INFINITY;
+    let shortestDoor = Number.POSITIVE_INFINITY;
+
+    for (const [offX, offY] of ORTHOGONAL) {
+      const beside = pavedKey(town, lot.x + offX, lot.y + offY);
+      const price = fresh.get(beside);
+      const steps = walked.get(beside);
+
+      if (price == null || steps == null) {
+        continue;
+      }
+      if (price < cheapestDoor || (price === cheapestDoor && steps < shortestDoor)) {
+        door = beside;
+        cheapestDoor = price;
+        shortestDoor = steps;
+      }
+    }
+    if (door == null) {
+      return null;
+    }
+
+    const path: [number, number][] = [];
+
+    for (let cell = door; ; cell = from.get(cell) ?? start) {
+      path.push([
+        town.x + ((cell % FOOTPRINT) - TOWN_RADIUS),
+        town.y + (Math.floor(cell / FOOTPRINT) - TOWN_RADIUS),
+      ]);
+      if (cell === start) {
+        return path;
+      }
+    }
+  };
+
+  for (const lot of lots) {
+    const alongX = Math.abs(lot.x - town.x) >= Math.abs(lot.y - town.y);
+    const straight = [elbow(lot, alongX), elbow(lot, !alongX)].find((path) =>
+      path.every(([x, y]) => open(x, y)),
+    );
+
+    lay(straight ?? around(lot) ?? []);
+  }
+  held.set(key, roads);
+  return roads;
+}
+
+/** Whether a street runs through this world cell */
+export function isRoadAt(world: World, x: number, y: number): boolean {
+  const town = townAt(world, x, y);
+
+  return town != null && getTownRoads(world, town).has(pavedKey(town, x, y));
 }

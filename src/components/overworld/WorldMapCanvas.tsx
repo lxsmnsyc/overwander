@@ -1,6 +1,9 @@
 import { type JSX, Show, createEffect, createSignal, onMount } from 'solid-js';
 import { BIOME_COLORS, BIOME_NAMES } from '../../data/biome';
 import type Biome from '../../data/ids/biome';
+import { CHUNK_CELLS } from '../../overworld/grid';
+import { TOWN_RADIUS, TOWN_REGION, townOfRegion } from '../../overworld/town';
+import getWorld from '../../overworld/current';
 
 /**
  * The world around the player, painted a chunk at a time.
@@ -34,6 +37,12 @@ const COLORS = {
   focus: '#3b82f6',
   /** The chunk somebody chose, ringed the way the player's own is */
   picked: '#facc15',
+  /**
+   * Every town is drawn the same: a map says a settlement is there,
+   * not which one, and finding out is what walking to it is for
+   */
+  town: '#f4e4c1',
+  townEdge: 'rgba(0, 0, 0, 0.55)',
 } as const;
 
 /**
@@ -55,6 +64,48 @@ const PAN_KEYS = new Map<string, [number, number]>([
   ['d', [1, 0]],
 ]);
 
+/**
+ * A town on the map, in chunks rather than cells: where its middle
+ * falls and how far it reaches, so the mark is the size the place
+ * actually is
+ */
+export interface TownMark {
+  x: number;
+  y: number;
+  radius: number;
+}
+
+/**
+ * The towns a view is looking at, asked of the regions it crosses
+ * rather than of its chunks: a town belongs to one region and a region
+ * is eight chunks, so a wide view is sixty-odd questions instead of
+ * four thousand
+ */
+export function townsInView(originX: number, originY: number, span: number): TownMark[] {
+  const world = getWorld();
+  const first = Math.floor(originX / TOWN_REGION);
+  const last = Math.floor((originX + span) / TOWN_REGION);
+  const top = Math.floor(originY / TOWN_REGION);
+  const bottom = Math.floor((originY + span) / TOWN_REGION);
+  const marks: TownMark[] = [];
+
+  for (let regionY = top; regionY <= bottom; regionY++) {
+    for (let regionX = first; regionX <= last; regionX++) {
+      const town = townOfRegion(world, regionX, regionY);
+
+      // The map is drawn in chunks and a town is sited in cells
+      if (town != null) {
+        marks.push({
+          x: town.x / CHUNK_CELLS,
+          y: town.y / CHUNK_CELLS,
+          radius: TOWN_RADIUS / CHUNK_CELLS,
+        });
+      }
+    }
+  }
+  return marks;
+}
+
 export interface WorldMapCanvasProps {
   /**
    * How many chunks the view spans on each side
@@ -71,6 +122,12 @@ export interface WorldMapCanvasProps {
    * the rim shows the end of it rather than repeating the last row
    */
   biomes: (Biome | null)[];
+  /**
+   * The towns the view is looking at. Biomes say what the ground is
+   * and towns say where the people are, which is the other half of
+   * deciding which way to walk
+   */
+  towns: TownMark[];
   /**
    * The chunk the player is standing in. It is marked when the camera
    * is looking somewhere that contains it, and simply absent when it
@@ -149,9 +206,15 @@ export default function WorldMapCanvas(props: WorldMapCanvasProps): JSX.Element 
     if (biome == null) {
       return '';
     }
-    return `${BIOME_NAMES[biome]} (${props.originX + (at % props.span)}, ${
-      props.originY + Math.floor(at / props.span)
-    })`;
+    const x = props.originX + (at % props.span);
+    const y = props.originY + Math.floor(at / props.span);
+    // The middle of the chunk against the town's reach, since a town
+    // is a circle and a chunk it barely clips is not where it is
+    const settled = props.towns.some(
+      (town) => Math.hypot(x + 0.5 - town.x, y + 0.5 - town.y) <= town.radius,
+    );
+
+    return `${settled ? `Town, ${BIOME_NAMES[biome]}` : BIOME_NAMES[biome]} (${x}, ${y})`;
   };
 
   onMount(() => {
@@ -195,6 +258,22 @@ export default function WorldMapCanvas(props: WorldMapCanvasProps): JSX.Element 
         context.lineTo(size, line * TILE + 0.5);
       }
       context.stroke();
+
+      // The towns, over the grid: a settlement is a thing on the
+      // ground rather than a chunk, so it is drawn at its own place
+      // and at its own size instead of colouring the squares it clips
+      for (const town of props.towns) {
+        const townX = (town.x - props.originX) * TILE;
+        const townY = (town.y - props.originY) * TILE;
+
+        context.beginPath();
+        context.arc(townX, townY, Math.max(2, town.radius * TILE), 0, Math.PI * 2);
+        context.fillStyle = COLORS.town;
+        context.fill();
+        context.strokeStyle = COLORS.townEdge;
+        context.lineWidth = 1;
+        context.stroke();
+      }
 
       // Where the player is standing: the same ground, ringed
       const column = props.playerX - props.originX;

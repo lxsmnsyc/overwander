@@ -1,13 +1,18 @@
 import { describe, expect, it } from 'vitest';
 import World from '../../src/overworld/world';
 import { CHUNK_CELLS, chunkOfCell } from '../../src/overworld/chunk';
+import { ORTHOGONAL } from '../../src/overworld/grid';
 import {
   TOWN_LANDMARKS,
   TOWN_RADIUS,
   TOWN_REGION,
+  type Town,
   getTownLots,
+  getTownRoads,
+  isRoadAt,
   isTownAt,
   portalCellIn,
+  portalSpot,
   townAt,
   townOfRegion,
 } from '../../src/overworld/town';
@@ -21,6 +26,23 @@ import { readGround } from '../../src/overworld/ground';
  */
 
 const SPAN = TOWN_REGION * CHUNK_CELLS;
+
+/** How wide a town's own square of cells is, for anything walking one */
+const FOOTPRINT = TOWN_RADIUS * 2 + 1;
+
+/** The first region that settled, for anything asked of a town rather than of the siting */
+function findTown(world: World): Town {
+  for (let regionY = -6; regionY < 6; regionY++) {
+    for (let regionX = -6; regionX < 6; regionX++) {
+      const town = townOfRegion(world, regionX, regionY);
+
+      if (town != null) {
+        return town;
+      }
+    }
+  }
+  throw new Error('no town in range');
+}
 
 describe('siting a town', () => {
   const world = new World('overworld');
@@ -134,9 +156,10 @@ describe('what a town holds', () => {
       }
     }
 
-    // The portal is what makes the network even, so it is not rolled
-    expect(held.get(Landmark.Portal)).toBe(towns);
-    // And the rest are what makes one town worth walking to over
+    // The portal stands on the plaza rather than on a lot, so no town
+    // ever spends one of its lots on the thing every town has
+    expect(held.get(Landmark.Portal) ?? 0).toBe(0);
+    // And the lots are what makes one town worth walking to over
     // another: a place that has everything is a place nobody leaves
     for (const kind of [Landmark.GymLeader, Landmark.AuctionBoard, Landmark.GymSeat]) {
       expect(held.get(kind) ?? 0).toBeGreaterThan(0);
@@ -207,11 +230,10 @@ describe('the portal network', () => {
           continue;
         }
 
-        const [lot] = getTownLots(world, town);
+        // Dead centre, which is where every street of the town begins
+        expect(portalSpot(world, regionX, regionY)).toEqual([town.x, town.y]);
 
-        expect(lot.landmark).toBe(Landmark.Portal);
-
-        const chunk = world.getChunk(chunkOfCell(lot.x), chunkOfCell(lot.y));
+        const chunk = world.getChunk(chunkOfCell(town.x), chunkOfCell(town.y));
 
         expect(chunk.getLandmarkCells().get(portalCellIn(world, chunk.x, chunk.y) ?? -1)).toBe(
           Landmark.Portal,
@@ -220,5 +242,117 @@ describe('the portal network', () => {
       }
     }
     expect(checked).toBeGreaterThan(0);
+  });
+});
+
+describe("a town's streets", () => {
+  it('paves the plaza and reaches every lot without paving it', () => {
+    const world = new World('overworld');
+    const town = findTown(world);
+    const roads = getTownRoads(world, town);
+
+    // The middle is paved, since it is where every street begins
+    expect(isRoadAt(world, town.x, town.y)).toBe(true);
+
+    // A street reaches every door without paving it: whoever stands
+    // at a lot stands at their own place, not in the road
+    for (const lot of getTownLots(world, town)) {
+      expect(isRoadAt(world, lot.x, lot.y)).toBe(false);
+      expect(ORTHOGONAL.some(([offX, offY]) => isRoadAt(world, lot.x + offX, lot.y + offY))).toBe(
+        true,
+      );
+    }
+    expect(roads.size).toBeGreaterThan(getTownLots(world, town).length);
+  });
+
+  it('walks back to the plaza from anywhere on it, in every town', () => {
+    const world = new World('overworld');
+
+    // The one thing a lot standing in a street would break: a street
+    // that stops at somebody's back wall reads as a road blocked off,
+    // whether or not a walk could step round it
+    for (let regionY = -3; regionY < 3; regionY++) {
+      for (let regionX = -3; regionX < 3; regionX++) {
+        const town = townOfRegion(world, regionX, regionY);
+
+        if (town == null) {
+          continue;
+        }
+
+        const reached = new Set<number>();
+        const edge: [number, number][] = [[town.x, town.y]];
+
+        while (edge.length > 0) {
+          const step = edge.pop();
+
+          if (step == null) {
+            break;
+          }
+
+          const [x, y] = step;
+          const cell = (y - town.y) * FOOTPRINT + (x - town.x);
+
+          if (reached.has(cell) || !isRoadAt(world, x, y)) {
+            continue;
+          }
+          reached.add(cell);
+          for (const [offX, offY] of ORTHOGONAL) {
+            edge.push([x + offX, y + offY]);
+          }
+        }
+        expect(reached.size).toBe(getTownRoads(world, town).size);
+      }
+    }
+  });
+
+  it('never runs a street diagonally', () => {
+    const world = new World('overworld');
+    const town = findTown(world);
+
+    // A cell of road reached only across a diagonal is a corner no
+    // walk could turn: every paved cell touches another squarely
+    for (let dy = -TOWN_RADIUS; dy <= TOWN_RADIUS; dy++) {
+      for (let dx = -TOWN_RADIUS; dx <= TOWN_RADIUS; dx++) {
+        const x = town.x + dx;
+        const y = town.y + dy;
+
+        if (!isRoadAt(world, x, y)) {
+          continue;
+        }
+        expect(ORTHOGONAL.some(([offX, offY]) => isRoadAt(world, x + offX, y + offY))).toBe(true);
+      }
+    }
+  });
+
+  it('keeps its streets inside the town', () => {
+    const world = new World('overworld');
+    const town = findTown(world);
+
+    for (let dy = -TOWN_RADIUS * 2; dy <= TOWN_RADIUS * 2; dy++) {
+      for (let dx = -TOWN_RADIUS * 2; dx <= TOWN_RADIUS * 2; dx++) {
+        if (isRoadAt(world, town.x + dx, town.y + dy)) {
+          expect(Math.hypot(dx, dy)).toBeLessThanOrEqual(TOWN_RADIUS);
+        }
+      }
+    }
+  });
+
+  it('leaves the open country unpaved', () => {
+    const world = new World('overworld');
+    const town = findTown(world);
+
+    // A long way out of any town, so nothing here is a street
+    expect(isRoadAt(world, town.x + TOWN_RADIUS * 3, town.y)).toBe(false);
+  });
+
+  it('is a wash over the ground rather than a kind of it', () => {
+    const world = new World('overworld');
+    const town = findTown(world);
+
+    // A road decides nothing about walking: the cell under it reads
+    // as the levelled ground a town always is
+    for (const lot of getTownLots(world, town)) {
+      expect(readGround(world, lot.x, lot.y).role).toBe('ground');
+    }
   });
 });

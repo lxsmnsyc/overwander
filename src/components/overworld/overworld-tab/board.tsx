@@ -580,21 +580,27 @@ export default function OverworldBoard(props: {
   /**
    * What is on the board.
    *
-   * A memo, and not a plain call: half the game asks for it — a walk
-   * asks four times a second, a press asks twice — and building it is
+   * A memo, and not a plain call: half the game asks for it (a walk
+   * asks four times a second, a press asks twice) and building it is
    * four windows' worth of rolling. Read plainly, every one of those
-   * asks was a fresh world
+   * asks was a fresh world.
+   *
+   * Null only until the player has been put somewhere, which is the
+   * one wait worth a loading screen. Everything after that draws,
+   * window landed or not
    */
   const view = createMemo(() =>
-    buildBoardView(
-      originX(),
-      originY(),
-      windows(),
-      zone,
-      auth.user()?.uid ?? null,
-      buddy() ?? null,
-      fled() ?? new Set(),
-    ),
+    placed()
+      ? buildBoardView(
+          originX(),
+          originY(),
+          windows(),
+          zone,
+          auth.user()?.uid ?? null,
+          buddy() ?? null,
+          fled() ?? new Set(),
+        )
+      : null,
   );
 
   /**

@@ -36,3 +36,11 @@ export function chunkOfCell(cell: number): number {
 export function cellInChunk(cell: number): number {
   return ((cell % CHUNK_CELLS) + CHUNK_CELLS) % CHUNK_CELLS;
 }
+
+/** The four cells straight out of one, for anything that walks a square grid */
+export const ORTHOGONAL: [dx: number, dy: number][] = [
+  [0, -1],
+  [1, 0],
+  [0, 1],
+  [-1, 0],
+];

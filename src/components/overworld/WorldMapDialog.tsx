@@ -4,7 +4,7 @@ import getWorld from '../../overworld/current';
 import { WORLD_MAX, WORLD_MIN, isInWorld } from '../../overworld/world';
 import { Button, Dialog, DialogActions, HoverCard } from '../styled';
 import { InformationIcon } from '../icons';
-import WorldMapCanvas, { PAN_STRIDE } from './WorldMapCanvas';
+import WorldMapCanvas, { PAN_STRIDE, townsInView } from './WorldMapCanvas';
 import { useGame } from '../app/game-context';
 
 /**
@@ -119,6 +119,8 @@ export default function WorldMapDialog(props: WorldMapDialogProps): JSX.Element 
     return values;
   });
 
+  const towns = createMemo(() => townsInView(centerX() - HALF, centerY() - HALF, SPAN));
+
   return (
     <Dialog
       isOpen={props.isOpen}
@@ -162,6 +164,7 @@ export default function WorldMapDialog(props: WorldMapDialogProps): JSX.Element 
         originX={centerX() - HALF}
         originY={centerY() - HALF}
         biomes={biomes()}
+        towns={towns()}
         playerX={standing()?.chunkX ?? Number.NaN}
         playerY={standing()?.chunkY ?? Number.NaN}
         onPan={pan}

@@ -306,6 +306,13 @@ export const COLORS = {
    * board is the part of it with the light on
    */
   surface: 'rgba(255, 255, 255, 0.10)',
+  /**
+   * A town's streets, washed over whatever ground they run across
+   * rather than tiled. Warm and half-clear, so it darkens a pale
+   * country and warms a dark one and every biome keeps its own floor
+   * showing through the paving
+   */
+  road: 'rgba(122, 92, 58, 0.42)',
 } as const;
 
 /**

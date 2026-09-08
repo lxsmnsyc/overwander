@@ -4,6 +4,7 @@ import { Badge, Button, Meta, Note, Row, Switch } from '../styled';
 import World from '../../overworld/world';
 import { CHUNK_CELLS } from '../../overworld/chunk';
 import { readGround } from '../../overworld/ground';
+import { isTownAt } from '../../overworld/town';
 import type Biome from '../../data/ids/biome';
 
 /**
@@ -28,6 +29,9 @@ const WATER_SHADE = 0.45;
 
 /** What rock is drawn as, whatever country it comes through */
 const ROCK: [number, number, number] = [64, 60, 58];
+
+/** And what a town is drawn as, so the settled ground stands out */
+const TOWN: [number, number, number] = [214, 196, 164];
 
 /** How the chunk grid is drawn over it */
 const GRID_COLOR = 'rgba(255, 255, 255, 0.25)';
@@ -99,12 +103,15 @@ export default function WorldDemo(): JSX.Element {
       for (let y = 0; y < cells; y++) {
         for (let x = 0; x < cells; x++) {
           const { biome, role } = readGround(world, x0 + x, y0 + y);
-          const shade =
-            role === 'wall'
-              ? ROCK
-              : channels(BIOME_COLORS[biome]).map((one) =>
-                  role === 'water' ? Math.round(one * WATER_SHADE) : one,
-                );
+          let shade: number[] = ROCK;
+
+          if (isTownAt(world, x0 + x, y0 + y) && role === 'ground') {
+            shade = TOWN;
+          } else if (role !== 'wall') {
+            shade = channels(BIOME_COLORS[biome]).map((one) =>
+              role === 'water' ? Math.round(one * WATER_SHADE) : one,
+            );
+          }
 
           // One cell is `scale` pixels square, so the picture holds
           // fewer cells the closer it is looked at
@@ -171,8 +178,9 @@ export default function WorldDemo(): JSX.Element {
   return (
     <div class="flex flex-col gap-3 p-3">
       <Meta>
-        One pixel is one cell of the world. Water is its country's own colour, darkened; rock is
-        grey. The chunk grid is drawn over the top, and nothing in the ground lines up with it.
+        One pixel is one cell of the world. Water is its country's own colour, darkened, rock is
+        grey and a town is pale. The chunk grid is drawn over the top, and nothing in the ground
+        lines up with it.
       </Meta>
       <Row>
         <Button

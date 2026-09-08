@@ -1,4 +1,5 @@
 import AleaRNG from '../core/alea';
+import { CELL_COUNT, CHUNK_CELLS, worldCell } from './grid';
 import type Biome from '../data/ids/biome';
 import { isOpenSea, isWaterBiome } from '../data/ids/biome';
 import { type GroundRole, isShelfAt, roleAt } from './ground';
@@ -10,36 +11,9 @@ import {
   getBiomeDecorations,
 } from '../data/overworld/decoration';
 import Landmark, { LANDMARKS } from '../data/overworld/landmark';
+import { TOWN_LANDMARKS, getTownLots, isTownAt, portalCellIn, townOverChunk } from './town';
 
-/**
- * A chunk is a 16x16 grid of cells; scenery, landmarks and snapshot
- * spawns each occupy one cell, never sharing
- */
-export const CHUNK_CELLS = 16;
-
-export const CELL_COUNT = CHUNK_CELLS * CHUNK_CELLS;
-
-/**
- * Where one of a chunk's cells sits in the world's own cell grid.
- * The fields the ground is read from know nothing about chunks, so
- * everything that asks them speaks in these
- */
-export function worldCell(chunk: number, cell: number): number {
-  return chunk * CHUNK_CELLS + cell;
-}
-
-/**
- * Which chunk a world cell falls in, and where in that chunk it sits.
- * The board is a window on world cells now, so anything it wants from
- * a chunk has to be asked for in the chunk's own numbering
- */
-export function chunkOfCell(cell: number): number {
-  return Math.floor(cell / CHUNK_CELLS);
-}
-
-export function cellInChunk(cell: number): number {
-  return ((cell % CHUNK_CELLS) + CHUNK_CELLS) % CHUNK_CELLS;
-}
+export { CELL_COUNT, CHUNK_CELLS, cellInChunk, chunkOfCell, worldCell } from './grid';
 
 /**
  * How much of the chunk anything may be placed in: all of it.
@@ -72,12 +46,21 @@ export function centeredCells(size: number): number[] {
 }
 
 /**
- * How many landmarks a chunk holds. Few enough that a chunk is worth
- * reading rather than a shopping list: at a dozen apiece every service
- * was on the doorstep and nothing was worth walking to
+ * How many landmarks a chunk of open country holds.
+ *
+ * Thin on purpose. The services moved into the towns, so what is left
+ * out here is what a player actually goes out for, and a couple of
+ * them to a chunk is the difference between country worth crossing
+ * and a shopping list laid over the whole world
  */
-const MIN_LANDMARKS = 5;
-const MAX_LANDMARKS = 8;
+const MIN_LANDMARKS = 2;
+const MAX_LANDMARKS = 4;
+
+/**
+ * What the open country still holds: everything a town does not. The
+ * two lists together are every landmark there is
+ */
+const WILD_LANDMARKS = LANDMARKS.filter((kind) => !new Set(TOWN_LANDMARKS).has(kind));
 
 /**
  * The roll pool on the open seas: a berry bush cannot grow on water
@@ -98,27 +81,14 @@ const SEA_PEOPLE = new Set([
   Landmark.AuctionBoard,
 ]);
 
-const SEA_LANDMARKS = LANDMARKS.filter((kind) => !SEA_PEOPLE.has(kind));
+const SEA_LANDMARKS = WILD_LANDMARKS.filter((kind) => !SEA_PEOPLE.has(kind));
 
 /**
- * The landmarks a chunk holds at most one of: a second portal goes
- * nowhere the first does not, and a gym or a champion's seat is a
- * place, not a patrol
+ * The wild landmarks a chunk holds at most one of. A lair is a place
+ * rather than a patrol, and two of the same one in sight of each
+ * other is one raid offered twice
  */
-const SINGLETON_LANDMARKS = new Set([
-  Landmark.Portal,
-  // The region's title fights, one apiece: two gyms in sight of each
-  // other is a badge run walked in a single chunk
-  Landmark.GymLeader,
-  Landmark.EliteFour,
-  Landmark.Champion,
-  // One seat to a chunk: a seat is a place players come back to, and
-  // two of them beside each other would be one contest split in half
-  Landmark.GymSeat,
-  // And one board: every board shows the same global lots, so a
-  // second in the same chunk is the same board twice
-  Landmark.AuctionBoard,
-]);
+const SINGLETON_LANDMARKS = new Set([Landmark.LegendaryLair, Landmark.ShadowLair]);
 
 /**
  * The cells touching one, diagonals included, clipped to the chunk.
@@ -192,7 +162,7 @@ export default class Chunk {
     public readonly seed: string,
     public readonly biome: Biome,
     /** The fields the ground under it is read out of */
-    private readonly world: World,
+    public readonly world: World,
   ) {}
 
   private readonly roles: (GroundRole | undefined)[] = new Array<GroundRole | undefined>(
@@ -329,22 +299,50 @@ export default class Chunk {
    * next door, and one placed against a ridge that begins over there
    * is walled in just the same
    */
+  /** Whether this cell has been built on: a town lays out its own */
+  isTownCell(cell: number): boolean {
+    return isTownAt(
+      this.world,
+      worldCell(this.x, cell % CHUNK_CELLS),
+      worldCell(this.y, Math.floor(cell / CHUNK_CELLS)),
+    );
+  }
+
+  private readonly clear: (boolean | undefined)[] = new Array<boolean | undefined>(CELL_COUNT);
+
   private isClear(cell: number): boolean {
-    if (this.getCellRole(cell) === 'wall') {
-      return false;
+    const known = this.clear[cell];
+
+    if (known != null) {
+      return known;
     }
 
-    const x = worldCell(this.x, cell % CHUNK_CELLS);
-    const y = worldCell(this.y, Math.floor(cell / CHUNK_CELLS));
+    const column = cell % CHUNK_CELLS;
+    const row = Math.floor(cell / CHUNK_CELLS);
+    const x = worldCell(this.x, column);
+    const y = worldCell(this.y, row);
+    let clear = this.getCellRole(cell) !== 'wall';
 
-    for (let dy = -1; dy <= 1; dy++) {
-      for (let dx = -1; dx <= 1; dx++) {
-        if ((dx !== 0 || dy !== 0) && roleAt(this.world, x + dx, y + dy) === 'wall') {
-          return false;
+    for (let dy = -1; clear && dy <= 1; dy++) {
+      for (let dx = -1; clear && dx <= 1; dx++) {
+        if (dx === 0 && dy === 0) {
+          continue;
         }
+
+        const near = column + dx;
+        const down = row + dy;
+        // The chunk's own cells are kept as they are read; only the
+        // ring that falls in the chunk next door costs a fresh look
+        const role =
+          near >= 0 && down >= 0 && near < CHUNK_CELLS && down < CHUNK_CELLS
+            ? this.getCellRole(down * CHUNK_CELLS + near)
+            : roleAt(this.world, x + dx, y + dy);
+
+        clear = role !== 'wall';
       }
     }
-    return true;
+    this.clear[cell] = clear;
+    return clear;
   }
 
   private decorationCells: Map<number, Decoration> | null = null;
@@ -382,7 +380,10 @@ export default class Chunk {
               !taken.has(candidate) &&
               !landmarks.has(candidate) &&
               this.getCellRole(candidate) === 'ground' &&
-              this.isClear(candidate),
+              this.isClear(candidate) &&
+              // Nothing grows in the street: a town is swept, and its
+              // scenery is the buildings on it
+              !this.isTownCell(candidate),
           );
 
           if (cell == null) {
@@ -431,11 +432,45 @@ export default class Chunk {
       const count = MIN_LANDMARKS + Math.floor(rng.random() * (MAX_LANDMARKS - MIN_LANDMARKS + 1));
       // Nothing stands in a rock's reach, and the open seas roll from
       // a pool without the landmarks that need ground under them
-      const base = isOpenSea(this.biome) ? SEA_LANDMARKS : LANDMARKS;
+      const base = isOpenSea(this.biome) ? SEA_LANDMARKS : WILD_LANDMARKS;
       const order = shuffled(rng, centeredCells(PLACEMENT_AREA));
       const cells = new Map<number, Landmark>();
       const taken = new Set<number>();
       const rolled = new Set<Landmark>();
+      // Whatever of the town falls in this chunk, laid before anything
+      // is rolled: a town is planned and the country around it is not,
+      // so the country fits round the town rather than the other way
+      const town = townOverChunk(this.world, this.x, this.y);
+      // The region's portal, wherever it fell. In a town it is one of
+      // the lots below and this puts it down twice, harmlessly, on the
+      // same cell
+      const gate = portalCellIn(this.world, this.x, this.y);
+
+      if (gate != null) {
+        cells.set(gate, Landmark.Portal);
+        taken.add(gate);
+        for (const neighbor of neighborCells(gate)) {
+          taken.add(neighbor);
+        }
+      }
+      if (town != null) {
+        for (const lot of getTownLots(this.world, town)) {
+          const cellX = lot.x - worldCell(this.x, 0);
+          const cellY = lot.y - worldCell(this.y, 0);
+
+          if (cellX < 0 || cellY < 0 || cellX >= CHUNK_CELLS || cellY >= CHUNK_CELLS) {
+            continue;
+          }
+
+          const cell = cellY * CHUNK_CELLS + cellX;
+
+          cells.set(cell, lot.landmark);
+          taken.add(cell);
+          for (const neighbor of neighborCells(cell)) {
+            taken.add(neighbor);
+          }
+        }
+      }
 
       for (let i = 0; i < count; i++) {
         // The draws land in pair order: the landmark, then its cell.
@@ -446,8 +481,10 @@ export default class Chunk {
         // Everything that is a landmark now needs ground under it. The
         // one that did not was the phenomenon, which is no longer one:
         // something happening is rolled over the chunk by the hour
+        // Nothing of the country is rolled onto a town's own ground:
+        // what stands in a town is the town's to say
         const free = (candidate: number): boolean =>
-          !taken.has(candidate) && this.isClear(candidate);
+          !taken.has(candidate) && this.isClear(candidate) && !this.isTownCell(candidate);
         // Dry ground first and the water only where there is none: a
         // landmark stands beside the pool rather than in it, and a
         // chunk one lake covers is stood on all the same rather than

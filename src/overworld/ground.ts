@@ -1,4 +1,7 @@
-import Biome, { BIOME_CONFIGS, isOpenSea, isWaterBiome } from '../data/ids/biome';
+import type Biome from '../data/ids/biome';
+import { isOpenSea, isWaterBiome } from '../data/ids/biome';
+import { STONE_FREQUENCY, isRock, isWaterAt, rockLevel } from './fields';
+import { isTownAt } from './town';
 import type World from './world';
 
 /**
@@ -18,41 +21,6 @@ import type World from './world';
 export type GroundRole = 'ground' | 'water' | 'wall';
 
 /**
- * How wide the standing water is, and how much of the land it takes.
- *
- * A lake wants to be worth walking round rather than stepped over, so
- * the field is read at about a lake every twenty cells and cut high
- * enough that most of the country is still country
- */
-const LAKE_FREQUENCY = 1 / 16;
-const LAKE_LEVEL = 0.34;
-
-/**
- * The same field read the other way for the wetlands: a swamp is
- * water with banks in it rather than land with pools, so what stands
- * out of it is where the field runs dry
- */
-const BANK_LEVEL = 0.3;
-
-/**
- * The rivers: a long, slow field taken where it crosses zero, which
- * is a line rather than an area. It is what the fields cannot draw,
- * since a threshold on a smooth field only ever gives blobs
- */
-const RIVER_FREQUENCY = 1 / 150;
-const RIVER_WIDTH = 0.012;
-
-/**
- * Where the rock comes through. Tighter than the water, since an
- * outcrop is a feature of a hillside rather than of a country, and
- * cut against the biome's own height: the same field is a crag in the
- * mountains and a boulder or two on the plain
- */
-const STONE_FREQUENCY = 1 / 8;
-const ROCK_LEVEL = 0.42;
-const ROCK_LIFT = 0.18;
-
-/**
  * How far under the rock level the ground is still shelf: the lighter
  * tiles the deep is drawn to meet, which is why they gather round the
  * outcrops rather than sitting in patches of their own
@@ -66,25 +34,6 @@ const ORTHOGONAL: [dx: number, dy: number][] = [
   [0, 1],
   [-1, 0],
 ];
-
-/** How high the biome stands, for the rock that comes through it */
-function heightOf(biome: Biome): number {
-  // Beyond is the portal world, which has no climate and no ground of
-  // its own to bring rock through
-  return biome === Biome.Beyond ? 0 : BIOME_CONFIGS[biome].elevation;
-}
-
-/** How high the stone has to stand here to break the surface */
-function rockLevel(biome: Biome): number {
-  // Against the country's own height: a mountain is mostly rock and a
-  // meadow has a boulder in it
-  return ROCK_LEVEL - ROCK_LIFT * Math.max(0, heightOf(biome));
-}
-
-/** Whether the rock breaks the surface here, before the gaps are filled */
-function isRock(world: World, x: number, y: number, biome: Biome): boolean {
-  return world.stone.noise(x * STONE_FREQUENCY, y * STONE_FREQUENCY) > rockLevel(biome);
-}
 
 /**
  * How near the rock level a cell has to be to count as a gap in an
@@ -102,9 +51,17 @@ const HOLE_REACH = 0.08;
  */
 export const POCKET_LIMIT = 12;
 
-/** Whether the rock stands here, before the pockets are filled */
+/**
+ * Whether the rock stands here, before the pockets are filled. A town
+ * has levelled its own ground, so nothing walls a cell inside one
+ */
 function isRawWall(world: World, x: number, y: number): boolean {
-  return isRock(world, x, y, world.getCellBiome(x, y));
+  const biome = world.getCellBiome(x, y);
+
+  if (!isOpenSea(biome) && isTownAt(world, x, y)) {
+    return false;
+  }
+  return isRock(world, x, y, biome);
 }
 
 /**
@@ -161,32 +118,6 @@ function isPocket(world: World, x: number, y: number, biome: Biome): boolean {
   return true;
 }
 
-/** Whether a river runs through this cell */
-function isRiver(world: World, x: number, y: number): boolean {
-  return Math.abs(world.lakes.noise(x * RIVER_FREQUENCY, y * RIVER_FREQUENCY + 0.5)) < RIVER_WIDTH;
-}
-
-/**
- * Whether a player swims here rather than walks.
- *
- * The biome answers first, since a sea is water wherever you stand in
- * it. On land it is the lakes and the rivers; in a wetland it is
- * everything the banks have not taken
- */
-export function isWaterAt(world: World, x: number, y: number, biome: Biome): boolean {
-  const pooled = world.lakes.noise(x * LAKE_FREQUENCY, y * LAKE_FREQUENCY);
-
-  if (isOpenSea(biome)) {
-    return true;
-  }
-  if (isWaterBiome(biome)) {
-    // A bank is where the field runs dry, which is the pool's own
-    // rule read backwards
-    return pooled > -BANK_LEVEL;
-  }
-  return pooled > LAKE_LEVEL || isRiver(world, x, y);
-}
-
 /**
  * What one cell of the world is: the country it belongs to and what
  * a player finds underfoot there
@@ -194,6 +125,12 @@ export function isWaterAt(world: World, x: number, y: number, biome: Biome): boo
 export function readGround(world: World, x: number, y: number): { biome: Biome; role: GroundRole } {
   const biome = world.getCellBiome(x, y);
 
+  // A town is levelled ground: whatever the fields left there, people
+  // have since drained it, cleared it and built on it. The sea is the
+  // one thing they have not, so a town on a coast ends at the shore
+  if (!isOpenSea(biome) && isTownAt(world, x, y)) {
+    return { biome, role: 'ground' };
+  }
   if (isRock(world, x, y, biome)) {
     return { biome, role: 'wall' };
   }

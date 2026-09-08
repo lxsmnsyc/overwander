@@ -11,3 +11,7 @@
 - The country is drawn twenty cells out, past the edge of the picture on every side, while the board itself is the ten cells the player can press, and everything standing on it is inside those
 - Scenery, landmarks and pokemon may stand on any cell of a chunk: the clear rim every chunk used to keep drew empty corridors across the world every sixteen cells
 - A new /demo/world page paints the world's ground a cell at a time, with the chunk grid over it
+- Towns: one settled circle 28 cells across in each 8x8 chunk region that has dry ground for it, holding the market, the auction board, the gym seat, the ladder and the region's portal
+- A chunk of open country rolls two to four landmarks instead of five to eight, so what is left out there is what a player goes out for
+- Every region has exactly one portal, in its town where it has one, so the network is even and reaches every country including the open seas
+- A town levels the ground it stands on and holds no wild pokemon, and no two towns have the same charter

@@ -83,9 +83,11 @@ import {
   CHUNK_CELLS,
   PLACEMENT_AREA,
   centeredCells,
+  chunkOfCell,
   neighborCells,
 } from '../../src/overworld/chunk';
 import { CARDINALS } from '../../src/overworld/path';
+import { TOWN_REGION, getTownLots, townAt, townOfRegion } from '../../src/overworld/town';
 import { getBiomeDecorations } from '../../src/data/overworld/decoration';
 import ChunkSnapshot, {
   EXECUTIVE_CHANCE,
@@ -295,6 +297,36 @@ describe('perlin noise', () => {
  * cover far more ground than a handful of chunks
  */
 function findChunk(world: World, matches: (chunk: Chunk) => boolean): Chunk | null {
+  // The towns first, and by region rather than by chunk. A town is two
+  // chunks across and one is sited to every eight, so a sweep that
+  // steps over chunks steps over the towns, and everything a town
+  // holds is exactly what a chunk of open country no longer does
+  for (let regionY = -24; regionY < 24; regionY++) {
+    for (let regionX = -24; regionX < 24; regionX++) {
+      const town = townOfRegion(world, regionX, regionY);
+
+      if (town == null) {
+        continue;
+      }
+
+      const seen = new Set<string>();
+
+      for (const lot of getTownLots(world, town)) {
+        const key = `${chunkOfCell(lot.x)},${chunkOfCell(lot.y)}`;
+
+        if (seen.has(key)) {
+          continue;
+        }
+        seen.add(key);
+
+        const candidate = world.getChunk(chunkOfCell(lot.x), chunkOfCell(lot.y));
+
+        if (matches(candidate)) {
+          return candidate;
+        }
+      }
+    }
+  }
   for (let y = -200; y < 200; y += 4) {
     for (let x = -200; x < 200; x += 4) {
       const candidate = world.getChunk(x, y);
@@ -346,7 +378,7 @@ describe('world', () => {
     expect(chunk.biome).toBe(world.getChunk(3, -7).biome);
   });
 
-  it('rolls 5-8 fixed landmarks per chunk, each on its own cell', () => {
+  it('rolls a few fixed landmarks per chunk of open country, each on its own cell', () => {
     const world = new World('overworld');
     const shapes = new Set<string>();
 
@@ -354,8 +386,10 @@ describe('world', () => {
       const chunk = world.getChunk(x, 0);
       const landmarks = chunk.getLandmarks();
 
-      expect(landmarks.length).toBeGreaterThanOrEqual(5);
-      expect(landmarks.length).toBeLessThanOrEqual(8);
+      // Thin: the services live in towns, so what is left out here is
+      // what a player goes out for. A chunk a town falls on holds the
+      // town's lots as well
+      expect(landmarks.length).toBeGreaterThanOrEqual(1);
 
       // One cell each, anywhere on the grid: the rim used to be held
       // clear for a player walking in from the chunk next door, and
@@ -2886,29 +2920,42 @@ describe('world', () => {
     }
   });
 
-  it('posts an auction board on land, one to a chunk and reachable', () => {
+  it('posts an auction board in a town, one to a chunk and reachable', () => {
     const world = new World('overworld');
     let boards = 0;
-    let chunks = 0;
+    let towns = 0;
+    const span = TOWN_REGION * CHUNK_CELLS;
 
-    for (let x = 0; x < 25; x++) {
-      for (let y = 0; y < 8; y++) {
+    for (let regionY = -3; regionY < 3; regionY++) {
+      for (let regionX = -3; regionX < 3; regionX++) {
+        // Sampled across the region, since a town sits wherever its
+        // region's own roll put it
+        for (let step = 0; step < span; step += 8) {
+          if (townAt(world, regionX * span + step, regionY * span + step) != null) {
+            towns++;
+            break;
+          }
+        }
+      }
+    }
+
+    for (let x = -40; x < 40; x++) {
+      for (let y = -40; y < 40; y++) {
         const chunk = world.getChunk(x, y);
         const cells = [...chunk.getLandmarkCells()].filter(
           ([, landmark]) => landmark === Landmark.AuctionBoard,
         );
 
-        chunks++;
         boards += cells.length;
         // One board to a chunk: every board reads the same global
         // lots, so a second would be the same board twice
         expect(cells.length).toBeLessThanOrEqual(1);
       }
     }
-
-    // Common enough that trading is a walk rather than an expedition
-    expect(boards).toBeGreaterThan(0);
-    expect(boards / chunks).toBeGreaterThan(0.2);
+    // Boards live in towns, and about half of a town's charters carry
+    // one, so a stretch of country this size holds several
+    expect(towns).toBeGreaterThan(0);
+    expect(boards).toBeGreaterThan(3);
   });
 
   it('names a gym seat by its place and never by its window', () => {
@@ -3654,11 +3701,10 @@ describe('chunk snapshot', () => {
           }
         }
 
-        // Nine cells at most per landmark, out of the central 15x15's
-        // two hundred and twenty-five: the ring never costs a chunk
-        // one of its five to eight
-        expect(landmarks.size).toBeGreaterThanOrEqual(5);
-        expect(landmarks.size).toBeLessThanOrEqual(8);
+        // The open country is thin now: what a chunk holds is a
+        // couple of things worth going out for, unless a town has been
+        // laid over it, in which case it holds the town's own lots
+        expect(landmarks.size).toBeGreaterThanOrEqual(1);
         // The area is the landmarks plus their rings, and a ring
         // inside the placement area is never empty
         expect(chunk.getLandmarkArea().size).toBeGreaterThan(landmarks.size);
@@ -4198,9 +4244,13 @@ describe('terrain spots', () => {
   it('reads the water out of the world rather than growing it in the chunk', () => {
     const world = new World('overworld');
 
-    // The open seas are water throughout: nothing in one is the other
-    // ground
-    const sea = findChunk(world, (candidate) => isOpenSea(candidate.biome));
+    // A chunk that is sea in every cell is water throughout: nothing
+    // in one is the other ground. Asked of every cell rather than of
+    // the chunk's own biome, which is only the country in its middle:
+    // a chunk on a coast is named for the sea and still holds a beach
+    const sea = findChunk(world, (candidate) =>
+      [...candidate.getCellBiomes()].every((biome) => isOpenSea(biome)),
+    );
 
     if (sea != null) {
       expect(sea.getSpotCells().size).toBe(0);

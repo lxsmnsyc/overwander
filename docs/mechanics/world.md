@@ -55,6 +55,33 @@ start. At 16 cells to a chunk that is 65,536 cells from edge to edge.
 The edge is a wall rather than a wrap-around: walking into it stops the player
 rather than bringing them out on the opposite side of the world.
 
+### Towns
+
+The world is divided into regions of 8x8 chunks, and each one holds at most one
+**town**: a settled circle 28 cells across, sited wherever the region's own roll
+found dry ground. Regions that are all sea have none.
+
+A town is where the services are. Everything somebody stands behind a counter
+for lives in one, and the country between towns holds what a player goes out
+for: things to forage, things to fight, nests and lairs.
+
+| In a town                                        | Out in the country                     |
+| ------------------------------------------------ | -------------------------------------- |
+| Market, Auction Board, Gym Seat, Wandering NPC    | Item Cache, Berry Patch, Apricorn Tree  |
+| Gym Leader, Elite Four, Champion                  | Nest, Trainer, Team Rocket              |
+| Portal                                            | Legendary and Shadow Raid lairs         |
+
+Every town has a portal, which is what keeps the network even. The rest is the
+town's charter and no two are alike: about half have an auction board, about
+half a gym seat, a third a gym leader, and a champion sits in perhaps one town
+in twelve. A place that had everything would be a place nobody left.
+
+A town levels the ground it stands on: no lakes, no rivers and no rock inside
+the footprint, though it stops at the shore rather than draining the sea. No
+wild pokemon stand in one and nothing is going on there, so a town is somewhere
+to put your guard down. The portal's keeper is the exception, since the keeper
+belongs to the portal.
+
 ### Inside a chunk
 
 Scenery, landmarks and pokemon may stand on any of a chunk's 256 cells. A clear
@@ -95,7 +122,8 @@ scenery belongs to the chunk permanently.
 
 ## Landmarks
 
-Every chunk contains **five to eight landmarks**, and they never move. The
+A chunk of open country holds **two to four landmarks**, and a chunk a town
+falls on holds that town's lots as well. They never move. The
 same chunk has the same landmarks on the same cells permanently; only their
 contents change. Most may repeat, so one chunk may hold two berry patches; a
 few are one to a chunk, marked below.

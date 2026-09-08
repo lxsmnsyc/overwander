@@ -423,21 +423,31 @@ export default class ChunkSnapshot {
         // top of a dust cloud, and the spawn would answer the press
         ...this.getPhenomena().keys(),
       ]);
-      const free = centeredCells(PLACEMENT_AREA).filter((cell) => !occupied.has(cell));
+      const free = centeredCells(PLACEMENT_AREA).filter(
+        // Nothing wild stands in a town. It is where a player puts
+        // their guard down: the country outside is where the pokemon
+        // are, and that is the whole reason to leave
+        (cell) => !occupied.has(cell) && !this.chunk.isTownCell(cell),
+      );
 
       // The portal's keeper rolls before the pool does, so it is the
       // first published spawn and every player sees it, lure or none
       const portal = getPortalCell(this.chunk);
 
       if (portal != null && this.rng.random() < PORTAL_KEEPER_CHANCE) {
-        const open = new Set(free);
-        const beside = neighborCells(portal).filter((cell) => open.has(cell));
+        // The keeper is the portal's rather than the country's, so it
+        // stands beside one in a town square the same as one out in a
+        // field: what a town keeps out is the wild
+        const beside = neighborCells(portal).filter((cell) => !occupied.has(cell));
 
         if (beside.length > 0) {
           const spawn: Spawn = [Species.Porygon, this.rng.int32(), this.rng.int32()];
           const cell = beside[Math.floor(this.rng.random() * beside.length)];
+          const standing = free.indexOf(cell);
 
-          free.splice(free.indexOf(cell), 1);
+          if (standing >= 0) {
+            free.splice(standing, 1);
+          }
           this.cells[cell] = spawn;
           spawns.push(spawn);
         }
@@ -1427,7 +1437,9 @@ export default class ChunkSnapshot {
       // the biome's list is what dry ground can show. A beach hosts
       // both, and a ripple on its sand was the sea in the wrong place
       const dry = kinds.filter((kind) => kind !== Phenomenon.RipplingWater);
-      const open = centeredCells(PLACEMENT_AREA).filter((cell) => !occupied.has(cell));
+      const open = centeredCells(PLACEMENT_AREA).filter(
+        (cell) => !occupied.has(cell) && !this.chunk.isTownCell(cell),
+      );
       // Dry ground first, so the biome's own are actually seen. A
       // wetland is mostly water, and rolling it flat would make every
       // marsh ripple and no marsh ever hide a grotto. A biome with

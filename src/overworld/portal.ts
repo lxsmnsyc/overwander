@@ -1,7 +1,7 @@
 import type Biome from '../data/ids/biome';
 import { BIOME_CONFIGS } from '../data/ids/biome';
-import Landmark from '../data/overworld/landmark';
 import type Chunk from './chunk';
+import { portalCellIn } from './town';
 import type World from './world';
 import { isInWorld } from './world';
 
@@ -60,12 +60,10 @@ export interface PortalDestination {
  * is the one that counts
  */
 export function getPortalCell(chunk: Chunk): number | null {
-  for (const [cell, landmark] of chunk.getLandmarkCells()) {
-    if (landmark === Landmark.Portal) {
-      return cell;
-    }
-  }
-  return null;
+  // Asked of the region rather than of the chunk's landmarks: every
+  // region has exactly one portal, and the network is walked tens of
+  // thousands of chunks at a time
+  return portalCellIn(chunk.world, chunk.x, chunk.y);
 }
 
 /**

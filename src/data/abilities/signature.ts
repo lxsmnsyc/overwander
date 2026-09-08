@@ -13,4 +13,11 @@ export default function registerSignatureAbilities(): void {
     description:
       'Banks 1/4 of every hit it takes, up to 1/2 of its HP. The next Grass move it lands spends the bank as extra damage.',
   });
+
+  // Charmander
+  registerAbility(Abilities.Afterburn, {
+    name: 'Afterburn',
+    description:
+      'Each Fire move it lands cuts 15% off its cast and channel times, up to 45%. A miss or a move of another type puts it back to 0.',
+  });
 }

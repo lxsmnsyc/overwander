@@ -302,6 +302,7 @@ const enum Abilities {
    * abilities stay four
    */
   SeedCache = 200001,
+  Afterburn = 200002,
 }
 
 export default Abilities;

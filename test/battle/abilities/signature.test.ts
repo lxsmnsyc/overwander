@@ -1,9 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import {
+  AFTERBURN_MAX_STACKS,
+  AFTERBURN_STEP,
   SEED_CACHE_BANK_FRACTION,
   SEED_CACHE_CAP_FRACTION,
 } from '../../../src/battle/abilities/signature';
-import { EffectType } from '../../../src/battle/events';
+import type Battle from '../../../src/battle/core';
+import { BattleEvents, EffectType, MoveTargetType } from '../../../src/battle/events';
+import type Unit from '../../../src/battle/unit';
 import { Stats } from '../../../src/data/constants/stats';
 import { Types } from '../../../src/data/constants/types';
 import Abilities from '../../../src/data/ids/abilities';
@@ -138,5 +142,96 @@ describe('Seed Cache', () => {
     );
 
     expect(spent - plain).toBeCloseTo(maxHP * SEED_CACHE_CAP_FRACTION, 5);
+  });
+});
+
+/** One resolved use of a move, landed or missed */
+function rollMove(battle: Battle, source: Unit, target: Unit, move: Moves, hit: boolean): void {
+  battle.emit(BattleEvents.UnitTriggerMoveRollHit, {
+    id: 'UnitTriggerMoveRollHit',
+    disabled: false,
+    parent: {
+      id: 'UnitTriggerMove',
+      disabled: false,
+      source,
+      move,
+      target: { type: MoveTargetType.Unit, unit: target },
+      steps: 0,
+    },
+    hit,
+  });
+}
+
+describe('Afterburn', () => {
+  it('shortens the wind-up by a step for each Fire move it lands', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Afterburn);
+
+    const target = { type: MoveTargetType.Unit, unit: enemy } as const;
+    const bare = holder.checkMoveCastTime(Moves.Flamethrower, target);
+
+    expect(bare).toBeGreaterThan(0);
+
+    for (let landed = 1; landed <= AFTERBURN_MAX_STACKS; landed += 1) {
+      rollMove(battle, holder, enemy, Moves.Flamethrower, true);
+
+      expect(holder.checkMoveCastTime(Moves.Flamethrower, target)).toBeCloseTo(
+        bare * (1 - AFTERBURN_STEP * landed),
+        5,
+      );
+    }
+
+    // Past the cap it holds where it is
+    rollMove(battle, holder, enemy, Moves.Flamethrower, true);
+
+    expect(holder.checkMoveCastTime(Moves.Flamethrower, target)).toBeCloseTo(
+      bare * (1 - AFTERBURN_STEP * AFTERBURN_MAX_STACKS),
+      5,
+    );
+  });
+
+  it('is blown out by a miss or by a move of another type', () => {
+    const { battle, teamA, teamB } = createBattle();
+    // 100 accuracy is the ceiling, so a pinned roll misses anything short of it
+    pinRandom(battle, 1);
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Afterburn);
+
+    const target = { type: MoveTargetType.Unit, unit: enemy } as const;
+    const bare = holder.checkMoveCastTime(Moves.Flamethrower, target);
+
+    rollMove(battle, holder, enemy, Moves.Flamethrower, true);
+    rollMove(battle, holder, enemy, Moves.FireBlast, false);
+
+    expect(holder.checkMoveCastTime(Moves.Flamethrower, target)).toBe(bare);
+
+    rollMove(battle, holder, enemy, Moves.Flamethrower, true);
+    rollMove(battle, holder, enemy, Moves.Tackle, true);
+
+    expect(holder.checkMoveCastTime(Moves.Flamethrower, target)).toBe(bare);
+  });
+
+  it('comes back on the field with the flame it started with', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Afterburn);
+
+    const target = { type: MoveTargetType.Unit, unit: enemy } as const;
+    const bare = holder.checkMoveCastTime(Moves.Flamethrower, target);
+
+    rollMove(battle, holder, enemy, Moves.Flamethrower, true);
+
+    battle.emit(BattleEvents.UnitEntersField, {
+      id: 'UnitEntersField',
+      disabled: false,
+      source: holder,
+      reactivation: false,
+    });
+
+    expect(holder.checkMoveCastTime(Moves.Flamethrower, target)).toBe(bare);
   });
 });

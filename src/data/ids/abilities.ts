@@ -344,6 +344,10 @@ const enum Abilities {
   LivingTunnel = 200041,
   DreamSiphon = 200042,
   HeavyPincer = 200043,
+  Overload = 200044,
+  Psyseed = 200045,
+  MourningBone = 200046,
+  SecondWind = 200047,
 }
 
 export default Abilities;

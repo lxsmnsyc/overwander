@@ -19,6 +19,12 @@ import {
 import {
   HEAVY_PINCER_SCALE,
   HEAVY_PINCER_THRESHOLD,
+  MOURNING_BONE_SCALE,
+  OVERLOAD_SPEED_SCALE,
+  OVERLOAD_THRESHOLD,
+  PSYSEED_FRACTION,
+  SECOND_WIND_HEAL_FRACTION,
+  SECOND_WIND_THRESHOLD,
 } from '../../../src/battle/abilities/signature/krabby-to-pinsir';
 import {
   DELAYED_REACTION_DELAY,
@@ -1592,5 +1598,98 @@ describe('Heavy Pincer', () => {
     holder.setHealth(holder.checkStat(Stats.HP, 0) * HEAVY_PINCER_THRESHOLD - 1);
 
     expect(holder.checkMovePower(Moves.Pound, target)).toBe(40);
+  });
+});
+
+describe('Overload', () => {
+  it('doubles its Speed once it is badly hurt', () => {
+    const { battle, teamA } = createBattle();
+    const holder = createUnit(battle, teamA);
+    holder.addAbility(Abilities.Overload);
+
+    const bare = holder.checkStat(Stats.Speed, 0);
+    const maxHP = holder.checkStat(Stats.HP, 0);
+
+    holder.setHealth(maxHP * OVERLOAD_THRESHOLD);
+
+    expect(holder.checkStat(Stats.Speed, 0)).toBe(bare);
+
+    holder.setHealth(maxHP * OVERLOAD_THRESHOLD - 1);
+
+    expect(holder.checkStat(Stats.Speed, 0)).toBeCloseTo(bare * OVERLOAD_SPEED_SCALE, 5);
+  });
+});
+
+describe('Psyseed', () => {
+  it('feeds every time a seeded mind is used', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Psyseed);
+
+    const maxHP = holder.checkStat(Stats.HP, 0);
+    holder.setHealth(maxHP / 2);
+
+    // Nothing is seeded yet
+    act(battle, enemy);
+
+    expect(holder.health).toBeCloseTo(maxHP / 2, 5);
+
+    // A move of another type plants nothing either
+    holder.attack(enemy, Moves.Pound, 40, Types.Normal, MoveCategories.Physical, 0);
+    act(battle, enemy);
+
+    expect(holder.health).toBeCloseTo(maxHP / 2, 5);
+
+    holder.attack(enemy, Moves.Confusion, 40, Types.Psychic, MoveCategories.Special, 0);
+    holder.setHealth(maxHP / 2);
+
+    act(battle, enemy);
+
+    expect(holder.health).toBeCloseTo(maxHP / 2 + maxHP * PSYSEED_FRACTION, 5);
+  });
+});
+
+describe('Mourning Bone', () => {
+  it('hits harder with nobody left beside it', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.MourningBone);
+
+    const target = { type: MoveTargetType.Unit, unit: enemy } as const;
+
+    expect(holder.checkMovePower(Moves.Pound, target)).toBe(40);
+
+    ally.faint(enemy);
+
+    expect(holder.checkMovePower(Moves.Pound, target)).toBeCloseTo(40 * MOURNING_BONE_SCALE, 5);
+  });
+});
+
+describe('Second Wind', () => {
+  it('gets up once and only once', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.SecondWind);
+
+    const maxHP = holder.checkStat(Stats.HP, 0);
+
+    holder.setHealth(maxHP * SECOND_WIND_THRESHOLD + 10);
+    enemy.damage(NONE_CAUSE, holder, 11, 0);
+
+    expect(holder.health).toBeCloseTo(
+      maxHP * SECOND_WIND_THRESHOLD - 1 + maxHP * SECOND_WIND_HEAL_FRACTION,
+      5,
+    );
+
+    // The wind does not come round twice
+    holder.setHealth(10);
+    enemy.damage(NONE_CAUSE, holder, 1, 0);
+
+    expect(holder.health).toBe(9);
   });
 });

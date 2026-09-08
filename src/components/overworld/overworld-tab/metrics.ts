@@ -105,3 +105,12 @@ export const ICON_SIZE = 24;
  * hatching machine
  */
 export const STEP_PACE = 250;
+
+/**
+ * How many claim lists the board remembers at once.
+ *
+ * One per list per chunk per window: three lists over the six chunks
+ * a board can cover is eighteen, and the rest is room to walk out of
+ * a chunk and back into it without asking the server again
+ */
+export const CLAIM_MEMORY = 64;

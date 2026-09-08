@@ -1739,6 +1739,10 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
        * washed in flat colour as it always was, grown by a hair since
        * two washes meeting on a hairline leave a seam down the middle
        */
+      // Off for this pass as it is for the ground's: a path is cut
+      // from the same pixels and smoothing softens its edges away
+      context.save();
+      context.imageSmoothingEnabled = false;
       for (const square of painted) {
         if (!ground.road(square.x, square.y)) {
           continue;
@@ -1770,6 +1774,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         context.fillStyle = COLORS.road;
         context.fill();
       }
+      context.restore();
 
       /**
        * A piece of baked art, stamped on the point it belongs to.

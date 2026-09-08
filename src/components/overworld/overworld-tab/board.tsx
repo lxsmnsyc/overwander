@@ -10,6 +10,8 @@ import challengerOf, { championGate, eliteGate } from './challengers';
 import { describeItem } from '../../details';
 import { type Journey, stateOf } from './journey';
 import { useAuth } from '../../../auth/context';
+import type { Unwatch } from '../../../auth/supabase';
+import LRUMap from '../../../core/lru-map';
 import { settled } from '../../app/resource-reads';
 import { type Direction, actionOf, forTheGame } from '../../app/keys';
 import settings from '../../app/settings';
@@ -101,6 +103,7 @@ import {
 import {
   BOARD_CELLS,
   BOARD_CENTER,
+  CLAIM_MEMORY,
   FIGHT_LANDMARKS,
   HARVEST_LANDMARKS,
   ICON_SIZE,
@@ -530,6 +533,17 @@ export default function OverworldBoard(props: {
     });
   });
 
+  /**
+   * The subscription open on each chunk the board is watching.
+   *
+   * Held across the effect rather than inside it, so a step that
+   * changes which chunks are in range stops the ones that left and
+   * starts the ones that arrived instead of closing every socket and
+   * opening it again. The set turns over every eight cells or so,
+   * and each fresh watcher costs a read
+   */
+  const watched = new Map<string, Unwatch>();
+
   createEffect(() => {
     // Nothing is watched until the player has been put somewhere:
     // chunk 0,0 is not where they are, and publishing its window
@@ -541,30 +555,45 @@ export default function OverworldBoard(props: {
     const wanted = overlapped();
     const keys = new Set(wanted.map(([x, y]) => `${x},${y}`));
 
+    for (const [key, stop] of watched) {
+      if (!keys.has(key)) {
+        stop();
+        watched.delete(key);
+      }
+    }
     // What the board has walked away from is dropped rather than left
     // to be drawn if the player walks back before it is re-read
     setWindows((held) => new Map([...held].filter(([key]) => keys.has(key))));
 
-    const stops = wanted.map(([x, y]) =>
-      watchSnapshotWindow(getWorld().getChunk(x, y), zone, (record) => {
-        setWindows((held) => {
-          const next = new Map(held);
+    for (const [x, y] of wanted) {
+      const key = `${x},${y}`;
 
-          if (record == null) {
-            next.delete(`${x},${y}`);
-          } else {
-            next.set(`${x},${y}`, { x, y, record });
-          }
-          return next;
-        });
-      }),
-    );
-
-    onCleanup(() => {
-      for (const stop of stops) {
-        stop();
+      if (watched.has(key)) {
+        continue;
       }
-    });
+      watched.set(
+        key,
+        watchSnapshotWindow(getWorld().getChunk(x, y), zone, (record) => {
+          setWindows((held) => {
+            const next = new Map(held);
+
+            if (record == null) {
+              next.delete(key);
+            } else {
+              next.set(key, { x, y, record });
+            }
+            return next;
+          });
+        }),
+      );
+    }
+  });
+
+  onCleanup(() => {
+    for (const stop of watched.values()) {
+      stop();
+    }
+    watched.clear();
   });
 
   // What walks beside the player changes what the chunk holds, so the
@@ -615,14 +644,26 @@ export default function OverworldBoard(props: {
   const [spent, setSpent] = createSignal<Set<string>>(new Set());
 
   /**
+   * What each claim list answered, by list, chunk and window.
+   *
+   * A claim changes when the player takes something or the window
+   * turns over, and neither happens because they walked a square. The
+   * set of chunks in range turns over every eight cells or so, and
+   * without this every turnover re-asked the server for chunks it had
+   * already been told about, three lists apiece
+   */
+  const claimed = new LRUMap<string, Promise<number[]>>(CLAIM_MEMORY);
+
+  /**
    * A claim list read from every window the board overlaps, gathered
    * into one set of world cells.
    *
-   * Keyed off the windows rather than the view, since the view is
-   * rebuilt on every step: what a player has already taken changes
-   * when a window turns over, not when they walk a square
+   * Only the chunks the board itself covers, not the wider country it
+   * draws: what is out there is a view, and nothing in a view can be
+   * pressed, so nothing in it can have been claimed
    */
   const gather = (
+    named: string,
     ask: (snapshot: ChunkSnapshot) => Promise<number[]>,
     take: (cells: Set<string>) => void,
   ): void => {
@@ -632,12 +673,28 @@ export default function OverworldBoard(props: {
       return;
     }
 
+    const who = untrack(() => auth.user()?.uid ?? '');
+    const near = new Set(untrack(overlapped).map(([x, y]) => `${x},${y}`));
+    const pieces = loaded.chunks.filter((piece) => near.has(`${piece.x},${piece.y}`));
     let live = true;
 
     Promise.all(
-      loaded.chunks.map(async (piece) =>
-        (await ask(piece.snapshot)).map((taken) => piece.world(taken).join(',')),
-      ),
+      pieces.map(async (piece) => {
+        // The player is in the key because a claim is theirs: signing
+        // in as somebody else must not read back the last one's
+        const key = `${who}|${named}|${piece.x},${piece.y}|${piece.snapshot.timestamp}`;
+        const known = claimed.get(key) ?? ask(piece.snapshot);
+
+        claimed.set(key, known);
+        try {
+          return (await known).map((taken) => piece.world(taken).join(','));
+        } catch (caught) {
+          // A list that failed is not the answer for the rest of the
+          // window: it is asked again the next time the board looks
+          claimed.delete(key);
+          throw caught;
+        }
+      }),
     )
       .then((found) => {
         if (live) {
@@ -653,11 +710,23 @@ export default function OverworldBoard(props: {
     });
   };
 
+  /**
+   * Forget what the server said about claims.
+   *
+   * Called when this player takes something, which is the one thing
+   * that can make a remembered list wrong. A press is rare next to a
+   * step, so the whole lot is dropped rather than the one entry: the
+   * next look asks again and the board agrees with the store
+   */
+  const forgetClaims = (): void => {
+    claimed.clear();
+  };
+
   createEffect(() => {
     // Read again when a window turns over, and not when the player
     // takes a step: the board moves under them constantly
     windowKey();
-    gather(listClaimedPhenomena, (cells) => {
+    gather('phenomena', listClaimedPhenomena, (cells) => {
       setSpent(cells);
     });
   });
@@ -682,10 +751,10 @@ export default function OverworldBoard(props: {
 
   createEffect(() => {
     windowKey();
-    gather(listPickedBerryPatches, (cells) => {
+    gather('patches', listPickedBerryPatches, (cells) => {
       setPicked(cells);
     });
-    gather(listClaimedItemCaches, (cells) => {
+    gather('caches', listClaimedItemCaches, (cells) => {
       setDug(cells);
     });
   });
@@ -854,6 +923,7 @@ export default function OverworldBoard(props: {
         // whichever way the answer went: the cell stops being drawn
         if (offer.from === 'grotto') {
           setSpent((cells) => new Set(cells).add(keyAt(offer.spot)));
+          forgetClaims();
         }
       })
       .catch((caught: unknown) => {
@@ -1094,6 +1164,7 @@ export default function OverworldBoard(props: {
       // Empty either way: the stash was already carried off, or this
       // press carried it off
       setDug((cells) => new Set(cells).add(keyAt(spot)));
+      forgetClaims();
       // What came out of the ground is put in front of them rather
       // than said under the map: a player pressing a cell is looking
       // at the cell
@@ -1106,6 +1177,7 @@ export default function OverworldBoard(props: {
       // Bare either way: the bush was already stripped, or this press
       // stripped it
       setPicked((cells) => new Set(cells).add(keyAt(spot)));
+      forgetClaims();
       announce(at, 'Bare bushes. Come back next window.', berries == null ? null : [berries]);
       return null;
     }
@@ -1115,6 +1187,7 @@ export default function OverworldBoard(props: {
       // Picked either way, and worth saying what they are for: an
       // apricorn is nothing until Kurt has it
       setPicked((cells) => new Set(cells).add(keyAt(spot)));
+      forgetClaims();
       announce(at, 'Picked bare. Come back next window.', apricorns == null ? null : [apricorns]);
       return null;
     }
@@ -1261,6 +1334,7 @@ export default function OverworldBoard(props: {
       // it stops being drawn rather than standing there to be pressed
       // again for nothing
       setSpent((cells) => new Set(cells).add(keyAt(spot)));
+      forgetClaims();
 
       if (claim == null) {
         return `${PHENOMENON_NAMES[showingKind]}, and nothing under it now.`;

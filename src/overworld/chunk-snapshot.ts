@@ -8,7 +8,7 @@ import {
   spawnRanks,
 } from '../data/biome';
 import type { SpawnRarityGroups } from '../data/biome';
-import { SPECIES_DAY_WEIGHT_BOOST, getFeaturedFamily } from '../data/species';
+import { SPECIES_DAY_WEIGHT_BOOST, getFeaturedFamily, swims } from '../data/species';
 import { TimeOfDay, getTimeOfDay, isWaterBiome } from '../data/ids/biome';
 import type { Items } from '../data/ids/items';
 import type { ItemStack } from '../data/overworld/item-pool';
@@ -411,8 +411,7 @@ export default class ChunkSnapshot {
     if (this.spawns == null) {
       const pool = this.getPool();
       const spawns: Spawn[] = [];
-      // Nothing spawns inside solid rock; a pool is fine, since a
-      // pokemon in the water is a pokemon in the water
+      // Nothing spawns inside solid rock
       const occupied = new Set([
         ...this.chunk.getDecorationCells().keys(),
         ...this.chunk.getLandmarkCells().keys(),
@@ -429,6 +428,23 @@ export default class ChunkSnapshot {
         // are, and that is the whole reason to leave
         (cell) => !occupied.has(cell) && !this.chunk.isTownCell(cell),
       );
+      // Where anything may stand, and where only a swimmer may.
+      //
+      // A water country was given a pool written for water, so
+      // everything in it belongs on its own sea. A lake or a river
+      // running through dry country is the other case: the pool there
+      // was written for the land around it, and a Rhyhorn in the
+      // middle of a pond is that pool answering a question nobody
+      // asked it
+      const biomes = this.chunk.getCellBiomes();
+      const standing: number[] = [];
+      const swimming: number[] = [];
+
+      for (const cell of free) {
+        const afloat = this.chunk.getCellRole(cell) === 'water' && !isWaterBiome(biomes[cell]);
+
+        (afloat ? swimming : standing).push(cell);
+      }
 
       // The portal's keeper rolls before the pool does, so it is the
       // first published spawn and every player sees it, lure or none
@@ -443,10 +459,13 @@ export default class ChunkSnapshot {
         if (beside.length > 0) {
           const spawn: Spawn = [Species.Porygon, this.rng.int32(), this.rng.int32()];
           const cell = beside[Math.floor(this.rng.random() * beside.length)];
-          const standing = free.indexOf(cell);
 
-          if (standing >= 0) {
-            free.splice(standing, 1);
+          for (const cells of [standing, swimming]) {
+            const taken = cells.indexOf(cell);
+
+            if (taken >= 0) {
+              cells.splice(taken, 1);
+            }
           }
           this.cells[cell] = spawn;
           spawns.push(spawn);
@@ -455,7 +474,7 @@ export default class ChunkSnapshot {
 
       // The keeper counts against the window, so a portal chunk never
       // publishes more rolls than any other
-      for (let i = spawns.length; i < count && free.length > 0; i++) {
+      for (let i = spawns.length; i < count && standing.length + swimming.length > 0; i++) {
         const species = pickSpawn(pool, () => this.rng.random());
 
         if (species == null) {
@@ -465,7 +484,20 @@ export default class ChunkSnapshot {
         // The draws land in tuple order: individual value, then the
         // trait value, then the cell placement
         const spawn: Spawn = [species, this.rng.int32(), this.rng.int32()];
-        const [cell] = free.splice(Math.floor(this.rng.random() * free.length), 1);
+        const roll = this.rng.random();
+        // Drawn over every cell the species could take at once, so a
+        // swimmer is no likelier to pick the water than the shore
+        const open = standing.length + (swims(species) ? swimming.length : 0);
+
+        // Rolled by the country and refused by the ground: nothing of
+        // this one is published, and the window is simply one lighter
+        if (open === 0) {
+          continue;
+        }
+
+        const at = Math.floor(roll * open);
+        const [cell] =
+          at < standing.length ? standing.splice(at, 1) : swimming.splice(at - standing.length, 1);
 
         this.cells[cell] = spawn;
         spawns.push(spawn);

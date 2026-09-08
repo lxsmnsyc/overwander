@@ -1,5 +1,5 @@
 import type { Stats } from '../constants/stats';
-import type { Types } from '../constants/types';
+import { Types } from '../constants/types';
 import type Abilities from '../ids/abilities';
 import type Biome from '../ids/biome';
 import type { TimeOfDay } from '../ids/biome';
@@ -266,6 +266,19 @@ export function getSpeciesData(species: Species): SpeciesData {
  * another one. A registration that says nothing is one: variants are
  * the exception, and the exception is what gets written down
  */
+/**
+ * Whether a species can be in the water rather than only beside it.
+ *
+ * Asked of the overworld when a lake or a river runs through dry
+ * country: the pool there was written for the land around it, and a
+ * Rhyhorn standing in the middle of a pond is the pool answering a
+ * question nobody asked it. A country that is itself water is not
+ * asked, since everything in its pool was chosen knowing that
+ */
+export function swims(species: Species): boolean {
+  return getSpeciesData(species).types.includes(Types.Water);
+}
+
 export function isBaseForm(species: Species): boolean {
   return getSpeciesData(species).baseForm !== false;
 }

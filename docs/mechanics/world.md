@@ -117,6 +117,12 @@ Nothing is ever placed against rock, so every landmark has open ground on all
 sides of it. Scenery keeps to dry land, and where a lake has taken most of a
 chunk there is simply less of it.
 
+A lake or a river running through dry country holds only what can be in water.
+The country's pokemon were chosen for the land around the water, so a Rhyhorn
+keeps to the bank and a Poliwag does not. A country that is water itself, an
+ocean or a swamp, is not held to this: everything that turns up there was chosen
+knowing where it would be standing.
+
 Scenery and landmarks keep a clear cell on every side of them, diagonals
 included, so there is always somewhere to stand beside whatever a player has
 walked over to. Two of them either side of a chunk boundary may occasionally

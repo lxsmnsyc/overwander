@@ -49,6 +49,7 @@ import {
   getSpeciesAbilityPools,
   getSpeciesData,
   registerSpecies,
+  swims,
 } from '../../src/data/species';
 import { MAX_LEVEL } from '../../src/data/constants/levels';
 import { WILD_HELD_COMMON, WILD_HELD_UNCOMMON } from '../../src/data/species/held-items';
@@ -3601,7 +3602,10 @@ describe('chunk snapshot', () => {
     // fixtures are not standing on and stops
     const packed = new ChunkSnapshot(chunk, NOON);
     // Whatever is going on this hour holds its cell too, so the room
-    // left is what nothing else is standing on
+    // left is what nothing else is standing on. The water is not room
+    // for everybody: a lake in dry country takes swimmers only, so it
+    // is what stops this filling the grid corner to corner
+    const biomes = chunk.getCellBiomes();
     const room = centeredCells(PLACEMENT_AREA).filter(
       (cell) =>
         !chunk.getLandmarkCells().has(cell) &&
@@ -3609,8 +3613,46 @@ describe('chunk snapshot', () => {
         !chunk.getRockCells().has(cell) &&
         !packed.getPhenomena().has(cell),
     );
+    const dry = room.filter(
+      (cell) => chunk.getCellRole(cell) !== 'water' || isWaterBiome(biomes[cell]),
+    );
 
-    expect(packed.getSpawns(1000)).toHaveLength(room.length);
+    packed.getSpawns(1000);
+
+    const filled = [...packed.getSpawnCells().keys()];
+
+    expect(filled.length).toBeGreaterThanOrEqual(dry.length);
+    expect(filled.length).toBeLessThanOrEqual(room.length);
+    for (const cell of dry) {
+      expect(filled).toContain(cell);
+    }
+  });
+
+  it('leaves a lake in dry country to the things that swim in it', () => {
+    const world = new World('overworld');
+    const NOON = 12 * 60 * 60 * 1000;
+    let checked = 0;
+
+    // A Rhyhorn standing in the middle of a pond is the country's pool
+    // answering a question nobody asked it. A country that is itself
+    // water is not asked: everything in its pool was chosen knowing so
+    for (let x = -12; x < 12 && checked < 24; x++) {
+      for (let y = -12; y < 12 && checked < 24; y++) {
+        const chunk = world.getChunk(x, y);
+        const biomes = chunk.getCellBiomes();
+        const snapshot = new ChunkSnapshot(chunk, NOON);
+
+        snapshot.getSpawns(SPAWN_COUNT);
+        for (const [cell, spawn] of snapshot.getSpawnCells()) {
+          if (chunk.getCellRole(cell) !== 'water' || isWaterBiome(biomes[cell])) {
+            continue;
+          }
+          checked++;
+          expect(swims(spawn[0])).toBe(true);
+        }
+      }
+    }
+    expect(checked).toBeGreaterThan(0);
   });
 
   it('places fixtures right up to the chunk edge, leaving no lattice of bare corridors', () => {

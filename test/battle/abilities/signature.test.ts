@@ -11,27 +11,30 @@ import {
   OVERPRESSURE_POWER_SCALE,
   RELENTLESS_MAX_STACKS,
   RELENTLESS_STEP,
-  SAND_COAT_DEFENSE_SCALE,
-  SAND_COAT_EXPOSED_SCALE,
-  SAND_COAT_POWER_SCALE,
   SEED_CACHE_BANK_FRACTION,
   SEED_CACHE_CAP_FRACTION,
   SLIPSTREAM_SCALE,
   TWIN_STINGER_POWER_SCALE,
 } from '../../../src/battle/abilities/signature/bulbasaur-to-pikachu';
-import type Battle from '../../../src/battle/core';
 import {
-  BattleEvents,
-  EffectType,
-  MoveTargetType,
-  type UnitAttackEvent,
-} from '../../../src/battle/events';
+  BROOD_FURY_FALLEN_SCALE,
+  BROOD_FURY_HURT_SCALE,
+  CURL_UP_MAX_STACKS,
+  CURL_UP_STEP,
+  NINE_TAILS_MAX_STACKS,
+  NINE_TAILS_STEP,
+  WARLORD_MAX_STACKS,
+  WARLORD_STEP,
+  WISHING_WELL_FRACTION,
+} from '../../../src/battle/abilities/signature/sandshrew-to-oddish';
+import type Battle from '../../../src/battle/core';
+import { BattleEvents, EffectType, MoveTargetType } from '../../../src/battle/events';
 import type Unit from '../../../src/battle/unit';
 import { Stats } from '../../../src/data/constants/stats';
 import { Types } from '../../../src/data/constants/types';
 import Abilities from '../../../src/data/ids/abilities';
 import { MoveCategories, MoveTargets, Moves } from '../../../src/data/ids/moves';
-import { Statuses, Weathers } from '../../../src/data/ids/status';
+import { Statuses } from '../../../src/data/ids/status';
 import { createBattle, createUnit, pinRandom } from '../harness';
 
 const NONE_CAUSE = { type: EffectType.None } as const;
@@ -165,45 +168,15 @@ describe('Seed Cache', () => {
   });
 });
 
-/** A synthetic blow, for the resolvers that answer questions about one */
-function makeAttack(
-  source: Unit,
-  target: Unit,
-  move: Moves,
-  type: Types,
-  category: MoveCategories,
-): UnitAttackEvent {
-  return {
-    id: 'UnitAttack',
+/** The unit reaching for a move, which is when a residual is paid */
+function act(battle: Battle, unit: Unit): void {
+  battle.emit(BattleEvents.UnitCast, {
+    id: 'UnitCast',
     disabled: false,
-    source,
-    target,
-    move,
-    value: 0,
-    category,
-    type,
-    flags: 0,
-    success: false,
-  };
-}
-
-function resolveAttackStat(
-  battle: Battle,
-  parent: UnitAttackEvent,
-  unit: Unit,
-  stat: Stats,
-  value: number,
-): number {
-  const event = {
-    id: 'UnitAttackResolveStat',
-    disabled: false,
-    parent,
-    unit,
-    stat,
-    value,
-  };
-  battle.emit(BattleEvents.UnitAttackResolveStat, event);
-  return event.value;
+    source: unit,
+    move: Moves.Tackle,
+    target: { type: MoveTargetType.None },
+  });
 }
 
 /** One resolved use of a move, landed or missed */
@@ -605,31 +578,163 @@ describe('Chain Lightning', () => {
   });
 });
 
-describe('Sand Coat', () => {
-  it('is armour in a storm and dead weight in clear air', () => {
+describe('Curl Up', () => {
+  it('rolls tighter with every hit and spends the roll on the next physical move', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.CurlUp);
+
+    const target = { type: MoveTargetType.Unit, unit: enemy } as const;
+    const bareDefense = holder.checkStat(Stats.Defense, 0);
+    const maxHP = holder.checkStat(Stats.HP, 0);
+
+    for (let taken = 1; taken <= CURL_UP_MAX_STACKS + 2; taken += 1) {
+      enemy.damage(NONE_CAUSE, holder, 1, 0);
+      holder.setHealth(maxHP);
+
+      const curled = Math.min(CURL_UP_MAX_STACKS, taken);
+
+      expect(holder.checkStat(Stats.Defense, 0)).toBeCloseTo(
+        bareDefense * (1 + CURL_UP_STEP * curled),
+        5,
+      );
+      expect(holder.checkMovePower(Moves.Tackle, target)).toBeCloseTo(
+        40 * (1 + CURL_UP_STEP * curled),
+        5,
+      );
+    }
+
+    // A special move leaves the roll where it is
+    holder.attack(enemy, Moves.Ember, 40, Types.Fire, MoveCategories.Special, 0);
+
+    expect(holder.checkStat(Stats.Defense, 0)).toBeCloseTo(
+      bareDefense * (1 + CURL_UP_STEP * CURL_UP_MAX_STACKS),
+      5,
+    );
+
+    holder.attack(enemy, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(holder.checkStat(Stats.Defense, 0)).toBe(bareDefense);
+    expect(holder.checkMovePower(Moves.Tackle, target)).toBe(40);
+  });
+});
+
+describe('Brood Fury', () => {
+  it('rises for a hurt ally and stays up once one has fallen', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const holder = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.BroodFury);
+
+    const target = { type: MoveTargetType.Unit, unit: enemy } as const;
+
+    expect(holder.checkMovePower(Moves.Tackle, target)).toBe(40);
+
+    ally.setHealth(ally.checkStat(Stats.HP, 0) / 2);
+
+    expect(holder.checkMovePower(Moves.Tackle, target)).toBeCloseTo(40 * BROOD_FURY_HURT_SCALE, 5);
+
+    ally.faint(enemy);
+
+    expect(holder.checkMovePower(Moves.Tackle, target)).toBeCloseTo(
+      40 * BROOD_FURY_FALLEN_SCALE,
+      5,
+    );
+  });
+
+  it('is nothing to a mother fighting alone', () => {
     const { battle, teamA, teamB } = createBattle();
     const holder = createUnit(battle, teamA);
     const enemy = createUnit(battle, teamB);
-    holder.addAbility(Abilities.SandCoat);
+    holder.addAbility(Abilities.BroodFury);
 
-    const target = { type: MoveTargetType.None } as const;
-    const bareDefense = holder.checkStat(Stats.Defense, 0);
-    const incoming = makeAttack(enemy, holder, Moves.Tackle, Types.Normal, MoveCategories.Physical);
+    holder.setHealth(1);
+    enemy.setHealth(1);
 
-    // No sand up: no coat, and everything lands harder
-    expect(holder.checkMovePower(Moves.Dig, target)).toBe(80);
-    expect(resolveAttackStat(battle, incoming, enemy, Stats.Attack, 100)).toBeCloseTo(
-      100 * SAND_COAT_EXPOSED_SCALE,
+    expect(holder.checkMovePower(Moves.Tackle, { type: MoveTargetType.Unit, unit: enemy })).toBe(
+      40,
+    );
+  });
+});
+
+describe('Warlord', () => {
+  it('pays for variety and stops paying for repetition', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Warlord);
+
+    const atEnemy = { type: MoveTargetType.Unit, unit: enemy } as const;
+
+    holder.attack(enemy, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
+    enemy.setHealth(enemy.checkStat(Stats.HP, 0));
+
+    // The move it just used is the one worth nothing extra
+    expect(holder.checkMovePower(Moves.Tackle, atEnemy)).toBe(40);
+    expect(holder.checkMovePower(Moves.Scratch, atEnemy)).toBeCloseTo(40 * (1 + WARLORD_STEP), 5);
+
+    for (const move of [Moves.Scratch, Moves.Pound, Moves.Peck, Moves.Bite, Moves.Lick]) {
+      holder.attack(enemy, move, 40, Types.Normal, MoveCategories.Physical, 0);
+      enemy.setHealth(enemy.checkStat(Stats.HP, 0));
+    }
+
+    expect(holder.checkMovePower(Moves.Tackle, atEnemy)).toBeCloseTo(
+      40 * (1 + WARLORD_STEP * WARLORD_MAX_STACKS),
       5,
     );
 
-    teamA.weather.current = Weathers.Sandstorm;
+    // Landing the same move twice puts it back to nothing
+    holder.attack(enemy, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
+    holder.attack(enemy, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
 
-    expect(holder.checkStat(Stats.Defense, 0)).toBeCloseTo(
-      bareDefense * SAND_COAT_DEFENSE_SCALE,
-      5,
-    );
-    expect(holder.checkMovePower(Moves.Dig, target)).toBeCloseTo(80 * SAND_COAT_POWER_SCALE, 5);
-    expect(resolveAttackStat(battle, incoming, enemy, Stats.Attack, 100)).toBe(100);
+    expect(holder.checkMovePower(Moves.Scratch, atEnemy)).toBe(40);
+  });
+});
+
+describe('Wishing Well', () => {
+  it('heals the ally furthest from full each time it acts, never itself', () => {
+    const { battle, teamA } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const hurt = createUnit(battle, teamA);
+    const scratched = createUnit(battle, teamA);
+    holder.addAbility(Abilities.WishingWell);
+
+    const maxHP = hurt.checkStat(Stats.HP, 0);
+    holder.setHealth(1);
+    hurt.setHealth(maxHP / 4);
+    scratched.setHealth(maxHP - 1);
+
+    act(battle, holder);
+
+    expect(hurt.health).toBeCloseTo(maxHP / 4 + maxHP * WISHING_WELL_FRACTION, 5);
+    expect(scratched.health).toBe(maxHP - 1);
+    expect(holder.health).toBe(1);
+  });
+});
+
+describe('Nine Tails', () => {
+  it('buys Special Attack with every hit it survives, up to nine', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.NineTails);
+
+    const bare = holder.checkStat(Stats.SpecialAttack, 0);
+    const maxHP = holder.checkStat(Stats.HP, 0);
+
+    for (let taken = 1; taken <= NINE_TAILS_MAX_STACKS + 2; taken += 1) {
+      enemy.damage(NONE_CAUSE, holder, 1, 0);
+      holder.setHealth(maxHP);
+
+      expect(holder.checkStat(Stats.SpecialAttack, 0)).toBeCloseTo(
+        bare * (1 + NINE_TAILS_STEP * Math.min(NINE_TAILS_MAX_STACKS, taken)),
+        5,
+      );
+    }
   });
 });

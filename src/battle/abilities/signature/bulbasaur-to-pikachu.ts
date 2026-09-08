@@ -7,7 +7,7 @@ import {
   MoveAttackFlags,
   MoveCategories,
   MoveTargets,
-  Moves,
+  type Moves,
   affectsFoesOnly,
 } from '../../../data/ids/moves';
 import { getMoveData } from '../../../data/moves';
@@ -22,16 +22,15 @@ import {
 import { MergedLifecycle } from '../../lifecycle';
 import { MULTI_HIT_MOVES } from '../../moves/multi-hit';
 import type Unit from '../../unit';
-import { isWeatherSandstorm, unitTarget } from '../../utils';
+import { unitTarget } from '../../utils';
 import { createAbility } from '../__create';
-import { createDamageTaken, createUnitCounter, createUnitState, fieldHasAbility } from './__create';
-
-/**
- * The moves the second needle never applies to: a confused unit
- * hitting itself, a bare fallback swing, and the last resort. None of
- * them are the pokemon's own attack
- */
-const NOT_STUNG = new Set<Moves>([Moves._Confused, Moves.Struggle, Moves.Attack]);
+import {
+  createDamageTaken,
+  createUnitCounter,
+  createUnitState,
+  fieldHasAbility,
+  isPhysicalMove,
+} from './__create';
 
 /**
  * Whether the second needle applies: a physical move that strikes
@@ -39,11 +38,7 @@ const NOT_STUNG = new Set<Moves>([Moves._Confused, Moves.Struggle, Moves.Attack]
  * own count
  */
 function isTwinStingerMove(move: Moves): boolean {
-  return (
-    !NOT_STUNG.has(move) &&
-    MULTI_HIT_MOVES[move] == null &&
-    getMoveData(move).category === MoveCategories.Physical
-  );
+  return isPhysicalMove(move) && MULTI_HIT_MOVES[move] == null;
 }
 
 /** What share of a blow the bulb keeps hold of */
@@ -87,13 +82,6 @@ export const CONSTRICT_CAST_SCALE = 1.2;
 
 /** What the arc carries to the next enemy along */
 export const CHAIN_LIGHTNING_FRACTION = 1 / 3;
-
-/** What the desert coat is worth where there is sand to fill it */
-export const SAND_COAT_DEFENSE_SCALE = 1.5;
-export const SAND_COAT_POWER_SCALE = 1.2;
-
-/** What it costs to wear a sand coat with no sand in the air */
-export const SAND_COAT_EXPOSED_SCALE = 1.1;
 
 /**
  * Who the arc jumps to: the next enemy still standing that is not the
@@ -475,46 +463,6 @@ const bulbasaurToPikachu = [
       }),
     ]);
   }),
-
-  // Sandshrew: the coat is packed with sand, so it is armour in a
-  // storm and dead weight in clear air
-  createAbility(
-    Abilities.SandCoat,
-    (battle) =>
-      new MergedLifecycle([
-        battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
-          if (
-            event.stat === Stats.Defense &&
-            event.source.hasAbility(Abilities.SandCoat) &&
-            isWeatherSandstorm(event.source)
-          ) {
-            event.value *= SAND_COAT_DEFENSE_SCALE;
-          }
-        }),
-        battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
-          if (
-            event.power != null &&
-            event.source.hasAbility(Abilities.SandCoat) &&
-            isWeatherSandstorm(event.source) &&
-            event.source.checkMoveType(event.move, event.target) === Types.Ground
-          ) {
-            event.power *= SAND_COAT_POWER_SCALE;
-          }
-        }),
-        battle.on(BattleEvents.UnitAttackResolveStat, EventPriority.Post, (event) => {
-          const parent = event.parent;
-
-          if (
-            event.unit === parent.source &&
-            (event.stat === Stats.Attack || event.stat === Stats.SpecialAttack) &&
-            parent.target.hasAbility(Abilities.SandCoat) &&
-            !isWeatherSandstorm(parent.target)
-          ) {
-            event.value *= SAND_COAT_EXPOSED_SCALE;
-          }
-        }),
-      ]),
-  ),
 ];
 
 export default bulbasaurToPikachu;

@@ -311,7 +311,11 @@ const enum Abilities {
   Relentless = 200008,
   Constrict = 200009,
   ChainLightning = 200010,
-  SandCoat = 200011,
+  CurlUp = 200011,
+  BroodFury = 200012,
+  Warlord = 200013,
+  WishingWell = 200014,
+  NineTails = 200015,
 }
 
 export default Abilities;

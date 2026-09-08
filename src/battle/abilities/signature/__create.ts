@@ -1,5 +1,7 @@
 import { AttackPriority, EventPriority } from '../../../core/event-emitter';
 import type Abilities from '../../../data/ids/abilities';
+import { MoveCategories, Moves } from '../../../data/ids/moves';
+import { getMoveData } from '../../../data/moves';
 import type Battle from '../../core';
 import { BattleEvents, type UnitDamageEvent } from '../../events';
 import type { Lifecycle } from '../../lifecycle';
@@ -116,4 +118,16 @@ export function enemyHolder(battle: Battle, unit: Unit, ability: Abilities): Uni
   }
 
   return undefined;
+}
+
+/**
+ * The moves no signature reads: a confused unit hitting itself, the
+ * bare fallback swing and the last resort. None of them are the
+ * pokemon's own attack, and one of them has no registry entry to ask
+ */
+const PSEUDO_MOVES = new Set<Moves>([Moves._Confused, Moves.Struggle, Moves.Attack]);
+
+/** Whether this is a physical move the pokemon actually chose */
+export function isPhysicalMove(move: Moves): boolean {
+  return !PSEUDO_MOVES.has(move) && getMoveData(move).category === MoveCategories.Physical;
 }

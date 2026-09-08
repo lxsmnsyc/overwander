@@ -27,4 +27,29 @@ export default function registerSignatureAbilities(): void {
     description:
       'Water moves hit 1.3x, but each one it lands adds 20% to its own cooldowns, up to 60%. A move of another type clears the fouling.',
   });
+
+  // Caterpie
+  registerAbility(Abilities.PowderBurst, {
+    name: 'Powder Burst',
+    description: 'Its status moves reach every enemy on the field, not only the one it aimed at.',
+  });
+
+  // Weedle
+  registerAbility(Abilities.TwinStinger, {
+    name: 'Twin Stinger',
+    description:
+      'Each physical move it uses strikes twice at 60% power, so anything that answers a landed blow answers both.',
+  });
+
+  // Pidgey
+  registerAbility(Abilities.Slipstream, {
+    name: 'Slipstream',
+    description: 'Cast times are 20% shorter for everybody on the field, enemies included.',
+  });
+
+  // Rattata
+  registerAbility(Abilities.Nibble, {
+    name: 'Nibble',
+    description: "Every move it lands takes another 1/32 of the target's HP, whatever its armour.",
+  });
 }

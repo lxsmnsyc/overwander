@@ -304,6 +304,10 @@ const enum Abilities {
   SeedCache = 200001,
   Afterburn = 200002,
   Overpressure = 200003,
+  PowderBurst = 200004,
+  TwinStinger = 200005,
+  Slipstream = 200006,
+  Nibble = 200007,
 }
 
 export default Abilities;

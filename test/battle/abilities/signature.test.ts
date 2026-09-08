@@ -1,20 +1,24 @@
 import { describe, expect, it } from 'vitest';
+import { AttackPriority } from '../../../src/core/event-emitter';
 import {
   AFTERBURN_MAX_STACKS,
   AFTERBURN_STEP,
+  NIBBLE_FRACTION,
   OVERPRESSURE_COOLDOWN_STEP,
   OVERPRESSURE_MAX_STACKS,
   OVERPRESSURE_POWER_SCALE,
   SEED_CACHE_BANK_FRACTION,
   SEED_CACHE_CAP_FRACTION,
-} from '../../../src/battle/abilities/signature';
+  SLIPSTREAM_SCALE,
+  TWIN_STINGER_POWER_SCALE,
+} from '../../../src/battle/abilities/signature/bulbasaur-to-pikachu';
 import type Battle from '../../../src/battle/core';
 import { BattleEvents, EffectType, MoveTargetType } from '../../../src/battle/events';
 import type Unit from '../../../src/battle/unit';
 import { Stats } from '../../../src/data/constants/stats';
 import { Types } from '../../../src/data/constants/types';
 import Abilities from '../../../src/data/ids/abilities';
-import { MoveCategories, Moves } from '../../../src/data/ids/moves';
+import { MoveCategories, MoveTargets, Moves } from '../../../src/data/ids/moves';
 import { createBattle, createUnit, pinRandom } from '../harness';
 
 const NONE_CAUSE = { type: EffectType.None } as const;
@@ -301,5 +305,132 @@ describe('Overpressure', () => {
     rollMove(battle, holder, enemy, Moves.HydroPump, false);
 
     expect(holder.checkMoveCooldown(Moves.WaterGun, target)).toBe(bare);
+  });
+});
+
+describe('Slipstream', () => {
+  it('shortens every wind-up on the field, the enemy included', () => {
+    const plain = createBattle();
+    const bare = createUnit(plain.battle, plain.teamA).checkMoveCastTime(Moves.Flamethrower, {
+      type: MoveTargetType.None,
+    });
+
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Slipstream);
+
+    const target = { type: MoveTargetType.None } as const;
+
+    expect(holder.checkMoveCastTime(Moves.Flamethrower, target)).toBeCloseTo(
+      bare * SLIPSTREAM_SCALE,
+      5,
+    );
+    expect(enemy.checkMoveCastTime(Moves.Flamethrower, target)).toBeCloseTo(
+      bare * SLIPSTREAM_SCALE,
+      5,
+    );
+  });
+});
+
+describe('Nibble', () => {
+  it('takes a bite on top of every move that lands', () => {
+    const plain = createBattle();
+    pinRandom(plain.battle, 1);
+    const plainHolder = createUnit(plain.battle, plain.teamA);
+    const plainEnemy = createUnit(plain.battle, plain.teamB);
+    const bare = dealDamage(
+      plainHolder,
+      plainEnemy,
+      Moves.Tackle,
+      40,
+      Types.Normal,
+      MoveCategories.Physical,
+    );
+
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Nibble);
+
+    const bitten = dealDamage(
+      holder,
+      enemy,
+      Moves.Tackle,
+      40,
+      Types.Normal,
+      MoveCategories.Physical,
+    );
+
+    expect(bitten - bare).toBeCloseTo(enemy.checkStat(Stats.HP, 0) * NIBBLE_FRACTION, 5);
+  });
+});
+
+describe('Powder Burst', () => {
+  it('widens a status move it aims at one enemy over the whole far side', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    createUnit(battle, teamB);
+    holder.addAbility(Abilities.PowderBurst);
+
+    // A status move aimed at one enemy is recast at nobody, which is
+    // what fans it out over the enemy side
+    expect(holder.checkMoveTargeting(Moves.SleepPowder).target).toBe(MoveTargets.None);
+
+    // An attacking move still picks its one target
+    expect(holder.checkMoveTargeting(Moves.Tackle).target).toBe(MoveTargets.Unit);
+  });
+});
+
+describe('Twin Stinger', () => {
+  it('lands a physical move twice at reduced power', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.TwinStinger);
+
+    const target = { type: MoveTargetType.Unit, unit: enemy } as const;
+
+    expect(holder.checkMovePower(Moves.Tackle, target)).toBeCloseTo(
+      40 * TWIN_STINGER_POWER_SCALE,
+      5,
+    );
+
+    let landed = 0;
+    battle.on(BattleEvents.UnitAttack, AttackPriority.Cleanup, (event) => {
+      if (event.source === holder && event.success) {
+        landed += 1;
+      }
+    });
+
+    holder.attack(enemy, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(landed).toBe(2);
+  });
+
+  it('leaves special moves and moves that already strike several times alone', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.TwinStinger);
+
+    const target = { type: MoveTargetType.Unit, unit: enemy } as const;
+
+    expect(holder.checkMovePower(Moves.Ember, target)).toBe(40);
+    expect(holder.checkMovePower(Moves.DoubleSlap, target)).toBe(15);
+
+    let landed = 0;
+    battle.on(BattleEvents.UnitAttack, AttackPriority.Cleanup, (event) => {
+      if (event.source === holder && event.success) {
+        landed += 1;
+      }
+    });
+
+    holder.attack(enemy, Moves.Ember, 40, Types.Fire, MoveCategories.Special, 0);
+
+    expect(landed).toBe(1);
   });
 });

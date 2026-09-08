@@ -2,6 +2,9 @@ import { describe, expect, it } from 'vitest';
 import {
   AFTERBURN_MAX_STACKS,
   AFTERBURN_STEP,
+  OVERPRESSURE_COOLDOWN_STEP,
+  OVERPRESSURE_MAX_STACKS,
+  OVERPRESSURE_POWER_SCALE,
   SEED_CACHE_BANK_FRACTION,
   SEED_CACHE_CAP_FRACTION,
 } from '../../../src/battle/abilities/signature';
@@ -233,5 +236,70 @@ describe('Afterburn', () => {
     });
 
     expect(holder.checkMoveCastTime(Moves.Flamethrower, target)).toBe(bare);
+  });
+});
+
+describe('Overpressure', () => {
+  it('drives Water moves harder', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Overpressure);
+
+    const target = { type: MoveTargetType.Unit, unit: enemy } as const;
+    const water = holder.checkMovePower(Moves.WaterGun, target);
+    const other = holder.checkMovePower(Moves.Tackle, target);
+
+    expect(water).toBeCloseTo(40 * OVERPRESSURE_POWER_SCALE, 5);
+    expect(other).toBe(40);
+  });
+
+  it('fouls its cooldowns with every shot that lands, and vents on another type', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Overpressure);
+
+    const target = { type: MoveTargetType.Unit, unit: enemy } as const;
+    const bare = holder.checkMoveCooldown(Moves.WaterGun, target);
+
+    expect(bare).toBeGreaterThan(0);
+
+    for (let landed = 1; landed <= OVERPRESSURE_MAX_STACKS; landed += 1) {
+      rollMove(battle, holder, enemy, Moves.WaterGun, true);
+
+      expect(holder.checkMoveCooldown(Moves.WaterGun, target)).toBeCloseTo(
+        bare * (1 + OVERPRESSURE_COOLDOWN_STEP * landed),
+        5,
+      );
+    }
+
+    // Past the cap the fouling holds where it is
+    rollMove(battle, holder, enemy, Moves.WaterGun, true);
+
+    expect(holder.checkMoveCooldown(Moves.WaterGun, target)).toBeCloseTo(
+      bare * (1 + OVERPRESSURE_COOLDOWN_STEP * OVERPRESSURE_MAX_STACKS),
+      5,
+    );
+
+    rollMove(battle, holder, enemy, Moves.Tackle, true);
+
+    expect(holder.checkMoveCooldown(Moves.WaterGun, target)).toBe(bare);
+  });
+
+  it('leaves the cannons clean when a shot misses', () => {
+    const { battle, teamA, teamB } = createBattle();
+    // 100 accuracy is the ceiling, so a pinned roll misses anything short of it
+    pinRandom(battle, 1);
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Overpressure);
+
+    const target = { type: MoveTargetType.Unit, unit: enemy } as const;
+    const bare = holder.checkMoveCooldown(Moves.WaterGun, target);
+
+    rollMove(battle, holder, enemy, Moves.HydroPump, false);
+
+    expect(holder.checkMoveCooldown(Moves.WaterGun, target)).toBe(bare);
   });
 });

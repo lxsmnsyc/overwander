@@ -303,6 +303,7 @@ const enum Abilities {
    */
   SeedCache = 200001,
   Afterburn = 200002,
+  Overpressure = 200003,
 }
 
 export default Abilities;

@@ -21,6 +21,15 @@ export const AFTERBURN_STEP = 0.15;
 /** How many of them the flame holds */
 export const AFTERBURN_MAX_STACKS = 3;
 
+/** What the pressure behind a shot is worth */
+export const OVERPRESSURE_POWER_SCALE = 1.3;
+
+/** What one shot leaves behind on the cannons */
+export const OVERPRESSURE_COOLDOWN_STEP = 0.2;
+
+/** How far the fouling builds */
+export const OVERPRESSURE_MAX_STACKS = 3;
+
 /**
  * A signature ability belongs to one family and is invented for it:
  * nothing in the mainline answers to these names
@@ -146,6 +155,59 @@ const setupAbilities = [
       }),
       battle.on(BattleEvents.UnitFaints, EventPriority.Post, (event) => {
         stacks.delete(event.source);
+      }),
+    ]);
+  }),
+
+  // Squirtle: the shell cannons are worth more the harder they are
+  // driven, and they foul as they go
+  createAbility(Abilities.Overpressure, (battle) => {
+    const fouling = new Map<Unit, number>();
+
+    return new MergedLifecycle([
+      battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
+        if (
+          event.power != null &&
+          event.source.hasAbility(Abilities.Overpressure) &&
+          event.source.checkMoveType(event.move, event.target) === Types.Water
+        ) {
+          event.power *= OVERPRESSURE_POWER_SCALE;
+        }
+      }),
+      battle.on(BattleEvents.CheckUnitMoveCooldown, EventPriority.Post, (event) => {
+        const held = fouling.get(event.source) ?? 0;
+
+        if (held > 0 && event.source.hasAbility(Abilities.Overpressure)) {
+          event.duration *= 1 + OVERPRESSURE_COOLDOWN_STEP * held;
+        }
+      }),
+      // Only a shot that lands fouls the cannons; anything else it
+      // reaches for vents them
+      battle.on(BattleEvents.UnitTriggerMoveRollHit, EventPriority.Post, (event) => {
+        const parent = event.parent;
+        const source = parent.source;
+
+        if (!source.hasAbility(Abilities.Overpressure)) {
+          return;
+        }
+
+        if (source.checkMoveType(parent.move, parent.target) !== Types.Water) {
+          fouling.delete(source);
+          return;
+        }
+
+        if (event.hit) {
+          fouling.set(source, Math.min(OVERPRESSURE_MAX_STACKS, (fouling.get(source) ?? 0) + 1));
+          source.triggerAbility(Abilities.Overpressure);
+        }
+      }),
+      battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+        if (!event.reactivation) {
+          fouling.delete(event.source);
+        }
+      }),
+      battle.on(BattleEvents.UnitFaints, EventPriority.Post, (event) => {
+        fouling.delete(event.source);
       }),
     ]);
   }),

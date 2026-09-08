@@ -20,4 +20,11 @@ export default function registerSignatureAbilities(): void {
     description:
       'Each Fire move it lands cuts 15% off its cast and channel times, up to 45%. A miss or a move of another type puts it back to 0.',
   });
+
+  // Squirtle
+  registerAbility(Abilities.Overpressure, {
+    name: 'Overpressure',
+    description:
+      'Water moves hit 1.3x, but each one it lands adds 20% to its own cooldowns, up to 60%. A move of another type clears the fouling.',
+  });
 }

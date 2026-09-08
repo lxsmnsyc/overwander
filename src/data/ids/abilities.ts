@@ -332,6 +332,10 @@ const enum Abilities {
   Digest = 200029,
   TentacleGrasp = 200030,
   SolidCore = 200031,
+  Gallop = 200032,
+  DelayedReaction = 200033,
+  RepulsionField = 200034,
+  LeekDuelist = 200035,
 }
 
 export default Abilities;

@@ -17,6 +17,14 @@ import {
   TWIN_STINGER_POWER_SCALE,
 } from '../../../src/battle/abilities/signature/bulbasaur-to-pikachu';
 import {
+  DELAYED_REACTION_DELAY,
+  DELAYED_REACTION_SHARE,
+  GALLOP_MAX_STACKS,
+  GALLOP_STEP,
+  LEEK_DUELIST_CRITICAL_SCALE,
+  LEEK_DUELIST_CRITICAL_STAGES,
+  LEEK_DUELIST_EXPOSED_SCALE,
+  REPULSION_FIELD_SCALE,
   SOLID_CORE_PHYSICAL_SCALE,
   SOLID_CORE_SPECIAL_SCALE,
 } from '../../../src/battle/abilities/signature/geodude-to-drowzee';
@@ -1262,5 +1270,119 @@ describe('Solid Core', () => {
 
     // Its own defensive stat is left alone
     expect(resolveAttackStat(battle, physical, holder, Stats.Defense, 100)).toBe(100);
+  });
+});
+
+describe('Gallop', () => {
+  it('gathers speed as it acts and loses it all to one hit', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Gallop);
+
+    const bare = holder.checkStat(Stats.Speed, 0);
+
+    for (let strides = 1; strides <= GALLOP_MAX_STACKS + 2; strides += 1) {
+      act(battle, holder);
+
+      expect(holder.checkStat(Stats.Speed, 0)).toBeCloseTo(
+        bare * (1 + GALLOP_STEP * Math.min(GALLOP_MAX_STACKS, strides)),
+        5,
+      );
+    }
+
+    enemy.damage(NONE_CAUSE, holder, 1, 0);
+
+    expect(holder.checkStat(Stats.Speed, 0)).toBe(bare);
+  });
+});
+
+describe('Delayed Reaction', () => {
+  it('feels half the blow now and the rest in four seconds', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.DelayedReaction);
+
+    const maxHP = holder.checkStat(Stats.HP, 0);
+
+    enemy.damage(NONE_CAUSE, holder, 40, 0);
+
+    expect(holder.health).toBeCloseTo(maxHP - 40 * DELAYED_REACTION_SHARE, 5);
+
+    battle.tick(DELAYED_REACTION_DELAY / 2);
+
+    expect(holder.health).toBeCloseTo(maxHP - 40 * DELAYED_REACTION_SHARE, 5);
+
+    battle.tick(DELAYED_REACTION_DELAY / 2);
+
+    expect(holder.health).toBeCloseTo(maxHP - 40, 5);
+
+    // The debt settles once and does not come round again
+    battle.tick(DELAYED_REACTION_DELAY);
+
+    expect(holder.health).toBeCloseTo(maxHP - 40, 5);
+  });
+});
+
+describe('Repulsion Field', () => {
+  it('dampens special moves from both sides', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.RepulsionField);
+
+    const incoming = makeAttack(enemy, holder, Moves.Ember, Types.Fire, MoveCategories.Special);
+    const outgoing = makeAttack(holder, enemy, Moves.Ember, Types.Fire, MoveCategories.Special);
+    const physical = makeAttack(enemy, holder, Moves.Pound, Types.Normal, MoveCategories.Physical);
+
+    expect(resolveAttackStat(battle, incoming, enemy, Stats.SpecialAttack, 100)).toBeCloseTo(
+      100 * REPULSION_FIELD_SCALE,
+      5,
+    );
+    expect(resolveAttackStat(battle, outgoing, holder, Stats.SpecialAttack, 100)).toBeCloseTo(
+      100 * REPULSION_FIELD_SCALE,
+      5,
+    );
+
+    // Nothing swung rather than thrown
+    expect(resolveAttackStat(battle, physical, enemy, Stats.Attack, 100)).toBe(100);
+  });
+});
+
+describe('Leek Duelist', () => {
+  it('crits more often and harder, and takes everything harder too', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.LeekDuelist);
+
+    const outgoing = makeAttack(holder, enemy, Moves.Pound, Types.Normal, MoveCategories.Physical);
+    const incoming = makeAttack(enemy, holder, Moves.Pound, Types.Normal, MoveCategories.Physical);
+
+    const ratio = {
+      id: 'UnitAttackCheckCriticalRatio',
+      disabled: false,
+      parent: outgoing,
+      value: 0,
+    };
+    battle.emit(BattleEvents.UnitAttackCheckCriticalRatio, ratio);
+
+    expect(ratio.value).toBe(LEEK_DUELIST_CRITICAL_STAGES);
+
+    const mult = {
+      id: 'UnitAttackResolveCriticalMult',
+      disabled: false,
+      parent: outgoing,
+      value: 0,
+    };
+    battle.emit(BattleEvents.UnitAttackResolveCriticalMult, mult);
+
+    expect(mult.value).toBeCloseTo(2 * LEEK_DUELIST_CRITICAL_SCALE, 5);
+
+    expect(resolveAttackStat(battle, incoming, enemy, Stats.Attack, 100)).toBeCloseTo(
+      100 * LEEK_DUELIST_EXPOSED_SCALE,
+      5,
+    );
   });
 });

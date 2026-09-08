@@ -4,7 +4,7 @@ import type Biome from '../data/ids/biome';
 import { getBiome } from '../data/ids/biome';
 import type Weather from '../data/overworld/weather';
 import { classifyWeather } from '../data/overworld/weather';
-import Chunk from './chunk';
+import Chunk, { CHUNK_CELLS } from './chunk';
 
 /**
  * How many chunks one climate noise cell spans: lower values make
@@ -13,11 +13,33 @@ import Chunk from './chunk';
 const CLIMATE_FREQUENCY = 1 / 24;
 
 /**
- * Climate is sampled at the chunk center: integer chunk coordinates
- * would land exactly on the noise lattice, where Perlin noise is
- * always zero and every chunk would share one biome
+ * The same field read a cell at a time. Climate belongs to the ground
+ * rather than to the chunk, so a country's edge falls where the field
+ * crosses rather than on a chunk boundary, and one chunk can hold two
+ * of them
+ */
+const CELL_CLIMATE_FREQUENCY = CLIMATE_FREQUENCY / CHUNK_CELLS;
+
+/**
+ * Climate is sampled at the cell center: integer coordinates would
+ * land exactly on the noise lattice, where Perlin noise is always
+ * zero
  */
 const CLIMATE_OFFSET = 0.5;
+
+/**
+ * How far the climate sample is dragged sideways before it is read,
+ * in cells, and how quickly that drag turns.
+ *
+ * Read straight, a climate field draws countries as smooth ovals and
+ * their borders as arcs. The drag is two more fields pulling the
+ * sample point about, which is what puts bays, tongues and inlets in
+ * a border without touching the climate itself. It is a good deal
+ * finer than the climate is, or it would only move the countries
+ * rather than fray them
+ */
+const WARP_REACH = 20;
+const WARP_FREQUENCY = 1 / 96;
 
 /**
  * Perlin values cluster near zero, which starves the biomes whose
@@ -87,6 +109,15 @@ export function clampToWorld(value: number): number {
   return Math.min(WORLD_MAX, Math.max(WORLD_MIN, Math.trunc(value)));
 }
 
+/** The lowest and highest cell the world has, on either axis */
+export const WORLD_CELL_MIN = WORLD_MIN * CHUNK_CELLS;
+export const WORLD_CELL_MAX = (WORLD_MAX + 1) * CHUNK_CELLS - 1;
+
+/** The nearest cell inside the world, for the reason `clampToWorld` is */
+export function clampToWorldCell(value: number): number {
+  return Math.min(WORLD_CELL_MAX, Math.max(WORLD_CELL_MIN, Math.trunc(value)));
+}
+
 /**
  * The overworld: one seed deterministically fans out into three
  * climate noise channels. The derivation draw order (humidity,
@@ -113,6 +144,17 @@ export default class World {
   readonly wetness: PerlinNoise;
   readonly energy: PerlinNoise;
   /**
+   * The two the climate sample is dragged by, and then the two the
+   * ground is cut from: where water gathers, and where the rock comes
+   * through. Drawn after every channel that came before them, since
+   * the draw order is the world format and inserting one among the
+   * others would reshape every world
+   */
+  readonly warpX: PerlinNoise;
+  readonly warpY: PerlinNoise;
+  readonly lakes: PerlinNoise;
+  readonly stone: PerlinNoise;
+  /**
    * Chunk coordinates to the biome their climate classified as. A
    * biome is a pure function of the seed and the coordinates, so a
    * remembered one can never go stale
@@ -127,6 +169,34 @@ export default class World {
     this.temperature = new PerlinNoise(String(rng.int32()));
     this.wetness = new PerlinNoise(String(rng.int32()));
     this.energy = new PerlinNoise(String(rng.int32()));
+    this.warpX = new PerlinNoise(String(rng.int32()));
+    this.warpY = new PerlinNoise(String(rng.int32()));
+    this.lakes = new PerlinNoise(String(rng.int32()));
+    this.stone = new PerlinNoise(String(rng.int32()));
+  }
+
+  /**
+   * The biome one cell of ground belongs to.
+   *
+   * This is where a biome is decided now: a chunk has no climate of
+   * its own, only the ground inside it, so a border runs through a
+   * chunk wherever the field says it does
+   */
+  getCellBiome(cellX: number, cellY: number): Biome {
+    const x = clampToWorldCell(cellX);
+    const y = clampToWorldCell(cellY);
+    const drift = (x + CLIMATE_OFFSET) * WARP_FREQUENCY;
+    const wander = (y + CLIMATE_OFFSET) * WARP_FREQUENCY;
+    const sampleX =
+      (x + CLIMATE_OFFSET + this.warpX.noise(drift, wander) * WARP_REACH) * CELL_CLIMATE_FREQUENCY;
+    const sampleY =
+      (y + CLIMATE_OFFSET + this.warpY.noise(drift, wander) * WARP_REACH) * CELL_CLIMATE_FREQUENCY;
+
+    return getBiome(
+      spreadNoise(this.humidity.noise(sampleX, sampleY)),
+      spreadNoise(this.temperature.noise(sampleX, sampleY)),
+      spreadNoise(this.elevation.noise(sampleX, sampleY)),
+    );
   }
 
   /**
@@ -162,7 +232,14 @@ export default class World {
    * not exist
    */
   /**
-   * What a chunk's climate classifies as, without building the chunk.
+   * The biome a chunk counts as as a whole: the one its middle cell
+   * belongs to.
+   *
+   * The ground inside it may be two or three countries, and what is
+   * drawn reads them a cell at a time. This is for everything that
+   * needs one answer for the chunk: what the map paints, what the
+   * place is called, what the sky is classified against and which
+   * pool the window's spawns are drawn from.
    *
    * The map draws tens of thousands of these at once and wants nothing
    * else about any of them; going through `getChunk` would allocate a
@@ -185,12 +262,9 @@ export default class World {
       return known;
     }
 
-    const sampleX = (x + CLIMATE_OFFSET) * CLIMATE_FREQUENCY;
-    const sampleY = (y + CLIMATE_OFFSET) * CLIMATE_FREQUENCY;
-    const biome = getBiome(
-      spreadNoise(this.humidity.noise(sampleX, sampleY)),
-      spreadNoise(this.temperature.noise(sampleX, sampleY)),
-      spreadNoise(this.elevation.noise(sampleX, sampleY)),
+    const biome = this.getCellBiome(
+      x * CHUNK_CELLS + CHUNK_CELLS / 2,
+      y * CHUNK_CELLS + CHUNK_CELLS / 2,
     );
 
     if (this.biomes.size >= BIOME_CACHE_LIMIT) {
@@ -204,6 +278,6 @@ export default class World {
     const x = clampToWorld(chunkX);
     const y = clampToWorld(chunkY);
 
-    return new Chunk(x, y, `${this.seed}(${x}, ${y})`, this.getChunkBiome(x, y));
+    return new Chunk(x, y, `${this.seed}(${x}, ${y})`, this.getChunkBiome(x, y), this);
   }
 }

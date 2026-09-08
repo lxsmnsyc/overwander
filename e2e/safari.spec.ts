@@ -1,8 +1,8 @@
 import { type Locator, type Page, expect, test } from '@playwright/test';
-import { CHUNK_CELLS, PLACEMENT_AREA, centeredCells } from '../src/overworld/chunk';
+import { BOARD_CELLS, BOARD_CENTER, boardCells, reachOf } from '../src/canvas/board';
 import { getRegisteredSpecies, getSpeciesData, registerSpecies } from '../src/data/species';
 import { SHEET, claimStarter, dialogNamed, expectOpen, signIn } from './game';
-import { boardOf, nameAt, placeOf, pressCell, pressEdge } from './walk';
+import { boardOf, nameAt, placeOf, pressCell, pressFar } from './walk';
 
 /**
  * Meeting something and catching it.
@@ -59,40 +59,49 @@ const WALK_PACE = 800;
 const WALK_SLACK = 8;
 
 /**
- * The longest anything here waits: a walk from one corner of a chunk to
- * the other, and then some
+ * The longest anything here waits: a walk across the board and then
+ * some
  */
-const WALK_LIMIT = (CHUNK_CELLS * 2 + WALK_SLACK) * WALK_PACE;
+const WALK_LIMIT = (BOARD_CELLS + WALK_SLACK) * WALK_PACE;
 
 /**
- * Where the middle of the chunk is, which is where a player who has
- * just arrived in one is standing. Spawns are tried nearest-first
- * against it, so the test walks the short way to something rather than
- * the length of the board
+ * How many times one stretch presses for the far side of the board.
+ * Two crosses a chunk boundary from anywhere, since one press walks
+ * the player half the board's width
  */
-const MIDDLE = CHUNK_CELLS / 2;
+const EDGE_PUSHES = 2;
 
 /**
- * How far a cell is from the middle of the chunk, in straight steps —
- * which is what the walk is measured in
+ * How far out from the player the sweep looks, in cells. It is a round
+ * trip to the browser per cell, so it reads a near neighbourhood
+ * rather than the whole board
+ */
+const SWEEP_REACH = 7;
+
+/**
+ * How far a cell is from the player, in straight steps, which is what
+ * the walk is measured in. The player stands in the middle of the
+ * board and stays there
  */
 function stepsBetween(index: number): number {
   return (
-    Math.abs((index % CHUNK_CELLS) - MIDDLE) + Math.abs(Math.floor(index / CHUNK_CELLS) - MIDDLE)
+    Math.abs((index % BOARD_CELLS) - BOARD_CENTER) +
+    Math.abs(Math.floor(index / BOARD_CELLS) - BOARD_CENTER)
   );
 }
 
 /**
- * Every cell of this chunk with something standing on it
+ * Every cell near the player with something standing on it
  */
 async function findSpawns(page: Page, world: Locator): Promise<number[]> {
   const standing: number[] = [];
 
-  // The central square only. Nothing is ever rolled onto the outer
-  // rows — a player walking in from an edge would land on top of it —
-  // so sweeping them is a hundred round trips to be told about bare
-  // ground
-  for (const cell of centeredCells(PLACEMENT_AREA)) {
+  // Only what is near enough to be worth walking to: the board is a
+  // wide circle, and sweeping the whole of it is four hundred round
+  // trips to be told about bare ground
+  for (const spot of boardCells().filter((cell) => reachOf(cell) <= SWEEP_REACH)) {
+    const cell = spot.y * BOARD_CELLS + spot.x;
+
     if (SPECIES_NAMES.has(await nameAt(page, world, cell))) {
       standing.push(cell);
     }
@@ -135,24 +144,27 @@ async function meetSomething(page: Page, world: Locator): Promise<boolean> {
       // It is gone — the window turned over, it fled, or the way to it
       // was blocked. The next one on the list is as good
     }
-    // Nothing here worth walking to, so walk out of it: a threshold
-    // cell is a step into the chunk beyond, and country this player
-    // has not seen. Alternating sides keeps it from pacing back over
-    // the same ground
+    // Nothing here worth walking to, so walk out of it. A press on the
+    // apron is a walk across the board and one step past it, which is
+    // most of a chunk but not always all of it, so it is pressed again
+    // until the board names somewhere else. Alternating sides keeps it
+    // from pacing back over the same ground
     const here = await placeOf(world);
 
-    await pressEdge(page, world, stretch % 2 === 0 ? { x: -1, y: MIDDLE } : { x: MIDDLE, y: -1 });
-    // Waited on the board saying somewhere else rather than on the
-    // clock: a walk to the edge is however long it is, and a run that
-    // has already crossed should get on with looking
-    await expect
-      .poll(async () => placeOf(world), { timeout: WALK_LIMIT })
-      .not.toBe(here)
-      .catch(() => {
-        // It did not get out of this chunk. Sweeping it again is the
-        // worst this costs, and the run still ends by saying honestly
-        // that it met nothing
-      });
+    for (let push = 0; push < EDGE_PUSHES && (await placeOf(world)) === here; push++) {
+      await pressFar(page, world, stretch % 2 === 0 ? [-1, 0] : [0, -1]);
+      // Waited on the board saying somewhere else rather than on the
+      // clock: a walk to the edge is however long it is, and a run that
+      // has already crossed should get on with looking
+      await expect
+        .poll(async () => placeOf(world), { timeout: WALK_LIMIT })
+        .not.toBe(here)
+        .catch(() => {
+          // It did not get out of this chunk. Pressing again is the
+          // worst this costs, and the run still ends by saying honestly
+          // that it met nothing
+        });
+    }
   }
   return false;
 }

@@ -1,4 +1,10 @@
-import { CHUNK_CELLS } from '../overworld/chunk';
+import {
+  BOARD_CELLS,
+  BOARD_CENTER,
+  BOARD_RADIUS,
+  BOARD_SPAN,
+  VIEW_RADIUS,
+} from '../overworld/board';
 import { GROUND_DEPTH, GROUND_RISE, PITCH } from './tilt';
 
 /**
@@ -16,6 +22,13 @@ import { GROUND_DEPTH, GROUND_RISE, PITCH } from './tilt';
  */
 
 export { PITCH };
+
+/**
+ * How big the board is, which is a fact about the world window rather
+ * than about the picture of it, and is re-exported here because this
+ * is where the rest of the game asks about the board
+ */
+export { BOARD_CELLS, BOARD_CENTER, BOARD_RADIUS, BOARD_SPAN, VIEW_RADIUS };
 
 /**
  * How much of the board's depth survives the tilt. Straight down it
@@ -111,24 +124,35 @@ function raw(point: GroundPoint, height = 0): ProjectedPoint {
 }
 
 /**
- * How many cells of apron are drawn around the chunk. Nothing is ever
- * placed on one — a step onto the apron is a step into the chunk next
- * door — so it is one cell deep: a threshold rather than a road
+ * How far past the board the painting reaches, in cells. Two, because
+ * the ground slides by up to a whole cell between steps and the rim is
+ * drawn a cell outside the board: painted only to the rim, the far
+ * edge would show a strip of nothing every time the camera caught up
+ */
+export const PAINT_CELLS = 2;
+
+/**
+ * How far out the rim is drawn, in cells: the country just past what
+ * the player can press, so the board ends in ground rather than in an
+ * edge
  */
 export const BORDER_CELLS = 1;
 
 /**
- * The apron, in board fractions — the same units the ground is measured
- * in, where the chunk itself runs from 0 to 1
+ * The board and its rim in board fractions: the same units the ground
+ * is measured in, where the whole square runs from 0 to 1. `REACH` is
+ * as far as the player can press, and `RIM` the ring of country drawn
+ * outside it
  */
-const APRON = BORDER_CELLS / CHUNK_CELLS;
+export const REACH = BOARD_RADIUS / BOARD_SPAN;
+export const RIM = (BOARD_RADIUS + BORDER_CELLS) / BOARD_SPAN;
 
 /**
  * How far from the middle the compass marks stand: past the apron and
  * a cell further. Off the board on purpose: a mark lying on the ground
  * reads as scenery rather than as which way the board faces
  */
-const COMPASS_REACH = 0.5 + (BORDER_CELLS + 1) / CHUNK_CELLS;
+const COMPASS_REACH = RIM + 1 / BOARD_SPAN;
 
 /**
  * Room for the mark itself, as a fraction of the picture's width. A
@@ -138,21 +162,23 @@ const COMPASS_REACH = 0.5 + (BORDER_CELLS + 1) / CHUNK_CELLS;
  */
 const MARK_ROOM = 0.03;
 
+/** A ring of ground points about the middle of the board */
+export function groundRing(reach: number, points: number): GroundPoint[] {
+  return Array.from({ length: points }, (_, step) => {
+    const angle = (step / points) * Math.PI * 2;
+
+    return { u: 0.5 + Math.cos(angle) * reach, v: 0.5 + Math.sin(angle) * reach };
+  });
+}
+
 /**
- * Everything that has to be inside the picture: the apron's corners
- * and the four compass marks. The chunk's own corners sit inside the
- * apron's, so they are not measured separately
+ * Everything that has to be inside the picture: the ring the compass
+ * marks stand on, which is the widest thing drawn. A circle rather
+ * than four corners, and sampled rather than taken at the axes: laid
+ * back under the camera a circle is an ellipse, and its widest point
+ * on the screen is not where its widest point on the ground was
  */
-const OUTER: GroundPoint[] = [
-  { u: -APRON, v: -APRON },
-  { u: 1 + APRON, v: -APRON },
-  { u: -APRON, v: 1 + APRON },
-  { u: 1 + APRON, v: 1 + APRON },
-  { u: 0.5, v: 0.5 - COMPASS_REACH },
-  { u: 0.5 + COMPASS_REACH, v: 0.5 },
-  { u: 0.5, v: 0.5 + COMPASS_REACH },
-  { u: 0.5 - COMPASS_REACH, v: 0.5 },
-];
+const OUTER: GroundPoint[] = groundRing(COMPASS_REACH, 96);
 
 const BOUNDS = ((): { left: number; top: number; width: number; height: number } => {
   /**
@@ -353,50 +379,60 @@ export function unprojectGround(x: number, y: number, yaw: Yaw = 0): GroundPoint
 }
 
 /**
- * A cell of the drawn board, across and back from the chunk's top left
- * corner. A chunk cell has both in `0..CHUNK_CELLS - 1`; the apron is
- * one step outside that. The four apron corners are not cells: a
- * player only steps onto the apron straight
+ * A cell of the drawn board, across and back from its top left corner.
+ * A board cell has both in `0..BOARD_CELLS - 1`; the apron is one step
+ * outside that. The four apron corners are not cells: a player only
+ * steps onto the apron straight
  */
 export interface BoardCell {
   x: number;
   y: number;
 }
 
+/** How far a cell's middle is from the player, in cells */
+export function reachOf(cell: BoardCell): number {
+  return Math.hypot(cell.x - BOARD_CENTER, cell.y - BOARD_CENTER);
+}
+
 /**
- * Whether the coordinates name a cell that is actually drawn — the
- * chunk, or the apron beside one of its four edges
+ * Whether the coordinates name a cell the player may press: one inside
+ * the circle the grid is ruled over. The country drawn past it is
+ * looked at rather than walked to a square at a time
  */
 export function isBoardCell(cell: BoardCell): boolean {
-  const outX = cell.x < 0 || cell.x >= CHUNK_CELLS;
-  const outY = cell.y < 0 || cell.y >= CHUNK_CELLS;
-
-  if (outX && outY) {
-    return false;
-  }
   return (
-    cell.x >= -BORDER_CELLS &&
-    cell.y >= -BORDER_CELLS &&
-    cell.x < CHUNK_CELLS + BORDER_CELLS &&
-    cell.y < CHUNK_CELLS + BORDER_CELLS
+    cell.x >= 0 &&
+    cell.y >= 0 &&
+    cell.x < BOARD_CELLS &&
+    cell.y < BOARD_CELLS &&
+    reachOf(cell) <= BOARD_RADIUS
   );
 }
 
 /**
- * Whether this is a threshold rather than a piece of the chunk
+ * Every cell of country the painter draws, which runs off the picture
+ * on every side: what the player looks out over rather than what they
+ * can reach
  */
-export function isBorderCell(cell: BoardCell): boolean {
-  return cell.x < 0 || cell.y < 0 || cell.x >= CHUNK_CELLS || cell.y >= CHUNK_CELLS;
+export function viewCells(): BoardCell[] {
+  const cells: BoardCell[] = [];
+
+  for (let y = 0; y < BOARD_CELLS; y++) {
+    for (let x = 0; x < BOARD_CELLS; x++) {
+      if (reachOf({ x, y }) <= VIEW_RADIUS) {
+        cells.push({ x, y });
+      }
+    }
+  }
+  return cells;
 }
 
-/**
- * Every cell the painter has to draw, the chunk and its apron
- */
+/** Every cell the pointer may land on, which is the board itself */
 export function boardCells(): BoardCell[] {
   const cells: BoardCell[] = [];
 
-  for (let y = -BORDER_CELLS; y < CHUNK_CELLS + BORDER_CELLS; y++) {
-    for (let x = -BORDER_CELLS; x < CHUNK_CELLS + BORDER_CELLS; x++) {
+  for (let y = 0; y < BOARD_CELLS; y++) {
+    for (let x = 0; x < BOARD_CELLS; x++) {
       if (isBoardCell({ x, y })) {
         cells.push({ x, y });
       }
@@ -406,61 +442,33 @@ export function boardCells(): BoardCell[] {
 }
 
 /**
- * Which chunk cell this is, or null for a threshold
+ * Which board cell this is, or null for a square outside the circle
  */
-export function chunkCellOf(cell: BoardCell): number | null {
-  return isBorderCell(cell) ? null : cell.y * CHUNK_CELLS + cell.x;
+export function boardIndexOf(cell: BoardCell): number | null {
+  return isBoardCell(cell) ? cell.y * BOARD_CELLS + cell.x : null;
 }
 
 /**
- * Where a chunk cell sits on the board
+ * Where a board cell index sits on the board
  */
 export function boardCellOf(index: number): BoardCell {
-  return { x: index % CHUNK_CELLS, y: Math.floor(index / CHUNK_CELLS) };
-}
-
-/**
- * The way out of the chunk a threshold cell is: the edge cell stepped
- * off, and the step that takes the player over. Null for anything that
- * is not a threshold, and for a corner — a crossing is one side at a
- * time. The step is the ordinary one, so nothing about crossing a
- * boundary had to learn that the apron exists
- */
-export function borderExit(cell: BoardCell): { cell: number; step: [number, number] } | null {
-  if (!isBoardCell(cell) || !isBorderCell(cell)) {
-    return null;
-  }
-
-  /**
-   * Which side of the chunk this is off: -1 before the first cell, 1
-   * past the last, and 0 for the axis the threshold is level with
-   */
-  const beyond = (along: number): number => {
-    if (along < 0) {
-      return -1;
-    }
-    return along >= CHUNK_CELLS ? 1 : 0;
-  };
-  const step: [number, number] = [beyond(cell.x), beyond(cell.y)];
-
-  // A corner threshold is off two sides at once, which no single
-  // step crosses
-  if (step[0] !== 0 && step[1] !== 0) {
-    return null;
-  }
-  const from = {
-    x: Math.min(CHUNK_CELLS - 1, Math.max(0, cell.x)),
-    y: Math.min(CHUNK_CELLS - 1, Math.max(0, cell.y)),
-  };
-
-  return { cell: from.y * CHUNK_CELLS + from.x, step };
+  return { x: index % BOARD_CELLS, y: Math.floor(index / BOARD_CELLS) };
 }
 
 /**
  * The middle of a board cell, as a fraction of the picture
  */
 export function projectBoardCell(cell: BoardCell, yaw: Yaw = 0): ProjectedPoint {
-  return projectGround({ u: (cell.x + 0.5) / CHUNK_CELLS, v: (cell.y + 0.5) / CHUNK_CELLS }, yaw);
+  // Measured out from the middle rather than from a corner: the square
+  // the cells are indexed in is wider than the one the picture is
+  // fitted to, and it is the picture that decides the perspective
+  return projectGround(
+    {
+      u: 0.5 + (cell.x - BOARD_CENTER) / BOARD_SPAN,
+      v: 0.5 + (cell.y - BOARD_CENTER) / BOARD_SPAN,
+    },
+    yaw,
+  );
 }
 
 /**
@@ -469,10 +477,10 @@ export function projectBoardCell(cell: BoardCell, yaw: Yaw = 0): ProjectedPoint 
  * closer together than the two near ones
  */
 export function projectBoardCellQuad(cell: BoardCell, yaw: Yaw = 0): ProjectedPoint[] {
-  const left = cell.x / CHUNK_CELLS;
-  const right = (cell.x + 1) / CHUNK_CELLS;
-  const far = cell.y / CHUNK_CELLS;
-  const near = (cell.y + 1) / CHUNK_CELLS;
+  const left = 0.5 + (cell.x - BOARD_CENTER - 0.5) / BOARD_SPAN;
+  const right = 0.5 + (cell.x - BOARD_CENTER + 0.5) / BOARD_SPAN;
+  const far = 0.5 + (cell.y - BOARD_CENTER - 0.5) / BOARD_SPAN;
+  const near = 0.5 + (cell.y - BOARD_CENTER + 0.5) / BOARD_SPAN;
 
   return [
     projectGround({ u: left, v: far }, yaw),
@@ -483,7 +491,7 @@ export function projectBoardCellQuad(cell: BoardCell, yaw: Yaw = 0): ProjectedPo
 }
 
 /**
- * The middle of a chunk cell, as a fraction of the picture. It is where
+ * The middle of a board cell, as a fraction of the picture. It is where
  * a pointer is aimed and where a sprite stands
  */
 export function projectCell(index: number, yaw: Yaw = 0): ProjectedPoint {
@@ -491,7 +499,7 @@ export function projectCell(index: number, yaw: Yaw = 0): ProjectedPoint {
 }
 
 /**
- * The four corners of a chunk cell
+ * The four corners of a board cell
  */
 export function projectCellQuad(index: number, yaw: Yaw = 0): ProjectedPoint[] {
   return projectBoardCellQuad(boardCellOf(index), yaw);
@@ -522,11 +530,20 @@ export function compassMarks(yaw: Yaw = 0): (ProjectedPoint & { north: boolean }
  * than by row, since a turned board has a far corner rather than a far
  * row
  */
-export function paintOrder(yaw: Yaw = 0): number[] {
-  const cells = [...Array.from({ length: CHUNK_CELLS * CHUNK_CELLS }).keys()];
-  const depth = cells.map((index) => projectCell(index, yaw).y);
+export function depthOrder(cells: Iterable<number>, yaw: Yaw = 0): number[] {
+  const depth = new Map(
+    [...cells].map((index) => [index, projectBoardCell(boardCellOf(index), yaw).y]),
+  );
 
-  return cells.sort((one, other) => depth[one] - depth[other]);
+  return [...depth.keys()].sort((one, other) => (depth.get(one) ?? 0) - (depth.get(other) ?? 0));
+}
+
+/** The same, over every cell the player may press */
+export function paintOrder(yaw: Yaw = 0): number[] {
+  return depthOrder(
+    boardCells().map((cell) => cell.y * BOARD_CELLS + cell.x),
+    yaw,
+  );
 }
 
 /**
@@ -618,19 +635,29 @@ export function shortestTurn(from: Yaw, to: Yaw): number {
  * the top two corners now that the board is a trapezoid, and the four
  * corners of the apron, where nothing is drawn
  */
-export function boardCellAtFraction(x: number, y: number, yaw: Yaw = 0): BoardCell | null {
+export function boardCellAtFraction(
+  x: number,
+  y: number,
+  yaw: Yaw = 0,
+  shift: [number, number] = [0, 0],
+): BoardCell | null {
   const { u, v } = unprojectGround(x, y, yaw);
-  const cell = { x: Math.floor(u * CHUNK_CELLS), y: Math.floor(v * CHUNK_CELLS) };
+  // The ground is drawn shifted by however far the camera has yet to
+  // catch up, so a reading off the picture is taken back the same way
+  const cell = {
+    x: Math.floor((u - 0.5) * BOARD_SPAN + BOARD_CENTER + 0.5 - shift[0]),
+    y: Math.floor((v - 0.5) * BOARD_SPAN + BOARD_CENTER + 0.5 - shift[1]),
+  };
 
   return isBoardCell(cell) ? cell : null;
 }
 
 /**
- * The same reading, narrowed to the chunk: a press on the apron is not
+ * The same reading, narrowed to the board: a press on the apron is not
  * a press on a cell of it
  */
 export function cellAtFraction(x: number, y: number, yaw: Yaw = 0): number | null {
   const cell = boardCellAtFraction(x, y, yaw);
 
-  return cell == null ? null : chunkCellOf(cell);
+  return cell == null ? null : boardIndexOf(cell);
 }

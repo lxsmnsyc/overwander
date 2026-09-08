@@ -25,6 +25,13 @@ import { CELL, COLORS } from './metrics';
  * the species rather than being worked out here
  */
 export interface SpawnCoat {
+  /**
+   * The name the window published it under, which is the one thing
+   * about a pokemon that does not move. A cell of the board is where
+   * something is *now*: the board follows the player, so the square a
+   * Rattata stands on is a different number after every step
+   */
+  id: string;
   species: Species;
   shiny: boolean;
   /**
@@ -438,19 +445,33 @@ export const SPARKLE_SPAN = 1 + SPARKLE_ROOM * 2;
 /** The largest a sparkle's picture is painted, in either direction */
 const SPARKLE_LIMIT = 192;
 
-const sparkled = { canvas: null as HTMLCanvasElement | null, key: '' };
+/**
+ * One picture per shiny, by the name its window published it under.
+ *
+ * It used to be a single canvas repainted for whoever asked, on the
+ * grounds that two shinies are never on screen at once. A board that
+ * reaches over several chunks made that false, and a shared canvas
+ * handed to the batch several times over is one texture drawn in
+ * several places: every shiny showed whichever glint was painted last,
+ * so they all sparkled together and a new one showed a spent glint
+ */
+const sparkled = new Map<string, { canvas: HTMLCanvasElement; key: string }>();
+
+/**
+ * How many are kept. A sparkle lasts about a second, so only a handful
+ * are ever being painted; the rest are canvases nobody is asking about
+ */
+const SPARKLE_PICTURES = 16;
 
 /**
  * The picture of one sparkle at this moment, in the sheet's own
  * pixels, painted around the point the pokemon stands on.
  *
  * The stars are a share of the sprite, so this is painted at the
- * sheet's scale and stamped at whatever the pokemon is drawn at. One
- * picture, repainted: two shinies seen in the same frame is not a
- * thing that happens, and a stale one is a glint out of step with the
- * pokemon it belongs to
+ * sheet's scale and stamped at whatever the pokemon is drawn at
  */
 export function paintSparkle(
+  name: string,
   seed: number,
   age: number,
   frame: { width: number; height: number },
@@ -458,11 +479,13 @@ export function paintSparkle(
   const across = Math.min(SPARKLE_LIMIT, Math.max(1, Math.round(frame.width * SPARKLE_SPAN)));
   const down = Math.min(SPARKLE_LIMIT, Math.max(1, Math.round(frame.height * SPARKLE_SPAN)));
   const key = `${seed}:${Math.round(age)}:${across}:${down}`;
+  const held = sparkled.get(name);
 
-  if (sparkled.canvas != null && sparkled.key === key) {
-    return sparkled.canvas;
+  if (held?.key === key) {
+    return held.canvas;
   }
-  const canvas = sparkled.canvas ?? document.createElement('canvas');
+
+  const canvas = held?.canvas ?? document.createElement('canvas');
 
   canvas.width = across;
   canvas.height = down;
@@ -485,7 +508,10 @@ export function paintSparkle(
     1,
   );
   context.restore();
-  sparkled.canvas = canvas;
-  sparkled.key = key;
+  // Oldest first, which is insertion order
+  if (held == null && sparkled.size >= SPARKLE_PICTURES) {
+    sparkled.delete(sparkled.keys().next().value ?? '');
+  }
+  sparkled.set(name, { canvas, key });
   return canvas;
 }

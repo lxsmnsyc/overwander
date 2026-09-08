@@ -2,27 +2,31 @@ import { type JSX, createEffect, createMemo, createSignal, onCleanup, onMount } 
 import LRUMap from '../../../core/lru-map';
 import {
   ASPECT,
-  BORDER_CELLS,
+  BOARD_CELLS,
+  BOARD_CENTER,
+  BOARD_SPAN,
   type BoardCell,
   type ProjectedPoint,
   TURN_DEAD_ZONE,
+  VIEW_RADIUS,
   angleOf,
   boardCellAtFraction,
   boardCellOf,
   boardCells,
-  borderExit,
-  chunkCellOf,
+  boardIndexOf,
   compassMarks,
+  depthOrder,
   facingFrom,
   fitPicture,
-  isBorderCell,
-  paintOrder,
+  groundRing,
+  projectBoardCell,
   projectBoardCellQuad,
-  projectCell,
   projectGround,
   radiusOf,
+  reachOf,
   shortestTurn,
   unprojectGround,
+  viewCells,
   yawTurns,
 } from '../../../canvas/board';
 import type SpeciesSpriteAnimation from '../../../canvas/species-sprite-animation';
@@ -56,16 +60,15 @@ import {
 } from '../../../canvas/placement';
 import { BIOME_COLORS } from '../../../data/biome';
 import type Biome from '../../../data/ids/biome';
-import { isWaterBiome } from '../../../data/ids/biome';
 import type { TerrainRole } from '../../../data/overworld/terrain';
 import boardTerrain from '../../../overworld/terrain';
+import type { BoardGround } from '../../../overworld/ground';
 import { rotateMask } from '../../../data/overworld/autotile';
 import { SpriteAnim } from '../../../data/ids/sprite-anims';
 import type Decoration from '../../../data/overworld/decoration';
 import Landmark from '../../../data/overworld/landmark';
 import Phenomenon from '../../../data/overworld/phenomenon';
 import Npc, { npcSheet } from '../../../data/overworld/npc';
-import type { Species } from '../../../data/ids/species';
 import { getSpeciesData } from '../../../data/species';
 import facingToward from '../../../canvas/facing';
 import type OWCharSprite from '../../../canvas/ow-char-sprite';
@@ -79,17 +82,10 @@ import landmarkPicture, { LANDMARK_SHEET } from '../../../data/overworld/landmar
 import type BasicSprite from '../../../canvas/basic-sprite';
 import loadBasicSprite from '../../../canvas/basic-sprites';
 import type { ItemStack } from '../../../data/overworld/item-pool';
-import { CHUNK_CELLS } from '../../../overworld/chunk';
 import {
-  APRON,
-  BEARINGS,
   CELL,
   CELL_STRIDE,
   COLORS,
-  CROSSING_IN,
-  CROSSING_OUT,
-  CROSSING_SLIDE,
-  type Crossing,
   GROUND_DEPTH,
   GROUND_SQUASH,
   HOVER_GLOW,
@@ -102,6 +98,9 @@ import {
   PLANT_PHASES,
   PLAYER_SHEET,
   QUARTER_TURN,
+  REACH,
+  RIM,
+  RING_POINTS,
   RIPPLE_ALPHA,
   RIPPLE_FADE,
   RIPPLE_PERIOD,
@@ -133,7 +132,7 @@ import {
   plantCallOut,
 } from './scenery';
 
-export { CROSSING_IN, CROSSING_OUT, type Crossing, type SpawnCoat, isTurningPress, slideGain };
+export { type SpawnCoat, isTurningPress, slideGain };
 
 /**
  * The chunk the player is standing in, drawn rather than laid out.
@@ -164,9 +163,17 @@ export interface ChunkCanvasProps {
    */
   caption: string;
   /**
-   * The cell the player is standing on
+   * Where the player is, in world cells. The board is a window that
+   * follows them, so this is what the camera chases: they are drawn in
+   * the middle of the picture and the ground slides under them
    */
-  player: number;
+  at: [number, number];
+  /**
+   * The world cell the board's own cell 0 sits on. It moves with the
+   * player, a cell at a time, which is why the camera is smoothed
+   * against the world rather than against the board
+   */
+  origin: [number, number];
   /**
    * The way they are standing, as a step. A walk turns them itself;
    * this is what turns them when a step was refused, so a player stood
@@ -186,19 +193,12 @@ export interface ChunkCanvasProps {
    */
   phenomena: Map<number, Phenomenon>;
   /**
-   * The chunk's terrain spots, drawn as the other ground: water
-   * pools on a land chunk, ground banks in a wetland
+   * The ground the board is standing on, cell by cell and a little
+   * way past its own edges. It is the world's answer rather than the
+   * chunk's, which is what lets a lake or a ridge carry on into the
+   * chunk beside this one
    */
-  spots: Set<number>;
-  /**
-   * An open-sea chunk's shallow patches, drawn with the ground tiles
-   * to break up the deep. Empty everywhere else
-   */
-  shallows: Set<number>;
-  /**
-   * The chunk's rock outcrops, drawn with the wall tiles
-   */
-  rocks: Set<number>;
+  ground: BoardGround;
   /**
    * Who is standing on each wandering-NPC cell this window. A landmark
    * says somebody is there; this says who, which is what decides the
@@ -268,20 +268,24 @@ export interface ChunkCanvasProps {
    */
   lamp: number;
   /**
-   * Whether the board is on its way off the screen or on to it, and
-   * which way the player went. Null while they are standing in the
-   * chunk that is drawn, which is nearly always
-   */
-  crossing: Crossing | null;
-  /**
    * A cell the player has asked to be at — the chunk's own, or one of
-   * the thresholds around it.
+   * the ring of country drawn around it.
    *
    * The canvas has no idea what that costs. Where the player is, what
    * is standing in the way and how long a walk takes are the tab's, and
    * this says only which square was pressed
    */
   onPress: (cell: BoardCell) => void;
+  /**
+   * A shiny has just been drawn that was not being drawn before.
+   *
+   * Handed up rather than worked out by the caller, because the two
+   * would otherwise disagree: what the caller knows is what the window
+   * rolled, and what a player can actually see is what has a sheet and
+   * is on the board. Called at most once a frame, however many arrived
+   * in it
+   */
+  onShiny?: () => void;
   /**
    * How to find where a cell is on the screen, handed up once there is
    * a canvas to measure. It is what lets a caller hang something over
@@ -311,11 +315,13 @@ export interface CellSpot {
  * pokemon have already been met draws at once. What that is not is a
  * reason to hold every coat met since the page opened: a player who
  * has crossed a hundred chunks would be carrying hundreds of decoded
- * sheets for the handful standing in front of them. Comfortably more
- * than any one chunk needs, and enough history to cover walking back
- * the way you came
+ * sheets for the handful standing in front of them.
+ *
+ * Comfortably more than a board can show, and that margin is the
+ * point: a coat evicted while it is still standing on the board is a
+ * pokemon that vanishes and then loads itself again
  */
-const SHEET_LIMIT = 48;
+const SHEET_LIMIT = 128;
 
 export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
   let canvas: HTMLCanvasElement | undefined;
@@ -338,17 +344,71 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
   let clock = 0;
 
   /**
-   * Which cells have already had their shiny announced, and what was
-   * standing on them when it happened.
+   * Which shinies have already been announced, and when.
    *
    * A shiny is the one thing on this board worth looking twice at, and
-   * it is a **recolour** — some of them are a shade off the ordinary
+   * it is a **recolour**: some of them are a shade off the ordinary
    * coat, and a player who does not know the palette would walk past
-   * one. So the first sight of it throws a handful of stars, once: the
-   * species is kept beside the instant so that the next window rolling
-   * a different shiny onto the same cell announces itself too
+   * one. So the first sight of it throws a handful of stars, once.
+   *
+   * Keyed by the name the window published the pokemon under rather
+   * than by the cell it is standing on. The board follows the player,
+   * so a cell is a different square after every step, and a sparkle
+   * keyed to the ground announced itself again with each one
    */
-  const sparkles = new Map<number, { species: Species; at: number }>();
+  const sparkles = new Map<string, number>();
+
+  /**
+   * How many are remembered. A name is unique to its window, so the
+   * map only grows as far as the shinies actually met; the cap is
+   * there so that a session left running all afternoon is bounded.
+   * Far more than a board can hold, since forgetting one still
+   * standing on it is what starts a sparkle over
+   */
+  const SPARKLE_MEMORY = 512;
+
+  /** A published name as a number, for the stars a shiny throws */
+  const nameSeed = (name: string): number => {
+    let mixed = 0;
+
+    for (let at = 0; at < name.length; at++) {
+      mixed = (Math.imul(mixed, 31) + name.charCodeAt(at)) | 0;
+    }
+    return Math.abs(mixed);
+  };
+
+  /**
+   * A square of the board said as the world's own cell.
+   *
+   * Everything a cell looks like is derived rather than stored: which
+   * tile of the tileset it draws, which way the pokemon standing on it
+   * faces, where a bush is in its sway. Derived from the *board* cell,
+   * all of it changed every time the player took a step, since the
+   * board moves and the world does not
+   */
+  const worldOf = (index: number): [number, number] => [
+    props.origin[0] + (index % BOARD_CELLS),
+    props.origin[1] + Math.floor(index / BOARD_CELLS),
+  ];
+
+  /**
+   * The same, as one number to seed with. A spatial hash rather than a
+   * row and a column: the world is 65,536 cells across, and a plain
+   * index of it overflows what the seeds downstream can multiply
+   */
+  const seedOf = (index: number): number => {
+    const [x, y] = worldOf(index);
+
+    return (Math.imul(x, 73_856_093) ^ Math.imul(y, 19_349_663)) >>> 1;
+  };
+
+  /**
+   * The country one cell of the board belongs to. Its own rather than
+   * the player's: a border runs between two cells now, and a tree on
+   * the far side of one is a tree of that country
+   */
+  const biomeAt = (index: number): Biome =>
+    props.ground.biome(index % BOARD_CELLS, Math.floor(index / BOARD_CELLS));
 
   /**
    * One animation per species standing in the chunk, shared by every
@@ -641,7 +701,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       return null;
     }
 
-    const picture = decorationPicture(kind, props.biome, index);
+    const picture = decorationPicture(kind, biomeAt(index), seedOf(index));
 
     if (!scenery.has(picture.sheet)) {
       loadScenery(picture.sheet).catch(() => {
@@ -718,7 +778,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       return null;
     }
 
-    const picture = grottoPicture(props.biome, index);
+    const picture = grottoPicture(biomeAt(index), seedOf(index));
 
     if (!scenery.has(picture.sheet)) {
       loadScenery(picture.sheet).catch(() => {
@@ -746,7 +806,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       return null;
     }
 
-    const name = landmarkPicture(kind, props.biome, props.dug.has(index), index);
+    const name = landmarkPicture(kind, biomeAt(index), props.dug.has(index), seedOf(index));
 
     if (name == null) {
       return null;
@@ -792,40 +852,79 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
   };
 
   /**
-   * Where the player is drawn, in board-cell coordinates. It chases
-   * `props.player` at walking pace, catching up if it has fallen
-   * behind, which is what turns a step into a slide; a jump too far to
-   * be a step snaps instead
+   * Where the player is, in **world** cells, chasing `props.at` at
+   * walking pace. They are drawn in the middle of the picture whatever
+   * this says: what it moves is the ground, so a step is the country
+   * sliding under them rather than a sprite crossing a fixed board. A
+   * jump too far to be a step snaps instead
    */
-  const slide = { x: props.player % CHUNK_CELLS, y: Math.floor(props.player / CHUNK_CELLS) };
+  const slide = { x: props.at[0], y: props.at[1] };
 
   /** The way the player last walked, which is the way they stand. */
   let heading: SpriteDirection = 'Down';
 
   /**
-   * The biome's own ground, once it has landed.
+   * The countries in sight, once their ground has landed.
    *
-   * Not part of the wait the pokemon are: a chunk with no tileset
+   * More than one, since a board is not one country any more: a
+   * border runs through a chunk wherever the climate field crosses,
+   * and each side is drawn out of its own tileset.
+   *
+   * Not part of the wait the pokemon are: a biome with no tileset
    * packed yet is drawn in the flat colour it always was, so the board
-   * has nothing to gain by standing still until this arrives
+   * has nothing to gain by standing still until these arrive
    */
-  const [tileset, setTileset] = createSignal<BiomeTileset | null>(null);
+  const [tilesets, setTilesets] = createSignal<Map<Biome, BiomeTileset>>(new Map());
+
+  /** Every country the drawn window touches, the rim included */
+  const inSight = createMemo(() => {
+    const ground = props.ground;
+    const seen = new Set<Biome>([props.biome]);
+
+    for (let y = -ground.margin; y < BOARD_CELLS + ground.margin; y++) {
+      for (let x = -ground.margin; x < BOARD_CELLS + ground.margin; x++) {
+        seen.add(ground.biome(x, y));
+      }
+    }
+    return seen;
+  });
 
   createEffect(() => {
-    const biome = props.biome;
+    const wanted = inSight();
     let live = true;
 
     onCleanup(() => {
       live = false;
     });
-    loadBiomeTileset(biome)
-      .then((loaded) => {
-        if (live) {
-          setTileset(loaded);
+    // Kept between windows: a step across a border asks for the
+    // country that was already being drawn a moment ago
+    Promise.all(
+      [...wanted].map(async (biome): Promise<[Biome, BiomeTileset | null]> => {
+        try {
+          return [biome, await loadBiomeTileset(biome)];
+        } catch {
+          // The flat colour it was drawn in before there were tilesets
+          return [biome, null];
         }
+      }),
+    )
+      .then((loaded) => {
+        if (!live) {
+          return;
+        }
+        setTilesets((held) => {
+          const sheets = new Map(held);
+
+          for (const [biome, tiles] of loaded) {
+            if (tiles != null) {
+              sheets.set(biome, tiles);
+            }
+          }
+          return sheets;
+        });
       })
       .catch(() => {
-        // The flat colour it was drawn in before there were tilesets
+        // Answered inside: nothing else to do with it
       });
   });
 
@@ -851,11 +950,14 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
    * instead: the ground is drawn, nothing is standing on it yet, and
    * the picture arrives whole.
    *
-   * It is only ever the **first** wait that shows. Sheets are cached
-   * across chunks, so walking into country whose pokemon have already
-   * been met resolves before the next frame
+   * It is only ever the **first** wait, and deliberately so. The board
+   * follows the player rather than the chunk, so something whose sheet
+   * has not been met walks into view every few steps: waited for every
+   * time, the whole field would blank each time one did. After the
+   * first picture a newcomer at the rim simply arrives when it lands
    */
   const [loading, setLoading] = createSignal(true);
+  let arrived = false;
 
   /**
    * The coat keys standing in this chunk right now.
@@ -893,29 +995,32 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
     const wearing = [...worn()];
 
     // Nothing to wait for is not a wait: an empty chunk is finished
+    const settle = (): void => {
+      if (live) {
+        arrived = true;
+        setLoading(false);
+      }
+    };
+
     if (
       coats.every((coat) => sprites.has(coatKey(coat))) &&
       wearing.every((sheet) => people.has(sheet))
     ) {
-      setLoading(false);
+      settle();
       return;
     }
-    setLoading(true);
+    if (!arrived) {
+      setLoading(true);
+    }
     Promise.all([
       ...wearing.map(async (sheet) => loadPerson(sheet)),
       ...coats.map(async (coat) => loadCoat(coat)),
     ])
-      .then(() => {
-        if (live) {
-          setLoading(false);
-        }
-      })
+      .then(settle)
       .catch(() => {
         // A sheet that will not load is drawn as the dot it always
         // was; it is not a reason to hold the whole board back
-        if (live) {
-          setLoading(false);
-        }
+        settle();
       });
   });
   const [hovered, setHovered] = createSignal<BoardCell | null>(null);
@@ -939,6 +1044,32 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
    * walking toward
    */
   const yaw = (): number => props.yaw;
+
+  /**
+   * How far the ground is drawn from where it lives, in cells.
+   *
+   * The board's corner moves a whole cell the instant a step is taken;
+   * the player catches up over the next quarter second. The difference
+   * between the two is this, and adding it to every square on the
+   * ground is what makes a step a scroll rather than a jump. The
+   * player is drawn without it, which is why they stay in the middle
+   */
+  const camera = (): [number, number] => [
+    BOARD_CENTER - (slide.x - props.origin[0]),
+    BOARD_CENTER - (slide.y - props.origin[1]),
+  ];
+
+  /** A square of ground where it is actually drawn */
+  const shifted = (cell: BoardCell): BoardCell => {
+    const [dx, dy] = camera();
+
+    return { x: cell.x + dx, y: cell.y + dy };
+  };
+
+  /** And where the middle of one is, which is where things stand */
+  const groundPoint = (index: number): ProjectedPoint =>
+    projectBoardCell(shifted(boardCellOf(index)), yaw());
+
   const setYaw = (turn: (angle: number) => number): void => {
     props.onTurn(turn(props.yaw));
   };
@@ -960,47 +1091,19 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
    */
   let turned = false;
   /**
-   * When the half of the crossing being drawn started. It is a plain
-   * variable stamped by the effect below rather than a signal: the
-   * picture is already redrawn every frame, so nothing needs telling
-   * that a clock is running
-   */
-  let crossedAt = 0;
-
-  createEffect(() => {
-    // The caller hands in a fresh crossing for each half, so each half
-    // starts its own clock. Standing still stamps nothing worth having
-    const half = props.crossing?.phase;
-
-    crossedAt = half == null ? 0 : performance.now();
-  });
-  /**
    * The cell the player is looking at, which is where the interact key
    * acts. It is a board cell rather than a chunk one, so a player
-   * facing out of the chunk faces a threshold
+   * facing off the board faces the country beyond it
    */
-  const faced = (): BoardCell => {
-    const standing = boardCellOf(props.player);
+  const faced = (): BoardCell => ({
+    x: BOARD_CENTER + props.facing[0],
+    y: BOARD_CENTER + props.facing[1],
+  });
 
-    return { x: standing.x + props.facing[0], y: standing.y + props.facing[1] };
-  };
-
-  /**
-   * What a cell is called, for the tooltip and for a screen reader. A
-   * threshold is named by where it goes rather than by what is on it,
-   * because nothing is ever on one
-   */
+  /** What a cell is called, for the tooltip and for a screen reader */
   const nameOf = (cell: BoardCell | null): string => {
-    if (cell == null) {
-      return '';
-    }
+    const index = cell == null ? null : boardIndexOf(cell);
 
-    const exit = borderExit(cell);
-    const index = chunkCellOf(cell);
-
-    if (exit != null) {
-      return `The way ${BEARINGS.get(`${exit.step[0]},${exit.step[1]}`) ?? 'on'}, into the next chunk`;
-    }
     return index == null ? '' : props.label(index);
   };
 
@@ -1056,7 +1159,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
     if (frame.width === 0 || frame.height === 0) {
       return null;
     }
-    const point = projectCell(cell, yaw());
+    const point = groundPoint(cell);
 
     return {
       x: bounds.left + frame.x + point.x * frame.width,
@@ -1073,14 +1176,8 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
 
   const cellAt = (event: MouseEvent): BoardCell | null => {
     const at = fractionAt(event);
-    const cell = at == null ? null : boardCellAtFraction(at.x, at.y, yaw());
 
-    // A corner threshold goes nowhere, so the pointer does not
-    // offer it
-    if (cell != null && isBorderCell(cell) && borderExit(cell) == null) {
-      return null;
-    }
-    return cell;
+    return at == null ? null : boardCellAtFraction(at.x, at.y, yaw(), camera());
   };
 
   /**
@@ -1255,20 +1352,20 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
     };
 
     /**
-     * A square of ground, as a path. `edge` is how far outside the
-     * chunk it reaches, in board fractions: none of it for the chunk
-     * itself, one cell's worth for the apron around it
+     * A ring of ground, as a path. `reach` is how far from the middle
+     * it runs, in board fractions: the circle the player can press, or
+     * the rim of country a cell outside it.
+     *
+     * Drawn as a ring in the **world** and then projected, so it comes
+     * out as the ellipse the tilt makes of a circle rather than as an
+     * ellipse drawn on the screen. Its own points, not the cells': a
+     * circle stepped round in cells is a staircase
      */
-    const groundCorners = (edge: number): ProjectedPoint[] =>
-      [
-        { u: -edge, v: -edge },
-        { u: 1 + edge, v: -edge },
-        { u: 1 + edge, v: 1 + edge },
-        { u: -edge, v: 1 + edge },
-      ].map((corner) => at(projectGround(corner, yaw())));
+    const ringAt = (reach: number): ProjectedPoint[] =>
+      groundRing(reach, RING_POINTS).map((point) => at(projectGround(point, yaw())));
 
-    const traceGround = (edge: number): void => {
-      traceQuad(groundCorners(edge));
+    const traceGround = (reach: number): void => {
+      traceQuad(ringAt(reach));
     };
 
     /**
@@ -1278,16 +1375,14 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
      * ringed by the ground that is actually there
      */
     const reachOutline = (): ProjectedPoint[] | null => {
-      const column = props.player % CHUNK_CELLS;
-      const row = Math.floor(props.player / CHUNK_CELLS);
-      const left = Math.max(0, column - 1) / CHUNK_CELLS;
-      const right = Math.min(CHUNK_CELLS, column + 2) / CHUNK_CELLS;
-      const far = Math.max(0, row - 1) / CHUNK_CELLS;
-      const near = Math.min(CHUNK_CELLS, row + 2) / CHUNK_CELLS;
+      // Measured out from the middle, the way every other ground
+      // point is: the square the cells are indexed in is wider than
+      // the one the picture is fitted to
+      const left = 0.5 - 1.5 / BOARD_SPAN;
+      const right = 0.5 + 1.5 / BOARD_SPAN;
+      const far = left;
+      const near = right;
 
-      if (right <= left || near <= far) {
-        return null;
-      }
       return [
         { u: left, v: far },
         { u: right, v: far },
@@ -1297,56 +1392,11 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
     };
 
     /**
-     * Every square the picture is made of, worked out once: the chunk's
-     * own cells and the apron's, which do not change while the player
-     * is standing in this chunk
+     * Every square of country the picture is made of, worked out once.
+     * It runs off the picture on every side: what the player looks out
+     * over rather than what they can reach
      */
-    const squares = boardCells();
-
-    /**
-     * Where the board is on its way to or from, in the picture's own
-     * pixels, and how much of it is left.
-     *
-     * The direction is the walked one put through the projection
-     * rather than taken as up or across: the camera can be anywhere
-     * round the board, so which way north is on the screen is
-     * something only the projection knows. The ground moves **against**
-     * the walk, the way scenery does — a player walking north watches
-     * the field they are leaving go south
-     */
-    const carrying = (): { x: number; y: number; alpha: number } => {
-      const step = props.crossing;
-
-      if (step == null) {
-        return { x: 0, y: 0, alpha: 1 };
-      }
-
-      const going = step.phase === 'out';
-      const span = going ? CROSSING_OUT : CROSSING_IN;
-      const part = Math.min(1, Math.max(0, (performance.now() - crossedAt) / span));
-      // Eased at both ends, so the board leans into the move and
-      // settles rather than starting and stopping at full speed
-      const eased = part * part * (3 - 2 * part);
-      const middle = at(projectGround({ u: 0.5, v: 0.5 }, yaw()));
-      const ahead = at(projectGround({ u: 0.5 + step.dx * 0.25, v: 0.5 + step.dy * 0.25 }, yaw()));
-      const away = Math.hypot(ahead.x - middle.x, ahead.y - middle.y);
-      const reach = (going ? -eased : 1 - eased) * CROSSING_SLIDE * placed.width;
-      // The fade lags the travel on the way out and leads it on the
-      // way in, so the board is still there for most of the leaving and
-      // is back before it has finished arriving. Fading in step with
-      // the slide left an empty field of country in the middle of the
-      // crossing, which is the flash again in a nicer colour
-      const alpha = going ? 1 - eased * eased : 1 - (1 - eased) * (1 - eased);
-
-      if (away === 0) {
-        return { x: 0, y: 0, alpha };
-      }
-      return {
-        x: ((ahead.x - middle.x) / away) * reach,
-        y: ((ahead.y - middle.y) / away) * reach,
-        alpha,
-      };
-    };
+    const painted = viewCells();
 
     /**
      * The hour the world is standing in, on the player's own clock.
@@ -1394,8 +1444,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       // The player's slide toward wherever the tab says they are, and
       // the walk cycle fed by how far it actually moved this frame
       const walker = playerPerson();
-      const goalX = props.player % CHUNK_CELLS;
-      const goalY = Math.floor(props.player / CHUNK_CELLS);
+      const [goalX, goalY] = props.at;
       const dx = goalX - slide.x;
       const dy = goalY - slide.y;
       const span = Math.hypot(dx, dy);
@@ -1473,12 +1522,6 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       // carrying on past the edge of what the player can reach
       context.clearRect(0, 0, screen.width, screen.height);
 
-      // Everything below is drawn where the board is rather than where
-      // it lives, because while a boundary is being crossed it is on
-      // its way somewhere. The clearing above is not: it is the whole
-      // canvas whatever the board is doing
-      const carried = carrying();
-
       /** The whole layer, as the four corners the backdrop fills */
       const screenBox = [
         { x: 0, y: 0 },
@@ -1499,29 +1542,23 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         // is what lets the hour's light be a multiply: a wash only
         // means what it means over something opaque
         batch.solid(BIOME_COLORS[props.biome], screenBox);
-        // Everything from here is the board, which while a boundary is
-        // being crossed is on its way somewhere
-        batch.carry(carried.x, carried.y, carried.alpha);
       }
 
       context.save();
-      context.globalAlpha = carried.alpha;
-      context.translate(carried.x, carried.y);
 
-      // The country, apron and all: the threshold cells are as much a
-      // part of the world as the chunk is, and a player stepping onto
-      // one is walking on the same ground
+      // The country, rim and all: what is drawn past the board is as
+      // much the world as what is on it
       if (batch == null) {
-        traceGround(APRON);
+        traceGround(RIM);
         context.fillStyle = BIOME_COLORS[props.biome];
         context.fill();
       }
       // The one thing that tells the chunk from the ground around it: a
       // surface catches a little more light than the country does. It
-      // stops at the chunk's own edge, so the apron reads as the way
-      // out rather than as more of the same
+      // stops at the board's own edge, so the rim reads as country
+      // out of reach rather than as more of the same
       if (batch == null) {
-        traceGround(0);
+        traceGround(REACH);
         context.fillStyle = COLORS.surface;
         context.fill();
       }
@@ -1579,16 +1616,15 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
        * every cell asks about its eight neighbours, and half of those
        * questions are the same question asked from the other side
        */
-      const water = isWaterBiome(props.biome);
-      const land = boardTerrain({
-        water,
-        spots: props.spots,
-        // A spot is a pool on land, a bank in a wetland
-        spotRole: water ? 'ground' : 'water',
-        shallows: props.shallows,
-        rocks: props.rocks,
+      const ground = props.ground;
+      const land = boardTerrain((x, y) => {
+        const role = ground.role(x, y);
+
+        // Shelf is water drawn with the ground tiles, which is what
+        // makes the sea's edge fade rather than stop
+        return role === 'water' && ground.shelf(x, y) ? 'ground' : role;
       });
-      const tiles = tileset();
+      const sheets = tilesets();
       // How far round the camera has been walked, in quarters. The
       // ground art is drawn for one point of view and can only be
       // turned in quarters, so it changes over at the halfway point
@@ -1602,14 +1638,15 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
        * parallelogram, which is the approximation it has always drawn
        */
       const lay = (
+        tiles: BiomeTileset,
         spot: { sheet: CanvasImageSource; x: number; y: number },
         corners: ProjectedPoint[],
       ): void => {
-        const tile = tiles?.tile ?? 0;
+        const tile = tiles.tile;
 
         // The tilesets recolour into canvases. Anything else is drawn
         // the old way rather than assumed to be uploadable
-        if (batch == null || tiles == null || !(spot.sheet instanceof HTMLCanvasElement)) {
+        if (batch == null || !(spot.sheet instanceof HTMLCanvasElement)) {
           drawTileQuad(context, spot.sheet, spot, tile, corners, turns);
           return;
         }
@@ -1626,6 +1663,10 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
        * draw still wants the flat colour it had before
        */
       const paintGround = (square: BoardCell, corners: ProjectedPoint[]): boolean => {
+        // Each cell is drawn out of its own country's tileset, so a
+        // border runs between two cells rather than round a chunk
+        const tiles = sheets.get(ground.biome(square.x, square.y));
+
         if (tiles == null) {
           return false;
         }
@@ -1639,26 +1680,26 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         const spot = tiles.tileAt(
           role,
           rotateMask(land.maskAt(square.x, square.y), turns),
-          variantAt(square.x, square.y, tiles.data.variants),
+          variantAt(props.origin[0] + square.x, props.origin[1] + square.y, tiles.data.variants),
           clock,
         );
 
         if (spot == null) {
           return false;
         }
-        lay(spot, corners);
+        lay(tiles, spot, corners);
 
         // Deep water against a shore takes the sea rips' foam overlay
         // on top, which is what actually blends the two
         if (role === 'water') {
           const foam = tiles.shoreAt(
             rotateMask(land.maskAt(square.x, square.y), turns),
-            variantAt(square.x, square.y, tiles.data.variants),
+            variantAt(props.origin[0] + square.x, props.origin[1] + square.y, tiles.data.variants),
             clock,
           );
 
           if (foam != null) {
-            lay(foam, corners);
+            lay(tiles, foam, corners);
           }
         }
         return true;
@@ -1666,29 +1707,23 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
 
       /**
        * The ground, in one pass of its own before anything is ruled
-       * over it.
-       *
-       * Over a wider square than the board is: the four corners of the
-       * apron are not cells and are never pressed, but a wall drawn
-       * round the chunk with its corners left out is a frame with four
-       * holes in it
+       * over it. Over a wider circle than the board is, since the ring
+       * past it is where the ground slides in from
        */
       if (batch != null) {
-        // The apron over the backdrop, and the chunk's own lit surface
+        // The rim over the backdrop, and the board's own lit surface
         // over that: the same country either side of the board's edge,
         // with the light on the half of it the player can reach
-        batch.solid(BIOME_COLORS[props.biome], groundCorners(APRON));
-        batch.solid(COLORS.surface, groundCorners(0));
+        batch.solid(BIOME_COLORS[props.biome], ringAt(RIM));
+        batch.solid(COLORS.surface, ringAt(REACH));
       }
-      if (tiles != null) {
+      if (sheets.size > 0) {
         // Off for the pass: these are pixel tiles, and smoothed up to
         // the size of a cell they lose the edges they are drawn with
         context.save();
         context.imageSmoothingEnabled = false;
-        for (let y = -BORDER_CELLS; y < CHUNK_CELLS + BORDER_CELLS; y++) {
-          for (let x = -BORDER_CELLS; x < CHUNK_CELLS + BORDER_CELLS; x++) {
-            paintGround({ x, y }, projectBoardCellQuad({ x, y }, yaw()).map(at));
-          }
+        for (const square of painted) {
+          paintGround(square, projectBoardCellQuad(shifted(square), yaw()).map(at));
         }
         context.restore();
       }
@@ -1729,7 +1764,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
 
       /**
        * One cell ruled on the board: the grid line round it, over a
-       * breath of light where a threshold goes somewhere.
+       * breath of light on the square under the pointer.
        *
        * Every cell rules its own four edges rather than the board
        * ruling a lattice, so two cells sharing an edge lay their lines
@@ -1886,37 +1921,23 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       /**
        * Whether the cursor is over this square. Read against the
        * board's own coordinates rather than the chunk's, so a
-       * threshold lights up the same way a cell does
+       * square lights up wherever the ground has slid to
        */
       const beneath = (square: BoardCell): boolean =>
         under != null && under.x === square.x && under.y === square.y;
       /** The square the cursor is over, kept to ring once the grid is laid */
       let hoveredOutline: ProjectedPoint[] | null = null;
 
-      for (const square of squares) {
-        const outline = projectBoardCellQuad(square, yaw()).map(at);
+      for (const square of boardCells()) {
+        const outline = projectBoardCellQuad(shifted(square), yaw()).map(at);
         const hot = beneath(square);
 
-        // A threshold that goes through keeps the grid, so it reads
-        // as ground that can be walked, and breathes a little light
-        // on top so the way into the next chunk reads as somewhere
-        // to press. The apron's corners go nowhere and get neither:
-        // the grid stopping is what says where the walkable ends
-        if (isBorderCell(square)) {
-          if (borderExit(square) != null) {
-            rule(outline, hot ? HOVER_GLOW : 0.1 + 0.05 * Math.sin(clock / 600));
-            if (hot) {
-              hoveredOutline = outline;
-            }
-          }
-          continue;
-        }
         rule(outline, hot ? HOVER_GLOW : 0);
         if (hot) {
           hoveredOutline = outline;
         }
 
-        const index = square.y * CHUNK_CELLS + square.x;
+        const index = square.y * BOARD_CELLS + square.x;
         const landmark = props.landmarks.get(index);
         // What is going on here, which is no longer a landmark: it is
         // rolled over the chunk by the hour and drawn wherever it fell
@@ -1955,7 +1976,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
           // the scenery rather than lying on the ground with the marks;
           // everything else that is going on is drawn here
           if (showing !== Phenomenon.HiddenGrotto) {
-            const middle = at(projectCell(index, yaw()));
+            const middle = at(groundPoint(index));
             const picture = batch == null ? null : paintPhenomenon(showing, clock);
             let drew = false;
 
@@ -2007,10 +2028,10 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
        * since it is a fact about the ground
        */
       const ripple = (index: number, spread: number, alpha: number): void => {
-        const spot = boardCellOf(index);
-        const midU = (spot.x + 0.5) / CHUNK_CELLS;
-        const midV = (spot.y + 0.5) / CHUNK_CELLS;
-        const radius = spread / CHUNK_CELLS / 2;
+        const spot = shifted(boardCellOf(index));
+        const midU = 0.5 + (spot.x - BOARD_CENTER) / BOARD_SPAN;
+        const midV = 0.5 + (spot.y - BOARD_CENTER) / BOARD_SPAN;
+        const radius = spread / BOARD_SPAN / 2;
         const ring: ProjectedPoint[] = [];
 
         for (let step = 0; step < RIPPLE_POINTS; step++) {
@@ -2094,18 +2115,13 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       // The sliding player belongs to the row they are passing
       // through, so occlusion is read off where they are drawn rather
       // than where the walk is headed
-      const playerCell = Math.round(slide.y) * CHUNK_CELLS + Math.round(slide.x);
+      const playerCell = BOARD_CENTER * BOARD_CELLS + BOARD_CENTER;
       /**
-       * Where the player actually is, which is between cells for most
-       * of a walk. Everything about them is drawn from it: the sprite,
-       * the shadow, and the light they carry
+       * Where the player is drawn, which is the middle of the picture
+       * and stays there. Everything about them comes off it: the
+       * sprite, the shadow, and the light they carry
        */
-      const afoot = at(
-        projectGround(
-          { u: (slide.x + 0.5) / CHUNK_CELLS, v: (slide.y + 0.5) / CHUNK_CELLS },
-          yaw(),
-        ),
-      );
+      const afoot = at(projectBoardCell({ x: BOARD_CENTER, y: BOARD_CENTER }, yaw()));
 
       lamps.length = 0;
       // The light travels with them rather than with the cell they are
@@ -2113,12 +2129,36 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       // instead of the board switching on a square at a time
       lamps.push(lampAt(afoot));
 
-      for (const index of paintOrder(yaw())) {
-        const middle = at(projectCell(index, yaw()));
+      /**
+       * The shinies drawn this frame, so the sparkles of those that
+       * have been walked away from can be let go of. The board moves
+       * over the world, and a map keyed by world cell would otherwise
+       * remember every shiny met all session
+       */
+      /** Whether one of them is new, which is a thing to be heard */
+      let announced = false;
+
+      /**
+       * Everything with something standing on it, from the back of the
+       * board forwards. Only those cells: the country is a thousand
+       * squares wide now, and asking every one of them what is on it
+       * is a thousand lookups a frame to be told about grass
+       */
+      const occupied = [
+        playerCell,
+        ...props.landmarks.keys(),
+        ...props.decorations.keys(),
+        ...props.spawns.keys(),
+        ...props.phenomena.keys(),
+      ].filter((index) => reachOf(boardCellOf(index)) <= VIEW_RADIUS);
+
+      for (const index of depthOrder(occupied, yaw())) {
+        const middle = at(groundPoint(index));
         // Nothing standing anywhere while the sheets are still coming:
         // a field that fills in one pokemon at a time reads as a page
         // loading rather than as a place
-        const standing = loading() ? undefined : props.spawns.get(index);
+        const rolled = props.spawns.get(index);
+        const standing = loading() ? undefined : rolled;
 
         // What a dark sky is kept off: the player, and the places worth
         // walking to. A pokemon standing on a cell carries no light of
@@ -2129,13 +2169,6 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         // knows where everything on the board ended up on the screen
         if (props.landmarks.get(index) != null) {
           lamps.push(lampAt(middle));
-        }
-
-        // Whatever was announced here has been caught, walked off or
-        // rolled over, so the next shiny to stand on this cell gets a
-        // sparkle of its own
-        if (standing?.shiny !== true) {
-          sparkles.delete(index);
         }
 
         // Scenery first of everything that stands on a cell: a tree is
@@ -2163,7 +2196,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
             // Out of step with its neighbours, so a chunk with four
             // patches on it is four bushes rather than one drawn four
             // times
-            phase: (index % PLANT_PHASES) / PLANT_PHASES,
+            phase: (Math.abs(seedOf(index)) % PLANT_PHASES) / PLANT_PHASES,
             // The soil the plant grows out of, which the sheet says
             // where to find
             anchor: 'foot',
@@ -2185,10 +2218,10 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
               facingFrom(
                 SPRITE_DIRECTIONS.indexOf(
                   facingToward(
-                    index % CHUNK_CELLS,
-                    Math.floor(index / CHUNK_CELLS),
-                    props.player % CHUNK_CELLS,
-                    Math.floor(props.player / CHUNK_CELLS),
+                    index % BOARD_CELLS,
+                    Math.floor(index / BOARD_CELLS),
+                    BOARD_CENTER,
+                    BOARD_CENTER,
                   ),
                 ),
                 yaw(),
@@ -2236,7 +2269,8 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
             // wherever the camera has been walked to: turn a quarter
             // and something that was facing you is facing across you
             sprite.play(SpriteAnim.Idle, {
-              direction: SPRITE_DIRECTIONS[facingFrom(facingOf(index, standing.species), yaw())],
+              direction:
+                SPRITE_DIRECTIONS[facingFrom(facingOf(seedOf(index), standing.species), yaw())],
               loop: true,
             });
 
@@ -2298,16 +2332,27 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
               // than the first time it is known about: a sparkle
               // thrown while the sheet was still coming would be over
               // before there was anything to sparkle around
-              const shown = sparkles.get(index);
+              // Seeded off the pokemon rather than off the ground, so
+              // the stars stand in the same places for as long as it
+              // does
+              const seed = nameSeed(standing.id);
 
-              if (shown == null || shown.species !== standing.species) {
-                sparkles.set(index, { species: standing.species, at: clock });
+              if (!sparkles.has(standing.id)) {
+                // Oldest first, which is insertion order: the map is
+                // only trimmed when it has run well past a board's
+                // worth of them
+                if (sparkles.size >= SPARKLE_MEMORY) {
+                  sparkles.delete(sparkles.keys().next().value ?? '');
+                }
+                sparkles.set(standing.id, clock);
+                announced = true;
               }
-              const age = clock - (sparkles.get(index)?.at ?? clock);
-              const glint = batch == null ? null : paintSparkle(index, age, sprite.sourceFrameSize);
+              const age = clock - (sparkles.get(standing.id) ?? clock);
+              const glint =
+                batch == null ? null : paintSparkle(standing.id, seed, age, sprite.sourceFrameSize);
 
               if (batch == null || glint == null) {
-                drawSparkle(context, index, age, middle.x, middle.y, sprite.sourceFrameSize, scale);
+                drawSparkle(context, seed, age, middle.x, middle.y, sprite.sourceFrameSize, scale);
               } else {
                 // Painted in the sheet's own pixels around the point
                 // the pokemon stands on, so it is stamped over the box
@@ -2379,23 +2424,27 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         }
       }
 
+      if (announced) {
+        props.onShiny?.();
+      }
+
       // A border while the keyboard is in here. It is not decoration:
       // the camera keys only work while this has focus, so whether it
       // does is the difference between Q and E turning the board and
       // doing nothing at all. It follows the board's own outline — the
-      // apron included, since that is as pressable as the rest — which
-      // is a trapezoid rather than the canvas
+      // rim included, since the board ends in country rather than in
+      // an edge
       const edge = focused() ? COLORS.cursor : COLORS.grid;
       const weight = focused() ? 3 : 1;
 
       if (batch == null) {
-        traceGround(APRON);
+        traceGround(RIM);
         context.strokeStyle = edge;
         context.lineWidth = weight;
         context.stroke();
         context.lineWidth = 1;
       } else {
-        batch.outline(edge, groundCorners(APRON), weight);
+        batch.outline(edge, ringAt(RIM), weight);
       }
 
       // The board is finished, so it is put back where it was found:
@@ -2639,12 +2688,10 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
             turned = false;
             return;
           }
-          // And nothing at all while the board is being carried on or
-          // off — it is not where it is drawn, so a press would land on
-          // whichever cell slid under the pointer — nor while the
-          // pokemon standing on it have yet to arrive, since a player
-          // cannot see what they would be walking into
-          if (props.crossing != null || loading()) {
+          // And nothing while the pokemon standing on the board have
+          // yet to arrive, since a player cannot see what they would be
+          // walking into
+          if (loading()) {
             return;
           }
 

@@ -271,13 +271,27 @@ export const ELEVATION_WEIGHT = 2;
  * Classify a climate sample into the nearest biome on its own side of
  * the shoreline (squared Euclidean distance, elevation weighted)
  */
+/**
+ * The same table walked as a list, built once.
+ *
+ * The ground is classified a cell at a time now, which is a few
+ * hundred calls for one chunk, and `Object.entries` on every one of
+ * them allocated more than the arithmetic it fed
+ */
+const CLIMATE_TARGETS: [biome: Biome, config: BiomeConfig][] = Object.entries(BIOME_CONFIGS).map(
+  // tsc requires the assertion to produce a Biome from the record
+  // key; tsgolint resolves the const enum to number
+  // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+  ([key, config]) => [Number(key) as Biome, config],
+);
+
 export function getBiome(humidity: number, temperature: number, elevation: number): Biome {
   let nearest = Biome.DeepOcean;
   let nearestDistance = Number.POSITIVE_INFINITY;
 
   const submerged = elevation < SEA_LEVEL;
 
-  for (const [key, config] of Object.entries(BIOME_CONFIGS)) {
+  for (const [biome, config] of CLIMATE_TARGETS) {
     // Never across the shoreline: the two sides are separate lists
     if (config.elevation < SEA_LEVEL !== submerged) {
       continue;
@@ -290,10 +304,7 @@ export function getBiome(humidity: number, temperature: number, elevation: numbe
 
     if (distance < nearestDistance) {
       nearestDistance = distance;
-      // tsc requires the assertion to produce a Biome from the
-      // record key; tsgolint resolves the const enum to number
-      // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
-      nearest = Number(key) as Biome;
+      nearest = biome;
     }
   }
 

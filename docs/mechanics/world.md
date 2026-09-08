@@ -6,9 +6,27 @@ chunk and everything buried in them are all derived from one world seed at the
 moment a player looks at them, so every player sees the same world without any of
 it being saved anywhere.
 
-A **chunk** is a 16×16 grid of cells and is the unit a player walks around in.
-Each chunk belongs to one biome and holds a fixed set of landmarks, and its
-contents refresh on several independent timers.
+A **chunk** is a 16×16 grid of cells, and it is how the world is bookkept rather
+than how it is walked. Each chunk holds a fixed set of landmarks and refreshes
+its contents on several independent timers. The ground itself belongs to the
+world rather than to the chunk: a border between two countries, a lake or a
+ridge of rock runs wherever it runs, and a chunk holds whatever parts of them it
+happens to sit on.
+
+What a player sees is a **board**: a stretch of country with them in the middle
+of it, following them a cell at a time, so there is no boundary to cross and
+nothing to wait for at one. It is three distances rather than one.
+
+| Reach       | Cells | What it decides                                |
+| ----------- | ----- | ---------------------------------------------- |
+| The country | 20    | How far the ground and its scenery are drawn   |
+| The board   | 10    | How far a press reaches, and where the grid is |
+| The pokemon | 7     | How near one has to be to be standing there    |
+
+So a player looks out over a good deal more country than they can act on, and a
+field fills as they cross it rather than showing its whole hand from the far
+side. The board straddles four or nine chunks at once, and everything standing
+on it is live whichever chunk it came out of.
 
 ## Geography
 
@@ -19,6 +37,12 @@ how warm it is. Together they select one of the **25 biomes**, which range
 from deep ocean and coral reef through savanna, desert and temperate forest to
 volcano, glacier and polar ocean. Climate changes gradually, so a biome typically runs
 about two dozen chunks across before giving way to another.
+
+The climate is read a cell at a time, so a country's edge is a wandering line
+through the ground rather than a step between one chunk and the next. Standing
+on a border, a player can see both sides of it at once. Where one country's name
+is wanted for the whole chunk, which is what the map paints and what the pokemon
+in it are drawn from, it is the country in the middle of it.
 
 A twenty-sixth place, **Beyond**, exists but is nowhere on the map. Mythical
 pokemon are recorded as coming from there, and nothing else does.
@@ -33,19 +57,27 @@ rather than bringing them out on the opposite side of the world.
 
 ### Inside a chunk
 
-| Area               | Size  | What may occupy it                   |
-| ------------------ | ----- | ------------------------------------ |
-| The whole chunk    | 16×16 | The player, walking                  |
-| The placement area | 14×14 | Scenery, landmarks and pokemon alike |
+Scenery, landmarks and pokemon may stand on any of a chunk's 256 cells. A clear
+cell used to run round the edge of every chunk, so that a player walking in from
+the one next door always arrived on empty ground; nobody walks in any more, and
+a rim on every chunk drew empty corridors across the world every sixteen cells.
 
-The placement area sits in the middle, so a clear cell runs all the way round
-the chunk: a player walking in from a neighbouring chunk always arrives on
-ground with nothing on it.
+### Water and rock
+
+Lakes, rivers and outcrops of rock are part of the world, not part of a chunk.
+Water is walked into and swum: a river crossing a chunk is a route, not a wall.
+Rock is not. Nothing stands in it, nothing walks through it, and a hollow small
+enough to be walled in is filled rather than left as somewhere unreachable.
+
+Nothing is ever placed against rock, so every landmark has open ground on all
+sides of it. Scenery keeps to dry land, and where a lake has taken most of a
+chunk there is simply less of it.
 
 Scenery and landmarks keep a clear cell on every side of them, diagonals
-included: no two fixtures are ever adjacent, so there is always somewhere to
-stand beside whatever a player has walked over to. Pokemon keep no such berth.
-They take any cell a fixture is not standing on, and a walk goes straight
+included, so there is always somewhere to stand beside whatever a player has
+walked over to. Two of them either side of a chunk boundary may occasionally
+touch, since each is placed knowing only its own chunk. Pokemon keep no such
+berth. They take any cell a fixture is not standing on, and a walk goes straight
 through one rather than round it. Scenery and landmarks are walked round: both
 are standing there, so a route goes past them.
 
@@ -99,7 +131,7 @@ for a champion. A player short of one badge can pick the cell out without walkin
 the chunk.
 
 **Phenomena are not landmarks.** A grotto, a dust cloud, rippling water or a
-shadow overhead is something *happening* rather than somewhere to go, so it is
+shadow overhead is something _happening_ rather than somewhere to go, so it is
 not fixed to a cell. Up to two are rolled across a chunk's open ground each
 hour and are somewhere else the next one, so a chunk you know is still worth
 looking over. They take dry ground where a chunk has any, which is why a marsh
@@ -302,10 +334,13 @@ appearing in the way, or a landmark changing mid-walk, never strands anybody.
 Landmarks and pokemon are obstacles rather than destinations. Clicking one walks
 the player up **beside** it and interacts on arrival.
 
-A darker one-cell border is drawn around the chunk. Stepping onto it carries the
-player into the neighbouring chunk, entering from the opposite side. Four compass
-marks stand outside that border and turn with the map as the camera moves. Each
-one points the way it stands for, and north is the red one.
+The player stays in the middle of the board and the world scrolls under them, so
+walking is continuous: there is no boundary to step over and no wait when one is
+crossed. Anywhere inside the ruled circle can be pressed, which is ten cells in
+any direction; the country drawn past it is looked out over rather than walked
+to a square at a time. Four compass marks stand at the edge of the ruled circle
+and turn with the map as the camera moves. Each one points the way it stands
+for, and north is the red one.
 
 The board can be turned: drag it with the right button, or twist two fingers on a
 touch screen. A drag or a twist that moved the camera does not count as a press on

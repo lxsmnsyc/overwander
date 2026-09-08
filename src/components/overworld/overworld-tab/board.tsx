@@ -1,4 +1,11 @@
-import { type ChunkView, buildChunkView, naming } from './chunk-view';
+import {
+  type BoardView,
+  type Placed,
+  type WatchedWindow,
+  boardChunks,
+  buildBoardView,
+  naming,
+} from './board-view';
 import challengerOf, { championGate, eliteGate } from './challengers';
 import { describeItem } from '../../details';
 import { type Journey, stateOf } from './journey';
@@ -21,7 +28,6 @@ import {
 import { type RocketRecord, rocketStopId } from '../../../auth/rocket-record';
 import { claimRocketReward, enterRocketStop } from '../../../auth/rockets';
 import { createSafariSession, isEncounterRetired } from '../../../auth/safari';
-import type { SnapshotRecord } from '../../../auth/snapshot-record';
 import {
   claimApricornTree,
   claimBerryPatch,
@@ -38,7 +44,7 @@ import {
   watchSnapshotWindow,
 } from '../../../auth/snapshots';
 import type { PlayerIdentity } from '../../../auth/user';
-import { type BoardCell, borderExit, chunkCellOf } from '../../../canvas/board';
+import { type BoardCell, boardIndexOf } from '../../../canvas/board';
 import { latitudeOf } from '../../../canvas/daylight';
 import { BIOME_COLORS, BIOME_NAMES } from '../../../data/biome';
 import type { Items } from '../../../data/ids/items';
@@ -61,7 +67,7 @@ import type Phenomenon from '../../../data/overworld/phenomenon';
 import { PHENOMENON_NAMES } from '../../../data/overworld/phenomenon';
 import { getSpeciesData } from '../../../data/species';
 import { isFeaturedSpecies } from '../../../data/species/day';
-import { CHUNK_CELLS } from '../../../overworld/chunk';
+import { CHUNK_CELLS, cellInChunk, chunkOfCell, worldCell } from '../../../overworld/chunk';
 import type ChunkSnapshot from '../../../overworld/chunk-snapshot';
 import type { Buddy } from '../../../overworld/core';
 import getWorld from '../../../overworld/current';
@@ -70,7 +76,6 @@ import type SafariSession from '../../../overworld/safari';
 import { isInWorld } from '../../../overworld/world';
 import { GameDialog, useGame } from '../../app/game-context';
 import { createCellNotes } from '../cell-notes';
-import watchLive from '../../app/watch';
 import ItemSprite from '../../items/ItemSprite';
 import sayItems from '../../items/say-items';
 import RaidDialog from '../../raids/RaidDialog';
@@ -79,12 +84,7 @@ import NestDialog, { type EggSource, type EggState } from '../NestDialog';
 import PortalDialog from '../PortalDialog';
 import RocketStopDialog, { type StopChallenge } from '../RocketStopDialog';
 import SafariDialog from '../SafariDialog';
-import ChunkCanvas, {
-  CROSSING_IN,
-  CROSSING_OUT,
-  type CellSpot,
-  type Crossing,
-} from '../chunk-canvas';
+import ChunkCanvas, { type CellSpot, type SpawnCoat } from '../chunk-canvas';
 import NpcDialog from '../npc-dialog';
 import {
   For,
@@ -92,16 +92,19 @@ import {
   type Resource,
   Show,
   createEffect,
+  createMemo,
   createSignal,
   onCleanup,
   onMount,
   untrack,
 } from 'solid-js';
 import {
-  CROSSING_LIMIT,
+  BOARD_CELLS,
+  BOARD_CENTER,
   FIGHT_LANDMARKS,
   HARVEST_LANDMARKS,
   ICON_SIZE,
+  PLAYER_CELL,
   PUBLISHED_SPAWNS,
   REFRESH_DEBOUNCE,
   SAVE_DELAY,
@@ -155,15 +158,68 @@ export default function OverworldBoard(props: {
       }),
     );
   });
-  const [chunkX, setChunkX] = createSignal(0);
-  const [chunkY, setChunkY] = createSignal(0);
-  const [cellX, setCellX] = createSignal(START_CELL);
-  const [cellY, setCellY] = createSignal(START_CELL);
   /**
-   * Where they are standing, as one number: the cell index every part
-   * of the game names a square by
+   * Where the player is standing, in world cells.
+   *
+   * The board is a window that follows them rather than the chunk they
+   * happen to be in, so this is the one position the game keeps: the
+   * chunk and the cell inside it are worked out from it when the
+   * server has to be told where somebody is
    */
-  const cell = (): number => cellY() * CHUNK_CELLS + cellX();
+  const [atX, setAtX] = createSignal(START_CELL);
+  const [atY, setAtY] = createSignal(START_CELL);
+  const chunkX = (): number => chunkOfCell(atX());
+  const chunkY = (): number => chunkOfCell(atY());
+  /** The world cell the board's own cell 0 sits on */
+  const originX = (): number => atX() - BOARD_CENTER;
+  const originY = (): number => atY() - BOARD_CENTER;
+  /**
+   * Where they are standing on the board, which is the middle of it
+   * and always will be: the window moves, they do not
+   */
+  const cell = (): number => PLAYER_CELL;
+  /** A board cell said as a world cell, and the way back */
+  const boardOf = (index: number): [number, number] => [
+    originX() + (index % BOARD_CELLS),
+    originY() + Math.floor(index / BOARD_CELLS),
+  ];
+  const seatOf = (x: number, y: number): number | null => {
+    const bx = x - originX();
+    const by = y - originY();
+
+    return bx < 0 || by < 0 || bx >= BOARD_CELLS || by >= BOARD_CELLS
+      ? null
+      : by * BOARD_CELLS + bx;
+  };
+  /**
+   * How a cell is remembered between steps.
+   *
+   * A board cell is where something is *now*: take one step east and
+   * cell 100 is the square next to the one it was. Anything held on to
+   * — a bush stripped, a cache dug, a claim in flight — is keyed by
+   * the world cell instead, which does not move
+   */
+  const keyOf = (index: number): string => boardOf(index).join(',');
+  /** The same key for a cell already resolved to its chunk's window */
+  const keyAt = (spot: Placed): string =>
+    [
+      worldCell(spot.snapshot.chunk.x, spot.cell % CHUNK_CELLS),
+      worldCell(spot.snapshot.chunk.y, Math.floor(spot.cell / CHUNK_CELLS)),
+    ].join(',');
+  /** Those keys back on the board, dropping what has since walked off it */
+  const seatsIn = (keys: Set<string>): Set<number> => {
+    const seats = new Set<number>();
+
+    for (const key of keys) {
+      const [x, y] = key.split(',').map(Number);
+      const standing = seatOf(x, y);
+
+      if (standing != null) {
+        seats.add(standing);
+      }
+    }
+    return seats;
+  };
   const [session, setSession] = createSignal<SafariSession<EncounterRecord> | null>(null);
   /**
    * Whether the meeting on screen is one that happens once: a
@@ -262,28 +318,43 @@ export default function OverworldBoard(props: {
    * standing on and who is on it this window, until their business is
    * done or declined
    */
-  const [wanderer, setWanderer] = createSignal<[number, Npc] | null>(null);
+  const [wanderer, setWanderer] = createSignal<[Placed, Npc] | null>(null);
   /**
    * The portal cell the player is standing at, or null. What it opens
    * onto is derived in the dialog rather than here
    */
-  const [portal, setPortal] = createSignal<number | null>(null);
+  const [portal, setPortal] = createSignal<Placed | null>(null);
   /**
    * The gym seat the player has walked up to: the cell, and where
    * this player stands with it — who holds it, when they may
    * challenge again, and whether they are the one just beaten off it
    */
-  const [seat, setSeat] = createSignal<[number, GymSeatStanding] | null>(null);
+  const [seat, setSeat] = createSignal<[Placed, GymSeatStanding] | null>(null);
   /**
    * The lair the player is standing in front of, and what it holds.
    * Looking at one stages nothing — the dialog's button is where a
    * lobby is opened or joined
    */
-  const [lair, setLair] = createSignal<[number, RaidView | null] | null>(null);
+  const [lair, setLair] = createSignal<[Placed, RaidView | null] | null>(null);
   /**
    * What the lair dialog says when there is nothing standing in it
    */
   const [lairReason, setLairReason] = createSignal<string | null>(null);
+  /**
+   * The two dialogs that are handed a window and a cell of it. The
+   * board says where things are in its own numbers, so the cell they
+   * are given is the chunk's rather than the board's
+   */
+  const standingNpc = (): [number, Npc] | null => {
+    const open = wanderer();
+
+    return open == null ? null : [open[0].cell, open[1]];
+  };
+  const standingLair = (): [number, RaidView | null] | null => {
+    const open = lair();
+
+    return open == null ? null : [open[0].cell, open[1]];
+  };
   /**
    * The raid items the player carries, each with what it calls. They
    * are used where the player stands, so they live here rather than
@@ -323,10 +394,8 @@ export default function OverworldBoard(props: {
     if (at == null || placed()) {
       return;
     }
-    setChunkX(at.chunkX);
-    setChunkY(at.chunkY);
-    setCellX(at.cellX);
-    setCellY(at.cellY);
+    setAtX(worldCell(at.chunkX, at.cellX));
+    setAtY(worldCell(at.chunkY, at.cellY));
     // Last, so nothing that watches a chunk starts watching the wrong
     // one: the whole overworld waits on being placed
     setPlaced(true);
@@ -341,26 +410,65 @@ export default function OverworldBoard(props: {
     if (at == null || !placed()) {
       return;
     }
-    setChunkX(at.chunkX);
-    setChunkY(at.chunkY);
-    setCellX(at.cellX);
-    setCellY(at.cellY);
+    setAtX(worldCell(at.chunkX, at.cellX));
+    setAtY(worldCell(at.chunkY, at.cellY));
   });
 
   /**
-   * Walking into a chunk publishes (or adopts) the window's spawns;
+   * The windows of every chunk the board overlaps, by chunk key.
+   *
+   * One subscription apiece: what time it is there and what is
+   * standing in it arrive together, since they are one document, and a
+   * spawn caught by another player disappears from every screen the
+   * moment its window is rewritten. Kept as a map rather than a single
+   * value because the board straddles chunks now, and a board waiting
+   * on all four of them at once would blank whenever any one of them
+   * turned over
+   */
+  const [windows, setWindows] = createSignal<Map<string, WatchedWindow>>(new Map());
+
+  /**
+   * The chunks the board is showing. A memo compared by content so
+   * that a step staying inside the same four is not a reason to open
+   * the subscriptions again: the window moves a cell at a time and the
+   * chunks under it change every sixteen
+   */
+  const overlapped = createMemo(() => boardChunks(originX(), originY()), [], {
+    equals: (was, now) =>
+      was.length === now.length && was.every(([x, y], at) => x === now[at][0] && y === now[at][1]),
+  });
+
+  /**
+   * The windows the board is showing, named by chunk and by the
+   * instant each was rolled. What is read once per window rather than
+   * once per step hangs off this: a step that changes neither is not a
+   * reason to ask the server anything
+   */
+  const windowKey = createMemo(() =>
+    overlapped()
+      .map(([x, y]) => `${x},${y}@${windows().get(`${x},${y}`)?.record.timestamp ?? ''}`)
+      .join(' '),
+  );
+
+  /**
+   * Seeing into a chunk publishes (or adopts) its window's spawns;
    * everything after that arrives through the subscriptions below,
    * so a window rolling over or a spawn another player caught shows
-   * up without a reload
+   * up without a reload.
+   *
+   * Every chunk the board overlaps, not only the one the player is
+   * standing in: what is drawn is what is being looked at, and a
+   * quarter of the board left unrolled would be a field with nothing
+   * in it until the player crossed into it
    */
   const refreshWindow = (): void => {
-    // The window always rolls the lure's extras, so every player of
-    // the chunk shares one set of rolls whoever publishes them
-    visitChunk(getWorld().getChunk(chunkX(), chunkY()), PUBLISHED_SPAWNS, zone).catch(
-      (caught: unknown) => {
+    for (const [x, y] of overlapped()) {
+      // The window always rolls the lure's extras, so every player of
+      // the chunk shares one set of rolls whoever publishes them
+      visitChunk(getWorld().getChunk(x, y), PUBLISHED_SPAWNS, zone).catch((caught: unknown) => {
         remark(caught instanceof Error ? caught.message : String(caught), 'ember');
-      },
-    );
+      });
+    }
   };
 
   /**
@@ -422,42 +530,39 @@ export default function OverworldBoard(props: {
     });
   });
 
-  /**
-   * A window with the chunk it belongs to. The record itself says only
-   * when it was rolled and what it rolled, so the coordinates ride
-   * beside it rather than being read again where it is used
-   */
-  interface WatchedWindow {
-    x: number;
-    y: number;
-    record: SnapshotRecord;
-  }
-
-  // One subscription for the whole window: what time it is here and
-  // what is standing in the chunk arrive together, since they are one
-  // document. A spawn caught by another player disappears from every
-  // screen the moment the window is rewritten
-  const window = watchLive<WatchedWindow>((set) => {
+  createEffect(() => {
     // Nothing is watched until the player has been put somewhere:
     // chunk 0,0 is not where they are, and publishing its window
-    // would be a visit nobody made. Being placed is what opens it,
-    // which is why this is `watchLive` and not `from` — see the note
-    // there, and note that walking into the next chunk re-opens it
-    // for the same reason
+    // would be a visit nobody made
     if (!placed()) {
-      return null;
+      return;
     }
 
-    // Read once, here, and carried with whatever arrives. `watchLive`
-    // lets go of the old value in an effect, which runs after the
-    // update that moved the player: for that gap a record read live
-    // would be paired with the chunk it is not about
-    const x = chunkX();
-    const y = chunkY();
+    const wanted = overlapped();
+    const keys = new Set(wanted.map(([x, y]) => `${x},${y}`));
 
-    return watchSnapshotWindow(getWorld().getChunk(x, y), zone, (record) => {
-      if (record != null) {
-        set({ x, y, record });
+    // What the board has walked away from is dropped rather than left
+    // to be drawn if the player walks back before it is re-read
+    setWindows((held) => new Map([...held].filter(([key]) => keys.has(key))));
+
+    const stops = wanted.map(([x, y]) =>
+      watchSnapshotWindow(getWorld().getChunk(x, y), zone, (record) => {
+        setWindows((held) => {
+          const next = new Map(held);
+
+          if (record == null) {
+            next.delete(`${x},${y}`);
+          } else {
+            next.set(`${x},${y}`, { x, y, record });
+          }
+          return next;
+        });
+      }),
+    );
+
+    onCleanup(() => {
+      for (const stop of stops) {
+        stop();
       }
     });
   });
@@ -472,123 +577,25 @@ export default function OverworldBoard(props: {
    */
   const fled = (): Set<string> | undefined => settled(props.fled);
 
-  const view = (): ChunkView | null => {
-    const held = window();
-
-    // A window is about the chunk it was opened for and no other. A
-    // record left over from the chunk behind draws the last one's
-    // pokemon standing on this one's ground
-    if (held == null || held.x !== chunkX() || held.y !== chunkY()) {
-      return null;
-    }
-    return buildChunkView(
-      held.x,
-      held.y,
-      held.record.timestamp,
+  /**
+   * What is on the board.
+   *
+   * A memo, and not a plain call: half the game asks for it — a walk
+   * asks four times a second, a press asks twice — and building it is
+   * four windows' worth of rolling. Read plainly, every one of those
+   * asks was a fresh world
+   */
+  const view = createMemo(() =>
+    buildBoardView(
+      originX(),
+      originY(),
+      windows(),
       zone,
-      held.record.spawns,
       auth.user()?.uid ?? null,
       buddy() ?? null,
       fled() ?? new Set(),
-    );
-  };
-
-  /**
-   * Which chunk the player is being shown, and which window of it the
-   * sparkle has already been played for.
-   *
-   * Walking out and back in is a fresh arrival: the sprites are drawn
-   * again, sparkles and all, so the sound belongs with them. What the
-   * window is for is the other case, where nothing has moved and the
-   * board is only being redrawn
-   */
-  let visited = '';
-  let sparkled = '';
-
-  /**
-   * A shiny standing in the chunk, said out loud.
-   *
-   * Keyed by the visit and the window rather than by what the view
-   * holds: the view is rebuilt whenever the buddy or a flight changes,
-   * and the sparkle is about the pokemon being there to see, not about
-   * the board being redrawn. The build is untracked for the same
-   * reason, so this listens to the window and nothing else
-   */
-  createEffect(() => {
-    const held = window();
-
-    if (held == null) {
-      return;
-    }
-
-    const spot = `${held.x},${held.y}`;
-
-    // Come back to a chunk and its shiny is arriving again, whether or
-    // not the window it stands in has turned over since
-    if (spot !== visited) {
-      visited = spot;
-      sparkled = '';
-    }
-
-    const key = `${spot}@${held.record.timestamp}`;
-
-    if (key === sparkled) {
-      return;
-    }
-    untrack(() => {
-      const loaded = view();
-
-      // Nothing yet: the record is a chunk ahead of where the player
-      // is standing, which happens for a beat while they cross. The
-      // window is left unmarked so its shiny is still heard when the
-      // two agree
-      if (loaded == null) {
-        return;
-      }
-      sparkled = key;
-      if ([...loaded.spawns.values()].some((standing) => standing.shiny)) {
-        playEffect(Effect.ShinySparkle);
-      }
-    });
-  });
-
-  /**
-   * The board being left behind, while it is being left behind.
-   *
-   * Crossing a boundary re-opens the window subscription, and what it
-   * holds is null until the next chunk's window arrives — so the world
-   * had nothing to draw for a round trip and put a line of text on the
-   * screen instead. That is a flash of the whole page, every time
-   * somebody walks off an edge.
-   *
-   * Held here, the old chunk stays on screen and is carried off by the
-   * canvas while the new one is in the air. The player's cell is held
-   * with it: they are already standing on the far side by then, and
-   * their marker jumping to the opposite edge of a board they have not
-   * left yet is the same flash in miniature
-   */
-  const [frozen, setFrozen] = createSignal<{ view: ChunkView; player: number } | null>(null);
-  const [crossing, setCrossing] = createSignal<Crossing | null>(null);
-  /**
-   * Whether the board has finished being carried off. The other half
-   * of the wait is the new window, and the crossing turns round when
-   * both are done
-   */
-  const [gone, setGone] = createSignal(true);
-
-  /**
-   * What is on screen: the board being carried off, or the one the
-   * player is standing in
-   */
-  const shown = (): ChunkView | null => frozen()?.view ?? view();
-
-  /**
-   * What every plant on the board is bearing: the berry patches and
-   * the apricorn trees together, since the canvas draws both the same
-   * way and a cell is one or the other
-   */
-  const fruiting = (snapshot: ChunkSnapshot): Map<number, ItemStack> =>
-    new Map([...snapshot.getBerryPatches(), ...snapshot.getApricornTrees()]);
+    ),
+  );
 
   /**
    * The cells whose happening this player has already walked into.
@@ -599,10 +606,21 @@ export default function OverworldBoard(props: {
    * pressed again, and re-read from the store on arrival so it stays
    * dropped across a reload or a walk back into the chunk
    */
-  const [spent, setSpent] = createSignal<Set<number>>(new Set());
+  const [spent, setSpent] = createSignal<Set<string>>(new Set());
 
-  createEffect(() => {
-    const loaded = view();
+  /**
+   * A claim list read from every window the board overlaps, gathered
+   * into one set of world cells.
+   *
+   * Keyed off the windows rather than the view, since the view is
+   * rebuilt on every step: what a player has already taken changes
+   * when a window turns over, not when they walk a square
+   */
+  const gather = (
+    ask: (snapshot: ChunkSnapshot) => Promise<number[]>,
+    take: (cells: Set<string>) => void,
+  ): void => {
+    const loaded = untrack(view);
 
     if (loaded == null) {
       return;
@@ -610,18 +628,31 @@ export default function OverworldBoard(props: {
 
     let live = true;
 
-    listClaimedPhenomena(loaded.snapshot)
-      .then((cells) => {
+    Promise.all(
+      loaded.chunks.map(async (piece) =>
+        (await ask(piece.snapshot)).map((taken) => piece.world(taken).join(',')),
+      ),
+    )
+      .then((found) => {
         if (live) {
-          setSpent(new Set(cells));
+          take(new Set(found.flat()));
         }
       })
       .catch(() => {
-        // A board that cannot say what was already taken draws them
-        // all: pressing a spent one costs a refusal, not a mistake
+        // A board that cannot say what was already taken draws it all:
+        // pressing a spent cell costs a refusal, not a mistake
       });
     onCleanup(() => {
       live = false;
+    });
+  };
+
+  createEffect(() => {
+    // Read again when a window turns over, and not when the player
+    // takes a step: the board moves under them constantly
+    windowKey();
+    gather(listClaimedPhenomena, (cells) => {
+      setSpent(cells);
     });
   });
 
@@ -633,7 +664,7 @@ export default function OverworldBoard(props: {
    * into the chunk. The markers behind it are keyed by the window, so
    * the set empties itself when the patches grow again
    */
-  const [picked, setPicked] = createSignal<Set<number>>(new Set());
+  const [picked, setPicked] = createSignal<Set<string>>(new Set());
 
   /**
    * The caches this player has already dug up this window, which the
@@ -641,38 +672,15 @@ export default function OverworldBoard(props: {
    * reason the bare bushes are: an emptied cache should stay emptied
    * across a reload
    */
-  const [dug, setDug] = createSignal<Set<number>>(new Set());
+  const [dug, setDug] = createSignal<Set<string>>(new Set());
 
   createEffect(() => {
-    const loaded = view();
-
-    if (loaded == null) {
-      return;
-    }
-
-    let live = true;
-
-    listPickedBerryPatches(loaded.snapshot)
-      .then((cells) => {
-        if (live) {
-          setPicked(new Set(cells));
-        }
-      })
-      .catch(() => {
-        // A board that cannot say which bushes are bare draws them all
-        // in fruit: pressing one costs a refusal, not a mistake
-      });
-    listClaimedItemCaches(loaded.snapshot)
-      .then((cells) => {
-        if (live) {
-          setDug(new Set(cells));
-        }
-      })
-      .catch(() => {
-        // The same bargain the bushes make
-      });
-    onCleanup(() => {
-      live = false;
+    windowKey();
+    gather(listPickedBerryPatches, (cells) => {
+      setPicked(cells);
+    });
+    gather(listClaimedItemCaches, (cells) => {
+      setDug(cells);
     });
   });
 
@@ -684,16 +692,18 @@ export default function OverworldBoard(props: {
    * the cell goes on looking exactly as it did until the answer comes
    * back. Held shut until it does, so a mashed cell is claimed once
    */
-  const [claiming, setClaiming] = createSignal<Set<number>>(new Set());
+  const [claiming, setClaiming] = createSignal<Set<string>>(new Set());
 
   const holdCell = (index: number, held: boolean): void => {
+    const spot = keyOf(index);
+
     setClaiming((cells) => {
       const next = new Set(cells);
 
       if (held) {
-        next.add(index);
+        next.add(spot);
       } else {
-        next.delete(index);
+        next.delete(spot);
       }
       return next;
     });
@@ -703,16 +713,16 @@ export default function OverworldBoard(props: {
    * What is going on at a cell, once what this player has already had
    * is taken out of it
    */
-  const showing = (loaded: ChunkView, index: number): Phenomenon | undefined =>
-    spent().has(index) ? undefined : loaded.snapshot.getPhenomena().get(index);
+  const showing = (loaded: BoardView, index: number): Phenomenon | undefined =>
+    spent().has(keyOf(index)) ? undefined : loaded.phenomena.get(index);
 
   /**
    * Everything still going on, as the canvas draws it
    */
-  const happenings = (loaded: ChunkView): Map<number, Phenomenon> => {
-    const live = new Map(loaded.snapshot.getPhenomena());
+  const happenings = (loaded: BoardView): Map<number, Phenomenon> => {
+    const live = new Map(loaded.phenomena);
 
-    for (const taken of spent()) {
+    for (const taken of seatsIn(spent())) {
       live.delete(taken);
     }
     return live;
@@ -729,72 +739,10 @@ export default function OverworldBoard(props: {
    */
   createEffect(() => {
     const open = wanderer();
-    const standing = view()?.snapshot;
 
-    if (open != null && standing != null && standing.getStandingNpc(open[0]) !== open[1]) {
+    if (open != null && open[0].snapshot.getStandingNpc(open[0].cell) !== open[1]) {
       setWanderer(null);
     }
-  });
-
-  const cross = (deltaX: number, deltaY: number): void => {
-    const standing = view();
-
-    if (standing == null) {
-      // Nothing is drawn yet, so there is nothing to carry off — which
-      // is the first chunk of a session and nothing else
-      return;
-    }
-    setFrozen({ view: standing, player: cell() });
-    setGone(false);
-    setCrossing({ dx: deltaX, dy: deltaY, phase: 'out' });
-  };
-
-  // The clock: each half of a crossing lasts as long as it lasts, and
-  // the out half has a floor under it — a window that never arrives
-  // must not leave a player looking at a chunk they walked out of
-  createEffect(() => {
-    const step = crossing();
-
-    if (step == null) {
-      return;
-    }
-
-    const ending = setTimeout(
-      () => {
-        if (step.phase === 'out') {
-          setGone(true);
-        } else {
-          setCrossing(null);
-        }
-      },
-      step.phase === 'out' ? CROSSING_OUT : CROSSING_IN,
-    );
-    const stalled =
-      step.phase === 'out'
-        ? setTimeout(() => {
-            setFrozen(null);
-            setCrossing(null);
-          }, CROSSING_LIMIT)
-        : null;
-
-    onCleanup(() => {
-      clearTimeout(ending);
-      if (stalled != null) {
-        clearTimeout(stalled);
-      }
-    });
-  });
-
-  // ...and the turn: the old board is off the screen and the new one
-  // has arrived, so it is let go of and brought on from the far side
-  createEffect(() => {
-    const step = crossing();
-
-    if (step?.phase !== 'out' || !gone() || view() == null) {
-      return;
-    }
-    setFrozen(null);
-    setCrossing({ ...step, phase: 'in' });
   });
 
   // Where they are, said at the top of the menu. The menu is a sibling
@@ -802,10 +750,7 @@ export default function OverworldBoard(props: {
   // upwards and cleared on the way out — a battle takes the page, and
   // the place under it is not where the player is standing any more
   createEffect(() => {
-    // What is drawn rather than where they are standing: while a
-    // boundary is being crossed those differ for a moment, and the
-    // words under a picture should be about the picture
-    const standing = shown();
+    const standing = view();
 
     game.setPlace(standing == null ? null : naming(standing));
     game.setWeather(standing == null ? null : standing.weather);
@@ -826,6 +771,9 @@ export default function OverworldBoard(props: {
    * still asking
    */
   const [eggOffer, setEggOffer] = createSignal<{
+    /** Where the egg is, in the words the server knows the cell by */
+    spot: Placed;
+    /** And where it is on the board, which is where the answer is shown */
     cell: number;
     from: EggSource;
     state: EggState;
@@ -867,15 +815,14 @@ export default function OverworldBoard(props: {
    */
   const takeEgg = (): void => {
     const offer = eggOffer();
-    const loaded = view();
 
-    if (offer == null || loaded == null || taking()) {
+    if (offer == null || taking()) {
       return;
     }
     setTaking(true);
     (offer.from === 'nest'
-      ? claimNest(loaded.snapshot, offer.cell)
-      : claimPhenomenon(loaded.snapshot, offer.cell).then((claim) =>
+      ? claimNest(offer.spot.snapshot, offer.spot.cell)
+      : claimPhenomenon(offer.spot.snapshot, offer.spot.cell).then((claim) =>
           claim?.kind === 'egg' ? claim.catchId : null,
         )
     )
@@ -900,7 +847,7 @@ export default function OverworldBoard(props: {
         // A grotto that has been opened is spent for this player,
         // whichever way the answer went: the cell stops being drawn
         if (offer.from === 'grotto') {
-          setSpent((cells) => new Set(cells).add(offer.cell));
+          setSpent((cells) => new Set(cells).add(keyAt(offer.spot)));
         }
       })
       .catch((caught: unknown) => {
@@ -1017,10 +964,8 @@ export default function OverworldBoard(props: {
     if (at == null) {
       return;
     }
-    setChunkX(at.chunkX);
-    setChunkY(at.chunkY);
-    setCellX(at.cellX);
-    setCellY(at.cellY);
+    setAtX(worldCell(at.chunkX, at.cellX));
+    setAtY(worldCell(at.chunkY, at.cellY));
     game.takeWalk();
   };
 
@@ -1030,7 +975,12 @@ export default function OverworldBoard(props: {
   // lands is where they stopped rather than every square they crossed
   createEffect(() => {
     const user = auth.user();
-    const at = { chunkX: chunkX(), chunkY: chunkY(), cellX: cellX(), cellY: cellY() };
+    const at = {
+      chunkX: chunkX(),
+      chunkY: chunkY(),
+      cellX: cellInChunk(atX()),
+      cellY: cellInChunk(atY()),
+    };
 
     if (user == null || !placed()) {
       return;
@@ -1050,7 +1000,7 @@ export default function OverworldBoard(props: {
   // way out rather than thrown away
   onCleanup(() => {
     if (placed()) {
-      settle(chunkX(), chunkY(), cellX(), cellY());
+      settle(chunkX(), chunkY(), cellInChunk(atX()), cellInChunk(atY()));
     }
   });
 
@@ -1064,43 +1014,19 @@ export default function OverworldBoard(props: {
     // seconds of walking
     askForWindow();
 
-    let x = cellX() + deltaX;
-    let y = cellY() + deltaY;
-    let chunk = chunkX();
-    let row = chunkY();
+    const x = atX() + deltaX;
+    const y = atY() + deltaY;
 
-    // Walking off an edge carries into the neighboring chunk, and
-    // the player re-enters it from the opposite edge
-    if (x < 0) {
-      chunk -= 1;
-      x = CHUNK_CELLS - 1;
-    } else if (x >= CHUNK_CELLS) {
-      chunk += 1;
-      x = 0;
-    }
-    if (y < 0) {
-      row -= 1;
-      y = CHUNK_CELLS - 1;
-    } else if (y >= CHUNK_CELLS) {
-      row += 1;
-      y = 0;
-    }
-
-    // The world is finite: its outermost chunks have no neighbor to
-    // step into, so a walk into the edge goes nowhere
-    if (!isInWorld(chunk, row)) {
+    // The world is finite: its outermost chunks have nothing beyond
+    // them, so a walk into the edge goes nowhere
+    if (!isInWorld(chunkOfCell(x), chunkOfCell(y))) {
       return;
     }
 
-    // Leaving the chunk: hold on to what is drawn, so the board can be
-    // carried off the screen rather than taken off it
-    if (chunk !== chunkX() || row !== chunkY()) {
-      cross(deltaX, deltaY);
-    }
-    setChunkX(chunk);
-    setChunkY(row);
-    setCellX(x);
-    setCellY(y);
+    // Nothing else happens: a boundary is a line on a map now, and
+    // crossing one moves the window a cell like every other step
+    setAtX(x);
+    setAtY(y);
     // A cell crossed is a step walked, and an egg only moves while it
     // is the one being carried
     pending += 1;
@@ -1131,16 +1057,25 @@ export default function OverworldBoard(props: {
   };
 
   const interact = async (
-    loaded: ChunkView,
+    loaded: BoardView,
     user: PlayerIdentity,
     at: number,
   ): Promise<string | null> => {
+    // Which window the cell belongs to. The board straddles chunks, so
+    // the square under the player and the one beside it can be two
+    // different windows' business
+    const spot = loaded.at(at);
+
+    if (spot == null) {
+      return 'That is not loaded yet.';
+    }
+
     const spawn = loaded.spawns.get(at);
 
     if (spawn != null) {
       // The server decides what is standing there: a spawn from a
       // window that has turned over is no longer met
-      const encounter = await startEncounter(loaded.snapshot, spawn.id);
+      const encounter = await startEncounter(spot.snapshot, spawn.id);
 
       return encounter == null ? 'Too late. The chunk has moved on.' : meet(user, encounter);
     }
@@ -1148,11 +1083,11 @@ export default function OverworldBoard(props: {
     const landmark = loaded.landmarks.get(at);
 
     if (landmark === Landmark.ItemCache) {
-      const stash = await claimItemCache(loaded.snapshot, at);
+      const stash = await claimItemCache(spot.snapshot, spot.cell);
 
       // Empty either way: the stash was already carried off, or this
       // press carried it off
-      setDug((cells) => new Set(cells).add(at));
+      setDug((cells) => new Set(cells).add(keyAt(spot)));
       // What came out of the ground is put in front of them rather
       // than said under the map: a player pressing a cell is looking
       // at the cell
@@ -1160,20 +1095,20 @@ export default function OverworldBoard(props: {
       return null;
     }
     if (landmark === Landmark.BerryPatch) {
-      const berries = await claimBerryPatch(loaded.snapshot, at);
+      const berries = await claimBerryPatch(spot.snapshot, spot.cell);
 
       // Bare either way: the bush was already stripped, or this press
       // stripped it
-      setPicked((cells) => new Set(cells).add(at));
+      setPicked((cells) => new Set(cells).add(keyAt(spot)));
       announce(at, 'Bare bushes. Come back next window.', berries == null ? null : [berries]);
       return null;
     }
     if (landmark === Landmark.ApricornTree) {
-      const apricorns = await claimApricornTree(loaded.snapshot, at);
+      const apricorns = await claimApricornTree(spot.snapshot, spot.cell);
 
       // Picked either way, and worth saying what they are for: an
       // apricorn is nothing until Kurt has it
-      setPicked((cells) => new Set(cells).add(at));
+      setPicked((cells) => new Set(cells).add(keyAt(spot)));
       announce(at, 'Picked bare. Come back next window.', apricorns == null ? null : [apricorns]);
       return null;
     }
@@ -1182,18 +1117,19 @@ export default function OverworldBoard(props: {
     // the challenge dialog rather than the wanderer's
     if (landmark != null && FIGHT_LANDMARKS.has(landmark)) {
       const grunt = landmark === Landmark.TeamRocket;
-      const staged = challengerOf(loaded.snapshot, landmark, at);
+      const staged = challengerOf(spot.snapshot, landmark, spot.cell);
       const who = staged?.name ?? 'Team Rocket';
-      const stop = await enterRocketStop(loaded.snapshot, at);
+      const stop = await enterRocketStop(spot.snapshot, spot.cell);
 
       if (stop === 'locked') {
         // The ladder's two gates, each named by whoever is standing
         // there: an elite asks for their own league's badges, a
         // champion for their own league's Elite Four
-        const seated = landmark === Landmark.EliteFour ? loaded.snapshot.getEliteMember(at) : null;
+        const seated =
+          landmark === Landmark.EliteFour ? spot.snapshot.getEliteMember(spot.cell) : null;
         const crowned =
-          landmark === Landmark.Champion && loaded.snapshot.getLegend(at) == null
-            ? loaded.snapshot.getChampion(at)
+          landmark === Landmark.Champion && spot.snapshot.getLegend(spot.cell) == null
+            ? spot.snapshot.getChampion(spot.cell)
             : null;
         let asked: string | null = null;
 
@@ -1213,10 +1149,10 @@ export default function OverworldBoard(props: {
         const owed = grunt
           ? await claimRocketReward(
               rocketStopId(
-                loaded.snapshot.chunk,
-                loaded.snapshot.npcTimestamp,
-                at,
-                loaded.snapshot.offset,
+                spot.snapshot.chunk,
+                spot.snapshot.npcTimestamp,
+                spot.cell,
+                spot.snapshot.offset,
               ),
             )
           : null;
@@ -1242,7 +1178,7 @@ export default function OverworldBoard(props: {
       // them; the dialog is what accepts it
       setChallengerNpc(grunt ? Npc.RocketGrunt : Npc.Trainer);
       setChallenger(staged);
-      setChallengeCoat(loaded.snapshot.getWandererCoats().get(at));
+      setChallengeCoat(spot.snapshot.getWandererCoats().get(spot.cell));
       setChallenge(stop);
       return null;
     }
@@ -1254,7 +1190,7 @@ export default function OverworldBoard(props: {
       return null;
     }
     if (landmark === Landmark.GymSeat) {
-      const standing = await enterGymSeat(loaded.snapshot, at);
+      const standing = await enterGymSeat(spot.snapshot, spot.cell);
 
       if (standing === 'absent') {
         // The board is behind the world: the seat is a fixture, so
@@ -1262,20 +1198,20 @@ export default function OverworldBoard(props: {
         askForWindow(true);
         return 'There is no seat there any more.';
       }
-      setSeat([at, standing]);
+      setSeat([spot, standing]);
       return null;
     }
     // The wandering cell and the market stall open the same counter:
     // who is standing there is the snapshot's answer either way
     if (landmark === Landmark.WanderingNpc || landmark === Landmark.Market) {
-      const standing = loaded.snapshot.getStandingNpc(at);
+      const standing = spot.snapshot.getStandingNpc(spot.cell);
 
       if (standing == null) {
         return 'Nobody is passing through right now.';
       }
       // What they want is put to the player rather than taken from
       // them; the dialog is where the fee is agreed to
-      setWanderer([at, standing]);
+      setWanderer([spot, standing]);
       return null;
     }
     if (landmark === Landmark.Nest) {
@@ -1284,12 +1220,13 @@ export default function OverworldBoard(props: {
       // simply better to have; an egg is not. A buddy carries one egg
       // and walks it open, so a second one is a decision about the
       // first, and the player is the one to make it
-      const offer = await peekNest(loaded.snapshot, at);
+      const offer = await peekNest(spot.snapshot, spot.cell);
 
       // A bare nest opens the dialog too. A player who pressed a cell
       // asked a question, and the answer belongs where they are
       // looking rather than in a line under the map
       setEggOffer({
+        spot,
         cell: at,
         from: 'nest',
         state: offer == null ? 'bare' : stateOf(offer),
@@ -1304,20 +1241,20 @@ export default function OverworldBoard(props: {
       // The grotto's egg is the one thing here that is asked about
       // first; an item and a pokemon are walked into as they always
       // were, and neither is worth a question
-      const hidden = await peekPhenomenonEgg(loaded.snapshot, at);
+      const hidden = await peekPhenomenonEgg(spot.snapshot, spot.cell);
 
       if (hidden != null) {
-        setEggOffer({ cell: at, from: 'grotto', state: stateOf(hidden), message: null });
+        setEggOffer({ spot, cell: at, from: 'grotto', state: stateOf(hidden), message: null });
         return null;
       }
 
-      const claim = await claimPhenomenon(loaded.snapshot, at);
+      const claim = await claimPhenomenon(spot.snapshot, spot.cell);
 
       // Taken, or already had, or the hour turned over under them.
       // Every one of those leaves the cell spent for this player, so
       // it stops being drawn rather than standing there to be pressed
       // again for nothing
-      setSpent((cells) => new Set(cells).add(at));
+      setSpent((cells) => new Set(cells).add(keyAt(spot)));
 
       if (claim == null) {
         return `${PHENOMENON_NAMES[showingKind]}, and nothing under it now.`;
@@ -1341,7 +1278,7 @@ export default function OverworldBoard(props: {
       // Where it goes is derived from the chunk it stands in, so the
       // dialog can list every destination without asking anything of
       // the server. The key is what the server is for
-      setPortal(at);
+      setPortal(spot);
       return null;
     }
     if (landmark === Landmark.LegendaryLair || landmark === Landmark.ShadowLair) {
@@ -1349,7 +1286,7 @@ export default function OverworldBoard(props: {
       // Looked at rather than walked into: nothing is staged until the
       // dialog's button is pressed, so a player who thinks better of it
       // leaves no lobby standing behind them
-      const standing = await peekRaid(loaded.snapshot, at, kind);
+      const standing = await peekRaid(spot.snapshot, spot.cell, kind);
 
       // Their own lobby, walked back into. The dialog exists to put
       // the lair to somebody deciding about it, and a host has already
@@ -1375,7 +1312,7 @@ export default function OverworldBoard(props: {
           ? 'The lair is quiet. Nothing has come out this window.'
           : 'You need a pokemon of your own to raid. You can watch one already under way.',
       );
-      setLair([at, standing]);
+      setLair([spot, standing]);
       return null;
     }
     return null;
@@ -1411,16 +1348,16 @@ export default function OverworldBoard(props: {
    * player onto it and does nothing — the reach that triggers it is
    * only taken for a cell that holds something
    */
-  const holdsSomething = (loaded: ChunkView | null, index: number): boolean =>
+  const holdsSomething = (loaded: BoardView | null, index: number): boolean =>
     loaded != null &&
-    !claiming().has(index) &&
+    !claiming().has(keyOf(index)) &&
     (loaded.spawns.has(index) || loaded.landmarks.has(index) || showing(loaded, index) != null);
 
   /**
    * Whether pressing the cell spends it on the spot, rather than
    * opening something the player answers afterwards
    */
-  const paysOnPress = (loaded: ChunkView, index: number): boolean => {
+  const paysOnPress = (loaded: BoardView, index: number): boolean => {
     const landmark = loaded.landmarks.get(index);
 
     return (landmark != null && HARVEST_LANDMARKS.has(landmark)) || showing(loaded, index) != null;
@@ -1433,12 +1370,9 @@ export default function OverworldBoard(props: {
    * beside it and reaches out, so passing through a cell never
    * springs it on them
    */
-  const withinReach = (index: number): boolean => {
-    const x = index % CHUNK_CELLS;
-    const y = Math.floor(index / CHUNK_CELLS);
-
-    return Math.abs(x - cellX()) <= 1 && Math.abs(y - cellY()) <= 1;
-  };
+  const withinReach = (index: number): boolean =>
+    Math.abs((index % BOARD_CELLS) - BOARD_CENTER) <= 1 &&
+    Math.abs(Math.floor(index / BOARD_CELLS) - BOARD_CENTER) <= 1;
 
   const reach = (index: number): void => {
     // Reaching for something is the moment it matters most whether the
@@ -1500,19 +1434,16 @@ export default function OverworldBoard(props: {
    * are what stop a walk, and it is the same answer whether the walk
    * was pressed for or walked with the keyboard
    */
-  const standable = (loaded: ChunkView, index: number): boolean =>
-    !loaded.landmarks.has(index) && !loaded.decorations.has(index) && !loaded.rocks.has(index);
+  const standable = (loaded: BoardView, index: number): boolean =>
+    !loaded.landmarks.has(index) && !loaded.decorations.has(index) && !loaded.walls.has(index);
 
   /**
-   * The cell one step from where the player stands, or null where that
-   * step is over the edge of the chunk
+   * The cell one step from where the player stands. Always on the
+   * board: they stand in the middle of it, and the middle is eight
+   * cells from every edge
    */
-  const ahead = ([dx, dy]: [number, number]): number | null => {
-    const x = cellX() + dx;
-    const y = cellY() + dy;
-
-    return x < 0 || y < 0 || x >= CHUNK_CELLS || y >= CHUNK_CELLS ? null : y * CHUNK_CELLS + x;
-  };
+  const ahead = ([dx, dy]: [number, number]): number =>
+    (BOARD_CENTER + dy) * BOARD_CELLS + (BOARD_CENTER + dx);
 
   /**
    * Where the player is walking, if they are.
@@ -1538,8 +1469,13 @@ export default function OverworldBoard(props: {
    * it rather than on it: standing on top of what you are looking at
    * is not what walking up to something means
    */
-  const arrived = (plan: Journey): boolean =>
-    plan.act ? withinReach(plan.goal) : cell() === plan.goal;
+  const arrived = (plan: Journey): boolean => {
+    const standing = seatOf(plan.goalX, plan.goalY);
+
+    return plan.act
+      ? standing != null && withinReach(standing)
+      : atX() === plan.goalX && atY() === plan.goalY;
+  };
 
   /**
    * One cell of the walk: work out the way from where they are now,
@@ -1569,12 +1505,22 @@ export default function OverworldBoard(props: {
     }
 
     if (arrived(plan)) {
+      const standing = seatOf(plan.goalX, plan.goalY);
+
       setJourney(null);
-      if (plan.act) {
-        reach(plan.goal);
-      } else if (plan.exit != null) {
-        move(plan.exit[0], plan.exit[1]);
+      if (plan.act && standing != null) {
+        reach(standing);
       }
+      return;
+    }
+
+    const goal = seatOf(plan.goalX, plan.goalY);
+
+    // The goal has been left behind: a walk only ever heads for
+    // something the player can see, so one off the board is one that
+    // is not being walked to any more
+    if (goal == null) {
+      setJourney(null);
       return;
     }
 
@@ -1586,23 +1532,32 @@ export default function OverworldBoard(props: {
     // chunk feel like a maze
     // Solid rock stops a walk the way a fixture does
     const passable = (index: number): boolean =>
-      !loaded.landmarks.has(index) && !loaded.decorations.has(index) && !loaded.rocks.has(index);
+      !loaded.landmarks.has(index) && !loaded.decorations.has(index) && !loaded.walls.has(index);
     // A goal nothing can stand on is walked up to instead of refused,
     // so a press on a boulder still takes the player over to it
     const route = plan.act
-      ? findPathBeside(here, plan.goal, passable)
-      : findPathNear(here, plan.goal, passable);
+      ? findPathBeside(here, goal, passable)
+      : findPathNear(here, goal, passable);
     const next = route?.[0];
 
     if (next == null) {
       setJourney(null);
       return;
     }
+    const step: [number, number] = [
+      (next % BOARD_CELLS) - (here % BOARD_CELLS),
+      Math.floor(next / BOARD_CELLS) - Math.floor(here / BOARD_CELLS),
+    ];
+
+    // A route is a run of single straight steps and nothing else. A
+    // walk is what carries the egg and what the world is seen from, so
+    // one that jumped would be a teleport with a walk's name on it
+    if (Math.abs(step[0]) + Math.abs(step[1]) !== 1) {
+      setJourney(null);
+      return;
+    }
     steppedAt = Date.now();
-    move(
-      (next % CHUNK_CELLS) - (here % CHUNK_CELLS),
-      Math.floor(next / CHUNK_CELLS) - Math.floor(here / CHUNK_CELLS),
-    );
+    move(step[0], step[1]);
   };
 
   /**
@@ -1658,23 +1613,12 @@ export default function OverworldBoard(props: {
     });
   });
 
-  // A walk belongs to the chunk it was started in: its goal is a cell
-  // number, and cell 42 of the chunk next door is somewhere else
-  // entirely. Crossing a boundary — on foot, or through a portal —
-  // ends it
-  createEffect(() => {
-    chunkX();
-    chunkY();
-    setJourney(null);
-  });
-
   /**
    * A square the player has asked to be at.
    *
-   * Three things it can be. Something they are already standing beside
-   * is reached for where they stand; anything else worth pressing is
-   * walked up to and then reached for; a threshold is walked to and
-   * stepped over, into the chunk beyond
+   * Something they are already standing beside is reached for where
+   * they stand; anything else worth pressing is walked up to and then
+   * reached for; bare ground is simply walked to
    */
   const press = (target: BoardCell): void => {
     const loaded = view();
@@ -1686,31 +1630,27 @@ export default function OverworldBoard(props: {
       return;
     }
 
-    const exit = borderExit(target);
-
-    if (exit != null) {
-      setJourney({ goal: exit.cell, exit: exit.step, act: false });
-      return;
-    }
-
-    const index = chunkCellOf(target);
+    const index = boardIndexOf(target);
 
     if (index == null) {
       return;
     }
+
+    const [x, y] = boardOf(index);
+
     if (holdsSomething(loaded, index)) {
       setJourney(null);
 
       if (withinReach(index)) {
         reach(index);
       } else {
-        setJourney({ goal: index, exit: null, act: true });
+        setJourney({ goalX: x, goalY: y, act: true });
       }
       return;
     }
     // Scenery is not a thing to reach for, but it is still somewhere
     // to head: the walk stops on the nearest cell that can be stood on
-    setJourney(index === cell() ? null : { goal: index, exit: null, act: false });
+    setJourney(index === cell() ? null : { goalX: x, goalY: y, act: false });
   };
 
   /** Which way each direction goes, in cells */
@@ -1741,11 +1681,9 @@ export default function OverworldBoard(props: {
     // pressed for is dropped rather than raced
     setJourney(null);
 
-    const target = ahead(step);
-
-    // Nothing ahead is the edge of the chunk, which is a step into the
-    // next one rather than a step into a wall
-    if (target != null && !standable(loaded, target)) {
+    // A step into something standing there turns the player and
+    // nothing more, which is what leaves the interact key an answer
+    if (!standable(loaded, ahead(step))) {
       return;
     }
     steppedAt = Date.now();
@@ -1761,7 +1699,7 @@ export default function OverworldBoard(props: {
     const loaded = view();
     const target = ahead(facing());
 
-    if (loaded == null || target == null || !holdsSomething(loaded, target)) {
+    if (loaded == null || !holdsSomething(loaded, target)) {
       return;
     }
     reach(target);
@@ -1851,10 +1789,42 @@ export default function OverworldBoard(props: {
     });
   });
 
+  /**
+   * What the canvas is handed, worked out once each.
+   *
+   * A prop is a getter, and the draw loop reads several of these once
+   * a cell a frame: built inline, each of them was a fresh map for
+   * every square of the board, sixty times a second
+   */
+  const afoot = createMemo(() => {
+    const loaded = view();
+
+    return loaded == null ? new Map<number, Phenomenon>() : happenings(loaded);
+  });
+  const pickedHere = createMemo(() => seatsIn(picked()));
+  const dugHere = createMemo(() => seatsIn(dug()));
+  const standingHere = createMemo(() => {
+    const loaded = view();
+
+    return loaded == null
+      ? new Map<number, SpawnCoat>()
+      : new Map(
+          [...loaded.spawns].map(([at, standing]): [number, SpawnCoat] => [
+            at,
+            {
+              id: standing.id,
+              species: standing.spawn[0],
+              shiny: standing.shiny,
+              // Against the window's own instant, which is what the
+              // server weighted the pool by
+              featured: isFeaturedSpecies(standing.spawn[0], loaded.snapshot.timestamp),
+            },
+          ]),
+        );
+  });
+
   const titleOf = (index: number): string => {
-    // The board on screen rather than the one they are standing in:
-    // a cell is named for what is drawn on it
-    const loaded = shown();
+    const loaded = view();
     const landmark = loaded?.landmarks.get(index);
     const spawn = loaded?.spawns.get(index);
 
@@ -1879,43 +1849,51 @@ export default function OverworldBoard(props: {
     // a phenomenon for whatever is going on there this hour, so a
     // player can see from across the chunk whether it is worth the
     // walk
+    // Everything below is the window's answer about one cell, and the
+    // board straddles chunks: the square beside the player can belong
+    // to a different window than the one they are standing in
+    const spot = loaded?.at(index) ?? null;
+
+    if (spot == null) {
+      return LANDMARK_NAMES[landmark];
+    }
     if (landmark === Landmark.WanderingNpc) {
-      const standing = loaded?.snapshot.getWanderingNpcs().get(index);
+      const standing = spot.snapshot.getWanderingNpcs().get(spot.cell);
 
       return standing == null ? LANDMARK_NAMES[landmark] : NPC_NAMES[standing];
     }
     // A stall is named for the counter it set up this window, so a
     // player short of vitamins can see which one to walk to
     if (landmark === Landmark.Market) {
-      const counter = loaded?.snapshot.getVendorKind(index);
+      const counter = spot.snapshot.getVendorKind(spot.cell);
 
       return counter == null ? LANDMARK_NAMES[landmark] : VENDOR_KIND_NAMES[counter];
     }
     // The boss is named when he is actually standing there: 1/64 is
-    // worth crossing the chunk for
-    if (landmark === Landmark.TeamRocket && loaded?.snapshot.isRocketBoss(index) === true) {
+    // worth crossing the field for
+    if (landmark === Landmark.TeamRocket && spot.snapshot.isRocketBoss(spot.cell)) {
       return 'Giovanni';
     }
     // The experts are named outright: which leader keeps this gym is
     // what decides whether the walk is worth it
     if (landmark === Landmark.GymLeader) {
-      const leader = loaded?.snapshot.getGymLeader(index);
+      const leader = spot.snapshot.getGymLeader(spot.cell);
 
       return leader == null ? LANDMARK_NAMES[landmark] : GYM_LEADER_NAMES[leader];
     }
     if (landmark === Landmark.EliteFour) {
-      const member = loaded?.snapshot.getEliteMember(index);
+      const member = spot.snapshot.getEliteMember(spot.cell);
 
       return member == null ? LANDMARK_NAMES[landmark] : ELITE_MEMBER_NAMES[member];
     }
     if (landmark === Landmark.Champion) {
-      const legend = loaded?.snapshot.getLegend(index);
+      const legend = spot.snapshot.getLegend(spot.cell);
 
       if (legend != null) {
         return LEGEND_NAMES[legend];
       }
 
-      const champion = loaded?.snapshot.getChampion(index);
+      const champion = spot.snapshot.getChampion(spot.cell);
 
       return champion == null ? LANDMARK_NAMES[landmark] : CHAMPION_NAMES[champion];
     }
@@ -1925,14 +1903,10 @@ export default function OverworldBoard(props: {
   return (
     <div class="relative h-full w-full">
       <Show
-        // What is drawn, which is the board being carried off while one
-        // is: the live view is null for a round trip after a boundary
-        // is crossed, and taking the world off the screen for that is
-        // the flash this holds it up to avoid
-        when={shown()}
+        when={view()}
         fallback={
           <div class="flex h-full items-center justify-center">
-            <Note>Loading chunk…</Note>
+            <Note>Loading the world…</Note>
           </div>
         }
       >
@@ -1972,51 +1946,38 @@ export default function OverworldBoard(props: {
                 // and a camera living down there would face front
                 // again every time
                 yaw={yaw()}
-                // How far north or south the chunk is, which is the
-                // one thing about the light that is the world's rather
+                // How far north or south this is, which is the one
+                // thing about the light that is the world's rather
                 // than the clock's
-                latitude={latitudeOf(loaded().y)}
+                latitude={latitudeOf(loaded().chunkY)}
                 onTurn={(turned) => {
                   setYaw(turned);
                 }}
                 caption={naming(loaded())}
-                // Held with the board while one is being carried off:
-                // they are standing in the next chunk by then, and
-                // their marker has no business on this one
-                player={frozen()?.player ?? cell()}
+                at={[atX(), atY()]}
+                origin={[originX(), originY()]}
                 facing={facing()}
-                crossing={crossing()}
                 landmarks={loaded().landmarks}
-                phenomena={happenings(loaded())}
-                spots={loaded().spots}
-                shallows={loaded().shallows}
-                rocks={loaded().rocks}
-                wanderers={loaded().snapshot.getWanderingNpcs()}
-                coats={loaded().snapshot.getWandererCoats()}
+                phenomena={afoot()}
+                ground={loaded().ground}
+                wanderers={loaded().wanderers}
+                coats={loaded().coats}
                 // What is on each bush this window, which is what
-                // decides the plant drawn on the patch. The snapshot's
-                // own map rather than one built here: a prop is a
-                // getter, and the draw loop reads this once a cell a
-                // frame
-                berries={fruiting(loaded().snapshot)}
-                picked={picked()}
-                dug={dug()}
+                // decides the plant drawn on the patch
+                berries={loaded().berries}
+                picked={pickedHere()}
+                dug={dugHere()}
                 decorations={loaded().decorations}
-                spawns={
-                  new Map(
-                    [...loaded().spawns].map(([at, standing]) => [
-                      at,
-                      {
-                        species: standing.spawn[0],
-                        shiny: standing.shiny,
-                        // Against the window's own instant, which is
-                        // what the server weighted the pool by
-                        featured: isFeaturedSpecies(standing.spawn[0], loaded().snapshot.timestamp),
-                      },
-                    ]),
-                  )
-                }
+                spawns={standingHere()}
                 label={titleOf}
+                // Said when one is actually drawn rather than when a
+                // window says one was rolled: the board straddles
+                // several chunks and reaches further than it draws, so
+                // the two are not the same shiny and were never the
+                // same moment
+                onShiny={() => {
+                  playEffect(Effect.ShinySparkle);
+                }}
                 onPress={press}
                 onPlaced={(found) => {
                   // Stored rather than called: a setter handed a
@@ -2124,16 +2085,16 @@ export default function OverworldBoard(props: {
             />
             <NpcDialog
               player={user().uid}
-              snapshot={view()?.snapshot ?? null}
-              standing={wanderer()}
+              snapshot={wanderer()?.[0].snapshot ?? null}
+              standing={standingNpc()}
               onClose={() => {
                 setWanderer(null);
               }}
             />
             <GymSeatDialog
               user={user()}
-              snapshot={view()?.snapshot ?? null}
-              cell={seat()?.[0] ?? null}
+              snapshot={seat()?.[0].snapshot ?? null}
+              cell={seat()?.[0].cell ?? null}
               standing={seat()?.[1] ?? null}
               onClose={() => {
                 setSeat(null);
@@ -2142,10 +2103,9 @@ export default function OverworldBoard(props: {
                 // The seat moved under the dialog, so what it is
                 // showing is re-read rather than guessed at
                 const standing = seat();
-                const loaded = view();
 
-                if (standing != null && loaded != null) {
-                  enterGymSeat(loaded.snapshot, standing[0])
+                if (standing != null) {
+                  enterGymSeat(standing[0].snapshot, standing[0].cell)
                     .then((held) => {
                       setSeat(held === 'absent' ? null : [standing[0], held]);
                     })
@@ -2165,8 +2125,8 @@ export default function OverworldBoard(props: {
               }}
             />
             <RaidDialog
-              snapshot={view()?.snapshot ?? null}
-              lair={lair()}
+              snapshot={lair()?.[0].snapshot ?? null}
+              lair={standingLair()}
               reason={lairReason()}
               onClose={() => {
                 setLair(null);
@@ -2174,8 +2134,8 @@ export default function OverworldBoard(props: {
             />
             <PortalDialog
               player={user().uid}
-              snapshot={view()?.snapshot ?? null}
-              cell={portal()}
+              snapshot={portal()?.snapshot ?? null}
+              cell={portal()?.cell ?? null}
               onClose={() => {
                 setPortal(null);
               }}
@@ -2183,10 +2143,8 @@ export default function OverworldBoard(props: {
                 // Out of a portal and into the one it opened onto:
                 // the far side is a chunk away rather than a step, so
                 // the whole position moves at once
-                setChunkX(destination.x);
-                setChunkY(destination.y);
-                setCellX(destination.cell % CHUNK_CELLS);
-                setCellY(Math.floor(destination.cell / CHUNK_CELLS));
+                setAtX(worldCell(destination.x, destination.cell % CHUNK_CELLS));
+                setAtY(worldCell(destination.y, Math.floor(destination.cell / CHUNK_CELLS)));
                 remark(
                   `Through to ${BIOME_NAMES[destination.biome]}. Chunk ${destination.x}, ${destination.y}.`,
                 );

@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { CHUNK_CELLS } from '../../src/overworld/chunk';
+import { BOARD_CELLS } from '../../src/overworld/board';
 import { findPath, findPathBeside, findPathNear, stepsBetween } from '../../src/overworld/path';
 
 const OPEN = (): boolean => true;
 
 function cell(x: number, y: number): number {
-  return y * CHUNK_CELLS + x;
+  return y * BOARD_CELLS + x;
 }
 
 /**
@@ -53,7 +53,7 @@ describe('walking across a chunk', () => {
   it('walks around what is standing in the way', () => {
     // A wall down the middle of the chunk with one gap in it
     const gap = cell(8, 15);
-    const passable = (index: number): boolean => index % CHUNK_CELLS !== 8 || index === gap;
+    const passable = (index: number): boolean => index % BOARD_CELLS !== 8 || index === gap;
     const from = cell(0, 0);
     const route = findPath(from, cell(15, 0), passable);
 
@@ -68,7 +68,7 @@ describe('walking across a chunk', () => {
   });
 
   it('answers nothing at all when there is no way through', () => {
-    const passable = (index: number): boolean => index % CHUNK_CELLS !== 8;
+    const passable = (index: number): boolean => index % BOARD_CELLS !== 8;
 
     expect(findPath(cell(0, 0), cell(15, 15), passable)).toBeNull();
     // And nothing for a destination that is itself blocked, which is
@@ -89,9 +89,9 @@ describe('walking across a chunk', () => {
     expect(walkable(from, route ?? [])).toBe(true);
     // Within the ring of eight, which is the same reach an interaction
     // has
-    expect(Math.abs((ended % CHUNK_CELLS) - (to % CHUNK_CELLS))).toBeLessThanOrEqual(1);
+    expect(Math.abs((ended % BOARD_CELLS) - (to % BOARD_CELLS))).toBeLessThanOrEqual(1);
     expect(
-      Math.abs(Math.floor(ended / CHUNK_CELLS) - Math.floor(to / CHUNK_CELLS)),
+      Math.abs(Math.floor(ended / BOARD_CELLS) - Math.floor(to / BOARD_CELLS)),
     ).toBeLessThanOrEqual(1);
     // The shortest such walk: the corner of its ring is the nearest
     // cell that counts as beside it
@@ -154,7 +154,7 @@ describe('walking to a cell nobody can stand on', () => {
     // A wall the target sits behind: the cells beside it are open
     // ground, and none of them can be reached
     const passable = (index: number): boolean =>
-      index !== to && index % CHUNK_CELLS !== 6 && Math.floor(index / CHUNK_CELLS) !== 6;
+      index !== to && index % BOARD_CELLS !== 6 && Math.floor(index / BOARD_CELLS) !== 6;
     const from = cell(1, 1);
     const route = findPathNear(from, to, passable);
     const ended = route?.at(-1) ?? from;

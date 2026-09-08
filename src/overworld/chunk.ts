@@ -1,6 +1,8 @@
 import AleaRNG from '../core/alea';
 import type Biome from '../data/ids/biome';
 import { isOpenSea, isWaterBiome } from '../data/ids/biome';
+import { type GroundRole, isShelfAt, roleAt } from './ground';
+import type World from './world';
 import type Decoration from '../data/overworld/decoration';
 import {
   MAX_DECORATIONS,
@@ -18,16 +20,38 @@ export const CHUNK_CELLS = 16;
 export const CELL_COUNT = CHUNK_CELLS * CHUNK_CELLS;
 
 /**
- * How much of the chunk anything may be placed in: the central 14x14,
- * which is the whole grid but for a clear cell all the way round.
- *
- * The three kinds used to keep to squares of their own — landmarks to
- * the middle eight, spawns to the middle twelve — which drew every
- * chunk as a target, busy in the middle and empty at the rim. One area
- * for all of them spreads the chunk out, and the ring it leaves is
- * what a player walks in on from a neighbouring chunk
+ * Where one of a chunk's cells sits in the world's own cell grid.
+ * The fields the ground is read from know nothing about chunks, so
+ * everything that asks them speaks in these
  */
-export const PLACEMENT_AREA = 14;
+export function worldCell(chunk: number, cell: number): number {
+  return chunk * CHUNK_CELLS + cell;
+}
+
+/**
+ * Which chunk a world cell falls in, and where in that chunk it sits.
+ * The board is a window on world cells now, so anything it wants from
+ * a chunk has to be asked for in the chunk's own numbering
+ */
+export function chunkOfCell(cell: number): number {
+  return Math.floor(cell / CHUNK_CELLS);
+}
+
+export function cellInChunk(cell: number): number {
+  return ((cell % CHUNK_CELLS) + CHUNK_CELLS) % CHUNK_CELLS;
+}
+
+/**
+ * How much of the chunk anything may be placed in: all of it.
+ *
+ * It used to be the central 14x14, leaving a clear cell all the way
+ * round for a player walking in from the chunk next door. Nobody walks
+ * in any more, since the board is a window that follows the player
+ * rather than the chunk they are in, and a clear rim on every chunk
+ * drew a lattice of bare corridors across the world every sixteen
+ * cells
+ */
+export const PLACEMENT_AREA = CHUNK_CELLS;
 
 /**
  * Row-major cell indices of a size x size square centered on the
@@ -54,13 +78,6 @@ export function centeredCells(size: number): number[] {
  */
 const MIN_LANDMARKS = 5;
 const MAX_LANDMARKS = 8;
-
-/**
- * How many terrain spots a chunk gets: grown pools on land, banks in
- * a wetland. Few enough that most of the ground is still ground
- */
-const MIN_WATER_SPOTS = 1;
-const MAX_WATER_SPOTS = 3;
 
 /**
  * The roll pool on the open seas: a berry bush cannot grow on water
@@ -104,33 +121,14 @@ const SINGLETON_LANDMARKS = new Set([
 ]);
 
 /**
- * How many shallow patches an open-sea chunk gets: the lighter
- * ground tiles mixed through the water, so the sea is not one
- * unbroken sheet
- */
-const MIN_SHALLOWS = 4;
-const MAX_SHALLOWS = 7;
-
-/**
- * How many rock outcrops a chunk grows. The seas always have some
- * standing out of the water; on land they are rarer, and a chunk
- * with none is an ordinary field
- */
-const SEA_ROCKS: [minimum: number, maximum: number] = [1, 3];
-const LAND_ROCKS: [minimum: number, maximum: number] = [0, 2];
-
-/**
- * How many cells one grown patch holds — a pool, a bank or a rock
- * outcrop alike. Big enough to read as a lake or a ridge from across
- * the chunk: at five cells a pool was a puddle the eye skipped over
- */
-const MIN_BLOB_CELLS = 9;
-const MAX_BLOB_CELLS = 16;
-
-/**
  * The cells touching one, diagonals included, clipped to the chunk.
  * A landmark keeps this ring clear of everything else, so there is
- * always somewhere to stand beside it
+ * always somewhere to stand beside it.
+ *
+ * Clipped, so a fixture on a chunk's edge only holds its own chunk's
+ * side of the ring clear: two of them either side of a boundary may
+ * end up touching, which is the price of a chunk that is a unit of
+ * bookkeeping rather than of walking
  */
 export function neighborCells(cell: number): number[] {
   const x = cell % CHUNK_CELLS;
@@ -168,100 +166,6 @@ function shuffled(rng: AleaRNG, cells: number[]): number[] {
 }
 
 /**
- * One rock outcrop, grown a cell at a time: start somewhere, and keep
- * annexing a random orthogonal neighbour until the size is reached or
- * the room runs out. Orthogonal growth keeps the blob solid, and the
- * shape falls out of the walk rather than out of a stamp
- */
-function grownBlob(rng: AleaRNG, start: number, size: number, allowed: Set<number>): Set<number> {
-  const blob = new Set([start]);
-
-  while (blob.size < size) {
-    const frontier: number[] = [];
-
-    for (const cell of blob) {
-      for (const step of [-1, 1, -CHUNK_CELLS, CHUNK_CELLS]) {
-        const next = cell + step;
-
-        // Row-major arithmetic wraps at the grid's edges, but the
-        // allowed set never contains a wrapped cell
-        if (!blob.has(next) && allowed.has(next)) {
-          frontier.push(next);
-        }
-      }
-    }
-    if (frontier.length === 0) {
-      break;
-    }
-    blob.add(frontier[Math.floor(rng.random() * frontier.length)]);
-  }
-  return blob;
-}
-
-/** The four cells straight out of one, clipped to the chunk */
-function orthogonal(cell: number): number[] {
-  const x = cell % CHUNK_CELLS;
-  const y = Math.floor(cell / CHUNK_CELLS);
-  const found: number[] = [];
-
-  if (x > 0) {
-    found.push(cell - 1);
-  }
-  if (x < CHUNK_CELLS - 1) {
-    found.push(cell + 1);
-  }
-  if (y > 0) {
-    found.push(cell - CHUNK_CELLS);
-  }
-  if (y < CHUNK_CELLS - 1) {
-    found.push(cell + CHUNK_CELLS);
-  }
-  return found;
-}
-
-/**
- * The cells a walk in from the chunk's rim cannot reach around the
- * given wall: the yards a blob closed round on itself.
- *
- * A grown blob takes its shape from a random walk, so a big one can
- * curl back and pen a cell in. A pen is worse than a wall: a spawn can
- * land in one and no player can ever get to it
- */
-function penned(wall: Set<number>): Set<number> {
-  const reached = new Set<number>();
-  const queue: number[] = [];
-
-  // The rim is outside every blob's allowed area, so it is always open
-  // ground to start from
-  for (let cell = 0; cell < CELL_COUNT; cell++) {
-    const x = cell % CHUNK_CELLS;
-    const y = Math.floor(cell / CHUNK_CELLS);
-
-    if (x === 0 || y === 0 || x === CHUNK_CELLS - 1 || y === CHUNK_CELLS - 1) {
-      reached.add(cell);
-      queue.push(cell);
-    }
-  }
-  for (let at = 0; at < queue.length; at++) {
-    for (const next of orthogonal(queue[at])) {
-      if (!wall.has(next) && !reached.has(next)) {
-        reached.add(next);
-        queue.push(next);
-      }
-    }
-  }
-
-  const shut = new Set<number>();
-
-  for (let cell = 0; cell < CELL_COUNT; cell++) {
-    if (!wall.has(cell) && !reached.has(cell)) {
-      shut.add(cell);
-    }
-  }
-  return shut;
-}
-
-/**
  * Cells and the rings around them, as one set
  */
 function spread(cells: Iterable<number>): Set<number> {
@@ -287,157 +191,127 @@ export default class Chunk {
     public readonly y: number,
     public readonly seed: string,
     public readonly biome: Biome,
+    /** The fields the ground under it is read out of */
+    private readonly world: World,
   ) {}
+
+  private readonly roles: (GroundRole | undefined)[] = new Array<GroundRole | undefined>(
+    CELL_COUNT,
+  );
+
+  /**
+   * What a player finds underfoot on one of the chunk's cells, read
+   * out of the world's own fields rather than grown here.
+   *
+   * A chunk knows nothing about where a lake or a ridge begins, which
+   * is the point: the same field answers for the cell on the far side
+   * of the boundary, so two chunks agree on a shore without being
+   * told. Read one cell at a time and kept, since placing the
+   * landmarks asks about a few dozen of the 256 and nothing else
+   */
+  getCellRole(cell: number): GroundRole {
+    const known = this.roles[cell];
+
+    if (known != null) {
+      return known;
+    }
+
+    const role = roleAt(
+      this.world,
+      worldCell(this.x, cell % CHUNK_CELLS),
+      worldCell(this.y, Math.floor(cell / CHUNK_CELLS)),
+    );
+
+    this.roles[cell] = role;
+    return role;
+  }
+
+  /** Every cell whose role is this one */
+  private cellsWhere(wanted: GroundRole): Set<number> {
+    const cells = new Set<number>();
+
+    for (let cell = 0; cell < CELL_COUNT; cell++) {
+      if (this.getCellRole(cell) === wanted) {
+        cells.add(cell);
+      }
+    }
+    return cells;
+  }
+
+  private cellBiomes: Uint8Array | null = null;
+
+  /**
+   * The country every cell belongs to, by row-major index. A chunk
+   * holds as many as the borders running through it leave it with,
+   * and `biome` is only the one in the middle
+   */
+  getCellBiomes(): Uint8Array {
+    if (this.cellBiomes == null) {
+      const biomes = new Uint8Array(CELL_COUNT);
+
+      for (let cell = 0; cell < CELL_COUNT; cell++) {
+        biomes[cell] = this.world.getCellBiome(
+          worldCell(this.x, cell % CHUNK_CELLS),
+          worldCell(this.y, Math.floor(cell / CHUNK_CELLS)),
+        );
+      }
+      this.cellBiomes = biomes;
+    }
+    return this.cellBiomes;
+  }
+
+  private waterCells: Set<number> | null = null;
+
+  /** Every cell of the chunk that is swum rather than walked */
+  getWaterCells(): Set<number> {
+    this.waterCells ??= this.cellsWhere('water');
+    return this.waterCells;
+  }
 
   private spotCells: Set<number> | null = null;
 
   /**
-   * The chunk's terrain spots: 1-3 grown patches of the other ground,
-   * as the union of their cells. On land they are pools of water; in
-   * a wetland they are banks of ground. The open seas have none —
-   * their variation is the rocks and the shallows. Laid down before
-   * anything else — the ground is what everything stands on
+   * The cells that are the other ground: pools and rivers on a land
+   * chunk, banks in a wetland. What counts as a spot depends on the
+   * country the chunk is mostly in, since a spot is what the ground
+   * around it is not
    */
   getSpotCells(): Set<number> {
-    if (this.spotCells == null) {
-      const cells = new Set<number>();
-
-      if (isOpenSea(this.biome)) {
-        this.spotCells = cells;
-        return cells;
-      }
-      const rng = new AleaRNG(`${this.seed}water`);
-      const count =
-        MIN_WATER_SPOTS + Math.floor(rng.random() * (MAX_WATER_SPOTS - MIN_WATER_SPOTS + 1));
-      // Confined inside the placement area's own ring, so the walk-in
-      // ring by the wall keeps its own ground whatever shape a patch
-      // grows into
-      const allowed = new Set(centeredCells(PLACEMENT_AREA - 2));
-      const order = shuffled(rng, [...allowed]);
-
-      for (let i = 0; i < count; i++) {
-        const start = order.find((cell) => allowed.has(cell));
-
-        if (start == null) {
-          break;
-        }
-        const size =
-          MIN_BLOB_CELLS + Math.floor(rng.random() * (MAX_BLOB_CELLS - MIN_BLOB_CELLS + 1));
-        const blob = grownBlob(rng, start, size, allowed);
-
-        for (const cell of blob) {
-          cells.add(cell);
-        }
-        // The patch and its ring leave room for the next, so two
-        // patches never run together
-        for (const cell of spread(blob)) {
-          allowed.delete(cell);
-        }
-      }
-      this.spotCells = cells;
-    }
+    this.spotCells ??= this.cellsWhere(isWaterBiome(this.biome) ? 'ground' : 'water');
     return this.spotCells;
-  }
-
-  /**
-   * The cells that are water where the ground around them is not:
-   * the pools on a land chunk. A water biome answers with nothing —
-   * its water is the default, not a spot
-   */
-  private wetCells(): Set<number> {
-    return isWaterBiome(this.biome) ? new Set() : this.getSpotCells();
   }
 
   private rockCells: Set<number> | null = null;
 
   /**
-   * The chunk's rock outcrops: organically grown blobs of solid wall,
-   * 1-3 standing out of every sea and 0-2 breaking up the land.
-   * Nothing may stand in one, nothing walks through one, and each
-   * keeps a clear ring from the others and from the pools
+   * The chunk's rock: where the world's stone field comes through the
+   * surface. Nothing may stand in one and nothing walks through one
    */
   getRockCells(): Set<number> {
-    if (this.rockCells == null) {
-      const cells = new Set<number>();
-      const rng = new AleaRNG(`${this.seed}rocks`);
-      const [minimum, maximum] = isOpenSea(this.biome) ? SEA_ROCKS : LAND_ROCKS;
-      const count = minimum + Math.floor(rng.random() * (maximum - minimum + 1));
-      // Confined inside the placement area's own ring, so the walk-in
-      // ring by the wall stays clear whatever shape a blob takes
-      const spots = this.getSpotCells();
-      const allowed = new Set(centeredCells(PLACEMENT_AREA - 2).filter((cell) => !spots.has(cell)));
-      const order = shuffled(rng, [...allowed]);
-
-      for (let i = 0; i < count; i++) {
-        const start = order.find((cell) => allowed.has(cell));
-
-        if (start == null) {
-          break;
-        }
-        const size =
-          MIN_BLOB_CELLS + Math.floor(rng.random() * (MAX_BLOB_CELLS - MIN_BLOB_CELLS + 1));
-        const blob = grownBlob(rng, start, size, allowed);
-
-        for (const cell of blob) {
-          cells.add(cell);
-        }
-        // The blob and its ring leave the pool of room for the next
-        for (const cell of spread(blob)) {
-          allowed.delete(cell);
-        }
-      }
-      // Solid, not a wall round a yard: a cell an outcrop closed in on
-      // is filled rather than left for a spawn to land in. A pool
-      // caught inside one is left alone, since water is not something
-      // to pave over
-      for (const cell of penned(cells)) {
-        if (!spots.has(cell)) {
-          cells.add(cell);
-        }
-      }
-      this.rockCells = cells;
-    }
+    this.rockCells ??= this.cellsWhere('wall');
     return this.rockCells;
   }
 
   private shallowCells: Set<number> | null = null;
 
   /**
-   * A water chunk's shallow cells, drawn with the ground tiles — in
-   * the sea rips the lighter shelf the deep's own gradient is drawn
-   * to meet. Every rock wears a skirt of them, since a wall's fringe
-   * is painted fading into ground; the open seas mix in loose patches
-   * of shelf besides. Purely a look: a shallow cell is swum exactly
-   * like the deep around it. Land chunks answer with nothing
+   * The water drawn with the lighter shelf tiles: the ring at the
+   * foot of every outcrop, and the water the rock is about to come
+   * through. Purely a look, and only in the seas and the wetlands
    */
   getShallowCells(): Set<number> {
     if (this.shallowCells == null) {
       const cells = new Set<number>();
 
-      if (isWaterBiome(this.biome)) {
-        const rocks = this.getRockCells();
-
-        // The skirt: the ring around every rock, so the wall art has
-        // the ground it was painted against
-        for (const cell of spread(rocks)) {
-          if (!rocks.has(cell)) {
-            cells.add(cell);
-          }
-        }
-      }
-      if (isOpenSea(this.biome)) {
-        const rng = new AleaRNG(`${this.seed}shallows`);
-        const count = MIN_SHALLOWS + Math.floor(rng.random() * (MAX_SHALLOWS - MIN_SHALLOWS + 1));
-        const rocks = this.getRockCells();
-
-        // Patches may run together — merged shelves look like shelves
-        const patches = shuffled(rng, centeredCells(PLACEMENT_AREA - 2)).slice(0, count);
-        const shelf = patches.flatMap((patch) => [patch, ...neighborCells(patch)]);
-
-        for (const cell of shelf) {
-          if (!rocks.has(cell)) {
-            cells.add(cell);
-          }
+      for (const cell of this.getWaterCells()) {
+        if (
+          isShelfAt(
+            this.world,
+            worldCell(this.x, cell % CHUNK_CELLS),
+            worldCell(this.y, Math.floor(cell / CHUNK_CELLS)),
+          )
+        ) {
+          cells.add(cell);
         }
       }
       this.shallowCells = cells;
@@ -446,12 +320,31 @@ export default class Chunk {
   }
 
   /**
-   * The cells no fixture may stand on: solid rock and the ring around
-   * it. Everything impassable keeps a clear ring from everything else
-   * impassable, which is what makes a walled-off pocket impossible
+   * Whether a fixture may stand on this cell: anything but rock, and
+   * nothing with rock in reach, so nothing is ever placed against a
+   * wall.
+   *
+   * The ring is read out of the world rather than out of the chunk. A
+   * cell on the chunk's own edge has half its neighbours in the chunk
+   * next door, and one placed against a ridge that begins over there
+   * is walled in just the same
    */
-  private rockArea(): Set<number> {
-    return spread(this.getRockCells());
+  private isClear(cell: number): boolean {
+    if (this.getCellRole(cell) === 'wall') {
+      return false;
+    }
+
+    const x = worldCell(this.x, cell % CHUNK_CELLS);
+    const y = worldCell(this.y, Math.floor(cell / CHUNK_CELLS));
+
+    for (let dy = -1; dy <= 1; dy++) {
+      for (let dx = -1; dx <= 1; dx++) {
+        if ((dx !== 0 || dy !== 0) && roleAt(this.world, x + dx, y + dy) === 'wall') {
+          return false;
+        }
+      }
+    }
+    return true;
   }
 
   private decorationCells: Map<number, Decoration> | null = null;
@@ -475,8 +368,6 @@ export default class Chunk {
           MIN_DECORATIONS + Math.floor(rng.random() * (MAX_DECORATIONS - MIN_DECORATIONS + 1));
         // Nothing grows out of a pool, a rock's reach, or a
         // landmark's approach
-        const water = this.wetCells();
-        const rocks = this.rockArea();
         const landmarks = this.getLandmarkArea();
         const taken = new Set<number>();
         const order = shuffled(rng, centeredCells(PLACEMENT_AREA));
@@ -484,12 +375,14 @@ export default class Chunk {
         for (let i = 0; i < count; i++) {
           // The draws land in pair order: the kind, then its cell
           const decoration = kinds[Math.floor(rng.random() * kinds.length)];
+          // Scenery keeps to dry ground: nothing here grows out of the
+          // water, so a chunk under a lake simply has less of it
           const cell = order.find(
             (candidate) =>
               !taken.has(candidate) &&
-              !water.has(candidate) &&
-              !rocks.has(candidate) &&
-              !landmarks.has(candidate),
+              !landmarks.has(candidate) &&
+              this.getCellRole(candidate) === 'ground' &&
+              this.isClear(candidate),
           );
 
           if (cell == null) {
@@ -536,10 +429,8 @@ export default class Chunk {
     if (this.landmarkCells == null) {
       const rng = new AleaRNG(`${this.seed}landmarks`);
       const count = MIN_LANDMARKS + Math.floor(rng.random() * (MAX_LANDMARKS - MIN_LANDMARKS + 1));
-      const water = this.wetCells();
       // Nothing stands in a rock's reach, and the open seas roll from
       // a pool without the landmarks that need ground under them
-      const rocks = this.rockArea();
       const base = isOpenSea(this.biome) ? SEA_LANDMARKS : LANDMARKS;
       const order = shuffled(rng, centeredCells(PLACEMENT_AREA));
       const cells = new Map<number, Landmark>();
@@ -555,9 +446,15 @@ export default class Chunk {
         // Everything that is a landmark now needs ground under it. The
         // one that did not was the phenomenon, which is no longer one:
         // something happening is rolled over the chunk by the hour
-        const fits = (candidate: number): boolean =>
-          !taken.has(candidate) && !rocks.has(candidate) && !water.has(candidate);
-        const cell = order.find(fits);
+        const free = (candidate: number): boolean =>
+          !taken.has(candidate) && this.isClear(candidate);
+        // Dry ground first and the water only where there is none: a
+        // landmark stands beside the pool rather than in it, and a
+        // chunk one lake covers is stood on all the same rather than
+        // left with nothing on it
+        const cell =
+          order.find((candidate) => free(candidate) && this.getCellRole(candidate) === 'ground') ??
+          order.find(free);
 
         if (cell == null) {
           break;

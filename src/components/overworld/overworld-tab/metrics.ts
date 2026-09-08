@@ -1,4 +1,5 @@
 import Landmark from '../../../data/overworld/landmark';
+import { BOARD_CELLS, BOARD_CENTER, BOARD_RADIUS } from '../../../overworld/board';
 import { CHUNK_CELLS } from '../../../overworld/chunk';
 
 /**
@@ -30,6 +31,24 @@ export const HARVEST_LANDMARKS = new Set([
  * measurements
  */
 export { PUBLISHED_SPAWNS } from '../../../auth/snapshots';
+
+/**
+ * How wide the board is and where the player stands on it. Both the
+ * projection's, since the picture is what decides how much of the
+ * world fits in it: the board is a window that follows the player, so
+ * they are always in the middle of it and it is the ground that moves
+ */
+export { BOARD_CELLS, BOARD_CENTER, BOARD_RADIUS };
+
+export const PLAYER_CELL = BOARD_CENTER * BOARD_CELLS + BOARD_CENTER;
+
+/**
+ * How far past the square it reads the ground, in cells. One cell, so
+ * that the outermost of the drawn ones still knows what is beside it:
+ * an edge tile is decided by its neighbours, and a neighbour nobody
+ * read is a seam
+ */
+export const BOARD_MARGIN = 1;
 
 /**
  * Where a player entering a chunk without a stored position starts
@@ -86,15 +105,3 @@ export const ICON_SIZE = 24;
  * hatching machine
  */
 export const STEP_PACE = 250;
-
-/**
- * How long a chunk may be held on screen after the player has walked
- * out of it.
- *
- * The board being carried off is held up until the next chunk's window
- * lands, and that is a round trip nobody can promise. Past this it is
- * let go of whether or not there is anything to put in its place: a
- * player looking at a chunk they left ten seconds ago is worse off
- * than one looking at a line that says the next one is loading
- */
-export const CROSSING_LIMIT = 4000;

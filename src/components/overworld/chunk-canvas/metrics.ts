@@ -1,6 +1,5 @@
-import { BORDER_CELLS, PICTURE_SPAN } from '../../../canvas/board';
+import { BOARD_SPAN, PICTURE_SPAN, REACH, RIM } from '../../../canvas/board';
 import { GROUND_DEPTH, GROUND_SQUASH } from '../../../canvas/tilt';
-import { CHUNK_CELLS } from '../../../overworld/chunk';
 
 /**
  * The board's reference measurements, its colours, and the few facts
@@ -20,18 +19,25 @@ import { CHUNK_CELLS } from '../../../overworld/chunk';
 export const CELL = 26;
 
 /**
- * The reference picture's width. It is wider than the chunk: there is
- * an apron of threshold cells around it and the compass marks stand
- * off that again
+ * The reference picture's width. It is the span the projection is
+ * calibrated to rather than the square the cells are indexed in: the
+ * country runs off the picture on every side, and how big a sprite is
+ * drawn is a fact about the picture
  */
-export const WIDTH = CELL * CHUNK_CELLS * PICTURE_SPAN;
+export const WIDTH = CELL * BOARD_SPAN * PICTURE_SPAN;
 
 /**
- * How far past the chunk the apron of thresholds reaches, in board
- * fractions — the units the ground is measured in, where the chunk
- * itself runs from 0 to 1
+ * How far from the middle the board's edge is drawn, in board
+ * fractions: the circle the player can press, and the rim of country
+ * outside it. The projection's, since the picture is fitted round them
  */
-export const APRON = BORDER_CELLS / CHUNK_CELLS;
+export { REACH, RIM };
+
+/**
+ * How many points the board's edge is drawn with. Enough that a circle
+ * a screen wide reads as one rather than as a polygon
+ */
+export const RING_POINTS = 96;
 
 /**
  * How many source pixels of a pokemon sheet stand on one cell of
@@ -453,15 +459,3 @@ export const QUARTER_TURN = Math.PI / 2;
 export function isTurningPress(event: { button: number; ctrlKey: boolean }): boolean {
   return event.button === RIGHT_BUTTON || (event.button === 0 && event.ctrlKey);
 }
-
-/**
- * Which way a step off the board goes, in the world's own words. North
- * is the far edge of the chunk however the camera has been walked
- * round, which is the same north the compass marks are drawn from
- */
-export const BEARINGS = new Map<string, string>([
-  ['0,-1', 'north'],
-  ['1,0', 'east'],
-  ['0,1', 'south'],
-  ['-1,0', 'west'],
-]);

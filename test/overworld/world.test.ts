@@ -249,6 +249,7 @@ import { LUCK_INCENSE_BONUS, PURE_INCENSE_QUIET } from '../../src/overworld/item
 import { AMULET_COIN_BONUS, CLEANSE_TAG_QUIET } from '../../src/overworld/items/trinkets';
 import { SHINY_CHARM_BOOST } from '../../src/overworld/items/key-items';
 import createOverworld from '../../src/overworld/setup';
+import { POCKET_LIMIT, roleAt } from '../../src/overworld/ground';
 import World, {
   WORLD_MAX,
   WORLD_MIN,
@@ -356,15 +357,10 @@ describe('world', () => {
       expect(landmarks.length).toBeGreaterThanOrEqual(5);
       expect(landmarks.length).toBeLessThanOrEqual(8);
 
-      // One cell each: the cell map holds every landmark, all
-      // within the central 15x15
+      // One cell each, anywhere on the grid: the rim used to be held
+      // clear for a player walking in from the chunk next door, and
+      // nobody walks in any more
       expect(chunk.getLandmarkCells().size).toBe(landmarks.length);
-      for (const cell of chunk.getLandmarkCells().keys()) {
-        expect(cell % 16).toBeGreaterThanOrEqual(1);
-        expect(cell % 16).toBeLessThanOrEqual(14);
-        expect(Math.floor(cell / 16)).toBeGreaterThanOrEqual(1);
-        expect(Math.floor(cell / 16)).toBeLessThanOrEqual(14);
-      }
 
       // Fixed forever: a fresh resolution of the chunk agrees
       const again = world.getChunk(x, 0);
@@ -3530,10 +3526,6 @@ describe('chunk snapshot', () => {
           placed.push(occupant);
           expect(chunk.getLandmarkAt(x, y)).toBeNull();
           expect(chunk.getDecorationCells().has(y * 16 + x)).toBe(false);
-          expect(x).toBeGreaterThanOrEqual(1);
-          expect(x).toBeLessThanOrEqual(14);
-          expect(y).toBeGreaterThanOrEqual(1);
-          expect(y).toBeLessThanOrEqual(14);
         }
       }
     }
@@ -3567,6 +3559,37 @@ describe('chunk snapshot', () => {
     expect(packed.getSpawns(1000)).toHaveLength(room.length);
   });
 
+  it('places fixtures right up to the chunk edge, leaving no lattice of bare corridors', () => {
+    const world = new World('overworld');
+    let onTheRim = 0;
+    let looked = 0;
+
+    for (let y = -12; y < 12; y += 3) {
+      for (let x = -12; x < 12; x += 3) {
+        const chunk = world.getChunk(x, y);
+
+        looked++;
+        for (const cell of [
+          ...chunk.getLandmarkCells().keys(),
+          ...chunk.getDecorationCells().keys(),
+        ]) {
+          const column = cell % CHUNK_CELLS;
+          const row = Math.floor(cell / CHUNK_CELLS);
+
+          if (column === 0 || row === 0 || column === CHUNK_CELLS - 1 || row === CHUNK_CELLS - 1) {
+            onTheRim++;
+          }
+        }
+      }
+    }
+
+    // The board follows the player rather than the chunk, so a clear
+    // rim on every chunk would draw empty corridors across the world
+    // every sixteen cells
+    expect(looked).toBeGreaterThan(0);
+    expect(onTheRim).toBeGreaterThan(looked);
+  });
+
   it('furnishes a chunk with the biome scenery, spaced like everything else', () => {
     const world = new World('overworld');
     let chunks = 0;
@@ -3578,24 +3601,28 @@ describe('chunk snapshot', () => {
         const scenery = chunk.getDecorationCells();
         const kinds = new Set(getBiomeDecorations(chunk.biome));
 
-        chunks++;
-        // The roll is 8 to 12, and scenery is placed last of the
-        // three: a chunk whose landmarks, pools and rocks left no room
-        // takes fewer, which is allowed and should stay rare
-        if (scenery.size < 8) {
-          short++;
+        const dry = [...Array(CELL_COUNT).keys()].filter(
+          (cell) => chunk.getCellRole(cell) === 'ground',
+        ).length;
+
+        // Nothing grows out of water, so what a chunk can hold is
+        // measured against the dry ground it actually has: one a lake
+        // or a sea has taken holds less, and one with none holds none
+        if (dry > CELL_COUNT / 2) {
+          chunks++;
+          expect(scenery.size).toBeGreaterThan(0);
+          // The roll is 8 to 12, and scenery is placed last of the
+          // three: a chunk whose landmarks and rocks left no room
+          // takes fewer, which is allowed and should stay rare
+          if (scenery.size < 8) {
+            short++;
+          }
         }
-        expect(scenery.size).toBeGreaterThan(0);
         expect(scenery.size).toBeLessThanOrEqual(12);
 
         for (const [cell, decoration] of scenery) {
-          // Of this biome, inside the placement area, and touching
-          // nothing
+          // Of this biome, and touching nothing of its own chunk's
           expect(kinds.has(decoration)).toBe(true);
-          expect(cell % 16).toBeGreaterThanOrEqual(1);
-          expect(cell % 16).toBeLessThanOrEqual(14);
-          expect(Math.floor(cell / 16)).toBeGreaterThanOrEqual(1);
-          expect(Math.floor(cell / 16)).toBeLessThanOrEqual(14);
           for (const neighbor of neighborCells(cell)) {
             expect(scenery.has(neighbor)).toBe(false);
           }
@@ -3607,6 +3634,7 @@ describe('chunk snapshot', () => {
     }
 
     // A crowded board is the exception, not the rule
+    expect(chunks).toBeGreaterThan(0);
     expect(short / chunks).toBeLessThan(0.05);
   });
 
@@ -4167,48 +4195,60 @@ describe('chunk snapshot', () => {
 });
 
 describe('terrain spots', () => {
-  it('grows 1-3 seeded patches on land and in the wetlands', () => {
+  it('reads the water out of the world rather than growing it in the chunk', () => {
     const world = new World('overworld');
 
-    // The open seas have no spots at all: their variation is the
-    // rocks and the shallows
+    // The open seas are water throughout: nothing in one is the other
+    // ground
     const sea = findChunk(world, (candidate) => isOpenSea(candidate.biome));
 
     if (sea != null) {
       expect(sea.getSpotCells().size).toBe(0);
     }
 
-    for (const chunk of [
-      findChunk(world, (candidate) => !isWaterBiome(candidate.biome)),
-      findChunk(world, (candidate) => isWaterBiome(candidate.biome) && !isOpenSea(candidate.biome)),
-    ]) {
-      expect(chunk).not.toBeNull();
-      if (chunk == null) {
-        continue;
+    let spotted = 0;
+    let crossed = 0;
+
+    for (let x = -20; x < 20; x++) {
+      for (let y = -20; y < 20; y++) {
+        const chunk = world.getChunk(x, y);
+
+        if (isWaterBiome(chunk.biome)) {
+          continue;
+        }
+
+        const spots = chunk.getSpotCells();
+
+        if (spots.size > 0) {
+          spotted += 1;
+        }
+        // A lake that reaches the last column runs on into the first
+        // column of the chunk beside it: neither of them decided where
+        // it began, so neither can end it at the boundary
+        const east = world.getChunk(x + 1, y);
+
+        for (let row = 0; row < CHUNK_CELLS; row++) {
+          if (
+            spots.has(row * CHUNK_CELLS + CHUNK_CELLS - 1) &&
+            east.getCellRole(row * CHUNK_CELLS) === 'water'
+          ) {
+            crossed += 1;
+          }
+        }
       }
+    }
+    // Water on land at all, and water that carries over a boundary:
+    // the old chunk-grown pools were confined to the placement area
+    // and could not touch a rim, let alone cross one
+    expect(spotted).toBeGreaterThan(0);
+    expect(crossed).toBeGreaterThan(0);
 
-      const spots = chunk.getSpotCells();
+    // Fixed forever: a fresh resolution of the chunk agrees
+    const land = findChunk(world, (candidate) => !isWaterBiome(candidate.biome));
 
-      // One grown patch at least, three at most, all confined inside
-      // the placement area's own ring
-      expect(spots.size).toBeGreaterThanOrEqual(9);
-      expect(spots.size).toBeLessThanOrEqual(48);
-      for (const cell of spots) {
-        expect(cell % 16).toBeGreaterThanOrEqual(2);
-        expect(cell % 16).toBeLessThanOrEqual(13);
-        expect(Math.floor(cell / 16)).toBeGreaterThanOrEqual(2);
-        expect(Math.floor(cell / 16)).toBeLessThanOrEqual(13);
-      }
-
-      // Grown, not scattered: every cell continues its patch
-      for (const cell of spots) {
-        const joined = [cell - 1, cell + 1, cell - 16, cell + 16].some((next) => spots.has(next));
-
-        expect(joined).toBe(true);
-      }
-
-      // Fixed forever: a fresh resolution of the chunk agrees
-      expect([...world.getChunk(chunk.x, chunk.y).getSpotCells()]).toEqual([...spots]);
+    expect(land).not.toBeNull();
+    if (land != null) {
+      expect([...world.getChunk(land.x, land.y).getSpotCells()]).toEqual([...land.getSpotCells()]);
     }
   });
 
@@ -4295,43 +4335,84 @@ describe('terrain spots', () => {
     expect(checked).toBeGreaterThan(0);
   });
 
-  it('never closes an outcrop round a cell nothing can walk to', () => {
+  it('never closes the rock round a pocket nothing can walk to', () => {
     const world = new World('overworld');
+    // Three chunks square, since a ridge belongs to the world rather
+    // than to a chunk: read one chunk at a time, a ridge crossing it
+    // cuts it in two and both halves are reached from the next chunk
+    // along
+    const span = CHUNK_CELLS * 3;
+    const rock = (x: number, y: number): boolean =>
+      roleAt(world, x - CHUNK_CELLS, y - CHUNK_CELLS) === 'wall';
+    const key = (x: number, y: number): number => y * span + x;
+    const reached = new Set<number>();
+    const queue: [number, number][] = [];
 
-    for (let y = -12; y < 12; y++) {
-      for (let x = -12; x < 12; x++) {
-        const chunk = world.getChunk(x, y);
-        const rocks = chunk.getRockCells();
-        const open = [...Array(CELL_COUNT).keys()].filter((cell) => !rocks.has(cell));
+    // In from the rim of the window, which is as far out as the walk
+    // can be followed
+    for (let at = 0; at < span; at++) {
+      for (const [x, y] of [
+        [at, 0],
+        [at, span - 1],
+        [0, at],
+        [span - 1, at],
+      ]) {
+        if (!rock(x, y) && !reached.has(key(x, y))) {
+          reached.add(key(x, y));
+          queue.push([x, y]);
+        }
+      }
+    }
+    for (let at = 0; at < queue.length; at++) {
+      const [x, y] = queue[at];
 
-        // The walk in from the rim, which is outside every blob's
-        // reach and so is always ground
-        const reached = new Set([0]);
-        const queue = [0];
+      // Straight steps only, the way the overworld is walked: a
+      // diagonal slip past a corner is not a way out
+      for (const [dx, dy] of CARDINALS) {
+        const nx = x + dx;
+        const ny = y + dy;
 
-        for (let at = 0; at < queue.length; at++) {
-          const cell = queue[at];
+        if (nx < 0 || ny < 0 || nx >= span || ny >= span || reached.has(key(nx, ny))) {
+          continue;
+        }
+        if (!rock(nx, ny)) {
+          reached.add(key(nx, ny));
+          queue.push([nx, ny]);
+        }
+      }
+    }
 
-          // Straight steps only, the way the overworld is walked: a
-          // diagonal slip past a corner is not a way out
-          for (const [dx, dy] of CARDINALS) {
-            const nx = (cell % 16) + dx;
-            const ny = Math.floor(cell / 16) + dy;
-            const next = ny * 16 + nx;
+    // Whatever the walk did not reach is shut in. Every such pocket is
+    // bigger than the world fills in, since a small one is paved over
+    // where it is found
+    const shut = new Set<number>();
 
-            if (nx < 0 || ny < 0 || nx > 15 || ny > 15) {
-              continue;
-            }
-            if (!rocks.has(next) && !reached.has(next)) {
-              reached.add(next);
-              queue.push(next);
-            }
+    for (let y = 0; y < span; y++) {
+      for (let x = 0; x < span; x++) {
+        if (!rock(x, y) && !reached.has(key(x, y))) {
+          shut.add(key(x, y));
+        }
+      }
+    }
+    while (shut.size > 0) {
+      const [first] = shut;
+      const pocket = [first];
+
+      shut.delete(first);
+      for (let at = 0; at < pocket.length; at++) {
+        const x = pocket[at] % span;
+        const y = Math.floor(pocket[at] / span);
+
+        for (const [dx, dy] of CARDINALS) {
+          const next = key(x + dx, y + dy);
+
+          if (shut.has(next)) {
+            shut.delete(next);
+            pocket.push(next);
           }
         }
-        // Everything not rock is walked to: a yard behind a wall is
-        // somewhere a spawn could land and nobody could reach
-        expect(reached.size).toBe(open.length);
       }
+      expect(pocket.length).toBeGreaterThan(POCKET_LIMIT);
     }
   });
 });
@@ -4364,7 +4445,12 @@ describe('the open seas', () => {
 
   it('keeps everything out of the rocks, and mixes shallows in around them', () => {
     const world = new World('overworld');
-    const chunk = findChunk(world, (candidate) => isOpenSea(candidate.biome));
+    // A sea chunk with rock in it: the stone field runs where it
+    // runs, so plenty of open water has none at all
+    const chunk = findChunk(
+      world,
+      (candidate) => isOpenSea(candidate.biome) && candidate.getRockCells().size > 0,
+    );
 
     expect(chunk).not.toBeNull();
     if (chunk == null) {
@@ -4374,16 +4460,8 @@ describe('the open seas', () => {
     const rocks = chunk.getRockCells();
     const shallows = chunk.getShallowCells();
 
-    // At least one grown outcrop, confined inside the placement
-    // area's own ring, and nothing stands in one
-    expect(rocks.size).toBeGreaterThanOrEqual(9);
-    expect(rocks.size).toBeLessThanOrEqual(48);
-    for (const cell of rocks) {
-      expect(cell % 16).toBeGreaterThanOrEqual(2);
-      expect(cell % 16).toBeLessThanOrEqual(13);
-      expect(Math.floor(cell / 16)).toBeGreaterThanOrEqual(2);
-      expect(Math.floor(cell / 16)).toBeLessThanOrEqual(13);
-    }
+    // Nothing stands in one, and the answer is the same every time
+    // the chunk is resolved
     expect([...world.getChunk(chunk.x, chunk.y).getRockCells()]).toEqual([...rocks]);
     for (const cell of chunk.getDecorationCells().keys()) {
       expect(rocks.has(cell)).toBe(false);
@@ -4391,6 +4469,7 @@ describe('the open seas', () => {
     for (const cell of chunk.getLandmarkCells().keys()) {
       expect(rocks.has(cell)).toBe(false);
     }
+
     const snapshot = new ChunkSnapshot(chunk, 0);
 
     snapshot.getSpawns(10);
@@ -4399,19 +4478,19 @@ describe('the open seas', () => {
       expect(rocks.has(cell)).toBe(false);
     }
 
-    // Shallow patches exist, keep clear of the rock, and hold still
+    // Every outcrop wears a skirt of shelf, and no cell is both
     expect(shallows.size).toBeGreaterThan(0);
     for (const cell of shallows) {
       expect(rocks.has(cell)).toBe(false);
     }
     expect([...world.getChunk(chunk.x, chunk.y).getShallowCells()]).toEqual([...shallows]);
 
-    // A land chunk has no shallows, and 0-2 outcrops of its own
+    // Shelf is the seas' and the wetlands' own look: a field with a
+    // pond in it draws the pond with its own shoreline instead
     const land = findChunk(world, (candidate) => !isWaterBiome(candidate.biome));
 
     if (land != null) {
       expect(land.getShallowCells().size).toBe(0);
-      expect(land.getRockCells().size).toBeLessThanOrEqual(32);
     }
   });
 
@@ -4479,6 +4558,12 @@ describe('placement invariants', () => {
 
         const banks = chunk.getSpotCells();
 
+        // Only where the marsh has a bank to stand on: the banks are
+        // the world's own dry ground now, and a chunk the water covers
+        // outright has none
+        if (banks.size === 0) {
+          continue;
+        }
         for (const cell of new ChunkSnapshot(chunk, 0).getPhenomena().keys()) {
           phenomena += 1;
           banked += banks.has(cell) ? 1 : 0;

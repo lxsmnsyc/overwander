@@ -328,6 +328,10 @@ const enum Abilities {
   ChaseDown = 200025,
   HypnoticSpiral = 200026,
   TeleportGuard = 200027,
+  OverheadThrow = 200028,
+  Digest = 200029,
+  TentacleGrasp = 200030,
+  SolidCore = 200031,
 }
 
 export default Abilities;

@@ -49,6 +49,14 @@ export const HYPNOTIC_SPIRAL_CAST_SCALE = 1.3;
 /** How long it takes to gather itself for another blink */
 export const TELEPORT_GUARD_WINDOW = 10000;
 
+/** What a throw is worth against something bigger, and something smaller */
+export const OVERHEAD_THROW_HEAVY_SCALE = 1.4;
+export const OVERHEAD_THROW_LIGHT_SCALE = 1.1;
+
+/** What a swallowed meal is worth, and how far gone it has to be */
+export const DIGEST_HEAL_FRACTION = 1 / 4;
+export const DIGEST_THRESHOLD = 1 / 4;
+
 /** Whether the target is far enough gone to be run down */
 function isQuarry(unit: Unit): boolean {
   return unit.health <= unit.checkStat(Stats.HP, 0) * CHASE_DOWN_THRESHOLD;
@@ -383,6 +391,90 @@ const parasToTentacool = [
         clock.start();
 
         target.triggerAbility(Abilities.TeleportGuard);
+      }),
+    ]);
+  }),
+
+  // Machop: it fights by picking things up, so the bigger the thing
+  // the better the throw
+  createAbility(Abilities.OverheadThrow, (battle) =>
+    battle.on(BattleEvents.UnitAttackResolveStat, EventPriority.Post, (event) => {
+      const parent = event.parent;
+      const source = parent.source;
+
+      if (
+        event.unit !== source ||
+        (event.stat !== Stats.Attack && event.stat !== Stats.SpecialAttack) ||
+        !source.hasAbility(Abilities.OverheadThrow) ||
+        !source.checkMoveContact(parent.move, unitTarget(parent.target))
+      ) {
+        return;
+      }
+
+      event.value *=
+        parent.target.checkWeight() > source.checkWeight()
+          ? OVERHEAD_THROW_HEAVY_SCALE
+          : OVERHEAD_THROW_LIGHT_SCALE;
+    }),
+  ),
+
+  // Bellsprout: it swallows what is nearly finished, the kill included,
+  // so the reading is taken once the blow has landed
+  createAbility(Abilities.Digest, (battle) =>
+    battle.on(BattleEvents.UnitAttack, AttackPriority.Post, (event) => {
+      const source = event.source;
+      const target = event.target;
+
+      if (
+        !event.success ||
+        event.flags & MoveAttackFlags.Simulated ||
+        target.health > target.checkStat(Stats.HP, 0) * DIGEST_THRESHOLD ||
+        !source.hasAbility(Abilities.Digest)
+      ) {
+        return;
+      }
+
+      source.triggerAbility(Abilities.Digest);
+
+      source.heal(
+        { type: EffectType.Ability, ability: Abilities.Digest, unit: source },
+        source,
+        source.checkStat(Stats.HP, 0) * DIGEST_HEAL_FRACTION,
+        0,
+      );
+    }),
+  ),
+
+  // Tentacool: eighty tentacles and no clock on them. What it has once
+  // touched stays in the water with it
+  createAbility(Abilities.TentacleGrasp, (battle) => {
+    const held = new Set<Unit>();
+
+    return new MergedLifecycle([
+      battle.on(BattleEvents.UnitAttack, AttackPriority.Post, (event) => {
+        if (
+          event.success &&
+          !(event.flags & MoveAttackFlags.Simulated) &&
+          event.source.hasAbility(Abilities.TentacleGrasp)
+        ) {
+          held.add(event.target);
+        }
+      }),
+      battle.on(BattleEvents.CheckUnitEscape, EventPriority.Post, (event) => {
+        const source = event.source;
+
+        if (!event.success || !held.has(source)) {
+          return;
+        }
+
+        for (const jelly of battle.units(source.team.alliance)) {
+          if (jelly.alive && jelly.hasAbility(Abilities.TentacleGrasp)) {
+            event.success = false;
+
+            // Every holder reacts, not just the first
+            jelly.triggerAbility(Abilities.TentacleGrasp);
+          }
+        }
       }),
     ]);
   }),

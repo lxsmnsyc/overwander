@@ -17,15 +17,23 @@ import {
   TWIN_STINGER_POWER_SCALE,
 } from '../../../src/battle/abilities/signature/bulbasaur-to-pikachu';
 import {
+  SOLID_CORE_PHYSICAL_SCALE,
+  SOLID_CORE_SPECIAL_SCALE,
+} from '../../../src/battle/abilities/signature/geodude-to-drowzee';
+import {
   BLIND_RAGE_ACCURACY_SCALE,
   BLIND_RAGE_ATTACK_SCALE,
   CHASE_DOWN_SCALE,
   CHASE_DOWN_THRESHOLD,
+  DIGEST_HEAL_FRACTION,
+  DIGEST_THRESHOLD,
   DUST_STORM_MAX_STACKS,
   DUST_STORM_STEP,
   FUNGAL_BLOOM_FRACTION,
   HEADACHE_BURST_SCALE,
   HYPNOTIC_SPIRAL_CAST_SCALE,
+  OVERHEAD_THROW_HEAVY_SCALE,
+  OVERHEAD_THROW_LIGHT_SCALE,
   TELEPORT_GUARD_WINDOW,
   UNDERMINE_MAX_STACKS,
   UNDERMINE_STEP,
@@ -1154,5 +1162,105 @@ describe('Teleport Guard', () => {
     battle.tick(TELEPORT_GUARD_WINDOW);
 
     expect(rolled(battle, enemy, holder, Moves.Pound)).toBe(false);
+  });
+});
+
+describe('Overhead Throw', () => {
+  it('throws a heavier target harder than a lighter one', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const heavy = createUnit(battle, teamB);
+    const light = createUnit(battle, teamB);
+    holder.addAbility(Abilities.OverheadThrow);
+
+    holder.setWeight(100);
+    heavy.setWeight(200);
+    light.setWeight(50);
+
+    const atHeavy = makeAttack(holder, heavy, Moves.Pound, Types.Normal, MoveCategories.Physical);
+    const atLight = makeAttack(holder, light, Moves.Pound, Types.Normal, MoveCategories.Physical);
+    const ranged = makeAttack(holder, heavy, Moves.Ember, Types.Fire, MoveCategories.Special);
+
+    expect(resolveAttackStat(battle, atHeavy, holder, Stats.Attack, 100)).toBeCloseTo(
+      100 * OVERHEAD_THROW_HEAVY_SCALE,
+      5,
+    );
+    expect(resolveAttackStat(battle, atLight, holder, Stats.Attack, 100)).toBeCloseTo(
+      100 * OVERHEAD_THROW_LIGHT_SCALE,
+      5,
+    );
+
+    // Nothing it does not get its hands on
+    expect(resolveAttackStat(battle, ranged, holder, Stats.SpecialAttack, 100)).toBe(100);
+  });
+});
+
+describe('Digest', () => {
+  it('feeds on a target that is nearly finished', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Digest);
+
+    const maxHP = holder.checkStat(Stats.HP, 0);
+    holder.setHealth(maxHP / 2);
+
+    // A healthy target is no meal
+    holder.attack(enemy, Moves.Pound, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(holder.health).toBeCloseTo(maxHP / 2, 5);
+
+    enemy.setHealth(enemy.checkStat(Stats.HP, 0) * DIGEST_THRESHOLD);
+    holder.attack(enemy, Moves.Pound, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(holder.health).toBeCloseTo(maxHP / 2 + maxHP * DIGEST_HEAL_FRACTION, 5);
+  });
+});
+
+describe('Tentacle Grasp', () => {
+  it('holds whatever it has touched while it stands', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    const untouched = createUnit(battle, teamB);
+    holder.addAbility(Abilities.TentacleGrasp);
+
+    expect(enemy.checkEscape()).toBe(true);
+
+    holder.attack(enemy, Moves.Pound, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(enemy.checkEscape()).toBe(false);
+    expect(untouched.checkEscape()).toBe(true);
+
+    // The grip goes with the holder
+    holder.faint(enemy);
+
+    expect(enemy.checkEscape()).toBe(true);
+  });
+});
+
+describe('Solid Core', () => {
+  it('shrugs off physical blows and eats special ones', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.SolidCore);
+
+    const physical = makeAttack(enemy, holder, Moves.Pound, Types.Normal, MoveCategories.Physical);
+    const special = makeAttack(enemy, holder, Moves.Ember, Types.Fire, MoveCategories.Special);
+
+    expect(resolveAttackStat(battle, physical, enemy, Stats.Attack, 100)).toBeCloseTo(
+      100 * SOLID_CORE_PHYSICAL_SCALE,
+      5,
+    );
+    expect(resolveAttackStat(battle, special, enemy, Stats.SpecialAttack, 100)).toBeCloseTo(
+      100 * SOLID_CORE_SPECIAL_SCALE,
+      5,
+    );
+
+    // Its own defensive stat is left alone
+    expect(resolveAttackStat(battle, physical, holder, Stats.Defense, 100)).toBe(100);
   });
 });

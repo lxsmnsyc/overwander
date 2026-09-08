@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// RBY TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.MegaPunch,
@@ -46,6 +46,13 @@ const FAMILY_TEACHABLE = [
   Moves.HiddenPower,
   Moves.SunnyDay,
   Moves.RockSmash,
+  Moves.BulkUp,
+  Moves.Earthquake,
+  Moves.Facade,
+  Moves.FocusPunch,
+  Moves.RockSlide,
+  Moves.RockTomb,
+  Moves.SecretPower,
 ];
 
 export default function registerTyrogueSpecies(): void {
@@ -75,9 +82,10 @@ export default function registerTyrogueSpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.DoubleKick, Moves.Meditate],
+        1: [Moves.DoubleKick, Moves.Meditate, Moves.Revenge],
         11: [Moves.RollingKick],
         16: [Moves.JumpKick],
+        20: [Moves.BrickBreak],
         21: [Moves.FocusEnergy],
         26: [Moves.HiJumpKick],
         31: [Moves.MindReader],
@@ -116,15 +124,21 @@ export default function registerTyrogueSpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.CometPunch, Moves.Agility],
+        1: [Moves.CometPunch, Moves.Agility, Moves.Revenge],
         13: [Moves.Pursuit],
         26: [Moves.FirePunch, Moves.IcePunch, Moves.ThunderPunch],
-        32: [Moves.MachPunch],
+        32: [Moves.MachPunch, Moves.SkyUppercut],
         38: [Moves.MegaPunch],
         44: [Moves.Detect],
         50: [Moves.Counter],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.FirePunch, Moves.IcePunch, Moves.ThunderPunch],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.FirePunch,
+        Moves.IcePunch,
+        Moves.ThunderPunch,
+        Moves.BrickBreak,
+      ],
     },
   });
 }

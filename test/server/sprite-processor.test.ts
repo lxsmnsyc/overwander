@@ -1,5 +1,5 @@
 import { readFileSync } from 'node:fs';
-import { type Credits, asCredits, groupCredits } from '../../src/data/credits';
+import { type Credits, asCredits, foldCredits, groupCredits } from '../../src/data/credits';
 import { withCredit } from '../../src/server/sprites/credits';
 import { describe, expect, it } from 'vitest';
 import pack from '../../src/server/sprites/packing';
@@ -333,27 +333,36 @@ describe('the credits list', () => {
     version: 1,
     sources: [],
     packages: [],
-    sprites: [],
-    overworld: [],
+    sprites: {},
+    overworld: {},
     scenery: [],
   };
 
-  it('adds a row for a charset it has just packed', () => {
-    expect(withCredit(listed, 'rocket-grunt', 'Artist').overworld).toEqual([
-      { work: 'rocket-grunt', credit: 'Artist' },
-    ]);
+  it('files a charset it has just packed under whoever drew it', () => {
+    expect(withCredit(listed, 'rocket-grunt', 'Artist').overworld).toEqual({
+      Artist: ['rocket-grunt'],
+    });
   });
 
-  it('updates a re-packed sheet rather than adding a second row', () => {
+  it('moves a re-packed sheet rather than leaving it under both', () => {
     const twice = withCredit(withCredit(listed, 'rocket-grunt', 'Artist'), 'rocket-grunt', 'Other');
 
-    expect(twice.overworld).toEqual([{ work: 'rocket-grunt', credit: 'Other' }]);
+    expect(twice.overworld).toEqual({ Other: ['rocket-grunt'] });
   });
 
-  it('keeps the rows sorted by sheet', () => {
-    const credited = withCredit(withCredit(listed, 'zubat-keeper', 'Z'), 'aide', 'A');
+  it('keeps one artist to a row and their sheets sorted', () => {
+    const credited = withCredit(withCredit(listed, 'zubat-keeper', 'A'), 'aide', 'A');
 
-    expect(credited.overworld.map((row) => row.work)).toEqual(['aide', 'zubat-keeper']);
+    expect(credited.overworld).toEqual({ A: ['aide', 'zubat-keeper'] });
+  });
+
+  it('reads two spellings of one name as one artist', () => {
+    const credited = withCredit(withCredit(listed, 'aide', 'Figyberries'), 'lass', 'figyberries');
+
+    expect(Object.values(credited.overworld)).toEqual([['aide', 'lass']]);
+    // A bracketed tag is the artist noting the drawing rather than a
+    // second person
+    expect(withCredit(listed, 'red', 'Kazan(TrainerRed)').overworld).toEqual({ Kazan: ['red'] });
   });
 
   it('leaves every hand-written section alone', () => {
@@ -388,16 +397,19 @@ describe('the credits list', () => {
 
     // Nobody ships uncredited: every sheet on disk names somebody, and
     // an empty credit would be a name nobody can read
-    for (const row of [...shipped.sprites, ...shipped.overworld]) {
-      expect(row.credit.length, row.work).toBeGreaterThan(0);
-      expect(row.work.length).toBeGreaterThan(0);
+    for (const [name, listing] of Object.entries({ ...shipped.sprites, ...shipped.overworld })) {
+      expect(name.length).toBeGreaterThan(0);
+      expect(listing.length, name).toBeGreaterThan(0);
+      for (const work of listing) {
+        expect(work.length, name).toBeGreaterThan(0);
+      }
     }
-    expect(shipped.sprites.length).toBeGreaterThan(200);
+    expect(Object.values(shipped.sprites).flat().length).toBeGreaterThan(200);
   });
 
   it('names an artist for every pokemon sheet that ships', () => {
     const shipped = asCredits(JSON.parse(readFileSync('public/credits.json', 'utf8')) as unknown);
-    const credited = new Set(shipped.sprites.map((row) => row.work));
+    const credited = new Set(Object.values(shipped.sprites).flat());
 
     // The scan reads the name off the sheet, so a sheet copied in
     // without a credits block would quietly go uncredited
@@ -405,17 +417,25 @@ describe('the credits list', () => {
     expect(credited.has('Bulbasaur')).toBe(true);
   });
 
-  it('gathers the works of one artist, most first', () => {
-    expect(
-      groupCredits([
-        { work: 'Abra', credit: 'CHUNSOFT' },
-        { work: 'Zubat', credit: 'CHUNSOFT' },
-        { work: 'Abra', credit: 'Tacocoa' },
-      ]),
-    ).toEqual([
+  it('reads the artists out most work first', () => {
+    expect(groupCredits({ CHUNSOFT: ['Abra', 'Zubat'], Tacocoa: ['Abra'] })).toEqual([
       { name: 'CHUNSOFT', works: ['Abra', 'Zubat'] },
       { name: 'Tacocoa', works: ['Abra'] },
     ]);
+  });
+
+  it('folds the pairs a scan finds into one entry per artist', () => {
+    // Two spellings are one artist under whichever signed the most,
+    // and a placeholder is one name however it is abbreviated
+    expect(
+      foldCredits([
+        { work: 'Zubat', credit: 'CHUNSOFT' },
+        { work: 'Abra', credit: 'CHUNSOFT' },
+        { work: 'Abra', credit: 'chunsoft' },
+        { work: 'Kadabra', credit: 'Anon' },
+        { work: 'Kadabra', credit: 'Anonymous' },
+      ]),
+    ).toEqual({ Anonymous: ['Kadabra'], CHUNSOFT: ['Abra', 'Zubat'] });
   });
 });
 

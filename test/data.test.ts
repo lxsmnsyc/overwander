@@ -30,6 +30,7 @@ import Abilities from '../src/data/ids/abilities';
 import {
   TYPE_COLORS,
   TYPE_EFFECTIVENESS,
+  TYPE_EFFECTIVENESS_FACTOR,
   TYPE_NAMES,
   TypeEffectiveness,
   Types,
@@ -73,7 +74,10 @@ import {
   unpackStatuses,
 } from '../src/data/ids/status';
 import {
+  CASTFORM_FORMS,
+  DEOXYS_FORMS,
   EvolutionMethod,
+  Genders,
   Species,
   UNOWN_FORMS,
   getBaseFormSpecies,
@@ -220,14 +224,13 @@ import { isPortalKey } from '../src/data/items/portal-key';
 import { isHeartScale } from '../src/data/items/heart-scale';
 import Landmark, { LANDMARKS, LANDMARK_NAMES } from '../src/data/overworld/landmark';
 import Npc, {
-  GIOVANNI_CHARSETS,
+  EXECUTIVE_CHARSETS,
+  EXECUTIVE_HONORS,
+  EXECUTIVE_NAMES,
+  EXECUTIVE_QUOTES,
   NPCS,
   NPC_NAMES,
   REMINDER_FEE,
-  ROCKET_EXECUTIVES,
-  ROCKET_EXECUTIVE_CHARSETS,
-  ROCKET_EXECUTIVE_NAMES,
-  ROCKET_EXECUTIVE_QUOTES,
   getRecallableMoves,
   npcSheet,
   npcSheets,
@@ -261,6 +264,7 @@ import {
 import { TYPE_BOOSTERS, TYPE_BOOSTER_PRICE } from '../src/data/items/type-boosters';
 import {
   SPECIES_DAY_WEIGHT_BOOST,
+  canEverEvolve,
   coversHandover,
   getAvailableEvolutions,
   getBaseForms,
@@ -281,6 +285,7 @@ import {
   getSpeciesData,
   getSpeciesForms,
   getSpentHeldItem,
+  getWornForms,
   isBaseForm,
   isFeaturedSpecies,
   meetsEvolutionCriteria,
@@ -290,6 +295,9 @@ import {
 import { registerSpecies as registerSpeciesData } from '../src/data/species/__create';
 import Awards, {
   AWARD_NAMES,
+  FRONTIER_SYMBOLS,
+  HOENN_BADGES,
+  HOENN_HONORS,
   JOHTO_BADGES,
   JOHTO_HONORS,
   KANTO_BADGES,
@@ -313,6 +321,19 @@ import {
   ELITE_MEMBER_SIGNATURES,
   EXPERT_PARTY_SIZE,
   EliteMember,
+  FRONTIER_BRAINS,
+  FRONTIER_BRAIN_CHARSETS,
+  FRONTIER_BRAIN_GOLD_PARTIES,
+  FRONTIER_BRAIN_NAMES,
+  FRONTIER_BRAIN_PARTIES,
+  FRONTIER_BRAIN_RULES,
+  FRONTIER_BRAIN_SYMBOLS,
+  FRONTIER_BRAIN_TITLES,
+  FRONTIER_FACILITY_NAMES,
+  FRONTIER_RENTAL_OFFER,
+  FRONTIER_TEAM_SIZE,
+  FrontierBrain,
+  FrontierRule,
   GYM_LEADERS,
   GYM_LEADER_BADGES,
   GYM_LEADER_CHARSETS,
@@ -327,14 +348,58 @@ import {
   LEGEND_PARTIES,
   LEGEND_PRIZE_CHARSETS,
   Legend,
+  PIKE_CURTAINS,
+  PIKE_CURTAIN_NAMES,
+  PIKE_CURTAIN_STATUSES,
+  PikeCurtain,
   getEliteBadges,
   getEliteMemberRoster,
+  getFrontierParty,
   getGymLeaderRoster,
+  getRentalPool,
   getWorldExpertPool,
+  pickPikeCurtain,
   rollGymMachine,
 } from '../src/data/overworld/experts';
 import Regions from '../src/data/ids/regions';
-import { getSpeciesRegion } from '../src/data/species/regions';
+import { FREE_CHARSETS } from '../src/data/overworld/charsets';
+import { counterParty, rentalOffer, rentedHand } from '../src/overworld/stop';
+import {
+  SYNDICATES,
+  SYNDICATE_BOSS_CHARSETS,
+  SYNDICATE_BOSS_HONORS,
+  SYNDICATE_BOSS_NAMES,
+  SYNDICATE_BOSS_QUOTES,
+  SYNDICATE_EXECUTIVES,
+  SYNDICATE_GRUNT_CHARSETS,
+  SYNDICATE_GRUNT_HONORS,
+  SYNDICATE_GRUNT_QUOTES,
+  SYNDICATE_HONORS,
+  SYNDICATE_NAMES,
+  Syndicate,
+  bossName,
+  executiveName,
+  getSyndicate,
+  gruntName,
+} from '../src/data/overworld/syndicate';
+import {
+  BEST_MOVE_COUNT,
+  BEST_MOVE_OVERRIDES,
+  BuildRole,
+  SETUP_MOVES,
+  getBestMoves,
+} from '../src/data/species/best-moves';
+import {
+  CORE_COUNT,
+  assignBuildRoles,
+  getBestAbilities,
+  getBestBuild,
+  getBestNature,
+  getBestParty,
+} from '../src/data/species/best-build';
+import { NATURE_EFFECTS } from '../src/data/ids/natures';
+import { isRecoilMove } from '../src/data/moves/recoil';
+import { getRegionSpan, getSpeciesRegion } from '../src/data/species/regions';
 import {
   ACHIEVEMENT_LINES,
   ACHIEVEMENT_TRAINERS,
@@ -354,6 +419,7 @@ import {
   getTitleName,
   lineTitle,
   professorTitle,
+  titleTrainer,
   trainerTitle,
   typeTitle,
 } from '../src/data/ids/titles';
@@ -372,6 +438,7 @@ import {
   getBiomeTrainers,
   getTradeClasses,
   getTrainerPool,
+  isAceTrainer,
 } from '../src/data/overworld/trainers';
 import { Metric, Landmark as QuestLandmark } from '../src/auth/quest-record';
 import {
@@ -395,6 +462,7 @@ import {
 } from '../src/data/quests';
 import {
   DEX_QUEST_BASE,
+  REGION_DEXES,
   dexChainId,
   dexQuestId,
   getDexChain,
@@ -648,12 +716,17 @@ describe('species measurements', () => {
 });
 
 describe('species forms', () => {
-  it('treats every registered species but the unowns as a default form', () => {
+  it('treats every registered species but the unowns and the worn shapes as a default form', () => {
     // The flag is absent almost everywhere and answers true rather
     // than being written out three hundred times; the twenty-seven
-    // unowns past A are the only variants registered so far
+    // unowns past A, the three skies a Castform wears and the three
+    // shapes a Deoxys rearranges into are the only variants so far
     const registered = getRegisteredSpecies();
-    const variants = new Set<Species>(UNOWN_FORMS.slice(1));
+    const variants = new Set<Species>([
+      ...UNOWN_FORMS.slice(1),
+      ...CASTFORM_FORMS.slice(1),
+      ...DEOXYS_FORMS.slice(1),
+    ]);
 
     expect(registered.length).toBeGreaterThan(0);
     for (const species of registered) {
@@ -718,6 +791,21 @@ describe('species forms', () => {
     // A species with no variants is a list of one, so a caller never
     // has to know which kind it is holding
     expect(getSpeciesForms(Species.Pikachu)).toEqual([Species.Pikachu]);
+  });
+
+  it('tells a worn shape from a shape that is met', () => {
+    // A letter is caught; a sky is put on. Only the second kind is
+    // filled in off the pokemon wearing it
+    expect(getWornForms(Species.Castform)).toEqual(CASTFORM_FORMS.slice(1));
+    expect(getWornForms(Species.Unown)).toEqual([]);
+    expect(getWornForms(Species.Pikachu)).toEqual([]);
+
+    for (const species of CASTFORM_FORMS.slice(1)) {
+      expect(getSpeciesData(species).worn).toBe(true);
+      // Nowhere at all: a sky is reached through Forecast
+      expect(getSpeciesData(species).biomes).toEqual([]);
+    }
+    expect(getSpeciesData(Species.Castform).worn).toBeUndefined();
   });
 });
 
@@ -1104,12 +1192,24 @@ describe('the moves added back to the dex', () => {
     );
   });
 
-  it('teaches Soft-Boiled to Chansey, and to the one who was not supposed to exist', () => {
+  it('teaches Soft-Boiled to Chansey, the fairies and the one who was not supposed to exist', () => {
     const taught = getRegisteredSpecies().filter((species) =>
       new Set(getSpeciesData(species).learnSet.teachable).has(Moves.SoftBoiled),
     );
 
-    expect(new Set(taught)).toEqual(new Set([Species.Chansey, Species.Mew]));
+    // The fairies come by it from a gen 3 tutor rather than from the
+    // machine the other two carry
+    expect(new Set(taught)).toEqual(
+      new Set([
+        Species.Clefairy,
+        Species.Clefable,
+        Species.Chansey,
+        Species.Mew,
+        Species.Cleffa,
+        Species.Togepi,
+        Species.Togetic,
+      ]),
+    );
   });
 
   it('registers all four with data a battle can read', () => {
@@ -1201,6 +1301,12 @@ describe('move damage', () => {
     Moves.Frustration,
     Moves.Magnitude,
     Moves.Present,
+    // Hoenn's own: power read off what Stockpile stored, off the gap
+    // between the two sides' HP, and off nothing at all for the one
+    // that ends a fight outright
+    Moves.SpitUp,
+    Moves.Endeavor,
+    Moves.SheerCold,
   ]);
 
   it('gives every damaging move something to hit with', () => {
@@ -1479,6 +1585,40 @@ describe('evolution data', () => {
     [Stats.Speed]: 100,
   };
 
+  it('gives a Feebas two roads to the same shape', () => {
+    const roads = getSpeciesData(Species.Feebas).evolvesInto ?? [];
+
+    expect(roads.map((road) => road.species)).toEqual([Species.Milotic, Species.Milotic]);
+
+    const context = {
+      species: Species.Feebas,
+      level: 40,
+      carried: new Set<Items>(),
+      held: new Set<Items>(),
+      canEvolve: false,
+      stats: EVEN_STATS,
+      friendship: EVOLUTION_FRIENDSHIP,
+      gender: Genders.Female,
+      time: TimeOfDay.Day,
+    };
+
+    // Raised fond enough and grown to 40, with nothing in the bag
+    expect(getAvailableEvolutions(context).map((road) => road.species)).toEqual([Species.Milotic]);
+
+    // The same fish, unloved: the scale is the other road, and it is
+    // the one still open
+    const cold = { ...context, friendship: BASE_FRIENDSHIP };
+
+    expect(getAvailableEvolutions(cold)).toEqual([]);
+    expect(
+      getAvailableEvolutions({ ...cold, held: new Set([Items.PrismScale]), canEvolve: true })
+        .length,
+    ).toBe(1);
+
+    // And a fond one that has not grown up yet stays a Feebas
+    expect(getAvailableEvolutions({ ...context, level: 39 })).toEqual([]);
+  });
+
   it('offers level evolutions once the threshold is reached', () => {
     const context = {
       carried: new Set<Items>(),
@@ -1486,6 +1626,7 @@ describe('evolution data', () => {
       canEvolve: false,
       stats: EVEN_STATS,
       friendship: BASE_FRIENDSHIP,
+      gender: Genders.Male,
       time: TimeOfDay.Day,
     };
 
@@ -1504,6 +1645,7 @@ describe('evolution data', () => {
       canEvolve: false,
       stats: EVEN_STATS,
       friendship: BASE_FRIENDSHIP,
+      gender: Genders.Male,
       time: TimeOfDay.Day,
     };
 
@@ -1536,6 +1678,7 @@ describe('evolution data', () => {
       canEvolve: true,
       stats: EVEN_STATS,
       friendship: BASE_FRIENDSHIP,
+      gender: Genders.Male,
       time: TimeOfDay.Day,
     };
 
@@ -1626,6 +1769,7 @@ describe('evolution data', () => {
       held: new Set<Items>(),
       stats: EVEN_STATS,
       friendship: BASE_FRIENDSHIP,
+      gender: Genders.Male,
       time: TimeOfDay.Day,
     };
 
@@ -1669,6 +1813,7 @@ describe('evolution data', () => {
       held: new Set<Items>(),
       stats: EVEN_STATS,
       friendship: BASE_FRIENDSHIP,
+      gender: Genders.Male,
       time: TimeOfDay.Day,
     };
 
@@ -1681,6 +1826,7 @@ describe('evolution data', () => {
         canEvolve: false,
         stats: EVEN_STATS,
         friendship: BASE_FRIENDSHIP,
+        gender: Genders.Male,
         time: TimeOfDay.Day,
       }),
     ).toEqual([]);
@@ -1691,6 +1837,7 @@ describe('evolution data', () => {
         canEvolve: true,
         stats: EVEN_STATS,
         friendship: BASE_FRIENDSHIP,
+        gender: Genders.Male,
         time: TimeOfDay.Day,
       }),
     ).toEqual([{ species: Species.Machamp, method: EvolutionMethod.Trade }]);
@@ -1705,6 +1852,7 @@ describe('evolution data', () => {
         canEvolve: false,
         stats: EVEN_STATS,
         friendship: BASE_FRIENDSHIP,
+        gender: Genders.Male,
         time: TimeOfDay.Day,
       }),
     ).toEqual([]);
@@ -1723,6 +1871,7 @@ describe('evolution data', () => {
           canEvolve: false,
           stats: EVEN_STATS,
           friendship: BASE_FRIENDSHIP,
+          gender: Genders.Male,
           time: TimeOfDay.Day,
         }),
       ).toEqual([]);
@@ -1733,6 +1882,7 @@ describe('evolution data', () => {
           canEvolve: true,
           stats: EVEN_STATS,
           friendship: BASE_FRIENDSHIP,
+          gender: Genders.Male,
           time: TimeOfDay.Day,
         }),
       ).toEqual([{ species: into, method: EvolutionMethod.Trade }]);
@@ -1755,6 +1905,7 @@ describe('evolution data', () => {
       held: new Set<Items>(),
       stats: EVEN_STATS,
       friendship: BASE_FRIENDSHIP,
+      gender: Genders.Male,
       time: TimeOfDay.Day,
     };
 
@@ -1789,6 +1940,7 @@ describe('evolution data', () => {
       canEvolve: false,
       stats: EVEN_STATS,
       friendship: BASE_FRIENDSHIP,
+      gender: Genders.Male,
       time: TimeOfDay.Day,
     };
     const cord = new Set([Items.LinkingCord]);
@@ -1825,6 +1977,7 @@ describe('evolution data', () => {
         canEvolve: false,
         stats: EVEN_STATS,
         friendship: BASE_FRIENDSHIP,
+        gender: Genders.Male,
         time: TimeOfDay.Day,
       }),
     ).toBe(false);
@@ -1839,6 +1992,7 @@ describe('evolution data', () => {
       held: new Set<Items>(),
       canEvolve: false,
       friendship: BASE_FRIENDSHIP,
+      gender: Genders.Male,
       time: TimeOfDay.Day,
     };
     const at = (attack: number, defense: number): Record<Stats, number> => ({
@@ -1868,6 +2022,7 @@ describe('evolution data', () => {
       canEvolve: false,
       stats: EVEN_STATS,
       time: TimeOfDay.Day,
+      gender: Genders.Male,
     };
 
     expect(getAvailableEvolutions({ ...context, friendship: EVOLUTION_FRIENDSHIP - 1 })).toEqual(
@@ -1887,6 +2042,7 @@ describe('evolution data', () => {
       canEvolve: false,
       stats: EVEN_STATS,
       friendship: EVOLUTION_FRIENDSHIP,
+      gender: Genders.Male,
     };
     const into = (time: TimeOfDay): Species[] =>
       getAvailableEvolutions({ ...context, time })
@@ -1908,6 +2064,44 @@ describe('evolution data', () => {
     ).toBe(false);
   });
 
+  it('splits a Wurmple by what it was born as', () => {
+    const context = {
+      species: Species.Wurmple,
+      level: 7,
+      carried: new Set<Items>(),
+      held: new Set<Items>(),
+      canEvolve: false,
+      stats: EVEN_STATS,
+      friendship: BASE_FRIENDSHIP,
+      time: TimeOfDay.Day,
+    };
+    const into = (gender: Genders): Species[] =>
+      getAvailableEvolutions({ ...context, gender }).map((entry) => entry.species);
+
+    expect(into(Genders.Male)).toEqual([Species.Silcoon]);
+    expect(into(Genders.Female)).toEqual([Species.Cascoon]);
+
+    // Neither half is open before the level either way round
+    expect(getAvailableEvolutions({ ...context, level: 6, gender: Genders.Female })).toEqual([]);
+
+    // And the branch it was never going to take is not something to
+    // work towards, so the sheet leaves it out rather than refusing it
+    const rows = (gender: Genders): Species[] =>
+      (getSpeciesData(Species.Wurmple).evolvesInto ?? [])
+        .filter((evolution) => canEverEvolve(evolution, gender))
+        .map((evolution) => evolution.species);
+
+    expect(rows(Genders.Male)).toEqual([Species.Silcoon]);
+    expect(rows(Genders.Female)).toEqual([Species.Cascoon]);
+
+    // A line that asks nothing about gender is shown to both
+    expect(
+      (getSpeciesData(Species.Charmander).evolvesInto ?? []).every((evolution) =>
+        canEverEvolve(evolution, Genders.Female),
+      ),
+    ).toBe(true);
+  });
+
   it('never offers evolutions it cannot verify', () => {
     // Weather and party composition have no stored counterpart, so an
     // evolution asking for one is refused rather than waved through,
@@ -1923,6 +2117,7 @@ describe('evolution data', () => {
           canEvolve: true,
           stats: EVEN_STATS,
           friendship: BASE_FRIENDSHIP,
+          gender: Genders.Male,
           time: TimeOfDay.Day,
         },
       ),
@@ -2275,6 +2470,8 @@ describe('item data', () => {
       Species.Omanyte,
       Species.Kabuto,
       Species.Aerodactyl,
+      Species.Lileep,
+      Species.Anorith,
     ]);
 
     for (const [item, species] of FOSSIL_SPECIES) {
@@ -2296,24 +2493,24 @@ describe('item data', () => {
       expect(getFossilPrice(item)).toBeGreaterThan(0);
 
       // What is inside lives nowhere at all: reviving it is the only
-      // way any of the three is ever met
+      // way any of them is ever met
       expect(listSpeciesHabitats(species).length).toBe(0);
       expect(getSpeciesData(species).biomes).toEqual([]);
     }
 
     // ...and neither do the species they grow into
-    for (const species of [Species.Omastar, Species.Kabutops]) {
+    for (const species of [Species.Omastar, Species.Kabutops, Species.Cradily, Species.Armaldo]) {
       expect(listSpeciesHabitats(species).length).toBe(0);
     }
 
     // Nothing else on the shelf is one
     expect(isFossil(Items.Nugget)).toBe(false);
 
-    // All three are prized: reviving one is irreversible and is the
-    // only way to the species inside, which is what that band is for.
-    // The amber is the thinnest slot of the three, because Aerodactyl
-    // is the rarest thing in them
-    for (const item of [Items.HelixFossil, Items.DomeFossil, Items.OldAmber]) {
+    // Every one of them is prized: reviving one is irreversible and
+    // is the only way to the species inside, which is what that band
+    // is for. The amber is the thinnest slot, because Aerodactyl is
+    // the rarest thing in them
+    for (const item of listFossils()) {
       expect(ITEM_POOL.prized.some((entry) => entry.item === item)).toBe(true);
       expect(getItemBand(item)).toBe('prized');
       expect(isPreciousItem(item)).toBe(true);
@@ -2325,7 +2522,7 @@ describe('item data', () => {
     expect(FOSSIL_REVIVE_LEVEL).toBeGreaterThan(0);
   });
 
-  it('has the maniac carry two of the three, never the same one twice', () => {
+  it('has the maniac carry two of them, never the same one twice', () => {
     const rng = new AleaRNG('fossils');
     const pairs = new Set<string>();
 
@@ -2340,9 +2537,11 @@ describe('item data', () => {
       pairs.add(JSON.stringify([...offer].sort((left, right) => left - right)));
     }
 
-    // Every pairing of the three turns up, so no fossil is one a
-    // player can never be offered
-    expect(pairs.size).toBe(3);
+    // Every pairing turns up, so no fossil is one a player can never
+    // be offered
+    const fossils = listFossils().length;
+
+    expect(pairs.size).toBe((fossils * (fossils - 1)) / 2);
   });
 
   it('keeps the balls and the medicine on counters of their own', () => {
@@ -3109,8 +3308,11 @@ describe('item data', () => {
     expect(ITEM_POOL.special.map((entry) => entry.item)).toEqual([
       Items.MasterBall,
       Items.ShinyCharm,
+      Items.CatchingCharm,
       Items.OldSeaMap,
       Items.GSBall,
+      Items.AuroraTicket,
+      Items.WishTag,
       Items.GoldenBottleCap,
       // The one thing in the band that is only gold, and there because
       // it is more of it than anything else in the game pays
@@ -3271,9 +3473,6 @@ describe('item data', () => {
       Items.Electirizer,
       Items.Magmarizer,
       Items.ReaperCloth,
-      Items.PrismScale,
-      Items.DeepSeaTooth,
-      Items.DeepSeaScale,
       Items.Sachet,
       Items.WhippedDream,
     ];
@@ -3328,6 +3527,18 @@ describe('item data', () => {
     // Metal Coat is not duplicated: the Steel booster already
     // registered is the id an evolution will read
     expect(getItemData(Items.MetalCoat).type).toBe(ItemTypes.Held);
+
+    // The three whose lines are registered are the family's
+    // exception: a Clamperl opens and a Feebas turns today, so all
+    // three are stocked and priced like the cord
+    for (const item of [Items.DeepSeaTooth, Items.DeepSeaScale, Items.PrismScale]) {
+      const data = getItemData(item);
+
+      expect(data.type, data.name).toBe(ItemTypes.Evolution);
+      expect(data.flags & ItemFlags.Marketable, data.name).not.toBe(0);
+      expect(data.buy, data.name).toBeGreaterThan(0);
+      expect(data.sell, data.name).toBeGreaterThan(0);
+    }
   });
 
   it('keeps every item an evolution asks to be held holdable', () => {
@@ -4654,7 +4865,7 @@ describe('what an expert hands its party', () => {
     expect(getExpertHeldItems(Species.Farfetchd, 1)).toEqual([Items.Stick]);
 
     // A second item is the next thing down rather than the same one
-    // twice, and it is still that species'
+    // twice
     const pikachu = getExpertHeldItems(Species.Pikachu, 2);
 
     expect(pikachu).toHaveLength(2);
@@ -4724,35 +4935,91 @@ describe('what an expert hands its party', () => {
   });
 });
 
-describe('Team Rocket', () => {
-  it('gives every executive a name, a quote and a shipped wardrobe', () => {
-    for (const executive of ROCKET_EXECUTIVES) {
-      expect(ROCKET_EXECUTIVE_NAMES[executive].length).toBeGreaterThan(0);
-      expect(ROCKET_EXECUTIVE_QUOTES[executive].length).toBeGreaterThan(0);
-      expect(ROCKET_EXECUTIVE_CHARSETS[executive].length).toBeGreaterThan(0);
+describe('the syndicates', () => {
+  it('gives every team a boss, a uniform and executives of its own', () => {
+    const marks = new Set<Awards>();
+    const worn = new Set<string>();
 
-      for (const sheet of ROCKET_EXECUTIVE_CHARSETS[executive]) {
+    for (const syndicate of SYNDICATES) {
+      const sheets = [
+        ...SYNDICATE_BOSS_CHARSETS[syndicate],
+        ...SYNDICATE_GRUNT_CHARSETS[syndicate],
+        ...SYNDICATE_EXECUTIVES[syndicate].flatMap((one) => EXECUTIVE_CHARSETS[one]),
+      ];
+      const named = SYNDICATE_NAMES[syndicate];
+
+      expect(named.length).toBeGreaterThan(0);
+      expect(SYNDICATE_BOSS_QUOTES[syndicate].length).toBeGreaterThan(0);
+      expect(SYNDICATE_GRUNT_QUOTES[syndicate].length).toBeGreaterThan(0);
+      for (const executive of SYNDICATE_EXECUTIVES[syndicate]) {
+        expect(EXECUTIVE_QUOTES[executive].length, EXECUTIVE_NAMES[executive]).toBeGreaterThan(0);
+      }
+      expect(SYNDICATE_EXECUTIVES[syndicate].length).toBeGreaterThan(0);
+
+      // Every coat is shipped, and nobody in the world wears somebody
+      // else's: a coat is what says which team put you down
+      for (const sheet of sheets) {
         expect(existsSync(`public/sprites/overworld/${sheet}/image.png`), sheet).toBe(true);
         expect(existsSync(`public/sprites/overworld/${sheet}/data.json`), sheet).toBe(true);
+        expect(worn.has(sheet), sheet).toBe(false);
+        worn.add(sheet);
+      }
+
+      // And every mark is its own, so a shelf says which team as well
+      // as which rank
+      for (const award of [
+        SYNDICATE_GRUNT_HONORS[syndicate],
+        ...SYNDICATE_EXECUTIVES[syndicate].map((one) => EXECUTIVE_HONORS[one]),
+        SYNDICATE_BOSS_HONORS[syndicate],
+      ]) {
+        expect(marks.has(award), AWARD_NAMES[award]).toBe(false);
+        marks.add(award);
+      }
+
+      // A person is introduced team first, then rank, then name
+      expect(bossName(syndicate).startsWith(named)).toBe(true);
+      expect(bossName(syndicate).endsWith(SYNDICATE_BOSS_NAMES[syndicate])).toBe(true);
+      expect(gruntName(syndicate)).toBe(`${named} Grunt`);
+      for (const executive of SYNDICATE_EXECUTIVES[syndicate]) {
+        expect(executiveName(syndicate, executive).startsWith(named)).toBe(true);
+        expect(executiveName(syndicate, executive).endsWith(EXECUTIVE_NAMES[executive])).toBe(true);
       }
     }
-    // Four of them, each in a coat nobody else wears
-    const worn = ROCKET_EXECUTIVES.flatMap((one) => ROCKET_EXECUTIVE_CHARSETS[one]);
+    expect([...marks]).toEqual(SYNDICATE_HONORS);
+  });
 
-    expect(new Set(worn).size).toBe(worn.length);
-    expect(new Set(worn).has(GIOVANNI_CHARSETS[0])).toBe(false);
+  it('gives every biome exactly one team, and leaves the rest to Rocket', () => {
+    const seen = new Map<Syndicate, number>();
+
+    for (const biome of WILD_BIOMES) {
+      const syndicate = getSyndicate(biome);
+
+      seen.set(syndicate, (seen.get(syndicate) ?? 0) + 1);
+    }
+
+    // All three are somewhere, and the water and the fire are the two
+    // that were claimed
+    for (const syndicate of SYNDICATES) {
+      expect(seen.get(syndicate) ?? 0, SYNDICATE_NAMES[syndicate]).toBeGreaterThan(0);
+    }
+    expect(getSyndicate(Biome.Ocean)).toBe(Syndicate.Aqua);
+    expect(getSyndicate(Biome.Volcano)).toBe(Syndicate.Magma);
+    expect(getSyndicate(Biome.Grassland)).toBe(Syndicate.Rocket);
   });
 });
 
 describe('type experts', () => {
   it('gives every leader a name, a badge and a shipped wardrobe', () => {
     const badges = GYM_LEADERS.map((leader) => GYM_LEADER_BADGES[leader]);
-    const cases = [...KANTO_BADGES, ...JOHTO_BADGES];
+    const cases = [...KANTO_BADGES, ...JOHTO_BADGES, ...HOENN_BADGES];
 
-    // Every leader carries a badge of their own, and between the two
-    // regions the leaders account for every badge there is
+    // Every leader carries a badge, and between the three regions the
+    // leaders account for every badge there is. There is one leader
+    // more than there are badges, because Mossdeep is kept by two
+    // people who pay the same one
     expect(new Set(badges).size).toBe(cases.length);
     expect(badges.every((badge) => cases.includes(badge))).toBe(true);
+    expect(GYM_LEADER_BADGES[GymLeader.Tate]).toBe(GYM_LEADER_BADGES[GymLeader.Liza]);
 
     for (const leader of GYM_LEADERS) {
       expect(GYM_LEADER_NAMES[leader].length).toBeGreaterThan(0);
@@ -4762,23 +5029,36 @@ describe('type experts', () => {
       }
     }
     // Every gym is a fight about a type now that Giovanni keeps the
-    // one Blue used to take all comers at
-    expect(new Set(GYM_LEADERS.map((leader) => GYM_LEADER_TYPES[leader])).size).toBe(
-      GYM_LEADERS.length,
-    );
+    // one Blue used to take all comers at, and no region runs the
+    // same fight twice. Across regions they repeat: Roxanne's gym is
+    // Brock's fight in another country
+    for (const region of [KANTO_BADGES, JOHTO_BADGES, HOENN_BADGES]) {
+      const held = new Map<Awards, Set<Types>>();
+
+      for (const leader of GYM_LEADERS.filter((one) => region.includes(GYM_LEADER_BADGES[one]))) {
+        const badge = GYM_LEADER_BADGES[leader];
+
+        held.set(badge, (held.get(badge) ?? new Set<Types>()).add(GYM_LEADER_TYPES[leader]));
+      }
+      // One badge is one type, whoever of its keepers a chunk seats
+      for (const [badge, types] of held) {
+        expect(types.size, AWARD_NAMES[badge]).toBe(1);
+      }
+      expect(new Set([...held.values()].flatMap((types) => [...types])).size).toBe(region.length);
+    }
     expect(GYM_LEADER_TYPES[GymLeader.Giovanni]).toBe(Types.Ground);
     expect(GYM_LEADER_TYPES[GymLeader.Brock]).toBe(Types.Rock);
   });
 
   it('gives every elite a mark and the champion a title', () => {
     const honors = ELITE_MEMBERS.map((member) => ELITE_MEMBER_HONORS[member]);
-    const marks = new Set([...KANTO_HONORS, ...JOHTO_HONORS]);
+    const marks = new Set([...KANTO_HONORS, ...JOHTO_HONORS, ...HOENN_HONORS]);
 
-    // Eight seats between two leagues, four apiece: Bruno keeps one in
-    // each, and no mark is shared between them
+    // Twelve seats between three leagues, four apiece: Bruno keeps one
+    // in each of the first two, and no mark is shared between them
     expect(new Set(honors).size).toBe(marks.size);
     expect(honors.every((honor) => marks.has(honor))).toBe(true);
-    expect(marks.size).toBe(KANTO_HONORS.length + JOHTO_HONORS.length);
+    expect(marks.size).toBe(KANTO_HONORS.length + JOHTO_HONORS.length + HOENN_HONORS.length);
 
     for (const member of ELITE_MEMBERS) {
       expect(ELITE_MEMBER_NAMES[member].length).toBeGreaterThan(0);
@@ -4795,8 +5075,10 @@ describe('type experts', () => {
     for (const award of [
       ...KANTO_BADGES,
       ...JOHTO_BADGES,
+      ...HOENN_BADGES,
       ...KANTO_HONORS,
       ...JOHTO_HONORS,
+      ...HOENN_HONORS,
       Awards.KantoChampion,
     ]) {
       expect(AWARD_NAMES[award].length).toBeGreaterThan(0);
@@ -4913,11 +5195,672 @@ describe('type experts', () => {
     expect(ELITE_MEMBER_CHARSETS[EliteMember.JohtoBruno]).toEqual(['characters/hgss/bruno']);
 
     // And every other seat asks for exactly its own league's gyms
+    const leagues = [
+      [KANTO_HONORS, KANTO_BADGES],
+      [JOHTO_HONORS, JOHTO_BADGES],
+      [HOENN_HONORS, HOENN_BADGES],
+    ] as const;
+
     for (const member of ELITE_MEMBERS) {
       const honor = ELITE_MEMBER_HONORS[member];
-      const asked = KANTO_HONORS.includes(honor) ? KANTO_BADGES : JOHTO_BADGES;
+      const league = leagues.find(([marked]) => marked.includes(honor));
 
-      expect(getEliteBadges(member), ELITE_MEMBER_NAMES[member]).toEqual(asked);
+      expect(league, ELITE_MEMBER_NAMES[member]).toBeDefined();
+      expect(getEliteBadges(member), ELITE_MEMBER_NAMES[member]).toEqual(league?.[1]);
+    }
+  });
+
+  it('seats Hoenn’s four on Hoenn’s badges, with no crown above them', () => {
+    for (const member of [
+      EliteMember.Sidney,
+      EliteMember.Phoebe,
+      EliteMember.Glacia,
+      EliteMember.Drake,
+    ]) {
+      expect(HOENN_HONORS).toContain(ELITE_MEMBER_HONORS[member]);
+      expect(getEliteBadges(member), ELITE_MEMBER_NAMES[member]).toEqual(HOENN_BADGES);
+    }
+    // And Wallace stands above them, asking for all four
+    expect(CHAMPION_HONORS[Champion.Wallace]).toEqual(HOENN_HONORS);
+    expect(CHAMPION_TITLES[Champion.Wallace]).toBe(Awards.HoennChampion);
+  });
+
+  it('gives every Frontier Brain a house, a rule and a pair of symbols', () => {
+    const symbols = FRONTIER_BRAINS.flatMap((brain) => FRONTIER_BRAIN_SYMBOLS[brain]);
+
+    // Two apiece and no sharing: a facility is its own pair
+    expect(new Set(symbols).size).toBe(symbols.length);
+    expect(symbols.every((symbol) => FRONTIER_SYMBOLS.includes(symbol))).toBe(true);
+
+    for (const brain of FRONTIER_BRAINS) {
+      expect(FRONTIER_BRAIN_NAMES[brain].length).toBeGreaterThan(0);
+      expect(FRONTIER_FACILITY_NAMES[brain].length).toBeGreaterThan(0);
+      // Three a side is the Frontier's shape, and what makes a house
+      // rule bite rather than merely annoy. Two houses name nobody:
+      // the Factory draws out of the crate like the challenger, and
+      // the Dome waits to be shown a party before it answers one
+      const named = FRONTIER_BRAIN_PARTIES[brain];
+      const rules = FRONTIER_BRAIN_RULES[brain];
+      const drawn = rules === FrontierRule.Rented || rules === FrontierRule.Countered;
+
+      expect(named).toHaveLength(drawn ? 0 : FRONTIER_TEAM_SIZE);
+      for (const species of named) {
+        expect(getSpeciesData(species).name.length).toBeGreaterThan(0);
+      }
+      for (const sheet of FRONTIER_BRAIN_CHARSETS[brain]) {
+        expect(existsSync(`public/sprites/overworld/${sheet}/image.png`), sheet).toBe(true);
+      }
+      // Every house but the Tower is a rule of its own, and the
+      // Tower's asking nothing is what the others are read against
+      expect(FRONTIER_BRAIN_RULES[brain] === FrontierRule.None).toBe(
+        brain === FrontierBrain.Anabel,
+      );
+      // And the Frontier stands past a league, so each asks for a crown
+      expect(CHAMPIONS.map((champion) => CHAMPION_TITLES[champion])).toContain(
+        FRONTIER_BRAIN_TITLES[brain],
+      );
+    }
+    // No two houses run the same fight
+    const rules = FRONTIER_BRAINS.map((one) => FRONTIER_BRAIN_RULES[one]);
+
+    expect(new Set(rules).size).toBe(rules.length);
+    expect(FRONTIER_BRAIN_RULES[FrontierBrain.Brandon]).toBe(FrontierRule.Bare);
+    expect(FRONTIER_BRAIN_RULES[FrontierBrain.Greta]).toBe(FrontierRule.Timed);
+    expect(FRONTIER_BRAIN_RULES[FrontierBrain.Lucy]).toBe(FrontierRule.Curtained);
+    expect(FRONTIER_BRAIN_RULES[FrontierBrain.Noland]).toBe(FrontierRule.Rented);
+    expect(FRONTIER_BRAIN_RULES[FrontierBrain.Spenser]).toBe(FrontierRule.Natured);
+    expect(FRONTIER_BRAIN_RULES[FrontierBrain.Tucker]).toBe(FrontierRule.Countered);
+  });
+
+  it('answers a party the Dome is shown with three drawn against it', () => {
+    const stop = 'stop:dome:1';
+    const brought = [Species.Charizard, Species.Blastoise, Species.Venusaur];
+    const answer = counterParty(stop, brought);
+
+    // One apiece, nobody twice, and the same three however many times
+    // the challenge is looked at
+    expect(answer).toHaveLength(brought.length);
+    expect(new Set(answer.map(([species]) => species)).size).toBe(brought.length);
+    expect(counterParty(stop, brought)).toEqual(answer);
+    expect(counterParty('stop:dome:2', brought)).not.toEqual(answer);
+
+    // And each of them is an answer: something it carries hits what it
+    // was drawn against for more than neutral
+    const crate = new Set(getRentalPool());
+
+    answer.forEach(([species], at) => {
+      expect(crate.has(species), getSpeciesData(species).name).toBe(true);
+
+      const theirs = getSpeciesData(brought[at]).types;
+      const best = Math.max(
+        ...getSpeciesData(species).types.map((type) =>
+          theirs.reduce((factor, against) => {
+            const effect = TYPE_EFFECTIVENESS[type][against];
+
+            return effect == null ? factor : factor * TYPE_EFFECTIVENESS_FACTOR[effect];
+          }, 1),
+        ),
+      );
+
+      expect(best, getSpeciesData(species).name).toBeGreaterThan(1);
+    });
+  });
+
+  it('draws one of the Pike’s curtains for any roll there is', () => {
+    const drawn = new Set<PikeCurtain>();
+
+    // The whole range lands inside the list, the top of it included:
+    // a roll of exactly 1 is the last curtain rather than nothing
+    for (let at = 0; at <= 1000; at += 1) {
+      drawn.add(pickPikeCurtain(at / 1000));
+    }
+    expect(drawn.size).toBe(PIKE_CURTAINS.length);
+    expect(pickPikeCurtain(1)).toBe(PIKE_CURTAINS.at(-1));
+    expect(pickPikeCurtain(0)).toBe(PIKE_CURTAINS[0]);
+
+    // Four rooms cost something and one gives, which is what makes
+    // walking in a gamble rather than a test
+    const kind = PIKE_CURTAINS.filter((curtain) => PIKE_CURTAIN_STATUSES[curtain] == null);
+
+    expect(kind).toEqual([PikeCurtain.Healed]);
+    for (const curtain of PIKE_CURTAINS) {
+      expect(PIKE_CURTAIN_NAMES[curtain].length).toBeGreaterThan(0);
+    }
+  });
+
+  it('lays six on the Factory’s table and takes three off it', () => {
+    const stop = 'stop:factory:1';
+    const offer = rentalOffer(stop);
+
+    // The same table every time it is looked at: walking away and
+    // back is not a reroll
+    expect(offer).toHaveLength(FRONTIER_RENTAL_OFFER);
+    expect(rentalOffer(stop)).toEqual(offer);
+    expect(rentalOffer('stop:factory:2')).not.toEqual(offer);
+
+    // Everything on it is something an expert could field
+    const crate = new Set(getRentalPool());
+
+    for (const [species] of offer) {
+      expect(crate.has(species), getSpeciesData(species).name).toBe(true);
+    }
+
+    // Three off the table, in the order they were taken
+    expect(rentedHand(stop, ['4', '0', '2'])).toEqual([offer[4], offer[0], offer[2]]);
+
+    // And nothing else is a hand: too few, too many, the same one
+    // twice, or a place that is not on the table
+    for (const picks of [['0'], ['0', '1', '2', '3'], ['1', '1', '2'], ['0', '1', '9']]) {
+      expect(rentedHand(stop, picks), picks.join(',')).toBeNull();
+    }
+  });
+
+  it('keeps a second three for whoever already took the house', () => {
+    for (const brain of FRONTIER_BRAINS) {
+      const first = FRONTIER_BRAIN_PARTIES[brain];
+      const second = FRONTIER_BRAIN_GOLD_PARTIES[brain];
+
+      // Both hands are the house's own shape, and a house that rents
+      // names nobody either time
+      expect(second).toHaveLength(first.length);
+      expect(getFrontierParty(brain, false)).toEqual(first);
+      expect(getFrontierParty(brain, true)).toEqual(second);
+      for (const species of second) {
+        expect(getSpeciesData(species).name.length).toBeGreaterThan(0);
+      }
+    }
+    // The Pyramid brings the same three either time, which is the
+    // mainline's own answer: what changes is the level and the
+    // loadout rather than who is in the crate
+    expect(FRONTIER_BRAIN_GOLD_PARTIES[FrontierBrain.Brandon]).toEqual(
+      FRONTIER_BRAIN_PARTIES[FrontierBrain.Brandon],
+    );
+    // Everybody else's second hand is a different fight
+    for (const brain of FRONTIER_BRAINS) {
+      if (
+        brain === FrontierBrain.Brandon ||
+        brain === FrontierBrain.Noland ||
+        brain === FrontierBrain.Tucker
+      ) {
+        continue;
+      }
+      expect(FRONTIER_BRAIN_GOLD_PARTIES[brain], FRONTIER_BRAIN_NAMES[brain]).not.toEqual(
+        FRONTIER_BRAIN_PARTIES[brain],
+      );
+    }
+  });
+
+  it('builds every species an expert can field with four moves it can learn', () => {
+    for (const species of getRentalPool()) {
+      const built = getBestMoves(species);
+      const legal = new Set(getLearnableMoves(species));
+      const name = getSpeciesData(species).name;
+
+      expect(built.length, name).toBeLessThanOrEqual(BEST_MOVE_COUNT);
+      expect(new Set(built).size, name).toBe(built.length);
+
+      let quiet = 0;
+
+      for (const move of built) {
+        expect(legal.has(move), `${name}: ${getMoveData(move).name}`).toBe(true);
+
+        if (getMoveData(move).category === MoveCategories.Status) {
+          quiet += 1;
+        }
+      }
+      // Four ways to do nothing is not a party: a core gives one slot
+      // to a move that deals no damage, and takes more only where the
+      // species has too few attacks to fill the sheet, which is what
+      // a Wobbuffet is
+      const hits =
+        legal.size -
+        [...legal].filter((move) => getMoveData(move).category === MoveCategories.Status).length;
+
+      expect(quiet, name).toBeLessThanOrEqual(Math.max(1, BEST_MOVE_COUNT - hits));
+
+      // And nothing that takes the pokemon off the field with it
+      expect(built).not.toContain(Moves.Explosion);
+      expect(built).not.toContain(Moves.SelfDestruct);
+    }
+  });
+
+  it('builds the same set twice, and a different one for a different ability', () => {
+    expect(getBestMoves(Species.Metagross)).toEqual(getBestMoves(Species.Metagross));
+
+    // Huge Power doubles the attack stat, which is what decides which
+    // half of the split is worth casting from
+    expect(getBestMoves(Species.Azumarill, [Abilities.HugePower])).not.toEqual(
+      getBestMoves(Species.Azumarill),
+    );
+
+    // A boost is worth what the stat it raises is worth: Latios never
+    // swings, so it is never handed a Dragon Dance
+    const latios = getBestMoves(Species.Latios);
+
+    expect(latios).toContain(Moves.CalmMind);
+    expect(latios).not.toContain(Moves.DragonDance);
+  });
+
+  it('prices gear above the league and orders it below', () => {
+    const moves = getBestMoves(Species.Gengar, [Abilities.Levitate]);
+
+    // A gym leader's Gengar is handed what suits a Gengar, off its own
+    // table. An elite's is handed the best answer there is
+    expect(getExpertHeldItems(Species.Gengar, 1, { moves })).not.toEqual(
+      getExpertHeldItems(Species.Gengar, 1, { moves, best: true }),
+    );
+    expect(getExpertHeldItems(Species.Gengar, 1, { moves, best: true })).toEqual([Items.LifeOrb]);
+  });
+
+  it('hands an expert gear priced against what it actually is', () => {
+    const hitter = getExpertHeldItems(Species.Gengar, 2, {
+      moves: getBestMoves(Species.Gengar, [Abilities.Levitate]),
+      best: true,
+    });
+    const wall = getExpertHeldItems(Species.Blissey, 2, {
+      moves: getBestMoves(Species.Blissey, [Abilities.NaturalCure]),
+      best: true,
+    });
+
+    // Health spent for damage suits something that hits hard enough
+    // for the damage to be worth more than the health
+    expect(hitter).toContain(Items.LifeOrb);
+    expect(wall).not.toContain(Items.LifeOrb);
+
+    // And an orb is a cost until an ability turns the status into a
+    // gain, which is the only thing that ever asks for one
+    const guts = getBestMoves(Species.Machamp, [Abilities.Guts]);
+
+    expect(
+      getExpertHeldItems(Species.Machamp, 1, {
+        moves: guts,
+        abilities: [Abilities.Guts],
+        best: true,
+      }),
+    ).toEqual([Items.ToxicOrb]);
+    expect(
+      getExpertHeldItems(Species.Machamp, 3, {
+        moves: guts,
+        abilities: [Abilities.NoGuard],
+        best: true,
+      }),
+    ).not.toContain(Items.ToxicOrb);
+  });
+
+  it('sells the orb to the two doing the attacking', () => {
+    const moves = getBestMoves(Species.Gengar, [Abilities.Levitate]);
+    const core = getExpertHeldItems(Species.Gengar, 2, { moves, best: true });
+    const support = getExpertHeldItems(Species.Gengar, 2, {
+      moves,
+      role: BuildRole.Support,
+      best: true,
+    });
+
+    // A Life Orb takes a tenth of its holder for every blow that
+    // lands, which is a price the four behind the cores pay without
+    // doing the attacking that earns it back
+    expect(core).toContain(Items.LifeOrb);
+    expect(support).not.toContain(Items.LifeOrb);
+  });
+
+  it('never locks a pokemon out of half its own sheet', () => {
+    const locking = new Set([Items.ChoiceBand, Items.ChoiceSpecs, Items.ChoiceScarf]);
+    // Two quiet moves and a lock is a pokemon that either never sets
+    // its rain or never attacks
+    const quiet = getExpertHeldItems(Species.Tentacruel, 3, {
+      moves: [Moves.RainDance, Moves.Surf, Moves.Reflect, Moves.SludgeBomb],
+      best: true,
+    });
+
+    for (const item of quiet) {
+      expect(locking.has(item), getItemData(item).name).toBe(false);
+    }
+  });
+
+  it('never hands out two of a kind of gear', () => {
+    const locking = new Set([Items.ChoiceBand, Items.ChoiceSpecs, Items.ChoiceScarf]);
+    const orbs = new Set([Items.FlameOrb, Items.ToxicOrb]);
+
+    for (const species of getRentalPool()) {
+      const held = getExpertHeldItems(species, 3, { moves: getBestMoves(species), best: true });
+      const name = getSpeciesData(species).name;
+
+      // Two Choice items lock twice and pay once, two orbs leave one
+      // status, and a second booster is for the lesser type
+      expect(held.filter((item) => locking.has(item)).length, name).toBeLessThanOrEqual(1);
+      expect(held.filter((item) => orbs.has(item)).length, name).toBeLessThanOrEqual(1);
+      expect(held.filter((item) => TYPE_BOOSTERS.has(item)).length, name).toBeLessThanOrEqual(1);
+    }
+  });
+
+  it('builds a support out of the same species as a core', () => {
+    for (const species of getRentalPool()) {
+      const name = getSpeciesData(species).name;
+      const legal = new Set(getLearnableMoves(species));
+      const support = getBestMoves(species, [], { role: BuildRole.Support });
+      const quiet = (moves: Moves[]): number =>
+        moves.filter((move) => getMoveData(move).category === MoveCategories.Status).length;
+
+      for (const move of support) {
+        expect(legal.has(move), `${name}: ${move}`).toBe(true);
+      }
+      // Half a sheet of quiet moves at most: a support that cannot
+      // hurt anybody is one the far side walks past. A species with
+      // nothing to hit with is its own answer to that, and there is
+      // exactly one of those
+      const hits = [...legal].filter(
+        (move) => getMoveData(move).category !== MoveCategories.Status,
+      ).length;
+
+      expect(quiet(support), name).toBeLessThanOrEqual(2);
+      expect(support.length - quiet(support), name).toBeGreaterThanOrEqual(Math.min(2, hits));
+    }
+
+    // A wall asked to attack still attacks, and asked to hold the
+    // fight open it reaches for what holds it open
+    const core = getBestMoves(Species.Blissey, [Abilities.NaturalCure]);
+    const support = getBestMoves(Species.Blissey, [Abilities.NaturalCure], {
+      role: BuildRole.Support,
+    });
+
+    expect(support).not.toEqual(core);
+    expect(support).toContain(Moves.SoftBoiled);
+  });
+
+  it('takes the sky and what waits under it together', () => {
+    // Nobody casts a Sunny Day for its own sake: what pays for the
+    // slot is the Chlorophyll behind it and the Solar Beam that stops
+    // winding up
+    const sun = getBestMoves(Species.Venusaur, [Abilities.Chlorophyll]);
+
+    expect(sun).toContain(Moves.SunnyDay);
+    expect(sun).toContain(Moves.SolarBeam);
+    expect(getBestMoves(Species.Venusaur)).not.toContain(Moves.SunnyDay);
+
+    // A sky an ability already brings is a sky nothing has to cast,
+    // and Thunder under it stops missing
+    const rain = getBestMoves(Species.Kyogre, [Abilities.Drizzle]);
+
+    expect(rain).not.toContain(Moves.RainDance);
+    expect(rain).toContain(Moves.Thunder);
+  });
+
+  it('pays for a move that cannot miss at all', () => {
+    // Accuracy is rolled against evasion, so a written 100 is a
+    // promise a Double Team breaks and a move with no accuracy is
+    // not. Read flat the two tied, and the older move id won
+    const charizard = getBestMoves(Species.Charizard, [Abilities.Blaze]);
+
+    expect(charizard).toContain(Moves.AerialAce);
+    expect(charizard).not.toContain(Moves.WingAttack);
+  });
+
+  it('does not hand the same move to half the party', () => {
+    // Four Earthquakes answer one wall four times and everything else
+    // never, so a repeat has to lose to the second-best move of its
+    // own type. A move the pokemon gets its own bonus from is barely
+    // docked: three Dragon types all carrying their own Dragon Claw
+    // is three pokemon casting what they are best at
+    for (const party of [...Object.values(CHAMPION_PARTIES), ...Object.values(LEGEND_PARTIES)]) {
+      const carried = new Map<Moves, number>();
+      const borrowed = new Map<Moves, number>();
+
+      for (const [at, build] of getBestParty(party, 3).entries()) {
+        const types = getSpeciesData(party[at]).types;
+
+        for (const move of build.moves) {
+          carried.set(move, (carried.get(move) ?? 0) + 1);
+          if (!types.includes(getMoveData(move).type)) {
+            borrowed.set(move, (borrowed.get(move) ?? 0) + 1);
+          }
+        }
+      }
+      for (const [move, count] of carried) {
+        expect(count, getMoveData(move).name).toBeLessThanOrEqual(3);
+      }
+      for (const [move, count] of borrowed) {
+        expect(count, getMoveData(move).name).toBeLessThanOrEqual(2);
+      }
+    }
+  });
+
+  it('lets the cores decide the sky', () => {
+    const weatherMoves = new Set([Moves.SunnyDay, Moves.RainDance, Moves.Sandstorm, Moves.Hail]);
+    const casts = (built: { moves: Moves[] }[]): number =>
+      built.filter((one) => one.moves.some((move) => weatherMoves.has(move))).length;
+
+    // Red's two cores are a Chlorophyll Venusaur and a Solar Power
+    // Charizard, and what the sun costs is two Water pokemon standing
+    // behind them. The cores carry the party, so the sun is called
+    const red = getBestParty(LEGEND_PARTIES[Legend.Red], 3);
+
+    expect(casts(red)).toBe(1);
+    expect(red.some((build) => build.moves.includes(Moves.SunnyDay))).toBe(true);
+
+    // Turn it around: the same want on a support, against a core that
+    // loses half of what it is best at, and the sky is left alone
+    const damped = getBestParty(
+      [
+        Species.Charizard,
+        Species.Salamence,
+        Species.Ludicolo,
+        Species.Blastoise,
+        Species.Blissey,
+        Species.Skarmory,
+      ],
+      3,
+    );
+
+    expect(casts(damped)).toBe(0);
+  });
+
+  it('does not hand the same move to half the party', () => {
+    // Four Earthquakes answer one wall four times and everything else
+    // never, so a repeat has to lose to the second-best move of its
+    // own type. A move the pokemon gets its own bonus from is barely
+    // docked: three Dragon types all carrying their own Dragon Claw
+    // is three pokemon casting what they are best at
+    for (const party of [...Object.values(CHAMPION_PARTIES), ...Object.values(LEGEND_PARTIES)]) {
+      const carried = new Map<Moves, number>();
+      const borrowed = new Map<Moves, number>();
+
+      for (const [at, build] of getBestParty(party, 3).entries()) {
+        const types = getSpeciesData(party[at]).types;
+
+        for (const move of build.moves) {
+          carried.set(move, (carried.get(move) ?? 0) + 1);
+          if (!types.includes(getMoveData(move).type)) {
+            borrowed.set(move, (borrowed.get(move) ?? 0) + 1);
+          }
+        }
+      }
+      for (const [move, count] of carried) {
+        expect(count, getMoveData(move).name).toBeLessThanOrEqual(3);
+      }
+      for (const [move, count] of borrowed) {
+        expect(count, getMoveData(move).name).toBeLessThanOrEqual(2);
+      }
+    }
+  });
+
+  it('spends a support slot on the two in front of it', () => {
+    // Every fight here stands the whole party up at once, so a move
+    // aimed at an ally has somebody to aim at
+    const support = getBestMoves(Species.Espeon, [], { role: BuildRole.Support });
+
+    expect(support).toContain(Moves.HelpingHand);
+    // A core spending a cast on somebody else's hit is a core not
+    // taking its own
+    expect(getBestMoves(Species.Espeon)).not.toContain(Moves.HelpingHand);
+
+    // And nothing passes a baton with nothing raised to pass
+    for (const species of getRentalPool()) {
+      for (const role of [BuildRole.Core, BuildRole.Support]) {
+        const built = getBestMoves(species, [], { role });
+
+        if (built.includes(Moves.BatonPass)) {
+          expect(
+            built.some((move) => SETUP_MOVES.has(move)),
+            getSpeciesData(species).name,
+          ).toBe(true);
+        }
+      }
+    }
+  });
+
+  it('never promises what the rest of the sheet cannot keep', () => {
+    for (const species of getRentalPool()) {
+      for (const role of [BuildRole.Core, BuildRole.Support]) {
+        const built = getBestMoves(species, [], { role });
+        const name = getSpeciesData(species).name;
+
+        // Dream Eater against somebody awake is a wasted cast, so it
+        // is only ever taken beside something that puts them to sleep
+        if (built.includes(Moves.DreamEater)) {
+          expect(
+            built.some((move) =>
+              [
+                Moves.Spore,
+                Moves.SleepPowder,
+                Moves.Hypnosis,
+                Moves.LovelyKiss,
+                Moves.Sing,
+                Moves.Yawn,
+              ].includes(move),
+            ),
+            name,
+          ).toBe(true);
+        }
+        if (built.includes(Moves.SleepTalk)) {
+          expect(built, name).toContain(Moves.Rest);
+        }
+      }
+    }
+  });
+
+  it('awakens the abilities the job asks for', () => {
+    // The sky it brings with it is the whole of what a Groudon is
+    expect(getBestAbilities(Species.Groudon, 1, BuildRole.Core)).toEqual([Abilities.Drought]);
+
+    // The same species leans one way as a core and the other behind
+    // one: what sharpens a hit against what survives one
+    expect(getBestAbilities(Species.Salamence, 1, BuildRole.Core)).not.toEqual(
+      getBestAbilities(Species.Salamence, 1, BuildRole.Support),
+    );
+
+    // A species with fewer than asked carries what it has, and never
+    // the same one twice
+    for (const species of getRentalPool()) {
+      const pool = new Set([
+        ...getSpeciesAbilityPools(species).regular,
+        ...getSpeciesAbilityPools(species).hidden,
+      ]);
+      const held = getBestAbilities(species, 3, BuildRole.Support);
+
+      expect(held.length, getSpeciesData(species).name).toBe(Math.min(3, pool.size));
+      expect(new Set(held).size).toBe(held.length);
+      for (const ability of held) {
+        expect(pool.has(ability)).toBe(true);
+      }
+    }
+  });
+
+  it('docks a move that pays for the swing out of the swinger', () => {
+    // Overheat halves the stat it just fired from, and a fight here is
+    // cast after cast rather than turn after turn, so its face value
+    // is a price paid once and collected once
+    const arcanine = getBestMoves(Species.Arcanine, [Abilities.Intimidate]);
+
+    expect(arcanine).toContain(Moves.FireBlast);
+    expect(arcanine).not.toContain(Moves.Overheat);
+  });
+
+  it('never awakens an ability the sheet never asks for', () => {
+    // Reckless lifts a move that hurts its user, and a sheet with
+    // none is a sheet it does nothing on. The two are picked apart,
+    // so the abilities are priced again once the moves are known
+    expect(
+      getBestAbilities(Species.Arcanine, 1, BuildRole.Core, undefined, [Moves.DoubleEdge]),
+    ).toEqual([Abilities.Reckless]);
+    expect(
+      getBestAbilities(Species.Arcanine, 1, BuildRole.Core, undefined, [Moves.Overheat]),
+    ).not.toEqual([Abilities.Reckless]);
+
+    // And what the builder actually fields agrees with its own sheet
+    const built = getBestBuild(Species.Arcanine, BuildRole.Core, 2);
+
+    if (built.abilities.includes(Abilities.Reckless)) {
+      expect(built.moves.some((move) => isRecoilMove(move))).toBe(true);
+    }
+  });
+
+  it('picks the nature the sheet it built actually wants', () => {
+    const machamp = getBestBuild(Species.Machamp, BuildRole.Core, 1);
+    const gengar = getBestBuild(Species.Gengar, BuildRole.Core, 1);
+
+    // The drop belongs on the side it never casts from
+    expect(NATURE_EFFECTS[machamp.nature]?.up).toBe(Stats.Attack);
+    expect(NATURE_EFFECTS[machamp.nature]?.down).toBe(Stats.SpecialAttack);
+    expect(NATURE_EFFECTS[gengar.nature]?.up).toBe(Stats.SpecialAttack);
+    expect(NATURE_EFFECTS[gengar.nature]?.down).toBe(Stats.Attack);
+
+    // A support is bought defence rather than power, and never pays
+    // for it with the defence it is there for
+    for (const species of getRentalPool()) {
+      const nature = getBestNature(
+        species,
+        BuildRole.Support,
+        getBestMoves(species, [], {
+          role: BuildRole.Support,
+        }),
+      );
+      const effect = NATURE_EFFECTS[nature];
+      const name = getSpeciesData(species).name;
+
+      expect(effect, name).toBeDefined();
+      expect([Stats.Defense, Stats.SpecialDefense, Stats.Speed], name).toContain(effect?.up);
+    }
+    // And the same species answers the same way twice
+    expect(getBestNature(Species.Machamp, BuildRole.Core)).toBe(
+      getBestNature(Species.Machamp, BuildRole.Core),
+    );
+  });
+
+  it('fields two cores behind four supports', () => {
+    const six = [
+      Species.Blissey,
+      Species.Skarmory,
+      Species.Salamence,
+      Species.Metagross,
+      Species.Milotic,
+      Species.Gengar,
+    ];
+    const roles = assignBuildRoles(six);
+
+    expect(roles.filter((role) => role === BuildRole.Core)).toHaveLength(CORE_COUNT);
+    // Read off the species rather than the slot: the two that can
+    // take something off the field are the two asked to
+    expect(roles[six.indexOf(Species.Salamence)]).toBe(BuildRole.Core);
+    expect(roles[six.indexOf(Species.Blissey)]).toBe(BuildRole.Support);
+
+    // A house that fields three has one, since two attackers and one
+    // support is not a plan
+    expect(
+      assignBuildRoles([Species.Blissey, Species.Salamence, Species.Skarmory]).filter(
+        (role) => role === BuildRole.Core,
+      ),
+    ).toHaveLength(1);
+  });
+
+  it('keeps every written override to something its species can learn', () => {
+    for (const [key, moves] of Object.entries(BEST_MOVE_OVERRIDES)) {
+      const species: Species = Number(key);
+      const legal = new Set(getLearnableMoves(species));
+
+      expect(moves, getSpeciesData(species).name).toHaveLength(BEST_MOVE_COUNT);
+      for (const move of moves) {
+        expect(legal.has(move), `${getSpeciesData(species).name}: ${move}`).toBe(true);
+      }
     }
   });
 
@@ -5056,8 +5999,10 @@ describe('type experts', () => {
     const spoken = new Set([
       ...KANTO_BADGES,
       ...JOHTO_BADGES,
+      ...HOENN_BADGES,
       ...KANTO_HONORS,
       ...JOHTO_HONORS,
+      ...HOENN_HONORS,
       ...CHAMPIONS.map((champion) => CHAMPION_TITLES[champion]),
     ]);
 
@@ -5069,14 +6014,12 @@ describe('type experts', () => {
       expect(spoken.has(mark)).toBe(false);
       expect(AWARD_NAMES[mark].length).toBeGreaterThan(0);
 
-      // The coats it unlocks are shipped, and none of them is the one
-      // the legend wanders in: that one is free from the start, so a
-      // mark that paid it would pay nothing
-      const worn = new Set(LEGEND_CHARSETS[legend]);
-
+      // The coats it unlocks are shipped, and none of them is free
+      // from the start: a mark that paid a starting look would pay
+      // nothing
       expect(LEGEND_PRIZE_CHARSETS[legend].length).toBeGreaterThan(0);
       for (const sheet of LEGEND_PRIZE_CHARSETS[legend]) {
-        expect(worn.has(sheet), sheet).toBe(false);
+        expect(FREE_CHARSETS.includes(sheet), sheet).toBe(false);
         expect(existsSync(`public/sprites/overworld/${sheet}/image.png`), sheet).toBe(true);
       }
     }
@@ -5241,6 +6184,7 @@ describe('achievements', () => {
     expect(getTradeClasses(TrainerClass.Swimmer)).toEqual([
       TrainerClass.Swimmer,
       TrainerClass.JohtoSwimmer,
+      TrainerClass.HoennSwimmer,
     ]);
     expect(TRAINER_TRADES).not.toContain(TrainerClass.JohtoSwimmer);
     expect(ACHIEVEMENT_TRAINERS).toEqual(TRAINER_TRADES);
@@ -5265,7 +6209,7 @@ describe('achievements', () => {
     expect(standings.variants.get(TrainerClass.Swimmer)?.tier).toBe(AchievementTier.None);
     expect(standings.variants.get(TrainerClass.JohtoSwimmer)?.count).toBe(2);
     // A trade only one region has counts the way it always did
-    expect(getTradeClasses(TrainerClass.Sage)).toEqual([TrainerClass.Sage]);
+    expect(getTradeClasses(TrainerClass.Channeler)).toEqual([TrainerClass.Channeler]);
   });
 
   it('names a trade twice over by the region it is met in', () => {
@@ -5367,19 +6311,77 @@ describe('achievements', () => {
         roads.add(trainer);
       }
       // What may actually be met there: the country's own, plus the
-      // two Aces, who belong to no country
-      expect(getBiomeTrainers(biome)).toEqual([
-        TrainerClass.AceTrainer,
-        TrainerClass.JohtoAceTrainer,
-        ...standing,
-      ]);
+      // two Aces, who belong to no country. Out on the water it is
+      // the seafarers among them and nobody else
+      if (isOpenSea(biome)) {
+        const afloat = getBiomeTrainers(biome);
+
+        expect(afloat.length).toBeGreaterThan(0);
+        for (const trainer of afloat) {
+          expect(standing, TRAINER_NAMES[trainer]).toContain(trainer);
+          expect(TRAINER_TYPES[trainer], TRAINER_NAMES[trainer]).toContain(Types.Water);
+        }
+        // And nobody who would need ground to stand on
+        for (const trainer of standing) {
+          if (!new Set(TRAINER_TYPES[trainer]).has(Types.Water)) {
+            expect(afloat, TRAINER_NAMES[trainer]).not.toContain(trainer);
+          }
+        }
+      } else {
+        expect(getBiomeTrainers(biome)).toEqual([
+          TrainerClass.AceTrainer,
+          TrainerClass.JohtoAceTrainer,
+          TrainerClass.HoennAceTrainer,
+          ...standing,
+        ]);
+      }
     }
 
-    // No class is written out of the world, the two Aces aside
+    // No class is written out of the world, the Aces aside
     for (const trainer of TRAINER_CLASSES) {
-      if (trainer !== TrainerClass.AceTrainer && trainer !== TrainerClass.JohtoAceTrainer) {
+      if (!isAceTrainer(trainer)) {
         expect(roads.has(trainer), TRAINER_NAMES[trainer]).toBe(true);
       }
+    }
+  });
+
+  it('puts somebody of Hoenn’s on the road for every type it grows', () => {
+    const hoenn: [TrainerClass, Types][] = [
+      [TrainerClass.AromaLady, Types.Grass],
+      [TrainerClass.Tuber, Types.Ice],
+      [TrainerClass.HoennScientist, Types.Steel],
+      [TrainerClass.DragonTamer, Types.Dragon],
+      [TrainerClass.StreetThug, Types.Dark],
+      [TrainerClass.Kindler, Types.Fire],
+      [TrainerClass.NinjaBoy, Types.Ghost],
+      [TrainerClass.Expert, Types.Psychic],
+      [TrainerClass.Guitarist, Types.Electric],
+      [TrainerClass.RuinManiac, Types.Ground],
+      [TrainerClass.BattleGirl, Types.Fighting],
+    ];
+
+    for (const [trainer, type] of hoenn) {
+      expect(TRAINER_TYPES[trainer], TRAINER_NAMES[trainer]).toContain(type);
+      expect(TRAINER_REGIONS[trainer], TRAINER_NAMES[trainer]).toBe(Regions.Hoenn);
+    }
+
+    const covered = new Set(
+      TRAINER_CLASSES.filter((trainer) => TRAINER_REGIONS[trainer] === Regions.Hoenn).flatMap(
+        (trainer) => TRAINER_TYPES[trainer],
+      ),
+    );
+
+    for (const type of ACHIEVEMENT_TYPES) {
+      expect(covered.has(type), TYPE_NAMES[type]).toBe(true);
+    }
+  });
+
+  it('numbers every trade inside the band its title is read from', () => {
+    // A title is `300 + trade * 2`, and the professors' start at 400,
+    // so a trade numbered past 49 would answer to one of theirs
+    for (const trade of TRAINER_TRADES) {
+      expect(titleTrainer(trainerTitle(trade, false)), TRAINER_NAMES[trade]).toBe(trade);
+      expect(titleTrainer(trainerTitle(trade, true)), TRAINER_NAMES[trade]).toBe(trade);
     }
   });
 
@@ -5525,6 +6527,31 @@ describe('a region’s pokedex chain', () => {
         (reward) => reward.kind === QuestRewardKind.Award && reward.award === Awards.JohtoDexMedal,
       ),
     ).toBe(true);
+  });
+
+  it('gives Hoenn its own ladder, all but the two mythicals', () => {
+    expect(getDexRegions()).toContain(Regions.Hoenn);
+    expect(CHAINS[dexChainId(Regions.Hoenn)].name).toBe('Hoenn Pokedex');
+
+    const last = getDexQuests(Regions.Hoenn).get(dexQuestId(Regions.Hoenn, 2));
+
+    expect(last?.name).toBe('Hoenn Complete');
+    expect(
+      last?.rewards.some(
+        (reward) => reward.kind === QuestRewardKind.Award && reward.award === Awards.HoennDexMedal,
+      ),
+    ).toBe(true);
+
+    // The top rung asks for every dex number of the region but the
+    // two a relic calls, which is the ask the other two regions carry
+    const [from, to] = getRegionSpan(Regions.Hoenn) ?? [0, 0];
+    const walked = getRegisteredSpecies().filter((species) => {
+      const dex = getSpeciesData(species).dexNumber;
+
+      return isBaseForm(species) && !isMythicalSpecies(species) && dex >= from && dex <= to;
+    });
+
+    expect(REGION_DEXES[Regions.Hoenn]?.milestones.at(-1)).toBe(walked.length);
   });
 
   it('leaves a region with no dex alone rather than inventing one', () => {

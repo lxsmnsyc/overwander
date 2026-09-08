@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// RBY TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.SwordsDance,
   Moves.Toxic,
@@ -53,6 +53,12 @@ const FAMILY_TEACHABLE = [
   Moves.HiddenPower,
   Moves.SunnyDay,
   Moves.RockSmash,
+  Moves.AerialAce,
+  Moves.BrickBreak,
+  Moves.Facade,
+  Moves.FocusPunch,
+  Moves.RockTomb,
+  Moves.SecretPower,
 ];
 
 export default function registerSandshrewSpecies(): void {
@@ -94,7 +100,7 @@ export default function registerSandshrewSpecies(): void {
         17: [Moves.Slash, Moves.PoisonSting],
         30: [Moves.Swift],
         37: [Moves.FurySwipes],
-        45: [Moves.Sandstorm],
+        45: [Moves.Sandstorm, Moves.SandTomb],
       },
       teachable: [...FAMILY_TEACHABLE],
       egg: [
@@ -104,6 +110,8 @@ export default function registerSandshrewSpecies(): void {
         Moves.Safeguard,
         Moves.RapidSpin,
         Moves.MetalClaw,
+
+        Moves.CrushClaw,
       ],
     },
   });
@@ -138,9 +146,9 @@ export default function registerSandshrewSpecies(): void {
         17: [Moves.Slash, Moves.PoisonSting],
         33: [Moves.Swift],
         42: [Moves.FurySwipes],
-        52: [Moves.Sandstorm],
+        52: [Moves.Sandstorm, Moves.SandTomb],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
+      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.Counter],
     },
   });
 }

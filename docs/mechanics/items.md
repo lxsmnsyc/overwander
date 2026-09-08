@@ -38,7 +38,7 @@ rolls first for a rarity band:
 | **Uncommon** | The eight utility balls; Big Pearls, Star Pieces, Big Mushrooms, Rare Bones, Relic Silver; Super and Hyper Potions, Full Heals, Energy Roots; Heart Scales; the six wings; the sixteen one-shot answers, from a Focus Sash to a Weakness Policy; the Everstone; the four weather rocks, Light Clay and a Big Root |
 | **Rare**     | The six evolution stones; Nuggets and the richer valuables; Max Potions, Full Restores, Revives, Revival Herbs; the species relics; the seventeen plates and the type-boosting gear; the choice items, the vest and the Eviolite; the three orbs; Leftovers, a Shed Shell and the rest of the battle gear        |
 | **Prized**   | Bottle Caps, the Purifying Gem, the Utility Belt, Max Revives, the Sacred Ash, the Portal Key, the Amulet Coin, the six power items, all three fossils, the ruins                                                                                                                                                 |
-| **Special**  | Master Ball, Shiny Charm, Golden Bottle Cap, the two raid relics (the Old Sea Map and the **GS Ball**), the Relic Crown                                                                                                                                                                                          |
+| **Special**  | Master Ball, Shiny Charm, Golden Bottle Cap, the four raid relics (the Old Sea Map, the **GS Ball**, the **Wish Tag** and the **Aurora Ticket**), the Relic Crown                                                                                                                                                                                          |
 
 The line between rare and prized is **permanence**. Rare is where a walk turns up
 something that gets a party through the next fight: a stone, a Revive, a plate.
@@ -140,6 +140,10 @@ A patch is a bush rather than a buried box, so it bears **one kind** of berry an
 **three to five** pieces of it. It fruits every 15 minutes; picked or not, the
 next window grows something new.
 
+A bush needs ground it can root in, so no patch grows on the open sea, on the
+deserts and the badlands, or on the volcano, the glacier and the alpine tundra.
+Everywhere else bears them.
+
 | Band         | What grows there                                                        |
 | ------------ | ----------------------------------------------------------------------- |
 | **Base**     | The five single-status cures                                            |
@@ -153,6 +157,10 @@ A tree bears **one colour** of apricorn and **three to five** of them, on the
 same 15-minute clock a berry patch fruits on. The colour is the tree's own and
 never changes: the tree is drawn bearing it, so a red one is a landmark you can
 walk back to.
+
+A tree stands only where a bush grows and the ground is below the tree line, so
+on top of the barrens and the ice there are none on the tundra, the steppe or
+the bare mountain either.
 
 An apricorn is worth nothing on its own. **Kurt**, who passes through the
 wandering cells, carves one into the ball it stands for: seven colours, seven

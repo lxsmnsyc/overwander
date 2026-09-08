@@ -76,6 +76,17 @@ export interface SafariFeedEvent extends SafariEvent {
 export interface SafariThrowEvent extends SafariEvent {
   ball: Balls;
   result: ThrowResult;
+  /**
+   * How many times the ball held before it opened, out of `SHAKES`.
+   * All of them is a catch, and anything less is what the meeting is
+   * telling the player about how close the throw came
+   */
+  shakes: number;
+  /**
+   * Whether the ball came out critical, and so had to hold once
+   * rather than three times
+   */
+  critical: boolean;
 }
 
 export interface SafariEndEvent extends SafariEvent {
@@ -237,6 +248,51 @@ export interface SafariContext {
    * read
    */
   buddy?: { species: Species; gender: Genders; level: number };
+  /**
+   * What everything the player brought along is worth on a throw,
+   * which today is the Catching Charm and nothing else.
+   *
+   * Answered by the overworld once, when the session opens, rather
+   * than asked at each throw: what the buddy is carrying cannot change
+   * while a ball is in the air, and the session has no overworld to
+   * ask. One means the player brought nothing that helps
+   */
+  charm?: number;
+  /**
+   * What a buddy that pins a meeting down leaves of its flee roll,
+   * which today is Arena Trap or Shadow Tag and nothing else.
+   *
+   * Answered by the overworld alongside `charm`, once, for the same
+   * reason. One means nothing is holding the encounter in place
+   */
+  trap?: number;
+  /**
+   * How far feeding can carry a throw before more of it stops
+   * counting. A Gluttony buddy lifts it; absent is `MAX_CATCH_BONUS`
+   */
+  cap?: number;
+  /**
+   * Whether a fed treat goes on working after a throw that missed. A
+   * Harvest buddy grows it back, and the meeting will still take a
+   * fresh one on top of it
+   */
+  keeps?: boolean;
+  /**
+   * What the player's dex is worth on a critical throw, from
+   * `masteryOf`. Absent, or zero, is a player whose balls never come
+   * out critical: they have not caught enough for it yet
+   */
+  mastery?: number;
+  /**
+   * What a buddy adds to how often a throw comes out critical. One
+   * means the player walks with nothing that helps
+   */
+  keen?: number;
+  /**
+   * How many chances the one shake of a critical throw gets, the
+   * better of them deciding. A Sniper buddy is what aims twice
+   */
+  aims?: number;
 }
 
 /**
@@ -292,6 +348,65 @@ const THROW_DRIFT = 1.01;
 const CATCH_RATE_SCALE = 255;
 
 /**
+ * How many times a ball has to hold before it holds for good.
+ *
+ * The catch is not rolled and then acted out: it is rolled *as* the
+ * shakes, each an independent check at the same odds, and all of them
+ * have to pass. That leaves the chance of a catch exactly what
+ * `getCatchChance` says, and buys the one thing a safari can honestly
+ * tell a player about the odds: two shakes and a burst says the throw
+ * was close, where a table would have said it in numbers
+ */
+export const SHAKES = 3;
+
+/**
+ * What a critical throw is: a ball that has to hold **once** rather
+ * than three times, at the same odds each. A one-in-ten catch holds on
+ * a critical throw very nearly one time in two, which is why the
+ * chance of getting one is small
+ */
+export const CRITICAL_SHAKES = 1;
+
+/**
+ * What share of a throw's own chance is the chance of that throw being
+ * a critical one, before the player's dex has its say. A sixth is the
+ * mainline's figure and it is kept: a good ball at an easy species is
+ * where a critical throw belongs, and a hopeless throw stays hopeless
+ */
+export const CRITICAL_SHARE = 1 / 6;
+
+/**
+ * However far a dex reaches, this is as often as a throw comes out
+ * critical
+ */
+export const MAX_CRITICAL_CHANCE = 0.15;
+
+/**
+ * What a dex is worth on a critical throw, by how many species the
+ * player has ever owned. A trainer who has caught nothing throws no
+ * critical balls at all: the whole point of it is that it is what
+ * experience looks like from the outside
+ */
+export const MASTERY_BANDS: [caught: number, worth: number][] = [
+  [600, 2.5],
+  [450, 2],
+  [300, 1.5],
+  [150, 1],
+  [60, 0.5],
+  [30, 0.25],
+];
+
+/** Which band a player's dex falls in */
+export function masteryOf(caught: number): number {
+  for (const [held, worth] of MASTERY_BANDS) {
+    if (caught >= held) {
+      return worth;
+    }
+  }
+  return 0;
+}
+
+/**
  * What is left of a throw at a shadow.
  *
  * A closed heart does not want to be held. It is a flat half rather
@@ -325,6 +440,32 @@ export function levelCatchFactor(level: number): number {
  * Even the fastest species stays catchable: flee rolls cap here
  */
 const MAX_FLEE_CHANCE = 0.5;
+
+/**
+ * How ready a meeting is to run, said in words rather than in a
+ * number: what a Forewarn buddy passes on is a feeling about the
+ * pokemon standing there, not a table. Read richest first, each band
+ * naming what is left of `MAX_FLEE_CHANCE`
+ */
+export const FLIGHT_WORDS: [above: number, said: string][] = [
+  [0.25, 'Ready to bolt'],
+  [0.1, 'Watching the exit'],
+  [0, 'Standing its ground'],
+];
+
+/**
+ * Which of `FLIGHT_WORDS` describes a chance to flee. Nothing that
+ * cannot run at all is described as anything: a raid prize and a
+ * settled meeting are both simply staying
+ */
+export function describeFlight(chance: number): string {
+  for (const [above, said] of FLIGHT_WORDS) {
+    if (chance > above) {
+      return said;
+    }
+  }
+  return 'Not going anywhere';
+}
 
 /**
  * A stable identity for an overworld encounter: the chunk cell
@@ -384,6 +525,16 @@ export default class SafariSession<
    * The accumulated feeding bonus; grown by the Feed mechanics
    */
   catchBonus = 1;
+
+  /**
+   * How far the last ball thrown got, out of `SHAKES`. It is what the
+   * dialog plays out, and it is kept on the session because a throw
+   * hands back its result rather than its event
+   */
+  shakes = 0;
+
+  /** Whether the last ball thrown came out critical */
+  critical = false;
 
   /**
    * Turns elapsed in this session: every resolved throw or feeding
@@ -549,9 +700,10 @@ export default class SafariSession<
 
   /**
    * The chance the next throw lands: species catch rate, ball
-   * modifier, accumulated feeding bonus, how grown the thing standing
-   * there is, the family day's own bonus, whether its heart is closed,
-   * and how many balls it has already shaken off
+   * modifier, accumulated feeding bonus, whatever the player is
+   * carrying, how grown the thing standing there is, the family day's
+   * own bonus, whether its heart is closed, and how many balls it has
+   * already shaken off
    */
   getCatchChance(): number {
     // A distributed pokemon is a gift, and a gift that could break out
@@ -563,6 +715,8 @@ export default class SafariSession<
 
     const rate = getSpeciesData(this.encounter.species).catchRate;
     const day = this.isFeatured() ? SPECIES_DAY_CATCH_BOOST : 1;
+    // What the player walked in carrying, the Catching Charm today
+    const brought = this.context.charm ?? 1;
     const grown = levelCatchFactor(this.encounter.level);
     // A shadow resists whatever it is and whoever is throwing
     const closed = this.encounter.shadow ? SHADOW_CATCH_FACTOR : 1;
@@ -572,7 +726,7 @@ export default class SafariSession<
 
     return Math.min(
       1,
-      (rate * this.getBallModifier() * this.catchBonus * day * grown * closed * wearing) /
+      (rate * this.getBallModifier() * this.catchBonus * brought * day * grown * closed * wearing) /
         CATCH_RATE_SCALE,
     );
   }
@@ -596,9 +750,10 @@ export default class SafariSession<
   /**
    * The chance it flees after a failed throw: the faster it is the
    * readier it bolts, capped so even the fastest stays catchable. It
-   * grows with level as the catch chance shrinks. Anything fought for
-   * or given — a raid prize, a grunt's parting gift, a distribution —
-   * never bolts
+   * grows with level as the catch chance shrinks. A treat and a buddy
+   * that pins it down both cut what is left, and stack. Anything
+   * fought for or given (a raid prize, a grunt's parting gift, a
+   * distribution) never bolts
    */
   getFleeChance(): number {
     if (
@@ -611,9 +766,39 @@ export default class SafariSession<
       return 0;
     }
     const calm = this.fedItem == null ? null : NANAB_FLEE_FACTOR.get(this.fedItem);
+    const pinned = this.context.trap ?? 1;
     const chance = Math.min(MAX_FLEE_CHANCE, this.getSpeed() / CATCH_RATE_SCALE);
 
-    return calm == null ? chance : chance * calm;
+    return chance * (calm ?? 1) * pinned;
+  }
+
+  /**
+   * How often a throw comes out critical: a ball that holds on one
+   * shake rather than three.
+   *
+   * It rides the throw's own chance, so everything already counted
+   * counts here too, and it is nothing at all for a player whose dex
+   * has not filled enough to earn it
+   */
+  getCriticalChance(): number {
+    const mastery = this.context.mastery ?? 0;
+
+    if (mastery <= 0) {
+      return 0;
+    }
+    return Math.min(
+      MAX_CRITICAL_CHANCE,
+      this.getCatchChance() * CRITICAL_SHARE * mastery * (this.context.keen ?? 1),
+    );
+  }
+
+  /**
+   * What one shake of the ball is worth. Three of them multiply back
+   * to the whole catch chance, so the sequence is the roll rather
+   * than a picture of one
+   */
+  getShakeChance(): number {
+    return this.getCatchChance() ** (1 / SHAKES);
   }
 
   /**
@@ -657,6 +842,8 @@ export default class SafariSession<
       session: this,
       ball: this.ball,
       result: ThrowResult.BrokeFree,
+      shakes: 0,
+      critical: false,
     };
 
     this.emit(SafariEvents.Throw, event);
@@ -700,6 +887,20 @@ export default class SafariSession<
 }
 
 /**
+ * Whether the ball holds through one shake, given as many aims at it
+ * as the player brought. The rolls stop at the first that holds, so a
+ * second aim costs a roll only where the first one missed
+ */
+function holds(session: SafariSession, chance: number, aims: number): boolean {
+  for (let aim = 0; aim < aims; aim++) {
+    if (session.random() < chance) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
  * The session's mechanics, battle-style: every action's effect
  * rides its event at Exact, so Pre listeners can veto any action by
  * disabling its event and UIs observe settled events at Post
@@ -713,7 +914,9 @@ function setupSafariMechanics(session: SafariSession): void {
     const bonus = FEED_CATCH_BONUS[event.item];
 
     if (bonus != null) {
-      event.session.catchBonus = Math.min(MAX_CATCH_BONUS, event.session.catchBonus * bonus);
+      const cap = event.session.context.cap ?? MAX_CATCH_BONUS;
+
+      event.session.catchBonus = Math.min(cap, event.session.catchBonus * bonus);
       event.bonus = event.session.catchBonus;
       // It has a mouthful; nothing else is offered until a throw
       // misses
@@ -724,8 +927,29 @@ function setupSafariMechanics(session: SafariSession): void {
 
   session.on(SafariEvents.Throw, EventPriority.Exact, (event) => {
     const target = event.session;
+    const shake = target.getShakeChance();
+    const critical = target.getCriticalChance();
 
-    if (target.random() < target.getCatchChance()) {
+    // Rolled only where it can happen, so a player who has not earned
+    // a critical throw yet is not silently spending a roll on one
+    event.critical = critical > 0 && target.random() < critical;
+
+    const needed = event.critical ? CRITICAL_SHAKES : SHAKES;
+    // A second aim is worth having only where there is one shot to
+    // take it on, so it rides the critical throw and nothing else:
+    // handed to an ordinary throw it would be three shakes rolled
+    // twice over, which is a different game
+    const aims = event.critical ? (target.context.aims ?? 1) : 1;
+
+    // Each shake is its own check at the same odds, and the first one
+    // to fail is where the ball opens. Rolled one at a time rather
+    // than as a single draw so the count means something: it is how
+    // near the throw came, and it is all the player is ever told
+    while (event.shakes < needed && holds(target, shake, aims)) {
+      event.shakes += 1;
+    }
+
+    if (event.shakes >= needed) {
       event.result = ThrowResult.Caught;
     } else if (target.random() < target.getFleeChance()) {
       event.result = ThrowResult.Fled;
@@ -744,12 +968,18 @@ function setupSafariMechanics(session: SafariSession): void {
   session.on(SafariEvents.Throw, EventPriority.Post, (event) => {
     event.session.turn += 1;
     event.session.throws += 1;
+    event.session.shakes = event.shakes;
+    event.session.critical = event.critical;
     // A ball it shook off leaves it open to another treat. A catch
     // ends the session, so clearing the flag there would be for
     // nobody
     if (event.result !== ThrowResult.Caught) {
       event.session.fed = false;
-      event.session.fedItem = null;
+      // What a Harvest buddy grows back: the last treat goes on
+      // working, and a fresh one may still be offered over it
+      if (event.session.context.keeps !== true) {
+        event.session.fedItem = null;
+      }
     }
   });
 }

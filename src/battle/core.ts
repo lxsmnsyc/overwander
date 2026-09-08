@@ -1,3 +1,4 @@
+import type Biome from '../data/ids/biome';
 import AleaRNG from '../core/alea';
 import { PVP_BATTLE_LIMITS, UNLIMITED_BATTLE_LIMITS } from '../data/constants/battle-limits';
 import { type Slots, getSlots } from '../data/constants/slots';
@@ -48,12 +49,33 @@ export default class Battle extends EventEngine<BattleEventMap> {
    */
   limits: number;
 
-  constructor(seed: string, mode = BattleModes.PvP, limits?: number) {
+  /**
+   * The ground the fight is being had on, where the caller knows it.
+   * Only the moves that read the ground care, and they fall back to
+   * open ground for a fight staged nowhere in particular. It is what
+   * the world put underfoot, not a field a move laid down: those are
+   * the terrains, which are their own thing
+   */
+  biome?: Biome;
+
+  /**
+   * How long the fight is given before it is judged, in
+   * milliseconds, or 0 for a fight that runs until a side is down.
+   *
+   * A house rule rather than the engine's own: the Battle Arena
+   * stops a fight on the clock and gives it to whoever has more of
+   * their party left standing
+   */
+  timeLimit: number;
+
+  constructor(seed: string, mode = BattleModes.PvP, limits?: number, biome?: Biome, timeLimit = 0) {
     super();
     this.rng = new AleaRNG(seed);
     this.mode = mode;
     this.limits =
       limits ?? (mode === BattleModes.Raid ? UNLIMITED_BATTLE_LIMITS : PVP_BATTLE_LIMITS);
+    this.biome = biome;
+    this.timeLimit = timeLimit;
   }
 
   /**

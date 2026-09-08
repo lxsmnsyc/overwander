@@ -18,20 +18,24 @@ import {
 } from '../../data/overworld/trainers';
 import Awards, {
   AWARD_NAMES,
+  FRONTIER_SYMBOLS,
+  HOENN_BADGES,
+  HOENN_HONORS,
   JOHTO_BADGES,
   JOHTO_HONORS,
   KANTO_BADGES,
   KANTO_HONORS,
 } from '../../data/ids/awards';
-import Npc, {
-  GIOVANNI_CHARSETS,
-  GIOVANNI_HONOR,
-  ROCKET_EXECUTIVES,
-  ROCKET_EXECUTIVE_CHARSETS,
-  ROCKET_EXECUTIVE_HONORS,
-  ROCKET_GRUNT_HONOR,
-  npcSheet,
-} from '../../data/overworld/npc';
+import Npc, { EXECUTIVE_CHARSETS, EXECUTIVE_HONORS } from '../../data/overworld/npc';
+import {
+  SYNDICATES,
+  SYNDICATE_BOSS_CHARSETS,
+  SYNDICATE_BOSS_HONORS,
+  SYNDICATE_EXECUTIVES,
+  SYNDICATE_GRUNT_CHARSETS,
+  SYNDICATE_GRUNT_HONORS,
+  SYNDICATE_HONORS,
+} from '../../data/overworld/syndicate';
 import {
   CHAMPION_TITLES,
   ELITE_MEMBERS,
@@ -91,12 +95,14 @@ const PERSON_AWARD_SHEETS: Partial<Record<Awards, string>> = Object.fromEntries(
     ELITE_MEMBER_CHARSETS[member][0],
   ]),
   ...LEGENDS.map((legend): [Awards, string] => [LEGEND_HONORS[legend], LEGEND_CHARSETS[legend][0]]),
-  [GIOVANNI_HONOR, GIOVANNI_CHARSETS[0]],
-  ...ROCKET_EXECUTIVES.map((executive): [Awards, string] => [
-    ROCKET_EXECUTIVE_HONORS[executive],
-    ROCKET_EXECUTIVE_CHARSETS[executive][0],
+  ...SYNDICATES.flatMap((syndicate): [Awards, string][] => [
+    [SYNDICATE_BOSS_HONORS[syndicate], SYNDICATE_BOSS_CHARSETS[syndicate][0]],
+    [SYNDICATE_GRUNT_HONORS[syndicate], SYNDICATE_GRUNT_CHARSETS[syndicate][0]],
+    ...SYNDICATE_EXECUTIVES[syndicate].map((executive): [Awards, string] => [
+      EXECUTIVE_HONORS[executive],
+      EXECUTIVE_CHARSETS[executive][0],
+    ]),
   ]),
-  [ROCKET_GRUNT_HONOR, npcSheet(Npc.RocketGrunt)],
 ]);
 
 /** The titles that read as a star rather than as a letter */
@@ -144,13 +150,52 @@ const AWARD_COLORS: Record<Awards, string> = {
   [Awards.PetrelDefeated]: '#7a6f8f',
   [Awards.RocketGruntDefeated]: '#3f4550',
   [Awards.JohtoDexMedal]: '#d0a63c',
+  [Awards.StoneBadge]: '#a9a29a',
+  [Awards.KnuckleBadge]: '#c96b4a',
+  [Awards.DynamoBadge]: '#e8c34a',
+  [Awards.HeatBadge]: '#d9542f',
+  [Awards.BalanceBadge]: '#b8894a',
+  [Awards.FeatherBadge]: '#8fb8d0',
+  [Awards.MindBadge]: '#c96fa8',
+  [Awards.RainBadge]: '#4a8fd0',
+  [Awards.HoennDexMedal]: '#3f9e6a',
+  [Awards.SidneyDefeated]: '#5c4f56',
+  [Awards.PhoebeDefeated]: '#8f6fb8',
+  [Awards.GlaciaDefeated]: '#9fd7e8',
+  [Awards.DrakeDefeated]: '#c9603c',
+  [Awards.HoennChampion]: '#e0b64f',
+  [Awards.StevenDefeated]: '#7f9aa8',
+  [Awards.SilverBraveSymbol]: '#b8bcc4',
+  [Awards.GoldBraveSymbol]: '#e0b64f',
+  [Awards.SilverGutsSymbol]: '#b8bcc4',
+  [Awards.GoldGutsSymbol]: '#e0b64f',
+  [Awards.SilverLuckSymbol]: '#b8bcc4',
+  [Awards.GoldLuckSymbol]: '#e0b64f',
+  [Awards.SilverKnowledgeSymbol]: '#b8bcc4',
+  [Awards.GoldKnowledgeSymbol]: '#e0b64f',
+  [Awards.SilverAbilitySymbol]: '#b8bcc4',
+  [Awards.GoldAbilitySymbol]: '#e0b64f',
+  [Awards.SilverSpiritsSymbol]: '#b8bcc4',
+  [Awards.GoldSpiritsSymbol]: '#e0b64f',
+  [Awards.SilverTacticsSymbol]: '#b8bcc4',
+  [Awards.GoldTacticsSymbol]: '#e0b64f',
+  [Awards.MagmaGruntDefeated]: '#8c3a2a',
+  [Awards.TabithaDefeated]: '#b0553c',
+  [Awards.CourtneyDefeated]: '#c96b5a',
+  [Awards.MaxieDefeated]: '#a83a2a',
+  [Awards.AquaGruntDefeated]: '#2a5a8c',
+  [Awards.MattDefeated]: '#3c7ab0',
+  [Awards.ShellyDefeated]: '#5a95c9',
+  [Awards.ArchieDefeated]: '#2a4a9e',
 };
 
 /**
  * The shelf's order: Kanto's 8 badges, its 4 elite marks, the title
  * and the dex medal, then Johto's 8 badges, its 4 marks and its
- * title and its medal, then the marks that belong to no region's
- * walk: Team Rocket's, from the rank and file up, and the legends'. The walk itself, left to right, a region at a time
+ * title and its medal, then Hoenn's 8 badges, which is all that
+ * region pays so far, then the marks that belong to no region's
+ * walk: Team Rocket's, from the rank and file up, and the legends'.
+ * The walk itself, left to right, a region at a time
  */
 const SHELF: Awards[] = [
   ...new Set([
@@ -162,9 +207,12 @@ const SHELF: Awards[] = [
     ...JOHTO_HONORS,
     Awards.JohtoChampion,
     Awards.JohtoDexMedal,
-    ROCKET_GRUNT_HONOR,
-    ...ROCKET_EXECUTIVES.map((executive) => ROCKET_EXECUTIVE_HONORS[executive]),
-    GIOVANNI_HONOR,
+    ...HOENN_BADGES,
+    ...HOENN_HONORS,
+    Awards.HoennChampion,
+    Awards.HoennDexMedal,
+    ...FRONTIER_SYMBOLS,
+    ...SYNDICATE_HONORS,
     ...LEGENDS.map((legend) => LEGEND_HONORS[legend]),
   ]),
 ];
@@ -272,6 +320,7 @@ function Shelf(props: { held: Resource<AwardRecord[]> }): JSX.Element {
   const honors = (): number => KANTO_HONORS.filter((honor) => wins().has(honor)).length;
   const johto = (): number => JOHTO_BADGES.filter((badge) => wins().has(badge)).length;
   const marks = (): number => JOHTO_HONORS.filter((honor) => wins().has(honor)).length;
+  const hoenn = (): number => HOENN_BADGES.filter((badge) => wins().has(badge)).length;
 
   const empties = (): number[] =>
     Array.from(
@@ -301,7 +350,8 @@ function Shelf(props: { held: Resource<AwardRecord[]> }): JSX.Element {
         Kanto: {badges()} of {KANTO_BADGES.length} badges, {honors()} of {KANTO_HONORS.length} of
         the Elite Four{wins().has(Awards.KantoChampion) ? ', Champion' : ''}. Johto: {johto()} of{' '}
         {JOHTO_BADGES.length} badges, {marks()} of {JOHTO_HONORS.length} of the Elite Four
-        {wins().has(Awards.JohtoChampion) ? ', Champion' : ''}.
+        {wins().has(Awards.JohtoChampion) ? ', Champion' : ''}. Hoenn: {hoenn()} of{' '}
+        {HOENN_BADGES.length} badges.
       </Meta>
     </div>
   );

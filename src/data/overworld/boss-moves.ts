@@ -19,14 +19,23 @@ import { getSpeciesData } from '../species';
  * lands the last hit down with it, which taxes the party for winning
  * rather than making the fight harder.
  *
+ * **Role Play** and **Skill Swap** are Transform by another road:
+ * both hand the abilities about, and the one a boss would give away
+ * is the Boss ability itself. **Memento** spends the whole of its
+ * health rather than a move's worth of it, so a boss that leaves one
+ * ends the raid on its own.
+ *
  * **Bide** returns double everything it was dealt while it channels,
  * and a lobby is up to ten parties: the harder the raid hits, the
  * more certainly the answer wipes it. **Belly Drum** and a Ghost's
  * **Curse** each cost half the pool, and the pool is the fight's
- * clock, so both hand the party half the raid.
+ * clock, so both hand the party half the raid. **Endeavor** fails
+ * while a boss is healthy and fires when it is nearly dead, taking
+ * the party down to a sliver at the moment it has won, and **Grudge**
+ * costs whoever lands the last hit the move that landed it.
  *
  * **Rest** is the one heal still barred. A boss may put back an
- * eighth of its pool, which is what the other heals are worth to it
+ * eighth of its pool, which is what every other heal is worth to it
  * now, but Rest buys that eighth with a sleep the boss inflicted on
  * itself, so it lands in full: the party gets the fight handed to it
  * while the boss lies there.
@@ -46,6 +55,11 @@ const BANNED_BOSS_MOVES = new Set<Moves>([
   Moves.DestinyBond,
   Moves.Bide,
   Moves.BellyDrum,
+  Moves.RolePlay,
+  Moves.SkillSwap,
+  Moves.Memento,
+  Moves.Grudge,
+  Moves.Endeavor,
   Moves.Rest,
   // TODO: temporary. A boss is already immune to Perishing, so the
   // song costs it a move slot and does nothing. Drop this line when

@@ -156,6 +156,35 @@ export function isOpenSea(biome: Biome): boolean {
   return OPEN_SEAS.has(biome);
 }
 
+/**
+ * Ground nothing fruits in: bare rock, baked sand and permanent ice.
+ * A berry bush wants soil and water, and these have neither
+ */
+const BARREN_BIOMES = new Set<Biome>([
+  Biome.Desert,
+  Biome.ColdDesert,
+  Biome.Badlands,
+  Biome.Volcano,
+  Biome.Glacier,
+  Biome.AlpineTundra,
+]);
+
+/** Whether a berry bush grows there. The open seas have no ground at all */
+export function growsBerries(biome: Biome): boolean {
+  return !isOpenSea(biome) && !BARREN_BIOMES.has(biome);
+}
+
+/**
+ * Where a bush fruits but nothing stands tall: above the tree line,
+ * on the permafrost, and out on the dry grassland
+ */
+const TREELESS_BIOMES = new Set<Biome>([Biome.Tundra, Biome.Steppe, Biome.Mountain]);
+
+/** Whether an apricorn tree grows there */
+export function growsTrees(biome: Biome): boolean {
+  return growsBerries(biome) && !TREELESS_BIOMES.has(biome);
+}
+
 export interface BiomeConfig {
   /**
    * Moisture level, -1 (arid) to 1 (saturated)

@@ -11,6 +11,7 @@ export default function registerSavannaSpawns(): void {
       base: [
         { species: Species.NidoranF, weight: 20 },
         { species: Species.NidoranM, weight: 20 },
+        { species: Species.Torchic, weight: 2 },
       ],
       uncommon: [
         { species: Species.Growlithe, weight: 10 },
@@ -18,15 +19,20 @@ export default function registerSavannaSpawns(): void {
         { species: Species.Natu, weight: 20 },
         { species: Species.Sunkern, weight: 25 },
         { species: Species.Phanpy, weight: 20 },
+        { species: Species.Taillow, weight: 25 },
+        { species: Species.Electrike, weight: 25 },
         { species: Species.Girafarig, weight: 5 },
       ],
       rare: [
         { species: Species.Nidorina, weight: 5 },
         { species: Species.Nidorino, weight: 5 },
+        { species: Species.Combusken, weight: 1 },
       ],
       scarce: [
         { species: Species.Arcanine, weight: 5 },
         { species: Species.Dodrio, weight: 10 },
+        { species: Species.Swellow, weight: 10 },
+        { species: Species.Manectric, weight: 10 },
         { species: Species.Xatu, weight: 5 },
         { species: Species.Sunflora, weight: 5 },
         { species: Species.Donphan, weight: 5 },
@@ -36,6 +42,10 @@ export default function registerSavannaSpawns(): void {
         { species: Species.Nidoking, weight: 5 },
         { species: Species.Kangaskhan, weight: 5 },
         { species: Species.Tauros, weight: 10 },
+        { species: Species.Blaziken, weight: 2 },
+        { species: Species.Plusle, weight: 8 },
+        { species: Species.Minun, weight: 8 },
+        { species: Species.Zangoose, weight: 8 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [],
@@ -45,6 +55,7 @@ export default function registerSavannaSpawns(): void {
         { species: Species.NidoranF, weight: 20 },
         { species: Species.NidoranM, weight: 20 },
         { species: Species.Rhyhorn, weight: 20 },
+        { species: Species.Torchic, weight: 2 },
       ],
       uncommon: [
         { species: Species.Ekans, weight: 20 },
@@ -53,17 +64,22 @@ export default function registerSavannaSpawns(): void {
         { species: Species.Natu, weight: 20 },
         { species: Species.Sunkern, weight: 25 },
         { species: Species.Phanpy, weight: 20 },
+        { species: Species.Taillow, weight: 25 },
+        { species: Species.Electrike, weight: 25 },
         { species: Species.Girafarig, weight: 5 },
       ],
       rare: [
         { species: Species.Nidorina, weight: 5 },
         { species: Species.Nidorino, weight: 5 },
+        { species: Species.Combusken, weight: 1 },
         { species: Species.Rhydon, weight: 10 },
       ],
       scarce: [
         { species: Species.Arbok, weight: 10 },
         { species: Species.Arcanine, weight: 5 },
         { species: Species.Dodrio, weight: 10 },
+        { species: Species.Swellow, weight: 10 },
+        { species: Species.Manectric, weight: 10 },
         { species: Species.Xatu, weight: 5 },
         { species: Species.Sunflora, weight: 5 },
         { species: Species.Donphan, weight: 5 },
@@ -73,6 +89,10 @@ export default function registerSavannaSpawns(): void {
         { species: Species.Nidoking, weight: 5 },
         { species: Species.Kangaskhan, weight: 5 },
         { species: Species.Tauros, weight: 10 },
+        { species: Species.Blaziken, weight: 2 },
+        { species: Species.Plusle, weight: 8 },
+        { species: Species.Minun, weight: 8 },
+        { species: Species.Zangoose, weight: 8 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [],
@@ -85,6 +105,7 @@ export default function registerSavannaSpawns(): void {
       uncommon: [
         { species: Species.Ekans, weight: 20 },
         { species: Species.Houndour, weight: 20 },
+        { species: Species.Poochyena, weight: 20 },
         { species: Species.Girafarig, weight: 5 },
       ],
       rare: [
@@ -93,11 +114,13 @@ export default function registerSavannaSpawns(): void {
       ],
       scarce: [
         { species: Species.Arbok, weight: 10 },
+        { species: Species.Mightyena, weight: 10 },
         { species: Species.Houndoom, weight: 5 },
       ],
       elusive: [
         { species: Species.Nidoqueen, weight: 5 },
         { species: Species.Nidoking, weight: 5 },
+        { species: Species.Seviper, weight: 8 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [],
@@ -110,6 +133,7 @@ export default function registerSavannaSpawns(): void {
       uncommon: [
         { species: Species.Ekans, weight: 20 },
         { species: Species.Houndour, weight: 20 },
+        { species: Species.Poochyena, weight: 20 },
         { species: Species.Girafarig, weight: 5 },
       ],
       rare: [
@@ -118,11 +142,13 @@ export default function registerSavannaSpawns(): void {
       ],
       scarce: [
         { species: Species.Arbok, weight: 10 },
+        { species: Species.Mightyena, weight: 10 },
         { species: Species.Houndoom, weight: 5 },
       ],
       elusive: [
         { species: Species.Nidoqueen, weight: 5 },
         { species: Species.Nidoking, weight: 5 },
+        { species: Species.Seviper, weight: 8 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [],

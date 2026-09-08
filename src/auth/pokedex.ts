@@ -90,6 +90,23 @@ export async function getPokedex(uid: string): Promise<PokedexView> {
 }
 
 /**
+ * How many species the player has ever owned one of.
+ *
+ * Counted rather than read whole: it is asked when a safari opens, to
+ * scale how often a ball holds on the first shake, and the dex itself
+ * is a large read for one number
+ */
+export async function getCaughtSpeciesCount(uid: string): Promise<number> {
+  const { count } = await getSupabase()
+    .from('pokedex_entries')
+    .select('species', { count: 'exact', head: true })
+    .eq('player', uid)
+    .or('caught.gt.0,caught_shiny.gt.0');
+
+  return count ?? 0;
+}
+
+/**
  * What the dex says about one species: whether it has been met, whether
  * one has been owned, whether a sparkling one ever has, and the counts
  * behind each

@@ -410,6 +410,14 @@ const LEGENDARY_SPECIES = new Set<Species>([
   Species.Suicune,
   Species.Lugia,
   Species.HoOh,
+  Species.Regirock,
+  Species.Regice,
+  Species.Registeel,
+  Species.Latias,
+  Species.Latios,
+  Species.Kyogre,
+  Species.Groudon,
+  Species.Rayquaza,
 ]);
 
 /**
@@ -417,7 +425,12 @@ const LEGENDARY_SPECIES = new Set<Species>([
  * will not roll one — the only way to face a mythical is to carry the
  * relic that calls it, which is what a raid item is
  */
-const MYTHICAL_SPECIES = new Set<Species>([Species.Mew, Species.Celebi]);
+const MYTHICAL_SPECIES = new Set<Species>([
+  Species.Mew,
+  Species.Celebi,
+  Species.Jirachi,
+  Species.Deoxys,
+]);
 
 /**
  * Whether the species is a legendary, the only kind a legendary raid
@@ -452,6 +465,8 @@ const BABY_SPECIES = new Set<Species>([
   Species.Smoochum,
   Species.Elekid,
   Species.Magby,
+  Species.Azurill,
+  Species.Wynaut,
 ]);
 
 /**
@@ -496,10 +511,9 @@ export const PRIZED_WEIGHT = UNOWN_SPAWNS.length;
  * is about what a nest holds and nothing else
  */
 const AWAITING_BABY_SPECIES = new Set<Species>([
-  // Gen 3 babies
-  Species.Marill,
-  Species.Wobbuffet,
   // Gen 4 babies
+  Species.Roselia,
+  Species.Chimecho,
   Species.Sudowoodo,
   Species.Mantine,
   Species.Chansey,
@@ -545,6 +559,9 @@ const AWAITING_EVOLUTION_SPECIES = new Set<Species>([
   Species.Sneasel,
   Species.Piloswine,
   Species.Porygon2,
+  Species.Nosepass,
+  Species.Roselia,
+  Species.Dusclops,
   // Gen 8 evolutions
   Species.Ursaring,
   Species.Stantler,

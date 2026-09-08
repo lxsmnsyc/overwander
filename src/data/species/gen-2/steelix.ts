@@ -35,6 +35,7 @@ export default function registerSteelixSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
+        57: [Moves.DoubleEdge],
         1: [Moves.Screech, Moves.Tackle],
         10: [Moves.Bind],
         14: [Moves.RockThrow],
@@ -73,6 +74,17 @@ export default function registerSteelixSpecies(): void {
         Moves.SunnyDay,
         Moves.Swagger,
         Moves.Toxic,
+
+        Moves.BodySlam,
+        Moves.Explosion,
+        Moves.Facade,
+        Moves.Mimic,
+        Moves.RockSlide,
+        Moves.RockTomb,
+        Moves.SecretPower,
+        Moves.Substitute,
+        Moves.Taunt,
+        Moves.Torment,
       ],
     },
   });

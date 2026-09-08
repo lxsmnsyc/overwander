@@ -81,6 +81,11 @@ export default function registerScytherSpecies(): void {
         Moves.HiddenPower,
         Moves.SunnyDay,
         Moves.RockSmash,
+
+        Moves.AerialAce,
+        Moves.DoubleEdge,
+        Moves.Facade,
+        Moves.SecretPower,
       ],
       egg: [
         Moves.Counter,
@@ -89,6 +94,8 @@ export default function registerScytherSpecies(): void {
         Moves.Reversal,
         Moves.Safeguard,
         Moves.BatonPass,
+
+        Moves.SilverWind,
       ],
     },
   });

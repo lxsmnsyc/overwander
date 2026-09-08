@@ -34,6 +34,8 @@ export default function registerGirafarigSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
+        7: [Moves.Astonish],
+        25: [Moves.OdorSleuth],
         1: [Moves.Confusion, Moves.Growl, Moves.Stomp, Moves.Tackle],
         20: [Moves.Agility],
         30: [Moves.BatonPass],
@@ -71,8 +73,30 @@ export default function registerGirafarigSpecies(): void {
         Moves.Thunderbolt,
         Moves.Toxic,
         Moves.ZapCannon,
+
+        Moves.BodySlam,
+        Moves.CalmMind,
+        Moves.DoubleEdge,
+        Moves.Facade,
+        Moves.Flash,
+        Moves.LightScreen,
+        Moves.Mimic,
+        Moves.Reflect,
+        Moves.SecretPower,
+        Moves.ShockWave,
+        Moves.SkillSwap,
+        Moves.Substitute,
+        Moves.ThunderWave,
       ],
-      egg: [Moves.Amnesia, Moves.BeatUp, Moves.Foresight, Moves.FutureSight, Moves.TakeDown],
+      egg: [
+        Moves.Amnesia,
+        Moves.BeatUp,
+        Moves.Foresight,
+        Moves.FutureSight,
+        Moves.TakeDown,
+        Moves.MagicCoat,
+        Moves.Wish,
+      ],
     },
   });
 }

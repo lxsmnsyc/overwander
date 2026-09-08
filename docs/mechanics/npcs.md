@@ -6,7 +6,7 @@ offer a breeder in the morning and a daycare lady by midday.
 
 Eleven people wander: the breeder, the daycare lady, Nurse Joy, the groomer, the
 Move Reminder, the Move Tutor, the chef, the Fossil Maniac, the Fossil Scientist,
-the Channeler and Kurt. The vendor, the Team Rocket grunt and the duelling
+the Channeler and Kurt. The vendor, the syndicate grunt and the duelling
 trainers each keep a landmark of their own, further down. A cell is a crossroads
 rather than a shop, so walking up to one does not reveal in advance which of the
 eleven is there.
@@ -149,20 +149,36 @@ elsewhere.
 emerges belongs to the fossil, and it arrives at level 20. Like the vendor, he has
 no once-per-window limit: what paces him is how many fossils have been dug up.
 
-## Team Rocket
+## The syndicates
 
-Somebody from Team Rocket bars the cell and fights whoever accepts. Who it is is
-rolled per cell per window, and the three cannot overlap:
+Somebody from a criminal organisation bars the cell and fights whoever accepts.
+Who it is is rolled per cell per window, and the three ranks cannot overlap:
 
-| Standing there        | How often | What they field                                                 |
-| --------------------- | --------- | --------------------------------------------------------------- |
-| **Grunt**             | The rest  | One common, two uncommon and three rare of the biome's, 40-60    |
-| **Rocket executive**  | 1 in 8    | Six of the biome's rare band, 65-85                              |
-| **Giovanni**          | 1 in 64   | Five of the rare band and a legendary, 85-100                    |
+| Standing there | How often | What they field                                               |
+| -------------- | --------- | ------------------------------------------------------------- |
+| **Grunt**      | The rest  | Two of each of the biome's three bands, 40-60                 |
+| **Executive**  | 1 in 8    | Six of the biome's rare band, 65-85                           |
+| **The boss**   | 1 in 64   | Five of the rare band and a legendary, 85-100                 |
 
-The executives are **Archer**, **Ariana**, **Proton** and **Petrel**, and which
-of the four turns up is its own roll. Everything they field is shadowed, and it
-is an ordinary trainer battle, so a simultaneous knockout is a draw.
+**Which organisation** it is is not rolled at all: it is the biome's, and it
+never changes. **Team Aqua** holds the water, every ocean, reef, kelp forest,
+beach, rocky coast, mangrove, swamp and bog. **Team Magma** holds the fire and
+the high dry country: volcanoes, mountains, alpine tundra, badlands and both
+deserts. **Team Rocket** holds everywhere else, and holds any biome added later
+until somebody says otherwise. So a player who learns that the coast is Aqua's
+has learned something about the world rather than about this window.
+
+| Team            | Its boss            | Its executives                      |
+| --------------- | ------------------- | ----------------------------------- |
+| **Team Rocket** | Boss **Giovanni**   | Archer, Ariana, Proton, Petrel      |
+| **Team Magma**  | Leader **Maxie**    | Admins Tabitha and Courtney         |
+| **Team Aqua**   | Leader **Archie**   | Admins Matt and Shelly              |
+
+Which executive turns up is its own roll, so a team with two of them is no
+likelier to field one than a team with four. Everybody is introduced team first
+and rank before the name, so **Team Aqua Leader Archie** says which organisation
+and how far up it in one line. Everything all three field is shadowed, and it is
+an ordinary trainer battle, so a simultaneous knockout is a draw.
 
 Every player fights the cell separately. One player's victory closes nothing for
 anybody else, and losing costs nothing but the attempt: they are still standing
@@ -170,23 +186,26 @@ and may be challenged again until the three hours are up.
 
 Beating one pays a purse drawn per winner, so the same fight is worth a different
 amount to the next player, and leaves a pokemon behind, shadowed and at level 10.
-A grunt pays **5,000 to 15,000** and leaves one of the three it was **not**
-fighting with, one of the common and uncommon pair rather than its best. An executive
+A grunt pays **5,000 to 15,000** and leaves any one of its six, which is what
+makes the commonest fight in the world the only place some of a biome's pokemon
+can be met as a shadow at all. An executive
 pays **40,000 to 90,000**, leaves any of its six, and drops an item it was
-carrying besides. **Giovanni** pays **120,000 to 250,000**, his own mark and any
-of his, the legendary included. The mark is worth the coat he runs Team Rocket
-in; the gym he keeps in Kanto is a different fight with a badge of its own.
+carrying besides. A **boss** pays **120,000 to 250,000**, their own mark and any
+of theirs, the legendary included. Giovanni's mark is worth the coat he runs Team
+Rocket in; the gym he keeps in Kanto is a different fight with a badge of its own.
 
-Every rank leaves a mark on the shelf as well, one apiece: the rank and file
-share one between them, each executive has their own, and so does the boss. Each
-is worth going about in that person's coat. See [Awards and titles](awards.md).
+Every rank leaves a mark on the shelf as well, and every team's marks are its
+own: the rank and file of one team share one between them, each executive has
+their own, and so does each boss. Each is worth going about in that person's
+coat, so the three uniforms are three different unlocks. See
+[Awards and titles](awards.md).
 
-The executives and Giovanni field trained pokemon rather than caught ones, and
+The executives and the bosses field trained pokemon rather than caught ones, and
 what they leave behind keeps it: an executive's prize walks away with both its
-abilities, and Giovanni's with both and room for a second held item. See
+abilities, and a boss' with both and room for a second held item. See
 [Battles](battles.md).
 
-Team Rocket is the one person at a crossroads a player can lose to. See
+A syndicate is the one person at a crossroads a player can lose to. See
 [Battles](battles.md) for how the fight itself runs.
 
 ## Duelling trainers
@@ -237,7 +256,7 @@ The **Ace Trainer** belongs to no country and may turn up anywhere.
 
 ## The league
 
-Three more landmarks fight rather than help, and each is worth something that is
+Four more landmarks fight rather than help, and each is worth something that is
 kept for good.
 
 | Who            | What they field                 | What beating them is worth                        |
@@ -246,6 +265,7 @@ kept for good.
 | **Elite Four** | Five of their seat's type and their signature, 65-85 | Their mark, an item, and a purse of 50,000 to 110,000 |
 | **Champion**   | Their own named six, 85-100     | Their league's title, an item, and 150,000 to 300,000 |
 | **Legend**     | Their own named six at level 100 | Their mark, a purse of 250,000 to 500,000, and a rare or a special item |
+| **Frontier Brain** | Their own three at level 100   | A symbol, silver or gold, and a purse of 200,000 to 400,000 |
 
 A gym leader's sixth is always the one pokemon they are known for, whatever the
 other five roll, and the five are drawn from every region rather than from the
@@ -253,13 +273,89 @@ one their gym stands in. The Elite Four are built the same way, down to the
 signature.
 
 One window in sixty-four, a **legend** has walked into the champion's seat and is
-standing there instead. There is one so far, and it is Red. A legend keeps no
-league: no badge case is asked for and no title is won, and what is left behind
+standing there instead. There are two: Red, and Steven, who kept Hoenn's crown
+before Wallace did. A legend keeps no league: no badge case is asked for and no title is won, and what is left behind
 is their own mark, the largest purse in the game, and an item off the rare band
 or, one time in twenty-one, the special one. The mark is worth the **Legend
 Breaker** title and the other coats that legend is drawn in. That is the only fight in the game that reaches the
 special band. Under one of the four skies that favour every type at once, the
 rarest weather there is, the seat is a legend's for certain.
+
+Past the league stands the **Battle Frontier**. A facility is kept by its Brain,
+and what makes one different from a champion is not the party but the **rule**: a
+Frontier fight is **three a side**, and the house adds its own terms on top.
+**Brandon** keeps the Battle Pyramid, which is walked with nothing in hand: no
+held item on either side counts for the length of the fight, and what a pokemon
+is holding is not spent, only left at the door. **Greta** keeps the Battle Arena,
+which is judged rather than waited out: after 10 turns the fight stops and
+whichever side has kept the greater **share** of what it brought takes it, so
+bringing something enormous is worth nothing on its own and an even fight is a
+draw.
+
+**Lucy** keeps the Battle Pike, which is walked through a curtain: what is
+behind it is drawn when the challenge is accepted, and your three arrive
+poisoned, burned, paralysed, asleep, or mended. One room in five is the kind
+one, and it heals whatever walked in. Hers arrive as they are, since the house
+does not walk through its own rooms. What the curtain leaves comes out with the
+party the way any status does, so a poisoned three walk out poisoned.
+
+**Noland** keeps the Battle Factory, where nothing on the field belongs to
+anybody. He lays 6 rented pokemon on the table, you pick 3, and he draws his own
+3 out of the same crate. Your box stays where it is: nothing of yours is fought
+with, so nothing of yours is hurt, spent or fed candy for it. The crate is every
+species an expert could field, from every region, so the Factory gets harder
+with each generation the game registers rather than easier.
+
+**Spenser** keeps the Battle Palace, where nobody fights on orders. Every pokemon
+on the field, his and yours, picks its moves by its own **nature**: one whose
+nature raises Attack, Special Attack or Speed leans towards attacking, one whose
+nature raises a defence leans towards status and setting up, and the five neutral
+natures have no leaning and fight as they always do. A nature decides who is
+aimed at as well: everywhere else a pokemon concentrates fire on the biggest
+threat on the field, but an attacking nature goes the other way and picks off
+whatever is nearest to going down, while a defensive one leans harder into the
+threat. A leaning is a preference and not a rule, so nobody walks past a
+finishing blow and nobody casts something that would do nothing. It makes the
+Palace the one house where which three you bring is a question of who they are
+rather than of what they cover.
+
+**Anabel** keeps the Battle Tower, and asks nothing at all: three of hers against
+three of yours, under the ordinary rules. She is the house the other four are
+read against, and she brings the hardest hand in the game to make up for having
+no rule to hide behind.
+
+**Tucker** keeps the Battle Dome, and the Dome names nobody in advance. His
+three are drawn the moment your party is frozen, one apiece against what you
+brought: whatever you field, he arrives carrying the answer to it. There is no
+lineup to read before you commit and no cover team that works, which makes his
+the one house where bringing your best three is a worse plan than bringing three
+that are hard to answer. His pokemon come out of the same crate the Factory
+rents from, so the Dome, like the Factory, gets harder with each generation the
+game registers.
+
+From the **Elite Four upwards**, a trainer's pokemon are **built rather than
+caught**: the four moves their species is best with, worked out from everything
+it can ever learn and weighed against its own types, which of its two attacking
+stats is the real one, and the ability it is fighting with. Their gear is priced the same way, on one
+scale, so a 1.5x on half of what a pokemon throws can be weighed against a 1.2x
+on all of it: a hard hitter is handed a Life Orb, a pokemon built around one blow
+is handed a Choice item, a wall is handed Leftovers, and an orb only goes to
+something whose ability turns the status into a gain. A relic like the Light Ball
+or the Thick Club still beats everything for the one species it belongs to, and
+nobody carries two of a kind. Below the league the gear is chosen the way it
+always was, off the species' own table, so a gym leader's party still reads as
+that leader's rather than as the best answer to a question. It reaches the Elite Four, the Champions, the legends,
+Giovanni and his executives, and all seven Frontier houses, the Factory's rented
+crate included. A gym leader and everybody below still field what they levelled
+into, which is most of what separates a badge from a crown.
+
+A house takes nobody who does not hold the crown of the region it stands in.
+Beating one hangs that facility's **silver symbol** on the shelf, and holding
+that symbol is what brings the Brain's **second three** out the next time you
+walk in. Beating those is the **gold** one. The two symbols are two different
+fights rather than one fight scored twice, and Brandon is the only Brain who
+fields the same three either time. Noland and Tucker name nobody either time,
+since both of their houses draw a party rather than keeping one.
 
 A member of the **Elite Four** will not fight anybody who is not carrying all
 eight of their own league's badges, and a **Champion** asks for all four of their

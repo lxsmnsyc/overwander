@@ -718,8 +718,8 @@ export const enum Items {
   RedFlute = 341,
 
   /**
-   * TODO: the charms, all shaped like the Shiny Charm that is already
-   * written
+   * TODO: the rest of the charms, all shaped like the Shiny Charm and
+   * the Catching Charm that are already written
    */
   ExpCharm = 342,
   OvalCharm = 343,
@@ -822,6 +822,20 @@ export const enum Items {
   PinkApricorn = 387,
   WhiteApricorn = 388,
   BlackApricorn = 389,
+
+  /**
+   * Hoenn's two fossils, numbered after the list rather than beside
+   * the first three: an id reaches a player's bag rows
+   */
+  RootFossil = 390,
+  ClawFossil = 391,
+
+  /** The ticket a Deoxys is reached with, and the rock that moves it */
+  AuroraTicket = 392,
+  Meteorite = 393,
+
+  /** The wish a Jirachi is called out to answer */
+  WishTag = 394,
 }
 
 /**

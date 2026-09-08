@@ -1,0 +1,189 @@
+{
+  "compact": true,
+  "width": 92,
+  "height": 92,
+  "images": [
+    {
+      "name": "ability-gold",
+      "x": 0,
+      "y": 0,
+      "width": 22,
+      "height": 22,
+      "sourceWidth": 22,
+      "sourceHeight": 22,
+      "trim": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "ability-silver",
+      "x": 23,
+      "y": 0,
+      "width": 22,
+      "height": 22,
+      "sourceWidth": 22,
+      "sourceHeight": 22,
+      "trim": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "brave-gold",
+      "x": 0,
+      "y": 23,
+      "width": 22,
+      "height": 22,
+      "sourceWidth": 22,
+      "sourceHeight": 22,
+      "trim": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "brave-silver",
+      "x": 23,
+      "y": 23,
+      "width": 22,
+      "height": 22,
+      "sourceWidth": 22,
+      "sourceHeight": 22,
+      "trim": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "guts-gold",
+      "x": 46,
+      "y": 0,
+      "width": 22,
+      "height": 22,
+      "sourceWidth": 22,
+      "sourceHeight": 22,
+      "trim": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "guts-silver",
+      "x": 46,
+      "y": 23,
+      "width": 22,
+      "height": 22,
+      "sourceWidth": 22,
+      "sourceHeight": 22,
+      "trim": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "knowledge-gold",
+      "x": 0,
+      "y": 46,
+      "width": 22,
+      "height": 22,
+      "sourceWidth": 22,
+      "sourceHeight": 22,
+      "trim": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "knowledge-silver",
+      "x": 23,
+      "y": 46,
+      "width": 22,
+      "height": 22,
+      "sourceWidth": 22,
+      "sourceHeight": 22,
+      "trim": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "luck-gold",
+      "x": 46,
+      "y": 46,
+      "width": 22,
+      "height": 22,
+      "sourceWidth": 22,
+      "sourceHeight": 22,
+      "trim": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "luck-silver",
+      "x": 69,
+      "y": 0,
+      "width": 22,
+      "height": 22,
+      "sourceWidth": 22,
+      "sourceHeight": 22,
+      "trim": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "spirits-gold",
+      "x": 69,
+      "y": 46,
+      "width": 22,
+      "height": 22,
+      "sourceWidth": 22,
+      "sourceHeight": 22,
+      "trim": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "spirits-silver",
+      "x": 69,
+      "y": 23,
+      "width": 22,
+      "height": 22,
+      "sourceWidth": 22,
+      "sourceHeight": 22,
+      "trim": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "tactics-gold",
+      "x": 0,
+      "y": 69,
+      "width": 22,
+      "height": 22,
+      "sourceWidth": 22,
+      "sourceHeight": 22,
+      "trim": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "tactics-silver",
+      "x": 23,
+      "y": 69,
+      "width": 22,
+      "height": 22,
+      "sourceWidth": 22,
+      "sourceHeight": 22,
+      "trim": [
+        0,
+        0
+      ]
+    }
+  ]
+}

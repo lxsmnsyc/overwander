@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// GSC TM/HM and tutor moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.Thunderbolt,
@@ -32,6 +32,12 @@ const FAMILY_TEACHABLE = [
   Moves.Headbutt,
   Moves.IronTail,
   Moves.Swift,
+  Moves.DoubleEdge,
+  Moves.Facade,
+  Moves.Mimic,
+  Moves.SecretPower,
+  Moves.ShockWave,
+  Moves.Substitute,
 ];
 
 // What the two evolved stages pick up once they stand on two legs
@@ -84,7 +90,15 @@ export default function registerMareepSpecies(): void {
         37: [Moves.Thunder],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.BodySlam, Moves.Reflect, Moves.Safeguard, Moves.Screech, Moves.TakeDown],
+      egg: [
+        Moves.BodySlam,
+        Moves.Reflect,
+        Moves.Safeguard,
+        Moves.Screech,
+        Moves.TakeDown,
+        Moves.Charge,
+        Moves.OdorSleuth,
+      ],
     },
   });
 
@@ -127,7 +141,17 @@ export default function registerMareepSpecies(): void {
         36: [Moves.LightScreen],
         45: [Moves.Thunder],
       },
-      teachable: [...FAMILY_TEACHABLE, ...EVOLVED_TEACHABLE],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        ...EVOLVED_TEACHABLE,
+        Moves.BodySlam,
+        Moves.BrickBreak,
+        Moves.Counter,
+        Moves.FocusPunch,
+        Moves.MegaKick,
+        Moves.MegaPunch,
+        Moves.SeismicToss,
+      ],
     },
   });
 
@@ -167,7 +191,18 @@ export default function registerMareepSpecies(): void {
         42: [Moves.LightScreen],
         57: [Moves.Thunder],
       },
-      teachable: [...FAMILY_TEACHABLE, ...EVOLVED_TEACHABLE, Moves.HyperBeam],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        ...EVOLVED_TEACHABLE,
+        Moves.HyperBeam,
+        Moves.BodySlam,
+        Moves.BrickBreak,
+        Moves.Counter,
+        Moves.FocusPunch,
+        Moves.MegaKick,
+        Moves.MegaPunch,
+        Moves.SeismicToss,
+      ],
     },
   });
 }

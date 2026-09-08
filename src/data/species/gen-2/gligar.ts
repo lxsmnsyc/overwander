@@ -69,8 +69,22 @@ export default function registerGligarSpecies(): void {
         Moves.Swift,
         Moves.Thief,
         Moves.Toxic,
+
+        Moves.AerialAce,
+        Moves.Dig,
+        Moves.DoubleEdge,
+        Moves.DreamEater,
+        Moves.Earthquake,
+        Moves.Facade,
+        Moves.Mimic,
+        Moves.RockSlide,
+        Moves.RockTomb,
+        Moves.SecretPower,
+        Moves.SteelWing,
+        Moves.Substitute,
+        Moves.SwordsDance,
       ],
-      egg: [Moves.Counter, Moves.MetalClaw, Moves.RazorWind, Moves.WingAttack],
+      egg: [Moves.Counter, Moves.MetalClaw, Moves.RazorWind, Moves.WingAttack, Moves.SandTomb],
     },
   });
 }

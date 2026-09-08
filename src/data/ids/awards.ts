@@ -46,6 +46,49 @@ const enum Awards {
   RocketGruntDefeated = 33,
   /** Johto's dex filled to 99 caught */
   JohtoDexMedal = 34,
+  StoneBadge = 35,
+  KnuckleBadge = 36,
+  DynamoBadge = 37,
+  HeatBadge = 38,
+  BalanceBadge = 39,
+  FeatherBadge = 40,
+  MindBadge = 41,
+  RainBadge = 42,
+  /** Hoenn's dex filled to 133 caught */
+  HoennDexMedal = 43,
+  SidneyDefeated = 44,
+  PhoebeDefeated = 45,
+  GlaciaDefeated = 46,
+  DrakeDefeated = 47,
+  HoennChampion = 48,
+  /** The one above Hoenn's league, met where a champion would be */
+  StevenDefeated = 49,
+  /**
+   * The Frontier's symbols, silver for the win and gold for taking
+   * one without losing a pokemon
+   */
+  SilverBraveSymbol = 50,
+  GoldBraveSymbol = 51,
+  SilverGutsSymbol = 52,
+  GoldGutsSymbol = 53,
+  SilverLuckSymbol = 54,
+  GoldLuckSymbol = 55,
+  SilverKnowledgeSymbol = 56,
+  GoldKnowledgeSymbol = 57,
+  SilverAbilitySymbol = 58,
+  GoldAbilitySymbol = 59,
+  SilverSpiritsSymbol = 60,
+  GoldSpiritsSymbol = 61,
+  SilverTacticsSymbol = 62,
+  GoldTacticsSymbol = 63,
+  MagmaGruntDefeated = 64,
+  TabithaDefeated = 65,
+  CourtneyDefeated = 66,
+  MaxieDefeated = 67,
+  AquaGruntDefeated = 68,
+  MattDefeated = 69,
+  ShellyDefeated = 70,
+  ArchieDefeated = 71,
 }
 
 export default Awards;
@@ -86,6 +129,43 @@ export const AWARD_NAMES: Record<Awards, string> = {
   [Awards.PetrelDefeated]: 'Petrel Defeated',
   [Awards.RocketGruntDefeated]: 'Team Rocket Repelled',
   [Awards.JohtoDexMedal]: 'Johto Dex Medal',
+  [Awards.StoneBadge]: 'Stone Badge',
+  [Awards.KnuckleBadge]: 'Knuckle Badge',
+  [Awards.DynamoBadge]: 'Dynamo Badge',
+  [Awards.HeatBadge]: 'Heat Badge',
+  [Awards.BalanceBadge]: 'Balance Badge',
+  [Awards.FeatherBadge]: 'Feather Badge',
+  [Awards.MindBadge]: 'Mind Badge',
+  [Awards.RainBadge]: 'Rain Badge',
+  [Awards.HoennDexMedal]: 'Hoenn Dex Medal',
+  [Awards.SidneyDefeated]: 'Sidney Defeated',
+  [Awards.PhoebeDefeated]: 'Phoebe Defeated',
+  [Awards.GlaciaDefeated]: 'Glacia Defeated',
+  [Awards.DrakeDefeated]: 'Drake Defeated',
+  [Awards.HoennChampion]: 'Hoenn Champion',
+  [Awards.StevenDefeated]: 'Steven Defeated',
+  [Awards.SilverBraveSymbol]: 'Silver Brave Symbol',
+  [Awards.GoldBraveSymbol]: 'Gold Brave Symbol',
+  [Awards.SilverGutsSymbol]: 'Silver Guts Symbol',
+  [Awards.GoldGutsSymbol]: 'Gold Guts Symbol',
+  [Awards.SilverLuckSymbol]: 'Silver Luck Symbol',
+  [Awards.GoldLuckSymbol]: 'Gold Luck Symbol',
+  [Awards.SilverKnowledgeSymbol]: 'Silver Knowledge Symbol',
+  [Awards.GoldKnowledgeSymbol]: 'Gold Knowledge Symbol',
+  [Awards.SilverAbilitySymbol]: 'Silver Ability Symbol',
+  [Awards.GoldAbilitySymbol]: 'Gold Ability Symbol',
+  [Awards.SilverSpiritsSymbol]: 'Silver Spirits Symbol',
+  [Awards.GoldSpiritsSymbol]: 'Gold Spirits Symbol',
+  [Awards.SilverTacticsSymbol]: 'Silver Tactics Symbol',
+  [Awards.GoldTacticsSymbol]: 'Gold Tactics Symbol',
+  [Awards.MagmaGruntDefeated]: 'Team Magma Repelled',
+  [Awards.TabithaDefeated]: 'Tabitha Defeated',
+  [Awards.CourtneyDefeated]: 'Courtney Defeated',
+  [Awards.MaxieDefeated]: 'Maxie Defeated',
+  [Awards.AquaGruntDefeated]: 'Team Aqua Repelled',
+  [Awards.MattDefeated]: 'Matt Defeated',
+  [Awards.ShellyDefeated]: 'Shelly Defeated',
+  [Awards.ArchieDefeated]: 'Archie Defeated',
 };
 
 /**
@@ -141,4 +221,51 @@ export const JOHTO_HONORS: Awards[] = [
   Awards.KogaDefeated,
   Awards.JohtoBrunoDefeated,
   Awards.KarenDefeated,
+];
+
+/**
+ * And Hoenn's 8, in gym order. The Mind Badge is one badge for one
+ * gym, which two people keep between them
+ */
+export const HOENN_BADGES: Awards[] = [
+  Awards.StoneBadge,
+  Awards.KnuckleBadge,
+  Awards.DynamoBadge,
+  Awards.HeatBadge,
+  Awards.BalanceBadge,
+  Awards.FeatherBadge,
+  Awards.MindBadge,
+  Awards.RainBadge,
+];
+
+/**
+ * And Hoenn's 4, which its champion asks to see
+ */
+export const HOENN_HONORS: Awards[] = [
+  Awards.SidneyDefeated,
+  Awards.PhoebeDefeated,
+  Awards.GlaciaDefeated,
+  Awards.DrakeDefeated,
+];
+
+/**
+ * The Frontier's symbols, silver then gold, in facility order. Its
+ * five open facilities so far: the rest of the Brains are still to
+ * come, and each brings a pair of its own
+ */
+export const FRONTIER_SYMBOLS: Awards[] = [
+  Awards.SilverBraveSymbol,
+  Awards.GoldBraveSymbol,
+  Awards.SilverGutsSymbol,
+  Awards.GoldGutsSymbol,
+  Awards.SilverLuckSymbol,
+  Awards.GoldLuckSymbol,
+  Awards.SilverKnowledgeSymbol,
+  Awards.GoldKnowledgeSymbol,
+  Awards.SilverAbilitySymbol,
+  Awards.GoldAbilitySymbol,
+  Awards.SilverSpiritsSymbol,
+  Awards.GoldSpiritsSymbol,
+  Awards.SilverTacticsSymbol,
+  Awards.GoldTacticsSymbol,
 ];

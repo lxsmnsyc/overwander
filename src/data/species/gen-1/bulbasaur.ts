@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// RBY TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.SwordsDance,
   Moves.Toxic,
@@ -43,6 +43,12 @@ const FAMILY_TEACHABLE = [
   Moves.SweetScent,
   Moves.HiddenPower,
   Moves.SunnyDay,
+  Moves.BulletSeed,
+  Moves.Facade,
+  Moves.RockSmash,
+  Moves.SecretPower,
+  Moves.SludgeBomb,
+  Moves.Strength,
 ];
 
 export default function registerBulbasaurSpecies(): void {
@@ -96,6 +102,9 @@ export default function registerBulbasaurSpecies(): void {
         Moves.RazorWind,
         Moves.Charm,
         Moves.Safeguard,
+
+        Moves.GrassWhistle,
+        Moves.MagicalLeaf,
       ],
     },
   });
@@ -180,7 +189,13 @@ export default function registerBulbasaurSpecies(): void {
         53: [Moves.Synthesis],
         65: [Moves.SolarBeam],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.Roar],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.HyperBeam,
+        Moves.Roar,
+        Moves.Earthquake,
+        Moves.FrenzyPlant,
+      ],
     },
   });
 }

@@ -5,7 +5,7 @@ import { BattleEvents, EffectType, MoveTargetType } from '../../src/battle/event
 import type Battle from '../../src/battle/core';
 import Team from '../../src/battle/team';
 import type Unit from '../../src/battle/unit';
-import { MOVE_DELAY, resolveMoveTargets } from '../../src/battle/mechanics/move';
+import { MOVE_DELAY, criticalChance, resolveMoveTargets } from '../../src/battle/mechanics/move';
 import { SWITCHING_SPAN } from '../../src/battle/status/switching';
 import turns from '../../src/battle/turn';
 import { Slots, packSlots } from '../../src/data/constants/slots';
@@ -17,13 +17,20 @@ import Natures from '../../src/data/ids/natures';
 import {
   DamageFlags,
   MoveAffects,
+  MoveAttackFlags,
   MoveCategories,
   Moves,
   StatFlags,
 } from '../../src/data/ids/moves';
 import { Species } from '../../src/data/ids/species';
 import { Statuses, Weathers } from '../../src/data/ids/status';
-import { PP_UP_LIMIT, getMoveData } from '../../src/data/moves';
+import {
+  MAX_SPEED_COOLDOWN_CUT,
+  PP_UP_LIMIT,
+  SPEED_COOLDOWN_CEILING,
+  getMoveData,
+  getSpeedCooldownFactor,
+} from '../../src/data/moves';
 import { FULL_INCENSE_PRIORITY, LAX_INCENSE_EVASION } from '../../src/battle/items/incenses';
 import { RELIC_BOOST_FACTOR, STAT_BOOST_FACTOR } from '../../src/battle/items/stat-boosters';
 import { TYPE_BOOSTER_FACTOR } from '../../src/battle/items/type-boosters';
@@ -57,6 +64,25 @@ function advance(battle: Battle, duration: number): void {
 function attackerIsHidden(unit: Unit): boolean {
   return unit.status[Statuses.Invulnerable] != null;
 }
+
+describe('roster mechanics', () => {
+  it('takes a unit off its team', () => {
+    const { battle, teamA } = createBattle();
+    const unit = createUnit(battle, teamA);
+
+    expect(teamA.units.has(unit)).toBe(true);
+    teamA.removeUnit(unit);
+    expect(teamA.units.has(unit)).toBe(false);
+  });
+
+  it('takes a team out of its alliance', () => {
+    const { allianceA, teamA } = createBattle();
+
+    expect(allianceA.teams.has(teamA)).toBe(true);
+    allianceA.removeTeam(teamA);
+    expect(allianceA.teams.has(teamA)).toBe(false);
+  });
+});
 
 describe('damage mechanics', () => {
   it('lethal damage clamps to zero and faints the target', () => {
@@ -104,6 +130,22 @@ describe('damage mechanics', () => {
     attacker.damage(NONE_CAUSE, ally, 30, 0);
 
     expect(attacker.dealt).toBe(0);
+  });
+
+  it('keeps a secondary off a target that took nothing', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0);
+    const thief = createUnit(battle, teamA);
+    const holder = createUnit(battle, teamB);
+
+    holder.addItem(Items.Leftovers);
+    holder.addStatus(Statuses.Substituted, { type: EffectType.None });
+
+    thief.triggerMoveTarget(Moves.Thief, unitTarget(holder), 0);
+
+    // The substitute ate the blow, so there was no blow to steal on
+    expect(holder.items[Items.Leftovers]).toBe(true);
+    expect(thief.items[Items.Leftovers]).toBeUndefined();
   });
 
   it('healing clamps at max health', () => {
@@ -213,6 +255,50 @@ describe('type effectiveness and STAB', () => {
     expect(ghost.health).toBe(160);
   });
 
+  it('lets a status move through a type that stops the damage', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const growler = createUnit(battle, teamA);
+    const ghost = createUnit(battle, teamB, [Types.Ghost]);
+    const normal = createUnit(battle, teamB, [Types.Normal]);
+    const dark = createUnit(battle, teamB, [Types.Dark]);
+
+    // Normal on a Ghost, Ghost on a Normal, Psychic on a Dark: all
+    // stop the damage and none of them stop the move
+    growler.triggerMoveTarget(Moves.Growl, unitTarget(ghost), 0);
+    expect(ghost.checkStage(Stages.Attack, 0)).toBe(-1);
+
+    growler.triggerMoveTarget(Moves.Foresight, unitTarget(ghost), 0);
+    expect(ghost.status[Statuses.Identified]).toBeDefined();
+
+    growler.triggerMoveTarget(Moves.ConfuseRay, unitTarget(normal), 0);
+    expect(normal.status[Statuses.Confused]).toBeDefined();
+
+    growler.triggerMoveTarget(Moves.Hypnosis, unitTarget(dark), 0);
+    expect(dark.status[Statuses.Sleeping]).toBeDefined();
+  });
+
+  it('still refuses the status moves that answer the chart themselves', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const zapper = createUnit(battle, teamA);
+    const ground = createUnit(battle, teamB, [Types.Ground]);
+
+    zapper.triggerMoveTarget(Moves.ThunderWave, unitTarget(ground), 0);
+
+    expect(ground.status[Statuses.Paralyzed]).toBeUndefined();
+  });
+
+  it('leaves a status move out of the chart and the bonus', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const attacker = createUnit(battle, teamA, [Types.Electric]);
+    const target = createUnit(battle, teamB, [Types.Water]);
+
+    // Electric on Water is doubled, and same-type again on top. A
+    // status move carries no damage for either to be a factor of
+    attacker.attack(target, Moves.ThunderWave, 40, Types.Electric, MoveCategories.Status, 0);
+
+    expect(160 - target.health).toBe(40);
+  });
+
   it('boosts same-type moves by 1.5', () => {
     const { battle, teamA, teamB } = createBattle();
     pinRandom(battle, 1);
@@ -242,6 +328,36 @@ describe('critical hits', () => {
     );
 
     expect(160 - defender.health).toBeCloseTo(19.6 * 2 * 0.85);
+  });
+
+  it('is even money two stages up and certain three', () => {
+    expect(criticalChance(0)).toBe(1 / 16);
+    expect(criticalChance(1)).toBe(1 / 8);
+    expect(criticalChance(2)).toBe(0.5);
+    expect(criticalChance(3)).toBe(1);
+    expect(criticalChance(9)).toBe(1);
+  });
+
+  it('lands one on an even roll once the ratio is two stages up', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0.4);
+    const attacker = createUnit(battle, teamA);
+    const defender = createUnit(battle, teamB);
+
+    battle.on(BattleEvents.UnitAttackCheckCriticalRatio, EventPriority.Post, (event) => {
+      event.value += 2;
+    });
+
+    attacker.attack(
+      defender,
+      Moves.Tackle,
+      40,
+      Types.Normal,
+      MoveCategories.Physical,
+      MoveAttackFlags.Critical,
+    );
+
+    expect(160 - defender.health).toBeCloseTo(19.6 * 2 * 0.91);
   });
 });
 
@@ -539,8 +655,11 @@ describe('casting flow', () => {
     attacker.cast(Moves.Tackle, unitTarget(defender));
     advance(battle, 1800);
 
-    // 180 seconds' worth of uses divided by Tackle's 35 PP
-    expect(attacker.moves[Moves.Tackle]?.cooldown?.duration).toBeCloseTo((180 / 35) * 1000);
+    // 180 seconds' worth of uses divided by Tackle's 35 PP, less what
+    // the caster's own Speed buys off the wait
+    expect(attacker.moves[Moves.Tackle]?.cooldown?.duration).toBeCloseTo(
+      (180 / 35) * 1000 * getSpeedCooldownFactor(attacker.resolveStat(Stats.Speed, 0)),
+    );
     expect(attacker.checkCanCast(Moves.Tackle, unitTarget(defender))).toBe(false);
   });
 
@@ -560,7 +679,59 @@ describe('casting flow', () => {
     // Tackle's 35 PP plus three fifths of it: 56, and the wait comes
     // down in proportion
     expect(attacker.moves[Moves.Tackle]?.points).toBe(PP_UP_LIMIT);
-    expect(attacker.moves[Moves.Tackle]?.cooldown?.duration).toBeCloseTo((180 / 56) * 1000);
+    expect(attacker.moves[Moves.Tackle]?.cooldown?.duration).toBeCloseTo(
+      (180 / 56) * 1000 * getSpeedCooldownFactor(attacker.resolveStat(Stats.Speed, 0)),
+    );
+  });
+
+  it('a faster pokemon gets the same move back sooner', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const attacker = createUnit(battle, teamA);
+    const defender = createUnit(battle, teamB);
+    const target = unitTarget(defender);
+
+    const plain = attacker.checkMoveCooldown(Moves.Tackle, target);
+    const walking = attacker.resolveStat(Stats.Speed, 0);
+
+    // Read with stages in, so an Agility is worth something
+    attacker.addStage(Stages.Speed, 2, NONE_CAUSE);
+
+    const running = attacker.resolveStat(Stats.Speed, 0);
+    const quickened = attacker.checkMoveCooldown(Moves.Tackle, target);
+
+    expect(running).toBeCloseTo(walking * 2);
+    expect(quickened).toBeLessThan(plain);
+    expect(quickened).toBeCloseTo(
+      plain * (getSpeedCooldownFactor(running) / getSpeedCooldownFactor(walking)),
+    );
+  });
+
+  it('approaches nineteen twentieths off without ever reaching it', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const attacker = createUnit(battle, teamA);
+    const defender = createUnit(battle, teamB);
+    const target = unitTarget(defender);
+    const asked = (180 / 35) * 1000;
+    const floor = asked * (1 - MAX_SPEED_COOLDOWN_CUT);
+
+    // Nothing the game can field reaches the floor, however it is
+    // stacked: the fastest build in the roster is under 6000
+    expect(getSpeedCooldownFactor(10_000)).toBeGreaterThan(1 - MAX_SPEED_COOLDOWN_CUT);
+
+    attacker.setStat(StatsKind.Base, Stats.Speed, 255);
+    attacker.addStage(Stages.Speed, 6, NONE_CAUSE);
+
+    const fast = attacker.checkMoveCooldown(Moves.Tackle, target);
+
+    expect(fast).toBeGreaterThan(floor);
+    expect(fast).toBeLessThan(asked * 0.3);
+
+    // At the ceiling the curve has effectively landed: eight
+    // halvings, within half a point of the floor
+    expect(1 - getSpeedCooldownFactor(SPEED_COOLDOWN_CEILING)).toBeCloseTo(
+      MAX_SPEED_COOLDOWN_CUT,
+      2,
+    );
   });
 
   it('spends no points on a move the unit does not know', () => {

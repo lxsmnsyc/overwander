@@ -7,7 +7,7 @@ export default function setupTeamMechanics(battle: Battle): void {
     event.team.units.add(event.unit);
   });
   battle.on(BattleEvents.TeamRemoveUnit, EventPriority.Exact, (event) => {
-    event.team.units.add(event.unit);
+    event.team.units.delete(event.unit);
   });
   battle.on(BattleEvents.TeamAddStatus, EventPriority.Exact, (event) => {
     event.team.status[event.status] = event.cause;

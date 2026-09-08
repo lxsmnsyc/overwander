@@ -20,7 +20,7 @@ into, **Team Rocket** stops, a **gym seat** another player is holding, and a
 | **Travel**      | The move is on its way         | A quarter second, or the flight time it names |
 | **Landing**     | It hits, and the effect lands  | Instant                                       |
 | **Carrying on** | Multi-step moves continue      | Another wind-up per step                      |
-| **Cooldown**    | That move cannot be used again | Set by the move's PP                          |
+| **Cooldown**    | That move cannot be used again | Set by the move's PP, less what Speed buys off |
 
 **A move is in the air for a moment.** Most take a quarter of a second between
 going off and landing, which is the time a swing takes. Anything thrown names its
@@ -36,6 +36,15 @@ earlier.
 be used its full PP's worth of times every three minutes: a 35 PP Tackle returns
 about every five seconds, a 5 PP Hyper Beam about every thirty-six. Strong moves
 are rationed by the clock.
+
+**Speed shortens every cooldown.** There is no turn order to win in a real-time
+fight, so what Speed buys is throwing the same move oftener: every 512 points of
+Speed halves what is left of the wait, closing on 95% off without ever quite
+getting there. A pokemon at 170 waits a fifth less than the move asks, one at 500
+waits half as long, and one at 1,500 is down to a sixth. Nothing is ever wasted
+on a stat that has run out of room. It is the stat as it stands at that moment,
+so an Agility, a Choice Scarf, Swift Swim under rain and paralysis all show up in
+how often a pokemon acts.
 
 **A wind-up can be interrupted.** Flinching stops it, and so does the target
 fainting. A move that has already landed cannot be taken back.
@@ -211,8 +220,8 @@ A lair can hold more than one resident, and the raid rolls which of them is at
 home. The **Burned Tower** is the one that does: Raikou, Entei and Suicune all
 live there. The rest hold one legendary each, at the **Seafoam Islands**, the
 **Power Plant**, **Mt. Ember**, **Cerulean Cave**, the **Whirl Islands** and the
-**Bell Tower**. **Faraway Island** and the **Ilex Forest** hold the two
-mythicals, and no walk ever stages those.
+**Bell Tower**. **Faraway Island**, the **Ilex Forest**, **Forina** and
+**Birth Island** hold the mythicals, and no walk ever stages those.
 
 A lobby stands for the whole three-hour raid window and anyone may join it; the
 host starts it. Each player brings up to **six** pokemon, and a lobby holds
@@ -225,8 +234,10 @@ minutes, restages in place with a new host.
 
 A **mythical raid** is not staged by the world at all. It is called out by
 spending a relic, and the world never produces a mythical on its own. There are
-two: an **Old Sea Map** calls Mew to the island it names, and a **GS Ball**
-calls Celebi to the shrine in the forest it was left at.
+four: an **Old Sea Map** calls Mew to the island it names, a **GS Ball**
+calls Celebi to the shrine in the forest it was left at, a **Wish Tag** calls
+Jirachi to the valley the comet passes over, and an **Aurora Ticket** calls
+Deoxys to the island it admits one passenger to.
 
 A **shadow raid** usually stages one of the biome's rare species, but one time in
 eight it reaches past them and stages a legendary instead.
@@ -328,6 +339,71 @@ budget is.
 What a Team Rocket prize is worth is untouched by any of this. The pokemon handed
 over is the one the roll made, values and all, not the one that was raised to
 fight.
+
+### How a built party is put together
+
+The Elite Four and everybody above them do not field what they caught: their six
+are **built**, and built as a party rather than as six separate pokemon.
+
+**Two cores and four supports.** The two whose own stats say they can take
+something off the field are handed that job, and the other four are there to keep
+the cores standing and the far side hampered. Which two are cores is read off the
+species, not the slot, so the hitter in the party is the one that hits.
+
+The job reaches everything about a pokemon that is chosen rather than rolled:
+
+- **Moves.** A core is built around attacks and the setup that sharpens them. A
+  support gives up to half its sheet to health, screens, hazards and whatever
+  cripples the other side, and always keeps two ways to hurt somebody. Four
+  supports are built knowing what the rest of the party already brings, so a
+  league team does not lay the same screen four times.
+- **Friendly moves.** Every fight here stands the whole party up at once, so a
+  move aimed at a teammate has somebody to aim at. A support will spend a slot on
+  a Helping Hand or a Follow Me for the cores in front of it, and passes a Baton
+  only when it has something raised to pass. A core never does: a cast spent on
+  somebody else's hit is a cast it did not take itself.
+- **Synergy.** Moves are picked knowing what else is on the sheet: a Substitute
+  makes room for the Focus Punch behind it, a Rest for the Sleep Talk, and a Dream
+  Eater is never brought without something to put the target to sleep.
+- **No two the same.** A move somebody else already carries is worth less to the
+  next pokemon, and less again to the one after, so a party does not answer one
+  wall with four Earthquakes. A move a pokemon gets its own type bonus from is
+  barely docked: three Dragon types all carrying a Dragon Claw are three pokemon
+  casting what they are best at.
+- **One sky for the six.** The weather is the party's decision, not each
+  pokemon's. If anybody brings a Drought or a Drizzle, that settles it and nobody
+  spends a slot on the setter. If nobody does but somebody is waiting on a sky, a
+  Chlorophyll or a Swift Swim, exactly one member carries the Sunny Day or the
+  Rain Dance, a support where one can learn it, and the other five spend their
+  slots on what the sky is worth to them: Solar Beams that stop winding up, a
+  Thunder that stops missing, Fire and Water moves worth half again.
+
+  A sky has to pay for itself, and **the cores decide**. What a core gains or
+  loses under it counts double what a support's does, since the cores are what the
+  party is trying to win with. Red's cores are a Chlorophyll Venusaur and a Solar
+  Power Charizard, so his six fight under sun even though two Water pokemon stand
+  behind them; put the same want on a support and a Fire core in front of it, and
+  no sky is called at all. An ability waiting on a sky that is not coming is not
+  awakened either: a Charizard on a rain team keeps Blaze and Intimidate rather
+  than a Solar Power that would never fire.
+- **Abilities.** The ones it awakens are the ones the job wants, out of everything
+  its species could ever carry: what sharpens a hit for a core, what survives one
+  for a support. They are priced against the sheet it ends up with, so nothing
+  awakens a Reckless with no recoil move to lift, a Strong Jaw with nothing that
+  bites, or a Solar Power under a sky that is not coming.
+- **Nature.** The 10% goes on the stat the sheet actually uses and comes off the
+  one it never casts from, so a Machamp is handed the opposite nature to a Gengar
+  without either being written down.
+
+A gym leader and everybody below still field what a walk could have met, which is
+the difference between a badge and a crown.
+
+**Gear follows the job too.** A Life Orb buys damage with the holder's own
+health, a tenth of it per blow that lands, so it goes to the cores: a support
+pays the same price without doing the attacking that earns it back, and a fast
+pokemon pays it far oftener than a slow one because Speed buys cooldown. A Choice
+item is priced against how much of the sheet it locks away, so nothing carrying
+two quiet moves is ever handed one.
 
 A second ability is the one thing a player cannot get by catching the same
 species: a wild meeting rolls one and keeps it. The gear is the pokemon's own

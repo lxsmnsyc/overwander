@@ -1,0 +1,343 @@
+import { Types } from '../../constants/types';
+import { MoveAffects, MoveCategories, MoveFlags, MoveTargets, Moves } from '../../ids/moves';
+import { SpriteAnim } from '../../ids/sprite-anims';
+import { PROJECTILE_DELAY, registerMove } from '../__create';
+
+/**
+ * The bugs and the birds: what Caterpie, Weedle, Pidgey, Rattata and
+ * Spearow bring with them
+ */
+export default function registerBugAndBirdMoves(): void {
+  registerMove(Moves.StringShot, {
+    name: 'String Shot',
+    description: 'Drops the Speed of everything opposite by 2 stages.',
+    type: Types.Bug,
+    category: MoveCategories.Status,
+    pp: 40,
+    accuracy: 95,
+    target: MoveTargets.None,
+    affects: MoveAffects.Unit | MoveAffects.Enemy,
+    flags: 0,
+    delay: PROJECTILE_DELAY,
+    cast: [SpriteAnim.Shoot, SpriteAnim.Emit, SpriteAnim.Attack],
+  });
+  registerMove(Moves.Harden, {
+    name: 'Harden',
+    description: "Raises the user's Defense a stage.",
+    type: Types.Normal,
+    category: MoveCategories.Status,
+    pp: 30,
+    target: MoveTargets.None,
+    flags: 0,
+    cast: [SpriteAnim.Withdraw, SpriteAnim.Swell, SpriteAnim.Charge],
+  });
+  registerMove(Moves.Confusion, {
+    name: 'Confusion',
+    description: '10% to confuse.',
+    type: Types.Psychic,
+    category: MoveCategories.Special,
+    pp: 25,
+    power: 50,
+    accuracy: 100,
+    target: MoveTargets.Unit,
+    flags: 0,
+    cast: [SpriteAnim.SpAttack, SpriteAnim.Emit, SpriteAnim.Charge],
+  });
+  registerMove(Moves.StunSpore, {
+    name: 'Stun Spore',
+    description: 'Paralyses the target. A powder, so Grass ignores it.',
+    type: Types.Grass,
+    category: MoveCategories.Status,
+    pp: 30,
+    accuracy: 75,
+    target: MoveTargets.Unit,
+    flags: MoveFlags.Powder,
+    cast: [SpriteAnim.Gas, SpriteAnim.Shake, SpriteAnim.Charge],
+  });
+  registerMove(Moves.Supersonic, {
+    name: 'Supersonic',
+    description: 'Confuses the target. It is a sound.',
+    type: Types.Normal,
+    category: MoveCategories.Status,
+    pp: 20,
+    accuracy: 55,
+    target: MoveTargets.Unit,
+    flags: MoveFlags.Sound,
+    cast: [SpriteAnim.Sound, SpriteAnim.RearUp, SpriteAnim.Emit, SpriteAnim.Charge],
+  });
+  registerMove(Moves.Whirlwind, {
+    name: 'Whirlwind',
+    description: 'Throws the target off the field and drags its weakest teammate in. Slow to cast.',
+    type: Types.Normal,
+    category: MoveCategories.Status,
+    pp: 20,
+    priority: -6,
+    target: MoveTargets.Unit,
+    flags: MoveFlags.Wind,
+    steps: 1,
+    cast: [SpriteAnim.FlapAround, SpriteAnim.Swing, SpriteAnim.Twirl, SpriteAnim.Charge],
+  });
+  registerMove(Moves.Psybeam, {
+    name: 'Psybeam',
+    description: '10% to confuse.',
+    type: Types.Psychic,
+    category: MoveCategories.Special,
+    pp: 20,
+    power: 65,
+    accuracy: 100,
+    target: MoveTargets.Unit,
+    flags: 0,
+    cast: [SpriteAnim.SpAttack, SpriteAnim.Shoot, SpriteAnim.Attack],
+  });
+  registerMove(Moves.Psychic, {
+    name: 'Psychic',
+    description: "10% to drop the target's Special Defense a stage.",
+    type: Types.Psychic,
+    category: MoveCategories.Special,
+    pp: 10,
+    power: 90,
+    accuracy: 100,
+    target: MoveTargets.Unit,
+    flags: 0,
+    cast: [SpriteAnim.SpAttack, SpriteAnim.Emit, SpriteAnim.Charge],
+  });
+  registerMove(Moves.Psywave, {
+    name: 'Psywave',
+    description: "Deals between 0.5x and 1.5x the user's level.",
+    type: Types.Psychic,
+    category: MoveCategories.Special,
+    pp: 15,
+    accuracy: 100,
+    target: MoveTargets.Unit,
+    flags: 0,
+    cast: [SpriteAnim.SpAttack, SpriteAnim.Shoot, SpriteAnim.Attack],
+  });
+  registerMove(Moves.Teleport, {
+    name: 'Teleport',
+    description: 'Swaps the user out for its strongest teammate. Slow to cast.',
+    type: Types.Psychic,
+    category: MoveCategories.Status,
+    pp: 20,
+    priority: -6,
+    target: MoveTargets.None,
+    flags: 0,
+    steps: 1,
+    cast: [SpriteAnim.Twirl, SpriteAnim.Hop, SpriteAnim.Charge],
+  });
+  registerMove(Moves.Flash, {
+    name: 'Flash',
+    description: "Drops the target's accuracy a stage.",
+    type: Types.Normal,
+    category: MoveCategories.Status,
+    pp: 20,
+    accuracy: 100,
+    target: MoveTargets.Unit,
+    affects: MoveAffects.Unit | MoveAffects.Own | MoveAffects.Enemy,
+    flags: 0,
+    cast: [SpriteAnim.Emit, SpriteAnim.Swell, SpriteAnim.Charge],
+  });
+  registerMove(Moves.PoisonSting, {
+    name: 'Poison Sting',
+    description: '30% to poison.',
+    type: Types.Poison,
+    category: MoveCategories.Physical,
+    pp: 35,
+    power: 15,
+    accuracy: 100,
+    target: MoveTargets.Unit,
+    flags: 0,
+    delay: PROJECTILE_DELAY,
+    cast: [SpriteAnim.Jab, SpriteAnim.Strike, SpriteAnim.Attack],
+  });
+  registerMove(Moves.FuryAttack, {
+    name: 'Fury Attack',
+    description: 'Strikes 2 to 5 times, 0.25 seconds apart.',
+    type: Types.Normal,
+    category: MoveCategories.Physical,
+    pp: 20,
+    power: 15,
+    accuracy: 85,
+    target: MoveTargets.Unit,
+    flags: MoveFlags.Contact,
+    cast: [SpriteAnim.MultiStrike, SpriteAnim.Jab, SpriteAnim.Double],
+  });
+  registerMove(Moves.FocusEnergy, {
+    name: 'Focus Energy',
+    description: 'The user crits far more readily until it leaves the field.',
+    type: Types.Normal,
+    category: MoveCategories.Status,
+    pp: 30,
+    target: MoveTargets.None,
+    flags: 0,
+    cast: [SpriteAnim.RaiseArms, SpriteAnim.Swell, SpriteAnim.RearUp, SpriteAnim.Charge],
+  });
+  registerMove(Moves.Twineedle, {
+    name: 'Twineedle',
+    description: 'Strikes 2 times, each with a 20% chance to poison.',
+    type: Types.Bug,
+    category: MoveCategories.Physical,
+    pp: 20,
+    power: 25,
+    accuracy: 100,
+    target: MoveTargets.Unit,
+    flags: 0,
+    delay: PROJECTILE_DELAY,
+    cast: [SpriteAnim.MultiStrike, SpriteAnim.Jab, SpriteAnim.Double],
+  });
+  registerMove(Moves.PinMissile, {
+    name: 'Pin Missile',
+    description: 'Strikes 2 to 5 times.',
+    type: Types.Bug,
+    category: MoveCategories.Physical,
+    pp: 20,
+    power: 25,
+    accuracy: 95,
+    target: MoveTargets.Unit,
+    flags: 0,
+    delay: PROJECTILE_DELAY,
+    cast: [SpriteAnim.MultiStrike, SpriteAnim.Shoot, SpriteAnim.Double],
+  });
+  registerMove(Moves.Agility, {
+    name: 'Agility',
+    description: "Raises the user's Speed 2 stages.",
+    type: Types.Psychic,
+    category: MoveCategories.Status,
+    pp: 30,
+    target: MoveTargets.None,
+    flags: 0,
+    cast: [SpriteAnim.Dance, SpriteAnim.Hop, SpriteAnim.Charge],
+  });
+  registerMove(Moves.Gust, {
+    name: 'Gust',
+    description: '2x on anything in the air from Fly.',
+    type: Types.Flying,
+    category: MoveCategories.Special,
+    pp: 35,
+    power: 40,
+    accuracy: 100,
+    target: MoveTargets.Unit,
+    flags: MoveFlags.Wind,
+    cast: [SpriteAnim.FlapAround, SpriteAnim.Swing, SpriteAnim.Shoot, SpriteAnim.Attack],
+  });
+  registerMove(Moves.SandAttack, {
+    name: 'Sand Attack',
+    description: "Drops the target's accuracy a stage.",
+    type: Types.Ground,
+    category: MoveCategories.Status,
+    pp: 15,
+    accuracy: 100,
+    target: MoveTargets.Unit,
+    affects: MoveAffects.Unit | MoveAffects.Own | MoveAffects.Enemy,
+    flags: 0,
+    delay: PROJECTILE_DELAY,
+    cast: [SpriteAnim.Stomp, SpriteAnim.Shake, SpriteAnim.Attack],
+  });
+  registerMove(Moves.QuickAttack, {
+    name: 'Quick Attack',
+    description: 'Winds up faster than an ordinary move.',
+    type: Types.Normal,
+    category: MoveCategories.Physical,
+    pp: 30,
+    power: 40,
+    accuracy: 100,
+    priority: 1,
+    target: MoveTargets.Unit,
+    flags: MoveFlags.Contact,
+    cast: [SpriteAnim.QuickStrike, SpriteAnim.Strike, SpriteAnim.Attack],
+  });
+  registerMove(Moves.WingAttack, {
+    name: 'Wing Attack',
+    description: 'Plain contact damage.',
+    type: Types.Flying,
+    category: MoveCategories.Physical,
+    pp: 35,
+    power: 60,
+    accuracy: 100,
+    target: MoveTargets.Unit,
+    flags: MoveFlags.Contact,
+    cast: [SpriteAnim.Strike, SpriteAnim.Swing, SpriteAnim.Attack],
+  });
+  registerMove(Moves.MirrorMove, {
+    name: 'Mirror Move',
+    description: "Uses the target's last move back at it.",
+    type: Types.Flying,
+    category: MoveCategories.Status,
+    pp: 20,
+    target: MoveTargets.Unit,
+    flags: 0,
+    cast: [SpriteAnim.Twirl, SpriteAnim.RearUp, SpriteAnim.Charge],
+  });
+  registerMove(Moves.RazorWind, {
+    name: 'Razor Wind',
+    description: 'Winds up, then fires. Crits more readily.',
+    type: Types.Normal,
+    category: MoveCategories.Special,
+    pp: 10,
+    power: 80,
+    accuracy: 100,
+    target: MoveTargets.Unit,
+    flags: MoveFlags.Slicing | MoveFlags.Wind,
+    steps: 1,
+    cast: [SpriteAnim.Shoot, SpriteAnim.Swing, SpriteAnim.Charge],
+  });
+  registerMove(Moves.SkyAttack, {
+    name: 'Sky Attack',
+    description: 'Winds up, then dives. Crits more readily, and 30% to flinch.',
+    type: Types.Flying,
+    category: MoveCategories.Physical,
+    pp: 5,
+    power: 140,
+    accuracy: 90,
+    target: MoveTargets.Unit,
+    flags: 0,
+    steps: 1,
+    cast: [SpriteAnim.Hover, SpriteAnim.Hop, SpriteAnim.Strike, SpriteAnim.Charge],
+  });
+  registerMove(Moves.HyperFang, {
+    name: 'Hyper Fang',
+    description: '10% to flinch.',
+    type: Types.Normal,
+    category: MoveCategories.Physical,
+    pp: 15,
+    power: 80,
+    accuracy: 90,
+    target: MoveTargets.Unit,
+    flags: MoveFlags.Contact | MoveFlags.Bite,
+    cast: [SpriteAnim.Bite, SpriteAnim.Strike, SpriteAnim.Attack],
+  });
+  registerMove(Moves.SuperFang, {
+    name: 'Super Fang',
+    description: 'Halves whatever health the target has left.',
+    type: Types.Normal,
+    category: MoveCategories.Physical,
+    pp: 10,
+    accuracy: 90,
+    target: MoveTargets.Unit,
+    flags: MoveFlags.Contact | MoveFlags.Bite,
+    cast: [SpriteAnim.Bite, SpriteAnim.Strike, SpriteAnim.Attack],
+  });
+  registerMove(Moves.Peck, {
+    name: 'Peck',
+    description: 'Plain contact damage.',
+    type: Types.Flying,
+    category: MoveCategories.Physical,
+    pp: 35,
+    power: 35,
+    accuracy: 100,
+    target: MoveTargets.Unit,
+    flags: MoveFlags.Contact,
+    cast: [SpriteAnim.Jab, SpriteAnim.QuickStrike, SpriteAnim.Attack],
+  });
+  registerMove(Moves.DrillPeck, {
+    name: 'Drill Peck',
+    description: 'Plain contact damage.',
+    type: Types.Flying,
+    category: MoveCategories.Physical,
+    pp: 20,
+    power: 80,
+    accuracy: 100,
+    target: MoveTargets.Unit,
+    flags: MoveFlags.Contact,
+    cast: [SpriteAnim.Jab, SpriteAnim.Twirl, SpriteAnim.Attack],
+  });
+}

@@ -35,7 +35,7 @@ export default function registerBellossomSpecies(): void {
     activeTimes: TimeOfDay.Evening | TimeOfDay.Night,
     learnSet: {
       level: {
-        1: [Moves.Absorb, Moves.PetalDance, Moves.StunSpore, Moves.SweetScent],
+        1: [Moves.Absorb, Moves.PetalDance, Moves.StunSpore, Moves.SweetScent, Moves.MagicalLeaf],
         55: [Moves.SolarBeam],
       },
       teachable: [
@@ -59,6 +59,16 @@ export default function registerBellossomSpecies(): void {
         Moves.Swagger,
         Moves.SweetScent,
         Moves.Toxic,
+
+        Moves.BulletSeed,
+        Moves.DoubleEdge,
+        Moves.Facade,
+        Moves.Mimic,
+        Moves.Safeguard,
+        Moves.SecretPower,
+        Moves.SludgeBomb,
+        Moves.Substitute,
+        Moves.SwordsDance,
       ],
     },
   });

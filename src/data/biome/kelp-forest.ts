@@ -18,6 +18,7 @@ export default function registerKelpForestSpawns(): void {
       ],
       rare: [{ species: Species.Seadra, weight: 10 }],
       scarce: [
+        { species: Species.Milotic, weight: 3 },
         { species: Species.Tentacruel, weight: 10 },
         { species: Species.Lanturn, weight: 10 },
         { species: Species.Octillery, weight: 10 },
@@ -40,6 +41,7 @@ export default function registerKelpForestSpawns(): void {
       ],
       rare: [{ species: Species.Seadra, weight: 10 }],
       scarce: [
+        { species: Species.Milotic, weight: 3 },
         { species: Species.Tentacruel, weight: 10 },
         { species: Species.Lanturn, weight: 10 },
         { species: Species.Octillery, weight: 10 },
@@ -62,6 +64,7 @@ export default function registerKelpForestSpawns(): void {
       ],
       rare: [{ species: Species.Seadra, weight: 10 }],
       scarce: [
+        { species: Species.Milotic, weight: 3 },
         { species: Species.Tentacruel, weight: 10 },
         { species: Species.Starmie, weight: 10 },
         { species: Species.Lanturn, weight: 10 },
@@ -85,6 +88,7 @@ export default function registerKelpForestSpawns(): void {
       ],
       rare: [{ species: Species.Seadra, weight: 10 }],
       scarce: [
+        { species: Species.Milotic, weight: 3 },
         { species: Species.Tentacruel, weight: 10 },
         { species: Species.Starmie, weight: 10 },
         { species: Species.Lanturn, weight: 10 },

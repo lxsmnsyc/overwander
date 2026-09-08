@@ -19,8 +19,8 @@ import { Genders } from '../../data/ids/species';
 import { isShadow, isShiny } from '../../auth/caught-record';
 import { getSpeciesData } from '../../data/species';
 import type SafariSession from '../../overworld/safari';
-import { FEED_CATCH_BONUS, SafariState, ThrowResult } from '../../overworld/safari';
-import { describeItem } from '../details';
+import { FEED_CATCH_BONUS, SafariState, ThrowResult, describeFlight } from '../../overworld/safari';
+import { describeAbility, describeItem } from '../details';
 import playEffect, { Effect } from '../app/sound';
 import InventoryPicker from '../items/InventoryPicker';
 import ItemSprite from '../items/ItemSprite';
@@ -64,6 +64,21 @@ const HELD_SPRITE = 16;
 
 const THROW_SPRITE = 28;
 
+/** How large the thrown ball is drawn where the pokemon was standing */
+const BALL_SPRITE = 48;
+
+/**
+ * How long the ball takes to land, how long one shake of it takes, and
+ * the beat it is left still before the answer is said.
+ *
+ * The whole of it runs while the catch is being written down, so the
+ * player waits no longer than they already do: what changes is that
+ * the wait is the ball rocking rather than a static sprite
+ */
+const BALL_LAND = 260;
+const BALL_SHAKE = 420;
+const BALL_SETTLE = 320;
+
 const STATE_MESSAGES: Record<SafariState, string> = {
   [SafariState.Active]: '',
   [SafariState.Caught]: 'Caught. It is yours.',
@@ -93,6 +108,17 @@ export interface SafariDialogProps {
    * a held item is found when the pokemon is caught
    */
   revealsHeld?: boolean;
+  /**
+   * Whether how ready it is to run is said before the first ball. A
+   * Forewarn buddy is what knows; without one the meeting is read off
+   * the pokemon itself
+   */
+  revealsFlight?: boolean;
+  /**
+   * Whether what it can do is read before it is caught. A Trace buddy
+   * is what reads it; without one the ability is found by catching it
+   */
+  revealsAbility?: boolean;
   onClose: () => void;
   /**
    * Fired with the new record the moment a throw lands.
@@ -156,6 +182,35 @@ function SafariBody(
   const [throwing, setThrowing] = createSignal(false);
 
   /**
+   * The ball on screen, as how many times it is set to rock. Null
+   * while nothing is thrown, which is what puts the pokemon back
+   */
+  const [rocking, setRocking] = createSignal<number | null>(null);
+
+  /**
+   * Play the ball landing and rocking, and resolve when it is done.
+   *
+   * It is awaited alongside the write rather than after it, so the
+   * animation costs nothing: a throw was already this long. Somebody
+   * who has asked for less motion is shown the ball and told the
+   * answer without the wait
+   */
+  const rock = async (shakes: number): Promise<void> => {
+    // Somebody who has asked for less motion is shown the ball for a
+    // beat and told the answer. The rocking is where the near miss is
+    // said, and there is nowhere else to say it that would not also
+    // say it to everybody the animation already told
+    const held = settings().reduceMotion
+      ? BALL_SETTLE
+      : BALL_LAND + shakes * BALL_SHAKE + BALL_SETTLE;
+
+    setRocking(shakes);
+    await new Promise<void>((resolve) => {
+      setTimeout(resolve, held);
+    });
+  };
+
+  /**
    * The session as the panel shows it, held one beat past the end.
    *
    * Running away empties the prop at once, and the dialog is still on
@@ -195,6 +250,7 @@ function SafariBody(
         setTreat(null);
         setCaught(null);
         setThrowing(false);
+        setRocking(null);
         // Said as the meeting opens rather than only drawn: the
         // sparkles in the title and on the sprite are easy to walk
         // past, and this is the one encounter worth the whole bag
@@ -346,8 +402,16 @@ function SafariBody(
       }
 
       const spent = active.ball;
-      const thrownAt = await throwBall(active);
+      // The ball is played out as the record is written: `throwBall`
+      // hands the shakes over the moment they are rolled, and what is
+      // awaited here is both halves finishing
+      let played: Promise<void> = Promise.resolve();
+      const thrownAt = await throwBall(active, (shakes) => {
+        played = rock(shakes);
+      });
 
+      await played;
+      setRocking(null);
       if (thrownAt == null) {
         return 'No ball of that kind to throw.';
       }
@@ -362,6 +426,17 @@ function SafariBody(
       // first, and the sheet is what they press for
       if (thrownAt.catchId != null) {
         setCaught(thrownAt.catchId);
+      }
+      // What a Pickpocket buddy came away with, said where the flight
+      // itself is said: it is the same moment, and the consolation
+      // reads as part of it rather than as a second announcement
+      // A ball that held on the first shake is the one throw worth
+      // saying anything more about than that it worked
+      if (thrownAt.critical && thrownAt.result === ThrowResult.Caught) {
+        return 'Caught, first shake!';
+      }
+      if (thrownAt.pocketed != null) {
+        return `It fled, and dropped its ${describeItem(thrownAt.pocketed)}.`;
       }
       return THROW_MESSAGES[thrownAt.result];
     });
@@ -470,8 +545,8 @@ function SafariBody(
                       the pokemon standing there, and it is the one
                       thing that decides whether this meeting is worth
                       the ball */}
-                  <Show when={props.revealsHeld === true && active().encounter.items.length > 0}>
-                    <span class="absolute top-0 left-0 flex flex-col items-start gap-1">
+                  <span class="absolute top-0 left-0 flex flex-col items-start gap-1">
+                    <Show when={props.revealsHeld === true}>
                       <For each={active().encounter.items}>
                         {(item) => (
                           <Badge tone="tide">
@@ -480,23 +555,69 @@ function SafariBody(
                           </Badge>
                         )}
                       </For>
+                    </Show>
+                    {/* What a Forewarn buddy passes on: a word for how
+                        ready it is to be gone, in the corner the held
+                        item is named in, since both are things known
+                        about the meeting before the first ball */}
+                    <Show when={props.revealsFlight === true}>
+                      <Badge tone="ember">{describeFlight(active().getFleeChance())}</Badge>
+                    </Show>
+                    {/* And what a Trace buddy reads off it: the one
+                        thing that tells two of a species apart before
+                        either is in a ball */}
+                    <Show when={props.revealsAbility === true}>
+                      <Badge tone="leaf">{describeAbility(active().encounter.ability)}</Badge>
+                    </Show>
+                  </span>
+                  {/* The ball stands where the pokemon does, and the
+                      pokemon is taken off the panel while it rocks:
+                      what is inside the ball is not standing in the
+                      field, and a sprite left behind it would say the
+                      throw had already failed */}
+                  <Show
+                    when={rocking() != null}
+                    fallback={
+                      <AnimatedSprite
+                        species={active().encounter.species}
+                        shiny={isShiny(active().encounter)}
+                        female={active().encounter.gender === Genders.Female}
+                        // What the sparkles in the title are about,
+                        // said by the pokemon instead: one standing in
+                        // front of the player is the encounter worth
+                        // spending the whole bag on
+                        sparkle={isShiny(active().encounter)}
+                        aura={isShadow(active().encounter) ? 'shadow' : undefined}
+                        animation={SpriteAnim.Idle}
+                        direction="Down"
+                        scale={4}
+                        label={`${getSpeciesData(active().encounter.species).name}, standing in front of you`}
+                      />
+                    }
+                  >
+                    {/* The ball stands where the pokemon did, and the
+                        pokemon comes off the panel while it rocks:
+                        what is inside the ball is not also in the
+                        field, and a sprite left behind it would give
+                        the answer away before the last shake */}
+                    <span
+                      class="block pb-8"
+                      style={{ animation: `ball-land ${BALL_LAND}ms ease-out both` }}
+                    >
+                      <span
+                        class="block"
+                        style={{
+                          animation: `ball-shake ${BALL_SHAKE}ms ease-in-out ${BALL_LAND}ms ${rocking() ?? 0} both`,
+                        }}
+                      >
+                        <ItemSprite
+                          item={BALL_ITEMS[active().ball]}
+                          size={BALL_SPRITE}
+                          label="The ball rocks"
+                        />
+                      </span>
                     </span>
                   </Show>
-                  <AnimatedSprite
-                    species={active().encounter.species}
-                    shiny={isShiny(active().encounter)}
-                    female={active().encounter.gender === Genders.Female}
-                    // What the sparkles in the title are about, said
-                    // by the pokemon instead: one standing in front of
-                    // the player is the encounter worth spending the
-                    // whole bag on
-                    sparkle={isShiny(active().encounter)}
-                    aura={isShadow(active().encounter) ? 'shadow' : undefined}
-                    animation={SpriteAnim.Idle}
-                    direction="Down"
-                    scale={4}
-                    label={`${getSpeciesData(active().encounter.species).name}, standing in front of you`}
-                  />
                 </div>
               }
             >

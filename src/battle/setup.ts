@@ -6,6 +6,7 @@
 import setupAbilities from './abilities';
 import setupAI from './ai';
 import Battle, { BattleModes } from './core';
+import type Biome from '../data/ids/biome';
 import setupItems from './items';
 import setupAbilityMechanics from './mechanics/ability';
 import setupAllianceMechanics from './mechanics/alliance';
@@ -34,9 +35,22 @@ import setupStatus from './status';
  */
 export default function createBattle(
   seed: string,
-  options?: { mode?: BattleModes; realtime?: boolean; limits?: number },
+  options?: {
+    mode?: BattleModes;
+    realtime?: boolean;
+    limits?: number;
+    biome?: Biome;
+    timeLimit?: number;
+    byNature?: boolean;
+  },
 ): Battle {
-  const battle = new Battle(seed, options?.mode, options?.limits);
+  const battle = new Battle(
+    seed,
+    options?.mode,
+    options?.limits,
+    options?.biome,
+    options?.timeLimit,
+  );
 
   setupAllianceMechanics(battle);
   setupTeamMechanics(battle);
@@ -59,7 +73,7 @@ export default function createBattle(
   // side left is a field somebody wanted to look at rather than a
   // fight that is over
   if (battle.mode !== BattleModes.Demo) {
-    setupAI(battle);
+    setupAI(battle, options?.byNature === true);
     // Last, so the scan sees a tick's actions already settled
     setupOutcomeMechanics(battle);
   }

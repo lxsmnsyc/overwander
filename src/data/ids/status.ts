@@ -88,6 +88,61 @@ export const enum Statuses {
    * nothing wakes it: no timer runs it down and no cure takes it off
    */
   Comatose = 32,
+  /**
+   * The unit has been taunted: it can cast nothing that does no
+   * damage (Taunt)
+   */
+  Taunted = 33,
+  /**
+   * The unit is tormented: it cannot cast the same move twice over
+   * (Torment)
+   */
+  Tormented = 34,
+  /**
+   * The unit is shut out of the moves whoever imprisoned it also
+   * knows (Imprison)
+   */
+  Imprisoned = 35,
+  /**
+   * The unit has put roots down: it recovers as it acts and cannot be
+   * swapped out (Ingrain)
+   */
+  Rooted = 36,
+  /**
+   * The unit has been yawned at and falls asleep when it runs out
+   * (Yawn)
+   */
+  Drowsy = 37,
+  /**
+   * The unit has made itself the centre of attention: single-target
+   * moves aimed at its side come to it (Follow Me)
+   */
+  Centered = 38,
+  /**
+   * The unit is coated: status moves aimed at it are turned back on
+   * whoever cast them (Magic Coat)
+   */
+  Coated = 39,
+  /**
+   * The unit is waiting to snatch the next move somebody casts on
+   * themselves (Snatch)
+   */
+  Snatching = 40,
+  /**
+   * The unit bears a grudge: whatever knocks it out loses the move
+   * that did it (Grudge)
+   */
+  Grudging = 41,
+  /**
+   * The unit is in an uproar: nothing on the field can sleep through
+   * it (Uproar)
+   */
+  Uproaring = 42,
+  /**
+   * The unit has been given a hand: its next move hits harder
+   * (Helping Hand)
+   */
+  Helped = 43,
 }
 
 /**

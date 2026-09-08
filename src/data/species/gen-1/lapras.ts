@@ -43,6 +43,7 @@ export default function registerLaprasSpecies(): void {
         43: [Moves.RainDance],
         46: [Moves.HydroPump],
         50: [Moves.Safeguard],
+        55: [Moves.SheerCold],
       },
       teachable: [
         Moves.Toxic,
@@ -89,8 +90,23 @@ export default function registerLaprasSpecies(): void {
         Moves.RockSmash,
         Moves.Whirlpool,
         Moves.Thunderbolt,
+
+        Moves.Dive,
+        Moves.Facade,
+        Moves.Roar,
+        Moves.SecretPower,
+        Moves.ShockWave,
+        Moves.WaterPulse,
+        Moves.Waterfall,
       ],
-      egg: [Moves.AuroraBeam, Moves.Foresight],
+      egg: [
+        Moves.AuroraBeam,
+        Moves.Foresight,
+        Moves.DragonDance,
+        Moves.HornDrill,
+        Moves.Refresh,
+        Moves.Tickle,
+      ],
     },
   });
 }

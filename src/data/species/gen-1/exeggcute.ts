@@ -9,7 +9,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// RBY TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.TakeDown,
@@ -48,6 +48,11 @@ const FAMILY_TEACHABLE = [
   Moves.HiddenPower,
   Moves.SunnyDay,
   Moves.PsychUp,
+  Moves.BulletSeed,
+  Moves.Facade,
+  Moves.LightScreen,
+  Moves.SecretPower,
+  Moves.SkillSwap,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Chlorophyll];
@@ -85,7 +90,7 @@ export default function registerExeggcuteSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.Barrage, Moves.Hypnosis],
+        1: [Moves.Barrage, Moves.Hypnosis, Moves.Uproar],
         7: [Moves.Reflect],
         13: [Moves.LeechSeed],
         19: [Moves.Confusion],
@@ -95,7 +100,14 @@ export default function registerExeggcuteSpecies(): void {
         42: [Moves.SolarBeam],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.Strength],
-      egg: [Moves.Reflect, Moves.MegaDrain, Moves.Synthesis, Moves.Moonlight, Moves.AncientPower],
+      egg: [
+        Moves.Reflect,
+        Moves.MegaDrain,
+        Moves.Synthesis,
+        Moves.Moonlight,
+        Moves.AncientPower,
+        Moves.Ingrain,
+      ],
     },
   });
 

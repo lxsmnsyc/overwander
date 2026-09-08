@@ -5,6 +5,7 @@ import registerBattleBerries from './berries';
 import registerBottleCaps from './bottle-caps';
 import registerCandyItems from './candy-items';
 import registerDrinks from './drinks';
+import registerFormItems from './form-items';
 import registerFossils from './fossils';
 import registerGear from './gear';
 import registerGems from './gems';
@@ -38,6 +39,7 @@ export { getItemData, listItemsByType, registerItem } from './__create';
 export type { ItemData } from './__create';
 export { getTeachableMoves } from './machines';
 export { FOSSIL_SPECIES, getSpeciesFossil, isFossil, listFossils } from './fossils';
+export { FORM_ITEMS, getItemForms } from './form-items';
 export { ITEM_TYPE_NAMES, ITEM_TYPE_ORDER } from './names';
 export { WING_EFFORT, WING_STATS, isWing } from './wings';
 
@@ -80,6 +82,7 @@ export default function registerItems(): void {
   registerHeartScale();
   registerHoney();
   registerFossils();
+  registerFormItems();
   registerWings();
   registerVitamins();
   registerMachines();

@@ -39,18 +39,6 @@ function setupUnitStageMechanics(battle: Battle): void {
     event.value = clampedStage - current;
   });
 
-  battle.on(BattleEvents.UnitRemoveStage, EventPriority.Exact, (event) => {
-    // Get the current stage
-    const current = event.source.stages[event.stage];
-    // Get the new stage
-    const newStage = current - event.value;
-    const clampedStage = Math.max(MIN_STAGE, Math.min(newStage, MAX_STAGE));
-    // Assign new stage
-    event.source.stages[event.stage] = clampedStage;
-    // Calculate the new clamped amount
-    event.value = clampedStage - current;
-  });
-
   battle.on(BattleEvents.CheckUnitStage, EventPriority.Exact, (event) => {
     event.value = event.source.stages[event.stage];
   });

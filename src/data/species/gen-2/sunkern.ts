@@ -9,7 +9,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// GSC TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.SolarBeam,
@@ -31,6 +31,14 @@ const FAMILY_TEACHABLE = [
   Moves.Frustration,
   Moves.HiddenPower,
   Moves.SweetScent,
+  Moves.DoubleEdge,
+  Moves.Facade,
+  Moves.LightScreen,
+  Moves.Mimic,
+  Moves.Safeguard,
+  Moves.SecretPower,
+  Moves.Substitute,
+  Moves.SwordsDance,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Chlorophyll, Abilities.SolarPower];
@@ -68,6 +76,8 @@ export default function registerSunkernSpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
+        18: [Moves.Ingrain],
+        25: [Moves.Endeavor],
         1: [Moves.Absorb],
         4: [Moves.Growth],
         10: [Moves.MegaDrain],
@@ -75,7 +85,14 @@ export default function registerSunkernSpecies(): void {
         31: [Moves.Synthesis],
         46: [Moves.GigaDrain],
       },
-      teachable: [...FAMILY_TEACHABLE],
+      teachable: [...FAMILY_TEACHABLE, Moves.BulletSeed],
+      egg: [
+        Moves.Encore,
+        Moves.GrassWhistle,
+        Moves.HelpingHand,
+        Moves.LeechSeed,
+        Moves.NaturePower,
+      ],
     },
   });
 
@@ -108,6 +125,8 @@ export default function registerSunkernSpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
+        18: [Moves.Ingrain],
+        25: [Moves.BulletSeed],
         1: [Moves.Absorb, Moves.Pound],
         4: [Moves.Growth],
         10: [Moves.RazorLeaf],

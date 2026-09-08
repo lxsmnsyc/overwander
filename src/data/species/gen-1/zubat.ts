@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// RBY TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.RazorWind,
   Moves.Whirlwind,
@@ -38,6 +38,14 @@ const FAMILY_TEACHABLE = [
   Moves.Frustration,
   Moves.HiddenPower,
   Moves.SunnyDay,
+  Moves.AerialAce,
+  Moves.Facade,
+  Moves.SecretPower,
+  Moves.ShadowBall,
+  Moves.SludgeBomb,
+  Moves.Snatch,
+  Moves.Taunt,
+  Moves.Torment,
 ];
 
 export default function registerZubatSpecies(): void {
@@ -75,10 +83,13 @@ export default function registerZubatSpecies(): void {
       level: {
         1: [Moves.LeechLife],
         6: [Moves.Supersonic],
+        11: [Moves.Astonish],
         12: [Moves.Bite],
         19: [Moves.ConfuseRay],
         27: [Moves.WingAttack],
+        31: [Moves.AirCutter],
         36: [Moves.Haze, Moves.MeanLook],
+        41: [Moves.PoisonFang],
       },
       teachable: [...FAMILY_TEACHABLE],
       egg: [Moves.QuickAttack, Moves.Gust, Moves.Whirlwind, Moves.FeintAttack, Moves.Pursuit],
@@ -117,11 +128,13 @@ export default function registerZubatSpecies(): void {
     activeTimes: TimeOfDay.Evening | TimeOfDay.Night,
     learnSet: {
       level: {
-        1: [Moves.Screech, Moves.LeechLife, Moves.Bite, Moves.Supersonic],
+        1: [Moves.Screech, Moves.LeechLife, Moves.Bite, Moves.Supersonic, Moves.Astonish],
         19: [Moves.ConfuseRay],
         30: [Moves.WingAttack],
+        35: [Moves.AirCutter],
         42: [Moves.MeanLook],
         43: [Moves.Haze],
+        49: [Moves.PoisonFang],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
     },

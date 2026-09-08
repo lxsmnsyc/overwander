@@ -128,7 +128,6 @@ export default async function recordAftermath(
   if (aftermath.length === 0) {
     return [];
   }
-
   // Whether this player fought it and how many did, in one question of
   // the one table, asked alongside the battle itself
   const [battles, teams] = await Promise.all([
@@ -166,6 +165,9 @@ export default async function recordAftermath(
   const fielded = await readFielded(battleId, uid);
   const reported = aftermath.filter((entry) => fielded.has(entry.caught));
 
+  // A rented fight reports nothing, since none of what it fielded
+  // stands for a record: there is nothing to settle onto and nothing
+  // to settle it with
   if (reported.length === 0) {
     return [];
   }

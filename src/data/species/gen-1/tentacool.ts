@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// RBY TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.TakeDown,
@@ -43,6 +43,13 @@ const FAMILY_TEACHABLE = [
   Moves.HiddenPower,
   Moves.RainDance,
   Moves.Whirlpool,
+  Moves.Dive,
+  Moves.Facade,
+  Moves.SecretPower,
+  Moves.SwordsDance,
+  Moves.Thief,
+  Moves.WaterPulse,
+  Moves.Waterfall,
 ];
 
 const FAMILY_ABILITIES = [Abilities.ClearBody, Abilities.LiquidOoze];

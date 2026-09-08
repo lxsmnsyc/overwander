@@ -232,13 +232,19 @@ export const ITEM_POOL: ItemRarityGroups = {
      * than something nobody else will ever see
      */
     { item: Items.SacredAsh, weight: 4 },
-    // The three fossils. Reviving one is irreversible and is the only
-    // way to the species inside, which is the test this band is for;
-    // the maniac sells them, so the pool is the lucky route rather
-    // than the only one. The amber is thinner because Aerodactyl is
+    // The fossils. Reviving one is irreversible and is the only way
+    // to the species inside, which is the test this band is for; the
+    // maniac sells them, so the pool is the lucky route rather than
+    // the only one. The amber is thinner because Aerodactyl is
     { item: Items.HelixFossil, weight: 8 },
     { item: Items.DomeFossil, weight: 8 },
     { item: Items.OldAmber, weight: 5 },
+    { item: Items.RootFossil, weight: 8 },
+    { item: Items.ClawFossil, weight: 8 },
+    // The rock a Deoxys rearranges itself around. Prized rather than
+    // special: it is worth nothing to anybody who has not been to
+    // the island, and everything to whoever has
+    { item: Items.Meteorite, weight: 4 },
     // Three purses instead of one, for good, and nothing sells one.
     // Here rather than in rare so that parting with it is asked about
     // twice
@@ -263,10 +269,16 @@ export const ITEM_POOL: ItemRarityGroups = {
   special: [
     { item: Items.MasterBall, weight: 10 },
     { item: Items.ShinyCharm, weight: 10 },
+    // Beside the Shiny Charm and a little readier to turn up: what it
+    // is worth is half again on a throw rather than eight times a
+    // roll, so it is the lesser of the two charms in every sense
+    { item: Items.CatchingCharm, weight: 12 },
     // The only way a mythical is ever fought: the relic is found
     // here or not at all
     { item: Items.OldSeaMap, weight: 6 },
     { item: Items.GSBall, weight: 6 },
+    { item: Items.AuroraTicket, weight: 6 },
+    { item: Items.WishTag, weight: 6 },
     // Six stats made perfect at once. Nothing else undoes a bad roll,
     // so it belongs with the things gold cannot buy
     { item: Items.GoldenBottleCap, weight: 8 },

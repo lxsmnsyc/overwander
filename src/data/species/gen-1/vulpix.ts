@@ -9,7 +9,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// RBY TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.BodySlam,
@@ -40,6 +40,9 @@ const FAMILY_TEACHABLE = [
   Moves.HiddenPower,
   Moves.SunnyDay,
   Moves.Flamethrower,
+  Moves.Facade,
+  Moves.Overheat,
+  Moves.SecretPower,
 ];
 
 export default function registerVulpixSpecies(): void {
@@ -78,13 +81,23 @@ export default function registerVulpixSpecies(): void {
         1: [Moves.Ember, Moves.TailWhip],
         7: [Moves.QuickAttack],
         13: [Moves.Roar],
+        17: [Moves.WillOWisp],
         19: [Moves.ConfuseRay],
-        25: [Moves.Safeguard],
+        25: [Moves.Safeguard, Moves.Imprison],
         31: [Moves.Flamethrower],
-        37: [Moves.FireSpin],
+        37: [Moves.FireSpin, Moves.Grudge],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.Hypnosis, Moves.Disable, Moves.Flail, Moves.Spite, Moves.FeintAttack],
+      egg: [
+        Moves.Hypnosis,
+        Moves.Disable,
+        Moves.Flail,
+        Moves.Spite,
+        Moves.FeintAttack,
+        Moves.HeatWave,
+        Moves.Howl,
+        Moves.PsychUp,
+      ],
     },
   });
 

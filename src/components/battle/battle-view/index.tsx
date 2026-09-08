@@ -33,7 +33,7 @@ import {
   createRaidBattle,
 } from '../../../overworld/raid-battle';
 import Npc from '../../../data/overworld/npc';
-import { createTrainerBattle } from '../../../overworld/rocket-battle';
+import { createTrainerBattle } from '../../../overworld/stop-battle';
 import BattleField from '../BattleField';
 import CandySprite from '../../sprites/CandySprite';
 import VerdictDialog from './VerdictDialog';
@@ -157,7 +157,7 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
         let built: RaidBattle;
 
         if (kind === BattleKind.Raid) {
-          built = createRaidBattle(props.active.id, teams, loaded.limits);
+          built = createRaidBattle(props.active.id, teams, loaded.limits, loaded.biome);
         } else {
           built = createTrainerBattle(
             props.active.id,
@@ -165,6 +165,8 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
             loaded.limits,
             kind === BattleKind.Player ? BattleModes.PvP : BattleModes.Npc,
             loaded.weather,
+            loaded.biome,
+            loaded.rules,
           );
         }
 
@@ -323,7 +325,7 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
   };
 
   const title = (): string => {
-    if (props.active.rocket != null) {
+    if (props.active.stop != null) {
       // A stop is not only a grunt: a duelling trainer, a gym leader
       // and the Champion are all fought from one, and each was named
       // on the way in
@@ -346,7 +348,7 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
     if (props.active.replay) {
       return 'The other side went down.';
     }
-    if (props.active.rocket != null) {
+    if (props.active.stop != null) {
       // Only a grunt leaves the pokemon they were beaten with. A
       // duelling trainer, a gym leader and the three rungs above them
       // keep their party and pay a purse, so a win at one of those
@@ -568,7 +570,7 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
     }
 
     const won = result === 'won';
-    const stop = props.active.rocket;
+    const stop = props.active.stop;
     const seat = props.active.seat;
     const built = instance();
     const user = auth.user();

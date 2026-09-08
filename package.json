@@ -13,6 +13,7 @@
     "preview": "vite preview",
     "compact-sprites": "node scripts/compact-sprites.ts",
     "sprite-coats": "node scripts/sprite-coats.ts",
+    "frontier-symbols": "node scripts/frontier-symbols.ts",
     "graft-walls": "node scripts/graft-walls.ts",
     "paths": "node scripts/paths.ts",
     "apricorn-trees": "node scripts/apricorn-trees.ts",

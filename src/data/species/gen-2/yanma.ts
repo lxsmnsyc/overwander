@@ -34,13 +34,14 @@ export default function registerYanmaSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
+        23: [Moves.Hypnosis],
         1: [Moves.Foresight, Moves.Tackle],
         7: [Moves.QuickAttack],
         13: [Moves.DoubleTeam],
         19: [Moves.SonicBoom],
         25: [Moves.Detect],
         31: [Moves.Supersonic],
-        37: [Moves.Swift, Moves.WingAttack],
+        37: [Moves.Swift, Moves.WingAttack, Moves.Uproar],
         43: [Moves.Screech],
       },
       teachable: [
@@ -65,8 +66,19 @@ export default function registerYanmaSpecies(): void {
         Moves.Swift,
         Moves.Thief,
         Moves.Toxic,
+
+        Moves.AerialAce,
+        Moves.DoubleEdge,
+        Moves.DreamEater,
+        Moves.Facade,
+        Moves.Mimic,
+        Moves.Psychic,
+        Moves.SecretPower,
+        Moves.ShadowBall,
+        Moves.SteelWing,
+        Moves.Substitute,
       ],
-      egg: [Moves.LeechLife, Moves.Reversal, Moves.Whirlwind],
+      egg: [Moves.LeechLife, Moves.Reversal, Moves.Whirlwind, Moves.SignalBeam, Moves.SilverWind],
     },
   });
 }

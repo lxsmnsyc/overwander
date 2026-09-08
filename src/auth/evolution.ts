@@ -1,6 +1,11 @@
 import { getTimeOfDay } from '../data/ids/biome';
 import type { Species } from '../data/ids/species';
-import { coveredByHandover, getSpeciesData, meetsEvolutionCriteria } from '../data/species';
+import {
+  canEverEvolve,
+  coveredByHandover,
+  getSpeciesData,
+  meetsEvolutionCriteria,
+} from '../data/species';
 import type { EvolutionData } from '../data/species';
 import evolveOnServerSide from '../server/evolution';
 import { requireUid } from '../server/auth';
@@ -38,6 +43,11 @@ export interface EvolutionOption {
  * The unmet ones are shown and refused instead, which is the same
  * answer with the reason attached.
  *
+ * A branch decided by gender is the exception, and is left out
+ * altogether: a male Wurmple is never going to spin a Cascoon, so
+ * showing it the row is showing it something it can never work
+ * towards.
+ *
  * Resolves an empty list when the catch is not the user's
  */
 export async function listEvolutionOptions(
@@ -59,13 +69,16 @@ export async function listEvolutionOptions(
     stats: getStats(caught),
     friendship: caught.friendship,
     time: getTimeOfDay(Date.now()),
+    gender: caught.gender,
   };
 
-  return (getSpeciesData(caught.species).evolvesInto ?? []).map((evolution) => ({
-    evolution,
-    available: meetsEvolutionCriteria(evolution, context),
-    covered: coveredByHandover(evolution, context),
-  }));
+  return (getSpeciesData(caught.species).evolvesInto ?? [])
+    .filter((evolution) => canEverEvolve(evolution, caught.gender))
+    .map((evolution) => ({
+      evolution,
+      available: meetsEvolutionCriteria(evolution, context),
+      covered: coveredByHandover(evolution, context),
+    }));
 }
 
 /**

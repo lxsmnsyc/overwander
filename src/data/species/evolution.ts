@@ -2,7 +2,7 @@ import { EVOLUTION_FRIENDSHIP } from '../constants/friendship';
 import type { TimeOfDay } from '../ids/biome';
 import type { Stats } from '../constants/stats';
 import { Items } from '../ids/items';
-import { EvolutionMethod, type Species } from '../ids/species';
+import { EvolutionMethod, type Genders, type Species } from '../ids/species';
 import {
   type EvolutionData,
   type StatComparison,
@@ -23,6 +23,7 @@ export const SUPPORTED_METHODS =
   EvolutionMethod.Trade |
   EvolutionMethod.Friendship |
   EvolutionMethod.TimeOfDay |
+  EvolutionMethod.Gender |
   EvolutionMethod.StatComparison;
 
 /**
@@ -69,6 +70,12 @@ export interface EvolutionContext {
    * line that reads it
    */
   time: TimeOfDay;
+  /**
+   * What it was born as. Wurmple is the only line that reads it, and
+   * every stage of that line is an even split, so the branch a
+   * pokemon takes never changes under it
+   */
+  gender: Genders;
 }
 
 /**
@@ -181,6 +188,11 @@ export function meetsEvolutionCriteria(
       return false;
     }
   }
+  if ((method & EvolutionMethod.Gender) !== 0) {
+    if (evolution.gender == null || evolution.gender !== context.gender) {
+      return false;
+    }
+  }
   if ((method & EvolutionMethod.StatComparison) !== 0) {
     if (evolution.compare == null || !comparesStats(evolution.compare, context)) {
       return false;
@@ -194,6 +206,18 @@ export function meetsEvolutionCriteria(
     return false;
   }
   return true;
+}
+
+/**
+ * Whether this pokemon could ever take this evolution at all.
+ *
+ * Every other condition is something to work towards, so an unmet one
+ * is shown and refused. Gender is not: it is what the pokemon was
+ * born as and nothing changes it, so the branch it cannot take is
+ * left out rather than refused forever
+ */
+export function canEverEvolve(evolution: EvolutionData, gender: Genders): boolean {
+  return (evolution.method & EvolutionMethod.Gender) === 0 || evolution.gender === gender;
 }
 
 /**

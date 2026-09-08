@@ -251,6 +251,40 @@ const enum Abilities {
   // Unown
   QueenlyMajesty = 148,
   Comatose = 149,
+  // Shiftry
+  WindRider = 150,
+  // Slakoth
+  Truant = 151,
+  // Shroomish
+  PoisonHeal = 152,
+  // Shedinja
+  WonderGuard = 153,
+  // Skitty
+  Normalize = 154,
+  // Meditite
+  PurePower = 155,
+  // Electrike
+  Minus = 156,
+  // Aron
+  HeavyMetal = 157,
+  // Sableye
+  Stall = 158,
+  // Zangoose
+  ToxicBoost = 159,
+  // Plusle
+  Battery = 160,
+  // Torkoal
+  WhiteSmoke = 161,
+  // Kecleon
+  ColorChange = 162,
+  // Castform
+  Forecast = 163,
+  // Metagross
+  Steelworker = 164,
+  // Numel
+  Simple = 165,
+  // Rayquaza
+  AirLock = 166,
   // Special (non-standard abilities outside the regular pool)
   Boss = 100001,
   Shadow = 100002,

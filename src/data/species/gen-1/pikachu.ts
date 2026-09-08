@@ -9,7 +9,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// RBY TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.MegaPunch,
   Moves.MegaKick,
@@ -53,6 +53,14 @@ const FAMILY_TEACHABLE = [
   Moves.IronTail,
   Moves.HiddenPower,
   Moves.RainDance,
+  Moves.BrickBreak,
+  Moves.Counter,
+  Moves.Dig,
+  Moves.Facade,
+  Moves.FocusPunch,
+  Moves.RockSmash,
+  Moves.SecretPower,
+  Moves.ShockWave,
 ];
 
 export default function registerPikachuSpecies(): void {
@@ -139,7 +147,7 @@ export default function registerPikachuSpecies(): void {
           Moves.QuickAttack,
         ],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.Thief],
+      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.Thief, Moves.LightScreen],
     },
   });
 }

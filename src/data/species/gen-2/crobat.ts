@@ -38,7 +38,9 @@ export default function registerCrobatSpecies(): void {
     activeTimes: TimeOfDay.Evening | TimeOfDay.Night,
     learnSet: {
       level: {
-        1: [Moves.LeechLife, Moves.Screech, Moves.Supersonic],
+        35: [Moves.AirCutter],
+        49: [Moves.PoisonFang],
+        1: [Moves.LeechLife, Moves.Screech, Moves.Supersonic, Moves.Astonish],
         6: [Moves.Supersonic],
         12: [Moves.Bite],
         19: [Moves.ConfuseRay],
@@ -68,6 +70,18 @@ export default function registerCrobatSpecies(): void {
         Moves.Swift,
         Moves.Thief,
         Moves.Toxic,
+
+        Moves.AerialAce,
+        Moves.DoubleEdge,
+        Moves.Facade,
+        Moves.Mimic,
+        Moves.SecretPower,
+        Moves.ShadowBall,
+        Moves.SludgeBomb,
+        Moves.Snatch,
+        Moves.Substitute,
+        Moves.Taunt,
+        Moves.Torment,
       ],
     },
   });

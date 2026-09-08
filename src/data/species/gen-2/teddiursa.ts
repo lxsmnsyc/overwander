@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// GSC TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.Earthquake,
@@ -42,6 +42,22 @@ const FAMILY_TEACHABLE = [
   Moves.RockSmash,
   Moves.Roar,
   Moves.Swift,
+  Moves.AerialAce,
+  Moves.BodySlam,
+  Moves.BrickBreak,
+  Moves.BulkUp,
+  Moves.DoubleEdge,
+  Moves.Facade,
+  Moves.FocusPunch,
+  Moves.MegaKick,
+  Moves.MegaPunch,
+  Moves.Metronome,
+  Moves.Mimic,
+  Moves.SecretPower,
+  Moves.Substitute,
+  Moves.SwordsDance,
+  Moves.Taunt,
+  Moves.Torment,
 ];
 
 // Both learn the same list, only later once it has grown
@@ -87,6 +103,7 @@ export default function registerTeddiursaSpecies(): void {
       level: {
         1: [Moves.Leer, Moves.Scratch],
         ...FAMILY_LEVEL,
+        19: [Moves.FakeTears],
         36: [Moves.Slash],
         43: [Moves.Snore],
         50: [Moves.Thrash],
@@ -99,6 +116,8 @@ export default function registerTeddiursaSpecies(): void {
         Moves.MetalClaw,
         Moves.SeismicToss,
         Moves.TakeDown,
+
+        Moves.Yawn,
       ],
     },
   });
@@ -131,6 +150,7 @@ export default function registerTeddiursaSpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
+        19: [Moves.FakeTears],
         1: [Moves.Leer, Moves.Scratch, Moves.Lick, Moves.FurySwipes],
         22: [Moves.FeintAttack],
         29: [Moves.Rest],
@@ -138,7 +158,14 @@ export default function registerTeddiursaSpecies(): void {
         49: [Moves.Snore],
         59: [Moves.Thrash],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.HyperBeam,
+        Moves.Counter,
+        Moves.RockSlide,
+        Moves.RockTomb,
+        Moves.SeismicToss,
+      ],
     },
   });
 }

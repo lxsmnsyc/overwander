@@ -11,6 +11,7 @@ export default function registerSteppeSpawns(): void {
       base: [
         { species: Species.Mareep, weight: 25 },
         { species: Species.Magnemite, weight: 20 },
+        { species: Species.Whismur, weight: 25 },
       ],
       uncommon: [
         { species: Species.Spearow, weight: 20 },
@@ -20,12 +21,14 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Sentret, weight: 25 },
         { species: Species.Phanpy, weight: 20 },
         { species: Species.Voltorb, weight: 20 },
+        { species: Species.Electrike, weight: 25 },
         { species: Species.Dunsparce, weight: 10 },
         { species: Species.Girafarig, weight: 5 },
       ],
       rare: [
-        { species: Species.Flaaffy, weight: 5 },
+        { species: Species.Loudred, weight: 10 },
         { species: Species.Magneton, weight: 10 },
+        { species: Species.Flaaffy, weight: 5 },
       ],
       scarce: [
         { species: Species.Fearow, weight: 10 },
@@ -34,12 +37,16 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Dodrio, weight: 10 },
         { species: Species.Electrode, weight: 10 },
         { species: Species.Furret, weight: 10 },
+        { species: Species.Manectric, weight: 10 },
         { species: Species.Donphan, weight: 10 },
       ],
       elusive: [
+        { species: Species.Castform, weight: 10 },
         { species: Species.Kangaskhan, weight: 5 },
         { species: Species.Tauros, weight: 10 },
         { species: Species.Miltank, weight: 5 },
+        { species: Species.Exploud, weight: 5 },
+        { species: Species.Zangoose, weight: 8 },
         { species: Species.Ampharos, weight: 10 },
       ],
       prized: [...UNOWN_SPAWNS],
@@ -49,6 +56,7 @@ export default function registerSteppeSpawns(): void {
       base: [
         { species: Species.Mareep, weight: 25 },
         { species: Species.Magnemite, weight: 20 },
+        { species: Species.Whismur, weight: 25 },
       ],
       uncommon: [
         { species: Species.Spearow, weight: 20 },
@@ -59,12 +67,14 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Sentret, weight: 25 },
         { species: Species.Phanpy, weight: 20 },
         { species: Species.Voltorb, weight: 20 },
+        { species: Species.Electrike, weight: 25 },
         { species: Species.Dunsparce, weight: 10 },
         { species: Species.Girafarig, weight: 5 },
       ],
       rare: [
-        { species: Species.Flaaffy, weight: 5 },
+        { species: Species.Loudred, weight: 10 },
         { species: Species.Magneton, weight: 10 },
+        { species: Species.Flaaffy, weight: 5 },
       ],
       scarce: [
         { species: Species.Fearow, weight: 10 },
@@ -74,12 +84,16 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Dodrio, weight: 10 },
         { species: Species.Electrode, weight: 10 },
         { species: Species.Furret, weight: 10 },
+        { species: Species.Manectric, weight: 10 },
         { species: Species.Donphan, weight: 10 },
       ],
       elusive: [
+        { species: Species.Castform, weight: 10 },
         { species: Species.Kangaskhan, weight: 5 },
         { species: Species.Tauros, weight: 10 },
         { species: Species.Miltank, weight: 5 },
+        { species: Species.Exploud, weight: 5 },
+        { species: Species.Zangoose, weight: 8 },
         { species: Species.Ampharos, weight: 10 },
       ],
       prized: [...UNOWN_SPAWNS],
@@ -98,6 +112,10 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Arbok, weight: 10 },
         { species: Species.Electrode, weight: 10 },
       ],
+      elusive: [
+        { species: Species.Castform, weight: 10 },
+        { species: Species.Seviper, weight: 8 },
+      ],
       prized: [...UNOWN_SPAWNS],
       special: [{ species: Species.Raikou, weight: 10 }],
     },
@@ -113,6 +131,10 @@ export default function registerSteppeSpawns(): void {
       scarce: [
         { species: Species.Arbok, weight: 10 },
         { species: Species.Electrode, weight: 10 },
+      ],
+      elusive: [
+        { species: Species.Castform, weight: 10 },
+        { species: Species.Seviper, weight: 8 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [{ species: Species.Raikou, weight: 10 }],

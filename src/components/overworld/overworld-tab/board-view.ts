@@ -75,6 +75,16 @@ export interface BoardView {
   lamp: number;
   /** Whether a meeting shows what it is holding. A Frisk buddy is what looks */
   revealsHeld: boolean;
+  /**
+   * Whether how ready a meeting is to run is said before the first
+   * ball. A Forewarn buddy is what knows
+   */
+  revealsFlight: boolean;
+  /**
+   * Whether what a meeting can do is read before it is caught. A Trace
+   * buddy is what reads it
+   */
+  revealsAbility: boolean;
   /** The window of the chunk the player is standing in */
   snapshot: ChunkSnapshot;
   /** Every window the board overlaps, which is at most four */
@@ -332,6 +342,8 @@ export function buildBoardView(
     weather: world.getWeather(playerX, playerY, under.weatherWindow),
     lamp: overworld.checkLampReach(DARK_DAY_LAMP_CELLS),
     revealsHeld: overworld.checkRevealsHeld(),
+    revealsFlight: overworld.checkRevealsFlight(),
+    revealsAbility: overworld.checkRevealsAbility(),
     snapshot: under,
     chunks,
     at: (cell) => {

@@ -9,7 +9,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// RBY TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.BodySlam,
@@ -46,6 +46,11 @@ const FAMILY_TEACHABLE = [
   Moves.HiddenPower,
   Moves.RainDance,
   Moves.Whirlpool,
+  Moves.Dig,
+  Moves.Dive,
+  Moves.Facade,
+  Moves.SecretPower,
+  Moves.WaterPulse,
 ];
 
 // The evolved forms grow arms: fighting-style TMs and HM Strength
@@ -108,7 +113,15 @@ export default function registerPoliwagSpecies(): void {
         43: [Moves.HydroPump],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.Mist, Moves.Splash, Moves.BubbleBeam, Moves.Haze, Moves.MindReader],
+      egg: [
+        Moves.Mist,
+        Moves.Splash,
+        Moves.BubbleBeam,
+        Moves.Haze,
+        Moves.MindReader,
+        Moves.IceBall,
+        Moves.WaterSport,
+      ],
     },
   });
 
@@ -158,7 +171,7 @@ export default function registerPoliwagSpecies(): void {
         43: [Moves.BellyDrum],
         49: [Moves.HydroPump],
       },
-      teachable: [...FAMILY_TEACHABLE, ...EVOLVED_TEACHABLE],
+      teachable: [...FAMILY_TEACHABLE, ...EVOLVED_TEACHABLE, Moves.BrickBreak, Moves.FocusPunch],
     },
   });
 
@@ -191,7 +204,16 @@ export default function registerPoliwagSpecies(): void {
         1: [Moves.Hypnosis, Moves.WaterGun, Moves.DoubleSlap, Moves.BodySlam, Moves.Submission],
         51: [Moves.MindReader],
       },
-      teachable: [...FAMILY_TEACHABLE, ...EVOLVED_TEACHABLE, Moves.HyperBeam, Moves.DynamicPunch],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        ...EVOLVED_TEACHABLE,
+        Moves.HyperBeam,
+        Moves.DynamicPunch,
+        Moves.BrickBreak,
+        Moves.BulkUp,
+        Moves.FocusPunch,
+        Moves.RockTomb,
+      ],
     },
   });
 }

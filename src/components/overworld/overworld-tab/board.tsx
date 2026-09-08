@@ -6,7 +6,7 @@ import {
   buildBoardView,
   naming,
 } from './board-view';
-import challengerOf, { championGate, eliteGate } from './challengers';
+import challengerOf, { championGate, eliteGate, frontierGate } from './challengers';
 import { describeItem } from '../../details';
 import { type Journey, stateOf } from './journey';
 import { useAuth } from '../../../auth/context';
@@ -27,8 +27,8 @@ import {
   hostMythicalRaid,
   peekRaid,
 } from '../../../auth/raids';
-import { type RocketRecord, rocketStopId } from '../../../auth/rocket-record';
-import { claimRocketReward, enterRocketStop } from '../../../auth/rockets';
+import { type StopRecord, stopIdOf } from '../../../auth/stop-record';
+import { claimStopReward, enterStop } from '../../../auth/stops';
 import { createSafariSession, isEncounterRetired } from '../../../auth/safari';
 import {
   claimApricornTree,
@@ -84,7 +84,7 @@ import RaidDialog from '../../raids/RaidDialog';
 import { Badge, Button, Note, useToast } from '../../styled';
 import NestDialog, { type EggSource, type EggState } from '../NestDialog';
 import PortalDialog from '../PortalDialog';
-import RocketStopDialog, { type StopChallenge } from '../RocketStopDialog';
+import StopDialog, { type StopChallenge } from '../StopDialog';
 import SafariDialog from '../SafariDialog';
 import ChunkCanvas, { type CellSpot, type SpawnCoat } from '../chunk-canvas';
 import NpcDialog from '../npc-dialog';
@@ -299,7 +299,7 @@ export default function OverworldBoard(props: {
    * into one: the stop's id and what it is fielding, until the
    * challenge is taken or declined
    */
-  const [challenge, setChallenge] = createSignal<[string, RocketRecord] | null>(null);
+  const [challenge, setChallenge] = createSignal<[string, StopRecord] | null>(null);
 
   /**
    * Who put the challenge: the grunt's ambush or the trainer's duel.
@@ -1198,24 +1198,29 @@ export default function OverworldBoard(props: {
       const grunt = landmark === Landmark.TeamRocket;
       const staged = challengerOf(spot.snapshot, landmark, spot.cell);
       const who = staged?.name ?? 'Team Rocket';
-      const stop = await enterRocketStop(spot.snapshot, spot.cell);
+      const stop = await enterStop(spot.snapshot, spot.cell);
 
       if (stop === 'locked') {
-        // The ladder's two gates, each named by whoever is standing
+        // The ladder's three gates, each named by whoever is standing
         // there: an elite asks for their own league's badges, a
-        // champion for their own league's Elite Four
+        // champion for their own league's Elite Four, and a Frontier
+        // house for the crown of the region it stands in
         const seated =
           landmark === Landmark.EliteFour ? spot.snapshot.getEliteMember(spot.cell) : null;
         const crowned =
           landmark === Landmark.Champion && spot.snapshot.getLegend(spot.cell) == null
             ? spot.snapshot.getChampion(spot.cell)
             : null;
+        const housed =
+          landmark === Landmark.FrontierBrain ? loaded.snapshot.getFrontierBrain(at) : null;
         let asked: string | null = null;
 
         if (seated != null) {
           asked = eliteGate(seated);
         } else if (crowned != null) {
           asked = championGate(crowned);
+        } else if (housed != null) {
+          asked = frontierGate(housed);
         }
         return asked == null
           ? `${who} is not taking challengers.`
@@ -1226,8 +1231,8 @@ export default function OverworldBoard(props: {
         // claiming again pays nothing and hands it back until it is
         // caught. Everybody else owed only the purse
         const owed = grunt
-          ? await claimRocketReward(
-              rocketStopId(
+          ? await claimStopReward(
+              stopIdOf(
                 spot.snapshot.chunk,
                 spot.snapshot.npcTimestamp,
                 spot.cell,
@@ -2131,6 +2136,8 @@ export default function OverworldBoard(props: {
               // A Frisk buddy reads what is standing there before
               // anything is thrown at it
               revealsHeld={view()?.revealsHeld === true}
+              revealsFlight={view()?.revealsFlight === true}
+              revealsAbility={view()?.revealsAbility === true}
               onCaught={(catchId) => {
                 // The encounter is finished the moment it is caught, so
                 // the safari closes and the sheet for what was caught
@@ -2153,7 +2160,7 @@ export default function OverworldBoard(props: {
                 props.onFled();
               }}
             />
-            <RocketStopDialog
+            <StopDialog
               user={user()}
               challenge={challenge()}
               npc={challengerNpc()}

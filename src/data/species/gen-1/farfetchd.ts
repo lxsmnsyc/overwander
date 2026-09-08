@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// RBY TM/HM moves
+// TM, HM and tutor moves
 const TEACHABLE = [
   Moves.Toxic,
   Moves.BodySlam,
@@ -57,7 +57,9 @@ export default function registerFarfetchdSpecies(): void {
         1: [Moves.Peck, Moves.SandAttack],
         7: [Moves.Leer],
         15: [Moves.FuryAttack],
+        21: [Moves.KnockOff],
         23: [Moves.SwordsDance],
+        26: [Moves.FuryCutter],
         31: [Moves.Agility],
         37: [Moves.Slash],
         44: [Moves.FalseSwipe],
@@ -82,6 +84,10 @@ export default function registerFarfetchdSpecies(): void {
         Moves.HiddenPower,
         Moves.SunnyDay,
         Moves.PsychUp,
+
+        Moves.AerialAce,
+        Moves.Facade,
+        Moves.SecretPower,
       ],
       egg: [
         Moves.Gust,
@@ -90,6 +96,8 @@ export default function registerFarfetchdSpecies(): void {
         Moves.Flail,
         Moves.Foresight,
         Moves.SteelWing,
+
+        Moves.FeatherDance,
       ],
     },
   });

@@ -13,6 +13,9 @@ export default function registerOceanSpawns(): void {
         { species: Species.Dratini, weight: 2 },
       ],
       uncommon: [
+        { species: Species.Carvanha, weight: 20 },
+        { species: Species.Wailmer, weight: 15 },
+        { species: Species.Clamperl, weight: 20 },
         { species: Species.Tentacool, weight: 30 },
         { species: Species.Seel, weight: 20 },
         { species: Species.Shellder, weight: 20 },
@@ -25,6 +28,8 @@ export default function registerOceanSpawns(): void {
         { species: Species.Seadra, weight: 10 },
       ],
       scarce: [
+        { species: Species.Sharpedo, weight: 6 },
+        { species: Species.Wailord, weight: 4 },
         { species: Species.Tentacruel, weight: 10 },
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Cloyster, weight: 10 },
@@ -41,9 +46,14 @@ export default function registerOceanSpawns(): void {
         { species: Species.Kingdra, weight: 5 },
         { species: Species.Corsola, weight: 20 },
         { species: Species.Qwilfish, weight: 15 },
+        { species: Species.Relicanth, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS],
-      special: [{ species: Species.Lugia, weight: 10 }],
+      special: [
+        { species: Species.Latias, weight: 10 },
+        { species: Species.Latios, weight: 10 },
+        { species: Species.Lugia, weight: 10 },
+      ],
     },
     [TimeOfDay.Day]: {
       base: [
@@ -51,6 +61,9 @@ export default function registerOceanSpawns(): void {
         { species: Species.Dratini, weight: 2 },
       ],
       uncommon: [
+        { species: Species.Carvanha, weight: 20 },
+        { species: Species.Wailmer, weight: 15 },
+        { species: Species.Clamperl, weight: 20 },
         { species: Species.Tentacool, weight: 30 },
         { species: Species.Seel, weight: 20 },
         { species: Species.Shellder, weight: 20 },
@@ -63,6 +76,8 @@ export default function registerOceanSpawns(): void {
         { species: Species.Seadra, weight: 10 },
       ],
       scarce: [
+        { species: Species.Sharpedo, weight: 6 },
+        { species: Species.Wailord, weight: 4 },
         { species: Species.Tentacruel, weight: 10 },
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Cloyster, weight: 10 },
@@ -79,9 +94,14 @@ export default function registerOceanSpawns(): void {
         { species: Species.Kingdra, weight: 5 },
         { species: Species.Corsola, weight: 20 },
         { species: Species.Qwilfish, weight: 15 },
+        { species: Species.Relicanth, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS],
-      special: [{ species: Species.Lugia, weight: 10 }],
+      special: [
+        { species: Species.Latias, weight: 10 },
+        { species: Species.Latios, weight: 10 },
+        { species: Species.Lugia, weight: 10 },
+      ],
     },
     [TimeOfDay.Evening]: {
       base: [
@@ -89,6 +109,9 @@ export default function registerOceanSpawns(): void {
         { species: Species.Dratini, weight: 2 },
       ],
       uncommon: [
+        { species: Species.Carvanha, weight: 20 },
+        { species: Species.Wailmer, weight: 15 },
+        { species: Species.Clamperl, weight: 20 },
         { species: Species.Tentacool, weight: 30 },
         { species: Species.Seel, weight: 20 },
         { species: Species.Shellder, weight: 20 },
@@ -101,6 +124,8 @@ export default function registerOceanSpawns(): void {
         { species: Species.Seadra, weight: 10 },
       ],
       scarce: [
+        { species: Species.Sharpedo, weight: 6 },
+        { species: Species.Wailord, weight: 4 },
         { species: Species.Tentacruel, weight: 10 },
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Cloyster, weight: 10 },
@@ -118,7 +143,11 @@ export default function registerOceanSpawns(): void {
         { species: Species.Qwilfish, weight: 15 },
       ],
       prized: [...UNOWN_SPAWNS],
-      special: [{ species: Species.Lugia, weight: 10 }],
+      special: [
+        { species: Species.Latias, weight: 10 },
+        { species: Species.Latios, weight: 10 },
+        { species: Species.Lugia, weight: 10 },
+      ],
     },
     [TimeOfDay.Night]: {
       base: [
@@ -126,6 +155,9 @@ export default function registerOceanSpawns(): void {
         { species: Species.Dratini, weight: 2 },
       ],
       uncommon: [
+        { species: Species.Carvanha, weight: 20 },
+        { species: Species.Wailmer, weight: 15 },
+        { species: Species.Clamperl, weight: 20 },
         { species: Species.Tentacool, weight: 30 },
         { species: Species.Seel, weight: 20 },
         { species: Species.Shellder, weight: 20 },
@@ -138,6 +170,8 @@ export default function registerOceanSpawns(): void {
         { species: Species.Seadra, weight: 10 },
       ],
       scarce: [
+        { species: Species.Sharpedo, weight: 6 },
+        { species: Species.Wailord, weight: 4 },
         { species: Species.Tentacruel, weight: 10 },
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Cloyster, weight: 10 },
@@ -155,7 +189,11 @@ export default function registerOceanSpawns(): void {
         { species: Species.Qwilfish, weight: 15 },
       ],
       prized: [...UNOWN_SPAWNS],
-      special: [{ species: Species.Lugia, weight: 10 }],
+      special: [
+        { species: Species.Latias, weight: 10 },
+        { species: Species.Latios, weight: 10 },
+        { species: Species.Lugia, weight: 10 },
+      ],
     },
   });
 }

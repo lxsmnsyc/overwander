@@ -9,7 +9,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// RBY TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.TakeDown,
@@ -42,6 +42,10 @@ const FAMILY_TEACHABLE = [
   Moves.HiddenPower,
   Moves.RainDance,
   Moves.Whirlpool,
+  Moves.Dive,
+  Moves.Facade,
+  Moves.SecretPower,
+  Moves.WaterPulse,
 ];
 
 const FAMILY_ABILITIES = [Abilities.ShellArmor, Abilities.SkillLink];
@@ -80,6 +84,7 @@ export default function registerShellderSpecies(): void {
     learnSet: {
       level: {
         1: [Moves.Tackle, Moves.Withdraw],
+        8: [Moves.IcicleSpear],
         9: [Moves.Supersonic],
         17: [Moves.AuroraBeam],
         23: [Moves.Clamp],
@@ -122,7 +127,7 @@ export default function registerShellderSpecies(): void {
         33: [Moves.Spikes],
         41: [Moves.SpikeCannon],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
+      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.Torment],
     },
   });
 }

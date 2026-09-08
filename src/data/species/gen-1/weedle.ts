@@ -117,6 +117,7 @@ export default function registerWeedleSpecies(): void {
         25: [Moves.Rage],
         30: [Moves.PinMissile, Moves.Pursuit],
         35: [Moves.Agility],
+        45: [Moves.Endeavor],
       },
       teachable: [
         Moves.SwordsDance,
@@ -149,6 +150,14 @@ export default function registerWeedleSpecies(): void {
         Moves.SweetScent,
         Moves.HiddenPower,
         Moves.SunnyDay,
+
+        Moves.AerialAce,
+        Moves.BrickBreak,
+        Moves.Facade,
+        Moves.RockSmash,
+        Moves.SecretPower,
+        Moves.SolarBeam,
+        Moves.Thief,
       ],
     },
   });

@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// RBY TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.BodySlam,
@@ -47,6 +47,11 @@ const FAMILY_TEACHABLE = [
   Moves.SunnyDay,
   Moves.ShadowBall,
   Moves.RockSmash,
+  Moves.Facade,
+  Moves.SecretPower,
+  Moves.ShockWave,
+  Moves.Taunt,
+  Moves.ThunderWave,
 ];
 
 export default function registerRattataSpecies(): void {
@@ -88,8 +93,9 @@ export default function registerRattataSpecies(): void {
         20: [Moves.FocusEnergy],
         27: [Moves.Pursuit],
         34: [Moves.SuperFang],
+        41: [Moves.Endeavor],
       },
-      teachable: [...FAMILY_TEACHABLE],
+      teachable: [...FAMILY_TEACHABLE, Moves.Cut, Moves.IceBeam],
       egg: [
         Moves.Screech,
         Moves.Bite,
@@ -97,6 +103,8 @@ export default function registerRattataSpecies(): void {
         Moves.FurySwipes,
         Moves.FlameWheel,
         Moves.Reversal,
+
+        Moves.Uproar,
       ],
     },
   });
@@ -133,6 +141,7 @@ export default function registerRattataSpecies(): void {
         27: [Moves.FocusEnergy],
         30: [Moves.Pursuit],
         40: [Moves.SuperFang],
+        50: [Moves.Endeavor],
       },
       teachable: [
         ...FAMILY_TEACHABLE,
@@ -141,6 +150,8 @@ export default function registerRattataSpecies(): void {
         Moves.Cut,
         Moves.Roar,
         Moves.Strength,
+
+        Moves.Counter,
       ],
     },
   });

@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// RBY TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.MegaPunch,
   Moves.MegaKick,
@@ -57,6 +57,14 @@ const FAMILY_TEACHABLE = [
   Moves.PsychUp,
   Moves.RockSmash,
   Moves.Whirlpool,
+  Moves.AerialAce,
+  Moves.BrickBreak,
+  Moves.CalmMind,
+  Moves.Dive,
+  Moves.Facade,
+  Moves.FocusPunch,
+  Moves.SecretPower,
+  Moves.WaterPulse,
 ];
 
 export default function registerPsyduckSpecies(): void {
@@ -92,7 +100,7 @@ export default function registerPsyduckSpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.Scratch],
+        1: [Moves.Scratch, Moves.WaterSport],
         5: [Moves.TailWhip],
         10: [Moves.Disable],
         16: [Moves.Confusion],
@@ -111,6 +119,8 @@ export default function registerPsyduckSpecies(): void {
         Moves.Foresight,
         Moves.CrossChop,
         Moves.FutureSight,
+
+        Moves.Refresh,
       ],
     },
   });
@@ -141,7 +151,7 @@ export default function registerPsyduckSpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.Scratch, Moves.TailWhip, Moves.Disable, Moves.Confusion],
+        1: [Moves.Scratch, Moves.TailWhip, Moves.Disable, Moves.Confusion, Moves.WaterSport],
         23: [Moves.Screech],
         31: [Moves.PsychUp],
         44: [Moves.FurySwipes],

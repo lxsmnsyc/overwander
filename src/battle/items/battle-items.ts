@@ -36,22 +36,18 @@ export const DIRE_HIT_CRITICAL_STAGES = 2;
  * back up further than it fell
  */
 function setupXItem(item: Items, stage: Stages): (battle: Battle) => void {
-  return createHeldItem(
-    item,
-    (battle) =>
-      new MergedLifecycle(
-        lowering(battle, (unit, fell) => {
-          if (fell !== stage) {
-            return;
-          }
+  return createHeldItem(item, (battle) =>
+    lowering(battle, (unit, fell) => {
+      if (fell !== stage) {
+        return;
+      }
 
-          const cause = spendItem(unit, item);
+      const cause = spendItem(unit, item);
 
-          if (cause) {
-            unit.addStage(stage, X_ITEM_STAGES_BOOST, cause);
-          }
-        }),
-      ),
+      if (cause) {
+        unit.addStage(stage, X_ITEM_STAGES_BOOST, cause);
+      }
+    }),
   );
 }
 
@@ -65,7 +61,7 @@ const setupDireHit = createHeldItem(Items.DireHit, (battle): Lifecycle => {
   const sharpened = new Set<Unit>();
 
   const listening = new MergedLifecycle([
-    ...lowering(battle, (unit) => {
+    lowering(battle, (unit) => {
       if (!holds(unit, Items.DireHit)) {
         return;
       }
@@ -132,14 +128,9 @@ const setupGuardSpec = createHeldItem(Items.GuardSpec, (battle) => {
     }
   }
 
-  return new MergedLifecycle([
-    battle.on(BattleEvents.CheckUnitCanAddStage, EventPriority.Post, (event) => {
-      refuse(event, event.value < 0);
-    }),
-    battle.on(BattleEvents.CheckUnitCanRemoveStage, EventPriority.Post, (event) => {
-      refuse(event, event.value > 0);
-    }),
-  ]);
+  return battle.on(BattleEvents.CheckUnitCanAddStage, EventPriority.Post, (event) => {
+    refuse(event, event.value < 0);
+  });
 });
 
 const SETUPS: ((battle: Battle) => void)[] = [

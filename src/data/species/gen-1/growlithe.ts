@@ -9,7 +9,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// RBY TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.BodySlam,
@@ -44,6 +44,12 @@ const FAMILY_TEACHABLE = [
   Moves.SunnyDay,
   Moves.RockSmash,
   Moves.Flamethrower,
+  Moves.AerialAce,
+  Moves.Facade,
+  Moves.Overheat,
+  Moves.SecretPower,
+  Moves.Strength,
+  Moves.Thief,
 ];
 
 export default function registerGrowlitheSpecies(): void {
@@ -82,13 +88,23 @@ export default function registerGrowlitheSpecies(): void {
         1: [Moves.Bite, Moves.Roar],
         9: [Moves.Ember],
         18: [Moves.Leer],
+        19: [Moves.OdorSleuth],
         26: [Moves.TakeDown],
         34: [Moves.FlameWheel],
+        37: [Moves.HelpingHand],
         39: [Moves.Agility],
         50: [Moves.Flamethrower],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.BodySlam, Moves.Thrash, Moves.FireSpin, Moves.Safeguard, Moves.Crunch],
+      egg: [
+        Moves.BodySlam,
+        Moves.Thrash,
+        Moves.FireSpin,
+        Moves.Safeguard,
+        Moves.Crunch,
+        Moves.HeatWave,
+        Moves.Howl,
+      ],
     },
   });
 
@@ -118,7 +134,15 @@ export default function registerGrowlitheSpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.Roar, Moves.Ember, Moves.Leer, Moves.TakeDown, Moves.FlameWheel],
+        1: [
+          Moves.Roar,
+          Moves.Ember,
+          Moves.Leer,
+          Moves.TakeDown,
+          Moves.FlameWheel,
+          Moves.Bite,
+          Moves.OdorSleuth,
+        ],
         50: [Moves.ExtremeSpeed],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],

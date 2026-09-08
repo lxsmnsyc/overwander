@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// GSC TM/HM and tutor moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.Thunderbolt,
@@ -32,6 +32,15 @@ const FAMILY_TEACHABLE = [
   Moves.RainDance,
   Moves.Whirlpool,
   Moves.Waterfall,
+  Moves.Blizzard,
+  Moves.Dive,
+  Moves.DoubleEdge,
+  Moves.Facade,
+  Moves.Mimic,
+  Moves.SecretPower,
+  Moves.ShockWave,
+  Moves.Substitute,
+  Moves.WaterPulse,
 ];
 
 const FAMILY_ABILITIES = [Abilities.VoltAbsorb, Abilities.Illuminate];
@@ -69,6 +78,7 @@ export default function registerChinchouSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
+        49: [Moves.Charge],
         1: [Moves.Bubble, Moves.ThunderWave],
         5: [Moves.Supersonic],
         13: [Moves.Flail],
@@ -79,7 +89,7 @@ export default function registerChinchouSpecies(): void {
         41: [Moves.HydroPump],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.Screech],
+      egg: [Moves.Screech, Moves.Amnesia],
     },
   });
 
@@ -112,6 +122,7 @@ export default function registerChinchouSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
+        61: [Moves.Charge],
         1: [Moves.Bubble, Moves.Supersonic, Moves.ThunderWave],
         13: [Moves.Flail],
         17: [Moves.WaterGun],

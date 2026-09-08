@@ -1,7 +1,7 @@
 import AleaRNG from '../core/alea';
 import { CELL_COUNT, CHUNK_CELLS, worldCell } from './grid';
 import type Biome from '../data/ids/biome';
-import { isOpenSea, isWaterBiome } from '../data/ids/biome';
+import { growsBerries, growsTrees, isOpenSea, isWaterBiome } from '../data/ids/biome';
 import { type GroundRole, isShelfAt, roleAt } from './ground';
 import type World from './world';
 import type Decoration from '../data/overworld/decoration';
@@ -65,23 +65,57 @@ const WILD_LANDMARKS = LANDMARKS.filter((kind) => !new Set(TOWN_LANDMARKS).has(k
 /**
  * The roll pool on the open seas: a berry bush cannot grow on water
  * and people have nowhere to stand, so neither bushes nor any of the
- * landmarks somebody stands at is rolled there
+ * landmarks somebody stands at is rolled there.
+ *
+ * The duel is the exception. A trainer out here is a swimmer, a
+ * sailor or somebody on a float, which `getBiomeTrainers` narrows the
+ * country's list down to, and none of them needs ground
  */
 const SEA_PEOPLE = new Set([
   Landmark.BerryPatch,
   Landmark.ApricornTree,
   Landmark.WanderingNpc,
   Landmark.TeamRocket,
-  Landmark.Trainer,
   Landmark.GymLeader,
   Landmark.EliteFour,
   Landmark.Champion,
   Landmark.Market,
   Landmark.GymSeat,
   Landmark.AuctionBoard,
+  Landmark.FrontierBrain,
 ]);
 
-const SEA_LANDMARKS = WILD_LANDMARKS.filter((kind) => !SEA_PEOPLE.has(kind));
+const BIOME_LANDMARKS = new Map<Biome, Landmark[]>();
+
+/**
+ * The pool a biome rolls its open country from: what cannot stand or
+ * grow there is out. A barren or frozen chunk bears no berries and a
+ * treeless one no apricorns, so those rolls go to something else
+ * rather than putting a bush on the lava. What belongs to a town is
+ * never in it, since a town lays its own lots
+ */
+function biomeLandmarks(biome: Biome): Landmark[] {
+  const held = BIOME_LANDMARKS.get(biome);
+
+  if (held != null) {
+    return held;
+  }
+  const pool = WILD_LANDMARKS.filter((kind) => {
+    if (isOpenSea(biome) && SEA_PEOPLE.has(kind)) {
+      return false;
+    }
+    if (kind === Landmark.BerryPatch) {
+      return growsBerries(biome);
+    }
+    if (kind === Landmark.ApricornTree) {
+      return growsTrees(biome);
+    }
+    return true;
+  });
+
+  BIOME_LANDMARKS.set(biome, pool);
+  return pool;
+}
 
 /**
  * The wild landmarks a chunk holds at most one of. A lair is a place
@@ -430,9 +464,9 @@ export default class Chunk {
     if (this.landmarkCells == null) {
       const rng = new AleaRNG(`${this.seed}landmarks`);
       const count = MIN_LANDMARKS + Math.floor(rng.random() * (MAX_LANDMARKS - MIN_LANDMARKS + 1));
-      // Nothing stands in a rock's reach, and the open seas roll from
-      // a pool without the landmarks that need ground under them
-      const base = isOpenSea(this.biome) ? SEA_LANDMARKS : WILD_LANDMARKS;
+      // Nothing stands in a rock's reach, and each biome rolls from a
+      // pool without the landmarks that cannot be there
+      const base = biomeLandmarks(this.biome);
       const order = shuffled(rng, centeredCells(PLACEMENT_AREA));
       const cells = new Map<number, Landmark>();
       const taken = new Set<number>();

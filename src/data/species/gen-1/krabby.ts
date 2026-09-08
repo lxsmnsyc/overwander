@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// RBY TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.SwordsDance,
@@ -45,6 +45,11 @@ const FAMILY_TEACHABLE = [
   Moves.RainDance,
   Moves.RockSmash,
   Moves.Whirlpool,
+  Moves.Dive,
+  Moves.Facade,
+  Moves.RockTomb,
+  Moves.SecretPower,
+  Moves.WaterPulse,
 ];
 
 const FAMILY_ABILITIES = [Abilities.HyperCutter, Abilities.ShellArmor];
@@ -85,13 +90,13 @@ export default function registerKrabbySpecies(): void {
         1: [Moves.Bubble, Moves.Leer],
         12: [Moves.ViceGrip],
         16: [Moves.Harden],
-        23: [Moves.Stomp],
+        23: [Moves.Stomp, Moves.MudShot],
         25: [Moves.Guillotine],
         34: [Moves.Protect],
         35: [Moves.Crabhammer],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.Dig, Moves.Haze, Moves.Amnesia, Moves.Slam, Moves.Flail],
+      egg: [Moves.Dig, Moves.Haze, Moves.Amnesia, Moves.Slam, Moves.Flail, Moves.KnockOff],
     },
   });
 
@@ -121,14 +126,15 @@ export default function registerKrabbySpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.Bubble, Moves.Leer, Moves.ViceGrip],
+        1: [Moves.Bubble, Moves.Leer, Moves.ViceGrip, Moves.MetalClaw],
         16: [Moves.Harden],
-        23: [Moves.Stomp],
+        23: [Moves.Stomp, Moves.MudShot],
         25: [Moves.Guillotine],
         38: [Moves.Protect],
         42: [Moves.Crabhammer],
+        65: [Moves.Flail],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
+      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.Dig],
     },
   });
 }

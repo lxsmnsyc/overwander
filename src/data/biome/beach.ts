@@ -15,6 +15,7 @@ export default function registerBeachSpawns(): void {
         { species: Species.Shellder, weight: 20 },
         { species: Species.Krabby, weight: 20 },
         { species: Species.Goldeen, weight: 20 },
+        { species: Species.Wingull, weight: 25 },
       ],
       rare: [{ species: Species.Wartortle, weight: 1 }],
       scarce: [
@@ -24,10 +25,12 @@ export default function registerBeachSpawns(): void {
         { species: Species.Seaking, weight: 10 },
         { species: Species.Vaporeon, weight: 5 },
         { species: Species.Slowking, weight: 5 },
+        { species: Species.Pelipper, weight: 10 },
       ],
       elusive: [
         { species: Species.Blastoise, weight: 2 },
         { species: Species.Corsola, weight: 20 },
+        { species: Species.Luvdisc, weight: 15 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [],
@@ -40,6 +43,7 @@ export default function registerBeachSpawns(): void {
         { species: Species.Shellder, weight: 20 },
         { species: Species.Krabby, weight: 20 },
         { species: Species.Goldeen, weight: 20 },
+        { species: Species.Wingull, weight: 25 },
       ],
       rare: [{ species: Species.Wartortle, weight: 1 }],
       scarce: [
@@ -49,10 +53,12 @@ export default function registerBeachSpawns(): void {
         { species: Species.Seaking, weight: 10 },
         { species: Species.Vaporeon, weight: 5 },
         { species: Species.Slowking, weight: 5 },
+        { species: Species.Pelipper, weight: 10 },
       ],
       elusive: [
         { species: Species.Blastoise, weight: 2 },
         { species: Species.Corsola, weight: 20 },
+        { species: Species.Luvdisc, weight: 15 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [],

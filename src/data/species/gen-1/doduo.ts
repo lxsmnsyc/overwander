@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// RBY TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.BodySlam,
@@ -39,6 +39,9 @@ const FAMILY_TEACHABLE = [
   Moves.Frustration,
   Moves.HiddenPower,
   Moves.SunnyDay,
+  Moves.AerialAce,
+  Moves.Facade,
+  Moves.SecretPower,
 ];
 
 const FAMILY_ABILITIES = [Abilities.RunAway, Abilities.EarlyBird];
@@ -82,10 +85,18 @@ export default function registerDoduoSpecies(): void {
         21: [Moves.TriAttack],
         25: [Moves.Rage],
         30: [Moves.DrillPeck],
+        33: [Moves.Uproar],
         37: [Moves.Agility],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.QuickAttack, Moves.Supersonic, Moves.Haze, Moves.Flail, Moves.FeintAttack],
+      egg: [
+        Moves.QuickAttack,
+        Moves.Supersonic,
+        Moves.Haze,
+        Moves.Flail,
+        Moves.FeintAttack,
+        Moves.Endeavor,
+      ],
     },
   });
 
@@ -119,9 +130,10 @@ export default function registerDoduoSpecies(): void {
         21: [Moves.TriAttack],
         25: [Moves.Rage],
         30: [Moves.DrillPeck],
+        38: [Moves.Uproar],
         47: [Moves.Agility],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
+      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.Taunt, Moves.Torment],
     },
   });
 }

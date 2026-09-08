@@ -1,6 +1,7 @@
 import type Battle from '../../core';
 import bulbasaurToPikachu from './bulbasaur-to-pikachu';
 import geodudeToDrowzee from './geodude-to-drowzee';
+import krabbyToPinsir from './krabby-to-pinsir';
 import parasToTentacool from './paras-to-tentacool';
 import sandshrewToOddish from './sandshrew-to-oddish';
 
@@ -13,6 +14,7 @@ const setupAbilities = [
   ...sandshrewToOddish,
   ...parasToTentacool,
   ...geodudeToDrowzee,
+  ...krabbyToPinsir,
 ];
 
 export default function setupSignatureAbilities(battle: Battle): void {

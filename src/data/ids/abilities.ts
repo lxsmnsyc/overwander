@@ -340,6 +340,10 @@ const enum Abilities {
   SleekHide = 200037,
   CorrosiveOoze = 200038,
   SpikeShell = 200039,
+  FadingPresence = 200040,
+  LivingTunnel = 200041,
+  DreamSiphon = 200042,
+  HeavyPincer = 200043,
 }
 
 export default Abilities;

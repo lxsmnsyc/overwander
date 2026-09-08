@@ -1,8 +1,11 @@
 import { AttackPriority, EventPriority } from '../../../core/event-emitter';
 import { Stats } from '../../../data/constants/stats';
+import { Types } from '../../../data/constants/types';
 import Abilities from '../../../data/ids/abilities';
+import { Statuses } from '../../../data/ids/status';
 import { DamageFlags, MoveAttackFlags, MoveCategories } from '../../../data/ids/moves';
-import { BattleEvents, EffectType } from '../../events';
+import type Battle from '../../core';
+import { BattleEvents, EffectType, MoveTargetType } from '../../events';
 import { MergedLifecycle } from '../../lifecycle';
 import type Unit from '../../unit';
 import { onUnitActs, stealableItem, unitTarget } from '../../utils';
@@ -24,6 +27,18 @@ export const DELAYED_REACTION_DELAY = 4000;
 /** What the field does to anything thrown rather than swung */
 export const REPULSION_FIELD_SCALE = 0.9;
 
+/** What a shape half there is worth missing, and worth hitting */
+export const FADING_PRESENCE_ACCURACY_SCALE = 0.85;
+export const FADING_PRESENCE_DAMAGE_SCALE = 1.3;
+
+/** What the tunnel is worth to the party, and what holding it costs */
+export const LIVING_TUNNEL_ALLY_SCALE = 0.8;
+export const LIVING_TUNNEL_SELF_SCALE = 1.2;
+
+/** What a sleeper on the field is worth to it, in power and in health */
+export const DREAM_SIPHON_POWER_SCALE = 1.25;
+export const DREAM_SIPHON_HEAL_FRACTION = 1 / 16;
+
 /** How often the spare head gets a turn, and what its blow is worth */
 export const SECOND_HEAD_INTERVAL = 3;
 export const SECOND_HEAD_POWER_SCALE = 0.5;
@@ -40,6 +55,17 @@ export const SPIKE_SHELL_FRACTION = 1 / 8;
 export const LEEK_DUELIST_CRITICAL_STAGES = 2;
 export const LEEK_DUELIST_CRITICAL_SCALE = 1.25;
 export const LEEK_DUELIST_EXPOSED_SCALE = 1.25;
+
+/** Whether anything on the far side is asleep for the siphon to read */
+function anyEnemyAsleep(battle: Battle, unit: Unit): boolean {
+  for (const enemy of battle.units(unit.team.alliance)) {
+    if (enemy.alive && enemy.status[Statuses.Sleeping] != null) {
+      return true;
+    }
+  }
+
+  return false;
+}
 
 /** Half a blow, waiting for the duck to notice it */
 interface Debt {
@@ -381,6 +407,104 @@ const geodudeToDrowzee = [
           );
         }),
         createContactHazard(battle, Abilities.SpikeShell),
+      ]),
+  ),
+
+  // Gastly: there is not much there to aim at, and not much there to
+  // stop what does arrive
+  createAbility(
+    Abilities.FadingPresence,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.CheckUnitMoveAccuracy, EventPriority.Post, (event) => {
+          if (
+            event.accuracy != null &&
+            event.target.type === MoveTargetType.Unit &&
+            event.target.unit !== event.source &&
+            event.target.unit.hasAbility(Abilities.FadingPresence)
+          ) {
+            event.accuracy *= FADING_PRESENCE_ACCURACY_SCALE;
+          }
+        }),
+        battle.on(BattleEvents.UnitAttackResolveStat, EventPriority.Post, (event) => {
+          const parent = event.parent;
+
+          if (
+            event.unit === parent.source &&
+            (event.stat === Stats.Attack || event.stat === Stats.SpecialAttack) &&
+            parent.target.hasAbility(Abilities.FadingPresence)
+          ) {
+            event.value *= FADING_PRESENCE_DAMAGE_SCALE;
+          }
+        }),
+      ]),
+  ),
+
+  // Onix: the party fights from behind it, and what the rock turns
+  // aside from them it takes itself
+  createAbility(Abilities.LivingTunnel, (battle) =>
+    battle.on(BattleEvents.UnitAttackResolveStat, EventPriority.Post, (event) => {
+      const parent = event.parent;
+      const target = parent.target;
+
+      if (
+        event.unit !== parent.source ||
+        (event.stat !== Stats.Attack && event.stat !== Stats.SpecialAttack) ||
+        (parent.type !== Types.Rock && parent.type !== Types.Ground)
+      ) {
+        return;
+      }
+
+      if (target.hasAbility(Abilities.LivingTunnel)) {
+        event.value *= LIVING_TUNNEL_SELF_SCALE;
+        return;
+      }
+
+      for (const ally of battle.units()) {
+        if (
+          ally !== target &&
+          ally.alive &&
+          ally.team.alliance === target.team.alliance &&
+          ally.hasAbility(Abilities.LivingTunnel)
+        ) {
+          event.value *= LIVING_TUNNEL_ALLY_SCALE;
+          return;
+        }
+      }
+    }),
+  ),
+
+  // Drowzee: it feeds on somebody else's sleep, so the pendulum is
+  // worth swinging before anything else
+  createAbility(
+    Abilities.DreamSiphon,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
+          if (
+            event.stat === Stats.SpecialAttack &&
+            event.source.hasAbility(Abilities.DreamSiphon) &&
+            anyEnemyAsleep(battle, event.source)
+          ) {
+            event.value *= DREAM_SIPHON_POWER_SCALE;
+          }
+        }),
+        // No clock to hang a residual on: it is taken as the sleeper's
+        // dream is, whenever the siphon reaches for a move
+        ...onUnitActs(battle, (unit) => {
+          if (!unit.hasAbility(Abilities.DreamSiphon) || !anyEnemyAsleep(battle, unit)) {
+            return;
+          }
+
+          unit.triggerAbility(Abilities.DreamSiphon);
+
+          unit.heal(
+            { type: EffectType.Ability, ability: Abilities.DreamSiphon, unit },
+            unit,
+            unit.checkStat(Stats.HP, 0) * DREAM_SIPHON_HEAL_FRACTION,
+            0,
+          );
+        }),
       ]),
   ),
 ];

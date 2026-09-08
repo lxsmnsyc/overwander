@@ -17,13 +17,23 @@ import {
   TWIN_STINGER_POWER_SCALE,
 } from '../../../src/battle/abilities/signature/bulbasaur-to-pikachu';
 import {
+  HEAVY_PINCER_SCALE,
+  HEAVY_PINCER_THRESHOLD,
+} from '../../../src/battle/abilities/signature/krabby-to-pinsir';
+import {
   DELAYED_REACTION_DELAY,
   DELAYED_REACTION_SHARE,
+  DREAM_SIPHON_HEAL_FRACTION,
+  DREAM_SIPHON_POWER_SCALE,
+  FADING_PRESENCE_ACCURACY_SCALE,
+  FADING_PRESENCE_DAMAGE_SCALE,
   GALLOP_MAX_STACKS,
   GALLOP_STEP,
   LEEK_DUELIST_CRITICAL_SCALE,
   LEEK_DUELIST_CRITICAL_STAGES,
   LEEK_DUELIST_EXPOSED_SCALE,
+  LIVING_TUNNEL_ALLY_SCALE,
+  LIVING_TUNNEL_SELF_SCALE,
   REPULSION_FIELD_SCALE,
   SECOND_HEAD_INTERVAL,
   SECOND_HEAD_POWER_SCALE,
@@ -1483,5 +1493,104 @@ describe('Spike Shell', () => {
     enemy.attack(holder, Moves.Pound, 40, Types.Normal, MoveCategories.Physical, 0);
 
     expect(before - enemy.health).toBeCloseTo(maxHP * SPIKE_SHELL_FRACTION, 5);
+  });
+});
+
+describe('Fading Presence', () => {
+  it('is hard to aim at and soft when hit', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.FadingPresence);
+
+    expect(
+      enemy.checkMoveAccuracy(Moves.Pound, { type: MoveTargetType.Unit, unit: holder }),
+    ).toBeCloseTo(100 * FADING_PRESENCE_ACCURACY_SCALE, 5);
+
+    const incoming = makeAttack(enemy, holder, Moves.Pound, Types.Normal, MoveCategories.Physical);
+
+    expect(resolveAttackStat(battle, incoming, enemy, Stats.Attack, 100)).toBeCloseTo(
+      100 * FADING_PRESENCE_DAMAGE_SCALE,
+      5,
+    );
+  });
+});
+
+describe('Living Tunnel', () => {
+  it('turns Rock and Ground aside from allies and takes them itself', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.LivingTunnel);
+
+    const atAlly = makeAttack(enemy, ally, Moves.RockThrow, Types.Rock, MoveCategories.Physical);
+    const atHolder = makeAttack(
+      enemy,
+      holder,
+      Moves.RockThrow,
+      Types.Rock,
+      MoveCategories.Physical,
+    );
+    const other = makeAttack(enemy, ally, Moves.Pound, Types.Normal, MoveCategories.Physical);
+
+    expect(resolveAttackStat(battle, atAlly, enemy, Stats.Attack, 100)).toBeCloseTo(
+      100 * LIVING_TUNNEL_ALLY_SCALE,
+      5,
+    );
+    expect(resolveAttackStat(battle, atHolder, enemy, Stats.Attack, 100)).toBeCloseTo(
+      100 * LIVING_TUNNEL_SELF_SCALE,
+      5,
+    );
+
+    // Only the two types the rock stands in the way of
+    expect(resolveAttackStat(battle, other, enemy, Stats.Attack, 100)).toBe(100);
+  });
+});
+
+describe('Dream Siphon', () => {
+  it('feeds on a sleeping enemy in power and in health', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.DreamSiphon);
+
+    const bare = holder.checkStat(Stats.SpecialAttack, 0);
+    const maxHP = holder.checkStat(Stats.HP, 0);
+    holder.setHealth(maxHP / 2);
+
+    act(battle, holder);
+
+    expect(holder.checkStat(Stats.SpecialAttack, 0)).toBe(bare);
+    expect(holder.health).toBeCloseTo(maxHP / 2, 5);
+
+    enemy.addStatus(Statuses.Sleeping, NONE_CAUSE);
+
+    expect(holder.checkStat(Stats.SpecialAttack, 0)).toBeCloseTo(
+      bare * DREAM_SIPHON_POWER_SCALE,
+      5,
+    );
+
+    act(battle, holder);
+
+    expect(holder.health).toBeCloseTo(maxHP / 2 + maxHP * DREAM_SIPHON_HEAL_FRACTION, 5);
+  });
+});
+
+describe('Heavy Pincer', () => {
+  it('closes the claw properly only while it has strength left', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.HeavyPincer);
+
+    const target = { type: MoveTargetType.Unit, unit: enemy } as const;
+
+    expect(holder.checkMovePower(Moves.Pound, target)).toBeCloseTo(40 * HEAVY_PINCER_SCALE, 5);
+    expect(holder.checkMovePower(Moves.Ember, target)).toBe(40);
+
+    holder.setHealth(holder.checkStat(Stats.HP, 0) * HEAVY_PINCER_THRESHOLD - 1);
+
+    expect(holder.checkMovePower(Moves.Pound, target)).toBe(40);
   });
 });

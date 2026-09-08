@@ -30,16 +30,16 @@ without one can neither see nor reach the last three.
 Each pokemon that appears rolls first for a rarity band, then for a species
 within that band.
 
-| Band     | Odds     | What is in it                                              |
-| -------- | -------- | ---------------------------------------------------------- |
-| Mythical | 1/4096   | Mythicals                                                  |
-| Special  | 1/4096   | Legendaries                                                |
-| Prized   | 1/512    | Babies and unowns                                          |
+| Band     | Odds     | What is in it                                                |
+| -------- | -------- | ------------------------------------------------------------ |
+| Mythical | 1/4096   | Mythicals                                                    |
+| Special  | 1/4096   | Legendaries                                                  |
+| Prized   | 1/512    | Babies and unowns                                            |
 | Elusive  | 1/32     | The end of a three-stage line, and species that never evolve |
-| Scarce   | 1/16     | The end of a two-stage line                                |
-| Rare     | 1/8      | The middle of a three-stage line                           |
-| Uncommon | 1/4      | The first stage of a two-stage line                        |
-| Base     | The rest | The first stage of a three-stage line                      |
+| Scarce   | 1/16     | The end of a two-stage line                                  |
+| Rare     | 1/8      | The middle of a three-stage line                             |
+| Uncommon | 1/4      | The first stage of a two-stage line                          |
+| Base     | The rest | The first stage of a three-stage line                        |
 
 A baby is not counted as a stage: it has a band of its own, so the line behind
 it is one stage shorter. Pichu is prized, Pikachu is the first stage of a
@@ -71,20 +71,20 @@ the species once, however many of its forms you have met.
 ### Level
 
 Level comes from the line itself: a stage is met between the level it can first
-exist at and the level it stops being itself at. A Charmander is 5–16, a
-Charmeleon 16–36, a Charizard 36–60.
+exist at and the level it stops being itself at. A Charmander is 5 to 16, a
+Charmeleon 16 to 36, a Charizard 36 to 60.
 
-| What was met                                | Level range                        |
-| ------------------------------------------- | ---------------------------------- |
-| A first stage that evolves at a level        | 5 to that level                    |
-| A first stage that evolves some other way    | 5–30                               |
-| A middle stage that evolves at a level       | The level it arrived at, to that level |
-| A middle stage that evolves some other way   | 30–50                              |
-| The end of a two-stage line                  | The level it arrived at, to 50     |
-| The end of a three-stage line                | The level it arrived at, to 60     |
-| A species that never evolves                 | 10–50                              |
-| A baby or an unown                           | 5–10                               |
-| A legendary or a mythical                    | 1–100                              |
+| What was met                               | Level range                            |
+| ------------------------------------------ | -------------------------------------- |
+| A first stage that evolves at a level      | 5 to that level                        |
+| A first stage that evolves some other way  | 5 to 30                                |
+| A middle stage that evolves at a level     | The level it arrived at, to that level |
+| A middle stage that evolves some other way | 30 to 50                               |
+| The end of a two-stage line                | The level it arrived at, to 50         |
+| The end of a three-stage line              | The level it arrived at, to 60         |
+| A species that never evolves               | 10 to 50                               |
+| A baby or an unown                         | 5 to 10                                |
+| A legendary or a mythical                  | 1 to 100                               |
 
 Where no level is named, because the step was a stone, a trade or an evolution
 a later generation holds, the stage starts at 30 instead.
@@ -186,25 +186,25 @@ secretly a stronger pokemon.
 The pokemon walking beside a player changes what they find. Some effects come
 from the buddy's ability, others from what it is holding.
 
-| Effect                                       | Source    | What it does                                              |
-| -------------------------------------------- | --------- | --------------------------------------------------------- |
-| **Synchronize**                              | Ability   | Half of the pokemon met share the buddy's nature          |
-| **Cute Charm**                               | Ability   | Two in three come out the opposite gender to the buddy    |
-| **Arena Trap**, **Illuminate**, **No Guard** | Ability   | Three extra pokemon become visible and meetable           |
-| **Illuminate**                               | Ability   | A lantern as well: sees more than twice as far in the dark |
-| **Stench**                                   | Ability   | Two fewer pokemon come near                               |
-| **Keen Eye**, **Intimidate**                 | Ability   | The bottom of the level band lifts by three               |
-| **Hustle**, **Pressure**, **Vital Spirit**   | Ability   | The top of the level band lifts by three                  |
+| Effect                                       | Source    | What it does                                                       |
+| -------------------------------------------- | --------- | ------------------------------------------------------------------ |
+| **Synchronize**                              | Ability   | Half of the pokemon met share the buddy's nature                   |
+| **Cute Charm**                               | Ability   | Two in three come out the opposite gender to the buddy             |
+| **Arena Trap**, **Illuminate**, **No Guard** | Ability   | Three extra pokemon become visible and meetable                    |
+| **Illuminate**                               | Ability   | A lantern as well: sees more than twice as far in the dark         |
+| **Stench**                                   | Ability   | Two fewer pokemon come near                                        |
+| **Keen Eye**, **Intimidate**                 | Ability   | The bottom of the level band lifts by three                        |
+| **Hustle**, **Pressure**, **Vital Spirit**   | Ability   | The top of the level band lifts by three                           |
 | **Compound Eyes**                            | Ability   | The two rare held-item slots turn up two and a half times as often |
-| **Frisk**                                    | Ability   | Shows what a wild pokemon is carrying before a throw      |
-| **Flame Body**                               | Ability   | An egg picked up beside it hatches in half the walk       |
-| **Pickup**                                   | Ability   | Finds an item every 512 steps walked                      |
-| **Shiny Charm**                              | Held item | Eight times the shiny odds                                |
-| **Exp. Share**                               | Held item | Half of catches also pay candy to the _buddy's_ family    |
-| **Lucky Egg**                                | Held item | Half of catches pay extra candy to the _caught_ family    |
-| **Luck Incense**                             | Held item | Doubles the gold a raid or a beaten grunt pays            |
-| **Pure Incense**, **Cleanse Tag**            | Held item | Three fewer pokemon appear, for crossing a chunk in peace |
-| **Amulet Coin**                              | Held item | Trebles the gold a raid or a beaten grunt pays            |
+| **Frisk**                                    | Ability   | Shows what a wild pokemon is carrying before a throw               |
+| **Flame Body**                               | Ability   | An egg picked up beside it hatches in half the walk                |
+| **Pickup**                                   | Ability   | Finds an item every 512 steps walked                               |
+| **Shiny Charm**                              | Held item | Eight times the shiny odds                                         |
+| **Exp. Share**                               | Held item | Half of catches also pay candy to the _buddy's_ family             |
+| **Lucky Egg**                                | Held item | Half of catches pay extra candy to the _caught_ family             |
+| **Luck Incense**                             | Held item | Doubles the gold a raid or a beaten grunt pays                     |
+| **Pure Incense**, **Cleanse Tag**            | Held item | Three fewer pokemon appear, for crossing a chunk in peace          |
+| **Amulet Coin**                              | Held item | Trebles the gold a raid or a beaten grunt pays                     |
 
 Cute Charm does nothing when either pokemon is genderless.
 

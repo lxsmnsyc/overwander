@@ -31,8 +31,8 @@ Overwander is a fan project. **Pokémon** is a trademark of Nintendo, Creatures
 Inc. and GAME FREAK Inc., and The Pokémon Company owns the franchise. None of
 them is affiliated with this project, has endorsed it, or has seen it. The
 species, moves, abilities, items and type chart are theirs. The names are used
-for one reason only: a Gen 1 game that renamed Bulbasaur would not be a Gen 1
-game. Nothing here is sold, and nothing here is offered as an official product.
+for one reason only: a game of these species that renamed Bulbasaur would not be
+a game of these species. Nothing here is sold, and nothing here is offered as an official product.
 
 ## The libraries
 
@@ -149,8 +149,8 @@ it.
 
 ## The rules
 
-The dex is Gen 1, with 151 species and their moves, abilities and items, but the
-mechanics are the modern ones wherever the two disagree: the special split, the
+The dex runs to 251, with those species and their moves, abilities and items,
+but the mechanics are the modern ones wherever the two disagree: the special split, the
 current type chart, natures, effort values, abilities, held items and
 friendship. All of that is the mainline games' design, reimplemented here from
 the published behaviour rather than copied from anything. The tables in

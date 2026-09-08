@@ -112,7 +112,7 @@ None of this affects the fight itself.
 ## Damage
 
 ```text
-damage = base damage × critical × 0.85–1.00 × type matchup × same-type bonus
+damage = base damage × critical × roll (0.85 up to 1.00) × type matchup × same-type bonus
 ```
 
 | Part                | Effect                                                    |
@@ -145,25 +145,25 @@ the fight. A pokemon can leave a raid both poisoned and asleep.
 Statuses that chip away do so on a clock, since there are no turns. Every
 **two seconds**, which is roughly one move and what a turn used to be worth:
 
-| What is chipping | How much of the maximum it takes  |
-| ---------------- | --------------------------------- |
-| **Poison**       | An eighth                         |
-| **Bad poison**   | A sixteenth, growing with each bite |
+| What is chipping | How much of the maximum it takes            |
+| ---------------- | ------------------------------------------- |
+| **Poison**       | An eighth                                   |
+| **Bad poison**   | A sixteenth, growing with each bite         |
 | **Sand, hail**   | A sixteenth, to whoever is not built for it |
 
 A status that runs out on its own runs out on that clock too:
 
-| Status                      | How long it lasts                         |
-| --------------------------- | ----------------------------------------- |
-| Flinching                   | 2 seconds                                 |
-| Recharging after a beam     | 2 seconds                                 |
-| Sleep                       | 4 seconds                                 |
-| Confusion                   | 4 to 10 seconds                           |
-| Freeze                      | 10 seconds, or until a Fire move thaws it |
-| Being trapped               | 8 seconds, biting every 2                 |
-| Reflect, Light Screen, Mist | 10 seconds                                |
-| Weather                     | 10 seconds                                |
-| A disabled move             | 8 seconds                                 |
+| Status                      | How long it lasts                          |
+| --------------------------- | ------------------------------------------ |
+| Flinching                   | 2 seconds                                  |
+| Recharging after a beam     | 2 seconds                                  |
+| Sleep                       | 4 seconds                                  |
+| Confusion                   | 4 to 10 seconds                            |
+| Freeze                      | 10 seconds, or until a Fire move thaws it  |
+| Being trapped               | 8 seconds, biting every 2                  |
+| Reflect, Light Screen, Mist | 10 seconds                                 |
+| Weather                     | 10 seconds                                 |
+| A disabled move             | 8 seconds                                  |
 | Perish Song                 | 8 seconds, and then whoever heard it falls |
 
 Poison, bad poison, burn and paralysis have no clock at all: they last until
@@ -188,12 +188,12 @@ A fight ends as soon as it can go nowhere: nothing is mid-move, and no surviving
 pokemon can act against an enemy. That covers the awkward cases, such as a side
 that is alive but permanently unable to do anything.
 
-| Situation                           | Result                                                                  |
-| ----------------------------------- | ----------------------------------------------------------------------- |
-| One side still standing             | That side wins                                                          |
+| Situation                           | Result                                                                 |
+| ----------------------------------- | ---------------------------------------------------------------------- |
+| One side still standing             | That side wins                                                         |
 | Nobody standing, in a raid          | The party wins. A boss taken down with the last of the party is beaten |
-| Nobody standing, anywhere else      | A draw                                                                  |
-| Both sides standing, nobody can act | A draw                                                                  |
+| Nobody standing, anywhere else      | A draw                                                                 |
+| Both sides standing, nobody can act | A draw                                                                 |
 
 The result appears in a dialog the moment the fight settles, naming the outcome
 and what it was worth. Closing it leaves the player standing on the finished
@@ -301,14 +301,14 @@ A duelling trainer and a Team Rocket grunt field what they caught. Everybody
 above them fields pokemon that were **trained**, which is most of what makes the
 same six harder from their side of the field:
 
-| Whose party        | Abilities | Held items | Individual values | Training |
-| ------------------ | --------- | ---------- | ----------------- | -------- |
-| Trainer, grunt     | 1         | None       | Rolled, like anything wild | None |
-| Ace Trainer        | 1         | None       | Perfect HP and Speed, the rest rolled | 252 in those two, 50 in the rest |
-| Gym leader         | 1         | 1          | A flat 10 in every stat | 50 in every stat |
-| Elite Four, executive | 2      | 1          | Perfect HP and Speed, the rest rolled | 252 in those two, 50 in the rest |
-| Champion, Giovanni | 2         | 2          | Perfect HP, Speed and its better attacking and defending stat, the rest rolled | 252 in those four, 50 in the rest |
-| Legend             | 3         | 3          | Perfect, all six | 252 in every stat |
+| Whose party           | Abilities | Held items | Individual values                                                              | Training                          |
+| --------------------- | --------- | ---------- | ------------------------------------------------------------------------------ | --------------------------------- |
+| Trainer, grunt        | 1         | None       | Rolled, like anything wild                                                     | None                              |
+| Ace Trainer           | 1         | None       | Perfect HP and Speed, the rest rolled                                          | 252 in those two, 50 in the rest  |
+| Gym leader            | 1         | 1          | A flat 10 in every stat                                                        | 50 in every stat                  |
+| Elite Four, executive | 2         | 1          | Perfect HP and Speed, the rest rolled                                          | 252 in those two, 50 in the rest  |
+| Champion, Giovanni    | 2         | 2          | Perfect HP, Speed and its better attacking and defending stat, the rest rolled | 252 in those four, 50 in the rest |
+| Legend                | 3         | 3          | Perfect, all six                                                               | 252 in every stat                 |
 
 Which stats an expert polishes is read off the species rather than picked: HP and
 Speed first, since every party wants to move first and stay standing, then the
@@ -350,17 +350,17 @@ its side's band, so a party has a spread rather than a rank. Which type expert i
 standing at a trainer cell depends on the country; see
 [People you meet](npcs.md).
 
-| Who                   | What they field                      | Levels |
-| --------------------- | ------------------------------------ | ------ |
-| **Type expert**       | Three to five of their own type      | 40-60  |
-| **Team Rocket grunt** | Six shadows: one common, two uncommon, three rare | 40-60 |
-| **Gym leader**        | Five of their gym's type, and their signature sixth | 45-65 |
-| **Ace Trainer**       | Five fully-grown pokemon of any type | 60-80  |
-| **Rocket executive**  | Six shadows of the biome's rare band | 65-85  |
-| **Elite Four**        | Five of their own kind, and their signature sixth | 65-85 |
-| **Giovanni**          | Six shadows, one of them a legendary | 85-100 |
-| **Champion**          | Their own signature six              | 85-100 |
-| **Legend**            | Their own signature six              | 100    |
+| Who                   | What they field                                     | Levels |
+| --------------------- | --------------------------------------------------- | ------ |
+| **Type expert**       | Three to five of their own type                     | 40-60  |
+| **Team Rocket grunt** | Six shadows: one common, two uncommon, three rare   | 40-60  |
+| **Gym leader**        | Five of their gym's type, and their signature sixth | 45-65  |
+| **Ace Trainer**       | Five fully-grown pokemon of any type                | 60-80  |
+| **Rocket executive**  | Six shadows of the biome's rare band                | 65-85  |
+| **Elite Four**        | Five of their own kind, and their signature sixth   | 65-85  |
+| **Giovanni**          | Six shadows, one of them a legendary                | 85-100 |
+| **Champion**          | Their own signature six                             | 85-100 |
+| **Legend**            | Their own signature six                             | 100    |
 
 ## Gym seats
 
@@ -420,21 +420,21 @@ The purse climbs with the fight. It is read against the **valuables**, which are
 the only prices the world sets rather than a shopkeeper: a nugget off the ground
 sells for 10,000, so nothing worth beating pays less than tripping over one.
 
-| Fight                 | Gold                         | What else                                |
-| --------------------- | ---------------------------- | ---------------------------------------- |
-| **Duelling trainer**  | 5,000 to 15,000              | Nothing: they keep their party           |
-| **Ace Trainer**       | 25,000 to 60,000             | The same                                 |
+| Fight                 | Gold                         | What else                                              |
+| --------------------- | ---------------------------- | ------------------------------------------------------ |
+| **Duelling trainer**  | 5,000 to 15,000              | Nothing: they keep their party                         |
+| **Ace Trainer**       | 25,000 to 60,000             | The same                                               |
 | **Team Rocket grunt** | 5,000 to 15,000              | One of the three it was not fighting with, at level 10 |
-| **Rocket executive**  | 40,000 to 90,000             | Any one of their six, and an item they were carrying |
-| **Giovanni**          | 120,000 to 250,000           | Any one of his six, the legendary included |
-| **Gym leader**        | 20,000 to 50,000             | Their badge, and a machine of their type |
-| **Elite Four**        | 50,000 to 110,000            | Their mark, and an item                  |
-| **Champion**          | 150,000 to 300,000           | The league's title, and an item          |
-| **Shadow raid**       | 35,000                       | A shadow, at level 25                    |
-| **Legendary raid**    | 80,000                       | The legendary, at level 50               |
-| **Mythical raid**     | 200,000                      | The mythical, at level 30                |
-| **Gym seat**          | A tenth of the loser's purse | The cell, if you want to sit on it       |
-| **Duel**              | Nothing                      | Nothing                                  |
+| **Rocket executive**  | 40,000 to 90,000             | Any one of their six, and an item they were carrying   |
+| **Giovanni**          | 120,000 to 250,000           | Any one of his six, the legendary included             |
+| **Gym leader**        | 20,000 to 50,000             | Their badge, and a machine of their type               |
+| **Elite Four**        | 50,000 to 110,000            | Their mark, and an item                                |
+| **Champion**          | 150,000 to 300,000           | The league's title, and an item                        |
+| **Shadow raid**       | 35,000                       | A shadow, at level 25                                  |
+| **Legendary raid**    | 80,000                       | The legendary, at level 50                             |
+| **Mythical raid**     | 200,000                      | The mythical, at level 30                              |
+| **Gym seat**          | A tenth of the loser's purse | The cell, if you want to sit on it                     |
+| **Duel**              | Nothing                      | Nothing                                                |
 
 The item an executive, one of the Elite Four or a Champion leaves is drawn from
 the same pool the ground hides things in, weighted higher the further up the

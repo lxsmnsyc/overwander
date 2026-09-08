@@ -68,24 +68,24 @@ same chunk has the same landmarks on the same cells permanently; only their
 contents change. Most may repeat, so one chunk may hold two berry patches; a
 few are one to a chunk, marked below.
 
-| Landmark            | Description                                                     |
-| ------------------- | --------------------------------------------------------------- |
-| **Item Cache**      | A buried stash of items                                         |
-| **Berry Patch**     | A bush bearing one kind of berry                                |
-| **Apricorn Tree**   | A tree bearing one colour of apricorn, for Kurt to carve        |
-| **Nest**            | An egg of a local species                                       |
-| **Legendary Raid**  | A legendary's lair; the raid is named after the place           |
-| **Shadow Raid**     | A lair with something wrong in it                               |
-| **Wandering NPC**   | Whoever is passing through: a breeder, a nurse, a chef          |
-| **Market**          | A vendor's stall, behind one of the trade's four counters       |
-| **Auction Board**   | The region's lots, and the only way to them. One to a chunk     |
-| **Team Rocket**     | A grunt barring the cell, one window in eight an executive, and once in a while Giovanni |
-| **Trainer**         | A duelling trainer: an Ace, or an expert in one type            |
-| **Gym Seat**        | A team another player left standing, to be fought. One to a chunk |
-| **Gym Leader**      | One of the sixteen, with a badge on the line. One to a chunk |
-| **Elite Four**      | One of the eight, for a challenger holding their league's badges  |
-| **Champion**        | Blue or Lance, for whoever has beaten their league's Elite Four. They field the team they are known for, and one window in sixty-four a legend has the seat instead. One to a chunk |
-| **Portal**          | A way through to another portal, for the price of a Portal Key. One to a chunk |
+| Landmark           | Description                                                                                                                                                                         |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Item Cache**     | A buried stash of items                                                                                                                                                             |
+| **Berry Patch**    | A bush bearing one kind of berry                                                                                                                                                    |
+| **Apricorn Tree**  | A tree bearing one colour of apricorn, for Kurt to carve                                                                                                                            |
+| **Nest**           | An egg of a local species                                                                                                                                                           |
+| **Legendary Raid** | A legendary's lair; the raid is named after the place                                                                                                                               |
+| **Shadow Raid**    | A lair with something wrong in it                                                                                                                                                   |
+| **Wandering NPC**  | Whoever is passing through: a breeder, a nurse, a chef                                                                                                                              |
+| **Market**         | A vendor's stall, behind one of the trade's four counters                                                                                                                           |
+| **Auction Board**  | The region's lots, and the only way to them. One to a chunk                                                                                                                         |
+| **Team Rocket**    | A grunt barring the cell, one window in eight an executive, and once in a while Giovanni                                                                                            |
+| **Trainer**        | A duelling trainer: an Ace, or an expert in one type                                                                                                                                |
+| **Gym Seat**       | A team another player left standing, to be fought. One to a chunk                                                                                                                   |
+| **Gym Leader**     | One of the sixteen, with a badge on the line. One to a chunk                                                                                                                        |
+| **Elite Four**     | One of the eight, for a challenger holding their league's badges                                                                                                                    |
+| **Champion**       | Blue or Lance, for whoever has beaten their league's Elite Four. They field the team they are known for, and one window in sixty-four a legend has the seat instead. One to a chunk |
+| **Portal**         | A way through to another portal, for the price of a Portal Key. One to a chunk                                                                                                      |
 
 Walking up to a wandering cell does not reveal in advance which specialist is
 standing there. The market, the board and the seat are fixtures: a stall is
@@ -142,12 +142,12 @@ found in a chunk says nothing about what another player will find there.
 
 Four periods divide the day, and each has its own pokemon:
 
-| Period  | Hours       |
-| ------- | ----------- |
-| Morning | 04:00–10:00 |
-| Day     | 10:00–17:00 |
-| Evening | 17:00–20:00 |
-| Night   | 20:00–04:00 |
+| Period  | Hours          |
+| ------- | -------------- |
+| Morning | 04:00 to 10:00 |
+| Day     | 10:00 to 17:00 |
+| Evening | 17:00 to 20:00 |
+| Night   | 20:00 to 04:00 |
 
 These are read in the player's own timezone.
 
@@ -210,12 +210,12 @@ which nothing else does, so anything met under one carries the floor of 10
 whoever you are raising. Each then does one thing no other weather does, and no
 two touch the same part of what a pokemon is.
 
-| Sky                | What it is                                                        | What it is worth                                    |
-| ------------------ | ----------------------------------------------------------------- | ---------------------------------------------------- |
-| **Meteor shower**  | The old rarest sky, moved to a band of its own                    | Double the odds of a **shiny coat**                  |
-| **Fata morgana**   | The mirage that rises off dead-still air, stacking a coastline into cliffs | Double the odds of a **hidden ability**     |
-| **Dark day**       | Noon gone dark under carried smoke, in air bone dry and moving hard | About a third of what is met is a **shadow**       |
-| **Fogbow**         | A rainbow with the colour gone, formed in fog fine enough to scatter light white | What is met knows one of its line's **egg moves** |
+| Sky               | What it is                                                                       | What it is worth                                  |
+| ----------------- | -------------------------------------------------------------------------------- | ------------------------------------------------- |
+| **Meteor shower** | The old rarest sky, moved to a band of its own                                   | Double the odds of a **shiny coat**               |
+| **Fata morgana**  | The mirage that rises off dead-still air, stacking a coastline into cliffs       | Double the odds of a **hidden ability**           |
+| **Dark day**      | Noon gone dark under carried smoke, in air bone dry and moving hard              | About a third of what is met is a **shadow**      |
+| **Fogbow**        | A rainbow with the colour gone, formed in fog fine enough to scatter light white | What is met knows one of its line's **egg moves** |
 
 The two doublings stack with the day's featured family and with anything the
 player is carrying.

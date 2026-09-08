@@ -12,8 +12,9 @@ players are holding, quests and badges to collect, an auction house and
 friend-to-friend trades, and a real-time battle engine both sides replay from a
 seed.
 
-The dex is Gen 1 — 151 species with their moves, abilities and items. Where Gen
-1 and the modern games disagree, the mechanics follow the modern games.
+The dex runs to 251, Kanto and Johto, with their moves, abilities and items.
+Where the old games and the modern ones disagree, the mechanics follow the
+modern ones.
 
 - [Releases](docs/update.md): what each major release brought, newest first.
 - [Player's guide](docs/mechanics.md): how the world, catching, fighting and
@@ -183,8 +184,8 @@ hands every account it creates the `admin` role, granted on the server.
 | `docs/`                | The player's guide, the database pages and the engine notes                                                               |
 
 Two conventions are worth knowing before reading the source. Every module has a
-single `export default` where it has an obvious main export. And effects — an
-ability, a held item, a status — are **written once and register themselves**
+single `export default` where it has an obvious main export. And effects (an
+ability, a held item, a status) are **written once and register themselves**
 against the events they care about, instead of being spelled out inside whatever
 function needed them. Nothing that stages a spawn or resolves a hit names an
 ability.

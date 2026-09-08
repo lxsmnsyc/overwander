@@ -301,16 +301,18 @@ amount is a heal, so drains reach it as they would anything else.
 
 ## `battles` and `battle_teams`
 
-| Column       | Type       | Notes                                               |
-| ------------ | ---------- | --------------------------------------------------- |
-| `id`         | `text`     | The battle, and its RNG seed                        |
-| `raid_id`    | `text`     | The raid it was fought for; null for PvP            |
-| `species`    | `integer`  | What was fought, so a listing can name it           |
-| `outcome`    | `smallint` | Unfinished (0), Won (1), Lost (2)                   |
-| `started_at` | `bigint`   | Server-clock milliseconds                           |
-| `biome`      | `smallint` | The ground it is fought on; Beyond (24) for nowhere |
-| `weather`    | `smallint` | The sky it was started under; Clear (0) for none    |
-| `limits`     | `integer`  | The engine limits the fight ran under               |
+| Column            | Type       | Notes                                               |
+| ----------------- | ---------- | --------------------------------------------------- |
+| `id`              | `text`     | The battle, and its RNG seed                        |
+| `raid_id`         | `text`     | The raid it was fought for; null for PvP            |
+| `species`         | `integer`  | What was fought, so a listing can name it           |
+| `outcome`         | `smallint` | Unfinished (0), Won (1), Lost (2)                   |
+| `started_at`      | `bigint`   | Server-clock milliseconds                           |
+| `biome`           | `smallint` | The ground it is fought on; Beyond (24) for nowhere |
+| `weather`         | `smallint` | The sky it was started under; Clear (0) for none    |
+| `limits`          | `integer`  | The engine limits the fight ran under               |
+| `opponent`        | `text`     | Who an unowned side was; empty otherwise            |
+| `opponent_sprite` | `text`     | The charset they wore, for the history to draw      |
 
 `biome` is what the field draws its ground from: a raid takes its lobby's, a
 grunt's fight takes the chunk the stop stands in, and a fight with no place of
@@ -324,6 +326,13 @@ fight carries one. It is stored for the reason `biome` is and for one of its own
 the world's sky is quantised to the hour, so a fight replayed an hour later would
 otherwise replay under different weather. Clear is the default and clear does
 nothing, so every other kind of fight is fought under no weather at all.
+
+`opponent` and `opponent_sprite` are who an unowned side was. A stop stages a
+grunt, Giovanni, a duelling trainer, a gym leader, one of the Elite Four or a
+champion, and which one is the window's roll. The window is gone an hour later,
+so the name and the coat are kept here for a history read back a week on, beside
+the species a raid keeps for the same reason. Both are empty where a player or a
+boss was on the other side.
 
 Who fought is `battle_teams`, one row per side: `(battle_id, position,
 snapshot_id, player)`, boss first, and the boss row names no player.

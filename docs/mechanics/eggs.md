@@ -77,14 +77,14 @@ Only the **buddy** walks, so an egg must be the buddy for its steps to count.
 cycle is **128 steps**. Most of the dex takes 20 cycles, or 2,560 steps, but a
 Magikarp is out after 5 (640 steps) and a Mewtwo takes 120 (15,360).
 
-| Egg                  | Cycles | Steps         |
-| -------------------- | ------ | ------------- |
-| Magikarp             | 5      | 640           |
-| Pikachu, Clefairy    | 10     | 1,280         |
-| The early-route ones | 15     | 1,920         |
-| Most species         | 20     | 2,560         |
-| Chansey, Snorlax     | 40     | 5,120         |
-| A legendary          | 80–120 | 10,240–15,360 |
+| Egg                  | Cycles    | Steps            |
+| -------------------- | --------- | ---------------- |
+| Magikarp             | 5         | 640              |
+| Pikachu, Clefairy    | 10        | 1,280            |
+| The early-route ones | 15        | 1,920            |
+| Most species         | 20        | 2,560            |
+| Chansey, Snorlax     | 40        | 5,120            |
+| A legendary          | 80 to 120 | 10,240 to 15,360 |
 
 A **shadow egg doubles** whatever its species asks for, and a portal crossing
 counts nothing at all: a crossing is not a walk.

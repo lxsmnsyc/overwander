@@ -320,6 +320,10 @@ const enum Abilities {
   Bloodthirst = 200017,
   DeepRoots = 200018,
   FungalBloom = 200019,
+  DustStorm = 200020,
+  Undermine = 200021,
+  Cutpurse = 200022,
+  HeadacheBurst = 200023,
 }
 
 export default Abilities;

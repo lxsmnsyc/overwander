@@ -16,7 +16,14 @@ import {
   SLIPSTREAM_SCALE,
   TWIN_STINGER_POWER_SCALE,
 } from '../../../src/battle/abilities/signature/bulbasaur-to-pikachu';
-import { FUNGAL_BLOOM_FRACTION } from '../../../src/battle/abilities/signature/paras-to-tentacool';
+import {
+  DUST_STORM_MAX_STACKS,
+  DUST_STORM_STEP,
+  FUNGAL_BLOOM_FRACTION,
+  HEADACHE_BURST_SCALE,
+  UNDERMINE_MAX_STACKS,
+  UNDERMINE_STEP,
+} from '../../../src/battle/abilities/signature/paras-to-tentacool';
 import {
   BLOODTHIRST_DRAIN_SCALE,
   BLOODTHIRST_HEAL_SCALE,
@@ -44,6 +51,7 @@ import type Unit from '../../../src/battle/unit';
 import { Stats } from '../../../src/data/constants/stats';
 import { Types } from '../../../src/data/constants/types';
 import Abilities from '../../../src/data/ids/abilities';
+import { Items } from '../../../src/data/ids/items';
 import { MoveCategories, MoveTargets, Moves } from '../../../src/data/ids/moves';
 import { Statuses } from '../../../src/data/ids/status';
 import turns from '../../../src/battle/turn';
@@ -904,5 +912,120 @@ describe('Fungal Bloom', () => {
     });
 
     expect(holder.health).toBeCloseTo(maxHP / 2, 5);
+  });
+});
+
+describe('Dust Storm', () => {
+  it('reads every ailing enemy, up to what the dust can cover', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    holder.addAbility(Abilities.DustStorm);
+
+    const enemies = [
+      createUnit(battle, teamB),
+      createUnit(battle, teamB),
+      createUnit(battle, teamB),
+      createUnit(battle, teamB),
+      createUnit(battle, teamB),
+    ];
+    const bare = holder.checkStat(Stats.SpecialAttack, 0);
+
+    expect(bare).toBeGreaterThan(0);
+
+    enemies.forEach((enemy, index) => {
+      enemy.addStatus(Statuses.Poisoned, NONE_CAUSE);
+
+      expect(holder.checkStat(Stats.SpecialAttack, 0)).toBeCloseTo(
+        bare * (1 + DUST_STORM_STEP * Math.min(DUST_STORM_MAX_STACKS, index + 1)),
+        5,
+      );
+    });
+  });
+
+  it('reads nothing off its own side', () => {
+    const { battle, teamA } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamA);
+    holder.addAbility(Abilities.DustStorm);
+
+    const bare = holder.checkStat(Stats.SpecialAttack, 0);
+    ally.addStatus(Statuses.Poisoned, NONE_CAUSE);
+
+    expect(holder.checkStat(Stats.SpecialAttack, 0)).toBe(bare);
+  });
+});
+
+describe('Undermine', () => {
+  it('leaves a target taking more from everybody, up to the cap', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const holder = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Undermine);
+
+    const maxHP = enemy.checkStat(Stats.HP, 0);
+    const fromAlly = makeAttack(ally, enemy, Moves.Pound, Types.Normal, MoveCategories.Physical);
+
+    expect(resolveAttackStat(battle, fromAlly, ally, Stats.Attack, 100)).toBe(100);
+
+    for (let passes = 1; passes <= UNDERMINE_MAX_STACKS + 2; passes += 1) {
+      holder.attack(enemy, Moves.Pound, 40, Types.Normal, MoveCategories.Physical, 0);
+      enemy.setHealth(maxHP);
+
+      // The ally profits from the digging as much as the digger does
+      expect(resolveAttackStat(battle, fromAlly, ally, Stats.Attack, 100)).toBeCloseTo(
+        100 * (1 + UNDERMINE_STEP * Math.min(UNDERMINE_MAX_STACKS, passes)),
+        5,
+      );
+    }
+  });
+});
+
+describe('Cutpurse', () => {
+  it('takes an item once from each enemy', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Cutpurse);
+
+    enemy.addItem(Items.OranBerry);
+
+    expect(enemy.items[Items.OranBerry]).not.toBeUndefined();
+
+    holder.attack(enemy, Moves.Pound, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(enemy.items[Items.OranBerry]).toBeUndefined();
+
+    // Pockets already turned out stay empty: a second item is safe
+    enemy.setHealth(enemy.checkStat(Stats.HP, 0));
+    enemy.addItem(Items.OranBerry);
+
+    holder.attack(enemy, Moves.Pound, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(enemy.items[Items.OranBerry]).not.toBeUndefined();
+  });
+});
+
+describe('Headache Burst', () => {
+  it('comes on at half health and takes the misses out of Psychic moves', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.HeadacheBurst);
+
+    const target = { type: MoveTargetType.Unit, unit: enemy } as const;
+    const bare = holder.checkStat(Stats.SpecialAttack, 0);
+
+    expect(holder.checkMoveAccuracy(Moves.Psybeam, target)).not.toBeUndefined();
+
+    holder.setHealth(holder.checkStat(Stats.HP, 0) / 2);
+
+    expect(holder.checkStat(Stats.SpecialAttack, 0)).toBeCloseTo(bare * HEADACHE_BURST_SCALE, 5);
+    expect(holder.checkMoveAccuracy(Moves.Psybeam, target)).toBeUndefined();
+
+    // A move of another type still has to land the ordinary way
+    expect(holder.checkMoveAccuracy(Moves.WaterGun, target)).not.toBeUndefined();
   });
 });

@@ -296,6 +296,12 @@ const enum Abilities {
    * right
    */
   Purified = 100003,
+  /**
+   * Signature (one per family, granted rather than rolled at birth).
+   * They sit outside the pools walk, so a line's four ordinary
+   * abilities stay four
+   */
+  SeedCache = 200001,
 }
 
 export default Abilities;

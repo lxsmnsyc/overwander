@@ -25,8 +25,14 @@ import {
   LEEK_DUELIST_CRITICAL_STAGES,
   LEEK_DUELIST_EXPOSED_SCALE,
   REPULSION_FIELD_SCALE,
+  SECOND_HEAD_INTERVAL,
+  SECOND_HEAD_POWER_SCALE,
+  SLEEK_HIDE_CONTACT_SCALE,
+  SLEEK_HIDE_RANGED_SCALE,
   SOLID_CORE_PHYSICAL_SCALE,
   SOLID_CORE_SPECIAL_SCALE,
+  SPIKE_SHELL_CONTACT_SCALE,
+  SPIKE_SHELL_FRACTION,
 } from '../../../src/battle/abilities/signature/geodude-to-drowzee';
 import {
   BLIND_RAGE_ACCURACY_SCALE,
@@ -1384,5 +1390,98 @@ describe('Leek Duelist', () => {
       100 * LEEK_DUELIST_EXPOSED_SCALE,
       5,
     );
+  });
+});
+
+describe('Second Head', () => {
+  it('gives the spare head every third blow', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.SecondHead);
+
+    const powers: number[] = [];
+    battle.on(BattleEvents.UnitAttack, AttackPriority.Cleanup, (event) => {
+      if (event.source === holder) {
+        powers.push(event.value);
+      }
+    });
+
+    for (let landed = 0; landed < SECOND_HEAD_INTERVAL; landed += 1) {
+      holder.attack(enemy, Moves.Pound, 40, Types.Normal, MoveCategories.Physical, 0);
+      enemy.setHealth(enemy.checkStat(Stats.HP, 0));
+    }
+
+    // Three blows thrown, and the third brings a fourth with it. The
+    // spare head's blow resolves inside the third, so it is recorded
+    // before it
+    expect(powers).toHaveLength(SECOND_HEAD_INTERVAL + 1);
+    expect(powers.filter((power) => power === 40 * SECOND_HEAD_POWER_SCALE)).toHaveLength(1);
+  });
+});
+
+describe('Sleek Hide', () => {
+  it('sheds contact and takes the rest badly', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.SleekHide);
+
+    const contact = makeAttack(enemy, holder, Moves.Pound, Types.Normal, MoveCategories.Physical);
+    const ranged = makeAttack(enemy, holder, Moves.Ember, Types.Fire, MoveCategories.Special);
+
+    expect(resolveAttackStat(battle, contact, enemy, Stats.Attack, 100)).toBeCloseTo(
+      100 * SLEEK_HIDE_CONTACT_SCALE,
+      5,
+    );
+    expect(resolveAttackStat(battle, ranged, enemy, Stats.SpecialAttack, 100)).toBeCloseTo(
+      100 * SLEEK_HIDE_RANGED_SCALE,
+      5,
+    );
+  });
+});
+
+describe('Corrosive Ooze', () => {
+  it('eats the item off whoever touches it', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.CorrosiveOoze);
+
+    enemy.addItem(Items.OranBerry);
+    enemy.attack(holder, Moves.Ember, 40, Types.Fire, MoveCategories.Special, 0);
+
+    // Nothing thrown from a distance touches the sludge
+    expect(enemy.items[Items.OranBerry]).not.toBeUndefined();
+
+    enemy.attack(holder, Moves.Pound, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(enemy.items[Items.OranBerry]).toBeUndefined();
+  });
+});
+
+describe('Spike Shell', () => {
+  it('blunts a contact blow and costs the arm that threw it', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.SpikeShell);
+
+    const contact = makeAttack(enemy, holder, Moves.Pound, Types.Normal, MoveCategories.Physical);
+
+    expect(resolveAttackStat(battle, contact, enemy, Stats.Attack, 100)).toBeCloseTo(
+      100 * SPIKE_SHELL_CONTACT_SCALE,
+      5,
+    );
+
+    const maxHP = enemy.checkStat(Stats.HP, 0);
+    const before = enemy.health;
+
+    enemy.attack(holder, Moves.Pound, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(before - enemy.health).toBeCloseTo(maxHP * SPIKE_SHELL_FRACTION, 5);
   });
 });

@@ -1,12 +1,12 @@
 import { AttackPriority, EventPriority } from '../../../core/event-emitter';
 import { Stats } from '../../../data/constants/stats';
 import Abilities from '../../../data/ids/abilities';
-import { DamageFlags, MoveCategories } from '../../../data/ids/moves';
+import { DamageFlags, MoveAttackFlags, MoveCategories } from '../../../data/ids/moves';
 import { BattleEvents, EffectType } from '../../events';
 import { MergedLifecycle } from '../../lifecycle';
 import type Unit from '../../unit';
-import { onUnitActs } from '../../utils';
-import { createAbility } from '../__create';
+import { onUnitActs, stealableItem, unitTarget } from '../../utils';
+import { createAbility, createContactHazard } from '../__create';
 import { createUnitCounter, createUnitState, fieldHasAbility } from './__create';
 
 /** What rock all the way through is worth, each way */
@@ -23,6 +23,18 @@ export const DELAYED_REACTION_DELAY = 4000;
 
 /** What the field does to anything thrown rather than swung */
 export const REPULSION_FIELD_SCALE = 0.9;
+
+/** How often the spare head gets a turn, and what its blow is worth */
+export const SECOND_HEAD_INTERVAL = 3;
+export const SECOND_HEAD_POWER_SCALE = 0.5;
+
+/** What slides off a swimmer, and what does not */
+export const SLEEK_HIDE_CONTACT_SCALE = 0.75;
+export const SLEEK_HIDE_RANGED_SCALE = 1.1;
+
+/** What the spikes take off a blow, and out of whoever threw it */
+export const SPIKE_SHELL_CONTACT_SCALE = 0.5;
+export const SPIKE_SHELL_FRACTION = 1 / 8;
 
 /** What the leek is worth in a duel, and what fighting without armour costs */
 export const LEEK_DUELIST_CRITICAL_STAGES = 2;
@@ -211,6 +223,164 @@ const geodudeToDrowzee = [
             event.value *= LEEK_DUELIST_EXPOSED_SCALE;
           }
         }),
+      ]),
+  ),
+
+  // Doduo: the heads take turns, so every third blow is the spare one
+  // getting its go
+  createAbility(Abilities.SecondHead, (battle) => {
+    const { counter, lifecycles } = createUnitCounter(battle);
+
+    // The spare head's blow is not one of the three
+    const striking = new Set<Unit>();
+
+    return new MergedLifecycle([
+      battle.on(BattleEvents.UnitAttack, AttackPriority.Post, (event) => {
+        const source = event.source;
+
+        if (
+          !event.success ||
+          !event.target.alive ||
+          event.flags & MoveAttackFlags.Simulated ||
+          striking.has(source) ||
+          !source.hasAbility(Abilities.SecondHead)
+        ) {
+          return;
+        }
+
+        const landed = counter.get(source) + 1;
+
+        if (landed < SECOND_HEAD_INTERVAL) {
+          counter.set(source, landed);
+          return;
+        }
+
+        counter.clear(source);
+
+        striking.add(source);
+        source.triggerAbility(Abilities.SecondHead);
+
+        source.attack(
+          event.target,
+          event.move,
+          event.value * SECOND_HEAD_POWER_SCALE,
+          event.type,
+          event.category,
+          event.flags,
+        );
+
+        striking.delete(source);
+      }),
+      ...lifecycles,
+    ]);
+  }),
+
+  // Seel: a swimmer's hide sheds what is dragged across it and takes
+  // what is thrown at it badly
+  createAbility(Abilities.SleekHide, (battle) =>
+    battle.on(BattleEvents.UnitAttackResolveStat, EventPriority.Post, (event) => {
+      const parent = event.parent;
+      const attacker = parent.source;
+
+      if (
+        event.unit !== attacker ||
+        (event.stat !== Stats.Attack && event.stat !== Stats.SpecialAttack) ||
+        !parent.target.hasAbility(Abilities.SleekHide)
+      ) {
+        return;
+      }
+
+      event.value *= attacker.checkMoveContact(parent.move, unitTarget(parent.target))
+        ? SLEEK_HIDE_CONTACT_SCALE
+        : SLEEK_HIDE_RANGED_SCALE;
+    }),
+  ),
+
+  // Grimer: the sludge eats what touches it. The item is gone rather
+  // than knocked loose, so nothing picks it back up
+  createAbility(
+    Abilities.CorrosiveOoze,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
+          const target = event.target;
+          const cause = event.cause;
+
+          if (
+            !event.success ||
+            event.flags & DamageFlags.Indirect ||
+            cause.type !== EffectType.Move ||
+            cause.unit === target ||
+            !target.hasAbility(Abilities.CorrosiveOoze) ||
+            !cause.unit.checkMoveContact(cause.move, unitTarget(target))
+          ) {
+            return;
+          }
+
+          const item = stealableItem(cause.unit);
+
+          if (item == null) {
+            return;
+          }
+
+          target.triggerAbility(Abilities.CorrosiveOoze);
+
+          cause.unit.removeItem(item, {
+            type: EffectType.Ability,
+            ability: Abilities.CorrosiveOoze,
+            unit: target,
+          });
+        }),
+        createContactHazard(battle, Abilities.CorrosiveOoze),
+      ]),
+  ),
+
+  // Shellder: all spikes. A blow dragged across them is worth less and
+  // costs the arm that threw it
+  createAbility(
+    Abilities.SpikeShell,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.UnitAttackResolveStat, EventPriority.Post, (event) => {
+          const parent = event.parent;
+          const attacker = parent.source;
+
+          if (
+            event.unit === attacker &&
+            (event.stat === Stats.Attack || event.stat === Stats.SpecialAttack) &&
+            parent.target.hasAbility(Abilities.SpikeShell) &&
+            attacker.checkMoveContact(parent.move, unitTarget(parent.target))
+          ) {
+            event.value *= SPIKE_SHELL_CONTACT_SCALE;
+          }
+        }),
+        battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
+          const target = event.target;
+          const cause = event.cause;
+
+          if (
+            !event.success ||
+            event.flags & DamageFlags.Indirect ||
+            cause.type !== EffectType.Move ||
+            cause.unit === target ||
+            !target.hasAbility(Abilities.SpikeShell) ||
+            !cause.unit.checkMoveContact(cause.move, unitTarget(target))
+          ) {
+            return;
+          }
+
+          const attacker = cause.unit;
+
+          target.triggerAbility(Abilities.SpikeShell);
+
+          target.damage(
+            { type: EffectType.Ability, ability: Abilities.SpikeShell, unit: target },
+            attacker,
+            attacker.checkStat(Stats.HP, 0) * SPIKE_SHELL_FRACTION,
+            DamageFlags.Indirect,
+          );
+        }),
+        createContactHazard(battle, Abilities.SpikeShell),
       ]),
   ),
 ];

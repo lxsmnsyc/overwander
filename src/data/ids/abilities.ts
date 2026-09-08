@@ -336,6 +336,10 @@ const enum Abilities {
   DelayedReaction = 200033,
   RepulsionField = 200034,
   LeekDuelist = 200035,
+  SecondHead = 200036,
+  SleekHide = 200037,
+  CorrosiveOoze = 200038,
+  SpikeShell = 200039,
 }
 
 export default Abilities;

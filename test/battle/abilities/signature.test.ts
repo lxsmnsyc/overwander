@@ -16,11 +16,17 @@ import {
   SLIPSTREAM_SCALE,
   TWIN_STINGER_POWER_SCALE,
 } from '../../../src/battle/abilities/signature/bulbasaur-to-pikachu';
+import { FUNGAL_BLOOM_FRACTION } from '../../../src/battle/abilities/signature/paras-to-tentacool';
 import {
+  BLOODTHIRST_DRAIN_SCALE,
+  BLOODTHIRST_HEAL_SCALE,
   BROOD_FURY_FALLEN_SCALE,
   BROOD_FURY_HURT_SCALE,
   CURL_UP_MAX_STACKS,
   CURL_UP_STEP,
+  DEEP_ROOTS_SCALE,
+  LULLABY_POWER_SCALE,
+  LULLABY_SLEEP_SCALE,
   NINE_TAILS_MAX_STACKS,
   NINE_TAILS_STEP,
   WARLORD_MAX_STACKS,
@@ -28,13 +34,19 @@ import {
   WISHING_WELL_FRACTION,
 } from '../../../src/battle/abilities/signature/sandshrew-to-oddish';
 import type Battle from '../../../src/battle/core';
-import { BattleEvents, EffectType, MoveTargetType } from '../../../src/battle/events';
+import {
+  BattleEvents,
+  EffectType,
+  MoveTargetType,
+  type UnitAttackEvent,
+} from '../../../src/battle/events';
 import type Unit from '../../../src/battle/unit';
 import { Stats } from '../../../src/data/constants/stats';
 import { Types } from '../../../src/data/constants/types';
 import Abilities from '../../../src/data/ids/abilities';
 import { MoveCategories, MoveTargets, Moves } from '../../../src/data/ids/moves';
 import { Statuses } from '../../../src/data/ids/status';
+import turns from '../../../src/battle/turn';
 import { createBattle, createUnit, pinRandom } from '../harness';
 
 const NONE_CAUSE = { type: EffectType.None } as const;
@@ -177,6 +189,47 @@ function act(battle: Battle, unit: Unit): void {
     move: Moves.Tackle,
     target: { type: MoveTargetType.None },
   });
+}
+
+/** A synthetic blow, for the resolvers that answer questions about one */
+function makeAttack(
+  source: Unit,
+  target: Unit,
+  move: Moves,
+  type: Types,
+  category: MoveCategories,
+): UnitAttackEvent {
+  return {
+    id: 'UnitAttack',
+    disabled: false,
+    source,
+    target,
+    move,
+    value: 0,
+    category,
+    type,
+    flags: 0,
+    success: false,
+  };
+}
+
+function resolveAttackStat(
+  battle: Battle,
+  parent: UnitAttackEvent,
+  unit: Unit,
+  stat: Stats,
+  value: number,
+): number {
+  const event = {
+    id: 'UnitAttackResolveStat',
+    disabled: false,
+    parent,
+    unit,
+    stat,
+    value,
+  };
+  battle.emit(BattleEvents.UnitAttackResolveStat, event);
+  return event.value;
 }
 
 /** One resolved use of a move, landed or missed */
@@ -736,5 +789,120 @@ describe('Nine Tails', () => {
         5,
       );
     }
+  });
+});
+
+describe('Lullaby', () => {
+  it('holds its own sleep longer and hits a sleeper harder', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Lullaby);
+
+    const fromHolder = {
+      type: EffectType.Ability,
+      ability: Abilities.Lullaby,
+      unit: holder,
+    } as const;
+
+    const bare = enemy.checkStatusDuration(Statuses.Sleeping, turns(3), NONE_CAUSE);
+
+    expect(enemy.checkStatusDuration(Statuses.Sleeping, turns(3), fromHolder)).toBeCloseTo(
+      bare * LULLABY_SLEEP_SCALE,
+      5,
+    );
+
+    const parent = makeAttack(holder, enemy, Moves.Pound, Types.Normal, MoveCategories.Physical);
+
+    expect(resolveAttackStat(battle, parent, holder, Stats.Attack, 100)).toBe(100);
+
+    enemy.addStatus(Statuses.Sleeping, NONE_CAUSE);
+
+    expect(resolveAttackStat(battle, parent, holder, Stats.Attack, 100)).toBeCloseTo(
+      100 * LULLABY_POWER_SCALE,
+      5,
+    );
+  });
+});
+
+describe('Bloodthirst', () => {
+  it('drinks deeper and eats worse', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Bloodthirst);
+
+    expect(holder.checkDrain(enemy, 20)).toBeCloseTo(20 * BLOODTHIRST_DRAIN_SCALE, 5);
+
+    holder.setHealth(10);
+    holder.heal(NONE_CAUSE, holder, 20, 0);
+
+    expect(holder.health).toBeCloseTo(10 + 20 * BLOODTHIRST_HEAL_SCALE, 5);
+
+    // A drain is not one of the heals it is bad at
+    holder.setHealth(10);
+    holder.heal({ type: EffectType.Move, move: Moves.MegaDrain, unit: holder }, holder, 20, 0);
+
+    expect(holder.health).toBeCloseTo(30, 5);
+  });
+});
+
+describe('Deep Roots', () => {
+  it('braces what lands on it mid-cast and refuses a flinch', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.DeepRoots);
+
+    const parent = makeAttack(enemy, holder, Moves.Pound, Types.Normal, MoveCategories.Physical);
+
+    // Standing free: no roots, and a flinch would land
+    expect(resolveAttackStat(battle, parent, enemy, Stats.Attack, 100)).toBe(100);
+    expect(holder.checkStatusImmunity(Statuses.Flinched, NONE_CAUSE)).toBe(false);
+
+    battle.emit(BattleEvents.UnitCast, {
+      id: 'UnitCast',
+      disabled: false,
+      source: holder,
+      move: Moves.SolarBeam,
+      target: { type: MoveTargetType.Unit, unit: enemy },
+    });
+
+    expect(holder.casting).not.toBeUndefined();
+    expect(resolveAttackStat(battle, parent, enemy, Stats.Attack, 100)).toBeCloseTo(
+      100 * DEEP_ROOTS_SCALE,
+      5,
+    );
+    expect(holder.checkStatusImmunity(Statuses.Flinched, NONE_CAUSE)).toBe(true);
+  });
+});
+
+describe('Fungal Bloom', () => {
+  it('feeds on every status it lands on an enemy', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.FungalBloom);
+
+    const maxHP = holder.checkStat(Stats.HP, 0);
+    holder.setHealth(maxHP / 2);
+
+    enemy.addStatus(Statuses.Poisoned, {
+      type: EffectType.Move,
+      move: Moves.PoisonPowder,
+      unit: holder,
+    });
+
+    expect(holder.health).toBeCloseTo(maxHP / 2 + maxHP * FUNGAL_BLOOM_FRACTION, 5);
+
+    // A status it puts on itself feeds it nothing
+    holder.setHealth(maxHP / 2);
+    holder.addStatus(Statuses.Poisoned, {
+      type: EffectType.Move,
+      move: Moves.Toxic,
+      unit: holder,
+    });
+
+    expect(holder.health).toBeCloseTo(maxHP / 2, 5);
   });
 });

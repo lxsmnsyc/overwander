@@ -1,11 +1,13 @@
 import { AttackPriority, EventPriority } from '../../../core/event-emitter';
 import { Stats } from '../../../data/constants/stats';
 import Abilities from '../../../data/ids/abilities';
-import { MoveAttackFlags, type Moves } from '../../../data/ids/moves';
+import { Statuses } from '../../../data/ids/status';
+import { MoveAttackFlags, Moves } from '../../../data/ids/moves';
 import type Alliance from '../../alliance';
 import type Battle from '../../core';
-import { BattleEvents, EffectType } from '../../events';
+import { BattleEvents, type EffectCause, EffectType } from '../../events';
 import { MergedLifecycle } from '../../lifecycle';
+import { ABSORB_MOVES } from '../../moves/absorb';
 import type Unit from '../../unit';
 import { onUnitActs } from '../../utils';
 import { createAbility } from '../__create';
@@ -38,6 +40,38 @@ export const NINE_TAILS_STEP = 0.08;
 
 /** How many tails there are to lose */
 export const NINE_TAILS_MAX_STACKS = 9;
+
+/** What the song is worth, in how long it holds and what it lands for */
+export const LULLABY_SLEEP_SCALE = 1.5;
+export const LULLABY_POWER_SCALE = 1.5;
+
+/** What a drain is worth to it, and what every other heal is worth */
+export const BLOODTHIRST_DRAIN_SCALE = 1.5;
+export const BLOODTHIRST_HEAL_SCALE = 0.5;
+
+/** What roots take off a blow that lands mid-cast */
+export const DEEP_ROOTS_SCALE = 0.6;
+
+/** Whether the effect came from a unit carrying the ability */
+function causedBy(cause: EffectCause, ability: Abilities): boolean {
+  return cause.type !== EffectType.None && cause.unit.hasAbility(ability);
+}
+
+/**
+ * Whether the heal is one taken out of somebody else: a draining move,
+ * or the seed's own tithe
+ */
+function isDrainHeal(cause: EffectCause): boolean {
+  return (
+    cause.type === EffectType.Move &&
+    (ABSORB_MOVES.has(cause.move) || cause.move === Moves.LeechSeed)
+  );
+}
+
+/** Whether the unit is mid-cast, which is when the roots are down */
+function isRooted(unit: Unit): boolean {
+  return unit.casting != null || unit.channeling != null;
+}
 
 /** Whether an ally of this unit is standing hurt */
 function alliesAreHurt(battle: Battle, unit: Unit): boolean {
@@ -289,6 +323,87 @@ const sandshrewToOddish = [
       ...lifecycles,
     ]);
   }),
+  // Jigglypuff: the song is the setup rather than a nuisance, so it
+  // holds longer and everything after it lands harder
+  createAbility(
+    Abilities.Lullaby,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.CheckUnitStatusDuration, EventPriority.Post, (event) => {
+          if (event.status === Statuses.Sleeping && causedBy(event.cause, Abilities.Lullaby)) {
+            event.duration *= LULLABY_SLEEP_SCALE;
+          }
+        }),
+        battle.on(BattleEvents.UnitAttackResolveStat, EventPriority.Post, (event) => {
+          const parent = event.parent;
+
+          if (
+            event.unit === parent.source &&
+            (event.stat === Stats.Attack || event.stat === Stats.SpecialAttack) &&
+            parent.source.hasAbility(Abilities.Lullaby) &&
+            parent.target.status[Statuses.Sleeping] != null
+          ) {
+            event.value *= LULLABY_POWER_SCALE;
+          }
+        }),
+      ]),
+  ),
+
+  // Zubat: it lives off what it takes out of something else, and off
+  // nothing else. A berry is half the meal for it that it is for
+  // anybody
+  createAbility(
+    Abilities.Bloodthirst,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.CheckUnitDrain, EventPriority.Post, (event) => {
+          if (event.value > 0 && event.source.hasAbility(Abilities.Bloodthirst)) {
+            event.value *= BLOODTHIRST_DRAIN_SCALE;
+
+            event.source.triggerAbility(Abilities.Bloodthirst);
+          }
+        }),
+        // Before Exact, which is where the health actually goes back
+        battle.on(BattleEvents.UnitHeal, EventPriority.Pre, (event) => {
+          if (event.target.hasAbility(Abilities.Bloodthirst) && !isDrainHeal(event.cause)) {
+            event.value *= BLOODTHIRST_HEAL_SCALE;
+          }
+        }),
+      ]),
+  ),
+
+  // Oddish: it plants itself to work. What catches it mid-cast catches
+  // something braced for it, and nothing shakes it off the move
+  createAbility(
+    Abilities.DeepRoots,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.UnitAttackResolveStat, EventPriority.Post, (event) => {
+          const parent = event.parent;
+
+          if (
+            event.unit === parent.source &&
+            (event.stat === Stats.Attack || event.stat === Stats.SpecialAttack) &&
+            parent.target.hasAbility(Abilities.DeepRoots) &&
+            isRooted(parent.target)
+          ) {
+            event.value *= DEEP_ROOTS_SCALE;
+          }
+        }),
+        battle.on(BattleEvents.CheckUnitStatusImmunity, EventPriority.Post, (event) => {
+          if (
+            !event.immune &&
+            event.status === Statuses.Flinched &&
+            event.source.hasAbility(Abilities.DeepRoots) &&
+            isRooted(event.source)
+          ) {
+            event.immune = true;
+
+            event.source.triggerAbility(Abilities.DeepRoots);
+          }
+        }),
+      ]),
+  ),
 ];
 
 export default sandshrewToOddish;

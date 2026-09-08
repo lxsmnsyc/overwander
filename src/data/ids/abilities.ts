@@ -316,6 +316,10 @@ const enum Abilities {
   Warlord = 200013,
   WishingWell = 200014,
   NineTails = 200015,
+  Lullaby = 200016,
+  Bloodthirst = 200017,
+  DeepRoots = 200018,
+  FungalBloom = 200019,
 }
 
 export default Abilities;

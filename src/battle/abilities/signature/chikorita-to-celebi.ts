@@ -1,7 +1,7 @@
 import { AttackPriority, EventPriority } from '../../../core/event-emitter';
 import { Stats } from '../../../data/constants/stats';
 import Abilities from '../../../data/ids/abilities';
-import { MoveAttackFlags, Moves } from '../../../data/ids/moves';
+import { DamageFlags, MoveAttackFlags, Moves } from '../../../data/ids/moves';
 import type Battle from '../../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../../events';
 import { MergedLifecycle } from '../../lifecycle';
@@ -254,6 +254,114 @@ const chikoritaToCelebi = [
         }),
       ]),
   ),
+
+  // Togepi: luck as a plain certainty, spent on everybody it is
+  // standing with rather than on itself
+  createAbility(Abilities.GoodOmen, (battle) =>
+    battle.on(BattleEvents.CheckUnitMoveAccuracy, EventPriority.Post, (event) => {
+      if (event.accuracy != null && guardedBy(battle, event.source, Abilities.GoodOmen)) {
+        event.accuracy = undefined;
+      }
+    }),
+  ),
+
+  // Natu: it saw the blow before it arrived, and what a foreseen blow
+  // does is Future Sight's business
+  createAbility(
+    Abilities.Prophecy,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+          if (!event.reactivation && event.source.hasAbility(Abilities.Prophecy)) {
+            event.source.triggerAbility(Abilities.Prophecy);
+          }
+        }),
+        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
+          if (event.ability !== Abilities.Prophecy) {
+            return;
+          }
+
+          const enemy = firstEnemy(battle, event.source);
+
+          if (enemy) {
+            event.source.triggerMove(Moves.FutureSight, unitTarget(enemy), 0);
+          }
+        }),
+      ]),
+  ),
+
+  // Mareep: the fleece has to go somewhere as it arrives, and what a
+  // shock does to a nervous system is Thunder Wave's business
+  createAbility(
+    Abilities.LiveWire,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+          if (!event.reactivation && event.source.hasAbility(Abilities.LiveWire)) {
+            event.source.triggerAbility(Abilities.LiveWire);
+          }
+        }),
+        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
+          if (event.ability !== Abilities.LiveWire) {
+            return;
+          }
+
+          const enemy = firstEnemy(battle, event.source);
+
+          if (enemy) {
+            event.source.triggerMove(Moves.ThunderWave, unitTarget(enemy), 0);
+          }
+        }),
+      ]),
+  ),
+
+  // Marill: the float is already full, so what will not fit goes at
+  // somebody. Measured before the heal is clamped and paid once it has
+  // gone through, so a refused heal spills nothing
+  createAbility(Abilities.Spillover, (battle) => {
+    const surplus = new WeakMap<object, number>();
+
+    return new MergedLifecycle([
+      battle.on(BattleEvents.UnitHeal, EventPriority.Pre, (event) => {
+        const target = event.target;
+
+        if (!target.hasAbility(Abilities.Spillover)) {
+          return;
+        }
+
+        const over = target.health + event.value - target.checkStat(Stats.HP, 0);
+
+        if (over > 0) {
+          surplus.set(event, over);
+        }
+      }),
+      battle.on(BattleEvents.UnitHeal, EventPriority.Post, (event) => {
+        const over = surplus.get(event);
+        const target = event.target;
+
+        if (over == null) {
+          return;
+        }
+
+        surplus.delete(event);
+
+        const enemy = firstEnemy(battle, target);
+
+        if (!enemy) {
+          return;
+        }
+
+        target.triggerAbility(Abilities.Spillover);
+
+        target.damage(
+          { type: EffectType.Ability, ability: Abilities.Spillover, unit: target },
+          enemy,
+          over,
+          DamageFlags.Indirect,
+        );
+      }),
+    ]);
+  }),
 ];
 
 export default chikoritaToCelebi;

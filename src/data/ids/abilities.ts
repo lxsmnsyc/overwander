@@ -387,6 +387,10 @@ const enum Abilities {
   Relay = 200084,
   SilkSnare = 200085,
   LanternLure = 200086,
+  GoodOmen = 200087,
+  Prophecy = 200088,
+  LiveWire = 200089,
+  Spillover = 200090,
 }
 
 export default Abilities;

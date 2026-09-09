@@ -554,4 +554,28 @@ export default function registerSignatureAbilities(): void {
     name: 'Lantern Lure',
     description: 'It casts Confuse Ray at an enemy as it arrives on the field.',
   });
+
+  // Togepi
+  registerAbility(Abilities.GoodOmen, {
+    name: 'Good Omen',
+    description: 'No move from its side can miss while it stands.',
+  });
+
+  // Natu
+  registerAbility(Abilities.Prophecy, {
+    name: 'Prophecy',
+    description: 'It casts Future Sight at an enemy as it arrives on the field.',
+  });
+
+  // Mareep
+  registerAbility(Abilities.LiveWire, {
+    name: 'Live Wire',
+    description: 'It casts Thunder Wave at an enemy as it arrives on the field.',
+  });
+
+  // Marill
+  registerAbility(Abilities.Spillover, {
+    name: 'Spillover',
+    description: 'Healing past its full HP is thrown at an enemy as damage rather than wasted.',
+  });
 }

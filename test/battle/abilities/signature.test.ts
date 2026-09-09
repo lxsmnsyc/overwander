@@ -2737,3 +2737,111 @@ describe('Lantern Lure', () => {
     expect(enemy.status[Statuses.Confused]).not.toBeUndefined();
   });
 });
+
+describe('Good Omen', () => {
+  it('lets nothing on its side miss', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    const atHolder = { type: MoveTargetType.Unit, unit: holder } as const;
+    const atEnemy = { type: MoveTargetType.Unit, unit: enemy } as const;
+
+    // Fire Blast is short of the ceiling, so an accuracy is asked for
+    expect(ally.checkMoveAccuracy(Moves.FireBlast, atEnemy)).not.toBeUndefined();
+
+    holder.addAbility(Abilities.GoodOmen);
+
+    expect(ally.checkMoveAccuracy(Moves.FireBlast, atEnemy)).toBeUndefined();
+    expect(holder.checkMoveAccuracy(Moves.FireBlast, atEnemy)).toBeUndefined();
+
+    // The far side aims as badly as ever
+    expect(enemy.checkMoveAccuracy(Moves.FireBlast, atHolder)).not.toBeUndefined();
+  });
+});
+
+describe('Prophecy', () => {
+  it('casts Future Sight at an enemy as it arrives', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0);
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Prophecy);
+
+    let cast: Moves | undefined;
+    battle.on(BattleEvents.UnitTriggerMove, AttackPriority.Post, (event) => {
+      if (event.source === holder) {
+        cast = event.move;
+      }
+    });
+
+    battle.emit(BattleEvents.UnitEntersField, {
+      id: 'UnitEntersField',
+      disabled: false,
+      source: holder,
+      reactivation: false,
+    });
+
+    expect(cast).toBe(Moves.FutureSight);
+
+    // The promise is kept two turns after the cast has flown
+    battle.tick(turns(4));
+
+    expect(enemy.health).toBeLessThan(enemy.checkStat(Stats.HP, 0));
+  });
+});
+
+describe('Live Wire', () => {
+  it('casts Thunder Wave at an enemy as it arrives', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0);
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.LiveWire);
+
+    battle.emit(BattleEvents.UnitEntersField, {
+      id: 'UnitEntersField',
+      disabled: false,
+      source: holder,
+      reactivation: false,
+    });
+    // The cast move takes its own flight time to arrive
+    battle.tick(turns(1));
+
+    expect(enemy.status[Statuses.Paralyzed]).not.toBeUndefined();
+  });
+});
+
+describe('Spillover', () => {
+  it('throws what will not fit at an enemy', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Spillover);
+
+    const maxHP = holder.checkStat(Stats.HP, 0);
+    const enemyHP = enemy.health;
+    holder.setHealth(maxHP - 10);
+
+    holder.heal(NONE_CAUSE, holder, 40, 0);
+
+    expect(holder.health).toBe(maxHP);
+    expect(enemy.health).toBe(enemyHP - 30);
+  });
+
+  it('spills nothing while there is room for the heal', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Spillover);
+
+    const maxHP = holder.checkStat(Stats.HP, 0);
+    const enemyHP = enemy.health;
+    holder.setHealth(maxHP / 2);
+
+    holder.heal(NONE_CAUSE, holder, 40, 0);
+
+    expect(enemy.health).toBe(enemyHP);
+  });
+});

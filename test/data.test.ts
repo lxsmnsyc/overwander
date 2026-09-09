@@ -1316,6 +1316,8 @@ describe('move damage', () => {
     Moves.Fling,
     Moves.TrumpCard,
     Moves.WringOut,
+    // And the one read off how far the target has pulled ahead
+    Moves.Punishment,
   ]);
 
   it('gives every damaging move something to hit with', () => {

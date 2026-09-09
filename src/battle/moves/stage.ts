@@ -94,6 +94,7 @@ const STAGE_MOVE_GROUPS: [Stages, StageMovesConfig][] = [
     Stages.Speed,
     {
       [Moves.StringShot]: -2,
+      [Moves.RockPolish]: 2,
       [Moves.Agility]: 2,
       [Moves.ScaryFace]: -2,
       [Moves.CottonSpore]: -2,

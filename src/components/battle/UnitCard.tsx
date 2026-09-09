@@ -90,6 +90,8 @@ const STATUS_COLORS: Record<Statuses, string> = {
   [Statuses.HealBlocked]: '#c97a8a',
   [Statuses.PowerTricked]: '#e0b06b',
   [Statuses.Roosting]: '#a0c9d6',
+  [Statuses.MagnetRisen]: '#d6c96b',
+  [Statuses.AquaRinged]: '#6bb8d6',
 };
 
 const STATUS_NAMES: Record<Statuses, string> = {
@@ -142,6 +144,8 @@ const STATUS_NAMES: Record<Statuses, string> = {
   [Statuses.HealBlocked]: 'Heal Blocked',
   [Statuses.PowerTricked]: 'Power Trick',
   [Statuses.Roosting]: 'Roosting',
+  [Statuses.MagnetRisen]: 'Magnet Rise',
+  [Statuses.AquaRinged]: 'Aqua Ring',
 };
 
 /**

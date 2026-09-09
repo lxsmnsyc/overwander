@@ -16,6 +16,7 @@ const INCREASED_CRITICAL_HIT_RATIO_MOVES = new Set([
   Moves.AirCutter,
   Moves.PoisonTail,
   Moves.LeafBlade,
+  Moves.NightSlash,
 ]);
 
 export default function setupIncreasedCriticalHitRatioMoves(battle: Battle): void {

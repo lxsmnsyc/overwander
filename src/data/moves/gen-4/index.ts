@@ -3,6 +3,9 @@ import registerGyroBallToFeint from './gyro-ball-to-feint';
 import registerPluckToCloseCombat from './pluck-to-close-combat';
 import registerPaybackToTrumpCard from './payback-to-trump-card';
 import registerHealBlockToPowerTrick from './heal-block-to-power-trick';
+import registerGastroAcidToLastResort from './gastro-acid-to-last-resort';
+import registerWorrySeedToFlareBlitz from './worry-seed-to-flare-blitz';
+import registerForcePalmToXScissor from './force-palm-to-x-scissor';
 
 /**
  * Sinnoh's moves, in the order the move list numbers them. That order
@@ -15,4 +18,7 @@ export default function registerGen4Moves(): void {
   registerPluckToCloseCombat();
   registerPaybackToTrumpCard();
   registerHealBlockToPowerTrick();
+  registerGastroAcidToLastResort();
+  registerWorrySeedToFlareBlitz();
+  registerForcePalmToXScissor();
 }

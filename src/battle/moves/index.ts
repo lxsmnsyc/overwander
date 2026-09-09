@@ -90,6 +90,12 @@ import setupAcupressure from './acupressure';
 import setupBerryMoves from './berry-moves';
 import setupHealingWish from './healing-wish';
 import setupFling from './fling';
+import setupStageSwaps from './stage-swaps';
+import setupToxicSpikes from './toxic-spikes';
+import setupAquaRing from './aqua-ring';
+import setupLuckyChant from './lucky-chant';
+import setupReadingTheField from './reading-the-field';
+import setupLastResort from './last-resort';
 
 export default function setupMoves(battle: Battle): void {
   // Overarching groups
@@ -194,6 +200,12 @@ export default function setupMoves(battle: Battle): void {
   setupBerryMoves(battle);
   setupHealingWish(battle);
   setupFling(battle);
+  setupStageSwaps(battle);
+  setupToxicSpikes(battle);
+  setupAquaRing(battle);
+  setupLuckyChant(battle);
+  setupReadingTheField(battle);
+  setupLastResort(battle);
 
   // Last, because they are what is left: both fallbacks only answer
   // when every resolver above has declined to pick anything. Attack

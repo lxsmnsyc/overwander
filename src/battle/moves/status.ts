@@ -47,6 +47,11 @@ const EFFECT_STATUS_MOVES: {
   [key in Moves]?: { status: Statuses; chance: number };
 } = {
   [Moves.BodySlam]: { status: Statuses.Paralyzed, chance: 30 },
+  [Moves.ForcePalm]: { status: Statuses.Paralyzed, chance: 30 },
+  [Moves.PoisonJab]: { status: Statuses.Poisoned, chance: 30 },
+  [Moves.DarkPulse]: { status: Statuses.Flinched, chance: 20 },
+  [Moves.AirSlash]: { status: Statuses.Flinched, chance: 30 },
+  [Moves.FlareBlitz]: { status: Statuses.Burned, chance: 10 },
   [Moves.Ember]: { status: Statuses.Burned, chance: 10 },
   [Moves.Flamethrower]: { status: Statuses.Burned, chance: 10 },
   [Moves.FireBlast]: { status: Statuses.Burned, chance: 10 },

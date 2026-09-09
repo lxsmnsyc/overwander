@@ -167,6 +167,16 @@ export const enum Statuses {
    * itself on the ground to rest (Roost)
    */
   Roosting = 48,
+  /**
+   * The unit is riding a magnetic field, so nothing on the ground
+   * reaches it (Magnet Rise)
+   */
+  MagnetRisen = 49,
+  /**
+   * A ring of water is drawn round the unit, putting a little health
+   * back each time it acts (Aqua Ring)
+   */
+  AquaRinged = 50,
 }
 
 /**
@@ -346,4 +356,13 @@ export const enum TeamStatuses {
    * Spikes are laid under the team: anything swapped in loses health
    */
   Spikes = 5,
+  /**
+   * Poisoned spikes are scattered under the team: anything walking in
+   * is poisoned, and two layers poison it badly
+   */
+  ToxicSpikes = 6,
+  /**
+   * A chant is up over the team: nothing lands a critical on it
+   */
+  LuckyChant = 7,
 }

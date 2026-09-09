@@ -1,5 +1,5 @@
 import { AttackPriority } from '../../core/event-emitter';
-import type Abilities from '../../data/ids/abilities';
+import Abilities from '../../data/ids/abilities';
 import { Moves } from '../../data/ids/moves';
 import type Battle from '../core';
 import { BattleEvents, MoveTargetType } from '../events';
@@ -43,6 +43,29 @@ export default function setupAbilityMoves(battle: Battle): void {
       }
       for (const ability of copying) {
         event.source.addAbility(ability);
+      }
+      return;
+    }
+
+    // Gastro Acid takes one of the target's abilities and gives
+    // nothing back; Worry Seed puts Insomnia where the one it took
+    // was, so a sleeper is worth nothing to whatever was counting on
+    // it sleeping.
+    //
+    // One rather than the lot: a unit here may hold several, and a
+    // move that stripped a pokemon bare would be a different move
+    if (event.move === Moves.GastroAcid || event.move === Moves.WorrySeed) {
+      const held = abilitiesOf(target);
+
+      if (held.length > 0) {
+        target.removeAbility(held[Math.floor(battle.random() * held.length)]);
+      } else if (event.move === Moves.GastroAcid) {
+        // Nothing to shut off is nothing done
+        event.source.triggerMoveEffectFailed(event.move, event.target, event.steps);
+        return;
+      }
+      if (event.move === Moves.WorrySeed) {
+        target.addAbility(Abilities.Insomnia);
       }
       return;
     }

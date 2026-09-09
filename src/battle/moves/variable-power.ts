@@ -1,6 +1,6 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { MAX_FRIENDSHIP } from '../../data/constants/friendship';
-import { Stats } from '../../data/constants/stats';
+import { Stages, Stats } from '../../data/constants/stats';
 import { Moves } from '../../data/ids/moves';
 import { USELESS_PENALTY } from '../ai/score';
 import type Battle from '../core';
@@ -67,6 +67,26 @@ const GYRO_CEILING = 150;
 
 /** Wring Out squeezes what is left, so a whole target is the worst to wring */
 const WRING_OUT_CEILING = 120;
+
+/**
+ * Punishment answers a target for what it has built: a base hit plus
+ * a share for every stage it has raised, and nothing off for the ones
+ * it has lost
+ */
+const PUNISHMENT_BASE = 60;
+const PUNISHMENT_PER_STAGE = 20;
+const PUNISHMENT_CEILING = 200;
+
+/** Every stage a target could have raised, which is what it answers for */
+const RAISED: Stages[] = [
+  Stages.Attack,
+  Stages.Defense,
+  Stages.SpecialAttack,
+  Stages.SpecialDefense,
+  Stages.Speed,
+  Stages.Accuracy,
+  Stages.Evasion,
+];
 
 /**
  * Trump Card, once its premise is translated. In the mainline it is
@@ -138,6 +158,13 @@ const TARGETED_POWER: { [key in Moves]?: (source: Unit, target: Unit) => number 
             1,
         ),
       ),
+    ),
+  [Moves.Punishment]: (_source, target) =>
+    Math.min(
+      PUNISHMENT_CEILING,
+      PUNISHMENT_BASE +
+        PUNISHMENT_PER_STAGE *
+          RAISED.reduce((total, stage) => total + Math.max(0, target.stages[stage]), 0),
     ),
   [Moves.WringOut]: (_source, target) =>
     Math.max(

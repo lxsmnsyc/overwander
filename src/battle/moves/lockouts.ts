@@ -4,6 +4,7 @@ import { Statuses } from '../../data/ids/status';
 import { USELESS_PENALTY } from '../ai/score';
 import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
+import { holdsAnyItem } from '../utils';
 
 /**
  * The two moves that take something away from a target rather than
@@ -39,12 +40,14 @@ export default function setupLockouts(battle: Battle): void {
     }
   });
 
-  // An embargo on a target holding nothing takes nothing away
+  // An embargo on a target holding nothing takes nothing away. Asked
+  // rather than counted off the bag, since an item already knocked
+  // off stays in there as a falsy entry
   battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
     if (
       event.move === Moves.Embargo &&
       event.target.type === MoveTargetType.Unit &&
-      Object.keys(event.target.unit.items).length === 0
+      !holdsAnyItem(event.target.unit)
     ) {
       event.score -= USELESS_PENALTY;
     }

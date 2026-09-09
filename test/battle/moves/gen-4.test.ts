@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   BattleEvents,
   type CheckUnitAIMoveUsableEvent,
+  type CheckUnitMovePowerEvent,
   EffectType,
   MoveTargetType,
 } from '../../../src/battle/events';
@@ -12,7 +13,11 @@ import { Types } from '../../../src/data/constants/types';
 import { Items } from '../../../src/data/ids/items';
 import { Moves } from '../../../src/data/ids/moves';
 import { Statuses } from '../../../src/data/ids/status';
+import Abilities from '../../../src/data/ids/abilities';
+import { EventPriority } from '../../../src/core/event-emitter';
 import turns from '../../../src/battle/turn';
+import { toxicLayersUnder } from '../../../src/battle/moves/toxic-spikes';
+import { stealableItem } from '../../../src/battle/utils';
 import { createBattle, createUnit, pinRandom } from '../harness';
 
 /** A plain cause, for the damage and heals these tests stage by hand */
@@ -23,6 +28,21 @@ function unitTarget(unit: Unit): { readonly type: MoveTargetType.Unit; readonly 
 }
 
 const NONE_TARGET = { type: MoveTargetType.None } as const;
+
+/** What a move is worth against this target right now */
+function powerOf(battle: Battle, source: Unit, move: Moves, aim: Unit): number {
+  const event: CheckUnitMovePowerEvent = {
+    id: 'CheckMovePower',
+    disabled: false,
+    source,
+    move,
+    target: unitTarget(aim),
+    power: 0,
+  };
+
+  battle.emit(BattleEvents.CheckUnitMovePower, event);
+  return event.power ?? 0;
+}
 
 function usable(battle: Battle, source: Unit, move: Moves, aim: Unit): boolean {
   const event: CheckUnitAIMoveUsableEvent = {
@@ -216,5 +236,198 @@ describe("Sinnoh's moves", () => {
 
     battle.tick(turns(4));
     expect(mate.checkStat(Stats.Speed, 0)).toBe(before);
+  });
+
+  it('only lands a Sucker Punch on a target that is already swinging', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const puncher = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB);
+
+    puncher.enter();
+    target.enter();
+    target.addMove(Moves.Tackle);
+
+    // Nothing to catch: the target is standing still
+    expect(usable(battle, puncher, Moves.SuckerPunch, target)).toBe(false);
+
+    target.cast(Moves.Tackle, unitTarget(puncher));
+    expect(usable(battle, puncher, Moves.SuckerPunch, target)).toBe(true);
+  });
+
+  it('waits for a Last Resort until everything else has been out', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const desperate = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB);
+
+    desperate.enter();
+    target.enter();
+    desperate.addMove(Moves.LastResort);
+    desperate.addMove(Moves.Tackle);
+    desperate.addMove(Moves.Growl);
+
+    expect(usable(battle, desperate, Moves.LastResort, target)).toBe(false);
+
+    desperate.triggerMove(Moves.Tackle, unitTarget(target), 0);
+    expect(usable(battle, desperate, Moves.LastResort, target)).toBe(false);
+
+    // Everything else has been out now, so the resort is there
+    desperate.triggerMove(Moves.Growl, unitTarget(target), 0);
+    expect(usable(battle, desperate, Moves.LastResort, target)).toBe(true);
+  });
+
+  it('trades stages across the field with a Power Swap, and makes none', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const swapper = createUnit(battle, teamA);
+    const built = createUnit(battle, teamB);
+
+    swapper.enter();
+    built.enter();
+    built.addStage(Stages.Attack, 2, MOVE_CAUSE);
+    swapper.addStage(Stages.SpecialAttack, 1, MOVE_CAUSE);
+
+    swapper.triggerMoveEffect(Moves.PowerSwap, unitTarget(built), 0);
+    battle.tick(1);
+
+    expect(swapper.stages[Stages.Attack]).toBe(2);
+    expect(built.stages[Stages.Attack]).toBe(0);
+    expect(built.stages[Stages.SpecialAttack]).toBe(1);
+    expect(swapper.stages[Stages.SpecialAttack]).toBe(0);
+
+    // The defences were never on the table
+    expect(swapper.stages[Stages.Defense]).toBe(0);
+  });
+
+  it('answers a target for what it has built, with Punishment', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const punisher = createUnit(battle, teamA);
+    const built = createUnit(battle, teamB);
+
+    punisher.enter();
+    built.enter();
+
+    const plain = powerOf(battle, punisher, Moves.Punishment, built);
+
+    built.addStage(Stages.Attack, 2, MOVE_CAUSE);
+    expect(powerOf(battle, punisher, Moves.Punishment, built)).toBeGreaterThan(plain);
+
+    // Stages it has lost are not stages it answers for
+    const other = createUnit(battle, teamB);
+
+    other.enter();
+    other.addStage(Stages.Attack, -2, MOVE_CAUSE);
+    expect(powerOf(battle, punisher, Moves.Punishment, other)).toBe(plain);
+  });
+
+  it('poisons whatever walks onto Toxic Spikes, and a Poison type takes them up', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const layer = createUnit(battle, teamA);
+    const walker = createUnit(battle, teamB);
+    const cleaner = createUnit(battle, teamB, [Types.Poison]);
+
+    layer.enter();
+    layer.triggerMoveEffect(Moves.ToxicSpikes, { type: MoveTargetType.Team, team: teamB }, 0);
+    battle.tick(1);
+
+    walker.enter();
+    expect(walker.status[Statuses.Poisoned]).not.toBeNull();
+
+    // The Poison type sweeps them rather than standing in them
+    cleaner.enter();
+    expect(cleaner.status[Statuses.Poisoned]).toBeUndefined();
+    expect(toxicLayersUnder(teamB)).toBe(0);
+  });
+
+  it('keeps a magnet-risen unit off the ground for a while', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const risen = createUnit(battle, teamA);
+
+    createUnit(battle, teamB).enter();
+    risen.enter();
+    expect(risen.checkGrounded()).toBe(true);
+
+    risen.triggerMoveEffect(Moves.MagnetRise, NONE_TARGET, 0);
+    battle.tick(1);
+    expect(risen.checkGrounded()).toBe(false);
+
+    battle.tick(turns(6));
+    expect(risen.checkGrounded()).toBe(true);
+  });
+
+  it('takes one ability with a Gastro Acid rather than every one', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const souring = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB);
+
+    souring.enter();
+    target.enter();
+    target.addAbility(Abilities.Levitate);
+
+    // Counted rather than read off the record: a unit with room for
+    // several would lose all of them to a move that swept the list,
+    // and one removal is the whole of what this move does
+    let taken = 0;
+
+    battle.on(BattleEvents.UnitRemoveAbility, EventPriority.Post, () => {
+      taken += 1;
+    });
+
+    souring.triggerMoveEffect(Moves.GastroAcid, unitTarget(target), 0);
+    battle.tick(1);
+
+    expect(taken).toBe(1);
+    expect(target.hasAbility(Abilities.Levitate)).toBe(false);
+  });
+
+  it('puts Insomnia in the place a Worry Seed took, and nowhere else', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const sower = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB);
+
+    sower.enter();
+    target.enter();
+    target.addAbility(Abilities.Levitate);
+
+    let taken = 0;
+
+    battle.on(BattleEvents.UnitRemoveAbility, EventPriority.Post, () => {
+      taken += 1;
+    });
+
+    sower.triggerMoveEffect(Moves.WorrySeed, unitTarget(target), 0);
+    battle.tick(1);
+
+    expect(taken).toBe(1);
+    expect(target.hasAbility(Abilities.Insomnia)).toBe(true);
+    expect(target.hasAbility(Abilities.Levitate)).toBe(false);
+  });
+
+  it('draws the stolen item at random rather than off the top of the bag', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const thief = createUnit(battle, teamA);
+    const victim = createUnit(battle, teamB);
+
+    thief.enter();
+    victim.enter();
+    // Written into the bag rather than added, since an ordinary unit
+    // has room for one and this is the case the draw is for
+    victim.items[Items.OranBerry] = true;
+    victim.items[Items.SitrusBerry] = true;
+
+    // Either end of the bag is reachable, so which of two held items
+    // a thief walks off with is the roll's decision and not the
+    // order they happened to go in
+    pinRandom(battle, 0);
+    const first = stealableItem(victim);
+
+    pinRandom(battle, 0.99);
+    const last = stealableItem(victim);
+
+    expect(first).not.toBeUndefined();
+    expect(last).not.toBe(first);
+
+    // And a roll of exactly 1, which a pinned RNG hands out, still
+    // points inside the bag
+    pinRandom(battle, 1);
+    expect(stealableItem(victim)).toBe(last);
   });
 });

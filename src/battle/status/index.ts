@@ -41,6 +41,7 @@ import setupEmbargoedStatus from './embargoed';
 import setupHealBlockedStatus from './heal-blocked';
 import setupPowerTrickedStatus from './power-tricked';
 import setupRoostingStatus from './roosting';
+import setupMagnetRisenStatus from './magnet-risen';
 import setupImprisonedStatus from './imprisoned';
 import setupRootedStatus from './rooted';
 import setupSnatchingStatus from './snatching';
@@ -201,6 +202,7 @@ export default function setupStatus(battle: Battle): void {
   setupHealBlockedStatus(battle);
   setupPowerTrickedStatus(battle);
   setupRoostingStatus(battle);
+  setupMagnetRisenStatus(battle);
 
   setupNonRefreshableStatus(battle);
   setupStatusTypeImmunity(battle);

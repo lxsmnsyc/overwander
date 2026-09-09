@@ -396,10 +396,18 @@ const treeckoToTorkoal = [
           gone.mark(source, VANISHING_ACT_DURATION);
         }
       }),
+      // Only what is aimed at it alone loses it: a move that covers the
+      // whole side finds it whether it is hiding or not
       battle.on(BattleEvents.UnitTriggerMoveRollHit, EventPriority.Post, (event) => {
-        const target = event.parent.target;
+        const parent = event.parent;
+        const target = parent.target;
 
-        if (event.hit && target.type === MoveTargetType.Unit && gone.has(target.unit)) {
+        if (
+          event.hit &&
+          target.type === MoveTargetType.Unit &&
+          isSingleTargetMove(parent.move) &&
+          gone.has(target.unit)
+        ) {
           event.hit = false;
         }
       }),
@@ -409,6 +417,7 @@ const treeckoToTorkoal = [
         if (
           event.usable &&
           event.target.type === MoveTargetType.Unit &&
+          isSingleTargetMove(event.move) &&
           gone.has(event.target.unit)
         ) {
           event.usable = false;

@@ -901,19 +901,21 @@ export function createCheerAbility(
 export const FEUD_SCALE = 1.4;
 
 /** Which half of the feud an ability is */
-export type FeudSide = 'poisons' | 'punishes';
+export type FeudSide = 'deepens' | 'punishes';
 
 /**
  * What Zangoose and Seviper share: the venom they have been fighting
- * over. Seviper's touch always leaves the worse poison, and a poisoned
- * anything is what Zangoose tears into, which is why the feud settles
- * nothing: Zangoose cannot be poisoned in the first place
+ * over. Seviper works whatever poison is already in something down into
+ * the worse kind, and a poisoned anything is what Zangoose tears into,
+ * which is why the feud settles nothing: Zangoose cannot be poisoned in
+ * the first place. Putting the poison on is Poison Touch's job, which
+ * Seviper's own pool already carries
  */
 export function createFeudAbility(
   ability: Abilities,
   side: FeudSide,
 ): ((battle: Battle) => void) & { ability: Abilities } {
-  if (side === 'poisons') {
+  if (side === 'deepens') {
     return createAbility(ability, (battle) =>
       battle.on(BattleEvents.UnitAttack, AttackPriority.Post, (event) => {
         const source = event.source;
@@ -924,17 +926,19 @@ export function createFeudAbility(
           !target.alive ||
           event.flags & MoveAttackFlags.Simulated ||
           !source.hasAbility(ability) ||
-          !source.checkMoveContact(event.move, { type: MoveTargetType.Unit, unit: target })
+          !isPoisoned(target)
         ) {
           return;
         }
 
+        const cause = { type: EffectType.Ability, ability, unit: source } as const;
+
         source.triggerAbility(ability);
-        target.addStatus(Statuses.BadlyPoisoned, {
-          type: EffectType.Ability,
-          ability,
-          unit: source,
-        });
+
+        // The mild kind is taken off first: the two are different
+        // statuses, so the worse one cannot simply be laid on top
+        target.removeStatus(Statuses.Poisoned, cause);
+        target.addStatus(Statuses.BadlyPoisoned, cause);
       }),
     );
   }

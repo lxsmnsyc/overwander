@@ -48,7 +48,7 @@ export const ANTLION_PIT_FRACTION = 1 / 8;
 
 /** How many times a wish-granter must act, and what the wish is worth */
 export const SEVEN_WISHES_COUNT = 7;
-export const SEVEN_WISHES_FRACTION = 1 / 2;
+export const SEVEN_WISHES_FRACTION = 1 / 4;
 
 /** How often a rearranging body drifts further into its own shape */
 export const FORM_DRIFT_INTERVAL = 6000;
@@ -457,9 +457,12 @@ const spoinkToDeoxys = [
         for (const ally of battle.units()) {
           if (ally.alive && ally.team.alliance === unit.team.alliance) {
             unit.heal(cause, ally, ally.checkStat(Stats.HP, 0) * SEVEN_WISHES_FRACTION, 0);
-            ally.cure(cause);
           }
         }
+
+        // The cure is the wish it keeps for itself: a side-wide Heal
+        // Bell every seven actions was more than anything could answer
+        unit.cure(cause);
       }),
       ...lifecycles,
     ]);
@@ -926,9 +929,9 @@ const spoinkToDeoxys = [
   createFossilPairAbility(Abilities.ClawRush, 'chases'),
 
   // Zangoose and Seviper: counterparts feuding over the venom, one
-  // putting it on and one hunting whatever carries it
+  // working it deeper and one hunting whatever carries it
   createFeudAbility(Abilities.FeudClaws, 'punishes'),
-  createFeudAbility(Abilities.VenomFang, 'poisons'),
+  createFeudAbility(Abilities.DeepeningVenom, 'deepens'),
 
   // Lunatone and Solrock: counterparts whose auras blot each other out,
   // since two stones in the sky at once is an eclipse

@@ -3345,22 +3345,35 @@ describe('Sweet Paw', () => {
 });
 
 describe('Magma Trail', () => {
-  it('burns whatever stands near it each time that thing moves', () => {
+  it('burns only what it has actually reached', () => {
     const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0);
     const holder = createUnit(battle, teamA);
     const ally = createUnit(battle, teamA);
-    const enemy = createUnit(battle, teamB);
+    const burned = createUnit(battle, teamB);
+    const untouched = createUnit(battle, teamB);
     holder.addAbility(Abilities.MagmaTrail);
 
-    const maxHP = enemy.checkStat(Stats.HP, 0);
+    const maxHP = burned.checkStat(Stats.HP, 0);
 
-    act(battle, enemy);
+    // Nothing before it connects
+    act(battle, burned);
 
-    expect(enemy.health).toBeCloseTo(maxHP - maxHP * MAGMA_TRAIL_FRACTION, 5);
+    expect(burned.health).toBe(maxHP);
 
-    // Its own side walks over the same ground unharmed
+    holder.attack(burned, Moves.Pound, 40, Types.Normal, MoveCategories.Physical, 0);
+    burned.setHealth(maxHP);
+
+    act(battle, burned);
+
+    expect(burned.health).toBeCloseTo(maxHP - maxHP * MAGMA_TRAIL_FRACTION, 5);
+
+    // The one it never touched walks over clean ground, and so does
+    // its own side
+    act(battle, untouched);
     act(battle, ally);
 
+    expect(untouched.health).toBe(untouched.checkStat(Stats.HP, 0));
     expect(ally.health).toBe(ally.checkStat(Stats.HP, 0));
   });
 });
@@ -4141,6 +4154,9 @@ describe('Vanishing Act', () => {
 
     expect(rolled(battle, enemy, holder, Moves.Pound)).toBe(false);
 
+    // A move that covers the whole side finds it anyway
+    expect(rolled(battle, enemy, holder, Moves.Earthquake)).toBe(true);
+
     // It comes back up on its own
     battle.tick(VANISHING_ACT_DURATION);
 
@@ -4817,37 +4833,34 @@ describe('Cloud Step', () => {
 });
 
 describe('the Zangoose and Seviper pair', () => {
-  it('poisons on one side and hunts the poisoned on the other', () => {
+  it('works the venom deeper on one side and hunts it on the other', () => {
     const { battle, teamA, teamB } = createBattle();
     pinRandom(battle, 0);
     const zangoose = createUnit(battle, teamA);
     const seviper = createUnit(battle, teamA);
     const enemy = createUnit(battle, teamB);
     zangoose.addAbility(Abilities.FeudClaws);
-    seviper.addAbility(Abilities.VenomFang);
+    seviper.addAbility(Abilities.DeepeningVenom);
 
     const target = unitTarget(enemy);
     const clean = zangoose.checkMovePower(Moves.Pound, target) ?? 0;
 
-    // Nothing owed while the target is clean
+    // A clean target is nothing to either of them
+    seviper.attack(enemy, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(enemy.status[Statuses.BadlyPoisoned]).toBeUndefined();
     expect(zangoose.checkMovePower(Moves.Pound, target)).toBeCloseTo(clean, 5);
+
+    // Somebody else's poison is what Seviper works on
+    enemy.addStatus(Statuses.Poisoned, NONE_CAUSE);
+
+    expect(zangoose.checkMovePower(Moves.Pound, target)).toBeCloseTo(clean * FEUD_SCALE, 5);
 
     seviper.attack(enemy, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
 
+    expect(enemy.status[Statuses.Poisoned]).toBeUndefined();
     expect(enemy.status[Statuses.BadlyPoisoned]).not.toBeUndefined();
     expect(zangoose.checkMovePower(Moves.Pound, target)).toBeCloseTo(clean * FEUD_SCALE, 5);
-  });
-
-  it('leaves a non-contact move out of the venom', () => {
-    const { battle, teamA, teamB } = createBattle();
-    pinRandom(battle, 0);
-    const seviper = createUnit(battle, teamA);
-    const enemy = createUnit(battle, teamB);
-    seviper.addAbility(Abilities.VenomFang);
-
-    seviper.attack(enemy, Moves.Ember, 40, Types.Fire, MoveCategories.Special, 0);
-
-    expect(enemy.status[Statuses.BadlyPoisoned]).toBeUndefined();
   });
 });
 
@@ -5581,6 +5594,7 @@ describe('Seven Wishes', () => {
     const maxHP = ally.checkStat(Stats.HP, 0);
     ally.setHealth(1);
     ally.addStatus(Statuses.Poisoned, NONE_CAUSE);
+    holder.addStatus(Statuses.Poisoned, NONE_CAUSE);
 
     for (let asked = 1; asked < SEVEN_WISHES_COUNT; asked += 1) {
       act(battle, holder);
@@ -5591,7 +5605,10 @@ describe('Seven Wishes', () => {
     act(battle, holder);
 
     expect(ally.health).toBeCloseTo(1 + maxHP * SEVEN_WISHES_FRACTION, 5);
-    expect(ally.status[Statuses.Poisoned]).toBeUndefined();
+
+    // The cure is for the wish-granter alone
+    expect(ally.status[Statuses.Poisoned]).not.toBeUndefined();
+    expect(holder.status[Statuses.Poisoned]).toBeUndefined();
 
     // The count starts again from nothing
     ally.setHealth(1);

@@ -990,30 +990,41 @@ const chikoritaToCelebi = [
     }),
   ),
 
-  // Slugma: it leaves the ground molten behind it, and whatever else
-  // is standing there pays for it as it moves
-  createAbility(
-    Abilities.MagmaTrail,
-    (battle) =>
-      new MergedLifecycle(
-        onUnitActs(battle, (unit) => {
-          const slug = enemyHolder(battle, unit, Abilities.MagmaTrail);
+  // Slugma: the ground it has dragged itself across stays molten, so
+  // what pays is whatever it has actually reached, not the whole field
+  createAbility(Abilities.MagmaTrail, (battle) => {
+    const { state, lifecycles } = createUnitState<boolean>(battle);
 
-          if (!slug) {
-            return;
-          }
+    return new MergedLifecycle([
+      ...lifecycles,
+      battle.on(BattleEvents.UnitAttack, AttackPriority.Post, (event) => {
+        if (
+          event.success &&
+          event.target.alive &&
+          !(event.flags & MoveAttackFlags.Simulated) &&
+          event.source.hasAbility(Abilities.MagmaTrail)
+        ) {
+          state.set(event.target, true);
+        }
+      }),
+      ...onUnitActs(battle, (unit) => {
+        const slug = enemyHolder(battle, unit, Abilities.MagmaTrail);
 
-          slug.triggerAbility(Abilities.MagmaTrail);
+        if (!slug || !state.get(unit)) {
+          return;
+        }
 
-          slug.damage(
-            { type: EffectType.Ability, ability: Abilities.MagmaTrail, unit: slug },
-            unit,
-            unit.checkStat(Stats.HP, 0) * MAGMA_TRAIL_FRACTION,
-            DamageFlags.Indirect,
-          );
-        }),
-      ),
-  ),
+        slug.triggerAbility(Abilities.MagmaTrail);
+
+        slug.damage(
+          { type: EffectType.Ability, ability: Abilities.MagmaTrail, unit: slug },
+          unit,
+          unit.checkStat(Stats.HP, 0) * MAGMA_TRAIL_FRACTION,
+          DamageFlags.Indirect,
+        );
+      }),
+    ]);
+  }),
 
   // Swinub: the tusks go through the wall rather than round it, so the
   // screen is gone for everybody afterwards. Torn down before the blow

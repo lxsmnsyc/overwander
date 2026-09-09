@@ -295,7 +295,7 @@ export default function registerSignatureAbilities(): void {
   // Krabby
   registerAbility(Abilities.HeavyPincer, {
     name: 'Heavy Pincer',
-    description: 'Its physical moves hit 1.45x while it is at or above 1/2 HP.',
+    description: 'Its contact moves hit 1.45x while it is at or above 1/2 HP.',
   });
 
   // Voltorb
@@ -344,7 +344,7 @@ export default function registerSignatureAbilities(): void {
   // Chansey
   registerAbility(Abilities.Cushioned, {
     name: 'Cushioned',
-    description: 'No single hit takes more than 1/6 of its HP off it.',
+    description: 'No single hit takes more than 1/4 of its HP off it.',
   });
 
   // Tangela
@@ -731,7 +731,8 @@ export default function registerSignatureAbilities(): void {
   // Slugma
   registerAbility(Abilities.MagmaTrail, {
     name: 'Magma Trail',
-    description: 'Every standing enemy loses 1/16 of its HP each time it acts while it stands.',
+    description:
+      'An enemy it has landed a move on loses 1/16 of its HP each time it acts, while it stands.',
   });
 
   // Swinub
@@ -959,7 +960,7 @@ export default function registerSignatureAbilities(): void {
   // Nincada
   registerAbility(Abilities.VanishingAct, {
     name: 'Vanishing Act',
-    description: 'For 1 second after it lands a move, moves aimed at it miss.',
+    description: 'For 1 second after it lands a move, single-target moves aimed at it miss.',
   });
 
   // Whismur
@@ -1145,9 +1146,10 @@ export default function registerSignatureAbilities(): void {
   });
 
   // Seviper
-  registerAbility(Abilities.VenomFang, {
-    name: 'Venom Fang',
-    description: 'Every contact move it lands leaves the target badly poisoned.',
+  registerAbility(Abilities.DeepeningVenom, {
+    name: 'Deepening Venom',
+    description:
+      'A move it lands on a poisoned target turns that poison into the badly-poisoned kind.',
   });
 
   /**
@@ -1374,7 +1376,7 @@ export default function registerSignatureAbilities(): void {
   registerAbility(Abilities.SevenWishes, {
     name: 'Seven Wishes',
     description:
-      'Every 7 times it acts, its whole side heals 1/2 of their HP and is cured of everything.',
+      'Every 7 times it acts, its whole side heals 1/4 of their HP and it alone is cured.',
   });
 
   // Deoxys

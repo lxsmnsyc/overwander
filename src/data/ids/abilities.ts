@@ -470,7 +470,7 @@ const enum Abilities {
   PatientStalk = 200167,
   CloudStep = 200168,
   FeudClaws = 200169,
-  VenomFang = 200170,
+  DeepeningVenom = 200170,
   MoonPull = 200171,
   SunGlare = 200172,
   SiltBed = 200173,

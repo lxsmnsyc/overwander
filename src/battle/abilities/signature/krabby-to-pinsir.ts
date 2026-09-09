@@ -45,7 +45,7 @@ export const SMOG_SCREEN_ACCURACY_SCALE = 0.85;
 export const CORKSCREW_SCALE = 1.15;
 
 /** The most one blow may take off a cushion */
-export const CUSHIONED_CAP_FRACTION = 1 / 6;
+export const CUSHIONED_CAP_FRACTION = 1 / 4;
 
 /** The share of health that puts an ally behind her */
 export const MOTHERS_SHIELD_THRESHOLD = 1 / 2;
@@ -132,7 +132,7 @@ function fightsAlone(battle: Battle, unit: Unit): boolean {
 
 const krabbyToPinsir = [
   // Krabby: the claw is only worth anything while there is strength
-  // behind it, so the line is front-loaded on purpose
+  // behind it, and only on what it actually closes around
   createAbility(Abilities.HeavyPincer, (battle) =>
     battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
       const source = event.source;
@@ -141,7 +141,8 @@ const krabbyToPinsir = [
         event.power != null &&
         isPhysicalMove(event.move) &&
         source.hasAbility(Abilities.HeavyPincer) &&
-        source.health >= source.checkStat(Stats.HP, 0) * HEAVY_PINCER_THRESHOLD
+        source.health >= source.checkStat(Stats.HP, 0) * HEAVY_PINCER_THRESHOLD &&
+        source.checkMoveContact(event.move, event.target)
       ) {
         event.power *= HEAVY_PINCER_SCALE;
       }

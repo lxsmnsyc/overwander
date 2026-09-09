@@ -39,7 +39,7 @@ export const SECOND_WIND_THRESHOLD = 1 / 4;
 export const SMOG_SCREEN_ACCURACY_SCALE = 0.85;
 
 /** What the horn is worth once it is through the guard */
-export const DRILL_HORN_SCALE = 1.15;
+export const CORKSCREW_SCALE = 1.15;
 
 /** The most one blow may take off a cushion */
 export const CUSHIONED_CAP_FRACTION = 1 / 6;
@@ -64,6 +64,21 @@ export const MIMED_BARRIER_SELF_SCALE = 1.15;
 
 /** What a muddled head is worth to it */
 export const ICY_CHARM_SCALE = 1.5;
+
+/** What one touch charges it by, and how much charge it holds */
+export const STATIC_FIELD_STEP = 0.15;
+export const STATIC_FIELD_MAX_STACKS = 4;
+
+/** What the forge is worth: on the burn, and on what is burning */
+export const FORGE_HEAT_BURN_SCALE = 1.5;
+export const FORGE_HEAT_DAMAGE_SCALE = 1.3;
+
+/** What catching something mid-swing is worth */
+export const SNAPJAW_SCALE = 1.5;
+
+/** What fighting with no guard is worth, and what it costs */
+export const BULLHEADED_POWER_SCALE = 1.3;
+export const BULLHEADED_EXPOSED_SCALE = 1.15;
 
 /** The stat stages a core rights itself in, in the order it tries them */
 const CORE_RESET_STAGES = [
@@ -293,16 +308,16 @@ const krabbyToPinsir = [
   // Rhyhorn: the horn goes through whatever the target has put up, so
   // the defending stat is read the way a critical hit reads it
   createAbility(
-    Abilities.DrillHorn,
+    Abilities.Corkscrew,
     (battle) =>
       new MergedLifecycle([
         battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
           if (
             event.power != null &&
-            event.source.hasAbility(Abilities.DrillHorn) &&
+            event.source.hasAbility(Abilities.Corkscrew) &&
             event.source.checkMoveContact(event.move, event.target)
           ) {
-            event.power *= DRILL_HORN_SCALE;
+            event.power *= CORKSCREW_SCALE;
           }
         }),
         battle.on(BattleEvents.UnitAttackResolveStat, EventPriority.Post, (event) => {
@@ -312,7 +327,7 @@ const krabbyToPinsir = [
           if (
             event.unit !== target ||
             (event.stat !== Stats.Defense && event.stat !== Stats.SpecialDefense) ||
-            !parent.source.hasAbility(Abilities.DrillHorn) ||
+            !parent.source.hasAbility(Abilities.Corkscrew) ||
             !parent.source.checkMoveContact(parent.move, unitTarget(target))
           ) {
             return;
@@ -568,6 +583,131 @@ const krabbyToPinsir = [
         event.value *= ICY_CHARM_SCALE;
       }
     }),
+  ),
+
+  // Electabuzz: it takes the charge out of whatever touches it, so a
+  // fight fought close is a fight it gets faster in
+  createAbility(Abilities.StaticField, (battle) => {
+    const { counter, lifecycles } = createUnitCounter(battle);
+
+    return new MergedLifecycle([
+      battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
+        const charge = counter.get(event.source);
+
+        if (
+          charge > 0 &&
+          event.stat === Stats.Speed &&
+          event.source.hasAbility(Abilities.StaticField)
+        ) {
+          event.value *= 1 + STATIC_FIELD_STEP * charge;
+        }
+      }),
+      battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
+        const target = event.target;
+        const cause = event.cause;
+        const charge = counter.get(target);
+
+        if (
+          !event.success ||
+          !target.alive ||
+          event.flags & DamageFlags.Indirect ||
+          cause.type !== EffectType.Move ||
+          cause.unit === target ||
+          charge >= STATIC_FIELD_MAX_STACKS ||
+          !target.hasAbility(Abilities.StaticField) ||
+          !cause.unit.checkMoveContact(cause.move, unitTarget(target))
+        ) {
+          return;
+        }
+
+        counter.set(target, charge + 1);
+        target.triggerAbility(Abilities.StaticField);
+      }),
+      ...lifecycles,
+    ]);
+  }),
+
+  // Magmar: it works what it has already heated. The burn is the
+  // opening and everything after it lands harder
+  createAbility(
+    Abilities.ForgeHeat,
+    (battle) =>
+      new MergedLifecycle([
+        // The burn's chip is dealt with the cause that lit it, and the
+        // status record holds that same cause: matching the two is what
+        // tells a burn residual apart from any other indirect hit
+        battle.on(BattleEvents.UnitDamage, AttackPriority.Pre, (event) => {
+          const cause = event.cause;
+
+          if (
+            event.flags & DamageFlags.Indirect &&
+            cause.type !== EffectType.None &&
+            event.target.status[Statuses.Burned] === cause &&
+            cause.unit.hasAbility(Abilities.ForgeHeat)
+          ) {
+            event.value *= FORGE_HEAT_BURN_SCALE;
+          }
+        }),
+        battle.on(BattleEvents.UnitAttackResolveStat, EventPriority.Post, (event) => {
+          const parent = event.parent;
+
+          if (
+            event.unit === parent.source &&
+            (event.stat === Stats.Attack || event.stat === Stats.SpecialAttack) &&
+            parent.source.hasAbility(Abilities.ForgeHeat) &&
+            parent.target.status[Statuses.Burned] != null
+          ) {
+            event.value *= FORGE_HEAT_DAMAGE_SCALE;
+          }
+        }),
+      ]),
+  ),
+
+  // Pinsir: it catches things mid-swing, which is a real-time reward
+  // for reading what the enemy is winding up
+  createAbility(Abilities.Snapjaw, (battle) =>
+    battle.on(BattleEvents.UnitAttackResolveStat, EventPriority.Post, (event) => {
+      const parent = event.parent;
+      const target = parent.target;
+
+      if (
+        event.unit === parent.source &&
+        (event.stat === Stats.Attack || event.stat === Stats.SpecialAttack) &&
+        parent.source.hasAbility(Abilities.Snapjaw) &&
+        (target.casting != null || target.channeling != null)
+      ) {
+        event.value *= SNAPJAW_SCALE;
+      }
+    }),
+  ),
+
+  // Tauros: it fights with no guard at all, which reads the same on a
+  // bull of any breed
+  createAbility(
+    Abilities.Bullheaded,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
+          if (
+            event.power != null &&
+            event.source.hasAbility(Abilities.Bullheaded) &&
+            event.source.checkMoveContact(event.move, event.target)
+          ) {
+            event.power *= BULLHEADED_POWER_SCALE;
+          }
+        }),
+        battle.on(BattleEvents.UnitAttackResolveStat, EventPriority.Post, (event) => {
+          const parent = event.parent;
+
+          if (
+            event.unit === parent.source &&
+            (event.stat === Stats.Attack || event.stat === Stats.SpecialAttack) &&
+            parent.target.hasAbility(Abilities.Bullheaded)
+          ) {
+            event.value *= BULLHEADED_EXPOSED_SCALE;
+          }
+        }),
+      ]),
   ),
 ];
 

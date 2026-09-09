@@ -309,7 +309,7 @@ const enum Abilities {
   Slipstream = 200006,
   Nibble = 200007,
   Relentless = 200008,
-  Constrict = 200009,
+  Chokehold = 200009,
   ChainLightning = 200010,
   CurlUp = 200011,
   RegalHide = 200012,
@@ -350,7 +350,7 @@ const enum Abilities {
   SecondWind = 200047,
   TasteEverything = 200048,
   SmogScreen = 200049,
-  DrillHorn = 200050,
+  Corkscrew = 200050,
   Cushioned = 200051,
   EndlessGrowth = 200052,
   MothersShield = 200053,
@@ -360,6 +360,10 @@ const enum Abilities {
   MimedBarrier = 200057,
   CleanCut = 200058,
   IcyCharm = 200059,
+  StaticField = 200060,
+  ForgeHeat = 200061,
+  Snapjaw = 200062,
+  Bullheaded = 200063,
 }
 
 export default Abilities;

@@ -13,7 +13,11 @@ import type Unit from '../../unit';
  * touch ride
  */
 export function createAbility(ability: Abilities, setup: (battle: Battle) => Lifecycle) {
-  return (battle: Battle): void => {
+  // The id rides along on the returned starter, so a list of abilities
+  // can say which ones it holds without being written out twice
+  return Object.assign(startAbility, { ability });
+
+  function startAbility(battle: Battle): void {
     const lifecycle = setup(battle);
 
     const units = new Set<Unit>();
@@ -53,7 +57,7 @@ export function createAbility(ability: Abilities, setup: (battle: Battle) => Lif
     battle.on(BattleEvents.UnitDisableAbility, EventPriority.Post, (event) => {
       disableAbility(event.ability, event.source);
     });
-  };
+  }
 }
 
 /**

@@ -17,6 +17,12 @@ const setupAbilities = [
   ...krabbyToPinsir,
 ];
 
+/**
+ * Every ability the signature files implement. A registry entry is a
+ * separate file, so the two are checked against each other in a test
+ */
+export const SIGNATURE_ABILITIES = setupAbilities.map((setup) => setup.ability);
+
 export default function setupSignatureAbilities(battle: Battle): void {
   for (const setup of setupAbilities) {
     setup(battle);

@@ -1,10 +1,15 @@
 import { describe, expect, it } from 'vitest';
+import registerAbilities, {
+  getAbilityData,
+  getRegisteredAbilities,
+} from '../../../src/data/abilities';
+import { SIGNATURE_ABILITIES } from '../../../src/battle/abilities/signature';
 import { AttackPriority } from '../../../src/core/event-emitter';
 import {
   AFTERBURN_MAX_STACKS,
   AFTERBURN_STEP,
   CHAIN_LIGHTNING_FRACTION,
-  CONSTRICT_CAST_SCALE,
+  CHOKEHOLD_CAST_SCALE,
   NIBBLE_FRACTION,
   OVERPRESSURE_COOLDOWN_STEP,
   OVERPRESSURE_MAX_STACKS,
@@ -17,11 +22,15 @@ import {
   TWIN_STINGER_POWER_SCALE,
 } from '../../../src/battle/abilities/signature/bulbasaur-to-pikachu';
 import {
+  BULLHEADED_EXPOSED_SCALE,
+  BULLHEADED_POWER_SCALE,
+  CORKSCREW_SCALE,
   CUSHIONED_CAP_FRACTION,
-  DRILL_HORN_SCALE,
   ENDLESS_GROWTH_HEAL_FRACTION,
   ENDLESS_GROWTH_MAX_STACKS,
   ENDLESS_GROWTH_STEP,
+  FORGE_HEAT_BURN_SCALE,
+  FORGE_HEAT_DAMAGE_SCALE,
   HEAVY_PINCER_SCALE,
   HEAVY_PINCER_THRESHOLD,
   ICY_CHARM_SCALE,
@@ -35,6 +44,9 @@ import {
   SECOND_WIND_HEAL_FRACTION,
   SECOND_WIND_THRESHOLD,
   SMOG_SCREEN_ACCURACY_SCALE,
+  SNAPJAW_SCALE,
+  STATIC_FIELD_MAX_STACKS,
+  STATIC_FIELD_STEP,
   UPSTREAM_SCALE,
   WHIRL_CURRENT_CAST_SCALE,
 } from '../../../src/battle/abilities/signature/krabby-to-pinsir';
@@ -632,13 +644,13 @@ describe('Relentless', () => {
   });
 });
 
-describe('Constrict', () => {
+describe('Chokehold', () => {
   it('corners what it touches and slows what that target reaches for next', () => {
     const { battle, teamA, teamB } = createBattle();
     pinRandom(battle, 1);
     const holder = createUnit(battle, teamA);
     const enemy = createUnit(battle, teamB);
-    holder.addAbility(Abilities.Constrict);
+    holder.addAbility(Abilities.Chokehold);
 
     const target = { type: MoveTargetType.None } as const;
     const bare = enemy.checkMoveCastTime(Moves.Flamethrower, target);
@@ -648,7 +660,7 @@ describe('Constrict', () => {
     expect(enemy.status[Statuses.Cornered]).not.toBeUndefined();
     expect(enemy.checkEscape()).toBe(false);
     expect(enemy.checkMoveCastTime(Moves.Flamethrower, target)).toBeCloseTo(
-      bare * CONSTRICT_CAST_SCALE,
+      bare * CHOKEHOLD_CAST_SCALE,
       5,
     );
 
@@ -669,7 +681,7 @@ describe('Constrict', () => {
     pinRandom(battle, 1);
     const holder = createUnit(battle, teamA);
     const enemy = createUnit(battle, teamB);
-    holder.addAbility(Abilities.Constrict);
+    holder.addAbility(Abilities.Chokehold);
 
     holder.attack(enemy, Moves.Ember, 40, Types.Fire, MoveCategories.Special, 0);
 
@@ -1763,16 +1775,16 @@ describe('Smog Screen', () => {
   });
 });
 
-describe('Drill Horn', () => {
+describe('Corkscrew', () => {
   it('hits harder and ignores a raised guard', () => {
     const { battle, teamA, teamB } = createBattle();
     const holder = createUnit(battle, teamA);
     const enemy = createUnit(battle, teamB);
-    holder.addAbility(Abilities.DrillHorn);
+    holder.addAbility(Abilities.Corkscrew);
 
     const target = { type: MoveTargetType.Unit, unit: enemy } as const;
 
-    expect(holder.checkMovePower(Moves.Pound, target)).toBeCloseTo(40 * DRILL_HORN_SCALE, 5);
+    expect(holder.checkMovePower(Moves.Pound, target)).toBeCloseTo(40 * CORKSCREW_SCALE, 5);
     expect(holder.checkMovePower(Moves.Ember, target)).toBe(40);
 
     enemy.addStage(Stages.Defense, 2, NONE_CAUSE);
@@ -2033,5 +2045,132 @@ describe('Icy Charm', () => {
       100 * ICY_CHARM_SCALE,
       5,
     );
+  });
+});
+
+describe('Static Field', () => {
+  it('charges off contact and only off contact', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.StaticField);
+
+    const bare = holder.checkStat(Stats.Speed, 0);
+    const maxHP = holder.checkStat(Stats.HP, 0);
+
+    enemy.attack(holder, Moves.Ember, 40, Types.Fire, MoveCategories.Special, 0);
+    holder.setHealth(maxHP);
+
+    expect(holder.checkStat(Stats.Speed, 0)).toBe(bare);
+
+    for (let touched = 1; touched <= STATIC_FIELD_MAX_STACKS + 2; touched += 1) {
+      enemy.attack(holder, Moves.Pound, 40, Types.Normal, MoveCategories.Physical, 0);
+      holder.setHealth(maxHP);
+
+      expect(holder.checkStat(Stats.Speed, 0)).toBeCloseTo(
+        bare * (1 + STATIC_FIELD_STEP * Math.min(STATIC_FIELD_MAX_STACKS, touched)),
+        5,
+      );
+    }
+  });
+});
+
+describe('Forge Heat', () => {
+  it('makes its own burn bite harder and hits a burning target harder', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.ForgeHeat);
+
+    const parent = makeAttack(holder, enemy, Moves.Pound, Types.Normal, MoveCategories.Physical);
+
+    expect(resolveAttackStat(battle, parent, holder, Stats.Attack, 100)).toBe(100);
+
+    enemy.addStatus(Statuses.Burned, {
+      type: EffectType.Move,
+      move: Moves.Ember,
+      unit: holder,
+    });
+
+    expect(resolveAttackStat(battle, parent, holder, Stats.Attack, 100)).toBeCloseTo(
+      100 * FORGE_HEAT_DAMAGE_SCALE,
+      5,
+    );
+
+    const maxHP = enemy.checkStat(Stats.HP, 0);
+    const before = enemy.health;
+
+    battle.tick(turns(1));
+
+    // The burn's own chip is a sixteenth, and the forge makes more of it
+    expect(before - enemy.health).toBeCloseTo((maxHP / 16) * FORGE_HEAT_BURN_SCALE, 5);
+  });
+});
+
+describe('Snapjaw', () => {
+  it('crushes a target that is winding up', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Snapjaw);
+
+    const parent = makeAttack(holder, enemy, Moves.Pound, Types.Normal, MoveCategories.Physical);
+
+    expect(resolveAttackStat(battle, parent, holder, Stats.Attack, 100)).toBe(100);
+
+    battle.emit(BattleEvents.UnitCast, {
+      id: 'UnitCast',
+      disabled: false,
+      source: enemy,
+      move: Moves.SolarBeam,
+      target: { type: MoveTargetType.Unit, unit: holder },
+    });
+
+    expect(resolveAttackStat(battle, parent, holder, Stats.Attack, 100)).toBeCloseTo(
+      100 * SNAPJAW_SCALE,
+      5,
+    );
+  });
+});
+
+describe('Bullheaded', () => {
+  it('trades guard for weight behind its charge', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Bullheaded);
+
+    const target = { type: MoveTargetType.Unit, unit: enemy } as const;
+
+    expect(holder.checkMovePower(Moves.Pound, target)).toBeCloseTo(40 * BULLHEADED_POWER_SCALE, 5);
+    expect(holder.checkMovePower(Moves.Ember, target)).toBe(40);
+
+    const incoming = makeAttack(enemy, holder, Moves.Ember, Types.Fire, MoveCategories.Special);
+
+    expect(resolveAttackStat(battle, incoming, enemy, Stats.SpecialAttack, 100)).toBeCloseTo(
+      100 * BULLHEADED_EXPOSED_SCALE,
+      5,
+    );
+  });
+});
+
+describe('the signature registry', () => {
+  it('has a name and a line for every signature ability the engine implements', () => {
+    registerAbilities();
+
+    const registered = new Set(getRegisteredAbilities());
+
+    // A battle implementation on its own proves nothing about the
+    // registry: an unregistered ability works in a fight and has no
+    // name anywhere a player can read
+    for (const ability of SIGNATURE_ABILITIES) {
+      expect(registered.has(ability)).toBe(true);
+
+      const data = getAbilityData(ability);
+
+      expect(data.name.length).toBeGreaterThan(0);
+      expect(data.description.endsWith('.')).toBe(true);
+    }
   });
 });

@@ -79,7 +79,7 @@ export const RELENTLESS_STEP = 0.1;
 export const RELENTLESS_MAX_STACKS = 4;
 
 /** What the coils add to the next thing the target reaches for */
-export const CONSTRICT_CAST_SCALE = 1.2;
+export const CHOKEHOLD_CAST_SCALE = 1.2;
 
 /** What the arc carries to the next enemy along */
 export const CHAIN_LIGHTNING_FRACTION = 1 / 3;
@@ -383,8 +383,8 @@ const bulbasaurToPikachu = [
 
   // Ekans: the coils are the whole fight. What it wraps stays wrapped,
   // which is the Cornered status a bind already puts on
-  createAbility(Abilities.Constrict, (battle) => {
-    const coils = createNextCastPenalty(battle, CONSTRICT_CAST_SCALE);
+  createAbility(Abilities.Chokehold, (battle) => {
+    const coils = createNextCastPenalty(battle, CHOKEHOLD_CAST_SCALE);
 
     return new MergedLifecycle([
       battle.on(BattleEvents.UnitAttack, AttackPriority.Post, (event) => {
@@ -394,19 +394,19 @@ const bulbasaurToPikachu = [
           !event.success ||
           !event.target.alive ||
           event.flags & MoveAttackFlags.Simulated ||
-          !source.hasAbility(Abilities.Constrict) ||
+          !source.hasAbility(Abilities.Chokehold) ||
           !source.checkMoveContact(event.move, unitTarget(event.target))
         ) {
           return;
         }
 
-        source.triggerAbility(Abilities.Constrict);
+        source.triggerAbility(Abilities.Chokehold);
 
         coils.mark(event.target);
 
         event.target.addStatus(Statuses.Cornered, {
           type: EffectType.Ability,
-          ability: Abilities.Constrict,
+          ability: Abilities.Chokehold,
           unit: source,
         });
       }),

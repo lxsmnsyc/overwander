@@ -55,6 +55,11 @@ const FAMILY_TEACHABLE = [
   Moves.SoftBoiled,
   Moves.ThunderWave,
   Moves.WaterPulse,
+  Moves.Captivate,
+  Moves.Fling,
+  Moves.GrassKnot,
+  Moves.NaturalGift,
+  Moves.ZenHeadbutt,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Hustle, Abilities.SereneGrace];
@@ -108,6 +113,7 @@ export default function registerTogepiSpecies(): void {
         26: [Moves.FollowMe],
         31: [...FAMILY_LEVEL[31], Moves.Wish],
         41: [Moves.BatonPass],
+        51: [Moves.LastResort],
       },
       teachable: [...FAMILY_TEACHABLE],
       egg: [
@@ -117,6 +123,9 @@ export default function registerTogepiSpecies(): void {
         Moves.Peck,
         Moves.Present,
         Moves.Substitute,
+        Moves.LuckyChant,
+        Moves.NastyPlot,
+        Moves.PsychoShift,
       ],
     },
   });
@@ -156,6 +165,7 @@ export default function registerTogepiSpecies(): void {
         26: [Moves.FollowMe],
         31: [...FAMILY_LEVEL[31], Moves.Wish],
         41: [Moves.BatonPass],
+        51: [Moves.LastResort],
       },
       teachable: [
         ...FAMILY_TEACHABLE,
@@ -166,6 +176,12 @@ export default function registerTogepiSpecies(): void {
         Moves.BrickBreak,
         Moves.FocusPunch,
         Moves.Substitute,
+        Moves.Defog,
+        Moves.DrainPunch,
+        Moves.GigaImpact,
+        Moves.OminousWind,
+        Moves.Roost,
+        Moves.Tailwind,
       ],
     },
   });

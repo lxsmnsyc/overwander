@@ -43,7 +43,9 @@ export default function registerEspeonSpecies(): void {
         36: [Moves.Psybeam],
         42: [Moves.PsychUp],
         47: [Moves.Psychic],
+        50: [Moves.LastResort],
         52: [Moves.MorningSun],
+        78: [Moves.PowerSwap],
       },
       teachable: [
         Moves.Attract,
@@ -87,6 +89,12 @@ export default function registerEspeonSpecies(): void {
         Moves.SecretPower,
         Moves.SkillSwap,
         Moves.Substitute,
+        Moves.Captivate,
+        Moves.GigaImpact,
+        Moves.GrassKnot,
+        Moves.NaturalGift,
+        Moves.TrickRoom,
+        Moves.ZenHeadbutt,
       ],
     },
   });

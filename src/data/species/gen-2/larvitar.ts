@@ -41,6 +41,12 @@ const FAMILY_TEACHABLE = [
   Moves.Substitute,
   Moves.Taunt,
   Moves.Torment,
+  Moves.Captivate,
+  Moves.EarthPower,
+  Moves.IronHead,
+  Moves.NaturalGift,
+  Moves.RockPolish,
+  Moves.StealthRock,
 ];
 
 // The line's own moves come at the same order the whole way up, only
@@ -87,8 +93,11 @@ export default function registerLarvitarSpecies(): void {
       level: {
         1: [Moves.Bite, Moves.Leer],
         ...FAMILY_LEVEL,
+        28: [Moves.DarkPulse],
+        32: [Moves.Payback],
         36: [Moves.ScaryFace],
         43: [Moves.Crunch],
+        46: [Moves.StoneEdge],
         50: [Moves.Earthquake],
         57: [Moves.HyperBeam],
       },
@@ -100,6 +109,7 @@ export default function registerLarvitarSpecies(): void {
         Moves.Pursuit,
         Moves.Stomp,
         Moves.DragonDance,
+        Moves.Assurance,
       ],
     },
   });
@@ -138,8 +148,11 @@ export default function registerLarvitarSpecies(): void {
       level: {
         1: [Moves.Bite, Moves.Leer, Moves.Sandstorm, Moves.Screech],
         ...FAMILY_LEVEL,
+        28: [Moves.DarkPulse],
+        34: [Moves.Payback],
         38: [Moves.ScaryFace],
         47: [Moves.Crunch],
+        54: [Moves.StoneEdge],
         56: [Moves.Earthquake],
         65: [Moves.HyperBeam],
       },
@@ -176,10 +189,21 @@ export default function registerLarvitarSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.Bite, Moves.Leer, Moves.Sandstorm, Moves.Screech],
+        1: [
+          Moves.Bite,
+          Moves.Leer,
+          Moves.Sandstorm,
+          Moves.Screech,
+          Moves.FireFang,
+          Moves.IceFang,
+          Moves.ThunderFang,
+        ],
         ...FAMILY_LEVEL,
+        28: [Moves.DarkPulse],
+        34: [Moves.Payback],
         38: [Moves.ScaryFace],
         47: [Moves.Crunch],
+        54: [Moves.StoneEdge],
         61: [Moves.Earthquake],
         75: [Moves.HyperBeam],
       },
@@ -214,6 +238,14 @@ export default function registerLarvitarSpecies(): void {
         Moves.Thunder,
         Moves.ThunderWave,
         Moves.WaterPulse,
+        Moves.AquaTail,
+        Moves.Avalanche,
+        Moves.DragonPulse,
+        Moves.Fling,
+        Moves.FocusBlast,
+        Moves.GigaImpact,
+        Moves.RockClimb,
+        Moves.ShadowClaw,
       ],
     },
   });

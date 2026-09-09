@@ -43,6 +43,10 @@ const FAMILY_TEACHABLE = [
   Moves.RockTomb,
   Moves.SecretPower,
   Moves.Substitute,
+  Moves.Captivate,
+  Moves.EarthPower,
+  Moves.NaturalGift,
+  Moves.StealthRock,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Oblivious, Abilities.SnowCloak];
@@ -83,7 +87,8 @@ export default function registerSwinubSpecies(): void {
         1: [Moves.Tackle, Moves.OdorSleuth],
         10: [Moves.PowderSnow],
         19: [Moves.Endure],
-        28: [Moves.TakeDown],
+        20: [Moves.MudBomb],
+        28: [Moves.TakeDown, Moves.IceShard],
         37: [Moves.Mist],
         46: [Moves.Blizzard],
         55: [Moves.Amnesia],
@@ -130,7 +135,8 @@ export default function registerSwinubSpecies(): void {
     learnSet: {
       level: {
         1: [Moves.HornAttack, Moves.PowderSnow, Moves.Endure, Moves.OdorSleuth],
-        28: [Moves.TakeDown],
+        20: [Moves.MudBomb],
+        28: [Moves.TakeDown, Moves.IceFang],
         33: [Moves.FuryAttack],
         42: [Moves.Mist],
         56: [Moves.Blizzard],
@@ -142,6 +148,9 @@ export default function registerSwinubSpecies(): void {
         Moves.BodySlam,
         Moves.DoubleEdge,
         Moves.RockSlide,
+        Moves.Avalanche,
+        Moves.GigaImpact,
+        Moves.StoneEdge,
       ],
     },
   });

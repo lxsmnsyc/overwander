@@ -49,6 +49,10 @@ const FAMILY_TEACHABLE = [
   Moves.Substitute,
   Moves.WaterPulse,
   Moves.Waterfall,
+  Moves.AquaTail,
+  Moves.Captivate,
+  Moves.EarthPower,
+  Moves.NaturalGift,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Damp, Abilities.WaterAbsorb];
@@ -89,6 +93,7 @@ export default function registerWooperSpecies(): void {
         16: [Moves.MudShot],
         1: [Moves.TailWhip, Moves.WaterGun],
         11: [Moves.Slam],
+        19: [Moves.MudBomb],
         21: [Moves.Amnesia],
         31: [Moves.Earthquake, Moves.Yawn],
         41: [Moves.RainDance],
@@ -139,6 +144,7 @@ export default function registerWooperSpecies(): void {
         16: [Moves.MudShot],
         1: [Moves.TailWhip, Moves.WaterGun],
         11: [Moves.Slam],
+        19: [Moves.MudBomb],
         23: [Moves.Amnesia],
         35: [Moves.Earthquake, Moves.Yawn],
         47: [Moves.RainDance],
@@ -156,6 +162,10 @@ export default function registerWooperSpecies(): void {
         Moves.MegaPunch,
         Moves.RockTomb,
         Moves.SeismicToss,
+        Moves.Fling,
+        Moves.FocusBlast,
+        Moves.GigaImpact,
+        Moves.StoneEdge,
       ],
     },
   });

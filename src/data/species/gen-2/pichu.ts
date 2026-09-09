@@ -45,6 +45,7 @@ export default function registerPichuSpecies(): void {
         6: [Moves.TailWhip],
         8: [Moves.ThunderWave],
         11: [Moves.SweetKiss],
+        18: [Moves.NastyPlot],
       },
       teachable: [
         Moves.Attract,
@@ -85,6 +86,12 @@ export default function registerPichuSpecies(): void {
         Moves.SeismicToss,
         Moves.ShockWave,
         Moves.Substitute,
+        Moves.Captivate,
+        Moves.ChargeBeam,
+        Moves.Fling,
+        Moves.GrassKnot,
+        Moves.MagnetRise,
+        Moves.NaturalGift,
       ],
       egg: [
         Moves.Bide,

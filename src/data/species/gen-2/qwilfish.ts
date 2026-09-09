@@ -37,14 +37,17 @@ export default function registerQwilfishSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
+        21: [Moves.ToxicSpikes],
         25: [Moves.Revenge],
-        45: [Moves.DestinyBond],
+        33: [Moves.Brine],
+        45: [Moves.DestinyBond, Moves.AquaTail],
         1: [Moves.PoisonSting, Moves.Spikes, Moves.Tackle],
         10: [Moves.Harden, Moves.Minimize],
         19: [Moves.WaterGun],
         28: [Moves.PinMissile],
         37: [Moves.TakeDown],
         46: [Moves.HydroPump],
+        49: [Moves.PoisonJab],
       },
       teachable: [
         Moves.Toxic,
@@ -84,8 +87,19 @@ export default function registerQwilfishSpecies(): void {
         Moves.SwordsDance,
         Moves.ThunderWave,
         Moves.WaterPulse,
+        Moves.Captivate,
+        Moves.GyroBall,
+        Moves.NaturalGift,
+        Moves.Payback,
       ],
-      egg: [Moves.BubbleBeam, Moves.Flail, Moves.Haze, Moves.Supersonic, Moves.Astonish],
+      egg: [
+        Moves.BubbleBeam,
+        Moves.Flail,
+        Moves.Haze,
+        Moves.Supersonic,
+        Moves.Astonish,
+        Moves.AquaJet,
+      ],
     },
   });
 }

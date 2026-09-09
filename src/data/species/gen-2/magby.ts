@@ -48,6 +48,7 @@ export default function registerMagbySpecies(): void {
         19: [Moves.FirePunch],
         25: [Moves.SmokeScreen],
         31: [Moves.SunnyDay],
+        34: [Moves.LavaPlume],
         37: [Moves.Flamethrower],
         43: [Moves.ConfuseRay],
         49: [Moves.FireBlast],
@@ -91,8 +92,18 @@ export default function registerMagbySpecies(): void {
         Moves.SecretPower,
         Moves.SeismicToss,
         Moves.Substitute,
+        Moves.Captivate,
+        Moves.Fling,
+        Moves.NaturalGift,
       ],
-      egg: [Moves.Barrier, Moves.CrossChop, Moves.KarateChop, Moves.MegaPunch, Moves.Screech],
+      egg: [
+        Moves.Barrier,
+        Moves.CrossChop,
+        Moves.KarateChop,
+        Moves.MegaPunch,
+        Moves.Screech,
+        Moves.FlareBlitz,
+      ],
     },
   });
 }

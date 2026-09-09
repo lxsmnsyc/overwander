@@ -34,6 +34,8 @@ export default function registerMisdreavusSpecies(): void {
     learnSet: {
       level: {
         11: [Moves.Astonish],
+        32: [Moves.Payback],
+        50: [Moves.PowerGem],
         53: [Moves.Grudge],
         1: [Moves.Growl, Moves.Psywave],
         6: [Moves.Spite],
@@ -86,8 +88,16 @@ export default function registerMisdreavusSpecies(): void {
         Moves.Taunt,
         Moves.ThunderWave,
         Moves.Torment,
+        Moves.Captivate,
+        Moves.ChargeBeam,
+        Moves.DarkPulse,
+        Moves.Embargo,
+        Moves.NaturalGift,
+        Moves.OminousWind,
+        Moves.SuckerPunch,
+        Moves.TrickRoom,
       ],
-      egg: [Moves.DestinyBond, Moves.Screech, Moves.Imprison],
+      egg: [Moves.DestinyBond, Moves.Screech, Moves.Imprison, Moves.NastyPlot, Moves.ShadowSneak],
     },
   });
 }

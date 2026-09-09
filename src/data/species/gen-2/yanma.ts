@@ -43,6 +43,9 @@ export default function registerYanmaSpecies(): void {
         31: [Moves.Supersonic],
         37: [Moves.Swift, Moves.WingAttack, Moves.Uproar],
         43: [Moves.Screech],
+        49: [Moves.UTurn],
+        54: [Moves.AirSlash],
+        57: [Moves.BugBuzz],
       },
       teachable: [
         Moves.Attract,
@@ -77,8 +80,22 @@ export default function registerYanmaSpecies(): void {
         Moves.ShadowBall,
         Moves.SteelWing,
         Moves.Substitute,
+        Moves.BugBite,
+        Moves.Captivate,
+        Moves.Defog,
+        Moves.NaturalGift,
+        Moves.OminousWind,
+        Moves.Roost,
+        Moves.Tailwind,
       ],
-      egg: [Moves.LeechLife, Moves.Reversal, Moves.Whirlwind, Moves.SignalBeam, Moves.SilverWind],
+      egg: [
+        Moves.LeechLife,
+        Moves.Reversal,
+        Moves.Whirlwind,
+        Moves.SignalBeam,
+        Moves.SilverWind,
+        Moves.Feint,
+      ],
     },
   });
 }

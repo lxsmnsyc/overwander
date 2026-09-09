@@ -68,6 +68,8 @@ export default function registerLegendaryBeastSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
+        50: [Moves.ThunderFang],
+        57: [Moves.Discharge],
         81: [Moves.CalmMind],
         1: [Moves.Bite, Moves.Leer],
         11: [Moves.ThunderShock],
@@ -91,6 +93,12 @@ export default function registerLegendaryBeastSpecies(): void {
         Moves.Substitute,
         Moves.ThunderWave,
         Moves.Thunderbolt,
+        Moves.ChargeBeam,
+        Moves.GigaImpact,
+        Moves.IronHead,
+        Moves.MagnetRise,
+        Moves.NaturalGift,
+        Moves.RockClimb,
       ],
     },
   });
@@ -122,6 +130,8 @@ export default function registerLegendaryBeastSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
+        50: [Moves.FireFang],
+        57: [Moves.LavaPlume],
         81: [Moves.CalmMind],
         1: [Moves.Bite, Moves.Leer],
         11: [Moves.Ember],
@@ -143,6 +153,11 @@ export default function registerLegendaryBeastSpecies(): void {
         Moves.Reflect,
         Moves.SecretPower,
         Moves.Substitute,
+        Moves.GigaImpact,
+        Moves.IronHead,
+        Moves.NaturalGift,
+        Moves.RockClimb,
+        Moves.StoneEdge,
       ],
     },
   });
@@ -174,6 +189,8 @@ export default function registerLegendaryBeastSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
+        50: [Moves.IceFang],
+        57: [Moves.Tailwind],
         81: [Moves.CalmMind],
         1: [Moves.Bite, Moves.Leer],
         11: [Moves.WaterGun],
@@ -202,6 +219,13 @@ export default function registerLegendaryBeastSpecies(): void {
         Moves.SecretPower,
         Moves.Substitute,
         Moves.WaterPulse,
+        Moves.Avalanche,
+        Moves.Brine,
+        Moves.GigaImpact,
+        Moves.IronHead,
+        Moves.NaturalGift,
+        Moves.OminousWind,
+        Moves.RockClimb,
       ],
     },
   });

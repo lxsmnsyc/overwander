@@ -89,6 +89,12 @@ export default function registerPolitoedSpecies(): void {
         Moves.SeismicToss,
         Moves.Substitute,
         Moves.WaterPulse,
+        Moves.Captivate,
+        Moves.Fling,
+        Moves.FocusBlast,
+        Moves.GigaImpact,
+        Moves.NaturalGift,
+        Moves.Payback,
       ],
     },
   });

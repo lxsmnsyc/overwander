@@ -35,6 +35,7 @@ export default function registerMurkrowSpecies(): void {
     learnSet: {
       level: {
         9: [Moves.Astonish],
+        25: [Moves.Assurance],
         40: [Moves.Taunt],
         1: [Moves.Peck],
         11: [Moves.Pursuit],
@@ -42,6 +43,7 @@ export default function registerMurkrowSpecies(): void {
         26: [Moves.NightShade],
         31: [Moves.FeintAttack],
         41: [Moves.MeanLook],
+        45: [Moves.SuckerPunch],
       },
       teachable: [
         Moves.Attract,
@@ -80,6 +82,16 @@ export default function registerMurkrowSpecies(): void {
         Moves.Substitute,
         Moves.ThunderWave,
         Moves.Torment,
+        Moves.Captivate,
+        Moves.DarkPulse,
+        Moves.Defog,
+        Moves.Embargo,
+        Moves.NaturalGift,
+        Moves.OminousWind,
+        Moves.Payback,
+        Moves.Pluck,
+        Moves.Roost,
+        Moves.Tailwind,
       ],
       egg: [
         Moves.DrillPeck,
@@ -92,6 +104,8 @@ export default function registerMurkrowSpecies(): void {
         Moves.ConfuseRay,
         Moves.FeatherDance,
         Moves.PerishSong,
+        Moves.BraveBird,
+        Moves.PsychoShift,
       ],
     },
   });

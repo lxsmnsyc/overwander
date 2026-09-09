@@ -8,6 +8,7 @@ import {
   MoveFlags,
   MoveTargets,
   Moves,
+  StatFlags,
   affectsFoesOnly,
 } from '../../../data/ids/moves';
 import { getMoveData } from '../../../data/moves';
@@ -18,7 +19,7 @@ import { PASSED_STAGES } from '../../moves/switch-out';
 import type Unit from '../../unit';
 import { hasFreeItemSlot, onUnitActs, unitTarget } from '../../utils';
 import { createAbility } from '../__create';
-import { createUnitState, isChannelledMove } from './__create';
+import { createUnitState, enemyHolder, isChannelledMove } from './__create';
 
 /** What the bed of petals gives an ally each time it moves */
 export const PETAL_BED_FRACTION = 1 / 16;
@@ -28,6 +29,15 @@ export const SUNLIT_CHARGE_SCALE = 1.3;
 
 /** How far down misery goes looking for company */
 export const SHARED_MISERY_THRESHOLD = 1 / 3;
+
+/** What share of a hit is banked to be given back */
+export const BACKLASH_SHARE = 1 / 4;
+
+/** The other end an attacking stat has, for a pokemon that swings with both */
+const OTHER_ATTACK_STAT: { [key in Stats]?: Stats } = {
+  [Stats.Attack]: Stats.SpecialAttack,
+  [Stats.SpecialAttack]: Stats.Attack,
+};
 
 /** The standing enemy with the most health left */
 function healthiestEnemy(battle: Battle, unit: Unit): Unit | undefined {
@@ -624,6 +634,108 @@ const chikoritaToCelebi = [
       ...lifecycles,
     ]);
   }),
+
+  // Unown: a wall of symbols cancels whatever was carried in past it
+  createAbility(Abilities.RuinousScript, (battle) =>
+    battle.on(BattleEvents.CheckUnitItem, EventPriority.Post, (event) => {
+      if (event.enabled && enemyHolder(battle, event.source, Abilities.RuinousScript)) {
+        event.enabled = false;
+      }
+    }),
+  ),
+
+  // Wobbuffet: it has no offence of its own, so what it gives back is
+  // whatever was put into it, paid as it next moves
+  createAbility(Abilities.Backlash, (battle) => {
+    const { state, lifecycles } = createUnitState<{ bank: number; attacker: Unit }>(battle);
+
+    return new MergedLifecycle([
+      battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
+        const cause = event.cause;
+        const target = event.target;
+
+        if (
+          !event.success ||
+          !target.alive ||
+          event.flags & DamageFlags.Indirect ||
+          cause.type === EffectType.None ||
+          cause.unit === target ||
+          !target.hasAbility(Abilities.Backlash)
+        ) {
+          return;
+        }
+
+        const held = state.get(target);
+        const bank = (held?.bank ?? 0) + event.value * BACKLASH_SHARE;
+
+        state.set(target, { bank, attacker: cause.unit });
+      }),
+      ...onUnitActs(battle, (unit) => {
+        const held = state.get(unit);
+
+        if (held == null || !unit.hasAbility(Abilities.Backlash)) {
+          return;
+        }
+
+        state.delete(unit);
+
+        if (!held.attacker.alive) {
+          return;
+        }
+
+        unit.triggerAbility(Abilities.Backlash);
+
+        unit.damage(
+          { type: EffectType.Ability, ability: Abilities.Backlash, unit },
+          held.attacker,
+          held.bank,
+          DamageFlags.Indirect,
+        );
+      }),
+      ...lifecycles,
+    ]);
+  }),
+
+  // Girafarig: two heads, and the one with the better idea is the one
+  // that swings. Asked of the attacking stat only, so what it defends
+  // with is its own business
+  createAbility(Abilities.Ambidextrous, (battle) =>
+    battle.on(BattleEvents.UnitAttackResolveStat, EventPriority.Post, (event) => {
+      const source = event.parent.source;
+
+      if (event.unit !== source || !source.hasAbility(Abilities.Ambidextrous)) {
+        return;
+      }
+
+      const other = OTHER_ATTACK_STAT[event.stat];
+
+      if (other == null) {
+        return;
+      }
+
+      event.value = Math.max(event.value, source.resolveStat(other, StatFlags.Attack));
+    }),
+  ),
+
+  // Pineco: it goes off as it goes down, and what the pieces do to the
+  // ground is Spikes' and Toxic Spikes' business
+  createAbility(Abilities.Shrapnel, (battle) =>
+    battle.on(BattleEvents.UnitFaints, EventPriority.Post, (event) => {
+      const source = event.source;
+
+      if (!source.hasAbility(Abilities.Shrapnel)) {
+        return;
+      }
+
+      source.triggerAbility(Abilities.Shrapnel);
+
+      for (const team of battle.teams(source.team.alliance)) {
+        for (const move of [Moves.Spikes, Moves.ToxicSpikes]) {
+          source.triggerMove(move, { type: MoveTargetType.Team, team }, 0);
+        }
+      }
+    }),
+  ),
 ];
 
 export default chikoritaToCelebi;

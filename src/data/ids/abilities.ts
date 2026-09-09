@@ -399,6 +399,10 @@ const enum Abilities {
   ContagiousYawn = 200096,
   Magpie = 200097,
   SharedMisery = 200098,
+  RuinousScript = 200099,
+  Backlash = 200100,
+  Ambidextrous = 200101,
+  Shrapnel = 200102,
 }
 
 export default Abilities;

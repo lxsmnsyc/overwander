@@ -628,4 +628,30 @@ export default function registerSignatureAbilities(): void {
     description:
       'The first time it drops below 1/3 of its HP it casts Pain Split at the healthiest enemy.',
   });
+
+  // Unown
+  registerAbility(Abilities.RuinousScript, {
+    name: 'Ruinous Script',
+    description: 'Held items do nothing on the enemy side while it stands.',
+  });
+
+  // Wobbuffet
+  registerAbility(Abilities.Backlash, {
+    name: 'Backlash',
+    description:
+      'It banks 1/4 of every hit it takes, and pays the bank back to whoever last struck it when it next acts.',
+  });
+
+  // Girafarig
+  registerAbility(Abilities.Ambidextrous, {
+    name: 'Ambidextrous',
+    description:
+      'Its moves are worked out from whichever of its Attack and Special Attack is higher.',
+  });
+
+  // Pineco
+  registerAbility(Abilities.Shrapnel, {
+    name: 'Shrapnel',
+    description: 'When it faints, it casts Spikes and Toxic Spikes onto the enemy side.',
+  });
 }

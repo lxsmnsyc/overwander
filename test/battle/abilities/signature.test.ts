@@ -5,6 +5,7 @@ import registerAbilities, {
 } from '../../../src/data/abilities';
 import { SIGNATURE_ABILITIES } from '../../../src/battle/abilities/signature';
 import {
+  BACKLASH_SHARE,
   PETAL_BED_FRACTION,
   SHARED_MISERY_THRESHOLD,
   SUNLIT_CHARGE_SCALE,
@@ -137,7 +138,7 @@ import { Stages, Stats, StatsKind } from '../../../src/data/constants/stats';
 import { Types } from '../../../src/data/constants/types';
 import Abilities from '../../../src/data/ids/abilities';
 import { Items } from '../../../src/data/ids/items';
-import { MoveCategories, MoveTargets, Moves } from '../../../src/data/ids/moves';
+import { MoveCategories, MoveTargets, Moves, StatFlags } from '../../../src/data/ids/moves';
 import { Statuses, TeamStatuses, Weathers } from '../../../src/data/ids/status';
 import turns from '../../../src/battle/turn';
 import { layersUnder } from '../../../src/battle/moves/spikes';
@@ -3124,5 +3125,97 @@ describe('Shared Misery', () => {
     healthy.damage(NONE_CAUSE, holder, 1, 0);
 
     expect(cast).toBeUndefined();
+  });
+});
+
+describe('Ruinous Script', () => {
+  it("shuts the far side's items down while it stands", () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    const ally = createUnit(battle, teamA);
+    enemy.addItem(Items.OranBerry);
+    ally.addItem(Items.SitrusBerry);
+
+    expect(enemy.hasItem(Items.OranBerry)).toBe(true);
+
+    holder.addAbility(Abilities.RuinousScript);
+
+    expect(enemy.hasItem(Items.OranBerry)).toBe(false);
+    // Its own side reads as usual
+    expect(ally.hasItem(Items.SitrusBerry)).toBe(true);
+
+    holder.faint(enemy);
+
+    expect(enemy.hasItem(Items.OranBerry)).toBe(true);
+  });
+});
+
+describe('Backlash', () => {
+  it('gives back a share of what was put into it as it moves', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Backlash);
+
+    const enemyHP = enemy.health;
+    // A blow with somebody behind it: there is nobody to pay a
+    // causeless hit back to
+    const blow = { type: EffectType.Move, move: Moves.Pound, unit: enemy } as const;
+
+    enemy.damage(blow, holder, 40, 0);
+    enemy.damage(blow, holder, 20, 0);
+
+    // Nothing is paid until it acts
+    expect(enemy.health).toBe(enemyHP);
+
+    act(battle, holder);
+
+    expect(enemy.health).toBeCloseTo(enemyHP - 60 * BACKLASH_SHARE, 5);
+
+    // The bank is spent, not kept
+    act(battle, holder);
+
+    expect(enemy.health).toBeCloseTo(enemyHP - 60 * BACKLASH_SHARE, 5);
+  });
+});
+
+describe('Ambidextrous', () => {
+  it('swings with the better of its two attacking stats', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Ambidextrous);
+
+    holder.setStat(StatsKind.Base, Stats.Attack, 20);
+    holder.setStat(StatsKind.Base, Stats.SpecialAttack, 200);
+
+    const physical = makeAttack(holder, enemy, Moves.Pound, Types.Normal, MoveCategories.Physical);
+    const special = holder.resolveStat(Stats.SpecialAttack, StatFlags.Attack);
+
+    expect(resolveAttackStat(battle, physical, holder, Stats.Attack, 30)).toBeCloseTo(special, 5);
+
+    // The defending end is untouched
+    const incoming = makeAttack(enemy, holder, Moves.Pound, Types.Normal, MoveCategories.Physical);
+
+    expect(resolveAttackStat(battle, incoming, holder, Stats.Defense, 50)).toBe(50);
+  });
+});
+
+describe('Shrapnel', () => {
+  it('lays both hazard layers on the enemy side as it goes down', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0);
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Shrapnel);
+
+    holder.faint(enemy);
+    // The cast moves take their own flight time to arrive
+    battle.tick(turns(1));
+
+    expect(layersUnder(teamB)).toBe(1);
+    expect(teamB.status[TeamStatuses.ToxicSpikes]).not.toBeUndefined();
+    expect(layersUnder(teamA)).toBe(0);
   });
 });

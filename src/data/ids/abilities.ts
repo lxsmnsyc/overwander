@@ -419,6 +419,10 @@ const enum Abilities {
   Escort = 200116,
   Steelmolt = 200117,
   PackHowl = 200118,
+  Momentum = 200119,
+  MindFog = 200120,
+  Palette = 200121,
+  Cowbell = 200122,
 }
 
 export default Abilities;

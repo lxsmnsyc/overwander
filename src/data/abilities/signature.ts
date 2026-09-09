@@ -750,4 +750,29 @@ export default function registerSignatureAbilities(): void {
     name: 'Pack Howl',
     description: 'Every ally gains a stage of Attack as it arrives on the field.',
   });
+
+  // Phanpy
+  registerAbility(Abilities.Momentum, {
+    name: 'Momentum',
+    description:
+      'Its moves hit 1.1x for each move it has landed since taking the field, up to 1.5x.',
+  });
+
+  // Stantler
+  registerAbility(Abilities.MindFog, {
+    name: 'Mind Fog',
+    description: 'Enemy Special Attack counts 0.85x while it stands.',
+  });
+
+  // Smeargle
+  registerAbility(Abilities.Palette, {
+    name: 'Palette',
+    description: 'Its moves take the type of the last move that hit it.',
+  });
+
+  // Miltank
+  registerAbility(Abilities.Cowbell, {
+    name: 'Cowbell',
+    description: 'It casts Heal Bell over its side as it arrives on the field.',
+  });
 }

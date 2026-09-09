@@ -9,6 +9,9 @@ import {
   BULLY_SCALE,
   ESCORT_SCALE,
   MAGMA_TRAIL_FRACTION,
+  MIND_FOG_SCALE,
+  MOMENTUM_MAX_STACKS,
+  MOMENTUM_STEP,
   PETAL_BED_FRACTION,
   SAND_RIDER_SCALE,
   SHARED_MISERY_THRESHOLD,
@@ -3595,5 +3598,110 @@ describe('Pack Howl', () => {
     expect(ally.stages[Stages.Attack]).toBe(1);
     expect(holder.stages[Stages.Attack]).toBe(0);
     expect(enemy.stages[Stages.Attack]).toBe(0);
+  });
+});
+
+describe('Momentum', () => {
+  it('rolls harder for every blow that has landed', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Momentum);
+
+    const target = { type: MoveTargetType.Unit, unit: enemy } as const;
+
+    expect(holder.checkMovePower(Moves.Pound, target)).toBe(40);
+
+    for (let landed = 1; landed <= MOMENTUM_MAX_STACKS; landed += 1) {
+      rollMove(battle, holder, enemy, Moves.Pound, true);
+
+      expect(holder.checkMovePower(Moves.Pound, target)).toBeCloseTo(
+        40 * (1 + MOMENTUM_STEP * landed),
+        5,
+      );
+    }
+
+    // Past the cap it holds where it is
+    rollMove(battle, holder, enemy, Moves.Pound, true);
+
+    expect(holder.checkMovePower(Moves.Pound, target)).toBeCloseTo(
+      40 * (1 + MOMENTUM_STEP * MOMENTUM_MAX_STACKS),
+      5,
+    );
+
+    // Taking the field again starts the roll over
+    battle.emit(BattleEvents.UnitEntersField, {
+      id: 'UnitEntersField',
+      disabled: false,
+      source: holder,
+      reactivation: false,
+    });
+
+    expect(holder.checkMovePower(Moves.Pound, target)).toBe(40);
+  });
+});
+
+describe('Mind Fog', () => {
+  it('dulls what the far side can think with', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    const bare = enemy.checkStat(Stats.SpecialAttack, 0);
+
+    holder.addAbility(Abilities.MindFog);
+
+    expect(enemy.checkStat(Stats.SpecialAttack, 0)).toBeCloseTo(bare * MIND_FOG_SCALE, 5);
+    expect(ally.checkStat(Stats.SpecialAttack, 0)).toBeCloseTo(bare, 5);
+    expect(enemy.checkStat(Stats.Attack, 0)).toBeCloseTo(bare, 5);
+  });
+});
+
+describe('Palette', () => {
+  it('paints its moves the colour of whatever last hit it', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Palette);
+
+    const target = { type: MoveTargetType.Unit, unit: enemy } as const;
+
+    expect(holder.checkMoveType(Moves.Pound, target)).toBe(Types.Normal);
+
+    enemy.attack(holder, Moves.WaterGun, 40, Types.Water, MoveCategories.Special, 0);
+
+    expect(holder.checkMoveType(Moves.Pound, target)).toBe(Types.Water);
+
+    // Whatever lands next repaints it
+    enemy.attack(holder, Moves.Ember, 40, Types.Fire, MoveCategories.Special, 0);
+
+    expect(holder.checkMoveType(Moves.Pound, target)).toBe(Types.Fire);
+  });
+});
+
+describe('Cowbell', () => {
+  it('rings the team clean as it arrives', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0);
+    const holder = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Cowbell);
+
+    ally.addStatus(Statuses.Burned, NONE_CAUSE);
+    enemy.addStatus(Statuses.Burned, NONE_CAUSE);
+
+    battle.emit(BattleEvents.UnitEntersField, {
+      id: 'UnitEntersField',
+      disabled: false,
+      source: holder,
+      reactivation: false,
+    });
+    // The cast move takes its own flight time to arrive
+    battle.tick(turns(1));
+
+    expect(ally.status[Statuses.Burned]).toBeUndefined();
+    expect(enemy.status[Statuses.Burned]).not.toBeUndefined();
   });
 });

@@ -24,6 +24,7 @@ import { createAbility } from '../__create';
 import {
   BATTLE_STATS,
   createStatAverage,
+  createUnitCounter,
   createUnitState,
   enemyHolder,
   isChannelledMove,
@@ -55,6 +56,13 @@ export const MAGMA_TRAIL_FRACTION = 1 / 16;
 
 /** What a wing spread over somebody is worth to them */
 export const ESCORT_SCALE = 1.3;
+
+/** What each landed blow adds to the roll, and how far it builds */
+export const MOMENTUM_STEP = 0.1;
+export const MOMENTUM_MAX_STACKS = 5;
+
+/** What a head full of antlers is worth against somebody thinking */
+export const MIND_FOG_SCALE = 0.85;
 
 /** The screens a pair of tusks goes through */
 const SCREENS = [TeamStatuses.Reflect, TeamStatuses.LightScreen];
@@ -1159,6 +1167,100 @@ const chikoritaToCelebi = [
             if (ally !== source && ally.alive && ally.team.alliance === source.team.alliance) {
               ally.addStage(Stages.Attack, 1, cause);
             }
+          }
+        }),
+      ]),
+  ),
+
+  // Phanpy: it is heavier every time it comes round again, and nothing
+  // short of leaving the field slows it back down
+  createAbility(Abilities.Momentum, (battle) => {
+    const { counter, lifecycles } = createUnitCounter(battle);
+
+    return new MergedLifecycle([
+      battle.on(BattleEvents.UnitTriggerMoveRollHit, EventPriority.Post, (event) => {
+        const source = event.parent.source;
+
+        if (event.hit && source.hasAbility(Abilities.Momentum)) {
+          counter.set(source, Math.min(MOMENTUM_MAX_STACKS, counter.get(source) + 1));
+
+          source.triggerAbility(Abilities.Momentum);
+        }
+      }),
+      battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
+        const held = counter.get(event.source);
+
+        if (event.power != null && held > 0 && event.source.hasAbility(Abilities.Momentum)) {
+          event.power *= 1 + MOMENTUM_STEP * held;
+        }
+      }),
+      ...lifecycles,
+    ]);
+  }),
+
+  // Stantler: the antlers make the air hard to think through, which
+  // costs whatever is trying to think its way past them
+  createAbility(Abilities.MindFog, (battle) =>
+    battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
+      if (
+        event.stat === Stats.SpecialAttack &&
+        enemyHolder(battle, event.source, Abilities.MindFog)
+      ) {
+        event.value *= MIND_FOG_SCALE;
+      }
+    }),
+  ),
+
+  // Smeargle: it paints with whatever it was last shown, so the colour
+  // on its tail is the colour that hit it
+  createAbility(Abilities.Palette, (battle) => {
+    const { state, lifecycles } = createUnitState<Types>(battle);
+
+    return new MergedLifecycle([
+      battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
+        const cause = event.cause;
+        const target = event.target;
+
+        if (
+          !event.success ||
+          cause.type !== EffectType.Move ||
+          cause.unit === target ||
+          !target.hasAbility(Abilities.Palette)
+        ) {
+          return;
+        }
+
+        state.set(target, cause.unit.checkMoveType(cause.move, unitTarget(target)));
+      }),
+      battle.on(BattleEvents.CheckUnitMoveType, EventPriority.Post, (event) => {
+        const painted = state.get(event.source);
+
+        if (painted != null && event.source.hasAbility(Abilities.Palette)) {
+          event.type = painted;
+        }
+      }),
+      ...lifecycles,
+    ]);
+  }),
+
+  // Miltank: the bell it wears is the point of it, and what a bell
+  // does to a sick herd is Heal Bell's business
+  createAbility(
+    Abilities.Cowbell,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+          if (!event.reactivation && event.source.hasAbility(Abilities.Cowbell)) {
+            event.source.triggerAbility(Abilities.Cowbell);
+          }
+        }),
+        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
+          if (event.ability === Abilities.Cowbell) {
+            event.source.triggerMove(
+              Moves.HealBell,
+              { type: MoveTargetType.Team, team: event.source.team },
+              0,
+            );
           }
         }),
       ]),

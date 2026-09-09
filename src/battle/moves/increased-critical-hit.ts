@@ -19,6 +19,9 @@ const INCREASED_CRITICAL_HIT_RATIO_MOVES = new Set([
   Moves.NightSlash,
   Moves.ShadowClaw,
   Moves.PsychoCut,
+  Moves.CrossPoison,
+  Moves.StoneEdge,
+  Moves.AttackOrder,
 ]);
 
 export default function setupIncreasedCriticalHitRatioMoves(battle: Battle): void {

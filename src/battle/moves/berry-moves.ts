@@ -9,8 +9,8 @@ import type Unit from '../unit';
 import { stealableItem } from '../utils';
 
 /**
- * The two moves that go through a berry: Pluck eats the target's,
- * Natural Gift throws the user's own.
+ * The moves that go through a berry: Pluck and Bug Bite eat the
+ * target's, Natural Gift throws the user's own.
  *
  * A berry's type and power in the mainline come from a table of
  * sixty-odd entries with no pattern behind them. That table is the
@@ -20,6 +20,9 @@ import { stealableItem } from '../utils';
  * https://bulbapedia.bulbagarden.net/wiki/Natural_Gift_(move)
  */
 const GIFT_POWER = 80;
+
+/** The moves that eat the berry out of whatever they hit */
+const EATING_MOVES = new Set<Moves>([Moves.Pluck, Moves.BugBite]);
 
 /** What the user is holding, if it is a berry */
 function heldBerry(unit: Unit): Items | undefined {
@@ -71,14 +74,18 @@ export default function setupBerryMoves(battle: Battle): void {
       return;
     }
 
-    // Pluck takes the berry out of the target and gets what the
-    // target would have got out of it
-    if (event.parent.move === Moves.Pluck) {
+    // The berry is taken out of the target, and the eater gets what
+    // the target would have got out of it
+    if (EATING_MOVES.has(event.parent.move)) {
       const target = event.parent.target;
       const berry = heldBerry(target);
 
       if (berry != null) {
-        target.removeItem(berry, { type: EffectType.Move, move: Moves.Pluck, unit: source });
+        target.removeItem(berry, {
+          type: EffectType.Move,
+          move: event.parent.move,
+          unit: source,
+        });
         source.addItem(berry);
         source.triggerItem(berry);
       }
@@ -86,16 +93,16 @@ export default function setupBerryMoves(battle: Battle): void {
   });
 
   battle.on(BattleEvents.CheckUnitAttackEffectChance, EventPriority.Post, (event) => {
-    if (event.parent.move === Moves.Pluck || event.parent.move === Moves.NaturalGift) {
+    if (EATING_MOVES.has(event.parent.move) || event.parent.move === Moves.NaturalGift) {
       event.value = 100;
     }
   });
 
-  // Pecking at a target holding nothing is a plain 60-power hit, and
-  // the AI should know that is all it is
+  // Biting a target holding nothing is a plain 60-power hit, and the
+  // AI should know that is all it is
   battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
     if (
-      event.move === Moves.Pluck &&
+      EATING_MOVES.has(event.move) &&
       event.target.type === MoveTargetType.Unit &&
       heldBerry(event.target.unit) == null
     ) {

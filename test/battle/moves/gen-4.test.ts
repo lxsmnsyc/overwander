@@ -12,11 +12,14 @@ import { Stages, Stats } from '../../../src/data/constants/stats';
 import { Types } from '../../../src/data/constants/types';
 import { Items } from '../../../src/data/ids/items';
 import { MoveCategories, Moves } from '../../../src/data/ids/moves';
-import { Statuses } from '../../../src/data/ids/status';
+import { Statuses, TeamStatuses } from '../../../src/data/ids/status';
 import Abilities from '../../../src/data/ids/abilities';
+import { Genders } from '../../../src/data/ids/species';
 import { EventPriority } from '../../../src/core/event-emitter';
 import turns from '../../../src/battle/turn';
 import { toxicLayersUnder } from '../../../src/battle/moves/toxic-spikes';
+import { layersUnder } from '../../../src/battle/moves/spikes';
+import { stonesOver } from '../../../src/battle/moves/stealth-rock';
 import { stealableItem } from '../../../src/battle/utils';
 import { createBattle, createUnit, pinRandom } from '../harness';
 
@@ -468,5 +471,152 @@ describe("Sinnoh's moves", () => {
     // And the window closes
     battle.tick(turns(2));
     expect(powerOf(battle, avenger, Moves.Avalanche, target)).toBe(plain);
+  });
+  it('turns every wind-up round while the Trick Room stands, and leaves cooldowns alone', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const caster = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB);
+
+    caster.enter();
+    target.enter();
+
+    const quick = caster.checkMoveCastTime(Moves.BulletPunch, unitTarget(target));
+    const plain = caster.checkMoveCastTime(Moves.Tackle, unitTarget(target));
+    const slow = caster.checkMoveCastTime(Moves.Avalanche, unitTarget(target));
+    const wait = caster.checkMoveCooldown(Moves.BulletPunch, unitTarget(target));
+
+    expect(quick).toBeLessThan(plain);
+    expect(slow).toBeGreaterThan(plain);
+
+    caster.triggerMoveEffect(Moves.TrickRoom, NONE_TARGET, 0);
+    battle.tick(1);
+
+    // The quick jab is now the slow one and the long answer snaps out
+    expect(caster.checkMoveCastTime(Moves.BulletPunch, unitTarget(target))).toBeGreaterThan(plain);
+    expect(caster.checkMoveCastTime(Moves.Avalanche, unitTarget(target))).toBeLessThan(plain);
+    expect(caster.checkMoveCastTime(Moves.Tackle, unitTarget(target))).toBe(plain);
+
+    // Speed still decides how often a move comes round
+    expect(caster.checkMoveCooldown(Moves.BulletPunch, unitTarget(target))).toBe(wait);
+
+    // A second casting takes the room down rather than holding it open
+    caster.triggerMoveEffect(Moves.TrickRoom, NONE_TARGET, 0);
+    battle.tick(1);
+    expect(caster.checkMoveCastTime(Moves.BulletPunch, unitTarget(target))).toBe(quick);
+  });
+
+  it('costs a flyer double what Stealth Rock costs anything else', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const layer = createUnit(battle, teamA);
+    const walker = createUnit(battle, teamB);
+    const bird = createUnit(battle, teamB, [Types.Normal, Types.Flying]);
+
+    layer.enter();
+    layer.triggerMoveEffect(Moves.StealthRock, { type: MoveTargetType.Team, team: teamB }, 0);
+    battle.tick(1);
+    expect(stonesOver(teamB)).toBe(true);
+
+    walker.enter();
+    bird.enter();
+
+    const walked = walker.checkStat(Stats.HP, 0) - walker.health;
+    const flew = bird.checkStat(Stats.HP, 0) - bird.health;
+
+    expect(walked).toBeGreaterThan(0);
+    expect(flew).toBeCloseTo(walked * 2, 0);
+  });
+
+  it('blows both sides clear with Defog and takes the screens off the target side', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const blower = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB);
+
+    blower.enter();
+    target.enter();
+
+    target.triggerMoveEffect(Moves.Spikes, { type: MoveTargetType.Team, team: teamA }, 0);
+    blower.triggerMoveEffect(Moves.ToxicSpikes, { type: MoveTargetType.Team, team: teamB }, 0);
+    blower.triggerMoveEffect(Moves.StealthRock, { type: MoveTargetType.Team, team: teamB }, 0);
+    teamB.addStatus(TeamStatuses.Reflect, MOVE_CAUSE);
+    battle.tick(1);
+
+    expect(layersUnder(teamA)).toBe(1);
+    expect(toxicLayersUnder(teamB)).toBe(1);
+
+    blower.triggerMoveEffect(Moves.Defog, unitTarget(target), 0);
+    battle.tick(1);
+
+    // The gale does not stop at the halfway line
+    expect(layersUnder(teamA)).toBe(0);
+    expect(toxicLayersUnder(teamB)).toBe(0);
+    expect(stonesOver(teamB)).toBe(false);
+    expect(teamB.status[TeamStatuses.Reflect]).toBeUndefined();
+  });
+
+  it('charms two stages out of the opposite gender and nothing out of its own', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const charmer = createUnit(battle, teamA);
+    const charmed = createUnit(battle, teamB);
+    const unmoved = createUnit(battle, teamB);
+
+    charmer.enter();
+    charmed.enter();
+    unmoved.enter();
+    charmer.setGender(Genders.Male);
+    charmed.setGender(Genders.Female);
+    unmoved.setGender(Genders.Male);
+
+    expect(usable(battle, charmer, Moves.Captivate, charmed)).toBe(true);
+    expect(usable(battle, charmer, Moves.Captivate, unmoved)).toBe(false);
+
+    charmer.triggerMoveEffect(Moves.Captivate, unitTarget(charmed), 0);
+    charmer.triggerMoveEffect(Moves.Captivate, unitTarget(unmoved), 0);
+    battle.tick(1);
+
+    expect(charmed.stages[Stages.SpecialAttack]).toBe(-2);
+    expect(unmoved.stages[Stages.SpecialAttack]).toBe(0);
+  });
+
+  it('throws Judgment as the Plate in hand', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const caster = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB);
+
+    caster.enter();
+    target.enter();
+
+    // Nothing in hand is a plain Normal move
+    expect(caster.checkMoveType(Moves.Judgment, unitTarget(target))).toBe(Types.Normal);
+
+    caster.addItem(Items.FlamePlate);
+    expect(caster.checkMoveType(Moves.Judgment, unitTarget(target))).toBe(Types.Fire);
+  });
+
+  it('eats the berry a Bug Bite lands on', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const biter = createUnit(battle, teamA);
+    const holder = createUnit(battle, teamB);
+
+    biter.enter();
+    holder.enter();
+    holder.addItem(Items.OranBerry);
+
+    biter.attack(holder, Moves.BugBite, 1, Types.Bug, MoveCategories.Physical, 0);
+    battle.tick(1);
+
+    expect(holder.items[Items.OranBerry]).toBeUndefined();
+  });
+
+  it('ties Grass Knot to what the target weighs', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const attacker = createUnit(battle, teamA);
+    const light = createUnit(battle, teamB);
+    const heavy = createUnit(battle, teamB);
+
+    light.setWeight(5);
+    heavy.setWeight(250);
+
+    expect(attacker.checkMovePower(Moves.GrassKnot, unitTarget(light))).toBe(20);
+    expect(attacker.checkMovePower(Moves.GrassKnot, unitTarget(heavy))).toBe(120);
   });
 });

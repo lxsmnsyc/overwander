@@ -117,6 +117,7 @@ const STAGE_MOVE_GROUPS: [Stages, StageMovesConfig][] = [
       [Moves.DoubleTeam]: 1,
       [Moves.Minimize]: 2,
       [Moves.SweetScent]: -2,
+      [Moves.Defog]: -1,
     },
   ],
 ];

@@ -8,6 +8,9 @@ import registerWorrySeedToFlareBlitz from './worry-seed-to-flare-blitz';
 import registerForcePalmToXScissor from './force-palm-to-x-scissor';
 import registerBugBuzzToEarthPower from './bug-buzz-to-earth-power';
 import registerSwitcherooToMirrorShot from './switcheroo-to-mirror-shot';
+import registerFlashCannonToRockWrecker from './flash-cannon-to-rock-wrecker';
+import registerCrossPoisonToStealthRock from './cross-poison-to-stealth-rock';
+import registerGrassKnotToAttackOrder from './grass-knot-to-attack-order';
 
 /**
  * Sinnoh's moves, in the order the move list numbers them. That order
@@ -25,4 +28,7 @@ export default function registerGen4Moves(): void {
   registerForcePalmToXScissor();
   registerBugBuzzToEarthPower();
   registerSwitcherooToMirrorShot();
+  registerFlashCannonToRockWrecker();
+  registerCrossPoisonToStealthRock();
+  registerGrassKnotToAttackOrder();
 }

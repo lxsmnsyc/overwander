@@ -48,6 +48,13 @@ const EFFECT_STATUS_MOVES: {
 } = {
   [Moves.BodySlam]: { status: Statuses.Paralyzed, chance: 30 },
   [Moves.ForcePalm]: { status: Statuses.Paralyzed, chance: 30 },
+  [Moves.Discharge]: { status: Statuses.Paralyzed, chance: 30 },
+  [Moves.RockClimb]: { status: Statuses.Confused, chance: 20 },
+  [Moves.Chatter]: { status: Statuses.Confused, chance: 100 },
+  [Moves.LavaPlume]: { status: Statuses.Burned, chance: 30 },
+  [Moves.CrossPoison]: { status: Statuses.Poisoned, chance: 10 },
+  [Moves.GunkShot]: { status: Statuses.Poisoned, chance: 30 },
+  [Moves.IronHead]: { status: Statuses.Flinched, chance: 30 },
   [Moves.PoisonJab]: { status: Statuses.Poisoned, chance: 30 },
   [Moves.DarkPulse]: { status: Statuses.Flinched, chance: 20 },
   [Moves.AirSlash]: { status: Statuses.Flinched, chance: 30 },
@@ -170,6 +177,8 @@ const EFFECT_STAGE_MOVES: { [key in Moves]?: AttackStageEffect } = {
   [Moves.EarthPower]: { stage: Stages.SpecialDefense, value: -1, chance: 10 },
   [Moves.MudBomb]: { stage: Stages.Accuracy, value: -1, chance: 30 },
   [Moves.MirrorShot]: { stage: Stages.Accuracy, value: -1, chance: 30 },
+  [Moves.FlashCannon]: { stage: Stages.SpecialDefense, value: -1, chance: 10 },
+  [Moves.ChargeBeam]: { stage: Stages.SpecialAttack, value: 1, chance: 70, self: true },
   [Moves.MuddyWater]: { stage: Stages.Accuracy, value: -1, chance: 30 },
   [Moves.MeteorMash]: { stage: Stages.Attack, value: 1, chance: 20, self: true },
   // Paid after it lands rather than before: the cost of swinging that
@@ -191,6 +200,8 @@ const EFFECT_STAGE_MOVES: { [key in Moves]?: AttackStageEffect } = {
     self: true,
   },
   [Moves.PsychoBoost]: { stage: Stages.SpecialAttack, value: -2, chance: 100, self: true },
+  [Moves.DracoMeteor]: { stage: Stages.SpecialAttack, value: -2, chance: 100, self: true },
+  [Moves.LeafStorm]: { stage: Stages.SpecialAttack, value: -2, chance: 100, self: true },
   [Moves.SilverWind]: {
     stage: [
       Stages.Attack,

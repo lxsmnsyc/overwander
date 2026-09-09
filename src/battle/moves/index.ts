@@ -97,6 +97,11 @@ import setupLuckyChant from './lucky-chant';
 import setupReadingTheField from './reading-the-field';
 import setupLastResort from './last-resort';
 import setupFangs from './fangs';
+import setupTrickRoom from './trick-room';
+import setupStealthRock from './stealth-rock';
+import setupDefog from './defog';
+import setupCaptivate from './captivate';
+import setupJudgment from './judgment';
 
 export default function setupMoves(battle: Battle): void {
   // Overarching groups
@@ -208,6 +213,11 @@ export default function setupMoves(battle: Battle): void {
   setupReadingTheField(battle);
   setupLastResort(battle);
   setupFangs(battle);
+  setupTrickRoom(battle);
+  setupStealthRock(battle);
+  setupDefog(battle);
+  setupCaptivate(battle);
+  setupJudgment(battle);
 
   // Last, because they are what is left: both fallbacks only answer
   // when every resolver above has declined to pick anything. Attack

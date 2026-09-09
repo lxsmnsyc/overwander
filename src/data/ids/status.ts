@@ -365,4 +365,9 @@ export const enum TeamStatuses {
    * A chant is up over the team: nothing lands a critical on it
    */
   LuckyChant = 7,
+  /**
+   * Stones hang over the team: anything swapped in is hurt for how it
+   * takes a Rock move
+   */
+  StealthRock = 8,
 }

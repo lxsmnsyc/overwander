@@ -49,7 +49,7 @@ export default function registerSignatureAbilities(): void {
   // Pidgey
   registerAbility(Abilities.Slipstream, {
     name: 'Slipstream',
-    description: 'Cast times are 20% shorter for everybody on the field, enemies included.',
+    description: 'Cast and channel times are 20% shorter for its own side while it stands.',
   });
 
   // Rattata
@@ -435,10 +435,9 @@ export default function registerSignatureAbilities(): void {
   });
 
   // Ditto
-  registerAbility(Abilities.AdaptiveCell, {
-    name: 'Adaptive Cell',
-    description:
-      'It takes 0.5x from the type of the last move that hit it, until a move of another type lands.',
+  registerAbility(Abilities.Formless, {
+    name: 'Formless',
+    description: 'Critical hits land on it as ordinary hits, and its stages cannot be lowered.',
   });
 
   // Eevee
@@ -581,9 +580,10 @@ export default function registerSignatureAbilities(): void {
   });
 
   // Togepi
-  registerAbility(Abilities.GoodOmen, {
-    name: 'Good Omen',
-    description: 'No move from its side can miss while it stands.',
+  registerAbility(Abilities.FairShare, {
+    name: 'Fair Share',
+    description:
+      'A move under 100% accuracy that just hit somebody on its side cannot hit that one again next time.',
   });
 
   // Natu
@@ -681,9 +681,9 @@ export default function registerSignatureAbilities(): void {
   });
 
   // Dunsparce
-  registerAbility(Abilities.EvenKeel, {
-    name: 'Even Keel',
-    description: 'Each of its five battle stats counts as the average of all five.',
+  registerAbility(Abilities.HiddenDen, {
+    name: 'Hidden Den',
+    description: 'While any ally stands, enemies cannot aim a single-target move at it.',
   });
 
   // Gligar
@@ -920,16 +920,15 @@ export default function registerSignatureAbilities(): void {
   });
 
   // Taillow
-  registerAbility(Abilities.FearlessDive, {
-    name: 'Fearless Dive',
-    description: 'Its moves hit 1.3x against a target on a higher share of its HP than it has.',
+  registerAbility(Abilities.MigrantsWind, {
+    name: "Migrant's Wind",
+    description: 'It casts Tailwind over its side as it arrives on the field.',
   });
 
   // Wingull
-  registerAbility(Abilities.BillCarry, {
-    name: 'Bill Carry',
-    description:
-      'It arrives carrying a Sitrus Berry, handed to the neediest empty-handed ally or kept if there is none.',
+  registerAbility(Abilities.GullsGreed, {
+    name: "Gull's Greed",
+    description: 'Every heal an enemy receives is 0.75x, and it takes the quarter for itself.',
   });
 
   // Ralts
@@ -1009,8 +1008,7 @@ export default function registerSignatureAbilities(): void {
   // Aron
   registerAbility(Abilities.OreHunger, {
     name: 'Ore Hunger',
-    description:
-      'Steel, Rock and Ground moves deal it no damage and heal it 1/4 of what they would have.',
+    description: 'Steel and Rock moves deal it no damage and heal it 1/4 of what they would have.',
   });
 
   // Meditite
@@ -1211,9 +1209,10 @@ export default function registerSignatureAbilities(): void {
   });
 
   // Feebas
-  registerAbility(Abilities.SoothingPresence, {
-    name: 'Soothing Presence',
-    description: 'Statuses landing on its own side last half as long while it stands.',
+  registerAbility(Abilities.ScarredBeauty, {
+    name: 'Scarred Beauty',
+    description:
+      'Its Special Attack counts 1.4x while it carries poison, sleep, paralysis, a burn or a freeze.',
   });
 
   // Castform
@@ -1223,10 +1222,9 @@ export default function registerSignatureAbilities(): void {
   });
 
   // Kecleon
-  registerAbility(Abilities.TwoToneStrike, {
-    name: 'Two-Tone Strike',
-    description:
-      'Each of its moves counts as its own type or as Normal against the target, whichever lands harder.',
+  registerAbility(Abilities.BlendIn, {
+    name: 'Blend In',
+    description: 'While it has stood still for 2 seconds, moves aimed at it are half as accurate.',
   });
 
   // Shuppet

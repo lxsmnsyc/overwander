@@ -72,7 +72,6 @@ import {
   TWIN_STINGER_POWER_SCALE,
 } from '../../../src/battle/abilities/signature/bulbasaur-to-pikachu';
 import {
-  ADAPTIVE_CELL_SCALE,
   BLAST_FURNACE_CHANCE,
   BULLHEADED_EXPOSED_SCALE,
   BULLHEADED_POWER_SCALE,
@@ -170,6 +169,8 @@ import { Statuses, TeamStatuses, Weathers } from '../../../src/data/ids/status';
 import {
   ANTLION_PIT_FRACTION,
   APPLAUSE_FRACTION,
+  BLEND_IN_DELAY,
+  BLEND_IN_SCALE,
   COLD_SNAP_CHANCE,
   DIRTY_FIGHTER_SCALE,
   DOOM_MARK_DURATION,
@@ -185,13 +186,13 @@ import {
   PATIENT_STALK_STEP,
   PEARL_GUARD_SCALE,
   RINGING_HEAD_SCALE,
+  SCARRED_BEAUTY_SCALE,
   SEVEN_WISHES_COUNT,
   SEVEN_WISHES_FRACTION,
   SHARED_HEART_SHARE,
   SILT_BED_SCALE,
   SKULL_CHARGE_RECOIL,
   SKULL_CHARGE_SCALE,
-  SOOTHING_PRESENCE_SCALE,
   SOUL_HARVEST_FRACTION,
   STORED_BOUNCE_CAP,
   STORED_BOUNCE_SHARE,
@@ -214,8 +215,8 @@ import {
   ECHO_CHAMBER_FRACTION,
   EMPATH_SCALE,
   EMPATH_THRESHOLD,
-  FEARLESS_DIVE_SCALE,
   FEEDING_FRENZY_MAX_STAGES,
+  GULLS_GREED_SHARE,
   JOLT_START_SCALE,
   KITTEN_PACE_SCALE,
   LURE_SCENT_SCALE,
@@ -401,27 +402,23 @@ function rollMove(battle: Battle, source: Unit, target: Unit, move: Moves, hit: 
 }
 
 describe('Slipstream', () => {
-  it('shortens every wind-up on the field, the enemy included', () => {
-    const plain = createBattle();
-    const bare = createUnit(plain.battle, plain.teamA).checkMoveCastTime(Moves.Flamethrower, {
-      type: MoveTargetType.None,
-    });
-
+  it('shortens what its own side winds up and leaves the enemy alone', () => {
     const { battle, teamA, teamB } = createBattle();
     const holder = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamA);
     const enemy = createUnit(battle, teamB);
+
+    const target = unitTarget(enemy);
+    const bare = ally.checkMoveCastTime(Moves.Flamethrower, target);
+    const theirs = enemy.checkMoveCastTime(Moves.Flamethrower, unitTarget(ally));
+
     holder.addAbility(Abilities.Slipstream);
 
-    const target = { type: MoveTargetType.None } as const;
-
-    expect(holder.checkMoveCastTime(Moves.Flamethrower, target)).toBeCloseTo(
+    expect(ally.checkMoveCastTime(Moves.Flamethrower, target)).toBeCloseTo(
       bare * SLIPSTREAM_SCALE,
       5,
     );
-    expect(enemy.checkMoveCastTime(Moves.Flamethrower, target)).toBeCloseTo(
-      bare * SLIPSTREAM_SCALE,
-      5,
-    );
+    expect(enemy.checkMoveCastTime(Moves.Flamethrower, unitTarget(ally))).toBeCloseTo(theirs, 5);
   });
 });
 
@@ -2109,34 +2106,31 @@ describe('Safe Passage', () => {
   });
 });
 
-describe('Adaptive Cell', () => {
-  it('learns the last shape that hit it and forgets it for a new one', () => {
+describe('Formless', () => {
+  it('takes a critical hit as an ordinary one and refuses a drop', () => {
     const { battle, teamA, teamB } = createBattle();
-    pinRandom(battle, 1);
     const holder = createUnit(battle, teamA);
     const enemy = createUnit(battle, teamB);
-    holder.addAbility(Abilities.AdaptiveCell);
+    holder.addAbility(Abilities.Formless);
 
-    const fire = makeAttack(enemy, holder, Moves.Ember, Types.Fire, MoveCategories.Special);
-    const normal = makeAttack(enemy, holder, Moves.Pound, Types.Normal, MoveCategories.Physical);
+    const event = {
+      id: 'UnitAttackResolveCriticalHit',
+      disabled: false,
+      parent: makeAttack(enemy, holder, Moves.Pound, Types.Normal, MoveCategories.Physical),
+      critical: true,
+    };
+    battle.emit(BattleEvents.UnitAttackResolveCriticalHit, event);
 
-    expect(resolveAttackStat(battle, fire, enemy, Stats.SpecialAttack, 100)).toBe(100);
+    expect(event.critical).toBe(false);
 
-    enemy.attack(holder, Moves.Ember, 40, Types.Fire, MoveCategories.Special, 0);
+    holder.addStage(Stages.Attack, -2, NONE_CAUSE);
 
-    expect(resolveAttackStat(battle, fire, enemy, Stats.SpecialAttack, 100)).toBeCloseTo(
-      100 * ADAPTIVE_CELL_SCALE,
-      5,
-    );
-    expect(resolveAttackStat(battle, normal, enemy, Stats.Attack, 100)).toBe(100);
+    expect(holder.stages[Stages.Attack]).toBe(0);
 
-    enemy.attack(holder, Moves.Pound, 40, Types.Normal, MoveCategories.Physical, 0);
+    // A raise is still a raise
+    holder.addStage(Stages.Attack, 1, NONE_CAUSE);
 
-    expect(resolveAttackStat(battle, normal, enemy, Stats.Attack, 100)).toBeCloseTo(
-      100 * ADAPTIVE_CELL_SCALE,
-      5,
-    );
-    expect(resolveAttackStat(battle, fire, enemy, Stats.SpecialAttack, 100)).toBe(100);
+    expect(holder.stages[Stages.Attack]).toBe(1);
   });
 });
 
@@ -2639,26 +2633,66 @@ describe('Lantern Lure', () => {
   });
 });
 
-describe('Good Omen', () => {
-  it('lets nothing on its side miss', () => {
+describe('Fair Share', () => {
+  it('caps a run of luck on the same ally', () => {
     const { battle, teamA, teamB } = createBattle();
     const holder = createUnit(battle, teamA);
     const ally = createUnit(battle, teamA);
     const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.FairShare);
 
-    const atHolder = { type: MoveTargetType.Unit, unit: holder } as const;
-    const atEnemy = { type: MoveTargetType.Unit, unit: enemy } as const;
+    // Hypnosis is 60 accuracy; a pinned roll of 0 always lands it
+    pinRandom(battle, 0);
 
-    // Fire Blast is short of the ceiling, so an accuracy is asked for
-    expect(ally.checkMoveAccuracy(Moves.FireBlast, atEnemy)).not.toBeUndefined();
+    rollMove(battle, enemy, ally, Moves.Hypnosis, false);
 
-    holder.addAbility(Abilities.GoodOmen);
+    const second = {
+      id: 'UnitTriggerMoveRollHit',
+      disabled: false,
+      parent: {
+        id: 'UnitTriggerMove',
+        disabled: false,
+        source: enemy,
+        move: Moves.Hypnosis,
+        target: unitTarget(ally),
+        steps: 0,
+      },
+      hit: false,
+    };
+    battle.emit(BattleEvents.UnitTriggerMoveRollHit, second);
 
-    expect(ally.checkMoveAccuracy(Moves.FireBlast, atEnemy)).toBeUndefined();
-    expect(holder.checkMoveAccuracy(Moves.FireBlast, atEnemy)).toBeUndefined();
+    // The second chancy move running cannot land on the same ally
+    expect(second.hit).toBe(false);
 
-    // The far side aims as badly as ever
-    expect(enemy.checkMoveAccuracy(Moves.FireBlast, atHolder)).not.toBeUndefined();
+    const third = {
+      id: 'UnitTriggerMoveRollHit',
+      disabled: false,
+      parent: {
+        id: 'UnitTriggerMove',
+        disabled: false,
+        source: enemy,
+        move: Moves.Hypnosis,
+        target: unitTarget(ally),
+        steps: 0,
+      },
+      hit: false,
+    };
+    battle.emit(BattleEvents.UnitTriggerMoveRollHit, third);
+
+    expect(third.hit).toBe(true);
+  });
+
+  it('says nothing about a move that never misses', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.FairShare);
+    pinRandom(battle, 0);
+
+    for (let blows = 0; blows < 3; blows += 1) {
+      expect(rolled(battle, enemy, ally, Moves.Pound)).toBe(true);
+    }
   });
 });
 
@@ -3128,35 +3162,21 @@ function resolveAttackDamage(battle: Battle, attacker: Unit, target: Unit): numb
   return event.value;
 }
 
-describe('Even Keel', () => {
-  it('levels its five battle stats out to their average', () => {
-    const { battle, teamA } = createBattle();
+describe('Hidden Den', () => {
+  it('cannot be aimed at while anybody else is standing', () => {
+    const { battle, teamA, teamB } = createBattle();
     const holder = createUnit(battle, teamA);
-    const bare = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.HiddenDen);
 
-    for (const unit of [holder, bare]) {
-      unit.setStat(StatsKind.Base, Stats.Attack, 200);
-      unit.setStat(StatsKind.Base, Stats.Defense, 20);
-    }
+    expect(enemy.checkMoveImmunity(Moves.Pound, unitTarget(holder), Types.Normal)).toBe(true);
+    expect(enemy.checkMoveImmunity(Moves.Pound, unitTarget(ally), Types.Normal)).toBe(false);
 
-    const stats = [
-      Stats.Attack,
-      Stats.Defense,
-      Stats.SpecialAttack,
-      Stats.SpecialDefense,
-      Stats.Speed,
-    ];
-    const average =
-      stats.reduce((total, stat) => total + bare.checkStat(stat, 0), 0) / stats.length;
+    // Alone, there is nowhere left to hide
+    ally.faint(enemy);
 
-    holder.addAbility(Abilities.EvenKeel);
-
-    for (const stat of stats) {
-      expect(holder.checkStat(stat, 0)).toBeCloseTo(average, 5);
-    }
-
-    // HP is not one of the five, so it is left where it was
-    expect(holder.checkStat(Stats.HP, 0)).toBe(bare.checkStat(Stats.HP, 0));
+    expect(enemy.checkMoveImmunity(Moves.Pound, unitTarget(holder), Types.Normal)).toBe(false);
   });
 });
 
@@ -3956,68 +3976,53 @@ describe('the Lotad and Seedot pair', () => {
   });
 });
 
-describe('Fearless Dive', () => {
-  it('goes hardest at whatever is standing tallest', () => {
-    const { battle, teamA, teamB } = createBattle();
+describe("Migrant's Wind", () => {
+  it('casts Tailwind over its side as it arrives', () => {
+    const { battle, teamA } = createBattle();
     const holder = createUnit(battle, teamA);
-    const enemy = createUnit(battle, teamB);
-    holder.addAbility(Abilities.FearlessDive);
+    holder.addAbility(Abilities.MigrantsWind);
 
-    const target = unitTarget(enemy);
-    const clean = holder.checkMovePower(Moves.Pound, target) ?? 0;
+    let cast: Moves | undefined;
+    battle.on(BattleEvents.UnitTriggerMove, AttackPriority.Post, (event) => {
+      if (event.target.type === MoveTargetType.Team) {
+        cast = event.move;
+      }
+    });
 
-    // Both whole, so nobody is standing taller
-    expect(holder.checkMovePower(Moves.Pound, target)).toBeCloseTo(clean, 5);
+    battle.emit(BattleEvents.UnitEntersField, {
+      id: 'UnitEntersField',
+      disabled: false,
+      source: holder,
+      reactivation: false,
+    });
 
-    holder.setHealth(holder.checkStat(Stats.HP, 0) / 2);
-
-    expect(holder.checkMovePower(Moves.Pound, target)).toBeCloseTo(clean * FEARLESS_DIVE_SCALE, 5);
-
-    // And nothing once the enemy is the lower of the two
-    enemy.setHealth(enemy.checkStat(Stats.HP, 0) / 4);
-
-    expect(holder.checkMovePower(Moves.Pound, target)).toBeCloseTo(clean, 5);
+    expect(cast).toBe(Moves.Tailwind);
   });
 });
 
-describe('Bill Carry', () => {
-  it('hands what it brought to the neediest empty-handed ally', () => {
-    const { battle, teamA } = createBattle();
+describe("Gull's Greed", () => {
+  it('takes its cut out of an enemy heal', () => {
+    const { battle, teamA, teamB } = createBattle();
     const holder = createUnit(battle, teamA);
-    const hurt = createUnit(battle, teamA);
-    const stocked = createUnit(battle, teamA);
-    holder.addAbility(Abilities.BillCarry);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.GullsGreed);
 
-    hurt.setHealth(hurt.checkStat(Stats.HP, 0) / 4);
-    stocked.setHealth(1);
-    stocked.addItem(Items.Leftovers);
+    const maxHP = holder.checkStat(Stats.HP, 0);
+    holder.setHealth(maxHP / 2);
+    enemy.setHealth(1);
 
-    battle.emit(BattleEvents.UnitEntersField, {
-      id: 'UnitEntersField',
-      disabled: false,
-      source: holder,
-      reactivation: false,
-    });
+    enemy.heal(NONE_CAUSE, enemy, 40, 0);
 
-    // The one with something already keeps what it has, however hurt
-    expect(hurt.items[Items.SitrusBerry]).not.toBeUndefined();
-    expect(stocked.items[Items.SitrusBerry]).toBeUndefined();
-    expect(holder.items[Items.SitrusBerry]).toBeUndefined();
-  });
+    expect(enemy.health).toBeCloseTo(1 + 40 * (1 - GULLS_GREED_SHARE), 5);
+    expect(holder.health).toBeCloseTo(maxHP / 2 + 40 * GULLS_GREED_SHARE, 5);
 
-  it('keeps the berry when nobody else can take it', () => {
-    const { battle, teamA } = createBattle();
-    const holder = createUnit(battle, teamA);
-    holder.addAbility(Abilities.BillCarry);
+    // Nothing taken out of its own side's healing
+    const ally = createUnit(battle, teamA);
+    ally.setHealth(1);
 
-    battle.emit(BattleEvents.UnitEntersField, {
-      id: 'UnitEntersField',
-      disabled: false,
-      source: holder,
-      reactivation: false,
-    });
+    ally.heal(NONE_CAUSE, ally, 40, 0);
 
-    expect(holder.items[Items.SitrusBerry]).not.toBeUndefined();
+    expect(ally.health).toBeCloseTo(41, 5);
   });
 });
 
@@ -4990,28 +4995,23 @@ describe('the Lileep and Anorith pair', () => {
   });
 });
 
-describe('Soothing Presence', () => {
-  it('halves what a status is given on its own side', () => {
-    const { battle, teamA, teamB } = createBattle();
+describe('Scarred Beauty', () => {
+  it('answers with what it is carrying', () => {
+    const { battle, teamA } = createBattle();
     const holder = createUnit(battle, teamA);
-    const ally = createUnit(battle, teamA);
-    const enemy = createUnit(battle, teamB);
+    const bare = createUnit(battle, teamA);
+    holder.addAbility(Abilities.ScarredBeauty);
 
-    const clean = ally.checkStatusDuration(Statuses.Sleeping, turns(4), NONE_CAUSE);
-    const theirs = enemy.checkStatusDuration(Statuses.Sleeping, turns(4), NONE_CAUSE);
+    const clean = bare.checkStat(Stats.SpecialAttack, 0);
 
-    holder.addAbility(Abilities.SoothingPresence);
+    expect(holder.checkStat(Stats.SpecialAttack, 0)).toBeCloseTo(clean, 5);
 
-    expect(ally.checkStatusDuration(Statuses.Sleeping, turns(4), NONE_CAUSE)).toBeCloseTo(
-      clean * SOOTHING_PRESENCE_SCALE,
-      5,
-    );
+    holder.addStatus(Statuses.Poisoned, NONE_CAUSE);
 
-    // Nothing for the far side
-    expect(enemy.checkStatusDuration(Statuses.Sleeping, turns(4), NONE_CAUSE)).toBeCloseTo(
-      theirs,
-      5,
-    );
+    expect(holder.checkStat(Stats.SpecialAttack, 0)).toBeCloseTo(clean * SCARRED_BEAUTY_SCALE, 5);
+
+    // Only the special half, and only a major status
+    expect(holder.checkStat(Stats.Attack, 0)).toBeCloseTo(bare.checkStat(Stats.Attack, 0), 5);
   });
 });
 
@@ -5043,38 +5043,59 @@ describe('Weather Worn', () => {
   });
 });
 
-describe('Two-Tone Strike', () => {
-  it('reads a move as its own type or as Normal, whichever lands harder', () => {
+describe('Blend In', () => {
+  it('hides it once it has stood still, and gives it away when it moves', () => {
     const { battle, teamA, teamB } = createBattle();
-    pinRandom(battle, 0);
     const holder = createUnit(battle, teamA);
     const enemy = createUnit(battle, teamB);
-    holder.addAbility(Abilities.TwoToneStrike);
+    holder.addAbility(Abilities.BlendIn);
 
-    // Fire into Water resists at 0.5x while plain Normal is neutral
-    // there, so the neutral reading is the one that stands
-    const event = {
-      id: 'UnitAttackResolveEffectiveness',
-      disabled: false,
-      parent: makeAttack(holder, enemy, Moves.Ember, Types.Fire, MoveCategories.Special),
-      defendingType: Types.Water,
-      multiplier: 1,
-    };
-    battle.emit(BattleEvents.UnitAttackResolveEffectiveness, event);
+    const target = unitTarget(holder);
+    const clean = enemy.checkMoveAccuracy(Moves.Pound, target);
 
-    expect(event.multiplier).toBe(1);
+    // Not yet still for long enough
+    battle.tick(BLEND_IN_DELAY / 2);
 
-    // And a reading that is already better than Normal is left alone
-    const strong = {
-      id: 'UnitAttackResolveEffectiveness',
-      disabled: false,
-      parent: makeAttack(holder, enemy, Moves.WaterGun, Types.Water, MoveCategories.Special),
-      defendingType: Types.Rock,
-      multiplier: 1,
-    };
-    battle.emit(BattleEvents.UnitAttackResolveEffectiveness, strong);
+    expect(enemy.checkMoveAccuracy(Moves.Pound, target)).toBe(clean);
 
-    expect(strong.multiplier).toBe(2);
+    battle.tick(BLEND_IN_DELAY / 2);
+
+    expect(enemy.checkMoveAccuracy(Moves.Pound, target)).toBeCloseTo(
+      (clean ?? 0) * BLEND_IN_SCALE,
+      5,
+    );
+
+    // Reaching for a move gives it away at once
+    act(battle, holder);
+
+    expect(enemy.checkMoveAccuracy(Moves.Pound, target)).toBe(clean);
+  });
+
+  it('covers it through the gaps of a real attacking loop', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.BlendIn);
+    holder.addMove(Moves.Pound);
+
+    const target = unitTarget(holder);
+    const clean = enemy.checkMoveAccuracy(Moves.Pound, target) ?? 0;
+
+    function hidden(): boolean {
+      return (enemy.checkMoveAccuracy(Moves.Pound, target) ?? 0) < clean;
+    }
+
+    // A cast, then the wait that follows it: the cover comes back 2
+    // seconds into the wait and holds until it reaches for the next move
+    holder.cast(Moves.Pound, unitTarget(enemy));
+    battle.tick(turns(2));
+
+    expect(holder.casting).toBeUndefined();
+    expect(hidden()).toBe(true);
+
+    act(battle, holder);
+
+    expect(hidden()).toBe(false);
   });
 });
 

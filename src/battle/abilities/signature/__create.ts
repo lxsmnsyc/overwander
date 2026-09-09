@@ -150,6 +150,11 @@ export function enemyHolder(battle: Battle, unit: Unit, ability: Abilities): Uni
  */
 const PSEUDO_MOVES = new Set<Moves>([Moves._Confused, Moves.Struggle, Moves.Attack]);
 
+/** Whether the move is one of the three no signature reads */
+export function isPseudoMove(move: Moves): boolean {
+  return PSEUDO_MOVES.has(move);
+}
+
 /** Whether this is a physical move the pokemon actually chose */
 export function isPhysicalMove(move: Moves): boolean {
   return !PSEUDO_MOVES.has(move) && getMoveData(move).category === MoveCategories.Physical;

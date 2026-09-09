@@ -22,14 +22,13 @@ import type Unit from '../../unit';
 import { hasFreeItemSlot, isWeatherSandstorm, onUnitActs, unitTarget } from '../../utils';
 import { createAbility } from '../__create';
 import {
-  BATTLE_STATS,
   createMarkAbility,
   createRisenAbility,
-  createStatAverage,
   createUnitCounter,
   createUnitState,
   enemyHolder,
   isChannelledMove,
+  isPseudoMove,
 } from './__create';
 
 /** What holding a move down is worth */
@@ -160,6 +159,9 @@ function guardedBy(battle: Battle, unit: Unit, ability: Abilities): Unit | undef
 
   return undefined;
 }
+
+/** The accuracy a move has to be under for a run of luck to be capped */
+export const FAIR_SHARE_ACCURACY = 100;
 
 const chikoritaToCelebi = [
   // The Johto starters: each leaves its own element on whatever it
@@ -306,13 +308,47 @@ const chikoritaToCelebi = [
 
   // Togepi: luck as a plain certainty, spent on everybody it is
   // standing with rather than on itself
-  createAbility(Abilities.GoodOmen, (battle) =>
-    battle.on(BattleEvents.CheckUnitMoveAccuracy, EventPriority.Post, (event) => {
-      if (event.accuracy != null && guardedBy(battle, event.source, Abilities.GoodOmen)) {
-        event.accuracy = undefined;
-      }
-    }),
-  ),
+  createAbility(Abilities.FairShare, (battle) => {
+    const { state, lifecycles } = createUnitState<boolean>(battle);
+
+    return new MergedLifecycle([
+      ...lifecycles,
+      battle.on(BattleEvents.UnitTriggerMoveRollHit, EventPriority.Post, (event) => {
+        const parent = event.parent;
+        const target = parent.target;
+
+        if (target.type !== MoveTargetType.Unit) {
+          return;
+        }
+
+        const aimed = target.unit;
+        const accuracy = isPseudoMove(parent.move) ? undefined : getMoveData(parent.move).accuracy;
+
+        if (
+          accuracy == null ||
+          accuracy >= FAIR_SHARE_ACCURACY ||
+          !guardedBy(battle, aimed, Abilities.FairShare)
+        ) {
+          return;
+        }
+
+        if (!event.hit) {
+          state.delete(aimed);
+          return;
+        }
+
+        // A chancy move that just landed on this one does not land on it
+        // twice running: the second is refused and the slate is clean
+        if (state.get(aimed)) {
+          event.hit = false;
+          state.delete(aimed);
+          return;
+        }
+
+        state.set(aimed, true);
+      }),
+    ]);
+  }),
 
   // Natu: it saw the blow before it arrived, and what a foreseen blow
   // does is Future Sight's business
@@ -749,18 +785,49 @@ const chikoritaToCelebi = [
 
   // Dunsparce: nothing about it is sharp and nothing is weak, which is
   // the whole of what the line is known for
-  createAbility(Abilities.EvenKeel, (battle) => {
-    const stats = createStatAverage();
-
-    return battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
-      if (
-        !stats.measuring() &&
-        BATTLE_STATS.includes(event.stat) &&
-        event.source.hasAbility(Abilities.EvenKeel)
-      ) {
-        event.value = stats.average(event.source);
+  createAbility(Abilities.HiddenDen, (battle) => {
+    /** Whether anybody else is standing for an enemy to aim at instead */
+    function covered(unit: Unit): boolean {
+      for (const ally of battle.units()) {
+        if (ally !== unit && ally.alive && ally.team.alliance === unit.team.alliance) {
+          return true;
+        }
       }
-    });
+
+      return false;
+    }
+
+    return new MergedLifecycle([
+      // A move aimed at it while it is hidden fails outright, and the AI
+      // is told rather than left to spend a cast finding out
+      battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Post, (event) => {
+        const target = event.target;
+
+        if (
+          !event.immune &&
+          target.type === MoveTargetType.Unit &&
+          target.unit !== event.source &&
+          target.unit.team.alliance !== event.source.team.alliance &&
+          target.unit.hasAbility(Abilities.HiddenDen) &&
+          covered(target.unit)
+        ) {
+          event.immune = true;
+        }
+      }),
+      battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Post, (event) => {
+        const target = event.target;
+
+        if (
+          event.usable &&
+          target.type === MoveTargetType.Unit &&
+          target.unit.team.alliance !== event.source.team.alliance &&
+          target.unit.hasAbility(Abilities.HiddenDen) &&
+          covered(target.unit)
+        ) {
+          event.usable = false;
+        }
+      }),
+    ]);
   }),
 
   // Gligar: the sand its kin hide in is the sand it flies on, so a

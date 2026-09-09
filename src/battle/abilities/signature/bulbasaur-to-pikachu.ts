@@ -18,13 +18,7 @@ import { MULTI_HIT_MOVES } from '../../moves/multi-hit';
 import type Unit from '../../unit';
 import { unitTarget } from '../../utils';
 import { createAbility } from '../__create';
-import {
-  createDamageTaken,
-  createFieldAbility,
-  createUnitState,
-  fieldHasAbility,
-  isPhysicalMove,
-} from './__create';
+import { createDamageTaken, createFieldAbility, createUnitState, isPhysicalMove } from './__create';
 
 /**
  * Whether the second needle applies: a physical move that strikes
@@ -38,7 +32,7 @@ function isTwinStingerMove(move: Moves): boolean {
 /** What each of the two needles is worth on its own */
 export const TWIN_STINGER_POWER_SCALE = 0.6;
 
-/** What the draught takes off every wind-up on the field */
+/** What the draught takes off the wind-ups on its own side */
 export const SLIPSTREAM_SCALE = 0.8;
 
 /** What a bite takes off the target, over and above the blow */
@@ -141,22 +135,40 @@ const bulbasaurToPikachu = [
 
   // Pidgey: the draught it beats up carries everybody along, its
   // enemies included, so it is a bet on being the fastest thing in it
-  createAbility(
-    Abilities.Slipstream,
-    (battle) =>
-      new MergedLifecycle([
-        battle.on(BattleEvents.CheckUnitMoveCastTime, EventPriority.Post, (event) => {
-          if (fieldHasAbility(battle, Abilities.Slipstream)) {
-            event.duration *= SLIPSTREAM_SCALE;
-          }
-        }),
-        battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
-          if (event.source.hasAbility(Abilities.Slipstream)) {
-            event.source.triggerAbility(Abilities.Slipstream);
-          }
-        }),
-      ]),
-  ),
+  createAbility(Abilities.Slipstream, (battle) => {
+    /** Whether a bird is beating up a draught on this unit's side */
+    function drafting(unit: Unit): boolean {
+      for (const bird of battle.units()) {
+        if (
+          bird.alive &&
+          bird.team.alliance === unit.team.alliance &&
+          bird.hasAbility(Abilities.Slipstream)
+        ) {
+          return true;
+        }
+      }
+
+      return false;
+    }
+
+    return new MergedLifecycle([
+      battle.on(BattleEvents.CheckUnitMoveCastTime, EventPriority.Post, (event) => {
+        if (drafting(event.source)) {
+          event.duration *= SLIPSTREAM_SCALE;
+        }
+      }),
+      battle.on(BattleEvents.CheckUnitMoveChannelTime, EventPriority.Post, (event) => {
+        if (drafting(event.source)) {
+          event.duration *= SLIPSTREAM_SCALE;
+        }
+      }),
+      battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+        if (event.source.hasAbility(Abilities.Slipstream)) {
+          event.source.triggerAbility(Abilities.Slipstream);
+        }
+      }),
+    ]);
+  }),
 
   // Rattata: the teeth do their own work whatever the blow was worth,
   // so armour is no answer to it

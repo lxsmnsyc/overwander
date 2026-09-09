@@ -2,7 +2,6 @@ import { AttackPriority, EventPriority } from '../../../core/event-emitter';
 import { Stages, Stats } from '../../../data/constants/stats';
 import { Types } from '../../../data/constants/types';
 import Abilities from '../../../data/ids/abilities';
-import { Items } from '../../../data/ids/items';
 import {
   DamageFlags,
   MoveAttackFlags,
@@ -18,14 +17,7 @@ import { BattleEvents, EffectType, MoveTargetType } from '../../events';
 import { MergedLifecycle } from '../../lifecycle';
 import type Unit from '../../unit';
 import { MAJOR_STATUS_CONDITIONS } from '../../status';
-import {
-  hasAnyStatus,
-  hasFreeItemSlot,
-  isWeatherRainy,
-  isWeatherSunny,
-  onUnitActs,
-  unitTarget,
-} from '../../utils';
+import { hasAnyStatus, isWeatherRainy, isWeatherSunny, onUnitActs, unitTarget } from '../../utils';
 import { createAbility } from '../__create';
 import {
   createCheerAbility,
@@ -48,8 +40,8 @@ export const PACK_HUNT_SCALE = 1.2;
 export const CROOKED_RUN_SCALE = 0.9;
 export const CROOKED_RUN_MAX_STACKS = 3;
 
-/** What a target still standing tall is worth */
-export const FEARLESS_DIVE_SCALE = 1.3;
+/** The cut a gull takes out of somebody else's meal */
+export const GULLS_GREED_SHARE = 1 / 4;
 
 /** What its side's hurt is worth to it, and the share that counts as hurt */
 export const EMPATH_SCALE = 1.3;
@@ -81,8 +73,9 @@ export const ORE_HUNGER_FRACTION = 1 / 4;
 /** What a blow is worth against something holding a move together */
 export const MIND_OVER_BODY_SCALE = 0.5;
 
-/** The three types the line lives on */
-const ORE_TYPES = new Set<Types>([Types.Steel, Types.Rock, Types.Ground]);
+/** The two types the line lives on. Ground is left out: it is Aggron's
+ * own worst weakness, and the line needs something that still answers it */
+const ORE_TYPES = new Set<Types>([Types.Steel, Types.Rock]);
 
 /** What the opening jolt is worth, over and above going first */
 export const JOLT_START_SCALE = 1.5;
@@ -110,27 +103,6 @@ interface Echo {
 
 /** The hazards a thing standing on the water never touches */
 const HAZARD_MOVES = new Set<Moves>([Moves.Spikes, Moves.StealthRock]);
-
-/** The ally furthest from full with nothing in its hands */
-function emptyHandedAlly(battle: Battle, unit: Unit): Unit | undefined {
-  let found: Unit | undefined;
-  let lowest = Number.POSITIVE_INFINITY;
-
-  for (const ally of battle.units()) {
-    if (ally === unit || !ally.alive || ally.team.alliance !== unit.team.alliance) {
-      continue;
-    }
-
-    const share = ally.health / ally.checkStat(Stats.HP, 0);
-
-    if (share < lowest && hasFreeItemSlot(ally)) {
-      found = ally;
-      lowest = share;
-    }
-  }
-
-  return found;
-}
 
 /** Whether anybody else on its side is hurt enough to feel */
 function allyIsHurt(battle: Battle, unit: Unit): boolean {
@@ -300,56 +272,63 @@ const treeckoToTorkoal = [
   createGroveAbility(Abilities.WaterBloom, Weathers.Rain, isWeatherRainy, 'heals'),
   createGroveAbility(Abilities.SunRoot, Weathers.Sunny, isWeatherSunny, 'strikes'),
 
-  // Taillow: it picks the fight it has no business picking, so what is
-  // still standing tall is what it goes at hardest
-  createAbility(Abilities.FearlessDive, (battle) =>
-    battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
+  // Taillow: the flock arrives already moving, and what a following
+  // wind is worth is Tailwind's business
+  createAbility(
+    Abilities.MigrantsWind,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+          if (!event.reactivation && event.source.hasAbility(Abilities.MigrantsWind)) {
+            event.source.triggerAbility(Abilities.MigrantsWind);
+          }
+        }),
+        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
+          if (event.ability === Abilities.MigrantsWind) {
+            event.source.triggerMove(
+              Moves.Tailwind,
+              { type: MoveTargetType.Team, team: event.source.team },
+              0,
+            );
+          }
+        }),
+      ]),
+  ),
+
+  // Wingull: the gull takes its cut of whatever the far side is given,
+  // and what it takes is exactly what they lose
+  createAbility(Abilities.GullsGreed, (battle) =>
+    battle.on(BattleEvents.UnitHeal, EventPriority.Pre, (event) => {
       const target = event.target;
-      const source = event.source;
+      const cause = event.cause;
 
       if (
-        event.power == null ||
-        target.type !== MoveTargetType.Unit ||
-        !source.hasAbility(Abilities.FearlessDive)
+        event.value <= 0 ||
+        (cause.type === EffectType.Ability && cause.ability === Abilities.GullsGreed)
       ) {
         return;
       }
 
-      const theirs = target.unit.health / target.unit.checkStat(Stats.HP, 0);
-      const ours = source.health / source.checkStat(Stats.HP, 0);
+      for (const gull of battle.units(target.team.alliance)) {
+        if (!gull.alive || !gull.hasAbility(Abilities.GullsGreed)) {
+          continue;
+        }
 
-      if (theirs > ours) {
-        event.power *= FEARLESS_DIVE_SCALE;
+        const taken = event.value * GULLS_GREED_SHARE;
+
+        event.value -= taken;
+
+        gull.triggerAbility(Abilities.GullsGreed);
+        gull.heal(
+          { type: EffectType.Ability, ability: Abilities.GullsGreed, unit: gull },
+          gull,
+          taken,
+          0,
+        );
+
+        return;
       }
     }),
-  ),
-
-  // Wingull: the bill is for carrying rather than fighting, so what it
-  // brings goes to whoever came with nothing
-  createAbility(
-    Abilities.BillCarry,
-    (battle) =>
-      new MergedLifecycle([
-        battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
-          if (!event.reactivation && event.source.hasAbility(Abilities.BillCarry)) {
-            event.source.triggerAbility(Abilities.BillCarry);
-          }
-        }),
-        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
-          if (event.ability !== Abilities.BillCarry) {
-            return;
-          }
-
-          const source = event.source;
-          const ally = emptyHandedAlly(battle, source);
-
-          if (ally) {
-            ally.addItem(Items.SitrusBerry);
-          } else if (hasFreeItemSlot(source)) {
-            source.addItem(Items.SitrusBerry);
-          }
-        }),
-      ]),
   ),
 
   // Ralts: it answers what its side is feeling, so the worse the fight

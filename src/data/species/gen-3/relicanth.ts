@@ -26,7 +26,7 @@ export default function registerRelicanthSpecies(): void {
     },
     types: [Types.Water, Types.Rock],
     abilities: [Abilities.SwiftSwim, Abilities.RockHead],
-    hiddenAbilities: [Abilities.Sturdy, Abilities.SolidRock],
+    hiddenAbilities: [Abilities.Sturdy, Abilities.Multiscale],
     eggGroups: [EggGroups.Water1, EggGroups.Water2],
     genderRatio: [7, 1],
     catchRate: 25,

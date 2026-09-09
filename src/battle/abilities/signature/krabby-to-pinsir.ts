@@ -19,7 +19,7 @@ import { MergedLifecycle } from '../../lifecycle';
 import type Unit from '../../unit';
 import { isWeatherRainy, onUnitActs, unitTarget } from '../../utils';
 import { createAbility } from '../__create';
-import { createUnitCounter, createUnitState, isPhysicalMove } from './__create';
+import { createUnitCounter, isPhysicalMove } from './__create';
 
 /** What a claw with strength behind it is worth */
 export const HEAVY_PINCER_SCALE = 1.45;
@@ -78,8 +78,6 @@ export const LATE_BLOOMER_INTERVAL = 10000;
 export const LATE_BLOOMER_MAX_STACKS = 10;
 
 /** What a shape it has already worn takes off the next blow like it */
-export const ADAPTIVE_CELL_SCALE = 0.5;
-
 /** What fighting with no guard is worth, and what it costs */
 export const BULLHEADED_POWER_SCALE = 1.3;
 export const BULLHEADED_EXPOSED_SCALE = 1.15;
@@ -737,45 +735,29 @@ const krabbyToPinsir = [
       ]),
   ),
 
-  // Ditto: it takes the shape of whatever hit it last, so the same blow
-  // twice is worth half the second time
-  createAbility(Abilities.AdaptiveCell, (battle) => {
-    const { state, lifecycles } = createUnitState<Types>(battle);
+  // Ditto: there is no shape on it for a blow to find a weak point in,
+  // and nothing gets a grip on what it is worth either
+  createAbility(
+    Abilities.Formless,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.UnitAttackResolveCriticalHit, EventPriority.Post, (event) => {
+          if (event.critical && event.parent.target.hasAbility(Abilities.Formless)) {
+            event.critical = false;
+          }
+        }),
+        battle.on(BattleEvents.CheckUnitCanAddStage, EventPriority.Post, (event) => {
+          if (event.success && event.value < 0 && event.source.hasAbility(Abilities.Formless)) {
+            event.success = false;
 
-    return new MergedLifecycle([
-      battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
-        const cause = event.cause;
-        const target = event.target;
-
-        if (
-          !event.success ||
-          event.flags & DamageFlags.Indirect ||
-          cause.type !== EffectType.Move ||
-          cause.unit === target ||
-          !target.hasAbility(Abilities.AdaptiveCell)
-        ) {
-          return;
-        }
-
-        target.triggerAbility(Abilities.AdaptiveCell);
-
-        state.set(target, cause.unit.checkMoveType(cause.move, unitTarget(target)));
-      }),
-      battle.on(BattleEvents.UnitAttackResolveStat, EventPriority.Post, (event) => {
-        const parent = event.parent;
-
-        if (
-          event.unit === parent.source &&
-          (event.stat === Stats.Attack || event.stat === Stats.SpecialAttack) &&
-          parent.target.hasAbility(Abilities.AdaptiveCell) &&
-          state.get(parent.target) === parent.type
-        ) {
-          event.value *= ADAPTIVE_CELL_SCALE;
-        }
-      }),
-      ...lifecycles,
-    ]);
-  }),
+            // A cue is for a real attempt, not for the AI weighing one
+            if (!event.simulated) {
+              event.source.triggerAbility(Abilities.Formless);
+            }
+          }
+        }),
+      ]),
+  ),
 ];
 
 export default krabbyToPinsir;

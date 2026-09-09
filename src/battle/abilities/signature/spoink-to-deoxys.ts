@@ -2,18 +2,15 @@ import { AttackPriority, EventPriority } from '../../../core/event-emitter';
 import { Stages, Stats } from '../../../data/constants/stats';
 import Abilities from '../../../data/ids/abilities';
 import { DamageFlags, MoveAttackFlags } from '../../../data/ids/moves';
-import {
-  TYPE_EFFECTIVENESS,
-  TYPE_EFFECTIVENESS_FACTOR,
-  Types,
-} from '../../../data/constants/types';
+import { Types } from '../../../data/constants/types';
 import { Items } from '../../../data/ids/items';
 import { Statuses, Weathers } from '../../../data/ids/status';
 import { FORCED_SWITCH_MOVES } from '../../moves/switch-out';
 import { BattleEvents, EffectType, MoveTargetType } from '../../events';
 import { MergedLifecycle } from '../../lifecycle';
 import type Unit from '../../unit';
-import { countHeldItems, hasFreeItemSlot, onUnitActs, unitTarget } from '../../utils';
+import { MAJOR_STATUS_CONDITIONS } from '../../status';
+import { countHeldItems, hasAnyStatus, hasFreeItemSlot, onUnitActs, unitTarget } from '../../utils';
 import { createAbility } from '../__create';
 import {
   STAT_STAGES,
@@ -89,8 +86,12 @@ export const RINGING_HEAD_SCALE = 1.25;
 export const DOOM_MARK_SCALE = 1.3;
 export const DOOM_MARK_DURATION = 4000;
 
-/** How much of a status' clock a calming presence takes off */
-export const SOOTHING_PRESENCE_SCALE = 0.5;
+/** What a scarred fish's own venom is worth to it */
+export const SCARRED_BEAUTY_SCALE = 1.4;
+
+/** How long it must stand still to disappear, and how well it hides */
+export const BLEND_IN_DELAY = 2000;
+export const BLEND_IN_SCALE = 0.5;
 
 /** What any sky at all is worth to something built out of one */
 export const WEATHER_WORN_DEALT_SCALE = 1.3;
@@ -734,21 +735,18 @@ const spoinkToDeoxys = [
     ]);
   }),
 
-  // Feebas: the line calms whatever it is standing beside, so nothing
-  // put on its side sticks for as long
-  createAbility(Abilities.SoothingPresence, (battle) =>
-    battle.on(BattleEvents.CheckUnitStatusDuration, EventPriority.Post, (event) => {
+  // Feebas: what it is carrying is what it grew out of, so the scars
+  // feed the same half of it that Marvel Scale guards
+  createAbility(Abilities.ScarredBeauty, (battle) =>
+    battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
       const source = event.source;
 
-      for (const scale of battle.units()) {
-        if (
-          scale.alive &&
-          scale.team.alliance === source.team.alliance &&
-          scale.hasAbility(Abilities.SoothingPresence)
-        ) {
-          event.duration *= SOOTHING_PRESENCE_SCALE;
-          return;
-        }
+      if (
+        event.stat === Stats.SpecialAttack &&
+        source.hasAbility(Abilities.ScarredBeauty) &&
+        hasAnyStatus(source, MAJOR_STATUS_CONDITIONS)
+      ) {
+        event.value *= SCARRED_BEAUTY_SCALE;
       }
     }),
   ),
@@ -775,25 +773,49 @@ const spoinkToDeoxys = [
     }),
   ),
 
-  // Kecleon: it wears whichever colour suits the moment, so a move is
-  // read both as itself and as plain Normal and the better one stands
-  createAbility(Abilities.TwoToneStrike, (battle) =>
-    battle.on(BattleEvents.UnitAttackResolveEffectiveness, EventPriority.Post, (event) => {
-      const parent = event.parent;
+  // Kecleon: standing still is what hides it, and the moment it reaches
+  // for a move the colours give it away again
+  createAbility(Abilities.BlendIn, (battle) => {
+    const { state, lifecycles } = createUnitState<number>(battle);
 
-      if (parent.type === Types.Normal || !parent.source.hasAbility(Abilities.TwoToneStrike)) {
-        return;
-      }
+    return new MergedLifecycle([
+      ...lifecycles,
+      battle.on(BattleEvents.Tick, EventPriority.Post, (event) => {
+        for (const unit of battle.units()) {
+          if (!unit.alive || !unit.hasAbility(Abilities.BlendIn)) {
+            continue;
+          }
 
-      const plain = TYPE_EFFECTIVENESS[Types.Normal][event.defendingType];
+          if (unit.casting != null || unit.channeling != null) {
+            state.set(unit, 0);
+            continue;
+          }
 
-      // A missing entry is the neutral case, which is most of the table
-      event.multiplier = Math.max(
-        event.multiplier,
-        plain == null ? 1 : TYPE_EFFECTIVENESS_FACTOR[plain],
-      );
-    }),
-  ),
+          state.set(unit, (state.get(unit) ?? 0) + event.duration);
+        }
+      }),
+      // Reaching for a move gives it away before the wind-up even starts
+      ...onUnitActs(battle, (unit) => {
+        if (unit.hasAbility(Abilities.BlendIn)) {
+          state.set(unit, 0);
+        }
+      }),
+      battle.on(BattleEvents.CheckUnitMoveAccuracy, EventPriority.Post, (event) => {
+        const target = event.target;
+
+        if (
+          event.accuracy == null ||
+          target.type !== MoveTargetType.Unit ||
+          !target.unit.hasAbility(Abilities.BlendIn) ||
+          (state.get(target.unit) ?? 0) < BLEND_IN_DELAY
+        ) {
+          return;
+        }
+
+        event.accuracy *= BLEND_IN_SCALE;
+      }),
+    ]);
+  }),
 
   // Shuppet: it feeds on whatever has been done to the thing in front
   // of it, so a well-worked target is what it hits hardest

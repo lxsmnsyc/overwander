@@ -166,6 +166,8 @@ import {
   DOOM_MARK_DURATION,
   DOOM_MARK_SCALE,
   FRUIT_CROP_INTERVAL,
+  HIVE_MIND_MAX_ALLIES,
+  HIVE_MIND_STEP,
   MALICE_POOL_MAX_STAGES,
   MALICE_POOL_STEP,
   PATIENT_STALK_MAX_STEPS,
@@ -173,7 +175,10 @@ import {
   PATIENT_STALK_STEP,
   PEARL_GUARD_SCALE,
   RINGING_HEAD_SCALE,
+  SHARED_HEART_SHARE,
   SILT_BED_SCALE,
+  SKULL_CHARGE_RECOIL,
+  SKULL_CHARGE_SCALE,
   SOOTHING_PRESENCE_SCALE,
   SOUL_HARVEST_FRACTION,
   STORED_BOUNCE_CAP,
@@ -5291,5 +5296,99 @@ describe('Unchanged', () => {
     expect(enemy.checkMoveImmunity(Moves.ThunderWave, unitTarget(holder), Types.Ground)).toBe(
       false,
     );
+  });
+});
+
+describe('Shared Heart', () => {
+  it('takes half of whatever an ally is given', () => {
+    const { battle, teamA } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamA);
+    holder.addAbility(Abilities.SharedHeart);
+
+    const maxHP = holder.checkStat(Stats.HP, 0);
+    holder.setHealth(maxHP / 2);
+    ally.setHealth(1);
+
+    ally.heal(NONE_CAUSE, ally, 40, 0);
+
+    expect(holder.health).toBeCloseTo(maxHP / 2 + 40 * SHARED_HEART_SHARE, 5);
+
+    // Two of them do not pass one heal back and forth
+    const second = createUnit(battle, teamA);
+    second.addAbility(Abilities.SharedHeart);
+    holder.setHealth(maxHP / 2);
+    second.setHealth(maxHP / 2);
+    ally.setHealth(1);
+
+    ally.heal(NONE_CAUSE, ally, 40, 0);
+
+    expect(holder.health).toBeCloseTo(maxHP / 2 + 40 * SHARED_HEART_SHARE, 5);
+    expect(second.health).toBeCloseTo(maxHP / 2 + 40 * SHARED_HEART_SHARE, 5);
+  });
+});
+
+describe('Skull Charge', () => {
+  it('hits harder with contact and pays for it', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0);
+    const holder = createUnit(battle, teamA);
+    const bare = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.SkullCharge);
+
+    const clean = dealDamage(bare, enemy, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical);
+    const maxHP = holder.checkStat(Stats.HP, 0);
+
+    const dealt = dealDamage(
+      holder,
+      enemy,
+      Moves.Tackle,
+      40,
+      Types.Normal,
+      MoveCategories.Physical,
+    );
+
+    expect(dealt).toBeCloseTo(clean * SKULL_CHARGE_SCALE, 5);
+    expect(maxHP - holder.health).toBeCloseTo(dealt * SKULL_CHARGE_RECOIL, 5);
+
+    // A move that never touches costs it nothing and gains it nothing
+    holder.setHealth(maxHP);
+
+    const special = dealDamage(holder, enemy, Moves.Ember, 40, Types.Fire, MoveCategories.Special);
+    const bareSpecial = dealDamage(
+      bare,
+      enemy,
+      Moves.Ember,
+      40,
+      Types.Fire,
+      MoveCategories.Special,
+    );
+
+    expect(special).toBeCloseTo(bareSpecial, 5);
+    expect(holder.health).toBe(maxHP);
+  });
+});
+
+describe('Hive Mind', () => {
+  it('counts the others standing with it, up to the cap', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.HiveMind);
+
+    const target = unitTarget(enemy);
+    const clean = enemy.checkMovePower(Moves.Pound, target) ?? 0;
+
+    expect(holder.checkMovePower(Moves.Pound, target)).toBeCloseTo(clean, 5);
+
+    for (let allies = 1; allies <= HIVE_MIND_MAX_ALLIES + 1; allies += 1) {
+      createUnit(battle, teamA);
+
+      expect(holder.checkMovePower(Moves.Pound, target)).toBeCloseTo(
+        clean * (1 + HIVE_MIND_STEP * Math.min(HIVE_MIND_MAX_ALLIES, allies)),
+        5,
+      );
+    }
   });
 });

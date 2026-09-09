@@ -1283,4 +1283,22 @@ export default function registerSignatureAbilities(): void {
     name: 'Unchanged',
     description: 'Every move hits it for neutral damage: it has no weaknesses and no resistances.',
   });
+
+  // Luvdisc
+  registerAbility(Abilities.SharedHeart, {
+    name: 'Shared Heart',
+    description: 'Whenever an ally is healed, it heals half of that amount as well.',
+  });
+
+  // Bagon
+  registerAbility(Abilities.SkullCharge, {
+    name: 'Skull Charge',
+    description: 'Its contact moves deal 1.4x, and it takes 1/8 of the damage they deal back.',
+  });
+
+  // Beldum
+  registerAbility(Abilities.HiveMind, {
+    name: 'Hive Mind',
+    description: 'Its moves hit 10% harder for each ally standing with it, up to 3 of them.',
+  });
 }

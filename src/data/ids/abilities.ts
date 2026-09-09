@@ -490,6 +490,9 @@ const enum Abilities {
   Applause = 200187,
   PearlGuard = 200188,
   Unchanged = 200189,
+  SharedHeart = 200190,
+  SkullCharge = 200191,
+  HiveMind = 200192,
 }
 
 export default Abilities;

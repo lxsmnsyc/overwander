@@ -43,6 +43,17 @@ const SPOTTED_STAGES = [
 /** What walking into the pit costs whoever missed */
 export const ANTLION_PIT_FRACTION = 1 / 8;
 
+/** What half a heart is worth to the other one */
+export const SHARED_HEART_SHARE = 1 / 2;
+
+/** What a skull-first charge is worth, and what it costs */
+export const SKULL_CHARGE_SCALE = 1.4;
+export const SKULL_CHARGE_RECOIL = 1 / 8;
+
+/** What each of the others is worth to a hive, and how many count */
+export const HIVE_MIND_STEP = 0.1;
+export const HIVE_MIND_MAX_ALLIES = 3;
+
 /** How often a touch of frost takes hold */
 export const COLD_SNAP_CHANCE = 0.2;
 
@@ -289,6 +300,112 @@ const spoinkToDeoxys = [
       event.success = false;
     });
   }),
+
+  // Luvdisc: the pair feels the same things, so what is done for one
+  // reaches the other. Its own gift is skipped, or two of them would
+  // pass one heal back and forth
+  createAbility(Abilities.SharedHeart, (battle) =>
+    battle.on(BattleEvents.UnitHeal, EventPriority.Post, (event) => {
+      const target = event.target;
+      const cause = event.cause;
+
+      if (
+        event.value <= 0 ||
+        (cause.type === EffectType.Ability && cause.ability === Abilities.SharedHeart)
+      ) {
+        return;
+      }
+
+      for (const heart of battle.units()) {
+        if (
+          heart === target ||
+          !heart.alive ||
+          heart.team.alliance !== target.team.alliance ||
+          !heart.hasAbility(Abilities.SharedHeart)
+        ) {
+          continue;
+        }
+
+        heart.triggerAbility(Abilities.SharedHeart);
+        heart.heal(
+          { type: EffectType.Ability, ability: Abilities.SharedHeart, unit: heart },
+          heart,
+          event.value * SHARED_HEART_SHARE,
+          0,
+        );
+      }
+    }),
+  ),
+
+  // Bagon: it goes head first off the cliff, and Rock Head only ever
+  // answered for what a move's own recoil does
+  createAbility(Abilities.SkullCharge, (battle) => {
+    const damage = createDamageTaken(battle);
+
+    return new MergedLifecycle([
+      ...damage.lifecycles,
+      battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, (event) => {
+        const parent = event.parent;
+
+        if (
+          parent.source.hasAbility(Abilities.SkullCharge) &&
+          parent.source.checkMoveContact(parent.move, unitTarget(parent.target))
+        ) {
+          event.value *= SKULL_CHARGE_SCALE;
+        }
+      }),
+      battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
+        const taken = damage.taken(event);
+        const cause = event.cause;
+
+        if (
+          !event.success ||
+          taken == null ||
+          taken <= 0 ||
+          event.flags & DamageFlags.Indirect ||
+          cause.type !== EffectType.Move ||
+          cause.unit === event.target ||
+          !cause.unit.alive ||
+          !cause.unit.hasAbility(Abilities.SkullCharge) ||
+          !cause.unit.checkMoveContact(cause.move, unitTarget(event.target))
+        ) {
+          return;
+        }
+
+        const charger = cause.unit;
+
+        charger.triggerAbility(Abilities.SkullCharge);
+        charger.damage(
+          { type: EffectType.Ability, ability: Abilities.SkullCharge, unit: charger },
+          charger,
+          taken * SKULL_CHARGE_RECOIL,
+          DamageFlags.Indirect,
+        );
+      }),
+    ]);
+  }),
+
+  // Beldum: the line thinks with whatever is standing beside it, and
+  // one of them alone is only one brain
+  createAbility(Abilities.HiveMind, (battle) =>
+    battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
+      const source = event.source;
+
+      if (event.power == null || !source.hasAbility(Abilities.HiveMind)) {
+        return;
+      }
+
+      let hive = 0;
+
+      for (const unit of battle.units()) {
+        if (unit !== source && unit.alive && unit.team.alliance === source.team.alliance) {
+          hive += 1;
+        }
+      }
+
+      event.power *= 1 + HIVE_MIND_STEP * Math.min(HIVE_MIND_MAX_ALLIES, hive);
+    }),
+  ),
 
   // Snorunt: the cold takes hold of whatever touches it, sometimes
   createAbility(Abilities.ColdSnap, (battle) =>

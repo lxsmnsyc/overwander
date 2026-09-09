@@ -603,4 +603,29 @@ export default function registerSignatureAbilities(): void {
     name: 'Sunlit Charge',
     description: 'Its channelled moves hit 1.3x and cannot be interrupted.',
   });
+
+  // Yanma
+  registerAbility(Abilities.Resonance, {
+    name: 'Resonance',
+    description: 'Its sound moves reach every enemy on the field, not only the one it aimed at.',
+  });
+
+  // Wooper
+  registerAbility(Abilities.ContagiousYawn, {
+    name: 'Contagious Yawn',
+    description: 'It casts Yawn at an enemy as it arrives on the field.',
+  });
+
+  // Murkrow
+  registerAbility(Abilities.Magpie, {
+    name: 'Magpie',
+    description: 'Any held item taken off somebody else on the field goes into its empty hands.',
+  });
+
+  // Misdreavus
+  registerAbility(Abilities.SharedMisery, {
+    name: 'Shared Misery',
+    description:
+      'The first time it drops below 1/3 of its HP it casts Pain Split at the healthiest enemy.',
+  });
 }

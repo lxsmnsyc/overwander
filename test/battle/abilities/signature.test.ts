@@ -6,6 +6,7 @@ import registerAbilities, {
 import { SIGNATURE_ABILITIES } from '../../../src/battle/abilities/signature';
 import {
   PETAL_BED_FRACTION,
+  SHARED_MISERY_THRESHOLD,
   SUNLIT_CHARGE_SCALE,
 } from '../../../src/battle/abilities/signature/chikorita-to-celebi';
 import {
@@ -3004,5 +3005,124 @@ describe('Sunlit Charge', () => {
 
     expect(holder.channeling).not.toBeUndefined();
     expect(plain.channeling).toBeUndefined();
+  });
+});
+
+describe('Resonance', () => {
+  it('carries a sound move across the whole enemy side', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Resonance);
+
+    // Uproar is sound; Pound is not
+    expect(holder.checkMoveTargeting(Moves.Uproar).target).toBe(MoveTargets.None);
+    expect(holder.checkMoveTargeting(Moves.Pound).target).toBe(MoveTargets.Unit);
+
+    // Everybody else still aims a sound at one target
+    expect(enemy.checkMoveTargeting(Moves.Uproar).target).toBe(MoveTargets.Unit);
+  });
+});
+
+describe('Contagious Yawn', () => {
+  it('casts Yawn at an enemy as it arrives', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0);
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.ContagiousYawn);
+
+    battle.emit(BattleEvents.UnitEntersField, {
+      id: 'UnitEntersField',
+      disabled: false,
+      source: holder,
+      reactivation: false,
+    });
+    // The cast move takes its own flight time to arrive
+    battle.tick(turns(1));
+
+    expect(enemy.status[Statuses.Drowsy]).not.toBeUndefined();
+  });
+});
+
+describe('Magpie', () => {
+  it('pockets whatever is taken off somebody else', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const crow = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    crow.addAbility(Abilities.Magpie);
+    enemy.addItem(Items.OranBerry);
+
+    enemy.removeItem(Items.OranBerry, {
+      type: EffectType.Ability,
+      ability: Abilities.Magpie,
+      unit: crow,
+    });
+
+    expect(enemy.items[Items.OranBerry]).toBeUndefined();
+    expect(crow.items[Items.OranBerry]).not.toBeUndefined();
+  });
+
+  it('leaves a berry its owner ate alone, and never robs itself', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const crow = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    crow.addAbility(Abilities.Magpie);
+    enemy.addItem(Items.OranBerry);
+
+    // Eaten rather than knocked loose: the cause names the holder
+    enemy.removeItem(Items.OranBerry, {
+      type: EffectType.Item,
+      item: Items.OranBerry,
+      unit: enemy,
+    });
+
+    expect(crow.items[Items.OranBerry]).toBeUndefined();
+
+    crow.addItem(Items.SitrusBerry);
+    crow.removeItem(Items.SitrusBerry, {
+      type: EffectType.Ability,
+      ability: Abilities.Magpie,
+      unit: enemy,
+    });
+
+    expect(crow.items[Items.SitrusBerry]).toBeUndefined();
+  });
+});
+
+describe('Shared Misery', () => {
+  it('casts Pain Split at the healthiest enemy once it is nearly done', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0);
+    const holder = createUnit(battle, teamA);
+    const hurt = createUnit(battle, teamB);
+    const healthy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.SharedMisery);
+
+    const maxHP = holder.checkStat(Stats.HP, 0);
+    hurt.setHealth(maxHP / 4);
+
+    let cast: { move: Moves; at: Unit } | undefined;
+    battle.on(BattleEvents.UnitTriggerMove, AttackPriority.Post, (event) => {
+      if (event.source === holder && event.target.type === MoveTargetType.Unit) {
+        cast = { move: event.move, at: event.target.unit };
+      }
+    });
+
+    // Still standing: nothing to share yet
+    healthy.damage(NONE_CAUSE, holder, maxHP * 0.5, 0);
+
+    expect(cast).toBeUndefined();
+
+    healthy.damage(NONE_CAUSE, holder, maxHP * SHARED_MISERY_THRESHOLD, 0);
+
+    expect(cast?.move).toBe(Moves.PainSplit);
+    expect(cast?.at).toBe(healthy);
+
+    // Once per turn on the field, not once per hit
+    cast = undefined;
+    healthy.damage(NONE_CAUSE, holder, 1, 0);
+
+    expect(cast).toBeUndefined();
   });
 });

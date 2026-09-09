@@ -395,6 +395,10 @@ const enum Abilities {
   Updraft = 200092,
   Tailthrow = 200093,
   SunlitCharge = 200094,
+  Resonance = 200095,
+  ContagiousYawn = 200096,
+  Magpie = 200097,
+  SharedMisery = 200098,
 }
 
 export default Abilities;

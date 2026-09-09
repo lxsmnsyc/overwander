@@ -2,13 +2,21 @@ import { AttackPriority, EventPriority } from '../../../core/event-emitter';
 import { Stages, Stats } from '../../../data/constants/stats';
 import { Types } from '../../../data/constants/types';
 import Abilities from '../../../data/ids/abilities';
-import { DamageFlags, MoveAttackFlags, Moves } from '../../../data/ids/moves';
+import {
+  DamageFlags,
+  MoveAttackFlags,
+  MoveFlags,
+  MoveTargets,
+  Moves,
+  affectsFoesOnly,
+} from '../../../data/ids/moves';
+import { getMoveData } from '../../../data/moves';
 import type Battle from '../../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../../events';
 import { MergedLifecycle } from '../../lifecycle';
 import { PASSED_STAGES } from '../../moves/switch-out';
 import type Unit from '../../unit';
-import { onUnitActs, unitTarget } from '../../utils';
+import { hasFreeItemSlot, onUnitActs, unitTarget } from '../../utils';
 import { createAbility } from '../__create';
 import { createUnitState, isChannelledMove } from './__create';
 
@@ -17,6 +25,22 @@ export const PETAL_BED_FRACTION = 1 / 16;
 
 /** What holding a move down is worth */
 export const SUNLIT_CHARGE_SCALE = 1.3;
+
+/** How far down misery goes looking for company */
+export const SHARED_MISERY_THRESHOLD = 1 / 3;
+
+/** The standing enemy with the most health left */
+function healthiestEnemy(battle: Battle, unit: Unit): Unit | undefined {
+  let best: Unit | undefined;
+
+  for (const enemy of battle.units(unit.team.alliance)) {
+    if (enemy.alive && (best == null || enemy.health > best.health)) {
+      best = enemy;
+    }
+  }
+
+  return best;
+}
 
 /** The first enemy still standing, for an ability that casts at one */
 function firstEnemy(battle: Battle, unit: Unit): Unit | undefined {
@@ -498,6 +522,108 @@ const chikoritaToCelebi = [
         }),
       ]),
   ),
+
+  // Yanma: the wingbeat is the attack, and a sound does not stop at
+  // whoever it was aimed at
+  createAbility(Abilities.Resonance, (battle) =>
+    battle.on(BattleEvents.CheckUnitMoveTargeting, EventPriority.Post, (event) => {
+      if (
+        event.target === MoveTargets.Unit &&
+        affectsFoesOnly(event.affects) &&
+        (getMoveData(event.move).flags & MoveFlags.Sound) !== 0 &&
+        event.source.hasAbility(Abilities.Resonance)
+      ) {
+        event.target = MoveTargets.None;
+      }
+    }),
+  ),
+
+  // Wooper: it turns up looking half asleep and passes that on, which
+  // is Yawn's business rather than this ability's
+  createAbility(
+    Abilities.ContagiousYawn,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+          if (!event.reactivation && event.source.hasAbility(Abilities.ContagiousYawn)) {
+            event.source.triggerAbility(Abilities.ContagiousYawn);
+          }
+        }),
+        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
+          if (event.ability !== Abilities.ContagiousYawn) {
+            return;
+          }
+
+          const enemy = firstEnemy(battle, event.source);
+
+          if (enemy) {
+            event.source.triggerMove(Moves.Yawn, unitTarget(enemy), 0);
+          }
+        }),
+      ]),
+  ),
+
+  // Murkrow: anything shiny that hits the ground is the crow's. Its
+  // own losses are not: a crow cannot be robbed by itself
+  createAbility(Abilities.Magpie, (battle) =>
+    battle.on(BattleEvents.UnitRemoveItem, EventPriority.Post, (event) => {
+      const cause = event.cause;
+      const victim = event.source;
+
+      // Nobody's own doing: eating a berry or throwing an item names
+      // the holder, and that is not a thing left lying about
+      if (cause.type === EffectType.None || cause.unit === victim) {
+        return;
+      }
+
+      for (const crow of battle.units()) {
+        if (
+          crow !== victim &&
+          crow.alive &&
+          crow.hasAbility(Abilities.Magpie) &&
+          hasFreeItemSlot(crow)
+        ) {
+          crow.triggerAbility(Abilities.Magpie);
+          crow.addItem(event.item);
+
+          return;
+        }
+      }
+    }),
+  ),
+
+  // Misdreavus: it will not go down on its own, and evening the two of
+  // them up is Pain Split's business
+  createAbility(Abilities.SharedMisery, (battle) => {
+    const { state, lifecycles } = createUnitState<boolean>(battle);
+
+    return new MergedLifecycle([
+      battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
+        const target = event.target;
+
+        if (
+          !event.success ||
+          !target.alive ||
+          state.get(target) ||
+          !target.hasAbility(Abilities.SharedMisery) ||
+          target.health >= target.checkStat(Stats.HP, 0) * SHARED_MISERY_THRESHOLD
+        ) {
+          return;
+        }
+
+        const enemy = healthiestEnemy(battle, target);
+
+        if (!enemy) {
+          return;
+        }
+
+        state.set(target, true);
+        target.triggerAbility(Abilities.SharedMisery);
+        target.triggerMove(Moves.PainSplit, unitTarget(enemy), 0);
+      }),
+      ...lifecycles,
+    ]);
+  }),
 ];
 
 export default chikoritaToCelebi;

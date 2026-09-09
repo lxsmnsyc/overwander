@@ -17,6 +17,8 @@ import {
   TWIN_STINGER_POWER_SCALE,
 } from '../../../src/battle/abilities/signature/bulbasaur-to-pikachu';
 import {
+  CUSHIONED_CAP_FRACTION,
+  DRILL_HORN_SCALE,
   HEAVY_PINCER_SCALE,
   HEAVY_PINCER_THRESHOLD,
   MOURNING_BONE_SCALE,
@@ -25,6 +27,7 @@ import {
   PSYSEED_FRACTION,
   SECOND_WIND_HEAL_FRACTION,
   SECOND_WIND_THRESHOLD,
+  SMOG_SCREEN_ACCURACY_SCALE,
 } from '../../../src/battle/abilities/signature/krabby-to-pinsir';
 import {
   DELAYED_REACTION_DELAY,
@@ -80,8 +83,7 @@ import {
   LULLABY_SLEEP_SCALE,
   NINE_TAILS_MAX_STACKS,
   NINE_TAILS_STEP,
-  WARLORD_MAX_STACKS,
-  WARLORD_STEP,
+  REGAL_VENOM_SCALE,
   WISHING_WELL_FRACTION,
 } from '../../../src/battle/abilities/signature/sandshrew-to-oddish';
 import type Battle from '../../../src/battle/core';
@@ -92,7 +94,7 @@ import {
   type UnitAttackEvent,
 } from '../../../src/battle/events';
 import type Unit from '../../../src/battle/unit';
-import { Stats } from '../../../src/data/constants/stats';
+import { Stages, Stats } from '../../../src/data/constants/stats';
 import { Types } from '../../../src/data/constants/types';
 import Abilities from '../../../src/data/ids/abilities';
 import { Items } from '../../../src/data/ids/items';
@@ -785,38 +787,42 @@ describe('Brood Fury', () => {
   });
 });
 
-describe('Warlord', () => {
-  it('pays for variety and stops paying for repetition', () => {
+describe('Regal Venom', () => {
+  it('poisons badly and hits the poisoned harder', () => {
     const { battle, teamA, teamB } = createBattle();
-    pinRandom(battle, 1);
     const holder = createUnit(battle, teamA);
     const enemy = createUnit(battle, teamB);
-    holder.addAbility(Abilities.Warlord);
+    holder.addAbility(Abilities.RegalVenom);
 
-    const atEnemy = { type: MoveTargetType.Unit, unit: enemy } as const;
+    const parent = makeAttack(holder, enemy, Moves.Pound, Types.Normal, MoveCategories.Physical);
 
-    holder.attack(enemy, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
-    enemy.setHealth(enemy.checkStat(Stats.HP, 0));
+    expect(resolveAttackStat(battle, parent, holder, Stats.Attack, 100)).toBe(100);
 
-    // The move it just used is the one worth nothing extra
-    expect(holder.checkMovePower(Moves.Tackle, atEnemy)).toBe(40);
-    expect(holder.checkMovePower(Moves.Scratch, atEnemy)).toBeCloseTo(40 * (1 + WARLORD_STEP), 5);
+    enemy.addStatus(Statuses.Poisoned, {
+      type: EffectType.Move,
+      move: Moves.PoisonSting,
+      unit: holder,
+    });
 
-    for (const move of [Moves.Scratch, Moves.Pound, Moves.Peck, Moves.Bite, Moves.Lick]) {
-      holder.attack(enemy, move, 40, Types.Normal, MoveCategories.Physical, 0);
-      enemy.setHealth(enemy.checkStat(Stats.HP, 0));
-    }
+    // The mild poison never landed
+    expect(enemy.status[Statuses.Poisoned]).toBeUndefined();
+    expect(enemy.status[Statuses.BadlyPoisoned]).not.toBeUndefined();
 
-    expect(holder.checkMovePower(Moves.Tackle, atEnemy)).toBeCloseTo(
-      40 * (1 + WARLORD_STEP * WARLORD_MAX_STACKS),
+    expect(resolveAttackStat(battle, parent, holder, Stats.Attack, 100)).toBeCloseTo(
+      100 * REGAL_VENOM_SCALE,
       5,
     );
+  });
 
-    // Landing the same move twice puts it back to nothing
-    holder.attack(enemy, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
-    holder.attack(enemy, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
+  it('leaves poison from anybody else alone', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.RegalVenom);
 
-    expect(holder.checkMovePower(Moves.Scratch, atEnemy)).toBe(40);
+    enemy.addStatus(Statuses.Poisoned, NONE_CAUSE);
+
+    expect(enemy.status[Statuses.Poisoned]).not.toBeUndefined();
   });
 });
 
@@ -1691,5 +1697,110 @@ describe('Second Wind', () => {
     enemy.damage(NONE_CAUSE, holder, 1, 0);
 
     expect(holder.health).toBe(9);
+  });
+});
+
+describe('Taste Everything', () => {
+  it('eats the berry it licks and takes what the berry gives', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.TasteEverything);
+
+    holder.setHealth(holder.checkStat(Stats.HP, 0) / 2);
+    enemy.addItem(Items.OranBerry);
+
+    // Nothing it does not get its tongue on
+    enemy.setHealth(enemy.checkStat(Stats.HP, 0));
+    holder.attack(enemy, Moves.Ember, 40, Types.Fire, MoveCategories.Special, 0);
+
+    expect(enemy.items[Items.OranBerry]).not.toBeUndefined();
+
+    const before = holder.health;
+    holder.attack(enemy, Moves.Pound, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(enemy.items[Items.OranBerry]).toBeUndefined();
+    expect(holder.health).toBeCloseTo(before + 10, 5);
+  });
+
+  it('is cured by a berry that cures', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.TasteEverything);
+
+    holder.addStatus(Statuses.Paralyzed, NONE_CAUSE);
+    enemy.addItem(Items.CheriBerry);
+
+    holder.attack(enemy, Moves.Pound, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(holder.status[Statuses.Paralyzed]).toBeUndefined();
+  });
+});
+
+describe('Smog Screen', () => {
+  it('costs the far side its aim and leaves its own alone', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.SmogScreen);
+
+    const atHolder = { type: MoveTargetType.Unit, unit: holder } as const;
+    const atEnemy = { type: MoveTargetType.Unit, unit: enemy } as const;
+
+    expect(enemy.checkMoveAccuracy(Moves.Pound, atHolder)).toBeCloseTo(
+      100 * SMOG_SCREEN_ACCURACY_SCALE,
+      5,
+    );
+    expect(ally.checkMoveAccuracy(Moves.Pound, atEnemy)).toBe(100);
+    expect(holder.checkMoveAccuracy(Moves.Pound, atEnemy)).toBe(100);
+  });
+});
+
+describe('Drill Horn', () => {
+  it('hits harder and ignores a raised guard', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.DrillHorn);
+
+    const target = { type: MoveTargetType.Unit, unit: enemy } as const;
+
+    expect(holder.checkMovePower(Moves.Pound, target)).toBeCloseTo(40 * DRILL_HORN_SCALE, 5);
+    expect(holder.checkMovePower(Moves.Ember, target)).toBe(40);
+
+    enemy.addStage(Stages.Defense, 2, NONE_CAUSE);
+
+    const guarded = enemy.resolveStat(Stats.Defense, 0);
+    const parent = makeAttack(holder, enemy, Moves.Pound, Types.Normal, MoveCategories.Physical);
+    const bare = createUnit(battle, teamB).resolveStat(Stats.Defense, 0);
+
+    expect(guarded).toBeGreaterThan(bare);
+    expect(resolveAttackStat(battle, parent, enemy, Stats.Defense, guarded)).toBeCloseTo(bare, 5);
+  });
+});
+
+describe('Cushioned', () => {
+  it('caps what any single blow may take', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Cushioned);
+
+    const maxHP = holder.checkStat(Stats.HP, 0);
+    const cap = maxHP * CUSHIONED_CAP_FRACTION;
+
+    enemy.damage(NONE_CAUSE, holder, maxHP, 0);
+
+    expect(holder.health).toBeCloseTo(maxHP - cap, 5);
+
+    // A small hit is left as it is
+    holder.setHealth(maxHP);
+    enemy.damage(NONE_CAUSE, holder, 5, 0);
+
+    expect(holder.health).toBeCloseTo(maxHP - 5, 5);
   });
 });

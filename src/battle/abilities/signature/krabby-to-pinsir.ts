@@ -2,7 +2,10 @@ import { AttackPriority, EventPriority } from '../../../core/event-emitter';
 import { Stats } from '../../../data/constants/stats';
 import { Types } from '../../../data/constants/types';
 import Abilities from '../../../data/ids/abilities';
-import { DamageFlags } from '../../../data/ids/moves';
+import { ItemTypes, type Items } from '../../../data/ids/items';
+import { DamageFlags, MoveAttackFlags, StatFlags } from '../../../data/ids/moves';
+import { BERRY_HEALS, BERRY_STATUS_CURES } from '../../../data/items/berries';
+import { listItemsByType } from '../../../data/items';
 import type Battle from '../../core';
 import { BattleEvents, EffectType } from '../../events';
 import { MergedLifecycle } from '../../lifecycle';
@@ -30,6 +33,26 @@ export const MOURNING_BONE_SCALE = 1.4;
 /** What getting up again is worth, and how far down it happens */
 export const SECOND_WIND_HEAL_FRACTION = 1 / 3;
 export const SECOND_WIND_THRESHOLD = 1 / 4;
+
+/** What the smog costs an enemy trying to aim through it */
+export const SMOG_SCREEN_ACCURACY_SCALE = 0.85;
+
+/** What the horn is worth once it is through the guard */
+export const DRILL_HORN_SCALE = 1.15;
+
+/** The most one blow may take off a cushion */
+export const CUSHIONED_CAP_FRACTION = 1 / 6;
+
+/** The berry the target is holding, if it is holding one */
+function heldBerry(unit: Unit): Items | undefined {
+  for (const item of listItemsByType(ItemTypes.Berry)) {
+    if (unit.items[item] != null) {
+      return item;
+    }
+  }
+
+  return undefined;
+}
 
 /** Whether anybody else on its side is still standing */
 function fightsAlone(battle: Battle, unit: Unit): boolean {
@@ -169,6 +192,125 @@ const krabbyToPinsir = [
       );
     });
   }),
+
+  // Lickitung: it tastes what it licks. Only the two things a berry
+  // does out of context are honoured: the heal and the cure
+  createAbility(Abilities.TasteEverything, (battle) =>
+    battle.on(BattleEvents.UnitAttack, AttackPriority.Post, (event) => {
+      const source = event.source;
+      const target = event.target;
+
+      if (
+        !event.success ||
+        event.flags & MoveAttackFlags.Simulated ||
+        !source.hasAbility(Abilities.TasteEverything) ||
+        !source.checkMoveContact(event.move, unitTarget(target))
+      ) {
+        return;
+      }
+
+      const berry = heldBerry(target);
+
+      if (berry == null) {
+        return;
+      }
+
+      const cause = {
+        type: EffectType.Ability,
+        ability: Abilities.TasteEverything,
+        unit: source,
+      } as const;
+
+      source.triggerAbility(Abilities.TasteEverything);
+      target.removeItem(berry, cause);
+
+      const restores = BERRY_HEALS.get(berry);
+
+      if (restores) {
+        source.heal(cause, source, restores.heal(source.checkStat(Stats.HP, 0)), 0);
+      }
+
+      for (const status of BERRY_STATUS_CURES.get(berry) ?? []) {
+        if (source.status[status] != null) {
+          source.removeStatus(status, cause);
+        }
+      }
+    }),
+  ),
+
+  // Koffing: the gas hangs over the whole far side. Its own side is
+  // used to the smell
+  createAbility(Abilities.SmogScreen, (battle) =>
+    battle.on(BattleEvents.CheckUnitMoveAccuracy, EventPriority.Post, (event) => {
+      if (event.accuracy == null) {
+        return;
+      }
+
+      const source = event.source;
+
+      for (const cloud of battle.units(source.team.alliance)) {
+        if (cloud.alive && cloud.hasAbility(Abilities.SmogScreen)) {
+          event.accuracy *= SMOG_SCREEN_ACCURACY_SCALE;
+          return;
+        }
+      }
+    }),
+  ),
+
+  // Rhyhorn: the horn goes through whatever the target has put up, so
+  // the defending stat is read the way a critical hit reads it
+  createAbility(
+    Abilities.DrillHorn,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
+          if (
+            event.power != null &&
+            event.source.hasAbility(Abilities.DrillHorn) &&
+            event.source.checkMoveContact(event.move, event.target)
+          ) {
+            event.power *= DRILL_HORN_SCALE;
+          }
+        }),
+        battle.on(BattleEvents.UnitAttackResolveStat, EventPriority.Post, (event) => {
+          const parent = event.parent;
+          const target = parent.target;
+
+          if (
+            event.unit !== target ||
+            (event.stat !== Stats.Defense && event.stat !== Stats.SpecialDefense) ||
+            !parent.source.hasAbility(Abilities.DrillHorn) ||
+            !parent.source.checkMoveContact(parent.move, unitTarget(target))
+          ) {
+            return;
+          }
+
+          // The critical flag is what ignores a raised defence, so the
+          // stat is asked for again with it rather than scaled by hand
+          event.value = target.resolveStat(event.stat, StatFlags.Attack | StatFlags.Critical);
+        }),
+      ]),
+  ),
+
+  // Chansey: all that health finally counts for something. A cap rather
+  // than a reduction, so burst cannot get through and a grind still can
+  createAbility(Abilities.Cushioned, (battle) =>
+    battle.on(BattleEvents.UnitDamage, AttackPriority.Pre, (event) => {
+      const target = event.target;
+
+      if (!target.hasAbility(Abilities.Cushioned)) {
+        return;
+      }
+
+      const cap = target.checkStat(Stats.HP, 0) * CUSHIONED_CAP_FRACTION;
+
+      if (event.value > cap) {
+        event.value = cap;
+
+        target.triggerAbility(Abilities.Cushioned);
+      }
+    }),
+  ),
 ];
 
 export default krabbyToPinsir;

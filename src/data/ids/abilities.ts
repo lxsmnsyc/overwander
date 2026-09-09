@@ -313,7 +313,7 @@ const enum Abilities {
   ChainLightning = 200010,
   CurlUp = 200011,
   BroodFury = 200012,
-  Warlord = 200013,
+  RegalVenom = 200013,
   WishingWell = 200014,
   NineTails = 200015,
   Lullaby = 200016,
@@ -348,6 +348,10 @@ const enum Abilities {
   Psyseed = 200045,
   MourningBone = 200046,
   SecondWind = 200047,
+  TasteEverything = 200048,
+  SmogScreen = 200049,
+  DrillHorn = 200050,
+  Cushioned = 200051,
 }
 
 export default Abilities;

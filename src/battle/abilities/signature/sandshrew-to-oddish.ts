@@ -11,7 +11,7 @@ import { ABSORB_MOVES } from '../../moves/absorb';
 import type Unit from '../../unit';
 import { onUnitActs } from '../../utils';
 import { createAbility } from '../__create';
-import { createUnitCounter, createUnitState, isPhysicalMove } from './__create';
+import { createUnitCounter, isPhysicalMove } from './__create';
 
 /** What one blow rolls it tighter by, in armour and in the answer */
 export const CURL_UP_STEP = 0.1;
@@ -26,11 +26,8 @@ export const BROOD_FURY_FALLEN_SCALE = 1.5;
 /** The share of health that counts an ally as hurt */
 export const BROOD_FURY_THRESHOLD = 1 / 2;
 
-/** What one fresh move is worth after another */
-export const WARLORD_STEP = 0.1;
-
-/** How far it presses its own variety */
-export const WARLORD_MAX_STACKS = 4;
+/** What venom already in the blood is worth to the next blow */
+export const REGAL_VENOM_SCALE = 1.3;
 
 /** What a wish is worth to the ally who needs it most */
 export const WISHING_WELL_FRACTION = 1 / 12;
@@ -51,6 +48,11 @@ export const BLOODTHIRST_HEAL_SCALE = 0.5;
 
 /** What roots take off a blow that lands mid-cast */
 export const DEEP_ROOTS_SCALE = 0.6;
+
+/** Whether the unit is carrying poison of either kind */
+function isPoisoned(unit: Unit): boolean {
+  return unit.status[Statuses.Poisoned] != null || unit.status[Statuses.BadlyPoisoned] != null;
+}
 
 /** Whether the effect came from a unit carrying the ability */
 function causedBy(cause: EffectCause, ability: Abilities): boolean {
@@ -215,50 +217,46 @@ const sandshrewToOddish = [
     ]);
   }),
 
-  // Nidoran (male): the widest move pool in the dex, paid for being
-  // wide. What it just used is the one thing worth nothing
-  createAbility(Abilities.Warlord, (battle) => {
-    const { state, lifecycles } = createUnitState<{ move: Moves; stacks: number }>(battle);
+  // Nidoran (male): the venom is the point. What it poisons only gets
+  // worse, and what is already poisoned is what it hits hardest
+  createAbility(
+    Abilities.RegalVenom,
+    (battle) =>
+      new MergedLifecycle([
+        // The mild poison never lands: it is refused and the worse one
+        // put on instead, which is a different status and so no loop
+        battle.on(BattleEvents.UnitAddStatus, EventPriority.Pre, (event) => {
+          const cause = event.cause;
 
-    return new MergedLifecycle([
-      battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
-        const held = state.get(event.source);
+          if (
+            event.status !== Statuses.Poisoned ||
+            cause.type === EffectType.None ||
+            cause.type === EffectType.Weather ||
+            cause.unit === event.source ||
+            !cause.unit.hasAbility(Abilities.RegalVenom)
+          ) {
+            return;
+          }
 
-        if (
-          event.power != null &&
-          held != null &&
-          held.move !== event.move &&
-          event.source.hasAbility(Abilities.Warlord)
-        ) {
-          event.power *= 1 + WARLORD_STEP * held.stacks;
-        }
-      }),
-      battle.on(BattleEvents.UnitAttack, AttackPriority.Post, (event) => {
-        const source = event.source;
+          event.disabled = true;
 
-        if (
-          !event.success ||
-          event.flags & MoveAttackFlags.Simulated ||
-          !source.hasAbility(Abilities.Warlord)
-        ) {
-          return;
-        }
+          cause.unit.triggerAbility(Abilities.RegalVenom);
+          event.source.addStatus(Statuses.BadlyPoisoned, cause);
+        }),
+        battle.on(BattleEvents.UnitAttackResolveStat, EventPriority.Post, (event) => {
+          const parent = event.parent;
 
-        const held = state.get(source);
-
-        if (held?.move === event.move) {
-          state.set(source, { move: event.move, stacks: 0 });
-        } else {
-          state.set(source, {
-            move: event.move,
-            stacks: Math.min(WARLORD_MAX_STACKS, (held?.stacks ?? 0) + 1),
-          });
-          source.triggerAbility(Abilities.Warlord);
-        }
-      }),
-      ...lifecycles,
-    ]);
-  }),
+          if (
+            event.unit === parent.source &&
+            (event.stat === Stats.Attack || event.stat === Stats.SpecialAttack) &&
+            parent.source.hasAbility(Abilities.RegalVenom) &&
+            isPoisoned(parent.target)
+          ) {
+            event.value *= REGAL_VENOM_SCALE;
+          }
+        }),
+      ]),
+  ),
 
   // Clefairy: the wish is for somebody else. It has no clock to hang
   // on, so it is granted as the wisher reaches for a move

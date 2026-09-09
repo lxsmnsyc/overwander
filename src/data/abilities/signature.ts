@@ -18,7 +18,7 @@ export default function registerSignatureAbilities(): void {
   registerAbility(Abilities.Afterburn, {
     name: 'Afterburn',
     description:
-      'Each Fire move it lands cuts 15% off its cast and channel times, up to 45%. A miss or a move of another type puts it back to 0.',
+      'Each Fire move it lands cuts 15% off its cast and channel times, up to 45%, and nothing takes the heat back.',
   });
 
   // Squirtle
@@ -296,8 +296,7 @@ export default function registerSignatureAbilities(): void {
   // Exeggcute
   registerAbility(Abilities.Psyseed, {
     name: 'Psyseed',
-    description:
-      'An enemy its Psychic moves damage is seeded, and it heals 1/16 of its HP each time that enemy acts.',
+    description: 'An enemy its Psychic moves damage has Leech Seed cast on it.',
   });
 
   // Cubone

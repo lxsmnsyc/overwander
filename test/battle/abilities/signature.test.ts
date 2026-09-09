@@ -59,7 +59,6 @@ import {
   MOURNING_BONE_SCALE,
   OVERLOAD_SPEED_SCALE,
   OVERLOAD_THRESHOLD,
-  PSYSEED_FRACTION,
   SECOND_WIND_HEAL_FRACTION,
   SECOND_WIND_THRESHOLD,
   SMOG_SCREEN_ACCURACY_SCALE,
@@ -390,7 +389,7 @@ describe('Afterburn', () => {
     );
   });
 
-  it('is blown out by a miss or by a move of another type', () => {
+  it('holds the heat through a miss and through a move of another type', () => {
     const { battle, teamA, teamB } = createBattle();
     // 100 accuracy is the ceiling, so a pinned roll misses anything short of it
     pinRandom(battle, 1);
@@ -403,13 +402,13 @@ describe('Afterburn', () => {
 
     rollMove(battle, holder, enemy, Moves.Flamethrower, true);
     rollMove(battle, holder, enemy, Moves.FireBlast, false);
-
-    expect(holder.checkMoveCastTime(Moves.Flamethrower, target)).toBe(bare);
-
-    rollMove(battle, holder, enemy, Moves.Flamethrower, true);
     rollMove(battle, holder, enemy, Moves.Tackle, true);
 
-    expect(holder.checkMoveCastTime(Moves.Flamethrower, target)).toBe(bare);
+    // One Fire move landed, and neither the miss nor the Tackle undid it
+    expect(holder.checkMoveCastTime(Moves.Flamethrower, target)).toBeCloseTo(
+      bare * (1 - AFTERBURN_STEP),
+      5,
+    );
   });
 
   it('comes back on the field with the flame it started with', () => {
@@ -1636,33 +1635,37 @@ describe('Overload', () => {
 });
 
 describe('Psyseed', () => {
-  it('feeds every time a seeded mind is used', () => {
+  it('casts Leech Seed on a mind its Psychic moves damage', () => {
     const { battle, teamA, teamB } = createBattle();
-    pinRandom(battle, 1);
+    pinRandom(battle, 0);
     const holder = createUnit(battle, teamA);
     const enemy = createUnit(battle, teamB);
     holder.addAbility(Abilities.Psyseed);
 
-    const maxHP = holder.checkStat(Stats.HP, 0);
-    holder.setHealth(maxHP / 2);
-
-    // Nothing is seeded yet
-    act(battle, enemy);
-
-    expect(holder.health).toBeCloseTo(maxHP / 2, 5);
-
-    // A move of another type plants nothing either
+    // A move of another type plants nothing
     holder.attack(enemy, Moves.Pound, 40, Types.Normal, MoveCategories.Physical, 0);
-    act(battle, enemy);
+    battle.tick(turns(1));
 
-    expect(holder.health).toBeCloseTo(maxHP / 2, 5);
+    expect(enemy.status[Statuses.Seeding]).toBeUndefined();
 
     holder.attack(enemy, Moves.Confusion, 40, Types.Psychic, MoveCategories.Special, 0);
-    holder.setHealth(maxHP / 2);
+    // The cast move takes its own flight time to arrive
+    battle.tick(turns(1));
 
-    act(battle, enemy);
+    expect(enemy.status[Statuses.Seeding]).not.toBeUndefined();
+  });
 
-    expect(holder.health).toBeCloseTo(maxHP / 2 + maxHP * PSYSEED_FRACTION, 5);
+  it('leaves a Grass type unseeded, the way the move does', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0);
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB, [Types.Grass]);
+    holder.addAbility(Abilities.Psyseed);
+
+    holder.attack(enemy, Moves.Confusion, 40, Types.Psychic, MoveCategories.Special, 0);
+    battle.tick(turns(1));
+
+    expect(enemy.status[Statuses.Seeding]).toBeUndefined();
   });
 });
 

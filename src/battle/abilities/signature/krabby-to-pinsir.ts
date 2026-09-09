@@ -31,9 +31,6 @@ export const HEAVY_PINCER_THRESHOLD = 1 / 2;
 export const OVERLOAD_SPEED_SCALE = 2;
 export const OVERLOAD_THRESHOLD = 1 / 2;
 
-/** What the seed takes out of a mind each time that mind is used */
-export const PSYSEED_FRACTION = 1 / 16;
-
 /** What grief is worth to the last one standing */
 export const MOURNING_BONE_SCALE = 1.4;
 
@@ -168,50 +165,30 @@ const krabbyToPinsir = [
     }),
   ),
 
-  // Exeggcute: the seed goes into the mind rather than the ground, so
-  // it is paid whenever that mind is used. The state is keyed on the
-  // seeded enemy, which is what drops it when that enemy leaves or
-  // falls
-  createAbility(Abilities.Psyseed, (battle) => {
-    const { state, lifecycles } = createUnitState<Unit>(battle);
+  // Exeggcute: the seed goes into the mind, and what a seed does to
+  // whoever carries it is Leech Seed's business
+  createAbility(Abilities.Psyseed, (battle) =>
+    battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
+      const cause = event.cause;
+      const source = event.source;
+      const target = event.target;
 
-    return new MergedLifecycle([
-      battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
-        const cause = event.cause;
-        const source = event.source;
+      if (
+        !event.success ||
+        !target.alive ||
+        event.flags & DamageFlags.Indirect ||
+        cause.type !== EffectType.Move ||
+        cause.unit === target ||
+        !source.hasAbility(Abilities.Psyseed) ||
+        source.checkMoveType(cause.move, unitTarget(target)) !== Types.Psychic
+      ) {
+        return;
+      }
 
-        if (
-          !event.success ||
-          event.flags & DamageFlags.Indirect ||
-          cause.type !== EffectType.Move ||
-          cause.unit === event.target ||
-          !source.hasAbility(Abilities.Psyseed) ||
-          source.checkMoveType(cause.move, unitTarget(event.target)) !== Types.Psychic
-        ) {
-          return;
-        }
-
-        state.set(event.target, source);
-      }),
-      ...onUnitActs(battle, (unit) => {
-        const seeder = state.get(unit);
-
-        if (!seeder?.alive || !seeder.hasAbility(Abilities.Psyseed)) {
-          return;
-        }
-
-        seeder.triggerAbility(Abilities.Psyseed);
-
-        seeder.heal(
-          { type: EffectType.Ability, ability: Abilities.Psyseed, unit: seeder },
-          seeder,
-          seeder.checkStat(Stats.HP, 0) * PSYSEED_FRACTION,
-          0,
-        );
-      }),
-      ...lifecycles,
-    ]);
-  }),
+      source.triggerAbility(Abilities.Psyseed);
+      source.triggerMove(Moves.LeechSeed, unitTarget(target), 0);
+    }),
+  ),
 
   // Cubone: it fights hardest with nobody left beside it, which is the
   // whole of what the line is about

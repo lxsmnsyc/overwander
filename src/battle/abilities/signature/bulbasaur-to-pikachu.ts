@@ -175,8 +175,9 @@ const bulbasaurToPikachu = [
 
         const fire = source.checkMoveType(parent.move, parent.target) === Types.Fire;
 
+        // Only landed Fire moves feed it, and nothing takes the heat
+        // back: a streak the AI cannot read is no design at all
         if (!event.hit || !fire) {
-          counter.clear(source);
           return;
         }
 

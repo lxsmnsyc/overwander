@@ -1,9 +1,10 @@
 import { AttackPriority, EventPriority } from '../../../core/event-emitter';
-import { Stats } from '../../../data/constants/stats';
+import { Stages, Stats } from '../../../data/constants/stats';
 import { Types } from '../../../data/constants/types';
 import Abilities from '../../../data/ids/abilities';
 import { ItemTypes, type Items } from '../../../data/ids/items';
-import { DamageFlags, MoveAttackFlags, StatFlags } from '../../../data/ids/moves';
+import { DamageFlags, MoveAttackFlags, MoveCategories, StatFlags } from '../../../data/ids/moves';
+import { Statuses } from '../../../data/ids/status';
 import { BERRY_HEALS, BERRY_STATUS_CURES } from '../../../data/items/berries';
 import { listItemsByType } from '../../../data/items';
 import type Battle from '../../core';
@@ -56,6 +57,24 @@ export const WHIRL_CURRENT_CAST_SCALE = 1.2;
 
 /** What swimming against something bigger is worth */
 export const UPSTREAM_SCALE = 1.35;
+
+/** What the mimed screen turns aside, and what holding it costs */
+export const MIMED_BARRIER_ALLY_SCALE = 0.85;
+export const MIMED_BARRIER_SELF_SCALE = 1.15;
+
+/** What a muddled head is worth to it */
+export const ICY_CHARM_SCALE = 1.5;
+
+/** The stat stages a core rights itself in, in the order it tries them */
+const CORE_RESET_STAGES = [
+  Stages.Attack,
+  Stages.Defense,
+  Stages.SpecialAttack,
+  Stages.SpecialDefense,
+  Stages.Speed,
+  Stages.Evasion,
+  Stages.Accuracy,
+];
 
 /** The berry the target is holding, if it is holding one */
 function heldBerry(unit: Unit): Items | undefined {
@@ -435,6 +454,118 @@ const krabbyToPinsir = [
         parent.target.checkStat(Stats.HP, 0) > source.checkStat(Stats.HP, 0)
       ) {
         event.value *= UPSTREAM_SCALE;
+      }
+    }),
+  ),
+
+  // Staryu: the core rights itself as it turns, one drop at a time, so
+  // wearing it down has to be done again and again
+  createAbility(
+    Abilities.CoreReset,
+    (battle) =>
+      new MergedLifecycle(
+        onUnitActs(battle, (unit) => {
+          if (!unit.hasAbility(Abilities.CoreReset)) {
+            return;
+          }
+
+          for (const stage of CORE_RESET_STAGES) {
+            if (unit.stages[stage] < 0) {
+              unit.triggerAbility(Abilities.CoreReset);
+
+              unit.addStage(stage, 1, {
+                type: EffectType.Ability,
+                ability: Abilities.CoreReset,
+                unit,
+              });
+
+              return;
+            }
+          }
+        }),
+      ),
+  ),
+
+  // Mr. Mime: it holds a screen up by hand. What it turns aside for the
+  // party it cannot turn aside for itself
+  createAbility(Abilities.MimedBarrier, (battle) =>
+    battle.on(BattleEvents.UnitAttackResolveStat, EventPriority.Post, (event) => {
+      const parent = event.parent;
+      const target = parent.target;
+
+      if (event.unit !== parent.source) {
+        return;
+      }
+
+      if (
+        event.stat === Stats.Attack &&
+        parent.category === MoveCategories.Physical &&
+        target.hasAbility(Abilities.MimedBarrier)
+      ) {
+        event.value *= MIMED_BARRIER_SELF_SCALE;
+        return;
+      }
+
+      if (event.stat !== Stats.SpecialAttack || parent.category !== MoveCategories.Special) {
+        return;
+      }
+
+      for (const mime of battle.units()) {
+        if (
+          mime.alive &&
+          mime.team.alliance === target.team.alliance &&
+          mime.hasAbility(Abilities.MimedBarrier)
+        ) {
+          event.value *= MIMED_BARRIER_ALLY_SCALE;
+          return;
+        }
+      }
+    }),
+  ),
+
+  // Scyther: a cut that lands properly goes through everything the
+  // target has put up, and everything it was born with
+  createAbility(Abilities.CleanCut, (battle) => {
+    // Whether the blow in flight is a critical. The resolver settles
+    // that before it asks for either stat, so the answer is waiting
+    const critical = new WeakMap<object, boolean>();
+
+    return new MergedLifecycle([
+      battle.on(BattleEvents.UnitAttackResolveCriticalHit, EventPriority.Post, (event) => {
+        if (event.critical && event.parent.source.hasAbility(Abilities.CleanCut)) {
+          critical.set(event.parent, true);
+
+          event.parent.source.triggerAbility(Abilities.CleanCut);
+        }
+      }),
+      battle.on(BattleEvents.UnitAttackResolveStat, EventPriority.Post, (event) => {
+        const parent = event.parent;
+
+        if (
+          event.unit === parent.target &&
+          (event.stat === Stats.Defense || event.stat === Stats.SpecialDefense) &&
+          critical.get(parent) === true
+        ) {
+          // The bare stat, with no stage of any sign left on it
+          event.value = parent.target.checkStat(event.stat, 0);
+        }
+      }),
+    ]);
+  }),
+
+  // Jynx: it works on a head that is already turned
+  createAbility(Abilities.IcyCharm, (battle) =>
+    battle.on(BattleEvents.UnitAttackResolveStat, EventPriority.Post, (event) => {
+      const parent = event.parent;
+      const target = parent.target;
+
+      if (
+        event.unit === parent.source &&
+        (event.stat === Stats.Attack || event.stat === Stats.SpecialAttack) &&
+        parent.source.hasAbility(Abilities.IcyCharm) &&
+        (target.status[Statuses.Infatuated] != null || target.status[Statuses.Confused] != null)
+      ) {
+        event.value *= ICY_CHARM_SCALE;
       }
     }),
   ),

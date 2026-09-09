@@ -24,6 +24,9 @@ import {
   ENDLESS_GROWTH_STEP,
   HEAVY_PINCER_SCALE,
   HEAVY_PINCER_THRESHOLD,
+  ICY_CHARM_SCALE,
+  MIMED_BARRIER_ALLY_SCALE,
+  MIMED_BARRIER_SELF_SCALE,
   MOTHERS_SHIELD_THRESHOLD,
   MOURNING_BONE_SCALE,
   OVERLOAD_SPEED_SCALE,
@@ -1919,5 +1922,116 @@ describe('Upstream', () => {
     );
 
     expect(resolveAttackStat(battle, atSmaller, holder, Stats.Attack, 100)).toBe(100);
+  });
+});
+
+describe('Core Reset', () => {
+  it('undoes one stat drop each time it acts', () => {
+    const { battle, teamA } = createBattle();
+    const holder = createUnit(battle, teamA);
+    holder.addAbility(Abilities.CoreReset);
+
+    holder.addStage(Stages.Attack, -2, NONE_CAUSE);
+    holder.addStage(Stages.Speed, -1, NONE_CAUSE);
+
+    act(battle, holder);
+
+    expect(holder.stages[Stages.Attack]).toBe(-1);
+    expect(holder.stages[Stages.Speed]).toBe(-1);
+
+    act(battle, holder);
+    act(battle, holder);
+
+    expect(holder.stages[Stages.Attack]).toBe(0);
+    expect(holder.stages[Stages.Speed]).toBe(0);
+
+    // Nothing to right, nothing raised
+    act(battle, holder);
+
+    expect(holder.stages[Stages.Attack]).toBe(0);
+  });
+});
+
+describe('Mimed Barrier', () => {
+  it('screens the side from special moves and leaves itself open', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.MimedBarrier);
+
+    const atAlly = makeAttack(enemy, ally, Moves.Ember, Types.Fire, MoveCategories.Special);
+    const atHolder = makeAttack(enemy, holder, Moves.Ember, Types.Fire, MoveCategories.Special);
+    const physical = makeAttack(enemy, holder, Moves.Pound, Types.Normal, MoveCategories.Physical);
+    const atAllyPhysical = makeAttack(
+      enemy,
+      ally,
+      Moves.Pound,
+      Types.Normal,
+      MoveCategories.Physical,
+    );
+
+    expect(resolveAttackStat(battle, atAlly, enemy, Stats.SpecialAttack, 100)).toBeCloseTo(
+      100 * MIMED_BARRIER_ALLY_SCALE,
+      5,
+    );
+    expect(resolveAttackStat(battle, atHolder, enemy, Stats.SpecialAttack, 100)).toBeCloseTo(
+      100 * MIMED_BARRIER_ALLY_SCALE,
+      5,
+    );
+    expect(resolveAttackStat(battle, physical, enemy, Stats.Attack, 100)).toBeCloseTo(
+      100 * MIMED_BARRIER_SELF_SCALE,
+      5,
+    );
+
+    // The screen is no help against a punch aimed at somebody else
+    expect(resolveAttackStat(battle, atAllyPhysical, enemy, Stats.Attack, 100)).toBe(100);
+  });
+});
+
+describe('Clean Cut', () => {
+  it('reads a critical hit against the bare defending stat', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.CleanCut);
+
+    enemy.addStage(Stages.Defense, 2, NONE_CAUSE);
+
+    const parent = makeAttack(holder, enemy, Moves.Pound, Types.Normal, MoveCategories.Physical);
+    const guarded = enemy.resolveStat(Stats.Defense, 0);
+    const bare = enemy.checkStat(Stats.Defense, 0);
+
+    // Nothing at all until the blow is a critical
+    expect(resolveAttackStat(battle, parent, enemy, Stats.Defense, guarded)).toBe(guarded);
+
+    battle.emit(BattleEvents.UnitAttackResolveCriticalHit, {
+      id: 'UnitAttackResolveCriticalHit',
+      disabled: false,
+      parent,
+      critical: true,
+    });
+
+    expect(resolveAttackStat(battle, parent, enemy, Stats.Defense, guarded)).toBe(bare);
+  });
+});
+
+describe('Icy Charm', () => {
+  it('hits a turned head harder', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.IcyCharm);
+
+    const parent = makeAttack(holder, enemy, Moves.Pound, Types.Normal, MoveCategories.Physical);
+
+    expect(resolveAttackStat(battle, parent, holder, Stats.Attack, 100)).toBe(100);
+
+    enemy.addStatus(Statuses.Confused, NONE_CAUSE);
+
+    expect(resolveAttackStat(battle, parent, holder, Stats.Attack, 100)).toBeCloseTo(
+      100 * ICY_CHARM_SCALE,
+      5,
+    );
   });
 });

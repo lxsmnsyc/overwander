@@ -356,6 +356,10 @@ const enum Abilities {
   MothersShield = 200053,
   WhirlCurrent = 200054,
   Upstream = 200055,
+  CoreReset = 200056,
+  MimedBarrier = 200057,
+  CleanCut = 200058,
+  IcyCharm = 200059,
 }
 
 export default Abilities;

@@ -531,4 +531,28 @@ export default function registerSignatureAbilities(): void {
     name: 'Sentry',
     description: 'Nobody on its side can be hit by a critical hit while it stands.',
   });
+
+  // Hoothoot
+  registerAbility(Abilities.WatchfulRoost, {
+    name: 'Watchful Roost',
+    description: 'It casts Reflect over its side as it arrives on the field.',
+  });
+
+  // Ledyba
+  registerAbility(Abilities.Relay, {
+    name: 'Relay',
+    description: 'Whenever it is switched out, its stat stages carry to the teammate coming in.',
+  });
+
+  // Spinarak
+  registerAbility(Abilities.SilkSnare, {
+    name: 'Silk Snare',
+    description: 'It casts String Shot at every standing enemy as it arrives on the field.',
+  });
+
+  // Chinchou
+  registerAbility(Abilities.LanternLure, {
+    name: 'Lantern Lure',
+    description: 'It casts Confuse Ray at an enemy as it arrives on the field.',
+  });
 }

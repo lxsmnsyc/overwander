@@ -138,6 +138,7 @@ import { MoveCategories, MoveTargets, Moves } from '../../../src/data/ids/moves'
 import { Statuses, TeamStatuses, Weathers } from '../../../src/data/ids/status';
 import turns from '../../../src/battle/turn';
 import { layersUnder } from '../../../src/battle/moves/spikes';
+import { SWITCHING_SPAN } from '../../../src/battle/status/switching';
 import { createBattle, createUnit, pinRandom } from '../harness';
 
 const NONE_CAUSE = { type: EffectType.None } as const;
@@ -2632,5 +2633,104 @@ describe('Sentry', () => {
 
     // The far side still crits as usual
     expect(rollCritical(enemy)).toBe(true);
+  });
+});
+
+describe('Watchful Roost', () => {
+  it('puts Reflect up over its side as it arrives', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    createUnit(battle, teamB);
+    holder.addAbility(Abilities.WatchfulRoost);
+
+    battle.emit(BattleEvents.UnitEntersField, {
+      id: 'UnitEntersField',
+      disabled: false,
+      source: holder,
+      reactivation: false,
+    });
+    // The cast move takes its own flight time to arrive
+    battle.tick(turns(1));
+
+    expect(teamA.status[TeamStatuses.Reflect]).not.toBeUndefined();
+    expect(teamB.status[TeamStatuses.Reflect]).toBeUndefined();
+  });
+});
+
+describe('Relay', () => {
+  it('hands its stat stages to the teammate coming in', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const replacement = createUnit(battle, teamA);
+    createUnit(battle, teamB);
+    holder.addAbility(Abilities.Relay);
+
+    holder.addStage(Stages.Attack, 2, NONE_CAUSE);
+    holder.addStage(Stages.Speed, -1, NONE_CAUSE);
+
+    holder.forceSwitch(replacement);
+    battle.tick(SWITCHING_SPAN);
+
+    expect(replacement.stages[Stages.Attack]).toBe(2);
+    expect(replacement.stages[Stages.Speed]).toBe(-1);
+
+    // What left the field still leaves it empty-handed
+    expect(holder.stages[Stages.Attack]).toBe(0);
+  });
+
+  it('passes nothing when it had nothing built up', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const replacement = createUnit(battle, teamA);
+    createUnit(battle, teamB);
+    holder.addAbility(Abilities.Relay);
+
+    holder.forceSwitch(replacement);
+    battle.tick(SWITCHING_SPAN);
+
+    expect(replacement.stages[Stages.Attack]).toBe(0);
+  });
+});
+
+describe('Silk Snare', () => {
+  it('casts String Shot over the whole enemy side as it arrives', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0);
+    const holder = createUnit(battle, teamA);
+    const first = createUnit(battle, teamB);
+    const second = createUnit(battle, teamB);
+    holder.addAbility(Abilities.SilkSnare);
+
+    battle.emit(BattleEvents.UnitEntersField, {
+      id: 'UnitEntersField',
+      disabled: false,
+      source: holder,
+      reactivation: false,
+    });
+    battle.tick(turns(1));
+
+    expect(first.stages[Stages.Speed]).toBeLessThan(0);
+    expect(second.stages[Stages.Speed]).toBeLessThan(0);
+    expect(holder.stages[Stages.Speed]).toBe(0);
+  });
+});
+
+describe('Lantern Lure', () => {
+  it('casts Confuse Ray at an enemy as it arrives', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0);
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.LanternLure);
+
+    battle.emit(BattleEvents.UnitEntersField, {
+      id: 'UnitEntersField',
+      disabled: false,
+      source: holder,
+      reactivation: false,
+    });
+    battle.tick(turns(1));
+
+    expect(enemy.status[Statuses.Confused]).not.toBeUndefined();
   });
 });

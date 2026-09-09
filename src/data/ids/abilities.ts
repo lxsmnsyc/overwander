@@ -383,6 +383,10 @@ const enum Abilities {
   Ignition = 200080,
   GatorGrip = 200081,
   Sentry = 200082,
+  WatchfulRoost = 200083,
+  Relay = 200084,
+  SilkSnare = 200085,
+  LanternLure = 200086,
 }
 
 export default Abilities;

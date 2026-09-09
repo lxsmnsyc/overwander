@@ -28,7 +28,7 @@ const SELF_SWITCH_MOVES = new Set<Moves>([Moves.Teleport, Moves.BatonPass]);
 /**
  * Every stage a Baton Pass hands over
  */
-const PASSED_STAGES = [
+export const PASSED_STAGES = [
   Stages.Attack,
   Stages.Defense,
   Stages.SpecialAttack,

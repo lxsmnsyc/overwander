@@ -10,8 +10,8 @@ import { onUnitActs, unitTarget } from '../../utils';
 import { createAbility } from '../__create';
 import {
   BATTLE_STATS,
+  createFossilAbility,
   createStatExtremes,
-  createTimedMarks,
   createUnitState,
   createWingbeatAbility,
 } from './__create';
@@ -25,14 +25,6 @@ export const ROLLBACK_SAMPLE = 1000;
 
 /** The share of health that triggers the restore */
 export const ROLLBACK_THRESHOLD = 1 / 2;
-
-/** What each repeat blow from one attacker loses, and the floor */
-export const SPIRAL_SHELL_STEP = 0.1;
-export const SPIRAL_SHELL_FLOOR = 0.6;
-
-/** What a cut takes each time the cut one acts, and how long it stays open */
-export const SERRATED_EDGE_FRACTION = 1 / 16;
-export const SERRATED_EDGE_DURATION = 6000;
 
 /** What the opening pass on each enemy is worth */
 export const PREDATORS_DIVE_SCALE = 1.5;
@@ -148,93 +140,10 @@ const eeveeToDragonite = [
     ]);
   }),
 
-  // Omanyte: the shell learns the angle a blow comes in at, so the
-  // same attacker gets less out of it each time
-  createAbility(Abilities.SpiralShell, (battle) => {
-    const { state, lifecycles } = createUnitState<Map<Unit, number>>(battle);
-
-    return new MergedLifecycle([
-      battle.on(BattleEvents.UnitAttackResolveStat, EventPriority.Post, (event) => {
-        const parent = event.parent;
-        const learned = state.get(parent.target)?.get(parent.source) ?? 0;
-
-        if (
-          learned > 0 &&
-          event.unit === parent.source &&
-          (event.stat === Stats.Attack || event.stat === Stats.SpecialAttack) &&
-          parent.target.hasAbility(Abilities.SpiralShell)
-        ) {
-          event.value *= Math.max(SPIRAL_SHELL_FLOOR, 1 - SPIRAL_SHELL_STEP * learned);
-        }
-      }),
-      battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
-        const target = event.target;
-        const cause = event.cause;
-
-        if (
-          !event.success ||
-          event.flags & DamageFlags.Indirect ||
-          cause.type !== EffectType.Move ||
-          cause.unit === target ||
-          !target.hasAbility(Abilities.SpiralShell)
-        ) {
-          return;
-        }
-
-        const learned = state.get(target) ?? new Map<Unit, number>();
-
-        learned.set(cause.unit, (learned.get(cause.unit) ?? 0) + 1);
-        state.set(target, learned);
-
-        target.triggerAbility(Abilities.SpiralShell);
-      }),
-      ...lifecycles,
-    ]);
-  }),
-
-  // Kabuto: the cut stays open, and it costs the cut one every time it
-  // moves rather than on any clock of its own
-  createAbility(Abilities.SerratedEdge, (battle) => {
-    const bleeding = createTimedMarks(battle);
-    const { state, lifecycles } = createUnitState<Unit>(battle);
-
-    return new MergedLifecycle([
-      ...bleeding.lifecycles,
-      battle.on(BattleEvents.UnitAttack, AttackPriority.Post, (event) => {
-        const source = event.source;
-
-        if (
-          !event.success ||
-          !event.target.alive ||
-          event.flags & MoveAttackFlags.Simulated ||
-          !source.hasAbility(Abilities.SerratedEdge) ||
-          !source.checkMoveContact(event.move, unitTarget(event.target))
-        ) {
-          return;
-        }
-
-        source.triggerAbility(Abilities.SerratedEdge);
-
-        state.set(event.target, source);
-        bleeding.mark(event.target, SERRATED_EDGE_DURATION);
-      }),
-      ...onUnitActs(battle, (unit) => {
-        const cutter = state.get(unit);
-
-        if (!cutter || !bleeding.has(unit)) {
-          return;
-        }
-
-        cutter.damage(
-          { type: EffectType.Ability, ability: Abilities.SerratedEdge, unit: cutter },
-          unit,
-          unit.checkStat(Stats.HP, 0) * SERRATED_EDGE_FRACTION,
-          DamageFlags.Indirect,
-        );
-      }),
-      ...lifecycles,
-    ]);
-  }),
+  // The two Kanto fossils: counterparts written on the same knob, the
+  // shell raising its own defences and the blade cutting into another's
+  createFossilAbility(Abilities.HelixShell, 'shell'),
+  createFossilAbility(Abilities.DomeBlade, 'blade'),
 
   // Aerodactyl: the pass out of the sun is the dangerous one, and each
   // enemy only walks into it once

@@ -3,23 +3,26 @@ name: signature-abilities
 description: >
   A signature ability is one invented ability per evolution family,
   numbered in the 200000 band and granted rather than rolled at birth.
-  A legendary **group** and a region's **starter trio** each share one
-  theme across their members. Applies whenever designing, naming,
-  implementing or reviewing a signature ability.
+  A legendary **group**, a region's **starter trio** and a pair of
+  **counterpart families** each share one theme across their members.
+  Applies whenever designing, naming, implementing or reviewing a
+  signature ability.
 ---
 
 Every evolution family gets one non-canon **signature ability**, themed on both what the line is and how it fights. They are not part of any pool: the ids sit in their own band from `200001` up in [`abilities.ts`](../../../src/data/ids/abilities.ts), and nothing rolls one at birth or breeds for one, so a line's four ordinary abilities stay four and the [`ability-pools`](../ability-pools/SKILL.md) walk is untouched.
 
 ## A group shares one theme
 
-**A legendary group and a region's three starters are each designed as a set: one idea told several ways, never a separate design each.** Pick the frame from what the group shares, usually their lore, their role or the ability all of them carry, then vary one axis per member.
+**A legendary group, a region's three starters and two counterpart families are each designed as a set: one idea told several ways, never a separate design each.** Pick the frame from what the group shares, usually their lore, their role or the ability all of them carry, then vary one axis per member.
 
 - The three beasts share what Ho-Oh did for them in the burned tower. Each survives the first blow that would finish it, is cured, and comes back a stage sharper in the stat it is built on: Raikou Speed, Entei Attack, Suicune Defense.
 - The three Kanto birds share the beat of their wings as one takes the field, each taking a different stat off the whole enemy side: Articuno Speed, Zapdos Special Defense, Moltres Defense.
 
 This covers every set the mainline presents as a set, the tower duo and the weather trio and the Regis and the Lati pair among them, and it covers **each region's starter trio**, whose shared frame comes from being the player's first partner rather than from lore. A legendary that stands alone, Mewtwo for instance, needs no shared frame.
 
-Because the members then share one behaviour, the implementation goes in a **meta factory** beside the other shared ones in [`signature/__create.ts`](../../../src/battle/abilities/signature/__create.ts) (`createRisenAbility`, `createWingbeatAbility`), never copied per member. That is the repository's standing rule for abilities that share an effect, and it is what keeps the group's numbers in one place.
+It also covers **counterpart pairs**, the two families the games themselves pair off: Nidoran female and male, Plusle and Minun, Volbeat and Illumise, Zangoose and Seviper, Lunatone and Solrock, Latias and Latios, Kyogre and Groudon. A pair's two designs either **complement** each other, so the two are worth more on one side than apart, or **cancel** each other, so meeting the counterpart is the one thing that answers the ability. Take whichever the pair's own flavour suggests, and complement when neither reads as an opposition.
+
+Because the members then share one behaviour, the implementation goes in a **meta factory** beside the other shared ones in [`signature/__create.ts`](../../../src/battle/abilities/signature/__create.ts) (`createRisenAbility`, `createWingbeatAbility`), never copied per member. A cancelling pair is the one shape that may stay two listeners, each looking for the other's ability, since the halves are not the same behaviour. That is the repository's standing rule for abilities that share an effect, and it is what keeps the group's numbers in one place.
 
 ## What the design may not do
 

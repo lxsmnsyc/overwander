@@ -7,9 +7,13 @@ import { SIGNATURE_ABILITIES } from '../../../src/battle/abilities/signature';
 import {
   FIELD_LOWERED_SCALE,
   FIELD_RAISED_SCALE,
+  FOSSIL_BLADE_SCALE,
+  FOSSIL_SHELL_SCALE,
   GROWTH_MAX_STAGES,
   MARK_DEEP_FRACTION,
   MARK_FRACTION,
+  REGAL_COURT_MAX_ENEMIES,
+  REGAL_COURT_STEP,
 } from '../../../src/battle/abilities/signature/__create';
 import {
   BACKLASH_SHARE,
@@ -37,10 +41,6 @@ import {
   ROLLBACK_SAMPLE,
   ROLLBACK_THRESHOLD,
   ROLLBACK_WINDOW,
-  SERRATED_EDGE_DURATION,
-  SERRATED_EDGE_FRACTION,
-  SPIRAL_SHELL_FLOOR,
-  SPIRAL_SHELL_STEP,
 } from '../../../src/battle/abilities/signature/eevee-to-dragonite';
 import { AttackPriority } from '../../../src/core/event-emitter';
 import {
@@ -127,10 +127,6 @@ import {
   LULLABY_SLEEP_SCALE,
   NINE_TAILS_MAX_STACKS,
   NINE_TAILS_STEP,
-  REGAL_HIDE_EXPOSED_SCALE,
-  REGAL_HIDE_GUARD_SCALE,
-  REGAL_HIDE_THRESHOLD,
-  REGAL_VENOM_SCALE,
 } from '../../../src/battle/abilities/signature/sandshrew-to-oddish';
 import type Battle from '../../../src/battle/core';
 import {
@@ -603,74 +599,79 @@ describe('Curl Up', () => {
   });
 });
 
-describe('Regal Hide', () => {
-  it('turns physical blows aside until the hide cracks', () => {
-    const { battle, teamA, teamB } = createBattle();
-    const holder = createUnit(battle, teamA);
-    const enemy = createUnit(battle, teamB);
-    holder.addAbility(Abilities.RegalHide);
+describe('the Nidoran pair', () => {
+  const COURTS = [
+    { name: "Queen's Court", ability: Abilities.QueensCourt, defends: true },
+    { name: "King's Court", ability: Abilities.KingsCourt, defends: false },
+  ];
 
-    const physical = makeAttack(enemy, holder, Moves.Pound, Types.Normal, MoveCategories.Physical);
-    const special = makeAttack(enemy, holder, Moves.Ember, Types.Fire, MoveCategories.Special);
-    const maxHP = holder.checkStat(Stats.HP, 0);
+  for (const { name, ability, defends } of COURTS) {
+    it(`pays ${name} for every poisoned enemy, up to the cap`, () => {
+      const { battle, teamA, teamB } = createBattle();
+      const holder = createUnit(battle, teamA);
+      const enemies = [
+        createUnit(battle, teamB),
+        createUnit(battle, teamB),
+        createUnit(battle, teamB),
+        createUnit(battle, teamB),
+      ];
+      holder.addAbility(ability);
 
-    expect(resolveAttackStat(battle, physical, enemy, Stats.Attack, 100)).toBeCloseTo(
-      100 * REGAL_HIDE_GUARD_SCALE,
-      5,
-    );
+      const parent = defends
+        ? makeAttack(enemies[0], holder, Moves.Pound, Types.Normal, MoveCategories.Physical)
+        : makeAttack(holder, enemies[0], Moves.Pound, Types.Normal, MoveCategories.Physical);
+      const stat = defends ? Stats.Defense : Stats.Attack;
 
-    // Only the physical half is turned aside while she is whole
-    expect(resolveAttackStat(battle, special, enemy, Stats.SpecialAttack, 100)).toBe(100);
+      // Nothing owed while the far side is clean
+      expect(resolveAttackStat(battle, parent, holder, stat, 100)).toBe(100);
 
-    holder.setHealth(maxHP * REGAL_HIDE_THRESHOLD - 1);
+      for (const [index, enemy] of enemies.entries()) {
+        enemy.addStatus(Statuses.Poisoned, NONE_CAUSE);
 
-    expect(resolveAttackStat(battle, physical, enemy, Stats.Attack, 100)).toBeCloseTo(
-      100 * REGAL_HIDE_EXPOSED_SCALE,
-      5,
-    );
-    expect(resolveAttackStat(battle, special, enemy, Stats.SpecialAttack, 100)).toBeCloseTo(
-      100 * REGAL_HIDE_EXPOSED_SCALE,
-      5,
-    );
-  });
-});
+        const counted = Math.min(REGAL_COURT_MAX_ENEMIES, index + 1);
 
-describe('Regal Venom', () => {
-  it('poisons badly and hits the poisoned harder', () => {
-    const { battle, teamA, teamB } = createBattle();
-    const holder = createUnit(battle, teamA);
-    const enemy = createUnit(battle, teamB);
-    holder.addAbility(Abilities.RegalVenom);
-
-    const parent = makeAttack(holder, enemy, Moves.Pound, Types.Normal, MoveCategories.Physical);
-
-    expect(resolveAttackStat(battle, parent, holder, Stats.Attack, 100)).toBe(100);
-
-    enemy.addStatus(Statuses.Poisoned, {
-      type: EffectType.Move,
-      move: Moves.PoisonSting,
-      unit: holder,
+        expect(resolveAttackStat(battle, parent, holder, stat, 100)).toBeCloseTo(
+          100 * (1 + REGAL_COURT_STEP * counted),
+          5,
+        );
+      }
     });
+  }
 
-    // The mild poison never landed
-    expect(enemy.status[Statuses.Poisoned]).toBeUndefined();
-    expect(enemy.status[Statuses.BadlyPoisoned]).not.toBeUndefined();
-
-    expect(resolveAttackStat(battle, parent, holder, Stats.Attack, 100)).toBeCloseTo(
-      100 * REGAL_VENOM_SCALE,
-      5,
-    );
-  });
-
-  it('leaves poison from anybody else alone', () => {
+  it('pays each half on its own side of the blow only', () => {
     const { battle, teamA, teamB } = createBattle();
-    const holder = createUnit(battle, teamA);
+    const queen = createUnit(battle, teamA);
+    const king = createUnit(battle, teamA);
     const enemy = createUnit(battle, teamB);
-    holder.addAbility(Abilities.RegalVenom);
-
+    queen.addAbility(Abilities.QueensCourt);
+    king.addAbility(Abilities.KingsCourt);
     enemy.addStatus(Statuses.Poisoned, NONE_CAUSE);
 
-    expect(enemy.status[Statuses.Poisoned]).not.toBeUndefined();
+    const struck = makeAttack(enemy, queen, Moves.Pound, Types.Normal, MoveCategories.Physical);
+    const thrown = makeAttack(king, enemy, Moves.Pound, Types.Normal, MoveCategories.Physical);
+    const owed = 100 * (1 + REGAL_COURT_STEP);
+
+    // She is paid defending and he attacking, and neither the other way
+    expect(resolveAttackStat(battle, struck, queen, Stats.Defense, 100)).toBeCloseTo(owed, 5);
+    expect(resolveAttackStat(battle, struck, enemy, Stats.Attack, 100)).toBe(100);
+    expect(resolveAttackStat(battle, thrown, king, Stats.Attack, 100)).toBeCloseTo(owed, 5);
+    expect(resolveAttackStat(battle, thrown, enemy, Stats.Defense, 100)).toBe(100);
+  });
+
+  it('counts the poison either of them landed', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const queen = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    queen.addAbility(Abilities.QueensCourt);
+
+    enemy.addStatus(Statuses.BadlyPoisoned, NONE_CAUSE);
+
+    const struck = makeAttack(enemy, queen, Moves.Pound, Types.Normal, MoveCategories.Physical);
+
+    expect(resolveAttackStat(battle, struck, queen, Stats.SpecialDefense, 100)).toBeCloseTo(
+      100 * (1 + REGAL_COURT_STEP),
+      5,
+    );
   });
 });
 
@@ -2119,64 +2120,63 @@ describe('Rollback', () => {
   });
 });
 
-describe('Spiral Shell', () => {
-  it('learns one attacker at a time, down to the floor', () => {
+describe('the Kanto fossils', () => {
+  it('raises the shell against every blow it takes', () => {
     const { battle, teamA, teamB } = createBattle();
-    pinRandom(battle, 1);
-    const holder = createUnit(battle, teamA);
-    const first = createUnit(battle, teamB);
-    const second = createUnit(battle, teamB);
-    holder.addAbility(Abilities.SpiralShell);
-
-    const fromFirst = makeAttack(first, holder, Moves.Pound, Types.Normal, MoveCategories.Physical);
-    const fromSecond = makeAttack(
-      second,
-      holder,
-      Moves.Pound,
-      Types.Normal,
-      MoveCategories.Physical,
-    );
-    const maxHP = holder.checkStat(Stats.HP, 0);
-
-    for (let blows = 1; blows <= 6; blows += 1) {
-      first.attack(holder, Moves.Pound, 40, Types.Normal, MoveCategories.Physical, 0);
-      holder.setHealth(maxHP);
-
-      expect(resolveAttackStat(battle, fromFirst, first, Stats.Attack, 100)).toBeCloseTo(
-        100 * Math.max(SPIRAL_SHELL_FLOOR, 1 - SPIRAL_SHELL_STEP * blows),
-        5,
-      );
-    }
-
-    // Nothing the second attacker has to show for it
-    expect(resolveAttackStat(battle, fromSecond, second, Stats.Attack, 100)).toBe(100);
-  });
-});
-
-describe('Serrated Edge', () => {
-  it('leaves a cut that costs the enemy every time it acts', () => {
-    const { battle, teamA, teamB } = createBattle();
-    pinRandom(battle, 1);
     const holder = createUnit(battle, teamA);
     const enemy = createUnit(battle, teamB);
-    holder.addAbility(Abilities.SerratedEdge);
+    holder.addAbility(Abilities.HelixShell);
 
-    holder.attack(enemy, Moves.Pound, 40, Types.Normal, MoveCategories.Physical, 0);
+    const physical = makeAttack(enemy, holder, Moves.Pound, Types.Normal, MoveCategories.Physical);
+    const special = makeAttack(enemy, holder, Moves.Ember, Types.Fire, MoveCategories.Special);
 
-    const maxHP = enemy.checkStat(Stats.HP, 0);
-    enemy.setHealth(maxHP);
+    expect(resolveAttackStat(battle, physical, holder, Stats.Defense, 100)).toBeCloseTo(
+      100 * FOSSIL_SHELL_SCALE,
+      5,
+    );
+    expect(resolveAttackStat(battle, special, holder, Stats.SpecialDefense, 100)).toBeCloseTo(
+      100 * FOSSIL_SHELL_SCALE,
+      5,
+    );
 
-    act(battle, enemy);
+    // Its own attacking side is untouched
+    const thrown = makeAttack(holder, enemy, Moves.Pound, Types.Normal, MoveCategories.Physical);
 
-    expect(maxHP - enemy.health).toBeCloseTo(maxHP * SERRATED_EDGE_FRACTION, 5);
+    expect(resolveAttackStat(battle, thrown, holder, Stats.Attack, 100)).toBe(100);
+  });
 
-    // The cut closes on its own
-    battle.tick(SERRATED_EDGE_DURATION);
-    enemy.setHealth(maxHP);
+  it('cuts the shell off whatever the blade strikes', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.DomeBlade);
 
-    act(battle, enemy);
+    const thrown = makeAttack(holder, enemy, Moves.Pound, Types.Normal, MoveCategories.Physical);
 
-    expect(enemy.health).toBe(maxHP);
+    expect(resolveAttackStat(battle, thrown, enemy, Stats.Defense, 100)).toBeCloseTo(
+      100 * FOSSIL_BLADE_SCALE,
+      5,
+    );
+
+    // And nothing when the blade is the one being struck
+    const struck = makeAttack(enemy, holder, Moves.Pound, Types.Normal, MoveCategories.Physical);
+
+    expect(resolveAttackStat(battle, struck, holder, Stats.Defense, 100)).toBe(100);
+  });
+
+  it('answers itself when the two meet', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const shell = createUnit(battle, teamA);
+    const blade = createUnit(battle, teamB);
+    shell.addAbility(Abilities.HelixShell);
+    blade.addAbility(Abilities.DomeBlade);
+
+    const parent = makeAttack(blade, shell, Moves.Pound, Types.Normal, MoveCategories.Physical);
+
+    expect(resolveAttackStat(battle, parent, shell, Stats.Defense, 100)).toBeCloseTo(
+      100 * FOSSIL_SHELL_SCALE * FOSSIL_BLADE_SCALE,
+      5,
+    );
   });
 });
 

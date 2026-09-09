@@ -85,18 +85,24 @@ export default function registerSignatureAbilities(): void {
     description: 'Each hit it takes casts Defense Curl on itself.',
   });
 
+  /**
+   * The two Nidoran lines are counterparts, so both are paid in poison:
+   * every poisoned enemy lifts the holder, the female on the defending
+   * side of a blow and the male on the attacking one
+   */
+
   // Nidoran (female)
-  registerAbility(Abilities.RegalHide, {
-    name: 'Regal Hide',
+  registerAbility(Abilities.QueensCourt, {
+    name: "Queen's Court",
     description:
-      'Physical moves hit her at 0.7x while she is at or above 1/2 HP. Below it, everything hits her at 1.15x.',
+      'Her Defense and Special Defense are 1.15x for each poisoned enemy on the field, counting up to 3.',
   });
 
   // Nidoran (male)
-  registerAbility(Abilities.RegalVenom, {
-    name: 'Regal Venom',
+  registerAbility(Abilities.KingsCourt, {
+    name: "King's Court",
     description:
-      'Poison it inflicts is always the badly-poisoned kind, and its moves hit 1.3x against a poisoned target.',
+      'His Attack and Special Attack are 1.15x for each poisoned enemy on the field, counting up to 3.',
   });
 
   // Clefairy
@@ -448,17 +454,22 @@ export default function registerSignatureAbilities(): void {
       'The first time it drops below 1/2 HP, its health goes back to what it was 4 seconds earlier.',
   });
 
+  /**
+   * The two Kanto fossils are counterparts, and both are written on the
+   * defending side of a blow: the shell raises its own defences and the
+   * blade cuts into whatever it strikes, so each answers the other
+   */
+
   // Omanyte
-  registerAbility(Abilities.SpiralShell, {
-    name: 'Spiral Shell',
-    description: 'Each blow from the same attacker lands 10% weaker than their last, down to 0.6x.',
+  registerAbility(Abilities.HelixShell, {
+    name: 'Helix Shell',
+    description: 'Its Defense and Special Defense count as 1.25x against every blow it takes.',
   });
 
   // Kabuto
-  registerAbility(Abilities.SerratedEdge, {
-    name: 'Serrated Edge',
-    description:
-      'A contact move it lands leaves a cut: that enemy loses 1/16 of its HP each time it acts for 6 seconds.',
+  registerAbility(Abilities.DomeBlade, {
+    name: 'Dome Blade',
+    description: "Its blows count the target's Defense or Special Defense as 0.75x.",
   });
 
   // Aerodactyl

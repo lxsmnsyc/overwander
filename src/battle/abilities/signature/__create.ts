@@ -552,3 +552,98 @@ export function createStatExtremes(): {
     },
   };
 }
+
+/** What one poisoned enemy is worth to the court, and how many it counts */
+export const REGAL_COURT_STEP = 0.15;
+export const REGAL_COURT_MAX_ENEMIES = 3;
+
+/** Which half of the court an ability is: the shield or the spear */
+export type RegalCourtSide = 'defends' | 'attacks';
+
+/** Whether the unit is carrying poison of either kind */
+function isPoisoned(unit: Unit): boolean {
+  return unit.status[Statuses.Poisoned] != null || unit.status[Statuses.BadlyPoisoned] != null;
+}
+
+/** How many of the holder's enemies are standing there poisoned */
+function poisonedEnemies(battle: Battle, holder: Unit): number {
+  let counted = 0;
+
+  for (const enemy of battle.units(holder.team.alliance)) {
+    if (enemy.alive && isPoisoned(enemy)) {
+      counted += 1;
+    }
+  }
+
+  return Math.min(REGAL_COURT_MAX_ENEMIES, counted);
+}
+
+/**
+ * What the two Nidoran lines share: both are paid in poison, so every
+ * poisoned enemy on the field lifts the holder. The female takes her
+ * due on the defending side and the male his on the attacking one,
+ * which is why either one poisoning is worth something to both
+ */
+export function createRegalCourtAbility(
+  ability: Abilities,
+  side: RegalCourtSide,
+): ((battle: Battle) => void) & { ability: Abilities } {
+  const defends = side === 'defends';
+
+  return createAbility(ability, (battle) =>
+    battle.on(BattleEvents.UnitAttackResolveStat, EventPriority.Post, (event) => {
+      const parent = event.parent;
+      const holder = defends ? parent.target : parent.source;
+      const wanted = defends
+        ? event.stat === Stats.Defense || event.stat === Stats.SpecialDefense
+        : event.stat === Stats.Attack || event.stat === Stats.SpecialAttack;
+
+      if (!wanted || event.unit !== holder || !holder.hasAbility(ability)) {
+        return;
+      }
+
+      const counted = poisonedEnemies(battle, holder);
+
+      if (counted > 0) {
+        event.value *= 1 + REGAL_COURT_STEP * counted;
+      }
+    }),
+  );
+}
+
+/** What the shell keeps out, and what the blade cuts through */
+export const FOSSIL_SHELL_SCALE = 1.25;
+export const FOSSIL_BLADE_SCALE = 0.75;
+
+/** Which fossil an ability is: the shell that holds or the blade that opens it */
+export type FossilSide = 'shell' | 'blade';
+
+/**
+ * What the two Kanto fossils share: both are written on the defending
+ * side of a blow, the shell raising its own and the blade cutting into
+ * whatever it strikes. Meeting the counterpart is what answers either,
+ * since the two multiply back toward nothing
+ */
+export function createFossilAbility(
+  ability: Abilities,
+  side: FossilSide,
+): ((battle: Battle) => void) & { ability: Abilities } {
+  const shell = side === 'shell';
+
+  return createAbility(ability, (battle) =>
+    battle.on(BattleEvents.UnitAttackResolveStat, EventPriority.Post, (event) => {
+      const parent = event.parent;
+      const holder = shell ? parent.target : parent.source;
+
+      if (
+        (event.stat !== Stats.Defense && event.stat !== Stats.SpecialDefense) ||
+        event.unit !== parent.target ||
+        !holder.hasAbility(ability)
+      ) {
+        return;
+      }
+
+      event.value *= shell ? FOSSIL_SHELL_SCALE : FOSSIL_BLADE_SCALE;
+    }),
+  );
+}

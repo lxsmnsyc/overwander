@@ -4,6 +4,7 @@ import registerAbilities, {
   getRegisteredAbilities,
 } from '../../../src/data/abilities';
 import { SIGNATURE_ABILITIES } from '../../../src/battle/abilities/signature';
+import { PETAL_BED_FRACTION } from '../../../src/battle/abilities/signature/chikorita-to-celebi';
 import {
   ABSOLUTE_CALM_STATUS_SCALE,
   ANCESTRAL_MEMORY_SCALE,
@@ -2599,5 +2600,105 @@ describe('Ancestral Memory', () => {
       100 * ANCESTRAL_MEMORY_SCALE,
       5,
     );
+  });
+});
+
+describe('Petal Bed', () => {
+  it('mends its allies as they act, and never itself', () => {
+    const { battle, teamA } = createBattle();
+    const flower = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamA);
+    flower.addAbility(Abilities.PetalBed);
+
+    const maxHP = ally.checkStat(Stats.HP, 0);
+    ally.setHealth(maxHP / 2);
+    flower.setHealth(maxHP / 2);
+
+    act(battle, ally);
+
+    expect(ally.health).toBeCloseTo(maxHP / 2 + maxHP * PETAL_BED_FRACTION, 5);
+
+    act(battle, flower);
+
+    expect(flower.health).toBeCloseTo(maxHP / 2, 5);
+  });
+});
+
+describe('Ignition', () => {
+  it('casts Will-O-Wisp at an enemy as it arrives', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0);
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Ignition);
+
+    let cast: Moves | undefined;
+    battle.on(BattleEvents.UnitTriggerMove, AttackPriority.Post, (event) => {
+      if (event.source === holder) {
+        cast = event.move;
+      }
+    });
+
+    battle.emit(BattleEvents.UnitEntersField, {
+      id: 'UnitEntersField',
+      disabled: false,
+      source: holder,
+      reactivation: false,
+    });
+
+    expect(cast).toBe(Moves.WillOWisp);
+
+    // The cast move takes its own flight time to arrive
+    battle.tick(turns(1));
+
+    expect(enemy.status[Statuses.Burned]).not.toBeUndefined();
+  });
+});
+
+describe('Gator Grip', () => {
+  it('casts Bind on whatever it bites', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0);
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.GatorGrip);
+
+    holder.attack(enemy, Moves.Ember, 40, Types.Fire, MoveCategories.Special, 0);
+
+    expect(enemy.status[Statuses.Trapped]).toBeUndefined();
+
+    holder.attack(enemy, Moves.Pound, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    // The cast move takes its own flight time to arrive
+    battle.tick(turns(1));
+
+    expect(enemy.status[Statuses.Trapped]).not.toBeUndefined();
+  });
+});
+
+describe('Sentry', () => {
+  it('refuses a critical hit anywhere on its side', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const lookout = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    lookout.addAbility(Abilities.Sentry);
+
+    function rollCritical(target: Unit): boolean {
+      const event = {
+        id: 'UnitAttackResolveCriticalHit',
+        disabled: false,
+        parent: makeAttack(enemy, target, Moves.Pound, Types.Normal, MoveCategories.Physical),
+        critical: true,
+      };
+      battle.emit(BattleEvents.UnitAttackResolveCriticalHit, event);
+      return event.critical;
+    }
+
+    expect(rollCritical(ally)).toBe(false);
+    expect(rollCritical(lookout)).toBe(false);
+
+    // The far side still crits as usual
+    expect(rollCritical(enemy)).toBe(true);
   });
 });

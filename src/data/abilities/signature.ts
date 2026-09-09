@@ -509,4 +509,29 @@ export default function registerSignatureAbilities(): void {
     name: 'Ancestral Memory',
     description: 'Any type that has already hit it once hits it at 0.85x thereafter.',
   });
+
+  // Chikorita
+  registerAbility(Abilities.PetalBed, {
+    name: 'Petal Bed',
+    description:
+      'Its allies heal 1/16 of their HP each time they act. It never heals itself this way.',
+  });
+
+  // Cyndaquil
+  registerAbility(Abilities.Ignition, {
+    name: 'Ignition',
+    description: 'It casts Will-O-Wisp at an enemy as it arrives on the field.',
+  });
+
+  // Totodile
+  registerAbility(Abilities.GatorGrip, {
+    name: 'Gator Grip',
+    description: 'A contact move it lands casts Bind on that target.',
+  });
+
+  // Sentret
+  registerAbility(Abilities.Sentry, {
+    name: 'Sentry',
+    description: 'Nobody on its side can be hit by a critical hit while it stands.',
+  });
 }

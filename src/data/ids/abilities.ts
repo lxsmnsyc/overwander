@@ -379,6 +379,10 @@ const enum Abilities {
   SereneStorm = 200076,
   GeneticApex = 200077,
   AncestralMemory = 200078,
+  PetalBed = 200079,
+  Ignition = 200080,
+  GatorGrip = 200081,
+  Sentry = 200082,
 }
 
 export default Abilities;

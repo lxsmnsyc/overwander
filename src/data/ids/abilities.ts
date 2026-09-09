@@ -434,6 +434,10 @@ const enum Abilities {
   EmberSurge = 200131,
   SiltSurge = 200132,
   PackHunt = 200133,
+  CrookedRun = 200134,
+  Cocoon = 200135,
+  WaterBloom = 200136,
+  SunRoot = 200137,
 }
 
 export default Abilities;

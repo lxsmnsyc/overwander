@@ -885,4 +885,37 @@ export default function registerSignatureAbilities(): void {
     name: 'Pack Hunt',
     description: 'Its moves hit 1.2x against anything an ally has already damaged.',
   });
+
+  // Zigzagoon
+  registerAbility(Abilities.CrookedRun, {
+    name: 'Crooked Run',
+    description:
+      'Each time it acts, moves aimed at it are 0.9x as accurate, stacking 3 times. A landed blow clears it.',
+  });
+
+  // Wurmple
+  registerAbility(Abilities.Cocoon, {
+    name: 'Cocoon',
+    description:
+      'The first time it drops below 1/2 HP, it shells over for 4 seconds: it deals and takes 0.5x damage.',
+  });
+
+  /**
+   * Lotad and Seedot are counterparts, so each calls up its own sky on
+   * taking the field and lives off it. Whichever arrived last owns the
+   * weather, which is what makes the two cancel
+   */
+
+  // Lotad
+  registerAbility(Abilities.WaterBloom, {
+    name: 'Water Bloom',
+    description:
+      'It calls up Rain as it takes the field, and heals 1/16 of its HP each time it acts in Rain.',
+  });
+
+  // Seedot
+  registerAbility(Abilities.SunRoot, {
+    name: 'Sun Root',
+    description: 'It calls up Sun as it takes the field, and its moves deal 1.3x damage in Sun.',
+  });
 }

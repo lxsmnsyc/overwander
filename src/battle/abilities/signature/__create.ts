@@ -4,13 +4,13 @@ import { Stats } from '../../../data/constants/stats';
 import type Abilities from '../../../data/ids/abilities';
 import type { Types } from '../../../data/constants/types';
 import { DamageFlags, MoveAttackFlags, MoveCategories, Moves } from '../../../data/ids/moves';
-import { getMoveData } from '../../../data/moves';
-import { Statuses } from '../../../data/ids/status';
+import { getMoveData, getWeatherMove } from '../../../data/moves';
+import { Statuses, type Weathers } from '../../../data/ids/status';
 import type Battle from '../../core';
-import { BattleEvents, EffectType, type UnitDamageEvent } from '../../events';
+import { BattleEvents, EffectType, MoveTargetType, type UnitDamageEvent } from '../../events';
 import { type Lifecycle, MergedLifecycle } from '../../lifecycle';
 import type Unit from '../../unit';
-import { onUnitActs } from '../../utils';
+import { isPrimalWeather, onUnitActs } from '../../utils';
 import { createAbility } from '../__create';
 
 /**
@@ -646,4 +646,73 @@ export function createFossilAbility(
       event.value *= shell ? FOSSIL_SHELL_SCALE : FOSSIL_BLADE_SCALE;
     }),
   );
+}
+
+/** What its own sky is worth to each of the two: a heal, or harder blows */
+export const GROVE_HEAL_FRACTION = 1 / 16;
+export const GROVE_DAMAGE_SCALE = 1.3;
+
+/** Which way a grove line is paid by its sky */
+export type GroveBoon = 'heals' | 'strikes';
+
+/**
+ * What Lotad and Seedot share: each calls up its own sky on taking the
+ * field and lives off it, so whichever arrived last owns the weather
+ * and the two cancel. The sky is set by casting the move that calls it,
+ * the way Drought casts Sunny Day
+ */
+export function createGroveAbility(
+  ability: Abilities,
+  weather: Weathers,
+  inWeather: (unit: Unit) => boolean,
+  boon: GroveBoon,
+): ((battle: Battle) => void) & { ability: Abilities } {
+  return createAbility(ability, (battle) => {
+    function paid(unit: Unit): boolean {
+      return unit.alive && unit.hasAbility(ability) && inWeather(unit);
+    }
+
+    return new MergedLifecycle([
+      battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+        // A primal sky is not something an ability argues with
+        if (event.source.hasAbility(ability) && !isPrimalWeather(battle.weather.current)) {
+          event.source.triggerAbility(ability);
+        }
+      }),
+      battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
+        if (event.ability !== ability) {
+          return;
+        }
+
+        const move = getWeatherMove(weather);
+
+        if (move == null) {
+          event.source.setWeather(weather);
+          return;
+        }
+
+        event.source.triggerMove(move, { type: MoveTargetType.None }, 0);
+      }),
+      ...(boon === 'heals'
+        ? onUnitActs(battle, (unit) => {
+            if (!paid(unit)) {
+              return;
+            }
+
+            unit.heal(
+              { type: EffectType.Ability, ability, unit },
+              unit,
+              unit.checkStat(Stats.HP, 0) * GROVE_HEAL_FRACTION,
+              0,
+            );
+          })
+        : [
+            battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, (event) => {
+              if (paid(event.parent.source)) {
+                event.value *= GROVE_DAMAGE_SCALE;
+              }
+            }),
+          ]),
+    ]);
+  });
 }

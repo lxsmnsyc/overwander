@@ -9,6 +9,8 @@ import {
   FIELD_RAISED_SCALE,
   FOSSIL_BLADE_SCALE,
   FOSSIL_SHELL_SCALE,
+  GROVE_DAMAGE_SCALE,
+  GROVE_HEAL_FRACTION,
   GROWTH_MAX_STAGES,
   MARK_DEEP_FRACTION,
   MARK_FRACTION,
@@ -151,7 +153,14 @@ import {
 import { Statuses, TeamStatuses, Weathers } from '../../../src/data/ids/status';
 import turns from '../../../src/battle/turn';
 import { layersUnder } from '../../../src/battle/moves/spikes';
-import { PACK_HUNT_SCALE } from '../../../src/battle/abilities/signature/treecko-to-deoxys';
+import {
+  COCOON_DURATION,
+  COCOON_SCALE,
+  COCOON_THRESHOLD,
+  CROOKED_RUN_MAX_STACKS,
+  CROOKED_RUN_SCALE,
+  PACK_HUNT_SCALE,
+} from '../../../src/battle/abilities/signature/treecko-to-deoxys';
 import { unitTarget } from '../../../src/battle/utils';
 import { SWITCHING_SPAN } from '../../../src/battle/status/switching';
 import { createBattle, createUnit, pinRandom } from '../harness';
@@ -3740,5 +3749,141 @@ describe('Pack Hunt', () => {
     ally.damage({ type: EffectType.Move, move: Moves.Pound, unit: ally }, enemy, 10, 0);
 
     expect(holder.checkMovePower(Moves.Pound, target)).toBeCloseTo(40 * PACK_HUNT_SCALE, 5);
+  });
+});
+
+describe('Crooked Run', () => {
+  it('is harder to hit for every step it takes, until something lands', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.CrookedRun);
+
+    const target = unitTarget(holder);
+    const clean = enemy.checkMoveAccuracy(Moves.Pound, target);
+
+    for (let steps = 1; steps <= CROOKED_RUN_MAX_STACKS + 2; steps += 1) {
+      act(battle, holder);
+
+      const kept = Math.min(CROOKED_RUN_MAX_STACKS, steps);
+
+      expect(enemy.checkMoveAccuracy(Moves.Pound, target)).toBeCloseTo(
+        (clean ?? 0) * CROOKED_RUN_SCALE ** kept,
+        5,
+      );
+    }
+
+    // Caught once, and the whole run counts for nothing
+    enemy.damage(NONE_CAUSE, holder, 1, 0);
+
+    expect(enemy.checkMoveAccuracy(Moves.Pound, target)).toBe(clean);
+  });
+
+  it('leaves a blow aimed at anybody else alone', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.CrookedRun);
+
+    const clean = enemy.checkMoveAccuracy(Moves.Pound, unitTarget(ally));
+
+    act(battle, holder);
+
+    expect(enemy.checkMoveAccuracy(Moves.Pound, unitTarget(ally))).toBe(clean);
+  });
+});
+
+describe('Cocoon', () => {
+  it('shells over once, cutting both sides of a blow', () => {
+    const { battle, teamA, teamB } = createBattle();
+    // The damage roll is pinned, so the blows differ only by the shell
+    pinRandom(battle, 0);
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Cocoon);
+
+    const maxHP = holder.checkStat(Stats.HP, 0);
+    const bare = resolveAttackDamage(battle, enemy, holder);
+    const thrown = resolveAttackDamage(battle, holder, enemy);
+
+    holder.setHealth(maxHP * COCOON_THRESHOLD + 10);
+    enemy.damage(NONE_CAUSE, holder, 20, 0);
+
+    expect(resolveAttackDamage(battle, enemy, holder)).toBeCloseTo(bare * COCOON_SCALE, 5);
+    expect(resolveAttackDamage(battle, holder, enemy)).toBeCloseTo(thrown * COCOON_SCALE, 5);
+
+    // The shell opens on its own, and it only ever grows one
+    battle.tick(COCOON_DURATION);
+
+    expect(resolveAttackDamage(battle, enemy, holder)).toBeCloseTo(bare, 5);
+
+    holder.setHealth(maxHP * COCOON_THRESHOLD - 1);
+    enemy.damage(NONE_CAUSE, holder, 1, 0);
+
+    expect(resolveAttackDamage(battle, enemy, holder)).toBeCloseTo(bare, 5);
+  });
+});
+
+describe('the Lotad and Seedot pair', () => {
+  it('calls up its own sky as it takes the field', () => {
+    const { battle, teamA } = createBattle();
+    const lotad = createUnit(battle, teamA);
+    lotad.addAbility(Abilities.WaterBloom);
+
+    battle.emit(BattleEvents.UnitEntersField, {
+      id: 'UnitEntersField',
+      disabled: false,
+      source: lotad,
+      reactivation: false,
+    });
+    battle.tick(turns(1));
+
+    expect(battle.weather.current).toBe(Weathers.Rain);
+
+    const seedot = createUnit(battle, teamA);
+    seedot.addAbility(Abilities.SunRoot);
+
+    battle.emit(BattleEvents.UnitEntersField, {
+      id: 'UnitEntersField',
+      disabled: false,
+      source: seedot,
+      reactivation: false,
+    });
+    battle.tick(turns(1));
+
+    // Whichever arrived last owns the sky, which is how the two cancel
+    expect(battle.weather.current).toBe(Weathers.Sunny);
+  });
+
+  it('pays the water half in health and the sun half in damage', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0);
+    const lotad = createUnit(battle, teamA);
+    const seedot = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    lotad.addAbility(Abilities.WaterBloom);
+    seedot.addAbility(Abilities.SunRoot);
+
+    const maxHP = lotad.checkStat(Stats.HP, 0);
+    const clean = resolveAttackDamage(battle, seedot, enemy);
+
+    lotad.setHealth(maxHP / 2);
+    lotad.setWeather(Weathers.Rain);
+
+    act(battle, lotad);
+
+    expect(lotad.health - maxHP / 2).toBeCloseTo(maxHP * GROVE_HEAL_FRACTION, 5);
+
+    // Nothing for the sun half while the rain stands
+    expect(resolveAttackDamage(battle, seedot, enemy)).toBeCloseTo(clean, 5);
+
+    seedot.setWeather(Weathers.Sunny);
+    lotad.setHealth(maxHP / 2);
+
+    act(battle, lotad);
+
+    expect(lotad.health).toBe(maxHP / 2);
+    expect(resolveAttackDamage(battle, seedot, enemy)).toBeCloseTo(clean * GROVE_DAMAGE_SCALE, 5);
   });
 });

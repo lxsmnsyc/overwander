@@ -312,7 +312,7 @@ const enum Abilities {
   Constrict = 200009,
   ChainLightning = 200010,
   CurlUp = 200011,
-  BroodFury = 200012,
+  RegalHide = 200012,
   RegalVenom = 200013,
   WishingWell = 200014,
   NineTails = 200015,

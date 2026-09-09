@@ -2,8 +2,7 @@ import { AttackPriority, EventPriority } from '../../../core/event-emitter';
 import { Stats } from '../../../data/constants/stats';
 import Abilities from '../../../data/ids/abilities';
 import { Statuses } from '../../../data/ids/status';
-import { MoveAttackFlags, Moves } from '../../../data/ids/moves';
-import type Alliance from '../../alliance';
+import { MoveAttackFlags, MoveCategories, Moves } from '../../../data/ids/moves';
 import type Battle from '../../core';
 import { BattleEvents, type EffectCause, EffectType } from '../../events';
 import { MergedLifecycle } from '../../lifecycle';
@@ -19,12 +18,12 @@ export const CURL_UP_STEP = 0.1;
 /** How tight it rolls before it can roll no tighter */
 export const CURL_UP_MAX_STACKS = 5;
 
-/** What a hurt ally is worth to her, and what a fallen one is worth */
-export const BROOD_FURY_HURT_SCALE = 1.35;
-export const BROOD_FURY_FALLEN_SCALE = 1.5;
+/** What the hide turns aside, and what a cracked hide lets through */
+export const REGAL_HIDE_GUARD_SCALE = 0.7;
+export const REGAL_HIDE_EXPOSED_SCALE = 1.15;
 
-/** The share of health that counts an ally as hurt */
-export const BROOD_FURY_THRESHOLD = 1 / 2;
+/** The share of health the hide holds down to */
+export const REGAL_HIDE_THRESHOLD = 1 / 2;
 
 /** What venom already in the blood is worth to the next blow */
 export const REGAL_VENOM_SCALE = 1.3;
@@ -73,22 +72,6 @@ function isDrainHeal(cause: EffectCause): boolean {
 /** Whether the unit is mid-cast, which is when the roots are down */
 function isRooted(unit: Unit): boolean {
   return unit.casting != null || unit.channeling != null;
-}
-
-/** Whether an ally of this unit is standing hurt */
-function alliesAreHurt(battle: Battle, unit: Unit): boolean {
-  for (const ally of battle.units()) {
-    if (
-      ally !== unit &&
-      ally.alive &&
-      ally.team.alliance === unit.team.alliance &&
-      ally.health <= ally.checkStat(Stats.HP, 0) * BROOD_FURY_THRESHOLD
-    ) {
-      return true;
-    }
-  }
-
-  return false;
 }
 
 /** The ally furthest from full, for the wish to go to */
@@ -178,44 +161,28 @@ const sandshrewToOddish = [
     ]);
   }),
 
-  // Nidoran (female): she fights hardest for what is behind her, and
-  // a loss is not something the fight takes back
-  createAbility(Abilities.BroodFury, (battle) => {
-    // Kept per side rather than per unit: a mother that fell and was
-    // sent out again is still avenging the same brood
-    const bereaved = new Set<Alliance>();
+  // Nidoran (female): armour with a line in it. Above the line the
+  // hide turns a blow aside, below it nothing does
+  createAbility(Abilities.RegalHide, (battle) =>
+    battle.on(BattleEvents.UnitAttackResolveStat, EventPriority.Post, (event) => {
+      const parent = event.parent;
+      const target = parent.target;
 
-    return new MergedLifecycle([
-      battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
-        const source = event.source;
+      if (
+        event.unit !== parent.source ||
+        (event.stat !== Stats.Attack && event.stat !== Stats.SpecialAttack) ||
+        !target.hasAbility(Abilities.RegalHide)
+      ) {
+        return;
+      }
 
-        if (event.power == null || !source.hasAbility(Abilities.BroodFury)) {
-          return;
-        }
-
-        if (bereaved.has(source.team.alliance)) {
-          event.power *= BROOD_FURY_FALLEN_SCALE;
-        } else if (alliesAreHurt(battle, source)) {
-          event.power *= BROOD_FURY_HURT_SCALE;
-        }
-      }),
-      battle.on(BattleEvents.UnitFaints, EventPriority.Post, (event) => {
-        const fallen = event.source;
-
-        for (const unit of battle.units()) {
-          if (
-            unit !== fallen &&
-            unit.alive &&
-            unit.team.alliance === fallen.team.alliance &&
-            unit.hasAbility(Abilities.BroodFury)
-          ) {
-            bereaved.add(fallen.team.alliance);
-            unit.triggerAbility(Abilities.BroodFury);
-          }
-        }
-      }),
-    ]);
-  }),
+      if (target.health < target.checkStat(Stats.HP, 0) * REGAL_HIDE_THRESHOLD) {
+        event.value *= REGAL_HIDE_EXPOSED_SCALE;
+      } else if (parent.category === MoveCategories.Physical) {
+        event.value *= REGAL_HIDE_GUARD_SCALE;
+      }
+    }),
+  ),
 
   // Nidoran (male): the venom is the point. What it poisons only gets
   // worse, and what is already poisoned is what it hits hardest

@@ -74,8 +74,6 @@ import {
 import {
   BLOODTHIRST_DRAIN_SCALE,
   BLOODTHIRST_HEAL_SCALE,
-  BROOD_FURY_FALLEN_SCALE,
-  BROOD_FURY_HURT_SCALE,
   CURL_UP_MAX_STACKS,
   CURL_UP_STEP,
   DEEP_ROOTS_SCALE,
@@ -83,6 +81,9 @@ import {
   LULLABY_SLEEP_SCALE,
   NINE_TAILS_MAX_STACKS,
   NINE_TAILS_STEP,
+  REGAL_HIDE_EXPOSED_SCALE,
+  REGAL_HIDE_GUARD_SCALE,
+  REGAL_HIDE_THRESHOLD,
   REGAL_VENOM_SCALE,
   WISHING_WELL_FRACTION,
 } from '../../../src/battle/abilities/signature/sandshrew-to-oddish';
@@ -747,42 +748,34 @@ describe('Curl Up', () => {
   });
 });
 
-describe('Brood Fury', () => {
-  it('rises for a hurt ally and stays up once one has fallen', () => {
+describe('Regal Hide', () => {
+  it('turns physical blows aside until the hide cracks', () => {
     const { battle, teamA, teamB } = createBattle();
-    pinRandom(battle, 1);
     const holder = createUnit(battle, teamA);
-    const ally = createUnit(battle, teamA);
     const enemy = createUnit(battle, teamB);
-    holder.addAbility(Abilities.BroodFury);
+    holder.addAbility(Abilities.RegalHide);
 
-    const target = { type: MoveTargetType.Unit, unit: enemy } as const;
+    const physical = makeAttack(enemy, holder, Moves.Pound, Types.Normal, MoveCategories.Physical);
+    const special = makeAttack(enemy, holder, Moves.Ember, Types.Fire, MoveCategories.Special);
+    const maxHP = holder.checkStat(Stats.HP, 0);
 
-    expect(holder.checkMovePower(Moves.Tackle, target)).toBe(40);
-
-    ally.setHealth(ally.checkStat(Stats.HP, 0) / 2);
-
-    expect(holder.checkMovePower(Moves.Tackle, target)).toBeCloseTo(40 * BROOD_FURY_HURT_SCALE, 5);
-
-    ally.faint(enemy);
-
-    expect(holder.checkMovePower(Moves.Tackle, target)).toBeCloseTo(
-      40 * BROOD_FURY_FALLEN_SCALE,
+    expect(resolveAttackStat(battle, physical, enemy, Stats.Attack, 100)).toBeCloseTo(
+      100 * REGAL_HIDE_GUARD_SCALE,
       5,
     );
-  });
 
-  it('is nothing to a mother fighting alone', () => {
-    const { battle, teamA, teamB } = createBattle();
-    const holder = createUnit(battle, teamA);
-    const enemy = createUnit(battle, teamB);
-    holder.addAbility(Abilities.BroodFury);
+    // Only the physical half is turned aside while she is whole
+    expect(resolveAttackStat(battle, special, enemy, Stats.SpecialAttack, 100)).toBe(100);
 
-    holder.setHealth(1);
-    enemy.setHealth(1);
+    holder.setHealth(maxHP * REGAL_HIDE_THRESHOLD - 1);
 
-    expect(holder.checkMovePower(Moves.Tackle, { type: MoveTargetType.Unit, unit: enemy })).toBe(
-      40,
+    expect(resolveAttackStat(battle, physical, enemy, Stats.Attack, 100)).toBeCloseTo(
+      100 * REGAL_HIDE_EXPOSED_SCALE,
+      5,
+    );
+    expect(resolveAttackStat(battle, special, enemy, Stats.SpecialAttack, 100)).toBeCloseTo(
+      100 * REGAL_HIDE_EXPOSED_SCALE,
+      5,
     );
   });
 });

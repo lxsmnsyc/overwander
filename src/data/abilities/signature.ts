@@ -578,4 +578,29 @@ export default function registerSignatureAbilities(): void {
     name: 'Spillover',
     description: 'Healing past its full HP is thrown at an enemy as damage rather than wasted.',
   });
+
+  // Sudowoodo
+  registerAbility(Abilities.FalseWood, {
+    name: 'False Wood',
+    description:
+      'It counts as a Grass type for working out what hurts it, until the first hit lands on it.',
+  });
+
+  // Hoppip
+  registerAbility(Abilities.Updraft, {
+    name: 'Updraft',
+    description: 'It cannot be trapped, its Speed cannot be lowered, and it always gets away.',
+  });
+
+  // Aipom
+  registerAbility(Abilities.Tailthrow, {
+    name: 'Tailthrow',
+    description: 'It casts Fling as it arrives on the field, throwing its held item at an enemy.',
+  });
+
+  // Sunkern
+  registerAbility(Abilities.SunlitCharge, {
+    name: 'Sunlit Charge',
+    description: 'Its channelled moves hit 1.3x and cannot be interrupted.',
+  });
 }

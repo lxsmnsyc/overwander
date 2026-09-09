@@ -1,5 +1,6 @@
 import { AttackPriority, EventPriority } from '../../../core/event-emitter';
-import { Stats } from '../../../data/constants/stats';
+import { Stages, Stats } from '../../../data/constants/stats';
+import { Types } from '../../../data/constants/types';
 import Abilities from '../../../data/ids/abilities';
 import { DamageFlags, MoveAttackFlags, Moves } from '../../../data/ids/moves';
 import type Battle from '../../core';
@@ -9,9 +10,13 @@ import { PASSED_STAGES } from '../../moves/switch-out';
 import type Unit from '../../unit';
 import { onUnitActs, unitTarget } from '../../utils';
 import { createAbility } from '../__create';
+import { createUnitState, isChannelledMove } from './__create';
 
 /** What the bed of petals gives an ally each time it moves */
 export const PETAL_BED_FRACTION = 1 / 16;
+
+/** What holding a move down is worth */
+export const SUNLIT_CHARGE_SCALE = 1.3;
 
 /** The first enemy still standing, for an ability that casts at one */
 function firstEnemy(battle: Battle, unit: Unit): Unit | undefined {
@@ -362,6 +367,137 @@ const chikoritaToCelebi = [
       }),
     ]);
   }),
+
+  // Sudowoodo: the act is the whole pokemon. Answered where
+  // effectiveness is worked out, one defending type at a time, so a
+  // Water move meets a tree rather than a rock
+  createAbility(Abilities.FalseWood, (battle) => {
+    const { state, lifecycles } = createUnitState<boolean>(battle);
+    // The disguise stands for one type: whichever defending type comes
+    // first is answered as Grass, and the rest count for nothing
+    const answered = new WeakSet<object>();
+    const spare = new WeakSet<object>();
+
+    return new MergedLifecycle([
+      battle.on(BattleEvents.UnitAttackResolveEffectiveness, EventPriority.Pre, (event) => {
+        const parent = event.parent;
+        const target = parent.target;
+
+        if (state.get(target) || !target.hasAbility(Abilities.FalseWood)) {
+          return;
+        }
+
+        if (answered.has(parent)) {
+          spare.add(event);
+          return;
+        }
+
+        answered.add(parent);
+        event.defendingType = Types.Grass;
+
+        if (!(parent.flags & MoveAttackFlags.Simulated)) {
+          target.triggerAbility(Abilities.FalseWood);
+        }
+      }),
+      battle.on(BattleEvents.UnitAttackResolveEffectiveness, EventPriority.Post, (event) => {
+        if (spare.has(event)) {
+          event.multiplier = 1;
+        }
+      }),
+      // One blow is all the act survives, until it next takes the field
+      battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
+        if (event.success && event.target.hasAbility(Abilities.FalseWood)) {
+          state.set(event.target, true);
+        }
+      }),
+      ...lifecycles,
+    ]);
+  }),
+
+  // Hoppip: it is carried on the wind rather than standing on the
+  // ground, so nothing holds it and nothing slows it
+  createAbility(
+    Abilities.Updraft,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.CheckUnitEscape, EventPriority.Post, (event) => {
+          if (!event.success && event.source.hasAbility(Abilities.Updraft)) {
+            event.success = true;
+
+            event.source.triggerAbility(Abilities.Updraft);
+          }
+        }),
+        battle.on(BattleEvents.CheckUnitCanAddStage, EventPriority.Post, (event) => {
+          if (
+            event.success &&
+            event.value < 0 &&
+            event.stage === Stages.Speed &&
+            event.source.hasAbility(Abilities.Updraft)
+          ) {
+            event.success = false;
+
+            // A cue is something a watcher sees, so it waits for a real
+            // attempt rather than the AI weighing one
+            if (!event.simulated) {
+              event.source.triggerAbility(Abilities.Updraft);
+            }
+          }
+        }),
+      ]),
+  ),
+
+  // Aipom: the tail is a third hand, and what a thrown item does on
+  // impact is Fling's business
+  createAbility(
+    Abilities.Tailthrow,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+          if (!event.reactivation && event.source.hasAbility(Abilities.Tailthrow)) {
+            event.source.triggerAbility(Abilities.Tailthrow);
+          }
+        }),
+        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
+          if (event.ability !== Abilities.Tailthrow) {
+            return;
+          }
+
+          const enemy = firstEnemy(battle, event.source);
+
+          if (enemy) {
+            event.source.triggerMove(Moves.Fling, unitTarget(enemy), 0);
+          }
+        }),
+      ]),
+  ),
+
+  // Sunkern: the whole line is built around gathering light, so what
+  // it holds down lands harder and nothing shakes it loose
+  createAbility(
+    Abilities.SunlitCharge,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
+          if (
+            event.power != null &&
+            event.source.hasAbility(Abilities.SunlitCharge) &&
+            isChannelledMove(event.move)
+          ) {
+            event.power *= SUNLIT_CHARGE_SCALE;
+          }
+        }),
+        // Fainting still ends it: that interrupt fires at zero health
+        battle.on(BattleEvents.UnitInterrupt, EventPriority.Pre, (event) => {
+          const source = event.source;
+
+          if (source.health > 0 && source.channeling && source.hasAbility(Abilities.SunlitCharge)) {
+            event.disabled = true;
+
+            source.triggerAbility(Abilities.SunlitCharge);
+          }
+        }),
+      ]),
+  ),
 ];
 
 export default chikoritaToCelebi;

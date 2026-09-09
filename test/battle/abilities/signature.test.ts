@@ -4,7 +4,10 @@ import registerAbilities, {
   getRegisteredAbilities,
 } from '../../../src/data/abilities';
 import { SIGNATURE_ABILITIES } from '../../../src/battle/abilities/signature';
-import { PETAL_BED_FRACTION } from '../../../src/battle/abilities/signature/chikorita-to-celebi';
+import {
+  PETAL_BED_FRACTION,
+  SUNLIT_CHARGE_SCALE,
+} from '../../../src/battle/abilities/signature/chikorita-to-celebi';
 import {
   ABSOLUTE_CALM_STATUS_SCALE,
   ANCESTRAL_MEMORY_SCALE,
@@ -2843,5 +2846,163 @@ describe('Spillover', () => {
     holder.heal(NONE_CAUSE, holder, 40, 0);
 
     expect(enemy.health).toBe(enemyHP);
+  });
+});
+
+describe('False Wood', () => {
+  function effectiveness(battle: Battle, attacker: Unit, target: Unit, type: Types): number {
+    const event = {
+      id: 'UnitAttackResolveEffectiveness',
+      disabled: false,
+      parent: makeAttack(attacker, target, Moves.WaterGun, type, MoveCategories.Special),
+      defendingType: Types.Rock,
+      multiplier: 1,
+    };
+    battle.emit(BattleEvents.UnitAttackResolveEffectiveness, event);
+    return event.multiplier;
+  }
+
+  it('answers a blow as a tree rather than a rock', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA, [Types.Rock]);
+    const enemy = createUnit(battle, teamB);
+
+    // Water is twice as bad against rock and half as bad against grass
+    expect(effectiveness(battle, enemy, holder, Types.Water)).toBeCloseTo(2, 5);
+
+    holder.addAbility(Abilities.FalseWood);
+
+    expect(effectiveness(battle, enemy, holder, Types.Water)).toBeCloseTo(0.5, 5);
+  });
+
+  it('drops the act on the first hit that lands', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA, [Types.Rock]);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.FalseWood);
+
+    enemy.damage(NONE_CAUSE, holder, 10, 0);
+
+    expect(effectiveness(battle, enemy, holder, Types.Water)).toBeCloseTo(2, 5);
+
+    // Taking the field again puts the disguise back up
+    battle.emit(BattleEvents.UnitEntersField, {
+      id: 'UnitEntersField',
+      disabled: false,
+      source: holder,
+      reactivation: false,
+    });
+
+    expect(effectiveness(battle, enemy, holder, Types.Water)).toBeCloseTo(0.5, 5);
+  });
+});
+
+describe('Updraft', () => {
+  it('gets away from whatever is holding it', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    createUnit(battle, teamB);
+
+    holder.addStatus(Statuses.Trapped, NONE_CAUSE);
+
+    expect(holder.checkEscape()).toBe(false);
+
+    holder.addAbility(Abilities.Updraft);
+
+    expect(holder.checkEscape()).toBe(true);
+  });
+
+  it('keeps its Speed where it is', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Updraft);
+
+    const cause = { type: EffectType.Ability, ability: Abilities.Updraft, unit: enemy } as const;
+
+    holder.addStage(Stages.Speed, -2, cause);
+
+    expect(holder.stages[Stages.Speed]).toBe(0);
+
+    // Everything else still slips through, and a raise is welcome
+    holder.addStage(Stages.Attack, -2, cause);
+    holder.addStage(Stages.Speed, 1, cause);
+
+    expect(holder.stages[Stages.Attack]).toBe(-2);
+    expect(holder.stages[Stages.Speed]).toBe(1);
+  });
+});
+
+describe('Tailthrow', () => {
+  it('casts Fling at an enemy as it arrives', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0);
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Tailthrow);
+    holder.addItem(Items.OranBerry);
+
+    let cast: Moves | undefined;
+    battle.on(BattleEvents.UnitTriggerMove, AttackPriority.Post, (event) => {
+      if (event.source === holder) {
+        cast = event.move;
+      }
+    });
+
+    battle.emit(BattleEvents.UnitEntersField, {
+      id: 'UnitEntersField',
+      disabled: false,
+      source: holder,
+      reactivation: false,
+    });
+
+    expect(cast).toBe(Moves.Fling);
+
+    // The cast move takes its own flight time to arrive
+    battle.tick(turns(1));
+
+    expect(enemy.health).toBeLessThan(enemy.checkStat(Stats.HP, 0));
+  });
+});
+
+describe('Sunlit Charge', () => {
+  it('makes what it holds down land harder', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    const target = { type: MoveTargetType.Unit, unit: enemy } as const;
+
+    const bare = holder.checkMovePower(Moves.SolarBeam, target);
+
+    holder.addAbility(Abilities.SunlitCharge);
+
+    expect(holder.checkMovePower(Moves.SolarBeam, target)).toBeCloseTo(
+      (bare ?? 0) * SUNLIT_CHARGE_SCALE,
+      5,
+    );
+
+    // A move let go at once gains nothing
+    expect(holder.checkMovePower(Moves.Pound, target)).toBe(40);
+  });
+
+  it('holds the channel through an interrupt', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const plain = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.SunlitCharge);
+
+    const target = { type: MoveTargetType.Unit, unit: enemy } as const;
+
+    holder.channel(Moves.SolarBeam, target, 0);
+    plain.channel(Moves.SolarBeam, target, 0);
+
+    expect(holder.channeling).not.toBeUndefined();
+
+    holder.interrupt();
+    plain.interrupt();
+
+    expect(holder.channeling).not.toBeUndefined();
+    expect(plain.channeling).toBeUndefined();
   });
 });

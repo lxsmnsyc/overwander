@@ -391,6 +391,10 @@ const enum Abilities {
   Prophecy = 200088,
   LiveWire = 200089,
   Spillover = 200090,
+  FalseWood = 200091,
+  Updraft = 200092,
+  Tailthrow = 200093,
+  SunlitCharge = 200094,
 }
 
 export default Abilities;

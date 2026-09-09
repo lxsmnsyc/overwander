@@ -271,6 +271,21 @@ describe('the moves that read the fight', () => {
     expect(user.checkMovePower(Moves.Flail, unitTarget(target))).toBe(200);
   });
 
+  it('lands a move whose power is only worked out as it resolves', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0);
+    const user = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB);
+
+    user.friendship = 255;
+
+    // Return carries no power in the registry, so nothing but the
+    // resolved figure can say it is a damaging move
+    user.triggerMoveEffect(Moves.Return, unitTarget(target), 0);
+
+    expect(target.health).toBeLessThan(target.checkStat(Stats.HP, 0));
+  });
+
   it('reads friendship for Return and its mirror', () => {
     const { battle, teamA, teamB } = createBattle();
     const user = createUnit(battle, teamA);

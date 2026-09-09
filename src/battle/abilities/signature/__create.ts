@@ -133,6 +133,11 @@ export function isPhysicalMove(move: Moves): boolean {
   return !PSEUDO_MOVES.has(move) && getMoveData(move).category === MoveCategories.Physical;
 }
 
+/** Whether the move is held down over steps rather than let go at once */
+export function isChannelledMove(move: Moves): boolean {
+  return !PSEUDO_MOVES.has(move) && (getMoveData(move).steps ?? 0) > 0;
+}
+
 /**
  * The shared half of every effect that slows down the next thing a
  * unit reaches for: a coil, a spiral, a blow to the head. The mark is

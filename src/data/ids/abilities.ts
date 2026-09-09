@@ -486,6 +486,10 @@ const enum Abilities {
   FruitCrop = 200183,
   RingingHead = 200184,
   DoomMark = 200185,
+  ColdSnap = 200186,
+  Applause = 200187,
+  PearlGuard = 200188,
+  Unchanged = 200189,
 }
 
 export default Abilities;

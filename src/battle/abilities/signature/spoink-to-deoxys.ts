@@ -13,7 +13,7 @@ import { FORCED_SWITCH_MOVES } from '../../moves/switch-out';
 import { BattleEvents, EffectType, MoveTargetType } from '../../events';
 import { MergedLifecycle } from '../../lifecycle';
 import type Unit from '../../unit';
-import { hasFreeItemSlot } from '../../utils';
+import { countHeldItems, hasFreeItemSlot, unitTarget } from '../../utils';
 import { createAbility } from '../__create';
 import {
   createDamageTaken,
@@ -42,6 +42,15 @@ const SPOTTED_STAGES = [
 
 /** What walking into the pit costs whoever missed */
 export const ANTLION_PIT_FRACTION = 1 / 8;
+
+/** How often a touch of frost takes hold */
+export const COLD_SNAP_CHANCE = 0.2;
+
+/** What a round of applause is worth */
+export const APPLAUSE_FRACTION = 1 / 16;
+
+/** What the pearl is worth while it is still in the shell */
+export const PEARL_GUARD_SCALE = 1.5;
 
 /** What the ferryman takes for a passenger */
 export const SOUL_HARVEST_FRACTION = 1 / 4;
@@ -280,6 +289,102 @@ const spoinkToDeoxys = [
       event.success = false;
     });
   }),
+
+  // Snorunt: the cold takes hold of whatever touches it, sometimes
+  createAbility(Abilities.ColdSnap, (battle) =>
+    battle.on(BattleEvents.UnitAttack, AttackPriority.Post, (event) => {
+      const source = event.source;
+      const target = event.target;
+
+      if (
+        !event.success ||
+        !source.alive ||
+        event.flags & MoveAttackFlags.Simulated ||
+        !target.hasAbility(Abilities.ColdSnap) ||
+        !source.checkMoveContact(event.move, unitTarget(target)) ||
+        battle.random() > COLD_SNAP_CHANCE
+      ) {
+        return;
+      }
+
+      target.triggerAbility(Abilities.ColdSnap);
+      source.addStatus(Statuses.Frozen, {
+        type: EffectType.Ability,
+        ability: Abilities.ColdSnap,
+        unit: target,
+      });
+    }),
+  ),
+
+  // Spheal: it claps for everybody else's work, and the clapping is
+  // what does it good
+  createAbility(Abilities.Applause, (battle) =>
+    battle.on(BattleEvents.UnitTriggerMoveRollHit, EventPriority.Post, (event) => {
+      const source = event.parent.source;
+
+      if (!event.hit) {
+        return;
+      }
+
+      for (const seal of battle.units()) {
+        if (
+          seal === source ||
+          !seal.alive ||
+          seal.team.alliance !== source.team.alliance ||
+          !seal.hasAbility(Abilities.Applause)
+        ) {
+          continue;
+        }
+
+        seal.triggerAbility(Abilities.Applause);
+        seal.heal(
+          { type: EffectType.Ability, ability: Abilities.Applause, unit: seal },
+          seal,
+          seal.checkStat(Stats.HP, 0) * APPLAUSE_FRACTION,
+          0,
+        );
+      }
+    }),
+  ),
+
+  // Clamperl: the pearl is what the shell is worth, and an empty shell
+  // is worth nothing
+  createAbility(Abilities.PearlGuard, (battle) =>
+    battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
+      const source = event.source;
+
+      if (
+        (event.stat === Stats.SpecialAttack || event.stat === Stats.SpecialDefense) &&
+        source.hasAbility(Abilities.PearlGuard) &&
+        countHeldItems(source) > 0
+      ) {
+        event.value *= PEARL_GUARD_SCALE;
+      }
+    }),
+  ),
+
+  // Relicanth: a hundred million years of nothing changing, so the type
+  // chart has nothing to say about it either way
+  createAbility(
+    Abilities.Unchanged,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.UnitAttackResolveEffectiveness, EventPriority.Post, (event) => {
+          if (event.parent.target.hasAbility(Abilities.Unchanged)) {
+            event.multiplier = 1;
+          }
+        }),
+        battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Post, (event) => {
+          if (
+            event.immune &&
+            event.target.type === MoveTargetType.Unit &&
+            event.target.unit.hasAbility(Abilities.Unchanged)
+          ) {
+            event.immune = false;
+          }
+        }),
+      ]),
+  ),
 
   // Duskull: the line ferries whatever falls, whichever side it fell on
   createAbility(Abilities.SoulHarvest, (battle) =>

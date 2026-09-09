@@ -160,6 +160,8 @@ import {
 import { Statuses, TeamStatuses, Weathers } from '../../../src/data/ids/status';
 import {
   ANTLION_PIT_FRACTION,
+  APPLAUSE_FRACTION,
+  COLD_SNAP_CHANCE,
   DIRTY_FIGHTER_SCALE,
   DOOM_MARK_DURATION,
   DOOM_MARK_SCALE,
@@ -169,6 +171,7 @@ import {
   PATIENT_STALK_MAX_STEPS,
   PATIENT_STALK_SECOND,
   PATIENT_STALK_STEP,
+  PEARL_GUARD_SCALE,
   RINGING_HEAD_SCALE,
   SILT_BED_SCALE,
   SOOTHING_PRESENCE_SCALE,
@@ -5178,5 +5181,115 @@ describe('Doom Mark', () => {
     expect(
       dealDamage(ally, enemy, Moves.Pound, 40, Types.Normal, MoveCategories.Physical),
     ).toBeCloseTo(clean, 5);
+  });
+});
+
+describe('Cold Snap', () => {
+  it('freezes whoever touches it, on the roll', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.ColdSnap);
+
+    // A roll under the chance takes hold
+    pinRandom(battle, COLD_SNAP_CHANCE - 0.01);
+    enemy.attack(holder, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(enemy.status[Statuses.Frozen]).not.toBeUndefined();
+
+    // A roll over it does not, and neither does a move that never
+    // touched it
+    const second = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    second.attack(holder, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(second.status[Statuses.Frozen]).toBeUndefined();
+
+    pinRandom(battle, 0);
+    second.attack(holder, Moves.Ember, 40, Types.Fire, MoveCategories.Special, 0);
+
+    expect(second.status[Statuses.Frozen]).toBeUndefined();
+  });
+});
+
+describe('Applause', () => {
+  it('claps for the rest of its side and nothing for itself', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Applause);
+
+    const maxHP = holder.checkStat(Stats.HP, 0);
+    holder.setHealth(maxHP / 2);
+
+    rollMove(battle, ally, enemy, Moves.Pound, true);
+
+    expect(holder.health).toBeCloseTo(maxHP / 2 + maxHP * APPLAUSE_FRACTION, 5);
+
+    // Its own moves and the enemy's are worth nothing to it
+    holder.setHealth(maxHP / 2);
+
+    rollMove(battle, holder, enemy, Moves.Pound, true);
+    rollMove(battle, enemy, holder, Moves.Pound, true);
+
+    expect(holder.health).toBeCloseTo(maxHP / 2, 5);
+  });
+});
+
+describe('Pearl Guard', () => {
+  it('is worth nothing with an empty shell', () => {
+    const { battle, teamA } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const bare = createUnit(battle, teamA);
+    holder.addAbility(Abilities.PearlGuard);
+
+    const special = bare.checkStat(Stats.SpecialAttack, 0);
+    const defence = bare.checkStat(Stats.SpecialDefense, 0);
+    const physical = bare.checkStat(Stats.Attack, 0);
+
+    expect(holder.checkStat(Stats.SpecialAttack, 0)).toBeCloseTo(special, 5);
+
+    holder.addItem(Items.Leftovers);
+
+    expect(holder.checkStat(Stats.SpecialAttack, 0)).toBeCloseTo(special * PEARL_GUARD_SCALE, 5);
+    expect(holder.checkStat(Stats.SpecialDefense, 0)).toBeCloseTo(defence * PEARL_GUARD_SCALE, 5);
+    expect(holder.checkStat(Stats.Attack, 0)).toBeCloseTo(physical, 5);
+
+    holder.removeItem(Items.Leftovers, NONE_CAUSE);
+
+    expect(holder.checkStat(Stats.SpecialAttack, 0)).toBeCloseTo(special, 5);
+  });
+});
+
+describe('Unchanged', () => {
+  it('reads every type against it as neutral', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Unchanged);
+    holder.addType(Types.Rock);
+
+    function effectiveness(type: Types): number {
+      const event = {
+        id: 'UnitAttackResolveEffectiveness',
+        disabled: false,
+        parent: makeAttack(enemy, holder, Moves.Pound, type, MoveCategories.Physical),
+        defendingType: Types.Rock,
+        multiplier: 1,
+      };
+      battle.emit(BattleEvents.UnitAttackResolveEffectiveness, event);
+      return event.multiplier;
+    }
+
+    // Water is 2x into Rock and Normal is 0.5x; both read neutral here
+    expect(effectiveness(Types.Water)).toBe(1);
+    expect(effectiveness(Types.Normal)).toBe(1);
+
+    // And an immunity is no immunity either
+    expect(enemy.checkMoveImmunity(Moves.ThunderWave, unitTarget(holder), Types.Ground)).toBe(
+      false,
+    );
   });
 });

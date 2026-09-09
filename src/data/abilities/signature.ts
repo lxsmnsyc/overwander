@@ -1259,4 +1259,28 @@ export default function registerSignatureAbilities(): void {
     description:
       'A move it lands marks that target: the next blow anybody lands on them within 4 seconds hits 1.3x.',
   });
+
+  // Snorunt
+  registerAbility(Abilities.ColdSnap, {
+    name: 'Cold Snap',
+    description: 'Whoever lands a contact move on it is frozen 20% of the time.',
+  });
+
+  // Spheal
+  registerAbility(Abilities.Applause, {
+    name: 'Applause',
+    description: 'It heals 1/16 of its HP each time an ally lands a move.',
+  });
+
+  // Clamperl
+  registerAbility(Abilities.PearlGuard, {
+    name: 'Pearl Guard',
+    description: 'Its Special Attack and Special Defense count 1.5x while it holds an item.',
+  });
+
+  // Relicanth
+  registerAbility(Abilities.Unchanged, {
+    name: 'Unchanged',
+    description: 'Every move hits it for neutral damage: it has no weaknesses and no resistances.',
+  });
 }

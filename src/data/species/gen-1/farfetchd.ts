@@ -54,14 +54,16 @@ export default function registerFarfetchdSpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.Peck, Moves.SandAttack],
+        1: [Moves.Peck, Moves.SandAttack, Moves.PoisonJab],
         7: [Moves.Leer],
         15: [Moves.FuryAttack],
         21: [Moves.KnockOff],
         23: [Moves.SwordsDance],
         26: [Moves.FuryCutter],
         31: [Moves.Agility],
-        37: [Moves.Slash],
+        33: [Moves.NightSlash],
+        37: [Moves.Slash, Moves.AirSlash],
+        43: [Moves.Feint],
         44: [Moves.FalseSwipe],
       },
       teachable: [
@@ -88,6 +90,14 @@ export default function registerFarfetchdSpecies(): void {
         Moves.AerialAce,
         Moves.Facade,
         Moves.SecretPower,
+        Moves.Captivate,
+        Moves.Defog,
+        Moves.LastResort,
+        Moves.NaturalGift,
+        Moves.OminousWind,
+        Moves.Pluck,
+        Moves.Roost,
+        Moves.UTurn,
       ],
       egg: [
         Moves.Gust,

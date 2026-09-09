@@ -79,6 +79,15 @@ const FAMILY_TEACHABLE = [
   Moves.ShockWave,
   Moves.Snatch,
   Moves.WaterPulse,
+  Moves.Captivate,
+  Moves.ChargeBeam,
+  Moves.DrainPunch,
+  Moves.Fling,
+  Moves.GrassKnot,
+  Moves.Gravity,
+  Moves.LastResort,
+  Moves.NaturalGift,
+  Moves.StealthRock,
 ];
 
 export default function registerJigglypuffSpecies(): void {
@@ -122,7 +131,9 @@ export default function registerJigglypuffSpecies(): void {
         19: [Moves.Rollout],
         24: [Moves.DoubleSlap],
         29: [Moves.Rest],
+        33: [Moves.GyroBall],
         34: [Moves.BodySlam],
+        37: [Moves.WakeUpSlap],
         39: [Moves.DoubleEdge],
         44: [Moves.HyperVoice],
       },
@@ -158,7 +169,13 @@ export default function registerJigglypuffSpecies(): void {
       level: {
         1: [Moves.Sing, Moves.Disable, Moves.DefenseCurl, Moves.DoubleSlap],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.HyperBeam,
+        Moves.FocusBlast,
+        Moves.GigaImpact,
+        Moves.GyroBall,
+      ],
     },
   });
 }

@@ -53,6 +53,16 @@ const FAMILY_TEACHABLE = [
   Moves.SecretPower,
   Moves.ShockWave,
   Moves.Thief,
+  Moves.AquaTail,
+  Moves.Captivate,
+  Moves.DragonPulse,
+  Moves.EarthPower,
+  Moves.NaturalGift,
+  Moves.Payback,
+  Moves.PoisonJab,
+  Moves.RockClimb,
+  Moves.RockPolish,
+  Moves.StealthRock,
 ];
 
 const FAMILY_ABILITIES = [Abilities.LightningRod, Abilities.RockHead];
@@ -96,6 +106,7 @@ export default function registerRhyhornSpecies(): void {
         29: [Moves.RockBlast],
         31: [Moves.ScaryFace],
         37: [Moves.HornDrill],
+        45: [Moves.StoneEdge],
         49: [Moves.TakeDown],
         50: [Moves.Leer],
         55: [Moves.Earthquake],
@@ -119,6 +130,10 @@ export default function registerRhyhornSpecies(): void {
 
         Moves.CrushClaw,
         Moves.SwordsDance,
+        Moves.DragonRush,
+        Moves.FireFang,
+        Moves.IceFang,
+        Moves.ThunderFang,
       ],
     },
   });
@@ -153,6 +168,8 @@ export default function registerRhyhornSpecies(): void {
         29: [Moves.RockBlast],
         31: [Moves.ScaryFace],
         37: [Moves.HornDrill],
+        42: [Moves.HammerArm],
+        45: [Moves.StoneEdge],
         54: [Moves.TakeDown],
         55: [Moves.Leer],
         65: [Moves.Earthquake],
@@ -185,6 +202,11 @@ export default function registerRhyhornSpecies(): void {
         Moves.Cut,
         Moves.FocusPunch,
         Moves.SwordsDance,
+        Moves.Avalanche,
+        Moves.Fling,
+        Moves.FocusBlast,
+        Moves.GigaImpact,
+        Moves.ShadowClaw,
       ],
     },
   });

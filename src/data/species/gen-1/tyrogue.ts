@@ -53,6 +53,12 @@ const FAMILY_TEACHABLE = [
   Moves.RockSlide,
   Moves.RockTomb,
   Moves.SecretPower,
+  Moves.Captivate,
+  Moves.Fling,
+  Moves.FocusBlast,
+  Moves.NaturalGift,
+  Moves.RockClimb,
+  Moves.StoneEdge,
 ];
 
 export default function registerTyrogueSpecies(): void {
@@ -87,14 +93,16 @@ export default function registerTyrogueSpecies(): void {
         16: [Moves.JumpKick],
         20: [Moves.BrickBreak],
         21: [Moves.FocusEnergy],
+        25: [Moves.Feint],
         26: [Moves.HiJumpKick],
         31: [Moves.MindReader],
         36: [Moves.Foresight],
         41: [Moves.Endure],
         46: [Moves.MegaKick],
         51: [Moves.Reversal],
+        53: [Moves.CloseCombat],
       },
-      teachable: [...FAMILY_TEACHABLE],
+      teachable: [...FAMILY_TEACHABLE, Moves.PoisonJab, Moves.SuckerPunch, Moves.VacuumWave],
     },
   });
 
@@ -126,11 +134,14 @@ export default function registerTyrogueSpecies(): void {
       level: {
         1: [Moves.CometPunch, Moves.Agility, Moves.Revenge],
         13: [Moves.Pursuit],
-        26: [Moves.FirePunch, Moves.IcePunch, Moves.ThunderPunch],
+        16: [Moves.BulletPunch],
+        21: [Moves.Feint],
+        26: [Moves.FirePunch, Moves.IcePunch, Moves.ThunderPunch, Moves.VacuumWave],
         32: [Moves.MachPunch, Moves.SkyUppercut],
         38: [Moves.MegaPunch],
         44: [Moves.Detect],
         50: [Moves.Counter],
+        56: [Moves.CloseCombat],
       },
       teachable: [
         ...FAMILY_TEACHABLE,
@@ -138,6 +149,7 @@ export default function registerTyrogueSpecies(): void {
         Moves.IcePunch,
         Moves.ThunderPunch,
         Moves.BrickBreak,
+        Moves.DrainPunch,
       ],
     },
   });

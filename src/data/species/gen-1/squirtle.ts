@@ -63,6 +63,12 @@ const FAMILY_TEACHABLE = [
   Moves.FocusPunch,
   Moves.SecretPower,
   Moves.WaterPulse,
+  Moves.Brine,
+  Moves.Captivate,
+  Moves.Fling,
+  Moves.GyroBall,
+  Moves.NaturalGift,
+  Moves.ZenHeadbutt,
 ];
 
 export default function registerSquirtleSpecies(): void {
@@ -104,7 +110,7 @@ export default function registerSquirtleSpecies(): void {
         13: [Moves.WaterGun],
         18: [Moves.Bite],
         23: [Moves.RapidSpin],
-        28: [Moves.Protect],
+        28: [Moves.Protect, Moves.AquaTail],
         33: [Moves.RainDance],
         35: [Moves.SkullBash],
         42: [Moves.HydroPump],
@@ -121,6 +127,8 @@ export default function registerSquirtleSpecies(): void {
         Moves.MudSport,
         Moves.Refresh,
         Moves.Yawn,
+        Moves.AquaJet,
+        Moves.AquaRing,
       ],
     },
   });
@@ -164,6 +172,7 @@ export default function registerSquirtleSpecies(): void {
         19: [Moves.Bite],
         25: [Moves.RapidSpin],
         31: [Moves.Protect],
+        32: [Moves.AquaTail],
         37: [Moves.RainDance],
         39: [Moves.SkullBash],
         47: [Moves.HydroPump],
@@ -198,10 +207,18 @@ export default function registerSquirtleSpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.Tackle, Moves.TailWhip, Moves.Bubble, Moves.WaterGun, Moves.Withdraw],
+        1: [
+          Moves.Tackle,
+          Moves.TailWhip,
+          Moves.Bubble,
+          Moves.WaterGun,
+          Moves.Withdraw,
+          Moves.FlashCannon,
+        ],
         19: [Moves.Bite],
         25: [Moves.RapidSpin],
         31: [Moves.Protect],
+        32: [Moves.AquaTail],
         42: [Moves.SkullBash, Moves.RainDance],
         52: [Moves.HydroPump],
       },
@@ -213,6 +230,10 @@ export default function registerSquirtleSpecies(): void {
         Moves.Roar,
 
         Moves.HydroCannon,
+        Moves.Avalanche,
+        Moves.FocusBlast,
+        Moves.GigaImpact,
+        Moves.RockClimb,
       ],
     },
   });

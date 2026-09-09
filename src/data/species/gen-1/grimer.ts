@@ -54,6 +54,10 @@ const FAMILY_TEACHABLE = [
   Moves.ShockWave,
   Moves.Taunt,
   Moves.Torment,
+  Moves.Captivate,
+  Moves.NaturalGift,
+  Moves.Payback,
+  Moves.PoisonJab,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Stench, Abilities.StickyHold];
@@ -94,14 +98,23 @@ export default function registerGrimerSpecies(): void {
         1: [Moves.Pound, Moves.Disable, Moves.PoisonGas],
         5: [Moves.Harden],
         16: [Moves.Sludge],
-        23: [Moves.Minimize],
+        23: [Moves.Minimize, Moves.MudBomb],
+        28: [Moves.Fling],
         31: [Moves.Screech],
         40: [Moves.AcidArmor],
+        44: [Moves.GunkShot],
         50: [Moves.SludgeBomb],
         53: [Moves.Memento],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.Haze, Moves.Lick, Moves.MeanLook, Moves.Imprison, Moves.ShadowPunch],
+      egg: [
+        Moves.Haze,
+        Moves.Lick,
+        Moves.MeanLook,
+        Moves.Imprison,
+        Moves.ShadowPunch,
+        Moves.ShadowSneak,
+      ],
     },
   });
 
@@ -132,10 +145,12 @@ export default function registerGrimerSpecies(): void {
     learnSet: {
       level: {
         1: [Moves.Pound, Moves.Disable, Moves.PoisonGas, Moves.Harden],
-        23: [Moves.Minimize],
+        23: [Moves.Minimize, Moves.MudBomb],
+        28: [Moves.Fling],
         31: [Moves.Screech],
         37: [Moves.Sludge],
         45: [Moves.AcidArmor],
+        54: [Moves.GunkShot],
         60: [Moves.SludgeBomb],
         61: [Moves.Memento],
       },
@@ -146,6 +161,9 @@ export default function registerGrimerSpecies(): void {
         Moves.FocusPunch,
         Moves.RockSmash,
         Moves.Strength,
+        Moves.DarkPulse,
+        Moves.FocusBlast,
+        Moves.GigaImpact,
       ],
     },
   });

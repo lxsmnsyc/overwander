@@ -49,6 +49,12 @@ const FAMILY_TEACHABLE = [
   Moves.Snatch,
   Moves.Taunt,
   Moves.Torment,
+  Moves.Captivate,
+  Moves.Embargo,
+  Moves.EnergyBall,
+  Moves.NaturalGift,
+  Moves.OminousWind,
+  Moves.TrickRoom,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Levitate];
@@ -109,8 +115,10 @@ export default function registerGastlySpecies(): void {
         8: [Moves.Spite],
         13: [Moves.MeanLook],
         16: [Moves.Curse],
+        22: [Moves.SuckerPunch],
+        26: [Moves.Payback],
         33: [Moves.DreamEater],
-        36: [Moves.DestinyBond],
+        36: [Moves.DestinyBond, Moves.DarkPulse],
       },
       teachable: [...FAMILY_TEACHABLE],
       egg: [
@@ -155,11 +163,14 @@ export default function registerGastlySpecies(): void {
         1: [Moves.Lick, Moves.ConfuseRay, Moves.NightShade, Moves.Hypnosis, Moves.Spite],
         13: [Moves.MeanLook],
         16: [Moves.Curse],
+        22: [Moves.SuckerPunch],
         25: [Moves.ShadowPunch],
+        28: [Moves.Payback],
         38: [Moves.DreamEater],
+        44: [Moves.DarkPulse],
         48: [Moves.DestinyBond],
       },
-      teachable: [...FAMILY_TEACHABLE],
+      teachable: [...FAMILY_TEACHABLE, Moves.Fling, Moves.PoisonJab, Moves.ShadowClaw],
     },
   });
 
@@ -185,8 +196,11 @@ export default function registerGastlySpecies(): void {
         1: [Moves.Lick, Moves.ConfuseRay, Moves.NightShade, Moves.Hypnosis, Moves.Spite],
         13: [Moves.MeanLook],
         16: [Moves.Curse],
+        22: [Moves.SuckerPunch],
         25: [Moves.ShadowPunch],
+        28: [Moves.Payback],
         38: [Moves.DreamEater],
+        44: [Moves.DarkPulse],
         48: [Moves.DestinyBond],
       },
       teachable: [
@@ -210,6 +224,12 @@ export default function registerGastlySpecies(): void {
         Moves.BrickBreak,
         Moves.FocusPunch,
         Moves.Metronome,
+        Moves.DrainPunch,
+        Moves.Fling,
+        Moves.FocusBlast,
+        Moves.GigaImpact,
+        Moves.PoisonJab,
+        Moves.ShadowClaw,
       ],
     },
   });

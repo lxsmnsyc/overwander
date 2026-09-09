@@ -41,6 +41,10 @@ const FAMILY_TEACHABLE = [
   Moves.Facade,
   Moves.SecretPower,
   Moves.ShockWave,
+  Moves.ChargeBeam,
+  Moves.FlashCannon,
+  Moves.Gravity,
+  Moves.NaturalGift,
 ];
 
 const FAMILY_ABILITIES = [Abilities.MagnetPull, Abilities.Sturdy];
@@ -85,9 +89,14 @@ export default function registerMagnemiteSpecies(): void {
         21: [Moves.ThunderWave],
         26: [Moves.Spark],
         27: [Moves.LockOn],
+        30: [Moves.MagnetBomb],
         33: [Moves.Swift],
+        38: [Moves.Discharge],
         39: [Moves.Screech],
+        43: [Moves.MirrorShot],
         45: [Moves.ZapCannon],
+        46: [Moves.MagnetRise],
+        49: [Moves.GyroBall],
       },
       teachable: [...FAMILY_TEACHABLE],
     },
@@ -123,11 +132,16 @@ export default function registerMagnemiteSpecies(): void {
         21: [Moves.ThunderWave],
         26: [Moves.Spark],
         27: [Moves.LockOn],
+        30: [Moves.MagnetBomb],
         35: [Moves.Swift, Moves.TriAttack],
+        40: [Moves.Discharge],
         43: [Moves.Screech],
+        46: [Moves.MirrorShot],
+        50: [Moves.MagnetRise],
         53: [Moves.ZapCannon],
+        54: [Moves.GyroBall],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
+      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.GigaImpact],
     },
   });
 }

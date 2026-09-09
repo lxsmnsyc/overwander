@@ -40,8 +40,11 @@ export default function registerLickitungSpecies(): void {
         15: [Moves.Disable],
         18: [Moves.KnockOff],
         31: [Moves.Slam],
+        37: [Moves.MeFirst],
         39: [Moves.Screech],
+        49: [Moves.PowerWhip],
         51: [Moves.Refresh],
+        53: [Moves.WringOut],
       },
       teachable: [
         Moves.Toxic,
@@ -117,8 +120,15 @@ export default function registerLickitungSpecies(): void {
         Moves.ShockWave,
         Moves.SolarBeam,
         Moves.WaterPulse,
+        Moves.AquaTail,
+        Moves.Captivate,
+        Moves.Fling,
+        Moves.GigaImpact,
+        Moves.NaturalGift,
+        Moves.RockClimb,
+        Moves.ZenHeadbutt,
       ],
-      egg: [Moves.BodySlam, Moves.BellyDrum, Moves.Magnitude, Moves.SmellingSalts],
+      egg: [Moves.BodySlam, Moves.BellyDrum, Moves.Magnitude, Moves.SmellingSalts, Moves.HammerArm],
     },
   });
 }

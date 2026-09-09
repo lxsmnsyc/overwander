@@ -34,7 +34,8 @@ export default function registerMrMimeSpecies(): void {
     activeTimes: TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.Confusion, Moves.Barrier],
+        1: [Moves.Confusion, Moves.Barrier, Moves.GuardSwap, Moves.PowerSwap],
+        4: [Moves.Copycat],
         11: [Moves.Substitute],
         16: [Moves.Meditate],
         21: [Moves.DoubleSlap],
@@ -110,8 +111,27 @@ export default function registerMrMimeSpecies(): void {
         Moves.Snatch,
         Moves.Taunt,
         Moves.Torment,
+        Moves.Captivate,
+        Moves.ChargeBeam,
+        Moves.DrainPunch,
+        Moves.EnergyBall,
+        Moves.Fling,
+        Moves.FocusBlast,
+        Moves.GigaImpact,
+        Moves.GrassKnot,
+        Moves.NaturalGift,
+        Moves.Payback,
+        Moves.TrickRoom,
+        Moves.ZenHeadbutt,
       ],
-      egg: [Moves.Hypnosis, Moves.Mimic, Moves.FutureSight, Moves.FakeOut],
+      egg: [
+        Moves.Hypnosis,
+        Moves.Mimic,
+        Moves.FutureSight,
+        Moves.FakeOut,
+        Moves.NastyPlot,
+        Moves.WakeUpSlap,
+      ],
     },
   });
 }

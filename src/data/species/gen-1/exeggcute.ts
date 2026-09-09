@@ -53,6 +53,11 @@ const FAMILY_TEACHABLE = [
   Moves.LightScreen,
   Moves.SecretPower,
   Moves.SkillSwap,
+  Moves.Captivate,
+  Moves.EnergyBall,
+  Moves.GrassKnot,
+  Moves.Gravity,
+  Moves.TrickRoom,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Chlorophyll];
@@ -96,10 +101,11 @@ export default function registerExeggcuteSpecies(): void {
         19: [Moves.Confusion],
         25: [Moves.StunSpore],
         31: [Moves.PoisonPowder],
-        37: [Moves.SleepPowder],
+        33: [Moves.WorrySeed],
+        37: [Moves.SleepPowder, Moves.NaturalGift],
         42: [Moves.SolarBeam],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.Strength],
+      teachable: [...FAMILY_TEACHABLE, Moves.Strength, Moves.SeedBomb],
       egg: [
         Moves.Reflect,
         Moves.MegaDrain,
@@ -107,6 +113,9 @@ export default function registerExeggcuteSpecies(): void {
         Moves.Moonlight,
         Moves.AncientPower,
         Moves.Ingrain,
+        Moves.LeafStorm,
+        Moves.LuckyChant,
+        Moves.PowerSwap,
       ],
     },
   });
@@ -137,11 +146,22 @@ export default function registerExeggcuteSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.Barrage, Moves.Hypnosis, Moves.Confusion],
+        1: [Moves.Barrage, Moves.Hypnosis, Moves.Confusion, Moves.SeedBomb],
         19: [Moves.Stomp],
         31: [Moves.EggBomb],
+        37: [Moves.WoodHammer],
+        47: [Moves.LeafStorm],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.Strength, Moves.Headbutt],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.HyperBeam,
+        Moves.Strength,
+        Moves.Headbutt,
+        Moves.GigaImpact,
+        Moves.NaturalGift,
+        Moves.WorrySeed,
+        Moves.ZenHeadbutt,
+      ],
     },
   });
 }

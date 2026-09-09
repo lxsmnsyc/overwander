@@ -46,6 +46,16 @@ const FAMILY_TEACHABLE = [
   Moves.Snatch,
   Moves.Taunt,
   Moves.Torment,
+  Moves.Captivate,
+  Moves.Defog,
+  Moves.NaturalGift,
+  Moves.OminousWind,
+  Moves.Payback,
+  Moves.Pluck,
+  Moves.Roost,
+  Moves.Tailwind,
+  Moves.UTurn,
+  Moves.ZenHeadbutt,
 ];
 
 export default function registerZubatSpecies(): void {
@@ -89,10 +99,18 @@ export default function registerZubatSpecies(): void {
         27: [Moves.WingAttack],
         31: [Moves.AirCutter],
         36: [Moves.Haze, Moves.MeanLook],
-        41: [Moves.PoisonFang],
+        41: [Moves.PoisonFang, Moves.AirSlash],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.QuickAttack, Moves.Gust, Moves.Whirlwind, Moves.FeintAttack, Moves.Pursuit],
+      egg: [
+        Moves.QuickAttack,
+        Moves.Gust,
+        Moves.Whirlwind,
+        Moves.FeintAttack,
+        Moves.Pursuit,
+        Moves.BraveBird,
+        Moves.NastyPlot,
+      ],
     },
   });
 
@@ -135,8 +153,9 @@ export default function registerZubatSpecies(): void {
         42: [Moves.MeanLook],
         43: [Moves.Haze],
         49: [Moves.PoisonFang],
+        51: [Moves.AirSlash],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
+      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.GigaImpact],
     },
   });
 }

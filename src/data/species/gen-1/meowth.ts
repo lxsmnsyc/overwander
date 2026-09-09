@@ -61,6 +61,14 @@ const FAMILY_TEACHABLE = [
   Moves.Taunt,
   Moves.Torment,
   Moves.WaterPulse,
+  Moves.DarkPulse,
+  Moves.GunkShot,
+  Moves.LastResort,
+  Moves.NaturalGift,
+  Moves.Payback,
+  Moves.SeedBomb,
+  Moves.ShadowClaw,
+  Moves.UTurn,
 ];
 
 export default function registerMeowthSpecies(): void {
@@ -102,11 +110,23 @@ export default function registerMeowthSpecies(): void {
         24: [Moves.Screech],
         28: [Moves.FeintAttack],
         33: [Moves.FurySwipes],
+        38: [Moves.NastyPlot],
+        41: [Moves.Assurance],
         44: [Moves.Slash],
+        46: [Moves.Captivate],
+        49: [Moves.NightSlash],
         50: [Moves.FakeOut],
+        54: [Moves.Feint],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.Hypnosis, Moves.Amnesia, Moves.Spite, Moves.Charm, Moves.Assist],
+      egg: [
+        Moves.Hypnosis,
+        Moves.Amnesia,
+        Moves.Spite,
+        Moves.Charm,
+        Moves.Assist,
+        Moves.Punishment,
+      ],
     },
   });
 
@@ -136,15 +156,27 @@ export default function registerMeowthSpecies(): void {
     activeTimes: TimeOfDay.Night,
     learnSet: {
       level: {
-        1: [Moves.Scratch, Moves.Growl, Moves.Bite],
+        1: [Moves.Scratch, Moves.Growl, Moves.Bite, Moves.Switcheroo],
         17: [Moves.PayDay],
         24: [Moves.Screech],
         29: [Moves.FeintAttack],
+        32: [Moves.PowerGem],
         37: [Moves.FurySwipes],
+        44: [Moves.NastyPlot],
+        49: [Moves.Assurance],
         51: [Moves.Slash],
+        56: [Moves.Captivate],
         59: [Moves.FakeOut],
+        61: [Moves.NightSlash],
+        68: [Moves.Feint],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.Roar],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.HyperBeam,
+        Moves.Roar,
+        Moves.Embargo,
+        Moves.GigaImpact,
+      ],
     },
   });
 }

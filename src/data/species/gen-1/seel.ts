@@ -50,6 +50,9 @@ const FAMILY_TEACHABLE = [
   Moves.SecretPower,
   Moves.Thief,
   Moves.WaterPulse,
+  Moves.Captivate,
+  Moves.Fling,
+  Moves.NaturalGift,
 ];
 
 const FAMILY_ABILITIES = [Abilities.ThickFat, Abilities.Hydration];
@@ -90,9 +93,14 @@ export default function registerSeelSpecies(): void {
         1: [Moves.Headbutt],
         5: [Moves.Growl],
         16: [Moves.AuroraBeam],
+        17: [Moves.IceShard],
         21: [Moves.Rest],
+        23: [Moves.AquaRing],
+        31: [Moves.AquaJet],
         32: [Moves.TakeDown],
+        33: [Moves.Brine],
         37: [Moves.IceBeam],
+        43: [Moves.AquaTail],
         48: [Moves.Safeguard],
       },
       teachable: [...FAMILY_TEACHABLE],
@@ -136,13 +144,17 @@ export default function registerSeelSpecies(): void {
     learnSet: {
       level: {
         1: [Moves.Headbutt, Moves.Growl, Moves.AuroraBeam, Moves.SignalBeam],
+        17: [Moves.IceShard],
         21: [Moves.Rest],
+        23: [Moves.AquaRing],
+        31: [Moves.AquaJet],
         32: [Moves.TakeDown],
+        33: [Moves.Brine],
         34: [Moves.SheerCold],
-        43: [Moves.IceBeam],
+        43: [Moves.IceBeam, Moves.AquaTail],
         60: [Moves.Safeguard],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
+      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.Avalanche, Moves.GigaImpact],
     },
   });
 }

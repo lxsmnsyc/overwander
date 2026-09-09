@@ -50,6 +50,10 @@ const FAMILY_TEACHABLE = [
   Moves.Thief,
   Moves.WaterPulse,
   Moves.Waterfall,
+  Moves.Brine,
+  Moves.Captivate,
+  Moves.NaturalGift,
+  Moves.Payback,
 ];
 
 const FAMILY_ABILITIES = [Abilities.ClearBody, Abilities.LiquidOoze];
@@ -91,10 +95,12 @@ export default function registerTentacoolSpecies(): void {
         6: [Moves.Supersonic],
         12: [Moves.Constrict],
         13: [Moves.Wrap],
+        15: [Moves.ToxicSpikes],
         22: [Moves.WaterGun],
         25: [Moves.BubbleBeam],
-        33: [Moves.Barrier],
+        33: [Moves.Barrier, Moves.PoisonJab],
         40: [Moves.Screech],
+        43: [Moves.WringOut],
         48: [Moves.HydroPump],
       },
       teachable: [...FAMILY_TEACHABLE],
@@ -105,6 +111,7 @@ export default function registerTentacoolSpecies(): void {
         Moves.Safeguard,
         Moves.RapidSpin,
         Moves.MirrorCoat,
+        Moves.Acupressure,
       ],
     },
   });
@@ -136,13 +143,16 @@ export default function registerTentacoolSpecies(): void {
     learnSet: {
       level: {
         1: [Moves.Acid, Moves.Supersonic, Moves.Wrap, Moves.PoisonSting, Moves.Constrict],
+        15: [Moves.ToxicSpikes],
         22: [Moves.WaterGun],
         25: [Moves.BubbleBeam],
         35: [Moves.Barrier],
+        36: [Moves.PoisonJab],
         43: [Moves.Screech],
         50: [Moves.HydroPump],
+        55: [Moves.WringOut],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
+      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.GigaImpact],
     },
   });
 }

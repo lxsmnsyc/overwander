@@ -56,6 +56,10 @@ const FAMILY_TEACHABLE = [
   Moves.Facade,
   Moves.SecretPower,
   Moves.WaterPulse,
+  Moves.Brine,
+  Moves.FlashCannon,
+  Moves.Gravity,
+  Moves.NaturalGift,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Illuminate, Abilities.NaturalCure];
@@ -99,8 +103,9 @@ export default function registerStaryuSpecies(): void {
         19: [Moves.Recover, Moves.Camouflage],
         25: [Moves.Swift],
         31: [Moves.BubbleBeam],
-        37: [Moves.Minimize],
+        37: [Moves.Minimize, Moves.GyroBall],
         42: [Moves.LightScreen, Moves.CosmicPower],
+        46: [Moves.PowerGem],
         47: [Moves.HydroPump],
       },
       teachable: [...FAMILY_TEACHABLE],
@@ -151,6 +156,11 @@ export default function registerStaryuSpecies(): void {
         Moves.Nightmare,
         Moves.LightScreen,
         Moves.SkillSwap,
+        Moves.Avalanche,
+        Moves.GigaImpact,
+        Moves.GrassKnot,
+        Moves.GyroBall,
+        Moves.TrickRoom,
       ],
     },
   });

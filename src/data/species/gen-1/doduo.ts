@@ -42,6 +42,9 @@ const FAMILY_TEACHABLE = [
   Moves.AerialAce,
   Moves.Facade,
   Moves.SecretPower,
+  Moves.Captivate,
+  Moves.NaturalGift,
+  Moves.Roost,
 ];
 
 const FAMILY_ABILITIES = [Abilities.RunAway, Abilities.EarlyBird];
@@ -84,11 +87,13 @@ export default function registerDoduoSpecies(): void {
         13: [Moves.FuryAttack],
         21: [Moves.TriAttack],
         25: [Moves.Rage],
+        28: [Moves.Acupressure],
         30: [Moves.DrillPeck],
+        32: [Moves.DoubleHit],
         33: [Moves.Uproar],
         37: [Moves.Agility],
       },
-      teachable: [...FAMILY_TEACHABLE],
+      teachable: [...FAMILY_TEACHABLE, Moves.Pluck],
       egg: [
         Moves.QuickAttack,
         Moves.Supersonic,
@@ -96,6 +101,7 @@ export default function registerDoduoSpecies(): void {
         Moves.Flail,
         Moves.FeintAttack,
         Moves.Endeavor,
+        Moves.BraveBird,
       ],
     },
   });
@@ -126,14 +132,22 @@ export default function registerDoduoSpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.Peck, Moves.Growl, Moves.FuryAttack, Moves.Pursuit],
+        1: [Moves.Peck, Moves.Growl, Moves.FuryAttack, Moves.Pursuit, Moves.Pluck],
         21: [Moves.TriAttack],
         25: [Moves.Rage],
+        28: [Moves.Acupressure],
         30: [Moves.DrillPeck],
         38: [Moves.Uproar],
         47: [Moves.Agility],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.Taunt, Moves.Torment],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.HyperBeam,
+        Moves.Taunt,
+        Moves.Torment,
+        Moves.GigaImpact,
+        Moves.Payback,
+      ],
     },
   });
 }

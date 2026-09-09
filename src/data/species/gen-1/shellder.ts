@@ -46,6 +46,9 @@ const FAMILY_TEACHABLE = [
   Moves.Facade,
   Moves.SecretPower,
   Moves.WaterPulse,
+  Moves.Captivate,
+  Moves.NaturalGift,
+  Moves.Payback,
 ];
 
 const FAMILY_ABILITIES = [Abilities.ShellArmor, Abilities.SkillLink];
@@ -89,7 +92,9 @@ export default function registerShellderSpecies(): void {
         17: [Moves.AuroraBeam],
         23: [Moves.Clamp],
         25: [Moves.Protect],
+        28: [Moves.IceShard],
         33: [Moves.Leer],
+        44: [Moves.Brine],
         49: [Moves.IceBeam],
       },
       teachable: [...FAMILY_TEACHABLE],
@@ -123,11 +128,26 @@ export default function registerShellderSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.Withdraw, Moves.Supersonic, Moves.Clamp, Moves.AuroraBeam, Moves.Protect],
+        1: [
+          Moves.Withdraw,
+          Moves.Supersonic,
+          Moves.Clamp,
+          Moves.AuroraBeam,
+          Moves.Protect,
+          Moves.ToxicSpikes,
+        ],
         33: [Moves.Spikes],
         41: [Moves.SpikeCannon],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.Torment],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.HyperBeam,
+        Moves.Torment,
+        Moves.Avalanche,
+        Moves.Brine,
+        Moves.GigaImpact,
+        Moves.PoisonJab,
+      ],
     },
   });
 }

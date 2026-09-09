@@ -44,6 +44,9 @@ const FAMILY_TEACHABLE = [
   Moves.Facade,
   Moves.SecretPower,
   Moves.WaterPulse,
+  Moves.AquaTail,
+  Moves.Captivate,
+  Moves.NaturalGift,
 ];
 
 const FAMILY_ABILITIES = [Abilities.SwiftSwim, Abilities.WaterVeil];
@@ -85,13 +88,14 @@ export default function registerGoldeenSpecies(): void {
         10: [Moves.Supersonic],
         15: [Moves.HornAttack],
         24: [Moves.Flail],
+        27: [Moves.AquaRing],
         29: [Moves.FuryAttack],
         37: [Moves.Waterfall],
         43: [Moves.HornDrill],
         52: [Moves.Agility],
         57: [Moves.Megahorn],
       },
-      teachable: [...FAMILY_TEACHABLE],
+      teachable: [...FAMILY_TEACHABLE, Moves.PoisonJab],
       egg: [Moves.Psybeam, Moves.Haze, Moves.HydroPump, Moves.MudSport],
     },
   });
@@ -122,16 +126,17 @@ export default function registerGoldeenSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.Peck, Moves.TailWhip, Moves.Supersonic, Moves.WaterSport],
+        1: [Moves.Peck, Moves.TailWhip, Moves.Supersonic, Moves.WaterSport, Moves.PoisonJab],
         15: [Moves.HornAttack],
         24: [Moves.Flail],
+        27: [Moves.AquaRing],
         29: [Moves.FuryAttack],
         39: [Moves.Waterfall],
         48: [Moves.HornDrill],
         54: [Moves.Agility],
         69: [Moves.Megahorn],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
+      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.GigaImpact],
     },
   });
 }

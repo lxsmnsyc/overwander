@@ -66,6 +66,12 @@ const FAMILY_TEACHABLE = [
   Moves.Taunt,
   Moves.Thief,
   Moves.Torment,
+  Moves.Captivate,
+  Moves.DrainPunch,
+  Moves.Fling,
+  Moves.GrassKnot,
+  Moves.NaturalGift,
+  Moves.TrickRoom,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Insomnia, Abilities.Forewarn];
@@ -110,11 +116,19 @@ export default function registerDrowzeeSpecies(): void {
         29: [Moves.PoisonGas],
         32: [Moves.Psychic],
         36: [Moves.Meditate],
-        43: [Moves.PsychUp],
+        43: [Moves.PsychUp, Moves.NastyPlot],
         45: [Moves.FutureSight],
+        50: [Moves.ZenHeadbutt],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.Barrier, Moves.LightScreen, Moves.Assist, Moves.RolePlay],
+      egg: [
+        Moves.Barrier,
+        Moves.LightScreen,
+        Moves.Assist,
+        Moves.RolePlay,
+        Moves.GuardSwap,
+        Moves.PsychoCut,
+      ],
     },
   });
 
@@ -144,15 +158,22 @@ export default function registerDrowzeeSpecies(): void {
     activeTimes: TimeOfDay.Night,
     learnSet: {
       level: {
-        1: [Moves.Pound, Moves.Hypnosis, Moves.Disable, Moves.Confusion],
+        1: [Moves.Pound, Moves.Hypnosis, Moves.Disable, Moves.Confusion, Moves.Switcheroo],
         24: [Moves.Headbutt],
         33: [Moves.PoisonGas],
         37: [Moves.Psychic],
         40: [Moves.Meditate],
-        55: [Moves.PsychUp],
+        55: [Moves.PsychUp, Moves.NastyPlot],
         60: [Moves.FutureSight],
+        64: [Moves.ZenHeadbutt],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.LightScreen],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.HyperBeam,
+        Moves.LightScreen,
+        Moves.FocusBlast,
+        Moves.GigaImpact,
+      ],
     },
   });
 }

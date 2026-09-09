@@ -59,6 +59,15 @@ const FAMILY_TEACHABLE = [
   Moves.FocusPunch,
   Moves.RockTomb,
   Moves.SecretPower,
+  Moves.Captivate,
+  Moves.EarthPower,
+  Moves.Fling,
+  Moves.NaturalGift,
+  Moves.PoisonJab,
+  Moves.RockClimb,
+  Moves.ShadowClaw,
+  Moves.StealthRock,
+  Moves.XScissor,
 ];
 
 export default function registerSandshrewSpecies(): void {
@@ -99,6 +108,7 @@ export default function registerSandshrewSpecies(): void {
         10: [Moves.SandAttack],
         17: [Moves.Slash, Moves.PoisonSting],
         30: [Moves.Swift],
+        33: [Moves.GyroBall],
         37: [Moves.FurySwipes],
         45: [Moves.Sandstorm, Moves.SandTomb],
       },
@@ -112,6 +122,7 @@ export default function registerSandshrewSpecies(): void {
         Moves.MetalClaw,
 
         Moves.CrushClaw,
+        Moves.NightSlash,
       ],
     },
   });
@@ -146,9 +157,17 @@ export default function registerSandshrewSpecies(): void {
         17: [Moves.Slash, Moves.PoisonSting],
         33: [Moves.Swift],
         42: [Moves.FurySwipes],
+        45: [Moves.GyroBall],
         52: [Moves.Sandstorm, Moves.SandTomb],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.Counter],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.HyperBeam,
+        Moves.Counter,
+        Moves.FocusBlast,
+        Moves.GigaImpact,
+        Moves.StoneEdge,
+      ],
     },
   });
 }

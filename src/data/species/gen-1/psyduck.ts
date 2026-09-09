@@ -65,6 +65,13 @@ const FAMILY_TEACHABLE = [
   Moves.FocusPunch,
   Moves.SecretPower,
   Moves.WaterPulse,
+  Moves.AquaTail,
+  Moves.Brine,
+  Moves.Captivate,
+  Moves.Fling,
+  Moves.NaturalGift,
+  Moves.ShadowClaw,
+  Moves.WorrySeed,
 ];
 
 export default function registerPsyduckSpecies(): void {
@@ -106,7 +113,7 @@ export default function registerPsyduckSpecies(): void {
         16: [Moves.Confusion],
         23: [Moves.Screech],
         31: [Moves.PsychUp],
-        40: [Moves.FurySwipes],
+        40: [Moves.FurySwipes, Moves.ZenHeadbutt],
         50: [Moves.HydroPump],
       },
       teachable: [...FAMILY_TEACHABLE],
@@ -121,6 +128,7 @@ export default function registerPsyduckSpecies(): void {
         Moves.FutureSight,
 
         Moves.Refresh,
+        Moves.MudBomb,
       ],
     },
   });
@@ -151,13 +159,27 @@ export default function registerPsyduckSpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.Scratch, Moves.TailWhip, Moves.Disable, Moves.Confusion, Moves.WaterSport],
+        1: [
+          Moves.Scratch,
+          Moves.TailWhip,
+          Moves.Disable,
+          Moves.Confusion,
+          Moves.WaterSport,
+          Moves.AquaJet,
+        ],
         23: [Moves.Screech],
         31: [Moves.PsychUp],
-        44: [Moves.FurySwipes],
+        44: [Moves.FurySwipes, Moves.ZenHeadbutt],
         58: [Moves.HydroPump],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.FuryCutter],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.HyperBeam,
+        Moves.FuryCutter,
+        Moves.FocusBlast,
+        Moves.GigaImpact,
+        Moves.RockClimb,
+      ],
     },
   });
 }

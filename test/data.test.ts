@@ -4404,6 +4404,7 @@ describe('wandering NPCs', () => {
       Moves.LeechSeed,
       Moves.SleepPowder,
       Moves.SweetScent,
+      Moves.WorrySeed,
     ]);
     // A pokemon that never dropped anything has nothing to remember
     expect(getRecallableMoves(Species.Bulbasaur, 6, [Moves.Tackle, Moves.Growl])).toEqual([]);
@@ -5618,10 +5619,10 @@ describe('type experts', () => {
     // Accuracy is rolled against evasion, so a written 100 is a
     // promise a Double Team breaks and a move with no accuracy is
     // not. Read flat the two tied, and the older move id won
-    const charizard = getBestMoves(Species.Charizard, [Abilities.Blaze]);
+    const scyther = getBestMoves(Species.Scyther, [Abilities.Swarm]);
 
-    expect(charizard).toContain(Moves.AerialAce);
-    expect(charizard).not.toContain(Moves.WingAttack);
+    expect(scyther).toContain(Moves.AerialAce);
+    expect(scyther).not.toContain(Moves.WingAttack);
   });
 
   it('does not hand the same move to half the party', () => {

@@ -41,8 +41,10 @@ export default function registerTangelaSpecies(): void {
         19: [Moves.VineWhip],
         31: [Moves.MegaDrain],
         34: [Moves.StunSpore],
-        40: [Moves.Slam],
+        40: [Moves.Slam, Moves.NaturalGift],
         46: [Moves.Growth, Moves.Tickle],
+        50: [Moves.WringOut],
+        54: [Moves.PowerWhip],
       },
       teachable: [
         Moves.Toxic,
@@ -83,6 +85,12 @@ export default function registerTangelaSpecies(): void {
         Moves.Facade,
         Moves.RockSmash,
         Moves.SecretPower,
+        Moves.Captivate,
+        Moves.EnergyBall,
+        Moves.GigaImpact,
+        Moves.GrassKnot,
+        Moves.SeedBomb,
+        Moves.WorrySeed,
       ],
       egg: [
         Moves.MegaDrain,
@@ -92,6 +100,8 @@ export default function registerTangelaSpecies(): void {
         Moves.Flail,
         Moves.LeechSeed,
         Moves.NaturePower,
+        Moves.LeafStorm,
+        Moves.PowerSwap,
       ],
     },
   });

@@ -43,6 +43,9 @@ const FAMILY_TEACHABLE = [
   Moves.Facade,
   Moves.SecretPower,
   Moves.SkillSwap,
+  Moves.BugBite,
+  Moves.Captivate,
+  Moves.NaturalGift,
 ];
 
 export default function registerVenonatSpecies(): void {
@@ -86,10 +89,11 @@ export default function registerVenonatSpecies(): void {
         28: [Moves.StunSpore],
         33: [Moves.Psybeam],
         36: [Moves.SleepPowder],
+        37: [Moves.ZenHeadbutt],
         41: [Moves.Psychic],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.Flash],
-      egg: [Moves.Screech, Moves.GigaDrain, Moves.BatonPass, Moves.SignalBeam],
+      egg: [Moves.Screech, Moves.GigaDrain, Moves.BatonPass, Moves.SignalBeam, Moves.ToxicSpikes],
     },
   });
 
@@ -132,10 +136,24 @@ export default function registerVenonatSpecies(): void {
         28: [Moves.StunSpore],
         31: [Moves.Gust],
         36: [Moves.Psybeam],
+        41: [Moves.ZenHeadbutt],
         42: [Moves.SleepPowder],
         50: [Moves.Psychic],
+        59: [Moves.BugBuzz],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.Flash, Moves.AerialAce],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.HyperBeam,
+        Moves.Flash,
+        Moves.AerialAce,
+        Moves.Defog,
+        Moves.EnergyBall,
+        Moves.GigaImpact,
+        Moves.OminousWind,
+        Moves.Roost,
+        Moves.Tailwind,
+        Moves.UTurn,
+      ],
     },
   });
 }

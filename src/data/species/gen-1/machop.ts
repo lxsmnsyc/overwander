@@ -60,6 +60,14 @@ const FAMILY_TEACHABLE = [
   Moves.FocusPunch,
   Moves.RockTomb,
   Moves.SecretPower,
+  Moves.Captivate,
+  Moves.Fling,
+  Moves.FocusBlast,
+  Moves.NaturalGift,
+  Moves.Payback,
+  Moves.PoisonJab,
+  Moves.RockClimb,
+  Moves.VacuumWave,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Guts, Abilities.NoGuard];
@@ -102,6 +110,7 @@ export default function registerMachopSpecies(): void {
         19: [Moves.SeismicToss],
         25: [Moves.Foresight, Moves.Revenge],
         31: [Moves.VitalThrow],
+        34: [Moves.WakeUpSlap],
         37: [Moves.CrossChop],
         43: [Moves.ScaryFace],
         46: [Moves.Submission],
@@ -113,6 +122,9 @@ export default function registerMachopSpecies(): void {
         Moves.RollingKick,
         Moves.Encore,
         Moves.SmellingSalts,
+        Moves.BulletPunch,
+        Moves.CloseCombat,
+        Moves.PowerTrick,
       ],
     },
   });
@@ -153,6 +165,7 @@ export default function registerMachopSpecies(): void {
         19: [Moves.SeismicToss],
         25: [Moves.Foresight, Moves.Revenge],
         34: [Moves.VitalThrow],
+        36: [Moves.WakeUpSlap],
         43: [Moves.CrossChop],
         52: [Moves.Submission, Moves.ScaryFace],
       },
@@ -190,10 +203,11 @@ export default function registerMachopSpecies(): void {
         19: [Moves.SeismicToss],
         25: [Moves.Foresight, Moves.Revenge],
         34: [Moves.VitalThrow],
+        36: [Moves.WakeUpSlap],
         43: [Moves.CrossChop],
         52: [Moves.Submission, Moves.ScaryFace],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
+      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.GigaImpact, Moves.StoneEdge],
     },
   });
 }

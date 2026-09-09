@@ -46,6 +46,8 @@ const FAMILY_TEACHABLE = [
   Moves.Taunt,
   Moves.Thief,
   Moves.Torment,
+  Moves.NaturalGift,
+  Moves.SuckerPunch,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Soundproof, Abilities.Static];
@@ -87,9 +89,11 @@ export default function registerVoltorbSpecies(): void {
         17: [Moves.SonicBoom],
         21: [Moves.Spark],
         22: [Moves.SelfDestruct],
+        26: [Moves.ChargeBeam],
         29: [Moves.LightScreen, Moves.Rollout],
-        36: [Moves.Swift],
+        36: [Moves.Swift, Moves.MagnetRise],
         39: [Moves.Explosion],
+        40: [Moves.GyroBall],
         41: [Moves.MirrorCoat],
       },
       teachable: [...FAMILY_TEACHABLE],
@@ -124,13 +128,15 @@ export default function registerVoltorbSpecies(): void {
       level: {
         1: [Moves.Tackle, Moves.Screech, Moves.SonicBoom, Moves.SelfDestruct, Moves.Charge],
         21: [Moves.Spark],
+        26: [Moves.ChargeBeam],
         29: [Moves.Rollout],
         31: [Moves.LightScreen],
-        40: [Moves.Swift],
+        40: [Moves.Swift, Moves.MagnetRise],
         44: [Moves.Explosion],
+        46: [Moves.GyroBall],
         48: [Moves.MirrorCoat],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
+      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.GigaImpact],
     },
   });
 }

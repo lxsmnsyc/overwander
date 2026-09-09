@@ -473,6 +473,11 @@ const enum Abilities {
   VenomFang = 200170,
   MoonPull = 200171,
   SunGlare = 200172,
+  SiltBed = 200173,
+  DirtyFighter = 200174,
+  SpinBalance = 200175,
+  RootHold = 200176,
+  ClawRush = 200177,
 }
 
 export default Abilities;

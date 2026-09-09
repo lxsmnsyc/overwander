@@ -2,6 +2,8 @@ import { AttackPriority, EventPriority } from '../../../core/event-emitter';
 import { Stages, Stats } from '../../../data/constants/stats';
 import Abilities from '../../../data/ids/abilities';
 import { DamageFlags, MoveAttackFlags } from '../../../data/ids/moves';
+import { Statuses } from '../../../data/ids/status';
+import { FORCED_SWITCH_MOVES } from '../../moves/switch-out';
 import { BattleEvents, EffectType, MoveTargetType } from '../../events';
 import { MergedLifecycle } from '../../lifecycle';
 import type Unit from '../../unit';
@@ -10,6 +12,7 @@ import {
   createDamageTaken,
   createEclipseAbility,
   createFeudAbility,
+  createFossilPairAbility,
   createUnitState,
 } from './__create';
 
@@ -32,6 +35,12 @@ const SPOTTED_STAGES = [
 
 /** What walking into the pit costs whoever missed */
 export const ANTLION_PIT_FRACTION = 1 / 8;
+
+/** What a bed of silt takes off everything standing in it */
+export const SILT_BED_SCALE = 0.9;
+
+/** What an untouched target is worth to a fighter with no manners */
+export const DIRTY_FIGHTER_SCALE = 1.3;
 
 /** What each second of waiting is worth, and how long the wait counts */
 export const PATIENT_STALK_STEP = 0.1;
@@ -229,6 +238,86 @@ const spoinkToDeoxys = [
       event.success = false;
     });
   }),
+
+  // Barboach: the silt it stirs up is under everybody's feet, its own
+  // included, and anything not standing on the ground is above it
+  createAbility(Abilities.SiltBed, (battle) =>
+    battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
+      const source = event.source;
+
+      if (event.stat !== Stats.Speed || !source.checkGrounded()) {
+        return;
+      }
+
+      for (const fish of battle.units()) {
+        if (fish.alive && fish.hasAbility(Abilities.SiltBed)) {
+          event.value *= SILT_BED_SCALE;
+          return;
+        }
+      }
+    }),
+  ),
+
+  // Corphish: it picks on whatever has not been touched yet, which is
+  // the opposite end of the fight from Houndour's chase
+  createAbility(Abilities.DirtyFighter, (battle) =>
+    battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
+      const target = event.target;
+
+      if (
+        event.power == null ||
+        target.type !== MoveTargetType.Unit ||
+        !event.source.hasAbility(Abilities.DirtyFighter) ||
+        target.unit.health < target.unit.checkStat(Stats.HP, 0)
+      ) {
+        return;
+      }
+
+      event.power *= DIRTY_FIGHTER_SCALE;
+    }),
+  ),
+
+  // Baltoy: it spins on one point and nothing tips it off that point
+  createAbility(
+    Abilities.SpinBalance,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.CheckUnitStatusImmunity, EventPriority.Post, (event) => {
+          if (
+            !event.immune &&
+            event.status === Statuses.Flinched &&
+            event.source.hasAbility(Abilities.SpinBalance)
+          ) {
+            event.immune = true;
+          }
+        }),
+        battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Post, (event) => {
+          if (
+            !event.immune &&
+            FORCED_SWITCH_MOVES.has(event.move) &&
+            event.target.type === MoveTargetType.Unit &&
+            event.target.unit.hasAbility(Abilities.SpinBalance)
+          ) {
+            event.immune = true;
+          }
+        }),
+        battle.on(BattleEvents.CheckUnitCanAddStage, EventPriority.Post, (event) => {
+          if (event.success && event.value < 0 && event.source.hasAbility(Abilities.SpinBalance)) {
+            event.success = false;
+
+            // A cue is for a real attempt, not for the AI weighing one
+            if (!event.simulated) {
+              event.source.triggerAbility(Abilities.SpinBalance);
+            }
+          }
+        }),
+      ]),
+  ),
+
+  // Lileep and Anorith: Hoenn's two fossils, one pinning what it
+  // touches and one running down whatever cannot keep up
+  createFossilPairAbility(Abilities.RootHold, 'anchors'),
+  createFossilPairAbility(Abilities.ClawRush, 'chases'),
 
   // Zangoose and Seviper: counterparts feuding over the venom, one
   // putting it on and one hunting whatever carries it

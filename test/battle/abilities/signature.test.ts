@@ -12,6 +12,9 @@ import {
   FIELD_LOWERED_SCALE,
   FIELD_RAISED_SCALE,
   FOSSIL_BLADE_SCALE,
+  FOSSIL_HOLD_DURATION,
+  FOSSIL_HOLD_SCALE,
+  FOSSIL_RUSH_SCALE,
   FOSSIL_SHELL_SCALE,
   GROVE_DAMAGE_SCALE,
   GROVE_HEAL_FRACTION,
@@ -157,9 +160,11 @@ import {
 import { Statuses, TeamStatuses, Weathers } from '../../../src/data/ids/status';
 import {
   ANTLION_PIT_FRACTION,
+  DIRTY_FIGHTER_SCALE,
   PATIENT_STALK_MAX_STEPS,
   PATIENT_STALK_SECOND,
   PATIENT_STALK_STEP,
+  SILT_BED_SCALE,
   STORED_BOUNCE_CAP,
   STORED_BOUNCE_SHARE,
   UNIQUE_SPOTS_LOWERED,
@@ -4866,5 +4871,101 @@ describe('the Lunatone and Solrock pair', () => {
       5,
     );
     expect(resolveAttackDamage(battle, ally, enemy)).toBeCloseTo(outbound, 5);
+  });
+});
+
+describe('Silt Bed', () => {
+  it('slows everything standing in it, its own side included', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    const ours = ally.checkStat(Stats.Speed, 0);
+    const theirs = enemy.checkStat(Stats.Speed, 0);
+
+    holder.addAbility(Abilities.SiltBed);
+
+    expect(ally.checkStat(Stats.Speed, 0)).toBeCloseTo(ours * SILT_BED_SCALE, 5);
+    expect(enemy.checkStat(Stats.Speed, 0)).toBeCloseTo(theirs * SILT_BED_SCALE, 5);
+
+    // Anything off the ground is above the silt
+    enemy.addAbility(Abilities.Levitate);
+
+    expect(enemy.checkStat(Stats.Speed, 0)).toBeCloseTo(theirs, 5);
+  });
+});
+
+describe('Dirty Fighter', () => {
+  it('hits an untouched target harder and a hurt one normally', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.DirtyFighter);
+
+    const target = unitTarget(enemy);
+    const clean = enemy.checkMovePower(Moves.Pound, target) ?? 0;
+
+    expect(holder.checkMovePower(Moves.Pound, target)).toBeCloseTo(clean * DIRTY_FIGHTER_SCALE, 5);
+
+    enemy.setHealth(enemy.checkStat(Stats.HP, 0) - 1);
+
+    expect(holder.checkMovePower(Moves.Pound, target)).toBeCloseTo(clean, 5);
+  });
+});
+
+describe('Spin Balance', () => {
+  it('refuses a flinch, a forced switch and a stage drop', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.SpinBalance);
+
+    holder.addStatus(Statuses.Flinched, NONE_CAUSE);
+
+    expect(holder.status[Statuses.Flinched]).toBeUndefined();
+
+    holder.addStage(Stages.Attack, -1, NONE_CAUSE);
+
+    expect(holder.stages[Stages.Attack]).toBe(0);
+
+    // A raise is still a raise
+    holder.addStage(Stages.Attack, 1, NONE_CAUSE);
+
+    expect(holder.stages[Stages.Attack]).toBe(1);
+
+    expect(enemy.checkMoveImmunity(Moves.Whirlwind, unitTarget(holder), Types.Normal)).toBe(true);
+  });
+});
+
+describe('the Lileep and Anorith pair', () => {
+  it('pins what it hits, and runs down whatever cannot keep up', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0);
+    const lileep = createUnit(battle, teamA);
+    const anorith = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    lileep.addAbility(Abilities.RootHold);
+    anorith.addAbility(Abilities.ClawRush);
+
+    const target = unitTarget(enemy);
+    const clean = enemy.checkStat(Stats.Speed, 0);
+    const power = enemy.checkMovePower(Moves.Pound, target) ?? 0;
+
+    // Anorith is no faster than the enemy to begin with
+    expect(anorith.checkMovePower(Moves.Pound, target)).toBeCloseTo(power, 5);
+
+    lileep.attack(enemy, Moves.Pound, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(enemy.checkStat(Stats.Speed, 0)).toBeCloseTo(clean * FOSSIL_HOLD_SCALE, 5);
+    expect(enemy.checkEscape()).toBe(false);
+
+    // What the roots leave behind is exactly what the claws are for
+    expect(anorith.checkMovePower(Moves.Pound, target)).toBeCloseTo(power * FOSSIL_RUSH_SCALE, 5);
+
+    battle.tick(FOSSIL_HOLD_DURATION);
+
+    expect(enemy.checkStat(Stats.Speed, 0)).toBeCloseTo(clean, 5);
+    expect(enemy.checkEscape()).toBe(true);
   });
 });

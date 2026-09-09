@@ -1002,3 +1002,73 @@ export function createEclipseAbility(
     }),
   );
 }
+
+/** How long the roots hold, what they take off, and what the claws get */
+export const FOSSIL_HOLD_DURATION = 6000;
+export const FOSSIL_HOLD_SCALE = 0.7;
+export const FOSSIL_RUSH_SCALE = 1.3;
+
+/** Which of Hoenn's two fossils an ability is */
+export type FossilPairSide = 'anchors' | 'chases';
+
+/**
+ * What Lileep and Anorith share: whether a thing can get away. Lileep
+ * pins whatever it touches down and slows it; Anorith is worth more
+ * against anything that cannot keep up, which is exactly what Lileep
+ * leaves behind
+ */
+export function createFossilPairAbility(
+  ability: Abilities,
+  side: FossilPairSide,
+): ((battle: Battle) => void) & { ability: Abilities } {
+  if (side === 'chases') {
+    return createAbility(ability, (battle) =>
+      battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
+        const target = event.target;
+        const source = event.source;
+
+        if (
+          event.power == null ||
+          target.type !== MoveTargetType.Unit ||
+          !source.hasAbility(ability) ||
+          target.unit.checkStat(Stats.Speed, 0) >= source.checkStat(Stats.Speed, 0)
+        ) {
+          return;
+        }
+
+        event.power *= FOSSIL_RUSH_SCALE;
+      }),
+    );
+  }
+
+  return createAbility(ability, (battle) => {
+    const held = createTimedMarks(battle);
+
+    return new MergedLifecycle([
+      ...held.lifecycles,
+      battle.on(BattleEvents.UnitAttack, AttackPriority.Post, (event) => {
+        const source = event.source;
+
+        if (
+          event.success &&
+          event.target.alive &&
+          !(event.flags & MoveAttackFlags.Simulated) &&
+          source.hasAbility(ability)
+        ) {
+          source.triggerAbility(ability);
+          held.mark(event.target, FOSSIL_HOLD_DURATION);
+        }
+      }),
+      battle.on(BattleEvents.CheckUnitEscape, EventPriority.Post, (event) => {
+        if (event.success && held.has(event.source)) {
+          event.success = false;
+        }
+      }),
+      battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
+        if (event.stat === Stats.Speed && held.has(event.source)) {
+          event.value *= FOSSIL_HOLD_SCALE;
+        }
+      }),
+    ]);
+  });
+}

@@ -1171,4 +1171,43 @@ export default function registerSignatureAbilities(): void {
     name: 'Sun Glare',
     description: 'Enemies take 1.15x damage while it stands, unless a Moon Pull holder stands too.',
   });
+
+  // Barboach
+  registerAbility(Abilities.SiltBed, {
+    name: 'Silt Bed',
+    description:
+      'Every grounded pokemon on the field, its own side included, has Speed count 0.9x.',
+  });
+
+  // Corphish
+  registerAbility(Abilities.DirtyFighter, {
+    name: 'Dirty Fighter',
+    description: 'Its moves hit 1.3x against a target still at full HP.',
+  });
+
+  // Baltoy
+  registerAbility(Abilities.SpinBalance, {
+    name: 'Spin Balance',
+    description:
+      'It cannot be flinched, cannot be forced off the field, and its stages cannot be lowered.',
+  });
+
+  /**
+   * Lileep and Anorith are Hoenn's two fossils, so they are counterparts:
+   * the one that anchors what it touches, and the one that runs down
+   * whatever cannot get away
+   */
+
+  // Lileep
+  registerAbility(Abilities.RootHold, {
+    name: 'Root Hold',
+    description:
+      'A move it lands stops that target fleeing for 6 seconds and counts their Speed 0.7x meanwhile.',
+  });
+
+  // Anorith
+  registerAbility(Abilities.ClawRush, {
+    name: 'Claw Rush',
+    description: 'Its moves hit 1.3x against any target slower than it.',
+  });
 }

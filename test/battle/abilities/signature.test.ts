@@ -6,8 +6,11 @@ import registerAbilities, {
 import { SIGNATURE_ABILITIES } from '../../../src/battle/abilities/signature';
 import {
   ABSOLUTE_CALM_STATUS_SCALE,
+  ANCESTRAL_MEMORY_SCALE,
   FULL_BELLY_CAST_SCALE,
   FULL_BELLY_HEAL_FRACTION,
+  GENETIC_APEX_HIGHEST_SCALE,
+  GENETIC_APEX_LOWEST_SCALE,
   LATENT_POTENTIAL_SCALE,
   LIGHTNING_REFLEXES_CAST_SCALE,
   PREDATORS_DIVE_SCALE,
@@ -2516,5 +2519,85 @@ describe('Ashfall', () => {
 
     // Nothing for the one already down
     expect(other.status[Statuses.Burned]).toBeUndefined();
+  });
+});
+
+describe('Serene Storm', () => {
+  it('holds its weather out and keeps its own side out of it', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.SereneStorm);
+
+    // Whatever it calls up is called up to stay
+    expect(holder.checkWeatherDuration(Weathers.Sandstorm, turns(5))).toBe(0);
+    expect(enemy.checkWeatherDuration(Weathers.Sandstorm, turns(5))).toBe(turns(5));
+
+    const sand = { type: EffectType.Weather, weather: Weathers.Sandstorm, unit: ally } as const;
+
+    expect(ally.checkCanDamage(sand, ally, 10, 0)).toBe(false);
+    expect(enemy.checkCanDamage({ ...sand, unit: enemy }, enemy, 10, 0)).toBe(true);
+  });
+});
+
+describe('Genetic Apex', () => {
+  it('sharpens what it is best at and dulls what it is worst at', () => {
+    const { battle, teamA } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const bare = createUnit(battle, teamA);
+    holder.addAbility(Abilities.GeneticApex);
+
+    for (const unit of [holder, bare]) {
+      unit.setStat(StatsKind.Base, Stats.SpecialAttack, 200);
+      unit.setStat(StatsKind.Base, Stats.Defense, 40);
+    }
+
+    expect(holder.checkStat(Stats.SpecialAttack, 0)).toBeCloseTo(
+      bare.checkStat(Stats.SpecialAttack, 0) * GENETIC_APEX_HIGHEST_SCALE,
+      5,
+    );
+    expect(holder.checkStat(Stats.Defense, 0)).toBeCloseTo(
+      bare.checkStat(Stats.Defense, 0) * GENETIC_APEX_LOWEST_SCALE,
+      5,
+    );
+    expect(holder.checkStat(Stats.Speed, 0)).toBe(bare.checkStat(Stats.Speed, 0));
+  });
+});
+
+describe('Ancestral Memory', () => {
+  it('remembers each type after it has met it once', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.AncestralMemory);
+
+    const fire = makeAttack(enemy, holder, Moves.Ember, Types.Fire, MoveCategories.Special);
+    const normal = makeAttack(enemy, holder, Moves.Pound, Types.Normal, MoveCategories.Physical);
+
+    expect(resolveAttackStat(battle, fire, enemy, Stats.SpecialAttack, 100)).toBe(100);
+
+    enemy.attack(holder, Moves.Ember, 40, Types.Fire, MoveCategories.Special, 0);
+
+    expect(resolveAttackStat(battle, fire, enemy, Stats.SpecialAttack, 100)).toBeCloseTo(
+      100 * ANCESTRAL_MEMORY_SCALE,
+      5,
+    );
+
+    // A type it has not met yet still lands in full, and the memory of
+    // the first one stays
+    expect(resolveAttackStat(battle, normal, enemy, Stats.Attack, 100)).toBe(100);
+
+    enemy.attack(holder, Moves.Pound, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(resolveAttackStat(battle, normal, enemy, Stats.Attack, 100)).toBeCloseTo(
+      100 * ANCESTRAL_MEMORY_SCALE,
+      5,
+    );
+    expect(resolveAttackStat(battle, fire, enemy, Stats.SpecialAttack, 100)).toBeCloseTo(
+      100 * ANCESTRAL_MEMORY_SCALE,
+      5,
+    );
   });
 });

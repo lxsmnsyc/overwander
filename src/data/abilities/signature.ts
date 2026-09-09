@@ -490,4 +490,23 @@ export default function registerSignatureAbilities(): void {
     name: 'Ashfall',
     description: 'When it faints, every standing enemy is burned.',
   });
+
+  // Dratini
+  registerAbility(Abilities.SereneStorm, {
+    name: 'Serene Storm',
+    description:
+      'Weather it calls up never clears on its own, and its side takes no damage from any weather.',
+  });
+
+  // Mewtwo
+  registerAbility(Abilities.GeneticApex, {
+    name: 'Genetic Apex',
+    description: 'Its highest battle stat counts 1.25x and its lowest counts 0.8x.',
+  });
+
+  // Mew
+  registerAbility(Abilities.AncestralMemory, {
+    name: 'Ancestral Memory',
+    description: 'Any type that has already hit it once hits it at 0.85x thereafter.',
+  });
 }

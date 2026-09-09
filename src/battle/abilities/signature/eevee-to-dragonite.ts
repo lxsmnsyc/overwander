@@ -1,5 +1,6 @@
 import { AttackPriority, EventPriority } from '../../../core/event-emitter';
 import { Stats } from '../../../data/constants/stats';
+import type { Types } from '../../../data/constants/types';
 import Abilities from '../../../data/ids/abilities';
 import { DamageFlags, MoveAttackFlags } from '../../../data/ids/moves';
 import { Statuses } from '../../../data/ids/status';
@@ -8,7 +9,7 @@ import { MergedLifecycle } from '../../lifecycle';
 import type Unit from '../../unit';
 import { onUnitActs, unitTarget } from '../../utils';
 import { createAbility } from '../__create';
-import { createTimedMarks, createUnitState } from './__create';
+import { BATTLE_STATS, createStatExtremes, createTimedMarks, createUnitState } from './__create';
 
 /** What the unspent half of a pokemon is worth */
 export const LATENT_POTENTIAL_SCALE = 1.3;
@@ -51,17 +52,12 @@ export const LIGHTNING_REFLEXES_CAST_SCALE = 0.75;
 /** The two things a bird that moves first is never caught by */
 const LIGHTNING_REFLEXES_IMMUNE = new Set<Statuses>([Statuses.Paralyzed, Statuses.Flinched]);
 
-/**
- * The five a fight is fought with. HP is left out: it is not a stat a
- * pokemon leans on, it is the room it has to be wrong in
- */
-const BATTLE_STATS = [
-  Stats.Attack,
-  Stats.Defense,
-  Stats.SpecialAttack,
-  Stats.SpecialDefense,
-  Stats.Speed,
-];
+/** What its highest stat is worth, and what its lowest is left at */
+export const GENETIC_APEX_HIGHEST_SCALE = 1.25;
+export const GENETIC_APEX_LOWEST_SCALE = 0.8;
+
+/** What a type it has already met takes off the next blow of that type */
+export const ANCESTRAL_MEMORY_SCALE = 0.85;
 
 /** What a pokemon looked like a moment ago */
 interface Snapshot {
@@ -70,38 +66,20 @@ interface Snapshot {
 }
 
 const eeveeToDragonite = [
-  // Eevee: whatever it has least of is what has not been spent yet.
-  // Reading the other four means asking for them, so the listener steps
-  // aside while it measures
+  // Eevee: whatever it has least of is what has not been spent yet
   createAbility(Abilities.LatentPotential, (battle) => {
-    let measuring = false;
+    const stats = createStatExtremes();
 
     return battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
       if (
-        measuring ||
+        stats.measuring() ||
         !BATTLE_STATS.includes(event.stat) ||
         !event.source.hasAbility(Abilities.LatentPotential)
       ) {
         return;
       }
 
-      measuring = true;
-
-      let lowest = event.stat;
-      let lowestValue = Number.POSITIVE_INFINITY;
-
-      for (const stat of BATTLE_STATS) {
-        const value = event.source.checkStat(stat, 0);
-
-        if (value < lowestValue) {
-          lowest = stat;
-          lowestValue = value;
-        }
-      }
-
-      measuring = false;
-
-      if (lowest === event.stat) {
+      if (stats.extremes(event.source).lowest === event.stat) {
         event.value *= LATENT_POTENTIAL_SCALE;
       }
     });
@@ -406,6 +384,105 @@ const eeveeToDragonite = [
       }
     }),
   ),
+
+  // Dratini: the sky it calls up does not clear itself, and its own
+  // side stands in it untouched
+  createAbility(
+    Abilities.SereneStorm,
+    (battle) =>
+      new MergedLifecycle([
+        // Zero is how this engine spells weather that holds until
+        // something replaces it
+        battle.on(BattleEvents.CheckUnitWeatherDuration, EventPriority.Post, (event) => {
+          if (event.source.hasAbility(Abilities.SereneStorm)) {
+            event.duration = 0;
+
+            event.source.triggerAbility(Abilities.SereneStorm);
+          }
+        }),
+        battle.on(BattleEvents.CheckUnitCanDamage, EventPriority.Post, (event) => {
+          if (event.success && event.cause.type === EffectType.Weather) {
+            for (const dragon of battle.units()) {
+              if (
+                dragon.alive &&
+                dragon.team.alliance === event.target.team.alliance &&
+                dragon.hasAbility(Abilities.SereneStorm)
+              ) {
+                event.success = false;
+                return;
+              }
+            }
+          }
+        }),
+      ]),
+  ),
+
+  // Mewtwo: built for one thing and left worse at everything else. The
+  // deliberate opposite of what an Eevee has not spent yet
+  createAbility(Abilities.GeneticApex, (battle) => {
+    const stats = createStatExtremes();
+
+    return battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
+      if (
+        stats.measuring() ||
+        !BATTLE_STATS.includes(event.stat) ||
+        !event.source.hasAbility(Abilities.GeneticApex)
+      ) {
+        return;
+      }
+
+      const { highest, lowest } = stats.extremes(event.source);
+
+      if (event.stat === highest) {
+        event.value *= GENETIC_APEX_HIGHEST_SCALE;
+      } else if (event.stat === lowest) {
+        event.value *= GENETIC_APEX_LOWEST_SCALE;
+      }
+    });
+  }),
+
+  // Mew: it has been everything at some point, so a type it has already
+  // met is a type it half remembers how to take
+  createAbility(Abilities.AncestralMemory, (battle) => {
+    const { state, lifecycles } = createUnitState<Set<Types>>(battle);
+
+    return new MergedLifecycle([
+      battle.on(BattleEvents.UnitAttackResolveStat, EventPriority.Post, (event) => {
+        const parent = event.parent;
+
+        if (
+          event.unit === parent.source &&
+          (event.stat === Stats.Attack || event.stat === Stats.SpecialAttack) &&
+          parent.target.hasAbility(Abilities.AncestralMemory) &&
+          state.get(parent.target)?.has(parent.type) === true
+        ) {
+          event.value *= ANCESTRAL_MEMORY_SCALE;
+        }
+      }),
+      battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
+        const target = event.target;
+        const cause = event.cause;
+
+        if (
+          !event.success ||
+          event.flags & DamageFlags.Indirect ||
+          cause.type !== EffectType.Move ||
+          cause.unit === target ||
+          !target.hasAbility(Abilities.AncestralMemory)
+        ) {
+          return;
+        }
+
+        const met = state.get(target) ?? new Set<Types>();
+
+        met.add(cause.unit.checkMoveType(cause.move, unitTarget(target)));
+        state.set(target, met);
+
+        target.triggerAbility(Abilities.AncestralMemory);
+      }),
+      ...lifecycles,
+    ]);
+  }),
 ];
 
 export default eeveeToDragonite;

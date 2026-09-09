@@ -376,6 +376,9 @@ const enum Abilities {
   AbsoluteCalm = 200073,
   LightningReflexes = 200074,
   Ashfall = 200075,
+  SereneStorm = 200076,
+  GeneticApex = 200077,
+  AncestralMemory = 200078,
 }
 
 export default Abilities;

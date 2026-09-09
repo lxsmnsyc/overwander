@@ -1,4 +1,5 @@
 import { AttackPriority, EventPriority } from '../../../core/event-emitter';
+import { Stats } from '../../../data/constants/stats';
 import type Abilities from '../../../data/ids/abilities';
 import { MoveCategories, Moves } from '../../../data/ids/moves';
 import { getMoveData } from '../../../data/moves';
@@ -207,5 +208,59 @@ export function createTimedMarks(battle: Battle): {
     },
     has: (unit) => marks.has(unit),
     lifecycles: [clock],
+  };
+}
+
+/**
+ * The five a fight is fought with. HP is left out: it is not a stat a
+ * pokemon leans on, it is the room it has to be wrong in
+ */
+export const BATTLE_STATS = [
+  Stats.Attack,
+  Stats.Defense,
+  Stats.SpecialAttack,
+  Stats.SpecialDefense,
+  Stats.Speed,
+];
+
+/**
+ * Reads which of a unit's five stats stand highest and lowest. Asking
+ * for a stat emits the same event the caller is answering, so the
+ * measurement raises a flag the caller checks before it does anything
+ */
+export function createStatExtremes(): {
+  measuring(): boolean;
+  extremes(unit: Unit): { highest: Stats; lowest: Stats };
+} {
+  let measuring = false;
+
+  return {
+    measuring: () => measuring,
+    extremes(unit) {
+      measuring = true;
+
+      let highest = BATTLE_STATS[0];
+      let lowest = BATTLE_STATS[0];
+      let highestValue = Number.NEGATIVE_INFINITY;
+      let lowestValue = Number.POSITIVE_INFINITY;
+
+      for (const stat of BATTLE_STATS) {
+        const value = unit.checkStat(stat, 0);
+
+        if (value > highestValue) {
+          highest = stat;
+          highestValue = value;
+        }
+
+        if (value < lowestValue) {
+          lowest = stat;
+          lowestValue = value;
+        }
+      }
+
+      measuring = false;
+
+      return { highest, lowest };
+    },
   };
 }

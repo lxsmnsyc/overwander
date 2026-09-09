@@ -439,4 +439,30 @@ export default function registerSignatureAbilities(): void {
     name: 'Latent Potential',
     description: 'Whichever of its five battle stats is lowest counts 1.3x.',
   });
+
+  // Porygon
+  registerAbility(Abilities.Rollback, {
+    name: 'Rollback',
+    description:
+      'The first time it drops below 1/2 HP, its health goes back to what it was 4 seconds earlier.',
+  });
+
+  // Omanyte
+  registerAbility(Abilities.SpiralShell, {
+    name: 'Spiral Shell',
+    description: 'Each blow from the same attacker lands 10% weaker than their last, down to 0.6x.',
+  });
+
+  // Kabuto
+  registerAbility(Abilities.SerratedEdge, {
+    name: 'Serrated Edge',
+    description:
+      'A contact move it lands leaves a cut: that enemy loses 1/16 of its HP each time it acts for 6 seconds.',
+  });
+
+  // Aerodactyl
+  registerAbility(Abilities.PredatorsDive, {
+    name: "Predator's Dive",
+    description: 'Its first move against each enemy hits 1.5x.',
+  });
 }

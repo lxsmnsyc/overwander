@@ -368,6 +368,10 @@ const enum Abilities {
   SafePassage = 200065,
   AdaptiveCell = 200066,
   LatentPotential = 200067,
+  Rollback = 200068,
+  SpiralShell = 200069,
+  SerratedEdge = 200070,
+  PredatorsDive = 200071,
 }
 
 export default Abilities;

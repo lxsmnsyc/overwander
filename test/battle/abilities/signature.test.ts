@@ -4,7 +4,17 @@ import registerAbilities, {
   getRegisteredAbilities,
 } from '../../../src/data/abilities';
 import { SIGNATURE_ABILITIES } from '../../../src/battle/abilities/signature';
-import { LATENT_POTENTIAL_SCALE } from '../../../src/battle/abilities/signature/eevee-to-dragonite';
+import {
+  LATENT_POTENTIAL_SCALE,
+  PREDATORS_DIVE_SCALE,
+  ROLLBACK_SAMPLE,
+  ROLLBACK_THRESHOLD,
+  ROLLBACK_WINDOW,
+  SERRATED_EDGE_DURATION,
+  SERRATED_EDGE_FRACTION,
+  SPIRAL_SHELL_FLOOR,
+  SPIRAL_SHELL_STEP,
+} from '../../../src/battle/abilities/signature/eevee-to-dragonite';
 import { AttackPriority } from '../../../src/core/event-emitter';
 import {
   AFTERBURN_MAX_STACKS,
@@ -2298,5 +2308,127 @@ describe('Latent Potential', () => {
     bare.setStat(StatsKind.Base, Stats.Speed, 200);
 
     expect(holder.checkStat(Stats.Speed, 0)).toBe(bare.checkStat(Stats.Speed, 0));
+  });
+});
+
+describe('Rollback', () => {
+  it('restores the health it had four seconds earlier, once', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Rollback);
+
+    const maxHP = holder.checkStat(Stats.HP, 0);
+
+    // Snapshots are taken a second at a time, so the clock is run the
+    // way a fight runs it
+    function waitForSnapshots(): void {
+      for (let taken = 0; taken <= ROLLBACK_WINDOW / ROLLBACK_SAMPLE + 1; taken += 1) {
+        battle.tick(ROLLBACK_SAMPLE);
+      }
+    }
+
+    waitForSnapshots();
+
+    enemy.damage(NONE_CAUSE, holder, maxHP * (1 - ROLLBACK_THRESHOLD) + 10, 0);
+
+    expect(holder.health).toBeCloseTo(maxHP, 5);
+
+    // The snapshot is spent: a second fall is not undone
+    holder.setHealth(maxHP);
+    waitForSnapshots();
+    enemy.damage(NONE_CAUSE, holder, maxHP * (1 - ROLLBACK_THRESHOLD) + 10, 0);
+
+    expect(holder.health).toBeLessThan(maxHP * ROLLBACK_THRESHOLD);
+  });
+});
+
+describe('Spiral Shell', () => {
+  it('learns one attacker at a time, down to the floor', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const holder = createUnit(battle, teamA);
+    const first = createUnit(battle, teamB);
+    const second = createUnit(battle, teamB);
+    holder.addAbility(Abilities.SpiralShell);
+
+    const fromFirst = makeAttack(first, holder, Moves.Pound, Types.Normal, MoveCategories.Physical);
+    const fromSecond = makeAttack(
+      second,
+      holder,
+      Moves.Pound,
+      Types.Normal,
+      MoveCategories.Physical,
+    );
+    const maxHP = holder.checkStat(Stats.HP, 0);
+
+    for (let blows = 1; blows <= 6; blows += 1) {
+      first.attack(holder, Moves.Pound, 40, Types.Normal, MoveCategories.Physical, 0);
+      holder.setHealth(maxHP);
+
+      expect(resolveAttackStat(battle, fromFirst, first, Stats.Attack, 100)).toBeCloseTo(
+        100 * Math.max(SPIRAL_SHELL_FLOOR, 1 - SPIRAL_SHELL_STEP * blows),
+        5,
+      );
+    }
+
+    // Nothing the second attacker has to show for it
+    expect(resolveAttackStat(battle, fromSecond, second, Stats.Attack, 100)).toBe(100);
+  });
+});
+
+describe('Serrated Edge', () => {
+  it('leaves a cut that costs the enemy every time it acts', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.SerratedEdge);
+
+    holder.attack(enemy, Moves.Pound, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    const maxHP = enemy.checkStat(Stats.HP, 0);
+    enemy.setHealth(maxHP);
+
+    act(battle, enemy);
+
+    expect(maxHP - enemy.health).toBeCloseTo(maxHP * SERRATED_EDGE_FRACTION, 5);
+
+    // The cut closes on its own
+    battle.tick(SERRATED_EDGE_DURATION);
+    enemy.setHealth(maxHP);
+
+    act(battle, enemy);
+
+    expect(enemy.health).toBe(maxHP);
+  });
+});
+
+describe("Predator's Dive", () => {
+  it('is worth more against each enemy exactly once', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    const other = createUnit(battle, teamB);
+    holder.addAbility(Abilities.PredatorsDive);
+
+    const atEnemy = makeAttack(holder, enemy, Moves.Pound, Types.Normal, MoveCategories.Physical);
+    const atOther = makeAttack(holder, other, Moves.Pound, Types.Normal, MoveCategories.Physical);
+
+    expect(resolveAttackStat(battle, atEnemy, holder, Stats.Attack, 100)).toBeCloseTo(
+      100 * PREDATORS_DIVE_SCALE,
+      5,
+    );
+
+    holder.attack(enemy, Moves.Pound, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(resolveAttackStat(battle, atEnemy, holder, Stats.Attack, 100)).toBe(100);
+
+    // Every new enemy is a new dive
+    expect(resolveAttackStat(battle, atOther, holder, Stats.Attack, 100)).toBeCloseTo(
+      100 * PREDATORS_DIVE_SCALE,
+      5,
+    );
   });
 });

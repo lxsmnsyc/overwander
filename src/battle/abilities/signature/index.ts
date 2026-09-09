@@ -6,6 +6,7 @@ import geodudeToDrowzee from './geodude-to-drowzee';
 import krabbyToPinsir from './krabby-to-pinsir';
 import parasToTentacool from './paras-to-tentacool';
 import sandshrewToOddish from './sandshrew-to-oddish';
+import treeckoToDeoxys from './treecko-to-deoxys';
 
 /**
  * The invented abilities, one per evolution family, in the order the
@@ -19,6 +20,7 @@ const setupAbilities = [
   ...krabbyToPinsir,
   ...eeveeToDragonite,
   ...chikoritaToCelebi,
+  ...treeckoToDeoxys,
 ];
 
 /**

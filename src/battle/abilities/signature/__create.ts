@@ -8,6 +8,7 @@ import type Battle from '../../core';
 import { BattleEvents, EffectType, type UnitDamageEvent } from '../../events';
 import { type Lifecycle, MergedLifecycle } from '../../lifecycle';
 import type Unit from '../../unit';
+import { onUnitActs } from '../../utils';
 import { createAbility } from '../__create';
 
 /**
@@ -235,6 +236,66 @@ export const BATTLE_STATS = [
  * for a stat emits the same event the caller is answering, so the
  * measurement raises a flag the caller checks before it does anything
  */
+/** How far a starter may grow a stat on its own */
+export const GROWTH_MAX_STAGES = 3;
+
+/** What sets a starter growing: its own action, its blows, or the ones it takes */
+export type GrowthTrigger = 'acts' | 'lands' | 'takes';
+
+/**
+ * What a region's three starters share: each grows through a fight in
+ * the stat its line is built on, a stage at a time and only so far.
+ * Stages rather than a hidden multiplier, so a Haze strips the growth
+ * and everything that reads a stage sees it
+ */
+export function createGrowthAbility(
+  ability: Abilities,
+  stage: Stages,
+  trigger: GrowthTrigger,
+): ((battle: Battle) => void) & { ability: Abilities } {
+  return createAbility(ability, (battle) => {
+    const { counter, lifecycles } = createUnitCounter(battle);
+
+    function grow(unit: Unit): void {
+      const held = counter.get(unit);
+
+      if (held >= GROWTH_MAX_STAGES || !unit.hasAbility(ability)) {
+        return;
+      }
+
+      counter.set(unit, held + 1);
+      unit.triggerAbility(ability);
+      unit.addStage(stage, 1, { type: EffectType.Ability, ability, unit });
+    }
+
+    function watch(): Lifecycle[] {
+      if (trigger === 'acts') {
+        return onUnitActs(battle, grow);
+      }
+
+      if (trigger === 'lands') {
+        return [
+          battle.on(BattleEvents.UnitTriggerMoveRollHit, EventPriority.Post, (event) => {
+            if (event.hit) {
+              grow(event.parent.source);
+            }
+          }),
+        ];
+      }
+
+      return [
+        battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
+          if (event.success && !(event.flags & DamageFlags.Indirect) && event.target.alive) {
+            grow(event.target);
+          }
+        }),
+      ];
+    }
+
+    return new MergedLifecycle([...watch(), ...lifecycles]);
+  });
+}
+
 /**
  * What the three Kanto birds share: the beat of the wings as one takes
  * the field costs every enemy a stage of whatever that bird's weather

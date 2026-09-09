@@ -833,4 +833,34 @@ export default function registerSignatureAbilities(): void {
     description:
       'The first time it drops below 1/2 HP, every stat drop on it is undone and every status cleared.',
   });
+
+  /**
+   * The Hoenn starters share one signature: each grows through the
+   * fight in the stat its line is built on, up to three stages of its
+   * own making
+   */
+  // Treecko
+  registerAbility(Abilities.SapSurge, {
+    name: 'Sap Surge',
+    description: 'It gains a stage of Speed each time it acts, up to 3 of its own.',
+  });
+
+  // Torchic
+  registerAbility(Abilities.EmberSurge, {
+    name: 'Ember Surge',
+    description: 'It gains a stage of Attack each time it lands a move, up to 3 of its own.',
+  });
+
+  // Mudkip
+  registerAbility(Abilities.SiltSurge, {
+    name: 'Silt Surge',
+    description:
+      'It gains a stage of Special Defense each time it takes a hit, up to 3 of its own.',
+  });
+
+  // Poochyena
+  registerAbility(Abilities.PackHunt, {
+    name: 'Pack Hunt',
+    description: 'Its moves hit 1.2x against anything an ally has already damaged.',
+  });
 }

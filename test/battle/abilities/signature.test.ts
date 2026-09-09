@@ -146,10 +146,18 @@ import { Stages, Stats, StatsKind } from '../../../src/data/constants/stats';
 import { Types } from '../../../src/data/constants/types';
 import Abilities from '../../../src/data/ids/abilities';
 import { Items } from '../../../src/data/ids/items';
-import { MoveCategories, MoveTargets, Moves, StatFlags } from '../../../src/data/ids/moves';
+import {
+  DamageFlags,
+  MoveCategories,
+  MoveTargets,
+  Moves,
+  StatFlags,
+} from '../../../src/data/ids/moves';
 import { Statuses, TeamStatuses, Weathers } from '../../../src/data/ids/status';
 import turns from '../../../src/battle/turn';
 import { layersUnder } from '../../../src/battle/moves/spikes';
+import { GROWTH_MAX_STAGES } from '../../../src/battle/abilities/signature/__create';
+import { PACK_HUNT_SCALE } from '../../../src/battle/abilities/signature/treecko-to-deoxys';
 import { unitTarget } from '../../../src/battle/utils';
 import { SWITCHING_SPAN } from '../../../src/battle/status/switching';
 import { createBattle, createUnit, pinRandom } from '../harness';
@@ -3833,5 +3841,93 @@ describe('Timeline Split', () => {
     enemy.damage(NONE_CAUSE, holder, 1, 0);
 
     expect(holder.stages[Stages.Defense]).toBe(-1);
+  });
+});
+
+describe('the Hoenn starters', () => {
+  it('grows Sap Surge a stage of Speed for every action', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    createUnit(battle, teamB);
+    holder.addAbility(Abilities.SapSurge);
+
+    for (let grown = 1; grown <= GROWTH_MAX_STAGES; grown += 1) {
+      act(battle, holder);
+
+      expect(holder.stages[Stages.Speed]).toBe(grown);
+    }
+
+    // It only grows itself so far
+    act(battle, holder);
+
+    expect(holder.stages[Stages.Speed]).toBe(GROWTH_MAX_STAGES);
+
+    // Taking the field again starts it over, stages and all
+    battle.emit(BattleEvents.UnitEntersField, {
+      id: 'UnitEntersField',
+      disabled: false,
+      source: holder,
+      reactivation: false,
+    });
+    act(battle, holder);
+
+    expect(holder.stages[Stages.Speed]).toBe(GROWTH_MAX_STAGES + 1);
+  });
+
+  it('grows Ember Surge a stage of Attack for every blow that lands', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.EmberSurge);
+
+    rollMove(battle, holder, enemy, Moves.Pound, true);
+
+    expect(holder.stages[Stages.Attack]).toBe(1);
+
+    // Acting is not landing
+    act(battle, holder);
+
+    expect(holder.stages[Stages.Attack]).toBe(1);
+  });
+
+  it('grows Silt Surge a stage of Special Defense for every hit taken', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.SiltSurge);
+
+    const blow = { type: EffectType.Move, move: Moves.Pound, unit: enemy } as const;
+
+    enemy.damage(blow, holder, 10, 0);
+
+    expect(holder.stages[Stages.SpecialDefense]).toBe(1);
+
+    // Chip damage is not a blow
+    enemy.damage(blow, holder, 10, DamageFlags.Indirect);
+
+    expect(holder.stages[Stages.SpecialDefense]).toBe(1);
+  });
+});
+
+describe('Pack Hunt', () => {
+  it('hits harder at whatever an ally has already been at', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.PackHunt);
+
+    const target = unitTarget(enemy);
+
+    expect(holder.checkMovePower(Moves.Pound, target)).toBe(40);
+
+    // Its own bite opens nothing up
+    holder.damage({ type: EffectType.Move, move: Moves.Pound, unit: holder }, enemy, 10, 0);
+
+    expect(holder.checkMovePower(Moves.Pound, target)).toBe(40);
+
+    ally.damage({ type: EffectType.Move, move: Moves.Pound, unit: ally }, enemy, 10, 0);
+
+    expect(holder.checkMovePower(Moves.Pound, target)).toBeCloseTo(40 * PACK_HUNT_SCALE, 5);
   });
 });

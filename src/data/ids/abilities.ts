@@ -430,6 +430,10 @@ const enum Abilities {
   SilverAegis = 200127,
   RainbowRekindling = 200128,
   TimelineSplit = 200129,
+  SapSurge = 200130,
+  EmberSurge = 200131,
+  SiltSurge = 200132,
+  PackHunt = 200133,
 }
 
 export default Abilities;

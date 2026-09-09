@@ -16,6 +16,7 @@ export const RECOIL_MOVES: { [key in Moves]?: number } = {
   [Moves.Submission]: 1 / 4,
   [Moves.VoltTackle]: 1 / 3,
   [Moves.FlareBlitz]: 1 / 3,
+  [Moves.BraveBird]: 1 / 3,
 };
 
 export function isRecoilMove(move: Moves): boolean {

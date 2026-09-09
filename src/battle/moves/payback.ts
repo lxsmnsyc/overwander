@@ -20,7 +20,7 @@ const WINDOW = turns(1);
 /** How much harder either lands when its moment is there */
 const PAID_BACK = 2;
 
-/** The two that wait, so the check below is one lookup rather than two */
+/** The two that wait on the target, so the check below is one lookup */
 const WAITING = new Set<Moves>([Moves.Payback, Moves.Assurance]);
 
 export default function setupPayback(battle: Battle): void {
@@ -70,6 +70,17 @@ export default function setupPayback(battle: Battle): void {
     const window = event.move === Moves.Payback ? cast : hurt;
 
     if (WAITING.has(event.move) && window.has(event.target.unit)) {
+      event.power *= PAID_BACK;
+    }
+  });
+
+  /**
+   * Avalanche reads the same window from the other side: it is the
+   * user's own wound it answers for, and its long wind-up is what
+   * gives the wound time to be dealt
+   */
+  battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
+    if (event.power != null && event.move === Moves.Avalanche && hurt.has(event.source)) {
       event.power *= PAID_BACK;
     }
   });

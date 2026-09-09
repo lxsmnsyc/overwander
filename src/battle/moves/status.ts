@@ -108,6 +108,13 @@ const EFFECT_STATUS_MOVES: {
   [Moves.VoltTackle]: { status: Statuses.Paralyzed, chance: 10 },
   [Moves.Bounce]: { status: Statuses.Paralyzed, chance: 30 },
   [Moves.SandTomb]: { status: Statuses.Trapped, chance: 100 },
+  [Moves.DragonRush]: { status: Statuses.Flinched, chance: 20 },
+  [Moves.ZenHeadbutt]: { status: Statuses.Flinched, chance: 20 },
+  // The fangs bite for an ailment here and roll their flinch apart
+  // from it, in `moves/fangs.ts`
+  [Moves.ThunderFang]: { status: Statuses.Paralyzed, chance: 10 },
+  [Moves.IceFang]: { status: Statuses.Frozen, chance: 10 },
+  [Moves.FireFang]: { status: Statuses.Burned, chance: 10 },
 };
 
 /**
@@ -157,6 +164,12 @@ const EFFECT_STAGE_MOVES: { [key in Moves]?: AttackStageEffect } = {
   [Moves.CrushClaw]: { stage: Stages.Defense, value: -1, chance: 50 },
   [Moves.RockTomb]: { stage: Stages.Speed, value: -1, chance: 100 },
   [Moves.MudShot]: { stage: Stages.Speed, value: -1, chance: 100 },
+  [Moves.BugBuzz]: { stage: Stages.SpecialDefense, value: -1, chance: 10 },
+  [Moves.FocusBlast]: { stage: Stages.SpecialDefense, value: -1, chance: 10 },
+  [Moves.EnergyBall]: { stage: Stages.SpecialDefense, value: -1, chance: 10 },
+  [Moves.EarthPower]: { stage: Stages.SpecialDefense, value: -1, chance: 10 },
+  [Moves.MudBomb]: { stage: Stages.Accuracy, value: -1, chance: 30 },
+  [Moves.MirrorShot]: { stage: Stages.Accuracy, value: -1, chance: 30 },
   [Moves.MuddyWater]: { stage: Stages.Accuracy, value: -1, chance: 30 },
   [Moves.MeteorMash]: { stage: Stages.Attack, value: 1, chance: 20, self: true },
   // Paid after it lands rather than before: the cost of swinging that

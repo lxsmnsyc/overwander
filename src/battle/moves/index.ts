@@ -96,6 +96,7 @@ import setupAquaRing from './aqua-ring';
 import setupLuckyChant from './lucky-chant';
 import setupReadingTheField from './reading-the-field';
 import setupLastResort from './last-resort';
+import setupFangs from './fangs';
 
 export default function setupMoves(battle: Battle): void {
   // Overarching groups
@@ -206,6 +207,7 @@ export default function setupMoves(battle: Battle): void {
   setupLuckyChant(battle);
   setupReadingTheField(battle);
   setupLastResort(battle);
+  setupFangs(battle);
 
   // Last, because they are what is left: both fallbacks only answer
   // when every resolver above has declined to pick anything. Attack

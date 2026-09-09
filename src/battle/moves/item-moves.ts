@@ -15,6 +15,9 @@ import { hasFreeItemSlot, stealableItem } from '../utils';
  * Thief and Covet, which take an item for keeps, are the thief group's
  * own business.
  */
+/** The two that trade hands, which differ in nothing but their name */
+const TRADING_MOVES = new Set<Moves>([Moves.Trick, Moves.Switcheroo]);
+
 export default function setupItemMoves(battle: Battle): void {
   /** What each unit last used up, which is what a Recycle gets back */
   const spent = new Map<Unit, Items>();
@@ -65,7 +68,7 @@ export default function setupItemMoves(battle: Battle): void {
       return;
     }
 
-    if (event.move !== Moves.Trick || event.target.type !== MoveTargetType.Unit) {
+    if (!TRADING_MOVES.has(event.move) || event.target.type !== MoveTargetType.Unit) {
       return;
     }
 

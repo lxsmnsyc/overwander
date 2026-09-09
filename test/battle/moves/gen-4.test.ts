@@ -11,7 +11,7 @@ import type Unit from '../../../src/battle/unit';
 import { Stages, Stats } from '../../../src/data/constants/stats';
 import { Types } from '../../../src/data/constants/types';
 import { Items } from '../../../src/data/ids/items';
-import { Moves } from '../../../src/data/ids/moves';
+import { MoveCategories, Moves } from '../../../src/data/ids/moves';
 import { Statuses } from '../../../src/data/ids/status';
 import Abilities from '../../../src/data/ids/abilities';
 import { EventPriority } from '../../../src/core/event-emitter';
@@ -429,5 +429,44 @@ describe("Sinnoh's moves", () => {
     // points inside the bag
     pinRandom(battle, 1);
     expect(stealableItem(victim)).toBe(last);
+  });
+
+  it('bites for an ailment and a flinch at once, with a fang', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const biter = createUnit(battle, teamA);
+    const bitten = createUnit(battle, teamB);
+
+    biter.enter();
+    bitten.enter();
+
+    // Both rolls come up: a fang carries two secondaries, and the
+    // shared resolver only has room for one of them
+    pinRandom(battle, 0);
+    biter.attack(bitten, Moves.FireFang, 10, Types.Fire, MoveCategories.Physical, 0);
+    battle.tick(1);
+
+    expect(bitten.status[Statuses.Burned]).not.toBeNull();
+    expect(bitten.status[Statuses.Flinched]).not.toBeNull();
+  });
+
+  it("answers for the user's own wound with an Avalanche", () => {
+    const { battle, teamA, teamB } = createBattle();
+    const avenger = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB);
+
+    avenger.enter();
+    target.enter();
+
+    const plain = powerOf(battle, avenger, Moves.Avalanche, target);
+
+    target.attack(avenger, Moves.Tackle, 10, Types.Normal, MoveCategories.Physical, 0);
+    battle.tick(1);
+
+    // Hurt inside the window, so the answer comes back twice as hard
+    expect(powerOf(battle, avenger, Moves.Avalanche, target)).toBe(plain * 2);
+
+    // And the window closes
+    battle.tick(turns(2));
+    expect(powerOf(battle, avenger, Moves.Avalanche, target)).toBe(plain);
   });
 });

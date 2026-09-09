@@ -6,6 +6,8 @@ import registerHealBlockToPowerTrick from './heal-block-to-power-trick';
 import registerGastroAcidToLastResort from './gastro-acid-to-last-resort';
 import registerWorrySeedToFlareBlitz from './worry-seed-to-flare-blitz';
 import registerForcePalmToXScissor from './force-palm-to-x-scissor';
+import registerBugBuzzToEarthPower from './bug-buzz-to-earth-power';
+import registerSwitcherooToMirrorShot from './switcheroo-to-mirror-shot';
 
 /**
  * Sinnoh's moves, in the order the move list numbers them. That order
@@ -21,4 +23,6 @@ export default function registerGen4Moves(): void {
   registerGastroAcidToLastResort();
   registerWorrySeedToFlareBlitz();
   registerForcePalmToXScissor();
+  registerBugBuzzToEarthPower();
+  registerSwitcherooToMirrorShot();
 }

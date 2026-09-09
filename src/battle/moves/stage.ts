@@ -53,6 +53,7 @@ const STAGE_MOVE_GROUPS: [Stages, StageMovesConfig][] = [
     {
       [Moves.Growth]: 1,
       [Moves.TailGlow]: 3,
+      [Moves.NastyPlot]: 2,
       [Moves.CalmMind]: 1,
       // Flattery: the target is talked into leaning on a stat it
       // cannot aim with

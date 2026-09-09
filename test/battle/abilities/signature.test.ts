@@ -152,6 +152,16 @@ import {
   StatFlags,
 } from '../../../src/data/ids/moves';
 import { Statuses, TeamStatuses, Weathers } from '../../../src/data/ids/status';
+import {
+  ANTLION_PIT_FRACTION,
+  PATIENT_STALK_MAX_STEPS,
+  PATIENT_STALK_SECOND,
+  PATIENT_STALK_STEP,
+  STORED_BOUNCE_CAP,
+  STORED_BOUNCE_SHARE,
+  UNIQUE_SPOTS_LOWERED,
+  UNIQUE_SPOTS_RAISED,
+} from '../../../src/battle/abilities/signature/spoink-to-deoxys';
 import turns from '../../../src/battle/turn';
 import { layersUnder } from '../../../src/battle/moves/spikes';
 import {
@@ -179,7 +189,7 @@ import {
   PERENNIAL_HEAL_FRACTION,
   PERENNIAL_THRESHOLD,
   VANISHING_ACT_DURATION,
-} from '../../../src/battle/abilities/signature/treecko-to-deoxys';
+} from '../../../src/battle/abilities/signature/treecko-to-torkoal';
 import { unitTarget } from '../../../src/battle/utils';
 import { SWITCHING_SPAN } from '../../../src/battle/status/switching';
 import { createBattle, createUnit, pinRandom } from '../harness';
@@ -4593,5 +4603,162 @@ describe('Body Heat', () => {
 
     // Nothing about what it hits with
     expect(holder.checkStat(Stats.Attack, 0)).toBeCloseTo(attack, 5);
+  });
+});
+
+describe('Stored Bounce', () => {
+  it('keeps half of what lands on it and gives the lot back', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0);
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.StoredBounce);
+
+    enemy.damage({ type: EffectType.Move, move: Moves.Pound, unit: enemy }, holder, 80, 0);
+
+    const before = enemy.health;
+    const dealt = dealDamage(holder, enemy, Moves.Pound, 40, Types.Normal, MoveCategories.Physical);
+
+    // The blow itself plus the stored half of the 80 it took
+    expect(before - enemy.health).toBeCloseTo(dealt, 5);
+    expect(dealt).toBeGreaterThan(80 * STORED_BOUNCE_SHARE);
+
+    // The bank empties on that one blow
+    const second = dealDamage(
+      holder,
+      enemy,
+      Moves.Pound,
+      40,
+      Types.Normal,
+      MoveCategories.Physical,
+    );
+
+    expect(second).toBeLessThan(dealt - 80 * STORED_BOUNCE_SHARE + 1);
+  });
+
+  it('holds no more than half its own HP', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0);
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.StoredBounce);
+
+    const maxHP = holder.checkStat(Stats.HP, 0);
+
+    for (let hits = 0; hits < 8; hits += 1) {
+      enemy.damage({ type: EffectType.Move, move: Moves.Pound, unit: enemy }, holder, maxHP / 4, 0);
+      holder.setHealth(maxHP);
+    }
+
+    const bare = createUnit(battle, teamA);
+    const clean = dealDamage(bare, enemy, Moves.Pound, 40, Types.Normal, MoveCategories.Physical);
+    const loaded = dealDamage(
+      holder,
+      enemy,
+      Moves.Pound,
+      40,
+      Types.Normal,
+      MoveCategories.Physical,
+    );
+
+    expect(loaded - clean).toBeCloseTo(maxHP * STORED_BOUNCE_CAP, 0);
+  });
+});
+
+describe('Unique Spots', () => {
+  it('rolls one stat up and a different one down as it arrives', () => {
+    const { battle, teamA } = createBattle();
+    pinRandom(battle, 0);
+    const holder = createUnit(battle, teamA);
+    holder.addAbility(Abilities.UniqueSpots);
+
+    battle.emit(BattleEvents.UnitEntersField, {
+      id: 'UnitEntersField',
+      disabled: false,
+      source: holder,
+      reactivation: false,
+    });
+
+    const raised = [];
+    const lowered = [];
+
+    for (const stage of [
+      Stages.Attack,
+      Stages.Defense,
+      Stages.SpecialAttack,
+      Stages.SpecialDefense,
+      Stages.Speed,
+    ]) {
+      if (holder.stages[stage] > 0) {
+        raised.push(stage);
+      }
+      if (holder.stages[stage] < 0) {
+        lowered.push(stage);
+      }
+    }
+
+    expect(raised).toHaveLength(1);
+    expect(lowered).toHaveLength(1);
+    expect(holder.stages[raised[0]]).toBe(UNIQUE_SPOTS_RAISED);
+    expect(holder.stages[lowered[0]]).toBe(-UNIQUE_SPOTS_LOWERED);
+  });
+});
+
+describe('Antlion Pit', () => {
+  it('costs whoever misses it a share of their own HP', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.AntlionPit);
+
+    const maxHP = enemy.checkStat(Stats.HP, 0);
+
+    // Hypnosis is a 60-accuracy move, so a pinned roll of 1 misses it
+    pinRandom(battle, 1);
+
+    rollMove(battle, enemy, holder, Moves.Hypnosis, false);
+
+    expect(maxHP - enemy.health).toBeCloseTo(maxHP * ANTLION_PIT_FRACTION, 5);
+
+    // And the same move landing costs nothing
+    enemy.setHealth(maxHP);
+    pinRandom(battle, 0);
+
+    rollMove(battle, enemy, holder, Moves.Hypnosis, false);
+
+    expect(enemy.health).toBe(maxHP);
+  });
+});
+
+describe('Patient Stalk', () => {
+  it('banks the wait and spends it on one blow', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const bare = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.PatientStalk);
+
+    const target = unitTarget(enemy);
+    const clean = bare.checkMovePower(Moves.Pound, target) ?? 0;
+
+    battle.tick(PATIENT_STALK_SECOND * 2);
+
+    expect(holder.checkMovePower(Moves.Pound, target)).toBeCloseTo(
+      clean * (1 + PATIENT_STALK_STEP * 2),
+      5,
+    );
+
+    // The wait stops counting at the cap
+    battle.tick(PATIENT_STALK_SECOND * (PATIENT_STALK_MAX_STEPS + 3));
+
+    expect(holder.checkMovePower(Moves.Pound, target)).toBeCloseTo(
+      clean * (1 + PATIENT_STALK_STEP * PATIENT_STALK_MAX_STEPS),
+      5,
+    );
+
+    // And a landed blow spends the lot
+    holder.attack(enemy, Moves.Pound, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(holder.checkMovePower(Moves.Pound, target)).toBeCloseTo(clean, 5);
   });
 });

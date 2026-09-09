@@ -464,6 +464,10 @@ const enum Abilities {
   Spout = 200161,
   MagmaVent = 200162,
   BodyHeat = 200163,
+  StoredBounce = 200164,
+  UniqueSpots = 200165,
+  AntlionPit = 200166,
+  PatientStalk = 200167,
 }
 
 export default Abilities;

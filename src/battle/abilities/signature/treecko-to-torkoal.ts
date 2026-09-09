@@ -157,7 +157,7 @@ export const COCOON_SCALE = 0.5;
 export const COCOON_DURATION = 4000;
 export const COCOON_THRESHOLD = 1 / 2;
 
-const treeckoToDeoxys = [
+const treeckoToTorkoal = [
   // The Hoenn starters: one growth each, in the stat its line is built
   // on, set off by what that line does with a fight
   createGrowthAbility(Abilities.SapSurge, Stages.Speed, 'acts'),
@@ -886,4 +886,4 @@ const treeckoToDeoxys = [
   ),
 ];
 
-export default treeckoToDeoxys;
+export default treeckoToTorkoal;

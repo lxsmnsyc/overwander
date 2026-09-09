@@ -1101,4 +1101,31 @@ export default function registerSignatureAbilities(): void {
     name: 'Body Heat',
     description: 'Its Defense and Special Defense count 1.3x while the Sun is up.',
   });
+
+  // Spoink
+  registerAbility(Abilities.StoredBounce, {
+    name: 'Stored Bounce',
+    description:
+      'Half of each hit it takes is stored, up to 1/2 its HP, and the next move it lands deals the lot on top.',
+  });
+
+  // Spinda
+  registerAbility(Abilities.UniqueSpots, {
+    name: 'Unique Spots',
+    description:
+      'It arrives with 2 stages in one random stat and 1 stage off another, rolled fresh each time.',
+  });
+
+  // Trapinch
+  registerAbility(Abilities.AntlionPit, {
+    name: 'Antlion Pit',
+    description: 'Any enemy move that misses it costs that enemy 1/8 of their HP.',
+  });
+
+  // Cacnea
+  registerAbility(Abilities.PatientStalk, {
+    name: 'Patient Stalk',
+    description:
+      'Its moves hit 10% harder for each second it has stood idle, up to 50%, spent on the next one it lands.',
+  });
 }

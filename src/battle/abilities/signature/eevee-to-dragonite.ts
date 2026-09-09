@@ -2,7 +2,7 @@ import { AttackPriority, EventPriority } from '../../../core/event-emitter';
 import { Stats } from '../../../data/constants/stats';
 import type { Types } from '../../../data/constants/types';
 import Abilities from '../../../data/ids/abilities';
-import { DamageFlags, MoveAttackFlags } from '../../../data/ids/moves';
+import { DamageFlags, MoveAttackFlags, Moves } from '../../../data/ids/moves';
 import { Statuses } from '../../../data/ids/status';
 import { BattleEvents, EffectType } from '../../events';
 import { MergedLifecycle } from '../../lifecycle';
@@ -361,8 +361,8 @@ const eeveeToDragonite = [
       ]),
   ),
 
-  // Moltres: the fire does not go out with it. Nothing is saved and
-  // nothing comes back, but the far side is left burning
+  // Moltres: the fire does not go out with it. What it leaves on the far
+  // side is Will-O-Wisp's, so the move's own roll decides what catches
   createAbility(Abilities.Ashfall, (battle) =>
     battle.on(BattleEvents.UnitFaints, EventPriority.Post, (event) => {
       const fallen = event.source;
@@ -375,11 +375,7 @@ const eeveeToDragonite = [
 
       for (const enemy of battle.units(fallen.team.alliance)) {
         if (enemy.alive) {
-          enemy.addStatus(Statuses.Burned, {
-            type: EffectType.Ability,
-            ability: Abilities.Ashfall,
-            unit: fallen,
-          });
+          fallen.triggerMove(Moves.WillOWisp, unitTarget(enemy), 0);
         }
       }
     }),

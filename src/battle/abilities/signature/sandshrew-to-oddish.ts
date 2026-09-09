@@ -2,21 +2,15 @@ import { AttackPriority, EventPriority } from '../../../core/event-emitter';
 import { Stats } from '../../../data/constants/stats';
 import Abilities from '../../../data/ids/abilities';
 import { Statuses } from '../../../data/ids/status';
-import { MoveAttackFlags, MoveCategories, Moves } from '../../../data/ids/moves';
+import { MoveCategories, Moves } from '../../../data/ids/moves';
 import type Battle from '../../core';
-import { BattleEvents, type EffectCause, EffectType } from '../../events';
+import { BattleEvents, type EffectCause, EffectType, MoveTargetType } from '../../events';
 import { MergedLifecycle } from '../../lifecycle';
 import { ABSORB_MOVES } from '../../moves/absorb';
 import type Unit from '../../unit';
-import { onUnitActs } from '../../utils';
+import { onUnitActs, unitTarget } from '../../utils';
 import { createAbility } from '../__create';
-import { createUnitCounter, isPhysicalMove } from './__create';
-
-/** What one blow rolls it tighter by, in armour and in the answer */
-export const CURL_UP_STEP = 0.1;
-
-/** How tight it rolls before it can roll no tighter */
-export const CURL_UP_MAX_STACKS = 5;
+import { createUnitCounter } from './__create';
 
 /** What the hide turns aside, and what a cracked hide lets through */
 export const REGAL_HIDE_GUARD_SCALE = 0.7;
@@ -27,9 +21,6 @@ export const REGAL_HIDE_THRESHOLD = 1 / 2;
 
 /** What venom already in the blood is worth to the next blow */
 export const REGAL_VENOM_SCALE = 1.3;
-
-/** What a wish is worth to the ally who needs it most */
-export const WISHING_WELL_FRACTION = 1 / 12;
 
 /** What each lost tail buys */
 export const NINE_TAILS_STEP = 0.08;
@@ -44,9 +35,6 @@ export const LULLABY_POWER_SCALE = 1.5;
 /** What a drain is worth to it, and what every other heal is worth */
 export const BLOODTHIRST_DRAIN_SCALE = 1.5;
 export const BLOODTHIRST_HEAL_SCALE = 0.5;
-
-/** What roots take off a blow that lands mid-cast */
-export const DEEP_ROOTS_SCALE = 0.6;
 
 /** Whether the unit is carrying poison of either kind */
 function isPoisoned(unit: Unit): boolean {
@@ -67,11 +55,6 @@ function isDrainHeal(cause: EffectCause): boolean {
     cause.type === EffectType.Move &&
     (ABSORB_MOVES.has(cause.move) || cause.move === Moves.LeechSeed)
   );
-}
-
-/** Whether the unit is mid-cast, which is when the roots are down */
-function isRooted(unit: Unit): boolean {
-  return unit.casting != null || unit.channeling != null;
 }
 
 /** The ally furthest from full, for the wish to go to */
@@ -96,70 +79,24 @@ function neediestAlly(battle: Battle, unit: Unit): Unit | undefined {
 }
 
 const sandshrewToOddish = [
-  // Sandshrew: it answers a blow by rolling tighter, and the whole
-  // roll goes into the next thing it throws. Weather has nothing to do
-  // with it, which is what keeps it fitting a form that never sees sand
-  createAbility(Abilities.CurlUp, (battle) => {
-    const { counter, lifecycles } = createUnitCounter(battle);
-
-    return new MergedLifecycle([
-      battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
-        const curled = counter.get(event.source);
-
-        if (
-          curled > 0 &&
-          event.stat === Stats.Defense &&
-          event.source.hasAbility(Abilities.CurlUp)
-        ) {
-          event.value *= 1 + CURL_UP_STEP * curled;
-        }
-      }),
-      battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
-        const curled = counter.get(event.source);
-
-        if (
-          event.power != null &&
-          curled > 0 &&
-          isPhysicalMove(event.move) &&
-          event.source.hasAbility(Abilities.CurlUp)
-        ) {
-          event.power *= 1 + CURL_UP_STEP * curled;
-        }
-      }),
-      battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
-        const target = event.target;
-        const curled = counter.get(target);
-
-        if (
-          !event.success ||
-          !target.alive ||
-          curled >= CURL_UP_MAX_STACKS ||
-          !target.hasAbility(Abilities.CurlUp)
-        ) {
-          return;
-        }
-
-        counter.set(target, curled + 1);
-        target.triggerAbility(Abilities.CurlUp);
-      }),
-      // Spent as the blow lands, not as it is weighed: the AI runs the
-      // power resolver on moves it only considers
-      battle.on(BattleEvents.UnitAttack, AttackPriority.Post, (event) => {
-        const source = event.source;
-
-        if (
-          event.success &&
-          !(event.flags & MoveAttackFlags.Simulated) &&
-          counter.get(source) > 0 &&
-          isPhysicalMove(event.move) &&
-          source.hasAbility(Abilities.CurlUp)
-        ) {
-          counter.clear(source);
-        }
-      }),
-      ...lifecycles,
-    ]);
-  }),
+  // Sandshrew: it answers a blow by rolling tighter, which is Defense
+  // Curl's own business rather than this ability's
+  createAbility(
+    Abilities.CurlUp,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
+          if (event.success && event.target.alive && event.target.hasAbility(Abilities.CurlUp)) {
+            event.target.triggerAbility(Abilities.CurlUp);
+          }
+        }),
+        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
+          if (event.ability === Abilities.CurlUp) {
+            event.source.triggerMove(Moves.DefenseCurl, { type: MoveTargetType.None }, 0);
+          }
+        }),
+      ]),
+  ),
 
   // Nidoran (female): armour with a line in it. Above the line the
   // hide turns a blow aside, below it nothing does
@@ -225,8 +162,8 @@ const sandshrewToOddish = [
       ]),
   ),
 
-  // Clefairy: the wish is for somebody else. It has no clock to hang
-  // on, so it is granted as the wisher reaches for a move
+  // Clefairy: the wish is for somebody else, and Wish is the move that
+  // knows how a wish arrives
   createAbility(
     Abilities.WishingWell,
     (battle) =>
@@ -243,13 +180,7 @@ const sandshrewToOddish = [
           }
 
           unit.triggerAbility(Abilities.WishingWell);
-
-          unit.heal(
-            { type: EffectType.Ability, ability: Abilities.WishingWell, unit },
-            ally,
-            ally.checkStat(Stats.HP, 0) * WISHING_WELL_FRACTION,
-            0,
-          );
+          unit.triggerMove(Moves.Wish, unitTarget(ally), 0);
         }),
       ),
   ),
@@ -337,34 +268,20 @@ const sandshrewToOddish = [
       ]),
   ),
 
-  // Oddish: it plants itself to work. What catches it mid-cast catches
-  // something braced for it, and nothing shakes it off the move
+  // Oddish: it plants itself to work, and Ingrain is what being planted
+  // already means here
   createAbility(
     Abilities.DeepRoots,
     (battle) =>
       new MergedLifecycle([
-        battle.on(BattleEvents.UnitAttackResolveStat, EventPriority.Post, (event) => {
-          const parent = event.parent;
-
-          if (
-            event.unit === parent.source &&
-            (event.stat === Stats.Attack || event.stat === Stats.SpecialAttack) &&
-            parent.target.hasAbility(Abilities.DeepRoots) &&
-            isRooted(parent.target)
-          ) {
-            event.value *= DEEP_ROOTS_SCALE;
+        battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+          if (!event.reactivation && event.source.hasAbility(Abilities.DeepRoots)) {
+            event.source.triggerAbility(Abilities.DeepRoots);
           }
         }),
-        battle.on(BattleEvents.CheckUnitStatusImmunity, EventPriority.Post, (event) => {
-          if (
-            !event.immune &&
-            event.status === Statuses.Flinched &&
-            event.source.hasAbility(Abilities.DeepRoots) &&
-            isRooted(event.source)
-          ) {
-            event.immune = true;
-
-            event.source.triggerAbility(Abilities.DeepRoots);
+        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
+          if (event.ability === Abilities.DeepRoots) {
+            event.source.triggerMove(Moves.Ingrain, { type: MoveTargetType.None }, 0);
           }
         }),
       ]),

@@ -54,14 +54,12 @@ import {
   LATE_BLOOMER_INTERVAL,
   LATE_BLOOMER_MAX_STACKS,
   LATE_BLOOMER_STEP,
-  MIMED_BARRIER_ALLY_SCALE,
   MIMED_BARRIER_SELF_SCALE,
   MOTHERS_SHIELD_THRESHOLD,
   MOURNING_BONE_SCALE,
   OVERLOAD_SPEED_SCALE,
   OVERLOAD_THRESHOLD,
   PSYSEED_FRACTION,
-  SAFE_PASSAGE_STATUS_SCALE,
   SECOND_WIND_HEAL_FRACTION,
   SECOND_WIND_THRESHOLD,
   SMOG_SCREEN_ACCURACY_SCALE,
@@ -69,7 +67,6 @@ import {
   STATIC_FIELD_MAX_STACKS,
   STATIC_FIELD_STEP,
   UPSTREAM_SCALE,
-  VINE_WEB_FRACTION,
   WHIRL_CURRENT_CAST_SCALE,
 } from '../../../src/battle/abilities/signature/krabby-to-pinsir';
 import {
@@ -115,9 +112,6 @@ import {
 import {
   BLOODTHIRST_DRAIN_SCALE,
   BLOODTHIRST_HEAL_SCALE,
-  CURL_UP_MAX_STACKS,
-  CURL_UP_STEP,
-  DEEP_ROOTS_SCALE,
   LULLABY_POWER_SCALE,
   LULLABY_SLEEP_SCALE,
   NINE_TAILS_MAX_STACKS,
@@ -126,7 +120,6 @@ import {
   REGAL_HIDE_GUARD_SCALE,
   REGAL_HIDE_THRESHOLD,
   REGAL_VENOM_SCALE,
-  WISHING_WELL_FRACTION,
 } from '../../../src/battle/abilities/signature/sandshrew-to-oddish';
 import type Battle from '../../../src/battle/core';
 import {
@@ -142,8 +135,9 @@ import { Types } from '../../../src/data/constants/types';
 import Abilities from '../../../src/data/ids/abilities';
 import { Items } from '../../../src/data/ids/items';
 import { MoveCategories, MoveTargets, Moves } from '../../../src/data/ids/moves';
-import { Statuses, Weathers } from '../../../src/data/ids/status';
+import { Statuses, TeamStatuses, Weathers } from '../../../src/data/ids/status';
 import turns from '../../../src/battle/turn';
+import { layersUnder } from '../../../src/battle/moves/spikes';
 import { createBattle, createUnit, pinRandom } from '../harness';
 
 const NONE_CAUSE = { type: EffectType.None } as const;
@@ -759,45 +753,24 @@ describe('Chain Lightning', () => {
 });
 
 describe('Curl Up', () => {
-  it('rolls tighter with every hit and spends the roll on the next physical move', () => {
+  it('casts Defense Curl on itself for every hit it takes', () => {
     const { battle, teamA, teamB } = createBattle();
-    pinRandom(battle, 1);
     const holder = createUnit(battle, teamA);
     const enemy = createUnit(battle, teamB);
     holder.addAbility(Abilities.CurlUp);
 
-    const target = { type: MoveTargetType.Unit, unit: enemy } as const;
-    const bareDefense = holder.checkStat(Stats.Defense, 0);
     const maxHP = holder.checkStat(Stats.HP, 0);
 
-    for (let taken = 1; taken <= CURL_UP_MAX_STACKS + 2; taken += 1) {
-      enemy.damage(NONE_CAUSE, holder, 1, 0);
-      holder.setHealth(maxHP);
+    enemy.damage(NONE_CAUSE, holder, 1, 0);
+    battle.tick(turns(1));
 
-      const curled = Math.min(CURL_UP_MAX_STACKS, taken);
+    expect(holder.stages[Stages.Defense]).toBe(1);
 
-      expect(holder.checkStat(Stats.Defense, 0)).toBeCloseTo(
-        bareDefense * (1 + CURL_UP_STEP * curled),
-        5,
-      );
-      expect(holder.checkMovePower(Moves.Tackle, target)).toBeCloseTo(
-        40 * (1 + CURL_UP_STEP * curled),
-        5,
-      );
-    }
+    holder.setHealth(maxHP);
+    enemy.damage(NONE_CAUSE, holder, 1, 0);
+    battle.tick(turns(1));
 
-    // A special move leaves the roll where it is
-    holder.attack(enemy, Moves.Ember, 40, Types.Fire, MoveCategories.Special, 0);
-
-    expect(holder.checkStat(Stats.Defense, 0)).toBeCloseTo(
-      bareDefense * (1 + CURL_UP_STEP * CURL_UP_MAX_STACKS),
-      5,
-    );
-
-    holder.attack(enemy, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
-
-    expect(holder.checkStat(Stats.Defense, 0)).toBe(bareDefense);
-    expect(holder.checkMovePower(Moves.Tackle, target)).toBe(40);
+    expect(holder.stages[Stages.Defense]).toBe(2);
   });
 });
 
@@ -873,23 +846,26 @@ describe('Regal Venom', () => {
 });
 
 describe('Wishing Well', () => {
-  it('heals the ally furthest from full each time it acts, never itself', () => {
+  it('casts Wish on the ally furthest from full', () => {
     const { battle, teamA } = createBattle();
     const holder = createUnit(battle, teamA);
     const hurt = createUnit(battle, teamA);
-    const scratched = createUnit(battle, teamA);
     holder.addAbility(Abilities.WishingWell);
 
     const maxHP = hurt.checkStat(Stats.HP, 0);
-    holder.setHealth(1);
     hurt.setHealth(maxHP / 4);
-    scratched.setHealth(maxHP - 1);
+    holder.setHealth(1);
+
+    let wished: Unit | undefined;
+    battle.on(BattleEvents.UnitTriggerMove, AttackPriority.Post, (event) => {
+      if (event.move === Moves.Wish && event.target.type === MoveTargetType.Unit) {
+        wished = event.target.unit;
+      }
+    });
 
     act(battle, holder);
 
-    expect(hurt.health).toBeCloseTo(maxHP / 4 + maxHP * WISHING_WELL_FRACTION, 5);
-    expect(scratched.health).toBe(maxHP - 1);
-    expect(holder.health).toBe(1);
+    expect(wished).toBe(hurt);
   });
 });
 
@@ -971,32 +947,20 @@ describe('Bloodthirst', () => {
 });
 
 describe('Deep Roots', () => {
-  it('braces what lands on it mid-cast and refuses a flinch', () => {
-    const { battle, teamA, teamB } = createBattle();
+  it('casts Ingrain on itself as it arrives', () => {
+    const { battle, teamA } = createBattle();
     const holder = createUnit(battle, teamA);
-    const enemy = createUnit(battle, teamB);
     holder.addAbility(Abilities.DeepRoots);
 
-    const parent = makeAttack(enemy, holder, Moves.Pound, Types.Normal, MoveCategories.Physical);
-
-    // Standing free: no roots, and a flinch would land
-    expect(resolveAttackStat(battle, parent, enemy, Stats.Attack, 100)).toBe(100);
-    expect(holder.checkStatusImmunity(Statuses.Flinched, NONE_CAUSE)).toBe(false);
-
-    battle.emit(BattleEvents.UnitCast, {
-      id: 'UnitCast',
+    battle.emit(BattleEvents.UnitEntersField, {
+      id: 'UnitEntersField',
       disabled: false,
       source: holder,
-      move: Moves.SolarBeam,
-      target: { type: MoveTargetType.Unit, unit: enemy },
+      reactivation: false,
     });
+    battle.tick(turns(1));
 
-    expect(holder.casting).not.toBeUndefined();
-    expect(resolveAttackStat(battle, parent, enemy, Stats.Attack, 100)).toBeCloseTo(
-      100 * DEEP_ROOTS_SCALE,
-      5,
-    );
-    expect(holder.checkStatusImmunity(Statuses.Flinched, NONE_CAUSE)).toBe(true);
+    expect(holder.status[Statuses.Rooted]).not.toBeUndefined();
   });
 });
 
@@ -1850,43 +1814,22 @@ describe('Cushioned', () => {
 });
 
 describe('Vine Web', () => {
-  it('bites whatever walks onto the field against it', () => {
+  it('lays a layer of Spikes on the enemy side as it arrives', () => {
     const { battle, teamA, teamB } = createBattle();
     const holder = createUnit(battle, teamA);
-    const enemy = createUnit(battle, teamB);
-    const ally = createUnit(battle, teamA);
+    createUnit(battle, teamB);
     holder.addAbility(Abilities.VineWeb);
 
-    const maxHP = enemy.checkStat(Stats.HP, 0);
-
     battle.emit(BattleEvents.UnitEntersField, {
       id: 'UnitEntersField',
       disabled: false,
-      source: enemy,
+      source: holder,
       reactivation: false,
     });
+    battle.tick(turns(1));
 
-    expect(maxHP - enemy.health).toBeCloseTo(maxHP * VINE_WEB_FRACTION, 5);
-
-    // Its own side walks over the vines safely, and a reactivation is
-    // not an arrival
-    const allyHealth = ally.health;
-
-    battle.emit(BattleEvents.UnitEntersField, {
-      id: 'UnitEntersField',
-      disabled: false,
-      source: ally,
-      reactivation: false,
-    });
-    battle.emit(BattleEvents.UnitEntersField, {
-      id: 'UnitEntersField',
-      disabled: false,
-      source: enemy,
-      reactivation: true,
-    });
-
-    expect(ally.health).toBe(allyHealth);
-    expect(maxHP - enemy.health).toBeCloseTo(maxHP * VINE_WEB_FRACTION, 5);
+    expect(layersUnder(teamB)).toBe(1);
+    expect(layersUnder(teamA)).toBe(0);
   });
 });
 
@@ -2006,39 +1949,28 @@ describe('Core Reset', () => {
 });
 
 describe('Mimed Barrier', () => {
-  it('screens the side from special moves and leaves itself open', () => {
+  it('puts Light Screen up as it arrives and stays open to a punch', () => {
     const { battle, teamA, teamB } = createBattle();
     const holder = createUnit(battle, teamA);
-    const ally = createUnit(battle, teamA);
     const enemy = createUnit(battle, teamB);
     holder.addAbility(Abilities.MimedBarrier);
 
-    const atAlly = makeAttack(enemy, ally, Moves.Ember, Types.Fire, MoveCategories.Special);
-    const atHolder = makeAttack(enemy, holder, Moves.Ember, Types.Fire, MoveCategories.Special);
-    const physical = makeAttack(enemy, holder, Moves.Pound, Types.Normal, MoveCategories.Physical);
-    const atAllyPhysical = makeAttack(
-      enemy,
-      ally,
-      Moves.Pound,
-      Types.Normal,
-      MoveCategories.Physical,
-    );
+    battle.emit(BattleEvents.UnitEntersField, {
+      id: 'UnitEntersField',
+      disabled: false,
+      source: holder,
+      reactivation: false,
+    });
+    battle.tick(turns(1));
 
-    expect(resolveAttackStat(battle, atAlly, enemy, Stats.SpecialAttack, 100)).toBeCloseTo(
-      100 * MIMED_BARRIER_ALLY_SCALE,
-      5,
-    );
-    expect(resolveAttackStat(battle, atHolder, enemy, Stats.SpecialAttack, 100)).toBeCloseTo(
-      100 * MIMED_BARRIER_ALLY_SCALE,
-      5,
-    );
+    expect(teamA.status[TeamStatuses.LightScreen]).not.toBeUndefined();
+
+    const physical = makeAttack(enemy, holder, Moves.Pound, Types.Normal, MoveCategories.Physical);
+
     expect(resolveAttackStat(battle, physical, enemy, Stats.Attack, 100)).toBeCloseTo(
       100 * MIMED_BARRIER_SELF_SCALE,
       5,
     );
-
-    // The screen is no help against a punch aimed at somebody else
-    expect(resolveAttackStat(battle, atAllyPhysical, enemy, Stats.Attack, 100)).toBe(100);
   });
 });
 
@@ -2241,25 +2173,28 @@ describe('Late Bloomer', () => {
 });
 
 describe('Safe Passage', () => {
-  it('carries its allies past a trap and past a status', () => {
+  it('puts Safeguard over its side and carries its allies past a trap', () => {
     const { battle, teamA, teamB } = createBattle();
     const ferry = createUnit(battle, teamA);
     const ally = createUnit(battle, teamA);
     const enemy = createUnit(battle, teamB);
     ferry.addAbility(Abilities.SafePassage);
 
+    battle.emit(BattleEvents.UnitEntersField, {
+      id: 'UnitEntersField',
+      disabled: false,
+      source: ferry,
+      reactivation: false,
+    });
+    battle.tick(turns(1));
+
+    expect(teamA.status[TeamStatuses.Safeguard]).not.toBeUndefined();
+
     ally.addStatus(Statuses.Cornered, NONE_CAUSE);
     enemy.addStatus(Statuses.Cornered, NONE_CAUSE);
 
     expect(ally.checkEscape()).toBe(true);
     expect(enemy.checkEscape()).toBe(false);
-
-    const bare = enemy.checkStatusDuration(Statuses.Sleeping, turns(3), NONE_CAUSE);
-
-    expect(ally.checkStatusDuration(Statuses.Sleeping, turns(3), NONE_CAUSE)).toBeCloseTo(
-      bare * SAFE_PASSAGE_STATUS_SCALE,
-      5,
-    );
   });
 });
 
@@ -2504,22 +2439,19 @@ describe('Lightning Reflexes', () => {
 });
 
 describe('Ashfall', () => {
-  it('burns the far side on the way down', () => {
+  it('casts Will-O-Wisp at the far side on the way down', () => {
     const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0);
     const holder = createUnit(battle, teamA);
     const ally = createUnit(battle, teamA);
     const enemy = createUnit(battle, teamB);
-    const other = createUnit(battle, teamB);
     holder.addAbility(Abilities.Ashfall);
 
-    other.faint(enemy);
     holder.faint(enemy);
+    battle.tick(turns(1));
 
     expect(enemy.status[Statuses.Burned]).not.toBeUndefined();
     expect(ally.status[Statuses.Burned]).toBeUndefined();
-
-    // Nothing for the one already down
-    expect(other.status[Statuses.Burned]).toBeUndefined();
   });
 });
 

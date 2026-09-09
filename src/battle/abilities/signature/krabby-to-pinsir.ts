@@ -3,7 +3,13 @@ import { Stages, Stats } from '../../../data/constants/stats';
 import { Types } from '../../../data/constants/types';
 import Abilities from '../../../data/ids/abilities';
 import { ItemTypes, type Items } from '../../../data/ids/items';
-import { DamageFlags, MoveAttackFlags, MoveCategories, StatFlags } from '../../../data/ids/moves';
+import {
+  DamageFlags,
+  MoveAttackFlags,
+  MoveCategories,
+  Moves,
+  StatFlags,
+} from '../../../data/ids/moves';
 import { Statuses } from '../../../data/ids/status';
 import { BERRY_HEALS, BERRY_STATUS_CURES } from '../../../data/items/berries';
 import { listItemsByType } from '../../../data/items';
@@ -44,9 +50,6 @@ export const CORKSCREW_SCALE = 1.15;
 /** The most one blow may take off a cushion */
 export const CUSHIONED_CAP_FRACTION = 1 / 6;
 
-/** What the vines take out of whatever walks into them */
-export const VINE_WEB_FRACTION = 1 / 8;
-
 /** The share of health that puts an ally behind her */
 export const MOTHERS_SHIELD_THRESHOLD = 1 / 2;
 
@@ -56,8 +59,7 @@ export const WHIRL_CURRENT_CAST_SCALE = 1.2;
 /** What swimming against something bigger is worth */
 export const UPSTREAM_SCALE = 1.35;
 
-/** What the mimed screen turns aside, and what holding it costs */
-export const MIMED_BARRIER_ALLY_SCALE = 0.85;
+/** What holding a screen up by hand costs the one holding it */
 export const MIMED_BARRIER_SELF_SCALE = 1.15;
 
 /** What a muddled head is worth to it */
@@ -77,9 +79,6 @@ export const SNAPJAW_SCALE = 1.5;
 export const LATE_BLOOMER_STEP = 0.05;
 export const LATE_BLOOMER_INTERVAL = 10000;
 export const LATE_BLOOMER_MAX_STACKS = 10;
-
-/** What the ferry takes off a status its passengers are carrying */
-export const SAFE_PASSAGE_STATUS_SCALE = 0.75;
 
 /** What a shape it has already worn takes off the next blow like it */
 export const ADAPTIVE_CELL_SCALE = 0.5;
@@ -383,31 +382,35 @@ const krabbyToPinsir = [
     }),
   ),
 
-  // Tangela: the vines are over the whole field, so anything walking on
-  // is walking into them. A fresh arrival only, never a reactivation
-  createAbility(Abilities.VineWeb, (battle) =>
-    battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
-      const arriving = event.source;
+  // Tangela: the vines are laid rather than swung, which is what Spikes
+  // already is. Each arrival lays another layer, up to the move's own
+  // ceiling
+  createAbility(
+    Abilities.VineWeb,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+          if (!event.reactivation && event.source.hasAbility(Abilities.VineWeb)) {
+            event.source.triggerAbility(Abilities.VineWeb);
+          }
+        }),
+        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
+          if (event.ability !== Abilities.VineWeb) {
+            return;
+          }
 
-      if (event.reactivation || !arriving.alive) {
-        return;
-      }
-
-      for (const vines of battle.units(arriving.team.alliance)) {
-        if (vines.alive && vines.hasAbility(Abilities.VineWeb)) {
-          vines.triggerAbility(Abilities.VineWeb);
-
-          vines.damage(
-            { type: EffectType.Ability, ability: Abilities.VineWeb, unit: vines },
-            arriving,
-            arriving.checkStat(Stats.HP, 0) * VINE_WEB_FRACTION,
-            DamageFlags.Indirect,
-          );
-
-          return;
-        }
-      }
-    }),
+          for (const enemy of battle.units(event.source.team.alliance)) {
+            if (enemy.alive) {
+              event.source.triggerMove(
+                Moves.Spikes,
+                { type: MoveTargetType.Team, team: enemy.team },
+                0,
+              );
+              return;
+            }
+          }
+        }),
+      ]),
   ),
 
   // Kangaskhan: she steps in front of whoever is hurt. The same
@@ -509,41 +512,39 @@ const krabbyToPinsir = [
       ),
   ),
 
-  // Mr. Mime: it holds a screen up by hand. What it turns aside for the
-  // party it cannot turn aside for itself
-  createAbility(Abilities.MimedBarrier, (battle) =>
-    battle.on(BattleEvents.UnitAttackResolveStat, EventPriority.Post, (event) => {
-      const parent = event.parent;
-      const target = parent.target;
+  // Mr. Mime: the screen it holds up is Light Screen. What it turns
+  // aside for the party it cannot turn aside for itself
+  createAbility(
+    Abilities.MimedBarrier,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+          if (!event.reactivation && event.source.hasAbility(Abilities.MimedBarrier)) {
+            event.source.triggerAbility(Abilities.MimedBarrier);
+          }
+        }),
+        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
+          if (event.ability === Abilities.MimedBarrier) {
+            event.source.triggerMove(
+              Moves.LightScreen,
+              { type: MoveTargetType.Team, team: event.source.team },
+              0,
+            );
+          }
+        }),
+        battle.on(BattleEvents.UnitAttackResolveStat, EventPriority.Post, (event) => {
+          const parent = event.parent;
 
-      if (event.unit !== parent.source) {
-        return;
-      }
-
-      if (
-        event.stat === Stats.Attack &&
-        parent.category === MoveCategories.Physical &&
-        target.hasAbility(Abilities.MimedBarrier)
-      ) {
-        event.value *= MIMED_BARRIER_SELF_SCALE;
-        return;
-      }
-
-      if (event.stat !== Stats.SpecialAttack || parent.category !== MoveCategories.Special) {
-        return;
-      }
-
-      for (const mime of battle.units()) {
-        if (
-          mime.alive &&
-          mime.team.alliance === target.team.alliance &&
-          mime.hasAbility(Abilities.MimedBarrier)
-        ) {
-          event.value *= MIMED_BARRIER_ALLY_SCALE;
-          return;
-        }
-      }
-    }),
+          if (
+            event.unit === parent.source &&
+            event.stat === Stats.Attack &&
+            parent.category === MoveCategories.Physical &&
+            parent.target.hasAbility(Abilities.MimedBarrier)
+          ) {
+            event.value *= MIMED_BARRIER_SELF_SCALE;
+          }
+        }),
+      ]),
   ),
 
   // Scyther: a cut that lands properly goes through everything the
@@ -730,23 +731,30 @@ const krabbyToPinsir = [
     ]);
   }),
 
-  // Lapras: it carries the party rather than shielding it. The escape
-  // answer runs after every other one, since restoring a refusal is
-  // only meaningful once the refusals have been made
+  // Lapras: it carries the party through, which is Safeguard's job. The
+  // escape answer runs after every other one, since restoring a refusal
+  // is only meaningful once the refusals have been made
   createAbility(
     Abilities.SafePassage,
     (battle) =>
       new MergedLifecycle([
-        battle.on(BattleEvents.CheckUnitEscape, EventPriority.Post, (event) => {
-          if (event.success || !carriedBy(battle, event.source)) {
-            return;
+        battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+          if (!event.reactivation && event.source.hasAbility(Abilities.SafePassage)) {
+            event.source.triggerAbility(Abilities.SafePassage);
           }
-
-          event.success = true;
         }),
-        battle.on(BattleEvents.CheckUnitStatusDuration, EventPriority.Post, (event) => {
-          if (carriedBy(battle, event.source)) {
-            event.duration *= SAFE_PASSAGE_STATUS_SCALE;
+        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
+          if (event.ability === Abilities.SafePassage) {
+            event.source.triggerMove(
+              Moves.Safeguard,
+              { type: MoveTargetType.Team, team: event.source.team },
+              0,
+            );
+          }
+        }),
+        battle.on(BattleEvents.CheckUnitEscape, EventPriority.Post, (event) => {
+          if (!event.success && carriedBy(battle, event.source)) {
+            event.success = true;
           }
         }),
       ]),

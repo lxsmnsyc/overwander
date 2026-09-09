@@ -77,8 +77,7 @@ export default function registerSignatureAbilities(): void {
   // Sandshrew
   registerAbility(Abilities.CurlUp, {
     name: 'Curl Up',
-    description:
-      'Each hit it takes rolls it 10% tighter, up to 5, raising its Defense. The next physical move it lands spends the whole roll on power.',
+    description: 'Each hit it takes casts Defense Curl on itself.',
   });
 
   // Nidoran (female)
@@ -98,8 +97,7 @@ export default function registerSignatureAbilities(): void {
   // Clefairy
   registerAbility(Abilities.WishingWell, {
     name: 'Wishing Well',
-    description:
-      'Each time it acts, the ally lowest on HP heals 1/12 of theirs. It never wishes for itself.',
+    description: 'Each time it acts, it casts Wish on the ally lowest on HP.',
   });
 
   // Vulpix
@@ -125,8 +123,7 @@ export default function registerSignatureAbilities(): void {
   // Oddish
   registerAbility(Abilities.DeepRoots, {
     name: 'Deep Roots',
-    description:
-      'While casting or channelling it takes 0.6x from attacks and cannot be made to flinch.',
+    description: 'It casts Ingrain on itself as it arrives on the field.',
   });
 
   // Paras
@@ -343,7 +340,7 @@ export default function registerSignatureAbilities(): void {
   // Tangela
   registerAbility(Abilities.VineWeb, {
     name: 'Vine Web',
-    description: 'Every enemy arriving on the field loses 1/8 of its HP to the vines.',
+    description: 'It lays a layer of Spikes on the enemy side each time it arrives on the field.',
   });
 
   // Kangaskhan
@@ -374,7 +371,7 @@ export default function registerSignatureAbilities(): void {
   registerAbility(Abilities.MimedBarrier, {
     name: 'Mimed Barrier',
     description:
-      'Its side takes 0.85x from special moves, and physical moves hit it at 1.15x itself.',
+      'It casts Light Screen over its side as it arrives, and physical moves hit it at 1.15x itself.',
   });
 
   // Scyther
@@ -424,7 +421,7 @@ export default function registerSignatureAbilities(): void {
   registerAbility(Abilities.SafePassage, {
     name: 'Safe Passage',
     description:
-      'Its allies cannot be stopped from fleeing, and statuses on them run out 25% faster.',
+      'It casts Safeguard over its side as it arrives, and its allies cannot be stopped from fleeing.',
   });
 
   // Ditto
@@ -488,7 +485,7 @@ export default function registerSignatureAbilities(): void {
   // Moltres
   registerAbility(Abilities.Ashfall, {
     name: 'Ashfall',
-    description: 'When it faints, every standing enemy is burned.',
+    description: 'When it faints, it casts Will-O-Wisp at every standing enemy.',
   });
 
   // Dratini

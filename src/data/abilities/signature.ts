@@ -1128,4 +1128,47 @@ export default function registerSignatureAbilities(): void {
     description:
       'Its moves hit 10% harder for each second it has stood idle, up to 50%, spent on the next one it lands.',
   });
+
+  // Swablu
+  registerAbility(Abilities.CloudStep, {
+    name: 'Cloud Step',
+    description: 'The first move aimed at it each battle deals no damage to it.',
+  });
+
+  /**
+   * Zangoose and Seviper are counterparts feuding over one thing: the
+   * venom. Seviper's every touch poisons, and poison anywhere is what
+   * Zangoose hunts, being the one thing venom does nothing to
+   */
+
+  // Zangoose
+  registerAbility(Abilities.FeudClaws, {
+    name: 'Feud Claws',
+    description: 'Its moves hit 1.4x against a poisoned target.',
+  });
+
+  // Seviper
+  registerAbility(Abilities.VenomFang, {
+    name: 'Venom Fang',
+    description: 'Every contact move it lands leaves the target badly poisoned.',
+  });
+
+  /**
+   * Lunatone and Solrock are counterparts, and each hangs an aura over
+   * the field that the other's presence blots out: with both standing,
+   * neither aura applies
+   */
+
+  // Lunatone
+  registerAbility(Abilities.MoonPull, {
+    name: 'Moon Pull',
+    description:
+      'Its side takes 0.85x damage while it stands, unless a Sun Glare holder stands too.',
+  });
+
+  // Solrock
+  registerAbility(Abilities.SunGlare, {
+    name: 'Sun Glare',
+    description: 'Enemies take 1.15x damage while it stands, unless a Moon Pull holder stands too.',
+  });
 }

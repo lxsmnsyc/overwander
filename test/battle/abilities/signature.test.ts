@@ -6,6 +6,9 @@ import registerAbilities, {
 import { SIGNATURE_ABILITIES } from '../../../src/battle/abilities/signature';
 import {
   CHEER_MAX_SHOUTS,
+  ECLIPSE_LOWERED_SCALE,
+  ECLIPSE_RAISED_SCALE,
+  FEUD_SCALE,
   FIELD_LOWERED_SCALE,
   FIELD_RAISED_SCALE,
   FOSSIL_BLADE_SCALE,
@@ -4760,5 +4763,108 @@ describe('Patient Stalk', () => {
     holder.attack(enemy, Moves.Pound, 40, Types.Normal, MoveCategories.Physical, 0);
 
     expect(holder.checkMovePower(Moves.Pound, target)).toBeCloseTo(clean, 5);
+  });
+});
+
+describe('Cloud Step', () => {
+  it('takes the first blow of a battle and nothing after it', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0);
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.CloudStep);
+
+    const maxHP = holder.checkStat(Stats.HP, 0);
+
+    enemy.damage({ type: EffectType.Move, move: Moves.Pound, unit: enemy }, holder, 40, 0);
+
+    expect(holder.health).toBe(maxHP);
+
+    enemy.damage({ type: EffectType.Move, move: Moves.Pound, unit: enemy }, holder, 40, 0);
+
+    expect(maxHP - holder.health).toBeCloseTo(40, 5);
+  });
+});
+
+describe('the Zangoose and Seviper pair', () => {
+  it('poisons on one side and hunts the poisoned on the other', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0);
+    const zangoose = createUnit(battle, teamA);
+    const seviper = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    zangoose.addAbility(Abilities.FeudClaws);
+    seviper.addAbility(Abilities.VenomFang);
+
+    const target = unitTarget(enemy);
+    const clean = zangoose.checkMovePower(Moves.Pound, target) ?? 0;
+
+    // Nothing owed while the target is clean
+    expect(zangoose.checkMovePower(Moves.Pound, target)).toBeCloseTo(clean, 5);
+
+    seviper.attack(enemy, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(enemy.status[Statuses.BadlyPoisoned]).not.toBeUndefined();
+    expect(zangoose.checkMovePower(Moves.Pound, target)).toBeCloseTo(clean * FEUD_SCALE, 5);
+  });
+
+  it('leaves a non-contact move out of the venom', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0);
+    const seviper = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    seviper.addAbility(Abilities.VenomFang);
+
+    seviper.attack(enemy, Moves.Ember, 40, Types.Fire, MoveCategories.Special, 0);
+
+    expect(enemy.status[Statuses.BadlyPoisoned]).toBeUndefined();
+  });
+});
+
+describe('the Lunatone and Solrock pair', () => {
+  it('hangs one aura each, over opposite sides', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0);
+    const solrock = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    const clean = resolveAttackDamage(battle, solrock, enemy);
+
+    solrock.addAbility(Abilities.SunGlare);
+
+    expect(resolveAttackDamage(battle, solrock, enemy)).toBeCloseTo(
+      clean * ECLIPSE_RAISED_SCALE,
+      5,
+    );
+
+    const lunatone = createUnit(battle, teamB);
+    const bare = resolveAttackDamage(battle, solrock, enemy);
+
+    lunatone.addAbility(Abilities.MoonPull);
+
+    // Two stones in the sky is an eclipse, so neither aura applies
+    expect(resolveAttackDamage(battle, solrock, enemy)).toBeCloseTo(bare / ECLIPSE_RAISED_SCALE, 5);
+
+    lunatone.faint(solrock);
+
+    expect(resolveAttackDamage(battle, solrock, enemy)).toBeCloseTo(bare, 5);
+  });
+
+  it('covers its own side with the moon and nothing else', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0);
+    const lunatone = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    const inbound = resolveAttackDamage(battle, enemy, ally);
+    const outbound = resolveAttackDamage(battle, ally, enemy);
+
+    lunatone.addAbility(Abilities.MoonPull);
+
+    expect(resolveAttackDamage(battle, enemy, ally)).toBeCloseTo(
+      inbound * ECLIPSE_LOWERED_SCALE,
+      5,
+    );
+    expect(resolveAttackDamage(battle, ally, enemy)).toBeCloseTo(outbound, 5);
   });
 });

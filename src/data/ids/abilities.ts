@@ -468,6 +468,11 @@ const enum Abilities {
   UniqueSpots = 200165,
   AntlionPit = 200166,
   PatientStalk = 200167,
+  CloudStep = 200168,
+  FeudClaws = 200169,
+  VenomFang = 200170,
+  MoonPull = 200171,
+  SunGlare = 200172,
 }
 
 export default Abilities;

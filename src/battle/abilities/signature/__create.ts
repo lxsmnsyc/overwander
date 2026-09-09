@@ -891,3 +891,114 @@ export function createCheerAbility(
     ]);
   });
 }
+
+/** What the venom half puts on, and what the claws get out of it */
+export const FEUD_SCALE = 1.4;
+
+/** Which half of the feud an ability is */
+export type FeudSide = 'poisons' | 'punishes';
+
+/**
+ * What Zangoose and Seviper share: the venom they have been fighting
+ * over. Seviper's touch always leaves the worse poison, and a poisoned
+ * anything is what Zangoose tears into, which is why the feud settles
+ * nothing: Zangoose cannot be poisoned in the first place
+ */
+export function createFeudAbility(
+  ability: Abilities,
+  side: FeudSide,
+): ((battle: Battle) => void) & { ability: Abilities } {
+  if (side === 'poisons') {
+    return createAbility(ability, (battle) =>
+      battle.on(BattleEvents.UnitAttack, AttackPriority.Post, (event) => {
+        const source = event.source;
+        const target = event.target;
+
+        if (
+          !event.success ||
+          !target.alive ||
+          event.flags & MoveAttackFlags.Simulated ||
+          !source.hasAbility(ability) ||
+          !source.checkMoveContact(event.move, { type: MoveTargetType.Unit, unit: target })
+        ) {
+          return;
+        }
+
+        source.triggerAbility(ability);
+        target.addStatus(Statuses.BadlyPoisoned, {
+          type: EffectType.Ability,
+          ability,
+          unit: source,
+        });
+      }),
+    );
+  }
+
+  return createAbility(ability, (battle) =>
+    battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
+      const target = event.target;
+
+      if (
+        event.power == null ||
+        target.type !== MoveTargetType.Unit ||
+        !event.source.hasAbility(ability) ||
+        !isPoisoned(target.unit)
+      ) {
+        return;
+      }
+
+      event.power *= FEUD_SCALE;
+    }),
+  );
+}
+
+/** What each meteorite's aura is worth while nothing blots it out */
+export const ECLIPSE_RAISED_SCALE = 1.15;
+export const ECLIPSE_LOWERED_SCALE = 0.85;
+
+/** Which side of the field a meteorite's aura settles over */
+export type EclipseSide = 'enemies' | 'allies';
+
+/**
+ * What Lunatone and Solrock share: an aura over one side of the field
+ * that the other one standing anywhere blots out. Two stones in the sky
+ * at once is an eclipse, and an eclipse is neither of them
+ */
+export function createEclipseAbility(
+  ability: Abilities,
+  counterpart: Abilities,
+  side: EclipseSide,
+): ((battle: Battle) => void) & { ability: Abilities } {
+  const enemies = side === 'enemies';
+
+  return createAbility(ability, (battle) =>
+    battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, (event) => {
+      let stone: Unit | undefined;
+
+      for (const unit of battle.units()) {
+        if (!unit.alive) {
+          continue;
+        }
+
+        // The other stone standing anywhere is the eclipse
+        if (unit.hasAbility(counterpart)) {
+          return;
+        }
+
+        if (stone == null && unit.hasAbility(ability)) {
+          stone = unit;
+        }
+      }
+
+      if (stone == null) {
+        return;
+      }
+
+      const ours = event.parent.target.team.alliance === stone.team.alliance;
+
+      if (enemies !== ours) {
+        event.value *= enemies ? ECLIPSE_RAISED_SCALE : ECLIPSE_LOWERED_SCALE;
+      }
+    }),
+  );
+}

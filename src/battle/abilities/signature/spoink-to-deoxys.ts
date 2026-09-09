@@ -6,7 +6,12 @@ import { BattleEvents, EffectType, MoveTargetType } from '../../events';
 import { MergedLifecycle } from '../../lifecycle';
 import type Unit from '../../unit';
 import { createAbility } from '../__create';
-import { createDamageTaken, createUnitState } from './__create';
+import {
+  createDamageTaken,
+  createEclipseAbility,
+  createFeudAbility,
+  createUnitState,
+} from './__create';
 
 /** The share of a blow the springs keep, and how much they hold */
 export const STORED_BOUNCE_SHARE = 1 / 2;
@@ -198,6 +203,42 @@ const spoinkToDeoxys = [
       }),
     ]);
   }),
+
+  // Swablu: the cotton takes the first thing thrown at it and nothing
+  // reaches the bird under it
+  createAbility(Abilities.CloudStep, (battle) => {
+    const spent = new Set<Unit>();
+
+    return battle.on(BattleEvents.CheckUnitCanDamage, EventPriority.Post, (event) => {
+      const cause = event.cause;
+      const target = event.target;
+
+      if (
+        !event.success ||
+        event.flags & DamageFlags.Indirect ||
+        cause.type !== EffectType.Move ||
+        cause.unit === target ||
+        spent.has(target) ||
+        !target.hasAbility(Abilities.CloudStep)
+      ) {
+        return;
+      }
+
+      spent.add(target);
+      target.triggerAbility(Abilities.CloudStep);
+      event.success = false;
+    });
+  }),
+
+  // Zangoose and Seviper: counterparts feuding over the venom, one
+  // putting it on and one hunting whatever carries it
+  createFeudAbility(Abilities.FeudClaws, 'punishes'),
+  createFeudAbility(Abilities.VenomFang, 'poisons'),
+
+  // Lunatone and Solrock: counterparts whose auras blot each other out,
+  // since two stones in the sky at once is an eclipse
+  createEclipseAbility(Abilities.MoonPull, Abilities.SunGlare, 'allies'),
+  createEclipseAbility(Abilities.SunGlare, Abilities.MoonPull, 'enemies'),
 ];
 
 export default spoinkToDeoxys;

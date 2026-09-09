@@ -7,12 +7,12 @@ import { DamageFlags, MoveAttackFlags, StatFlags } from '../../../data/ids/moves
 import { BERRY_HEALS, BERRY_STATUS_CURES } from '../../../data/items/berries';
 import { listItemsByType } from '../../../data/items';
 import type Battle from '../../core';
-import { BattleEvents, EffectType } from '../../events';
+import { BattleEvents, EffectType, MoveTargetType } from '../../events';
 import { MergedLifecycle } from '../../lifecycle';
 import type Unit from '../../unit';
-import { onUnitActs, unitTarget } from '../../utils';
+import { isWeatherRainy, onUnitActs, unitTarget } from '../../utils';
 import { createAbility } from '../__create';
-import { createUnitState, isPhysicalMove } from './__create';
+import { createUnitCounter, createUnitState, isPhysicalMove } from './__create';
 
 /** What a claw with strength behind it is worth */
 export const HEAVY_PINCER_SCALE = 1.45;
@@ -42,6 +42,20 @@ export const DRILL_HORN_SCALE = 1.15;
 
 /** The most one blow may take off a cushion */
 export const CUSHIONED_CAP_FRACTION = 1 / 6;
+
+/** What one more turn of growth is worth, and how long it grows for */
+export const ENDLESS_GROWTH_STEP = 0.05;
+export const ENDLESS_GROWTH_MAX_STACKS = 10;
+export const ENDLESS_GROWTH_HEAL_FRACTION = 1 / 16;
+
+/** The share of health that puts an ally behind her */
+export const MOTHERS_SHIELD_THRESHOLD = 1 / 2;
+
+/** What the current adds to a wind-up in the wet */
+export const WHIRL_CURRENT_CAST_SCALE = 1.2;
+
+/** What swimming against something bigger is worth */
+export const UPSTREAM_SCALE = 1.35;
 
 /** The berry the target is holding, if it is holding one */
 function heldBerry(unit: Unit): Items | undefined {
@@ -308,6 +322,119 @@ const krabbyToPinsir = [
         event.value = cap;
 
         target.triggerAbility(Abilities.Cushioned);
+      }
+    }),
+  ),
+
+  // Tangela: it never stops putting out vines, so a fight it is left
+  // alive in is a fight it wins. Nothing here has a clock: the growth
+  // is paid as it reaches for a move
+  createAbility(Abilities.EndlessGrowth, (battle) => {
+    const { counter, lifecycles } = createUnitCounter(battle);
+
+    return new MergedLifecycle([
+      battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
+        const grown = counter.get(event.source);
+
+        if (
+          grown > 0 &&
+          event.stat === Stats.Defense &&
+          event.source.hasAbility(Abilities.EndlessGrowth)
+        ) {
+          event.value *= 1 + ENDLESS_GROWTH_STEP * grown;
+        }
+      }),
+      ...onUnitActs(battle, (unit) => {
+        if (!unit.hasAbility(Abilities.EndlessGrowth)) {
+          return;
+        }
+
+        const grown = counter.get(unit);
+
+        if (grown < ENDLESS_GROWTH_MAX_STACKS) {
+          counter.set(unit, grown + 1);
+        }
+
+        unit.triggerAbility(Abilities.EndlessGrowth);
+
+        unit.heal(
+          { type: EffectType.Ability, ability: Abilities.EndlessGrowth, unit },
+          unit,
+          unit.checkStat(Stats.HP, 0) * ENDLESS_GROWTH_HEAL_FRACTION,
+          0,
+        );
+      }),
+      ...lifecycles,
+    ]);
+  }),
+
+  // Kangaskhan: she steps in front of whoever is hurt. The same
+  // retargeting a Lightning Rod does, read off health rather than type
+  createAbility(Abilities.MothersShield, (battle) =>
+    battle.on(BattleEvents.UnitTriggerMoveTarget, AttackPriority.Pre, (event) => {
+      if (event.target.type !== MoveTargetType.Unit) {
+        return;
+      }
+
+      const aimedAt = event.target.unit;
+
+      if (
+        aimedAt.team.alliance === event.source.team.alliance ||
+        aimedAt.hasAbility(Abilities.MothersShield) ||
+        aimedAt.health >= aimedAt.checkStat(Stats.HP, 0) * MOTHERS_SHIELD_THRESHOLD
+      ) {
+        return;
+      }
+
+      for (const mother of battle.units()) {
+        if (
+          mother.alive &&
+          mother !== event.source &&
+          mother.team.alliance === aimedAt.team.alliance &&
+          mother.hasAbility(Abilities.MothersShield)
+        ) {
+          event.target = { type: MoveTargetType.Unit, unit: mother };
+
+          mother.triggerAbility(Abilities.MothersShield);
+          return;
+        }
+      }
+    }),
+  ),
+
+  // Horsea: it stirs the water against whoever is standing in it, so
+  // the rain its own line calls up works for it twice
+  createAbility(Abilities.WhirlCurrent, (battle) =>
+    battle.on(BattleEvents.CheckUnitMoveCastTime, EventPriority.Post, (event) => {
+      const source = event.source;
+
+      if (!isWeatherRainy(source)) {
+        return;
+      }
+
+      for (const swirl of battle.units(source.team.alliance)) {
+        if (swirl.alive && swirl.hasAbility(Abilities.WhirlCurrent)) {
+          event.duration *= WHIRL_CURRENT_CAST_SCALE;
+          return;
+        }
+      }
+    }),
+  ),
+
+  // Goldeen: it spends its life swimming against the current, so what
+  // it fights best is whatever is bigger than it
+  createAbility(Abilities.Upstream, (battle) =>
+    battle.on(BattleEvents.UnitAttackResolveStat, EventPriority.Post, (event) => {
+      const parent = event.parent;
+      const source = parent.source;
+
+      if (
+        event.unit === source &&
+        (event.stat === Stats.Attack || event.stat === Stats.SpecialAttack) &&
+        source.hasAbility(Abilities.Upstream) &&
+        parent.target.checkStat(Stats.HP, 0) > source.checkStat(Stats.HP, 0)
+      ) {
+        event.value *= UPSTREAM_SCALE;
       }
     }),
   ),

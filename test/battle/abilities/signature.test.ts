@@ -19,8 +19,12 @@ import {
 import {
   CUSHIONED_CAP_FRACTION,
   DRILL_HORN_SCALE,
+  ENDLESS_GROWTH_HEAL_FRACTION,
+  ENDLESS_GROWTH_MAX_STACKS,
+  ENDLESS_GROWTH_STEP,
   HEAVY_PINCER_SCALE,
   HEAVY_PINCER_THRESHOLD,
+  MOTHERS_SHIELD_THRESHOLD,
   MOURNING_BONE_SCALE,
   OVERLOAD_SPEED_SCALE,
   OVERLOAD_THRESHOLD,
@@ -28,6 +32,8 @@ import {
   SECOND_WIND_HEAL_FRACTION,
   SECOND_WIND_THRESHOLD,
   SMOG_SCREEN_ACCURACY_SCALE,
+  UPSTREAM_SCALE,
+  WHIRL_CURRENT_CAST_SCALE,
 } from '../../../src/battle/abilities/signature/krabby-to-pinsir';
 import {
   DELAYED_REACTION_DELAY,
@@ -91,16 +97,17 @@ import type Battle from '../../../src/battle/core';
 import {
   BattleEvents,
   EffectType,
+  type MoveTarget,
   MoveTargetType,
   type UnitAttackEvent,
 } from '../../../src/battle/events';
 import type Unit from '../../../src/battle/unit';
-import { Stages, Stats } from '../../../src/data/constants/stats';
+import { Stages, Stats, StatsKind } from '../../../src/data/constants/stats';
 import { Types } from '../../../src/data/constants/types';
 import Abilities from '../../../src/data/ids/abilities';
 import { Items } from '../../../src/data/ids/items';
 import { MoveCategories, MoveTargets, Moves } from '../../../src/data/ids/moves';
-import { Statuses } from '../../../src/data/ids/status';
+import { Statuses, Weathers } from '../../../src/data/ids/status';
 import turns from '../../../src/battle/turn';
 import { createBattle, createUnit, pinRandom } from '../harness';
 
@@ -1795,5 +1802,122 @@ describe('Cushioned', () => {
     enemy.damage(NONE_CAUSE, holder, 5, 0);
 
     expect(holder.health).toBeCloseTo(maxHP - 5, 5);
+  });
+});
+
+describe('Endless Growth', () => {
+  it('heals and thickens every time it acts', () => {
+    const { battle, teamA } = createBattle();
+    const holder = createUnit(battle, teamA);
+    holder.addAbility(Abilities.EndlessGrowth);
+
+    const bareDefense = holder.checkStat(Stats.Defense, 0);
+    const maxHP = holder.checkStat(Stats.HP, 0);
+    holder.setHealth(maxHP / 2);
+
+    act(battle, holder);
+
+    expect(holder.health).toBeCloseTo(maxHP / 2 + maxHP * ENDLESS_GROWTH_HEAL_FRACTION, 5);
+    expect(holder.checkStat(Stats.Defense, 0)).toBeCloseTo(
+      bareDefense * (1 + ENDLESS_GROWTH_STEP),
+      5,
+    );
+
+    for (let grown = 2; grown <= ENDLESS_GROWTH_MAX_STACKS + 2; grown += 1) {
+      act(battle, holder);
+    }
+
+    expect(holder.checkStat(Stats.Defense, 0)).toBeCloseTo(
+      bareDefense * (1 + ENDLESS_GROWTH_STEP * ENDLESS_GROWTH_MAX_STACKS),
+      5,
+    );
+  });
+});
+
+describe("Mother's Shield", () => {
+  it('takes over a move aimed at a hurt ally', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const mother = createUnit(battle, teamA);
+    const child = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    mother.addAbility(Abilities.MothersShield);
+
+    function aimedAt(unit: Unit): Unit | undefined {
+      const event = {
+        id: 'UnitTriggerMoveTarget',
+        disabled: false,
+        source: enemy,
+        move: Moves.Pound,
+        target: { type: MoveTargetType.Unit, unit } as MoveTarget,
+        steps: 0,
+      };
+      battle.emit(BattleEvents.UnitTriggerMoveTarget, event);
+      return event.target.type === MoveTargetType.Unit ? event.target.unit : undefined;
+    }
+
+    // A healthy ally is left to fend for itself
+    expect(aimedAt(child)).toBe(child);
+
+    child.setHealth(child.checkStat(Stats.HP, 0) * MOTHERS_SHIELD_THRESHOLD - 1);
+
+    expect(aimedAt(child)).toBe(mother);
+  });
+});
+
+describe('Whirl Current', () => {
+  it('slows enemy wind-ups while it is raining', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.WhirlCurrent);
+
+    const target = { type: MoveTargetType.None } as const;
+    const bare = enemy.checkMoveCastTime(Moves.Flamethrower, target);
+
+    expect(enemy.checkMoveCastTime(Moves.Flamethrower, target)).toBe(bare);
+
+    teamB.weather.current = Weathers.Rain;
+
+    expect(enemy.checkMoveCastTime(Moves.Flamethrower, target)).toBeCloseTo(
+      bare * WHIRL_CURRENT_CAST_SCALE,
+      5,
+    );
+
+    // Its own casts are its own business
+    teamA.weather.current = Weathers.Rain;
+
+    expect(holder.checkMoveCastTime(Moves.Flamethrower, target)).toBe(bare);
+  });
+});
+
+describe('Upstream', () => {
+  it('hits anything bigger than it harder', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const bigger = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Upstream);
+
+    bigger.setStat(StatsKind.Base, Stats.HP, 200);
+
+    const atBigger = makeAttack(holder, bigger, Moves.Pound, Types.Normal, MoveCategories.Physical);
+
+    expect(bigger.checkStat(Stats.HP, 0)).toBeGreaterThan(holder.checkStat(Stats.HP, 0));
+    expect(resolveAttackStat(battle, atBigger, holder, Stats.Attack, 100)).toBeCloseTo(
+      100 * UPSTREAM_SCALE,
+      5,
+    );
+
+    const smaller = createUnit(battle, teamB);
+    smaller.setStat(StatsKind.Base, Stats.HP, 20);
+
+    const atSmaller = makeAttack(
+      holder,
+      smaller,
+      Moves.Pound,
+      Types.Normal,
+      MoveCategories.Physical,
+    );
+
+    expect(resolveAttackStat(battle, atSmaller, holder, Stats.Attack, 100)).toBe(100);
   });
 });

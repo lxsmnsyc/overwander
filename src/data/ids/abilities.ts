@@ -352,6 +352,10 @@ const enum Abilities {
   SmogScreen = 200049,
   DrillHorn = 200050,
   Cushioned = 200051,
+  EndlessGrowth = 200052,
+  MothersShield = 200053,
+  WhirlCurrent = 200054,
+  Upstream = 200055,
 }
 
 export default Abilities;

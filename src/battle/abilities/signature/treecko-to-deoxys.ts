@@ -56,6 +56,16 @@ export const FEARLESS_DIVE_SCALE = 1.3;
 export const EMPATH_SCALE = 1.3;
 export const EMPATH_THRESHOLD = 1 / 2;
 
+/** How many meals the frenzy counts */
+export const FEEDING_FRENZY_MAX_STAGES = 3;
+
+/** What the hump takes off the far side, and the share that sets it off */
+export const MAGMA_VENT_FRACTION = 1 / 8;
+export const MAGMA_VENT_THRESHOLD = 1 / 2;
+
+/** What its own sky is worth to a coal-burning shell */
+export const BODY_HEAT_SCALE = 1.3;
+
 /** What the aroma takes off the far side's Speed */
 export const LURE_SCENT_SCALE = 0.85;
 
@@ -565,6 +575,107 @@ const treeckoToDeoxys = [
         source.health >= source.checkStat(Stats.HP, 0)
       ) {
         event.value *= KITTEN_PACE_SCALE;
+      }
+    }),
+  ),
+
+  // Carvanha: every meal makes the school braver, whoever served it
+  createAbility(Abilities.FeedingFrenzy, (battle) => {
+    const { counter, lifecycles } = createUnitCounter(battle);
+
+    return new MergedLifecycle([
+      battle.on(BattleEvents.UnitFaints, EventPriority.Post, (event) => {
+        for (const shark of battle.units(event.source.team.alliance)) {
+          const fed = counter.get(shark);
+
+          if (
+            fed >= FEEDING_FRENZY_MAX_STAGES ||
+            !shark.alive ||
+            !shark.hasAbility(Abilities.FeedingFrenzy)
+          ) {
+            continue;
+          }
+
+          counter.set(shark, fed + 1);
+          shark.triggerAbility(Abilities.FeedingFrenzy);
+          shark.addStage(Stages.Attack, 1, {
+            type: EffectType.Ability,
+            ability: Abilities.FeedingFrenzy,
+            unit: shark,
+          });
+        }
+      }),
+      ...lifecycles,
+    ]);
+  }),
+
+  // Wailmer: what it spouts goes over everything in front of it, the
+  // same widening Caterpie's powder gets
+  createAbility(Abilities.Spout, (battle) =>
+    battle.on(BattleEvents.CheckUnitMoveTargeting, EventPriority.Post, (event) => {
+      if (
+        event.target === MoveTargets.Unit &&
+        affectsFoesOnly(event.affects) &&
+        getMoveData(event.move).type === Types.Water &&
+        event.source.hasAbility(Abilities.Spout)
+      ) {
+        event.target = MoveTargets.None;
+      }
+    }),
+  ),
+
+  // Numel: the hump goes off once the fight turns, and it goes off over
+  // the whole far side
+  createAbility(Abilities.MagmaVent, (battle) => {
+    const spent = new Set<Unit>();
+
+    return battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
+      const target = event.target;
+
+      if (
+        !event.success ||
+        !target.alive ||
+        spent.has(target) ||
+        !target.hasAbility(Abilities.MagmaVent) ||
+        target.health >= target.checkStat(Stats.HP, 0) * MAGMA_VENT_THRESHOLD
+      ) {
+        return;
+      }
+
+      spent.add(target);
+      target.triggerAbility(Abilities.MagmaVent);
+
+      const cause = {
+        type: EffectType.Ability,
+        ability: Abilities.MagmaVent,
+        unit: target,
+      } as const;
+
+      for (const enemy of battle.units(target.team.alliance)) {
+        if (enemy.alive) {
+          target.damage(
+            cause,
+            enemy,
+            enemy.checkStat(Stats.HP, 0) * MAGMA_VENT_FRACTION,
+            DamageFlags.Indirect,
+          );
+        }
+      }
+    });
+  }),
+
+  // Torkoal: the coal in the shell burns hotter under its own sun, and
+  // Drought is in its pool to put one up
+  createAbility(Abilities.BodyHeat, (battle) =>
+    battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
+      const source = event.source;
+
+      if (
+        (event.stat === Stats.Defense || event.stat === Stats.SpecialDefense) &&
+        source.hasAbility(Abilities.BodyHeat) &&
+        isWeatherSunny(source)
+      ) {
+        event.value *= BODY_HEAT_SCALE;
       }
     }),
   ),

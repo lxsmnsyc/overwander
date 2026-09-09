@@ -155,6 +155,7 @@ import { Statuses, TeamStatuses, Weathers } from '../../../src/data/ids/status';
 import turns from '../../../src/battle/turn';
 import { layersUnder } from '../../../src/battle/moves/spikes';
 import {
+  BODY_HEAT_SCALE,
   BOTTOMLESS_FRACTION,
   COCOON_DURATION,
   COCOON_SCALE,
@@ -166,9 +167,12 @@ import {
   EMPATH_SCALE,
   EMPATH_THRESHOLD,
   FEARLESS_DIVE_SCALE,
+  FEEDING_FRENZY_MAX_STAGES,
   JOLT_START_SCALE,
   KITTEN_PACE_SCALE,
   LURE_SCENT_SCALE,
+  MAGMA_VENT_FRACTION,
+  MAGMA_VENT_THRESHOLD,
   MYCELIUM_SCALE,
   ORE_HUNGER_FRACTION,
   PACK_HUNT_SCALE,
@@ -4492,5 +4496,102 @@ describe('Bottomless', () => {
     enemy.removeItem(Items.Leftovers, { type: EffectType.Move, move: Moves.Pound, unit: holder });
 
     expect(holder.health).toBeCloseTo(maxHP / 2, 5);
+  });
+});
+
+describe('Feeding Frenzy', () => {
+  it('takes a step for each enemy that falls, up to the cap', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    holder.addAbility(Abilities.FeedingFrenzy);
+
+    const meals = [];
+    for (let index = 0; index < FEEDING_FRENZY_MAX_STAGES + 1; index += 1) {
+      meals.push(createUnit(battle, teamB));
+    }
+
+    for (const [index, meal] of meals.entries()) {
+      meal.faint(holder);
+
+      expect(holder.stages[Stages.Attack]).toBe(Math.min(FEEDING_FRENZY_MAX_STAGES, index + 1));
+    }
+  });
+
+  it('is fed by nothing on its own side', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.FeedingFrenzy);
+
+    ally.faint(enemy);
+
+    expect(holder.stages[Stages.Attack]).toBe(0);
+  });
+});
+
+describe('Spout', () => {
+  it('widens a Water move over the whole far side', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Spout);
+
+    expect(holder.checkMoveTargeting(Moves.WaterGun).target).toBe(MoveTargets.None);
+
+    // Anything that is not Water still picks its one target
+    expect(holder.checkMoveTargeting(Moves.Ember).target).toBe(MoveTargets.Unit);
+
+    // And nobody else spouts
+    expect(enemy.checkMoveTargeting(Moves.WaterGun).target).toBe(MoveTargets.Unit);
+  });
+});
+
+describe('Magma Vent', () => {
+  it('empties the hump over the far side once', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const first = createUnit(battle, teamB);
+    const second = createUnit(battle, teamB);
+    holder.addAbility(Abilities.MagmaVent);
+
+    const maxHP = holder.checkStat(Stats.HP, 0);
+    holder.setHealth(maxHP * MAGMA_VENT_THRESHOLD + 10);
+
+    first.damage(NONE_CAUSE, holder, 20, 0);
+
+    for (const enemy of [first, second]) {
+      const theirs = enemy.checkStat(Stats.HP, 0);
+
+      expect(theirs - enemy.health).toBeCloseTo(theirs * MAGMA_VENT_FRACTION, 5);
+    }
+
+    // Only ever the once
+    const before = first.health;
+
+    holder.setHealth(maxHP * MAGMA_VENT_THRESHOLD - 1);
+    first.damage(NONE_CAUSE, holder, 1, 0);
+
+    expect(first.health).toBe(before);
+  });
+});
+
+describe('Body Heat', () => {
+  it('counts both defences higher under its own sun', () => {
+    const { battle, teamA } = createBattle();
+    const holder = createUnit(battle, teamA);
+    holder.addAbility(Abilities.BodyHeat);
+
+    const defense = holder.checkStat(Stats.Defense, 0);
+    const special = holder.checkStat(Stats.SpecialDefense, 0);
+    const attack = holder.checkStat(Stats.Attack, 0);
+
+    holder.setWeather(Weathers.Sunny);
+
+    expect(holder.checkStat(Stats.Defense, 0)).toBeCloseTo(defense * BODY_HEAT_SCALE, 5);
+    expect(holder.checkStat(Stats.SpecialDefense, 0)).toBeCloseTo(special * BODY_HEAT_SCALE, 5);
+
+    // Nothing about what it hits with
+    expect(holder.checkStat(Stats.Attack, 0)).toBeCloseTo(attack, 5);
   });
 });

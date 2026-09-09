@@ -460,6 +460,10 @@ const enum Abilities {
   LureScent = 200157,
   Perennial = 200158,
   Bottomless = 200159,
+  FeedingFrenzy = 200160,
+  Spout = 200161,
+  MagmaVent = 200162,
+  BodyHeat = 200163,
 }
 
 export default Abilities;

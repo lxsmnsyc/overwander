@@ -1076,4 +1076,29 @@ export default function registerSignatureAbilities(): void {
     name: 'Bottomless',
     description: 'It heals 1/8 of its HP whenever any held item is consumed on the field.',
   });
+
+  // Carvanha
+  registerAbility(Abilities.FeedingFrenzy, {
+    name: 'Feeding Frenzy',
+    description: 'It gains a stage of Attack whenever any enemy faints, up to 3 of them.',
+  });
+
+  // Wailmer
+  registerAbility(Abilities.Spout, {
+    name: 'Spout',
+    description: 'Its Water moves reach every enemy on the field, not only the one it aimed at.',
+  });
+
+  // Numel
+  registerAbility(Abilities.MagmaVent, {
+    name: 'Magma Vent',
+    description:
+      'The first time it drops below 1/2 HP, every enemy loses 1/8 of their HP. Once per battle.',
+  });
+
+  // Torkoal
+  registerAbility(Abilities.BodyHeat, {
+    name: 'Body Heat',
+    description: 'Its Defense and Special Defense count 1.3x while the Sun is up.',
+  });
 }

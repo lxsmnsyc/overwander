@@ -1345,4 +1345,44 @@ export default function registerSignatureAbilities(): void {
     name: 'Eon Lance',
     description: 'Its moves deal 1.25x and count Reflect and Light Screen for nothing.',
   });
+
+  /**
+   * The three superancient pokemon share the waking: each is holding
+   * back until it drops below half, and what comes out then stays out
+   */
+
+  // Kyogre
+  registerAbility(Abilities.PrimalSea, {
+    name: 'Primal Sea',
+    description:
+      'Below 1/2 HP it gains 2 stages of Special Attack and its Water moves deal 1.3x, for good.',
+  });
+
+  // Groudon
+  registerAbility(Abilities.PrimalLand, {
+    name: 'Primal Land',
+    description:
+      'Below 1/2 HP it gains 2 stages of Attack and its Ground moves deal 1.3x, for good.',
+  });
+
+  // Rayquaza
+  registerAbility(Abilities.PrimalSky, {
+    name: 'Primal Sky',
+    description:
+      'Below 1/2 HP it gains 2 stages of Special Attack and its Dragon moves deal 1.3x, for good.',
+  });
+
+  // Jirachi
+  registerAbility(Abilities.SevenWishes, {
+    name: 'Seven Wishes',
+    description:
+      'Every 7 times it acts, its whole side heals 1/2 of their HP and is cured of everything.',
+  });
+
+  // Deoxys
+  registerAbility(Abilities.FormDrift, {
+    name: 'Form Drift',
+    description:
+      'Every 6 seconds it gains a stage in its highest battle stat and loses one in its lowest.',
+  });
 }

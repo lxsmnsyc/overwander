@@ -23,6 +23,9 @@ import {
   GROWTH_MAX_STAGES,
   MARK_DEEP_FRACTION,
   MARK_FRACTION,
+  PRIMAL_SCALE,
+  PRIMAL_STAGES,
+  PRIMAL_THRESHOLD,
   REGAL_COURT_MAX_ENEMIES,
   REGAL_COURT_STEP,
   SEALED_DURATION,
@@ -171,6 +174,7 @@ import {
   DIRTY_FIGHTER_SCALE,
   DOOM_MARK_DURATION,
   DOOM_MARK_SCALE,
+  FORM_DRIFT_INTERVAL,
   FRUIT_CROP_INTERVAL,
   HIVE_MIND_MAX_ALLIES,
   HIVE_MIND_STEP,
@@ -181,6 +185,8 @@ import {
   PATIENT_STALK_STEP,
   PEARL_GUARD_SCALE,
   RINGING_HEAD_SCALE,
+  SEVEN_WISHES_COUNT,
+  SEVEN_WISHES_FRACTION,
   SHARED_HEART_SHARE,
   SILT_BED_SCALE,
   SKULL_CHARGE_RECOIL,
@@ -5473,5 +5479,125 @@ describe('the Latias and Latios pair', () => {
     // The screen takes its cut off everybody else and nothing off him
     expect(screened).toBeLessThan(clean);
     expect(resolveAttackDamage(battle, latios, enemy)).toBeCloseTo(clean * EON_LANCE_SCALE, 5);
+  });
+});
+
+describe('the weather trio', () => {
+  const TITANS = [
+    {
+      name: 'Primal Sea',
+      ability: Abilities.PrimalSea,
+      stage: Stages.SpecialAttack,
+      type: Types.Water,
+      move: Moves.WaterGun,
+    },
+    {
+      name: 'Primal Land',
+      ability: Abilities.PrimalLand,
+      stage: Stages.Attack,
+      type: Types.Ground,
+      move: Moves.MudSlap,
+    },
+    {
+      name: 'Primal Sky',
+      ability: Abilities.PrimalSky,
+      stage: Stages.SpecialAttack,
+      type: Types.Dragon,
+      move: Moves.DragonBreath,
+    },
+  ];
+
+  function resolve(battle: Battle, attacker: Unit, target: Unit, type: Types, move: Moves): number {
+    const event = {
+      id: 'UnitAttackResolveDamage',
+      disabled: false,
+      parent: makeAttack(attacker, target, move, type, MoveCategories.Special),
+      value: 0,
+    };
+    battle.emit(BattleEvents.UnitAttackResolveDamage, event);
+    return event.value;
+  }
+
+  for (const { name, ability, stage, type, move } of TITANS) {
+    it(`wakes once and stays awake for ${name}`, () => {
+      const { battle, teamA, teamB } = createBattle();
+      pinRandom(battle, 0);
+      const holder = createUnit(battle, teamA);
+      const enemy = createUnit(battle, teamB);
+      holder.addAbility(ability);
+
+      const clean = resolve(battle, holder, enemy, type, move);
+      const maxHP = holder.checkStat(Stats.HP, 0);
+
+      expect(holder.stages[stage]).toBe(0);
+
+      holder.setHealth(maxHP * PRIMAL_THRESHOLD + 10);
+      enemy.damage(NONE_CAUSE, holder, 20, 0);
+
+      expect(holder.stages[stage]).toBe(PRIMAL_STAGES);
+      expect(resolve(battle, holder, enemy, type, move)).toBeCloseTo(clean * PRIMAL_SCALE, 5);
+
+      // Its other elements are untouched, and the waking is once only
+      expect(resolve(battle, holder, enemy, Types.Normal, Moves.Pound)).toBeCloseTo(
+        resolve(battle, enemy, holder, Types.Normal, Moves.Pound),
+        5,
+      );
+
+      enemy.damage(NONE_CAUSE, holder, 1, 0);
+
+      expect(holder.stages[stage]).toBe(PRIMAL_STAGES);
+    });
+  }
+});
+
+describe('Seven Wishes', () => {
+  it('grants the lot on the seventh time it acts', () => {
+    const { battle, teamA } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamA);
+    holder.addAbility(Abilities.SevenWishes);
+
+    const maxHP = ally.checkStat(Stats.HP, 0);
+    ally.setHealth(1);
+    ally.addStatus(Statuses.Poisoned, NONE_CAUSE);
+
+    for (let asked = 1; asked < SEVEN_WISHES_COUNT; asked += 1) {
+      act(battle, holder);
+    }
+
+    expect(ally.health).toBe(1);
+
+    act(battle, holder);
+
+    expect(ally.health).toBeCloseTo(1 + maxHP * SEVEN_WISHES_FRACTION, 5);
+    expect(ally.status[Statuses.Poisoned]).toBeUndefined();
+
+    // The count starts again from nothing
+    ally.setHealth(1);
+
+    act(battle, holder);
+
+    expect(ally.health).toBe(1);
+  });
+});
+
+describe('Form Drift', () => {
+  it('drifts further into whatever shape it is already in', () => {
+    const { battle, teamA } = createBattle();
+    const holder = createUnit(battle, teamA);
+    holder.addAbility(Abilities.FormDrift);
+
+    holder.setStat(StatsKind.Base, Stats.Attack, 200);
+    holder.setStat(StatsKind.Base, Stats.Defense, 20);
+
+    battle.tick(FORM_DRIFT_INTERVAL);
+
+    expect(holder.stages[Stages.Attack]).toBe(1);
+    expect(holder.stages[Stages.Defense]).toBe(-1);
+
+    battle.tick(FORM_DRIFT_INTERVAL);
+
+    expect(holder.stages[Stages.Attack]).toBe(2);
+    expect(holder.stages[Stages.Defense]).toBe(-2);
   });
 });

@@ -809,7 +809,7 @@ export function createDeceiverAbility(
 }
 
 /** Which stage answers each of the five battle stats */
-const STAT_STAGES: Partial<Record<Stats, Stages>> = {
+export const STAT_STAGES: Partial<Record<Stats, Stages>> = {
   [Stats.Attack]: Stages.Attack,
   [Stats.Defense]: Stages.Defense,
   [Stats.SpecialAttack]: Stages.SpecialAttack,
@@ -1205,4 +1205,55 @@ export function createEonAbility(
       }
     }),
   );
+}
+
+/** How far a titan wakes, what its own element is then worth, and when */
+export const PRIMAL_STAGES = 2;
+export const PRIMAL_SCALE = 1.3;
+export const PRIMAL_THRESHOLD = 1 / 2;
+
+/**
+ * What the three superancient pokemon share: each is holding back until
+ * the fight turns. The first time one drops below half it wakes for
+ * good, two stages up in the stat it fights with and a third harder
+ * with the element it was made to move
+ */
+export function createPrimalAbility(
+  ability: Abilities,
+  stage: Stages,
+  type: Types,
+): ((battle: Battle) => void) & { ability: Abilities } {
+  return createAbility(ability, (battle) => {
+    const woken = new Set<Unit>();
+
+    return new MergedLifecycle([
+      battle.on(BattleEvents.UnitFaints, EventPriority.Post, (event) => {
+        woken.delete(event.source);
+      }),
+      battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
+        const target = event.target;
+
+        if (
+          !event.success ||
+          !target.alive ||
+          woken.has(target) ||
+          !target.hasAbility(ability) ||
+          target.health >= target.checkStat(Stats.HP, 0) * PRIMAL_THRESHOLD
+        ) {
+          return;
+        }
+
+        woken.add(target);
+        target.triggerAbility(ability);
+        target.addStage(stage, PRIMAL_STAGES, { type: EffectType.Ability, ability, unit: target });
+      }),
+      battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, (event) => {
+        const parent = event.parent;
+
+        if (woken.has(parent.source) && parent.type === type) {
+          event.value *= PRIMAL_SCALE;
+        }
+      }),
+    ]);
+  });
 }

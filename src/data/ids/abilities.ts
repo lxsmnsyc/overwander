@@ -498,6 +498,11 @@ const enum Abilities {
   IronSeal = 200195,
   EonShield = 200196,
   EonLance = 200197,
+  PrimalSea = 200198,
+  PrimalLand = 200199,
+  PrimalSky = 200200,
+  SevenWishes = 200201,
+  FormDrift = 200202,
 }
 
 export default Abilities;

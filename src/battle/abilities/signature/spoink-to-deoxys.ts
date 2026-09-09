@@ -13,15 +13,19 @@ import { FORCED_SWITCH_MOVES } from '../../moves/switch-out';
 import { BattleEvents, EffectType, MoveTargetType } from '../../events';
 import { MergedLifecycle } from '../../lifecycle';
 import type Unit from '../../unit';
-import { countHeldItems, hasFreeItemSlot, unitTarget } from '../../utils';
+import { countHeldItems, hasFreeItemSlot, onUnitActs, unitTarget } from '../../utils';
 import { createAbility } from '../__create';
 import {
+  STAT_STAGES,
   createDamageTaken,
   createEclipseAbility,
   createEonAbility,
   createFeudAbility,
   createFossilPairAbility,
+  createPrimalAbility,
   createSealedAbility,
+  createStatExtremes,
+  createUnitCounter,
   createUnitState,
 } from './__create';
 
@@ -44,6 +48,13 @@ const SPOTTED_STAGES = [
 
 /** What walking into the pit costs whoever missed */
 export const ANTLION_PIT_FRACTION = 1 / 8;
+
+/** How many times a wish-granter must act, and what the wish is worth */
+export const SEVEN_WISHES_COUNT = 7;
+export const SEVEN_WISHES_FRACTION = 1 / 2;
+
+/** How often a rearranging body drifts further into its own shape */
+export const FORM_DRIFT_INTERVAL = 6000;
 
 /** What half a heart is worth to the other one */
 export const SHARED_HEART_SHARE = 1 / 2;
@@ -408,6 +419,93 @@ const spoinkToDeoxys = [
       event.power *= 1 + HIVE_MIND_STEP * Math.min(HIVE_MIND_MAX_ALLIES, hive);
     }),
   ),
+
+  // The weather trio: each holds back until the fight turns, and what
+  // wakes then stays awake
+  createPrimalAbility(Abilities.PrimalSea, Stages.SpecialAttack, Types.Water),
+  createPrimalAbility(Abilities.PrimalLand, Stages.Attack, Types.Ground),
+  createPrimalAbility(Abilities.PrimalSky, Stages.SpecialAttack, Types.Dragon),
+
+  // Jirachi: it counts what it is asked for, and grants the lot on the
+  // seventh, its own side included
+  createAbility(Abilities.SevenWishes, (battle) => {
+    const { counter, lifecycles } = createUnitCounter(battle);
+
+    return new MergedLifecycle([
+      ...onUnitActs(battle, (unit) => {
+        if (!unit.hasAbility(Abilities.SevenWishes)) {
+          return;
+        }
+
+        const asked = counter.get(unit) + 1;
+
+        if (asked < SEVEN_WISHES_COUNT) {
+          counter.set(unit, asked);
+          return;
+        }
+
+        counter.set(unit, 0);
+        unit.triggerAbility(Abilities.SevenWishes);
+
+        const cause = {
+          type: EffectType.Ability,
+          ability: Abilities.SevenWishes,
+          unit,
+        } as const;
+
+        for (const ally of battle.units()) {
+          if (ally.alive && ally.team.alliance === unit.team.alliance) {
+            unit.heal(cause, ally, ally.checkStat(Stats.HP, 0) * SEVEN_WISHES_FRACTION, 0);
+            ally.cure(cause);
+          }
+        }
+      }),
+      ...lifecycles,
+    ]);
+  }),
+
+  // Deoxys: the body keeps rearranging itself toward whatever shape it
+  // is already in, taking what it needs off whatever it uses least
+  createAbility(Abilities.FormDrift, (battle) => {
+    const stats = createStatExtremes();
+
+    let waited = 0;
+
+    return battle.on(BattleEvents.Tick, EventPriority.Post, (event) => {
+      waited += event.duration;
+
+      if (waited < FORM_DRIFT_INTERVAL || stats.measuring()) {
+        return;
+      }
+
+      waited = 0;
+
+      for (const unit of battle.units()) {
+        if (!unit.alive || !unit.hasAbility(Abilities.FormDrift)) {
+          continue;
+        }
+
+        const { highest, lowest } = stats.extremes(unit);
+        const raised = STAT_STAGES[highest];
+        const lowered = STAT_STAGES[lowest];
+        const cause = {
+          type: EffectType.Ability,
+          ability: Abilities.FormDrift,
+          unit,
+        } as const;
+
+        unit.triggerAbility(Abilities.FormDrift);
+
+        // Explicit null checks: the first Stages enum member is 0
+        if (raised != null) {
+          unit.addStage(raised, 1, cause);
+        }
+        if (lowered != null) {
+          unit.addStage(lowered, -1, cause);
+        }
+      }
+    });
+  }),
 
   // The three Regis: each stands sealed for its first seconds and then
   // wakes for good, two stages up in the stat it was built around

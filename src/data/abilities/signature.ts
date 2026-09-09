@@ -61,10 +61,10 @@ export default function registerSignatureAbilities(): void {
   });
 
   // Ekans
-  registerAbility(Abilities.Chokehold, {
-    name: 'Chokehold',
+  registerAbility(Abilities.Squeeze, {
+    name: 'Squeeze',
     description:
-      'A contact move it lands corners the target, which cannot swap out, and its next cast takes 20% longer.',
+      'While it casts or channels, the last enemy it touched loses 1/16 of its HP each second.',
   });
 
   // Pikachu
@@ -266,9 +266,9 @@ export default function registerSignatureAbilities(): void {
   });
 
   // Gastly
-  registerAbility(Abilities.FadingPresence, {
-    name: 'Fading Presence',
-    description: 'Moves aimed at it are 15% less accurate, and whatever lands hits it 1.3x.',
+  registerAbility(Abilities.NightTerror, {
+    name: 'Night Terror',
+    description: 'An enemy it damages cannot be healed for the next 4 seconds.',
   });
 
   // Onix
@@ -279,10 +279,9 @@ export default function registerSignatureAbilities(): void {
   });
 
   // Drowzee
-  registerAbility(Abilities.DreamSiphon, {
-    name: 'Dream Siphon',
-    description:
-      'While any enemy is asleep its Special Attack is 1.25x and it heals 1/16 of its HP each time it acts.',
+  registerAbility(Abilities.DreamFeast, {
+    name: 'Dream Feast',
+    description: 'Landing a move on a sleeping target heals it 1/8 of its HP.',
   });
 
   // Krabby
@@ -342,9 +341,9 @@ export default function registerSignatureAbilities(): void {
   });
 
   // Tangela
-  registerAbility(Abilities.EndlessGrowth, {
-    name: 'Endless Growth',
-    description: 'Each time it acts it heals 1/16 of its HP and its Defense rises 5%, up to 1.5x.',
+  registerAbility(Abilities.VineWeb, {
+    name: 'Vine Web',
+    description: 'Every enemy arriving on the field loses 1/8 of its HP to the vines.',
   });
 
   // Kangaskhan
@@ -397,10 +396,9 @@ export default function registerSignatureAbilities(): void {
   });
 
   // Magmar
-  registerAbility(Abilities.ForgeHeat, {
-    name: 'Forge Heat',
-    description:
-      'A burn it inflicted bites 1.5x as hard, and its moves hit 1.3x against a burning target.',
+  registerAbility(Abilities.BlastFurnace, {
+    name: 'Blast Furnace',
+    description: 'Its Fire moves burn the target 30% of the time.',
   });
 
   // Pinsir

@@ -11,7 +11,6 @@ import {
   affectsFoesOnly,
 } from '../../../data/ids/moves';
 import { getMoveData } from '../../../data/moves';
-import { Statuses } from '../../../data/ids/status';
 import type Battle from '../../core';
 import {
   BattleEvents,
@@ -26,7 +25,6 @@ import { unitTarget } from '../../utils';
 import { createAbility } from '../__create';
 import {
   createDamageTaken,
-  createNextCastPenalty,
   createUnitCounter,
   createUnitState,
   fieldHasAbility,
@@ -78,8 +76,9 @@ export const RELENTLESS_STEP = 0.1;
 /** How far it presses one target before it can press no harder */
 export const RELENTLESS_MAX_STACKS = 4;
 
-/** What the coils add to the next thing the target reaches for */
-export const CHOKEHOLD_CAST_SCALE = 1.2;
+/** How often the coils tighten, and what they take when they do */
+export const SQUEEZE_INTERVAL = 1000;
+export const SQUEEZE_FRACTION = 1 / 16;
 
 /** What the arc carries to the next enemy along */
 export const CHAIN_LIGHTNING_FRACTION = 1 / 3;
@@ -381,36 +380,54 @@ const bulbasaurToPikachu = [
     ]);
   }),
 
-  // Ekans: the coils are the whole fight. What it wraps stays wrapped,
-  // which is the Cornered status a bind already puts on
-  createAbility(Abilities.Chokehold, (battle) => {
-    const coils = createNextCastPenalty(battle, CHOKEHOLD_CAST_SCALE);
+  // Ekans: the coils tighten while it is busy with something else, so
+  // the last thing it got hold of pays for every wind-up
+  createAbility(Abilities.Squeeze, (battle) => {
+    const { state, lifecycles } = createUnitState<Unit>(battle);
+
+    let waited = 0;
+
+    const clock = battle.on(BattleEvents.Tick, EventPriority.Post, (event) => {
+      waited += event.duration;
+
+      if (waited < SQUEEZE_INTERVAL) {
+        return;
+      }
+
+      waited = 0;
+
+      for (const [snake, caught] of state) {
+        if (!snake.alive || !caught.alive || (snake.casting == null && snake.channeling == null)) {
+          continue;
+        }
+
+        snake.triggerAbility(Abilities.Squeeze);
+
+        snake.damage(
+          { type: EffectType.Ability, ability: Abilities.Squeeze, unit: snake },
+          caught,
+          caught.checkStat(Stats.HP, 0) * SQUEEZE_FRACTION,
+          DamageFlags.Indirect,
+        );
+      }
+    });
 
     return new MergedLifecycle([
+      clock,
       battle.on(BattleEvents.UnitAttack, AttackPriority.Post, (event) => {
         const source = event.source;
 
         if (
-          !event.success ||
-          !event.target.alive ||
-          event.flags & MoveAttackFlags.Simulated ||
-          !source.hasAbility(Abilities.Chokehold) ||
-          !source.checkMoveContact(event.move, unitTarget(event.target))
+          event.success &&
+          event.target.alive &&
+          !(event.flags & MoveAttackFlags.Simulated) &&
+          source.hasAbility(Abilities.Squeeze) &&
+          source.checkMoveContact(event.move, unitTarget(event.target))
         ) {
-          return;
+          state.set(source, event.target);
         }
-
-        source.triggerAbility(Abilities.Chokehold);
-
-        coils.mark(event.target);
-
-        event.target.addStatus(Statuses.Cornered, {
-          type: EffectType.Ability,
-          ability: Abilities.Chokehold,
-          unit: source,
-        });
       }),
-      ...coils.lifecycles,
+      ...lifecycles,
     ]);
   }),
 

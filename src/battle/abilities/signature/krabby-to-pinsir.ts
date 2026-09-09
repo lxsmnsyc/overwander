@@ -44,10 +44,8 @@ export const CORKSCREW_SCALE = 1.15;
 /** The most one blow may take off a cushion */
 export const CUSHIONED_CAP_FRACTION = 1 / 6;
 
-/** What one more turn of growth is worth, and how long it grows for */
-export const ENDLESS_GROWTH_STEP = 0.05;
-export const ENDLESS_GROWTH_MAX_STACKS = 10;
-export const ENDLESS_GROWTH_HEAL_FRACTION = 1 / 16;
+/** What the vines take out of whatever walks into them */
+export const VINE_WEB_FRACTION = 1 / 8;
 
 /** The share of health that puts an ally behind her */
 export const MOTHERS_SHIELD_THRESHOLD = 1 / 2;
@@ -69,9 +67,8 @@ export const ICY_CHARM_SCALE = 1.5;
 export const STATIC_FIELD_STEP = 0.15;
 export const STATIC_FIELD_MAX_STACKS = 4;
 
-/** What the forge is worth: on the burn, and on what is burning */
-export const FORGE_HEAT_BURN_SCALE = 1.5;
-export const FORGE_HEAT_DAMAGE_SCALE = 1.3;
+/** How often what it throws sets the target alight */
+export const BLAST_FURNACE_CHANCE = 0.3;
 
 /** What catching something mid-swing is worth */
 export const SNAPJAW_SCALE = 1.5;
@@ -360,47 +357,32 @@ const krabbyToPinsir = [
     }),
   ),
 
-  // Tangela: it never stops putting out vines, so a fight it is left
-  // alive in is a fight it wins. Nothing here has a clock: the growth
-  // is paid as it reaches for a move
-  createAbility(Abilities.EndlessGrowth, (battle) => {
-    const { counter, lifecycles } = createUnitCounter(battle);
+  // Tangela: the vines are over the whole field, so anything walking on
+  // is walking into them. A fresh arrival only, never a reactivation
+  createAbility(Abilities.VineWeb, (battle) =>
+    battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+      const arriving = event.source;
 
-    return new MergedLifecycle([
-      battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
-        const grown = counter.get(event.source);
+      if (event.reactivation || !arriving.alive) {
+        return;
+      }
 
-        if (
-          grown > 0 &&
-          event.stat === Stats.Defense &&
-          event.source.hasAbility(Abilities.EndlessGrowth)
-        ) {
-          event.value *= 1 + ENDLESS_GROWTH_STEP * grown;
-        }
-      }),
-      ...onUnitActs(battle, (unit) => {
-        if (!unit.hasAbility(Abilities.EndlessGrowth)) {
+      for (const vines of battle.units(arriving.team.alliance)) {
+        if (vines.alive && vines.hasAbility(Abilities.VineWeb)) {
+          vines.triggerAbility(Abilities.VineWeb);
+
+          vines.damage(
+            { type: EffectType.Ability, ability: Abilities.VineWeb, unit: vines },
+            arriving,
+            arriving.checkStat(Stats.HP, 0) * VINE_WEB_FRACTION,
+            DamageFlags.Indirect,
+          );
+
           return;
         }
-
-        const grown = counter.get(unit);
-
-        if (grown < ENDLESS_GROWTH_MAX_STACKS) {
-          counter.set(unit, grown + 1);
-        }
-
-        unit.triggerAbility(Abilities.EndlessGrowth);
-
-        unit.heal(
-          { type: EffectType.Ability, ability: Abilities.EndlessGrowth, unit },
-          unit,
-          unit.checkStat(Stats.HP, 0) * ENDLESS_GROWTH_HEAL_FRACTION,
-          0,
-        );
-      }),
-      ...lifecycles,
-    ]);
-  }),
+      }
+    }),
+  ),
 
   // Kangaskhan: she steps in front of whoever is hurt. The same
   // retargeting a Lightning Rod does, read off health rather than type
@@ -627,40 +609,30 @@ const krabbyToPinsir = [
     ]);
   }),
 
-  // Magmar: it works what it has already heated. The burn is the
-  // opening and everything after it lands harder
-  createAbility(
-    Abilities.ForgeHeat,
-    (battle) =>
-      new MergedLifecycle([
-        // The burn's chip is dealt with the cause that lit it, and the
-        // status record holds that same cause: matching the two is what
-        // tells a burn residual apart from any other indirect hit
-        battle.on(BattleEvents.UnitDamage, AttackPriority.Pre, (event) => {
-          const cause = event.cause;
+  // Magmar: everything it throws is still on fire when it lands
+  createAbility(Abilities.BlastFurnace, (battle) =>
+    battle.on(BattleEvents.UnitAttack, AttackPriority.Post, (event) => {
+      const source = event.source;
 
-          if (
-            event.flags & DamageFlags.Indirect &&
-            cause.type !== EffectType.None &&
-            event.target.status[Statuses.Burned] === cause &&
-            cause.unit.hasAbility(Abilities.ForgeHeat)
-          ) {
-            event.value *= FORGE_HEAT_BURN_SCALE;
-          }
-        }),
-        battle.on(BattleEvents.UnitAttackResolveStat, EventPriority.Post, (event) => {
-          const parent = event.parent;
+      if (
+        !event.success ||
+        !event.target.alive ||
+        event.flags & MoveAttackFlags.Simulated ||
+        !source.hasAbility(Abilities.BlastFurnace) ||
+        source.checkMoveType(event.move, unitTarget(event.target)) !== Types.Fire ||
+        battle.random() >= BLAST_FURNACE_CHANCE
+      ) {
+        return;
+      }
 
-          if (
-            event.unit === parent.source &&
-            (event.stat === Stats.Attack || event.stat === Stats.SpecialAttack) &&
-            parent.source.hasAbility(Abilities.ForgeHeat) &&
-            parent.target.status[Statuses.Burned] != null
-          ) {
-            event.value *= FORGE_HEAT_DAMAGE_SCALE;
-          }
-        }),
-      ]),
+      source.triggerAbility(Abilities.BlastFurnace);
+
+      event.target.addStatus(Statuses.Burned, {
+        type: EffectType.Ability,
+        ability: Abilities.BlastFurnace,
+        unit: source,
+      });
+    }),
   ),
 
   // Pinsir: it catches things mid-swing, which is a real-time reward

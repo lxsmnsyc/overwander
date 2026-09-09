@@ -9,7 +9,6 @@ import {
   AFTERBURN_MAX_STACKS,
   AFTERBURN_STEP,
   CHAIN_LIGHTNING_FRACTION,
-  CHOKEHOLD_CAST_SCALE,
   NIBBLE_FRACTION,
   OVERPRESSURE_COOLDOWN_STEP,
   OVERPRESSURE_MAX_STACKS,
@@ -19,18 +18,16 @@ import {
   SEED_CACHE_BANK_FRACTION,
   SEED_CACHE_CAP_FRACTION,
   SLIPSTREAM_SCALE,
+  SQUEEZE_FRACTION,
+  SQUEEZE_INTERVAL,
   TWIN_STINGER_POWER_SCALE,
 } from '../../../src/battle/abilities/signature/bulbasaur-to-pikachu';
 import {
+  BLAST_FURNACE_CHANCE,
   BULLHEADED_EXPOSED_SCALE,
   BULLHEADED_POWER_SCALE,
   CORKSCREW_SCALE,
   CUSHIONED_CAP_FRACTION,
-  ENDLESS_GROWTH_HEAL_FRACTION,
-  ENDLESS_GROWTH_MAX_STACKS,
-  ENDLESS_GROWTH_STEP,
-  FORGE_HEAT_BURN_SCALE,
-  FORGE_HEAT_DAMAGE_SCALE,
   HEAVY_PINCER_SCALE,
   HEAVY_PINCER_THRESHOLD,
   ICY_CHARM_SCALE,
@@ -48,15 +45,13 @@ import {
   STATIC_FIELD_MAX_STACKS,
   STATIC_FIELD_STEP,
   UPSTREAM_SCALE,
+  VINE_WEB_FRACTION,
   WHIRL_CURRENT_CAST_SCALE,
 } from '../../../src/battle/abilities/signature/krabby-to-pinsir';
 import {
   DELAYED_REACTION_DELAY,
   DELAYED_REACTION_SHARE,
-  DREAM_SIPHON_HEAL_FRACTION,
-  DREAM_SIPHON_POWER_SCALE,
-  FADING_PRESENCE_ACCURACY_SCALE,
-  FADING_PRESENCE_DAMAGE_SCALE,
+  DREAM_FEAST_FRACTION,
   GALLOP_MAX_STACKS,
   GALLOP_STEP,
   LEEK_DUELIST_CRITICAL_SCALE,
@@ -64,6 +59,7 @@ import {
   LEEK_DUELIST_EXPOSED_SCALE,
   LIVING_TUNNEL_ALLY_SCALE,
   LIVING_TUNNEL_SELF_SCALE,
+  NIGHT_TERROR_DURATION,
   REPULSION_FIELD_SCALE,
   SECOND_HEAD_INTERVAL,
   SECOND_HEAD_POWER_SCALE,
@@ -644,48 +640,59 @@ describe('Relentless', () => {
   });
 });
 
-describe('Chokehold', () => {
-  it('corners what it touches and slows what that target reaches for next', () => {
+describe('Squeeze', () => {
+  it('tightens on the last thing it touched while it is winding up', () => {
     const { battle, teamA, teamB } = createBattle();
     pinRandom(battle, 1);
     const holder = createUnit(battle, teamA);
     const enemy = createUnit(battle, teamB);
-    holder.addAbility(Abilities.Chokehold);
+    holder.addAbility(Abilities.Squeeze);
 
-    const target = { type: MoveTargetType.None } as const;
-    const bare = enemy.checkMoveCastTime(Moves.Flamethrower, target);
+    const maxHP = enemy.checkStat(Stats.HP, 0);
 
-    holder.attack(enemy, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
+    holder.attack(enemy, Moves.Pound, 40, Types.Normal, MoveCategories.Physical, 0);
 
-    expect(enemy.status[Statuses.Cornered]).not.toBeUndefined();
-    expect(enemy.checkEscape()).toBe(false);
-    expect(enemy.checkMoveCastTime(Moves.Flamethrower, target)).toBeCloseTo(
-      bare * CHOKEHOLD_CAST_SCALE,
-      5,
-    );
+    const caught = enemy.health;
 
-    // The coils only hold the one cast
+    // Nothing while it stands idle
+    battle.tick(SQUEEZE_INTERVAL);
+
+    expect(enemy.health).toBe(caught);
+
     battle.emit(BattleEvents.UnitCast, {
       id: 'UnitCast',
       disabled: false,
-      source: enemy,
-      move: Moves.Flamethrower,
-      target,
+      source: holder,
+      move: Moves.SolarBeam,
+      target: { type: MoveTargetType.Unit, unit: enemy },
     });
 
-    expect(enemy.checkMoveCastTime(Moves.Flamethrower, target)).toBe(bare);
+    battle.tick(SQUEEZE_INTERVAL);
+
+    expect(caught - enemy.health).toBeCloseTo(maxHP * SQUEEZE_FRACTION, 5);
   });
 
-  it('needs contact to catch anything', () => {
+  it('needs contact to get hold of anything', () => {
     const { battle, teamA, teamB } = createBattle();
     pinRandom(battle, 1);
     const holder = createUnit(battle, teamA);
     const enemy = createUnit(battle, teamB);
-    holder.addAbility(Abilities.Chokehold);
+    holder.addAbility(Abilities.Squeeze);
 
     holder.attack(enemy, Moves.Ember, 40, Types.Fire, MoveCategories.Special, 0);
 
-    expect(enemy.status[Statuses.Cornered]).toBeUndefined();
+    const before = enemy.health;
+
+    battle.emit(BattleEvents.UnitCast, {
+      id: 'UnitCast',
+      disabled: false,
+      source: holder,
+      move: Moves.SolarBeam,
+      target: { type: MoveTargetType.Unit, unit: enemy },
+    });
+    battle.tick(SQUEEZE_INTERVAL);
+
+    expect(enemy.health).toBe(before);
   });
 });
 
@@ -1523,23 +1530,28 @@ describe('Spike Shell', () => {
   });
 });
 
-describe('Fading Presence', () => {
-  it('is hard to aim at and soft when hit', () => {
+describe('Night Terror', () => {
+  it('keeps a wound open for four seconds', () => {
     const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
     const holder = createUnit(battle, teamA);
     const enemy = createUnit(battle, teamB);
-    holder.addAbility(Abilities.FadingPresence);
+    holder.addAbility(Abilities.NightTerror);
 
-    expect(
-      enemy.checkMoveAccuracy(Moves.Pound, { type: MoveTargetType.Unit, unit: holder }),
-    ).toBeCloseTo(100 * FADING_PRESENCE_ACCURACY_SCALE, 5);
+    holder.attack(enemy, Moves.Pound, 40, Types.Normal, MoveCategories.Physical, 0);
 
-    const incoming = makeAttack(enemy, holder, Moves.Pound, Types.Normal, MoveCategories.Physical);
+    // Well clear of full, so a heal that lands has room to show
+    enemy.setHealth(enemy.checkStat(Stats.HP, 0) / 2);
 
-    expect(resolveAttackStat(battle, incoming, enemy, Stats.Attack, 100)).toBeCloseTo(
-      100 * FADING_PRESENCE_DAMAGE_SCALE,
-      5,
-    );
+    const hurt = enemy.health;
+    enemy.heal(NONE_CAUSE, enemy, 20, 0);
+
+    expect(enemy.health).toBe(hurt);
+
+    battle.tick(NIGHT_TERROR_DURATION);
+    enemy.heal(NONE_CAUSE, enemy, 20, 0);
+
+    expect(enemy.health).toBeCloseTo(hurt + 20, 5);
   });
 });
 
@@ -1575,32 +1587,25 @@ describe('Living Tunnel', () => {
   });
 });
 
-describe('Dream Siphon', () => {
-  it('feeds on a sleeping enemy in power and in health', () => {
+describe('Dream Feast', () => {
+  it('eats a sleeping dream whole', () => {
     const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
     const holder = createUnit(battle, teamA);
     const enemy = createUnit(battle, teamB);
-    holder.addAbility(Abilities.DreamSiphon);
+    holder.addAbility(Abilities.DreamFeast);
 
-    const bare = holder.checkStat(Stats.SpecialAttack, 0);
     const maxHP = holder.checkStat(Stats.HP, 0);
     holder.setHealth(maxHP / 2);
 
-    act(battle, holder);
+    holder.attack(enemy, Moves.Pound, 40, Types.Normal, MoveCategories.Physical, 0);
 
-    expect(holder.checkStat(Stats.SpecialAttack, 0)).toBe(bare);
     expect(holder.health).toBeCloseTo(maxHP / 2, 5);
 
     enemy.addStatus(Statuses.Sleeping, NONE_CAUSE);
+    holder.attack(enemy, Moves.Pound, 40, Types.Normal, MoveCategories.Physical, 0);
 
-    expect(holder.checkStat(Stats.SpecialAttack, 0)).toBeCloseTo(
-      bare * DREAM_SIPHON_POWER_SCALE,
-      5,
-    );
-
-    act(battle, holder);
-
-    expect(holder.health).toBeCloseTo(maxHP / 2 + maxHP * DREAM_SIPHON_HEAL_FRACTION, 5);
+    expect(holder.health).toBeCloseTo(maxHP / 2 + maxHP * DREAM_FEAST_FRACTION, 5);
   });
 });
 
@@ -1820,32 +1825,44 @@ describe('Cushioned', () => {
   });
 });
 
-describe('Endless Growth', () => {
-  it('heals and thickens every time it acts', () => {
-    const { battle, teamA } = createBattle();
+describe('Vine Web', () => {
+  it('bites whatever walks onto the field against it', () => {
+    const { battle, teamA, teamB } = createBattle();
     const holder = createUnit(battle, teamA);
-    holder.addAbility(Abilities.EndlessGrowth);
+    const enemy = createUnit(battle, teamB);
+    const ally = createUnit(battle, teamA);
+    holder.addAbility(Abilities.VineWeb);
 
-    const bareDefense = holder.checkStat(Stats.Defense, 0);
-    const maxHP = holder.checkStat(Stats.HP, 0);
-    holder.setHealth(maxHP / 2);
+    const maxHP = enemy.checkStat(Stats.HP, 0);
 
-    act(battle, holder);
+    battle.emit(BattleEvents.UnitEntersField, {
+      id: 'UnitEntersField',
+      disabled: false,
+      source: enemy,
+      reactivation: false,
+    });
 
-    expect(holder.health).toBeCloseTo(maxHP / 2 + maxHP * ENDLESS_GROWTH_HEAL_FRACTION, 5);
-    expect(holder.checkStat(Stats.Defense, 0)).toBeCloseTo(
-      bareDefense * (1 + ENDLESS_GROWTH_STEP),
-      5,
-    );
+    expect(maxHP - enemy.health).toBeCloseTo(maxHP * VINE_WEB_FRACTION, 5);
 
-    for (let grown = 2; grown <= ENDLESS_GROWTH_MAX_STACKS + 2; grown += 1) {
-      act(battle, holder);
-    }
+    // Its own side walks over the vines safely, and a reactivation is
+    // not an arrival
+    const allyHealth = ally.health;
 
-    expect(holder.checkStat(Stats.Defense, 0)).toBeCloseTo(
-      bareDefense * (1 + ENDLESS_GROWTH_STEP * ENDLESS_GROWTH_MAX_STACKS),
-      5,
-    );
+    battle.emit(BattleEvents.UnitEntersField, {
+      id: 'UnitEntersField',
+      disabled: false,
+      source: ally,
+      reactivation: false,
+    });
+    battle.emit(BattleEvents.UnitEntersField, {
+      id: 'UnitEntersField',
+      disabled: false,
+      source: enemy,
+      reactivation: true,
+    });
+
+    expect(ally.health).toBe(allyHealth);
+    expect(maxHP - enemy.health).toBeCloseTo(maxHP * VINE_WEB_FRACTION, 5);
   });
 });
 
@@ -2076,35 +2093,35 @@ describe('Static Field', () => {
   });
 });
 
-describe('Forge Heat', () => {
-  it('makes its own burn bite harder and hits a burning target harder', () => {
+describe('Blast Furnace', () => {
+  it('sets a target alight with a Fire move and leaves other types alone', () => {
     const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0);
     const holder = createUnit(battle, teamA);
     const enemy = createUnit(battle, teamB);
-    holder.addAbility(Abilities.ForgeHeat);
+    holder.addAbility(Abilities.BlastFurnace);
 
-    const parent = makeAttack(holder, enemy, Moves.Pound, Types.Normal, MoveCategories.Physical);
+    expect(BLAST_FURNACE_CHANCE).toBeGreaterThan(0);
 
-    expect(resolveAttackStat(battle, parent, holder, Stats.Attack, 100)).toBe(100);
+    holder.attack(enemy, Moves.Pound, 40, Types.Normal, MoveCategories.Physical, 0);
 
-    enemy.addStatus(Statuses.Burned, {
-      type: EffectType.Move,
-      move: Moves.Ember,
-      unit: holder,
-    });
+    expect(enemy.status[Statuses.Burned]).toBeUndefined();
 
-    expect(resolveAttackStat(battle, parent, holder, Stats.Attack, 100)).toBeCloseTo(
-      100 * FORGE_HEAT_DAMAGE_SCALE,
-      5,
-    );
+    holder.attack(enemy, Moves.Ember, 40, Types.Fire, MoveCategories.Special, 0);
 
-    const maxHP = enemy.checkStat(Stats.HP, 0);
-    const before = enemy.health;
+    expect(enemy.status[Statuses.Burned]).not.toBeUndefined();
+  });
 
-    battle.tick(turns(1));
+  it('does not light one when the roll goes against it', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.BlastFurnace);
 
-    // The burn's own chip is a sixteenth, and the forge makes more of it
-    expect(before - enemy.health).toBeCloseTo((maxHP / 16) * FORGE_HEAT_BURN_SCALE, 5);
+    holder.attack(enemy, Moves.Ember, 40, Types.Fire, MoveCategories.Special, 0);
+
+    expect(enemy.status[Statuses.Burned]).toBeUndefined();
   });
 });
 

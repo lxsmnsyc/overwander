@@ -163,3 +163,49 @@ export function createNextCastPenalty(
     ],
   };
 }
+
+/**
+ * Marks that let go on their own, for the effects that hold somebody
+ * for a few seconds rather than until something happens. The clock
+ * only runs while at least one mark stands
+ */
+export function createTimedMarks(battle: Battle): {
+  mark(unit: Unit, duration: number): void;
+  has(unit: Unit): boolean;
+  lifecycles: Lifecycle[];
+} {
+  const marks = new Map<Unit, number>();
+
+  const clock = battle.on(BattleEvents.Tick, EventPriority.Post, (event) => {
+    const expired: Unit[] = [];
+
+    for (const [unit, left] of marks) {
+      const next = left - event.duration;
+
+      if (next <= 0) {
+        expired.push(unit);
+      } else {
+        marks.set(unit, next);
+      }
+    }
+
+    for (const unit of expired) {
+      marks.delete(unit);
+    }
+
+    if (marks.size === 0) {
+      clock.stop();
+    }
+  });
+
+  clock.stop();
+
+  return {
+    mark(unit, duration) {
+      marks.set(unit, duration);
+      clock.start();
+    },
+    has: (unit) => marks.has(unit),
+    lifecycles: [clock],
+  };
+}

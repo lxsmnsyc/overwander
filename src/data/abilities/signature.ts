@@ -968,4 +968,41 @@ export default function registerSignatureAbilities(): void {
     name: 'Echo Chamber',
     description: 'A sound move it lands echoes 2 seconds later for 1/4 of the damage it dealt.',
   });
+
+  // Makuhita
+  registerAbility(Abilities.Shove, {
+    name: 'Shove',
+    description:
+      'A contact move it lands on an enemy winding a move up flinches them, costing them that cast.',
+  });
+
+  // Nosepass
+  registerAbility(Abilities.Magnetize, {
+    name: 'Magnetize',
+    description: 'Enemy moves aimed at one of its allies are pulled onto it instead.',
+  });
+
+  // Skitty
+  registerAbility(Abilities.KittenPace, {
+    name: 'Kitten Pace',
+    description: 'Its Speed counts 1.3x while it is at full HP.',
+  });
+
+  /**
+   * Sableye and Mawile are counterparts, and both work on what the far
+   * side has built up: Sableye knocks a raised stage off, Mawile takes
+   * that stage for itself
+   */
+
+  // Sableye
+  registerAbility(Abilities.ShadowTax, {
+    name: 'Shadow Tax',
+    description: 'A move it lands removes one raised stage from the target.',
+  });
+
+  // Mawile
+  registerAbility(Abilities.JawClaim, {
+    name: 'Jaw Claim',
+    description: 'A move it lands moves one raised stage from the target onto itself.',
+  });
 }

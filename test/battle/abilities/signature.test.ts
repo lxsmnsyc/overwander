@@ -164,6 +164,7 @@ import {
   EMPATH_SCALE,
   EMPATH_THRESHOLD,
   FEARLESS_DIVE_SCALE,
+  KITTEN_PACE_SCALE,
   MYCELIUM_SCALE,
   PACK_HUNT_SCALE,
   VANISHING_ACT_DURATION,
@@ -4139,5 +4140,125 @@ describe('Echo Chamber', () => {
     battle.tick(ECHO_CHAMBER_DELAY);
 
     expect(enemy.health).toBe(before);
+  });
+});
+
+describe('Shove', () => {
+  it('costs an enemy the cast it was winding up', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0);
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Shove);
+    enemy.addMove(Moves.Ember);
+
+    enemy.cast(Moves.Ember, unitTarget(holder));
+
+    expect(enemy.casting).not.toBeUndefined();
+
+    holder.attack(enemy, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(enemy.status[Statuses.Flinched]).not.toBeUndefined();
+    expect(enemy.casting).toBeUndefined();
+  });
+
+  it('has nothing to shove when the enemy is standing still', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0);
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Shove);
+
+    holder.attack(enemy, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(enemy.status[Statuses.Flinched]).toBeUndefined();
+  });
+});
+
+describe('Magnetize', () => {
+  it('pulls what was aimed at an ally onto itself', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Magnetize);
+    enemy.addMove(Moves.Ember);
+
+    enemy.cast(Moves.Ember, unitTarget(ally));
+
+    expect(enemy.casting?.target).toEqual(unitTarget(holder));
+  });
+
+  it('leaves a spread move and a move aimed at its own side alone', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    const other = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Magnetize);
+    enemy.addMove(Moves.Growl);
+
+    // Aimed at its own side, so there is nothing coming to pull
+    enemy.cast(Moves.Growl, unitTarget(other));
+
+    expect(enemy.casting?.target).toEqual(unitTarget(other));
+  });
+});
+
+describe('Kitten Pace', () => {
+  it('plays fastest while nothing has caught it', () => {
+    const { battle, teamA } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const bare = createUnit(battle, teamA);
+    holder.addAbility(Abilities.KittenPace);
+
+    const clean = bare.checkStat(Stats.Speed, 0);
+
+    expect(holder.checkStat(Stats.Speed, 0)).toBeCloseTo(clean * KITTEN_PACE_SCALE, 5);
+
+    holder.setHealth(holder.checkStat(Stats.HP, 0) - 1);
+
+    expect(holder.checkStat(Stats.Speed, 0)).toBeCloseTo(clean, 5);
+  });
+});
+
+describe('the Sableye and Mawile pair', () => {
+  it('knocks the highest raise off, and keeps it on the other half', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0);
+    const sableye = createUnit(battle, teamA);
+    const mawile = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    sableye.addAbility(Abilities.ShadowTax);
+    mawile.addAbility(Abilities.JawClaim);
+
+    enemy.addStage(Stages.Attack, 3, NONE_CAUSE);
+    enemy.addStage(Stages.Defense, 1, NONE_CAUSE);
+
+    sableye.attack(enemy, Moves.Pound, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    // The highest raise is the one taken, and nobody keeps it
+    expect(enemy.stages[Stages.Attack]).toBe(2);
+    expect(enemy.stages[Stages.Defense]).toBe(1);
+    expect(sableye.stages[Stages.Attack]).toBe(0);
+
+    mawile.attack(enemy, Moves.Pound, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(enemy.stages[Stages.Attack]).toBe(1);
+    expect(mawile.stages[Stages.Attack]).toBe(1);
+  });
+
+  it('has nothing to take off a target that has raised nothing', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0);
+    const mawile = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    mawile.addAbility(Abilities.JawClaim);
+
+    enemy.addStage(Stages.Speed, -2, NONE_CAUSE);
+
+    mawile.attack(enemy, Moves.Pound, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(enemy.stages[Stages.Speed]).toBe(-2);
+    expect(mawile.stages[Stages.Speed]).toBe(0);
   });
 });

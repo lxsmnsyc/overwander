@@ -11,7 +11,7 @@ import {
   affectsFoesOnly,
 } from '../../../data/ids/moves';
 import { getMoveData } from '../../../data/moves';
-import { Weathers } from '../../../data/ids/status';
+import { Statuses, Weathers } from '../../../data/ids/status';
 import type Battle from '../../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../../events';
 import { MergedLifecycle } from '../../lifecycle';
@@ -23,16 +23,19 @@ import {
   isWeatherRainy,
   isWeatherSunny,
   onUnitActs,
+  unitTarget,
 } from '../../utils';
 import { createAbility } from '../__create';
 import {
   createDamageTaken,
+  createDeceiverAbility,
   createGroveAbility,
   createGrowthAbility,
   createTimedMarks,
   createUnitCounter,
   createUnitState,
   fieldHasAbility,
+  isSingleTargetMove,
   isSoundMove,
 } from './__create';
 
@@ -49,6 +52,9 @@ export const FEARLESS_DIVE_SCALE = 1.3;
 /** What its side's hurt is worth to it, and the share that counts as hurt */
 export const EMPATH_SCALE = 1.3;
 export const EMPATH_THRESHOLD = 1 / 2;
+
+/** What an untouched cat's Speed counts as */
+export const KITTEN_PACE_SCALE = 1.3;
 
 /** What the fungus takes off anything already sick */
 export const MYCELIUM_SCALE = 1.2;
@@ -463,6 +469,82 @@ const treeckoToDeoxys = [
       }),
     ]);
   }),
+
+  // Makuhita: the palm that puts somebody off their feet. Only worth
+  // anything against something already winding a move up, since a
+  // flinch is what interrupts one
+  createAbility(Abilities.Shove, (battle) =>
+    battle.on(BattleEvents.UnitAttack, AttackPriority.Post, (event) => {
+      const source = event.source;
+      const target = event.target;
+
+      if (
+        !event.success ||
+        !target.alive ||
+        event.flags & MoveAttackFlags.Simulated ||
+        (target.casting == null && target.channeling == null) ||
+        !source.hasAbility(Abilities.Shove) ||
+        !source.checkMoveContact(event.move, unitTarget(target))
+      ) {
+        return;
+      }
+
+      source.triggerAbility(Abilities.Shove);
+      target.addStatus(Statuses.Flinched, {
+        type: EffectType.Ability,
+        ability: Abilities.Shove,
+        unit: source,
+      });
+    }),
+  ),
+
+  // Nosepass: the nose pulls what is coming at its side onto itself.
+  // Turned as the cast is aimed, which is where Follow Me turns one
+  createAbility(Abilities.Magnetize, (battle) =>
+    battle.on(BattleEvents.UnitCast, EventPriority.Post, (event) => {
+      const caster = event.source;
+      const target = event.target;
+
+      if (target.type !== MoveTargetType.Unit || !isSingleTargetMove(event.move)) {
+        return;
+      }
+
+      const aimed = target.unit;
+
+      if (aimed.team.alliance === caster.team.alliance) {
+        return;
+      }
+
+      for (const magnet of battle.units(caster.team.alliance)) {
+        if (magnet !== aimed && magnet.alive && magnet.hasAbility(Abilities.Magnetize)) {
+          magnet.triggerAbility(Abilities.Magnetize);
+          caster.updateCast({ target: { type: MoveTargetType.Unit, unit: magnet } });
+          return;
+        }
+      }
+    }),
+  ),
+
+  // Skitty: it plays fastest while nothing has caught it, so the first
+  // hit it takes is what settles it down
+  createAbility(Abilities.KittenPace, (battle) =>
+    battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
+      const source = event.source;
+
+      if (
+        event.stat === Stats.Speed &&
+        source.hasAbility(Abilities.KittenPace) &&
+        source.health >= source.checkStat(Stats.HP, 0)
+      ) {
+        event.value *= KITTEN_PACE_SCALE;
+      }
+    }),
+  ),
+
+  // Sableye and Mawile: counterparts working the same knob, one knocking
+  // a raised stage off and the other keeping it
+  createDeceiverAbility(Abilities.ShadowTax, 'strips'),
+  createDeceiverAbility(Abilities.JawClaim, 'steals'),
 
   // Surskit: it stands on the water rather than in it, so what settles
   // on the ground and what falls out of the sky both pass it by

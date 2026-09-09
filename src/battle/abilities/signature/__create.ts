@@ -1,6 +1,5 @@
 import { AttackPriority, EventPriority } from '../../../core/event-emitter';
-import type { Stages } from '../../../data/constants/stats';
-import { Stats } from '../../../data/constants/stats';
+import { Stages, Stats } from '../../../data/constants/stats';
 import type Abilities from '../../../data/ids/abilities';
 import type { Types } from '../../../data/constants/types';
 import {
@@ -8,6 +7,7 @@ import {
   MoveAttackFlags,
   MoveCategories,
   MoveFlags,
+  MoveTargets,
   Moves,
 } from '../../../data/ids/moves';
 import { getMoveData, getWeatherMove } from '../../../data/moves';
@@ -153,6 +153,11 @@ const PSEUDO_MOVES = new Set<Moves>([Moves._Confused, Moves.Struggle, Moves.Atta
 /** Whether this is a physical move the pokemon actually chose */
 export function isPhysicalMove(move: Moves): boolean {
   return !PSEUDO_MOVES.has(move) && getMoveData(move).category === MoveCategories.Physical;
+}
+
+/** Whether the move is one aimed at a single pokemon the holder chose */
+export function isSingleTargetMove(move: Moves): boolean {
+  return !PSEUDO_MOVES.has(move) && getMoveData(move).target === MoveTargets.Unit;
 }
 
 /** Whether the move is one carried on sound the pokemon actually chose */
@@ -726,4 +731,79 @@ export function createGroveAbility(
           ]),
     ]);
   });
+}
+
+/** The stages a deceiver goes looking for, highest first */
+const CLAIMED_STAGES = [
+  Stages.Attack,
+  Stages.SpecialAttack,
+  Stages.Speed,
+  Stages.Defense,
+  Stages.SpecialDefense,
+  Stages.Accuracy,
+  Stages.Evasion,
+];
+
+/** Which half of the pair an ability is: the one that knocks off, or the one that keeps */
+export type DeceiverSide = 'strips' | 'steals';
+
+/** The raised stage standing highest on the unit, if it has one */
+function highestRaised(unit: Unit): Stages | undefined {
+  let found: Stages | undefined;
+  let highest = 0;
+
+  for (const stage of CLAIMED_STAGES) {
+    const held = unit.stages[stage];
+
+    if (held > highest) {
+      found = stage;
+      highest = held;
+    }
+  }
+
+  return found;
+}
+
+/**
+ * What Sableye and Mawile share: a landed move takes a raised stage off
+ * whatever it hit. Sableye leaves it on the floor and Mawile keeps it,
+ * which is the whole difference between the two
+ */
+export function createDeceiverAbility(
+  ability: Abilities,
+  side: DeceiverSide,
+): ((battle: Battle) => void) & { ability: Abilities } {
+  const steals = side === 'steals';
+
+  return createAbility(ability, (battle) =>
+    battle.on(BattleEvents.UnitAttack, AttackPriority.Post, (event) => {
+      const source = event.source;
+      const target = event.target;
+
+      if (
+        !event.success ||
+        !target.alive ||
+        event.flags & MoveAttackFlags.Simulated ||
+        !source.hasAbility(ability)
+      ) {
+        return;
+      }
+
+      const stage = highestRaised(target);
+
+      // Explicit null check: the first Stages enum member is 0
+      if (stage == null) {
+        return;
+      }
+
+      const cause = { type: EffectType.Ability, ability, unit: source } as const;
+
+      source.triggerAbility(ability);
+      target.addStage(stage, -1, cause);
+
+      if (steals) {
+        source.addStage(stage, 1, cause);
+      }
+    }),
+  );
 }

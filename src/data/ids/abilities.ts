@@ -446,6 +446,11 @@ const enum Abilities {
   WideSwing = 200143,
   VanishingAct = 200144,
   EchoChamber = 200145,
+  Shove = 200146,
+  Magnetize = 200147,
+  KittenPace = 200148,
+  ShadowTax = 200149,
+  JawClaim = 200150,
 }
 
 export default Abilities;

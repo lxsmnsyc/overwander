@@ -678,4 +678,28 @@ export default function registerSignatureAbilities(): void {
     name: 'Last Barb',
     description: 'When it faints, it casts Toxic at whoever finished it.',
   });
+
+  // Shuckle
+  registerAbility(Abilities.Fermenter, {
+    name: 'Fermenter',
+    description: 'Each time it acts with a free hand, a Berry Juice appears in it.',
+  });
+
+  // Heracross
+  registerAbility(Abilities.Heave, {
+    name: 'Heave',
+    description: 'The first contact move it lands on each enemy casts Whirlwind at them.',
+  });
+
+  // Sneasel
+  registerAbility(Abilities.SharpClaw, {
+    name: 'Sharp Claw',
+    description: "Each contact move it lands drops the target's Defense by a stage.",
+  });
+
+  // Teddiursa
+  registerAbility(Abilities.SweetPaw, {
+    name: 'Sweet Paw',
+    description: 'Its contact moves heal it 1/8 of the damage they deal.',
+  });
 }

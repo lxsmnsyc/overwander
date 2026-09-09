@@ -2,6 +2,7 @@ import { AttackPriority, EventPriority } from '../../../core/event-emitter';
 import { Stages, Stats } from '../../../data/constants/stats';
 import { Types } from '../../../data/constants/types';
 import Abilities from '../../../data/ids/abilities';
+import { Items } from '../../../data/ids/items';
 import {
   DamageFlags,
   MoveAttackFlags,
@@ -44,6 +45,9 @@ export const SAND_RIDER_SCALE = 0.75;
 
 /** What a target that has already been cowed is worth */
 export const BULLY_SCALE = 1.3;
+
+/** What a paw licked clean between blows gives back */
+export const SWEET_PAW_SHARE = 1 / 8;
 
 /** The other end an attacking stat has, for a pokemon that swings with both */
 const OTHER_ATTACK_STAT: { [key in Stats]?: Stats } = {
@@ -820,6 +824,108 @@ const chikoritaToCelebi = [
 
       source.triggerAbility(Abilities.LastBarb);
       source.triggerMove(Moves.Toxic, unitTarget(killer), 0);
+    }),
+  ),
+
+  // Shuckle: what the shell does to a berry is the line's one claim to
+  // fame, so it turns up with the juice already made
+  createAbility(
+    Abilities.Fermenter,
+    (battle) =>
+      new MergedLifecycle(
+        onUnitActs(battle, (unit) => {
+          if (unit.hasAbility(Abilities.Fermenter) && hasFreeItemSlot(unit)) {
+            unit.triggerAbility(Abilities.Fermenter);
+            unit.addItem(Items.BerryJuice);
+          }
+        }),
+      ),
+  ),
+
+  // Heracross: it picks whatever it grabs up and throws it, and what
+  // being thrown off the field means is Whirlwind's business. Once per
+  // enemy, so the field is not a revolving door
+  createAbility(Abilities.Heave, (battle) => {
+    const { state, lifecycles } = createUnitState<boolean>(battle);
+
+    return new MergedLifecycle([
+      battle.on(BattleEvents.UnitAttack, AttackPriority.Post, (event) => {
+        const source = event.source;
+        const target = event.target;
+
+        if (
+          !event.success ||
+          !target.alive ||
+          event.flags & MoveAttackFlags.Simulated ||
+          state.get(target) ||
+          !source.hasAbility(Abilities.Heave) ||
+          !source.checkMoveContact(event.move, unitTarget(target))
+        ) {
+          return;
+        }
+
+        state.set(target, true);
+        source.triggerAbility(Abilities.Heave);
+        source.triggerMove(Moves.Whirlwind, unitTarget(target), 0);
+      }),
+      ...lifecycles,
+    ]);
+  }),
+
+  // Sneasel: the claws are the whole of the design, so what they leave
+  // behind is an opening for the next pass
+  createAbility(Abilities.SharpClaw, (battle) =>
+    battle.on(BattleEvents.UnitAttack, AttackPriority.Post, (event) => {
+      const source = event.source;
+      const target = event.target;
+
+      if (
+        !event.success ||
+        !target.alive ||
+        event.flags & MoveAttackFlags.Simulated ||
+        !source.hasAbility(Abilities.SharpClaw) ||
+        !source.checkMoveContact(event.move, unitTarget(target))
+      ) {
+        return;
+      }
+
+      source.triggerAbility(Abilities.SharpClaw);
+      target.addStage(Stages.Defense, -1, {
+        type: EffectType.Ability,
+        ability: Abilities.SharpClaw,
+        unit: source,
+      });
+    }),
+  ),
+
+  // Teddiursa: it licks its paws between swings. Paid through the
+  // drain check, so a Liquid Ooze turns it back on itself the way it
+  // would any other drink
+  createAbility(Abilities.SweetPaw, (battle) =>
+    battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
+      const cause = event.cause;
+      const source = event.source;
+
+      if (
+        !event.success ||
+        event.flags & DamageFlags.Indirect ||
+        cause.type !== EffectType.Move ||
+        cause.unit !== source ||
+        !source.hasAbility(Abilities.SweetPaw) ||
+        !source.checkMoveContact(cause.move, unitTarget(event.target))
+      ) {
+        return;
+      }
+
+      const amount = source.checkDrain(event.target, event.value * SWEET_PAW_SHARE);
+
+      source.triggerAbility(Abilities.SweetPaw);
+
+      if (amount >= 0) {
+        source.heal(cause, source, amount, 0);
+      } else {
+        source.damage(cause, source, -amount, DamageFlags.Indirect);
+      }
     }),
   ),
 ];

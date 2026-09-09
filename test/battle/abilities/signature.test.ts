@@ -11,6 +11,7 @@ import {
   SAND_RIDER_SCALE,
   SHARED_MISERY_THRESHOLD,
   SUNLIT_CHARGE_SCALE,
+  SWEET_PAW_SHARE,
 } from '../../../src/battle/abilities/signature/chikorita-to-celebi';
 import {
   ABSOLUTE_CALM_STATUS_SCALE,
@@ -3324,5 +3325,108 @@ describe('Last Barb', () => {
     battle.tick(turns(1));
 
     expect(enemy.status[Statuses.BadlyPoisoned]).not.toBeUndefined();
+  });
+});
+
+describe('Fermenter', () => {
+  it('brews a juice into a free hand as it moves', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    createUnit(battle, teamB);
+    holder.addAbility(Abilities.Fermenter);
+
+    expect(holder.items[Items.BerryJuice]).toBeUndefined();
+
+    act(battle, holder);
+
+    expect(holder.items[Items.BerryJuice]).not.toBeUndefined();
+  });
+});
+
+describe('Heave', () => {
+  it('throws each enemy off the field the first time it lands one', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0);
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    createUnit(battle, teamB);
+    holder.addAbility(Abilities.Heave);
+
+    const casts: Moves[] = [];
+    battle.on(BattleEvents.UnitTriggerMove, AttackPriority.Post, (event) => {
+      if (event.source === holder) {
+        casts.push(event.move);
+      }
+    });
+
+    // A contact move lands, and the throw follows it
+    holder.attack(enemy, Moves.Pound, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(casts).toEqual([Moves.Whirlwind]);
+
+    // The same enemy is not thrown twice
+    holder.attack(enemy, Moves.Pound, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(casts).toEqual([Moves.Whirlwind]);
+  });
+
+  it('leaves a move that never touched it alone', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Heave);
+
+    let cast = false;
+    battle.on(BattleEvents.UnitTriggerMove, AttackPriority.Post, (event) => {
+      cast = cast || event.source === holder;
+    });
+
+    holder.attack(enemy, Moves.WaterGun, 40, Types.Water, MoveCategories.Special, 0);
+
+    expect(cast).toBe(false);
+  });
+});
+
+describe('Sharp Claw', () => {
+  it('opens the target up with every touch', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.SharpClaw);
+
+    holder.attack(enemy, Moves.Pound, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(enemy.stages[Stages.Defense]).toBe(-1);
+
+    holder.attack(enemy, Moves.Pound, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(enemy.stages[Stages.Defense]).toBe(-2);
+
+    // Nothing that keeps its distance cuts anything
+    holder.attack(enemy, Moves.WaterGun, 40, Types.Water, MoveCategories.Special, 0);
+
+    expect(enemy.stages[Stages.Defense]).toBe(-2);
+  });
+});
+
+describe('Sweet Paw', () => {
+  it('licks back a share of what its paws deal', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.SweetPaw);
+
+    const maxHP = holder.checkStat(Stats.HP, 0);
+    holder.setHealth(maxHP / 2);
+
+    holder.damage({ type: EffectType.Move, move: Moves.Pound, unit: holder }, enemy, 40, 0);
+
+    expect(holder.health).toBeCloseTo(maxHP / 2 + 40 * SWEET_PAW_SHARE, 5);
+
+    // A move that never touched the target gives nothing back
+    holder.setHealth(maxHP / 2);
+    holder.damage({ type: EffectType.Move, move: Moves.WaterGun, unit: holder }, enemy, 40, 0);
+
+    expect(holder.health).toBeCloseTo(maxHP / 2, 5);
   });
 });

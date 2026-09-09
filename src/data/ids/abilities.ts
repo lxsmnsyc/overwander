@@ -407,6 +407,10 @@ const enum Abilities {
   SandRider = 200104,
   Bully = 200105,
   LastBarb = 200106,
+  Fermenter = 200107,
+  Heave = 200108,
+  SharpClaw = 200109,
+  SweetPaw = 200110,
 }
 
 export default Abilities;

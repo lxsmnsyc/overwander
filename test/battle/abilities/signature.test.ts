@@ -5,7 +5,11 @@ import registerAbilities, {
 } from '../../../src/data/abilities';
 import { SIGNATURE_ABILITIES } from '../../../src/battle/abilities/signature';
 import {
+  ABSOLUTE_CALM_STATUS_SCALE,
+  FULL_BELLY_CAST_SCALE,
+  FULL_BELLY_HEAL_FRACTION,
   LATENT_POTENTIAL_SCALE,
+  LIGHTNING_REFLEXES_CAST_SCALE,
   PREDATORS_DIVE_SCALE,
   ROLLBACK_SAMPLE,
   ROLLBACK_THRESHOLD,
@@ -2430,5 +2434,87 @@ describe("Predator's Dive", () => {
       100 * PREDATORS_DIVE_SCALE,
       5,
     );
+  });
+});
+
+describe('Full Belly', () => {
+  it('feeds itself every time it acts and is slower for it', () => {
+    const { battle, teamA } = createBattle();
+    const holder = createUnit(battle, teamA);
+    holder.addAbility(Abilities.FullBelly);
+
+    const bare = createUnit(battle, teamA).checkMoveCastTime(Moves.Flamethrower, {
+      type: MoveTargetType.None,
+    });
+    const maxHP = holder.checkStat(Stats.HP, 0);
+    holder.setHealth(maxHP / 2);
+
+    act(battle, holder);
+
+    expect(holder.health).toBeCloseTo(maxHP / 2 + maxHP * FULL_BELLY_HEAL_FRACTION, 5);
+    expect(holder.checkMoveCastTime(Moves.Flamethrower, { type: MoveTargetType.None })).toBeCloseTo(
+      bare * FULL_BELLY_CAST_SCALE,
+      5,
+    );
+  });
+});
+
+describe('Absolute Calm', () => {
+  it('refuses what rattles and shortens what lands', () => {
+    const { battle, teamA } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const bare = createUnit(battle, teamA);
+    holder.addAbility(Abilities.AbsoluteCalm);
+
+    expect(holder.checkStatusImmunity(Statuses.Flinched, NONE_CAUSE)).toBe(true);
+    expect(holder.checkStatusImmunity(Statuses.Confused, NONE_CAUSE)).toBe(true);
+    expect(holder.checkStatusImmunity(Statuses.Infatuated, NONE_CAUSE)).toBe(true);
+
+    // A burn still lands, it just does not stay long
+    expect(holder.checkStatusImmunity(Statuses.Burned, NONE_CAUSE)).toBe(false);
+    expect(holder.checkStatusDuration(Statuses.Sleeping, turns(3), NONE_CAUSE)).toBeCloseTo(
+      bare.checkStatusDuration(Statuses.Sleeping, turns(3), NONE_CAUSE) *
+        ABSOLUTE_CALM_STATUS_SCALE,
+      5,
+    );
+  });
+});
+
+describe('Lightning Reflexes', () => {
+  it('winds up faster and cannot be slowed or stopped', () => {
+    const { battle, teamA } = createBattle();
+    const holder = createUnit(battle, teamA);
+    holder.addAbility(Abilities.LightningReflexes);
+
+    const target = { type: MoveTargetType.None } as const;
+    const bare = createUnit(battle, teamA).checkMoveCastTime(Moves.Flamethrower, target);
+
+    expect(holder.checkMoveCastTime(Moves.Flamethrower, target)).toBeCloseTo(
+      bare * LIGHTNING_REFLEXES_CAST_SCALE,
+      5,
+    );
+    expect(holder.checkStatusImmunity(Statuses.Paralyzed, NONE_CAUSE)).toBe(true);
+    expect(holder.checkStatusImmunity(Statuses.Flinched, NONE_CAUSE)).toBe(true);
+    expect(holder.checkStatusImmunity(Statuses.Burned, NONE_CAUSE)).toBe(false);
+  });
+});
+
+describe('Ashfall', () => {
+  it('burns the far side on the way down', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    const other = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Ashfall);
+
+    other.faint(enemy);
+    holder.faint(enemy);
+
+    expect(enemy.status[Statuses.Burned]).not.toBeUndefined();
+    expect(ally.status[Statuses.Burned]).toBeUndefined();
+
+    // Nothing for the one already down
+    expect(other.status[Statuses.Burned]).toBeUndefined();
   });
 });

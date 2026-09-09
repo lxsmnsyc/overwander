@@ -465,4 +465,29 @@ export default function registerSignatureAbilities(): void {
     name: "Predator's Dive",
     description: 'Its first move against each enemy hits 1.5x.',
   });
+
+  // Snorlax
+  registerAbility(Abilities.FullBelly, {
+    name: 'Full Belly',
+    description: 'It heals 1/16 of its HP every time it acts, and its cast times are 25% longer.',
+  });
+
+  // Articuno
+  registerAbility(Abilities.AbsoluteCalm, {
+    name: 'Absolute Calm',
+    description:
+      'It cannot be made to flinch, confused or infatuated, and statuses on it run out in half the time.',
+  });
+
+  // Zapdos
+  registerAbility(Abilities.LightningReflexes, {
+    name: 'Lightning Reflexes',
+    description: 'Its cast times are 25% shorter, and it cannot be paralysed or made to flinch.',
+  });
+
+  // Moltres
+  registerAbility(Abilities.Ashfall, {
+    name: 'Ashfall',
+    description: 'When it faints, every standing enemy is burned.',
+  });
 }

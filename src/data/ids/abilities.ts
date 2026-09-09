@@ -372,6 +372,10 @@ const enum Abilities {
   SpiralShell = 200069,
   SerratedEdge = 200070,
   PredatorsDive = 200071,
+  FullBelly = 200072,
+  AbsoluteCalm = 200073,
+  LightningReflexes = 200074,
+  Ashfall = 200075,
 }
 
 export default Abilities;

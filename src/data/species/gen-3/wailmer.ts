@@ -44,6 +44,9 @@ const FAMILY_TEACHABLE = [
   Moves.Swagger,
   Moves.SleepTalk,
   Moves.DefenseCurl,
+  Moves.Avalanche,
+  Moves.Captivate,
+  Moves.NaturalGift,
 ];
 
 export default function registerWailmerSpecies(): void {
@@ -86,6 +89,7 @@ export default function registerWailmerSpecies(): void {
         19: [Moves.Whirlpool],
         23: [Moves.Astonish],
         28: [Moves.WaterPulse],
+        31: [Moves.Brine],
         32: [Moves.Mist],
         37: [Moves.Rest],
         41: [Moves.WaterSpout],
@@ -93,7 +97,7 @@ export default function registerWailmerSpecies(): void {
         50: [Moves.HydroPump],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.Curse, Moves.Fissure, Moves.Thrash, Moves.Tickle],
+      egg: [Moves.Curse, Moves.Fissure, Moves.Thrash, Moves.Tickle, Moves.AquaRing],
     },
   });
 
@@ -129,13 +133,14 @@ export default function registerWailmerSpecies(): void {
         19: [Moves.Whirlpool],
         23: [Moves.Astonish],
         28: [Moves.WaterPulse],
+        31: [Moves.Brine],
         32: [Moves.Mist],
         37: [Moves.Rest],
         44: [Moves.WaterSpout],
         52: [Moves.Amnesia],
         59: [Moves.HydroPump],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
+      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.GigaImpact, Moves.IronHead],
     },
   });
 }

@@ -42,6 +42,12 @@ const FAMILY_TEACHABLE = [
   Moves.FuryCutter,
   Moves.SleepTalk,
   Moves.Swift,
+  Moves.Brine,
+  Moves.Captivate,
+  Moves.DarkPulse,
+  Moves.NaturalGift,
+  Moves.Payback,
+  Moves.ZenHeadbutt,
 ];
 
 export default function registerCarvanhaSpecies(): void {
@@ -80,10 +86,11 @@ export default function registerCarvanhaSpecies(): void {
         1: [Moves.Leer, Moves.Bite],
         7: [Moves.Rage],
         13: [Moves.FocusEnergy],
-        16: [Moves.ScaryFace],
+        16: [Moves.ScaryFace, Moves.IceFang],
         22: [Moves.Crunch],
+        26: [Moves.Assurance],
         28: [Moves.Screech],
-        31: [Moves.TakeDown],
+        31: [Moves.TakeDown, Moves.AquaJet],
         37: [Moves.Swagger],
         43: [Moves.Agility],
       },
@@ -120,15 +127,18 @@ export default function registerCarvanhaSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.Leer, Moves.Bite, Moves.Rage, Moves.FocusEnergy],
-        16: [Moves.ScaryFace],
+        1: [Moves.Leer, Moves.Bite, Moves.Rage, Moves.FocusEnergy, Moves.Feint],
+        16: [Moves.ScaryFace, Moves.IceFang],
         22: [Moves.Crunch],
+        26: [Moves.Assurance],
         28: [Moves.Screech],
         33: [Moves.Slash],
+        34: [Moves.AquaJet],
         38: [Moves.Taunt],
         43: [Moves.Swagger],
         48: [Moves.SkullBash],
         53: [Moves.Agility],
+        56: [Moves.NightSlash],
       },
       teachable: [
         ...FAMILY_TEACHABLE,
@@ -138,6 +148,9 @@ export default function registerCarvanhaSpecies(): void {
         Moves.RockTomb,
         Moves.Strength,
         Moves.RockSmash,
+        Moves.Avalanche,
+        Moves.GigaImpact,
+        Moves.PoisonJab,
       ],
     },
   });

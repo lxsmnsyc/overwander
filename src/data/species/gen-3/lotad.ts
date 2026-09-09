@@ -43,6 +43,9 @@ const FAMILY_TEACHABLE = [
   Moves.Endure,
   Moves.Swagger,
   Moves.SleepTalk,
+  Moves.Captivate,
+  Moves.GrassKnot,
+  Moves.SeedBomb,
 ];
 
 // What the two above the base pick up: a lily pad has no arms to
@@ -97,9 +100,11 @@ export default function registerLotadSpecies(): void {
         3: [Moves.Growl],
         7: [Moves.Absorb],
         13: [Moves.NaturePower],
+        15: [Moves.NaturalGift],
         21: [Moves.Mist],
+        27: [Moves.ZenHeadbutt],
         31: [Moves.RainDance],
-        43: [Moves.MegaDrain],
+        43: [Moves.MegaDrain, Moves.EnergyBall],
       },
       teachable: [...FAMILY_TEACHABLE],
       egg: [
@@ -152,12 +157,20 @@ export default function registerLotadSpecies(): void {
         13: [Moves.NaturePower],
         19: [Moves.FakeOut],
         25: [Moves.FurySwipes],
+        27: [Moves.ZenHeadbutt],
         31: [Moves.WaterSport],
         37: [Moves.Thief],
         43: [Moves.Uproar],
         49: [Moves.HydroPump],
       },
-      teachable: [...FAMILY_TEACHABLE, ...GROWN_TEACHABLE],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        ...GROWN_TEACHABLE,
+        Moves.DrainPunch,
+        Moves.EnergyBall,
+        Moves.Fling,
+        Moves.NaturalGift,
+      ],
     },
   });
 
@@ -202,6 +215,14 @@ export default function registerLotadSpecies(): void {
         Moves.Counter,
         Moves.SeismicToss,
         Moves.Metronome,
+        Moves.DrainPunch,
+        Moves.EnergyBall,
+        Moves.Fling,
+        Moves.FocusBlast,
+        Moves.GigaImpact,
+        Moves.NaturalGift,
+        Moves.RockClimb,
+        Moves.ZenHeadbutt,
       ],
     },
   });

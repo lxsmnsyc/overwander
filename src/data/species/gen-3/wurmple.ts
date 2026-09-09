@@ -86,6 +86,7 @@ export default function registerWurmpleSpecies(): void {
       level: {
         1: [Moves.Tackle, Moves.StringShot],
         5: [Moves.PoisonSting],
+        15: [Moves.BugBite],
       },
       teachable: [],
     },
@@ -125,7 +126,7 @@ export default function registerWurmpleSpecies(): void {
       level: {
         1: [Moves.Harden],
       },
-      teachable: [],
+      teachable: [Moves.BugBite],
     },
   });
 
@@ -164,8 +165,22 @@ export default function registerWurmpleSpecies(): void {
         31: [Moves.Attract],
         34: [Moves.SilverWind],
         38: [Moves.GigaDrain],
+        41: [Moves.BugBuzz],
       },
-      teachable: [...WINGED_TEACHABLE, Moves.Safeguard],
+      teachable: [
+        ...WINGED_TEACHABLE,
+        Moves.Safeguard,
+        Moves.BugBite,
+        Moves.Captivate,
+        Moves.Defog,
+        Moves.EnergyBall,
+        Moves.GigaImpact,
+        Moves.NaturalGift,
+        Moves.OminousWind,
+        Moves.Roost,
+        Moves.Tailwind,
+        Moves.UTurn,
+      ],
     },
   });
 
@@ -203,7 +218,7 @@ export default function registerWurmpleSpecies(): void {
       level: {
         1: [Moves.Harden],
       },
-      teachable: [],
+      teachable: [Moves.BugBite],
     },
   });
 
@@ -242,8 +257,23 @@ export default function registerWurmpleSpecies(): void {
         31: [Moves.LightScreen],
         34: [Moves.SilverWind],
         38: [Moves.Toxic],
+        41: [Moves.BugBuzz],
       },
-      teachable: [...WINGED_TEACHABLE, Moves.LightScreen, Moves.SludgeBomb],
+      teachable: [
+        ...WINGED_TEACHABLE,
+        Moves.LightScreen,
+        Moves.SludgeBomb,
+        Moves.BugBite,
+        Moves.Captivate,
+        Moves.Defog,
+        Moves.EnergyBall,
+        Moves.GigaImpact,
+        Moves.NaturalGift,
+        Moves.OminousWind,
+        Moves.Roost,
+        Moves.Tailwind,
+        Moves.UTurn,
+      ],
     },
   });
 }

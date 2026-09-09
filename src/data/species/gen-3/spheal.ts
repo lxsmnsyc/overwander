@@ -46,6 +46,10 @@ const FAMILY_TEACHABLE = [
   Moves.Swagger,
   Moves.SleepTalk,
   Moves.DefenseCurl,
+  Moves.AquaTail,
+  Moves.Brine,
+  Moves.Captivate,
+  Moves.NaturalGift,
 ];
 
 export default function registerSphealSpecies(): void {
@@ -100,6 +104,7 @@ export default function registerSphealSpecies(): void {
         Moves.Swallow,
         Moves.WaterSport,
         Moves.Yawn,
+        Moves.AquaRing,
       ],
     },
   });
@@ -184,10 +189,18 @@ export default function registerSphealSpecies(): void {
         25: [Moves.AuroraBeam],
         31: [Moves.Hail],
         39: [Moves.Rest, Moves.Snore],
+        44: [Moves.IceFang],
         50: [Moves.Blizzard],
         61: [Moves.SheerCold],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.Roar, Moves.HyperBeam],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.Roar,
+        Moves.HyperBeam,
+        Moves.Avalanche,
+        Moves.GigaImpact,
+        Moves.IronHead,
+      ],
     },
   });
 }

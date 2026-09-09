@@ -38,10 +38,12 @@ export default function registerLuvdiscSpecies(): void {
         4: [Moves.Charm],
         12: [Moves.WaterGun],
         16: [Moves.Agility],
+        17: [Moves.LuckyChant],
         24: [Moves.TakeDown],
         28: [Moves.Attract],
         36: [Moves.SweetKiss],
-        40: [Moves.Flail],
+        37: [Moves.AquaRing],
+        40: [Moves.Flail, Moves.Captivate],
         48: [Moves.Safeguard],
       },
       teachable: [
@@ -74,8 +76,10 @@ export default function registerLuvdiscSpecies(): void {
         Moves.Swagger,
         Moves.SleepTalk,
         Moves.Swift,
+        Moves.Brine,
+        Moves.NaturalGift,
       ],
-      egg: [Moves.Splash, Moves.Supersonic, Moves.WaterSport, Moves.MudSport],
+      egg: [Moves.Splash, Moves.Supersonic, Moves.WaterSport, Moves.MudSport, Moves.AquaJet],
     },
   });
 }

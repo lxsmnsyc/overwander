@@ -44,6 +44,9 @@ export default function registerNosepassSpecies(): void {
         37: [Moves.Rest],
         43: [Moves.ZapCannon],
         46: [Moves.LockOn],
+        49: [Moves.Discharge, Moves.PowerGem],
+        55: [Moves.StoneEdge],
+        73: [Moves.EarthPower],
       },
       teachable: [
         Moves.Attract,
@@ -85,8 +88,14 @@ export default function registerNosepassSpecies(): void {
         Moves.Thunderbolt,
         Moves.Torment,
         Moves.Toxic,
+        Moves.Captivate,
+        Moves.Gravity,
+        Moves.MagnetRise,
+        Moves.NaturalGift,
+        Moves.RockPolish,
+        Moves.StealthRock,
       ],
-      egg: [Moves.Explosion, Moves.Magnitude, Moves.Rollout],
+      egg: [Moves.Explosion, Moves.Magnitude, Moves.Rollout, Moves.HeadSmash],
     },
   });
 }

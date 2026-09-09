@@ -38,6 +38,7 @@ const FAMILY_TEACHABLE = [
   Moves.Swagger,
   Moves.SleepTalk,
   Moves.Swift,
+  Moves.NaturalGift,
 ];
 
 export default function registerFeebasSpecies(): void {
@@ -89,7 +90,7 @@ export default function registerFeebasSpecies(): void {
         15: [Moves.Tackle],
         30: [Moves.Flail],
       },
-      teachable: [...FAMILY_TEACHABLE],
+      teachable: [...FAMILY_TEACHABLE, Moves.Captivate],
       egg: [
         Moves.ConfuseRay,
         Moves.DragonBreath,
@@ -132,11 +133,13 @@ export default function registerFeebasSpecies(): void {
         10: [Moves.WaterSport],
         15: [Moves.Refresh],
         20: [Moves.WaterPulse],
-        25: [Moves.Twister],
+        25: [Moves.Twister, Moves.Captivate],
+        29: [Moves.AquaTail],
         30: [Moves.Recover],
         35: [Moves.RainDance],
         40: [Moves.HydroPump],
         45: [Moves.Attract],
+        49: [Moves.AquaRing],
         50: [Moves.Safeguard],
       },
       teachable: [
@@ -147,6 +150,10 @@ export default function registerFeebasSpecies(): void {
         Moves.BodySlam,
         Moves.PsychUp,
         Moves.MudSlap,
+        Moves.Avalanche,
+        Moves.DragonPulse,
+        Moves.GigaImpact,
+        Moves.IronHead,
       ],
     },
   });

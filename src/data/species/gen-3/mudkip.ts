@@ -45,6 +45,10 @@ const FAMILY_TEACHABLE = [
   Moves.Swagger,
   Moves.SleepTalk,
   Moves.DefenseCurl,
+  Moves.AquaTail,
+  Moves.Captivate,
+  Moves.EarthPower,
+  Moves.NaturalGift,
 ];
 
 // What the two above the base pick up: the machines and tutors that
@@ -106,7 +110,15 @@ export default function registerMudkipSpecies(): void {
         46: [Moves.Endeavor],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.Refresh, Moves.Uproar, Moves.Curse, Moves.MirrorCoat, Moves.Stomp, Moves.IceBall],
+      egg: [
+        Moves.Refresh,
+        Moves.Uproar,
+        Moves.Curse,
+        Moves.MirrorCoat,
+        Moves.Stomp,
+        Moves.IceBall,
+        Moves.MudBomb,
+      ],
     },
   });
 
@@ -147,14 +159,14 @@ export default function registerMudkipSpecies(): void {
         15: [Moves.Bide],
         16: [Moves.MudShot],
         20: [Moves.Foresight],
-        25: [Moves.MudSport],
+        25: [Moves.MudSport, Moves.MudBomb],
         31: [Moves.TakeDown],
         37: [Moves.MuddyWater],
         42: [Moves.Protect],
         46: [Moves.Earthquake],
         53: [Moves.Endeavor],
       },
-      teachable: [...FAMILY_TEACHABLE, ...GROWN_TEACHABLE],
+      teachable: [...FAMILY_TEACHABLE, ...GROWN_TEACHABLE, Moves.Fling, Moves.StealthRock],
     },
   });
 
@@ -191,12 +203,13 @@ export default function registerMudkipSpecies(): void {
         15: [Moves.Bide],
         16: [Moves.MudShot],
         20: [Moves.Foresight],
-        25: [Moves.MudSport],
+        25: [Moves.MudSport, Moves.MudBomb],
         31: [Moves.TakeDown],
         39: [Moves.MuddyWater],
         46: [Moves.Protect],
         52: [Moves.Earthquake],
         61: [Moves.Endeavor],
+        69: [Moves.HammerArm],
       },
       teachable: [
         ...FAMILY_TEACHABLE,
@@ -205,6 +218,13 @@ export default function registerMudkipSpecies(): void {
         Moves.Roar,
         Moves.BrickBreak,
         Moves.HyperBeam,
+        Moves.Avalanche,
+        Moves.Fling,
+        Moves.FocusBlast,
+        Moves.GigaImpact,
+        Moves.RockClimb,
+        Moves.StealthRock,
+        Moves.StoneEdge,
       ],
     },
   });

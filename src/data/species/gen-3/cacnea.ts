@@ -44,6 +44,16 @@ const FAMILY_TEACHABLE = [
   Moves.FuryCutter,
   Moves.ThunderPunch,
   Moves.SleepTalk,
+  Moves.Captivate,
+  Moves.DarkPulse,
+  Moves.DrainPunch,
+  Moves.EnergyBall,
+  Moves.Fling,
+  Moves.GrassKnot,
+  Moves.NaturalGift,
+  Moves.PoisonJab,
+  Moves.SeedBomb,
+  Moves.WorrySeed,
 ];
 
 export default function registerCacneaSpecies(): void {
@@ -88,12 +98,12 @@ export default function registerCacneaSpecies(): void {
         25: [Moves.Ingrain],
         29: [Moves.FeintAttack],
         33: [Moves.Spikes],
-        37: [Moves.NeedleArm],
-        41: [Moves.CottonSpore],
+        37: [Moves.NeedleArm, Moves.SuckerPunch],
+        41: [Moves.CottonSpore, Moves.Payback],
         45: [Moves.Sandstorm],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.Acid, Moves.GrassWhistle, Moves.TeeterDance],
+      egg: [Moves.Acid, Moves.GrassWhistle, Moves.TeeterDance, Moves.NastyPlot],
     },
   });
 
@@ -134,11 +144,19 @@ export default function registerCacneaSpecies(): void {
         25: [Moves.Ingrain],
         29: [Moves.FeintAttack],
         35: [Moves.Spikes],
-        41: [Moves.NeedleArm],
-        47: [Moves.CottonSpore],
+        41: [Moves.NeedleArm, Moves.SuckerPunch],
+        47: [Moves.CottonSpore, Moves.Payback],
         53: [Moves.Sandstorm],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.Strength, Moves.MegaKick],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.HyperBeam,
+        Moves.Strength,
+        Moves.MegaKick,
+        Moves.Embargo,
+        Moves.FocusBlast,
+        Moves.GigaImpact,
+      ],
     },
   });
 }

@@ -53,6 +53,12 @@ const FAMILY_TEACHABLE = [
   Moves.FirePunch,
   Moves.SleepTalk,
   Moves.DefenseCurl,
+  Moves.ChargeBeam,
+  Moves.Fling,
+  Moves.GrassKnot,
+  Moves.NaturalGift,
+  Moves.TrickRoom,
+  Moves.ZenHeadbutt,
 ];
 
 export default function registerRaltsSpecies(): void {
@@ -92,6 +98,7 @@ export default function registerRaltsSpecies(): void {
         6: [Moves.Confusion],
         11: [Moves.DoubleTeam],
         16: [Moves.Teleport],
+        17: [Moves.LuckyChant],
         21: [Moves.CalmMind],
         26: [Moves.Psychic],
         31: [Moves.Imprison],
@@ -99,8 +106,15 @@ export default function registerRaltsSpecies(): void {
         41: [Moves.Hypnosis],
         46: [Moves.DreamEater],
       },
-      teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.Disable, Moves.MeanLook, Moves.WillOWisp, Moves.DestinyBond, Moves.Memento],
+      teachable: [...FAMILY_TEACHABLE, Moves.Captivate],
+      egg: [
+        Moves.Disable,
+        Moves.MeanLook,
+        Moves.WillOWisp,
+        Moves.DestinyBond,
+        Moves.Memento,
+        Moves.ShadowSneak,
+      ],
     },
   });
 
@@ -138,6 +152,7 @@ export default function registerRaltsSpecies(): void {
     learnSet: {
       level: {
         1: [Moves.Growl, Moves.Confusion, Moves.DoubleTeam, Moves.Teleport],
+        17: [Moves.LuckyChant],
         21: [Moves.CalmMind],
         26: [Moves.Psychic],
         33: [Moves.Imprison],
@@ -145,7 +160,7 @@ export default function registerRaltsSpecies(): void {
         47: [Moves.Hypnosis],
         54: [Moves.DreamEater],
       },
-      teachable: [...FAMILY_TEACHABLE],
+      teachable: [...FAMILY_TEACHABLE, Moves.Captivate],
     },
   });
 
@@ -178,15 +193,22 @@ export default function registerRaltsSpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.Growl, Moves.Confusion, Moves.DoubleTeam, Moves.Teleport],
+        1: [Moves.Growl, Moves.Confusion, Moves.DoubleTeam, Moves.Teleport, Moves.HealingWish],
         21: [Moves.CalmMind],
         26: [Moves.Psychic],
         33: [Moves.Imprison],
         42: [Moves.FutureSight],
         51: [Moves.Hypnosis],
+        53: [Moves.Captivate],
         60: [Moves.DreamEater],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.HyperBeam,
+        Moves.EnergyBall,
+        Moves.FocusBlast,
+        Moves.GigaImpact,
+      ],
     },
   });
 }

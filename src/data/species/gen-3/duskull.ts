@@ -51,6 +51,15 @@ const FAMILY_TEACHABLE = [
   Moves.Endure,
   Moves.Swagger,
   Moves.SleepTalk,
+  Moves.Captivate,
+  Moves.ChargeBeam,
+  Moves.DarkPulse,
+  Moves.Embargo,
+  Moves.Fling,
+  Moves.NaturalGift,
+  Moves.OminousWind,
+  Moves.SuckerPunch,
+  Moves.TrickRoom,
 ];
 
 export default function registerDuskullSpecies(): void {
@@ -90,14 +99,16 @@ export default function registerDuskullSpecies(): void {
         5: [Moves.Disable],
         12: [Moves.Foresight],
         16: [Moves.Astonish],
+        22: [Moves.ShadowSneak],
         23: [Moves.ConfuseRay],
         27: [Moves.Pursuit],
         34: [Moves.Curse],
         38: [Moves.WillOWisp],
+        41: [Moves.Payback],
         45: [Moves.MeanLook],
         49: [Moves.FutureSight],
       },
-      teachable: [...FAMILY_TEACHABLE],
+      teachable: [...FAMILY_TEACHABLE, Moves.Gravity],
       egg: [Moves.DestinyBond, Moves.FeintAttack, Moves.Grudge, Moves.Imprison, Moves.Memento],
     },
   });
@@ -128,15 +139,16 @@ export default function registerDuskullSpecies(): void {
     activeTimes: TimeOfDay.Night,
     learnSet: {
       level: {
-        1: [Moves.Leer, Moves.NightShade, Moves.Disable, Moves.Bind],
+        1: [Moves.Leer, Moves.NightShade, Moves.Disable, Moves.Bind, Moves.Gravity],
         12: [Moves.Foresight],
         16: [Moves.Astonish],
+        22: [Moves.ShadowSneak],
         23: [Moves.ConfuseRay],
         27: [Moves.Pursuit],
         34: [Moves.Curse],
         37: [Moves.ShadowPunch],
         41: [Moves.WillOWisp],
-        51: [Moves.MeanLook],
+        51: [Moves.MeanLook, Moves.Payback],
         58: [Moves.FutureSight],
       },
       teachable: [
@@ -158,6 +170,7 @@ export default function registerDuskullSpecies(): void {
         Moves.IcePunch,
         Moves.ThunderPunch,
         Moves.FirePunch,
+        Moves.GigaImpact,
       ],
     },
   });

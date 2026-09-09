@@ -52,6 +52,13 @@ const FAMILY_TEACHABLE = [
   Moves.SleepTalk,
   Moves.DefenseCurl,
   Moves.Swift,
+  Moves.ChargeBeam,
+  Moves.GrassKnot,
+  Moves.LastResort,
+  Moves.NaturalGift,
+  Moves.Payback,
+  Moves.SuckerPunch,
+  Moves.ZenHeadbutt,
 ];
 
 export default function registerSkittySpecies(): void {
@@ -90,14 +97,17 @@ export default function registerSkittySpecies(): void {
         1: [Moves.Tackle, Moves.Growl],
         3: [Moves.TailWhip],
         7: [Moves.Attract],
+        11: [Moves.Copycat],
         13: [Moves.Sing],
         15: [Moves.DoubleSlap],
         19: [Moves.Assist],
         25: [Moves.Charm],
         27: [Moves.FeintAttack],
+        29: [Moves.WakeUpSlap],
         31: [Moves.Covet],
         37: [Moves.HealBell],
         39: [Moves.DoubleEdge],
+        42: [Moves.Captivate],
       },
       teachable: [...FAMILY_TEACHABLE],
       egg: [
@@ -107,6 +117,7 @@ export default function registerSkittySpecies(): void {
         Moves.Wish,
         Moves.Tickle,
         Moves.FakeTears,
+        Moves.MudBomb,
       ],
     },
   });
@@ -141,7 +152,14 @@ export default function registerSkittySpecies(): void {
       level: {
         1: [Moves.Growl, Moves.DoubleSlap, Moves.Sing, Moves.Attract],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.Strength, Moves.RockSmash],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.HyperBeam,
+        Moves.Strength,
+        Moves.RockSmash,
+        Moves.Captivate,
+        Moves.GigaImpact,
+      ],
     },
   });
 }

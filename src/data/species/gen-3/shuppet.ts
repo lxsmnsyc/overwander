@@ -46,6 +46,13 @@ const FAMILY_TEACHABLE = [
   Moves.Endure,
   Moves.Swagger,
   Moves.SleepTalk,
+  Moves.Captivate,
+  Moves.ChargeBeam,
+  Moves.DarkPulse,
+  Moves.NaturalGift,
+  Moves.OminousWind,
+  Moves.Payback,
+  Moves.TrickRoom,
 ];
 
 export default function registerShuppetSpecies(): void {
@@ -84,10 +91,12 @@ export default function registerShuppetSpecies(): void {
         1: [Moves.KnockOff],
         8: [Moves.Screech],
         13: [Moves.NightShade],
-        20: [Moves.Curse],
+        20: [Moves.Curse, Moves.ShadowSneak],
         25: [Moves.Spite],
         32: [Moves.WillOWisp],
+        35: [Moves.SuckerPunch],
         37: [Moves.FeintAttack],
+        38: [Moves.Embargo],
         44: [Moves.ShadowBall],
         49: [Moves.Snatch],
         56: [Moves.Grudge],
@@ -126,14 +135,25 @@ export default function registerShuppetSpecies(): void {
     learnSet: {
       level: {
         1: [Moves.KnockOff, Moves.Screech, Moves.NightShade, Moves.Curse],
+        20: [Moves.ShadowSneak],
         25: [Moves.Spite],
         32: [Moves.WillOWisp],
+        35: [Moves.SuckerPunch],
         39: [Moves.FeintAttack],
+        42: [Moves.Embargo],
         48: [Moves.ShadowBall],
         55: [Moves.Snatch],
         64: [Moves.Grudge],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.Metronome, Moves.MudSlap],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.HyperBeam,
+        Moves.Metronome,
+        Moves.MudSlap,
+        Moves.Fling,
+        Moves.GigaImpact,
+        Moves.ShadowClaw,
+      ],
     },
   });
 }

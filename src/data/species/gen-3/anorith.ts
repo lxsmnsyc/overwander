@@ -41,6 +41,11 @@ const FAMILY_TEACHABLE = [
   Moves.Swagger,
   Moves.FuryCutter,
   Moves.SleepTalk,
+  Moves.Captivate,
+  Moves.EarthPower,
+  Moves.NaturalGift,
+  Moves.RockPolish,
+  Moves.StealthRock,
 ];
 
 export default function registerAnorithSpecies(): void {
@@ -87,9 +92,10 @@ export default function registerAnorithSpecies(): void {
         43: [Moves.FuryCutter],
         49: [Moves.Slash],
         55: [Moves.RockBlast],
+        61: [Moves.XScissor],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.KnockOff, Moves.RapidSpin],
+      egg: [Moves.KnockOff, Moves.RapidSpin, Moves.CrossPoison],
     },
   });
 
@@ -129,6 +135,7 @@ export default function registerAnorithSpecies(): void {
         46: [Moves.FuryCutter],
         55: [Moves.Slash],
         64: [Moves.RockBlast],
+        73: [Moves.XScissor],
       },
       teachable: [
         ...FAMILY_TEACHABLE,
@@ -137,6 +144,10 @@ export default function registerAnorithSpecies(): void {
         Moves.Earthquake,
         Moves.Strength,
         Moves.SeismicToss,
+        Moves.AquaTail,
+        Moves.FlashCannon,
+        Moves.GigaImpact,
+        Moves.StoneEdge,
       ],
     },
   });

@@ -40,6 +40,9 @@ const FAMILY_TEACHABLE = [
   Moves.Swagger,
   Moves.SleepTalk,
   Moves.Swift,
+  Moves.BugBite,
+  Moves.Captivate,
+  Moves.NaturalGift,
 ];
 
 export default function registerSurskitSpecies(): void {
@@ -114,14 +117,25 @@ export default function registerSurskitSpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.Bubble, Moves.QuickAttack, Moves.SweetScent, Moves.WaterSport],
+        1: [Moves.Bubble, Moves.QuickAttack, Moves.SweetScent, Moves.WaterSport, Moves.OminousWind],
         26: [Moves.Gust],
         33: [Moves.ScaryFace],
         40: [Moves.StunSpore],
-        47: [Moves.SilverWind],
+        47: [Moves.SilverWind, Moves.AirSlash],
         53: [Moves.Whirlwind],
+        61: [Moves.BugBuzz],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.AerialAce, Moves.HyperBeam],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.AerialAce,
+        Moves.HyperBeam,
+        Moves.Defog,
+        Moves.EnergyBall,
+        Moves.GigaImpact,
+        Moves.Roost,
+        Moves.Tailwind,
+        Moves.UTurn,
+      ],
     },
   });
 }

@@ -42,6 +42,10 @@ const FAMILY_TEACHABLE = [
   Moves.MudSlap,
   Moves.Swagger,
   Moves.SleepTalk,
+  Moves.Captivate,
+  Moves.DarkPulse,
+  Moves.NaturalGift,
+  Moves.Payback,
 ];
 
 export default function registerPoochyenaSpecies(): void {
@@ -84,14 +88,25 @@ export default function registerPoochyenaSpecies(): void {
         17: [Moves.OdorSleuth],
         21: [Moves.Roar],
         25: [Moves.Swagger],
-        29: [Moves.ScaryFace],
+        29: [Moves.ScaryFace, Moves.Assurance],
         33: [Moves.TakeDown],
         37: [Moves.Taunt],
-        41: [Moves.Crunch],
+        41: [Moves.Crunch, Moves.Embargo],
         45: [Moves.Thief],
+        49: [Moves.SuckerPunch],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.Astonish, Moves.PoisonFang, Moves.Covet, Moves.Leer, Moves.Yawn],
+      egg: [
+        Moves.Astonish,
+        Moves.PoisonFang,
+        Moves.Covet,
+        Moves.Leer,
+        Moves.Yawn,
+        Moves.FireFang,
+        Moves.IceFang,
+        Moves.MeFirst,
+        Moves.ThunderFang,
+      ],
     },
   });
 
@@ -125,13 +140,14 @@ export default function registerPoochyenaSpecies(): void {
         17: [Moves.OdorSleuth],
         22: [Moves.Roar],
         27: [Moves.Swagger],
-        32: [Moves.ScaryFace],
+        32: [Moves.ScaryFace, Moves.Assurance],
         37: [Moves.TakeDown],
         42: [Moves.Taunt],
-        47: [Moves.Crunch],
+        47: [Moves.Crunch, Moves.Embargo],
         52: [Moves.Thief],
+        62: [Moves.SuckerPunch],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.Strength],
+      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.Strength, Moves.GigaImpact],
     },
   });
 }

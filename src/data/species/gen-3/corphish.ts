@@ -49,6 +49,11 @@ const FAMILY_TEACHABLE = [
   Moves.Swagger,
   Moves.FuryCutter,
   Moves.SleepTalk,
+  Moves.Captivate,
+  Moves.Fling,
+  Moves.NaturalGift,
+  Moves.Payback,
+  Moves.XScissor,
 ];
 
 export default function registerCorphishSpecies(): void {
@@ -92,7 +97,7 @@ export default function registerCorphishSpecies(): void {
         23: [Moves.Protect],
         26: [Moves.KnockOff],
         32: [Moves.Taunt],
-        35: [Moves.Crabhammer],
+        35: [Moves.Crabhammer, Moves.NightSlash],
         38: [Moves.SwordsDance],
         44: [Moves.Guillotine],
       },
@@ -134,11 +139,19 @@ export default function registerCorphishSpecies(): void {
         23: [Moves.Protect],
         26: [Moves.KnockOff],
         34: [Moves.Taunt],
-        39: [Moves.Crabhammer],
+        39: [Moves.Crabhammer, Moves.NightSlash],
         44: [Moves.SwordsDance],
         52: [Moves.Guillotine],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.Dive, Moves.Swift],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.HyperBeam,
+        Moves.Dive,
+        Moves.Swift,
+        Moves.Avalanche,
+        Moves.DarkPulse,
+        Moves.GigaImpact,
+      ],
     },
   });
 }

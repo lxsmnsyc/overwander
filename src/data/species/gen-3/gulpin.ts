@@ -51,6 +51,9 @@ const FAMILY_TEACHABLE = [
   Moves.FirePunch,
   Moves.SleepTalk,
   Moves.DefenseCurl,
+  Moves.Captivate,
+  Moves.NaturalGift,
+  Moves.SeedBomb,
 ];
 
 export default function registerGulpinSpecies(): void {
@@ -95,6 +98,9 @@ export default function registerGulpinSpecies(): void {
         28: [Moves.Toxic],
         34: [Moves.Stockpile, Moves.SpitUp, Moves.Swallow],
         39: [Moves.SludgeBomb],
+        44: [Moves.GastroAcid],
+        49: [Moves.WringOut],
+        54: [Moves.GunkShot],
       },
       teachable: [...FAMILY_TEACHABLE],
       egg: [Moves.AcidArmor, Moves.PainSplit, Moves.Smog],
@@ -136,8 +142,11 @@ export default function registerGulpinSpecies(): void {
         31: [Moves.Toxic],
         40: [Moves.Stockpile, Moves.SpitUp, Moves.Swallow],
         48: [Moves.SludgeBomb],
+        52: [Moves.GastroAcid],
+        59: [Moves.WringOut],
+        66: [Moves.GunkShot],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
+      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.GigaImpact],
     },
   });
 }

@@ -59,6 +59,11 @@ const FAMILY_TEACHABLE = [
   Moves.ThunderPunch,
   Moves.FirePunch,
   Moves.SleepTalk,
+  Moves.Captivate,
+  Moves.GunkShot,
+  Moves.NaturalGift,
+  Moves.ShadowClaw,
+  Moves.SuckerPunch,
 ];
 
 // What the two above the base pick up: the sloth in the tree is not
@@ -106,8 +111,15 @@ export default function registerSlakothSpecies(): void {
         37: [Moves.Counter],
         43: [Moves.Flail],
       },
-      teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.Slash, Moves.Pursuit, Moves.CrushClaw, Moves.Curse],
+      teachable: [...FAMILY_TEACHABLE, Moves.Fling],
+      egg: [
+        Moves.Slash,
+        Moves.Pursuit,
+        Moves.CrushClaw,
+        Moves.Curse,
+        Moves.HammerArm,
+        Moves.NightSlash,
+      ],
     },
   });
 
@@ -151,7 +163,13 @@ export default function registerSlakothSpecies(): void {
         43: [Moves.FocusPunch],
         49: [Moves.Reversal],
       },
-      teachable: [...FAMILY_TEACHABLE, ...GROWN_TEACHABLE],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        ...GROWN_TEACHABLE,
+        Moves.Fling,
+        Moves.FocusBlast,
+        Moves.RockClimb,
+      ],
     },
   });
 
@@ -191,8 +209,18 @@ export default function registerSlakothSpecies(): void {
         36: [Moves.Swagger],
         37: [Moves.Counter],
         43: [Moves.Flail],
+        49: [Moves.Fling],
+        55: [Moves.Punishment],
+        61: [Moves.HammerArm],
       },
-      teachable: [...FAMILY_TEACHABLE, ...GROWN_TEACHABLE, Moves.HyperBeam],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        ...GROWN_TEACHABLE,
+        Moves.HyperBeam,
+        Moves.FocusBlast,
+        Moves.GigaImpact,
+        Moves.RockClimb,
+      ],
     },
   });
 }

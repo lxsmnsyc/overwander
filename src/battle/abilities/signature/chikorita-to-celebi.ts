@@ -53,6 +53,9 @@ export const SWEET_PAW_SHARE = 1 / 8;
 /** What standing near molten ground costs, each time an enemy moves */
 export const MAGMA_TRAIL_FRACTION = 1 / 16;
 
+/** What a wing spread over somebody is worth to them */
+export const ESCORT_SCALE = 1.3;
+
 /** The screens a pair of tusks goes through */
 const SCREENS = [TeamStatuses.Reflect, TeamStatuses.LightScreen];
 
@@ -101,6 +104,22 @@ function firstEnemy(battle: Battle, unit: Unit): Unit | undefined {
   for (const enemy of battle.units(unit.team.alliance)) {
     if (enemy.alive) {
       return enemy;
+    }
+  }
+
+  return undefined;
+}
+
+/** A standing holder on this unit's side other than the unit itself */
+function escortedBy(battle: Battle, unit: Unit, ability: Abilities): Unit | undefined {
+  for (const ally of battle.units()) {
+    if (
+      ally !== unit &&
+      ally.alive &&
+      ally.team.alliance === unit.team.alliance &&
+      ally.hasAbility(ability)
+    ) {
+      return ally;
     }
   }
 
@@ -1049,6 +1068,100 @@ const chikoritaToCelebi = [
         event.contact = false;
       }
     }),
+  ),
+
+  // Delibird: the sack is for somebody else, so it turns up with the
+  // parcel already addressed to whoever needs it
+  createAbility(
+    Abilities.Delivery,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+          if (!event.reactivation && event.source.hasAbility(Abilities.Delivery)) {
+            event.source.triggerAbility(Abilities.Delivery);
+          }
+        }),
+        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
+          if (event.ability !== Abilities.Delivery) {
+            return;
+          }
+
+          const ally = neediestAlly(battle, event.source);
+
+          if (ally && hasFreeItemSlot(ally)) {
+            ally.addItem(Items.BerryJuice);
+          }
+        }),
+      ]),
+  ),
+
+  // Mantine: the wing goes over whatever is riding with it, which is
+  // the only thing its 140 was ever for
+  createAbility(Abilities.Escort, (battle) =>
+    battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
+      if (event.stat !== Stats.SpecialDefense) {
+        return;
+      }
+
+      const wing = escortedBy(battle, event.source, Abilities.Escort);
+
+      if (wing) {
+        event.value *= ESCORT_SCALE;
+      }
+    }),
+  ),
+
+  // Skarmory: the feathers it loses are steel, and where they land is
+  // Spikes' business
+  createAbility(Abilities.Steelmolt, (battle) =>
+    battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
+      const target = event.target;
+
+      if (
+        !event.success ||
+        event.flags & DamageFlags.Indirect ||
+        !target.hasAbility(Abilities.Steelmolt)
+      ) {
+        return;
+      }
+
+      target.triggerAbility(Abilities.Steelmolt);
+
+      for (const team of battle.teams(target.team.alliance)) {
+        target.triggerMove(Moves.Spikes, { type: MoveTargetType.Team, team }, 0);
+      }
+    }),
+  ),
+
+  // Houndour: the cry is what brings the rest of the pack in at a run
+  createAbility(
+    Abilities.PackHowl,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+          if (!event.reactivation && event.source.hasAbility(Abilities.PackHowl)) {
+            event.source.triggerAbility(Abilities.PackHowl);
+          }
+        }),
+        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
+          if (event.ability !== Abilities.PackHowl) {
+            return;
+          }
+
+          const source = event.source;
+          const cause = {
+            type: EffectType.Ability,
+            ability: Abilities.PackHowl,
+            unit: source,
+          } as const;
+
+          for (const ally of battle.units()) {
+            if (ally !== source && ally.alive && ally.team.alliance === source.team.alliance) {
+              ally.addStage(Stages.Attack, 1, cause);
+            }
+          }
+        }),
+      ]),
   ),
 ];
 

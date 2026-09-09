@@ -415,6 +415,10 @@ const enum Abilities {
   Icebreaker = 200112,
   CoralBloom = 200113,
   Standoff = 200114,
+  Delivery = 200115,
+  Escort = 200116,
+  Steelmolt = 200117,
+  PackHowl = 200118,
 }
 
 export default Abilities;

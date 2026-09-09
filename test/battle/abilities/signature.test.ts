@@ -7,6 +7,7 @@ import { SIGNATURE_ABILITIES } from '../../../src/battle/abilities/signature';
 import {
   BACKLASH_SHARE,
   BULLY_SCALE,
+  ESCORT_SCALE,
   MAGMA_TRAIL_FRACTION,
   PETAL_BED_FRACTION,
   SAND_RIDER_SCALE,
@@ -3508,5 +3509,91 @@ describe('Standoff', () => {
     holder.addAbility(Abilities.Standoff);
 
     expect(holder.checkMoveContact(Moves.Pound, unitTarget(enemy))).toBe(false);
+  });
+});
+
+describe('Delivery', () => {
+  it('puts a juice in the hands of whoever needs it as it arrives', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const hurt = createUnit(battle, teamA);
+    const fine = createUnit(battle, teamA);
+    createUnit(battle, teamB);
+    holder.addAbility(Abilities.Delivery);
+
+    hurt.setHealth(hurt.checkStat(Stats.HP, 0) / 4);
+
+    battle.emit(BattleEvents.UnitEntersField, {
+      id: 'UnitEntersField',
+      disabled: false,
+      source: holder,
+      reactivation: false,
+    });
+
+    expect(hurt.items[Items.BerryJuice]).not.toBeUndefined();
+    expect(fine.items[Items.BerryJuice]).toBeUndefined();
+    // The parcel is never for itself
+    expect(holder.items[Items.BerryJuice]).toBeUndefined();
+  });
+});
+
+describe('Escort', () => {
+  it('spreads its wing over everybody else on its side', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    const bare = ally.checkStat(Stats.SpecialDefense, 0);
+
+    holder.addAbility(Abilities.Escort);
+
+    expect(ally.checkStat(Stats.SpecialDefense, 0)).toBeCloseTo(bare * ESCORT_SCALE, 5);
+    // Not itself, and not the far side
+    expect(holder.checkStat(Stats.SpecialDefense, 0)).toBeCloseTo(bare, 5);
+    expect(enemy.checkStat(Stats.SpecialDefense, 0)).toBeCloseTo(bare, 5);
+  });
+});
+
+describe('Steelmolt', () => {
+  it('sheds a layer onto the enemy side for every hit taken', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0);
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Steelmolt);
+
+    enemy.damage({ type: EffectType.Move, move: Moves.Pound, unit: enemy }, holder, 20, 0);
+    // The cast move takes its own flight time to arrive
+    battle.tick(turns(1));
+
+    expect(layersUnder(teamB)).toBe(1);
+
+    enemy.damage({ type: EffectType.Move, move: Moves.Pound, unit: enemy }, holder, 20, 0);
+    battle.tick(turns(1));
+
+    expect(layersUnder(teamB)).toBe(2);
+    expect(layersUnder(teamA)).toBe(0);
+  });
+});
+
+describe('Pack Howl', () => {
+  it('lifts every ally as it arrives', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.PackHowl);
+
+    battle.emit(BattleEvents.UnitEntersField, {
+      id: 'UnitEntersField',
+      disabled: false,
+      source: holder,
+      reactivation: false,
+    });
+
+    expect(ally.stages[Stages.Attack]).toBe(1);
+    expect(holder.stages[Stages.Attack]).toBe(0);
+    expect(enemy.stages[Stages.Attack]).toBe(0);
   });
 });

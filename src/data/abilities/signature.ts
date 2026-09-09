@@ -726,4 +726,28 @@ export default function registerSignatureAbilities(): void {
     name: 'Standoff',
     description: 'Nothing it uses counts as contact, so it never sets off what answers a touch.',
   });
+
+  // Delibird
+  registerAbility(Abilities.Delivery, {
+    name: 'Delivery',
+    description: 'It hands a Berry Juice to the ally lowest on HP as it arrives on the field.',
+  });
+
+  // Mantine
+  registerAbility(Abilities.Escort, {
+    name: 'Escort',
+    description: "Its allies' Special Defense counts 1.3x while it stands.",
+  });
+
+  // Skarmory
+  registerAbility(Abilities.Steelmolt, {
+    name: 'Steelmolt',
+    description: 'Each hit it takes lays a layer of Spikes on the enemy side.',
+  });
+
+  // Houndour
+  registerAbility(Abilities.PackHowl, {
+    name: 'Pack Howl',
+    description: 'Every ally gains a stage of Attack as it arrives on the field.',
+  });
 }

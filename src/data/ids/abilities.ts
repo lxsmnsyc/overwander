@@ -451,6 +451,11 @@ const enum Abilities {
   KittenPace = 200148,
   ShadowTax = 200149,
   JawClaim = 200150,
+  OreHunger = 200151,
+  Chakra = 200152,
+  JoltStart = 200153,
+  CheerOn = 200154,
+  JeerAt = 200155,
 }
 
 export default Abilities;

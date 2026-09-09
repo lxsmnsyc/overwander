@@ -5,6 +5,7 @@ import registerAbilities, {
 } from '../../../src/data/abilities';
 import { SIGNATURE_ABILITIES } from '../../../src/battle/abilities/signature';
 import {
+  CHEER_MAX_SHOUTS,
   FIELD_LOWERED_SCALE,
   FIELD_RAISED_SCALE,
   FOSSIL_BLADE_SCALE,
@@ -164,8 +165,10 @@ import {
   EMPATH_SCALE,
   EMPATH_THRESHOLD,
   FEARLESS_DIVE_SCALE,
+  JOLT_START_SCALE,
   KITTEN_PACE_SCALE,
   MYCELIUM_SCALE,
+  ORE_HUNGER_FRACTION,
   PACK_HUNT_SCALE,
   VANISHING_ACT_DURATION,
 } from '../../../src/battle/abilities/signature/treecko-to-deoxys';
@@ -4260,5 +4263,127 @@ describe('the Sableye and Mawile pair', () => {
 
     expect(enemy.stages[Stages.Speed]).toBe(-2);
     expect(mawile.stages[Stages.Speed]).toBe(0);
+  });
+});
+
+describe('Ore Hunger', () => {
+  it('eats a blow of steel, rock or earth', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.OreHunger);
+
+    const maxHP = holder.checkStat(Stats.HP, 0);
+    holder.setHealth(maxHP / 2);
+
+    enemy.damage({ type: EffectType.Move, move: Moves.RockThrow, unit: enemy }, holder, 100, 0);
+
+    expect(holder.health).toBeCloseTo(maxHP / 2 + 100 * ORE_HUNGER_FRACTION, 5);
+
+    // Anything else is still a blow
+    holder.setHealth(maxHP);
+    enemy.damage({ type: EffectType.Move, move: Moves.Pound, unit: enemy }, holder, 100, 0);
+
+    expect(holder.health).toBeCloseTo(maxHP - 100, 5);
+  });
+});
+
+describe('Chakra', () => {
+  it('works every move out of whichever half is stronger', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Chakra);
+
+    holder.setStat(StatsKind.Base, Stats.Attack, 20);
+    holder.setStat(StatsKind.Base, Stats.SpecialAttack, 200);
+
+    const physical = makeAttack(holder, enemy, Moves.Pound, Types.Normal, MoveCategories.Physical);
+    const special = holder.resolveStat(Stats.SpecialAttack, StatFlags.Attack);
+
+    // The physical blow is worked out of the special half, since that
+    // is the higher of the two
+    expect(
+      resolveAttackStat(
+        battle,
+        physical,
+        holder,
+        Stats.Attack,
+        holder.resolveStat(Stats.Attack, StatFlags.Attack),
+      ),
+    ).toBeCloseTo(special, 5);
+
+    // And the defending side of a blow is left alone
+    const incoming = makeAttack(enemy, holder, Moves.Pound, Types.Normal, MoveCategories.Physical);
+
+    expect(resolveAttackStat(battle, incoming, holder, Stats.Defense, 100)).toBe(100);
+  });
+});
+
+describe('Jolt Start', () => {
+  it('puts the opening move ahead of everything, and nothing after it', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const bare = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.JoltStart);
+
+    const target = unitTarget(enemy);
+    const clean = bare.checkMovePower(Moves.Pound, target) ?? 0;
+
+    expect(holder.checkMovePriority(Moves.Pound, target)).toBe(1);
+    expect(holder.checkMovePower(Moves.Pound, target)).toBeCloseTo(clean * JOLT_START_SCALE, 5);
+
+    act(battle, holder);
+
+    // The jolt still covers the move it went off with, but nothing is
+    // coming out ahead any more
+    expect(holder.checkMovePower(Moves.Pound, target)).toBeCloseTo(clean * JOLT_START_SCALE, 5);
+    expect(holder.checkMovePriority(Moves.Pound, target)).toBe(0);
+
+    act(battle, holder);
+
+    expect(holder.checkMovePower(Moves.Pound, target)).toBeCloseTo(clean, 5);
+  });
+});
+
+describe('the Plusle and Minun pair', () => {
+  it('lifts the ally that needs it and drags the best enemy down', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const plusle = createUnit(battle, teamA);
+    const minun = createUnit(battle, teamA);
+    const hurt = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    plusle.addAbility(Abilities.CheerOn);
+    minun.addAbility(Abilities.JeerAt);
+
+    hurt.setHealth(hurt.checkStat(Stats.HP, 0) / 4);
+    hurt.setStat(StatsKind.Base, Stats.Attack, 200);
+    enemy.setStat(StatsKind.Base, Stats.Speed, 200);
+
+    act(battle, plusle);
+
+    expect(hurt.stages[Stages.Attack]).toBe(1);
+
+    act(battle, minun);
+
+    expect(enemy.stages[Stages.Speed]).toBe(-1);
+  });
+
+  it('only has so many shouts in it', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const plusle = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamA);
+    createUnit(battle, teamB);
+    plusle.addAbility(Abilities.CheerOn);
+
+    ally.setHealth(1);
+    ally.setStat(StatsKind.Base, Stats.Attack, 200);
+
+    for (let shouts = 0; shouts < CHEER_MAX_SHOUTS + 2; shouts += 1) {
+      act(battle, plusle);
+    }
+
+    expect(ally.stages[Stages.Attack]).toBe(CHEER_MAX_SHOUTS);
   });
 });

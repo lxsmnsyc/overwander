@@ -1005,4 +1005,44 @@ export default function registerSignatureAbilities(): void {
     name: 'Jaw Claim',
     description: 'A move it lands moves one raised stage from the target onto itself.',
   });
+
+  // Aron
+  registerAbility(Abilities.OreHunger, {
+    name: 'Ore Hunger',
+    description:
+      'Steel, Rock and Ground moves deal it no damage and heal it 1/4 of what they would have.',
+  });
+
+  // Meditite
+  registerAbility(Abilities.Chakra, {
+    name: 'Chakra',
+    description:
+      'Every move it uses is worked out from the higher of its Attack and Special Attack.',
+  });
+
+  // Electrike
+  registerAbility(Abilities.JoltStart, {
+    name: 'Jolt Start',
+    description: 'Its first move of a battle goes off a step ahead of everything and hits 1.5x.',
+  });
+
+  /**
+   * Plusle and Minun are counterparts, and each works one end of the
+   * field as it acts: Plusle lifts the ally that needs it, Minun takes
+   * the strongest enemy down a step
+   */
+
+  // Plusle
+  registerAbility(Abilities.CheerOn, {
+    name: 'Cheer On',
+    description:
+      'Each time it acts, the ally lowest on HP gains a stage in its best stat, up to 3 times a battle.',
+  });
+
+  // Minun
+  registerAbility(Abilities.JeerAt, {
+    name: 'Jeer At',
+    description:
+      'Each time it acts, the enemy highest on HP loses a stage in its best stat, up to 3 times a battle.',
+  });
 }

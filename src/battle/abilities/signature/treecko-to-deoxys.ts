@@ -1,5 +1,6 @@
 import { AttackPriority, EventPriority } from '../../../core/event-emitter';
 import { Stages, Stats } from '../../../data/constants/stats';
+import { Types } from '../../../data/constants/types';
 import Abilities from '../../../data/ids/abilities';
 import { Items } from '../../../data/ids/items';
 import {
@@ -8,6 +9,7 @@ import {
   MoveCategories,
   MoveTargets,
   Moves,
+  StatFlags,
   affectsFoesOnly,
 } from '../../../data/ids/moves';
 import { getMoveData } from '../../../data/moves';
@@ -27,6 +29,7 @@ import {
 } from '../../utils';
 import { createAbility } from '../__create';
 import {
+  createCheerAbility,
   createDamageTaken,
   createDeceiverAbility,
   createGroveAbility,
@@ -52,6 +55,21 @@ export const FEARLESS_DIVE_SCALE = 1.3;
 /** What its side's hurt is worth to it, and the share that counts as hurt */
 export const EMPATH_SCALE = 1.3;
 export const EMPATH_THRESHOLD = 1 / 2;
+
+/** What the ore it eats is worth back to it */
+export const ORE_HUNGER_FRACTION = 1 / 4;
+
+/** The other half of a pokemon's attack, for the line that uses both */
+const OTHER_ATTACK_STATS: Partial<Record<Stats, Stats>> = {
+  [Stats.Attack]: Stats.SpecialAttack,
+  [Stats.SpecialAttack]: Stats.Attack,
+};
+
+/** The three types the line lives on */
+const ORE_TYPES = new Set<Types>([Types.Steel, Types.Rock, Types.Ground]);
+
+/** What the opening jolt is worth, over and above going first */
+export const JOLT_START_SCALE = 1.5;
 
 /** What an untouched cat's Speed counts as */
 export const KITTEN_PACE_SCALE = 1.3;
@@ -540,6 +558,95 @@ const treeckoToDeoxys = [
       }
     }),
   ),
+
+  // Aron: steel, rock and earth are what the line eats, so a blow of
+  // one feeds it rather than hurting it
+  createAbility(Abilities.OreHunger, (battle) =>
+    battle.on(BattleEvents.CheckUnitCanDamage, EventPriority.Post, (event) => {
+      const cause = event.cause;
+      const target = event.target;
+
+      if (
+        !event.success ||
+        event.flags & DamageFlags.Indirect ||
+        cause.type !== EffectType.Move ||
+        cause.unit === target ||
+        !target.hasAbility(Abilities.OreHunger) ||
+        !ORE_TYPES.has(cause.unit.checkMoveType(cause.move, unitTarget(target)))
+      ) {
+        return;
+      }
+
+      const fed = event.value * ORE_HUNGER_FRACTION;
+
+      event.success = false;
+
+      // The meal is worked out of the blow that was refused, so it has
+      // to be read here rather than off a later trigger
+      target.triggerAbility(Abilities.OreHunger);
+      target.heal(
+        { type: EffectType.Ability, ability: Abilities.OreHunger, unit: target },
+        target,
+        fed,
+        0,
+      );
+    }),
+  ),
+
+  // Meditite: mind and body are one to this line, so whichever half is
+  // stronger is the half every move is worked out from
+  createAbility(Abilities.Chakra, (battle) =>
+    battle.on(BattleEvents.UnitAttackResolveStat, EventPriority.Post, (event) => {
+      const source = event.parent.source;
+      const other = OTHER_ATTACK_STATS[event.stat];
+
+      // Explicit null check: the first Stats enum member is 0
+      if (other == null || event.unit !== source || !source.hasAbility(Abilities.Chakra)) {
+        return;
+      }
+
+      event.value = Math.max(event.value, source.resolveStat(other, StatFlags.Attack));
+    }),
+  ),
+
+  // Electrike: the first thing it does in a fight is the fast thing.
+  // Counted by actions, so the jolt covers the move it goes off on and
+  // nothing after it
+  createAbility(Abilities.JoltStart, (battle) => {
+    const { counter, lifecycles } = createUnitCounter(battle);
+
+    return new MergedLifecycle([
+      ...onUnitActs(battle, (unit) => {
+        if (unit.hasAbility(Abilities.JoltStart) && counter.get(unit) <= 1) {
+          counter.set(unit, counter.get(unit) + 1);
+
+          if (counter.get(unit) === 1) {
+            unit.triggerAbility(Abilities.JoltStart);
+          }
+        }
+      }),
+      battle.on(BattleEvents.CheckUnitMovePriority, EventPriority.Post, (event) => {
+        if (event.source.hasAbility(Abilities.JoltStart) && counter.get(event.source) === 0) {
+          event.priority += 1;
+        }
+      }),
+      battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
+        if (
+          event.power != null &&
+          event.source.hasAbility(Abilities.JoltStart) &&
+          counter.get(event.source) <= 1
+        ) {
+          event.power *= JOLT_START_SCALE;
+        }
+      }),
+      ...lifecycles,
+    ]);
+  }),
+
+  // Plusle and Minun: counterparts shouting at opposite ends of the
+  // field, one lifting its own side and one dragging the other down
+  createCheerAbility(Abilities.CheerOn, 'cheers'),
+  createCheerAbility(Abilities.JeerAt, 'jeers'),
 
   // Sableye and Mawile: counterparts working the same knob, one knocking
   // a raised stage off and the other keeping it

@@ -807,3 +807,87 @@ export function createDeceiverAbility(
     }),
   );
 }
+
+/** Which stage answers each of the five battle stats */
+const STAT_STAGES: Partial<Record<Stats, Stages>> = {
+  [Stats.Attack]: Stages.Attack,
+  [Stats.Defense]: Stages.Defense,
+  [Stats.SpecialAttack]: Stages.SpecialAttack,
+  [Stats.SpecialDefense]: Stages.SpecialDefense,
+  [Stats.Speed]: Stages.Speed,
+};
+
+/** How many times one cheerleader's shout counts in a battle */
+export const CHEER_MAX_SHOUTS = 3;
+
+/** Which of the two an ability is: the one that lifts, or the one that drags */
+export type CheerSide = 'cheers' | 'jeers';
+
+/**
+ * What Plusle and Minun share: a shout each time they act, worked on
+ * whichever stat the pokemon it is aimed at leans on most. Plusle picks
+ * the ally that needs it and Minun the enemy standing best, so the two
+ * work opposite ends of the same field
+ */
+export function createCheerAbility(
+  ability: Abilities,
+  side: CheerSide,
+): ((battle: Battle) => void) & { ability: Abilities } {
+  const cheers = side === 'cheers';
+
+  return createAbility(ability, (battle) => {
+    const { counter, lifecycles } = createUnitCounter(battle);
+    const stats = createStatExtremes();
+
+    /** The ally furthest from full, or the enemy closest to it */
+    function aimedAt(unit: Unit): Unit | undefined {
+      let found: Unit | undefined;
+      let best = cheers ? Number.POSITIVE_INFINITY : 0;
+
+      for (const other of battle.units()) {
+        const ours = other.team.alliance === unit.team.alliance;
+
+        if (!other.alive || (cheers ? !ours || other === unit : ours)) {
+          continue;
+        }
+
+        const share = other.health / other.checkStat(Stats.HP, 0);
+
+        if (cheers ? share < best : share > best) {
+          found = other;
+          best = share;
+        }
+      }
+
+      return found;
+    }
+
+    return new MergedLifecycle([
+      ...onUnitActs(battle, (unit) => {
+        const shouted = counter.get(unit);
+
+        if (shouted >= CHEER_MAX_SHOUTS || !unit.hasAbility(ability) || stats.measuring()) {
+          return;
+        }
+
+        const aimed = aimedAt(unit);
+
+        if (!aimed) {
+          return;
+        }
+
+        counter.set(unit, shouted + 1);
+        unit.triggerAbility(ability);
+
+        const stat = stats.extremes(aimed).highest;
+        const stage = STAT_STAGES[stat];
+
+        // Explicit null check: the first Stages enum member is 0
+        if (stage != null) {
+          aimed.addStage(stage, cheers ? 1 : -1, { type: EffectType.Ability, ability, unit });
+        }
+      }),
+      ...lifecycles,
+    ]);
+  });
+}

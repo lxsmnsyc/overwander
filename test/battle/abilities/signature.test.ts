@@ -161,14 +161,19 @@ import { Statuses, TeamStatuses, Weathers } from '../../../src/data/ids/status';
 import {
   ANTLION_PIT_FRACTION,
   DIRTY_FIGHTER_SCALE,
+  MALICE_POOL_MAX_STAGES,
+  MALICE_POOL_STEP,
   PATIENT_STALK_MAX_STEPS,
   PATIENT_STALK_SECOND,
   PATIENT_STALK_STEP,
   SILT_BED_SCALE,
+  SOOTHING_PRESENCE_SCALE,
   STORED_BOUNCE_CAP,
   STORED_BOUNCE_SHARE,
   UNIQUE_SPOTS_LOWERED,
   UNIQUE_SPOTS_RAISED,
+  WEATHER_WORN_DEALT_SCALE,
+  WEATHER_WORN_TAKEN_SCALE,
 } from '../../../src/battle/abilities/signature/spoink-to-deoxys';
 import turns from '../../../src/battle/turn';
 import { layersUnder } from '../../../src/battle/moves/spikes';
@@ -191,6 +196,7 @@ import {
   LURE_SCENT_SCALE,
   MAGMA_VENT_FRACTION,
   MAGMA_VENT_THRESHOLD,
+  MIND_OVER_BODY_SCALE,
   MYCELIUM_SCALE,
   ORE_HUNGER_FRACTION,
   PACK_HUNT_SCALE,
@@ -4314,35 +4320,24 @@ describe('Ore Hunger', () => {
   });
 });
 
-describe('Chakra', () => {
-  it('works every move out of whichever half is stronger', () => {
+describe('Mind Over Body', () => {
+  it('takes half of what lands while it is holding a move together', () => {
     const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0);
     const holder = createUnit(battle, teamA);
     const enemy = createUnit(battle, teamB);
-    holder.addAbility(Abilities.Chakra);
+    holder.addAbility(Abilities.MindOverBody);
+    holder.addMove(Moves.Ember);
 
-    holder.setStat(StatsKind.Base, Stats.Attack, 20);
-    holder.setStat(StatsKind.Base, Stats.SpecialAttack, 200);
+    const clean = resolveAttackDamage(battle, enemy, holder);
 
-    const physical = makeAttack(holder, enemy, Moves.Pound, Types.Normal, MoveCategories.Physical);
-    const special = holder.resolveStat(Stats.SpecialAttack, StatFlags.Attack);
+    holder.cast(Moves.Ember, unitTarget(enemy));
 
-    // The physical blow is worked out of the special half, since that
-    // is the higher of the two
-    expect(
-      resolveAttackStat(
-        battle,
-        physical,
-        holder,
-        Stats.Attack,
-        holder.resolveStat(Stats.Attack, StatFlags.Attack),
-      ),
-    ).toBeCloseTo(special, 5);
+    expect(resolveAttackDamage(battle, enemy, holder)).toBeCloseTo(clean * MIND_OVER_BODY_SCALE, 5);
 
-    // And the defending side of a blow is left alone
-    const incoming = makeAttack(enemy, holder, Moves.Pound, Types.Normal, MoveCategories.Physical);
+    holder.stopCast();
 
-    expect(resolveAttackStat(battle, incoming, holder, Stats.Defense, 100)).toBe(100);
+    expect(resolveAttackDamage(battle, enemy, holder)).toBeCloseTo(clean, 5);
   });
 });
 
@@ -4967,5 +4962,124 @@ describe('the Lileep and Anorith pair', () => {
 
     expect(enemy.checkStat(Stats.Speed, 0)).toBeCloseTo(clean, 5);
     expect(enemy.checkEscape()).toBe(true);
+  });
+});
+
+describe('Soothing Presence', () => {
+  it('halves what a status is given on its own side', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    const clean = ally.checkStatusDuration(Statuses.Sleeping, turns(4), NONE_CAUSE);
+    const theirs = enemy.checkStatusDuration(Statuses.Sleeping, turns(4), NONE_CAUSE);
+
+    holder.addAbility(Abilities.SoothingPresence);
+
+    expect(ally.checkStatusDuration(Statuses.Sleeping, turns(4), NONE_CAUSE)).toBeCloseTo(
+      clean * SOOTHING_PRESENCE_SCALE,
+      5,
+    );
+
+    // Nothing for the far side
+    expect(enemy.checkStatusDuration(Statuses.Sleeping, turns(4), NONE_CAUSE)).toBeCloseTo(
+      theirs,
+      5,
+    );
+  });
+});
+
+describe('Weather Worn', () => {
+  it('is worth something under any sky and nothing under none', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0);
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.WeatherWorn);
+
+    const dealt = resolveAttackDamage(battle, holder, enemy);
+    const taken = resolveAttackDamage(battle, enemy, holder);
+
+    holder.setWeather(Weathers.Hail);
+
+    expect(resolveAttackDamage(battle, holder, enemy)).toBeCloseTo(
+      dealt * WEATHER_WORN_DEALT_SCALE,
+      5,
+    );
+    expect(resolveAttackDamage(battle, enemy, holder)).toBeCloseTo(
+      taken * WEATHER_WORN_TAKEN_SCALE,
+      5,
+    );
+
+    holder.setWeather(Weathers.None);
+
+    expect(resolveAttackDamage(battle, holder, enemy)).toBeCloseTo(dealt, 5);
+  });
+});
+
+describe('Two-Tone Strike', () => {
+  it('reads a move as its own type or as Normal, whichever lands harder', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0);
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.TwoToneStrike);
+
+    // Fire into Water resists at 0.5x while plain Normal is neutral
+    // there, so the neutral reading is the one that stands
+    const event = {
+      id: 'UnitAttackResolveEffectiveness',
+      disabled: false,
+      parent: makeAttack(holder, enemy, Moves.Ember, Types.Fire, MoveCategories.Special),
+      defendingType: Types.Water,
+      multiplier: 1,
+    };
+    battle.emit(BattleEvents.UnitAttackResolveEffectiveness, event);
+
+    expect(event.multiplier).toBe(1);
+
+    // And a reading that is already better than Normal is left alone
+    const strong = {
+      id: 'UnitAttackResolveEffectiveness',
+      disabled: false,
+      parent: makeAttack(holder, enemy, Moves.WaterGun, Types.Water, MoveCategories.Special),
+      defendingType: Types.Rock,
+      multiplier: 1,
+    };
+    battle.emit(BattleEvents.UnitAttackResolveEffectiveness, strong);
+
+    expect(strong.multiplier).toBe(2);
+  });
+});
+
+describe('Malice Pool', () => {
+  it('reads how far the target has been worked down', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.MalicePool);
+
+    const target = unitTarget(enemy);
+    const clean = enemy.checkMovePower(Moves.Pound, target) ?? 0;
+
+    expect(holder.checkMovePower(Moves.Pound, target)).toBeCloseTo(clean, 5);
+
+    enemy.addStage(Stages.Attack, -2, NONE_CAUSE);
+    enemy.addStage(Stages.Speed, -1, NONE_CAUSE);
+
+    expect(holder.checkMovePower(Moves.Pound, target)).toBeCloseTo(
+      clean * (1 + MALICE_POOL_STEP * 3),
+      5,
+    );
+
+    // Raises count for nothing, and the pool has a floor to it
+    enemy.addStage(Stages.Defense, 3, NONE_CAUSE);
+    enemy.addStage(Stages.SpecialAttack, -6, NONE_CAUSE);
+
+    expect(holder.checkMovePower(Moves.Pound, target)).toBeCloseTo(
+      clean * (1 + MALICE_POOL_STEP * MALICE_POOL_MAX_STAGES),
+      5,
+    );
   });
 });

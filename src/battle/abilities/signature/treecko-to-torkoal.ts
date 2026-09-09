@@ -9,7 +9,6 @@ import {
   MoveCategories,
   MoveTargets,
   Moves,
-  StatFlags,
   affectsFoesOnly,
 } from '../../../data/ids/moves';
 import { getMoveData } from '../../../data/moves';
@@ -79,11 +78,8 @@ export const BOTTOMLESS_FRACTION = 1 / 8;
 /** What the ore it eats is worth back to it */
 export const ORE_HUNGER_FRACTION = 1 / 4;
 
-/** The other half of a pokemon's attack, for the line that uses both */
-const OTHER_ATTACK_STATS: Partial<Record<Stats, Stats>> = {
-  [Stats.Attack]: Stats.SpecialAttack,
-  [Stats.SpecialAttack]: Stats.Attack,
-};
+/** What a blow is worth against something holding a move together */
+export const MIND_OVER_BODY_SCALE = 0.5;
 
 /** The three types the line lives on */
 const ORE_TYPES = new Set<Types>([Types.Steel, Types.Rock, Types.Ground]);
@@ -807,19 +803,18 @@ const treeckoToTorkoal = [
     }),
   ),
 
-  // Meditite: mind and body are one to this line, so whichever half is
-  // stronger is the half every move is worked out from
-  createAbility(Abilities.Chakra, (battle) =>
-    battle.on(BattleEvents.UnitAttackResolveStat, EventPriority.Post, (event) => {
-      const source = event.parent.source;
-      const other = OTHER_ATTACK_STATS[event.stat];
+  // Meditite: the line meditates through the blow, so what lands on it
+  // while it is holding a move together barely reaches it
+  createAbility(Abilities.MindOverBody, (battle) =>
+    battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, (event) => {
+      const target = event.parent.target;
 
-      // Explicit null check: the first Stats enum member is 0
-      if (other == null || event.unit !== source || !source.hasAbility(Abilities.Chakra)) {
-        return;
+      if (
+        target.hasAbility(Abilities.MindOverBody) &&
+        (target.casting != null || target.channeling != null)
+      ) {
+        event.value *= MIND_OVER_BODY_SCALE;
       }
-
-      event.value = Math.max(event.value, source.resolveStat(other, StatFlags.Attack));
     }),
   ),
 

@@ -2,7 +2,12 @@ import { AttackPriority, EventPriority } from '../../../core/event-emitter';
 import { Stages, Stats } from '../../../data/constants/stats';
 import Abilities from '../../../data/ids/abilities';
 import { DamageFlags, MoveAttackFlags } from '../../../data/ids/moves';
-import { Statuses } from '../../../data/ids/status';
+import {
+  TYPE_EFFECTIVENESS,
+  TYPE_EFFECTIVENESS_FACTOR,
+  Types,
+} from '../../../data/constants/types';
+import { Statuses, Weathers } from '../../../data/ids/status';
 import { FORCED_SWITCH_MOVES } from '../../moves/switch-out';
 import { BattleEvents, EffectType, MoveTargetType } from '../../events';
 import { MergedLifecycle } from '../../lifecycle';
@@ -35,6 +40,28 @@ const SPOTTED_STAGES = [
 
 /** What walking into the pit costs whoever missed */
 export const ANTLION_PIT_FRACTION = 1 / 8;
+
+/** How much of a status' clock a calming presence takes off */
+export const SOOTHING_PRESENCE_SCALE = 0.5;
+
+/** What any sky at all is worth to something built out of one */
+export const WEATHER_WORN_DEALT_SCALE = 1.3;
+export const WEATHER_WORN_TAKEN_SCALE = 0.85;
+
+/** What each stage the target has lost is worth, and how many count */
+export const MALICE_POOL_STEP = 0.1;
+export const MALICE_POOL_MAX_STAGES = 5;
+
+/** The seven a pool of malice is counted over */
+const MALICE_STAGES = [
+  Stages.Attack,
+  Stages.Defense,
+  Stages.SpecialAttack,
+  Stages.SpecialDefense,
+  Stages.Speed,
+  Stages.Accuracy,
+  Stages.Evasion,
+];
 
 /** What a bed of silt takes off everything standing in it */
 export const SILT_BED_SCALE = 0.9;
@@ -238,6 +265,95 @@ const spoinkToDeoxys = [
       event.success = false;
     });
   }),
+
+  // Feebas: the line calms whatever it is standing beside, so nothing
+  // put on its side sticks for as long
+  createAbility(Abilities.SoothingPresence, (battle) =>
+    battle.on(BattleEvents.CheckUnitStatusDuration, EventPriority.Post, (event) => {
+      const source = event.source;
+
+      for (const scale of battle.units()) {
+        if (
+          scale.alive &&
+          scale.team.alliance === source.team.alliance &&
+          scale.hasAbility(Abilities.SoothingPresence)
+        ) {
+          event.duration *= SOOTHING_PRESENCE_SCALE;
+          return;
+        }
+      }
+    }),
+  ),
+
+  // Castform: it is made out of whatever sky is up, so any sky at all
+  // suits it and a clear one leaves it as it was
+  createAbility(Abilities.WeatherWorn, (battle) =>
+    battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, (event) => {
+      const parent = event.parent;
+
+      if (
+        parent.source.hasAbility(Abilities.WeatherWorn) &&
+        parent.source.checkWeather() !== Weathers.None
+      ) {
+        event.value *= WEATHER_WORN_DEALT_SCALE;
+      }
+
+      if (
+        parent.target.hasAbility(Abilities.WeatherWorn) &&
+        parent.target.checkWeather() !== Weathers.None
+      ) {
+        event.value *= WEATHER_WORN_TAKEN_SCALE;
+      }
+    }),
+  ),
+
+  // Kecleon: it wears whichever colour suits the moment, so a move is
+  // read both as itself and as plain Normal and the better one stands
+  createAbility(Abilities.TwoToneStrike, (battle) =>
+    battle.on(BattleEvents.UnitAttackResolveEffectiveness, EventPriority.Post, (event) => {
+      const parent = event.parent;
+
+      if (parent.type === Types.Normal || !parent.source.hasAbility(Abilities.TwoToneStrike)) {
+        return;
+      }
+
+      const plain = TYPE_EFFECTIVENESS[Types.Normal][event.defendingType];
+
+      // A missing entry is the neutral case, which is most of the table
+      event.multiplier = Math.max(
+        event.multiplier,
+        plain == null ? 1 : TYPE_EFFECTIVENESS_FACTOR[plain],
+      );
+    }),
+  ),
+
+  // Shuppet: it feeds on whatever has been done to the thing in front
+  // of it, so a well-worked target is what it hits hardest
+  createAbility(Abilities.MalicePool, (battle) =>
+    battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
+      const target = event.target;
+
+      if (
+        event.power == null ||
+        target.type !== MoveTargetType.Unit ||
+        !event.source.hasAbility(Abilities.MalicePool)
+      ) {
+        return;
+      }
+
+      let lost = 0;
+
+      for (const stage of MALICE_STAGES) {
+        const held = target.unit.stages[stage];
+
+        if (held < 0) {
+          lost -= held;
+        }
+      }
+
+      event.power *= 1 + MALICE_POOL_STEP * Math.min(MALICE_POOL_MAX_STAGES, lost);
+    }),
+  ),
 
   // Barboach: the silt it stirs up is under everybody's feet, its own
   // included, and anything not standing on the ground is above it

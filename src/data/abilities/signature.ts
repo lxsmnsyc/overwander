@@ -1014,10 +1014,9 @@ export default function registerSignatureAbilities(): void {
   });
 
   // Meditite
-  registerAbility(Abilities.Chakra, {
-    name: 'Chakra',
-    description:
-      'Every move it uses is worked out from the higher of its Attack and Special Attack.',
+  registerAbility(Abilities.MindOverBody, {
+    name: 'Mind Over Body',
+    description: 'It takes 0.5x damage while it is casting or channelling a move.',
   });
 
   // Electrike
@@ -1209,5 +1208,30 @@ export default function registerSignatureAbilities(): void {
   registerAbility(Abilities.ClawRush, {
     name: 'Claw Rush',
     description: 'Its moves hit 1.3x against any target slower than it.',
+  });
+
+  // Feebas
+  registerAbility(Abilities.SoothingPresence, {
+    name: 'Soothing Presence',
+    description: 'Statuses landing on its own side last half as long while it stands.',
+  });
+
+  // Castform
+  registerAbility(Abilities.WeatherWorn, {
+    name: 'Weather Worn',
+    description: 'Under any weather its moves deal 1.3x and everything hits it at 0.85x.',
+  });
+
+  // Kecleon
+  registerAbility(Abilities.TwoToneStrike, {
+    name: 'Two-Tone Strike',
+    description:
+      'Each of its moves counts as its own type or as Normal against the target, whichever lands harder.',
+  });
+
+  // Shuppet
+  registerAbility(Abilities.MalicePool, {
+    name: 'Malice Pool',
+    description: 'Its moves hit 10% harder for each lowered stage on the target, up to 50%.',
   });
 }

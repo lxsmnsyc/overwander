@@ -452,7 +452,7 @@ const enum Abilities {
   ShadowTax = 200149,
   JawClaim = 200150,
   OreHunger = 200151,
-  Chakra = 200152,
+  MindOverBody = 200152,
   JoltStart = 200153,
   CheerOn = 200154,
   JeerAt = 200155,
@@ -478,6 +478,10 @@ const enum Abilities {
   SpinBalance = 200175,
   RootHold = 200176,
   ClawRush = 200177,
+  SoothingPresence = 200178,
+  WeatherWorn = 200179,
+  TwoToneStrike = 200180,
+  MalicePool = 200181,
 }
 
 export default Abilities;

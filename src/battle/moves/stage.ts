@@ -65,6 +65,7 @@ const STAGE_MOVE_GROUPS: [Stages, StageMovesConfig][] = [
     Stages.SpecialDefense,
     {
       [Moves.Amnesia]: 2,
+      [Moves.DefendOrder]: 1,
       [Moves.CalmMind]: 1,
       [Moves.CosmicPower]: 1,
       [Moves.Stockpile]: 1,
@@ -77,6 +78,7 @@ const STAGE_MOVE_GROUPS: [Stages, StageMovesConfig][] = [
     Stages.Defense,
     {
       [Moves.Leer]: -1,
+      [Moves.DefendOrder]: 1,
       [Moves.TailWhip]: -1,
       [Moves.Withdraw]: 1,
       [Moves.Harden]: 1,

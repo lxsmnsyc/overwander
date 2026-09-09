@@ -619,4 +619,81 @@ describe("Sinnoh's moves", () => {
     expect(attacker.checkMovePower(Moves.GrassKnot, unitTarget(light))).toBe(20);
     expect(attacker.checkMovePower(Moves.GrassKnot, unitTarget(heavy))).toBe(120);
   });
+
+  it('spends the dancer on a teammate standing beside it', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const dancer = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamA);
+
+    createUnit(battle, teamB).enter();
+    dancer.enter();
+    ally.enter();
+
+    ally.damage(MOVE_CAUSE, ally, ally.checkStat(Stats.HP, 0) / 2, 0);
+    ally.addStatus(Statuses.Burned, MOVE_CAUSE);
+    ally.addMove(Moves.Tackle);
+    ally.startCooldown(Moves.Tackle, NONE_TARGET);
+    battle.tick(1);
+
+    dancer.triggerMoveEffect(Moves.HealingWish, unitTarget(ally), 0);
+    battle.tick(1);
+
+    // The wish pays for health and the burn, and the dancer is gone
+    expect(ally.health).toBe(ally.checkStat(Stats.HP, 0));
+    expect(ally.status[Statuses.Burned]).toBeUndefined();
+    expect(dancer.alive).toBe(false);
+
+    // What it does not pay for is the wait, which the dance does
+    expect(ally.moves[Moves.Tackle]?.cooldown).toBeDefined();
+
+    const second = createUnit(battle, teamA);
+
+    second.enter();
+    second.triggerMoveEffect(Moves.LunarDance, unitTarget(ally), 0);
+    battle.tick(1);
+
+    expect(ally.moves[Moves.Tackle]?.cooldown).toBeUndefined();
+    expect(second.alive).toBe(false);
+  });
+
+  it('strikes through a guard on the way back from Shadow Force', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const striker = createUnit(battle, teamA);
+    const guard = createUnit(battle, teamB);
+
+    striker.enter();
+    guard.enter();
+
+    // Off the field on the first step, so nothing reaches it
+    striker.triggerMoveEffect(Moves.ShadowForce, unitTarget(guard), 1);
+    expect(striker.status[Statuses.Invulnerable]).toBeDefined();
+
+    guard.triggerMoveEffect(Moves.Protect, NONE_TARGET, 0);
+    expect(guard.status[Statuses.Protected]).toBeDefined();
+
+    const whole = guard.health;
+
+    striker.triggerMoveTarget(Moves.ShadowForce, unitTarget(guard), 0);
+
+    // The blow landed and the guard did not survive being walked through
+    expect(guard.health).toBeLessThan(whole);
+    expect(guard.status[Statuses.Protected]).toBeUndefined();
+  });
+
+  it('grips hardest on a target with everything left', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const gripper = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB);
+
+    gripper.enter();
+    target.enter();
+
+    expect(powerOf(battle, gripper, Moves.CrushGrip, target)).toBe(120);
+
+    target.damage(MOVE_CAUSE, target, target.checkStat(Stats.HP, 0) / 2, 0);
+    battle.tick(1);
+
+    expect(powerOf(battle, gripper, Moves.CrushGrip, target)).toBe(60);
+  });
 });

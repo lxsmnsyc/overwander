@@ -22,6 +22,7 @@ const INCREASED_CRITICAL_HIT_RATIO_MOVES = new Set([
   Moves.CrossPoison,
   Moves.StoneEdge,
   Moves.AttackOrder,
+  Moves.SpacialRend,
 ]);
 
 export default function setupIncreasedCriticalHitRatioMoves(battle: Battle): void {

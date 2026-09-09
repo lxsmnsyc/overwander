@@ -1,5 +1,5 @@
 import { Types } from '../../constants/types';
-import { MoveCategories, MoveFlags, MoveTargets, Moves } from '../../ids/moves';
+import { MoveAffects, MoveCategories, MoveFlags, MoveTargets, Moves } from '../../ids/moves';
 import { SpriteAnim } from '../../ids/sprite-anims';
 import { PROJECTILE_DELAY, registerMove } from '../__create';
 
@@ -21,11 +21,12 @@ export default function registerGyroBallToFeint(): void {
   });
   registerMove(Moves.HealingWish, {
     name: 'Healing Wish',
-    description: 'The user faints, and whoever takes its place comes in at full HP and cured.',
+    description: 'The user faints, and a teammate on the field goes back to full HP and is cured.',
     type: Types.Psychic,
     category: MoveCategories.Status,
     pp: 10,
-    target: MoveTargets.None,
+    target: MoveTargets.Unit,
+    affects: MoveAffects.Unit | MoveAffects.Own,
     flags: 0,
     cast: [SpriteAnim.Appeal, SpriteAnim.RaiseArms, SpriteAnim.Charge],
   });

@@ -15,6 +15,13 @@ const DURATION = turns(1);
 const setupTimer = createTimedStatus(Statuses.Protected, DURATION);
 
 /**
+ * The moves a guard does not stop: Feint walks through it and Shadow
+ * Force comes back from off the field, and neither leaves the guard
+ * standing afterwards
+ */
+const WALKS_THROUGH = new Set<Moves>([Moves.Feint, Moves.ShadowForce]);
+
+/**
  * Guarding: everything aimed at the unit from outside is turned away
  * while it holds. https://bulbapedia.bulbagarden.net/wiki/Protect_(move)
  */
@@ -36,9 +43,8 @@ export default function setupProtectedStatus(battle: Battle): void {
       return;
     }
 
-    // Feint is the one that goes through, and the guard does not
-    // survive being walked through
-    if (event.move === Moves.Feint) {
+    // The guard does not survive being walked through
+    if (WALKS_THROUGH.has(event.move)) {
       target.removeStatus(Statuses.Protected, guard);
       return;
     }

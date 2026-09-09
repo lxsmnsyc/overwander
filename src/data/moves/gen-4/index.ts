@@ -11,6 +11,7 @@ import registerSwitcherooToMirrorShot from './switcheroo-to-mirror-shot';
 import registerFlashCannonToRockWrecker from './flash-cannon-to-rock-wrecker';
 import registerCrossPoisonToStealthRock from './cross-poison-to-stealth-rock';
 import registerGrassKnotToAttackOrder from './grass-knot-to-attack-order';
+import registerDefendOrderToShadowForce from './defend-order-to-shadow-force';
 
 /**
  * Sinnoh's moves, in the order the move list numbers them. That order
@@ -31,4 +32,5 @@ export default function registerGen4Moves(): void {
   registerFlashCannonToRockWrecker();
   registerCrossPoisonToStealthRock();
   registerGrassKnotToAttackOrder();
+  registerDefendOrderToShadowForce();
 }

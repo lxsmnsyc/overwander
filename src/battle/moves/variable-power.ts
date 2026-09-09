@@ -65,8 +65,18 @@ const GIFT_BONUS = 6;
 const GYRO_RATIO = 25;
 const GYRO_CEILING = 150;
 
-/** Wring Out squeezes what is left, so a whole target is the worst to wring */
-const WRING_OUT_CEILING = 120;
+/**
+ * Wring Out and Crush Grip both read what the target has left, so
+ * either lands hardest on a whole one and barely at all on a spent one
+ */
+const SQUEEZE_CEILING = 120;
+
+function healthPower(target: Unit): number {
+  return Math.max(
+    1,
+    Math.floor(SQUEEZE_CEILING * (target.health / Math.max(1, target.checkStat(Stats.HP, 0)))),
+  );
+}
 
 /**
  * Punishment answers a target for what it has built: a base hit plus
@@ -166,11 +176,8 @@ const TARGETED_POWER: { [key in Moves]?: (source: Unit, target: Unit) => number 
         PUNISHMENT_PER_STAGE *
           RAISED.reduce((total, stage) => total + Math.max(0, target.stages[stage]), 0),
     ),
-  [Moves.WringOut]: (_source, target) =>
-    Math.max(
-      1,
-      Math.floor(WRING_OUT_CEILING * (target.health / Math.max(1, target.checkStat(Stats.HP, 0)))),
-    ),
+  [Moves.WringOut]: (_source, target) => healthPower(target),
+  [Moves.CrushGrip]: (_source, target) => healthPower(target),
 };
 
 export default function setupVariablePowerMoves(battle: Battle): void {

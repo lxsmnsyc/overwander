@@ -44,6 +44,14 @@ const SEMI_INVULNERABLE_MOVES: { [key in Moves]?: SemiInvulnerableConfig } = {
     doubled: new Set([Moves.Surf, Moves.Whirlpool]),
     status: Statuses.Submerged,
   },
+  // Nowhere on the field at all: it steps out of it, so nothing
+  // reaches it and nothing it is hiding behind stops the strike on
+  // the way back
+  // https://bulbapedia.bulbagarden.net/wiki/Shadow_Force_(move)
+  [Moves.ShadowForce]: {
+    bypass: new Set(),
+    doubled: new Set(),
+  },
   // Up where Fly goes, so what reaches one reaches the other. Sky
   // Uppercut is the fist that follows it up there
   // https://bulbapedia.bulbagarden.net/wiki/Bounce_(move)

@@ -25,6 +25,7 @@ const HEAL_FRACTION: { [key in Moves]?: number } = {
   // being on the ground costs
   // https://bulbapedia.bulbagarden.net/wiki/Roost_(move)
   [Moves.Roost]: 0.5,
+  [Moves.HealOrder]: 0.5,
 };
 
 /**

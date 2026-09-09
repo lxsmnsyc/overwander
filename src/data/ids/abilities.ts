@@ -403,6 +403,10 @@ const enum Abilities {
   Backlash = 200100,
   Ambidextrous = 200101,
   Shrapnel = 200102,
+  EvenKeel = 200103,
+  SandRider = 200104,
+  Bully = 200105,
+  LastBarb = 200106,
 }
 
 export default Abilities;

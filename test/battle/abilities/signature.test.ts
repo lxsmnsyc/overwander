@@ -6,7 +6,9 @@ import registerAbilities, {
 import { SIGNATURE_ABILITIES } from '../../../src/battle/abilities/signature';
 import {
   BACKLASH_SHARE,
+  BULLY_SCALE,
   PETAL_BED_FRACTION,
+  SAND_RIDER_SCALE,
   SHARED_MISERY_THRESHOLD,
   SUNLIT_CHARGE_SCALE,
 } from '../../../src/battle/abilities/signature/chikorita-to-celebi';
@@ -3217,5 +3219,110 @@ describe('Shrapnel', () => {
     expect(layersUnder(teamB)).toBe(1);
     expect(teamB.status[TeamStatuses.ToxicSpikes]).not.toBeUndefined();
     expect(layersUnder(teamA)).toBe(0);
+  });
+});
+
+/** What one plain blow works out to against a given defender */
+function resolveAttackDamage(battle: Battle, attacker: Unit, target: Unit): number {
+  const event = {
+    id: 'UnitAttackResolveDamage',
+    disabled: false,
+    parent: makeAttack(attacker, target, Moves.Pound, Types.Normal, MoveCategories.Physical),
+    value: 0,
+  };
+  battle.emit(BattleEvents.UnitAttackResolveDamage, event);
+  return event.value;
+}
+
+describe('Even Keel', () => {
+  it('levels its five battle stats out to their average', () => {
+    const { battle, teamA } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const bare = createUnit(battle, teamA);
+
+    for (const unit of [holder, bare]) {
+      unit.setStat(StatsKind.Base, Stats.Attack, 200);
+      unit.setStat(StatsKind.Base, Stats.Defense, 20);
+    }
+
+    const stats = [
+      Stats.Attack,
+      Stats.Defense,
+      Stats.SpecialAttack,
+      Stats.SpecialDefense,
+      Stats.Speed,
+    ];
+    const average =
+      stats.reduce((total, stat) => total + bare.checkStat(stat, 0), 0) / stats.length;
+
+    holder.addAbility(Abilities.EvenKeel);
+
+    for (const stat of stats) {
+      expect(holder.checkStat(stat, 0)).toBeCloseTo(average, 5);
+    }
+
+    // HP is not one of the five, so it is left where it was
+    expect(holder.checkStat(Stats.HP, 0)).toBe(bare.checkStat(Stats.HP, 0));
+  });
+});
+
+describe('Sand Rider', () => {
+  it('cannot miss and is half covered while the sand blows', () => {
+    const { battle, teamA, teamB } = createBattle();
+    // The damage roll is pinned, so the two blows differ only by the cover
+    pinRandom(battle, 0);
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.SandRider);
+
+    const atEnemy = { type: MoveTargetType.Unit, unit: enemy } as const;
+
+    expect(holder.checkMoveAccuracy(Moves.FireBlast, atEnemy)).not.toBeUndefined();
+
+    battle.setWeather(Weathers.Sandstorm);
+
+    expect(holder.checkMoveAccuracy(Moves.FireBlast, atEnemy)).toBeUndefined();
+
+    // The resolver works the damage out itself, so the cover is read
+    // off a bare unit taking the same blow
+    const bare = createUnit(battle, teamA);
+
+    expect(resolveAttackDamage(battle, enemy, holder)).toBeCloseTo(
+      resolveAttackDamage(battle, enemy, bare) * SAND_RIDER_SCALE,
+      5,
+    );
+  });
+});
+
+describe('Bully', () => {
+  it('hits harder at whatever has already been cowed', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Bully);
+
+    const target = { type: MoveTargetType.Unit, unit: enemy } as const;
+
+    expect(holder.checkMovePower(Moves.Pound, target)).toBe(40);
+
+    enemy.addStage(Stages.Attack, -1, NONE_CAUSE);
+
+    expect(holder.checkMovePower(Moves.Pound, target)).toBeCloseTo(40 * BULLY_SCALE, 5);
+  });
+});
+
+describe('Last Barb', () => {
+  it('casts Toxic at whoever finished it', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0);
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.LastBarb);
+
+    holder.faint(enemy);
+    // The cast move takes its own flight time to arrive
+    battle.tick(turns(1));
+
+    expect(enemy.status[Statuses.BadlyPoisoned]).not.toBeUndefined();
   });
 });

@@ -233,6 +233,35 @@ export const BATTLE_STATS = [
  * for a stat emits the same event the caller is answering, so the
  * measurement raises a flag the caller checks before it does anything
  */
+/**
+ * The mean of a unit's five battle stats, with the same guard the
+ * extremes carry: reading the stats asks the stat check again, and a
+ * listener built on this must sit that reading out
+ */
+export function createStatAverage(): {
+  measuring(): boolean;
+  average(unit: Unit): number;
+} {
+  let measuring = false;
+
+  return {
+    measuring: () => measuring,
+    average(unit) {
+      measuring = true;
+
+      let total = 0;
+
+      for (const stat of BATTLE_STATS) {
+        total += unit.checkStat(stat, 0);
+      }
+
+      measuring = false;
+
+      return total / BATTLE_STATS.length;
+    },
+  };
+}
+
 export function createStatExtremes(): {
   measuring(): boolean;
   extremes(unit: Unit): { highest: Stats; lowest: Stats };

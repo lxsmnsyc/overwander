@@ -654,4 +654,28 @@ export default function registerSignatureAbilities(): void {
     name: 'Shrapnel',
     description: 'When it faints, it casts Spikes and Toxic Spikes onto the enemy side.',
   });
+
+  // Dunsparce
+  registerAbility(Abilities.EvenKeel, {
+    name: 'Even Keel',
+    description: 'Each of its five battle stats counts as the average of all five.',
+  });
+
+  // Gligar
+  registerAbility(Abilities.SandRider, {
+    name: 'Sand Rider',
+    description: 'While sand blows, its moves cannot miss and everything hits it at 0.75x.',
+  });
+
+  // Snubbull
+  registerAbility(Abilities.Bully, {
+    name: 'Bully',
+    description: 'Its moves hit 1.3x against a target whose Attack has been lowered.',
+  });
+
+  // Qwilfish
+  registerAbility(Abilities.LastBarb, {
+    name: 'Last Barb',
+    description: 'When it faints, it casts Toxic at whoever finished it.',
+  });
 }

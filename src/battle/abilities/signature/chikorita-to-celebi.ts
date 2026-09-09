@@ -17,9 +17,15 @@ import { BattleEvents, EffectType, MoveTargetType } from '../../events';
 import { MergedLifecycle } from '../../lifecycle';
 import { PASSED_STAGES } from '../../moves/switch-out';
 import type Unit from '../../unit';
-import { hasFreeItemSlot, onUnitActs, unitTarget } from '../../utils';
+import { hasFreeItemSlot, isWeatherSandstorm, onUnitActs, unitTarget } from '../../utils';
 import { createAbility } from '../__create';
-import { createUnitState, enemyHolder, isChannelledMove } from './__create';
+import {
+  BATTLE_STATS,
+  createStatAverage,
+  createUnitState,
+  enemyHolder,
+  isChannelledMove,
+} from './__create';
 
 /** What the bed of petals gives an ally each time it moves */
 export const PETAL_BED_FRACTION = 1 / 16;
@@ -32,6 +38,12 @@ export const SHARED_MISERY_THRESHOLD = 1 / 3;
 
 /** What share of a hit is banked to be given back */
 export const BACKLASH_SHARE = 1 / 4;
+
+/** What riding the storm is worth to whatever is aimed at it */
+export const SAND_RIDER_SCALE = 0.75;
+
+/** What a target that has already been cowed is worth */
+export const BULLY_SCALE = 1.3;
 
 /** The other end an attacking stat has, for a pokemon that swings with both */
 const OTHER_ATTACK_STAT: { [key in Stats]?: Stats } = {
@@ -734,6 +746,80 @@ const chikoritaToCelebi = [
           source.triggerMove(move, { type: MoveTargetType.Team, team }, 0);
         }
       }
+    }),
+  ),
+
+  // Dunsparce: nothing about it is sharp and nothing is weak, which is
+  // the whole of what the line is known for
+  createAbility(Abilities.EvenKeel, (battle) => {
+    const stats = createStatAverage();
+
+    return battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
+      if (
+        !stats.measuring() &&
+        BATTLE_STATS.includes(event.stat) &&
+        event.source.hasAbility(Abilities.EvenKeel)
+      ) {
+        event.value = stats.average(event.source);
+      }
+    });
+  }),
+
+  // Gligar: the sand its kin hide in is the sand it flies on, so a
+  // storm is worth aim to it and cover as well
+  createAbility(
+    Abilities.SandRider,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.CheckUnitMoveAccuracy, EventPriority.Post, (event) => {
+          if (
+            event.accuracy != null &&
+            event.source.hasAbility(Abilities.SandRider) &&
+            isWeatherSandstorm(event.source)
+          ) {
+            event.accuracy = undefined;
+          }
+        }),
+        battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, (event) => {
+          const target = event.parent.target;
+
+          if (target.hasAbility(Abilities.SandRider) && isWeatherSandstorm(target)) {
+            event.value *= SAND_RIDER_SCALE;
+          }
+        }),
+      ]),
+  ),
+
+  // Snubbull: it picks on whatever has already been put in its place,
+  // which its own Intimidate is there to arrange
+  createAbility(Abilities.Bully, (battle) =>
+    battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
+      const target = event.target;
+
+      if (
+        event.power != null &&
+        target.type === MoveTargetType.Unit &&
+        target.unit.stages[Stages.Attack] < 0 &&
+        event.source.hasAbility(Abilities.Bully)
+      ) {
+        event.power *= BULLY_SCALE;
+      }
+    }),
+  ),
+
+  // Qwilfish: the last spine goes into whoever pushed it that far, and
+  // what the venom does afterwards is Toxic's business
+  createAbility(Abilities.LastBarb, (battle) =>
+    battle.on(BattleEvents.UnitFaints, EventPriority.Post, (event) => {
+      const source = event.source;
+      const killer = event.attacker;
+
+      if (!source.hasAbility(Abilities.LastBarb) || killer === source || !killer.alive) {
+        return;
+      }
+
+      source.triggerAbility(Abilities.LastBarb);
+      source.triggerMove(Moves.Toxic, unitTarget(killer), 0);
     }),
   ),
 ];

@@ -24,6 +24,14 @@ It also covers **counterpart pairs**, the two families the games themselves pair
 
 Because the members then share one behaviour, the implementation goes in a **meta factory** beside the other shared ones in [`signature/__create.ts`](../../../src/battle/abilities/signature/__create.ts) (`createRisenAbility`, `createWingbeatAbility`), never copied per member. A cancelling pair is the one shape that may stay two listeners, each looking for the other's ability, since the halves are not the same behaviour. That is the repository's standing rule for abilities that share an effect, and it is what keeps the group's numbers in one place.
 
+## Read what the family already has
+
+**Before proposing anything, read that family's own ability pool** in `src/data/species/`, every stage of the line included. Two failures come out of skipping it, and both mean the concept has to be thrown away rather than tuned.
+
+The first is saying the same thing twice. Shroomish already has Effect Spore, so a signature that put a spore on whoever touched it was giving the line nothing it did not have.
+
+The second is stacking a cost on a line that is already paying one. Slaking already carries Truant, so a signature that bought damage with longer cast times made the family worse rather than more interesting. Where a pool ability is itself a penalty, the signature should pay some of that back, or at least cost nothing of its own.
+
 ## What the design may not do
 
 **A name may never be the same as a move's or an item's.** All three appear in the same lists and tooltips, so one word standing for two mechanics is confusing however it is described. A name that merely contains a move's word is fine: Mimed Barrier stands beside Barrier. Check `src/data/moves` and `src/data/items` before proposing, not after.

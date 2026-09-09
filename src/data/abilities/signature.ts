@@ -943,4 +943,29 @@ export default function registerSignatureAbilities(): void {
     name: 'Surface Walk',
     description: 'It takes no damage from hazards or from weather.',
   });
+
+  // Shroomish
+  registerAbility(Abilities.Mycelium, {
+    name: 'Mycelium',
+    description:
+      'Anything carrying poison, sleep, paralysis, a burn or a freeze takes 1.2x from every blow while it stands.',
+  });
+
+  // Slakoth
+  registerAbility(Abilities.WideSwing, {
+    name: 'Wide Swing',
+    description: 'Its physical moves reach every enemy on the field, not only the one it aimed at.',
+  });
+
+  // Nincada
+  registerAbility(Abilities.VanishingAct, {
+    name: 'Vanishing Act',
+    description: 'For 1 second after it lands a move, moves aimed at it miss.',
+  });
+
+  // Whismur
+  registerAbility(Abilities.EchoChamber, {
+    name: 'Echo Chamber',
+    description: 'A sound move it lands echoes 2 seconds later for 1/4 of the damage it dealt.',
+  });
 }

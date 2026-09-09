@@ -159,10 +159,14 @@ import {
   COCOON_THRESHOLD,
   CROOKED_RUN_MAX_STACKS,
   CROOKED_RUN_SCALE,
+  ECHO_CHAMBER_DELAY,
+  ECHO_CHAMBER_FRACTION,
   EMPATH_SCALE,
   EMPATH_THRESHOLD,
   FEARLESS_DIVE_SCALE,
+  MYCELIUM_SCALE,
   PACK_HUNT_SCALE,
+  VANISHING_ACT_DURATION,
 } from '../../../src/battle/abilities/signature/treecko-to-deoxys';
 import { unitTarget } from '../../../src/battle/utils';
 import { SWITCHING_SPAN } from '../../../src/battle/status/switching';
@@ -4014,5 +4018,126 @@ describe('Surface Walk', () => {
     enemy.damage({ type: EffectType.Move, move: Moves.Pound, unit: enemy }, holder, maxHP / 4, 0);
 
     expect(holder.health).toBeLessThan(maxHP);
+  });
+});
+
+describe('Mycelium', () => {
+  it('feeds on whatever is already sick, whichever side is carrying it', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0);
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Mycelium);
+
+    const cleanOut = resolveAttackDamage(battle, holder, enemy);
+    const cleanIn = resolveAttackDamage(battle, enemy, holder);
+
+    enemy.addStatus(Statuses.Poisoned, NONE_CAUSE);
+
+    expect(resolveAttackDamage(battle, holder, enemy)).toBeCloseTo(cleanOut * MYCELIUM_SCALE, 5);
+
+    // Its own side is no exception: the fungus does not pick a team
+    holder.addStatus(Statuses.Burned, NONE_CAUSE);
+
+    expect(resolveAttackDamage(battle, enemy, holder)).toBeCloseTo(cleanIn * MYCELIUM_SCALE, 5);
+  });
+});
+
+describe('Wide Swing', () => {
+  it('widens a physical move over the whole far side', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.WideSwing);
+
+    expect(holder.checkMoveTargeting(Moves.Tackle).target).toBe(MoveTargets.None);
+
+    // A special move and a status move still pick their one target
+    expect(holder.checkMoveTargeting(Moves.Ember).target).toBe(MoveTargets.Unit);
+    expect(holder.checkMoveTargeting(Moves.SleepPowder).target).toBe(MoveTargets.Unit);
+
+    // And nobody else swings that wide
+    expect(enemy.checkMoveTargeting(Moves.Tackle).target).toBe(MoveTargets.Unit);
+  });
+});
+
+describe('Vanishing Act', () => {
+  it('cannot be found for a moment after it strikes', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0);
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.VanishingAct);
+
+    expect(rolled(battle, enemy, holder, Moves.Pound)).toBe(true);
+
+    holder.attack(enemy, Moves.Pound, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(rolled(battle, enemy, holder, Moves.Pound)).toBe(false);
+
+    // It comes back up on its own
+    battle.tick(VANISHING_ACT_DURATION);
+
+    expect(rolled(battle, enemy, holder, Moves.Pound)).toBe(true);
+  });
+
+  it('is taken out of the running while it is gone', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0);
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.VanishingAct);
+
+    function usable(): boolean {
+      const event = {
+        id: 'CheckUnitAIMoveUsable',
+        disabled: false,
+        source: enemy,
+        move: Moves.Pound,
+        target: unitTarget(holder),
+        usable: true,
+      };
+      battle.emit(BattleEvents.CheckUnitAIMoveUsable, event);
+      return event.usable;
+    }
+
+    expect(usable()).toBe(true);
+
+    holder.attack(enemy, Moves.Pound, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(usable()).toBe(false);
+  });
+});
+
+describe('Echo Chamber', () => {
+  it('sends a sound move back off the walls', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0);
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.EchoChamber);
+
+    const shout = dealDamage(holder, enemy, Moves.Uproar, 90, Types.Normal, MoveCategories.Special);
+    const before = enemy.health;
+
+    battle.tick(ECHO_CHAMBER_DELAY);
+
+    expect(before - enemy.health).toBeCloseTo(shout * ECHO_CHAMBER_FRACTION, 5);
+  });
+
+  it('has nothing to say about a move that is not sound', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0);
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.EchoChamber);
+
+    dealDamage(holder, enemy, Moves.Pound, 40, Types.Normal, MoveCategories.Physical);
+
+    const before = enemy.health;
+
+    battle.tick(ECHO_CHAMBER_DELAY);
+
+    expect(enemy.health).toBe(before);
   });
 });

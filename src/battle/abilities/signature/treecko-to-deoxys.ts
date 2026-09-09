@@ -2,20 +2,38 @@ import { AttackPriority, EventPriority } from '../../../core/event-emitter';
 import { Stages, Stats } from '../../../data/constants/stats';
 import Abilities from '../../../data/ids/abilities';
 import { Items } from '../../../data/ids/items';
-import { DamageFlags, Moves } from '../../../data/ids/moves';
+import {
+  DamageFlags,
+  MoveAttackFlags,
+  MoveCategories,
+  MoveTargets,
+  Moves,
+  affectsFoesOnly,
+} from '../../../data/ids/moves';
+import { getMoveData } from '../../../data/moves';
 import { Weathers } from '../../../data/ids/status';
 import type Battle from '../../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../../events';
 import { MergedLifecycle } from '../../lifecycle';
 import type Unit from '../../unit';
-import { hasFreeItemSlot, isWeatherRainy, isWeatherSunny, onUnitActs } from '../../utils';
+import { MAJOR_STATUS_CONDITIONS } from '../../status';
+import {
+  hasAnyStatus,
+  hasFreeItemSlot,
+  isWeatherRainy,
+  isWeatherSunny,
+  onUnitActs,
+} from '../../utils';
 import { createAbility } from '../__create';
 import {
+  createDamageTaken,
   createGroveAbility,
   createGrowthAbility,
   createTimedMarks,
   createUnitCounter,
   createUnitState,
+  fieldHasAbility,
+  isSoundMove,
 } from './__create';
 
 /** What a target the pack has already opened up is worth */
@@ -31,6 +49,24 @@ export const FEARLESS_DIVE_SCALE = 1.3;
 /** What its side's hurt is worth to it, and the share that counts as hurt */
 export const EMPATH_SCALE = 1.3;
 export const EMPATH_THRESHOLD = 1 / 2;
+
+/** What the fungus takes off anything already sick */
+export const MYCELIUM_SCALE = 1.2;
+
+/** How long nothing can find it, once it has struck */
+export const VANISHING_ACT_DURATION = 1000;
+
+/** What the echo comes back for, and how long behind the shout */
+export const ECHO_CHAMBER_FRACTION = 1 / 4;
+export const ECHO_CHAMBER_DELAY = 2000;
+
+/** An echo still to come back */
+interface Echo {
+  source: Unit;
+  target: Unit;
+  amount: number;
+  remaining: number;
+}
 
 /** The hazards a thing standing on the water never touches */
 const HAZARD_MOVES = new Set<Moves>([Moves.Spikes, Moves.StealthRock]);
@@ -292,6 +328,141 @@ const treeckoToDeoxys = [
       }
     }),
   ),
+
+  // Shroomish: the fungus feeds on whatever is already sick, whichever
+  // side is carrying it
+  createAbility(Abilities.Mycelium, (battle) =>
+    battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, (event) => {
+      if (
+        fieldHasAbility(battle, Abilities.Mycelium) &&
+        hasAnyStatus(event.parent.target, MAJOR_STATUS_CONDITIONS)
+      ) {
+        event.value *= MYCELIUM_SCALE;
+      }
+    }),
+  ),
+
+  // Slakoth: one enormous arm, so the rare swing reaches the whole far
+  // side. The same widening Caterpie's powder gets
+  createAbility(Abilities.WideSwing, (battle) =>
+    battle.on(BattleEvents.CheckUnitMoveTargeting, EventPriority.Post, (event) => {
+      if (
+        event.target === MoveTargets.Unit &&
+        affectsFoesOnly(event.affects) &&
+        getMoveData(event.move).category === MoveCategories.Physical &&
+        event.source.hasAbility(Abilities.WideSwing)
+      ) {
+        event.target = MoveTargets.None;
+      }
+    }),
+  ),
+
+  // Nincada: it is back underground before the answer comes. The miss
+  // is rolled rather than written into accuracy, since a falsy accuracy
+  // means no check at all
+  createAbility(Abilities.VanishingAct, (battle) => {
+    const gone = createTimedMarks(battle);
+
+    return new MergedLifecycle([
+      ...gone.lifecycles,
+      battle.on(BattleEvents.UnitAttack, AttackPriority.Post, (event) => {
+        const source = event.source;
+
+        if (
+          event.success &&
+          !(event.flags & MoveAttackFlags.Simulated) &&
+          source.hasAbility(Abilities.VanishingAct)
+        ) {
+          source.triggerAbility(Abilities.VanishingAct);
+          gone.mark(source, VANISHING_ACT_DURATION);
+        }
+      }),
+      battle.on(BattleEvents.UnitTriggerMoveRollHit, EventPriority.Post, (event) => {
+        const target = event.parent.target;
+
+        if (event.hit && target.type === MoveTargetType.Unit && gone.has(target.unit)) {
+          event.hit = false;
+        }
+      }),
+      // Nothing is worth aiming at it while it is gone, and the AI is
+      // told rather than left to spend a cast finding out
+      battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Post, (event) => {
+        if (
+          event.usable &&
+          event.target.type === MoveTargetType.Unit &&
+          gone.has(event.target.unit)
+        ) {
+          event.usable = false;
+        }
+      }),
+    ]);
+  }),
+
+  // Whismur: the shout comes back off the walls. The echo is indirect,
+  // so it neither crits nor carries whatever the move did
+  createAbility(Abilities.EchoChamber, (battle) => {
+    const damage = createDamageTaken(battle);
+    const echoes: Echo[] = [];
+
+    const clock = battle.on(BattleEvents.Tick, EventPriority.Post, (event) => {
+      for (const echo of echoes) {
+        echo.remaining -= event.duration;
+      }
+
+      const due = echoes.filter((echo) => echo.remaining <= 0);
+
+      for (const echo of due) {
+        echoes.splice(echoes.indexOf(echo), 1);
+
+        if (!echo.source.alive || !echo.target.alive) {
+          continue;
+        }
+
+        echo.source.triggerAbility(Abilities.EchoChamber);
+        echo.source.damage(
+          { type: EffectType.Ability, ability: Abilities.EchoChamber, unit: echo.source },
+          echo.target,
+          echo.amount,
+          DamageFlags.Indirect,
+        );
+      }
+
+      if (echoes.length === 0) {
+        clock.stop();
+      }
+    });
+
+    clock.stop();
+
+    return new MergedLifecycle([
+      clock,
+      ...damage.lifecycles,
+      battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
+        const taken = damage.taken(event);
+        const cause = event.cause;
+
+        if (
+          !event.success ||
+          taken == null ||
+          taken <= 0 ||
+          event.flags & DamageFlags.Indirect ||
+          cause.type !== EffectType.Move ||
+          !isSoundMove(cause.move) ||
+          !cause.unit.hasAbility(Abilities.EchoChamber)
+        ) {
+          return;
+        }
+
+        echoes.push({
+          source: cause.unit,
+          target: event.target,
+          amount: taken * ECHO_CHAMBER_FRACTION,
+          remaining: ECHO_CHAMBER_DELAY,
+        });
+        clock.start();
+      }),
+    ]);
+  }),
 
   // Surskit: it stands on the water rather than in it, so what settles
   // on the ground and what falls out of the sky both pass it by

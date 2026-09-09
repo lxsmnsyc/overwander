@@ -442,6 +442,10 @@ const enum Abilities {
   BillCarry = 200139,
   Empath = 200140,
   SurfaceWalk = 200141,
+  Mycelium = 200142,
+  WideSwing = 200143,
+  VanishingAct = 200144,
+  EchoChamber = 200145,
 }
 
 export default Abilities;

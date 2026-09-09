@@ -3,7 +3,13 @@ import type { Stages } from '../../../data/constants/stats';
 import { Stats } from '../../../data/constants/stats';
 import type Abilities from '../../../data/ids/abilities';
 import type { Types } from '../../../data/constants/types';
-import { DamageFlags, MoveAttackFlags, MoveCategories, Moves } from '../../../data/ids/moves';
+import {
+  DamageFlags,
+  MoveAttackFlags,
+  MoveCategories,
+  MoveFlags,
+  Moves,
+} from '../../../data/ids/moves';
 import { getMoveData, getWeatherMove } from '../../../data/moves';
 import { Statuses, type Weathers } from '../../../data/ids/status';
 import type Battle from '../../core';
@@ -147,6 +153,11 @@ const PSEUDO_MOVES = new Set<Moves>([Moves._Confused, Moves.Struggle, Moves.Atta
 /** Whether this is a physical move the pokemon actually chose */
 export function isPhysicalMove(move: Moves): boolean {
   return !PSEUDO_MOVES.has(move) && getMoveData(move).category === MoveCategories.Physical;
+}
+
+/** Whether the move is one carried on sound the pokemon actually chose */
+export function isSoundMove(move: Moves): boolean {
+  return !PSEUDO_MOVES.has(move) && (getMoveData(move).flags & MoveFlags.Sound) !== 0;
 }
 
 /** Whether the move is held down over steps rather than let go at once */

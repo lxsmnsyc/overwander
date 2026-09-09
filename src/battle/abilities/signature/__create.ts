@@ -11,7 +11,7 @@ import {
   Moves,
 } from '../../../data/ids/moves';
 import { getMoveData, getWeatherMove } from '../../../data/moves';
-import { Statuses, type Weathers } from '../../../data/ids/status';
+import { Statuses, TeamStatuses, type Weathers } from '../../../data/ids/status';
 import type Battle from '../../core';
 import { BattleEvents, EffectType, MoveTargetType, type UnitDamageEvent } from '../../events';
 import { type Lifecycle, MergedLifecycle } from '../../lifecycle';
@@ -1071,4 +1071,138 @@ export function createFossilPairAbility(
       }),
     ]);
   });
+}
+
+/** How long a golem stands sealed, and what a sealed one is worth both ways */
+export const SEALED_DURATION = 8000;
+export const SEALED_SCALE = 0.5;
+
+/** What a woken golem is worth, and how far the waking lifts its own stat */
+export const WOKEN_SCALE = 1.25;
+export const WOKEN_STAGES = 2;
+
+/**
+ * What the three Regis share: each stands sealed for its first seconds
+ * on the field, taking and dealing half, and then wakes for good, a
+ * quarter harder and two stages up in the stat it was built around
+ */
+export function createSealedAbility(
+  ability: Abilities,
+  stage: Stages,
+): ((battle: Battle) => void) & { ability: Abilities } {
+  return createAbility(ability, (battle) => {
+    const { state, lifecycles } = createUnitState<number>(battle);
+
+    function sealed(unit: Unit): boolean {
+      return unit.hasAbility(ability) && (state.get(unit) ?? 0) < SEALED_DURATION;
+    }
+
+    return new MergedLifecycle([
+      ...lifecycles,
+      battle.on(BattleEvents.Tick, EventPriority.Post, (event) => {
+        for (const golem of battle.units()) {
+          if (!golem.alive || !golem.hasAbility(ability)) {
+            continue;
+          }
+
+          const stood = state.get(golem) ?? 0;
+
+          if (stood >= SEALED_DURATION) {
+            continue;
+          }
+
+          state.set(golem, stood + event.duration);
+
+          // The seal breaks once, and what it lets out stays out
+          if (stood + event.duration >= SEALED_DURATION) {
+            golem.triggerAbility(ability);
+            golem.addStage(stage, WOKEN_STAGES, {
+              type: EffectType.Ability,
+              ability,
+              unit: golem,
+            });
+          }
+        }
+      }),
+      battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, (event) => {
+        const parent = event.parent;
+
+        if (parent.source.hasAbility(ability)) {
+          event.value *= sealed(parent.source) ? SEALED_SCALE : WOKEN_SCALE;
+        }
+
+        if (sealed(parent.target)) {
+          event.value *= SEALED_SCALE;
+        }
+      }),
+    ]);
+  });
+}
+
+/** What the sister's wing is worth, and what the brother's dive is */
+export const EON_SHIELD_SCALE = 0.8;
+export const EON_LANCE_SCALE = 1.25;
+
+/** Undoes a screen's own reduction, the way Infiltrator does */
+const EON_SCREEN_COMPENSATION = 4096 / 2732;
+
+/** Which screen answers which half of a blow */
+const EON_SCREENS: { [key in MoveCategories]?: TeamStatuses } = {
+  [MoveCategories.Physical]: TeamStatuses.Reflect,
+  [MoveCategories.Special]: TeamStatuses.LightScreen,
+};
+
+/** Which of the two an ability is: the one that guards or the one that pierces */
+export type EonSide = 'shields' | 'pierces';
+
+/**
+ * What Latias and Latios share: one flies over its side and one flies
+ * through whatever the far side put up. The sister's wing never covers
+ * herself, and the brother's dive counts a screen for nothing
+ */
+export function createEonAbility(
+  ability: Abilities,
+  side: EonSide,
+): ((battle: Battle) => void) & { ability: Abilities } {
+  if (side === 'shields') {
+    return createAbility(ability, (battle) =>
+      battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, (event) => {
+        const target = event.parent.target;
+
+        for (const eon of battle.units()) {
+          if (
+            eon !== target &&
+            eon.alive &&
+            eon.team.alliance === target.team.alliance &&
+            eon.hasAbility(ability)
+          ) {
+            event.value *= EON_SHIELD_SCALE;
+            return;
+          }
+        }
+      }),
+    );
+  }
+
+  return createAbility(ability, (battle) =>
+    battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, (event) => {
+      const parent = event.parent;
+
+      if (!parent.source.hasAbility(ability)) {
+        return;
+      }
+
+      event.value *= EON_LANCE_SCALE;
+
+      const screen = EON_SCREENS[parent.category];
+
+      if (
+        screen != null &&
+        parent.target.team.status[screen] != null &&
+        !(parent.flags & MoveAttackFlags.Confused)
+      ) {
+        event.value *= EON_SCREEN_COMPENSATION;
+      }
+    }),
+  );
 }

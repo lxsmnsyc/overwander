@@ -493,6 +493,11 @@ const enum Abilities {
   SharedHeart = 200190,
   SkullCharge = 200191,
   HiveMind = 200192,
+  StoneSeal = 200193,
+  FrostSeal = 200194,
+  IronSeal = 200195,
+  EonShield = 200196,
+  EonLance = 200197,
 }
 
 export default Abilities;

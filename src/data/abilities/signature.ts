@@ -1301,4 +1301,48 @@ export default function registerSignatureAbilities(): void {
     name: 'Hive Mind',
     description: 'Its moves hit 10% harder for each ally standing with it, up to 3 of them.',
   });
+
+  /**
+   * The three Regis share the seal they were shut behind: each stands
+   * half-strength for its first seconds on the field and then wakes for
+   * good, a quarter harder and two stages up in its own stat
+   */
+
+  // Regirock
+  registerAbility(Abilities.StoneSeal, {
+    name: 'Stone Seal',
+    description:
+      'For 8 seconds it deals and takes 0.5x. It then deals 1.25x and gains 2 stages of Defense.',
+  });
+
+  // Regice
+  registerAbility(Abilities.FrostSeal, {
+    name: 'Frost Seal',
+    description:
+      'For 8 seconds it deals and takes 0.5x. It then deals 1.25x and gains 2 stages of Special Defense.',
+  });
+
+  // Registeel
+  registerAbility(Abilities.IronSeal, {
+    name: 'Iron Seal',
+    description:
+      'For 8 seconds it deals and takes 0.5x. It then deals 1.25x and gains 2 stages of Attack.',
+  });
+
+  /**
+   * Latias and Latios are counterparts: the sister flies over her side
+   * and the brother flies through whatever the far side put up
+   */
+
+  // Latias
+  registerAbility(Abilities.EonShield, {
+    name: 'Eon Shield',
+    description: 'Its allies take 0.8x damage while it stands. It covers everybody but itself.',
+  });
+
+  // Latios
+  registerAbility(Abilities.EonLance, {
+    name: 'Eon Lance',
+    description: 'Its moves deal 1.25x and count Reflect and Light Screen for nothing.',
+  });
 }

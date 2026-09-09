@@ -8,6 +8,8 @@ import {
   CHEER_MAX_SHOUTS,
   ECLIPSE_LOWERED_SCALE,
   ECLIPSE_RAISED_SCALE,
+  EON_LANCE_SCALE,
+  EON_SHIELD_SCALE,
   FEUD_SCALE,
   FIELD_LOWERED_SCALE,
   FIELD_RAISED_SCALE,
@@ -23,6 +25,10 @@ import {
   MARK_FRACTION,
   REGAL_COURT_MAX_ENEMIES,
   REGAL_COURT_STEP,
+  SEALED_DURATION,
+  SEALED_SCALE,
+  WOKEN_SCALE,
+  WOKEN_STAGES,
 } from '../../../src/battle/abilities/signature/__create';
 import {
   BACKLASH_SHARE,
@@ -5390,5 +5396,82 @@ describe('Hive Mind', () => {
         5,
       );
     }
+  });
+});
+
+describe('the Regi trio', () => {
+  const GOLEMS = [
+    { name: 'Stone Seal', ability: Abilities.StoneSeal, stage: Stages.Defense },
+    { name: 'Frost Seal', ability: Abilities.FrostSeal, stage: Stages.SpecialDefense },
+    { name: 'Iron Seal', ability: Abilities.IronSeal, stage: Stages.Attack },
+  ];
+
+  for (const { name, ability, stage } of GOLEMS) {
+    it(`stands sealed and then wakes for ${name}`, () => {
+      const { battle, teamA, teamB } = createBattle();
+      pinRandom(battle, 0);
+      const holder = createUnit(battle, teamA);
+      const bare = createUnit(battle, teamA);
+      const enemy = createUnit(battle, teamB);
+      holder.addAbility(ability);
+
+      const clean = resolveAttackDamage(battle, bare, enemy);
+      const incoming = resolveAttackDamage(battle, enemy, bare);
+
+      // Sealed: half in both directions
+      expect(resolveAttackDamage(battle, holder, enemy)).toBeCloseTo(clean * SEALED_SCALE, 5);
+      expect(resolveAttackDamage(battle, enemy, holder)).toBeCloseTo(incoming * SEALED_SCALE, 5);
+
+      battle.tick(SEALED_DURATION);
+
+      // Woken: a quarter harder, taking blows in full, and two stages up
+      expect(holder.stages[stage]).toBe(WOKEN_STAGES);
+      expect(resolveAttackDamage(battle, holder, enemy)).toBeCloseTo(clean * WOKEN_SCALE, 5);
+      expect(resolveAttackDamage(battle, enemy, holder)).toBeCloseTo(incoming, 5);
+
+      // The seal breaks once
+      battle.tick(SEALED_DURATION);
+
+      expect(holder.stages[stage]).toBe(WOKEN_STAGES);
+    });
+  }
+});
+
+describe('the Latias and Latios pair', () => {
+  it('covers everybody but itself', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0);
+    const latias = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    const onAlly = resolveAttackDamage(battle, enemy, ally);
+    const onHer = resolveAttackDamage(battle, enemy, latias);
+
+    latias.addAbility(Abilities.EonShield);
+
+    expect(resolveAttackDamage(battle, enemy, ally)).toBeCloseTo(onAlly * EON_SHIELD_SCALE, 5);
+    expect(resolveAttackDamage(battle, enemy, latias)).toBeCloseTo(onHer, 5);
+  });
+
+  it('flies through what the far side put up', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0);
+    const latios = createUnit(battle, teamA);
+    const bare = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    latios.addAbility(Abilities.EonLance);
+
+    const clean = resolveAttackDamage(battle, bare, enemy);
+
+    expect(resolveAttackDamage(battle, latios, enemy)).toBeCloseTo(clean * EON_LANCE_SCALE, 5);
+
+    teamB.addStatus(TeamStatuses.Reflect, NONE_CAUSE);
+
+    const screened = resolveAttackDamage(battle, bare, enemy);
+
+    // The screen takes its cut off everybody else and nothing off him
+    expect(screened).toBeLessThan(clean);
+    expect(resolveAttackDamage(battle, latios, enemy)).toBeCloseTo(clean * EON_LANCE_SCALE, 5);
   });
 });

@@ -18,8 +18,10 @@ import { createAbility } from '../__create';
 import {
   createDamageTaken,
   createEclipseAbility,
+  createEonAbility,
   createFeudAbility,
   createFossilPairAbility,
+  createSealedAbility,
   createUnitState,
 } from './__create';
 
@@ -406,6 +408,17 @@ const spoinkToDeoxys = [
       event.power *= 1 + HIVE_MIND_STEP * Math.min(HIVE_MIND_MAX_ALLIES, hive);
     }),
   ),
+
+  // The three Regis: each stands sealed for its first seconds and then
+  // wakes for good, two stages up in the stat it was built around
+  createSealedAbility(Abilities.StoneSeal, Stages.Defense),
+  createSealedAbility(Abilities.FrostSeal, Stages.SpecialDefense),
+  createSealedAbility(Abilities.IronSeal, Stages.Attack),
+
+  // Latias and Latios: counterparts, one flying over its side and one
+  // flying through whatever the far side put up
+  createEonAbility(Abilities.EonShield, 'shields'),
+  createEonAbility(Abilities.EonLance, 'pierces'),
 
   // Snorunt: the cold takes hold of whatever touches it, sometimes
   createAbility(Abilities.ColdSnap, (battle) =>

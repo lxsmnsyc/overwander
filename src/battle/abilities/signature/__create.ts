@@ -2,8 +2,10 @@ import { AttackPriority, EventPriority } from '../../../core/event-emitter';
 import type { Stages } from '../../../data/constants/stats';
 import { Stats } from '../../../data/constants/stats';
 import type Abilities from '../../../data/ids/abilities';
-import { DamageFlags, MoveCategories, Moves } from '../../../data/ids/moves';
+import type { Types } from '../../../data/constants/types';
+import { DamageFlags, MoveAttackFlags, MoveCategories, Moves } from '../../../data/ids/moves';
 import { getMoveData } from '../../../data/moves';
+import { Statuses } from '../../../data/ids/status';
 import type Battle from '../../core';
 import { BattleEvents, EffectType, type UnitDamageEvent } from '../../events';
 import { type Lifecycle, MergedLifecycle } from '../../lifecycle';
@@ -114,6 +116,17 @@ export function fieldHasAbility(battle: Battle, ability: Abilities): boolean {
  * The standing holder on the other side of the fight from this unit,
  * for an effect a holder works on its enemies
  */
+/** A standing holder of this ability anywhere on the field */
+export function fieldHolder(battle: Battle, ability: Abilities): Unit | undefined {
+  for (const unit of battle.units()) {
+    if (unit.alive && unit.hasAbility(ability)) {
+      return unit;
+    }
+  }
+
+  return undefined;
+}
+
 export function enemyHolder(battle: Battle, unit: Unit, ability: Abilities): Unit | undefined {
   for (const other of battle.units(unit.team.alliance)) {
     if (other.alive && other.hasAbility(ability)) {
@@ -236,6 +249,109 @@ export const BATTLE_STATS = [
  * for a stat emits the same event the caller is answering, so the
  * measurement raises a flag the caller checks before it does anything
  */
+/** What a field tilted toward a type is worth, and against one */
+export const FIELD_RAISED_SCALE = 1.2;
+export const FIELD_LOWERED_SCALE = 0.8;
+
+/**
+ * What the Kanto starters share: each tilts the whole field toward its
+ * own type and away from the one that type beats, its own side included.
+ * Read where the blow's damage is worked out, so it reaches every move
+ * of that type whoever threw it
+ */
+export function createFieldAbility(
+  ability: Abilities,
+  raised: Types,
+  lowered: Types,
+): ((battle: Battle) => void) & { ability: Abilities } {
+  return createAbility(ability, (battle) =>
+    battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, (event) => {
+      const parent = event.parent;
+      const holder = fieldHolder(battle, ability);
+
+      if (!holder) {
+        return;
+      }
+
+      if (parent.type === raised) {
+        event.value *= FIELD_RAISED_SCALE;
+      } else if (parent.type === lowered) {
+        event.value *= FIELD_LOWERED_SCALE;
+      }
+    }),
+  );
+}
+
+/** What a mark left on something takes each time it moves, and the deeper bite */
+export const MARK_FRACTION = 1 / 16;
+export const MARK_DEEP_FRACTION = 1 / 8;
+
+/** What each starter's mark does besides taking its share */
+export type MarkRider = 'drink' | 'kindle' | 'hold';
+
+/**
+ * What the Johto starters share: a landed move leaves the line's own
+ * element on whatever it hit, and that thing pays for it every time it
+ * moves. The mark is kept on the marked unit, so it goes when that unit
+ * leaves the field or falls
+ */
+export function createMarkAbility(
+  ability: Abilities,
+  rider: MarkRider,
+): ((battle: Battle) => void) & { ability: Abilities } {
+  return createAbility(ability, (battle) => {
+    const { state, lifecycles } = createUnitState<Unit>(battle);
+
+    return new MergedLifecycle([
+      battle.on(BattleEvents.UnitAttack, AttackPriority.Post, (event) => {
+        const source = event.source;
+        const target = event.target;
+
+        if (
+          !event.success ||
+          !target.alive ||
+          event.flags & MoveAttackFlags.Simulated ||
+          !source.hasAbility(ability)
+        ) {
+          return;
+        }
+
+        // A jaw holds one thing: marking something else lets the last
+        // one go
+        if (rider === 'hold') {
+          for (const [marked, marker] of state) {
+            if (marker === source && marked !== target) {
+              state.delete(marked);
+            }
+          }
+        }
+
+        state.set(target, source);
+      }),
+      ...onUnitActs(battle, (unit) => {
+        const marker = state.get(unit);
+
+        if (marker == null || !marker.alive || !marker.hasAbility(ability)) {
+          return;
+        }
+
+        const deep =
+          rider === 'hold' || (rider === 'kindle' && unit.status[Statuses.Burned] != null);
+        const amount = unit.checkStat(Stats.HP, 0) * (deep ? MARK_DEEP_FRACTION : MARK_FRACTION);
+        const cause = { type: EffectType.Ability, ability, unit: marker } as const;
+
+        marker.triggerAbility(ability);
+        marker.damage(cause, unit, amount, DamageFlags.Indirect);
+
+        if (rider === 'drink') {
+          marker.heal(cause, marker, amount, 0);
+        }
+      }),
+      ...lifecycles,
+    ]);
+  });
+}
+
 /** How far a starter may grow a stat on its own */
 export const GROWTH_MAX_STAGES = 3;
 

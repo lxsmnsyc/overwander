@@ -7,25 +7,30 @@ import { registerAbility } from './__create';
  * they are granted, so a species' ordinary pool is untouched
  */
 export default function registerSignatureAbilities(): void {
+  /**
+   * The Kanto starters share one signature: each tilts the field toward
+   * its own type and away from the one that type beats, both sides
+   * included
+   */
   // Bulbasaur
-  registerAbility(Abilities.SeedCache, {
-    name: 'Seed Cache',
+  registerAbility(Abilities.VerdantField, {
+    name: 'Verdant Field',
     description:
-      'Banks 1/4 of every hit it takes, up to 1/2 of its HP. The next Grass move it lands spends the bank as extra damage.',
+      'Grass moves hit 1.2x and Water moves 0.8x for everybody on the field while it stands.',
   });
 
   // Charmander
-  registerAbility(Abilities.Afterburn, {
-    name: 'Afterburn',
+  registerAbility(Abilities.EmberField, {
+    name: 'Ember Field',
     description:
-      'Each Fire move it lands cuts 15% off its cast and channel times, up to 45%, and nothing takes the heat back.',
+      'Fire moves hit 1.2x and Grass moves 0.8x for everybody on the field while it stands.',
   });
 
   // Squirtle
-  registerAbility(Abilities.Overpressure, {
-    name: 'Overpressure',
+  registerAbility(Abilities.DelugeField, {
+    name: 'Deluge Field',
     description:
-      'Water moves hit 1.3x, but each one it lands adds 20% to its own cooldowns, up to 60%. A move of another type clears the fouling.',
+      'Water moves hit 1.2x and Fire moves 0.8x for everybody on the field while it stands.',
   });
 
   // Caterpie
@@ -509,23 +514,29 @@ export default function registerSignatureAbilities(): void {
     description: 'Any type that has already hit it once hits it at 0.85x thereafter.',
   });
 
+  /**
+   * The Johto starters share one signature: each leaves its element on
+   * whatever it lands a move on, paid as that thing acts
+   */
   // Chikorita
-  registerAbility(Abilities.PetalBed, {
-    name: 'Petal Bed',
+  registerAbility(Abilities.Sapmark, {
+    name: 'Sapmark',
     description:
-      'Its allies heal 1/16 of their HP each time they act. It never heals itself this way.',
+      'Anything it lands a move on loses 1/16 of its HP each time it acts, and Chikorita drinks the same.',
   });
 
   // Cyndaquil
-  registerAbility(Abilities.Ignition, {
-    name: 'Ignition',
-    description: 'It casts Will-O-Wisp at an enemy as it arrives on the field.',
+  registerAbility(Abilities.Embermark, {
+    name: 'Embermark',
+    description:
+      'Anything it lands a move on loses 1/16 of its HP each time it acts, or 1/8 while it is burned.',
   });
 
   // Totodile
-  registerAbility(Abilities.GatorGrip, {
-    name: 'Gator Grip',
-    description: 'A contact move it lands casts Bind on that target.',
+  registerAbility(Abilities.Jawmark, {
+    name: 'Jawmark',
+    description:
+      'The one thing it has its jaws in loses 1/8 of its HP each time it acts. Only ever one at a time.',
   });
 
   // Sentret

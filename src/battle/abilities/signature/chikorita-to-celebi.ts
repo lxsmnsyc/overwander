@@ -23,6 +23,7 @@ import { hasFreeItemSlot, isWeatherSandstorm, onUnitActs, unitTarget } from '../
 import { createAbility } from '../__create';
 import {
   BATTLE_STATS,
+  createMarkAbility,
   createRisenAbility,
   createStatAverage,
   createUnitCounter,
@@ -30,9 +31,6 @@ import {
   enemyHolder,
   isChannelledMove,
 } from './__create';
-
-/** What the bed of petals gives an ally each time it moves */
-export const PETAL_BED_FRACTION = 1 / 16;
 
 /** What holding a move down is worth */
 export const SUNLIT_CHARGE_SCALE = 1.3;
@@ -164,88 +162,11 @@ function guardedBy(battle: Battle, unit: Unit, ability: Abilities): Unit | undef
 }
 
 const chikoritaToCelebi = [
-  // Chikorita: the party stands in something that mends them. Paid as
-  // each ally reaches for a move, and never to the flower itself
-  createAbility(
-    Abilities.PetalBed,
-    (battle) =>
-      new MergedLifecycle(
-        onUnitActs(battle, (unit) => {
-          if (unit.hasAbility(Abilities.PetalBed)) {
-            return;
-          }
-
-          const flower = guardedBy(battle, unit, Abilities.PetalBed);
-
-          if (!flower) {
-            return;
-          }
-
-          flower.triggerAbility(Abilities.PetalBed);
-
-          flower.heal(
-            { type: EffectType.Ability, ability: Abilities.PetalBed, unit: flower },
-            unit,
-            unit.checkStat(Stats.HP, 0) * PETAL_BED_FRACTION,
-            0,
-          );
-        }),
-      ),
-  ),
-
-  // Cyndaquil: the back flares as it arrives, and what that does is
-  // Will-O-Wisp's business rather than this ability's
-  createAbility(
-    Abilities.Ignition,
-    (battle) =>
-      new MergedLifecycle([
-        battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
-          if (!event.reactivation && event.source.hasAbility(Abilities.Ignition)) {
-            event.source.triggerAbility(Abilities.Ignition);
-          }
-        }),
-        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
-          if (event.ability !== Abilities.Ignition) {
-            return;
-          }
-
-          const enemy = firstEnemy(battle, event.source);
-
-          if (enemy) {
-            event.source.triggerMove(Moves.WillOWisp, unitTarget(enemy), 0);
-          }
-        }),
-      ]),
-  ),
-
-  // Totodile: it bites and does not let go, which is the hold Bind
-  // already knows how to put on
-  createAbility(Abilities.GatorGrip, (battle) => {
-    // The bind is itself a contact move, so without this the grip would
-    // grip its own grip
-    const gripping = new Set<Unit>();
-
-    return battle.on(BattleEvents.UnitAttack, AttackPriority.Post, (event) => {
-      const source = event.source;
-      const target = event.target;
-
-      if (
-        !event.success ||
-        !target.alive ||
-        event.flags & MoveAttackFlags.Simulated ||
-        gripping.has(source) ||
-        !source.hasAbility(Abilities.GatorGrip) ||
-        !source.checkMoveContact(event.move, unitTarget(target))
-      ) {
-        return;
-      }
-
-      gripping.add(source);
-      source.triggerAbility(Abilities.GatorGrip);
-      source.triggerMove(Moves.Bind, unitTarget(target), 0);
-      gripping.delete(source);
-    });
-  }),
+  // The Johto starters: each leaves its own element on whatever it
+  // lands a move on, and that thing pays for it every time it moves
+  createMarkAbility(Abilities.Sapmark, 'drink'),
+  createMarkAbility(Abilities.Embermark, 'kindle'),
+  createMarkAbility(Abilities.Jawmark, 'hold'),
 
   // Sentret: it is the one watching, so nothing catches its side
   // unawares

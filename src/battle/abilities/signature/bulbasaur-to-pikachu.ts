@@ -12,12 +12,7 @@ import {
 } from '../../../data/ids/moves';
 import { getMoveData } from '../../../data/moves';
 import type Battle from '../../core';
-import {
-  BattleEvents,
-  type CheckUnitMoveTimeEvent,
-  EffectType,
-  MoveTargetType,
-} from '../../events';
+import { BattleEvents, EffectType, MoveTargetType } from '../../events';
 import { MergedLifecycle } from '../../lifecycle';
 import { MULTI_HIT_MOVES } from '../../moves/multi-hit';
 import type Unit from '../../unit';
@@ -25,7 +20,7 @@ import { unitTarget } from '../../utils';
 import { createAbility } from '../__create';
 import {
   createDamageTaken,
-  createUnitCounter,
+  createFieldAbility,
   createUnitState,
   fieldHasAbility,
   isPhysicalMove,
@@ -39,27 +34,6 @@ import {
 function isTwinStingerMove(move: Moves): boolean {
   return isPhysicalMove(move) && MULTI_HIT_MOVES[move] == null;
 }
-
-/** What share of a blow the bulb keeps hold of */
-export const SEED_CACHE_BANK_FRACTION = 1 / 4;
-
-/** How far the bank can fill, as a share of the holder's max HP */
-export const SEED_CACHE_CAP_FRACTION = 1 / 2;
-
-/** What one landed Fire move takes off the wind-up */
-export const AFTERBURN_STEP = 0.15;
-
-/** How many of them the flame holds */
-export const AFTERBURN_MAX_STACKS = 3;
-
-/** What the pressure behind a shot is worth */
-export const OVERPRESSURE_POWER_SCALE = 1.3;
-
-/** What one shot leaves behind on the cannons */
-export const OVERPRESSURE_COOLDOWN_STEP = 0.2;
-
-/** How far the fouling builds */
-export const OVERPRESSURE_MAX_STACKS = 3;
 
 /** What each of the two needles is worth on its own */
 export const TWIN_STINGER_POWER_SCALE = 0.6;
@@ -98,143 +72,11 @@ function nextAlongTheArc(battle: Battle, source: Unit, struck: Unit): Unit | und
 }
 
 const bulbasaurToPikachu = [
-  // Bulbasaur: the seed on its back grows on what it is fed, so
-  // punching it is what loads the shot it fires back
-  createAbility(Abilities.SeedCache, (battle) => {
-    const { counter, lifecycles } = createUnitCounter(battle);
-    const damage = createDamageTaken(battle);
-
-    return new MergedLifecycle([
-      ...damage.lifecycles,
-      battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
-        const taken = damage.taken(event);
-
-        if (!event.success || taken == null || !event.target.hasAbility(Abilities.SeedCache)) {
-          return;
-        }
-
-        const target = event.target;
-        const cap = target.checkStat(Stats.HP, 0) * SEED_CACHE_CAP_FRACTION;
-
-        counter.set(target, Math.min(cap, counter.get(target) + taken * SEED_CACHE_BANK_FRACTION));
-      }),
-      // The bank rides on the blow itself rather than on the move's
-      // power, so a resisted Grass move still delivers all of it
-      battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, (event) => {
-        const parent = event.parent;
-        const source = parent.source;
-
-        if (
-          parent.type !== Types.Grass ||
-          parent.category === MoveCategories.Status ||
-          !source.hasAbility(Abilities.SeedCache)
-        ) {
-          return;
-        }
-
-        const bank = counter.get(source);
-
-        if (bank <= 0) {
-          return;
-        }
-
-        event.value += bank;
-
-        // The AI weighs a move by running this same resolver, so a
-        // bank it is only thinking about must survive the thought
-        if (!(parent.flags & MoveAttackFlags.Simulated)) {
-          counter.clear(source);
-          source.triggerAbility(Abilities.SeedCache);
-        }
-      }),
-      ...lifecycles,
-    ]);
-  }),
-
-  // Charmander: the tail flame feeds on its own fire, so a chain of
-  // hits winds the line up and a single whiff blows it out
-  createAbility(Abilities.Afterburn, (battle) => {
-    const { counter, lifecycles } = createUnitCounter(battle);
-
-    function discount(event: CheckUnitMoveTimeEvent): void {
-      const held = counter.get(event.source);
-
-      if (held > 0 && event.source.hasAbility(Abilities.Afterburn)) {
-        event.duration *= 1 - AFTERBURN_STEP * held;
-      }
-    }
-
-    return new MergedLifecycle([
-      battle.on(BattleEvents.UnitTriggerMoveRollHit, EventPriority.Post, (event) => {
-        const parent = event.parent;
-        const source = parent.source;
-
-        if (!source.hasAbility(Abilities.Afterburn)) {
-          return;
-        }
-
-        const fire = source.checkMoveType(parent.move, parent.target) === Types.Fire;
-
-        // Only landed Fire moves feed it, and nothing takes the heat
-        // back: a streak the AI cannot read is no design at all
-        if (!event.hit || !fire) {
-          return;
-        }
-
-        counter.set(source, Math.min(AFTERBURN_MAX_STACKS, counter.get(source) + 1));
-        source.triggerAbility(Abilities.Afterburn);
-      }),
-      battle.on(BattleEvents.CheckUnitMoveCastTime, EventPriority.Post, discount),
-      battle.on(BattleEvents.CheckUnitMoveChannelTime, EventPriority.Post, discount),
-      ...lifecycles,
-    ]);
-  }),
-
-  // Squirtle: the shell cannons are worth more the harder they are
-  // driven, and they foul as they go
-  createAbility(Abilities.Overpressure, (battle) => {
-    const { counter, lifecycles } = createUnitCounter(battle);
-
-    return new MergedLifecycle([
-      battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
-        if (
-          event.power != null &&
-          event.source.hasAbility(Abilities.Overpressure) &&
-          event.source.checkMoveType(event.move, event.target) === Types.Water
-        ) {
-          event.power *= OVERPRESSURE_POWER_SCALE;
-        }
-      }),
-      battle.on(BattleEvents.CheckUnitMoveCooldown, EventPriority.Post, (event) => {
-        const held = counter.get(event.source);
-
-        if (held > 0 && event.source.hasAbility(Abilities.Overpressure)) {
-          event.duration *= 1 + OVERPRESSURE_COOLDOWN_STEP * held;
-        }
-      }),
-      // Only a shot that lands fouls the cannons; anything else it
-      // reaches for vents them
-      battle.on(BattleEvents.UnitTriggerMoveRollHit, EventPriority.Post, (event) => {
-        const parent = event.parent;
-        const source = parent.source;
-
-        if (!source.hasAbility(Abilities.Overpressure)) {
-          return;
-        }
-
-        if (source.checkMoveType(parent.move, parent.target) !== Types.Water) {
-          counter.clear(source);
-          return;
-        }
-
-        if (event.hit) {
-          counter.set(source, Math.min(OVERPRESSURE_MAX_STACKS, counter.get(source) + 1));
-          source.triggerAbility(Abilities.Overpressure);
-        }
-      }),
-      ...lifecycles,
-    ]);
-  }),
+  // The Kanto starters: each tilts the field toward its own type and
+  // away from the one that type beats, its own side standing in it too
+  createFieldAbility(Abilities.VerdantField, Types.Grass, Types.Water),
+  createFieldAbility(Abilities.EmberField, Types.Fire, Types.Grass),
+  createFieldAbility(Abilities.DelugeField, Types.Water, Types.Fire),
 
   // Caterpie: dust drifts, so what it aims at one enemy settles over
   // the whole far side. The same widening a Boss gets

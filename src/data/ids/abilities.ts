@@ -301,9 +301,9 @@ const enum Abilities {
    * They sit outside the pools walk, so a line's four ordinary
    * abilities stay four
    */
-  SeedCache = 200001,
-  Afterburn = 200002,
-  Overpressure = 200003,
+  VerdantField = 200001,
+  EmberField = 200002,
+  DelugeField = 200003,
   PowderBurst = 200004,
   TwinStinger = 200005,
   Slipstream = 200006,
@@ -379,9 +379,9 @@ const enum Abilities {
   SereneStorm = 200076,
   GeneticApex = 200077,
   AncestralMemory = 200078,
-  PetalBed = 200079,
-  Ignition = 200080,
-  GatorGrip = 200081,
+  Sapmark = 200079,
+  Embermark = 200080,
+  Jawmark = 200081,
   Sentry = 200082,
   WatchfulRoost = 200083,
   Relay = 200084,

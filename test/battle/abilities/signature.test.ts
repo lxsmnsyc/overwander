@@ -5,6 +5,13 @@ import registerAbilities, {
 } from '../../../src/data/abilities';
 import { SIGNATURE_ABILITIES } from '../../../src/battle/abilities/signature';
 import {
+  FIELD_LOWERED_SCALE,
+  FIELD_RAISED_SCALE,
+  GROWTH_MAX_STAGES,
+  MARK_DEEP_FRACTION,
+  MARK_FRACTION,
+} from '../../../src/battle/abilities/signature/__create';
+import {
   BACKLASH_SHARE,
   BULLY_SCALE,
   ESCORT_SCALE,
@@ -12,7 +19,6 @@ import {
   MIND_FOG_SCALE,
   MOMENTUM_MAX_STACKS,
   MOMENTUM_STEP,
-  PETAL_BED_FRACTION,
   RAINBOW_REKINDLING_FRACTION,
   SAND_RIDER_SCALE,
   SHARED_MISERY_THRESHOLD,
@@ -38,17 +44,10 @@ import {
 } from '../../../src/battle/abilities/signature/eevee-to-dragonite';
 import { AttackPriority } from '../../../src/core/event-emitter';
 import {
-  AFTERBURN_MAX_STACKS,
-  AFTERBURN_STEP,
   CHAIN_LIGHTNING_FRACTION,
   NIBBLE_FRACTION,
-  OVERPRESSURE_COOLDOWN_STEP,
-  OVERPRESSURE_MAX_STACKS,
-  OVERPRESSURE_POWER_SCALE,
   RELENTLESS_MAX_STACKS,
   RELENTLESS_STEP,
-  SEED_CACHE_BANK_FRACTION,
-  SEED_CACHE_CAP_FRACTION,
   SLIPSTREAM_SCALE,
   SQUEEZE_FRACTION,
   SQUEEZE_INTERVAL,
@@ -156,7 +155,6 @@ import {
 import { Statuses, TeamStatuses, Weathers } from '../../../src/data/ids/status';
 import turns from '../../../src/battle/turn';
 import { layersUnder } from '../../../src/battle/moves/spikes';
-import { GROWTH_MAX_STAGES } from '../../../src/battle/abilities/signature/__create';
 import { PACK_HUNT_SCALE } from '../../../src/battle/abilities/signature/treecko-to-deoxys';
 import { unitTarget } from '../../../src/battle/utils';
 import { SWITCHING_SPAN } from '../../../src/battle/status/switching';
@@ -177,121 +175,6 @@ function dealDamage(
   attacker.attack(defender, move, power, type, category, 0);
   return before - defender.health;
 }
-
-describe('Seed Cache', () => {
-  it('banks a quarter of what it takes and spends it on a Grass move', () => {
-    const { battle, teamA, teamB } = createBattle();
-    pinRandom(battle, 1);
-    const holder = createUnit(battle, teamA);
-    const enemy = createUnit(battle, teamB);
-    holder.addAbility(Abilities.SeedCache);
-
-    enemy.damage(NONE_CAUSE, holder, 40, 0);
-
-    const spent = dealDamage(
-      holder,
-      enemy,
-      Moves.VineWhip,
-      45,
-      Types.Grass,
-      MoveCategories.Physical,
-    );
-    const plain = dealDamage(
-      holder,
-      enemy,
-      Moves.VineWhip,
-      45,
-      Types.Grass,
-      MoveCategories.Physical,
-    );
-
-    expect(spent - plain).toBeCloseTo(40 * SEED_CACHE_BANK_FRACTION, 5);
-  });
-
-  it('empties the bank once it is spent, and only Grass spends it', () => {
-    const { battle, teamA, teamB } = createBattle();
-    pinRandom(battle, 1);
-    const holder = createUnit(battle, teamA);
-    const enemy = createUnit(battle, teamB);
-    holder.addAbility(Abilities.SeedCache);
-
-    enemy.damage(NONE_CAUSE, holder, 40, 0);
-
-    const normal = dealDamage(
-      holder,
-      enemy,
-      Moves.Tackle,
-      40,
-      Types.Normal,
-      MoveCategories.Physical,
-    );
-    const plainNormal = dealDamage(
-      holder,
-      enemy,
-      Moves.Tackle,
-      40,
-      Types.Normal,
-      MoveCategories.Physical,
-    );
-
-    // A Normal move leaves the bank where it is
-    expect(normal).toBeCloseTo(plainNormal, 5);
-
-    const first = dealDamage(
-      holder,
-      enemy,
-      Moves.VineWhip,
-      45,
-      Types.Grass,
-      MoveCategories.Physical,
-    );
-    const second = dealDamage(
-      holder,
-      enemy,
-      Moves.VineWhip,
-      45,
-      Types.Grass,
-      MoveCategories.Physical,
-    );
-
-    expect(first - second).toBeCloseTo(40 * SEED_CACHE_BANK_FRACTION, 5);
-  });
-
-  it('fills no further than half its HP', () => {
-    const { battle, teamA, teamB } = createBattle();
-    pinRandom(battle, 1);
-    const holder = createUnit(battle, teamA);
-    const enemy = createUnit(battle, teamB);
-    holder.addAbility(Abilities.SeedCache);
-
-    const maxHP = holder.checkStat(Stats.HP, 0);
-
-    // Fed far past the cap, healed back each time so it survives
-    for (let i = 0; i < 20; i += 1) {
-      enemy.damage(NONE_CAUSE, holder, 100, 0);
-      holder.setHealth(maxHP);
-    }
-
-    const spent = dealDamage(
-      holder,
-      enemy,
-      Moves.VineWhip,
-      45,
-      Types.Grass,
-      MoveCategories.Physical,
-    );
-    const plain = dealDamage(
-      holder,
-      enemy,
-      Moves.VineWhip,
-      45,
-      Types.Grass,
-      MoveCategories.Physical,
-    );
-
-    expect(spent - plain).toBeCloseTo(maxHP * SEED_CACHE_CAP_FRACTION, 5);
-  });
-});
 
 /** The unit reaching for a move, which is when a residual is paid */
 function act(battle: Battle, unit: Unit): void {
@@ -364,7 +247,70 @@ function rolled(battle: Battle, source: Unit, target: Unit, move: Moves): boolea
   return event.hit;
 }
 
-/** One resolved use of a move, landed or missed */
+describe('the Kanto starters', () => {
+  const FIELDS = [
+    {
+      name: 'Verdant Field',
+      ability: Abilities.VerdantField,
+      raised: Types.Grass,
+      lowered: Types.Water,
+    },
+    {
+      name: 'Ember Field',
+      ability: Abilities.EmberField,
+      raised: Types.Fire,
+      lowered: Types.Grass,
+    },
+    {
+      name: 'Deluge Field',
+      ability: Abilities.DelugeField,
+      raised: Types.Water,
+      lowered: Types.Fire,
+    },
+  ];
+
+  function resolve(battle: Battle, attacker: Unit, target: Unit, type: Types): number {
+    const event = {
+      id: 'UnitAttackResolveDamage',
+      disabled: false,
+      parent: makeAttack(attacker, target, Moves.Pound, type, MoveCategories.Special),
+      value: 0,
+    };
+    battle.emit(BattleEvents.UnitAttackResolveDamage, event);
+    return event.value;
+  }
+
+  for (const { name, ability, raised, lowered } of FIELDS) {
+    it(`tilts the field both ways for ${name}`, () => {
+      const { battle, teamA, teamB } = createBattle();
+      // The damage roll is pinned, so the blows differ only by the tilt
+      pinRandom(battle, 0);
+      const holder = createUnit(battle, teamA);
+      const enemy = createUnit(battle, teamB);
+
+      const bareRaised = resolve(battle, enemy, holder, raised);
+      const bareLowered = resolve(battle, enemy, holder, lowered);
+
+      holder.addAbility(ability);
+
+      // Both sides stand in it: this is the enemy throwing them
+      expect(resolve(battle, enemy, holder, raised)).toBeCloseTo(
+        bareRaised * FIELD_RAISED_SCALE,
+        5,
+      );
+      expect(resolve(battle, enemy, holder, lowered)).toBeCloseTo(
+        bareLowered * FIELD_LOWERED_SCALE,
+        5,
+      );
+      // Anything else is thrown as usual
+      expect(resolve(battle, enemy, holder, Types.Normal)).toBeCloseTo(
+        resolve(battle, holder, enemy, Types.Normal),
+        5,
+      );
+    });
+  }
+});
+
 function rollMove(battle: Battle, source: Unit, target: Unit, move: Moves, hit: boolean): void {
   battle.emit(BattleEvents.UnitTriggerMoveRollHit, {
     id: 'UnitTriggerMoveRollHit',
@@ -380,145 +326,6 @@ function rollMove(battle: Battle, source: Unit, target: Unit, move: Moves, hit: 
     hit,
   });
 }
-
-describe('Afterburn', () => {
-  it('shortens the wind-up by a step for each Fire move it lands', () => {
-    const { battle, teamA, teamB } = createBattle();
-    const holder = createUnit(battle, teamA);
-    const enemy = createUnit(battle, teamB);
-    holder.addAbility(Abilities.Afterburn);
-
-    const target = { type: MoveTargetType.Unit, unit: enemy } as const;
-    const bare = holder.checkMoveCastTime(Moves.Flamethrower, target);
-
-    expect(bare).toBeGreaterThan(0);
-
-    for (let landed = 1; landed <= AFTERBURN_MAX_STACKS; landed += 1) {
-      rollMove(battle, holder, enemy, Moves.Flamethrower, true);
-
-      expect(holder.checkMoveCastTime(Moves.Flamethrower, target)).toBeCloseTo(
-        bare * (1 - AFTERBURN_STEP * landed),
-        5,
-      );
-    }
-
-    // Past the cap it holds where it is
-    rollMove(battle, holder, enemy, Moves.Flamethrower, true);
-
-    expect(holder.checkMoveCastTime(Moves.Flamethrower, target)).toBeCloseTo(
-      bare * (1 - AFTERBURN_STEP * AFTERBURN_MAX_STACKS),
-      5,
-    );
-  });
-
-  it('holds the heat through a miss and through a move of another type', () => {
-    const { battle, teamA, teamB } = createBattle();
-    // 100 accuracy is the ceiling, so a pinned roll misses anything short of it
-    pinRandom(battle, 1);
-    const holder = createUnit(battle, teamA);
-    const enemy = createUnit(battle, teamB);
-    holder.addAbility(Abilities.Afterburn);
-
-    const target = { type: MoveTargetType.Unit, unit: enemy } as const;
-    const bare = holder.checkMoveCastTime(Moves.Flamethrower, target);
-
-    rollMove(battle, holder, enemy, Moves.Flamethrower, true);
-    rollMove(battle, holder, enemy, Moves.FireBlast, false);
-    rollMove(battle, holder, enemy, Moves.Tackle, true);
-
-    // One Fire move landed, and neither the miss nor the Tackle undid it
-    expect(holder.checkMoveCastTime(Moves.Flamethrower, target)).toBeCloseTo(
-      bare * (1 - AFTERBURN_STEP),
-      5,
-    );
-  });
-
-  it('comes back on the field with the flame it started with', () => {
-    const { battle, teamA, teamB } = createBattle();
-    const holder = createUnit(battle, teamA);
-    const enemy = createUnit(battle, teamB);
-    holder.addAbility(Abilities.Afterburn);
-
-    const target = { type: MoveTargetType.Unit, unit: enemy } as const;
-    const bare = holder.checkMoveCastTime(Moves.Flamethrower, target);
-
-    rollMove(battle, holder, enemy, Moves.Flamethrower, true);
-
-    battle.emit(BattleEvents.UnitEntersField, {
-      id: 'UnitEntersField',
-      disabled: false,
-      source: holder,
-      reactivation: false,
-    });
-
-    expect(holder.checkMoveCastTime(Moves.Flamethrower, target)).toBe(bare);
-  });
-});
-
-describe('Overpressure', () => {
-  it('drives Water moves harder', () => {
-    const { battle, teamA, teamB } = createBattle();
-    const holder = createUnit(battle, teamA);
-    const enemy = createUnit(battle, teamB);
-    holder.addAbility(Abilities.Overpressure);
-
-    const target = { type: MoveTargetType.Unit, unit: enemy } as const;
-    const water = holder.checkMovePower(Moves.WaterGun, target);
-    const other = holder.checkMovePower(Moves.Tackle, target);
-
-    expect(water).toBeCloseTo(40 * OVERPRESSURE_POWER_SCALE, 5);
-    expect(other).toBe(40);
-  });
-
-  it('fouls its cooldowns with every shot that lands, and vents on another type', () => {
-    const { battle, teamA, teamB } = createBattle();
-    const holder = createUnit(battle, teamA);
-    const enemy = createUnit(battle, teamB);
-    holder.addAbility(Abilities.Overpressure);
-
-    const target = { type: MoveTargetType.Unit, unit: enemy } as const;
-    const bare = holder.checkMoveCooldown(Moves.WaterGun, target);
-
-    expect(bare).toBeGreaterThan(0);
-
-    for (let landed = 1; landed <= OVERPRESSURE_MAX_STACKS; landed += 1) {
-      rollMove(battle, holder, enemy, Moves.WaterGun, true);
-
-      expect(holder.checkMoveCooldown(Moves.WaterGun, target)).toBeCloseTo(
-        bare * (1 + OVERPRESSURE_COOLDOWN_STEP * landed),
-        5,
-      );
-    }
-
-    // Past the cap the fouling holds where it is
-    rollMove(battle, holder, enemy, Moves.WaterGun, true);
-
-    expect(holder.checkMoveCooldown(Moves.WaterGun, target)).toBeCloseTo(
-      bare * (1 + OVERPRESSURE_COOLDOWN_STEP * OVERPRESSURE_MAX_STACKS),
-      5,
-    );
-
-    rollMove(battle, holder, enemy, Moves.Tackle, true);
-
-    expect(holder.checkMoveCooldown(Moves.WaterGun, target)).toBe(bare);
-  });
-
-  it('leaves the cannons clean when a shot misses', () => {
-    const { battle, teamA, teamB } = createBattle();
-    // 100 accuracy is the ceiling, so a pinned roll misses anything short of it
-    pinRandom(battle, 1);
-    const holder = createUnit(battle, teamA);
-    const enemy = createUnit(battle, teamB);
-    holder.addAbility(Abilities.Overpressure);
-
-    const target = { type: MoveTargetType.Unit, unit: enemy } as const;
-    const bare = holder.checkMoveCooldown(Moves.WaterGun, target);
-
-    rollMove(battle, holder, enemy, Moves.HydroPump, false);
-
-    expect(holder.checkMoveCooldown(Moves.WaterGun, target)).toBe(bare);
-  });
-});
 
 describe('Slipstream', () => {
   it('shortens every wind-up on the field, the enemy included', () => {
@@ -2552,76 +2359,80 @@ describe('Ancestral Memory', () => {
   });
 });
 
-describe('Petal Bed', () => {
-  it('mends its allies as they act, and never itself', () => {
-    const { battle, teamA } = createBattle();
-    const flower = createUnit(battle, teamA);
-    const ally = createUnit(battle, teamA);
-    flower.addAbility(Abilities.PetalBed);
-
-    const maxHP = ally.checkStat(Stats.HP, 0);
-    ally.setHealth(maxHP / 2);
-    flower.setHealth(maxHP / 2);
-
-    act(battle, ally);
-
-    expect(ally.health).toBeCloseTo(maxHP / 2 + maxHP * PETAL_BED_FRACTION, 5);
-
-    act(battle, flower);
-
-    expect(flower.health).toBeCloseTo(maxHP / 2, 5);
-  });
-});
-
-describe('Ignition', () => {
-  it('casts Will-O-Wisp at an enemy as it arrives', () => {
+describe('the Johto starters', () => {
+  it('marks what Sapmark lands on, and drinks the same', () => {
     const { battle, teamA, teamB } = createBattle();
-    pinRandom(battle, 0);
     const holder = createUnit(battle, teamA);
     const enemy = createUnit(battle, teamB);
-    holder.addAbility(Abilities.Ignition);
+    holder.addAbility(Abilities.Sapmark);
 
-    let cast: Moves | undefined;
-    battle.on(BattleEvents.UnitTriggerMove, AttackPriority.Post, (event) => {
-      if (event.source === holder) {
-        cast = event.move;
-      }
-    });
+    const maxHP = holder.checkStat(Stats.HP, 0);
+    holder.setHealth(maxHP / 2);
 
-    battle.emit(BattleEvents.UnitEntersField, {
-      id: 'UnitEntersField',
-      disabled: false,
-      source: holder,
-      reactivation: false,
-    });
+    // Nothing is marked until something lands
+    act(battle, enemy);
 
-    expect(cast).toBe(Moves.WillOWisp);
-
-    // The cast move takes its own flight time to arrive
-    battle.tick(turns(1));
-
-    expect(enemy.status[Statuses.Burned]).not.toBeUndefined();
-  });
-});
-
-describe('Gator Grip', () => {
-  it('casts Bind on whatever it bites', () => {
-    const { battle, teamA, teamB } = createBattle();
-    pinRandom(battle, 0);
-    const holder = createUnit(battle, teamA);
-    const enemy = createUnit(battle, teamB);
-    holder.addAbility(Abilities.GatorGrip);
-
-    holder.attack(enemy, Moves.Ember, 40, Types.Fire, MoveCategories.Special, 0);
-
-    expect(enemy.status[Statuses.Trapped]).toBeUndefined();
+    expect(enemy.health).toBe(enemy.checkStat(Stats.HP, 0));
 
     holder.attack(enemy, Moves.Pound, 40, Types.Normal, MoveCategories.Physical, 0);
 
-    // The cast move takes its own flight time to arrive
-    battle.tick(turns(1));
+    const before = enemy.health;
+    holder.setHealth(maxHP / 2);
 
-    expect(enemy.status[Statuses.Trapped]).not.toBeUndefined();
+    act(battle, enemy);
+
+    const share = enemy.checkStat(Stats.HP, 0) * MARK_FRACTION;
+
+    expect(enemy.health).toBeCloseTo(before - share, 5);
+    expect(holder.health).toBeCloseTo(maxHP / 2 + share, 5);
+  });
+
+  it('bites deeper with Embermark once the target is burning', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Embermark);
+
+    holder.attack(enemy, Moves.Pound, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    const maxHP = enemy.checkStat(Stats.HP, 0);
+    let before = enemy.health;
+
+    act(battle, enemy);
+
+    expect(enemy.health).toBeCloseTo(before - maxHP * MARK_FRACTION, 5);
+
+    enemy.addStatus(Statuses.Burned, NONE_CAUSE);
+    before = enemy.health;
+
+    act(battle, enemy);
+
+    // The burn's own residual rides on top, so only the floor is checked
+    expect(enemy.health).toBeLessThanOrEqual(before - maxHP * MARK_DEEP_FRACTION);
+  });
+
+  it('holds one thing at a time with Jawmark', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const first = createUnit(battle, teamB);
+    const second = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Jawmark);
+
+    holder.attack(first, Moves.Pound, 40, Types.Normal, MoveCategories.Physical, 0);
+    holder.attack(second, Moves.Pound, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    const firstHealth = first.health;
+    const secondBefore = second.health;
+
+    act(battle, first);
+    act(battle, second);
+
+    // The jaw let the first one go when it took the second
+    expect(first.health).toBe(firstHealth);
+    expect(second.health).toBeCloseTo(
+      secondBefore - second.checkStat(Stats.HP, 0) * MARK_DEEP_FRACTION,
+      5,
+    );
   });
 });
 

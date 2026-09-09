@@ -412,4 +412,31 @@ export default function registerSignatureAbilities(): void {
     name: 'Bullheaded',
     description: 'Its contact moves hit 1.3x, and everything hits it 1.15x in return.',
   });
+
+  // Magikarp
+  registerAbility(Abilities.LateBloomer, {
+    name: 'Late Bloomer',
+    description:
+      'Its moves hit 5% harder for every 10 seconds it has been in the fight, up to 1.5x.',
+  });
+
+  // Lapras
+  registerAbility(Abilities.SafePassage, {
+    name: 'Safe Passage',
+    description:
+      'Its allies cannot be stopped from fleeing, and statuses on them run out 25% faster.',
+  });
+
+  // Ditto
+  registerAbility(Abilities.AdaptiveCell, {
+    name: 'Adaptive Cell',
+    description:
+      'It takes 0.5x from the type of the last move that hit it, until a move of another type lands.',
+  });
+
+  // Eevee
+  registerAbility(Abilities.LatentPotential, {
+    name: 'Latent Potential',
+    description: 'Whichever of its five battle stats is lowest counts 1.3x.',
+  });
 }

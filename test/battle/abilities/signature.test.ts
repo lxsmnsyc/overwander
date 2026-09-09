@@ -4,6 +4,7 @@ import registerAbilities, {
   getRegisteredAbilities,
 } from '../../../src/data/abilities';
 import { SIGNATURE_ABILITIES } from '../../../src/battle/abilities/signature';
+import { LATENT_POTENTIAL_SCALE } from '../../../src/battle/abilities/signature/eevee-to-dragonite';
 import { AttackPriority } from '../../../src/core/event-emitter';
 import {
   AFTERBURN_MAX_STACKS,
@@ -23,6 +24,7 @@ import {
   TWIN_STINGER_POWER_SCALE,
 } from '../../../src/battle/abilities/signature/bulbasaur-to-pikachu';
 import {
+  ADAPTIVE_CELL_SCALE,
   BLAST_FURNACE_CHANCE,
   BULLHEADED_EXPOSED_SCALE,
   BULLHEADED_POWER_SCALE,
@@ -31,6 +33,9 @@ import {
   HEAVY_PINCER_SCALE,
   HEAVY_PINCER_THRESHOLD,
   ICY_CHARM_SCALE,
+  LATE_BLOOMER_INTERVAL,
+  LATE_BLOOMER_MAX_STACKS,
+  LATE_BLOOMER_STEP,
   MIMED_BARRIER_ALLY_SCALE,
   MIMED_BARRIER_SELF_SCALE,
   MOTHERS_SHIELD_THRESHOLD,
@@ -38,6 +43,7 @@ import {
   OVERLOAD_SPEED_SCALE,
   OVERLOAD_THRESHOLD,
   PSYSEED_FRACTION,
+  SAFE_PASSAGE_STATUS_SCALE,
   SECOND_WIND_HEAL_FRACTION,
   SECOND_WIND_THRESHOLD,
   SMOG_SCREEN_ACCURACY_SCALE,
@@ -2189,5 +2195,108 @@ describe('the signature registry', () => {
       expect(data.name.length).toBeGreaterThan(0);
       expect(data.description.endsWith('.')).toBe(true);
     }
+  });
+});
+
+describe('Late Bloomer', () => {
+  it('grows with every stretch of the fight, up to its ceiling', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.LateBloomer);
+
+    const target = { type: MoveTargetType.Unit, unit: enemy } as const;
+
+    expect(holder.checkMovePower(Moves.Pound, target)).toBe(40);
+
+    battle.tick(LATE_BLOOMER_INTERVAL);
+
+    expect(holder.checkMovePower(Moves.Pound, target)).toBeCloseTo(40 * (1 + LATE_BLOOMER_STEP), 5);
+
+    battle.tick(LATE_BLOOMER_INTERVAL * (LATE_BLOOMER_MAX_STACKS + 4));
+
+    expect(holder.checkMovePower(Moves.Pound, target)).toBeCloseTo(
+      40 * (1 + LATE_BLOOMER_STEP * LATE_BLOOMER_MAX_STACKS),
+      5,
+    );
+  });
+});
+
+describe('Safe Passage', () => {
+  it('carries its allies past a trap and past a status', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const ferry = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    ferry.addAbility(Abilities.SafePassage);
+
+    ally.addStatus(Statuses.Cornered, NONE_CAUSE);
+    enemy.addStatus(Statuses.Cornered, NONE_CAUSE);
+
+    expect(ally.checkEscape()).toBe(true);
+    expect(enemy.checkEscape()).toBe(false);
+
+    const bare = enemy.checkStatusDuration(Statuses.Sleeping, turns(3), NONE_CAUSE);
+
+    expect(ally.checkStatusDuration(Statuses.Sleeping, turns(3), NONE_CAUSE)).toBeCloseTo(
+      bare * SAFE_PASSAGE_STATUS_SCALE,
+      5,
+    );
+  });
+});
+
+describe('Adaptive Cell', () => {
+  it('learns the last shape that hit it and forgets it for a new one', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.AdaptiveCell);
+
+    const fire = makeAttack(enemy, holder, Moves.Ember, Types.Fire, MoveCategories.Special);
+    const normal = makeAttack(enemy, holder, Moves.Pound, Types.Normal, MoveCategories.Physical);
+
+    expect(resolveAttackStat(battle, fire, enemy, Stats.SpecialAttack, 100)).toBe(100);
+
+    enemy.attack(holder, Moves.Ember, 40, Types.Fire, MoveCategories.Special, 0);
+
+    expect(resolveAttackStat(battle, fire, enemy, Stats.SpecialAttack, 100)).toBeCloseTo(
+      100 * ADAPTIVE_CELL_SCALE,
+      5,
+    );
+    expect(resolveAttackStat(battle, normal, enemy, Stats.Attack, 100)).toBe(100);
+
+    enemy.attack(holder, Moves.Pound, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(resolveAttackStat(battle, normal, enemy, Stats.Attack, 100)).toBeCloseTo(
+      100 * ADAPTIVE_CELL_SCALE,
+      5,
+    );
+    expect(resolveAttackStat(battle, fire, enemy, Stats.SpecialAttack, 100)).toBe(100);
+  });
+});
+
+describe('Latent Potential', () => {
+  it('raises whichever stat is furthest behind', () => {
+    const { battle, teamA } = createBattle();
+    const holder = createUnit(battle, teamA);
+    holder.addAbility(Abilities.LatentPotential);
+
+    const bare = createUnit(battle, teamA);
+    holder.setStat(StatsKind.Base, Stats.Speed, 40);
+    bare.setStat(StatsKind.Base, Stats.Speed, 40);
+
+    // Speed is now its worst, so Speed is what the potential goes into
+    expect(holder.checkStat(Stats.Speed, 0)).toBeCloseTo(
+      bare.checkStat(Stats.Speed, 0) * LATENT_POTENTIAL_SCALE,
+      5,
+    );
+    expect(holder.checkStat(Stats.Attack, 0)).toBe(bare.checkStat(Stats.Attack, 0));
+
+    // Lift it above the rest and the potential moves elsewhere
+    holder.setStat(StatsKind.Base, Stats.Speed, 200);
+    bare.setStat(StatsKind.Base, Stats.Speed, 200);
+
+    expect(holder.checkStat(Stats.Speed, 0)).toBe(bare.checkStat(Stats.Speed, 0));
   });
 });

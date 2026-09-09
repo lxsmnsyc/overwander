@@ -1,5 +1,6 @@
 import type Battle from '../../core';
 import bulbasaurToPikachu from './bulbasaur-to-pikachu';
+import eeveeToDragonite from './eevee-to-dragonite';
 import geodudeToDrowzee from './geodude-to-drowzee';
 import krabbyToPinsir from './krabby-to-pinsir';
 import parasToTentacool from './paras-to-tentacool';
@@ -15,6 +16,7 @@ const setupAbilities = [
   ...parasToTentacool,
   ...geodudeToDrowzee,
   ...krabbyToPinsir,
+  ...eeveeToDragonite,
 ];
 
 /**

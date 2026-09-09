@@ -73,6 +73,17 @@ export const BLAST_FURNACE_CHANCE = 0.3;
 /** What catching something mid-swing is worth */
 export const SNAPJAW_SCALE = 1.5;
 
+/** What each stretch of the fight adds, how long a stretch is, and the ceiling */
+export const LATE_BLOOMER_STEP = 0.05;
+export const LATE_BLOOMER_INTERVAL = 10000;
+export const LATE_BLOOMER_MAX_STACKS = 10;
+
+/** What the ferry takes off a status its passengers are carrying */
+export const SAFE_PASSAGE_STATUS_SCALE = 0.75;
+
+/** What a shape it has already worn takes off the next blow like it */
+export const ADAPTIVE_CELL_SCALE = 0.5;
+
 /** What fighting with no guard is worth, and what it costs */
 export const BULLHEADED_POWER_SCALE = 1.3;
 export const BULLHEADED_EXPOSED_SCALE = 1.15;
@@ -97,6 +108,21 @@ function heldBerry(unit: Unit): Items | undefined {
   }
 
   return undefined;
+}
+
+/** Whether a ferry is standing on this unit's side */
+function carriedBy(battle: Battle, unit: Unit): boolean {
+  for (const ferry of battle.units()) {
+    if (
+      ferry.alive &&
+      ferry.team.alliance === unit.team.alliance &&
+      ferry.hasAbility(Abilities.SafePassage)
+    ) {
+      return true;
+    }
+  }
+
+  return false;
 }
 
 /** Whether anybody else on its side is still standing */
@@ -681,6 +707,90 @@ const krabbyToPinsir = [
         }),
       ]),
   ),
+
+  // Magikarp: it is worth nothing early and everything late, counted
+  // from when it arrived rather than from the first bell
+  createAbility(Abilities.LateBloomer, (battle) => {
+    let elapsed = 0;
+
+    return new MergedLifecycle([
+      battle.on(BattleEvents.Tick, EventPriority.Post, (event) => {
+        elapsed += event.duration;
+      }),
+      battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
+        const grown = Math.min(
+          LATE_BLOOMER_MAX_STACKS,
+          Math.floor(elapsed / LATE_BLOOMER_INTERVAL),
+        );
+
+        if (event.power != null && grown > 0 && event.source.hasAbility(Abilities.LateBloomer)) {
+          event.power *= 1 + LATE_BLOOMER_STEP * grown;
+        }
+      }),
+    ]);
+  }),
+
+  // Lapras: it carries the party rather than shielding it. The escape
+  // answer runs after every other one, since restoring a refusal is
+  // only meaningful once the refusals have been made
+  createAbility(
+    Abilities.SafePassage,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.CheckUnitEscape, EventPriority.Post, (event) => {
+          if (event.success || !carriedBy(battle, event.source)) {
+            return;
+          }
+
+          event.success = true;
+        }),
+        battle.on(BattleEvents.CheckUnitStatusDuration, EventPriority.Post, (event) => {
+          if (carriedBy(battle, event.source)) {
+            event.duration *= SAFE_PASSAGE_STATUS_SCALE;
+          }
+        }),
+      ]),
+  ),
+
+  // Ditto: it takes the shape of whatever hit it last, so the same blow
+  // twice is worth half the second time
+  createAbility(Abilities.AdaptiveCell, (battle) => {
+    const { state, lifecycles } = createUnitState<Types>(battle);
+
+    return new MergedLifecycle([
+      battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
+        const cause = event.cause;
+        const target = event.target;
+
+        if (
+          !event.success ||
+          event.flags & DamageFlags.Indirect ||
+          cause.type !== EffectType.Move ||
+          cause.unit === target ||
+          !target.hasAbility(Abilities.AdaptiveCell)
+        ) {
+          return;
+        }
+
+        target.triggerAbility(Abilities.AdaptiveCell);
+
+        state.set(target, cause.unit.checkMoveType(cause.move, unitTarget(target)));
+      }),
+      battle.on(BattleEvents.UnitAttackResolveStat, EventPriority.Post, (event) => {
+        const parent = event.parent;
+
+        if (
+          event.unit === parent.source &&
+          (event.stat === Stats.Attack || event.stat === Stats.SpecialAttack) &&
+          parent.target.hasAbility(Abilities.AdaptiveCell) &&
+          state.get(parent.target) === parent.type
+        ) {
+          event.value *= ADAPTIVE_CELL_SCALE;
+        }
+      }),
+      ...lifecycles,
+    ]);
+  }),
 ];
 
 export default krabbyToPinsir;

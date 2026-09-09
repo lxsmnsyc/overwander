@@ -364,6 +364,10 @@ const enum Abilities {
   BlastFurnace = 200061,
   Snapjaw = 200062,
   Bullheaded = 200063,
+  LateBloomer = 200064,
+  SafePassage = 200065,
+  AdaptiveCell = 200066,
+  LatentPotential = 200067,
 }
 
 export default Abilities;

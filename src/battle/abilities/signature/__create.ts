@@ -1,12 +1,14 @@
 import { AttackPriority, EventPriority } from '../../../core/event-emitter';
+import type { Stages } from '../../../data/constants/stats';
 import { Stats } from '../../../data/constants/stats';
 import type Abilities from '../../../data/ids/abilities';
-import { MoveCategories, Moves } from '../../../data/ids/moves';
+import { DamageFlags, MoveCategories, Moves } from '../../../data/ids/moves';
 import { getMoveData } from '../../../data/moves';
 import type Battle from '../../core';
-import { BattleEvents, type UnitDamageEvent } from '../../events';
+import { BattleEvents, EffectType, type UnitDamageEvent } from '../../events';
 import type { Lifecycle } from '../../lifecycle';
 import type Unit from '../../unit';
+import { createAbility } from '../__create';
 
 /**
  * What the signature abilities that remember something share: state
@@ -233,6 +235,44 @@ export const BATTLE_STATS = [
  * for a stat emits the same event the caller is answering, so the
  * measurement raises a flag the caller checks before it does anything
  */
+/**
+ * What the three legendary beasts share: the first blow that would
+ * finish one leaves it standing on 1 HP, cured of whatever it was
+ * carrying, and a stage sharper in the stat that beast is built on.
+ * Once per battle rather than once per arrival, the way a revival is
+ */
+export function createRisenAbility(
+  ability: Abilities,
+  stage: Stages,
+): ((battle: Battle) => void) & { ability: Abilities } {
+  return createAbility(ability, (battle) => {
+    const spent = new Set<Unit>();
+
+    return battle.on(BattleEvents.UnitDamage, AttackPriority.Pre, (event) => {
+      const target = event.target;
+
+      if (
+        !target.alive ||
+        event.flags & DamageFlags.Indirect ||
+        event.value < target.health ||
+        spent.has(target) ||
+        !target.hasAbility(ability)
+      ) {
+        return;
+      }
+
+      spent.add(target);
+      event.value = target.health - 1;
+
+      const cause = { type: EffectType.Ability, ability, unit: target } as const;
+
+      target.triggerAbility(ability);
+      target.cure(cause);
+      target.addStage(stage, 1, cause);
+    });
+  });
+}
+
 /**
  * The mean of a unit's five battle stats, with the same guard the
  * extremes carry: reading the stats asks the stat check again, and a

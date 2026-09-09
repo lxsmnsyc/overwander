@@ -3705,3 +3705,57 @@ describe('Cowbell', () => {
     expect(enemy.status[Statuses.Burned]).not.toBeUndefined();
   });
 });
+
+describe('the risen beasts', () => {
+  const RISEN = [
+    { name: 'Risen Thunder', ability: Abilities.RisenThunder, stage: Stages.Speed },
+    { name: 'Risen Flame', ability: Abilities.RisenFlame, stage: Stages.Attack },
+    { name: 'Risen Tide', ability: Abilities.RisenTide, stage: Stages.Defense },
+  ];
+
+  for (const { name, ability, stage } of RISEN) {
+    it(`gets ${name} back up once, cured and a stage sharper`, () => {
+      const { battle, teamA, teamB } = createBattle();
+      const holder = createUnit(battle, teamA);
+      const enemy = createUnit(battle, teamB);
+      holder.addAbility(ability);
+      holder.addStatus(Statuses.Burned, NONE_CAUSE);
+
+      const maxHP = holder.checkStat(Stats.HP, 0);
+
+      enemy.damage({ type: EffectType.Move, move: Moves.Pound, unit: enemy }, holder, maxHP * 2, 0);
+
+      expect(holder.alive).toBe(true);
+      expect(holder.health).toBe(1);
+      expect(holder.status[Statuses.Burned]).toBeUndefined();
+      expect(holder.stages[stage]).toBe(1);
+
+      // The tower burns once: the next one finishes it
+      holder.setHealth(maxHP);
+      enemy.damage({ type: EffectType.Move, move: Moves.Pound, unit: enemy }, holder, maxHP * 2, 0);
+
+      expect(holder.alive).toBe(false);
+    });
+  }
+});
+
+describe('Tyrant', () => {
+  it('holds the far side down where it is', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Tyrant);
+
+    enemy.addStage(Stages.Attack, 2, NONE_CAUSE);
+
+    expect(enemy.stages[Stages.Attack]).toBe(0);
+
+    // Drops still land on them, and its own side builds as it likes
+    enemy.addStage(Stages.Attack, -1, NONE_CAUSE);
+    ally.addStage(Stages.Attack, 2, NONE_CAUSE);
+
+    expect(enemy.stages[Stages.Attack]).toBe(-1);
+    expect(ally.stages[Stages.Attack]).toBe(2);
+  });
+});

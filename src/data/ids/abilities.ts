@@ -423,6 +423,10 @@ const enum Abilities {
   MindFog = 200120,
   Palette = 200121,
   Cowbell = 200122,
+  RisenThunder = 200123,
+  RisenFlame = 200124,
+  RisenTide = 200125,
+  Tyrant = 200126,
 }
 
 export default Abilities;

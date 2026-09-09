@@ -23,6 +23,7 @@ import { hasFreeItemSlot, isWeatherSandstorm, onUnitActs, unitTarget } from '../
 import { createAbility } from '../__create';
 import {
   BATTLE_STATS,
+  createRisenAbility,
   createStatAverage,
   createUnitCounter,
   createUnitState,
@@ -1264,6 +1265,34 @@ const chikoritaToCelebi = [
           }
         }),
       ]),
+  ),
+
+  // The three beasts: what Ho-Oh did in the burned tower, once each
+  // per battle, told in the stat each one is built on
+  createRisenAbility(Abilities.RisenThunder, Stages.Speed),
+  createRisenAbility(Abilities.RisenFlame, Stages.Attack),
+  createRisenAbility(Abilities.RisenTide, Stages.Defense),
+
+  // Larvitar: whatever the far side was building, it is not building
+  // it here
+  createAbility(Abilities.Tyrant, (battle) =>
+    battle.on(BattleEvents.CheckUnitCanAddStage, EventPriority.Post, (event) => {
+      if (!event.success || event.value <= 0) {
+        return;
+      }
+
+      const tyrant = enemyHolder(battle, event.source, Abilities.Tyrant);
+
+      if (tyrant) {
+        event.success = false;
+
+        // A cue is something a watcher sees, so it waits for a real
+        // attempt rather than the AI weighing one
+        if (!event.simulated) {
+          tyrant.triggerAbility(Abilities.Tyrant);
+        }
+      }
+    }),
   ),
 ];
 

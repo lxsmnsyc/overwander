@@ -775,4 +775,35 @@ export default function registerSignatureAbilities(): void {
     name: 'Cowbell',
     description: 'It casts Heal Bell over its side as it arrives on the field.',
   });
+
+  /**
+   * The three beasts share one signature, told three ways: what Ho-Oh
+   * did for them in the burned tower, once per battle
+   */
+  // Raikou
+  registerAbility(Abilities.RisenThunder, {
+    name: 'Risen Thunder',
+    description:
+      'The first blow that would finish it leaves it on 1 HP, cured, and a stage faster. Once per battle.',
+  });
+
+  // Entei
+  registerAbility(Abilities.RisenFlame, {
+    name: 'Risen Flame',
+    description:
+      'The first blow that would finish it leaves it on 1 HP, cured, and a stage stronger. Once per battle.',
+  });
+
+  // Suicune
+  registerAbility(Abilities.RisenTide, {
+    name: 'Risen Tide',
+    description:
+      'The first blow that would finish it leaves it on 1 HP, cured, and a stage harder to hurt. Once per battle.',
+  });
+
+  // Larvitar
+  registerAbility(Abilities.Tyrant, {
+    name: 'Tyrant',
+    description: 'Nothing on the enemy side can raise a stat while it stands.',
+  });
 }

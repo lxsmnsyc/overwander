@@ -702,4 +702,28 @@ export default function registerSignatureAbilities(): void {
     name: 'Sweet Paw',
     description: 'Its contact moves heal it 1/8 of the damage they deal.',
   });
+
+  // Slugma
+  registerAbility(Abilities.MagmaTrail, {
+    name: 'Magma Trail',
+    description: 'Every standing enemy loses 1/16 of its HP each time it acts while it stands.',
+  });
+
+  // Swinub
+  registerAbility(Abilities.Icebreaker, {
+    name: 'Icebreaker',
+    description: "A move it lands tears Reflect and Light Screen off the target's side.",
+  });
+
+  // Corsola
+  registerAbility(Abilities.CoralBloom, {
+    name: 'Coral Bloom',
+    description: 'Whenever it is healed, the ally lowest on HP is healed the same amount.',
+  });
+
+  // Remoraid
+  registerAbility(Abilities.Standoff, {
+    name: 'Standoff',
+    description: 'Nothing it uses counts as contact, so it never sets off what answers a touch.',
+  });
 }

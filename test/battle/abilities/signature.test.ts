@@ -7,6 +7,7 @@ import { SIGNATURE_ABILITIES } from '../../../src/battle/abilities/signature';
 import {
   BACKLASH_SHARE,
   BULLY_SCALE,
+  MAGMA_TRAIL_FRACTION,
   PETAL_BED_FRACTION,
   SAND_RIDER_SCALE,
   SHARED_MISERY_THRESHOLD,
@@ -145,6 +146,7 @@ import { MoveCategories, MoveTargets, Moves, StatFlags } from '../../../src/data
 import { Statuses, TeamStatuses, Weathers } from '../../../src/data/ids/status';
 import turns from '../../../src/battle/turn';
 import { layersUnder } from '../../../src/battle/moves/spikes';
+import { unitTarget } from '../../../src/battle/utils';
 import { SWITCHING_SPAN } from '../../../src/battle/status/switching';
 import { createBattle, createUnit, pinRandom } from '../harness';
 
@@ -3428,5 +3430,83 @@ describe('Sweet Paw', () => {
     holder.damage({ type: EffectType.Move, move: Moves.WaterGun, unit: holder }, enemy, 40, 0);
 
     expect(holder.health).toBeCloseTo(maxHP / 2, 5);
+  });
+});
+
+describe('Magma Trail', () => {
+  it('burns whatever stands near it each time that thing moves', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.MagmaTrail);
+
+    const maxHP = enemy.checkStat(Stats.HP, 0);
+
+    act(battle, enemy);
+
+    expect(enemy.health).toBeCloseTo(maxHP - maxHP * MAGMA_TRAIL_FRACTION, 5);
+
+    // Its own side walks over the same ground unharmed
+    act(battle, ally);
+
+    expect(ally.health).toBe(ally.checkStat(Stats.HP, 0));
+  });
+});
+
+describe('Icebreaker', () => {
+  it('tears the screens down as it swings', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0);
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Icebreaker);
+
+    const screen = { type: EffectType.None } as const;
+    teamB.addStatus(TeamStatuses.Reflect, screen);
+    teamB.addStatus(TeamStatuses.LightScreen, screen);
+
+    holder.triggerMove(Moves.Pound, unitTarget(enemy), 0);
+    battle.tick(turns(1));
+
+    expect(teamB.status[TeamStatuses.Reflect]).toBeUndefined();
+    expect(teamB.status[TeamStatuses.LightScreen]).toBeUndefined();
+  });
+});
+
+describe('Coral Bloom', () => {
+  it('passes what it takes in on to the ally that needs it', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const hurt = createUnit(battle, teamA);
+    const fine = createUnit(battle, teamA);
+    createUnit(battle, teamB);
+    holder.addAbility(Abilities.CoralBloom);
+
+    const maxHP = holder.checkStat(Stats.HP, 0);
+    holder.setHealth(maxHP / 2);
+    hurt.setHealth(maxHP / 4);
+
+    holder.heal(NONE_CAUSE, holder, 20, 0);
+
+    expect(holder.health).toBeCloseTo(maxHP / 2 + 20, 5);
+    expect(hurt.health).toBeCloseTo(maxHP / 4 + 20, 5);
+    // Only the neediest branch, and never twice over
+    expect(fine.health).toBe(maxHP);
+  });
+});
+
+describe('Standoff', () => {
+  it('never touches whatever it is shooting at', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    const bare = createUnit(battle, teamA);
+
+    expect(bare.checkMoveContact(Moves.Pound, unitTarget(enemy))).toBe(true);
+
+    holder.addAbility(Abilities.Standoff);
+
+    expect(holder.checkMoveContact(Moves.Pound, unitTarget(enemy))).toBe(false);
   });
 });

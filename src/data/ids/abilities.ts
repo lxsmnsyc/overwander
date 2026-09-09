@@ -411,6 +411,10 @@ const enum Abilities {
   Heave = 200108,
   SharpClaw = 200109,
   SweetPaw = 200110,
+  MagmaTrail = 200111,
+  Icebreaker = 200112,
+  CoralBloom = 200113,
+  Standoff = 200114,
 }
 
 export default Abilities;

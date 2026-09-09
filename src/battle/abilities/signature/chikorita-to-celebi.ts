@@ -3,6 +3,7 @@ import { Stages, Stats } from '../../../data/constants/stats';
 import { Types } from '../../../data/constants/types';
 import Abilities from '../../../data/ids/abilities';
 import { Items } from '../../../data/ids/items';
+import { TeamStatuses } from '../../../data/ids/status';
 import {
   DamageFlags,
   MoveAttackFlags,
@@ -49,11 +50,38 @@ export const BULLY_SCALE = 1.3;
 /** What a paw licked clean between blows gives back */
 export const SWEET_PAW_SHARE = 1 / 8;
 
+/** What standing near molten ground costs, each time an enemy moves */
+export const MAGMA_TRAIL_FRACTION = 1 / 16;
+
+/** The screens a pair of tusks goes through */
+const SCREENS = [TeamStatuses.Reflect, TeamStatuses.LightScreen];
+
 /** The other end an attacking stat has, for a pokemon that swings with both */
 const OTHER_ATTACK_STAT: { [key in Stats]?: Stats } = {
   [Stats.Attack]: Stats.SpecialAttack,
   [Stats.SpecialAttack]: Stats.Attack,
 };
+
+/** The hurt ally with the least health left, as a share of its own */
+function neediestAlly(battle: Battle, unit: Unit): Unit | undefined {
+  let found: Unit | undefined;
+  let lowest = 1;
+
+  for (const ally of battle.units()) {
+    if (ally === unit || !ally.alive || ally.team.alliance !== unit.team.alliance) {
+      continue;
+    }
+
+    const share = ally.health / ally.checkStat(Stats.HP, 0);
+
+    if (share < lowest) {
+      found = ally;
+      lowest = share;
+    }
+  }
+
+  return found;
+}
 
 /** The standing enemy with the most health left */
 function healthiestEnemy(battle: Battle, unit: Unit): Unit | undefined {
@@ -925,6 +953,100 @@ const chikoritaToCelebi = [
         source.heal(cause, source, amount, 0);
       } else {
         source.damage(cause, source, -amount, DamageFlags.Indirect);
+      }
+    }),
+  ),
+
+  // Slugma: it leaves the ground molten behind it, and whatever else
+  // is standing there pays for it as it moves
+  createAbility(
+    Abilities.MagmaTrail,
+    (battle) =>
+      new MergedLifecycle(
+        onUnitActs(battle, (unit) => {
+          const slug = enemyHolder(battle, unit, Abilities.MagmaTrail);
+
+          if (!slug) {
+            return;
+          }
+
+          slug.triggerAbility(Abilities.MagmaTrail);
+
+          slug.damage(
+            { type: EffectType.Ability, ability: Abilities.MagmaTrail, unit: slug },
+            unit,
+            unit.checkStat(Stats.HP, 0) * MAGMA_TRAIL_FRACTION,
+            DamageFlags.Indirect,
+          );
+        }),
+      ),
+  ),
+
+  // Swinub: the tusks go through the wall rather than round it, so the
+  // screen is gone for everybody afterwards. Torn down before the blow
+  // lands, the way Brick Break does it
+  createAbility(Abilities.Icebreaker, (battle) =>
+    battle.on(BattleEvents.UnitTriggerMoveTarget, AttackPriority.Pre, (event) => {
+      if (
+        event.target.type !== MoveTargetType.Unit ||
+        !event.source.hasAbility(Abilities.Icebreaker)
+      ) {
+        return;
+      }
+
+      const team = event.target.unit.team;
+      const cause = {
+        type: EffectType.Ability,
+        ability: Abilities.Icebreaker,
+        unit: event.source,
+      } as const;
+
+      for (const screen of SCREENS) {
+        if (team.status[screen] != null) {
+          event.source.triggerAbility(Abilities.Icebreaker);
+          team.removeStatus(screen, cause);
+        }
+      }
+    }),
+  ),
+
+  // Corsola: the reef takes nothing in on its own, so what reaches it
+  // reaches whichever branch needs it most
+  createAbility(Abilities.CoralBloom, (battle) => {
+    // The shared heal must not bloom a heal of its own
+    const blooming = new Set<Unit>();
+
+    return battle.on(BattleEvents.UnitHeal, EventPriority.Post, (event) => {
+      const target = event.target;
+
+      if (event.value <= 0 || blooming.has(target) || !target.hasAbility(Abilities.CoralBloom)) {
+        return;
+      }
+
+      const ally = neediestAlly(battle, target);
+
+      if (!ally) {
+        return;
+      }
+
+      blooming.add(target);
+      target.triggerAbility(Abilities.CoralBloom);
+      target.heal(
+        { type: EffectType.Ability, ability: Abilities.CoralBloom, unit: target },
+        ally,
+        event.value,
+        0,
+      );
+      blooming.delete(target);
+    });
+  }),
+
+  // Remoraid: it shoots from where it is, so nothing that answers a
+  // touch ever gets to answer
+  createAbility(Abilities.Standoff, (battle) =>
+    battle.on(BattleEvents.CheckUnitMoveContact, EventPriority.Post, (event) => {
+      if (event.contact && event.source.hasAbility(Abilities.Standoff)) {
+        event.contact = false;
       }
     }),
   ),

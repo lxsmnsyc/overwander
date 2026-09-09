@@ -427,6 +427,9 @@ const enum Abilities {
   RisenFlame = 200124,
   RisenTide = 200125,
   Tyrant = 200126,
+  SilverAegis = 200127,
+  RainbowRekindling = 200128,
+  TimelineSplit = 200129,
 }
 
 export default Abilities;

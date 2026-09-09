@@ -13,10 +13,12 @@ import {
   MOMENTUM_MAX_STACKS,
   MOMENTUM_STEP,
   PETAL_BED_FRACTION,
+  RAINBOW_REKINDLING_FRACTION,
   SAND_RIDER_SCALE,
   SHARED_MISERY_THRESHOLD,
   SUNLIT_CHARGE_SCALE,
   SWEET_PAW_SHARE,
+  TIMELINE_SPLIT_THRESHOLD,
 } from '../../../src/battle/abilities/signature/chikorita-to-celebi';
 import {
   ANCESTRAL_MEMORY_SCALE,
@@ -3746,5 +3748,90 @@ describe('Tyrant', () => {
 
     expect(enemy.stages[Stages.Attack]).toBe(-1);
     expect(ally.stages[Stages.Attack]).toBe(2);
+  });
+});
+
+describe('Silver Aegis', () => {
+  it('holds an ally up through the blow that would finish it', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const guardian = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    guardian.addAbility(Abilities.SilverAegis);
+
+    const blow = { type: EffectType.Move, move: Moves.Pound, unit: enemy } as const;
+    const maxHP = ally.checkStat(Stats.HP, 0);
+
+    enemy.damage(blow, ally, maxHP * 2, 0);
+
+    expect(ally.alive).toBe(true);
+    expect(ally.health).toBe(1);
+
+    // One shield, and the guardian never held it over itself
+    ally.setHealth(maxHP);
+    enemy.damage(blow, ally, maxHP * 2, 0);
+
+    expect(ally.alive).toBe(false);
+    expect(guardian.alive).toBe(true);
+
+    enemy.damage(blow, guardian, guardian.checkStat(Stats.HP, 0) * 2, 0);
+
+    expect(guardian.alive).toBe(false);
+  });
+});
+
+describe('Rainbow Rekindling', () => {
+  it('puts the first ally that falls back on its feet', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const phoenix = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamA);
+    const second = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    phoenix.addAbility(Abilities.RainbowRekindling);
+
+    ally.faint(enemy);
+
+    expect(ally.alive).toBe(true);
+    expect(ally.health).toBeCloseTo(ally.checkStat(Stats.HP, 0) * RAINBOW_REKINDLING_FRACTION, 5);
+
+    // The rainbow comes once
+    second.faint(enemy);
+
+    expect(second.alive).toBe(false);
+  });
+});
+
+describe('Timeline Split', () => {
+  it('steps back to before it was worn down', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.TimelineSplit);
+
+    holder.addStage(Stages.Attack, 2, NONE_CAUSE);
+    holder.addStage(Stages.Defense, -2, NONE_CAUSE);
+    holder.addStage(Stages.Speed, -1, NONE_CAUSE);
+    holder.addStatus(Statuses.Burned, NONE_CAUSE);
+
+    const maxHP = holder.checkStat(Stats.HP, 0);
+
+    // Still above the line: nothing splits yet
+    enemy.damage(NONE_CAUSE, holder, maxHP * 0.2, 0);
+
+    expect(holder.stages[Stages.Defense]).toBe(-2);
+
+    enemy.damage(NONE_CAUSE, holder, maxHP * (1 - TIMELINE_SPLIT_THRESHOLD), 0);
+
+    expect(holder.stages[Stages.Defense]).toBe(0);
+    expect(holder.stages[Stages.Speed]).toBe(0);
+    // What it built for itself is its own doing and stays
+    expect(holder.stages[Stages.Attack]).toBe(2);
+    expect(holder.status[Statuses.Burned]).toBeUndefined();
+
+    // Once per battle
+    holder.addStage(Stages.Defense, -1, NONE_CAUSE);
+    enemy.damage(NONE_CAUSE, holder, 1, 0);
+
+    expect(holder.stages[Stages.Defense]).toBe(-1);
   });
 });

@@ -809,4 +809,28 @@ export default function registerSignatureAbilities(): void {
     name: 'Tyrant',
     description: 'Nothing on the enemy side can raise a stat while it stands.',
   });
+
+  /**
+   * The tower duo share one signature, told either side of a fall: the
+   * guardian keeps its side standing once per battle
+   */
+  // Lugia
+  registerAbility(Abilities.SilverAegis, {
+    name: 'Silver Aegis',
+    description:
+      'The first blow that would finish an ally leaves it on 1 HP instead. Once per battle.',
+  });
+
+  // Ho-Oh
+  registerAbility(Abilities.RainbowRekindling, {
+    name: 'Rainbow Rekindling',
+    description: 'The first ally to fall gets back up on 1/3 of its HP. Once per battle.',
+  });
+
+  // Celebi
+  registerAbility(Abilities.TimelineSplit, {
+    name: 'Timeline Split',
+    description:
+      'The first time it drops below 1/2 HP, every stat drop on it is undone and every status cleared.',
+  });
 }

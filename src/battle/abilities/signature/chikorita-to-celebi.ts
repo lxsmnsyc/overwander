@@ -65,6 +65,12 @@ export const MOMENTUM_MAX_STACKS = 5;
 /** What a head full of antlers is worth against somebody thinking */
 export const MIND_FOG_SCALE = 0.85;
 
+/** What a rainbow puts back into whoever has already gone down */
+export const RAINBOW_REKINDLING_FRACTION = 1 / 3;
+
+/** How far down a timeline splits */
+export const TIMELINE_SPLIT_THRESHOLD = 1 / 2;
+
 /** The screens a pair of tusks goes through */
 const SCREENS = [TeamStatuses.Reflect, TeamStatuses.LightScreen];
 
@@ -118,6 +124,17 @@ function firstEnemy(battle: Battle, unit: Unit): Unit | undefined {
 
   return undefined;
 }
+
+/** All five battle stages, for an ability that reads or resets them */
+const STAGE_DROPS = [
+  Stages.Attack,
+  Stages.Defense,
+  Stages.SpecialAttack,
+  Stages.SpecialDefense,
+  Stages.Speed,
+  Stages.Accuracy,
+  Stages.Evasion,
+];
 
 /** A standing holder on this unit's side other than the unit itself */
 function escortedBy(battle: Battle, unit: Unit, ability: Abilities): Unit | undefined {
@@ -1294,6 +1311,92 @@ const chikoritaToCelebi = [
       }
     }),
   ),
+
+  // Lugia: the guardian is the reason the birds are still standing, so
+  // its side does not fall while it is watching. Once per battle, and
+  // never for itself: a shield is held over somebody
+  createAbility(Abilities.SilverAegis, (battle) => {
+    const spent = new Set<Unit>();
+
+    return battle.on(BattleEvents.UnitDamage, AttackPriority.Pre, (event) => {
+      const target = event.target;
+
+      if (!target.alive || event.flags & DamageFlags.Indirect || event.value < target.health) {
+        return;
+      }
+
+      const guardian = escortedBy(battle, target, Abilities.SilverAegis);
+
+      if (!guardian || spent.has(guardian)) {
+        return;
+      }
+
+      spent.add(guardian);
+      event.value = target.health - 1;
+
+      guardian.triggerAbility(Abilities.SilverAegis);
+    });
+  }),
+
+  // Ho-Oh: what it did for the beasts, once per battle for whoever it
+  // is standing with. The other half of Lugia's watch: one keeps them
+  // up, this one gets them back up
+  createAbility(Abilities.RainbowRekindling, (battle) => {
+    const spent = new Set<Unit>();
+
+    return battle.on(BattleEvents.UnitFaints, EventPriority.Post, (event) => {
+      const fallen = event.source;
+      const phoenix = escortedBy(battle, fallen, Abilities.RainbowRekindling);
+
+      if (!phoenix || spent.has(phoenix)) {
+        return;
+      }
+
+      spent.add(phoenix);
+      phoenix.triggerAbility(Abilities.RainbowRekindling);
+
+      fallen.revive(fallen.checkStat(Stats.HP, 0) * RAINBOW_REKINDLING_FRACTION);
+    });
+  }),
+
+  // Celebi: it steps back to before whatever was done to it. The
+  // boosts it built are its own doing and stay
+  createAbility(Abilities.TimelineSplit, (battle) => {
+    const spent = new Set<Unit>();
+
+    return battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
+      const target = event.target;
+
+      if (
+        !event.success ||
+        !target.alive ||
+        spent.has(target) ||
+        !target.hasAbility(Abilities.TimelineSplit) ||
+        target.health >= target.checkStat(Stats.HP, 0) * TIMELINE_SPLIT_THRESHOLD
+      ) {
+        return;
+      }
+
+      spent.add(target);
+      target.triggerAbility(Abilities.TimelineSplit);
+
+      const cause = {
+        type: EffectType.Ability,
+        ability: Abilities.TimelineSplit,
+        unit: target,
+      } as const;
+
+      for (const stage of STAGE_DROPS) {
+        const held = target.stages[stage];
+
+        if (held < 0) {
+          target.addStage(stage, -held, cause);
+        }
+      }
+
+      target.cure(cause);
+    });
+  }),
 ];
 
 export default chikoritaToCelebi;

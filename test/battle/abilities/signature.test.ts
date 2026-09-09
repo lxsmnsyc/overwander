@@ -161,13 +161,18 @@ import { Statuses, TeamStatuses, Weathers } from '../../../src/data/ids/status';
 import {
   ANTLION_PIT_FRACTION,
   DIRTY_FIGHTER_SCALE,
+  DOOM_MARK_DURATION,
+  DOOM_MARK_SCALE,
+  FRUIT_CROP_INTERVAL,
   MALICE_POOL_MAX_STAGES,
   MALICE_POOL_STEP,
   PATIENT_STALK_MAX_STEPS,
   PATIENT_STALK_SECOND,
   PATIENT_STALK_STEP,
+  RINGING_HEAD_SCALE,
   SILT_BED_SCALE,
   SOOTHING_PRESENCE_SCALE,
+  SOUL_HARVEST_FRACTION,
   STORED_BOUNCE_CAP,
   STORED_BOUNCE_SHARE,
   UNIQUE_SPOTS_LOWERED,
@@ -5081,5 +5086,97 @@ describe('Malice Pool', () => {
       clean * (1 + MALICE_POOL_STEP * MALICE_POOL_MAX_STAGES),
       5,
     );
+  });
+});
+
+describe('Soul Harvest', () => {
+  it('takes its cut of anything that falls, either side', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.SoulHarvest);
+
+    const maxHP = holder.checkStat(Stats.HP, 0);
+    holder.setHealth(1);
+
+    enemy.faint(holder);
+
+    expect(holder.health).toBeCloseTo(1 + maxHP * SOUL_HARVEST_FRACTION, 5);
+
+    holder.setHealth(1);
+    ally.faint(enemy);
+
+    expect(holder.health).toBeCloseTo(1 + maxHP * SOUL_HARVEST_FRACTION, 5);
+  });
+});
+
+describe('Fruit Crop', () => {
+  it('grows a berry on the clock while its hands are empty', () => {
+    const { battle, teamA } = createBattle();
+    const holder = createUnit(battle, teamA);
+    holder.addAbility(Abilities.FruitCrop);
+
+    battle.tick(FRUIT_CROP_INTERVAL);
+
+    expect(holder.items[Items.SitrusBerry]).not.toBeUndefined();
+
+    // Nothing grows into a full hand
+    holder.removeItem(Items.SitrusBerry, NONE_CAUSE);
+    holder.addItem(Items.Leftovers);
+    battle.tick(FRUIT_CROP_INTERVAL);
+
+    expect(holder.items[Items.SitrusBerry]).toBeUndefined();
+  });
+});
+
+describe('Ringing Head', () => {
+  it('drags out what the far side winds up, and nothing of its own', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    const theirs = enemy.checkMoveCastTime(Moves.Ember, unitTarget(ally));
+    const ours = ally.checkMoveCastTime(Moves.Ember, unitTarget(enemy));
+
+    holder.addAbility(Abilities.RingingHead);
+
+    expect(enemy.checkMoveCastTime(Moves.Ember, unitTarget(ally))).toBeCloseTo(
+      theirs * RINGING_HEAD_SCALE,
+      5,
+    );
+    expect(ally.checkMoveCastTime(Moves.Ember, unitTarget(enemy))).toBeCloseTo(ours, 5);
+  });
+});
+
+describe('Doom Mark', () => {
+  it('marks what it hits, and the next blow spends the mark', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0);
+    const holder = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.DoomMark);
+
+    const clean = dealDamage(ally, enemy, Moves.Pound, 40, Types.Normal, MoveCategories.Physical);
+
+    holder.attack(enemy, Moves.Pound, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    // An ally's blow is what the mark pays out on, and it pays once
+    expect(
+      dealDamage(ally, enemy, Moves.Pound, 40, Types.Normal, MoveCategories.Physical),
+    ).toBeCloseTo(clean * DOOM_MARK_SCALE, 5);
+    expect(
+      dealDamage(ally, enemy, Moves.Pound, 40, Types.Normal, MoveCategories.Physical),
+    ).toBeCloseTo(clean, 5);
+
+    // And an unspent mark lets go on its own
+    holder.attack(enemy, Moves.Pound, 40, Types.Normal, MoveCategories.Physical, 0);
+    battle.tick(DOOM_MARK_DURATION);
+
+    expect(
+      dealDamage(ally, enemy, Moves.Pound, 40, Types.Normal, MoveCategories.Physical),
+    ).toBeCloseTo(clean, 5);
   });
 });

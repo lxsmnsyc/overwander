@@ -482,6 +482,10 @@ const enum Abilities {
   WeatherWorn = 200179,
   TwoToneStrike = 200180,
   MalicePool = 200181,
+  SoulHarvest = 200182,
+  FruitCrop = 200183,
+  RingingHead = 200184,
+  DoomMark = 200185,
 }
 
 export default Abilities;

@@ -1234,4 +1234,29 @@ export default function registerSignatureAbilities(): void {
     name: 'Malice Pool',
     description: 'Its moves hit 10% harder for each lowered stage on the target, up to 50%.',
   });
+
+  // Duskull
+  registerAbility(Abilities.SoulHarvest, {
+    name: 'Soul Harvest',
+    description: 'It heals 1/4 of its HP whenever anything on the field faints, either side.',
+  });
+
+  // Tropius
+  registerAbility(Abilities.FruitCrop, {
+    name: 'Fruit Crop',
+    description: 'Every 8 seconds it grows a Sitrus Berry, if its hands are empty.',
+  });
+
+  // Chimecho
+  registerAbility(Abilities.RingingHead, {
+    name: 'Ringing Head',
+    description: 'Enemy cast and channel times run 25% longer while it stands.',
+  });
+
+  // Absol
+  registerAbility(Abilities.DoomMark, {
+    name: 'Doom Mark',
+    description:
+      'A move it lands marks that target: the next blow anybody lands on them within 4 seconds hits 1.3x.',
+  });
 }

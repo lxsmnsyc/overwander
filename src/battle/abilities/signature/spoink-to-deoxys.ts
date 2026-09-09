@@ -7,11 +7,13 @@ import {
   TYPE_EFFECTIVENESS_FACTOR,
   Types,
 } from '../../../data/constants/types';
+import { Items } from '../../../data/ids/items';
 import { Statuses, Weathers } from '../../../data/ids/status';
 import { FORCED_SWITCH_MOVES } from '../../moves/switch-out';
 import { BattleEvents, EffectType, MoveTargetType } from '../../events';
 import { MergedLifecycle } from '../../lifecycle';
 import type Unit from '../../unit';
+import { hasFreeItemSlot } from '../../utils';
 import { createAbility } from '../__create';
 import {
   createDamageTaken,
@@ -40,6 +42,19 @@ const SPOTTED_STAGES = [
 
 /** What walking into the pit costs whoever missed */
 export const ANTLION_PIT_FRACTION = 1 / 8;
+
+/** What the ferryman takes for a passenger */
+export const SOUL_HARVEST_FRACTION = 1 / 4;
+
+/** How often the fruit comes in */
+export const FRUIT_CROP_INTERVAL = 8000;
+
+/** What a ringing head does to the far side's wind-ups */
+export const RINGING_HEAD_SCALE = 1.25;
+
+/** What a marked target's next blow is worth, and how long the mark waits */
+export const DOOM_MARK_SCALE = 1.3;
+export const DOOM_MARK_DURATION = 4000;
 
 /** How much of a status' clock a calming presence takes off */
 export const SOOTHING_PRESENCE_SCALE = 0.5;
@@ -264,6 +279,126 @@ const spoinkToDeoxys = [
       target.triggerAbility(Abilities.CloudStep);
       event.success = false;
     });
+  }),
+
+  // Duskull: the line ferries whatever falls, whichever side it fell on
+  createAbility(Abilities.SoulHarvest, (battle) =>
+    battle.on(BattleEvents.UnitFaints, EventPriority.Post, (event) => {
+      for (const reaper of battle.units()) {
+        if (reaper === event.source || !reaper.alive || !reaper.hasAbility(Abilities.SoulHarvest)) {
+          continue;
+        }
+
+        reaper.triggerAbility(Abilities.SoulHarvest);
+        reaper.heal(
+          { type: EffectType.Ability, ability: Abilities.SoulHarvest, unit: reaper },
+          reaper,
+          reaper.checkStat(Stats.HP, 0) * SOUL_HARVEST_FRACTION,
+          0,
+        );
+      }
+    }),
+  ),
+
+  // Tropius: the fruit comes in on its own clock, and there is nowhere
+  // to put it while its hands are full
+  createAbility(Abilities.FruitCrop, (battle) => {
+    let waited = 0;
+
+    return battle.on(BattleEvents.Tick, EventPriority.Post, (event) => {
+      waited += event.duration;
+
+      if (waited < FRUIT_CROP_INTERVAL) {
+        return;
+      }
+
+      waited = 0;
+
+      for (const tree of battle.units()) {
+        if (tree.alive && tree.hasAbility(Abilities.FruitCrop) && hasFreeItemSlot(tree)) {
+          tree.triggerAbility(Abilities.FruitCrop);
+          tree.addItem(Items.SitrusBerry);
+        }
+      }
+    });
+  }),
+
+  // Chimecho: the note hangs over the far side and everything they
+  // wind up takes longer through it. Cast time only, never a cooldown
+  createAbility(Abilities.RingingHead, (battle) => {
+    function ringing(unit: Unit): boolean {
+      for (const chime of battle.units(unit.team.alliance)) {
+        if (chime.alive && chime.hasAbility(Abilities.RingingHead)) {
+          return true;
+        }
+      }
+
+      return false;
+    }
+
+    return new MergedLifecycle([
+      battle.on(BattleEvents.CheckUnitMoveCastTime, EventPriority.Post, (event) => {
+        if (ringing(event.source)) {
+          event.duration *= RINGING_HEAD_SCALE;
+        }
+      }),
+      battle.on(BattleEvents.CheckUnitMoveChannelTime, EventPriority.Post, (event) => {
+        if (ringing(event.source)) {
+          event.duration *= RINGING_HEAD_SCALE;
+        }
+      }),
+    ]);
+  }),
+
+  // Absol: what it reads is coming for somebody, and the next thing to
+  // land is what it was reading. Set after its own blow resolves, so
+  // the blow that marks is never the blow that spends the mark
+  createAbility(Abilities.DoomMark, (battle) => {
+    const marks = new Map<Unit, number>();
+
+    const clock = battle.on(BattleEvents.Tick, EventPriority.Post, (event) => {
+      for (const [unit, left] of marks) {
+        const next = left - event.duration;
+
+        if (next <= 0) {
+          marks.delete(unit);
+        } else {
+          marks.set(unit, next);
+        }
+      }
+
+      if (marks.size === 0) {
+        clock.stop();
+      }
+    });
+
+    clock.stop();
+
+    return new MergedLifecycle([
+      clock,
+      battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, (event) => {
+        const target = event.parent.target;
+
+        if (marks.has(target)) {
+          marks.delete(target);
+          event.value *= DOOM_MARK_SCALE;
+        }
+      }),
+      battle.on(BattleEvents.UnitAttack, AttackPriority.Post, (event) => {
+        const source = event.source;
+
+        if (
+          event.success &&
+          event.target.alive &&
+          !(event.flags & MoveAttackFlags.Simulated) &&
+          source.hasAbility(Abilities.DoomMark)
+        ) {
+          source.triggerAbility(Abilities.DoomMark);
+          marks.set(event.target, DOOM_MARK_DURATION);
+          clock.start();
+        }
+      }),
+    ]);
   }),
 
   // Feebas: the line calms whatever it is standing beside, so nothing

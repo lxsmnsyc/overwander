@@ -37,7 +37,7 @@ test.describe('using an item out of the bag', () => {
 
     const bag = await openPanel(page, 'Bag');
 
-    await bag.getByRole('button', { name: /^Rare Candy, 2 carried/ }).click();
+    await bag.getByRole('button', { name: /Rare Candy, 2 carried/ }).click();
 
     // Which pokemon it goes on, and the last press
     const picker = dialogNamed(page, 'Use it on');
@@ -53,6 +53,6 @@ test.describe('using an item out of the bag', () => {
     await expect(page.getByText(/^Grew to level \d+\.$/)).toBeVisible();
 
     // And the bag is still the bag, with one candy fewer in it
-    await expect(bag.getByRole('button', { name: /^Rare Candy, 1 carried/ })).toBeVisible();
+    await expect(bag.getByRole('button', { name: /Rare Candy, 1 carried/ })).toBeVisible();
   });
 });

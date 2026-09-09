@@ -4322,7 +4322,9 @@ describe('wandering NPCs', () => {
   });
 
   it('dresses every role only in sheets that ship', () => {
-    for (const npc of NPCS) {
+    // The three who stand at a landmark of their own are dressed the
+    // same way the wanderers are, so they are checked beside them
+    for (const npc of [...NPCS, Npc.RocketGrunt, Npc.Trainer, Npc.Vendor]) {
       for (const sheet of npcSheets(npc)) {
         expect(existsSync(`public/sprites/overworld/${sheet}/image.png`), sheet).toBe(true);
         expect(existsSync(`public/sprites/overworld/${sheet}/data.json`), sheet).toBe(true);
@@ -4330,30 +4332,11 @@ describe('wandering NPCs', () => {
     }
   });
 
-  it('draws whoever has been drawn, and leaves the rest alone', () => {
-    const drawn = NPCS.filter((npc) =>
-      existsSync(`public/sprites/overworld/${npcSheet(npc)}/image.png`),
-    );
-
-    // Whatever ships is a folder holding both halves: a drawing with no
-    // description cannot be cut into frames
-    for (const npc of drawn) {
-      expect(
-        existsSync(`public/sprites/overworld/${npcSheet(npc)}/data.json`),
-        NPC_NAMES[npc],
-      ).toBe(true);
-    }
-    // And nothing on disk claims to be somebody who does not exist:
-    // a numbered folder is one of the roles, wanderer or fighter or
-    // the vendor, whose stall is a landmark rather than a round
-    const roles = new Set<number>([...NPCS, Npc.RocketGrunt, Npc.Trainer, Npc.Vendor]);
-
+  it('keeps no numbered npc sheet on disk', () => {
+    // Every role names a charset, so the numbered Gen 4 folders they
+    // used to fall back to belong to nobody
     for (const folder of readdirSync('public/sprites/overworld')) {
-      const numbered = /^landmarks-npc-(\d+)$/.exec(folder);
-
-      if (numbered != null) {
-        expect(roles.has(Number(numbered[1])), folder).toBe(true);
-      }
+      expect(/^landmarks-npc-\d+$/.test(folder), folder).toBe(false);
     }
   });
 

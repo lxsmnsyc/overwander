@@ -10,16 +10,20 @@ import { claimStarter, openPanel, signIn } from './game';
  * list redrew, a square whose stack ran out. Nothing sends a
  * mouse-leave for that, so the card is left standing over whatever
  * took its place.
+ *
+ * Read off the bag, whose squares say what they are in a tooltip. The
+ * hover card is wired to the same rule, and this is the surface a
+ * player meets it on most
  */
 
-test.describe('a hover card', () => {
+test.describe('a card over a square', () => {
   test('goes when the thing it is about leaves the page', async ({ page }) => {
     await signIn(page);
     await claimStarter(page);
 
     const bag = await openPanel(page, 'Bag');
-    const square = bag.getByRole('button', { name: /^Poke Ball, \d+ carried/ });
-    const card = page.getByRole('dialog', { name: /^Info$/ });
+    const square = bag.getByRole('button', { name: /Poke Ball, \d+ carried/ });
+    const card = page.getByRole('tooltip');
 
     // From a corner first: a hover that moves the pointer nowhere
     // sends no `mouseenter`, and the card never opens
@@ -43,14 +47,14 @@ test.describe('a hover card', () => {
     await claimStarter(page);
 
     const bag = await openPanel(page, 'Bag');
-    const square = bag.getByRole('button', { name: /^Poke Ball, \d+ carried/ });
-    const card = page.getByRole('dialog', { name: /^Info$/ });
+    const square = bag.getByRole('button', { name: /Poke Ball, \d+ carried/ });
+    const card = page.getByRole('tooltip');
 
     await page.mouse.move(0, 0);
     await square.hover();
     await expect(card).toBeVisible({ timeout: 5_000 });
 
-    await bag.getByRole('searchbox').first().fill('nothing matches this');
+    await bag.getByRole('combobox').first().fill('nothing matches this');
     await expect(square).toHaveCount(0);
     await expect(card).toBeHidden();
   });

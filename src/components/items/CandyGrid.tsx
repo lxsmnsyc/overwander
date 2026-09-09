@@ -3,7 +3,7 @@ import type Families from '../../data/ids/families';
 import { getFamilyName } from '../../data/species';
 import CandySprite from '../sprites/CandySprite';
 import { GRID_COLUMNS } from './ItemGrid';
-import { HoverCard, Meta, Note } from '../styled';
+import { Note, TooltipHost } from '../styled';
 
 /**
  * The candy piles as a tray of pictures, the way the bag draws items.
@@ -54,37 +54,31 @@ export default function CandyGrid(props: CandyGridProps): JSX.Element {
             loop would tear every square down under the pointer */}
         <Index each={props.piles}>
           {(pile) => (
-            <HoverCard
+            <TooltipHost
               class="block w-full"
-              title="Candy"
-              trigger={
-                <span
-                  role="img"
-                  aria-label={`${getFamilyName(pile().family)} candy, ${pile().count} held`}
-                  class="relative flex aspect-square w-full items-center justify-center rounded-lg
+              name={`${getFamilyName(pile().family)} candy`}
+              description={`${pile().count} in the jar. It raises anything of that family, and letting one go pays more of it.`}
+            >
+              <span
+                role="img"
+                aria-label={`${getFamilyName(pile().family)} candy, ${pile().count} held`}
+                class="relative flex aspect-square w-full items-center justify-center rounded-lg
                     border-2 border-line bg-paper p-1"
-                >
-                  {/* Laid over the square rather than in it, so a
+              >
+                {/* Laid over the square rather than in it, so a
                       narrow square is not stretched taller than it is
                       wide */}
-                  <span class="pointer-events-none absolute inset-1.5 flex items-center justify-center">
-                    <CandySprite family={pile().family} fill label="" />
-                  </span>
-                  <span
-                    class="pointer-events-none absolute right-0.5 bottom-0.5 rounded-full border
-                      border-line bg-paper px-1 text-[10px] leading-tight font-bold text-ink"
-                  >
-                    {pile().count}
-                  </span>
+                <span class="pointer-events-none absolute inset-1.5 flex items-center justify-center">
+                  <CandySprite family={pile().family} fill label="" />
                 </span>
-              }
-            >
-              <span class="font-medium">{getFamilyName(pile().family)} candy</span>
-              <Meta>
-                {pile().count} in the jar. It raises anything of that family, and letting one go
-                pays more of it.
-              </Meta>
-            </HoverCard>
+                <span
+                  class="pointer-events-none absolute right-0.5 bottom-0.5 rounded-full border
+                      border-line bg-paper px-1 text-[10px] leading-tight font-bold text-ink"
+                >
+                  {pile().count}
+                </span>
+              </span>
+            </TooltipHost>
           )}
         </Index>
         {/* The rest of the tray, drawn empty rather than left out: a

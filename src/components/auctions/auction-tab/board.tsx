@@ -28,7 +28,7 @@ import CatchPicker, { type CatchOption } from '../../catches/catch-picker';
 import { asBoxEntry, describeCatch } from '../../catches/catch-summary';
 import { describeItem } from '../../details';
 import InventoryPicker from '../../items/InventoryPicker';
-import ItemGrid, { type ItemCell } from '../../items/ItemGrid';
+import ItemGrid, { type ItemAction, type ItemCell } from '../../items/ItemGrid';
 import {
   Badge,
   Button,
@@ -38,7 +38,6 @@ import {
   Note,
   Panel,
   Row,
-  RowButton,
   SEARCH_FROM,
   Search,
   Status,
@@ -322,16 +321,7 @@ export function AuctionBoard(
   const lotDetails = (auction: AuctionRecord): JSX.Element => (
     <>
       <Detail label="Owned by">
-        <Show when={auction.seller !== props.player} fallback={<span>you</span>}>
-          <RowButton
-            class="inline underline decoration-dotted underline-offset-2"
-            onClick={() => {
-              game.setVisiting(auction.seller);
-            }}
-          >
-            {describeSeller(auction)}
-          </RowButton>
-        </Show>
+        {auction.seller === props.player ? 'you' : describeSeller(auction)}
       </Detail>
       <Detail label="Bidding">
         {describeStanding(auction)} · {describeRemaining(auction.endsAt, now())}
@@ -393,9 +383,57 @@ export function AuctionBoard(
   );
 
   /**
+   * What can be done with one lot: look up whose it is, and bid on it
+   * or collect it. Two of them on a live lot, which is what puts the
+   * tray's squares under a card rather than a label
+   */
+  const lotChoices = (id: string, auction: AuctionRecord): ItemAction[] => {
+    const choices: ItemAction[] = [];
+
+    // A board is where a seller worth trading with again is found, so
+    // whose it is presses
+    if (auction.seller !== props.player) {
+      choices.push({
+        label: describeSeller(auction),
+        onPress: () => {
+          game.setVisiting(auction.seller);
+        },
+      });
+    }
+    if (props.viewOnly === true) {
+      return choices;
+    }
+
+    const taking = claimOf(id, auction);
+
+    if (taking != null) {
+      choices.push({ label: taking.label, tone: 'primary', onPress: taking.onClaim });
+      return choices;
+    }
+    if (auction.seller === props.player) {
+      return choices;
+    }
+    const refusal = bidRefusal(auction, props.player, gold());
+
+    // The button asks; the dialog it asks for stands with the panel
+    // rather than inside the tray, which is put away the moment the
+    // pointer leaves it
+    choices.push({
+      label: 'Bid',
+      tone: 'primary',
+      disabled: refusal != null,
+      title: refusal ?? undefined,
+      onPress: () => {
+        setBidding(id);
+      },
+    });
+    return choices;
+  };
+
+  /**
    * The items on the block, as the bag's own tray reads them: the icon
-   * says what it is, the badge says what it stands at, and the card over
-   * it says whose it is and carries the bid
+   * says what it is, the badge says what it stands at, and the card
+   * over it says whose it is and carries the bid
    */
   const itemLots = (): ItemCell[] =>
     board().flatMap(([id, auction]): ItemCell[] =>
@@ -408,7 +446,7 @@ export function AuctionBoard(
                 auction,
               )}, by ${describeSeller(auction)}`,
               card: () => lotDetails(auction),
-              footer: () => lotActions(id, auction),
+              actions: lotChoices(id, auction),
             },
           ]
         : [],
@@ -463,10 +501,9 @@ export function AuctionBoard(
     >
       <Show when={itemLots().length}>
         <h4>Items</h4>
-        {/* Narrowed by the board's own search, so the tray draws none of
-            its own — and card-only, since a press on a picture is not a
-            bid */}
-        <ItemGrid bare cardOnly entries={itemLots()} />
+        {/* Narrowed by the board's own search, so the tray draws none
+            of its own */}
+        <ItemGrid bare entries={itemLots()} />
       </Show>
 
       <Show when={boxed().length}>

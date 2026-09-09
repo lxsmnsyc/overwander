@@ -16,21 +16,29 @@ export default function setupHitMoves(battle: Battle): void {
       return;
     }
 
-    /**
-     * Plain hits are derived from the move registry: any damaging move
-     * with a base power. Fixed-damage moves (Seismic Toss, Counter,
-     * Bide, ...) carry no power and resolve through their own groups.
-     */
     const data = getMoveData(event.move);
 
-    if (data.category === MoveCategories.Status || data.power == null) {
+    if (data.category === MoveCategories.Status) {
+      return;
+    }
+
+    /**
+     * Plain hits go by the power the move resolves to rather than the
+     * one written in the registry: Fling, Return and Gyro Ball work
+     * theirs out as they land and carry none. Fixed-damage moves
+     * (Seismic Toss, Counter, Bide, ...) answer nothing here and fire
+     * their own strikes.
+     */
+    const power = event.source.checkMovePower(event.move, event.target);
+
+    if (power == null) {
       return;
     }
 
     event.source.attack(
       event.target.unit,
       event.move,
-      event.source.checkMovePower(event.move, event.target) ?? 0,
+      power,
       event.source.checkMoveType(event.move, event.target),
       data.category,
       MoveAttackFlags.Critical,

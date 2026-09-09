@@ -23,15 +23,19 @@ PostgREST embeds.
 | `gender`, `nature`                    | `smallint`  |                                                        |
 | `slots`                               | `smallint`  | Room for abilities, held items and moves               |
 | `shiny`, `shadow`, `egg`              | `boolean`   | What it is                                             |
-| `traded`                              | `boolean`   | Has changed hands; opens a trade evolution             |
+| `traded`                              | `boolean`   | Has changed hands; what the box search reads           |
+| `can_evolve`                          | `boolean`   | A handover has met what a trade evolution asks         |
 | `favorite`, `guarded`                 | `boolean`   | See [What the player sets](#what-the-player-sets)      |
 | `auctionable`                         | `boolean`   | Advisory; the opener re-derives it                     |
+| `hidden`                              | `boolean`   | Folded into a fusion; nothing reads it yet             |
 | `locked_at`                           | `bigint`    | `started_at` of the battle holding it; 0 when free     |
 | `steps`                               | `integer`   | Steps walked in the shell; only eggs accrue any        |
 | `hatch_steps`                         | `integer`   | What hatching costs, frozen when the egg was found     |
 | `stepped_at`                          | `bigint`    | Server instant steps were last credited at             |
 | `walked`                              | `integer`   | Steps walked as buddy since hatching                   |
-| `health`                              | `integer`   | Health left; 0 is fainted. The maximum is derived      |
+| `health`                              | `integer`   | Health left; 0 is fainted                              |
+| `max_health`                          | `integer`   | What it is measured against; advisory                  |
+| `hurt`                                | `boolean`   | Generated: `health < max_health`                       |
 | `statuses`                            | `smallint`  | Mask of the non-volatile statuses it carries           |
 | `lair`                                | `smallint`  | Where a raid prize was won, else null                  |
 | `ball`                                | `integer`   | Ball the catch was made with                           |
@@ -352,17 +356,25 @@ against the stored rows inside that transaction, never trusted from the
 caller.
 
 Which evolutions are offered comes from
-[`src/data/species/evolution.ts`](../../src/data/species/evolution.ts). Four
-methods can be verified against what is stored: `Level`, `UsedItem`, `HeldItem`
-and `Trade`. An evolution carrying any other flag, such as friendship or
-weather, is never offered rather than waved through. A held item is required but
-not consumed; only a used item is spent.
+[`src/data/species/evolution.ts`](../../src/data/species/evolution.ts). Seven
+methods can be verified against what is stored, and `SUPPORTED_METHODS` is the
+list: `Level`, `UsedItem`, `HeldItem`, `Trade`, `Friendship`, `TimeOfDay` and
+`StatComparison`. An evolution carrying any other flag, such as the weather or
+who else is in the party, is never offered rather than waved through. A used item
+is spent. A held item is asked for without being taken, unless a handover has
+already covered it.
 
-`Trade` reads the record's own `traded` field rather than watching a handover
+`Trade` reads the record's own `can_evolve` field rather than watching a handover
 happen. The mainline evolves a pokemon _during_ the trade, which is a moment this
-game has nowhere to put, so changing hands opens the evolution and the record
-carries the fact for good. Winning a lot at auction is the one handover there is
-so far.
+game has nowhere to put, so the swap settles the question and the record carries
+the answer until something spends it. Winning a lot at auction is the one
+handover there is so far.
+
+The swap settles **both halves at once**. An Onix handed over in a Metal Coat
+arrives a coat lighter and ready to change, so the evolution never asks for the
+item a second time. `traded` is separate and stays: it says the pokemon has
+changed hands, which is what the box search reads, and it is true of a Machop
+that no trade evolution was ever open to.
 
 An **Everstone** refuses every evolution while it is held, and it answers here
 rather than at the moment of evolving, so the catch sheet stops offering what the
@@ -389,11 +401,13 @@ player looks after rather than a row of levels. The report that writes it is
 [`battle_aftermaths`](raids.md#battle_aftermaths), and the rules both
 sides read are in [`src/auth/health.ts`](../../src/auth/health.ts).
 
-**Maximum health is derived, never stored.** It comes from the same formula the
-battle fights on (`getHealthStat` in
-[`src/data/constants/stats.ts`](../../src/data/constants/stats.ts)), so it follows
-a level, an evolution or a polished value on its own. Only the current figure is a
-field.
+**The maximum is stored beside the current figure.** It comes from the same
+formula the battle fights on (`getHealthStat` in
+[`src/data/constants/stats.ts`](../../src/data/constants/stats.ts)), and only what
+that formula reads writes it: a level, an evolution, a polished value and a
+training session. It is stored so that `hurt` can be a generated column, which is
+what `is:hurt` and Nurse Joy's list both ask. Like `auctionable` it is advisory,
+and a caller re-derives before acting on it.
 
 **When the maximum moves, the share moves with it.** A pokemon at 50 of 100 comes
 out of an evolution at 60 of 120, and out of a bottle cap the same way. Two edges

@@ -5,16 +5,21 @@ import { ArrowLeftIcon, ArrowRightIcon } from '../icons';
 import ItemCard from './ItemCard';
 import ItemSprite from './ItemSprite';
 import matchesItem, { ITEM_VOCABULARY, orderItems } from '../../data/items/search';
-import { Button, HoverCard, Meta, Note, Row, Search, TooltipHost } from '../styled';
+import { Button, Detail, HoverCard, Meta, Note, Row, Search, TooltipHost } from '../styled';
 
 /**
  * The bag as a tray of pictures rather than a column of names.
  *
  * It is the pokemon box, for items: six across and five down, a page
  * at a time, with what a square holds said by the picture and how many
- * by the number in its corner. A name is what a card over the square
- * says while the pointer is on it — the bag is looked at far more
- * often than it is read, and thirty lines of text is reading.
+ * by the number in its corner. A name is what the pointer brings up
+ * over the square, since the bag is looked at far more often than it
+ * is read and thirty lines of text is reading.
+ *
+ * A square says what it is in a **tooltip**, and gets a **hover card**
+ * only where it offers more than one thing to do. One action is the
+ * square's own press and wants no window; a choice between two has to
+ * be pressed, and a card is what can hold buttons.
  *
  * The tray carries its own furniture, a search over it and the pages
  * under it, so the bag is laid out the same way wherever it is opened:
@@ -31,6 +36,20 @@ export const GRID_SIZE = GRID_COLUMNS * GRID_ROWS;
  * Re-exported from where the battle card reads them too: a tray of
  * items and a pokemon's held item are named the same way
  */
+
+/**
+ * One thing a square offers beyond being pressed. A square with one of
+ * these does it when pressed; a square with several needs somewhere to
+ * put the buttons
+ */
+export interface ItemAction {
+  label: string;
+  onPress: () => void;
+  tone?: 'primary';
+  disabled?: boolean;
+  /** Why it cannot be pressed, where it cannot */
+  title?: string;
+}
 
 /**
  * One square: what is in it, how many, and what the caller thinks of
@@ -91,11 +110,12 @@ export interface ItemCell {
    */
   said?: string;
   /**
-   * What stands in this square's card instead of the one button the
-   * tray would draw. A caller that has its own buttons — bid, collect,
-   * take it back — writes them here
+   * What can be done with this square, where the tray's own press is
+   * not the whole of it. One of them is the square's press and the
+   * square is read in a tooltip; more than one is drawn as buttons in
+   * a hover card, since a tooltip has nowhere to put them
    */
-  footer?: () => JSX.Element;
+  actions?: ItemAction[];
 }
 
 export interface ItemGridProps {
@@ -112,10 +132,9 @@ export interface ItemGridProps {
    */
   disabled?: boolean;
   /**
-   * Whether a square itself does nothing, leaving whatever the caller
-   * put in the card as the only way to act — a board of lots, where
-   * the buttons are bid and collect rather than anything about the
-   * item
+   * Whether a square itself does nothing, for a tray that is read
+   * rather than acted from. A square with actions of its own is
+   * pressable whatever this says
    */
   cardOnly?: boolean;
   /**
@@ -124,21 +143,6 @@ export interface ItemGridProps {
    * otherwise have three of them
    */
   bare?: boolean;
-  /**
-   * Whether a square's card stays up through a press on the square.
-   * For a tray whose press acts in place, buying and buying again,
-   * rather than opening a window the card would stand on top of
-   */
-  keepCards?: boolean;
-  /**
-   * Whether a square says what it is in a tooltip rather than a hover
-   * card. For a tray the player is reading between presses rather than
-   * acting from: a card is a window that covers the thing under it,
-   * and a safari's bag is opened to check what is in hand. A square's
-   * `footer` has nowhere to go on this path, so a caller with buttons
-   * of its own wants the card
-   */
-  tips?: boolean;
   onPress?: (item: Items) => void;
 }
 
@@ -180,6 +184,29 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
   const empties = (): number[] => Array.from({ length: squares() - shown().length }, (_, at) => at);
 
   /**
+   * Whether this square's own buttons need a window to stand in. One
+   * action is the square's press, so the square only has to say what
+   * it is; two or three are a choice, and a choice needs pressing
+   */
+  const carded = (cell: ItemCell): boolean => (cell.actions?.length ?? 0) > 1;
+
+  /** The one action a square does when pressed, where it has exactly one */
+  const only = (cell: ItemCell): ItemAction | undefined =>
+    cell.actions?.length === 1 ? cell.actions[0] : undefined;
+
+  /** Whether pressing this square does anything at all */
+  const pressable = (cell: ItemCell): boolean => {
+    // A caller that listed its actions has said what the square does,
+    // so the tray's own press is not offered on top of them
+    if (cell.actions != null) {
+      const action = only(cell);
+
+      return action != null && action.disabled !== true;
+    }
+    return props.cardOnly !== true;
+  };
+
+  /**
    * How a square reads to the pointer. One that is refused is greyed
    * rather than marked — a square he will not part with is still worth
    * seeing, and a red edge reads as something having gone wrong
@@ -188,11 +215,18 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
     if (cell.blocked != null) {
       return 'border-line-soft opacity-45 grayscale';
     }
-    return props.cardOnly === true ? 'cursor-default' : 'cursor-pointer';
+    return pressable(cell) ? 'cursor-pointer' : 'cursor-default';
   };
 
   const press = (cell: ItemCell): void => {
-    if (props.disabled === true || cell.blocked != null) {
+    if (props.disabled === true || cell.blocked != null || !pressable(cell)) {
+      return;
+    }
+
+    const action = only(cell);
+
+    if (action != null) {
+      action.onPress();
       return;
     }
     if (cell.onPress != null) {
@@ -201,6 +235,20 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
     }
     props.onPress?.(cell.item);
   };
+
+  /**
+   * What the tooltip says under the item's own line: how many the bag
+   * holds, which a crate's square cannot say by itself, and whatever
+   * the caller had to add
+   */
+  const aside = (cell: ItemCell): JSX.Element => (
+    <>
+      <Show when={cell.carried ?? cell.amount}>
+        {(held) => <Detail label="Amount in bag">{held()}</Detail>}
+      </Show>
+      {cell.card?.()}
+    </>
+  );
 
   /**
    * One square of the tray, drawn the same whether a hover card or a
@@ -218,9 +266,7 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
       }
       aria-pressed={cell.selected === true}
       onClick={() => {
-        if (props.cardOnly !== true) {
-          press(cell);
-        }
+        press(cell);
       }}
       class={`relative flex aspect-square w-full items-center justify-center rounded-lg border-2
         p-1 transition-colors disabled:cursor-not-allowed ${
@@ -296,26 +342,37 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
         <Index each={shown()}>
           {(cell) => (
             <Show
-              when={props.tips !== true}
+              when={carded(cell())}
               fallback={
-                <TooltipHost class="block w-full" {...detailItem(cell().item)} extra={cell().card}>
+                <TooltipHost
+                  class="block w-full"
+                  {...detailItem(cell().item)}
+                  extra={() => aside(cell())}
+                >
                   {square(cell())}
                 </TooltipHost>
               }
             >
-              {/* A window rather than a label, because what a square is
-                  worth doing is a button rather than a sentence: use
-                  it, buy it, sell it */}
+              {/* A window rather than a label, because a square with a
+                  choice on it needs the choice pressing: bid, collect,
+                  take it back */}
               <HoverCard
                 class="block w-full"
                 title="Info"
-                stayOnPress={props.keepCards}
-                // What a square is for is the square: pressing the
-                // picture is the whole of it, and the card says what
-                // the thing is. Only a caller with buttons of its own —
-                // bid, collect, take it back — puts anything in the
-                // foot
-                footer={<Show when={cell().footer}>{(foot) => foot()()}</Show>}
+                footer={
+                  <For each={cell().actions}>
+                    {(action) => (
+                      <Button
+                        tone={action.tone}
+                        disabled={action.disabled}
+                        title={action.title}
+                        onClick={action.onPress}
+                      >
+                        {action.label}
+                      </Button>
+                    )}
+                  </For>
+                }
                 trigger={square(cell())}
               >
                 <ItemCard item={cell().item} carried={cell().carried ?? cell().amount} />

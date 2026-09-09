@@ -143,12 +143,12 @@ found in a chunk says nothing about what another player will find there.
 
 Four periods divide the day, and each has its own pokemon:
 
-| Period  | Hours       |
-| ------- | ----------- |
-| Morning | 04:00–10:00 |
-| Day     | 10:00–17:00 |
-| Evening | 17:00–20:00 |
-| Night   | 20:00–04:00 |
+| Period  | Hours          |
+| ------- | -------------- |
+| Morning | 04:00 to 10:00 |
+| Day     | 10:00 to 17:00 |
+| Evening | 17:00 to 20:00 |
+| Night   | 20:00 to 04:00 |
 
 These are read in the player's own timezone.
 
@@ -211,12 +211,12 @@ which nothing else does, so anything met under one carries the floor of 10
 whoever you are raising. Each then does one thing no other weather does, and no
 two touch the same part of what a pokemon is.
 
-| Sky                | What it is                                                        | What it is worth                                    |
-| ------------------ | ----------------------------------------------------------------- | ---------------------------------------------------- |
-| **Meteor shower**  | The old rarest sky, moved to a band of its own                    | Double the odds of a **shiny coat**                  |
-| **Fata morgana**   | The mirage that rises off dead-still air, stacking a coastline into cliffs | Double the odds of a **hidden ability**     |
-| **Dark day**       | Noon gone dark under carried smoke, in air bone dry and moving hard | About a third of what is met is a **shadow**       |
-| **Fogbow**         | A rainbow with the colour gone, formed in fog fine enough to scatter light white | What is met knows one of its line's **egg moves** |
+| Sky               | What it is                                                                       | What it is worth                                  |
+| ----------------- | -------------------------------------------------------------------------------- | ------------------------------------------------- |
+| **Meteor shower** | The old rarest sky, moved to a band of its own                                   | Double the odds of a **shiny coat**               |
+| **Fata morgana**  | The mirage that rises off dead-still air, stacking a coastline into cliffs       | Double the odds of a **hidden ability**           |
+| **Dark day**      | Noon gone dark under carried smoke, in air bone dry and moving hard              | About a third of what is met is a **shadow**      |
+| **Fogbow**        | A rainbow with the colour gone, formed in fog fine enough to scatter light white | What is met knows one of its line's **egg moves** |
 
 The two doublings stack with the day's featured family and with anything the
 player is carrying.

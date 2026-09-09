@@ -456,6 +456,10 @@ const enum Abilities {
   JoltStart = 200153,
   CheerOn = 200154,
   JeerAt = 200155,
+  TailLight = 200156,
+  LureScent = 200157,
+  Perennial = 200158,
+  Bottomless = 200159,
 }
 
 export default Abilities;

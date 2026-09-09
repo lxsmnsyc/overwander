@@ -56,6 +56,16 @@ export const FEARLESS_DIVE_SCALE = 1.3;
 export const EMPATH_SCALE = 1.3;
 export const EMPATH_THRESHOLD = 1 / 2;
 
+/** What the aroma takes off the far side's Speed */
+export const LURE_SCENT_SCALE = 0.85;
+
+/** What flowering again gives back, and the share it waits for */
+export const PERENNIAL_HEAL_FRACTION = 1 / 3;
+export const PERENNIAL_THRESHOLD = 1 / 4;
+
+/** What somebody else's spent item is worth to a bottomless stomach */
+export const BOTTOMLESS_FRACTION = 1 / 8;
+
 /** What the ore it eats is worth back to it */
 export const ORE_HUNGER_FRACTION = 1 / 4;
 
@@ -555,6 +565,99 @@ const treeckoToDeoxys = [
         source.health >= source.checkStat(Stats.HP, 0)
       ) {
         event.value *= KITTEN_PACE_SCALE;
+      }
+    }),
+  ),
+
+  // Volbeat and Illumise: counterparts, each hanging its own aura over
+  // the far side. Two knobs rather than one, so two listeners
+  createAbility(Abilities.TailLight, (battle) =>
+    battle.on(BattleEvents.CheckUnitStage, EventPriority.Post, (event) => {
+      const source = event.source;
+
+      if (event.stage !== Stages.Evasion || event.value <= 0) {
+        return;
+      }
+
+      for (const firefly of battle.units(source.team.alliance)) {
+        if (firefly.alive && firefly.hasAbility(Abilities.TailLight)) {
+          event.value = 0;
+          return;
+        }
+      }
+    }),
+  ),
+
+  createAbility(Abilities.LureScent, (battle) =>
+    battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
+      const source = event.source;
+
+      if (event.stat !== Stats.Speed) {
+        return;
+      }
+
+      for (const firefly of battle.units(source.team.alliance)) {
+        if (firefly.alive && firefly.hasAbility(Abilities.LureScent)) {
+          event.value *= LURE_SCENT_SCALE;
+          return;
+        }
+      }
+    }),
+  ),
+
+  // Roselia: it flowers again out of nothing, once, and comes up clean
+  createAbility(Abilities.Perennial, (battle) => {
+    const spent = new Set<Unit>();
+
+    return battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
+      const target = event.target;
+
+      if (
+        !event.success ||
+        !target.alive ||
+        spent.has(target) ||
+        !target.hasAbility(Abilities.Perennial) ||
+        target.health >= target.checkStat(Stats.HP, 0) * PERENNIAL_THRESHOLD
+      ) {
+        return;
+      }
+
+      spent.add(target);
+      target.triggerAbility(Abilities.Perennial);
+
+      const cause = {
+        type: EffectType.Ability,
+        ability: Abilities.Perennial,
+        unit: target,
+      } as const;
+
+      target.heal(cause, target, target.checkStat(Stats.HP, 0) * PERENNIAL_HEAL_FRACTION, 0);
+      target.cure(cause);
+    });
+  }),
+
+  // Gulpin: anybody's spent item is a meal, since the stomach does not
+  // ask whose it was
+  createAbility(Abilities.Bottomless, (battle) =>
+    battle.on(BattleEvents.UnitRemoveItem, EventPriority.Post, (event) => {
+      const cause = event.cause;
+
+      // Spent rather than knocked away: a consumed item carries its own
+      // item cause, which nothing else that takes one does
+      if (cause.type !== EffectType.Item || cause.item !== event.item) {
+        return;
+      }
+
+      for (const stomach of battle.units()) {
+        if (stomach.alive && stomach.hasAbility(Abilities.Bottomless)) {
+          stomach.triggerAbility(Abilities.Bottomless);
+          stomach.heal(
+            { type: EffectType.Ability, ability: Abilities.Bottomless, unit: stomach },
+            stomach,
+            stomach.checkStat(Stats.HP, 0) * BOTTOMLESS_FRACTION,
+            0,
+          );
+        }
       }
     }),
   ),

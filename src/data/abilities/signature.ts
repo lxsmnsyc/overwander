@@ -1045,4 +1045,35 @@ export default function registerSignatureAbilities(): void {
     description:
       'Each time it acts, the enemy highest on HP loses a stage in its best stat, up to 3 times a battle.',
   });
+
+  /**
+   * Volbeat and Illumise are counterparts, and each hangs an aura over
+   * the far side for as long as it stands: the light leaves nowhere to
+   * hide, the scent leaves nobody quick
+   */
+
+  // Volbeat
+  registerAbility(Abilities.TailLight, {
+    name: 'Tail Light',
+    description: 'Evasion counts for nothing on the enemy side while it stands.',
+  });
+
+  // Illumise
+  registerAbility(Abilities.LureScent, {
+    name: 'Lure Scent',
+    description: 'Enemy Speed counts 0.85x while it stands.',
+  });
+
+  // Roselia
+  registerAbility(Abilities.Perennial, {
+    name: 'Perennial',
+    description:
+      'The first time it drops below 1/4 HP it heals 1/3 of its HP and is cured. Once per battle.',
+  });
+
+  // Gulpin
+  registerAbility(Abilities.Bottomless, {
+    name: 'Bottomless',
+    description: 'It heals 1/8 of its HP whenever any held item is consumed on the field.',
+  });
 }

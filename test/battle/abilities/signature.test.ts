@@ -155,6 +155,7 @@ import { Statuses, TeamStatuses, Weathers } from '../../../src/data/ids/status';
 import turns from '../../../src/battle/turn';
 import { layersUnder } from '../../../src/battle/moves/spikes';
 import {
+  BOTTOMLESS_FRACTION,
   COCOON_DURATION,
   COCOON_SCALE,
   COCOON_THRESHOLD,
@@ -167,9 +168,12 @@ import {
   FEARLESS_DIVE_SCALE,
   JOLT_START_SCALE,
   KITTEN_PACE_SCALE,
+  LURE_SCENT_SCALE,
   MYCELIUM_SCALE,
   ORE_HUNGER_FRACTION,
   PACK_HUNT_SCALE,
+  PERENNIAL_HEAL_FRACTION,
+  PERENNIAL_THRESHOLD,
   VANISHING_ACT_DURATION,
 } from '../../../src/battle/abilities/signature/treecko-to-deoxys';
 import { unitTarget } from '../../../src/battle/utils';
@@ -4385,5 +4389,108 @@ describe('the Plusle and Minun pair', () => {
     }
 
     expect(ally.stages[Stages.Attack]).toBe(CHEER_MAX_SHOUTS);
+  });
+});
+
+describe('the Volbeat and Illumise pair', () => {
+  it('leaves the far side nowhere to hide and nobody quick', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const volbeat = createUnit(battle, teamA);
+    const illumise = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    // Measured before the pair lights up, since the aura covers the
+    // whole far side
+    const clean = enemy.checkStat(Stats.Speed, 0);
+
+    volbeat.addAbility(Abilities.TailLight);
+    illumise.addAbility(Abilities.LureScent);
+
+    enemy.addStage(Stages.Evasion, 3, NONE_CAUSE);
+
+    expect(enemy.checkStage(Stages.Evasion, 0)).toBe(0);
+    expect(enemy.checkStat(Stats.Speed, 0)).toBeCloseTo(clean * LURE_SCENT_SCALE, 5);
+
+    // Neither aura reaches its own side
+    volbeat.addStage(Stages.Evasion, 2, NONE_CAUSE);
+
+    expect(volbeat.checkStage(Stages.Evasion, 0)).toBe(2);
+  });
+
+  it('takes the light and the scent with it when it goes', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const volbeat = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    volbeat.addAbility(Abilities.TailLight);
+
+    enemy.addStage(Stages.Evasion, 2, NONE_CAUSE);
+
+    expect(enemy.checkStage(Stages.Evasion, 0)).toBe(0);
+
+    volbeat.faint(enemy);
+
+    expect(enemy.checkStage(Stages.Evasion, 0)).toBe(2);
+  });
+});
+
+describe('Perennial', () => {
+  it('flowers again once, clean', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Perennial);
+
+    const maxHP = holder.checkStat(Stats.HP, 0);
+    holder.setHealth(maxHP * PERENNIAL_THRESHOLD + 10);
+    holder.addStatus(Statuses.Poisoned, NONE_CAUSE);
+
+    enemy.damage(NONE_CAUSE, holder, 20, 0);
+
+    expect(holder.status[Statuses.Poisoned]).toBeUndefined();
+    expect(holder.health).toBeCloseTo(
+      maxHP * PERENNIAL_THRESHOLD - 10 + maxHP * PERENNIAL_HEAL_FRACTION,
+      5,
+    );
+
+    // Only ever the once
+    holder.setHealth(maxHP * PERENNIAL_THRESHOLD - 1);
+    const before = holder.health;
+
+    enemy.damage(NONE_CAUSE, holder, 1, 0);
+
+    expect(holder.health).toBeCloseTo(before - 1, 5);
+  });
+});
+
+describe('Bottomless', () => {
+  it('feeds on whatever anybody else spends', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Bottomless);
+
+    const maxHP = holder.checkStat(Stats.HP, 0);
+    holder.setHealth(maxHP / 2);
+
+    enemy.addItem(Items.SitrusBerry);
+    enemy.setHealth(enemy.checkStat(Stats.HP, 0) / 4);
+    battle.tick(turns(1));
+
+    expect(enemy.items[Items.SitrusBerry]).toBeUndefined();
+    expect(holder.health).toBeCloseTo(maxHP / 2 + maxHP * BOTTOMLESS_FRACTION, 5);
+  });
+
+  it('gets nothing from an item knocked out of a hand', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Bottomless);
+
+    const maxHP = holder.checkStat(Stats.HP, 0);
+    holder.setHealth(maxHP / 2);
+
+    enemy.addItem(Items.Leftovers);
+    enemy.removeItem(Items.Leftovers, { type: EffectType.Move, move: Moves.Pound, unit: holder });
+
+    expect(holder.health).toBeCloseTo(maxHP / 2, 5);
   });
 });

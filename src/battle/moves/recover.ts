@@ -1,7 +1,7 @@
 import { AttackPriority } from '../../core/event-emitter';
 import { Stats } from '../../data/constants/stats';
 import { Moves } from '../../data/ids/moves';
-import { Weathers } from '../../data/ids/status';
+import { Statuses, Weathers } from '../../data/ids/status';
 import { scoreHeal } from '../ai/score';
 import type Battle from '../core';
 import type Unit from '../unit';
@@ -21,6 +21,10 @@ const HEAL_FRACTION: { [key in Moves]?: number } = {
   [Moves.MilkDrink]: 0.5,
   // https://bulbapedia.bulbagarden.net/wiki/Slack_Off_(move)
   [Moves.SlackOff]: 0.5,
+  // The one that pays for itself: see `status/roosting.ts` for what
+  // being on the ground costs
+  // https://bulbapedia.bulbagarden.net/wiki/Roost_(move)
+  [Moves.Roost]: 0.5,
 };
 
 /**
@@ -71,6 +75,15 @@ export default function setupRecoverMoves(battle: Battle): void {
         healed.checkStat(Stats.HP, 0) * fraction,
         0,
       );
+
+      // Roost lands on the ground to take its rest, and is open there
+      if (event.move === Moves.Roost) {
+        event.source.addStatus(Statuses.Roosting, {
+          type: EffectType.Move,
+          move: event.move,
+          unit: event.source,
+        });
+      }
     }
   });
 

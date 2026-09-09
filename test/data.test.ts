@@ -1307,6 +1307,15 @@ describe('move damage', () => {
     Moves.SpitUp,
     Moves.Endeavor,
     Moves.SheerCold,
+    // Sinnoh's own: power read off the Speed between the two sides,
+    // off what either of them is carrying, off the damage just taken,
+    // off the PP left and off what the target has left
+    Moves.GyroBall,
+    Moves.NaturalGift,
+    Moves.MetalBurst,
+    Moves.Fling,
+    Moves.TrumpCard,
+    Moves.WringOut,
   ]);
 
   it('gives every damaging move something to hit with', () => {

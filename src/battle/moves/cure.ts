@@ -4,6 +4,7 @@ import { Statuses } from '../../data/ids/status';
 import { USELESS_PENALTY } from '../ai/score';
 import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
+import { ASLEEP_STATUSES } from '../status';
 import { hasAnyStatus } from '../utils';
 
 /**
@@ -39,6 +40,18 @@ export default function setupCureMoves(battle: Battle): void {
         move: event.move,
         unit: event.source,
       });
+    }
+
+    // The slap is what wakes it, which is what the doubled hit pays
+    // for: a target left asleep would simply be hit twice as hard
+    if (event.move === Moves.WakeUpSlap && event.target.type === MoveTargetType.Unit) {
+      for (const status of ASLEEP_STATUSES) {
+        event.target.unit.removeStatus(status, {
+          type: EffectType.Move,
+          move: event.move,
+          unit: event.source,
+        });
+      }
     }
   });
 

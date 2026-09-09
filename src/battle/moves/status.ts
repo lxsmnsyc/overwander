@@ -163,6 +163,15 @@ const EFFECT_STAGE_MOVES: { [key in Moves]?: AttackStageEffect } = {
     self: true,
   },
   [Moves.Overheat]: { stage: Stages.SpecialAttack, value: -2, chance: 100, self: true },
+  // The cost of a swing that big, paid by the swinger: Hammer Arm is
+  // slower to come round again, Close Combat is open afterwards
+  [Moves.HammerArm]: { stage: Stages.Speed, value: -1, chance: 100, self: true },
+  [Moves.CloseCombat]: {
+    stage: [Stages.Defense, Stages.SpecialDefense],
+    value: -1,
+    chance: 100,
+    self: true,
+  },
   [Moves.PsychoBoost]: { stage: Stages.SpecialAttack, value: -2, chance: 100, self: true },
   [Moves.SilverWind]: {
     stage: [

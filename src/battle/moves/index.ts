@@ -80,6 +80,16 @@ import setupSports from './sports';
 import setupStockpile from './stockpile';
 import setupUproar from './uproar';
 import setupWish from './wish';
+import setupPayback from './payback';
+import setupLockouts from './lockouts';
+import setupPsychoShift from './psycho-shift';
+import setupPowerTrick from './power-trick';
+import setupGravity from './gravity';
+import setupTailwind from './tailwind';
+import setupAcupressure from './acupressure';
+import setupBerryMoves from './berry-moves';
+import setupHealingWish from './healing-wish';
+import setupFling from './fling';
 
 export default function setupMoves(battle: Battle): void {
   // Overarching groups
@@ -172,6 +182,18 @@ export default function setupMoves(battle: Battle): void {
   setupAssist(battle);
   setupWish(battle);
   setupGroundMoves(battle);
+
+  // Sinnoh
+  setupPayback(battle);
+  setupLockouts(battle);
+  setupPsychoShift(battle);
+  setupPowerTrick(battle);
+  setupGravity(battle);
+  setupTailwind(battle);
+  setupAcupressure(battle);
+  setupBerryMoves(battle);
+  setupHealingWish(battle);
+  setupFling(battle);
 
   // Last, because they are what is left: both fallbacks only answer
   // when every resolver above has declined to pick anything. Attack

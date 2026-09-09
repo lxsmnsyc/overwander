@@ -89,6 +89,11 @@ export const STATUS_NAMES: Record<Statuses, string> = {
   [Statuses.Grudging]: 'Grudging',
   [Statuses.Uproaring]: 'Uproar',
   [Statuses.Helped]: 'Helped',
+  [Statuses.MindRead]: 'Read',
+  [Statuses.Embargoed]: 'Embargoed',
+  [Statuses.HealBlocked]: 'Heal Blocked',
+  [Statuses.PowerTricked]: 'Power Trick',
+  [Statuses.Roosting]: 'Roosting',
 };
 
 /**

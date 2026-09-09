@@ -85,6 +85,11 @@ const STATUS_COLORS: Record<Statuses, string> = {
   [Statuses.Grudging]: '#5a3f5a',
   [Statuses.Uproaring]: '#c97a4a',
   [Statuses.Helped]: '#7ac9a0',
+  [Statuses.MindRead]: '#c9a0e0',
+  [Statuses.Embargoed]: '#8a7f6b',
+  [Statuses.HealBlocked]: '#c97a8a',
+  [Statuses.PowerTricked]: '#e0b06b',
+  [Statuses.Roosting]: '#a0c9d6',
 };
 
 const STATUS_NAMES: Record<Statuses, string> = {
@@ -132,6 +137,11 @@ const STATUS_NAMES: Record<Statuses, string> = {
   [Statuses.Grudging]: 'Grudging',
   [Statuses.Uproaring]: 'Uproar',
   [Statuses.Helped]: 'Helped',
+  [Statuses.MindRead]: 'Read',
+  [Statuses.Embargoed]: 'Embargoed',
+  [Statuses.HealBlocked]: 'Heal Blocked',
+  [Statuses.PowerTricked]: 'Power Trick',
+  [Statuses.Roosting]: 'Roosting',
 };
 
 /**

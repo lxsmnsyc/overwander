@@ -143,6 +143,30 @@ export const enum Statuses {
    * (Helping Hand)
    */
   Helped = 43,
+  /**
+   * The unit has been read: its evasion is ignored, and so is the
+   * immunity a Dark type has to Psychic (Miracle Eye)
+   */
+  MindRead = 44,
+  /**
+   * The unit's held item does nothing while this lasts (Embargo)
+   */
+  Embargoed = 45,
+  /**
+   * Nothing puts health back on this unit while this lasts (Heal
+   * Block)
+   */
+  HealBlocked = 46,
+  /**
+   * The unit has swapped its Attack and its Defense over, and swaps
+   * them back when it leaves the field (Power Trick)
+   */
+  PowerTricked = 47,
+  /**
+   * The unit is not Flying for as long as this lasts, having put
+   * itself on the ground to rest (Roost)
+   */
+  Roosting = 48,
 }
 
 /**

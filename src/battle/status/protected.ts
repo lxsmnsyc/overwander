@@ -1,4 +1,5 @@
 import { EventPriority } from '../../core/event-emitter';
+import { Moves } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
 import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
@@ -27,12 +28,23 @@ export default function setupProtectedStatus(battle: Battle): void {
 
     const target = event.target.unit;
 
+    const guard = target.status[Statuses.Protected];
+
     // A guard turns away what somebody else aims at it, never what the
     // unit does to itself
-    if (target !== event.source && target.status[Statuses.Protected] != null) {
-      event.immune = true;
-
-      target.triggerStatus(Statuses.Protected, { type: EffectType.None });
+    if (target === event.source || guard == null) {
+      return;
     }
+
+    // Feint is the one that goes through, and the guard does not
+    // survive being walked through
+    if (event.move === Moves.Feint) {
+      target.removeStatus(Statuses.Protected, guard);
+      return;
+    }
+
+    event.immune = true;
+
+    target.triggerStatus(Statuses.Protected, { type: EffectType.None });
   });
 }

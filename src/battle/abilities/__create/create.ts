@@ -12,7 +12,10 @@ import type Unit from '../../unit';
  * How an ability is registered, and the hook the ones that answer a
  * touch ride
  */
-export function createAbility(ability: Abilities, setup: (battle: Battle) => Lifecycle) {
+export function createAbility(
+  ability: Abilities,
+  setup: (battle: Battle) => Lifecycle,
+): ((battle: Battle) => void) & { ability: Abilities } {
   // The id rides along on the returned starter, so a list of abilities
   // can say which ones it holds without being written out twice
   return Object.assign(startAbility, { ability });

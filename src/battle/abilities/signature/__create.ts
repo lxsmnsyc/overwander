@@ -6,7 +6,7 @@ import { DamageFlags, MoveCategories, Moves } from '../../../data/ids/moves';
 import { getMoveData } from '../../../data/moves';
 import type Battle from '../../core';
 import { BattleEvents, EffectType, type UnitDamageEvent } from '../../events';
-import type { Lifecycle } from '../../lifecycle';
+import { type Lifecycle, MergedLifecycle } from '../../lifecycle';
 import type Unit from '../../unit';
 import { createAbility } from '../__create';
 
@@ -235,6 +235,43 @@ export const BATTLE_STATS = [
  * for a stat emits the same event the caller is answering, so the
  * measurement raises a flag the caller checks before it does anything
  */
+/**
+ * What the three Kanto birds share: the beat of the wings as one takes
+ * the field costs every enemy a stage of whatever that bird's weather
+ * works on. Nothing in it reads a type, so a regional form of the same
+ * bird would beat its wings the same way
+ */
+export function createWingbeatAbility(
+  ability: Abilities,
+  stage: Stages,
+): ((battle: Battle) => void) & { ability: Abilities } {
+  return createAbility(
+    ability,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+          if (!event.reactivation && event.source.hasAbility(ability)) {
+            event.source.triggerAbility(ability);
+          }
+        }),
+        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
+          if (event.ability !== ability) {
+            return;
+          }
+
+          const source = event.source;
+          const cause = { type: EffectType.Ability, ability, unit: source } as const;
+
+          for (const enemy of battle.units(source.team.alliance)) {
+            if (enemy.alive) {
+              enemy.addStage(stage, -1, cause);
+            }
+          }
+        }),
+      ]),
+  );
+}
+
 /**
  * What the three legendary beasts share: the first blow that would
  * finish one leaves it standing on 1 HP, cured of whatever it was

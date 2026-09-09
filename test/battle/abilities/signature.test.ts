@@ -19,14 +19,12 @@ import {
   SWEET_PAW_SHARE,
 } from '../../../src/battle/abilities/signature/chikorita-to-celebi';
 import {
-  ABSOLUTE_CALM_STATUS_SCALE,
   ANCESTRAL_MEMORY_SCALE,
   FULL_BELLY_CAST_SCALE,
   FULL_BELLY_HEAL_FRACTION,
   GENETIC_APEX_HIGHEST_SCALE,
   GENETIC_APEX_LOWEST_SCALE,
   LATENT_POTENTIAL_SCALE,
-  LIGHTNING_REFLEXES_CAST_SCALE,
   PREDATORS_DIVE_SCALE,
   ROLLBACK_SAMPLE,
   ROLLBACK_THRESHOLD,
@@ -2416,60 +2414,51 @@ describe('Full Belly', () => {
   });
 });
 
-describe('Absolute Calm', () => {
-  it('refuses what rattles and shortens what lands', () => {
-    const { battle, teamA } = createBattle();
-    const holder = createUnit(battle, teamA);
-    const bare = createUnit(battle, teamA);
-    holder.addAbility(Abilities.AbsoluteCalm);
+describe('the birds', () => {
+  const WINGBEATS = [
+    { name: 'Frostwing', ability: Abilities.Frostwing, stage: Stages.Speed },
+    { name: 'Stormwing', ability: Abilities.Stormwing, stage: Stages.SpecialDefense },
+    { name: 'Emberwing', ability: Abilities.Emberwing, stage: Stages.Defense },
+  ];
 
-    expect(holder.checkStatusImmunity(Statuses.Flinched, NONE_CAUSE)).toBe(true);
-    expect(holder.checkStatusImmunity(Statuses.Confused, NONE_CAUSE)).toBe(true);
-    expect(holder.checkStatusImmunity(Statuses.Infatuated, NONE_CAUSE)).toBe(true);
+  for (const { name, ability, stage } of WINGBEATS) {
+    it(`takes a stage off the whole far side as ${name} arrives`, () => {
+      const { battle, teamA, teamB } = createBattle();
+      const holder = createUnit(battle, teamA);
+      const ally = createUnit(battle, teamA);
+      const first = createUnit(battle, teamB);
+      const second = createUnit(battle, teamB);
+      holder.addAbility(ability);
 
-    // A burn still lands, it just does not stay long
-    expect(holder.checkStatusImmunity(Statuses.Burned, NONE_CAUSE)).toBe(false);
-    expect(holder.checkStatusDuration(Statuses.Sleeping, turns(3), NONE_CAUSE)).toBeCloseTo(
-      bare.checkStatusDuration(Statuses.Sleeping, turns(3), NONE_CAUSE) *
-        ABSOLUTE_CALM_STATUS_SCALE,
-      5,
-    );
-  });
-});
+      battle.emit(BattleEvents.UnitEntersField, {
+        id: 'UnitEntersField',
+        disabled: false,
+        source: holder,
+        reactivation: false,
+      });
 
-describe('Lightning Reflexes', () => {
-  it('winds up faster and cannot be slowed or stopped', () => {
-    const { battle, teamA } = createBattle();
-    const holder = createUnit(battle, teamA);
-    holder.addAbility(Abilities.LightningReflexes);
+      expect(first.stages[stage]).toBe(-1);
+      expect(second.stages[stage]).toBe(-1);
+      // Its own side stands where it was
+      expect(ally.stages[stage]).toBe(0);
+      expect(holder.stages[stage]).toBe(0);
+    });
+  }
 
-    const target = { type: MoveTargetType.None } as const;
-    const bare = createUnit(battle, teamA).checkMoveCastTime(Moves.Flamethrower, target);
-
-    expect(holder.checkMoveCastTime(Moves.Flamethrower, target)).toBeCloseTo(
-      bare * LIGHTNING_REFLEXES_CAST_SCALE,
-      5,
-    );
-    expect(holder.checkStatusImmunity(Statuses.Paralyzed, NONE_CAUSE)).toBe(true);
-    expect(holder.checkStatusImmunity(Statuses.Flinched, NONE_CAUSE)).toBe(true);
-    expect(holder.checkStatusImmunity(Statuses.Burned, NONE_CAUSE)).toBe(false);
-  });
-});
-
-describe('Ashfall', () => {
-  it('casts Will-O-Wisp at the far side on the way down', () => {
+  it('beats nothing on a bird that was only reactivated', () => {
     const { battle, teamA, teamB } = createBattle();
-    pinRandom(battle, 0);
     const holder = createUnit(battle, teamA);
-    const ally = createUnit(battle, teamA);
     const enemy = createUnit(battle, teamB);
-    holder.addAbility(Abilities.Ashfall);
+    holder.addAbility(Abilities.Frostwing);
 
-    holder.faint(enemy);
-    battle.tick(turns(1));
+    battle.emit(BattleEvents.UnitEntersField, {
+      id: 'UnitEntersField',
+      disabled: false,
+      source: holder,
+      reactivation: true,
+    });
 
-    expect(enemy.status[Statuses.Burned]).not.toBeUndefined();
-    expect(ally.status[Statuses.Burned]).toBeUndefined();
+    expect(enemy.stages[Stages.Speed]).toBe(0);
   });
 });
 

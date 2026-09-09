@@ -468,23 +468,26 @@ export default function registerSignatureAbilities(): void {
     description: 'It heals 1/16 of its HP every time it acts, and its cast times are 25% longer.',
   });
 
+  /**
+   * The three birds share one signature: the beat of the wings as one
+   * takes the field, told in the stat its own weather works on
+   */
   // Articuno
-  registerAbility(Abilities.AbsoluteCalm, {
-    name: 'Absolute Calm',
-    description:
-      'It cannot be made to flinch, confused or infatuated, and statuses on it run out in half the time.',
+  registerAbility(Abilities.Frostwing, {
+    name: 'Frostwing',
+    description: 'Every enemy loses a stage of Speed as it arrives on the field.',
   });
 
   // Zapdos
-  registerAbility(Abilities.LightningReflexes, {
-    name: 'Lightning Reflexes',
-    description: 'Its cast times are 25% shorter, and it cannot be paralysed or made to flinch.',
+  registerAbility(Abilities.Stormwing, {
+    name: 'Stormwing',
+    description: 'Every enemy loses a stage of Special Defense as it arrives on the field.',
   });
 
   // Moltres
-  registerAbility(Abilities.Ashfall, {
-    name: 'Ashfall',
-    description: 'When it faints, it casts Will-O-Wisp at every standing enemy.',
+  registerAbility(Abilities.Emberwing, {
+    name: 'Emberwing',
+    description: 'Every enemy loses a stage of Defense as it arrives on the field.',
   });
 
   // Dratini

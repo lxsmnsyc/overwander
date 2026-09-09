@@ -1,15 +1,20 @@
 import { AttackPriority, EventPriority } from '../../../core/event-emitter';
-import { Stats } from '../../../data/constants/stats';
+import { Stages, Stats } from '../../../data/constants/stats';
 import type { Types } from '../../../data/constants/types';
 import Abilities from '../../../data/ids/abilities';
-import { DamageFlags, MoveAttackFlags, Moves } from '../../../data/ids/moves';
-import { Statuses } from '../../../data/ids/status';
+import { DamageFlags, MoveAttackFlags } from '../../../data/ids/moves';
 import { BattleEvents, EffectType } from '../../events';
 import { MergedLifecycle } from '../../lifecycle';
 import type Unit from '../../unit';
 import { onUnitActs, unitTarget } from '../../utils';
 import { createAbility } from '../__create';
-import { BATTLE_STATS, createStatExtremes, createTimedMarks, createUnitState } from './__create';
+import {
+  BATTLE_STATS,
+  createStatExtremes,
+  createTimedMarks,
+  createUnitState,
+  createWingbeatAbility,
+} from './__create';
 
 /** What the unspent half of a pokemon is worth */
 export const LATENT_POTENTIAL_SCALE = 1.3;
@@ -35,22 +40,6 @@ export const PREDATORS_DIVE_SCALE = 1.5;
 /** What a full belly gives back, and what carrying it costs */
 export const FULL_BELLY_HEAL_FRACTION = 1 / 16;
 export const FULL_BELLY_CAST_SCALE = 1.25;
-
-/** What nothing rattling it takes off a status */
-export const ABSOLUTE_CALM_STATUS_SCALE = 0.5;
-
-/** The statuses that never take on a bird that cannot be rattled */
-const ABSOLUTE_CALM_IMMUNE = new Set<Statuses>([
-  Statuses.Flinched,
-  Statuses.Confused,
-  Statuses.Infatuated,
-]);
-
-/** What thinking faster than the storm takes off a wind-up */
-export const LIGHTNING_REFLEXES_CAST_SCALE = 0.75;
-
-/** The two things a bird that moves first is never caught by */
-const LIGHTNING_REFLEXES_IMMUNE = new Set<Statuses>([Statuses.Paralyzed, Statuses.Flinched]);
 
 /** What its highest stat is worth, and what its lowest is left at */
 export const GENETIC_APEX_HIGHEST_SCALE = 1.25;
@@ -311,75 +300,11 @@ const eeveeToDragonite = [
       ]),
   ),
 
-  // Articuno: nothing rattles it, and what does land on it does not
-  // stay. None of it reads its type, so the Galarian bird gets the same
-  createAbility(
-    Abilities.AbsoluteCalm,
-    (battle) =>
-      new MergedLifecycle([
-        battle.on(BattleEvents.CheckUnitStatusImmunity, EventPriority.Post, (event) => {
-          if (
-            !event.immune &&
-            ABSOLUTE_CALM_IMMUNE.has(event.status) &&
-            event.source.hasAbility(Abilities.AbsoluteCalm)
-          ) {
-            event.immune = true;
-
-            event.source.triggerAbility(Abilities.AbsoluteCalm);
-          }
-        }),
-        battle.on(BattleEvents.CheckUnitStatusDuration, EventPriority.Post, (event) => {
-          if (event.source.hasAbility(Abilities.AbsoluteCalm)) {
-            event.duration *= ABSOLUTE_CALM_STATUS_SCALE;
-          }
-        }),
-      ]),
-  ),
-
-  // Zapdos: it is already moving. Cast time rather than cooldown, which
-  // is Speed's own business
-  createAbility(
-    Abilities.LightningReflexes,
-    (battle) =>
-      new MergedLifecycle([
-        battle.on(BattleEvents.CheckUnitMoveCastTime, EventPriority.Post, (event) => {
-          if (event.source.hasAbility(Abilities.LightningReflexes)) {
-            event.duration *= LIGHTNING_REFLEXES_CAST_SCALE;
-          }
-        }),
-        battle.on(BattleEvents.CheckUnitStatusImmunity, EventPriority.Post, (event) => {
-          if (
-            !event.immune &&
-            LIGHTNING_REFLEXES_IMMUNE.has(event.status) &&
-            event.source.hasAbility(Abilities.LightningReflexes)
-          ) {
-            event.immune = true;
-
-            event.source.triggerAbility(Abilities.LightningReflexes);
-          }
-        }),
-      ]),
-  ),
-
-  // Moltres: the fire does not go out with it. What it leaves on the far
-  // side is Will-O-Wisp's, so the move's own roll decides what catches
-  createAbility(Abilities.Ashfall, (battle) =>
-    battle.on(BattleEvents.UnitFaints, EventPriority.Post, (event) => {
-      const fallen = event.source;
-
-      if (!fallen.hasAbility(Abilities.Ashfall)) {
-        return;
-      }
-
-      fallen.triggerAbility(Abilities.Ashfall);
-
-      for (const enemy of battle.units(fallen.team.alliance)) {
-        if (enemy.alive) {
-          fallen.triggerMove(Moves.WillOWisp, unitTarget(enemy), 0);
-        }
-      }
-    }),
-  ),
+  // The three birds: one beat of the wings each as it takes the field,
+  // in the stat that bird's own weather works on
+  createWingbeatAbility(Abilities.Frostwing, Stages.Speed),
+  createWingbeatAbility(Abilities.Stormwing, Stages.SpecialDefense),
+  createWingbeatAbility(Abilities.Emberwing, Stages.Defense),
 
   // Dratini: the sky it calls up does not clear itself, and its own
   // side stands in it untouched

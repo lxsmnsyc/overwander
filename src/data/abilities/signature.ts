@@ -918,4 +918,29 @@ export default function registerSignatureAbilities(): void {
     name: 'Sun Root',
     description: 'It calls up Sun as it takes the field, and its moves deal 1.3x damage in Sun.',
   });
+
+  // Taillow
+  registerAbility(Abilities.FearlessDive, {
+    name: 'Fearless Dive',
+    description: 'Its moves hit 1.3x against a target on a higher share of its HP than it has.',
+  });
+
+  // Wingull
+  registerAbility(Abilities.BillCarry, {
+    name: 'Bill Carry',
+    description:
+      'It arrives carrying a Sitrus Berry, handed to the neediest empty-handed ally or kept if there is none.',
+  });
+
+  // Ralts
+  registerAbility(Abilities.Empath, {
+    name: 'Empath',
+    description: 'Its Special Attack counts 1.3x while any ally is below 1/2 HP.',
+  });
+
+  // Surskit
+  registerAbility(Abilities.SurfaceWalk, {
+    name: 'Surface Walk',
+    description: 'It takes no damage from hazards or from weather.',
+  });
 }

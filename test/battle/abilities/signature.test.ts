@@ -159,6 +159,9 @@ import {
   COCOON_THRESHOLD,
   CROOKED_RUN_MAX_STACKS,
   CROOKED_RUN_SCALE,
+  EMPATH_SCALE,
+  EMPATH_THRESHOLD,
+  FEARLESS_DIVE_SCALE,
   PACK_HUNT_SCALE,
 } from '../../../src/battle/abilities/signature/treecko-to-deoxys';
 import { unitTarget } from '../../../src/battle/utils';
@@ -3885,5 +3888,131 @@ describe('the Lotad and Seedot pair', () => {
 
     expect(lotad.health).toBe(maxHP / 2);
     expect(resolveAttackDamage(battle, seedot, enemy)).toBeCloseTo(clean * GROVE_DAMAGE_SCALE, 5);
+  });
+});
+
+describe('Fearless Dive', () => {
+  it('goes hardest at whatever is standing tallest', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.FearlessDive);
+
+    const target = unitTarget(enemy);
+    const clean = holder.checkMovePower(Moves.Pound, target) ?? 0;
+
+    // Both whole, so nobody is standing taller
+    expect(holder.checkMovePower(Moves.Pound, target)).toBeCloseTo(clean, 5);
+
+    holder.setHealth(holder.checkStat(Stats.HP, 0) / 2);
+
+    expect(holder.checkMovePower(Moves.Pound, target)).toBeCloseTo(clean * FEARLESS_DIVE_SCALE, 5);
+
+    // And nothing once the enemy is the lower of the two
+    enemy.setHealth(enemy.checkStat(Stats.HP, 0) / 4);
+
+    expect(holder.checkMovePower(Moves.Pound, target)).toBeCloseTo(clean, 5);
+  });
+});
+
+describe('Bill Carry', () => {
+  it('hands what it brought to the neediest empty-handed ally', () => {
+    const { battle, teamA } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const hurt = createUnit(battle, teamA);
+    const stocked = createUnit(battle, teamA);
+    holder.addAbility(Abilities.BillCarry);
+
+    hurt.setHealth(hurt.checkStat(Stats.HP, 0) / 4);
+    stocked.setHealth(1);
+    stocked.addItem(Items.Leftovers);
+
+    battle.emit(BattleEvents.UnitEntersField, {
+      id: 'UnitEntersField',
+      disabled: false,
+      source: holder,
+      reactivation: false,
+    });
+
+    // The one with something already keeps what it has, however hurt
+    expect(hurt.items[Items.SitrusBerry]).not.toBeUndefined();
+    expect(stocked.items[Items.SitrusBerry]).toBeUndefined();
+    expect(holder.items[Items.SitrusBerry]).toBeUndefined();
+  });
+
+  it('keeps the berry when nobody else can take it', () => {
+    const { battle, teamA } = createBattle();
+    const holder = createUnit(battle, teamA);
+    holder.addAbility(Abilities.BillCarry);
+
+    battle.emit(BattleEvents.UnitEntersField, {
+      id: 'UnitEntersField',
+      disabled: false,
+      source: holder,
+      reactivation: false,
+    });
+
+    expect(holder.items[Items.SitrusBerry]).not.toBeUndefined();
+  });
+});
+
+describe('Empath', () => {
+  it('answers for whatever its side is carrying', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.Empath);
+
+    const parent = makeAttack(holder, enemy, Moves.Ember, Types.Fire, MoveCategories.Special);
+
+    expect(resolveAttackStat(battle, parent, holder, Stats.SpecialAttack, 100)).toBe(100);
+
+    ally.setHealth(ally.checkStat(Stats.HP, 0) * EMPATH_THRESHOLD - 1);
+
+    expect(resolveAttackStat(battle, parent, holder, Stats.SpecialAttack, 100)).toBeCloseTo(
+      100 * EMPATH_SCALE,
+      5,
+    );
+
+    // Its own hurt is not the side's, and the physical half is untouched
+    ally.setHealth(ally.checkStat(Stats.HP, 0));
+    holder.setHealth(1);
+
+    expect(resolveAttackStat(battle, parent, holder, Stats.SpecialAttack, 100)).toBe(100);
+  });
+});
+
+describe('Surface Walk', () => {
+  it('lets the hazards and the weather pass under it', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.SurfaceWalk);
+
+    const maxHP = holder.checkStat(Stats.HP, 0);
+
+    enemy.damage(
+      { type: EffectType.Move, move: Moves.Spikes, unit: enemy },
+      holder,
+      maxHP / 8,
+      DamageFlags.Indirect,
+    );
+
+    expect(holder.health).toBe(maxHP);
+
+    holder.damage(
+      { type: EffectType.Weather, weather: Weathers.Sandstorm, unit: holder },
+      holder,
+      maxHP / 16,
+      DamageFlags.Indirect,
+    );
+
+    expect(holder.health).toBe(maxHP);
+
+    // A blow is still a blow
+    enemy.damage({ type: EffectType.Move, move: Moves.Pound, unit: enemy }, holder, maxHP / 4, 0);
+
+    expect(holder.health).toBeLessThan(maxHP);
   });
 });

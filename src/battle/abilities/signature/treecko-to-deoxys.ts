@@ -1,12 +1,14 @@
 import { AttackPriority, EventPriority } from '../../../core/event-emitter';
 import { Stages, Stats } from '../../../data/constants/stats';
 import Abilities from '../../../data/ids/abilities';
-import { DamageFlags } from '../../../data/ids/moves';
+import { Items } from '../../../data/ids/items';
+import { DamageFlags, Moves } from '../../../data/ids/moves';
 import { Weathers } from '../../../data/ids/status';
+import type Battle from '../../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../../events';
 import { MergedLifecycle } from '../../lifecycle';
 import type Unit from '../../unit';
-import { isWeatherRainy, isWeatherSunny, onUnitActs } from '../../utils';
+import { hasFreeItemSlot, isWeatherRainy, isWeatherSunny, onUnitActs } from '../../utils';
 import { createAbility } from '../__create';
 import {
   createGroveAbility,
@@ -22,6 +24,53 @@ export const PACK_HUNT_SCALE = 1.2;
 /** What one crooked step takes off a blow aimed at it, and how many it keeps */
 export const CROOKED_RUN_SCALE = 0.9;
 export const CROOKED_RUN_MAX_STACKS = 3;
+
+/** What a target still standing tall is worth */
+export const FEARLESS_DIVE_SCALE = 1.3;
+
+/** What its side's hurt is worth to it, and the share that counts as hurt */
+export const EMPATH_SCALE = 1.3;
+export const EMPATH_THRESHOLD = 1 / 2;
+
+/** The hazards a thing standing on the water never touches */
+const HAZARD_MOVES = new Set<Moves>([Moves.Spikes, Moves.StealthRock]);
+
+/** The ally furthest from full with nothing in its hands */
+function emptyHandedAlly(battle: Battle, unit: Unit): Unit | undefined {
+  let found: Unit | undefined;
+  let lowest = Number.POSITIVE_INFINITY;
+
+  for (const ally of battle.units()) {
+    if (ally === unit || !ally.alive || ally.team.alliance !== unit.team.alliance) {
+      continue;
+    }
+
+    const share = ally.health / ally.checkStat(Stats.HP, 0);
+
+    if (share < lowest && hasFreeItemSlot(ally)) {
+      found = ally;
+      lowest = share;
+    }
+  }
+
+  return found;
+}
+
+/** Whether anybody else on its side is hurt enough to feel */
+function allyIsHurt(battle: Battle, unit: Unit): boolean {
+  for (const ally of battle.units()) {
+    if (
+      ally !== unit &&
+      ally.alive &&
+      ally.team.alliance === unit.team.alliance &&
+      ally.health < ally.checkStat(Stats.HP, 0) * EMPATH_THRESHOLD
+    ) {
+      return true;
+    }
+  }
+
+  return false;
+}
 
 /** What the shell is worth both ways, how long it holds, and what opens it */
 export const COCOON_SCALE = 0.5;
@@ -174,6 +223,93 @@ const treeckoToDeoxys = [
   // paid by it, so the last one in owns the weather
   createGroveAbility(Abilities.WaterBloom, Weathers.Rain, isWeatherRainy, 'heals'),
   createGroveAbility(Abilities.SunRoot, Weathers.Sunny, isWeatherSunny, 'strikes'),
+
+  // Taillow: it picks the fight it has no business picking, so what is
+  // still standing tall is what it goes at hardest
+  createAbility(Abilities.FearlessDive, (battle) =>
+    battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
+      const target = event.target;
+      const source = event.source;
+
+      if (
+        event.power == null ||
+        target.type !== MoveTargetType.Unit ||
+        !source.hasAbility(Abilities.FearlessDive)
+      ) {
+        return;
+      }
+
+      const theirs = target.unit.health / target.unit.checkStat(Stats.HP, 0);
+      const ours = source.health / source.checkStat(Stats.HP, 0);
+
+      if (theirs > ours) {
+        event.power *= FEARLESS_DIVE_SCALE;
+      }
+    }),
+  ),
+
+  // Wingull: the bill is for carrying rather than fighting, so what it
+  // brings goes to whoever came with nothing
+  createAbility(
+    Abilities.BillCarry,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+          if (!event.reactivation && event.source.hasAbility(Abilities.BillCarry)) {
+            event.source.triggerAbility(Abilities.BillCarry);
+          }
+        }),
+        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
+          if (event.ability !== Abilities.BillCarry) {
+            return;
+          }
+
+          const source = event.source;
+          const ally = emptyHandedAlly(battle, source);
+
+          if (ally) {
+            ally.addItem(Items.SitrusBerry);
+          } else if (hasFreeItemSlot(source)) {
+            source.addItem(Items.SitrusBerry);
+          }
+        }),
+      ]),
+  ),
+
+  // Ralts: it answers what its side is feeling, so the worse the fight
+  // goes for the others the harder it hits
+  createAbility(Abilities.Empath, (battle) =>
+    battle.on(BattleEvents.UnitAttackResolveStat, EventPriority.Post, (event) => {
+      const source = event.parent.source;
+
+      if (
+        event.stat === Stats.SpecialAttack &&
+        event.unit === source &&
+        source.hasAbility(Abilities.Empath) &&
+        allyIsHurt(battle, source)
+      ) {
+        event.value *= EMPATH_SCALE;
+      }
+    }),
+  ),
+
+  // Surskit: it stands on the water rather than in it, so what settles
+  // on the ground and what falls out of the sky both pass it by
+  createAbility(Abilities.SurfaceWalk, (battle) =>
+    battle.on(BattleEvents.CheckUnitCanDamage, EventPriority.Post, (event) => {
+      const cause = event.cause;
+      const laid = cause.type === EffectType.Move && HAZARD_MOVES.has(cause.move);
+
+      if (
+        event.success &&
+        (laid || cause.type === EffectType.Weather) &&
+        event.target.hasAbility(Abilities.SurfaceWalk)
+      ) {
+        event.target.triggerAbility(Abilities.SurfaceWalk);
+        event.success = false;
+      }
+    }),
+  ),
 ];
 
 export default treeckoToDeoxys;

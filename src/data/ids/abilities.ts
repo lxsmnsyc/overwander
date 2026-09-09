@@ -438,6 +438,10 @@ const enum Abilities {
   Cocoon = 200135,
   WaterBloom = 200136,
   SunRoot = 200137,
+  FearlessDive = 200138,
+  BillCarry = 200139,
+  Empath = 200140,
+  SurfaceWalk = 200141,
 }
 
 export default Abilities;

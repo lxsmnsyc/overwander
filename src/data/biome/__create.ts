@@ -1,7 +1,7 @@
 import type Biome from '../ids/biome';
 import { TimeOfDay } from '../ids/biome';
 import type Families from '../ids/families';
-import { Species, UNOWN_FORMS } from '../ids/species';
+import { DEOXYS_FORMS, Species, UNOWN_FORMS } from '../ids/species';
 import type { Types } from '../constants/types';
 import { getBaseSpecies, getSpeciesData } from '../species';
 
@@ -438,7 +438,9 @@ const MYTHICAL_SPECIES = new Set<Species>([
   Species.Mew,
   Species.Celebi,
   Species.Jirachi,
-  Species.Deoxys,
+  // Every arrangement of Deoxys, since each is one a player owns
+  // rather than a shape one wears for a fight
+  ...DEOXYS_FORMS,
   Species.Darkrai,
   Species.Manaphy,
   Species.Shaymin,
@@ -624,10 +626,10 @@ export function getLineStage(species: Species): number {
  * later gen counts that evolution, since the line is what it is
  * whether or not this game has the last of it yet.
  *
- * A change of shape is not a stage. A Rotom's machines are reached
- * the same way an evolution is, and they carry its own dex number, so
- * they are stepped over: the line is one stage long however many
- * machines it gets into
+ * A change of shape is not a stage. A Deoxys rearranges itself and a
+ * Rotom gets into a machine the same way an evolution happens, and
+ * both shapes carry their own dex number, so they are stepped over:
+ * the line is one stage long however many shapes it takes
  */
 function stagesBelow(species: Species): number {
   const own = BABY_SPECIES.has(species) ? 0 : 1;

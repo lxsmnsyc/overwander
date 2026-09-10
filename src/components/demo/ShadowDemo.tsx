@@ -1,6 +1,12 @@
 import { type JSX, Show, createEffect, createMemo, createSignal, onCleanup } from 'solid-js';
 import { Badge, Meta, Note, Row, Select, Slider, Switch } from '../styled';
-import { CELL, COLORS, SPRITE_STANDS, WIDTH, sizeOf } from '../overworld/chunk-canvas/metrics';
+import {
+  CELL,
+  COLORS,
+  SPRITE_STANDS,
+  pictureWidth,
+  sizeOf,
+} from '../overworld/chunk-canvas/metrics';
 import { fitPicture, projectAir } from '../../canvas/board';
 import { SHADOW_STAMP, bakeShadowDisc } from '../overworld/chunk-canvas/scenery';
 import { castCorners, shadowCorners } from '../../canvas/placement';
@@ -244,7 +250,7 @@ export default function ShadowDemo(): JSX.Element {
       drawing.height = Math.round(height * ratio);
 
       const frame_ = fitPicture(width, height);
-      const magnify = frame_.width / WIDTH;
+      const magnify = frame_.width / pictureWidth();
       const angle = yaw();
       const thrown = cast();
       const zoomed = magnified();

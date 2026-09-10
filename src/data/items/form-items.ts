@@ -1,4 +1,4 @@
-import { DEOXYS_FORMS, Species } from '../ids/species';
+import { Species } from '../ids/species';
 import { PLATES } from './plates';
 import { Types } from '../constants/types';
 import { ItemFlags, ItemTypes, Items } from '../ids/items';
@@ -9,8 +9,10 @@ import { registerItem } from './__create';
  *
  * A form item names a set of shapes one species comes in, and while a
  * pokemon of that species is holding it, the shape it fights in is
- * one of them. It is the first of its kind here, so the map is what a
- * later one is added to rather than a special case for this one.
+ * one of them. A shape worn for a fight is a different thing from one
+ * a pokemon is put into and keeps: Deoxys and Rotom are rearranged
+ * for good through the evolution route, and everything here is put on
+ * and taken off with the item.
  *
  * The battle side lives in
  * [`src/battle/items/forms.ts`](../../battle/items/forms.ts).
@@ -44,9 +46,8 @@ const ARCEUS_PLATES: [Items, Species[]][] = [...PLATES].flatMap(([plate, type]) 
 });
 
 export const FORM_ITEMS = new Map<Items, Species[]>([
-  [Items.Meteorite, DEOXYS_FORMS],
-  // One shape each rather than a set, so the orb is a switch a player
-  // sets rather than the gamble a Meteorite is
+  // One shape each rather than a set, so an orb is a switch a player
+  // sets rather than a roll
   [Items.AdamantOrb, [Species.DialgaOrigin]],
   [Items.LustrousOrb, [Species.PalkiaOrigin]],
   [Items.GriseousOrb, [Species.GiratinaOrigin]],
@@ -68,7 +69,8 @@ export function getItemForms(item: Items): Species[] {
 
 /**
  * What a rock that fell out of the sky is worth. Dear: it is the only
- * way to any shape but the one a Deoxys arrives in
+ * way to any shape but the one a Deoxys arrives in, and it is spent
+ * on every rearrangement rather than held through them
  */
 export const METEORITE_PRICE = 12_000;
 
@@ -94,12 +96,12 @@ const CREATION_ORBS: [item: Items, name: string, icon: string, holder: string][]
 export default function registerFormItems(): void {
   registerItem(Items.Meteorite, {
     name: 'Meteorite',
-    description: 'Its holder takes one of its own shapes at random as a fight begins.',
-    type: ItemTypes.Held,
+    description: 'Rearranges the Deoxys it is used on into another of its shapes.',
+    type: ItemTypes.Evolution,
     // The rock is drawn on the key sheet, which is where the
     // collection packed it
     icon: 'key/meteorite',
-    flags: ItemFlags.Holdable,
+    flags: ItemFlags.Usable,
     buy: 0,
     sell: METEORITE_PRICE / 2,
   });

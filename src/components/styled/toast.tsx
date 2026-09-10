@@ -7,9 +7,11 @@ import {
   createContext,
   createSignal,
   onCleanup,
+  onMount,
   useContext,
 } from 'solid-js';
-import { Portal, isServer } from 'solid-js/web';
+import { Portal } from 'solid-js/web';
+import { rootPortalHost } from './portal-host';
 
 /**
  * Something the game did, said in passing.
@@ -123,18 +125,6 @@ export function useToast(): ToastState {
   return state;
 }
 
-/**
- * Where the toasts are drawn: the same container the dialogs are in,
- * so a toast is over the top of one rather than under it. What the
- * game just did is worth reading whatever else is open
- */
-function portalHost(): HTMLElement | undefined {
-  if (isServer) {
-    return undefined;
-  }
-  return document.getElementById('portals') ?? undefined;
-}
-
 function ToastCard(props: { toast: Toast; onClose: () => void }): JSX.Element {
   return (
     <li
@@ -179,6 +169,16 @@ function ToastCard(props: { toast: Toast; onClose: () => void }): JSX.Element {
 
 export default function ToastProvider(props: ParentProps): JSX.Element {
   const [toasts, setToasts] = createSignal<Toast[]>([]);
+  /**
+   * The container the toasts are drawn in, once the app has drawn it.
+   * It is the last thing in the app and this is among the first, so
+   * there is nothing to portal into while this is rendering
+   */
+  const [host, setHost] = createSignal<HTMLElement>();
+
+  onMount(() => {
+    setHost(rootPortalHost());
+  });
   /**
    * The timers still to fire, so a toast dismissed by hand does not
    * leave one running and a provider going away takes them all with it
@@ -258,8 +258,18 @@ export default function ToastProvider(props: ParentProps): JSX.Element {
   return (
     <ToastContext.Provider value={{ push, dismiss, toasts }}>
       {props.children}
-      <Portal mount={portalHost()}>
-        {/* A column across the **top centre**, over everything and not
+      {/* Drawn in the app's own container rather than in whichever
+          dialog is open, so a toast is over the top of one rather than
+          under it: what the game just did is worth reading whatever
+          else is open.
+
+          Waited for rather than asked for while this renders: the
+          container is the last thing the app draws, and the toasts are
+          among the first */}
+      <Show when={host()}>
+        {(where) => (
+          <Portal mount={where()}>
+            {/* A column across the **top centre**, over everything and not
             in the way of a press: only the toasts themselves take the
             pointer.
 
@@ -267,22 +277,24 @@ export default function ToastProvider(props: ParentProps): JSX.Element {
             the older ones are pushed down under it. The player is
             looking at the middle of the board, which is what puts them
             there rather than in a corner */}
-        <ul
-          class="pointer-events-none fixed top-3 left-1/2 z-[100] m-0 flex -translate-x-1/2
+            <ul
+              class="pointer-events-none fixed top-3 left-1/2 z-[100] m-0 flex -translate-x-1/2
             list-none flex-col-reverse items-center gap-2 p-0"
-        >
-          <For each={toasts()}>
-            {(toast) => (
-              <ToastCard
-                toast={toast}
-                onClose={() => {
-                  dismiss(toast.id);
-                }}
-              />
-            )}
-          </For>
-        </ul>
-      </Portal>
+            >
+              <For each={toasts()}>
+                {(toast) => (
+                  <ToastCard
+                    toast={toast}
+                    onClose={() => {
+                      dismiss(toast.id);
+                    }}
+                  />
+                )}
+              </For>
+            </ul>
+          </Portal>
+        )}
+      </Show>
     </ToastContext.Provider>
   );
 }

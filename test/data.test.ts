@@ -1803,6 +1803,44 @@ describe('evolution data', () => {
     }
   });
 
+  it('rearranges a Deoxys on a Meteorite, never into the shape it is in', () => {
+    const context = {
+      level: 50,
+      held: new Set<Items>(),
+      canEvolve: false,
+      moves: new Set<Moves>(),
+      stats: EVEN_STATS,
+      friendship: BASE_FRIENDSHIP,
+      gender: Genders.Genderless,
+      time: TimeOfDay.Day,
+    };
+    const rock = new Set([Items.Meteorite]);
+
+    // No rock, no rearranging
+    expect(
+      getAvailableEvolutions({ species: Species.Deoxys, ...context, carried: new Set() }),
+    ).toEqual([]);
+
+    for (const shape of DEOXYS_FORMS) {
+      const offered = getAvailableEvolutions({ species: shape, ...context, carried: rock });
+
+      // Every other arrangement, its own left out, and each spends the
+      // rock it was rearranged with
+      expect(offered.map((entry) => entry.species).sort()).toEqual(
+        DEOXYS_FORMS.filter((other) => other !== shape).sort(),
+      );
+      for (const entry of offered) {
+        expect(getConsumedItem(entry)).toBe(Items.Meteorite);
+      }
+    }
+
+    // An arrangement is a shape rather than a stage, so the line stays
+    // one stage long and every shape reads the same band
+    for (const shape of DEOXYS_FORMS) {
+      expect(getSpawnRarity(shape)).toBe(SpawnRarity.Mythical);
+    }
+  });
+
   it('offers nothing at all to a pokemon holding an Everstone', () => {
     // Traded as a Machoke, so the trade door below is genuinely open
     const context = {
@@ -3812,7 +3850,7 @@ describe('item data', () => {
     // where the rest of the once-in-a-run things are. A Plate is in
     // the rare band with the held items instead, since lifting a type
     // is what it does for everybody who is not an Arceus
-    for (const item of [Items.Meteorite, Items.AdamantOrb, Items.Gracidea]) {
+    for (const item of [Items.AdamantOrb, Items.LustrousOrb, Items.Gracidea]) {
       expect(ITEM_POOL.prized.some((entry) => entry.item === item)).toBe(true);
     }
     for (const item of PLATES.keys()) {

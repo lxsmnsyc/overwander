@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { ASPECT, projectGround } from '../../src/canvas/board';
+import { boardView, projectGround } from '../../src/canvas/board';
 import { getCast, getSun } from '../../src/canvas/daylight';
 
 /**
@@ -27,7 +27,7 @@ function groundBearing(east: number, north: number, yaw: number): number {
   const from = projectGround({ u: 0.5 - east * step, v: 0.5 + north * step }, yaw);
   const to = projectGround({ u: 0.5 + east * step, v: 0.5 - north * step }, yaw);
 
-  return bearingOf(to.x - from.x, (to.y - from.y) * ASPECT);
+  return bearingOf(to.x - from.x, (to.y - from.y) * boardView().aspect);
 }
 
 /** How far apart two bearings are, the short way round. */

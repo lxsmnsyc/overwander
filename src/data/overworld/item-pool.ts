@@ -253,9 +253,10 @@ export const ITEM_POOL: ItemRarityGroups = {
     { item: Items.ClawFossil, weight: 8 },
     { item: Items.SkullFossil, weight: 8 },
     { item: Items.ArmorFossil, weight: 8 },
-    // The rock a Deoxys rearranges itself around. Prized rather than
-    // special: it is worth nothing to anybody who has not been to
-    // the island, and everything to whoever has
+    // The rock a Deoxys rearranges itself with, spent on each
+    // rearrangement. Prized rather than special: it is worth nothing
+    // to anybody who has not been to the island, and everything to
+    // whoever has
     { item: Items.Meteorite, weight: 4 },
     // The orbs and the flower, which the meteorite is the first of:
     // each is worth nothing at all until its own legendary has been

@@ -1,5 +1,31 @@
 # overwander
 
+## 2.3.0
+
+### Minor Changes
+
+- a27fe06: A fullscreen switch over the keypad in the menu, beside the day and night one. It gives the whole game the screen, so the browser's own bars stop costing the board a strip of its height, and it is left out where the browser has no fullscreen to give.
+- b5fed81: The overworld board is drawn two ways, chosen by the shape of the screen:
+
+  - A screen taller than it is wide draws it flat from straight above: square cells the same size wherever they sit, the round shadow the board already used at night under everything standing on it, and the weather falling against the glass.
+  - A wider screen draws it laid back under the camera, as before.
+  - In both, anything standing in front of the player fades while it covers them and comes back as they step out from behind it.
+  - A new page at /demo/board stands the board in a frame of any shape, for looking at either.
+
+### Patch Changes
+
+- cade09c: The Clear Amulet is drawn from the charm's own art rather than as a paper tag on a cord.
+- 0dcdf4e: A trade evolution taken with a Linking Cord spends the held item it asks for, so a Seadra that pulls the cord loses its Dragon Scale
+- 11ac6fa: A move offer, a bottle and a run of candy stay with the pokemon they were begun on, so a press on the box behind the sheet cannot answer them for whoever was clicked
+- 2a5f075: Giovanni fields the legendary of a lair his biome hosts, or a sixth rare where it hosts none
+- 1ca21f4: Item squares say what they are in a tooltip rather than a hover card. A card is
+  kept only where a square offers more than one thing to do, which today is an
+  auction lot: its seller and its bid. Everywhere else the card was a window
+  covering the tray being read from.
+- 660702b: Moves that work out their own power as they land now deal damage: Fling, Return, Frustration, Flail, Reversal, Gyro Ball, Magnitude, Present, Punishment, Spit Up, Trump Card and Natural Gift all missed the plain-hit path because their registry entries carry no base power.
+- 0fbcefc: Every wandering role is dressed from its own charset, and the numbered Gen 4 npc sheets nobody wore any more are gone from the build
+- 3711168: Dialogs, toasts and every other floating panel are drawn in a container that stands last inside the app rather than beside it, so they sit under the same root as the page they cover.
+
 ## 2.2.0
 
 ### Minor Changes

@@ -1,4 +1,4 @@
-import { GROUND_DEPTH } from './tilt';
+import { boardView } from './board';
 import type { QuadSheet, QuadSource } from './gl/quad-batch';
 
 /**
@@ -111,7 +111,7 @@ export function castCorners(
   const reach = cast.length * high;
   // How far the throw runs away from the camera before the board lays
   // it back, which is what the spread has to be square to
-  const depth = cast.dy / GROUND_DEPTH;
+  const depth = cast.dy / boardView().depth;
   const alongX = cast.dx * reach;
   const alongY = cast.dy * reach;
   // Square to the throw on the **ground**, then snapped to whichever
@@ -120,7 +120,7 @@ export function castCorners(
   // amount everywhere but the two bearings it agrees at
   const sideways = Math.abs(depth) < Math.abs(cast.dx);
   const acrossX = sideways ? 0 : -Math.sign(depth || 1) * half;
-  const acrossY = sideways ? Math.sign(cast.dx) * GROUND_DEPTH * half : 0;
+  const acrossY = sideways ? Math.sign(cast.dx) * boardView().depth * half : 0;
 
   return [
     { x: patch.footX + alongX - acrossX, y: patch.footY + alongY - acrossY },

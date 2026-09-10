@@ -34,6 +34,17 @@ import { getSpeciesData } from '../species';
  * the party down to a sliver at the moment it has won, and **Grudge**
  * costs whoever lands the last hit the move that landed it.
  *
+ * **Healing Wish** and **Lunar Dance** spend the whole of the pool
+ * the way Memento does, and both are aimed at a teammate a lone boss
+ * does not have. **Helping Hand** and **Follow Me** are the same
+ * absence without the cost: there is nobody to help or to stand in
+ * front of.
+ *
+ * **Power Swap**, **Guard Swap** and **Heart Swap** leak whichever
+ * way they are cast. A swap is two stage changes, and a boss refuses
+ * the negative half, so the positive half lands on its own: the party
+ * copies the boss' boosts, or the boss hands over its own.
+ *
  * **Rest** is the one heal still barred. A boss may put back an
  * eighth of its pool, which is what every other heal is worth to it
  * now, but Rest buys that eighth with a sleep the boss inflicted on
@@ -61,6 +72,13 @@ const BANNED_BOSS_MOVES = new Set<Moves>([
   Moves.Grudge,
   Moves.Endeavor,
   Moves.Rest,
+  Moves.HealingWish,
+  Moves.LunarDance,
+  Moves.HelpingHand,
+  Moves.FollowMe,
+  Moves.PowerSwap,
+  Moves.GuardSwap,
+  Moves.HeartSwap,
   // TODO: temporary. A boss is already immune to Perishing, so the
   // song costs it a move slot and does nothing. Drop this line when
   // there is something for it to do

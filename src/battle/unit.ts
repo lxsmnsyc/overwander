@@ -783,6 +783,15 @@ export default class Unit {
   }
 
   hasAbility(ability: Abilities): boolean {
+    // Nothing may grant an ability through the query: the record is
+    // the baseline and a suppressor can only clear it. So a unit that
+    // does not carry it answers without asking, which is what keeps a
+    // field-wide "is a holder standing" scan from emitting an event
+    // per unit
+    if (this.abilities[ability] !== true) {
+      return false;
+    }
+
     const event: CheckUnitAbilityEvent = {
       id: 'CheckUnitAbility',
       disabled: false,
@@ -790,7 +799,7 @@ export default class Unit {
       ability,
       // The unit's own record is the baseline; suppressors (e.g.
       // Neutralizing Gas) may clear it
-      enabled: this.abilities[ability] === true,
+      enabled: true,
     };
     this.battle.emit(BattleEvents.CheckUnitAbility, event);
     return event.enabled;

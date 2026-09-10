@@ -1572,12 +1572,13 @@ describe('ability data', () => {
       const signature = getSignatureAbility(family);
 
       expect(signature, `${getFamilyName(family)} has no signature`).not.toBeNull();
-      expect(
-        signatures.has(signature as Abilities),
-        `${getFamilyName(family)} repeats a signature`,
-      ).toBe(false);
-      signatures.add(signature as Abilities);
-      expect(getAbilityData(signature as Abilities).name.length).toBeGreaterThan(0);
+
+      if (signature == null) {
+        continue;
+      }
+      expect(signatures.has(signature), `${getFamilyName(family)} repeats a signature`).toBe(false);
+      signatures.add(signature);
+      expect(getAbilityData(signature).name.length).toBeGreaterThan(0);
     }
     expect(signatures.size).toBe(getRegisteredFamilies().length);
   });

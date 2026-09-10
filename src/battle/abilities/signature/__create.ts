@@ -17,7 +17,7 @@ import { BattleEvents, EffectType, MoveTargetType, type UnitDamageEvent } from '
 import { type Lifecycle, MergedLifecycle } from '../../lifecycle';
 import type Unit from '../../unit';
 import { isPrimalWeather, onUnitActs } from '../../utils';
-import { createAbility } from '../__create';
+import { createAbility, getAbilityHolders } from '../__create';
 
 /**
  * What the signature abilities that remember something share: state
@@ -104,27 +104,17 @@ export function createDamageTaken(battle: Battle): {
 }
 
 /**
- * Whether anybody still standing carries the ability, wherever they
- * stand. It is what a field-wide signature reads: the effect belongs
- * to the fight rather than to a side
+ * A standing holder of this ability anywhere on the field, or none.
+ *
+ * The candidates come from the ability factory's own holder list
+ * rather than from a sweep of the field, since these questions are
+ * asked from checks that run on every stat and every hit. The two
+ * things the list does not know are still asked of each candidate:
+ * whether it is still standing, and whether something is suppressing
+ * what it carries
  */
-export function fieldHasAbility(battle: Battle, ability: Abilities): boolean {
-  for (const unit of battle.units()) {
-    if (unit.alive && unit.hasAbility(ability)) {
-      return true;
-    }
-  }
-
-  return false;
-}
-
-/**
- * The standing holder on the other side of the fight from this unit,
- * for an effect a holder works on its enemies
- */
-/** A standing holder of this ability anywhere on the field */
 export function fieldHolder(battle: Battle, ability: Abilities): Unit | undefined {
-  for (const unit of battle.units()) {
+  for (const unit of getAbilityHolders(battle, ability)) {
     if (unit.alive && unit.hasAbility(ability)) {
       return unit;
     }
@@ -133,9 +123,50 @@ export function fieldHolder(battle: Battle, ability: Abilities): Unit | undefine
   return undefined;
 }
 
+/**
+ * Whether anybody still standing carries the ability, wherever they
+ * stand. It is what a field-wide signature reads: the effect belongs
+ * to the fight rather than to a side
+ */
+export function fieldHasAbility(battle: Battle, ability: Abilities): boolean {
+  return fieldHolder(battle, ability) != null;
+}
+
+/**
+ * The standing holder on the other side of the fight from this unit,
+ * for an effect a holder works on its enemies
+ */
 export function enemyHolder(battle: Battle, unit: Unit, ability: Abilities): Unit | undefined {
-  for (const other of battle.units(unit.team.alliance)) {
-    if (other.alive && other.hasAbility(ability)) {
+  for (const other of getAbilityHolders(battle, ability)) {
+    if (other.alive && other.team.alliance !== unit.team.alliance && other.hasAbility(ability)) {
+      return other;
+    }
+  }
+
+  return undefined;
+}
+
+/**
+ * The standing holder on this unit's own side, itself included: an
+ * effect that reaches everybody under the same banner
+ */
+export function sideHolder(battle: Battle, unit: Unit, ability: Abilities): Unit | undefined {
+  for (const other of getAbilityHolders(battle, ability)) {
+    if (other.alive && other.team === unit.team && other.hasAbility(ability)) {
+      return other;
+    }
+  }
+
+  return undefined;
+}
+
+/**
+ * The standing holder beside this unit, itself excluded: an effect one
+ * pokemon works on the rest of its side
+ */
+export function allyHolder(battle: Battle, unit: Unit, ability: Abilities): Unit | undefined {
+  for (const other of getAbilityHolders(battle, ability)) {
+    if (other !== unit && other.alive && other.team === unit.team && other.hasAbility(ability)) {
       return other;
     }
   }
@@ -850,7 +881,9 @@ export function createCheerAbility(
       let best = cheers ? Number.POSITIVE_INFINITY : 0;
 
       for (const other of battle.units()) {
-        const ours = other.team.alliance === unit.team.alliance;
+        // The cheer is for its own party; the jeer is for anybody
+        // under a different banner
+        const ours = cheers ? other.team === unit.team : other.team.alliance === unit.team.alliance;
 
         if (!other.alive || (cheers ? !ours || other === unit : ours)) {
           continue;
@@ -982,28 +1015,24 @@ export function createEclipseAbility(
 
   return createAbility(ability, (battle) =>
     battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, (event) => {
-      let stone: Unit | undefined;
-
-      for (const unit of battle.units()) {
-        if (!unit.alive) {
-          continue;
-        }
-
-        // The other stone standing anywhere is the eclipse
-        if (unit.hasAbility(counterpart)) {
-          return;
-        }
-
-        if (stone == null && unit.hasAbility(ability)) {
-          stone = unit;
-        }
+      // The other stone standing anywhere is the eclipse
+      if (fieldHolder(battle, counterpart)) {
+        return;
       }
+
+      const stone = fieldHolder(battle, ability);
 
       if (stone == null) {
         return;
       }
 
-      const ours = event.parent.target.team.alliance === stone.team.alliance;
+      const struck = event.parent.target;
+      // The aura over its own side covers the party it flies with; the
+      // one thrown at the far side covers everybody under another
+      // banner
+      const ours = enemies
+        ? struck.team.alliance === stone.team.alliance
+        : struck.team === stone.team;
 
       if (enemies !== ours) {
         event.value *= enemies ? ECLIPSE_RAISED_SCALE : ECLIPSE_LOWERED_SCALE;
@@ -1109,7 +1138,7 @@ export function createSealedAbility(
     return new MergedLifecycle([
       ...lifecycles,
       battle.on(BattleEvents.Tick, EventPriority.Post, (event) => {
-        for (const golem of battle.units()) {
+        for (const golem of getAbilityHolders(battle, ability)) {
           if (!golem.alive || !golem.hasAbility(ability)) {
             continue;
           }
@@ -1178,16 +1207,9 @@ export function createEonAbility(
       battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, (event) => {
         const target = event.parent.target;
 
-        for (const eon of battle.units()) {
-          if (
-            eon !== target &&
-            eon.alive &&
-            eon.team.alliance === target.team.alliance &&
-            eon.hasAbility(ability)
-          ) {
-            event.value *= EON_SHIELD_SCALE;
-            return;
-          }
+        // The sister's wing never covers herself
+        if (allyHolder(battle, target, ability)) {
+          event.value *= EON_SHIELD_SCALE;
         }
       }),
     );

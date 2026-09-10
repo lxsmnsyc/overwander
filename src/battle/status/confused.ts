@@ -16,6 +16,9 @@ const MIN_DURATION = turns(2);
 const MAX_DURATION = turns(5);
 const CONFUSION_CHANCE = 1 / 3;
 
+/** What the self-hit swings for, the mainline's own 40 */
+const CONFUSED_POWER = 40;
+
 export default function setupConfusedStatus(battle: Battle): void {
   const instances = new Map<Unit, ConfusedData>();
 
@@ -74,12 +77,68 @@ export default function setupConfusedStatus(battle: Battle): void {
     }
   });
 
+  /**
+   * The self-hit is not a registered move, so nothing may look it up:
+   * the answers are given here at Pre and the question closed, which
+   * keeps the mechanics from reaching a registry that has no entry
+   * for it. It is a typeless swing that cannot miss and touches
+   * nothing, which is what the mainline calls it too
+   */
+  battle.on(BattleEvents.CheckUnitMoveType, EventPriority.Pre, (event) => {
+    if (event.move === Moves._Confused) {
+      event.type = Types.Unknown;
+      event.disabled = true;
+    }
+  });
+
+  battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Pre, (event) => {
+    if (event.move === Moves._Confused) {
+      event.immune = false;
+      event.disabled = true;
+    }
+  });
+
+  battle.on(BattleEvents.CheckUnitMoveAccuracy, EventPriority.Pre, (event) => {
+    if (event.move === Moves._Confused) {
+      event.accuracy = undefined;
+      event.disabled = true;
+    }
+  });
+
+  battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Pre, (event) => {
+    if (event.move === Moves._Confused) {
+      event.power = CONFUSED_POWER;
+      event.disabled = true;
+    }
+  });
+
+  battle.on(BattleEvents.CheckUnitMovePriority, EventPriority.Pre, (event) => {
+    if (event.move === Moves._Confused) {
+      event.priority = 0;
+      event.disabled = true;
+    }
+  });
+
+  battle.on(BattleEvents.CheckUnitMoveSteps, EventPriority.Pre, (event) => {
+    if (event.move === Moves._Confused) {
+      event.steps = 0;
+      event.disabled = true;
+    }
+  });
+
+  battle.on(BattleEvents.CheckUnitMoveContact, EventPriority.Pre, (event) => {
+    if (event.move === Moves._Confused) {
+      event.contact = false;
+      event.disabled = true;
+    }
+  });
+
   battle.on(BattleEvents.UnitTriggerStatus, EventPriority.Post, (event) => {
     if (event.status === Statuses.Confused) {
       event.source.attack(
         event.source,
         Moves._Confused,
-        40,
+        CONFUSED_POWER,
         Types.Unknown,
         MoveCategories.Physical,
         MoveAttackFlags.Confused,

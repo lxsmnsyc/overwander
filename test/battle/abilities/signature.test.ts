@@ -232,9 +232,21 @@ import {
 } from '../../../src/battle/abilities/signature/treecko-to-torkoal';
 import { unitTarget } from '../../../src/battle/utils';
 import { SWITCHING_SPAN } from '../../../src/battle/status/switching';
+import Team from '../../../src/battle/team';
 import { createBattle, createUnit, pinRandom } from '../harness';
 
 const NONE_CAUSE = { type: EffectType.None } as const;
+
+/**
+ * How deep a chain of answers is allowed to run before a test calls
+ * it runaway. Ordinary play nests about a dozen events
+ */
+const RUNAWAY_DEPTH = 200;
+
+/** The bus as a plain emitter, so a test can count what goes over it */
+interface Emitting {
+  emit(type: never, event: never): void;
+}
 
 /** Deterministic direct attack; returns the health lost by the target */
 function dealDamage(
@@ -3163,18 +3175,34 @@ function resolveAttackDamage(battle: Battle, attacker: Unit, target: Unit): numb
 }
 
 describe('Hidden Den', () => {
-  it('cannot be aimed at while anybody else is standing', () => {
+  it('cannot be aimed at while a teammate is standing', () => {
     const { battle, teamA, teamB } = createBattle();
     const holder = createUnit(battle, teamA);
-    const ally = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
     const enemy = createUnit(battle, teamB);
     holder.addAbility(Abilities.HiddenDen);
 
     expect(enemy.checkMoveImmunity(Moves.Pound, unitTarget(holder), Types.Normal)).toBe(true);
-    expect(enemy.checkMoveImmunity(Moves.Pound, unitTarget(ally), Types.Normal)).toBe(false);
+    expect(enemy.checkMoveImmunity(Moves.Pound, unitTarget(mate), Types.Normal)).toBe(false);
 
     // Alone, there is nowhere left to hide
-    ally.faint(enemy);
+    mate.faint(enemy);
+
+    expect(enemy.checkMoveImmunity(Moves.Pound, unitTarget(holder), Types.Normal)).toBe(false);
+  });
+
+  it('does not hide behind somebody else’s party', () => {
+    const { battle, allianceA, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.HiddenDen);
+
+    // A second party under the same banner, which is what a raid is:
+    // allied, but not the pokemon standing beside it
+    const allied = new Team(battle, allianceA);
+
+    allianceA.addTeam(allied);
+    createUnit(battle, allied);
 
     expect(enemy.checkMoveImmunity(Moves.Pound, unitTarget(holder), Types.Normal)).toBe(false);
   });
@@ -3461,20 +3489,29 @@ describe('Delivery', () => {
 });
 
 describe('Escort', () => {
-  it('spreads its wing over everybody else on its side', () => {
-    const { battle, teamA, teamB } = createBattle();
+  it('spreads its wing over everybody else in its party', () => {
+    const { battle, allianceA, teamA, teamB } = createBattle();
     const holder = createUnit(battle, teamA);
-    const ally = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
     const enemy = createUnit(battle, teamB);
 
-    const bare = ally.checkStat(Stats.SpecialDefense, 0);
+    const bare = mate.checkStat(Stats.SpecialDefense, 0);
 
     holder.addAbility(Abilities.Escort);
 
-    expect(ally.checkStat(Stats.SpecialDefense, 0)).toBeCloseTo(bare * ESCORT_SCALE, 5);
+    expect(mate.checkStat(Stats.SpecialDefense, 0)).toBeCloseTo(bare * ESCORT_SCALE, 5);
     // Not itself, and not the far side
     expect(holder.checkStat(Stats.SpecialDefense, 0)).toBeCloseTo(bare, 5);
     expect(enemy.checkStat(Stats.SpecialDefense, 0)).toBeCloseTo(bare, 5);
+
+    // And not a party it merely happens to be allied with
+    const allied = new Team(battle, allianceA);
+
+    allianceA.addTeam(allied);
+
+    const stranger = createUnit(battle, allied);
+
+    expect(stranger.checkStat(Stats.SpecialDefense, 0)).toBeCloseTo(bare, 5);
   });
 });
 
@@ -3501,12 +3538,20 @@ describe('Steelmolt', () => {
 });
 
 describe('Pack Howl', () => {
-  it('lifts every ally as it arrives', () => {
-    const { battle, teamA, teamB } = createBattle();
+  it('lifts every teammate as it arrives, and nobody else', () => {
+    const { battle, allianceA, teamA, teamB } = createBattle();
     const holder = createUnit(battle, teamA);
-    const ally = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
     const enemy = createUnit(battle, teamB);
     holder.addAbility(Abilities.PackHowl);
+
+    // Another party under the same banner, which is what a raid lobby
+    // is: allied, but not the pack
+    const allied = new Team(battle, allianceA);
+
+    allianceA.addTeam(allied);
+
+    const stranger = createUnit(battle, allied);
 
     battle.emit(BattleEvents.UnitEntersField, {
       id: 'UnitEntersField',
@@ -3515,8 +3560,9 @@ describe('Pack Howl', () => {
       reactivation: false,
     });
 
-    expect(ally.stages[Stages.Attack]).toBe(1);
+    expect(mate.stages[Stages.Attack]).toBe(1);
     expect(holder.stages[Stages.Attack]).toBe(0);
+    expect(stranger.stages[Stages.Attack]).toBe(0);
     expect(enemy.stages[Stages.Attack]).toBe(0);
   });
 });
@@ -5637,5 +5683,141 @@ describe('Form Drift', () => {
 
     expect(holder.stages[Stages.Attack]).toBe(2);
     expect(holder.stages[Stages.Defense]).toBe(-2);
+  });
+});
+
+describe('signature feedback', () => {
+  /**
+   * A ring of signatures that each answer the thing the next one
+   * does. What is being asserted is that the answers run out: a
+   * signature whose answer re-triggers the signature that caused it
+   * would recurse until the stack gave way, and on a raid field of
+   * forty-nine that is a frozen page rather than a caught bug
+   */
+  const watchDepth = (battle: ReturnType<typeof createBattle>['battle']): (() => number) => {
+    let depth = 0;
+    let deepest = 0;
+    // Counted through the bus itself rather than through any one
+    // event: what nests here is one listener causing the next
+    const engine: Emitting = battle;
+    const emit = engine.emit.bind(engine);
+
+    engine.emit = (type, event): void => {
+      depth++;
+      deepest = Math.max(deepest, depth);
+
+      if (depth > RUNAWAY_DEPTH) {
+        throw new Error('runaway event recursion');
+      }
+      try {
+        emit(type, event);
+      } finally {
+        depth--;
+      }
+    };
+
+    return () => deepest;
+  };
+
+  it('settles a ring of heal answers', () => {
+    const { battle, teamA } = createBattle('loop-heal');
+    pinRandom(battle, 0);
+
+    const reef = createUnit(battle, teamA);
+    const pair = createUnit(battle, teamA);
+    const other = createUnit(battle, teamA);
+    const gull = createUnit(battle, teamA);
+    const over = createUnit(battle, teamA);
+
+    reef.addAbility(Abilities.CoralBloom);
+    pair.addAbility(Abilities.SharedHeart);
+    other.addAbility(Abilities.SharedHeart);
+    gull.addAbility(Abilities.GullsGreed);
+    over.addAbility(Abilities.Spillover);
+
+    battle.initialize();
+    battle.start();
+
+    for (const unit of [reef, pair, other, gull, over]) {
+      unit.setHealth(Math.floor(unit.checkStat(Stats.HP, 0) / 2));
+    }
+
+    const deepest = watchDepth(battle);
+
+    reef.heal(NONE_CAUSE, reef, 40, 0);
+    pair.heal(NONE_CAUSE, pair, 40, 0);
+    // More than it can hold, so the spill is paid out as well
+    over.heal(NONE_CAUSE, over, 400, 0);
+
+    expect(deepest()).toBeLessThan(RUNAWAY_DEPTH);
+  });
+
+  it('settles a ring of damage answers', () => {
+    const { battle, teamA, teamB } = createBattle('loop-damage');
+    pinRandom(battle, 0);
+
+    const spikes = createUnit(battle, teamA);
+    const misery = createUnit(battle, teamA);
+    const vent = createUnit(battle, teamA);
+    const back = createUnit(battle, teamB);
+    const skull = createUnit(battle, teamB);
+    const arc = createUnit(battle, teamB);
+
+    spikes.addAbility(Abilities.SpikeShell);
+    misery.addAbility(Abilities.SharedMisery);
+    vent.addAbility(Abilities.MagmaVent);
+    back.addAbility(Abilities.Backlash);
+    skull.addAbility(Abilities.SkullCharge);
+    arc.addAbility(Abilities.ChainLightning);
+
+    battle.initialize();
+    battle.start();
+
+    const deepest = watchDepth(battle);
+
+    // Low enough that the ones that answer a hard fight are armed
+    for (const unit of [spikes, misery, vent, back, skull, arc]) {
+      unit.setHealth(Math.floor(unit.checkStat(Stats.HP, 0) / 4));
+    }
+
+    // Contact damage caused by a move, which is what the reflectors
+    // are gated on: a bare damage call reaches none of them
+    const swing = (source: Unit, target: Unit, type: Types): void => {
+      source.attack(target, Moves.Tackle, 40, type, MoveCategories.Physical, 0);
+    };
+
+    swing(skull, spikes, Types.Normal);
+    swing(spikes, back, Types.Normal);
+    swing(arc, vent, Types.Electric);
+    swing(back, misery, Types.Normal);
+    swing(misery, skull, Types.Normal);
+    swing(vent, arc, Types.Fire);
+
+    for (let frame = 0; frame < 20; frame++) {
+      battle.tick(250);
+    }
+
+    expect(deepest()).toBeLessThan(RUNAWAY_DEPTH);
+  });
+
+  it('lets a confused holder hit itself without asking what the hit was', () => {
+    const { battle, teamA } = createBattle('loop-confusion');
+    pinRandom(battle, 0);
+
+    // Sweet Paw drinks from what its move lands, and a confusion
+    // self-hit arrives as a move nobody registered: it must answer
+    // the contact question rather than look the hit up
+    const paw = createUnit(battle, teamA);
+
+    paw.addAbility(Abilities.SweetPaw);
+
+    battle.initialize();
+    battle.start();
+
+    expect(() => {
+      paw.attack(paw, Moves._Confused, 40, Types.Unknown, MoveCategories.Physical, 0);
+    }).not.toThrow();
+
+    expect(paw.checkMoveContact(Moves._Confused, unitTarget(paw))).toBe(false);
   });
 });

@@ -18,7 +18,13 @@ import { MULTI_HIT_MOVES } from '../../moves/multi-hit';
 import type Unit from '../../unit';
 import { unitTarget } from '../../utils';
 import { createAbility } from '../__create';
-import { createDamageTaken, createFieldAbility, createUnitState, isPhysicalMove } from './__create';
+import {
+  createDamageTaken,
+  createFieldAbility,
+  createUnitState,
+  isPhysicalMove,
+  sideHolder,
+} from './__create';
 
 /**
  * Whether the second needle applies: a physical move that strikes
@@ -138,17 +144,7 @@ const bulbasaurToPikachu = [
   createAbility(Abilities.Slipstream, (battle) => {
     /** Whether a bird is beating up a draught on this unit's side */
     function drafting(unit: Unit): boolean {
-      for (const bird of battle.units()) {
-        if (
-          bird.alive &&
-          bird.team.alliance === unit.team.alliance &&
-          bird.hasAbility(Abilities.Slipstream)
-        ) {
-          return true;
-        }
-      }
-
-      return false;
+      return sideHolder(battle, unit, Abilities.Slipstream) != null;
     }
 
     return new MergedLifecycle([

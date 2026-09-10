@@ -27,6 +27,13 @@ const SWAPPED: { [key in Moves]?: Stages[] } = {
   ],
 };
 
+/** The three of them, for what has to refuse a swap outright */
+export const STAGE_SWAP_MOVES = new Set<Moves>(
+  // The record is keyed by the enum, which comes back as a string
+  // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+  Object.keys(SWAPPED).map((move) => Number(move) as Moves),
+);
+
 /** How far ahead the target is on the stages this move would take */
 function ahead(source: Unit, target: Unit, stages: Stages[]): number {
   return stages.reduce((total, stage) => total + target.stages[stage] - source.stages[stage], 0);

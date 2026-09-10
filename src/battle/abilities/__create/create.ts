@@ -9,6 +9,45 @@ import type { Lifecycle } from '../../lifecycle';
 import type Unit from '../../unit';
 
 /**
+ * Who carries what, kept per battle. The factory below already needs
+ * it to know when an ability's listeners should be running, so it is
+ * shared: an effect asking whether a holder is standing walks the one
+ * or two units that carry the ability rather than the whole field,
+ * which on a raid roster of forty-nine is the difference between a
+ * lookup and a sweep
+ */
+const HOLDERS = new WeakMap<Battle, Map<Abilities, Set<Unit>>>();
+
+function holdersOf(battle: Battle, ability: Abilities): Set<Unit> {
+  let known = HOLDERS.get(battle);
+
+  if (!known) {
+    known = new Map();
+    HOLDERS.set(battle, known);
+  }
+
+  let units = known.get(ability);
+
+  if (!units) {
+    units = new Set();
+    known.set(ability, units);
+  }
+
+  return units;
+}
+
+/**
+ * Everyone carrying this ability, whether or not they are still
+ * standing and whether or not something is suppressing it. A reader
+ * that cares about either has to say so: `unit.alive` for the first
+ * and `unit.hasAbility` for the second, which is cheap over a set of
+ * one or two
+ */
+export function getAbilityHolders(battle: Battle, ability: Abilities): ReadonlySet<Unit> {
+  return holdersOf(battle, ability);
+}
+
+/**
  * How an ability is registered, and the hook the ones that answer a
  * touch ride
  */
@@ -23,7 +62,7 @@ export function createAbility(
   function startAbility(battle: Battle): void {
     const lifecycle = setup(battle);
 
-    const units = new Set<Unit>();
+    const units = holdersOf(battle, ability);
 
     function enableAbility(current: Abilities, source: Unit): void {
       if (current === ability) {

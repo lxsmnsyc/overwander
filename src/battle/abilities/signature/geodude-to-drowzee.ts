@@ -9,7 +9,13 @@ import { MergedLifecycle } from '../../lifecycle';
 import type Unit from '../../unit';
 import { onUnitActs, stealableItem, unitTarget } from '../../utils';
 import { createAbility, createContactHazard } from '../__create';
-import { createTimedMarks, createUnitCounter, createUnitState, fieldHasAbility } from './__create';
+import {
+  allyHolder,
+  createTimedMarks,
+  createUnitCounter,
+  createUnitState,
+  fieldHasAbility,
+} from './__create';
 
 /** What rock all the way through is worth, each way */
 export const SOLID_CORE_PHYSICAL_SCALE = 0.7;
@@ -449,16 +455,8 @@ const geodudeToDrowzee = [
         return;
       }
 
-      for (const ally of battle.units()) {
-        if (
-          ally !== target &&
-          ally.alive &&
-          ally.team.alliance === target.team.alliance &&
-          ally.hasAbility(Abilities.LivingTunnel)
-        ) {
-          event.value *= LIVING_TUNNEL_ALLY_SCALE;
-          return;
-        }
+      if (allyHolder(battle, target, Abilities.LivingTunnel)) {
+        event.value *= LIVING_TUNNEL_ALLY_SCALE;
       }
     }),
   ),

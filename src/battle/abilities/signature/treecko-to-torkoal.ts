@@ -110,7 +110,7 @@ function allyIsHurt(battle: Battle, unit: Unit): boolean {
     if (
       ally !== unit &&
       ally.alive &&
-      ally.team.alliance === unit.team.alliance &&
+      ally.team === unit.team &&
       ally.health < ally.checkStat(Stats.HP, 0) * EMPATH_THRESHOLD
     ) {
       return true;
@@ -175,7 +175,7 @@ const treeckoToTorkoal = [
         // The pack, not the hound itself: what it has bitten alone is
         // no easier for the next bite
         for (const hunter of marks) {
-          if (hunter !== source && hunter.team.alliance === source.team.alliance) {
+          if (hunter !== source && hunter.team === source.team) {
             event.power *= PACK_HUNT_SCALE;
 
             return;
@@ -537,7 +537,7 @@ const treeckoToTorkoal = [
         return;
       }
 
-      for (const magnet of battle.units(caster.team.alliance)) {
+      for (const magnet of aimed.team.units) {
         if (magnet !== aimed && magnet.alive && magnet.hasAbility(Abilities.Magnetize)) {
           magnet.triggerAbility(Abilities.Magnetize);
           caster.updateCast({ target: { type: MoveTargetType.Unit, unit: magnet } });

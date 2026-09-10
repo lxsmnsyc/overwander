@@ -404,6 +404,94 @@ describe("Sinnoh's moves", () => {
     expect(target.hasAbility(Abilities.Levitate)).toBe(false);
   });
 
+  it('finds nothing to take hold of on a raid boss', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const sower = createUnit(battle, teamA);
+    const boss = createUnit(battle, teamB);
+
+    sower.enter();
+    boss.enter();
+    boss.addAbility(Abilities.Boss);
+    boss.addAbility(Abilities.Levitate);
+
+    const pool = boss.checkStat(Stats.HP, 0);
+
+    sower.triggerMoveEffect(Moves.WorrySeed, unitTarget(boss), 0);
+    sower.triggerMoveEffect(Moves.GastroAcid, unitTarget(boss), 0);
+    battle.tick(1);
+
+    // Nothing taken, nothing put in its place, and the pool the raid
+    // is built around still stands
+    expect(boss.hasAbility(Abilities.Boss)).toBe(true);
+    expect(boss.hasAbility(Abilities.Levitate)).toBe(true);
+    expect(boss.hasAbility(Abilities.Insomnia)).toBe(false);
+    expect(boss.checkStat(Stats.HP, 0)).toBe(pool);
+  });
+
+  it('refuses a stage swap at either end of a raid boss', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const swapper = createUnit(battle, teamA);
+    const boss = createUnit(battle, teamB);
+
+    swapper.enter();
+    boss.enter();
+    boss.addAbility(Abilities.Boss);
+
+    boss.addStage(Stages.Attack, 2, MOVE_CAUSE);
+    swapper.addStage(Stages.SpecialAttack, -2, MOVE_CAUSE);
+    battle.tick(1);
+
+    swapper.triggerMoveEffect(Moves.HeartSwap, unitTarget(boss), 0);
+    boss.triggerMoveEffect(Moves.PowerSwap, unitTarget(swapper), 0);
+    battle.tick(1);
+
+    // A boss turns away the half that would cost it anything, so a
+    // swap that landed would copy rather than trade
+    expect(boss.stages[Stages.Attack]).toBe(2);
+    expect(swapper.stages[Stages.Attack]).toBe(0);
+    expect(swapper.stages[Stages.SpecialAttack]).toBe(-2);
+    expect(usable(battle, swapper, Moves.GuardSwap, boss)).toBe(false);
+  });
+
+  it('holds nothing on a raid boss', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const boss = createUnit(battle, teamB);
+    const plain = createUnit(battle, teamB);
+
+    holder.enter();
+    boss.enter();
+    plain.enter();
+    boss.addAbility(Abilities.Boss);
+    boss.addMove(Moves.Tackle);
+    plain.addMove(Moves.Tackle);
+
+    for (const held of [boss, plain]) {
+      for (const move of [Moves.Taunt, Moves.Torment, Moves.Imprison]) {
+        holder.triggerMoveEffect(move, unitTarget(held), 0);
+      }
+      held.triggerMove(Moves.Tackle, unitTarget(holder), 0);
+      battle.tick(turns(1));
+      holder.triggerMoveEffect(Moves.Encore, unitTarget(held), 0);
+      battle.tick(1);
+    }
+
+    // The same four land on anything that is not a boss
+    expect(plain.status[Statuses.Taunted]).toBeDefined();
+    expect(plain.status[Statuses.Tormented]).toBeDefined();
+    expect(plain.status[Statuses.Imprisoned]).toBeDefined();
+    expect(plain.status[Statuses.Encored]).toBeDefined();
+
+    expect(boss.status[Statuses.Taunted]).toBeUndefined();
+    expect(boss.status[Statuses.Tormented]).toBeUndefined();
+    expect(boss.status[Statuses.Imprisoned]).toBeUndefined();
+    expect(boss.status[Statuses.Encored]).toBeUndefined();
+
+    // And the AI is told rather than left to spend a cast finding out
+    expect(usable(battle, holder, Moves.Taunt, boss)).toBe(false);
+    expect(usable(battle, holder, Moves.Encore, boss)).toBe(false);
+  });
+
   it('draws the stolen item at random rather than off the top of the bag', () => {
     const { battle, teamA, teamB } = createBattle();
     const thief = createUnit(battle, teamA);

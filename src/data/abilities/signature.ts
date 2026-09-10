@@ -44,7 +44,7 @@ export default function registerSignatureAbilities(): void {
 
   registerSignature(Families.Pidgey, Abilities.Slipstream, {
     name: 'Slipstream',
-    description: 'Cast and channel times are 20% shorter for its own side while it stands.',
+    description: 'Cast and channel times are 20% shorter for its party while it stands.',
   });
 
   registerSignature(Families.Rattata, Abilities.Nibble, {
@@ -95,7 +95,7 @@ export default function registerSignatureAbilities(): void {
 
   registerSignature(Families.Clefairy, Abilities.WishingWell, {
     name: 'Wishing Well',
-    description: 'Each time it acts, it casts Wish on the ally lowest on HP.',
+    description: 'Each time it acts, it casts Wish on the teammate lowest on HP.',
   });
 
   registerSignature(Families.Vulpix, Abilities.NineTails, {
@@ -243,7 +243,7 @@ export default function registerSignatureAbilities(): void {
   registerSignature(Families.Onix, Abilities.LivingTunnel, {
     name: 'Living Tunnel',
     description:
-      'Its allies take 0.8x from Rock and Ground moves while it stands, and it takes those at 1.2x.',
+      'Its teammates take 0.8x from Rock and Ground moves while it stands, and it takes those at 1.2x.',
   });
 
   registerSignature(Families.Drowzee, Abilities.DreamFeast, {
@@ -268,7 +268,7 @@ export default function registerSignatureAbilities(): void {
 
   registerSignature(Families.Cubone, Abilities.MourningBone, {
     name: 'Mourning Bone',
-    description: 'Its moves hit 1.4x while it is the only one left standing on its side.',
+    description: 'Its moves hit 1.4x while it is the only one left standing in its party.',
   });
 
   registerSignature(Families.Tyrogue, Abilities.SecondWind, {
@@ -304,7 +304,7 @@ export default function registerSignatureAbilities(): void {
 
   registerSignature(Families.Kangaskhan, Abilities.MothersShield, {
     name: "Mother's Shield",
-    description: 'Enemy moves aimed at an ally below 1/2 HP are aimed at her instead.',
+    description: 'Enemy moves aimed at a teammate below 1/2 HP are aimed at her instead.',
   });
 
   registerSignature(Families.Horsea, Abilities.WhirlCurrent, {
@@ -325,7 +325,7 @@ export default function registerSignatureAbilities(): void {
   registerSignature(Families.MrMime, Abilities.MimedBarrier, {
     name: 'Mimed Barrier',
     description:
-      'It casts Light Screen over its side as it arrives, and physical moves hit it at 1.15x itself.',
+      'It casts Light Screen over its party as it arrives, and physical moves hit it at 1.15x itself.',
   });
 
   registerSignature(Families.Scyther, Abilities.CleanCut, {
@@ -367,7 +367,7 @@ export default function registerSignatureAbilities(): void {
   registerSignature(Families.Lapras, Abilities.SafePassage, {
     name: 'Safe Passage',
     description:
-      'It casts Safeguard over its side as it arrives, and its allies cannot be stopped from fleeing.',
+      'It casts Safeguard over its party as it arrives, and its teammates cannot be stopped from fleeing.',
   });
 
   registerSignature(Families.Ditto, Abilities.Formless, {
@@ -434,7 +434,7 @@ export default function registerSignatureAbilities(): void {
   registerSignature(Families.Dratini, Abilities.SereneStorm, {
     name: 'Serene Storm',
     description:
-      'Weather it calls up never clears on its own, and its side takes no damage from any weather.',
+      'Weather it calls up never clears on its own, and its party takes no damage from any weather.',
   });
 
   registerSignature(Families.Mewtwo, Abilities.GeneticApex, {
@@ -471,12 +471,12 @@ export default function registerSignatureAbilities(): void {
 
   registerSignature(Families.Sentret, Abilities.Sentry, {
     name: 'Sentry',
-    description: 'Nobody on its side can be hit by a critical hit while it stands.',
+    description: 'Nobody in its party can be hit by a critical hit while it stands.',
   });
 
   registerSignature(Families.Hoothoot, Abilities.WatchfulRoost, {
     name: 'Watchful Roost',
-    description: 'It casts Reflect over its side as it arrives on the field.',
+    description: 'It casts Reflect over its party as it arrives on the field.',
   });
 
   registerSignature(Families.Ledyba, Abilities.Relay, {
@@ -497,7 +497,7 @@ export default function registerSignatureAbilities(): void {
   registerSignature(Families.Togepi, Abilities.FairShare, {
     name: 'Fair Share',
     description:
-      'A move under 100% accuracy that just hit somebody on its side cannot hit that one again next time.',
+      'A move under 100% accuracy that just hit somebody in its party cannot hit that one again next time.',
   });
 
   registerSignature(Families.Natu, Abilities.Prophecy, {
@@ -581,7 +581,8 @@ export default function registerSignatureAbilities(): void {
 
   registerSignature(Families.Dunsparce, Abilities.HiddenDen, {
     name: 'Hidden Den',
-    description: 'While any ally stands, enemies cannot aim a single-target move at it.',
+    description:
+      'While anybody else in its party stands, enemies cannot aim a single-target move at it.',
   });
 
   registerSignature(Families.Gligar, Abilities.SandRider, {
@@ -632,7 +633,7 @@ export default function registerSignatureAbilities(): void {
 
   registerSignature(Families.Corsola, Abilities.CoralBloom, {
     name: 'Coral Bloom',
-    description: 'Whenever it is healed, the ally lowest on HP is healed the same amount.',
+    description: 'Whenever it is healed, the teammate lowest on HP is healed the same amount.',
   });
 
   registerSignature(Families.Remoraid, Abilities.Standoff, {
@@ -642,12 +643,12 @@ export default function registerSignatureAbilities(): void {
 
   registerSignature(Families.Delibird, Abilities.Delivery, {
     name: 'Delivery',
-    description: 'It hands a Berry Juice to the ally lowest on HP as it arrives on the field.',
+    description: 'It hands a Berry Juice to the teammate lowest on HP as it arrives on the field.',
   });
 
   registerSignature(Families.Mantine, Abilities.Escort, {
     name: 'Escort',
-    description: "Its allies' Special Defense counts 1.3x while it stands.",
+    description: "Its teammates' Special Defense counts 1.3x while it stands.",
   });
 
   registerSignature(Families.Skarmory, Abilities.Steelmolt, {
@@ -657,7 +658,7 @@ export default function registerSignatureAbilities(): void {
 
   registerSignature(Families.Houndour, Abilities.PackHowl, {
     name: 'Pack Howl',
-    description: 'Every ally gains a stage of Attack as it arrives on the field.',
+    description: 'Every teammate gains a stage of Attack as it arrives on the field.',
   });
 
   registerSignature(Families.Phanpy, Abilities.Momentum, {
@@ -678,7 +679,7 @@ export default function registerSignatureAbilities(): void {
 
   registerSignature(Families.Miltank, Abilities.Cowbell, {
     name: 'Cowbell',
-    description: 'It casts Heal Bell over its side as it arrives on the field.',
+    description: 'It casts Heal Bell over its party as it arrives on the field.',
   });
 
   /**
@@ -710,17 +711,17 @@ export default function registerSignatureAbilities(): void {
 
   /**
    * The tower duo share one signature, told either side of a fall: the
-   * guardian keeps its side standing once per battle
+   * guardian keeps its party standing once per battle
    */
   registerSignature(Families.Lugia, Abilities.SilverAegis, {
     name: 'Silver Aegis',
     description:
-      'The first blow that would finish an ally leaves it on 1 HP instead. Once per battle.',
+      'The first blow that would finish a teammate leaves it on 1 HP instead. Once per battle.',
   });
 
   registerSignature(Families.HoOh, Abilities.RainbowRekindling, {
     name: 'Rainbow Rekindling',
-    description: 'The first ally to fall gets back up on 1/3 of its HP. Once per battle.',
+    description: 'The first teammate to fall gets back up on 1/3 of its HP. Once per battle.',
   });
 
   registerSignature(Families.Celebi, Abilities.TimelineSplit, {
@@ -752,7 +753,7 @@ export default function registerSignatureAbilities(): void {
 
   registerSignature(Families.Poochyena, Abilities.PackHunt, {
     name: 'Pack Hunt',
-    description: 'Its moves hit 1.2x against anything an ally has already damaged.',
+    description: 'Its moves hit 1.2x against anything a teammate has already damaged.',
   });
 
   registerSignature(Families.Zigzagoon, Abilities.CrookedRun, {
@@ -786,7 +787,7 @@ export default function registerSignatureAbilities(): void {
 
   registerSignature(Families.Taillow, Abilities.MigrantsWind, {
     name: "Migrant's Wind",
-    description: 'It casts Tailwind over its side as it arrives on the field.',
+    description: 'It casts Tailwind over its party as it arrives on the field.',
   });
 
   registerSignature(Families.Wingull, Abilities.GullsGreed, {
@@ -796,7 +797,7 @@ export default function registerSignatureAbilities(): void {
 
   registerSignature(Families.Ralts, Abilities.Empath, {
     name: 'Empath',
-    description: 'Its Special Attack counts 1.3x while any ally is below 1/2 HP.',
+    description: 'Its Special Attack counts 1.3x while a teammate is below 1/2 HP.',
   });
 
   registerSignature(Families.Surskit, Abilities.SurfaceWalk, {
@@ -833,7 +834,7 @@ export default function registerSignatureAbilities(): void {
 
   registerSignature(Families.Nosepass, Abilities.Magnetize, {
     name: 'Magnetize',
-    description: 'Enemy moves aimed at one of its allies are pulled onto it instead.',
+    description: 'Enemy moves aimed at one of its teammates are pulled onto it instead.',
   });
 
   registerSignature(Families.Skitty, Abilities.KittenPace, {
@@ -874,14 +875,14 @@ export default function registerSignatureAbilities(): void {
 
   /**
    * Plusle and Minun are counterparts, and each works one end of the
-   * field as it acts: Plusle lifts the ally that needs it, Minun takes
+   * field as it acts: Plusle lifts the teammate that needs it, Minun takes
    * the strongest enemy down a step
    */
 
   registerSignature(Families.Plusle, Abilities.CheerOn, {
     name: 'Cheer On',
     description:
-      'Each time it acts, the ally lowest on HP gains a stage in its best stat, up to 3 times a battle.',
+      'Each time it acts, the teammate lowest on HP gains a stage in its best stat, up to 3 times a battle.',
   });
 
   registerSignature(Families.Minun, Abilities.JeerAt, {
@@ -992,7 +993,7 @@ export default function registerSignatureAbilities(): void {
   registerSignature(Families.Lunatone, Abilities.MoonPull, {
     name: 'Moon Pull',
     description:
-      'Its side takes 0.85x damage while it stands, unless a Sun Glare holder stands too.',
+      'Its party takes 0.85x damage while it stands, unless a Sun Glare holder stands too.',
   });
 
   registerSignature(Families.Solrock, Abilities.SunGlare, {
@@ -1083,7 +1084,7 @@ export default function registerSignatureAbilities(): void {
 
   registerSignature(Families.Spheal, Abilities.Applause, {
     name: 'Applause',
-    description: 'It heals 1/16 of its HP each time an ally lands a move.',
+    description: 'It heals 1/16 of its HP each time a teammate lands a move.',
   });
 
   registerSignature(Families.Clamperl, Abilities.PearlGuard, {
@@ -1098,7 +1099,7 @@ export default function registerSignatureAbilities(): void {
 
   registerSignature(Families.Luvdisc, Abilities.SharedHeart, {
     name: 'Shared Heart',
-    description: 'Whenever an ally is healed, it heals half of that amount as well.',
+    description: 'Whenever a teammate is healed, it heals half of that amount as well.',
   });
 
   registerSignature(Families.Bagon, Abilities.SkullCharge, {
@@ -1108,7 +1109,7 @@ export default function registerSignatureAbilities(): void {
 
   registerSignature(Families.Beldum, Abilities.HiveMind, {
     name: 'Hive Mind',
-    description: 'Its moves hit 10% harder for each ally standing with it, up to 3 of them.',
+    description: 'Its moves hit 10% harder for each teammate standing with it, up to 3 of them.',
   });
 
   /**
@@ -1142,7 +1143,7 @@ export default function registerSignatureAbilities(): void {
 
   registerSignature(Families.Latias, Abilities.EonShield, {
     name: 'Eon Shield',
-    description: 'Its allies take 0.8x damage while it stands. It covers everybody but itself.',
+    description: 'Its teammates take 0.8x damage while it stands. It covers everybody but itself.',
   });
 
   registerSignature(Families.Latios, Abilities.EonLance, {
@@ -1176,7 +1177,7 @@ export default function registerSignatureAbilities(): void {
   registerSignature(Families.Jirachi, Abilities.SevenWishes, {
     name: 'Seven Wishes',
     description:
-      'Every 7 times it acts, its whole side heals 1/4 of their HP and it alone is cured.',
+      'Every 7 times it acts, its whole party heals 1/4 of their HP and it alone is cured.',
   });
 
   registerSignature(Families.Deoxys, Abilities.FormDrift, {

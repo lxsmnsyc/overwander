@@ -48,7 +48,7 @@ function neediestAlly(battle: Battle, unit: Unit): Unit | undefined {
   let lowest = 1;
 
   for (const ally of battle.units()) {
-    if (ally === unit || !ally.alive || ally.team.alliance !== unit.team.alliance) {
+    if (ally === unit || !ally.alive || ally.team !== unit.team) {
       continue;
     }
 

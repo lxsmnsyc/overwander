@@ -11,7 +11,7 @@ import { MergedLifecycle } from '../../lifecycle';
 import type Unit from '../../unit';
 import { MAJOR_STATUS_CONDITIONS } from '../../status';
 import { countHeldItems, hasAnyStatus, hasFreeItemSlot, onUnitActs, unitTarget } from '../../utils';
-import { createAbility } from '../__create';
+import { createAbility, getAbilityHolders } from '../__create';
 import {
   STAT_STAGES,
   createDamageTaken,
@@ -24,6 +24,8 @@ import {
   createStatExtremes,
   createUnitCounter,
   createUnitState,
+  enemyHolder,
+  fieldHasAbility,
 } from './__create';
 
 /** The share of a blow the springs keep, and how much they hold */
@@ -334,7 +336,7 @@ const spoinkToDeoxys = [
         if (
           heart === target ||
           !heart.alive ||
-          heart.team.alliance !== target.team.alliance ||
+          heart.team !== target.team ||
           !heart.hasAbility(Abilities.SharedHeart)
         ) {
           continue;
@@ -412,7 +414,7 @@ const spoinkToDeoxys = [
       let hive = 0;
 
       for (const unit of battle.units()) {
-        if (unit !== source && unit.alive && unit.team.alliance === source.team.alliance) {
+        if (unit !== source && unit.alive && unit.team === source.team) {
           hive += 1;
         }
       }
@@ -455,7 +457,7 @@ const spoinkToDeoxys = [
         } as const;
 
         for (const ally of battle.units()) {
-          if (ally.alive && ally.team.alliance === unit.team.alliance) {
+          if (ally.alive && ally.team === unit.team) {
             unit.heal(cause, ally, ally.checkStat(Stats.HP, 0) * SEVEN_WISHES_FRACTION, 0);
           }
         }
@@ -484,7 +486,7 @@ const spoinkToDeoxys = [
 
       waited = 0;
 
-      for (const unit of battle.units()) {
+      for (const unit of getAbilityHolders(battle, Abilities.FormDrift)) {
         if (!unit.alive || !unit.hasAbility(Abilities.FormDrift)) {
           continue;
         }
@@ -558,11 +560,11 @@ const spoinkToDeoxys = [
         return;
       }
 
-      for (const seal of battle.units()) {
+      for (const seal of getAbilityHolders(battle, Abilities.Applause)) {
         if (
           seal === source ||
           !seal.alive ||
-          seal.team.alliance !== source.team.alliance ||
+          seal.team !== source.team ||
           !seal.hasAbility(Abilities.Applause)
         ) {
           continue;
@@ -651,7 +653,7 @@ const spoinkToDeoxys = [
 
       waited = 0;
 
-      for (const tree of battle.units()) {
+      for (const tree of getAbilityHolders(battle, Abilities.FruitCrop)) {
         if (tree.alive && tree.hasAbility(Abilities.FruitCrop) && hasFreeItemSlot(tree)) {
           tree.triggerAbility(Abilities.FruitCrop);
           tree.addItem(Items.SitrusBerry);
@@ -664,13 +666,7 @@ const spoinkToDeoxys = [
   // wind up takes longer through it. Cast time only, never a cooldown
   createAbility(Abilities.RingingHead, (battle) => {
     function ringing(unit: Unit): boolean {
-      for (const chime of battle.units(unit.team.alliance)) {
-        if (chime.alive && chime.hasAbility(Abilities.RingingHead)) {
-          return true;
-        }
-      }
-
-      return false;
+      return enemyHolder(battle, unit, Abilities.RingingHead) != null;
     }
 
     return new MergedLifecycle([
@@ -858,11 +854,8 @@ const spoinkToDeoxys = [
         return;
       }
 
-      for (const fish of battle.units()) {
-        if (fish.alive && fish.hasAbility(Abilities.SiltBed)) {
-          event.value *= SILT_BED_SCALE;
-          return;
-        }
+      if (fieldHasAbility(battle, Abilities.SiltBed)) {
+        event.value *= SILT_BED_SCALE;
       }
     }),
   ),

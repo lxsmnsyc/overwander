@@ -399,6 +399,28 @@ describe('what Hoenn does to abilities', () => {
   });
 });
 
+describe('what Hoenn does to a raid boss', () => {
+  it('leaves a boss out of a Role Play and a Skill Swap', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const mimic = createUnit(battle, teamA);
+    const boss = createUnit(battle, teamB);
+
+    mimic.addAbility(Abilities.Overgrow);
+    boss.addAbility(Abilities.Boss);
+    boss.addAbility(Abilities.Blaze);
+
+    mimic.triggerMoveEffect(Moves.RolePlay, unitTarget(boss), 0);
+    mimic.triggerMoveEffect(Moves.SkillSwap, unitTarget(boss), 0);
+
+    // Neither end moved: what makes it a raid cannot be worn by
+    // somebody else, and the boss keeps what it came with
+    expect(mimic.hasAbility(Abilities.Boss)).toBe(false);
+    expect(mimic.hasAbility(Abilities.Overgrow)).toBe(true);
+    expect(boss.hasAbility(Abilities.Boss)).toBe(true);
+    expect(boss.hasAbility(Abilities.Blaze)).toBe(true);
+  });
+});
+
 describe('the moves that stand in somebody else’s way', () => {
   it('turns a cast already winding up onto whoever called for it', () => {
     const { battle, teamA, teamB } = createBattle();

@@ -18,8 +18,8 @@ import { BattleEvents, EffectType, MoveTargetType } from '../../events';
 import { MergedLifecycle } from '../../lifecycle';
 import type Unit from '../../unit';
 import { isWeatherRainy, onUnitActs, unitTarget } from '../../utils';
-import { createAbility } from '../__create';
-import { createUnitCounter, isPhysicalMove } from './__create';
+import { createAbility, getAbilityHolders } from '../__create';
+import { createUnitCounter, enemyHolder, isPhysicalMove, sideHolder } from './__create';
 
 /** What a claw with strength behind it is worth */
 export const HEAVY_PINCER_SCALE = 1.45;
@@ -106,23 +106,13 @@ function heldBerry(unit: Unit): Items | undefined {
 
 /** Whether a ferry is standing on this unit's side */
 function carriedBy(battle: Battle, unit: Unit): boolean {
-  for (const ferry of battle.units()) {
-    if (
-      ferry.alive &&
-      ferry.team.alliance === unit.team.alliance &&
-      ferry.hasAbility(Abilities.SafePassage)
-    ) {
-      return true;
-    }
-  }
-
-  return false;
+  return sideHolder(battle, unit, Abilities.SafePassage) != null;
 }
 
 /** Whether anybody else on its side is still standing */
 function fightsAlone(battle: Battle, unit: Unit): boolean {
   for (const ally of battle.units()) {
-    if (ally !== unit && ally.alive && ally.team.alliance === unit.team.alliance) {
+    if (ally !== unit && ally.alive && ally.team === unit.team) {
       return false;
     }
   }
@@ -294,11 +284,8 @@ const krabbyToPinsir = [
 
       const source = event.source;
 
-      for (const cloud of battle.units(source.team.alliance)) {
-        if (cloud.alive && cloud.hasAbility(Abilities.SmogScreen)) {
-          event.accuracy *= SMOG_SCREEN_ACCURACY_SCALE;
-          return;
-        }
+      if (enemyHolder(battle, source, Abilities.SmogScreen)) {
+        event.accuracy *= SMOG_SCREEN_ACCURACY_SCALE;
       }
     }),
   ),
@@ -407,11 +394,11 @@ const krabbyToPinsir = [
         return;
       }
 
-      for (const mother of battle.units()) {
+      for (const mother of getAbilityHolders(battle, Abilities.MothersShield)) {
         if (
           mother.alive &&
           mother !== event.source &&
-          mother.team.alliance === aimedAt.team.alliance &&
+          mother.team === aimedAt.team &&
           mother.hasAbility(Abilities.MothersShield)
         ) {
           event.target = { type: MoveTargetType.Unit, unit: mother };
@@ -433,11 +420,8 @@ const krabbyToPinsir = [
         return;
       }
 
-      for (const swirl of battle.units(source.team.alliance)) {
-        if (swirl.alive && swirl.hasAbility(Abilities.WhirlCurrent)) {
-          event.duration *= WHIRL_CURRENT_CAST_SCALE;
-          return;
-        }
+      if (enemyHolder(battle, source, Abilities.WhirlCurrent)) {
+        event.duration *= WHIRL_CURRENT_CAST_SCALE;
       }
     }),
   ),

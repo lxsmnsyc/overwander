@@ -4,7 +4,15 @@ import Abilities from '../../data/ids/abilities';
 import { DamageFlags, MoveTargets, Moves, affectsFoesOnly } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
 import type Battle from '../core';
-import { BattleEvents, type EffectCause, EffectType, MoveTargetType } from '../events';
+import {
+  BattleEvents,
+  type EffectCause,
+  EffectType,
+  type MoveTarget,
+  MoveTargetType,
+} from '../events';
+import { ABILITY_MOVES } from '../moves/ability-moves';
+import { STAGE_SWAP_MOVES } from '../moves/stage-swaps';
 import { FORCED_SWITCH_MOVES } from '../moves/switch-out';
 import type Unit from '../unit';
 import { MergedLifecycle } from '../lifecycle';
@@ -66,14 +74,39 @@ const SHADOW_STAT_SCALES = new Map<Stats, number>([
 export { default as BANNED_BOSS_MOVES, getBannedBossMoves } from '../../data/overworld/boss-moves';
 
 /**
+ * What a boss refuses at either end. Nothing may move its ability
+ * about, and a stage swap leaks whichever way it is cast: the boss
+ * turns away the negative half and the positive half lands on its
+ * own, so whoever swapped keeps a copy of what the other side had
+ */
+const BOSS_REFUSED_MOVES = new Set<Moves>([...ABILITY_MOVES, ...STAGE_SWAP_MOVES]);
+
+/**
+ * The moves that hold a pokemon to part of its move set. A boss
+ * refuses each of them, so the AI never spends a cast finding out
+ */
+const MOVE_HOLDS = new Set<Moves>([
+  Moves.Disable,
+  Moves.Taunt,
+  Moves.Torment,
+  Moves.Imprison,
+  Moves.Encore,
+]);
+
+/**
  * Statuses a Boss shrugs off unless self-inflicted (e.g. Rest).
  *
  * All of them take the fight away from the player rather than making
  * it harder: a boss that cannot act is not a boss anybody fought.
- * **Infatuation** is on the list for that reason and one more — a
+ * **Infatuation** is on the list for that reason and one more: a
  * lobby is up to ten parties, so somebody always has the gender the
  * boss would fall for, and an Attract landing would turn the raid into
- * a queue of who brought the right pokemon
+ * a queue of who brought the right pokemon.
+ *
+ * The last four are what the moves that hold a pokemon to part of its
+ * move set leave behind, and a boss held to one move is a boss the
+ * party has stopped fighting. A Disable never sticks to one either,
+ * which is the same rule written where the disabling happens
  */
 const BOSS_BLOCKED_STATUSES = new Set<Statuses>([
   Statuses.Trapped,
@@ -81,6 +114,10 @@ const BOSS_BLOCKED_STATUSES = new Set<Statuses>([
   Statuses.Frozen,
   Statuses.Sleeping,
   Statuses.Infatuated,
+  Statuses.Taunted,
+  Statuses.Tormented,
+  Statuses.Imprisoned,
+  Statuses.Encored,
 ]);
 
 /**
@@ -109,10 +146,11 @@ function refusesStatus(status: Statuses, cause: EffectCause, source: unknown): b
 
 const setupAbilities = [
   /**
-   * Boss: a raid-style stat wall — twentyfold HP, doubled everything
-   * else, immune to negative stage applications, to damage measured
-   * as a share of its pool, to forced switch-outs, trapping and
-   * disruption statuses (unless self-inflicted), and to a Perish Song
+   * Boss: a raid-style stat wall, twentyfold HP and doubled
+   * everything else, immune to negative stage applications, to damage
+   * measured as a share of its pool, to forced switch-outs, to
+   * trapping and disruption statuses (unless self-inflicted), to the
+   * moves that move abilities or stages about, and to a Perish Song
    * whoever sang it. Indirect damage lands for at most
    * `BOSS_INDIRECT_DAMAGE_CAP`, and it heals at most
    * `BOSS_HEAL_FRACTION` of its pool at a time. Its single-target
@@ -125,6 +163,14 @@ const setupAbilities = [
     // fight runs, so healing is capped by the second rather than by
     // the heal: ten drains landing at once are worth one
     const spent = new Map<Unit, number>();
+
+    /** Whether either end of this move is a raid boss */
+    function touchesBoss(event: { source: Unit; target: MoveTarget }): boolean {
+      return (
+        event.source.hasAbility(Abilities.Boss) ||
+        (event.target.type === MoveTargetType.Unit && event.target.unit.hasAbility(Abilities.Boss))
+      );
+    }
 
     /** What this boss may still take back, and what taking it costs */
     function takeHealing(unit: Unit, wanted: number): number {
@@ -200,6 +246,26 @@ const setupAbilities = [
           event.disabled = true;
         }
       }),
+      /**
+       * The moves that move abilities about find nothing to take hold
+       * of at either end of a raid. What a boss is is not a thing to
+       * copy, trade or shut off, and a move that took half of it
+       * would leave the fight without the pool it is built around
+       */
+      battle.on(BattleEvents.CheckUnitTriggerMoveEffect, EventPriority.Post, (event) => {
+        if (event.success && BOSS_REFUSED_MOVES.has(event.move) && touchesBoss(event)) {
+          event.success = false;
+
+          event.source.triggerAbility(Abilities.Boss);
+        }
+      }),
+      // And the AI is told rather than left to spend a cast finding out
+      battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Post, (event) => {
+        if (event.usable && BOSS_REFUSED_MOVES.has(event.move) && touchesBoss(event)) {
+          event.usable = false;
+        }
+      }),
+
       // Negative stage applications fail outright
       battle.on(BattleEvents.CheckUnitCanAddStage, EventPriority.Post, (event) => {
         if (event.success && event.value < 0 && event.source.hasAbility(Abilities.Boss)) {
@@ -302,13 +368,13 @@ const setupAbilities = [
           event.source.triggerAbility(Abilities.Boss);
         }
       }),
-      // Neither of the two above is worth casting at a boss, so the
-      // AI is told before it picks one: a forced switch-out fails
-      // outright, and a disabling never sticks
+      // None of these is worth casting at a boss, so the AI is told
+      // before it picks one: a forced switch-out fails outright, and
+      // nothing that holds a pokemon to part of its move set sticks
       battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Post, (event) => {
         if (
           event.usable &&
-          (FORCED_SWITCH_MOVES.has(event.move) || event.move === Moves.Disable) &&
+          (FORCED_SWITCH_MOVES.has(event.move) || MOVE_HOLDS.has(event.move)) &&
           event.target.type === MoveTargetType.Unit &&
           event.target.unit !== event.source &&
           event.target.unit.hasAbility(Abilities.Boss)

@@ -7,13 +7,14 @@ import { BattleEvents, EffectType } from '../../events';
 import { MergedLifecycle } from '../../lifecycle';
 import type Unit from '../../unit';
 import { onUnitActs, unitTarget } from '../../utils';
-import { createAbility } from '../__create';
+import { createAbility, getAbilityHolders } from '../__create';
 import {
   BATTLE_STATS,
   createFossilAbility,
   createStatExtremes,
   createUnitState,
   createWingbeatAbility,
+  sideHolder,
 } from './__create';
 
 /** What the unspent half of a pokemon is worth */
@@ -90,7 +91,7 @@ const eeveeToDragonite = [
 
         sampling = 0;
 
-        for (const unit of battle.units()) {
+        for (const unit of getAbilityHolders(battle, Abilities.Rollback)) {
           if (!unit.alive || !unit.hasAbility(Abilities.Rollback)) {
             continue;
           }
@@ -232,15 +233,8 @@ const eeveeToDragonite = [
         }),
         battle.on(BattleEvents.CheckUnitCanDamage, EventPriority.Post, (event) => {
           if (event.success && event.cause.type === EffectType.Weather) {
-            for (const dragon of battle.units()) {
-              if (
-                dragon.alive &&
-                dragon.team.alliance === event.target.team.alliance &&
-                dragon.hasAbility(Abilities.SereneStorm)
-              ) {
-                event.success = false;
-                return;
-              }
+            if (sideHolder(battle, event.target, Abilities.SereneStorm)) {
+              event.success = false;
             }
           }
         }),

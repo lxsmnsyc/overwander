@@ -9,7 +9,7 @@ import { MergedLifecycle } from '../../lifecycle';
 import { MAJOR_STATUS_CONDITIONS } from '../../status';
 import type Unit from '../../unit';
 import { hasAnyStatus, stealableItem, unitTarget } from '../../utils';
-import { createAbility } from '../__create';
+import { createAbility, getAbilityHolders } from '../__create';
 import { createNextCastPenalty } from './__create';
 
 /** What one status landed is worth to the fungus */
@@ -295,8 +295,12 @@ const parasToTentacool = [
             return;
           }
 
-          for (const hunter of battle.units(source.team.alliance)) {
-            if (hunter.alive && hunter.hasAbility(Abilities.ChaseDown)) {
+          for (const hunter of getAbilityHolders(battle, Abilities.ChaseDown)) {
+            if (
+              hunter.alive &&
+              hunter.team.alliance !== source.team.alliance &&
+              hunter.hasAbility(Abilities.ChaseDown)
+            ) {
               event.success = false;
 
               // Every holder reacts, not just the first
@@ -467,8 +471,12 @@ const parasToTentacool = [
           return;
         }
 
-        for (const jelly of battle.units(source.team.alliance)) {
-          if (jelly.alive && jelly.hasAbility(Abilities.TentacleGrasp)) {
+        for (const jelly of getAbilityHolders(battle, Abilities.TentacleGrasp)) {
+          if (
+            jelly.alive &&
+            jelly.team.alliance !== source.team.alliance &&
+            jelly.hasAbility(Abilities.TentacleGrasp)
+          ) {
             event.success = false;
 
             // Every holder reacts, not just the first

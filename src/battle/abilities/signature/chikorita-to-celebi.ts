@@ -22,6 +22,7 @@ import type Unit from '../../unit';
 import { hasFreeItemSlot, isWeatherSandstorm, onUnitActs, unitTarget } from '../../utils';
 import { createAbility } from '../__create';
 import {
+  allyHolder,
   createMarkAbility,
   createRisenAbility,
   createUnitCounter,
@@ -29,6 +30,7 @@ import {
   enemyHolder,
   isChannelledMove,
   isPseudoMove,
+  sideHolder,
 } from './__create';
 
 /** What holding a move down is worth */
@@ -83,7 +85,7 @@ function neediestAlly(battle: Battle, unit: Unit): Unit | undefined {
   let lowest = 1;
 
   for (const ally of battle.units()) {
-    if (ally === unit || !ally.alive || ally.team.alliance !== unit.team.alliance) {
+    if (ally === unit || !ally.alive || ally.team !== unit.team) {
       continue;
     }
 
@@ -135,29 +137,12 @@ const STAGE_DROPS = [
 
 /** A standing holder on this unit's side other than the unit itself */
 function escortedBy(battle: Battle, unit: Unit, ability: Abilities): Unit | undefined {
-  for (const ally of battle.units()) {
-    if (
-      ally !== unit &&
-      ally.alive &&
-      ally.team.alliance === unit.team.alliance &&
-      ally.hasAbility(ability)
-    ) {
-      return ally;
-    }
-  }
-
-  return undefined;
+  return allyHolder(battle, unit, ability);
 }
 
 /** The standing holder on this unit's own side */
 function guardedBy(battle: Battle, unit: Unit, ability: Abilities): Unit | undefined {
-  for (const ally of battle.units()) {
-    if (ally.alive && ally.team.alliance === unit.team.alliance && ally.hasAbility(ability)) {
-      return ally;
-    }
-  }
-
-  return undefined;
+  return sideHolder(battle, unit, ability);
 }
 
 /** The accuracy a move has to be under for a run of luck to be capped */
@@ -786,10 +771,15 @@ const chikoritaToCelebi = [
   // Dunsparce: nothing about it is sharp and nothing is weak, which is
   // the whole of what the line is known for
   createAbility(Abilities.HiddenDen, (battle) => {
-    /** Whether anybody else is standing for an enemy to aim at instead */
+    /**
+     * Whether anybody else in its own party is standing for an enemy
+     * to aim at instead. Its party rather than its side: a raid is
+     * eight parties allied, and hiding behind seven other players'
+     * pokemon would make it unreachable for the whole fight
+     */
     function covered(unit: Unit): boolean {
-      for (const ally of battle.units()) {
-        if (ally !== unit && ally.alive && ally.team.alliance === unit.team.alliance) {
+      for (const mate of unit.team.units) {
+        if (mate !== unit && mate.alive) {
           return true;
         }
       }
@@ -1181,7 +1171,7 @@ const chikoritaToCelebi = [
           } as const;
 
           for (const ally of battle.units()) {
-            if (ally !== source && ally.alive && ally.team.alliance === source.team.alliance) {
+            if (ally !== source && ally.alive && ally.team === source.team) {
               ally.addStage(Stages.Attack, 1, cause);
             }
           }

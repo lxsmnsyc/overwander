@@ -932,6 +932,17 @@ describe('world', () => {
       // Temporary: a boss is immune to Perishing, so the song would
       // only be a slot it wastes
       Moves.PerishSong,
+      // Spent on a teammate a lone boss does not have, and the first
+      // two spend the whole pool doing it
+      Moves.HealingWish,
+      Moves.LunarDance,
+      Moves.HelpingHand,
+      Moves.FollowMe,
+      // A swap leaks whichever way it is cast, since a boss refuses
+      // the half that would cost it anything
+      Moves.PowerSwap,
+      Moves.GuardSwap,
+      Moves.HeartSwap,
     ]) {
       expect(BANNED_BOSS_MOVES.has(move)).toBe(true);
     }

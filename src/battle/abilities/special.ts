@@ -147,8 +147,8 @@ function refusesStatus(status: Statuses, cause: EffectCause, source: unknown): b
 const setupAbilities = [
   /**
    * Boss: a raid-style stat wall, twentyfold HP and doubled
-   * everything else, immune to negative stage applications, to damage
-   * measured as a share of its pool, to forced switch-outs, to
+   * everything else, immune to damage measured as a share of its
+   * pool, to forced switch-outs, to
    * trapping and disruption statuses (unless self-inflicted), to the
    * moves that move abilities or stages about, to a Perish Song
    * whoever sang it, and to anything that would fell it while its
@@ -267,18 +267,6 @@ const setupAbilities = [
         }
       }),
 
-      // Negative stage applications fail outright
-      battle.on(BattleEvents.CheckUnitCanAddStage, EventPriority.Post, (event) => {
-        if (event.success && event.value < 0 && event.source.hasAbility(Abilities.Boss)) {
-          event.success = false;
-
-          // A cue is something a watcher sees, so it waits for a real
-          // attempt rather than the AI weighing one
-          if (!event.simulated) {
-            event.source.triggerAbility(Abilities.Boss);
-          }
-        }
-      }),
       // A share of a raid pool is worth more than anything the party
       // is landing, so nothing may take one: an OHKO move and a Super
       // Fang are refused outright.

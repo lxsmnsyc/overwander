@@ -786,7 +786,7 @@ describe('weighing a move', () => {
     expect(open - scoreMove(battle, unit, Moves.Screech, target)).toBe(USELESS_PENALTY);
   });
 
-  it('declines a stat drop a boss will not take', () => {
+  it('spends a stat drop on a boss like any other target', () => {
     const { battle, teamA, teamB } = createAIBattle(BattleModes.Raid);
     pinRandom(battle, 0.99);
     const unit = createUnit(battle, teamA);
@@ -795,10 +795,9 @@ describe('weighing a move', () => {
 
     boss.addAbility(Abilities.Boss);
 
-    // Under the base score rather than a fixed distance from it: a
-    // boss draws the focus its bulk earns as well as the refusal, and
-    // the refusal is the larger of the two
-    expect(scoreMove(battle, unit, Moves.Screech, target)).toBeLessThan(BASE_SCORE);
+    // A boss takes what lowers it now, so the drop is worth what it
+    // is worth anywhere, plus the focus the bulk earns
+    expect(scoreMove(battle, unit, Moves.Screech, target)).toBeGreaterThanOrEqual(BASE_SCORE);
   });
 
   it('asks about a stage without setting off what refuses it', () => {

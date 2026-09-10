@@ -40,10 +40,11 @@ import { getSpeciesData } from '../species';
  * absence without the cost: there is nobody to help or to stand in
  * front of.
  *
- * **Power Swap**, **Guard Swap** and **Heart Swap** leak whichever
- * way they are cast. A swap is two stage changes, and a boss refuses
- * the negative half, so the positive half lands on its own: the party
- * copies the boss' boosts, or the boss hands over its own.
+ * **Power Swap**, **Guard Swap** and **Heart Swap** hand a boss'
+ * boosts over whichever way they are cast, and what a boss builds on
+ * doubled stats is worth more to the party than to it. A boss refuses
+ * one aimed at it, so the ban is the other half: it never casts one
+ * either.
  *
  * **Rest** is the one heal still barred. A boss may put back an
  * eighth of its pool, which is what every other heal is worth to it

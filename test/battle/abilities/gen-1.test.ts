@@ -1967,7 +1967,7 @@ describe('Boss', () => {
     expect(boss.checkStat(Stats.Speed, 0)).toBe(210);
   });
 
-  it('is immune to negative stage applications', () => {
+  it('takes stage drops like anything else', () => {
     const { battle, teamA, teamB } = createBattle();
     const boss = createUnit(battle, teamA);
     const enemy = createUnit(battle, teamB);
@@ -1976,14 +1976,14 @@ describe('Boss', () => {
     const cause = { type: EffectType.Move, move: Moves.Growl, unit: enemy } as const;
 
     boss.addStage(Stages.Attack, -1, cause);
-    boss.addStage(Stages.Defense, -1, cause);
+    boss.addStage(Stages.Defense, -2, cause);
 
-    expect(boss.stages[Stages.Attack]).toBe(0);
-    expect(boss.stages[Stages.Defense]).toBe(0);
+    expect(boss.stages[Stages.Attack]).toBe(-1);
+    expect(boss.stages[Stages.Defense]).toBe(-2);
 
     // Positive applications still land
     boss.addStage(Stages.Attack, 1, cause);
-    expect(boss.stages[Stages.Attack]).toBe(1);
+    expect(boss.stages[Stages.Attack]).toBe(0);
   });
 
   it('heals an eighth of its pool a second, however many heals land', () => {

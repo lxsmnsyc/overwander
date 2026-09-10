@@ -25,6 +25,8 @@ export default function registerTropicalRainforestSpawns(): void {
       scarce: [
         { species: Species.Exeggutor, weight: 10 },
         { species: Species.Forretress, weight: 5 },
+        { species: Species.Ambipom, weight: 6 },
+        { species: Species.Yanmega, weight: 6 },
       ],
       elusive: [
         { species: Species.Sceptile, weight: 2 },
@@ -54,6 +56,8 @@ export default function registerTropicalRainforestSpawns(): void {
       scarce: [
         { species: Species.Exeggutor, weight: 10 },
         { species: Species.Forretress, weight: 5 },
+        { species: Species.Ambipom, weight: 6 },
+        { species: Species.Yanmega, weight: 6 },
       ],
       elusive: [
         { species: Species.Sceptile, weight: 2 },
@@ -81,6 +85,8 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Ariados, weight: 8 },
         { species: Species.Breloom, weight: 10 },
         { species: Species.Forretress, weight: 8 },
+        { species: Species.Ambipom, weight: 6 },
+        { species: Species.Yanmega, weight: 6 },
       ],
       elusive: [],
       prized: [...UNOWN_SPAWNS],
@@ -103,6 +109,8 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Ariados, weight: 8 },
         { species: Species.Breloom, weight: 10 },
         { species: Species.Forretress, weight: 8 },
+        { species: Species.Ambipom, weight: 6 },
+        { species: Species.Yanmega, weight: 6 },
       ],
       elusive: [],
       prized: [...UNOWN_SPAWNS],

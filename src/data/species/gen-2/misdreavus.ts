@@ -4,13 +4,21 @@ import Abilities from '../../ids/abilities';
 import Biome, { TimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
+import { Items } from '../../ids/items';
 import { Moves } from '../../ids/moves';
-import { Species } from '../../ids/species';
+import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 export default function registerMisdreavusSpecies(): void {
   registerSpecies(Species.Misdreavus, {
     dexNumber: 200,
+    evolvesInto: [
+      {
+        species: Species.Mismagius,
+        method: EvolutionMethod.UsedItem,
+        item: Items.DuskStone,
+      },
+    ],
     name: 'Misdreavus',
     category: 'Screech Pokemon',
     height: 0.7,

@@ -15,7 +15,10 @@ export default function registerTundraSpawns(): void {
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Abomasnow, weight: 6 },
       ],
-      elusive: [{ species: Species.Delibird, weight: 5 }],
+      elusive: [
+        { species: Species.Delibird, weight: 5 },
+        { species: Species.Mamoswine, weight: 5 },
+      ],
       prized: [...UNOWN_SPAWNS],
       special: [{ species: Species.Suicune, weight: 10 }],
     },
@@ -27,7 +30,10 @@ export default function registerTundraSpawns(): void {
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Abomasnow, weight: 6 },
       ],
-      elusive: [{ species: Species.Delibird, weight: 5 }],
+      elusive: [
+        { species: Species.Delibird, weight: 5 },
+        { species: Species.Mamoswine, weight: 5 },
+      ],
       prized: [...UNOWN_SPAWNS],
       special: [{ species: Species.Suicune, weight: 10 }],
     },
@@ -41,10 +47,12 @@ export default function registerTundraSpawns(): void {
       scarce: [
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Abomasnow, weight: 6 },
+        { species: Species.Weavile, weight: 6 },
       ],
       elusive: [
         { species: Species.Jynx, weight: 5 },
         { species: Species.Delibird, weight: 5 },
+        { species: Species.Mamoswine, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS, { species: Species.Smoochum, weight: PRIZED_WEIGHT }],
       special: [{ species: Species.Suicune, weight: 10 }],
@@ -59,10 +67,12 @@ export default function registerTundraSpawns(): void {
       scarce: [
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Abomasnow, weight: 6 },
+        { species: Species.Weavile, weight: 6 },
       ],
       elusive: [
         { species: Species.Jynx, weight: 5 },
         { species: Species.Delibird, weight: 5 },
+        { species: Species.Mamoswine, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS, { species: Species.Smoochum, weight: PRIZED_WEIGHT }],
       special: [{ species: Species.Suicune, weight: 10 }],

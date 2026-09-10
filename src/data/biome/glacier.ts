@@ -27,6 +27,7 @@ export default function registerGlacierSpawns(): void {
         { species: Species.Walrein, weight: 5 },
         { species: Species.Delibird, weight: 5 },
         { species: Species.Empoleon, weight: 2 },
+        { species: Species.Mamoswine, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [
@@ -54,6 +55,7 @@ export default function registerGlacierSpawns(): void {
         { species: Species.Walrein, weight: 5 },
         { species: Species.Delibird, weight: 5 },
         { species: Species.Empoleon, weight: 2 },
+        { species: Species.Mamoswine, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [
@@ -77,11 +79,13 @@ export default function registerGlacierSpawns(): void {
       scarce: [
         { species: Species.Glalie, weight: 6 },
         { species: Species.Froslass, weight: 6 },
+        { species: Species.Weavile, weight: 6 },
       ],
       elusive: [
         { species: Species.Walrein, weight: 5 },
         { species: Species.Jynx, weight: 5 },
         { species: Species.Delibird, weight: 5 },
+        { species: Species.Mamoswine, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS, { species: Species.Smoochum, weight: PRIZED_WEIGHT }],
       special: [
@@ -105,11 +109,13 @@ export default function registerGlacierSpawns(): void {
       scarce: [
         { species: Species.Glalie, weight: 6 },
         { species: Species.Froslass, weight: 6 },
+        { species: Species.Weavile, weight: 6 },
       ],
       elusive: [
         { species: Species.Walrein, weight: 5 },
         { species: Species.Jynx, weight: 5 },
         { species: Species.Delibird, weight: 5 },
+        { species: Species.Mamoswine, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS, { species: Species.Smoochum, weight: PRIZED_WEIGHT }],
       special: [

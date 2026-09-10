@@ -1,0 +1,118 @@
+import { Stats } from '../../constants/stats';
+import { Types } from '../../constants/types';
+import Abilities from '../../ids/abilities';
+import Biome, { AnyTimeOfDay } from '../../ids/biome';
+import EggGroups from '../../ids/egg-groups';
+import Families from '../../ids/families';
+import { Moves } from '../../ids/moves';
+import { Species } from '../../ids/species';
+import { registerSpecies } from '../__create';
+
+/**
+ * The tail that learned to do everything: an Ambipom stopped using
+ * its hands years ago and has not missed them
+ */
+export default function registerAmbipomSpecies(): void {
+  registerSpecies(Species.Ambipom, {
+    dexNumber: 424,
+    name: 'Ambipom',
+    category: 'Long Tail Pokemon',
+    height: 1.2,
+    weight: 20.3,
+    family: Families.Aipom,
+    evolvesFrom: Species.Aipom,
+    stats: {
+      [Stats.HP]: 75,
+      [Stats.Attack]: 100,
+      [Stats.Defense]: 66,
+      [Stats.SpecialAttack]: 60,
+      [Stats.SpecialDefense]: 66,
+      [Stats.Speed]: 115,
+    },
+    types: [Types.Normal],
+    abilities: [Abilities.Technician, Abilities.Pickup],
+    hiddenAbilities: [Abilities.SkillLink],
+    eggGroups: [EggGroups.Field],
+    genderRatio: [1, 1],
+    catchRate: 45,
+    biomes: [Biome.TropicalRainforest, Biome.TemperateForest, Biome.Woodland],
+    activeTimes: AnyTimeOfDay,
+    learnSet: {
+      level: {
+        1: [Moves.Astonish, Moves.SandAttack, Moves.Scratch, Moves.TailWhip],
+        4: [Moves.SandAttack],
+        8: [Moves.Astonish],
+        11: [Moves.BatonPass],
+        15: [Moves.Tickle],
+        18: [Moves.FurySwipes],
+        22: [Moves.Swift],
+        25: [Moves.Screech],
+        29: [Moves.Agility],
+        32: [Moves.DoubleHit],
+        36: [Moves.Fling],
+        39: [Moves.NastyPlot],
+        43: [Moves.LastResort],
+      },
+      teachable: [
+        Moves.AerialAce,
+        Moves.Attract,
+        Moves.Bounce,
+        Moves.BrickBreak,
+        Moves.Captivate,
+        Moves.Cut,
+        Moves.Dig,
+        Moves.DoubleTeam,
+        Moves.DreamEater,
+        Moves.Endure,
+        Moves.Facade,
+        Moves.FirePunch,
+        Moves.Fling,
+        Moves.FocusPunch,
+        Moves.Frustration,
+        Moves.FuryCutter,
+        Moves.GigaImpact,
+        Moves.GrassKnot,
+        Moves.GunkShot,
+        Moves.HiddenPower,
+        Moves.HyperBeam,
+        Moves.IcePunch,
+        Moves.IronTail,
+        Moves.KnockOff,
+        Moves.LastResort,
+        Moves.MudSlap,
+        Moves.NaturalGift,
+        Moves.Payback,
+        Moves.Protect,
+        Moves.RainDance,
+        Moves.Rest,
+        Moves.Return,
+        Moves.RockSmash,
+        Moves.SecretPower,
+        Moves.SeedBomb,
+        Moves.ShadowBall,
+        Moves.ShadowClaw,
+        Moves.ShockWave,
+        Moves.SleepTalk,
+        Moves.Snatch,
+        Moves.Snore,
+        Moves.SolarBeam,
+        Moves.Spite,
+        Moves.Strength,
+        Moves.Substitute,
+        Moves.SunnyDay,
+        Moves.Swagger,
+        Moves.Swift,
+        Moves.Taunt,
+        Moves.Thief,
+        Moves.Thunder,
+        Moves.ThunderPunch,
+        Moves.ThunderWave,
+        Moves.Thunderbolt,
+        Moves.Toxic,
+        Moves.UTurn,
+        Moves.Uproar,
+        Moves.WaterPulse,
+      ],
+    },
+  });
+}

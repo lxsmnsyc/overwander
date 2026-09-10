@@ -21,6 +21,11 @@ export default function registerGen4Abilities(): void {
     name: 'Merciless',
     description: 'Its moves land critically on a poisoned target, armour permitting.',
   });
+  // Togepi
+  registerAbility(Abilities.FriendGuard, {
+    name: 'Friend Guard',
+    description: 'Its teammates take 0.75x from everything while it stands.',
+  });
   // Bronzor
   registerAbility(Abilities.Heatproof, {
     name: 'Heatproof',

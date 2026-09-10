@@ -4,6 +4,7 @@ import { ITEM_STACKS } from '../auth/stacks';
 import { getMaxHealth, getStats, rescaleHealth } from '../auth/health';
 import { getTimeOfDay } from '../data/ids/biome';
 import type { Items } from '../data/ids/items';
+import type { Moves } from '../data/ids/moves';
 import type { Genders, Species } from '../data/ids/species';
 import type { EvolutionContext, EvolutionData } from '../data/species';
 import {
@@ -83,6 +84,10 @@ export default async function evolveCatch(
       // same row the species change is written back to
       // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
       held: new Set(asNumberArray(caught.items) as Items[]),
+      // Its own move set, read off the row: a move evolution asks what
+      // the pokemon has actually learned
+      // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+      moves: new Set(asNumberArray(caught.moves) as Moves[]),
       // Settled at the handover rather than re-read here: the server
       // wrote it, so a client saying it was traded changes nothing
       canEvolve: asBoolean(caught.canEvolve),

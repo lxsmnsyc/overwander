@@ -16,6 +16,7 @@ export default function registerSudowoodoSpecies(): void {
     height: 1.2,
     weight: 38,
     family: Families.Sudowoodo,
+    evolvesFrom: Species.Bonsly,
     stats: {
       [Stats.HP]: 70,
       [Stats.Attack]: 100,
@@ -101,7 +102,6 @@ export default function registerSudowoodoSpecies(): void {
         Moves.StealthRock,
         Moves.StoneEdge,
       ],
-      egg: [Moves.SelfDestruct],
     },
   });
 }

@@ -1664,6 +1664,7 @@ describe('evolution data', () => {
       carried: new Set<Items>(),
       held: new Set<Items>(),
       canEvolve: false,
+      moves: new Set<Moves>(),
       stats: EVEN_STATS,
       friendship: EVOLUTION_FRIENDSHIP,
       gender: Genders.Female,
@@ -1692,6 +1693,7 @@ describe('evolution data', () => {
       carried: new Set<Items>(),
       held: new Set<Items>(),
       canEvolve: false,
+      moves: new Set<Moves>(),
       stats: EVEN_STATS,
       friendship: BASE_FRIENDSHIP,
       gender: Genders.Male,
@@ -1711,6 +1713,7 @@ describe('evolution data', () => {
       level: 50,
       held: new Set<Items>(),
       canEvolve: false,
+      moves: new Set<Moves>(),
       stats: EVEN_STATS,
       friendship: BASE_FRIENDSHIP,
       gender: Genders.Male,
@@ -1757,6 +1760,7 @@ describe('evolution data', () => {
         species: Species.Charmander,
         ...context,
         held: new Set([Items.Everstone]),
+        moves: new Set<Moves>(),
       }),
     ).toEqual([]);
     expect(
@@ -1764,6 +1768,7 @@ describe('evolution data', () => {
         species: Species.Vulpix,
         ...context,
         held: new Set([Items.Everstone]),
+        moves: new Set<Moves>(),
       }),
     ).toEqual([]);
     expect(
@@ -1771,6 +1776,7 @@ describe('evolution data', () => {
         species: Species.Machoke,
         ...context,
         held: new Set([Items.Everstone]),
+        moves: new Set<Moves>(),
       }),
     ).toEqual([]);
 
@@ -1780,6 +1786,7 @@ describe('evolution data', () => {
         species: Species.Machoke,
         ...context,
         held: new Set([Items.Leftovers]),
+        moves: new Set<Moves>(),
       }),
     ).toEqual([{ species: Species.Machamp, method: EvolutionMethod.Trade }]);
   });
@@ -1835,6 +1842,7 @@ describe('evolution data', () => {
       level: 50,
       carried: new Set<Items>(),
       held: new Set<Items>(),
+      moves: new Set<Moves>(),
       stats: EVEN_STATS,
       friendship: BASE_FRIENDSHIP,
       gender: Genders.Male,
@@ -1864,6 +1872,7 @@ describe('evolution data', () => {
         canEvolve: false,
         carried: new Set([Items.LinkingCord]),
         held: new Set([Items.MetalCoat]),
+        moves: new Set<Moves>(),
       }),
     ).toEqual([
       {
@@ -1879,6 +1888,7 @@ describe('evolution data', () => {
       level: 100,
       carried: new Set<Items>(),
       held: new Set<Items>(),
+      moves: new Set<Moves>(),
       stats: EVEN_STATS,
       friendship: BASE_FRIENDSHIP,
       gender: Genders.Male,
@@ -1971,6 +1981,7 @@ describe('evolution data', () => {
       level: 100,
       carried: new Set<Items>(),
       held: new Set<Items>(),
+      moves: new Set<Moves>(),
       stats: EVEN_STATS,
       friendship: BASE_FRIENDSHIP,
       gender: Genders.Male,
@@ -2006,6 +2017,7 @@ describe('evolution data', () => {
       level: 100,
       held: new Set<Items>(),
       canEvolve: false,
+      moves: new Set<Moves>(),
       stats: EVEN_STATS,
       friendship: BASE_FRIENDSHIP,
       gender: Genders.Male,
@@ -2042,6 +2054,7 @@ describe('evolution data', () => {
         level: 100,
         carried,
         held: new Set(),
+        moves: new Set<Moves>(),
         canEvolve: false,
         stats: EVEN_STATS,
         friendship: BASE_FRIENDSHIP,
@@ -2058,6 +2071,7 @@ describe('evolution data', () => {
       level: 20,
       carried: new Set<Items>(),
       held: new Set<Items>(),
+      moves: new Set<Moves>(),
       canEvolve: false,
       friendship: BASE_FRIENDSHIP,
       gender: Genders.Male,
@@ -2088,6 +2102,7 @@ describe('evolution data', () => {
       carried: new Set<Items>(),
       held: new Set<Items>(),
       canEvolve: false,
+      moves: new Set<Moves>(),
       stats: EVEN_STATS,
       time: TimeOfDay.Day,
       gender: Genders.Male,
@@ -2108,6 +2123,7 @@ describe('evolution data', () => {
       carried: new Set<Items>(),
       held: new Set<Items>(),
       canEvolve: false,
+      moves: new Set<Moves>(),
       stats: EVEN_STATS,
       friendship: EVOLUTION_FRIENDSHIP,
       gender: Genders.Male,
@@ -2139,6 +2155,7 @@ describe('evolution data', () => {
       carried: new Set<Items>(),
       held: new Set<Items>(),
       canEvolve: false,
+      moves: new Set<Moves>(),
       stats: EVEN_STATS,
       friendship: BASE_FRIENDSHIP,
       time: TimeOfDay.Day,
@@ -2182,6 +2199,7 @@ describe('evolution data', () => {
           level: 100,
           carried: new Set(),
           held: new Set(),
+          moves: new Set<Moves>(),
           canEvolve: true,
           stats: EVEN_STATS,
           friendship: BASE_FRIENDSHIP,

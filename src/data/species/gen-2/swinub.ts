@@ -108,6 +108,14 @@ export default function registerSwinubSpecies(): void {
 
   registerSpecies(Species.Piloswine, {
     dexNumber: 221,
+    evolvesInto: [
+      {
+        species: Species.Mamoswine,
+        method: EvolutionMethod.Level | EvolutionMethod.KnownMove,
+        level: 45,
+        move: Moves.AncientPower,
+      },
+    ],
     name: 'Piloswine',
     category: 'Swine Pokemon',
     height: 1.1,

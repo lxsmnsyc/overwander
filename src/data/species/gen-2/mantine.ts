@@ -16,6 +16,7 @@ export default function registerMantineSpecies(): void {
     height: 2.1,
     weight: 220,
     family: Families.Mantine,
+    evolvesFrom: Species.Mantyke,
     stats: {
       [Stats.HP]: 85,
       [Stats.Attack]: 40,
@@ -90,14 +91,6 @@ export default function registerMantineSpecies(): void {
         Moves.NaturalGift,
         Moves.SeedBomb,
         Moves.Tailwind,
-      ],
-      egg: [
-        Moves.Haze,
-        Moves.HydroPump,
-        Moves.Slam,
-        Moves.Twister,
-        Moves.MudSport,
-        Moves.RockSlide,
       ],
     },
   });

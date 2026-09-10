@@ -173,6 +173,7 @@ import {
   TRAINER_CHARSETS,
   TRAINER_CLASSES,
   TRAINER_NAMES,
+  TRAINER_REGIONS,
   TRAINER_TYPES,
   TYPE_TRAINER_LEVELS,
   TYPE_TRAINER_PARTY_MAX,
@@ -181,6 +182,7 @@ import {
   getBiomeTrainers,
   getTrainerPool,
   isAceTrainer,
+  isGrownInRegion,
   trainerLevels,
 } from '../../src/data/overworld/trainers';
 import pickStartPosition, { START_AREA, pickFreeCell } from '../../src/overworld/start';
@@ -1277,8 +1279,13 @@ describe('world', () => {
         expect(party.length).toBeLessThanOrEqual(TYPE_TRAINER_PARTY_MAX);
       }
       for (const [species] of party) {
-        // Fully grown, never a legendary, and of the class' type
-        expect(isGrownSpecies(species), getSpeciesData(species).name).toBe(true);
+        // As grown as its own region goes, never a legendary, and of
+        // the class' type. A later region often holds the last stage
+        // of an older line, and that stage is not this trainer's
+        expect(
+          isGrownInRegion(species, TRAINER_REGIONS[trainer]),
+          getSpeciesData(species).name,
+        ).toBe(true);
         expect(lairSpecies.has(species)).toBe(false);
         if (types.size > 0) {
           expect(

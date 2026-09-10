@@ -65,6 +65,7 @@ export async function listEvolutionOptions(
     level: caught.level,
     carried: new Set(inventory.filter((entry) => entry.amount > 0).map((entry) => entry.item)),
     held: new Set(caught.items),
+    moves: new Set(caught.moves),
     canEvolve: caught.canEvolve,
     stats: getStats(caught),
     friendship: caught.friendship,

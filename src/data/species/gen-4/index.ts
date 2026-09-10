@@ -1,5 +1,7 @@
 import registerBidoofSpecies from './bidoof';
+import registerAmbipomSpecies from './ambipom';
 import registerBronzorSpecies from './bronzor';
+import registerBonslySpecies from './bonsly';
 import registerBudewSpecies from './budew';
 import registerBuizelSpecies from './buizel';
 import registerBurmySpecies from './burmy';
@@ -11,7 +13,12 @@ import registerDusknoirSpecies from './dusknoir';
 import registerFinneonSpecies from './finneon';
 import registerFroslassSpecies from './froslass';
 import registerGalladeSpecies from './gallade';
+import registerHonchkrowSpecies from './honchkrow';
+import registerMamoswineSpecies from './mamoswine';
+import registerMantykeSpecies from './mantyke';
+import registerMismagiusSpecies from './mismagius';
 import registerGibleSpecies from './gible';
+import registerGliscorSpecies from './gliscor';
 import registerHippopotasSpecies from './hippopotas';
 import registerGlameowSpecies from './glameow';
 import registerChimcharSpecies from './chimchar';
@@ -28,6 +35,9 @@ import registerShinxSpecies from './shinx';
 import registerSkorupiSpecies from './skorupi';
 import registerSnoverSpecies from './snover';
 import registerStunkySpecies from './stunky';
+import registerTogekissSpecies from './togekiss';
+import registerWeavileSpecies from './weavile';
+import registerYanmegaSpecies from './yanmega';
 import registerStarlySpecies from './starly';
 import registerTurtwigSpecies from './turtwig';
 
@@ -67,4 +77,14 @@ export default function registerGen4Species(): void {
   registerProbopassSpecies();
   registerDusknoirSpecies();
   registerFroslassSpecies();
+  registerAmbipomSpecies();
+  registerMismagiusSpecies();
+  registerHonchkrowSpecies();
+  registerBonslySpecies();
+  registerMantykeSpecies();
+  registerWeavileSpecies();
+  registerTogekissSpecies();
+  registerYanmegaSpecies();
+  registerGliscorSpecies();
+  registerMamoswineSpecies();
 }

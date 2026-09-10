@@ -4,13 +4,23 @@ import Abilities from '../../ids/abilities';
 import Biome, { TimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
+import { Items } from '../../ids/items';
 import { Moves } from '../../ids/moves';
-import { Species } from '../../ids/species';
+import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 export default function registerGligarSpecies(): void {
   registerSpecies(Species.Gligar, {
     dexNumber: 207,
+    evolvesInto: [
+      {
+        species: Species.Gliscor,
+        method: EvolutionMethod.Level | EvolutionMethod.HeldItem | EvolutionMethod.TimeOfDay,
+        level: 35,
+        item: Items.RazorFang,
+        time: TimeOfDay.Evening | TimeOfDay.Night,
+      },
+    ],
     name: 'Gligar',
     category: 'Fly Scorpion Pokemon',
     height: 1.1,

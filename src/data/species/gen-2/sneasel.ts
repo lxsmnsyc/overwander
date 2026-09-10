@@ -4,13 +4,23 @@ import Abilities from '../../ids/abilities';
 import Biome, { TimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
+import { Items } from '../../ids/items';
 import { Moves } from '../../ids/moves';
-import { Species } from '../../ids/species';
+import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 export default function registerSneaselSpecies(): void {
   registerSpecies(Species.Sneasel, {
     dexNumber: 215,
+    evolvesInto: [
+      {
+        species: Species.Weavile,
+        method: EvolutionMethod.Level | EvolutionMethod.HeldItem | EvolutionMethod.TimeOfDay,
+        level: 35,
+        item: Items.RazorClaw,
+        time: TimeOfDay.Evening | TimeOfDay.Night,
+      },
+    ],
     name: 'Sneasel',
     category: 'Sharp Claw Pokemon',
     height: 0.9,

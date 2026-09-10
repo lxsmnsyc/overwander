@@ -4,6 +4,7 @@ import Abilities from '../../ids/abilities';
 import Biome, { TimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
+import { Items } from '../../ids/items';
 import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
@@ -132,6 +133,13 @@ export default function registerTogepiSpecies(): void {
 
   registerSpecies(Species.Togetic, {
     dexNumber: 176,
+    evolvesInto: [
+      {
+        species: Species.Togekiss,
+        method: EvolutionMethod.UsedItem,
+        item: Items.ShinyStone,
+      },
+    ],
     name: 'Togetic',
     category: 'Happiness Pokemon',
     height: 0.6,

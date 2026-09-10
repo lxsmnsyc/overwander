@@ -78,6 +78,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Lopunny, weight: 8 },
         { species: Species.Purugly, weight: 8 },
         { species: Species.Roserade, weight: 6 },
+        { species: Species.Togekiss, weight: 6 },
       ],
       elusive: [
         { species: Species.Castform, weight: 10 },
@@ -188,6 +189,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Lopunny, weight: 8 },
         { species: Species.Purugly, weight: 8 },
         { species: Species.Roserade, weight: 6 },
+        { species: Species.Togekiss, weight: 6 },
       ],
       elusive: [
         { species: Species.Castform, weight: 10 },

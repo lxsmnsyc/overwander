@@ -5,12 +5,20 @@ import Biome, { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
-import { Species } from '../../ids/species';
+import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 export default function registerYanmaSpecies(): void {
   registerSpecies(Species.Yanma, {
     dexNumber: 193,
+    evolvesInto: [
+      {
+        species: Species.Yanmega,
+        method: EvolutionMethod.Level | EvolutionMethod.KnownMove,
+        level: 33,
+        move: Moves.AncientPower,
+      },
+    ],
     name: 'Yanma',
     category: 'Clear Wing Pokemon',
     height: 1.2,

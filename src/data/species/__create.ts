@@ -52,6 +52,12 @@ export interface EvolutionData {
    */
   gender?: Genders;
   /**
+   * The move it has to know (EvolutionMethod.KnownMove). Four lines
+   * ask, and each of them asks for a move the mainline teaches that
+   * stage and nothing above it
+   */
+  move?: Moves;
+  /**
    * Two of its own stats set against each other
    * (EvolutionMethod.StatComparison). Tyrogue is the only line that
    * asks: its Attack against its Defense decides which of the three

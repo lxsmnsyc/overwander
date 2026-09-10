@@ -4,13 +4,21 @@ import Abilities from '../../ids/abilities';
 import Biome, { TimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
+import { Items } from '../../ids/items';
 import { Moves } from '../../ids/moves';
-import { Species } from '../../ids/species';
+import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 export default function registerMurkrowSpecies(): void {
   registerSpecies(Species.Murkrow, {
     dexNumber: 198,
+    evolvesInto: [
+      {
+        species: Species.Honchkrow,
+        method: EvolutionMethod.UsedItem,
+        item: Items.DuskStone,
+      },
+    ],
     name: 'Murkrow',
     category: 'Darkness Pokemon',
     height: 0.5,

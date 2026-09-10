@@ -177,6 +177,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Bronzong, weight: 6 },
         { species: Species.Hippowdon, weight: 6 },
         { species: Species.Probopass, weight: 6 },
+        { species: Species.Gliscor, weight: 6 },
       ],
       elusive: [
         { species: Species.Metagross, weight: 1 },
@@ -236,6 +237,8 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Bronzong, weight: 6 },
         { species: Species.Hippowdon, weight: 6 },
         { species: Species.Probopass, weight: 6 },
+        { species: Species.Mismagius, weight: 6 },
+        { species: Species.Gliscor, weight: 6 },
       ],
       elusive: [
         { species: Species.Metagross, weight: 1 },

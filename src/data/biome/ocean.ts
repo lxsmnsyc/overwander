@@ -1,6 +1,6 @@
 import Biome, { TimeOfDay } from '../ids/biome';
 import { Species } from '../ids/species';
-import { UNOWN_SPAWNS, registerSpawnPool } from './__create';
+import { PRIZED_WEIGHT, UNOWN_SPAWNS, registerSpawnPool } from './__create';
 
 /**
  * Ocean spawn pool, grouped by day-cycle period and rarity band
@@ -50,7 +50,7 @@ export default function registerOceanSpawns(): void {
         { species: Species.Qwilfish, weight: 15 },
         { species: Species.Relicanth, weight: 5 },
       ],
-      prized: [...UNOWN_SPAWNS],
+      prized: [...UNOWN_SPAWNS, { species: Species.Mantyke, weight: PRIZED_WEIGHT }],
       special: [
         { species: Species.Latias, weight: 10 },
         { species: Species.Latios, weight: 10 },
@@ -100,7 +100,7 @@ export default function registerOceanSpawns(): void {
         { species: Species.Qwilfish, weight: 15 },
         { species: Species.Relicanth, weight: 5 },
       ],
-      prized: [...UNOWN_SPAWNS],
+      prized: [...UNOWN_SPAWNS, { species: Species.Mantyke, weight: PRIZED_WEIGHT }],
       special: [
         { species: Species.Latias, weight: 10 },
         { species: Species.Latios, weight: 10 },
@@ -148,7 +148,7 @@ export default function registerOceanSpawns(): void {
         { species: Species.Corsola, weight: 20 },
         { species: Species.Qwilfish, weight: 15 },
       ],
-      prized: [...UNOWN_SPAWNS],
+      prized: [...UNOWN_SPAWNS, { species: Species.Mantyke, weight: PRIZED_WEIGHT }],
       special: [
         { species: Species.Latias, weight: 10 },
         { species: Species.Latios, weight: 10 },
@@ -196,7 +196,7 @@ export default function registerOceanSpawns(): void {
         { species: Species.Corsola, weight: 20 },
         { species: Species.Qwilfish, weight: 15 },
       ],
-      prized: [...UNOWN_SPAWNS],
+      prized: [...UNOWN_SPAWNS, { species: Species.Mantyke, weight: PRIZED_WEIGHT }],
       special: [
         { species: Species.Latias, weight: 10 },
         { species: Species.Latios, weight: 10 },

@@ -42,6 +42,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Bibarel, weight: 10 },
         { species: Species.Floatzel, weight: 8 },
         { species: Species.Toxicroak, weight: 6 },
+        { species: Species.Yanmega, weight: 6 },
       ],
       elusive: [
         { species: Species.Poliwrath, weight: 5 },
@@ -87,6 +88,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Bibarel, weight: 10 },
         { species: Species.Floatzel, weight: 8 },
         { species: Species.Toxicroak, weight: 6 },
+        { species: Species.Yanmega, weight: 6 },
       ],
       elusive: [
         { species: Species.Poliwrath, weight: 5 },
@@ -124,6 +126,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Floatzel, weight: 8 },
         { species: Species.Drifblim, weight: 6 },
         { species: Species.Toxicroak, weight: 6 },
+        { species: Species.Yanmega, weight: 6 },
       ],
       elusive: [
         { species: Species.Volbeat, weight: 8 },
@@ -167,6 +170,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Floatzel, weight: 8 },
         { species: Species.Drifblim, weight: 6 },
         { species: Species.Toxicroak, weight: 6 },
+        { species: Species.Yanmega, weight: 6 },
       ],
       elusive: [
         { species: Species.Poliwrath, weight: 5 },

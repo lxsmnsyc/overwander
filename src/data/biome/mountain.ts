@@ -81,6 +81,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Wynaut, weight: PRIZED_WEIGHT },
         { species: Species.Riolu, weight: PRIZED_WEIGHT },
         { species: Species.Chingling, weight: PRIZED_WEIGHT },
+        { species: Species.Bonsly, weight: PRIZED_WEIGHT },
       ],
       special: [
         { species: Species.Rayquaza, weight: 10 },
@@ -167,6 +168,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Wynaut, weight: PRIZED_WEIGHT },
         { species: Species.Riolu, weight: PRIZED_WEIGHT },
         { species: Species.Chingling, weight: PRIZED_WEIGHT },
+        { species: Species.Bonsly, weight: PRIZED_WEIGHT },
       ],
       special: [
         { species: Species.Rayquaza, weight: 10 },
@@ -210,6 +212,8 @@ export default function registerMountainSpawns(): void {
         { species: Species.WormadamTrash, weight: 4 },
         { species: Species.Bronzong, weight: 6 },
         { species: Species.Probopass, weight: 6 },
+        { species: Species.Honchkrow, weight: 6 },
+        { species: Species.Gliscor, weight: 6 },
       ],
       elusive: [
         { species: Species.Salamence, weight: 2 },
@@ -229,6 +233,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Magby, weight: PRIZED_WEIGHT },
         { species: Species.Wynaut, weight: PRIZED_WEIGHT },
         { species: Species.Chingling, weight: PRIZED_WEIGHT },
+        { species: Species.Bonsly, weight: PRIZED_WEIGHT },
       ],
       special: [
         { species: Species.Rayquaza, weight: 10 },
@@ -277,6 +282,9 @@ export default function registerMountainSpawns(): void {
         { species: Species.WormadamTrash, weight: 4 },
         { species: Species.Bronzong, weight: 6 },
         { species: Species.Probopass, weight: 6 },
+        { species: Species.Mismagius, weight: 6 },
+        { species: Species.Honchkrow, weight: 6 },
+        { species: Species.Gliscor, weight: 6 },
       ],
       elusive: [
         { species: Species.Golem, weight: 5 },
@@ -297,6 +305,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Magby, weight: PRIZED_WEIGHT },
         { species: Species.Wynaut, weight: PRIZED_WEIGHT },
         { species: Species.Chingling, weight: PRIZED_WEIGHT },
+        { species: Species.Bonsly, weight: PRIZED_WEIGHT },
       ],
       special: [
         { species: Species.Rayquaza, weight: 10 },

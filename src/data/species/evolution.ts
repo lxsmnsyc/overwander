@@ -2,6 +2,7 @@ import { EVOLUTION_FRIENDSHIP } from '../constants/friendship';
 import type { TimeOfDay } from '../ids/biome';
 import type { Stats } from '../constants/stats';
 import { Items } from '../ids/items';
+import type { Moves } from '../ids/moves';
 import { EvolutionMethod, type Genders, type Species } from '../ids/species';
 import {
   type EvolutionData,
@@ -24,6 +25,7 @@ export const SUPPORTED_METHODS =
   EvolutionMethod.Friendship |
   EvolutionMethod.TimeOfDay |
   EvolutionMethod.Gender |
+  EvolutionMethod.KnownMove |
   EvolutionMethod.StatComparison;
 
 /**
@@ -70,6 +72,11 @@ export interface EvolutionContext {
    * line that reads it
    */
   time: TimeOfDay;
+  /**
+   * The moves it knows right now. Four lines ask for one: an Aipom
+   * that has learned Double Hit is the one that becomes an Ambipom
+   */
+  moves: ReadonlySet<Moves>;
   /**
    * What it was born as. Wurmple is the only line that reads it, and
    * every stage of that line is an even split, so the branch a
@@ -185,6 +192,11 @@ export function meetsEvolutionCriteria(
   }
   if ((method & EvolutionMethod.TimeOfDay) !== 0) {
     if (evolution.time == null || (evolution.time & context.time) === 0) {
+      return false;
+    }
+  }
+  if ((method & EvolutionMethod.KnownMove) !== 0) {
+    if (evolution.move == null || !context.moves.has(evolution.move)) {
       return false;
     }
   }

@@ -467,6 +467,8 @@ const BABY_SPECIES = new Set<Species>([
   Species.Magby,
   Species.Azurill,
   Species.Wynaut,
+  Species.Bonsly,
+  Species.Mantyke,
   Species.Budew,
   Species.Chingling,
   Species.Riolu,
@@ -515,8 +517,6 @@ export const PRIZED_WEIGHT = UNOWN_SPAWNS.length;
  */
 const AWAITING_BABY_SPECIES = new Set<Species>([
   // Gen 4 babies
-  Species.Sudowoodo,
-  Species.Mantine,
   Species.Chansey,
   Species.MrMime,
   Species.Snorlax,
@@ -551,14 +551,6 @@ const AWAITING_EVOLUTION_SPECIES = new Set<Species>([
   Species.Tangela,
   Species.Electabuzz,
   Species.Magmar,
-  Species.Togetic,
-  Species.Aipom,
-  Species.Yanma,
-  Species.Murkrow,
-  Species.Misdreavus,
-  Species.Gligar,
-  Species.Sneasel,
-  Species.Piloswine,
   Species.Porygon2,
   // Gen 8 evolutions
   Species.Ursaring,

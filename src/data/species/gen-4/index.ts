@@ -1,3 +1,4 @@
+import registerArceusSpecies from './arceus';
 import registerBidoofSpecies from './bidoof';
 import registerAmbipomSpecies from './ambipom';
 import registerBronzorSpecies from './bronzor';
@@ -135,4 +136,5 @@ export default function registerGen4Species(): void {
   registerCarnivineSpecies();
   registerRotomSpecies();
   registerShayminSpecies();
+  registerArceusSpecies();
 }

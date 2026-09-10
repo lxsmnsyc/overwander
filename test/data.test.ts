@@ -80,6 +80,7 @@ import {
   DEOXYS_FORMS,
   DIALGA_FORMS,
   GIRATINA_FORMS,
+  ARCEUS_FORMS,
   ROTOM_FORMS,
   SHAYMIN_FORMS,
   PALKIA_FORMS,
@@ -265,7 +266,7 @@ import { AMULET_COIN_BONUS } from '../src/overworld/items/trinkets';
 import { FEED_CATCH_BONUS, MAX_CATCH_BONUS } from '../src/overworld/safari';
 import { ORBS, ORB_PRICE } from '../src/data/items/orbs';
 import { PLATES, PLATE_RESALE } from '../src/data/items/plates';
-import { FORM_ITEMS } from '../src/data/items/form-items';
+import { FORM_ITEMS, getItemForms } from '../src/data/items/form-items';
 import { RAID_ITEMS, getRaidSpecies } from '../src/data/items/raid-items';
 import {
   GENERAL_STAT_BOOSTERS,
@@ -753,6 +754,7 @@ describe('species forms', () => {
       ...GIRATINA_FORMS.slice(1),
       ...SHAYMIN_FORMS.slice(1),
       ...ROTOM_FORMS.slice(1),
+      ...ARCEUS_FORMS.slice(1),
     ]);
 
     expect(registered.length).toBeGreaterThan(0);
@@ -3464,6 +3466,7 @@ describe('item data', () => {
       Items.MemberCard,
       Items.ManaphyEgg,
       Items.OaksLetter,
+      Items.AzureFlute,
       Items.GoldenBottleCap,
       // The one thing in the band that is only gold, and there because
       // it is more of it than anything else in the game pays
@@ -3766,9 +3769,34 @@ describe('item data', () => {
     expect(getRaidSpecies(Items.MasterBall)).toBeNull();
   });
 
-  it('buries every form item in the prized band and nowhere else', () => {
+  it('paints an Arceus with every Plate it can hold', () => {
+    // Multitype is not battle machinery: a Plate names one shape, and
+    // the shape's own species data carries the type the Plate lifts
+    for (const [plate, type] of PLATES) {
+      const shapes = getItemForms(plate);
+
+      expect(shapes.length, getItemData(plate).name).toBe(1);
+
+      const shape = getSpeciesData(shapes[0]);
+
+      expect(shape.types).toEqual([type]);
+      expect(shape.dexNumber).toBe(493);
+      expect(shape.baseForm).toBe(false);
+      expect(shape.worn).toBe(true);
+      // Every shape has the six numbers the bare one has
+      expect(shape.stats).toEqual(getSpeciesData(Species.Arceus).stats);
+    }
+
+    // Seventeen Plates and the shape it is met in
+    expect(ARCEUS_FORMS.length).toBe(PLATES.size + 1);
+  });
+
+  it('buries every form item, and no shop stocks one', () => {
     for (const [item, forms] of FORM_ITEMS) {
       const data = getItemData(item);
+      const buried = (['base', 'uncommon', 'rare', 'prized', 'special'] as const).some((band) =>
+        ITEM_POOL[band].some((entry) => entry.item === item),
+      );
 
       // Held for the shape it puts its holder into, and nothing sells
       // one, so the pool is the only way to it
@@ -3777,10 +3805,18 @@ describe('item data', () => {
       expect(data.flags & ItemFlags.Holdable).not.toBe(0);
       expect(data.flags & ItemFlags.Marketable).toBe(0);
       expect(data.buy).toBe(0);
+      expect(buried, data.name).toBe(true);
+    }
+
+    // A form item whose only use is the shape sits in the prized band,
+    // where the rest of the once-in-a-run things are. A Plate is in
+    // the rare band with the held items instead, since lifting a type
+    // is what it does for everybody who is not an Arceus
+    for (const item of [Items.Meteorite, Items.AdamantOrb, Items.Gracidea]) {
       expect(ITEM_POOL.prized.some((entry) => entry.item === item)).toBe(true);
-      for (const band of ['base', 'uncommon', 'rare', 'special'] as const) {
-        expect(ITEM_POOL[band].some((entry) => entry.item === item)).toBe(false);
-      }
+    }
+    for (const item of PLATES.keys()) {
+      expect(ITEM_POOL.rare.some((entry) => entry.item === item)).toBe(true);
     }
   });
 

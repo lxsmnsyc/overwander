@@ -1,4 +1,5 @@
 import type Battle from '../../core';
+import arceus from './arceus';
 import bulbasaurToPikachu from './bulbasaur-to-pikachu';
 import chikoritaToCelebi from './chikorita-to-celebi';
 import eeveeToDragonite from './eevee-to-dragonite';
@@ -57,6 +58,7 @@ const setupAbilities = [
   ...moonDuo,
   ...manaphy,
   ...shaymin,
+  ...arceus,
 ];
 
 /**

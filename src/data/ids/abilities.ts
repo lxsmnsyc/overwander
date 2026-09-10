@@ -827,6 +827,7 @@ const enum Abilities {
   Birdsong = 200243,
   Soulwell = 200244,
   Snapvine = 200245,
+  Firstlight = 200246,
 }
 
 export default Abilities;

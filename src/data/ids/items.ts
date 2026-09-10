@@ -861,6 +861,9 @@ export const enum Items {
 
   /** The list of machines a Rotom picks its next one out of */
   RotomCatalog = 405,
+
+  /** The flute that opens the stair at the top of the mountain */
+  AzureFlute = 406,
 }
 
 /**

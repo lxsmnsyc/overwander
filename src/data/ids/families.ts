@@ -248,6 +248,7 @@ const enum Families {
   Manaphy = 243,
   Darkrai = 244,
   Shaymin = 245,
+  Arceus = 246,
 }
 
 export default Families;

@@ -615,6 +615,7 @@ export const enum Species {
   Manaphy = 490,
   Darkrai = 491,
   Shaymin = 492,
+  Arceus = 493,
   DeoxysAttack = 1038601,
   DeoxysDefense = 1038602,
   DeoxysSpeed = 1038603,
@@ -630,6 +631,28 @@ export const enum Species {
   RotomFrost = 1047903,
   RotomFan = 1047904,
   RotomMow = 1047905,
+
+  /**
+   * The seventeen shapes a Plate puts an Arceus in, filed the way the
+   * sprite collection files them: by the type's own name
+   */
+  ArceusBug = 1049301,
+  ArceusDark = 1049302,
+  ArceusDragon = 1049303,
+  ArceusElectric = 1049304,
+  ArceusFighting = 1049305,
+  ArceusFire = 1049306,
+  ArceusFlying = 1049307,
+  ArceusGhost = 1049308,
+  ArceusGrass = 1049309,
+  ArceusGround = 1049310,
+  ArceusIce = 1049311,
+  ArceusPoison = 1049312,
+  ArceusPsychic = 1049313,
+  ArceusRock = 1049314,
+  ArceusSteel = 1049315,
+  ArceusWater = 1049316,
+  ArceusFairy = 1049317,
 
   /** The shape a Shaymin opens into with the flower in its hands */
   ShayminSky = 1049201,
@@ -794,6 +817,28 @@ export const ROTOM_FORMS: Species[] = [
   Species.RotomFrost,
   Species.RotomFan,
   Species.RotomMow,
+];
+
+/** Arceus and the seventeen shapes its Plates put it in */
+export const ARCEUS_FORMS: Species[] = [
+  Species.Arceus,
+  Species.ArceusBug,
+  Species.ArceusDark,
+  Species.ArceusDragon,
+  Species.ArceusElectric,
+  Species.ArceusFighting,
+  Species.ArceusFire,
+  Species.ArceusFlying,
+  Species.ArceusGhost,
+  Species.ArceusGrass,
+  Species.ArceusGround,
+  Species.ArceusIce,
+  Species.ArceusPoison,
+  Species.ArceusPsychic,
+  Species.ArceusRock,
+  Species.ArceusSteel,
+  Species.ArceusWater,
+  Species.ArceusFairy,
 ];
 
 /** Shaymin and the shape the Gracidea opens it into */

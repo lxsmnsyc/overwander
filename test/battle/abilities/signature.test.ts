@@ -7150,3 +7150,55 @@ describe('the squirrel, the bird, the stone and the trap', () => {
     expect(enemy.status[Statuses.Trapped]).toBeUndefined();
   });
 });
+
+describe('Firstlight', () => {
+  /** What the chart says, once everybody has answered */
+  function effectiveness(battle: Battle, attacker: Unit, target: Unit, type: Types): number {
+    const parent = makeAttack(attacker, target, Moves.Judgment, type, MoveCategories.Special);
+    let total = 1;
+
+    for (const defending of target.types) {
+      const event = {
+        id: 'UnitAttackResolveEffectiveness',
+        disabled: false,
+        parent,
+        defendingType: defending,
+        multiplier: 1,
+      };
+      battle.emit(BattleEvents.UnitAttackResolveEffectiveness, event);
+      total *= event.multiplier;
+    }
+
+    return total;
+  }
+
+  it('reads a resistance as none, and leaves the rest of the chart alone', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const alpha = createUnit(battle, teamA, [Types.Fire]);
+    const wet = createUnit(battle, teamB, [Types.Water]);
+    const bug = createUnit(battle, teamB, [Types.Bug]);
+
+    expect(effectiveness(battle, alpha, wet, Types.Fire)).toBeCloseTo(0.5, 5);
+
+    alpha.addAbility(Abilities.Firstlight);
+
+    expect(effectiveness(battle, alpha, wet, Types.Fire)).toBeCloseTo(1, 5);
+    // A weakness is still a weakness
+    expect(effectiveness(battle, alpha, bug, Types.Fire)).toBeCloseTo(2, 5);
+  });
+
+  it('leaves an immunity standing, and a type it is not wearing', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const alpha = createUnit(battle, teamA, [Types.Normal]);
+    const ghost = createUnit(battle, teamB, [Types.Ghost]);
+    const steel = createUnit(battle, teamB, [Types.Steel]);
+    alpha.addAbility(Abilities.Firstlight);
+
+    // Nothing reaches a Ghost with a Normal move, ability or not
+    expect(effectiveness(battle, alpha, ghost, Types.Normal)).toBeCloseTo(0, 5);
+    // Steel resists Normal, and this is the type it is wearing
+    expect(effectiveness(battle, alpha, steel, Types.Normal)).toBeCloseTo(1, 5);
+    // Thrown as something it is not wearing, the chart is the chart
+    expect(effectiveness(battle, alpha, steel, Types.Grass)).toBeCloseTo(0.5, 5);
+  });
+});

@@ -1475,6 +1475,12 @@ export default function registerSignatureAbilities(): void {
     description: 'Every stat stage an enemy gains is written onto it as well.',
   });
 
+  // The one that was there first, whose judgment nobody shrugs off
+  registerSignature(Families.Arceus, Abilities.Firstlight, {
+    name: 'Firstlight',
+    description: 'Its moves of its own type are never resisted. An immunity still holds.',
+  });
+
   // The flower that takes the poison out of the air it stands in
   registerSignature(Families.Shaymin, Abilities.Purebloom, {
     name: 'Purebloom',

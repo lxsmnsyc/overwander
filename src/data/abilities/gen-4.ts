@@ -31,6 +31,11 @@ export default function registerGen4Abilities(): void {
     name: 'Slow Start',
     description: 'Attack and Speed are halved for its first 8 seconds on the field.',
   });
+  // Arceus
+  registerAbility(Abilities.Multitype, {
+    name: 'Multitype',
+    description: 'It is whatever type the Plate in its hands is.',
+  });
   // Pachirisu
   registerAbility(Abilities.CheekPouch, {
     name: 'Cheek Pouch',

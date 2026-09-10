@@ -119,6 +119,11 @@ const enum Lairs {
    * time somebody thanks it. A mythical's lair, so no biome hosts it
    */
   FlowerParadise = 28,
+  /**
+   * The stair that opens over the top of the mountain, and what is
+   * standing at the top of it. A mythical's lair, so no biome hosts it
+   */
+  HallOfOrigin = 29,
 }
 
 export const LAIR_NAMES: Record<Lairs, string> = {
@@ -151,6 +156,7 @@ export const LAIR_NAMES: Record<Lairs, string> = {
   [Lairs.StarkMountain]: 'Stark Mountain',
   [Lairs.SnowpointTemple]: 'Snowpoint Temple',
   [Lairs.FlowerParadise]: 'Flower Paradise',
+  [Lairs.HallOfOrigin]: 'Hall of Origin',
 };
 
 /**
@@ -189,6 +195,7 @@ export const LAIR_SPECIES: Record<Lairs, Species[]> = {
   [Lairs.StarkMountain]: [Species.Heatran],
   [Lairs.SnowpointTemple]: [Species.Regigigas],
   [Lairs.FlowerParadise]: [Species.Shaymin],
+  [Lairs.HallOfOrigin]: [Species.Arceus],
 };
 
 /**
@@ -224,6 +231,7 @@ export const EVERY_LAIR: Lairs[] = [
   Lairs.StarkMountain,
   Lairs.SnowpointTemple,
   Lairs.FlowerParadise,
+  Lairs.HallOfOrigin,
 ];
 
 /**

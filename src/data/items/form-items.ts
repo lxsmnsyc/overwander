@@ -1,4 +1,6 @@
 import { DEOXYS_FORMS, Species } from '../ids/species';
+import { PLATES } from './plates';
+import { Types } from '../constants/types';
 import { ItemFlags, ItemTypes, Items } from '../ids/items';
 import { registerItem } from './__create';
 
@@ -13,6 +15,34 @@ import { registerItem } from './__create';
  * The battle side lives in
  * [`src/battle/items/forms.ts`](../../battle/items/forms.ts).
  */
+/** Which shape each Plate paints an Arceus, by the type it lifts */
+const ARCEUS_TYPE_FORMS: { [key in Types]?: Species } = {
+  [Types.Bug]: Species.ArceusBug,
+  [Types.Dark]: Species.ArceusDark,
+  [Types.Dragon]: Species.ArceusDragon,
+  [Types.Electric]: Species.ArceusElectric,
+  [Types.Fairy]: Species.ArceusFairy,
+  [Types.Fighting]: Species.ArceusFighting,
+  [Types.Fire]: Species.ArceusFire,
+  [Types.Flying]: Species.ArceusFlying,
+  [Types.Ghost]: Species.ArceusGhost,
+  [Types.Grass]: Species.ArceusGrass,
+  [Types.Ground]: Species.ArceusGround,
+  [Types.Ice]: Species.ArceusIce,
+  [Types.Poison]: Species.ArceusPoison,
+  [Types.Psychic]: Species.ArceusPsychic,
+  [Types.Rock]: Species.ArceusRock,
+  [Types.Steel]: Species.ArceusSteel,
+  [Types.Water]: Species.ArceusWater,
+};
+
+/** The Plate rows, derived so a Plate added later brings its shape */
+const ARCEUS_PLATES: [Items, Species[]][] = [...PLATES].flatMap(([plate, type]) => {
+  const shape = ARCEUS_TYPE_FORMS[type];
+
+  return shape == null ? [] : [[plate, [shape]] as [Items, Species[]]];
+});
+
 export const FORM_ITEMS = new Map<Items, Species[]>([
   [Items.Meteorite, DEOXYS_FORMS],
   // One shape each rather than a set, so the orb is a switch a player
@@ -21,6 +51,11 @@ export const FORM_ITEMS = new Map<Items, Species[]>([
   [Items.LustrousOrb, [Species.PalkiaOrigin]],
   [Items.GriseousOrb, [Species.GiratinaOrigin]],
   [Items.Gracidea, [Species.ShayminSky]],
+  // The seventeen Plates, each of which is already a type booster.
+  // Holding one paints an Arceus the type it lifts, which is what the
+  // mainline calls Multitype: there is no battle code behind it, only
+  // the shape the stone puts it in
+  ...ARCEUS_PLATES,
 ]);
 
 /**

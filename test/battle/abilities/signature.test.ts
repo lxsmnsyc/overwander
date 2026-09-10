@@ -76,6 +76,11 @@ import {
   VELVET_CLAWS_SCALE,
 } from '../../../src/battle/abilities/signature/drifloon-to-glameow';
 import {
+  DEEP_TOLL_FRACTION,
+  RANK_AIR_SCALE,
+  SKYHUNT_SCALE,
+} from '../../../src/battle/abilities/signature/stunky-to-gible';
+import {
   FLOAT_SAC_THRESHOLD,
   POLLEN_DOLE_FRACTION,
   SECOND_BLOOM_FRACTION,
@@ -6389,5 +6394,87 @@ describe('the balloon, the ears and the claws', () => {
 
     // And a move that never touches it is a move that never touches it
     expect(cat.checkMovePower(Moves.ShadowBall, unitTarget(smug))).toBe(80);
+  });
+});
+
+describe('the skunk, the bell and the shark', () => {
+  it('sprays harder at whatever is already breathing it', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const skunk = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    const clean = createUnit(battle, teamB);
+
+    skunk.addAbility(Abilities.RankAir);
+
+    expect(skunk.checkMovePower(Moves.Tackle, unitTarget(enemy))).toBe(40);
+
+    enemy.addStatus(Statuses.Poisoned, NONE_CAUSE);
+
+    expect(skunk.checkMovePower(Moves.Tackle, unitTarget(enemy))).toBeCloseTo(
+      40 * RANK_AIR_SCALE,
+      5,
+    );
+    expect(skunk.checkMovePower(Moves.Tackle, unitTarget(clean))).toBe(40);
+
+    // The bad poison is the same poison as far as the cloud is concerned
+    clean.addStatus(Statuses.BadlyPoisoned, NONE_CAUSE);
+
+    expect(skunk.checkMovePower(Moves.Tackle, unitTarget(clean))).toBeCloseTo(
+      40 * RANK_AIR_SCALE,
+      5,
+    );
+  });
+
+  it('tolls for the far side every time the bell swings', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const bell = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamA);
+    const first = createUnit(battle, teamB);
+    const second = createUnit(battle, teamB);
+
+    bell.addAbility(Abilities.DeepToll);
+
+    const enemyHP = first.checkStat(Stats.HP, 0);
+    const allyHP = ally.checkStat(Stats.HP, 0);
+
+    act(battle, bell);
+
+    expect(first.health).toBeCloseTo(enemyHP - enemyHP * DEEP_TOLL_FRACTION, 5);
+    expect(second.health).toBeCloseTo(enemyHP - enemyHP * DEEP_TOLL_FRACTION, 5);
+    // Its own side hears nothing
+    expect(ally.health).toBe(allyHP);
+
+    act(battle, bell);
+
+    expect(first.health).toBeCloseTo(enemyHP - 2 * enemyHP * DEEP_TOLL_FRACTION, 5);
+
+    // And nobody else's move rings it
+    act(battle, ally);
+
+    expect(first.health).toBeCloseTo(enemyHP - 2 * enemyHP * DEEP_TOLL_FRACTION, 5);
+  });
+
+  it('reaches what is off the ground, and hits it harder for being there', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const shark = createUnit(battle, teamA);
+    const plain = createUnit(battle, teamA);
+    const flier = createUnit(battle, teamB);
+    const walker = createUnit(battle, teamB);
+
+    shark.addAbility(Abilities.Skyhunt);
+    flier.addType(Types.Flying);
+
+    expect(shark.checkMoveImmunity(Moves.MudSlap, unitTarget(flier), Types.Ground)).toBe(false);
+    expect(plain.checkMoveImmunity(Moves.MudSlap, unitTarget(flier), Types.Ground)).toBe(true);
+
+    // The lift is for the ones it had to reach up to
+    expect(shark.checkMovePower(Moves.MudSlap, unitTarget(flier))).toBeCloseTo(
+      20 * SKYHUNT_SCALE,
+      5,
+    );
+    expect(shark.checkMovePower(Moves.MudSlap, unitTarget(walker))).toBe(20);
+
+    // And it is Ground moves that get it, not everything it throws
+    expect(shark.checkMovePower(Moves.Tackle, unitTarget(flier))).toBe(40);
   });
 });

@@ -1,9 +1,11 @@
 import registerBidoofSpecies from './bidoof';
+import registerBronzorSpecies from './bronzor';
 import registerBuizelSpecies from './buizel';
 import registerBurmySpecies from './burmy';
 import registerCherubiSpecies from './cherubi';
 import registerBunearySpecies from './buneary';
 import registerDrifloonSpecies from './drifloon';
+import registerGibleSpecies from './gible';
 import registerGlameowSpecies from './glameow';
 import registerChimcharSpecies from './chimchar';
 import registerCombeeSpecies from './combee';
@@ -13,6 +15,7 @@ import registerPiplupSpecies from './piplup';
 import registerShellosSpecies from './shellos';
 import registerShieldonSpecies from './shieldon';
 import registerShinxSpecies from './shinx';
+import registerStunkySpecies from './stunky';
 import registerStarlySpecies from './starly';
 import registerTurtwigSpecies from './turtwig';
 
@@ -37,4 +40,7 @@ export default function registerGen4Species(): void {
   registerBunearySpecies();
   registerGlameowSpecies();
   registerShellosSpecies();
+  registerStunkySpecies();
+  registerBronzorSpecies();
+  registerGibleSpecies();
 }

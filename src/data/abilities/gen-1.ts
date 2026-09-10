@@ -656,15 +656,6 @@ export default function registerGen1Abilities(): void {
   });
 
   // Special (non-standard abilities outside the regular pool)
-  registerAbility(Abilities.FlareBoost, {
-    name: 'Flare Boost',
-    description: 'Special Attack is 1.5x while it is burned.',
-  });
-  registerAbility(Abilities.Klutz, {
-    name: 'Klutz',
-    description: 'Whatever it is holding does nothing at all.',
-  });
-
   registerAbility(Abilities.Boss, {
     name: 'Boss',
     description:

@@ -93,6 +93,7 @@ export type {
   CheckUnitItemThresholdEvent,
   CheckUnitStageEvent,
   CheckUnitStatEvent,
+  CheckUnitStatusDamageEvent,
   CheckUnitStatusDurationEvent,
   CheckUnitStatusImmunityEvent,
   CheckUnitWeightEvent,

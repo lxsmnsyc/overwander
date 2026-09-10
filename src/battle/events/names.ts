@@ -304,6 +304,14 @@ const enum BattleEvents {
    * an ability may answer for whatever its holder throws
    */
   CheckUnitMoveGuard = 148,
+
+  /**
+   * What a residual status is about to take off the unit holding it.
+   * The status names its own share and everything with a say in how
+   * hard it lands answers here, so a burn is one question rather than
+   * one per module
+   */
+  CheckUnitStatusDamage = 149,
 }
 
 export default BattleEvents;

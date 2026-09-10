@@ -1,0 +1,226 @@
+import { Stats } from '../../constants/stats';
+import { Types } from '../../constants/types';
+import Abilities from '../../ids/abilities';
+import Biome, { AnyTimeOfDay } from '../../ids/biome';
+import EggGroups from '../../ids/egg-groups';
+import Families from '../../ids/families';
+import { Moves } from '../../ids/moves';
+import { EvolutionMethod, Species } from '../../ids/species';
+import { registerSpecies } from '../__create';
+
+// TM, HM and tutor moves shared by the whole family
+const FAMILY_TEACHABLE = [
+  Moves.AerialAce,
+  Moves.Attract,
+  Moves.Captivate,
+  Moves.Cut,
+  Moves.Dig,
+  Moves.DoubleTeam,
+  Moves.DracoMeteor,
+  Moves.DragonClaw,
+  Moves.DragonPulse,
+  Moves.EarthPower,
+  Moves.Earthquake,
+  Moves.Endure,
+  Moves.Facade,
+  Moves.FireBlast,
+  Moves.Flamethrower,
+  Moves.Frustration,
+  Moves.FuryCutter,
+  Moves.HiddenPower,
+  Moves.IronHead,
+  Moves.MudSlap,
+  Moves.NaturalGift,
+  Moves.Outrage,
+  Moves.Protect,
+  Moves.RainDance,
+  Moves.Rest,
+  Moves.Return,
+  Moves.Roar,
+  Moves.RockClimb,
+  Moves.RockSlide,
+  Moves.RockSmash,
+  Moves.RockTomb,
+  Moves.Sandstorm,
+  Moves.SecretPower,
+  Moves.ShadowClaw,
+  Moves.SleepTalk,
+  Moves.Snore,
+  Moves.StealthRock,
+  Moves.StoneEdge,
+  Moves.Strength,
+  Moves.Substitute,
+  Moves.SunnyDay,
+  Moves.Swagger,
+  Moves.Swift,
+  Moves.Toxic,
+  Moves.Twister,
+];
+
+/**
+ * The cave mouth that bites: Gible waits in a hole for something to
+ * walk past, and a Garchomp does the same at the speed of a jet
+ */
+export default function registerGibleSpecies(): void {
+  registerSpecies(Species.Gible, {
+    dexNumber: 443,
+    evolvesInto: [
+      {
+        species: Species.Gabite,
+        method: EvolutionMethod.Level,
+        level: 24,
+      },
+    ],
+    name: 'Gible',
+    category: 'Land Shark Pokemon',
+    height: 0.7,
+    weight: 20.5,
+    family: Families.Gible,
+    stats: {
+      [Stats.HP]: 58,
+      [Stats.Attack]: 70,
+      [Stats.Defense]: 45,
+      [Stats.SpecialAttack]: 40,
+      [Stats.SpecialDefense]: 45,
+      [Stats.Speed]: 42,
+    },
+    types: [Types.Dragon, Types.Ground],
+    abilities: [Abilities.SandVeil],
+    hiddenAbilities: [Abilities.RoughSkin],
+    eggGroups: [EggGroups.Monster, EggGroups.Dragon],
+    genderRatio: [1, 1],
+    catchRate: 45,
+    biomes: [Biome.Mountain, Biome.Badlands, Biome.Desert],
+    activeTimes: AnyTimeOfDay,
+    learnSet: {
+      level: {
+        1: [Moves.Tackle],
+        3: [Moves.SandAttack],
+        7: [Moves.DragonRage],
+        13: [Moves.Sandstorm],
+        15: [Moves.TakeDown],
+        19: [Moves.SandTomb],
+        25: [Moves.Slash],
+        27: [Moves.DragonClaw],
+        31: [Moves.Dig],
+        37: [Moves.DragonRush],
+      },
+      teachable: [...FAMILY_TEACHABLE],
+      egg: [
+        Moves.BodySlam,
+        Moves.DoubleEdge,
+        Moves.DragonBreath,
+        Moves.IronHead,
+        Moves.MetalClaw,
+        Moves.Outrage,
+        Moves.SandTomb,
+        Moves.ScaryFace,
+        Moves.Thrash,
+        Moves.Twister,
+      ],
+    },
+  });
+  registerSpecies(Species.Gabite, {
+    dexNumber: 444,
+    evolvesInto: [
+      {
+        species: Species.Garchomp,
+        method: EvolutionMethod.Level,
+        level: 48,
+      },
+    ],
+    name: 'Gabite',
+    category: 'Cave Pokemon',
+    height: 1.4,
+    weight: 56.0,
+    family: Families.Gible,
+    evolvesFrom: Species.Gible,
+    stats: {
+      [Stats.HP]: 68,
+      [Stats.Attack]: 90,
+      [Stats.Defense]: 65,
+      [Stats.SpecialAttack]: 50,
+      [Stats.SpecialDefense]: 55,
+      [Stats.Speed]: 82,
+    },
+    types: [Types.Dragon, Types.Ground],
+    abilities: [Abilities.SandVeil],
+    hiddenAbilities: [Abilities.RoughSkin],
+    eggGroups: [EggGroups.Monster, EggGroups.Dragon],
+    genderRatio: [1, 1],
+    catchRate: 45,
+    biomes: [Biome.Mountain, Biome.Badlands, Biome.Desert],
+    activeTimes: AnyTimeOfDay,
+    learnSet: {
+      level: {
+        1: [Moves.SandAttack, Moves.Tackle],
+        3: [Moves.SandAttack],
+        7: [Moves.DragonRage],
+        13: [Moves.Sandstorm],
+        15: [Moves.TakeDown],
+        19: [Moves.SandTomb],
+        28: [Moves.Slash],
+        33: [Moves.DragonClaw],
+        40: [Moves.Dig],
+        49: [Moves.DragonRush],
+      },
+      teachable: [...FAMILY_TEACHABLE, Moves.IronTail],
+    },
+  });
+  registerSpecies(Species.Garchomp, {
+    dexNumber: 445,
+    name: 'Garchomp',
+    category: 'Mach Pokemon',
+    height: 1.9,
+    weight: 95.0,
+    family: Families.Gible,
+    evolvesFrom: Species.Gabite,
+    stats: {
+      [Stats.HP]: 108,
+      [Stats.Attack]: 130,
+      [Stats.Defense]: 95,
+      [Stats.SpecialAttack]: 80,
+      [Stats.SpecialDefense]: 85,
+      [Stats.Speed]: 102,
+    },
+    types: [Types.Dragon, Types.Ground],
+    abilities: [Abilities.SandVeil],
+    // Strong Jaw and Sand Rush are this registry's rather than the
+    // mainline's: the line has two abilities and needs four, and Mega
+    // Garchomp's Sand Force is not one it may take early
+    hiddenAbilities: [Abilities.RoughSkin, Abilities.StrongJaw, Abilities.SandRush],
+    eggGroups: [EggGroups.Monster, EggGroups.Dragon],
+    genderRatio: [1, 1],
+    catchRate: 45,
+    biomes: [Biome.Mountain, Biome.Badlands, Biome.Desert],
+    activeTimes: AnyTimeOfDay,
+    learnSet: {
+      level: {
+        1: [Moves.DragonRage, Moves.FireFang, Moves.SandAttack, Moves.Sandstorm, Moves.Tackle],
+        3: [Moves.SandAttack],
+        7: [Moves.DragonRage],
+        13: [Moves.Sandstorm],
+        15: [Moves.TakeDown],
+        19: [Moves.SandTomb],
+        28: [Moves.Slash],
+        33: [Moves.DragonClaw],
+        40: [Moves.Dig],
+        48: [Moves.Crunch],
+        55: [Moves.DragonRush],
+      },
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.AquaTail,
+        Moves.BrickBreak,
+        Moves.FalseSwipe,
+        Moves.Fling,
+        Moves.GigaImpact,
+        Moves.HyperBeam,
+        Moves.IronTail,
+        Moves.PoisonJab,
+        Moves.Surf,
+        Moves.SwordsDance,
+      ],
+    },
+  });
+}

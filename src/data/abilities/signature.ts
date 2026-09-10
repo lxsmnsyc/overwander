@@ -1307,4 +1307,24 @@ export default function registerSignatureAbilities(): void {
     name: 'Velvet Claws',
     description: 'Its contact moves hit 1.25x against anything that has raised a stat this fight.',
   });
+
+  /**
+   * The skunk, the bell and the shark: one fights whatever it has
+   * already poisoned, one tolls for everything facing it, and one
+   * reaches what thinks it is out of reach
+   */
+  registerSignature(Families.Stunky, Abilities.RankAir, {
+    name: 'Rank Air',
+    description: 'Its moves hit 1.25x against a poisoned target.',
+  });
+
+  registerSignature(Families.Bronzor, Abilities.DeepToll, {
+    name: 'Deep Toll',
+    description: 'Every move it reaches for costs each enemy 1/16 of their HP.',
+  });
+
+  registerSignature(Families.Gible, Abilities.Skyhunt, {
+    name: 'Skyhunt',
+    description: 'Its Ground moves reach what is off the ground, and hit it 1.2x.',
+  });
 }

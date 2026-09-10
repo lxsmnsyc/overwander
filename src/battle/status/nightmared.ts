@@ -5,6 +5,7 @@ import { Statuses } from '../../data/ids/status';
 import type Battle from '../core';
 import { BattleEvents, EffectType } from '../events';
 import { onUnitActs } from '../utils';
+import { checkStatusDamage } from './__create';
 
 /**
  * What a nightmare costs every time the sleeper stirs
@@ -30,7 +31,12 @@ export default function setupNightmaredStatus(battle: Battle): void {
 
     unit.triggerStatus(Statuses.Nightmared, cause);
 
-    const amount = unit.checkStat(Stats.HP, 0) * NIGHTMARE_FRACTION;
+    const amount = checkStatusDamage(
+      battle,
+      unit,
+      Statuses.Nightmared,
+      unit.checkStat(Stats.HP, 0) * NIGHTMARE_FRACTION,
+    );
     const source = cause.type === EffectType.None ? unit : cause.unit;
 
     source.damage(cause, unit, amount, DamageFlags.Indirect | DamageFlags.HealthScaled);

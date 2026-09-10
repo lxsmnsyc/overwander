@@ -801,6 +801,9 @@ const enum Abilities {
   CarryOff = 200217,
   Springheel = 200218,
   VelvetClaws = 200219,
+  RankAir = 200220,
+  DeepToll = 200221,
+  Skyhunt = 200222,
 }
 
 export default Abilities;

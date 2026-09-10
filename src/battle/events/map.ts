@@ -68,6 +68,7 @@ import type {
   CheckUnitItemThresholdEvent,
   CheckUnitStageEvent,
   CheckUnitStatEvent,
+  CheckUnitStatusDamageEvent,
   CheckUnitStatusDurationEvent,
   CheckUnitStatusImmunityEvent,
   CheckUnitWeightEvent,
@@ -283,6 +284,7 @@ export interface BattleEventMap extends EventMap {
   [BattleEvents.CheckUnitItemThreshold]: [CheckUnitItemThresholdEvent, EventPriority];
   [BattleEvents.CheckUnitDrain]: [CheckUnitDrainEvent, EventPriority];
   [BattleEvents.CheckUnitStatusDuration]: [CheckUnitStatusDurationEvent, EventPriority];
+  [BattleEvents.CheckUnitStatusDamage]: [CheckUnitStatusDamageEvent, EventPriority];
   [BattleEvents.CheckTeamStatusDuration]: [CheckTeamStatusDurationEvent, EventPriority];
   [BattleEvents.CheckUnitWeatherDuration]: [CheckUnitWeatherDurationEvent, EventPriority];
   [BattleEvents.UnitUpdateStatusTimer]: [UnitUpdateStatusTimerEvent, EventPriority];

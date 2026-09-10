@@ -240,6 +240,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Combee, weight: 22 },
         { species: Species.Buneary, weight: 25 },
         { species: Species.Glameow, weight: 25 },
+        { species: Species.Stunky, weight: 22 },
       ],
       rare: [
         { species: Species.Nidorina, weight: 5 },
@@ -257,6 +258,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Vespiquen, weight: 5 },
         { species: Species.Lopunny, weight: 8 },
         { species: Species.Purugly, weight: 8 },
+        { species: Species.Skuntank, weight: 8 },
       ],
       elusive: [
         { species: Species.Castform, weight: 10 },
@@ -298,6 +300,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Combee, weight: 22 },
         { species: Species.Buneary, weight: 25 },
         { species: Species.Glameow, weight: 25 },
+        { species: Species.Stunky, weight: 22 },
       ],
       rare: [
         { species: Species.Nidorina, weight: 5 },
@@ -317,6 +320,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Vespiquen, weight: 5 },
         { species: Species.Lopunny, weight: 8 },
         { species: Species.Purugly, weight: 8 },
+        { species: Species.Skuntank, weight: 8 },
       ],
       elusive: [
         { species: Species.Castform, weight: 10 },

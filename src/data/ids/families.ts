@@ -222,6 +222,9 @@ const enum Families {
   Drifloon = 217,
   Buneary = 218,
   Glameow = 219,
+  Stunky = 220,
+  Bronzor = 221,
+  Gible = 222,
 }
 
 export default Families;

@@ -19,6 +19,7 @@ import {
   createDrizzleAbility,
   createKeenEyeAbility,
   createStageFeedScoring,
+  createThickFatAbility,
   createToughClawsAbility,
 } from '../__create';
 import { MergedLifecycle } from '../../lifecycle';
@@ -44,20 +45,7 @@ const bulbasaurToPikachu = [
   ),
 
   // Bulbasaur (Mega Venusaur)
-  // https://bulbapedia.bulbagarden.net/wiki/Thick_Fat_(Ability)
-  createAbility(Abilities.ThickFat, (battle) =>
-    battle.on(BattleEvents.UnitAttackResolveStat, EventPriority.Post, (event) => {
-      const type = event.parent.type;
-      if (
-        (type === Types.Fire || type === Types.Ice) &&
-        event.unit === event.parent.source &&
-        (event.stat === Stats.Attack || event.stat === Stats.SpecialAttack) &&
-        event.parent.target.hasAbility(Abilities.ThickFat)
-      ) {
-        event.value *= 0.5;
-      }
-    }),
-  ),
+  createThickFatAbility(Abilities.ThickFat, new Set([Types.Fire, Types.Ice])),
 
   // Charmander
   createBlazeAbility(Abilities.Blaze, Types.Fire),

@@ -17,6 +17,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Larvitar, weight: 2 },
         { species: Species.Aron, weight: 20 },
         { species: Species.Chimchar, weight: 3 },
+        { species: Species.Gible, weight: 2 },
       ],
       uncommon: [
         { species: Species.Makuhita, weight: 20 },
@@ -30,6 +31,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Dunsparce, weight: 10 },
         { species: Species.Nosepass, weight: 20 },
         { species: Species.BurmyTrash, weight: 20 },
+        { species: Species.Bronzor, weight: 20 },
       ],
       rare: [
         { species: Species.Charmeleon, weight: 1 },
@@ -40,6 +42,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Lairon, weight: 10 },
         { species: Species.Primeape, weight: 10 },
         { species: Species.Monferno, weight: 2 },
+        { species: Species.Gabite, weight: 1 },
       ],
       scarce: [
         { species: Species.Hariyama, weight: 6 },
@@ -50,6 +53,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Medicham, weight: 10 },
         { species: Species.Magcargo, weight: 5 },
         { species: Species.WormadamTrash, weight: 4 },
+        { species: Species.Bronzong, weight: 6 },
       ],
       elusive: [
         { species: Species.Charizard, weight: 2 },
@@ -67,6 +71,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Torkoal, weight: 12 },
         { species: Species.Chimecho, weight: 5 },
         { species: Species.Infernape, weight: 2 },
+        { species: Species.Garchomp, weight: 2 },
       ],
       prized: [
         ...UNOWN_SPAWNS,
@@ -92,6 +97,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Larvitar, weight: 2 },
         { species: Species.Aron, weight: 20 },
         { species: Species.Chimchar, weight: 3 },
+        { species: Species.Gible, weight: 2 },
       ],
       uncommon: [
         { species: Species.Makuhita, weight: 20 },
@@ -105,6 +111,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Dunsparce, weight: 10 },
         { species: Species.Nosepass, weight: 20 },
         { species: Species.BurmyTrash, weight: 20 },
+        { species: Species.Bronzor, weight: 20 },
       ],
       rare: [
         { species: Species.Shelgon, weight: 1 },
@@ -116,6 +123,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Lairon, weight: 10 },
         { species: Species.Primeape, weight: 10 },
         { species: Species.Monferno, weight: 2 },
+        { species: Species.Gabite, weight: 1 },
       ],
       scarce: [
         { species: Species.Hariyama, weight: 6 },
@@ -126,6 +134,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Medicham, weight: 10 },
         { species: Species.Magcargo, weight: 5 },
         { species: Species.WormadamTrash, weight: 4 },
+        { species: Species.Bronzong, weight: 6 },
       ],
       elusive: [
         { species: Species.Salamence, weight: 2 },
@@ -144,6 +153,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Torkoal, weight: 12 },
         { species: Species.Chimecho, weight: 5 },
         { species: Species.Infernape, weight: 2 },
+        { species: Species.Garchomp, weight: 2 },
       ],
       prized: [
         ...UNOWN_SPAWNS,
@@ -164,6 +174,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Zubat, weight: 30 },
         { species: Species.Geodude, weight: 20 },
         { species: Species.Larvitar, weight: 2 },
+        { species: Species.Gible, weight: 2 },
       ],
       uncommon: [
         { species: Species.Diglett, weight: 20 },
@@ -175,18 +186,21 @@ export default function registerMountainSpawns(): void {
         { species: Species.Gligar, weight: 5 },
         { species: Species.Nosepass, weight: 20 },
         { species: Species.BurmyTrash, weight: 20 },
+        { species: Species.Bronzor, weight: 20 },
       ],
       rare: [
         { species: Species.Shelgon, weight: 1 },
         { species: Species.Graveler, weight: 5 },
         { species: Species.Pupitar, weight: 1 },
         { species: Species.Golbat, weight: 10 },
+        { species: Species.Gabite, weight: 1 },
       ],
       scarce: [
         { species: Species.Dugtrio, weight: 10 },
         { species: Species.Steelix, weight: 5 },
         { species: Species.Magcargo, weight: 5 },
         { species: Species.WormadamTrash, weight: 4 },
+        { species: Species.Bronzong, weight: 6 },
       ],
       elusive: [
         { species: Species.Salamence, weight: 2 },
@@ -199,6 +213,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Crobat, weight: 5 },
         { species: Species.Absol, weight: 5 },
         { species: Species.Chimecho, weight: 5 },
+        { species: Species.Garchomp, weight: 2 },
       ],
       prized: [
         ...UNOWN_SPAWNS,
@@ -219,6 +234,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Geodude, weight: 20 },
         { species: Species.Gastly, weight: 20 },
         { species: Species.Larvitar, weight: 2 },
+        { species: Species.Gible, weight: 2 },
       ],
       uncommon: [
         { species: Species.Diglett, weight: 20 },
@@ -233,12 +249,14 @@ export default function registerMountainSpawns(): void {
         { species: Species.Gligar, weight: 5 },
         { species: Species.Nosepass, weight: 20 },
         { species: Species.BurmyTrash, weight: 20 },
+        { species: Species.Bronzor, weight: 20 },
       ],
       rare: [
         { species: Species.Graveler, weight: 5 },
         { species: Species.Haunter, weight: 5 },
         { species: Species.Pupitar, weight: 1 },
         { species: Species.Golbat, weight: 10 },
+        { species: Species.Gabite, weight: 1 },
       ],
       scarce: [
         { species: Species.Clefable, weight: 5 },
@@ -247,6 +265,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Steelix, weight: 5 },
         { species: Species.Magcargo, weight: 5 },
         { species: Species.WormadamTrash, weight: 4 },
+        { species: Species.Bronzong, weight: 6 },
       ],
       elusive: [
         { species: Species.Golem, weight: 5 },
@@ -259,6 +278,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Crobat, weight: 5 },
         { species: Species.Absol, weight: 5 },
         { species: Species.Chimecho, weight: 5 },
+        { species: Species.Garchomp, weight: 2 },
       ],
       prized: [
         ...UNOWN_SPAWNS,

@@ -26,6 +26,7 @@ export {
   createLimberAbility,
   createRestageAbility,
   createShellArmorAbility,
+  createThickFatAbility,
 } from './guard';
 export {
   chipImmunity,

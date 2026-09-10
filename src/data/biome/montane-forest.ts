@@ -12,6 +12,8 @@ export default function registerMontaneForestSpawns(): void {
         { species: Species.Mankey, weight: 20 },
         { species: Species.Teddiursa, weight: 20 },
         { species: Species.Ralts, weight: 20 },
+        { species: Species.Chimchar, weight: 3 },
+        { species: Species.Turtwig, weight: 3 },
       ],
       uncommon: [
         { species: Species.Makuhita, weight: 20 },
@@ -22,6 +24,8 @@ export default function registerMontaneForestSpawns(): void {
         { species: Species.Kirlia, weight: 10 },
         { species: Species.Primeape, weight: 10 },
         { species: Species.Ursaring, weight: 5 },
+        { species: Species.Monferno, weight: 2 },
+        { species: Species.Grotle, weight: 2 },
       ],
       scarce: [
         { species: Species.Hariyama, weight: 6 },
@@ -32,6 +36,8 @@ export default function registerMontaneForestSpawns(): void {
         { species: Species.Gardevoir, weight: 5 },
         { species: Species.Spinda, weight: 12 },
         { species: Species.Chimecho, weight: 5 },
+        { species: Species.Infernape, weight: 2 },
+        { species: Species.Torterra, weight: 2 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [],
@@ -41,6 +47,8 @@ export default function registerMontaneForestSpawns(): void {
         { species: Species.Mankey, weight: 20 },
         { species: Species.Teddiursa, weight: 20 },
         { species: Species.Ralts, weight: 20 },
+        { species: Species.Chimchar, weight: 3 },
+        { species: Species.Turtwig, weight: 3 },
       ],
       uncommon: [
         { species: Species.Makuhita, weight: 20 },
@@ -51,6 +59,8 @@ export default function registerMontaneForestSpawns(): void {
         { species: Species.Kirlia, weight: 10 },
         { species: Species.Primeape, weight: 10 },
         { species: Species.Ursaring, weight: 5 },
+        { species: Species.Monferno, weight: 2 },
+        { species: Species.Grotle, weight: 2 },
       ],
       scarce: [
         { species: Species.Hariyama, weight: 6 },
@@ -62,6 +72,8 @@ export default function registerMontaneForestSpawns(): void {
         { species: Species.Gardevoir, weight: 5 },
         { species: Species.Spinda, weight: 12 },
         { species: Species.Chimecho, weight: 5 },
+        { species: Species.Infernape, weight: 2 },
+        { species: Species.Torterra, weight: 2 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [],

@@ -8,7 +8,7 @@ import { UNOWN_SPAWNS, registerSpawnPool } from './__create';
 export default function registerRockyCoastSpawns(): void {
   registerSpawnPool(Biome.RockyCoast, {
     [TimeOfDay.Morning]: {
-      base: [],
+      base: [{ species: Species.Piplup, weight: 3 }],
       uncommon: [
         { species: Species.Krabby, weight: 20 },
         { species: Species.Shellder, weight: 20 },
@@ -17,7 +17,7 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Magikarp, weight: 30 },
         { species: Species.Wingull, weight: 25 },
       ],
-      rare: [],
+      rare: [{ species: Species.Prinplup, weight: 2 }],
       scarce: [
         { species: Species.Kingler, weight: 10 },
         { species: Species.Cloyster, weight: 10 },
@@ -28,12 +28,13 @@ export default function registerRockyCoastSpawns(): void {
       elusive: [
         { species: Species.Shuckle, weight: 5 },
         { species: Species.Qwilfish, weight: 15 },
+        { species: Species.Empoleon, weight: 2 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [],
     },
     [TimeOfDay.Day]: {
-      base: [],
+      base: [{ species: Species.Piplup, weight: 3 }],
       uncommon: [
         { species: Species.Krabby, weight: 20 },
         { species: Species.Shellder, weight: 20 },
@@ -42,7 +43,7 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Magikarp, weight: 30 },
         { species: Species.Wingull, weight: 25 },
       ],
-      rare: [],
+      rare: [{ species: Species.Prinplup, weight: 2 }],
       scarce: [
         { species: Species.Kingler, weight: 10 },
         { species: Species.Cloyster, weight: 10 },
@@ -53,6 +54,7 @@ export default function registerRockyCoastSpawns(): void {
       elusive: [
         { species: Species.Shuckle, weight: 5 },
         { species: Species.Qwilfish, weight: 15 },
+        { species: Species.Empoleon, weight: 2 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [],

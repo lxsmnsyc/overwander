@@ -503,6 +503,9 @@ const enum Abilities {
   PrimalSky = 200200,
   SevenWishes = 200201,
   FormDrift = 200202,
+  BarkBrace = 200203,
+  CinderBrace = 200204,
+  CrestBrace = 200205,
 }
 
 export default Abilities;

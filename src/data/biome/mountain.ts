@@ -16,6 +16,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Cyndaquil, weight: 2 },
         { species: Species.Larvitar, weight: 2 },
         { species: Species.Aron, weight: 20 },
+        { species: Species.Chimchar, weight: 3 },
       ],
       uncommon: [
         { species: Species.Makuhita, weight: 20 },
@@ -37,6 +38,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Pupitar, weight: 1 },
         { species: Species.Lairon, weight: 10 },
         { species: Species.Primeape, weight: 10 },
+        { species: Species.Monferno, weight: 2 },
       ],
       scarce: [
         { species: Species.Hariyama, weight: 6 },
@@ -62,6 +64,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Mawile, weight: 8 },
         { species: Species.Torkoal, weight: 12 },
         { species: Species.Chimecho, weight: 5 },
+        { species: Species.Infernape, weight: 2 },
       ],
       prized: [
         ...UNOWN_SPAWNS,
@@ -86,6 +89,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Cyndaquil, weight: 2 },
         { species: Species.Larvitar, weight: 2 },
         { species: Species.Aron, weight: 20 },
+        { species: Species.Chimchar, weight: 3 },
       ],
       uncommon: [
         { species: Species.Makuhita, weight: 20 },
@@ -108,6 +112,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Pupitar, weight: 1 },
         { species: Species.Lairon, weight: 10 },
         { species: Species.Primeape, weight: 10 },
+        { species: Species.Monferno, weight: 2 },
       ],
       scarce: [
         { species: Species.Hariyama, weight: 6 },
@@ -134,6 +139,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Mawile, weight: 8 },
         { species: Species.Torkoal, weight: 12 },
         { species: Species.Chimecho, weight: 5 },
+        { species: Species.Infernape, weight: 2 },
       ],
       prized: [
         ...UNOWN_SPAWNS,

@@ -40,7 +40,12 @@ const DESTINATION = 'public/sprites/pokemon';
  * game's own answer is `getSpeciesRegion`, which cannot be imported
  * into a script: it is written in `const enum`s, which node refuses
  */
-const REGIONS: Partial<Record<string, string>> = { kanto: 'kanto', johto: 'johto', hoenn: 'hoenn' };
+const REGIONS: Partial<Record<string, string>> = {
+  kanto: 'kanto',
+  johto: 'johto',
+  hoenn: 'hoenn',
+  sinnoh: 'sinnoh',
+};
 
 /**
  * The three drawn like pokemon without being pokemon, by the form the

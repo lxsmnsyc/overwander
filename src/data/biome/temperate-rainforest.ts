@@ -8,26 +8,44 @@ import { PRIZED_WEIGHT, UNOWN_SPAWNS, registerSpawnPool } from './__create';
 export default function registerTemperateRainforestSpawns(): void {
   registerSpawnPool(Biome.TemperateRainforest, {
     [TimeOfDay.Morning]: {
-      base: [{ species: Species.Bellsprout, weight: 20 }],
+      base: [
+        { species: Species.Bellsprout, weight: 20 },
+        { species: Species.Turtwig, weight: 3 },
+      ],
       uncommon: [
         { species: Species.Marill, weight: 20 },
         { species: Species.Tangela, weight: 10 },
       ],
-      rare: [{ species: Species.Weepinbell, weight: 5 }],
+      rare: [
+        { species: Species.Weepinbell, weight: 5 },
+        { species: Species.Grotle, weight: 2 },
+      ],
       scarce: [{ species: Species.Azumarill, weight: 5 }],
-      elusive: [{ species: Species.Victreebel, weight: 5 }],
+      elusive: [
+        { species: Species.Victreebel, weight: 5 },
+        { species: Species.Torterra, weight: 2 },
+      ],
       prized: [...UNOWN_SPAWNS, { species: Species.Azurill, weight: PRIZED_WEIGHT }],
       special: [],
     },
     [TimeOfDay.Day]: {
-      base: [{ species: Species.Bellsprout, weight: 20 }],
+      base: [
+        { species: Species.Bellsprout, weight: 20 },
+        { species: Species.Turtwig, weight: 3 },
+      ],
       uncommon: [
         { species: Species.Marill, weight: 20 },
         { species: Species.Tangela, weight: 10 },
       ],
-      rare: [{ species: Species.Weepinbell, weight: 5 }],
+      rare: [
+        { species: Species.Weepinbell, weight: 5 },
+        { species: Species.Grotle, weight: 2 },
+      ],
       scarce: [{ species: Species.Azumarill, weight: 5 }],
-      elusive: [{ species: Species.Victreebel, weight: 5 }],
+      elusive: [
+        { species: Species.Victreebel, weight: 5 },
+        { species: Species.Torterra, weight: 2 },
+      ],
       prized: [...UNOWN_SPAWNS, { species: Species.Azurill, weight: PRIZED_WEIGHT }],
       special: [],
     },

@@ -8,6 +8,7 @@ import parasToTentacool from './paras-to-tentacool';
 import sandshrewToOddish from './sandshrew-to-oddish';
 import spoinkToDeoxys from './spoink-to-deoxys';
 import treeckoToTorkoal from './treecko-to-torkoal';
+import turtwigToPiplup from './turtwig-to-piplup';
 
 /**
  * The invented abilities, one per evolution family, in the order the
@@ -23,6 +24,7 @@ const setupAbilities = [
   ...chikoritaToCelebi,
   ...treeckoToTorkoal,
   ...spoinkToDeoxys,
+  ...turtwigToPiplup,
 ];
 
 /**

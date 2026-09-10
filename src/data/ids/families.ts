@@ -205,6 +205,9 @@ const enum Families {
   Rayquaza = 200,
   Jirachi = 201,
   Deoxys = 202,
+  Turtwig = 203,
+  Chimchar = 204,
+  Piplup = 205,
 }
 
 export default Families;

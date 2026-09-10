@@ -465,6 +465,84 @@ export function createGrowthAbility(
 }
 
 /**
+ * What the three Sinnoh starters share: each is braced for one kind of
+ * blow. The first one of that kind each fight lands for half of what
+ * it was worth, or fails outright where it is a status move, and what
+ * the holder does with it is the family's own.
+ *
+ * A status move is vetoed in the query and paid for on the real
+ * failure, so a speculative immunity check never spends the brace
+ */
+export function createBraceAbility(
+  ability: Abilities,
+  blow: MoveCategories,
+  build: (battle: Battle) => { answer: (unit: Unit) => void; lifecycles?: Lifecycle[] },
+): ((battle: Battle) => void) & { ability: Abilities } {
+  return createAbility(ability, (battle) => {
+    /** Who has already taken the blow it was braced for */
+    const spent = new Set<Unit>();
+    const { answer, lifecycles = [] } = build(battle);
+
+    function braced(unit: Unit): boolean {
+      return !spent.has(unit) && unit.hasAbility(ability);
+    }
+
+    function brace(unit: Unit): void {
+      spent.add(unit);
+      unit.triggerAbility(ability);
+      answer(unit);
+    }
+
+    if (blow !== MoveCategories.Status) {
+      return new MergedLifecycle([
+        battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, (event) => {
+          const parent = event.parent;
+
+          if (
+            event.value > 0 &&
+            parent.category === blow &&
+            !(parent.flags & MoveAttackFlags.Simulated) &&
+            braced(parent.target)
+          ) {
+            event.value /= 2;
+            brace(parent.target);
+          }
+        }),
+        ...lifecycles,
+      ]);
+    }
+
+    return new MergedLifecycle([
+      battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Post, (event) => {
+        if (
+          !event.immune &&
+          event.target.type === MoveTargetType.Unit &&
+          event.target.unit !== event.source &&
+          getMoveData(event.move).category === MoveCategories.Status &&
+          braced(event.target.unit)
+        ) {
+          event.immune = true;
+        }
+      }),
+      // Spent only when a real move actually failed against it
+      battle.on(BattleEvents.UnitTriggerMoveFailed, EventPriority.Post, (event) => {
+        const parent = event.parent;
+
+        if (
+          parent.target.type === MoveTargetType.Unit &&
+          parent.target.unit !== parent.source &&
+          getMoveData(parent.move).category === MoveCategories.Status &&
+          braced(parent.target.unit)
+        ) {
+          brace(parent.target.unit);
+        }
+      }),
+      ...lifecycles,
+    ]);
+  });
+}
+
+/**
  * What the three Kanto birds share: the beat of the wings as one takes
  * the field costs every enemy a stage of whatever that bird's weather
  * works on. Nothing in it reads a type, so a regional form of the same

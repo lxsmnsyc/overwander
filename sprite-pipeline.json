@@ -15517,6 +15517,222 @@
         "bytes": 10196
       }
     },
+    "public/sprites/pokemon/sinnoh/387/regular.png": {
+      "digest": "a9b11d80d6354d55",
+      "bytes": 3357,
+      "width": 109,
+      "height": 124,
+      "compact": {
+        "at": "2026-09-10T05:12:47Z",
+        "as": "already compact",
+        "was": 3357,
+        "bytes": 3357
+      }
+    },
+    "public/sprites/pokemon/sinnoh/387/shiny.png": {
+      "digest": "69a72ff0b876fb86",
+      "bytes": 3410,
+      "width": 109,
+      "height": 124,
+      "compact": {
+        "at": "2026-09-10T05:12:47Z",
+        "as": "already compact",
+        "was": 3410,
+        "bytes": 3410
+      }
+    },
+    "public/sprites/pokemon/sinnoh/388/regular.png": {
+      "digest": "a1931ab7d8530446",
+      "bytes": 5485,
+      "width": 152,
+      "height": 137,
+      "compact": {
+        "at": "2026-09-10T05:12:47Z",
+        "as": "already compact",
+        "was": 5485,
+        "bytes": 5485
+      }
+    },
+    "public/sprites/pokemon/sinnoh/388/shiny.png": {
+      "digest": "899575b0f75918c6",
+      "bytes": 5656,
+      "width": 152,
+      "height": 137,
+      "compact": {
+        "at": "2026-09-10T05:12:47Z",
+        "as": "already compact",
+        "was": 5656,
+        "bytes": 5656
+      }
+    },
+    "public/sprites/pokemon/sinnoh/389/regular.png": {
+      "digest": "3c89ecb883dce4cb",
+      "bytes": 14899,
+      "width": 299,
+      "height": 227,
+      "compact": {
+        "at": "2026-09-10T05:12:47Z",
+        "as": "already compact",
+        "was": 14899,
+        "bytes": 14899
+      }
+    },
+    "public/sprites/pokemon/sinnoh/389/shiny.png": {
+      "digest": "b844ee6d60ce3378",
+      "bytes": 14899,
+      "width": 299,
+      "height": 227,
+      "compact": {
+        "at": "2026-09-10T05:12:47Z",
+        "as": "already compact",
+        "was": 14899,
+        "bytes": 14899
+      }
+    },
+    "public/sprites/pokemon/sinnoh/390/regular.png": {
+      "digest": "d4a4b88381466a21",
+      "bytes": 6018,
+      "width": 131,
+      "height": 183,
+      "compact": {
+        "at": "2026-09-10T05:12:47Z",
+        "as": "already compact",
+        "was": 6018,
+        "bytes": 6018
+      }
+    },
+    "public/sprites/pokemon/sinnoh/390/shiny.png": {
+      "digest": "df00c12e2c2aea55",
+      "bytes": 6048,
+      "width": 131,
+      "height": 183,
+      "compact": {
+        "at": "2026-09-10T05:12:47Z",
+        "as": "already compact",
+        "was": 6048,
+        "bytes": 6048
+      }
+    },
+    "public/sprites/pokemon/sinnoh/391/regular.png": {
+      "digest": "073d0622d1ba26e4",
+      "bytes": 11853,
+      "width": 153,
+      "height": 337,
+      "compact": {
+        "at": "2026-09-10T05:12:47Z",
+        "as": "already compact",
+        "was": 11853,
+        "bytes": 11853
+      }
+    },
+    "public/sprites/pokemon/sinnoh/391/shiny.png": {
+      "digest": "747236e31cfb5329",
+      "bytes": 11853,
+      "width": 153,
+      "height": 337,
+      "compact": {
+        "at": "2026-09-10T05:12:47Z",
+        "as": "already compact",
+        "was": 11853,
+        "bytes": 11853
+      }
+    },
+    "public/sprites/pokemon/sinnoh/392/regular.png": {
+      "digest": "1d696faedb76346d",
+      "bytes": 14249,
+      "width": 139,
+      "height": 417,
+      "compact": {
+        "at": "2026-09-10T05:12:47Z",
+        "as": "already compact",
+        "was": 14249,
+        "bytes": 14249
+      }
+    },
+    "public/sprites/pokemon/sinnoh/392/shiny.png": {
+      "digest": "d205fe1366d99bf3",
+      "bytes": 14249,
+      "width": 139,
+      "height": 417,
+      "compact": {
+        "at": "2026-09-10T05:12:47Z",
+        "as": "already compact",
+        "was": 14249,
+        "bytes": 14249
+      }
+    },
+    "public/sprites/pokemon/sinnoh/393/regular.png": {
+      "digest": "838078abe3106cd3",
+      "bytes": 3847,
+      "width": 110,
+      "height": 152,
+      "compact": {
+        "at": "2026-09-10T05:12:47Z",
+        "as": "already compact",
+        "was": 3847,
+        "bytes": 3847
+      }
+    },
+    "public/sprites/pokemon/sinnoh/393/shiny.png": {
+      "digest": "fc337c6aa80eaf2d",
+      "bytes": 3847,
+      "width": 110,
+      "height": 152,
+      "compact": {
+        "at": "2026-09-10T05:12:47Z",
+        "as": "already compact",
+        "was": 3847,
+        "bytes": 3847
+      }
+    },
+    "public/sprites/pokemon/sinnoh/394/regular.png": {
+      "digest": "acc0dbaeabdef83b",
+      "bytes": 5745,
+      "width": 104,
+      "height": 231,
+      "compact": {
+        "at": "2026-09-10T05:12:47Z",
+        "as": "already compact",
+        "was": 5745,
+        "bytes": 5745
+      }
+    },
+    "public/sprites/pokemon/sinnoh/394/shiny.png": {
+      "digest": "a578f30f38d491ef",
+      "bytes": 5745,
+      "width": 104,
+      "height": 231,
+      "compact": {
+        "at": "2026-09-10T05:12:47Z",
+        "as": "already compact",
+        "was": 5745,
+        "bytes": 5745
+      }
+    },
+    "public/sprites/pokemon/sinnoh/395/regular.png": {
+      "digest": "82c29ec09b7c08c4",
+      "bytes": 8011,
+      "width": 299,
+      "height": 116,
+      "compact": {
+        "at": "2026-09-10T05:12:47Z",
+        "as": "already compact",
+        "was": 8011,
+        "bytes": 8011
+      }
+    },
+    "public/sprites/pokemon/sinnoh/395/shiny.png": {
+      "digest": "974f466263419fee",
+      "bytes": 8011,
+      "width": 299,
+      "height": 116,
+      "compact": {
+        "at": "2026-09-10T05:12:47Z",
+        "as": "already compact",
+        "was": 8011,
+        "bytes": 8011
+      }
+    },
     "public/sprites/pokemon/unknown/100000/regular.png": {
       "digest": "740100996c69d777",
       "bytes": 1126,
@@ -15599,6 +15815,18 @@
         "as": "already compact",
         "was": 9694,
         "bytes": 9694
+      }
+    },
+    "public/sprites/ui/candies/sinnoh/image.png": {
+      "digest": "a43e1cf43a113859",
+      "bytes": 507,
+      "width": 32,
+      "height": 32,
+      "compact": {
+        "at": "2026-09-10T05:12:47Z",
+        "as": "already compact",
+        "was": 507,
+        "bytes": 507
       }
     },
     "public/sprites/ui/items/apricorn/image.png": {

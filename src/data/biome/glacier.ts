@@ -11,16 +11,19 @@ export default function registerGlacierSpawns(): void {
       base: [
         { species: Species.Spheal, weight: 25 },
         { species: Species.Swinub, weight: 25 },
+        { species: Species.Piplup, weight: 3 },
       ],
       uncommon: [{ species: Species.Snorunt, weight: 22 }],
       rare: [
         { species: Species.Sealeo, weight: 8 },
         { species: Species.Piloswine, weight: 5 },
+        { species: Species.Prinplup, weight: 2 },
       ],
       scarce: [{ species: Species.Glalie, weight: 6 }],
       elusive: [
         { species: Species.Walrein, weight: 5 },
         { species: Species.Delibird, weight: 5 },
+        { species: Species.Empoleon, weight: 2 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [
@@ -32,16 +35,19 @@ export default function registerGlacierSpawns(): void {
       base: [
         { species: Species.Spheal, weight: 25 },
         { species: Species.Swinub, weight: 25 },
+        { species: Species.Piplup, weight: 3 },
       ],
       uncommon: [{ species: Species.Snorunt, weight: 22 }],
       rare: [
         { species: Species.Sealeo, weight: 8 },
         { species: Species.Piloswine, weight: 5 },
+        { species: Species.Prinplup, weight: 2 },
       ],
       scarce: [{ species: Species.Glalie, weight: 6 }],
       elusive: [
         { species: Species.Walrein, weight: 5 },
         { species: Species.Delibird, weight: 5 },
+        { species: Species.Empoleon, weight: 2 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [

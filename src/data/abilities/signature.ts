@@ -1185,4 +1185,27 @@ export default function registerSignatureAbilities(): void {
     description:
       'Every 6 seconds it gains a stage in its highest battle stat and loses one in its lowest.',
   });
+
+  /**
+   * The Sinnoh starters share one signature: each is braced for one
+   * kind of blow, takes it once a fight for half of what it was worth,
+   * and turns it into something that lasts
+   */
+  registerSignature(Families.Turtwig, Abilities.BarkBrace, {
+    name: 'Bark Brace',
+    description:
+      'The first physical blow it takes each fight lands at 1/2, and it roots: 1/16 of its HP back each time it acts.',
+  });
+
+  registerSignature(Families.Chimchar, Abilities.CinderBrace, {
+    name: 'Cinder Brace',
+    description:
+      'The first special blow it takes each fight lands at 1/2, and its next move to land hits 1.5x.',
+  });
+
+  registerSignature(Families.Piplup, Abilities.CrestBrace, {
+    name: 'Crest Brace',
+    description:
+      'The first status move aimed at it each fight fails, and it takes a stage of Special Attack from the insult.',
+  });
 }

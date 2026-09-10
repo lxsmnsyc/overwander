@@ -5686,6 +5686,97 @@ describe('Form Drift', () => {
   });
 });
 
+describe('the Sinnoh starters', () => {
+  it('takes the first physical blow at half and puts roots down', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const turtle = createUnit(battle, teamA);
+    const attacker = createUnit(battle, teamB);
+
+    turtle.addAbility(Abilities.BarkBrace);
+    turtle.enter();
+    attacker.enter();
+    battle.tick(1);
+
+    const pool = turtle.checkStat(Stats.HP, 0);
+
+    attacker.attack(turtle, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
+    battle.tick(turns(1));
+
+    const braced = pool - turtle.health;
+
+    // The roots are Ingrain's, so they land on the move's own delay
+    expect(turtle.status[Statuses.Rooted]).toBeDefined();
+
+    // The second one of the same kind is a blow like any other
+    attacker.attack(turtle, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
+    battle.tick(1);
+
+    expect(pool - turtle.health - braced).toBeGreaterThan(braced);
+  });
+
+  it('takes the first special blow at half and puts the flare into its next move', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 1);
+    const chimp = createUnit(battle, teamA);
+    const attacker = createUnit(battle, teamB);
+    const bystander = createUnit(battle, teamB);
+
+    chimp.addAbility(Abilities.CinderBrace);
+    chimp.enter();
+    attacker.enter();
+    bystander.enter();
+    battle.tick(1);
+
+    const plain = bystander.health;
+
+    chimp.attack(bystander, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
+    battle.tick(1);
+
+    const ordinary = plain - bystander.health;
+
+    attacker.attack(chimp, Moves.WaterGun, 40, Types.Water, MoveCategories.Special, 0);
+    battle.tick(1);
+
+    const before = bystander.health;
+
+    chimp.attack(bystander, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
+    battle.tick(1);
+
+    // The flare rides the next move that lands, and only that one
+    expect(before - bystander.health).toBeCloseTo(ordinary * 1.5, 5);
+
+    const after = bystander.health;
+
+    chimp.attack(bystander, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
+    battle.tick(1);
+
+    expect(after - bystander.health).toBeCloseTo(ordinary, 5);
+  });
+
+  it('refuses the first status move aimed at it and takes a stage for the insult', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const penguin = createUnit(battle, teamA);
+    const talker = createUnit(battle, teamB);
+
+    penguin.addAbility(Abilities.CrestBrace);
+    penguin.enter();
+    talker.enter();
+    battle.tick(1);
+
+    talker.triggerMove(Moves.Growl, unitTarget(penguin), 0);
+    battle.tick(turns(1));
+
+    expect(penguin.stages[Stages.SpecialAttack]).toBe(1);
+    expect(penguin.stages[Stages.Attack]).toBe(0);
+
+    // Only the first: the next one lands
+    talker.triggerMove(Moves.Growl, unitTarget(penguin), 0);
+    battle.tick(turns(1));
+
+    expect(penguin.stages[Stages.Attack]).toBe(-1);
+  });
+});
+
 describe('signature feedback', () => {
   /**
    * A ring of signatures that each answer the thing the next one

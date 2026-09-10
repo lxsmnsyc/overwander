@@ -264,6 +264,7 @@ import { AMULET_COIN_BONUS } from '../src/overworld/items/trinkets';
 import { FEED_CATCH_BONUS, MAX_CATCH_BONUS } from '../src/overworld/safari';
 import { ORBS, ORB_PRICE } from '../src/data/items/orbs';
 import { PLATES, PLATE_RESALE } from '../src/data/items/plates';
+import { FORM_ITEMS } from '../src/data/items/form-items';
 import { RAID_ITEMS, getRaidSpecies } from '../src/data/items/raid-items';
 import {
   GENERAL_STAT_BOOSTERS,
@@ -3720,6 +3721,24 @@ describe('item data', () => {
     // A relic that named a legendary would call nothing: the world
     // stages those itself
     expect(getRaidSpecies(Items.MasterBall)).toBeNull();
+  });
+
+  it('buries every form item in the prized band and nowhere else', () => {
+    for (const [item, forms] of FORM_ITEMS) {
+      const data = getItemData(item);
+
+      // Held for the shape it puts its holder into, and nothing sells
+      // one, so the pool is the only way to it
+      expect(forms.length).toBeGreaterThan(0);
+      expect(data.type).toBe(ItemTypes.Held);
+      expect(data.flags & ItemFlags.Holdable).not.toBe(0);
+      expect(data.flags & ItemFlags.Marketable).toBe(0);
+      expect(data.buy).toBe(0);
+      expect(ITEM_POOL.prized.some((entry) => entry.item === item)).toBe(true);
+      for (const band of ['base', 'uncommon', 'rare', 'special'] as const) {
+        expect(ITEM_POOL[band].some((entry) => entry.item === item)).toBe(false);
+      }
+    }
   });
 
   it('registers every berry as a held, consumable berry', () => {

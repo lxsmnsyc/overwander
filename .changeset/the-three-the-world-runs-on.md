@@ -13,7 +13,8 @@ Dialga, Palkia and Giratina can be met, each in its other shape as well.
   holder leaves the field and two of them never stack.
 - The Adamant, Lustrous and Griseous Orbs are new. A member of the trio holding
   its own orb fights in its Origin Forme, which is worn rather than met: the
-  dex fills the shape in the day its own is.
+  dex fills the shape in the day its own is. Nobody sells one, so the prized
+  band of the overworld item pool is the only way to one.
 - Origin Forme carries an ability of its own. Giratina Origin has Levitate, as
   it does in the mainline, Dialga Origin has Unaware and Palkia Origin has
   Shadow Tag.

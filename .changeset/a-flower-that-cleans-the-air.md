@@ -11,7 +11,8 @@ Shaymin can be met, in both of its shapes.
   anything that reads a poisoned target still reads one.
 - The Gracidea is new. A Shaymin holding it fights in its Sky Forme, which is
   worn rather than met: the dex fills the shape in the day the one it lies down
-  in is.
+  in is. Nobody sells one, so the prized band of the overworld item pool is the
+  only way to one.
 - Sky Forme carries Serene Grace, which is the shape's own ability and stays
   with the shape.
 - The mainline gives Shaymin only Natural Cure, so it carries three of this

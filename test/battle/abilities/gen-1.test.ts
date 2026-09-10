@@ -2296,6 +2296,32 @@ describe('Boss', () => {
     expect(second.health).toBeLessThan(160);
     expect(ally.health).toBe(160);
   });
+
+  it('is not taken down by a Destiny Bond while its pool holds', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const boss = createUnit(battle, teamA);
+    const bonded = createUnit(battle, teamB);
+
+    boss.addAbility(Abilities.Boss);
+    boss.enter();
+    bonded.enter();
+    battle.tick(1);
+
+    bonded.addStatus(Statuses.Bonded, {
+      type: EffectType.Move,
+      move: Moves.DestinyBond,
+      unit: bonded,
+    });
+    boss.damage({ type: EffectType.None }, bonded, bonded.health, 0);
+
+    expect(bonded.alive).toBe(false);
+    expect(boss.alive).toBe(true);
+
+    // What empties the pool still fells it
+    boss.damage({ type: EffectType.None }, boss, boss.health, 0);
+
+    expect(boss.alive).toBe(false);
+  });
 });
 
 describe('Shadow', () => {

@@ -6006,7 +6006,10 @@ describe('the three that open Sinnoh', () => {
     battle.tick(1);
 
     expect(ally.checkMovePower(Moves.BugBuzz, unitTarget(enemy))).toBeCloseTo(90 * CHORUS_SCALE, 5);
-    expect(cricket.checkMovePower(Moves.BugBuzz, unitTarget(enemy))).toBeCloseTo(90 * CHORUS_SCALE, 5);
+    expect(cricket.checkMovePower(Moves.BugBuzz, unitTarget(enemy))).toBeCloseTo(
+      90 * CHORUS_SCALE,
+      5,
+    );
 
     // What is not sung is not conducted
     expect(ally.checkMovePower(Moves.Tackle, unitTarget(enemy))).toBe(40);

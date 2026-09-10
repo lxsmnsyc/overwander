@@ -150,8 +150,9 @@ const setupAbilities = [
    * everything else, immune to negative stage applications, to damage
    * measured as a share of its pool, to forced switch-outs, to
    * trapping and disruption statuses (unless self-inflicted), to the
-   * moves that move abilities or stages about, and to a Perish Song
-   * whoever sang it. Indirect damage lands for at most
+   * moves that move abilities or stages about, to a Perish Song
+   * whoever sang it, and to anything that would fell it while its
+   * pool still holds. Indirect damage lands for at most
    * `BOSS_INDIRECT_DAMAGE_CAP`, and it heals at most
    * `BOSS_HEAL_FRACTION` of its pool at a time. Its single-target
    * enemy moves strike every enemy instead.
@@ -331,6 +332,18 @@ const setupAbilities = [
 
           // For visual cues
           event.target.triggerAbility(Abilities.Boss);
+        }
+      }),
+      // A boss goes down when its pool is empty and no other way. An
+      // effect that fells a pokemon outright, Destiny Bond among
+      // them, skips damage entirely, so none of the refusals above
+      // ever sees it: one bond would end a raid at full health
+      battle.on(BattleEvents.UnitFaints, EventPriority.Pre, (event) => {
+        if (event.source.health > 0 && event.source.hasAbility(Abilities.Boss)) {
+          event.disabled = true;
+
+          // For visual cues
+          event.source.triggerAbility(Abilities.Boss);
         }
       }),
       // Recoil never comes back to a boss (Rock Head style)

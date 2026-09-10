@@ -15,7 +15,10 @@ export default function registerTaigaSpawns(): void {
       ],
       rare: [{ species: Species.Ursaring, weight: 5 }],
       scarce: [{ species: Species.Abomasnow, weight: 6 }],
-      elusive: [{ species: Species.Snorlax, weight: 5 }],
+      elusive: [
+        { species: Species.Pachirisu, weight: 8 },
+        { species: Species.Snorlax, weight: 5 },
+      ],
       prized: [...UNOWN_SPAWNS],
       special: [
         { species: Species.Suicune, weight: 10 },
@@ -30,7 +33,10 @@ export default function registerTaigaSpawns(): void {
       ],
       rare: [{ species: Species.Ursaring, weight: 5 }],
       scarce: [{ species: Species.Abomasnow, weight: 6 }],
-      elusive: [{ species: Species.Snorlax, weight: 5 }],
+      elusive: [
+        { species: Species.Pachirisu, weight: 8 },
+        { species: Species.Snorlax, weight: 5 },
+      ],
       prized: [...UNOWN_SPAWNS],
       special: [
         { species: Species.Suicune, weight: 10 },
@@ -50,6 +56,7 @@ export default function registerTaigaSpawns(): void {
         { species: Species.Abomasnow, weight: 6 },
       ],
       elusive: [
+        { species: Species.Pachirisu, weight: 8 },
         { species: Species.Jynx, weight: 5 },
         { species: Species.Snorlax, weight: 5 },
       ],
@@ -74,6 +81,7 @@ export default function registerTaigaSpawns(): void {
         { species: Species.Abomasnow, weight: 6 },
       ],
       elusive: [
+        { species: Species.Pachirisu, weight: 8 },
         { species: Species.Jynx, weight: 5 },
         { species: Species.Snorlax, weight: 5 },
       ],

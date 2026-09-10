@@ -8,6 +8,7 @@ import krabbyToPinsir from './krabby-to-pinsir';
 import lakeTrio from './lake-trio';
 import manaphy from './manaphy';
 import moonDuo from './moon-duo';
+import pachirisuToCarnivine from './pachirisu-to-carnivine';
 import parasToTentacool from './paras-to-tentacool';
 import rotom from './rotom';
 import sandshrewToOddish from './sandshrew-to-oddish';
@@ -48,6 +49,7 @@ const setupAbilities = [
   ...stunkyToGible,
   ...rioluToSkorupi,
   ...croagunkToSnover,
+  ...pachirisuToCarnivine,
   ...rotom,
   ...lakeTrio,
   ...heatranRegigigas,

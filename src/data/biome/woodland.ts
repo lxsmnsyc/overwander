@@ -77,6 +77,9 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Leafeon, weight: 6 },
       ],
       elusive: [
+        { species: Species.Chatot, weight: 6 },
+        { species: Species.Pachirisu, weight: 8 },
+        { species: Species.Rotom, weight: 6 },
         { species: Species.Rotom, weight: 6 },
         { species: Species.Venusaur, weight: 2 },
         { species: Species.Butterfree, weight: 10 },
@@ -176,6 +179,9 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Leafeon, weight: 6 },
       ],
       elusive: [
+        { species: Species.Chatot, weight: 6 },
+        { species: Species.Pachirisu, weight: 8 },
+        { species: Species.Rotom, weight: 6 },
         { species: Species.Rotom, weight: 6 },
         { species: Species.Venusaur, weight: 2 },
         { species: Species.Butterfree, weight: 10 },
@@ -269,6 +275,9 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Lickilicky, weight: 6 },
       ],
       elusive: [
+        { species: Species.Spiritomb, weight: 5 },
+        { species: Species.Pachirisu, weight: 8 },
+        { species: Species.Rotom, weight: 6 },
         { species: Species.Rotom, weight: 6 },
         { species: Species.Nidoqueen, weight: 5 },
         { species: Species.Nidoking, weight: 5 },
@@ -364,6 +373,9 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Lickilicky, weight: 6 },
       ],
       elusive: [
+        { species: Species.Spiritomb, weight: 5 },
+        { species: Species.Pachirisu, weight: 8 },
+        { species: Species.Rotom, weight: 6 },
         { species: Species.Rotom, weight: 6 },
         { species: Species.Nidoqueen, weight: 5 },
         { species: Species.Nidoking, weight: 5 },

@@ -189,6 +189,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Magmortar, weight: 6 },
       ],
       elusive: [
+        { species: Species.Spiritomb, weight: 5 },
         { species: Species.Metagross, weight: 1 },
         { species: Species.Tyranitar, weight: 2 },
         { species: Species.Shuckle, weight: 5 },
@@ -254,6 +255,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Magmortar, weight: 6 },
       ],
       elusive: [
+        { species: Species.Spiritomb, weight: 5 },
         { species: Species.Metagross, weight: 1 },
         { species: Species.Tyranitar, weight: 2 },
         { species: Species.Shuckle, weight: 5 },

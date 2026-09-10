@@ -31,6 +31,11 @@ export default function registerGen4Abilities(): void {
     name: 'Slow Start',
     description: 'Attack and Speed are halved for its first 8 seconds on the field.',
   });
+  // Pachirisu
+  registerAbility(Abilities.CheekPouch, {
+    name: 'Cheek Pouch',
+    description: 'Eating a berry also puts 1/3 of its HP back, whatever the berry was for.',
+  });
   // Cresselia
   registerAbility(Abilities.AromaVeil, {
     name: 'Aroma Veil',

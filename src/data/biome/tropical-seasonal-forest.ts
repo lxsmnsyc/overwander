@@ -26,6 +26,7 @@ export default function registerTropicalSeasonalForestSpawns(): void {
         { species: Species.Lickilicky, weight: 6 },
       ],
       elusive: [
+        { species: Species.Chatot, weight: 6 },
         { species: Species.Victreebel, weight: 5 },
         { species: Species.Sceptile, weight: 2 },
         { species: Species.Kecleon, weight: 10 },
@@ -53,6 +54,7 @@ export default function registerTropicalSeasonalForestSpawns(): void {
         { species: Species.Lickilicky, weight: 6 },
       ],
       elusive: [
+        { species: Species.Chatot, weight: 6 },
         { species: Species.Victreebel, weight: 5 },
         { species: Species.Pinsir, weight: 5 },
         { species: Species.Sceptile, weight: 2 },

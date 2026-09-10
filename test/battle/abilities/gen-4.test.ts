@@ -10,6 +10,7 @@ import type Unit from '../../../src/battle/unit';
 import { Stats } from '../../../src/data/constants/stats';
 import { Types } from '../../../src/data/constants/types';
 import Abilities from '../../../src/data/ids/abilities';
+import { Items } from '../../../src/data/ids/items';
 import { MoveCategories, Moves } from '../../../src/data/ids/moves';
 import { Statuses } from '../../../src/data/ids/status';
 import turns from '../../../src/battle/turn';
@@ -200,5 +201,41 @@ describe('Slow Start', () => {
 
     expect(slow.checkStat(Stats.Attack, 0)).toBeCloseTo(attack, 5);
     expect(slow.checkStat(Stats.Speed, 0)).toBeCloseTo(speed, 5);
+  });
+});
+
+describe('Cheek Pouch', () => {
+  it('pays out on a berry it ate itself, and not on one taken from it', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const squirrel = createUnit(battle, teamA);
+    const thief = createUnit(battle, teamB);
+    squirrel.addAbility(Abilities.CheekPouch);
+
+    const full = squirrel.health;
+
+    squirrel.damage({ type: EffectType.None }, squirrel, Math.floor(full / 2), 0);
+
+    const hurt = squirrel.health;
+
+    squirrel.addItem(Items.OranBerry);
+    squirrel.removeItem(Items.OranBerry, {
+      type: EffectType.Item,
+      item: Items.OranBerry,
+      unit: squirrel,
+    });
+
+    expect(squirrel.health).toBeGreaterThan(hurt);
+
+    const fed = squirrel.health;
+
+    // Knocked off by somebody else, so the pouch never closed on it
+    squirrel.addItem(Items.OranBerry);
+    squirrel.removeItem(Items.OranBerry, {
+      type: EffectType.Move,
+      move: Moves.KnockOff,
+      unit: thief,
+    });
+
+    expect(squirrel.health).toBe(fed);
   });
 });

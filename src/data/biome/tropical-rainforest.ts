@@ -30,6 +30,7 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Tangrowth, weight: 6 },
       ],
       elusive: [
+        { species: Species.Carnivine, weight: 6 },
         { species: Species.Sceptile, weight: 2 },
         { species: Species.Slaking, weight: 5 },
         { species: Species.Kecleon, weight: 10 },
@@ -62,6 +63,7 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Tangrowth, weight: 6 },
       ],
       elusive: [
+        { species: Species.Carnivine, weight: 6 },
         { species: Species.Sceptile, weight: 2 },
         { species: Species.Slaking, weight: 5 },
         { species: Species.Kecleon, weight: 10 },
@@ -91,7 +93,7 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Yanmega, weight: 6 },
         { species: Species.Tangrowth, weight: 6 },
       ],
-      elusive: [],
+      elusive: [{ species: Species.Carnivine, weight: 6 }],
       prized: [...UNOWN_SPAWNS, { species: Species.Munchlax, weight: PRIZED_WEIGHT }],
       special: [],
       mythical: [{ species: Species.Mew, weight: 10 }],
@@ -116,7 +118,7 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Yanmega, weight: 6 },
         { species: Species.Tangrowth, weight: 6 },
       ],
-      elusive: [],
+      elusive: [{ species: Species.Carnivine, weight: 6 }],
       prized: [...UNOWN_SPAWNS, { species: Species.Munchlax, weight: PRIZED_WEIGHT }],
       special: [],
       mythical: [{ species: Species.Mew, weight: 10 }],

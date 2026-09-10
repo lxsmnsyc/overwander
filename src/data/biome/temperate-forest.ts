@@ -60,6 +60,9 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Leafeon, weight: 6 },
       ],
       elusive: [
+        { species: Species.Chatot, weight: 6 },
+        { species: Species.Pachirisu, weight: 8 },
+        { species: Species.Rotom, weight: 6 },
         { species: Species.Rotom, weight: 6 },
         { species: Species.Venusaur, weight: 2 },
         { species: Species.Butterfree, weight: 10 },
@@ -138,6 +141,9 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Leafeon, weight: 6 },
       ],
       elusive: [
+        { species: Species.Chatot, weight: 6 },
+        { species: Species.Pachirisu, weight: 8 },
+        { species: Species.Rotom, weight: 6 },
         { species: Species.Rotom, weight: 6 },
         { species: Species.Venusaur, weight: 2 },
         { species: Species.Butterfree, weight: 10 },
@@ -208,6 +214,8 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Honchkrow, weight: 6 },
       ],
       elusive: [
+        { species: Species.Pachirisu, weight: 8 },
+        { species: Species.Rotom, weight: 6 },
         { species: Species.Rotom, weight: 6 },
         { species: Species.Vileplume, weight: 5 },
         { species: Species.Snorlax, weight: 5 },
@@ -274,6 +282,8 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Honchkrow, weight: 6 },
       ],
       elusive: [
+        { species: Species.Pachirisu, weight: 8 },
+        { species: Species.Rotom, weight: 6 },
         { species: Species.Rotom, weight: 6 },
         { species: Species.Vileplume, weight: 5 },
         { species: Species.Snorlax, weight: 5 },

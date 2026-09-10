@@ -823,6 +823,10 @@ const enum Abilities {
   WaxingDark = 200239,
   Purebloom = 200240,
   Appliance = 200241,
+  Sparkfur = 200242,
+  Birdsong = 200243,
+  Soulwell = 200244,
+  Snapvine = 200245,
 }
 
 export default Abilities;

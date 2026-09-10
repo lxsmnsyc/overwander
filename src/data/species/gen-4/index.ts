@@ -5,6 +5,8 @@ import registerBonslySpecies from './bonsly';
 import registerBudewSpecies from './budew';
 import registerBuizelSpecies from './buizel';
 import registerBurmySpecies from './burmy';
+import registerCarnivineSpecies from './carnivine';
+import registerChatotSpecies from './chatot';
 import registerCherubiSpecies from './cherubi';
 import registerChinglingSpecies from './chingling';
 import registerBunearySpecies from './buneary';
@@ -40,6 +42,7 @@ import registerCreationTrioSpecies from './creation-trio';
 import registerCroagunkSpecies from './croagunk';
 import registerKricketotSpecies from './kricketot';
 import registerLakeTrioSpecies from './lake-trio';
+import registerPachirisuSpecies from './pachirisu';
 import registerPiplupSpecies from './piplup';
 import registerPorygonZSpecies from './porygon-z';
 import registerProbopassSpecies from './probopass';
@@ -58,6 +61,7 @@ import registerTangrowthSpecies from './tangrowth';
 import registerTogekissSpecies from './togekiss';
 import registerWeavileSpecies from './weavile';
 import registerYanmegaSpecies from './yanmega';
+import registerSpiritombSpecies from './spiritomb';
 import registerStarlySpecies from './starly';
 import registerTurtwigSpecies from './turtwig';
 
@@ -125,6 +129,10 @@ export default function registerGen4Species(): void {
   registerCreationTrioSpecies();
   registerMoonDuoSpecies();
   registerManaphySpecies();
+  registerPachirisuSpecies();
+  registerChatotSpecies();
+  registerSpiritombSpecies();
+  registerCarnivineSpecies();
   registerRotomSpecies();
   registerShayminSpecies();
 }

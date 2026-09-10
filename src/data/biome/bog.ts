@@ -135,6 +135,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Yanmega, weight: 6 },
       ],
       elusive: [
+        { species: Species.Spiritomb, weight: 5 },
         { species: Species.Volbeat, weight: 8 },
         { species: Species.Illumise, weight: 8 },
       ],
@@ -182,6 +183,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Yanmega, weight: 6 },
       ],
       elusive: [
+        { species: Species.Spiritomb, weight: 5 },
         { species: Species.Poliwrath, weight: 5 },
         { species: Species.Vileplume, weight: 5 },
         { species: Species.Gengar, weight: 5 },

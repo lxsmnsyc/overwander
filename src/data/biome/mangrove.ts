@@ -34,6 +34,7 @@ export default function registerMangroveSpawns(): void {
         { species: Species.Toxicroak, weight: 6 },
       ],
       elusive: [
+        { species: Species.Carnivine, weight: 6 },
         { species: Species.Farfetchd, weight: 5 },
         { species: Species.Feraligatr, weight: 2 },
         { species: Species.Ludicolo, weight: 5 },
@@ -68,6 +69,7 @@ export default function registerMangroveSpawns(): void {
         { species: Species.Toxicroak, weight: 6 },
       ],
       elusive: [
+        { species: Species.Carnivine, weight: 6 },
         { species: Species.Farfetchd, weight: 5 },
         { species: Species.Feraligatr, weight: 2 },
         { species: Species.Ludicolo, weight: 5 },
@@ -92,7 +94,7 @@ export default function registerMangroveSpawns(): void {
         { species: Species.Gastrodon, weight: 10 },
         { species: Species.Toxicroak, weight: 6 },
       ],
-      elusive: [],
+      elusive: [{ species: Species.Carnivine, weight: 6 }],
       prized: [...UNOWN_SPAWNS],
       special: [],
     },
@@ -113,7 +115,7 @@ export default function registerMangroveSpawns(): void {
         { species: Species.Gastrodon, weight: 10 },
         { species: Species.Toxicroak, weight: 6 },
       ],
-      elusive: [],
+      elusive: [{ species: Species.Carnivine, weight: 6 }],
       prized: [...UNOWN_SPAWNS],
       special: [],
     },

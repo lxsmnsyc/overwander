@@ -5,7 +5,9 @@ import Abilities from '../../data/ids/abilities';
 import { Statuses } from '../../data/ids/status';
 import type Battle from '../core';
 import type Unit from '../unit';
-import { BattleEvents } from '../events';
+import { ItemTypes } from '../../data/ids/items';
+import { getItemData } from '../../data/items';
+import { BattleEvents, EffectType } from '../events';
 import { MergedLifecycle } from '../lifecycle';
 import { SEALED_DURATION } from './signature/__create';
 import { hasAnyStatus } from '../utils';
@@ -49,6 +51,9 @@ const HEATPROOF_BURN_SCALE = 0.5;
  * exactly the time nothing can punish it for standing weak
  */
 const SLOW_START_DURATION = SEALED_DURATION;
+
+/** What a pouch is worth on top of whatever the berry did. */
+const CHEEK_POUCH_SHARE = 1 / 3;
 
 /** What Attack and Speed are worth while it is still getting going. */
 const SLOW_START_SCALE = 0.5;
@@ -197,6 +202,33 @@ const setupAbilities = [
       }),
     ]);
   }),
+
+  /**
+   * The pouch pays out on the berry going down, so only a berry the
+   * holder ate itself counts: one knocked off or tricked away is
+   * somebody else taking it
+   * https://bulbapedia.bulbagarden.net/wiki/Cheek_Pouch_(Ability)
+   */
+  createAbility(Abilities.CheekPouch, (battle) =>
+    battle.on(BattleEvents.UnitRemoveItem, EventPriority.Post, (event) => {
+      const unit = event.source;
+
+      if (
+        event.cause.type === EffectType.Item &&
+        unit.alive &&
+        unit.hasAbility(Abilities.CheekPouch) &&
+        getItemData(event.item).type === ItemTypes.Berry
+      ) {
+        unit.triggerAbility(Abilities.CheekPouch);
+        unit.heal(
+          { type: EffectType.Ability, ability: Abilities.CheekPouch, unit },
+          unit,
+          Math.max(1, Math.floor(unit.checkStat(Stats.HP, 0) * CHEEK_POUCH_SHARE)),
+          0,
+        );
+      }
+    }),
+  ),
 
   // https://bulbapedia.bulbagarden.net/wiki/Heatproof_(Ability)
   createThickFatAbility(Abilities.Heatproof, HEATPROOF_TYPES),

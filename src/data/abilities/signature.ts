@@ -1368,6 +1368,30 @@ export default function registerSignatureAbilities(): void {
     description: 'Fire moves hit it at 0.5x while hail or snow falls.',
   });
 
+  // The squirrel, whose charge is in the fur of whoever it lives with
+  registerSignature(Families.Pachirisu, Abilities.Sparkfur, {
+    name: 'Sparkfur',
+    description: 'Anything that touches one of its teammates is paralyzed 30% of the time.',
+  });
+
+  // The bird, whose noise is somebody else's and louder
+  registerSignature(Families.Chatot, Abilities.Birdsong, {
+    name: 'Birdsong',
+    description: 'Its damaging sound moves confuse the target 20% of the time.',
+  });
+
+  // The stone, which is only ever taking on more
+  registerSignature(Families.Spiritomb, Abilities.Soulwell, {
+    name: 'Soulwell',
+    description: 'Heals 1/4 of its HP whenever anybody on the field faints.',
+  });
+
+  // The mouth on a stem, which shuts once on each of them
+  registerSignature(Families.Carnivine, Abilities.Snapvine, {
+    name: 'Snapvine',
+    description: 'The first move it lands on each enemy binds them as well.',
+  });
+
   // The plasma, which is good at whatever it got into
   registerSignature(Families.Rotom, Abilities.Appliance, {
     name: 'Appliance',

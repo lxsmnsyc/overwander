@@ -7068,3 +7068,85 @@ describe('Appliance', () => {
     expect(resolveAttackStat(battle, ghost, rotom, Stats.SpecialAttack, 100)).toBe(100);
   });
 });
+
+describe('the squirrel, the bird, the stone and the trap', () => {
+  it('Sparkfur puts the charge in a teammate rather than in itself', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const squirrel = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    squirrel.addAbility(Abilities.Sparkfur);
+    pinRandom(battle, 0);
+
+    enemy.triggerMove(Moves.Tackle, unitTarget(mate), 0);
+    battle.tick(turns(2));
+
+    expect(enemy.status[Statuses.Paralyzed]).toBeDefined();
+  });
+
+  it('Birdsong turns a listener around, and only on a sound move', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const bird = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    bird.addAbility(Abilities.Birdsong);
+    pinRandom(battle, 0);
+
+    bird.triggerMove(Moves.Tackle, unitTarget(enemy), 0);
+    battle.tick(turns(2));
+
+    expect(enemy.status[Statuses.Confused]).toBeUndefined();
+
+    // Chatter would confuse on its own, so the test uses a sound move
+    // that does not
+    bird.triggerMove(Moves.BugBuzz, unitTarget(enemy), 0);
+    battle.tick(turns(1));
+
+    expect(enemy.status[Statuses.Confused]).toBeDefined();
+  });
+
+  it('Soulwell takes in whoever stopped standing, either side', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const stone = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    stone.addAbility(Abilities.Soulwell);
+
+    const full = stone.health;
+
+    stone.damage({ type: EffectType.None }, stone, Math.floor(full / 2), 0);
+
+    const hurt = stone.health;
+
+    mate.faint(enemy);
+    battle.tick(turns(1));
+
+    expect(stone.health).toBeGreaterThan(hurt);
+
+    const healed = stone.health;
+
+    enemy.faint(stone);
+    battle.tick(turns(1));
+
+    expect(stone.health).toBeGreaterThan(healed);
+  });
+
+  it('Snapvine shuts on each enemy once', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const vine = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    vine.addAbility(Abilities.Snapvine);
+
+    vine.triggerMove(Moves.Tackle, unitTarget(enemy), 0);
+    battle.tick(turns(2));
+
+    expect(enemy.status[Statuses.Trapped]).toBeDefined();
+
+    // The hold runs out, and the trap does not shut on the same one
+    // twice
+    enemy.removeStatus(Statuses.Trapped, { type: EffectType.None });
+    vine.triggerMove(Moves.Tackle, unitTarget(enemy), 0);
+    battle.tick(turns(2));
+
+    expect(enemy.status[Statuses.Trapped]).toBeUndefined();
+  });
+});

@@ -66,6 +66,11 @@ import {
   FLOCK_SCALE,
   LODGE_SCALE,
 } from '../../../src/battle/abilities/signature/starly-to-kricketot';
+import {
+  PATCHWORK_MAX_PATCHES,
+  TWO_SEAS_SCALE,
+} from '../../../src/battle/abilities/signature/burmy-to-shellos';
+import { Species } from '../../../src/data/ids/species';
 import { AttackPriority } from '../../../src/core/event-emitter';
 import {
   CHAIN_LIGHTNING_FRACTION,
@@ -6151,5 +6156,61 @@ describe('the lion and the two fossils', () => {
 
     // The far side is nobody it stands with
     expect(enemy.status[Statuses.Protected]).toBeUndefined();
+  });
+});
+
+describe('the bagworm and the sea slug', () => {
+  it('patches a hole once, and only so many holes', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const worm = createUnit(battle, teamA);
+    const attacker = createUnit(battle, teamB);
+
+    worm.addAbility(Abilities.Patchwork);
+    worm.enter();
+    attacker.enter();
+    battle.tick(1);
+
+    attacker.attack(worm, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
+    battle.tick(1);
+
+    expect(worm.stages[Stages.Defense]).toBe(1);
+    expect(worm.stages[Stages.SpecialDefense]).toBe(1);
+
+    // The same hole is already patched
+    attacker.attack(worm, Moves.BodySlam, 40, Types.Normal, MoveCategories.Physical, 0);
+    battle.tick(1);
+
+    expect(worm.stages[Stages.Defense]).toBe(1);
+
+    attacker.attack(worm, Moves.Ember, 40, Types.Fire, MoveCategories.Special, 0);
+    battle.tick(1);
+    attacker.attack(worm, Moves.WaterGun, 40, Types.Water, MoveCategories.Special, 0);
+    battle.tick(1);
+    attacker.attack(worm, Moves.ThunderShock, 40, Types.Electric, MoveCategories.Special, 0);
+    battle.tick(1);
+
+    // Three holes is what the case is worth
+    expect(worm.stages[Stages.Defense]).toBe(PATCHWORK_MAX_PATCHES);
+    expect(worm.stages[Stages.SpecialDefense]).toBe(PATCHWORK_MAX_PATCHES);
+  });
+
+  it('pays each shell for its own half of the sea', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const west = createUnit(battle, teamA);
+    const east = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    west.setSpecies(Species.Shellos);
+    east.setSpecies(Species.ShellosEast);
+    west.addAbility(Abilities.TwoSeas);
+    east.addAbility(Abilities.TwoSeas);
+
+    const target = unitTarget(enemy);
+
+    expect(west.checkMovePower(Moves.WaterGun, target)).toBeCloseTo(40 * TWO_SEAS_SCALE, 5);
+    expect(west.checkMovePower(Moves.MudSlap, target)).toBe(20);
+
+    expect(east.checkMovePower(Moves.MudSlap, target)).toBeCloseTo(20 * TWO_SEAS_SCALE, 5);
+    expect(east.checkMovePower(Moves.WaterGun, target)).toBe(40);
   });
 });

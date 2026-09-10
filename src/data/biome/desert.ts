@@ -14,11 +14,13 @@ export default function registerDesertSpawns(): void {
         { species: Species.Baltoy, weight: 22 },
         { species: Species.Diglett, weight: 20 },
         { species: Species.Magmar, weight: 5 },
+        { species: Species.BurmySandy, weight: 20 },
       ],
       rare: [{ species: Species.Vibrava, weight: 10 }],
       scarce: [
         { species: Species.Claydol, weight: 6 },
         { species: Species.Dugtrio, weight: 10 },
+        { species: Species.WormadamSandy, weight: 4 },
       ],
       elusive: [
         { species: Species.Flygon, weight: 5 },
@@ -41,6 +43,7 @@ export default function registerDesertSpawns(): void {
         { species: Species.Sandshrew, weight: 20 },
         { species: Species.Diglett, weight: 20 },
         { species: Species.Magmar, weight: 5 },
+        { species: Species.BurmySandy, weight: 20 },
       ],
       rare: [
         { species: Species.Vibrava, weight: 10 },
@@ -50,6 +53,7 @@ export default function registerDesertSpawns(): void {
         { species: Species.Claydol, weight: 6 },
         { species: Species.Sandslash, weight: 10 },
         { species: Species.Dugtrio, weight: 10 },
+        { species: Species.WormadamSandy, weight: 4 },
       ],
       elusive: [
         { species: Species.Flygon, weight: 5 },
@@ -68,6 +72,7 @@ export default function registerDesertSpawns(): void {
         { species: Species.Sandshrew, weight: 20 },
         { species: Species.Diglett, weight: 20 },
         { species: Species.Magmar, weight: 5 },
+        { species: Species.BurmySandy, weight: 20 },
       ],
       rare: [],
       scarce: [
@@ -75,6 +80,7 @@ export default function registerDesertSpawns(): void {
         { species: Species.Claydol, weight: 6 },
         { species: Species.Sandslash, weight: 10 },
         { species: Species.Dugtrio, weight: 10 },
+        { species: Species.WormadamSandy, weight: 4 },
       ],
       elusive: [],
       prized: [...UNOWN_SPAWNS, { species: Species.Magby, weight: PRIZED_WEIGHT }],
@@ -90,6 +96,7 @@ export default function registerDesertSpawns(): void {
         { species: Species.Diglett, weight: 20 },
         { species: Species.Cubone, weight: 20 },
         { species: Species.Magmar, weight: 5 },
+        { species: Species.BurmySandy, weight: 20 },
       ],
       rare: [],
       scarce: [
@@ -97,6 +104,7 @@ export default function registerDesertSpawns(): void {
         { species: Species.Claydol, weight: 6 },
         { species: Species.Dugtrio, weight: 10 },
         { species: Species.Marowak, weight: 10 },
+        { species: Species.WormadamSandy, weight: 4 },
       ],
       elusive: [],
       prized: [...UNOWN_SPAWNS, { species: Species.Magby, weight: PRIZED_WEIGHT }],

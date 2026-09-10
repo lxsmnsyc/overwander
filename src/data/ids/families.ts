@@ -214,6 +214,8 @@ const enum Families {
   Shinx = 209,
   Cranidos = 210,
   Shieldon = 211,
+  Burmy = 212,
+  Shellos = 213,
 }
 
 export default Families;

@@ -1251,4 +1251,19 @@ export default function registerSignatureAbilities(): void {
     name: 'Bulwark',
     description: 'A guard it puts up covers its whole team for as long as its own holds.',
   });
+
+  /**
+   * Sinnoh's next two: one built out of what it is hit with, the
+   * other out of the side of the world it came from
+   */
+  registerSignature(Families.Burmy, Abilities.Patchwork, {
+    name: 'Patchwork',
+    description:
+      'The first hit of each type it takes raises its Defense and Special Defense 1 stage, 3 times a fight.',
+  });
+
+  registerSignature(Families.Shellos, Abilities.TwoSeas, {
+    name: 'Two Seas',
+    description: 'The west shell hits 1.25x with Water moves, the east shell with Ground moves.',
+  });
 }

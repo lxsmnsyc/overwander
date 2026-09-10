@@ -29,6 +29,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Magmar, weight: 5 },
         { species: Species.Dunsparce, weight: 10 },
         { species: Species.Nosepass, weight: 20 },
+        { species: Species.BurmyTrash, weight: 20 },
       ],
       rare: [
         { species: Species.Charmeleon, weight: 1 },
@@ -48,6 +49,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Steelix, weight: 5 },
         { species: Species.Medicham, weight: 10 },
         { species: Species.Magcargo, weight: 5 },
+        { species: Species.WormadamTrash, weight: 4 },
       ],
       elusive: [
         { species: Species.Charizard, weight: 2 },
@@ -102,6 +104,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Magmar, weight: 5 },
         { species: Species.Dunsparce, weight: 10 },
         { species: Species.Nosepass, weight: 20 },
+        { species: Species.BurmyTrash, weight: 20 },
       ],
       rare: [
         { species: Species.Shelgon, weight: 1 },
@@ -122,6 +125,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Steelix, weight: 5 },
         { species: Species.Medicham, weight: 10 },
         { species: Species.Magcargo, weight: 5 },
+        { species: Species.WormadamTrash, weight: 4 },
       ],
       elusive: [
         { species: Species.Salamence, weight: 2 },
@@ -170,6 +174,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Dunsparce, weight: 10 },
         { species: Species.Gligar, weight: 5 },
         { species: Species.Nosepass, weight: 20 },
+        { species: Species.BurmyTrash, weight: 20 },
       ],
       rare: [
         { species: Species.Shelgon, weight: 1 },
@@ -181,6 +186,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Dugtrio, weight: 10 },
         { species: Species.Steelix, weight: 5 },
         { species: Species.Magcargo, weight: 5 },
+        { species: Species.WormadamTrash, weight: 4 },
       ],
       elusive: [
         { species: Species.Salamence, weight: 2 },
@@ -226,6 +232,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Dunsparce, weight: 10 },
         { species: Species.Gligar, weight: 5 },
         { species: Species.Nosepass, weight: 20 },
+        { species: Species.BurmyTrash, weight: 20 },
       ],
       rare: [
         { species: Species.Graveler, weight: 5 },
@@ -239,6 +246,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Marowak, weight: 10 },
         { species: Species.Steelix, weight: 5 },
         { species: Species.Magcargo, weight: 5 },
+        { species: Species.WormadamTrash, weight: 4 },
       ],
       elusive: [
         { species: Species.Golem, weight: 5 },

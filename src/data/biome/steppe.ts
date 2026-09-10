@@ -24,6 +24,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Electrike, weight: 25 },
         { species: Species.Dunsparce, weight: 10 },
         { species: Species.Girafarig, weight: 5 },
+        { species: Species.BurmyTrash, weight: 20 },
       ],
       rare: [
         { species: Species.Loudred, weight: 10 },
@@ -39,6 +40,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Furret, weight: 10 },
         { species: Species.Manectric, weight: 10 },
         { species: Species.Donphan, weight: 10 },
+        { species: Species.WormadamTrash, weight: 4 },
       ],
       elusive: [
         { species: Species.Castform, weight: 10 },
@@ -70,6 +72,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Electrike, weight: 25 },
         { species: Species.Dunsparce, weight: 10 },
         { species: Species.Girafarig, weight: 5 },
+        { species: Species.BurmyTrash, weight: 20 },
       ],
       rare: [
         { species: Species.Loudred, weight: 10 },
@@ -86,6 +89,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Furret, weight: 10 },
         { species: Species.Manectric, weight: 10 },
         { species: Species.Donphan, weight: 10 },
+        { species: Species.WormadamTrash, weight: 4 },
       ],
       elusive: [
         { species: Species.Castform, weight: 10 },
@@ -106,11 +110,13 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Voltorb, weight: 20 },
         { species: Species.Dunsparce, weight: 10 },
         { species: Species.Girafarig, weight: 5 },
+        { species: Species.BurmyTrash, weight: 20 },
       ],
       rare: [{ species: Species.Magneton, weight: 10 }],
       scarce: [
         { species: Species.Arbok, weight: 10 },
         { species: Species.Electrode, weight: 10 },
+        { species: Species.WormadamTrash, weight: 4 },
       ],
       elusive: [
         { species: Species.Castform, weight: 10 },
@@ -126,11 +132,13 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Voltorb, weight: 20 },
         { species: Species.Dunsparce, weight: 10 },
         { species: Species.Girafarig, weight: 5 },
+        { species: Species.BurmyTrash, weight: 20 },
       ],
       rare: [{ species: Species.Magneton, weight: 10 }],
       scarce: [
         { species: Species.Arbok, weight: 10 },
         { species: Species.Electrode, weight: 10 },
+        { species: Species.WormadamTrash, weight: 4 },
       ],
       elusive: [
         { species: Species.Castform, weight: 10 },

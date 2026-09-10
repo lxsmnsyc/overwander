@@ -16,6 +16,8 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Slowpoke, weight: 20 },
         { species: Species.Magikarp, weight: 30 },
         { species: Species.Wingull, weight: 25 },
+        { species: Species.Shellos, weight: 25 },
+        { species: Species.BurmySandy, weight: 20 },
       ],
       rare: [{ species: Species.Prinplup, weight: 2 }],
       scarce: [
@@ -24,6 +26,8 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Slowbro, weight: 10 },
         { species: Species.Pelipper, weight: 10 },
+        { species: Species.Gastrodon, weight: 10 },
+        { species: Species.WormadamSandy, weight: 4 },
       ],
       elusive: [
         { species: Species.Shuckle, weight: 5 },
@@ -42,6 +46,8 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Slowpoke, weight: 20 },
         { species: Species.Magikarp, weight: 30 },
         { species: Species.Wingull, weight: 25 },
+        { species: Species.Shellos, weight: 25 },
+        { species: Species.BurmySandy, weight: 20 },
       ],
       rare: [{ species: Species.Prinplup, weight: 2 }],
       scarce: [
@@ -50,6 +56,8 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Slowbro, weight: 10 },
         { species: Species.Pelipper, weight: 10 },
+        { species: Species.Gastrodon, weight: 10 },
+        { species: Species.WormadamSandy, weight: 4 },
       ],
       elusive: [
         { species: Species.Shuckle, weight: 5 },
@@ -67,6 +75,8 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Seel, weight: 20 },
         { species: Species.Staryu, weight: 20 },
         { species: Species.Magikarp, weight: 30 },
+        { species: Species.Shellos, weight: 25 },
+        { species: Species.BurmySandy, weight: 20 },
       ],
       rare: [],
       scarce: [
@@ -74,6 +84,8 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Cloyster, weight: 10 },
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Starmie, weight: 10 },
+        { species: Species.Gastrodon, weight: 10 },
+        { species: Species.WormadamSandy, weight: 4 },
       ],
       elusive: [
         { species: Species.Shuckle, weight: 5 },
@@ -90,6 +102,8 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Seel, weight: 20 },
         { species: Species.Staryu, weight: 20 },
         { species: Species.Magikarp, weight: 30 },
+        { species: Species.Shellos, weight: 25 },
+        { species: Species.BurmySandy, weight: 20 },
       ],
       rare: [],
       scarce: [
@@ -97,6 +111,8 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Cloyster, weight: 10 },
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Starmie, weight: 10 },
+        { species: Species.Gastrodon, weight: 10 },
+        { species: Species.WormadamSandy, weight: 4 },
       ],
       elusive: [
         { species: Species.Shuckle, weight: 5 },

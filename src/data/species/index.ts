@@ -52,6 +52,7 @@ export {
 } from './evolution';
 export type { EvolutionContext, Handover } from './evolution';
 export { REGIONS, REGION_NAMES, getSpeciesByRegion, getSpeciesRegion } from './regions';
+export { getShoreForm } from './gen-4/shellos';
 
 export function registerSpecies(): void {
   registerGen1Species();

@@ -24,6 +24,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Phanpy, weight: 20 },
         { species: Species.Dunsparce, weight: 10 },
         { species: Species.Nosepass, weight: 20 },
+        { species: Species.BurmyTrash, weight: 20 },
       ],
       rare: [
         { species: Species.Metang, weight: 1 },
@@ -39,6 +40,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Claydol, weight: 6 },
         { species: Species.Donphan, weight: 5 },
         { species: Species.Magcargo, weight: 5 },
+        { species: Species.WormadamTrash, weight: 4 },
       ],
       elusive: [
         { species: Species.Metagross, weight: 1 },
@@ -80,6 +82,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Phanpy, weight: 20 },
         { species: Species.Dunsparce, weight: 10 },
         { species: Species.Nosepass, weight: 20 },
+        { species: Species.BurmyTrash, weight: 20 },
       ],
       rare: [
         { species: Species.Metang, weight: 1 },
@@ -98,6 +101,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Arbok, weight: 10 },
         { species: Species.Donphan, weight: 10 },
         { species: Species.Magcargo, weight: 10 },
+        { species: Species.WormadamTrash, weight: 4 },
       ],
       elusive: [
         { species: Species.Metagross, weight: 1 },
@@ -135,6 +139,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Dunsparce, weight: 10 },
         { species: Species.Gligar, weight: 5 },
         { species: Species.Nosepass, weight: 20 },
+        { species: Species.BurmyTrash, weight: 20 },
       ],
       rare: [
         { species: Species.Metang, weight: 1 },
@@ -148,6 +153,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Ninjask, weight: 10 },
         { species: Species.Houndoom, weight: 10 },
         { species: Species.Magcargo, weight: 10 },
+        { species: Species.WormadamTrash, weight: 4 },
       ],
       elusive: [
         { species: Species.Metagross, weight: 1 },
@@ -183,6 +189,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Dunsparce, weight: 10 },
         { species: Species.Gligar, weight: 5 },
         { species: Species.Nosepass, weight: 20 },
+        { species: Species.BurmyTrash, weight: 20 },
       ],
       rare: [
         { species: Species.Metang, weight: 1 },
@@ -197,6 +204,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Ninjask, weight: 10 },
         { species: Species.Houndoom, weight: 5 },
         { species: Species.Magcargo, weight: 5 },
+        { species: Species.WormadamTrash, weight: 4 },
       ],
       elusive: [
         { species: Species.Metagross, weight: 1 },

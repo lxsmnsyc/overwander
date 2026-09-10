@@ -793,6 +793,8 @@ const enum Abilities {
   GleamEyes = 200209,
   Ramrod = 200210,
   Bulwark = 200211,
+  Patchwork = 200212,
+  TwoSeas = 200213,
 }
 
 export default Abilities;

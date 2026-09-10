@@ -35,6 +35,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Pikachu, weight: 5 },
         { species: Species.Aipom, weight: 5 },
         { species: Species.Togetic, weight: 5 },
+        { species: Species.Burmy, weight: 20 },
       ],
       rare: [
         { species: Species.Ivysaur, weight: 1 },
@@ -60,6 +61,8 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Linoone, weight: 10 },
         { species: Species.Forretress, weight: 5 },
         { species: Species.Granbull, weight: 5 },
+        { species: Species.Wormadam, weight: 4 },
+        { species: Species.Mothim, weight: 4 },
       ],
       elusive: [
         { species: Species.Venusaur, weight: 2 },
@@ -115,6 +118,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Pikachu, weight: 5 },
         { species: Species.Aipom, weight: 5 },
         { species: Species.Togetic, weight: 5 },
+        { species: Species.Burmy, weight: 20 },
       ],
       rare: [
         { species: Species.Ivysaur, weight: 1 },
@@ -140,6 +144,8 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Linoone, weight: 10 },
         { species: Species.Forretress, weight: 5 },
         { species: Species.Granbull, weight: 5 },
+        { species: Species.Wormadam, weight: 4 },
+        { species: Species.Mothim, weight: 4 },
       ],
       elusive: [
         { species: Species.Venusaur, weight: 2 },
@@ -190,6 +196,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Aipom, weight: 5 },
         { species: Species.Murkrow, weight: 5 },
         { species: Species.Kricketot, weight: 25 },
+        { species: Species.Burmy, weight: 20 },
       ],
       rare: [
         { species: Species.Nidorina, weight: 5 },
@@ -211,6 +218,8 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Ninjask, weight: 10 },
         { species: Species.Forretress, weight: 5 },
         { species: Species.Kricketune, weight: 10 },
+        { species: Species.Wormadam, weight: 4 },
+        { species: Species.Mothim, weight: 4 },
       ],
       elusive: [
         { species: Species.Nidoqueen, weight: 5 },
@@ -259,6 +268,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Murkrow, weight: 5 },
         { species: Species.Misdreavus, weight: 5 },
         { species: Species.Kricketot, weight: 25 },
+        { species: Species.Burmy, weight: 20 },
       ],
       rare: [
         { species: Species.Nidorina, weight: 5 },
@@ -283,6 +293,8 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Ninjask, weight: 10 },
         { species: Species.Forretress, weight: 5 },
         { species: Species.Kricketune, weight: 10 },
+        { species: Species.Wormadam, weight: 4 },
+        { species: Species.Mothim, weight: 4 },
       ],
       elusive: [
         { species: Species.Nidoqueen, weight: 5 },

@@ -28,6 +28,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Stantler, weight: 5 },
         { species: Species.Togetic, weight: 5 },
         { species: Species.Bidoof, weight: 25 },
+        { species: Species.Burmy, weight: 20 },
       ],
       rare: [
         { species: Species.Ivysaur, weight: 1 },
@@ -46,6 +47,8 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Scizor, weight: 5 },
         { species: Species.Forretress, weight: 5 },
         { species: Species.Bibarel, weight: 10 },
+        { species: Species.Wormadam, weight: 4 },
+        { species: Species.Mothim, weight: 4 },
       ],
       elusive: [
         { species: Species.Venusaur, weight: 2 },
@@ -89,6 +92,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Stantler, weight: 5 },
         { species: Species.Togetic, weight: 5 },
         { species: Species.Bidoof, weight: 25 },
+        { species: Species.Burmy, weight: 20 },
       ],
       rare: [
         { species: Species.Ivysaur, weight: 1 },
@@ -107,6 +111,8 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Scizor, weight: 5 },
         { species: Species.Forretress, weight: 5 },
         { species: Species.Bibarel, weight: 10 },
+        { species: Species.Wormadam, weight: 4 },
+        { species: Species.Mothim, weight: 4 },
       ],
       elusive: [
         { species: Species.Venusaur, weight: 2 },
@@ -147,6 +153,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Stantler, weight: 5 },
         { species: Species.Kricketot, weight: 25 },
         { species: Species.Bidoof, weight: 25 },
+        { species: Species.Burmy, weight: 20 },
       ],
       rare: [
         { species: Species.Gloom, weight: 5 },
@@ -161,6 +168,8 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Forretress, weight: 5 },
         { species: Species.Kricketune, weight: 10 },
         { species: Species.Bibarel, weight: 10 },
+        { species: Species.Wormadam, weight: 4 },
+        { species: Species.Mothim, weight: 4 },
       ],
       elusive: [
         { species: Species.Vileplume, weight: 5 },
@@ -194,6 +203,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Stantler, weight: 5 },
         { species: Species.Kricketot, weight: 25 },
         { species: Species.Bidoof, weight: 25 },
+        { species: Species.Burmy, weight: 20 },
       ],
       rare: [
         { species: Species.Gloom, weight: 5 },
@@ -209,6 +219,8 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Forretress, weight: 5 },
         { species: Species.Kricketune, weight: 10 },
         { species: Species.Bibarel, weight: 10 },
+        { species: Species.Wormadam, weight: 4 },
+        { species: Species.Mothim, weight: 4 },
       ],
       elusive: [
         { species: Species.Vileplume, weight: 5 },

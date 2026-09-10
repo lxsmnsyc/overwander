@@ -532,9 +532,24 @@ export const enum Species {
   Rampardos = 409,
   Shieldon = 410,
   Bastiodon = 411,
+  Burmy = 412,
+  Wormadam = 413,
+  Mothim = 414,
+  Shellos = 422,
+  Gastrodon = 423,
   DeoxysAttack = 1038601,
   DeoxysDefense = 1038602,
   DeoxysSpeed = 1038603,
+
+  /** The three cloaks, which are what a Burmy was met wearing */
+  BurmySandy = 1041201,
+  BurmyTrash = 1041202,
+  WormadamSandy = 1041301,
+  WormadamTrash = 1041302,
+
+  /** The far shore's shell, met east of the meridian */
+  ShellosEast = 1042201,
+  GastrodonEast = 1042301,
 }
 
 /**
@@ -634,6 +649,21 @@ const UNOWN_LETTERS = new Map<Species, string>(
 export function unownLetter(species: Species): string | null {
   return UNOWN_LETTERS.get(species) ?? null;
 }
+
+/**
+ * A Burmy's three cloaks, the plant one first: unlike a Castform's
+ * skies, these are met rather than worn, and the one it was met in is
+ * the one it keeps
+ */
+export const BURMY_FORMS = [Species.Burmy, Species.BurmySandy, Species.BurmyTrash];
+
+/** What each cloak grows into, in the same order */
+export const WORMADAM_FORMS = [Species.Wormadam, Species.WormadamSandy, Species.WormadamTrash];
+
+/** The two shells, the west one first, split by the world's own meridian */
+export const SHELLOS_FORMS = [Species.Shellos, Species.ShellosEast];
+
+export const GASTRODON_FORMS = [Species.Gastrodon, Species.GastrodonEast];
 
 /**
  * Castform's four shapes, its plain one first. Unlike an unown's,

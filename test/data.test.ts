@@ -74,12 +74,16 @@ import {
   unpackStatuses,
 } from '../src/data/ids/status';
 import {
+  BURMY_FORMS,
   CASTFORM_FORMS,
   DEOXYS_FORMS,
+  GASTRODON_FORMS,
   EvolutionMethod,
   Genders,
   Species,
+  SHELLOS_FORMS,
   UNOWN_FORMS,
+  WORMADAM_FORMS,
   getBaseFormSpecies,
   speciesDexNumber,
   speciesFormIndex,
@@ -282,6 +286,7 @@ import {
   getRegisteredSpecies,
   getSpeciesAbilities,
   getSpeciesAbilityPools,
+  getShoreForm,
   getSpeciesByBiome,
   getSpeciesData,
   getSpeciesForms,
@@ -719,14 +724,20 @@ describe('species measurements', () => {
 describe('species forms', () => {
   it('treats every registered species but the unowns and the worn shapes as a default form', () => {
     // The flag is absent almost everywhere and answers true rather
-    // than being written out three hundred times; the twenty-seven
-    // unowns past A, the three skies a Castform wears and the three
-    // shapes a Deoxys rearranges into are the only variants so far
+    // than being written out three hundred times. The variants are
+    // the twenty-seven unowns past A, the three skies a Castform
+    // wears, the three shapes a Deoxys rearranges into, and the ones
+    // that are met rather than worn: a Burmy's other two cloaks with
+    // the Wormadam they grow into, and the far shore's shell
     const registered = getRegisteredSpecies();
     const variants = new Set<Species>([
       ...UNOWN_FORMS.slice(1),
       ...CASTFORM_FORMS.slice(1),
       ...DEOXYS_FORMS.slice(1),
+      ...BURMY_FORMS.slice(1),
+      ...WORMADAM_FORMS.slice(1),
+      ...SHELLOS_FORMS.slice(1),
+      ...GASTRODON_FORMS.slice(1),
     ]);
 
     expect(registered.length).toBeGreaterThan(0);
@@ -1026,10 +1037,33 @@ describe('where a species lives', () => {
     }
   });
 
+  it('hands over the shell the side of the world asks for', () => {
+    // West of the meridian is the pink one, east of it the blue, and
+    // the rule is the chunk's own x rather than anything about the
+    // shore it is standing on
+    expect(getShoreForm(Species.Shellos, -1)).toBe(Species.Shellos);
+    expect(getShoreForm(Species.Shellos, 0)).toBe(Species.ShellosEast);
+    expect(getShoreForm(Species.Shellos, 12)).toBe(Species.ShellosEast);
+    expect(getShoreForm(Species.Gastrodon, -400)).toBe(Species.Gastrodon);
+    expect(getShoreForm(Species.Gastrodon, 400)).toBe(Species.GastrodonEast);
+
+    // Everything else is handed back as it came
+    expect(getShoreForm(Species.Bulbasaur, 400)).toBe(Species.Bulbasaur);
+    expect(getShoreForm(Species.ShellosEast, -400)).toBe(Species.ShellosEast);
+  });
+
   it('stages every species that says it lives somewhere', () => {
     // Porygon is made rather than met: it stands beside a portal and
-    // in no pool, and what it evolves into is met the same way
-    const unstaged = new Set<Species>([Species.Porygon, Species.Porygon2]);
+    // in no pool, and what it evolves into is met the same way. The
+    // far shore's shell is staged by the pool its west counterpart
+    // sits in, and swapped for as the world hands it over, so no pool
+    // names it either
+    const unstaged = new Set<Species>([
+      Species.Porygon,
+      Species.Porygon2,
+      Species.ShellosEast,
+      Species.GastrodonEast,
+    ]);
     const staged = new Set<Species>();
 
     for (const biome of Object.keys(BIOME_NAMES).map(Number) as Biome[]) {

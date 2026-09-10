@@ -4,7 +4,9 @@ import { Types } from '../../data/constants/types';
 import Abilities from '../../data/ids/abilities';
 import { Statuses } from '../../data/ids/status';
 import type Battle from '../core';
+import type Unit from '../unit';
 import { BattleEvents } from '../events';
+import { MergedLifecycle } from '../lifecycle';
 import { hasAnyStatus } from '../utils';
 import {
   createAbility,
@@ -25,11 +27,31 @@ const POISONS_HELD = new Set([Statuses.Poisoned, Statuses.BadlyPoisoned]);
 /** What standing beside a friend is worth. */
 const FRIEND_GUARD_SCALE = 0.75;
 
+/** What a mind is taken away from its owner with. */
+const AROMA_VEIL_STATUSES = new Set([
+  Statuses.Encored,
+  Statuses.HealBlocked,
+  Statuses.Infatuated,
+  Statuses.Taunted,
+  Statuses.Tormented,
+]);
+
 /** The one type the bronze turns away. */
 const HEATPROOF_TYPES = new Set([Types.Fire]);
 
 /** And how much of a burn it feels, fire being fire. */
 const HEATPROOF_BURN_SCALE = 0.5;
+
+/** Whoever on the unit's own team is holding the veil over it. */
+function isUnderAromaVeil(battle: Battle, unit: Unit): Unit | null {
+  for (const veil of getAbilityHolders(battle, Abilities.AromaVeil)) {
+    if (veil.alive && veil.team === unit.team && veil.hasAbility(Abilities.AromaVeil)) {
+      return veil;
+    }
+  }
+
+  return null;
+}
 
 /** What Sinnoh brought to the pools. */
 const setupAbilities = [
@@ -91,6 +113,37 @@ const setupAbilities = [
         }
       }
     }),
+  ),
+
+  /**
+   * Aroma Veil covers the holder's own team, itself included, so a
+   * lone holder is still under it
+   * https://bulbapedia.bulbagarden.net/wiki/Aroma_Veil_(Ability)
+   */
+  createAbility(
+    Abilities.AromaVeil,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.CheckUnitStatusImmunity, EventPriority.Post, (event) => {
+          if (
+            !event.immune &&
+            AROMA_VEIL_STATUSES.has(event.status) &&
+            isUnderAromaVeil(battle, event.source) != null
+          ) {
+            event.immune = true;
+          }
+        }),
+        // The cue only fires when a real application was refused
+        battle.on(BattleEvents.UnitAddStatusFailed, EventPriority.Post, (event) => {
+          const veil = AROMA_VEIL_STATUSES.has(event.status)
+            ? isUnderAromaVeil(battle, event.source)
+            : null;
+
+          if (veil != null) {
+            veil.triggerAbility(Abilities.AromaVeil);
+          }
+        }),
+      ]),
   ),
 
   // https://bulbapedia.bulbagarden.net/wiki/Heatproof_(Ability)

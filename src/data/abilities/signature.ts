@@ -1407,4 +1407,19 @@ export default function registerSignatureAbilities(): void {
     name: 'Void Weight',
     description: 'Every enemy reads its Attack stage 1 lower while it stands.',
   });
+
+  /**
+   * The moon duo, who disagree about how long a night runs. One cuts
+   * what settles on its own side in half, the other draws out what it
+   * puts on the far side, and meeting each other is what answers both
+   */
+  registerSignature(Families.Cresselia, Abilities.WaningLight, {
+    name: 'Waning Light',
+    description: 'A status on its teammates runs 0.5x as long.',
+  });
+
+  registerSignature(Families.Darkrai, Abilities.WaxingDark, {
+    name: 'Waxing Dark',
+    description: 'A status it puts on an enemy runs 1.5x as long.',
+  });
 }

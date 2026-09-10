@@ -816,6 +816,8 @@ const enum Abilities {
   TimeDrag = 200232,
   SpaceDrift = 200233,
   VoidWeight = 200234,
+  WaningLight = 200235,
+  WaxingDark = 200236,
 }
 
 export default Abilities;

@@ -26,6 +26,11 @@ export default function registerGen4Abilities(): void {
     name: 'Friend Guard',
     description: 'Its teammates take 0.75x from everything while it stands.',
   });
+  // Cresselia
+  registerAbility(Abilities.AromaVeil, {
+    name: 'Aroma Veil',
+    description: 'Its teammates cannot be taunted, tormented, encored, charmed or heal blocked.',
+  });
   // Bronzor
   registerAbility(Abilities.Heatproof, {
     name: 'Heatproof',

@@ -287,6 +287,7 @@ export const ITEM_POOL: ItemRarityGroups = {
     { item: Items.GSBall, weight: 6 },
     { item: Items.AuroraTicket, weight: 6 },
     { item: Items.WishTag, weight: 6 },
+    { item: Items.MemberCard, weight: 6 },
     // Six stats made perfect at once. Nothing else undoes a bad roll,
     // so it belongs with the things gold cannot buy
     { item: Items.GoldenBottleCap, weight: 8 },

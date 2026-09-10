@@ -615,6 +615,44 @@ export function createFieldDragAbility(
 }
 
 /**
+ * What the moon duo share: how long a night runs. One halves what
+ * settles on its own team, itself included, and the other stretches
+ * what it put on the far side, so a status the dark drew out comes
+ * back to less than it started at when the light is standing opposite.
+ *
+ * Asked at the duration check rather than written anywhere, and it
+ * answers once, so two holders never compound
+ */
+export function createNightfallAbility(
+  ability: Abilities,
+  scale: number,
+  own: boolean,
+): ((battle: Battle) => void) & { ability: Abilities } {
+  return createAbility(ability, (battle) =>
+    battle.on(BattleEvents.CheckUnitStatusDuration, EventPriority.Post, (event) => {
+      for (const holder of getAbilityHolders(battle, ability)) {
+        if (!holder.alive || !holder.hasAbility(ability)) {
+          continue;
+        }
+
+        // The light covers its own party; the dark only stretches what
+        // it inflicted itself
+        const covered = own
+          ? holder.team === event.source.team
+          : holder.team.alliance !== event.source.team.alliance &&
+            event.cause.type !== EffectType.None &&
+            event.cause.unit === holder;
+
+        if (covered) {
+          event.duration *= scale;
+          return;
+        }
+      }
+    }),
+  );
+}
+
+/**
  * What the lake trio share: each of them hands its own side the thing
  * it was made to hold as it arrives, one stage of it, in the stat
  * that reads as knowledge, feeling or resolve.

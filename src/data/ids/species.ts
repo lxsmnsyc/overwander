@@ -603,6 +603,8 @@ export const enum Species {
   Dialga = 483,
   Palkia = 484,
   Giratina = 487,
+  Cresselia = 488,
+  Darkrai = 491,
   DeoxysAttack = 1038601,
   DeoxysDefense = 1038602,
   DeoxysSpeed = 1038603,

@@ -145,3 +145,29 @@ describe('Merciless', () => {
     expect(resolveCritical(battle, parent)).toBe(false);
   });
 });
+
+describe('Aroma Veil', () => {
+  it('keeps its whole team out of everything that takes a mind away', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const veil = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    veil.addAbility(Abilities.AromaVeil);
+
+    const cause = { type: EffectType.Move, unit: enemy, move: Moves.Taunt } as const;
+
+    ally.addStatus(Statuses.Taunted, cause);
+    veil.addStatus(Statuses.Tormented, cause);
+    enemy.addStatus(Statuses.Taunted, { type: EffectType.None });
+
+    // The holder is on its own team, so it is under its own veil
+    expect(ally.status[Statuses.Taunted]).toBeUndefined();
+    expect(veil.status[Statuses.Tormented]).toBeUndefined();
+    expect(enemy.status[Statuses.Taunted]).toBeDefined();
+
+    // A burn is not a thing anybody was talked into
+    ally.addStatus(Statuses.Burned, cause);
+
+    expect(ally.status[Statuses.Burned]).toBeDefined();
+  });
+});

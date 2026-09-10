@@ -848,6 +848,9 @@ export const enum Items {
   AdamantOrb = 398,
   LustrousOrb = 399,
   GriseousOrb = 400,
+
+  /** The pass that gets somebody into the inn a Darkrai is reached from */
+  MemberCard = 401,
 }
 
 /**

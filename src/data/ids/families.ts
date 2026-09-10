@@ -237,6 +237,8 @@ const enum Families {
   Dialga = 232,
   Palkia = 233,
   Giratina = 234,
+  Cresselia = 235,
+  Darkrai = 236,
 }
 
 export default Families;

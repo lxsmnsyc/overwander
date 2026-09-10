@@ -92,6 +92,13 @@ const enum Lairs {
    * the only door to the world behind this one
    */
   TurnbackCave = 22,
+  /**
+   * The two islands off the same port, one for each half of the moon.
+   * Newmoon Island is a mythical's, so no biome lists it: the pass is
+   * the only way onto that boat
+   */
+  FullmoonIsland = 23,
+  NewmoonIsland = 24,
 }
 
 export const LAIR_NAMES: Record<Lairs, string> = {
@@ -118,6 +125,8 @@ export const LAIR_NAMES: Record<Lairs, string> = {
   [Lairs.LakeValor]: 'Lake Valor',
   [Lairs.SpearPillar]: 'Spear Pillar',
   [Lairs.TurnbackCave]: 'Turnback Cave',
+  [Lairs.FullmoonIsland]: 'Fullmoon Island',
+  [Lairs.NewmoonIsland]: 'Newmoon Island',
 };
 
 /**
@@ -150,6 +159,8 @@ export const LAIR_SPECIES: Record<Lairs, Species[]> = {
   [Lairs.LakeValor]: [Species.Azelf],
   [Lairs.SpearPillar]: [Species.Dialga, Species.Palkia],
   [Lairs.TurnbackCave]: [Species.Giratina],
+  [Lairs.FullmoonIsland]: [Species.Cresselia],
+  [Lairs.NewmoonIsland]: [Species.Darkrai],
 };
 
 /**
@@ -179,6 +190,8 @@ export const EVERY_LAIR: Lairs[] = [
   Lairs.LakeValor,
   Lairs.SpearPillar,
   Lairs.TurnbackCave,
+  Lairs.FullmoonIsland,
+  Lairs.NewmoonIsland,
 ];
 
 /**
@@ -215,7 +228,7 @@ const STAGED_LAIRS = new Set<Lairs>(EVERY_STAGED_LAIR);
  */
 const BIOME_LAIRS: { [key in Biome]?: Lairs[] } = {
   [Biome.DeepOcean]: [Lairs.SeafoamIslands, Lairs.WhirlIslands, Lairs.MarineCave],
-  [Biome.Ocean]: [Lairs.WhirlIslands, Lairs.SouthernIsland],
+  [Biome.Ocean]: [Lairs.WhirlIslands, Lairs.SouthernIsland, Lairs.FullmoonIsland],
   [Biome.PolarOcean]: [Lairs.SeafoamIslands, Lairs.IslandCave],
   [Biome.Glacier]: [Lairs.SeafoamIslands, Lairs.IslandCave],
   [Biome.Grassland]: [Lairs.PowerPlant, Lairs.BurnedTower, Lairs.LakeValor],

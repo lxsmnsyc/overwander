@@ -24,6 +24,7 @@ import registerMimeJrSpecies from './mime-jr';
 import registerMunchlaxSpecies from './munchlax';
 import registerMantykeSpecies from './mantyke';
 import registerMismagiusSpecies from './mismagius';
+import registerMoonDuoSpecies from './moon-duo';
 import registerGibleSpecies from './gible';
 import registerGlaceonSpecies from './glaceon';
 import registerGliscorSpecies from './gliscor';
@@ -115,4 +116,5 @@ export default function registerGen4Species(): void {
   registerPorygonZSpecies();
   registerLakeTrioSpecies();
   registerCreationTrioSpecies();
+  registerMoonDuoSpecies();
 }

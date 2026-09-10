@@ -6798,3 +6798,66 @@ describe('the frog, the fish and the tree', () => {
     );
   });
 });
+
+describe('the moon duo', () => {
+  it('Waning Light halves a night on its own team and leaves the far side alone', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    const cause = { type: EffectType.Move, unit: enemy, move: Moves.Hypnosis } as const;
+
+    holder.addAbility(Abilities.WaningLight);
+
+    // Itself included: it is asleep under its own crescent too
+    expect(mate.checkStatusDuration(Statuses.Sleeping, 4000, cause)).toBe(2000);
+    expect(holder.checkStatusDuration(Statuses.Sleeping, 4000, cause)).toBe(2000);
+    expect(enemy.checkStatusDuration(Statuses.Sleeping, 4000, cause)).toBe(4000);
+  });
+
+  it('Waxing Dark stretches what it laid down itself and nothing else', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    holder.addAbility(Abilities.WaxingDark);
+
+    const its = { type: EffectType.Move, unit: holder, move: Moves.Hypnosis } as const;
+    const other = { type: EffectType.Move, unit: mate, move: Moves.Hypnosis } as const;
+
+    expect(enemy.checkStatusDuration(Statuses.Sleeping, 4000, its)).toBe(6000);
+    // A teammate's sleep is a teammate's, and its own side is never
+    // what it is drawing out
+    expect(enemy.checkStatusDuration(Statuses.Sleeping, 4000, other)).toBe(4000);
+    expect(mate.checkStatusDuration(Statuses.Sleeping, 4000, its)).toBe(4000);
+  });
+
+  it('cuts back below what it started at when the two meet', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const dark = createUnit(battle, teamA);
+    const light = createUnit(battle, teamB);
+    const mate = createUnit(battle, teamB);
+
+    dark.addAbility(Abilities.WaxingDark);
+    light.addAbility(Abilities.WaningLight);
+
+    const cause = { type: EffectType.Move, unit: dark, move: Moves.Hypnosis } as const;
+
+    // 1.5x drawn out and 0.5x cut back, in whichever order they answer
+    expect(mate.checkStatusDuration(Statuses.Sleeping, 4000, cause)).toBe(3000);
+  });
+
+  it('never compounds, however many are standing', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const first = createUnit(battle, teamA);
+    const second = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    const cause = { type: EffectType.Move, unit: enemy, move: Moves.Hypnosis } as const;
+
+    first.addAbility(Abilities.WaningLight);
+    second.addAbility(Abilities.WaningLight);
+
+    expect(first.checkStatusDuration(Statuses.Sleeping, 4000, cause)).toBe(2000);
+  });
+});

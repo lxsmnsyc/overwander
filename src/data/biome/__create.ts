@@ -424,6 +424,7 @@ const LEGENDARY_SPECIES = new Set<Species>([
   Species.Dialga,
   Species.Palkia,
   Species.Giratina,
+  Species.Cresselia,
 ]);
 
 /**
@@ -436,6 +437,7 @@ const MYTHICAL_SPECIES = new Set<Species>([
   Species.Celebi,
   Species.Jirachi,
   Species.Deoxys,
+  Species.Darkrai,
 ]);
 
 /**

@@ -19,9 +19,9 @@ import QuadBatch from '../../canvas/gl/quad-batch';
 import type { QuadPoint } from '../../canvas/gl/quad-batch';
 import paintSky, { type Lamp, type SkyCamera, batchSky, batchWash } from '../../canvas/sky';
 import {
-  PICTURE_SPAN,
   TURN_DEAD_ZONE,
   angleOf,
+  boardView,
   fitPicture,
   projectAir,
   radiusOf,
@@ -175,7 +175,7 @@ function marksOn(
   placed: ReturnType<typeof fitPicture>,
   yaw: number,
 ): { x: number; y: number; wide: number; reach: number }[] {
-  const cell = placed.width / PICTURE_SPAN / CELLS;
+  const cell = placed.width / boardView().span / CELLS;
 
   return MARKS.map((mark) => {
     const point = projectAir({ u: mark.x, v: mark.y }, 0, yaw);

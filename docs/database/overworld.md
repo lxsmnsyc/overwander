@@ -100,6 +100,11 @@ gender, ability, nature, moves, and the rest) derived once and reused afterwards
 Keyed by `(spawn_id, player)`, with `encounter_moves`, `encounter_items` and
 `encounter_abilities` hanging off that pair.
 
+`fed` is the berry the pokemon was given, and null for the ones nobody fed. A
+Pinap pays its extra candy at the catch, which is a later call than the one that
+fed it, and the catch is recorded from the staged row, so the row is where the
+berry has to live.
+
 Its `shiny` and `shadow` columns and its packed `ivs` are the same shapes the
 catch row stores, see [Packed fields](catches.md#packed-fields), so recording a
 catch copies them across rather than converting them. Only the named player may
@@ -216,7 +221,7 @@ eaten. Its slice of the roll falls through to the rare band below, the way any
 empty band does.
 
 A patch is a bush rather than a buried box, so it bears **one kind** and
-`MIN_BERRY_PICK`–`MAX_BERRY_PICK` (3–5) pieces of it: the rarity is the
+`MIN_BERRY_PICK` to `MAX_BERRY_PICK` (3 to 5) pieces of it: the rarity is the
 interesting draw and the count is only how good a season it had. That is the
 difference from a cache, which rolls several kinds but rarely more than one or two
 of each.
@@ -336,11 +341,14 @@ re-derives the chunk, the zone and the window and checks the NPC standing there
 **Each of them serves a player once per window**, the vendor and the fossil
 scientist aside, since what those two hand over is paced by a purse and by a bag
 of fossils rather than by the clock. A row in `npc_claims`, whose marker is
-`{npc}{cell}` stamped with the NPC window, records that this player has been
-seen, and a second
-ask before the passer-by changes is turned away whatever they can pay. The marker
-is per cell, so walking to another wandering cell finds somebody who has not seen
-you yet. That walk is what a second egg costs.
+`{npc}{cell}` stamped with the NPC window, records that this player has been seen,
+and a second ask before the passer-by changes is turned away whatever they can
+pay. Its `payload` holds whatever the visit is worth remembering, such as which
+pokemon the nurse tended. It is write-once audit data and nothing queries it by
+field.
+
+The marker is per cell, so walking to another wandering cell finds somebody who
+has not seen you yet. That walk is what a second egg costs.
 
 The marker is taken as late as each call can manage, once the visit is known to be
 one that will land: a pair that cannot breed, an egg already ready to hatch, or a

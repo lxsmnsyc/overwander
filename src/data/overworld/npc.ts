@@ -136,11 +136,11 @@ export const NPCS: Npc[] = [
 /**
  * The charsets a role may turn up wearing: the community packs' takes
  * on the same figure, FRLG and LGPE where both drew one. Which of a
- * role's styles is standing there is the window's roll — see
- * `ChunkSnapshot.getWandererCoats`. A role listed nowhere would keep
- * its numbered Gen 4 folder; every role is covered today
+ * role's styles is standing there is the window's roll, see
+ * `ChunkSnapshot.getWandererCoats`. Every role names its own, so a
+ * new one cannot be added without being dressed
  */
-const NPC_CHARSETS: Partial<Record<Npc, string[]>> = {
+const NPC_CHARSETS: Record<Npc, string[]> = {
   [Npc.Breeder]: ['characters/frlg/camper-f', 'characters/lgpe/picnicker'],
   [Npc.DaycareLady]: ['characters/frlg/woman'],
   [Npc.NurseJoy]: ['characters/extra/nurse'],
@@ -230,13 +230,11 @@ export const EXECUTIVE_QUOTES: Record<Executive, string> = {
  * Every charset a wanderer of this role may be drawn with
  */
 export function npcSheets(npc: Npc): string[] {
-  return NPC_CHARSETS[npc] ?? [`landmarks-npc-${npc}`];
+  return NPC_CHARSETS[npc];
 }
 
 /**
- * The role's first style, for anywhere that has no window to roll
- * one: a sheet that has not been drawn yet is a landmark drawn the
- * way it always was, which is the letter in a circle
+ * The role's first style, for anywhere that has no window to roll one
  */
 export function npcSheet(npc: Npc): string {
   return npcSheets(npc)[0];

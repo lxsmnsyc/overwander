@@ -19,16 +19,16 @@ anything else in it: catching Caterpies levels a Butterfree.
 What a catch pays depends on how hard it was to meet, since a candy is a level
 and a level of a legendary is worth more work than a level of a Rattata:
 
-| What was caught                         | Candy |
-| --------------------------------------- | ----- |
-| The first stage of a three-stage line    | 1     |
-| The first stage of a two-stage line      | 2     |
-| The middle of a three-stage line         | 3     |
-| The end of a two-stage line              | 4     |
-| The end of a three-stage line, or a one-off | 5  |
-| A baby or an unown                       | 6     |
-| A legendary                              | 7     |
-| A mythical                               | 8     |
+| What was caught                             | Candy |
+| ------------------------------------------- | ----- |
+| The first stage of a three-stage line       | 1     |
+| The first stage of a two-stage line         | 2     |
+| The middle of a three-stage line            | 3     |
+| The end of a two-stage line                 | 4     |
+| The end of a three-stage line, or a one-off | 5     |
+| A baby or an unown                          | 6     |
+| A legendary                                 | 7     |
+| A mythical                                  | 8     |
 
 Two held items pay extra candy, each about half the time. An **Exp. Share** pays
 the buddy's family, so everything caught feeds the one pokemon being raised. A
@@ -69,16 +69,16 @@ them.
 Only evolutions the game can verify are offered. The rest are never offered
 rather than being waved through.
 
-| Method                | Supported | Notes                                             |
-| --------------------- | --------- | -------------------------------------------------- |
-| **By level**          | Yes       | Checked against the pokemon's level               |
-| **Using an item**     | Yes       | The stone is consumed                             |
-| **Holding an item**   | Yes       | Held at the moment of evolving                    |
-| **By trade**          | Yes       | A pokemon that changed hands as what it is        |
-| **By friendship**     | Yes       | The three Kanto babies ask for 220                |
-| **By time of day**    | Yes       | An Espeon by day, an Umbreon by night             |
-| **By one stat against another** | Yes | A Tyrogue at level 20, its Attack against its Defense |
-| Weather, party, place | No        | Nothing stores the answer, so it is never offered |
+| Method                          | Supported | Notes                                                 |
+| ------------------------------- | --------- | ----------------------------------------------------- |
+| **By level**                    | Yes       | Checked against the pokemon's level                   |
+| **Using an item**               | Yes       | The stone is consumed                                 |
+| **Holding an item**             | Yes       | Held at the moment of evolving                        |
+| **By trade**                    | Yes       | A pokemon that changed hands as what it is            |
+| **By friendship**               | Yes       | The three Kanto babies ask for 220                    |
+| **By time of day**              | Yes       | An Espeon by day, an Umbreon by night                 |
+| **By one stat against another** | Yes       | A Tyrogue at level 20, its Attack against its Defense |
+| Weather, party, place           | No        | Nothing stores the answer, so it is never offered     |
 
 A **trade evolution** opens the moment a pokemon changes hands, and what it opens
 is the evolution of whatever the pokemon was at that moment. A Machoke that was
@@ -148,13 +148,13 @@ Every pokemon carries a friendship score from 0 to 255. Gains **shrink as the
 score grows**: the first hundred points come quickly and the last fifty are a
 long walk.
 
-| Event                     | 0–99 | 100–199 | 200–255 |
-| ------------------------- | ---- | ------- | ------- |
-| A level taken             | +5   | +3      | +2      |
-| 256 steps walked as buddy | +2   | +2      | +1      |
-| A bitter berry eaten      | +10  | +5      | +2      |
-| Herbal medicine, per dose | −5   | −5      | −10     |
-| Knocked out               | −1   | −1      | −1      |
+| Event                     | 0 to 99 | 100 to 199 | 200 to 255 |
+| ------------------------- | ------- | ---------- | ---------- |
+| A level taken             | +5      | +3         | +2         |
+| 256 steps walked as buddy | +2      | +2         | +1         |
+| A bitter berry eaten      | +10     | +5         | +2         |
+| Herbal medicine, per dose | −5      | −5         | −10        |
+| Knocked out               | −1      | −1         | −1         |
 
 A caught pokemon starts at 70; a hatched one starts at 120, because it has
 already been carried.
@@ -253,14 +253,14 @@ amount to a free Move Reminder and the Heart Scale would be worth nothing.
 - **A Heal Ball thrown at something else**, which restores the buddy for free.
   See [Catching](catching.md#balls).
 
-| Medicine                        | What it does                                            |
-| ------------------------------- | -------------------------------------------------------- |
-| **Potion, Super, Hyper, Max**   | 20 points, 60, 120, and all of it                        |
-| **A cure, Full Heal**           | One status, or every one at once                         |
-| **Full Restore**                | Health and every status together                         |
-| **Revive, Max Revive**          | A fainted pokemon, on half its health or all of it       |
-| **Energy Powder, Energy Root**  | 50 points and 200, for friendship                        |
-| **Heal Powder, Revival Herb**   | Every status, or a faint on full health, for friendship  |
+| Medicine                       | What it does                                            |
+| ------------------------------ | ------------------------------------------------------- |
+| **Potion, Super, Hyper, Max**  | 20 points, 60, 120, and all of it                       |
+| **A cure, Full Heal**          | One status, or every one at once                        |
+| **Full Restore**               | Health and every status together                        |
+| **Revive, Max Revive**         | A fainted pokemon, on half its health or all of it      |
+| **Energy Powder, Energy Root** | 50 points and 200, for friendship                       |
+| **Heal Powder, Revival Herb**  | Every status, or a faint on full health, for friendship |
 
 Two rules apply throughout. **A revive is the only thing that reaches a fainted
 pokemon**, and the only thing that does nothing for one still standing. And

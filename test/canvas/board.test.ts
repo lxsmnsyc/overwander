@@ -1,11 +1,11 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 import {
-  ASPECT,
   type BoardCell,
   PITCH,
   SPRITE_FACINGS,
   boardCellAtFraction,
   boardCells,
+  boardView,
   borderExit,
   cellAtFraction,
   chunkCellOf,
@@ -14,12 +14,15 @@ import {
   fitPicture,
   isBorderCell,
   paintOrder,
+  projectAir,
   projectBoardCell,
   projectBoardCellQuad,
   projectCell,
   projectCellQuad,
   projectGround,
+  setBoardScreen,
   unprojectGround,
+  viewFor,
   yawTurns,
 } from '../../src/canvas/board';
 import { CHUNK_CELLS } from '../../src/overworld/chunk';
@@ -34,7 +37,7 @@ describe('the board projection', () => {
 
     // The picture is wider than it is deep, because the depth is what
     // the tilt foreshortens
-    expect(ASPECT).toBeLessThan(1);
+    expect(boardView().aspect).toBeLessThan(1);
 
     const far = projectGround({ u: 1, v: 0 }).x - projectGround({ u: 0, v: 0 }).x;
     const near = projectGround({ u: 1, v: 1 }).x - projectGround({ u: 0, v: 1 }).x;
@@ -109,6 +112,83 @@ describe('the board projection', () => {
   });
 });
 
+describe('the flat board a portrait screen is drawn with', () => {
+  /**
+   * A phone held upright, and a window with room across it. The
+   * projection answers for whichever screen was last named, so every
+   * case says which it means and the laid-back board is put back
+   * afterwards
+   */
+  const PHONE: [number, number] = [390, 844];
+  const DESKTOP: [number, number] = [1280, 720];
+
+  afterEach(() => {
+    setBoardScreen(...DESKTOP);
+  });
+
+  it('is the flat one, and a wide screen is not', () => {
+    setBoardScreen(...PHONE);
+    expect(boardView().mode).toBe('2d');
+
+    setBoardScreen(...DESKTOP);
+    expect(boardView().mode).toBe('3d');
+  });
+
+  it('has no perspective in it, so a cell is a cell wherever it sits', () => {
+    setBoardScreen(...PHONE);
+
+    // Nothing recedes: the far row is drawn at the size of the near
+    // one, which is what makes every cell the same square to press
+    expect(projectCell(0).scale).toBeCloseTo(projectCell(LAST).scale, 10);
+
+    const across = (row: number): number =>
+      projectGround({ u: 1, v: row }).x - projectGround({ u: 0, v: row }).x;
+    const deep = (column: number): number =>
+      projectGround({ u: column, v: 1 }).y - projectGround({ u: column, v: 0 }).y;
+
+    expect(across(0)).toBeCloseTo(across(1), 10);
+    // ...and as deep as it is wide, since the ground is not laid back
+    expect(deep(0.5)).toBeCloseTo(across(0.5), 10);
+    // The picture is square with it, where the laid-back one is wide
+    // and shallow
+    expect(boardView().aspect).toBeCloseTo(1, 2);
+    expect(boardView().aspect).toBeGreaterThan(viewFor(...DESKTOP).aspect);
+  });
+
+  it('leaves nothing standing above the ground', () => {
+    setBoardScreen(...PHONE);
+
+    // Seen from straight up, a drop ten cells high is over the spot it
+    // will land on. It is why the flat board draws its weather against
+    // the glass rather than standing it in the world
+    expect(boardView().rise).toBeCloseTo(0, 10);
+    expect(projectAir({ u: 0.5, v: 0.5 }, 1).y).toBeCloseTo(
+      projectGround({ u: 0.5, v: 0.5 }).y,
+      10,
+    );
+  });
+
+  it('still reads back exactly, and still paints from the back forwards', () => {
+    setBoardScreen(...PHONE);
+
+    for (let across = 0; across <= 10; across++) {
+      for (let back = 0; back <= 10; back++) {
+        const point = { u: across / 10, v: back / 10 };
+        const there = projectGround(point, 0.7);
+        const home = unprojectGround(there.x, there.y, 0.7);
+
+        expect(home.u, `${point.u},${point.v}`).toBeCloseTo(point.u, 6);
+        expect(home.v, `${point.u},${point.v}`).toBeCloseTo(point.v, 6);
+      }
+    }
+    for (let row = 1; row < CHUNK_CELLS; row++) {
+      expect(projectCell(row * CHUNK_CELLS).y).toBeGreaterThan(
+        projectCell((row - 1) * CHUNK_CELLS).y,
+      );
+    }
+  });
+});
+
 describe('fitting the picture to a screen', () => {
   it('keeps its proportions whatever shape the screen is', () => {
     for (const [width, height] of [
@@ -119,7 +199,10 @@ describe('fitting the picture to a screen', () => {
     ]) {
       const frame = fitPicture(width, height);
 
-      expect(frame.height / frame.width, `${width}x${height}`).toBeCloseTo(ASPECT, 6);
+      expect(frame.height / frame.width, `${width}x${height}`).toBeCloseTo(
+        viewFor(width, height).aspect,
+        6,
+      );
       // Inside the screen, and off its edges: a board fitted to the
       // last pixel loses its far corner as soon as it is turned
       expect(frame.x).toBeGreaterThan(0);

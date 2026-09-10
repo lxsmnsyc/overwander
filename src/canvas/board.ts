@@ -1,5 +1,5 @@
 import { CHUNK_CELLS } from '../overworld/chunk';
-import { GROUND_DEPTH, GROUND_RISE, PITCH } from './tilt';
+import { FLAT_PITCH, PITCH, depthOf, riseOf, squashOf } from './tilt';
 
 /**
  * The chunk seen from a chair rather than from a satellite: the ground
@@ -8,27 +8,24 @@ import { GROUND_DEPTH, GROUND_RISE, PITCH } from './tilt';
  * Everything here is one projection and its inverse, and nothing else
  * in the game may work out where a cell is — the painter asks for
  * corners, the pointer asks which cell it is over, the browser test
- * asks where to click. A pitch changed here changes all three.
+ * asks where to click.
  *
- * The pitch itself lives in [`tilt`](./tilt.ts), where the tools that
- * cut sprite sheets can read it too, and is re-exported here because
- * this is where the rest of the game asks about the board.
+ * There are two of those projections rather than one. A screen with
+ * room across it is drawn in **3d**: the board laid back, a trapezoid
+ * with the far rows smaller than the near ones. A screen taller than
+ * it is wide is drawn in **2d**: the board flat and square on, seen
+ * from straight above, with no perspective anywhere in it. Which is in
+ * hand is [`boardView`](#boardView), chosen from the shape of the
+ * screen by `setBoardScreen` — everything below answers for whichever
+ * screen was last named.
+ *
+ * The pitches themselves live in [`tilt`](./tilt.ts), where the tools
+ * that cut sprite sheets can read them too, and the laid-back one is
+ * re-exported here because this is where the rest of the game asks
+ * about the board.
  */
 
 export { PITCH };
-
-/**
- * How much of the board's depth survives the tilt. Straight down it
- * is all of it; edge-on it is none
- */
-const DEPTH = GROUND_DEPTH;
-
-/**
- * And how much of a step into the air survives it. Half of what a step
- * across the board is worth, at this tilt: a drop ten cells up is
- * drawn five cells above where it will land
- */
-const RISE = GROUND_RISE;
 
 /**
  * How far the camera stands back, in board widths — what makes the far
@@ -52,7 +49,8 @@ export interface GroundPoint {
 /**
  * Where a ground point lands on the canvas, and how big things are
  * there. `scale` is the whole of the third dimension: a sprite drawn
- * at it recedes instead of standing in a line of identical cut-outs
+ * at it recedes instead of standing in a line of identical cut-outs.
+ * Flat on, it is 1 everywhere
  */
 export interface ProjectedPoint {
   x: number;
@@ -66,49 +64,6 @@ export interface ProjectedPoint {
  * no opinion about where the camera stands
  */
 export type Yaw = number;
-
-/**
- * A ground point turned about the middle of the board. The turn is
- * applied **before** the tilt, so it reads as a camera walking around
- * a table rather than a picture spun on the screen
- */
-function turn(point: GroundPoint, yaw: Yaw): GroundPoint {
-  if (yaw === 0) {
-    return point;
-  }
-
-  const cos = Math.cos(yaw);
-  const sin = Math.sin(yaw);
-  const u = point.u - 0.5;
-  const v = point.v - 0.5;
-
-  return { u: u * cos - v * sin + 0.5, v: u * sin + v * cos + 0.5 };
-}
-
-/**
- * The perspective factor at a depth: how much bigger or smaller than
- * the board's middle row things are there
- */
-function scaleAt(v: number): number {
-  // Positive away from the camera, so the far half divides by more
-  return FOCAL / (FOCAL - (v - 0.5) * DEPTH);
-}
-
-/**
- * The projection, before it is fitted to the canvas: the board's
- * middle at the origin, one unit wide
- */
-function raw(point: GroundPoint, height = 0): ProjectedPoint {
-  const scale = scaleAt(point.v);
-
-  return {
-    x: (point.u - 0.5) * scale,
-    // Depth pushes a point up the picture and so does height, each
-    // laid back by its own half of the tilt
-    y: ((point.v - 0.5) * DEPTH - height * RISE) * scale,
-    scale,
-  };
-}
 
 /**
  * How many cells of apron are drawn around the chunk. Nothing is ever
@@ -154,7 +109,126 @@ const OUTER: GroundPoint[] = [
   { u: 0.5 - COMPASS_REACH, v: 0.5 },
 ];
 
-const BOUNDS = ((): { left: number; top: number; width: number; height: number } => {
+/**
+ * A ground point turned about the middle of the board. The turn is
+ * applied **before** the tilt, so it reads as a camera walking around
+ * a table rather than a picture spun on the screen
+ */
+function turn(point: GroundPoint, yaw: Yaw): GroundPoint {
+  if (yaw === 0) {
+    return point;
+  }
+
+  const cos = Math.cos(yaw);
+  const sin = Math.sin(yaw);
+  const u = point.u - 0.5;
+  const v = point.v - 0.5;
+
+  return { u: u * cos - v * sin + 0.5, v: u * sin + v * cos + 0.5 };
+}
+
+/**
+ * Which of the two boards is being drawn: `3d` laid back under the
+ * camera, `2d` flat and seen from straight above
+ */
+export type BoardMode = '2d' | '3d';
+
+/**
+ * One way of looking at the board, worked out once from a pitch and a
+ * lens. What a caller outside this file wants is the measurements at
+ * the top; the rest is the projection's own working
+ */
+export interface BoardView {
+  mode: BoardMode;
+  /**
+   * How much of a step across the board survives the tilt. Straight
+   * down it is all of it; edge-on it is none. Anything measuring a
+   * direction **on the ground** has to lay it back by this
+   */
+  depth: number;
+  /**
+   * And how much of a step into the air survives it: a drop ten cells
+   * up is drawn this much of ten cells above where it will land. None
+   * of it flat on, which is why the flat board draws its weather
+   * against the glass instead of standing it in the world
+   */
+  rise: number;
+  /**
+   * How flat a patch of ground lies — a shadow, a pool of lamplight
+   * drawn as an ellipse this much as tall as it is wide
+   */
+  squash: number;
+  /** How wide and tall the picture is, as a fraction of its width */
+  aspect: number;
+  /**
+   * How wide the picture is in board widths. The picture is not the
+   * board — there is an apron and four letters around it — so a
+   * painter multiplies its cell size by this to get cells the size it
+   * asked for
+   */
+  span: number;
+  /** How much bigger than the board's middle row things are at a depth */
+  scaleAt: (v: number) => number;
+  /** The projection: the board's middle at the origin, one unit wide */
+  raw: (point: GroundPoint, height?: number) => ProjectedPoint;
+  /** And its inverse, before the fit and the turn are taken off */
+  groundAt: (x: number, y: number) => GroundPoint;
+  bounds: { left: number; top: number; width: number; height: number };
+  middle: { x: number; y: number };
+  fit: number[];
+}
+
+/**
+ * A view of the board. A `focal` of null is no perspective at all,
+ * which is what the flat board wants: a cell the same size wherever it
+ * sits, rather than one that grows as it comes toward the camera
+ */
+function createView(mode: BoardMode, pitch: number, focal: number | null): BoardView {
+  const depth = depthOf(pitch);
+  const rise = riseOf(pitch);
+  /**
+   * The perspective factor at a depth: how much bigger or smaller than
+   * the board's middle row things are there
+   */
+  const scaleAt =
+    focal == null
+      ? (): number => 1
+      : // Positive away from the camera, so the far half divides by more
+        (v: number): number => focal / (focal - (v - 0.5) * depth);
+  /**
+   * The projection, before it is fitted to the canvas: the board's
+   * middle at the origin, one unit wide
+   */
+  const raw = (point: GroundPoint, height = 0): ProjectedPoint => {
+    const scale = scaleAt(point.v);
+
+    return {
+      x: (point.u - 0.5) * scale,
+      // Depth pushes a point up the picture and so does height, each
+      // laid back by its own half of the tilt
+      y: ((point.v - 0.5) * depth - height * rise) * scale,
+      scale,
+    };
+  };
+  /**
+   * The way back, solved rather than searched. With `t` for the depth
+   * either side of the middle row the forward transform is
+   *
+   *     y = t * F * depth / (F - t * depth)
+   *
+   * which rearranges to the line below, and is a plain division by the
+   * depth where there is no perspective to undo
+   */
+  const groundAt = (x: number, y: number): GroundPoint => {
+    if (focal == null) {
+      return { u: x + 0.5, v: y / depth + 0.5 };
+    }
+
+    const t = (y * focal) / (focal * depth + y * depth);
+    const v = t + 0.5;
+
+    return { u: x / scaleAt(v) + 0.5, v };
+  };
   /**
    * Measured with the board **facing front**, which is how it is
    * nearly always looked at. Fitting every angle instead would size
@@ -169,39 +243,30 @@ const BOUNDS = ((): { left: number; top: number; width: number; height: number }
   // is not symmetric about its own middle once it is laid back, since
   // the near edge is both wider and further from the centre than the
   // far one
-  const width = Math.max(...corners.map((corner) => corner.x)) - left;
-  const height = Math.max(...corners.map((corner) => corner.y)) - top;
+  const wide = Math.max(...corners.map((corner) => corner.x)) - left;
+  const deep = Math.max(...corners.map((corner) => corner.y)) - top;
   // ...and then the same room on every side, measured on the picture
   // rather than on the ground, so the marks have somewhere to be
   // drawn and the board is not pushed up the screen to pay for it
-  const room = width * MARK_ROOM;
-
-  return {
+  const room = wide * MARK_ROOM;
+  const bounds = {
     left: left - room,
     top: top - room,
-    width: width + room * 2,
-    height: height + room * 2,
+    width: wide + room * 2,
+    height: deep + room * 2,
   };
-})();
-
-/**
- * The middle of the picture, which is what the board is turned about
- * and what it shrinks toward
- */
-const MIDDLE = { x: BOUNDS.left + BOUNDS.width / 2, y: BOUNDS.top + BOUNDS.height / 2 };
-
-/**
- * How large the board may be drawn at each angle, a degree at a time
- * through a quarter turn.
- *
- * A square corner-on is half as wide again as one facing front, so
- * either the picture is fitted to that and the board is always small,
- * or the board gives up a little while turned and has it back when it
- * comes round. This is the second. A quarter turn is the whole table:
- * a square and a cross repeat every ninety degrees
- */
-const FIT = ((): number[] => {
-  const table: number[] = [];
+  const middle = { x: bounds.left + bounds.width / 2, y: bounds.top + bounds.height / 2 };
+  /**
+   * How large the board may be drawn at each angle, a degree at a time
+   * through a quarter turn.
+   *
+   * A square corner-on is half as wide again as one facing front, so
+   * either the picture is fitted to that and the board is always
+   * small, or the board gives up a little while turned and has it back
+   * when it comes round. This is the second. A quarter turn is the
+   * whole table: a square and a cross repeat every ninety degrees
+   */
+  const fit: number[] = [];
 
   for (let step = 0; step <= 90; step++) {
     const yaw = (step * Math.PI) / 180;
@@ -212,14 +277,78 @@ const FIT = ((): number[] => {
 
       worst = Math.max(
         worst,
-        Math.abs(turned.x - MIDDLE.x) / (BOUNDS.width / 2),
-        Math.abs(turned.y - MIDDLE.y) / (BOUNDS.height / 2),
+        Math.abs(turned.x - middle.x) / (bounds.width / 2),
+        Math.abs(turned.y - middle.y) / (bounds.height / 2),
       );
     }
-    table.push(1 / worst);
+    fit.push(1 / worst);
   }
-  return table;
-})();
+
+  return {
+    mode,
+    depth,
+    rise,
+    squash: squashOf(pitch),
+    aspect: bounds.height / bounds.width,
+    span: bounds.width,
+    scaleAt,
+    raw,
+    groundAt,
+    bounds,
+    middle,
+    fit,
+  };
+}
+
+/** The board laid back under the camera, drawn as a trapezoid */
+const LAID_BACK = createView('3d', PITCH, FOCAL);
+
+/**
+ * And the board flat, seen from straight above. It costs the picture
+ * its depth and buys a far row that can be pressed with a thumb, a
+ * square picture where a portrait screen has the room, and sprites all
+ * drawn at one size
+ */
+const FLAT = createView('2d', FLAT_PITCH, null);
+
+/**
+ * Which of the two a screen this shape is drawn with: taller than it
+ * is wide is flat, anything else is laid back.
+ *
+ * The shape rather than the size, because it is the shape that makes
+ * the tilt expensive. A portrait screen fits the picture to its width
+ * and has height left over, which a laid-back board cannot use and a
+ * square one can — and the cells it saves are the far ones, which the
+ * tilt had drawn half as deep as the near ones.
+ *
+ * A pure reading, so the browser test can ask it of the box it just
+ * measured rather than of whatever the last caller set
+ */
+export function viewFor(width: number, height: number): BoardView {
+  return height > width ? FLAT : LAID_BACK;
+}
+
+let looking = LAID_BACK;
+
+/**
+ * Which way the board is being looked at now. Everything drawn on it
+ * that is not a projection — the shadow a thing throws, a lamp's
+ * ellipse, whether the weather stands in the world — reads what it
+ * needs off this
+ */
+export function boardView(): BoardView {
+  return looking;
+}
+
+/**
+ * Say how large the screen the board is drawn on is, which is what
+ * chooses between the two views. Called wherever that size is known:
+ * the painter measures its canvas every frame, and the browser test
+ * measures the same box before it aims at a cell
+ */
+export function setBoardScreen(width: number, height: number): void {
+  looking = viewFor(width, height);
+}
 
 /**
  * How much of itself the board keeps at this angle: 1 facing front,
@@ -227,25 +356,12 @@ const FIT = ((): number[] => {
  * rounded to one, so that turning it is smooth
  */
 function fitAt(yaw: Yaw): number {
+  const { fit } = looking;
   const degrees = ((((yaw * 180) / Math.PI) % 90) + 90) % 90;
   const step = Math.floor(degrees);
 
-  return FIT[step] + (FIT[step + 1] - FIT[step]) * (degrees - step);
+  return fit[step] + (fit[step + 1] - fit[step]) * (degrees - step);
 }
-
-/**
- * How wide and tall the picture is, as a fraction of its width. The
- * board is wider than it is deep once it is laid back, so the canvas
- * is no longer square — a square one would be half empty
- */
-export const ASPECT = BOUNDS.height / BOUNDS.width;
-
-/**
- * How wide the picture is in board widths. The picture is not the
- * board — there is an apron and four letters around it — so a painter
- * multiplies its cell size by this to get cells the size it asked for
- */
-export const PICTURE_SPAN = BOUNDS.width;
 
 /**
  * How much of a screen the picture may take. Drawn edge to edge, the
@@ -271,20 +387,23 @@ export function fitPicture(
   width: number,
   height: number,
 ): { x: number; y: number; width: number; height: number } {
+  // The screen's own view rather than the one that is set, so that
+  // fitting a picture is a reading and nothing else
+  const { aspect } = viewFor(width, height);
   const room = {
     width: width * PICTURE_INSET,
     height: height * (PICTURE_INSET - PICTURE_FLOOR),
   };
-  const drawn = Math.min(room.width, room.height / ASPECT);
+  const drawn = Math.min(room.width, room.height / aspect);
 
   return {
     x: (width - drawn) / 2,
     // Centred in what is left once the menu has had its strip, rather
     // than in the screen: centred in the screen, the picture would sit
     // under the menu by half of it
-    y: (height * (1 - PICTURE_FLOOR) - drawn * ASPECT) / 2,
+    y: (height * (1 - PICTURE_FLOOR) - drawn * aspect) / 2,
     width: drawn,
-    height: drawn * ASPECT,
+    height: drawn * aspect,
   };
 }
 
@@ -300,7 +419,8 @@ export function projectGround(point: GroundPoint, yaw: Yaw = 0): ProjectedPoint 
 /**
  * The same, for a point standing **above** the ground rather than on
  * it. `height` is in board widths, so a drop at 1 is as high as the
- * chunk is wide.
+ * chunk is wide. Nothing stands above a flat board: seen from straight
+ * up, a thing in the air is over the spot it will land on.
  *
  * The fit rides home the same way it does for the ground, so a thing
  * in the air is drawn at the scale of the board under it: the sky and
@@ -308,7 +428,8 @@ export function projectGround(point: GroundPoint, yaw: Yaw = 0): ProjectedPoint 
  * nothing slides against anything else
  */
 export function projectAir(point: GroundPoint, height: number, yaw: Yaw = 0): ProjectedPoint {
-  const projected = raw(turn(point, yaw), height);
+  const { bounds, middle } = looking;
+  const projected = looking.raw(turn(point, yaw), height);
   // Drawn toward the middle of the picture by however much the board
   // has given up at this angle. Whatever is standing on it gives up
   // the same, which is why the factor rides home on `scale`: a pokemon
@@ -316,8 +437,8 @@ export function projectAir(point: GroundPoint, height: number, yaw: Yaw = 0): Pr
   const fit = fitAt(yaw);
 
   return {
-    x: (MIDDLE.x + (projected.x - MIDDLE.x) * fit - BOUNDS.left) / BOUNDS.width,
-    y: (MIDDLE.y + (projected.y - MIDDLE.y) * fit - BOUNDS.top) / BOUNDS.height,
+    x: (middle.x + (projected.x - middle.x) * fit - bounds.left) / bounds.width,
+    y: (middle.y + (projected.y - middle.y) * fit - bounds.top) / bounds.height,
     scale: projected.scale * fit,
   };
 }
@@ -330,26 +451,16 @@ export function projectAir(point: GroundPoint, height: number, yaw: Yaw = 0): Pr
  * rather than a guess refined by sampling
  */
 export function unprojectGround(x: number, y: number, yaw: Yaw = 0): GroundPoint {
+  const { bounds, middle } = looking;
   // The shrinking comes off first, since it is the last thing the
   // forward transform does
   const fit = fitAt(yaw);
-  const px = MIDDLE.x + (x * BOUNDS.width + BOUNDS.left - MIDDLE.x) / fit;
-  const py = MIDDLE.y + (y * BOUNDS.height + BOUNDS.top - MIDDLE.y) / fit;
-
-  /**
-   * Solved rather than searched. With `t` for the depth either side of
-   * the middle row the forward transform is
-   *
-   *     py = t * F * DEPTH / (F - t * DEPTH)
-   *
-   * which rearranges to the line below
-   */
-  const t = (py * FOCAL) / (FOCAL * DEPTH + py * DEPTH);
-  const v = t + 0.5;
+  const px = middle.x + (x * bounds.width + bounds.left - middle.x) / fit;
+  const py = middle.y + (y * bounds.height + bounds.top - middle.y) / fit;
 
   // ...and then turned back, since the turn is the first thing the
   // forward transform does and so the last thing this one undoes
-  return turn({ u: px / scaleAt(v) + 0.5, v }, -yaw);
+  return turn(looking.groundAt(px, py), -yaw);
 }
 
 /**

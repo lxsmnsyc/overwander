@@ -30,16 +30,16 @@ without one can neither see nor reach the last three.
 Each pokemon that appears rolls first for a rarity band, then for a species
 within that band.
 
-| Band     | Odds     | What is in it                                              |
-| -------- | -------- | ---------------------------------------------------------- |
-| Mythical | 1/4096   | Mythicals                                                  |
-| Special  | 1/4096   | Legendaries                                                |
-| Prized   | 1/512    | Babies and unowns                                          |
+| Band     | Odds     | What is in it                                                |
+| -------- | -------- | ------------------------------------------------------------ |
+| Mythical | 1/4096   | Mythicals                                                    |
+| Special  | 1/4096   | Legendaries                                                  |
+| Prized   | 1/512    | Babies and unowns                                            |
 | Elusive  | 1/32     | The end of a three-stage line, and species that never evolve |
-| Scarce   | 1/16     | The end of a two-stage line                                |
-| Rare     | 1/8      | The middle of a three-stage line                           |
-| Uncommon | 1/4      | The first stage of a two-stage line                        |
-| Base     | The rest | The first stage of a three-stage line                      |
+| Scarce   | 1/16     | The end of a two-stage line                                  |
+| Rare     | 1/8      | The middle of a three-stage line                             |
+| Uncommon | 1/4      | The first stage of a two-stage line                          |
+| Base     | The rest | The first stage of a three-stage line                        |
 
 A baby is not counted as a stage: it has a band of its own, so the line behind
 it is one stage shorter. Pichu is prized, Pikachu is the first stage of a
@@ -71,20 +71,20 @@ the species once, however many of its forms you have met.
 ### Level
 
 Level comes from the line itself: a stage is met between the level it can first
-exist at and the level it stops being itself at. A Charmander is 5–16, a
-Charmeleon 16–36, a Charizard 36–60.
+exist at and the level it stops being itself at. A Charmander is 5 to 16, a
+Charmeleon 16 to 36, a Charizard 36 to 60.
 
-| What was met                                | Level range                        |
-| ------------------------------------------- | ---------------------------------- |
-| A first stage that evolves at a level        | 5 to that level                    |
-| A first stage that evolves some other way    | 5–30                               |
-| A middle stage that evolves at a level       | The level it arrived at, to that level |
-| A middle stage that evolves some other way   | 30–50                              |
-| The end of a two-stage line                  | The level it arrived at, to 50     |
-| The end of a three-stage line                | The level it arrived at, to 60     |
-| A species that never evolves                 | 10–50                              |
-| A baby or an unown                           | 5–10                               |
-| A legendary or a mythical                    | 1–100                              |
+| What was met                               | Level range                            |
+| ------------------------------------------ | -------------------------------------- |
+| A first stage that evolves at a level      | 5 to that level                        |
+| A first stage that evolves some other way  | 5 to 30                                |
+| A middle stage that evolves at a level     | The level it arrived at, to that level |
+| A middle stage that evolves some other way | 30 to 50                               |
+| The end of a two-stage line                | The level it arrived at, to 50         |
+| The end of a three-stage line              | The level it arrived at, to 60         |
+| A species that never evolves               | 10 to 50                               |
+| A baby or an unown                         | 5 to 10                                |
+| A legendary or a mythical                  | 1 to 100                               |
 
 Where no level is named, because the step was a stone, a trade or an evolution
 a later generation holds, the stage starts at 30 instead.

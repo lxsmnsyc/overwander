@@ -1,6 +1,6 @@
 # Quests, achievements and awards
 
-Four tables and one column, all of them counters or claim markers, all written
+Five tables and one column, all of them counters or claim markers, all written
 by the server alone. A client that could write its own counters could write
 itself rewards.
 
@@ -41,6 +41,19 @@ behind to count and began fresh.
 
 One row per player and quest, written as the reward is paid, which is what pays a
 quest exactly once.
+
+## `quest_baselines`
+
+Where a quest's counters stood when the quest opened, one row per
+`(player, quest, slot)`, since a quest may ask for more than one thing.
+
+The requirements read the lifetime counters, so a quest waiting behind a
+prerequisite used to arrive already part-done: a player who had caught two
+hundred pokemon unlocked "catch five" complete. A baseline is written as the
+quest opens and the requirement is measured from it.
+
+Only quests behind a prerequisite have rows. One at the head of its chain has
+been open since the account was, so its counters are its own from the start.
 
 ## `rotation_baselines` and `rotation_claims`
 
@@ -95,8 +108,8 @@ the truth, and a stored tier would only be something to fall out of step with.
 
 ## Access
 
-`quest_progress`, `quest_claims`, `rotation_baselines` and `rotation_claims` are
-**closed** end to end: row-level security is on and no policy is written, so a
+`quest_progress`, `quest_baselines`, `quest_claims`, `rotation_baselines` and
+`rotation_claims` are **closed** end to end: row-level security is on and no policy is written, so a
 browser reading them gets nothing back. Everything is served through the server.
 `awards` is tier 1, readable by anybody signed in.
 

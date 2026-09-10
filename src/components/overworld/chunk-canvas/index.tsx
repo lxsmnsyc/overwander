@@ -1,7 +1,6 @@
 import { type JSX, createEffect, createMemo, createSignal, onCleanup, onMount } from 'solid-js';
 import LRUMap from '../../../core/lru-map';
 import {
-  ASPECT,
   BORDER_CELLS,
   type BoardCell,
   type ProjectedPoint,
@@ -10,6 +9,7 @@ import {
   boardCellAtFraction,
   boardCellOf,
   boardCells,
+  boardView,
   borderExit,
   chunkCellOf,
   compassMarks,
@@ -21,6 +21,7 @@ import {
   projectCell,
   projectGround,
   radiusOf,
+  setBoardScreen,
   shortestTurn,
   unprojectGround,
   yawTurns,
@@ -90,8 +91,6 @@ import {
   CROSSING_OUT,
   CROSSING_SLIDE,
   type Crossing,
-  GROUND_DEPTH,
-  GROUND_SQUASH,
   HOVER_GLOW,
   LOADING_LABEL,
   LOADING_SIZE,
@@ -112,10 +111,16 @@ import {
   SCENERY_CELLS,
   SNAP_CELLS,
   SPRITE_STANDS,
-  WIDTH,
+  VEIL_ALPHA,
+  VEIL_FADE,
+  VEIL_SHARE,
   compassArrow,
+  coverOf,
   grownArrow,
   isTurningPress,
+  lampSquash,
+  pictureWidth,
+  shadowSquash,
   sizeOf,
   slideGain,
 } from './metrics';
@@ -317,6 +322,23 @@ export interface CellSpot {
  */
 const SHEET_LIMIT = 48;
 
+/**
+ * The pictures one cell can carry. A cell can hold a tree and a
+ * pokemon standing beside it, and either may be in front of the player
+ * without the other, so each fades under a key of its own
+ */
+const enum Standing {
+  Scenery = 0,
+  Grotto = 1,
+  Mark = 2,
+  Plant = 3,
+  Person = 4,
+  Spawn = 5,
+}
+
+/** How many of those there are, which is what spaces the keys out */
+const STANDINGS = 6;
+
 export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
   let canvas: HTMLCanvasElement | undefined;
   let layer: HTMLCanvasElement | undefined;
@@ -349,6 +371,21 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
    * a different shiny onto the same cell announces itself too
    */
   const sparkles = new Map<number, { species: Species; at: number }>();
+
+  /**
+   * How faint each picture standing in front of the player is drawn,
+   * while it is in the way of them.
+   *
+   * Kept between frames because it is a fade rather than a switch: a
+   * tree the player has just stepped behind is on its way to faint,
+   * and one they have stepped out from behind is on its way back.
+   * Anything at full strength is dropped rather than stored, so a
+   * board nobody is hiding behind carries nothing
+   */
+  const veils = new Map<number, number>();
+
+  /** When the last frame was drawn, on the board's own clock */
+  let painted = 0;
 
   /**
    * One animation per species standing in the chunk, shared by every
@@ -668,7 +705,9 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
     piece: { sheet: BasicSprite; name: string } | null,
     middle: { x: number; y: number; scale: number },
     magnify: number,
-    lay?: (placed: SpriteQuad | null) => boolean,
+    lay?: (placed: SpriteQuad | null, alpha?: number) => boolean,
+    /** How faint to draw it, asked once the piece has been placed */
+    fade?: (placed: SpriteQuad | null) => number,
   ): void => {
     const cell = piece?.sheet.frameOf(piece.name);
 
@@ -702,8 +741,11 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
     const top = middle.y - base[1] * scale;
     const where = { scale, anchor: 'top-left' } as const;
 
-    if (lay?.(piece.sheet.quadOf(piece.name, left, top, where)) !== true) {
-      piece.sheet.draw(context, piece.name, left, top, where);
+    const quad = piece.sheet.quadOf(piece.name, left, top, where);
+    const alpha = fade?.(quad) ?? 1;
+
+    if (lay?.(quad, alpha) !== true) {
+      piece.sheet.draw(context, piece.name, left, top, alpha === 1 ? where : { ...where, alpha });
     }
     context.imageSmoothingEnabled = smoothing;
   };
@@ -924,7 +966,10 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
    * fitted into it, so this is what decides how large the board is
    * drawn
    */
-  const [box, setBox] = createSignal({ width: WIDTH, height: WIDTH * ASPECT });
+  const [box, setBox] = createSignal({
+    width: pictureWidth(),
+    height: pictureWidth() * boardView().aspect,
+  });
   const [focused, setFocused] = createSignal(false);
   /**
    * Which way round the board is being looked at. It is the camera's,
@@ -1022,6 +1067,10 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
     }
 
     const bounds = element.getBoundingClientRect();
+
+    // The pointer reads the board the painter drew, so it names the
+    // same screen first
+    setBoardScreen(bounds.width, bounds.height);
     // Through the picture rather than the element. They were the same
     // thing while the canvas was the board; now the canvas is the page
     // and the picture is as much of it as the board's proportions
@@ -1051,6 +1100,9 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
     }
 
     const bounds = element.getBoundingClientRect();
+
+    setBoardScreen(bounds.width, bounds.height);
+
     const frame = fitPicture(bounds.width, bounds.height);
 
     if (frame.width === 0 || frame.height === 0) {
@@ -1211,7 +1263,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
      * canvas is the page, so they change when the window does and at
      * no other time
      */
-    let placed = fitPicture(WIDTH, WIDTH * ASPECT);
+    let placed = fitPicture(pictureWidth(), pictureWidth() * boardView().aspect);
     let magnify = 1;
 
     /**
@@ -1236,7 +1288,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       x: point.x,
       y: point.y,
       reach: CELL * magnify * props.lamp * point.scale,
-      squash: GROUND_DEPTH,
+      squash: lampSquash(),
     });
 
     /**
@@ -1462,8 +1514,31 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       // only transform the drawing below assumes
       context.setTransform(ratio, 0, 0, ratio, 0, 0);
 
+      // Which of the two boards this screen is drawn with, before a
+      // single point is put through it: a screen taller than it is
+      // wide is drawn flat, anything else laid back
+      setBoardScreen(screen.width, screen.height);
       placed = fitPicture(screen.width, screen.height);
-      magnify = placed.width / WIDTH;
+      magnify = placed.width / pictureWidth();
+
+      /**
+       * Which of the two boards this is, for everything that is not
+       * the projection itself.
+       *
+       * Flat on there is no third dimension left to draw in: a shadow
+       * is the patch under the feet rather than the thing's own
+       * picture leaned along the light, and the weather falls against
+       * the glass rather than standing in the world
+       */
+      const flat = boardView().mode === '2d';
+
+      /** The light's throw, which the flat board has nowhere to put */
+      const throwing = (): Cast | undefined => (flat ? undefined : cast());
+
+      /** How long since the last frame, for anything easing its way somewhere */
+      const since = Math.max(0, Math.min(VEIL_FADE, clock - painted));
+
+      painted = clock;
 
       // Nothing outside the board. A tilted board leaves corners of
       // the canvas that are not board, and painting them — even a
@@ -1846,7 +1921,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         if (batch == null || patch == null || disc == null) {
           return false;
         }
-        const thrown = cast();
+        const thrown = throwing();
         // Which way the shadow falls. The caller turns that into the
         // pose the light is looking at, which needs the thing's own
         // facing as well and only the caller has it
@@ -2113,6 +2188,57 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       // instead of the board switching on a square at a time
       lamps.push(lampAt(afoot));
 
+      const walker = playerPerson();
+      /**
+       * How the player is drawn, and the box that comes to on the
+       * screen.
+       *
+       * Worked out before the board is walked rather than at their own
+       * turn in it: whatever is drawn in front of them has to know
+       * where they are to know that it is in the way
+       */
+      const walking =
+        walker == null
+          ? null
+          : ({
+              scale: (CELL * NPC_CELLS * afoot.scale * magnify) / walker.sourceFrameHeight,
+              anchor: 'foot',
+            } as const);
+      const playerBox = walking == null ? null : walker?.quadOf(afoot.x, afoot.y, walking);
+      /** Whether the painting has reached the player's own row yet */
+      let passed = false;
+
+      /**
+       * How faint one of a cell's pictures is drawn while it stands
+       * between the camera and the player.
+       *
+       * A tree in the row in front hides the one thing on the board a
+       * player is actually watching, so it gives way rather than
+       * winning: it fades while it covers them and comes back as they
+       * step out from behind it. Only what is drawn *after* them can
+       * be in front of them, and only what covers a real part of them
+       * is in the way — a sprite clipping their elbow is not
+       */
+      const veil = (index: number, kind: Standing, quad: SpriteQuad | null): number => {
+        const key = index * STANDINGS + kind;
+        const held = veils.get(key) ?? 1;
+        const hiding =
+          passed && playerBox != null && quad != null && coverOf(playerBox, quad) >= VEIL_SHARE;
+        const target = hiding ? VEIL_ALPHA : 1;
+        // Eased over the same span either way, so stepping behind a
+        // tree and stepping out from behind it cost the same
+        const stride = (since / VEIL_FADE) * (1 - VEIL_ALPHA);
+        const level =
+          target > held ? Math.min(target, held + stride) : Math.max(target, held - stride);
+
+        if (level >= 1) {
+          veils.delete(key);
+          return 1;
+        }
+        veils.set(key, level);
+        return level;
+      };
+
       for (const index of paintOrder(yaw())) {
         const middle = at(projectCell(index, yaw()));
         // Nothing standing anywhere while the sheets are still coming:
@@ -2142,9 +2268,15 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         // the backdrop a pokemon is standing in front of, and a lair
         // is the backdrop the whole cell is about
         if (!loading()) {
-          standPiece(context, sceneryOn(index), middle, magnify, place);
-          standPiece(context, grottoOn(index), middle, magnify, place);
-          standPiece(context, landmarkOn(index), middle, magnify, place);
+          standPiece(context, sceneryOn(index), middle, magnify, place, (quad) =>
+            veil(index, Standing.Scenery, quad),
+          );
+          standPiece(context, grottoOn(index), middle, magnify, place, (quad) =>
+            veil(index, Standing.Grotto, quad),
+          );
+          standPiece(context, landmarkOn(index), middle, magnify, place, (quad) =>
+            veil(index, Standing.Mark, quad),
+          );
         }
 
         // A bush is drawn before whatever is standing beside it: it is
@@ -2169,8 +2301,11 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
             anchor: 'foot',
           } as const;
 
-          if (!place(plant.quadOf(middle.x, middle.y, growing))) {
-            plant.draw(context, middle.x, middle.y, growing);
+          const grown = plant.quadOf(middle.x, middle.y, growing);
+          const alpha = veil(index, Standing.Plant, grown);
+
+          if (!place(grown, alpha)) {
+            plant.draw(context, middle.x, middle.y, alpha === 1 ? growing : { ...growing, alpha });
           }
         }
 
@@ -2207,8 +2342,8 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
             color: COLORS.shadow,
             // Lying the way the board lies, and thrown the way this
             // hour's light throws every other shadow on it
-            squash: GROUND_SQUASH,
-            cast: cast(),
+            squash: shadowSquash(),
+            cast: throwing(),
           };
 
           if (
@@ -2223,8 +2358,16 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
           ) {
             person.drawShadow(context, middle.x, middle.y, thrown);
           }
-          if (!place(person.quadOf(middle.x, middle.y, standingPerson))) {
-            person.draw(context, middle.x, middle.y, standingPerson);
+          const stood = person.quadOf(middle.x, middle.y, standingPerson);
+          const alpha = veil(index, Standing.Person, stood);
+
+          if (!place(stood, alpha)) {
+            person.draw(
+              context,
+              middle.x,
+              middle.y,
+              alpha === 1 ? standingPerson : { ...standingPerson, alpha },
+            );
           }
         }
 
@@ -2266,11 +2409,11 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
             const thrown = {
               ...placement,
               color: COLORS.shadow,
-              squash: GROUND_SQUASH,
+              squash: shadowSquash(),
               // Thrown by whatever light there is at this hour: long
               // and faint near the horizons, short and hard at noon,
               // and nothing at all once the sun is down
-              cast: cast(),
+              cast: throwing(),
             };
 
             if (
@@ -2289,8 +2432,16 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
             // the pokemon on it are not, which is what a billboard is
             // and what makes them look like they are standing up out
             // of the board
-            if (!place(sprite.quadOf(middle.x, middle.y, placement))) {
-              sprite.draw(context, middle.x, middle.y, placement);
+            const stood = sprite.quadOf(middle.x, middle.y, placement);
+            const alpha = veil(index, Standing.Spawn, stood);
+
+            if (!place(stood, alpha)) {
+              sprite.draw(
+                context,
+                middle.x,
+                middle.y,
+                alpha === 1 ? placement : { ...placement, alpha },
+              );
             }
 
             if (standing.shiny) {
@@ -2339,10 +2490,9 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         }
 
         if (index === playerCell) {
-          const walker = playerPerson();
           const spot = afoot;
 
-          if (walker == null) {
+          if (walker == null || walking == null) {
             // The dot it was before the sheet landed, on its own line
             const radius = CELL * 0.3 * spot.scale * magnify;
 
@@ -2353,16 +2503,12 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
             // has been walked to
             walker.facing =
               SPRITE_DIRECTIONS[facingFrom(SPRITE_DIRECTIONS.indexOf(heading), yaw())];
-            const walking = {
-              scale: (CELL * NPC_CELLS * spot.scale * magnify) / walker.sourceFrameHeight,
-              anchor: 'foot',
-            } as const;
 
             const thrown = {
               ...walking,
               color: COLORS.shadow,
-              squash: GROUND_SQUASH,
-              cast: cast(),
+              squash: shadowSquash(),
+              cast: throwing(),
             };
 
             if (
@@ -2376,6 +2522,9 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
               walker.draw(context, spot.x, spot.y, walking);
             }
           }
+          // Everything from here is nearer the camera than they are,
+          // so it is the only thing that can stand in front of them
+          passed = true;
         }
       }
 
@@ -2414,7 +2563,11 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       // fall after it, the order they were always drawn in
       // Where the board is and which way round it is, so the weather
       // can stand in the world rather than on the glass
-      const sky = { yaw: yaw(), ...placed };
+      // Flat on, the weather is drawn against the glass the way it
+      // always was: seen from straight above there is no height for a
+      // drop to fall through, and a fall standing in the world would
+      // be a field of dots holding still
+      const sky = flat ? undefined : { yaw: yaw(), ...placed };
 
       if (batch == null) {
         paintAmbient(context, screen.width, screen.height, worldTime(), props.latitude);

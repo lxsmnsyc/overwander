@@ -35,7 +35,7 @@ migrations to a Supabase project, and what Vercel needs to reach it.
 | [Auctions](database/auctions.md)                 | `auctions`, `auction_sellers`, `bids`, and the escrow a lot sits in                                        |
 | [Mystery gifts](database/gifts.md)               | `gifts`, `gift_claims`: what is waiting on a shelf, and who has taken it                                   |
 | [Friends](database/friends.md)                   | `friends`, `friend_requests`, `blocks`, `friend_codes`, `trades`                                           |
-| [Quests and awards](database/quests.md)          | `quest_progress`, `quest_claims`, the rotation windows, `awards`, and the worn title                       |
+| [Quests and awards](database/quests.md)          | `quest_progress`, `quest_baselines`, `quest_claims`, the rotation windows, `awards`, and the worn title    |
 | [Encounter kinds](database/encounters.md)        | `EncounterType`: what each way of meeting a pokemon is recorded as                                         |
 | [Time](database/time.md)                         | The server clock, and the player-local zone everything is read in                                          |
 | [Security](database/security.md)                 | Privileged writes, the policies, the grants, and the indexes the queries need                              |

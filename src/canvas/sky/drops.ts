@@ -1,4 +1,4 @@
-import { PICTURE_SPAN, projectAir } from '../board';
+import { boardView, projectAir } from '../board';
 import { type Fall, SALTS, scatterOf } from './fall';
 
 /** One falling thing, in front of the camera and in the world */
@@ -270,7 +270,7 @@ export function eachWorldDrop(
 
   // How many pixels one board width is worth. Free of the fit, and so
   // free of the yaw
-  const perBoard = camera.width / PICTURE_SPAN;
+  const perBoard = camera.width / boardView().span;
   const radius = VOLUME_SPAN / 2;
 
   for (let at = 0; at < count; at++) {

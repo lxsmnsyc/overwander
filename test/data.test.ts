@@ -80,6 +80,7 @@ import {
   DEOXYS_FORMS,
   DIALGA_FORMS,
   GIRATINA_FORMS,
+  ROTOM_FORMS,
   SHAYMIN_FORMS,
   PALKIA_FORMS,
   GASTRODON_FORMS,
@@ -751,6 +752,7 @@ describe('species forms', () => {
       ...PALKIA_FORMS.slice(1),
       ...GIRATINA_FORMS.slice(1),
       ...SHAYMIN_FORMS.slice(1),
+      ...ROTOM_FORMS.slice(1),
     ]);
 
     expect(registered.length).toBeGreaterThan(0);
@@ -1066,6 +1068,9 @@ describe('where a species lives', () => {
   });
 
   it('stages every species that says it lives somewhere', () => {
+    // A Rotom in a machine lives where a Rotom does, but a Catalog
+    // is the only way into one of those shapes, so no pool names one.
+    //
     // Phione is laid rather than met: a Manaphy's egg is the only
     // one there is, so no pool stages it though it names the water it
     // drifts in.
@@ -1077,6 +1082,7 @@ describe('where a species lives', () => {
     // names it either
     const unstaged = new Set<Species>([
       Species.Phione,
+      ...ROTOM_FORMS.slice(1),
       Species.Porygon,
       Species.Porygon2,
       Species.PorygonZ,
@@ -1756,6 +1762,43 @@ describe('evolution data', () => {
     ).toEqual([
       { species: Species.Ninetales, method: EvolutionMethod.UsedItem, item: Items.FireStone },
     ]);
+  });
+
+  it('walks a Rotom between its machines on a Catalog, never into itself', () => {
+    const context = {
+      level: 50,
+      held: new Set<Items>(),
+      canEvolve: false,
+      moves: new Set<Moves>(),
+      stats: EVEN_STATS,
+      friendship: BASE_FRIENDSHIP,
+      gender: Genders.Genderless,
+      time: TimeOfDay.Day,
+    };
+    const catalog = new Set([Items.RotomCatalog]);
+
+    // No Catalog, no machine
+    expect(
+      getAvailableEvolutions({ species: Species.Rotom, ...context, carried: new Set() }),
+    ).toEqual([]);
+
+    for (const shape of ROTOM_FORMS) {
+      const offered = getAvailableEvolutions({ species: shape, ...context, carried: catalog });
+
+      // Every other shape, its own left out, and each spends a Catalog
+      expect(offered.map((entry) => entry.species).sort()).toEqual(
+        ROTOM_FORMS.filter((other) => other !== shape).sort(),
+      );
+      for (const entry of offered) {
+        expect(getConsumedItem(entry)).toBe(Items.RotomCatalog);
+      }
+    }
+
+    // A machine is a shape rather than a stage, so the line stays one
+    // stage long and every shape reads the same band
+    for (const shape of ROTOM_FORMS) {
+      expect(getSpawnRarity(shape)).toBe(SpawnRarity.Elusive);
+    }
   });
 
   it('offers nothing at all to a pokemon holding an Everstone', () => {

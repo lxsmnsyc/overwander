@@ -822,6 +822,7 @@ const enum Abilities {
   Heartcurrent = 200238,
   WaxingDark = 200239,
   Purebloom = 200240,
+  Appliance = 200241,
 }
 
 export default Abilities;

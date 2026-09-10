@@ -597,6 +597,7 @@ export const enum Species {
   Probopass = 476,
   Dusknoir = 477,
   Froslass = 478,
+  Rotom = 479,
   Uxie = 480,
   Mesprit = 481,
   Azelf = 482,
@@ -618,6 +619,13 @@ export const enum Species {
   DialgaOrigin = 1048301,
   PalkiaOrigin = 1048401,
   GiratinaOrigin = 1048701,
+
+  /** The five appliances a Rotom gets into, one machine apiece */
+  RotomHeat = 1047901,
+  RotomWash = 1047902,
+  RotomFrost = 1047903,
+  RotomFan = 1047904,
+  RotomMow = 1047905,
 
   /** The shape a Shaymin opens into with the flower in its hands */
   ShayminSky = 1049201,
@@ -773,6 +781,16 @@ export const CASTFORM_FORMS: Species[] = [
 export const DIALGA_FORMS: Species[] = [Species.Dialga, Species.DialgaOrigin];
 export const PALKIA_FORMS: Species[] = [Species.Palkia, Species.PalkiaOrigin];
 export const GIRATINA_FORMS: Species[] = [Species.Giratina, Species.GiratinaOrigin];
+
+/** Rotom and the five machines it gets into */
+export const ROTOM_FORMS: Species[] = [
+  Species.Rotom,
+  Species.RotomHeat,
+  Species.RotomWash,
+  Species.RotomFrost,
+  Species.RotomFan,
+  Species.RotomMow,
+];
 
 /** Shaymin and the shape the Gracidea opens it into */
 export const SHAYMIN_FORMS: Species[] = [Species.Shaymin, Species.ShayminSky];

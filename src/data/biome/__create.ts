@@ -621,13 +621,19 @@ export function getLineStage(species: Species): number {
  * How many stages the longest walk from here down the line holds,
  * babies left out. A species whose evolution is still waiting on a
  * later gen counts that evolution, since the line is what it is
- * whether or not this game has the last of it yet
+ * whether or not this game has the last of it yet.
+ *
+ * A change of shape is not a stage. A Rotom's machines are reached
+ * the same way an evolution is, and they carry its own dex number, so
+ * they are stepped over: the line is one stage long however many
+ * machines it gets into
  */
 function stagesBelow(species: Species): number {
   const own = BABY_SPECIES.has(species) ? 0 : 1;
-  const below = (getSpeciesData(species).evolvesInto ?? []).map((entry) =>
-    stagesBelow(entry.species),
-  );
+  const dex = getSpeciesData(species).dexNumber;
+  const below = (getSpeciesData(species).evolvesInto ?? [])
+    .filter((entry) => getSpeciesData(entry.species).dexNumber !== dex)
+    .map((entry) => stagesBelow(entry.species));
 
   if (below.length === 0) {
     return own + (isAwaitingEvolution(species) ? 1 : 0);

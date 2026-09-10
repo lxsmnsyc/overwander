@@ -157,6 +157,10 @@ export const ITEM_POOL: ItemRarityGroups = {
     { item: Items.DuskStone, weight: 8 },
     { item: Items.DawnStone, weight: 8 },
     { item: Items.IceStone, weight: 8 },
+    // Not a stone, and here for the same reason they are: it is used
+    // on a pokemon and spent. Thinner, because a Rotom wants more
+    // than one of them and nobody sells any
+    { item: Items.RotomCatalog, weight: 6 },
     { item: Items.Nugget, weight: 8 },
     // The middle of the ladder, thinning as it climbs
     // Cut off a Slowpoke, and worth more than the nugget it is found

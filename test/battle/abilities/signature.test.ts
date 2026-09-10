@@ -33,6 +33,7 @@ import {
   WOKEN_SCALE,
   WOKEN_STAGES,
 } from '../../../src/battle/abilities/signature/__create';
+import { APPLIANCE_SCALE } from '../../../src/battle/abilities/signature/rotom';
 import { LAVADOME_SCALE } from '../../../src/battle/abilities/signature/heatran-regigigas';
 import {
   BACKLASH_SHARE,
@@ -7037,5 +7038,33 @@ describe('Purebloom', () => {
     battle.tick(turns(1));
 
     expect(flower.health).toBeLessThan(flowerHP);
+  });
+});
+
+describe('Appliance', () => {
+  it('lifts what the machine gives it and leaves the current alone', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const rotom = createUnit(battle, teamA, [Types.Electric, Types.Fire]);
+    const enemy = createUnit(battle, teamB);
+    rotom.addAbility(Abilities.Appliance);
+
+    const fire = makeAttack(rotom, enemy, Moves.Overheat, Types.Fire, MoveCategories.Special);
+    const electric = makeAttack(
+      rotom,
+      enemy,
+      Moves.ThunderShock,
+      Types.Electric,
+      MoveCategories.Special,
+    );
+    const ghost = makeAttack(rotom, enemy, Moves.ShadowBall, Types.Ghost, MoveCategories.Special);
+
+    expect(resolveAttackStat(battle, fire, rotom, Stats.SpecialAttack, 100)).toBeCloseTo(
+      100 * APPLIANCE_SCALE,
+      5,
+    );
+    // The current it is made of is not what the machine gave it
+    expect(resolveAttackStat(battle, electric, rotom, Stats.SpecialAttack, 100)).toBe(100);
+    // And a type this shape does not have is nothing to it
+    expect(resolveAttackStat(battle, ghost, rotom, Stats.SpecialAttack, 100)).toBe(100);
   });
 });

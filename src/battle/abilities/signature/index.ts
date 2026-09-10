@@ -9,6 +9,7 @@ import lakeTrio from './lake-trio';
 import manaphy from './manaphy';
 import moonDuo from './moon-duo';
 import parasToTentacool from './paras-to-tentacool';
+import rotom from './rotom';
 import sandshrewToOddish from './sandshrew-to-oddish';
 import shaymin from './shaymin';
 import spoinkToDeoxys from './spoink-to-deoxys';
@@ -47,6 +48,7 @@ const setupAbilities = [
   ...stunkyToGible,
   ...rioluToSkorupi,
   ...croagunkToSnover,
+  ...rotom,
   ...lakeTrio,
   ...heatranRegigigas,
   ...creationTrio,

@@ -858,6 +858,9 @@ export const enum Items {
   /** The flower a Shaymin opens with, and the letter that leads to one */
   Gracidea = 403,
   OaksLetter = 404,
+
+  /** The list of machines a Rotom picks its next one out of */
+  RotomCatalog = 405,
 }
 
 /**

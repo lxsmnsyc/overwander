@@ -95,4 +95,21 @@ export default function registerEvolutionStones(): void {
       sell: 1500,
     });
   }
+
+  /**
+   * Not a stone, but the same kind of item: used on a Rotom to move it
+   * into one of the machines it lives in, and spent doing it. Nobody
+   * stocks one, so every shape after the first costs a Catalog found
+   * in the ground
+   */
+  registerItem(Items.RotomCatalog, {
+    name: 'Rotom Catalog',
+    description: 'Moves the Rotom it is used on into another of its machines.',
+    type: ItemTypes.Evolution,
+    // Drawn on the key sheet, which is where the collection packed it
+    icon: 'key/rotom-catalog',
+    flags: ItemFlags.Usable,
+    buy: 0,
+    sell: 1500,
+  });
 }

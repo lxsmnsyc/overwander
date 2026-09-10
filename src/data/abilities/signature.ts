@@ -1368,6 +1368,12 @@ export default function registerSignatureAbilities(): void {
     description: 'Fire moves hit it at 0.5x while hail or snow falls.',
   });
 
+  // The plasma, which is good at whatever it got into
+  registerSignature(Families.Rotom, Abilities.Appliance, {
+    name: 'Appliance',
+    description: 'Its moves of the type its shape gives it, Electric aside, hit 1.3x.',
+  });
+
   /**
    * The lake trio: each of them hands its own side the thing it was
    * made to keep, one stage of it, as it arrives. The birds' wingbeat

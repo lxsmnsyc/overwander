@@ -23,6 +23,7 @@ export default function registerTropicalSeasonalForestSpawns(): void {
       scarce: [
         { species: Species.Exeggutor, weight: 10 },
         { species: Species.Cherrim, weight: 6 },
+        { species: Species.Lickilicky, weight: 6 },
       ],
       elusive: [
         { species: Species.Victreebel, weight: 5 },
@@ -49,6 +50,7 @@ export default function registerTropicalSeasonalForestSpawns(): void {
       scarce: [
         { species: Species.Exeggutor, weight: 10 },
         { species: Species.Cherrim, weight: 6 },
+        { species: Species.Lickilicky, weight: 6 },
       ],
       elusive: [
         { species: Species.Victreebel, weight: 5 },
@@ -70,6 +72,7 @@ export default function registerTropicalSeasonalForestSpawns(): void {
       scarce: [
         { species: Species.Exeggutor, weight: 10 },
         { species: Species.Cherrim, weight: 6 },
+        { species: Species.Lickilicky, weight: 6 },
       ],
       elusive: [],
       prized: [...UNOWN_SPAWNS],
@@ -85,6 +88,7 @@ export default function registerTropicalSeasonalForestSpawns(): void {
       scarce: [
         { species: Species.Exeggutor, weight: 10 },
         { species: Species.Cherrim, weight: 6 },
+        { species: Species.Lickilicky, weight: 6 },
       ],
       elusive: [],
       prized: [...UNOWN_SPAWNS],

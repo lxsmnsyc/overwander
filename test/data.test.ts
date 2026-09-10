@@ -1064,6 +1064,7 @@ describe('where a species lives', () => {
     const unstaged = new Set<Species>([
       Species.Porygon,
       Species.Porygon2,
+      Species.PorygonZ,
       Species.ShellosEast,
       Species.GastrodonEast,
     ]);
@@ -1627,7 +1628,8 @@ describe('evolution data', () => {
       { species: Species.Ivysaur, method: EvolutionMethod.Level, level: 16 },
     ]);
 
-    expect(getSpeciesData(Species.Eevee).evolvesInto).toHaveLength(5);
+    // Seven roads out of one Eevee: five stones and two friendships
+    expect(getSpeciesData(Species.Eevee).evolvesInto).toHaveLength(7);
     expect(getSpeciesData(Species.Eevee).evolvesInto?.[0]).toEqual({
       species: Species.Vaporeon,
       method: EvolutionMethod.UsedItem,
@@ -3544,42 +3546,52 @@ describe('item data', () => {
     // not gold
     expect(sellPrice(Items.HeartScale)).toBe(0);
     expect(sellPrice(Items.PortalKey)).toBe(0);
-    expect(sellPrice(Items.IceStone)).toBe(0);
+    expect(sellPrice(Items.WishTag)).toBe(0);
   });
 
-  it('registers the stones and trade items nothing can spend yet', () => {
-    // Every line that asks for one belongs to a generation this game
-    // has not registered, so they are named, drawn and priceless
-    // rather than stocked or buried
+  it('stocks the evolution items whose lines are registered, and holds the rest back', () => {
+    // A stone or a token is sold and buried once something can spend
+    // it. The four Sinnoh stones and the five tokens below them all
+    // have a line asking now
     const stones = [Items.ShinyStone, Items.DuskStone, Items.DawnStone, Items.IceStone];
-    const traded = [
-      Items.KingsRock,
-      Items.DragonScale,
-      Items.UpGrade,
+    const carried = [
       Items.DubiousDisc,
       Items.Protector,
       Items.Electirizer,
       Items.Magmarizer,
       Items.ReaperCloth,
+      Items.RazorClaw,
+      Items.RazorFang,
+      Items.OvalStone,
+    ];
+
+    for (const item of [...stones, ...carried]) {
+      const data = getItemData(item);
+
+      expect(data.flags & ItemFlags.Marketable, data.name).not.toBe(0);
+      expect(data.buy, data.name).toBeGreaterThan(0);
+      expect(data.sell, data.name).toBeGreaterThan(0);
+    }
+
+    // The ones still waiting on a generation this game has not
+    // registered are named, drawn and priceless rather than stocked
+    const latent = [
+      Items.KingsRock,
+      Items.DragonScale,
+      Items.UpGrade,
       Items.Sachet,
       Items.WhippedDream,
     ];
-    const latent = [...stones, ...traded];
 
     for (const item of latent) {
       const data = getItemData(item);
 
       expect(data.type).toBe(ItemTypes.Evolution);
-      // Nothing stocks one, nothing buys one back, and the ground
-      // hides none of them
-      expect(data.flags & ItemFlags.Marketable).toBe(0);
-      expect(data.buy).toBe(0);
-      expect(data.sell).toBe(0);
+      expect(data.flags & ItemFlags.Marketable, data.name).toBe(0);
+      expect(data.buy, data.name).toBe(0);
+      expect(data.sell, data.name).toBe(0);
       expect(getItemBand(item)).toBeNull();
-    }
-    expect(new Set(getVendorGoods().map((item) => item)).size).toBeGreaterThan(0);
-    for (const item of latent) {
-      expect(new Set(getVendorGoods()).has(item)).toBe(false);
+      expect(new Set(getVendorGoods()).has(item), data.name).toBe(false);
     }
 
     // A stone is spent on the pokemon, the way the five Kanto ones are
@@ -3587,29 +3599,21 @@ describe('item data', () => {
       expect(getItemData(item).flags & ItemFlags.Usable, getItemData(item).name).not.toBe(0);
     }
 
-    // A trade item is held rather than spent: the evolution asks what
-    // the pokemon is holding, and only a holdable item can be handed
-    // to one at all
-    for (const item of traded) {
+    // Everything carried is held rather than spent: the evolution asks
+    // what the pokemon is holding, and only a holdable item can be
+    // handed to one at all
+    for (const item of [...carried, ...latent]) {
       const data = getItemData(item);
 
       expect(data.flags & ItemFlags.Holdable, data.name).not.toBe(0);
       expect(data.flags & ItemFlags.Usable, data.name).toBe(0);
     }
 
-    // A Razor Claw and a Razor Fang are not trade items at all: what
-    // a Weavile and a Gliscor want is a level at night with one in
-    // hand, so both are held and neither is ever spent
-    for (const item of [Items.RazorClaw, Items.RazorFang]) {
-      const data = getItemData(item);
-
-      expect(data.type, data.name).toBe(ItemTypes.Held);
-      expect(data.flags & ItemFlags.Holdable, data.name).not.toBe(0);
-      expect(data.flags & ItemFlags.Usable, data.name).toBe(0);
-      expect(data.flags & ItemFlags.Marketable, data.name).toBe(0);
-      // Their lines are a later generation's, so the line says the
-      // fight and nothing about an evolution nothing can reach
-      expect(data.description).not.toContain('volve');
+    // A Razor Claw, a Razor Fang and an Oval Stone are not trade items
+    // at all: what a Weavile, a Gliscor and a Chansey want is a level
+    // with one in hand, so all three are held and none is ever spent
+    for (const item of [Items.RazorClaw, Items.RazorFang, Items.OvalStone]) {
+      expect(getItemData(item).type, getItemData(item).name).toBe(ItemTypes.Held);
     }
 
     // Metal Coat is not duplicated: the Steel booster already

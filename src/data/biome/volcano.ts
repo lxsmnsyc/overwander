@@ -35,6 +35,7 @@ export default function registerVolcanoSpawns(): void {
         { species: Species.Camerupt, weight: 6 },
         { species: Species.Arcanine, weight: 5 },
         { species: Species.Magcargo, weight: 5 },
+        { species: Species.Magmortar, weight: 6 },
       ],
       elusive: [
         { species: Species.Charizard, weight: 3 },
@@ -77,6 +78,7 @@ export default function registerVolcanoSpawns(): void {
         { species: Species.Arcanine, weight: 5 },
         { species: Species.Rapidash, weight: 5 },
         { species: Species.Magcargo, weight: 5 },
+        { species: Species.Magmortar, weight: 6 },
       ],
       elusive: [
         { species: Species.Charizard, weight: 3 },
@@ -104,6 +106,7 @@ export default function registerVolcanoSpawns(): void {
       scarce: [
         { species: Species.Ninetales, weight: 5 },
         { species: Species.Magcargo, weight: 10 },
+        { species: Species.Magmortar, weight: 6 },
       ],
       elusive: [],
       prized: [...UNOWN_SPAWNS],
@@ -127,6 +130,7 @@ export default function registerVolcanoSpawns(): void {
         { species: Species.Weezing, weight: 5 },
         { species: Species.Ninetales, weight: 5 },
         { species: Species.Magcargo, weight: 5 },
+        { species: Species.Magmortar, weight: 6 },
       ],
       elusive: [],
       prized: [...UNOWN_SPAWNS],

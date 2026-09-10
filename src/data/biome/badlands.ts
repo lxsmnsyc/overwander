@@ -48,6 +48,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Bronzong, weight: 6 },
         { species: Species.Hippowdon, weight: 6 },
         { species: Species.Probopass, weight: 6 },
+        { species: Species.Magmortar, weight: 6 },
       ],
       elusive: [
         { species: Species.Metagross, weight: 1 },
@@ -61,6 +62,8 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Mawile, weight: 8 },
         { species: Species.Solrock, weight: 5 },
         { species: Species.Garchomp, weight: 2 },
+        { species: Species.Magnezone, weight: 5 },
+        { species: Species.Rhyperior, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [
@@ -117,6 +120,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Bronzong, weight: 6 },
         { species: Species.Hippowdon, weight: 6 },
         { species: Species.Probopass, weight: 6 },
+        { species: Species.Magmortar, weight: 6 },
       ],
       elusive: [
         { species: Species.Metagross, weight: 1 },
@@ -130,6 +134,8 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Mawile, weight: 8 },
         { species: Species.Solrock, weight: 5 },
         { species: Species.Garchomp, weight: 2 },
+        { species: Species.Magnezone, weight: 5 },
+        { species: Species.Rhyperior, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [
@@ -178,6 +184,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Hippowdon, weight: 6 },
         { species: Species.Probopass, weight: 6 },
         { species: Species.Gliscor, weight: 6 },
+        { species: Species.Magmortar, weight: 6 },
       ],
       elusive: [
         { species: Species.Metagross, weight: 1 },
@@ -186,6 +193,8 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Sableye, weight: 8 },
         { species: Species.Lunatone, weight: 5 },
         { species: Species.Garchomp, weight: 2 },
+        { species: Species.Magnezone, weight: 5 },
+        { species: Species.Rhyperior, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [
@@ -239,6 +248,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Probopass, weight: 6 },
         { species: Species.Mismagius, weight: 6 },
         { species: Species.Gliscor, weight: 6 },
+        { species: Species.Magmortar, weight: 6 },
       ],
       elusive: [
         { species: Species.Metagross, weight: 1 },
@@ -248,6 +258,8 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Lunatone, weight: 5 },
         { species: Species.Garchomp, weight: 2 },
         { species: Species.Dusknoir, weight: 5 },
+        { species: Species.Magnezone, weight: 5 },
+        { species: Species.Rhyperior, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [

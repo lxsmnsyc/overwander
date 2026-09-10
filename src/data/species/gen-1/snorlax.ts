@@ -16,6 +16,7 @@ export default function registerSnorlaxSpecies(): void {
     height: 2.1,
     weight: 460,
     family: Families.Snorlax,
+    evolvesFrom: Species.Munchlax,
     stats: {
       [Stats.HP]: 160,
       [Stats.Attack]: 110,
@@ -130,7 +131,6 @@ export default function registerSnorlaxSpecies(): void {
         Moves.SeedBomb,
         Moves.ZenHeadbutt,
       ],
-      egg: [Moves.Lick, Moves.Charm],
     },
   });
 }

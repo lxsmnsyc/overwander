@@ -22,6 +22,7 @@ export default function registerChanseySpecies(): void {
     height: 1.1,
     weight: 34.6,
     family: Families.Chansey,
+    evolvesFrom: Species.Happiny,
     stats: {
       [Stats.HP]: 250,
       [Stats.Attack]: 5,
@@ -140,7 +141,6 @@ export default function registerChanseySpecies(): void {
         Moves.StealthRock,
         Moves.ZenHeadbutt,
       ],
-      egg: [Moves.Metronome, Moves.HealBell, Moves.Present, Moves.Aromatherapy, Moves.MudBomb],
     },
   });
 }

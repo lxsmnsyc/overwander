@@ -14,6 +14,7 @@ export default function registerTundraSpawns(): void {
       scarce: [
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Abomasnow, weight: 6 },
+        { species: Species.Glaceon, weight: 6 },
       ],
       elusive: [
         { species: Species.Delibird, weight: 5 },
@@ -29,6 +30,7 @@ export default function registerTundraSpawns(): void {
       scarce: [
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Abomasnow, weight: 6 },
+        { species: Species.Glaceon, weight: 6 },
       ],
       elusive: [
         { species: Species.Delibird, weight: 5 },
@@ -48,6 +50,7 @@ export default function registerTundraSpawns(): void {
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Abomasnow, weight: 6 },
         { species: Species.Weavile, weight: 6 },
+        { species: Species.Glaceon, weight: 6 },
       ],
       elusive: [
         { species: Species.Jynx, weight: 5 },
@@ -68,6 +71,7 @@ export default function registerTundraSpawns(): void {
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Abomasnow, weight: 6 },
         { species: Species.Weavile, weight: 6 },
+        { species: Species.Glaceon, weight: 6 },
       ],
       elusive: [
         { species: Species.Jynx, weight: 5 },

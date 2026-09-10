@@ -51,6 +51,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Bibarel, weight: 10 },
         { species: Species.Toxicroak, weight: 6 },
         { species: Species.Yanmega, weight: 6 },
+        { species: Species.Tangrowth, weight: 6 },
       ],
       elusive: [
         { species: Species.Poliwrath, weight: 5 },
@@ -106,6 +107,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Bibarel, weight: 10 },
         { species: Species.Toxicroak, weight: 6 },
         { species: Species.Yanmega, weight: 6 },
+        { species: Species.Tangrowth, weight: 6 },
       ],
       elusive: [
         { species: Species.Poliwrath, weight: 5 },
@@ -143,6 +145,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Bibarel, weight: 10 },
         { species: Species.Toxicroak, weight: 6 },
         { species: Species.Yanmega, weight: 6 },
+        { species: Species.Tangrowth, weight: 6 },
       ],
       elusive: [
         { species: Species.Poliwrath, weight: 5 },
@@ -181,6 +184,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Bibarel, weight: 10 },
         { species: Species.Toxicroak, weight: 6 },
         { species: Species.Yanmega, weight: 6 },
+        { species: Species.Tangrowth, weight: 6 },
       ],
       elusive: [
         { species: Species.Poliwrath, weight: 5 },

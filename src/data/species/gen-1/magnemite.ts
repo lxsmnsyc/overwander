@@ -4,6 +4,7 @@ import Abilities from '../../ids/abilities';
 import Biome, { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
+import { Items } from '../../ids/items';
 import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
@@ -104,6 +105,15 @@ export default function registerMagnemiteSpecies(): void {
 
   registerSpecies(Species.Magneton, {
     dexNumber: 82,
+    // A Thunder Stone rather than a magnetic field, the way Nosepass
+    // asks for one
+    evolvesInto: [
+      {
+        species: Species.Magnezone,
+        method: EvolutionMethod.UsedItem,
+        item: Items.ThunderStone,
+      },
+    ],
     name: 'Magneton',
     category: 'Magnet Pokemon',
     height: 1,

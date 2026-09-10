@@ -468,6 +468,9 @@ const BABY_SPECIES = new Set<Species>([
   Species.Azurill,
   Species.Wynaut,
   Species.Bonsly,
+  Species.MimeJr,
+  Species.Happiny,
+  Species.Munchlax,
   Species.Mantyke,
   Species.Budew,
   Species.Chingling,
@@ -516,10 +519,8 @@ export const PRIZED_WEIGHT = UNOWN_SPAWNS.length;
  * is about what a nest holds and nothing else
  */
 const AWAITING_BABY_SPECIES = new Set<Species>([
-  // Gen 4 babies
-  Species.Chansey,
-  Species.MrMime,
-  Species.Snorlax,
+  // Every baby the game knows about is registered. A later
+  // generation's babies belong here as they are written down
 ]);
 
 /**
@@ -544,14 +545,6 @@ export function isAwaitingBaby(species: Species): boolean {
  * registered
  */
 const AWAITING_EVOLUTION_SPECIES = new Set<Species>([
-  // Gen 4 evolutions
-  Species.Magneton,
-  Species.Lickitung,
-  Species.Rhydon,
-  Species.Tangela,
-  Species.Electabuzz,
-  Species.Magmar,
-  Species.Porygon2,
   // Gen 8 evolutions
   Species.Ursaring,
   Species.Stantler,

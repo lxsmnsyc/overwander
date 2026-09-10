@@ -29,6 +29,7 @@ export default function registerDesertSpawns(): void {
         { species: Species.Dugtrio, weight: 10 },
         { species: Species.WormadamSandy, weight: 4 },
         { species: Species.Hippowdon, weight: 6 },
+        { species: Species.Magmortar, weight: 6 },
       ],
       elusive: [
         { species: Species.Flygon, weight: 5 },
@@ -67,6 +68,7 @@ export default function registerDesertSpawns(): void {
         { species: Species.Dugtrio, weight: 10 },
         { species: Species.WormadamSandy, weight: 4 },
         { species: Species.Hippowdon, weight: 6 },
+        { species: Species.Magmortar, weight: 6 },
       ],
       elusive: [
         { species: Species.Flygon, weight: 5 },
@@ -99,6 +101,7 @@ export default function registerDesertSpawns(): void {
         { species: Species.WormadamSandy, weight: 4 },
         { species: Species.Drapion, weight: 6 },
         { species: Species.Hippowdon, weight: 6 },
+        { species: Species.Magmortar, weight: 6 },
       ],
       elusive: [{ species: Species.Garchomp, weight: 2 }],
       prized: [...UNOWN_SPAWNS, { species: Species.Magby, weight: PRIZED_WEIGHT }],
@@ -127,6 +130,7 @@ export default function registerDesertSpawns(): void {
         { species: Species.WormadamSandy, weight: 4 },
         { species: Species.Drapion, weight: 6 },
         { species: Species.Hippowdon, weight: 6 },
+        { species: Species.Magmortar, weight: 6 },
       ],
       elusive: [{ species: Species.Garchomp, weight: 2 }],
       prized: [...UNOWN_SPAWNS, { species: Species.Magby, weight: PRIZED_WEIGHT }],

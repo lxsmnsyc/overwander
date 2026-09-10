@@ -4,13 +4,21 @@ import Abilities from '../../ids/abilities';
 import Biome, { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
+import { Items } from '../../ids/items';
 import { Moves } from '../../ids/moves';
-import { Species } from '../../ids/species';
+import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 export default function registerPorygon2Species(): void {
   registerSpecies(Species.Porygon2, {
     dexNumber: 233,
+    evolvesInto: [
+      {
+        species: Species.PorygonZ,
+        method: EvolutionMethod.Trade | EvolutionMethod.HeldItem,
+        item: Items.DubiousDisc,
+      },
+    ],
     name: 'Porygon2',
     category: 'Virtual Pokemon',
     height: 0.6,

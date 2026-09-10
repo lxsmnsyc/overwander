@@ -4,6 +4,7 @@ import Abilities from '../../ids/abilities';
 import Biome, { TimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
+import { Items } from '../../ids/items';
 import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
@@ -140,6 +141,13 @@ export default function registerRhyhornSpecies(): void {
 
   registerSpecies(Species.Rhydon, {
     dexNumber: 112,
+    evolvesInto: [
+      {
+        species: Species.Rhyperior,
+        method: EvolutionMethod.Trade | EvolutionMethod.HeldItem,
+        item: Items.Protector,
+      },
+    ],
     name: 'Rhydon',
     category: 'Drill Pokemon',
     height: 1.9,

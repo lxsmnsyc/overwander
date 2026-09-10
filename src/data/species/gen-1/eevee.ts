@@ -73,6 +73,16 @@ export default function registerEeveeSpecies(): void {
         time: TimeOfDay.Morning | TimeOfDay.Day,
       },
       {
+        species: Species.Leafeon,
+        method: EvolutionMethod.UsedItem,
+        item: Items.LeafStone,
+      },
+      {
+        species: Species.Glaceon,
+        method: EvolutionMethod.UsedItem,
+        item: Items.IceStone,
+      },
+      {
         species: Species.Umbreon,
         method: EvolutionMethod.Friendship | EvolutionMethod.TimeOfDay,
         time: TimeOfDay.Evening | TimeOfDay.Night,

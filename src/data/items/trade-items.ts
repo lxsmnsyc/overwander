@@ -66,11 +66,6 @@ const TRADE_ITEMS: [item: Items, name: string, icon: string, description: string
   ],
   [Items.DragonScale, 'Dragon Scale', 'dragon-scale', EVOLVES],
   [Items.UpGrade, 'Up-Grade', 'up-grade', EVOLVES],
-  [Items.DubiousDisc, 'Dubious Disc', 'dubious-disc', EVOLVES],
-  [Items.Protector, 'Protector', 'protector', EVOLVES],
-  [Items.Electirizer, 'Electirizer', 'electirizer', EVOLVES],
-  [Items.Magmarizer, 'Magmarizer', 'magmarizer', EVOLVES],
-  [Items.ReaperCloth, 'Reaper Cloth', 'reaper-cloth', EVOLVES],
   [Items.Sachet, 'Sachet', 'sachet', EVOLVES],
   [Items.WhippedDream, 'Whipped Dream', 'whipped-dream', EVOLVES],
 ];
@@ -101,20 +96,50 @@ const STOCKED_TRADE_ITEMS: [item: Items, name: string, icon: string, description
     'prism-scale',
     'A Feebas traded holding it turns into what it grows up as.',
   ],
+  [
+    Items.Protector,
+    'Protector',
+    'protector',
+    'A Rhydon traded holding it grows the armour it was missing.',
+  ],
+  [
+    Items.Electirizer,
+    'Electirizer',
+    'electirizer',
+    'An Electabuzz traded holding it grows into the one with the cables.',
+  ],
+  [
+    Items.Magmarizer,
+    'Magmarizer',
+    'magmarizer',
+    'A Magmar traded holding it grows the arms it fires from.',
+  ],
+  [
+    Items.ReaperCloth,
+    'Reaper Cloth',
+    'reaper-cloth',
+    'A Dusclops traded holding it opens into what it was covering.',
+  ],
+  [
+    Items.DubiousDisc,
+    'Dubious Disc',
+    'dubious-disc',
+    'A Porygon2 traded holding it comes back wrong, and faster for it.',
+  ],
 ];
 
 /**
- * The two that were filed here and are not trade items at all.
+ * The three that were filed here and are not trade items at all.
  *
- * A Razor Claw and a Razor Fang are **held** through a level, at
- * night: that is how a Sneasel becomes a Weavile and a Gligar a
- * Gliscor. Neither is handed over before a trade and neither is ever
- * spent, so neither is Usable, and their lines are a later
- * generation's anyway. They keep their pictures with the evolution
- * items because that is where the sheet packs them.
+ * A Razor Claw, a Razor Fang and an Oval Stone are **held** through a
+ * level: that is how a Sneasel becomes a Weavile at night, a Gligar a
+ * Gliscor, and a Happiny a Chansey in daylight. None is handed over
+ * before a trade and none is ever spent, so none is Usable. They keep
+ * their pictures with the evolution items because that is where the
+ * sheet packs them.
  *
- * Their lines say nothing yet, so the description is the fight and
- * only the fight, the way every other held item's is
+ * Each description leads with the fight where there is one, the way
+ * every other held item's does
  */
 const HELD_EVOLUTION_ITEMS: [item: Items, name: string, icon: string, description: string][] = [
   [Items.RazorClaw, 'Razor Claw', 'razor-claw', '2x its holder’s odds of a critical.'],
@@ -123,6 +148,12 @@ const HELD_EVOLUTION_ITEMS: [item: Items, name: string, icon: string, descriptio
     'Razor Fang',
     'razor-fang',
     '1/10 of its holder’s blows leave the target flinching.',
+  ],
+  [
+    Items.OvalStone,
+    'Oval Stone',
+    'oval-stone',
+    'A Happiny holding it grows into a Chansey in daylight.',
   ],
 ];
 
@@ -174,9 +205,11 @@ export default function registerTradeItems(): void {
       description,
       type: ItemTypes.Held,
       icon: `evolutions/${icon}`,
-      flags: ItemFlags.Holdable,
-      buy: 0,
-      sell: 0,
+      // On the shelf for the same reason the trade items are: a line
+      // that asks for a held item is shut without one
+      flags: ItemFlags.Holdable | ItemFlags.Marketable,
+      buy: 3000,
+      sell: 1500,
     });
   }
 }

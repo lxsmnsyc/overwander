@@ -1,6 +1,6 @@
 import Biome, { TimeOfDay } from '../ids/biome';
 import { Species } from '../ids/species';
-import { UNOWN_SPAWNS, registerSpawnPool } from './__create';
+import { PRIZED_WEIGHT, UNOWN_SPAWNS, registerSpawnPool } from './__create';
 
 /**
  * TropicalRainforest spawn pool, grouped by day-cycle period and rarity band
@@ -27,6 +27,7 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Forretress, weight: 5 },
         { species: Species.Ambipom, weight: 6 },
         { species: Species.Yanmega, weight: 6 },
+        { species: Species.Tangrowth, weight: 6 },
       ],
       elusive: [
         { species: Species.Sceptile, weight: 2 },
@@ -34,7 +35,7 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Kecleon, weight: 10 },
         { species: Species.Tropius, weight: 8 },
       ],
-      prized: [...UNOWN_SPAWNS],
+      prized: [...UNOWN_SPAWNS, { species: Species.Munchlax, weight: PRIZED_WEIGHT }],
       special: [],
       mythical: [{ species: Species.Mew, weight: 10 }],
     },
@@ -58,6 +59,7 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Forretress, weight: 5 },
         { species: Species.Ambipom, weight: 6 },
         { species: Species.Yanmega, weight: 6 },
+        { species: Species.Tangrowth, weight: 6 },
       ],
       elusive: [
         { species: Species.Sceptile, weight: 2 },
@@ -65,7 +67,7 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Kecleon, weight: 10 },
         { species: Species.Tropius, weight: 8 },
       ],
-      prized: [...UNOWN_SPAWNS],
+      prized: [...UNOWN_SPAWNS, { species: Species.Munchlax, weight: PRIZED_WEIGHT }],
       special: [],
       mythical: [{ species: Species.Mew, weight: 10 }],
     },
@@ -87,9 +89,10 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Forretress, weight: 8 },
         { species: Species.Ambipom, weight: 6 },
         { species: Species.Yanmega, weight: 6 },
+        { species: Species.Tangrowth, weight: 6 },
       ],
       elusive: [],
-      prized: [...UNOWN_SPAWNS],
+      prized: [...UNOWN_SPAWNS, { species: Species.Munchlax, weight: PRIZED_WEIGHT }],
       special: [],
       mythical: [{ species: Species.Mew, weight: 10 }],
     },
@@ -111,9 +114,10 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Forretress, weight: 8 },
         { species: Species.Ambipom, weight: 6 },
         { species: Species.Yanmega, weight: 6 },
+        { species: Species.Tangrowth, weight: 6 },
       ],
       elusive: [],
-      prized: [...UNOWN_SPAWNS],
+      prized: [...UNOWN_SPAWNS, { species: Species.Munchlax, weight: PRIZED_WEIGHT }],
       special: [],
       mythical: [{ species: Species.Mew, weight: 10 }],
     },

@@ -22,6 +22,7 @@ export default function registerGlacierSpawns(): void {
       scarce: [
         { species: Species.Glalie, weight: 6 },
         { species: Species.Froslass, weight: 6 },
+        { species: Species.Glaceon, weight: 6 },
       ],
       elusive: [
         { species: Species.Walrein, weight: 5 },
@@ -50,6 +51,7 @@ export default function registerGlacierSpawns(): void {
       scarce: [
         { species: Species.Glalie, weight: 6 },
         { species: Species.Froslass, weight: 6 },
+        { species: Species.Glaceon, weight: 6 },
       ],
       elusive: [
         { species: Species.Walrein, weight: 5 },
@@ -80,6 +82,7 @@ export default function registerGlacierSpawns(): void {
         { species: Species.Glalie, weight: 6 },
         { species: Species.Froslass, weight: 6 },
         { species: Species.Weavile, weight: 6 },
+        { species: Species.Glaceon, weight: 6 },
       ],
       elusive: [
         { species: Species.Walrein, weight: 5 },
@@ -110,6 +113,7 @@ export default function registerGlacierSpawns(): void {
         { species: Species.Glalie, weight: 6 },
         { species: Species.Froslass, weight: 6 },
         { species: Species.Weavile, weight: 6 },
+        { species: Species.Glaceon, weight: 6 },
       ],
       elusive: [
         { species: Species.Walrein, weight: 5 },

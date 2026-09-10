@@ -20,7 +20,11 @@ export default function registerTemperateRainforestSpawns(): void {
         { species: Species.Weepinbell, weight: 5 },
         { species: Species.Grotle, weight: 2 },
       ],
-      scarce: [{ species: Species.Azumarill, weight: 5 }],
+      scarce: [
+        { species: Species.Azumarill, weight: 5 },
+        { species: Species.Tangrowth, weight: 6 },
+        { species: Species.Leafeon, weight: 6 },
+      ],
       elusive: [
         { species: Species.Victreebel, weight: 5 },
         { species: Species.Torterra, weight: 2 },
@@ -41,7 +45,11 @@ export default function registerTemperateRainforestSpawns(): void {
         { species: Species.Weepinbell, weight: 5 },
         { species: Species.Grotle, weight: 2 },
       ],
-      scarce: [{ species: Species.Azumarill, weight: 5 }],
+      scarce: [
+        { species: Species.Azumarill, weight: 5 },
+        { species: Species.Tangrowth, weight: 6 },
+        { species: Species.Leafeon, weight: 6 },
+      ],
       elusive: [
         { species: Species.Victreebel, weight: 5 },
         { species: Species.Torterra, weight: 2 },
@@ -61,6 +69,7 @@ export default function registerTemperateRainforestSpawns(): void {
         { species: Species.Venomoth, weight: 10 },
         { species: Species.Azumarill, weight: 5 },
         { species: Species.Breloom, weight: 10 },
+        { species: Species.Tangrowth, weight: 6 },
       ],
       elusive: [],
       prized: [...UNOWN_SPAWNS, { species: Species.Azurill, weight: PRIZED_WEIGHT }],
@@ -78,6 +87,7 @@ export default function registerTemperateRainforestSpawns(): void {
         { species: Species.Venomoth, weight: 10 },
         { species: Species.Azumarill, weight: 5 },
         { species: Species.Breloom, weight: 10 },
+        { species: Species.Tangrowth, weight: 6 },
       ],
       elusive: [],
       prized: [...UNOWN_SPAWNS, { species: Species.Azurill, weight: PRIZED_WEIGHT }],

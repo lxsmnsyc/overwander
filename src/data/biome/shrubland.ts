@@ -46,7 +46,11 @@ export default function registerShrublandSpawns(): void {
         { species: Species.Jumpluff, weight: 5 },
         { species: Species.Luxray, weight: 4 },
       ],
-      prized: [...UNOWN_SPAWNS, { species: Species.Budew, weight: PRIZED_WEIGHT }],
+      prized: [
+        ...UNOWN_SPAWNS,
+        { species: Species.Budew, weight: PRIZED_WEIGHT },
+        { species: Species.Happiny, weight: PRIZED_WEIGHT },
+      ],
       special: [],
     },
     [TimeOfDay.Day]: {
@@ -88,7 +92,11 @@ export default function registerShrublandSpawns(): void {
         { species: Species.Jumpluff, weight: 5 },
         { species: Species.Luxray, weight: 4 },
       ],
-      prized: [...UNOWN_SPAWNS, { species: Species.Budew, weight: PRIZED_WEIGHT }],
+      prized: [
+        ...UNOWN_SPAWNS,
+        { species: Species.Budew, weight: PRIZED_WEIGHT },
+        { species: Species.Happiny, weight: PRIZED_WEIGHT },
+      ],
       special: [],
     },
     [TimeOfDay.Evening]: {
@@ -124,7 +132,11 @@ export default function registerShrublandSpawns(): void {
         { species: Species.Shiftry, weight: 5 },
         { species: Species.Luxray, weight: 4 },
       ],
-      prized: [...UNOWN_SPAWNS, { species: Species.Budew, weight: PRIZED_WEIGHT }],
+      prized: [
+        ...UNOWN_SPAWNS,
+        { species: Species.Budew, weight: PRIZED_WEIGHT },
+        { species: Species.Happiny, weight: PRIZED_WEIGHT },
+      ],
       special: [],
     },
     [TimeOfDay.Night]: {
@@ -160,7 +172,11 @@ export default function registerShrublandSpawns(): void {
         { species: Species.Shiftry, weight: 5 },
         { species: Species.Luxray, weight: 4 },
       ],
-      prized: [...UNOWN_SPAWNS, { species: Species.Budew, weight: PRIZED_WEIGHT }],
+      prized: [
+        ...UNOWN_SPAWNS,
+        { species: Species.Budew, weight: PRIZED_WEIGHT },
+        { species: Species.Happiny, weight: PRIZED_WEIGHT },
+      ],
       special: [],
     },
   });

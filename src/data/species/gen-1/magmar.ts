@@ -4,13 +4,21 @@ import Abilities from '../../ids/abilities';
 import Biome, { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
+import { Items } from '../../ids/items';
 import { Moves } from '../../ids/moves';
-import { Species } from '../../ids/species';
+import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 export default function registerMagmarSpecies(): void {
   registerSpecies(Species.Magmar, {
     dexNumber: 126,
+    evolvesInto: [
+      {
+        species: Species.Magmortar,
+        method: EvolutionMethod.Trade | EvolutionMethod.HeldItem,
+        item: Items.Magmarizer,
+      },
+    ],
     name: 'Magmar',
     category: 'Spitfire Pokemon',
     height: 1.3,

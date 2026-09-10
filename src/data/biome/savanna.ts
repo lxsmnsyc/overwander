@@ -40,6 +40,7 @@ export default function registerSavannaSpawns(): void {
         { species: Species.Sunflora, weight: 5 },
         { species: Species.Donphan, weight: 5 },
         { species: Species.Hippowdon, weight: 6 },
+        { species: Species.Electivire, weight: 6 },
       ],
       elusive: [
         { species: Species.Nidoqueen, weight: 5 },
@@ -92,6 +93,7 @@ export default function registerSavannaSpawns(): void {
         { species: Species.Sunflora, weight: 5 },
         { species: Species.Donphan, weight: 5 },
         { species: Species.Hippowdon, weight: 6 },
+        { species: Species.Electivire, weight: 6 },
       ],
       elusive: [
         { species: Species.Nidoqueen, weight: 5 },
@@ -130,6 +132,7 @@ export default function registerSavannaSpawns(): void {
         { species: Species.Mightyena, weight: 10 },
         { species: Species.Houndoom, weight: 5 },
         { species: Species.Hippowdon, weight: 6 },
+        { species: Species.Electivire, weight: 6 },
       ],
       elusive: [
         { species: Species.Nidoqueen, weight: 5 },
@@ -163,6 +166,7 @@ export default function registerSavannaSpawns(): void {
         { species: Species.Mightyena, weight: 10 },
         { species: Species.Houndoom, weight: 5 },
         { species: Species.Hippowdon, weight: 6 },
+        { species: Species.Electivire, weight: 6 },
       ],
       elusive: [
         { species: Species.Nidoqueen, weight: 5 },

@@ -26,6 +26,7 @@ export default function registerAlpineTundraSpawns(): void {
         { species: Species.Bronzong, weight: 6 },
         { species: Species.Abomasnow, weight: 6 },
         { species: Species.Froslass, weight: 6 },
+        { species: Species.Glaceon, weight: 6 },
       ],
       elusive: [
         { species: Species.Machamp, weight: 5 },
@@ -58,6 +59,7 @@ export default function registerAlpineTundraSpawns(): void {
         { species: Species.Bronzong, weight: 6 },
         { species: Species.Abomasnow, weight: 6 },
         { species: Species.Froslass, weight: 6 },
+        { species: Species.Glaceon, weight: 6 },
       ],
       elusive: [
         { species: Species.Salamence, weight: 2 },
@@ -91,6 +93,7 @@ export default function registerAlpineTundraSpawns(): void {
         { species: Species.Abomasnow, weight: 6 },
         { species: Species.Froslass, weight: 6 },
         { species: Species.Weavile, weight: 6 },
+        { species: Species.Glaceon, weight: 6 },
       ],
       elusive: [
         { species: Species.Salamence, weight: 2 },
@@ -116,6 +119,7 @@ export default function registerAlpineTundraSpawns(): void {
         { species: Species.Abomasnow, weight: 6 },
         { species: Species.Froslass, weight: 6 },
         { species: Species.Weavile, weight: 6 },
+        { species: Species.Glaceon, weight: 6 },
       ],
       elusive: [
         { species: Species.Delibird, weight: 5 },

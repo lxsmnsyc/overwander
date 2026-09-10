@@ -74,6 +74,8 @@ export default function registerMountainSpawns(): void {
         { species: Species.Infernape, weight: 2 },
         { species: Species.Garchomp, weight: 2 },
         { species: Species.Lucario, weight: 5 },
+        { species: Species.Magnezone, weight: 5 },
+        { species: Species.Rhyperior, weight: 5 },
       ],
       prized: [
         ...UNOWN_SPAWNS,
@@ -161,6 +163,8 @@ export default function registerMountainSpawns(): void {
         { species: Species.Infernape, weight: 2 },
         { species: Species.Garchomp, weight: 2 },
         { species: Species.Lucario, weight: 5 },
+        { species: Species.Magnezone, weight: 5 },
+        { species: Species.Rhyperior, weight: 5 },
       ],
       prized: [
         ...UNOWN_SPAWNS,
@@ -227,6 +231,8 @@ export default function registerMountainSpawns(): void {
         { species: Species.Absol, weight: 5 },
         { species: Species.Chimecho, weight: 5 },
         { species: Species.Garchomp, weight: 2 },
+        { species: Species.Magnezone, weight: 5 },
+        { species: Species.Rhyperior, weight: 5 },
       ],
       prized: [
         ...UNOWN_SPAWNS,
@@ -298,6 +304,8 @@ export default function registerMountainSpawns(): void {
         { species: Species.Absol, weight: 5 },
         { species: Species.Chimecho, weight: 5 },
         { species: Species.Garchomp, weight: 2 },
+        { species: Species.Magnezone, weight: 5 },
+        { species: Species.Rhyperior, weight: 5 },
       ],
       prized: [
         ...UNOWN_SPAWNS,

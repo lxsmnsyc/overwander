@@ -151,6 +151,12 @@ export const ITEM_POOL: ItemRarityGroups = {
     { item: Items.LeafStone, weight: 10 },
     { item: Items.MoonStone, weight: 10 },
     { item: Items.SunStone, weight: 10 },
+    // Sinnoh's four, buried like the six above them now that a line
+    // asks for each
+    { item: Items.ShinyStone, weight: 8 },
+    { item: Items.DuskStone, weight: 8 },
+    { item: Items.DawnStone, weight: 8 },
+    { item: Items.IceStone, weight: 8 },
     { item: Items.Nugget, weight: 8 },
     // The middle of the ladder, thinning as it climbs
     // Cut off a Slowpoke, and worth more than the nugget it is found

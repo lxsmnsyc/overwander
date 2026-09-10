@@ -5,12 +5,20 @@ import Biome, { TimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
-import { Species } from '../../ids/species';
+import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 export default function registerTangelaSpecies(): void {
   registerSpecies(Species.Tangela, {
     dexNumber: 114,
+    evolvesInto: [
+      {
+        species: Species.Tangrowth,
+        method: EvolutionMethod.Level | EvolutionMethod.KnownMove,
+        level: 38,
+        move: Moves.AncientPower,
+      },
+    ],
     name: 'Tangela',
     category: 'Vine Pokemon',
     height: 1,

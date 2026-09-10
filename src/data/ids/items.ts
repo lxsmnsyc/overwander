@@ -840,6 +840,9 @@ export const enum Items {
   /** Sinnoh's two, the skull that charged and the face that held */
   SkullFossil = 395,
   ArmorFossil = 396,
+
+  /** What a Happiny carries about as though it were an egg */
+  OvalStone = 397,
 }
 
 /**

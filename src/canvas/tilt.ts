@@ -17,6 +17,34 @@
 export const PITCH = 60;
 
 /**
+ * And how far above it the camera sits in the flat view, which is
+ * straight down. A board with no tilt at all: every cell is the same
+ * square wherever it is, which is what a thumb needs and what a
+ * portrait screen has room for
+ */
+export const FLAT_PITCH = 90;
+
+/** How much of a step across the board survives being drawn at a pitch */
+export function depthOf(pitch: number): number {
+  return Math.sin((pitch * Math.PI) / 180);
+}
+
+/** And how much of a step upward survives it */
+export function riseOf(pitch: number): number {
+  return Math.cos((pitch * Math.PI) / 180);
+}
+
+/**
+ * How flat a patch of ground lies at a pitch: an ellipse as wide as
+ * the patch and this much of that tall. Short of the pitch's own sine,
+ * since a shadow hugging the ground reads better than one drawn as the
+ * full circle the geometry would give
+ */
+export function squashOf(pitch: number): number {
+  return depthOf(pitch) * 0.55;
+}
+
+/**
  * How much of a step across the board survives being drawn.
  *
  * The board is laid back under the camera, so a step away from the
@@ -24,7 +52,7 @@ export const PITCH = 60;
  * Anything measuring a direction **on the ground** rather than on the
  * page has to lay it back by this or it points somewhere else
  */
-export const GROUND_DEPTH = Math.sin((PITCH * Math.PI) / 180);
+export const GROUND_DEPTH = depthOf(PITCH);
 
 /**
  * And how much of a step **upward** survives it.
@@ -35,7 +63,7 @@ export const GROUND_DEPTH = Math.sin((PITCH * Math.PI) / 180);
  * raised by this, and at sixty degrees it is half of what a step
  * across the board is worth
  */
-export const GROUND_RISE = Math.cos((PITCH * Math.PI) / 180);
+export const GROUND_RISE = riseOf(PITCH);
 
 /**
  * How flat a patch of ground lies: an ellipse as wide as the patch and
@@ -43,4 +71,4 @@ export const GROUND_RISE = Math.cos((PITCH * Math.PI) / 180);
  * hugging the ground reads better than one drawn as the full circle
  * the geometry would give
  */
-export const GROUND_SQUASH = GROUND_DEPTH * 0.55;
+export const GROUND_SQUASH = squashOf(PITCH);

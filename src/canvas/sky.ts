@@ -1,7 +1,7 @@
 import Weather from '../data/overworld/weather';
 import type QuadBatch from './gl/quad-batch';
 import type { QuadBlend, QuadPoint } from './gl/quad-batch';
-import { PICTURE_SPAN, projectAir } from './board';
+import { boardView, projectAir } from './board';
 
 /**
  * The sky over the board, drawn rather than packed.
@@ -767,7 +767,7 @@ function eachWorldDrop(
 
   // How many pixels one board width is worth. Free of the fit, and so
   // free of the yaw
-  const perBoard = camera.width / PICTURE_SPAN;
+  const perBoard = camera.width / boardView().span;
   const radius = VOLUME_SPAN / 2;
 
   for (let at = 0; at < count; at++) {

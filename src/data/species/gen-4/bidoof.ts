@@ -1,0 +1,182 @@
+import { Stats } from '../../constants/stats';
+import { Types } from '../../constants/types';
+import Abilities from '../../ids/abilities';
+import Biome, { AnyTimeOfDay } from '../../ids/biome';
+import EggGroups from '../../ids/egg-groups';
+import Families from '../../ids/families';
+import { Moves } from '../../ids/moves';
+import { EvolutionMethod, Species } from '../../ids/species';
+import { registerSpecies } from '../__create';
+
+// TM, HM and tutor moves shared by the whole family
+const FAMILY_TEACHABLE = [
+  Moves.Attract,
+  Moves.Blizzard,
+  Moves.Captivate,
+  Moves.ChargeBeam,
+  Moves.Cut,
+  Moves.Dig,
+  Moves.DoubleTeam,
+  Moves.Endure,
+  Moves.Facade,
+  Moves.Frustration,
+  Moves.FuryCutter,
+  Moves.GrassKnot,
+  Moves.Headbutt,
+  Moves.HiddenPower,
+  Moves.IceBeam,
+  Moves.IcyWind,
+  Moves.IronTail,
+  Moves.LastResort,
+  Moves.MudSlap,
+  Moves.NaturalGift,
+  Moves.Pluck,
+  Moves.Protect,
+  Moves.RainDance,
+  Moves.Rest,
+  Moves.Return,
+  Moves.RockSmash,
+  Moves.SecretPower,
+  Moves.ShadowBall,
+  Moves.ShockWave,
+  Moves.SleepTalk,
+  Moves.Snore,
+  Moves.StealthRock,
+  Moves.Substitute,
+  Moves.SunnyDay,
+  Moves.SuperFang,
+  Moves.Superpower,
+  Moves.Swagger,
+  Moves.Swift,
+  Moves.Taunt,
+  Moves.Thief,
+  Moves.Thunder,
+  Moves.ThunderWave,
+  Moves.Thunderbolt,
+  Moves.Toxic,
+];
+
+/**
+ * The river's engineer: Bidoof gnaws whatever it finds down to size,
+ * and a Bibarel dams the water with what is left
+ */
+export default function registerBidoofSpecies(): void {
+  registerSpecies(Species.Bidoof, {
+    dexNumber: 399,
+    evolvesInto: [
+      {
+        species: Species.Bibarel,
+        method: EvolutionMethod.Level,
+        level: 15,
+      },
+    ],
+    name: 'Bidoof',
+    category: 'Plump Mouse Pokemon',
+    height: 0.5,
+    weight: 20.0,
+    family: Families.Bidoof,
+    stats: {
+      [Stats.HP]: 59,
+      [Stats.Attack]: 45,
+      [Stats.Defense]: 40,
+      [Stats.SpecialAttack]: 35,
+      [Stats.SpecialDefense]: 40,
+      [Stats.Speed]: 31,
+    },
+    types: [Types.Normal],
+    abilities: [Abilities.Simple, Abilities.Unaware],
+    hiddenAbilities: [Abilities.Moody],
+    eggGroups: [EggGroups.Water1, EggGroups.Field],
+    genderRatio: [1, 1],
+    catchRate: 255,
+    biomes: [Biome.Bog, Biome.Swamp, Biome.TemperateForest],
+    activeTimes: AnyTimeOfDay,
+    learnSet: {
+      level: {
+        1: [Moves.Tackle],
+        5: [Moves.Growl],
+        9: [Moves.DefenseCurl],
+        13: [Moves.Rollout],
+        17: [Moves.Headbutt],
+        21: [Moves.HyperFang],
+        25: [Moves.Yawn],
+        29: [Moves.Amnesia],
+        33: [Moves.TakeDown],
+        37: [Moves.SuperFang],
+        41: [Moves.Superpower],
+        45: [Moves.Curse],
+      },
+      teachable: [...FAMILY_TEACHABLE],
+      egg: [
+        Moves.AquaTail,
+        Moves.DefenseCurl,
+        Moves.DoubleEdge,
+        Moves.FurySwipes,
+        Moves.OdorSleuth,
+        Moves.QuickAttack,
+        Moves.Rollout,
+        Moves.WaterSport,
+      ],
+    },
+  });
+  registerSpecies(Species.Bibarel, {
+    dexNumber: 400,
+    name: 'Bibarel',
+    category: 'Beaver Pokemon',
+    height: 1.0,
+    weight: 31.5,
+    family: Families.Bidoof,
+    evolvesFrom: Species.Bidoof,
+    stats: {
+      [Stats.HP]: 79,
+      [Stats.Attack]: 85,
+      [Stats.Defense]: 60,
+      [Stats.SpecialAttack]: 55,
+      [Stats.SpecialDefense]: 60,
+      [Stats.Speed]: 71,
+    },
+    types: [Types.Normal, Types.Water],
+    abilities: [Abilities.Simple, Abilities.Unaware],
+    // Sturdy is this registry's rather than the mainline's: a dam is
+    // built to hold, and this line has no stat that stands out instead
+    hiddenAbilities: [Abilities.Moody, Abilities.Sturdy],
+    eggGroups: [EggGroups.Water1, EggGroups.Field],
+    genderRatio: [1, 1],
+    catchRate: 127,
+    biomes: [Biome.Bog, Biome.Swamp, Biome.TemperateForest],
+    activeTimes: AnyTimeOfDay,
+    learnSet: {
+      level: {
+        1: [Moves.Growl, Moves.Tackle],
+        5: [Moves.Growl],
+        9: [Moves.DefenseCurl],
+        13: [Moves.Rollout],
+        15: [Moves.WaterGun],
+        18: [Moves.Headbutt],
+        23: [Moves.HyperFang],
+        28: [Moves.Yawn],
+        33: [Moves.Amnesia],
+        38: [Moves.TakeDown],
+        43: [Moves.SuperFang],
+        48: [Moves.Superpower],
+        53: [Moves.Curse],
+      },
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.AquaTail,
+        Moves.Dive,
+        Moves.Fling,
+        Moves.FocusPunch,
+        Moves.GigaImpact,
+        Moves.HyperBeam,
+        Moves.RockClimb,
+        Moves.Rollout,
+        Moves.Strength,
+        Moves.Surf,
+        Moves.WaterPulse,
+        Moves.Waterfall,
+        Moves.Whirlpool,
+      ],
+    },
+  });
+}

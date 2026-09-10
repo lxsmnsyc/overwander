@@ -787,6 +787,9 @@ const enum Abilities {
   BarkBrace = 200203,
   CinderBrace = 200204,
   CrestBrace = 200205,
+  Murmuration = 200206,
+  Lodgework = 200207,
+  Chorus = 200208,
 }
 
 export default Abilities;

@@ -8,6 +8,7 @@ import parasToTentacool from './paras-to-tentacool';
 import sandshrewToOddish from './sandshrew-to-oddish';
 import spoinkToDeoxys from './spoink-to-deoxys';
 import treeckoToTorkoal from './treecko-to-torkoal';
+import starlyToKricketot from './starly-to-kricketot';
 import turtwigToPiplup from './turtwig-to-piplup';
 
 /**
@@ -25,6 +26,7 @@ const setupAbilities = [
   ...treeckoToTorkoal,
   ...spoinkToDeoxys,
   ...turtwigToPiplup,
+  ...starlyToKricketot,
 ];
 
 /**

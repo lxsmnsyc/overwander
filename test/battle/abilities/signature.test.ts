@@ -60,6 +60,12 @@ import {
   ROLLBACK_THRESHOLD,
   ROLLBACK_WINDOW,
 } from '../../../src/battle/abilities/signature/eevee-to-dragonite';
+import {
+  CHORUS_SCALE,
+  FLOCK_CEILING,
+  FLOCK_SCALE,
+  LODGE_SCALE,
+} from '../../../src/battle/abilities/signature/starly-to-kricketot';
 import { AttackPriority } from '../../../src/core/event-emitter';
 import {
   CHAIN_LIGHTNING_FRACTION,
@@ -5910,5 +5916,102 @@ describe('signature feedback', () => {
     }).not.toThrow();
 
     expect(paw.checkMoveContact(Moves._Confused, unitTarget(paw))).toBe(false);
+  });
+});
+
+describe('the three that open Sinnoh', () => {
+  it('pays a Starly for the flock it stands in, up to a ceiling', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const bird = createUnit(battle, teamA);
+    const mates = [0, 1, 2, 3, 4, 5].map(() => createUnit(battle, teamA));
+    const enemy = createUnit(battle, teamB);
+
+    bird.addAbility(Abilities.Murmuration);
+    bird.enter();
+    enemy.enter();
+
+    for (const mate of mates) {
+      mate.enter();
+    }
+
+    battle.tick(1);
+
+    // Six others standing is past where the flock stops paying
+    expect(bird.checkMovePower(Moves.Tackle, unitTarget(enemy))).toBeCloseTo(40 * FLOCK_CEILING, 5);
+
+    for (const mate of mates.slice(1)) {
+      mate.damage(NONE_CAUSE, mate, mate.health, 0);
+    }
+
+    // One left beside it is one step of the scale
+    expect(bird.checkMovePower(Moves.Tackle, unitTarget(enemy))).toBeCloseTo(40 * FLOCK_SCALE, 5);
+
+    mates[0].damage(NONE_CAUSE, mates[0], mates[0].health, 0);
+
+    expect(bird.checkMovePower(Moves.Tackle, unitTarget(enemy))).toBe(40);
+  });
+
+  it('leaves a quarter of what is indirect off its own lodge', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const beaver = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    beaver.addAbility(Abilities.Lodgework);
+    beaver.enter();
+    ally.enter();
+    enemy.enter();
+    battle.tick(1);
+
+    const before = ally.health;
+
+    enemy.damage(NONE_CAUSE, ally, 20, DamageFlags.Indirect);
+
+    expect(before - ally.health).toBeCloseTo(20 * LODGE_SCALE, 5);
+
+    // A cost is what a pokemon spent rather than what was done to it
+    const paid = ally.health;
+
+    ally.damage(NONE_CAUSE, ally, 20, DamageFlags.Indirect | DamageFlags.Cost);
+
+    expect(paid - ally.health).toBe(20);
+
+    // The far side builds no dams
+    const across = enemy.health;
+
+    ally.damage(NONE_CAUSE, enemy, 20, DamageFlags.Indirect);
+
+    expect(across - enemy.health).toBe(20);
+
+    // And it holds for nobody once the builder is down
+    beaver.damage(NONE_CAUSE, beaver, beaver.health, 0);
+
+    const alone = ally.health;
+
+    enemy.damage(NONE_CAUSE, ally, 20, DamageFlags.Indirect);
+
+    expect(alone - ally.health).toBe(20);
+  });
+
+  it('lifts every sound move on its own side and nothing else', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const cricket = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    cricket.addAbility(Abilities.Chorus);
+    cricket.enter();
+    ally.enter();
+    enemy.enter();
+    battle.tick(1);
+
+    expect(ally.checkMovePower(Moves.BugBuzz, unitTarget(enemy))).toBeCloseTo(90 * CHORUS_SCALE, 5);
+    expect(cricket.checkMovePower(Moves.BugBuzz, unitTarget(enemy))).toBeCloseTo(90 * CHORUS_SCALE, 5);
+
+    // What is not sung is not conducted
+    expect(ally.checkMovePower(Moves.Tackle, unitTarget(enemy))).toBe(40);
+
+    // Nor is the far side's singing
+    expect(enemy.checkMovePower(Moves.BugBuzz, unitTarget(ally))).toBe(90);
   });
 });

@@ -28,6 +28,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Surskit, weight: 25 },
         { species: Species.Lickitung, weight: 5 },
         { species: Species.Yanma, weight: 5 },
+        { species: Species.Bidoof, weight: 25 },
       ],
       rare: [
         { species: Species.Wartortle, weight: 1 },
@@ -46,6 +47,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Slowking, weight: 5 },
         { species: Species.Masquerain, weight: 10 },
         { species: Species.Quagsire, weight: 5 },
+        { species: Species.Bibarel, weight: 10 },
       ],
       elusive: [
         { species: Species.Poliwrath, weight: 5 },
@@ -78,6 +80,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Surskit, weight: 25 },
         { species: Species.Lickitung, weight: 5 },
         { species: Species.Yanma, weight: 5 },
+        { species: Species.Bidoof, weight: 25 },
       ],
       rare: [
         { species: Species.Wartortle, weight: 1 },
@@ -96,6 +99,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Slowking, weight: 5 },
         { species: Species.Masquerain, weight: 10 },
         { species: Species.Quagsire, weight: 5 },
+        { species: Species.Bibarel, weight: 10 },
       ],
       elusive: [
         { species: Species.Poliwrath, weight: 5 },
@@ -119,6 +123,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Wooper, weight: 25 },
         { species: Species.Marill, weight: 20 },
         { species: Species.Yanma, weight: 5 },
+        { species: Species.Bidoof, weight: 25 },
       ],
       rare: [{ species: Species.Poliwhirl, weight: 5 }],
       scarce: [
@@ -128,6 +133,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Seaking, weight: 10 },
         { species: Species.Azumarill, weight: 5 },
         { species: Species.Quagsire, weight: 5 },
+        { species: Species.Bibarel, weight: 10 },
       ],
       elusive: [
         { species: Species.Poliwrath, weight: 5 },
@@ -150,6 +156,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Wooper, weight: 25 },
         { species: Species.Marill, weight: 20 },
         { species: Species.Yanma, weight: 5 },
+        { species: Species.Bidoof, weight: 25 },
       ],
       rare: [{ species: Species.Poliwhirl, weight: 5 }],
       scarce: [
@@ -161,6 +168,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Seaking, weight: 10 },
         { species: Species.Azumarill, weight: 5 },
         { species: Species.Quagsire, weight: 5 },
+        { species: Species.Bibarel, weight: 10 },
       ],
       elusive: [
         { species: Species.Poliwrath, weight: 5 },

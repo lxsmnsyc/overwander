@@ -17,6 +17,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Teddiursa, weight: 20 },
         { species: Species.Wurmple, weight: 30 },
         { species: Species.Ralts, weight: 20 },
+        { species: Species.Starly, weight: 30 },
       ],
       uncommon: [
         { species: Species.Ledyba, weight: 20 },
@@ -26,6 +27,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Aipom, weight: 5 },
         { species: Species.Stantler, weight: 5 },
         { species: Species.Togetic, weight: 5 },
+        { species: Species.Bidoof, weight: 25 },
       ],
       rare: [
         { species: Species.Ivysaur, weight: 1 },
@@ -36,12 +38,14 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Silcoon, weight: 15 },
         { species: Species.Kirlia, weight: 10 },
         { species: Species.Ursaring, weight: 5 },
+        { species: Species.Staravia, weight: 5 },
       ],
       scarce: [
         { species: Species.Raichu, weight: 5 },
         { species: Species.Ledian, weight: 8 },
         { species: Species.Scizor, weight: 5 },
         { species: Species.Forretress, weight: 5 },
+        { species: Species.Bibarel, weight: 10 },
       ],
       elusive: [
         { species: Species.Venusaur, weight: 2 },
@@ -54,6 +58,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Sudowoodo, weight: 5 },
         { species: Species.Beautifly, weight: 10 },
         { species: Species.Gardevoir, weight: 5 },
+        { species: Species.Staraptor, weight: 5 },
       ],
       prized: [
         ...UNOWN_SPAWNS,
@@ -73,6 +78,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Teddiursa, weight: 20 },
         { species: Species.Wurmple, weight: 30 },
         { species: Species.Ralts, weight: 20 },
+        { species: Species.Starly, weight: 30 },
       ],
       uncommon: [
         { species: Species.Ledyba, weight: 20 },
@@ -82,6 +88,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Aipom, weight: 5 },
         { species: Species.Stantler, weight: 5 },
         { species: Species.Togetic, weight: 5 },
+        { species: Species.Bidoof, weight: 25 },
       ],
       rare: [
         { species: Species.Ivysaur, weight: 1 },
@@ -92,12 +99,14 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Silcoon, weight: 15 },
         { species: Species.Kirlia, weight: 10 },
         { species: Species.Ursaring, weight: 5 },
+        { species: Species.Staravia, weight: 5 },
       ],
       scarce: [
         { species: Species.Raichu, weight: 5 },
         { species: Species.Ledian, weight: 8 },
         { species: Species.Scizor, weight: 5 },
         { species: Species.Forretress, weight: 5 },
+        { species: Species.Bibarel, weight: 10 },
       ],
       elusive: [
         { species: Species.Venusaur, weight: 2 },
@@ -111,6 +120,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Sudowoodo, weight: 5 },
         { species: Species.Beautifly, weight: 10 },
         { species: Species.Gardevoir, weight: 5 },
+        { species: Species.Staraptor, weight: 5 },
       ],
       prized: [
         ...UNOWN_SPAWNS,
@@ -135,6 +145,8 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Aipom, weight: 5 },
         { species: Species.Murkrow, weight: 5 },
         { species: Species.Stantler, weight: 5 },
+        { species: Species.Kricketot, weight: 25 },
+        { species: Species.Bidoof, weight: 25 },
       ],
       rare: [
         { species: Species.Gloom, weight: 5 },
@@ -147,6 +159,8 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Noctowl, weight: 10 },
         { species: Species.Ariados, weight: 8 },
         { species: Species.Forretress, weight: 5 },
+        { species: Species.Kricketune, weight: 10 },
+        { species: Species.Bibarel, weight: 10 },
       ],
       elusive: [
         { species: Species.Vileplume, weight: 5 },
@@ -178,6 +192,8 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Aipom, weight: 5 },
         { species: Species.Murkrow, weight: 5 },
         { species: Species.Stantler, weight: 5 },
+        { species: Species.Kricketot, weight: 25 },
+        { species: Species.Bidoof, weight: 25 },
       ],
       rare: [
         { species: Species.Gloom, weight: 5 },
@@ -191,6 +207,8 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Noctowl, weight: 10 },
         { species: Species.Ariados, weight: 8 },
         { species: Species.Forretress, weight: 5 },
+        { species: Species.Kricketune, weight: 10 },
+        { species: Species.Bibarel, weight: 10 },
       ],
       elusive: [
         { species: Species.Vileplume, weight: 5 },

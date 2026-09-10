@@ -16,6 +16,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Chikorita, weight: 2 },
         { species: Species.Mareep, weight: 25 },
         { species: Species.Hoppip, weight: 25 },
+        { species: Species.Starly, weight: 30 },
       ],
       uncommon: [
         { species: Species.Swablu, weight: 22 },
@@ -48,6 +49,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Bayleef, weight: 1 },
         { species: Species.Flaaffy, weight: 5 },
         { species: Species.Skiploom, weight: 5 },
+        { species: Species.Staravia, weight: 5 },
       ],
       scarce: [
         { species: Species.Altaria, weight: 5 },
@@ -89,6 +91,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Ampharos, weight: 5 },
         { species: Species.Jumpluff, weight: 5 },
         { species: Species.Hitmontop, weight: 5 },
+        { species: Species.Staraptor, weight: 5 },
       ],
       prized: [
         ...UNOWN_SPAWNS,
@@ -109,6 +112,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Chikorita, weight: 2 },
         { species: Species.Mareep, weight: 25 },
         { species: Species.Hoppip, weight: 25 },
+        { species: Species.Starly, weight: 30 },
       ],
       uncommon: [
         { species: Species.Swablu, weight: 22 },
@@ -143,6 +147,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Bayleef, weight: 1 },
         { species: Species.Flaaffy, weight: 5 },
         { species: Species.Skiploom, weight: 5 },
+        { species: Species.Staravia, weight: 5 },
       ],
       scarce: [
         { species: Species.Altaria, weight: 5 },
@@ -187,6 +192,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Ampharos, weight: 5 },
         { species: Species.Jumpluff, weight: 5 },
         { species: Species.Hitmontop, weight: 5 },
+        { species: Species.Staraptor, weight: 5 },
       ],
       prized: [
         ...UNOWN_SPAWNS,

@@ -1208,4 +1208,23 @@ export default function registerSignatureAbilities(): void {
     description:
       'The first status move aimed at it each fight fails, and it takes a stage of Special Attack from the insult.',
   });
+
+  /**
+   * The three that open Sinnoh's routes, each worth more for the
+   * company it keeps: a flock, a lodge, a chorus
+   */
+  registerSignature(Families.Starly, Abilities.Murmuration, {
+    name: 'Murmuration',
+    description: 'Its attacks hit 1.05x for each teammate still standing, up to 1.25x.',
+  });
+
+  registerSignature(Families.Bidoof, Abilities.Lodgework, {
+    name: 'Lodgework',
+    description: 'Its team takes 25% less indirect damage while it stands.',
+  });
+
+  registerSignature(Families.Kricketot, Abilities.Chorus, {
+    name: 'Chorus',
+    description: 'Sound moves from its team hit 1.2x while it stands, its own included.',
+  });
 }

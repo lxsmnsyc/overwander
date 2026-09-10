@@ -20,6 +20,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Wurmple, weight: 30 },
         { species: Species.Slakoth, weight: 20 },
         { species: Species.Turtwig, weight: 3 },
+        { species: Species.Starly, weight: 30 },
       ],
       uncommon: [
         { species: Species.Rattata, weight: 30 },
@@ -47,6 +48,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Vigoroth, weight: 10 },
         { species: Species.Skiploom, weight: 5 },
         { species: Species.Grotle, weight: 2 },
+        { species: Species.Staravia, weight: 5 },
       ],
       scarce: [
         { species: Species.Raticate, weight: 10 },
@@ -75,6 +77,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Slaking, weight: 5 },
         { species: Species.Jumpluff, weight: 5 },
         { species: Species.Torterra, weight: 2 },
+        { species: Species.Staraptor, weight: 5 },
       ],
       prized: [
         ...UNOWN_SPAWNS,
@@ -97,6 +100,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Wurmple, weight: 30 },
         { species: Species.Slakoth, weight: 20 },
         { species: Species.Turtwig, weight: 3 },
+        { species: Species.Starly, weight: 30 },
       ],
       uncommon: [
         { species: Species.Rattata, weight: 30 },
@@ -124,6 +128,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Vigoroth, weight: 10 },
         { species: Species.Skiploom, weight: 5 },
         { species: Species.Grotle, weight: 2 },
+        { species: Species.Staravia, weight: 5 },
       ],
       scarce: [
         { species: Species.Raticate, weight: 10 },
@@ -152,6 +157,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Slaking, weight: 5 },
         { species: Species.Jumpluff, weight: 5 },
         { species: Species.Torterra, weight: 2 },
+        { species: Species.Staraptor, weight: 5 },
       ],
       prized: [
         ...UNOWN_SPAWNS,
@@ -183,6 +189,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Jigglypuff, weight: 10 },
         { species: Species.Aipom, weight: 5 },
         { species: Species.Murkrow, weight: 5 },
+        { species: Species.Kricketot, weight: 25 },
       ],
       rare: [
         { species: Species.Nidorina, weight: 5 },
@@ -203,6 +210,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Linoone, weight: 10 },
         { species: Species.Ninjask, weight: 10 },
         { species: Species.Forretress, weight: 5 },
+        { species: Species.Kricketune, weight: 10 },
       ],
       elusive: [
         { species: Species.Nidoqueen, weight: 5 },
@@ -250,6 +258,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Aipom, weight: 5 },
         { species: Species.Murkrow, weight: 5 },
         { species: Species.Misdreavus, weight: 5 },
+        { species: Species.Kricketot, weight: 25 },
       ],
       rare: [
         { species: Species.Nidorina, weight: 5 },
@@ -273,6 +282,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Linoone, weight: 10 },
         { species: Species.Ninjask, weight: 10 },
         { species: Species.Forretress, weight: 5 },
+        { species: Species.Kricketune, weight: 10 },
       ],
       elusive: [
         { species: Species.Nidoqueen, weight: 5 },

@@ -208,6 +208,9 @@ const enum Families {
   Turtwig = 203,
   Chimchar = 204,
   Piplup = 205,
+  Starly = 206,
+  Bidoof = 207,
+  Kricketot = 208,
 }
 
 export default Families;

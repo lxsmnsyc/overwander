@@ -6994,3 +6994,48 @@ describe('Lavadome', () => {
     expect(blow.value).toBeCloseTo(100, 5);
   });
 });
+
+describe('Purebloom', () => {
+  it('takes the cost out of poison for its own team and nobody else', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const flower = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    const cause = { type: EffectType.Move, unit: enemy, move: Moves.Toxic } as const;
+
+    flower.addAbility(Abilities.Purebloom);
+    flower.addStatus(Statuses.Poisoned, cause);
+    mate.addStatus(Statuses.Poisoned, cause);
+    // A residual only chips when somebody is behind it
+    enemy.addStatus(Statuses.Poisoned, { type: EffectType.Move, unit: mate, move: Moves.Toxic });
+
+    const flowerHP = flower.health;
+    const mateHP = mate.health;
+    const enemyHP = enemy.health;
+
+    battle.tick(turns(1));
+
+    // Still poisoned, and still on the clock: it just costs nothing
+    expect(flower.status[Statuses.Poisoned]).toBeDefined();
+    expect(mate.status[Statuses.Poisoned]).toBeDefined();
+    expect(flower.health).toBe(flowerHP);
+    expect(mate.health).toBe(mateHP);
+    expect(enemy.health).toBeLessThan(enemyHP);
+  });
+
+  it('leaves a burn alone', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const flower = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    const cause = { type: EffectType.Move, unit: enemy, move: Moves.WillOWisp } as const;
+
+    flower.addAbility(Abilities.Purebloom);
+    flower.addStatus(Statuses.Burned, cause);
+
+    const flowerHP = flower.health;
+
+    battle.tick(turns(1));
+
+    expect(flower.health).toBeLessThan(flowerHP);
+  });
+});

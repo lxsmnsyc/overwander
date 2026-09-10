@@ -1444,4 +1444,10 @@ export default function registerSignatureAbilities(): void {
     name: 'Heartcurrent',
     description: 'Every stat stage an enemy gains is written onto it as well.',
   });
+
+  // The flower that takes the poison out of the air it stands in
+  registerSignature(Families.Shaymin, Abilities.Purebloom, {
+    name: 'Purebloom',
+    description: 'Poison costs its teammates no HP while it stands.',
+  });
 }

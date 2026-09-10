@@ -441,6 +441,7 @@ const MYTHICAL_SPECIES = new Set<Species>([
   Species.Deoxys,
   Species.Darkrai,
   Species.Manaphy,
+  Species.Shaymin,
 ]);
 
 /**

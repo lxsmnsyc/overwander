@@ -80,6 +80,7 @@ import {
   DEOXYS_FORMS,
   DIALGA_FORMS,
   GIRATINA_FORMS,
+  SHAYMIN_FORMS,
   PALKIA_FORMS,
   GASTRODON_FORMS,
   EvolutionMethod,
@@ -748,6 +749,7 @@ describe('species forms', () => {
       ...DIALGA_FORMS.slice(1),
       ...PALKIA_FORMS.slice(1),
       ...GIRATINA_FORMS.slice(1),
+      ...SHAYMIN_FORMS.slice(1),
     ]);
 
     expect(registered.length).toBeGreaterThan(0);
@@ -3417,6 +3419,7 @@ describe('item data', () => {
       Items.WishTag,
       Items.MemberCard,
       Items.ManaphyEgg,
+      Items.OaksLetter,
       Items.GoldenBottleCap,
       // The one thing in the band that is only gold, and there because
       // it is more of it than anything else in the game pays

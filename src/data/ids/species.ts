@@ -609,6 +609,7 @@ export const enum Species {
   Phione = 489,
   Manaphy = 490,
   Darkrai = 491,
+  Shaymin = 492,
   DeoxysAttack = 1038601,
   DeoxysDefense = 1038602,
   DeoxysSpeed = 1038603,
@@ -617,6 +618,9 @@ export const enum Species {
   DialgaOrigin = 1048301,
   PalkiaOrigin = 1048401,
   GiratinaOrigin = 1048701,
+
+  /** The shape a Shaymin opens into with the flower in its hands */
+  ShayminSky = 1049201,
 
   /** The three cloaks, which are what a Burmy was met wearing */
   BurmySandy = 1041201,
@@ -769,6 +773,9 @@ export const CASTFORM_FORMS: Species[] = [
 export const DIALGA_FORMS: Species[] = [Species.Dialga, Species.DialgaOrigin];
 export const PALKIA_FORMS: Species[] = [Species.Palkia, Species.PalkiaOrigin];
 export const GIRATINA_FORMS: Species[] = [Species.Giratina, Species.GiratinaOrigin];
+
+/** Shaymin and the shape the Gracidea opens it into */
+export const SHAYMIN_FORMS: Species[] = [Species.Shaymin, Species.ShayminSky];
 
 export const DEOXYS_FORMS: Species[] = [
   Species.Deoxys,

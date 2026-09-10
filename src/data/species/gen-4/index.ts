@@ -45,6 +45,7 @@ import registerPorygonZSpecies from './porygon-z';
 import registerProbopassSpecies from './probopass';
 import registerRegigigasSpecies from './regigigas';
 import registerRhyperiorSpecies from './rhyperior';
+import registerShayminSpecies from './shaymin';
 import registerShellosSpecies from './shellos';
 import registerShieldonSpecies from './shieldon';
 import registerRioluSpecies from './riolu';
@@ -123,4 +124,5 @@ export default function registerGen4Species(): void {
   registerCreationTrioSpecies();
   registerMoonDuoSpecies();
   registerManaphySpecies();
+  registerShayminSpecies();
 }

@@ -114,6 +114,11 @@ const enum Lairs {
    * three it made
    */
   SnowpointTemple = 27,
+  /**
+   * The meadow at the end of the broken path, which grows back every
+   * time somebody thanks it. A mythical's lair, so no biome hosts it
+   */
+  FlowerParadise = 28,
 }
 
 export const LAIR_NAMES: Record<Lairs, string> = {
@@ -145,6 +150,7 @@ export const LAIR_NAMES: Record<Lairs, string> = {
   [Lairs.SeaTemple]: 'Sea Temple',
   [Lairs.StarkMountain]: 'Stark Mountain',
   [Lairs.SnowpointTemple]: 'Snowpoint Temple',
+  [Lairs.FlowerParadise]: 'Flower Paradise',
 };
 
 /**
@@ -182,6 +188,7 @@ export const LAIR_SPECIES: Record<Lairs, Species[]> = {
   [Lairs.SeaTemple]: [Species.Manaphy],
   [Lairs.StarkMountain]: [Species.Heatran],
   [Lairs.SnowpointTemple]: [Species.Regigigas],
+  [Lairs.FlowerParadise]: [Species.Shaymin],
 };
 
 /**
@@ -216,6 +223,7 @@ export const EVERY_LAIR: Lairs[] = [
   Lairs.SeaTemple,
   Lairs.StarkMountain,
   Lairs.SnowpointTemple,
+  Lairs.FlowerParadise,
 ];
 
 /**

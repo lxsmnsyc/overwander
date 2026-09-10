@@ -854,6 +854,10 @@ export const enum Items {
 
   /** The egg somebody carried in from the sea, which is not theirs */
   ManaphyEgg = 402,
+
+  /** The flower a Shaymin opens with, and the letter that leads to one */
+  Gracidea = 403,
+  OaksLetter = 404,
 }
 
 /**

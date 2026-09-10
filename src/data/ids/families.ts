@@ -242,6 +242,7 @@ const enum Families {
   Cresselia = 237,
   Manaphy = 238,
   Darkrai = 239,
+  Shaymin = 240,
 }
 
 export default Families;

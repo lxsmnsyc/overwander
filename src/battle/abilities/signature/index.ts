@@ -10,6 +10,7 @@ import manaphy from './manaphy';
 import moonDuo from './moon-duo';
 import parasToTentacool from './paras-to-tentacool';
 import sandshrewToOddish from './sandshrew-to-oddish';
+import shaymin from './shaymin';
 import spoinkToDeoxys from './spoink-to-deoxys';
 import treeckoToTorkoal from './treecko-to-torkoal';
 import burmyToShellos from './burmy-to-shellos';
@@ -51,6 +52,7 @@ const setupAbilities = [
   ...creationTrio,
   ...moonDuo,
   ...manaphy,
+  ...shaymin,
 ];
 
 /**

@@ -20,6 +20,7 @@ export const FORM_ITEMS = new Map<Items, Species[]>([
   [Items.AdamantOrb, [Species.DialgaOrigin]],
   [Items.LustrousOrb, [Species.PalkiaOrigin]],
   [Items.GriseousOrb, [Species.GiratinaOrigin]],
+  [Items.Gracidea, [Species.ShayminSky]],
 ]);
 
 /**
@@ -41,6 +42,12 @@ export const METEORITE_PRICE = 12_000;
  * reason: it is the only way to the shape it holds
  */
 export const ORB_PRICE = 12_000;
+
+/**
+ * What the flower costs. Less than an orb, since a Gracidea is a
+ * thing that grows rather than a thing the world was made with
+ */
+export const GRACIDEA_PRICE = 8_000;
 
 /** The three orbs, and the one the holder has to be */
 const CREATION_ORBS: [item: Items, name: string, icon: string, holder: string][] = [
@@ -75,4 +82,15 @@ export default function registerFormItems(): void {
       sell: ORB_PRICE / 2,
     });
   }
+
+  registerItem(Items.Gracidea, {
+    name: 'Gracidea',
+    description: 'A Shaymin holding it fights in its other shape.',
+    type: ItemTypes.Held,
+    // Drawn on the key sheet, which is where the collection packed it
+    icon: 'key/gracidea',
+    flags: ItemFlags.Holdable,
+    buy: 0,
+    sell: GRACIDEA_PRICE / 2,
+  });
 }

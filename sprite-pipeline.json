@@ -15757,6 +15757,30 @@
         "bytes": 24900
       }
     },
+    "public/sprites/pokemon/sinnoh/1049201/regular.png": {
+      "digest": "bf250b0e93b379d2",
+      "bytes": 11714,
+      "width": 127,
+      "height": 394,
+      "compact": {
+        "at": "2026-09-10T12:37:16Z",
+        "as": "already compact",
+        "was": 11714,
+        "bytes": 11714
+      }
+    },
+    "public/sprites/pokemon/sinnoh/1049201/shiny.png": {
+      "digest": "c2b12e0cd111507a",
+      "bytes": 11714,
+      "width": 127,
+      "height": 394,
+      "compact": {
+        "at": "2026-09-10T12:37:16Z",
+        "as": "already compact",
+        "was": 11714,
+        "bytes": 11714
+      }
+    },
     "public/sprites/pokemon/sinnoh/387/regular.png": {
       "digest": "a9b11d80d6354d55",
       "bytes": 3357,
@@ -18661,6 +18685,30 @@
         "bytes": 15318
       }
     },
+    "public/sprites/pokemon/sinnoh/492/regular.png": {
+      "digest": "ae5614ac455727cb",
+      "bytes": 4082,
+      "width": 136,
+      "height": 105,
+      "compact": {
+        "at": "2026-09-10T12:37:16Z",
+        "as": "already compact",
+        "was": 4082,
+        "bytes": 4082
+      }
+    },
+    "public/sprites/pokemon/sinnoh/492/shiny.png": {
+      "digest": "d2858f7fcef0744d",
+      "bytes": 4136,
+      "width": 136,
+      "height": 105,
+      "compact": {
+        "at": "2026-09-10T12:37:16Z",
+        "as": "already compact",
+        "was": 4136,
+        "bytes": 4136
+      }
+    },
     "public/sprites/pokemon/unknown/100000/regular.png": {
       "digest": "740100996c69d777",
       "bytes": 1126,
@@ -18746,15 +18794,15 @@
       }
     },
     "public/sprites/ui/candies/sinnoh/image.png": {
-      "digest": "69f677d127a1fdfe",
-      "bytes": 5508,
+      "digest": "0ccab69c2204656d",
+      "bytes": 5641,
       "width": 112,
       "height": 96,
       "compact": {
-        "at": "2026-09-10T12:22:33Z",
+        "at": "2026-09-10T12:37:16Z",
         "as": "already compact",
-        "was": 5508,
-        "bytes": 5508
+        "was": 5641,
+        "bytes": 5641
       }
     },
     "public/sprites/ui/items/apricorn/image.png": {

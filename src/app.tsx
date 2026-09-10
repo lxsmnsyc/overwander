@@ -8,6 +8,7 @@ import registerWorldData from './data/world';
 import ThemeProvider from './components/app/theme';
 import settings, { loadSettings } from './components/app/settings';
 import { ToastProvider } from './components/styled';
+import { ROOT_HOST } from './components/styled/portal-host';
 import './app.css';
 
 // The world is inert until it is registered, and both the server
@@ -43,14 +44,15 @@ export default function App(): JSX.Element {
   return (
     <Router
       root={(props) => (
-        <MetaProvider>
-          {/* Day or night, over everything: it is a class on the root
-              element, so a dialog drawn into the portals container
-              beside the app is in the same theme as the app */}
-          <ThemeProvider>
-            <AuthProvider>
-              <Title>Overwander</Title>
-              {/* No bar over the top. The game is one page — the world,
+        <>
+          <MetaProvider>
+            {/* Day or night, over everything: it is a class on the root
+              element, so a dialog drawn into the portals container is
+              in the same theme as the page it is over */}
+            <ThemeProvider>
+              <AuthProvider>
+                <Title>Overwander</Title>
+                {/* No bar over the top. The game is one page — the world,
                   with what the player wants pulled over it — and a nav
                   offering to leave it was three links to two pages that
                   no longer exist and one that is a demo.
@@ -59,12 +61,21 @@ export default function App(): JSX.Element {
                   game has to say in passing is not any one screen's
                   business: a cache dug up says so over the world, and
                   it would say so over a battle too */}
-              <ToastProvider>
-                <Suspense>{props.children}</Suspense>
-              </ToastProvider>
-            </AuthProvider>
-          </ThemeProvider>
-        </MetaProvider>
+                <ToastProvider>
+                  <Suspense>{props.children}</Suspense>
+                </ToastProvider>
+              </AuthProvider>
+            </ThemeProvider>
+          </MetaProvider>
+          {/* Where everything that floats over the page is drawn.
+              Written here rather than beside the app so it is under
+              the same root as the page it covers, and last so that
+              nothing the page builds around the button that opened a
+              panel can clip it or stack over it. Whatever is drawn
+              into it is put there by `styled/portal-host`, and a
+              dialog carries a container of its own for what it floats */}
+          <div id={ROOT_HOST} />
+        </>
       )}
     >
       <FileRoutes />

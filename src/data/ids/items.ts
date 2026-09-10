@@ -836,6 +836,10 @@ export const enum Items {
 
   /** The wish a Jirachi is called out to answer */
   WishTag = 394,
+
+  /** Sinnoh's two, the skull that charged and the face that held */
+  SkullFossil = 395,
+  ArmorFossil = 396,
 }
 
 /**

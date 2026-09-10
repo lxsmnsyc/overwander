@@ -297,6 +297,13 @@ const enum BattleEvents {
    * to somebody else it still does
    */
   CheckUnitTriggerMoveTarget = 147,
+
+  /**
+   * Whether this move walks through a guard rather than being turned
+   * away by one. Feint and Shadow Force answer yes by themselves, and
+   * an ability may answer for whatever its holder throws
+   */
+  CheckUnitMoveGuard = 148,
 }
 
 export default BattleEvents;

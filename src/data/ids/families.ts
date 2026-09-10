@@ -211,6 +211,9 @@ const enum Families {
   Starly = 206,
   Bidoof = 207,
   Kricketot = 208,
+  Shinx = 209,
+  Cranidos = 210,
+  Shieldon = 211,
 }
 
 export default Families;

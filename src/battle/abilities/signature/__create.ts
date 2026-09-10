@@ -1366,3 +1366,61 @@ export function createPrimalAbility(
     ]);
   });
 }
+
+/** Which of Sinnoh's two fossils an ability is */
+export type SinnohFossilSide = 'rams' | 'shields';
+
+/**
+ * What Cranidos and Shieldon share: cover, and what it is worth. The
+ * skull walks through whatever is put in front of it, a guard and a
+ * substitute alike; the face-shield hands its own guard to everybody
+ * standing with it. Meeting each other, what the one puts up is the
+ * one thing the other ignores
+ */
+export function createSinnohFossilAbility(
+  ability: Abilities,
+  side: SinnohFossilSide,
+): ((battle: Battle) => void) & { ability: Abilities } {
+  if (side === 'rams') {
+    return createAbility(
+      ability,
+      (battle) =>
+        new MergedLifecycle([
+          battle.on(BattleEvents.CheckUnitMoveGuard, EventPriority.Post, (event) => {
+            if (!event.walks && event.source.hasAbility(ability)) {
+              event.walks = true;
+            }
+          }),
+          // A substitute is the other thing standing in the way, and
+          // the flag is what every shield already honours
+          battle.on(BattleEvents.UnitAttack, AttackPriority.Pre, (event) => {
+            if (event.source.hasAbility(ability)) {
+              event.flags |= MoveAttackFlags.Piercing;
+            }
+          }),
+        ]),
+    );
+  }
+
+  return createAbility(ability, (battle) => {
+    // A second holder would hand the guard straight back
+    let spreading = false;
+
+    return battle.on(BattleEvents.UnitAddStatus, EventPriority.Post, (event) => {
+      if (spreading || event.status !== Statuses.Protected || !event.source.hasAbility(ability)) {
+        return;
+      }
+
+      spreading = true;
+      event.source.triggerAbility(ability);
+
+      for (const mate of event.source.team.units) {
+        if (mate !== event.source && mate.alive) {
+          mate.addStatus(Statuses.Protected, event.cause);
+        }
+      }
+
+      spreading = false;
+    });
+  });
+}

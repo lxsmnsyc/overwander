@@ -12,6 +12,7 @@ export default function registerSavannaSpawns(): void {
         { species: Species.NidoranF, weight: 20 },
         { species: Species.NidoranM, weight: 20 },
         { species: Species.Torchic, weight: 2 },
+        { species: Species.Shinx, weight: 25 },
       ],
       uncommon: [
         { species: Species.Growlithe, weight: 10 },
@@ -27,6 +28,7 @@ export default function registerSavannaSpawns(): void {
         { species: Species.Nidorina, weight: 5 },
         { species: Species.Nidorino, weight: 5 },
         { species: Species.Combusken, weight: 1 },
+        { species: Species.Luxio, weight: 5 },
       ],
       scarce: [
         { species: Species.Arcanine, weight: 5 },
@@ -46,6 +48,7 @@ export default function registerSavannaSpawns(): void {
         { species: Species.Plusle, weight: 8 },
         { species: Species.Minun, weight: 8 },
         { species: Species.Zangoose, weight: 8 },
+        { species: Species.Luxray, weight: 4 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [],
@@ -56,6 +59,7 @@ export default function registerSavannaSpawns(): void {
         { species: Species.NidoranM, weight: 20 },
         { species: Species.Rhyhorn, weight: 20 },
         { species: Species.Torchic, weight: 2 },
+        { species: Species.Shinx, weight: 25 },
       ],
       uncommon: [
         { species: Species.Ekans, weight: 20 },
@@ -73,6 +77,7 @@ export default function registerSavannaSpawns(): void {
         { species: Species.Nidorino, weight: 5 },
         { species: Species.Combusken, weight: 1 },
         { species: Species.Rhydon, weight: 10 },
+        { species: Species.Luxio, weight: 5 },
       ],
       scarce: [
         { species: Species.Arbok, weight: 10 },
@@ -93,6 +98,7 @@ export default function registerSavannaSpawns(): void {
         { species: Species.Plusle, weight: 8 },
         { species: Species.Minun, weight: 8 },
         { species: Species.Zangoose, weight: 8 },
+        { species: Species.Luxray, weight: 4 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [],
@@ -101,6 +107,7 @@ export default function registerSavannaSpawns(): void {
       base: [
         { species: Species.NidoranF, weight: 20 },
         { species: Species.NidoranM, weight: 20 },
+        { species: Species.Shinx, weight: 25 },
       ],
       uncommon: [
         { species: Species.Ekans, weight: 20 },
@@ -111,6 +118,7 @@ export default function registerSavannaSpawns(): void {
       rare: [
         { species: Species.Nidorina, weight: 5 },
         { species: Species.Nidorino, weight: 5 },
+        { species: Species.Luxio, weight: 5 },
       ],
       scarce: [
         { species: Species.Arbok, weight: 10 },
@@ -121,6 +129,7 @@ export default function registerSavannaSpawns(): void {
         { species: Species.Nidoqueen, weight: 5 },
         { species: Species.Nidoking, weight: 5 },
         { species: Species.Seviper, weight: 8 },
+        { species: Species.Luxray, weight: 4 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [],
@@ -129,6 +138,7 @@ export default function registerSavannaSpawns(): void {
       base: [
         { species: Species.NidoranF, weight: 20 },
         { species: Species.NidoranM, weight: 20 },
+        { species: Species.Shinx, weight: 25 },
       ],
       uncommon: [
         { species: Species.Ekans, weight: 20 },
@@ -139,6 +149,7 @@ export default function registerSavannaSpawns(): void {
       rare: [
         { species: Species.Nidorina, weight: 5 },
         { species: Species.Nidorino, weight: 5 },
+        { species: Species.Luxio, weight: 5 },
       ],
       scarce: [
         { species: Species.Arbok, weight: 10 },
@@ -149,6 +160,7 @@ export default function registerSavannaSpawns(): void {
         { species: Species.Nidoqueen, weight: 5 },
         { species: Species.Nidoking, weight: 5 },
         { species: Species.Seviper, weight: 8 },
+        { species: Species.Luxray, weight: 4 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [],

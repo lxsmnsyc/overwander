@@ -6018,3 +6018,138 @@ describe('the three that open Sinnoh', () => {
     expect(enemy.checkMovePower(Moves.BugBuzz, unitTarget(ally))).toBe(90);
   });
 });
+
+describe('the lion and the two fossils', () => {
+  it('sees through evasion and through a hiding place', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const lion = createUnit(battle, teamA);
+    const dodger = createUnit(battle, teamB);
+
+    dodger.addStage(Stages.Evasion, 6, NONE_CAUSE);
+
+    const parent = {
+      id: 'UnitTriggerMove',
+      disabled: false,
+      source: lion,
+      move: Moves.Tackle,
+      target: { type: MoveTargetType.Unit, unit: dodger },
+      steps: 0,
+    } as const;
+
+    const resolve = (): number | undefined => {
+      const event = {
+        id: 'UnitTriggerMoveResolveAccuracy',
+        disabled: false,
+        parent,
+        accuracy: undefined as number | undefined,
+      };
+      battle.emit(BattleEvents.UnitTriggerMoveResolveAccuracy, event);
+      return event.accuracy;
+    };
+
+    expect(resolve()).toBeCloseTo(100 / 3);
+
+    lion.addAbility(Abilities.GleamEyes);
+
+    expect(resolve()).toBeCloseTo(100);
+
+    // A lowered accuracy of its own is still paid: only the evasion
+    // half is taken back out
+    lion.addStage(Stages.Accuracy, -2, NONE_CAUSE);
+
+    expect(resolve()).toBeCloseTo(100 * (3 / 5));
+  });
+
+  it('reaches a target that is underground', () => {
+    const { battle, teamA, teamB } = createBattle();
+    // The accuracy roll always lands, so a miss is the hiding place
+    pinRandom(battle, 0);
+    const lion = createUnit(battle, teamA);
+    const digger = createUnit(battle, teamB);
+
+    lion.enter();
+    digger.enter();
+    battle.tick(1);
+
+    digger.triggerMove(Moves.Dig, unitTarget(lion), 1);
+    battle.tick(turns(1));
+
+    expect(digger.status[Statuses.Invulnerable]).toBeDefined();
+
+    const reaches = (): boolean => {
+      const event = {
+        id: 'UnitTriggerMoveRollHit' as const,
+        disabled: false,
+        parent: {
+          id: 'UnitTriggerMove' as const,
+          disabled: false,
+          source: lion,
+          move: Moves.Tackle,
+          target: unitTarget(digger),
+          steps: 0,
+        },
+        hit: false,
+      };
+      battle.emit(BattleEvents.UnitTriggerMoveRollHit, event);
+      return event.hit;
+    };
+
+    expect(reaches()).toBe(false);
+
+    lion.addAbility(Abilities.GleamEyes);
+
+    expect(reaches()).toBe(true);
+  });
+
+  it('rams through a guard and through a substitute', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0);
+    const skull = createUnit(battle, teamA);
+    const guarded = createUnit(battle, teamB);
+
+    skull.enter();
+    guarded.enter();
+    battle.tick(1);
+
+    guarded.addStatus(Statuses.Protected, NONE_CAUSE);
+
+    expect(skull.checkMoveImmunity(Moves.Tackle, unitTarget(guarded), Types.Normal)).toBe(true);
+
+    skull.addAbility(Abilities.Ramrod);
+
+    expect(skull.checkMoveImmunity(Moves.Tackle, unitTarget(guarded), Types.Normal)).toBe(false);
+
+    // The guard does not survive being walked through, the way Feint
+    // leaves it
+    expect(guarded.status[Statuses.Protected]).toBeUndefined();
+
+    guarded.addStatus(Statuses.Substituted, NONE_CAUSE);
+
+    const behind = guarded.health;
+
+    skull.attack(guarded, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
+    battle.tick(1);
+
+    expect(guarded.health).toBeLessThan(behind);
+  });
+
+  it('hands the guard it puts up to everybody standing with it', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const shield = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    shield.addAbility(Abilities.Bulwark);
+    shield.enter();
+    ally.enter();
+    enemy.enter();
+    battle.tick(1);
+
+    shield.addStatus(Statuses.Protected, NONE_CAUSE);
+
+    expect(ally.status[Statuses.Protected]).toBeDefined();
+
+    // The far side is nobody it stands with
+    expect(enemy.status[Statuses.Protected]).toBeUndefined();
+  });
+});

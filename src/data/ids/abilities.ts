@@ -790,6 +790,9 @@ const enum Abilities {
   Murmuration = 200206,
   Lodgework = 200207,
   Chorus = 200208,
+  GleamEyes = 200209,
+  Ramrod = 200210,
+  Bulwark = 200211,
 }
 
 export default Abilities;

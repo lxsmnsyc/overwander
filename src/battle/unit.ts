@@ -27,6 +27,7 @@ import type {
   CheckUnitItemThresholdEvent,
   CheckUnitMoveAccuracyEvent,
   CheckUnitMoveContactEvent,
+  CheckUnitMoveGuardEvent,
   CheckUnitMoveHitsEvent,
   CheckUnitMoveImmunityEvent,
   CheckUnitMovePPEvent,
@@ -1203,6 +1204,25 @@ export default class Unit {
     };
     this.battle.emit(BattleEvents.CheckUnitMoveContact, event);
     return event.contact;
+  }
+
+  /**
+   * Whether a blow of this move walks through a guard instead of being
+   * turned away by one. The guard asks rather than keeping a list, so
+   * an ability that walks through is one answer rather than an entry
+   * in the status
+   */
+  checkMoveGuard(move: Moves, target: MoveTarget): boolean {
+    const event: CheckUnitMoveGuardEvent = {
+      id: 'CheckUnitMoveGuard',
+      disabled: false,
+      source: this,
+      move,
+      target,
+      walks: false,
+    };
+    this.battle.emit(BattleEvents.CheckUnitMoveGuard, event);
+    return event.walks;
   }
 
   checkGrounded(): boolean {

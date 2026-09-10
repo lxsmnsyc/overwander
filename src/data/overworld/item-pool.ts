@@ -241,6 +241,8 @@ export const ITEM_POOL: ItemRarityGroups = {
     { item: Items.OldAmber, weight: 5 },
     { item: Items.RootFossil, weight: 8 },
     { item: Items.ClawFossil, weight: 8 },
+    { item: Items.SkullFossil, weight: 8 },
+    { item: Items.ArmorFossil, weight: 8 },
     // The rock a Deoxys rearranges itself around. Prized rather than
     // special: it is worth nothing to anybody who has not been to
     // the island, and everything to whoever has

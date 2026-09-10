@@ -40,6 +40,7 @@ export type {
   CheckUnitCanChannelEvent,
   CheckUnitMoveAccuracyEvent,
   CheckUnitMoveContactEvent,
+  CheckUnitMoveGuardEvent,
   CheckUnitMoveEvent,
   CheckUnitMoveHitsEvent,
   CheckUnitMoveImmunityEvent,

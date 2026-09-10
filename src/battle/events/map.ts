@@ -14,6 +14,7 @@ import type {
   CheckUnitCanChannelEvent,
   CheckUnitMoveAccuracyEvent,
   CheckUnitMoveContactEvent,
+  CheckUnitMoveGuardEvent,
   CheckUnitMoveHitsEvent,
   CheckUnitMoveImmunityEvent,
   CheckUnitMovePPEvent,
@@ -121,6 +122,7 @@ export interface BattleEventMap extends EventMap {
   [BattleEvents.CheckUnitGrounded]: [CheckUnitGroundedEvent, EventPriority];
   [BattleEvents.CheckUnitWeight]: [CheckUnitWeightEvent, EventPriority];
   [BattleEvents.CheckUnitMoveContact]: [CheckUnitMoveContactEvent, EventPriority];
+  [BattleEvents.CheckUnitMoveGuard]: [CheckUnitMoveGuardEvent, EventPriority];
   [BattleEvents.UnitRevives]: [UnitSetValueEvent, EventPriority];
   [BattleEvents.UnitSetSlots]: [UnitSetValueEvent, EventPriority];
   [BattleEvents.CheckUnitMoveTargeting]: [CheckUnitMoveTargetingEvent, EventPriority];

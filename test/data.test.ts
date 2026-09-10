@@ -2503,6 +2503,8 @@ describe('item data', () => {
       Species.Aerodactyl,
       Species.Lileep,
       Species.Anorith,
+      Species.Cranidos,
+      Species.Shieldon,
     ]);
 
     for (const [item, species] of FOSSIL_SPECIES) {
@@ -2557,7 +2559,7 @@ describe('item data', () => {
     const rng = new AleaRNG('fossils');
     const pairs = new Set<string>();
 
-    for (let at = 0; at < 50; at++) {
+    for (let at = 0; at < 400; at++) {
       const offer = rollFossilOffer(() => rng.random());
 
       expect(offer.length).toBe(FOSSIL_OFFER_KINDS);

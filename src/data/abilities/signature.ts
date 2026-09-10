@@ -1227,4 +1227,28 @@ export default function registerSignatureAbilities(): void {
     name: 'Chorus',
     description: 'Sound moves from its team hit 1.2x while it stands, its own included.',
   });
+
+  /**
+   * Gleam Eyes: the lion whose eyes are the reason nothing it hunts
+   * gets to hide
+   */
+  registerSignature(Families.Shinx, Abilities.GleamEyes, {
+    name: 'Gleam Eyes',
+    description:
+      "Its attacks ignore the target's raised evasion, and reach one that is in the air or underground.",
+  });
+
+  /**
+   * Sinnoh's two fossils share cover: the skull ignores it, the
+   * face-shield hands it out
+   */
+  registerSignature(Families.Cranidos, Abilities.Ramrod, {
+    name: 'Ramrod',
+    description: 'Its attacks strike through Protect, Detect and a Substitute.',
+  });
+
+  registerSignature(Families.Shieldon, Abilities.Bulwark, {
+    name: 'Bulwark',
+    description: 'A guard it puts up covers its whole team for as long as its own holds.',
+  });
 }

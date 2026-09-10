@@ -98,6 +98,10 @@ export interface CheckUnitMoveContactEvent extends CheckUnitMoveEvent {
   contact: boolean;
 }
 
+export interface CheckUnitMoveGuardEvent extends CheckUnitMoveEvent {
+  walks: boolean;
+}
+
 export interface UnitChannelEvent extends UnitCastEvent {
   steps: number;
 }

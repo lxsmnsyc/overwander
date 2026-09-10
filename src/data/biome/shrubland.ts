@@ -11,6 +11,7 @@ export default function registerShrublandSpawns(): void {
       base: [
         { species: Species.Mareep, weight: 25 },
         { species: Species.Hoppip, weight: 25 },
+        { species: Species.Shinx, weight: 25 },
       ],
       uncommon: [
         { species: Species.Spoink, weight: 20 },
@@ -24,6 +25,7 @@ export default function registerShrublandSpawns(): void {
       rare: [
         { species: Species.Flaaffy, weight: 5 },
         { species: Species.Skiploom, weight: 5 },
+        { species: Species.Luxio, weight: 5 },
       ],
       scarce: [
         { species: Species.Grumpig, weight: 6 },
@@ -39,6 +41,7 @@ export default function registerShrublandSpawns(): void {
         { species: Species.Miltank, weight: 5 },
         { species: Species.Ampharos, weight: 5 },
         { species: Species.Jumpluff, weight: 5 },
+        { species: Species.Luxray, weight: 4 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [],
@@ -47,6 +50,7 @@ export default function registerShrublandSpawns(): void {
       base: [
         { species: Species.Mareep, weight: 25 },
         { species: Species.Hoppip, weight: 25 },
+        { species: Species.Shinx, weight: 25 },
       ],
       uncommon: [
         { species: Species.Spoink, weight: 20 },
@@ -60,6 +64,7 @@ export default function registerShrublandSpawns(): void {
       rare: [
         { species: Species.Flaaffy, weight: 5 },
         { species: Species.Skiploom, weight: 5 },
+        { species: Species.Luxio, weight: 5 },
       ],
       scarce: [
         { species: Species.Grumpig, weight: 6 },
@@ -75,19 +80,26 @@ export default function registerShrublandSpawns(): void {
         { species: Species.Miltank, weight: 5 },
         { species: Species.Ampharos, weight: 5 },
         { species: Species.Jumpluff, weight: 5 },
+        { species: Species.Luxray, weight: 4 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [],
     },
     [TimeOfDay.Evening]: {
-      base: [{ species: Species.Seedot, weight: 20 }],
+      base: [
+        { species: Species.Seedot, weight: 20 },
+        { species: Species.Shinx, weight: 25 },
+      ],
       uncommon: [
         { species: Species.Vulpix, weight: 10 },
         { species: Species.Houndour, weight: 20 },
         { species: Species.Poochyena, weight: 20 },
         { species: Species.Roselia, weight: 20 },
       ],
-      rare: [{ species: Species.Nuzleaf, weight: 10 }],
+      rare: [
+        { species: Species.Nuzleaf, weight: 10 },
+        { species: Species.Luxio, weight: 5 },
+      ],
       scarce: [
         { species: Species.Ninetales, weight: 5 },
         { species: Species.Flareon, weight: 5 },
@@ -97,19 +109,26 @@ export default function registerShrublandSpawns(): void {
       elusive: [
         { species: Species.Smeargle, weight: 5 },
         { species: Species.Shiftry, weight: 5 },
+        { species: Species.Luxray, weight: 4 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [],
     },
     [TimeOfDay.Night]: {
-      base: [{ species: Species.Seedot, weight: 20 }],
+      base: [
+        { species: Species.Seedot, weight: 20 },
+        { species: Species.Shinx, weight: 25 },
+      ],
       uncommon: [
         { species: Species.Vulpix, weight: 10 },
         { species: Species.Houndour, weight: 20 },
         { species: Species.Poochyena, weight: 20 },
         { species: Species.Roselia, weight: 20 },
       ],
-      rare: [{ species: Species.Nuzleaf, weight: 10 }],
+      rare: [
+        { species: Species.Nuzleaf, weight: 10 },
+        { species: Species.Luxio, weight: 5 },
+      ],
       scarce: [
         { species: Species.Ninetales, weight: 5 },
         { species: Species.Flareon, weight: 5 },
@@ -119,6 +138,7 @@ export default function registerShrublandSpawns(): void {
       elusive: [
         { species: Species.Smeargle, weight: 5 },
         { species: Species.Shiftry, weight: 5 },
+        { species: Species.Luxray, weight: 4 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [],

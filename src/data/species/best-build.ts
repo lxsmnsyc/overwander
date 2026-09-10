@@ -316,6 +316,9 @@ export function getBestAbilities(
  * because no nature touches it, and the attacking stat it does not
  * use is worth nothing, which is what makes the drop land there
  */
+/** The two halves of the split, for what a support may never be sold */
+const ATTACKING_STATS = new Set<Stats | undefined>([Stats.Attack, Stats.SpecialAttack]);
+
 const NATURE_WEIGHTS: Record<BuildRole, Record<Stats, number>> = {
   [BuildRole.Core]: {
     [Stats.HP]: 0,
@@ -386,6 +389,14 @@ export function getBestNature(species: Species, role: BuildRole, moves: Moves[] 
   let bestWorth = Number.NEGATIVE_INFINITY;
 
   for (const nature of Object.keys(NATURE_EFFECTS).map(Number) as Natures[]) {
+    // A support is bought for what it can stand and how often it acts,
+    // so it never buys power: a lopsided attacker like Rampardos would
+    // otherwise outbid its own defence with the stat it is not there
+    // for
+    if (role === BuildRole.Support && ATTACKING_STATS.has(NATURE_EFFECTS[nature]?.up)) {
+      continue;
+    }
+
     let worth = 0;
 
     for (const stat of [

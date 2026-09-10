@@ -17,6 +17,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Mareep, weight: 25 },
         { species: Species.Hoppip, weight: 25 },
         { species: Species.Starly, weight: 30 },
+        { species: Species.Shinx, weight: 25 },
       ],
       uncommon: [
         { species: Species.Swablu, weight: 22 },
@@ -50,6 +51,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Flaaffy, weight: 5 },
         { species: Species.Skiploom, weight: 5 },
         { species: Species.Staravia, weight: 5 },
+        { species: Species.Luxio, weight: 5 },
       ],
       scarce: [
         { species: Species.Altaria, weight: 5 },
@@ -92,6 +94,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Jumpluff, weight: 5 },
         { species: Species.Hitmontop, weight: 5 },
         { species: Species.Staraptor, weight: 5 },
+        { species: Species.Luxray, weight: 4 },
       ],
       prized: [
         ...UNOWN_SPAWNS,
@@ -113,6 +116,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Mareep, weight: 25 },
         { species: Species.Hoppip, weight: 25 },
         { species: Species.Starly, weight: 30 },
+        { species: Species.Shinx, weight: 25 },
       ],
       uncommon: [
         { species: Species.Swablu, weight: 22 },
@@ -148,6 +152,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Flaaffy, weight: 5 },
         { species: Species.Skiploom, weight: 5 },
         { species: Species.Staravia, weight: 5 },
+        { species: Species.Luxio, weight: 5 },
       ],
       scarce: [
         { species: Species.Altaria, weight: 5 },
@@ -193,6 +198,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Jumpluff, weight: 5 },
         { species: Species.Hitmontop, weight: 5 },
         { species: Species.Staraptor, weight: 5 },
+        { species: Species.Luxray, weight: 4 },
       ],
       prized: [
         ...UNOWN_SPAWNS,
@@ -208,6 +214,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.NidoranF, weight: 20 },
         { species: Species.NidoranM, weight: 20 },
         { species: Species.Oddish, weight: 20 },
+        { species: Species.Shinx, weight: 25 },
       ],
       uncommon: [
         { species: Species.Rattata, weight: 30 },
@@ -223,6 +230,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Nidorina, weight: 5 },
         { species: Species.Nidorino, weight: 5 },
         { species: Species.Gloom, weight: 5 },
+        { species: Species.Luxio, weight: 5 },
       ],
       scarce: [
         { species: Species.Raticate, weight: 10 },
@@ -241,6 +249,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Smeargle, weight: 5 },
         { species: Species.Wobbuffet, weight: 5 },
         { species: Species.Bellossom, weight: 5 },
+        { species: Species.Luxray, weight: 4 },
       ],
       prized: [
         ...UNOWN_SPAWNS,
@@ -255,6 +264,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.NidoranF, weight: 20 },
         { species: Species.NidoranM, weight: 20 },
         { species: Species.Oddish, weight: 20 },
+        { species: Species.Shinx, weight: 25 },
       ],
       uncommon: [
         { species: Species.Rattata, weight: 30 },
@@ -272,6 +282,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Nidorina, weight: 5 },
         { species: Species.Nidorino, weight: 5 },
         { species: Species.Gloom, weight: 5 },
+        { species: Species.Luxio, weight: 5 },
       ],
       scarce: [
         { species: Species.Raticate, weight: 10 },
@@ -292,6 +303,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Smeargle, weight: 5 },
         { species: Species.Wobbuffet, weight: 5 },
         { species: Species.Bellossom, weight: 5 },
+        { species: Species.Luxray, weight: 4 },
       ],
       prized: [
         ...UNOWN_SPAWNS,

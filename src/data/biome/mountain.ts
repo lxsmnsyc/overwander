@@ -72,11 +72,13 @@ export default function registerMountainSpawns(): void {
         { species: Species.Chimecho, weight: 5 },
         { species: Species.Infernape, weight: 2 },
         { species: Species.Garchomp, weight: 2 },
+        { species: Species.Lucario, weight: 5 },
       ],
       prized: [
         ...UNOWN_SPAWNS,
         { species: Species.Magby, weight: PRIZED_WEIGHT },
         { species: Species.Wynaut, weight: PRIZED_WEIGHT },
+        { species: Species.Riolu, weight: PRIZED_WEIGHT },
       ],
       special: [
         { species: Species.Rayquaza, weight: 10 },
@@ -154,11 +156,13 @@ export default function registerMountainSpawns(): void {
         { species: Species.Chimecho, weight: 5 },
         { species: Species.Infernape, weight: 2 },
         { species: Species.Garchomp, weight: 2 },
+        { species: Species.Lucario, weight: 5 },
       ],
       prized: [
         ...UNOWN_SPAWNS,
         { species: Species.Magby, weight: PRIZED_WEIGHT },
         { species: Species.Wynaut, weight: PRIZED_WEIGHT },
+        { species: Species.Riolu, weight: PRIZED_WEIGHT },
       ],
       special: [
         { species: Species.Rayquaza, weight: 10 },

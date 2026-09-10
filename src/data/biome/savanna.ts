@@ -23,6 +23,7 @@ export default function registerSavannaSpawns(): void {
         { species: Species.Taillow, weight: 25 },
         { species: Species.Electrike, weight: 25 },
         { species: Species.Girafarig, weight: 5 },
+        { species: Species.Hippopotas, weight: 20 },
       ],
       rare: [
         { species: Species.Nidorina, weight: 5 },
@@ -38,6 +39,7 @@ export default function registerSavannaSpawns(): void {
         { species: Species.Xatu, weight: 5 },
         { species: Species.Sunflora, weight: 5 },
         { species: Species.Donphan, weight: 5 },
+        { species: Species.Hippowdon, weight: 6 },
       ],
       elusive: [
         { species: Species.Nidoqueen, weight: 5 },
@@ -71,6 +73,7 @@ export default function registerSavannaSpawns(): void {
         { species: Species.Taillow, weight: 25 },
         { species: Species.Electrike, weight: 25 },
         { species: Species.Girafarig, weight: 5 },
+        { species: Species.Hippopotas, weight: 20 },
       ],
       rare: [
         { species: Species.Nidorina, weight: 5 },
@@ -88,6 +91,7 @@ export default function registerSavannaSpawns(): void {
         { species: Species.Xatu, weight: 5 },
         { species: Species.Sunflora, weight: 5 },
         { species: Species.Donphan, weight: 5 },
+        { species: Species.Hippowdon, weight: 6 },
       ],
       elusive: [
         { species: Species.Nidoqueen, weight: 5 },
@@ -114,6 +118,7 @@ export default function registerSavannaSpawns(): void {
         { species: Species.Houndour, weight: 20 },
         { species: Species.Poochyena, weight: 20 },
         { species: Species.Girafarig, weight: 5 },
+        { species: Species.Hippopotas, weight: 20 },
       ],
       rare: [
         { species: Species.Nidorina, weight: 5 },
@@ -124,6 +129,7 @@ export default function registerSavannaSpawns(): void {
         { species: Species.Arbok, weight: 10 },
         { species: Species.Mightyena, weight: 10 },
         { species: Species.Houndoom, weight: 5 },
+        { species: Species.Hippowdon, weight: 6 },
       ],
       elusive: [
         { species: Species.Nidoqueen, weight: 5 },
@@ -145,6 +151,7 @@ export default function registerSavannaSpawns(): void {
         { species: Species.Houndour, weight: 20 },
         { species: Species.Poochyena, weight: 20 },
         { species: Species.Girafarig, weight: 5 },
+        { species: Species.Hippopotas, weight: 20 },
       ],
       rare: [
         { species: Species.Nidorina, weight: 5 },
@@ -155,6 +162,7 @@ export default function registerSavannaSpawns(): void {
         { species: Species.Arbok, weight: 10 },
         { species: Species.Mightyena, weight: 10 },
         { species: Species.Houndoom, weight: 5 },
+        { species: Species.Hippowdon, weight: 6 },
       ],
       elusive: [
         { species: Species.Nidoqueen, weight: 5 },

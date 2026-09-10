@@ -1,6 +1,6 @@
 import Biome, { TimeOfDay } from '../ids/biome';
 import { Species } from '../ids/species';
-import { UNOWN_SPAWNS, registerSpawnPool } from './__create';
+import { PRIZED_WEIGHT, UNOWN_SPAWNS, registerSpawnPool } from './__create';
 
 /**
  * MontaneForest spawn pool, grouped by day-cycle period and rarity band
@@ -41,8 +41,9 @@ export default function registerMontaneForestSpawns(): void {
         { species: Species.Chimecho, weight: 5 },
         { species: Species.Infernape, weight: 2 },
         { species: Species.Torterra, weight: 2 },
+        { species: Species.Lucario, weight: 5 },
       ],
-      prized: [...UNOWN_SPAWNS],
+      prized: [...UNOWN_SPAWNS, { species: Species.Riolu, weight: PRIZED_WEIGHT }],
       special: [],
     },
     [TimeOfDay.Day]: {
@@ -80,8 +81,9 @@ export default function registerMontaneForestSpawns(): void {
         { species: Species.Chimecho, weight: 5 },
         { species: Species.Infernape, weight: 2 },
         { species: Species.Torterra, weight: 2 },
+        { species: Species.Lucario, weight: 5 },
       ],
-      prized: [...UNOWN_SPAWNS],
+      prized: [...UNOWN_SPAWNS, { species: Species.Riolu, weight: PRIZED_WEIGHT }],
       special: [],
     },
     [TimeOfDay.Evening]: {

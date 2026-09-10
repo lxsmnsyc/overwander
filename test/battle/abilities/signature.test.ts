@@ -81,6 +81,11 @@ import {
   SKYHUNT_SCALE,
 } from '../../../src/battle/abilities/signature/stunky-to-gible';
 import {
+  AMBUSH_SCALE,
+  AURA_MATCH_SCALE,
+  DUST_BATH_FRACTION,
+} from '../../../src/battle/abilities/signature/riolu-to-skorupi';
+import {
   FLOAT_SAC_THRESHOLD,
   POLLEN_DOLE_FRACTION,
   SECOND_BLOOM_FRACTION,
@@ -6476,5 +6481,76 @@ describe('the skunk, the bell and the shark', () => {
 
     // And it is Ground moves that get it, not everything it throws
     expect(shark.checkMovePower(Moves.Tackle, unitTarget(flier))).toBe(40);
+  });
+});
+
+describe('the aura, the sand and the sting', () => {
+  it('rises to whatever is in better shape than it is', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const reader = createUnit(battle, teamA);
+    const whole = createUnit(battle, teamB);
+    const hurt = createUnit(battle, teamB);
+
+    reader.addAbility(Abilities.AuraMatch);
+    hurt.setHealth(hurt.checkStat(Stats.HP, 0) / 4);
+
+    expect(reader.checkMovePower(Moves.Tackle, unitTarget(whole))).toBe(40);
+
+    reader.setHealth(reader.checkStat(Stats.HP, 0) / 2);
+
+    expect(reader.checkMovePower(Moves.Tackle, unitTarget(whole))).toBeCloseTo(
+      40 * AURA_MATCH_SCALE,
+      5,
+    );
+    // The reading is of shares, so anything worse off than it is reads plain
+    expect(reader.checkMovePower(Moves.Tackle, unitTarget(hurt))).toBe(40);
+  });
+
+  it('rolls in the sand it makes, and in nothing else', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const hippo = createUnit(battle, teamA);
+    createUnit(battle, teamB);
+
+    hippo.addAbility(Abilities.DustBath);
+
+    const maxHP = hippo.checkStat(Stats.HP, 0);
+    hippo.setHealth(maxHP / 2);
+
+    // No sand yet, so reaching for a move puts nothing back
+    act(battle, hippo);
+
+    expect(hippo.health).toBeCloseTo(maxHP / 2, 5);
+
+    teamA.weather.current = Weathers.Sandstorm;
+
+    act(battle, hippo);
+
+    expect(hippo.health).toBeCloseTo(maxHP / 2 + maxHP * DUST_BATH_FRACTION, 5);
+  });
+
+  it('gets one blow in on each enemy before it is seen', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const scorpion = createUnit(battle, teamA);
+    const first = createUnit(battle, teamB);
+    const second = createUnit(battle, teamB);
+
+    scorpion.addAbility(Abilities.Ambush);
+    scorpion.enter();
+    first.enter();
+    battle.tick(1);
+
+    expect(scorpion.checkMovePower(Moves.Tackle, unitTarget(first))).toBeCloseTo(
+      40 * AMBUSH_SCALE,
+      5,
+    );
+
+    scorpion.attack(first, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(scorpion.checkMovePower(Moves.Tackle, unitTarget(first))).toBe(40);
+    // Cover is spent one enemy at a time
+    expect(scorpion.checkMovePower(Moves.Tackle, unitTarget(second))).toBeCloseTo(
+      40 * AMBUSH_SCALE,
+      5,
+    );
   });
 });

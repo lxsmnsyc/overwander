@@ -5,6 +5,7 @@ import Abilities from '../../data/ids/abilities';
 import { Statuses } from '../../data/ids/status';
 import type Battle from '../core';
 import { BattleEvents } from '../events';
+import { hasAnyStatus } from '../utils';
 import { createAbility, createStatusBoostAbility, createThickFatAbility } from './__create';
 
 /** What a burn is worth to a Special Attack that feeds on it. */
@@ -12,6 +13,9 @@ const FLARE_BOOST_SCALE = 1.5;
 
 /** The one burn, for the ability that reads it that way. */
 const BURN_HELD = new Set([Statuses.Burned]);
+
+/** Either poison is what the pincers were waiting for. */
+const POISONS_HELD = new Set([Statuses.Poisoned, Statuses.BadlyPoisoned]);
 
 /** The one type the bronze turns away. */
 const HEATPROOF_TYPES = new Set([Types.Fire]);
@@ -31,6 +35,24 @@ const setupAbilities = [
       // what it does is what the holder cannot reach
       if (event.enabled && event.source.hasAbility(Abilities.Klutz)) {
         event.enabled = false;
+      }
+    }),
+  ),
+
+  /**
+   * Merciless answers before the roll rather than after it, so armour
+   * (Battle Armor, Shell Armor) still refuses the critical at Post the
+   * way it refuses a rolled one
+   * https://bulbapedia.bulbagarden.net/wiki/Merciless_(Ability)
+   */
+  createAbility(Abilities.Merciless, (battle) =>
+    battle.on(BattleEvents.UnitAttackResolveCriticalHit, EventPriority.Pre, (event) => {
+      if (
+        !event.critical &&
+        event.parent.source.hasAbility(Abilities.Merciless) &&
+        hasAnyStatus(event.parent.target, POISONS_HELD)
+      ) {
+        event.critical = true;
       }
     }),
   ),

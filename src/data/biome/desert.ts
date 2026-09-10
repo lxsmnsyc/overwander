@@ -18,6 +18,7 @@ export default function registerDesertSpawns(): void {
         { species: Species.Diglett, weight: 20 },
         { species: Species.Magmar, weight: 5 },
         { species: Species.BurmySandy, weight: 20 },
+        { species: Species.Hippopotas, weight: 20 },
       ],
       rare: [
         { species: Species.Vibrava, weight: 10 },
@@ -27,6 +28,7 @@ export default function registerDesertSpawns(): void {
         { species: Species.Claydol, weight: 6 },
         { species: Species.Dugtrio, weight: 10 },
         { species: Species.WormadamSandy, weight: 4 },
+        { species: Species.Hippowdon, weight: 6 },
       ],
       elusive: [
         { species: Species.Flygon, weight: 5 },
@@ -52,6 +54,7 @@ export default function registerDesertSpawns(): void {
         { species: Species.Diglett, weight: 20 },
         { species: Species.Magmar, weight: 5 },
         { species: Species.BurmySandy, weight: 20 },
+        { species: Species.Hippopotas, weight: 20 },
       ],
       rare: [
         { species: Species.Vibrava, weight: 10 },
@@ -63,6 +66,7 @@ export default function registerDesertSpawns(): void {
         { species: Species.Sandslash, weight: 10 },
         { species: Species.Dugtrio, weight: 10 },
         { species: Species.WormadamSandy, weight: 4 },
+        { species: Species.Hippowdon, weight: 6 },
       ],
       elusive: [
         { species: Species.Flygon, weight: 5 },
@@ -83,6 +87,8 @@ export default function registerDesertSpawns(): void {
         { species: Species.Diglett, weight: 20 },
         { species: Species.Magmar, weight: 5 },
         { species: Species.BurmySandy, weight: 20 },
+        { species: Species.Skorupi, weight: 20 },
+        { species: Species.Hippopotas, weight: 20 },
       ],
       rare: [{ species: Species.Gabite, weight: 1 }],
       scarce: [
@@ -91,6 +97,8 @@ export default function registerDesertSpawns(): void {
         { species: Species.Sandslash, weight: 10 },
         { species: Species.Dugtrio, weight: 10 },
         { species: Species.WormadamSandy, weight: 4 },
+        { species: Species.Drapion, weight: 6 },
+        { species: Species.Hippowdon, weight: 6 },
       ],
       elusive: [{ species: Species.Garchomp, weight: 2 }],
       prized: [...UNOWN_SPAWNS, { species: Species.Magby, weight: PRIZED_WEIGHT }],
@@ -107,6 +115,8 @@ export default function registerDesertSpawns(): void {
         { species: Species.Cubone, weight: 20 },
         { species: Species.Magmar, weight: 5 },
         { species: Species.BurmySandy, weight: 20 },
+        { species: Species.Skorupi, weight: 20 },
+        { species: Species.Hippopotas, weight: 20 },
       ],
       rare: [{ species: Species.Gabite, weight: 1 }],
       scarce: [
@@ -115,6 +125,8 @@ export default function registerDesertSpawns(): void {
         { species: Species.Dugtrio, weight: 10 },
         { species: Species.Marowak, weight: 10 },
         { species: Species.WormadamSandy, weight: 4 },
+        { species: Species.Drapion, weight: 6 },
+        { species: Species.Hippowdon, weight: 6 },
       ],
       elusive: [{ species: Species.Garchomp, weight: 2 }],
       prized: [...UNOWN_SPAWNS, { species: Species.Magby, weight: PRIZED_WEIGHT }],

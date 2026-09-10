@@ -225,6 +225,9 @@ const enum Families {
   Stunky = 220,
   Bronzor = 221,
   Gible = 222,
+  Riolu = 223,
+  Hippopotas = 224,
+  Skorupi = 225,
 }
 
 export default Families;

@@ -467,6 +467,7 @@ const BABY_SPECIES = new Set<Species>([
   Species.Magby,
   Species.Azurill,
   Species.Wynaut,
+  Species.Riolu,
 ]);
 
 /**

@@ -1327,4 +1327,24 @@ export default function registerSignatureAbilities(): void {
     name: 'Skyhunt',
     description: 'Its Ground moves reach what is off the ground, and hit it 1.2x.',
   });
+
+  /**
+   * The aura, the sand and the sting: one rises to whatever it is
+   * facing, one carries its own weather, and one gets a single blow
+   * in before it is seen
+   */
+  registerSignature(Families.Riolu, Abilities.AuraMatch, {
+    name: 'Aura Match',
+    description: 'Its moves hit 1.25x against a target holding a larger share of its HP.',
+  });
+
+  registerSignature(Families.Hippopotas, Abilities.DustBath, {
+    name: 'Dust Bath',
+    description: 'It heals 1/16 of its HP every time it reaches for a move while sand blows.',
+  });
+
+  registerSignature(Families.Skorupi, Abilities.Ambush, {
+    name: 'Ambush',
+    description: 'The first move it lands on each enemy hits 1.3x.',
+  });
 }

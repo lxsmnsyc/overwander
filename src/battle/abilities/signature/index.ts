@@ -11,6 +11,7 @@ import treeckoToTorkoal from './treecko-to-torkoal';
 import burmyToShellos from './burmy-to-shellos';
 import combeeToCherubi from './combee-to-cherubi';
 import drifloonToGlameow from './drifloon-to-glameow';
+import rioluToSkorupi from './riolu-to-skorupi';
 import shinxToShieldon from './shinx-to-shieldon';
 import starlyToKricketot from './starly-to-kricketot';
 import stunkyToGible from './stunky-to-gible';
@@ -37,6 +38,7 @@ const setupAbilities = [
   ...combeeToCherubi,
   ...drifloonToGlameow,
   ...stunkyToGible,
+  ...rioluToSkorupi,
 ];
 
 /**

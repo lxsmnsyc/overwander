@@ -804,6 +804,9 @@ const enum Abilities {
   RankAir = 200220,
   DeepToll = 200221,
   Skyhunt = 200222,
+  AuraMatch = 200223,
+  DustBath = 200224,
+  Ambush = 200225,
 }
 
 export default Abilities;

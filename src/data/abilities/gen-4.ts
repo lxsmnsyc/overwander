@@ -16,6 +16,11 @@ export default function registerGen4Abilities(): void {
     name: 'Klutz',
     description: 'Whatever it is holding does nothing at all.',
   });
+  // Drapion
+  registerAbility(Abilities.Merciless, {
+    name: 'Merciless',
+    description: 'Its moves land critically on a poisoned target, armour permitting.',
+  });
   // Bronzor
   registerAbility(Abilities.Heatproof, {
     name: 'Heatproof',

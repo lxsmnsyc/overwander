@@ -20,6 +20,7 @@ import type {
   CheckUnitMovePPEvent,
   CheckUnitMovePowerEvent,
   CheckUnitMovePriorityEvent,
+  CheckUnitMoveRedirectEvent,
   CheckUnitMoveStepsEvent,
   CheckUnitMoveTargetingEvent,
   CheckUnitMoveTimeEvent,
@@ -285,6 +286,7 @@ export interface BattleEventMap extends EventMap {
   [BattleEvents.CheckUnitDrain]: [CheckUnitDrainEvent, EventPriority];
   [BattleEvents.CheckUnitStatusDuration]: [CheckUnitStatusDurationEvent, EventPriority];
   [BattleEvents.CheckUnitStatusDamage]: [CheckUnitStatusDamageEvent, EventPriority];
+  [BattleEvents.CheckUnitMoveRedirect]: [CheckUnitMoveRedirectEvent, EventPriority];
   [BattleEvents.CheckTeamStatusDuration]: [CheckTeamStatusDurationEvent, EventPriority];
   [BattleEvents.CheckUnitWeatherDuration]: [CheckUnitWeatherDurationEvent, EventPriority];
   [BattleEvents.UnitUpdateStatusTimer]: [UnitUpdateStatusTimerEvent, EventPriority];

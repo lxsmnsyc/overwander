@@ -228,6 +228,9 @@ const enum Families {
   Riolu = 223,
   Hippopotas = 224,
   Skorupi = 225,
+  Croagunk = 226,
+  Finneon = 227,
+  Snover = 228,
 }
 
 export default Families;

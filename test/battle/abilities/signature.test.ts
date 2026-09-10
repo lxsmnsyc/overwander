@@ -86,6 +86,12 @@ import {
   DUST_BATH_FRACTION,
 } from '../../../src/battle/abilities/signature/riolu-to-skorupi';
 import {
+  EVERGREEN_SCALE,
+  FALSE_EYES_THRESHOLD,
+  FINISHER_SCALE,
+  FINISHER_THRESHOLD,
+} from '../../../src/battle/abilities/signature/croagunk-to-snover';
+import {
   FLOAT_SAC_THRESHOLD,
   POLLEN_DOLE_FRACTION,
   SECOND_BLOOM_FRACTION,
@@ -6550,6 +6556,155 @@ describe('the aura, the sand and the sting', () => {
     // Cover is spent one enemy at a time
     expect(scorpion.checkMovePower(Moves.Tackle, unitTarget(second))).toBeCloseTo(
       40 * AMBUSH_SCALE,
+      5,
+    );
+  });
+});
+
+describe('the frog, the fish and the tree', () => {
+  it('winds up faster once the target is nearly done', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const frog = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    frog.addAbility(Abilities.Finisher);
+
+    const whole = frog.checkMoveCastTime(Moves.Flamethrower, unitTarget(enemy));
+
+    expect(whole).toBeGreaterThan(0);
+
+    enemy.setHealth(enemy.checkStat(Stats.HP, 0) * FINISHER_THRESHOLD);
+
+    expect(frog.checkMoveCastTime(Moves.Flamethrower, unitTarget(enemy))).toBeCloseTo(
+      whole * FINISHER_SCALE,
+      5,
+    );
+  });
+
+  it('takes the move aimed at a teammate that is worse off', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const fish = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    fish.addAbility(Abilities.FalseEyes);
+    enemy.addMove(Moves.Tackle);
+    fish.enter();
+    mate.enter();
+    enemy.enter();
+    battle.tick(1);
+
+    const landed: Unit[] = [];
+
+    battle.on(BattleEvents.UnitTriggerMoveTarget, AttackPriority.Post, (event) => {
+      if (event.source === enemy && event.target.type === MoveTargetType.Unit) {
+        landed.push(event.target.unit);
+      }
+    });
+
+    // Whole, so the pattern has nothing to draw
+    enemy.triggerMove(Moves.Tackle, unitTarget(mate), 0);
+    battle.tick(turns(2));
+
+    expect(landed).toEqual([mate]);
+
+    mate.setHealth(mate.checkStat(Stats.HP, 0) * FALSE_EYES_THRESHOLD - 1);
+
+    const hurt = mate.health;
+    const whole = fish.health;
+
+    landed.length = 0;
+
+    enemy.triggerMove(Moves.Tackle, unitTarget(mate), 0);
+    battle.tick(turns(2));
+
+    // The move itself comes across, so the blow is struck at the fish
+    expect(landed).toEqual([fish]);
+    expect(fish.health).toBeLessThan(whole);
+    expect(mate.health).toBe(hurt);
+  });
+
+  it('leaves a blow a Follow Me has already drawn', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const fish = createUnit(battle, teamA);
+    const guard = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    fish.addAbility(Abilities.FalseEyes);
+    enemy.addMove(Moves.Tackle);
+    fish.enter();
+    guard.enter();
+    mate.enter();
+    enemy.enter();
+    battle.tick(1);
+
+    // The one drawing everything is the one worth covering, which is
+    // exactly when the fish would otherwise take it away
+    guard.setHealth(guard.checkStat(Stats.HP, 0) / 4);
+    guard.triggerMoveEffect(Moves.FollowMe, { type: MoveTargetType.None }, 0);
+    enemy.cast(Moves.Tackle, unitTarget(mate));
+
+    const landed: Unit[] = [];
+
+    battle.on(BattleEvents.UnitTriggerMoveTarget, AttackPriority.Post, (event) => {
+      if (event.source === enemy && event.target.type === MoveTargetType.Unit) {
+        landed.push(event.target.unit);
+      }
+    });
+
+    battle.tick(turns(4));
+
+    expect(landed).toEqual([guard]);
+  });
+
+  it('leaves a blow the teammate was going to shrug off', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const fish = createUnit(battle, teamA);
+    const drawer = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    fish.addAbility(Abilities.FalseEyes);
+    drawer.addAbility(Abilities.StormDrain);
+    enemy.addMove(Moves.WaterGun);
+    fish.enter();
+    drawer.enter();
+    enemy.enter();
+    battle.tick(1);
+
+    drawer.setHealth(drawer.checkStat(Stats.HP, 0) / 4);
+
+    const landed: Unit[] = [];
+
+    battle.on(BattleEvents.UnitTriggerMoveTarget, AttackPriority.Post, (event) => {
+      if (event.source === enemy && event.target.type === MoveTargetType.Unit) {
+        landed.push(event.target.unit);
+      }
+    });
+
+    enemy.triggerMove(Moves.WaterGun, unitTarget(drawer), 0);
+    battle.tick(turns(2));
+
+    // The water was the drawer's to eat, so the fish stays out of it
+    expect(landed).toEqual([drawer]);
+    expect(drawer.stages[Stages.SpecialAttack]).toBe(1);
+  });
+
+  it('answers a fire only while its own snow falls', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const attacker = createUnit(battle, teamA);
+    const tree = createUnit(battle, teamB);
+
+    tree.addAbility(Abilities.Evergreen);
+
+    const parent = makeAttack(attacker, tree, Moves.Ember, Types.Fire, MoveCategories.Special);
+
+    expect(resolveAttackStat(battle, parent, attacker, Stats.SpecialAttack, 100)).toBe(100);
+
+    teamB.weather.current = Weathers.Hail;
+
+    expect(resolveAttackStat(battle, parent, attacker, Stats.SpecialAttack, 100)).toBeCloseTo(
+      100 * EVERGREEN_SCALE,
       5,
     );
   });

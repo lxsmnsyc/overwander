@@ -18,6 +18,7 @@ export default function registerMangroveSpawns(): void {
         { species: Species.Krabby, weight: 20 },
         { species: Species.Wooper, weight: 25 },
         { species: Species.Shellos, weight: 25 },
+        { species: Species.Croagunk, weight: 20 },
       ],
       rare: [
         { species: Species.Croconaw, weight: 1 },
@@ -30,6 +31,7 @@ export default function registerMangroveSpawns(): void {
         { species: Species.Slowking, weight: 5 },
         { species: Species.Quagsire, weight: 10 },
         { species: Species.Gastrodon, weight: 10 },
+        { species: Species.Toxicroak, weight: 6 },
       ],
       elusive: [
         { species: Species.Farfetchd, weight: 5 },
@@ -50,6 +52,7 @@ export default function registerMangroveSpawns(): void {
         { species: Species.Krabby, weight: 20 },
         { species: Species.Wooper, weight: 25 },
         { species: Species.Shellos, weight: 25 },
+        { species: Species.Croagunk, weight: 20 },
       ],
       rare: [
         { species: Species.Croconaw, weight: 1 },
@@ -62,6 +65,7 @@ export default function registerMangroveSpawns(): void {
         { species: Species.Slowking, weight: 5 },
         { species: Species.Quagsire, weight: 10 },
         { species: Species.Gastrodon, weight: 10 },
+        { species: Species.Toxicroak, weight: 6 },
       ],
       elusive: [
         { species: Species.Farfetchd, weight: 5 },
@@ -78,6 +82,7 @@ export default function registerMangroveSpawns(): void {
         { species: Species.Krabby, weight: 20 },
         { species: Species.Wooper, weight: 25 },
         { species: Species.Shellos, weight: 25 },
+        { species: Species.Croagunk, weight: 20 },
       ],
       rare: [],
       scarce: [
@@ -85,6 +90,7 @@ export default function registerMangroveSpawns(): void {
         { species: Species.Kingler, weight: 10 },
         { species: Species.Quagsire, weight: 10 },
         { species: Species.Gastrodon, weight: 10 },
+        { species: Species.Toxicroak, weight: 6 },
       ],
       elusive: [],
       prized: [...UNOWN_SPAWNS],
@@ -97,6 +103,7 @@ export default function registerMangroveSpawns(): void {
         { species: Species.Krabby, weight: 20 },
         { species: Species.Wooper, weight: 25 },
         { species: Species.Shellos, weight: 25 },
+        { species: Species.Croagunk, weight: 20 },
       ],
       rare: [],
       scarce: [
@@ -104,6 +111,7 @@ export default function registerMangroveSpawns(): void {
         { species: Species.Kingler, weight: 10 },
         { species: Species.Quagsire, weight: 10 },
         { species: Species.Gastrodon, weight: 10 },
+        { species: Species.Toxicroak, weight: 6 },
       ],
       elusive: [],
       prized: [...UNOWN_SPAWNS],

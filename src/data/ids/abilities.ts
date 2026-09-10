@@ -807,6 +807,9 @@ const enum Abilities {
   AuraMatch = 200223,
   DustBath = 200224,
   Ambush = 200225,
+  Finisher = 200226,
+  FalseEyes = 200227,
+  Evergreen = 200228,
 }
 
 export default Abilities;

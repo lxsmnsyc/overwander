@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { AttackPriority } from '../../../src/core/event-emitter';
 import {
   BattleEvents,
   type CheckUnitAIMoveScoreEvent,
@@ -453,6 +454,41 @@ describe('the moves that stand in somebody else’s way', () => {
     battle.tick(turns(2));
     attacker.cast(Moves.Tackle, unitTarget(ally));
     expect(attacker.casting?.target).toEqual(unitTarget(ally));
+  });
+
+  it('keeps what it drew when an ability would draw it instead', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const guard = createUnit(battle, teamA);
+    const rod = createUnit(battle, teamA);
+    const ally = createUnit(battle, teamA);
+    const attacker = createUnit(battle, teamB);
+
+    rod.addAbility(Abilities.LightningRod);
+    attacker.addMove(Moves.ThunderShock);
+    guard.enter();
+    rod.enter();
+    ally.enter();
+    attacker.enter();
+    battle.tick(1);
+
+    guard.triggerMoveEffect(Moves.FollowMe, NONE_TARGET, 0);
+    attacker.cast(Moves.ThunderShock, unitTarget(ally));
+
+    expect(attacker.casting?.target).toEqual(unitTarget(guard));
+
+    const landed: Unit[] = [];
+
+    battle.on(BattleEvents.UnitTriggerMoveTarget, AttackPriority.Post, (event) => {
+      if (event.source === attacker && event.target.type === MoveTargetType.Unit) {
+        landed.push(event.target.unit);
+      }
+    });
+
+    battle.tick(turns(4));
+
+    // The rod stands down: a Follow Me cost a cast and a rod costs
+    // nothing
+    expect(landed).toEqual([guard]);
   });
 
   it('turns a status move back on whoever cast it', () => {

@@ -312,6 +312,14 @@ const enum BattleEvents {
    * one per module
    */
   CheckUnitStatusDamage = 149,
+
+  /**
+   * Who a single-target move actually lands on. Asked once per move
+   * that was aimed at one thing, with the aim as the answer, so an
+   * ability may put somebody else in the way. A move that goes out to
+   * a whole side is never asked: there is nobody it missed
+   */
+  CheckUnitMoveRedirect = 150,
 }
 
 export default BattleEvents;

@@ -13,11 +13,13 @@ export default function registerCoralReefSpawns(): void {
         { species: Species.Carvanha, weight: 20 },
         { species: Species.Clamperl, weight: 20 },
         { species: Species.Remoraid, weight: 20 },
+        { species: Species.Finneon, weight: 20 },
       ],
       rare: [{ species: Species.Seadra, weight: 10 }],
       scarce: [
         { species: Species.Sharpedo, weight: 6 },
         { species: Species.Octillery, weight: 5 },
+        { species: Species.Lumineon, weight: 6 },
       ],
       elusive: [
         { species: Species.Mantine, weight: 5 },
@@ -34,11 +36,13 @@ export default function registerCoralReefSpawns(): void {
         { species: Species.Carvanha, weight: 20 },
         { species: Species.Clamperl, weight: 20 },
         { species: Species.Remoraid, weight: 20 },
+        { species: Species.Finneon, weight: 20 },
       ],
       rare: [{ species: Species.Seadra, weight: 10 }],
       scarce: [
         { species: Species.Sharpedo, weight: 6 },
         { species: Species.Octillery, weight: 5 },
+        { species: Species.Lumineon, weight: 6 },
       ],
       elusive: [
         { species: Species.Mantine, weight: 5 },
@@ -56,12 +60,14 @@ export default function registerCoralReefSpawns(): void {
         { species: Species.Clamperl, weight: 20 },
         { species: Species.Staryu, weight: 20 },
         { species: Species.Remoraid, weight: 20 },
+        { species: Species.Finneon, weight: 20 },
       ],
       rare: [{ species: Species.Seadra, weight: 10 }],
       scarce: [
         { species: Species.Sharpedo, weight: 6 },
         { species: Species.Starmie, weight: 10 },
         { species: Species.Octillery, weight: 10 },
+        { species: Species.Lumineon, weight: 6 },
       ],
       elusive: [
         { species: Species.Mantine, weight: 5 },
@@ -78,12 +84,14 @@ export default function registerCoralReefSpawns(): void {
         { species: Species.Clamperl, weight: 20 },
         { species: Species.Staryu, weight: 20 },
         { species: Species.Remoraid, weight: 20 },
+        { species: Species.Finneon, weight: 20 },
       ],
       rare: [{ species: Species.Seadra, weight: 10 }],
       scarce: [
         { species: Species.Sharpedo, weight: 6 },
         { species: Species.Starmie, weight: 10 },
         { species: Species.Octillery, weight: 10 },
+        { species: Species.Lumineon, weight: 6 },
       ],
       elusive: [
         { species: Species.Mantine, weight: 5 },

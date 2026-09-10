@@ -3074,8 +3074,12 @@ describe('interaction fixes', () => {
     const plain = createUnit(battle, teamB);
     const rod = createUnit(battle, teamB);
     rod.addAbility(Abilities.LightningRod);
+    attacker.addMove(Moves.ThunderShock);
 
-    attacker.triggerMoveTarget(Moves.ThunderShock, { type: MoveTargetType.Unit, unit: plain }, 0);
+    // The whole move rather than a hand-made blow: who it lands on is
+    // worked out where the aim is resolved
+    attacker.triggerMove(Moves.ThunderShock, { type: MoveTargetType.Unit, unit: plain }, 0);
+    battle.tick(turns(2));
 
     expect(plain.health).toBe(160); // redirected away
     expect(rod.health).toBe(160); // absorbed

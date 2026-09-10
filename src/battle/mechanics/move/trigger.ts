@@ -1,6 +1,6 @@
 import { AttackPriority, EventPriority } from '../../../core/event-emitter';
 import { Stages } from '../../../data/constants/stats';
-import { StatFlags } from '../../../data/ids/moves';
+import { MoveTargets, StatFlags } from '../../../data/ids/moves';
 import { getMoveData } from '../../../data/moves';
 import type Battle from '../../core';
 import type {
@@ -134,8 +134,16 @@ export default function setupTriggerMoveMechanics(battle: Battle): void {
       targeting.affects,
     );
 
+    // Only a move aimed at one thing can be put onto somebody else:
+    // one that goes out to a whole side already reaches everybody
+    const single = targeting.target !== MoveTargets.None;
+
     for (const target of targets) {
-      event.source.triggerMoveTarget(event.move, target, event.steps);
+      event.source.triggerMoveTarget(
+        event.move,
+        single ? event.source.checkMoveRedirect(event.move, target) : target,
+        event.steps,
+      );
     }
   });
 

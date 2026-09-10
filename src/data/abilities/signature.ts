@@ -1347,4 +1347,24 @@ export default function registerSignatureAbilities(): void {
     name: 'Ambush',
     description: 'The first move it lands on each enemy hits 1.3x.',
   });
+
+  /**
+   * The frog, the fish and the tree: one throws the blow that ends
+   * it, one takes what was aimed at somebody worse off, and one
+   * stands in the winter it brought
+   */
+  registerSignature(Families.Croagunk, Abilities.Finisher, {
+    name: 'Finisher',
+    description: 'Its moves wind up 25% faster against a target at or below 1/4 HP.',
+  });
+
+  registerSignature(Families.Finneon, Abilities.FalseEyes, {
+    name: 'False Eyes',
+    description: 'A single-target move aimed at a teammate below 1/2 HP comes to it instead.',
+  });
+
+  registerSignature(Families.Snover, Abilities.Evergreen, {
+    name: 'Evergreen',
+    description: 'Fire moves hit it at 0.5x while hail or snow falls.',
+  });
 }

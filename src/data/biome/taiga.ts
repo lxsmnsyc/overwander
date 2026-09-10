@@ -9,18 +9,24 @@ export default function registerTaigaSpawns(): void {
   registerSpawnPool(Biome.Taiga, {
     [TimeOfDay.Morning]: {
       base: [{ species: Species.Teddiursa, weight: 20 }],
-      uncommon: [{ species: Species.Stantler, weight: 5 }],
+      uncommon: [
+        { species: Species.Stantler, weight: 5 },
+        { species: Species.Snover, weight: 20 },
+      ],
       rare: [{ species: Species.Ursaring, weight: 5 }],
-      scarce: [],
+      scarce: [{ species: Species.Abomasnow, weight: 6 }],
       elusive: [{ species: Species.Snorlax, weight: 5 }],
       prized: [...UNOWN_SPAWNS],
       special: [{ species: Species.Suicune, weight: 10 }],
     },
     [TimeOfDay.Day]: {
       base: [{ species: Species.Teddiursa, weight: 20 }],
-      uncommon: [{ species: Species.Stantler, weight: 5 }],
+      uncommon: [
+        { species: Species.Stantler, weight: 5 },
+        { species: Species.Snover, weight: 20 },
+      ],
       rare: [{ species: Species.Ursaring, weight: 5 }],
-      scarce: [],
+      scarce: [{ species: Species.Abomasnow, weight: 6 }],
       elusive: [{ species: Species.Snorlax, weight: 5 }],
       prized: [...UNOWN_SPAWNS],
       special: [{ species: Species.Suicune, weight: 10 }],
@@ -30,9 +36,13 @@ export default function registerTaigaSpawns(): void {
       uncommon: [
         { species: Species.Vulpix, weight: 10 },
         { species: Species.Stantler, weight: 5 },
+        { species: Species.Snover, weight: 20 },
       ],
       rare: [],
-      scarce: [{ species: Species.Ninetales, weight: 5 }],
+      scarce: [
+        { species: Species.Ninetales, weight: 5 },
+        { species: Species.Abomasnow, weight: 6 },
+      ],
       elusive: [
         { species: Species.Jynx, weight: 5 },
         { species: Species.Snorlax, weight: 5 },
@@ -46,11 +56,13 @@ export default function registerTaigaSpawns(): void {
         { species: Species.Vulpix, weight: 10 },
         { species: Species.Paras, weight: 20 },
         { species: Species.Stantler, weight: 5 },
+        { species: Species.Snover, weight: 20 },
       ],
       rare: [],
       scarce: [
         { species: Species.Ninetales, weight: 5 },
         { species: Species.Parasect, weight: 10 },
+        { species: Species.Abomasnow, weight: 6 },
       ],
       elusive: [
         { species: Species.Jynx, weight: 5 },

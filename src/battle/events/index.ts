@@ -47,6 +47,7 @@ export type {
   CheckUnitMovePPEvent,
   CheckUnitMovePowerEvent,
   CheckUnitMovePriorityEvent,
+  CheckUnitMoveRedirectEvent,
   CheckUnitMoveStepsEvent,
   CheckUnitMoveTargetingEvent,
   CheckUnitMoveTimeEvent,

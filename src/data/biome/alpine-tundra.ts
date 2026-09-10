@@ -15,6 +15,7 @@ export default function registerAlpineTundraSpawns(): void {
       uncommon: [
         { species: Species.Snorunt, weight: 22 },
         { species: Species.Bronzor, weight: 20 },
+        { species: Species.Snover, weight: 20 },
       ],
       rare: [
         { species: Species.Machoke, weight: 5 },
@@ -23,6 +24,7 @@ export default function registerAlpineTundraSpawns(): void {
       scarce: [
         { species: Species.Glalie, weight: 6 },
         { species: Species.Bronzong, weight: 6 },
+        { species: Species.Abomasnow, weight: 6 },
       ],
       elusive: [
         { species: Species.Machamp, weight: 5 },
@@ -42,6 +44,7 @@ export default function registerAlpineTundraSpawns(): void {
       uncommon: [
         { species: Species.Snorunt, weight: 22 },
         { species: Species.Bronzor, weight: 20 },
+        { species: Species.Snover, weight: 20 },
       ],
       rare: [
         { species: Species.Shelgon, weight: 1 },
@@ -51,6 +54,7 @@ export default function registerAlpineTundraSpawns(): void {
       scarce: [
         { species: Species.Glalie, weight: 6 },
         { species: Species.Bronzong, weight: 6 },
+        { species: Species.Abomasnow, weight: 6 },
       ],
       elusive: [
         { species: Species.Salamence, weight: 2 },
@@ -71,6 +75,7 @@ export default function registerAlpineTundraSpawns(): void {
         { species: Species.Snorunt, weight: 22 },
         { species: Species.Sneasel, weight: 5 },
         { species: Species.Bronzor, weight: 20 },
+        { species: Species.Snover, weight: 20 },
       ],
       rare: [
         { species: Species.Shelgon, weight: 1 },
@@ -79,6 +84,7 @@ export default function registerAlpineTundraSpawns(): void {
       scarce: [
         { species: Species.Glalie, weight: 6 },
         { species: Species.Bronzong, weight: 6 },
+        { species: Species.Abomasnow, weight: 6 },
       ],
       elusive: [
         { species: Species.Salamence, weight: 2 },
@@ -94,11 +100,13 @@ export default function registerAlpineTundraSpawns(): void {
         { species: Species.Snorunt, weight: 22 },
         { species: Species.Sneasel, weight: 5 },
         { species: Species.Bronzor, weight: 20 },
+        { species: Species.Snover, weight: 20 },
       ],
       rare: [{ species: Species.Piloswine, weight: 5 }],
       scarce: [
         { species: Species.Glalie, weight: 6 },
         { species: Species.Bronzong, weight: 6 },
+        { species: Species.Abomasnow, weight: 6 },
       ],
       elusive: [
         { species: Species.Delibird, weight: 5 },

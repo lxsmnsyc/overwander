@@ -15,6 +15,7 @@ export default function registerKelpForestSpawns(): void {
         { species: Species.Chinchou, weight: 20 },
         { species: Species.Remoraid, weight: 20 },
         { species: Species.Tangela, weight: 5 },
+        { species: Species.Finneon, weight: 20 },
       ],
       rare: [{ species: Species.Seadra, weight: 10 }],
       scarce: [
@@ -22,6 +23,7 @@ export default function registerKelpForestSpawns(): void {
         { species: Species.Tentacruel, weight: 10 },
         { species: Species.Lanturn, weight: 10 },
         { species: Species.Octillery, weight: 10 },
+        { species: Species.Lumineon, weight: 6 },
       ],
       elusive: [
         { species: Species.Mantine, weight: 5 },
@@ -38,6 +40,7 @@ export default function registerKelpForestSpawns(): void {
         { species: Species.Chinchou, weight: 20 },
         { species: Species.Remoraid, weight: 20 },
         { species: Species.Tangela, weight: 5 },
+        { species: Species.Finneon, weight: 20 },
       ],
       rare: [{ species: Species.Seadra, weight: 10 }],
       scarce: [
@@ -45,6 +48,7 @@ export default function registerKelpForestSpawns(): void {
         { species: Species.Tentacruel, weight: 10 },
         { species: Species.Lanturn, weight: 10 },
         { species: Species.Octillery, weight: 10 },
+        { species: Species.Lumineon, weight: 6 },
       ],
       elusive: [
         { species: Species.Mantine, weight: 5 },
@@ -61,6 +65,7 @@ export default function registerKelpForestSpawns(): void {
         { species: Species.Magikarp, weight: 30 },
         { species: Species.Chinchou, weight: 20 },
         { species: Species.Remoraid, weight: 20 },
+        { species: Species.Finneon, weight: 20 },
       ],
       rare: [{ species: Species.Seadra, weight: 10 }],
       scarce: [
@@ -69,6 +74,7 @@ export default function registerKelpForestSpawns(): void {
         { species: Species.Starmie, weight: 10 },
         { species: Species.Lanturn, weight: 10 },
         { species: Species.Octillery, weight: 10 },
+        { species: Species.Lumineon, weight: 6 },
       ],
       elusive: [
         { species: Species.Mantine, weight: 5 },
@@ -85,6 +91,7 @@ export default function registerKelpForestSpawns(): void {
         { species: Species.Magikarp, weight: 30 },
         { species: Species.Chinchou, weight: 20 },
         { species: Species.Remoraid, weight: 20 },
+        { species: Species.Finneon, weight: 20 },
       ],
       rare: [{ species: Species.Seadra, weight: 10 }],
       scarce: [
@@ -93,6 +100,7 @@ export default function registerKelpForestSpawns(): void {
         { species: Species.Starmie, weight: 10 },
         { species: Species.Lanturn, weight: 10 },
         { species: Species.Octillery, weight: 10 },
+        { species: Species.Lumineon, weight: 6 },
       ],
       elusive: [
         { species: Species.Mantine, weight: 5 },

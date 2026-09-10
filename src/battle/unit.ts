@@ -33,6 +33,7 @@ import type {
   CheckUnitMovePPEvent,
   CheckUnitMovePowerEvent,
   CheckUnitMovePriorityEvent,
+  CheckUnitMoveRedirectEvent,
   CheckUnitMoveStepsEvent,
   CheckUnitMoveTargetingEvent,
   CheckUnitMoveTimeEvent,
@@ -1193,6 +1194,23 @@ export default class Unit {
    * move's own flag, so a Protective Pads is one veto rather than a
    * clause in each of them
    */
+  /**
+   * Who a single-target move lands on, which is whoever it was aimed
+   * at unless something puts itself in the way
+   */
+  checkMoveRedirect(move: Moves, target: MoveTarget): MoveTarget {
+    const event: CheckUnitMoveRedirectEvent = {
+      id: 'CheckUnitMoveRedirect',
+      disabled: false,
+      source: this,
+      move,
+      target,
+      redirect: target,
+    };
+    this.battle.emit(BattleEvents.CheckUnitMoveRedirect, event);
+    return event.redirect;
+  }
+
   checkMoveContact(move: Moves, target: MoveTarget): boolean {
     const event: CheckUnitMoveContactEvent = {
       id: 'CheckUnitMoveContact',

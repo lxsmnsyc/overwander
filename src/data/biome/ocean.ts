@@ -22,6 +22,7 @@ export default function registerOceanSpawns(): void {
         { species: Species.Magikarp, weight: 30 },
         { species: Species.Chinchou, weight: 20 },
         { species: Species.Remoraid, weight: 20 },
+        { species: Species.Finneon, weight: 20 },
       ],
       rare: [
         { species: Species.Dragonair, weight: 1 },
@@ -37,6 +38,7 @@ export default function registerOceanSpawns(): void {
         { species: Species.Vaporeon, weight: 5 },
         { species: Species.Lanturn, weight: 10 },
         { species: Species.Octillery, weight: 10 },
+        { species: Species.Lumineon, weight: 6 },
       ],
       elusive: [
         { species: Species.Blastoise, weight: 2 },
@@ -70,6 +72,7 @@ export default function registerOceanSpawns(): void {
         { species: Species.Magikarp, weight: 30 },
         { species: Species.Chinchou, weight: 20 },
         { species: Species.Remoraid, weight: 20 },
+        { species: Species.Finneon, weight: 20 },
       ],
       rare: [
         { species: Species.Dragonair, weight: 1 },
@@ -85,6 +88,7 @@ export default function registerOceanSpawns(): void {
         { species: Species.Vaporeon, weight: 5 },
         { species: Species.Lanturn, weight: 10 },
         { species: Species.Octillery, weight: 10 },
+        { species: Species.Lumineon, weight: 6 },
       ],
       elusive: [
         { species: Species.Blastoise, weight: 2 },
@@ -118,6 +122,7 @@ export default function registerOceanSpawns(): void {
         { species: Species.Magikarp, weight: 30 },
         { species: Species.Chinchou, weight: 20 },
         { species: Species.Remoraid, weight: 20 },
+        { species: Species.Finneon, weight: 20 },
       ],
       rare: [
         { species: Species.Dragonair, weight: 1 },
@@ -133,6 +138,7 @@ export default function registerOceanSpawns(): void {
         { species: Species.Vaporeon, weight: 5 },
         { species: Species.Lanturn, weight: 10 },
         { species: Species.Octillery, weight: 10 },
+        { species: Species.Lumineon, weight: 6 },
       ],
       elusive: [
         { species: Species.Lapras, weight: 5 },
@@ -164,6 +170,7 @@ export default function registerOceanSpawns(): void {
         { species: Species.Magikarp, weight: 30 },
         { species: Species.Chinchou, weight: 20 },
         { species: Species.Remoraid, weight: 20 },
+        { species: Species.Finneon, weight: 20 },
       ],
       rare: [
         { species: Species.Dragonair, weight: 1 },
@@ -179,6 +186,7 @@ export default function registerOceanSpawns(): void {
         { species: Species.Vaporeon, weight: 5 },
         { species: Species.Lanturn, weight: 10 },
         { species: Species.Octillery, weight: 10 },
+        { species: Species.Lumineon, weight: 6 },
       ],
       elusive: [
         { species: Species.Lapras, weight: 5 },

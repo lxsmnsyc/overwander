@@ -285,6 +285,287 @@ const enum Abilities {
   Simple = 165,
   // Rayquaza
   AirLock = 166,
+  // Drifloon
+  FlareBoost = 167,
+  // Buneary
+  Klutz = 168,
+  // Bronzor
+  Heatproof = 169,
+  // Regigigas
+  SlowStart = 170,
+  // Arceus
+  Multitype = 171,
+  // Diglett
+  TanglingHair = 172,
+  // Meowth
+  SteelySpirit = 173,
+  // Geodude
+  Galvanize = 174,
+  // Ponyta
+  PastelVeil = 175,
+  // Slowpoke
+  QuickDraw = 176,
+  CuriousMedicine = 177,
+  // Grimer
+  PowerOfAlchemy = 178,
+  // Kangaskhan
+  ParentalBond = 179,
+  // Pinsir
+  Aerilate = 180,
+  // Eevee
+  Pixilate = 181,
+  // Chikorita
+  MegaSol = 182,
+  // Totodile
+  Dragonize = 183,
+  // Pichu
+  SurgeSurfer = 184,
+  // Girafarig
+  CudChew = 185,
+  ArmorTail = 186,
+  // Teddiursa
+  MindsEye = 187,
+  // Corsola
+  PerishBody = 188,
+  // Kyogre
+  PrimordialSea = 189,
+  // Groudon
+  DesolateLand = 190,
+  // Rayquaza
+  DeltaStream = 191,
+  // MimeJr
+  ScreenCleaner = 192,
+  // Riolu
+  AuraGuard = 193,
+  // Victini
+  VictoryStar = 194,
+  // Drilbur
+  PiercingDrill = 195,
+  // Darumaka
+  ZenMode = 196,
+  GorillaTactics = 197,
+  // Yamask
+  Mummy = 198,
+  WanderingSpirit = 199,
+  // Archen
+  Defeatist = 200,
+  // Zorua
+  Illusion = 201,
+  // Ferroseed
+  IronBarbs = 202,
+  // Tynamo
+  Eelevate = 203,
+  // Stunfisk
+  Mimicry = 204,
+  // Pawniard
+  SupremeOverlord = 205,
+  // Reshiram
+  Turboblaze = 206,
+  // Zekrom
+  Teravolt = 207,
+  // Chespin
+  Bulletproof = 208,
+  // Fennekin
+  Magician = 209,
+  // Froakie
+  BattleBond = 210,
+  // Bunnelby
+  CheekPouch = 211,
+  // Litleo
+  FireMane = 212,
+  // Flabebe
+  FlowerVeil = 213,
+  Symbiosis = 214,
+  // Skiddo
+  GrassPelt = 215,
+  // Furfrou
+  FurCoat = 216,
+  // Honedge
+  StanceChange = 217,
+  // Spritzee
+  AromaVeil = 218,
+  // Swirlix
+  SweetVeil = 219,
+  // Clauncher
+  MegaLauncher = 220,
+  // Amaura
+  Refrigerate = 221,
+  // Goomy
+  Gooey = 222,
+  // Xerneas
+  FairyAura = 223,
+  // Yveltal
+  DarkAura = 224,
+  // Zygarde
+  AuraBreak = 225,
+  PowerConstruct = 226,
+  // Rowlet
+  LongReach = 227,
+  // Popplio
+  LiquidVoice = 228,
+  // Yungoos
+  Stakeout = 229,
+  // Oricorio
+  Dancer = 230,
+  // Wishiwashi
+  Schooling = 231,
+  // Mareanie
+  Merciless = 232,
+  // Dewpider
+  WaterBubble = 233,
+  // Salandit
+  Corrosion = 234,
+  // Stufful
+  Fluffy = 235,
+  // Comfey
+  Triage = 236,
+  // Passimian
+  Receiver = 237,
+  // Wimpod
+  WimpOut = 238,
+  EmergencyExit = 239,
+  // Sandygast
+  WaterCompaction = 240,
+  // Pyukumuku
+  InnardsOut = 241,
+  // TypeNull
+  RksSystem = 242,
+  // Minior
+  ShieldsDown = 243,
+  // Mimikyu
+  Disguise = 244,
+  // Bruxish
+  Dazzling = 245,
+  // TapuKoko
+  ElectricSurge = 246,
+  // TapuLele
+  PsychicSurge = 247,
+  // TapuBulu
+  GrassySurge = 248,
+  // TapuFini
+  MistySurge = 249,
+  // Cosmog
+  FullMetalBody = 250,
+  ShadowShield = 251,
+  // Nihilego
+  BeastBoost = 252,
+  // Necrozma
+  PrismArmor = 253,
+  Neuroforce = 254,
+  // Magearna
+  SoulHeart = 255,
+  // Scorbunny
+  Libero = 256,
+  // Gossifleur
+  CottonDown = 257,
+  // Yamper
+  BallFetch = 258,
+  // Rolycoly
+  SteamEngine = 259,
+  // Applin
+  Ripen = 260,
+  SupersweetSyrup = 261,
+  // Silicobra
+  SandSpit = 262,
+  // Cramorant
+  GulpMissile = 263,
+  // Arrokuda
+  PropellerTail = 264,
+  // Toxel
+  PunkRock = 265,
+  // Snom
+  IceScales = 266,
+  // Stonjourner
+  PowerSpot = 267,
+  // Eiscue
+  IceFace = 268,
+  // Morpeko
+  HungerSwitch = 269,
+  // Duraludon
+  Stalwart = 270,
+  // Zacian
+  IntrepidSword = 271,
+  // Zamazenta
+  DauntlessShield = 272,
+  // Kubfu
+  UnseenFist = 273,
+  // Regieleki
+  Transistor = 274,
+  // Regidrago
+  DragonsMaw = 275,
+  // Glastrier
+  ChillingNeigh = 276,
+  // Spectrier
+  GrimNeigh = 277,
+  // Calyrex
+  AsOneGlastrier = 278,
+  AsOneSpectrier = 279,
+  // Lechonk
+  LingeringAroma = 280,
+  // Fidough
+  WellBakedBody = 281,
+  // Smoliv
+  SeedSower = 282,
+  // Nacli
+  PurifyingSalt = 283,
+  // Tadbulb
+  Electromorphosis = 284,
+  // Wattrel
+  WindPower = 285,
+  // Maschiff
+  GuardDog = 286,
+  // Toedscool
+  MyceliumMight = 287,
+  // Klawf
+  AngerShell = 288,
+  // Capsakid
+  SpicySpray = 289,
+  // Flittle
+  Opportunist = 290,
+  // Bombirdier
+  RockyPayload = 291,
+  // Finizen
+  ZeroToHero = 292,
+  // Orthworm
+  EarthEater = 293,
+  // Glimmet
+  ToxicDebris = 294,
+  // Flamigo
+  Costar = 295,
+  // Tatsugiri
+  Commander = 296,
+  // GreatTusk
+  Protosynthesis = 297,
+  // IronTreads
+  QuarkDrive = 298,
+  // Frigibax
+  ThermalExchange = 299,
+  // Gimmighoul
+  GoodAsGold = 300,
+  // WoChien
+  TabletsOfRuin = 301,
+  // ChienPao
+  SwordOfRuin = 302,
+  // TingLu
+  VesselOfRuin = 303,
+  // ChiYu
+  BeadsOfRuin = 304,
+  // Koraidon
+  OrichalcumPulse = 305,
+  // Miraidon
+  HadronEngine = 306,
+  // Poltchageist
+  Hospitality = 307,
+  // Okidogi
+  ToxicChain = 308,
+  // Ogerpon
+  EmbodyAspect = 309,
+  // Terapagos
+  TeraShift = 310,
+  TeraShell = 311,
+  TeraformZero = 312,
+  // Pecharunt
+  PoisonPuppeteer = 313,
   // Special (non-standard abilities outside the regular pool)
   Boss = 100001,
   Shadow = 100002,

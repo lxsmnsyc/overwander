@@ -41,6 +41,10 @@ const FAMILY_TEACHABLE = [
   Moves.Swagger,
   Moves.SleepTalk,
   Moves.Swift,
+  Moves.Captivate,
+  Moves.OminousWind,
+  Moves.Roost,
+  Moves.Tailwind,
 ];
 
 export default function registerSwabluSpecies(): void {
@@ -83,12 +87,21 @@ export default function registerSwabluSpecies(): void {
         21: [Moves.Safeguard],
         28: [Moves.Mist],
         31: [Moves.TakeDown],
+        32: [Moves.NaturalGift],
         38: [Moves.MirrorMove],
         41: [Moves.Refresh],
+        45: [Moves.DragonPulse],
         48: [Moves.PerishSong],
       },
-      teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.Agility, Moves.Haze, Moves.Pursuit, Moves.Rage],
+      teachable: [...FAMILY_TEACHABLE, Moves.Pluck],
+      egg: [
+        Moves.Agility,
+        Moves.Haze,
+        Moves.Pursuit,
+        Moves.Rage,
+        Moves.DragonRush,
+        Moves.PowerSwap,
+      ],
     },
   });
 
@@ -120,15 +133,16 @@ export default function registerSwabluSpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.Growl, Moves.Peck, Moves.Astonish, Moves.Sing],
+        1: [Moves.Growl, Moves.Peck, Moves.Astonish, Moves.Sing, Moves.Pluck],
         18: [Moves.FuryAttack],
         21: [Moves.Safeguard],
         28: [Moves.Mist],
         31: [Moves.TakeDown],
+        32: [Moves.NaturalGift],
         35: [Moves.DragonBreath],
         40: [Moves.DragonDance],
         45: [Moves.Refresh],
-        54: [Moves.PerishSong],
+        54: [Moves.PerishSong, Moves.DragonPulse],
         59: [Moves.SkyAttack],
       },
       teachable: [
@@ -141,6 +155,8 @@ export default function registerSwabluSpecies(): void {
         Moves.Flamethrower,
         Moves.FireBlast,
         Moves.RockSmash,
+        Moves.DracoMeteor,
+        Moves.GigaImpact,
       ],
     },
   });

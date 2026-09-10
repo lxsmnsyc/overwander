@@ -48,6 +48,13 @@ const FAMILY_TEACHABLE = [
   Moves.BulletSeed,
   Moves.Facade,
   Moves.SecretPower,
+  Moves.BugBite,
+  Moves.Captivate,
+  Moves.EnergyBall,
+  Moves.GrassKnot,
+  Moves.NaturalGift,
+  Moves.SeedBomb,
+  Moves.WorrySeed,
 ];
 
 export default function registerParasSpecies(): void {
@@ -90,7 +97,7 @@ export default function registerParasSpecies(): void {
         25: [Moves.Spore],
         31: [Moves.Slash],
         37: [Moves.Growth],
-        43: [Moves.GigaDrain],
+        43: [Moves.GigaDrain, Moves.XScissor],
         49: [Moves.Aromatherapy],
       },
       teachable: [...FAMILY_TEACHABLE],
@@ -103,6 +110,7 @@ export default function registerParasSpecies(): void {
         Moves.FalseSwipe,
         Moves.Pursuit,
         Moves.SweetScent,
+        Moves.CrossPoison,
       ],
     },
   });
@@ -133,14 +141,14 @@ export default function registerParasSpecies(): void {
     activeTimes: TimeOfDay.Night,
     learnSet: {
       level: {
-        1: [Moves.Scratch, Moves.StunSpore, Moves.LeechLife, Moves.PoisonPowder],
+        1: [Moves.Scratch, Moves.StunSpore, Moves.LeechLife, Moves.PoisonPowder, Moves.CrossPoison],
         28: [Moves.Spore],
         37: [Moves.Slash],
         46: [Moves.Growth],
-        55: [Moves.GigaDrain],
+        55: [Moves.GigaDrain, Moves.XScissor],
         59: [Moves.Aromatherapy],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.Counter],
+      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.Counter, Moves.GigaImpact],
     },
   });
 }

@@ -52,6 +52,12 @@ export interface EvolutionData {
    */
   gender?: Genders;
   /**
+   * The move it has to know (EvolutionMethod.KnownMove). Four lines
+   * ask, and each of them asks for a move the mainline teaches that
+   * stage and nothing above it
+   */
+  move?: Moves;
+  /**
    * Two of its own stats set against each other
    * (EvolutionMethod.StatComparison). Tyrogue is the only line that
    * asks: its Attack against its Defense decides which of the three
@@ -144,6 +150,12 @@ export interface SpeciesData {
    * The evolutions available to this pokemon, if any
    */
   evolvesInto?: EvolutionData[];
+  /**
+   * What this pokemon's egg hatches into, when that is not the bottom
+   * of its own line. A Manaphy lays a Phione and never another
+   * Manaphy, which is the only way one is ever reached
+   */
+  eggSpecies?: Species;
   /**
    * Base stats of the pokemon
    */
@@ -472,6 +484,14 @@ export function getBaseSpecies(species: Species): Species {
     previous = getSpeciesData(current).evolvesFrom;
   }
   return current;
+}
+
+/**
+ * What a mother of this species lays: the bottom of her own line,
+ * unless she is one of the few that lay something else
+ */
+export function getEggBaseSpecies(species: Species): Species {
+  return getSpeciesData(species).eggSpecies ?? getBaseSpecies(species);
 }
 
 /**

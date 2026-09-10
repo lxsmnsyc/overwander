@@ -46,6 +46,10 @@ const FAMILY_TEACHABLE = [
   Moves.Swagger,
   Moves.SleepTalk,
   Moves.Swift,
+  Moves.Captivate,
+  Moves.LastResort,
+  Moves.NaturalGift,
+  Moves.ShadowClaw,
 ];
 
 // What the two above the base pick up: the machines and tutors that
@@ -112,6 +116,8 @@ export default function registerTorchicSpecies(): void {
         Moves.RockSlide,
         Moves.Swagger,
         Moves.SmellingSalts,
+        Moves.Feint,
+        Moves.NightSlash,
       ],
     },
   });
@@ -158,8 +164,16 @@ export default function registerTorchicSpecies(): void {
         39: [Moves.Slash],
         43: [Moves.MirrorMove],
         50: [Moves.SkyUppercut],
+        54: [Moves.FlareBlitz],
       },
-      teachable: [...FAMILY_TEACHABLE, ...GROWN_TEACHABLE],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        ...GROWN_TEACHABLE,
+        Moves.Fling,
+        Moves.FocusBlast,
+        Moves.PoisonJab,
+        Moves.VacuumWave,
+      ],
     },
   });
 
@@ -200,8 +214,9 @@ export default function registerTorchicSpecies(): void {
         32: [Moves.QuickAttack],
         36: [Moves.BlazeKick],
         42: [Moves.Slash],
-        49: [Moves.MirrorMove],
+        49: [Moves.MirrorMove, Moves.BraveBird],
         59: [Moves.SkyUppercut],
+        66: [Moves.FlareBlitz],
       },
       teachable: [
         ...FAMILY_TEACHABLE,
@@ -209,6 +224,13 @@ export default function registerTorchicSpecies(): void {
         Moves.Roar,
         Moves.HyperBeam,
         Moves.Earthquake,
+        Moves.Fling,
+        Moves.FocusBlast,
+        Moves.GigaImpact,
+        Moves.PoisonJab,
+        Moves.RockClimb,
+        Moves.StoneEdge,
+        Moves.VacuumWave,
       ],
     },
   });

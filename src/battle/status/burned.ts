@@ -5,7 +5,7 @@ import { Statuses } from '../../data/ids/status';
 import type Battle from '../core';
 import { BattleEvents, type EffectCause, EffectType } from '../events';
 import type Unit from '../unit';
-import { RESIDUAL_TICK } from './__create';
+import { RESIDUAL_TICK, checkStatusDamage } from './__create';
 
 interface BurnedData {
   progress: number;
@@ -55,7 +55,12 @@ export default function setupBurnedStatus(battle: Battle): void {
   battle.on(BattleEvents.UnitTriggerStatus, EventPriority.Exact, (event) => {
     if (event.status === Statuses.Burned) {
       // Modern residual damage: 1/16 of max HP
-      const amount = event.source.checkStat(Stats.HP, 0) / 16;
+      const amount = checkStatusDamage(
+        battle,
+        event.source,
+        Statuses.Burned,
+        event.source.checkStat(Stats.HP, 0) / 16,
+      );
 
       if (event.cause.type !== EffectType.None) {
         event.cause.unit.damage(

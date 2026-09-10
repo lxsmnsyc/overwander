@@ -40,6 +40,11 @@ const FAMILY_TEACHABLE = [
   Moves.SecretPower,
   Moves.Substitute,
   Moves.SwordsDance,
+  Moves.Captivate,
+  Moves.EnergyBall,
+  Moves.GrassKnot,
+  Moves.SeedBomb,
+  Moves.WorrySeed,
 ];
 
 // What the two above the base pick up: the machines that ask for a
@@ -84,6 +89,7 @@ export default function registerChikoritaSpecies(): void {
         12: [Moves.Reflect],
         15: [Moves.PoisonPowder],
         22: [Moves.Synthesis],
+        23: [Moves.NaturalGift],
         29: [Moves.BodySlam],
         36: [Moves.LightScreen],
         43: [Moves.Safeguard],
@@ -99,6 +105,8 @@ export default function registerChikoritaSpecies(): void {
         Moves.GrassWhistle,
         Moves.Ingrain,
         Moves.NaturePower,
+        Moves.LeafStorm,
+        Moves.WringOut,
       ],
     },
   });
@@ -139,6 +147,7 @@ export default function registerChikoritaSpecies(): void {
         1: [Moves.Tackle, Moves.Growl, Moves.RazorLeaf, Moves.Reflect],
         15: [Moves.PoisonPowder],
         23: [Moves.Synthesis],
+        26: [Moves.NaturalGift],
         31: [Moves.BodySlam],
         39: [Moves.LightScreen],
         47: [Moves.Safeguard],
@@ -181,6 +190,7 @@ export default function registerChikoritaSpecies(): void {
         1: [Moves.Tackle, Moves.Growl, Moves.RazorLeaf, Moves.Reflect],
         15: [Moves.PoisonPowder],
         23: [Moves.Synthesis],
+        26: [Moves.NaturalGift],
         31: [Moves.BodySlam],
         41: [Moves.LightScreen],
         51: [Moves.Safeguard],
@@ -192,6 +202,8 @@ export default function registerChikoritaSpecies(): void {
         Moves.HyperBeam,
         Moves.Earthquake,
         Moves.Counter,
+        Moves.GigaImpact,
+        Moves.RockClimb,
       ],
     },
   });

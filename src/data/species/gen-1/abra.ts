@@ -66,6 +66,17 @@ const FAMILY_TEACHABLE = [
   Moves.Snatch,
   Moves.Taunt,
   Moves.Torment,
+  Moves.Captivate,
+  Moves.ChargeBeam,
+  Moves.DrainPunch,
+  Moves.Embargo,
+  Moves.EnergyBall,
+  Moves.Fling,
+  Moves.GrassKnot,
+  Moves.Gravity,
+  Moves.NaturalGift,
+  Moves.TrickRoom,
+  Moves.ZenHeadbutt,
 ];
 
 const ABRA_STATS = {
@@ -132,6 +143,8 @@ export default function registerAbraSpecies(): void {
         Moves.Encore,
 
         Moves.KnockOff,
+        Moves.GuardSwap,
+        Moves.PowerTrick,
       ],
     },
   });
@@ -169,7 +182,9 @@ export default function registerAbraSpecies(): void {
     learnSet: {
       level: {
         ...KADABRA_LEVEL_MOVES,
+        22: [Moves.MiracleEye],
         33: [Moves.RolePlay],
+        34: [Moves.PsychoCut],
         43: [Moves.Trick],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.Dig, Moves.CalmMind, Moves.LightScreen],
@@ -203,10 +218,19 @@ export default function registerAbraSpecies(): void {
     learnSet: {
       level: {
         ...KADABRA_LEVEL_MOVES,
+        22: [Moves.MiracleEye],
         33: [Moves.CalmMind],
+        34: [Moves.PsychoCut],
         43: [Moves.Trick],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.Dig, Moves.LightScreen],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.HyperBeam,
+        Moves.Dig,
+        Moves.LightScreen,
+        Moves.FocusBlast,
+        Moves.GigaImpact,
+      ],
     },
   });
 }

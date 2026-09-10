@@ -4,13 +4,21 @@ import Abilities from '../../ids/abilities';
 import Biome, { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
+import { Items } from '../../ids/items';
 import { Moves } from '../../ids/moves';
-import { Species } from '../../ids/species';
+import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 export default function registerMagmarSpecies(): void {
   registerSpecies(Species.Magmar, {
     dexNumber: 126,
+    evolvesInto: [
+      {
+        species: Species.Magmortar,
+        method: EvolutionMethod.Trade | EvolutionMethod.HeldItem,
+        item: Items.Magmarizer,
+      },
+    ],
     name: 'Magmar',
     category: 'Spitfire Pokemon',
     height: 1.3,
@@ -38,6 +46,7 @@ export default function registerMagmarSpecies(): void {
         1: [Moves.Ember, Moves.Leer, Moves.FirePunch, Moves.Smog],
         25: [Moves.SmokeScreen],
         33: [Moves.SunnyDay],
+        36: [Moves.LavaPlume],
         39: [Moves.ConfuseRay],
         41: [Moves.Flamethrower],
         57: [Moves.FireBlast],
@@ -91,6 +100,12 @@ export default function registerMagmarSpecies(): void {
         Moves.Facade,
         Moves.FocusPunch,
         Moves.SecretPower,
+        Moves.Captivate,
+        Moves.Fling,
+        Moves.FocusBlast,
+        Moves.GigaImpact,
+        Moves.NaturalGift,
+        Moves.RockClimb,
       ],
     },
   });

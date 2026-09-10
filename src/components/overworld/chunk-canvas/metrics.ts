@@ -1,5 +1,4 @@
-import { BOARD_SPAN, PICTURE_SPAN, REACH, RIM } from '../../../canvas/board';
-import { GROUND_DEPTH, GROUND_SQUASH } from '../../../canvas/tilt';
+import { BOARD_SPAN, REACH, RIM, boardView } from '../../../canvas/board';
 
 /**
  * The board's reference measurements, its colours, and the few facts
@@ -22,9 +21,15 @@ export const CELL = 26;
  * The reference picture's width. It is the span the projection is
  * calibrated to rather than the square the cells are indexed in: the
  * country runs off the picture on every side, and how big a sprite is
- * drawn is a fact about the picture
+ * drawn is a fact about the picture.
+ *
+ * Asked rather than kept, because the two boards are not the same
+ * shape: the flat one is squarer than the laid-back one, and a painter
+ * measuring against the wrong one draws every cell the wrong size
  */
-export const WIDTH = CELL * BOARD_SPAN * PICTURE_SPAN;
+export function pictureWidth(): number {
+  return CELL * BOARD_SPAN * boardView().span;
+}
 
 /**
  * How far from the middle the board's edge is drawn, in board
@@ -379,14 +384,59 @@ export function grownArrow(
   });
 }
 
+/** A box on the screen, which is what a drawn sprite fills */
+export interface DrawnBox {
+  left: number;
+  top: number;
+  width: number;
+  height: number;
+}
+
+/**
+ * How much of the first box the second one covers, as a share of the
+ * first box's own area. What tells a tree standing in front of the
+ * player from one standing beside them
+ */
+export function coverOf(under: DrawnBox, over: DrawnBox): number {
+  const across =
+    Math.min(under.left + under.width, over.left + over.width) - Math.max(under.left, over.left);
+  const down =
+    Math.min(under.top + under.height, over.top + over.height) - Math.max(under.top, over.top);
+  const area = under.width * under.height;
+
+  if (across <= 0 || down <= 0 || area <= 0) {
+    return 0;
+  }
+  return (across * down) / area;
+}
+
+/**
+ * How much of the player something drawn in front of them has to cover
+ * before it gives way. High enough that a neighbour overlapping one
+ * side of them stays solid: what has to fade is what stands over them
+ */
+export const VEIL_SHARE = 0.3;
+
+/**
+ * How faint it is drawn while it does. Faint enough to see the player
+ * through and solid enough to still read as a tree: taken away
+ * altogether, the board would look like it had lost a cell
+ */
+export const VEIL_ALPHA = 0.35;
+
+/**
+ * How long it takes to fade, either way, in milliseconds. A sprite
+ * switching between the two as a walk crosses a line reads as a fault
+ */
+export const VEIL_FADE = 140;
+
 /**
  * How flat the shadow lies. It is on the ground, and the ground is
- * laid back under the camera, so it is squashed the way the ground is.
- * From [`tilt`](../../../canvas/tilt.ts), which is where the sheet
- * cutters read it from as well: a sheet says where a piece of scenery
- * meets the ground, and finding that point needs this
+ * laid back under the camera, so it is squashed the way the ground is
  */
-export { GROUND_SQUASH };
+export function shadowSquash(): number {
+  return boardView().squash;
+}
 
 /**
  * How flat a pool of light lies. The board's own depth rather than the
@@ -394,7 +444,9 @@ export { GROUND_SQUASH };
  * is laid back by exactly what the ground is and not by the flatter
  * figure a shadow is drawn at for looks
  */
-export { GROUND_DEPTH };
+export function lampSquash(): number {
+  return boardView().depth;
+}
 
 /**
  * Crossing a boundary, drawn rather than waited through.

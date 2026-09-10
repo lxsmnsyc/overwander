@@ -16,6 +16,7 @@ export default function registerMrMimeSpecies(): void {
     height: 1.3,
     weight: 54.5,
     family: Families.MrMime,
+    evolvesFrom: Species.MimeJr,
     stats: {
       [Stats.HP]: 40,
       [Stats.Attack]: 45,
@@ -26,7 +27,10 @@ export default function registerMrMimeSpecies(): void {
     },
     types: [Types.Psychic, Types.Fairy],
     abilities: [Abilities.Soundproof, Abilities.Filter],
-    hiddenAbilities: [Abilities.Technician],
+    // Magic Bounce is this registry's rather than the mainline's: Mime
+    // Jr. brings nothing the adult did not have, so the line reaches
+    // three abilities and needs four
+    hiddenAbilities: [Abilities.Technician, Abilities.MagicBounce],
     eggGroups: [EggGroups.HumanLike],
     genderRatio: [1, 1],
     catchRate: 45,
@@ -34,7 +38,8 @@ export default function registerMrMimeSpecies(): void {
     activeTimes: TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.Confusion, Moves.Barrier],
+        1: [Moves.Confusion, Moves.Barrier, Moves.GuardSwap, Moves.PowerSwap],
+        4: [Moves.Copycat],
         11: [Moves.Substitute],
         16: [Moves.Meditate],
         21: [Moves.DoubleSlap],
@@ -110,8 +115,19 @@ export default function registerMrMimeSpecies(): void {
         Moves.Snatch,
         Moves.Taunt,
         Moves.Torment,
+        Moves.Captivate,
+        Moves.ChargeBeam,
+        Moves.DrainPunch,
+        Moves.EnergyBall,
+        Moves.Fling,
+        Moves.FocusBlast,
+        Moves.GigaImpact,
+        Moves.GrassKnot,
+        Moves.NaturalGift,
+        Moves.Payback,
+        Moves.TrickRoom,
+        Moves.ZenHeadbutt,
       ],
-      egg: [Moves.Hypnosis, Moves.Mimic, Moves.FutureSight, Moves.FakeOut],
     },
   });
 }

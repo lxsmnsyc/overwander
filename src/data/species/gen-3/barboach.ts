@@ -40,6 +40,9 @@ const FAMILY_TEACHABLE = [
   Moves.MudSlap,
   Moves.Swagger,
   Moves.SleepTalk,
+  Moves.Captivate,
+  Moves.EarthPower,
+  Moves.NaturalGift,
 ];
 
 export default function registerBarboachSpecies(): void {
@@ -78,10 +81,12 @@ export default function registerBarboachSpecies(): void {
         1: [Moves.MudSlap],
         6: [Moves.MudSport, Moves.WaterSport],
         11: [Moves.WaterGun],
+        14: [Moves.MudBomb],
         16: [Moves.Magnitude],
         21: [Moves.Amnesia],
         26: [Moves.Rest, Moves.Snore],
         31: [Moves.Earthquake],
+        35: [Moves.AquaTail],
         36: [Moves.FutureSight],
         41: [Moves.Fissure],
       },
@@ -118,12 +123,14 @@ export default function registerBarboachSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.MudSlap, Moves.MudSport, Moves.WaterSport, Moves.Tickle],
+        1: [Moves.MudSlap, Moves.MudSport, Moves.WaterSport, Moves.Tickle, Moves.ZenHeadbutt],
         11: [Moves.WaterGun],
+        14: [Moves.MudBomb],
         16: [Moves.Magnitude],
         21: [Moves.Amnesia],
         26: [Moves.Rest, Moves.Snore],
         36: [Moves.Earthquake],
+        39: [Moves.AquaTail],
         46: [Moves.FutureSight],
         56: [Moves.Fissure],
       },
@@ -133,6 +140,8 @@ export default function registerBarboachSpecies(): void {
         Moves.Strength,
         Moves.RockSmash,
         Moves.RockSlide,
+        Moves.GigaImpact,
+        Moves.StoneEdge,
       ],
     },
   });

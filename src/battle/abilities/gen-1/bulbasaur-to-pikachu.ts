@@ -9,6 +9,7 @@ import { getItemData } from '../../../data/items';
 import { getMoveData } from '../../../data/moves';
 import { BattleEvents, EffectType, MoveTargetType, type UnitAttackEvent } from '../../events';
 import { MAJOR_STATUS_CONDITIONS } from '../../status';
+import { isCentered } from '../../status/centered';
 import type Team from '../../team';
 import type Unit from '../../unit';
 import { hasAnyStatus, isWeatherRainy, isWeatherSunny, onUnitActs, unitTarget } from '../../utils';
@@ -19,7 +20,9 @@ import {
   createDrizzleAbility,
   createKeenEyeAbility,
   createStageFeedScoring,
+  createThickFatAbility,
   createToughClawsAbility,
+  getAbilityHolders,
 } from '../__create';
 import { MergedLifecycle } from '../../lifecycle';
 
@@ -44,20 +47,7 @@ const bulbasaurToPikachu = [
   ),
 
   // Bulbasaur (Mega Venusaur)
-  // https://bulbapedia.bulbagarden.net/wiki/Thick_Fat_(Ability)
-  createAbility(Abilities.ThickFat, (battle) =>
-    battle.on(BattleEvents.UnitAttackResolveStat, EventPriority.Post, (event) => {
-      const type = event.parent.type;
-      if (
-        (type === Types.Fire || type === Types.Ice) &&
-        event.unit === event.parent.source &&
-        (event.stat === Stats.Attack || event.stat === Stats.SpecialAttack) &&
-        event.parent.target.hasAbility(Abilities.ThickFat)
-      ) {
-        event.value *= 0.5;
-      }
-    }),
-  ),
+  createThickFatAbility(Abilities.ThickFat, new Set([Types.Fire, Types.Ice])),
 
   // Charmander
   createBlazeAbility(Abilities.Blaze, Types.Fire),
@@ -487,27 +477,32 @@ const bulbasaurToPikachu = [
     Abilities.LightningRod,
     (battle) =>
       new MergedLifecycle([
-        // Single-target Electric moves are drawn to a rod on the
-        // defending side
-        battle.on(BattleEvents.UnitTriggerMoveTarget, AttackPriority.Pre, (event) => {
+        // Electric moves are drawn to a rod on the defending side. The
+        // question is only asked of a move aimed at one thing, so a
+        // move that goes out to the whole side needs no test here
+        battle.on(BattleEvents.CheckUnitMoveRedirect, EventPriority.Post, (event) => {
+          const aimed = event.redirect;
+
           if (
-            event.target.type !== MoveTargetType.Unit ||
-            event.target.unit.hasAbility(Abilities.LightningRod) ||
-            event.source.checkMoveType(event.move, event.target) !== Types.Electric
+            aimed.type !== MoveTargetType.Unit ||
+            aimed.unit.hasAbility(Abilities.LightningRod) ||
+            // A centre outranks a rod: Follow Me cost a cast
+            isCentered(aimed.unit) ||
+            event.source.checkMoveType(event.move, aimed) !== Types.Electric
           ) {
             return;
           }
 
-          const alliance = event.target.unit.team.alliance;
+          const alliance = aimed.unit.team.alliance;
 
-          for (const unit of battle.units()) {
+          for (const unit of getAbilityHolders(battle, Abilities.LightningRod)) {
             if (
               unit.alive &&
               unit !== event.source &&
               unit.team.alliance === alliance &&
               unit.hasAbility(Abilities.LightningRod)
             ) {
-              event.target = { type: MoveTargetType.Unit, unit };
+              event.redirect = unitTarget(unit);
               return;
             }
           }

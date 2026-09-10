@@ -37,6 +37,7 @@ export default function registerCorsolaSpecies(): void {
     learnSet: {
       level: {
         17: [Moves.Refresh],
+        28: [Moves.LuckyChant],
         34: [Moves.RockBlast],
         1: [Moves.Tackle],
         7: [Moves.Harden],
@@ -44,8 +45,10 @@ export default function registerCorsolaSpecies(): void {
         19: [Moves.Recover],
         25: [Moves.BubbleBeam],
         31: [Moves.SpikeCannon],
-        37: [Moves.MirrorCoat],
+        37: [Moves.MirrorCoat, Moves.AquaRing],
         43: [Moves.AncientPower],
+        44: [Moves.PowerGem],
+        53: [Moves.EarthPower],
       },
       teachable: [
         Moves.Toxic,
@@ -91,6 +94,13 @@ export default function registerCorsolaSpecies(): void {
         Moves.ShadowBall,
         Moves.Substitute,
         Moves.WaterPulse,
+        Moves.Brine,
+        Moves.Captivate,
+        Moves.NaturalGift,
+        Moves.RockPolish,
+        Moves.StealthRock,
+        Moves.StoneEdge,
+        Moves.SuckerPunch,
       ],
       egg: [
         Moves.Amnesia,

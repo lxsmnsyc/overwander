@@ -63,6 +63,10 @@ const GROUND_ITEMS: [item: Items, biomes: Biome[]][] = [
   [ItemIds.LeafStone, FOREST],
   [ItemIds.MoonStone, [...COLD, BiomeIds.Mountain]],
   [ItemIds.SunStone, [BiomeIds.Savanna, BiomeIds.Desert, BiomeIds.TropicalSeasonalForest]],
+  [ItemIds.ShinyStone, [...OPEN, BiomeIds.TemperateForest]],
+  [ItemIds.DuskStone, [...FOREST, BiomeIds.Badlands]],
+  [ItemIds.DawnStone, [...HIGHLAND, BiomeIds.Taiga]],
+  [ItemIds.IceStone, COLD],
   // The rocks that hold a sky open, each dug out of the sky it holds
   [ItemIds.HeatRock, [...VOLCANIC, BiomeIds.Desert]],
   [ItemIds.DampRock, [...WETLAND, BiomeIds.TropicalRainforest, BiomeIds.TemperateRainforest]],

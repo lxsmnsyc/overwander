@@ -16,6 +16,7 @@ export default function registerSudowoodoSpecies(): void {
     height: 1.2,
     weight: 38,
     family: Families.Sudowoodo,
+    evolvesFrom: Species.Bonsly,
     stats: {
       [Stats.HP]: 70,
       [Stats.Attack]: 100,
@@ -38,8 +39,10 @@ export default function registerSudowoodoSpecies(): void {
     learnSet: {
       level: {
         33: [Moves.Block],
+        41: [Moves.SuckerPunch],
+        49: [Moves.HammerArm],
         57: [Moves.DoubleEdge],
-        1: [Moves.Mimic, Moves.RockThrow],
+        1: [Moves.Mimic, Moves.RockThrow, Moves.Copycat, Moves.WoodHammer],
         10: [Moves.Flail],
         19: [Moves.LowKick],
         28: [Moves.RockSlide],
@@ -91,8 +94,14 @@ export default function registerSudowoodoSpecies(): void {
         Moves.SeismicToss,
         Moves.Substitute,
         Moves.Taunt,
+        Moves.Captivate,
+        Moves.EarthPower,
+        Moves.Fling,
+        Moves.NaturalGift,
+        Moves.RockPolish,
+        Moves.StealthRock,
+        Moves.StoneEdge,
       ],
-      egg: [Moves.SelfDestruct],
     },
   });
 }

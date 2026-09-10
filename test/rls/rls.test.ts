@@ -212,7 +212,6 @@ describe('friendship rows', () => {
     expect(received.data?.length).toBe(1);
 
     // A third party sees neither
-    const carol = await actor('carol');
     const nothing = await carol.client.from('friend_requests').select('sender');
 
     expect(nothing.data ?? []).toEqual([]);

@@ -23,6 +23,9 @@ export default function registerBogSpawns(): void {
         { species: Species.Marill, weight: 20 },
         { species: Species.Surskit, weight: 25 },
         { species: Species.Yanma, weight: 5 },
+        { species: Species.Bidoof, weight: 25 },
+        { species: Species.Buizel, weight: 25 },
+        { species: Species.Croagunk, weight: 20 },
       ],
       rare: [
         { species: Species.Poliwhirl, weight: 5 },
@@ -36,6 +39,10 @@ export default function registerBogSpawns(): void {
         { species: Species.Azumarill, weight: 5 },
         { species: Species.Masquerain, weight: 10 },
         { species: Species.Quagsire, weight: 5 },
+        { species: Species.Bibarel, weight: 10 },
+        { species: Species.Floatzel, weight: 8 },
+        { species: Species.Toxicroak, weight: 6 },
+        { species: Species.Yanmega, weight: 6 },
       ],
       elusive: [
         { species: Species.Poliwrath, weight: 5 },
@@ -44,7 +51,10 @@ export default function registerBogSpawns(): void {
         { species: Species.Ludicolo, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS, { species: Species.Azurill, weight: PRIZED_WEIGHT }],
-      special: [],
+      special: [
+        { species: Species.Azelf, weight: 10 },
+        { species: Species.Giratina, weight: 10 },
+      ],
     },
     [TimeOfDay.Day]: {
       base: [
@@ -62,6 +72,9 @@ export default function registerBogSpawns(): void {
         { species: Species.Marill, weight: 20 },
         { species: Species.Surskit, weight: 25 },
         { species: Species.Yanma, weight: 5 },
+        { species: Species.Bidoof, weight: 25 },
+        { species: Species.Buizel, weight: 25 },
+        { species: Species.Croagunk, weight: 20 },
       ],
       rare: [
         { species: Species.Poliwhirl, weight: 5 },
@@ -75,6 +88,10 @@ export default function registerBogSpawns(): void {
         { species: Species.Azumarill, weight: 5 },
         { species: Species.Masquerain, weight: 10 },
         { species: Species.Quagsire, weight: 5 },
+        { species: Species.Bibarel, weight: 10 },
+        { species: Species.Floatzel, weight: 8 },
+        { species: Species.Toxicroak, weight: 6 },
+        { species: Species.Yanmega, weight: 6 },
       ],
       elusive: [
         { species: Species.Poliwrath, weight: 5 },
@@ -83,7 +100,10 @@ export default function registerBogSpawns(): void {
         { species: Species.Ludicolo, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS, { species: Species.Azurill, weight: PRIZED_WEIGHT }],
-      special: [],
+      special: [
+        { species: Species.Azelf, weight: 10 },
+        { species: Species.Giratina, weight: 10 },
+      ],
     },
     [TimeOfDay.Evening]: {
       base: [{ species: Species.Poliwag, weight: 20 }],
@@ -96,6 +116,10 @@ export default function registerBogSpawns(): void {
         { species: Species.Wooper, weight: 25 },
         { species: Species.Marill, weight: 20 },
         { species: Species.Yanma, weight: 5 },
+        { species: Species.Bidoof, weight: 25 },
+        { species: Species.Buizel, weight: 25 },
+        { species: Species.Drifloon, weight: 20 },
+        { species: Species.Croagunk, weight: 20 },
       ],
       rare: [{ species: Species.Poliwhirl, weight: 5 }],
       scarce: [
@@ -104,13 +128,22 @@ export default function registerBogSpawns(): void {
         { species: Species.Venomoth, weight: 10 },
         { species: Species.Azumarill, weight: 5 },
         { species: Species.Quagsire, weight: 5 },
+        { species: Species.Bibarel, weight: 10 },
+        { species: Species.Floatzel, weight: 8 },
+        { species: Species.Drifblim, weight: 6 },
+        { species: Species.Toxicroak, weight: 6 },
+        { species: Species.Yanmega, weight: 6 },
       ],
       elusive: [
+        { species: Species.Spiritomb, weight: 5 },
         { species: Species.Volbeat, weight: 8 },
         { species: Species.Illumise, weight: 8 },
       ],
       prized: [...UNOWN_SPAWNS, { species: Species.Azurill, weight: PRIZED_WEIGHT }],
-      special: [],
+      special: [
+        { species: Species.Azelf, weight: 10 },
+        { species: Species.Giratina, weight: 10 },
+      ],
     },
     [TimeOfDay.Night]: {
       base: [
@@ -127,6 +160,10 @@ export default function registerBogSpawns(): void {
         { species: Species.Wooper, weight: 25 },
         { species: Species.Marill, weight: 20 },
         { species: Species.Yanma, weight: 5 },
+        { species: Species.Bidoof, weight: 25 },
+        { species: Species.Buizel, weight: 25 },
+        { species: Species.Drifloon, weight: 20 },
+        { species: Species.Croagunk, weight: 20 },
       ],
       rare: [
         { species: Species.Poliwhirl, weight: 5 },
@@ -139,8 +176,14 @@ export default function registerBogSpawns(): void {
         { species: Species.Muk, weight: 10 },
         { species: Species.Azumarill, weight: 5 },
         { species: Species.Quagsire, weight: 5 },
+        { species: Species.Bibarel, weight: 10 },
+        { species: Species.Floatzel, weight: 8 },
+        { species: Species.Drifblim, weight: 6 },
+        { species: Species.Toxicroak, weight: 6 },
+        { species: Species.Yanmega, weight: 6 },
       ],
       elusive: [
+        { species: Species.Spiritomb, weight: 5 },
         { species: Species.Poliwrath, weight: 5 },
         { species: Species.Vileplume, weight: 5 },
         { species: Species.Gengar, weight: 5 },
@@ -148,7 +191,10 @@ export default function registerBogSpawns(): void {
         { species: Species.Illumise, weight: 8 },
       ],
       prized: [...UNOWN_SPAWNS, { species: Species.Azurill, weight: PRIZED_WEIGHT }],
-      special: [],
+      special: [
+        { species: Species.Azelf, weight: 10 },
+        { species: Species.Giratina, weight: 10 },
+      ],
     },
   });
 }

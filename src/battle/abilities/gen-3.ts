@@ -20,6 +20,7 @@ import {
   createHugePowerAbility,
   createPolarityAbility,
   createRestageAbility,
+  createStatusBoostAbility,
   createWeightAbility,
   movesFlagged,
 } from './__create';
@@ -52,7 +53,7 @@ const TOXIC_BOOST_SCALE = 1.5;
 const BATTERY_BOOST = 1.3;
 
 /** Either poison counts, the way either one chips. */
-const POISONS_HELD = [Statuses.Poisoned, Statuses.BadlyPoisoned];
+const POISONS_HELD = new Set([Statuses.Poisoned, Statuses.BadlyPoisoned]);
 
 /** What a poison hands back instead of taking, per residual. */
 const POISON_HEAL_FRACTION = 1 / 8;
@@ -210,17 +211,7 @@ const setupAbilities = [
   ),
 
   // https://bulbapedia.bulbagarden.net/wiki/Toxic_Boost_(Ability)
-  createAbility(Abilities.ToxicBoost, (battle) =>
-    battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
-      if (
-        event.stat === Stats.Attack &&
-        event.source.hasAbility(Abilities.ToxicBoost) &&
-        POISONS_HELD.some((status) => event.source.status[status] != null)
-      ) {
-        event.value *= TOXIC_BOOST_SCALE;
-      }
-    }),
-  ),
+  createStatusBoostAbility(Abilities.ToxicBoost, POISONS_HELD, Stats.Attack, TOXIC_BOOST_SCALE),
 
   /**
    * Battery lifts what everybody else on the side throws, never its

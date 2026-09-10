@@ -1,10 +1,12 @@
 import registerGen1Species from './gen-1';
 import registerGen2Species from './gen-2';
 import registerGen3Species from './gen-3';
+import registerGen4Species from './gen-4';
 
 export {
   getBaseForms,
   getBaseSpecies,
+  getEggBaseSpecies,
   getEggMoves,
   getFamilyName,
   getLearnableMoves,
@@ -52,9 +54,11 @@ export {
 } from './evolution';
 export type { EvolutionContext, Handover } from './evolution';
 export { REGIONS, REGION_NAMES, getSpeciesByRegion, getSpeciesRegion } from './regions';
+export { getShoreForm } from './gen-4/shellos';
 
 export function registerSpecies(): void {
   registerGen1Species();
   registerGen2Species();
   registerGen3Species();
+  registerGen4Species();
 }

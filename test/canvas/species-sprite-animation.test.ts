@@ -235,6 +235,15 @@ describe('sprite metadata', () => {
    */
   const OVERDRAWN = new Set(['214 Attack']);
 
+  /**
+   * A clip whose drawing starts a row above the cell it is declared
+   * in. Combee's Idle is one pixel up, which is the archive's own
+   * offset rather than anything the import does. Listed for the same
+   * reason as the overdrawn one: a second of them should fail rather
+   * than pass quietly
+   */
+  const RAISED = new Set(['415 Idle']);
+
   it('trims frames into the cell they were drawn in', () => {
     const past: string[] = [];
 
@@ -248,8 +257,10 @@ describe('sprite metadata', () => {
         }
         // Whatever the cell says, a frame is cut out of the drawing
         // rather than out of the air
-        expect(target.trim[0], `${species} ${name} trim`).toBeGreaterThanOrEqual(0);
-        expect(target.trim[1], `${species} ${name} trim`).toBeGreaterThanOrEqual(0);
+        const floor = RAISED.has(`${species} ${spriteAnimName(name)}`) ? -1 : 0;
+
+        expect(target.trim[0], `${species} ${name} trim`).toBeGreaterThanOrEqual(floor);
+        expect(target.trim[1], `${species} ${name} trim`).toBeGreaterThanOrEqual(floor);
       }
     }
     expect(past).toEqual([...OVERDRAWN]);

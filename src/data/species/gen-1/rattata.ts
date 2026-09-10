@@ -52,6 +52,14 @@ const FAMILY_TEACHABLE = [
   Moves.ShockWave,
   Moves.Taunt,
   Moves.ThunderWave,
+  Moves.Captivate,
+  Moves.ChargeBeam,
+  Moves.GrassKnot,
+  Moves.LastResort,
+  Moves.NaturalGift,
+  Moves.Pluck,
+  Moves.UTurn,
+  Moves.ZenHeadbutt,
 ];
 
 export default function registerRattataSpecies(): void {
@@ -90,7 +98,9 @@ export default function registerRattataSpecies(): void {
         1: [Moves.Tackle, Moves.TailWhip],
         7: [Moves.QuickAttack],
         13: [Moves.HyperFang],
+        19: [Moves.SuckerPunch],
         20: [Moves.FocusEnergy],
+        25: [Moves.Assurance],
         27: [Moves.Pursuit],
         34: [Moves.SuperFang],
         41: [Moves.Endeavor],
@@ -105,6 +115,7 @@ export default function registerRattataSpecies(): void {
         Moves.Reversal,
 
         Moves.Uproar,
+        Moves.MeFirst,
       ],
     },
   });
@@ -137,8 +148,10 @@ export default function registerRattataSpecies(): void {
       level: {
         1: [Moves.Tackle, Moves.TailWhip, Moves.QuickAttack],
         13: [Moves.HyperFang],
+        19: [Moves.SuckerPunch],
         20: [Moves.ScaryFace],
         27: [Moves.FocusEnergy],
+        29: [Moves.Assurance],
         30: [Moves.Pursuit],
         40: [Moves.SuperFang],
         50: [Moves.Endeavor],
@@ -152,6 +165,7 @@ export default function registerRattataSpecies(): void {
         Moves.Strength,
 
         Moves.Counter,
+        Moves.GigaImpact,
       ],
     },
   });

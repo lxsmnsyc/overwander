@@ -1,6 +1,6 @@
 import Biome, { TimeOfDay } from '../ids/biome';
 import { Species } from '../ids/species';
-import { UNOWN_SPAWNS, registerSpawnPool } from './__create';
+import { PRIZED_WEIGHT, UNOWN_SPAWNS, registerSpawnPool } from './__create';
 
 /**
  * Ocean spawn pool, grouped by day-cycle period and rarity band
@@ -22,6 +22,7 @@ export default function registerOceanSpawns(): void {
         { species: Species.Magikarp, weight: 30 },
         { species: Species.Chinchou, weight: 20 },
         { species: Species.Remoraid, weight: 20 },
+        { species: Species.Finneon, weight: 20 },
       ],
       rare: [
         { species: Species.Dragonair, weight: 1 },
@@ -37,6 +38,7 @@ export default function registerOceanSpawns(): void {
         { species: Species.Vaporeon, weight: 5 },
         { species: Species.Lanturn, weight: 10 },
         { species: Species.Octillery, weight: 10 },
+        { species: Species.Lumineon, weight: 6 },
       ],
       elusive: [
         { species: Species.Blastoise, weight: 2 },
@@ -48,7 +50,7 @@ export default function registerOceanSpawns(): void {
         { species: Species.Qwilfish, weight: 15 },
         { species: Species.Relicanth, weight: 5 },
       ],
-      prized: [...UNOWN_SPAWNS],
+      prized: [...UNOWN_SPAWNS, { species: Species.Mantyke, weight: PRIZED_WEIGHT }],
       special: [
         { species: Species.Latias, weight: 10 },
         { species: Species.Latios, weight: 10 },
@@ -70,6 +72,7 @@ export default function registerOceanSpawns(): void {
         { species: Species.Magikarp, weight: 30 },
         { species: Species.Chinchou, weight: 20 },
         { species: Species.Remoraid, weight: 20 },
+        { species: Species.Finneon, weight: 20 },
       ],
       rare: [
         { species: Species.Dragonair, weight: 1 },
@@ -85,6 +88,7 @@ export default function registerOceanSpawns(): void {
         { species: Species.Vaporeon, weight: 5 },
         { species: Species.Lanturn, weight: 10 },
         { species: Species.Octillery, weight: 10 },
+        { species: Species.Lumineon, weight: 6 },
       ],
       elusive: [
         { species: Species.Blastoise, weight: 2 },
@@ -96,7 +100,7 @@ export default function registerOceanSpawns(): void {
         { species: Species.Qwilfish, weight: 15 },
         { species: Species.Relicanth, weight: 5 },
       ],
-      prized: [...UNOWN_SPAWNS],
+      prized: [...UNOWN_SPAWNS, { species: Species.Mantyke, weight: PRIZED_WEIGHT }],
       special: [
         { species: Species.Latias, weight: 10 },
         { species: Species.Latios, weight: 10 },
@@ -118,6 +122,7 @@ export default function registerOceanSpawns(): void {
         { species: Species.Magikarp, weight: 30 },
         { species: Species.Chinchou, weight: 20 },
         { species: Species.Remoraid, weight: 20 },
+        { species: Species.Finneon, weight: 20 },
       ],
       rare: [
         { species: Species.Dragonair, weight: 1 },
@@ -133,6 +138,7 @@ export default function registerOceanSpawns(): void {
         { species: Species.Vaporeon, weight: 5 },
         { species: Species.Lanturn, weight: 10 },
         { species: Species.Octillery, weight: 10 },
+        { species: Species.Lumineon, weight: 6 },
       ],
       elusive: [
         { species: Species.Lapras, weight: 5 },
@@ -142,11 +148,12 @@ export default function registerOceanSpawns(): void {
         { species: Species.Corsola, weight: 20 },
         { species: Species.Qwilfish, weight: 15 },
       ],
-      prized: [...UNOWN_SPAWNS],
+      prized: [...UNOWN_SPAWNS, { species: Species.Mantyke, weight: PRIZED_WEIGHT }],
       special: [
         { species: Species.Latias, weight: 10 },
         { species: Species.Latios, weight: 10 },
         { species: Species.Lugia, weight: 10 },
+        { species: Species.Cresselia, weight: 10 },
       ],
     },
     [TimeOfDay.Night]: {
@@ -164,6 +171,7 @@ export default function registerOceanSpawns(): void {
         { species: Species.Magikarp, weight: 30 },
         { species: Species.Chinchou, weight: 20 },
         { species: Species.Remoraid, weight: 20 },
+        { species: Species.Finneon, weight: 20 },
       ],
       rare: [
         { species: Species.Dragonair, weight: 1 },
@@ -179,6 +187,7 @@ export default function registerOceanSpawns(): void {
         { species: Species.Vaporeon, weight: 5 },
         { species: Species.Lanturn, weight: 10 },
         { species: Species.Octillery, weight: 10 },
+        { species: Species.Lumineon, weight: 6 },
       ],
       elusive: [
         { species: Species.Lapras, weight: 5 },
@@ -188,12 +197,14 @@ export default function registerOceanSpawns(): void {
         { species: Species.Corsola, weight: 20 },
         { species: Species.Qwilfish, weight: 15 },
       ],
-      prized: [...UNOWN_SPAWNS],
+      prized: [...UNOWN_SPAWNS, { species: Species.Mantyke, weight: PRIZED_WEIGHT }],
       special: [
         { species: Species.Latias, weight: 10 },
         { species: Species.Latios, weight: 10 },
         { species: Species.Lugia, weight: 10 },
+        { species: Species.Cresselia, weight: 10 },
       ],
+      mythical: [{ species: Species.Darkrai, weight: 10 }],
     },
   });
 }

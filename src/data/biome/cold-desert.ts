@@ -75,6 +75,7 @@ export default function registerColdDesertSpawns(): void {
         { species: Species.Cacturne, weight: 6 },
         { species: Species.Dugtrio, weight: 10 },
         { species: Species.Steelix, weight: 5 },
+        { species: Species.Gliscor, weight: 6 },
       ],
       elusive: [
         { species: Species.Metagross, weight: 1 },
@@ -104,6 +105,7 @@ export default function registerColdDesertSpawns(): void {
         { species: Species.Dugtrio, weight: 10 },
         { species: Species.Marowak, weight: 10 },
         { species: Species.Steelix, weight: 5 },
+        { species: Species.Gliscor, weight: 6 },
       ],
       elusive: [
         { species: Species.Metagross, weight: 1 },

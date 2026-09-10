@@ -5,13 +5,15 @@ import Biome, { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
-import { DEOXYS_FORMS } from '../../ids/species';
+import { Items } from '../../ids/items';
+import { DEOXYS_FORMS, EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 /**
  * Deoxys, and the three arrangements it puts itself into. Only the
- * first is ever met: the other three are worn, and a Meteorite in its
- * hands is what moves it between them.
+ * first is ever met; a Meteorite used on it rearranges it into any of
+ * the others, and out of any of them back again, so the four are a
+ * wheel rather than a ladder and each turn of it costs a rock.
  *
  * Every shape has the same 50 HP and the same moves. What changes is
  * where the other 550 points sit, which is the whole of what the
@@ -76,10 +78,16 @@ export default function registerDeoxysSpecies(): void {
       weight: 60.8,
       family: Families.Deoxys,
       baseForm: at === 0 ? undefined : false,
-      // Worn rather than met: the three arrangements are reached
-      // through the rock it holds, so the dex fills them in with the
-      // shape it arrived as
-      worn: at === 0 ? undefined : true,
+      // The shape it was in when it came down is the one it evolves
+      // out of, so an arrangement always walks back to that one
+      evolvesFrom: at === 0 ? undefined : Species.Deoxys,
+      // Every other arrangement, its own left out. A rock is spent on
+      // each rearrangement, whichever way it goes
+      evolvesInto: DEOXYS_FORMS.filter((other) => other !== species).map((other) => ({
+        species: other,
+        method: EvolutionMethod.UsedItem,
+        item: Items.Meteorite,
+      })),
       stats: shape.stats,
       types: [Types.Psychic],
       abilities: [Abilities.Pressure],
@@ -88,8 +96,8 @@ export default function registerDeoxysSpecies(): void {
       catchRate: 3,
       // Where it came down, which is a bare island shore. It is
       // habitat rather than a spawn: no pool lists a mythical, so the
-      // ticket is still the only way to one. A worn shape lives
-      // nowhere, being reached through the rock instead
+      // ticket is still the only way to one. An arrangement lives
+      // nowhere, being rearranged into rather than met
       biomes: at === 0 ? [Biome.Beach] : [],
       activeTimes: AnyTimeOfDay,
       learnSet: {

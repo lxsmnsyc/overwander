@@ -54,6 +54,10 @@ const FAMILY_TEACHABLE = [
   Moves.SwordsDance,
   Moves.WaterPulse,
   Moves.Waterfall,
+  Moves.Captivate,
+  Moves.Fling,
+  Moves.NaturalGift,
+  Moves.ShadowClaw,
 ];
 
 // What the two above the base pick up: the machines that ask for a
@@ -96,9 +100,10 @@ export default function registerTotodileSpecies(): void {
         1: [Moves.Scratch, Moves.Leer],
         7: [Moves.Rage],
         13: [Moves.WaterGun],
-        20: [Moves.Bite],
+        20: [Moves.Bite, Moves.IceFang],
         27: [Moves.ScaryFace],
         35: [Moves.Slash],
+        36: [Moves.AquaTail],
         43: [Moves.Screech],
         52: [Moves.HydroPump],
       },
@@ -112,6 +117,7 @@ export default function registerTotodileSpecies(): void {
         Moves.DragonClaw,
         Moves.MudSport,
         Moves.WaterSport,
+        Moves.AquaJet,
       ],
     },
   });
@@ -151,9 +157,10 @@ export default function registerTotodileSpecies(): void {
       level: {
         1: [Moves.Scratch, Moves.Leer, Moves.Rage],
         13: [Moves.WaterGun],
-        21: [Moves.Bite],
+        21: [Moves.Bite, Moves.IceFang],
         28: [Moves.ScaryFace],
         37: [Moves.Slash],
+        42: [Moves.AquaTail],
         45: [Moves.Screech],
         55: [Moves.HydroPump],
       },
@@ -192,10 +199,11 @@ export default function registerTotodileSpecies(): void {
     learnSet: {
       level: {
         1: [Moves.Scratch, Moves.Leer, Moves.WaterGun, Moves.Rage],
-        21: [Moves.Bite],
+        21: [Moves.Bite, Moves.IceFang],
         28: [Moves.ScaryFace],
         38: [Moves.Slash],
         47: [Moves.Screech],
+        50: [Moves.AquaTail],
         58: [Moves.HydroPump],
       },
       teachable: [
@@ -205,6 +213,11 @@ export default function registerTotodileSpecies(): void {
         Moves.Earthquake,
         Moves.DragonClaw,
         Moves.RockSlide,
+        Moves.Avalanche,
+        Moves.DragonPulse,
+        Moves.FocusBlast,
+        Moves.GigaImpact,
+        Moves.RockClimb,
       ],
     },
   });

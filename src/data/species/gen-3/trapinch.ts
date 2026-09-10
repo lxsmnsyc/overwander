@@ -40,6 +40,9 @@ const FAMILY_TEACHABLE = [
   Moves.MudSlap,
   Moves.Swagger,
   Moves.SleepTalk,
+  Moves.BugBite,
+  Moves.Captivate,
+  Moves.NaturalGift,
 ];
 
 // What the two above the base pick up: a pit in the sand has no
@@ -87,6 +90,8 @@ export default function registerTrapinchSpecies(): void {
         41: [Moves.Dig],
         49: [Moves.Sandstorm],
         57: [Moves.HyperBeam],
+        65: [Moves.EarthPower],
+        81: [Moves.Feint],
       },
       teachable: [...FAMILY_TEACHABLE],
       egg: [Moves.FocusEnergy, Moves.QuickAttack, Moves.Gust],
@@ -132,7 +137,18 @@ export default function registerTrapinchSpecies(): void {
         49: [Moves.Sandstorm],
         57: [Moves.HyperBeam],
       },
-      teachable: [...FAMILY_TEACHABLE, ...GROWN_TEACHABLE],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        ...GROWN_TEACHABLE,
+        Moves.Defog,
+        Moves.DracoMeteor,
+        Moves.DragonPulse,
+        Moves.EarthPower,
+        Moves.OminousWind,
+        Moves.Roost,
+        Moves.Tailwind,
+        Moves.UTurn,
+      ],
     },
   });
 
@@ -177,6 +193,16 @@ export default function registerTrapinchSpecies(): void {
         Moves.IronTail,
         Moves.FuryCutter,
         Moves.FirePunch,
+        Moves.Defog,
+        Moves.DracoMeteor,
+        Moves.DragonPulse,
+        Moves.EarthPower,
+        Moves.GigaImpact,
+        Moves.OminousWind,
+        Moves.Roost,
+        Moves.StoneEdge,
+        Moves.Tailwind,
+        Moves.UTurn,
       ],
     },
   });

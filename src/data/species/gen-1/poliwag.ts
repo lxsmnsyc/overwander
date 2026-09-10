@@ -51,6 +51,8 @@ const FAMILY_TEACHABLE = [
   Moves.Facade,
   Moves.SecretPower,
   Moves.WaterPulse,
+  Moves.Captivate,
+  Moves.NaturalGift,
 ];
 
 // The evolved forms grow arms: fighting-style TMs and HM Strength
@@ -108,8 +110,10 @@ export default function registerPoliwagSpecies(): void {
         19: [Moves.DoubleSlap],
         25: [Moves.RainDance],
         31: [Moves.BodySlam],
+        35: [Moves.WakeUpSlap],
         37: [Moves.BellyDrum],
         38: [Moves.Amnesia],
+        41: [Moves.MudBomb],
         43: [Moves.HydroPump],
       },
       teachable: [...FAMILY_TEACHABLE],
@@ -168,10 +172,17 @@ export default function registerPoliwagSpecies(): void {
         27: [Moves.RainDance],
         33: [Moves.BodySlam],
         41: [Moves.Amnesia],
-        43: [Moves.BellyDrum],
+        43: [Moves.BellyDrum, Moves.WakeUpSlap],
         49: [Moves.HydroPump],
+        53: [Moves.MudBomb],
       },
-      teachable: [...FAMILY_TEACHABLE, ...EVOLVED_TEACHABLE, Moves.BrickBreak, Moves.FocusPunch],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        ...EVOLVED_TEACHABLE,
+        Moves.BrickBreak,
+        Moves.FocusPunch,
+        Moves.Fling,
+      ],
     },
   });
 
@@ -213,6 +224,13 @@ export default function registerPoliwagSpecies(): void {
         Moves.BulkUp,
         Moves.FocusPunch,
         Moves.RockTomb,
+        Moves.Fling,
+        Moves.FocusBlast,
+        Moves.GigaImpact,
+        Moves.Payback,
+        Moves.PoisonJab,
+        Moves.RockClimb,
+        Moves.VacuumWave,
       ],
     },
   });

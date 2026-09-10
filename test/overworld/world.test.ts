@@ -176,6 +176,7 @@ import {
   TRAINER_CHARSETS,
   TRAINER_CLASSES,
   TRAINER_NAMES,
+  TRAINER_REGIONS,
   TRAINER_TYPES,
   TYPE_TRAINER_LEVELS,
   TYPE_TRAINER_PARTY_MAX,
@@ -184,6 +185,7 @@ import {
   getBiomeTrainers,
   getTrainerPool,
   isAceTrainer,
+  isGrownInRegion,
   trainerLevels,
 } from '../../src/data/overworld/trainers';
 import pickStartPosition, { START_AREA, pickFreeCell } from '../../src/overworld/start';
@@ -744,9 +746,9 @@ describe('world', () => {
       return;
     }
 
-    // A mountain holds five: the volcano, the cave under it, the two
-    // towers on it and the tomb cut into it. Every window stages one
-    // of them, and whoever is at home in it
+    // A mountain holds six: the volcano, the cave under it, the two
+    // towers on it, the tomb cut into it and the pillar at the top.
+    // Every window stages one of them, and whoever is at home in it
     const hosted = new Set(getBiomeLairs(Biome.Mountain));
 
     expect(hosted).toEqual(
@@ -756,6 +758,7 @@ describe('world', () => {
         Lairs.BellTower,
         Lairs.AncientTomb,
         Lairs.SkyPillar,
+        Lairs.SpearPillar,
       ]),
     );
 
@@ -963,6 +966,17 @@ describe('world', () => {
       // Temporary: a boss is immune to Perishing, so the song would
       // only be a slot it wastes
       Moves.PerishSong,
+      // Spent on a teammate a lone boss does not have, and the first
+      // two spend the whole pool doing it
+      Moves.HealingWish,
+      Moves.LunarDance,
+      Moves.HelpingHand,
+      Moves.FollowMe,
+      // A swap leaks whichever way it is cast, since a boss refuses
+      // the half that would cost it anything
+      Moves.PowerSwap,
+      Moves.GuardSwap,
+      Moves.HeartSwap,
     ]) {
       expect(BANNED_BOSS_MOVES.has(move)).toBe(true);
     }
@@ -1297,8 +1311,13 @@ describe('world', () => {
         expect(party.length).toBeLessThanOrEqual(TYPE_TRAINER_PARTY_MAX);
       }
       for (const [species] of party) {
-        // Fully grown, never a legendary, and of the class' type
-        expect(isGrownSpecies(species), getSpeciesData(species).name).toBe(true);
+        // As grown as its own region goes, never a legendary, and of
+        // the class' type. A later region often holds the last stage
+        // of an older line, and that stage is not this trainer's
+        expect(
+          isGrownInRegion(species, TRAINER_REGIONS[trainer]),
+          getSpeciesData(species).name,
+        ).toBe(true);
         expect(lairSpecies.has(species)).toBe(false);
         if (types.size > 0) {
           expect(

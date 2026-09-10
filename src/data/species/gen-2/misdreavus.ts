@@ -4,13 +4,21 @@ import Abilities from '../../ids/abilities';
 import Biome, { TimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
+import { Items } from '../../ids/items';
 import { Moves } from '../../ids/moves';
-import { Species } from '../../ids/species';
+import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 export default function registerMisdreavusSpecies(): void {
   registerSpecies(Species.Misdreavus, {
     dexNumber: 200,
+    evolvesInto: [
+      {
+        species: Species.Mismagius,
+        method: EvolutionMethod.UsedItem,
+        item: Items.DuskStone,
+      },
+    ],
     name: 'Misdreavus',
     category: 'Screech Pokemon',
     height: 0.7,
@@ -34,6 +42,8 @@ export default function registerMisdreavusSpecies(): void {
     learnSet: {
       level: {
         11: [Moves.Astonish],
+        32: [Moves.Payback],
+        50: [Moves.PowerGem],
         53: [Moves.Grudge],
         1: [Moves.Growl, Moves.Psywave],
         6: [Moves.Spite],
@@ -86,8 +96,16 @@ export default function registerMisdreavusSpecies(): void {
         Moves.Taunt,
         Moves.ThunderWave,
         Moves.Torment,
+        Moves.Captivate,
+        Moves.ChargeBeam,
+        Moves.DarkPulse,
+        Moves.Embargo,
+        Moves.NaturalGift,
+        Moves.OminousWind,
+        Moves.SuckerPunch,
+        Moves.TrickRoom,
       ],
-      egg: [Moves.DestinyBond, Moves.Screech, Moves.Imprison],
+      egg: [Moves.DestinyBond, Moves.Screech, Moves.Imprison, Moves.NastyPlot, Moves.ShadowSneak],
     },
   });
 }

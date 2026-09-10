@@ -1,4 +1,4 @@
-import { readFileSync, renameSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import sharp from 'sharp';
 import decode, { type Image, encodeSmallest } from '../src/server/sprites/png.ts';
@@ -604,11 +604,15 @@ function tinted(tint: Tint, sheets: Map<string, Sheet>): Picture {
  * The one picture that comes in from outside rather than off another
  * sheet.
  *
- * A clear amulet: no rip has one, and the render it is drawn from is a
- * hundred and sixty pixels of smooth gradient. So it is shrunk to an
- * item's cell here, and the ramp the shrinking leaves behind is
- * flattened back to a few tones, which is how the rest of the sheet is
- * drawn.
+ * A clear amulet, a Manaphy egg: no rip has either, and the renders
+ * they are drawn from are hundreds of pixels of smooth gradient. So
+ * each is shrunk to an item's cell here, and the ramp the shrinking
+ * leaves behind is flattened back to a few tones, which is how the
+ * rest of the sheet is drawn.
+ *
+ * The renders live under `art`, and one that is not there is skipped:
+ * the finished picture is already packed into its sheet, so a missing
+ * render costs the ability to make it again rather than the icon.
  */
 
 /** Where the renders these are made from are kept. */
@@ -631,7 +635,10 @@ interface Shrunk {
   wide: number;
 }
 
-const SHRUNK: Shrunk[] = [{ from: 'clear-amulet', to: 'held/clear-amulet', wide: 21 }];
+const SHRUNK: Shrunk[] = [
+  { from: 'clear-amulet', to: 'held/clear-amulet', wide: 21 },
+  { from: 'manaphy-egg', to: 'key/manaphy-egg', wide: 20 },
+];
 
 function lightnessOf(colour: number[]): number {
   return (Math.max(...colour) + Math.min(...colour)) / 510;
@@ -639,6 +646,39 @@ function lightnessOf(colour: number[]): number {
 
 function apart(one: number[], two: number[]): number {
   return Math.hypot(one[0] - two[0], one[1] - two[1], one[2] - two[2]);
+}
+
+/**
+ * A dark line round whatever the shrinking left.
+ *
+ * Every icon on these sheets is drawn with one, and a render's own
+ * outline is thinner than a pixel by the time it is twenty across: it
+ * survives as a tone somewhere between the line and the fill. So the
+ * rim is repainted in the picture's own darkest tone, which leaves an
+ * icon that already had a dark edge exactly as it was
+ */
+function outlined(image: Image, dark: number[] | undefined): void {
+  const rim = dark ?? [32, 32, 32];
+  const lit = (x: number, y: number): boolean =>
+    x >= 0 &&
+    y >= 0 &&
+    x < image.width &&
+    y < image.height &&
+    image.rgba[(y * image.width + x) * 4 + 3] > 0;
+  const edge: number[] = [];
+
+  for (let y = 0; y < image.height; y += 1) {
+    for (let x = 0; x < image.width; x += 1) {
+      if (lit(x, y) && !(lit(x - 1, y) && lit(x + 1, y) && lit(x, y - 1) && lit(x, y + 1))) {
+        edge.push((y * image.width + x) * 4);
+      }
+    }
+  }
+  for (const at of edge) {
+    for (let channel = 0; channel < 3; channel += 1) {
+      image.rgba[at + channel] = rim[channel];
+    }
+  }
 }
 
 /**
@@ -709,6 +749,8 @@ async function shrunk(art: Shrunk): Promise<Picture> {
     image.rgba[at + 1] = into.colour[1];
     image.rgba[at + 2] = into.colour[2];
   }
+  outlined(image, dark[0]?.colour);
+
   return {
     name: art.to.split('/')[1],
     image,
@@ -955,6 +997,10 @@ for (const one of DRAWN) {
   put(one.to.split('/')[0], drawn(one.to.split('/')[1], one.rows, one.colours));
 }
 for (const one of SHRUNK) {
+  if (!existsSync(join(ART, `${one.from}.png`))) {
+    console.log(`  ${one.to} kept as it is: no ${ART}/${one.from}.png to shrink`);
+    continue;
+  }
   put(one.to.split('/')[0], await shrunk(one));
 }
 for (const name of touched) {

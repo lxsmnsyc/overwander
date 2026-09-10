@@ -7,7 +7,9 @@ import { defaultSlots } from '../data/constants/slots';
 import { MAX_LEVEL } from '../data/constants/levels';
 import { MAX_IV, Stats, packIVs } from '../data/constants/stats';
 import { Species } from '../data/ids/species';
-import { getRegisteredSpecies, isFullyEvolved, isWornForm } from '../data/species';
+import type Abilities from '../data/ids/abilities';
+import { getSignatureAbility } from '../data/abilities';
+import { getRegisteredSpecies, getSpeciesData, isFullyEvolved, isWornForm } from '../data/species';
 import { deriveAbility, deriveGender, deriveMoves, deriveNature, deriveSize } from './encounter';
 import { BOSS_ALLIANCE, PLAYER_ALLIANCE, canStageBoss, createRaidBossSnapshot } from './raid';
 
@@ -70,6 +72,16 @@ function getRollableSpecies(): Species[] {
   return rollable;
 }
 
+/**
+ * What a demo pokemon is given instead of a rolled ability: the
+ * signature its family was written for. Nothing in the game grants
+ * one yet, so the demo is where they can be watched, and a line with
+ * none falls back to what it would have rolled
+ */
+function demoAbility(species: Species, traitValue: number): Abilities {
+  return getSignatureAbility(getSpeciesData(species).family) ?? deriveAbility(species, traitValue);
+}
+
 function pick<T>(entries: T[], random: () => number): T {
   return entries[Math.min(entries.length - 1, Math.floor(random() * entries.length))];
 }
@@ -129,7 +141,7 @@ function rollCatch(random: () => number, index: number): CatchSnapshot {
     // Nobody trained it: a staged pokemon has had nothing spent on
     // any of its moves
     movePoints: {},
-    abilities: [deriveAbility(species, traitValue)],
+    abilities: [demoAbility(species, traitValue)],
     items: [],
     slots: defaultSlots(),
     health: getMaxHealth({ species, level, ivs, effortValues }),
@@ -155,13 +167,23 @@ export function createDemoRaidTeams(seed: string, shadow = false): TeamSnapshotR
   const random = (): number => rng.random();
   const bosses = getRollableSpecies().filter(canStageBoss);
   const boss = pick(bosses, random);
+  const bossTrait = Math.floor(random() * 0x1_0000_0000);
+  const staged = createRaidBossSnapshot(boss, bossTrait, shadow);
 
   const teams: TeamSnapshotRecord[] = [
     {
       // A boss belongs to nobody, the way a real one does
       player: '',
       alliance: BOSS_ALLIANCE,
-      catches: [createRaidBossSnapshot(boss, Math.floor(random() * 0x1_0000_0000), shadow)],
+      catches: [
+        {
+          ...staged,
+          // The rolled ability sits last, after the Boss one and any
+          // shadow, so it is the one the signature stands in for:
+          // what makes it a raid is left alone
+          abilities: [...staged.abilities.slice(0, -1), demoAbility(boss, bossTrait)],
+        },
+      ],
     },
   ];
 

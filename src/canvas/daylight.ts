@@ -15,7 +15,7 @@
 
 import { WORLD_MAX } from '../overworld/world';
 import type QuadBatch from './gl/quad-batch';
-import { GROUND_DEPTH } from './tilt';
+import { boardView } from './board';
 
 const HOUR = 3_600_000;
 const DAY = 24 * HOUR;
@@ -277,7 +277,7 @@ export function getCast(localTime: number, yaw = 0, latitude = 0): Cast {
     // own depth: a direction worked out any other way stops agreeing
     // with the ground it is supposed to lie on
     dx: east * cos - away * sin,
-    dy: (east * sin + away * cos) * GROUND_DEPTH,
+    dy: (east * sin + away * cos) * boardView().depth,
     length: risen ? length : 0,
     // Fading with the sun rather than switching off at the horizon:
     // the last of the light throws the faintest shadow, which is what

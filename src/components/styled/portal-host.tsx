@@ -15,12 +15,23 @@ import { isServer } from 'solid-js/web';
  */
 const HostContext = createContext<HTMLElement | undefined>();
 
-/** The document's container, which stands after the app root */
-function rootHost(): HTMLElement | undefined {
+/**
+ * What the app's own container is called. The app draws it last inside
+ * `#app`, in [`app.tsx`](../../app.tsx): it has to be part of the app
+ * rather than written beside it, since everything in `#app` the app
+ * does not own is thrown away when the page hydrates
+ */
+export const ROOT_HOST = 'portals';
+
+/**
+ * That container. Nothing before the app has mounted has one, which is
+ * why the toasts wait for their mount before they draw
+ */
+export function rootPortalHost(): HTMLElement | undefined {
   if (isServer) {
     return undefined;
   }
-  return document.getElementById('portals') ?? undefined;
+  return document.getElementById(ROOT_HOST) ?? undefined;
 }
 
 /**
@@ -30,7 +41,7 @@ function rootHost(): HTMLElement | undefined {
 export function usePortalHost(): () => HTMLElement | undefined {
   const held = useContext(HostContext);
 
-  return () => held ?? rootHost();
+  return () => held ?? rootPortalHost();
 }
 
 /**

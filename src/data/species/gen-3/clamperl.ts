@@ -38,6 +38,7 @@ const FAMILY_TEACHABLE = [
   Moves.Endure,
   Moves.Swagger,
   Moves.SleepTalk,
+  Moves.NaturalGift,
 ];
 
 // What both halves of the shell pick up once they are out of it
@@ -86,8 +87,15 @@ export default function registerClamperlSpecies(): void {
       level: {
         1: [Moves.WaterGun, Moves.Clamp, Moves.Whirlpool, Moves.IronDefense],
       },
-      teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.Barrier, Moves.ConfuseRay, Moves.MudSport, Moves.Refresh, Moves.Supersonic],
+      teachable: [...FAMILY_TEACHABLE, Moves.Brine, Moves.Captivate],
+      egg: [
+        Moves.Barrier,
+        Moves.ConfuseRay,
+        Moves.MudSport,
+        Moves.Refresh,
+        Moves.Supersonic,
+        Moves.AquaRing,
+      ],
     },
   });
 
@@ -121,12 +129,23 @@ export default function registerClamperlSpecies(): void {
         8: [Moves.Bite],
         15: [Moves.Screech],
         22: [Moves.WaterPulse],
+        24: [Moves.IceFang],
+        28: [Moves.Brine],
         29: [Moves.ScaryFace],
         36: [Moves.Crunch],
         43: [Moves.BatonPass],
+        46: [Moves.AquaTail],
         50: [Moves.HydroPump],
       },
-      teachable: [...FAMILY_TEACHABLE, ...OPENED_TEACHABLE, Moves.RockTomb, Moves.Snatch],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        ...OPENED_TEACHABLE,
+        Moves.RockTomb,
+        Moves.Snatch,
+        Moves.Captivate,
+        Moves.GigaImpact,
+        Moves.SuckerPunch,
+      ],
     },
   });
 
@@ -160,9 +179,12 @@ export default function registerClamperlSpecies(): void {
         8: [Moves.Confusion],
         15: [Moves.Agility],
         22: [Moves.WaterPulse],
+        24: [Moves.AquaRing],
+        28: [Moves.Captivate],
         29: [Moves.Amnesia],
         36: [Moves.Psychic],
         43: [Moves.BatonPass],
+        46: [Moves.AquaTail],
         50: [Moves.HydroPump],
       },
       teachable: [
@@ -171,6 +193,8 @@ export default function registerClamperlSpecies(): void {
         Moves.Safeguard,
         Moves.Psychic,
         Moves.ShadowBall,
+        Moves.Brine,
+        Moves.GigaImpact,
       ],
     },
   });

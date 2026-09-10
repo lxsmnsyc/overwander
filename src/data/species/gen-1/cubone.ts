@@ -64,6 +64,11 @@ const FAMILY_TEACHABLE = [
   Moves.FocusPunch,
   Moves.RockTomb,
   Moves.SecretPower,
+  Moves.Captivate,
+  Moves.EarthPower,
+  Moves.NaturalGift,
+  Moves.RockClimb,
+  Moves.StealthRock,
 ];
 
 const FAMILY_ABILITIES = [Abilities.RockHead, Abilities.LightningRod];
@@ -108,7 +113,7 @@ export default function registerCuboneSpecies(): void {
         21: [Moves.FocusEnergy],
         25: [Moves.Bonemerang],
         29: [Moves.Rage],
-        33: [Moves.FalseSwipe],
+        33: [Moves.FalseSwipe, Moves.Fling],
         37: [Moves.Thrash],
         41: [Moves.BoneRush],
       },
@@ -121,6 +126,7 @@ export default function registerCuboneSpecies(): void {
         Moves.BellyDrum,
         Moves.PerishSong,
         Moves.AncientPower,
+        Moves.IronHead,
       ],
     },
   });
@@ -155,11 +161,20 @@ export default function registerCuboneSpecies(): void {
         21: [Moves.FocusEnergy],
         25: [Moves.Bonemerang],
         32: [Moves.Rage],
+        37: [Moves.Fling],
         39: [Moves.FalseSwipe],
         41: [Moves.Thrash],
         53: [Moves.BoneRush],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.RockSlide, Moves.SwordsDance],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.HyperBeam,
+        Moves.RockSlide,
+        Moves.SwordsDance,
+        Moves.FocusBlast,
+        Moves.GigaImpact,
+        Moves.StoneEdge,
+      ],
     },
   });
 }

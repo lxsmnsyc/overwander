@@ -7,12 +7,13 @@ import { MergedLifecycle } from '../lifecycle';
 import { createHeldItem, holds } from './__create';
 
 /**
- * The form items: a held rock that decides which shape its holder
+ * The form items: a held thing that decides which shape its holder
  * fights in.
  *
  * The shape is rolled as the holder reaches the field rather than
- * chosen, so a Meteorite is a gamble every fight rather than a switch
- * a player sets once. Which shapes an item offers is
+ * chosen, so an item naming several shapes is a gamble every fight
+ * rather than a switch a player sets once. An item naming one shape
+ * is that switch. Which shapes each offers is
  * [`FORM_ITEMS`](../../data/items/form-items.ts)
  */
 export default function setupFormItems(battle: Battle): void {

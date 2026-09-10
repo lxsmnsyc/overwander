@@ -5,12 +5,20 @@ import Biome, { TimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
-import { Species } from '../../ids/species';
+import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 export default function registerLickitungSpecies(): void {
   registerSpecies(Species.Lickitung, {
     dexNumber: 108,
+    evolvesInto: [
+      {
+        species: Species.Lickilicky,
+        method: EvolutionMethod.Level | EvolutionMethod.KnownMove,
+        level: 33,
+        move: Moves.Rollout,
+      },
+    ],
     name: 'Lickitung',
     category: 'Licking Pokemon',
     height: 1.2,
@@ -40,8 +48,11 @@ export default function registerLickitungSpecies(): void {
         15: [Moves.Disable],
         18: [Moves.KnockOff],
         31: [Moves.Slam],
+        37: [Moves.MeFirst],
         39: [Moves.Screech],
+        49: [Moves.PowerWhip],
         51: [Moves.Refresh],
+        53: [Moves.WringOut],
       },
       teachable: [
         Moves.Toxic,
@@ -117,8 +128,15 @@ export default function registerLickitungSpecies(): void {
         Moves.ShockWave,
         Moves.SolarBeam,
         Moves.WaterPulse,
+        Moves.AquaTail,
+        Moves.Captivate,
+        Moves.Fling,
+        Moves.GigaImpact,
+        Moves.NaturalGift,
+        Moves.RockClimb,
+        Moves.ZenHeadbutt,
       ],
-      egg: [Moves.BodySlam, Moves.BellyDrum, Moves.Magnitude, Moves.SmellingSalts],
+      egg: [Moves.BodySlam, Moves.BellyDrum, Moves.Magnitude, Moves.SmellingSalts, Moves.HammerArm],
     },
   });
 }

@@ -8,7 +8,7 @@ import {
   spawnRanks,
 } from '../data/biome';
 import type { SpawnRarityGroups } from '../data/biome';
-import { SPECIES_DAY_WEIGHT_BOOST, getFeaturedFamily, swims } from '../data/species';
+import { SPECIES_DAY_WEIGHT_BOOST, getFeaturedFamily, getShoreForm, swims } from '../data/species';
 import { TimeOfDay, getTimeOfDay, isWaterBiome } from '../data/ids/biome';
 import type { Items } from '../data/ids/items';
 import type { ItemStack } from '../data/overworld/item-pool';
@@ -499,11 +499,16 @@ export default class ChunkSnapshot {
       // The keeper counts against the window, so a portal chunk never
       // publishes more rolls than any other
       for (let i = spawns.length; i < count && standing.length + swimming.length > 0; i++) {
-        const species = pickSpawn(pool, () => this.rng.random());
+        const rolled = pickSpawn(pool, () => this.rng.random());
 
-        if (species == null) {
+        if (rolled == null) {
           break;
         }
+
+        // Which shell a Shellos wears is the world's own longitude,
+        // so the two seas fall either side of the meridian rather
+        // than either side of a pool
+        const species = getShoreForm(rolled, this.chunk.x);
 
         // The draws land in tuple order: individual value, then the
         // trait value, then the cell placement
@@ -1618,12 +1623,17 @@ export default class ChunkSnapshot {
 
     const rng = new AleaRNG(`${this.groundKey}${this.phenomenonTimestamp}happening${cell}`);
 
-    return resolvePhenomenon(
+    const reward = resolvePhenomenon(
       phenomenon,
       this.chunk.biome,
       getTimeOfDay(this.phenomenonTimestamp),
       () => rng.random(),
       getFeaturedFamily(this.phenomenonTimestamp),
     );
+
+    // A pokemon out of a phenomenon answers the meridian too
+    return reward?.kind === 'pokemon'
+      ? { ...reward, species: getShoreForm(reward.species, this.chunk.x) }
+      : reward;
   }
 }

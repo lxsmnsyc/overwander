@@ -1,6 +1,6 @@
-import { isGrownSpecies } from '../../biome';
 import { Species } from '../../ids/species';
-import { getSpeciesByRegion, getSpeciesData, isBaseForm } from '../../species';
+import type Regions from '../../ids/regions';
+import { getSpeciesByRegion, getSpeciesData, getSpeciesRegion, isBaseForm } from '../../species';
 import { EVERY_LAIR, getLairResidents } from '../lair';
 import { TRAINER_REGIONS, TrainerClass } from './classes';
 import TRAINER_TYPES from './types';
@@ -44,6 +44,21 @@ export function trainerLevels(trainer: TrainerClass): [minimum: number, maximum:
 const LAIR_SPECIES = new Set(EVERY_LAIR.flatMap(getLairResidents));
 
 /**
+ * Whether this is as far as the species goes **within this region**.
+ *
+ * A later generation often puts the last stage of an older line in
+ * its own dex: a Misdreavus grows into a Mismagius, and Mismagius is
+ * Sinnoh's. A Johto trainer walks the Misdreavus, so a stage whose
+ * every evolution belongs somewhere else is grown as far as this
+ * region is concerned
+ */
+export function isGrownInRegion(species: Species, region: Regions): boolean {
+  const roads = getSpeciesData(species).evolvesInto ?? [];
+
+  return roads.every((road) => getSpeciesRegion(road.species) !== region);
+}
+
+/**
  * What a class may field: their own region's fully-grown species of
  * their own type, or of any type for the Ace. The region is the
  * class', not the country they are standing in, which is what makes
@@ -62,7 +77,7 @@ export function getTrainerPool(trainer: TrainerClass): Species[] {
     // "Rare" is the shape of the line rather than the odds of meeting
     // one: a species nothing evolves into is what a trainer this far
     // along would be walking with
-    if (!isGrownSpecies(species)) {
+    if (!isGrownInRegion(species, TRAINER_REGIONS[trainer])) {
       return false;
     }
     // An empty list is every type there is, which is the Ace's

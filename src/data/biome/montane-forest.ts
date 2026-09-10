@@ -1,6 +1,6 @@
 import Biome, { TimeOfDay } from '../ids/biome';
 import { Species } from '../ids/species';
-import { UNOWN_SPAWNS, registerSpawnPool } from './__create';
+import { PRIZED_WEIGHT, UNOWN_SPAWNS, registerSpawnPool } from './__create';
 
 /**
  * MontaneForest spawn pool, grouped by day-cycle period and rarity band
@@ -12,28 +12,43 @@ export default function registerMontaneForestSpawns(): void {
         { species: Species.Mankey, weight: 20 },
         { species: Species.Teddiursa, weight: 20 },
         { species: Species.Ralts, weight: 20 },
+        { species: Species.Chimchar, weight: 3 },
+        { species: Species.Turtwig, weight: 3 },
       ],
       uncommon: [
         { species: Species.Makuhita, weight: 20 },
         { species: Species.Meditite, weight: 25 },
         { species: Species.Stantler, weight: 5 },
+        { species: Species.Burmy, weight: 20 },
       ],
       rare: [
         { species: Species.Kirlia, weight: 10 },
         { species: Species.Primeape, weight: 10 },
         { species: Species.Ursaring, weight: 5 },
+        { species: Species.Monferno, weight: 2 },
+        { species: Species.Grotle, weight: 2 },
       ],
       scarce: [
         { species: Species.Hariyama, weight: 6 },
         { species: Species.Medicham, weight: 10 },
+        { species: Species.Wormadam, weight: 4 },
+        { species: Species.Mothim, weight: 4 },
       ],
       elusive: [
         { species: Species.Heracross, weight: 5 },
         { species: Species.Gardevoir, weight: 5 },
         { species: Species.Spinda, weight: 12 },
         { species: Species.Chimecho, weight: 5 },
+        { species: Species.Infernape, weight: 2 },
+        { species: Species.Torterra, weight: 2 },
+        { species: Species.Lucario, weight: 5 },
+        { species: Species.Gallade, weight: 5 },
       ],
-      prized: [...UNOWN_SPAWNS],
+      prized: [
+        ...UNOWN_SPAWNS,
+        { species: Species.Riolu, weight: PRIZED_WEIGHT },
+        { species: Species.Chingling, weight: PRIZED_WEIGHT },
+      ],
       special: [],
     },
     [TimeOfDay.Day]: {
@@ -41,20 +56,27 @@ export default function registerMontaneForestSpawns(): void {
         { species: Species.Mankey, weight: 20 },
         { species: Species.Teddiursa, weight: 20 },
         { species: Species.Ralts, weight: 20 },
+        { species: Species.Chimchar, weight: 3 },
+        { species: Species.Turtwig, weight: 3 },
       ],
       uncommon: [
         { species: Species.Makuhita, weight: 20 },
         { species: Species.Meditite, weight: 25 },
         { species: Species.Stantler, weight: 5 },
+        { species: Species.Burmy, weight: 20 },
       ],
       rare: [
         { species: Species.Kirlia, weight: 10 },
         { species: Species.Primeape, weight: 10 },
         { species: Species.Ursaring, weight: 5 },
+        { species: Species.Monferno, weight: 2 },
+        { species: Species.Grotle, weight: 2 },
       ],
       scarce: [
         { species: Species.Hariyama, weight: 6 },
         { species: Species.Medicham, weight: 10 },
+        { species: Species.Wormadam, weight: 4 },
+        { species: Species.Mothim, weight: 4 },
       ],
       elusive: [
         { species: Species.Pinsir, weight: 5 },
@@ -62,8 +84,16 @@ export default function registerMontaneForestSpawns(): void {
         { species: Species.Gardevoir, weight: 5 },
         { species: Species.Spinda, weight: 12 },
         { species: Species.Chimecho, weight: 5 },
+        { species: Species.Infernape, weight: 2 },
+        { species: Species.Torterra, weight: 2 },
+        { species: Species.Lucario, weight: 5 },
+        { species: Species.Gallade, weight: 5 },
       ],
-      prized: [...UNOWN_SPAWNS],
+      prized: [
+        ...UNOWN_SPAWNS,
+        { species: Species.Riolu, weight: PRIZED_WEIGHT },
+        { species: Species.Chingling, weight: PRIZED_WEIGHT },
+      ],
       special: [],
     },
     [TimeOfDay.Evening]: {
@@ -71,16 +101,23 @@ export default function registerMontaneForestSpawns(): void {
       uncommon: [
         { species: Species.Hoothoot, weight: 25 },
         { species: Species.Stantler, weight: 5 },
+        { species: Species.Kricketot, weight: 25 },
+        { species: Species.Burmy, weight: 20 },
       ],
       rare: [{ species: Species.Golbat, weight: 10 }],
-      scarce: [{ species: Species.Noctowl, weight: 10 }],
+      scarce: [
+        { species: Species.Noctowl, weight: 10 },
+        { species: Species.Wormadam, weight: 4 },
+        { species: Species.Mothim, weight: 4 },
+      ],
       elusive: [
         { species: Species.Heracross, weight: 5 },
         { species: Species.Crobat, weight: 5 },
         { species: Species.Sableye, weight: 8 },
         { species: Species.Chimecho, weight: 5 },
+        { species: Species.Kricketune, weight: 10 },
       ],
-      prized: [...UNOWN_SPAWNS],
+      prized: [...UNOWN_SPAWNS, { species: Species.Chingling, weight: PRIZED_WEIGHT }],
       special: [],
     },
     [TimeOfDay.Night]: {
@@ -89,11 +126,16 @@ export default function registerMontaneForestSpawns(): void {
         { species: Species.Paras, weight: 20 },
         { species: Species.Hoothoot, weight: 25 },
         { species: Species.Stantler, weight: 5 },
+        { species: Species.Kricketot, weight: 25 },
+        { species: Species.Burmy, weight: 20 },
       ],
       rare: [{ species: Species.Golbat, weight: 10 }],
       scarce: [
         { species: Species.Parasect, weight: 10 },
         { species: Species.Noctowl, weight: 10 },
+        { species: Species.Kricketune, weight: 10 },
+        { species: Species.Wormadam, weight: 4 },
+        { species: Species.Mothim, weight: 4 },
       ],
       elusive: [
         { species: Species.Heracross, weight: 5 },
@@ -101,7 +143,7 @@ export default function registerMontaneForestSpawns(): void {
         { species: Species.Sableye, weight: 8 },
         { species: Species.Chimecho, weight: 5 },
       ],
-      prized: [...UNOWN_SPAWNS],
+      prized: [...UNOWN_SPAWNS, { species: Species.Chingling, weight: PRIZED_WEIGHT }],
       special: [],
     },
   });

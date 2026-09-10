@@ -7,7 +7,7 @@ import type Natures from '../data/ids/natures';
 import { Genders, Species } from '../data/ids/species';
 import { MAX_LEVEL } from '../data/constants/levels';
 import {
-  getBaseSpecies,
+  getEggBaseSpecies,
   getEggMoves,
   getLevelUpMoves,
   getSpeciesAbilityPools,
@@ -219,6 +219,9 @@ export function rollEggSpecies(species: Species, random: () => number): Species 
  * What the pair would hatch: the first stage of the mother's line,
  * or of the non-Ditto parent's when a Ditto stands in for her.
  *
+ * A mother that lays something other than her own first stage is
+ * answered with what she lays: a Manaphy's egg is a Phione.
+ *
  * A line with two halves answers the half the mother is; `rollEggSpecies`
  * is what decides the egg's own, and is left to the caller so that
  * asking whether a pair *can* breed does not need a roll.
@@ -240,7 +243,7 @@ export function getEggSpecies(left: BreedingParent, right: BreedingParent): Spec
 
   const mother = getMother(left, right);
 
-  return mother == null ? null : getBaseSpecies(mother.species);
+  return mother == null ? null : getEggBaseSpecies(mother.species);
 }
 
 /**

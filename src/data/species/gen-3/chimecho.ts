@@ -16,6 +16,7 @@ export default function registerChimechoSpecies(): void {
     height: 0.6,
     weight: 1,
     family: Families.Chimecho,
+    evolvesFrom: Species.Chingling,
     stats: {
       [Stats.HP]: 75,
       [Stats.Attack]: 50,
@@ -49,6 +50,7 @@ export default function registerChimechoSpecies(): void {
         38: [Moves.HealBell],
         41: [Moves.Safeguard],
         46: [Moves.Psychic],
+        49: [Moves.HealingWish],
       },
       teachable: [
         Moves.Attract,
@@ -87,8 +89,16 @@ export default function registerChimechoSpecies(): void {
         Moves.Taunt,
         Moves.Torment,
         Moves.Toxic,
+        Moves.Captivate,
+        Moves.ChargeBeam,
+        Moves.EnergyBall,
+        Moves.GrassKnot,
+        Moves.Gravity,
+        Moves.LastResort,
+        Moves.NaturalGift,
+        Moves.TrickRoom,
+        Moves.ZenHeadbutt,
       ],
-      egg: [Moves.Curse, Moves.Disable, Moves.DreamEater, Moves.Hypnosis],
     },
   });
 }

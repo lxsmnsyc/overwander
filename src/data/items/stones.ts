@@ -2,11 +2,11 @@ import { ItemFlags, ItemTypes, Items } from '../ids/items';
 import { registerItem } from './__create';
 
 /**
- * The stones whose lines belong to a generation this game has not
- * registered: the item, what it is called and the picture it is drawn
- * with
+ * The four Sinnoh stones. Every one of them is asked for now, so they
+ * are stocked and found beside the older six rather than registered
+ * and left where nobody can reach them
  */
-const LATENT_STONES: [item: Items, name: string, icon: string][] = [
+const SINNOH_STONES: [item: Items, name: string, icon: string][] = [
   [Items.ShinyStone, 'Shiny Stone', 'shiny-stone'],
   [Items.DuskStone, 'Dusk Stone', 'dusk-stone'],
   [Items.DawnStone, 'Dawn Stone', 'dawn-stone'],
@@ -17,13 +17,10 @@ const LATENT_STONES: [item: Items, name: string, icon: string][] = [
  * Evolution stones: used on a pokemon to trigger a UsedItem
  * evolution.
  *
- * The five Kanto stones and the Sun Stone are stocked and found; the
- * four below them are neither yet. Every line that asks for a Shiny
- * Stone or an Ice Stone belongs to a generation this game has not
- * registered, so a vendor selling one would be selling a stone with
- * nothing to spend it on. They are registered anyway, since a name, a
- * picture and a price are what an item is, and the day a line asks
- * for one the only change needed is a line in the pool
+ * All ten are stocked and found. The four Sinnoh ones were registered
+ * and left out of the market while nothing asked for them; a Roserade,
+ * a Togekiss, a Mismagius, a Honchkrow, a Gallade, a Froslass, a
+ * Magnezone and a Glaceon all ask now
  */
 export default function registerEvolutionStones(): void {
   registerItem(Items.FireStone, {
@@ -87,15 +84,32 @@ export default function registerEvolutionStones(): void {
   // The stones nothing can spend yet: no market listing and no price,
   // since a price is what the market charges and the market does not
   // stock them. Both come back the day a line asks for one
-  for (const [item, name, icon] of LATENT_STONES) {
+  for (const [item, name, icon] of SINNOH_STONES) {
     registerItem(item, {
       name,
       description: 'Evolves the pokemon it is used on, where a line asks for it.',
       type: ItemTypes.Evolution,
       icon: `evolutions/${icon}`,
-      flags: ItemFlags.Usable,
-      buy: 0,
-      sell: 0,
+      flags: ItemFlags.Usable | ItemFlags.Marketable,
+      buy: 3000,
+      sell: 1500,
     });
   }
+
+  /**
+   * Not a stone, but the same kind of item: used on a Rotom to move it
+   * into one of the machines it lives in, and spent doing it. Nobody
+   * stocks one, so every shape after the first costs a Catalog found
+   * in the ground
+   */
+  registerItem(Items.RotomCatalog, {
+    name: 'Rotom Catalog',
+    description: 'Moves the Rotom it is used on into another of its machines.',
+    type: ItemTypes.Evolution,
+    // Drawn on the key sheet, which is where the collection packed it
+    icon: 'key/rotom-catalog',
+    flags: ItemFlags.Usable,
+    buy: 0,
+    sell: 1500,
+  });
 }

@@ -5,12 +5,20 @@ import Biome, { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
-import { Species } from '../../ids/species';
+import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 export default function registerAipomSpecies(): void {
   registerSpecies(Species.Aipom, {
     dexNumber: 190,
+    evolvesInto: [
+      {
+        species: Species.Ambipom,
+        method: EvolutionMethod.Level | EvolutionMethod.KnownMove,
+        level: 32,
+        move: Moves.DoubleHit,
+      },
+    ],
     name: 'Aipom',
     category: 'Long Tail Pokemon',
     height: 0.8,
@@ -41,7 +49,10 @@ export default function registerAipomSpecies(): void {
         12: [Moves.BatonPass],
         19: [Moves.FurySwipes],
         27: [Moves.Swift],
-        36: [Moves.Screech],
+        32: [Moves.DoubleHit],
+        36: [Moves.Screech, Moves.Fling],
+        39: [Moves.NastyPlot],
+        43: [Moves.LastResort],
         46: [Moves.Agility],
       },
       teachable: [
@@ -101,6 +112,14 @@ export default function registerAipomSpecies(): void {
         Moves.Taunt,
         Moves.ThunderWave,
         Moves.WaterPulse,
+        Moves.Captivate,
+        Moves.GrassKnot,
+        Moves.GunkShot,
+        Moves.NaturalGift,
+        Moves.Payback,
+        Moves.SeedBomb,
+        Moves.ShadowClaw,
+        Moves.UTurn,
       ],
       egg: [
         Moves.Agility,

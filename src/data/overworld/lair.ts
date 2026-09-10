@@ -73,6 +73,57 @@ const enum Lairs {
    * over it. A mythical's lair, so no biome hosts it
    */
   Forina = 17,
+  /**
+   * The three lakes the trio sleep under, one apiece. Like the sealed
+   * chambers and unlike the Burned Tower, each holds exactly one: they
+   * were set down in three places and stayed in them
+   */
+  LakeAcuity = 18,
+  LakeVerity = 19,
+  LakeValor = 20,
+  /**
+   * The top of the mountain, where the two that made the world are
+   * called down. It holds both, like the Southern Island, so which of
+   * them answers is a roll
+   */
+  SpearPillar = 21,
+  /**
+   * The cave the third one was banished through. One resident, and
+   * the only door to the world behind this one
+   */
+  TurnbackCave = 22,
+  /**
+   * The two islands off the same port, one for each half of the moon.
+   * Newmoon Island is a mythical's, so no biome lists it: the pass is
+   * the only way onto that boat
+   */
+  FullmoonIsland = 23,
+  NewmoonIsland = 24,
+  /**
+   * The temple that surfaces once and sinks again, and the prince
+   * that lives in it. A mythical's lair, so no biome hosts it
+   */
+  SeaTemple = 25,
+  /**
+   * The cavern at the top of the volcano, which is not a cave the
+   * thing in it lives under but the one it hangs off
+   */
+  StarkMountain = 26,
+  /**
+   * The temple in the snow the fourth golem was shut in, above the
+   * three it made
+   */
+  SnowpointTemple = 27,
+  /**
+   * The meadow at the end of the broken path, which grows back every
+   * time somebody thanks it. A mythical's lair, so no biome hosts it
+   */
+  FlowerParadise = 28,
+  /**
+   * The stair that opens over the top of the mountain, and what is
+   * standing at the top of it. A mythical's lair, so no biome hosts it
+   */
+  HallOfOrigin = 29,
 }
 
 export const LAIR_NAMES: Record<Lairs, string> = {
@@ -94,6 +145,18 @@ export const LAIR_NAMES: Record<Lairs, string> = {
   [Lairs.SkyPillar]: 'Sky Pillar',
   [Lairs.BirthIsland]: 'Birth Island',
   [Lairs.Forina]: 'Forina',
+  [Lairs.LakeAcuity]: 'Lake Acuity',
+  [Lairs.LakeVerity]: 'Lake Verity',
+  [Lairs.LakeValor]: 'Lake Valor',
+  [Lairs.SpearPillar]: 'Spear Pillar',
+  [Lairs.TurnbackCave]: 'Turnback Cave',
+  [Lairs.FullmoonIsland]: 'Fullmoon Island',
+  [Lairs.NewmoonIsland]: 'Newmoon Island',
+  [Lairs.SeaTemple]: 'Sea Temple',
+  [Lairs.StarkMountain]: 'Stark Mountain',
+  [Lairs.SnowpointTemple]: 'Snowpoint Temple',
+  [Lairs.FlowerParadise]: 'Flower Paradise',
+  [Lairs.HallOfOrigin]: 'Hall of Origin',
 };
 
 /**
@@ -121,6 +184,18 @@ export const LAIR_SPECIES: Record<Lairs, Species[]> = {
   [Lairs.SkyPillar]: [Species.Rayquaza],
   [Lairs.BirthIsland]: [Species.Deoxys],
   [Lairs.Forina]: [Species.Jirachi],
+  [Lairs.LakeAcuity]: [Species.Uxie],
+  [Lairs.LakeVerity]: [Species.Mesprit],
+  [Lairs.LakeValor]: [Species.Azelf],
+  [Lairs.SpearPillar]: [Species.Dialga, Species.Palkia],
+  [Lairs.TurnbackCave]: [Species.Giratina],
+  [Lairs.FullmoonIsland]: [Species.Cresselia],
+  [Lairs.NewmoonIsland]: [Species.Darkrai],
+  [Lairs.SeaTemple]: [Species.Manaphy],
+  [Lairs.StarkMountain]: [Species.Heatran],
+  [Lairs.SnowpointTemple]: [Species.Regigigas],
+  [Lairs.FlowerParadise]: [Species.Shaymin],
+  [Lairs.HallOfOrigin]: [Species.Arceus],
 };
 
 /**
@@ -145,6 +220,18 @@ export const EVERY_LAIR: Lairs[] = [
   Lairs.SkyPillar,
   Lairs.BirthIsland,
   Lairs.Forina,
+  Lairs.LakeAcuity,
+  Lairs.LakeVerity,
+  Lairs.LakeValor,
+  Lairs.SpearPillar,
+  Lairs.TurnbackCave,
+  Lairs.FullmoonIsland,
+  Lairs.NewmoonIsland,
+  Lairs.SeaTemple,
+  Lairs.StarkMountain,
+  Lairs.SnowpointTemple,
+  Lairs.FlowerParadise,
+  Lairs.HallOfOrigin,
 ];
 
 /**
@@ -172,29 +259,37 @@ const STAGED_LAIRS = new Set<Lairs>(EVERY_STAGED_LAIR);
  * sealed chambers sit where their doors were cut: ruins in the sand,
  * a cave in the ice, a tomb under the rock.
  *
+ * The three lakes sit in the country each of them was found in: the
+ * cold one in the north, the wooded one and the one on open ground.
+ *
  * A biome with no lair stages no legendary lair at all, which is most
  * of them: a legendary the whole world could walk to is not a
  * legendary
  */
 const BIOME_LAIRS: { [key in Biome]?: Lairs[] } = {
   [Biome.DeepOcean]: [Lairs.SeafoamIslands, Lairs.WhirlIslands, Lairs.MarineCave],
-  [Biome.Ocean]: [Lairs.WhirlIslands, Lairs.SouthernIsland],
+  [Biome.Ocean]: [Lairs.WhirlIslands, Lairs.SouthernIsland, Lairs.FullmoonIsland],
   [Biome.PolarOcean]: [Lairs.SeafoamIslands, Lairs.IslandCave],
-  [Biome.Glacier]: [Lairs.SeafoamIslands, Lairs.IslandCave],
-  [Biome.Grassland]: [Lairs.PowerPlant, Lairs.BurnedTower],
-  [Biome.Woodland]: [Lairs.BurnedTower],
+  [Biome.Glacier]: [Lairs.SeafoamIslands, Lairs.IslandCave, Lairs.SnowpointTemple],
+  [Biome.Grassland]: [Lairs.PowerPlant, Lairs.BurnedTower, Lairs.LakeValor],
+  [Biome.Bog]: [Lairs.LakeValor, Lairs.TurnbackCave],
+  [Biome.TemperateForest]: [Lairs.LakeVerity],
+  [Biome.Woodland]: [Lairs.BurnedTower, Lairs.LakeVerity],
+  [Biome.Taiga]: [Lairs.LakeAcuity],
+  [Biome.Tundra]: [Lairs.LakeAcuity, Lairs.SnowpointTemple],
   [Biome.Steppe]: [Lairs.PowerPlant],
   [Biome.Desert]: [Lairs.MtEmber, Lairs.DesertRuins],
-  [Biome.Badlands]: [Lairs.DesertRuins, Lairs.AncientTomb],
+  [Biome.Badlands]: [Lairs.DesertRuins, Lairs.AncientTomb, Lairs.TurnbackCave],
   [Biome.Mountain]: [
     Lairs.MtEmber,
     Lairs.CeruleanCave,
     Lairs.BellTower,
     Lairs.AncientTomb,
     Lairs.SkyPillar,
+    Lairs.SpearPillar,
   ],
-  [Biome.AlpineTundra]: [Lairs.CeruleanCave],
-  [Biome.Volcano]: [Lairs.TerraCave],
+  [Biome.AlpineTundra]: [Lairs.CeruleanCave, Lairs.SpearPillar],
+  [Biome.Volcano]: [Lairs.TerraCave, Lairs.StarkMountain],
 };
 
 /**

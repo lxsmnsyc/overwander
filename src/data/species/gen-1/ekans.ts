@@ -48,6 +48,13 @@ const FAMILY_TEACHABLE = [
   Moves.SecretPower,
   Moves.Snatch,
   Moves.Torment,
+  Moves.AquaTail,
+  Moves.Captivate,
+  Moves.DarkPulse,
+  Moves.NaturalGift,
+  Moves.Payback,
+  Moves.PoisonJab,
+  Moves.SeedBomb,
 ];
 
 export default function registerEkansSpecies(): void {
@@ -87,12 +94,23 @@ export default function registerEkansSpecies(): void {
         9: [Moves.PoisonSting],
         15: [Moves.Bite],
         23: [Moves.Glare],
+        28: [Moves.MudBomb],
         29: [Moves.Screech],
+        33: [Moves.GastroAcid],
         37: [Moves.Acid, Moves.SpitUp, Moves.Stockpile, Moves.Swallow],
+        41: [Moves.GunkShot],
         43: [Moves.Haze],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.Slam, Moves.Spite, Moves.Pursuit, Moves.Crunch, Moves.BeatUp, Moves.PoisonFang],
+      egg: [
+        Moves.Slam,
+        Moves.Spite,
+        Moves.Pursuit,
+        Moves.Crunch,
+        Moves.BeatUp,
+        Moves.PoisonFang,
+        Moves.Switcheroo,
+      ],
     },
   });
 
@@ -122,14 +140,25 @@ export default function registerEkansSpecies(): void {
     activeTimes: TimeOfDay.Day | TimeOfDay.Evening | TimeOfDay.Night,
     learnSet: {
       level: {
-        1: [Moves.Wrap, Moves.Leer, Moves.PoisonSting, Moves.Bite],
+        1: [
+          Moves.Wrap,
+          Moves.Leer,
+          Moves.PoisonSting,
+          Moves.Bite,
+          Moves.FireFang,
+          Moves.IceFang,
+          Moves.ThunderFang,
+        ],
         25: [Moves.Glare],
         33: [Moves.Screech],
+        34: [Moves.MudBomb],
+        42: [Moves.GastroAcid],
         43: [Moves.Acid],
         46: [Moves.SpitUp, Moves.Stockpile, Moves.Swallow],
         51: [Moves.Haze],
+        56: [Moves.GunkShot],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
+      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.GigaImpact],
     },
   });
 }

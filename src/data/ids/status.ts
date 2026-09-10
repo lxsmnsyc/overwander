@@ -143,6 +143,40 @@ export const enum Statuses {
    * (Helping Hand)
    */
   Helped = 43,
+  /**
+   * The unit has been read: its evasion is ignored, and so is the
+   * immunity a Dark type has to Psychic (Miracle Eye)
+   */
+  MindRead = 44,
+  /**
+   * The unit's held item does nothing while this lasts (Embargo)
+   */
+  Embargoed = 45,
+  /**
+   * Nothing puts health back on this unit while this lasts (Heal
+   * Block)
+   */
+  HealBlocked = 46,
+  /**
+   * The unit has swapped its Attack and its Defense over, and swaps
+   * them back when it leaves the field (Power Trick)
+   */
+  PowerTricked = 47,
+  /**
+   * The unit is not Flying for as long as this lasts, having put
+   * itself on the ground to rest (Roost)
+   */
+  Roosting = 48,
+  /**
+   * The unit is riding a magnetic field, so nothing on the ground
+   * reaches it (Magnet Rise)
+   */
+  MagnetRisen = 49,
+  /**
+   * A ring of water is drawn round the unit, putting a little health
+   * back each time it acts (Aqua Ring)
+   */
+  AquaRinged = 50,
 }
 
 /**
@@ -322,4 +356,18 @@ export const enum TeamStatuses {
    * Spikes are laid under the team: anything swapped in loses health
    */
   Spikes = 5,
+  /**
+   * Poisoned spikes are scattered under the team: anything walking in
+   * is poisoned, and two layers poison it badly
+   */
+  ToxicSpikes = 6,
+  /**
+   * A chant is up over the team: nothing lands a critical on it
+   */
+  LuckyChant = 7,
+  /**
+   * Stones hang over the team: anything swapped in is hurt for how it
+   * takes a Rock move
+   */
+  StealthRock = 8,
 }

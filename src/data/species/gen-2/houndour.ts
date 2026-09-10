@@ -49,6 +49,11 @@ const FAMILY_TEACHABLE = [
   Moves.Substitute,
   Moves.Taunt,
   Moves.Torment,
+  Moves.Captivate,
+  Moves.DarkPulse,
+  Moves.NaturalGift,
+  Moves.Payback,
+  Moves.SuckerPunch,
 ];
 
 const FAMILY_ABILITIES = [Abilities.EarlyBird, Abilities.FlashFire];
@@ -96,10 +101,13 @@ export default function registerHoundourSpecies(): void {
       level: {
         ...FAMILY_LEVEL,
         7: [...FAMILY_LEVEL[7], Moves.Howl],
+        30: [Moves.FireFang],
         31: [Moves.OdorSleuth],
         27: [Moves.FeintAttack],
         35: [Moves.Flamethrower],
+        40: [Moves.Embargo],
         43: [Moves.Crunch],
+        53: [Moves.NastyPlot],
       },
       teachable: [...FAMILY_TEACHABLE],
       egg: [
@@ -112,6 +120,9 @@ export default function registerHoundourSpecies(): void {
         Moves.Spite,
 
         Moves.WillOWisp,
+        Moves.Feint,
+        Moves.Punishment,
+        Moves.ThunderFang,
       ],
     },
   });
@@ -146,13 +157,22 @@ export default function registerHoundourSpecies(): void {
     learnSet: {
       level: {
         ...FAMILY_LEVEL,
-        1: [...FAMILY_LEVEL[1], Moves.Howl],
+        1: [...FAMILY_LEVEL[1], Moves.Howl, Moves.ThunderFang],
+        32: [Moves.FireFang],
         35: [Moves.OdorSleuth],
         30: [Moves.FeintAttack],
         41: [Moves.Flamethrower],
+        44: [Moves.Embargo],
         52: [Moves.Crunch],
+        60: [Moves.NastyPlot],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.Strength, Moves.HyperBeam, Moves.Counter],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.Strength,
+        Moves.HyperBeam,
+        Moves.Counter,
+        Moves.GigaImpact,
+      ],
     },
   });
 }

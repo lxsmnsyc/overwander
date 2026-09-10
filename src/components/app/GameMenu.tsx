@@ -43,9 +43,18 @@ import {
 import WeatherIcon from '../overworld/WeatherIcon';
 import { Divider, HoverCard } from '../styled';
 import { SHEER } from '../styled/transition';
+import FullscreenToggle from './fullscreen';
 import { ThemeToggle } from './theme';
 import { actionOf, forTheGame } from './keys';
 import settings, { type ClockFormat } from './settings';
+
+/**
+ * How the two switches over the keypad are drawn: the bar's own button,
+ * without the box a button usually carries
+ */
+const TOGGLE = `cursor-pointer rounded-full border-0 bg-transparent px-2 py-1 text-ink shadow-none
+  transition-colors hover:border-0 hover:bg-tide hover:text-on-accent active:translate-y-0
+  focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tide`;
 
 /**
  * The one piece of furniture the game has: a bar along the bottom of
@@ -389,16 +398,12 @@ export default function GameMenu(): JSX.Element {
             // unmount={false}
             class="rounded-panel border-2 border-tide bg-paper p-2 shadow-pop"
           >
-            {/* Day or night, over the keypad: it changes how the game
-              looks rather than what is on the screen, so it is not one
-              of the keys */}
+            {/* How much screen the game has, and whether it is day or
+              night in it. Both change how the game looks rather than
+              what is on it, so neither is one of the keys */}
             <div class="flex items-center justify-end gap-2 border-b-2 border-line-soft px-2 pb-2">
-              <ThemeToggle
-                class="cursor-pointer rounded-full border-0 bg-transparent px-2 py-1 text-ink
-                shadow-none transition-colors hover:border-0 hover:bg-tide hover:text-on-accent
-                active:translate-y-0 focus-visible:outline-2 focus-visible:outline-offset-2
-                focus-visible:outline-tide"
-              />
+              <FullscreenToggle class={TOGGLE} />
+              <ThemeToggle class={TOGGLE} />
             </div>
 
             <div class="grid grid-cols-3 gap-1 pt-2">

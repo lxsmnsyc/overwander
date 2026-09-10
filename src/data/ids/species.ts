@@ -509,9 +509,166 @@ export const enum Species {
   Rayquaza = 384,
   Jirachi = 385,
   Deoxys = 386,
+  Turtwig = 387,
+  Grotle = 388,
+  Torterra = 389,
+  Chimchar = 390,
+  Monferno = 391,
+  Infernape = 392,
+  Piplup = 393,
+  Prinplup = 394,
+  Empoleon = 395,
+  Starly = 396,
+  Staravia = 397,
+  Staraptor = 398,
+  Bidoof = 399,
+  Bibarel = 400,
+  Kricketot = 401,
+  Kricketune = 402,
+  Shinx = 403,
+  Luxio = 404,
+  Luxray = 405,
+  Budew = 406,
+  Roserade = 407,
+  Cranidos = 408,
+  Rampardos = 409,
+  Shieldon = 410,
+  Bastiodon = 411,
+  Burmy = 412,
+  Wormadam = 413,
+  Mothim = 414,
+  Combee = 415,
+  Vespiquen = 416,
+  Pachirisu = 417,
+  Buizel = 418,
+  Floatzel = 419,
+  Cherubi = 420,
+  Cherrim = 421,
+  Shellos = 422,
+  Gastrodon = 423,
+  Ambipom = 424,
+  Drifloon = 425,
+  Drifblim = 426,
+  Buneary = 427,
+  Lopunny = 428,
+  Mismagius = 429,
+  Honchkrow = 430,
+  Glameow = 431,
+  Purugly = 432,
+  Chingling = 433,
+  Stunky = 434,
+  Skuntank = 435,
+  Bronzor = 436,
+  Bronzong = 437,
+  Bonsly = 438,
+  MimeJr = 439,
+  Happiny = 440,
+  Chatot = 441,
+  Spiritomb = 442,
+  Gible = 443,
+  Gabite = 444,
+  Garchomp = 445,
+  Munchlax = 446,
+  Riolu = 447,
+  Lucario = 448,
+  Hippopotas = 449,
+  Hippowdon = 450,
+  Skorupi = 451,
+  Drapion = 452,
+  Croagunk = 453,
+  Toxicroak = 454,
+  Carnivine = 455,
+  Finneon = 456,
+  Lumineon = 457,
+  Mantyke = 458,
+  Snover = 459,
+  Abomasnow = 460,
+  Weavile = 461,
+  Magnezone = 462,
+  Lickilicky = 463,
+  Rhyperior = 464,
+  Tangrowth = 465,
+  Electivire = 466,
+  Magmortar = 467,
+  Togekiss = 468,
+  Yanmega = 469,
+  Leafeon = 470,
+  Glaceon = 471,
+  Gliscor = 472,
+  Mamoswine = 473,
+  PorygonZ = 474,
+  Gallade = 475,
+  Probopass = 476,
+  Dusknoir = 477,
+  Froslass = 478,
+  Rotom = 479,
+  Uxie = 480,
+  Mesprit = 481,
+  Azelf = 482,
+  Dialga = 483,
+  Palkia = 484,
+  Heatran = 485,
+  Regigigas = 486,
+  Giratina = 487,
+  Cresselia = 488,
+  Phione = 489,
+  Manaphy = 490,
+  Darkrai = 491,
+  Shaymin = 492,
+  Arceus = 493,
   DeoxysAttack = 1038601,
   DeoxysDefense = 1038602,
   DeoxysSpeed = 1038603,
+
+  /** The shapes the creation trio take in the world behind this one */
+  DialgaOrigin = 1048301,
+  PalkiaOrigin = 1048401,
+  GiratinaOrigin = 1048701,
+
+  /** The five appliances a Rotom gets into, one machine apiece */
+  RotomHeat = 1047901,
+  RotomWash = 1047902,
+  RotomFrost = 1047903,
+  RotomFan = 1047904,
+  RotomMow = 1047905,
+
+  /**
+   * The seventeen shapes a Plate puts an Arceus in, filed the way the
+   * sprite collection files them: by the type's own name
+   */
+  ArceusBug = 1049301,
+  ArceusDark = 1049302,
+  ArceusDragon = 1049303,
+  ArceusElectric = 1049304,
+  ArceusFighting = 1049305,
+  ArceusFire = 1049306,
+  ArceusFlying = 1049307,
+  ArceusGhost = 1049308,
+  ArceusGrass = 1049309,
+  ArceusGround = 1049310,
+  ArceusIce = 1049311,
+  ArceusPoison = 1049312,
+  ArceusPsychic = 1049313,
+  ArceusRock = 1049314,
+  ArceusSteel = 1049315,
+  ArceusWater = 1049316,
+  ArceusFairy = 1049317,
+
+  /** The shape a Shaymin opens into with the flower in its hands */
+  ShayminSky = 1049201,
+
+  /** The three cloaks, which are what a Burmy was met wearing */
+  BurmySandy = 1041201,
+  BurmyTrash = 1041202,
+  WormadamSandy = 1041301,
+  WormadamTrash = 1041302,
+
+  /** The blossom a Cherrim opens into once the sun is out */
+  CherrimSunshine = 1042101,
+
+  /** The far shore's shell, met east of the meridian */
+  ShellosEast = 1042201,
+  GastrodonEast = 1042301,
 }
 
 /**
@@ -613,6 +770,24 @@ export function unownLetter(species: Species): string | null {
 }
 
 /**
+ * A Burmy's three cloaks, the plant one first: unlike a Castform's
+ * skies, these are met rather than worn, and the one it was met in is
+ * the one it keeps
+ */
+export const BURMY_FORMS = [Species.Burmy, Species.BurmySandy, Species.BurmyTrash];
+
+/** What each cloak grows into, in the same order */
+export const WORMADAM_FORMS = [Species.Wormadam, Species.WormadamSandy, Species.WormadamTrash];
+
+/** The two shells, the west one first, split by the world's own meridian */
+export const SHELLOS_FORMS = [Species.Shellos, Species.ShellosEast];
+
+export const GASTRODON_FORMS = [Species.Gastrodon, Species.GastrodonEast];
+
+/** Cherrim shut and Cherrim open, the shut one first */
+export const CHERRIM_FORMS = [Species.Cherrim, Species.CherrimSunshine];
+
+/**
  * Castform's four shapes, its plain one first. Unlike an unown's,
  * these are not caught: Forecast puts the holder into whichever the
  * sky calls for, so only the first is ever spawned or stored
@@ -629,6 +804,46 @@ export const CASTFORM_FORMS: Species[] = [
  * Castform's skies they are worn rather than met: a Meteorite in its
  * hands is what moves it between them
  */
+/** A creation trio member and the shape its own orb holds it in */
+export const DIALGA_FORMS: Species[] = [Species.Dialga, Species.DialgaOrigin];
+export const PALKIA_FORMS: Species[] = [Species.Palkia, Species.PalkiaOrigin];
+export const GIRATINA_FORMS: Species[] = [Species.Giratina, Species.GiratinaOrigin];
+
+/** Rotom and the five machines it gets into */
+export const ROTOM_FORMS: Species[] = [
+  Species.Rotom,
+  Species.RotomHeat,
+  Species.RotomWash,
+  Species.RotomFrost,
+  Species.RotomFan,
+  Species.RotomMow,
+];
+
+/** Arceus and the seventeen shapes its Plates put it in */
+export const ARCEUS_FORMS: Species[] = [
+  Species.Arceus,
+  Species.ArceusBug,
+  Species.ArceusDark,
+  Species.ArceusDragon,
+  Species.ArceusElectric,
+  Species.ArceusFighting,
+  Species.ArceusFire,
+  Species.ArceusFlying,
+  Species.ArceusGhost,
+  Species.ArceusGrass,
+  Species.ArceusGround,
+  Species.ArceusIce,
+  Species.ArceusPoison,
+  Species.ArceusPsychic,
+  Species.ArceusRock,
+  Species.ArceusSteel,
+  Species.ArceusWater,
+  Species.ArceusFairy,
+];
+
+/** Shaymin and the shape the Gracidea opens it into */
+export const SHAYMIN_FORMS: Species[] = [Species.Shaymin, Species.ShayminSky];
+
 export const DEOXYS_FORMS: Species[] = [
   Species.Deoxys,
   Species.DeoxysAttack,

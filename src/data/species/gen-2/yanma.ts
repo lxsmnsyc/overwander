@@ -5,12 +5,20 @@ import Biome, { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
-import { Species } from '../../ids/species';
+import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 export default function registerYanmaSpecies(): void {
   registerSpecies(Species.Yanma, {
     dexNumber: 193,
+    evolvesInto: [
+      {
+        species: Species.Yanmega,
+        method: EvolutionMethod.Level | EvolutionMethod.KnownMove,
+        level: 33,
+        move: Moves.AncientPower,
+      },
+    ],
     name: 'Yanma',
     category: 'Clear Wing Pokemon',
     height: 1.2,
@@ -43,6 +51,9 @@ export default function registerYanmaSpecies(): void {
         31: [Moves.Supersonic],
         37: [Moves.Swift, Moves.WingAttack, Moves.Uproar],
         43: [Moves.Screech],
+        49: [Moves.UTurn],
+        54: [Moves.AirSlash],
+        57: [Moves.BugBuzz],
       },
       teachable: [
         Moves.Attract,
@@ -77,8 +88,22 @@ export default function registerYanmaSpecies(): void {
         Moves.ShadowBall,
         Moves.SteelWing,
         Moves.Substitute,
+        Moves.BugBite,
+        Moves.Captivate,
+        Moves.Defog,
+        Moves.NaturalGift,
+        Moves.OminousWind,
+        Moves.Roost,
+        Moves.Tailwind,
       ],
-      egg: [Moves.LeechLife, Moves.Reversal, Moves.Whirlwind, Moves.SignalBeam, Moves.SilverWind],
+      egg: [
+        Moves.LeechLife,
+        Moves.Reversal,
+        Moves.Whirlwind,
+        Moves.SignalBeam,
+        Moves.SilverWind,
+        Moves.Feint,
+      ],
     },
   });
 }

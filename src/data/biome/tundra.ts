@@ -9,45 +9,93 @@ export default function registerTundraSpawns(): void {
   registerSpawnPool(Biome.Tundra, {
     [TimeOfDay.Morning]: {
       base: [{ species: Species.Swinub, weight: 25 }],
-      uncommon: [],
+      uncommon: [{ species: Species.Snover, weight: 20 }],
       rare: [{ species: Species.Piloswine, weight: 10 }],
-      scarce: [{ species: Species.Dewgong, weight: 10 }],
-      elusive: [{ species: Species.Delibird, weight: 5 }],
+      scarce: [
+        { species: Species.Dewgong, weight: 10 },
+        { species: Species.Abomasnow, weight: 6 },
+        { species: Species.Glaceon, weight: 6 },
+      ],
+      elusive: [
+        { species: Species.Delibird, weight: 5 },
+        { species: Species.Mamoswine, weight: 5 },
+      ],
       prized: [...UNOWN_SPAWNS],
-      special: [{ species: Species.Suicune, weight: 10 }],
+      special: [
+        { species: Species.Suicune, weight: 10 },
+        { species: Species.Uxie, weight: 10 },
+        { species: Species.Regigigas, weight: 10 },
+      ],
     },
     [TimeOfDay.Day]: {
       base: [{ species: Species.Swinub, weight: 25 }],
-      uncommon: [],
+      uncommon: [{ species: Species.Snover, weight: 20 }],
       rare: [{ species: Species.Piloswine, weight: 10 }],
-      scarce: [{ species: Species.Dewgong, weight: 10 }],
-      elusive: [{ species: Species.Delibird, weight: 5 }],
+      scarce: [
+        { species: Species.Dewgong, weight: 10 },
+        { species: Species.Abomasnow, weight: 6 },
+        { species: Species.Glaceon, weight: 6 },
+      ],
+      elusive: [
+        { species: Species.Delibird, weight: 5 },
+        { species: Species.Mamoswine, weight: 5 },
+      ],
       prized: [...UNOWN_SPAWNS],
-      special: [{ species: Species.Suicune, weight: 10 }],
+      special: [
+        { species: Species.Suicune, weight: 10 },
+        { species: Species.Uxie, weight: 10 },
+        { species: Species.Regigigas, weight: 10 },
+      ],
     },
     [TimeOfDay.Evening]: {
       base: [{ species: Species.Swinub, weight: 25 }],
-      uncommon: [{ species: Species.Sneasel, weight: 5 }],
+      uncommon: [
+        { species: Species.Sneasel, weight: 5 },
+        { species: Species.Snover, weight: 20 },
+      ],
       rare: [{ species: Species.Piloswine, weight: 5 }],
-      scarce: [{ species: Species.Dewgong, weight: 10 }],
+      scarce: [
+        { species: Species.Dewgong, weight: 10 },
+        { species: Species.Abomasnow, weight: 6 },
+        { species: Species.Weavile, weight: 6 },
+        { species: Species.Glaceon, weight: 6 },
+      ],
       elusive: [
         { species: Species.Jynx, weight: 5 },
         { species: Species.Delibird, weight: 5 },
+        { species: Species.Mamoswine, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS, { species: Species.Smoochum, weight: PRIZED_WEIGHT }],
-      special: [{ species: Species.Suicune, weight: 10 }],
+      special: [
+        { species: Species.Suicune, weight: 10 },
+        { species: Species.Uxie, weight: 10 },
+        { species: Species.Regigigas, weight: 10 },
+      ],
     },
     [TimeOfDay.Night]: {
       base: [{ species: Species.Swinub, weight: 25 }],
-      uncommon: [{ species: Species.Sneasel, weight: 5 }],
+      uncommon: [
+        { species: Species.Sneasel, weight: 5 },
+        { species: Species.Snover, weight: 20 },
+      ],
       rare: [{ species: Species.Piloswine, weight: 5 }],
-      scarce: [{ species: Species.Dewgong, weight: 10 }],
+      scarce: [
+        { species: Species.Dewgong, weight: 10 },
+        { species: Species.Abomasnow, weight: 6 },
+        { species: Species.Weavile, weight: 6 },
+        { species: Species.Glaceon, weight: 6 },
+      ],
       elusive: [
         { species: Species.Jynx, weight: 5 },
         { species: Species.Delibird, weight: 5 },
+        { species: Species.Mamoswine, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS, { species: Species.Smoochum, weight: PRIZED_WEIGHT }],
-      special: [{ species: Species.Suicune, weight: 10 }],
+      special: [
+        { species: Species.Suicune, weight: 10 },
+        { species: Species.Uxie, weight: 10 },
+        { species: Species.Regigigas, weight: 10 },
+      ],
     },
   });
 }

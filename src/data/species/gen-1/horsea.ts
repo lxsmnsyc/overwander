@@ -47,6 +47,9 @@ const FAMILY_TEACHABLE = [
   Moves.Facade,
   Moves.SecretPower,
   Moves.WaterPulse,
+  Moves.Captivate,
+  Moves.FlashCannon,
+  Moves.NaturalGift,
 ];
 
 export default function registerHorseaSpecies(): void {
@@ -87,7 +90,9 @@ export default function registerHorseaSpecies(): void {
         15: [Moves.Leer],
         22: [Moves.WaterGun],
         29: [Moves.Twister],
+        30: [Moves.Brine],
         36: [Moves.Agility],
+        42: [Moves.DragonPulse],
         43: [Moves.HydroPump],
         50: [Moves.DragonDance],
       },
@@ -138,11 +143,13 @@ export default function registerHorseaSpecies(): void {
       level: {
         1: [Moves.Bubble, Moves.SmokeScreen, Moves.Leer, Moves.WaterGun],
         29: [Moves.Twister],
+        30: [Moves.Brine],
         40: [Moves.Agility],
         51: [Moves.HydroPump],
+        57: [Moves.DragonPulse],
         62: [Moves.DragonDance],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
+      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.GigaImpact],
     },
   });
 }

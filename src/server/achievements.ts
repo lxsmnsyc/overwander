@@ -142,6 +142,7 @@ export async function listUnlockedSprites(player: string): Promise<string[]> {
         return awards.has(charset.lock.award);
       case 'awards':
         return charset.lock.awards.every((award) => awards.has(award));
+      case 'trainer':
       default:
         // The class' own wins rather than the trade's: beating
         // Kanto's swimmers never dressed anybody as a Johto one

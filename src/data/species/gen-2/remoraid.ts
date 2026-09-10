@@ -44,6 +44,11 @@ const FAMILY_TEACHABLE = [
   Moves.Substitute,
   Moves.WaterPulse,
   Moves.Waterfall,
+  Moves.Brine,
+  Moves.Captivate,
+  Moves.ChargeBeam,
+  Moves.NaturalGift,
+  Moves.SeedBomb,
 ];
 
 // The three beams all land together, at the same level up the line
@@ -89,7 +94,7 @@ export default function registerRemoraidSpecies(): void {
         44: [Moves.IceBeam],
         55: [Moves.HyperBeam],
       },
-      teachable: [...FAMILY_TEACHABLE],
+      teachable: [...FAMILY_TEACHABLE, Moves.GunkShot],
       egg: [
         Moves.Haze,
         Moves.Octazooka,
@@ -127,10 +132,11 @@ export default function registerRemoraidSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.WaterGun],
+        1: [Moves.WaterGun, Moves.GunkShot],
         11: [Moves.Constrict],
         ...BEAMS,
         25: [Moves.Octazooka],
+        36: [Moves.WringOut],
         38: [Moves.FocusEnergy],
         54: [Moves.IceBeam],
         70: [Moves.HyperBeam],
@@ -141,6 +147,10 @@ export default function registerRemoraidSpecies(): void {
         Moves.SeismicToss,
         Moves.SludgeBomb,
         Moves.ThunderWave,
+        Moves.EnergyBall,
+        Moves.FlashCannon,
+        Moves.GigaImpact,
+        Moves.Payback,
       ],
     },
   });

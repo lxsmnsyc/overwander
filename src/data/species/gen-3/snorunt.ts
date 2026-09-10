@@ -4,8 +4,9 @@ import Abilities from '../../ids/abilities';
 import Biome, { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
+import { Items } from '../../ids/items';
 import { Moves } from '../../ids/moves';
-import { EvolutionMethod, Species } from '../../ids/species';
+import { EvolutionMethod, Genders, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 // TM and tutor moves both stages share
@@ -38,6 +39,9 @@ const FAMILY_TEACHABLE = [
   Moves.Endure,
   Moves.Swagger,
   Moves.SleepTalk,
+  Moves.Avalanche,
+  Moves.Captivate,
+  Moves.NaturalGift,
 ];
 
 export default function registerSnoruntSpecies(): void {
@@ -48,6 +52,12 @@ export default function registerSnoruntSpecies(): void {
         species: Species.Glalie,
         method: EvolutionMethod.Level,
         level: 42,
+      },
+      {
+        species: Species.Froslass,
+        method: EvolutionMethod.UsedItem | EvolutionMethod.Gender,
+        item: Items.DawnStone,
+        gender: Genders.Female,
       },
     ],
     name: 'Snorunt',
@@ -79,9 +89,9 @@ export default function registerSnoruntSpecies(): void {
         16: [Moves.IcyWind],
         19: [Moves.Headbutt],
         25: [Moves.Protect],
-        28: [Moves.Crunch],
+        28: [Moves.Crunch, Moves.IceFang],
         34: [Moves.IceBeam],
-        37: [Moves.Hail],
+        37: [Moves.Hail, Moves.IceShard],
         43: [Moves.Blizzard],
       },
       teachable: [...FAMILY_TEACHABLE],
@@ -121,7 +131,7 @@ export default function registerSnoruntSpecies(): void {
         16: [Moves.IcyWind],
         19: [Moves.Headbutt],
         25: [Moves.Protect],
-        28: [Moves.Crunch],
+        28: [Moves.Crunch, Moves.IceFang],
         34: [Moves.IceBeam],
         42: [Moves.Hail],
         53: [Moves.Blizzard],
@@ -136,6 +146,11 @@ export default function registerSnoruntSpecies(): void {
         Moves.Explosion,
         Moves.Rollout,
         Moves.DefenseCurl,
+        Moves.DarkPulse,
+        Moves.GigaImpact,
+        Moves.GyroBall,
+        Moves.IronHead,
+        Moves.Payback,
       ],
     },
   });

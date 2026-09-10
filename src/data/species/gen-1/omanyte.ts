@@ -50,6 +50,12 @@ const FAMILY_TEACHABLE = [
   Moves.SecretPower,
   Moves.WaterPulse,
   Moves.Waterfall,
+  Moves.Captivate,
+  Moves.EarthPower,
+  Moves.GyroBall,
+  Moves.NaturalGift,
+  Moves.RockPolish,
+  Moves.StealthRock,
 ];
 
 const FAMILY_ABILITIES = [Abilities.SwiftSwim, Abilities.ShellArmor];
@@ -92,6 +98,7 @@ export default function registerOmanyteSpecies(): void {
         1: [Moves.WaterGun, Moves.Withdraw, Moves.Constrict],
         13: [Moves.Bite],
         25: [Moves.MudShot],
+        28: [Moves.Brine],
         31: [Moves.Leer],
         34: [Moves.HornAttack],
         37: [Moves.Protect],
@@ -109,6 +116,8 @@ export default function registerOmanyteSpecies(): void {
         Moves.Haze,
         Moves.RockSlide,
         Moves.Spikes,
+        Moves.ToxicSpikes,
+        Moves.WringOut,
       ],
     },
   });
@@ -143,6 +152,7 @@ export default function registerOmanyteSpecies(): void {
       level: {
         1: [Moves.WaterGun, Moves.Withdraw, Moves.HornAttack, Moves.Bite, Moves.Constrict],
         25: [Moves.MudShot],
+        28: [Moves.Brine],
         31: [Moves.Leer],
         37: [Moves.Protect],
         40: [Moves.SpikeCannon],
@@ -158,6 +168,9 @@ export default function registerOmanyteSpecies(): void {
         Moves.Submission,
 
         Moves.RockSlide,
+        Moves.GigaImpact,
+        Moves.RockClimb,
+        Moves.StoneEdge,
       ],
     },
   });

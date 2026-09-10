@@ -58,6 +58,13 @@ const FAMILY_TEACHABLE = [
   Moves.SwordsDance,
   Moves.Taunt,
   Moves.Torment,
+  Moves.Captivate,
+  Moves.GunkShot,
+  Moves.LastResort,
+  Moves.NaturalGift,
+  Moves.Payback,
+  Moves.SeedBomb,
+  Moves.ShadowClaw,
 ];
 
 // Both learn the same list, only later once it has grown
@@ -107,6 +114,7 @@ export default function registerTeddiursaSpecies(): void {
         36: [Moves.Slash],
         43: [Moves.Snore],
         50: [Moves.Thrash],
+        57: [Moves.Fling],
       },
       teachable: [...FAMILY_TEACHABLE],
       egg: [
@@ -118,6 +126,8 @@ export default function registerTeddiursaSpecies(): void {
         Moves.TakeDown,
 
         Moves.Yawn,
+        Moves.CloseCombat,
+        Moves.NightSlash,
       ],
     },
   });
@@ -157,6 +167,7 @@ export default function registerTeddiursaSpecies(): void {
         39: [Moves.Slash],
         49: [Moves.Snore],
         59: [Moves.Thrash],
+        67: [Moves.HammerArm],
       },
       teachable: [
         ...FAMILY_TEACHABLE,
@@ -165,6 +176,12 @@ export default function registerTeddiursaSpecies(): void {
         Moves.RockSlide,
         Moves.RockTomb,
         Moves.SeismicToss,
+        Moves.Avalanche,
+        Moves.Fling,
+        Moves.FocusBlast,
+        Moves.GigaImpact,
+        Moves.RockClimb,
+        Moves.StoneEdge,
       ],
     },
   });

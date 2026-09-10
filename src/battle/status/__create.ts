@@ -1,7 +1,7 @@
 import { EventPriority } from '../../core/event-emitter';
 import type { Statuses } from '../../data/ids/status';
 import type Battle from '../core';
-import { BattleEvents, type ProgressData } from '../events';
+import { BattleEvents, type CheckUnitStatusDamageEvent, type ProgressData } from '../events';
 import { TURN } from '../turn';
 import type Unit from '../unit';
 
@@ -12,6 +12,30 @@ import type Unit from '../unit';
  * four subtly different rates is four balance decisions nobody made
  */
 export const RESIDUAL_TICK = TURN;
+
+/**
+ * What a residual actually takes, once everything with a say has
+ * answered. A status works out its own share and asks here, so an
+ * effect that softens one (Heatproof and a burn) is written once
+ * rather than inside every module that chips
+ */
+export function checkStatusDamage(
+  battle: Battle,
+  unit: Unit,
+  status: Statuses,
+  value: number,
+): number {
+  const event: CheckUnitStatusDamageEvent = {
+    id: 'CheckUnitStatusDamage',
+    disabled: false,
+    source: unit,
+    status,
+    value,
+  };
+
+  battle.emit(BattleEvents.CheckUnitStatusDamage, event);
+  return Math.max(0, event.value);
+}
 
 /**
  * Wires a status to a countdown timer, structured like the casting

@@ -43,6 +43,11 @@ const FAMILY_TEACHABLE = [
   Moves.Swagger,
   Moves.FuryCutter,
   Moves.SleepTalk,
+  Moves.Captivate,
+  Moves.DracoMeteor,
+  Moves.DragonPulse,
+  Moves.NaturalGift,
+  Moves.ShadowClaw,
 ];
 
 // What the shell brings: a Bagon has nothing to curl up into
@@ -88,13 +93,22 @@ export default function registerBagonSpecies(): void {
         21: [Moves.FocusEnergy],
         25: [Moves.Ember],
         33: [Moves.DragonBreath],
+        35: [Moves.ZenHeadbutt],
         37: [Moves.ScaryFace],
         41: [Moves.Crunch],
         49: [Moves.DragonClaw],
         53: [Moves.DoubleEdge],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.DragonDance, Moves.DragonRage, Moves.HydroPump, Moves.Thrash, Moves.Twister],
+      egg: [
+        Moves.DragonDance,
+        Moves.DragonRage,
+        Moves.HydroPump,
+        Moves.Thrash,
+        Moves.Twister,
+        Moves.DragonRush,
+        Moves.FireFang,
+      ],
     },
   });
 
@@ -135,6 +149,7 @@ export default function registerBagonSpecies(): void {
         21: [Moves.FocusEnergy],
         25: [Moves.Ember],
         30: [Moves.Protect],
+        37: [Moves.ZenHeadbutt],
         38: [Moves.DragonBreath],
         47: [Moves.ScaryFace],
         56: [Moves.Crunch],
@@ -171,10 +186,11 @@ export default function registerBagonSpecies(): void {
     activeTimes: TimeOfDay.Day | TimeOfDay.Evening,
     learnSet: {
       level: {
-        1: [Moves.Rage, Moves.Bite, Moves.Leer, Moves.Headbutt],
+        1: [Moves.Rage, Moves.Bite, Moves.Leer, Moves.Headbutt, Moves.FireFang, Moves.ThunderFang],
         21: [Moves.FocusEnergy],
         25: [Moves.Ember],
         30: [Moves.Protect],
+        37: [Moves.ZenHeadbutt],
         38: [Moves.DragonBreath],
         47: [Moves.ScaryFace],
         50: [Moves.Fly],
@@ -191,6 +207,13 @@ export default function registerBagonSpecies(): void {
         Moves.SteelWing,
         Moves.Fly,
         Moves.Swift,
+        Moves.AquaTail,
+        Moves.Defog,
+        Moves.GigaImpact,
+        Moves.OminousWind,
+        Moves.Roost,
+        Moves.StoneEdge,
+        Moves.Tailwind,
       ],
     },
   });

@@ -44,6 +44,13 @@ const FAMILY_TEACHABLE = [
   Moves.Facade,
   Moves.SecretPower,
   Moves.Thief,
+  Moves.Captivate,
+  Moves.EnergyBall,
+  Moves.GrassKnot,
+  Moves.NaturalGift,
+  Moves.SeedBomb,
+  Moves.SuckerPunch,
+  Moves.WorrySeed,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Chlorophyll];
@@ -93,7 +100,9 @@ export default function registerBellsproutSpecies(): void {
         23: [Moves.Acid],
         30: [Moves.SweetScent],
         33: [Moves.RazorLeaf],
+        35: [Moves.GastroAcid],
         42: [Moves.Slam],
+        47: [Moves.WringOut],
       },
       teachable: [...FAMILY_TEACHABLE],
       egg: [
@@ -151,7 +160,9 @@ export default function registerBellsproutSpecies(): void {
         19: [Moves.StunSpore],
         24: [Moves.Acid],
         33: [Moves.SweetScent],
+        35: [Moves.GastroAcid],
         38: [Moves.RazorLeaf],
+        47: [Moves.WringOut],
         49: [Moves.Slam],
       },
       teachable: [...FAMILY_TEACHABLE],
@@ -200,8 +211,15 @@ export default function registerBellsproutSpecies(): void {
           Moves.Stockpile,
           Moves.Swallow,
         ],
+        47: [Moves.LeafStorm],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.BodySlam],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.HyperBeam,
+        Moves.BodySlam,
+        Moves.GastroAcid,
+        Moves.GigaImpact,
+      ],
     },
   });
 }

@@ -70,6 +70,9 @@ export const STARTER_SPECIES: Species[] = [
   Species.Treecko,
   Species.Torchic,
   Species.Mudkip,
+  Species.Turtwig,
+  Species.Chimchar,
+  Species.Piplup,
 ];
 
 /**

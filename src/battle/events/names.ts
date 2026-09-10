@@ -297,6 +297,29 @@ const enum BattleEvents {
    * to somebody else it still does
    */
   CheckUnitTriggerMoveTarget = 147,
+
+  /**
+   * Whether this move walks through a guard rather than being turned
+   * away by one. Feint and Shadow Force answer yes by themselves, and
+   * an ability may answer for whatever its holder throws
+   */
+  CheckUnitMoveGuard = 148,
+
+  /**
+   * What a residual status is about to take off the unit holding it.
+   * The status names its own share and everything with a say in how
+   * hard it lands answers here, so a burn is one question rather than
+   * one per module
+   */
+  CheckUnitStatusDamage = 149,
+
+  /**
+   * Who a single-target move actually lands on. Asked once per move
+   * that was aimed at one thing, with the aim as the answer, so an
+   * ability may put somebody else in the way. A move that goes out to
+   * a whole side is never asked: there is nobody it missed
+   */
+  CheckUnitMoveRedirect = 150,
 }
 
 export default BattleEvents;

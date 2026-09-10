@@ -23,6 +23,10 @@ export const RAID_ITEMS = new Map<Items, Species>([
   [Items.GSBall, Species.Celebi],
   [Items.AuroraTicket, Species.Deoxys],
   [Items.WishTag, Species.Jirachi],
+  [Items.MemberCard, Species.Darkrai],
+  [Items.ManaphyEgg, Species.Manaphy],
+  [Items.OaksLetter, Species.Shaymin],
+  [Items.AzureFlute, Species.Arceus],
 ]);
 
 const NAMES: { [key in Items]?: string } = {
@@ -30,6 +34,10 @@ const NAMES: { [key in Items]?: string } = {
   [Items.GSBall]: 'GS Ball',
   [Items.AuroraTicket]: 'Aurora Ticket',
   [Items.WishTag]: 'Wish Tag',
+  [Items.MemberCard]: 'Member Card',
+  [Items.ManaphyEgg]: 'Manaphy Egg',
+  [Items.OaksLetter]: "Oak's Letter",
+  [Items.AzureFlute]: 'Azure Flute',
 };
 
 /**
@@ -42,6 +50,10 @@ const PLACES: { [key in Items]?: string } = {
   [Items.GSBall]: 'the shrine in the forest it was left at',
   [Items.AuroraTicket]: 'the island it admits one passenger to',
   [Items.WishTag]: 'the valley the comet passes over',
+  [Items.MemberCard]: 'the island the boat behind the inn goes out to',
+  [Items.ManaphyEgg]: 'the temple the sea gives back for one day',
+  [Items.OaksLetter]: 'the meadow at the far end of the broken path',
+  [Items.AzureFlute]: 'the stair that opens above the mountain',
 };
 
 /**
@@ -50,6 +62,7 @@ const PLACES: { [key in Items]?: string } = {
  */
 const ICONS: { [key in Items]?: string } = {
   [Items.AuroraTicket]: 'key/auroraticket',
+  [Items.OaksLetter]: 'key/oaks-letter',
 };
 
 /**

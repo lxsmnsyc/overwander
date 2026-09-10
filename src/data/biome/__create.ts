@@ -1,7 +1,7 @@
 import type Biome from '../ids/biome';
 import { TimeOfDay } from '../ids/biome';
 import type Families from '../ids/families';
-import { Species, UNOWN_FORMS } from '../ids/species';
+import { DEOXYS_FORMS, Species, UNOWN_FORMS } from '../ids/species';
 import type { Types } from '../constants/types';
 import { getBaseSpecies, getSpeciesData } from '../species';
 
@@ -418,6 +418,15 @@ const LEGENDARY_SPECIES = new Set<Species>([
   Species.Kyogre,
   Species.Groudon,
   Species.Rayquaza,
+  Species.Uxie,
+  Species.Mesprit,
+  Species.Azelf,
+  Species.Dialga,
+  Species.Palkia,
+  Species.Giratina,
+  Species.Cresselia,
+  Species.Heatran,
+  Species.Regigigas,
 ]);
 
 /**
@@ -429,7 +438,13 @@ const MYTHICAL_SPECIES = new Set<Species>([
   Species.Mew,
   Species.Celebi,
   Species.Jirachi,
-  Species.Deoxys,
+  // Every arrangement of Deoxys, since each is one a player owns
+  // rather than a shape one wears for a fight
+  ...DEOXYS_FORMS,
+  Species.Darkrai,
+  Species.Manaphy,
+  Species.Shaymin,
+  Species.Arceus,
 ]);
 
 /**
@@ -467,6 +482,14 @@ const BABY_SPECIES = new Set<Species>([
   Species.Magby,
   Species.Azurill,
   Species.Wynaut,
+  Species.Bonsly,
+  Species.MimeJr,
+  Species.Happiny,
+  Species.Munchlax,
+  Species.Mantyke,
+  Species.Budew,
+  Species.Chingling,
+  Species.Riolu,
 ]);
 
 /**
@@ -511,14 +534,8 @@ export const PRIZED_WEIGHT = UNOWN_SPAWNS.length;
  * is about what a nest holds and nothing else
  */
 const AWAITING_BABY_SPECIES = new Set<Species>([
-  // Gen 4 babies
-  Species.Roselia,
-  Species.Chimecho,
-  Species.Sudowoodo,
-  Species.Mantine,
-  Species.Chansey,
-  Species.MrMime,
-  Species.Snorlax,
+  // Every baby the game knows about is registered. A later
+  // generation's babies belong here as they are written down
 ]);
 
 /**
@@ -543,25 +560,6 @@ export function isAwaitingBaby(species: Species): boolean {
  * registered
  */
 const AWAITING_EVOLUTION_SPECIES = new Set<Species>([
-  // Gen 4 evolutions
-  Species.Magneton,
-  Species.Lickitung,
-  Species.Rhydon,
-  Species.Tangela,
-  Species.Electabuzz,
-  Species.Magmar,
-  Species.Togetic,
-  Species.Aipom,
-  Species.Yanma,
-  Species.Murkrow,
-  Species.Misdreavus,
-  Species.Gligar,
-  Species.Sneasel,
-  Species.Piloswine,
-  Species.Porygon2,
-  Species.Nosepass,
-  Species.Roselia,
-  Species.Dusclops,
   // Gen 8 evolutions
   Species.Ursaring,
   Species.Stantler,
@@ -626,13 +624,19 @@ export function getLineStage(species: Species): number {
  * How many stages the longest walk from here down the line holds,
  * babies left out. A species whose evolution is still waiting on a
  * later gen counts that evolution, since the line is what it is
- * whether or not this game has the last of it yet
+ * whether or not this game has the last of it yet.
+ *
+ * A change of shape is not a stage. A Deoxys rearranges itself and a
+ * Rotom gets into a machine the same way an evolution happens, and
+ * both shapes carry their own dex number, so they are stepped over:
+ * the line is one stage long however many shapes it takes
  */
 function stagesBelow(species: Species): number {
   const own = BABY_SPECIES.has(species) ? 0 : 1;
-  const below = (getSpeciesData(species).evolvesInto ?? []).map((entry) =>
-    stagesBelow(entry.species),
-  );
+  const dex = getSpeciesData(species).dexNumber;
+  const below = (getSpeciesData(species).evolvesInto ?? [])
+    .filter((entry) => getSpeciesData(entry.species).dexNumber !== dex)
+    .map((entry) => stagesBelow(entry.species));
 
   if (below.length === 0) {
     return own + (isAwaitingEvolution(species) ? 1 : 0);

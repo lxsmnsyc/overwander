@@ -836,6 +836,34 @@ export const enum Items {
 
   /** The wish a Jirachi is called out to answer */
   WishTag = 394,
+
+  /** Sinnoh's two, the skull that charged and the face that held */
+  SkullFossil = 395,
+  ArmorFossil = 396,
+
+  /** What a Happiny carries about as though it were an egg */
+  OvalStone = 397,
+
+  /** The three the creation trio are held in their other shape by */
+  AdamantOrb = 398,
+  LustrousOrb = 399,
+  GriseousOrb = 400,
+
+  /** The pass that gets somebody into the inn a Darkrai is reached from */
+  MemberCard = 401,
+
+  /** The egg somebody carried in from the sea, which is not theirs */
+  ManaphyEgg = 402,
+
+  /** The flower a Shaymin opens with, and the letter that leads to one */
+  Gracidea = 403,
+  OaksLetter = 404,
+
+  /** The list of machines a Rotom picks its next one out of */
+  RotomCatalog = 405,
+
+  /** The flute that opens the stair at the top of the mountain */
+  AzureFlute = 406,
 }
 
 /**

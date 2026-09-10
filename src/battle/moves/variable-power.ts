@@ -1,6 +1,6 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { MAX_FRIENDSHIP } from '../../data/constants/friendship';
-import { Stats } from '../../data/constants/stats';
+import { Stages, Stats } from '../../data/constants/stats';
 import { Moves } from '../../data/ids/moves';
 import { USELESS_PENALTY } from '../ai/score';
 import type Battle from '../core';
@@ -59,6 +59,55 @@ const PRESENT_GIFT_SHARE = 0.25;
 const GIFT_BONUS = 6;
 
 /**
+ * Gyro Ball is thrown by the slower of the two: the wider the gap the
+ * harder it lands, and a user faster than its target barely swings it
+ */
+const GYRO_RATIO = 25;
+const GYRO_CEILING = 150;
+
+/**
+ * Wring Out and Crush Grip both read what the target has left, so
+ * either lands hardest on a whole one and barely at all on a spent one
+ */
+const SQUEEZE_CEILING = 120;
+
+function healthPower(target: Unit): number {
+  return Math.max(
+    1,
+    Math.floor(SQUEEZE_CEILING * (target.health / Math.max(1, target.checkStat(Stats.HP, 0)))),
+  );
+}
+
+/**
+ * Punishment answers a target for what it has built: a base hit plus
+ * a share for every stage it has raised, and nothing off for the ones
+ * it has lost
+ */
+const PUNISHMENT_BASE = 60;
+const PUNISHMENT_PER_STAGE = 20;
+const PUNISHMENT_CEILING = 200;
+
+/** Every stage a target could have raised, which is what it answers for */
+const RAISED: Stages[] = [
+  Stages.Attack,
+  Stages.Defense,
+  Stages.SpecialAttack,
+  Stages.SpecialDefense,
+  Stages.Speed,
+  Stages.Accuracy,
+  Stages.Evasion,
+];
+
+/**
+ * Trump Card, once its premise is translated. In the mainline it is
+ * the card you are down to, and PP here is a cooldown rather than a
+ * pool that drains, so it is the card you have already played: each
+ * cast in this fight makes the next one land harder, and the last is
+ * worth digging five casts for
+ */
+const TRUMP_CARD_POWERS = [40, 50, 60, 80, 200];
+
+/**
  * Magnitude reads the ground: 4 through 10, weighted the way the
  * mainline weights them, with 7 the common one
  */
@@ -102,13 +151,76 @@ function friendshipPower(value: number): number {
   return Math.max(1, Math.round((value / MAX_FRIENDSHIP) * FRIENDSHIP_POWER));
 }
 
+/**
+ * The moves that read the unit in front of them rather than the one
+ * casting. Kept apart from `VARIABLE_POWER` because a move cast at
+ * nobody has nothing to read, and these are all cast at a unit
+ */
+const TARGETED_POWER: { [key in Moves]?: (source: Unit, target: Unit) => number } = {
+  [Moves.GyroBall]: (source, target) =>
+    Math.max(
+      1,
+      Math.min(
+        GYRO_CEILING,
+        Math.floor(
+          (GYRO_RATIO * target.checkStat(Stats.Speed, 0)) /
+            Math.max(1, source.checkStat(Stats.Speed, 0)) +
+            1,
+        ),
+      ),
+    ),
+  [Moves.Punishment]: (_source, target) =>
+    Math.min(
+      PUNISHMENT_CEILING,
+      PUNISHMENT_BASE +
+        PUNISHMENT_PER_STAGE *
+          RAISED.reduce((total, stage) => total + Math.max(0, target.stages[stage]), 0),
+    ),
+  [Moves.WringOut]: (_source, target) => healthPower(target),
+  [Moves.CrushGrip]: (_source, target) => healthPower(target),
+};
+
 export default function setupVariablePowerMoves(battle: Battle): void {
+  /** How many Trump Cards each unit has played in this fight */
+  const played = new Map<Unit, number>();
+
   battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Exact, (event) => {
     const worked = VARIABLE_POWER[event.move];
 
     if (worked != null) {
       event.power = worked(event.source, battle.random());
+      return;
     }
+
+    const targeted = TARGETED_POWER[event.move];
+
+    if (targeted != null && event.target.type === MoveTargetType.Unit) {
+      event.power = targeted(event.source, event.target.unit);
+      return;
+    }
+
+    if (event.move === Moves.TrumpCard) {
+      const spent = played.get(event.source) ?? 0;
+
+      event.power = TRUMP_CARD_POWERS[Math.min(spent, TRUMP_CARD_POWERS.length - 1)];
+    }
+  });
+
+  // Counted as it lands rather than as it is cast, so a card the
+  // target never saw is not one the user has played
+  battle.on(BattleEvents.UnitTriggerMove, AttackPriority.Post, (event) => {
+    if (event.move === Moves.TrumpCard) {
+      played.set(event.source, (played.get(event.source) ?? 0) + 1);
+    }
+  });
+
+  // A unit that has left the field is holding a fresh hand when it
+  // comes back
+  battle.on(BattleEvents.UnitFaints, EventPriority.Post, (event) => {
+    played.delete(event.source);
+  });
+  battle.on(BattleEvents.UnitLeavesField, EventPriority.Post, (event) => {
+    played.delete(event.source);
   });
 
   /**

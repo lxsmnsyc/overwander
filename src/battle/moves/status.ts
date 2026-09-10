@@ -11,6 +11,7 @@ export const STATUS_MOVES: { [key in Moves]?: Statuses } = {
   [Moves.LovelyKiss]: Statuses.Sleeping,
   [Moves.SleepPowder]: Statuses.Sleeping,
   [Moves.Toxic]: Statuses.BadlyPoisoned,
+  [Moves.DarkVoid]: Statuses.Sleeping,
   [Moves.StunSpore]: Statuses.Paralyzed,
   [Moves.Supersonic]: Statuses.Confused,
   [Moves.ThunderWave]: Statuses.Paralyzed,
@@ -47,12 +48,25 @@ const EFFECT_STATUS_MOVES: {
   [key in Moves]?: { status: Statuses; chance: number };
 } = {
   [Moves.BodySlam]: { status: Statuses.Paralyzed, chance: 30 },
+  [Moves.ForcePalm]: { status: Statuses.Paralyzed, chance: 30 },
+  [Moves.Discharge]: { status: Statuses.Paralyzed, chance: 30 },
+  [Moves.RockClimb]: { status: Statuses.Confused, chance: 20 },
+  [Moves.Chatter]: { status: Statuses.Confused, chance: 100 },
+  [Moves.LavaPlume]: { status: Statuses.Burned, chance: 30 },
+  [Moves.CrossPoison]: { status: Statuses.Poisoned, chance: 10 },
+  [Moves.GunkShot]: { status: Statuses.Poisoned, chance: 30 },
+  [Moves.IronHead]: { status: Statuses.Flinched, chance: 30 },
+  [Moves.PoisonJab]: { status: Statuses.Poisoned, chance: 30 },
+  [Moves.DarkPulse]: { status: Statuses.Flinched, chance: 20 },
+  [Moves.AirSlash]: { status: Statuses.Flinched, chance: 30 },
+  [Moves.FlareBlitz]: { status: Statuses.Burned, chance: 10 },
   [Moves.Ember]: { status: Statuses.Burned, chance: 10 },
   [Moves.Flamethrower]: { status: Statuses.Burned, chance: 10 },
   [Moves.FireBlast]: { status: Statuses.Burned, chance: 10 },
   [Moves.FireSpin]: { status: Statuses.Trapped, chance: 100 },
   [Moves.Wrap]: { status: Statuses.Trapped, chance: 100 },
   [Moves.Clamp]: { status: Statuses.Trapped, chance: 100 },
+  [Moves.MagmaStorm]: { status: Statuses.Trapped, chance: 100 },
   [Moves.Bind]: { status: Statuses.Trapped, chance: 100 },
   [Moves.RockSlide]: { status: Statuses.Flinched, chance: 30 },
   [Moves.Bite]: { status: Statuses.Flinched, chance: 30 },
@@ -103,6 +117,13 @@ const EFFECT_STATUS_MOVES: {
   [Moves.VoltTackle]: { status: Statuses.Paralyzed, chance: 10 },
   [Moves.Bounce]: { status: Statuses.Paralyzed, chance: 30 },
   [Moves.SandTomb]: { status: Statuses.Trapped, chance: 100 },
+  [Moves.DragonRush]: { status: Statuses.Flinched, chance: 20 },
+  [Moves.ZenHeadbutt]: { status: Statuses.Flinched, chance: 20 },
+  // The fangs bite for an ailment here and roll their flinch apart
+  // from it, in `moves/fangs.ts`
+  [Moves.ThunderFang]: { status: Statuses.Paralyzed, chance: 10 },
+  [Moves.IceFang]: { status: Statuses.Frozen, chance: 10 },
+  [Moves.FireFang]: { status: Statuses.Burned, chance: 10 },
 };
 
 /**
@@ -152,6 +173,15 @@ const EFFECT_STAGE_MOVES: { [key in Moves]?: AttackStageEffect } = {
   [Moves.CrushClaw]: { stage: Stages.Defense, value: -1, chance: 50 },
   [Moves.RockTomb]: { stage: Stages.Speed, value: -1, chance: 100 },
   [Moves.MudShot]: { stage: Stages.Speed, value: -1, chance: 100 },
+  [Moves.BugBuzz]: { stage: Stages.SpecialDefense, value: -1, chance: 10 },
+  [Moves.FocusBlast]: { stage: Stages.SpecialDefense, value: -1, chance: 10 },
+  [Moves.EnergyBall]: { stage: Stages.SpecialDefense, value: -1, chance: 10 },
+  [Moves.EarthPower]: { stage: Stages.SpecialDefense, value: -1, chance: 10 },
+  [Moves.MudBomb]: { stage: Stages.Accuracy, value: -1, chance: 30 },
+  [Moves.MirrorShot]: { stage: Stages.Accuracy, value: -1, chance: 30 },
+  [Moves.FlashCannon]: { stage: Stages.SpecialDefense, value: -1, chance: 10 },
+  [Moves.SeedFlare]: { stage: Stages.SpecialDefense, value: -2, chance: 40 },
+  [Moves.ChargeBeam]: { stage: Stages.SpecialAttack, value: 1, chance: 70, self: true },
   [Moves.MuddyWater]: { stage: Stages.Accuracy, value: -1, chance: 30 },
   [Moves.MeteorMash]: { stage: Stages.Attack, value: 1, chance: 20, self: true },
   // Paid after it lands rather than before: the cost of swinging that
@@ -163,7 +193,18 @@ const EFFECT_STAGE_MOVES: { [key in Moves]?: AttackStageEffect } = {
     self: true,
   },
   [Moves.Overheat]: { stage: Stages.SpecialAttack, value: -2, chance: 100, self: true },
+  // The cost of a swing that big, paid by the swinger: Hammer Arm is
+  // slower to come round again, Close Combat is open afterwards
+  [Moves.HammerArm]: { stage: Stages.Speed, value: -1, chance: 100, self: true },
+  [Moves.CloseCombat]: {
+    stage: [Stages.Defense, Stages.SpecialDefense],
+    value: -1,
+    chance: 100,
+    self: true,
+  },
   [Moves.PsychoBoost]: { stage: Stages.SpecialAttack, value: -2, chance: 100, self: true },
+  [Moves.DracoMeteor]: { stage: Stages.SpecialAttack, value: -2, chance: 100, self: true },
+  [Moves.LeafStorm]: { stage: Stages.SpecialAttack, value: -2, chance: 100, self: true },
   [Moves.SilverWind]: {
     stage: [
       Stages.Attack,
@@ -177,6 +218,18 @@ const EFFECT_STAGE_MOVES: { [key in Moves]?: AttackStageEffect } = {
     self: true,
   },
   [Moves.AncientPower]: {
+    stage: [
+      Stages.Attack,
+      Stages.Defense,
+      Stages.SpecialAttack,
+      Stages.SpecialDefense,
+      Stages.Speed,
+    ],
+    value: 1,
+    chance: 10,
+    self: true,
+  },
+  [Moves.OminousWind]: {
     stage: [
       Stages.Attack,
       Stages.Defense,

@@ -1,0 +1,190 @@
+import { Stats } from '../../constants/stats';
+import { Types } from '../../constants/types';
+import Abilities from '../../ids/abilities';
+import { AnyTimeOfDay } from '../../ids/biome';
+import EggGroups from '../../ids/egg-groups';
+import Families from '../../ids/families';
+import { Moves } from '../../ids/moves';
+import { EvolutionMethod, Species } from '../../ids/species';
+import { registerSpecies } from '../__create';
+
+// TM, HM and tutor moves shared by the whole family
+const FAMILY_TEACHABLE = [
+  Moves.AncientPower,
+  Moves.Attract,
+  Moves.Blizzard,
+  Moves.Captivate,
+  Moves.Dig,
+  Moves.DoubleTeam,
+  Moves.DragonPulse,
+  Moves.EarthPower,
+  Moves.Earthquake,
+  Moves.Endeavor,
+  Moves.Endure,
+  Moves.Facade,
+  Moves.FireBlast,
+  Moves.FirePunch,
+  Moves.Flamethrower,
+  Moves.Fling,
+  Moves.Frustration,
+  Moves.Headbutt,
+  Moves.HiddenPower,
+  Moves.IceBeam,
+  Moves.IronHead,
+  Moves.IronTail,
+  Moves.MudSlap,
+  Moves.NaturalGift,
+  Moves.Payback,
+  Moves.Protect,
+  Moves.RainDance,
+  Moves.Rest,
+  Moves.Return,
+  Moves.Roar,
+  Moves.RockClimb,
+  Moves.RockPolish,
+  Moves.RockSlide,
+  Moves.RockSmash,
+  Moves.RockTomb,
+  Moves.Sandstorm,
+  Moves.SecretPower,
+  Moves.ShockWave,
+  Moves.SleepTalk,
+  Moves.Snore,
+  Moves.Spite,
+  Moves.StealthRock,
+  Moves.StoneEdge,
+  Moves.Strength,
+  Moves.Substitute,
+  Moves.SunnyDay,
+  Moves.Superpower,
+  Moves.Swagger,
+  Moves.SwordsDance,
+  Moves.Thief,
+  Moves.Thunder,
+  Moves.ThunderPunch,
+  Moves.Thunderbolt,
+  Moves.Toxic,
+  Moves.Uproar,
+  Moves.ZenHeadbutt,
+];
+
+/**
+ * Sinnoh's skull fossil, all head and no room for anything else: the
+ * charge is the whole pokemon, and the Defense says what it costs
+ */
+export default function registerCranidosSpecies(): void {
+  registerSpecies(Species.Cranidos, {
+    dexNumber: 408,
+    evolvesInto: [
+      {
+        species: Species.Rampardos,
+        method: EvolutionMethod.Level,
+        level: 30,
+      },
+    ],
+    name: 'Cranidos',
+    category: 'Head Butt Pokemon',
+    height: 0.9,
+    weight: 31.5,
+    family: Families.Cranidos,
+    stats: {
+      [Stats.HP]: 67,
+      [Stats.Attack]: 125,
+      [Stats.Defense]: 40,
+      [Stats.SpecialAttack]: 30,
+      [Stats.SpecialDefense]: 30,
+      [Stats.Speed]: 58,
+    },
+    types: [Types.Rock],
+    abilities: [Abilities.MoldBreaker],
+    hiddenAbilities: [Abilities.SheerForce],
+    eggGroups: [EggGroups.Monster],
+    genderRatio: [7, 1],
+    catchRate: 45,
+    biomes: [],
+    activeTimes: AnyTimeOfDay,
+    learnSet: {
+      level: {
+        1: [Moves.Headbutt, Moves.Leer],
+        6: [Moves.FocusEnergy],
+        10: [Moves.Pursuit],
+        15: [Moves.TakeDown],
+        19: [Moves.ScaryFace],
+        24: [Moves.Assurance],
+        28: [Moves.AncientPower],
+        33: [Moves.ZenHeadbutt],
+        37: [Moves.Screech],
+        43: [Moves.HeadSmash],
+      },
+      teachable: [...FAMILY_TEACHABLE],
+      egg: [
+        Moves.Crunch,
+        Moves.Curse,
+        Moves.DoubleEdge,
+        Moves.HammerArm,
+        Moves.Leer,
+        Moves.Slam,
+        Moves.Stomp,
+        Moves.Thrash,
+        Moves.Whirlwind,
+      ],
+    },
+  });
+  registerSpecies(Species.Rampardos, {
+    dexNumber: 409,
+    name: 'Rampardos',
+    category: 'Head Butt Pokemon',
+    height: 1.6,
+    weight: 102.5,
+    family: Families.Cranidos,
+    evolvesFrom: Species.Cranidos,
+    stats: {
+      [Stats.HP]: 97,
+      [Stats.Attack]: 165,
+      [Stats.Defense]: 60,
+      [Stats.SpecialAttack]: 65,
+      [Stats.SpecialDefense]: 50,
+      [Stats.Speed]: 58,
+    },
+    types: [Types.Rock],
+    abilities: [Abilities.MoldBreaker],
+    // Rock Head and Rivalry are this registry's rather than the
+    // mainline's: Head Smash is the line's own move, and the head is
+    // what it settles an argument with
+    hiddenAbilities: [Abilities.SheerForce, Abilities.RockHead, Abilities.Rivalry],
+    eggGroups: [EggGroups.Monster],
+    genderRatio: [7, 1],
+    catchRate: 45,
+    biomes: [],
+    activeTimes: AnyTimeOfDay,
+    learnSet: {
+      level: {
+        1: [Moves.Headbutt, Moves.Leer],
+        6: [Moves.FocusEnergy],
+        10: [Moves.Pursuit],
+        15: [Moves.TakeDown],
+        19: [Moves.ScaryFace],
+        24: [Moves.Assurance],
+        28: [Moves.AncientPower],
+        30: [Moves.Endeavor],
+        36: [Moves.ZenHeadbutt],
+        43: [Moves.Screech],
+        52: [Moves.HeadSmash],
+      },
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.Avalanche,
+        Moves.BrickBreak,
+        Moves.Cut,
+        Moves.FocusBlast,
+        Moves.FocusPunch,
+        Moves.GigaImpact,
+        Moves.HyperBeam,
+        Moves.Outrage,
+        Moves.PainSplit,
+        Moves.Surf,
+        Moves.Whirlpool,
+      ],
+    },
+  });
+}

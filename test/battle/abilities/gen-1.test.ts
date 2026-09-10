@@ -1967,7 +1967,7 @@ describe('Boss', () => {
     expect(boss.checkStat(Stats.Speed, 0)).toBe(210);
   });
 
-  it('is immune to negative stage applications', () => {
+  it('takes stage drops like anything else', () => {
     const { battle, teamA, teamB } = createBattle();
     const boss = createUnit(battle, teamA);
     const enemy = createUnit(battle, teamB);
@@ -1976,14 +1976,14 @@ describe('Boss', () => {
     const cause = { type: EffectType.Move, move: Moves.Growl, unit: enemy } as const;
 
     boss.addStage(Stages.Attack, -1, cause);
-    boss.addStage(Stages.Defense, -1, cause);
+    boss.addStage(Stages.Defense, -2, cause);
 
-    expect(boss.stages[Stages.Attack]).toBe(0);
-    expect(boss.stages[Stages.Defense]).toBe(0);
+    expect(boss.stages[Stages.Attack]).toBe(-1);
+    expect(boss.stages[Stages.Defense]).toBe(-2);
 
     // Positive applications still land
     boss.addStage(Stages.Attack, 1, cause);
-    expect(boss.stages[Stages.Attack]).toBe(1);
+    expect(boss.stages[Stages.Attack]).toBe(0);
   });
 
   it('heals an eighth of its pool a second, however many heals land', () => {
@@ -2295,6 +2295,32 @@ describe('Boss', () => {
     expect(first.health).toBeLessThan(160);
     expect(second.health).toBeLessThan(160);
     expect(ally.health).toBe(160);
+  });
+
+  it('is not taken down by a Destiny Bond while its pool holds', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const boss = createUnit(battle, teamA);
+    const bonded = createUnit(battle, teamB);
+
+    boss.addAbility(Abilities.Boss);
+    boss.enter();
+    bonded.enter();
+    battle.tick(1);
+
+    bonded.addStatus(Statuses.Bonded, {
+      type: EffectType.Move,
+      move: Moves.DestinyBond,
+      unit: bonded,
+    });
+    boss.damage({ type: EffectType.None }, bonded, bonded.health, 0);
+
+    expect(bonded.alive).toBe(false);
+    expect(boss.alive).toBe(true);
+
+    // What empties the pool still fells it
+    boss.damage({ type: EffectType.None }, boss, boss.health, 0);
+
+    expect(boss.alive).toBe(false);
   });
 });
 
@@ -3048,8 +3074,12 @@ describe('interaction fixes', () => {
     const plain = createUnit(battle, teamB);
     const rod = createUnit(battle, teamB);
     rod.addAbility(Abilities.LightningRod);
+    attacker.addMove(Moves.ThunderShock);
 
-    attacker.triggerMoveTarget(Moves.ThunderShock, { type: MoveTargetType.Unit, unit: plain }, 0);
+    // The whole move rather than a hand-made blow: who it lands on is
+    // worked out where the aim is resolved
+    attacker.triggerMove(Moves.ThunderShock, { type: MoveTargetType.Unit, unit: plain }, 0);
+    battle.tick(turns(2));
 
     expect(plain.health).toBe(160); // redirected away
     expect(rod.health).toBe(160); // absorbed

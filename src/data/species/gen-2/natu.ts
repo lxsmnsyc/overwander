@@ -46,6 +46,15 @@ const FAMILY_TEACHABLE = [
   Moves.SkillSwap,
   Moves.Substitute,
   Moves.ThunderWave,
+  Moves.Captivate,
+  Moves.GrassKnot,
+  Moves.NaturalGift,
+  Moves.Pluck,
+  Moves.Roost,
+  Moves.SuckerPunch,
+  Moves.TrickRoom,
+  Moves.UTurn,
+  Moves.ZenHeadbutt,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Synchronize, Abilities.EarlyBird];
@@ -85,12 +94,17 @@ export default function registerNatuSpecies(): void {
       level: {
         1: [Moves.Leer, Moves.Peck],
         10: [Moves.NightShade],
-        20: [Moves.Teleport],
+        12: [Moves.LuckyChant],
+        17: [Moves.MiracleEye],
+        20: [Moves.Teleport, Moves.MeFirst],
         30: [Moves.FutureSight, Moves.Wish],
+        33: [Moves.PsychoShift],
+        39: [Moves.OminousWind],
         40: [Moves.ConfuseRay],
+        44: [Moves.GuardSwap, Moves.PowerSwap],
         50: [Moves.Psychic],
       },
-      teachable: [...FAMILY_TEACHABLE],
+      teachable: [...FAMILY_TEACHABLE, Moves.Tailwind],
       egg: [
         Moves.DrillPeck,
         Moves.FeintAttack,
@@ -133,12 +147,25 @@ export default function registerNatuSpecies(): void {
     learnSet: {
       level: {
         1: [Moves.Leer, Moves.Peck, Moves.NightShade],
-        20: [Moves.Teleport],
+        12: [Moves.LuckyChant],
+        17: [Moves.MiracleEye],
+        20: [Moves.Teleport, Moves.MeFirst],
+        27: [Moves.Tailwind],
         35: [Moves.FutureSight, Moves.Wish],
+        37: [Moves.PsychoShift],
+        47: [Moves.OminousWind],
         50: [Moves.ConfuseRay],
+        54: [Moves.GuardSwap, Moves.PowerSwap],
         65: [Moves.Psychic],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.Fly, Moves.HyperBeam, Moves.SteelWing],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.Fly,
+        Moves.HyperBeam,
+        Moves.SteelWing,
+        Moves.Defog,
+        Moves.GigaImpact,
+      ],
     },
   });
 }

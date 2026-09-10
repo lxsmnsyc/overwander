@@ -39,6 +39,11 @@ const FAMILY_TEACHABLE = [
   Moves.RockTomb,
   Moves.SecretPower,
   Moves.Substitute,
+  Moves.Captivate,
+  Moves.EarthPower,
+  Moves.GunkShot,
+  Moves.SeedBomb,
+  Moves.StealthRock,
 ];
 
 export default function registerPhanpySpecies(): void {
@@ -77,8 +82,10 @@ export default function registerPhanpySpecies(): void {
         1: [Moves.Growl, Moves.Tackle, Moves.OdorSleuth],
         9: [Moves.DefenseCurl],
         17: [Moves.Flail],
+        19: [Moves.NaturalGift],
         25: [Moves.TakeDown],
         33: [Moves.Rollout],
+        37: [Moves.LastResort],
         41: [Moves.Endure],
         49: [Moves.DoubleEdge],
       },
@@ -90,6 +97,8 @@ export default function registerPhanpySpecies(): void {
         Moves.WaterGun,
         Moves.Counter,
         Moves.Fissure,
+        Moves.HeadSmash,
+        Moves.IceShard,
       ],
     },
   });
@@ -123,13 +132,15 @@ export default function registerPhanpySpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.Growl, Moves.HornAttack, Moves.OdorSleuth],
+        1: [Moves.Growl, Moves.HornAttack, Moves.OdorSleuth, Moves.FireFang, Moves.ThunderFang],
         9: [Moves.DefenseCurl],
         17: [Moves.Flail],
         25: [Moves.FuryAttack],
+        31: [Moves.Assurance],
         33: [Moves.Rollout],
         41: [Moves.RapidSpin],
         49: [Moves.Earthquake],
+        54: [Moves.GigaImpact],
       },
       teachable: [
         ...FAMILY_TEACHABLE,
@@ -138,6 +149,11 @@ export default function registerPhanpySpecies(): void {
         Moves.Counter,
         Moves.DoubleEdge,
         Moves.RockSlide,
+        Moves.GyroBall,
+        Moves.NaturalGift,
+        Moves.PoisonJab,
+        Moves.RockPolish,
+        Moves.StoneEdge,
       ],
     },
   });

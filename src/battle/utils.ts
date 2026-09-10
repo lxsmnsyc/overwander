@@ -58,19 +58,31 @@ export function hasFreeItemSlot(unit: Unit): boolean {
 
 /**
  * The one item a thief could walk off with, or nothing when the unit's
- * hands are empty. The first one found is the one taken: which of two
- * held items goes is nobody's decision
+ * hands are empty.
+ *
+ * Drawn at random rather than taken off the top of the bag: which of
+ * two held items goes is nobody's decision, and the bag's order is an
+ * accident of what was put in it first. It rolls the battle's own RNG,
+ * so two clients watching the same fight see the same thing taken
  */
 export function stealableItem(unit: Unit): Items | undefined {
+  const held: Items[] = [];
+
   for (const [item, carried] of Object.entries(unit.items)) {
     if (carried) {
       // The bag is keyed by the item enum, which comes back as a
       // string from Object.entries
       // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
-      return Number(item) as Items;
+      held.push(Number(item) as Items);
     }
   }
-  return undefined;
+  if (held.length === 0) {
+    return undefined;
+  }
+
+  // Held inside the bag: a roll of exactly 1, which a pinned RNG
+  // hands out, would otherwise point one past the last item
+  return held[Math.min(held.length - 1, Math.floor(unit.battle.random() * held.length))];
 }
 
 /**

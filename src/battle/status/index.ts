@@ -36,6 +36,12 @@ import setupCoatedStatus from './coated';
 import setupDrowsyStatus from './drowsy';
 import setupGrudgingStatus from './grudging';
 import setupHelpedStatus from './helped';
+import setupMindReadStatus from './mind-read';
+import setupEmbargoedStatus from './embargoed';
+import setupHealBlockedStatus from './heal-blocked';
+import setupPowerTrickedStatus from './power-tricked';
+import setupRoostingStatus from './roosting';
+import setupMagnetRisenStatus from './magnet-risen';
 import setupImprisonedStatus from './imprisoned';
 import setupRootedStatus from './rooted';
 import setupSnatchingStatus from './snatching';
@@ -189,6 +195,14 @@ export default function setupStatus(battle: Battle): void {
   setupGrudgingStatus(battle);
   setupUproaringStatus(battle);
   setupHelpedStatus(battle);
+
+  // Sinnoh
+  setupMindReadStatus(battle);
+  setupEmbargoedStatus(battle);
+  setupHealBlockedStatus(battle);
+  setupPowerTrickedStatus(battle);
+  setupRoostingStatus(battle);
+  setupMagnetRisenStatus(battle);
 
   setupNonRefreshableStatus(battle);
   setupStatusTypeImmunity(battle);

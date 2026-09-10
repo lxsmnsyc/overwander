@@ -38,6 +38,7 @@ const FAMILY_TEACHABLE = [
   Moves.Swagger,
   Moves.FuryCutter,
   Moves.SleepTalk,
+  Moves.NaturalGift,
 ];
 
 export default function registerNincadaSpecies(): void {
@@ -93,8 +94,8 @@ export default function registerNincadaSpecies(): void {
         38: [Moves.MetalClaw],
         45: [Moves.Dig],
       },
-      teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.Gust, Moves.FeintAttack, Moves.SilverWind],
+      teachable: [...FAMILY_TEACHABLE, Moves.BugBite, Moves.XScissor],
+      egg: [Moves.Gust, Moves.FeintAttack, Moves.SilverWind, Moves.BugBuzz, Moves.NightSlash],
     },
   });
 
@@ -124,7 +125,7 @@ export default function registerNincadaSpecies(): void {
     activeTimes: TimeOfDay.Evening | TimeOfDay.Night,
     learnSet: {
       level: {
-        1: [Moves.Scratch, Moves.Harden, Moves.LeechLife, Moves.SandAttack],
+        1: [Moves.Scratch, Moves.Harden, Moves.LeechLife, Moves.SandAttack, Moves.BugBite],
         14: [Moves.FurySwipes],
         19: [Moves.MindReader],
         20: [Moves.DoubleTeam, Moves.FuryCutter, Moves.Screech],
@@ -132,6 +133,7 @@ export default function registerNincadaSpecies(): void {
         31: [Moves.Slash],
         38: [Moves.Agility],
         45: [Moves.BatonPass],
+        52: [Moves.XScissor],
       },
       teachable: [
         ...FAMILY_TEACHABLE,
@@ -140,6 +142,12 @@ export default function registerNincadaSpecies(): void {
         Moves.Thief,
         Moves.Swift,
         Moves.SwordsDance,
+        Moves.Captivate,
+        Moves.Defog,
+        Moves.GigaImpact,
+        Moves.OminousWind,
+        Moves.Roost,
+        Moves.UTurn,
       ],
     },
   });
@@ -183,10 +191,21 @@ export default function registerNincadaSpecies(): void {
         19: [Moves.MindReader],
         25: [Moves.Spite],
         31: [Moves.ConfuseRay],
-        38: [Moves.ShadowBall],
+        38: [Moves.ShadowBall, Moves.ShadowSneak],
         45: [Moves.Grudge],
+        52: [Moves.HealBlock],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.DreamEater, Moves.Thief],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.HyperBeam,
+        Moves.DreamEater,
+        Moves.Thief,
+        Moves.BugBite,
+        Moves.GigaImpact,
+        Moves.ShadowClaw,
+        Moves.SuckerPunch,
+        Moves.XScissor,
+      ],
     },
   });
 }

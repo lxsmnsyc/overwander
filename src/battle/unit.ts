@@ -27,11 +27,13 @@ import type {
   CheckUnitItemThresholdEvent,
   CheckUnitMoveAccuracyEvent,
   CheckUnitMoveContactEvent,
+  CheckUnitMoveGuardEvent,
   CheckUnitMoveHitsEvent,
   CheckUnitMoveImmunityEvent,
   CheckUnitMovePPEvent,
   CheckUnitMovePowerEvent,
   CheckUnitMovePriorityEvent,
+  CheckUnitMoveRedirectEvent,
   CheckUnitMoveStepsEvent,
   CheckUnitMoveTargetingEvent,
   CheckUnitMoveTimeEvent,
@@ -783,6 +785,15 @@ export default class Unit {
   }
 
   hasAbility(ability: Abilities): boolean {
+    // Nothing may grant an ability through the query: the record is
+    // the baseline and a suppressor can only clear it. So a unit that
+    // does not carry it answers without asking, which is what keeps a
+    // field-wide "is a holder standing" scan from emitting an event
+    // per unit
+    if (this.abilities[ability] !== true) {
+      return false;
+    }
+
     const event: CheckUnitAbilityEvent = {
       id: 'CheckUnitAbility',
       disabled: false,
@@ -790,7 +801,7 @@ export default class Unit {
       ability,
       // The unit's own record is the baseline; suppressors (e.g.
       // Neutralizing Gas) may clear it
-      enabled: this.abilities[ability] === true,
+      enabled: true,
     };
     this.battle.emit(BattleEvents.CheckUnitAbility, event);
     return event.enabled;
@@ -1183,6 +1194,23 @@ export default class Unit {
    * move's own flag, so a Protective Pads is one veto rather than a
    * clause in each of them
    */
+  /**
+   * Who a single-target move lands on, which is whoever it was aimed
+   * at unless something puts itself in the way
+   */
+  checkMoveRedirect(move: Moves, target: MoveTarget): MoveTarget {
+    const event: CheckUnitMoveRedirectEvent = {
+      id: 'CheckUnitMoveRedirect',
+      disabled: false,
+      source: this,
+      move,
+      target,
+      redirect: target,
+    };
+    this.battle.emit(BattleEvents.CheckUnitMoveRedirect, event);
+    return event.redirect;
+  }
+
   checkMoveContact(move: Moves, target: MoveTarget): boolean {
     const event: CheckUnitMoveContactEvent = {
       id: 'CheckUnitMoveContact',
@@ -1194,6 +1222,25 @@ export default class Unit {
     };
     this.battle.emit(BattleEvents.CheckUnitMoveContact, event);
     return event.contact;
+  }
+
+  /**
+   * Whether a blow of this move walks through a guard instead of being
+   * turned away by one. The guard asks rather than keeping a list, so
+   * an ability that walks through is one answer rather than an entry
+   * in the status
+   */
+  checkMoveGuard(move: Moves, target: MoveTarget): boolean {
+    const event: CheckUnitMoveGuardEvent = {
+      id: 'CheckUnitMoveGuard',
+      disabled: false,
+      source: this,
+      move,
+      target,
+      walks: false,
+    };
+    this.battle.emit(BattleEvents.CheckUnitMoveGuard, event);
+    return event.walks;
   }
 
   checkGrounded(): boolean {

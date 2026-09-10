@@ -253,7 +253,6 @@ in the lobby fights exactly the same one. Its raid form gives it:
 - Wind-ups that take twice as long, and that nothing short of fainting can
   interrupt.
 - Single-target moves that strike every enemy at once.
-- Immunity to attempts to lower its stats.
 
 A boss opens the fight **dormant**: for the first ten seconds it stands there and
 cannot act, which is the party's window to arrive, buff up and land the opening

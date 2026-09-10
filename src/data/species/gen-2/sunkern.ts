@@ -39,6 +39,11 @@ const FAMILY_TEACHABLE = [
   Moves.SecretPower,
   Moves.Substitute,
   Moves.SwordsDance,
+  Moves.Captivate,
+  Moves.EarthPower,
+  Moves.EnergyBall,
+  Moves.GrassKnot,
+  Moves.NaturalGift,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Chlorophyll, Abilities.SolarPower];
@@ -77,12 +82,13 @@ export default function registerSunkernSpecies(): void {
     learnSet: {
       level: {
         18: [Moves.Ingrain],
-        25: [Moves.Endeavor],
+        25: [Moves.Endeavor, Moves.WorrySeed],
         1: [Moves.Absorb],
         4: [Moves.Growth],
         10: [Moves.MegaDrain],
         19: [Moves.SunnyDay],
         31: [Moves.Synthesis],
+        45: [Moves.SeedBomb],
         46: [Moves.GigaDrain],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.BulletSeed],
@@ -126,15 +132,16 @@ export default function registerSunkernSpecies(): void {
     learnSet: {
       level: {
         18: [Moves.Ingrain],
-        25: [Moves.BulletSeed],
+        25: [Moves.BulletSeed, Moves.WorrySeed],
         1: [Moves.Absorb, Moves.Pound],
         4: [Moves.Growth],
         10: [Moves.RazorLeaf],
         19: [Moves.SunnyDay],
         31: [Moves.PetalDance],
+        43: [Moves.LeafStorm],
         46: [Moves.SolarBeam],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
+      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.GigaImpact, Moves.SeedBomb],
     },
   });
 }

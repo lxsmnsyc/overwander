@@ -4,18 +4,27 @@ import Abilities from '../../ids/abilities';
 import Biome, { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
+import { Items } from '../../ids/items';
 import { Moves } from '../../ids/moves';
-import { Species } from '../../ids/species';
+import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 export default function registerRoseliaSpecies(): void {
   registerSpecies(Species.Roselia, {
     dexNumber: 315,
+    evolvesInto: [
+      {
+        species: Species.Roserade,
+        method: EvolutionMethod.UsedItem,
+        item: Items.ShinyStone,
+      },
+    ],
     name: 'Roselia',
     category: 'Thorn Pokemon',
     height: 0.3,
     weight: 2,
     family: Families.Roselia,
+    evolvesFrom: Species.Budew,
     stats: {
       [Stats.HP]: 50,
       [Stats.Attack]: 60,
@@ -41,6 +50,7 @@ export default function registerRoseliaSpecies(): void {
         17: [Moves.MegaDrain],
         21: [Moves.LeechSeed],
         25: [Moves.MagicalLeaf],
+        28: [Moves.ToxicSpikes],
         29: [Moves.GrassWhistle],
         33: [Moves.GigaDrain],
         37: [Moves.SweetScent],
@@ -82,8 +92,14 @@ export default function registerRoseliaSpecies(): void {
         Moves.Swift,
         Moves.SwordsDance,
         Moves.Toxic,
+        Moves.Captivate,
+        Moves.EnergyBall,
+        Moves.GrassKnot,
+        Moves.NaturalGift,
+        Moves.PoisonJab,
+        Moves.SeedBomb,
+        Moves.WorrySeed,
       ],
-      egg: [Moves.CottonSpore, Moves.PinMissile, Moves.Spikes, Moves.Synthesis],
     },
   });
 }

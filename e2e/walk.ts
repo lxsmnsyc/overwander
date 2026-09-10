@@ -6,6 +6,7 @@ import {
   isBoardCell,
   projectBoardCell,
   projectCell,
+  setBoardScreen,
 } from '../src/canvas/board';
 import { CHUNK_CELLS } from '../src/overworld/chunk';
 import Landmark, { LANDMARK_NAMES } from '../src/data/overworld/landmark';
@@ -49,13 +50,20 @@ export function world(): World {
  */
 export function spotOf(
   bounds: { x: number; y: number; width: number; height: number },
-  point: { x: number; y: number },
+  point: () => { x: number; y: number },
 ): { x: number; y: number } {
+  // A screen taller than it is wide is drawn flat rather than laid
+  // back, so the projection is told which screen this is before it is
+  // asked where anything landed. The point comes as a thunk for that
+  // reason: worked out first, it would answer for the last screen
+  setBoardScreen(bounds.width, bounds.height);
+
+  const at = point();
   const frame = fitPicture(bounds.width, bounds.height);
 
   return {
-    x: bounds.x + frame.x + point.x * frame.width,
-    y: bounds.y + frame.y + point.y * frame.height,
+    x: bounds.x + frame.x + at.x * frame.width,
+    y: bounds.y + frame.y + at.y * frame.height,
   };
 }
 
@@ -76,7 +84,7 @@ export async function cellAt(
 ): Promise<{ x: number; y: number } | null> {
   const bounds = await board.boundingBox();
 
-  return bounds == null ? null : spotOf(bounds, projectCell(index));
+  return bounds == null ? null : spotOf(bounds, () => projectCell(index));
 }
 
 /**
@@ -127,7 +135,9 @@ export async function pressFar(page: Page, board: Locator, way: [number, number]
     reach = candidate;
   }
 
-  const spot = spotOf(bounds, projectBoardCell(reach));
+  // The point is a thunk: the screen has to be named from the board's
+  // own box before anything is put through the projection
+  const spot = spotOf(bounds, () => projectBoardCell(reach));
 
   await page.mouse.click(spot.x, spot.y);
 }

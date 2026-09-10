@@ -51,7 +51,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Ludicolo, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS, { species: Species.Azurill, weight: PRIZED_WEIGHT }],
-      special: [],
+      special: [{ species: Species.Azelf, weight: 10 }],
     },
     [TimeOfDay.Day]: {
       base: [
@@ -97,7 +97,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Ludicolo, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS, { species: Species.Azurill, weight: PRIZED_WEIGHT }],
-      special: [],
+      special: [{ species: Species.Azelf, weight: 10 }],
     },
     [TimeOfDay.Evening]: {
       base: [{ species: Species.Poliwag, weight: 20 }],
@@ -133,7 +133,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Illumise, weight: 8 },
       ],
       prized: [...UNOWN_SPAWNS, { species: Species.Azurill, weight: PRIZED_WEIGHT }],
-      special: [],
+      special: [{ species: Species.Azelf, weight: 10 }],
     },
     [TimeOfDay.Night]: {
       base: [
@@ -180,7 +180,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Illumise, weight: 8 },
       ],
       prized: [...UNOWN_SPAWNS, { species: Species.Azurill, weight: PRIZED_WEIGHT }],
-      special: [],
+      special: [{ species: Species.Azelf, weight: 10 }],
     },
   });
 }

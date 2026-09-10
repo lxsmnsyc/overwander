@@ -4,6 +4,7 @@ import chikoritaToCelebi from './chikorita-to-celebi';
 import eeveeToDragonite from './eevee-to-dragonite';
 import geodudeToDrowzee from './geodude-to-drowzee';
 import krabbyToPinsir from './krabby-to-pinsir';
+import lakeTrio from './lake-trio';
 import parasToTentacool from './paras-to-tentacool';
 import sandshrewToOddish from './sandshrew-to-oddish';
 import spoinkToDeoxys from './spoink-to-deoxys';
@@ -41,6 +42,7 @@ const setupAbilities = [
   ...stunkyToGible,
   ...rioluToSkorupi,
   ...croagunkToSnover,
+  ...lakeTrio,
 ];
 
 /**

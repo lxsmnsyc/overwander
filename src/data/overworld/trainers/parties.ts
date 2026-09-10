@@ -1,11 +1,6 @@
 import { Species } from '../../ids/species';
 import type Regions from '../../ids/regions';
-import {
-  getSpeciesByRegion,
-  getSpeciesData,
-  getSpeciesRegion,
-  isBaseForm,
-} from '../../species';
+import { getSpeciesByRegion, getSpeciesData, getSpeciesRegion, isBaseForm } from '../../species';
 import { EVERY_LAIR, getLairResidents } from '../lair';
 import { TRAINER_REGIONS, TrainerClass } from './classes';
 import TRAINER_TYPES from './types';

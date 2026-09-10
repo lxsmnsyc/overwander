@@ -21,7 +21,10 @@ export default function registerTundraSpawns(): void {
         { species: Species.Mamoswine, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS],
-      special: [{ species: Species.Suicune, weight: 10 }],
+      special: [
+        { species: Species.Suicune, weight: 10 },
+        { species: Species.Uxie, weight: 10 },
+      ],
     },
     [TimeOfDay.Day]: {
       base: [{ species: Species.Swinub, weight: 25 }],
@@ -37,7 +40,10 @@ export default function registerTundraSpawns(): void {
         { species: Species.Mamoswine, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS],
-      special: [{ species: Species.Suicune, weight: 10 }],
+      special: [
+        { species: Species.Suicune, weight: 10 },
+        { species: Species.Uxie, weight: 10 },
+      ],
     },
     [TimeOfDay.Evening]: {
       base: [{ species: Species.Swinub, weight: 25 }],
@@ -58,7 +64,10 @@ export default function registerTundraSpawns(): void {
         { species: Species.Mamoswine, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS, { species: Species.Smoochum, weight: PRIZED_WEIGHT }],
-      special: [{ species: Species.Suicune, weight: 10 }],
+      special: [
+        { species: Species.Suicune, weight: 10 },
+        { species: Species.Uxie, weight: 10 },
+      ],
     },
     [TimeOfDay.Night]: {
       base: [{ species: Species.Swinub, weight: 25 }],
@@ -79,7 +88,10 @@ export default function registerTundraSpawns(): void {
         { species: Species.Mamoswine, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS, { species: Species.Smoochum, weight: PRIZED_WEIGHT }],
-      special: [{ species: Species.Suicune, weight: 10 }],
+      special: [
+        { species: Species.Suicune, weight: 10 },
+        { species: Species.Uxie, weight: 10 },
+      ],
     },
   });
 }

@@ -2352,6 +2352,52 @@ describe('Full Belly', () => {
   });
 });
 
+describe('the lake trio', () => {
+  const GIFTS = [
+    { name: 'Mindgift', ability: Abilities.Mindgift, stage: Stages.Accuracy },
+    { name: 'Heartgift', ability: Abilities.Heartgift, stage: Stages.SpecialAttack },
+    { name: 'Willgift', ability: Abilities.Willgift, stage: Stages.Attack },
+  ];
+
+  for (const { name, ability, stage } of GIFTS) {
+    it(`hands its own side a stage as ${name} arrives`, () => {
+      const { battle, teamA, teamB } = createBattle();
+      const holder = createUnit(battle, teamA);
+      const mate = createUnit(battle, teamA);
+      const enemy = createUnit(battle, teamB);
+      holder.addAbility(ability);
+
+      battle.emit(BattleEvents.UnitEntersField, {
+        id: 'UnitEntersField',
+        disabled: false,
+        source: holder,
+        reactivation: false,
+      });
+
+      // Itself included: it is standing at its own lake
+      expect(holder.stages[stage]).toBe(1);
+      expect(mate.stages[stage]).toBe(1);
+      // And the far side gets nothing
+      expect(enemy.stages[stage]).toBe(0);
+    });
+  }
+
+  it('gives nothing back when it is only reactivated', () => {
+    const { battle, teamA } = createBattle();
+    const holder = createUnit(battle, teamA);
+    holder.addAbility(Abilities.Mindgift);
+
+    battle.emit(BattleEvents.UnitEntersField, {
+      id: 'UnitEntersField',
+      disabled: false,
+      source: holder,
+      reactivation: true,
+    });
+
+    expect(holder.stages[Stages.Accuracy]).toBe(0);
+  });
+});
+
 describe('the birds', () => {
   const WINGBEATS = [
     { name: 'Frostwing', ability: Abilities.Frostwing, stage: Stages.Speed },

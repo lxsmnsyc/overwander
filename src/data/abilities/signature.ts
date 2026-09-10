@@ -1367,4 +1367,24 @@ export default function registerSignatureAbilities(): void {
     name: 'Evergreen',
     description: 'Fire moves hit it at 0.5x while hail or snow falls.',
   });
+
+  /**
+   * The lake trio: each of them hands its own side the thing it was
+   * made to keep, one stage of it, as it arrives. The birds' wingbeat
+   * turned around
+   */
+  registerSignature(Families.Uxie, Abilities.Mindgift, {
+    name: 'Mindgift',
+    description: 'Its whole team gains 1 stage of accuracy as it takes the field.',
+  });
+
+  registerSignature(Families.Mesprit, Abilities.Heartgift, {
+    name: 'Heartgift',
+    description: 'Its whole team gains 1 stage of Special Attack as it takes the field.',
+  });
+
+  registerSignature(Families.Azelf, Abilities.Willgift, {
+    name: 'Willgift',
+    description: 'Its whole team gains 1 stage of Attack as it takes the field.',
+  });
 }

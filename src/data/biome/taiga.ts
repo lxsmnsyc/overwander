@@ -17,7 +17,10 @@ export default function registerTaigaSpawns(): void {
       scarce: [{ species: Species.Abomasnow, weight: 6 }],
       elusive: [{ species: Species.Snorlax, weight: 5 }],
       prized: [...UNOWN_SPAWNS],
-      special: [{ species: Species.Suicune, weight: 10 }],
+      special: [
+        { species: Species.Suicune, weight: 10 },
+        { species: Species.Uxie, weight: 10 },
+      ],
     },
     [TimeOfDay.Day]: {
       base: [{ species: Species.Teddiursa, weight: 20 }],
@@ -29,7 +32,10 @@ export default function registerTaigaSpawns(): void {
       scarce: [{ species: Species.Abomasnow, weight: 6 }],
       elusive: [{ species: Species.Snorlax, weight: 5 }],
       prized: [...UNOWN_SPAWNS],
-      special: [{ species: Species.Suicune, weight: 10 }],
+      special: [
+        { species: Species.Suicune, weight: 10 },
+        { species: Species.Uxie, weight: 10 },
+      ],
     },
     [TimeOfDay.Evening]: {
       base: [],
@@ -48,7 +54,10 @@ export default function registerTaigaSpawns(): void {
         { species: Species.Snorlax, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS, { species: Species.Smoochum, weight: PRIZED_WEIGHT }],
-      special: [{ species: Species.Suicune, weight: 10 }],
+      special: [
+        { species: Species.Suicune, weight: 10 },
+        { species: Species.Uxie, weight: 10 },
+      ],
     },
     [TimeOfDay.Night]: {
       base: [],
@@ -69,7 +78,10 @@ export default function registerTaigaSpawns(): void {
         { species: Species.Snorlax, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS, { species: Species.Smoochum, weight: PRIZED_WEIGHT }],
-      special: [{ species: Species.Suicune, weight: 10 }],
+      special: [
+        { species: Species.Suicune, weight: 10 },
+        { species: Species.Uxie, weight: 10 },
+      ],
     },
   });
 }

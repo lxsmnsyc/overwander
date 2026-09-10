@@ -580,6 +580,46 @@ export function createWingbeatAbility(
 }
 
 /**
+ * What the lake trio share: each of them hands its own side the thing
+ * it was made to hold as it arrives, one stage of it, in the stat
+ * that reads as knowledge, feeling or resolve.
+ *
+ * The mirror of the birds' wingbeat, which takes a stage off the far
+ * side instead. Its own party rather than its whole alliance: a lake
+ * gives to the people standing at it
+ */
+export function createLakeGiftAbility(
+  ability: Abilities,
+  stage: Stages,
+): ((battle: Battle) => void) & { ability: Abilities } {
+  return createAbility(
+    ability,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+          if (!event.reactivation && event.source.hasAbility(ability)) {
+            event.source.triggerAbility(ability);
+          }
+        }),
+        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
+          if (event.ability !== ability) {
+            return;
+          }
+
+          const source = event.source;
+          const cause = { type: EffectType.Ability, ability, unit: source } as const;
+
+          for (const mate of source.team.units) {
+            if (mate.alive) {
+              mate.addStage(stage, 1, cause);
+            }
+          }
+        }),
+      ]),
+  );
+}
+
+/**
  * What the three legendary beasts share: the first blow that would
  * finish one leaves it standing on 1 HP, cured of whatever it was
  * carrying, and a stage sharper in the stat that beast is built on.

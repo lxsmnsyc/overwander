@@ -810,6 +810,9 @@ const enum Abilities {
   Finisher = 200226,
   FalseEyes = 200227,
   Evergreen = 200228,
+  Mindgift = 200229,
+  Heartgift = 200230,
+  Willgift = 200231,
 }
 
 export default Abilities;

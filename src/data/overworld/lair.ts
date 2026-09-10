@@ -73,6 +73,14 @@ const enum Lairs {
    * over it. A mythical's lair, so no biome hosts it
    */
   Forina = 17,
+  /**
+   * The three lakes the trio sleep under, one apiece. Like the sealed
+   * chambers and unlike the Burned Tower, each holds exactly one: they
+   * were set down in three places and stayed in them
+   */
+  LakeAcuity = 18,
+  LakeVerity = 19,
+  LakeValor = 20,
 }
 
 export const LAIR_NAMES: Record<Lairs, string> = {
@@ -94,6 +102,9 @@ export const LAIR_NAMES: Record<Lairs, string> = {
   [Lairs.SkyPillar]: 'Sky Pillar',
   [Lairs.BirthIsland]: 'Birth Island',
   [Lairs.Forina]: 'Forina',
+  [Lairs.LakeAcuity]: 'Lake Acuity',
+  [Lairs.LakeVerity]: 'Lake Verity',
+  [Lairs.LakeValor]: 'Lake Valor',
 };
 
 /**
@@ -121,6 +132,9 @@ export const LAIR_SPECIES: Record<Lairs, Species[]> = {
   [Lairs.SkyPillar]: [Species.Rayquaza],
   [Lairs.BirthIsland]: [Species.Deoxys],
   [Lairs.Forina]: [Species.Jirachi],
+  [Lairs.LakeAcuity]: [Species.Uxie],
+  [Lairs.LakeVerity]: [Species.Mesprit],
+  [Lairs.LakeValor]: [Species.Azelf],
 };
 
 /**
@@ -145,6 +159,9 @@ export const EVERY_LAIR: Lairs[] = [
   Lairs.SkyPillar,
   Lairs.BirthIsland,
   Lairs.Forina,
+  Lairs.LakeAcuity,
+  Lairs.LakeVerity,
+  Lairs.LakeValor,
 ];
 
 /**
@@ -172,6 +189,9 @@ const STAGED_LAIRS = new Set<Lairs>(EVERY_STAGED_LAIR);
  * sealed chambers sit where their doors were cut: ruins in the sand,
  * a cave in the ice, a tomb under the rock.
  *
+ * The three lakes sit in the country each of them was found in: the
+ * cold one in the north, the wooded one and the one on open ground.
+ *
  * A biome with no lair stages no legendary lair at all, which is most
  * of them: a legendary the whole world could walk to is not a
  * legendary
@@ -181,8 +201,12 @@ const BIOME_LAIRS: { [key in Biome]?: Lairs[] } = {
   [Biome.Ocean]: [Lairs.WhirlIslands, Lairs.SouthernIsland],
   [Biome.PolarOcean]: [Lairs.SeafoamIslands, Lairs.IslandCave],
   [Biome.Glacier]: [Lairs.SeafoamIslands, Lairs.IslandCave],
-  [Biome.Grassland]: [Lairs.PowerPlant, Lairs.BurnedTower],
-  [Biome.Woodland]: [Lairs.BurnedTower],
+  [Biome.Grassland]: [Lairs.PowerPlant, Lairs.BurnedTower, Lairs.LakeValor],
+  [Biome.Bog]: [Lairs.LakeValor],
+  [Biome.TemperateForest]: [Lairs.LakeVerity],
+  [Biome.Woodland]: [Lairs.BurnedTower, Lairs.LakeVerity],
+  [Biome.Taiga]: [Lairs.LakeAcuity],
+  [Biome.Tundra]: [Lairs.LakeAcuity],
   [Biome.Steppe]: [Lairs.PowerPlant],
   [Biome.Desert]: [Lairs.MtEmber, Lairs.DesertRuins],
   [Biome.Badlands]: [Lairs.DesertRuins, Lairs.AncientTomb],

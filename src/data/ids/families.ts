@@ -231,6 +231,9 @@ const enum Families {
   Croagunk = 226,
   Finneon = 227,
   Snover = 228,
+  Uxie = 229,
+  Mesprit = 230,
+  Azelf = 231,
 }
 
 export default Families;

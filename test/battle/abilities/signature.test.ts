@@ -71,6 +71,11 @@ import {
   TWO_SEAS_SCALE,
 } from '../../../src/battle/abilities/signature/burmy-to-shellos';
 import {
+  CARRY_OFF_CHANCE,
+  SPRINGHEEL_MAX_JUMPS,
+  VELVET_CLAWS_SCALE,
+} from '../../../src/battle/abilities/signature/drifloon-to-glameow';
+import {
   FLOAT_SAC_THRESHOLD,
   POLLEN_DOLE_FRACTION,
   SECOND_BLOOM_FRACTION,
@@ -6301,5 +6306,88 @@ describe('the comb, the sac and the blossom', () => {
 
     expect(cherry.health).toBe(opened - 10);
     expect(cherry.stages[Stages.SpecialAttack]).toBe(SECOND_BLOOM_STAGES);
+  });
+});
+
+describe('the balloon, the ears and the claws', () => {
+  it('blows the target away on the roll, and leaves it alone otherwise', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const balloon = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    createUnit(battle, teamB);
+
+    balloon.addAbility(Abilities.CarryOff);
+    balloon.enter();
+    enemy.enter();
+    battle.tick(1);
+
+    const casts: Moves[] = [];
+
+    battle.on(BattleEvents.UnitTriggerMove, AttackPriority.Post, (event) => {
+      if (event.source === balloon) {
+        casts.push(event.move);
+      }
+    });
+
+    // The roll sits on the edge, so nothing takes hold
+    pinRandom(battle, CARRY_OFF_CHANCE);
+    balloon.attack(enemy, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    expect(casts).toEqual([]);
+
+    pinRandom(battle, 0);
+    balloon.attack(enemy, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
+
+    // The string is Whirlwind's, so whatever the move does is what
+    // happens to the target
+    expect(casts).toEqual([Moves.Whirlwind]);
+  });
+
+  it('uncoils three times and no more', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const rabbit = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    rabbit.addAbility(Abilities.Springheel);
+    rabbit.enter();
+    enemy.enter();
+    battle.tick(1);
+
+    for (let at = 0; at < SPRINGHEEL_MAX_JUMPS + 2; at++) {
+      rabbit.attack(enemy, Moves.Tackle, 10, Types.Normal, MoveCategories.Physical, 0);
+      battle.tick(1);
+    }
+
+    expect(rabbit.stages[Stages.Speed]).toBe(SPRINGHEEL_MAX_JUMPS);
+  });
+
+  it('claws harder at whatever made itself comfortable', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const cat = createUnit(battle, teamA);
+    const smug = createUnit(battle, teamB);
+    const plain = createUnit(battle, teamB);
+
+    cat.addAbility(Abilities.VelvetClaws);
+
+    expect(cat.checkMovePower(Moves.Scratch, unitTarget(smug))).toBe(40);
+
+    smug.addStage(Stages.Attack, 1, NONE_CAUSE);
+
+    expect(cat.checkMovePower(Moves.Scratch, unitTarget(smug))).toBeCloseTo(
+      40 * VELVET_CLAWS_SCALE,
+      5,
+    );
+
+    // The mark stays once it is made, and nobody else carries it
+    smug.addStage(Stages.Attack, -1, NONE_CAUSE);
+
+    expect(cat.checkMovePower(Moves.Scratch, unitTarget(smug))).toBeCloseTo(
+      40 * VELVET_CLAWS_SCALE,
+      5,
+    );
+    expect(cat.checkMovePower(Moves.Scratch, unitTarget(plain))).toBe(40);
+
+    // And a move that never touches it is a move that never touches it
+    expect(cat.checkMovePower(Moves.ShadowBall, unitTarget(smug))).toBe(80);
   });
 });

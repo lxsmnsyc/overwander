@@ -13,6 +13,7 @@ export {
   ABSORB_HEAL_FRACTION,
   createBlazeAbility,
   createHugePowerAbility,
+  createStatusBoostAbility,
   createHydrationAbility,
   createPolarityAbility,
   createWaterAbsorbAbility,

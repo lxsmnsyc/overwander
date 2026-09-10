@@ -31,6 +31,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Burmy, weight: 20 },
         { species: Species.Combee, weight: 22 },
         { species: Species.Cherubi, weight: 22 },
+        { species: Species.Buneary, weight: 25 },
       ],
       rare: [
         { species: Species.Ivysaur, weight: 1 },
@@ -53,6 +54,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Mothim, weight: 4 },
         { species: Species.Vespiquen, weight: 5 },
         { species: Species.Cherrim, weight: 6 },
+        { species: Species.Lopunny, weight: 8 },
       ],
       elusive: [
         { species: Species.Venusaur, weight: 2 },
@@ -99,6 +101,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Burmy, weight: 20 },
         { species: Species.Combee, weight: 22 },
         { species: Species.Cherubi, weight: 22 },
+        { species: Species.Buneary, weight: 25 },
       ],
       rare: [
         { species: Species.Ivysaur, weight: 1 },
@@ -121,6 +124,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Mothim, weight: 4 },
         { species: Species.Vespiquen, weight: 5 },
         { species: Species.Cherrim, weight: 6 },
+        { species: Species.Lopunny, weight: 8 },
       ],
       elusive: [
         { species: Species.Venusaur, weight: 2 },
@@ -164,6 +168,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Burmy, weight: 20 },
         { species: Species.Combee, weight: 22 },
         { species: Species.Cherubi, weight: 22 },
+        { species: Species.Buneary, weight: 25 },
       ],
       rare: [
         { species: Species.Gloom, weight: 5 },
@@ -182,6 +187,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Mothim, weight: 4 },
         { species: Species.Vespiquen, weight: 5 },
         { species: Species.Cherrim, weight: 6 },
+        { species: Species.Lopunny, weight: 8 },
       ],
       elusive: [
         { species: Species.Vileplume, weight: 5 },
@@ -218,6 +224,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Burmy, weight: 20 },
         { species: Species.Combee, weight: 22 },
         { species: Species.Cherubi, weight: 22 },
+        { species: Species.Buneary, weight: 25 },
       ],
       rare: [
         { species: Species.Gloom, weight: 5 },
@@ -237,6 +244,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Mothim, weight: 4 },
         { species: Species.Vespiquen, weight: 5 },
         { species: Species.Cherrim, weight: 6 },
+        { species: Species.Lopunny, weight: 8 },
       ],
       elusive: [
         { species: Species.Vileplume, weight: 5 },

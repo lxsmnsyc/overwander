@@ -219,6 +219,9 @@ const enum Families {
   Buizel = 214,
   Cherubi = 215,
   Shellos = 216,
+  Drifloon = 217,
+  Buneary = 218,
+  Glameow = 219,
 }
 
 export default Families;

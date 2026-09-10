@@ -798,6 +798,9 @@ const enum Abilities {
   PollenDole = 200214,
   FloatSac = 200215,
   SecondBloom = 200216,
+  CarryOff = 200217,
+  Springheel = 200218,
+  VelvetClaws = 200219,
 }
 
 export default Abilities;

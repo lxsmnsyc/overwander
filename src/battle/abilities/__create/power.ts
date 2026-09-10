@@ -7,6 +7,7 @@ import Abilities from '../../../data/ids/abilities';
 import type Battle from '../../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../../events';
 import { MergedLifecycle } from '../../lifecycle';
+import { Statuses } from '../../../data/ids/status';
 import { MAJOR_STATUS_CONDITIONS } from '../../status';
 import type Unit from '../../unit';
 import { createAbility } from './create';
@@ -23,6 +24,35 @@ export function createWeightAbility(ability: Abilities, scale: number): (battle:
     battle.on(BattleEvents.CheckUnitWeight, EventPriority.Post, (event) => {
       if (event.source.hasAbility(ability)) {
         event.weight *= scale;
+      }
+    }),
+  );
+}
+
+/**
+ * An ability that pays its holder for the status it is carrying:
+ * Toxic Boost sells a poison for Attack, Flare Boost sells a burn for
+ * Special Attack. What the mainline writes as a power multiplier is
+ * written here on the stat, which is the same answer for a move and a
+ * readable one for anything asking what the unit hits like
+ */
+export function createStatusBoostAbility(
+  ability: Abilities,
+  statuses: Set<Statuses>,
+  stat: Stats,
+  scale: number,
+): (battle: Battle) => void {
+  return createAbility(ability, (battle) =>
+    battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
+      if (event.stat !== stat || !event.source.hasAbility(ability)) {
+        return;
+      }
+
+      for (const status of statuses) {
+        if (event.source.status[status] != null) {
+          event.value *= scale;
+          return;
+        }
       }
     }),
   );

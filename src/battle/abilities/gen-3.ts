@@ -18,6 +18,7 @@ import {
   createClearBodyAbility,
   createCloudNineAbility,
   createHugePowerAbility,
+  createStatusBoostAbility,
   createPolarityAbility,
   createRestageAbility,
   createWeightAbility,
@@ -48,11 +49,17 @@ const STEELWORKER_SCALE = 1.5;
 /** What a poison is worth to an Attack that feeds on it. */
 const TOXIC_BOOST_SCALE = 1.5;
 
+/** And what a burn is worth to a Special Attack that does. */
+const FLARE_BOOST_SCALE = 1.5;
+
 /** What one Battery is worth to everybody else's special moves. */
 const BATTERY_BOOST = 1.3;
 
 /** Either poison counts, the way either one chips. */
-const POISONS_HELD = [Statuses.Poisoned, Statuses.BadlyPoisoned];
+const POISONS_HELD = new Set([Statuses.Poisoned, Statuses.BadlyPoisoned]);
+
+/** And the one burn, for the ability that reads it the same way. */
+const BURN_HELD = new Set([Statuses.Burned]);
 
 /** What a poison hands back instead of taking, per residual. */
 const POISON_HEAL_FRACTION = 1 / 8;
@@ -210,14 +217,18 @@ const setupAbilities = [
   ),
 
   // https://bulbapedia.bulbagarden.net/wiki/Toxic_Boost_(Ability)
-  createAbility(Abilities.ToxicBoost, (battle) =>
-    battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
-      if (
-        event.stat === Stats.Attack &&
-        event.source.hasAbility(Abilities.ToxicBoost) &&
-        POISONS_HELD.some((status) => event.source.status[status] != null)
-      ) {
-        event.value *= TOXIC_BOOST_SCALE;
+  createStatusBoostAbility(Abilities.ToxicBoost, POISONS_HELD, Stats.Attack, TOXIC_BOOST_SCALE),
+
+  // https://bulbapedia.bulbagarden.net/wiki/Flare_Boost_(Ability)
+  createStatusBoostAbility(Abilities.FlareBoost, BURN_HELD, Stats.SpecialAttack, FLARE_BOOST_SCALE),
+
+  // https://bulbapedia.bulbagarden.net/wiki/Klutz_(Ability)
+  createAbility(Abilities.Klutz, (battle) =>
+    battle.on(BattleEvents.CheckUnitItem, EventPriority.Post, (event) => {
+      // The item is still held and still knocked off or tricked away;
+      // what it does is what the holder cannot reach
+      if (event.enabled && event.source.hasAbility(Abilities.Klutz)) {
+        event.enabled = false;
       }
     }),
   ),

@@ -1287,4 +1287,24 @@ export default function registerSignatureAbilities(): void {
     description:
       'The first time it falls under 1/2 HP each fight it takes 1/4 of its HP back and 1 stage of Special Attack.',
   });
+
+  /**
+   * The balloon, the ears and the claws: one drifts off with whatever
+   * it lands on, one uncoils as it goes, and one goes for whatever
+   * has been making itself comfortable
+   */
+  registerSignature(Families.Drifloon, Abilities.CarryOff, {
+    name: 'Carry Off',
+    description: '20% for an attack it lands to blow the target away, as Whirlwind would.',
+  });
+
+  registerSignature(Families.Buneary, Abilities.Springheel, {
+    name: 'Springheel',
+    description: 'Each of the first 3 attacks it lands raises its Speed 1 stage.',
+  });
+
+  registerSignature(Families.Glameow, Abilities.VelvetClaws, {
+    name: 'Velvet Claws',
+    description: 'Its contact moves hit 1.25x against anything that has raised a stat this fight.',
+  });
 }

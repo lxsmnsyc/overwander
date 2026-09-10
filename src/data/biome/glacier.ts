@@ -19,7 +19,10 @@ export default function registerGlacierSpawns(): void {
         { species: Species.Piloswine, weight: 5 },
         { species: Species.Prinplup, weight: 2 },
       ],
-      scarce: [{ species: Species.Glalie, weight: 6 }],
+      scarce: [
+        { species: Species.Glalie, weight: 6 },
+        { species: Species.Froslass, weight: 6 },
+      ],
       elusive: [
         { species: Species.Walrein, weight: 5 },
         { species: Species.Delibird, weight: 5 },
@@ -43,7 +46,10 @@ export default function registerGlacierSpawns(): void {
         { species: Species.Piloswine, weight: 5 },
         { species: Species.Prinplup, weight: 2 },
       ],
-      scarce: [{ species: Species.Glalie, weight: 6 }],
+      scarce: [
+        { species: Species.Glalie, weight: 6 },
+        { species: Species.Froslass, weight: 6 },
+      ],
       elusive: [
         { species: Species.Walrein, weight: 5 },
         { species: Species.Delibird, weight: 5 },
@@ -68,7 +74,10 @@ export default function registerGlacierSpawns(): void {
         { species: Species.Sealeo, weight: 8 },
         { species: Species.Piloswine, weight: 5 },
       ],
-      scarce: [{ species: Species.Glalie, weight: 6 }],
+      scarce: [
+        { species: Species.Glalie, weight: 6 },
+        { species: Species.Froslass, weight: 6 },
+      ],
       elusive: [
         { species: Species.Walrein, weight: 5 },
         { species: Species.Jynx, weight: 5 },
@@ -93,7 +102,10 @@ export default function registerGlacierSpawns(): void {
         { species: Species.Sealeo, weight: 8 },
         { species: Species.Piloswine, weight: 5 },
       ],
-      scarce: [{ species: Species.Glalie, weight: 6 }],
+      scarce: [
+        { species: Species.Glalie, weight: 6 },
+        { species: Species.Froslass, weight: 6 },
+      ],
       elusive: [
         { species: Species.Walrein, weight: 5 },
         { species: Species.Jynx, weight: 5 },

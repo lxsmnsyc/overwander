@@ -1,11 +1,16 @@
 import registerBidoofSpecies from './bidoof';
 import registerBronzorSpecies from './bronzor';
+import registerBudewSpecies from './budew';
 import registerBuizelSpecies from './buizel';
 import registerBurmySpecies from './burmy';
 import registerCherubiSpecies from './cherubi';
+import registerChinglingSpecies from './chingling';
 import registerBunearySpecies from './buneary';
 import registerDrifloonSpecies from './drifloon';
+import registerDusknoirSpecies from './dusknoir';
 import registerFinneonSpecies from './finneon';
+import registerFroslassSpecies from './froslass';
+import registerGalladeSpecies from './gallade';
 import registerGibleSpecies from './gible';
 import registerHippopotasSpecies from './hippopotas';
 import registerGlameowSpecies from './glameow';
@@ -15,6 +20,7 @@ import registerCranidosSpecies from './cranidos';
 import registerCroagunkSpecies from './croagunk';
 import registerKricketotSpecies from './kricketot';
 import registerPiplupSpecies from './piplup';
+import registerProbopassSpecies from './probopass';
 import registerShellosSpecies from './shellos';
 import registerShieldonSpecies from './shieldon';
 import registerRioluSpecies from './riolu';
@@ -55,4 +61,10 @@ export default function registerGen4Species(): void {
   registerCroagunkSpecies();
   registerFinneonSpecies();
   registerSnoverSpecies();
+  registerBudewSpecies();
+  registerChinglingSpecies();
+  registerGalladeSpecies();
+  registerProbopassSpecies();
+  registerDusknoirSpecies();
+  registerFroslassSpecies();
 }

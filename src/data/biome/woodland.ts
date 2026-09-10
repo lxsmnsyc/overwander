@@ -347,6 +347,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Bellossom, weight: 5 },
         { species: Species.Dustox, weight: 10 },
         { species: Species.Shiftry, weight: 5 },
+        { species: Species.Dusknoir, weight: 5 },
       ],
       prized: [
         ...UNOWN_SPAWNS,

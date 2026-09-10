@@ -47,6 +47,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.WormadamTrash, weight: 4 },
         { species: Species.Bronzong, weight: 6 },
         { species: Species.Hippowdon, weight: 6 },
+        { species: Species.Probopass, weight: 6 },
       ],
       elusive: [
         { species: Species.Metagross, weight: 1 },
@@ -115,6 +116,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.WormadamTrash, weight: 4 },
         { species: Species.Bronzong, weight: 6 },
         { species: Species.Hippowdon, weight: 6 },
+        { species: Species.Probopass, weight: 6 },
       ],
       elusive: [
         { species: Species.Metagross, weight: 1 },
@@ -174,6 +176,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.WormadamTrash, weight: 4 },
         { species: Species.Bronzong, weight: 6 },
         { species: Species.Hippowdon, weight: 6 },
+        { species: Species.Probopass, weight: 6 },
       ],
       elusive: [
         { species: Species.Metagross, weight: 1 },
@@ -232,6 +235,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.WormadamTrash, weight: 4 },
         { species: Species.Bronzong, weight: 6 },
         { species: Species.Hippowdon, weight: 6 },
+        { species: Species.Probopass, weight: 6 },
       ],
       elusive: [
         { species: Species.Metagross, weight: 1 },
@@ -240,6 +244,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Sableye, weight: 8 },
         { species: Species.Lunatone, weight: 5 },
         { species: Species.Garchomp, weight: 2 },
+        { species: Species.Dusknoir, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS],
       special: [

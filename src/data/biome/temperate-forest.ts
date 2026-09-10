@@ -68,6 +68,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Beautifly, weight: 10 },
         { species: Species.Gardevoir, weight: 5 },
         { species: Species.Staraptor, weight: 5 },
+        { species: Species.Gallade, weight: 5 },
       ],
       prized: [
         ...UNOWN_SPAWNS,
@@ -139,6 +140,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Beautifly, weight: 10 },
         { species: Species.Gardevoir, weight: 5 },
         { species: Species.Staraptor, weight: 5 },
+        { species: Species.Gallade, weight: 5 },
       ],
       prized: [
         ...UNOWN_SPAWNS,

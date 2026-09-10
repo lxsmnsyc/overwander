@@ -1,6 +1,6 @@
 import Biome, { TimeOfDay } from '../ids/biome';
 import { Species } from '../ids/species';
-import { UNOWN_SPAWNS, registerSpawnPool } from './__create';
+import { PRIZED_WEIGHT, UNOWN_SPAWNS, registerSpawnPool } from './__create';
 
 /**
  * Shrubland spawn pool, grouped by day-cycle period and rarity band
@@ -37,6 +37,7 @@ export default function registerShrublandSpawns(): void {
         { species: Species.Sunflora, weight: 5 },
         { species: Species.Granbull, weight: 5 },
         { species: Species.Purugly, weight: 8 },
+        { species: Species.Roserade, weight: 6 },
       ],
       elusive: [
         { species: Species.Smeargle, weight: 5 },
@@ -45,7 +46,7 @@ export default function registerShrublandSpawns(): void {
         { species: Species.Jumpluff, weight: 5 },
         { species: Species.Luxray, weight: 4 },
       ],
-      prized: [...UNOWN_SPAWNS],
+      prized: [...UNOWN_SPAWNS, { species: Species.Budew, weight: PRIZED_WEIGHT }],
       special: [],
     },
     [TimeOfDay.Day]: {
@@ -78,6 +79,7 @@ export default function registerShrublandSpawns(): void {
         { species: Species.Sunflora, weight: 5 },
         { species: Species.Granbull, weight: 5 },
         { species: Species.Purugly, weight: 8 },
+        { species: Species.Roserade, weight: 6 },
       ],
       elusive: [
         { species: Species.Smeargle, weight: 5 },
@@ -86,7 +88,7 @@ export default function registerShrublandSpawns(): void {
         { species: Species.Jumpluff, weight: 5 },
         { species: Species.Luxray, weight: 4 },
       ],
-      prized: [...UNOWN_SPAWNS],
+      prized: [...UNOWN_SPAWNS, { species: Species.Budew, weight: PRIZED_WEIGHT }],
       special: [],
     },
     [TimeOfDay.Evening]: {
@@ -115,13 +117,14 @@ export default function registerShrublandSpawns(): void {
         { species: Species.Purugly, weight: 8 },
         { species: Species.Skuntank, weight: 8 },
         { species: Species.Drapion, weight: 6 },
+        { species: Species.Roserade, weight: 6 },
       ],
       elusive: [
         { species: Species.Smeargle, weight: 5 },
         { species: Species.Shiftry, weight: 5 },
         { species: Species.Luxray, weight: 4 },
       ],
-      prized: [...UNOWN_SPAWNS],
+      prized: [...UNOWN_SPAWNS, { species: Species.Budew, weight: PRIZED_WEIGHT }],
       special: [],
     },
     [TimeOfDay.Night]: {
@@ -150,13 +153,14 @@ export default function registerShrublandSpawns(): void {
         { species: Species.Purugly, weight: 8 },
         { species: Species.Skuntank, weight: 8 },
         { species: Species.Drapion, weight: 6 },
+        { species: Species.Roserade, weight: 6 },
       ],
       elusive: [
         { species: Species.Smeargle, weight: 5 },
         { species: Species.Shiftry, weight: 5 },
         { species: Species.Luxray, weight: 4 },
       ],
-      prized: [...UNOWN_SPAWNS],
+      prized: [...UNOWN_SPAWNS, { species: Species.Budew, weight: PRIZED_WEIGHT }],
       special: [],
     },
   });

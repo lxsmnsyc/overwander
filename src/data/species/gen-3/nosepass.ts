@@ -4,13 +4,23 @@ import Abilities from '../../ids/abilities';
 import Biome, { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
+import { Items } from '../../ids/items';
 import { Moves } from '../../ids/moves';
-import { Species } from '../../ids/species';
+import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 export default function registerNosepassSpecies(): void {
   registerSpecies(Species.Nosepass, {
     dexNumber: 299,
+    // A Thunder Stone rather than a magnetic field: the newer games
+    // sell the stone, and nowhere here is a place with a field in it
+    evolvesInto: [
+      {
+        species: Species.Probopass,
+        method: EvolutionMethod.UsedItem,
+        item: Items.ThunderStone,
+      },
+    ],
     name: 'Nosepass',
     category: 'Compass Pokemon',
     height: 1,

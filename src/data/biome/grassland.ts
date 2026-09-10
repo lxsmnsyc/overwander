@@ -77,6 +77,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Vespiquen, weight: 5 },
         { species: Species.Lopunny, weight: 8 },
         { species: Species.Purugly, weight: 8 },
+        { species: Species.Roserade, weight: 6 },
       ],
       elusive: [
         { species: Species.Castform, weight: 10 },
@@ -108,6 +109,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Tyrogue, weight: PRIZED_WEIGHT },
         { species: Species.Elekid, weight: PRIZED_WEIGHT },
         { species: Species.Wynaut, weight: PRIZED_WEIGHT },
+        { species: Species.Budew, weight: PRIZED_WEIGHT },
       ],
       special: [{ species: Species.Raikou, weight: 10 }],
     },
@@ -185,6 +187,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Vespiquen, weight: 5 },
         { species: Species.Lopunny, weight: 8 },
         { species: Species.Purugly, weight: 8 },
+        { species: Species.Roserade, weight: 6 },
       ],
       elusive: [
         { species: Species.Castform, weight: 10 },
@@ -218,6 +221,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Tyrogue, weight: PRIZED_WEIGHT },
         { species: Species.Elekid, weight: PRIZED_WEIGHT },
         { species: Species.Wynaut, weight: PRIZED_WEIGHT },
+        { species: Species.Budew, weight: PRIZED_WEIGHT },
       ],
       special: [{ species: Species.Raikou, weight: 10 }],
     },
@@ -259,6 +263,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Lopunny, weight: 8 },
         { species: Species.Purugly, weight: 8 },
         { species: Species.Skuntank, weight: 8 },
+        { species: Species.Roserade, weight: 6 },
       ],
       elusive: [
         { species: Species.Castform, weight: 10 },
@@ -276,6 +281,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Igglybuff, weight: PRIZED_WEIGHT },
         { species: Species.Elekid, weight: PRIZED_WEIGHT },
         { species: Species.Wynaut, weight: PRIZED_WEIGHT },
+        { species: Species.Budew, weight: PRIZED_WEIGHT },
       ],
       special: [{ species: Species.Raikou, weight: 10 }],
     },
@@ -321,6 +327,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Lopunny, weight: 8 },
         { species: Species.Purugly, weight: 8 },
         { species: Species.Skuntank, weight: 8 },
+        { species: Species.Roserade, weight: 6 },
       ],
       elusive: [
         { species: Species.Castform, weight: 10 },
@@ -338,6 +345,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Igglybuff, weight: PRIZED_WEIGHT },
         { species: Species.Elekid, weight: PRIZED_WEIGHT },
         { species: Species.Wynaut, weight: PRIZED_WEIGHT },
+        { species: Species.Budew, weight: PRIZED_WEIGHT },
       ],
       special: [{ species: Species.Raikou, weight: 10 }],
     },

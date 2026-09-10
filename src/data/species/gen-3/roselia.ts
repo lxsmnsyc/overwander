@@ -4,18 +4,27 @@ import Abilities from '../../ids/abilities';
 import Biome, { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
+import { Items } from '../../ids/items';
 import { Moves } from '../../ids/moves';
-import { Species } from '../../ids/species';
+import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 export default function registerRoseliaSpecies(): void {
   registerSpecies(Species.Roselia, {
     dexNumber: 315,
+    evolvesInto: [
+      {
+        species: Species.Roserade,
+        method: EvolutionMethod.UsedItem,
+        item: Items.ShinyStone,
+      },
+    ],
     name: 'Roselia',
     category: 'Thorn Pokemon',
     height: 0.3,
     weight: 2,
     family: Families.Roselia,
+    evolvesFrom: Species.Budew,
     stats: {
       [Stats.HP]: 50,
       [Stats.Attack]: 60,
@@ -91,7 +100,6 @@ export default function registerRoseliaSpecies(): void {
         Moves.SeedBomb,
         Moves.WorrySeed,
       ],
-      egg: [Moves.CottonSpore, Moves.PinMissile, Moves.Spikes, Moves.Synthesis, Moves.LeafStorm],
     },
   });
 }

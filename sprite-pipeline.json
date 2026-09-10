@@ -16333,6 +16333,78 @@
         "bytes": 7869
       }
     },
+    "public/sprites/pokemon/sinnoh/406/regular.png": {
+      "digest": "4911c1b709d5e1dc",
+      "bytes": 3943,
+      "width": 102,
+      "height": 171,
+      "compact": {
+        "at": "2026-09-10T09:52:04Z",
+        "as": "already compact",
+        "was": 3943,
+        "bytes": 3943
+      }
+    },
+    "public/sprites/pokemon/sinnoh/406/shiny.png": {
+      "digest": "14d2ee15e29a061b",
+      "bytes": 3995,
+      "width": 102,
+      "height": 171,
+      "compact": {
+        "at": "2026-09-10T09:52:04Z",
+        "as": "already compact",
+        "was": 3995,
+        "bytes": 3995
+      }
+    },
+    "public/sprites/pokemon/sinnoh/407/female.png": {
+      "digest": "dcec0830edaa62f1",
+      "bytes": 8471,
+      "width": 221,
+      "height": 160,
+      "compact": {
+        "at": "2026-09-10T09:52:04Z",
+        "as": "already compact",
+        "was": 8471,
+        "bytes": 8471
+      }
+    },
+    "public/sprites/pokemon/sinnoh/407/regular.png": {
+      "digest": "957f6cedeba3d62d",
+      "bytes": 8305,
+      "width": 221,
+      "height": 160,
+      "compact": {
+        "at": "2026-09-10T09:52:04Z",
+        "as": "already compact",
+        "was": 8305,
+        "bytes": 8305
+      }
+    },
+    "public/sprites/pokemon/sinnoh/407/shiny.png": {
+      "digest": "ef9e05c26e85062d",
+      "bytes": 8316,
+      "width": 221,
+      "height": 160,
+      "compact": {
+        "at": "2026-09-10T09:52:04Z",
+        "as": "already compact",
+        "was": 8316,
+        "bytes": 8316
+      }
+    },
+    "public/sprites/pokemon/sinnoh/407/shiny_female.png": {
+      "digest": "0796b9496db3313e",
+      "bytes": 8481,
+      "width": 221,
+      "height": 160,
+      "compact": {
+        "at": "2026-09-10T09:52:04Z",
+        "as": "already compact",
+        "was": 8481,
+        "bytes": 8481
+      }
+    },
     "public/sprites/pokemon/sinnoh/408/regular.png": {
       "digest": "04ddb96ff5fd8ff6",
       "bytes": 4298,
@@ -16907,6 +16979,30 @@
         "as": "already compact",
         "was": 12881,
         "bytes": 12881
+      }
+    },
+    "public/sprites/pokemon/sinnoh/433/regular.png": {
+      "digest": "6f79477fddb74bcc",
+      "bytes": 3040,
+      "width": 77,
+      "height": 167,
+      "compact": {
+        "at": "2026-09-10T09:52:04Z",
+        "as": "already compact",
+        "was": 3040,
+        "bytes": 3040
+      }
+    },
+    "public/sprites/pokemon/sinnoh/433/shiny.png": {
+      "digest": "2fef843a1c7fe74f",
+      "bytes": 3040,
+      "width": 77,
+      "height": 167,
+      "compact": {
+        "at": "2026-09-10T09:52:04Z",
+        "as": "already compact",
+        "was": 3040,
+        "bytes": 3040
       }
     },
     "public/sprites/pokemon/sinnoh/434/regular.png": {
@@ -17557,6 +17653,102 @@
         "bytes": 9952
       }
     },
+    "public/sprites/pokemon/sinnoh/475/regular.png": {
+      "digest": "1981b7c3fa155239",
+      "bytes": 6429,
+      "width": 161,
+      "height": 178,
+      "compact": {
+        "at": "2026-09-10T09:52:04Z",
+        "as": "already compact",
+        "was": 6429,
+        "bytes": 6429
+      }
+    },
+    "public/sprites/pokemon/sinnoh/475/shiny.png": {
+      "digest": "d270031564c569bf",
+      "bytes": 6429,
+      "width": 161,
+      "height": 178,
+      "compact": {
+        "at": "2026-09-10T09:52:04Z",
+        "as": "already compact",
+        "was": 6429,
+        "bytes": 6429
+      }
+    },
+    "public/sprites/pokemon/sinnoh/476/regular.png": {
+      "digest": "121a1e7ed3931bf2",
+      "bytes": 8902,
+      "width": 230,
+      "height": 306,
+      "compact": {
+        "at": "2026-09-10T09:52:04Z",
+        "as": "already compact",
+        "was": 8902,
+        "bytes": 8902
+      }
+    },
+    "public/sprites/pokemon/sinnoh/476/shiny.png": {
+      "digest": "b3f401141fb37e77",
+      "bytes": 8902,
+      "width": 230,
+      "height": 306,
+      "compact": {
+        "at": "2026-09-10T09:52:04Z",
+        "as": "already compact",
+        "was": 8902,
+        "bytes": 8902
+      }
+    },
+    "public/sprites/pokemon/sinnoh/477/regular.png": {
+      "digest": "15c87e34c56d6c5c",
+      "bytes": 12884,
+      "width": 359,
+      "height": 175,
+      "compact": {
+        "at": "2026-09-10T09:52:04Z",
+        "as": "already compact",
+        "was": 12884,
+        "bytes": 12884
+      }
+    },
+    "public/sprites/pokemon/sinnoh/477/shiny.png": {
+      "digest": "135e7d88fc6bec14",
+      "bytes": 13012,
+      "width": 359,
+      "height": 175,
+      "compact": {
+        "at": "2026-09-10T09:52:04Z",
+        "as": "already compact",
+        "was": 13012,
+        "bytes": 13012
+      }
+    },
+    "public/sprites/pokemon/sinnoh/478/regular.png": {
+      "digest": "353ba0dc1ed0ffe1",
+      "bytes": 4673,
+      "width": 296,
+      "height": 80,
+      "compact": {
+        "at": "2026-09-10T09:52:04Z",
+        "as": "already compact",
+        "was": 4673,
+        "bytes": 4673
+      }
+    },
+    "public/sprites/pokemon/sinnoh/478/shiny.png": {
+      "digest": "2817d3a26577df2e",
+      "bytes": 4673,
+      "width": 296,
+      "height": 80,
+      "compact": {
+        "at": "2026-09-10T09:52:04Z",
+        "as": "already compact",
+        "was": 4673,
+        "bytes": 4673
+      }
+    },
     "public/sprites/pokemon/unknown/100000/regular.png": {
       "digest": "740100996c69d777",
       "bytes": 1126,
@@ -17606,15 +17798,15 @@
       }
     },
     "public/sprites/ui/candies/hoenn/image.png": {
-      "digest": "bf0b7f93b704f67b",
-      "bytes": 8754,
+      "digest": "23f3a962334a74dd",
+      "bytes": 8774,
       "width": 144,
       "height": 144,
       "compact": {
-        "at": "2026-09-05T12:52:21Z",
+        "at": "2026-09-10T09:52:04Z",
         "as": "already compact",
-        "was": 8754,
-        "bytes": 8754
+        "was": 8774,
+        "bytes": 8774
       }
     },
     "public/sprites/ui/candies/johto/image.png": {

@@ -4,8 +4,9 @@ import Abilities from '../../ids/abilities';
 import Biome, { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
+import { Items } from '../../ids/items';
 import { Moves } from '../../ids/moves';
-import { EvolutionMethod, Species } from '../../ids/species';
+import { EvolutionMethod, Genders, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 // TM and tutor moves both stages share
@@ -51,6 +52,12 @@ export default function registerSnoruntSpecies(): void {
         species: Species.Glalie,
         method: EvolutionMethod.Level,
         level: 42,
+      },
+      {
+        species: Species.Froslass,
+        method: EvolutionMethod.UsedItem | EvolutionMethod.Gender,
+        item: Items.DawnStone,
+        gender: Genders.Female,
       },
     ],
     name: 'Snorunt',

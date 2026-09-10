@@ -234,6 +234,9 @@ const enum Families {
   Uxie = 229,
   Mesprit = 230,
   Azelf = 231,
+  Dialga = 232,
+  Palkia = 233,
+  Giratina = 234,
 }
 
 export default Families;

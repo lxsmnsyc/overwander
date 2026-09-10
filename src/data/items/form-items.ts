@@ -1,4 +1,4 @@
-import { DEOXYS_FORMS, type Species } from '../ids/species';
+import { DEOXYS_FORMS, Species } from '../ids/species';
 import { ItemFlags, ItemTypes, Items } from '../ids/items';
 import { registerItem } from './__create';
 
@@ -13,7 +13,14 @@ import { registerItem } from './__create';
  * The battle side lives in
  * [`src/battle/items/forms.ts`](../../battle/items/forms.ts).
  */
-export const FORM_ITEMS = new Map<Items, Species[]>([[Items.Meteorite, DEOXYS_FORMS]]);
+export const FORM_ITEMS = new Map<Items, Species[]>([
+  [Items.Meteorite, DEOXYS_FORMS],
+  // One shape each rather than a set, so the orb is a switch a player
+  // sets rather than the gamble a Meteorite is
+  [Items.AdamantOrb, [Species.DialgaOrigin]],
+  [Items.LustrousOrb, [Species.PalkiaOrigin]],
+  [Items.GriseousOrb, [Species.GiratinaOrigin]],
+]);
 
 /**
  * The shapes this item rearranges its holder into, or an empty list
@@ -29,6 +36,19 @@ export function getItemForms(item: Items): Species[] {
  */
 export const METEORITE_PRICE = 12_000;
 
+/**
+ * What an orb costs. Dear as the meteorite is, and for the same
+ * reason: it is the only way to the shape it holds
+ */
+export const ORB_PRICE = 12_000;
+
+/** The three orbs, and the one the holder has to be */
+const CREATION_ORBS: [item: Items, name: string, icon: string, holder: string][] = [
+  [Items.AdamantOrb, 'Adamant Orb', 'adamant-orb', 'Dialga'],
+  [Items.LustrousOrb, 'Lustrous Orb', 'lustrous-orb', 'Palkia'],
+  [Items.GriseousOrb, 'Griseous Orb', 'griseous-orb', 'Giratina'],
+];
+
 export default function registerFormItems(): void {
   registerItem(Items.Meteorite, {
     name: 'Meteorite',
@@ -41,4 +61,18 @@ export default function registerFormItems(): void {
     buy: 0,
     sell: METEORITE_PRICE / 2,
   });
+
+  for (const [item, name, icon, holder] of CREATION_ORBS) {
+    registerItem(item, {
+      name,
+      description: `A ${holder} holding it fights in its other shape.`,
+      type: ItemTypes.Held,
+      // The three are drawn on the held sheet, which is where the
+      // collection packed them
+      icon: `held/${icon}`,
+      flags: ItemFlags.Holdable,
+      buy: 0,
+      sell: ORB_PRICE / 2,
+    });
+  }
 }

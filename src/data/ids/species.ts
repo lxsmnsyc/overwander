@@ -600,9 +600,17 @@ export const enum Species {
   Uxie = 480,
   Mesprit = 481,
   Azelf = 482,
+  Dialga = 483,
+  Palkia = 484,
+  Giratina = 487,
   DeoxysAttack = 1038601,
   DeoxysDefense = 1038602,
   DeoxysSpeed = 1038603,
+
+  /** The shapes the creation trio take in the world behind this one */
+  DialgaOrigin = 1048301,
+  PalkiaOrigin = 1048401,
+  GiratinaOrigin = 1048701,
 
   /** The three cloaks, which are what a Burmy was met wearing */
   BurmySandy = 1041201,
@@ -751,6 +759,11 @@ export const CASTFORM_FORMS: Species[] = [
  * Castform's skies they are worn rather than met: a Meteorite in its
  * hands is what moves it between them
  */
+/** A creation trio member and the shape its own orb holds it in */
+export const DIALGA_FORMS: Species[] = [Species.Dialga, Species.DialgaOrigin];
+export const PALKIA_FORMS: Species[] = [Species.Palkia, Species.PalkiaOrigin];
+export const GIRATINA_FORMS: Species[] = [Species.Giratina, Species.GiratinaOrigin];
+
 export const DEOXYS_FORMS: Species[] = [
   Species.Deoxys,
   Species.DeoxysAttack,

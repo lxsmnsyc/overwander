@@ -81,6 +81,17 @@ const enum Lairs {
   LakeAcuity = 18,
   LakeVerity = 19,
   LakeValor = 20,
+  /**
+   * The top of the mountain, where the two that made the world are
+   * called down. It holds both, like the Southern Island, so which of
+   * them answers is a roll
+   */
+  SpearPillar = 21,
+  /**
+   * The cave the third one was banished through. One resident, and
+   * the only door to the world behind this one
+   */
+  TurnbackCave = 22,
 }
 
 export const LAIR_NAMES: Record<Lairs, string> = {
@@ -105,6 +116,8 @@ export const LAIR_NAMES: Record<Lairs, string> = {
   [Lairs.LakeAcuity]: 'Lake Acuity',
   [Lairs.LakeVerity]: 'Lake Verity',
   [Lairs.LakeValor]: 'Lake Valor',
+  [Lairs.SpearPillar]: 'Spear Pillar',
+  [Lairs.TurnbackCave]: 'Turnback Cave',
 };
 
 /**
@@ -135,6 +148,8 @@ export const LAIR_SPECIES: Record<Lairs, Species[]> = {
   [Lairs.LakeAcuity]: [Species.Uxie],
   [Lairs.LakeVerity]: [Species.Mesprit],
   [Lairs.LakeValor]: [Species.Azelf],
+  [Lairs.SpearPillar]: [Species.Dialga, Species.Palkia],
+  [Lairs.TurnbackCave]: [Species.Giratina],
 };
 
 /**
@@ -162,6 +177,8 @@ export const EVERY_LAIR: Lairs[] = [
   Lairs.LakeAcuity,
   Lairs.LakeVerity,
   Lairs.LakeValor,
+  Lairs.SpearPillar,
+  Lairs.TurnbackCave,
 ];
 
 /**
@@ -202,22 +219,23 @@ const BIOME_LAIRS: { [key in Biome]?: Lairs[] } = {
   [Biome.PolarOcean]: [Lairs.SeafoamIslands, Lairs.IslandCave],
   [Biome.Glacier]: [Lairs.SeafoamIslands, Lairs.IslandCave],
   [Biome.Grassland]: [Lairs.PowerPlant, Lairs.BurnedTower, Lairs.LakeValor],
-  [Biome.Bog]: [Lairs.LakeValor],
+  [Biome.Bog]: [Lairs.LakeValor, Lairs.TurnbackCave],
   [Biome.TemperateForest]: [Lairs.LakeVerity],
   [Biome.Woodland]: [Lairs.BurnedTower, Lairs.LakeVerity],
   [Biome.Taiga]: [Lairs.LakeAcuity],
   [Biome.Tundra]: [Lairs.LakeAcuity],
   [Biome.Steppe]: [Lairs.PowerPlant],
   [Biome.Desert]: [Lairs.MtEmber, Lairs.DesertRuins],
-  [Biome.Badlands]: [Lairs.DesertRuins, Lairs.AncientTomb],
+  [Biome.Badlands]: [Lairs.DesertRuins, Lairs.AncientTomb, Lairs.TurnbackCave],
   [Biome.Mountain]: [
     Lairs.MtEmber,
     Lairs.CeruleanCave,
     Lairs.BellTower,
     Lairs.AncientTomb,
     Lairs.SkyPillar,
+    Lairs.SpearPillar,
   ],
-  [Biome.AlpineTundra]: [Lairs.CeruleanCave],
+  [Biome.AlpineTundra]: [Lairs.CeruleanCave, Lairs.SpearPillar],
   [Biome.Volcano]: [Lairs.TerraCave],
 };
 

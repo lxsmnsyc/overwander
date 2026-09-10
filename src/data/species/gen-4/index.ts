@@ -33,6 +33,7 @@ import registerGlameowSpecies from './glameow';
 import registerChimcharSpecies from './chimchar';
 import registerCombeeSpecies from './combee';
 import registerCranidosSpecies from './cranidos';
+import registerCreationTrioSpecies from './creation-trio';
 import registerCroagunkSpecies from './croagunk';
 import registerKricketotSpecies from './kricketot';
 import registerLakeTrioSpecies from './lake-trio';
@@ -113,4 +114,5 @@ export default function registerGen4Species(): void {
   registerGlaceonSpecies();
   registerPorygonZSpecies();
   registerLakeTrioSpecies();
+  registerCreationTrioSpecies();
 }

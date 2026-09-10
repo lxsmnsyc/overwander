@@ -1387,4 +1387,24 @@ export default function registerSignatureAbilities(): void {
     name: 'Willgift',
     description: 'Its whole team gains 1 stage of Attack as it takes the field.',
   });
+
+  /**
+   * The creation trio: while one stands, the far side reads one of
+   * its stages a step lower. Asked rather than applied, so it lifts
+   * the moment the holder leaves
+   */
+  registerSignature(Families.Dialga, Abilities.TimeDrag, {
+    name: 'Time Drag',
+    description: 'Every enemy reads its Speed stage 1 lower while it stands.',
+  });
+
+  registerSignature(Families.Palkia, Abilities.SpaceDrift, {
+    name: 'Space Drift',
+    description: 'Every enemy reads its accuracy stage 1 lower while it stands.',
+  });
+
+  registerSignature(Families.Giratina, Abilities.VoidWeight, {
+    name: 'Void Weight',
+    description: 'Every enemy reads its Attack stage 1 lower while it stands.',
+  });
 }

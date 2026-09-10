@@ -580,6 +580,41 @@ export function createWingbeatAbility(
 }
 
 /**
+ * What the creation trio share: while one of them is standing, every
+ * unit on the far side reads one of its stages a step lower than it
+ * is.
+ *
+ * Asked rather than written: nothing is applied to the enemy, so the
+ * step comes back the moment the holder leaves the field, two holders
+ * never stack, and Clear Body and Mist have nothing to refuse. The AI
+ * sees it because scoring asks the same question the resolver does
+ */
+export function createFieldDragAbility(
+  ability: Abilities,
+  stage: Stages,
+): ((battle: Battle) => void) & { ability: Abilities } {
+  return createAbility(ability, (battle) =>
+    battle.on(BattleEvents.CheckUnitStage, EventPriority.Post, (event) => {
+      if (event.stage !== stage) {
+        return;
+      }
+
+      for (const holder of getAbilityHolders(battle, ability)) {
+        if (
+          holder.alive &&
+          holder !== event.source &&
+          holder.team.alliance !== event.source.team.alliance &&
+          holder.hasAbility(ability)
+        ) {
+          event.value -= 1;
+          return;
+        }
+      }
+    }),
+  );
+}
+
+/**
  * What the lake trio share: each of them hands its own side the thing
  * it was made to hold as it arrives, one stage of it, in the stat
  * that reads as knowledge, feeling or resolve.

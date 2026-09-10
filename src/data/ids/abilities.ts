@@ -813,6 +813,9 @@ const enum Abilities {
   Mindgift = 200229,
   Heartgift = 200230,
   Willgift = 200231,
+  TimeDrag = 200232,
+  SpaceDrift = 200233,
+  VoidWeight = 200234,
 }
 
 export default Abilities;

@@ -2352,6 +2352,49 @@ describe('Full Belly', () => {
   });
 });
 
+describe('the creation trio', () => {
+  const DRAGS = [
+    { name: 'Time Drag', ability: Abilities.TimeDrag, stage: Stages.Speed },
+    { name: 'Space Drift', ability: Abilities.SpaceDrift, stage: Stages.Accuracy },
+    { name: 'Void Weight', ability: Abilities.VoidWeight, stage: Stages.Attack },
+  ];
+
+  for (const { name, ability, stage } of DRAGS) {
+    it(`${name} costs the far side a stage for as long as it stands`, () => {
+      const { battle, teamA, teamB } = createBattle();
+      const holder = createUnit(battle, teamA);
+      const mate = createUnit(battle, teamA);
+      const enemy = createUnit(battle, teamB);
+
+      expect(enemy.checkStage(stage, 0)).toBe(0);
+
+      holder.addAbility(ability);
+
+      expect(enemy.checkStage(stage, 0)).toBe(-1);
+      // Its own side reads what it always read, itself included
+      expect(mate.checkStage(stage, 0)).toBe(0);
+      expect(holder.checkStage(stage, 0)).toBe(0);
+
+      // Nothing is written to the enemy, so it comes straight back
+      holder.removeAbility(ability);
+
+      expect(enemy.checkStage(stage, 0)).toBe(0);
+    });
+  }
+
+  it('two of them never stack on the same stage', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const first = createUnit(battle, teamA);
+    const second = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    first.addAbility(Abilities.TimeDrag);
+    second.addAbility(Abilities.TimeDrag);
+
+    expect(enemy.checkStage(Stages.Speed, 0)).toBe(-1);
+  });
+});
+
 describe('the lake trio', () => {
   const GIFTS = [
     { name: 'Mindgift', ability: Abilities.Mindgift, stage: Stages.Accuracy },

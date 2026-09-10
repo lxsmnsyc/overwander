@@ -421,6 +421,9 @@ const LEGENDARY_SPECIES = new Set<Species>([
   Species.Uxie,
   Species.Mesprit,
   Species.Azelf,
+  Species.Dialga,
+  Species.Palkia,
+  Species.Giratina,
 ]);
 
 /**

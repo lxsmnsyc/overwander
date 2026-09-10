@@ -843,6 +843,11 @@ export const enum Items {
 
   /** What a Happiny carries about as though it were an egg */
   OvalStone = 397,
+
+  /** The three the creation trio are held in their other shape by */
+  AdamantOrb = 398,
+  LustrousOrb = 399,
+  GriseousOrb = 400,
 }
 
 /**

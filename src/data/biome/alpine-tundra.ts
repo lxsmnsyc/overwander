@@ -36,7 +36,11 @@ export default function registerAlpineTundraSpawns(): void {
         { species: Species.Mamoswine, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS, { species: Species.Riolu, weight: PRIZED_WEIGHT }],
-      special: [{ species: Species.Articuno, weight: 10 }],
+      special: [
+        { species: Species.Articuno, weight: 10 },
+        { species: Species.Dialga, weight: 10 },
+        { species: Species.Palkia, weight: 10 },
+      ],
     },
     [TimeOfDay.Day]: {
       base: [
@@ -70,7 +74,11 @@ export default function registerAlpineTundraSpawns(): void {
         { species: Species.Mamoswine, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS, { species: Species.Riolu, weight: PRIZED_WEIGHT }],
-      special: [{ species: Species.Articuno, weight: 10 }],
+      special: [
+        { species: Species.Articuno, weight: 10 },
+        { species: Species.Dialga, weight: 10 },
+        { species: Species.Palkia, weight: 10 },
+      ],
     },
     [TimeOfDay.Evening]: {
       base: [
@@ -102,7 +110,11 @@ export default function registerAlpineTundraSpawns(): void {
         { species: Species.Mamoswine, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS],
-      special: [{ species: Species.Articuno, weight: 10 }],
+      special: [
+        { species: Species.Articuno, weight: 10 },
+        { species: Species.Dialga, weight: 10 },
+        { species: Species.Palkia, weight: 10 },
+      ],
     },
     [TimeOfDay.Night]: {
       base: [{ species: Species.Swinub, weight: 25 }],
@@ -127,7 +139,11 @@ export default function registerAlpineTundraSpawns(): void {
         { species: Species.Mamoswine, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS],
-      special: [{ species: Species.Articuno, weight: 10 }],
+      special: [
+        { species: Species.Articuno, weight: 10 },
+        { species: Species.Dialga, weight: 10 },
+        { species: Species.Palkia, weight: 10 },
+      ],
     },
   });
 }

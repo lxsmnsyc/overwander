@@ -2,4 +2,13 @@
 'overwander': minor
 ---
 
-Three more Sinnoh families are in: the Shinx line, and Sinnoh's two fossils. A Luxray's Gleam Eyes ignore raised evasion and reach a target hiding in the air or underground; a Rampardos' Ramrod strikes through Protect, Detect and a Substitute; a Bastiodon's Bulwark hands the guard it puts up to its whole team. The Skull Fossil and the Armor Fossil are dug up and bought like the other five, and Cranidos and Shieldon come out of them at the same bench.
+Shinx, Cranidos and Shieldon can be caught, with their evolutions.
+
+- The Skull Fossil and the Armor Fossil are dug up and sold like the other five.
+  Cranidos and Shieldon are revived from them.
+- Gleam Eyes let a Shinx ignore raised evasion and hit a target that is in the
+  air or underground.
+- Ramrod lets a Cranidos strike through Protect, Detect and a Substitute.
+- Bulwark gives a Shieldon's guard to its whole team for as long as its own
+  lasts.
+- Changes world generation.

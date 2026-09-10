@@ -2,4 +2,10 @@
 'overwander': minor
 ---
 
-Sinnoh's first three routes are catchable: the Starly line, the Bidoof line and the Kricketot line, each with its own signature. A Staraptor's Murmuration pays it for the flock still standing beside it, a Bibarel's Lodgework leaves a quarter of every burn, poison and hazard off its whole team, and a Kricketune's Chorus lifts every sound move its side sings.
+Starly, Bidoof and Kricketot can be caught, with their evolutions.
+
+- Murmuration raises a Starly's damage 1.05x for each teammate still standing,
+  up to 1.25x.
+- Lodgework cuts indirect damage to a Bidoof's team by 25%.
+- Chorus raises the damage of sound moves from a Kricketot's team by 1.2x.
+- Changes world generation.

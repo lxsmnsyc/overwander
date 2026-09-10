@@ -36,6 +36,8 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Aipom, weight: 5 },
         { species: Species.Togetic, weight: 5 },
         { species: Species.Burmy, weight: 20 },
+        { species: Species.Combee, weight: 22 },
+        { species: Species.Cherubi, weight: 22 },
       ],
       rare: [
         { species: Species.Ivysaur, weight: 1 },
@@ -63,6 +65,8 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Granbull, weight: 5 },
         { species: Species.Wormadam, weight: 4 },
         { species: Species.Mothim, weight: 4 },
+        { species: Species.Vespiquen, weight: 5 },
+        { species: Species.Cherrim, weight: 6 },
       ],
       elusive: [
         { species: Species.Venusaur, weight: 2 },
@@ -119,6 +123,8 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Aipom, weight: 5 },
         { species: Species.Togetic, weight: 5 },
         { species: Species.Burmy, weight: 20 },
+        { species: Species.Combee, weight: 22 },
+        { species: Species.Cherubi, weight: 22 },
       ],
       rare: [
         { species: Species.Ivysaur, weight: 1 },
@@ -146,6 +152,8 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Granbull, weight: 5 },
         { species: Species.Wormadam, weight: 4 },
         { species: Species.Mothim, weight: 4 },
+        { species: Species.Vespiquen, weight: 5 },
+        { species: Species.Cherrim, weight: 6 },
       ],
       elusive: [
         { species: Species.Venusaur, weight: 2 },
@@ -197,6 +205,8 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Murkrow, weight: 5 },
         { species: Species.Kricketot, weight: 25 },
         { species: Species.Burmy, weight: 20 },
+        { species: Species.Combee, weight: 22 },
+        { species: Species.Cherubi, weight: 22 },
       ],
       rare: [
         { species: Species.Nidorina, weight: 5 },
@@ -220,6 +230,8 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Kricketune, weight: 10 },
         { species: Species.Wormadam, weight: 4 },
         { species: Species.Mothim, weight: 4 },
+        { species: Species.Vespiquen, weight: 5 },
+        { species: Species.Cherrim, weight: 6 },
       ],
       elusive: [
         { species: Species.Nidoqueen, weight: 5 },
@@ -269,6 +281,8 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Misdreavus, weight: 5 },
         { species: Species.Kricketot, weight: 25 },
         { species: Species.Burmy, weight: 20 },
+        { species: Species.Combee, weight: 22 },
+        { species: Species.Cherubi, weight: 22 },
       ],
       rare: [
         { species: Species.Nidorina, weight: 5 },
@@ -295,6 +309,8 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Kricketune, weight: 10 },
         { species: Species.Wormadam, weight: 4 },
         { species: Species.Mothim, weight: 4 },
+        { species: Species.Vespiquen, weight: 5 },
+        { species: Species.Cherrim, weight: 6 },
       ],
       elusive: [
         { species: Species.Nidoqueen, weight: 5 },

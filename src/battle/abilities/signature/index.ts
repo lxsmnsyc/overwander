@@ -9,6 +9,7 @@ import sandshrewToOddish from './sandshrew-to-oddish';
 import spoinkToDeoxys from './spoink-to-deoxys';
 import treeckoToTorkoal from './treecko-to-torkoal';
 import burmyToShellos from './burmy-to-shellos';
+import combeeToCherubi from './combee-to-cherubi';
 import shinxToShieldon from './shinx-to-shieldon';
 import starlyToKricketot from './starly-to-kricketot';
 import turtwigToPiplup from './turtwig-to-piplup';
@@ -31,6 +32,7 @@ const setupAbilities = [
   ...starlyToKricketot,
   ...shinxToShieldon,
   ...burmyToShellos,
+  ...combeeToCherubi,
 ];
 
 /**

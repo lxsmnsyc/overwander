@@ -1,6 +1,9 @@
 import registerBidoofSpecies from './bidoof';
+import registerBuizelSpecies from './buizel';
 import registerBurmySpecies from './burmy';
+import registerCherubiSpecies from './cherubi';
 import registerChimcharSpecies from './chimchar';
+import registerCombeeSpecies from './combee';
 import registerCranidosSpecies from './cranidos';
 import registerKricketotSpecies from './kricketot';
 import registerPiplupSpecies from './piplup';
@@ -24,5 +27,8 @@ export default function registerGen4Species(): void {
   registerCranidosSpecies();
   registerShieldonSpecies();
   registerBurmySpecies();
+  registerCombeeSpecies();
+  registerBuizelSpecies();
+  registerCherubiSpecies();
   registerShellosSpecies();
 }

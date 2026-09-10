@@ -76,6 +76,7 @@ import {
 import {
   BURMY_FORMS,
   CASTFORM_FORMS,
+  CHERRIM_FORMS,
   DEOXYS_FORMS,
   GASTRODON_FORMS,
   EvolutionMethod,
@@ -728,7 +729,8 @@ describe('species forms', () => {
     // the twenty-seven unowns past A, the three skies a Castform
     // wears, the three shapes a Deoxys rearranges into, and the ones
     // that are met rather than worn: a Burmy's other two cloaks with
-    // the Wormadam they grow into, and the far shore's shell
+    // the Wormadam they grow into, and the far shore's shell. A
+    // Cherrim's open blossom is worn, the way a Castform's sky is
     const registered = getRegisteredSpecies();
     const variants = new Set<Species>([
       ...UNOWN_FORMS.slice(1),
@@ -738,6 +740,7 @@ describe('species forms', () => {
       ...WORMADAM_FORMS.slice(1),
       ...SHELLOS_FORMS.slice(1),
       ...GASTRODON_FORMS.slice(1),
+      ...CHERRIM_FORMS.slice(1),
     ]);
 
     expect(registered.length).toBeGreaterThan(0);

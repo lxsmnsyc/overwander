@@ -18,6 +18,7 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Wingull, weight: 25 },
         { species: Species.Shellos, weight: 25 },
         { species: Species.BurmySandy, weight: 20 },
+        { species: Species.Buizel, weight: 25 },
       ],
       rare: [{ species: Species.Prinplup, weight: 2 }],
       scarce: [
@@ -28,6 +29,7 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Pelipper, weight: 10 },
         { species: Species.Gastrodon, weight: 10 },
         { species: Species.WormadamSandy, weight: 4 },
+        { species: Species.Floatzel, weight: 8 },
       ],
       elusive: [
         { species: Species.Shuckle, weight: 5 },
@@ -48,6 +50,7 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Wingull, weight: 25 },
         { species: Species.Shellos, weight: 25 },
         { species: Species.BurmySandy, weight: 20 },
+        { species: Species.Buizel, weight: 25 },
       ],
       rare: [{ species: Species.Prinplup, weight: 2 }],
       scarce: [
@@ -58,6 +61,7 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Pelipper, weight: 10 },
         { species: Species.Gastrodon, weight: 10 },
         { species: Species.WormadamSandy, weight: 4 },
+        { species: Species.Floatzel, weight: 8 },
       ],
       elusive: [
         { species: Species.Shuckle, weight: 5 },
@@ -77,6 +81,7 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Magikarp, weight: 30 },
         { species: Species.Shellos, weight: 25 },
         { species: Species.BurmySandy, weight: 20 },
+        { species: Species.Buizel, weight: 25 },
       ],
       rare: [],
       scarce: [
@@ -86,6 +91,7 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Starmie, weight: 10 },
         { species: Species.Gastrodon, weight: 10 },
         { species: Species.WormadamSandy, weight: 4 },
+        { species: Species.Floatzel, weight: 8 },
       ],
       elusive: [
         { species: Species.Shuckle, weight: 5 },
@@ -104,6 +110,7 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Magikarp, weight: 30 },
         { species: Species.Shellos, weight: 25 },
         { species: Species.BurmySandy, weight: 20 },
+        { species: Species.Buizel, weight: 25 },
       ],
       rare: [],
       scarce: [
@@ -113,6 +120,7 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Starmie, weight: 10 },
         { species: Species.Gastrodon, weight: 10 },
         { species: Species.WormadamSandy, weight: 4 },
+        { species: Species.Floatzel, weight: 8 },
       ],
       elusive: [
         { species: Species.Shuckle, weight: 5 },

@@ -535,6 +535,12 @@ export const enum Species {
   Burmy = 412,
   Wormadam = 413,
   Mothim = 414,
+  Combee = 415,
+  Vespiquen = 416,
+  Buizel = 418,
+  Floatzel = 419,
+  Cherubi = 420,
+  Cherrim = 421,
   Shellos = 422,
   Gastrodon = 423,
   DeoxysAttack = 1038601,
@@ -546,6 +552,9 @@ export const enum Species {
   BurmyTrash = 1041202,
   WormadamSandy = 1041301,
   WormadamTrash = 1041302,
+
+  /** The blossom a Cherrim opens into once the sun is out */
+  CherrimSunshine = 1042101,
 
   /** The far shore's shell, met east of the meridian */
   ShellosEast = 1042201,
@@ -664,6 +673,9 @@ export const WORMADAM_FORMS = [Species.Wormadam, Species.WormadamSandy, Species.
 export const SHELLOS_FORMS = [Species.Shellos, Species.ShellosEast];
 
 export const GASTRODON_FORMS = [Species.Gastrodon, Species.GastrodonEast];
+
+/** Cherrim shut and Cherrim open, the shut one first */
+export const CHERRIM_FORMS = [Species.Cherrim, Species.CherrimSunshine];
 
 /**
  * Castform's four shapes, its plain one first. Unlike an unown's,

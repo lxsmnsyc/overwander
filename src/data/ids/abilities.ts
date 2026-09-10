@@ -795,6 +795,9 @@ const enum Abilities {
   Bulwark = 200211,
   Patchwork = 200212,
   TwoSeas = 200213,
+  PollenDole = 200214,
+  FloatSac = 200215,
+  SecondBloom = 200216,
 }
 
 export default Abilities;

@@ -1266,4 +1266,25 @@ export default function registerSignatureAbilities(): void {
     name: 'Two Seas',
     description: 'The west shell hits 1.25x with Water moves, the east shell with Ground moves.',
   });
+
+  /**
+   * The comb, the sac and the blossom: what one gathers goes to the
+   * hive, what one carries holds it off the ground, and what one
+   * opens is itself
+   */
+  registerSignature(Families.Combee, Abilities.PollenDole, {
+    name: 'Pollen Dole',
+    description: "Each attack it lands puts 1/16 of its worst hurt teammate's HP back for them.",
+  });
+
+  registerSignature(Families.Buizel, Abilities.FloatSac, {
+    name: 'Float Sac',
+    description: 'It floats above Ground moves and hazards until a blow takes it under 1/2 HP.',
+  });
+
+  registerSignature(Families.Cherubi, Abilities.SecondBloom, {
+    name: 'Second Bloom',
+    description:
+      'The first time it falls under 1/2 HP each fight it takes 1/4 of its HP back and 1 stage of Special Attack.',
+  });
 }

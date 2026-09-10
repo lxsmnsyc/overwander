@@ -18,6 +18,7 @@ export default function registerBeachSpawns(): void {
         { species: Species.Wingull, weight: 25 },
         { species: Species.Shellos, weight: 25 },
         { species: Species.BurmySandy, weight: 20 },
+        { species: Species.Buizel, weight: 25 },
       ],
       rare: [{ species: Species.Wartortle, weight: 1 }],
       scarce: [
@@ -30,6 +31,7 @@ export default function registerBeachSpawns(): void {
         { species: Species.Pelipper, weight: 10 },
         { species: Species.Gastrodon, weight: 10 },
         { species: Species.WormadamSandy, weight: 4 },
+        { species: Species.Floatzel, weight: 8 },
       ],
       elusive: [
         { species: Species.Blastoise, weight: 2 },
@@ -50,6 +52,7 @@ export default function registerBeachSpawns(): void {
         { species: Species.Wingull, weight: 25 },
         { species: Species.Shellos, weight: 25 },
         { species: Species.BurmySandy, weight: 20 },
+        { species: Species.Buizel, weight: 25 },
       ],
       rare: [{ species: Species.Wartortle, weight: 1 }],
       scarce: [
@@ -62,6 +65,7 @@ export default function registerBeachSpawns(): void {
         { species: Species.Pelipper, weight: 10 },
         { species: Species.Gastrodon, weight: 10 },
         { species: Species.WormadamSandy, weight: 4 },
+        { species: Species.Floatzel, weight: 8 },
       ],
       elusive: [
         { species: Species.Blastoise, weight: 2 },
@@ -80,6 +84,7 @@ export default function registerBeachSpawns(): void {
         { species: Species.Staryu, weight: 20 },
         { species: Species.Shellos, weight: 25 },
         { species: Species.BurmySandy, weight: 20 },
+        { species: Species.Buizel, weight: 25 },
       ],
       rare: [],
       scarce: [
@@ -89,6 +94,7 @@ export default function registerBeachSpawns(): void {
         { species: Species.Vaporeon, weight: 5 },
         { species: Species.Gastrodon, weight: 10 },
         { species: Species.WormadamSandy, weight: 4 },
+        { species: Species.Floatzel, weight: 8 },
       ],
       elusive: [{ species: Species.Corsola, weight: 20 }],
       prized: [...UNOWN_SPAWNS],
@@ -103,6 +109,7 @@ export default function registerBeachSpawns(): void {
         { species: Species.Staryu, weight: 20 },
         { species: Species.Shellos, weight: 25 },
         { species: Species.BurmySandy, weight: 20 },
+        { species: Species.Buizel, weight: 25 },
       ],
       rare: [],
       scarce: [
@@ -112,6 +119,7 @@ export default function registerBeachSpawns(): void {
         { species: Species.Vaporeon, weight: 5 },
         { species: Species.Gastrodon, weight: 10 },
         { species: Species.WormadamSandy, weight: 4 },
+        { species: Species.Floatzel, weight: 8 },
       ],
       elusive: [{ species: Species.Corsola, weight: 20 }],
       prized: [...UNOWN_SPAWNS],

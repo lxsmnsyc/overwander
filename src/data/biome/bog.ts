@@ -24,6 +24,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Surskit, weight: 25 },
         { species: Species.Yanma, weight: 5 },
         { species: Species.Bidoof, weight: 25 },
+        { species: Species.Buizel, weight: 25 },
       ],
       rare: [
         { species: Species.Poliwhirl, weight: 5 },
@@ -38,6 +39,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Masquerain, weight: 10 },
         { species: Species.Quagsire, weight: 5 },
         { species: Species.Bibarel, weight: 10 },
+        { species: Species.Floatzel, weight: 8 },
       ],
       elusive: [
         { species: Species.Poliwrath, weight: 5 },
@@ -65,6 +67,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Surskit, weight: 25 },
         { species: Species.Yanma, weight: 5 },
         { species: Species.Bidoof, weight: 25 },
+        { species: Species.Buizel, weight: 25 },
       ],
       rare: [
         { species: Species.Poliwhirl, weight: 5 },
@@ -79,6 +82,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Masquerain, weight: 10 },
         { species: Species.Quagsire, weight: 5 },
         { species: Species.Bibarel, weight: 10 },
+        { species: Species.Floatzel, weight: 8 },
       ],
       elusive: [
         { species: Species.Poliwrath, weight: 5 },
@@ -101,6 +105,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Marill, weight: 20 },
         { species: Species.Yanma, weight: 5 },
         { species: Species.Bidoof, weight: 25 },
+        { species: Species.Buizel, weight: 25 },
       ],
       rare: [{ species: Species.Poliwhirl, weight: 5 }],
       scarce: [
@@ -110,6 +115,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Azumarill, weight: 5 },
         { species: Species.Quagsire, weight: 5 },
         { species: Species.Bibarel, weight: 10 },
+        { species: Species.Floatzel, weight: 8 },
       ],
       elusive: [
         { species: Species.Volbeat, weight: 8 },
@@ -134,6 +140,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Marill, weight: 20 },
         { species: Species.Yanma, weight: 5 },
         { species: Species.Bidoof, weight: 25 },
+        { species: Species.Buizel, weight: 25 },
       ],
       rare: [
         { species: Species.Poliwhirl, weight: 5 },
@@ -147,6 +154,7 @@ export default function registerBogSpawns(): void {
         { species: Species.Azumarill, weight: 5 },
         { species: Species.Quagsire, weight: 5 },
         { species: Species.Bibarel, weight: 10 },
+        { species: Species.Floatzel, weight: 8 },
       ],
       elusive: [
         { species: Species.Poliwrath, weight: 5 },

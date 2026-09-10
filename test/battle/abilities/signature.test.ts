@@ -70,6 +70,12 @@ import {
   PATCHWORK_MAX_PATCHES,
   TWO_SEAS_SCALE,
 } from '../../../src/battle/abilities/signature/burmy-to-shellos';
+import {
+  FLOAT_SAC_THRESHOLD,
+  POLLEN_DOLE_FRACTION,
+  SECOND_BLOOM_FRACTION,
+  SECOND_BLOOM_STAGES,
+} from '../../../src/battle/abilities/signature/combee-to-cherubi';
 import { Species } from '../../../src/data/ids/species';
 import { AttackPriority } from '../../../src/core/event-emitter';
 import {
@@ -6212,5 +6218,88 @@ describe('the bagworm and the sea slug', () => {
 
     expect(east.checkMovePower(Moves.MudSlap, target)).toBeCloseTo(20 * TWO_SEAS_SCALE, 5);
     expect(east.checkMovePower(Moves.WaterGun, target)).toBe(40);
+  });
+});
+
+describe('the comb, the sac and the blossom', () => {
+  it('sends what it gathers to whoever needs it most', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const bee = createUnit(battle, teamA);
+    const hurt = createUnit(battle, teamA);
+    const scratched = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    bee.addAbility(Abilities.PollenDole);
+    bee.enter();
+    hurt.enter();
+    scratched.enter();
+    enemy.enter();
+    battle.tick(1);
+
+    const pool = hurt.checkStat(Stats.HP, 0);
+
+    hurt.setHealth(pool / 4);
+    scratched.setHealth(pool / 2);
+
+    const before = hurt.health;
+    const beside = scratched.health;
+
+    bee.attack(enemy, Moves.Tackle, 40, Types.Normal, MoveCategories.Physical, 0);
+    battle.tick(1);
+
+    expect(hurt.health - before).toBeCloseTo(pool * POLLEN_DOLE_FRACTION, 5);
+
+    // Only the worst hurt one is paid
+    expect(scratched.health).toBe(beside);
+  });
+
+  it('floats over the ground until the sac is opened', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const weasel = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    weasel.addAbility(Abilities.FloatSac);
+    weasel.enter();
+    enemy.enter();
+    battle.tick(1);
+
+    expect(weasel.checkGrounded()).toBe(false);
+
+    const pool = weasel.checkStat(Stats.HP, 0);
+
+    enemy.damage(NONE_CAUSE, weasel, pool * FLOAT_SAC_THRESHOLD + 1, 0);
+
+    expect(weasel.checkGrounded()).toBe(true);
+
+    // Healing does not put the air back in
+    weasel.heal(NONE_CAUSE, weasel, pool, 0);
+
+    expect(weasel.checkGrounded()).toBe(true);
+  });
+
+  it('opens once when it is worth opening', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const cherry = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+
+    cherry.addAbility(Abilities.SecondBloom);
+    cherry.enter();
+    enemy.enter();
+    battle.tick(1);
+
+    const pool = cherry.checkStat(Stats.HP, 0);
+
+    enemy.damage(NONE_CAUSE, cherry, pool * 0.6, 0);
+
+    expect(cherry.stages[Stages.SpecialAttack]).toBe(SECOND_BLOOM_STAGES);
+    expect(cherry.health).toBeCloseTo(pool * 0.4 + pool * SECOND_BLOOM_FRACTION, 5);
+
+    // The blossom is already open
+    const opened = cherry.health;
+
+    enemy.damage(NONE_CAUSE, cherry, 10, 0);
+
+    expect(cherry.health).toBe(opened - 10);
+    expect(cherry.stages[Stages.SpecialAttack]).toBe(SECOND_BLOOM_STAGES);
   });
 });

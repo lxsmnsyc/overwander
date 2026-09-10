@@ -215,7 +215,10 @@ const enum Families {
   Cranidos = 210,
   Shieldon = 211,
   Burmy = 212,
-  Shellos = 213,
+  Combee = 213,
+  Buizel = 214,
+  Cherubi = 215,
+  Shellos = 216,
 }
 
 export default Families;

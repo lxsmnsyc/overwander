@@ -12,12 +12,18 @@ export default function registerTropicalSeasonalForestSpawns(): void {
         { species: Species.Bellsprout, weight: 20 },
         { species: Species.Treecko, weight: 2 },
       ],
-      uncommon: [{ species: Species.Exeggcute, weight: 20 }],
+      uncommon: [
+        { species: Species.Exeggcute, weight: 20 },
+        { species: Species.Cherubi, weight: 22 },
+      ],
       rare: [
         { species: Species.Weepinbell, weight: 5 },
         { species: Species.Grovyle, weight: 1 },
       ],
-      scarce: [{ species: Species.Exeggutor, weight: 10 }],
+      scarce: [
+        { species: Species.Exeggutor, weight: 10 },
+        { species: Species.Cherrim, weight: 6 },
+      ],
       elusive: [
         { species: Species.Victreebel, weight: 5 },
         { species: Species.Sceptile, weight: 2 },
@@ -32,12 +38,18 @@ export default function registerTropicalSeasonalForestSpawns(): void {
         { species: Species.Bellsprout, weight: 20 },
         { species: Species.Treecko, weight: 2 },
       ],
-      uncommon: [{ species: Species.Exeggcute, weight: 20 }],
+      uncommon: [
+        { species: Species.Exeggcute, weight: 20 },
+        { species: Species.Cherubi, weight: 22 },
+      ],
       rare: [
         { species: Species.Weepinbell, weight: 5 },
         { species: Species.Grovyle, weight: 1 },
       ],
-      scarce: [{ species: Species.Exeggutor, weight: 10 }],
+      scarce: [
+        { species: Species.Exeggutor, weight: 10 },
+        { species: Species.Cherrim, weight: 6 },
+      ],
       elusive: [
         { species: Species.Victreebel, weight: 5 },
         { species: Species.Pinsir, weight: 5 },
@@ -50,18 +62,30 @@ export default function registerTropicalSeasonalForestSpawns(): void {
     },
     [TimeOfDay.Evening]: {
       base: [],
-      uncommon: [{ species: Species.Exeggcute, weight: 20 }],
+      uncommon: [
+        { species: Species.Exeggcute, weight: 20 },
+        { species: Species.Cherubi, weight: 22 },
+      ],
       rare: [],
-      scarce: [{ species: Species.Exeggutor, weight: 10 }],
+      scarce: [
+        { species: Species.Exeggutor, weight: 10 },
+        { species: Species.Cherrim, weight: 6 },
+      ],
       elusive: [],
       prized: [...UNOWN_SPAWNS],
       special: [],
     },
     [TimeOfDay.Night]: {
       base: [],
-      uncommon: [{ species: Species.Exeggcute, weight: 20 }],
+      uncommon: [
+        { species: Species.Exeggcute, weight: 20 },
+        { species: Species.Cherubi, weight: 22 },
+      ],
       rare: [],
-      scarce: [{ species: Species.Exeggutor, weight: 10 }],
+      scarce: [
+        { species: Species.Exeggutor, weight: 10 },
+        { species: Species.Cherrim, weight: 6 },
+      ],
       elusive: [],
       prized: [...UNOWN_SPAWNS],
       special: [],

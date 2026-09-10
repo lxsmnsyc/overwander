@@ -1,5 +1,6 @@
 import Abilities from '../ids/abilities';
-import { registerAbility } from './__create';
+import Families from '../ids/families';
+import { registerSignature } from './__create';
 
 /**
  * One invented ability per evolution family, themed on what the line
@@ -12,75 +13,64 @@ export default function registerSignatureAbilities(): void {
    * its own type and away from the one that type beats, both sides
    * included
    */
-  // Bulbasaur
-  registerAbility(Abilities.VerdantField, {
+  registerSignature(Families.Bulbasaur, Abilities.VerdantField, {
     name: 'Verdant Field',
     description:
       'Grass moves hit 1.2x and Water moves 0.8x for everybody on the field while it stands.',
   });
 
-  // Charmander
-  registerAbility(Abilities.EmberField, {
+  registerSignature(Families.Charmander, Abilities.EmberField, {
     name: 'Ember Field',
     description:
       'Fire moves hit 1.2x and Grass moves 0.8x for everybody on the field while it stands.',
   });
 
-  // Squirtle
-  registerAbility(Abilities.DelugeField, {
+  registerSignature(Families.Squirtle, Abilities.DelugeField, {
     name: 'Deluge Field',
     description:
       'Water moves hit 1.2x and Fire moves 0.8x for everybody on the field while it stands.',
   });
 
-  // Caterpie
-  registerAbility(Abilities.PowderBurst, {
+  registerSignature(Families.Caterpie, Abilities.PowderBurst, {
     name: 'Powder Burst',
     description: 'Its status moves reach every enemy on the field, not only the one it aimed at.',
   });
 
-  // Weedle
-  registerAbility(Abilities.TwinStinger, {
+  registerSignature(Families.Weedle, Abilities.TwinStinger, {
     name: 'Twin Stinger',
     description:
       'Each physical move it uses strikes twice at 60% power, so anything that answers a landed blow answers both.',
   });
 
-  // Pidgey
-  registerAbility(Abilities.Slipstream, {
+  registerSignature(Families.Pidgey, Abilities.Slipstream, {
     name: 'Slipstream',
     description: 'Cast and channel times are 20% shorter for its own side while it stands.',
   });
 
-  // Rattata
-  registerAbility(Abilities.Nibble, {
+  registerSignature(Families.Rattata, Abilities.Nibble, {
     name: 'Nibble',
     description: "Every move it lands takes another 1/32 of the target's HP, whatever its armour.",
   });
 
-  // Spearow
-  registerAbility(Abilities.Relentless, {
+  registerSignature(Families.Spearow, Abilities.Relentless, {
     name: 'Relentless',
     description:
       'Each move it lands on the same target as the last hits 10% harder, up to 1.4x. Aiming at anybody else starts it over.',
   });
 
-  // Ekans
-  registerAbility(Abilities.Squeeze, {
+  registerSignature(Families.Ekans, Abilities.Squeeze, {
     name: 'Squeeze',
     description:
       'While it casts or channels, the last enemy it touched loses 1/16 of its HP each second.',
   });
 
-  // Pikachu
-  registerAbility(Abilities.ChainLightning, {
+  registerSignature(Families.Pikachu, Abilities.ChainLightning, {
     name: 'Chain Lightning',
     description:
       'An Electric move it lands arcs to one other standing enemy for 1/3 of the damage it dealt.',
   });
 
-  // Sandshrew
-  registerAbility(Abilities.CurlUp, {
+  registerSignature(Families.Sandshrew, Abilities.CurlUp, {
     name: 'Curl Up',
     description: 'Each hit it takes casts Defense Curl on itself.',
   });
@@ -91,363 +81,306 @@ export default function registerSignatureAbilities(): void {
    * side of a blow and the male on the attacking one
    */
 
-  // Nidoran (female)
-  registerAbility(Abilities.QueensCourt, {
+  registerSignature(Families.NidoranF, Abilities.QueensCourt, {
     name: "Queen's Court",
     description:
       'Her Defense and Special Defense are 1.15x for each poisoned enemy on the field, counting up to 3.',
   });
 
-  // Nidoran (male)
-  registerAbility(Abilities.KingsCourt, {
+  registerSignature(Families.NidoranM, Abilities.KingsCourt, {
     name: "King's Court",
     description:
       'His Attack and Special Attack are 1.15x for each poisoned enemy on the field, counting up to 3.',
   });
 
-  // Clefairy
-  registerAbility(Abilities.WishingWell, {
+  registerSignature(Families.Clefairy, Abilities.WishingWell, {
     name: 'Wishing Well',
     description: 'Each time it acts, it casts Wish on the ally lowest on HP.',
   });
 
-  // Vulpix
-  registerAbility(Abilities.NineTails, {
+  registerSignature(Families.Vulpix, Abilities.NineTails, {
     name: 'Nine Tails',
     description: 'Its Special Attack rises 8% for each hit it has taken, up to 9 hits.',
   });
 
-  // Jigglypuff
-  registerAbility(Abilities.Lullaby, {
+  registerSignature(Families.Jigglypuff, Abilities.Lullaby, {
     name: 'Lullaby',
     description:
       'Sleep it inflicts lasts 1.5x as long, and its moves hit 1.5x against a sleeping target.',
   });
 
-  // Zubat
-  registerAbility(Abilities.Bloodthirst, {
+  registerSignature(Families.Zubat, Abilities.Bloodthirst, {
     name: 'Bloodthirst',
     description:
       'Draining moves and Leech Seed restore 1.5x for it. Every other heal on it is halved.',
   });
 
-  // Oddish
-  registerAbility(Abilities.DeepRoots, {
+  registerSignature(Families.Oddish, Abilities.DeepRoots, {
     name: 'Deep Roots',
     description: 'It casts Ingrain on itself as it arrives on the field.',
   });
 
-  // Paras
-  registerAbility(Abilities.FungalBloom, {
+  registerSignature(Families.Paras, Abilities.FungalBloom, {
     name: 'Fungal Bloom',
     description:
       'Heals 1/8 of its HP each time it lands poison, sleep, paralysis, a burn or a freeze on an enemy.',
   });
 
-  // Venonat
-  registerAbility(Abilities.DustStorm, {
+  registerSignature(Families.Venonat, Abilities.DustStorm, {
     name: 'Dust Storm',
     description: 'Its Special Attack rises 12% for every enemy carrying a status, up to 4 of them.',
   });
 
-  // Diglett
-  registerAbility(Abilities.Undermine, {
+  registerSignature(Families.Diglett, Abilities.Undermine, {
     name: 'Undermine',
     description:
       'Each move it lands leaves that enemy taking 5% more from everybody, up to 25%, for the rest of the fight.',
   });
 
-  // Meowth
-  registerAbility(Abilities.Cutpurse, {
+  registerSignature(Families.Meowth, Abilities.Cutpurse, {
     name: 'Cutpurse',
     description: 'The first move it lands on each enemy knocks their held item away.',
   });
 
-  // Psyduck
-  registerAbility(Abilities.HeadacheBurst, {
+  registerSignature(Families.Psyduck, Abilities.HeadacheBurst, {
     name: 'Headache Burst',
     description: 'At or below 1/2 HP its Special Attack is 1.5x and its Psychic moves cannot miss.',
   });
 
-  // Mankey
-  registerAbility(Abilities.BlindRage, {
+  registerSignature(Families.Mankey, Abilities.BlindRage, {
     name: 'Blind Rage',
     description:
       'Its Attack is 1.4x and its moves are 15% less accurate. Nothing can heal it while the rage is on.',
   });
 
-  // Growlithe
-  registerAbility(Abilities.ChaseDown, {
+  registerSignature(Families.Growlithe, Abilities.ChaseDown, {
     name: 'Chase Down',
     description:
       'Its moves hit 1.5x against a target at or below 1/3 HP, and such a target cannot flee from it.',
   });
 
-  // Poliwag
-  registerAbility(Abilities.HypnoticSpiral, {
+  registerSignature(Families.Poliwag, Abilities.HypnoticSpiral, {
     name: 'Hypnotic Spiral',
     description: 'Whoever lands a contact move on it takes 30% longer over their next cast.',
   });
 
-  // Abra
-  registerAbility(Abilities.TeleportGuard, {
+  registerSignature(Families.Abra, Abilities.TeleportGuard, {
     name: 'Teleport Guard',
     description:
       'It blinks away from the first attack that would land on it, then needs 10 seconds to do it again.',
   });
 
-  // Machop
-  registerAbility(Abilities.OverheadThrow, {
+  registerSignature(Families.Machop, Abilities.OverheadThrow, {
     name: 'Overhead Throw',
     description:
       'Its contact moves hit 1.4x against a target heavier than it, and 1.1x against a lighter one.',
   });
 
-  // Bellsprout
-  registerAbility(Abilities.Digest, {
+  registerSignature(Families.Bellsprout, Abilities.Digest, {
     name: 'Digest',
     description:
       'Landing a move on a target at or below 1/4 HP heals it 1/4 of its own HP. A finished target counts.',
   });
 
-  // Tentacool
-  registerAbility(Abilities.TentacleGrasp, {
+  registerSignature(Families.Tentacool, Abilities.TentacleGrasp, {
     name: 'Tentacle Grasp',
     description: 'No enemy it has landed a move on may flee while it is still standing.',
   });
 
-  // Geodude
-  registerAbility(Abilities.SolidCore, {
+  registerSignature(Families.Geodude, Abilities.SolidCore, {
     name: 'Solid Core',
     description: 'Physical moves hit it at 0.7x and special moves at 1.3x.',
   });
 
-  // Ponyta
-  registerAbility(Abilities.Gallop, {
+  registerSignature(Families.Ponyta, Abilities.Gallop, {
     name: 'Gallop',
     description:
       'Its Speed rises 10% each time it acts, up to 1.5x. Any hit it takes brings it back to a standstill.',
   });
 
-  // Slowpoke
-  registerAbility(Abilities.DelayedReaction, {
+  registerSignature(Families.Slowpoke, Abilities.DelayedReaction, {
     name: 'Delayed Reaction',
     description: 'It only feels half of each hit at once. The other half arrives 4 seconds later.',
   });
 
-  // Magnemite
-  registerAbility(Abilities.RepulsionField, {
+  registerSignature(Families.Magnemite, Abilities.RepulsionField, {
     name: 'Repulsion Field',
     description: 'Special moves hit at 0.9x for everybody on the field, its own included.',
   });
 
-  // Farfetch'd
-  registerAbility(Abilities.LeekDuelist, {
+  registerSignature(Families.Farfetchd, Abilities.LeekDuelist, {
     name: 'Leek Duelist',
     description:
       'Its critical stage is 2 higher and its criticals hit 1.25x harder. Everything hits it 1.25x in return.',
   });
 
-  // Doduo
-  registerAbility(Abilities.SecondHead, {
+  registerSignature(Families.Doduo, Abilities.SecondHead, {
     name: 'Second Head',
     description: 'Every third move it lands strikes again at once for 50% power.',
   });
 
-  // Seel
-  registerAbility(Abilities.SleekHide, {
+  registerSignature(Families.Seel, Abilities.SleekHide, {
     name: 'Sleek Hide',
     description: 'Contact moves hit it at 0.75x and everything else at 1.1x.',
   });
 
-  // Grimer
-  registerAbility(Abilities.CorrosiveOoze, {
+  registerSignature(Families.Grimer, Abilities.CorrosiveOoze, {
     name: 'Corrosive Ooze',
     description:
       'Whoever lands a contact move on it has their held item destroyed, not knocked loose.',
   });
 
-  // Shellder
-  registerAbility(Abilities.SpikeShell, {
+  registerSignature(Families.Shellder, Abilities.SpikeShell, {
     name: 'Spike Shell',
     description: 'Contact moves hit it at 0.5x, and whoever lands one takes 1/8 of their own HP.',
   });
 
-  // Gastly
-  registerAbility(Abilities.NightTerror, {
+  registerSignature(Families.Gastly, Abilities.NightTerror, {
     name: 'Night Terror',
     description: 'An enemy it damages cannot be healed for the next 4 seconds.',
   });
 
-  // Onix
-  registerAbility(Abilities.LivingTunnel, {
+  registerSignature(Families.Onix, Abilities.LivingTunnel, {
     name: 'Living Tunnel',
     description:
       'Its allies take 0.8x from Rock and Ground moves while it stands, and it takes those at 1.2x.',
   });
 
-  // Drowzee
-  registerAbility(Abilities.DreamFeast, {
+  registerSignature(Families.Drowzee, Abilities.DreamFeast, {
     name: 'Dream Feast',
     description: 'Landing a move on a sleeping target heals it 1/8 of its HP.',
   });
 
-  // Krabby
-  registerAbility(Abilities.HeavyPincer, {
+  registerSignature(Families.Krabby, Abilities.HeavyPincer, {
     name: 'Heavy Pincer',
     description: 'Its contact moves hit 1.45x while it is at or above 1/2 HP.',
   });
 
-  // Voltorb
-  registerAbility(Abilities.Overload, {
+  registerSignature(Families.Voltorb, Abilities.Overload, {
     name: 'Overload',
     description: 'Its Speed doubles below 1/2 HP.',
   });
 
-  // Exeggcute
-  registerAbility(Abilities.Psyseed, {
+  registerSignature(Families.Exeggcute, Abilities.Psyseed, {
     name: 'Psyseed',
     description: 'An enemy its Psychic moves damage has Leech Seed cast on it.',
   });
 
-  // Cubone
-  registerAbility(Abilities.MourningBone, {
+  registerSignature(Families.Cubone, Abilities.MourningBone, {
     name: 'Mourning Bone',
     description: 'Its moves hit 1.4x while it is the only one left standing on its side.',
   });
 
-  // Tyrogue
-  registerAbility(Abilities.SecondWind, {
+  registerSignature(Families.Tyrogue, Abilities.SecondWind, {
     name: 'Second Wind',
     description: 'The first time it falls below 1/4 HP it heals 1/3 of its HP. Once per battle.',
   });
 
-  // Lickitung
-  registerAbility(Abilities.TasteEverything, {
+  registerSignature(Families.Lickitung, Abilities.TasteEverything, {
     name: 'Taste Everything',
     description:
       'A contact move it lands on a berry holder eats that berry, healing or curing it as the berry would.',
   });
 
-  // Koffing
-  registerAbility(Abilities.SmogScreen, {
+  registerSignature(Families.Koffing, Abilities.SmogScreen, {
     name: 'Smog Screen',
     description: 'Enemy moves are 15% less accurate while it stands. Its own side sees fine.',
   });
 
-  // Rhyhorn
-  registerAbility(Abilities.Corkscrew, {
+  registerSignature(Families.Rhyhorn, Abilities.Corkscrew, {
     name: 'Corkscrew',
     description: 'Its contact moves hit 1.15x and ignore any Defense the target has raised.',
   });
 
-  // Chansey
-  registerAbility(Abilities.Cushioned, {
+  registerSignature(Families.Chansey, Abilities.Cushioned, {
     name: 'Cushioned',
     description: 'No single hit takes more than 1/4 of its HP off it.',
   });
 
-  // Tangela
-  registerAbility(Abilities.VineWeb, {
+  registerSignature(Families.Tangela, Abilities.VineWeb, {
     name: 'Vine Web',
     description: 'It lays a layer of Spikes on the enemy side each time it arrives on the field.',
   });
 
-  // Kangaskhan
-  registerAbility(Abilities.MothersShield, {
+  registerSignature(Families.Kangaskhan, Abilities.MothersShield, {
     name: "Mother's Shield",
     description: 'Enemy moves aimed at an ally below 1/2 HP are aimed at her instead.',
   });
 
-  // Horsea
-  registerAbility(Abilities.WhirlCurrent, {
+  registerSignature(Families.Horsea, Abilities.WhirlCurrent, {
     name: 'Whirl Current',
     description: 'Enemy cast times are 20% longer while rain is falling.',
   });
 
-  // Goldeen
-  registerAbility(Abilities.Upstream, {
+  registerSignature(Families.Goldeen, Abilities.Upstream, {
     name: 'Upstream',
     description: 'Its moves hit 1.35x against any target with more HP than its own.',
   });
 
-  // Staryu
-  registerAbility(Abilities.CoreReset, {
+  registerSignature(Families.Staryu, Abilities.CoreReset, {
     name: 'Core Reset',
     description: 'Each time it acts, one stat drop on it is undone.',
   });
 
-  // Mr. Mime
-  registerAbility(Abilities.MimedBarrier, {
+  registerSignature(Families.MrMime, Abilities.MimedBarrier, {
     name: 'Mimed Barrier',
     description:
       'It casts Light Screen over its side as it arrives, and physical moves hit it at 1.15x itself.',
   });
 
-  // Scyther
-  registerAbility(Abilities.CleanCut, {
+  registerSignature(Families.Scyther, Abilities.CleanCut, {
     name: 'Clean Cut',
     description: "Its critical hits ignore every stage on the target's defending stat.",
   });
 
-  // Jynx
-  registerAbility(Abilities.IcyCharm, {
+  registerSignature(Families.Jynx, Abilities.IcyCharm, {
     name: 'Icy Charm',
     description: 'Its moves hit 1.5x against a target that is infatuated or confused.',
   });
 
-  // Electabuzz
-  registerAbility(Abilities.StaticField, {
+  registerSignature(Families.Electabuzz, Abilities.StaticField, {
     name: 'Static Field',
     description: 'Its Speed rises 15% for each contact hit it has taken, up to 4 of them.',
   });
 
-  // Magmar
-  registerAbility(Abilities.BlastFurnace, {
+  registerSignature(Families.Magmar, Abilities.BlastFurnace, {
     name: 'Blast Furnace',
     description: 'Its Fire moves burn the target 30% of the time.',
   });
 
-  // Pinsir
-  registerAbility(Abilities.Snapjaw, {
+  registerSignature(Families.Pinsir, Abilities.Snapjaw, {
     name: 'Snapjaw',
     description: 'Its moves hit 1.5x against a target that is casting or channelling.',
   });
 
-  // Tauros
-  registerAbility(Abilities.Bullheaded, {
+  registerSignature(Families.Tauros, Abilities.Bullheaded, {
     name: 'Bullheaded',
     description: 'Its contact moves hit 1.3x, and everything hits it 1.15x in return.',
   });
 
-  // Magikarp
-  registerAbility(Abilities.LateBloomer, {
+  registerSignature(Families.Magikarp, Abilities.LateBloomer, {
     name: 'Late Bloomer',
     description:
       'Its moves hit 5% harder for every 10 seconds it has been in the fight, up to 1.5x.',
   });
 
-  // Lapras
-  registerAbility(Abilities.SafePassage, {
+  registerSignature(Families.Lapras, Abilities.SafePassage, {
     name: 'Safe Passage',
     description:
       'It casts Safeguard over its side as it arrives, and its allies cannot be stopped from fleeing.',
   });
 
-  // Ditto
-  registerAbility(Abilities.Formless, {
+  registerSignature(Families.Ditto, Abilities.Formless, {
     name: 'Formless',
     description: 'Critical hits land on it as ordinary hits, and its stages cannot be lowered.',
   });
 
-  // Eevee
-  registerAbility(Abilities.LatentPotential, {
+  registerSignature(Families.Eevee, Abilities.LatentPotential, {
     name: 'Latent Potential',
     description: 'Whichever of its five battle stats is lowest counts 1.3x.',
   });
 
-  // Porygon
-  registerAbility(Abilities.Rollback, {
+  registerSignature(Families.Porygon, Abilities.Rollback, {
     name: 'Rollback',
     description:
       'The first time it drops below 1/2 HP, its health goes back to what it was 4 seconds earlier.',
@@ -459,26 +392,22 @@ export default function registerSignatureAbilities(): void {
    * blade cuts into whatever it strikes, so each answers the other
    */
 
-  // Omanyte
-  registerAbility(Abilities.HelixShell, {
+  registerSignature(Families.Omanyte, Abilities.HelixShell, {
     name: 'Helix Shell',
     description: 'Its Defense and Special Defense count as 1.25x against every blow it takes.',
   });
 
-  // Kabuto
-  registerAbility(Abilities.DomeBlade, {
+  registerSignature(Families.Kabuto, Abilities.DomeBlade, {
     name: 'Dome Blade',
     description: "Its blows count the target's Defense or Special Defense as 0.75x.",
   });
 
-  // Aerodactyl
-  registerAbility(Abilities.PredatorsDive, {
+  registerSignature(Families.Aerodactyl, Abilities.PredatorsDive, {
     name: "Predator's Dive",
     description: 'Its first move against each enemy hits 1.5x.',
   });
 
-  // Snorlax
-  registerAbility(Abilities.FullBelly, {
+  registerSignature(Families.Snorlax, Abilities.FullBelly, {
     name: 'Full Belly',
     description: 'It heals 1/16 of its HP every time it acts, and its cast times are 25% longer.',
   });
@@ -487,39 +416,33 @@ export default function registerSignatureAbilities(): void {
    * The three birds share one signature: the beat of the wings as one
    * takes the field, told in the stat its own weather works on
    */
-  // Articuno
-  registerAbility(Abilities.Frostwing, {
+  registerSignature(Families.Articuno, Abilities.Frostwing, {
     name: 'Frostwing',
     description: 'Every enemy loses a stage of Speed as it arrives on the field.',
   });
 
-  // Zapdos
-  registerAbility(Abilities.Stormwing, {
+  registerSignature(Families.Zapdos, Abilities.Stormwing, {
     name: 'Stormwing',
     description: 'Every enemy loses a stage of Special Defense as it arrives on the field.',
   });
 
-  // Moltres
-  registerAbility(Abilities.Emberwing, {
+  registerSignature(Families.Moltres, Abilities.Emberwing, {
     name: 'Emberwing',
     description: 'Every enemy loses a stage of Defense as it arrives on the field.',
   });
 
-  // Dratini
-  registerAbility(Abilities.SereneStorm, {
+  registerSignature(Families.Dratini, Abilities.SereneStorm, {
     name: 'Serene Storm',
     description:
       'Weather it calls up never clears on its own, and its side takes no damage from any weather.',
   });
 
-  // Mewtwo
-  registerAbility(Abilities.GeneticApex, {
+  registerSignature(Families.Mewtwo, Abilities.GeneticApex, {
     name: 'Genetic Apex',
     description: 'Its highest battle stat counts 1.25x and its lowest counts 0.8x.',
   });
 
-  // Mew
-  registerAbility(Abilities.AncestralMemory, {
+  registerSignature(Families.Mew, Abilities.AncestralMemory, {
     name: 'Ancestral Memory',
     description: 'Any type that has already hit it once hits it at 0.85x thereafter.',
   });
@@ -528,276 +451,232 @@ export default function registerSignatureAbilities(): void {
    * The Johto starters share one signature: each leaves its element on
    * whatever it lands a move on, paid as that thing acts
    */
-  // Chikorita
-  registerAbility(Abilities.Sapmark, {
+  registerSignature(Families.Chikorita, Abilities.Sapmark, {
     name: 'Sapmark',
     description:
       'Anything it lands a move on loses 1/16 of its HP each time it acts, and Chikorita drinks the same.',
   });
 
-  // Cyndaquil
-  registerAbility(Abilities.Embermark, {
+  registerSignature(Families.Cyndaquil, Abilities.Embermark, {
     name: 'Embermark',
     description:
       'Anything it lands a move on loses 1/16 of its HP each time it acts, or 1/8 while it is burned.',
   });
 
-  // Totodile
-  registerAbility(Abilities.Jawmark, {
+  registerSignature(Families.Totodile, Abilities.Jawmark, {
     name: 'Jawmark',
     description:
       'The one thing it has its jaws in loses 1/8 of its HP each time it acts. Only ever one at a time.',
   });
 
-  // Sentret
-  registerAbility(Abilities.Sentry, {
+  registerSignature(Families.Sentret, Abilities.Sentry, {
     name: 'Sentry',
     description: 'Nobody on its side can be hit by a critical hit while it stands.',
   });
 
-  // Hoothoot
-  registerAbility(Abilities.WatchfulRoost, {
+  registerSignature(Families.Hoothoot, Abilities.WatchfulRoost, {
     name: 'Watchful Roost',
     description: 'It casts Reflect over its side as it arrives on the field.',
   });
 
-  // Ledyba
-  registerAbility(Abilities.Relay, {
+  registerSignature(Families.Ledyba, Abilities.Relay, {
     name: 'Relay',
     description: 'Whenever it is switched out, its stat stages carry to the teammate coming in.',
   });
 
-  // Spinarak
-  registerAbility(Abilities.SilkSnare, {
+  registerSignature(Families.Spinarak, Abilities.SilkSnare, {
     name: 'Silk Snare',
     description: 'It casts String Shot at every standing enemy as it arrives on the field.',
   });
 
-  // Chinchou
-  registerAbility(Abilities.LanternLure, {
+  registerSignature(Families.Chinchou, Abilities.LanternLure, {
     name: 'Lantern Lure',
     description: 'It casts Confuse Ray at an enemy as it arrives on the field.',
   });
 
-  // Togepi
-  registerAbility(Abilities.FairShare, {
+  registerSignature(Families.Togepi, Abilities.FairShare, {
     name: 'Fair Share',
     description:
       'A move under 100% accuracy that just hit somebody on its side cannot hit that one again next time.',
   });
 
-  // Natu
-  registerAbility(Abilities.Prophecy, {
+  registerSignature(Families.Natu, Abilities.Prophecy, {
     name: 'Prophecy',
     description: 'It casts Future Sight at an enemy as it arrives on the field.',
   });
 
-  // Mareep
-  registerAbility(Abilities.LiveWire, {
+  registerSignature(Families.Mareep, Abilities.LiveWire, {
     name: 'Live Wire',
     description: 'It casts Thunder Wave at an enemy as it arrives on the field.',
   });
 
-  // Marill
-  registerAbility(Abilities.Spillover, {
+  registerSignature(Families.Marill, Abilities.Spillover, {
     name: 'Spillover',
     description: 'Healing past its full HP is thrown at an enemy as damage rather than wasted.',
   });
 
-  // Sudowoodo
-  registerAbility(Abilities.FalseWood, {
+  registerSignature(Families.Sudowoodo, Abilities.FalseWood, {
     name: 'False Wood',
     description:
       'It counts as a Grass type for working out what hurts it, until the first hit lands on it.',
   });
 
-  // Hoppip
-  registerAbility(Abilities.Updraft, {
+  registerSignature(Families.Hoppip, Abilities.Updraft, {
     name: 'Updraft',
     description: 'It cannot be trapped, its Speed cannot be lowered, and it always gets away.',
   });
 
-  // Aipom
-  registerAbility(Abilities.Tailthrow, {
+  registerSignature(Families.Aipom, Abilities.Tailthrow, {
     name: 'Tailthrow',
     description: 'It casts Fling as it arrives on the field, throwing its held item at an enemy.',
   });
 
-  // Sunkern
-  registerAbility(Abilities.SunlitCharge, {
+  registerSignature(Families.Sunkern, Abilities.SunlitCharge, {
     name: 'Sunlit Charge',
     description: 'Its channelled moves hit 1.3x and cannot be interrupted.',
   });
 
-  // Yanma
-  registerAbility(Abilities.Resonance, {
+  registerSignature(Families.Yanma, Abilities.Resonance, {
     name: 'Resonance',
     description: 'Its sound moves reach every enemy on the field, not only the one it aimed at.',
   });
 
-  // Wooper
-  registerAbility(Abilities.ContagiousYawn, {
+  registerSignature(Families.Wooper, Abilities.ContagiousYawn, {
     name: 'Contagious Yawn',
     description: 'It casts Yawn at an enemy as it arrives on the field.',
   });
 
-  // Murkrow
-  registerAbility(Abilities.Magpie, {
+  registerSignature(Families.Murkrow, Abilities.Magpie, {
     name: 'Magpie',
     description: 'Any held item taken off somebody else on the field goes into its empty hands.',
   });
 
-  // Misdreavus
-  registerAbility(Abilities.SharedMisery, {
+  registerSignature(Families.Misdreavus, Abilities.SharedMisery, {
     name: 'Shared Misery',
     description:
       'The first time it drops below 1/3 of its HP it casts Pain Split at the healthiest enemy.',
   });
 
-  // Unown
-  registerAbility(Abilities.RuinousScript, {
+  registerSignature(Families.Unown, Abilities.RuinousScript, {
     name: 'Ruinous Script',
     description: 'Held items do nothing on the enemy side while it stands.',
   });
 
-  // Wobbuffet
-  registerAbility(Abilities.Backlash, {
+  registerSignature(Families.Wobbuffet, Abilities.Backlash, {
     name: 'Backlash',
     description:
       'It banks 1/4 of every hit it takes, and pays the bank back to whoever last struck it when it next acts.',
   });
 
-  // Girafarig
-  registerAbility(Abilities.Ambidextrous, {
+  registerSignature(Families.Girafarig, Abilities.Ambidextrous, {
     name: 'Ambidextrous',
     description:
       'Its moves are worked out from whichever of its Attack and Special Attack is higher.',
   });
 
-  // Pineco
-  registerAbility(Abilities.Shrapnel, {
+  registerSignature(Families.Pineco, Abilities.Shrapnel, {
     name: 'Shrapnel',
     description: 'When it faints, it casts Spikes and Toxic Spikes onto the enemy side.',
   });
 
-  // Dunsparce
-  registerAbility(Abilities.HiddenDen, {
+  registerSignature(Families.Dunsparce, Abilities.HiddenDen, {
     name: 'Hidden Den',
     description: 'While any ally stands, enemies cannot aim a single-target move at it.',
   });
 
-  // Gligar
-  registerAbility(Abilities.SandRider, {
+  registerSignature(Families.Gligar, Abilities.SandRider, {
     name: 'Sand Rider',
     description: 'While sand blows, its moves cannot miss and everything hits it at 0.75x.',
   });
 
-  // Snubbull
-  registerAbility(Abilities.Bully, {
+  registerSignature(Families.Snubbull, Abilities.Bully, {
     name: 'Bully',
     description: 'Its moves hit 1.3x against a target whose Attack has been lowered.',
   });
 
-  // Qwilfish
-  registerAbility(Abilities.LastBarb, {
+  registerSignature(Families.Qwilfish, Abilities.LastBarb, {
     name: 'Last Barb',
     description: 'When it faints, it casts Toxic at whoever finished it.',
   });
 
-  // Shuckle
-  registerAbility(Abilities.Fermenter, {
+  registerSignature(Families.Shuckle, Abilities.Fermenter, {
     name: 'Fermenter',
     description: 'Each time it acts with a free hand, a Berry Juice appears in it.',
   });
 
-  // Heracross
-  registerAbility(Abilities.Heave, {
+  registerSignature(Families.Heracross, Abilities.Heave, {
     name: 'Heave',
     description: 'The first contact move it lands on each enemy casts Whirlwind at them.',
   });
 
-  // Sneasel
-  registerAbility(Abilities.SharpClaw, {
+  registerSignature(Families.Sneasel, Abilities.SharpClaw, {
     name: 'Sharp Claw',
     description: "Each contact move it lands drops the target's Defense by a stage.",
   });
 
-  // Teddiursa
-  registerAbility(Abilities.SweetPaw, {
+  registerSignature(Families.Teddiursa, Abilities.SweetPaw, {
     name: 'Sweet Paw',
     description: 'Its contact moves heal it 1/8 of the damage they deal.',
   });
 
-  // Slugma
-  registerAbility(Abilities.MagmaTrail, {
+  registerSignature(Families.Slugma, Abilities.MagmaTrail, {
     name: 'Magma Trail',
     description:
       'An enemy it has landed a move on loses 1/16 of its HP each time it acts, while it stands.',
   });
 
-  // Swinub
-  registerAbility(Abilities.Icebreaker, {
+  registerSignature(Families.Swinub, Abilities.Icebreaker, {
     name: 'Icebreaker',
     description: "A move it lands tears Reflect and Light Screen off the target's side.",
   });
 
-  // Corsola
-  registerAbility(Abilities.CoralBloom, {
+  registerSignature(Families.Corsola, Abilities.CoralBloom, {
     name: 'Coral Bloom',
     description: 'Whenever it is healed, the ally lowest on HP is healed the same amount.',
   });
 
-  // Remoraid
-  registerAbility(Abilities.Standoff, {
+  registerSignature(Families.Remoraid, Abilities.Standoff, {
     name: 'Standoff',
     description: 'Nothing it uses counts as contact, so it never sets off what answers a touch.',
   });
 
-  // Delibird
-  registerAbility(Abilities.Delivery, {
+  registerSignature(Families.Delibird, Abilities.Delivery, {
     name: 'Delivery',
     description: 'It hands a Berry Juice to the ally lowest on HP as it arrives on the field.',
   });
 
-  // Mantine
-  registerAbility(Abilities.Escort, {
+  registerSignature(Families.Mantine, Abilities.Escort, {
     name: 'Escort',
     description: "Its allies' Special Defense counts 1.3x while it stands.",
   });
 
-  // Skarmory
-  registerAbility(Abilities.Steelmolt, {
+  registerSignature(Families.Skarmory, Abilities.Steelmolt, {
     name: 'Steelmolt',
     description: 'Each hit it takes lays a layer of Spikes on the enemy side.',
   });
 
-  // Houndour
-  registerAbility(Abilities.PackHowl, {
+  registerSignature(Families.Houndour, Abilities.PackHowl, {
     name: 'Pack Howl',
     description: 'Every ally gains a stage of Attack as it arrives on the field.',
   });
 
-  // Phanpy
-  registerAbility(Abilities.Momentum, {
+  registerSignature(Families.Phanpy, Abilities.Momentum, {
     name: 'Momentum',
     description:
       'Its moves hit 1.1x for each move it has landed since taking the field, up to 1.5x.',
   });
 
-  // Stantler
-  registerAbility(Abilities.MindFog, {
+  registerSignature(Families.Stantler, Abilities.MindFog, {
     name: 'Mind Fog',
     description: 'Enemy Special Attack counts 0.85x while it stands.',
   });
 
-  // Smeargle
-  registerAbility(Abilities.Palette, {
+  registerSignature(Families.Smeargle, Abilities.Palette, {
     name: 'Palette',
     description: 'Its moves take the type of the last move that hit it.',
   });
 
-  // Miltank
-  registerAbility(Abilities.Cowbell, {
+  registerSignature(Families.Miltank, Abilities.Cowbell, {
     name: 'Cowbell',
     description: 'It casts Heal Bell over its side as it arrives on the field.',
   });
@@ -806,29 +685,25 @@ export default function registerSignatureAbilities(): void {
    * The three beasts share one signature, told three ways: what Ho-Oh
    * did for them in the burned tower, once per battle
    */
-  // Raikou
-  registerAbility(Abilities.RisenThunder, {
+  registerSignature(Families.Raikou, Abilities.RisenThunder, {
     name: 'Risen Thunder',
     description:
       'The first blow that would finish it leaves it on 1 HP, cured, and a stage faster. Once per battle.',
   });
 
-  // Entei
-  registerAbility(Abilities.RisenFlame, {
+  registerSignature(Families.Entei, Abilities.RisenFlame, {
     name: 'Risen Flame',
     description:
       'The first blow that would finish it leaves it on 1 HP, cured, and a stage stronger. Once per battle.',
   });
 
-  // Suicune
-  registerAbility(Abilities.RisenTide, {
+  registerSignature(Families.Suicune, Abilities.RisenTide, {
     name: 'Risen Tide',
     description:
       'The first blow that would finish it leaves it on 1 HP, cured, and a stage harder to hurt. Once per battle.',
   });
 
-  // Larvitar
-  registerAbility(Abilities.Tyrant, {
+  registerSignature(Families.Larvitar, Abilities.Tyrant, {
     name: 'Tyrant',
     description: 'Nothing on the enemy side can raise a stat while it stands.',
   });
@@ -837,21 +712,18 @@ export default function registerSignatureAbilities(): void {
    * The tower duo share one signature, told either side of a fall: the
    * guardian keeps its side standing once per battle
    */
-  // Lugia
-  registerAbility(Abilities.SilverAegis, {
+  registerSignature(Families.Lugia, Abilities.SilverAegis, {
     name: 'Silver Aegis',
     description:
       'The first blow that would finish an ally leaves it on 1 HP instead. Once per battle.',
   });
 
-  // Ho-Oh
-  registerAbility(Abilities.RainbowRekindling, {
+  registerSignature(Families.HoOh, Abilities.RainbowRekindling, {
     name: 'Rainbow Rekindling',
     description: 'The first ally to fall gets back up on 1/3 of its HP. Once per battle.',
   });
 
-  // Celebi
-  registerAbility(Abilities.TimelineSplit, {
+  registerSignature(Families.Celebi, Abilities.TimelineSplit, {
     name: 'Timeline Split',
     description:
       'The first time it drops below 1/2 HP, every stat drop on it is undone and every status cleared.',
@@ -862,40 +734,34 @@ export default function registerSignatureAbilities(): void {
    * fight in the stat its line is built on, up to three stages of its
    * own making
    */
-  // Treecko
-  registerAbility(Abilities.SapSurge, {
+  registerSignature(Families.Treecko, Abilities.SapSurge, {
     name: 'Sap Surge',
     description: 'It gains a stage of Speed each time it acts, up to 3 of its own.',
   });
 
-  // Torchic
-  registerAbility(Abilities.EmberSurge, {
+  registerSignature(Families.Torchic, Abilities.EmberSurge, {
     name: 'Ember Surge',
     description: 'It gains a stage of Attack each time it lands a move, up to 3 of its own.',
   });
 
-  // Mudkip
-  registerAbility(Abilities.SiltSurge, {
+  registerSignature(Families.Mudkip, Abilities.SiltSurge, {
     name: 'Silt Surge',
     description:
       'It gains a stage of Special Defense each time it takes a hit, up to 3 of its own.',
   });
 
-  // Poochyena
-  registerAbility(Abilities.PackHunt, {
+  registerSignature(Families.Poochyena, Abilities.PackHunt, {
     name: 'Pack Hunt',
     description: 'Its moves hit 1.2x against anything an ally has already damaged.',
   });
 
-  // Zigzagoon
-  registerAbility(Abilities.CrookedRun, {
+  registerSignature(Families.Zigzagoon, Abilities.CrookedRun, {
     name: 'Crooked Run',
     description:
       'Each time it acts, moves aimed at it are 0.9x as accurate, stacking 3 times. A landed blow clears it.',
   });
 
-  // Wurmple
-  registerAbility(Abilities.Cocoon, {
+  registerSignature(Families.Wurmple, Abilities.Cocoon, {
     name: 'Cocoon',
     description:
       'The first time it drops below 1/2 HP, it shells over for 4 seconds: it deals and takes 0.5x damage.',
@@ -907,83 +773,70 @@ export default function registerSignatureAbilities(): void {
    * weather, which is what makes the two cancel
    */
 
-  // Lotad
-  registerAbility(Abilities.WaterBloom, {
+  registerSignature(Families.Lotad, Abilities.WaterBloom, {
     name: 'Water Bloom',
     description:
       'It calls up Rain as it takes the field, and heals 1/16 of its HP each time it acts in Rain.',
   });
 
-  // Seedot
-  registerAbility(Abilities.SunRoot, {
+  registerSignature(Families.Seedot, Abilities.SunRoot, {
     name: 'Sun Root',
     description: 'It calls up Sun as it takes the field, and its moves deal 1.3x damage in Sun.',
   });
 
-  // Taillow
-  registerAbility(Abilities.MigrantsWind, {
+  registerSignature(Families.Taillow, Abilities.MigrantsWind, {
     name: "Migrant's Wind",
     description: 'It casts Tailwind over its side as it arrives on the field.',
   });
 
-  // Wingull
-  registerAbility(Abilities.GullsGreed, {
+  registerSignature(Families.Wingull, Abilities.GullsGreed, {
     name: "Gull's Greed",
     description: 'Every heal an enemy receives is 0.75x, and it takes the quarter for itself.',
   });
 
-  // Ralts
-  registerAbility(Abilities.Empath, {
+  registerSignature(Families.Ralts, Abilities.Empath, {
     name: 'Empath',
     description: 'Its Special Attack counts 1.3x while any ally is below 1/2 HP.',
   });
 
-  // Surskit
-  registerAbility(Abilities.SurfaceWalk, {
+  registerSignature(Families.Surskit, Abilities.SurfaceWalk, {
     name: 'Surface Walk',
     description: 'It takes no damage from hazards or from weather.',
   });
 
-  // Shroomish
-  registerAbility(Abilities.Mycelium, {
+  registerSignature(Families.Shroomish, Abilities.Mycelium, {
     name: 'Mycelium',
     description:
       'Anything carrying poison, sleep, paralysis, a burn or a freeze takes 1.2x from every blow while it stands.',
   });
 
-  // Slakoth
-  registerAbility(Abilities.WideSwing, {
+  registerSignature(Families.Slakoth, Abilities.WideSwing, {
     name: 'Wide Swing',
     description: 'Its physical moves reach every enemy on the field, not only the one it aimed at.',
   });
 
-  // Nincada
-  registerAbility(Abilities.VanishingAct, {
+  registerSignature(Families.Nincada, Abilities.VanishingAct, {
     name: 'Vanishing Act',
     description: 'For 1 second after it lands a move, single-target moves aimed at it miss.',
   });
 
-  // Whismur
-  registerAbility(Abilities.EchoChamber, {
+  registerSignature(Families.Whismur, Abilities.EchoChamber, {
     name: 'Echo Chamber',
     description: 'A sound move it lands echoes 2 seconds later for 1/4 of the damage it dealt.',
   });
 
-  // Makuhita
-  registerAbility(Abilities.Shove, {
+  registerSignature(Families.Makuhita, Abilities.Shove, {
     name: 'Shove',
     description:
       'A contact move it lands on an enemy winding a move up flinches them, costing them that cast.',
   });
 
-  // Nosepass
-  registerAbility(Abilities.Magnetize, {
+  registerSignature(Families.Nosepass, Abilities.Magnetize, {
     name: 'Magnetize',
     description: 'Enemy moves aimed at one of its allies are pulled onto it instead.',
   });
 
-  // Skitty
-  registerAbility(Abilities.KittenPace, {
+  registerSignature(Families.Skitty, Abilities.KittenPace, {
     name: 'Kitten Pace',
     description: 'Its Speed counts 1.3x while it is at full HP.',
   });
@@ -994,32 +847,27 @@ export default function registerSignatureAbilities(): void {
    * that stage for itself
    */
 
-  // Sableye
-  registerAbility(Abilities.ShadowTax, {
+  registerSignature(Families.Sableye, Abilities.ShadowTax, {
     name: 'Shadow Tax',
     description: 'A move it lands removes one raised stage from the target.',
   });
 
-  // Mawile
-  registerAbility(Abilities.JawClaim, {
+  registerSignature(Families.Mawile, Abilities.JawClaim, {
     name: 'Jaw Claim',
     description: 'A move it lands moves one raised stage from the target onto itself.',
   });
 
-  // Aron
-  registerAbility(Abilities.OreHunger, {
+  registerSignature(Families.Aron, Abilities.OreHunger, {
     name: 'Ore Hunger',
     description: 'Steel and Rock moves deal it no damage and heal it 1/4 of what they would have.',
   });
 
-  // Meditite
-  registerAbility(Abilities.MindOverBody, {
+  registerSignature(Families.Meditite, Abilities.MindOverBody, {
     name: 'Mind Over Body',
     description: 'It takes 0.5x damage while it is casting or channelling a move.',
   });
 
-  // Electrike
-  registerAbility(Abilities.JoltStart, {
+  registerSignature(Families.Electrike, Abilities.JoltStart, {
     name: 'Jolt Start',
     description: 'Its first move of a battle goes off a step ahead of everything and hits 1.5x.',
   });
@@ -1030,15 +878,13 @@ export default function registerSignatureAbilities(): void {
    * the strongest enemy down a step
    */
 
-  // Plusle
-  registerAbility(Abilities.CheerOn, {
+  registerSignature(Families.Plusle, Abilities.CheerOn, {
     name: 'Cheer On',
     description:
       'Each time it acts, the ally lowest on HP gains a stage in its best stat, up to 3 times a battle.',
   });
 
-  // Minun
-  registerAbility(Abilities.JeerAt, {
+  registerSignature(Families.Minun, Abilities.JeerAt, {
     name: 'Jeer At',
     description:
       'Each time it acts, the enemy highest on HP loses a stage in its best stat, up to 3 times a battle.',
@@ -1050,85 +896,72 @@ export default function registerSignatureAbilities(): void {
    * hide, the scent leaves nobody quick
    */
 
-  // Volbeat
-  registerAbility(Abilities.TailLight, {
+  registerSignature(Families.Volbeat, Abilities.TailLight, {
     name: 'Tail Light',
     description: 'Evasion counts for nothing on the enemy side while it stands.',
   });
 
-  // Illumise
-  registerAbility(Abilities.LureScent, {
+  registerSignature(Families.Illumise, Abilities.LureScent, {
     name: 'Lure Scent',
     description: 'Enemy Speed counts 0.85x while it stands.',
   });
 
-  // Roselia
-  registerAbility(Abilities.Perennial, {
+  registerSignature(Families.Roselia, Abilities.Perennial, {
     name: 'Perennial',
     description:
       'The first time it drops below 1/4 HP it heals 1/3 of its HP and is cured. Once per battle.',
   });
 
-  // Gulpin
-  registerAbility(Abilities.Bottomless, {
+  registerSignature(Families.Gulpin, Abilities.Bottomless, {
     name: 'Bottomless',
     description: 'It heals 1/8 of its HP whenever any held item is consumed on the field.',
   });
 
-  // Carvanha
-  registerAbility(Abilities.FeedingFrenzy, {
+  registerSignature(Families.Carvanha, Abilities.FeedingFrenzy, {
     name: 'Feeding Frenzy',
     description: 'It gains a stage of Attack whenever any enemy faints, up to 3 of them.',
   });
 
-  // Wailmer
-  registerAbility(Abilities.Spout, {
+  registerSignature(Families.Wailmer, Abilities.Spout, {
     name: 'Spout',
     description: 'Its Water moves reach every enemy on the field, not only the one it aimed at.',
   });
 
-  // Numel
-  registerAbility(Abilities.MagmaVent, {
+  registerSignature(Families.Numel, Abilities.MagmaVent, {
     name: 'Magma Vent',
     description:
       'The first time it drops below 1/2 HP, every enemy loses 1/8 of their HP. Once per battle.',
   });
 
-  // Torkoal
-  registerAbility(Abilities.BodyHeat, {
+  registerSignature(Families.Torkoal, Abilities.BodyHeat, {
     name: 'Body Heat',
     description: 'Its Defense and Special Defense count 1.3x while the Sun is up.',
   });
 
-  // Spoink
-  registerAbility(Abilities.StoredBounce, {
+  registerSignature(Families.Spoink, Abilities.StoredBounce, {
     name: 'Stored Bounce',
     description:
       'Half of each hit it takes is stored, up to 1/2 its HP, and the next move it lands deals the lot on top.',
   });
 
-  // Spinda
-  registerAbility(Abilities.UniqueSpots, {
+  registerSignature(Families.Spinda, Abilities.UniqueSpots, {
     name: 'Unique Spots',
     description:
       'It arrives with 2 stages in one random stat and 1 stage off another, rolled fresh each time.',
   });
 
-  // Trapinch
-  registerAbility(Abilities.AntlionPit, {
+  registerSignature(Families.Trapinch, Abilities.AntlionPit, {
     name: 'Antlion Pit',
     description: 'Any enemy move that misses it costs that enemy 1/8 of their HP.',
   });
 
-  // Cacnea
-  registerAbility(Abilities.PatientStalk, {
+  registerSignature(Families.Cacnea, Abilities.PatientStalk, {
     name: 'Patient Stalk',
     description:
       'Its moves hit 10% harder for each second it has stood idle, up to 50%, spent on the next one it lands.',
   });
 
-  // Swablu
-  registerAbility(Abilities.CloudStep, {
+  registerSignature(Families.Swablu, Abilities.CloudStep, {
     name: 'Cloud Step',
     description: 'The first move aimed at it each battle deals no damage to it.',
   });
@@ -1139,14 +972,12 @@ export default function registerSignatureAbilities(): void {
    * Zangoose hunts, being the one thing venom does nothing to
    */
 
-  // Zangoose
-  registerAbility(Abilities.FeudClaws, {
+  registerSignature(Families.Zangoose, Abilities.FeudClaws, {
     name: 'Feud Claws',
     description: 'Its moves hit 1.4x against a poisoned target.',
   });
 
-  // Seviper
-  registerAbility(Abilities.DeepeningVenom, {
+  registerSignature(Families.Seviper, Abilities.DeepeningVenom, {
     name: 'Deepening Venom',
     description:
       'A move it lands on a poisoned target turns that poison into the badly-poisoned kind.',
@@ -1158,34 +989,29 @@ export default function registerSignatureAbilities(): void {
    * neither aura applies
    */
 
-  // Lunatone
-  registerAbility(Abilities.MoonPull, {
+  registerSignature(Families.Lunatone, Abilities.MoonPull, {
     name: 'Moon Pull',
     description:
       'Its side takes 0.85x damage while it stands, unless a Sun Glare holder stands too.',
   });
 
-  // Solrock
-  registerAbility(Abilities.SunGlare, {
+  registerSignature(Families.Solrock, Abilities.SunGlare, {
     name: 'Sun Glare',
     description: 'Enemies take 1.15x damage while it stands, unless a Moon Pull holder stands too.',
   });
 
-  // Barboach
-  registerAbility(Abilities.SiltBed, {
+  registerSignature(Families.Barboach, Abilities.SiltBed, {
     name: 'Silt Bed',
     description:
       'Every grounded pokemon on the field, its own side included, has Speed count 0.9x.',
   });
 
-  // Corphish
-  registerAbility(Abilities.DirtyFighter, {
+  registerSignature(Families.Corphish, Abilities.DirtyFighter, {
     name: 'Dirty Fighter',
     description: 'Its moves hit 1.3x against a target still at full HP.',
   });
 
-  // Baltoy
-  registerAbility(Abilities.SpinBalance, {
+  registerSignature(Families.Baltoy, Abilities.SpinBalance, {
     name: 'Spin Balance',
     description:
       'It cannot be flinched, cannot be forced off the field, and its stages cannot be lowered.',
@@ -1197,107 +1023,90 @@ export default function registerSignatureAbilities(): void {
    * whatever cannot get away
    */
 
-  // Lileep
-  registerAbility(Abilities.RootHold, {
+  registerSignature(Families.Lileep, Abilities.RootHold, {
     name: 'Root Hold',
     description:
       'A move it lands stops that target fleeing for 6 seconds and counts their Speed 0.7x meanwhile.',
   });
 
-  // Anorith
-  registerAbility(Abilities.ClawRush, {
+  registerSignature(Families.Anorith, Abilities.ClawRush, {
     name: 'Claw Rush',
     description: 'Its moves hit 1.3x against any target slower than it.',
   });
 
-  // Feebas
-  registerAbility(Abilities.ScarredBeauty, {
+  registerSignature(Families.Feebas, Abilities.ScarredBeauty, {
     name: 'Scarred Beauty',
     description:
       'Its Special Attack counts 1.4x while it carries poison, sleep, paralysis, a burn or a freeze.',
   });
 
-  // Castform
-  registerAbility(Abilities.WeatherWorn, {
+  registerSignature(Families.Castform, Abilities.WeatherWorn, {
     name: 'Weather Worn',
     description: 'Under any weather its moves deal 1.3x and everything hits it at 0.85x.',
   });
 
-  // Kecleon
-  registerAbility(Abilities.BlendIn, {
+  registerSignature(Families.Kecleon, Abilities.BlendIn, {
     name: 'Blend In',
     description: 'While it has stood still for 2 seconds, moves aimed at it are half as accurate.',
   });
 
-  // Shuppet
-  registerAbility(Abilities.MalicePool, {
+  registerSignature(Families.Shuppet, Abilities.MalicePool, {
     name: 'Malice Pool',
     description: 'Its moves hit 10% harder for each lowered stage on the target, up to 50%.',
   });
 
-  // Duskull
-  registerAbility(Abilities.SoulHarvest, {
+  registerSignature(Families.Duskull, Abilities.SoulHarvest, {
     name: 'Soul Harvest',
     description: 'It heals 1/4 of its HP whenever anything on the field faints, either side.',
   });
 
-  // Tropius
-  registerAbility(Abilities.FruitCrop, {
+  registerSignature(Families.Tropius, Abilities.FruitCrop, {
     name: 'Fruit Crop',
     description: 'Every 8 seconds it grows a Sitrus Berry, if its hands are empty.',
   });
 
-  // Chimecho
-  registerAbility(Abilities.RingingHead, {
+  registerSignature(Families.Chimecho, Abilities.RingingHead, {
     name: 'Ringing Head',
     description: 'Enemy cast and channel times run 25% longer while it stands.',
   });
 
-  // Absol
-  registerAbility(Abilities.DoomMark, {
+  registerSignature(Families.Absol, Abilities.DoomMark, {
     name: 'Doom Mark',
     description:
       'A move it lands marks that target: the next blow anybody lands on them within 4 seconds hits 1.3x.',
   });
 
-  // Snorunt
-  registerAbility(Abilities.ColdSnap, {
+  registerSignature(Families.Snorunt, Abilities.ColdSnap, {
     name: 'Cold Snap',
     description: 'Whoever lands a contact move on it is frozen 20% of the time.',
   });
 
-  // Spheal
-  registerAbility(Abilities.Applause, {
+  registerSignature(Families.Spheal, Abilities.Applause, {
     name: 'Applause',
     description: 'It heals 1/16 of its HP each time an ally lands a move.',
   });
 
-  // Clamperl
-  registerAbility(Abilities.PearlGuard, {
+  registerSignature(Families.Clamperl, Abilities.PearlGuard, {
     name: 'Pearl Guard',
     description: 'Its Special Attack and Special Defense count 1.5x while it holds an item.',
   });
 
-  // Relicanth
-  registerAbility(Abilities.Unchanged, {
+  registerSignature(Families.Relicanth, Abilities.Unchanged, {
     name: 'Unchanged',
     description: 'Every move hits it for neutral damage: it has no weaknesses and no resistances.',
   });
 
-  // Luvdisc
-  registerAbility(Abilities.SharedHeart, {
+  registerSignature(Families.Luvdisc, Abilities.SharedHeart, {
     name: 'Shared Heart',
     description: 'Whenever an ally is healed, it heals half of that amount as well.',
   });
 
-  // Bagon
-  registerAbility(Abilities.SkullCharge, {
+  registerSignature(Families.Bagon, Abilities.SkullCharge, {
     name: 'Skull Charge',
     description: 'Its contact moves deal 1.4x, and it takes 1/8 of the damage they deal back.',
   });
 
-  // Beldum
-  registerAbility(Abilities.HiveMind, {
+  registerSignature(Families.Beldum, Abilities.HiveMind, {
     name: 'Hive Mind',
     description: 'Its moves hit 10% harder for each ally standing with it, up to 3 of them.',
   });
@@ -1308,22 +1117,19 @@ export default function registerSignatureAbilities(): void {
    * good, a quarter harder and two stages up in its own stat
    */
 
-  // Regirock
-  registerAbility(Abilities.StoneSeal, {
+  registerSignature(Families.Regirock, Abilities.StoneSeal, {
     name: 'Stone Seal',
     description:
       'For 8 seconds it deals and takes 0.5x. It then deals 1.25x and gains 2 stages of Defense.',
   });
 
-  // Regice
-  registerAbility(Abilities.FrostSeal, {
+  registerSignature(Families.Regice, Abilities.FrostSeal, {
     name: 'Frost Seal',
     description:
       'For 8 seconds it deals and takes 0.5x. It then deals 1.25x and gains 2 stages of Special Defense.',
   });
 
-  // Registeel
-  registerAbility(Abilities.IronSeal, {
+  registerSignature(Families.Registeel, Abilities.IronSeal, {
     name: 'Iron Seal',
     description:
       'For 8 seconds it deals and takes 0.5x. It then deals 1.25x and gains 2 stages of Attack.',
@@ -1334,14 +1140,12 @@ export default function registerSignatureAbilities(): void {
    * and the brother flies through whatever the far side put up
    */
 
-  // Latias
-  registerAbility(Abilities.EonShield, {
+  registerSignature(Families.Latias, Abilities.EonShield, {
     name: 'Eon Shield',
     description: 'Its allies take 0.8x damage while it stands. It covers everybody but itself.',
   });
 
-  // Latios
-  registerAbility(Abilities.EonLance, {
+  registerSignature(Families.Latios, Abilities.EonLance, {
     name: 'Eon Lance',
     description: 'Its moves deal 1.25x and count Reflect and Light Screen for nothing.',
   });
@@ -1351,36 +1155,31 @@ export default function registerSignatureAbilities(): void {
    * back until it drops below half, and what comes out then stays out
    */
 
-  // Kyogre
-  registerAbility(Abilities.PrimalSea, {
+  registerSignature(Families.Kyogre, Abilities.PrimalSea, {
     name: 'Primal Sea',
     description:
       'Below 1/2 HP it gains 2 stages of Special Attack and its Water moves deal 1.3x, for good.',
   });
 
-  // Groudon
-  registerAbility(Abilities.PrimalLand, {
+  registerSignature(Families.Groudon, Abilities.PrimalLand, {
     name: 'Primal Land',
     description:
       'Below 1/2 HP it gains 2 stages of Attack and its Ground moves deal 1.3x, for good.',
   });
 
-  // Rayquaza
-  registerAbility(Abilities.PrimalSky, {
+  registerSignature(Families.Rayquaza, Abilities.PrimalSky, {
     name: 'Primal Sky',
     description:
       'Below 1/2 HP it gains 2 stages of Special Attack and its Dragon moves deal 1.3x, for good.',
   });
 
-  // Jirachi
-  registerAbility(Abilities.SevenWishes, {
+  registerSignature(Families.Jirachi, Abilities.SevenWishes, {
     name: 'Seven Wishes',
     description:
       'Every 7 times it acts, its whole side heals 1/4 of their HP and it alone is cured.',
   });
 
-  // Deoxys
-  registerAbility(Abilities.FormDrift, {
+  registerSignature(Families.Deoxys, Abilities.FormDrift, {
     name: 'Form Drift',
     description:
       'Every 6 seconds it gains a stage in its highest battle stat and loses one in its lowest.',

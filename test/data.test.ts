@@ -25,7 +25,7 @@ import registerBiomeSpawns, {
 } from '../src/data/biome';
 import EggGroups from '../src/data/ids/egg-groups';
 import Families from '../src/data/ids/families';
-import registerAbilities, { getAbilityData } from '../src/data/abilities';
+import registerAbilities, { getAbilityData, getSignatureAbility } from '../src/data/abilities';
 import Abilities from '../src/data/ids/abilities';
 import {
   TYPE_COLORS,
@@ -273,6 +273,7 @@ import {
   getDayOfYear,
   getDaysInYear,
   getEggMoves,
+  getFamilyName,
   getFeaturedFamily,
   getLearnableMoves,
   getLevelUpMoves,
@@ -1562,6 +1563,23 @@ describe('ability data', () => {
     // The raid abilities are registered alongside the rolled ones
     expect(getAbilityData(Abilities.Boss).name).toBe('Boss');
     expect(getAbilityData(Abilities.Shadow).name).toBe('Shadow');
+  });
+
+  it('owes every family one signature, and none of them the same one', () => {
+    const signatures = new Set<Abilities>();
+
+    for (const family of getRegisteredFamilies()) {
+      const signature = getSignatureAbility(family);
+
+      expect(signature, `${getFamilyName(family)} has no signature`).not.toBeNull();
+      expect(
+        signatures.has(signature as Abilities),
+        `${getFamilyName(family)} repeats a signature`,
+      ).toBe(false);
+      signatures.add(signature as Abilities);
+      expect(getAbilityData(signature as Abilities).name.length).toBeGreaterThan(0);
+    }
+    expect(signatures.size).toBe(getRegisteredFamilies().length);
   });
 });
 

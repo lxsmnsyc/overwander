@@ -13,6 +13,7 @@ import Abilities from '../../../src/data/ids/abilities';
 import { MoveCategories, Moves } from '../../../src/data/ids/moves';
 import { Statuses } from '../../../src/data/ids/status';
 import turns from '../../../src/battle/turn';
+import { SEALED_DURATION } from '../../../src/battle/abilities/signature/__create';
 import { createBattle, createUnit, pinRandom } from '../harness';
 
 function makeAttack(
@@ -169,5 +170,35 @@ describe('Aroma Veil', () => {
     ally.addStatus(Statuses.Burned, cause);
 
     expect(ally.status[Statuses.Burned]).toBeDefined();
+  });
+});
+
+describe('Slow Start', () => {
+  it('halves Attack and Speed until its first seconds are up', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const slow = createUnit(battle, teamA);
+    const bare = createUnit(battle, teamB);
+
+    const attack = bare.checkStat(Stats.Attack, 0);
+    const speed = bare.checkStat(Stats.Speed, 0);
+    const defense = bare.checkStat(Stats.Defense, 0);
+
+    slow.addAbility(Abilities.SlowStart);
+    battle.emit(BattleEvents.UnitEntersField, {
+      id: 'UnitEntersField',
+      disabled: false,
+      source: slow,
+      reactivation: false,
+    });
+
+    expect(slow.checkStat(Stats.Attack, 0)).toBeCloseTo(attack / 2, 5);
+    expect(slow.checkStat(Stats.Speed, 0)).toBeCloseTo(speed / 2, 5);
+    // Nothing else is held back
+    expect(slow.checkStat(Stats.Defense, 0)).toBeCloseTo(defense, 5);
+
+    battle.tick(SEALED_DURATION);
+
+    expect(slow.checkStat(Stats.Attack, 0)).toBeCloseTo(attack, 5);
+    expect(slow.checkStat(Stats.Speed, 0)).toBeCloseTo(speed, 5);
   });
 });

@@ -815,10 +815,12 @@ const enum Abilities {
   Willgift = 200231,
   TimeDrag = 200232,
   SpaceDrift = 200233,
-  VoidWeight = 200234,
-  WaningLight = 200235,
-  WaxingDark = 200236,
-  Heartcurrent = 200237,
+  Lavadome = 200234,
+  TitanSeal = 200235,
+  VoidWeight = 200236,
+  WaningLight = 200237,
+  Heartcurrent = 200238,
+  WaxingDark = 200239,
 }
 
 export default Abilities;

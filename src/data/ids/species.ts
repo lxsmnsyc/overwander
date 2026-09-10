@@ -602,6 +602,8 @@ export const enum Species {
   Azelf = 482,
   Dialga = 483,
   Palkia = 484,
+  Heatran = 485,
+  Regigigas = 486,
   Giratina = 487,
   Cresselia = 488,
   Phione = 489,

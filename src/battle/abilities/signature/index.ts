@@ -3,6 +3,7 @@ import bulbasaurToPikachu from './bulbasaur-to-pikachu';
 import chikoritaToCelebi from './chikorita-to-celebi';
 import eeveeToDragonite from './eevee-to-dragonite';
 import geodudeToDrowzee from './geodude-to-drowzee';
+import heatranRegigigas from './heatran-regigigas';
 import krabbyToPinsir from './krabby-to-pinsir';
 import lakeTrio from './lake-trio';
 import manaphy from './manaphy';
@@ -46,6 +47,7 @@ const setupAbilities = [
   ...rioluToSkorupi,
   ...croagunkToSnover,
   ...lakeTrio,
+  ...heatranRegigigas,
   ...creationTrio,
   ...moonDuo,
   ...manaphy,

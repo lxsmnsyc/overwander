@@ -236,10 +236,12 @@ const enum Families {
   Azelf = 231,
   Dialga = 232,
   Palkia = 233,
-  Giratina = 234,
-  Cresselia = 235,
-  Darkrai = 236,
-  Manaphy = 237,
+  Heatran = 234,
+  Regigigas = 235,
+  Giratina = 236,
+  Cresselia = 237,
+  Manaphy = 238,
+  Darkrai = 239,
 }
 
 export default Families;

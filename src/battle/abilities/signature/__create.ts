@@ -1311,13 +1311,18 @@ export const WOKEN_SCALE = 1.25;
 export const WOKEN_STAGES = 2;
 
 /**
- * What the three Regis share: each stands sealed for its first seconds
+ * What the four golems share: each stands sealed for its first seconds
  * on the field, taking and dealing half, and then wakes for good, a
- * quarter harder and two stages up in the stat it was built around
+ * quarter harder and two stages up in the stat it was built around.
+ *
+ * The one that made the other three deals its own `sealedScale`, since
+ * Slow Start is already taking that half off it and a second helping
+ * would be two penalties for one seal
  */
 export function createSealedAbility(
   ability: Abilities,
   stage: Stages,
+  sealedScale = SEALED_SCALE,
 ): ((battle: Battle) => void) & { ability: Abilities } {
   return createAbility(ability, (battle) => {
     const { state, lifecycles } = createUnitState<number>(battle);
@@ -1357,7 +1362,7 @@ export function createSealedAbility(
         const parent = event.parent;
 
         if (parent.source.hasAbility(ability)) {
-          event.value *= sealed(parent.source) ? SEALED_SCALE : WOKEN_SCALE;
+          event.value *= sealed(parent.source) ? sealedScale : WOKEN_SCALE;
         }
 
         if (sealed(parent.target)) {

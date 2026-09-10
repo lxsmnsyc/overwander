@@ -34,6 +34,7 @@ export default function registerGlacierSpawns(): void {
       special: [
         { species: Species.Regice, weight: 10 },
         { species: Species.Articuno, weight: 10 },
+        { species: Species.Regigigas, weight: 10 },
       ],
     },
     [TimeOfDay.Day]: {
@@ -63,6 +64,7 @@ export default function registerGlacierSpawns(): void {
       special: [
         { species: Species.Regice, weight: 10 },
         { species: Species.Articuno, weight: 10 },
+        { species: Species.Regigigas, weight: 10 },
       ],
     },
     [TimeOfDay.Evening]: {
@@ -94,6 +96,7 @@ export default function registerGlacierSpawns(): void {
       special: [
         { species: Species.Regice, weight: 10 },
         { species: Species.Articuno, weight: 10 },
+        { species: Species.Regigigas, weight: 10 },
       ],
     },
     [TimeOfDay.Night]: {
@@ -125,6 +128,7 @@ export default function registerGlacierSpawns(): void {
       special: [
         { species: Species.Regice, weight: 10 },
         { species: Species.Articuno, weight: 10 },
+        { species: Species.Regigigas, weight: 10 },
       ],
     },
   });

@@ -1388,6 +1388,22 @@ export default function registerSignatureAbilities(): void {
     description: 'Its whole team gains 1 stage of Attack as it takes the field.',
   });
 
+  // The dome hangs over whatever it lit, and keeps it burning
+  registerSignature(Families.Heatran, Abilities.Lavadome, {
+    name: 'Lavadome',
+    description: 'A burned enemy takes 1.25x from everything while it stands.',
+  });
+
+  /**
+   * The fourth golem, and the one that sealed the other three. It
+   * shares their seal, minus the half of its own damage: Slow Start
+   * is already taking that
+   */
+  registerSignature(Families.Regigigas, Abilities.TitanSeal, {
+    name: 'Titan Seal',
+    description: 'For 8 seconds it takes 0.5x. It then deals 1.25x and gains 2 stages of Attack.',
+  });
+
   /**
    * The creation trio: while one stands, the far side reads one of
    * its stages a step lower. Asked rather than applied, so it lifts

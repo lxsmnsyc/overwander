@@ -26,6 +26,11 @@ export default function registerGen4Abilities(): void {
     name: 'Friend Guard',
     description: 'Its teammates take 0.75x from everything while it stands.',
   });
+  // Regigigas
+  registerAbility(Abilities.SlowStart, {
+    name: 'Slow Start',
+    description: 'Attack and Speed are halved for its first 8 seconds on the field.',
+  });
   // Cresselia
   registerAbility(Abilities.AromaVeil, {
     name: 'Aroma Veil',

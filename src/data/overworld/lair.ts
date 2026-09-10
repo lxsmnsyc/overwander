@@ -104,6 +104,16 @@ const enum Lairs {
    * that lives in it. A mythical's lair, so no biome hosts it
    */
   SeaTemple = 25,
+  /**
+   * The cavern at the top of the volcano, which is not a cave the
+   * thing in it lives under but the one it hangs off
+   */
+  StarkMountain = 26,
+  /**
+   * The temple in the snow the fourth golem was shut in, above the
+   * three it made
+   */
+  SnowpointTemple = 27,
 }
 
 export const LAIR_NAMES: Record<Lairs, string> = {
@@ -133,6 +143,8 @@ export const LAIR_NAMES: Record<Lairs, string> = {
   [Lairs.FullmoonIsland]: 'Fullmoon Island',
   [Lairs.NewmoonIsland]: 'Newmoon Island',
   [Lairs.SeaTemple]: 'Sea Temple',
+  [Lairs.StarkMountain]: 'Stark Mountain',
+  [Lairs.SnowpointTemple]: 'Snowpoint Temple',
 };
 
 /**
@@ -168,6 +180,8 @@ export const LAIR_SPECIES: Record<Lairs, Species[]> = {
   [Lairs.FullmoonIsland]: [Species.Cresselia],
   [Lairs.NewmoonIsland]: [Species.Darkrai],
   [Lairs.SeaTemple]: [Species.Manaphy],
+  [Lairs.StarkMountain]: [Species.Heatran],
+  [Lairs.SnowpointTemple]: [Species.Regigigas],
 };
 
 /**
@@ -200,6 +214,8 @@ export const EVERY_LAIR: Lairs[] = [
   Lairs.FullmoonIsland,
   Lairs.NewmoonIsland,
   Lairs.SeaTemple,
+  Lairs.StarkMountain,
+  Lairs.SnowpointTemple,
 ];
 
 /**
@@ -238,13 +254,13 @@ const BIOME_LAIRS: { [key in Biome]?: Lairs[] } = {
   [Biome.DeepOcean]: [Lairs.SeafoamIslands, Lairs.WhirlIslands, Lairs.MarineCave],
   [Biome.Ocean]: [Lairs.WhirlIslands, Lairs.SouthernIsland, Lairs.FullmoonIsland],
   [Biome.PolarOcean]: [Lairs.SeafoamIslands, Lairs.IslandCave],
-  [Biome.Glacier]: [Lairs.SeafoamIslands, Lairs.IslandCave],
+  [Biome.Glacier]: [Lairs.SeafoamIslands, Lairs.IslandCave, Lairs.SnowpointTemple],
   [Biome.Grassland]: [Lairs.PowerPlant, Lairs.BurnedTower, Lairs.LakeValor],
   [Biome.Bog]: [Lairs.LakeValor, Lairs.TurnbackCave],
   [Biome.TemperateForest]: [Lairs.LakeVerity],
   [Biome.Woodland]: [Lairs.BurnedTower, Lairs.LakeVerity],
   [Biome.Taiga]: [Lairs.LakeAcuity],
-  [Biome.Tundra]: [Lairs.LakeAcuity],
+  [Biome.Tundra]: [Lairs.LakeAcuity, Lairs.SnowpointTemple],
   [Biome.Steppe]: [Lairs.PowerPlant],
   [Biome.Desert]: [Lairs.MtEmber, Lairs.DesertRuins],
   [Biome.Badlands]: [Lairs.DesertRuins, Lairs.AncientTomb, Lairs.TurnbackCave],
@@ -257,7 +273,7 @@ const BIOME_LAIRS: { [key in Biome]?: Lairs[] } = {
     Lairs.SpearPillar,
   ],
   [Biome.AlpineTundra]: [Lairs.CeruleanCave, Lairs.SpearPillar],
-  [Biome.Volcano]: [Lairs.TerraCave],
+  [Biome.Volcano]: [Lairs.TerraCave, Lairs.StarkMountain],
 };
 
 /**

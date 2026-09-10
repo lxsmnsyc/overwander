@@ -33,6 +33,7 @@ import {
   WOKEN_SCALE,
   WOKEN_STAGES,
 } from '../../../src/battle/abilities/signature/__create';
+import { LAVADOME_SCALE } from '../../../src/battle/abilities/signature/heatran-regigigas';
 import {
   BACKLASH_SHARE,
   BULLY_SCALE,
@@ -190,6 +191,7 @@ import {
   type MoveTarget,
   MoveTargetType,
   type UnitAttackEvent,
+  type UnitDamageEvent,
 } from '../../../src/battle/events';
 import type Unit from '../../../src/battle/unit';
 import { Stages, Stats, StatsKind } from '../../../src/data/constants/stats';
@@ -6911,5 +6913,84 @@ describe('the prince of the sea', () => {
     // copy back
     expect(first.stages[Stages.SpecialAttack]).toBe(1);
     expect(second.stages[Stages.SpecialAttack]).toBe(0);
+  });
+});
+
+describe('the fourth golem', () => {
+  it('Titan Seal takes half without giving half back, then wakes', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0);
+    const holder = createUnit(battle, teamA);
+    const bare = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    holder.addAbility(Abilities.TitanSeal);
+
+    const clean = resolveAttackDamage(battle, bare, enemy);
+    const incoming = resolveAttackDamage(battle, enemy, bare);
+
+    // Sealed: it takes half, and what it deals is left alone, since
+    // Slow Start is already halving the Attack behind it
+    expect(resolveAttackDamage(battle, holder, enemy)).toBeCloseTo(clean, 5);
+    expect(resolveAttackDamage(battle, enemy, holder)).toBeCloseTo(incoming * SEALED_SCALE, 5);
+
+    battle.tick(SEALED_DURATION);
+
+    expect(holder.stages[Stages.Attack]).toBe(WOKEN_STAGES);
+    expect(resolveAttackDamage(battle, holder, enemy)).toBeCloseTo(clean * WOKEN_SCALE, 5);
+    expect(resolveAttackDamage(battle, enemy, holder)).toBeCloseTo(incoming, 5);
+  });
+});
+
+describe('Lavadome', () => {
+  /** A blow that has already been worked out, for the dome to answer */
+  function landed(source: Unit, target: Unit): UnitDamageEvent {
+    return {
+      id: 'UnitDamage',
+      disabled: false,
+      source,
+      target,
+      value: 100,
+      flags: 0,
+      success: true,
+      cause: { type: EffectType.None },
+    };
+  }
+
+  it('makes a burn on the far side worth more, whoever the blow came from', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const heatran = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    const cause = { type: EffectType.None } as const;
+
+    heatran.addAbility(Abilities.Lavadome);
+    enemy.addStatus(Statuses.Burned, cause);
+    mate.addStatus(Statuses.Burned, cause);
+
+    const onEnemy = landed(mate, enemy);
+
+    battle.emit(BattleEvents.UnitDamage, onEnemy);
+
+    expect(onEnemy.value).toBeCloseTo(100 * LAVADOME_SCALE, 5);
+
+    // Its own side burns at the usual rate
+    const onMate = landed(enemy, mate);
+
+    battle.emit(BattleEvents.UnitDamage, onMate);
+
+    expect(onMate.value).toBeCloseTo(100, 5);
+  });
+
+  it('leaves an enemy that is not burning alone', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const heatran = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    heatran.addAbility(Abilities.Lavadome);
+
+    const blow = landed(heatran, enemy);
+
+    battle.emit(BattleEvents.UnitDamage, blow);
+
+    expect(blow.value).toBeCloseTo(100, 5);
   });
 });

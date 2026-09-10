@@ -7,6 +7,7 @@ import type Battle from '../core';
 import type Unit from '../unit';
 import { BattleEvents } from '../events';
 import { MergedLifecycle } from '../lifecycle';
+import { SEALED_DURATION } from './signature/__create';
 import { hasAnyStatus } from '../utils';
 import {
   createAbility,
@@ -41,6 +42,19 @@ const HEATPROOF_TYPES = new Set([Types.Fire]);
 
 /** And how much of a burn it feels, fire being fire. */
 const HEATPROOF_BURN_SCALE = 0.5;
+
+/**
+ * How long a Regigigas is still getting going. It is the seal's own
+ * window on purpose: it carries both, so the time it stands weak is
+ * exactly the time nothing can punish it for standing weak
+ */
+const SLOW_START_DURATION = SEALED_DURATION;
+
+/** What Attack and Speed are worth while it is still getting going. */
+const SLOW_START_SCALE = 0.5;
+
+/** The two stats a slow start holds back. */
+const SLOW_START_STATS = new Set([Stats.Attack, Stats.Speed]);
 
 /** Whoever on the unit's own team is holding the veil over it. */
 function isUnderAromaVeil(battle: Battle, unit: Unit): Unit | null {
@@ -145,6 +159,44 @@ const setupAbilities = [
         }),
       ]),
   ),
+
+  /**
+   * Slow Start counts from the arrival rather than from the ability,
+   * so a unit handed one mid-fight is not started over
+   * https://bulbapedia.bulbagarden.net/wiki/Slow_Start_(Ability)
+   */
+  createAbility(Abilities.SlowStart, (battle) => {
+    const stood = new Map<Unit, number>();
+
+    return new MergedLifecycle([
+      battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+        if (!event.reactivation) {
+          stood.set(event.source, 0);
+        }
+      }),
+      battle.on(BattleEvents.UnitFaints, EventPriority.Post, (event) => {
+        stood.delete(event.source);
+      }),
+      battle.on(BattleEvents.Tick, EventPriority.Post, (event) => {
+        for (const slow of getAbilityHolders(battle, Abilities.SlowStart)) {
+          const time = stood.get(slow) ?? 0;
+
+          if (slow.alive && time < SLOW_START_DURATION) {
+            stood.set(slow, time + event.duration);
+          }
+        }
+      }),
+      battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
+        if (
+          SLOW_START_STATS.has(event.stat) &&
+          event.source.hasAbility(Abilities.SlowStart) &&
+          (stood.get(event.source) ?? 0) < SLOW_START_DURATION
+        ) {
+          event.value *= SLOW_START_SCALE;
+        }
+      }),
+    ]);
+  }),
 
   // https://bulbapedia.bulbagarden.net/wiki/Heatproof_(Ability)
   createThickFatAbility(Abilities.Heatproof, HEATPROOF_TYPES),

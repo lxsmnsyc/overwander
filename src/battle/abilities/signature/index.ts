@@ -5,6 +5,7 @@ import eeveeToDragonite from './eevee-to-dragonite';
 import geodudeToDrowzee from './geodude-to-drowzee';
 import krabbyToPinsir from './krabby-to-pinsir';
 import lakeTrio from './lake-trio';
+import manaphy from './manaphy';
 import moonDuo from './moon-duo';
 import parasToTentacool from './paras-to-tentacool';
 import sandshrewToOddish from './sandshrew-to-oddish';
@@ -47,6 +48,7 @@ const setupAbilities = [
   ...lakeTrio,
   ...creationTrio,
   ...moonDuo,
+  ...manaphy,
 ];
 
 /**

@@ -18541,6 +18541,54 @@
         "bytes": 7833
       }
     },
+    "public/sprites/pokemon/sinnoh/489/regular.png": {
+      "digest": "adbb117064e1619c",
+      "bytes": 3471,
+      "width": 178,
+      "height": 102,
+      "compact": {
+        "at": "2026-09-10T12:02:18Z",
+        "as": "already compact",
+        "was": 3471,
+        "bytes": 3471
+      }
+    },
+    "public/sprites/pokemon/sinnoh/489/shiny.png": {
+      "digest": "60f4bc54464a5abd",
+      "bytes": 3487,
+      "width": 178,
+      "height": 102,
+      "compact": {
+        "at": "2026-09-10T12:02:18Z",
+        "as": "already compact",
+        "was": 3487,
+        "bytes": 3487
+      }
+    },
+    "public/sprites/pokemon/sinnoh/490/regular.png": {
+      "digest": "0bfe3fc4f024a11a",
+      "bytes": 3909,
+      "width": 146,
+      "height": 135,
+      "compact": {
+        "at": "2026-09-10T12:02:18Z",
+        "as": "already compact",
+        "was": 3909,
+        "bytes": 3909
+      }
+    },
+    "public/sprites/pokemon/sinnoh/490/shiny.png": {
+      "digest": "2f9c0b489e057a45",
+      "bytes": 3909,
+      "width": 146,
+      "height": 135,
+      "compact": {
+        "at": "2026-09-10T12:02:18Z",
+        "as": "already compact",
+        "was": 3909,
+        "bytes": 3909
+      }
+    },
     "public/sprites/pokemon/sinnoh/491/regular.png": {
       "digest": "313b2e21f2c5eb6a",
       "bytes": 15318,
@@ -18650,15 +18698,15 @@
       }
     },
     "public/sprites/ui/candies/sinnoh/image.png": {
-      "digest": "30760a4928ad136f",
-      "bytes": 5167,
+      "digest": "60f301e79801adbc",
+      "bytes": 5319,
       "width": 96,
       "height": 96,
       "compact": {
-        "at": "2026-09-10T11:35:23Z",
+        "at": "2026-09-10T12:02:18Z",
         "as": "already compact",
-        "was": 5167,
-        "bytes": 5167
+        "was": 5319,
+        "bytes": 5319
       }
     },
     "public/sprites/ui/items/apricorn/image.png": {
@@ -18816,15 +18864,15 @@
       }
     },
     "public/sprites/ui/items/key/image.png": {
-      "digest": "4bdebfa3686f2d79",
-      "bytes": 54857,
-      "width": 328,
-      "height": 346,
+      "digest": "f3f414f212b8ce77",
+      "bytes": 55135,
+      "width": 376,
+      "height": 286,
       "compact": {
-        "at": "2026-09-04T09:10:32Z",
+        "at": "2026-09-10T12:09:57Z",
         "as": "already compact",
-        "was": 54857,
-        "bytes": 54857
+        "was": 55135,
+        "bytes": 55135
       }
     },
     "public/sprites/ui/items/medicine/image.png": {

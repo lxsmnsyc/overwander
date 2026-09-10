@@ -604,6 +604,8 @@ export const enum Species {
   Palkia = 484,
   Giratina = 487,
   Cresselia = 488,
+  Phione = 489,
+  Manaphy = 490,
   Darkrai = 491,
   DeoxysAttack = 1038601,
   DeoxysDefense = 1038602,

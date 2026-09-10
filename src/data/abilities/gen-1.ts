@@ -176,10 +176,6 @@ export default function registerGen1Abilities(): void {
     name: 'Magic Guard',
     description: 'Takes no indirect damage at all.',
   });
-  registerAbility(Abilities.FriendGuard, {
-    name: 'Friend Guard',
-    description: 'Allies take 1/4 less damage.',
-  });
   registerAbility(Abilities.Unaware, {
     name: 'Unaware',
     description: "Ignores the other side's stat stages in any blow it deals or takes.",

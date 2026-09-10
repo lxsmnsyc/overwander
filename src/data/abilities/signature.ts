@@ -1422,4 +1422,10 @@ export default function registerSignatureAbilities(): void {
     name: 'Waxing Dark',
     description: 'A status it puts on an enemy runs 1.5x as long.',
   });
+
+  // The prince of the sea, whose own move is a swap of hearts
+  registerSignature(Families.Manaphy, Abilities.Heartcurrent, {
+    name: 'Heartcurrent',
+    description: 'Every stat stage an enemy gains is written onto it as well.',
+  });
 }

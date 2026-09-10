@@ -6,6 +6,7 @@ import registerGen4Species from './gen-4';
 export {
   getBaseForms,
   getBaseSpecies,
+  getEggBaseSpecies,
   getEggMoves,
   getFamilyName,
   getLearnableMoves,

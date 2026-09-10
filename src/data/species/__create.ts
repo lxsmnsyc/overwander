@@ -151,6 +151,12 @@ export interface SpeciesData {
    */
   evolvesInto?: EvolutionData[];
   /**
+   * What this pokemon's egg hatches into, when that is not the bottom
+   * of its own line. A Manaphy lays a Phione and never another
+   * Manaphy, which is the only way one is ever reached
+   */
+  eggSpecies?: Species;
+  /**
    * Base stats of the pokemon
    */
   stats: Record<Stats, number>;
@@ -465,6 +471,14 @@ export function getBaseSpecies(species: Species): Species {
     previous = getSpeciesData(current).evolvesFrom;
   }
   return current;
+}
+
+/**
+ * What a mother of this species lays: the bottom of her own line,
+ * unless she is one of the few that lay something else
+ */
+export function getEggBaseSpecies(species: Species): Species {
+  return getSpeciesData(species).eggSpecies ?? getBaseSpecies(species);
 }
 
 /**

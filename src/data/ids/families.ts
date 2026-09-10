@@ -239,6 +239,7 @@ const enum Families {
   Giratina = 234,
   Cresselia = 235,
   Darkrai = 236,
+  Manaphy = 237,
 }
 
 export default Families;

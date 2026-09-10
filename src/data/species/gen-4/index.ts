@@ -19,6 +19,7 @@ import registerLeafeonSpecies from './leafeon';
 import registerLickilickySpecies from './lickilicky';
 import registerMagmortarSpecies from './magmortar';
 import registerMagnezoneSpecies from './magnezone';
+import registerManaphySpecies from './manaphy';
 import registerMamoswineSpecies from './mamoswine';
 import registerMimeJrSpecies from './mime-jr';
 import registerMunchlaxSpecies from './munchlax';
@@ -117,4 +118,5 @@ export default function registerGen4Species(): void {
   registerLakeTrioSpecies();
   registerCreationTrioSpecies();
   registerMoonDuoSpecies();
+  registerManaphySpecies();
 }

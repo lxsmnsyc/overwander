@@ -1063,12 +1063,17 @@ describe('where a species lives', () => {
   });
 
   it('stages every species that says it lives somewhere', () => {
+    // Phione is laid rather than met: a Manaphy's egg is the only
+    // one there is, so no pool stages it though it names the water it
+    // drifts in.
+    //
     // Porygon is made rather than met: it stands beside a portal and
     // in no pool, and what it evolves into is met the same way. The
     // far shore's shell is staged by the pool its west counterpart
     // sits in, and swapped for as the world hands it over, so no pool
     // names it either
     const unstaged = new Set<Species>([
+      Species.Phione,
       Species.Porygon,
       Species.Porygon2,
       Species.PorygonZ,
@@ -3411,6 +3416,7 @@ describe('item data', () => {
       Items.AuroraTicket,
       Items.WishTag,
       Items.MemberCard,
+      Items.ManaphyEgg,
       Items.GoldenBottleCap,
       // The one thing in the band that is only gold, and there because
       // it is more of it than anything else in the game pays

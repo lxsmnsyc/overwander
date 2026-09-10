@@ -818,6 +818,7 @@ const enum Abilities {
   VoidWeight = 200234,
   WaningLight = 200235,
   WaxingDark = 200236,
+  Heartcurrent = 200237,
 }
 
 export default Abilities;

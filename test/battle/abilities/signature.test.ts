@@ -6861,3 +6861,55 @@ describe('the moon duo', () => {
     expect(first.checkStatusDuration(Statuses.Sleeping, 4000, cause)).toBe(2000);
   });
 });
+
+describe('the prince of the sea', () => {
+  it('Heartcurrent writes an enemy stage onto itself as the enemy gains it', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    const cause = { type: EffectType.None } as const;
+
+    holder.addAbility(Abilities.Heartcurrent);
+
+    enemy.addStage(Stages.Attack, 2, cause);
+
+    // The enemy keeps what it raised: nothing was taken off it
+    expect(enemy.stages[Stages.Attack]).toBe(2);
+    expect(holder.stages[Stages.Attack]).toBe(2);
+    // And it is the holder's, not its team's
+    expect(mate.stages[Stages.Attack]).toBe(0);
+  });
+
+  it('takes gains only, and never its own side', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    const cause = { type: EffectType.None } as const;
+
+    holder.addAbility(Abilities.Heartcurrent);
+
+    enemy.addStage(Stages.Speed, -1, cause);
+    mate.addStage(Stages.Speed, 1, cause);
+
+    expect(holder.stages[Stages.Speed]).toBe(0);
+  });
+
+  it('does not answer its own copy when both sides are holding it', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const first = createUnit(battle, teamA);
+    const second = createUnit(battle, teamB);
+    const enemy = createUnit(battle, teamB);
+
+    first.addAbility(Abilities.Heartcurrent);
+    second.addAbility(Abilities.Heartcurrent);
+
+    enemy.addStage(Stages.SpecialAttack, 1, { type: EffectType.None });
+
+    // The first copies the enemy, and the second does not copy the
+    // copy back
+    expect(first.stages[Stages.SpecialAttack]).toBe(1);
+    expect(second.stages[Stages.SpecialAttack]).toBe(0);
+  });
+});

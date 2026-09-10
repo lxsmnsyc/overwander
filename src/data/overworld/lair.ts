@@ -99,6 +99,11 @@ const enum Lairs {
    */
   FullmoonIsland = 23,
   NewmoonIsland = 24,
+  /**
+   * The temple that surfaces once and sinks again, and the prince
+   * that lives in it. A mythical's lair, so no biome hosts it
+   */
+  SeaTemple = 25,
 }
 
 export const LAIR_NAMES: Record<Lairs, string> = {
@@ -127,6 +132,7 @@ export const LAIR_NAMES: Record<Lairs, string> = {
   [Lairs.TurnbackCave]: 'Turnback Cave',
   [Lairs.FullmoonIsland]: 'Fullmoon Island',
   [Lairs.NewmoonIsland]: 'Newmoon Island',
+  [Lairs.SeaTemple]: 'Sea Temple',
 };
 
 /**
@@ -161,6 +167,7 @@ export const LAIR_SPECIES: Record<Lairs, Species[]> = {
   [Lairs.TurnbackCave]: [Species.Giratina],
   [Lairs.FullmoonIsland]: [Species.Cresselia],
   [Lairs.NewmoonIsland]: [Species.Darkrai],
+  [Lairs.SeaTemple]: [Species.Manaphy],
 };
 
 /**
@@ -192,6 +199,7 @@ export const EVERY_LAIR: Lairs[] = [
   Lairs.TurnbackCave,
   Lairs.FullmoonIsland,
   Lairs.NewmoonIsland,
+  Lairs.SeaTemple,
 ];
 
 /**

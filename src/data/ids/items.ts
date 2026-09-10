@@ -851,6 +851,9 @@ export const enum Items {
 
   /** The pass that gets somebody into the inn a Darkrai is reached from */
   MemberCard = 401,
+
+  /** The egg somebody carried in from the sea, which is not theirs */
+  ManaphyEgg = 402,
 }
 
 /**

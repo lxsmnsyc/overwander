@@ -61,6 +61,13 @@ Four child tables carry what a pokemon has several of, one row per slot:
 Each cascades on delete, so releasing a pokemon takes its moves and its history
 with it in one statement.
 
+The `slot` on the first three is the owner's own order, not the order things
+were learned in: a battle takes as many of each as it allows from the top of the
+list, so the order decides what a pokemon brings to a fight that allows fewer
+than it has. `arrangeCatch` in [`caught.ts`](../../src/server/caught.ts) is what
+writes it, and it accepts only a rearrangement of what is already stored, so
+nothing is learned or handed over by arranging.
+
 Columns are snake_case and the TypeScript record that reads them is camelCase;
 [`caught-rows.ts`](../../src/auth/caught-rows.ts) is where the two meet. A box is
 still one query however many pokemon are in it, because the children ride along
@@ -283,7 +290,14 @@ held items and moves. Three bits each, stored **0-based** so a count of
 one reads out of a zero. A ceiling belongs to the individual rather than to the
 game: a shadow carries two abilities where everything else carries one, and it
 keeps that room once purified. The defaults are 1 ability (2 for a shadow), 1
-held item and 4 moves, and three bits gives each of them room to reach 8.
+held item and 4 moves.
+
+Three bits would hold 8 of each, but the width is the field's own limit rather
+than a rule about pokemon, so the rule is stated separately: **1 to 4 abilities,
+1 to 8 held items, 4 to 8 moves**. Both ends are held on the way in and on the
+way out, so a record written while a ceiling was higher reads inside the one
+that holds now and nothing has to be rewritten. Moves start at 4 because every
+catch can already use four; the four above that are what it earns.
 
 Both places that enforce a ceiling read it off the record rather than off a
 constant: `giveItem` asks `Slots.Item` before it hands anything over, and

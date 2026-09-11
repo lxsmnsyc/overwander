@@ -1,8 +1,8 @@
 import {
   DEFAULT_ITEM_SLOTS,
   DEFAULT_MOVE_SLOTS,
-  MAX_SLOTS,
-  type Slots,
+  Slots,
+  mostSlots,
   packSlots,
   withSlots,
 } from './slots';
@@ -37,25 +37,18 @@ export const PVP_BATTLE_LIMITS = packSlots(1, DEFAULT_ITEM_SLOTS, DEFAULT_MOVE_S
  * pokemon is what they brought, and the boss itself carries more
  * abilities than any rule here would let it
  */
-export const UNLIMITED_BATTLE_LIMITS = packSlots(MAX_SLOTS, MAX_SLOTS, MAX_SLOTS);
+export const UNLIMITED_BATTLE_LIMITS = packSlots(
+  mostSlots(Slots.Ability),
+  mostSlots(Slots.Item),
+  mostSlots(Slots.Move),
+);
 
 /**
- * The counts a host may set a fight to, by kind.
- *
- * The floor is one of each rather than none: a pokemon with no move
- * slot cannot act, and one with no ability slot is a different pokemon
- * from the one its owner raised. The ceiling is the packing's own,
- * which is also what a raid allows — a host asking for everything is
- * asking for a raid's rules in a fight between two people
- */
-export const MIN_LIMIT_SLOTS = 1;
-export const MAX_LIMIT_SLOTS = MAX_SLOTS;
-
-/**
- * The limit with one count changed, held inside what a host may pick.
- * A count outside the range is brought inside it rather than refused,
- * the way `withSlots` treats one outside what three bits can hold
+ * The counts a host may set a fight to, which is the same range a
+ * pokemon itself may have room for: `SLOT_LIMITS`. A host asking for
+ * the top of every one is asking for a raid's rules in a fight between
+ * two people
  */
 export function withLimit(limits: number, kind: Slots, count: number): number {
-  return withSlots(limits, kind, Math.max(MIN_LIMIT_SLOTS, Math.min(MAX_LIMIT_SLOTS, count)));
+  return withSlots(limits, kind, count);
 }

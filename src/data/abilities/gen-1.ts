@@ -71,7 +71,7 @@ export default function registerGen1Abilities(): void {
   // Butterfree
   registerAbility(Abilities.CompoundEyes, {
     name: 'Compound Eyes',
-    description: '1.3x accuracy.',
+    description: '1.3x accuracy. As a buddy, wild pokemon carry a rare held item 2.5x as often.',
   });
   registerAbility(Abilities.TintedLens, {
     name: 'Tinted Lens',
@@ -85,13 +85,14 @@ export default function registerGen1Abilities(): void {
   });
   registerAbility(Abilities.Sniper, {
     name: 'Sniper',
-    description: '1.5x on critical hits.',
+    description: '1.5x on critical hits. As a buddy, a critical throw gets 2 chances at its shake.',
   });
 
   // Pidgey
   registerAbility(Abilities.KeenEye, {
     name: 'Keen Eye',
-    description: 'Refuses accuracy drops from anybody else.',
+    description:
+      'Refuses accuracy drops from anybody else. As a buddy, the bottom of the wild level band lifts by 3.',
   });
   registerAbility(Abilities.TangledFeet, {
     name: 'Tangled Feet',
@@ -114,13 +115,15 @@ export default function registerGen1Abilities(): void {
   });
   registerAbility(Abilities.Hustle, {
     name: 'Hustle',
-    description: '1.5x Attack, but physical moves are 20% less accurate.',
+    description:
+      '1.5x Attack, but physical moves are 20% less accurate. As a buddy, the top of the wild level band lifts by 3.',
   });
 
   // Ekans
   registerAbility(Abilities.Intimidate, {
     name: 'Intimidate',
-    description: '-1 Attack to every enemy as it enters the field.',
+    description:
+      '-1 Attack to every enemy as it enters the field. As a buddy, the bottom of the wild level band lifts by 3.',
   });
   registerAbility(Abilities.Unnerve, {
     name: 'Unnerve',
@@ -135,7 +138,7 @@ export default function registerGen1Abilities(): void {
   registerAbility(Abilities.LightningRod, {
     name: 'Lightning Rod',
     description:
-      'Draws Electric moves to itself, takes nothing from them, and gains +1 Special Attack.',
+      'Draws Electric moves to itself, takes nothing from them, and gains +1 Special Attack. As a buddy, 1.5x the catch chance on wild Electric types.',
   });
 
   // Sandshrew
@@ -170,7 +173,8 @@ export default function registerGen1Abilities(): void {
   // Clefairy
   registerAbility(Abilities.CuteCharm, {
     name: 'Cute Charm',
-    description: '30% to infatuate anything that touches it.',
+    description:
+      '30% to infatuate anything that touches it. As a buddy, 2/3 of wild pokemon come out the opposite gender to it.',
   });
   registerAbility(Abilities.MagicGuard, {
     name: 'Magic Guard',
@@ -184,7 +188,8 @@ export default function registerGen1Abilities(): void {
   // Vulpix
   registerAbility(Abilities.FlashFire, {
     name: 'Flash Fire',
-    description: 'Immune to Fire, and 1.5x its own Fire moves once one has been thrown at it.',
+    description:
+      'Immune to Fire, and 1.5x its own Fire moves once one has been thrown at it. As a buddy, 1.5x the catch chance on wild Fire types.',
   });
 
   // Jigglypuff
@@ -194,7 +199,8 @@ export default function registerGen1Abilities(): void {
   });
   registerAbility(Abilities.Frisk, {
     name: 'Frisk',
-    description: 'Pockets one enemy item, berries aside, while it stands.',
+    description:
+      'Pockets one enemy item, berries aside, while it stands. As a buddy, shows what a wild pokemon is carrying.',
   });
 
   // Zubat
@@ -210,7 +216,8 @@ export default function registerGen1Abilities(): void {
   // Oddish
   registerAbility(Abilities.Stench, {
     name: 'Stench',
-    description: '10% to leave whatever it hits flinching.',
+    description:
+      '10% to leave whatever it hits flinching. As a buddy, 2 fewer wild pokemon appear.',
   });
   registerAbility(Abilities.EffectSpore, {
     name: 'Effect Spore',
@@ -237,7 +244,8 @@ export default function registerGen1Abilities(): void {
   // Diglett
   registerAbility(Abilities.ArenaTrap, {
     name: 'Arena Trap',
-    description: 'Grounded enemies cannot flee.',
+    description:
+      'Grounded enemies cannot flee. As a buddy, 3 more wild pokemon appear and each is half as likely to flee.',
   });
   registerAbility(Abilities.SandForce, {
     name: 'Sand Force',
@@ -247,7 +255,8 @@ export default function registerGen1Abilities(): void {
   // Meowth
   registerAbility(Abilities.Pickup, {
     name: 'Pickup',
-    description: 'Picks up an item somebody else used, if it has room for one.',
+    description:
+      'Picks up an item somebody else used, if it has room for one. As a buddy, finds an item every 512 steps walked.',
   });
   registerAbility(Abilities.Technician, {
     name: 'Technician',
@@ -271,7 +280,7 @@ export default function registerGen1Abilities(): void {
   // Mankey
   registerAbility(Abilities.VitalSpirit, {
     name: 'Vital Spirit',
-    description: 'Cannot fall asleep.',
+    description: 'Cannot fall asleep. As a buddy, the top of the wild level band lifts by 3.',
   });
   registerAbility(Abilities.AngerPoint, {
     name: 'Anger Point',
@@ -291,19 +300,21 @@ export default function registerGen1Abilities(): void {
   // Poliwag
   registerAbility(Abilities.WaterAbsorb, {
     name: 'Water Absorb',
-    description: 'Immune to Water, and healed 1/4 of its HP by it.',
+    description:
+      'Immune to Water, and healed 1/4 of its HP by it. As a buddy, 1.5x the catch chance on wild Water types.',
   });
 
   // Abra
   registerAbility(Abilities.Synchronize, {
     name: 'Synchronize',
-    description: 'Passes poison, burn and paralysis back to whoever caused it.',
+    description:
+      'Passes poison, burn and paralysis back to whoever caused it. As a buddy, 1/2 of wild pokemon share its nature.',
   });
 
   // Machop
   registerAbility(Abilities.NoGuard, {
     name: 'No Guard',
-    description: 'Nothing misses, in either direction.',
+    description: 'Nothing misses, in either direction. As a buddy, 3 more wild pokemon appear.',
   });
   registerAbility(Abilities.Steadfast, {
     name: 'Steadfast',
@@ -313,7 +324,8 @@ export default function registerGen1Abilities(): void {
   // Bellsprout
   registerAbility(Abilities.Gluttony, {
     name: 'Gluttony',
-    description: 'Eats its pinch items at 2x the usual HP threshold.',
+    description:
+      'Eats its pinch items at 2x the usual HP threshold. As a buddy, treats fed to a wild pokemon keep working 1.5x as long.',
   });
 
   // Tentacool
@@ -345,7 +357,8 @@ export default function registerGen1Abilities(): void {
   // Ponyta
   registerAbility(Abilities.FlameBody, {
     name: 'Flame Body',
-    description: '30% to burn anything that touches it.',
+    description:
+      '30% to burn anything that touches it. An egg found while it is the buddy hatches in half the walk.',
   });
 
   // Slowpoke
@@ -365,7 +378,7 @@ export default function registerGen1Abilities(): void {
   // Magnemite
   registerAbility(Abilities.MagnetPull, {
     name: 'Magnet Pull',
-    description: 'Steel enemies cannot flee.',
+    description: 'Steel enemies cannot flee. As a buddy, wild Steel types cannot flee at all.',
   });
   registerAbility(Abilities.Analytic, {
     name: 'Analytic',
@@ -441,7 +454,8 @@ export default function registerGen1Abilities(): void {
   });
   registerAbility(Abilities.Forewarn, {
     name: 'Forewarn',
-    description: 'Disables the strongest enemy move for 8 seconds on entry.',
+    description:
+      'Disables the strongest enemy move for 8 seconds on entry. As a buddy, shows how ready a wild pokemon is to flee.',
   });
 
   registerAbility(Abilities.BadDreams, {
@@ -468,7 +482,8 @@ export default function registerGen1Abilities(): void {
   // Exeggcute
   registerAbility(Abilities.Harvest, {
     name: 'Harvest',
-    description: 'Regrows the berry it ate: always in sun, 1/2 the time otherwise.',
+    description:
+      'Regrows the berry it ate: always in sun, 1/2 the time otherwise. As a buddy, a treat fed to a wild pokemon survives a missed throw.',
   });
 
   // Cubone
@@ -532,7 +547,8 @@ export default function registerGen1Abilities(): void {
   // Staryu
   registerAbility(Abilities.Illuminate, {
     name: 'Illuminate',
-    description: 'Refuses accuracy drops from anybody else.',
+    description:
+      'Refuses accuracy drops from anybody else. As a buddy, 3 more wild pokemon appear and the dark is lit 3 cells out.',
   });
 
   // MrMime
@@ -570,13 +586,15 @@ export default function registerGen1Abilities(): void {
   });
   registerAbility(Abilities.Anticipation, {
     name: 'Anticipation',
-    description: 'Takes half damage from the worst enemy move it braced for.',
+    description:
+      'Takes half damage from the worst enemy move it braced for. As a buddy, shows how ready a wild pokemon is to flee.',
   });
 
   // Jolteon
   registerAbility(Abilities.VoltAbsorb, {
     name: 'Volt Absorb',
-    description: 'Immune to Electric, and healed 1/4 of its HP by it.',
+    description:
+      'Immune to Electric, and healed 1/4 of its HP by it. As a buddy, 1.5x the catch chance on wild Electric types.',
   });
   registerAbility(Abilities.QuickFeet, {
     name: 'Quick Feet',
@@ -586,7 +604,8 @@ export default function registerGen1Abilities(): void {
   // Porygon
   registerAbility(Abilities.Trace, {
     name: 'Trace',
-    description: "Copies the strongest enemy's ability as it enters the field.",
+    description:
+      "Copies the strongest enemy's ability as it enters the field. As a buddy, shows what a wild pokemon’s ability is.",
   });
   registerAbility(Abilities.Download, {
     name: 'Download',
@@ -602,7 +621,8 @@ export default function registerGen1Abilities(): void {
   // Aerodactyl
   registerAbility(Abilities.Pressure, {
     name: 'Pressure',
-    description: 'Moves aimed at it cost 2x the cooldown.',
+    description:
+      'Moves aimed at it cost 2x the cooldown. As a buddy, the top of the wild level band lifts by 3.',
   });
 
   registerAbility(Abilities.StrongJaw, {
@@ -663,6 +683,7 @@ export default function registerGen1Abilities(): void {
   });
   registerAbility(Abilities.Purified, {
     name: 'Purified',
-    description: 'The mark of a shadow put right. Does nothing in a fight.',
+    description:
+      'The mark of a shadow put right, worth nothing in a fight. As a buddy, 1.5x the catch chance on a wild shadow.',
   });
 }

@@ -18,16 +18,25 @@ import { ExpandIcon, ShrinkIcon } from '../icons';
  */
 
 /**
+ * Whether the browser will do it at all. An iPhone has fullscreen for
+ * videos and nothing else, and a button that cannot do anything is
+ * worse than no button.
+ *
+ * Kept for the whole page rather than inside the switch, so whatever
+ * is drawn beside it can go when it does: the bar puts a divider in
+ * front of it, and a divider with nothing after it is a line hanging
+ * off the end of the bar. False until the switch has mounted, which
+ * is what keeps it agreeing with the markup the server sent
+ */
+const [offered, setOffered] = createSignal(false);
+
+export { offered as fullscreenOffered };
+
+/**
  * The switch, drawn as one of the game's buttons. It is pressed while
  * the game has the screen
  */
 export default function FullscreenToggle(props: { class?: string }): JSX.Element {
-  /**
-   * Whether the browser will do it at all. An iPhone has fullscreen
-   * for videos and nothing else, and a button that cannot do anything
-   * is worse than no button
-   */
-  const [offered, setOffered] = createSignal(false);
   const [filling, setFilling] = createSignal(false);
 
   onMount(() => {

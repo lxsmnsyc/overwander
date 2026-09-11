@@ -837,33 +837,61 @@ export const enum Items {
   /** The wish a Jirachi is called out to answer */
   WishTag = 394,
 
+  /**
+   * The mints: one per nature that does something, plus the Serious
+   * Mint for a pokemon that should do nothing. In nature order, and
+   * appended rather than inserted, since an id reaches a player's bag
+   * rows
+   */
+  LonelyMint = 395,
+  BraveMint = 396,
+  AdamantMint = 397,
+  NaughtyMint = 398,
+  BoldMint = 399,
+  RelaxedMint = 400,
+  ImpishMint = 401,
+  LaxMint = 402,
+  TimidMint = 403,
+  HastyMint = 404,
+  SeriousMint = 405,
+  JollyMint = 406,
+  NaiveMint = 407,
+  ModestMint = 408,
+  MildMint = 409,
+  QuietMint = 410,
+  RashMint = 411,
+  CalmMint = 412,
+  GentleMint = 413,
+  SassyMint = 414,
+  CarefulMint = 415,
+
   /** Sinnoh's two, the skull that charged and the face that held */
-  SkullFossil = 395,
-  ArmorFossil = 396,
+  SkullFossil = 416,
+  ArmorFossil = 417,
 
   /** What a Happiny carries about as though it were an egg */
-  OvalStone = 397,
+  OvalStone = 418,
 
   /** The three the creation trio are held in their other shape by */
-  AdamantOrb = 398,
-  LustrousOrb = 399,
-  GriseousOrb = 400,
+  AdamantOrb = 419,
+  LustrousOrb = 420,
+  GriseousOrb = 421,
 
   /** The pass that gets somebody into the inn a Darkrai is reached from */
-  MemberCard = 401,
+  MemberCard = 422,
 
   /** The egg somebody carried in from the sea, which is not theirs */
-  ManaphyEgg = 402,
+  ManaphyEgg = 423,
 
   /** The flower a Shaymin opens with, and the letter that leads to one */
-  Gracidea = 403,
-  OaksLetter = 404,
+  Gracidea = 424,
+  OaksLetter = 425,
 
   /** The list of machines a Rotom picks its next one out of */
-  RotomCatalog = 405,
+  RotomCatalog = 426,
 
   /** The flute that opens the stair at the top of the mountain */
-  AzureFlute = 406,
+  AzureFlute = 427,
 }
 
 /**

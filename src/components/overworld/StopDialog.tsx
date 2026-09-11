@@ -14,6 +14,7 @@ import { FRONTIER_TEAM_SIZE } from '../../data/overworld/experts';
 import type { Spawn } from '../../overworld/chunk-snapshot';
 import { levelInBand } from '../../overworld/encounter';
 import { NPC_QUOTES } from './npc-dialog/shared';
+import { saidLevels } from './overworld-tab/challengers';
 import TeamPickerDialog from '../battle/TeamPickerDialog';
 import CatchBox, { type BoxEntry } from '../catches/CatchBox';
 import NpcSprite from './NpcSprite';
@@ -168,9 +169,9 @@ export default function StopDialog(props: StopDialogProps): JSX.Element {
     if (challenger != null) {
       return challenger.stakes;
     }
-    return `Six of theirs against as many as you bring. Win and the grunt drops a purse and
-      whatever they were carrying. Lose and you lose nothing but the fight. They will be
-      here all window.`;
+    return `Six of theirs at ${saidLevels(levels())} against as many as you bring. Win and the
+      grunt drops a purse and whatever they were carrying. Lose and you lose nothing but the
+      fight. They will be here all window.`;
   };
 
   /** What a challenge that can no longer be taken says */
@@ -244,12 +245,7 @@ export default function StopDialog(props: StopDialogProps): JSX.Element {
                   standing empty */}
               <Show
                 when={!unseen()}
-                fallback={
-                  <Meta>
-                    Nobody named yet. Three of theirs at levels {levels()[0]} to {levels()[1]},
-                    drawn once yours are.
-                  </Meta>
-                }
+                fallback={<Meta>Nobody named yet. Theirs are drawn once yours are.</Meta>}
               >
                 <CatchBox
                   entries={lineup(record())}
@@ -257,9 +253,6 @@ export default function StopDialog(props: StopDialogProps): JSX.Element {
                   columns={3}
                   cardOnly
                 />
-                <Meta>
-                  {record().party.length} of theirs, levels {levels()[0]} to {levels()[1]}.
-                </Meta>
               </Show>
 
               {/* And what the fight is worth, which is the decision the

@@ -1,8 +1,8 @@
 import { type JSX, createEffect, createSignal } from 'solid-js';
 import type { DuelRules } from '../../auth/duels';
 import { TEAM_SIZE } from '../../auth/teams';
-import { MAX_LIMIT_SLOTS, MIN_LIMIT_SLOTS, withLimit } from '../../data/constants/battle-limits';
-import { Slots, getSlots } from '../../data/constants/slots';
+import { withLimit } from '../../data/constants/battle-limits';
+import { Slots, getSlots, leastSlots, mostSlots } from '../../data/constants/slots';
 import { Button, Dialog, DialogActions, Note, Select } from '../styled';
 
 /**
@@ -22,11 +22,15 @@ export interface DuelRulesDialogProps {
   onSubmit: (rules: DuelRules) => void;
 }
 
-/** The counts on offer for one slot kind, low to high */
-const SLOT_CHOICES = Array.from(
-  { length: MAX_LIMIT_SLOTS - MIN_LIMIT_SLOTS + 1 },
-  (_, at) => MIN_LIMIT_SLOTS + at,
-);
+/**
+ * The counts on offer for one slot kind, low to high. Each kind has
+ * its own range, so moves start at the four every pokemon already has
+ */
+const slotChoices = (kind: Slots): number[] => {
+  const least = leastSlots(kind);
+
+  return Array.from({ length: mostSlots(kind) - least + 1 }, (_, at) => least + at);
+};
 
 const TEAM_CHOICES = Array.from({ length: TEAM_SIZE }, (_, at) => at + 1);
 
@@ -54,7 +58,7 @@ export default function DuelRulesDialog(props: DuelRulesDialogProps): JSX.Elemen
     <Select
       label={label}
       value={slotsOf(kind)}
-      options={countOptions(SLOT_CHOICES)}
+      options={countOptions(slotChoices(kind))}
       onChange={(count) => {
         setSlots(kind, count);
       }}

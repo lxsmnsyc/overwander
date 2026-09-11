@@ -67,7 +67,7 @@ function saidTypes(types: Types[]): string {
 }
 
 /** A band said the way a lineup reads it: "levels 45-65" */
-function saidLevels([lowest, highest]: LevelBand): string {
+export function saidLevels([lowest, highest]: LevelBand): string {
   return `levels ${lowest}-${highest}`;
 }
 

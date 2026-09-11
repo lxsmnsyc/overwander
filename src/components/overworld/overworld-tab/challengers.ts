@@ -102,6 +102,14 @@ const GYM_LEADER_QUOTES: Record<GymLeader, string> = {
   [GymLeader.Tate]: 'My sister knows what I am about to do. Do you?',
   [GymLeader.Liza]: 'My brother and I share one badge. You still have to earn it.',
   [GymLeader.Juan]: 'Water is elegance, and elegance is strength. Observe.',
+  [GymLeader.Roark]: 'I dig fossils out of this rock all day. Digging you out will be quicker.',
+  [GymLeader.Gardenia]: 'Grass pokemon are wonderful, and mine are wonderfully mean.',
+  [GymLeader.Maylene]: 'I am young to keep a gym. Nobody has taken it off me yet.',
+  [GymLeader.CrasherWake]: 'Crash! The Fen Badge is behind me, and so is a wall of water.',
+  [GymLeader.Fantina]: 'My ghosts dance, and they never miss a step. Shall we?',
+  [GymLeader.Byron]: 'My son keeps a gym of his own. Neither of us gives anything away.',
+  [GymLeader.Candice]: 'Focus! That is all it takes. Mine has never once slipped.',
+  [GymLeader.Volkner]: 'I have been bored for years. Please be worth the electricity.',
 };
 
 /** Which league each champion is the top of */

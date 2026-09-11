@@ -89,6 +89,14 @@ const enum Awards {
   MattDefeated = 69,
   ShellyDefeated = 70,
   ArchieDefeated = 71,
+  CoalBadge = 72,
+  ForestBadge = 73,
+  CobbleBadge = 74,
+  FenBadge = 75,
+  RelicBadge = 76,
+  MineBadge = 77,
+  IcicleBadge = 78,
+  BeaconBadge = 79,
 }
 
 export default Awards;
@@ -166,6 +174,14 @@ export const AWARD_NAMES: Record<Awards, string> = {
   [Awards.MattDefeated]: 'Matt Defeated',
   [Awards.ShellyDefeated]: 'Shelly Defeated',
   [Awards.ArchieDefeated]: 'Archie Defeated',
+  [Awards.CoalBadge]: 'Coal Badge',
+  [Awards.ForestBadge]: 'Forest Badge',
+  [Awards.CobbleBadge]: 'Cobble Badge',
+  [Awards.FenBadge]: 'Fen Badge',
+  [Awards.RelicBadge]: 'Relic Badge',
+  [Awards.MineBadge]: 'Mine Badge',
+  [Awards.IcicleBadge]: 'Icicle Badge',
+  [Awards.BeaconBadge]: 'Beacon Badge',
 };
 
 /**
@@ -236,6 +252,21 @@ export const HOENN_BADGES: Awards[] = [
   Awards.FeatherBadge,
   Awards.MindBadge,
   Awards.RainBadge,
+];
+
+/**
+ * And Sinnoh's 8, in gym order. Nothing asks to see the set yet: the
+ * region keeps gyms and no league above them
+ */
+export const SINNOH_BADGES: Awards[] = [
+  Awards.CoalBadge,
+  Awards.ForestBadge,
+  Awards.CobbleBadge,
+  Awards.FenBadge,
+  Awards.RelicBadge,
+  Awards.MineBadge,
+  Awards.IcicleBadge,
+  Awards.BeaconBadge,
 ];
 
 /**

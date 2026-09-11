@@ -25,6 +25,7 @@ import Awards, {
   JOHTO_HONORS,
   KANTO_BADGES,
   KANTO_HONORS,
+  SINNOH_BADGES,
 } from '../../data/ids/awards';
 import Npc, { EXECUTIVE_CHARSETS, EXECUTIVE_HONORS } from '../../data/overworld/npc';
 import {
@@ -82,6 +83,24 @@ const AWARD_SPRITES: Partial<Record<Awards, [sheet: string, name: string]>> = {
   [Awards.MineralBadge]: ['badges/johto', 'Johto (5)'],
   [Awards.GlacierBadge]: ['badges/johto', 'Johto (6)'],
   [Awards.RisingBadge]: ['badges/johto', 'Johto (7)'],
+  [Awards.StoneBadge]: ['badges/hoenn', 'Hoenn'],
+  [Awards.KnuckleBadge]: ['badges/hoenn', 'Hoenn (1)'],
+  [Awards.DynamoBadge]: ['badges/hoenn', 'Hoenn (2)'],
+  [Awards.HeatBadge]: ['badges/hoenn', 'Hoenn (3)'],
+  [Awards.BalanceBadge]: ['badges/hoenn', 'Hoenn (4)'],
+  [Awards.FeatherBadge]: ['badges/hoenn', 'Hoenn (5)'],
+  [Awards.MindBadge]: ['badges/hoenn', 'Hoenn (6)'],
+  [Awards.RainBadge]: ['badges/hoenn', 'Hoenn (7)'],
+  // Sinnoh's sheet names its badges by number rather than by region,
+  // and the numbers are the gym order
+  [Awards.CoalBadge]: ['badges/sinnoh', '1'],
+  [Awards.ForestBadge]: ['badges/sinnoh', '2'],
+  [Awards.CobbleBadge]: ['badges/sinnoh', '3'],
+  [Awards.FenBadge]: ['badges/sinnoh', '4'],
+  [Awards.RelicBadge]: ['badges/sinnoh', '5'],
+  [Awards.MineBadge]: ['badges/sinnoh', '6'],
+  [Awards.IcicleBadge]: ['badges/sinnoh', '7'],
+  [Awards.BeaconBadge]: ['badges/sinnoh', '8'],
 };
 
 /**
@@ -187,15 +206,23 @@ const AWARD_COLORS: Record<Awards, string> = {
   [Awards.MattDefeated]: '#3c7ab0',
   [Awards.ShellyDefeated]: '#5a95c9',
   [Awards.ArchieDefeated]: '#2a4a9e',
+  [Awards.CoalBadge]: '#6f747c',
+  [Awards.ForestBadge]: '#5aa46a',
+  [Awards.CobbleBadge]: '#c98a4b',
+  [Awards.FenBadge]: '#4aa3b8',
+  [Awards.RelicBadge]: '#8a6fb8',
+  [Awards.MineBadge]: '#8f9aa8',
+  [Awards.IcicleBadge]: '#9fd7e8',
+  [Awards.BeaconBadge]: '#f2c14a',
 };
 
 /**
  * The shelf's order: Kanto's 8 badges, its 4 elite marks, the title
  * and the dex medal, then Johto's 8 badges, its 4 marks and its
- * title and its medal, then Hoenn's 8 badges, which is all that
- * region pays so far, then the marks that belong to no region's
- * walk: Team Rocket's, from the rank and file up, and the legends'.
- * The walk itself, left to right, a region at a time
+ * title and its medal, then Hoenn's, then Sinnoh's 8 badges, which
+ * is all that region pays so far, then the marks that belong to no
+ * region's walk: Team Rocket's, from the rank and file up, and the
+ * legends'. The walk itself, left to right, a region at a time
  */
 const SHELF: Awards[] = [
   ...new Set([
@@ -211,6 +238,7 @@ const SHELF: Awards[] = [
     ...HOENN_HONORS,
     Awards.HoennChampion,
     Awards.HoennDexMedal,
+    ...SINNOH_BADGES,
     ...FRONTIER_SYMBOLS,
     ...SYNDICATE_HONORS,
     ...LEGENDS.map((legend) => LEGEND_HONORS[legend]),
@@ -321,6 +349,7 @@ function Shelf(props: { held: Resource<AwardRecord[]> }): JSX.Element {
   const johto = (): number => JOHTO_BADGES.filter((badge) => wins().has(badge)).length;
   const marks = (): number => JOHTO_HONORS.filter((honor) => wins().has(honor)).length;
   const hoenn = (): number => HOENN_BADGES.filter((badge) => wins().has(badge)).length;
+  const sinnoh = (): number => SINNOH_BADGES.filter((badge) => wins().has(badge)).length;
 
   const empties = (): number[] =>
     Array.from(
@@ -351,7 +380,7 @@ function Shelf(props: { held: Resource<AwardRecord[]> }): JSX.Element {
         the Elite Four{wins().has(Awards.KantoChampion) ? ', Champion' : ''}. Johto: {johto()} of{' '}
         {JOHTO_BADGES.length} badges, {marks()} of {JOHTO_HONORS.length} of the Elite Four
         {wins().has(Awards.JohtoChampion) ? ', Champion' : ''}. Hoenn: {hoenn()} of{' '}
-        {HOENN_BADGES.length} badges.
+        {HOENN_BADGES.length} badges. Sinnoh: {sinnoh()} of {SINNOH_BADGES.length} badges.
       </Meta>
     </div>
   );

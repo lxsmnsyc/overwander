@@ -154,6 +154,21 @@ export const GYM_LEADER_SIGNATURES: Record<GymLeader, Species> = {
   // The same ace Clair brings, which is the mainline's own doing:
   // two water-and-dragon gyms, one Kingdra between them
   [GymLeader.Juan]: Species.Kingdra,
+  // Roark's ace is a first stage with a Rampardos above it, which is
+  // Brock's Onix again: the pokemon the gym is remembered for rather
+  // than the strongest thing its keeper could field
+  [GymLeader.Roark]: Species.Cranidos,
+  [GymLeader.Gardenia]: Species.Roserade,
+  [GymLeader.Maylene]: Species.Lucario,
+  [GymLeader.CrasherWake]: Species.Floatzel,
+  // The ghost she closes with in Diamond and Pearl, which is the
+  // league this badge order is read from
+  [GymLeader.Fantina]: Species.Drifblim,
+  [GymLeader.Byron]: Species.Bastiodon,
+  [GymLeader.Candice]: Species.Abomasnow,
+  // Not the Raichu he opens with: Lt. Surge is already remembered for
+  // that one, and the Luxray is what Sunyshore closes with anyway
+  [GymLeader.Volkner]: Species.Luxray,
 };
 
 /**

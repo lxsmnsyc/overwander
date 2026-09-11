@@ -10,7 +10,7 @@ own, and beating one is kept for good.
 
 | Award               | How many | Earned by                              |
 | ------------------- | -------- | -------------------------------------- |
-| **Gym badge**       | 24       | Beating that gym's leader              |
+| **Gym badge**       | 32       | Beating that gym's leader              |
 | **Elite Four mark** | 12       | Beating that member of the Elite Four  |
 | **Champion**        | 3        | Beating that league's Champion          |
 | **Legend's mark**   | 2        | Beating a legend, who asks for nothing |
@@ -18,10 +18,13 @@ own, and beating one is kept for good.
 | **Syndicate marks** | 14       | Beating a grunt, an executive or the boss of Team Rocket, Team Magma or Team Aqua |
 | **Dex medal**       | 3        | Filling that region's dex                |
 
-Kanto, Johto and Hoenn keep eight gyms apiece, and their leaders share the
-world's countries: which of them keeps a given gym is fixed for that gym, so a
-badge is always in the same place. Hoenn seats nine people for its eight, since
-Tate and Liza keep one gym between them and pay the one badge either way.
+Kanto, Johto, Hoenn and Sinnoh keep eight gyms apiece, and their leaders share
+the world's countries: which of them keeps a given gym is fixed for that gym, so
+a badge is always in the same place. Hoenn seats nine people for its eight,
+since Tate and Liza keep one gym between them and pay the one badge either way.
+Sinnoh's eight are Roark, Gardenia, Maylene, Crasher Wake, Fantina, Byron,
+Candice and Volkner, and its league is still to come, so its badges open no seat
+yet.
 
 Kanto's and Johto's Elite Fours come to seven people rather than eight, four
 apiece. Bruno keeps a seat in each, and each is its own fight with its own mark:

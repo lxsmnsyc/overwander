@@ -405,3 +405,39 @@
   transition-duration: 1ms !important;
   scroll-behavior: auto !important;
 }
+
+/**
+ * The ball rocking where the pokemon was standing. One iteration is
+ * one shake, so the count the throw came back with is the number of
+ * times this runs: three and it holds, fewer and it opens
+ */
+@keyframes ball-shake {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+
+  25% {
+    transform: rotate(-18deg) translateX(-6%);
+  }
+
+  75% {
+    transform: rotate(18deg) translateX(6%);
+  }
+}
+
+/**
+ * The ball landing: it arrives from where the player threw it, which
+ * is off the bottom of the panel, and settles where the pokemon was
+ */
+@keyframes ball-land {
+  from {
+    opacity: 0;
+    transform: translateY(60%) scale(0.4);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}

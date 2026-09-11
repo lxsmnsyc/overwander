@@ -4,8 +4,15 @@ import { isEgg } from '../../../auth/egg';
 import { Items } from '../../../data/ids/items';
 import { getItemData } from '../../../data/items';
 import { getHeldPowerStat } from '../../../data/items/power-items';
-import Npc from '../../../data/overworld/npc';
+import Npc, { REMINDER_FEE } from '../../../data/overworld/npc';
 import type { BreedingParent } from '../../../overworld/breeding';
+import type { JSX, Resource } from 'solid-js';
+import type ChunkSnapshot from '../../../overworld/chunk-snapshot';
+import type { InventoryEntry } from '../../../auth/inventory';
+import type { CatchOption } from '../../catches/catch-picker';
+import type { Moves } from '../../../data/ids/moves';
+import type { LearnResult } from '../../../auth/learn-refusal';
+import { type ToastTone, useToast } from '../../styled';
 
 /**
  * What the person standing there actually says.
@@ -30,7 +37,7 @@ export const NPC_QUOTES: Record<Npc, string> = {
   [Npc.MoveReminder]:
     'Forgotten? Hah. Nothing is ever forgotten. One Heart Scale and I will prove it.',
   // The grunt never opens this dialog: walking up to one puts the
-  // challenge in `RocketStopDialog`, which says this line instead.
+  // challenge in `StopDialog`, which says this line instead.
   // They are still one of the people a cell can draw, so their words
   // live with the rest
   [Npc.RocketGrunt]: 'Wrong path, kid. Three of mine say so.',
@@ -38,7 +45,7 @@ export const NPC_QUOTES: Record<Npc, string> = {
     'Dug these up myself! Two beauties, and I will part with one. Just one, mind.',
   [Npc.FossilScientist]: 'A fossil? Marvelous! Hand it over. It has waited in there long enough.',
   [Npc.MoveTutor]: 'Some moves are taught, never grown into. One Heart Scale buys the lesson.',
-  // The trainer opens `RocketStopDialog` too: a duel is put the same
+  // The trainer opens `StopDialog` too: a duel is put the same
   // way an ambush is, only asked rather than sprung
   [Npc.Trainer]: 'You look strong. Prove it. Three of the local best, purse to the winner.',
   [Npc.Chef]: 'Fresh off the stove and out of the icebox. Your pokemon carries it, it eats well.',
@@ -83,3 +90,105 @@ export function priceOf(item: Items, buying: boolean): number {
 
 /** What a counter's own column is laid out as: one thing at a time, centred */
 export const CENTRED = 'items-center text-center';
+
+/**
+ * What every counter is handed.
+ *
+ * One person, one offer: the resources they read, the way to say
+ * something landed, and the button that walks away from them. Each
+ * counter keeps its own picks and its own status line, so leaving one
+ * and walking up to the next starts a fresh conversation
+ */
+export interface CounterProps {
+  player: string;
+  snapshot: ChunkSnapshot | null;
+  /** Where they stand, which is what the server re-derives them from */
+  standing: [cell: number, npc: Npc] | null;
+  catches: Resource<CatchOption[]>;
+  gold: Resource<number>;
+  bag: Resource<InventoryEntry[]>;
+  /** Whether the maniac has already sold to this player this window */
+  visited: Resource<boolean>;
+  /** Whether the daycare lady has already warmed an egg this window */
+  warmed: Resource<boolean>;
+  /**
+   * Whether the one standing here has already done their one thing for
+   * this player this window. Only the counters in `ONCE_A_WINDOW` are
+   * asked, so the rest read it as false
+   */
+  spent: Resource<boolean>;
+  onServed: () => void;
+  onTraded: () => void;
+  onChange?: () => void;
+  /**
+   * The way out, drawn at the end of every counter's own row. A thunk
+   * rather than the element, since it is built here and rendered a
+   * component down
+   */
+  walkOn: () => JSX.Element;
+  /**
+   * A teaching the counter has agreed to, asked outside this window.
+   *
+   * The window steps aside while it is up: two modals at once fight
+   * for the click that closes them, and a dialog nested in one that
+   * closes goes with it
+   */
+  ask: (question: CounterQuestion | null) => void;
+}
+
+/**
+ * The player's pokemon as every picker in these dialogs reads them.
+ *
+ * `latest`, not the resource. Every one of these people writes and
+ * then re-reads the list, and a read that suspends takes the panel out
+ * for the length of the round trip: handing a party to Nurse Joy would
+ * blank the counter mid-sentence
+ */
+export function optionsOf(props: CounterProps): CatchOption[] {
+  return props.catches.latest ?? [];
+}
+
+/**
+ * How many Heart Scales are in the bag. It is the whole price of a
+ * reminder, a lesson and a channelling
+ */
+export function scalesIn(props: CounterProps): number {
+  return (props.bag.latest ?? []).find((entry) => entry.item === REMINDER_FEE)?.amount ?? 0;
+}
+
+/** What went wrong, said the way every counter says it */
+export function refusal(caught: unknown): string {
+  return caught instanceof Error ? caught.message : String(caught);
+}
+
+/**
+ * How a counter reports what just happened: in a toast, never in a
+ * line at the foot of its own panel.
+ *
+ * A player who has pressed a counter's button is looking at the button
+ * and at the pokemon or item it acted on, not at the bottom of the
+ * dialog, and a panel that is about to close takes its own status line
+ * with it. A toast outlives the dialog and stacks when several things
+ * landed. What stays on the panel is what is read *before* pressing:
+ * the fee, what is in the bag, why a square is grey
+ */
+export function useSaying(): (message: string, tone?: ToastTone) => void {
+  const toast = useToast();
+
+  return (message, tone = 'leaf') => {
+    toast.push({ message, tone });
+  };
+}
+
+/**
+ * What a counter has agreed and cannot ask by itself: whether there is
+ * room for the move, and which one goes if there is not
+ */
+export interface CounterQuestion {
+  catchId: string;
+  move: Moves;
+  /** What it costs, said in the dialog that asks */
+  cost: string;
+  teach: (catchId: string, move: Moves, replaces: number) => Promise<LearnResult>;
+  onTaught: () => void;
+}

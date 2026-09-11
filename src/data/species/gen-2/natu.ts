@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// GSC TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.Psychic,
@@ -34,6 +34,18 @@ const FAMILY_TEACHABLE = [
   Moves.Nightmare,
   Moves.PsychUp,
   Moves.Swift,
+  Moves.AerialAce,
+  Moves.CalmMind,
+  Moves.DoubleEdge,
+  Moves.Facade,
+  Moves.LightScreen,
+  Moves.Mimic,
+  Moves.Reflect,
+  Moves.SecretPower,
+  Moves.ShadowBall,
+  Moves.SkillSwap,
+  Moves.Substitute,
+  Moves.ThunderWave,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Synchronize, Abilities.EarlyBird];
@@ -74,12 +86,20 @@ export default function registerNatuSpecies(): void {
         1: [Moves.Leer, Moves.Peck],
         10: [Moves.NightShade],
         20: [Moves.Teleport],
-        30: [Moves.FutureSight],
+        30: [Moves.FutureSight, Moves.Wish],
         40: [Moves.ConfuseRay],
         50: [Moves.Psychic],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.DrillPeck, Moves.FeintAttack, Moves.Haze, Moves.QuickAttack, Moves.SteelWing],
+      egg: [
+        Moves.DrillPeck,
+        Moves.FeintAttack,
+        Moves.Haze,
+        Moves.QuickAttack,
+        Moves.SteelWing,
+        Moves.FeatherDance,
+        Moves.Refresh,
+      ],
     },
   });
 
@@ -114,11 +134,11 @@ export default function registerNatuSpecies(): void {
       level: {
         1: [Moves.Leer, Moves.Peck, Moves.NightShade],
         20: [Moves.Teleport],
-        35: [Moves.FutureSight],
+        35: [Moves.FutureSight, Moves.Wish],
         50: [Moves.ConfuseRay],
         65: [Moves.Psychic],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.Fly, Moves.HyperBeam],
+      teachable: [...FAMILY_TEACHABLE, Moves.Fly, Moves.HyperBeam, Moves.SteelWing],
     },
   });
 }

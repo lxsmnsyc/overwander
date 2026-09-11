@@ -21,11 +21,15 @@ import { nameToIcon, registerItem } from './__create';
 export const RAID_ITEMS = new Map<Items, Species>([
   [Items.OldSeaMap, Species.Mew],
   [Items.GSBall, Species.Celebi],
+  [Items.AuroraTicket, Species.Deoxys],
+  [Items.WishTag, Species.Jirachi],
 ]);
 
 const NAMES: { [key in Items]?: string } = {
   [Items.OldSeaMap]: 'Old Sea Map',
   [Items.GSBall]: 'GS Ball',
+  [Items.AuroraTicket]: 'Aurora Ticket',
+  [Items.WishTag]: 'Wish Tag',
 };
 
 /**
@@ -36,6 +40,16 @@ const NAMES: { [key in Items]?: string } = {
 const PLACES: { [key in Items]?: string } = {
   [Items.OldSeaMap]: 'the island it charts, far out to sea',
   [Items.GSBall]: 'the shrine in the forest it was left at',
+  [Items.AuroraTicket]: 'the island it admits one passenger to',
+  [Items.WishTag]: 'the valley the comet passes over',
+};
+
+/**
+ * Where the collection filed the picture, for the ones whose file
+ * name is not what the item's name makes
+ */
+const ICONS: { [key in Items]?: string } = {
+  [Items.AuroraTicket]: 'key/auroraticket',
 };
 
 /**
@@ -59,7 +73,7 @@ export default function registerRaidItems(): void {
       name: NAMES[item] ?? `Item #${item}`,
       description: `Opens a raid at ${PLACES[item] ?? 'the place it leads to'}. Spent when the raid starts.`,
       type: ItemTypes.KeyItem,
-      icon: nameToIcon('key', NAMES[item] ?? ''),
+      icon: ICONS[item] ?? nameToIcon('key', NAMES[item] ?? ''),
       // Used to open a raid, and gone once it has been
       flags: ItemFlags.Usable | ItemFlags.Consumable,
       buy: 0,

@@ -53,6 +53,7 @@ const TEMPLATE = { sheet: 'public/sprites/ui/items/candies', picture: 'red.png' 
 const REGIONS: { name: string; from: number; to: number }[] = [
   { name: 'kanto', from: 1, to: 151 },
   { name: 'johto', from: 152, to: 251 },
+  { name: 'hoenn', from: 252, to: 386 },
 ];
 
 /** Where the ids are written down, read as text for the same reason. */

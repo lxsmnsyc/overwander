@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import AleaRNG from '../../src/core/alea';
 import { MAX_OFFSET, MIN_OFFSET, asOffset } from '../../src/auth/local-time';
 import Abilities from '../../src/data/ids/abilities';
+import registerAbilities, { getAbilityData } from '../../src/data/abilities';
 import PerlinNoise from '../../src/core/perlin';
 import registerBiomeSpawns, {
   BIOME_NAMES,
@@ -12,10 +13,19 @@ import registerBiomeSpawns, {
   isGrownSpecies,
   spawnRanks,
 } from '../../src/data/biome';
+import { BuildRole } from '../../src/data/species/best-moves';
+import {
+  CORE_COUNT,
+  assignBuildRoles,
+  getBestNature,
+  getBestParty,
+} from '../../src/data/species/best-build';
 import Biome, {
   BIOME_CONFIGS,
   TimeOfDay,
   getTimeOfDay,
+  growsBerries,
+  growsTrees,
   isOpenSea,
   isWaterBiome,
 } from '../../src/data/ids/biome';
@@ -59,6 +69,7 @@ import {
   getBannedBossMoves,
 } from '../../src/battle/abilities/special';
 import { EffectType } from '../../src/battle/events';
+import { Types } from '../../src/data/constants/types';
 import { getMaxHealth } from '../../src/auth/health';
 import { isShadow, isShiny } from '../../src/auth/caught-record';
 import {
@@ -71,11 +82,7 @@ import {
   unpackIVs,
 } from '../../src/data/constants/stats';
 import { Statuses, packStatuses } from '../../src/data/ids/status';
-import {
-  type RocketRecord,
-  deriveRocketReward,
-  rocketRewardOffer,
-} from '../../src/auth/rocket-record';
+import { type StopRecord, deriveStopReward } from '../../src/auth/stop-record';
 import { seatId } from '../../src/auth/gym-seat-record';
 import type Chunk from '../../src/overworld/chunk';
 import {
@@ -139,7 +146,8 @@ import {
   ROCKET_PARTY_LEVELS,
   ROCKET_REWARD_LEVEL,
   TYPE_TRAINER_GOLD,
-  createRocketParty,
+  createStopParty,
+  createStopSnapshot,
   polishedStats,
   rocketPartyLevels,
   rollStopGold,
@@ -147,7 +155,7 @@ import {
   stopGoldBand,
   stopOutfit,
   stopPartyLevels,
-} from '../../src/overworld/rocket';
+} from '../../src/overworld/stop';
 import {
   BIOME_ELITE_MEMBERS,
   BIOME_GYM_LEADERS,
@@ -178,6 +186,7 @@ import {
 } from '../../src/data/overworld/trainers';
 import pickStartPosition, { START_AREA, pickFreeCell } from '../../src/overworld/start';
 import { Moves } from '../../src/data/ids/moves';
+import type { Encounter } from '../../src/overworld/encounter/shape';
 import deriveEncounter, {
   ENCOUNTER_TYPE_NAMES,
   EncounterType,
@@ -194,16 +203,21 @@ import deriveEncounter, {
   isRaidEncounter,
   isShinyFor,
 } from '../../src/overworld/encounter';
-import { encounterKey, encounterWindow } from '../../src/overworld/safari';
+import {
+  MAX_CATCH_BONUS,
+  SHADOW_CATCH_FACTOR,
+  encounterKey,
+  encounterWindow,
+} from '../../src/overworld/safari';
 import { FOSSIL_OFFER_KINDS, getFossilPrice } from '../../src/data/overworld/fossil';
 import { isFossil } from '../../src/data/items/fossils';
 import Landmark from '../../src/data/overworld/landmark';
+import { SYNDICATE_BOSS_CHARSETS } from '../../src/data/overworld/syndicate';
 import { findPortal, findPortals, getPortalCell } from '../../src/overworld/portal';
 import Npc, {
-  GIOVANNI_CHARSETS,
+  EXECUTIVE_CHARSETS,
+  EXECUTIVE_NAMES,
   NPCS,
-  ROCKET_EXECUTIVE_CHARSETS,
-  ROCKET_EXECUTIVE_NAMES,
   npcSheets,
 } from '../../src/data/overworld/npc';
 import Phenomenon, {
@@ -218,7 +232,6 @@ import {
   getChefGoods,
   getVendorGoods,
   isMarketable,
-  vendorStockSize,
 } from '../../src/data/overworld/vendor';
 import {
   MAX_BERRY_PICK,
@@ -230,16 +243,28 @@ import {
   resolvePhenomenon,
 } from '../../src/overworld/landmarks';
 import { DARK_DAY_LAMP_CELLS, favorsEverything } from '../../src/data/overworld/weather';
-import { LURE_SPAWN_BONUS } from '../../src/overworld/abilities/__create';
+import {
+  BUDDY_ABILITIES,
+  KINSHIP_CATCH_BOOST,
+  LURE_SPAWN_BONUS,
+  TRAP_FLEE_FACTOR,
+} from '../../src/overworld/abilities/__create';
 import { PUBLISHED_SPAWNS } from '../../src/auth/snapshots';
 import {
   COMPOUND_EYES_HELD_BOOST,
+  CUTE_CHARM_CHANCE,
   FLAME_BODY_FACTOR,
+  GLUTTONY_FEAST,
+  HONEY_STEP_INTERVAL,
   ILLUMINATE_LAMP_CELLS,
+  KEEN_CRITICAL_BOOST,
   LEVEL_CEILING_LIFT,
   LEVEL_FLOOR_LIFT,
   PICKUP_STEP_INTERVAL,
+  PURIFIED_SHADOW_RELIEF,
+  SNIPER_AIMS,
   STENCH_QUIET,
+  SYNCHRONIZE_CHANCE,
 } from '../../src/overworld/abilities/gen-1';
 import { EGG_HATCH_STEPS } from '../../src/auth/egg';
 import type Overworld from '../../src/overworld/core';
@@ -247,7 +272,7 @@ import type { Buddy } from '../../src/overworld/core';
 import { CANDY_ITEM_BONUS } from '../../src/overworld/items/candy-items';
 import { LUCK_INCENSE_BONUS, PURE_INCENSE_QUIET } from '../../src/overworld/items/incenses';
 import { AMULET_COIN_BONUS, CLEANSE_TAG_QUIET } from '../../src/overworld/items/trinkets';
-import { SHINY_CHARM_BOOST } from '../../src/overworld/items/key-items';
+import { CATCHING_CHARM_BOOST, SHINY_CHARM_BOOST } from '../../src/overworld/items/key-items';
 import createOverworld from '../../src/overworld/setup';
 import World, {
   WORLD_MAX,
@@ -263,6 +288,7 @@ import World, {
 registerMoves();
 registerSpecies();
 registerItems();
+registerAbilities();
 registerBiomeSpawns();
 
 describe('perlin noise', () => {
@@ -317,6 +343,33 @@ function buddyWith(abilities: Abilities[]): Buddy {
     items: [],
     nature: Natures.Adamant,
     gender: Genders.Male,
+  };
+}
+
+/**
+ * A meeting standing in front of the player, for the questions asked
+ * of one rather than of the chunk that staged it
+ */
+function metWild(species: Species, shadow = false): Encounter {
+  return {
+    type: EncounterType.Wild,
+    species,
+    level: 10,
+    individualValue: 0,
+    traitValue: 0,
+    ivs: 0,
+    nature: Natures.Adamant,
+    ability: Abilities.Overgrow,
+    gender: Genders.Male,
+    lair: null,
+    shiny: false,
+    shadow,
+    moves: [],
+    items: [],
+    timestamp: 0,
+    x: 0,
+    y: 0,
+    biome: Biome.Grassland,
   };
 }
 
@@ -593,9 +646,8 @@ describe('world', () => {
 
   it('stages legendary raids on the raid window', () => {
     const world = new World('overworld');
-    // Alpine tundra stages Articuno; the raid roll only reads the
-    // A lair is a place: the polar ocean holds the Seafoam Islands,
-    // and what is at home there is Articuno
+    // A lair is a place: the polar ocean holds the Seafoam Islands
+    // and the Island Cave, and each stages whoever is at home in it
     const chunk = findChunk(
       world,
       (candidate) =>
@@ -611,10 +663,14 @@ describe('world', () => {
     const raids = new ChunkSnapshot(chunk, 0).getLegendaryLairs();
 
     expect(raids.size).toBeGreaterThan(0);
+    const hosted = new Set(getBiomeLairs(Biome.PolarOcean));
+
+    expect(hosted).toEqual(new Set([Lairs.SeafoamIslands, Lairs.IslandCave]));
     for (const [cell, roll] of raids) {
       expect(chunk.getLandmarkCells().get(cell)).toBe(Landmark.LegendaryLair);
-      expect(roll.lair).toBe(Lairs.SeafoamIslands);
-      expect(roll.species).toBe(Species.Articuno);
+      expect(roll.lair).not.toBeNull();
+      expect(hosted.has(roll.lair ?? Lairs.FarawayIsland)).toBe(true);
+      expect(getLairResidents(roll.lair ?? Lairs.FarawayIsland)).toContain(roll.species);
     }
 
     // Every spawn window inside the raid's three hours stages the
@@ -661,12 +717,20 @@ describe('world', () => {
       return;
     }
 
-    // A mountain holds three: the volcano, the cave under it and the
-    // tower on it. Every window stages one of them, and whoever is at
-    // home in it
+    // A mountain holds five: the volcano, the cave under it, the two
+    // towers on it and the tomb cut into it. Every window stages one
+    // of them, and whoever is at home in it
     const hosted = new Set(getBiomeLairs(Biome.Mountain));
 
-    expect(hosted).toEqual(new Set([Lairs.MtEmber, Lairs.CeruleanCave, Lairs.BellTower]));
+    expect(hosted).toEqual(
+      new Set([
+        Lairs.MtEmber,
+        Lairs.CeruleanCave,
+        Lairs.BellTower,
+        Lairs.AncientTomb,
+        Lairs.SkyPillar,
+      ]),
+    );
 
     for (let window = 0; window < 12; window++) {
       for (const roll of new ChunkSnapshot(chunk, window * RAID_INTERVAL)
@@ -861,6 +925,11 @@ describe('world', () => {
       Moves.DestinyBond,
       Moves.Bide,
       Moves.BellyDrum,
+      Moves.RolePlay,
+      Moves.SkillSwap,
+      Moves.Memento,
+      Moves.Grudge,
+      Moves.Endeavor,
       // The heal it sleeps for is capped like any other, while the
       // sleep is self-inflicted and lands in full
       Moves.Rest,
@@ -881,6 +950,10 @@ describe('world', () => {
       Moves.Moonlight,
       Moves.MorningSun,
       Moves.Synthesis,
+      Moves.Wish,
+      Moves.Ingrain,
+      Moves.SlackOff,
+      Moves.Swallow,
     ]) {
       expect(BANNED_BOSS_MOVES.has(move)).toBe(false);
     }
@@ -1045,7 +1118,7 @@ describe('world', () => {
     expect(collectAftermath(built, '')).toEqual([]);
   });
 
-  it('stands a Team Rocket grunt on one band of each rarity', () => {
+  it('stands a syndicate grunt on two of each of the biome’s bands', () => {
     const world = new World('overworld');
     const chunk = findChunk(
       world,
@@ -1077,7 +1150,7 @@ describe('world', () => {
         expect(new Set(bandOf(band).map((entry) => entry.species)).has(party[at][0])).toBe(true);
       };
 
-      if (rank === RocketRank.Giovanni) {
+      if (rank === RocketRank.Boss) {
         // Five grown ones and a legendary at the end
         for (let at = 0; at < ROCKET_PARTY_SIZE - 1; at++) {
           drawnFrom(at, grown);
@@ -1091,10 +1164,11 @@ describe('world', () => {
         }
         continue;
       }
-      // A grunt's six, weakest first: one commoner, two of the
-      // uncommon band and three of the rare. A band the window leaves
-      // empty borrows from the commonest one that is not
-      const bands = [young, middle, middle, grown, grown, grown];
+      // A grunt's six, weakest first: two out of each of the biome's
+      // three bands, so the rank that is met most often is the one
+      // that reaches the whole pool. A band the window leaves empty
+      // borrows from the commonest one that is not
+      const bands = [young, young, middle, middle, grown, grown];
 
       for (const [at, band] of bands.entries()) {
         drawnFrom(at, band);
@@ -1122,7 +1196,7 @@ describe('world', () => {
 
     const snapshot = new ChunkSnapshot(chunk, 0);
     const [spawns] = [...snapshot.getRocketStops().values()];
-    const party = createRocketParty(snapshot, spawns);
+    const party = createStopParty(snapshot, spawns);
 
     expect(party).toHaveLength(ROCKET_PARTY_SIZE);
     for (const [at, member] of party.entries()) {
@@ -1145,7 +1219,7 @@ describe('world', () => {
 
     // A duelling trainer fields the same pokemon as their ordinary
     // selves: same species and level, nothing shadowed
-    const duel = createRocketParty(snapshot, spawns, false);
+    const duel = createStopParty(snapshot, spawns, false);
 
     for (const [at, member] of duel.entries()) {
       expect(member.level).toBeGreaterThanOrEqual(ROCKET_PARTY_LEVELS[0]);
@@ -1227,9 +1301,9 @@ describe('world', () => {
     const worn = TRAINER_CLASSES.flatMap((trainer) => TRAINER_CHARSETS[trainer]);
 
     expect(new Set(worn).size).toBe(worn.length);
-    // And only the two Aces field everything there is
-    expect(TRAINER_CLASSES.filter((trainer) => TRAINER_TYPES[trainer].length === 0)).toHaveLength(
-      2,
+    // And only the Aces field everything there is, one to a region
+    expect(TRAINER_CLASSES.filter((trainer) => TRAINER_TYPES[trainer].length === 0)).toEqual(
+      TRAINER_CLASSES.filter(isAceTrainer),
     );
   });
 
@@ -1278,16 +1352,18 @@ describe('world', () => {
     expect(homes.length > 0 ? endemic.has(party[5][0]) : !legendaries.has(party[5][0])).toBe(true);
 
     // Dressed as the boss himself
-    expect(GIOVANNI_CHARSETS).toContain(staged.snapshot.getWandererCoats().get(staged.cell));
+    expect(SYNDICATE_BOSS_CHARSETS[staged.snapshot.getSyndicate()]).toContain(
+      staged.snapshot.getWandererCoats().get(staged.cell),
+    );
 
     // Fielded at his own level, all shadows. The band is the stop's to
     // pass now that every rank fields six: nothing about the party
     // says whose it is
-    const fielded = createRocketParty(
+    const fielded = createStopParty(
       staged.snapshot,
       party,
       true,
-      rocketPartyLevels(RocketRank.Giovanni),
+      rocketPartyLevels(RocketRank.Boss),
     );
 
     for (const member of fielded) {
@@ -1374,7 +1450,7 @@ describe('world', () => {
 
             // The three are one draw, so they cannot overlap: only the
             // boss reads as the boss, and only an executive names one
-            expect(snapshot.isRocketBoss(cell)).toBe(rank === RocketRank.Giovanni);
+            expect(snapshot.isRocketBoss(cell)).toBe(rank === RocketRank.Boss);
             expect(snapshot.getRocketExecutive(cell) != null).toBe(rank === RocketRank.Executive);
 
             if (rank === RocketRank.Executive && executive == null) {
@@ -1394,7 +1470,7 @@ describe('world', () => {
     expect(share(RocketRank.Grunt)).toBeGreaterThan(0.7);
     expect(share(RocketRank.Executive)).toBeGreaterThan(EXECUTIVE_CHANCE / 2);
     expect(share(RocketRank.Executive)).toBeLessThan(EXECUTIVE_CHANCE * 2);
-    expect(share(RocketRank.Giovanni)).toBeLessThan(EXECUTIVE_CHANCE);
+    expect(share(RocketRank.Boss)).toBeLessThan(EXECUTIVE_CHANCE);
 
     // And an executive stands there as one of the four, dressed as
     // themselves, fielding six of the country's rares at the Elite
@@ -1410,10 +1486,10 @@ describe('world', () => {
     if (who == null) {
       return;
     }
-    expect(ROCKET_EXECUTIVE_CHARSETS[who]).toContain(
+    expect(EXECUTIVE_CHARSETS[who]).toContain(
       executive.snapshot.getWandererCoats().get(executive.cell),
     );
-    expect(ROCKET_EXECUTIVE_NAMES[who].length).toBeGreaterThan(0);
+    expect(EXECUTIVE_NAMES[who].length).toBeGreaterThan(0);
 
     const party = executive.snapshot.getRocketStops().get(executive.cell) ?? [];
     const rares = new Set(
@@ -1427,7 +1503,7 @@ describe('world', () => {
       expect(rares.has(species)).toBe(true);
     }
 
-    const fielded = createRocketParty(
+    const fielded = createStopParty(
       executive.snapshot,
       party,
       true,
@@ -1439,11 +1515,6 @@ describe('world', () => {
       expect(member.level).toBeLessThanOrEqual(ELITE_PARTY_LEVELS[1]);
       expect(member.shadow).toBe(true);
     }
-    // And their whole six is on offer, where a grunt's is only the
-    // half they were not fighting with
-    expect(rocketRewardOffer(RocketRank.Executive)).toBe(ROCKET_PARTY_SIZE);
-    expect(rocketRewardOffer(RocketRank.Giovanni)).toBe(ROCKET_PARTY_SIZE);
-    expect(rocketRewardOffer(RocketRank.Grunt)).toBe(ROCKET_PARTY_SIZE / 2);
   });
 
   it('fields an expert’s party trained rather than caught', () => {
@@ -1482,12 +1553,12 @@ describe('world', () => {
     expect(stopOutfit(Landmark.EliteFour, RocketRank.Grunt)).toEqual(ELITE_OUTFIT);
     expect(stopOutfit(Landmark.TeamRocket, RocketRank.Executive)).toEqual(ELITE_OUTFIT);
     expect(stopOutfit(Landmark.Champion, RocketRank.Grunt)).toEqual(CHAMPION_OUTFIT);
-    expect(stopOutfit(Landmark.TeamRocket, RocketRank.Giovanni)).toEqual(CHAMPION_OUTFIT);
+    expect(stopOutfit(Landmark.TeamRocket, RocketRank.Boss)).toEqual(CHAMPION_OUTFIT);
     // And the one rung above the league, which is three of everything
     expect(stopOutfit(Landmark.Champion, RocketRank.Grunt, true)).toEqual(LEGEND_OUTFIT);
 
     const fielded = (outfit: typeof PLAIN_OUTFIT, shadow = false): CatchSnapshot[] =>
-      createRocketParty(snapshot, spawns, shadow, ELITE_PARTY_LEVELS, outfit);
+      createStopParty(snapshot, spawns, shadow, ELITE_PARTY_LEVELS, outfit);
 
     // A duelling trainer's six is what a walk would have met
     for (const member of fielded(PLAIN_OUTFIT)) {
@@ -1499,8 +1570,14 @@ describe('world', () => {
 
     for (const member of fielded(GYM_OUTFIT)) {
       expect(member.abilities).toHaveLength(1);
-      // One item, and the one that species would want
-      expect(member.items).toEqual(getExpertHeldItems(member.species, 1));
+      // One item, and the one that pokemon would want, which is a
+      // question about the set it is fielding rather than its species
+      expect(member.items).toEqual(
+        getExpertHeldItems(member.species, 1, {
+          moves: member.moves,
+          abilities: member.abilities,
+        }),
+      );
       expect(getSlots(member.slots, Slots.Item)).toBe(1);
     }
 
@@ -1556,6 +1633,50 @@ describe('world', () => {
     }
   });
 
+  it('fields a built party as two cores behind four supports', () => {
+    const world = new World('overworld');
+    const chunk = findChunk(
+      world,
+      (candidate) => new ChunkSnapshot(candidate, 0).getRocketStops().size > 0,
+    );
+
+    expect(chunk).not.toBeNull();
+    if (chunk == null) {
+      return;
+    }
+    const snapshot = new ChunkSnapshot(chunk, 0);
+    const spawns = [...snapshot.getRocketStops().values()][0];
+    const party = createStopParty(snapshot, spawns, false, ELITE_PARTY_LEVELS, ELITE_OUTFIT);
+    const roles = assignBuildRoles(party.map((member) => member.species));
+    const composed = getBestParty(
+      party.map((member) => member.species),
+      ELITE_OUTFIT.abilities,
+    );
+
+    expect(roles.filter((role) => role === BuildRole.Core)).toHaveLength(
+      Math.min(CORE_COUNT, party.length),
+    );
+
+    for (const [at, member] of party.entries()) {
+      // Everything chosen rather than rolled comes off the party's
+      // own plan: the jobs, the sky, the abilities, the moves and the
+      // nature those moves want
+      expect(member.abilities, getSpeciesData(member.species).name).toEqual(composed[at].abilities);
+      expect(member.moves).toEqual(composed[at].moves);
+      expect(member.nature).toBe(getBestNature(member.species, roles[at], member.moves));
+    }
+
+    // A rolled party has no jobs to hand out, so nothing about it
+    // moves when the builder changes
+    const rolled = createStopParty(snapshot, spawns, false, ELITE_PARTY_LEVELS, PLAIN_OUTFIT);
+
+    for (const [at, member] of rolled.entries()) {
+      expect(member.nature).toBe(
+        createStopSnapshot(snapshot, spawns[at], false, ELITE_PARTY_LEVELS, PLAIN_OUTFIT).nature,
+      );
+    }
+  });
+
   it('raises an expert’s party by its rung', () => {
     const world = new World('overworld');
     const chunk = findChunk(
@@ -1571,8 +1692,8 @@ describe('world', () => {
     const snapshot = new ChunkSnapshot(chunk, 0);
     const [spawns] = [...snapshot.getRocketStops().values()];
     const fielded = (outfit: typeof PLAIN_OUTFIT): CatchSnapshot[] =>
-      createRocketParty(snapshot, spawns, false, ELITE_PARTY_LEVELS, outfit);
-    const rolled = createRocketParty(snapshot, spawns, false, ELITE_PARTY_LEVELS, PLAIN_OUTFIT);
+      createStopParty(snapshot, spawns, false, ELITE_PARTY_LEVELS, outfit);
+    const rolled = createStopParty(snapshot, spawns, false, ELITE_PARTY_LEVELS, PLAIN_OUTFIT);
 
     // A duelling trainer's and a grunt's is what the roll gave, with
     // nothing spent on it
@@ -1667,7 +1788,7 @@ describe('world', () => {
       ['an Ace Trainer', stopGoldBand(Landmark.Trainer, RocketRank.Grunt, TrainerClass.AceTrainer)],
       ['an executive', stopGoldBand(Landmark.TeamRocket, RocketRank.Executive)],
       ['the Elite Four', stopGoldBand(Landmark.EliteFour, RocketRank.Grunt)],
-      ['Giovanni', stopGoldBand(Landmark.TeamRocket, RocketRank.Giovanni)],
+      ['Giovanni', stopGoldBand(Landmark.TeamRocket, RocketRank.Boss)],
       ['the Champion', stopGoldBand(Landmark.Champion, RocketRank.Grunt)],
       ['a legend', stopGoldBand(Landmark.Champion, RocketRank.Grunt, undefined, true)],
     ];
@@ -1942,9 +2063,7 @@ describe('world', () => {
     );
     // Every rank fields six, so it is the rank rather than the party
     // that says what a Team Rocket cell is worth
-    expect(stopPartyLevels(Landmark.TeamRocket, RocketRank.Giovanni)).toEqual(
-      CHAMPION_PARTY_LEVELS,
-    );
+    expect(stopPartyLevels(Landmark.TeamRocket, RocketRank.Boss)).toEqual(CHAMPION_PARTY_LEVELS);
     expect(stopPartyLevels(Landmark.TeamRocket, RocketRank.Executive)).toEqual(ELITE_PARTY_LEVELS);
     expect(stopPartyLevels(Landmark.TeamRocket, RocketRank.Grunt)).toEqual(TYPE_TRAINER_LEVELS);
     // A duellist's band is their class', which the caller passes in
@@ -1955,7 +2074,7 @@ describe('world', () => {
 
     // The purse is read the same way, so a Team Rocket cell is priced
     // by who is standing on it rather than by what they brought
-    expect(stopGoldBand(Landmark.TeamRocket, RocketRank.Giovanni)).toEqual(GIOVANNI_GOLD);
+    expect(stopGoldBand(Landmark.TeamRocket, RocketRank.Boss)).toEqual(GIOVANNI_GOLD);
     expect(stopGoldBand(Landmark.TeamRocket, RocketRank.Grunt)).toEqual(ROCKET_GRUNT_GOLD);
     expect(stopGoldBand(Landmark.Champion, RocketRank.Grunt)).toEqual(CHAMPION_GOLD);
     expect(stopGoldBand(Landmark.EliteFour, RocketRank.Grunt)).toEqual(ELITE_GOLD);
@@ -1963,7 +2082,7 @@ describe('world', () => {
   });
 
   it('offers any of the boss’ six as the reward', () => {
-    const record: RocketRecord = {
+    const record: StopRecord = {
       player: 'red',
       party: [
         Species.Magnemite,
@@ -1987,12 +2106,7 @@ describe('world', () => {
     const met = new Set<Species>();
 
     for (let winner = 0; winner < 64; winner++) {
-      const [, spawn] = deriveRocketReward(
-        record,
-        'stop-id',
-        `player-${winner}`,
-        RocketRank.Giovanni,
-      );
+      const [, spawn] = deriveStopReward(record, 'stop-id', `player-${winner}`);
 
       met.add(spawn[0]);
     }
@@ -2005,7 +2119,7 @@ describe('world', () => {
   });
 
   it('pays a beaten grunt out of the half it was not fighting with', () => {
-    const record: RocketRecord = {
+    const record: StopRecord = {
       player: 'red',
       party: [
         { species: Species.Rattata, individualValue: 1, traitValue: 2 },
@@ -2026,30 +2140,21 @@ describe('world', () => {
     const offered = new Set<Species>();
 
     for (const uid of ['red', 'blue', 'green', 'yellow', 'gold', 'silver']) {
-      const [id, [species, individualValue, traitValue]] = deriveRocketReward(
-        record,
-        'stop-id',
-        uid,
-        RocketRank.Grunt,
-      );
+      const [id, [species, individualValue, traitValue]] = deriveStopReward(record, 'stop-id', uid);
 
-      // Never one of the three rares: a grunt does not hand over what
-      // it was actually fighting with
-      expect(species).not.toBe(Species.Kangaskhan);
-      expect(species).not.toBe(Species.Lapras);
-      expect(species).not.toBe(Species.Snorlax);
       offered.add(species);
       expect(id).toBe('stop-id$reward');
       // Each winner meets their own individual of it
       expect(individualValue).not.toBe(traitValue);
     }
 
-    // All three of the weaker half come up across enough winners
-    expect(offered.size).toBe(3);
+    // Every one of the six comes up across enough winners: a grunt
+    // puts its whole party up the way the ranks above it do
+    expect(offered.size).toBeGreaterThan(1);
 
     // A player's own reward is the same however often it is derived
-    expect(deriveRocketReward(record, 'stop-id', 'red', RocketRank.Grunt)).toEqual(
-      deriveRocketReward(record, 'stop-id', 'red', RocketRank.Grunt),
+    expect(deriveStopReward(record, 'stop-id', 'red')).toEqual(
+      deriveStopReward(record, 'stop-id', 'red'),
     );
   });
 
@@ -2340,6 +2445,201 @@ describe('world', () => {
     expect(charmed.checkEncounterShiny('spawn#0')).toBe(SHINY_CHARM_BOOST);
   });
 
+  it('lifts every throw for a buddy holding the catching charm', () => {
+    const plain = createOverworld('player-uid', buddyWith([]));
+    const charmed = createOverworld('player-uid', {
+      ...buddyWith([]),
+      items: [Items.CatchingCharm],
+    });
+
+    const wild = metWild(Species.Rattata);
+
+    expect(createOverworld('player-uid', null).checkCatchChance('spawn#0', wild)).toBe(1);
+    expect(plain.checkCatchChance('spawn#0', wild)).toBe(1);
+    expect(charmed.checkCatchChance('spawn#0', wild)).toBe(CATCHING_CHARM_BOOST);
+    // The two charms answer different questions, so neither is worth
+    // anything on the other's
+    expect(charmed.checkEncounterShiny('spawn#0')).toBe(1);
+  });
+
+  it('holds a meeting still for a buddy that traps', () => {
+    const alone = createOverworld('player-uid', null);
+    const wild = metWild(Species.Rattata);
+
+    expect(alone.checkFleeChance('spawn#0', wild)).toBe(1);
+    expect(createOverworld('player-uid', buddyWith([])).checkFleeChance('spawn#0', wild)).toBe(1);
+
+    for (const trap of [Abilities.ArenaTrap, Abilities.ShadowTag]) {
+      expect(
+        createOverworld('player-uid', buddyWith([trap])).checkFleeChance('spawn#0', wild),
+      ).toBe(TRAP_FLEE_FACTOR);
+    }
+
+    // Arena Trap is a lure as well, and the two answers are separate:
+    // neither ability reads on the other's question
+    expect(
+      createOverworld('player-uid', buddyWith([Abilities.ShadowTag])).checkSpawnCount(SPAWN_COUNT),
+    ).toBe(SPAWN_COUNT);
+    expect(
+      createOverworld('player-uid', buddyWith([Abilities.Illuminate])).checkFleeChance(
+        'spawn#0',
+        wild,
+      ),
+    ).toBe(1);
+  });
+
+  it('pins down what a Magnet Pull buddy has a hold on, and nothing else', () => {
+    const magnetic = createOverworld('player-uid', buddyWith([Abilities.MagnetPull]));
+
+    // Magnemite is a Steel type and Rattata is not, so one of them
+    // cannot get away at all and the other leaves when it likes
+    expect(magnetic.checkFleeChance('spawn#0', metWild(Species.Magnemite))).toBe(0);
+    expect(magnetic.checkFleeChance('spawn#0', metWild(Species.Rattata))).toBe(1);
+    expect(
+      createOverworld('player-uid', buddyWith([])).checkFleeChance(
+        'spawn#0',
+        metWild(Species.Magnemite),
+      ),
+    ).toBe(1);
+  });
+
+  it('throws truer at a shadow for a buddy that has been one', () => {
+    const purified = createOverworld('player-uid', buddyWith([Abilities.Purified]));
+    const plain = createOverworld('player-uid', buddyWith([]));
+
+    expect(purified.checkCatchChance('spawn#0', metWild(Species.Rattata, true))).toBe(
+      PURIFIED_SHADOW_RELIEF,
+    );
+    // Nothing changes for a meeting whose heart was never closed
+    expect(purified.checkCatchChance('spawn#0', metWild(Species.Rattata))).toBe(1);
+    expect(plain.checkCatchChance('spawn#0', metWild(Species.Rattata, true))).toBe(1);
+    // It gives something back, which the old formula stopped doing the
+    // day a shadow became a half rather than a third
+    expect(PURIFIED_SHADOW_RELIEF).toBeGreaterThan(1);
+    // And less than the shadow took, so a shadow stays the harder catch
+    expect(PURIFIED_SHADOW_RELIEF * SHADOW_CATCH_FACTOR).toBeLessThan(1);
+  });
+
+  it('carries a bagful of treats further, and grows the last one back', () => {
+    const plain = createOverworld('player-uid', buddyWith([]));
+    const greedy = createOverworld('player-uid', buddyWith([Abilities.Gluttony]));
+    const grower = createOverworld('player-uid', buddyWith([Abilities.Harvest]));
+
+    expect(plain.checkTreats('spawn#0', MAX_CATCH_BONUS)).toEqual({
+      cap: MAX_CATCH_BONUS,
+      keeps: false,
+    });
+    expect(greedy.checkTreats('spawn#0', MAX_CATCH_BONUS).cap).toBe(
+      MAX_CATCH_BONUS * GLUTTONY_FEAST,
+    );
+    expect(greedy.checkTreats('spawn#0', MAX_CATCH_BONUS).keeps).toBe(false);
+    expect(grower.checkTreats('spawn#0', MAX_CATCH_BONUS)).toEqual({
+      cap: MAX_CATCH_BONUS,
+      keeps: true,
+    });
+  });
+
+  it('comes back from the hedges with a Honey Gather buddy', () => {
+    const gatherer = createOverworld('player-uid', buddyWith([Abilities.HoneyGather]));
+    const far = HONEY_STEP_INTERVAL * 4;
+
+    expect(gatherer.checkWalkPickup('buddy', 0, far).gathered).toBe(4);
+    // What grows is not what is dropped: it finds nothing on the
+    // ground, the way a Pickup buddy finds nothing on a bush
+    expect(gatherer.checkWalkPickup('buddy', 0, far).found).toBe(0);
+    expect(gatherer.checkWalkPickup('buddy', 0, HONEY_STEP_INTERVAL - 1).gathered).toBe(0);
+  });
+
+  it('reads a meeting for a Forewarn buddy and its pockets for a Pickpocket one', () => {
+    const plain = createOverworld('player-uid', buddyWith([]));
+
+    expect(plain.checkRevealsFlight()).toBe(false);
+    expect(plain.checkPockets('spawn#0')).toBe(false);
+    // The two readers answer alike: out here there is one thing to
+    // read about a meeting, and both of them read it
+    for (const reader of [Abilities.Forewarn, Abilities.Anticipation]) {
+      expect(createOverworld('player-uid', buddyWith([reader])).checkRevealsFlight()).toBe(true);
+    }
+    expect(
+      createOverworld('player-uid', buddyWith([Abilities.Pickpocket])).checkPockets('spawn#0'),
+    ).toBe(true);
+    // Neither reads on the other's question, nor on Frisk's
+    expect(createOverworld('player-uid', buddyWith([Abilities.Frisk])).checkRevealsFlight()).toBe(
+      false,
+    );
+    expect(createOverworld('player-uid', buddyWith([Abilities.Forewarn])).checkRevealsHeld()).toBe(
+      false,
+    );
+  });
+
+  it('lifts a throw at what a buddy shares an element with', () => {
+    const water = metWild(Species.Squirtle);
+    const plain = metWild(Species.Rattata);
+
+    for (const kin of [Abilities.StormDrain, Abilities.WaterAbsorb]) {
+      const buddy = createOverworld('player-uid', buddyWith([kin]));
+
+      expect(buddy.checkCatchChance('spawn#0', water)).toBe(KINSHIP_CATCH_BOOST);
+      // Nothing for a meeting that shares nothing with it
+      expect(buddy.checkCatchChance('spawn#0', plain)).toBe(1);
+      // And it lifts the throw rather than holding the meeting down,
+      // which is what separates it from Magnet Pull
+      expect(buddy.checkFleeChance('spawn#0', water)).toBe(1);
+    }
+    expect(
+      createOverworld('player-uid', buddyWith([Abilities.SapSipper])).checkCatchChance(
+        'spawn#0',
+        water,
+      ),
+    ).toBe(1);
+  });
+
+  it('reads what a meeting can do for a Trace buddy', () => {
+    expect(createOverworld('player-uid', buddyWith([])).checkRevealsAbility()).toBe(false);
+    expect(createOverworld('player-uid', buddyWith([Abilities.Trace])).checkRevealsAbility()).toBe(
+      true,
+    );
+    // Three readers, three separate questions
+    expect(createOverworld('player-uid', buddyWith([Abilities.Trace])).checkRevealsHeld()).toBe(
+      false,
+    );
+    expect(createOverworld('player-uid', buddyWith([Abilities.Frisk])).checkRevealsAbility()).toBe(
+      false,
+    );
+  });
+
+  it('sharpens a throw for a buddy that knows where to aim', () => {
+    const wild = metWild(Species.Rattata);
+
+    expect(
+      createOverworld('player-uid', buddyWith([])).checkCriticalCatch('spawn#0', wild),
+    ).toEqual({ boost: 1, aims: 1 });
+
+    // The two are halves rather than copies: Super Luck is how often a
+    // throw comes out critical, Sniper is how well the one it gets
+    // goes
+    expect(
+      createOverworld('player-uid', buddyWith([Abilities.SuperLuck])).checkCriticalCatch(
+        'spawn#0',
+        wild,
+      ),
+    ).toEqual({ boost: KEEN_CRITICAL_BOOST, aims: 1 });
+    expect(
+      createOverworld('player-uid', buddyWith([Abilities.Sniper])).checkCriticalCatch(
+        'spawn#0',
+        wild,
+      ),
+    ).toEqual({ boost: 1, aims: SNIPER_AIMS });
+
+    // It is its own question: neither of them lifts an ordinary throw
+    expect(
+      createOverworld('player-uid', buddyWith([Abilities.SuperLuck])).checkCatchChance(
+        'spawn#0',
+        wild,
+      ),
+    ).toBe(1);
+  });
+
   it('pays candy for what a buddy is carrying, to the right family', () => {
     // The buddy is a Bulbasaur; the pokemon being caught is not
     const buddyFamily = getSpeciesData(Species.Bulbasaur).family;
@@ -2403,11 +2703,18 @@ describe('world', () => {
     }
   });
 
-  it('warms an egg picked up beside a Flame Body buddy', () => {
+  it('warms an egg picked up beside a Flame Body or Magma Armor buddy', () => {
     const warm = createOverworld('player-uid', buddyWith([Abilities.FlameBody]));
     const plain = createOverworld('player-uid', buddyWith([Abilities.Overgrow]));
 
     expect(warm.checkEggSteps('egg', EGG_HATCH_STEPS)).toBe(EGG_HATCH_STEPS * FLAME_BODY_FACTOR);
+    // The other warm one is worth exactly the same walk
+    expect(
+      createOverworld('player-uid', buddyWith([Abilities.MagmaArmor])).checkEggSteps(
+        'egg',
+        EGG_HATCH_STEPS,
+      ),
+    ).toBe(EGG_HATCH_STEPS * FLAME_BODY_FACTOR);
     expect(plain.checkEggSteps('egg', EGG_HATCH_STEPS)).toBe(EGG_HATCH_STEPS);
     expect(createOverworld('player-uid', null).checkEggSteps('egg', EGG_HATCH_STEPS)).toBe(
       EGG_HATCH_STEPS,
@@ -2422,17 +2729,20 @@ describe('world', () => {
     const plain = createOverworld('player-uid', buddyWith([Abilities.Overgrow]));
     const far = PICKUP_STEP_INTERVAL * 3;
 
-    expect(finder.checkWalkPickup('buddy', 0, far)).toBe(3);
-    expect(plain.checkWalkPickup('buddy', 0, far)).toBe(0);
+    expect(finder.checkWalkPickup('buddy', 0, far).found).toBe(3);
+    expect(plain.checkWalkPickup('buddy', 0, far).found).toBe(0);
+    // Nothing off a bush either: the ground and the hedges are two
+    // pools, and Pickup only reads one of them
+    expect(finder.checkWalkPickup('buddy', 0, far).gathered).toBe(0);
     // Short of the first mark is nothing at all
-    expect(finder.checkWalkPickup('buddy', 0, PICKUP_STEP_INTERVAL - 1)).toBe(0);
+    expect(finder.checkWalkPickup('buddy', 0, PICKUP_STEP_INTERVAL - 1).found).toBe(0);
 
     // It counts marks crossed rather than steps reported, so walking
     // the same distance in handfuls finds exactly as much
     let piecemeal = 0;
 
     for (let at = 0; at < far; at += 64) {
-      piecemeal += finder.checkWalkPickup('buddy', at, Math.min(far, at + 64));
+      piecemeal += finder.checkWalkPickup('buddy', at, Math.min(far, at + 64)).found;
     }
     expect(piecemeal).toBe(3);
   });
@@ -2796,11 +3106,12 @@ describe('world', () => {
         found++;
         crates.add(JSON.stringify(stock));
 
-        // As many kinds as that counter lays out, none of them twice:
-        // six for everybody, a dozen off the machine stall's long shelf
+        // A dozen kinds, none of them twice, or the whole shelf where
+        // that counter is carrying fewer than a dozen
         const kind = npc === Npc.Chef ? null : snapshot.getVendorKind(cell);
+        const shelf = kind == null ? getChefGoods() : getVendorGoods(kind);
 
-        expect(stock.length).toBe(kind == null ? VENDOR_STOCK_KINDS : vendorStockSize(kind));
+        expect(stock.length).toBe(Math.min(VENDOR_STOCK_KINDS, shelf.length));
         expect(new Set(stock).size).toBe(stock.length);
 
         if (npc === Npc.Chef) {
@@ -4130,7 +4441,7 @@ describe('chunk snapshot', () => {
     // the record says where it actually came from
     expect(dropped.type).toBe(EncounterType.Rocket);
     expect(isRaidEncounter(dropped.type)).toBe(false);
-    expect(ENCOUNTER_TYPE_NAMES[dropped.type]).toBe('Team Rocket');
+    expect(ENCOUNTER_TYPE_NAMES[dropped.type]).toBe('Taken from a syndicate');
     // Both raids count as raids where they are alike, and neither is
     // what a grunt hands over
     expect(isRaidEncounter(EncounterType.LegendaryRaid)).toBe(true);
@@ -4336,6 +4647,69 @@ describe('terrain spots', () => {
   });
 });
 
+describe('what the ground grows', () => {
+  it('bears no fruit where nothing can root', () => {
+    // Lava, ice and bare sand: a bush there would be a landmark the
+    // player walks to and finds impossible
+    for (const biome of [
+      Biome.Desert,
+      Biome.ColdDesert,
+      Biome.Badlands,
+      Biome.Volcano,
+      Biome.Glacier,
+      Biome.AlpineTundra,
+    ]) {
+      expect(growsBerries(biome)).toBe(false);
+      expect(growsTrees(biome)).toBe(false);
+    }
+    // And nothing at all afloat
+    expect(growsBerries(Biome.DeepOcean)).toBe(false);
+  });
+
+  it('fruits where a bush can stand, and grows a tree only below the line', () => {
+    expect(growsBerries(Biome.Grassland)).toBe(true);
+    expect(growsTrees(Biome.TemperateForest)).toBe(true);
+
+    // The permafrost and the open steppe carry berries the way the
+    // real ones do, but nothing stands tall on either
+    for (const biome of [Biome.Tundra, Biome.Steppe, Biome.Mountain]) {
+      expect(growsBerries(biome)).toBe(true);
+      expect(growsTrees(biome)).toBe(false);
+    }
+  });
+
+  it('rolls no patch or tree into a chunk that cannot grow one', () => {
+    const world = new World('overworld');
+    let barren = 0;
+    let treeless = 0;
+    let growing = 0;
+
+    for (let x = -60; x < 60; x += 3) {
+      for (let y = -60; y < 60; y += 3) {
+        const chunk = world.getChunk(x, y);
+        const landmarks = chunk.getLandmarks();
+        const patches = landmarks.filter((kind) => kind === Landmark.BerryPatch).length;
+        const trees = landmarks.filter((kind) => kind === Landmark.ApricornTree).length;
+
+        if (!growsBerries(chunk.biome)) {
+          barren += 1;
+          expect(patches).toBe(0);
+        }
+        if (!growsTrees(chunk.biome)) {
+          treeless += 1;
+          expect(trees).toBe(0);
+        }
+        growing += growsTrees(chunk.biome) ? patches + trees : 0;
+      }
+    }
+    // The sweep has to have crossed both kinds of dead ground, and
+    // the living ground still bears
+    expect(barren).toBeGreaterThan(0);
+    expect(treeless).toBeGreaterThan(barren);
+    expect(growing).toBeGreaterThan(0);
+  });
+});
+
 describe('the open seas', () => {
   it('rolls no berry patch and no wandering npc afloat', () => {
     const world = new World('overworld');
@@ -4360,6 +4734,46 @@ describe('the open seas', () => {
       }
     }
     expect(seen).toBeGreaterThan(0);
+  });
+
+  it('puts a duel afloat, and only somebody who could be out there', () => {
+    const world = new World('overworld');
+    let duels = 0;
+    let seen = 0;
+
+    for (let x = -100; x < 100 && seen < 24; x += 2) {
+      for (let y = -100; y < 100 && seen < 24; y += 25) {
+        const chunk = world.getChunk(x, y);
+
+        if (!isOpenSea(chunk.biome)) {
+          continue;
+        }
+        seen += 1;
+
+        const snapshot = new ChunkSnapshot(chunk, 0);
+
+        for (const [cell, landmark] of chunk.getLandmarkCells()) {
+          if (landmark !== Landmark.Trainer) {
+            continue;
+          }
+          duels += 1;
+
+          const trainer = snapshot.getTrainerClass(cell);
+
+          expect(trainer).not.toBeNull();
+          if (trainer == null) {
+            continue;
+          }
+          // A swimmer swims and a sailor has a boat. Nobody who needs
+          // ground under them is met out here, the Aces included
+          expect(new Set(TRAINER_TYPES[trainer]).has(Types.Water)).toBe(true);
+          expect(isAceTrainer(trainer)).toBe(false);
+        }
+      }
+    }
+    expect(seen).toBeGreaterThan(0);
+    // The seas are not empty of them: the landmark rolls out here now
+    expect(duels).toBeGreaterThan(0);
   });
 
   it('keeps everything out of the rocks, and mixes shallows in around them', () => {
@@ -4566,5 +4980,75 @@ describe('portal balancing', () => {
         }
       }
     }
+  });
+});
+
+describe('buddy copy', () => {
+  /**
+   * The figure each buddy line prints, against the constant the
+   * overworld actually reads. The description is written by hand, so
+   * this is what stops it saying one thing while the field does
+   * another
+   */
+  const FIGURES: [Abilities, string, number][] = [
+    [Abilities.ArenaTrap, '3 more', LURE_SPAWN_BONUS],
+    [Abilities.Illuminate, '3 more', LURE_SPAWN_BONUS],
+    [Abilities.NoGuard, '3 more', LURE_SPAWN_BONUS],
+    [Abilities.Illuminate, 'lit 3 cells out', ILLUMINATE_LAMP_CELLS],
+    [Abilities.Stench, '2 fewer', STENCH_QUIET],
+    [Abilities.CompoundEyes, '2.5x', COMPOUND_EYES_HELD_BOOST],
+    [Abilities.Pickup, 'every 512 steps', PICKUP_STEP_INTERVAL],
+    [Abilities.HoneyGather, 'every 384 steps', HONEY_STEP_INTERVAL],
+    [Abilities.Gluttony, '1.5x as long', GLUTTONY_FEAST],
+    [Abilities.SuperLuck, 'critical 2x as often', KEEN_CRITICAL_BOOST],
+    [Abilities.Sniper, '2 chances', SNIPER_AIMS],
+    [Abilities.KeenEye, 'lifts by 3', LEVEL_FLOOR_LIFT],
+    [Abilities.Intimidate, 'lifts by 3', LEVEL_FLOOR_LIFT],
+    [Abilities.Hustle, 'lifts by 3', LEVEL_CEILING_LIFT],
+    [Abilities.Pressure, 'lifts by 3', LEVEL_CEILING_LIFT],
+    [Abilities.VitalSpirit, 'lifts by 3', LEVEL_CEILING_LIFT],
+    [Abilities.Purified, '1.5x', PURIFIED_SHADOW_RELIEF],
+    [Abilities.FlashFire, '1.5x', KINSHIP_CATCH_BOOST],
+    [Abilities.SapSipper, '1.5x', KINSHIP_CATCH_BOOST],
+    [Abilities.Synchronize, '1/2 of wild', SYNCHRONIZE_CHANCE],
+    [Abilities.CuteCharm, '2/3 of wild', CUTE_CHARM_CHANCE],
+  ];
+
+  it('prints the figure the field actually uses', () => {
+    for (const [ability, said, number] of FIGURES) {
+      const data = getAbilityData(ability);
+      // The figure in the line, pulled back out of it
+      const printed = /(\d+(?:\.\d+)?)(?:\/(\d+))?/.exec(said);
+
+      expect(printed, said).not.toBeNull();
+
+      const value =
+        printed?.[2] == null ? Number(printed?.[1]) : Number(printed[1]) / Number(printed[2]);
+
+      expect(value, `${data.name}: ${said}`).toBe(number);
+      expect(data.description, data.name).toContain(said);
+    }
+  });
+
+  it('says what every buddy ability does out of a fight', () => {
+    // Every ability the overworld listens for has to say so, or a
+    // player choosing who to walk with is reading a battle line about
+    // a field effect
+    for (const ability of BUDDY_ABILITIES) {
+      const data = getAbilityData(ability);
+
+      expect(data.description, `${data.name} says nothing about being a buddy`).toMatch(
+        /As a buddy,|while it is the buddy/,
+      );
+    }
+  });
+
+  it('tells Keen Eye and Illuminate apart', () => {
+    // The two carry the same battle line and do completely different
+    // things beside a player, which is the case that made this worth
+    // writing down at all
+    expect(getAbilityData(Abilities.KeenEye).description).not.toBe(
+      getAbilityData(Abilities.Illuminate).description,
+    );
   });
 });

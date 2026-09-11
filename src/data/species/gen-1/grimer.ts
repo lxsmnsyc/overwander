@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// RBY TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.BodySlam,
@@ -47,6 +47,13 @@ const FAMILY_TEACHABLE = [
   Moves.HiddenPower,
   Moves.SunnyDay,
   Moves.Flamethrower,
+  Moves.Dig,
+  Moves.Facade,
+  Moves.RockTomb,
+  Moves.SecretPower,
+  Moves.ShockWave,
+  Moves.Taunt,
+  Moves.Torment,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Stench, Abilities.StickyHold];
@@ -91,9 +98,10 @@ export default function registerGrimerSpecies(): void {
         31: [Moves.Screech],
         40: [Moves.AcidArmor],
         50: [Moves.SludgeBomb],
+        53: [Moves.Memento],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.Haze, Moves.Lick, Moves.MeanLook],
+      egg: [Moves.Haze, Moves.Lick, Moves.MeanLook, Moves.Imprison, Moves.ShadowPunch],
     },
   });
 
@@ -129,8 +137,16 @@ export default function registerGrimerSpecies(): void {
         37: [Moves.Sludge],
         45: [Moves.AcidArmor],
         60: [Moves.SludgeBomb],
+        61: [Moves.Memento],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.HyperBeam,
+        Moves.BrickBreak,
+        Moves.FocusPunch,
+        Moves.RockSmash,
+        Moves.Strength,
+      ],
     },
   });
 }

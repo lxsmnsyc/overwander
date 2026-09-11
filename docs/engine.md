@@ -31,7 +31,7 @@ why it settles nothing and pays nothing.
 | **Cast**     | Winding up the chosen move               | `(104 − 16 × priority)` frames |
 | **Trigger**  | The move landing, once per step          | Immediate                      |
 | **Channel**  | The remaining steps of a multi-step move | The cast time again, per step  |
-| **Cooldown** | That one move being unusable again       | `180 / PP` seconds             |
+| **Cooldown** | That one move being unusable again       | `180 / PP` seconds, less Speed |
 
 A base cast is 104 frames, about 1.73 seconds, and each point of move priority
 takes 16 frames off it, so priority is the mainline number doing real-time work.
@@ -40,6 +40,21 @@ Cooldown is derived from **PP**, which has no other job here: `PP_COOLDOWN_BASIS
 is 180, so a move is usable its full PP's worth of times in three minutes. PP is
 a rate rather than a pool, so nothing runs out mid-raid and a strong move is
 still rationed.
+
+**Speed is spent on that wait.** A real-time fight has no turn order to win, so
+every `SPEED_COOLDOWN_HALVING` (512) points of Speed halves what is left of the
+cooldown above the floor: the curve approaches `MAX_SPEED_COOLDOWN_CUT` (95% off)
+asymptotically and never lands on it, so no point of Speed is ever wasted.
+`SPEED_COOLDOWN_CEILING` (4096) is where it has effectively arrived, eight
+halvings in and within half a point of the floor, which is past everything the
+roster reaches short of stacking every multiplier it owns.
+
+A subtraction was the obvious shape and the wrong one: at 5% per 32 points the
+cut hit its cap at 576 Speed, which 410 of 419 species clear at +6 stages, so
+most of the roster stood on a wall. `CheckUnitMoveCooldown` carries the curve:
+the mechanic answers the PP wait at `Exact` and the Speed cut at `Post`, reading
+`resolveStat` so stages count, which is what makes Agility, Swift Swim, Speed
+Boost, Choice Scarf and the paralysis halving do anything at all.
 
 A cast is **interruptible**: flinching stops it, and so does its target fainting.
 A move that has already triggered cannot be taken back.

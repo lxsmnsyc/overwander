@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// RBY TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.BodySlam,
@@ -43,6 +43,11 @@ const FAMILY_TEACHABLE = [
   Moves.Frustration,
   Moves.HiddenPower,
   Moves.SunnyDay,
+  Moves.Facade,
+  Moves.IronTail,
+  Moves.SecretPower,
+  Moves.Snatch,
+  Moves.Torment,
 ];
 
 export default function registerEkansSpecies(): void {
@@ -83,11 +88,11 @@ export default function registerEkansSpecies(): void {
         15: [Moves.Bite],
         23: [Moves.Glare],
         29: [Moves.Screech],
-        37: [Moves.Acid],
+        37: [Moves.Acid, Moves.SpitUp, Moves.Stockpile, Moves.Swallow],
         43: [Moves.Haze],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.Slam, Moves.Spite, Moves.Pursuit, Moves.Crunch, Moves.BeatUp],
+      egg: [Moves.Slam, Moves.Spite, Moves.Pursuit, Moves.Crunch, Moves.BeatUp, Moves.PoisonFang],
     },
   });
 
@@ -121,6 +126,7 @@ export default function registerEkansSpecies(): void {
         25: [Moves.Glare],
         33: [Moves.Screech],
         43: [Moves.Acid],
+        46: [Moves.SpitUp, Moves.Stockpile, Moves.Swallow],
         51: [Moves.Haze],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],

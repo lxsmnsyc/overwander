@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// RBY TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.MegaPunch,
   Moves.MegaKick,
@@ -54,6 +54,12 @@ const FAMILY_TEACHABLE = [
   Moves.SunnyDay,
   Moves.RockSmash,
   Moves.Flamethrower,
+  Moves.BrickBreak,
+  Moves.BulkUp,
+  Moves.Facade,
+  Moves.FocusPunch,
+  Moves.RockTomb,
+  Moves.SecretPower,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Guts, Abilities.NoGuard];
@@ -94,14 +100,20 @@ export default function registerMachopSpecies(): void {
         1: [Moves.KarateChop, Moves.LowKick, Moves.Leer],
         7: [Moves.FocusEnergy],
         19: [Moves.SeismicToss],
-        25: [Moves.Foresight],
+        25: [Moves.Foresight, Moves.Revenge],
         31: [Moves.VitalThrow],
         37: [Moves.CrossChop],
         43: [Moves.ScaryFace],
         46: [Moves.Submission],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.LightScreen, Moves.Meditate, Moves.RollingKick, Moves.Encore],
+      egg: [
+        Moves.LightScreen,
+        Moves.Meditate,
+        Moves.RollingKick,
+        Moves.Encore,
+        Moves.SmellingSalts,
+      ],
     },
   });
 
@@ -139,7 +151,7 @@ export default function registerMachopSpecies(): void {
       level: {
         1: [Moves.KarateChop, Moves.LowKick, Moves.Leer, Moves.FocusEnergy],
         19: [Moves.SeismicToss],
-        25: [Moves.Foresight],
+        25: [Moves.Foresight, Moves.Revenge],
         34: [Moves.VitalThrow],
         43: [Moves.CrossChop],
         52: [Moves.Submission, Moves.ScaryFace],
@@ -176,7 +188,7 @@ export default function registerMachopSpecies(): void {
       level: {
         1: [Moves.KarateChop, Moves.LowKick, Moves.Leer, Moves.FocusEnergy],
         19: [Moves.SeismicToss],
-        25: [Moves.Foresight],
+        25: [Moves.Foresight, Moves.Revenge],
         34: [Moves.VitalThrow],
         43: [Moves.CrossChop],
         52: [Moves.Submission, Moves.ScaryFace],

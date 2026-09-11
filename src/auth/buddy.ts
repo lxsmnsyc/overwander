@@ -54,12 +54,15 @@ export async function clearBuddy(uid: string): Promise<void> {
 export async function getBuddyEffects(uid: string): Promise<Buddy | null> {
   const buddy = await resolveBuddy(uid);
 
-  if (buddy == null) {
-    return null;
-  }
+  return buddy == null ? null : buddyEffectsOf(buddy[1]);
+}
 
-  const [, caught] = buddy;
-
+/**
+ * The same reading, taken off a record the caller has already read.
+ * A caller that resolved the buddy for something else should not pay
+ * for a second read of it
+ */
+export function buddyEffectsOf(caught: CaughtPokemon): Buddy | null {
   // An egg is carried rather than accompanied: what is written inside
   // it changes nothing about the world until it hatches
   if (isEgg(caught)) {

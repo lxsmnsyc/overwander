@@ -31,6 +31,13 @@ export interface MoveCardProps {
    * a PP Up shows up here as a shorter wait
    */
   points?: number;
+  /**
+   * How fast the pokemon reading this card is. Speed buys part of a
+   * wait off, so a card shown against a pokemon says what that
+   * pokemon actually waits; a card with no pokemon behind it shows
+   * the move's own
+   */
+  speed?: number;
 }
 
 export default function MoveCard(props: MoveCardProps): JSX.Element {
@@ -75,7 +82,7 @@ export default function MoveCard(props: MoveCardProps): JSX.Element {
         <Detail label="Cooldown">
           {data() == null
             ? NONE
-            : `${(getMoveCooldown(props.move, props.points ?? 0) / 1000).toFixed(1)}s`}
+            : `${(getMoveCooldown(props.move, props.points ?? 0, props.speed ?? 0) / 1000).toFixed(1)}s`}
         </Detail>
       </div>
       <Detail label="Description">{data()?.description ?? 'Nothing is known about this.'}</Detail>

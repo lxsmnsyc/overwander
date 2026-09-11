@@ -9,7 +9,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// RBY TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.HornDrill,
@@ -47,6 +47,12 @@ const FAMILY_TEACHABLE = [
   Moves.HiddenPower,
   Moves.RainDance,
   Moves.SunnyDay,
+  Moves.Cut,
+  Moves.Facade,
+  Moves.SecretPower,
+  Moves.ShockWave,
+  Moves.SludgeBomb,
+  Moves.WaterPulse,
 ];
 
 // Additional TM/HM moves for the fully evolved form
@@ -99,15 +105,17 @@ export default function registerNidoranMSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.Leer, Moves.Tackle],
+        1: [Moves.Leer, Moves.Tackle, Moves.Peck],
         8: [Moves.HornAttack],
         12: [Moves.DoubleKick],
         14: [Moves.PoisonSting],
         21: [Moves.FocusEnergy],
+        23: [Moves.HelpingHand],
         29: [Moves.FuryAttack],
         36: [Moves.HornDrill],
+        38: [Moves.Flatter],
       },
-      teachable: [...FAMILY_TEACHABLE],
+      teachable: [...FAMILY_TEACHABLE, Moves.Dig, Moves.IceBeam, Moves.RockSmash, Moves.Strength],
       egg: [
         Moves.Supersonic,
         Moves.Disable,
@@ -153,14 +161,23 @@ export default function registerNidoranMSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.Leer, Moves.Tackle, Moves.HornAttack],
+        1: [Moves.Leer, Moves.Tackle, Moves.HornAttack, Moves.Peck],
         12: [Moves.DoubleKick],
         14: [Moves.PoisonSting],
         23: [Moves.FocusEnergy],
+        26: [Moves.HelpingHand],
         32: [Moves.FuryAttack],
         41: [Moves.HornDrill],
+        43: [Moves.Flatter],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.Strength, Moves.RockSmash, Moves.IceBeam],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.Strength,
+        Moves.RockSmash,
+        Moves.IceBeam,
+        Moves.Counter,
+        Moves.Dig,
+      ],
     },
   });
 
@@ -190,8 +207,16 @@ export default function registerNidoranMSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.Tackle, Moves.HornAttack, Moves.PoisonSting, Moves.DoubleKick],
+        1: [
+          Moves.Tackle,
+          Moves.HornAttack,
+          Moves.PoisonSting,
+          Moves.DoubleKick,
+          Moves.FocusEnergy,
+          Moves.Peck,
+        ],
         23: [Moves.Thrash],
+        43: [Moves.Megahorn],
       },
       teachable: [
         ...FAMILY_TEACHABLE,
@@ -207,6 +232,13 @@ export default function registerNidoranMSpecies(): void {
         Moves.ShadowBall,
         Moves.RockSmash,
         Moves.Flamethrower,
+
+        Moves.BrickBreak,
+        Moves.Counter,
+        Moves.FocusPunch,
+        Moves.RockTomb,
+        Moves.Taunt,
+        Moves.Torment,
       ],
     },
   });

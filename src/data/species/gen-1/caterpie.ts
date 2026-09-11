@@ -120,6 +120,7 @@ export default function registerCaterpieSpecies(): void {
         28: [Moves.Gust],
         32: [Moves.Psybeam],
         40: [Moves.Safeguard],
+        47: [Moves.SilverWind],
       },
       teachable: [
         Moves.Toxic,
@@ -154,6 +155,14 @@ export default function registerCaterpieSpecies(): void {
         Moves.SweetScent,
         Moves.HiddenPower,
         Moves.SunnyDay,
+
+        Moves.AerialAce,
+        Moves.DreamEater,
+        Moves.Facade,
+        Moves.SecretPower,
+        Moves.ShadowBall,
+        Moves.SkillSwap,
+        Moves.Thief,
       ],
     },
   });

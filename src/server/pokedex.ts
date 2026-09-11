@@ -5,6 +5,7 @@ import type { Species } from '../data/ids/species';
 import { FORMS_PER_SPECIES, SPECIES_FORM_BAND } from '../data/ids/species';
 import { DEX_CAUGHT, DEX_SEEN, type DexSpec } from '../auth/pokedex-record';
 import { getRegionSpan } from '../data/species/regions';
+import { getWornForms } from '../data/species';
 import type { Fragment, Sql } from 'postgres';
 import { type Tx, getSql, tx } from './db';
 import { asNumber } from './read';
@@ -105,6 +106,12 @@ export async function recordSeenSpecies(
   shiny: boolean,
 ): Promise<void> {
   await logSpecies(uid, DEX_SEEN, species, shiny);
+
+  // A worn shape is never met on its own, so meeting the pokemon is
+  // the only chance the dex gets to fill it in
+  for (const worn of getWornForms(species)) {
+    await logSpecies(uid, DEX_SEEN, worn, shiny);
+  }
 }
 
 /**
@@ -149,7 +156,7 @@ export async function recordSeenParty(
  * settled, for the same reason an encounter is: a fight walked away
  * from is still a fight the player stood in. The other side is read
  * off the team snapshots the server froze, so it covers every kind of
- * battle at once, a raid boss and a rocket's party and another
+ * battle at once, a raid boss and a stop's party and another
  * player's team alike.
  *
  * A whole lobby is logged in one read and one write, however many

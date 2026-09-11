@@ -9,7 +9,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// RBY TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.MegaPunch,
   Moves.MegaKick,
@@ -68,6 +68,17 @@ const FAMILY_TEACHABLE = [
   Moves.PsychUp,
   Moves.ShadowBall,
   Moves.Flamethrower,
+  Moves.BrickBreak,
+  Moves.Counter,
+  Moves.Dig,
+  Moves.Facade,
+  Moves.FocusPunch,
+  Moves.LightScreen,
+  Moves.Safeguard,
+  Moves.SecretPower,
+  Moves.ShockWave,
+  Moves.Snatch,
+  Moves.WaterPulse,
 ];
 
 export default function registerJigglypuffSpecies(): void {
@@ -113,6 +124,7 @@ export default function registerJigglypuffSpecies(): void {
         29: [Moves.Rest],
         34: [Moves.BodySlam],
         39: [Moves.DoubleEdge],
+        44: [Moves.HyperVoice],
       },
       teachable: [...FAMILY_TEACHABLE],
     },

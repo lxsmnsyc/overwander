@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// GSC TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.Earthquake,
@@ -33,6 +33,12 @@ const FAMILY_TEACHABLE = [
   Moves.RockSmash,
   Moves.Strength,
   Moves.Roar,
+  Moves.Facade,
+  Moves.IronTail,
+  Moves.Mimic,
+  Moves.RockTomb,
+  Moves.SecretPower,
+  Moves.Substitute,
 ];
 
 export default function registerPhanpySpecies(): void {
@@ -68,7 +74,7 @@ export default function registerPhanpySpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.Growl, Moves.Tackle],
+        1: [Moves.Growl, Moves.Tackle, Moves.OdorSleuth],
         9: [Moves.DefenseCurl],
         17: [Moves.Flail],
         25: [Moves.TakeDown],
@@ -77,7 +83,14 @@ export default function registerPhanpySpecies(): void {
         49: [Moves.DoubleEdge],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.AncientPower, Moves.BodySlam, Moves.FocusEnergy, Moves.WaterGun],
+      egg: [
+        Moves.AncientPower,
+        Moves.BodySlam,
+        Moves.FocusEnergy,
+        Moves.WaterGun,
+        Moves.Counter,
+        Moves.Fissure,
+      ],
     },
   });
 
@@ -110,7 +123,7 @@ export default function registerPhanpySpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.Growl, Moves.HornAttack],
+        1: [Moves.Growl, Moves.HornAttack, Moves.OdorSleuth],
         9: [Moves.DefenseCurl],
         17: [Moves.Flail],
         25: [Moves.FuryAttack],
@@ -118,7 +131,14 @@ export default function registerPhanpySpecies(): void {
         41: [Moves.RapidSpin],
         49: [Moves.Earthquake],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.HyperBeam,
+        Moves.BodySlam,
+        Moves.Counter,
+        Moves.DoubleEdge,
+        Moves.RockSlide,
+      ],
     },
   });
 }

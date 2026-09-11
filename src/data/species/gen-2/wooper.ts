@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// GSC TM/HM and tutor moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.IceBeam,
@@ -40,6 +40,15 @@ const FAMILY_TEACHABLE = [
   Moves.DynamicPunch,
   Moves.MudSlap,
   Moves.RockSmash,
+  Moves.Blizzard,
+  Moves.Dive,
+  Moves.DoubleEdge,
+  Moves.Facade,
+  Moves.Mimic,
+  Moves.SecretPower,
+  Moves.Substitute,
+  Moves.WaterPulse,
+  Moves.Waterfall,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Damp, Abilities.WaterAbsorb];
@@ -77,15 +86,24 @@ export default function registerWooperSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
+        16: [Moves.MudShot],
         1: [Moves.TailWhip, Moves.WaterGun],
         11: [Moves.Slam],
         21: [Moves.Amnesia],
-        31: [Moves.Earthquake],
+        31: [Moves.Earthquake, Moves.Yawn],
         41: [Moves.RainDance],
         51: [Moves.Haze, Moves.Mist],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.AncientPower, Moves.BodySlam, Moves.Safeguard],
+      egg: [
+        Moves.AncientPower,
+        Moves.BodySlam,
+        Moves.Safeguard,
+        Moves.MudSport,
+        Moves.SpitUp,
+        Moves.Stockpile,
+        Moves.Swallow,
+      ],
     },
   });
 
@@ -118,14 +136,27 @@ export default function registerWooperSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
+        16: [Moves.MudShot],
         1: [Moves.TailWhip, Moves.WaterGun],
         11: [Moves.Slam],
         23: [Moves.Amnesia],
-        35: [Moves.Earthquake],
+        35: [Moves.Earthquake, Moves.Yawn],
         47: [Moves.RainDance],
         59: [Moves.Haze, Moves.Mist],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.Strength, Moves.HyperBeam],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.Strength,
+        Moves.HyperBeam,
+        Moves.BodySlam,
+        Moves.BrickBreak,
+        Moves.Counter,
+        Moves.FocusPunch,
+        Moves.MegaKick,
+        Moves.MegaPunch,
+        Moves.RockTomb,
+        Moves.SeismicToss,
+      ],
     },
   });
 }

@@ -16,7 +16,7 @@ import { nameToIcon, registerItem } from './__create';
  * is priced as one
  */
 export const MARKET_TRINKETS: Map<Items, [name: string, description: string]> = new Map([
-  [Items.CleanseTag, ['Cleanse Tag', 'Fewer wild spawns around the buddy carrying it.']],
+  [Items.CleanseTag, ['Cleanse Tag', '3 fewer wild spawns around the buddy carrying it.']],
 ]);
 
 /**
@@ -29,7 +29,10 @@ export const FOUND_TRINKETS: Map<Items, [name: string, description: string]> = n
     Items.Everstone,
     ['Everstone', 'Its holder will not evolve, whatever it meets the conditions for.'],
   ],
-  [Items.AmuletCoin, ['Amulet Coin', 'Three times the gold from any fight its holder is in.']],
+  [
+    Items.AmuletCoin,
+    ['Amulet Coin', '3x the gold from any fight its holder is in, a raid or a grunt included.'],
+  ],
 ]);
 
 /**

@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// RBY TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.BodySlam,
@@ -50,6 +50,17 @@ const FAMILY_TEACHABLE = [
   Moves.SunnyDay,
   Moves.PsychUp,
   Moves.ShadowBall,
+  Moves.AerialAce,
+  Moves.Cut,
+  Moves.Dig,
+  Moves.Facade,
+  Moves.Flash,
+  Moves.SecretPower,
+  Moves.ShockWave,
+  Moves.Snatch,
+  Moves.Taunt,
+  Moves.Torment,
+  Moves.WaterPulse,
 ];
 
 export default function registerMeowthSpecies(): void {
@@ -92,9 +103,10 @@ export default function registerMeowthSpecies(): void {
         28: [Moves.FeintAttack],
         33: [Moves.FurySwipes],
         44: [Moves.Slash],
+        50: [Moves.FakeOut],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.Hypnosis, Moves.Amnesia, Moves.Spite, Moves.Charm],
+      egg: [Moves.Hypnosis, Moves.Amnesia, Moves.Spite, Moves.Charm, Moves.Assist],
     },
   });
 
@@ -130,6 +142,7 @@ export default function registerMeowthSpecies(): void {
         29: [Moves.FeintAttack],
         37: [Moves.FurySwipes],
         51: [Moves.Slash],
+        59: [Moves.FakeOut],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.Roar],
     },

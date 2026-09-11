@@ -4,6 +4,7 @@ import { MARKET_GEAR } from '../items/gear';
 import { ONE_SHOTS } from '../items/one-shots';
 import { ORBS } from '../items/orbs';
 import { PLATES } from '../items/plates';
+import { MINT_NATURES } from '../items/mints';
 import { POWER_ITEMS } from '../items/power-items';
 import { GENERAL_STAT_BOOSTERS } from '../items/stat-boosters';
 import { TYPE_BOOSTERS } from '../items/type-boosters';
@@ -232,13 +233,19 @@ export const ITEM_POOL: ItemRarityGroups = {
      * than something nobody else will ever see
      */
     { item: Items.SacredAsh, weight: 4 },
-    // The three fossils. Reviving one is irreversible and is the only
-    // way to the species inside, which is the test this band is for;
-    // the maniac sells them, so the pool is the lucky route rather
-    // than the only one. The amber is thinner because Aerodactyl is
+    // The fossils. Reviving one is irreversible and is the only way
+    // to the species inside, which is the test this band is for; the
+    // maniac sells them, so the pool is the lucky route rather than
+    // the only one. The amber is thinner because Aerodactyl is
     { item: Items.HelixFossil, weight: 8 },
     { item: Items.DomeFossil, weight: 8 },
     { item: Items.OldAmber, weight: 5 },
+    { item: Items.RootFossil, weight: 8 },
+    { item: Items.ClawFossil, weight: 8 },
+    // The rock a Deoxys rearranges itself around. Prized rather than
+    // special: it is worth nothing to anybody who has not been to
+    // the island, and everything to whoever has
+    { item: Items.Meteorite, weight: 4 },
     // Three purses instead of one, for good, and nothing sells one.
     // Here rather than in rare so that parting with it is asked about
     // twice
@@ -259,14 +266,26 @@ export const ITEM_POOL: ItemRarityGroups = {
     // are made of, which is the band's permanence test passed on the
     // next generation rather than on the holder
     ...[...POWER_ITEMS.keys()].map((item) => ({ item, weight: 2 })),
+    // The mints. A nature is two stats for the rest of a pokemon's
+    // life and nothing else touches one, which is this band exactly.
+    // The thinnest weight there is, because there are twenty-one of
+    // them: finding a mint is ordinary, finding the one a player came
+    // for is not, and the chef is who they go to when it matters
+    ...[...MINT_NATURES.keys()].map((item) => ({ item, weight: 1 })),
   ],
   special: [
     { item: Items.MasterBall, weight: 10 },
     { item: Items.ShinyCharm, weight: 10 },
+    // Beside the Shiny Charm and a little readier to turn up: what it
+    // is worth is half again on a throw rather than eight times a
+    // roll, so it is the lesser of the two charms in every sense
+    { item: Items.CatchingCharm, weight: 12 },
     // The only way a mythical is ever fought: the relic is found
     // here or not at all
     { item: Items.OldSeaMap, weight: 6 },
     { item: Items.GSBall, weight: 6 },
+    { item: Items.AuroraTicket, weight: 6 },
+    { item: Items.WishTag, weight: 6 },
     // Six stats made perfect at once. Nothing else undoes a bad roll,
     // so it belongs with the things gold cannot buy
     { item: Items.GoldenBottleCap, weight: 8 },

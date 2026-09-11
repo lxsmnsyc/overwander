@@ -3,6 +3,7 @@ import type Alliance from '../alliance';
 import type Battle from '../core';
 import { BattleModes } from '../core';
 import { BattleEvents } from '../events';
+import { Stats } from '../../data/constants/stats';
 
 /**
  * How long the field has to stay decided before the battle is called.
@@ -50,6 +51,44 @@ function resolveWinner(battle: Battle, standing: Set<Alliance>): Alliance | null
 }
 
 /**
+ * Who a fight stopped on the clock belongs to.
+ *
+ * The Battle Arena judges rather than waits, and the closest a
+ * real-time fight comes to the mainline's mind-skill-body score is
+ * the plainest reading of it: whichever side has kept more of what it
+ * brought. It is a share rather than a total, so bringing a Wailord
+ * is worth nothing on its own, and an exact tie is a draw
+ */
+function resolveJudged(battle: Battle): Alliance | null {
+  let best: Alliance | null = null;
+  let highest = 0;
+  let tied = false;
+
+  for (const alliance of battle.alliances) {
+    let held = 0;
+    let pool = 0;
+
+    for (const team of alliance.teams) {
+      for (const unit of team.units) {
+        held += Math.max(0, unit.health);
+        pool += unit.checkStat(Stats.HP, 0);
+      }
+    }
+
+    const share = pool === 0 ? 0 : held / pool;
+
+    if (best == null || share > highest) {
+      best = alliance;
+      highest = share;
+      tied = false;
+    } else if (share === highest) {
+      tied = true;
+    }
+  }
+  return tied ? null : best;
+}
+
+/**
  * The battle's terminal state.
  *
  * It watches for one thing: whether more than one side still has
@@ -62,6 +101,25 @@ function resolveWinner(battle: Battle, standing: Set<Alliance>): Alliance | null
  * result is called when it runs out.
  */
 export default function setupOutcomeMechanics(battle: Battle): void {
+  /** How long the fight has run, for the houses that judge one */
+  let elapsed = 0;
+
+  if (battle.timeLimit > 0) {
+    battle.on(BattleEvents.Tick, EventPriority.Post, (event) => {
+      if (battle.settled) {
+        return;
+      }
+      elapsed += event.duration;
+
+      if (elapsed < battle.timeLimit) {
+        return;
+      }
+      battle.settled = true;
+      battle.winner = resolveJudged(battle);
+      battle.end();
+    });
+  }
+
   /**
    * How long the field has been decided, or null while it is not. It
    * is reset rather than merely paused: a fight that goes back to two

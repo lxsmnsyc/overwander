@@ -23,14 +23,18 @@ import {
   LEGEND_NAMES,
   LEGEND_PRIZE_CHARSETS,
 } from '../src/data/overworld/experts';
-import Npc, {
-  GIOVANNI_HONOR,
-  ROCKET_EXECUTIVES,
-  ROCKET_EXECUTIVE_CHARSETS,
-  ROCKET_EXECUTIVE_HONORS,
-  ROCKET_GRUNT_HONOR,
-  npcSheets,
-} from '../src/data/overworld/npc';
+import { EXECUTIVE_CHARSETS, EXECUTIVE_HONORS } from '../src/data/overworld/npc';
+import {
+  SYNDICATES,
+  SYNDICATE_BOSS_CHARSETS,
+  SYNDICATE_BOSS_HONORS,
+  SYNDICATE_EXECUTIVES,
+  SYNDICATE_GRUNT_CHARSETS,
+  SYNDICATE_GRUNT_HONORS,
+  bossName,
+  executiveName,
+  gruntName,
+} from '../src/data/overworld/syndicate';
 import { TRAINER_CHARSETS, TRAINER_CLASSES } from '../src/data/overworld/trainers';
 
 /**
@@ -127,7 +131,7 @@ describe('the characters a trainer may wear', () => {
     // and that one pays the other two looks of him
     expect(getCharset('characters/hgss/giovanni')?.lock).toEqual({
       kind: 'award',
-      award: GIOVANNI_HONOR,
+      award: Awards.GiovanniDefeated,
     });
     for (const sheet of ['characters/frlg/giovanni', 'characters/lgpe/giovanni']) {
       expect(getCharset(sheet)?.lock).toEqual({ kind: 'award', award: Awards.EarthBadge });
@@ -140,27 +144,47 @@ describe('the characters a trainer may wear', () => {
         expect(getCharset(sheet)?.lock).toEqual({ kind: 'award', award: LEGEND_HONORS[legend] });
         expect(getCharset(sheet)?.name).toBe(LEGEND_NAMES[legend]);
       }
-      // The one they wander in stays free: it is what the game starts
-      // half its players as
+      // A coat the game starts players in stays free whoever wears it
+      // in the world, so Red's mark pays his other two and not that
+      // one. Steven's is nobody's starting look, so his mark pays the
+      // sheet he is standing there in
       for (const sheet of LEGEND_CHARSETS[legend]) {
-        expect(getCharset(sheet)?.lock).toEqual({ kind: 'free' });
+        expect(getCharset(sheet)?.lock).toEqual(
+          FREE_CHARSETS.includes(sheet)
+            ? { kind: 'free' }
+            : { kind: 'award', award: LEGEND_HONORS[legend] },
+        );
       }
     }
   });
 
-  it('pays every Team Rocket rank in the coat it was met in', () => {
-    for (const executive of ROCKET_EXECUTIVES) {
-      for (const sheet of ROCKET_EXECUTIVE_CHARSETS[executive]) {
-        expect(getCharset(sheet)?.lock).toEqual({
+  it('pays every syndicate rank in the coat it was met in', () => {
+    for (const syndicate of SYNDICATES) {
+      for (const sheet of SYNDICATE_BOSS_CHARSETS[syndicate]) {
+        expect(getCharset(sheet)?.lock, sheet).toEqual({
           kind: 'award',
-          award: ROCKET_EXECUTIVE_HONORS[executive],
+          award: SYNDICATE_BOSS_HONORS[syndicate],
         });
+        expect(getCharset(sheet)?.name, sheet).toBe(bossName(syndicate));
       }
-    }
-    // The rank and file share one mark between them: a grunt is a
-    // uniform rather than a person
-    for (const sheet of npcSheets(Npc.RocketGrunt)) {
-      expect(getCharset(sheet)?.lock).toEqual({ kind: 'award', award: ROCKET_GRUNT_HONOR });
+      for (const executive of SYNDICATE_EXECUTIVES[syndicate]) {
+        for (const sheet of EXECUTIVE_CHARSETS[executive]) {
+          expect(getCharset(sheet)?.lock, sheet).toEqual({
+            kind: 'award',
+            award: EXECUTIVE_HONORS[executive],
+          });
+          expect(getCharset(sheet)?.name, sheet).toBe(executiveName(syndicate, executive));
+        }
+      }
+      // The rank and file share one mark between them: a grunt is a
+      // uniform rather than a person
+      for (const sheet of SYNDICATE_GRUNT_CHARSETS[syndicate]) {
+        expect(getCharset(sheet)?.lock, sheet).toEqual({
+          kind: 'award',
+          award: SYNDICATE_GRUNT_HONORS[syndicate],
+        });
+        expect(getCharset(sheet)?.name, sheet).toBe(gruntName(syndicate));
+      }
     }
   });
 
@@ -193,6 +217,11 @@ describe('the characters a trainer may wear', () => {
       kind: 'awards',
       awards: [Awards.KantoDexMedal, Awards.JohtoDexMedal],
     });
+    expect(getCharset('characters/oras/birch')?.lock).toEqual({
+      kind: 'award',
+      award: Awards.HoennDexMedal,
+    });
+    expect(getCharset('characters/oras/birch')?.name).toBe('Professor Birch');
   });
 
   it('says who a sheet is, and which game it is drawn from', () => {

@@ -4,6 +4,7 @@ import type Families from '../data/ids/families';
 import type Natures from '../data/ids/natures';
 import type { Genders } from '../data/ids/species';
 import type Overworld from './core';
+import type { Encounter } from './encounter/shape';
 
 /**
  * What the overworld asks before it stages anything. Every question
@@ -75,6 +76,41 @@ export const enum OverworldEvents {
    * throw anything at it. Frisk is what does the looking
    */
   CheckRevealsHeld = 11,
+  /**
+   * How much likelier a thrown ball is to hold. The Catching Charm is
+   * what answers it
+   */
+  CheckCatchChance = 12,
+  /**
+   * How ready a wild pokemon is to bolt from a failed throw. The
+   * buddies that pin one down are what answer it
+   */
+  CheckFleeChance = 13,
+  /**
+   * What feeding a meeting is worth over a whole session: how far it
+   * can carry a throw, and whether the treat survives a miss
+   */
+  CheckTreats = 14,
+  /**
+   * Whether how ready a meeting is to bolt is said before a ball is
+   * thrown at it. Forewarn is what reads it
+   */
+  CheckRevealsFlight = 15,
+  /**
+   * Whether what a meeting that ran off was carrying is left behind.
+   * Pickpocket is what takes it
+   */
+  CheckPockets = 16,
+  /**
+   * How much likelier a throw is to come out critical, holding on one
+   * shake rather than three
+   */
+  CheckCriticalCatch = 17,
+  /**
+   * Whether what a wild pokemon can do is read before it is caught.
+   * Trace is what reads it
+   */
+  CheckRevealsAbility = 18,
 }
 
 /**
@@ -159,6 +195,12 @@ export interface CheckWalkPickupEvent extends OverworldEvent {
    * How many things were found along the way
    */
   found: number;
+  /**
+   * How many of them were picked off a bush rather than off the
+   * ground. They are counted apart because they come from a different
+   * pool: what grows is not what is dropped
+   */
+  gathered: number;
 }
 
 export interface CheckLampReachEvent extends OverworldEvent {
@@ -190,6 +232,71 @@ export interface CheckRevealsHeldEvent extends OverworldEvent {
   shown: boolean;
 }
 
+/**
+ * The two questions asked of a meeting that is already standing
+ * there, rather than of the chunk that staged it: what is in front of
+ * the player is what a type-minded buddy has an opinion about
+ */
+export interface CheckEncounterEvent extends OverworldEvent {
+  encounter: Encounter;
+}
+
+export interface CheckCatchChanceEvent extends CheckEncounterEvent {
+  /**
+   * What every throw's chance is multiplied by. The chance is capped
+   * at certainty afterwards, so this can never make a ball hold on
+   * something a player has no business catching
+   */
+  boost: number;
+}
+
+export interface CheckFleeChanceEvent extends CheckEncounterEvent {
+  /**
+   * What the encounter's own flee chance is multiplied by. Zero is a
+   * meeting that cannot run at all
+   */
+  factor: number;
+}
+
+export interface CheckTreatsEvent extends OverworldEvent {
+  /**
+   * How far feeding can carry a throw before more of it stops
+   * counting, as a multiplier on the throw
+   */
+  cap: number;
+  /**
+   * Whether a treat goes on working after the throw that missed. The
+   * meeting can still be offered a fresh one either way
+   */
+  keeps: boolean;
+}
+
+export interface CheckRevealsFlightEvent extends OverworldEvent {
+  shown: boolean;
+}
+
+export interface CheckPocketsEvent extends OverworldEvent {
+  taken: boolean;
+}
+
+export interface CheckCriticalCatchEvent extends CheckEncounterEvent {
+  /**
+   * What the chance of a critical throw is multiplied by. It is
+   * capped afterwards, so nothing here makes every ball a critical one
+   */
+  boost: number;
+  /**
+   * How many chances the one shake of a critical throw gets, the best
+   * of them deciding. One is a single aim, which is what a player
+   * walking with nothing that helps takes
+   */
+  aims: number;
+}
+
+export interface CheckRevealsAbilityEvent extends OverworldEvent {
+  shown: boolean;
+}
+
 export interface OverworldEventMap extends EventMap {
   [OverworldEvents.CheckSpawnCount]: [CheckSpawnCountEvent, EventPriority];
   [OverworldEvents.CheckEncounterNature]: [CheckEncounterNatureEvent, EventPriority];
@@ -203,4 +310,11 @@ export interface OverworldEventMap extends EventMap {
   [OverworldEvents.CheckEncounterLevels]: [CheckEncounterLevelsEvent, EventPriority];
   [OverworldEvents.CheckEncounterHeld]: [CheckEncounterHeldEvent, EventPriority];
   [OverworldEvents.CheckRevealsHeld]: [CheckRevealsHeldEvent, EventPriority];
+  [OverworldEvents.CheckCatchChance]: [CheckCatchChanceEvent, EventPriority];
+  [OverworldEvents.CheckFleeChance]: [CheckFleeChanceEvent, EventPriority];
+  [OverworldEvents.CheckTreats]: [CheckTreatsEvent, EventPriority];
+  [OverworldEvents.CheckRevealsFlight]: [CheckRevealsFlightEvent, EventPriority];
+  [OverworldEvents.CheckPockets]: [CheckPocketsEvent, EventPriority];
+  [OverworldEvents.CheckCriticalCatch]: [CheckCriticalCatchEvent, EventPriority];
+  [OverworldEvents.CheckRevealsAbility]: [CheckRevealsAbilityEvent, EventPriority];
 }

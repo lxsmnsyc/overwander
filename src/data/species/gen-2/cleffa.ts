@@ -41,6 +41,7 @@ export default function registerCleffaSpecies(): void {
     activeTimes: TimeOfDay.Night,
     learnSet: {
       level: {
+        17: [Moves.MagicalLeaf],
         1: [Moves.Charm, Moves.Pound],
         4: [Moves.Encore],
         8: [Moves.Sing],
@@ -79,6 +80,23 @@ export default function registerCleffaSpecies(): void {
         Moves.Swagger,
         Moves.Toxic,
         Moves.ZapCannon,
+
+        Moves.BodySlam,
+        Moves.Counter,
+        Moves.Dig,
+        Moves.DoubleEdge,
+        Moves.Facade,
+        Moves.LightScreen,
+        Moves.MegaKick,
+        Moves.MegaPunch,
+        Moves.Reflect,
+        Moves.Safeguard,
+        Moves.SecretPower,
+        Moves.SeismicToss,
+        Moves.ShockWave,
+        Moves.SoftBoiled,
+        Moves.ThunderWave,
+        Moves.WaterPulse,
       ],
       egg: [
         Moves.Amnesia,
@@ -87,6 +105,9 @@ export default function registerCleffaSpecies(): void {
         Moves.Mimic,
         Moves.Present,
         Moves.Splash,
+
+        Moves.Substitute,
+        Moves.Wish,
       ],
     },
   });

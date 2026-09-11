@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// GSC TM/HM moves shared by the baby and the spinner
+// TM, HM and tutor moves shared by the baby and the spinner
 const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.Strength,
@@ -31,6 +31,18 @@ const FAMILY_TEACHABLE = [
   Moves.Headbutt,
   Moves.RockSmash,
   Moves.Swift,
+  Moves.BodySlam,
+  Moves.BrickBreak,
+  Moves.BulkUp,
+  Moves.DoubleEdge,
+  Moves.Earthquake,
+  Moves.Facade,
+  Moves.MegaKick,
+  Moves.Mimic,
+  Moves.RockSlide,
+  Moves.SecretPower,
+  Moves.SeismicToss,
+  Moves.Substitute,
 ];
 
 // Which of the three it becomes, decided the way the games decide it
@@ -85,8 +97,14 @@ export default function registerTyrogueSpecies(): void {
       level: {
         1: [Moves.Tackle],
       },
-      teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.HiJumpKick, Moves.MachPunch, Moves.MindReader, Moves.RapidSpin],
+      teachable: [...FAMILY_TEACHABLE, Moves.Counter],
+      egg: [
+        Moves.HiJumpKick,
+        Moves.MachPunch,
+        Moves.MindReader,
+        Moves.RapidSpin,
+        Moves.HelpingHand,
+      ],
     },
   });
 
@@ -118,7 +136,7 @@ export default function registerTyrogueSpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.RollingKick],
+        1: [Moves.RollingKick, Moves.Revenge],
         7: [Moves.FocusEnergy],
         13: [Moves.Pursuit],
         19: [Moves.QuickAttack],
@@ -126,7 +144,7 @@ export default function registerTyrogueSpecies(): void {
         31: [Moves.Counter],
         37: [Moves.Agility],
         43: [Moves.Detect],
-        49: [Moves.TripleKick],
+        49: [Moves.TripleKick, Moves.Endeavor],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.Dig],
     },

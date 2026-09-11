@@ -6,35 +6,48 @@ import {
   Champion,
   ELITE_MEMBER_NAMES,
   EliteMember,
+  FRONTIER_BRAIN_NAMES,
+  FRONTIER_BRAIN_RULES,
+  FRONTIER_BRAIN_SYMBOLS,
+  FRONTIER_BRAIN_TITLES,
+  FRONTIER_FACILITY_NAMES,
+  FRONTIER_RENTAL_OFFER,
+  FRONTIER_TEAM_SIZE,
+  FRONTIER_TIME_TURNS,
+  FrontierBrain,
+  FrontierRule,
   GYM_LEADER_BADGES,
   GYM_LEADER_NAMES,
   GymLeader,
   LEGEND_HONORS,
   LEGEND_NAMES,
   Legend,
+  PIKE_CURTAINS,
   getEliteBadges,
 } from '../../../data/overworld/experts';
 import Landmark from '../../../data/overworld/landmark';
-import Npc, {
-  GIOVANNI_HONOR,
-  GIOVANNI_NAME,
-  NPC_NAMES,
-  ROCKET_EXECUTIVE_HONORS,
-  ROCKET_EXECUTIVE_NAMES,
-  ROCKET_EXECUTIVE_QUOTES,
-  ROCKET_GRUNT_HONOR,
-} from '../../../data/overworld/npc';
+import { EXECUTIVE_HONORS, EXECUTIVE_QUOTES } from '../../../data/overworld/npc';
+import {
+  SYNDICATE_BOSS_HONORS,
+  SYNDICATE_BOSS_QUOTES,
+  SYNDICATE_GRUNT_HONORS,
+  SYNDICATE_GRUNT_QUOTES,
+  SYNDICATE_NAMES,
+  bossName,
+  executiveName,
+  gruntName,
+} from '../../../data/overworld/syndicate';
 import { RocketRank } from '../../../overworld/chunk-snapshot';
-import { NPC_QUOTES } from '../npc-dialog/shared';
 import type ChunkSnapshot from '../../../overworld/chunk-snapshot';
 import {
   CHAMPION_PARTY_LEVELS,
   ELITE_PARTY_LEVELS,
+  FRONTIER_PARTY_LEVELS,
   GYM_PARTY_LEVELS,
   LEGEND_PARTY_LEVELS,
   type LevelBand,
   rocketPartyLevels,
-} from '../../../overworld/rocket';
+} from '../../../overworld/stop';
 import {
   TRAINER_NAMES,
   TRAINER_QUOTES,
@@ -42,7 +55,7 @@ import {
   trainerLevels,
 } from '../../../data/overworld/trainers';
 import { TYPE_NAMES, type Types } from '../../../data/constants/types';
-import type { StopChallenge } from '../RocketStopDialog';
+import type { StopChallenge } from '../StopDialog';
 
 /** The types a class fields, said as a list: "Water and Fighting" */
 function saidTypes(types: Types[]): string {
@@ -54,7 +67,7 @@ function saidTypes(types: Types[]): string {
 }
 
 /** A band said the way a lineup reads it: "levels 45-65" */
-function saidLevels([lowest, highest]: LevelBand): string {
+export function saidLevels([lowest, highest]: LevelBand): string {
   return `levels ${lowest}-${highest}`;
 }
 
@@ -80,12 +93,22 @@ const GYM_LEADER_QUOTES: Record<GymLeader, string> = {
   [GymLeader.Jasmine]: 'Um... I am sorry. My steel pokemon do not go down easily.',
   [GymLeader.Pryce]: 'I have seen ninety winters. You will not last one of them.',
   [GymLeader.Clair]: 'I am the greatest dragon master. Try to prove otherwise.',
+  [GymLeader.Roxanne]: 'I studied rock pokemon at the academy. Let us see what you studied.',
+  [GymLeader.Brawly]: 'I am a big wave in the making! Come and wipe out on me!',
+  [GymLeader.Wattson]: 'Wahahaha! My machines run on my pokemon. Mind the shock!',
+  [GymLeader.Flannery]: 'My grandfather left me this gym. I intend to keep it hot.',
+  [GymLeader.Norman]: 'I am somebody’s father, and I do not go easy on anybody. Come.',
+  [GymLeader.Winona]: 'I have flown with birds all my life. You will not touch us.',
+  [GymLeader.Tate]: 'My sister knows what I am about to do. Do you?',
+  [GymLeader.Liza]: 'My brother and I share one badge. You still have to earn it.',
+  [GymLeader.Juan]: 'Water is elegance, and elegance is strength. Observe.',
 };
 
 /** Which league each champion is the top of */
 const CHAMPION_LEAGUES: Record<Champion, string> = {
   [Champion.Blue]: 'Kanto',
   [Champion.Lance]: 'Johto',
+  [Champion.Wallace]: 'Hoenn',
 };
 
 /** Which league each seat belongs to, for the copy that names it */
@@ -98,6 +121,10 @@ const ELITE_MEMBER_LEAGUES: Record<EliteMember, string> = {
   [EliteMember.Koga]: 'Johto',
   [EliteMember.Karen]: 'Johto',
   [EliteMember.JohtoBruno]: 'Johto',
+  [EliteMember.Sidney]: 'Hoenn',
+  [EliteMember.Phoebe]: 'Hoenn',
+  [EliteMember.Glacia]: 'Hoenn',
+  [EliteMember.Drake]: 'Hoenn',
 };
 
 const ELITE_QUOTES: Record<EliteMember, string> = {
@@ -109,17 +136,23 @@ const ELITE_QUOTES: Record<EliteMember, string> = {
   [EliteMember.Koga]: 'Fufufu! You are already standing in my poison. Shall we begin?',
   [EliteMember.Karen]: 'Strong pokemon. Weak pokemon. Only your favourites matter. Show me yours.',
   [EliteMember.JohtoBruno]: 'I have come back stronger. Feel the fists of Johto!',
+  [EliteMember.Sidney]: 'No hard feelings, right? Let us just enjoy the fight.',
+  [EliteMember.Phoebe]: 'I trained with the spirits on Mt. Pyre. They are still with me.',
+  [EliteMember.Glacia]: 'I came here for warmth, and my ice only grew fiercer. See it.',
+  [EliteMember.Drake]: 'Do you know what it means to fight beside a dragon? Show me.',
 };
 
-/** What a legend says, which in the one case there is so far is nothing */
+/** What a legend says, where they say anything at all */
 const LEGEND_GREETINGS: Record<Legend, string> = {
   [Legend.Red]: 'Red says nothing. He reaches for a ball.',
+  [Legend.Steven]: 'Steven turns a stone over in his hand. “I was hoping for a real fight.”',
 };
 
 /** What a champion says as the last fight of their league is put */
 const CHAMPION_GREETINGS: Record<Champion, string> = {
   [Champion.Blue]: 'Blue smirks. “I am the Champion here. Smell ya later.”',
   [Champion.Lance]: 'Lance looks you over. “So you made it this far. Show me your best.”',
+  [Champion.Wallace]: 'Wallace bows. “Let us make this beautiful, and let us make it brief.”',
 };
 
 /**
@@ -130,6 +163,50 @@ export function championGate(champion: Champion): string {
   const league = CHAMPION_LEAGUES[champion];
 
   return `who have beaten all ${CHAMPION_HONORS[champion].length} of ${league}'s Elite Four`;
+}
+
+/** What a Brain says as the house is entered */
+const FRONTIER_GREETINGS: Record<FrontierBrain, string> = {
+  [FrontierBrain.Brandon]: 'You came to my pyramid. Leave everything at the door and climb.',
+  [FrontierBrain.Greta]: 'The clock is running. Fight like it matters, because it is judged.',
+  [FrontierBrain.Lucy]: 'Pick a curtain. What is behind it is not my doing, and I do not care.',
+  [FrontierBrain.Noland]:
+    'Nothing here is yours and nothing here is mine. Pick three and let us see.',
+  [FrontierBrain.Anabel]:
+    'No tricks up here. My three against your three. Begin when you are ready.',
+  [FrontierBrain.Spenser]:
+    'In my palace nobody takes orders. Bring three whose hearts you already know.',
+  [FrontierBrain.Tucker]:
+    'Show me your three first. The Dome always answers, and the crowd loves an answer.',
+};
+
+/**
+ * The house rule, said first, because it is the whole of what makes a
+ * Frontier fight different from the Champion's. Each ends in a space:
+ * the Tower has no rule at all, and its line opens on the party
+ * instead of on a gap
+ */
+const FRONTIER_RULE_TERMS: Record<FrontierRule, string> = {
+  [FrontierRule.None]: '',
+  [FrontierRule.Bare]: 'Nothing is held: no items on either side. ',
+  [FrontierRule.Timed]: `Judged after ${FRONTIER_TIME_TURNS} turns: whoever has more of their
+     party left standing takes it. `,
+  [FrontierRule.Curtained]: `A curtain is drawn as you walk in, and one room in
+     ${PIKE_CURTAINS.length} is kind: your three arrive poisoned, burned, paralysed, asleep, or
+     mended. Hers arrive as they are. `,
+  [FrontierRule.Rented]: `The house lends both sides: pick 3 of the ${FRONTIER_RENTAL_OFFER} on
+     the table and leave your own box alone. Nothing of yours is on the field, so nothing of
+     yours comes off it. `,
+  [FrontierRule.Natured]: `Nobody fights on orders: every pokemon here picks by its nature, so a
+     bold one guards and a brave one swings whatever the field asks for. `,
+  [FrontierRule.Countered]: `The house names nobody until you do: his 3 are drawn against yours
+     the moment they are frozen, one apiece, so a team that covers everything covers nothing
+     here. `,
+};
+
+/** What a Brain's house asks to see: the crown of its region */
+export function frontierGate(brain: FrontierBrain): string {
+  return `holding the title of ${AWARD_NAMES[FRONTIER_BRAIN_TITLES[brain]]}`;
 }
 
 /**
@@ -163,45 +240,51 @@ export default function challengerOf(
 
     const executive = snapshot.getRocketExecutive(cell);
     const levels = rocketPartyLevels(rank);
+    // Which of the three keeps this cell is the biome's answer, so
+    // every line below names the team standing here
+    const syndicate = snapshot.getSyndicate();
+    const team = SYNDICATE_NAMES[syndicate];
 
-    if (rank === RocketRank.Giovanni) {
+    if (rank === RocketRank.Boss) {
+      const boss = bossName(syndicate);
+
       return {
-        name: GIOVANNI_NAME,
+        name: boss,
         levels,
-        greeting: `${GIOVANNI_NAME} himself bars the way. “So you are the one. Show me what you
-          have.”`,
+        greeting: `${boss} himself bars the way. “${SYNDICATE_BOSS_QUOTES[syndicate]}”`,
         stakes: `Six of his at ${saidLevels(levels)}, each carrying two items and two abilities,
           against as many as you bring. Beat him and he leaves one of the six behind, the
           legendary among them, keeping both its abilities and the room for a second item, along
-          with a purse worth the trouble and the mark for ${AWARD_NAMES[GIOVANNI_HONOR]}. Lose and
-          you lose nothing but the fight.`,
+          with a purse worth the trouble and the mark for
+          ${AWARD_NAMES[SYNDICATE_BOSS_HONORS[syndicate]]}. Lose and you lose nothing but the
+          fight.`,
       };
     }
     if (executive != null) {
-      const name = ROCKET_EXECUTIVE_NAMES[executive];
+      const name = executiveName(syndicate, executive);
 
       return {
         name,
         levels,
-        greeting: `${name} of Team Rocket blocks the way. “${ROCKET_EXECUTIVE_QUOTES[executive]}”`,
+        greeting: `${name} of ${team} blocks the way. “${EXECUTIVE_QUOTES[executive]}”`,
         stakes: `Six of the country's best at ${saidLevels(levels)}, each carrying an item and
           two abilities, against as many as you bring. Win and they drop a purse, one of the six
           with both its abilities, whatever they were carrying, and the mark for
-          ${AWARD_NAMES[ROCKET_EXECUTIVE_HONORS[executive]]}. Lose and you lose nothing but the
+          ${AWARD_NAMES[EXECUTIVE_HONORS[executive]]}. Lose and you lose nothing but the
           fight. They will be here all window.`,
       };
     }
 
-    const name = NPC_NAMES[Npc.RocketGrunt];
+    const name = gruntName(syndicate);
 
     return {
       name,
       levels,
-      greeting: `A ${name} blocks the way. “${NPC_QUOTES[Npc.RocketGrunt]}”`,
+      greeting: `A ${name} blocks the way. “${SYNDICATE_GRUNT_QUOTES[syndicate]}”`,
       stakes: `Six of theirs at ${saidLevels(levels)} against as many as you bring. Win and the
         grunt drops a purse, one of the three they were not fighting with, and the mark for
-        ${AWARD_NAMES[ROCKET_GRUNT_HONOR]} if you do not hold it yet. Lose and you lose nothing
-        but the fight. They will be here all window.`,
+        ${AWARD_NAMES[SYNDICATE_GRUNT_HONORS[syndicate]]} if you do not hold it yet. Lose and you
+        lose nothing but the fight. They will be here all window.`,
     };
   }
   if (landmark === Landmark.Trainer) {
@@ -298,6 +381,31 @@ export default function challengerOf(
         and two abilities, against as many as you bring. Win and the title of
         ${AWARD_NAMES[CHAMPION_TITLES[champion]]} is yours, with the largest purse a walk pays
         and something worth keeping besides. Lose and you lose nothing but the fight.`,
+    };
+  }
+  if (landmark === Landmark.FrontierBrain) {
+    const brain = snapshot.getFrontierBrain(cell);
+
+    if (brain == null) {
+      return null;
+    }
+
+    const name = FRONTIER_BRAIN_NAMES[brain];
+    const [silver, gold] = FRONTIER_BRAIN_SYMBOLS[brain];
+
+    return {
+      name,
+      levels: FRONTIER_PARTY_LEVELS,
+      bring: FRONTIER_TEAM_SIZE,
+      rented: FRONTIER_BRAIN_RULES[brain] === FrontierRule.Rented,
+      unseen: FRONTIER_BRAIN_RULES[brain] === FrontierRule.Countered,
+      greeting: `${name} keeps the ${FRONTIER_FACILITY_NAMES[brain]}.
+        “${FRONTIER_GREETINGS[brain]}”`,
+      stakes: `${FRONTIER_RULE_TERMS[FRONTIER_BRAIN_RULES[brain]]} Three of theirs at level
+        ${FRONTIER_PARTY_LEVELS[0]}, each carrying two items and two abilities, against three of
+        yours. Win and the ${AWARD_NAMES[silver]} is yours, with a purse to match the rank. Hold
+        it and they bring their second three out next time, which is what the
+        ${AWARD_NAMES[gold]} is for. Lose and you lose nothing but the fight.`,
     };
   }
   return null;

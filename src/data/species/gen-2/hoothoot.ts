@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// GSC TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.Fly,
@@ -33,6 +33,14 @@ const FAMILY_TEACHABLE = [
   Moves.Frustration,
   Moves.HiddenPower,
   Moves.SunnyDay,
+  Moves.AerialAce,
+  Moves.DoubleEdge,
+  Moves.Facade,
+  Moves.Mimic,
+  Moves.Psychic,
+  Moves.SecretPower,
+  Moves.ShadowBall,
+  Moves.Substitute,
 ];
 
 export default function registerHoothootSpecies(): void {
@@ -84,6 +92,9 @@ export default function registerHoothootSpecies(): void {
         Moves.Supersonic,
         Moves.MirrorMove,
         Moves.FeintAttack,
+
+        Moves.FeatherDance,
+        Moves.SkyAttack,
       ],
     },
   });

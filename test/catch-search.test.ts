@@ -246,7 +246,7 @@ describe('the fields added for the query builder', () => {
     expect(matchesCatch(caught, 'nature:timid')).toBe(false);
     expect(matchesCatch(caught, 'gender:female')).toBe(true);
     expect(matchesCatch(caught, 'ball:ultra')).toBe(true);
-    expect(matchesCatch(caught, 'met:rocket')).toBe(true);
+    expect(matchesCatch(caught, 'met:syndicate')).toBe(true);
     expect(matchesCatch(caught, 'is:traded is:auctionable')).toBe(true);
   });
 
@@ -289,7 +289,7 @@ describe('the fields added for the query builder', () => {
     expect(planCatchSearch('ball:ultra')).toEqual([
       { on: 'row', column: 'ball', op: 'eq', value: Balls.UltraBall },
     ]);
-    expect(planCatchSearch('met:rocket')).toEqual([
+    expect(planCatchSearch('met:syndicate')).toEqual([
       { on: 'row', column: 'type', op: 'eq', value: EncounterType.Rocket },
     ]);
     expect(planCatchSearch('is:perfect')).toEqual([

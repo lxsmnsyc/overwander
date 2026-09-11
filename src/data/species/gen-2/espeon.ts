@@ -35,7 +35,7 @@ export default function registerEspeonSpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.Tackle, Moves.TailWhip],
+        1: [Moves.Tackle, Moves.TailWhip, Moves.HelpingHand],
         8: [Moves.SandAttack],
         16: [Moves.Confusion],
         23: [Moves.QuickAttack],
@@ -75,6 +75,18 @@ export default function registerEspeonSpecies(): void {
         Moves.Swift,
         Moves.Toxic,
         Moves.ZapCannon,
+
+        Moves.BodySlam,
+        Moves.CalmMind,
+        Moves.Dig,
+        Moves.DoubleEdge,
+        Moves.Facade,
+        Moves.LightScreen,
+        Moves.Mimic,
+        Moves.Reflect,
+        Moves.SecretPower,
+        Moves.SkillSwap,
+        Moves.Substitute,
       ],
     },
   });

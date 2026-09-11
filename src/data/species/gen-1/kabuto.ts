@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// RBY TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.SwordsDance,
@@ -43,6 +43,13 @@ const FAMILY_TEACHABLE = [
   Moves.HiddenPower,
   Moves.RainDance,
   Moves.RockSmash,
+  Moves.AerialAce,
+  Moves.Facade,
+  Moves.RockSlide,
+  Moves.RockTomb,
+  Moves.SecretPower,
+  Moves.WaterPulse,
+  Moves.Waterfall,
 ];
 
 const FAMILY_ABILITIES = [Abilities.SwiftSwim, Abilities.BattleArmor];
@@ -85,15 +92,25 @@ export default function registerKabutoSpecies(): void {
         1: [Moves.Scratch, Moves.Harden],
         10: [Moves.Absorb],
         19: [Moves.Leer],
+        25: [Moves.MudShot],
         28: [Moves.SandAttack],
         37: [Moves.Endure],
         39: [Moves.Slash],
+        43: [Moves.MetalSound],
         46: [Moves.MegaDrain],
         49: [Moves.HydroPump],
         55: [Moves.AncientPower],
       },
-      teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.BubbleBeam, Moves.AuroraBeam, Moves.Dig, Moves.Flail, Moves.RapidSpin],
+      teachable: [...FAMILY_TEACHABLE, Moves.BodySlam],
+      egg: [
+        Moves.BubbleBeam,
+        Moves.AuroraBeam,
+        Moves.Dig,
+        Moves.Flail,
+        Moves.RapidSpin,
+        Moves.ConfuseRay,
+        Moves.KnockOff,
+      ],
     },
   });
 
@@ -127,9 +144,11 @@ export default function registerKabutoSpecies(): void {
       level: {
         1: [Moves.Scratch, Moves.Harden, Moves.Absorb],
         19: [Moves.Leer],
+        25: [Moves.MudShot],
         28: [Moves.SandAttack],
         37: [Moves.Endure],
         39: [Moves.Slash],
+        46: [Moves.MetalSound],
         51: [Moves.MegaDrain],
         53: [Moves.HydroPump],
         65: [Moves.AncientPower],
@@ -145,6 +164,11 @@ export default function registerKabutoSpecies(): void {
         Moves.Headbutt,
         Moves.FuryCutter,
         Moves.Whirlpool,
+
+        Moves.BrickBreak,
+        Moves.Dig,
+        Moves.Dive,
+        Moves.MegaKick,
       ],
     },
   });

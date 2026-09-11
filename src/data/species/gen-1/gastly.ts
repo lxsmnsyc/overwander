@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// RBY TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.Rage,
@@ -42,6 +42,13 @@ const FAMILY_TEACHABLE = [
   Moves.SunnyDay,
   Moves.PsychUp,
   Moves.ShadowBall,
+  Moves.Facade,
+  Moves.SecretPower,
+  Moves.SkillSwap,
+  Moves.SludgeBomb,
+  Moves.Snatch,
+  Moves.Taunt,
+  Moves.Torment,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Levitate];
@@ -113,6 +120,10 @@ export default function registerGastlySpecies(): void {
         Moves.IcePunch,
         Moves.ThunderPunch,
         Moves.PerishSong,
+
+        Moves.Astonish,
+        Moves.Grudge,
+        Moves.WillOWisp,
       ],
     },
   });
@@ -144,6 +155,7 @@ export default function registerGastlySpecies(): void {
         1: [Moves.Lick, Moves.ConfuseRay, Moves.NightShade, Moves.Hypnosis, Moves.Spite],
         13: [Moves.MeanLook],
         16: [Moves.Curse],
+        25: [Moves.ShadowPunch],
         38: [Moves.DreamEater],
         48: [Moves.DestinyBond],
       },
@@ -173,6 +185,7 @@ export default function registerGastlySpecies(): void {
         1: [Moves.Lick, Moves.ConfuseRay, Moves.NightShade, Moves.Hypnosis, Moves.Spite],
         13: [Moves.MeanLook],
         16: [Moves.Curse],
+        25: [Moves.ShadowPunch],
         38: [Moves.DreamEater],
         48: [Moves.DestinyBond],
       },
@@ -193,6 +206,10 @@ export default function registerGastlySpecies(): void {
         Moves.Headbutt,
         Moves.DynamicPunch,
         Moves.RockSmash,
+
+        Moves.BrickBreak,
+        Moves.FocusPunch,
+        Moves.Metronome,
       ],
     },
   });

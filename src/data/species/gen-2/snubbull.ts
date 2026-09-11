@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// GSC TM/HM and tutor moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.Thunderbolt,
@@ -42,6 +42,30 @@ const FAMILY_TEACHABLE = [
   Moves.MudSlap,
   Moves.RockSmash,
   Moves.Strength,
+  Moves.BodySlam,
+  Moves.BrickBreak,
+  Moves.BulkUp,
+  Moves.Counter,
+  Moves.Dig,
+  Moves.DoubleEdge,
+  Moves.Earthquake,
+  Moves.Facade,
+  Moves.FireBlast,
+  Moves.Flamethrower,
+  Moves.FocusPunch,
+  Moves.MegaKick,
+  Moves.MegaPunch,
+  Moves.Mimic,
+  Moves.Overheat,
+  Moves.SecretPower,
+  Moves.SeismicToss,
+  Moves.ShockWave,
+  Moves.SolarBeam,
+  Moves.Substitute,
+  Moves.Taunt,
+  Moves.ThunderWave,
+  Moves.Torment,
+  Moves.WaterPulse,
 ];
 
 const FAMILY_LEVEL = {
@@ -99,6 +123,8 @@ export default function registerSnubbullSpecies(): void {
         Moves.Metronome,
         Moves.Present,
         Moves.Reflect,
+
+        Moves.SmellingSalts,
       ],
     },
   });
@@ -130,11 +156,19 @@ export default function registerSnubbullSpecies(): void {
     learnSet: {
       level: {
         ...FAMILY_LEVEL,
+        61: [Moves.Crunch],
         28: [Moves.Roar],
         38: [Moves.Rage],
         51: [Moves.TakeDown],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.HyperBeam,
+        Moves.IronTail,
+        Moves.Metronome,
+        Moves.RockSlide,
+        Moves.RockTomb,
+      ],
     },
   });
 }

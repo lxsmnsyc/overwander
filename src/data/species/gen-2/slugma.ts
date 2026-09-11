@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// GSC TM/HM and tutor moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.FireBlast,
@@ -30,6 +30,14 @@ const FAMILY_TEACHABLE = [
   Moves.MudSlap,
   Moves.DefenseCurl,
   Moves.RockSmash,
+  Moves.DoubleEdge,
+  Moves.Facade,
+  Moves.LightScreen,
+  Moves.Mimic,
+  Moves.Overheat,
+  Moves.Reflect,
+  Moves.SecretPower,
+  Moves.Substitute,
 ];
 
 const FAMILY_ABILITIES = [Abilities.MagmaArmor, Abilities.FlameBody];
@@ -67,7 +75,7 @@ export default function registerSlugmaSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.Smog],
+        1: [Moves.Smog, Moves.Yawn],
         8: [Moves.Ember],
         15: [Moves.RockThrow],
         22: [Moves.Harden],
@@ -77,7 +85,7 @@ export default function registerSlugmaSpecies(): void {
         50: [Moves.BodySlam],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.AcidArmor],
+      egg: [Moves.AcidArmor, Moves.HeatWave],
     },
   });
 
@@ -110,14 +118,20 @@ export default function registerSlugmaSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.Smog, Moves.Ember, Moves.RockThrow],
+        1: [Moves.Smog, Moves.Ember, Moves.RockThrow, Moves.Yawn],
         22: [Moves.Harden],
         29: [Moves.Amnesia],
         36: [Moves.Flamethrower],
         48: [Moves.RockSlide],
         60: [Moves.BodySlam],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.Earthquake, Moves.Strength, Moves.HyperBeam],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.Earthquake,
+        Moves.Strength,
+        Moves.HyperBeam,
+        Moves.RockTomb,
+      ],
     },
   });
 }

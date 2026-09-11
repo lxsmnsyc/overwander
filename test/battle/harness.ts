@@ -46,6 +46,7 @@ export function createBattle(
   seed = 'test-seed',
   mode?: BattleModes,
   limits?: number,
+  timeLimit?: number,
 ): BattleHarness {
   if (!dataRegistered) {
     registerMoves();
@@ -54,7 +55,7 @@ export function createBattle(
     dataRegistered = true;
   }
 
-  const battle = new Battle(seed, mode, limits);
+  const battle = new Battle(seed, mode, limits, undefined, timeLimit);
 
   setupAllianceMechanics(battle);
   setupTeamMechanics(battle);

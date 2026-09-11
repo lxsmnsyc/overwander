@@ -35,7 +35,7 @@ export default function registerUmbreonSpecies(): void {
     activeTimes: TimeOfDay.Evening | TimeOfDay.Night,
     learnSet: {
       level: {
-        1: [Moves.Tackle, Moves.TailWhip],
+        1: [Moves.Tackle, Moves.TailWhip, Moves.HelpingHand],
         8: [Moves.SandAttack],
         16: [Moves.Pursuit],
         23: [Moves.QuickAttack],
@@ -75,6 +75,17 @@ export default function registerUmbreonSpecies(): void {
         Moves.Swift,
         Moves.Toxic,
         Moves.ZapCannon,
+
+        Moves.BodySlam,
+        Moves.Dig,
+        Moves.DoubleEdge,
+        Moves.Facade,
+        Moves.Mimic,
+        Moves.SecretPower,
+        Moves.Snatch,
+        Moves.Substitute,
+        Moves.Taunt,
+        Moves.Torment,
       ],
     },
   });

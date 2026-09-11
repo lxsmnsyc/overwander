@@ -42,6 +42,37 @@ const enum Lairs {
    * Celebi's shrine. A mythical's lair, so the world never stages it
    */
   IlexForest = 8,
+  /**
+   * The three sealed chambers, one golem apiece. Unlike the Burned
+   * Tower, which holds three, each of these holds exactly one: they
+   * were sealed separately and are opened separately
+   */
+  DesertRuins = 9,
+  IslandCave = 10,
+  AncientTomb = 11,
+  /**
+   * The island the eon pair keep to, well out in open water. Like the
+   * Burned Tower it holds two, so which of the pair is at home is a
+   * roll
+   */
+  SouthernIsland = 12,
+  /**
+   * The three the weather trio sleep in: a cavern that floods, one
+   * that fills with heat, and the tower the sky is reached from
+   */
+  MarineCave = 13,
+  TerraCave = 14,
+  SkyPillar = 15,
+  /**
+   * Deoxys' island. A mythical's lair, so no biome lists it: the
+   * ticket is the only way there
+   */
+  BirthIsland = 16,
+  /**
+   * The valley a Jirachi sleeps under, woken by the comet that passes
+   * over it. A mythical's lair, so no biome hosts it
+   */
+  Forina = 17,
 }
 
 export const LAIR_NAMES: Record<Lairs, string> = {
@@ -54,6 +85,15 @@ export const LAIR_NAMES: Record<Lairs, string> = {
   [Lairs.WhirlIslands]: 'Whirl Islands',
   [Lairs.BellTower]: 'Bell Tower',
   [Lairs.IlexForest]: 'Ilex Forest',
+  [Lairs.DesertRuins]: 'Desert Ruins',
+  [Lairs.IslandCave]: 'Island Cave',
+  [Lairs.AncientTomb]: 'Ancient Tomb',
+  [Lairs.SouthernIsland]: 'Southern Island',
+  [Lairs.MarineCave]: 'Marine Cave',
+  [Lairs.TerraCave]: 'Terra Cave',
+  [Lairs.SkyPillar]: 'Sky Pillar',
+  [Lairs.BirthIsland]: 'Birth Island',
+  [Lairs.Forina]: 'Forina',
 };
 
 /**
@@ -72,6 +112,15 @@ export const LAIR_SPECIES: Record<Lairs, Species[]> = {
   [Lairs.WhirlIslands]: [Species.Lugia],
   [Lairs.BellTower]: [Species.HoOh],
   [Lairs.IlexForest]: [Species.Celebi],
+  [Lairs.DesertRuins]: [Species.Regirock],
+  [Lairs.IslandCave]: [Species.Regice],
+  [Lairs.AncientTomb]: [Species.Registeel],
+  [Lairs.SouthernIsland]: [Species.Latias, Species.Latios],
+  [Lairs.MarineCave]: [Species.Kyogre],
+  [Lairs.TerraCave]: [Species.Groudon],
+  [Lairs.SkyPillar]: [Species.Rayquaza],
+  [Lairs.BirthIsland]: [Species.Deoxys],
+  [Lairs.Forina]: [Species.Jirachi],
 };
 
 /**
@@ -87,6 +136,15 @@ export const EVERY_LAIR: Lairs[] = [
   Lairs.WhirlIslands,
   Lairs.BellTower,
   Lairs.IlexForest,
+  Lairs.DesertRuins,
+  Lairs.IslandCave,
+  Lairs.AncientTomb,
+  Lairs.SouthernIsland,
+  Lairs.MarineCave,
+  Lairs.TerraCave,
+  Lairs.SkyPillar,
+  Lairs.BirthIsland,
+  Lairs.Forina,
 ];
 
 /**
@@ -109,24 +167,34 @@ const STAGED_LAIRS = new Set<Lairs>(EVERY_STAGED_LAIR);
  * Which lairs a biome can host. A lair is a place, so it sits where
  * that place would be: the Seafoam Islands are a sea cave in cold
  * water, Mt. Ember is a volcano, Cerulean Cave is deep under a
- * mountain, and the Power Plant is the one building among them —
- * abandoned on flat ground, which is where the plains are.
+ * mountain, and the Power Plant is the one building among them,
+ * abandoned on flat ground, which is where the plains are. The three
+ * sealed chambers sit where their doors were cut: ruins in the sand,
+ * a cave in the ice, a tomb under the rock.
  *
  * A biome with no lair stages no legendary lair at all, which is most
  * of them: a legendary the whole world could walk to is not a
  * legendary
  */
 const BIOME_LAIRS: { [key in Biome]?: Lairs[] } = {
-  [Biome.DeepOcean]: [Lairs.SeafoamIslands, Lairs.WhirlIslands],
-  [Biome.Ocean]: [Lairs.WhirlIslands],
-  [Biome.PolarOcean]: [Lairs.SeafoamIslands],
-  [Biome.Glacier]: [Lairs.SeafoamIslands],
+  [Biome.DeepOcean]: [Lairs.SeafoamIslands, Lairs.WhirlIslands, Lairs.MarineCave],
+  [Biome.Ocean]: [Lairs.WhirlIslands, Lairs.SouthernIsland],
+  [Biome.PolarOcean]: [Lairs.SeafoamIslands, Lairs.IslandCave],
+  [Biome.Glacier]: [Lairs.SeafoamIslands, Lairs.IslandCave],
   [Biome.Grassland]: [Lairs.PowerPlant, Lairs.BurnedTower],
   [Biome.Woodland]: [Lairs.BurnedTower],
   [Biome.Steppe]: [Lairs.PowerPlant],
-  [Biome.Desert]: [Lairs.MtEmber],
-  [Biome.Mountain]: [Lairs.MtEmber, Lairs.CeruleanCave, Lairs.BellTower],
+  [Biome.Desert]: [Lairs.MtEmber, Lairs.DesertRuins],
+  [Biome.Badlands]: [Lairs.DesertRuins, Lairs.AncientTomb],
+  [Biome.Mountain]: [
+    Lairs.MtEmber,
+    Lairs.CeruleanCave,
+    Lairs.BellTower,
+    Lairs.AncientTomb,
+    Lairs.SkyPillar,
+  ],
   [Biome.AlpineTundra]: [Lairs.CeruleanCave],
+  [Biome.Volcano]: [Lairs.TerraCave],
 };
 
 /**

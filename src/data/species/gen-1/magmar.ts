@@ -86,6 +86,11 @@ export default function registerMagmarSpecies(): void {
         Moves.SunnyDay,
         Moves.RockSmash,
         Moves.Flamethrower,
+
+        Moves.BrickBreak,
+        Moves.Facade,
+        Moves.FocusPunch,
+        Moves.SecretPower,
       ],
     },
   });

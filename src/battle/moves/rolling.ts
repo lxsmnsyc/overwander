@@ -17,7 +17,10 @@ import type Unit from '../unit';
  * and the doubling happens between its own passes rather than between
  * casts.
  */
-const ROLLING_MOVES = new Set<Moves>([Moves.Rollout, Moves.FuryCutter]);
+const ROLLING_MOVES = new Set<Moves>([Moves.Rollout, Moves.FuryCutter, Moves.IceBall]);
+
+/** The rolls a Defense Curl doubles again */
+const CURLED_MOVES = new Set<Moves>([Moves.Rollout, Moves.IceBall]);
 
 /** What a Defense Curl is worth to the roll that follows it */
 const CURLED_FACTOR = 2;
@@ -50,7 +53,7 @@ export default function setupRollingMoves(battle: Battle): void {
 
     event.power *= 2 ** (passes.get(event.source) ?? 0);
 
-    if (event.move === Moves.Rollout && curled.has(event.source)) {
+    if (CURLED_MOVES.has(event.move) && curled.has(event.source)) {
       event.power *= CURLED_FACTOR;
     }
   });

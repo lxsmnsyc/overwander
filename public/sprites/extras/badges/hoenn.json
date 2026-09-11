@@ -1,0 +1,111 @@
+{
+  "compact": true,
+  "width": 159,
+  "height": 128,
+  "images": [
+    {
+      "name": "Hoenn",
+      "x": 39,
+      "y": 0,
+      "width": 48,
+      "height": 46,
+      "sourceWidth": 48,
+      "sourceHeight": 46,
+      "trim": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Hoenn (1)",
+      "x": 0,
+      "y": 89,
+      "width": 43,
+      "height": 39,
+      "sourceWidth": 43,
+      "sourceHeight": 39,
+      "trim": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Hoenn (2)",
+      "x": 87,
+      "y": 0,
+      "width": 35,
+      "height": 45,
+      "sourceWidth": 35,
+      "sourceHeight": 45,
+      "trim": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Hoenn (3)",
+      "x": 0,
+      "y": 46,
+      "width": 43,
+      "height": 43,
+      "sourceWidth": 43,
+      "sourceHeight": 43,
+      "trim": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Hoenn (4)",
+      "x": 43,
+      "y": 46,
+      "width": 43,
+      "height": 43,
+      "sourceWidth": 43,
+      "sourceHeight": 43,
+      "trim": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Hoenn (5)",
+      "x": 122,
+      "y": 0,
+      "width": 37,
+      "height": 42,
+      "sourceWidth": 37,
+      "sourceHeight": 42,
+      "trim": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Hoenn (6)",
+      "x": 43,
+      "y": 89,
+      "width": 42,
+      "height": 39,
+      "sourceWidth": 42,
+      "sourceHeight": 39,
+      "trim": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Hoenn (7)",
+      "x": 0,
+      "y": 0,
+      "width": 39,
+      "height": 46,
+      "sourceWidth": 39,
+      "sourceHeight": 46,
+      "trim": [
+        0,
+        0
+      ]
+    }
+  ]
+}

@@ -38,6 +38,9 @@ export const REGION_DEXES: Partial<Record<Regions, RegionDex>> = {
   [Regions.Kanto]: { milestones: [25, 75, 150], medal: Awards.KantoDexMedal },
   // 100 more, and the same shape: a fifth, half, and all but Celebi
   [Regions.Johto]: { milestones: [20, 50, 99], medal: Awards.JohtoDexMedal },
+  // 135 more, and the same shape again: a fifth, half, and all but
+  // the two mythicals, since a relic is not something a walk turns up
+  [Regions.Hoenn]: { milestones: [27, 68, 133], medal: Awards.HoennDexMedal },
 };
 
 /**

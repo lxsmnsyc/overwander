@@ -7,8 +7,7 @@ import type EggGroups from '../ids/egg-groups';
 import type Families from '../ids/families';
 import type { Items } from '../ids/items';
 import type { Moves } from '../ids/moves';
-import type { Species } from '../ids/species';
-import { getBaseFormSpecies } from '../ids/species';
+import { type Genders, type Species, getBaseFormSpecies } from '../ids/species';
 
 /**
  * One way a species evolves: the target species and the required
@@ -45,6 +44,13 @@ export interface EvolutionData {
    * that asks: an Espeon is a day's growing and an Umbreon a night's
    */
   time?: TimeOfDay;
+  /**
+   * The gender the evolution is open to (EvolutionMethod.Gender).
+   * Wurmple is the only line that asks: a male spins a Silcoon and a
+   * female a Cascoon, where the mainline reads a hidden number
+   * instead
+   */
+  gender?: Genders;
   /**
    * Two of its own stats set against each other
    * (EvolutionMethod.StatComparison). Tyrogue is the only line that
@@ -122,6 +128,14 @@ export interface SpeciesData {
    * readers ask `isBaseForm` rather than the field
    */
   baseForm?: boolean;
+  /**
+   * Whether the form is **worn rather than met**: a shape something
+   * is put into mid-fight, like the sky a Castform answers. One is
+   * never spawned, caught or stored, so the dex fills it in the
+   * moment its default form is met rather than leaving a square
+   * nobody can ever reach
+   */
+  worn?: boolean;
   /**
    * The species this pokemon evolves from, if any
    */
@@ -301,6 +315,26 @@ export function getSpeciesForms(species: Species): Species[] {
     }
   }
   return formIndex.get(getBaseFormSpecies(species)) ?? [species];
+}
+
+/**
+ * Whether the form is one something is put into mid-fight rather than
+ * one that is met. Nothing stages a worn shape: it is reached through
+ * whatever wears it
+ */
+export function isWornForm(species: Species): boolean {
+  return getSpeciesData(species).worn === true;
+}
+
+/**
+ * The shapes this pokemon is put into rather than met in, its own
+ * form left out. Empty for almost everything, which is what a caller
+ * asking about any species gets back
+ */
+export function getWornForms(species: Species): Species[] {
+  return getSpeciesForms(species).filter(
+    (form) => form !== species && getSpeciesData(form).worn === true,
+  );
 }
 
 export interface SpeciesAbilityPools {

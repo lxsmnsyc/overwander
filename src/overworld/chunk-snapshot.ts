@@ -17,14 +17,14 @@ import { rollFossilOffer } from '../data/overworld/fossil';
 import Landmark from '../data/overworld/landmark';
 import type Lairs from '../data/overworld/lair';
 import { getBiomeLairs, getLairResidents, pickLairSpecies } from '../data/overworld/lair';
-import Npc, {
-  GIOVANNI_CHARSETS,
-  NPCS,
-  ROCKET_EXECUTIVES,
-  ROCKET_EXECUTIVE_CHARSETS,
-  type RocketExecutive,
-  npcSheets,
-} from '../data/overworld/npc';
+import Npc, { EXECUTIVE_CHARSETS, type Executive, NPCS, npcSheets } from '../data/overworld/npc';
+import {
+  SYNDICATE_BOSS_CHARSETS,
+  SYNDICATE_EXECUTIVES,
+  SYNDICATE_GRUNT_CHARSETS,
+  type Syndicate,
+  getSyndicate,
+} from '../data/overworld/syndicate';
 import {
   BIOME_ELITE_MEMBERS,
   BIOME_GYM_LEADERS,
@@ -36,6 +36,12 @@ import {
   ELITE_MEMBER_SIGNATURES,
   EXPERT_PARTY_SIZE,
   type EliteMember,
+  FRONTIER_BRAINS,
+  FRONTIER_BRAIN_CHARSETS,
+  FRONTIER_BRAIN_RULES,
+  FRONTIER_TEAM_SIZE,
+  type FrontierBrain,
+  FrontierRule,
   GYM_LEADER_CHARSETS,
   GYM_LEADER_SIGNATURES,
   type GymLeader,
@@ -43,8 +49,10 @@ import {
   LEGEND_CHARSETS,
   LEGEND_PARTIES,
   type Legend,
+  getFrontierParty as frontierParty,
   getEliteMemberRoster,
   getGymLeaderRoster,
+  getRentalPool,
 } from '../data/overworld/experts';
 import {
   ACE_PARTY_SIZE,
@@ -106,6 +114,22 @@ function expertParty(pool: Species[], signature: Species, seed: string): Spawn[]
 }
 
 /**
+ * A party out of the crate: the species are drawn as well as the
+ * values, which is what makes a rented three a rented three. With
+ * replacement, since the crate is what it is and two of a kind is a
+ * hand the house can deal
+ */
+function rentedParty(pool: Species[], size: number, seed: string): Spawn[] {
+  const rng = new AleaRNG(seed);
+
+  return Array.from({ length: size }, (): Spawn => [
+    pool[Math.floor(rng.random() * pool.length)],
+    rng.int32(),
+    rng.int32(),
+  ]);
+}
+
+/**
  * A named party rolled out: the species are the trainer's own, so
  * only the individual and trait values are drawn
  */
@@ -161,7 +185,7 @@ export const ROCKET_PARTY_SIZE = 6;
 const enum RocketRank {
   Grunt = 0,
   Executive = 1,
-  Giovanni = 2,
+  Boss = 2,
 }
 
 export { RocketRank };
@@ -857,14 +881,15 @@ export default class ChunkSnapshot {
 
           dress(cell, trainer == null ? npcSheets(Npc.Trainer) : TRAINER_CHARSETS[trainer]);
         } else if (landmark === Landmark.TeamRocket) {
+          const syndicate = this.getSyndicate();
           const executive = this.getRocketExecutive(cell);
 
           if (this.isRocketBoss(cell)) {
-            dress(cell, GIOVANNI_CHARSETS);
+            dress(cell, SYNDICATE_BOSS_CHARSETS[syndicate]);
           } else if (executive == null) {
-            dress(cell, npcSheets(Npc.RocketGrunt));
+            dress(cell, SYNDICATE_GRUNT_CHARSETS[syndicate]);
           } else {
-            dress(cell, ROCKET_EXECUTIVE_CHARSETS[executive]);
+            dress(cell, EXECUTIVE_CHARSETS[executive]);
           }
         } else if (landmark === Landmark.GymLeader) {
           const leader = this.getGymLeader(cell);
@@ -886,6 +911,12 @@ export default class ChunkSnapshot {
             dress(cell, LEGEND_CHARSETS[legend]);
           } else if (champion != null) {
             dress(cell, CHAMPION_CHARSETS[champion]);
+          }
+        } else if (landmark === Landmark.FrontierBrain) {
+          const brain = this.getFrontierBrain(cell);
+
+          if (brain != null) {
+            dress(cell, FRONTIER_BRAIN_CHARSETS[brain]);
           }
         } else if (landmark === Landmark.Market) {
           dress(cell, npcSheets(Npc.Vendor));
@@ -910,29 +941,39 @@ export default class ChunkSnapshot {
     const rolled = new AleaRNG(`${this.key}${this.npcTimestamp}boss${cell}`).random();
 
     if (rolled < GIOVANNI_CHANCE) {
-      return RocketRank.Giovanni;
+      return RocketRank.Boss;
     }
     return rolled < GIOVANNI_CHANCE + EXECUTIVE_CHANCE ? RocketRank.Executive : RocketRank.Grunt;
   }
 
   /**
-   * Which of the four executives it is, once the rank says one is
-   * standing there. Rolled apart from the rank, so adding a fifth
-   * does not move anybody's odds of meeting one at all
+   * Which organisation keeps the crime landmark in this chunk. A
+   * fixture of the biome rather than a roll: the coast is Team
+   * Aqua's every window, and the volcanoes are Team Magma's
    */
-  getRocketExecutive(cell: number): RocketExecutive | null {
+  getSyndicate(): Syndicate {
+    return getSyndicate(this.chunk.biome);
+  }
+
+  /**
+   * Which of that team's executives it is, once the rank says one is
+   * standing there. Rolled apart from the rank, so a team with two
+   * of them is no likelier to field one than a team with four
+   */
+  getRocketExecutive(cell: number): Executive | null {
     if (this.getRocketRank(cell) !== RocketRank.Executive) {
       return null;
     }
 
     const rng = new AleaRNG(`${this.key}${this.npcTimestamp}executive${cell}`);
+    const roster = SYNDICATE_EXECUTIVES[this.getSyndicate()];
 
-    return ROCKET_EXECUTIVES[Math.floor(rng.random() * ROCKET_EXECUTIVES.length)] ?? null;
+    return roster[Math.floor(rng.random() * roster.length)] ?? null;
   }
 
   /** Whether this Team Rocket stop rolled the boss himself */
   isRocketBoss(cell: number): boolean {
-    return this.getRocketRank(cell) === RocketRank.Giovanni;
+    return this.getRocketRank(cell) === RocketRank.Boss;
   }
 
   /**
@@ -997,10 +1038,11 @@ export default class ChunkSnapshot {
           const [commons, uncommons, rares] = fielded;
           const rank = this.getRocketRank(cell);
 
-          if (rank === RocketRank.Giovanni) {
-            // The ground he is standing on, and nowhere else: a lair
-            // is a place, so a biome that hosts none has no legendary
-            // for him to have taken and he fields a sixth rare
+          if (rank === RocketRank.Boss) {
+            // The ground they are standing on, and nowhere else: a
+            // lair is a place, so a biome that hosts none has no
+            // legendary to have been taken from it and the boss
+            // fields a sixth rare
             const homes = getBiomeLairs(this.chunk.biome);
             const party = Array.from({ length: ROCKET_PARTY_SIZE - 1 }, () => draw(rares));
 
@@ -1022,14 +1064,16 @@ export default class ChunkSnapshot {
               Array.from({ length: ROCKET_PARTY_SIZE }, () => draw(rares)),
             );
           } else {
-            // Weakest first, which is also the half a beaten grunt
-            // hands over: the commoner and the two uncommons, never
-            // the three they were actually fighting with
+            // Weakest first, and two out of each of the biome's three
+            // bands: a grunt is the one rank that reaches the whole
+            // pool rather than the top of it, which is what makes the
+            // commonest fight in the world the only way to meet some
+            // of what lives there
             stops.set(cell, [
+              draw(commons),
               draw(commons),
               draw(uncommons),
               draw(uncommons),
-              draw(rares),
               draw(rares),
               draw(rares),
             ]);
@@ -1046,7 +1090,8 @@ export default class ChunkSnapshot {
    * holds no duelling landmark. The class turns over with the window
    * the way a grunt's party does, and it is drawn from what this
    * country puts on the road: a Swimmer stands on the water and a
-   * Hiker on hard ground, with the Ace anywhere at all
+   * Hiker on hard ground, with the Ace anywhere there is ground. Out
+   * on the open sea it is the seafarers among them and nobody else
    */
   getTrainerClass(cell: number): TrainerClass | null {
     if (this.chunk.getLandmarkCells().get(cell) !== Landmark.Trainer) {
@@ -1239,6 +1284,68 @@ export default class ChunkSnapshot {
     const rng = new AleaRNG(`${this.chunk.seed}champion${cell}`);
 
     return CHAMPIONS[Math.floor(rng.random() * CHAMPIONS.length)] ?? null;
+  }
+
+  /**
+   * Which Brain keeps the facility at this cell, or null when the
+   * cell holds none. A facility is a building rather than a country,
+   * so which house stands here is a plain fixture roll, fixed for the
+   * cell the way a gym's leader is
+   */
+  getFrontierBrain(cell: number): FrontierBrain | null {
+    if (this.chunk.getLandmarkCells().get(cell) !== Landmark.FrontierBrain) {
+      return null;
+    }
+
+    const rng = new AleaRNG(`${this.chunk.seed}frontier${cell}`);
+
+    return FRONTIER_BRAINS[Math.floor(rng.random() * FRONTIER_BRAINS.length)] ?? null;
+  }
+
+  private readonly frontierStops = new Map<string, Spawn[]>();
+
+  /**
+   * What the facility at this cell fields, or null where the cell
+   * keeps none.
+   *
+   * `gold` is whether the challenger already holds this house's
+   * silver symbol, which is what brings the Brain's second three out;
+   * it is the caller's question, since a chunk is the same for
+   * everybody and a badge case is not
+   */
+  getFrontierStop(cell: number, gold = false): Spawn[] | null {
+    const brain = this.getFrontierBrain(cell);
+
+    if (brain == null) {
+      return null;
+    }
+
+    const key = `${cell}:${gold ? 'gold' : 'silver'}`;
+    const held = this.frontierStops.get(key);
+
+    if (held != null) {
+      return held;
+    }
+
+    const seed = `${this.key}${this.npcTimestamp}frontier${key}`;
+    const named = frontierParty(brain, gold);
+    // The Dome names nobody in advance: its three are drawn against
+    // the challenger's once those are frozen, which is a question a
+    // chunk cannot answer
+    if (FRONTIER_BRAIN_RULES[brain] === FrontierRule.Countered) {
+      this.frontierStops.set(key, []);
+      return [];
+    }
+
+    // A house with no party of its own rents like everybody else:
+    // the Factory's keeper draws three out of the crate
+    const party =
+      named.length > 0
+        ? signatureParty(named, seed)
+        : rentedParty(getRentalPool(), FRONTIER_TEAM_SIZE, seed);
+
+    this.frontierStops.set(key, party);
+    return party;
   }
 
   /**

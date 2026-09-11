@@ -28,7 +28,7 @@ export default class Alliance {
   }
 
   removeTeam(team: Team): void {
-    this.battle.emit(BattleEvents.AllianceAddTeam, {
+    this.battle.emit(BattleEvents.AllianceRemoveTeam, {
       id: 'AllianceRemoveTeam',
       disabled: false,
       alliance: this,

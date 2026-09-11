@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// GSC TM/HM and tutor moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.IceBeam,
@@ -35,6 +35,14 @@ const FAMILY_TEACHABLE = [
   Moves.MudSlap,
   Moves.RockSmash,
   Moves.Roar,
+  Moves.Dig,
+  Moves.Facade,
+  Moves.LightScreen,
+  Moves.Mimic,
+  Moves.Reflect,
+  Moves.RockTomb,
+  Moves.SecretPower,
+  Moves.Substitute,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Oblivious, Abilities.SnowCloak];
@@ -72,7 +80,7 @@ export default function registerSwinubSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.Tackle],
+        1: [Moves.Tackle, Moves.OdorSleuth],
         10: [Moves.PowderSnow],
         19: [Moves.Endure],
         28: [Moves.TakeDown],
@@ -81,7 +89,15 @@ export default function registerSwinubSpecies(): void {
         55: [Moves.Amnesia],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.AncientPower, Moves.Bite, Moves.BodySlam, Moves.RockSlide],
+      egg: [
+        Moves.AncientPower,
+        Moves.Bite,
+        Moves.BodySlam,
+        Moves.RockSlide,
+        Moves.DoubleEdge,
+        Moves.IcicleSpear,
+        Moves.MudShot,
+      ],
     },
   });
 
@@ -113,14 +129,20 @@ export default function registerSwinubSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.HornAttack, Moves.PowderSnow, Moves.Endure],
+        1: [Moves.HornAttack, Moves.PowderSnow, Moves.Endure, Moves.OdorSleuth],
         28: [Moves.TakeDown],
         33: [Moves.FuryAttack],
         42: [Moves.Mist],
         56: [Moves.Blizzard],
         70: [Moves.Amnesia],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.HyperBeam,
+        Moves.BodySlam,
+        Moves.DoubleEdge,
+        Moves.RockSlide,
+      ],
     },
   });
 }

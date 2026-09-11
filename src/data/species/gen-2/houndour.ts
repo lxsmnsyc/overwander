@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// GSC TM/HM and tutor moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.FireBlast,
@@ -39,6 +39,16 @@ const FAMILY_TEACHABLE = [
   Moves.RockSmash,
   Moves.Roar,
   Moves.Swift,
+  Moves.BodySlam,
+  Moves.DoubleEdge,
+  Moves.Facade,
+  Moves.Mimic,
+  Moves.Overheat,
+  Moves.SecretPower,
+  Moves.Snatch,
+  Moves.Substitute,
+  Moves.Taunt,
+  Moves.Torment,
 ];
 
 const FAMILY_ABILITIES = [Abilities.EarlyBird, Abilities.FlashFire];
@@ -85,6 +95,8 @@ export default function registerHoundourSpecies(): void {
     learnSet: {
       level: {
         ...FAMILY_LEVEL,
+        7: [...FAMILY_LEVEL[7], Moves.Howl],
+        31: [Moves.OdorSleuth],
         27: [Moves.FeintAttack],
         35: [Moves.Flamethrower],
         43: [Moves.Crunch],
@@ -98,6 +110,8 @@ export default function registerHoundourSpecies(): void {
         Moves.Rage,
         Moves.Reversal,
         Moves.Spite,
+
+        Moves.WillOWisp,
       ],
     },
   });
@@ -132,11 +146,13 @@ export default function registerHoundourSpecies(): void {
     learnSet: {
       level: {
         ...FAMILY_LEVEL,
+        1: [...FAMILY_LEVEL[1], Moves.Howl],
+        35: [Moves.OdorSleuth],
         30: [Moves.FeintAttack],
         41: [Moves.Flamethrower],
         52: [Moves.Crunch],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.Strength, Moves.HyperBeam],
+      teachable: [...FAMILY_TEACHABLE, Moves.Strength, Moves.HyperBeam, Moves.Counter],
     },
   });
 }

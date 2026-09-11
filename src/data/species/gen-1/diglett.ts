@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// RBY TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.TakeDown,
@@ -39,6 +39,11 @@ const FAMILY_TEACHABLE = [
   Moves.HiddenPower,
   Moves.SunnyDay,
   Moves.RockSmash,
+  Moves.AerialAce,
+  Moves.BodySlam,
+  Moves.Facade,
+  Moves.RockTomb,
+  Moves.SecretPower,
 ];
 
 export default function registerDiglettSpecies(): void {
@@ -78,13 +83,21 @@ export default function registerDiglettSpecies(): void {
         5: [Moves.Growl],
         9: [Moves.Magnitude],
         17: [Moves.Dig],
+        21: [Moves.FurySwipes],
         24: [Moves.SandAttack],
         31: [Moves.Slash],
         40: [Moves.Earthquake],
         49: [Moves.Fissure],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.Screech, Moves.FeintAttack, Moves.Pursuit, Moves.AncientPower, Moves.BeatUp],
+      egg: [
+        Moves.Screech,
+        Moves.FeintAttack,
+        Moves.Pursuit,
+        Moves.AncientPower,
+        Moves.BeatUp,
+        Moves.Uproar,
+      ],
     },
   });
 
@@ -115,7 +128,9 @@ export default function registerDiglettSpecies(): void {
     learnSet: {
       level: {
         1: [Moves.Scratch, Moves.Growl, Moves.Dig, Moves.TriAttack, Moves.Magnitude],
+        21: [Moves.FurySwipes],
         24: [Moves.SandAttack],
+        26: [Moves.SandTomb],
         35: [Moves.Slash],
         47: [Moves.Earthquake],
         61: [Moves.Fissure],

@@ -23,7 +23,8 @@ export default function registerGen2Abilities(): void {
   });
   registerAbility(Abilities.MotorDrive, {
     name: 'Motor Drive',
-    description: 'Electric moves cannot touch it, and raise its Speed a stage instead.',
+    description:
+      'Electric moves cannot touch it, and raise its Speed a stage instead. As a buddy, 1.5x the catch chance on wild Electric types.',
   });
   // Sunkern
   registerAbility(Abilities.FlowerGift, {
@@ -33,7 +34,7 @@ export default function registerGen2Abilities(): void {
   // Slugma
   registerAbility(Abilities.MagmaArmor, {
     name: 'Magma Armor',
-    description: 'Cannot be frozen.',
+    description: 'Cannot be frozen. An egg found while it is the buddy hatches in half the walk.',
   });
   // Remoraid
   registerAbility(Abilities.SuctionCups, {
@@ -52,7 +53,8 @@ export default function registerGen2Abilities(): void {
   // Togepi
   registerAbility(Abilities.SuperLuck, {
     name: 'Super Luck',
-    description: 'Its moves land critical hits a stage more often.',
+    description:
+      'Its moves land critical hits a stage more often. As a buddy, a throw comes out critical 2x as often.',
   });
   // Shuckle
   registerAbility(Abilities.Contrary, {
@@ -62,7 +64,8 @@ export default function registerGen2Abilities(): void {
   // Corsola
   registerAbility(Abilities.StormDrain, {
     name: 'Storm Drain',
-    description: 'Water moves cannot touch it, and raise its Special Attack a stage instead.',
+    description:
+      'Water moves cannot touch it, and raise its Special Attack a stage instead. As a buddy, 1.5x the catch chance on wild Water types.',
   });
   // Skarmory
   registerAbility(Abilities.MirrorArmor, {
@@ -82,12 +85,14 @@ export default function registerGen2Abilities(): void {
   // Heracross
   registerAbility(Abilities.SapSipper, {
     name: 'Sap Sipper',
-    description: 'Grass moves cannot touch it, and raise its Attack a stage instead.',
+    description:
+      'Grass moves cannot touch it, and raise its Attack a stage instead. As a buddy, 1.5x the catch chance on wild Grass types.',
   });
   // Teddiursa
   registerAbility(Abilities.HoneyGather, {
     name: 'Honey Gather',
-    description: 'Comes up with a Honey the first time it acts, if it has a hand free.',
+    description:
+      'Comes up with a Honey the first time it acts, if it has a hand free. As a buddy, finds a berry every 384 steps walked.',
   });
   // Marill
   registerAbility(Abilities.HugePower, {
@@ -102,12 +107,14 @@ export default function registerGen2Abilities(): void {
   // Sneasel
   registerAbility(Abilities.Pickpocket, {
     name: 'Pickpocket',
-    description: 'Takes the item off whoever touches it, if it has a hand free.',
+    description:
+      'Takes the item off whoever touches it, if it has a hand free. As a buddy, a wild pokemon that flees leaves what it was carrying.',
   });
   // Wobbuffet
   registerAbility(Abilities.ShadowTag, {
     name: 'Shadow Tag',
-    description: 'Nothing on the far side can flee, ghosts aside.',
+    description:
+      'Nothing on the far side can flee, ghosts aside. As a buddy, a wild pokemon is half as likely to flee.',
   });
   registerAbility(Abilities.Telepathy, {
     name: 'Telepathy',

@@ -35,6 +35,7 @@ export default function registerScizorSpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
+        41: [Moves.IronDefense],
         1: [Moves.Leer, Moves.QuickAttack],
         6: [Moves.FocusEnergy],
         12: [Moves.Pursuit],
@@ -71,6 +72,14 @@ export default function registerScizorSpecies(): void {
         Moves.Swift,
         Moves.Thief,
         Moves.Toxic,
+
+        Moves.AerialAce,
+        Moves.Counter,
+        Moves.DoubleEdge,
+        Moves.Facade,
+        Moves.Mimic,
+        Moves.SecretPower,
+        Moves.Substitute,
       ],
     },
   });

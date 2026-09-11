@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// GSC TM/HM moves shared by all three beasts
+// TM, HM and tutor moves shared by all three beasts
 const BEAST_TEACHABLE = [
   Moves.Toxic,
   Moves.Cut,
@@ -68,6 +68,7 @@ export default function registerLegendaryBeastSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
+        81: [Moves.CalmMind],
         1: [Moves.Bite, Moves.Leer],
         11: [Moves.ThunderShock],
         21: [Moves.Roar],
@@ -77,7 +78,20 @@ export default function registerLegendaryBeastSpecies(): void {
         61: [Moves.Crunch],
         71: [Moves.Thunder],
       },
-      teachable: [...BEAST_TEACHABLE, Moves.Thunder, Moves.ZapCannon],
+      teachable: [
+        ...BEAST_TEACHABLE,
+        Moves.Thunder,
+        Moves.ZapCannon,
+        Moves.BodySlam,
+        Moves.DoubleEdge,
+        Moves.Facade,
+        Moves.Mimic,
+        Moves.SecretPower,
+        Moves.ShockWave,
+        Moves.Substitute,
+        Moves.ThunderWave,
+        Moves.Thunderbolt,
+      ],
     },
   });
 
@@ -108,6 +122,7 @@ export default function registerLegendaryBeastSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
+        81: [Moves.CalmMind],
         1: [Moves.Bite, Moves.Leer],
         11: [Moves.Ember],
         21: [Moves.Roar],
@@ -117,7 +132,18 @@ export default function registerLegendaryBeastSpecies(): void {
         61: [Moves.Swagger],
         71: [Moves.FireBlast],
       },
-      teachable: [...BEAST_TEACHABLE, Moves.FireBlast, Moves.SolarBeam],
+      teachable: [
+        ...BEAST_TEACHABLE,
+        Moves.FireBlast,
+        Moves.SolarBeam,
+        Moves.BodySlam,
+        Moves.DoubleEdge,
+        Moves.Facade,
+        Moves.Mimic,
+        Moves.Reflect,
+        Moves.SecretPower,
+        Moves.Substitute,
+      ],
     },
   });
 
@@ -148,6 +174,7 @@ export default function registerLegendaryBeastSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
+        81: [Moves.CalmMind],
         1: [Moves.Bite, Moves.Leer],
         11: [Moves.WaterGun],
         21: [Moves.RainDance, Moves.Roar],
@@ -164,6 +191,17 @@ export default function registerLegendaryBeastSpecies(): void {
         Moves.Whirlpool,
         Moves.IcyWind,
         Moves.Blizzard,
+
+        Moves.BodySlam,
+        Moves.Dive,
+        Moves.DoubleEdge,
+        Moves.Facade,
+        Moves.IceBeam,
+        Moves.Mimic,
+        Moves.Reflect,
+        Moves.SecretPower,
+        Moves.Substitute,
+        Moves.WaterPulse,
       ],
     },
   });

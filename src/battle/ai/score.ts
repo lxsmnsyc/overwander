@@ -80,13 +80,13 @@ export function healWorth(unit: Unit, fraction: number): number {
 }
 
 /**
- * Weigh a self-heal by what it would actually restore: a heal that
- * would spill over is worth nothing, and one that fills a real hole is
- * worth more than a hit. Every healing move weighs the same way and
- * only the fraction it restores differs
+ * Weigh a heal by what it would actually restore for whoever is
+ * getting it: one that would spill over is worth nothing, and one that
+ * fills a real hole is worth more than a hit. Every healing move
+ * weighs the same way and only the fraction it restores differs
  */
-export function scoreSelfHeal(event: CheckUnitAIMoveScoreEvent, fraction: number): void {
-  const worth = healWorth(event.source, fraction);
+export function scoreHeal(event: CheckUnitAIMoveScoreEvent, healed: Unit, fraction: number): void {
+  const worth = healWorth(healed, fraction);
 
   event.score += worth === 0 ? -USELESS_PENALTY : worth;
 }

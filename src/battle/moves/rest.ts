@@ -2,7 +2,7 @@ import { AttackPriority } from '../../core/event-emitter';
 import { Stats } from '../../data/constants/stats';
 import { Moves } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
-import { scoreSelfHeal } from '../ai/score';
+import { scoreHeal } from '../ai/score';
 import type Battle from '../core';
 import { BattleEvents, EffectType } from '../events';
 import type Unit from '../unit';
@@ -63,7 +63,7 @@ export default function setupRest(battle: Battle): void {
   // is missing
   battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
     if (event.move === Moves.Rest) {
-      scoreSelfHeal(event, 1);
+      scoreHeal(event, event.source, 1);
     }
   });
 }

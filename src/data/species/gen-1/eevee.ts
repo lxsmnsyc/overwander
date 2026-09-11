@@ -9,7 +9,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// RBY TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.BodySlam,
@@ -41,6 +41,9 @@ const FAMILY_TEACHABLE = [
   Moves.RainDance,
   Moves.SunnyDay,
   Moves.ShadowBall,
+  Moves.Dig,
+  Moves.Facade,
+  Moves.SecretPower,
 ];
 
 export default function registerEeveeSpecies(): void {
@@ -96,7 +99,7 @@ export default function registerEeveeSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.Tackle, Moves.SandAttack, Moves.TailWhip],
+        1: [Moves.Tackle, Moves.SandAttack, Moves.TailWhip, Moves.HelpingHand],
         16: [Moves.Growl],
         23: [Moves.QuickAttack],
         30: [Moves.Bite],
@@ -104,7 +107,7 @@ export default function registerEeveeSpecies(): void {
         42: [Moves.TakeDown],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.Flail, Moves.Charm],
+      egg: [Moves.Flail, Moves.Charm, Moves.Tickle, Moves.Wish],
     },
   });
 
@@ -134,7 +137,14 @@ export default function registerEeveeSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.Tackle, Moves.SandAttack, Moves.QuickAttack, Moves.WaterGun, Moves.TailWhip],
+        1: [
+          Moves.Tackle,
+          Moves.SandAttack,
+          Moves.QuickAttack,
+          Moves.WaterGun,
+          Moves.TailWhip,
+          Moves.HelpingHand,
+        ],
         30: [Moves.Bite],
         36: [Moves.AuroraBeam],
         42: [Moves.AcidArmor, Moves.Haze],
@@ -153,6 +163,9 @@ export default function registerEeveeSpecies(): void {
         Moves.Waterfall,
         Moves.IcyWind,
         Moves.Whirlpool,
+
+        Moves.Dive,
+        Moves.WaterPulse,
       ],
     },
   });
@@ -183,7 +196,14 @@ export default function registerEeveeSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.Tackle, Moves.SandAttack, Moves.QuickAttack, Moves.ThunderShock, Moves.TailWhip],
+        1: [
+          Moves.Tackle,
+          Moves.SandAttack,
+          Moves.QuickAttack,
+          Moves.ThunderShock,
+          Moves.TailWhip,
+          Moves.HelpingHand,
+        ],
         30: [Moves.DoubleKick],
         36: [Moves.PinMissile],
         42: [Moves.ThunderWave],
@@ -199,6 +219,8 @@ export default function registerEeveeSpecies(): void {
         Moves.Flash,
         Moves.Roar,
         Moves.ZapCannon,
+
+        Moves.ShockWave,
       ],
     },
   });
@@ -229,7 +251,14 @@ export default function registerEeveeSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.Tackle, Moves.SandAttack, Moves.QuickAttack, Moves.Ember, Moves.TailWhip],
+        1: [
+          Moves.Tackle,
+          Moves.SandAttack,
+          Moves.QuickAttack,
+          Moves.Ember,
+          Moves.TailWhip,
+          Moves.HelpingHand,
+        ],
         30: [Moves.Bite],
         36: [Moves.FireSpin],
         42: [Moves.Leer, Moves.Smog],
@@ -243,6 +272,8 @@ export default function registerEeveeSpecies(): void {
         Moves.Roar,
         Moves.ZapCannon,
         Moves.Flamethrower,
+
+        Moves.Overheat,
       ],
     },
   });

@@ -27,6 +27,38 @@ pokemon is worth their remaining Ultra Balls should be looking at the pokemon.
 What it is actually worth, its stats and nature and ability, is discovered by
 catching it.
 
+The one thing the game does say is the ball itself. See
+[Shakes](#shakes).
+
+## Shakes
+
+A thrown ball rocks up to three times, and it has to hold through all three.
+Each shake is its own check at the same odds, so three of them multiply back to
+exactly the catch chance below: the shaking is the roll, not a picture of one.
+
+That makes the rocking the only honest thing a player is told about the odds.
+Two shakes and a burst means the throw came close. None at all means it was
+never going to hold, and something in the bag should change before the next one.
+
+### A critical throw
+
+Some throws come out **critical**: the ball rocks once and holds. The single
+shake is at the same odds as any other, so a critical throw is far likelier to
+catch, which is why it is rare.
+
+How often one happens depends on how full the player's pokedex is. A trainer who
+has caught nothing never throws one; the chance climbs in bands from thirty
+species owned to six hundred, and it also rides the throw's own chance, so a
+critical throw at a Chansey with a Poke Ball is still nearly hopeless. It can
+never happen more than 15% of the time. A **Super Luck** buddy doubles it.
+
+**Sniper** is the other half: critical throws come no oftener, but the single
+shake behind one gets two chances instead of one, the better deciding. Walking
+with both means more critical throws and better ones.
+
+Nothing about a critical throw changes what is caught, and it is announced only
+after the fact.
+
 ## Catch chance
 
 Six things multiply together to decide whether a thrown ball sticks:

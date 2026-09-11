@@ -1,9 +1,17 @@
 import { EventPriority } from '../../core/event-emitter';
 import Abilities from '../../data/ids/abilities';
 import { Genders } from '../../data/ids/species';
+import { Types } from '../../data/constants/types';
+import { SHADOW_CATCH_FACTOR } from '../safari';
 import type Overworld from '../core';
 import { OverworldEvents } from '../events';
-import { createBuddyAbility, createLureAbility } from './__create';
+import {
+  createBuddyAbility,
+  createKinshipAbility,
+  createLureAbility,
+  createPullAbility,
+  createTrapAbility,
+} from './__create';
 
 /**
  * The field abilities: what a pokemon changes about the world by
@@ -63,7 +71,7 @@ const setupCuteCharm = createBuddyAbility(Abilities.CuteCharm, (overworld) => {
 });
 
 /**
- * What a Flame Body buddy takes off the walk an egg needs. Half is
+ * What a warm buddy takes off the walk an egg needs. Half is
  * the mainline's own figure, and it is applied to the requirement
  * rather than to the steps, so it is settled once instead of being
  * asked again every few paces
@@ -71,20 +79,22 @@ const setupCuteCharm = createBuddyAbility(Abilities.CuteCharm, (overworld) => {
 export const FLAME_BODY_FACTOR = 0.5;
 
 /**
- * Flame Body: an egg picked up beside something warm has less far to
- * go.
+ * Flame Body and Magma Armor: an egg picked up beside something warm
+ * has less far to go.
  *
  * It reads the buddy at the moment the egg is found, because that is
- * the only moment there is one to read — walking an egg means carrying
+ * the only moment there is one to read: walking an egg means carrying
  * the egg as the buddy, so nothing is beside the player afterwards.
  * The answer is frozen onto the egg's `hatchSteps`, which is the same
  * field a shadow egg has already doubled
  */
-const setupFlameBody = createBuddyAbility(Abilities.FlameBody, (overworld) => {
-  overworld.on(OverworldEvents.CheckEggSteps, EventPriority.Exact, (event) => {
-    event.steps *= FLAME_BODY_FACTOR;
+function createWarmAbility(ability: Abilities): (overworld: Overworld) => void {
+  return createBuddyAbility(ability, (overworld) => {
+    overworld.on(OverworldEvents.CheckEggSteps, EventPriority.Exact, (event) => {
+      event.steps *= FLAME_BODY_FACTOR;
+    });
   });
-});
+}
 
 /**
  * How far a Pickup buddy walks between one find and the next
@@ -211,14 +221,185 @@ const setupFrisk = createBuddyAbility(Abilities.Frisk, (overworld) => {
 });
 
 /**
+ * What a purified buddy gives back of what a closed heart takes. Half
+ * of it: a shadow is still a shadow, and the pokemon that walked out
+ * of one is the one thing in the world that has done it before.
+ *
+ * Halfway between giving nothing back and undoing the penalty
+ * outright, so it follows `SHADOW_CATCH_FACTOR` wherever that goes.
+ * It was written as `1 / SHADOW_CATCH_FACTOR / 2`, which is the same
+ * number only while a shadow is a third as catchable; the day that
+ * became a half, this quietly became 1 and the ability stopped doing
+ * anything
+ */
+export const PURIFIED_SHADOW_RELIEF = (1 + 1 / SHADOW_CATCH_FACTOR) / 2;
+
+/**
+ * Purified: a shadow throws truer for somebody who has already been
+ * brought back from one. Nothing changes for anything else met
+ */
+const setupPurified = createBuddyAbility(Abilities.Purified, (overworld) => {
+  overworld.on(OverworldEvents.CheckCatchChance, EventPriority.Exact, (event) => {
+    if (event.encounter.shadow) {
+      event.boost *= PURIFIED_SHADOW_RELIEF;
+    }
+  });
+});
+
+/**
+ * How far a Honey Gather buddy walks between one bush and the next.
+ * Shorter than Pickup's stretch, since what it comes back with is one
+ * pool rather than the whole ladder of the world's finds
+ */
+export const HONEY_STEP_INTERVAL = 384;
+
+/**
+ * Honey Gather: it comes back from the hedges with something. What it
+ * brings is what grows rather than what was dropped, so it is counted
+ * apart from a Pickup buddy's finds
+ */
+const setupHoneyGather = createBuddyAbility(Abilities.HoneyGather, (overworld) => {
+  overworld.on(OverworldEvents.CheckWalkPickup, EventPriority.Exact, (event) => {
+    event.gathered +=
+      Math.floor(event.to / HONEY_STEP_INTERVAL) - Math.floor(event.from / HONEY_STEP_INTERVAL);
+  });
+});
+
+/**
+ * How much further a Gluttony buddy carries a bagful of treats. It
+ * lifts the ceiling rather than the treat: a berry is worth what a
+ * berry is worth, and what changes is that the encounter is still
+ * listening after the point where anything else would have stopped
+ */
+export const GLUTTONY_FEAST = 1.5;
+
+/**
+ * Gluttony: it eats past where the rest stop, so a player willing to
+ * spend the bag gets further with it
+ */
+const setupGluttony = createBuddyAbility(Abilities.Gluttony, (overworld) => {
+  overworld.on(OverworldEvents.CheckTreats, EventPriority.Exact, (event) => {
+    event.cap *= GLUTTONY_FEAST;
+  });
+});
+
+/**
+ * Harvest: the treat grows back. What was fed goes on working through
+ * the throw that missed, and the meeting will still take a fresh one
+ * on top, so a Nanab's calm lasts the session rather than one ball
+ */
+const setupHarvest = createBuddyAbility(Abilities.Harvest, (overworld) => {
+  overworld.on(OverworldEvents.CheckTreats, EventPriority.Exact, (event) => {
+    event.keeps = true;
+  });
+});
+
+/**
+ * What Super Luck adds to how often a throw comes out critical. It
+ * multiplies a chance that is small to begin with and capped after, so
+ * it is a better eye rather than a different game
+ */
+export const KEEN_CRITICAL_BOOST = 2;
+
+/**
+ * Super Luck: the throw that holds on the first shake comes along
+ * twice as often. It is the mainline's raised critical ratio, and it
+ * changes how often rather than how well
+ */
+const setupSuperLuck = createBuddyAbility(Abilities.SuperLuck, (overworld) => {
+  overworld.on(OverworldEvents.CheckCriticalCatch, EventPriority.Exact, (event) => {
+    event.boost *= KEEN_CRITICAL_BOOST;
+  });
+});
+
+/**
+ * How many chances a Sniper buddy gives the one shake a critical
+ * throw gets. Two aims, the better deciding, which is the mainline's
+ * heavier critical hit said in the terms a ball has
+ */
+export const SNIPER_AIMS = 2;
+
+/**
+ * Sniper: critical throws come no oftener, and the ones that come are
+ * far likelier to hold. It is the other half of Super Luck rather than
+ * a second copy of it, so a player walking with either knows which
+ * they are walking with
+ */
+const setupSniper = createBuddyAbility(Abilities.Sniper, (overworld) => {
+  overworld.on(OverworldEvents.CheckCriticalCatch, EventPriority.Exact, (event) => {
+    event.aims = SNIPER_AIMS;
+  });
+});
+
+/**
+ * Trace: what the pokemon standing there can do is read off it before
+ * a ball is thrown.
+ *
+ * It is the last thing about a meeting that a catch used to be the
+ * only way to learn, and it is the one that decides whether this
+ * particular Rattata is worth keeping: two of a species are the same
+ * pokemon until their abilities differ
+ */
+const setupTrace = createBuddyAbility(Abilities.Trace, (overworld) => {
+  overworld.on(OverworldEvents.CheckRevealsAbility, EventPriority.Exact, (event) => {
+    event.shown = true;
+  });
+});
+
+/**
+ * Pickpocket: a pokemon that got away did not get away with what it
+ * was holding. It is the one thing that pays for a flight, and it
+ * pays nothing where the meeting was carrying nothing
+ */
+const setupPickpocket = createBuddyAbility(Abilities.Pickpocket, (overworld) => {
+  overworld.on(OverworldEvents.CheckPockets, EventPriority.Exact, (event) => {
+    event.taken = true;
+  });
+});
+
+/**
+ * Forewarn and Anticipation: how ready the thing in front of the
+ * player is to bolt is known before the first ball, so a meeting worth
+ * a Nanab can be told from one worth throwing straight at.
+ *
+ * Both read the meeting rather than the fight, and out here that is
+ * the one thing there is to read, so they answer alike
+ */
+function createReadingAbility(ability: Abilities): (overworld: Overworld) => void {
+  return createBuddyAbility(ability, (overworld) => {
+    overworld.on(OverworldEvents.CheckRevealsFlight, EventPriority.Exact, (event) => {
+      event.shown = true;
+    });
+  });
+}
+
+/**
  * The lures, which draw `LURE_SPAWN_BONUS` more pokemon into a chunk,
- * the two abilities that decide what an encounter comes out as, and
- * the two that pay a walk rather than a meeting
+ * the two that hold a meeting still, the two abilities that decide
+ * what an encounter comes out as, and the two that pay a walk rather
+ * than a meeting
  */
 const FIELD_ABILITIES: ((overworld: Overworld) => void)[] = [
   createLureAbility(Abilities.ArenaTrap),
   createLureAbility(Abilities.Illuminate),
   createLureAbility(Abilities.NoGuard),
+
+  createTrapAbility(Abilities.ArenaTrap),
+  createTrapAbility(Abilities.ShadowTag),
+  createPullAbility(Abilities.MagnetPull, Types.Steel),
+
+  createKinshipAbility(Abilities.LightningRod, Types.Electric),
+  createKinshipAbility(Abilities.MotorDrive, Types.Electric),
+  createKinshipAbility(Abilities.VoltAbsorb, Types.Electric),
+  createKinshipAbility(Abilities.StormDrain, Types.Water),
+  createKinshipAbility(Abilities.WaterAbsorb, Types.Water),
+  createKinshipAbility(Abilities.SapSipper, Types.Grass),
+  createKinshipAbility(Abilities.FlashFire, Types.Fire),
+
+  setupPurified,
+  setupGluttony,
+  setupHarvest,
+  setupHoneyGather,
 
   setupIlluminate,
   setupStench,
@@ -232,10 +413,19 @@ const FIELD_ABILITIES: ((overworld: Overworld) => void)[] = [
 
   setupCompoundEyes,
   setupFrisk,
+  createReadingAbility(Abilities.Forewarn),
+  createReadingAbility(Abilities.Anticipation),
+  setupTrace,
+
+  setupPickpocket,
+
+  setupSuperLuck,
+  setupSniper,
 
   setupSynchronize,
   setupCuteCharm,
-  setupFlameBody,
+  createWarmAbility(Abilities.FlameBody),
+  createWarmAbility(Abilities.MagmaArmor),
   setupPickup,
 ];
 

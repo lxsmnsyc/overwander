@@ -5,6 +5,7 @@ import { DRINKS } from '../items/drinks';
 import { INCENSES } from '../items/incenses';
 import { getTeachableMoves } from '../items/machines';
 import { MEDICINES } from '../items/medicine';
+import { MINT_NATURES } from '../items/mints';
 import { TREATS } from '../items/treats';
 import { PP_ITEMS, VITAMIN_STATS } from '../items/vitamins';
 
@@ -77,24 +78,20 @@ export const VENDOR_KIND_NAMES: Record<VendorKind, string> = {
 };
 
 /**
- * How many kinds one crate holds. Small enough that walking to the
- * next one is worth doing, large enough that a crate is a choice
- * rather than an offer
+ * How many kinds one crate holds. Six was too thin a slice of any
+ * shelf worth planning a walk around: the machine stall had already
+ * been given a dozen for exactly that reason, and every other counter
+ * had the same problem in a smaller way. A dozen everywhere, so a
+ * crate is a choice rather than an offer
  */
-export const VENDOR_STOCK_KINDS = 6;
+export const VENDOR_STOCK_KINDS = 12;
 
 /**
- * What the machine stall lays out instead. Its shelf is every teachable
- * move in the game, so six of them is a slice thin enough that
- * looking for a particular machine is not worth the walk
+ * How many kinds this counter's crate holds. Every counter lays out
+ * the same number now
  */
-export const MOVE_STOCK_KINDS = 12;
-
-/**
- * How many kinds this counter's crate holds
- */
-export function vendorStockSize(kind: VendorKind): number {
-  return kind === VendorKind.Moves ? MOVE_STOCK_KINDS : VENDOR_STOCK_KINDS;
+export function vendorStockSize(_kind: VendorKind): number {
+  return VENDOR_STOCK_KINDS;
 }
 
 /**
@@ -191,20 +188,25 @@ export function rollVendorStock(
 }
 
 /**
- * The chef's whole larder: the drinks a region bottles and the treats
- * somebody brings home from its cities. He is the only one who stocks
- * either
+ * The chef's whole larder: the drinks a region bottles, the treats
+ * somebody brings home from its cities, and the mints. He is the only
+ * one who stocks any of them.
+ *
+ * The mints are his because a mint is something cooked rather than
+ * something manufactured, and because his was the one counter with a
+ * shelf short enough to take another twenty-one kinds without burying
+ * what was already on it
  */
 let larder: Items[] | null = null;
 
 export function getChefGoods(): Items[] {
-  larder ??= [...DRINKS.keys(), ...TREATS.keys()].filter(isMarketable);
+  larder ??= [...DRINKS.keys(), ...TREATS.keys(), ...MINT_NATURES.keys()].filter(isMarketable);
   return larder;
 }
 
 /**
- * What the chef has cooked up this window: six dishes off the larder,
- * drawn the way a vendor's crate is
+ * What the chef has cooked up this window, drawn the way a vendor's
+ * crate is
  */
 export function rollChefStock(random: () => number): Items[] {
   return fillCrate([], getChefGoods(), random, VENDOR_STOCK_KINDS);

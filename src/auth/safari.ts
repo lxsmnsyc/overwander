@@ -3,17 +3,21 @@ import AleaRNG from '../core/alea';
 import { BALL_ITEMS, type Balls, type Items } from '../data/ids/items';
 import SafariSession, {
   FEED_CATCH_BONUS,
+  MAX_CATCH_BONUS,
   SafariState,
   ThrowResult,
   encounterKey,
+  masteryOf,
 } from '../overworld/safari';
 import { recordCatch } from '../server/caught';
 import { requireUid } from '../server/auth';
 import { consumeItem } from '../server/inventory';
 import { stampFeed } from '../server/encounter-io';
-import { retireSpawn } from '../server/overworld';
-import { resolveBuddy } from './buddy';
+import { pocketFled, retireSpawn } from '../server/overworld';
+import createOverworld from '../overworld/setup';
+import { buddyEffectsOf, resolveBuddy } from './buddy';
 import { hasCaughtSpecies } from './caught';
+import { getCaughtSpeciesCount } from './pokedex';
 import { syncServerClock } from './clock';
 import { getLocalOffset, getLocale } from './local-time';
 import type { EncounterRecord } from './encounter-record';
@@ -40,8 +44,25 @@ export async function createSafariSession(
   // that is is read once here alongside it. A player walking alone
   // throws both as plain balls
   const walking = await resolveBuddy(user.uid);
+  // What the player brought along, asked once: the Catching Charm on
+  // the throw and a buddy that pins the meeting down on the bolt.
+  // Neither can change while a ball is in the air
+  const overworld = createOverworld(user.uid, walking == null ? null : buddyEffectsOf(walking[1]));
+  const treats = overworld.checkTreats(encounterKey(encounter), MAX_CATCH_BONUS);
+  // How much of the dex is filled decides how often a ball holds on
+  // the first shake, so a player who has caught a great many things
+  // throws like somebody who has
+  const dex = await getCaughtSpeciesCount(user.uid);
+  const critical = overworld.checkCriticalCatch(encounterKey(encounter), encounter);
   const session = new SafariSession(encounter, () => rng.random(), {
     speciesCaught,
+    cap: treats.cap,
+    keeps: treats.keeps,
+    mastery: masteryOf(dex),
+    keen: critical.boost,
+    aims: critical.aims,
+    charm: overworld.checkCatchChance(encounterKey(encounter), encounter),
+    trap: overworld.checkFleeChance(encounterKey(encounter), encounter),
     buddy:
       walking == null
         ? undefined
@@ -142,9 +163,16 @@ async function keepCatch(
  * Retire an encounter that fled. The key is recomputed server-side
  * from the stored encounter
  */
-async function retireEncounter(token: string, spawn: string): Promise<void> {
+async function retireEncounter(token: string, spawn: string): Promise<Items | null> {
   'use server';
-  await retireSpawn(await requireUid(token), spawn);
+
+  const uid = await requireUid(token);
+
+  // Only the call that actually retires it pays: a meeting is retired
+  // rather than deleted, so what it was carrying stays readable, and a
+  // client reporting the same flight twice would otherwise be paid
+  // twice for it
+  return (await retireSpawn(uid, spawn)) ? pocketFled(uid, spawn) : null;
 }
 
 /**
@@ -158,6 +186,21 @@ async function retireEncounter(token: string, spawn: string): Promise<void> {
 export interface ThrowOutcome {
   result: ThrowResult;
   catchId: string | null;
+  /**
+   * How far the ball got before it opened, out of `SHAKES`. A catch
+   * held through all of them
+   */
+  shakes: number;
+  /**
+   * Whether the ball came out critical, and so held on one shake
+   * rather than three
+   */
+  critical: boolean;
+  /**
+   * What the pokemon left behind as it ran, for a player whose buddy
+   * picks pockets. Null for every other throw
+   */
+  pocketed?: Items | null;
 }
 
 /**
@@ -168,6 +211,7 @@ export interface ThrowOutcome {
  */
 export async function throwBall(
   session: SafariSession<EncounterRecord>,
+  watch?: (shakes: number, result: ThrowResult) => void,
 ): Promise<ThrowOutcome | null> {
   if (session.state !== SafariState.Active) {
     return null;
@@ -186,18 +230,31 @@ export async function throwBall(
   const result = session.throwBall();
   const spawn = session.encounter.spawn;
 
+  // Handed over the moment it is rolled, before the record is written:
+  // the ball is what the player is watching, and the writing is what
+  // it should be watched over rather than after
+  watch?.(session.shakes, result);
+
   if (result === ThrowResult.Caught) {
     // The catch is stamped in the catcher's own zone and carries the
     // locale it was made in, so its date reads as the day they had
     return {
       result,
+      shakes: session.shakes,
+      critical: session.critical,
       catchId: await keepCatch(token, spawn, session.ball, getLocalOffset(), getLocale()),
     };
   }
   if (result === ThrowResult.Fled) {
-    await retireEncounter(token, spawn);
+    return {
+      result,
+      shakes: session.shakes,
+      critical: session.critical,
+      catchId: null,
+      pocketed: await retireEncounter(token, spawn),
+    };
   }
-  return { result, catchId: null };
+  return { result, shakes: session.shakes, critical: session.critical, catchId: null };
 }
 
 /**

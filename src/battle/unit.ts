@@ -914,39 +914,6 @@ export default class Unit {
     }
   }
 
-  checkCanRemoveStage(
-    stage: Stages,
-    value: number,
-    cause: EffectCause,
-    simulated = false,
-  ): boolean {
-    const event: CheckUnitCanUpdateStageEvent = {
-      id: 'CheckUnitCanRemoveStage',
-      disabled: false,
-      source: this,
-      stage,
-      value,
-      cause,
-      success: true,
-      simulated,
-    };
-    this.battle.emit(BattleEvents.CheckUnitCanRemoveStage, event);
-    return event.success;
-  }
-
-  removeStage(stage: Stages, value: number, cause: EffectCause): void {
-    if (this.checkCanRemoveStage(stage, value, cause)) {
-      this.battle.emit(BattleEvents.UnitRemoveStage, {
-        id: 'UnitRemoveStage',
-        disabled: false,
-        source: this,
-        stage,
-        value,
-        cause,
-      });
-    }
-  }
-
   resetStages(cause: EffectCause): void {
     this.battle.emit(BattleEvents.UnitResetStages, {
       id: 'UnitResetStages',
@@ -1382,6 +1349,23 @@ export default class Unit {
       target,
     };
     this.battle.emit(BattleEvents.CheckUnitMoveCastTime, event);
+    return event.duration;
+  }
+
+  /**
+   * What this move's wait comes to for this unit: its PP against the
+   * clock, less whatever the unit's Speed buys off it
+   */
+  checkMoveCooldown(move: Moves, target: MoveTarget): number {
+    const event: CheckUnitMoveTimeEvent = {
+      id: 'CheckUnitMoveCooldown',
+      disabled: false,
+      source: this,
+      move,
+      duration: 0,
+      target,
+    };
+    this.battle.emit(BattleEvents.CheckUnitMoveCooldown, event);
     return event.duration;
   }
 

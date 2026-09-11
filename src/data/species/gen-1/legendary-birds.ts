@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// RBY TM/HM moves shared by all three birds
+// TM, HM and tutor moves shared by all three birds
 const BIRD_TEACHABLE = [
   Moves.Toxic,
   Moves.RazorWind,
@@ -77,6 +77,7 @@ export default function registerLegendaryBirdSpecies(): void {
         37: [Moves.MindReader],
         51: [Moves.Blizzard],
         61: [Moves.Reflect],
+        85: [Moves.SheerCold],
       },
       teachable: [
         ...BIRD_TEACHABLE,
@@ -86,6 +87,11 @@ export default function registerLegendaryBirdSpecies(): void {
         Moves.WaterGun,
         Moves.Surf,
         Moves.IcyWind,
+
+        Moves.AerialAce,
+        Moves.Facade,
+        Moves.SecretPower,
+        Moves.WaterPulse,
       ],
     },
   });
@@ -121,6 +127,7 @@ export default function registerLegendaryBirdSpecies(): void {
         37: [Moves.Detect],
         51: [Moves.Thunder],
         60: [Moves.LightScreen],
+        61: [Moves.Charge],
       },
       teachable: [
         ...BIRD_TEACHABLE,
@@ -129,6 +136,11 @@ export default function registerLegendaryBirdSpecies(): void {
         Moves.ThunderWave,
         Moves.Flash,
         Moves.ZapCannon,
+
+        Moves.AerialAce,
+        Moves.Facade,
+        Moves.SecretPower,
+        Moves.ShockWave,
       ],
     },
   });
@@ -165,8 +177,17 @@ export default function registerLegendaryBirdSpecies(): void {
         51: [Moves.Leer],
         60: [Moves.SkyAttack],
         61: [Moves.Safeguard],
+        73: [Moves.HeatWave],
       },
-      teachable: [...BIRD_TEACHABLE, Moves.FireBlast, Moves.Flamethrower],
+      teachable: [
+        ...BIRD_TEACHABLE,
+        Moves.FireBlast,
+        Moves.Flamethrower,
+        Moves.AerialAce,
+        Moves.Facade,
+        Moves.Overheat,
+        Moves.SecretPower,
+      ],
     },
   });
 }

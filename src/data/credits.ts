@@ -37,16 +37,79 @@ export interface CreditPackage {
 
 /**
  * One drawing and who drew it: a species for a pokemon sheet, a
- * charset's path for an overworld one.
- *
- * Flat pairs rather than a list per artist, because that is the shape
- * both writers want: one names the work it has just packed, the other
- * scans the sheets and finds whoever is on them. Grouping them by
- * artist is the reader's job, and `groupCredits` does it
+ * charset's path for an overworld one. It is what the scanners find,
+ * on the way to the list they write
  */
 export interface CreditWork {
   work: string;
   credit: string;
+}
+
+/**
+ * Everything one artist drew, keyed by the name they are shown under.
+ *
+ * A list per artist rather than a flat pair per drawing, so a name is
+ * written once however much of the game it signed
+ */
+export type CreditWorks = Record<string, string[]>;
+
+/**
+ * Two spellings the fold below cannot see as one. A placeholder is a
+ * placeholder however it is abbreviated, and nobody is being credited
+ * by either
+ */
+const CREDIT_ALIASES: Record<string, string> = { anon: 'Anonymous' };
+
+/**
+ * The name a credit is shown under.
+ *
+ * A trailing bracket is the artist noting which drawing it was rather
+ * than a different artist, so it comes off: Kazan(Red) and
+ * Kazan(TrainerRed) are Kazan
+ */
+export function creditName(credit: string): string {
+  const named = credit
+    .trim()
+    .replace(/\s*\([^()]*\)$/, '')
+    .trim();
+
+  return CREDIT_ALIASES[named.toLowerCase()] ?? named;
+}
+
+/**
+ * The pairs as a list per artist, in name order.
+ *
+ * Names differing only in case are one person, shown under whichever
+ * spelling signed the most, and alphabetically where they signed the
+ * same amount: figyberries drew four sheets as Figyberries and three
+ * as figyberries, and is one artist with seven
+ */
+export function foldCredits(works: Iterable<CreditWork>): CreditWorks {
+  const held = new Map<string, { spellings: Map<string, number>; drawn: Set<string> }>();
+
+  for (const { work, credit } of works) {
+    const name = creditName(credit);
+    const key = name.toLowerCase();
+    const found = held.get(key) ?? {
+      spellings: new Map<string, number>(),
+      drawn: new Set<string>(),
+    };
+
+    found.spellings.set(name, (found.spellings.get(name) ?? 0) + 1);
+    found.drawn.add(work);
+    held.set(key, found);
+  }
+
+  const listed = [...held.values()].map((found) => {
+    const [name] = [...found.spellings].sort(
+      (one, other) => other[1] - one[1] || one[0].localeCompare(other[0]),
+    )[0];
+
+    return { name, drawn: [...found.drawn].sort((one, other) => one.localeCompare(other)) };
+  });
+
+  listed.sort((one, other) => one.name.localeCompare(other.name));
+  return Object.fromEntries(listed.map((artist) => [artist.name, artist.drawn]));
 }
 
 export interface Credits {
@@ -54,9 +117,9 @@ export interface Credits {
   sources: CreditSource[];
   packages: CreditPackage[];
   /** Pokemon sheets, scanned from each `sheet.json`. */
-  sprites: CreditWork[];
+  sprites: CreditWorks;
   /** Overworld charsets, written as each is packed. */
-  overworld: CreditWork[];
+  overworld: CreditWorks;
   /**
    * The landmark, decoration and tree tiles: names alone.
    *
@@ -74,25 +137,13 @@ export interface CreditedArtist {
 }
 
 /**
- * The pairs gathered by artist, most work first and alphabetical
- * within a tie. A name that appears on both a pokemon's regular coat
- * and its shiny is one name against one work
+ * The list in reading order: most work first, alphabetical within a
+ * tie. The list itself is already one entry per artist, so this only
+ * decides who is read first
  */
-export function groupCredits(works: CreditWork[]): CreditedArtist[] {
-  const held = new Map<string, Set<string>>();
-
-  for (const { work, credit } of works) {
-    const found = held.get(credit);
-
-    if (found) {
-      found.add(work);
-    } else {
-      held.set(credit, new Set([work]));
-    }
-  }
-
-  return [...held]
-    .map(([name, listed]) => ({ name, works: [...listed].sort((a, b) => a.localeCompare(b)) }))
+export function groupCredits(works: CreditWorks): CreditedArtist[] {
+  return Object.entries(works)
+    .map(([name, drawn]) => ({ name, works: drawn }))
     .sort((one, other) =>
       one.works.length === other.works.length
         ? one.name.localeCompare(other.name)
@@ -104,11 +155,25 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value != null;
 }
 
-function asWorks(value: unknown): CreditWork[] {
-  return (Array.isArray(value) ? value : []).filter(isRecord).map((row) => ({
-    work: String(row.work),
-    credit: String(row.credit),
-  }));
+/**
+ * A section of the list, folded on the way in. A file written before
+ * the list was kept per artist is read as the pairs it holds, so a
+ * browser with the old one cached still shows a credits screen
+ */
+export function asCreditWorks(value: unknown): CreditWorks {
+  if (Array.isArray(value)) {
+    return foldCredits(
+      value.filter(isRecord).map((row) => ({ work: String(row.work), credit: String(row.credit) })),
+    );
+  }
+  if (!isRecord(value)) {
+    return {};
+  }
+  return foldCredits(
+    Object.entries(value).flatMap(([credit, drawn]) =>
+      (Array.isArray(drawn) ? drawn : []).map((work) => ({ work: String(work), credit })),
+    ),
+  );
 }
 
 /** Reads whatever was fetched, keeping only what has the right shape. */
@@ -130,8 +195,8 @@ export function asCredits(value: unknown): Credits {
       licence: String(row.licence),
       kind: row.kind === 'build' ? 'build' : 'runtime',
     })),
-    sprites: asWorks(root.sprites),
-    overworld: asWorks(root.overworld),
+    sprites: asCreditWorks(root.sprites),
+    overworld: asCreditWorks(root.overworld),
     scenery: (Array.isArray(root.scenery) ? root.scenery : []).map(String),
   };
 }

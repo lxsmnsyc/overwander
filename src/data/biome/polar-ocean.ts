@@ -8,52 +8,76 @@ import { UNOWN_SPAWNS, registerSpawnPool } from './__create';
 export default function registerPolarOceanSpawns(): void {
   registerSpawnPool(Biome.PolarOcean, {
     [TimeOfDay.Morning]: {
-      base: [],
+      base: [{ species: Species.Spheal, weight: 25 }],
       uncommon: [{ species: Species.Seel, weight: 20 }],
-      rare: [],
+      rare: [{ species: Species.Sealeo, weight: 8 }],
       scarce: [
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Cloyster, weight: 10 },
       ],
-      elusive: [{ species: Species.Lapras, weight: 5 }],
+      elusive: [
+        { species: Species.Walrein, weight: 5 },
+        { species: Species.Lapras, weight: 5 },
+      ],
       prized: [...UNOWN_SPAWNS],
-      special: [{ species: Species.Articuno, weight: 10 }],
+      special: [
+        { species: Species.Regice, weight: 10 },
+        { species: Species.Articuno, weight: 10 },
+      ],
     },
     [TimeOfDay.Day]: {
-      base: [],
+      base: [{ species: Species.Spheal, weight: 25 }],
       uncommon: [{ species: Species.Seel, weight: 20 }],
-      rare: [],
+      rare: [{ species: Species.Sealeo, weight: 8 }],
       scarce: [
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Cloyster, weight: 10 },
       ],
-      elusive: [{ species: Species.Lapras, weight: 5 }],
+      elusive: [
+        { species: Species.Walrein, weight: 5 },
+        { species: Species.Lapras, weight: 5 },
+      ],
       prized: [...UNOWN_SPAWNS],
-      special: [{ species: Species.Articuno, weight: 10 }],
+      special: [
+        { species: Species.Regice, weight: 10 },
+        { species: Species.Articuno, weight: 10 },
+      ],
     },
     [TimeOfDay.Evening]: {
-      base: [],
+      base: [{ species: Species.Spheal, weight: 25 }],
       uncommon: [{ species: Species.Seel, weight: 20 }],
-      rare: [],
+      rare: [{ species: Species.Sealeo, weight: 8 }],
       scarce: [
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Cloyster, weight: 10 },
       ],
-      elusive: [{ species: Species.Lapras, weight: 5 }],
+      elusive: [
+        { species: Species.Walrein, weight: 5 },
+        { species: Species.Lapras, weight: 5 },
+      ],
       prized: [...UNOWN_SPAWNS],
-      special: [{ species: Species.Articuno, weight: 10 }],
+      special: [
+        { species: Species.Regice, weight: 10 },
+        { species: Species.Articuno, weight: 10 },
+      ],
     },
     [TimeOfDay.Night]: {
-      base: [],
+      base: [{ species: Species.Spheal, weight: 25 }],
       uncommon: [{ species: Species.Seel, weight: 20 }],
-      rare: [],
+      rare: [{ species: Species.Sealeo, weight: 8 }],
       scarce: [
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Cloyster, weight: 10 },
       ],
-      elusive: [{ species: Species.Lapras, weight: 5 }],
+      elusive: [
+        { species: Species.Walrein, weight: 5 },
+        { species: Species.Lapras, weight: 5 },
+      ],
       prized: [...UNOWN_SPAWNS],
-      special: [{ species: Species.Articuno, weight: 10 }],
+      special: [
+        { species: Species.Regice, weight: 10 },
+        { species: Species.Articuno, weight: 10 },
+      ],
     },
   });
 }

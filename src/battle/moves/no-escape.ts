@@ -8,7 +8,7 @@ import { BattleEvents, EffectType, MoveTargetType } from '../events';
  * The moves that hold a target where it stands. They deal nothing:
  * what they take away is the way out
  */
-const NO_ESCAPE_MOVES = new Set<Moves>([Moves.MeanLook, Moves.SpiderWeb]);
+const NO_ESCAPE_MOVES = new Set<Moves>([Moves.MeanLook, Moves.SpiderWeb, Moves.Block]);
 
 export default function setupNoEscapeMoves(battle: Battle): void {
   battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Exact, (event) => {

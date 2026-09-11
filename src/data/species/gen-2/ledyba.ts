@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// GSC TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.IcePunch,
   Moves.ThunderPunch,
@@ -36,6 +36,15 @@ const FAMILY_TEACHABLE = [
   Moves.SweetScent,
   Moves.HiddenPower,
   Moves.SunnyDay,
+  Moves.AerialAce,
+  Moves.BrickBreak,
+  Moves.Facade,
+  Moves.FocusPunch,
+  Moves.MegaPunch,
+  Moves.Mimic,
+  Moves.SecretPower,
+  Moves.Substitute,
+  Moves.SwordsDance,
 ];
 
 export default function registerLedybaSpecies(): void {
@@ -81,7 +90,7 @@ export default function registerLedybaSpecies(): void {
         50: [Moves.DoubleEdge],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.Psybeam, Moves.Bide],
+      egg: [Moves.Psybeam, Moves.Bide, Moves.SilverWind],
     },
   });
 

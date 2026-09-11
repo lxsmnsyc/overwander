@@ -42,7 +42,7 @@ export default function registerPorygon2Species(): void {
         24: [Moves.DefenseCurl],
         32: [Moves.LockOn],
         36: [Moves.TriAttack],
-        44: [Moves.ZapCannon],
+        44: [Moves.ZapCannon, Moves.Recycle],
       },
       teachable: [
         Moves.Blizzard,
@@ -75,6 +75,17 @@ export default function registerPorygon2Species(): void {
         Moves.Thunderbolt,
         Moves.Toxic,
         Moves.ZapCannon,
+
+        Moves.AerialAce,
+        Moves.DoubleEdge,
+        Moves.Facade,
+        Moves.Mimic,
+        Moves.SecretPower,
+        Moves.ShadowBall,
+        Moves.ShockWave,
+        Moves.SolarBeam,
+        Moves.Substitute,
+        Moves.ThunderWave,
       ],
     },
   });

@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// RBY TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.MegaPunch,
@@ -58,6 +58,12 @@ const FAMILY_TEACHABLE = [
   Moves.SunnyDay,
   Moves.RockSmash,
   Moves.Flamethrower,
+  Moves.AerialAce,
+  Moves.BrickBreak,
+  Moves.Facade,
+  Moves.FocusPunch,
+  Moves.RockTomb,
+  Moves.SecretPower,
 ];
 
 const FAMILY_ABILITIES = [Abilities.RockHead, Abilities.LightningRod];
@@ -153,7 +159,7 @@ export default function registerCuboneSpecies(): void {
         41: [Moves.Thrash],
         53: [Moves.BoneRush],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
+      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.RockSlide, Moves.SwordsDance],
     },
   });
 }

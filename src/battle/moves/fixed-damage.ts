@@ -14,7 +14,12 @@ import type Unit from '../unit';
 /**
  * One-hit KO moves (used by Sturdy's immunity)
  */
-export const OHKO_MOVES = new Set<Moves>([Moves.Fissure, Moves.HornDrill, Moves.Guillotine]);
+export const OHKO_MOVES = new Set<Moves>([
+  Moves.Fissure,
+  Moves.HornDrill,
+  Moves.Guillotine,
+  Moves.SheerCold,
+]);
 
 const FIXED_DAMAGE_MOVES: {
   [key in Moves]?: (source: Unit, target: Unit) => number;
@@ -37,6 +42,12 @@ const FIXED_DAMAGE_MOVES: {
   [Moves.SuperFang]: (_, target) => Math.max(1, Math.floor(target.health / 2)),
   // https://bulbapedia.bulbagarden.net/wiki/Psywave_(move)
   [Moves.Psywave]: (source) => Math.max(1, source.level * source.battle.randomRange(0.5, 1.5)),
+  // https://bulbapedia.bulbagarden.net/wiki/Sheer_Cold_(move)
+  [Moves.SheerCold]: (_, target) => target.health,
+  // Levels the two down to the same figure: what the target has above
+  // the user is exactly what it loses
+  // https://bulbapedia.bulbagarden.net/wiki/Endeavor_(move)
+  [Moves.Endeavor]: (source, target) => Math.max(0, target.health - source.health),
 };
 
 /**
@@ -47,6 +58,8 @@ export const HEALTH_SCALED_MOVES = new Set<Moves>([
   Moves.HornDrill,
   Moves.Guillotine,
   Moves.SuperFang,
+  Moves.SheerCold,
+  Moves.Endeavor,
 ]);
 
 /**

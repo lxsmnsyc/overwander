@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// GSC TM/HM and tutor moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.Psychic,
@@ -41,6 +41,20 @@ const FAMILY_TEACHABLE = [
   Moves.MudSlap,
   Moves.RockSmash,
   Moves.Swift,
+  Moves.BodySlam,
+  Moves.Counter,
+  Moves.Facade,
+  Moves.LightScreen,
+  Moves.MegaKick,
+  Moves.MegaPunch,
+  Moves.Mimic,
+  Moves.Reflect,
+  Moves.SecretPower,
+  Moves.SeismicToss,
+  Moves.ShockWave,
+  Moves.SoftBoiled,
+  Moves.ThunderWave,
+  Moves.WaterPulse,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Hustle, Abilities.SereneGrace];
@@ -87,9 +101,23 @@ export default function registerTogepiSpecies(): void {
     biomes: [Biome.Grassland, Biome.Woodland, Biome.TemperateForest],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
-      level: { ...FAMILY_LEVEL },
+      level: {
+        ...FAMILY_LEVEL,
+        16: [Moves.Yawn],
+        21: [Moves.AncientPower],
+        26: [Moves.FollowMe],
+        31: [...FAMILY_LEVEL[31], Moves.Wish],
+        41: [Moves.BatonPass],
+      },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.Foresight, Moves.FutureSight, Moves.MirrorMove, Moves.Peck, Moves.Present],
+      egg: [
+        Moves.Foresight,
+        Moves.FutureSight,
+        Moves.MirrorMove,
+        Moves.Peck,
+        Moves.Present,
+        Moves.Substitute,
+      ],
     },
   });
 
@@ -120,8 +148,25 @@ export default function registerTogepiSpecies(): void {
     biomes: [Biome.Grassland, Biome.Woodland, Biome.TemperateForest],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
-      level: { ...FAMILY_LEVEL },
-      teachable: [...FAMILY_TEACHABLE, Moves.Fly, Moves.SteelWing, Moves.HyperBeam],
+      level: {
+        ...FAMILY_LEVEL,
+        1: [...FAMILY_LEVEL[1], Moves.MagicalLeaf],
+        16: [Moves.Yawn],
+        21: [Moves.AncientPower],
+        26: [Moves.FollowMe],
+        31: [...FAMILY_LEVEL[31], Moves.Wish],
+        41: [Moves.BatonPass],
+      },
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.Fly,
+        Moves.SteelWing,
+        Moves.HyperBeam,
+        Moves.AerialAce,
+        Moves.BrickBreak,
+        Moves.FocusPunch,
+        Moves.Substitute,
+      ],
     },
   });
 }

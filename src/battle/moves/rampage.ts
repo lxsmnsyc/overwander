@@ -11,8 +11,15 @@ import { BattleEvents, EffectType, MoveTargetType } from '../events';
  * step lands the same full attack, and the fatigue at the end leaves
  * the user confused. The shared hit handler already covers the final
  * step's strike, so only the earlier steps strike here.
+ *
+ * Uproar is the same shape without the fatigue: it keeps going for
+ * its steps and comes out of it clear-headed, and the racket it makes
+ * while it runs is the Uproaring status' own business
  */
-const RAMPAGE_MOVES = new Set<Moves>([Moves.Thrash, Moves.PetalDance, Moves.Outrage]);
+const RAMPAGE_MOVES = new Set<Moves>([Moves.Thrash, Moves.PetalDance, Moves.Outrage, Moves.Uproar]);
+
+/** The ones that leave the user reeling when they finally stop */
+const FATIGUING_MOVES = new Set<Moves>([Moves.Thrash, Moves.PetalDance, Moves.Outrage]);
 
 export default function setupRampageMoves(battle: Battle): void {
   battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
@@ -34,7 +41,7 @@ export default function setupRampageMoves(battle: Battle): void {
 
   // Fatigue: the user comes out of the rampage confused
   battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Post, (event) => {
-    if (RAMPAGE_MOVES.has(event.move) && event.steps === 0 && event.source.alive) {
+    if (FATIGUING_MOVES.has(event.move) && event.steps === 0 && event.source.alive) {
       event.source.addStatus(Statuses.Confused, {
         type: EffectType.Move,
         move: event.move,
@@ -54,6 +61,9 @@ export default function setupRampageMoves(battle: Battle): void {
     }
 
     event.score += STEP_PENALTY * event.source.checkMoveSteps(event.move, event.target);
-    event.score -= RISKY_PENALTY;
+
+    if (FATIGUING_MOVES.has(event.move)) {
+      event.score -= RISKY_PENALTY;
+    }
   });
 }

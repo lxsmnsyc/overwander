@@ -718,8 +718,8 @@ export const enum Items {
   RedFlute = 341,
 
   /**
-   * TODO: the charms, all shaped like the Shiny Charm that is already
-   * written
+   * TODO: the rest of the charms, all shaped like the Shiny Charm and
+   * the Catching Charm that are already written
    */
   ExpCharm = 342,
   OvalCharm = 343,
@@ -822,6 +822,48 @@ export const enum Items {
   PinkApricorn = 387,
   WhiteApricorn = 388,
   BlackApricorn = 389,
+
+  /**
+   * Hoenn's two fossils, numbered after the list rather than beside
+   * the first three: an id reaches a player's bag rows
+   */
+  RootFossil = 390,
+  ClawFossil = 391,
+
+  /** The ticket a Deoxys is reached with, and the rock that moves it */
+  AuroraTicket = 392,
+  Meteorite = 393,
+
+  /** The wish a Jirachi is called out to answer */
+  WishTag = 394,
+
+  /**
+   * The mints: one per nature that does something, plus the Serious
+   * Mint for a pokemon that should do nothing. In nature order, and
+   * appended rather than inserted, since an id reaches a player's bag
+   * rows
+   */
+  LonelyMint = 395,
+  BraveMint = 396,
+  AdamantMint = 397,
+  NaughtyMint = 398,
+  BoldMint = 399,
+  RelaxedMint = 400,
+  ImpishMint = 401,
+  LaxMint = 402,
+  TimidMint = 403,
+  HastyMint = 404,
+  SeriousMint = 405,
+  JollyMint = 406,
+  NaiveMint = 407,
+  ModestMint = 408,
+  MildMint = 409,
+  QuietMint = 410,
+  RashMint = 411,
+  CalmMint = 412,
+  GentleMint = 413,
+  SassyMint = 414,
+  CarefulMint = 415,
 }
 
 /**

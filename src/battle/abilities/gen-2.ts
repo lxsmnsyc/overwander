@@ -15,13 +15,17 @@ import { MAJOR_STATUS_CONDITIONS } from '../status';
 import { hasFreeItemSlot, isWeatherSunny, onUnitActs, stealableItem, unitTarget } from '../utils';
 import {
   createAbility,
+  createAbsorbStageAbility,
   createContactHazard,
   createDrizzleAbility,
+  createHugePowerAbility,
   createLimberAbility,
-  createStageFeedScoring,
+  createPolarityAbility,
+  createRestageAbility,
+  createWeightAbility,
+  movesOfType,
 } from './__create';
 
-const PLUS_BOOST = 1.5;
 const FLOWER_GIFT_BOOST = 1.5;
 
 /**
@@ -184,65 +188,10 @@ const setupAbilities = [
   ),
 
   // https://bulbapedia.bulbagarden.net/wiki/Plus_(Ability)
-  // The mainline pairs it with Minus; no registered species has
-  // Minus, so a second Plus on the team is the only partner
-  createAbility(Abilities.Plus, (battle) =>
-    battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
-      if (event.stat !== Stats.SpecialAttack || !event.source.hasAbility(Abilities.Plus)) {
-        return;
-      }
-
-      for (const ally of event.source.team.units) {
-        if (ally !== event.source && ally.alive && ally.hasAbility(Abilities.Plus)) {
-          event.value *= PLUS_BOOST;
-          return;
-        }
-      }
-    }),
-  ),
+  createPolarityAbility(Abilities.Plus),
 
   // https://bulbapedia.bulbagarden.net/wiki/Motor_Drive_(Ability)
-  createAbility(
-    Abilities.MotorDrive,
-    (battle) =>
-      new MergedLifecycle([
-        // Pure query: grants the immunity, no side effects
-        battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Post, (event) => {
-          if (
-            event.type === Types.Electric &&
-            event.target.type === MoveTargetType.Unit &&
-            event.target.unit !== event.source &&
-            event.target.unit.hasAbility(Abilities.MotorDrive)
-          ) {
-            event.immune = true;
-          }
-        }),
-        // Only a move that really failed against the holder pays out,
-        // never a speculative immunity check
-        battle.on(BattleEvents.UnitTriggerMoveFailed, EventPriority.Post, (event) => {
-          const parent = event.parent;
-
-          if (
-            parent.target.type === MoveTargetType.Unit &&
-            parent.target.unit !== parent.source &&
-            parent.target.unit.hasAbility(Abilities.MotorDrive) &&
-            parent.source.checkMoveType(parent.move, parent.target) === Types.Electric
-          ) {
-            parent.target.unit.triggerAbility(Abilities.MotorDrive);
-          }
-        }),
-        createStageFeedScoring(battle, Abilities.MotorDrive, Types.Electric, Stages.Speed),
-        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
-          if (event.ability === Abilities.MotorDrive) {
-            event.source.addStage(Stages.Speed, 1, {
-              type: EffectType.Ability,
-              ability: Abilities.MotorDrive,
-              unit: event.source,
-            });
-          }
-        }),
-      ]),
-  ),
+  createAbsorbStageAbility(Abilities.MotorDrive, Stages.Speed, movesOfType(Types.Electric)),
 
   // https://bulbapedia.bulbagarden.net/wiki/Magma_Armor_(Ability)
   createLimberAbility(Abilities.MagmaArmor, [Statuses.Frozen]),
@@ -353,84 +302,13 @@ const setupAbilities = [
   ),
 
   // https://bulbapedia.bulbagarden.net/wiki/Contrary_(Ability)
-  createAbility(Abilities.Contrary, (battle) => {
-    // Holders part-way through a flipped change: the flip is a fresh
-    // call and would otherwise come straight back through here
-    const inverting = new Set<Unit>();
-
-    return new MergedLifecycle([
-      battle.on(BattleEvents.CheckUnitCanAddStage, EventPriority.Post, (event) => {
-        if (
-          !event.success ||
-          event.value === 0 ||
-          inverting.has(event.source) ||
-          !event.source.hasAbility(Abilities.Contrary)
-        ) {
-          return;
-        }
-
-        event.success = false;
-
-        // The refusal is the whole answer for the AI weighing a move:
-        // the rise itself belongs to a cast that actually happened
-        if (event.simulated) {
-          return;
-        }
-
-        event.source.triggerAbility(Abilities.Contrary);
-
-        inverting.add(event.source);
-        event.source.addStage(event.stage, -event.value, event.cause);
-        inverting.delete(event.source);
-      }),
-      battle.on(BattleEvents.UnitLeavesField, EventPriority.Post, (event) => {
-        inverting.delete(event.source);
-      }),
-    ]);
-  }),
+  createRestageAbility(Abilities.Contrary, (value) => -value),
 
   // https://bulbapedia.bulbagarden.net/wiki/Storm_Drain_(Ability)
   // The mainline also pulls Water moves aimed elsewhere onto the
   // holder. Nothing here redirects a move away from the target it
   // committed to, so this is the immunity and the boost
-  createAbility(
-    Abilities.StormDrain,
-    (battle) =>
-      new MergedLifecycle([
-        battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Post, (event) => {
-          if (
-            event.type === Types.Water &&
-            event.target.type === MoveTargetType.Unit &&
-            event.target.unit !== event.source &&
-            event.target.unit.hasAbility(Abilities.StormDrain)
-          ) {
-            event.immune = true;
-          }
-        }),
-        battle.on(BattleEvents.UnitTriggerMoveFailed, EventPriority.Post, (event) => {
-          const parent = event.parent;
-
-          if (
-            parent.target.type === MoveTargetType.Unit &&
-            parent.target.unit !== parent.source &&
-            parent.target.unit.hasAbility(Abilities.StormDrain) &&
-            parent.source.checkMoveType(parent.move, parent.target) === Types.Water
-          ) {
-            parent.target.unit.triggerAbility(Abilities.StormDrain);
-          }
-        }),
-        createStageFeedScoring(battle, Abilities.StormDrain, Types.Water, Stages.SpecialAttack),
-        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
-          if (event.ability === Abilities.StormDrain) {
-            event.source.addStage(Stages.SpecialAttack, 1, {
-              type: EffectType.Ability,
-              ability: Abilities.StormDrain,
-              unit: event.source,
-            });
-          }
-        }),
-      ]),
-  ),
+  createAbsorbStageAbility(Abilities.StormDrain, Stages.SpecialAttack, movesOfType(Types.Water)),
 
   // https://bulbapedia.bulbagarden.net/wiki/Mirror_Armor_(Ability)
   // Two holders never volley a drop between them: the bounced call
@@ -479,44 +357,7 @@ const setupAbilities = [
   createDrizzleAbility(Abilities.SandStream, Weathers.Sandstorm),
 
   // https://bulbapedia.bulbagarden.net/wiki/Sap_Sipper_(Ability)
-  createAbility(
-    Abilities.SapSipper,
-    (battle) =>
-      new MergedLifecycle([
-        battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Post, (event) => {
-          if (
-            event.type === Types.Grass &&
-            event.target.type === MoveTargetType.Unit &&
-            event.target.unit !== event.source &&
-            event.target.unit.hasAbility(Abilities.SapSipper)
-          ) {
-            event.immune = true;
-          }
-        }),
-        battle.on(BattleEvents.UnitTriggerMoveFailed, EventPriority.Post, (event) => {
-          const parent = event.parent;
-
-          if (
-            parent.target.type === MoveTargetType.Unit &&
-            parent.target.unit !== parent.source &&
-            parent.target.unit.hasAbility(Abilities.SapSipper) &&
-            parent.source.checkMoveType(parent.move, parent.target) === Types.Grass
-          ) {
-            parent.target.unit.triggerAbility(Abilities.SapSipper);
-          }
-        }),
-        createStageFeedScoring(battle, Abilities.SapSipper, Types.Grass, Stages.Attack),
-        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
-          if (event.ability === Abilities.SapSipper) {
-            event.source.addStage(Stages.Attack, 1, {
-              type: EffectType.Ability,
-              ability: Abilities.SapSipper,
-              unit: event.source,
-            });
-          }
-        }),
-      ]),
-  ),
+  createAbsorbStageAbility(Abilities.SapSipper, Stages.Attack, movesOfType(Types.Grass)),
 
   // https://bulbapedia.bulbagarden.net/wiki/Honey_Gather_(Ability)
   // The mainline finds the jar after the fight, and a fight here has
@@ -675,13 +516,7 @@ const setupAbilities = [
 
   // Scizor
   // https://bulbapedia.bulbagarden.net/wiki/Light_Metal_(Ability)
-  createAbility(Abilities.LightMetal, (battle) =>
-    battle.on(BattleEvents.CheckUnitWeight, EventPriority.Post, (event) => {
-      if (event.source.hasAbility(Abilities.LightMetal)) {
-        event.weight /= 2;
-      }
-    }),
-  ),
+  createWeightAbility(Abilities.LightMetal, 1 / 2),
 
   // Unown Q
   // The whole side is covered, the way the mainline has it: what the
@@ -767,13 +602,7 @@ const setupAbilities = [
   // Doubles the stat rather than the blow, so anything reading the
   // Attack it has (Foul Play, a Power Trip) reads the doubled one
   // https://bulbapedia.bulbagarden.net/wiki/Huge_Power_(Ability)
-  createAbility(Abilities.HugePower, (battle) =>
-    battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
-      if (event.stat === Stats.Attack && event.source.hasAbility(Abilities.HugePower)) {
-        event.value *= 2;
-      }
-    }),
-  ),
+  createHugePowerAbility(Abilities.HugePower),
 ];
 
 export default function setupGen2Abilities(battle: Battle): void {

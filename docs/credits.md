@@ -16,7 +16,9 @@ gets written.
 
 Two of its sections are derived and must not be edited by hand: `sprites` is
 scanned out of every `sheet.json` by `pnpm import-sprites`, and `overworld` is
-written a row at a time by the sprite processor as it packs a charset.
+written a sheet at a time by the sprite processor as it packs a charset. Both
+are kept as a list of drawings under each artist's name, and names that differ
+only in case, or by a tag in brackets, are read as one person.
 
 ## The game
 

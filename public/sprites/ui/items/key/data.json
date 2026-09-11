@@ -1,7 +1,7 @@
 {
   "compact": true,
   "width": 328,
-  "height": 326,
+  "height": 346,
   "images": [
     {
       "name": "acro-bike-gen3.png",
@@ -3108,6 +3108,19 @@
       "trim": [
         9,
         3
+      ]
+    },
+    {
+      "name": "wish-tag.png",
+      "x": 300,
+      "y": 309,
+      "width": 21,
+      "height": 20,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        6,
+        6
       ]
     },
     {

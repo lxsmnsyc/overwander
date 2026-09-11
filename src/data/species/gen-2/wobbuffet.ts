@@ -11,6 +11,7 @@ import { registerSpecies } from '../__create';
 export default function registerWobbuffetSpecies(): void {
   registerSpecies(Species.Wobbuffet, {
     dexNumber: 202,
+    evolvesFrom: Species.Wynaut,
     name: 'Wobbuffet',
     category: 'Patient Pokemon',
     height: 1.3,

@@ -123,36 +123,21 @@ export function createHeldItem(
 }
 
 /**
- * The pair of listeners it takes to catch a stat going down
- */
-export type StageListeners = [
-  EventListenerLifecycle<UnitUpdateStageEvent>,
-  EventListenerLifecycle<UnitUpdateStageEvent>,
-];
-
-/**
- * A stage can fall two ways: something takes one off, or something adds
- * a negative one — an Intimidate does the latter — so anything
- * answering a stat being lowered has to watch both
+ * A stat going down. Every drop in the game is a negative stage added,
+ * an Intimidate included, so there is one door to watch
  */
 export function lowering(
   battle: Battle,
   listener: (unit: Unit, stage: Stages, cause: EffectCause) => void,
-): StageListeners {
-  // Both events carry the change that was actually applied once they
-  // have been resolved — a stage that was already at the floor comes
-  // back as nothing moved — so a negative is a stat that really did go
-  // down, whichever door it came through
-  const fell = (event: UnitUpdateStageEvent): void => {
+): EventListenerLifecycle<UnitUpdateStageEvent> {
+  // The event carries the change that was actually applied once it has
+  // been resolved — a stage already at the floor comes back as nothing
+  // moved — so a negative is a stat that really did go down
+  return battle.on(BattleEvents.UnitAddStage, EventPriority.Post, (event) => {
     if (event.value < 0) {
       listener(event.source, event.stage, event.cause);
     }
-  };
-
-  return [
-    battle.on(BattleEvents.UnitRemoveStage, EventPriority.Post, fell),
-    battle.on(BattleEvents.UnitAddStage, EventPriority.Post, fell),
-  ];
+  });
 }
 
 /**

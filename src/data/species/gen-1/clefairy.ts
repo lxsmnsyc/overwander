@@ -9,7 +9,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// RBY TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.MegaPunch,
   Moves.MegaKick,
@@ -70,6 +70,18 @@ const FAMILY_TEACHABLE = [
   Moves.PsychUp,
   Moves.ShadowBall,
   Moves.Flamethrower,
+  Moves.BrickBreak,
+  Moves.CalmMind,
+  Moves.Counter,
+  Moves.Dig,
+  Moves.Facade,
+  Moves.FocusPunch,
+  Moves.Safeguard,
+  Moves.SecretPower,
+  Moves.ShockWave,
+  Moves.Snatch,
+  Moves.SoftBoiled,
+  Moves.WaterPulse,
 ];
 
 export default function registerClefairySpecies(): void {
@@ -110,10 +122,13 @@ export default function registerClefairySpecies(): void {
         4: [Moves.Encore],
         8: [Moves.Sing],
         13: [Moves.DoubleSlap],
+        17: [Moves.FollowMe],
         19: [Moves.Minimize],
         26: [Moves.DefenseCurl],
         31: [Moves.Metronome],
+        33: [Moves.CosmicPower],
         43: [Moves.Moonlight],
+        45: [Moves.MeteorMash],
         48: [Moves.LightScreen],
       },
       teachable: [...FAMILY_TEACHABLE],
@@ -148,7 +163,7 @@ export default function registerClefairySpecies(): void {
       level: {
         1: [Moves.Sing, Moves.DoubleSlap, Moves.Minimize, Moves.Metronome, Moves.Moonlight],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],
+      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.LightScreen],
     },
   });
 }

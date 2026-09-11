@@ -47,8 +47,10 @@ export default function registerOnixSpecies(): void {
         14: [Moves.RockThrow],
         23: [Moves.Harden],
         25: [Moves.Rage],
+        30: [Moves.DragonBreath],
         33: [Moves.Slam],
         36: [Moves.Sandstorm],
+        49: [Moves.SandTomb],
       },
       teachable: [
         Moves.Toxic,
@@ -87,8 +89,15 @@ export default function registerOnixSpecies(): void {
         Moves.HiddenPower,
         Moves.SunnyDay,
         Moves.RockSmash,
+
+        Moves.Facade,
+        Moves.PsychUp,
+        Moves.RockTomb,
+        Moves.SecretPower,
+        Moves.Taunt,
+        Moves.Torment,
       ],
-      egg: [Moves.RockSlide, Moves.Flail],
+      egg: [Moves.RockSlide, Moves.Flail, Moves.Block],
     },
   });
 }

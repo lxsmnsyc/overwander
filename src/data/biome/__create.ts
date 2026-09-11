@@ -1,7 +1,7 @@
 import type Biome from '../ids/biome';
 import { TimeOfDay } from '../ids/biome';
 import type Families from '../ids/families';
-import { Species, UNOWN_FORMS } from '../ids/species';
+import { DEOXYS_FORMS, Species, UNOWN_FORMS } from '../ids/species';
 import type { Types } from '../constants/types';
 import { getBaseSpecies, getSpeciesData } from '../species';
 
@@ -410,6 +410,14 @@ const LEGENDARY_SPECIES = new Set<Species>([
   Species.Suicune,
   Species.Lugia,
   Species.HoOh,
+  Species.Regirock,
+  Species.Regice,
+  Species.Registeel,
+  Species.Latias,
+  Species.Latios,
+  Species.Kyogre,
+  Species.Groudon,
+  Species.Rayquaza,
 ]);
 
 /**
@@ -417,7 +425,14 @@ const LEGENDARY_SPECIES = new Set<Species>([
  * will not roll one — the only way to face a mythical is to carry the
  * relic that calls it, which is what a raid item is
  */
-const MYTHICAL_SPECIES = new Set<Species>([Species.Mew, Species.Celebi]);
+const MYTHICAL_SPECIES = new Set<Species>([
+  Species.Mew,
+  Species.Celebi,
+  Species.Jirachi,
+  // Every arrangement of it, since each is a Deoxys a player owns
+  // rather than a shape one wears for a fight
+  ...DEOXYS_FORMS,
+]);
 
 /**
  * Whether the species is a legendary, the only kind a legendary raid
@@ -452,6 +467,8 @@ const BABY_SPECIES = new Set<Species>([
   Species.Smoochum,
   Species.Elekid,
   Species.Magby,
+  Species.Azurill,
+  Species.Wynaut,
 ]);
 
 /**
@@ -496,10 +513,9 @@ export const PRIZED_WEIGHT = UNOWN_SPAWNS.length;
  * is about what a nest holds and nothing else
  */
 const AWAITING_BABY_SPECIES = new Set<Species>([
-  // Gen 3 babies
-  Species.Marill,
-  Species.Wobbuffet,
   // Gen 4 babies
+  Species.Roselia,
+  Species.Chimecho,
   Species.Sudowoodo,
   Species.Mantine,
   Species.Chansey,
@@ -545,6 +561,9 @@ const AWAITING_EVOLUTION_SPECIES = new Set<Species>([
   Species.Sneasel,
   Species.Piloswine,
   Species.Porygon2,
+  Species.Nosepass,
+  Species.Roselia,
+  Species.Dusclops,
   // Gen 8 evolutions
   Species.Ursaring,
   Species.Stantler,
@@ -609,13 +628,19 @@ export function getLineStage(species: Species): number {
  * How many stages the longest walk from here down the line holds,
  * babies left out. A species whose evolution is still waiting on a
  * later gen counts that evolution, since the line is what it is
- * whether or not this game has the last of it yet
+ * whether or not this game has the last of it yet.
+ *
+ * A change of shape is not a stage. A Deoxys rearranges itself the
+ * same way an evolution happens, and its arrangements carry its own
+ * dex number, so they are stepped over: the line is one stage long
+ * however many shapes it puts itself into
  */
 function stagesBelow(species: Species): number {
   const own = BABY_SPECIES.has(species) ? 0 : 1;
-  const below = (getSpeciesData(species).evolvesInto ?? []).map((entry) =>
-    stagesBelow(entry.species),
-  );
+  const dex = getSpeciesData(species).dexNumber;
+  const below = (getSpeciesData(species).evolvesInto ?? [])
+    .filter((entry) => getSpeciesData(entry.species).dexNumber !== dex)
+    .map((entry) => stagesBelow(entry.species));
 
   if (below.length === 0) {
     return own + (isAwaitingEvolution(species) ? 1 : 0);

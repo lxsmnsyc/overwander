@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// RBY TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.BodySlam,
@@ -38,6 +38,11 @@ const FAMILY_TEACHABLE = [
   Moves.HiddenPower,
   Moves.SunnyDay,
   Moves.Flamethrower,
+  Moves.Facade,
+  Moves.Overheat,
+  Moves.SecretPower,
+  Moves.SolarBeam,
+  Moves.Strength,
 ];
 
 const FAMILY_ABILITIES = [Abilities.RunAway, Abilities.FlashFire];
@@ -82,6 +87,7 @@ export default function registerPonytaSpecies(): void {
         26: [Moves.FireSpin],
         34: [Moves.TakeDown],
         43: [Moves.Agility],
+        45: [Moves.Bounce],
         53: [Moves.FireBlast],
       },
       teachable: [...FAMILY_TEACHABLE],
@@ -122,11 +128,12 @@ export default function registerPonytaSpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.Ember, Moves.TailWhip, Moves.Stomp, Moves.Growl, Moves.Tackle],
+        1: [Moves.Ember, Moves.TailWhip, Moves.Stomp, Moves.Growl, Moves.Tackle, Moves.QuickAttack],
         26: [Moves.FireSpin],
         34: [Moves.TakeDown],
         40: [Moves.FuryAttack],
         47: [Moves.Agility],
+        50: [Moves.Bounce],
         61: [Moves.FireBlast],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam],

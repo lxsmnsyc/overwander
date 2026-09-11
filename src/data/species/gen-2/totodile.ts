@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// GSC TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.IcePunch,
   Moves.Toxic,
@@ -36,6 +36,24 @@ const FAMILY_TEACHABLE = [
   Moves.HiddenPower,
   Moves.RainDance,
   Moves.Whirlpool,
+  Moves.AerialAce,
+  Moves.BodySlam,
+  Moves.BrickBreak,
+  Moves.Counter,
+  Moves.Dive,
+  Moves.DoubleEdge,
+  Moves.Facade,
+  Moves.FocusPunch,
+  Moves.IceBeam,
+  Moves.MegaKick,
+  Moves.MegaPunch,
+  Moves.Mimic,
+  Moves.SecretPower,
+  Moves.SeismicToss,
+  Moves.Substitute,
+  Moves.SwordsDance,
+  Moves.WaterPulse,
+  Moves.Waterfall,
 ];
 
 // What the two above the base pick up: the machines that ask for a
@@ -85,7 +103,16 @@ export default function registerTotodileSpecies(): void {
         52: [Moves.HydroPump],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.RazorWind, Moves.Thrash, Moves.RockSlide, Moves.Crunch, Moves.AncientPower],
+      egg: [
+        Moves.RazorWind,
+        Moves.Thrash,
+        Moves.RockSlide,
+        Moves.Crunch,
+        Moves.AncientPower,
+        Moves.DragonClaw,
+        Moves.MudSport,
+        Moves.WaterSport,
+      ],
     },
   });
 
@@ -130,7 +157,7 @@ export default function registerTotodileSpecies(): void {
         45: [Moves.Screech],
         55: [Moves.HydroPump],
       },
-      teachable: [...FAMILY_TEACHABLE, ...GROWN_TEACHABLE],
+      teachable: [...FAMILY_TEACHABLE, ...GROWN_TEACHABLE, Moves.RockSlide],
     },
   });
 
@@ -171,7 +198,14 @@ export default function registerTotodileSpecies(): void {
         47: [Moves.Screech],
         58: [Moves.HydroPump],
       },
-      teachable: [...FAMILY_TEACHABLE, ...GROWN_TEACHABLE, Moves.HyperBeam, Moves.Earthquake],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        ...GROWN_TEACHABLE,
+        Moves.HyperBeam,
+        Moves.Earthquake,
+        Moves.DragonClaw,
+        Moves.RockSlide,
+      ],
     },
   });
 }

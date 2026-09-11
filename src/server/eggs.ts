@@ -19,7 +19,14 @@ import { asOffset, toLocalISO, toLocalTime } from '../auth/local-time';
 import AleaRNG from '../core/alea';
 import Abilities from '../data/ids/abilities';
 import { Balls, type Items } from '../data/ids/items';
-import { ITEM_POOL, type ItemStack, PICKUP_BAND_ODDS, pickItem } from '../data/overworld/item-pool';
+import BERRY_POOL from '../data/overworld/berry-pool';
+import {
+  ITEM_POOL,
+  type ItemRarityGroups,
+  type ItemStack,
+  PICKUP_BAND_ODDS,
+  pickItem,
+} from '../data/overworld/item-pool';
 import type { Moves } from '../data/ids/moves';
 import type Natures from '../data/ids/natures';
 import type { Genders, Species } from '../data/ids/species';
@@ -356,15 +363,27 @@ export async function grantBredEgg(
  * them on. Which item is luck; how many were found is not, and that
  * part was already decided by the ability
  */
-function pickedUp(uid: string, walked: number, finds: number): Map<Items, number> {
+function pickedUp(
+  uid: string,
+  walked: number,
+  finds: { found: number; gathered: number },
+): Map<Items, number> {
   const rng = new AleaRNG(`${uid}pickup${walked}`);
   const found = new Map<Items, number>();
+  // The ground first and the bushes after, off one stream: two pools,
+  // one walk
+  const draws: [number, ItemRarityGroups][] = [
+    [finds.found, ITEM_POOL],
+    [finds.gathered, BERRY_POOL],
+  ];
 
-  for (let at = 0; at < finds; at++) {
-    const item = pickItem(ITEM_POOL, () => rng.random(), PICKUP_BAND_ODDS);
+  for (const [count, pool] of draws) {
+    for (let at = 0; at < count; at++) {
+      const item = pickItem(pool, () => rng.random(), PICKUP_BAND_ODDS);
 
-    if (item != null) {
-      found.set(item, (found.get(item) ?? 0) + 1);
+      if (item != null) {
+        found.set(item, (found.get(item) ?? 0) + 1);
+      }
     }
   }
   return found;

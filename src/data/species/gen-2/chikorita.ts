@@ -8,7 +8,7 @@ import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
-// GSC TM/HM moves shared by the whole family
+// TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.SolarBeam,
@@ -33,6 +33,13 @@ const FAMILY_TEACHABLE = [
   Moves.IronTail,
   Moves.HiddenPower,
   Moves.SunnyDay,
+  Moves.BulletSeed,
+  Moves.DoubleEdge,
+  Moves.Facade,
+  Moves.Mimic,
+  Moves.SecretPower,
+  Moves.Substitute,
+  Moves.SwordsDance,
 ];
 
 // What the two above the base pick up: the machines that ask for a
@@ -83,7 +90,16 @@ export default function registerChikoritaSpecies(): void {
         50: [Moves.SolarBeam],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.VineWhip, Moves.Counter, Moves.LeechSeed, Moves.Flail, Moves.AncientPower],
+      egg: [
+        Moves.VineWhip,
+        Moves.Counter,
+        Moves.LeechSeed,
+        Moves.Flail,
+        Moves.AncientPower,
+        Moves.GrassWhistle,
+        Moves.Ingrain,
+        Moves.NaturePower,
+      ],
     },
   });
 
@@ -128,7 +144,7 @@ export default function registerChikoritaSpecies(): void {
         47: [Moves.Safeguard],
         55: [Moves.SolarBeam],
       },
-      teachable: [...FAMILY_TEACHABLE, ...GROWN_TEACHABLE],
+      teachable: [...FAMILY_TEACHABLE, ...GROWN_TEACHABLE, Moves.Counter],
     },
   });
 
@@ -170,7 +186,13 @@ export default function registerChikoritaSpecies(): void {
         51: [Moves.Safeguard],
         61: [Moves.SolarBeam],
       },
-      teachable: [...FAMILY_TEACHABLE, ...GROWN_TEACHABLE, Moves.HyperBeam, Moves.Earthquake],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        ...GROWN_TEACHABLE,
+        Moves.HyperBeam,
+        Moves.Earthquake,
+        Moves.Counter,
+      ],
     },
   });
 }

@@ -102,6 +102,13 @@ export type EffectShape =
   | 'Caltrops'
   | 'Spout'
   | 'Roots'
+  | 'Press'
+  | 'Grid'
+  | 'Dart'
+  | 'Gale'
+  | 'Gyro'
+  | 'Petals'
+  | 'Cross'
   | 'Whiff';
 
 /** How long each of them takes at ordinary weight, in milliseconds. */
@@ -156,6 +163,13 @@ export const SPANS: Record<EffectShape, number> = {
   Caltrops: 560,
   Spout: 780,
   Roots: 660,
+  Press: 760,
+  Grid: 900,
+  Dart: 640,
+  Gale: 720,
+  Gyro: 900,
+  Petals: 760,
+  Cross: 460,
   Whiff: 320,
 };
 
@@ -210,6 +224,14 @@ export function landing(stage: Stage): Point {
  * once on each of them: a screen is one pane over the team
  */
 export const OVER_A_SIDE = new Set<EffectShape>(['Screen']);
+
+/**
+ * The shapes that are about the pokemon that cast the move rather
+ * than about what it landed on. A relay is what the caster is handing
+ * over on its way off the field, so it belongs over the caster even
+ * when the move reached somebody else on the way out
+ */
+export const ON_THE_CASTER = new Set<EffectShape>(['Relay']);
 
 /** The point in the middle of everything given. */
 export function middle(points: Point[]): Point {

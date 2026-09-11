@@ -1,4 +1,4 @@
-import Awards, { HOENN_HONORS, JOHTO_HONORS, KANTO_HONORS } from '../../ids/awards';
+import Awards, { HOENN_HONORS, JOHTO_HONORS, KANTO_HONORS, SINNOH_HONORS } from '../../ids/awards';
 import { Species } from '../../ids/species';
 
 /**
@@ -11,16 +11,23 @@ const enum Champion {
   Blue = 0,
   Lance = 1,
   Wallace = 2,
+  Cynthia = 3,
 }
 
 export { Champion };
 
-export const CHAMPIONS: Champion[] = [Champion.Blue, Champion.Lance, Champion.Wallace];
+export const CHAMPIONS: Champion[] = [
+  Champion.Blue,
+  Champion.Lance,
+  Champion.Wallace,
+  Champion.Cynthia,
+];
 
 export const CHAMPION_NAMES: Record<Champion, string> = {
   [Champion.Blue]: 'Blue',
   [Champion.Lance]: 'Lance',
   [Champion.Wallace]: 'Wallace',
+  [Champion.Cynthia]: 'Cynthia',
 };
 
 export const CHAMPION_CHARSETS: Record<Champion, string[]> = {
@@ -29,6 +36,7 @@ export const CHAMPION_CHARSETS: Record<Champion, string[]> = {
   // Sootopolis' gym is Juan's here, so Wallace is only ever the man
   // at the top, in both coats he is drawn in
   [Champion.Wallace]: ['characters/rse/wallace', 'characters/oras/wallace'],
+  [Champion.Cynthia]: ['characters/dppt/cynthia'],
 };
 
 /** The title a champion's seat is worth */
@@ -36,6 +44,7 @@ export const CHAMPION_TITLES: Record<Champion, Awards> = {
   [Champion.Blue]: Awards.KantoChampion,
   [Champion.Lance]: Awards.JohtoChampion,
   [Champion.Wallace]: Awards.HoennChampion,
+  [Champion.Cynthia]: Awards.SinnohChampion,
 };
 
 /**
@@ -53,6 +62,7 @@ export const CHAMPION_HONORS: Record<Champion, Awards[]> = {
   [Champion.Blue]: KANTO_HONORS,
   [Champion.Lance]: JOHTO_HONORS,
   [Champion.Wallace]: HOENN_HONORS,
+  [Champion.Cynthia]: SINNOH_HONORS,
 };
 
 /**
@@ -90,5 +100,15 @@ export const CHAMPION_PARTIES: Record<Champion, Species[]> = {
     Species.Whiscash,
     Species.Gyarados,
     Species.Milotic,
+  ],
+  // Platinum's six, Garchomp last. It is the line-up she is
+  // remembered for, and the one type nothing in it shares
+  [Champion.Cynthia]: [
+    Species.Spiritomb,
+    Species.Roserade,
+    Species.Togekiss,
+    Species.Lucario,
+    Species.Milotic,
+    Species.Garchomp,
   ],
 };

@@ -178,6 +178,9 @@ const enum Executive {
   Courtney = 5,
   Matt = 6,
   Shelly = 7,
+  Mars = 8,
+  Jupiter = 9,
+  Saturn = 10,
 }
 
 export { Executive };
@@ -191,6 +194,9 @@ export const EXECUTIVE_NAMES: Record<Executive, string> = {
   [Executive.Courtney]: 'Courtney',
   [Executive.Matt]: 'Matt',
   [Executive.Shelly]: 'Shelly',
+  [Executive.Mars]: 'Mars',
+  [Executive.Jupiter]: 'Jupiter',
+  [Executive.Saturn]: 'Saturn',
 };
 
 export const EXECUTIVE_CHARSETS: Record<Executive, string[]> = {
@@ -202,6 +208,9 @@ export const EXECUTIVE_CHARSETS: Record<Executive, string[]> = {
   [Executive.Courtney]: ['characters/oras/courtney'],
   [Executive.Matt]: ['characters/oras/matt'],
   [Executive.Shelly]: ['characters/oras/shelly'],
+  [Executive.Mars]: ['characters/dppt/mars'],
+  [Executive.Jupiter]: ['characters/dppt/jupiter'],
+  [Executive.Saturn]: ['characters/dppt/saturn'],
 };
 
 /** The mark putting one of them down is worth, one to each */
@@ -214,6 +223,9 @@ export const EXECUTIVE_HONORS: Record<Executive, Awards> = {
   [Executive.Courtney]: Awards.CourtneyDefeated,
   [Executive.Matt]: Awards.MattDefeated,
   [Executive.Shelly]: Awards.ShellyDefeated,
+  [Executive.Mars]: Awards.MarsDefeated,
+  [Executive.Jupiter]: Awards.JupiterDefeated,
+  [Executive.Saturn]: Awards.SaturnDefeated,
 };
 
 /** What each says as they bar the cell */
@@ -226,6 +238,9 @@ export const EXECUTIVE_QUOTES: Record<Executive, string> = {
   [Executive.Courtney]: 'Analysing your chances. Result: none. Proceeding.',
   [Executive.Matt]: 'Ooooh, a challenger! Do not go down too fast, I get bored.',
   [Executive.Shelly]: 'The sea takes what it wants. Today it wants you out of the way.',
+  [Executive.Mars]: 'You are in the way of a better world. Move, or be moved.',
+  [Executive.Jupiter]: 'Do not take this personally. I barely take it personally.',
+  [Executive.Saturn]: 'I have my doubts about all this. None of them are about beating you.',
 };
 
 /**

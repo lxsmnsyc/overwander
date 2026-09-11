@@ -85,6 +85,37 @@ describe("Sinnoh's moves", () => {
     expect(bird.status[Statuses.Roosting]).toBeUndefined();
   });
 
+  it('lands a U-turn on the way out rather than on its way off the field', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const leaver = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB);
+
+    leaver.enter();
+    target.enter();
+
+    const whole = target.health;
+
+    // The first step is the blow
+    leaver.triggerMoveEffect(Moves.UTurn, unitTarget(target), 1);
+    battle.tick(1);
+
+    expect(target.health).toBeLessThan(whole);
+    // Still standing there: nothing has swapped yet
+    expect(leaver.status[Statuses.Switching]).toBeUndefined();
+
+    const hurt = target.health;
+
+    // The second is the walk off the field, which costs the target
+    // nothing more
+    leaver.triggerMoveEffect(Moves.UTurn, unitTarget(target), 0);
+    battle.tick(1);
+
+    expect(target.health).toBe(hurt);
+    expect(leaver.status[Statuses.Switching]).toBeDefined();
+    expect(mate.status[Statuses.Switching]).toBeDefined();
+  });
+
   it('reads a Dark type with Miracle Eye without opening it to everything', () => {
     const { battle, teamA, teamB } = createBattle();
     const seer = createUnit(battle, teamA);

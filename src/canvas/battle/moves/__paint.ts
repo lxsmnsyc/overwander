@@ -140,6 +140,53 @@ export function ripple(
   context.stroke();
 }
 
+/**
+ * A ring seen edge-on at an angle: a hoop turning about its own axis.
+ * `squash` is how much of its width it is showing, so running that
+ * from one to nothing and back is a ring turning through the flat
+ */
+export function hoop(
+  context: CanvasRenderingContext2D,
+  [x, y]: Point,
+  radius: number,
+  squash: number,
+  tilt: number,
+  painted: Painted,
+): void {
+  context.beginPath();
+  // Never quite flat: a hoop drawn at no width at all disappears for
+  // a frame, which reads as a ring that blinked rather than turned
+  context.ellipse(x, y, radius, Math.max(radius * 0.08, radius * squash), tilt, 0, Math.PI * 2);
+  context.strokeStyle = fade(painted.color, painted.alpha ?? 1);
+  context.lineWidth = painted.width ?? 2;
+  context.stroke();
+}
+
+/**
+ * A petal: a leaf shape pointing whichever way it is turned, filled
+ * rather than outlined, since a petal drawn as an outline at this size
+ * is a ring
+ */
+export function petal(
+  context: CanvasRenderingContext2D,
+  [x, y]: Point,
+  size: number,
+  angle: number,
+  painted: Painted,
+): void {
+  context.save();
+  context.translate(x, y);
+  context.rotate(angle);
+  context.beginPath();
+  context.moveTo(0, -size);
+  context.quadraticCurveTo(size * 0.72, 0, 0, size);
+  context.quadraticCurveTo(-size * 0.72, 0, 0, -size);
+  context.closePath();
+  context.fillStyle = fade(painted.color, painted.alpha ?? 1);
+  context.fill();
+  context.restore();
+}
+
 /** A solid ball of light: a core, an orb, a charge gathering. */
 export function orb(
   context: CanvasRenderingContext2D,
@@ -345,6 +392,97 @@ export function beam(
   context.lineCap = 'butt';
 }
 
+/**
+ * A stream of wind from one point to another: strands turning around
+ * the line between them, narrow where they leave and wide where they
+ * arrive. `reach` is how far along it has got and `turn` how far the
+ * strands have wound on, so holding one and advancing the other draws
+ * a blast that keeps blowing rather than one that travels
+ */
+export function funnel(
+  context: CanvasRenderingContext2D,
+  from: Point,
+  to: Point,
+  reach: number,
+  strands: number,
+  width: number,
+  turn: number,
+  painted: Painted,
+): void {
+  const dx = to[0] - from[0];
+  const dy = to[1] - from[1];
+  const length = Math.hypot(dx, dy) || 1;
+  const steps = 22;
+  const far = Math.max(0, Math.min(1, reach));
+
+  context.strokeStyle = fade(painted.color, painted.alpha ?? 1);
+  context.lineWidth = painted.width ?? 2;
+  context.lineCap = 'round';
+  for (let strand = 0; strand < strands; strand += 1) {
+    context.beginPath();
+    for (let step = 0; step <= steps; step += 1) {
+      const along = (step / steps) * far;
+      const [x, y] = between(from, to, along);
+      // Wider the further it has blown, so the pokemon at the far end
+      // stands in the mouth of it
+      const swing =
+        Math.sin(along * Math.PI * 2.5 + turn + (strand / strands) * Math.PI * 2) *
+        width *
+        (0.25 + along);
+
+      if (step === 0) {
+        context.moveTo(x, y);
+      } else {
+        context.lineTo(x - (dy / length) * swing, y + (dx / length) * swing);
+      }
+    }
+    context.stroke();
+  }
+  context.lineCap = 'butt';
+}
+
+/**
+ * A straight cut: a blade widest in the middle and coming to a point
+ * at both ends, filled rather than stroked. `bow` bends it, and at
+ * nothing it is a line — what makes it read as an edge rather than as
+ * a rope is the taper, not the curve
+ */
+export function edge(
+  context: CanvasRenderingContext2D,
+  from: Point,
+  to: Point,
+  width: number,
+  bow: number,
+  painted: Painted,
+): void {
+  const dx = to[0] - from[0];
+  const dy = to[1] - from[1];
+  const length = Math.max(1, Math.hypot(dx, dy));
+  const across: Point = [-(dy / length), dx / length];
+  const middle: Point = [
+    (from[0] + to[0]) / 2 + across[0] * bow,
+    (from[1] + to[1]) / 2 + across[1] * bow,
+  ];
+
+  context.beginPath();
+  context.moveTo(from[0], from[1]);
+  context.quadraticCurveTo(
+    middle[0] + across[0] * width,
+    middle[1] + across[1] * width,
+    to[0],
+    to[1],
+  );
+  context.quadraticCurveTo(
+    middle[0] - across[0] * width,
+    middle[1] - across[1] * width,
+    from[0],
+    from[1],
+  );
+  context.closePath();
+  context.fillStyle = fade(painted.color, painted.alpha ?? 1);
+  context.fill();
+}
+
 /** A curved cut through a point: a claw, a blade, a gust. */
 export function slash(
   context: CanvasRenderingContext2D,
@@ -468,6 +606,63 @@ export function pane(
   context.fill();
   context.strokeStyle = fade(painted.color, painted.alpha ?? 1);
   context.lineWidth = painted.width ?? 2;
+  context.stroke();
+}
+
+/**
+ * A room, drawn as a wireframe box standing on the ground. The far
+ * edge is narrower and higher than the near one, which is the same
+ * false perspective `pane` leans on
+ */
+export function box(
+  context: CanvasRenderingContext2D,
+  [x, y]: Point,
+  width: number,
+  height: number,
+  depth: number,
+  painted: Painted,
+): void {
+  const far = width * 0.68;
+  const floor: Point[] = [
+    [x - width, y],
+    [x + width, y],
+    [x + far, y - depth],
+    [x - far, y - depth],
+  ];
+
+  context.strokeStyle = fade(painted.color, painted.alpha ?? 1);
+  context.lineWidth = painted.width ?? 2;
+  context.beginPath();
+  for (const [at, [cornerX, cornerY]] of floor.entries()) {
+    if (at === 0) {
+      context.moveTo(cornerX, cornerY);
+    } else {
+      context.lineTo(cornerX, cornerY);
+    }
+  }
+  context.closePath();
+  context.fillStyle = fade(painted.color, (painted.alpha ?? 1) * 0.18);
+  context.fill();
+  context.stroke();
+
+  // The ceiling is the floor lifted, and the four posts are what
+  // makes the pair read as one room rather than as two rings
+  context.beginPath();
+  for (const [at, [cornerX, cornerY]] of floor.entries()) {
+    if (at === 0) {
+      context.moveTo(cornerX, cornerY - height);
+    } else {
+      context.lineTo(cornerX, cornerY - height);
+    }
+  }
+  context.closePath();
+  context.stroke();
+
+  context.beginPath();
+  for (const [cornerX, cornerY] of floor) {
+    context.moveTo(cornerX, cornerY);
+    context.lineTo(cornerX, cornerY - height);
+  }
   context.stroke();
 }
 

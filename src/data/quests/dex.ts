@@ -41,6 +41,10 @@ export const REGION_DEXES: Partial<Record<Regions, RegionDex>> = {
   // 135 more, and the same shape again: a fifth, half, and all but
   // the two mythicals, since a relic is not something a walk turns up
   [Regions.Hoenn]: { milestones: [27, 68, 133], medal: Awards.HoennDexMedal },
+  // 107 more, and the same shape once more: a fifth, half, and all but
+  // the four a relic calls, which is Darkrai, Manaphy, Shaymin and
+  // Arceus
+  [Regions.Sinnoh]: { milestones: [21, 54, 103], medal: Awards.SinnohDexMedal },
 };
 
 /**

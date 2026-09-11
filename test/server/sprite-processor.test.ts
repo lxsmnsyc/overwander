@@ -12,7 +12,7 @@ import {
   overworldSlug,
 } from '../../src/server/sprites/files';
 import { FACINGS, GRID_NAME, packPokengine, parseOrder } from '../../src/server/sprites/pokengine';
-import { storedAs } from '../../src/components/admin/sprite-processor/shared';
+import { storedAs } from '../../src/components/sprite-processor/shared';
 
 /**
  * The sprite processor's arithmetic.

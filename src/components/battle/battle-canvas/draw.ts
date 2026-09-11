@@ -22,6 +22,7 @@ import type { Point } from '../../../canvas/sprite-sheet';
 import { Stats } from '../../../data/constants/stats';
 import Abilities from '../../../data/ids/abilities';
 import { getMoveData } from '../../../data/moves';
+import { SpriteAnim } from '../../../data/ids/sprite-anims';
 
 /**
  * Painting one slot: the pokemon, the bars over it and the words under
@@ -409,6 +410,51 @@ function sparkle(
   );
 }
 
+/**
+ * How much of a substituted pokemon is left showing behind its doll,
+ * and how far back the doll comes in from as it goes up
+ */
+const BEHIND = 0.3;
+const STAND_RISE = 0.35;
+
+/**
+ * The doll a substituted pokemon is standing behind.
+ *
+ * Drawn after the pokemon and on the same spot, so the two crossfade
+ * in place: the substitute is what is taking the hits, and what a
+ * watcher is meant to be looking at while it is up. It arrives from
+ * a little behind and settles, which is what reads as something
+ * stepping in front rather than fading up out of the floor
+ */
+function drawStand(context: CanvasRenderingContext2D, slot: Slot, onto?: SlotBatch): void {
+  const stand = slot.stand;
+  const sprite = stand?.sprite;
+
+  if (stand == null || sprite?.ready !== true || stand.share <= 0) {
+    return;
+  }
+
+  const [x, y] = [slot.x + slot.offset[0], slot.y + slot.offset[1]];
+  const scale = scaleOf(slot);
+  const placement = { scale, anchor: 'shadow' } as const;
+  // Back and up while it is coming, nothing once it has arrived
+  const back = (1 - stand.share) * sprite.frameSize.height * scale * STAND_RISE;
+  const spot: [number, number] = [x, y - back];
+
+  sprite.play(SpriteAnim.Idle, { direction: slot.facing, loop: true });
+  context.globalAlpha = stand.share;
+
+  const quad = onto == null ? null : sprite.quadOf(spot[0], spot[1], placement);
+
+  if (onto == null || quad == null) {
+    sprite.drawShadow(context, spot[0], spot[1], placement);
+    sprite.draw(context, spot[0], spot[1], placement);
+    return;
+  }
+  shade(sprite.shadowOf(spot[0], spot[1], placement), onto, stand.share);
+  onto.batch.quad(quad.sheet, quad.source, cornersOf(quad), stand.share);
+}
+
 export function drawSlot(
   context: CanvasRenderingContext2D,
   slot: Slot,
@@ -420,9 +466,16 @@ export function drawSlot(
   const { unit } = slot;
   const maxHealth = unit.checkStat(Stats.HP, 0);
   const share = maxHealth <= 0 ? 0 : unit.health / maxHealth;
+  /**
+   * How much of the pokemon itself is showing. A substituted one is
+   * standing behind its doll rather than gone: it is dimmed to
+   * `BEHIND` as the doll comes up, so a watcher can still see whose
+   * substitute it is
+   */
+  const stood = slot.stand?.share ?? 0;
   // What a downed pokemon is left drawn at. The painted pass sets it
   // on the context; the batch takes it a quad at a time
-  const alpha = unit.alive ? 1 : 0.35;
+  const alpha = (unit.alive ? 1 : 0.35) * (1 - stood * (1 - BEHIND));
 
   context.globalAlpha = alpha;
 
@@ -564,6 +617,10 @@ export function drawSlot(
         );
       }
     }
+    // After the body and on the same spot, whether or not the body
+    // itself had a sheet to draw
+    drawStand(context, slot, onto);
+    context.globalAlpha = alpha;
   }
 
   // A bar no wider than the pokemon has room for. A crowded field —

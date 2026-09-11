@@ -12,7 +12,6 @@ import {
   FRONTIER_BRAIN_TITLES,
   FRONTIER_FACILITY_NAMES,
   FRONTIER_RENTAL_OFFER,
-  FRONTIER_TEAM_SIZE,
   FRONTIER_TIME_TURNS,
   FrontierBrain,
   FrontierRule,
@@ -23,6 +22,7 @@ import {
   LEGEND_NAMES,
   Legend,
   PIKE_CURTAINS,
+  frontierTeamSize,
   getEliteBadges,
 } from '../../../data/overworld/experts';
 import Landmark from '../../../data/overworld/landmark';
@@ -102,6 +102,14 @@ const GYM_LEADER_QUOTES: Record<GymLeader, string> = {
   [GymLeader.Tate]: 'My sister knows what I am about to do. Do you?',
   [GymLeader.Liza]: 'My brother and I share one badge. You still have to earn it.',
   [GymLeader.Juan]: 'Water is elegance, and elegance is strength. Observe.',
+  [GymLeader.Roark]: 'I dig fossils out of this rock all day. Digging you out will be quicker.',
+  [GymLeader.Gardenia]: 'Grass pokemon are wonderful, and mine are wonderfully mean.',
+  [GymLeader.Maylene]: 'I am young to keep a gym. Nobody has taken it off me yet.',
+  [GymLeader.CrasherWake]: 'Crash! The Fen Badge is behind me, and so is a wall of water.',
+  [GymLeader.Fantina]: 'My ghosts dance, and they never miss a step. Shall we?',
+  [GymLeader.Byron]: 'My son keeps a gym of his own. Neither of us gives anything away.',
+  [GymLeader.Candice]: 'Focus! That is all it takes. Mine has never once slipped.',
+  [GymLeader.Volkner]: 'I have been bored for years. Please be worth the electricity.',
 };
 
 /** Which league each champion is the top of */
@@ -109,6 +117,7 @@ const CHAMPION_LEAGUES: Record<Champion, string> = {
   [Champion.Blue]: 'Kanto',
   [Champion.Lance]: 'Johto',
   [Champion.Wallace]: 'Hoenn',
+  [Champion.Cynthia]: 'Sinnoh',
 };
 
 /** Which league each seat belongs to, for the copy that names it */
@@ -125,6 +134,10 @@ const ELITE_MEMBER_LEAGUES: Record<EliteMember, string> = {
   [EliteMember.Phoebe]: 'Hoenn',
   [EliteMember.Glacia]: 'Hoenn',
   [EliteMember.Drake]: 'Hoenn',
+  [EliteMember.Aaron]: 'Sinnoh',
+  [EliteMember.Bertha]: 'Sinnoh',
+  [EliteMember.Flint]: 'Sinnoh',
+  [EliteMember.Lucian]: 'Sinnoh',
 };
 
 const ELITE_QUOTES: Record<EliteMember, string> = {
@@ -140,6 +153,10 @@ const ELITE_QUOTES: Record<EliteMember, string> = {
   [EliteMember.Phoebe]: 'I trained with the spirits on Mt. Pyre. They are still with me.',
   [EliteMember.Glacia]: 'I came here for warmth, and my ice only grew fiercer. See it.',
   [EliteMember.Drake]: 'Do you know what it means to fight beside a dragon? Show me.',
+  [EliteMember.Aaron]: 'Bug pokemon are the strongest of all. I will show you why.',
+  [EliteMember.Bertha]: 'I have been at this longer than you have been alive, dear.',
+  [EliteMember.Flint]: 'My hair is not the hottest thing here. Watch.',
+  [EliteMember.Lucian]: 'One moment, let me finish this page. Now then.',
 };
 
 /** What a legend says, where they say anything at all */
@@ -153,6 +170,8 @@ const CHAMPION_GREETINGS: Record<Champion, string> = {
   [Champion.Blue]: 'Blue smirks. “I am the Champion here. Smell ya later.”',
   [Champion.Lance]: 'Lance looks you over. “So you made it this far. Show me your best.”',
   [Champion.Wallace]: 'Wallace bows. “Let us make this beautiful, and let us make it brief.”',
+  [Champion.Cynthia]:
+    'Cynthia closes her book. “I have been waiting for somebody worth the whole team.”',
 };
 
 /**
@@ -178,6 +197,14 @@ const FRONTIER_GREETINGS: Record<FrontierBrain, string> = {
     'In my palace nobody takes orders. Bring three whose hearts you already know.',
   [FrontierBrain.Tucker]:
     'Show me your three first. The Dome always answers, and the crowd loves an answer.',
+  [FrontierBrain.Palmer]: 'My son talks about you. Let us find out whether he was exaggerating.',
+  [FrontierBrain.Thorton]:
+    'Rentals, both sides, no preparation. I have run the numbers. You have not.',
+  [FrontierBrain.Dahlia]: 'Spin it! Whatever it lands on lands on both of us. That is the fun.',
+  [FrontierBrain.Darach]: 'The lady is watching. I am afraid the house keeps its own medicine.',
+  [FrontierBrain.Caitlin]:
+    'Darach usually does this for me. Today I am curious enough to do it myself.',
+  [FrontierBrain.Argenta]: 'One of yours, one of mine. No hiding behind anybody else.',
 };
 
 /**
@@ -202,6 +229,13 @@ const FRONTIER_RULE_TERMS: Record<FrontierRule, string> = {
   [FrontierRule.Countered]: `The house names nobody until you do: his 3 are drawn against yours
      the moment they are frozen, one apiece, so a team that covers everything covers nothing
      here. `,
+  [FrontierRule.Rolled]: `The wheel is spun as you walk in and it lands on both sides: a sky for
+     the whole fight, every held item left at the door, everybody poisoned, or everybody
+     mended. `,
+  [FrontierRule.Unhealed]: `The house keeps the medicine: nothing puts health back on your side
+     for the whole fight, not a potion, not a berry, not a drain. Theirs heal as usual. `,
+  [FrontierRule.Singled]: `One of yours against one of hers, and hers is drawn against yours the
+     moment it is frozen. Nothing can cover for anything else. `,
 };
 
 /** What a Brain's house asks to see: the crown of its region */
@@ -396,14 +430,17 @@ export default function challengerOf(
     return {
       name,
       levels: FRONTIER_PARTY_LEVELS,
-      bring: FRONTIER_TEAM_SIZE,
+      bring: frontierTeamSize(FRONTIER_BRAIN_RULES[brain]),
       rented: FRONTIER_BRAIN_RULES[brain] === FrontierRule.Rented,
-      unseen: FRONTIER_BRAIN_RULES[brain] === FrontierRule.Countered,
+      unseen:
+        FRONTIER_BRAIN_RULES[brain] === FrontierRule.Countered ||
+        FRONTIER_BRAIN_RULES[brain] === FrontierRule.Singled,
       greeting: `${name} keeps the ${FRONTIER_FACILITY_NAMES[brain]}.
         “${FRONTIER_GREETINGS[brain]}”`,
-      stakes: `${FRONTIER_RULE_TERMS[FRONTIER_BRAIN_RULES[brain]]} Three of theirs at level
-        ${FRONTIER_PARTY_LEVELS[0]}, each carrying two items and two abilities, against three of
-        yours. Win and the ${AWARD_NAMES[silver]} is yours, with a purse to match the rank. Hold
+      stakes: `${FRONTIER_RULE_TERMS[FRONTIER_BRAIN_RULES[brain]]} ${frontierTeamSize(
+        FRONTIER_BRAIN_RULES[brain],
+      )} of theirs at level ${FRONTIER_PARTY_LEVELS[0]}, each carrying two items and two
+        abilities, against as many of yours. Win and the ${AWARD_NAMES[silver]} is yours, with a purse to match the rank. Hold
         it and they bring their second three out next time, which is what the
         ${AWARD_NAMES[gold]} is for. Lose and you lose nothing but the fight.`,
     };

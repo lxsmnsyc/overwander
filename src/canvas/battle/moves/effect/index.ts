@@ -14,6 +14,7 @@ import { BY_TYPE, NAMED } from './named';
 
 import {
   type EffectShape,
+  ON_THE_CASTER,
   OVER_A_SIDE,
   SPANS,
   type ShapePainter,
@@ -37,9 +38,22 @@ const WINDING_UP = new Set<Moves>([
   Moves.RazorWind,
   Moves.Dig,
   Moves.Fly,
+  Moves.Dive,
+  Moves.Bounce,
+  Moves.ShadowForce,
   Moves.Teleport,
   Moves.Bide,
 ]);
+
+/**
+ * The moves whose first step is the blow and whose second is
+ * something else. U-turn strikes and then leaves, so the hit belongs
+ * to the step the engine deals it on and the landing table holds what
+ * the move does at the end of it
+ */
+const WINDING_AS: Partial<Record<Moves, EffectShape>> = {
+  [Moves.UTurn]: 'Dart',
+};
 
 /**
  * Where a contact hit stops being a jab and where it becomes a whole
@@ -95,19 +109,22 @@ function contactShape(move: Moves, type: Types): EffectShape {
 
 /** What this move does when it lands. */
 export function effectShapeFor(move: Moves): EffectShape {
-  // A move that moves a stat is drawn by what it did to it, ahead of
-  // anything else it looks like: one picture for every rise and the
-  // same turned over for every drop, on whoever it landed on. What
-  // the move was, a growl or a flash, is the gap it crossed
+  const named = NAMED[move];
+
+  // A move with a picture of its own keeps it, stat or no stat: a
+  // breeze of petals is what Sweet Scent is, and the evasion it takes
+  // off is what the move does rather than what it looks like
+  if (named != null) {
+    return named;
+  }
+  // Everything else that moves a stat is drawn by what it did to it:
+  // one picture for every rise and the same turned over for every
+  // drop, on whoever it landed on. What the move was, a growl or a
+  // flash, is the gap it crossed
   const stage = getStageMoveEffect(move);
 
   if (stage != null) {
     return stage.value > 0 ? 'Boost' : 'Drop';
-  }
-  const named = NAMED[move];
-
-  if (named != null) {
-    return named;
   }
 
   const data = getMoveData(move);
@@ -154,8 +171,15 @@ export function effectShapeFor(move: Moves): EffectShape {
  * resolved was only the wind-up
  */
 export default function moveEffectVisual(move: Moves, steps = 0): PaintedVisual | null {
-  if (steps > 0 && WINDING_UP.has(move)) {
-    return null;
+  if (steps > 0) {
+    if (WINDING_UP.has(move)) {
+      return null;
+    }
+    const early = WINDING_AS[move];
+
+    if (early != null) {
+      return painted(early, move, weightOf(move));
+    }
   }
   return painted(effectShapeFor(move), move, weightOf(move));
 }
@@ -179,7 +203,8 @@ function painted(shape: EffectShape, move: Moves, weight: number): PaintedVisual
     // is — it draws one landing and this runs it for each. The seed
     // moves with the target so a spread move scatters differently on
     // each of them rather than stamping the same picture out
-    const landings = stage.targets.length > 0 ? stage.targets : [stage.source];
+    const landings =
+      stage.targets.length > 0 && !ON_THE_CASTER.has(shape) ? stage.targets : [stage.source];
 
     if (OVER_A_SIDE.has(shape)) {
       PAINTERS[shape](context, { ...stage, targets: [middle(landings)] }, share, {

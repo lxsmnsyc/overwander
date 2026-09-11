@@ -16,6 +16,8 @@ import ChunkSnapshot, { NPC_INTERVAL, RocketRank, type Spawn } from '../overworl
 import getWorld from '../overworld/current';
 import { EncounterType } from '../overworld/encounter';
 import { PLAYER_ALLIANCE } from '../overworld/raid';
+import { getMaxHealth } from '../auth/health';
+import { packStatuses } from '../data/ids/status';
 import {
   FRONTIER_OUTFIT,
   FRONTIER_PARTY_LEVELS,
@@ -40,17 +42,23 @@ import { trainerLevels } from '../data/overworld/trainers';
 import type Awards from '../data/ids/awards';
 import type { CatchSnapshot } from '../auth/catch-snapshot';
 import {
+  ARCADE_PANEL_WEATHER,
+  ArcadePanel,
   CHAMPION_HONORS,
   CHAMPION_TITLES,
   ELITE_MEMBER_HONORS,
   FRONTIER_BRAIN_RULES,
   FRONTIER_BRAIN_SYMBOLS,
   FRONTIER_BRAIN_TITLES,
-  FRONTIER_TEAM_SIZE,
   FrontierRule,
   GYM_LEADER_BADGES,
   LEGEND_HONORS,
+  PIKE_CURTAIN_STATUSES,
+  PikeCurtain,
+  arcadeCurtain,
+  frontierTeamSize,
   getEliteBadges,
+  pickArcadePanel,
   pickPikeCurtain,
   rollGymMachine,
 } from '../data/overworld/experts';
@@ -296,11 +304,31 @@ export async function enterStop(
 }
 
 /**
- * The house's own three, under its own rule. Only the Pyramid changes
- * them: it bars held items, and it bars them on both sides
+ * The house's own three, as its rule leaves them.
+ *
+ * Two houses reach this side of the field: the Pyramid bars held
+ * items, and the Arcade's panel lands on everybody, so whatever it
+ * did to the challenger it did here too
  */
-function houseParty(party: CatchSnapshot[], rules: FrontierRule): CatchSnapshot[] {
-  return rules === FrontierRule.Bare ? party.map((one) => ({ ...one, items: [] })) : party;
+function houseParty(
+  party: CatchSnapshot[],
+  options: { stripped: boolean; panel: ArcadePanel | undefined },
+): CatchSnapshot[] {
+  const carried = options.stripped ? party.map((one) => ({ ...one, items: [] })) : party;
+  const room = arcadeCurtain(options.panel);
+
+  if (room == null) {
+    return carried;
+  }
+  if (room === PikeCurtain.Healed) {
+    return carried.map((one) => ({ ...one, health: getMaxHealth(one), statuses: 0 }));
+  }
+
+  const status = PIKE_CURTAIN_STATUSES[room];
+
+  return status == null
+    ? carried
+    : carried.map((one) => ({ ...one, statuses: one.statuses | packStatuses([status]) }));
 }
 
 /**
@@ -376,7 +404,7 @@ export async function startStopBattle(
   // A house fight is three a side. The cap is refused rather than
   // trimmed: which three were brought is the player's decision, and
   // silently dropping the rest would field a party they did not pick
-  if (brain != null && catches.length > FRONTIER_TEAM_SIZE) {
+  if (brain != null && catches.length > frontierTeamSize(rules)) {
     return null;
   }
 
@@ -395,6 +423,13 @@ export async function startStopBattle(
     rules === FrontierRule.Curtained
       ? pickPikeCurtain(new AleaRNG(`${stop}:curtain`).random())
       : undefined;
+  // And the Arcade's panel, drawn the same way and landing on both
+  // sides rather than on the challenger alone
+  const panel =
+    rules === FrontierRule.Rolled
+      ? pickArcadePanel(new AleaRNG(`${stop}:panel`).random())
+      : undefined;
+  const stripped = rules === FrontierRule.Bare || panel === ArcadePanel.Stripped;
   // The Factory lends both sides their three, so there is nothing of
   // the player's to freeze: the crate is drawn from once for the
   // challenge and the row belongs to them without standing for any
@@ -412,8 +447,8 @@ export async function startStopBattle(
   const party =
     rented == null
       ? await publishTeamSnapshot(uid, catches, PLAYER_ALLIANCE, now, {
-          bare: rules === FrontierRule.Bare,
-          curtain,
+          bare: stripped,
+          curtain: curtain ?? arcadeCurtain(panel),
         })
       : newDocId();
 
@@ -424,7 +459,7 @@ export async function startStopBattle(
   // freeze leaves behind anything already fighting, so its three are
   // drawn against the party that actually made the field
   const fielded =
-    rules === FrontierRule.Countered
+    rules === FrontierRule.Countered || rules === FrontierRule.Singled
       ? counterParty(stop, await readPublishedSpecies(party))
       : toSpawns(record.party);
   // The cell's landmark decides what they field: only Team Rocket
@@ -450,7 +485,11 @@ export async function startStopBattle(
   // The sky over the cell when the fight was accepted, read here
   // rather than trusted from the client and kept on the row, since
   // the world's own moves on within the hour
-  const weather = getWorld().getWeather(record.chunk.x, record.chunk.y, snapshot.weatherWindow);
+  // The Arcade puts its own sky over the fight where the panel is a
+  // weather one; everywhere else it is the sky over the cell
+  const weather =
+    (panel == null ? null : ARCADE_PANEL_WEATHER[panel]) ??
+    getWorld().getWeather(record.chunk.x, record.chunk.y, snapshot.weatherWindow);
 
   await tx(async (transaction) => {
     // A rented party is the player's to field and nobody's to keep:
@@ -480,7 +519,7 @@ export async function startStopBattle(
                       duellist ?? undefined,
                     ),
                   ),
-                  rules,
+                  { stripped, panel },
                 ),
               )})
     `;

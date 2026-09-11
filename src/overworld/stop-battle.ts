@@ -5,6 +5,9 @@ import createBattle from '../battle/setup';
 import { PVP_BATTLE_LIMITS } from '../data/constants/battle-limits';
 import Weather, { toBattleWeather } from '../data/overworld/weather';
 import { FRONTIER_TIME_LIMIT, FrontierRule } from '../data/overworld/experts';
+import { BattleEvents } from '../battle/events';
+import { EventPriority } from '../core/event-emitter';
+import { PLAYER_ALLIANCE } from './raid';
 import type Battle from '../battle/core';
 import { type RaidBattle, fieldTeams } from './raid-battle';
 
@@ -50,7 +53,21 @@ export function createTrainerBattle(
   if (mode === BattleModes.Npc) {
     battle.setWeather(toBattleWeather(weather));
   }
-  return { battle, ...fieldTeams(battle, teams, null) };
+
+  const staged = fieldTeams(battle, teams, null);
+  // The Castle, where the service is the house's: nothing puts health
+  // back on the challenger's side, whatever asked. It is a veto rather
+  // than a heal of zero, so a potion is refused rather than spent
+  const guests = staged.alliances.get(PLAYER_ALLIANCE);
+
+  if (rules === FrontierRule.Unhealed && guests != null) {
+    battle.on(BattleEvents.CheckUnitCanHeal, EventPriority.Post, (event) => {
+      if (event.target.team.alliance === guests) {
+        event.success = false;
+      }
+    });
+  }
+  return { battle, ...staged };
 }
 
 /**

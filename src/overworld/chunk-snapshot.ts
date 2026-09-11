@@ -1398,7 +1398,10 @@ export default class ChunkSnapshot {
     // The Dome names nobody in advance: its three are drawn against
     // the challenger's once those are frozen, which is a question a
     // chunk cannot answer
-    if (FRONTIER_BRAIN_RULES[brain] === FrontierRule.Countered) {
+    if (
+      FRONTIER_BRAIN_RULES[brain] === FrontierRule.Countered ||
+      FRONTIER_BRAIN_RULES[brain] === FrontierRule.Singled
+    ) {
       this.frontierStops.set(key, []);
       return [];
     }

@@ -89,6 +89,40 @@ const enum Awards {
   MattDefeated = 69,
   ShellyDefeated = 70,
   ArchieDefeated = 71,
+  CoalBadge = 72,
+  ForestBadge = 73,
+  CobbleBadge = 74,
+  FenBadge = 75,
+  RelicBadge = 76,
+  MineBadge = 77,
+  IcicleBadge = 78,
+  BeaconBadge = 79,
+  AaronDefeated = 80,
+  BerthaDefeated = 81,
+  FlintDefeated = 82,
+  LucianDefeated = 83,
+  SinnohChampion = 84,
+  /** Sinnoh's dex filled to 103 caught */
+  SinnohDexMedal = 85,
+  GalacticGruntDefeated = 86,
+  MarsDefeated = 87,
+  JupiterDefeated = 88,
+  SaturnDefeated = 89,
+  CyrusDefeated = 90,
+  /**
+   * Sinnoh's Frontier hangs prints rather than symbols, silver for
+   * the win and gold for taking the house again
+   */
+  SilverTowerPrint = 91,
+  GoldTowerPrint = 92,
+  SilverFactoryPrint = 93,
+  GoldFactoryPrint = 94,
+  SilverArcadePrint = 95,
+  GoldArcadePrint = 96,
+  SilverCastlePrint = 97,
+  GoldCastlePrint = 98,
+  SilverHallPrint = 99,
+  GoldHallPrint = 100,
 }
 
 export default Awards;
@@ -166,6 +200,35 @@ export const AWARD_NAMES: Record<Awards, string> = {
   [Awards.MattDefeated]: 'Matt Defeated',
   [Awards.ShellyDefeated]: 'Shelly Defeated',
   [Awards.ArchieDefeated]: 'Archie Defeated',
+  [Awards.CoalBadge]: 'Coal Badge',
+  [Awards.ForestBadge]: 'Forest Badge',
+  [Awards.CobbleBadge]: 'Cobble Badge',
+  [Awards.FenBadge]: 'Fen Badge',
+  [Awards.RelicBadge]: 'Relic Badge',
+  [Awards.MineBadge]: 'Mine Badge',
+  [Awards.IcicleBadge]: 'Icicle Badge',
+  [Awards.BeaconBadge]: 'Beacon Badge',
+  [Awards.AaronDefeated]: 'Aaron Defeated',
+  [Awards.BerthaDefeated]: 'Bertha Defeated',
+  [Awards.FlintDefeated]: 'Flint Defeated',
+  [Awards.LucianDefeated]: 'Lucian Defeated',
+  [Awards.SinnohChampion]: 'Sinnoh Champion',
+  [Awards.SinnohDexMedal]: 'Sinnoh Dex Medal',
+  [Awards.GalacticGruntDefeated]: 'Team Galactic Repelled',
+  [Awards.MarsDefeated]: 'Mars Defeated',
+  [Awards.JupiterDefeated]: 'Jupiter Defeated',
+  [Awards.SaturnDefeated]: 'Saturn Defeated',
+  [Awards.CyrusDefeated]: 'Cyrus Defeated',
+  [Awards.SilverTowerPrint]: 'Silver Tower Print',
+  [Awards.GoldTowerPrint]: 'Gold Tower Print',
+  [Awards.SilverFactoryPrint]: 'Silver Factory Print',
+  [Awards.GoldFactoryPrint]: 'Gold Factory Print',
+  [Awards.SilverArcadePrint]: 'Silver Arcade Print',
+  [Awards.GoldArcadePrint]: 'Gold Arcade Print',
+  [Awards.SilverCastlePrint]: 'Silver Castle Print',
+  [Awards.GoldCastlePrint]: 'Gold Castle Print',
+  [Awards.SilverHallPrint]: 'Silver Hall Print',
+  [Awards.GoldHallPrint]: 'Gold Hall Print',
 };
 
 /**
@@ -239,6 +302,20 @@ export const HOENN_BADGES: Awards[] = [
 ];
 
 /**
+ * And Sinnoh's 8, in gym order, which its Elite Four ask to see
+ */
+export const SINNOH_BADGES: Awards[] = [
+  Awards.CoalBadge,
+  Awards.ForestBadge,
+  Awards.CobbleBadge,
+  Awards.FenBadge,
+  Awards.RelicBadge,
+  Awards.MineBadge,
+  Awards.IcicleBadge,
+  Awards.BeaconBadge,
+];
+
+/**
  * And Hoenn's 4, which its champion asks to see
  */
 export const HOENN_HONORS: Awards[] = [
@@ -249,9 +326,18 @@ export const HOENN_HONORS: Awards[] = [
 ];
 
 /**
- * The Frontier's symbols, silver then gold, in facility order. Its
- * five open facilities so far: the rest of the Brains are still to
- * come, and each brings a pair of its own
+ * And Sinnoh's 4, which Cynthia asks to see
+ */
+export const SINNOH_HONORS: Awards[] = [
+  Awards.AaronDefeated,
+  Awards.BerthaDefeated,
+  Awards.FlintDefeated,
+  Awards.LucianDefeated,
+];
+
+/**
+ * What the Frontier hangs, silver then gold, in facility order:
+ * Hoenn's seven symbols, then Sinnoh's five prints
  */
 export const FRONTIER_SYMBOLS: Awards[] = [
   Awards.SilverBraveSymbol,
@@ -268,4 +354,14 @@ export const FRONTIER_SYMBOLS: Awards[] = [
   Awards.GoldSpiritsSymbol,
   Awards.SilverTacticsSymbol,
   Awards.GoldTacticsSymbol,
+  Awards.SilverTowerPrint,
+  Awards.GoldTowerPrint,
+  Awards.SilverFactoryPrint,
+  Awards.GoldFactoryPrint,
+  Awards.SilverArcadePrint,
+  Awards.GoldArcadePrint,
+  Awards.SilverCastlePrint,
+  Awards.GoldCastlePrint,
+  Awards.SilverHallPrint,
+  Awards.GoldHallPrint,
 ];

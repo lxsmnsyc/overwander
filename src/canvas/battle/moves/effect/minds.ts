@@ -1,9 +1,13 @@
 import {
+  box,
   burst,
+  chevrons,
   decay,
   heart,
   motes,
+  noise,
   orb,
+  petal,
   ring,
   ripple,
   slash,
@@ -196,6 +200,77 @@ const minds = {
       });
       context.restore();
     }
+  },
+
+  // A breeze of petals over it: they cross rather than burst, and
+  // each one turns as it goes, which is what separates blown petals
+  // from thrown ones
+  Petals(context, stage, share, { paint, seed, weight }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale;
+
+    for (let one = 0; one < many(9, weight); one += 1) {
+      // Staggered, so petals keep arriving for the whole of it rather
+      // than crossing as one row
+      const held = (share * 1.25 + noise(seed, one)) % 1;
+      const drift = (held - 0.5) * size * 4.4;
+      const sway = Math.sin(held * Math.PI * 2.2 + one) * size * 0.55;
+      const high = (noise(seed, one + 30) - 0.5) * size * 2;
+
+      petal(
+        context,
+        [at[0] + drift, at[1] + high + sway],
+        size * (0.22 + noise(seed, one + 60) * 0.12),
+        held * Math.PI * 3 + one,
+        { ...paint, alpha: 0.35 + swell(held) * 0.65 },
+      );
+    }
+  },
+
+  // A room laid over the field. It goes up and stands, the way a
+  // screen does: what it changes lasts, so a flash would be a lie
+  // about how long it is there
+  Grid(context, stage, share, { paint }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale;
+    const up = Math.min(1, share * 3);
+    const alpha = share < 0.8 ? 0.4 + up * 0.4 : decay(share) * 4;
+
+    box(context, [at[0], at[1] + size * 0.6], size * 3.4 * up, size * 2.6 * up, size * 1.1 * up, {
+      ...paint,
+      alpha,
+      width: 2.2 * stage.scale,
+    });
+  },
+
+  // Weight coming down over everything: chevrons falling rather than
+  // rising, and the ground pressed flat under them
+  Press(context, stage, share, { paint, seed }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale;
+
+    for (let column = 0; column < 3; column += 1) {
+      const x = at[0] + (column - 1) * size * 1.9;
+
+      chevrons(
+        context,
+        [x, at[1] - size * 0.4],
+        size,
+        2,
+        (share + noise(seed, column) * 0.2) % 1,
+        { ...paint, alpha: swell(share) * 0.85, width: 2.6 * stage.scale },
+        // Falling rather than rising: the same marks a stat drop is
+        // drawn with, which is what makes this read as weight
+        -1,
+      );
+    }
+    // Flattened rather than round: what is being drawn is the ground
+    // taking the weight
+    ripple(context, [at[0], at[1] + size * 0.6], size * (1.6 + swell(share) * 1.4), {
+      ...paint,
+      alpha: swell(share) * 0.5,
+      width: 2.4 * stage.scale,
+    });
   },
 } satisfies Partial<Record<EffectShape, ShapePainter>>;
 

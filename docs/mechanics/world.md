@@ -191,7 +191,7 @@ few are one to a chunk, marked below.
 | **Gym Seat**        | A team another player left standing, to be fought. One to a chunk |
 | **Gym Leader**      | One of the twenty-five, with a badge on the line. One to a chunk |
 | **Elite Four**      | One of the twelve, for a challenger holding their league's badges |
-| **Champion**        | Blue, Lance or Wallace, for whoever has beaten their league's Elite Four. They field the team they are known for, and one window in sixty-four a legend has the seat instead. One to a chunk |
+| **Champion**        | Blue, Lance, Wallace or Cynthia, for whoever has beaten their league's Elite Four. They field the team they are known for, and one window in sixty-four a legend has the seat instead. One to a chunk |
 | **Frontier Brain**  | The house champion of a Battle Frontier facility, for whoever holds that region's crown. Three a side, under the house's own rule |
 | **Portal**          | A way through to another town's portal, for the price of a Portal Key. One to a region |
 | **Pokémon Center**  | Nurse Joy behind her counter. One to a town, and none in the country |

@@ -5,6 +5,7 @@ import {
   bone,
   burst,
   decay,
+  edge,
   jaw,
   lash,
   motes,
@@ -175,12 +176,13 @@ const contact = {
       }
       const off = (cut - (cuts - 1) / 2) * size * 0.42;
 
-      lash(
+      edge(
         context,
         [at[0] - size * 0.9 + off, at[1] - size * 0.9],
         [at[0] + size * 0.9 + off, at[1] + size * 0.9],
-        size * 0.35,
-        { ...paint, alpha: decay(held), width: 3 * stage.scale },
+        size * 0.16,
+        size * 0.12,
+        { ...paint, alpha: decay(held) },
       );
     }
   },
@@ -290,6 +292,73 @@ const contact = {
         ...paint,
         alpha: decay(since),
         width: 2.4 * stage.scale,
+      });
+    }
+  },
+
+  // Out and back: something thrown that hits and returns to where it
+  // was thrown from, which is the whole shape of a U-turn. The strike
+  // is at the far end, where it turns
+  Dart(context, stage, share, { paint, weight }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale * weight;
+    // Out for the first half, home for the second
+    const held = share < 0.5 ? share * 2 : (1 - share) * 2;
+    const spot = between(stage.source, at, held);
+
+    orb(context, spot, size * 0.4, paint);
+    // The trail behind it, which is what says travelling rather than
+    // a dot that moved. Behind is toward the caster on the way out and
+    // toward the target on the way home
+    const way = share < 0.5 ? 1 : -1;
+
+    for (let step = 1; step <= 3; step += 1) {
+      const behind = Math.min(1, Math.max(0, held - step * 0.08 * way));
+
+      orb(context, between(stage.source, at, behind), size * 0.3 * (1 - step * 0.22), {
+        ...paint,
+        alpha: 0.45 - step * 0.12,
+      });
+    }
+    // One burst as it arrives, at the turn
+    const since = (share - 0.45) / 0.2;
+
+    if (since > 0 && since < 1) {
+      burst(context, at, size * (0.5 + since), 6, 41, {
+        ...paint,
+        alpha: decay(since),
+        width: 2.4 * stage.scale,
+      });
+    }
+  },
+
+  // Two cuts across each other. The second comes a beat after the
+  // first and both are held until they go together, so what is read
+  // is an X rather than two separate rakes
+  Cross(context, stage, share, { paint, weight }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale * weight;
+    const cuts: [from: Point, to: Point][] = [
+      [
+        [at[0] - size, at[1] - size],
+        [at[0] + size, at[1] + size],
+      ],
+      [
+        [at[0] + size, at[1] - size],
+        [at[0] - size, at[1] + size],
+      ],
+    ];
+
+    for (const [cut, [from, to]] of cuts.entries()) {
+      // The second cut waits, and neither fades until the pair is up
+      const held = share - cut * 0.18;
+
+      if (held <= 0) {
+        continue;
+      }
+      edge(context, from, to, size * 0.15, size * 0.06, {
+        ...paint,
+        alpha: share < 0.6 ? 1 : Math.min(1, decay(share) * 2.5),
       });
     }
   },

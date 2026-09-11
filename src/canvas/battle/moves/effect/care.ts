@@ -1,5 +1,17 @@
 import type { Point } from '../../stage';
-import { beam, between, chevrons, decay, motes, noise, orb, pane, ring, swell } from '../__paint';
+import {
+  beam,
+  between,
+  chevrons,
+  decay,
+  hoop,
+  motes,
+  noise,
+  orb,
+  pane,
+  ring,
+  swell,
+} from '../__paint';
 import type { EffectShape, ShapePainter } from './shapes';
 import { REACH, landing, many } from './shapes';
 
@@ -69,6 +81,28 @@ const care = {
       beam(context, [x, foot[1]], [x + size * 0.9, foot[1] - height], 1, size * 0.16, {
         ...paint,
         alpha: alpha * 0.5,
+      });
+    }
+  },
+
+  // Water turning about the pokemon rather than a wall in front of
+  // it: three hoops on three axes, each passing through the flat at a
+  // different moment, which is what makes them read as one turning
+  // thing rather than three ringing ones
+  Gyro(context, stage, share, { paint }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale;
+    // Up quickly and held: what it puts round the pokemon stays there
+    const up = Math.min(1, share * 4);
+    const alpha = share < 0.85 ? 0.55 + up * 0.4 : decay(share) * 6;
+
+    for (let hoopAt = 0; hoopAt < 3; hoopAt += 1) {
+      const spin = share * Math.PI * 2.4 + (hoopAt / 3) * Math.PI;
+
+      hoop(context, at, size * 1.3 * up, Math.abs(Math.cos(spin)), (hoopAt / 3) * Math.PI, {
+        ...paint,
+        alpha,
+        width: 2.6 * stage.scale,
       });
     }
   },

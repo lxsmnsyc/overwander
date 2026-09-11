@@ -17,6 +17,8 @@ export const BY_TYPE: Partial<Record<Types, EffectShape>> = {
   [Types.Ground]: 'Quake',
   [Types.Rock]: 'Impact',
   [Types.Flying]: 'Leafy',
+  [Types.Dark]: 'Shade',
+  [Types.Ghost]: 'Shade',
 };
 
 /**
@@ -103,6 +105,10 @@ export const NAMED: Partial<Record<Moves, EffectShape>> = {
   // Wind
   [Moves.Gust]: 'Swirl',
 
+  // Blown over it rather than shown to it: the move is a smell, and
+  // what a pokemon standing in one sees is what the air is carrying
+  [Moves.SweetScent]: 'Petals',
+
   // Weather, which arrives over the field rather than on whoever
   // called for it
   [Moves.Sandstorm]: 'Sky',
@@ -165,14 +171,17 @@ export const NAMED: Partial<Record<Moves, EffectShape>> = {
 
   // Johto. Most of them are answered by the rules underneath: what is
   // named here is what those rules would have drawn wrong
-  [Moves.Aeroblast]: 'Beam',
+  // Wind that keeps blowing out of it rather than a jet: the move is
+  // a storm aimed at something
+  [Moves.Aeroblast]: 'Gale',
   [Moves.DragonBreath]: 'Beam',
   [Moves.Twister]: 'Swirl',
   [Moves.RapidSpin]: 'Swirl',
   [Moves.Whirlpool]: 'Coil',
   [Moves.SpiderWeb]: 'Coil',
   [Moves.Megahorn]: 'Spike',
-  [Moves.CrossChop]: 'Claw',
+  // Two cuts across each other rather than a rake of them
+  [Moves.CrossChop]: 'Cross',
   [Moves.IronTail]: 'Lash',
   [Moves.ExtremeSpeed]: 'Strike',
   [Moves.Spark]: 'Zap',
@@ -295,4 +304,121 @@ export const NAMED: Partial<Record<Moves, EffectShape>> = {
   // stat rule above never sees it
   [Moves.HelpingHand]: 'Boost',
   [Moves.Recycle]: 'Boost',
+
+  // Sinnoh. As with the generations before it, what is named is what
+  // the rules underneath would have drawn wrong
+
+  // Health coming back, whatever the move is called
+  [Moves.Roost]: 'Mend',
+  // Water put round it and left turning there, which is what the move
+  // is: the healing comes later, a turn at a time
+  [Moves.AquaRing]: 'Gyro',
+  [Moves.HealOrder]: 'Mend',
+  [Moves.HealingWish]: 'Mend',
+  [Moves.LunarDance]: 'Mend',
+
+  // Laid on the ground for whatever walks in next, the way Spikes is
+  [Moves.StealthRock]: 'Caltrops',
+  [Moves.ToxicSpikes]: 'Caltrops',
+
+  // Held between the two of them: an item, a stat, a move. Trick and
+  // Skill Swap are drawn this way, and these are the same act
+  [Moves.Switcheroo]: 'Warp',
+  [Moves.GuardSwap]: 'Warp',
+  [Moves.PowerSwap]: 'Warp',
+  [Moves.HeartSwap]: 'Warp',
+  [Moves.PsychoShift]: 'Warp',
+  [Moves.PowerTrick]: 'Warp',
+  [Moves.Copycat]: 'Warp',
+  [Moves.MeFirst]: 'Warp',
+
+  // Time and space themselves, which bend rather than strike
+  [Moves.RoarOfTime]: 'Warp',
+  [Moves.SpacialRend]: 'Warp',
+  // A room laid over the field, and a weight put on it
+  [Moves.TrickRoom]: 'Grid',
+  [Moves.Gravity]: 'Press',
+
+  // Something turning in front of its eyes
+  [Moves.DarkVoid]: 'Trance',
+  [Moves.MiracleEye]: 'Trance',
+  [Moves.Captivate]: 'Hearts',
+
+  // Wound round it, or closing on it
+  [Moves.MagmaStorm]: 'Coil',
+  [Moves.WorrySeed]: 'Coil',
+  [Moves.CrushGrip]: 'Coil',
+  [Moves.WringOut]: 'Coil',
+
+  // Jets and beams, which the type alone would have drawn as a cloud
+  [Moves.ChargeBeam]: 'Beam',
+  [Moves.DragonPulse]: 'Beam',
+  [Moves.FlashCannon]: 'Beam',
+
+  // Light rather than an element
+  [Moves.Judgment]: 'Dazzle',
+  [Moves.SeedFlare]: 'Dazzle',
+  [Moves.MirrorShot]: 'Dazzle',
+  [Moves.PowerGem]: 'Dazzle',
+
+  // Whatever it was holding, thrown at it: a hit rather than the dark
+  // closing in, which is what its type alone would have drawn
+  [Moves.Fling]: 'Impact',
+
+  // Thrown and going off where it lands
+  [Moves.AuraSphere]: 'Blast',
+  [Moves.FocusBlast]: 'Blast',
+  [Moves.EnergyBall]: 'Blast',
+  [Moves.SeedBomb]: 'Blast',
+  [Moves.MudBomb]: 'Blast',
+  [Moves.MagnetBomb]: 'Blast',
+  [Moves.MetalBurst]: 'Blast',
+  [Moves.GunkShot]: 'Blast',
+
+  // Stone and earth coming down
+  [Moves.StoneEdge]: 'Rocks',
+  [Moves.RockWrecker]: 'Rocks',
+  [Moves.Avalanche]: 'Rocks',
+  [Moves.DracoMeteor]: 'Rocks',
+
+  // Two cuts across each other, the way Cross Chop lands
+  [Moves.XScissor]: 'Cross',
+
+  // A point driven in, and something long reaching out
+  [Moves.Pluck]: 'Spike',
+  [Moves.PoisonJab]: 'Spike',
+  [Moves.AquaTail]: 'Lash',
+  [Moves.PowerWhip]: 'Lash',
+
+  // Arriving faster than it can be seen coming
+  [Moves.Feint]: 'Strike',
+  [Moves.SuckerPunch]: 'Strike',
+  [Moves.ShadowSneak]: 'Strike',
+
+  // A swarm rather than a blow
+  [Moves.AttackOrder]: 'Volley',
+
+  // Carried on the air, or washing over it
+  [Moves.Tailwind]: 'Blow',
+  [Moves.OminousWind]: 'Blow',
+  [Moves.VacuumWave]: 'Wave',
+
+  // Leaves, and something under its feet
+  [Moves.LeafStorm]: 'Leaves',
+  [Moves.GrassKnot]: 'Roots',
+
+  // A body turning into it, and a body arriving whole
+  [Moves.GyroBall]: 'Swirl',
+  [Moves.DragonRush]: 'Slam',
+
+  // Thrown high and coming down glittering
+  [Moves.TrumpCard]: 'Stars',
+
+  // A stat that rises without the move naming which one, so the stage
+  // rule above never sees it
+  [Moves.Acupressure]: 'Boost',
+
+  // Struck and gone: the blow is the first step and the walk off the
+  // field is the second, which is why the landing here is the leaving
+  [Moves.UTurn]: 'Relay',
 };

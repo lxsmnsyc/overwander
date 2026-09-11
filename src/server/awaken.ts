@@ -2,7 +2,7 @@ import 'server-only';
 import { asNumberArray } from '../auth/__normalize';
 import { ITEM_STACKS } from '../auth/stacks';
 import AleaRNG from '../core/alea';
-import { MAX_SLOTS, Slots, countAbilitySlots, getSlots, withSlots } from '../data/constants/slots';
+import { Slots, countAbilitySlots, getSlots, mostSlots, withSlots } from '../data/constants/slots';
 import type Abilities from '../data/ids/abilities';
 import type { Items } from '../data/ids/items';
 import type { Species } from '../data/ids/species';
@@ -77,7 +77,7 @@ export default async function awakenAbility(
     const slots = asNumber(caught.slots);
     const room = getSlots(slots, Slots.Ability);
 
-    if (room >= MAX_SLOTS) {
+    if (room >= mostSlots(Slots.Ability)) {
       return null;
     }
 

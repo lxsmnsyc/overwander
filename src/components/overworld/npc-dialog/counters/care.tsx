@@ -2,7 +2,7 @@ import { type JSX, Show } from 'solid-js';
 import { boostedSteps, isEgg, stepsRemaining } from '../../../../auth/egg';
 import { getCatchSlots, isGuarded, isShadow } from '../../../../auth/caught-record';
 import { groomedFriendship } from '../../../../data/constants/friendship';
-import { MAX_SLOTS, Slots, countAbilitySlots } from '../../../../data/constants/slots';
+import { Slots, countAbilitySlots, mostSlots } from '../../../../data/constants/slots';
 import type { Items } from '../../../../data/ids/items';
 import { getAwakenableAbilities } from '../../../../data/overworld/npc';
 import CatchPicker, { type CatchOption } from '../../../catches/catch-picker';
@@ -237,7 +237,7 @@ export interface ChannelerCounterProps {
  */
 function hasSomethingLeft(caught: CatchOption['caught']): boolean {
   return (
-    getCatchSlots(caught, Slots.Ability) < MAX_SLOTS &&
+    getCatchSlots(caught, Slots.Ability) < mostSlots(Slots.Ability) &&
     countAbilitySlots(caught.abilities) >= getCatchSlots(caught, Slots.Ability) &&
     getAwakenableAbilities(caught.species, caught.abilities).length > 0
   );

@@ -283,7 +283,14 @@ held items and moves. Three bits each, stored **0-based** so a count of
 one reads out of a zero. A ceiling belongs to the individual rather than to the
 game: a shadow carries two abilities where everything else carries one, and it
 keeps that room once purified. The defaults are 1 ability (2 for a shadow), 1
-held item and 4 moves, and three bits gives each of them room to reach 8.
+held item and 4 moves.
+
+Three bits would hold 8 of each, but the width is the field's own limit rather
+than a rule about pokemon, so the rule is stated separately: **1 to 4 abilities,
+1 to 8 held items, 4 to 8 moves**. Both ends are held on the way in and on the
+way out, so a record written while a ceiling was higher reads inside the one
+that holds now and nothing has to be rewritten. Moves start at 4 because every
+catch can already use four; the four above that are what it earns.
 
 Both places that enforce a ceiling read it off the record rather than off a
 constant: `giveItem` asks `Slots.Item` before it hands anything over, and

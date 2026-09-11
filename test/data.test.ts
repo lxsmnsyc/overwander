@@ -174,11 +174,14 @@ import { CANDY_STACKS, ITEM_STACKS, getStack, listStacks } from '../src/auth/sta
 import {
   MAX_SLOTS,
   SLOT_BITS,
+  SLOT_LIMITS,
   Slots,
   countAbilitySlots,
   countsAgainstSlots,
   defaultSlots,
   getSlots,
+  leastSlots,
+  mostSlots,
   packSlots,
   withSlots,
 } from '../src/data/constants/slots';
@@ -200,8 +203,6 @@ import {
 import { BOTTLE_CAPS, isBottleCap, isPerfectIVs, polishIVs } from '../src/data/items/bottle-caps';
 import { UTILITY_BELT_SLOT, isUtilityBelt } from '../src/data/items/utility-belt';
 import {
-  MAX_LIMIT_SLOTS,
-  MIN_LIMIT_SLOTS,
   PVP_BATTLE_LIMITS,
   UNLIMITED_BATTLE_LIMITS,
   withLimit,
@@ -2578,9 +2579,10 @@ describe('item data', () => {
     expect(getSlots(PVP_BATTLE_LIMITS, Slots.Item)).toBe(1);
     expect(getSlots(PVP_BATTLE_LIMITS, Slots.Move)).toBe(4);
 
-    // A raid adds no ceiling of its own
+    // A raid adds no ceiling of its own, so each count sits at the
+    // most that kind allows
     for (const kind of [Slots.Ability, Slots.Item, Slots.Move]) {
-      expect(getSlots(UNLIMITED_BATTLE_LIMITS, kind)).toBe(MAX_SLOTS);
+      expect(getSlots(UNLIMITED_BATTLE_LIMITS, kind)).toBe(mostSlots(kind));
     }
 
     // And a scenario is one packed number, which is why it can be
@@ -2592,11 +2594,13 @@ describe('item data', () => {
   });
 
   it('holds a host\u2019s limits inside what a fight can be set to', () => {
-    // A count below one would field a pokemon that cannot act, and
-    // one above the packing's ceiling would wrap into its neighbour
-    expect(getSlots(withLimit(PVP_BATTLE_LIMITS, Slots.Move, 0), Slots.Move)).toBe(MIN_LIMIT_SLOTS);
+    // A count below what the kind allows would field a pokemon that
+    // cannot fight it, and one above it would wrap into its neighbour
+    expect(getSlots(withLimit(PVP_BATTLE_LIMITS, Slots.Move, 0), Slots.Move)).toBe(
+      leastSlots(Slots.Move),
+    );
     expect(getSlots(withLimit(PVP_BATTLE_LIMITS, Slots.Move, 99), Slots.Move)).toBe(
-      MAX_LIMIT_SLOTS,
+      mostSlots(Slots.Move),
     );
 
     // And one count moves without disturbing the other two
@@ -2848,12 +2852,28 @@ describe('item data', () => {
     expect(new Set(Object.values(MOVE_CATEGORY_COLORS)).size).toBe(3);
   });
 
+  it('holds each kind of room inside what the game allows', () => {
+    // The width holds eight of everything; what a pokemon may have is
+    // a rule rather than a consequence of the packing
+    expect(SLOT_LIMITS[Slots.Ability]).toEqual([1, 4]);
+    expect(SLOT_LIMITS[Slots.Item]).toEqual([1, 8]);
+    expect(SLOT_LIMITS[Slots.Move]).toEqual([4, 8]);
+
+    for (const kind of [Slots.Ability, Slots.Item, Slots.Move]) {
+      expect(leastSlots(kind)).toBeGreaterThanOrEqual(1);
+      expect(mostSlots(kind)).toBeLessThanOrEqual(MAX_SLOTS);
+      expect(getSlots(withSlots(0, kind, 99), kind)).toBe(mostSlots(kind));
+      expect(getSlots(withSlots(0, kind, 0), kind)).toBe(leastSlots(kind));
+    }
+  });
+
   it('packs how much room a pokemon has into three counts', () => {
-    // Stored 0-based, so an unwritten field reads as one of each —
-    // which is what the game gave everything before the field existed
+    // Stored 0-based, so an unwritten field reads as the least of
+    // each kind: one ability, one held item, and the four moves every
+    // pokemon can already use
     expect(getSlots(0, Slots.Ability)).toBe(1);
     expect(getSlots(0, Slots.Item)).toBe(1);
-    expect(getSlots(0, Slots.Move)).toBe(1);
+    expect(getSlots(0, Slots.Move)).toBe(4);
 
     const usual = packSlots(1, 1, 4);
 
@@ -2870,13 +2890,20 @@ describe('item data', () => {
     expect(getSlots(roomier, Slots.Ability)).toBe(1);
     expect(getSlots(roomier, Slots.Move)).toBe(4);
 
-    // And a count outside what three bits hold is brought inside it
-    // rather than wrapping into its neighbour
+    // And a count outside what the kind allows is brought inside it
+    // rather than wrapping into its neighbour. Four abilities is the
+    // ceiling even though three bits would hold eight
     const clamped = withSlots(usual, Slots.Ability, 99);
 
-    expect(getSlots(clamped, Slots.Ability)).toBe(MAX_SLOTS);
+    expect(getSlots(clamped, Slots.Ability)).toBe(mostSlots(Slots.Ability));
+    expect(mostSlots(Slots.Ability)).toBeLessThan(MAX_SLOTS);
     expect(getSlots(clamped, Slots.Move)).toBe(4);
-    expect(getSlots(withSlots(usual, Slots.Move, 0), Slots.Move)).toBe(1);
+    expect(getSlots(withSlots(usual, Slots.Move, 0), Slots.Move)).toBe(leastSlots(Slots.Move));
+
+    // A record written while the ceiling was higher reads inside the
+    // one that holds now, so nothing keeps room the game will not
+    // honour
+    expect(getSlots(packSlots(1, 1, 4) | (7 << 0), Slots.Ability)).toBe(mostSlots(Slots.Ability));
 
     // The special tier takes no room at all: a shadow arrives carrying
     // two abilities and still has its one slot free for the one it

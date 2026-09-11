@@ -293,8 +293,9 @@ decide. Ask her again on a later window and the pokemon widens again, until
 either its family has nothing left it does not already carry or it runs out of
 room.
 
-Most Kanto families hold **three** abilities or fewer between all their stages,
-so a pokemon usually stops at two or three. The Eevee line is the deepest by far.
+No pokemon holds more than **four** abilities however many its family is capable
+of, and most Kanto families hold three or fewer between all their stages, so a
+pokemon usually stops at two or three. The Eevee line is the deepest by far.
 Being a shadow, a purified pokemon or a raid boss costs no room: those marks ride
 alongside the abilities rather than taking a slot from them.
 

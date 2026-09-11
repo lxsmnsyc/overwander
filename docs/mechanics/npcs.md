@@ -118,13 +118,14 @@ he sells is the lesson without the hunt for the disc.
 
 **The Channeler** is the only way a pokemon ever gains an ability. Every other
 ability it has was decided before you met it. She opens one more ability slot and
-fills it in the same breath, drawing from everything the pokemon's **family** is
-capable of, so a Magikarp can wake up with Intimidate. Which one answers is hers
-to decide, not yours.
+fills it in the same breath, drawing from everything the pokemon and the stages
+**below** it are capable of, so a Gyarados can wake up with a Magikarp's Swift
+Swim. Which one answers is hers to decide, not yours.
 
 She refuses a pokemon whose family has nothing left it does not already carry,
-and she refuses one that has run out of room. A shadow's mark and a boss's do not
-count against that room, so a shadow is not punished for carrying one.
+and she refuses one that has run out of room. **Four abilities is the most any
+pokemon holds**, however deep its family runs. A shadow's mark and a boss's do
+not count against that room, so a shadow is not punished for carrying one.
 
 **Kurt** carves apricorns into balls, one ball per apricorn, and charges nothing.
 Each colour makes its own ball, and the seven he carves are stocked nowhere:

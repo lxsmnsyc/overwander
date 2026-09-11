@@ -1,6 +1,6 @@
 import 'server-only';
 import { ITEM_STACKS } from '../auth/stacks';
-import { MAX_SLOTS, getSlots, withSlots } from '../data/constants/slots';
+import { getSlots, mostSlots, withSlots } from '../data/constants/slots';
 import { Items } from '../data/ids/items';
 import { UTILITY_BELT_SLOT } from '../data/items/utility-belt';
 import { isEggRecord, isGuardedRecord } from './catch-fields';
@@ -55,7 +55,7 @@ export default async function useUtilityBelt(uid: string, catchId: string): Prom
     const room = getSlots(slots, UTILITY_BELT_SLOT);
 
     // Nothing left to widen, so nothing is spent
-    if (room >= MAX_SLOTS) {
+    if (room >= mostSlots(UTILITY_BELT_SLOT)) {
       return null;
     }
 

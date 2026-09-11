@@ -26,6 +26,7 @@ import Awards, {
   KANTO_BADGES,
   KANTO_HONORS,
   SINNOH_BADGES,
+  SINNOH_HONORS,
 } from '../../data/ids/awards';
 import Npc, { EXECUTIVE_CHARSETS, EXECUTIVE_HONORS } from '../../data/overworld/npc';
 import {
@@ -214,14 +215,18 @@ const AWARD_COLORS: Record<Awards, string> = {
   [Awards.MineBadge]: '#8f9aa8',
   [Awards.IcicleBadge]: '#9fd7e8',
   [Awards.BeaconBadge]: '#f2c14a',
+  [Awards.AaronDefeated]: '#6fae5a',
+  [Awards.BerthaDefeated]: '#b8935a',
+  [Awards.FlintDefeated]: '#d9542f',
+  [Awards.LucianDefeated]: '#7f6fc9',
 };
 
 /**
  * The shelf's order: Kanto's 8 badges, its 4 elite marks, the title
  * and the dex medal, then Johto's 8 badges, its 4 marks and its
- * title and its medal, then Hoenn's, then Sinnoh's 8 badges, which
- * is all that region pays so far, then the marks that belong to no
- * region's walk: Team Rocket's, from the rank and file up, and the
+ * title and its medal, then Hoenn's, then Sinnoh's 8 badges and its
+ * 4 marks, which is all that region pays so far, then the marks that
+ * belong to no region's walk: Team Rocket's, from the rank and file up, and the
  * legends'. The walk itself, left to right, a region at a time
  */
 const SHELF: Awards[] = [
@@ -239,6 +244,7 @@ const SHELF: Awards[] = [
     Awards.HoennChampion,
     Awards.HoennDexMedal,
     ...SINNOH_BADGES,
+    ...SINNOH_HONORS,
     ...FRONTIER_SYMBOLS,
     ...SYNDICATE_HONORS,
     ...LEGENDS.map((legend) => LEGEND_HONORS[legend]),
@@ -350,6 +356,7 @@ function Shelf(props: { held: Resource<AwardRecord[]> }): JSX.Element {
   const marks = (): number => JOHTO_HONORS.filter((honor) => wins().has(honor)).length;
   const hoenn = (): number => HOENN_BADGES.filter((badge) => wins().has(badge)).length;
   const sinnoh = (): number => SINNOH_BADGES.filter((badge) => wins().has(badge)).length;
+  const seats = (): number => SINNOH_HONORS.filter((honor) => wins().has(honor)).length;
 
   const empties = (): number[] =>
     Array.from(
@@ -380,7 +387,8 @@ function Shelf(props: { held: Resource<AwardRecord[]> }): JSX.Element {
         the Elite Four{wins().has(Awards.KantoChampion) ? ', Champion' : ''}. Johto: {johto()} of{' '}
         {JOHTO_BADGES.length} badges, {marks()} of {JOHTO_HONORS.length} of the Elite Four
         {wins().has(Awards.JohtoChampion) ? ', Champion' : ''}. Hoenn: {hoenn()} of{' '}
-        {HOENN_BADGES.length} badges. Sinnoh: {sinnoh()} of {SINNOH_BADGES.length} badges.
+        {HOENN_BADGES.length} badges. Sinnoh: {sinnoh()} of {SINNOH_BADGES.length} badges, {seats()}{' '}
+        of {SINNOH_HONORS.length} of the Elite Four.
       </Meta>
     </div>
   );

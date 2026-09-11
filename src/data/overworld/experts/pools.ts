@@ -89,6 +89,15 @@ export const ELITE_MEMBER_POOLS: Record<EliteMember, ExpertPool> = {
   [EliteMember.Phoebe]: { types: [Types.Ghost] },
   [EliteMember.Glacia]: { types: [Types.Ice] },
   [EliteMember.Drake]: { types: [Types.Dragon] },
+  // Drapion is a Poison and Dark pokemon that Aaron closes with in
+  // every game he is in, which is Agatha's Golbat again: the type
+  // chart does not reach it and the man fields it anyway
+  [EliteMember.Aaron]: { types: [Types.Bug], also: [Species.Drapion] },
+  // The Sudowoodo is hers in Diamond and Pearl, and it is rock rather
+  // than ground
+  [EliteMember.Bertha]: { types: [Types.Ground], also: [Species.Sudowoodo] },
+  [EliteMember.Flint]: { types: [Types.Fire] },
+  [EliteMember.Lucian]: { types: [Types.Psychic] },
 };
 
 /**
@@ -109,6 +118,16 @@ export const ELITE_MEMBER_SIGNATURES: Record<EliteMember, Species> = {
   [EliteMember.Phoebe]: Species.Dusclops,
   [EliteMember.Glacia]: Species.Walrein,
   [EliteMember.Drake]: Species.Salamence,
+  // Not the Drapion he actually closes with: a signature is of the
+  // expert's own kind, and the bug he keeps in both his teams is the
+  // Heracross
+  [EliteMember.Aaron]: Species.Heracross,
+  [EliteMember.Bertha]: Species.Hippowdon,
+  // Platinum's ace, from the team that is fire all the way down.
+  // Diamond and Pearl close him with an Infernape, which is a
+  // starter a player chooses rather than a pokemon of his
+  [EliteMember.Flint]: Species.Magmortar,
+  [EliteMember.Lucian]: Species.Bronzong,
 };
 
 /**

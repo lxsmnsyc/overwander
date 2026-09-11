@@ -133,6 +133,10 @@ const ELITE_MEMBER_LEAGUES: Record<EliteMember, string> = {
   [EliteMember.Phoebe]: 'Hoenn',
   [EliteMember.Glacia]: 'Hoenn',
   [EliteMember.Drake]: 'Hoenn',
+  [EliteMember.Aaron]: 'Sinnoh',
+  [EliteMember.Bertha]: 'Sinnoh',
+  [EliteMember.Flint]: 'Sinnoh',
+  [EliteMember.Lucian]: 'Sinnoh',
 };
 
 const ELITE_QUOTES: Record<EliteMember, string> = {
@@ -148,6 +152,10 @@ const ELITE_QUOTES: Record<EliteMember, string> = {
   [EliteMember.Phoebe]: 'I trained with the spirits on Mt. Pyre. They are still with me.',
   [EliteMember.Glacia]: 'I came here for warmth, and my ice only grew fiercer. See it.',
   [EliteMember.Drake]: 'Do you know what it means to fight beside a dragon? Show me.',
+  [EliteMember.Aaron]: 'Bug pokemon are the strongest of all. I will show you why.',
+  [EliteMember.Bertha]: 'I have been at this longer than you have been alive, dear.',
+  [EliteMember.Flint]: 'My hair is not the hottest thing here. Watch.',
+  [EliteMember.Lucian]: 'One moment, let me finish this page. Now then.',
 };
 
 /** What a legend says, where they say anything at all */

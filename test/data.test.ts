@@ -318,6 +318,7 @@ import Awards, {
   KANTO_BADGES,
   KANTO_HONORS,
   SINNOH_BADGES,
+  SINNOH_HONORS,
 } from '../src/data/ids/awards';
 import {
   BIOME_ELITE_MEMBERS,
@@ -5418,13 +5419,15 @@ describe('type experts', () => {
 
   it('gives every elite a mark and the champion a title', () => {
     const honors = ELITE_MEMBERS.map((member) => ELITE_MEMBER_HONORS[member]);
-    const marks = new Set([...KANTO_HONORS, ...JOHTO_HONORS, ...HOENN_HONORS]);
+    const marks = new Set([...KANTO_HONORS, ...JOHTO_HONORS, ...HOENN_HONORS, ...SINNOH_HONORS]);
 
-    // Twelve seats between three leagues, four apiece: Bruno keeps one
+    // Sixteen seats between four leagues, four apiece: Bruno keeps one
     // in each of the first two, and no mark is shared between them
     expect(new Set(honors).size).toBe(marks.size);
     expect(honors.every((honor) => marks.has(honor))).toBe(true);
-    expect(marks.size).toBe(KANTO_HONORS.length + JOHTO_HONORS.length + HOENN_HONORS.length);
+    expect(marks.size).toBe(
+      KANTO_HONORS.length + JOHTO_HONORS.length + HOENN_HONORS.length + SINNOH_HONORS.length,
+    );
 
     for (const member of ELITE_MEMBERS) {
       expect(ELITE_MEMBER_NAMES[member].length).toBeGreaterThan(0);
@@ -5446,6 +5449,7 @@ describe('type experts', () => {
       ...KANTO_HONORS,
       ...JOHTO_HONORS,
       ...HOENN_HONORS,
+      ...SINNOH_HONORS,
       Awards.KantoChampion,
     ]) {
       expect(AWARD_NAMES[award].length).toBeGreaterThan(0);
@@ -5566,6 +5570,7 @@ describe('type experts', () => {
       [KANTO_HONORS, KANTO_BADGES],
       [JOHTO_HONORS, JOHTO_BADGES],
       [HOENN_HONORS, HOENN_BADGES],
+      [SINNOH_HONORS, SINNOH_BADGES],
     ] as const;
 
     for (const member of ELITE_MEMBERS) {
@@ -5590,6 +5595,22 @@ describe('type experts', () => {
     // And Wallace stands above them, asking for all four
     expect(CHAMPION_HONORS[Champion.Wallace]).toEqual(HOENN_HONORS);
     expect(CHAMPION_TITLES[Champion.Wallace]).toBe(Awards.HoennChampion);
+  });
+
+  it('seats Sinnoh’s four on Sinnoh’s badges, with no crown above them', () => {
+    for (const member of [
+      EliteMember.Aaron,
+      EliteMember.Bertha,
+      EliteMember.Flint,
+      EliteMember.Lucian,
+    ]) {
+      expect(SINNOH_HONORS).toContain(ELITE_MEMBER_HONORS[member]);
+      expect(getEliteBadges(member), ELITE_MEMBER_NAMES[member]).toEqual(SINNOH_BADGES);
+    }
+    // Nobody stands above them yet: no champion asks for these four
+    for (const champion of CHAMPIONS) {
+      expect(CHAMPION_HONORS[champion], CHAMPION_NAMES[champion]).not.toEqual(SINNOH_HONORS);
+    }
   });
 
   it('gives every Frontier Brain a house, a rule and a pair of symbols', () => {
@@ -6371,6 +6392,7 @@ describe('type experts', () => {
       ...KANTO_HONORS,
       ...JOHTO_HONORS,
       ...HOENN_HONORS,
+      ...SINNOH_HONORS,
       ...CHAMPIONS.map((champion) => CHAMPION_TITLES[champion]),
     ]);
 

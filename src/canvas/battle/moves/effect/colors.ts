@@ -38,6 +38,9 @@ const BY_SHAPE: Partial<Record<EffectShape, string>> = {
   // The light itself. A Normal-type grey would be a picture of a
   // shadow rather than of a flash
   Dazzle: '#fff2b4',
+  // The petals themselves. A Normal-type grey would be a picture of
+  // dust blowing past rather than of a scent
+  Petals: '#f2a0c8',
   Whiff: '#c8ccd4',
 };
 

@@ -39,13 +39,14 @@ import { isLoopingCast, pickCast } from '../../../data/constants/cast';
 
 import { Stats } from '../../../data/constants/stats';
 import { MoveFlags } from '../../../data/ids/moves';
-import { Genders, type Species } from '../../../data/ids/species';
+import { Genders, Species } from '../../../data/ids/species';
 
-import type { Statuses } from '../../../data/ids/status';
+import { Statuses } from '../../../data/ids/status';
 import { getMoveData } from '../../../data/moves';
 import { bodyOf, boxOf, drawAim, drawSlot, scaleOf, withinSlot } from './draw';
 import {
   type Slot,
+  type Stand,
   aimedAt,
   lobbyCamera,
   project,
@@ -127,6 +128,12 @@ export interface UnitSpot {
   top: number;
   bottom: number;
 }
+
+/**
+ * How long a substitute takes to step in front of the pokemon it is
+ * standing in for, and to step back off when it breaks
+ */
+const STAND_FADE = 320;
 
 export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
   let canvas: HTMLCanvasElement | undefined;
@@ -225,6 +232,45 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
    * be told when the field is drawable
    */
   const loads = new Map<Unit, Promise<void>>();
+
+  /**
+   * The doll in front of each substituted pokemon, and how far in it
+   * is. One animation per unit rather than one shared between them:
+   * an animation carries where it is in its own clip, and two dolls
+   * sharing one would breathe in step.
+   *
+   * An entry outlives the status by as long as the fade out takes,
+   * which is what lets the pokemon come back rather than reappear
+   */
+  const dolls = new Map<Unit, { sprite: SpeciesSpriteAnimation | null; share: number }>();
+
+  const standFor = (unit: Unit): Stand | null => {
+    const held = dolls.get(unit);
+
+    if (held != null) {
+      return held;
+    }
+    if (unit.status[Statuses.Substituted] == null) {
+      return null;
+    }
+
+    const waiting = { sprite: null as SpeciesSpriteAnimation | null, share: 0 };
+
+    dolls.set(unit, waiting);
+    // The doll is the doll whoever is behind it: never shiny, never
+    // the female sheet, since neither is a fact about the substitute
+    loadSpeciesSprite(Species.Substitute, { female: false, shiny: false })
+      .then((loaded) => {
+        if (dolls.get(unit) === waiting) {
+          waiting.sprite = loaded;
+        }
+      })
+      .catch(() => {
+        // Nothing to stand in front of it, so the pokemon stays as it
+        // is: the rings the status draws still say a substitute is up
+      });
+    return waiting;
+  };
 
   /**
    * Whether the sheets for everybody on the field are still coming.
@@ -474,7 +520,7 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
         }
       }
 
-      const slots = project(ringStandings(field, spriteFor), view, striking);
+      const slots = project(ringStandings(field, spriteFor, standFor), view, striking);
       const at = new Map(slots.map((slot) => [slot.unit, slot]));
 
       // Whoever is throwing itself at somebody is drawn part of the
@@ -1014,6 +1060,24 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       }
       for (const held of sprites.values()) {
         held.sprite?.update(event.duration);
+      }
+      // The doll steps in front while the substitute is up and steps
+      // off once it has broken, which is the same crossfade run either
+      // way. It is dropped only once it is all the way off, so the
+      // pokemon is never seen popping back
+      for (const [unit, doll] of dolls) {
+        const wanted = unit.status[Statuses.Substituted] == null ? 0 : 1;
+        const step = event.duration / STAND_FADE;
+
+        doll.share =
+          wanted > doll.share
+            ? Math.min(wanted, doll.share + step)
+            : Math.max(wanted, doll.share - step);
+        doll.sprite?.update(event.duration);
+
+        if (doll.share <= 0 && wanted === 0) {
+          dolls.delete(unit);
+        }
       }
       // Move effects run on the same clock as everything else, and one
       // that has run its course is dropped after the frame that shows

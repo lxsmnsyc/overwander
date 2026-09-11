@@ -20,6 +20,7 @@ import { Types } from '../../src/data/constants/types';
 import Abilities from '../../src/data/ids/abilities';
 import { Items } from '../../src/data/ids/items';
 import { Moves } from '../../src/data/ids/moves';
+import { SPANS } from '../../src/canvas/battle/moves/effect/shapes';
 import { Statuses } from '../../src/data/ids/status';
 import registerGameData from '../../src/data';
 
@@ -145,9 +146,42 @@ const SHAPES: [shape: string, move: Moves][] = [
   // Hoenn's own two
   ['Spout', Moves.Eruption],
   ['Roots', Moves.Ingrain],
+  // Sinnoh's own two: the moves that change what everybody on the
+  // field is fighting under
+  ['Press', Moves.Gravity],
+  ['Grid', Moves.TrickRoom],
+  // Wind that keeps coming, and water left turning about a pokemon
+  ['Gale', Moves.Aeroblast],
+  ['Gyro', Moves.AquaRing],
+  // Blown over it rather than done to it
+  ['Petals', Moves.SweetScent],
+  // Two cuts across each other
+  ['Cross', Moves.XScissor],
 ];
 
+/**
+ * The shapes a move draws on one of its steps rather than as what it
+ * lands as. A U-turn's blow is its first step and its leaving is its
+ * last, so neither picture is the move's landing
+ */
+const STEP_SHAPES: [shape: string, move: Moves, steps: number][] = [['Dart', Moves.UTurn, 1]];
+
 describe('a painted move', () => {
+  it('has a move to draw for every shape there is', () => {
+    // Otherwise a shape added for a new generation is one nothing
+    // above ever paints, and the loop under this passes without
+    // having drawn it
+    // Whiff apart: nothing lands as it, since it is the picture of a
+    // move that went past, and the miss has a test of its own below
+    const covered = new Set([
+      ...SHAPES.map(([shape]) => shape),
+      ...STEP_SHAPES.map(([shape]) => shape),
+      'Whiff',
+    ]);
+
+    expect([...Object.keys(SPANS)].filter((shape) => !covered.has(shape))).toEqual([]);
+  });
+
   it('draws something at every instant of every shape it can land as', () => {
     for (const [shape, move] of SHAPES) {
       expect(effectShapeFor(move), `${shape} is what ${move} lands as`).toBe(shape);
@@ -161,6 +195,23 @@ describe('a painted move', () => {
       for (const at of [0.05, 0.35, 0.7]) {
         const { context, marks } = canvas();
         const playing = moveEffectVisual(move);
+
+        playing?.advance((visual?.duration ?? 0) * at);
+        playing?.draw(context, STAGE);
+        expect(marks(), `${shape} at ${at}`).toBeGreaterThan(0);
+      }
+    }
+  });
+
+  it('draws something at every instant of a shape a move only reaches on a step', () => {
+    for (const [shape, move, steps] of STEP_SHAPES) {
+      const visual = moveEffectVisual(move, steps);
+
+      expect(visual, shape).not.toBeNull();
+
+      for (const at of [0.05, 0.35, 0.7]) {
+        const { context, marks } = canvas();
+        const playing = moveEffectVisual(move, steps);
 
         playing?.advance((visual?.duration ?? 0) * at);
         playing?.draw(context, STAGE);
@@ -272,6 +323,44 @@ describe('a painted move', () => {
     expect(delayShapeFor(Moves.DoomDesire, 0)).toBe('Charge');
   });
 
+  it('draws the Sinnoh moves the rules alone would have drawn wrong', () => {
+    // Health coming back, whatever the move is called
+    expect(effectShapeFor(Moves.Roost)).toBe('Mend');
+    expect(effectShapeFor(Moves.LunarDance)).toBe('Mend');
+    // Laid on the ground rather than marked on whoever is standing there
+    expect(effectShapeFor(Moves.StealthRock)).toBe('Caltrops');
+    expect(effectShapeFor(Moves.ToxicSpikes)).toBe('Caltrops');
+    // Held between the two of them, the way Trick and Skill Swap are
+    expect(effectShapeFor(Moves.Switcheroo)).toBe('Warp');
+    expect(effectShapeFor(Moves.HeartSwap)).toBe('Warp');
+    // A room over the field and a weight on it: the two moves that
+    // change the rules everybody is fighting under
+    expect(effectShapeFor(Moves.TrickRoom)).toBe('Grid');
+    expect(effectShapeFor(Moves.Gravity)).toBe('Press');
+    // Every type arrives as something now that each of them has a
+    // special move: a flower burst stood in for all of these
+    expect(effectShapeFor(Moves.DarkPulse)).toBe('Shade');
+    expect(effectShapeFor(Moves.DragonPulse)).toBe('Beam');
+    expect(effectShapeFor(Moves.FocusBlast)).toBe('Blast');
+    expect(effectShapeFor(Moves.Judgment)).toBe('Dazzle');
+    // What traps is drawn as what traps, whatever it is made of
+    expect(effectShapeFor(Moves.MagmaStorm)).toBe('Coil');
+    // Lobbed rather than shot flat, and laid rather than thrown at
+    expect(delayShapeFor(Moves.SeedBomb, 0)).toBe('Lobbed');
+    expect(delayShapeFor(Moves.StealthRock, 0)).toBe('Lobbed');
+    // The ground answers a knot the way it answers an Earthquake
+    expect(delayShapeFor(Moves.GrassKnot, 0)).toBe('Rise');
+    // Out of the world and back out of it behind whatever it hits
+    expect(delayShapeFor(Moves.ShadowForce, 1)).toBe('Vanish');
+  });
+
+  it('draws a U-turn as the blow and then as the leaving', () => {
+    // The engine deals the damage on the wind-up step and swaps the
+    // pokemon out on the last one, so the two steps are two pictures
+    expect(moveEffectVisual(Moves.UTurn, 1)).not.toBeNull();
+    expect(effectShapeFor(Moves.UTurn)).toBe('Relay');
+  });
+
   it('spends the gap differently depending on the move', () => {
     // The pokemon is the projectile: nothing else crosses the gap
     expect(delayShapeFor(Moves.Tackle, 0)).toBeNull();
@@ -312,6 +401,12 @@ describe('a painted move', () => {
     // move is aimed at would be a lie about what happened
     expect(moveEffectVisual(Moves.Dig, 1)).toBeNull();
     expect(moveEffectVisual(Moves.Dig, 0)).not.toBeNull();
+    // The same for everything else that leaves the field to wind up:
+    // a hit drawn on the target while the caster is under the water,
+    // in the air or out of the world is a lie about what happened
+    expect(moveEffectVisual(Moves.Dive, 1)).toBeNull();
+    expect(moveEffectVisual(Moves.Bounce, 1)).toBeNull();
+    expect(moveEffectVisual(Moves.ShadowForce, 1)).toBeNull();
     // A move that hits on every step keeps its picture on every step
     expect(moveEffectVisual(Moves.Thrash, 1)).not.toBeNull();
   });

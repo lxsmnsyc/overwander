@@ -7,6 +7,7 @@ import {
   burst,
   decay,
   fade,
+  funnel,
   lash,
   lighten,
   motes,
@@ -326,6 +327,38 @@ const elements = {
     motes(context, at, size * 1.5, many(5, weight), seed, share, {
       ...paint,
       alpha: swell(share) * 0.7,
+      width: 2 * stage.scale,
+    });
+  },
+
+  // Wind that keeps coming rather than a gust that arrives: strands
+  // turning out of the caster and widening onto whatever it is aimed
+  // at, held for most of the picture and then dropping
+  Gale(context, stage, share, { paint, seed, weight }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale * weight;
+    const reach = Math.min(1, share * 2.4);
+    const fading = share < 0.75 ? 1 : decay(share) * 4;
+
+    funnel(context, stage.source, at, reach, many(3, weight), size * 0.9, share * Math.PI * 6, {
+      ...paint,
+      alpha: fading * 0.9,
+      width: 2.4 * stage.scale,
+    });
+    // What it is doing where it arrives: the far end turns rather
+    // than bursts, which is what separates a blast of wind from a jet
+    if (reach >= 1) {
+      for (let spin = 0; spin < 2; spin += 1) {
+        slash(context, at, size * (0.8 + spin * 0.4), share * Math.PI * 5 + spin * 2.2, {
+          ...paint,
+          alpha: fading * 0.8,
+          width: 2.6 * stage.scale,
+        });
+      }
+    }
+    motes(context, at, size * 1.6, many(4, weight), seed, share, {
+      ...paint,
+      alpha: fading * 0.6,
       width: 2 * stage.scale,
     });
   },

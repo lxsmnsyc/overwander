@@ -68,15 +68,20 @@ const THROW_SPRITE = 28;
 const BALL_SPRITE = 48;
 
 /**
- * How long the ball takes to land, how long one shake of it takes, and
- * the beat it is left still before the answer is said.
+ * How long the ball takes to land, how long one shake of it takes, how
+ * long it lies still between shakes, and the beat it is left still
+ * before the answer is said.
  *
- * The whole of it runs while the catch is being written down, so the
- * player waits no longer than they already do: what changes is that
- * the wait is the ball rocking rather than a static sprite
+ * Most of it runs while the catch is being written down, so the player
+ * waits little longer than they already do: what changes is that the
+ * wait is the ball rocking rather than a static sprite.
+ *
+ * A shake and the rest after it are one iteration of the keyframes, so
+ * the two are split there in the same 2/3 to 1/3 they are here
  */
 const BALL_LAND = 260;
-const BALL_SHAKE = 420;
+const BALL_SHAKE = 400;
+const BALL_REST = 200;
 const BALL_SETTLE = 320;
 
 const STATE_MESSAGES: Record<SafariState, string> = {
@@ -202,7 +207,7 @@ function SafariBody(
     // say it to everybody the animation already told
     const held = settings().reduceMotion
       ? BALL_SETTLE
-      : BALL_LAND + shakes * BALL_SHAKE + BALL_SETTLE;
+      : BALL_LAND + shakes * (BALL_SHAKE + BALL_REST) + BALL_SETTLE;
 
     setRocking(shakes);
     await new Promise<void>((resolve) => {
@@ -411,9 +416,15 @@ function SafariBody(
       });
 
       await played;
-      setRocking(null);
       if (thrownAt == null) {
+        setRocking(null);
         return 'No ball of that kind to throw.';
+      }
+      // A ball that held stays where it stopped. The pokemon is inside
+      // it, so putting the sprite back in the field said it had got
+      // out, in the same beat as being told it was caught
+      if (thrownAt.result !== ThrowResult.Caught) {
+        setRocking(null);
       }
       // Written down whatever the setting says: the record is of what
       // happened, and turning the setting on later should pick up the
@@ -516,7 +527,11 @@ function SafariBody(
     <Dialog
       isOpen={props.session != null}
       onClose={leave}
-      insistent={props.insistent}
+      // A throw in flight is insistent whatever the encounter is: the
+      // ball is rocking, the answer is on its way, and leaving mid
+      // throw settles the session under it. The press is refused
+      // outright rather than heard and dropped
+      insistent={props.insistent === true || throwing()}
       title={met()}
       terse
       description="One encounter, one throw at a time. A treat makes it easier to catch and every
@@ -596,10 +611,11 @@ function SafariBody(
                     }
                   >
                     {/* The ball stands where the pokemon did, and the
-                        pokemon comes off the panel while it rocks:
-                        what is inside the ball is not also in the
-                        field, and a sprite left behind it would give
-                        the answer away before the last shake */}
+                        pokemon comes off the panel for good once it is
+                        thrown: what is inside the ball is not also in
+                        the field, and a sprite left behind it would
+                        give the answer away before the last shake. A
+                        ball that held keeps the space afterwards */}
                     <span
                       class="block pb-8"
                       style={{ animation: `ball-land ${BALL_LAND}ms ease-out both` }}
@@ -607,13 +623,17 @@ function SafariBody(
                       <span
                         class="block"
                         style={{
-                          animation: `ball-shake ${BALL_SHAKE}ms ease-in-out ${BALL_LAND}ms ${rocking() ?? 0} both`,
+                          animation: `ball-shake ${BALL_SHAKE + BALL_REST}ms ease-in-out ${BALL_LAND}ms ${rocking() ?? 0} both`,
                         }}
                       >
                         <ItemSprite
                           item={BALL_ITEMS[active().ball]}
                           size={BALL_SPRITE}
-                          label="The ball rocks"
+                          label={
+                            active().state === SafariState.Caught
+                              ? 'The ball holds'
+                              : 'The ball rocks'
+                          }
                         />
                       </span>
                     </span>

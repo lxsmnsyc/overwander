@@ -238,9 +238,17 @@ export function Dialog(props: DialogProps): JSX.Element {
    * already made would put away whatever it opened instead
    */
   const reportClose = (): void => {
-    if (asked) {
-      asked = false;
-      props.onClose();
+    if (!asked) {
+      return;
+    }
+    asked = false;
+    props.onClose();
+    // A caller that refused the close keeps its dialog. Hiding is this
+    // dialog's own doing and only a change of `isOpen` puts it back,
+    // so a handler that declined left the panel gone while whatever it
+    // was standing over stayed open underneath, refusing every press
+    if (props.isOpen) {
+      setShowing(true);
     }
   };
 

@@ -409,19 +409,26 @@
 /**
  * The ball rocking where the pokemon was standing. One iteration is
  * one shake, so the count the throw came back with is the number of
- * times this runs: three and it holds, fewer and it opens
+ * times this runs: three and it holds, fewer and it opens.
+ *
+ * The rock is over by two thirds through, and the rest of the
+ * iteration is the ball lying still. Without that beat the shakes ran
+ * into each other and read as one long wobble rather than as the
+ * three separate answers they are. The split is 2/3 rocking to 1/3
+ * still, which is BALL_SHAKE against BALL_REST in SafariDialog
  */
 @keyframes ball-shake {
   0%,
+  66.7%,
   100% {
     transform: rotate(0deg);
   }
 
-  25% {
+  16.7% {
     transform: rotate(-18deg) translateX(-6%);
   }
 
-  75% {
+  50% {
     transform: rotate(18deg) translateX(6%);
   }
 }

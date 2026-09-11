@@ -65,6 +65,14 @@ const WALK_SLACK = 8;
 const WALK_LIMIT = (BOARD_CELLS + WALK_SLACK) * WALK_PACE;
 
 /**
+ * How long a throw is given to answer. The ball lands, rocks up to
+ * three times with a beat between each, and lies still before the
+ * result is said, so a throw is seconds rather than the moment the
+ * request takes
+ */
+const THROW_LIMIT = 8_000;
+
+/**
  * How many times one stretch presses for the far side of the board.
  * Two crosses a chunk boundary from anywhere, since one press walks
  * the player half the board's width
@@ -231,7 +239,20 @@ test.describe('the safari', () => {
         break;
       }
       await throwBall.click();
-      await page.waitForTimeout(1200);
+      // Waited on the throw being over rather than on the clock. The
+      // button is shut for as long as the ball is in the air, so a
+      // flat beat shorter than the animation read a throw still
+      // rocking as an encounter that had ended
+      await expect
+        .poll(
+          async () => (await showing(look)) || !(await throwBall.isDisabled().catch(() => true)),
+          { timeout: THROW_LIMIT },
+        )
+        .toBe(true)
+        .catch(() => {
+          // Still nothing, which the next turn of the loop reads for
+          // itself: either the encounter ended or the bag is empty
+        });
     }
 
     // Either it is in the bag and there is something to look at, or the

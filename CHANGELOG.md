@@ -1,5 +1,535 @@
 # overwander
 
+## 3.0.0
+
+### Major Changes
+
+- 8a835cb: Hoenn.
+
+  All 135 of it, the 102 moves it brought, and the 17 abilities, Wonder Guard and
+  Pure Power and Truant among them. With them:
+
+  - The eight gym leaders, Roxanne to Juan, and the Elite Four and Wallace behind
+    them, which makes a third league and a third crown.
+  - The Battle Frontier: seven houses above a champion, each fought under its own
+    rule rather than against its own roster, and a silver symbol and a gold one to
+    take from each.
+  - Regirock, Regice, Registeel, Latias, Latios, Kyogre, Groudon and Rayquaza,
+    with Jirachi and Deoxys.
+  - Team Aqua and Team Magma, who keep the crime landmark on the water and on the
+    dry country while Team Rocket keeps the rest.
+  - A ball rocks up to three times before it holds, and 20 more buddy abilities
+    have a say in a safari.
+  - Speed shortens cooldowns, so every point of it now does something.
+  - 21 mints, one for every nature, so a pokemon is no longer stuck with the roll
+    it was met on.
+  - From the Elite Four upwards a trainer's six are composed rather than levelled
+    into: cores, supports, one weather, and gear priced against what carries it.
+
+  The world changes under all of it. Hoenn's species join the biomes they belong
+  to, nine lairs and 24 more duelling stops stand in the country, berry patches
+  and apricorn trees only grow where they could, and trainers are met out on the
+  open seas. What a chunk holds has changed everywhere.
+
+### Minor Changes
+
+- 0a42366: A thrown ball now rocks up to three times before it holds, and how far it got is what the meeting says about how close the throw came. The odds are unchanged: each shake is an independent check, and three of them multiply back to the old catch chance.
+
+  Some throws come out critical and hold on a single shake. How often depends on how many species the player has caught. A Super Luck buddy doubles how often one comes along, and a Sniper buddy gives the shake behind one two chances instead of one.
+
+- 9ad09f7: Three more things a buddy is worth in the field:
+
+  - Magma Armor halves an egg's walk, the same as Flame Body.
+  - Trace shows what a wild pokemon's ability is before a ball is thrown.
+  - Lightning Rod, Motor Drive, Volt Absorb, Storm Drain, Water Absorb, Sap Sipper and Flash Fire make a pokemon of their own type half again as easy to catch.
+
+- 64f66af: A buddy carrying the Catching Charm puts half again on every throw, and the charm turns up in the rarest band of found items.
+- 0990c16: Hoenn's crown, and the man who wore it before.
+
+  - **Wallace** takes the champion's seat, asking for all four of Hoenn's Elite
+    Four marks and paying the **Hoenn Champion** title. He fields the six he
+    defends Ever Grande with, Milotic last.
+  - **Steven** is a legend, met in a champion's seat one window in sixty-four like
+    Red, asking for nothing and paying his own mark. He fields the steel he is met
+    with on the mountain, Metagross last.
+  - Beating either pays the coat they are standing in: Wallace's two, and Steven's
+    one. Red's starting coat stays free, since it is what half the game begins in.
+  - Changes world generation.
+
+- 7b39df3: **Lucy** keeps the Battle Pike, the Frontier's third house.
+
+  - Her fight is walked through a curtain: your three arrive poisoned, burned,
+    paralysed, asleep, or mended, one room in 5 being the kind one. Hers arrive as
+    they are.
+  - The room is drawn when the challenge is accepted and frozen into the party, so
+    everybody watching the fight back walks through the one the challenger did.
+  - What the curtain leaves travels out with the party, and the kind room is the
+    only thing in the game that mends one by fighting.
+  - She fields Seviper, Shuckle and Milotic, and pays the **Luck Symbol**, silver
+    or gold.
+  - Changes world generation.
+
+- 2481a1e: Hoenn's pokedex chain, and the professor it pays.
+
+  - **Hoenn Pokedex** on the quest board, asking for 27 caught, then 68, then 133,
+    which is every species of the region but Jirachi and Deoxys.
+  - The last rung hangs the **Hoenn Dex Medal** on the shelf and hands over a
+    Master Ball, the way the other two regions' do.
+  - Filling it unlocks **Professor Birch** to wear.
+
+- 529ea72: A syndicate grunt now fields two out of each of the biome's three spawn bands rather than one common, two uncommon and three rare, and leaves any one of its six behind rather than only the half it was not fighting with. Changes world generation.
+- 9fadbe8: - Mints change a pokemon's nature for good. There are 21, one per nature that moves a stat, plus a Serious Mint for a pokemon that should move none.
+  - The wandering chef sells every mint, and the ground hides them in the prized band.
+  - Every vendor counter now lays out 12 kinds rather than 6, or its whole shelf where it carries fewer than 12.
+- ae35af0: Two Hoenn water lines, one of them a fork.
+
+  - **Spheal**, **Sealeo** and **Walrein** at dex 363 to 365, on the glacier and
+    in the polar ocean. Sealeo at 32, Walrein at 44. Walrein carries Slush Rush
+    beyond the mainline's set.
+  - **Clamperl** at dex 366, on the reef and in the ocean, opening into
+    **Huntail** or **Gorebyss** in the deep ocean depending on what it was
+    holding when it changed hands.
+  - The **Deep Sea Tooth** and **Deep Sea Scale** are spendable now, so both are
+    priced at 3,000 gold and turn up where a stone does. The rest of the trade
+    items stay priceless until their lines land.
+  - Changes world generation.
+
+- 733c205: The Wish Tag has a picture of its own: a pale paper tag with a gold star, made
+  from the member card's shape rather than borrowing it.
+- 733c205: Jirachi, and the tag a wish is written on.
+
+  - **Jirachi** at dex 385, a Steel and Psychic mythical of the badlands. Serene
+    Grace, and Levitate, Healer and Magic Bounce beyond the mainline's one.
+  - It stands in the badlands' mythical band at every hour, the same thinnest odds
+    Mew and Celebi walk at.
+  - **Forina**, the valley it sleeps under. A mythical's lair, so no biome hosts
+    it and no landmark ever rolls it.
+  - The **Wish Tag** joins the special band of the item pool: spending it calls
+    Jirachi out to the valley the comet passes over, wherever the player is
+    standing.
+  - Changes world generation.
+
+- 61cc84e: - **The Aron family** at dex 304 through 306, on the mountain and the badlands
+  by day.
+  - **The Trapinch family** at dex 328 through 330, in the desert and the
+    badlands by day.
+  - **Heavy Metal**, which the Aron line carries: it weighs 2x what it looks
+    like, so a Low Kick lands harder on it.
+  - Aggron reaches Battle Armor, which the mainline does not give it, since a
+    final evolution is filled to four.
+  - Changes world generation.
+- a29fef1: From the Elite Four upwards, a trainer's pokemon fight with the four moves their species is best with rather than the last four they levelled into, and their held gear follows those moves. Reaches the Elite Four, Champions, legends, Giovanni, his executives and all seven Frontier houses.
+- eeb39b2: - **Skitty and Delcatty** at dex 300 and 301, on grassland and shrubland by
+  day, with Skitty taking a Moon Stone.
+  - **Meditite and Medicham** at dex 307 and 308, on the mountain and in montane
+    forest by day.
+  - **Electrike and Manectric** at dex 309 and 310, on the savanna and the steppe
+    by day.
+  - **Normalize**, Skitty's own: everything it uses comes out Normal-type, so a
+    ghost takes nothing from any of it.
+  - **Pure Power** and **Minus**, which the other two lines carry. Plus now
+    answers Minus as well as another Plus, which is how the mainline has paired
+    them since Gen 5.
+  - Delcatty reaches Limber, Medicham reaches Inner Focus and Levitate, and
+    Manectric reaches Quick Feet, none of which the mainline gives them, since a
+    final evolution is filled to four.
+  - Changes world generation.
+- 053e7bc: Trainers are met out on the open seas, and only the ones who could be there: the swimmers, fishermen, sailors and tubers a country puts on its water.
+- 181d3f5: Hoenn's five two-stage water lines.
+
+  - **Carvanha** and **Sharpedo** at dex 318 and 319, in the ocean and on the
+    reef. Sharpedo carries Intimidate and Unnerve beyond the mainline's pair.
+  - **Wailmer** and **Wailord** at 320 and 321, in the ocean and the deep. Wailord
+    carries Damp.
+  - **Barboach** and **Whiscash** at 339 and 340, in the swamp and the bog.
+    Whiscash carries Sturdy.
+  - **Corphish** and **Crawdaunt** at 341 and 342, in the mangroves and the swamp.
+    Crawdaunt carries Tough Claws.
+  - **Feebas** and **Milotic** at 349 and 350: the fish in the bog, the one it
+    becomes in the kelp. A Feebas turns either on a **Prism Scale** handed over or
+    on reaching level 40 fond enough, standing in for the beauty this game does
+    not keep. The Prism Scale is priced and spendable now.
+  - A species reachable by more than one road is settled by whichever road is
+    open, so an evolution never spends an item the other road did not ask for.
+  - Changes world generation.
+
+- d2e6ce4: - **Taillow and Swellow** at dex 276 and 277, over grassland and savanna by
+  day.
+  - **Wingull and Pelipper** at dex 278 and 279, on the beach and the rocky coast
+    by day. Pelipper brings its own rain.
+  - Swellow reaches Gale Wings and Big Pecks, which the mainline does not give
+    it, since a final evolution is filled to four.
+  - Changes world generation.
+- 1122d9e: The 102 moves Hoenn brought, with what each of them does:
+
+  - Taunt, Torment and Imprison hold a pokemon out of part of its move set, and Yawn puts one to sleep 4 seconds after it hears it.
+  - Focus Punch is lost if the user is hit while winding it up, and Revenge hits twice as hard for the same thing.
+  - Stockpile fills its store over 3 steps, a charge and a pair of stat stages each, and Spit Up and Swallow are worth what it put away.
+  - Follow Me takes what an ally was about to take, Magic Coat turns a status move back on its caster, and Snatch takes a self-cast move for itself.
+  - Trick swaps held items, Knock Off knocks one away, Recycle picks up what was used, and Role Play and Skill Swap move abilities about.
+  - Wish heals 4 seconds later and can be left with a party member, Ingrain roots a pokemon down, and Doom Desire lands like a Future Sight.
+  - Nature Power, Secret Power and Camouflage read the ground the fight is on: a battle now carries its biome, and a swamp, a glacier and a forest each throw something different.
+  - Fake Out is one surprise per trip onto the field rather than a window, and Uproar is a rampage like Thrash that keeps the field awake for as long as it runs.
+
+- e6ed216: - **The Lotad family** at dex 270 through 272, on the bog and in the mangrove
+  by day, with Lombre taking a Water Stone.
+  - **The Seedot family** at dex 273 through 275, in woodland and shrubland after
+    dark, with Nuzleaf taking a Leaf Stone.
+  - **Wind Rider**, Shiftry's own: it takes nothing from a move that rides on the
+    wind and gains an Attack stage instead. Gust, Whirlwind, Razor Wind, Icy
+    Wind, Twister, Silver Wind, Heat Wave, Air Cutter and Blizzard all ride one.
+  - Ludicolo reaches Hydration, which the mainline does not give it, since a
+    final evolution is filled to four.
+  - Changes world generation.
+- 7c1e7d3: - **Poochyena and Mightyena** at dex 261 and 262, out on the savanna and the
+  shrubland after dark.
+  - **Zigzagoon and Linoone** at dex 263 and 264, on grassland and in woodland at
+    any hour.
+  - Linoone reaches Frisk, which the mainline does not give it, since a final
+    evolution is filled to four.
+  - Changes world generation.
+- 915a1b0: The first nine of Hoenn: the three starters and what they become.
+
+  - **Treecko, Torchic and Mudkip**, each with its two evolutions, at dex 252
+    through 260, with sheets under `sprites/pokemon/hoenn`.
+  - **Hoenn is a region the game knows about**, spanning dex 252 to 386.
+  - A new trainer now chooses a first partner from three regions rather than two.
+  - Sceptile reaches Chlorophyll and Leaf Guard, Blaziken Iron Fist and Moxie,
+    Swampert Rain Dish and Water Veil, none of which the mainline gives them.
+  - Changes world generation: Treecko is found in tropical rainforest and
+    tropical seasonal forest, Torchic on the savanna and the volcano, Mudkip in
+    swamp and bog.
+
+- e156ee0: Hoenn's trainer classes stand at duelling stops: 24 of them, covering every type the region grows.
+
+  Changes world generation.
+
+- 8ccb833: Hoenn's gym leaders, and the eight badges they pay.
+
+  - **Roxanne**, **Brawly**, **Wattson**, **Flannery**, **Norman**, **Winona**,
+    **Tate**, **Liza** and **Juan**, seated in the countries their own type
+    answers to alongside Kanto's and Johto's leaders.
+  - The **Stone**, **Knuckle**, **Dynamo**, **Heat**, **Balance**, **Feather**,
+    **Mind** and **Rain** badges, on the shelf after Johto's.
+  - Mossdeep is one gym kept by two people: whichever of Tate or Liza a chunk
+    seats, the Mind Badge is what it pays.
+  - Sootopolis is Juan's, which leaves Wallace for a champion's seat.
+  - Each of them is drawn in their own Ruby and Sapphire coat, unlocked by their
+    badge, with Roxanne, Flannery, Tate and Liza carrying an Omega Ruby one too.
+  - Hoenn has no Elite Four or Champion yet, so its badges open no seat.
+  - Changes world generation.
+
+- 170bc18: Hoenn's Elite Four.
+
+  - **Sidney** on dark ground, **Phoebe** in the damp, **Glacia** in the cold and
+    **Drake** on the water and in the green, seated the way the other two leagues'
+    seats are.
+  - Each asks to see all eight of Hoenn's badges before they will fight, and pays
+    their own mark: **Sidney**, **Phoebe**, **Glacia** and **Drake Defeated**.
+  - Each fields their type and nothing else, since their mainline teams carry no
+    widener, and each stands last behind their own ace: Absol, Dusclops, Walrein
+    and Salamence.
+  - Hoenn has no champion yet, so its four marks are the top of that region's walk.
+  - Changes world generation.
+
+- cd1380e: - **The Nincada family** at dex 290 through 292, in woodland and badlands after
+  dark. Shedinja is met nowhere: it is the other thing a Nincada can become at
+  Lv. 20, and it costs the Poke Ball the mainline asks you to be carrying.
+  - **The Whismur family** at dex 293 through 295, on the badlands and the steppe
+    by day.
+  - **Wonder Guard**, Shedinja's own: only a move it is weak to lands at all,
+    while status moves, poison and the weather still reach it.
+  - Shedinja reaches Cursed Body and Exploud reaches Berserk, neither of which
+    the mainline gives them, since a final evolution is filled to four.
+  - Changes world generation.
+- 9ef18b9: **Anabel** keeps the Battle Tower, the Frontier's fifth house.
+
+  - She asks nothing: three of hers against three of yours, under the ordinary
+    rules. The Tower is the fight the other four houses are read against.
+  - What she has instead of a rule is the hand: Alakazam, Entei and Snorlax at
+    level 100.
+  - She pays the **Ability Symbol**, silver or gold.
+  - Changes world generation.
+
+- 5df65cb: Spenser keeps the Battle Palace, the sixth Frontier house: every pokemon on the field picks its moves and its targets by its own nature, and the Spirits Symbol is what taking it pays. Changes world generation.
+- 06b6adf: **Noland** keeps the Battle Factory, the Frontier's fourth house.
+
+  - The house lends both sides. 6 rentals are laid on the table, you pick 3, and
+    Noland draws his own 3 out of the same crate.
+  - Nothing of yours is on the field, so nothing of yours comes off it: no health
+    lost, no item spent, no candy earned. The purse and the symbol are what the
+    fight pays.
+  - The crate is every species an expert could field, from every region, so the
+    Factory gets harder as the game registers more of them.
+  - The table is drawn off the challenge, so walking away and back deals the same
+    6, and a watched replay sees the hand that was actually played.
+  - He pays the **Knowledge Symbol**, silver or gold.
+  - Changes world generation.
+
+- 9e784be: The Hoenn version exclusives that never evolve, ten in all, each one the other
+  half of a pair.
+
+  - **Sableye** and **Mawile** at dex 302 and 303.
+  - **Plusle** and **Minun** at dex 311 and 312, which only work beside somebody.
+  - **Volbeat** and **Illumise** at dex 313 and 314, one male-only and one
+    female-only.
+  - **Zangoose** and **Seviper** at dex 335 and 336, sharing a plain: the
+    mongoose hunts by day and the snake after dark.
+  - **Lunatone** and **Solrock** at dex 337 and 338, one under the moon and one
+    under the sun.
+  - **Stall**, **Toxic Boost** and **Battery**, which those lines carry. Battery
+    lifts its teammates' special moves to 1.3x and never its own.
+  - Changes world generation.
+
+- 8fa7ddc: The Hoenn pokemon that stay exactly what they hatched as.
+
+  - **Torkoal** at dex 324, on the volcano and the mountain, bringing its own sun.
+  - **Spinda** at dex 327, on grassland and in montane forest.
+  - **Kecleon** at dex 352 and **Tropius** at dex 357, in tropical rainforest and
+    tropical seasonal forest.
+  - **Absol** at dex 359, on the mountain and the alpine tundra after dark.
+  - **Relicanth** at dex 369, in the ocean and the deep ocean.
+  - **Luvdisc** at dex 370, on the reef and the beach.
+  - **White Smoke** and **Color Change**, which Torkoal and Kecleon carry. Color
+    Change turns the holder the type of whatever move just hit it, whole rather
+    than adding to it.
+  - Changes world generation.
+
+- 317bece: - **Surskit and Masquerain** at dex 283 and 284, on the swamp and the bog by
+  day.
+  - **Shroomish and Breloom** at dex 285 and 286, in temperate and tropical
+    rainforest after dark.
+  - **Poison Heal**, which the Shroomish line carries: poison restores 1/8 of its
+    HP each time it would take some, and the AI will not waste a cast poisoning
+    it.
+  - Changes world generation.
+- d603b6e: - **The Ralts family** at dex 280 through 282, in temperate and montane forest
+  by day.
+  - **The Slakoth family** at dex 287 through 289, in tropical rainforest and
+    woodland by day.
+  - **Truant**, Slakoth's own: it loafs about for 2 seconds after every move it
+    finishes. The mainline alternates turns, and there are none here to
+    alternate between, so it loafs by the clock instead.
+  - Gardevoir reaches Healer and Slaking reaches Comatose and Oblivious, none of
+    which the mainline gives them, since a final evolution is filled to four.
+  - Changes world generation.
+- e896c7c: The last of Hoenn's two-stage lines.
+
+  - **Makuhita** and **Hariyama** on the mountain and in the montane forest by
+    day. Hariyama carries Stamina.
+  - **Gulpin** and **Swalot** in the bog and the swamp. Swalot carries Poison
+    Touch.
+  - **Numel** and **Camerupt** on the volcano and in the badlands.
+  - **Spoink** and **Grumpig** on the mountain and in the shrubland. Grumpig
+    carries Forewarn.
+  - **Cacnea** in the deserts by day, and **Cacturne** after dark, carrying Rough
+    Skin and Sand Rush.
+  - **Swablu** and **Altaria** on the mountain and the grassland. Altaria carries
+    Gale Wings and Healer.
+  - **Baltoy** and **Claydol** in the desert and the badlands at any hour. Claydol
+    carries Analytic, Filter and Sand Force.
+  - **Shuppet** and **Banette** in the woodland and the temperate forest at night.
+    Banette carries Aftermath.
+  - **Duskull** and **Dusclops** in the badlands and the woodland at night.
+    Dusclops is left as the mainline has it: a Dusknoir stands above it later.
+  - **Snorunt** and **Glalie** on the glacier and the alpine tundra. Glalie
+    carries Snow Warning.
+  - **Simple**, which Numel has: every stat change it takes counts 2x. Contrary
+    now shares its machinery instead of keeping a copy.
+  - Changes world generation.
+
+- a637881: The eon pair, and the island they keep to.
+
+  - **Latias** at dex 380 and **Latios** at 381, legendaries in the open ocean.
+    Each is single-gendered, so a player who wants both needs both lairs to come
+    round.
+  - **Southern Island**, out in open water, holding the two of them the way the
+    Burned Tower holds the beasts.
+  - Beyond Levitate, both carry Multiscale and Speed Boost; Latias adds Healer
+    and Latios Magic Bounce.
+  - The demo raid no longer stages a worn shape. A Rainy Castform is only ever
+    worn, so it could be rolled onto the field and then undressed by Forecast the
+    moment the fight started.
+  - Changes world generation.
+
+- af968ad: Castform, and the three skies it wears.
+
+  - **Castform** at dex 351, on grassland and the steppe at any hour.
+  - **Forecast**, which puts the holder into the shape the sky calls for: Fire in
+    sun, Water in rain, Ice in hail, and plain under anything else.
+  - A form can now be **worn rather than met**. A worn shape is never spawned or
+    caught, so meeting the pokemon fills it in: seeing a Castform fills all four
+    of its dex squares.
+  - Changes world generation.
+
+- 545d93f: Tucker keeps the Battle Dome, the last Frontier house: he names nobody until your three are frozen, then fields three drawn against them, and the Tactics Symbol is what taking it pays. Changes world generation.
+- 6f9f324: The five Hoenn species the region was still missing.
+
+  - **Azurill** at dex 298, a baby of the Marill line in the bogs, swamps and
+    temperate rainforest. Marill hatches from one now rather than from itself, and
+    the line's inherited moves moved down to the stage that lays the egg.
+  - **Nosepass** at dex 299 on the mountain and in the badlands, and **Roselia**
+    at 315 on grassland and shrubland. Both stand in the uncommon band: Probopass
+    and Roserade are still to come, so neither is the end of its line.
+  - **Chimecho** at 358 on the mountain and in the montane forest. Healer, Own
+    Tempo and Forewarn beyond the mainline's Levitate.
+  - **Wynaut** at 360, a baby of the Wobbuffet line on the mountain, in woodland
+    and on grassland. Wobbuffet hatches from one now.
+  - Roselia and Chimecho wait on a baby of their own, so a nest lays neither until
+    Budew and Chingling land.
+  - Changes world generation.
+
+- 29ee35f: Deoxys, in all four of its arrangements.
+
+  - **Deoxys** at dex 386, a mythical: the world stages none, and the **Aurora
+    Ticket** found in the special band is the only way to the raid at **Birth
+    Island**.
+  - Its Attack, Defense and Speed shapes are reached by rearranging it. Using a
+    **Meteorite** on a Deoxys offers every shape but the one it is in, so a
+    player picks the arrangement rather than rolling for it, and the rock is
+    spent doing it. Any shape walks back to any other, so each of the four fills
+    its own dex square once it has been stood in.
+  - **Meteorite**, found in the prized band and stocked by nobody, so a second
+    arrangement costs a second rock.
+  - A change of shape does not count as a stage when a spawn band is worked out,
+    so a Deoxys reads the same band in all four arrangements.
+  - Changes world generation.
+
+- 9ef18b9: A Frontier Brain keeps a second team for anybody who has already beaten them.
+
+  - Holding a house's silver symbol is what brings the Brain's second three out the
+    next time you walk in, and beating those is what the gold symbol is for.
+  - Greta's second is Gengar, Breloom and Umbreon; Lucy's is Seviper, Steelix and
+    Gyarados; Anabel's is Raikou, Snorlax and Latios. Brandon fields the same three
+    either time, and Noland rents both meetings.
+  - The gold symbol was a clean win before this, which was a way of scoring one
+    fight twice rather than two fights.
+
+- 9f6fc27: Overworld charsets for the seven Frontier Brains: Anabel, Tucker, Greta, Spenser, Noland, Lucy and Brandon.
+- 63b76a3: The weather trio, each sealed in its own place.
+
+  - **Kyogre** at dex 382 in the deep ocean, **Groudon** at 383 on the volcano,
+    **Rayquaza** at 384 on the mountain. All three are legendaries; Rayquaza
+    keeps the mainline's easier catch rate of 45 where the other two are 3.
+  - Three lairs: **Marine Cave**, **Terra Cave** and the **Sky Pillar**.
+  - **Air Lock**, which Rayquaza carries: weather does nothing to anybody while
+    it is up. It is Cloud Nine's effect, so both now share one implementation.
+  - Beyond their one mainline ability each: Kyogre carries Swift Swim, Water
+    Absorb and Pressure; Groudon Magma Armor, Stamina and Pressure; Rayquaza
+    Pressure, Intimidate and Multiscale.
+  - Changes world generation.
+
+- 0d01477: The three golems, and the chambers they were sealed in.
+
+  - **Regirock** at dex 377 in the desert and the badlands, **Regice** at 378 on
+    the glacier and in the polar ocean, **Registeel** at 379 on the mountain and
+    in the badlands. All three are legendaries: special band, catch rate 3, and a
+    raid boss a lobby can face.
+  - Three lairs to hold them: **Desert Ruins**, **Island Cave** and **Ancient
+    Tomb**, one golem apiece. Unlike the Burned Tower, none of them is shared.
+  - Beyond the mainline's pair each: Regirock carries Solid Rock and Sand Force,
+    Regice carries Filter and Slush Rush, Registeel carries Steelworker and
+    Filter.
+  - Changes world generation.
+
+- b15b372: Team Magma and Team Aqua keep the crime landmark in their own biomes: Aqua on the water, Magma on the volcanoes and dry country, Team Rocket everywhere else. Each has its own boss, executives, uniform and marks, and everybody is named team and rank first, as in Team Aqua Leader Archie. A pokemon taken off any of them is now recorded as taken from a syndicate rather than from Team Rocket, so the catch search term is `met:syndicate`. Changes world generation.
+- 2c3e7b3: The Battle Frontier opens, with two of its seven houses.
+
+  - A **Frontier Brain** landmark, the rank above the Champion. It takes nobody
+    who does not hold the crown of the region it stands in, and it is the first
+    fight in the game whose **rules** differ rather than its roster: three a side,
+    and the house's own terms on top.
+  - **Brandon** keeps the Battle Pyramid, walked with nothing in hand: neither side
+    carries a held item, and what a pokemon was holding is left at the door rather
+    than spent.
+  - **Greta** keeps the Battle Arena, judged rather than waited out: after 10 turns
+    the fight stops and the side holding the greater share of what it brought takes
+    it. An even fight is a draw.
+  - Both field their own three at level 100 and pay 200,000 to 400,000. Beating one
+    hangs its **silver symbol** on the shelf, and beating it without losing a
+    pokemon hangs the **gold** one instead.
+  - A battle now records the house rule it was fought under, so a replay is the
+    fight that happened.
+  - Changes world generation.
+
+- f59cfbe: The two Hoenn lines that take the longest to grow up.
+
+  - **Bagon**, **Shelgon** and **Salamence** at dex 371 to 373, on the mountain
+    and the alpine tundra by day and evening. Shelgon at 30, Salamence at 50.
+  - **Beldum**, **Metang** and **Metagross** at dex 374 to 376, in the badlands
+    and the cold desert at any hour. Metang at 20, Metagross at 45. A Beldum
+    knows one move and no machine teaches it another.
+  - **Steelworker**, which Metagross carries alongside Levitate: steel moves hit
+    1.5x whatever the holder's own types are.
+  - Changes world generation.
+
+- 01b9d56: Hoenn's fossils, and what is inside them.
+
+  - **Root Fossil** and **Claw Fossil**, dug out of the prized band or bought
+    off the Fossil Maniac for 12,000 gold, and spent at the Scientist's bench.
+  - **Lileep** and **Cradily** at dex 345 and 346, **Anorith** and **Armaldo** at
+    347 and 348. Both evolve at 40, and neither line spawns anywhere: a fossil is
+    the only way to either.
+  - The maniac now draws his two out of five, so which pair he is carrying is
+    worth checking again.
+  - Cradily carries Water Absorb and Stamina beyond the mainline's pair, and
+    Armaldo carries Sturdy and Adaptability.
+  - Changes world generation.
+
+- 353cd97: Seven more buddy abilities have a say in a safari:
+
+  - Magnet Pull holds a Steel type in place completely.
+  - Purified throws truer at a shadow.
+  - Gluttony carries feeding half again as far before it stops counting.
+  - Harvest keeps a fed treat working through a missed throw.
+  - Honey Gather finds a berry every 384 steps walked.
+  - Forewarn and Anticipation say how ready a wild pokemon is to run before the first ball.
+  - Pickpocket takes what a pokemon that ran off was carrying.
+
+- 0e06703: - **The Wurmple family** at dex 265 through 269, in woodland and temperate
+  forest: Wurmple at any hour, Silcoon and Beautifly by day, Cascoon and Dustox
+  after dark.
+  - **An evolution can ask what a pokemon was born as.** A Wurmple spins a
+    Silcoon if it is male and a Cascoon if it is female. The mainline reads a
+    hidden number instead.
+  - A catch dialog shows only the branch its pokemon fits, since gender is not
+    something a player can work towards.
+  - Changes world generation.
+
+### Patch Changes
+
+- d69d9e2: - A critical hit is even money two stages up and certain three, in place of the doubling that never reached a certainty.
+  - A blow a substitute ate, or an immunity refused, no longer carries its secondary effect.
+  - The type chart and the same-type bonus no longer scale a status move.
+- 3782e2d: - Every ability that does something beside a walking player now says so in its description, where before all 35 described only their battle behaviour.
+  - Cleanse Tag names the 3 spawns it keeps away, and the Amulet Coin and Luck Incense say a raid or a grunt counts.
+  - A Purified buddy makes a wild shadow 1.5x easier to catch. It had been doing nothing at all since a shadow became a half rather than a third as catchable.
+- 61746fe: A move that deals no damage is no longer stopped by the type chart, so a Ghost hears a Growl, a Normal type sees a Confuse Ray, and a Foresight identifies what it was made for. Thunder Wave still fails against a Ground type.
+- 61746fe: Soft-Boiled and Milk Drink can be aimed at a party member, and heal a share of that pokemon's HP rather than the caster's.
+- d69d9e2: Taking a unit off a team, or a team out of an alliance, now removes it rather than putting it back.
+- 9766004: A raid boss is never staged with Role Play, Skill Swap, Memento, Grudge, Endeavor, Wish, Ingrain, Slack Off or Swallow.
+- 699d6a2: The credits list is kept as the drawings under each artist's name rather than a
+  pair per drawing, and names that differ only in case, or by a tag in brackets,
+  are read as one person.
+- f45cc79: From the Elite Four upwards, an expert's held gear is priced rather than ordered: a Life Orb goes to something that hits hard enough to pay the recoil, a Choice item to a pokemon built around one blow, Leftovers to a wall, and an orb only to an ability that turns the status into a gain. Nobody carries two Choice items, two orbs or two type boosters. Gym leaders and below still carry what suits their species.
+- d154cd3: - Every Hoenn move draws its own picture: eruptions and spouts pour down, Ingrain and Frenzy Plant put roots up through the floor, Dive goes under and Bounce goes up, and the rest land as the shape their name says.
+  - A sound move is heard rather than seen, read off the move's own sound flag instead of a list.
+  - Taunt, Torment, Imprison, Ingrain, Yawn, Follow Me, Magic Coat, Snatch, Grudge, Uproar and Helping Hand now leave a mark on the pokemon carrying them.
+- Ice Ball rolls 5 times in one cast, and Flatter, Tickle, Feather Dance, Memento, Metal Sound and Fake Tears may be aimed at an ally.
+- 3cc175e: The gen 3 moves say how they are cast apart from who they reach, and the ones that may be aimed at a teammate reach the caster's own party.
+- 0162774: The Johto species learn what gen 3 teaches them, on top of everything they already knew.
+- e45da99: The Kanto species learn what gen 3 teaches them, on top of everything they already knew.
+- 18b80cc: Berry patches and apricorn trees only appear where they could grow: no patch on the deserts, the badlands, the volcano, the glacier or the alpine tundra, and no tree there or on the tundra, the steppe and the bare mountain. Changes world generation.
+- aacf421: Arena Trap and Shadow Tag buddies halve the chance a wild pokemon bolts after a failed throw, stacking with a Nanab berry.
+- 0463130: A stop dialog no longer repeats the challenger's team size and level band above the stake line, which already says both. A Team Rocket grunt's stake line now names the level band the way every other challenger's does.
+- 9892926: Speed now shortens cooldowns: every 512 points halves what is left of a move's wait, closing on 95% off, read with stages, abilities and held items in. Everything that moved Speed did nothing before this.
+- f45cc79: The NPC battle machinery is named for stops rather than for Team Rocket, since
+  it has served gym leaders, the Elite Four, the Champion, duelling trainers and
+  Frontier Brains for a while now. The two tables keep their names, because a
+  scheduled sweep deletes from them.
+- 5a33a1e: Teeter Dance confuses everything else on the field rather than the far side alone.
+- 4d64635: A built party is now composed rather than assembled: two cores and four supports, the weather settled once for all six by what the cores gain or lose under it, and no move handed to half the party. Moves, abilities, natures and gear are all chosen for the job and against each other, so nothing awakens an ability its own four moves never ask for, a Life Orb goes to the two doing the attacking, and a Choice item never locks a pokemon out of half its sheet.
+
 ## 2.4.1
 
 ### Patch Changes

@@ -199,7 +199,9 @@ async function enterRaidOnServer(
 
 /**
  * Open a mythical raid with a raid item, where the player is
- * standing. Opening costs nothing: the server checks the relic is
+ * standing. It takes the chunk rather than a snapshot, because the
+ * bag opens one too and a bag has no chunk built: the server derives
+ * its own snapshot from these two numbers either way. Opening costs nothing: the server checks the relic is
  * carried and leaves it in the bag, and it is spent when the raid
  * starts, so a mythical is fought once, won or lost. One relic opens
  * one lobby a window, so pressing it again is the way back into a
@@ -210,16 +212,12 @@ async function enterRaidOnServer(
  * this window's lobby for it has already been fought out
  */
 export async function hostMythicalRaid(
-  snapshot: ChunkSnapshot,
+  chunkX: number,
+  chunkY: number,
   item: Items,
+  offset: number,
 ): Promise<[string, RaidRecord] | null> {
-  return hostMythicalOnServer(
-    await getIdToken(),
-    snapshot.chunk.x,
-    snapshot.chunk.y,
-    item,
-    snapshot.offset,
-  );
+  return hostMythicalOnServer(await getIdToken(), chunkX, chunkY, item, offset);
 }
 
 async function hostMythicalOnServer(

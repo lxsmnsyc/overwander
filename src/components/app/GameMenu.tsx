@@ -43,14 +43,14 @@ import {
 import WeatherIcon from '../overworld/WeatherIcon';
 import { Divider, HoverCard } from '../styled';
 import { SHEER } from '../styled/transition';
-import FullscreenToggle from './fullscreen';
+import FullscreenToggle, { fullscreenOffered } from './fullscreen';
 import { ThemeToggle } from './theme';
 import { actionOf, forTheGame } from './keys';
 import settings, { type ClockFormat } from './settings';
 
 /**
- * How the two switches over the keypad are drawn: the bar's own button,
- * without the box a button usually carries
+ * How a switch is drawn, on the bar and over the keypad alike: the
+ * bar's own button, without the box a button usually carries
  */
 const TOGGLE = `cursor-pointer rounded-full border-0 bg-transparent px-2 py-1 text-ink shadow-none
   transition-colors hover:border-0 hover:bg-tide hover:text-on-accent active:translate-y-0
@@ -382,6 +382,17 @@ export default function GameMenu(): JSX.Element {
           {gold() ?? 0} gold
         </span>
 
+        {/* On the bar rather than behind the button: taking the screen
+            is what a player does as they start walking, and a phone is
+            where the browser's own bars cost the most. The divider is
+            asked the same question the switch is, since a browser that
+            will not fill the screen draws neither */}
+        <Show when={fullscreenOffered()}>
+          <Divider />
+        </Show>
+
+        <FullscreenToggle class={`${TOGGLE} shrink-0`} />
+
         {/* Above the button rather than below it: the button is at the
             bottom of the window, and there is nothing under it to open
             into. Centred on the button and pulled back by half its own
@@ -398,11 +409,10 @@ export default function GameMenu(): JSX.Element {
             // unmount={false}
             class="rounded-panel border-2 border-tide bg-paper p-2 shadow-pop"
           >
-            {/* How much screen the game has, and whether it is day or
-              night in it. Both change how the game looks rather than
-              what is on it, so neither is one of the keys */}
+            {/* Whether it is day or night in the game, which changes
+              how it looks rather than what is on it, so it is not one
+              of the keys */}
             <div class="flex items-center justify-end gap-2 border-b-2 border-line-soft px-2 pb-2">
-              <FullscreenToggle class={TOGGLE} />
               <ThemeToggle class={TOGGLE} />
             </div>
 

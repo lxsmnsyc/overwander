@@ -385,7 +385,7 @@ describe('the landmarks that ship', () => {
       Landmark.ApricornTree,
     ]) {
       expect(hasLandmarkPicture(kind), LANDMARK_NAMES[kind]).toBe(false);
-      expect(landmarkPicture(kind, Biome.Grassland), LANDMARK_NAMES[kind]).toBe(null);
+      expect(landmarkPicture(kind), LANDMARK_NAMES[kind]).toBe(null);
     }
   });
 
@@ -394,41 +394,30 @@ describe('the landmarks that ship', () => {
       if (!hasLandmarkPicture(kind)) {
         continue;
       }
-      expect(landmarkPicture(kind, Biome.Grassland), LANDMARK_NAMES[kind]).not.toBe(null);
+      expect(landmarkPicture(kind), LANDMARK_NAMES[kind]).not.toBe(null);
     }
   });
 
-  it('hangs a cold lair with ice and a wet one with moss', () => {
-    expect(landmarkPicture(Landmark.LegendaryLair, Biome.Grassland)).toBe('lair');
-    expect(landmarkPicture(Landmark.LegendaryLair, Biome.Glacier)).toBe('lair-ice');
-    expect(landmarkPicture(Landmark.LegendaryLair, Biome.Swamp)).toBe('lair-moss');
-    // Only the lair varies: a board is a board wherever it is posted
-    expect(landmarkPicture(Landmark.AuctionBoard, Biome.Glacier)).toBe(
-      landmarkPicture(Landmark.AuctionBoard, Biome.Swamp),
-    );
-  });
+  it('draws a lair as one statue, and a shadow one as the same statue', () => {
+    // Both raid landmarks are the gym's old seat now: the biome mouths
+    // and the boarded-over one are gone, and what tells the two apart
+    // is the stone's colour rather than its shape
+    expect(landmarkPicture(Landmark.LegendaryLair)).toBe('lair');
+    expect(landmarkPicture(Landmark.ShadowLair)).toBe('lair-rubble');
 
-  it('finds a shadow lair choked or boarded, and always the same one', () => {
-    const mouths = new Set(
-      Array.from({ length: 32 }, (_, cell) =>
-        landmarkPicture(Landmark.ShadowLair, Biome.Grassland, false, cell),
-      ),
-    );
+    const [legendary] = packed(LANDMARK_SHEET).filter((one) => one.name === 'lair');
+    const [shadow] = packed(LANDMARK_SHEET).filter((one) => one.name === 'lair-rubble');
 
-    expect([...mouths].sort()).toEqual(['lair-rubble', 'lair-sealed']);
-    // The same cell keeps the mouth it had: a lair that changed every
-    // frame would be a lair nobody could recognise
-    expect(landmarkPicture(Landmark.ShadowLair, Biome.Grassland, false, 7)).toBe(
-      landmarkPicture(Landmark.ShadowLair, Biome.Grassland, false, 7),
-    );
+    expect(shadow.width).toBe(legendary.width);
+    expect(shadow.height).toBe(legendary.height);
   });
 
   it('opens a cache this player has already dug up', () => {
-    expect(landmarkPicture(Landmark.ItemCache, Biome.Grassland)).toBe('cache');
-    expect(landmarkPicture(Landmark.ItemCache, Biome.Grassland, true)).toBe('cache-taken');
+    expect(landmarkPicture(Landmark.ItemCache)).toBe('cache');
+    expect(landmarkPicture(Landmark.ItemCache, true)).toBe('cache-taken');
     // Nothing else has a second state, and asking for one gives the
     // picture it always had rather than nothing at all
-    expect(landmarkPicture(Landmark.Nest, Biome.Grassland, true)).toBe('nest');
+    expect(landmarkPicture(Landmark.Nest, true)).toBe('nest');
   });
 
   it('says where every landmark meets the ground', () => {

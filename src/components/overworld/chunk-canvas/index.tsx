@@ -848,7 +848,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       return null;
     }
 
-    const name = landmarkPicture(kind, biomeAt(index), props.dug.has(index), seedOf(index));
+    const name = landmarkPicture(kind, props.dug.has(index));
 
     if (name == null) {
       return null;

@@ -221,6 +221,11 @@ const AWARD_COLORS: Record<Awards, string> = {
   [Awards.LucianDefeated]: '#7f6fc9',
   [Awards.SinnohChampion]: '#e0b64f',
   [Awards.SinnohDexMedal]: '#4a7fc9',
+  [Awards.GalacticGruntDefeated]: '#4a4f6a',
+  [Awards.MarsDefeated]: '#c9536f',
+  [Awards.JupiterDefeated]: '#8f5fa8',
+  [Awards.SaturnDefeated]: '#4a8fa8',
+  [Awards.CyrusDefeated]: '#3c5a8c',
 };
 
 /**

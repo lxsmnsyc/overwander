@@ -15,7 +15,7 @@ own, and beating one is kept for good.
 | **Champion**        | 4        | Beating that league's Champion          |
 | **Legend's mark**   | 2        | Beating a legend, who asks for nothing |
 | **Frontier symbol** | 14       | Taking a facility: silver for the win, gold for its second three |
-| **Syndicate marks** | 14       | Beating a grunt, an executive or the boss of Team Rocket, Team Magma or Team Aqua |
+| **Syndicate marks** | 19       | Beating a grunt, an executive or the boss of Team Rocket, Team Magma, Team Aqua or Team Galactic |
 | **Dex medal**       | 4        | Filling that region's dex                |
 
 Kanto, Johto, Hoenn and Sinnoh keep eight gyms apiece, and their leaders share

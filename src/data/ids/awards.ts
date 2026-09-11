@@ -104,6 +104,11 @@ const enum Awards {
   SinnohChampion = 84,
   /** Sinnoh's dex filled to 103 caught */
   SinnohDexMedal = 85,
+  GalacticGruntDefeated = 86,
+  MarsDefeated = 87,
+  JupiterDefeated = 88,
+  SaturnDefeated = 89,
+  CyrusDefeated = 90,
 }
 
 export default Awards;
@@ -195,6 +200,11 @@ export const AWARD_NAMES: Record<Awards, string> = {
   [Awards.LucianDefeated]: 'Lucian Defeated',
   [Awards.SinnohChampion]: 'Sinnoh Champion',
   [Awards.SinnohDexMedal]: 'Sinnoh Dex Medal',
+  [Awards.GalacticGruntDefeated]: 'Team Galactic Repelled',
+  [Awards.MarsDefeated]: 'Mars Defeated',
+  [Awards.JupiterDefeated]: 'Jupiter Defeated',
+  [Awards.SaturnDefeated]: 'Saturn Defeated',
+  [Awards.CyrusDefeated]: 'Cyrus Defeated',
 };
 
 /**

@@ -5364,13 +5364,15 @@ describe('the syndicates', () => {
       seen.set(syndicate, (seen.get(syndicate) ?? 0) + 1);
     }
 
-    // All three are somewhere, and the water and the fire are the two
-    // that were claimed
+    // All four are somewhere, and the water, the fire and the cold are
+    // the three that were claimed
     for (const syndicate of SYNDICATES) {
       expect(seen.get(syndicate) ?? 0, SYNDICATE_NAMES[syndicate]).toBeGreaterThan(0);
     }
     expect(getSyndicate(Biome.Ocean)).toBe(Syndicate.Aqua);
     expect(getSyndicate(Biome.Volcano)).toBe(Syndicate.Magma);
+    expect(getSyndicate(Biome.Glacier)).toBe(Syndicate.Galactic);
+    expect(getSyndicate(Biome.Beyond)).toBe(Syndicate.Galactic);
     expect(getSyndicate(Biome.Grassland)).toBe(Syndicate.Rocket);
   });
 });

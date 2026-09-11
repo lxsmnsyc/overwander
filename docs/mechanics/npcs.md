@@ -165,7 +165,8 @@ Who it is is rolled per cell per window, and the three ranks cannot overlap:
 never changes. **Team Aqua** holds the water, every ocean, reef, kelp forest,
 beach, rocky coast, mangrove, swamp and bog. **Team Magma** holds the fire and
 the high dry country: volcanoes, mountains, alpine tundra, badlands and both
-deserts. **Team Rocket** holds everywhere else, and holds any biome added later
+deserts. **Team Galactic** holds the cold and the thin places: glaciers, tundra,
+taiga, montane forest and the Beyond. **Team Rocket** holds everywhere else, and holds any biome added later
 until somebody says otherwise. So a player who learns that the coast is Aqua's
 has learned something about the world rather than about this window.
 
@@ -174,6 +175,7 @@ has learned something about the world rather than about this window.
 | **Team Rocket** | Boss **Giovanni**   | Archer, Ariana, Proton, Petrel      |
 | **Team Magma**  | Leader **Maxie**    | Admins Tabitha and Courtney         |
 | **Team Aqua**   | Leader **Archie**   | Admins Matt and Shelly              |
+| **Team Galactic** | Boss **Cyrus**    | Commanders Mars, Jupiter and Saturn |
 
 Which executive turns up is its own roll, so a team with two of them is no
 likelier to field one than a team with four. Everybody is introduced team first

@@ -255,8 +255,10 @@ their own names: a **Guitarist** is a Rocker, an **Aroma Lady** a Sage, a
 also bring trades nobody had: Hoenn the **Ninja Boy**, the **Tuber** and the
 **Poké Fan**, and Sinnoh fifteen more, among them the **Pokémon Ranger**, the
 **Worker**, the **Rancher**, the **Pokémon Breeder**, the **Policeman**, the
-**Parasol Lady**, the **Collector** and the **Twins**. Every one of the four
-regions now covers every type its own country grows.
+**Parasol Lady**, the **Collector** and the **Twins**. Seven of those two
+regions share, the **Young Couple** among them, so each is met in its own
+region's coat. Every one of the four regions now covers every type its own
+country grows.
 
 Which of them may be standing on a cell is the country's own: a Swimmer is met on
 the water, a Hiker on hard ground, a Skier in the snow, the same rule the gyms

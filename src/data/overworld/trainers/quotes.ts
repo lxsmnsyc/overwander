@@ -135,6 +135,18 @@ const TRAINER_QUOTES: Record<TrainerClass, string> = {
     'I have photographs of every one of these. Now I want one of you losing.',
   [TrainerClass.SinnohRoughneck]: 'We hold this stretch of road. Toll is one battle, win or lose.',
   [TrainerClass.SinnohClown]: 'Watch the hands. No, the other hands. Too late.',
+  [TrainerClass.Couple]: 'We battle together or not at all. You are welcome to try the pair of us.',
+  [TrainerClass.HoennBreeder]:
+    'The eggs hatch faster on the cycling road. These three were this morning.',
+  [TrainerClass.HoennRanger]: 'This route is mine to keep. Nothing crosses it without meeting me.',
+  [TrainerClass.HoennCollector]:
+    'I have dug up every oddity on this coast. You would round out the shelf.',
+  [TrainerClass.HoennReporter]:
+    'We are filming a piece on roadside battles. Say something for the camera.',
+  [TrainerClass.HoennRichBoy]: 'Father keeps a yacht at Lilycove. I keep a team worth rather more.',
+  [TrainerClass.HoennParasolLady]: 'It rains here six days in seven. I have never once been wet.',
+  [TrainerClass.SinnohCouple]:
+    'We walked the whole route together. We will take you together as well.',
 };
 
 export default TRAINER_QUOTES;

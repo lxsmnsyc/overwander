@@ -89,6 +89,11 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.Waiter,
     TrainerClass.ParasolLady,
     TrainerClass.Jogger,
+    TrainerClass.HoennReporter,
+    TrainerClass.HoennRichBoy,
+    TrainerClass.HoennParasolLady,
+    TrainerClass.Couple,
+    TrainerClass.SinnohCouple,
   ],
   [Biome.Mangrove]: [
     TrainerClass.Swimmer,
@@ -111,6 +116,8 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.SinnohNinjaBoy,
     TrainerClass.Ranger,
     TrainerClass.ParasolLady,
+    TrainerClass.HoennRanger,
+    TrainerClass.HoennParasolLady,
   ],
   [Biome.KelpForest]: [
     TrainerClass.Swimmer,
@@ -172,6 +179,7 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.SinnohSkier,
     TrainerClass.SinnohTuber,
     TrainerClass.RichBoy,
+    TrainerClass.HoennRichBoy,
   ],
   [Biome.Swamp]: [
     TrainerClass.Biker,
@@ -192,6 +200,9 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.Ranger,
     TrainerClass.Collector,
     TrainerClass.ParasolLady,
+    TrainerClass.HoennRanger,
+    TrainerClass.HoennCollector,
+    TrainerClass.HoennParasolLady,
   ],
   [Biome.Bog]: [
     TrainerClass.Biker,
@@ -208,6 +219,8 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.Collector,
     TrainerClass.ParasolLady,
     TrainerClass.Policeman,
+    TrainerClass.HoennCollector,
+    TrainerClass.HoennParasolLady,
   ],
   [Biome.TropicalSeasonalForest]: [
     TrainerClass.BugCatcher,
@@ -227,6 +240,10 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.SinnohAromaLady,
     TrainerClass.Ranger,
     TrainerClass.Breeder,
+    TrainerClass.HoennRanger,
+    TrainerClass.HoennBreeder,
+    TrainerClass.Couple,
+    TrainerClass.SinnohCouple,
   ],
   [Biome.Grassland]: [
     TrainerClass.Lass,
@@ -263,6 +280,12 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.Twins,
     TrainerClass.Jogger,
     TrainerClass.Breeder,
+    TrainerClass.HoennRanger,
+    TrainerClass.HoennReporter,
+    TrainerClass.HoennRichBoy,
+    TrainerClass.HoennBreeder,
+    TrainerClass.Couple,
+    TrainerClass.SinnohCouple,
   ],
   [Biome.TemperateForest]: [
     TrainerClass.BugCatcher,
@@ -286,6 +309,11 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.Artist,
     TrainerClass.RichBoy,
     TrainerClass.Breeder,
+    TrainerClass.HoennRanger,
+    TrainerClass.HoennRichBoy,
+    TrainerClass.HoennBreeder,
+    TrainerClass.Couple,
+    TrainerClass.SinnohCouple,
   ],
   [Biome.Woodland]: [
     TrainerClass.BugCatcher,
@@ -310,6 +338,10 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.Waiter,
     TrainerClass.Twins,
     TrainerClass.Breeder,
+    TrainerClass.HoennRanger,
+    TrainerClass.HoennBreeder,
+    TrainerClass.Couple,
+    TrainerClass.SinnohCouple,
   ],
   [Biome.Savanna]: [
     TrainerClass.BirdKeeper,
@@ -335,6 +367,7 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.Reporter,
     TrainerClass.Policeman,
     TrainerClass.Jogger,
+    TrainerClass.HoennReporter,
   ],
   [Biome.Steppe]: [
     TrainerClass.BirdKeeper,
@@ -358,6 +391,7 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.Cyclist,
     TrainerClass.Reporter,
     TrainerClass.Jogger,
+    TrainerClass.HoennReporter,
   ],
   [Biome.Desert]: [
     TrainerClass.Hiker,
@@ -422,6 +456,7 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.SinnohCamper,
     TrainerClass.Worker,
     TrainerClass.Collector,
+    TrainerClass.HoennCollector,
   ],
   [Biome.Mountain]: [
     TrainerClass.Hiker,
@@ -449,6 +484,7 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.Worker,
     TrainerClass.Collector,
     TrainerClass.Jogger,
+    TrainerClass.HoennCollector,
   ],
   [Biome.AlpineTundra]: [
     TrainerClass.Hiker,
@@ -497,6 +533,7 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.Worker,
     TrainerClass.Collector,
     TrainerClass.Policeman,
+    TrainerClass.HoennCollector,
   ],
   [Biome.RockyCoast]: [
     TrainerClass.PokeManiac,
@@ -521,6 +558,8 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.Worker,
     TrainerClass.RichBoy,
     TrainerClass.ParasolLady,
+    TrainerClass.HoennRichBoy,
+    TrainerClass.HoennParasolLady,
   ],
   [Biome.TemperateRainforest]: [
     TrainerClass.BugCatcher,
@@ -542,6 +581,7 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.SinnohNinjaBoy,
     TrainerClass.Collector,
     TrainerClass.Twins,
+    TrainerClass.HoennCollector,
   ],
   [Biome.MontaneForest]: [
     TrainerClass.Psychic,
@@ -565,6 +605,9 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.Ranger,
     TrainerClass.Artist,
     TrainerClass.Twins,
+    TrainerClass.HoennRanger,
+    TrainerClass.Couple,
+    TrainerClass.SinnohCouple,
   ],
   [Biome.Beyond]: [
     TrainerClass.Psychic,
@@ -590,6 +633,7 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.SinnohSchoolKid,
     TrainerClass.SinnohClown,
     TrainerClass.Collector,
+    TrainerClass.HoennCollector,
   ],
   [Biome.TropicalRainforest]: [
     TrainerClass.BugCatcher,
@@ -613,6 +657,7 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.SinnohClown,
     TrainerClass.SinnohNinjaBoy,
     TrainerClass.Ranger,
+    TrainerClass.HoennRanger,
   ],
   [Biome.Shrubland]: [
     TrainerClass.Lass,
@@ -644,6 +689,11 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.Reporter,
     TrainerClass.Twins,
     TrainerClass.Breeder,
+    TrainerClass.HoennRanger,
+    TrainerClass.HoennReporter,
+    TrainerClass.HoennBreeder,
+    TrainerClass.Couple,
+    TrainerClass.SinnohCouple,
   ],
   [Biome.Taiga]: [
     TrainerClass.Hiker,
@@ -665,6 +715,7 @@ export const BIOME_TRAINERS: Record<Biome, TrainerClass[]> = {
     TrainerClass.SinnohCamper,
     TrainerClass.Ranger,
     TrainerClass.Policeman,
+    TrainerClass.HoennRanger,
   ],
 };
 

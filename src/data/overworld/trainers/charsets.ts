@@ -137,6 +137,14 @@ const TRAINER_CHARSETS: Record<TrainerClass, string[]> = {
   [TrainerClass.SinnohPokeFan]: ['characters/dppt/poke-fan-f', 'characters/dppt/poke-fan-m'],
   [TrainerClass.SinnohRoughneck]: ['characters/dppt/roughneck'],
   [TrainerClass.SinnohClown]: ['characters/dppt/clown', 'characters/dppt/clown-f'],
+  [TrainerClass.Couple]: ['characters/oras/couple-f', 'characters/oras/couple-m'],
+  [TrainerClass.HoennBreeder]: ['characters/oras/breeder-f', 'characters/oras/breeder-m'],
+  [TrainerClass.HoennRanger]: ['characters/oras/ranger-f', 'characters/oras/ranger-m'],
+  [TrainerClass.HoennCollector]: ['characters/oras/collector'],
+  [TrainerClass.HoennReporter]: ['characters/oras/reporter', 'characters/oras/cameraman'],
+  [TrainerClass.HoennRichBoy]: ['characters/oras/rich-boy', 'characters/oras/lady'],
+  [TrainerClass.HoennParasolLady]: ['characters/oras/parasol-lady'],
+  [TrainerClass.SinnohCouple]: ['characters/dppt/couple-f', 'characters/dppt/couple-m'],
 };
 
 export default TRAINER_CHARSETS;

@@ -116,6 +116,14 @@ export const TRAINER_BASE_NAMES: Record<TrainerClass, string> = {
   [TrainerClass.SinnohPokeFan]: 'Poké Fan',
   [TrainerClass.SinnohRoughneck]: 'Roughneck',
   [TrainerClass.SinnohClown]: 'Clown',
+  [TrainerClass.Couple]: 'Young Couple',
+  [TrainerClass.HoennBreeder]: 'Pokémon Breeder',
+  [TrainerClass.HoennRanger]: 'Pokémon Ranger',
+  [TrainerClass.HoennCollector]: 'Collector',
+  [TrainerClass.HoennReporter]: 'Reporter',
+  [TrainerClass.HoennRichBoy]: 'Rich Boy',
+  [TrainerClass.HoennParasolLady]: 'Parasol Lady',
+  [TrainerClass.SinnohCouple]: 'Young Couple',
 };
 
 /**

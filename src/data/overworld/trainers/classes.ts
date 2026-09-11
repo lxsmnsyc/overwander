@@ -143,6 +143,21 @@ const enum TrainerClass {
   SinnohPokeFan = 106,
   SinnohRoughneck = 107,
   SinnohClown = 108,
+
+  /**
+   * The Young Couple, who both later regions put on the road, and
+   * Hoenn's own of the trades Sinnoh turned out to have brought
+   * first: the art for all seven shipped with Hoenn and was worn by
+   * nobody
+   */
+  Couple = 109,
+  HoennBreeder = 110,
+  HoennRanger = 111,
+  HoennCollector = 112,
+  HoennReporter = 113,
+  HoennRichBoy = 114,
+  HoennParasolLady = 115,
+  SinnohCouple = 116,
 }
 
 export { TrainerClass };
@@ -269,6 +284,14 @@ export const TRAINER_CLASSES: TrainerClass[] = [
   TrainerClass.SinnohPokeFan,
   TrainerClass.SinnohRoughneck,
   TrainerClass.SinnohClown,
+  TrainerClass.Couple,
+  TrainerClass.HoennBreeder,
+  TrainerClass.HoennRanger,
+  TrainerClass.HoennCollector,
+  TrainerClass.HoennReporter,
+  TrainerClass.HoennRichBoy,
+  TrainerClass.HoennParasolLady,
+  TrainerClass.SinnohCouple,
 ];
 
 /**
@@ -387,4 +410,12 @@ export const TRAINER_REGIONS: Record<TrainerClass, Regions> = {
   [TrainerClass.SinnohPokeFan]: Regions.Sinnoh,
   [TrainerClass.SinnohRoughneck]: Regions.Sinnoh,
   [TrainerClass.SinnohClown]: Regions.Sinnoh,
+  [TrainerClass.Couple]: Regions.Hoenn,
+  [TrainerClass.HoennBreeder]: Regions.Hoenn,
+  [TrainerClass.HoennRanger]: Regions.Hoenn,
+  [TrainerClass.HoennCollector]: Regions.Hoenn,
+  [TrainerClass.HoennReporter]: Regions.Hoenn,
+  [TrainerClass.HoennRichBoy]: Regions.Hoenn,
+  [TrainerClass.HoennParasolLady]: Regions.Hoenn,
+  [TrainerClass.SinnohCouple]: Regions.Sinnoh,
 };

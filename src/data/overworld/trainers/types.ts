@@ -135,6 +135,16 @@ const TRAINER_TYPES: Record<TrainerClass, Types[]> = {
   [TrainerClass.SinnohPokeFan]: [Types.Normal, Types.Electric],
   [TrainerClass.SinnohRoughneck]: [Types.Poison],
   [TrainerClass.SinnohClown]: [Types.Psychic],
+  // The couple field what a pair of them would: Hoenn's Volbeat and
+  // Illumise, and the Ralts line both regions grow
+  [TrainerClass.Couple]: [Types.Bug, Types.Psychic],
+  [TrainerClass.HoennBreeder]: [Types.Normal, Types.Grass],
+  [TrainerClass.HoennRanger]: [Types.Grass, Types.Bug],
+  [TrainerClass.HoennCollector]: [Types.Rock, Types.Ghost],
+  [TrainerClass.HoennReporter]: [Types.Normal, Types.Electric],
+  [TrainerClass.HoennRichBoy]: [Types.Normal, Types.Flying],
+  [TrainerClass.HoennParasolLady]: [Types.Water],
+  [TrainerClass.SinnohCouple]: [Types.Bug, Types.Psychic],
 };
 
 export default TRAINER_TYPES;

@@ -119,6 +119,14 @@ export const TRAINER_TRADE: Record<TrainerClass, TrainerClass> = {
   [TrainerClass.SinnohPokeFan]: TrainerClass.PokeFan,
   [TrainerClass.SinnohRoughneck]: TrainerClass.Biker,
   [TrainerClass.SinnohClown]: TrainerClass.Juggler,
+  [TrainerClass.Couple]: TrainerClass.Couple,
+  [TrainerClass.HoennBreeder]: TrainerClass.Breeder,
+  [TrainerClass.HoennRanger]: TrainerClass.Ranger,
+  [TrainerClass.HoennCollector]: TrainerClass.Collector,
+  [TrainerClass.HoennReporter]: TrainerClass.Reporter,
+  [TrainerClass.HoennRichBoy]: TrainerClass.RichBoy,
+  [TrainerClass.HoennParasolLady]: TrainerClass.ParasolLady,
+  [TrainerClass.SinnohCouple]: TrainerClass.Couple,
 };
 
 /**

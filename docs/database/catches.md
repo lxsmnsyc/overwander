@@ -61,6 +61,13 @@ Four child tables carry what a pokemon has several of, one row per slot:
 Each cascades on delete, so releasing a pokemon takes its moves and its history
 with it in one statement.
 
+The `slot` on the first three is the owner's own order, not the order things
+were learned in: a battle takes as many of each as it allows from the top of the
+list, so the order decides what a pokemon brings to a fight that allows fewer
+than it has. `arrangeCatch` in [`caught.ts`](../../src/server/caught.ts) is what
+writes it, and it accepts only a rearrangement of what is already stored, so
+nothing is learned or handed over by arranging.
+
 Columns are snake_case and the TypeScript record that reads them is camelCase;
 [`caught-rows.ts`](../../src/auth/caught-rows.ts) is where the two meet. A box is
 still one query however many pokemon are in it, because the children ride along

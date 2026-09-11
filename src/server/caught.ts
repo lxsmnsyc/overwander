@@ -1,6 +1,7 @@
 import 'server-only';
 import {
   Acquisition,
+  type CatchOrder,
   asCaughtPokemon,
   isAuctionableCatch,
   isNicknameLocked,
@@ -33,6 +34,7 @@ import {
   isEggRecord,
   isFavoriteRecord,
   isGuardedRecord,
+  rearrangedAs,
   zeroEffortValues,
 } from './catch-fields';
 import { readCaughtIn, readCaughtMany, updateCaughtIn } from './caught-io';
@@ -46,7 +48,7 @@ import { CANDY_STACKS, ITEM_STACKS } from '../auth/stacks';
 import { readStackIn, readStacksIn, spendStackIn, writeStackIn } from './stacks';
 import { asOffset, toLocalISO, toLocalTime } from '../auth/local-time';
 import { isCatchLocked } from './locks';
-import { asNumber, asNumberArray } from './read';
+import { asNumber, asNumberArray, asRecord } from './read';
 import { retireSpawn } from './overworld';
 
 /**
@@ -485,6 +487,69 @@ export async function takeItem(uid: string, catchId: string, item: Items): Promi
     // still gives back exactly what it took
     await updateCaughtIn(transaction, catchId, { items: held.filter((_, at) => at !== index) });
     await writeStackIn(transaction, ITEM_STACKS, uid, item, carried + 1);
+    return true;
+  });
+}
+
+/**
+ * Put a pokemon's moves, abilities and held items in the order its
+ * owner wants them in.
+ *
+ * The order is what a player brings to a fight rather than a matter
+ * of taste: a battle takes as many of each as it allows from the top
+ * of the list, so a pokemon with eight moves in a fight that allows
+ * four fights with the first four.
+ *
+ * All three lists in one call, since they are laid out together and
+ * saved together. Each may only be a rearrangement of what is already
+ * there: nothing is learned, taught or handed over here, and a list
+ * that says otherwise refuses the whole call. Refused as well for a
+ * pokemon somebody is fighting with, an egg, and one put away
+ */
+export async function arrangeCatch(
+  uid: string,
+  catchId: string,
+  order: CatchOrder,
+): Promise<boolean> {
+  return tx(async (transaction) => {
+    const caught = await readCaughtIn(transaction, catchId);
+
+    if (
+      caught == null ||
+      caught.owner !== uid ||
+      isCatchLocked(caught) ||
+      isEggRecord(caught) ||
+      isGuardedRecord(caught)
+    ) {
+      return false;
+    }
+
+    const fields: Record<string, unknown> = {};
+
+    for (const kind of ['moves', 'abilities', 'items'] as const) {
+      const wanted = order[kind];
+
+      if (wanted == null) {
+        continue;
+      }
+
+      const laid = rearrangedAs(asNumberArray(caught[kind]), wanted);
+
+      if (laid == null) {
+        return false;
+      }
+      fields[kind] = laid;
+    }
+
+    if (Object.keys(fields).length === 0) {
+      return false;
+    }
+    // The points ride on the move rows, so rewriting those without
+    // saying what was spent on each would hand every PP Up back
+    if ('moves' in fields) {
+      fields.movePoints = asRecord(caught.movePoints);
+    }
+    await updateCaughtIn(transaction, catchId, fields);
     return true;
   });
 }

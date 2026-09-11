@@ -427,6 +427,16 @@ export const ACQUISITION_NAMES: Record<Acquisition, string> = {
   [Acquisition.Revived]: 'Revived from a fossil',
 };
 
+/**
+ * What a rearranging player is asking for: the lists they want, in the
+ * order they want them. A list left out is left where it is
+ */
+export interface CatchOrder {
+  moves?: number[];
+  abilities?: number[];
+  items?: number[];
+}
+
 export interface OwnershipRecord {
   owner: string;
   /**

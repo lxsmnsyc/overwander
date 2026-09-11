@@ -10,7 +10,9 @@ import { isAuctionableCatch } from '../../../auth/auctions';
 import { setBuddy } from '../../../auth/buddy';
 import { getCandyCost, getReleaseCandy, useCandy } from '../../../auth/candy';
 import {
+  type CatchOrder,
   type CaughtPokemon,
+  arrangeCatch,
   giveItem,
   isFavorite,
   isGuarded,
@@ -689,6 +691,32 @@ export function CatchSheetBody(
         props.onRecordChanged();
         props.onBagChanged();
         props.onEvolutionsChanged();
+        props.onChange?.();
+      })
+      .catch((caught: unknown) => {
+        say(caught instanceof Error ? caught.message : String(caught), 'ember');
+      });
+  };
+
+  /**
+   * Save the order its moves, abilities and items are laid out in.
+   *
+   * One call for whichever of the three moved, the way a spread of
+   * effort is one call: dragging is cheap and the round trip is not,
+   * so nothing is asked of the server until the player saves
+   */
+  const arrange = (order: CatchOrder): void => {
+    const catchId = props.catchId;
+
+    if (owned() == null || catchId == null) {
+      return;
+    }
+    arrangeCatch(catchId, order)
+      .then((laid) => {
+        if (!laid) {
+          say('That order could not be saved.', 'ember');
+        }
+        props.onRecordChanged();
         props.onChange?.();
       })
       .catch((caught: unknown) => {
@@ -1377,9 +1405,10 @@ export function CatchSheetBody(
                       onGive={(item) => {
                         moveItem(item, true);
                       }}
-                      onTake={(at) => {
-                        moveItem(loaded().items[at], false);
+                      onTake={(item) => {
+                        moveItem(item, false);
                       }}
+                      onArrange={arrange}
                     />
                   </Show>
 

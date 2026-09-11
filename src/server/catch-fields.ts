@@ -47,6 +47,35 @@ export function withoutHeld(items: readonly number[], spent: number): number[] {
 }
 
 /**
+ * The same list in the order a caller asked for, or null where that
+ * is not what they asked for.
+ *
+ * A rearrangement may only move what is already there: the same
+ * entries, the same number of each, and nothing else. Counted rather
+ * than compared as sets, since a pokemon may hold two of an item
+ */
+export function rearrangedAs(held: readonly number[], wanted: readonly number[]): number[] | null {
+  if (held.length !== wanted.length) {
+    return null;
+  }
+
+  const counts = new Map<number, number>();
+
+  for (const entry of held) {
+    counts.set(entry, (counts.get(entry) ?? 0) + 1);
+  }
+  for (const entry of wanted) {
+    const left = counts.get(entry) ?? 0;
+
+    if (left === 0) {
+      return null;
+    }
+    counts.set(entry, left - 1);
+  }
+  return [...wanted];
+}
+
+/**
  * Whether the player has marked it as one they are keeping, read
  * straight off the stored row. A favorite is refused by everything
  * that would part them with it: a release, an auction, and a trade

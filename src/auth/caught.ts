@@ -2,6 +2,7 @@ import type { Items } from '../data/ids/items';
 import type { Species } from '../data/ids/species';
 import {
   type BulkOutcome,
+  arrangeCatch as arrangeOnServer,
   setFavorite as favoriteOnServerSide,
   giveItem as giveOnServer,
   setGuarded as guardedOnServerSide,
@@ -15,7 +16,7 @@ import { requireUid } from '../server/auth';
 import type { CatchConstraint, CatchContext, RowConstraint } from './catch-search';
 import type { PostgrestError } from '@supabase/supabase-js';
 import { asRecord, asRecordArray } from './__normalize';
-import type { CaughtPokemon } from './caught-record';
+import type { CatchOrder, CaughtPokemon } from './caught-record';
 import { CAUGHT_EMBED, fromCaughtRow } from './caught-rows';
 import getSupabase from './supabase';
 import getIdToken from './session';
@@ -28,7 +29,7 @@ export {
   isGuarded,
 } from './caught-record';
 export { NICKNAME_LIMIT, asNickname } from './nickname';
-export type { CaughtPokemon, OwnershipRecord } from './caught-record';
+export type { CatchOrder, CaughtPokemon, OwnershipRecord } from './caught-record';
 
 const CAUGHT_TABLE = 'caught';
 
@@ -458,6 +459,32 @@ export async function takeItem(catchId: string, item: Items): Promise<boolean> {
 async function takeItemOnServer(token: string, catchId: string, item: Items): Promise<boolean> {
   'use server';
   return takeOnServer(await requireUid(token), catchId, item);
+}
+
+/**
+ * Lay a pokemon's moves, abilities and held items out in the order
+ * the player wants them.
+ *
+ * One call for all three, because the sheet lays them out together
+ * and saves them together: a player who has shuffled four moves and
+ * two items pays one round trip rather than six.
+ *
+ * The order decides what it brings to a fight that allows fewer than
+ * it knows. Resolves false when the catch is not the player's, is
+ * fighting, is an egg, is put away, or when a list is anything but a
+ * rearrangement of what it already has
+ */
+export async function arrangeCatch(catchId: string, order: CatchOrder): Promise<boolean> {
+  return arrangeCatchOnServer(await getIdToken(), catchId, order);
+}
+
+async function arrangeCatchOnServer(
+  token: string,
+  catchId: string,
+  order: CatchOrder,
+): Promise<boolean> {
+  'use server';
+  return arrangeOnServer(await requireUid(token), catchId, order);
 }
 
 /**

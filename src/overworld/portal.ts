@@ -1,44 +1,36 @@
 import type Biome from '../data/ids/biome';
-import { BIOME_CONFIGS } from '../data/ids/biome';
 import type Chunk from './chunk';
-import { portalCellIn } from './town';
+import { CHUNK_CELLS, cellInChunk, chunkOfCell } from './grid';
+import { portalCellIn, portalSpot, townName, townOfRegion } from './town';
 import type World from './world';
-import { isInWorld } from './world';
 
 /**
  * Where a portal goes.
  *
  * A portal is not a teleport: it opens onto **another portal**, and
- * the traveller names the biome rather than the place. The one they
- * arrive at is the nearest portal of that biome to the one they are
- * standing in — which is a pure function of the two of them, so both
- * sides work it out rather than one telling the other. A client that
- * lied about its destination would be asking to be sent somewhere the
- * server derives differently, and gets sent where the derivation says.
+ * the traveller names the town they want. Towns are the only places
+ * in the world with names of their own, which is what makes the
+ * network something players can talk about: a name told to somebody
+ * is a place they can now reach, once somebody has been there.
  *
- * Landmarks come out of the chunk seed alone, so none of this touches
- * a store, a window or a clock: the network exists as soon as the
- * world does, and it is the same network for everybody.
+ * Where a named town's portal stands is a pure function of the
+ * region, so both sides work it out rather than one telling the
+ * other. A client that lied about its destination would be asking to
+ * be sent somewhere the server derives differently, and gets sent
+ * where the derivation says.
+ *
+ * All of it is derived from the seed alone, the name included, so
+ * none of this touches a store, a window or a clock. What the store
+ * holds is only **which towns anybody has walked into**, since that
+ * is the one thing about a town no derivation can answer.
+ *
+ * A region with no town still has a portal, out in the country. It is
+ * somewhere to leave from and nowhere to arrive at: nothing names it.
  */
 
-/**
- * How far a portal reaches, in chunks. It is a long way — far past
- * what anybody would walk — but it is finite, so the search always
- * ends and a biome that is not within it simply is not on offer
- */
-export const PORTAL_RANGE = 96;
-
-/**
- * How many biomes the world actually grows. `Beyond` is not one of
- * them — nothing is generated there — so a search that has found this
- * many has found everything there is and can stop walking
- */
-const BIOME_COUNT = Object.keys(BIOME_CONFIGS).length;
-
-/**
- * One end of a crossing
- */
+/** One end of a crossing */
 export interface PortalDestination {
+  /** The chunk it stands in */
   x: number;
   y: number;
   /**
@@ -47,11 +39,8 @@ export interface PortalDestination {
    */
   cell: number;
   biome: Biome;
-  /**
-   * How many chunks away it is, as a ring rather than as the crow
-   * flies — the same measure the search walks outward in
-   */
-  distance: number;
+  /** The town it stands in the middle of, as the store named it */
+  name: string;
 }
 
 /**
@@ -61,77 +50,34 @@ export interface PortalDestination {
  */
 export function getPortalCell(chunk: Chunk): number | null {
   // Asked of the region rather than of the chunk's landmarks: every
-  // region has exactly one portal, and the network is walked tens of
-  // thousands of chunks at a time
+  // region has exactly one portal, and a landmark roll is not free
   return portalCellIn(chunk.world, chunk.x, chunk.y);
 }
 
 /**
- * Every biome a portal here can reach, and where it comes out.
- *
- * One walk outward answers for all of them at once: the first portal
- * of a biome the search meets is the nearest one, and a biome already
- * answered for is not asked about again. Chunks are only rolled for
- * their landmarks where their biome is still wanted, which is what
- * keeps a search for something rare from paying for the common ground
- * it crosses.
- *
- * The chunk the traveller is standing in is not a destination — a
- * portal that came out where it went in would be a wasted key
+ * Where a crossing to this region comes out, or null when the region
+ * has no town and so nothing anybody could have named
  */
-export function findPortals(
+export function portalInRegion(
   world: World,
-  fromX: number,
-  fromY: number,
-  range = PORTAL_RANGE,
-): Map<Biome, PortalDestination> {
-  const found = new Map<Biome, PortalDestination>();
-
-  for (let radius = 1; radius <= range && found.size < BIOME_COUNT; radius++) {
-    for (let dy = -radius; dy <= radius; dy++) {
-      for (let dx = -radius; dx <= radius; dx++) {
-        // The ring alone; everything inside it was walked already
-        if (Math.max(Math.abs(dx), Math.abs(dy)) !== radius) {
-          continue;
-        }
-
-        const x = fromX + dx;
-        const y = fromY + dy;
-
-        if (!isInWorld(x, y)) {
-          continue;
-        }
-
-        const biome = world.getChunkBiome(x, y);
-
-        // Already answered for, and the answer was nearer than this
-        if (found.has(biome)) {
-          continue;
-        }
-
-        const cell = getPortalCell(world.getChunk(x, y));
-
-        if (cell != null) {
-          found.set(biome, { x, y, cell, biome, distance: radius });
-        }
-      }
-    }
-  }
-  return found;
-}
-
-/**
- * Where a portal here comes out for the biome named, or null when
- * nothing of that biome is in reach. It is the same walk `findPortals`
- * makes — the server checks a crossing by asking for it again rather
- * than by trusting what arrived
- */
-export function findPortal(
-  world: World,
-  fromX: number,
-  fromY: number,
-  biome: Biome,
-  range = PORTAL_RANGE,
+  regionX: number,
+  regionY: number,
 ): PortalDestination | null {
-  return findPortals(world, fromX, fromY, range).get(biome) ?? null;
+  const town = townOfRegion(world, regionX, regionY);
+
+  if (town == null) {
+    return null;
+  }
+
+  const [x, y] = portalSpot(world, regionX, regionY);
+  const chunkX = chunkOfCell(x);
+  const chunkY = chunkOfCell(y);
+
+  return {
+    x: chunkX,
+    y: chunkY,
+    cell: cellInChunk(y) * CHUNK_CELLS + cellInChunk(x),
+    biome: town.biome,
+    name: townName(town),
+  };
 }

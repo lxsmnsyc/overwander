@@ -31,6 +31,7 @@ beforeEach(async () => {
   // cascade would follow profiles.buddy_id into the profiles table
   // and empty the actors' own rows
   await sql`delete from bids`;
+  await sql`delete from towns`;
   await sql`delete from gift_claims`;
   await sql`delete from gifts`;
   await sql`delete from auction_sellers`;
@@ -239,6 +240,48 @@ describe('gifts', () => {
       .insert({ id: 'rls-gift-2', player: null, offered_at: 0, gift: {} });
 
     expect(written.error).not.toBeNull();
+  });
+});
+
+describe('towns', () => {
+  it('is readable by anybody and writable by nobody', async () => {
+    await sql`
+      insert into towns (region_x, region_y, found_by, found_at)
+      values (3, -2, ${alice.uid}, 1000)
+    `;
+
+    // A town one player found is a town everybody can cross to, so the
+    // register is public. What it is called is not in here at all: a
+    // name is worked out from the region it stands in
+    const seen = await bob.client.from('towns').select('region_x, region_y, found_by');
+
+    expect(seen.error).toBeNull();
+    expect(seen.data?.length).toBe(1);
+    expect(seen.data?.[0]?.found_by).toBe(alice.uid);
+
+    // Finding one is the server's to write. A browser that could insert
+    // here could put anywhere on the map without walking to it
+    const forged = await bob.client.from('towns').insert({
+      region_x: 4,
+      region_y: -2,
+      found_by: bob.uid,
+      found_at: 1000,
+    });
+
+    expect(forged.error).not.toBeNull();
+
+    const stolen = await bob.client.from('towns').update({ found_by: bob.uid }).eq('region_x', 3);
+
+    expect(stolen.error).not.toBeNull();
+
+    const razed = await bob.client.from('towns').delete().eq('region_x', 3);
+
+    expect(razed.error).not.toBeNull();
+
+    // A guest sees no towns at all
+    const hidden = await guest().from('towns').select('region_x');
+
+    expect(hidden.data ?? []).toEqual([]);
   });
 });
 

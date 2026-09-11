@@ -42,8 +42,19 @@ import Biome, {
   WILD_BIOMES,
   getBiome,
   isOpenSea,
+  isSettledBiome,
   isWaterBiome,
 } from '../src/data/ids/biome';
+import type { SettledBiome } from '../src/data/ids/biome';
+import nameTown, {
+  COUNTY_REGIONS,
+  HEADS_PER_BIOME,
+  NAMES_PER_BIOME,
+  TOWN_HEADS,
+} from '../src/data/overworld/town-names';
+import { WORLD_MAX, WORLD_MIN } from '../src/overworld/world';
+import { CHUNK_CELLS } from '../src/overworld/grid';
+import { TOWN_REGION } from '../src/overworld/town';
 import {
   APRICORNS,
   BALL_ITEMS,
@@ -6949,5 +6960,110 @@ describe('a region’s pokedex chain', () => {
         ids.add(id);
       }
     }
+  });
+});
+
+describe('town names', () => {
+  it('dresses every country a town can stand on, and nothing else', () => {
+    const dressed = (Object.keys(TOWN_HEADS).map(Number) as SettledBiome[]).sort(
+      (left, right) => left - right,
+    );
+
+    // Exactly the biomes a town can be settled on. Words for a biome
+    // no town can stand on would be words nothing ever reaches
+    expect(dressed).toEqual(WILD_BIOMES.filter(isSettledBiome));
+    for (const biome of dressed) {
+      expect(isOpenSea(biome), BIOME_NAMES[biome]).toBe(false);
+    }
+
+    const seen = new Map<string, Biome>();
+
+    for (const biome of dressed) {
+      const heads = TOWN_HEADS[biome];
+
+      expect(heads.length, BIOME_NAMES[biome]).toBe(HEADS_PER_BIOME);
+      for (const head of heads) {
+        // Two biomes sharing a word is two towns that could be called
+        // the same thing, which is a name the store has to re-roll
+        expect(seen.get(head) ?? biome, head).toBe(biome);
+        seen.set(head, biome);
+        expect(head).toMatch(/^[A-Z][a-z]+$/);
+      }
+    }
+  });
+
+  it('gives a county’s regions a name each, and never two the same', () => {
+    const names = new Set<string>();
+
+    // A whole county, which is the set a name has to be unique inside.
+    // Exhaustive on purpose: this is the claim the whole scheme rests
+    // on, and it is only 4,096 names
+    for (let y = 0; y < COUNTY_REGIONS; y++) {
+      for (let x = 0; x < COUNTY_REGIONS; x++) {
+        names.add(nameTown(x, y, Biome.Glacier));
+      }
+    }
+    expect(names.size).toBe(COUNTY_REGIONS * COUNTY_REGIONS);
+    // And the county has room left over, which is what lets the marks
+    // stay rare
+    expect(NAMES_PER_BIOME).toBe(49_920);
+    expect(NAMES_PER_BIOME).toBeGreaterThan(COUNTY_REGIONS * COUNTY_REGIONS);
+  });
+
+  it('keeps a mark a flourish rather than a fixture', () => {
+    let marked = 0;
+
+    for (let y = 0; y < COUNTY_REGIONS; y++) {
+      for (let x = 0; x < COUNTY_REGIONS; x++) {
+        // A mark is a word in front, so a marked name is the one with
+        // three words before the county rather than two
+        if (nameTown(x, y, Biome.Glacier).split(',')[0].split(' ').length === 3) {
+          marked++;
+        }
+      }
+    }
+    // The 3,840 unmarked names are spent first, so only what is left
+    // of the county's 4,096 regions reaches for one
+    expect(marked).toBe(COUNTY_REGIONS * COUNTY_REGIONS - 8 * 40 * 12);
+    expect(marked / (COUNTY_REGIONS * COUNTY_REGIONS)).toBeLessThan(0.07);
+  });
+
+  it('names a town for the county it stands in', () => {
+    const name = nameTown(3, -2, Biome.Glacier);
+    const [local, county] = name.split(', ');
+
+    expect(county).not.toBeUndefined();
+    // The head is the glacier's own, which is what makes the name
+    // worth reading before the map is looked at
+    const words = local.split(' ');
+
+    expect(
+      TOWN_HEADS[Biome.Glacier].some((head) => words[words.length - 2].startsWith(head)),
+      name,
+    ).toBe(true);
+
+    // Everywhere in one county shares its second half, and a region a
+    // county over does not
+    expect(nameTown(4, -2, Biome.Glacier).split(', ')[1]).toBe(county);
+    expect(nameTown(3 + COUNTY_REGIONS, -2, Biome.Glacier).split(', ')[1]).not.toBe(county);
+  });
+
+  it('never depends on how big the world is', () => {
+    // A county is floor(region / 64) and nothing else, so growing the
+    // world leaves every town that already existed under the name it
+    // already had. Every region the world has today must land inside
+    // the county names, which is what would fail if it grew
+    const lowest = Math.floor((WORLD_MIN * CHUNK_CELLS) / (TOWN_REGION * CHUNK_CELLS));
+    const highest = Math.floor(((WORLD_MAX + 1) * CHUNK_CELLS - 1) / (TOWN_REGION * CHUNK_CELLS));
+
+    for (const y of [lowest, -1, 0, highest]) {
+      for (const x of [lowest, -1, 0, highest]) {
+        expect(() => nameTown(x, y, Biome.Glacier)).not.toThrow();
+      }
+    }
+    // ...and a region past the world's edge is the thing that says so,
+    // rather than quietly sharing a name with somewhere real
+    expect(() => nameTown(lowest - 1, 0, Biome.Glacier)).toThrow();
+    expect(() => nameTown(0, highest + 1, Biome.Glacier)).toThrow();
   });
 });

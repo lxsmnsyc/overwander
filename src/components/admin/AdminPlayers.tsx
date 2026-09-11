@@ -14,6 +14,7 @@ import { ADMIN_ROLE } from '../../auth/staff';
 import Listing from './Listing';
 import { listPlayers } from '../../auth/admin';
 import namePlace from '../../overworld/place';
+import { worldCell } from '../../overworld/grid';
 
 /**
  * Everybody who has ever signed in.
@@ -77,7 +78,13 @@ function PlayerList(props: {
                 <Show when={player.position} fallback={<Meta>has not walked anywhere</Meta>}>
                   {(at) => (
                     <Meta>
-                      {namePlace(at().chunkX, at().chunkY)} · cell {at().cellX}, {at().cellY}
+                      {namePlace(
+                        at().chunkX,
+                        at().chunkY,
+                        worldCell(at().chunkX, at().cellX),
+                        worldCell(at().chunkY, at().cellY),
+                      )}{' '}
+                      · cell {at().cellX}, {at().cellY}
                     </Meta>
                   )}
                 </Show>

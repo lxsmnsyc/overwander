@@ -890,13 +890,19 @@ export default class ChunkSnapshot {
 
   /**
    * Who is standing at this cell, wherever they came from: the
-   * window's wanderer, or the vendor whose stall is fixed to a Market
-   * cell. Everything that asks "is this person really there" asks
+   * window's wanderer, or one of the two whose place is fixed rather
+   * than rolled, the vendor at his stall and Nurse Joy at her
+   * counter. Everything that asks "is this person really there" asks
    * this, so the server's refusal and the board's offer agree
    */
   getStandingNpc(cell: number): Npc | null {
-    if (this.chunk.getLandmarkCells().get(cell) === Landmark.Market) {
+    const landmark = this.chunk.getLandmarkCells().get(cell);
+
+    if (landmark === Landmark.Market) {
       return Npc.Vendor;
+    }
+    if (landmark === Landmark.PokemonCenter) {
+      return Npc.NurseJoy;
     }
     return this.getWanderingNpcs().get(cell) ?? null;
   }
@@ -967,6 +973,8 @@ export default class ChunkSnapshot {
           }
         } else if (landmark === Landmark.Market) {
           dress(cell, npcSheets(Npc.Vendor));
+        } else if (landmark === Landmark.PokemonCenter) {
+          dress(cell, npcSheets(Npc.NurseJoy));
         }
       }
       this.coats = coats;

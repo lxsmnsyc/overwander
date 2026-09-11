@@ -120,7 +120,14 @@ export interface BoardView {
 
 /** Where a board is, in the words the game names it by */
 export function naming(view: BoardView): string {
-  return namePlace(view.chunkX, view.chunkY);
+  // The player stands at the middle of the board, and a town is
+  // named by the cell somebody is on rather than by the chunk
+  return namePlace(
+    view.chunkX,
+    view.chunkY,
+    view.originX + BOARD_CENTER,
+    view.originY + BOARD_CENTER,
+  );
 }
 
 /** How far a board cell is from the player, who stands in the middle */

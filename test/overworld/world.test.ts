@@ -93,9 +93,19 @@ import {
   centeredCells,
   chunkOfCell,
   neighborCells,
+  worldCell,
 } from '../../src/overworld/chunk';
 import { CARDINALS } from '../../src/overworld/path';
-import { TOWN_REGION, getTownLots, townAt, townOfRegion } from '../../src/overworld/town';
+import nameTown from '../../src/data/overworld/town-names';
+import type { Town } from '../../src/overworld/town';
+import {
+  TOWN_REGION,
+  getTownLots,
+  townAt,
+  townName,
+  townOfRegion,
+  townOverChunk,
+} from '../../src/overworld/town';
 import { getBiomeDecorations } from '../../src/data/overworld/decoration';
 import ChunkSnapshot, {
   EXECUTIVE_CHANCE,
@@ -218,11 +228,12 @@ import { FOSSIL_OFFER_KINDS, getFossilPrice } from '../../src/data/overworld/fos
 import { isFossil } from '../../src/data/items/fossils';
 import Landmark from '../../src/data/overworld/landmark';
 import { SYNDICATE_BOSS_CHARSETS } from '../../src/data/overworld/syndicate';
-import { findPortal, findPortals, getPortalCell } from '../../src/overworld/portal';
+import { getPortalCell, portalInRegion } from '../../src/overworld/portal';
 import Npc, {
   EXECUTIVE_CHARSETS,
   EXECUTIVE_NAMES,
   NPCS,
+  npcSheet,
   npcSheets,
 } from '../../src/data/overworld/npc';
 import Phenomenon, {
@@ -325,6 +336,25 @@ describe('perlin noise', () => {
  * Biomes span whole regions, so a search for a specific one has to
  * cover far more ground than a handful of chunks
  */
+/**
+ * The first region whose town, or lack of one, is what a test is
+ * after. Swept the way `findChunk` sweeps, since a town is sited to
+ * every eighth chunk and most of the world is water
+ */
+function findRegion(
+  world: World,
+  matches: (town: Town | null) => boolean,
+): [regionX: number, regionY: number] | null {
+  for (let regionY = -24; regionY < 24; regionY++) {
+    for (let regionX = -24; regionX < 24; regionX++) {
+      if (matches(townOfRegion(world, regionX, regionY))) {
+        return [regionX, regionY];
+      }
+    }
+  }
+  return null;
+}
+
 function findChunk(world: World, matches: (chunk: Chunk) => boolean): Chunk | null {
   // The towns first, and by region rather than by chunk. A town is two
   // chunks across and one is sited to every eight, so a sweep that
@@ -3035,7 +3065,7 @@ describe('world', () => {
     const shapes = new Set<string>();
     const met = new Set<Npc>();
 
-    // Enough windows that all 9 roles have room to turn up on however
+    // Enough windows that all 10 roles have room to turn up on however
     // few wandering cells the chunk rolled
     for (let window = 0; window < 96; window++) {
       const standing = new ChunkSnapshot(chunk, window * NPC_INTERVAL).getWanderingNpcs();
@@ -3046,13 +3076,14 @@ describe('world', () => {
       }
     }
     expect(shapes.size).toBeGreaterThan(1);
-    // Everyone who wanders turns up: the nurse and the groomer are
-    // drawn from the same pool as the two who came first
-    expect(met.has(Npc.NurseJoy)).toBe(true);
+    // Everyone who wanders turns up: the groomer is drawn from the
+    // same pool as the two who came first
     expect(met.has(Npc.Groomer)).toBe(true);
     expect(met.has(Npc.MoveReminder)).toBe(true);
-    // The vendor is not among them any more: his stall is a landmark
+    // Neither of the two with a place of their own is among them: the
+    // vendor keeps a stall and Nurse Joy keeps a centre
     expect(met.has(Npc.Vendor)).toBe(false);
+    expect(met.has(Npc.NurseJoy)).toBe(false);
   });
 
   it('dresses each wanderer from their role’s own wardrobe', () => {
@@ -3251,6 +3282,132 @@ describe('world', () => {
     }
   });
 
+  it('keeps Nurse Joy at a centre in every town, whatever the window', () => {
+    const world = new World('overworld');
+    const chunk = findChunk(world, (candidate) =>
+      new Set(candidate.getLandmarkCells().values()).has(Landmark.PokemonCenter),
+    );
+
+    expect(chunk).not.toBeNull();
+    if (chunk == null) {
+      return;
+    }
+
+    const counters = [...chunk.getLandmarkCells()]
+      .filter(([, landmark]) => landmark === Landmark.PokemonCenter)
+      .map(([cell]) => cell);
+
+    for (let window = 0; window < 24; window++) {
+      const snapshot = new ChunkSnapshot(chunk, window * NPC_INTERVAL);
+
+      for (const cell of counters) {
+        // She is never rolled away: the counter is the landmark
+        expect(snapshot.getStandingNpc(cell)).toBe(Npc.NurseJoy);
+        expect(snapshot.getWandererCoats().get(cell)).toBe(npcSheet(Npc.NurseJoy));
+      }
+      // And a wandering cell never stages her any more
+      for (const npc of snapshot.getWanderingNpcs().values()) {
+        expect(npc).not.toBe(Npc.NurseJoy);
+      }
+    }
+  });
+
+  it('charters a centre in every town and none in the country', () => {
+    const world = new World('overworld');
+    let towns = 0;
+
+    for (let regionY = -8; regionY < 8; regionY++) {
+      for (let regionX = -8; regionX < 8; regionX++) {
+        const town = townOfRegion(world, regionX, regionY);
+
+        if (town == null) {
+          continue;
+        }
+        towns++;
+
+        const lots = getTownLots(world, town).filter(
+          (lot) => lot.landmark === Landmark.PokemonCenter,
+        );
+
+        // One, never two: a second counter is the same service twice
+        expect(lots.length, `${town.x}, ${town.y}`).toBe(1);
+      }
+    }
+    expect(towns).toBeGreaterThan(0);
+
+    // Nothing out in the country stages one. A chunk that holds a
+    // centre is a chunk a town reaches into
+    for (let x = -20; x < 20; x++) {
+      for (let y = -20; y < 20; y++) {
+        const chunk = world.getChunk(x, y);
+        const centres = [...chunk.getLandmarkCells()].filter(
+          ([, landmark]) => landmark === Landmark.PokemonCenter,
+        );
+
+        if (centres.length > 0) {
+          expect(townOverChunk(world, x, y)).not.toBeNull();
+        }
+      }
+    }
+  });
+
+  it('names every town it grows, and never two of them the same', () => {
+    const world = new World('overworld');
+    const names = new Map<string, string>();
+
+    // Not a sample of the odds: names are worked out from where a town
+    // is, so two of them sharing one is not unlikely, it is impossible
+    for (let regionY = -24; regionY < 24; regionY++) {
+      for (let regionX = -24; regionX < 24; regionX++) {
+        const town = townOfRegion(world, regionX, regionY);
+
+        if (town == null) {
+          continue;
+        }
+
+        const name = townName(town);
+        const where = `${regionX}, ${regionY}`;
+
+        expect(name).toMatch(/^[A-Z].*, [A-Z][a-z]+$/);
+        // Answered the same way every time, by anybody, with nothing
+        // asked of a store
+        expect(townName(town)).toBe(name);
+        expect(names.get(name) ?? where, name).toBe(where);
+        names.set(name, where);
+      }
+    }
+    expect(names.size).toBeGreaterThan(500);
+  });
+
+  it('names a town for its own country and its own county', () => {
+    const world = new World('overworld');
+    const settled = findRegion(world, (town) => town != null);
+
+    expect(settled).not.toBeNull();
+    if (settled == null) {
+      return;
+    }
+
+    const town = townOfRegion(world, settled[0], settled[1]);
+
+    expect(town).not.toBeNull();
+    if (town == null) {
+      return;
+    }
+
+    // The same answer the data table gives for those coordinates: the
+    // town carries nothing of its own into it but where it stands
+    expect(townName(town)).toBe(nameTown(town.regionX, town.regionY, town.biome));
+
+    // And a second world says the same thing, since there is nothing
+    // remembered anywhere for it to differ about
+    const other = new World('overworld');
+    const same = townOfRegion(other, settled[0], settled[1]);
+
+    expect(same).not.toBeNull();
+    expect(same == null ? null : townName(same)).toBe(townName(town));
+  });
+
   it('posts an auction board in a town, one to a chunk and reachable', () => {
     const world = new World('overworld');
     let boards = 0;
@@ -3375,7 +3532,7 @@ describe('world', () => {
     expect(offers.size).toBeGreaterThan(1);
   });
 
-  it('opens a portal onto the nearest portal of the biome asked for', () => {
+  it('opens a portal onto the portal in the town named', () => {
     const world = new World('overworld');
     const chunk = findChunk(world, (candidate) =>
       new Set(candidate.getLandmarkCells().values()).has(Landmark.Portal),
@@ -3393,43 +3550,46 @@ describe('world', () => {
     expect(cell).not.toBeNull();
     expect(chunk.getLandmarkCells().get(cell ?? -1)).toBe(Landmark.Portal);
 
-    const destinations = findPortals(world, chunk.x, chunk.y);
+    // A region with a town is a place somebody can name; one without
+    // has a portal out in the country and nothing to call it
+    const settled = findRegion(world, (town) => town != null);
 
-    expect(destinations.size).toBeGreaterThan(0);
-
-    for (const [biome, destination] of destinations) {
-      // Every destination is a portal, of the biome it was filed
-      // under, and somewhere other than here
-      expect(destination.biome).toBe(biome);
-      expect(world.getChunkBiome(destination.x, destination.y)).toBe(biome);
-      expect(getPortalCell(world.getChunk(destination.x, destination.y))).toBe(destination.cell);
-      expect(destination.x === chunk.x && destination.y === chunk.y).toBe(false);
-      expect(destination.distance).toBeGreaterThan(0);
-
-      // ...and it is the *nearest* one: nothing of that biome inside
-      // its ring has a portal
-      for (let radius = 1; radius < destination.distance; radius++) {
-        for (let dy = -radius; dy <= radius; dy++) {
-          for (let dx = -radius; dx <= radius; dx++) {
-            if (Math.max(Math.abs(dx), Math.abs(dy)) !== radius) {
-              continue;
-            }
-
-            const x = chunk.x + dx;
-            const y = chunk.y + dy;
-
-            if (isInWorld(x, y) && world.getChunkBiome(x, y) === biome) {
-              expect(getPortalCell(world.getChunk(x, y))).toBeNull();
-            }
-          }
-        }
-      }
+    expect(settled).not.toBeNull();
+    if (settled == null) {
+      return;
     }
 
-    // Asked one biome at a time, the answer is the same one
-    for (const [biome, destination] of destinations) {
-      expect(findPortal(world, chunk.x, chunk.y, biome)).toEqual(destination);
+    const town = townOfRegion(world, settled[0], settled[1]);
+
+    expect(town).not.toBeNull();
+    if (town == null) {
+      return;
     }
+
+    const destination = portalInRegion(world, settled[0], settled[1]);
+
+    expect(destination).not.toBeNull();
+    if (destination == null) {
+      return;
+    }
+
+    // It is a real portal, in the middle of the town it was named for
+    expect(destination.name).toBe(townName(town));
+    expect(destination.biome).toBe(town.biome);
+    expect(getPortalCell(world.getChunk(destination.x, destination.y))).toBe(destination.cell);
+    expect(worldCell(destination.x, destination.cell % CHUNK_CELLS)).toBe(town.x);
+    expect(worldCell(destination.y, Math.floor(destination.cell / CHUNK_CELLS))).toBe(town.y);
+  });
+
+  it('has nowhere to come out in a region with no town', () => {
+    const world = new World('overworld');
+    const empty = findRegion(world, (town) => town == null);
+
+    expect(empty).not.toBeNull();
+    if (empty == null) {
+      return;
+    }
+    expect(portalInRegion(world, empty[0], empty[1])).toBeNull();
   });
 
   it('reads the window back out of an encounter key', () => {

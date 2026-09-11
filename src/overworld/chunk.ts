@@ -83,6 +83,7 @@ const SEA_PEOPLE = new Set([
   Landmark.GymSeat,
   Landmark.AuctionBoard,
   Landmark.FrontierBrain,
+  Landmark.PokemonCenter,
 ]);
 
 const BIOME_LANDMARKS = new Map<Biome, Landmark[]>();

@@ -380,6 +380,7 @@ describe('the landmarks that ship', () => {
       Landmark.Champion,
       Landmark.TeamRocket,
       Landmark.WanderingNpc,
+      Landmark.PokemonCenter,
       // And the patch grows its own bush, the way a tree grows its own
       Landmark.BerryPatch,
       Landmark.ApricornTree,

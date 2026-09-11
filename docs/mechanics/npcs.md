@@ -4,21 +4,20 @@ Some chunks contain a **Wandering NPC** cell. The cell itself never moves, but
 whoever is standing on it changes every **three hours**, so the same spot may
 offer a breeder in the morning and a daycare lady by midday.
 
-Eleven people wander: the breeder, the daycare lady, Nurse Joy, the groomer, the
-Move Reminder, the Move Tutor, the chef, the Fossil Maniac, the Fossil Scientist,
-the Channeler and Kurt. The vendor, the syndicate grunt and the duelling
+Ten people wander: the breeder, the daycare lady, the groomer, the Move
+Reminder, the Move Tutor, the chef, the Fossil Maniac, the Fossil Scientist, the
+Channeler and Kurt. Nurse Joy, the vendor, the syndicate grunt and the duelling
 trainers each keep a landmark of their own, further down. A cell is a crossroads
 rather than a shop, so walking up to one does not reveal in advance which of the
-eleven is there.
+ten is there.
 
 ## The once-per-window rule
 
-Every traveller except **Nurse Joy**, the **chef**, the **Fossil Scientist** and
-**Kurt** helps a player once per three-hour window, and asking again before it
-turns over is refused whatever the player can pay. Nurse Joy takes up to six
-pokemon in one handover and turns nobody away while she is standing there. The
-chef is paced by a purse, the scientist by how many fossils have been dug up, and
-Kurt by how many apricorns have been picked.
+Every traveller except the **chef**, the **Fossil Scientist** and **Kurt** helps
+a player once per three-hour window, and asking again before it turns over is
+refused whatever the player can pay. The chef is paced by a purse, the scientist
+by how many fossils have been dug up, and Kurt by how many apricorns have been
+picked.
 
 The limit applies per cell, so walking to another wandering cell finds somebody
 who has not served that player yet. That walk is what a second egg costs.
@@ -81,6 +80,16 @@ directions: the **Master Ball**, the **Portal Key**, both **Bottle Caps**, the
 **Purifying Gem** and the **Heart Scale**. A scale in the bag is a forgotten move
 waiting to be recovered, and a price would let it be spent on something else. The
 evolution stones, by contrast, do carry a price, so a spare one is worth gold.
+
+## The Pokémon Center
+
+**Nurse Joy** does not wander. Every town has exactly one **Pokémon Center**,
+and she is standing behind its counter whatever the hour. The open country has
+none at all, so being patched up is a reason to walk back into town.
+
+She charges nothing, takes up to six pokemon in one handover, and turns nobody
+away however often they come back. What she hands back is at full health with
+nothing left on it, and a shadow among them is purified on the way.
 
 ## The specialists
 

@@ -69,14 +69,38 @@ for: things to forage, things to fight, nests and lairs.
 | ------------------------------------------------ | -------------------------------------- |
 | Market, Auction Board, Gym Seat, Wandering NPC    | Item Cache, Berry Patch, Apricorn Tree  |
 | Gym Leader, Elite Four, Champion                  | Nest, Trainer, Team Rocket              |
-| Portal                                            | Legendary and Shadow Raid lairs         |
+| Pokémon Center, Portal                            | Legendary and Shadow Raid lairs         |
 
 The portal stands dead centre, on the plaza, which is what keeps the network
 even and means a player stepping out of the gate is looking down every street at
-once. Around it a town holds **nine to fourteen** lots, and no two towns are
-alike: about half have an auction board, about half a gym seat, a third a gym
-leader, and a champion sits in perhaps one town in twelve. The rest is trade. A
-place that had everything would be a place nobody left.
+once. Around it a town holds **nine to fourteen** lots. One of them is always a
+**Pokémon Center**, since a town you cannot be patched up in is a town you would
+have to leave; the rest differ. About half have an auction board, about half a
+gym seat, a third a gym leader, and a champion sits in perhaps one town in
+twelve. The rest is trade. A place that had everything would be a place nobody
+left.
+
+### The name
+
+Every town has a **name of its own**, and no two towns anywhere share one. The
+name is built out of the country the town stands on, so it says something true
+before the map is looked at, and it ends with the **county** it stands in, which
+says roughly where in the world that is.
+
+| Name | Where |
+| ---- | ----- |
+| Rimefell Village, Ashmarch | A glacier, out west |
+| Ochrereach Town, Sedgemoor | A desert |
+| Port Saltmere City, Dunhollow | A rocky coast |
+
+The world is divided into 64 counties, so places on opposite sides of it are
+never confused for one another, and a name is worked out from where a town is
+rather than picked, so no two ever collide.
+
+Walking into a town is what puts it on the map. The register is shared: a town
+**any** player has found is a town **every** player can travel to, which is what
+makes telling a friend a name worth anything. A town nobody has been to yet
+cannot be crossed to, however well you guess at its name.
 
 A town levels the ground it stands on: no lakes, no rivers and no rock inside
 the footprint, though it stops at the shore rather than draining the sea. No
@@ -169,7 +193,8 @@ few are one to a chunk, marked below.
 | **Elite Four**      | One of the twelve, for a challenger holding their league's badges |
 | **Champion**        | Blue, Lance or Wallace, for whoever has beaten their league's Elite Four. They field the team they are known for, and one window in sixty-four a legend has the seat instead. One to a chunk |
 | **Frontier Brain**  | The house champion of a Battle Frontier facility, for whoever holds that region's crown. Three a side, under the house's own rule |
-| **Portal**          | A way through to another portal, for the price of a Portal Key. One to a chunk |
+| **Portal**          | A way through to another town's portal, for the price of a Portal Key. One to a region |
+| **Pokémon Center**  | Nurse Joy behind her counter. One to a town, and none in the country |
 
 Walking up to a wandering cell does not reveal in advance which specialist is
 standing there. The market, the board and the seat are fixtures: a stall is
@@ -370,9 +395,14 @@ in.
 A **Portal** landmark does nothing until a player spends a **Portal Key**, which
 is one of the rarer items in the game. The key is consumed by the crossing.
 
-The traveller chooses a **biome** rather than a place, and arrives at the nearest
-portal in that biome to the one they left. Almost every biome in the world is
-within reach of any given portal, so a key is effectively a way to get anywhere.
+The traveller **names a town**. The box finishes a name once a few letters of it
+have been typed, and what it knows is every town anybody has ever walked into,
+so a name a friend passes on is a place that can be reached. Arriving puts the
+player on the portal in that town's plaza, whatever the distance.
+
+Every region has a portal, town or no town, so there is always one to leave
+from. A region with no town has nothing anybody could name, so it is somewhere
+to leave from and nowhere to arrive at.
 
 If a destination is refused for any reason, the key is not spent.
 

@@ -358,7 +358,10 @@ be charged to be told so, and both the gold and the visit go back if the write
 behind them fails.
 
 Nurse Joy takes no marker at all: she heals as often as she is asked, so there
-is no visit to spend.
+is no visit to spend. She is not a wanderer either. A `PokemonCenter` landmark
+is chartered into every town at a chance of 1 and is rolled nowhere in the open
+country, so `getStandingNpc` answers `Npc.NurseJoy` for that cell the way it
+answers `Npc.Vendor` for a `Market` one.
 
 - **Breeder** takes two of the player's pokemon and `BREEDING_FEE` gold, and
   writes an egg. Neither parent is consumed, held or locked: they are handed back
@@ -467,26 +470,67 @@ A `Portal` landmark is a way through to another one. It does nothing on its own:
 opening it takes a **Portal Key**, the rarest band's newest entry, and the key is
 **spent in the crossing**.
 
-The traveller names a **biome**, never a destination. Where they come out is the
-nearest portal of that biome to the one they are standing in, derived in
-[`src/overworld/portal.ts`](../../src/overworld/portal.ts) from the chunk seeds
-alone. So the client lists every destination on offer without asking anything of
-the server, and the server re-derives the same answer when the crossing is asked
-for. There is nothing in the request to lie about except which way to go.
+The traveller names a **town**, never a destination. Where they come out is that
+town's own portal, on its plaza, derived in
+[`src/overworld/portal.ts`](../../src/overworld/portal.ts) by `portalInRegion`
+from the region's seed alone. The client already knows where it is going and the
+server sites the region again when the crossing is asked for, so there is
+nothing in the request to lie about except which way to go.
 
-`findPortals` walks outward ring by ring and answers for **every biome at once**.
-The first portal of a biome it meets is that biome's nearest, and a biome already
-answered for is not looked at again, so a chunk is only rolled for its landmarks
-where its biome is still wanted. It stops at `PORTAL_RANGE` (96 chunks) or once
-every biome the world grows has been found, whichever comes first. Measured, that
-is about 13ms cold from a standing start, and a fraction of that against a warm
-biome cache. Roughly all 25 biomes are reachable from a typical portal.
+The **name** is derived too, so nothing here asks a store what a place is
+called. See [Naming a town](#naming-a-town). What is stored is only which towns
+anybody has walked into, which is what the crossing is checked against. A region
+with no town has a portal out in the country: somewhere to leave from, and
+nowhere to arrive at, since nothing names it.
 
 `usePortal` ([`src/server/portals.ts`](../../src/server/portals.ts)) checks that
-the cell really is a portal in a live window, derives the far end, and takes the
-key **last**, so a player refused a destination keeps it. It cannot move anybody:
+the cell really is a portal in a live window, checks the named region is on the
+register, sites it again, and takes the key **last**, so a player refused a
+destination keeps it. It cannot move anybody:
 the game stores no position for it, so it answers with the chunk and cell and the
 client walks through.
+
+## Naming a town
+
+A town's name is **worked out from where it stands**, never rolled and never
+stored, and two towns can never share one.
+
+`nameTown` ([`src/data/overworld/town-names.ts`](../../src/data/overworld/town-names.ts))
+builds it from five parts: an optional mark, a head drawn from the town's **own
+biome's** word list, a tail welded onto it, a title, and the **county**. So a
+full name reads `Rimefell Village, Ashmarch`.
+
+The county is what makes it work. Without one, a name would have to be unique
+across the world's 262,144 regions, and one biome's words only make 49,920
+names, five times less world than words. A county is 64x64 regions, so a name
+only has to be unique inside **one county and one biome**: 4,096 regions against
+49,920 names, which leaves room to spend the 3,840 unmarked names first, so only
+about 1 town in 16 carries a mark.
+
+Two towns of different biomes can never collide anyway, since no two biomes
+share a head word and a test pins that. Within a county, the region's local
+index is run through a bijection (`SPIN`, odd, so multiplying is a permutation)
+and read off as digits, so neighbouring towns do not read as a numbered
+sequence.
+
+`floor(region / 64)` reads a town's own coordinates and nothing else, so **none
+of this depends on how big the world is**. Growing `WORLD_SIZE` leaves every
+existing town in the county it was already in, under the name it already had,
+and only wants more county names at the new edges. `nameTown` throws for a
+region outside the county names rather than folding it onto a county that
+exists, and a test walks the world's corners to prove it cannot.
+
+## The register
+
+`towns` holds the one fact no derivation can reach: **whether anybody has walked
+in**. Just `(region_x, region_y, found_by, found_at)`, no name column and no
+unique index, because there is nothing to reserve.
+
+Every row is public, and that is the point. A town one player found is a town
+everybody can cross to, so the portal's name box is a shared register rather
+than each player's own list. A portal crossing names a **region**, and
+`usePortal` refuses one nobody has walked into, so guessing a name is not a way
+to reach a town that has never been found.
 
 ## Derived, never stored
 

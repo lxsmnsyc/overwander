@@ -1,5 +1,7 @@
 import AleaRNG from '../core/alea';
-import { isOpenSea } from '../data/ids/biome';
+import type { SettledBiome } from '../data/ids/biome';
+import { isOpenSea, isSettledBiome } from '../data/ids/biome';
+import nameTown from '../data/overworld/town-names';
 import { isRock, isWaterAt } from './fields';
 import Landmark from '../data/overworld/landmark';
 import { CHUNK_CELLS, ORTHOGONAL } from './grid';
@@ -75,6 +77,7 @@ const WET_SAMPLES = 12;
  * from as well as to
  */
 export const TOWN_LANDMARKS: Landmark[] = [
+  Landmark.PokemonCenter,
   Landmark.Market,
   Landmark.AuctionBoard,
   Landmark.GymSeat,
@@ -92,9 +95,14 @@ export const TOWN_LANDMARKS: Landmark[] = [
  * is one that has something the last one did not. A market and
  * somebody passing through are on every corner; a portal, a board or
  * a seat are worth the walk, and the ladder is what a badge run is
- * spent looking for
+ * spent looking for. The centre is the one certainty, since walking
+ * into a town has to mean a party comes out of it whole
  */
 const CHARTER: [kind: Landmark, chance: number][] = [
+  // Certain, and chartered first so a town with barely any room still
+  // has one: being patched up is the service the rest of the game
+  // assumes, and a town without it is a town a player has to leave
+  [Landmark.PokemonCenter, 1],
   [Landmark.GymSeat, 0.5],
   [Landmark.AuctionBoard, 0.5],
   [Landmark.GymLeader, 0.35],
@@ -116,6 +124,11 @@ export interface Town {
   /** The world cell its middle sits on */
   x: number;
   y: number;
+  /** The region it was sited in, which is the key everything holds it by */
+  regionX: number;
+  regionY: number;
+  /** The country it stands on, which is where its name comes from */
+  biome: SettledBiome;
   seed: string;
 }
 
@@ -205,8 +218,13 @@ function townIn(world: World, regionX: number, regionY: number): Town | null {
     const x = regionX * REGION_CELLS + SITE_INSET + Math.floor(rng.random() * spread);
     const y = regionY * REGION_CELLS + SITE_INSET + Math.floor(rng.random() * spread);
 
-    if (town == null && isBuildable(world, x, y)) {
-      town = { x, y, seed };
+    const biome = world.getCellBiome(x, y);
+
+    // A town is named after its own country, so the country has to be
+    // one a town can stand on. `isBuildable` refuses the open seas
+    // anyway; this is the same refusal said in the type
+    if (town == null && isSettledBiome(biome) && isBuildable(world, x, y)) {
+      town = { x, y, regionX, regionY, biome, seed };
     }
   }
 
@@ -281,6 +299,19 @@ export function portalCellIn(world: World, chunkX: number, chunkY: number): numb
   return cellX < 0 || cellY < 0 || cellX >= CHUNK_CELLS || cellY >= CHUNK_CELLS
     ? null
     : cellY * CHUNK_CELLS + cellX;
+}
+
+/**
+ * What a town is called.
+ *
+ * Worked out from where it stands, so every client answers the same
+ * thing without asking anybody and a town has a name before anyone has
+ * been to it. Two towns can never share one: see
+ * [`town-names.ts`](../data/overworld/town-names.ts), where the
+ * county is what makes that true
+ */
+export function townName(town: Town): string {
+  return nameTown(town.regionX, town.regionY, town.biome);
 }
 
 /** Whether a world cell is inside a town */

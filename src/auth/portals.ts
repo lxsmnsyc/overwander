@@ -1,4 +1,3 @@
-import type Biome from '../data/ids/biome';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
 import type { PortalDestination } from '../overworld/portal';
 import { requireUid } from '../server/auth';
@@ -9,32 +8,34 @@ import getIdToken from './session';
 /**
  * Stepping through a portal.
  *
- * Where a portal comes out derives from the chunk it stands in and the
- * biome the traveller names, so the client already knows every
- * destination on offer — `findPortals` in
- * [`src/overworld/portal.ts`](../overworld/portal.ts) is what the
- * dialog lists. This is for the part that is not the client's: the key
- * leaving the bag.
+ * A crossing is named by the **town** at the far end. Everything about
+ * that town derives from the seed, its name included, so the client
+ * already knows where it is going; what it cannot know on its own is
+ * whether anybody has ever been there, which is the register in
+ * [`src/auth/towns.ts`](towns.ts). This is for the parts that are not
+ * the client's: that check, and the key leaving the bag.
  */
 
 /**
- * Cross to the nearest portal of the biome named. The key is spent in
- * the crossing.
+ * Cross to the portal in the town of the region named. The key is
+ * spent in the crossing.
  *
  * Resolves where the player comes out, or null when they are not at a
- * portal, no portal of that biome is in reach, or they carry no key
+ * portal, nobody has walked into that town, or they carry no key
  */
 export default async function usePortal(
   snapshot: ChunkSnapshot,
   cell: number,
-  biome: Biome,
+  regionX: number,
+  regionY: number,
 ): Promise<PortalDestination | null> {
   return usePortalOnServer(
     await getIdToken(),
     snapshot.chunk.x,
     snapshot.chunk.y,
     cell,
-    biome,
+    regionX,
+    regionY,
     snapshot.offset,
   );
 }
@@ -44,7 +45,8 @@ async function usePortalOnServer(
   x: number,
   y: number,
   cell: number,
-  biome: Biome,
+  regionX: number,
+  regionY: number,
   offset: number,
 ): Promise<PortalDestination | null> {
   'use server';
@@ -53,7 +55,8 @@ async function usePortalOnServer(
     x,
     y,
     cell,
-    biome,
+    regionX,
+    regionY,
     await syncServerClock(),
     offset,
   );

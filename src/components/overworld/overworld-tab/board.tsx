@@ -42,7 +42,7 @@ import {
 import type { PlayerIdentity } from '../../../auth/user';
 import { type BoardCell, boardIndexOf } from '../../../canvas/board';
 import { latitudeOf } from '../../../canvas/daylight';
-import { BIOME_COLORS, BIOME_NAMES } from '../../../data/biome';
+import { BIOME_COLORS } from '../../../data/biome';
 import { DECORATION_NAMES } from '../../../data/overworld/decoration';
 import {
   CHAMPION_NAMES,
@@ -65,6 +65,8 @@ import { CHUNK_CELLS, cellInChunk, chunkOfCell, worldCell } from '../../../overw
 import type ChunkSnapshot from '../../../overworld/chunk-snapshot';
 import type { Buddy } from '../../../overworld/core';
 import getWorld from '../../../overworld/current';
+import { townAt } from '../../../overworld/town';
+import { discoverTown } from '../../../auth/towns';
 import { findPathBeside, findPathNear } from '../../../overworld/path';
 import type SafariSession from '../../../overworld/safari';
 import { isInWorld } from '../../../overworld/world';
@@ -785,6 +787,35 @@ export default function OverworldBoard(props: {
     }
   });
 
+  /**
+   * Which regions this session has already reported, so standing in a
+   * plaza does not ask about the same town on every redraw. The row
+   * itself is written once and for good
+   */
+  const reported = new Set<string>();
+  // Walking into a town puts it on everybody's register. It costs
+  // nothing, takes nothing and is not a claim: it is what makes the
+  // town somewhere the portals will cross to, for everybody
+  createEffect(() => {
+    const town = townAt(getWorld(), atX(), atY());
+
+    if (town == null) {
+      return;
+    }
+
+    const key = `${town.regionX},${town.regionY}`;
+
+    if (reported.has(key)) {
+      return;
+    }
+    reported.add(key);
+    discoverTown(town.regionX, town.regionY).catch(() => {
+      // Nothing on screen is riding on it: the name is derived either
+      // way, and only crossing to the town wants the register
+      reported.delete(key);
+    });
+  });
+
   // Where they are, said at the top of the menu. The menu is a sibling
   // of the world rather than a child of it, so the words are published
   // upwards and cleared on the way out — a battle takes the page, and
@@ -1250,9 +1281,14 @@ export default function OverworldBoard(props: {
       setSeat([spot, standing]);
       return null;
     }
-    // The wandering cell and the market stall open the same counter:
-    // who is standing there is the snapshot's answer either way
-    if (landmark === Landmark.WanderingNpc || landmark === Landmark.Market) {
+    // The wandering cell, the market stall and the centre open the
+    // same counter: who is standing there is the snapshot's answer
+    // either way
+    if (
+      landmark === Landmark.WanderingNpc ||
+      landmark === Landmark.Market ||
+      landmark === Landmark.PokemonCenter
+    ) {
       const standing = spot.snapshot.getStandingNpc(spot.cell);
 
       if (standing == null) {
@@ -2180,9 +2216,7 @@ export default function OverworldBoard(props: {
                 // the whole position moves at once
                 setAtX(worldCell(destination.x, destination.cell % CHUNK_CELLS));
                 setAtY(worldCell(destination.y, Math.floor(destination.cell / CHUNK_CELLS)));
-                remark(
-                  `Through to ${BIOME_NAMES[destination.biome]}. Chunk ${destination.x}, ${destination.y}.`,
-                );
+                remark(`Through to ${destination.name}. Chunk ${destination.x}, ${destination.y}.`);
                 // A key was spent getting here, so where it got them is
                 // written down now rather than in a second and a half.
                 // The paces that led to the portal go with it; the

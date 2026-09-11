@@ -157,6 +157,28 @@ export function isOpenSea(biome: Biome): boolean {
 }
 
 /**
+ * The country a town can be settled on: everything the world grows
+ * that is not open sea. Nothing is built on water and nothing is
+ * generated in `Beyond` at all, so those are the two the type leaves
+ * out, and anything that exists once per town has to cover exactly
+ * these
+ */
+export type SettledBiome = Exclude<
+  Biome,
+  | Biome.Beyond
+  | Biome.CoralReef
+  | Biome.DeepOcean
+  | Biome.KelpForest
+  | Biome.Ocean
+  | Biome.PolarOcean
+>;
+
+/** Whether a town can stand on this country */
+export function isSettledBiome(biome: Biome): biome is SettledBiome {
+  return !isOpenSea(biome) && biome !== Biome.Beyond;
+}
+
+/**
  * Ground nothing fruits in: bare rock, baked sand and permanent ice.
  * A berry bush wants soil and water, and these have neither
  */

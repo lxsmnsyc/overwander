@@ -15,6 +15,7 @@ import registerIncenses from './incenses';
 import registerKeyItems from './key-items';
 import registerMachines from './machines';
 import registerMedicines from './medicine';
+import registerMints from './mints';
 import registerOneShots from './one-shots';
 import registerOrbs from './orbs';
 import registerPlates from './plates';
@@ -72,6 +73,7 @@ export default function registerItems(): void {
   registerCandyItems();
   registerRareCandy();
   registerBottleCaps();
+  registerMints();
   registerUtilityBelt();
   registerPurifyingGem();
   registerSacredAsh();

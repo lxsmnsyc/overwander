@@ -231,7 +231,6 @@ import {
   getChefGoods,
   getVendorGoods,
   isMarketable,
-  vendorStockSize,
 } from '../../src/data/overworld/vendor';
 import {
   MAX_BERRY_PICK,
@@ -3100,11 +3099,12 @@ describe('world', () => {
         found++;
         crates.add(JSON.stringify(stock));
 
-        // As many kinds as that counter lays out, none of them twice:
-        // six for everybody, a dozen off the machine stall's long shelf
+        // A dozen kinds, none of them twice, or the whole shelf where
+        // that counter is carrying fewer than a dozen
         const kind = npc === Npc.Chef ? null : snapshot.getVendorKind(cell);
+        const shelf = kind == null ? getChefGoods() : getVendorGoods(kind);
 
-        expect(stock.length).toBe(kind == null ? VENDOR_STOCK_KINDS : vendorStockSize(kind));
+        expect(stock.length).toBe(Math.min(VENDOR_STOCK_KINDS, shelf.length));
         expect(new Set(stock).size).toBe(stock.length);
 
         if (npc === Npc.Chef) {

@@ -188,6 +188,18 @@ is perfect all round is refused before it can waste one.
 
 Both caps are found in the overworld and nowhere else; no shop stocks either.
 
+### Mints
+
+A nature is rolled at the same time and decides two of the six stats for good:
+one is worth 1.1x and another 0.9x. A **mint** rewrites it. There are 21, one per
+nature that moves a stat, and a Serious Mint for a pokemon that should move none.
+
+A mint changes the nature outright rather than hiding it, so the summary goes on
+saying what the pokemon actually is. It is spent on use, and it is refused on a
+pokemon that already has that nature. The wandering **chef** sells every one of
+them, and the ground hides them in the prized band, so the mint you want is
+either a purchase or a long walk.
+
 ## Purifying a shadow
 
 A shadow pokemon comes from a shadow raid or from a Team Rocket grunt. It keeps

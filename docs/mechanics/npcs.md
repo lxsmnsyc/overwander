@@ -52,10 +52,10 @@ A stall sets up **one counter** per window, drawn from six:
 | **Battle items** | The one-fight boosters                                       |
 | **Machines**     | The machines, and the only place one is sold                 |
 
-Six kinds off that counter, drawn without repeats, or **12** off the machine
-stall, whose shelf is one machine per move any pokemon can be taught. The
-balls and the medicine open with a staple, a **Poke Ball** and a **Potion**, and
-everything else varies. What a stall carries is part of who set it up rather than
+**12** kinds off that counter, drawn without repeats, or the whole shelf where a
+counter carries fewer than twelve, which the vitamins, the incenses and the
+battle items all do. The balls and the medicine open with a staple, a **Poke
+Ball** and a **Potion**, and everything else varies. What a stall carries is part of who set it up rather than
 anything a player can influence, and every player who reaches it in that window
 is offered the same crate. A player who wants an Ultra Ball, or a particular
 machine, walks until they find a counter carrying one.
@@ -92,7 +92,7 @@ evolution stones, by contrast, do carry a price, so a spare one is worth gold.
 | **Groomer**          | One pokemon, 2,500 gold                  | Half of the friendship it had left to gain |
 | **Move Reminder**    | One Heart Scale                          | A level-up move the pokemon has lost       |
 | **Move Tutor**       | One Heart Scale                          | Any move a machine could teach it          |
-| **Chef**             | Gold, as often as it holds out           | Drinks and treats, stocked nowhere else    |
+| **Chef**             | Gold, as often as it holds out           | Drinks, treats and mints, stocked nowhere else |
 | **Fossil Maniac**    | 12,000 gold, or 30,000 for the Old Amber | One of the two fossils he is carrying      |
 | **Fossil Scientist** | A fossil, free                           | The pokemon inside it, at level 20         |
 | **Channeler**        | One pokemon, one Heart Scale             | An extra ability slot, filled at once      |
@@ -134,9 +134,9 @@ decision is how many to hand over. What paces him is picking, so he is worth
 walking to with a full bag. See [Catching](catching.md#balls) for what each ball
 answers.
 
-**The Chef** keeps the one shelf no vendor stocks: the region's drinks and its
-treats, six of them a window. Like the vendor, he serves as often as a purse
-holds out rather than once per window.
+**The Chef** keeps the one shelf no vendor stocks: the region's drinks, its
+treats and all 21 mints, a dozen of them a window. Like the vendor, he serves as
+often as a purse holds out rather than once per window.
 
 A trade moves at most **99** of one kind at a time, which is a guard against a
 slipped keyboard rather than a rule: gold is the real limit.

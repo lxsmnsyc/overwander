@@ -836,6 +836,34 @@ export const enum Items {
 
   /** The wish a Jirachi is called out to answer */
   WishTag = 394,
+
+  /**
+   * The mints: one per nature that does something, plus the Serious
+   * Mint for a pokemon that should do nothing. In nature order, and
+   * appended rather than inserted, since an id reaches a player's bag
+   * rows
+   */
+  LonelyMint = 395,
+  BraveMint = 396,
+  AdamantMint = 397,
+  NaughtyMint = 398,
+  BoldMint = 399,
+  RelaxedMint = 400,
+  ImpishMint = 401,
+  LaxMint = 402,
+  TimidMint = 403,
+  HastyMint = 404,
+  SeriousMint = 405,
+  JollyMint = 406,
+  NaiveMint = 407,
+  ModestMint = 408,
+  MildMint = 409,
+  QuietMint = 410,
+  RashMint = 411,
+  CalmMint = 412,
+  GentleMint = 413,
+  SassyMint = 414,
+  CarefulMint = 415,
 }
 
 /**

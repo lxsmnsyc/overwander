@@ -102,6 +102,8 @@ const enum Awards {
   FlintDefeated = 82,
   LucianDefeated = 83,
   SinnohChampion = 84,
+  /** Sinnoh's dex filled to 103 caught */
+  SinnohDexMedal = 85,
 }
 
 export default Awards;
@@ -192,6 +194,7 @@ export const AWARD_NAMES: Record<Awards, string> = {
   [Awards.FlintDefeated]: 'Flint Defeated',
   [Awards.LucianDefeated]: 'Lucian Defeated',
   [Awards.SinnohChampion]: 'Sinnoh Champion',
+  [Awards.SinnohDexMedal]: 'Sinnoh Dex Medal',
 };
 
 /**

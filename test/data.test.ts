@@ -6943,6 +6943,31 @@ describe('a region’s pokedex chain', () => {
     expect(REGION_DEXES[Regions.Hoenn]?.milestones.at(-1)).toBe(walked.length);
   });
 
+  it('gives Sinnoh its own ladder, all but the four mythicals', () => {
+    expect(getDexRegions()).toContain(Regions.Sinnoh);
+    expect(CHAINS[dexChainId(Regions.Sinnoh)].name).toBe('Sinnoh Pokedex');
+
+    const last = getDexQuests(Regions.Sinnoh).get(dexQuestId(Regions.Sinnoh, 2));
+
+    expect(last?.name).toBe('Sinnoh Complete');
+    expect(
+      last?.rewards.some(
+        (reward) => reward.kind === QuestRewardKind.Award && reward.award === Awards.SinnohDexMedal,
+      ),
+    ).toBe(true);
+
+    // Darkrai, Manaphy, Shaymin and Arceus are the four left out, and
+    // every one of them is called by a relic rather than walked into
+    const [from, to] = getRegionSpan(Regions.Sinnoh) ?? [0, 0];
+    const walked = getRegisteredSpecies().filter((species) => {
+      const dex = getSpeciesData(species).dexNumber;
+
+      return isBaseForm(species) && !isMythicalSpecies(species) && dex >= from && dex <= to;
+    });
+
+    expect(REGION_DEXES[Regions.Sinnoh]?.milestones.at(-1)).toBe(walked.length);
+  });
+
   it('leaves a region with no dex alone rather than inventing one', () => {
     // Nothing is written for it, so it stands no chain at all. This is
     // what a generation that has not landed yet looks like

@@ -220,14 +220,15 @@ const AWARD_COLORS: Record<Awards, string> = {
   [Awards.FlintDefeated]: '#d9542f',
   [Awards.LucianDefeated]: '#7f6fc9',
   [Awards.SinnohChampion]: '#e0b64f',
+  [Awards.SinnohDexMedal]: '#4a7fc9',
 };
 
 /**
  * The shelf's order: Kanto's 8 badges, its 4 elite marks, the title
  * and the dex medal, then Johto's 8 badges, its 4 marks and its
  * title and its medal, then Hoenn's, then Sinnoh's 8 badges, its 4
- * marks and its title, which is all that region pays so far, then the
- * marks that belong to no region's walk: Team Rocket's, from the rank and file up, and the
+ * marks, its title and its medal, then the marks that belong to no
+ * region's walk: Team Rocket's, from the rank and file up, and the
  * legends'. The walk itself, left to right, a region at a time
  */
 const SHELF: Awards[] = [
@@ -247,6 +248,7 @@ const SHELF: Awards[] = [
     ...SINNOH_BADGES,
     ...SINNOH_HONORS,
     Awards.SinnohChampion,
+    Awards.SinnohDexMedal,
     ...FRONTIER_SYMBOLS,
     ...SYNDICATE_HONORS,
     ...LEGENDS.map((legend) => LEGEND_HONORS[legend]),

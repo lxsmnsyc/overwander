@@ -16,7 +16,7 @@ own, and beating one is kept for good.
 | **Legend's mark**   | 2        | Beating a legend, who asks for nothing |
 | **Frontier symbol** | 14       | Taking a facility: silver for the win, gold for its second three |
 | **Syndicate marks** | 14       | Beating a grunt, an executive or the boss of Team Rocket, Team Magma or Team Aqua |
-| **Dex medal**       | 3        | Filling that region's dex                |
+| **Dex medal**       | 4        | Filling that region's dex                |
 
 Kanto, Johto, Hoenn and Sinnoh keep eight gyms apiece, and their leaders share
 the world's countries: which of them keeps a given gym is fixed for that gym, so
@@ -109,6 +109,7 @@ titles come from.
 | **Professor Oak**         | Kanto's dex filled              |
 | **Professor Elm**         | Johto's dex filled              |
 | **Professor Birch**       | Hoenn's dex filled              |
+| **Professor Rowan**       | Sinnoh's dex filled, in both his looks |
 | Oak in Johto              | Both dexes filled               |
 | A Kanto leader's later look | That badge **and** Johto's crown |
 | A class of trainer        | That region's class at **Bronze** |
@@ -128,7 +129,8 @@ Janine's rather than her father's, so the Soul Badge is what pays her.
 
 The professors are earned by filling a dex rather than by fighting: Kanto's pays
 Oak in the two looks he is drawn in there, Johto's pays Elm, Hoenn's pays Birch,
-and holding both of the first two pays Oak as he is drawn in Johto.
+Sinnoh's pays Rowan in both of his, and holding both of the first two pays Oak as
+he is drawn in Johto.
 
 ## See also
 

@@ -249,6 +249,15 @@ its own **Poké Maniac** and **Burglar**, who field the dragons of the Dragon's
 Den and the dark that works the roads outside it. Johto's road covers every type
 the game grows; Kanto's covers what Kanto grows.
 
+Hoenn and Sinnoh each bring their own of the trades already on the road, under
+their own names: a **Guitarist** is a Rocker, an **Aroma Lady** a Sage, a
+**Battle Girl** a Black Belt, a **Cyclist** and a **Roughneck** are Bikers. Both
+also bring trades nobody had: Hoenn the **Ninja Boy**, the **Tuber** and the
+**Poké Fan**, and Sinnoh fifteen more, among them the **Pokémon Ranger**, the
+**Worker**, the **Rancher**, the **Pokémon Breeder**, the **Policeman**, the
+**Parasol Lady**, the **Collector** and the **Twins**. Every one of the four
+regions now covers every type its own country grows.
+
 Which of them may be standing on a cell is the country's own: a Swimmer is met on
 the water, a Hiker on hard ground, a Skier in the snow, the same rule the gyms
 follow, so a player hunting one class knows where to walk. What they field is

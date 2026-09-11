@@ -18,9 +18,14 @@ import {
  *
  * The id space: 0-99 the ladder titles, 100-199 the achievement
  * lines' (base at even, Master at odd), 200-299 the types'
- * (Specialist at even, Master at odd), 300-399 the trainer trades'
- * (the trade's name at even, Master at odd), and 400+ the regions'
- * professor, one apiece
+ * (Specialist at even, Master at odd), 300-399 the first 50 trainer
+ * trades' (the trade's name at even, Master at odd), 400-499 the
+ * regions' professor, one apiece, and 500+ the trades past the
+ * fiftieth, which is where Sinnoh's own carry on.
+ *
+ * A stored title is a number on a profile, so nothing here may ever
+ * be renumbered: the second trade band is bolted on above the
+ * professors rather than the professors being moved up
  */
 export type Title = number;
 
@@ -42,6 +47,10 @@ const LINE_TITLE_BASE = 100;
 const TYPE_TITLE_BASE = 200;
 const TRAINER_TITLE_BASE = 300;
 const PROFESSOR_TITLE_BASE = 400;
+const LATE_TRAINER_TITLE_BASE = 500;
+
+/** How many trades fit under the professors, which is where the rest go */
+const EARLY_TRADES = (PROFESSOR_TITLE_BASE - TRAINER_TITLE_BASE) / 2;
 
 /** The title an achievement line's Bronze (or, `master`, Platinum) tier unlocks */
 export function lineTitle(line: AchievementLine, master: boolean): Title {
@@ -60,7 +69,16 @@ export function typeTitle(type: Types, master: boolean): Title {
  * count towards the one title
  */
 export function trainerTitle(trade: TrainerClass, master: boolean): Title {
-  return TRAINER_TITLE_BASE + trade * 2 + (master ? 1 : 0);
+  // Read as a number rather than as a class: what decides the band is
+  // how far up the enum the trade sits, which is arithmetic
+  const at: number = trade;
+  const early = at < EARLY_TRADES;
+
+  return (
+    (early ? TRAINER_TITLE_BASE : LATE_TRAINER_TITLE_BASE) +
+    (early ? at : at - EARLY_TRADES) * 2 +
+    (master ? 1 : 0)
+  );
 }
 
 /**
@@ -101,7 +119,7 @@ export function professorTitle(region: Regions): Title {
 
 /** The region a professor title belongs to, or null for anything else */
 export function titleProfessor(title: Title): Regions | null {
-  if (title < PROFESSOR_TITLE_BASE) {
+  if (title < PROFESSOR_TITLE_BASE || title >= LATE_TRAINER_TITLE_BASE) {
     return null;
   }
 
@@ -116,12 +134,19 @@ export function titleProfessor(title: Title): Regions | null {
  * trade's
  */
 export function titleTrainer(title: Title): TrainerClass | null {
-  if (title < TRAINER_TITLE_BASE || title >= PROFESSOR_TITLE_BASE) {
+  if (title < TRAINER_TITLE_BASE) {
+    return null;
+  }
+  if (title >= PROFESSOR_TITLE_BASE && title < LATE_TRAINER_TITLE_BASE) {
     return null;
   }
 
-  // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
-  const trainer = Math.floor((title - TRAINER_TITLE_BASE) / 2) as TrainerClass;
+  const trainer =
+    title >= LATE_TRAINER_TITLE_BASE
+      ? // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+        ((EARLY_TRADES + Math.floor((title - LATE_TRAINER_TITLE_BASE) / 2)) as TrainerClass)
+      : // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+        (Math.floor((title - TRAINER_TITLE_BASE) / 2) as TrainerClass);
 
   // A trade carries the title, so a region's own class resolves to
   // none: there is no Swimmer (Johto) title, only a Swimmer one

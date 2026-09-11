@@ -416,7 +416,7 @@ import {
 } from '../src/data/species/best-build';
 import Natures, { NATURE_EFFECTS, NATURE_NAMES } from '../src/data/ids/natures';
 import { isRecoilMove } from '../src/data/moves/recoil';
-import { getRegionSpan, getSpeciesRegion } from '../src/data/species/regions';
+import { REGIONS, getRegionSpan, getSpeciesRegion } from '../src/data/species/regions';
 import {
   ACHIEVEMENT_LINES,
   ACHIEVEMENT_TRAINERS,
@@ -436,6 +436,7 @@ import {
   getTitleName,
   lineTitle,
   professorTitle,
+  titleProfessor,
   titleTrainer,
   trainerTitle,
   typeTitle,
@@ -6576,6 +6577,7 @@ describe('achievements', () => {
       TrainerClass.Swimmer,
       TrainerClass.JohtoSwimmer,
       TrainerClass.HoennSwimmer,
+      TrainerClass.SinnohSwimmer,
     ]);
     expect(TRAINER_TRADES).not.toContain(TrainerClass.JohtoSwimmer);
     expect(ACHIEVEMENT_TRAINERS).toEqual(TRAINER_TRADES);
@@ -6723,6 +6725,7 @@ describe('achievements', () => {
           TrainerClass.AceTrainer,
           TrainerClass.JohtoAceTrainer,
           TrainerClass.HoennAceTrainer,
+          TrainerClass.SinnohAceTrainer,
           ...standing,
         ]);
       }
@@ -6768,11 +6771,59 @@ describe('achievements', () => {
   });
 
   it('numbers every trade inside the band its title is read from', () => {
-    // A title is `300 + trade * 2`, and the professors' start at 400,
-    // so a trade numbered past 49 would answer to one of theirs
+    // The first 50 trades are titled `300 + trade * 2`; the rest, which
+    // Sinnoh's own are the first of, carry on at 500, above the
+    // professors rather than through them
     for (const trade of TRAINER_TRADES) {
       expect(titleTrainer(trainerTitle(trade, false)), TRAINER_NAMES[trade]).toBe(trade);
       expect(titleTrainer(trainerTitle(trade, true)), TRAINER_NAMES[trade]).toBe(trade);
+      expect(titleProfessor(trainerTitle(trade, false)), TRAINER_NAMES[trade]).toBeNull();
+    }
+    // And the professors keep the numbers they were stored under
+    for (const region of REGIONS) {
+      if (region !== Regions.Unknown) {
+        expect(titleProfessor(professorTitle(region))).toBe(region);
+        expect(titleTrainer(professorTitle(region))).toBeNull();
+      }
+    }
+    expect(trainerTitle(TrainerClass.Ranger, false)).toBeGreaterThanOrEqual(500);
+    expect(getTitleName(trainerTitle(TrainerClass.Ranger, true))).toBe('Master Pokémon Ranger');
+  });
+
+  it('puts somebody of Sinnoh’s on the road for every type it grows', () => {
+    const sinnoh: [TrainerClass, Types][] = [
+      [TrainerClass.SinnohAromaLady, Types.Grass],
+      [TrainerClass.SinnohSkier, Types.Ice],
+      [TrainerClass.SinnohScientist, Types.Steel],
+      [TrainerClass.SinnohDragonTamer, Types.Dragon],
+      [TrainerClass.Policeman, Types.Dark],
+      [TrainerClass.Waiter, Types.Fire],
+      [TrainerClass.SinnohNinjaBoy, Types.Ghost],
+      [TrainerClass.SinnohPsychic, Types.Psychic],
+      [TrainerClass.Cyclist, Types.Electric],
+      [TrainerClass.SinnohHiker, Types.Ground],
+      [TrainerClass.Jogger, Types.Fighting],
+      [TrainerClass.Worker, Types.Rock],
+      [TrainerClass.ParasolLady, Types.Water],
+      [TrainerClass.Ranger, Types.Bug],
+      [TrainerClass.RichBoy, Types.Flying],
+      [TrainerClass.Rancher, Types.Normal],
+      [TrainerClass.SinnohRoughneck, Types.Poison],
+    ];
+
+    for (const [trainer, type] of sinnoh) {
+      expect(TRAINER_TYPES[trainer], TRAINER_NAMES[trainer]).toContain(type);
+      expect(TRAINER_REGIONS[trainer], TRAINER_NAMES[trainer]).toBe(Regions.Sinnoh);
+    }
+
+    const covered = new Set(
+      TRAINER_CLASSES.filter((trainer) => TRAINER_REGIONS[trainer] === Regions.Sinnoh).flatMap(
+        (trainer) => TRAINER_TYPES[trainer],
+      ),
+    );
+
+    for (const type of ACHIEVEMENT_TYPES) {
+      expect(covered.has(type), TYPE_NAMES[type]).toBe(true);
     }
   });
 

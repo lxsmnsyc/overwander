@@ -4,6 +4,7 @@ import { MARKET_GEAR } from '../items/gear';
 import { ONE_SHOTS } from '../items/one-shots';
 import { ORBS } from '../items/orbs';
 import { PLATES } from '../items/plates';
+import { MINT_NATURES } from '../items/mints';
 import { POWER_ITEMS } from '../items/power-items';
 import { GENERAL_STAT_BOOSTERS } from '../items/stat-boosters';
 import { TYPE_BOOSTERS } from '../items/type-boosters';
@@ -287,6 +288,12 @@ export const ITEM_POOL: ItemRarityGroups = {
     // are made of, which is the band's permanence test passed on the
     // next generation rather than on the holder
     ...[...POWER_ITEMS.keys()].map((item) => ({ item, weight: 2 })),
+    // The mints. A nature is two stats for the rest of a pokemon's
+    // life and nothing else touches one, which is this band exactly.
+    // The thinnest weight there is, because there are twenty-one of
+    // them: finding a mint is ordinary, finding the one a player came
+    // for is not, and the chef is who they go to when it matters
+    ...[...MINT_NATURES.keys()].map((item) => ({ item, weight: 1 })),
   ],
   special: [
     { item: Items.MasterBall, weight: 10 },

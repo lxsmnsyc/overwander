@@ -20,13 +20,7 @@ import { watchProfile } from '../../../auth/profile';
 import { type EggWalk, walk } from '../../../auth/eggs';
 import type { EncounterRecord } from '../../../auth/encounter-record';
 import { getLocalOffset } from '../../../auth/local-time';
-import {
-  RaidKind,
-  type RaidView,
-  canJoinRaids,
-  hostMythicalRaid,
-  peekRaid,
-} from '../../../auth/raids';
+import { RaidKind, type RaidView, canJoinRaids, peekRaid } from '../../../auth/raids';
 import { type StopRecord, stopIdOf } from '../../../auth/stop-record';
 import { claimStopReward, enterStop } from '../../../auth/stops';
 import { createSafariSession, isEncounterRetired } from '../../../auth/safari';
@@ -49,8 +43,6 @@ import type { PlayerIdentity } from '../../../auth/user';
 import { type BoardCell, boardIndexOf } from '../../../canvas/board';
 import { latitudeOf } from '../../../canvas/daylight';
 import { BIOME_COLORS, BIOME_NAMES } from '../../../data/biome';
-import type { Items } from '../../../data/ids/items';
-import type { Species } from '../../../data/ids/species';
 import { DECORATION_NAMES } from '../../../data/overworld/decoration';
 import {
   CHAMPION_NAMES,
@@ -89,7 +81,6 @@ import SafariDialog from '../SafariDialog';
 import ChunkCanvas, { type CellSpot, type SpawnCoat } from '../chunk-canvas';
 import NpcDialog from '../npc-dialog';
 import {
-  For,
   type JSX,
   type Resource,
   Show,
@@ -125,18 +116,16 @@ import playEffect, { Effect } from '../../app/sound';
  * for whatever they are facing
  */
 /**
- * The world itself, which is where the relics, the buddy and what has
- * fled are all read.
+ * The world itself, which is where the buddy and what has fled are
+ * both read.
  *
- * Any of them read in the body that declared it would throw past every
+ * Either read in the body that declared it would throw past every
  * `Suspense` written there and land on the boundary around the whole
  * page — the world is what that boundary would blank
  */
 export default function OverworldBoard(props: {
-  relics: Resource<{ item: Items; amount: number; species: Species }[]>;
   buddy: Resource<Buddy | null>;
   fled: Resource<Set<string>>;
-  onRelicSpent: () => void;
   onFled: () => void;
 }): JSX.Element {
   const auth = useAuth();
@@ -363,30 +352,6 @@ export default function OverworldBoard(props: {
    * are used where the player stands, so they live here rather than
    * in the bag listing
    */
-  const relics = (): { item: Items; amount: number; species: Species }[] | undefined =>
-    settled(props.relics);
-
-  /**
-   * Spend a relic: the lobby opens where the player is standing, and
-   * the Raids tab is where it is fought from
-   */
-  const callMythical = (snapshot: ChunkSnapshot, item: Items): void => {
-    hostMythicalRaid(snapshot, item)
-      .then((lobby) => {
-        props.onRelicSpent();
-
-        if (lobby == null) {
-          remark('That relic called nothing.');
-          return;
-        }
-        game.setRaid(lobby[0]);
-        game.setDialog(GameDialog.Raids);
-      })
-      .catch((caught: unknown) => {
-        remark(caught instanceof Error ? caught.message : String(caught), 'ember');
-      });
-  };
-
   // Where they were put by the provider, which is the one place the
   // position is worked out: a tab panel unmounts when it is left, so
   // walking back into the Overworld is a remount, and it must pick up
@@ -2073,12 +2038,10 @@ export default function OverworldBoard(props: {
               {notes.view()}
             </div>
 
-            {/* What the player is carrying and what they can spend
-                here, over the corner of the map rather than under it.
-                Both are things about this moment — an egg a few paces
-                from hatching, a relic that can only be used where
-                somebody is standing — and neither is worth a strip of
-                the world when there is no egg and no relic */}
+            {/* How close the carried egg is, over the corner of the
+                map rather than under it. It is a thing about this
+                moment and not worth a strip of the world when there is
+                no egg */}
             <div class="pointer-events-none absolute top-2 right-2 flex flex-col items-end gap-1">
               <Show when={carried()}>
                 {(egg) => (
@@ -2088,21 +2051,6 @@ export default function OverworldBoard(props: {
                   </Badge>
                 )}
               </Show>
-              {/* A mythical stands on no landmark: the only way to
-                  face one is to spend the relic that calls it, and it
-                  is spent whatever the raid comes to */}
-              <For each={relics()}>
-                {(entry) => (
-                  <Button
-                    class="pointer-events-auto"
-                    onClick={() => {
-                      callMythical(loaded().snapshot, entry.item);
-                    }}
-                  >
-                    Use {describeItem(entry.item)} × {entry.amount}
-                  </Button>
-                )}
-              </For>
             </div>
           </>
         )}

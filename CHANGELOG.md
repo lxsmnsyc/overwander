@@ -1,5 +1,28 @@
 # overwander
 
+## 2.4.1
+
+### Patch Changes
+
+- b563bd3: A raid relic now opens its lobby when it is pressed in the bag, where before it opened an empty pokemon picker. The buttons the overworld drew over the corner of the map are gone: the bag is the one place a relic is used.
+- b563bd3: The fullscreen switch now sits on the menu bar beside the gold, rather than behind the menu button.
+
+## 2.4.0
+
+### Minor Changes
+
+- 54e2f88: A pokemon's moves, abilities and held items can be put in the order its owner wants:
+
+  - Drag an entry into place on the pokemon's own page, or hold Alt and press the arrows.
+  - All three lists are saved together on one press, so rearranging costs one request.
+  - The order decides what it brings to a fight that allows fewer than it has, which is taken from the top of each list.
+
+### Patch Changes
+
+- 534bfd3: - A pokemon holds at most 4 abilities. The Channeler refuses one that already has four, where before she would widen it to eight.
+  - A pokemon has room for 4 to 8 moves and 1 to 8 held items, and a duel rule may ask for any count inside those ranges.
+  - A catch stored with more room than the new ceilings allow reads inside them, keeping every ability it already carries.
+
 ## 2.3.0
 
 ### Minor Changes

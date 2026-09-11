@@ -34,6 +34,8 @@ export { LIST_PAGE, createPager } from './pager';
 export type { Pager } from './pager';
 export { default as RadioGroup } from './radio-group';
 export type { RadioGroupProps, RadioOption } from './radio-group';
+export { default as createReorder, carried } from './reorder';
+export type { Reorder, ReorderOptions } from './reorder';
 export { default as Search, SEARCH_FROM } from './search';
 export { default as Select } from './select';
 export type { SelectOption, SelectProps } from './select';

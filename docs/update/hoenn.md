@@ -38,14 +38,19 @@ and its own medal.
 - **A Nincada at level 20 leaves a Shedinja behind**, which costs the Poke Ball
   you have to be carrying. It is met nowhere else.
 
-### A form can be worn
+### A form can be worn, or chosen
 
 - A **Castform** takes the shape of the sky it is standing under: Fire in sun,
-  Water in rain, Ice in hail.
-- A **Deoxys** takes one of its four arrangements, and the **Meteorite** it
-  holds picks one at random as a fight begins.
-- A worn shape is never spawned or caught, so **meeting the pokemon fills the
-  whole set in**: seeing one Castform fills all four of its dex squares.
+  Water in rain, Ice in hail. A worn shape is never spawned or caught, so
+  **meeting the pokemon fills the whole set in**: seeing one Castform fills all
+  four of its dex squares.
+- A **Deoxys** is rearranged instead. Using a **Meteorite** on one offers every
+  shape but the one it is standing in, so you pick the arrangement rather than
+  rolling for it, and the rock is spent doing it. Any shape walks back to any
+  other, and each fills its own dex square once it has been stood in.
+- A **second arrangement costs a second rock**. Meteorites turn up in the prized
+  band and nobody stocks them. Which shape a Deoxys is in never changes the band
+  it is read at.
 
 ## The Battle Frontier
 
@@ -134,6 +139,18 @@ Speed now shortens cooldowns. **Every 512 points halves what is left of a
 move's wait**, closing on 95% off, read with stages, abilities and held items
 in. Everything that moved Speed did nothing before this.
 
+## A nature you can change
+
+**21 mints**: one for every nature that moves a stat, and a **Serious Mint** for
+a pokemon that should move none. A mint is spent on one pokemon and changes its
+nature for good, so a pokemon raised for years is no longer stuck with the roll
+it was met on.
+
+- The **wandering chef** sells every one of them, and the ground hides them in
+  the prized band.
+- **A vendor counter lays out 12 kinds** now rather than 6, or its whole shelf
+  where it carries fewer.
+
 ## 102 new moves
 
 Every Ruby, Sapphire and Emerald move, merged into all 386 learnsets. The Kanto
@@ -201,6 +218,10 @@ them.
   than putting it back.
 - **The credits keep the drawings under each artist's name**, and names that
   differ only in case or by a bracketed tag are read as one person.
+- **A stop dialog says what a challenger fields once.** The team size and level
+  band no longer sit above a stake line that already gives both, and a Team
+  Rocket grunt's stake line names its level band the way every other
+  challenger's does.
 
 ## See also
 

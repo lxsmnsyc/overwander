@@ -46,8 +46,8 @@ export const FIELD_INCENSES = new Set<Items>([
 const FIELD_DESCRIPTIONS: { [key in Items]?: string } = {
   [Items.FullIncense]: 'Its holder winds up a bracket slower than it otherwise would.',
   [Items.LaxIncense]: 'Anything aimed at its holder is 5% likelier to miss.',
-  [Items.LuckIncense]: 'Twice the gold from any fight its holder is in.',
-  [Items.PureIncense]: 'Three fewer wild spawns around the buddy carrying it.',
+  [Items.LuckIncense]: '2x the gold from any fight its holder is in, a raid or a grunt included.',
+  [Items.PureIncense]: '3 fewer wild spawns around the buddy carrying it.',
 };
 
 const NAMES: { [key in Items]?: string } = {

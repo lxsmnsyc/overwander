@@ -223,9 +223,16 @@ const setupFrisk = createBuddyAbility(Abilities.Frisk, (overworld) => {
 /**
  * What a purified buddy gives back of what a closed heart takes. Half
  * of it: a shadow is still a shadow, and the pokemon that walked out
- * of one is the one thing in the world that has done it before
+ * of one is the one thing in the world that has done it before.
+ *
+ * Halfway between giving nothing back and undoing the penalty
+ * outright, so it follows `SHADOW_CATCH_FACTOR` wherever that goes.
+ * It was written as `1 / SHADOW_CATCH_FACTOR / 2`, which is the same
+ * number only while a shadow is a third as catchable; the day that
+ * became a half, this quietly became 1 and the ability stopped doing
+ * anything
  */
-export const PURIFIED_SHADOW_RELIEF = 1 / SHADOW_CATCH_FACTOR / 2;
+export const PURIFIED_SHADOW_RELIEF = (1 + 1 / SHADOW_CATCH_FACTOR) / 2;
 
 /**
  * Purified: a shadow throws truer for somebody who has already been

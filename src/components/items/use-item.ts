@@ -1,5 +1,6 @@
 import useBall from '../../auth/balls';
 import useBottleCap from '../../auth/bottle-caps';
+import useMint from '../../auth/mints';
 import { useRareCandy } from '../../auth/candy';
 import { type CaughtPokemon, getCaught } from '../../auth/caught';
 import {
@@ -20,9 +21,11 @@ import type { Stats } from '../../data/constants/stats';
 import { MAX_SLOTS } from '../../data/constants/slots';
 import { Items, getBall, getMachineMove, isMachineItem } from '../../data/ids/items';
 import type { Moves } from '../../data/ids/moves';
+import { NATURE_NAMES } from '../../data/ids/natures';
 import { Genders, type Species } from '../../data/ids/species';
 import { BERRY_EFFORT_DROPS } from '../../data/items/berries';
 import { isBottleCap, isPerfectIVs } from '../../data/items/bottle-caps';
+import { getMintNature, isMint } from '../../data/items/mints';
 import { isHerbal } from '../../data/items/medicine';
 import { isPurifyingGem } from '../../data/items/purifying-gem';
 import { UTILITY_BELT_SLOT, isUtilityBelt } from '../../data/items/utility-belt';
@@ -66,6 +69,11 @@ export function isUsableOn(item: Items, caught: CaughtPokemon): boolean {
   }
   if (isBottleCap(item)) {
     return !isPerfectIVs(caught.ivs);
+  }
+  // A mint that would leave the nature where it is does nothing, so it
+  // is not offered rather than being spent on nothing
+  if (isMint(item)) {
+    return getMintNature(item) !== caught.nature;
   }
   const ball = getBall(item);
 
@@ -279,6 +287,14 @@ export default async function spendItemOn(catchId: string, item: Items): Promise
           tone: 'neutral',
           level: null,
         };
+  }
+
+  if (isMint(item)) {
+    const nature = await useMint(catchId, item);
+
+    return nature == null
+      ? refused(item)
+      : { said: `It is ${NATURE_NAMES[nature]} now.`, tone: 'neutral', level: null };
   }
 
   if (isPurifyingGem(item)) {

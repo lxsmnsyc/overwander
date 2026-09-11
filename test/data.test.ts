@@ -168,7 +168,6 @@ import {
 } from '../src/data/overworld/fossil';
 import { FOSSIL_SPECIES, isFossil, listFossils } from '../src/data/items/fossils';
 import {
-  MOVE_STOCK_KINDS,
   VENDOR_KINDS,
   VENDOR_KIND_NAMES,
   VENDOR_STAPLES,
@@ -189,11 +188,14 @@ import { CANDY_STACKS, ITEM_STACKS, getStack, listStacks } from '../src/auth/sta
 import {
   MAX_SLOTS,
   SLOT_BITS,
+  SLOT_LIMITS,
   Slots,
   countAbilitySlots,
   countsAgainstSlots,
   defaultSlots,
   getSlots,
+  leastSlots,
+  mostSlots,
   packSlots,
   withSlots,
 } from '../src/data/constants/slots';
@@ -213,10 +215,9 @@ import {
   unpackIVs,
 } from '../src/data/constants/stats';
 import { BOTTLE_CAPS, isBottleCap, isPerfectIVs, polishIVs } from '../src/data/items/bottle-caps';
+import { MINT_NATURES, describeMint, getMintNature, isMint } from '../src/data/items/mints';
 import { UTILITY_BELT_SLOT, isUtilityBelt } from '../src/data/items/utility-belt';
 import {
-  MAX_LIMIT_SLOTS,
-  MIN_LIMIT_SLOTS,
   PVP_BATTLE_LIMITS,
   UNLIMITED_BATTLE_LIMITS,
   withLimit,
@@ -411,7 +412,7 @@ import {
   getBestNature,
   getBestParty,
 } from '../src/data/species/best-build';
-import { NATURE_EFFECTS } from '../src/data/ids/natures';
+import Natures, { NATURE_EFFECTS, NATURE_NAMES } from '../src/data/ids/natures';
 import { isRecoilMove } from '../src/data/moves/recoil';
 import { getRegionSpan, getSpeciesRegion } from '../src/data/species/regions';
 import {
@@ -2842,12 +2843,11 @@ describe('item data', () => {
       }
     }
 
-    // A crate is smaller than every shelf, so no counter ever shows
-    // its whole hand
+    // A crate never repeats and never runs past the counter's own
+    // shelf. Three of the specialist shelves are shorter than a dozen,
+    // so those counters do lay out everything they have
     for (const kind of VENDOR_KINDS) {
-      expect(getVendorGoods(kind).length, VENDOR_KIND_NAMES[kind]).toBeGreaterThan(
-        vendorStockSize(kind),
-      );
+      expect(getVendorGoods(kind).length, VENDOR_KIND_NAMES[kind]).toBeGreaterThan(0);
     }
 
     // The two a player plans a walk around, and nothing else
@@ -2879,16 +2879,18 @@ describe('item data', () => {
     const crate = rollVendorStock(() => rng.random(), VendorKind.Moves);
     const elsewhere = new AleaRNG('another-stall');
 
-    expect(crate).toHaveLength(MOVE_STOCK_KINDS);
-    expect(new Set(crate).size).toBe(MOVE_STOCK_KINDS);
+    expect(crate).toHaveLength(VENDOR_STOCK_KINDS);
+    expect(new Set(crate).size).toBe(VENDOR_STOCK_KINDS);
     expect(rollVendorStock(() => elsewhere.random(), VendorKind.Moves)).not.toEqual(crate);
     for (const item of crate) {
       expect(isMachineItem(item), getItemData(item).name).toBe(true);
     }
 
-    // Six is what everybody else lays out
-    expect(vendorStockSize(VendorKind.Balls)).toBe(VENDOR_STOCK_KINDS);
-    expect(vendorStockSize(VendorKind.Moves)).toBe(MOVE_STOCK_KINDS);
+    // And a dozen is what every counter lays out now, the machine
+    // stall included
+    for (const kind of VENDOR_KINDS) {
+      expect(vendorStockSize(kind), VENDOR_KIND_NAMES[kind]).toBe(VENDOR_STOCK_KINDS);
+    }
   });
 
   it('stocks the other counters from their own shelves', () => {
@@ -2915,12 +2917,97 @@ describe('item data', () => {
     }
   });
 
-  it('fills the chef’s larder with the drinks and the treats', () => {
+  it('gives every nature worth having a mint of its own', () => {
+    // One per nature that moves a stat, plus Serious for a pokemon
+    // that should move none. The other four neutral natures have no
+    // mint, since Serious already says what they say
+    expect(MINT_NATURES.size).toBe(21);
+
+    const made = new Set(MINT_NATURES.values());
+
+    for (const nature of Object.keys(NATURE_EFFECTS).map(Number) as Natures[]) {
+      expect(made.has(nature), NATURE_NAMES[nature]).toBe(true);
+    }
+    expect(made.has(Natures.Serious)).toBe(true);
+    for (const neutral of [Natures.Hardy, Natures.Docile, Natures.Bashful, Natures.Quirky]) {
+      expect(made.has(neutral), NATURE_NAMES[neutral]).toBe(false);
+    }
+
+    for (const [item, nature] of MINT_NATURES) {
+      const data = getItemData(item);
+
+      expect(isMint(item)).toBe(true);
+      expect(getMintNature(item)).toBe(nature);
+      expect(data.name).toBe(`${NATURE_NAMES[nature]} Mint`);
+      expect(data.description).toBe(describeMint(nature));
+
+      // A mint is drawn by the stat its nature raises, so a player
+      // scanning the tray sees what the jar is for before the name
+      const effect = NATURE_EFFECTS[nature];
+
+      expect(data.icon.startsWith('mints/')).toBe(true);
+      if (effect == null) {
+        expect(data.icon).toBe('mints/neutral');
+      } else {
+        expect(data.icon).not.toBe('mints/neutral');
+      }
+
+      // Bought off the chef, never held, and gone once eaten
+      expect(isMarketable(item)).toBe(true);
+      expect(data.buy).toBeGreaterThan(0);
+      expect(data.sell).toBeLessThan(data.buy);
+      expect(data.flags & ItemFlags.Holdable).toBe(0);
+      expect(data.flags & ItemFlags.Consumable).not.toBe(0);
+    }
+
+    // Two mints share a jar when they raise the same stat and never
+    // when they do not, which is the whole of the rule
+    for (const [left, leftNature] of MINT_NATURES) {
+      for (const [right, rightNature] of MINT_NATURES) {
+        const same = NATURE_EFFECTS[leftNature]?.up === NATURE_EFFECTS[rightNature]?.up;
+
+        expect(getItemData(left).icon === getItemData(right).icon, NATURE_NAMES[leftNature]).toBe(
+          same,
+        );
+      }
+    }
+
+    // The description says what the nature does rather than naming it
+    // twice, and reads the engine's own factors
+    expect(describeMint(Natures.Adamant)).toBe(
+      'Makes it Adamant: 1.1x Attack, 0.9x Sp. Attack. Spent on use.',
+    );
+    expect(describeMint(Natures.Serious)).toBe(
+      'Makes it Serious, which raises and lowers nothing. Spent on use.',
+    );
+  });
+
+  it('buries every mint in the prized band', () => {
+    // A nature is two stats for the rest of a pokemon's life, which is
+    // what the prized band is for
+    const prized = new Set(ITEM_POOL.prized.map((entry) => entry.item));
+
+    for (const item of MINT_NATURES.keys()) {
+      expect(prized.has(item), getItemData(item).name).toBe(true);
+    }
+
+    // And each is the thinnest thing in it, since there are 21 of them
+    const thinnest = Math.min(...ITEM_POOL.prized.map((entry) => entry.weight));
+
+    for (const entry of ITEM_POOL.prized.filter((one) => MINT_NATURES.has(one.item))) {
+      expect(entry.weight).toBe(thinnest);
+    }
+  });
+
+  it('fills the chef’s larder with the drinks, the treats and the mints', () => {
     const larder = getChefGoods();
 
-    // Five drinks and nine treats, all of them his and only his
-    expect(new Set(larder)).toEqual(new Set([...DRINKS.keys(), ...TREATS.keys()]));
-    expect(larder.length).toBe(DRINKS.size + TREATS.size);
+    // Five drinks, nine treats and twenty-one mints, all of them his
+    // and only his
+    expect(new Set(larder)).toEqual(
+      new Set([...DRINKS.keys(), ...TREATS.keys(), ...MINT_NATURES.keys()]),
+    );
+    expect(larder.length).toBe(DRINKS.size + TREATS.size + MINT_NATURES.size);
 
     for (const item of larder) {
       const data = getItemData(item);
@@ -2965,9 +3052,10 @@ describe('item data', () => {
     expect(getSlots(PVP_BATTLE_LIMITS, Slots.Item)).toBe(1);
     expect(getSlots(PVP_BATTLE_LIMITS, Slots.Move)).toBe(4);
 
-    // A raid adds no ceiling of its own
+    // A raid adds no ceiling of its own, so each count sits at the
+    // most that kind allows
     for (const kind of [Slots.Ability, Slots.Item, Slots.Move]) {
-      expect(getSlots(UNLIMITED_BATTLE_LIMITS, kind)).toBe(MAX_SLOTS);
+      expect(getSlots(UNLIMITED_BATTLE_LIMITS, kind)).toBe(mostSlots(kind));
     }
 
     // And a scenario is one packed number, which is why it can be
@@ -2979,11 +3067,13 @@ describe('item data', () => {
   });
 
   it('holds a host\u2019s limits inside what a fight can be set to', () => {
-    // A count below one would field a pokemon that cannot act, and
-    // one above the packing's ceiling would wrap into its neighbour
-    expect(getSlots(withLimit(PVP_BATTLE_LIMITS, Slots.Move, 0), Slots.Move)).toBe(MIN_LIMIT_SLOTS);
+    // A count below what the kind allows would field a pokemon that
+    // cannot fight it, and one above it would wrap into its neighbour
+    expect(getSlots(withLimit(PVP_BATTLE_LIMITS, Slots.Move, 0), Slots.Move)).toBe(
+      leastSlots(Slots.Move),
+    );
     expect(getSlots(withLimit(PVP_BATTLE_LIMITS, Slots.Move, 99), Slots.Move)).toBe(
-      MAX_LIMIT_SLOTS,
+      mostSlots(Slots.Move),
     );
 
     // And one count moves without disturbing the other two
@@ -3235,12 +3325,28 @@ describe('item data', () => {
     expect(new Set(Object.values(MOVE_CATEGORY_COLORS)).size).toBe(3);
   });
 
+  it('holds each kind of room inside what the game allows', () => {
+    // The width holds eight of everything; what a pokemon may have is
+    // a rule rather than a consequence of the packing
+    expect(SLOT_LIMITS[Slots.Ability]).toEqual([1, 4]);
+    expect(SLOT_LIMITS[Slots.Item]).toEqual([1, 8]);
+    expect(SLOT_LIMITS[Slots.Move]).toEqual([4, 8]);
+
+    for (const kind of [Slots.Ability, Slots.Item, Slots.Move]) {
+      expect(leastSlots(kind)).toBeGreaterThanOrEqual(1);
+      expect(mostSlots(kind)).toBeLessThanOrEqual(MAX_SLOTS);
+      expect(getSlots(withSlots(0, kind, 99), kind)).toBe(mostSlots(kind));
+      expect(getSlots(withSlots(0, kind, 0), kind)).toBe(leastSlots(kind));
+    }
+  });
+
   it('packs how much room a pokemon has into three counts', () => {
-    // Stored 0-based, so an unwritten field reads as one of each —
-    // which is what the game gave everything before the field existed
+    // Stored 0-based, so an unwritten field reads as the least of
+    // each kind: one ability, one held item, and the four moves every
+    // pokemon can already use
     expect(getSlots(0, Slots.Ability)).toBe(1);
     expect(getSlots(0, Slots.Item)).toBe(1);
-    expect(getSlots(0, Slots.Move)).toBe(1);
+    expect(getSlots(0, Slots.Move)).toBe(4);
 
     const usual = packSlots(1, 1, 4);
 
@@ -3257,13 +3363,20 @@ describe('item data', () => {
     expect(getSlots(roomier, Slots.Ability)).toBe(1);
     expect(getSlots(roomier, Slots.Move)).toBe(4);
 
-    // And a count outside what three bits hold is brought inside it
-    // rather than wrapping into its neighbour
+    // And a count outside what the kind allows is brought inside it
+    // rather than wrapping into its neighbour. Four abilities is the
+    // ceiling even though three bits would hold eight
     const clamped = withSlots(usual, Slots.Ability, 99);
 
-    expect(getSlots(clamped, Slots.Ability)).toBe(MAX_SLOTS);
+    expect(getSlots(clamped, Slots.Ability)).toBe(mostSlots(Slots.Ability));
+    expect(mostSlots(Slots.Ability)).toBeLessThan(MAX_SLOTS);
     expect(getSlots(clamped, Slots.Move)).toBe(4);
-    expect(getSlots(withSlots(usual, Slots.Move, 0), Slots.Move)).toBe(1);
+    expect(getSlots(withSlots(usual, Slots.Move, 0), Slots.Move)).toBe(leastSlots(Slots.Move));
+
+    // A record written while the ceiling was higher reads inside the
+    // one that holds now, so nothing keeps room the game will not
+    // honour
+    expect(getSlots(packSlots(1, 1, 4) | (7 << 0), Slots.Ability)).toBe(mostSlots(Slots.Ability));
 
     // The special tier takes no room at all: a shadow arrives carrying
     // two abilities and still has its one slot free for the one it
@@ -4126,6 +4239,12 @@ describe('item icons', () => {
       // the type of the move it teaches, so every Normal-type machine
       // is the same picture on purpose and the name on it is the news
       if (isMachineItem(item)) {
+        continue;
+      }
+      // The mints are the other one: a mint is drawn by the stat its
+      // nature raises, so the four that raise Attack share a jar and
+      // the name on it is the news
+      if (isMint(item)) {
         continue;
       }
 

@@ -281,6 +281,17 @@ Exp. Share, a Lucky Egg, a Luck Incense, a Pure Incense and an Amulet Coin all
 want the same slot on the same buddy, and a berry or a piece of battle gear
 wants it during a raid.
 
+## The order they are in
+
+A pokemon's moves, its abilities and what it is holding are each a list, and the
+order of each list is yours to set: drag them into place on the pokemon's own
+page, and press Save once when all three are where you want them.
+
+The order is worth setting. A fight that allows fewer than a pokemon has takes
+them from the top of the list: a pokemon that knows eight moves fights with the
+first four of them in a battle that allows four, and the same goes for its
+abilities and what it is carrying.
+
 ## Abilities
 
 A pokemon's ability is decided before you ever meet it, and most carry exactly
@@ -293,8 +304,9 @@ decide. Ask her again on a later window and the pokemon widens again, until
 either its family has nothing left it does not already carry or it runs out of
 room.
 
-Most Kanto families hold **three** abilities or fewer between all their stages,
-so a pokemon usually stops at two or three. The Eevee line is the deepest by far.
+No pokemon holds more than **four** abilities however many its family is capable
+of, and most Kanto families hold three or fewer between all their stages, so a
+pokemon usually stops at two or three. The Eevee line is the deepest by far.
 Being a shadow, a purified pokemon or a raid boss costs no room: those marks ride
 alongside the abilities rather than taking a slot from them.
 

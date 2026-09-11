@@ -1,5 +1,12 @@
 # overwander
 
+## 2.4.1
+
+### Patch Changes
+
+- b563bd3: A raid relic now opens its lobby when it is pressed in the bag, where before it opened an empty pokemon picker. The buttons the overworld drew over the corner of the map are gone: the bag is the one place a relic is used.
+- b563bd3: The fullscreen switch now sits on the menu bar beside the gold, rather than behind the menu button.
+
 ## 2.4.0
 
 ### Minor Changes

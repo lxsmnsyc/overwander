@@ -1,5 +1,5 @@
-import { FilePicker, Written, clearedOnSuccess, refusalOf, useToken } from './shared';
-import { packExtras } from '../../../auth/sprites';
+import { FilePicker, Written, clearedOnSuccess, refusalOf } from './shared';
+import { packExtras } from '../../auth/sprites';
 import {
   Button,
   FormActions,
@@ -9,13 +9,12 @@ import {
   Status,
   Switch,
   TextField,
-} from '../../styled';
+} from '../styled';
 import { useSubmission } from '@solidjs/router';
 import { type JSX, Show, createSignal } from 'solid-js';
 
 /** Loose images into `public/sprites/extras`. */
 export default function ExtrasForm(): JSX.Element {
-  const token = useToken();
   const [count, setCount] = createSignal(0);
   const [name, setName] = createSignal('');
   const [compact, setCompact] = createSignal(true);
@@ -42,7 +41,6 @@ export default function ExtrasForm(): JSX.Element {
       method="post"
       enctype="multipart/form-data"
     >
-      <input type="hidden" name="token" value={token()} />
       <input type="hidden" name="name" value={name()} />
       <input type="hidden" name="compact" value={compact() ? 'on' : ''} />
       <FormSection

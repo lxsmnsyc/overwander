@@ -1,9 +1,9 @@
-import { FilePicker, Written, clearedOnSuccess, refusalOf, useToken } from './shared';
-import { packBiome } from '../../../auth/sprites';
-import { BIOME_NAMES } from '../../../data/biome';
-import { DEFAULT_SPEEDS, DEFAULT_TERRAINS, DRAWN_ROLES } from '../../../data/constants/tileset-rip';
-import Biome from '../../../data/ids/biome';
-import { AUTOTILE_COUNT } from '../../../data/overworld/autotile';
+import { FilePicker, Written, clearedOnSuccess, refusalOf } from './shared';
+import { packBiome } from '../../auth/sprites';
+import { BIOME_NAMES } from '../../data/biome';
+import { DEFAULT_SPEEDS, DEFAULT_TERRAINS, DRAWN_ROLES } from '../../data/constants/tileset-rip';
+import Biome from '../../data/ids/biome';
+import { AUTOTILE_COUNT } from '../../data/overworld/autotile';
 import {
   Button,
   Combobox,
@@ -14,7 +14,7 @@ import {
   Status,
   TextArea,
   TextField,
-} from '../../styled';
+} from '../styled';
 import { useSubmission } from '@solidjs/router';
 import { For, type JSX, Show, createSignal } from 'solid-js';
 
@@ -41,7 +41,6 @@ export function biomeOptions(): { value: number; label: string }[] {
  * written across the top in English, so that one list is typed in
  */
 export function BiomeForm(): JSX.Element {
-  const token = useToken();
   const [picked, setPicked] = createSignal(false);
   const [biome, setBiome] = createSignal<number | null>(null);
   const [terrains, setTerrains] = createSignal(RIP.terrains);
@@ -70,7 +69,6 @@ export function BiomeForm(): JSX.Element {
       method="post"
       enctype="multipart/form-data"
     >
-      <input type="hidden" name="token" value={token()} />
       <input type="hidden" name="biome" value={biome() ?? ''} />
       <input type="hidden" name="speeds" value={speeds()} />
       <For each={DRAWN_ROLES}>

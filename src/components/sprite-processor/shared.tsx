@@ -1,7 +1,6 @@
-import getIdToken from '../../../auth/session';
-import type { Drawing } from '../../../auth/sprites';
-import { Field, Note } from '../../styled';
-import { For, type JSX, Show, createEffect, createSignal, onMount } from 'solid-js';
+import type { Drawing } from '../../auth/sprites';
+import { Field, Note } from '../styled';
+import { For, type JSX, Show, createEffect } from 'solid-js';
 
 /** The file picker, dressed like the rest of the forms. */
 export function FilePicker(props: {
@@ -115,29 +114,6 @@ export function Written(props: {
       </ul>
     </div>
   );
-}
-
-/**
- * The caller's own token, put in the form.
- *
- * A privileged server function verifies who is asking, and a form
- * submission carries nothing a fetch would have set for it — so the
- * token is a field like any other. It is read once when the screen
- * opens, which is as long as this tool is ever open for
- */
-export function useToken(): () => string {
-  const [token, setToken] = createSignal('');
-
-  onMount(() => {
-    getIdToken()
-      .then(setToken)
-      .catch(() => {
-        // Nothing signed in is a refusal the server gives anyway, and
-        // this screen is behind the dashboard's own gate
-        setToken('');
-      });
-  });
-  return token;
 }
 
 /**

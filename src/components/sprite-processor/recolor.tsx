@@ -1,6 +1,6 @@
 import { biomeOptions } from './biome';
-import { Written, refusalOf, useToken } from './shared';
-import { recolorBiome } from '../../../auth/sprites';
+import { Written, refusalOf } from './shared';
+import { recolorBiome } from '../../auth/sprites';
 import {
   Button,
   Combobox,
@@ -10,7 +10,7 @@ import {
   Note,
   Status,
   TextArea,
-} from '../../styled';
+} from '../styled';
 import { useSubmission } from '@solidjs/router';
 import { type JSX, Show, createSignal } from 'solid-js';
 
@@ -23,7 +23,6 @@ import { type JSX, Show, createSignal } from 'solid-js';
  * the map in and run again
  */
 export default function RecolorForm(): JSX.Element {
-  const token = useToken();
   const [source, setSource] = createSignal<number | null>(null);
   const [biome, setBiome] = createSignal<number | null>(null);
   const [swaps, setSwaps] = createSignal('');
@@ -34,7 +33,6 @@ export default function RecolorForm(): JSX.Element {
 
   return (
     <form action={recolorBiome} method="post">
-      <input type="hidden" name="token" value={token()} />
       <input type="hidden" name="source" value={source() ?? ''} />
       <input type="hidden" name="biome" value={biome() ?? ''} />
       <FormSection

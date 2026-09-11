@@ -424,11 +424,12 @@ is in [Security](database/security.md).
 
 ## What does not work on a deployed build, by design
 
-- **The sprite tools.** The admin sprite processor writes finished sheets into
-  `public/`, which is only ever right on a machine where `public/` is the working
-  tree. A deployed server serves those files out of a bundle, so the write is
-  refused rather than attempted. The pages are hidden on a deployed build; the
-  refusal is the real guard.
+- **The sprite tools.** The sprite processor at `/sprite-processor` writes
+  finished sheets into `public/`, which is only ever right on a machine where
+  `public/` is the working tree. A deployed server serves those files out of a
+  bundle, so the write is refused rather than attempted. It is behind no sign-in,
+  because on the machine it works on the person at the keyboard owns those files
+  already; the refusal is the whole guard.
 - **The email and password form.** Drawn on a development build alone, which is
   what the browser tests sign in with.
 

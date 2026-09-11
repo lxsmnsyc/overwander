@@ -1,7 +1,7 @@
 import { biomeOptions } from './biome';
-import { Written, refusalOf, useToken } from './shared';
-import { graftBiomeWall } from '../../../auth/sprites';
-import { Button, Combobox, FormActions, FormSection, Note, Status, TextArea } from '../../styled';
+import { Written, refusalOf } from './shared';
+import { graftBiomeWall } from '../../auth/sprites';
+import { Button, Combobox, FormActions, FormSection, Note, Status, TextArea } from '../styled';
 import { useSubmission } from '@solidjs/router';
 import { type JSX, Show, createSignal } from 'solid-js';
 
@@ -14,7 +14,6 @@ import { type JSX, Show, createSignal } from 'solid-js';
  * trees back where the world put them
  */
 export default function GraftForm(): JSX.Element {
-  const token = useToken();
   const [from, setFrom] = createSignal<number | null>(null);
   const [biomes, setBiomes] = createSignal('');
   const grafting = useSubmission(graftBiomeWall);
@@ -23,7 +22,6 @@ export default function GraftForm(): JSX.Element {
 
   return (
     <form action={graftBiomeWall} method="post">
-      <input type="hidden" name="token" value={token()} />
       <input type="hidden" name="from" value={from() ?? ''} />
       <FormSection
         title="Borrow a wall"

@@ -20,6 +20,17 @@ export function canWrite(): boolean {
   return import.meta.env.DEV;
 }
 
+/**
+ * Refuses before a byte is read, rather than leaving it to the write
+ * at the end: a deployed build would otherwise unpack an archive it
+ * was always going to throw away
+ */
+export function requireDevelopment(): void {
+  if (!canWrite()) {
+    throw new Error('Sprites can only be processed on a development build');
+  }
+}
+
 export interface Destination {
   /** Where the drawing goes, relative to `public/`. */
   image: string;

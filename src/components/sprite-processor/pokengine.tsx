@@ -1,14 +1,6 @@
-import { FilePicker, Written, clearedOnSuccess, refusalOf, useToken } from './shared';
-import { packPokengine } from '../../../auth/sprites';
-import {
-  Button,
-  FormActions,
-  FormGrid,
-  FormSection,
-  Status,
-  Switch,
-  TextField,
-} from '../../styled';
+import { FilePicker, Written, clearedOnSuccess, refusalOf } from './shared';
+import { packPokengine } from '../../auth/sprites';
+import { Button, FormActions, FormGrid, FormSection, Status, Switch, TextField } from '../styled';
 import { useSubmission } from '@solidjs/router';
 import { type JSX, Show, createSignal } from 'solid-js';
 
@@ -23,7 +15,6 @@ const POKENGINE_ORDER = 'down up right left';
  * order, which the pack puts into the game's reading order
  */
 export default function PokengineForm(): JSX.Element {
-  const token = useToken();
   const [picked, setPicked] = createSignal(false);
   const [name, setName] = createSignal('');
   const [order, setOrder] = createSignal(POKENGINE_ORDER);
@@ -55,7 +46,6 @@ export default function PokengineForm(): JSX.Element {
       method="post"
       enctype="multipart/form-data"
     >
-      <input type="hidden" name="token" value={token()} />
       <input type="hidden" name="name" value={name()} />
       <input type="hidden" name="order" value={order()} />
       <input type="hidden" name="credit" value={credit()} />

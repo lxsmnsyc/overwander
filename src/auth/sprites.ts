@@ -2,6 +2,10 @@ import { action } from '@solidjs/router';
 import type { ProcessResult, UploadedImage } from '../server/sprites/extras';
 import processExtras from '../server/sprites/extras';
 import type { Drawing } from '../server/sprites/files';
+// Kept apart from the type import above: the transform strips an
+// import the server function alone uses, and a re-exported type on
+// the same line goes with it
+import { requireDevelopment } from '../server/sprites/files';
 import type { PokengineGrid, PokengineResult } from '../server/sprites/pokengine';
 import processPokengine, { parseOrder } from '../server/sprites/pokengine';
 import type { GraftResult } from '../server/sprites/graft';
@@ -12,7 +16,6 @@ import type { TerrainBlock, TilesetResult, TilesetSheet } from '../server/sprite
 import processTileset, { parseSpeeds, parseTerrains } from '../server/sprites/tileset';
 import type { DrawnRole } from '../data/constants/tileset-rip';
 import { DRAWN_ROLES } from '../data/constants/tileset-rip';
-import { requireAdmin } from '../server/roles';
 
 /**
  * What the sprite processor asks the server to do.
@@ -21,12 +24,13 @@ import { requireAdmin } from '../server/roles';
  * are for, and a file belongs in a multipart body: reading it into a
  * typed array on the client only to serialise it through a function
  * call is a copy of the whole archive for nothing. Everything else the
- * call needs — the caller's token included — rides along as a named
- * input in the same form.
+ * call needs rides along as a named input in the same form.
  *
  * All of them write into `public/`, so all of them refuse anywhere but
  * a development build. That is checked on the server, which is the only
- * side of the pair a deployed build runs.
+ * side of the pair a deployed build runs, and it is the whole of what
+ * guards them: on a machine where `public/` is the working tree, the
+ * person at the keyboard owns those files already.
  */
 
 export type {
@@ -84,7 +88,7 @@ function asFile(value: FormDataEntryValue | null, what: string): File {
  */
 export const packPokengine = action(async (form: FormData): Promise<PokengineResult> => {
   'use server';
-  await requireAdmin(String(form.get('token') ?? ''));
+  requireDevelopment();
 
   const picked = asFile(form.get('sheet'), 'sheet');
 
@@ -106,7 +110,7 @@ export const packPokengine = action(async (form: FormData): Promise<PokengineRes
  */
 export const packBiome = action(async (form: FormData): Promise<TilesetResult> => {
   'use server';
-  await requireAdmin(String(form.get('token') ?? ''));
+  requireDevelopment();
 
   const picked = asFile(form.get('sheet'), 'sheet');
 
@@ -127,7 +131,7 @@ export const packBiome = action(async (form: FormData): Promise<TilesetResult> =
  */
 export const recolorBiome = action(async (form: FormData): Promise<RecolorResult> => {
   'use server';
-  await requireAdmin(String(form.get('token') ?? ''));
+  requireDevelopment();
 
   return recolorTileset({
     source: Number.parseInt(String(form.get('source') ?? ''), 10),
@@ -142,7 +146,7 @@ export const recolorBiome = action(async (form: FormData): Promise<RecolorResult
  */
 export const graftBiomeWall = action(async (form: FormData): Promise<GraftResult> => {
   'use server';
-  await requireAdmin(String(form.get('token') ?? ''));
+  requireDevelopment();
 
   return graftWall({
     from: Number.parseInt(String(form.get('from') ?? ''), 10),
@@ -153,7 +157,7 @@ export const graftBiomeWall = action(async (form: FormData): Promise<GraftResult
 /** Loose images into one sheet under `public/sprites/extras`. */
 export const packExtras = action(async (form: FormData): Promise<ProcessResult> => {
   'use server';
-  await requireAdmin(String(form.get('token') ?? ''));
+  requireDevelopment();
 
   // Every file under the one name, which is what a `multiple` picker
   // posts: `get` would take the first and quietly drop the rest

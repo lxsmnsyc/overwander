@@ -1,7 +1,7 @@
 import { type JSX, Show } from 'solid-js';
 
-import { Status, TabBar, TabButton, TabGroup, TabPane } from '../../styled';
-import { canProcessSprites } from '../../../auth/sprites';
+import { Status, TabBar, TabButton, TabGroup, TabPane } from '../styled';
+import { canProcessSprites } from '../../auth/sprites';
 
 import { BiomeForm } from './biome';
 import ExtrasForm from './extras';
@@ -17,10 +17,11 @@ import RecolorForm from './recolor';
  * checkout beside this repository, which is where the archives and
  * the tooling for them live.
  *
- * A **development tool** rather than a staff screen: a deployed build
- * serves `public/` from a bundle, and a server that could write its
- * own asset root is a hole. The server refuses either way and the page
- * says so rather than offering a button that cannot work.
+ * A **development tool** rather than a part of the game, and behind no
+ * sign-in: a deployed build serves `public/` from a bundle, and a
+ * server that could write its own asset root is a hole. The server
+ * refuses either way and the page says so rather than offering a
+ * button that cannot work.
  *
  * Each half is an ordinary form, so the files ride in a multipart
  * body: the server functions take `FormData`

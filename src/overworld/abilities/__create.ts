@@ -7,6 +7,16 @@ import type Overworld from '../core';
 import { OverworldEvents } from '../events';
 
 /**
+ * Every ability that does something out of a fight, collected as the
+ * factories above are called rather than written out again.
+ *
+ * A player picks who to walk with by reading ability lines, so each of
+ * these has to say what it does out here; the test that checks they do
+ * reads this, and a new one joins it by being written
+ */
+export const BUDDY_ABILITIES = new Set<Abilities>();
+
+/**
  * A field ability registers itself only when the buddy actually has
  * it. The battle engine watches abilities come and go on units; a
  * buddy's set is fixed for the life of an overworld instance, so the
@@ -16,6 +26,8 @@ export function createBuddyAbility(
   ability: Abilities,
   setup: (overworld: Overworld) => void,
 ): (overworld: Overworld) => void {
+  BUDDY_ABILITIES.add(ability);
+
   return (overworld: Overworld): void => {
     if (overworld.hasAbility(ability)) {
       setup(overworld);

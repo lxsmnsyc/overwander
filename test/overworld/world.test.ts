@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import AleaRNG from '../../src/core/alea';
 import { MAX_OFFSET, MIN_OFFSET, asOffset } from '../../src/auth/local-time';
 import Abilities from '../../src/data/ids/abilities';
+import registerAbilities, { getAbilityData } from '../../src/data/abilities';
 import PerlinNoise from '../../src/core/perlin';
 import registerBiomeSpawns, {
   BIOME_NAMES,
@@ -243,6 +244,7 @@ import {
 } from '../../src/overworld/landmarks';
 import { DARK_DAY_LAMP_CELLS, favorsEverything } from '../../src/data/overworld/weather';
 import {
+  BUDDY_ABILITIES,
   KINSHIP_CATCH_BOOST,
   LURE_SPAWN_BONUS,
   TRAP_FLEE_FACTOR,
@@ -250,6 +252,7 @@ import {
 import { PUBLISHED_SPAWNS } from '../../src/auth/snapshots';
 import {
   COMPOUND_EYES_HELD_BOOST,
+  CUTE_CHARM_CHANCE,
   FLAME_BODY_FACTOR,
   GLUTTONY_FEAST,
   HONEY_STEP_INTERVAL,
@@ -261,6 +264,7 @@ import {
   PURIFIED_SHADOW_RELIEF,
   SNIPER_AIMS,
   STENCH_QUIET,
+  SYNCHRONIZE_CHANCE,
 } from '../../src/overworld/abilities/gen-1';
 import { EGG_HATCH_STEPS } from '../../src/auth/egg';
 import type Overworld from '../../src/overworld/core';
@@ -284,6 +288,7 @@ import World, {
 registerMoves();
 registerSpecies();
 registerItems();
+registerAbilities();
 registerBiomeSpawns();
 
 describe('perlin noise', () => {
@@ -2508,8 +2513,10 @@ describe('world', () => {
     // Nothing changes for a meeting whose heart was never closed
     expect(purified.checkCatchChance('spawn#0', metWild(Species.Rattata))).toBe(1);
     expect(plain.checkCatchChance('spawn#0', metWild(Species.Rattata, true))).toBe(1);
-    // And it gives back less than the shadow took, so a shadow stays
-    // the harder catch
+    // It gives something back, which the old formula stopped doing the
+    // day a shadow became a half rather than a third
+    expect(PURIFIED_SHADOW_RELIEF).toBeGreaterThan(1);
+    // And less than the shadow took, so a shadow stays the harder catch
     expect(PURIFIED_SHADOW_RELIEF * SHADOW_CATCH_FACTOR).toBeLessThan(1);
   });
 
@@ -4973,5 +4980,75 @@ describe('portal balancing', () => {
         }
       }
     }
+  });
+});
+
+describe('buddy copy', () => {
+  /**
+   * The figure each buddy line prints, against the constant the
+   * overworld actually reads. The description is written by hand, so
+   * this is what stops it saying one thing while the field does
+   * another
+   */
+  const FIGURES: [Abilities, string, number][] = [
+    [Abilities.ArenaTrap, '3 more', LURE_SPAWN_BONUS],
+    [Abilities.Illuminate, '3 more', LURE_SPAWN_BONUS],
+    [Abilities.NoGuard, '3 more', LURE_SPAWN_BONUS],
+    [Abilities.Illuminate, 'lit 3 cells out', ILLUMINATE_LAMP_CELLS],
+    [Abilities.Stench, '2 fewer', STENCH_QUIET],
+    [Abilities.CompoundEyes, '2.5x', COMPOUND_EYES_HELD_BOOST],
+    [Abilities.Pickup, 'every 512 steps', PICKUP_STEP_INTERVAL],
+    [Abilities.HoneyGather, 'every 384 steps', HONEY_STEP_INTERVAL],
+    [Abilities.Gluttony, '1.5x as long', GLUTTONY_FEAST],
+    [Abilities.SuperLuck, 'critical 2x as often', KEEN_CRITICAL_BOOST],
+    [Abilities.Sniper, '2 chances', SNIPER_AIMS],
+    [Abilities.KeenEye, 'lifts by 3', LEVEL_FLOOR_LIFT],
+    [Abilities.Intimidate, 'lifts by 3', LEVEL_FLOOR_LIFT],
+    [Abilities.Hustle, 'lifts by 3', LEVEL_CEILING_LIFT],
+    [Abilities.Pressure, 'lifts by 3', LEVEL_CEILING_LIFT],
+    [Abilities.VitalSpirit, 'lifts by 3', LEVEL_CEILING_LIFT],
+    [Abilities.Purified, '1.5x', PURIFIED_SHADOW_RELIEF],
+    [Abilities.FlashFire, '1.5x', KINSHIP_CATCH_BOOST],
+    [Abilities.SapSipper, '1.5x', KINSHIP_CATCH_BOOST],
+    [Abilities.Synchronize, '1/2 of wild', SYNCHRONIZE_CHANCE],
+    [Abilities.CuteCharm, '2/3 of wild', CUTE_CHARM_CHANCE],
+  ];
+
+  it('prints the figure the field actually uses', () => {
+    for (const [ability, said, number] of FIGURES) {
+      const data = getAbilityData(ability);
+      // The figure in the line, pulled back out of it
+      const printed = /(\d+(?:\.\d+)?)(?:\/(\d+))?/.exec(said);
+
+      expect(printed, said).not.toBeNull();
+
+      const value =
+        printed?.[2] == null ? Number(printed?.[1]) : Number(printed[1]) / Number(printed[2]);
+
+      expect(value, `${data.name}: ${said}`).toBe(number);
+      expect(data.description, data.name).toContain(said);
+    }
+  });
+
+  it('says what every buddy ability does out of a fight', () => {
+    // Every ability the overworld listens for has to say so, or a
+    // player choosing who to walk with is reading a battle line about
+    // a field effect
+    for (const ability of BUDDY_ABILITIES) {
+      const data = getAbilityData(ability);
+
+      expect(data.description, `${data.name} says nothing about being a buddy`).toMatch(
+        /As a buddy,|while it is the buddy/,
+      );
+    }
+  });
+
+  it('tells Keen Eye and Illuminate apart', () => {
+    // The two carry the same battle line and do completely different
+    // things beside a player, which is the case that made this worth
+    // writing down at all
+    expect(getAbilityData(Abilities.KeenEye).description).not.toBe(
+      getAbilityData(Abilities.Illuminate).description,
+    );
   });
 });

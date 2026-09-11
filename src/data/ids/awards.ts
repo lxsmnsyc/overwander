@@ -101,6 +101,7 @@ const enum Awards {
   BerthaDefeated = 81,
   FlintDefeated = 82,
   LucianDefeated = 83,
+  SinnohChampion = 84,
 }
 
 export default Awards;
@@ -190,6 +191,7 @@ export const AWARD_NAMES: Record<Awards, string> = {
   [Awards.BerthaDefeated]: 'Bertha Defeated',
   [Awards.FlintDefeated]: 'Flint Defeated',
   [Awards.LucianDefeated]: 'Lucian Defeated',
+  [Awards.SinnohChampion]: 'Sinnoh Champion',
 };
 
 /**
@@ -287,8 +289,7 @@ export const HOENN_HONORS: Awards[] = [
 ];
 
 /**
- * And Sinnoh's 4. Nothing asks to see the set yet: the region has a
- * league and no champion above it
+ * And Sinnoh's 4, which Cynthia asks to see
  */
 export const SINNOH_HONORS: Awards[] = [
   Awards.AaronDefeated,

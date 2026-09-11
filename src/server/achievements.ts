@@ -90,6 +90,9 @@ export async function listUnlockedTitles(player: string): Promise<Title[]> {
   if (awards.has(Awards.HoennChampion)) {
     titles.push(LadderTitle.HoennChampion);
   }
+  if (awards.has(Awards.SinnohChampion)) {
+    titles.push(LadderTitle.SinnohChampion);
+  }
   // One mark is enough: a legend is not a set to be walked through
   if (LEGENDS.some((legend) => awards.has(LEGEND_HONORS[legend]))) {
     titles.push(LadderTitle.LegendBreaker);

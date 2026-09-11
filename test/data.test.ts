@@ -5597,7 +5597,7 @@ describe('type experts', () => {
     expect(CHAMPION_TITLES[Champion.Wallace]).toBe(Awards.HoennChampion);
   });
 
-  it('seats Sinnoh’s four on Sinnoh’s badges, with no crown above them', () => {
+  it('seats Sinnoh’s four on Sinnoh’s badges, with Cynthia above them', () => {
     for (const member of [
       EliteMember.Aaron,
       EliteMember.Bertha,
@@ -5607,10 +5607,9 @@ describe('type experts', () => {
       expect(SINNOH_HONORS).toContain(ELITE_MEMBER_HONORS[member]);
       expect(getEliteBadges(member), ELITE_MEMBER_NAMES[member]).toEqual(SINNOH_BADGES);
     }
-    // Nobody stands above them yet: no champion asks for these four
-    for (const champion of CHAMPIONS) {
-      expect(CHAMPION_HONORS[champion], CHAMPION_NAMES[champion]).not.toEqual(SINNOH_HONORS);
-    }
+    // And Cynthia stands above them, asking for all four
+    expect(CHAMPION_HONORS[Champion.Cynthia]).toEqual(SINNOH_HONORS);
+    expect(CHAMPION_TITLES[Champion.Cynthia]).toBe(Awards.SinnohChampion);
   });
 
   it('gives every Frontier Brain a house, a rule and a pair of symbols', () => {

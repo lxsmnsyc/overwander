@@ -35,6 +35,7 @@ export const enum LadderTitle {
   /** Any legend's mark: the fight the league does not ask for */
   LegendBreaker = 4,
   HoennChampion = 5,
+  SinnohChampion = 6,
 }
 
 const LINE_TITLE_BASE = 100;
@@ -134,6 +135,7 @@ const LADDER_TITLE_NAMES: Record<LadderTitle, string> = {
   [LadderTitle.JohtoChampion]: 'Johto Champion',
   [LadderTitle.LegendBreaker]: 'Legend Breaker',
   [LadderTitle.HoennChampion]: 'Hoenn Champion',
+  [LadderTitle.SinnohChampion]: 'Sinnoh Champion',
 };
 
 /**

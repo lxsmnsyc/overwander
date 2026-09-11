@@ -12,7 +12,7 @@ own, and beating one is kept for good.
 | ------------------- | -------- | -------------------------------------- |
 | **Gym badge**       | 32       | Beating that gym's leader              |
 | **Elite Four mark** | 16       | Beating that member of the Elite Four  |
-| **Champion**        | 3        | Beating that league's Champion          |
+| **Champion**        | 4        | Beating that league's Champion          |
 | **Legend's mark**   | 2        | Beating a legend, who asks for nothing |
 | **Frontier symbol** | 14       | Taking a facility: silver for the win, gold for its second three |
 | **Syndicate marks** | 14       | Beating a grunt, an executive or the boss of Team Rocket, Team Magma or Team Aqua |
@@ -28,11 +28,10 @@ Candice and Volkner.
 Kanto's and Johto's Elite Fours come to seven people rather than eight, four
 apiece. Bruno keeps a seat in each, and each is its own fight with its own mark:
 walking only one region's gyms earns you the Bruno of that region and that mark
-alone. Hoenn's four are its own four people, and so are Sinnoh's: Aaron, Bertha, Flint
-and Lucian. Each of the **Elite Four asks to see all eight of their own league's
-badges** before they will fight, and each **Champion asks for all four of their
-own league's marks**. Sinnoh has no champion yet, so its four marks open
-nothing above them.
+alone. Hoenn's four are its own four people, and so are Sinnoh's: Aaron, Bertha,
+Flint and Lucian. Each of the **Elite Four asks to see all eight of their own
+league's badges** before they will fight, and each **Champion asks for all four
+of their own league's marks**. Sinnoh's champion is Cynthia.
 
 A **legend** stands outside all of that. One turns up in a champion's seat one
 window in sixty-four, and under the rarest skies for certain; no badge case is

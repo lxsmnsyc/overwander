@@ -4,6 +4,7 @@
 // oxlint-disable typescript/no-unnecessary-type-assertion
 import type { Items } from '../data/ids/items';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
+import type { Depth } from '../overworld/depth';
 import { asNumber, asRecord, asRecordArray, asString } from './__normalize';
 import { RaidKind, type RaidRecord, type RaidView, asRaidRecord } from './raid-record';
 import { hasAnyCaught } from './caught';
@@ -145,6 +146,7 @@ export async function peekRaid(
     cell,
     kind,
     snapshot.offset,
+    snapshot.depth,
   );
 }
 
@@ -155,9 +157,19 @@ async function peekRaidOnServer(
   cell: number,
   kind: RaidKind,
   offset: number,
+  depth: Depth,
 ): Promise<RaidView | null> {
   'use server';
-  return peekOnServer(await requireUid(token), x, y, cell, kind, await syncServerClock(), offset);
+  return peekOnServer(
+    await requireUid(token),
+    x,
+    y,
+    cell,
+    kind,
+    await syncServerClock(),
+    offset,
+    depth,
+  );
 }
 
 /**
@@ -182,6 +194,7 @@ export async function enterRaid(
     cell,
     kind,
     snapshot.offset,
+    snapshot.depth,
   );
 }
 
@@ -192,9 +205,19 @@ async function enterRaidOnServer(
   cell: number,
   kind: RaidKind,
   offset: number,
+  depth: Depth,
 ): Promise<[string, RaidRecord] | null> {
   'use server';
-  return enterOnServer(await requireUid(token), x, y, cell, kind, await syncServerClock(), offset);
+  return enterOnServer(
+    await requireUid(token),
+    x,
+    y,
+    cell,
+    kind,
+    await syncServerClock(),
+    offset,
+    depth,
+  );
 }
 
 /**

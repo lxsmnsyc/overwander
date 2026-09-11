@@ -122,6 +122,22 @@ function digestOf(path: string): string {
 const SHEETS = findSheets(SPRITE_ROOT);
 const LEDGER = readLedger();
 
+/** The landmarks a person is standing on, drawn from their charset */
+const DRAWN_AS_PEOPLE = new Set<Landmark>([
+  Landmark.Market,
+  Landmark.Trainer,
+  Landmark.GymLeader,
+  Landmark.EliteFour,
+  Landmark.Champion,
+  Landmark.TeamRocket,
+  Landmark.WanderingNpc,
+  Landmark.PokemonCenter,
+  Landmark.FrontierBrain,
+]);
+
+/** And the ones that grow their own picture */
+const GROWS_ITS_OWN = new Set<Landmark>([Landmark.BerryPatch, Landmark.ApricornTree]);
+
 describe('the sprite pipeline record', () => {
   it('has an entry for every sheet that ships', () => {
     expect(SHEETS.length).toBeGreaterThan(0);
@@ -372,19 +388,7 @@ describe('the landmarks that ship', () => {
   it('leaves the landmarks somebody stands on to their charsets', () => {
     // A market is its vendor and a gym is its leader. A picture as well
     // would be the cell saying the same thing twice
-    for (const kind of [
-      Landmark.Market,
-      Landmark.Trainer,
-      Landmark.GymLeader,
-      Landmark.EliteFour,
-      Landmark.Champion,
-      Landmark.TeamRocket,
-      Landmark.WanderingNpc,
-      Landmark.PokemonCenter,
-      // And the patch grows its own bush, the way a tree grows its own
-      Landmark.BerryPatch,
-      Landmark.ApricornTree,
-    ]) {
+    for (const kind of [...DRAWN_AS_PEOPLE, ...GROWS_ITS_OWN]) {
       expect(hasLandmarkPicture(kind), LANDMARK_NAMES[kind]).toBe(false);
       expect(landmarkPicture(kind), LANDMARK_NAMES[kind]).toBe(null);
     }
@@ -397,6 +401,25 @@ describe('the landmarks that ship', () => {
       }
       expect(landmarkPicture(kind), LANDMARK_NAMES[kind]).not.toBe(null);
     }
+  });
+
+  it('leaves no landmark drawn as nothing at all', () => {
+    // The two lists above are what a landmark may be: a picture off
+    // the sheet, or somebody standing on it. A kind in neither fell
+    // through both and is drawn as a bare ring, which is how the cave
+    // mouth shipped with no art
+    for (const kind of LANDMARKS) {
+      expect(
+        hasLandmarkPicture(kind) || DRAWN_AS_PEOPLE.has(kind) || GROWS_ITS_OWN.has(kind),
+        LANDMARK_NAMES[kind],
+      ).toBe(true);
+    }
+  });
+
+  it('draws a cave mouth from above and the way out from below', () => {
+    // The one landmark on both layers at once, so the one drawn twice
+    expect(landmarkPicture(Landmark.CaveMouth)).toBe('cave');
+    expect(landmarkPicture(Landmark.CaveMouth, false, true)).toBe('cave-exit');
   });
 
   it('draws a lair as one statue, and a shadow one as the same statue', () => {

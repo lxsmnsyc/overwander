@@ -3,10 +3,12 @@ import {
   type PositionRecord,
   asCellCoordinate,
   asChunkCoordinate,
+  asDepth,
   asPositionRecord,
 } from '../auth/position-record';
 import type Biome from '../data/ids/biome';
 import getWorld from '../overworld/current';
+import type { Depth } from '../overworld/depth';
 import { Metric } from '../auth/quest-record';
 import { getSql } from './db';
 import { markProgress } from './quest-progress';
@@ -48,15 +50,17 @@ export default async function savePosition(
   chunkY: number,
   cellX: number,
   cellY: number,
+  depth: Depth,
   now: number,
 ): Promise<number> {
   await getSql()`
-    insert into positions (player, chunk_x, chunk_y, cell_x, cell_y, moved_at)
+    insert into positions (player, chunk_x, chunk_y, cell_x, cell_y, depth, moved_at)
     values (${uid}, ${asChunkCoordinate(chunkX)}, ${asChunkCoordinate(chunkY)},
-            ${asCellCoordinate(cellX)}, ${asCellCoordinate(cellY)}, ${now})
+            ${asCellCoordinate(cellX)}, ${asCellCoordinate(cellY)}, ${asDepth(depth)}, ${now})
     on conflict (player) do update set
       chunk_x = excluded.chunk_x, chunk_y = excluded.chunk_y,
       cell_x = excluded.cell_x, cell_y = excluded.cell_y,
+      depth = excluded.depth,
       moved_at = excluded.moved_at
   `;
 
@@ -79,7 +83,7 @@ export default async function savePosition(
 export async function readPosition(uid: string): Promise<PositionRecord | null> {
   const rows = await getSql()`
     select player, chunk_x as "chunkX", chunk_y as "chunkY",
-           cell_x as "cellX", cell_y as "cellY", moved_at as "movedAt"
+           cell_x as "cellX", cell_y as "cellY", depth, moved_at as "movedAt"
     from positions where player = ${uid}
   `;
 
@@ -101,7 +105,7 @@ export async function readPositions(uids: readonly string[]): Promise<Map<string
   const sql = getSql();
   const rows = await sql`
     select player, chunk_x as "chunkX", chunk_y as "chunkY",
-           cell_x as "cellX", cell_y as "cellY", moved_at as "movedAt"
+           cell_x as "cellX", cell_y as "cellY", depth, moved_at as "movedAt"
     from positions where player in ${sql(wanted)}
   `;
   const found = new Map<string, PositionRecord>();

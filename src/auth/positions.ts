@@ -1,3 +1,4 @@
+import type { Depth } from '../overworld/depth';
 import { requireUid } from '../server/auth';
 import savePositionOnServerSide, { readPosition } from '../server/positions';
 import { syncServerClock } from './clock';
@@ -24,7 +25,7 @@ export type { PositionRecord } from './position-record';
 export async function getPosition(uid: string): Promise<PositionRecord | null> {
   const { data } = await getSupabase()
     .from('positions')
-    .select('player, chunk_x, chunk_y, cell_x, cell_y, moved_at')
+    .select('player, chunk_x, chunk_y, cell_x, cell_y, depth, moved_at')
     .eq('player', uid)
     .maybeSingle();
 
@@ -40,6 +41,7 @@ export async function getPosition(uid: string): Promise<PositionRecord | null> {
     chunkY: row.chunk_y,
     cellX: row.cell_x,
     cellY: row.cell_y,
+    depth: row.depth,
     movedAt: row.moved_at,
   });
 }
@@ -88,8 +90,9 @@ export async function savePosition(
   chunkY: number,
   cellX: number,
   cellY: number,
+  depth: Depth,
 ): Promise<number> {
-  return savePositionOnServer(await getIdToken(), chunkX, chunkY, cellX, cellY);
+  return savePositionOnServer(await getIdToken(), chunkX, chunkY, cellX, cellY, depth);
 }
 
 async function savePositionOnServer(
@@ -98,6 +101,7 @@ async function savePositionOnServer(
   chunkY: number,
   cellX: number,
   cellY: number,
+  depth: Depth,
 ): Promise<number> {
   'use server';
   return savePositionOnServerSide(
@@ -106,6 +110,7 @@ async function savePositionOnServer(
     chunkY,
     cellX,
     cellY,
+    depth,
     await syncServerClock(),
   );
 }

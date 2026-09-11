@@ -41,7 +41,13 @@ import drawSparkle from '../../../canvas/sparkle';
 import { type Cast, batchAmbient, getCast, paintAmbient } from '../../../canvas/daylight';
 import type Weather from '../../../data/overworld/weather';
 import pixelRatio from '../../../canvas/ratio';
-import paintSky, { type Lamp, batchSky, batchWash } from '../../../canvas/sky';
+import paintSky, {
+  type Lamp,
+  batchCavern,
+  batchSky,
+  batchWash,
+  paintCavern,
+} from '../../../canvas/sky';
 import createTwist from '../../../canvas/twist';
 import { getLocalOffset, toLocalTime } from '../../../auth/local-time';
 import { serverNow } from '../../../auth/clock';
@@ -272,6 +278,11 @@ export interface ChunkCanvasProps {
    * business rather than the board's
    */
   lamp: number;
+  /**
+   * Whether this board is underground. A cave has no sky over it, so
+   * the weather is not drawn at all and the dark never lifts
+   */
+  underground: boolean;
   /**
    * A cell the player has asked to be at — the chunk's own, or one of
    * the ring of country drawn around it.
@@ -850,7 +861,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       return null;
     }
 
-    const name = landmarkPicture(kind, props.dug.has(index));
+    const name = landmarkPicture(kind, props.dug.has(index), props.underground);
 
     if (name == null) {
       return null;
@@ -2671,11 +2682,21 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
 
       if (batch == null) {
         paintAmbient(context, screen.width, screen.height, worldTime(), props.latitude);
-        paintSky(context, screen.width, screen.height, props.weather, clock, 1, lamps, sky);
+        if (props.underground) {
+          // No sky down here, so no weather and no hour: the dark is
+          // the cave's own and the only thing that lifts it is a light
+          paintCavern(context, screen.width, screen.height, lamps);
+        } else {
+          paintSky(context, screen.width, screen.height, props.weather, clock, 1, lamps, sky);
+        }
       } else {
         batchAmbient(batch, screen.width, screen.height, worldTime(), props.latitude);
-        batchWash(batch, screen.width, screen.height, props.weather, clock, 1, lamps, sky);
-        batchSky(batch, screen.width, screen.height, props.weather, clock, 1, sky);
+        if (props.underground) {
+          batchCavern(batch, screen.width, screen.height, lamps);
+        } else {
+          batchWash(batch, screen.width, screen.height, props.weather, clock, 1, lamps, sky);
+          batchSky(batch, screen.width, screen.height, props.weather, clock, 1, sky);
+        }
       }
 
       /**

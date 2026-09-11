@@ -892,6 +892,13 @@ export const enum Items {
 
   /** The flute that opens the stair at the top of the mountain */
   AzureFlute = 427,
+
+  /**
+   * The kit a player goes underground with. In the mainline it is
+   * what opens the Underground at all; here the caves are open to
+   * anybody, and what the kit is worth is the light
+   */
+  ExplorerKit = 428,
 }
 
 /**

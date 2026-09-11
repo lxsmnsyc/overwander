@@ -1,4 +1,5 @@
 import 'server-only';
+import { Depth } from '../../overworld/depth';
 import type { ItemStack } from '../../data/overworld/item-pool';
 import type ChunkSnapshot from '../../overworld/chunk-snapshot';
 import { getSql } from '../db';
@@ -29,8 +30,9 @@ export async function listPickedBerryPatches(
   y: number,
   now: number,
   offset: number,
+  depth: Depth = Depth.Surface,
 ): Promise<number[]> {
-  const snapshot = await resolveSnapshot(x, y, now, offset);
+  const snapshot = await resolveSnapshot(x, y, now, offset, depth);
 
   if (snapshot == null) {
     return [];
@@ -58,8 +60,9 @@ export async function claimBerryPatch(
   cell: number,
   now: number,
   offset: number,
+  depth: Depth = Depth.Surface,
 ): Promise<ItemStack | null> {
-  const snapshot = await resolveSnapshot(x, y, now, offset);
+  const snapshot = await resolveSnapshot(x, y, now, offset, depth);
   const berries = snapshot?.getBerryPatches().get(cell);
 
   if (snapshot == null || berries == null) {
@@ -98,8 +101,9 @@ export async function claimApricornTree(
   cell: number,
   now: number,
   offset: number,
+  depth: Depth = Depth.Surface,
 ): Promise<ItemStack | null> {
-  const snapshot = await resolveSnapshot(x, y, now, offset);
+  const snapshot = await resolveSnapshot(x, y, now, offset, depth);
   const picked = snapshot?.getApricornTrees().get(cell);
 
   if (snapshot == null || picked == null) {

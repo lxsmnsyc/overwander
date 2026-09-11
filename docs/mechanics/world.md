@@ -390,6 +390,51 @@ those are worth what is met under them and nothing more. A fight keeps the sky i
 started under, so watching it back later shows the weather it was actually fought
 in.
 
+## The caves
+
+Under the world is a second layer of it, at the **same coordinates**. Step into
+a cave at a cell and you are under that cell; walk to another mouth and you come
+out exactly as far across the world as you actually walked. Nothing teleports.
+
+**Caves are inside the rock you can see.** Where the surface has a crag or a
+range, there is a chamber under it, and thin winding veins join the chambers up.
+So the network is the shape of the mountains, flat country has none at all, and
+a cave is the way **under** a ridge that the surface makes you walk around.
+
+It is a route, not a second overworld. About **a fifth** of the ground
+underground is open, against most of it on the surface, and a network runs
+roughly **seven chunks** before it dead-ends and you have to surface. Entrances
+are common, about one chunk in two in rocky country, so coming back up is never
+far.
+
+Nothing grows down there, and passages never run diagonally: two cells that
+touch only at their corners would be two dead ends, since nothing in the game
+moves diagonally, so a corner like that is squared off into a walkable one.
+
+**A cave under the open sea is its own network.** The rock is solid along every
+shore, so no tunnel runs from the hills out under the water. The sea caves are
+reached by swimming to a mouth, and three legendaries keep their lairs in them:
+Kyogre in the Marine Cave, Articuno in the Seafoam Islands and Lugia in the Whirl
+Islands. Nothing that walks out of the hills will ever meet them.
+
+### What is down there
+
+| | |
+| --- | --- |
+| **Its own pokemon** | One pool for the whole of underground, and none of it stands on the surface: Zubat, Geodude, Onix, Dunsparce, Sableye, Mawile and the rest of what lives in the dark |
+| **The same at every hour** | There is no sky down there, so no dawn, no dusk, and nothing that only comes out at night |
+| **No weather** | And so no weather bonus to a meeting's stats, and nothing crowded in by a front |
+| **Landmarks** | Item caches, nests, Team Rocket, duelling trainers and both kinds of raid lair |
+| **No town of any kind** | No market, no centre, no portal. The way out of a cave is the way back into it |
+
+### The dark
+
+A cave is dark whatever the hour: you see **2 cells** carrying nothing. A buddy
+with **Illuminate** sees **3**, and so does a buddy carrying the **Explorer Kit**,
+for a player whose buddy cannot light the way itself. They are worth the same and
+they do not stack, so it is a choice between spending the buddy or spending its
+held item, never a reason to carry both.
+
 ## Portals
 
 A **Portal** landmark does nothing until a player spends a **Portal Key**, which

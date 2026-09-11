@@ -1,4 +1,5 @@
 import 'server-only';
+import { Depth } from '../../overworld/depth';
 import AleaRNG from '../../core/alea';
 import type ChunkSnapshot from '../../overworld/chunk-snapshot';
 import type { Spawn } from '../../overworld/chunk-snapshot';
@@ -31,8 +32,9 @@ export async function peekPhenomenonEgg(
   cell: number,
   now: number,
   offset: number,
+  depth: Depth = Depth.Surface,
 ): Promise<NestOffer | null> {
-  const snapshot = await resolveSnapshot(x, y, now, offset);
+  const snapshot = await resolveSnapshot(x, y, now, offset, depth);
   const reward = snapshot?.getPhenomenonReward(cell) ?? null;
 
   if (snapshot == null || reward?.kind !== 'egg') {
@@ -79,8 +81,9 @@ export async function listClaimedPhenomena(
   y: number,
   now: number,
   offset: number,
+  depth: Depth = Depth.Surface,
 ): Promise<number[]> {
-  const snapshot = await resolveSnapshot(x, y, now, offset);
+  const snapshot = await resolveSnapshot(x, y, now, offset, depth);
 
   if (snapshot == null) {
     return [];
@@ -119,8 +122,9 @@ export async function claimPhenomenon(
   now: number,
   offset: number,
   locale: string,
+  depth: Depth = Depth.Surface,
 ): Promise<PhenomenonClaim | null> {
-  const snapshot = await resolveSnapshot(x, y, now, offset);
+  const snapshot = await resolveSnapshot(x, y, now, offset, depth);
   const reward = snapshot?.getPhenomenonReward(cell) ?? null;
 
   if (snapshot == null || reward == null) {

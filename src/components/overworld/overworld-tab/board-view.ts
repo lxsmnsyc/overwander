@@ -16,6 +16,8 @@ import deriveEncounter from '../../../overworld/encounter';
 import namePlace from '../../../overworld/place';
 import { spawnKey } from '../../../overworld/safari';
 import { DARK_DAY_LAMP_CELLS } from '../../../data/overworld/weather';
+import { CAVE_DARK_CELLS } from '../../../data/overworld/cave';
+import { Depth } from '../../../overworld/depth';
 import createOverworld from '../../../overworld/setup';
 import { BOARD_CELLS, BOARD_CENTER, BOARD_MARGIN, BOARD_RADIUS, PUBLISHED_SPAWNS } from './metrics';
 
@@ -73,6 +75,11 @@ export interface BoardView {
    * buddy's answer as much as the sky's
    */
   lamp: number;
+  /**
+   * Whether this board is underground, which is dark whatever the hour
+   * and has no sky over it at all
+   */
+  underground: boolean;
   /** Whether a meeting shows what it is holding. A Frisk buddy is what looks */
   revealsHeld: boolean;
   /**
@@ -191,8 +198,9 @@ export function buildBoardView(
   player: string | null,
   buddy: Buddy | null,
   fled: Set<string>,
+  depth: Depth = Depth.Surface,
 ): BoardView {
-  const world = getWorld();
+  const world = getWorld(depth);
   const playerX = chunkOfCell(originX + BOARD_CENTER);
   const playerY = chunkOfCell(originY + BOARD_CENTER);
 
@@ -347,7 +355,10 @@ export function buildBoardView(
     chunkY: playerY,
     biome: world.getCellBiome(originX + BOARD_CENTER, originY + BOARD_CENTER),
     weather: world.getWeather(playerX, playerY, under.weatherWindow),
-    lamp: overworld.checkLampReach(DARK_DAY_LAMP_CELLS),
+    lamp: overworld.checkLampReach(
+      world.depth === Depth.Cave ? CAVE_DARK_CELLS : DARK_DAY_LAMP_CELLS,
+    ),
+    underground: world.depth === Depth.Cave,
     revealsHeld: overworld.checkRevealsHeld(),
     revealsFlight: overworld.checkRevealsFlight(),
     revealsAbility: overworld.checkRevealsAbility(),

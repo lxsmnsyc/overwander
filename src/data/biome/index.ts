@@ -2,6 +2,7 @@ import registerAlpineTundraSpawns from './alpine-tundra';
 import registerBadlandsSpawns from './badlands';
 import registerBeachSpawns from './beach';
 import registerBogSpawns from './bog';
+import registerCaveSpawns from './cave';
 import registerColdDesertSpawns from './cold-desert';
 import registerCoralReefSpawns from './coral-reef';
 import registerDeepOceanSpawns from './deep-ocean';
@@ -52,6 +53,7 @@ export {
   PRIZED_SPAWN_ODDS,
   PRIZED_WEIGHT,
   RARE_SPAWN_ODDS,
+  registerCavePool,
   registerSpawnPool,
   spawnBand,
   spawnRanks,
@@ -67,6 +69,8 @@ export default function registerBiomeSpawns(): void {
   registerBadlandsSpawns();
   registerBeachSpawns();
   registerBogSpawns();
+  // Not a biome: the one pool the whole of underground draws from
+  registerCaveSpawns();
   registerColdDesertSpawns();
   registerCoralReefSpawns();
   registerDeepOceanSpawns();

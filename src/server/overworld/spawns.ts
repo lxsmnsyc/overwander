@@ -1,4 +1,5 @@
 import 'server-only';
+import { Depth } from '../../overworld/depth';
 import { type EncounterRecord, asEncounterRecord } from '../../auth/encounter-record';
 import { asSpawnRolls, spawnId as nameSpawn } from '../../auth/snapshot-record';
 import AleaRNG from '../../core/alea';
@@ -163,8 +164,9 @@ export async function meetSpawn(
   spawnId: string,
   now: number,
   offset: number,
+  depth: Depth = Depth.Surface,
 ): Promise<EncounterRecord | null> {
-  const snapshot = await resolveSnapshot(x, y, now, offset);
+  const snapshot = await resolveSnapshot(x, y, now, offset, depth);
 
   if (snapshot == null) {
     return null;

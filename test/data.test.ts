@@ -46,6 +46,8 @@ import Biome, {
   isWaterBiome,
 } from '../src/data/ids/biome';
 import type { SettledBiome } from '../src/data/ids/biome';
+import { CAVE_DARK_CELLS, CAVE_LAMP_CELLS } from '../src/data/overworld/cave';
+import { ILLUMINATE_LAMP_CELLS } from '../src/overworld/abilities/gen-1';
 import nameTown, {
   COUNTY_REGIONS,
   HEADS_PER_BIOME,
@@ -7065,5 +7067,41 @@ describe('town names', () => {
     // rather than quietly sharing a name with somewhere real
     expect(() => nameTown(lowest - 1, 0, Biome.Glacier)).toThrow();
     expect(() => nameTown(0, highest + 1, Biome.Glacier)).toThrow();
+  });
+});
+
+describe('what lives underground', () => {
+  it('draws from its own pool, not the country overhead', () => {
+    const surface = getSpawnPool(Biome.Grassland, TimeOfDay.Day);
+    const cave = getSpawnPool(Biome.Grassland, TimeOfDay.Day, true);
+
+    expect(cave.base.length).toBeGreaterThan(0);
+    expect(cave).not.toEqual(surface);
+    // Zubat is what a cave is, and it stands in no biome pool
+    expect(cave.base.some((entry) => entry.species === Species.Zubat)).toBe(true);
+  });
+
+  it('is the same pool under every country and at every hour', () => {
+    const day = getSpawnPool(Biome.Grassland, TimeOfDay.Day, true);
+
+    // There is no sky down there for an hour to come out of, and a
+    // cave under a desert is the same cave as one under a taiga
+    for (const time of TIMES_OF_DAY) {
+      expect(getSpawnPool(Biome.Glacier, time, true)).toEqual(day);
+      expect(getSpawnPool(Biome.Desert, time, true)).toEqual(day);
+    }
+  });
+
+  it('stages no legendary in a passage', () => {
+    // A legendary underground is at home in a lair rather than
+    // standing about in a tunnel
+    expect(getSpawnPool(Biome.Mountain, TimeOfDay.Day, true).special).toEqual([]);
+  });
+
+  it('lights the dark the same way from either source', () => {
+    // Two ways to buy one effect, so they must arrive at the same
+    // place and must not stack into a third
+    expect(CAVE_LAMP_CELLS).toBe(ILLUMINATE_LAMP_CELLS);
+    expect(CAVE_DARK_CELLS).toBeLessThan(CAVE_LAMP_CELLS);
   });
 });

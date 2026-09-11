@@ -29,6 +29,19 @@ const PICTURES: Partial<Record<Landmark, string>> = {
   [Landmark.Portal]: 'portal',
   [Landmark.GymSeat]: 'seat',
   [Landmark.AuctionBoard]: 'board',
+  [Landmark.CaveMouth]: 'cave',
+};
+
+/**
+ * What a landmark is drawn as from underneath, where it differs.
+ *
+ * Only the cave mouth does, and it is the only landmark that stands on
+ * both layers at once: a hole in the hillside seen from the country
+ * above, and the lit way out seen from the dark below. Everything else
+ * underground is the same thing whichever side of it you are on
+ */
+const UNDERGROUND: Partial<Record<Landmark, string>> = {
+  [Landmark.CaveMouth]: 'cave-exit',
 };
 
 /**
@@ -42,13 +55,18 @@ const TAKEN: Partial<Record<Landmark, string>> = {
 
 /**
  * The picture one landmark is drawn as, in the state this player left
- * it in. Null for a landmark that is drawn some other way.
+ * it in and on the layer they are standing on. Null for a landmark
+ * that is drawn some other way.
  *
  * It used to read the biome and the cell as well, for the mouths a
  * lair was drawn with in cold or wet country and the two a shadow one
  * alternated between. A lair is one statue now, so neither is asked
  */
-export default function landmarkPicture(kind: Landmark, taken = false): string | null {
+export default function landmarkPicture(
+  kind: Landmark,
+  taken = false,
+  underground = false,
+): string | null {
   if (taken) {
     const gone = TAKEN[kind];
 
@@ -56,12 +74,25 @@ export default function landmarkPicture(kind: Landmark, taken = false): string |
       return gone;
     }
   }
+  if (underground) {
+    const below = UNDERGROUND[kind];
+
+    if (below != null) {
+      return below;
+    }
+  }
   return PICTURES[kind] ?? null;
 }
 
 /** Every picture the sheet is expected to carry. */
 export function landmarkPictures(): string[] {
-  return [...new Set([...Object.values(PICTURES), ...Object.values(TAKEN)])];
+  return [
+    ...new Set([
+      ...Object.values(PICTURES),
+      ...Object.values(TAKEN),
+      ...Object.values(UNDERGROUND),
+    ]),
+  ];
 }
 
 /** Whether a landmark is drawn from the sheet rather than as a mark. */

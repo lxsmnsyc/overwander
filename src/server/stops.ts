@@ -1,4 +1,5 @@
 import 'server-only';
+import { Depth } from '../overworld/depth';
 import BattleOutcome from '../auth/battle-outcome';
 import { PVP_BATTLE_LIMITS } from '../data/constants/battle-limits';
 import { type EncounterRecord, asEncounterRecord } from '../auth/encounter-record';
@@ -187,8 +188,9 @@ export async function enterStop(
   cell: number,
   now: number,
   offset: number,
+  depth: Depth = Depth.Surface,
 ): Promise<StopEntry> {
-  const chunk = getWorld().getChunk(x, y);
+  const chunk = getWorld(depth).getChunk(x, y);
   const zone = asOffset(offset);
   const snapshot = new ChunkSnapshot(chunk, toLocalTime(now, zone), zone);
   // The cell's landmark says whose stop this is: Team Rocket's, the

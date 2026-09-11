@@ -1,4 +1,5 @@
 import AleaRNG from '../core/alea';
+import { Depth } from './depth';
 import PerlinNoise from '../core/perlin';
 import type Biome from '../data/ids/biome';
 import { getBiome } from '../data/ids/biome';
@@ -161,7 +162,10 @@ export default class World {
    */
   private readonly biomes = new Map<number, Biome>();
 
-  constructor(public seed: string) {
+  constructor(
+    public seed: string,
+    public readonly depth: Depth = Depth.Surface,
+  ) {
     const rng = new AleaRNG(seed);
 
     this.humidity = new PerlinNoise(String(rng.int32()));
@@ -277,7 +281,34 @@ export default class World {
   getChunk(chunkX: number, chunkY: number): Chunk {
     const x = clampToWorld(chunkX);
     const y = clampToWorld(chunkY);
+    // The layer is in the seed, so a cave chunk rolls its own
+    // landmarks and its own spawns, and the window rows it publishes
+    // can never be mistaken for the surface's
+    const seed =
+      this.depth === Depth.Cave ? `${this.seed}cave(${x}, ${y})` : `${this.seed}(${x}, ${y})`;
 
-    return new Chunk(x, y, `${this.seed}(${x}, ${y})`, this.getChunkBiome(x, y), this);
+    return new Chunk(x, y, seed, this.getChunkBiome(x, y), this);
+  }
+
+  private other: World | null = null;
+
+  /**
+   * The same world at another depth. Built from the same seed, so
+   * every field comes out identical and the two layers are readings
+   * of one place rather than two worlds that happen to touch
+   */
+  at(depth: Depth): World {
+    if (depth === this.depth) {
+      return this;
+    }
+    if (this.other == null) {
+      this.other = new World(this.seed, depth);
+      // Pointed back, so the pair is two objects however many times
+      // either of them is asked for the other
+      this.other.other = this;
+    }
+    return this.other;
   }
 }
+
+export { DEPTHS, Depth } from './depth';

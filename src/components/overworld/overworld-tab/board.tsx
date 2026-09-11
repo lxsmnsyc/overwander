@@ -65,6 +65,9 @@ import { CHUNK_CELLS, cellInChunk, chunkOfCell, worldCell } from '../../../overw
 import type ChunkSnapshot from '../../../overworld/chunk-snapshot';
 import type { Buddy } from '../../../overworld/core';
 import getWorld from '../../../overworld/current';
+import type World from '../../../overworld/world';
+import { Depth } from '../../../overworld/depth';
+import { throughMouth } from '../../../overworld/cave';
 import { townAt } from '../../../overworld/town';
 import { discoverTown } from '../../../auth/towns';
 import { findPathBeside, findPathNear } from '../../../overworld/path';
@@ -162,6 +165,14 @@ export default function OverworldBoard(props: {
    */
   const [atX, setAtX] = createSignal(START_CELL);
   const [atY, setAtY] = createSignal(START_CELL);
+  /**
+   * Which layer they are on. The caves are the same coordinates one
+   * layer down, so this is half of saying where the player is: the
+   * same cell is open ground above and solid rock below
+   */
+  const [atDepth, setAtDepth] = createSignal<Depth>(Depth.Surface);
+  /** The world the board is reading, which is the layer they are on */
+  const around = (): World => getWorld(atDepth());
   const chunkX = (): number => chunkOfCell(atX());
   const chunkY = (): number => chunkOfCell(atY());
   /** The world cell the board's own cell 0 sits on */
@@ -366,6 +377,7 @@ export default function OverworldBoard(props: {
     }
     setAtX(worldCell(at.chunkX, at.cellX));
     setAtY(worldCell(at.chunkY, at.cellY));
+    setAtDepth(at.depth);
     // Last, so nothing that watches a chunk starts watching the wrong
     // one: the whole overworld waits on being placed
     setPlaced(true);
@@ -382,6 +394,7 @@ export default function OverworldBoard(props: {
     }
     setAtX(worldCell(at.chunkX, at.cellX));
     setAtY(worldCell(at.chunkY, at.cellY));
+    setAtDepth(at.depth);
   });
 
   /**
@@ -435,7 +448,7 @@ export default function OverworldBoard(props: {
     for (const [x, y] of overlapped()) {
       // The window always rolls the lure's extras, so every player of
       // the chunk shares one set of rolls whoever publishes them
-      visitChunk(getWorld().getChunk(x, y), PUBLISHED_SPAWNS, zone).catch((caught: unknown) => {
+      visitChunk(around().getChunk(x, y), PUBLISHED_SPAWNS, zone).catch((caught: unknown) => {
         remark(caught instanceof Error ? caught.message : String(caught), 'ember');
       });
     }
@@ -540,7 +553,7 @@ export default function OverworldBoard(props: {
       }
       watched.set(
         key,
-        watchSnapshotWindow(getWorld().getChunk(x, y), zone, (record) => {
+        watchSnapshotWindow(around().getChunk(x, y), zone, (record) => {
           setWindows((held) => {
             const next = new Map(held);
 
@@ -595,6 +608,7 @@ export default function OverworldBoard(props: {
           auth.user()?.uid ?? null,
           buddy() ?? null,
           fled() ?? new Set(),
+          atDepth(),
         )
       : null,
   );
@@ -1009,9 +1023,10 @@ export default function OverworldBoard(props: {
       chunkY: row,
       cellX: x,
       cellY: y,
+      depth: atDepth(),
       movedAt: Date.now(),
     });
-    game.saveWalk(chunk, row, x, y);
+    game.saveWalk(chunk, row, x, y, atDepth());
   };
 
   /**
@@ -1359,6 +1374,29 @@ export default function OverworldBoard(props: {
         return 'An egg, tucked away in the grotto. Walk it warm.';
       }
       return meet(user, claim.encounter, true);
+    }
+    if (landmark === Landmark.CaveMouth) {
+      const through = throughMouth(around(), spot.snapshot.chunk.x, spot.snapshot.chunk.y);
+
+      if (through == null) {
+        // The board is behind the world: a mouth is cut into the
+        // ground rather than rolled onto it, so this is a stale chunk
+        askForWindow(true);
+        return 'There is no way through there any more.';
+      }
+
+      const going = atDepth() === Depth.Cave ? Depth.Surface : Depth.Cave;
+      const chunk = spot.snapshot.chunk;
+
+      // One cell, not a crossing: a mouth joins the two cells it sits
+      // between, so going under moves a player into the hillside
+      // rather than anywhere they did not walk to
+      setAtDepth(going);
+      setAtX(worldCell(chunk.x, through % CHUNK_CELLS));
+      setAtY(worldCell(chunk.y, Math.floor(through / CHUNK_CELLS)));
+      settle(chunk.x, chunk.y, through % CHUNK_CELLS, Math.floor(through / CHUNK_CELLS));
+      remark(going === Depth.Cave ? 'Into the dark.' : 'Back out into the light.');
+      return null;
     }
     if (landmark === Landmark.Portal) {
       // Where it goes is derived from the chunk it stands in, so the
@@ -2026,6 +2064,7 @@ export default function OverworldBoard(props: {
                 biome={loaded().biome}
                 weather={loaded().weather}
                 lamp={loaded().lamp}
+                underground={loaded().underground}
                 charset={charset()}
                 // The camera belongs to the player rather than to the
                 // chunk: walking over a boundary swaps the board out

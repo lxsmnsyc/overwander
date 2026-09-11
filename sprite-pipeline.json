@@ -4598,15 +4598,15 @@
       }
     },
     "public/sprites/overworld/landmarks/image.png": {
-      "digest": "49e08e9c9b384e75",
-      "bytes": 1680,
-      "width": 81,
-      "height": 67,
+      "digest": "435cbae24b7feceb",
+      "bytes": 2430,
+      "width": 124,
+      "height": 83,
       "compact": {
-        "at": "2026-09-11T09:05:02Z",
+        "at": "2026-09-11T11:16:24Z",
         "as": "already compact",
-        "was": 1680,
-        "bytes": 1680
+        "was": 2430,
+        "bytes": 2430
       }
     },
     "public/sprites/overworld/trees/image.png": {

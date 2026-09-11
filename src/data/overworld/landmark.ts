@@ -124,6 +124,13 @@ const enum Landmark {
    * back into town
    */
   PokemonCenter = 18,
+  /**
+   * A way into the caves, and back out of them. Not rolled like the
+   * rest: a mouth is cut where the ground already has a hillside to
+   * cut it into, so it stands at the same pair of cells for both
+   * layers and a player who goes down can always come back up
+   */
+  CaveMouth = 19,
 
   //
   // TODO: Honey Tree, with Sinnoh. Honey is slathered on and the tree
@@ -168,6 +175,7 @@ export const LANDMARKS: Landmark[] = [
   Landmark.ApricornTree,
   Landmark.FrontierBrain,
   Landmark.PokemonCenter,
+  Landmark.CaveMouth,
 ];
 
 /**
@@ -192,4 +200,5 @@ export const LANDMARK_NAMES: Record<Landmark, string> = {
   [Landmark.ApricornTree]: 'Apricorn Tree',
   [Landmark.FrontierBrain]: 'Frontier Brain',
   [Landmark.PokemonCenter]: 'Pokémon Center',
+  [Landmark.CaveMouth]: 'Cave',
 };

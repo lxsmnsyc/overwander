@@ -5204,8 +5204,21 @@ describe('the open seas', () => {
     for (const cell of rocks) {
       expect(pools.has(cell)).toBe(false);
     }
-    // Fixtures keep their ring from the outcrop
-    for (const cell of [...chunk.getLandmarkCells().keys(), ...chunk.getDecorationCells().keys()]) {
+    // Fixtures keep their ring from the outcrop, bar the one that is
+    // cut into it: a cave mouth with no rock beside it would be a way
+    // into a hillside that is not there
+    for (const [cell, landmark] of chunk.getLandmarkCells()) {
+      if (landmark === Landmark.CaveMouth) {
+        expect(rocks.has(cell)).toBe(false);
+        expect(neighborCells(cell).some((neighbor) => rocks.has(neighbor))).toBe(true);
+        continue;
+      }
+      expect(rocks.has(cell)).toBe(false);
+      for (const neighbor of neighborCells(cell)) {
+        expect(rocks.has(neighbor)).toBe(false);
+      }
+    }
+    for (const cell of chunk.getDecorationCells().keys()) {
       expect(rocks.has(cell)).toBe(false);
       for (const neighbor of neighborCells(cell)) {
         expect(rocks.has(neighbor)).toBe(false);

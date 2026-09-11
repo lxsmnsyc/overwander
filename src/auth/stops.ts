@@ -7,6 +7,7 @@ import {
   startStopBattle as startOnServer,
 } from '../server/stops';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
+import type { Depth } from '../overworld/depth';
 import { syncServerClock } from './clock';
 import getIdToken from './session';
 
@@ -33,6 +34,7 @@ export async function enterStop(snapshot: ChunkSnapshot, cell: number): Promise<
     snapshot.chunk.y,
     cell,
     snapshot.offset,
+    snapshot.depth,
   );
 }
 
@@ -42,9 +44,10 @@ async function enterStopOnServer(
   y: number,
   cell: number,
   offset: number,
+  depth: Depth,
 ): Promise<StopEntry> {
   'use server';
-  return enterOnServer(await requireUid(token), x, y, cell, await syncServerClock(), offset);
+  return enterOnServer(await requireUid(token), x, y, cell, await syncServerClock(), offset, depth);
 }
 
 /**

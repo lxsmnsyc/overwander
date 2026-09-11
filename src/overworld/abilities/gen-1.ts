@@ -135,7 +135,11 @@ export const ILLUMINATE_LAMP_CELLS = 3;
  */
 const setupIlluminate = createBuddyAbility(Abilities.Illuminate, (overworld) => {
   overworld.on(OverworldEvents.CheckLampReach, EventPriority.Exact, (event) => {
-    event.reach = ILLUMINATE_LAMP_CELLS;
+    // The greater rather than the answer, since a held light asks the
+    // same question: whichever is brighter is what the dark gives way
+    // to, and neither the order they registered in nor carrying both
+    // changes it
+    event.reach = Math.max(event.reach, ILLUMINATE_LAMP_CELLS);
   });
 });
 

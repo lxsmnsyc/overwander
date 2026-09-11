@@ -6,6 +6,7 @@ import { isRock, isWaterAt } from './fields';
 import Landmark from '../data/overworld/landmark';
 import { CHUNK_CELLS, ORTHOGONAL } from './grid';
 import type World from './world';
+import { Depth } from './depth';
 
 /**
  * The towns: the one place in the world that is laid out rather than
@@ -199,6 +200,12 @@ export function regionOfCell(cell: number): number {
 }
 
 function townIn(world: World, regionX: number, regionY: number): Town | null {
+  // Nobody has built anything underground. A cave has no towns, so it
+  // has no lots, no streets and no portal in a plaza either
+  if (world.depth !== Depth.Surface) {
+    return null;
+  }
+
   const known = sited.get(world) ?? new Map<number, Town | null>();
   const key = regionKey(regionX, regionY);
 
@@ -292,6 +299,12 @@ export function portalSpot(world: World, regionX: number, regionY: number): [x: 
  * time and a landmark roll is not free
  */
 export function portalCellIn(world: World, chunkX: number, chunkY: number): number | null {
+  // The network is the surface's. A portal in a cave would be a way
+  // out that skipped the walk back to a mouth
+  if (world.depth !== Depth.Surface) {
+    return null;
+  }
+
   const [x, y] = portalSpot(world, regionOf(chunkX * CHUNK_CELLS), regionOf(chunkY * CHUNK_CELLS));
   const cellX = x - chunkX * CHUNK_CELLS;
   const cellY = y - chunkY * CHUNK_CELLS;

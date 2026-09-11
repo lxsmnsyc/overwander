@@ -11,6 +11,10 @@ import writeAtlas, { type Cut, type Drawn, assertWhole, cut, tighten } from './a
  * not here: it is drawn as a tree with a hollow in it, off the tree
  * sheet, which is what hides it.
  *
+ * A cave mouth is the one landmark drawn twice, since it is the one
+ * that stands on both layers: the hole in the hillside from above, and
+ * the way back out from below.
+ *
  * A shortlist rather than a decision. Several landmarks have more than
  * one candidate here, since which of them reads as a portal or a claimed
  * seat is a matter of looking at them on the board, and the sheet is
@@ -29,6 +33,15 @@ const CUTS: Cut[] = [
   // and the biome mouths are gone. The cave mouths are still on the
   // rip at 100,600 and the two beside them if they are wanted back
   { name: 'lair', x: 1357, y: 998, width: 23, height: 41 },
+  // The way underground, which is the cave mouth the raid lairs used
+  // to be drawn as. It was always a hole in the ground rather than
+  // somewhere to walk up to, which is what a raid stopped being and
+  // what a cave is
+  { name: 'cave', x: 100, y: 600, width: 40, height: 40 },
+  // And the same mouth from the inside, which is the ring of standing
+  // stones the portals used to be. Seen from underground it reads as
+  // the way out rather than the way in: a lit arch in the rock
+  { name: 'cave-exit', x: 20, y: 680, width: 40, height: 40, crowded: true },
   // A woven basket with greens in it, which is the only nest-shaped
   // thing on the rip: everything else that would do is a crate
   { name: 'nest', x: 1393, y: 993, width: 15, height: 15 },

@@ -1,9 +1,10 @@
 import type Biome from '../data/ids/biome';
 import { isOpenSea, isWaterBiome } from '../data/ids/biome';
-import { STONE_FREQUENCY, isRock, isWaterAt, rockLevel } from './fields';
+import { STONE_FREQUENCY, isCaveFloor, isRock, isWaterAt, rockLevel } from './fields';
 import { ORTHOGONAL } from './grid';
 import { isRoadAt, isTownAt } from './town';
 import type World from './world';
+import { Depth } from './depth';
 
 /**
  * What one cell of the world is made of.
@@ -117,6 +118,13 @@ function isPocket(world: World, x: number, y: number, biome: Biome): boolean {
  */
 export function readGround(world: World, x: number, y: number): { biome: Biome; role: GroundRole } {
   const biome = world.getCellBiome(x, y);
+
+  // Underground there is only stone and the space in it. The country
+  // overhead still decides what lives down there, so the biome is the
+  // surface's, but nothing else about the cell is
+  if (world.depth === Depth.Cave) {
+    return { biome, role: isCaveFloor(world, x, y, biome) ? 'ground' : 'wall' };
+  }
 
   // A town is levelled ground: whatever the fields left there, people
   // have since drained it, cleared it and built on it. The sea is the

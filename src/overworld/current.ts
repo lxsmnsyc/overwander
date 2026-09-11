@@ -1,4 +1,4 @@
-import World from './world';
+import World, { Depth } from './world';
 
 /**
  * The world every player shares. The seed comes from the
@@ -10,10 +10,12 @@ export const WORLD_SEED = import.meta.env.VITE_WORLD_SEED || 'overworld';
 let world: World | null = null;
 
 /**
- * The shared world instance. Built lazily and reused, because the
- * three climate noise channels are worth deriving only once
+ * The shared world instance, at the layer asked for. Built lazily and
+ * reused, because the noise channels are worth deriving only once,
+ * and the two layers are one pair rather than two worlds: everything
+ * underground is read off the same fields as the ground over it
  */
-export default function getWorld(): World {
+export default function getWorld(depth: Depth = Depth.Surface): World {
   world ??= new World(WORLD_SEED);
-  return world;
+  return world.at(depth);
 }

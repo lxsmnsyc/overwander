@@ -225,6 +225,7 @@ export default function BoardDemo(): JSX.Element {
           biome={biome()}
           weather={weather()}
           lamp={LAMP}
+          underground={false}
           yaw={yaw()}
           onTurn={(turned) => {
             setYaw(turned);

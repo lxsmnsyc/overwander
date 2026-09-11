@@ -1,4 +1,5 @@
 import 'server-only';
+import { Depth } from '../../overworld/depth';
 import { asOffset, toLocalTime } from '../../auth/local-time';
 import {
   RaidAction,
@@ -48,8 +49,9 @@ export async function peekRaid(
   kind: RaidKind,
   now: number,
   offset: number,
+  depth: Depth = Depth.Surface,
 ): Promise<RaidView | null> {
-  const chunk = getWorld().getChunk(x, y);
+  const chunk = getWorld(depth).getChunk(x, y);
   const zone = asOffset(offset);
   const snapshot = new ChunkSnapshot(chunk, toLocalTime(now, zone), zone);
   const roll =
@@ -133,8 +135,9 @@ export async function enterRaid(
   kind: RaidKind,
   now: number,
   offset: number,
+  depth: Depth = Depth.Surface,
 ): Promise<[string, RaidRecord] | null> {
-  const chunk = getWorld().getChunk(x, y);
+  const chunk = getWorld(depth).getChunk(x, y);
   const zone = asOffset(offset);
   const snapshot = new ChunkSnapshot(chunk, toLocalTime(now, zone), zone);
   const roll =
@@ -229,6 +232,7 @@ export async function hostMythicalRaid(
   item: Items,
   now: number,
   offset: number,
+  depth: Depth = Depth.Surface,
 ): Promise<[string, RaidRecord] | null> {
   const species = getRaidSpecies(item);
 
@@ -236,7 +240,7 @@ export async function hostMythicalRaid(
     return null;
   }
 
-  const chunk = getWorld().getChunk(x, y);
+  const chunk = getWorld(depth).getChunk(x, y);
   const zone = asOffset(offset);
   const snapshot = new ChunkSnapshot(chunk, toLocalTime(now, zone), zone);
   const id = mythicalRaidId(snapshot.raidTimestamp, item, uid, zone);

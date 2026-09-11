@@ -1,13 +1,13 @@
 {
   "compact": true,
-  "width": 81,
-  "height": 67,
+  "width": 124,
+  "height": 83,
   "stands": 24,
   "images": [
     {
       "name": "board.png",
-      "x": 0,
-      "y": 42,
+      "x": 89,
+      "y": 0,
       "width": 34,
       "height": 24,
       "sourceWidth": 41,
@@ -23,8 +23,8 @@
     },
     {
       "name": "cache-taken.png",
-      "x": 35,
-      "y": 42,
+      "x": 105,
+      "y": 25,
       "width": 15,
       "height": 14,
       "sourceWidth": 41,
@@ -40,8 +40,8 @@
     },
     {
       "name": "cache.png",
-      "x": 51,
-      "y": 42,
+      "x": 89,
+      "y": 41,
       "width": 15,
       "height": 12,
       "sourceWidth": 41,
@@ -53,6 +53,40 @@
       "base": [
         20,
         36
+      ]
+    },
+    {
+      "name": "cave-exit.png",
+      "x": 0,
+      "y": 42,
+      "width": 40,
+      "height": 40,
+      "sourceWidth": 41,
+      "sourceHeight": 41,
+      "trim": [
+        0,
+        1
+      ],
+      "base": [
+        20,
+        30
+      ]
+    },
+    {
+      "name": "cave.png",
+      "x": 48,
+      "y": 0,
+      "width": 40,
+      "height": 40,
+      "sourceWidth": 41,
+      "sourceHeight": 41,
+      "trim": [
+        0,
+        1
+      ],
+      "base": [
+        20,
+        30
       ]
     },
     {
@@ -91,8 +125,8 @@
     },
     {
       "name": "nest.png",
-      "x": 64,
-      "y": 26,
+      "x": 89,
+      "y": 25,
       "width": 15,
       "height": 15,
       "sourceWidth": 41,
@@ -108,8 +142,8 @@
     },
     {
       "name": "portal.png",
-      "x": 48,
-      "y": 0,
+      "x": 41,
+      "y": 42,
       "width": 15,
       "height": 32,
       "sourceWidth": 41,
@@ -125,8 +159,8 @@
     },
     {
       "name": "seat.png",
-      "x": 64,
-      "y": 0,
+      "x": 57,
+      "y": 42,
       "width": 16,
       "height": 25,
       "sourceWidth": 41,

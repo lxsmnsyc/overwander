@@ -1,4 +1,5 @@
 import 'server-only';
+import { Depth } from '../../overworld/depth';
 import type { EncounterRecord } from '../../auth/encounter-record';
 import type { ItemStack } from '../../data/overworld/item-pool';
 import type ChunkSnapshot from '../../overworld/chunk-snapshot';
@@ -36,8 +37,9 @@ export async function peekNest(
   cell: number,
   now: number,
   offset: number,
+  depth: Depth = Depth.Surface,
 ): Promise<NestOffer | null> {
-  const snapshot = await resolveSnapshot(x, y, now, offset);
+  const snapshot = await resolveSnapshot(x, y, now, offset, depth);
   const species = snapshot?.getNests().get(cell);
 
   if (snapshot == null || species == null) {
@@ -86,8 +88,9 @@ export async function claimNest(
   now: number,
   offset: number,
   locale: string,
+  depth: Depth = Depth.Surface,
 ): Promise<string | null> {
-  const snapshot = await resolveSnapshot(x, y, now, offset);
+  const snapshot = await resolveSnapshot(x, y, now, offset, depth);
   const species = snapshot?.getNests().get(cell);
 
   if (snapshot == null || species == null) {

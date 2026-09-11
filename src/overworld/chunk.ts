@@ -12,6 +12,8 @@ import {
 } from '../data/overworld/decoration';
 import Landmark, { LANDMARKS } from '../data/overworld/landmark';
 import { TOWN_LANDMARKS, getTownLots, isTownAt, portalCellIn, townOverChunk } from './town';
+import { caveMouthCellIn } from './cave';
+import { Depth } from './depth';
 
 export { CELL_COUNT, CHUNK_CELLS, cellInChunk, chunkOfCell, worldCell } from './grid';
 
@@ -57,10 +59,30 @@ const MIN_LANDMARKS = 2;
 const MAX_LANDMARKS = 4;
 
 /**
- * What the open country still holds: everything a town does not. The
- * two lists together are every landmark there is
+ * What the open country still holds: everything a town does not, less
+ * the cave mouths, which are cut where the ground has a hillside to
+ * cut them into rather than rolled anywhere
  */
-const WILD_LANDMARKS = LANDMARKS.filter((kind) => !new Set(TOWN_LANDMARKS).has(kind));
+const WILD_LANDMARKS = LANDMARKS.filter(
+  (kind) => !new Set(TOWN_LANDMARKS).has(kind) && kind !== Landmark.CaveMouth,
+);
+
+/**
+ * What the caves hold.
+ *
+ * Everything that belongs under a hill and nothing that wants a sky
+ * over it: no bushes, no trees, no stalls, no seats of the league.
+ * What is left is what a player goes underground for, which is the
+ * same list the open country keeps minus everything that grows
+ */
+const CAVE_LANDMARKS: Landmark[] = [
+  Landmark.ItemCache,
+  Landmark.Nest,
+  Landmark.TeamRocket,
+  Landmark.Trainer,
+  Landmark.LegendaryLair,
+  Landmark.ShadowLair,
+];
 
 /**
  * The roll pool on the open seas: a berry bush cannot grow on water
@@ -86,7 +108,7 @@ const SEA_PEOPLE = new Set([
   Landmark.PokemonCenter,
 ]);
 
-const BIOME_LANDMARKS = new Map<Biome, Landmark[]>();
+const BIOME_LANDMARKS = new Map<number, Landmark[]>();
 
 /**
  * The pool a biome rolls its open country from: what cannot stand or
@@ -95,12 +117,18 @@ const BIOME_LANDMARKS = new Map<Biome, Landmark[]>();
  * rather than putting a bush on the lava. What belongs to a town is
  * never in it, since a town lays its own lots
  */
-function biomeLandmarks(biome: Biome): Landmark[] {
-  const held = BIOME_LANDMARKS.get(biome);
+function biomeLandmarks(biome: Biome, depth: Depth): Landmark[] {
+  const key = biome * 2 + depth;
+  const held = BIOME_LANDMARKS.get(key);
 
   if (held != null) {
     return held;
   }
+  if (depth === Depth.Cave) {
+    BIOME_LANDMARKS.set(key, CAVE_LANDMARKS);
+    return CAVE_LANDMARKS;
+  }
+
   const pool = WILD_LANDMARKS.filter((kind) => {
     if (isOpenSea(biome) && SEA_PEOPLE.has(kind)) {
       return false;
@@ -114,7 +142,7 @@ function biomeLandmarks(biome: Biome): Landmark[] {
     return true;
   });
 
-  BIOME_LANDMARKS.set(biome, pool);
+  BIOME_LANDMARKS.set(key, pool);
   return pool;
 }
 
@@ -392,7 +420,11 @@ export default class Chunk {
    */
   getDecorationCells(): Map<number, Decoration> {
     if (this.decorationCells == null) {
-      const kinds = getBiomeDecorations(this.biome);
+      // Nothing grows in the dark. The scenery is the country's own,
+      // and underground there is no country: a cave has the biome
+      // overhead so that its spawns and its lairs know where they are,
+      // not so that it can sprout that biome's trees
+      const kinds = this.world.depth === Depth.Cave ? [] : getBiomeDecorations(this.biome);
       const cells = new Map<number, Decoration>();
 
       if (kinds.length > 0) {
@@ -467,7 +499,7 @@ export default class Chunk {
       const count = MIN_LANDMARKS + Math.floor(rng.random() * (MAX_LANDMARKS - MIN_LANDMARKS + 1));
       // Nothing stands in a rock's reach, and each biome rolls from a
       // pool without the landmarks that cannot be there
-      const base = biomeLandmarks(this.biome);
+      const base = biomeLandmarks(this.biome, this.world.depth);
       const order = shuffled(rng, centeredCells(PLACEMENT_AREA));
       const cells = new Map<number, Landmark>();
       const taken = new Set<number>();
@@ -479,11 +511,25 @@ export default class Chunk {
       // The region's portal, wherever it fell: the middle of the plaza
       // in a town, and out in the country where the region has none
       const gate = portalCellIn(this.world, this.x, this.y);
+      // And the way between the layers, which is cut into the ground
+      // rather than rolled onto it, so it goes down before anything
+      // else is placed
+      const mouth = caveMouthCellIn(this.world, this.x, this.y);
 
       if (gate != null) {
         cells.set(gate, Landmark.Portal);
         taken.add(gate);
         for (const neighbor of neighborCells(gate)) {
+          taken.add(neighbor);
+        }
+      }
+      // After the gate, and only where the gate left room: a region's
+      // portal is one to a region and a mouth is one to a chunk, so
+      // the rarer of the two keeps the cell
+      if (mouth != null && !taken.has(mouth)) {
+        cells.set(mouth, Landmark.CaveMouth);
+        taken.add(mouth);
+        for (const neighbor of neighborCells(mouth)) {
           taken.add(neighbor);
         }
       }

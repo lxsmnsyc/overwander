@@ -82,6 +82,7 @@ import type Chunk from './chunk';
 import { canStageBoss } from './raid';
 import { CELL_COUNT, CHUNK_CELLS, PLACEMENT_AREA, centeredCells, neighborCells } from './chunk';
 import { getPortalCell } from './portal';
+import type { Depth } from './depth';
 import type { PhenomenonReward } from './landmarks';
 import {
   resolveApricornColour,
@@ -328,6 +329,16 @@ export default class ChunkSnapshot {
     this.timestamp = Math.floor(timestamp / SNAPSHOT_INTERVAL) * SNAPSHOT_INTERVAL;
     this.key = `${chunk.seed}${toZoneKey(offset)}`;
     this.rng = new AleaRNG(`${this.key}${this.timestamp}`);
+  }
+
+  /**
+   * Which layer of the world this window is of. It rides beside the
+   * zone wherever a call is made against a chunk, for the same reason
+   * the zone does: the server has to derive the same chunk the client
+   * was looking at, and the layer is half of saying which one that is
+   */
+  get depth(): Depth {
+    return this.chunk.world.depth;
   }
 
   /**

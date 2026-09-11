@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { asPositionRecord } from '../src/auth/position-record';
 import { CHUNK_CELLS } from '../src/overworld/chunk';
-import { WORLD_MAX, WORLD_MIN } from '../src/overworld/world';
+import { Depth, WORLD_MAX, WORLD_MIN } from '../src/overworld/world';
 
 describe('a stored position', () => {
   it('reads back what was written', () => {
@@ -12,9 +12,26 @@ describe('a stored position', () => {
         chunkY: 40,
         cellX: 3,
         cellY: 9,
+        depth: Depth.Cave,
         movedAt: 7,
       }),
-    ).toEqual({ player: 'walker', chunkX: -12, chunkY: 40, cellX: 3, cellY: 9, movedAt: 7 });
+    ).toEqual({
+      player: 'walker',
+      chunkX: -12,
+      chunkY: 40,
+      cellX: 3,
+      cellY: 9,
+      depth: Depth.Cave,
+      movedAt: 7,
+    });
+  });
+
+  it('puts anybody whose layer is not one of them outside', () => {
+    // Every row written before there were caves has no layer at all,
+    // and the surface is where those players were standing
+    expect(asPositionRecord({ chunkX: 1, chunkY: 1 }).depth).toBe(Depth.Surface);
+    expect(asPositionRecord({ chunkX: 1, chunkY: 1, depth: 9 }).depth).toBe(Depth.Surface);
+    expect(asPositionRecord({ chunkX: 1, chunkY: 1, depth: Depth.Cave }).depth).toBe(Depth.Cave);
   });
 
   it('puts nobody outside the world', () => {
@@ -36,7 +53,15 @@ describe('a stored position', () => {
   it('reads a missing or malformed record as the origin', () => {
     const empty = asPositionRecord(null);
 
-    expect(empty).toEqual({ player: '', chunkX: 0, chunkY: 0, cellX: 0, cellY: 0, movedAt: 0 });
+    expect(empty).toEqual({
+      player: '',
+      chunkX: 0,
+      chunkY: 0,
+      cellX: 0,
+      cellY: 0,
+      depth: Depth.Surface,
+      movedAt: 0,
+    });
     expect(asPositionRecord({ chunkX: '40', cellX: 2.7 })).toMatchObject({ chunkX: 0, cellX: 2 });
   });
 });

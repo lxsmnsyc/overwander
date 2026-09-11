@@ -13,6 +13,9 @@ import { ItemFlags, type Items, getMachineMove, isMachineItem } from '../../data
 import type { Moves } from '../../data/ids/moves';
 import { isPPItem } from '../../data/items/vitamins';
 import { type InventoryEntry, getInventory } from '../../auth/inventory';
+import { getLocalOffset } from '../../auth/local-time';
+import { hostMythicalRaid } from '../../auth/raids';
+import { getRaidSpecies } from '../../data/items/raid-items';
 import { getItemData } from '../../data/items';
 import CatchPicker from '../catches/catch-picker';
 import IncreasePPDialog from '../catches/IncreasePPDialog';
@@ -22,7 +25,7 @@ import ItemGrid from './ItemGrid';
 import { describeItem } from '../details';
 import spendItemOn, { getLevelMoves, isUsableOn } from './use-item';
 import spentToast from './spent-toast';
-import { useGame } from '../app/game-context';
+import { GameDialog, useGame } from '../app/game-context';
 import { Note, useToast } from '../styled';
 
 export interface InventoryListProps {
@@ -32,7 +35,10 @@ export interface InventoryListProps {
 /**
  * Whether this is a thing that gets spent on a pokemon — a remedy, a
  * cap, a machine. Everything else in the bag is held, sold or carried
- * until somebody asks for it, and has nothing to press
+ * until somebody asks for it, and has nothing to press.
+ *
+ * A relic is `Usable` too but goes nowhere near a pokemon, so it is
+ * kept out of this one and answered by `isRelic` instead
  */
 function isUsable(item: Items): boolean {
   try {
@@ -40,6 +46,22 @@ function isUsable(item: Items): boolean {
   } catch {
     return false;
   }
+}
+
+/**
+ * Whether pressing it opens a raid rather than asking for a pokemon.
+ * A relic is spent on a place, not on anything the bag could pick
+ */
+function isRelic(item: Items): boolean {
+  return getRaidSpecies(item) != null;
+}
+
+/** What pressing this square is announced as doing */
+function relicVerb(item: Items): string {
+  if (isRelic(item)) {
+    return 'Open the raid with ';
+  }
+  return isUsable(item) ? 'Use ' : '';
 }
 
 /**
@@ -117,6 +139,39 @@ function BagBody(
     }
   });
 
+  /**
+   * Open the lobby a relic calls, from the bag, standing wherever the
+   * player already is.
+   *
+   * Pressing it costs nothing: the server checks the relic is carried
+   * and leaves it there, and it comes out of the bag when the raid
+   * starts. So this needs no second question, and pressing the same
+   * relic again is the way back into a lobby that was walked out of
+   */
+  const call = (item: Items): void => {
+    const at = game.position();
+
+    if (at == null) {
+      said('Take a walk first: a relic is used where the player is standing.', 'ember');
+      return;
+    }
+
+    hostMythicalRaid(at.chunkX, at.chunkY, item, getLocalOffset())
+      .then((lobby) => {
+        props.onSpent();
+
+        if (lobby == null) {
+          said('That relic called nothing.');
+          return;
+        }
+        game.setRaid(lobby[0]);
+        game.setDialog(GameDialog.Raids);
+      })
+      .catch((caught: unknown) => {
+        said(caught instanceof Error ? caught.message : String(caught), 'ember');
+      });
+  };
+
   /** Move on to the next move the level offered, or shut the dialog */
   const nextTeaching = (): void => {
     const current = teaching();
@@ -188,11 +243,13 @@ function BagBody(
           entries={(props.items.latest ?? []).map((entry) => ({
             item: entry.item,
             amount: entry.amount,
-            said: `${isUsable(entry.item) ? 'Use ' : ''}${describeItem(entry.item)}, ${
-              entry.amount
-            } carried`,
+            said: `${relicVerb(entry.item)}${describeItem(entry.item)}, ${entry.amount} carried`,
           }))}
           onPress={(item) => {
+            if (isRelic(item)) {
+              call(item);
+              return;
+            }
             if (isUsable(item)) {
               setUsing(item);
             }

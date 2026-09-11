@@ -14,7 +14,7 @@ own, and beating one is kept for good.
 | **Elite Four mark** | 16       | Beating that member of the Elite Four  |
 | **Champion**        | 4        | Beating that league's Champion          |
 | **Legend's mark**   | 2        | Beating a legend, who asks for nothing |
-| **Frontier symbol** | 14       | Taking a facility: silver for the win, gold for its second three |
+| **Frontier symbol** | 24       | Taking a facility: silver for the win, gold for its second three. Hoenn hangs symbols, Sinnoh prints |
 | **Syndicate marks** | 19       | Beating a grunt, an executive or the boss of Team Rocket, Team Magma, Team Aqua or Team Galactic |
 | **Dex medal**       | 4        | Filling that region's dex                |
 

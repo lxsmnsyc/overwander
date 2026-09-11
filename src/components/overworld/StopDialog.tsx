@@ -117,7 +117,7 @@ export default function StopDialog(props: StopDialogProps): JSX.Element {
       if (held.includes(at)) {
         return held.filter((one) => one !== at);
       }
-      return held.length >= FRONTIER_TEAM_SIZE ? held : [...held, at];
+      return held.length >= (props.challenger?.bring ?? FRONTIER_TEAM_SIZE) ? held : [...held, at];
     });
   };
 

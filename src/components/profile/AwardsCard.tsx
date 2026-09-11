@@ -226,6 +226,16 @@ const AWARD_COLORS: Record<Awards, string> = {
   [Awards.JupiterDefeated]: '#8f5fa8',
   [Awards.SaturnDefeated]: '#4a8fa8',
   [Awards.CyrusDefeated]: '#3c5a8c',
+  [Awards.SilverTowerPrint]: '#b9c0c9',
+  [Awards.GoldTowerPrint]: '#e0b64f',
+  [Awards.SilverFactoryPrint]: '#b9c0c9',
+  [Awards.GoldFactoryPrint]: '#e0b64f',
+  [Awards.SilverArcadePrint]: '#b9c0c9',
+  [Awards.GoldArcadePrint]: '#e0b64f',
+  [Awards.SilverCastlePrint]: '#b9c0c9',
+  [Awards.GoldCastlePrint]: '#e0b64f',
+  [Awards.SilverHallPrint]: '#b9c0c9',
+  [Awards.GoldHallPrint]: '#e0b64f',
 };
 
 /**

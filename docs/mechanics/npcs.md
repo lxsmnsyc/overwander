@@ -279,7 +279,7 @@ kept for good.
 | **Elite Four** | Five of their seat's type and their signature, 65-85 | Their mark, an item, and a purse of 50,000 to 110,000 |
 | **Champion**   | Their own named six, 85-100     | Their league's title, an item, and 150,000 to 300,000 |
 | **Legend**     | Their own named six at level 100 | Their mark, a purse of 250,000 to 500,000, and a rare or a special item |
-| **Frontier Brain** | Their own three at level 100   | A symbol, silver or gold, and a purse of 200,000 to 400,000 |
+| **Frontier Brain** | Their own three at level 100, or one at the Hall | A symbol or a print, silver or gold, and a purse of 200,000 to 400,000 |
 
 A gym leader's sixth is always the one pokemon they are known for, whatever the
 other five roll, and the five are drawn from every region rather than from the
@@ -295,9 +295,10 @@ Breaker** title and the other coats that legend is drawn in. That is the only fi
 special band. Under one of the four skies that favour every type at once, the
 rarest weather there is, the seat is a legend's for certain.
 
-Past the league stands the **Battle Frontier**. A facility is kept by its Brain,
-and what makes one different from a champion is not the party but the **rule**: a
-Frontier fight is **three a side**, and the house adds its own terms on top.
+Past the league stands the **Battle Frontier**, one to a region. A facility is
+kept by its Brain, and what makes one different from a champion is not the party
+but the **rule**: a Frontier fight is **three a side** everywhere but the Hall,
+and the house adds its own terms on top.
 **Brandon** keeps the Battle Pyramid, which is walked with nothing in hand: no
 held item on either side counts for the length of the fight, and what a pokemon
 is holding is not spent, only left at the door. **Greta** keeps the Battle Arena,
@@ -347,6 +348,26 @@ that are hard to answer. His pokemon come out of the same crate the Factory
 rents from, so the Dome, like the Factory, gets harder with each generation the
 game registers.
 
+Sinnoh keeps a Frontier of its own, five houses across six people. **Palmer**
+keeps its Battle Tower and asks nothing, the way Anabel does. **Thorton** keeps
+its Battle Factory and rents both sides out of the same crate.
+
+**Dahlia** keeps the Battle Arcade, where a wheel is spun as you walk in. What it
+lands on lands on **both sides**, which is what tells it from the Pike: the sun,
+the rain, the sand or the hail for the whole fight, every held item on the field
+left at the door, everybody poisoned, or everybody mended. It is drawn when the
+challenge is accepted, so the fight replays as the fight that happened.
+
+**Darach** and **Caitlin** keep the Battle Castle between them, and whichever of
+them a chunk seats, the Castle Print is what it pays. The house keeps the
+medicine: nothing puts health back on your side for the whole fight, not a
+potion, not a berry, not a drain, not a held item. Theirs heal as usual, which is
+the point of it.
+
+**Argenta** keeps the Battle Hall, which is fought **one against one**. You bring
+a single pokemon, and hers is drawn against it the moment yours is frozen, out of
+the same crate the Factory rents from. Nothing covers for anything else.
+
 From the **Elite Four upwards**, a trainer's pokemon are **built rather than
 caught**: the four moves their species is best with, worked out from everything
 it can ever learn and weighed against its own types, which of its two attacking
@@ -359,8 +380,8 @@ or the Thick Club still beats everything for the one species it belongs to, and
 nobody carries two of a kind. Below the league the gear is chosen the way it
 always was, off the species' own table, so a gym leader's party still reads as
 that leader's rather than as the best answer to a question. It reaches the Elite Four, the Champions, the legends,
-Giovanni and his executives, and all seven Frontier houses, the Factory's rented
-crate included. A gym leader and everybody below still field what they levelled
+Giovanni and his executives, and every Frontier house in both regions, the
+Factory's rented crate included. A gym leader and everybody below still field what they levelled
 into, which is most of what separates a badge from a crown.
 
 A house takes nobody who does not hold the crown of the region it stands in.

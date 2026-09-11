@@ -321,6 +321,10 @@ import Awards, {
   SINNOH_HONORS,
 } from '../src/data/ids/awards';
 import {
+  ARCADE_PANELS,
+  ARCADE_PANEL_NAMES,
+  ARCADE_PANEL_WEATHER,
+  ArcadePanel,
   BIOME_ELITE_MEMBERS,
   BIOME_GYM_LEADERS,
   CHAMPIONS,
@@ -369,12 +373,15 @@ import {
   PIKE_CURTAIN_NAMES,
   PIKE_CURTAIN_STATUSES,
   PikeCurtain,
+  arcadeCurtain,
+  frontierTeamSize,
   getEliteBadges,
   getEliteMemberRoster,
   getFrontierParty,
   getGymLeaderRoster,
   getRentalPool,
   getWorldExpertPool,
+  pickArcadePanel,
   pickPikeCurtain,
   rollGymMachine,
 } from '../src/data/overworld/experts';
@@ -5618,21 +5625,30 @@ describe('type experts', () => {
   it('gives every Frontier Brain a house, a rule and a pair of symbols', () => {
     const symbols = FRONTIER_BRAINS.flatMap((brain) => FRONTIER_BRAIN_SYMBOLS[brain]);
 
-    // Two apiece and no sharing: a facility is its own pair
-    expect(new Set(symbols).size).toBe(symbols.length);
+    // Two apiece, and the only sharing is the Castle: its lady and
+    // her valet keep one house between them and pay the one pair
+    expect(FRONTIER_BRAIN_SYMBOLS[FrontierBrain.Caitlin]).toEqual(
+      FRONTIER_BRAIN_SYMBOLS[FrontierBrain.Darach],
+    );
+    expect(new Set(symbols).size).toBe(symbols.length - 2);
     expect(symbols.every((symbol) => FRONTIER_SYMBOLS.includes(symbol))).toBe(true);
 
     for (const brain of FRONTIER_BRAINS) {
       expect(FRONTIER_BRAIN_NAMES[brain].length).toBeGreaterThan(0);
       expect(FRONTIER_FACILITY_NAMES[brain].length).toBeGreaterThan(0);
       // Three a side is the Frontier's shape, and what makes a house
-      // rule bite rather than merely annoy. Two houses name nobody:
-      // the Factory draws out of the crate like the challenger, and
-      // the Dome waits to be shown a party before it answers one
+      // rule bite rather than merely annoy. The Hall is the one that
+      // fights one against one. Some houses name nobody: the Factory
+      // draws out of the crate like the challenger, and the Dome and
+      // the Hall wait to be shown a party before they answer one
       const named = FRONTIER_BRAIN_PARTIES[brain];
       const rules = FRONTIER_BRAIN_RULES[brain];
-      const drawn = rules === FrontierRule.Rented || rules === FrontierRule.Countered;
+      const drawn =
+        rules === FrontierRule.Rented ||
+        rules === FrontierRule.Countered ||
+        rules === FrontierRule.Singled;
 
+      expect(frontierTeamSize(rules)).toBe(rules === FrontierRule.Singled ? 1 : FRONTIER_TEAM_SIZE);
       expect(named).toHaveLength(drawn ? 0 : FRONTIER_TEAM_SIZE);
       for (const species of named) {
         expect(getSpeciesData(species).name.length).toBeGreaterThan(0);
@@ -5640,26 +5656,83 @@ describe('type experts', () => {
       for (const sheet of FRONTIER_BRAIN_CHARSETS[brain]) {
         expect(existsSync(`public/sprites/overworld/${sheet}/image.png`), sheet).toBe(true);
       }
-      // Every house but the Tower is a rule of its own, and the
-      // Tower's asking nothing is what the others are read against
+      // A Tower is the house that asks nothing, and it is what the
+      // rest of its own Frontier is read against. Both regions keep one
       expect(FRONTIER_BRAIN_RULES[brain] === FrontierRule.None).toBe(
-        brain === FrontierBrain.Anabel,
+        brain === FrontierBrain.Anabel || brain === FrontierBrain.Palmer,
       );
       // And the Frontier stands past a league, so each asks for a crown
       expect(CHAMPIONS.map((champion) => CHAMPION_TITLES[champion])).toContain(
         FRONTIER_BRAIN_TITLES[brain],
       );
     }
-    // No two houses run the same fight
-    const rules = FRONTIER_BRAINS.map((one) => FRONTIER_BRAIN_RULES[one]);
+    // No two houses of one Frontier run the same fight. Caitlin is
+    // left out of the count: she keeps Darach's house, so she keeps
+    // his rule
+    const houses = [
+      [
+        FrontierBrain.Brandon,
+        FrontierBrain.Greta,
+        FrontierBrain.Lucy,
+        FrontierBrain.Noland,
+        FrontierBrain.Anabel,
+        FrontierBrain.Spenser,
+        FrontierBrain.Tucker,
+      ],
+      [
+        FrontierBrain.Palmer,
+        FrontierBrain.Thorton,
+        FrontierBrain.Dahlia,
+        FrontierBrain.Darach,
+        FrontierBrain.Argenta,
+      ],
+    ];
 
-    expect(new Set(rules).size).toBe(rules.length);
+    for (const frontier of houses) {
+      const rules = frontier.map((one) => FRONTIER_BRAIN_RULES[one]);
+
+      expect(new Set(rules).size).toBe(rules.length);
+    }
+    expect(FRONTIER_BRAIN_RULES[FrontierBrain.Caitlin]).toBe(
+      FRONTIER_BRAIN_RULES[FrontierBrain.Darach],
+    );
     expect(FRONTIER_BRAIN_RULES[FrontierBrain.Brandon]).toBe(FrontierRule.Bare);
     expect(FRONTIER_BRAIN_RULES[FrontierBrain.Greta]).toBe(FrontierRule.Timed);
     expect(FRONTIER_BRAIN_RULES[FrontierBrain.Lucy]).toBe(FrontierRule.Curtained);
     expect(FRONTIER_BRAIN_RULES[FrontierBrain.Noland]).toBe(FrontierRule.Rented);
     expect(FRONTIER_BRAIN_RULES[FrontierBrain.Spenser]).toBe(FrontierRule.Natured);
     expect(FRONTIER_BRAIN_RULES[FrontierBrain.Tucker]).toBe(FrontierRule.Countered);
+    // The two houses that repeat across the regions, and only those:
+    // a Tower asks nothing and a Factory rents, wherever it stands
+    expect(FRONTIER_BRAIN_RULES[FrontierBrain.Thorton]).toBe(FrontierRule.Rented);
+    expect(FRONTIER_BRAIN_RULES[FrontierBrain.Dahlia]).toBe(FrontierRule.Rolled);
+    expect(FRONTIER_BRAIN_RULES[FrontierBrain.Darach]).toBe(FrontierRule.Unhealed);
+    expect(FRONTIER_BRAIN_RULES[FrontierBrain.Argenta]).toBe(FrontierRule.Singled);
+  });
+
+  it('spins the Arcade onto both sides, and the same panel every watch', () => {
+    // Every panel is drawn by some roll, and a roll at either end
+    // lands inside the wheel rather than off it
+    const drawn = new Set(Array.from({ length: 200 }, (_, at) => pickArcadePanel(at / 200)));
+
+    expect(drawn.size).toBe(ARCADE_PANELS.length);
+    expect(pickArcadePanel(0)).toBe(ARCADE_PANELS[0]);
+    expect(pickArcadePanel(0.999999)).toBe(ARCADE_PANELS[ARCADE_PANELS.length - 1]);
+    // Four panels are a sky, and the other three are what the parties
+    // walk in as. A panel is one or the other, never both
+    for (const panel of ARCADE_PANELS) {
+      const sky = ARCADE_PANEL_WEATHER[panel];
+      const room = arcadeCurtain(panel);
+
+      expect(sky == null || room == null, ARCADE_PANEL_NAMES[panel]).toBe(true);
+      expect(ARCADE_PANEL_NAMES[panel].length).toBeGreaterThan(0);
+    }
+    expect(arcadeCurtain(ArcadePanel.Poisoned)).toBe(PikeCurtain.Poisoned);
+    expect(arcadeCurtain(ArcadePanel.Mended)).toBe(PikeCurtain.Healed);
+    // The stripped panel bares both sides rather than mending or
+    // hurting anybody, so it carries neither a sky nor a room
+    expect(ARCADE_PANEL_WEATHER[ArcadePanel.Stripped]).toBeNull();
+    expect(arcadeCurtain(ArcadePanel.Stripped)).toBeUndefined();
   });
 
   it('answers a party the Dome is shown with three drawn against it', () => {
@@ -5761,16 +5834,19 @@ describe('type experts', () => {
     }
     // The Pyramid brings the same three either time, which is the
     // mainline's own answer: what changes is the level and the
-    // loadout rather than who is in the crate
-    expect(FRONTIER_BRAIN_GOLD_PARTIES[FrontierBrain.Brandon]).toEqual(
-      FRONTIER_BRAIN_PARTIES[FrontierBrain.Brandon],
-    );
+    // loadout rather than who is in the crate. Sinnoh's Tower is the
+    // same, and for the same reason
+    for (const brain of [FrontierBrain.Brandon, FrontierBrain.Palmer]) {
+      expect(FRONTIER_BRAIN_GOLD_PARTIES[brain], FRONTIER_BRAIN_NAMES[brain]).toEqual(
+        FRONTIER_BRAIN_PARTIES[brain],
+      );
+    }
     // Everybody else's second hand is a different fight
     for (const brain of FRONTIER_BRAINS) {
       if (
         brain === FrontierBrain.Brandon ||
-        brain === FrontierBrain.Noland ||
-        brain === FrontierBrain.Tucker
+        brain === FrontierBrain.Palmer ||
+        FRONTIER_BRAIN_PARTIES[brain].length === 0
       ) {
         continue;
       }

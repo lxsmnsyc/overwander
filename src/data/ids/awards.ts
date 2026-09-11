@@ -109,6 +109,20 @@ const enum Awards {
   JupiterDefeated = 88,
   SaturnDefeated = 89,
   CyrusDefeated = 90,
+  /**
+   * Sinnoh's Frontier hangs prints rather than symbols, silver for
+   * the win and gold for taking the house again
+   */
+  SilverTowerPrint = 91,
+  GoldTowerPrint = 92,
+  SilverFactoryPrint = 93,
+  GoldFactoryPrint = 94,
+  SilverArcadePrint = 95,
+  GoldArcadePrint = 96,
+  SilverCastlePrint = 97,
+  GoldCastlePrint = 98,
+  SilverHallPrint = 99,
+  GoldHallPrint = 100,
 }
 
 export default Awards;
@@ -205,6 +219,16 @@ export const AWARD_NAMES: Record<Awards, string> = {
   [Awards.JupiterDefeated]: 'Jupiter Defeated',
   [Awards.SaturnDefeated]: 'Saturn Defeated',
   [Awards.CyrusDefeated]: 'Cyrus Defeated',
+  [Awards.SilverTowerPrint]: 'Silver Tower Print',
+  [Awards.GoldTowerPrint]: 'Gold Tower Print',
+  [Awards.SilverFactoryPrint]: 'Silver Factory Print',
+  [Awards.GoldFactoryPrint]: 'Gold Factory Print',
+  [Awards.SilverArcadePrint]: 'Silver Arcade Print',
+  [Awards.GoldArcadePrint]: 'Gold Arcade Print',
+  [Awards.SilverCastlePrint]: 'Silver Castle Print',
+  [Awards.GoldCastlePrint]: 'Gold Castle Print',
+  [Awards.SilverHallPrint]: 'Silver Hall Print',
+  [Awards.GoldHallPrint]: 'Gold Hall Print',
 };
 
 /**
@@ -312,9 +336,8 @@ export const SINNOH_HONORS: Awards[] = [
 ];
 
 /**
- * The Frontier's symbols, silver then gold, in facility order. Its
- * five open facilities so far: the rest of the Brains are still to
- * come, and each brings a pair of its own
+ * What the Frontier hangs, silver then gold, in facility order:
+ * Hoenn's seven symbols, then Sinnoh's five prints
  */
 export const FRONTIER_SYMBOLS: Awards[] = [
   Awards.SilverBraveSymbol,
@@ -331,4 +354,14 @@ export const FRONTIER_SYMBOLS: Awards[] = [
   Awards.GoldSpiritsSymbol,
   Awards.SilverTacticsSymbol,
   Awards.GoldTacticsSymbol,
+  Awards.SilverTowerPrint,
+  Awards.GoldTowerPrint,
+  Awards.SilverFactoryPrint,
+  Awards.GoldFactoryPrint,
+  Awards.SilverArcadePrint,
+  Awards.GoldArcadePrint,
+  Awards.SilverCastlePrint,
+  Awards.GoldCastlePrint,
+  Awards.SilverHallPrint,
+  Awards.GoldHallPrint,
 ];

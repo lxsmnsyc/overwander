@@ -3,6 +3,7 @@ import { roleAt } from './ground';
 import { portalCellIn } from './town';
 import { isCaveFloor, isRock } from './fields';
 import type Biome from '../data/ids/biome';
+import { MOUTH_SEARCH } from '../data/overworld/cave';
 import type World from './world';
 import { Depth } from './depth';
 
@@ -159,6 +160,40 @@ export function caveMouthCellIn(world: World, chunkX: number, chunkY: number): n
     return null;
   }
   return world.depth === Depth.Cave ? mouth.cave : mouth.surface;
+}
+
+/** A way out, and the chunk it was found in */
+export interface NearestMouth {
+  chunkX: number;
+  chunkY: number;
+  mouth: CaveMouth;
+}
+
+/**
+ * The nearest way up, ring by ring so the first found is the nearest
+ * and a chunk with its own mouth costs one reading. Nearest by ring
+ * rather than by true distance, which can prefer a corner to an edge
+ * slightly closer. Null where nothing is within `MOUTH_SEARCH`
+ */
+export function nearestMouth(world: World, chunkX: number, chunkY: number): NearestMouth | null {
+  for (let ring = 0; ring <= MOUTH_SEARCH; ring++) {
+    for (let y = chunkY - ring; y <= chunkY + ring; y++) {
+      for (let x = chunkX - ring; x <= chunkX + ring; x++) {
+        // Only the ring's own edge: everything inside it was read by
+        // the rounds before this one
+        if (Math.max(Math.abs(x - chunkX), Math.abs(y - chunkY)) !== ring) {
+          continue;
+        }
+
+        const mouth = caveMouth(world, x, y);
+
+        if (mouth != null) {
+          return { chunkX: x, chunkY: y, mouth };
+        }
+      }
+    }
+  }
+  return null;
 }
 
 /** Where a player standing at a mouth comes out on the other side */

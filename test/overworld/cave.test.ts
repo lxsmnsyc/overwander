@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import Landmark from '../../src/data/overworld/landmark';
 import { isOpenSea } from '../../src/data/ids/biome';
-import caveMouth, { caveMouthCellIn, throughMouth } from '../../src/overworld/cave';
+import caveMouth, { caveMouthCellIn, nearestMouth, throughMouth } from '../../src/overworld/cave';
+import { MOUTH_SEARCH } from '../../src/data/overworld/cave';
 import { CHUNK_CELLS, worldCell } from '../../src/overworld/grid';
 import { roleAt } from '../../src/overworld/ground';
 import World, { Depth } from '../../src/overworld/world';
@@ -291,5 +292,83 @@ describe('the caves', () => {
         }
       }
     }
+  });
+});
+
+describe('the way out of a cave', () => {
+  const world = new World('overworld').at(Depth.Cave);
+
+  it('answers the chunk a player is standing in, where it has a mouth', () => {
+    let checked = 0;
+
+    for (let x = 0; x < SPAN && checked < 8; x++) {
+      for (let y = 0; y < SPAN && checked < 8; y++) {
+        const mouth = caveMouth(world, x, y);
+
+        if (mouth == null) {
+          continue;
+        }
+        checked++;
+
+        const found = nearestMouth(world, x, y);
+
+        expect(found).not.toBeNull();
+        expect(found?.chunkX).toBe(x);
+        expect(found?.chunkY).toBe(y);
+        expect(found?.mouth).toEqual(mouth);
+      }
+    }
+    expect(checked).toBe(8);
+  });
+
+  it('reaches into the country around a chunk with no way up of its own', () => {
+    let checked = 0;
+
+    for (let x = 0; x < SPAN; x++) {
+      for (let y = 0; y < SPAN; y++) {
+        if (caveMouth(world, x, y) != null) {
+          continue;
+        }
+
+        const found = nearestMouth(world, x, y);
+
+        if (found == null) {
+          continue;
+        }
+        checked++;
+        // Whatever it named is a real mouth, and inside the search
+        expect(caveMouth(world, found.chunkX, found.chunkY)).toEqual(found.mouth);
+        expect(Math.abs(found.chunkX - x)).toBeLessThanOrEqual(MOUTH_SEARCH);
+        expect(Math.abs(found.chunkY - y)).toBeLessThanOrEqual(MOUTH_SEARCH);
+      }
+    }
+    expect(checked).toBeGreaterThan(0);
+  });
+
+  it('comes up on ground a player can stand on', () => {
+    let checked = 0;
+
+    for (let x = 0; x < SPAN && checked < 12; x++) {
+      for (let y = 0; y < SPAN && checked < 12; y++) {
+        const found = nearestMouth(world, x, y);
+
+        if (found == null) {
+          continue;
+        }
+        checked++;
+
+        const cell = found.mouth.surface;
+        const above = world.at(Depth.Surface);
+
+        expect(
+          roleAt(
+            above,
+            worldCell(found.chunkX, cell % CHUNK_CELLS),
+            worldCell(found.chunkY, Math.floor(cell / CHUNK_CELLS)),
+          ),
+        ).toBe('ground');
+      }
+    }
+    expect(checked).toBe(12);
   });
 });

@@ -26,3 +26,10 @@ export const CAVE_DARK_CELLS = 2;
  * dark gives way to
  */
 export const CAVE_LAMP_CELLS = 3;
+
+/**
+ * How far a rope looks for a way out, in chunks. Three chunks in five
+ * hold a mouth of their own, so the cap is really for the sea, where
+ * the network runs under water that never breaks the surface.
+ */
+export const MOUTH_SEARCH = 8;

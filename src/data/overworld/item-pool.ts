@@ -83,6 +83,10 @@ export const ITEM_POOL: ItemRarityGroups = {
     { item: Items.BlackSludge, weight: 4 },
     // A burr picked up off the same walk, and about as welcome
     { item: Items.StickyBarb, weight: 4 },
+    // The way out of a cave, hidden in the country that has caves in
+    // it as often as anywhere else: a rope is worth carrying before
+    // you need it
+    { item: Items.EscapeRope, weight: 6 },
     // The everyday medicine. A walk that turns up a Potion and an
     // Antidote is a walk that paid for the raid it is walking towards
     { item: Items.Potion, weight: 12 },

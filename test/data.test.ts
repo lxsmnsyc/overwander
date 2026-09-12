@@ -712,6 +712,48 @@ describe('species abilities', () => {
   });
 });
 
+describe('what a family is called', () => {
+  it('names every family after a pokemon in it', () => {
+    const members = new Map<Families, Species[]>();
+
+    for (const species of getRegisteredSpecies()) {
+      const { family } = getSpeciesData(species);
+
+      members.set(family, [...(members.get(family) ?? []), species]);
+    }
+
+    for (const [family, lot] of members) {
+      const name = getFamilyName(family);
+      const named = lot.map((species) => getSpeciesData(species).name);
+
+      // The name is one of the line's own, spelled the way the species
+      // is spelled: Mr. Mime and Farfetch'd included
+      expect(named, name).toContain(name);
+      expect(name.length).toBeGreaterThan(0);
+    }
+    // And no two lines answer to one name, since a candy jar is read
+    // by it
+    const names = [...members.keys()].map((family) => getFamilyName(family));
+
+    expect(new Set(names).size).toBe(names.length);
+  });
+
+  it('is the pokemon the line is known as, not the one it hatches as', () => {
+    // The bug this is written from: the name was the base species, so
+    // eight families answered to the baby a later generation put under
+    // them and a bag read "Pichu candy" for a Pikachu's
+    expect(getFamilyName(getSpeciesData(Species.Pikachu).family)).toBe('Pikachu');
+    expect(getFamilyName(getSpeciesData(Species.Pichu).family)).toBe('Pikachu');
+    expect(getFamilyName(getSpeciesData(Species.Marill).family)).toBe('Marill');
+    expect(getFamilyName(getSpeciesData(Species.Wobbuffet).family)).toBe('Wobbuffet');
+    expect(getFamilyName(getSpeciesData(Species.Jynx).family)).toBe('Jynx');
+    // Except where the baby is the only name that covers the line: the
+    // three Hitmons are siblings rather than stages of each other
+    expect(getFamilyName(getSpeciesData(Species.Hitmonlee).family)).toBe('Tyrogue');
+    expect(getFamilyName(getSpeciesData(Species.Tyrogue).family)).toBe('Tyrogue');
+  });
+});
+
 describe('species measurements', () => {
   it('measures every species', () => {
     // Weight-driven moves read these, so a species registered

@@ -5,6 +5,7 @@ import type Biome from '../ids/biome';
 import type { TimeOfDay } from '../ids/biome';
 import type EggGroups from '../ids/egg-groups';
 import type Families from '../ids/families';
+import { FAMILY_NAMES } from '../ids/families';
 import type { Items } from '../ids/items';
 import type { Moves } from '../ids/moves';
 import { type Genders, type Species, getBaseFormSpecies } from '../ids/species';
@@ -221,20 +222,11 @@ let familyIndex: Families[] | null = null;
  */
 let formIndex: Map<Species, Species[]> | null = null;
 
-/**
- * What each family is called, worked out the first time it is asked
- * for. See `getFamilyName`
- */
-const familyNames = new Map<Families, string>();
-
 export function registerSpecies(species: Species, data: SpeciesData): void {
   SPECIES_MAP.set(species, data);
   biomeIndex = null;
   familyIndex = null;
   formIndex = null;
-  // A line that has just gained a member may have gained a new base
-  // stage, and the name is that stage's
-  familyNames.clear();
 }
 
 /**
@@ -482,37 +474,17 @@ export function getEggBaseSpecies(species: Species): Species {
 }
 
 /**
- * The name a family is known by, derived rather than written down.
+ * The name a family is known by, read off the table beside the enum
+ * that numbers them.
  *
- * A family is a line of pokemon, and a line is called after what it
- * starts as — a Charmander's candy is a Charmander's candy whether it
- * is being fed to a Charmeleon or a Charizard. So the name is the
- * **base species** of the line: found by walking any member of it back
- * to the stage it hatches at, which is the same answer whichever
- * member is asked.
- *
- * It is derived because the alternative is a second list of eighty
- * names beside the enum that already holds them, kept in step by hand.
- * A family with nothing registered under it has no name to give and
- * says so with its number, which is the honest answer for a line the
- * game does not have yet
+ * It was derived once, by walking any member back to what it hatches
+ * as, which named the Pikachu family after Pichu and seven others
+ * after the babies later generations put under them. A family is
+ * called after the pokemon the line is known as, and the enum already
+ * knows which that is
  */
 export function getFamilyName(family: Families): string {
-  const known = familyNames.get(family);
-
-  if (known != null) {
-    return known;
-  }
-
-  for (const species of SPECIES_MAP.keys()) {
-    if (getSpeciesData(species).family === family) {
-      const name = getSpeciesData(getBaseSpecies(species)).name;
-
-      familyNames.set(family, name);
-      return name;
-    }
-  }
-  return `Family #${family}`;
+  return FAMILY_NAMES[family];
 }
 
 /**

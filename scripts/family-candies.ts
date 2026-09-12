@@ -13,15 +13,20 @@ import pack from '../src/server/sprites/packing.ts';
  * swap** of that drawing, painted in the colours its own sprite is
  * mostly drawn in.
  *
- * The drawing is a ball with three wrapper stripes across it, and the
- * three colours land one to a surface: the most drawn on the ball, the
- * second on the top and bottom stripes, the third on the middle one.
- * The shadow under the ball and the glint on it are not colours of
- * their own, they are that surface lit and unlit, so a swap keeps how
- * far each pixel sits from its surface's own tone.
+ * The drawing is a ball with three wrapper stripes across it, which is
+ * seven parts counted from the top, and four colours land on them. The
+ * top and bottom of the ball take the colour the pokemon is mostly
+ * drawn in, the ball between the stripes the second, the top and
+ * bottom stripes the third, and the middle stripe the fourth. The
+ * shadow under the ball and the glint on it are not colours of their
+ * own, they are a surface lit and unlit, so a swap keeps how far each
+ * pixel sits from its surface's own tone.
  *
- * The colours are read off the sheet of the family's base species,
- * which is the pokemon the family is named after.
+ * The colours are read off the sheet of the pokemon the family is
+ * named after, which is its **earliest** member rather than its base
+ * species: a later generation often puts a baby under an older line,
+ * and a Pikachu's candy is a Pikachu's candy however long ago Pichu
+ * was added below it.
  *
  * ```bash
  * pnpm family-candies
@@ -102,6 +107,29 @@ const NAMED_BY = { from: 0.25, to: 0.68 };
 /** The template's outline, which no family repaints. */
 const OUTLINE = '41,41,41';
 
+/** How many parts the drawing falls into, counted from the top. */
+const PARTS = 7;
+
+/**
+ * Which of the family's colours each part takes, most drawn first. The
+ * candy is symmetric about its middle stripe, so a part and the one
+ * facing it across the ball are painted alike
+ */
+const PART_COLOURS = [0, 2, 1, 3, 1, 2, 0];
+
+/** How many colours a candy is painted in. */
+const COLOURS = Math.max(...PART_COLOURS) + 1;
+
+/**
+ * Which parts touch, taken down the top half since the ball repeats.
+ * Two of these painted the same lightness lose the seam between them
+ */
+const TOUCHING: [number, number][] = [
+  [0, 2],
+  [2, 1],
+  [1, 3],
+];
+
 /**
  * The wrapper's colours in the template: the stripes lit, shaded, and
  * where the light catches them. Everything else lit is the ball
@@ -116,13 +144,13 @@ const WRAPPER = new Set(['238,222,238', '197,189,222', '255,246,246']);
 const REFERENCE = { ball: '230,82,98', stripe: '238,222,238' };
 
 /**
- * How much of a colour's darkness the stripes take. They are the light
- * part of the candy, and a family whose second colour is a dark blue
+ * How much of a colour's darkness a stripe takes. The stripes are the
+ * light part of the candy, and a family whose colour is a dark blue
  * still needs stripes that read as stripes
  */
 const STRIPE_LIFT = 0.45;
 
-/** How far the stripes stay from the ball in lightness, so they show. */
+/** How far apart in lightness two parts that touch are held. */
 const SEPARATION = 0.22;
 
 interface Hsl {
@@ -131,11 +159,10 @@ interface Hsl {
   l: number;
 }
 
-/** Which surface a pixel of the template belongs to. */
-type Surface = 'ball' | 'stripe' | 'middle';
-
 interface Entry {
   species: number;
+  /** The species' own key in the enum, which is how a family names one */
+  key: string;
   dex: number;
   family: number;
   from: number | null;
@@ -180,13 +207,14 @@ function entriesOf(species: Map<string, number>, families: Map<string, number>):
       const source = readFileSync(join(folder, file), 'utf8');
 
       for (const block of source.split('registerSpecies(Species.').slice(1)) {
-        const id = species.get(block.slice(0, block.indexOf(',')));
+        const key = block.slice(0, block.indexOf(','));
+        const id = species.get(key);
         const family = families.get(/family: Families\.(\w+),/.exec(block)?.[1] ?? '');
         const dex = Number(/dexNumber: (\d+),/.exec(block)?.[1] ?? 0);
         const from = species.get(/evolvesFrom: Species\.(\w+),/.exec(block)?.[1] ?? '');
 
         if (id != null && family != null) {
-          entries.push({ species: id, dex, family, from: from ?? null });
+          entries.push({ species: id, key, dex, family, from: from ?? null });
         }
       }
     }
@@ -213,7 +241,7 @@ function loopRegistered(
     const id = species.get(name);
 
     if (!found.has(family) && id != null) {
-      missed.push({ species: id, dex: id, family, from: null });
+      missed.push({ species: id, key: name, dex: id, family, from: null });
     }
   }
   return missed;
@@ -331,7 +359,7 @@ function coloursOf(sheet: Image): [number, number, number][] {
         two.pixels * (NEUTRAL_WEIGHT + two.shades[0].chroma) -
         one.pixels * (NEUTRAL_WEIGHT + one.shades[0].chroma),
     )
-    .slice(0, 3)
+    .slice(0, COLOURS)
     .map(
       (cluster) =>
         (
@@ -381,15 +409,14 @@ function pictureOf(folder: string, name: string): Image {
   return picture;
 }
 
-/**
- * Which surface each pixel of the template is part of, or nothing for
- * the outline and the empty corners.
- *
- * The stripes are found rather than listed: the wrapper's pixels fall
- * into three runs across the ball, and the one in the middle is the
- * middle stripe. Reading them off the drawing means a template redrawn
- * a pixel wider still paints correctly
- */
+/** A pixel of the template: which part it is in, and what it is made of. */
+interface Painted {
+  part: number;
+  /** Wrapper pixels are the light stripes, and stay light when swapped. */
+  wrapper: boolean;
+}
+
+/** Every pixel touching one, which is how a stripe is walked. */
 function neighbours(at: number, width: number, height: number): number[] {
   const x = at % width;
   const y = Math.floor(at / width);
@@ -405,24 +432,34 @@ function neighbours(at: number, width: number, height: number): number[] {
   return found;
 }
 
-function surfacesOf(template: Image): (Surface | null)[] {
+/**
+ * Which part each pixel of the template belongs to, or nothing for the
+ * outline and the empty corners.
+ *
+ * The parts are the drawing's own: three wrapper stripes down the
+ * ball, and the ball showing between and around them, which is seven
+ * bands counted from the top. The stripes are found rather than listed
+ * so a template redrawn a pixel wider still paints correctly, and a
+ * pixel of ball takes its part from how many stripes sit above it
+ */
+function partsOf(template: Image): (Painted | null)[] {
   const { width, height, rgba } = template;
   const wrapper = (at: number): boolean => rgba[at * 4 + 3] > 0 && WRAPPER.has(keyOf(rgba, at * 4));
-  const bands: number[][] = [];
+  const stripes: number[][] = [];
   const seen = new Set<number>();
 
   for (let at = 0; at < width * height; at += 1) {
     if (!wrapper(at) || seen.has(at)) {
       continue;
     }
-    const band: number[] = [];
+    const stripe: number[] = [];
     const walking = [at];
 
     seen.add(at);
     while (walking.length > 0) {
       const held = walking.pop() ?? 0;
 
-      band.push(held);
+      stripe.push(held);
       for (const next of neighbours(held, width, height)) {
         if (wrapper(next) && !seen.has(next)) {
           seen.add(next);
@@ -430,86 +467,99 @@ function surfacesOf(template: Image): (Surface | null)[] {
         }
       }
     }
-    bands.push(band);
+    stripes.push(stripe);
   }
 
-  /** How far down the ball a band sits, which is what orders them. */
-  const down = (band: number[]): number =>
-    band.reduce((total, at) => total + Math.floor(at / width), 0) / band.length;
+  /** How far down the ball a stripe sits, which is what orders them. */
+  const down = (stripe: number[]): number =>
+    stripe.reduce((total, at) => total + Math.floor(at / width), 0) / stripe.length;
 
-  bands.sort((one, two) => down(one) - down(two));
+  stripes.sort((one, two) => down(one) - down(two));
 
-  const middle = bands[Math.floor(bands.length / 2)] ?? [];
-  const surfaces: (Surface | null)[] = [];
+  const crossing = stripes.map(down);
+  const partOf = new Map<number, number>();
 
-  for (let at = 0; at < width * height; at += 1) {
-    if (rgba[at * 4 + 3] === 0 || keyOf(rgba, at * 4) === OUTLINE) {
-      surfaces.push(null);
-    } else {
-      surfaces.push(wrapper(at) ? 'stripe' : 'ball');
+  for (const [index, stripe] of stripes.entries()) {
+    for (const at of stripe) {
+      partOf.set(at, Math.min(index * 2 + 1, PARTS - 1));
     }
   }
-  for (const at of middle) {
-    surfaces[at] = 'middle';
+  const parts: (Painted | null)[] = [];
+
+  for (let at = 0; at < width * height; at += 1) {
+    const held = partOf.get(at);
+
+    if (rgba[at * 4 + 3] === 0 || keyOf(rgba, at * 4) === OUTLINE) {
+      parts.push(null);
+    } else if (held == null) {
+      const above = crossing.filter((line) => Math.floor(at / width) > line).length;
+
+      parts.push({ part: Math.min(above * 2, PARTS - 1), wrapper: false });
+    } else {
+      parts.push({ part: held, wrapper: true });
+    }
   }
-  return surfaces;
+  return parts;
 }
 
 /**
- * One template pixel repainted in a family's colour.
+ * One template pixel repainted in its part's colour.
  *
  * The template's own tone for the surface is the anchor: how far the
- * pixel sits from it in saturation and lightness is what makes the ball
- * look round, and that distance is what carries over. The hue is the
- * family's outright
+ * pixel sits from it in saturation and lightness is what makes the
+ * ball look round and the stripe sit on it, and that distance is what
+ * carries over. The hue is the family's outright
  */
-function swap(colour: string, surface: Surface, into: Hsl): [number, number, number] {
+function swap(colour: string, wrapper: boolean, into: Hsl): [number, number, number] {
   const from = toHsl(colourOf(colour));
-  const anchor = toHsl(colourOf(surface === 'ball' ? REFERENCE.ball : REFERENCE.stripe));
+  const anchor = toHsl(colourOf(wrapper ? REFERENCE.stripe : REFERENCE.ball));
 
   return fromHsl({
     h: into.h,
     s: anchor.s === 0 ? into.s : Math.min((from.s / anchor.s) * into.s, 1),
-    l: Math.min(
-      Math.max(from.l + (into.l - anchor.l) * (surface === 'ball' ? 1 : STRIPE_LIFT), 0.12),
-      0.97,
-    ),
+    l: Math.min(Math.max(from.l + (into.l - anchor.l) * (wrapper ? STRIPE_LIFT : 1), 0.12), 0.97),
   });
 }
 
-/**
- * What each surface is painted in, from however many colours the
- * sprite gave up.
- *
- * A family drawn in one colour still has a wrapper to paint, so the
- * stripes are that colour turned up until they read as stripes, and
- * the middle one is a shade off the other two
- */
-function palette(colours: [number, number, number][]): Record<Surface, Hsl> {
-  const ball = toHsl(colours[0]);
-  const second = colours.length > 1 ? toHsl(colours[1]) : { ...ball, s: ball.s * 0.5, l: 0.9 };
-  const stripe =
-    Math.abs(second.l - ball.l) < SEPARATION
-      ? { ...second, l: Math.min(Math.max(second.l, ball.l + SEPARATION), 0.94) }
-      : second;
+/** One tone stepped off another, for a colour the sprite never gave. */
+function stepped(tone: Hsl, by: number): Hsl {
+  return { ...tone, s: tone.s * 0.85, l: Math.min(Math.max(tone.l + by, 0.16), 0.94) };
+}
 
-  return {
-    ball,
-    stripe,
-    middle:
-      colours.length > 2
-        ? toHsl(colours[2])
-        : { ...stripe, s: stripe.s * 0.75, l: stripe.l - 0.09 },
-  };
+/**
+ * What the bands are painted in, from however many colours the sprite
+ * gave up.
+ *
+ * A family drawn in one colour still has four bands to fill, so the
+ * colours it did give up are stepped in lightness until there are
+ * four, and two bands that touch are pushed apart until the seam
+ * between them shows
+ */
+function palette(colours: [number, number, number][]): Hsl[] {
+  const tones = colours.map(toHsl);
+
+  while (tones.length < COLOURS) {
+    tones.push(stepped(tones[tones.length - 1], tones.length % 2 === 1 ? SEPARATION : -SEPARATION));
+  }
+  for (const [one, two] of TOUCHING) {
+    const gap = tones[two].l - tones[one].l;
+
+    if (Math.abs(gap) < SEPARATION) {
+      const push = tones[one].l + (gap < 0 ? -SEPARATION : SEPARATION);
+
+      tones[two] = { ...tones[two], l: Math.min(Math.max(push, 0.16), 0.94) };
+    }
+  }
+  return tones;
 }
 
 /** The template repainted for one family. */
 function candyOf(
   template: Image,
-  surfaces: (Surface | null)[],
+  parts: (Painted | null)[],
   colours: [number, number, number][],
 ): Image {
-  const paint = palette(colours);
+  const tones = palette(colours);
   const painted = new Map<string, [number, number, number]>();
   const image: Image = {
     width: template.width,
@@ -517,15 +567,16 @@ function candyOf(
     rgba: Buffer.from(template.rgba),
   };
 
-  for (let at = 0; at < surfaces.length; at += 1) {
-    const surface = surfaces[at];
+  for (let at = 0; at < parts.length; at += 1) {
+    const held = parts[at];
 
-    if (surface == null) {
+    if (held == null) {
       continue;
     }
+    const tone = PART_COLOURS[held.part];
     const colour = keyOf(image.rgba, at * 4);
-    const key = `${surface} ${colour}`;
-    const into = painted.get(key) ?? swap(colour, surface, paint[surface]);
+    const key = `${tone} ${held.wrapper} ${colour}`;
+    const into = painted.get(key) ?? swap(colour, held.wrapper, tones[tone]);
 
     painted.set(key, into);
     image.rgba[at * 4] = into[0];
@@ -616,12 +667,14 @@ function write(region: string, candies: Candy[]): void {
 
 const species = idsOf(IDS.species, 'Species');
 const families = idsOf(IDS.families, 'Families');
+/** The enum's own name for each family, which is the pokemon it is called after */
+const familyKeys = new Map([...families].map(([key, id]) => [id, key]));
 const entries = entriesOf(species, families);
 
 entries.push(...loopRegistered(entries, species, families));
 
 const template = pictureOf(TEMPLATE.sheet, TEMPLATE.picture);
-const surfaces = surfacesOf(template);
+const parts = partsOf(template);
 const byRegion = new Map<string, Candy[]>();
 const undrawn: number[] = [];
 
@@ -631,11 +684,14 @@ for (const family of [...new Set(entries.map((entry) => entry.family))].sort(
   const members = entries
     .filter((entry) => entry.family === family)
     .sort((one, two) => one.dex - two.dex);
-  // The base is what the family is called and so what its candy is
-  // painted from; the earliest member is where the line comes from and
-  // so which sheet it is filed on. A baby added a generation later
-  // makes those two different pokemon
-  const base = members.find((entry) => entry.from == null) ?? members[0];
+  // The family's own name says which of its members the candy is
+  // painted from, since the two enums share their keys: a Pikachu
+  // family is painted from Pikachu, and the Hitmons from the Tyrogue
+  // they all come from. Painting from the *base* instead put a
+  // Pikachu's candy in Pichu's colours, since a baby added a
+  // generation later sits under the line without naming it
+  const key = familyKeys.get(family);
+  const base = members.find((entry) => entry.key === key) ?? members[0];
   const region = regionOf(members[0].dex);
   const sheet = sheetOf(base.species, base.dex);
   const colours = sheet == null ? [] : coloursOf(sheet);
@@ -648,7 +704,7 @@ for (const family of [...new Set(entries.map((entry) => entry.family))].sort(
 
   held.push({
     name: String(family),
-    image: candyOf(template, surfaces, colours),
+    image: candyOf(template, parts, colours),
     w: template.width,
     h: template.height,
   });

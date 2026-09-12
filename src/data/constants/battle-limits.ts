@@ -44,6 +44,23 @@ export const UNLIMITED_BATTLE_LIMITS = packSlots(
 );
 
 /**
+ * And what a fight against the world allows, which is the same
+ * everything.
+ *
+ * A trainer stop, a gym, a league seat and a Frontier house are fights
+ * the game staged rather than fights two people agreed to, and both
+ * sides are built for them: an expert's six are composed, priced and
+ * handed two abilities and two items apiece. Holding that side to the
+ * mainline's one of each threw away half of what was built, and it
+ * threw away the player's belt with it, so a pokemon carrying a Sacred
+ * Ash under a Leftovers walked in with only the Leftovers.
+ *
+ * Fights between players keep the mainline shape, since there the
+ * limit is the fair part rather than the lost part
+ */
+export const NPC_BATTLE_LIMITS = UNLIMITED_BATTLE_LIMITS;
+
+/**
  * The counts a host may set a fight to, which is the same range a
  * pokemon itself may have room for: `SLOT_LIMITS`. A host asking for
  * the top of every one is asking for a raid's rules in a fight between

@@ -1,7 +1,7 @@
 import 'server-only';
 import { Depth } from '../overworld/depth';
 import BattleOutcome from '../auth/battle-outcome';
-import { PVP_BATTLE_LIMITS } from '../data/constants/battle-limits';
+import { NPC_BATTLE_LIMITS } from '../data/constants/battle-limits';
 import { type EncounterRecord, asEncounterRecord } from '../auth/encounter-record';
 import { asOffset, toLocalTime } from '../auth/local-time';
 import {
@@ -528,7 +528,7 @@ export async function startStopBattle(
                            rules, opponent, opponent_sprite)
       values (${battleId}, null, ${fielded.length > 0 ? fielded[0][0] : (record.party[0]?.species ?? 0)},
               ${BattleOutcome.Unfinished}, ${now},
-              ${chunk.biome}, ${weather}, ${PVP_BATTLE_LIMITS}, ${rules},
+              ${chunk.biome}, ${weather}, ${NPC_BATTLE_LIMITS}, ${rules},
               ${challenger?.name ?? ''}, ${challenger?.sprite ?? ''})
     `;
 

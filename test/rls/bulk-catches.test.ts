@@ -46,6 +46,7 @@ beforeEach(async () => {
   await sql`delete from caught_items`;
   await sql`delete from gift_claims`;
   await sql`delete from gifts`;
+  await sql`delete from auctions`;
   await sql`delete from caught`;
 });
 
@@ -172,6 +173,51 @@ describe('letting several go at once', () => {
 
     expect(claims).toHaveLength(1);
     expect(claims.at(0)?.catch_id).toBeNull();
+  });
+
+  it('lets go of one that has been to auction, and leaves the lot behind', async () => {
+    const id = await put('a');
+
+    await put('b');
+    // A lot that has been handed over: the pokemon came back to its
+    // seller unbid, or was collected by whoever won it. Either way
+    // the row is history and still names the pokemon
+    await sql`
+      insert into auctions (id, seller, lot, item, caught_id, starting_bid, increment,
+                            bid, bidder, created_at, ends_at, utc_offset, settled)
+      values ('bulk-lot', ${player.uid}, 1, null, ${id}, 100, 10, 0, null,
+              ${Date.now()}, ${Date.now()}, 0, true)
+    `;
+
+    expect(await releaseCatch(player.uid, id)).toBe(true);
+    expect(await remaining()).toEqual(['bulk-b']);
+
+    // The lot outlives the pokemon and loses its pointer, the way a
+    // gift claim does. Before the check allowed that, releasing
+    // anything that had ever been on the block was refused outright
+    const lots = await sql`select caught_id, settled from auctions where id = 'bulk-lot'`;
+
+    expect(lots).toHaveLength(1);
+    expect(lots.at(0)?.caught_id).toBeNull();
+  });
+
+  it('keeps a lot that is still running pointed at its pokemon', async () => {
+    const id = await put('a');
+
+    await put('b');
+    await sql`
+      insert into auctions (id, seller, lot, item, caught_id, starting_bid, increment,
+                            bid, bidder, created_at, ends_at, utc_offset, settled)
+      values ('bulk-live', ${player.uid}, 1, null, ${id}, 100, 10, 0, null,
+              ${Date.now()}, ${Date.now() + 60_000}, 0, false)
+    `;
+
+    // Nothing may empty a live lot: the pokemon is in escrow while the
+    // bidding runs, and a lot on the block with nothing on it is a lot
+    // nobody could bid on
+    await expect(
+      sql`update auctions set caught_id = null where id = 'bulk-live'`,
+    ).rejects.toThrow();
   });
 
   it('refuses a pokemon that is not theirs', async () => {

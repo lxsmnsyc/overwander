@@ -29,6 +29,12 @@ export const enum Effect {
   Flight = 4,
   /** A pokemon that grew, however many levels the run reached */
   LevelUp = 5,
+  /** The fight about to start, played over the count in */
+  BattleStart = 6,
+  /** The fight won */
+  BattleWon = 7,
+  /** The fight lost, which a draw is near enough to share */
+  BattleLost = 8,
 }
 
 const FILES: Record<Effect, string> = {
@@ -38,6 +44,9 @@ const FILES: Record<Effect, string> = {
   [Effect.CatchFailed]: '/sounds/effects/catch_failed.wav',
   [Effect.Flight]: '/sounds/effects/flight.wav',
   [Effect.LevelUp]: '/sounds/effects/level_up.wav',
+  [Effect.BattleStart]: '/sounds/effects/battle_start.wav',
+  [Effect.BattleWon]: '/sounds/effects/battle_won.wav',
+  [Effect.BattleLost]: '/sounds/effects/battle_lost.wav',
 };
 
 /**

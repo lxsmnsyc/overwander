@@ -32,6 +32,7 @@ import { hatchEgg } from '../../../auth/eggs';
 import { type EvolutionOption, evolveCatch } from '../../../auth/evolution';
 import type { InventoryEntry } from '../../../auth/inventory';
 import { learnLevelUpMove } from '../../../auth/moves';
+import playEffect, { Effect } from '../../app/sound';
 import type { PokedexView } from '../../../auth/pokedex';
 import { trainEfforts } from '../../../auth/training';
 
@@ -554,6 +555,11 @@ export function CatchSheetBody(
     running = true;
     feedRun(catchId, levels)
       .then((level) => {
+        // Once for the run rather than once a level: a pile handed
+        // over in one press is one growing, however far it reached
+        if (level != null && level > from) {
+          playEffect(Effect.LevelUp);
+        }
         if (!showing()) {
           say(level == null ? 'That candy could not be used.' : `Grew to level ${level}.`);
           props.onRecordChanged();

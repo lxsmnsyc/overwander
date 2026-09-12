@@ -27,6 +27,8 @@ export const enum Effect {
   CatchFailed = 3,
   /** Something leaving the encounter, whichever end of it walked off */
   Flight = 4,
+  /** A pokemon that grew, however many levels the run reached */
+  LevelUp = 5,
 }
 
 const FILES: Record<Effect, string> = {
@@ -35,6 +37,7 @@ const FILES: Record<Effect, string> = {
   [Effect.BallShake]: '/sounds/effects/ball_shake.wav',
   [Effect.CatchFailed]: '/sounds/effects/catch_failed.wav',
   [Effect.Flight]: '/sounds/effects/flight.wav',
+  [Effect.LevelUp]: '/sounds/effects/level_up.wav',
 };
 
 /**

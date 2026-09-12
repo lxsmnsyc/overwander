@@ -218,6 +218,7 @@ import { BOTTLE_CAPS, isBottleCap, isPerfectIVs, polishIVs } from '../src/data/i
 import { MINT_NATURES, describeMint, getMintNature, isMint } from '../src/data/items/mints';
 import { UTILITY_BELT_SLOT, isUtilityBelt } from '../src/data/items/utility-belt';
 import {
+  NPC_BATTLE_LIMITS,
   PVP_BATTLE_LIMITS,
   UNLIMITED_BATTLE_LIMITS,
   withLimit,
@@ -3066,6 +3067,13 @@ describe('item data', () => {
     // most that kind allows
     for (const kind of [Slots.Ability, Slots.Item, Slots.Move]) {
       expect(getSlots(UNLIMITED_BATTLE_LIMITS, kind)).toBe(mostSlots(kind));
+    }
+    // And a fight against the world adds none either: an expert is
+    // built with two abilities and two items, and the player's belt
+    // is the one they packed. Under the mainline's one of each, half
+    // of both was thrown away before the fight started
+    for (const kind of [Slots.Ability, Slots.Item, Slots.Move]) {
+      expect(getSlots(NPC_BATTLE_LIMITS, kind)).toBe(mostSlots(kind));
     }
 
     // And a scenario is one packed number, which is why it can be

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { EventPriority } from '../../src/core/event-emitter';
 import type Battle from '../../src/battle/core';
+import { BattleModes } from '../../src/battle/core';
 import { BattleEvents, EffectType, MoveTargetType } from '../../src/battle/events';
 import type Team from '../../src/battle/team';
 import type Unit from '../../src/battle/unit';
@@ -1496,6 +1497,26 @@ describe('the Sacred Ash', () => {
 
     expect(holder.alive).toBe(true);
     expect(holder.moves[Moves.Tackle]?.cooldown).toBeUndefined();
+  });
+
+  it('reaches the field in a trainer fight beside another item', () => {
+    // The bug this is written from: a fight against the world allowed
+    // one held item, so an ash under a Leftovers was refused as the
+    // party was fielded and nothing ever revived
+    const { battle, teamA, teamB } = createBattle('ash-npc', BattleModes.Npc);
+    const holder = createUnit(battle, teamA);
+    const attacker = createUnit(battle, teamB);
+
+    holder.setSlots(packSlots(1, 2, 4));
+    holder.addItem(Items.Leftovers);
+    holder.addItem(Items.SacredAsh);
+
+    expect(holder.items[Items.SacredAsh]).toBe(true);
+
+    wipe([holder], attacker);
+    battle.tick(SACRED_ASH_DELAY);
+
+    expect(holder.alive).toBe(true);
   });
 
   it('is one to a team, however many the team is carrying', () => {

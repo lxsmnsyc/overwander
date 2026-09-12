@@ -1,6 +1,6 @@
 import type { Stats } from '../constants/stats';
 import { Types } from '../constants/types';
-import type Abilities from '../ids/abilities';
+import Abilities from '../ids/abilities';
 import type Biome from '../ids/biome';
 import type { TimeOfDay } from '../ids/biome';
 import type EggGroups from '../ids/egg-groups';
@@ -295,6 +295,29 @@ export function getSpeciesData(species: Species): SpeciesData {
  */
 export function swims(species: Species): boolean {
   return getSpeciesData(species).types.includes(Types.Water);
+}
+
+/**
+ * Whether a species is over the ground rather than on it: the Flying
+ * types, and the hoverers the mainline hands Levitate to.
+ *
+ * Asked beside `swims` for the same pond. Something in the air is no
+ * more standing in the water than something swimming is, so a Zubat
+ * over a river is the pool answering the question it was asked. What
+ * the rule keeps out is the Rhyhorn.
+ *
+ * Read off the species' own abilities rather than the walk up its
+ * line, since what hovers is this stage rather than whatever its
+ * pre-evolution could be born with
+ */
+export function floats(species: Species): boolean {
+  const data = getSpeciesData(species);
+
+  return (
+    data.types.includes(Types.Flying) ||
+    data.abilities.includes(Abilities.Levitate) ||
+    (data.hiddenAbilities ?? []).includes(Abilities.Levitate)
+  );
 }
 
 export function isBaseForm(species: Species): boolean {

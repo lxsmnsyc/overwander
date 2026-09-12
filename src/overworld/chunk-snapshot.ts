@@ -8,7 +8,13 @@ import {
   spawnRanks,
 } from '../data/biome';
 import type { SpawnRarityGroups } from '../data/biome';
-import { SPECIES_DAY_WEIGHT_BOOST, getFeaturedFamily, getShoreForm, swims } from '../data/species';
+import {
+  SPECIES_DAY_WEIGHT_BOOST,
+  floats,
+  getFeaturedFamily,
+  getShoreForm,
+  swims,
+} from '../data/species';
 import { TimeOfDay, getTimeOfDay, isWaterBiome } from '../data/ids/biome';
 import type { Items } from '../data/ids/items';
 import type { ItemStack } from '../data/overworld/item-pool';
@@ -463,22 +469,23 @@ export default class ChunkSnapshot {
         // are, and that is the whole reason to leave
         (cell) => !occupied.has(cell) && !this.chunk.isTownCell(cell),
       );
-      // Where anything may stand, and where only a swimmer may.
+      // Where anything may stand, and where only what swims or flies
+      // may.
       //
       // A water country was given a pool written for water, so
       // everything in it belongs on its own sea. A lake or a river
       // running through dry country is the other case: the pool there
       // was written for the land around it, and a Rhyhorn in the
       // middle of a pond is that pool answering a question nobody
-      // asked it
+      // asked it. A Zubat over the same pond is not standing in it
       const biomes = this.chunk.getCellBiomes();
       const standing: number[] = [];
-      const swimming: number[] = [];
+      const over: number[] = [];
 
       for (const cell of free) {
-        const afloat = this.chunk.getCellRole(cell) === 'water' && !isWaterBiome(biomes[cell]);
+        const water = this.chunk.getCellRole(cell) === 'water' && !isWaterBiome(biomes[cell]);
 
-        (afloat ? swimming : standing).push(cell);
+        (water ? over : standing).push(cell);
       }
 
       // The portal's keeper rolls before the pool does, so it is the
@@ -495,7 +502,7 @@ export default class ChunkSnapshot {
           const spawn: Spawn = [Species.Porygon, this.rng.int32(), this.rng.int32()];
           const cell = beside[Math.floor(this.rng.random() * beside.length)];
 
-          for (const cells of [standing, swimming]) {
+          for (const cells of [standing, over]) {
             const taken = cells.indexOf(cell);
 
             if (taken >= 0) {
@@ -509,7 +516,7 @@ export default class ChunkSnapshot {
 
       // The keeper counts against the window, so a portal chunk never
       // publishes more rolls than any other
-      for (let i = spawns.length; i < count && standing.length + swimming.length > 0; i++) {
+      for (let i = spawns.length; i < count && standing.length + over.length > 0; i++) {
         const rolled = pickSpawn(pool, () => this.rng.random());
 
         if (rolled == null) {
@@ -527,7 +534,8 @@ export default class ChunkSnapshot {
         const roll = this.rng.random();
         // Drawn over every cell the species could take at once, so a
         // swimmer is no likelier to pick the water than the shore
-        const open = standing.length + (swims(species) ? swimming.length : 0);
+        const afloat = swims(species) || floats(species);
+        const open = standing.length + (afloat ? over.length : 0);
 
         // Rolled by the country and refused by the ground: nothing of
         // this one is published, and the window is simply one lighter
@@ -537,7 +545,7 @@ export default class ChunkSnapshot {
 
         const at = Math.floor(roll * open);
         const [cell] =
-          at < standing.length ? standing.splice(at, 1) : swimming.splice(at - standing.length, 1);
+          at < standing.length ? standing.splice(at, 1) : over.splice(at - standing.length, 1);
 
         this.cells[cell] = spawn;
         spawns.push(spawn);

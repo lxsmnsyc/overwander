@@ -54,6 +54,7 @@ import EggGroups from '../../src/data/ids/egg-groups';
 import { Genders, Species } from '../../src/data/ids/species';
 import {
   SPECIES_DAY_HIDDEN_ABILITY_BOOST,
+  floats,
   getBaseSpecies,
   getRegisteredSpecies,
   getSpeciesAbilityPools,
@@ -4118,16 +4119,17 @@ describe('chunk snapshot', () => {
     }
   });
 
-  it('leaves a lake in dry country to the things that swim in it', () => {
+  it('leaves a lake in dry country to what swims in it or flies over it', () => {
     const world = new World('overworld');
     const NOON = 12 * 60 * 60 * 1000;
     let checked = 0;
+    let airborne = 0;
 
     // A Rhyhorn standing in the middle of a pond is the country's pool
     // answering a question nobody asked it. A country that is itself
     // water is not asked: everything in its pool was chosen knowing so
-    for (let x = -12; x < 12 && checked < 24; x++) {
-      for (let y = -12; y < 12 && checked < 24; y++) {
+    for (let x = -12; x < 12; x++) {
+      for (let y = -12; y < 12; y++) {
         const chunk = world.getChunk(x, y);
         const biomes = chunk.getCellBiomes();
         const snapshot = new ChunkSnapshot(chunk, NOON);
@@ -4138,11 +4140,17 @@ describe('chunk snapshot', () => {
             continue;
           }
           checked++;
-          expect(swims(spawn[0])).toBe(true);
+          expect(swims(spawn[0]) || floats(spawn[0])).toBe(true);
+          if (!swims(spawn[0])) {
+            airborne++;
+          }
         }
       }
     }
     expect(checked).toBeGreaterThan(0);
+    // And the water is not the swimmers' alone: a pond with nothing
+    // over it would mean the rule was written and never reached
+    expect(airborne).toBeGreaterThan(0);
   });
 
   it('places fixtures right up to the chunk edge, leaving no lattice of bare corridors', () => {

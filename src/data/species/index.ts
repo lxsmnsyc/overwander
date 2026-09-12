@@ -23,6 +23,7 @@ export {
   getWornForms,
   isWornForm,
   getTeachableMoves,
+  floats,
   isBaseForm,
   swims,
 } from './__create';

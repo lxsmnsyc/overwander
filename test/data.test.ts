@@ -317,9 +317,11 @@ import {
   getWornForms,
   isBaseForm,
   isFeaturedSpecies,
+  floats,
   meetsEvolutionCriteria,
   registerSpecies,
   settleHandover,
+  swims,
 } from '../src/data/species';
 import { registerSpecies as registerSpeciesData } from '../src/data/species/__create';
 import Awards, {
@@ -1010,6 +1012,33 @@ describe('the unowns', () => {
     for (const species of UNOWN_FORMS) {
       expect(hatchable.has(species)).toBe(false);
     }
+  });
+});
+
+describe('what a pond is open to', () => {
+  it('counts a swimmer by its type', () => {
+    expect(swims(Species.Magikarp)).toBe(true);
+    expect(swims(Species.Rhyhorn)).toBe(false);
+  });
+
+  it('counts anything in the air as over the water rather than in it', () => {
+    // A Flying type is off the ground whether or not it is much of a
+    // flier, which is the same rule that gives it its Ground immunity
+    expect(floats(Species.Pidgey)).toBe(true);
+    expect(floats(Species.Hoppip)).toBe(true);
+    expect(floats(Species.Doduo)).toBe(true);
+    // And so is a hoverer, read off its own abilities
+    expect(floats(Species.Koffing)).toBe(true);
+    // What the rule keeps out of the pond
+    expect(floats(Species.Rhyhorn)).toBe(false);
+    expect(floats(Species.Magikarp)).toBe(false);
+  });
+
+  it('reads each stage on its own, rather than the whole line', () => {
+    // Off the species' own abilities and not the walk up its chain, so
+    // a line whose stages differ is answered a stage at a time
+    expect(floats(Species.Gastly)).toBe(true);
+    expect(floats(Species.Magnemite)).toBe(false);
   });
 });
 

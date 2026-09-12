@@ -5,6 +5,7 @@ import World from '../../overworld/world';
 import { CHUNK_CELLS } from '../../overworld/chunk';
 import { readGround } from '../../overworld/ground';
 import { isRoadAt, isTownAt } from '../../overworld/town';
+import { isRouteAt } from '../../overworld/route';
 import type Biome from '../../data/ids/biome';
 
 /**
@@ -35,6 +36,9 @@ const TOWN: [number, number, number] = [214, 196, 164];
 
 /** A town's streets, darker than the ground they run over */
 const ROAD: [number, number, number] = [150, 122, 88];
+
+/** And the roads between towns, which are the same paving out in the open */
+const ROUTE: [number, number, number] = [178, 96, 60];
 
 /** How the chunk grid is drawn over it */
 const GRID_COLOR = 'rgba(255, 255, 255, 0.25)';
@@ -72,6 +76,7 @@ export default function WorldDemo(): JSX.Element {
   const [top, setTop] = createSignal(-SPAN / 2);
   const [zoom, setZoom] = createSignal(1);
   const [grid, setGrid] = createSignal(true);
+  const [roads, setRoads] = createSignal(true);
   const [drawn, setDrawn] = createSignal(0);
   const [under, setUnder] = createSignal<{ x: number; y: number; biome: Biome } | null>(null);
   let canvas: HTMLCanvasElement | undefined;
@@ -82,6 +87,7 @@ export default function WorldDemo(): JSX.Element {
     const x0 = left();
     const y0 = top();
     const showing = grid();
+    const paved = roads();
     const surface = canvas;
 
     if (surface == null) {
@@ -110,6 +116,10 @@ export default function WorldDemo(): JSX.Element {
 
           if (isTownAt(world, x0 + x, y0 + y) && role === 'ground') {
             shade = isRoadAt(world, x0 + x, y0 + y) ? ROAD : TOWN;
+          } else if (paved && isRouteAt(world, x0 + x, y0 + y)) {
+            // Drawn over whatever it crosses, which is what levelling
+            // the ground would come to: a bridge, or a cutting
+            shade = ROUTE;
           } else if (role !== 'wall') {
             shade = channels(BIOME_COLORS[biome]).map((one) =>
               role === 'water' ? Math.round(one * WATER_SHADE) : one,
@@ -182,8 +192,8 @@ export default function WorldDemo(): JSX.Element {
     <div class="flex flex-col gap-3 p-3">
       <Meta>
         One pixel is one cell of the world. Water is its country's own colour, darkened, rock is
-        grey and a town is pale. The chunk grid is drawn over the top, and nothing in the ground
-        lines up with it.
+        grey, a town is pale and the roads between towns are rust. The chunk grid is drawn over the
+        top, and nothing in the ground lines up with it.
       </Meta>
       <Row>
         <Button
@@ -242,6 +252,13 @@ export default function WorldDemo(): JSX.Element {
           checked={grid()}
           onChange={(checked) => {
             setGrid(checked);
+          }}
+        />
+        <Switch
+          label="Roads"
+          checked={roads()}
+          onChange={(checked) => {
+            setRoads(checked);
           }}
         />
         <Button

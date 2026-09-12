@@ -21,11 +21,20 @@ export const enum Effect {
   ShinySparkle = 0,
   /** A party handed back whole, at the counter it was handed over at */
   NurseHeal = 1,
+  /** One rock of a thrown ball, played once for every shake it takes */
+  BallShake = 2,
+  /** The ball opening again: what was in it is still standing there */
+  CatchFailed = 3,
+  /** Something leaving the encounter, whichever end of it walked off */
+  Flight = 4,
 }
 
 const FILES: Record<Effect, string> = {
   [Effect.ShinySparkle]: '/sounds/effects/shiny_sparkle.wav',
   [Effect.NurseHeal]: '/sounds/effects/nurse_heal.wav',
+  [Effect.BallShake]: '/sounds/effects/ball_shake.wav',
+  [Effect.CatchFailed]: '/sounds/effects/catch_failed.wav',
+  [Effect.Flight]: '/sounds/effects/flight.wav',
 };
 
 /**

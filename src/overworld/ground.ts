@@ -1,8 +1,8 @@
-import type Biome from '../data/ids/biome';
-import { isOpenSea, isWaterBiome } from '../data/ids/biome';
+import Biome, { isOpenSea, isWaterBiome } from '../data/ids/biome';
 import { STONE_FREQUENCY, isCaveFloor, isRock, isWaterAt, rockLevel } from './fields';
-import { ORTHOGONAL } from './grid';
-import { isRoadAt, isTownAt } from './town';
+import { ORTHOGONAL, SQUARES, SURROUNDING } from './grid';
+import { isTownAt } from './town';
+import { levelAt } from './terrace';
 import type World from './world';
 import { Depth } from './depth';
 
@@ -20,36 +20,24 @@ import { Depth } from './depth';
  * clients standing either side of a border draw the same shore.
  */
 
+/** Rock is a cave's alone: above ground nothing is walled off. */
 export type GroundRole = 'ground' | 'water' | 'wall';
 
 /**
- * How far under the rock level the ground is still shelf: the lighter
- * tiles the deep is drawn to meet, which is why they gather round the
- * outcrops rather than sitting in patches of their own
+ * How far under the rock level the water is still shelf: the lighter
+ * tiles the deep is drawn to meet, so they gather where the stone is
+ * about to break the surface rather than sitting in patches of their
+ * own
  */
 const SHELF_REACH = 0.1;
 
 /**
- * How near the rock level a cell has to be to count as a gap in an
- * outcrop rather than as open country beside one. The field is smooth,
- * so a cell with rock on all four sides is all but at the level
- * itself; the reach is what keeps the test off the other 99 cells in
- * a hundred
+ * Whether the rock stands here, as far as anything above ground is
+ * concerned: the stone field breaking the surface somewhere nobody
+ * has built. Nothing is walled off by it any more, so this is only
+ * asked about where a hillside is, which is where a cave has a way in
  */
-const HOLE_REACH = 0.08;
-
-/**
- * How big a hollow in the rock may be before it is country rather
- * than a hole. A pocket this size is a few cells nobody can reach;
- * anything larger is a valley with a way into it somewhere
- */
-export const POCKET_LIMIT = 12;
-
-/**
- * Whether the rock stands here, before the pockets are filled. A town
- * has levelled its own ground, so nothing walls a cell inside one
- */
-function isRawWall(world: World, x: number, y: number): boolean {
+export function isHillside(world: World, x: number, y: number): boolean {
   const biome = world.getCellBiome(x, y);
 
   if (!isOpenSea(biome) && isTownAt(world, x, y)) {
@@ -58,58 +46,171 @@ function isRawWall(world: World, x: number, y: number): boolean {
   return isRock(world, x, y, biome);
 }
 
+/** How many columns of one answer are kept before the lot is dropped */
+const KEPT = 1 << 11;
+
 /**
- * Whether the rock has closed round this cell.
+ * The same rule, remembering what it has answered for each world.
  *
- * A hole in an outcrop is worse than the outcrop: nothing can walk
- * into it, and a spawn that lands there is a spawn nobody reaches. It
- * is asked of the world rather than of the chunk, so two chunks
- * sharing a hole fill it the same way, and it is asked in three steps,
- * cheapest first: the field has to be near the rock level here, the
- * rock has to be on two sides at least, and only then is the hollow
- * walked to see whether it runs anywhere
+ * The water rules below read one another across four neighbours and
+ * nine cells at a time, so one reading of one cell is thousands of the
+ * cheapest one without this. Held against the world, so a world nobody
+ * is standing in is collected with its answers
  */
-function isPocket(world: World, x: number, y: number, biome: Biome): boolean {
-  if (
-    world.stone.noise(x * STONE_FREQUENCY, y * STONE_FREQUENCY) <=
-    rockLevel(biome) - HOLE_REACH
-  ) {
-    return false;
-  }
+function remembered(
+  read: (world: World, x: number, y: number) => boolean,
+): (world: World, x: number, y: number) => boolean {
+  const held = new WeakMap<World, Map<number, Map<number, boolean>>>();
 
-  let walls = 0;
+  return (world, x, y) => {
+    let kept = held.get(world);
 
-  for (const [dx, dy] of ORTHOGONAL) {
-    if (isRawWall(world, x + dx, y + dy)) {
-      walls += 1;
+    if (kept == null) {
+      kept = new Map<number, Map<number, boolean>>();
+      held.set(world, kept);
     }
-  }
-  if (walls < 2) {
+    let column = kept.get(x);
+
+    if (column == null) {
+      if (kept.size >= KEPT) {
+        kept.clear();
+      }
+      column = new Map<number, boolean>();
+      kept.set(x, column);
+    }
+    const known = column.get(y);
+
+    if (known != null) {
+      return known;
+    }
+    const answer = read(world, x, y);
+
+    column.set(y, answer);
+    return answer;
+  };
+}
+
+/**
+ * Whether the fields put water here at all: water nobody has built on
+ * that is not about to run into water of another kind.
+ *
+ * A volcano's water is lava, and lava reaching into the lake next door
+ * reads as one pool of two liquids. So lava dries wherever the volcano
+ * ends within a cell, which leaves bare ground between the crater and
+ * whatever is beyond it. Only the lava is held back: water on the far
+ * side of the border can then never be touching any, and a cell that
+ * is not in a volcano pays nothing for the rule
+ */
+const isWetField = remembered((world: World, x: number, y: number): boolean => {
+  const biome = world.getCellBiome(x, y);
+
+  // Cheapest first, and asked of several cells for every one the board
+  // draws: the water is a sample or two, the town is a search of the
+  // region round it, and the border is eight more readings of the
+  // country
+  if (!isWaterAt(world, x, y, biome)) {
     return false;
   }
+  if (!isOpenSea(biome) && isTownAt(world, x, y)) {
+    return false;
+  }
+  if (biome !== Biome.Volcano) {
+    return true;
+  }
+  return !SURROUNDING.some(([dx, dy]) => world.getCellBiome(x + dx, y + dy) !== Biome.Volcano);
+});
 
-  const seen = new Set([`${x},${y}`]);
-  const queue: [number, number][] = [[x, y]];
-
-  for (let at = 0; at < queue.length; at++) {
-    const [px, py] = queue[at];
-
-    for (const [dx, dy] of ORTHOGONAL) {
-      const nx = px + dx;
-      const ny = py + dy;
-      const key = `${nx},${ny}`;
-
-      if (seen.has(key) || isRawWall(world, nx, ny)) {
-        continue;
-      }
-      if (seen.size >= POCKET_LIMIT) {
+/** Whether all four cells of one 2x2 square answer to something. */
+function fitsSquare(ox: number, oy: number, is: (x: number, y: number) => boolean): boolean {
+  for (let dy = 0; dy < 2; dy += 1) {
+    for (let dx = 0; dx < 2; dx += 1) {
+      if (!is(ox + dx, oy + dy)) {
         return false;
       }
-      seen.add(key);
-      queue.push([nx, ny]);
     }
   }
   return true;
+}
+
+/**
+ * Whether a 2x2 block of water fits somewhere over this cell, as the
+ * field alone sees it. What the lip rule asks about the cell below a
+ * step, which cannot ask the finished answer without asking about
+ * itself
+ */
+function isBroadField(world: World, x: number, y: number): boolean {
+  return SQUARES.some(([ox, oy]) =>
+    fitsSquare(ox, oy, (cx, cy) => isWetField(world, x + cx, y + cy)),
+  );
+}
+
+/**
+ * Whether the water here hangs over a cliff, read against whatever the
+ * caller counts as water below the step.
+ *
+ * A pool's surface is level, so it cannot sit at the lip of a step
+ * with open country below it: drawn there, the water would end in
+ * mid-air and the cliff would be wearing it as a hat. Where the ground
+ * below is water too, the two are one fall and the board runs them
+ * together, so only a dry drop dries the lip up
+ */
+function spills(
+  world: World,
+  x: number,
+  y: number,
+  below: (cx: number, cy: number) => boolean,
+): boolean {
+  const here = levelAt(world, x, y);
+
+  return ORTHOGONAL.some(
+    ([dx, dy]) => levelAt(world, x + dx, y + dy) < here && !below(x + dx, y + dy),
+  );
+}
+
+/**
+ * Whether the fields would leave water here, read one step short of
+ * the answer: the lip rule against the water the fields alone put
+ * below the step.
+ *
+ * Two readings of the same rule rather than one because the finished
+ * answer cannot be asked of the cell below without asking about this
+ * cell in turn. This is the rougher of the two, and it is what the
+ * finished one reads below a step
+ */
+const poolsAsField = remembered(
+  (world: World, x: number, y: number): boolean =>
+    isWetField(world, x, y) &&
+    !spills(world, x, y, (cx, cy) => isWetField(world, cx, cy) && isBroadField(world, cx, cy)),
+);
+
+/** Whether a 2x2 block of that rougher water fits over this cell */
+function isBroadPool(world: World, x: number, y: number): boolean {
+  return SQUARES.some(([ox, oy]) =>
+    fitsSquare(ox, oy, (cx, cy) => poolsAsField(world, x + cx, y + cy)),
+  );
+}
+
+/**
+ * Whether water may stand on this cell: the fields put it here, and
+ * the step below it, if there is one, falls into more water
+ */
+const pools = remembered(
+  (world: World, x: number, y: number): boolean =>
+    isWetField(world, x, y) &&
+    !spills(world, x, y, (cx, cy) => poolsAsField(world, cx, cy) && isBroadPool(world, cx, cy)),
+);
+
+/**
+ * Whether water covers this cell.
+ *
+ * Water is laid in 2x2 blocks rather than cell by cell: the shore is
+ * drawn as a ring of edges and corners, and a single cell asks for
+ * all four corners at once. Read as blocks, every water cell has three
+ * others square with it whatever else has dried up, which drying cells
+ * one at a time and measuring afterwards cannot promise
+ */
+function isWater(world: World, x: number, y: number): boolean {
+  return SQUARES.some(([ox, oy]) => fitsSquare(ox, oy, (cx, cy) => pools(world, x + cx, y + cy)));
 }
 
 /**
@@ -132,14 +233,13 @@ export function readGround(world: World, x: number, y: number): { biome: Biome; 
   if (!isOpenSea(biome) && isTownAt(world, x, y)) {
     return { biome, role: 'ground' };
   }
-  if (isRock(world, x, y, biome)) {
-    return { biome, role: 'wall' };
-  }
-  if (isWaterAt(world, x, y, biome)) {
+  if (isWater(world, x, y)) {
     return { biome, role: 'water' };
   }
-  // Water in a hollow is left alone: it is not something to pave over
-  return { biome, role: isPocket(world, x, y, biome) ? 'wall' : 'ground' };
+  // Everything else is walked on. The stone field still says where a
+  // hillside is, for the caves and for the shelf, but it walls nothing
+  // off up here: what used to be an outcrop is open country
+  return { biome, role: 'ground' };
 }
 
 /** What a player finds underfoot at one cell */
@@ -149,8 +249,7 @@ export function roleAt(world: World, x: number, y: number): GroundRole {
 
 /**
  * Whether this water is drawn with the lighter shelf tiles: the water
- * at the foot of a wall, where the rip's own art fades into ground,
- * and the water shallow enough for the shelf to show through.
+ * shallow enough for the shoal under it to show through.
  *
  * Purely a look. A shelf cell is swum exactly like the deep beside it
  */
@@ -163,92 +262,9 @@ export function isShelfAt(world: World, x: number, y: number): boolean {
   if (role !== 'water' || !isWaterBiome(biome)) {
     return false;
   }
-  // The skirt: a wall's fringe is painted fading into ground, so the
-  // ring around every outcrop is drawn as shelf
-  for (const [dx, dy] of ORTHOGONAL) {
-    if (roleAt(world, x + dx, y + dy) === 'wall') {
-      return true;
-    }
-  }
+  // Where the stone field is close to breaking the surface, which is
+  // a shoal rather than an island now that nothing is walled off
   return (
     world.stone.noise(x * STONE_FREQUENCY, y * STONE_FREQUENCY) > rockLevel(biome) - SHELF_REACH
   );
-}
-
-/**
- * The ground a board draws, read once for the window it shows.
- *
- * The window is a square of world cells with an apron round it, and
- * nothing about it is aligned to a chunk: the board follows the
- * player rather than the grid, so its corner is wherever they are
- * standing. Read once because a frame asks every cell what it is
- * several times over, and the fields do not change between frames
- */
-export interface BoardGround {
-  /** How far past the board the window reaches, in cells */
-  margin: number;
-  role: (x: number, y: number) => GroundRole;
-  biome: (x: number, y: number) => Biome;
-  /** Whether the water here is drawn with the lighter shelf tiles */
-  shelf: (x: number, y: number) => boolean;
-  /**
-   * Whether a town's street runs through here. It is drawn over the
-   * ground rather than being a kind of ground, so nothing about
-   * walking, spawning or building reads it
-   */
-  road: (x: number, y: number) => boolean;
-}
-
-const ROLE_ORDER: GroundRole[] = ['ground', 'water', 'wall'];
-
-/**
- * The ground under a board window, in board coordinates: `0, 0` is
- * the cell at `originX, originY` of the world
- */
-export function readBoardGround(
-  world: World,
-  originX: number,
-  originY: number,
-  margin: number,
-  cells: number,
-): BoardGround {
-  const span = cells + margin * 2;
-  const roles = new Uint8Array(span * span);
-  const biomes = new Uint8Array(span * span);
-  const shelves = new Uint8Array(span * span);
-  const roads = new Uint8Array(span * span);
-  const inside = (x: number, y: number): boolean =>
-    x >= -margin && y >= -margin && x < cells + margin && y < cells + margin;
-  const key = (x: number, y: number): number => (y + margin) * span + (x + margin);
-
-  for (let y = -margin; y < cells + margin; y++) {
-    for (let x = -margin; x < cells + margin; x++) {
-      const { biome, role } = readGround(world, originX + x, originY + y);
-
-      roles[key(x, y)] = ROLE_ORDER.indexOf(role);
-      biomes[key(x, y)] = biome;
-      roads[key(x, y)] = isRoadAt(world, originX + x, originY + y) ? 1 : 0;
-    }
-  }
-  for (let y = -margin; y < cells + margin; y++) {
-    for (let x = -margin; x < cells + margin; x++) {
-      if (roles[key(x, y)] === ROLE_ORDER.indexOf('water')) {
-        shelves[key(x, y)] = isShelfAt(world, originX + x, originY + y) ? 1 : 0;
-      }
-    }
-  }
-
-  return {
-    margin,
-    // Past the window the world is asked directly: a frame reaches
-    // one cell further than it draws when it works out an edge
-    role: (x, y) =>
-      inside(x, y) ? ROLE_ORDER[roles[key(x, y)]] : roleAt(world, originX + x, originY + y),
-    biome: (x, y) =>
-      inside(x, y) ? biomes[key(x, y)] : world.getCellBiome(originX + x, originY + y),
-    shelf: (x, y) =>
-      inside(x, y) ? shelves[key(x, y)] === 1 : isShelfAt(world, originX + x, originY + y),
-    road: (x, y) =>
-      inside(x, y) ? roads[key(x, y)] === 1 : isRoadAt(world, originX + x, originY + y),
-  };
 }

@@ -1,5 +1,5 @@
 import { CHUNK_CELLS, ORTHOGONAL, worldCell } from './grid';
-import { roleAt } from './ground';
+import { isHillside, roleAt } from './ground';
 import { portalCellIn } from './town';
 import { isCaveFloor, isRock } from './fields';
 import type Biome from '../data/ids/biome';
@@ -131,12 +131,12 @@ export default function caveMouth(world: World, chunkX: number, chunkY: number):
       // Both are asked, since the chambers are the rock but the veins
       // are not, and a vein under open ground is no hillside.
       //
-      // `roleAt` last: a town has levelled whatever the fields left it,
-      // so rock inside one is not a hillside at all
+      // The hillside last: a town has levelled whatever the fields
+      // left it, so rock inside one is no hillside at all
       if (
         isCaveFloor(above, intoWorldX, intoWorldY, intoBiome) &&
         roleAt(above, x, y) === 'ground' &&
-        roleAt(above, intoWorldX, intoWorldY) === 'wall'
+        isHillside(above, intoWorldX, intoWorldY)
       ) {
         mouth = { surface: cell, cave: into };
         break;

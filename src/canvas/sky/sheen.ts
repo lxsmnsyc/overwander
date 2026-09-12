@@ -1,5 +1,5 @@
 import Weather from '../../data/overworld/weather';
-import type QuadBatch from '../gl/quad-batch';
+import type { Painter } from '../gl/quad-batch';
 import { BLENDS, MODES, type WashMode } from './wash';
 import { sheetOf, tintOf } from './field';
 
@@ -193,7 +193,7 @@ export function paintSheen(
 }
 
 export function batchSheen(
-  batch: QuadBatch,
+  batch: Painter,
   width: number,
   height: number,
   sheen: Sheen,

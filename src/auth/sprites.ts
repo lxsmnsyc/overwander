@@ -8,14 +8,6 @@ import type { Drawing } from '../server/sprites/files';
 import { requireDevelopment } from '../server/sprites/files';
 import type { PokengineGrid, PokengineResult } from '../server/sprites/pokengine';
 import processPokengine, { parseOrder } from '../server/sprites/pokengine';
-import type { GraftResult } from '../server/sprites/graft';
-import graftWall, { parseBiomes } from '../server/sprites/graft';
-import type { RecolorResult } from '../server/sprites/recolor';
-import recolorTileset, { parseSwaps } from '../server/sprites/recolor';
-import type { TerrainBlock, TilesetResult, TilesetSheet } from '../server/sprites/tileset';
-import processTileset, { parseSpeeds, parseTerrains } from '../server/sprites/tileset';
-import type { DrawnRole } from '../data/constants/tileset-rip';
-import { DRAWN_ROLES } from '../data/constants/tileset-rip';
 
 /**
  * What the sprite processor asks the server to do.
@@ -33,36 +25,11 @@ import { DRAWN_ROLES } from '../data/constants/tileset-rip';
  * person at the keyboard owns those files already.
  */
 
-export type {
-  Drawing,
-  PokengineGrid,
-  PokengineResult,
-  DrawnRole,
-  ProcessResult,
-  RecolorResult,
-  TerrainBlock,
-  TilesetResult,
-  TilesetSheet,
-  UploadedImage,
-};
+export type { Drawing, PokengineGrid, PokengineResult, ProcessResult, UploadedImage };
 
 /** Only a development build can process sprites at all. */
 export function canProcessSprites(): boolean {
   return import.meta.env.DEV;
-}
-
-/** Which terrain the form named for each role, where it named one. */
-function drawnFrom(form: FormData): Partial<Record<DrawnRole, string>> {
-  const draws: Partial<Record<DrawnRole, string>> = {};
-
-  for (const role of DRAWN_ROLES) {
-    const name = String(form.get(`draws-${role}`) ?? '').trim();
-
-    if (name.length > 0) {
-      draws[role] = name;
-    }
-  }
-  return draws;
 }
 
 /** A checkbox that was never ticked is not in the form at all. */
@@ -99,60 +66,6 @@ export const packPokengine = action(async (form: FormData): Promise<PokengineRes
     credit: String(form.get('credit') ?? ''),
   });
 }, 'sprites/pokengine');
-
-/**
- * A dungeon tileset rip into `public/sprites/biome/{biome}`.
- *
- * The sheet says where its own table, legend and palettes are, so the
- * only things asked for here are the ones written on it in English:
- * which column is which terrain, and how many drawings of each it
- * holds
- */
-export const packBiome = action(async (form: FormData): Promise<TilesetResult> => {
-  'use server';
-  requireDevelopment();
-
-  const picked = asFile(form.get('sheet'), 'sheet');
-
-  return processTileset(new Uint8Array(await picked.arrayBuffer()), {
-    biome: Number.parseInt(String(form.get('biome') ?? ''), 10),
-    terrains: parseTerrains(String(form.get('terrains') ?? '')),
-    speeds: parseSpeeds(String(form.get('speeds') ?? '')),
-    // Blank means the first terrain of that role, which is what every
-    // sheet packed before there was a choice took
-    draws: drawnFrom(form),
-  });
-}, 'sprites/biome');
-
-/**
- * A packed biome, palette-swapped into another biome's folder. No
- * file rides along: the source is what an earlier pack wrote, and the
- * map is typed in — run it empty first to be told the sheet's colours
- */
-export const recolorBiome = action(async (form: FormData): Promise<RecolorResult> => {
-  'use server';
-  requireDevelopment();
-
-  return recolorTileset({
-    source: Number.parseInt(String(form.get('source') ?? ''), 10),
-    biome: Number.parseInt(String(form.get('biome') ?? ''), 10),
-    swaps: parseSwaps(String(form.get('swaps') ?? '')),
-  });
-}, 'sprites/recolor');
-
-/**
- * One packed biome's wall written over another's. No file rides along:
- * both sheets are what earlier packs wrote
- */
-export const graftBiomeWall = action(async (form: FormData): Promise<GraftResult> => {
-  'use server';
-  requireDevelopment();
-
-  return graftWall({
-    from: Number.parseInt(String(form.get('from') ?? ''), 10),
-    biomes: parseBiomes(String(form.get('biomes') ?? '')),
-  });
-}, 'sprites/graft');
 
 /** Loose images into one sheet under `public/sprites/extras`. */
 export const packExtras = action(async (form: FormData): Promise<ProcessResult> => {

@@ -106,6 +106,42 @@ const DECORATIONS: Record<Biome, Decoration[]> = {
   [Biome.Beyond]: [],
 };
 
+/**
+ * What stands in the way in each country.
+ *
+ * The rock that used to wall a cell off is a tree now, and a tree is
+ * wrong in a desert or out at sea, so each biome names the tall thing
+ * a blocked cell shows instead
+ */
+const BLOCKERS: Partial<Record<Biome, Decoration>> = {
+  [Biome.DeepOcean]: Decoration.Rock,
+  [Biome.Ocean]: Decoration.Rock,
+  [Biome.CoralReef]: Decoration.Coral,
+  [Biome.PolarOcean]: Decoration.Ice,
+  [Biome.KelpForest]: Decoration.Coral,
+  [Biome.Beach]: Decoration.Palm,
+  [Biome.Desert]: Decoration.Cactus,
+  [Biome.ColdDesert]: Decoration.Boulder,
+  [Biome.Badlands]: Decoration.Boulder,
+  [Biome.Volcano]: Decoration.Boulder,
+  [Biome.Mountain]: Decoration.Boulder,
+  [Biome.AlpineTundra]: Decoration.Boulder,
+  [Biome.Glacier]: Decoration.Ice,
+  [Biome.Tundra]: Decoration.Rock,
+  [Biome.Taiga]: Decoration.Pine,
+  [Biome.MontaneForest]: Decoration.Pine,
+  [Biome.Savanna]: Decoration.Tree,
+  [Biome.Steppe]: Decoration.Rock,
+  [Biome.Shrubland]: Decoration.Shrub,
+  [Biome.Swamp]: Decoration.Stump,
+  [Biome.Bog]: Decoration.Stump,
+};
+
+/** The tall thing standing on a cell nothing can walk through. */
+export function getBlocker(biome: Biome): Decoration {
+  return BLOCKERS[biome] ?? Decoration.Tree;
+}
+
 export function getBiomeDecorations(biome: Biome): Decoration[] {
   return DECORATIONS[biome];
 }

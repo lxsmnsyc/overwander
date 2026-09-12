@@ -14,7 +14,7 @@
  */
 
 import { WORLD_MAX } from '../overworld/world';
-import type QuadBatch from './gl/quad-batch';
+import type { Painter } from './gl/quad-batch';
 import { boardView } from './board';
 
 const HOUR = 3_600_000;
@@ -331,7 +331,7 @@ export function paintAmbient(
  * canvas. Answers whether it wrote anything
  */
 export function batchAmbient(
-  batch: QuadBatch,
+  batch: Painter,
   width: number,
   height: number,
   localTime: number,

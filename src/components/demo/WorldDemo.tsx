@@ -6,6 +6,7 @@ import { CHUNK_CELLS } from '../../overworld/chunk';
 import { readGround } from '../../overworld/ground';
 import { isRoadAt, isTownAt } from '../../overworld/town';
 import { isRouteAt } from '../../overworld/route';
+import { TERRACE_TOP, levelAt } from '../../overworld/terrace';
 import type Biome from '../../data/ids/biome';
 
 /**
@@ -39,6 +40,12 @@ const ROAD: [number, number, number] = [150, 122, 88];
 
 /** And the roads between towns, which are the same paving out in the open */
 const ROUTE: [number, number, number] = [178, 96, 60];
+
+/** The face between two levels, which is where a cliff would be drawn */
+const FACE: [number, number, number] = [24, 20, 18];
+
+/** How much darker the lowest level is drawn than the highest */
+const LEVEL_SHADE = 0.55;
 
 /** How the chunk grid is drawn over it */
 const GRID_COLOR = 'rgba(255, 255, 255, 0.25)';
@@ -77,6 +84,7 @@ export default function WorldDemo(): JSX.Element {
   const [zoom, setZoom] = createSignal(1);
   const [grid, setGrid] = createSignal(true);
   const [roads, setRoads] = createSignal(true);
+  const [levels, setLevels] = createSignal(true);
   const [drawn, setDrawn] = createSignal(0);
   const [under, setUnder] = createSignal<{ x: number; y: number; biome: Biome } | null>(null);
   let canvas: HTMLCanvasElement | undefined;
@@ -88,6 +96,7 @@ export default function WorldDemo(): JSX.Element {
     const y0 = top();
     const showing = grid();
     const paved = roads();
+    const stepped = levels();
     const surface = canvas;
 
     if (surface == null) {
@@ -124,6 +133,25 @@ export default function WorldDemo(): JSX.Element {
             shade = channels(BIOME_COLORS[biome]).map((one) =>
               role === 'water' ? Math.round(one * WATER_SHADE) : one,
             );
+          }
+          if (stepped) {
+            const level = levelAt(world, x0 + x, y0 + y);
+            // Lit by how high it stands, and the step between two
+            // levels drawn dark: that line is where a cliff goes
+            const lit = 1 - LEVEL_SHADE + (level / TERRACE_TOP) * LEVEL_SHADE;
+
+            shade = shade.map((one) => Math.min(0xff, Math.round(one * lit)));
+            for (const [dx, dy] of [
+              [1, 0],
+              [-1, 0],
+              [0, 1],
+              [0, -1],
+            ]) {
+              if (levelAt(world, x0 + x + dx, y0 + y + dy) > level) {
+                shade = FACE;
+                break;
+              }
+            }
           }
 
           // One cell is `scale` pixels square, so the picture holds
@@ -261,6 +289,13 @@ export default function WorldDemo(): JSX.Element {
             setRoads(checked);
           }}
         />
+        <Switch
+          label="Levels"
+          checked={levels()}
+          onChange={(checked) => {
+            setLevels(checked);
+          }}
+        />
         <Button
           onClick={() => {
             setSeed(`${DEFAULT_SEED}-${Math.floor(Math.random() * 1000)}`);
@@ -280,7 +315,8 @@ export default function WorldDemo(): JSX.Element {
       <Show when={under()} keyed>
         {(spot) => (
           <Note>
-            Cell {spot.x}, {spot.y} is {BIOME_NAMES[spot.biome]}, in chunk{' '}
+            Cell {spot.x}, {spot.y} is {BIOME_NAMES[spot.biome]} at level{' '}
+            {levelAt(new World(seed()), spot.x, spot.y)} of {TERRACE_TOP}, in chunk{' '}
             {Math.floor(spot.x / CHUNK_CELLS)}, {Math.floor(spot.y / CHUNK_CELLS)}
           </Note>
         )}

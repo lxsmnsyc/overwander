@@ -317,8 +317,9 @@ export default class Chunk {
   private rockCells: Set<number> | null = null;
 
   /**
-   * The chunk's rock: where the world's stone field comes through the
-   * surface. Nothing may stand in one and nothing walks through one
+   * The chunk's solid rock, which only a cave has: above ground the
+   * stone field walls nothing off. Nothing may stand in one and
+   * nothing walks through one
    */
   getRockCells(): Set<number> {
     this.rockCells ??= this.cellsWhere('wall');

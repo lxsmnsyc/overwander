@@ -4,7 +4,7 @@ import { isOpenSea } from '../../src/data/ids/biome';
 import caveMouth, { caveMouthCellIn, nearestMouth, throughMouth } from '../../src/overworld/cave';
 import { MOUTH_SEARCH } from '../../src/data/overworld/cave';
 import { CHUNK_CELLS, worldCell } from '../../src/overworld/grid';
-import { roleAt } from '../../src/overworld/ground';
+import { isHillside, roleAt } from '../../src/overworld/ground';
 import World, { Depth } from '../../src/overworld/world';
 import registerGameData from '../../src/data';
 
@@ -206,9 +206,12 @@ describe('the caves', () => {
         const caveX = worldCell(x, mouth.cave % CHUNK_CELLS);
         const caveY = worldCell(y, Math.floor(mouth.cave / CHUNK_CELLS));
 
-        // Somewhere to walk up to, cut into rock, and floor behind it
+        // Somewhere to walk up to, cut into a hillside, and floor
+        // behind it. The hillside is walked over rather than walled
+        // off above ground, so it is the stone field that says it is
+        // one
         expect(roleAt(world, surfaceX, surfaceY), `${x}, ${y}`).toBe('ground');
-        expect(roleAt(world, caveX, caveY), `${x}, ${y}`).toBe('wall');
+        expect(isHillside(world, caveX, caveY), `${x}, ${y}`).toBe(true);
         expect(roleAt(cave, caveX, caveY), `${x}, ${y}`).toBe('ground');
         // The two touch, so going under is a step rather than a jump
         expect(Math.abs(surfaceX - caveX) + Math.abs(surfaceY - caveY)).toBe(1);

@@ -12,8 +12,7 @@ import decodePng, { type Image } from '../src/server/sprites/png';
 import apricornTreeSheet, { apricornColour } from '../src/data/overworld/apricorn-tree';
 import berryPlantSheet, { berryPlantName } from '../src/data/overworld/berry-plant';
 import { BIOME_NAMES } from '../src/data/biome/names';
-import Biome, { isOpenSea } from '../src/data/ids/biome';
-import { ALONE, AUTOTILE_COUNT, SURROUNDED } from '../src/data/overworld/autotile';
+import Biome from '../src/data/ids/biome';
 import Landmark, { LANDMARKS, LANDMARK_NAMES } from '../src/data/overworld/landmark';
 import landmarkPicture, {
   LANDMARK_SHEET,
@@ -910,112 +909,6 @@ describe('the family candies that ship', () => {
 
     for (const [family, from, to] of bands) {
       expect(within(hueOf(ballOf(family)), from, to), String(family)).toBe(true);
-    }
-  });
-});
-
-describe('the paths that ship', () => {
-  const ROOT = `${SPRITE_ROOT}/biome`;
-
-  /** The numbers a description carries, read as numbers. */
-  function asNumberArray(value: unknown): number[] {
-    return Array.isArray(value) ? value.map(Number) : [];
-  }
-
-  interface Laid {
-    described: unknown;
-    image: Image;
-    tile: number;
-    variants: number;
-    cases: number[];
-    path: unknown;
-  }
-
-  /** Every country a tileset was packed for. */
-  function countries(): Biome[] {
-    const found: Biome[] = readdirSync(ROOT)
-      .filter((one) => /^\d+$/.test(one))
-      .map(Number);
-
-    return found.sort((one, two) => one - two);
-  }
-
-  function laid(biome: Biome): Laid {
-    const described: unknown = JSON.parse(readFileSync(`${ROOT}/${biome}/data.json`, 'utf8'));
-    const terrains = fieldOf(described, 'terrains');
-
-    return {
-      described,
-      image: decodePng(readFileSync(`${ROOT}/${biome}/image.png`)),
-      tile: Number(fieldOf(described, 'tile')),
-      variants: Number(fieldOf(described, 'variants')),
-      cases: asNumberArray(fieldOf(described, 'cases')),
-      path: (Array.isArray(terrains) ? terrains : []).find(
-        (one) => fieldOf(one, 'name') === 'path',
-      ),
-    };
-  }
-
-  /** Whether one pixel of a case's tile is drawn at all. */
-  function lit(sheet: Laid, row: number, x: number, y: number): boolean {
-    const column = Number(fieldOf(sheet.path, 'column'));
-    const at = ((row * sheet.tile + y) * sheet.image.width + column * sheet.tile + x) * 4;
-
-    return sheet.image.rgba[at + 3] > 0;
-  }
-
-  it('lays one in every country but the open sea', () => {
-    for (const biome of countries()) {
-      const sheet = laid(biome);
-
-      expect(sheet.path == null, BIOME_NAMES[biome]).toBe(isOpenSea(biome));
-    }
-  });
-
-  it('cuts it to the same neighbourhoods as the rest of the sheet', () => {
-    for (const biome of countries().filter((one) => !isOpenSea(one))) {
-      const sheet = laid(biome);
-      const column = Number(fieldOf(sheet.path, 'column'));
-
-      expect(fieldOf(sheet.path, 'role'), BIOME_NAMES[biome]).toBe('path');
-      // A track is earth and does not move, so it cycles no palette
-      expect(fieldOf(sheet.path, 'palette'), BIOME_NAMES[biome]).toBe(-1);
-      expect(fieldOf(sheet.path, 'missing'), BIOME_NAMES[biome]).toEqual([]);
-      expect(sheet.cases, BIOME_NAMES[biome]).toHaveLength(AUTOTILE_COUNT);
-      expect(
-        (column + sheet.variants) * sheet.tile,
-        `${BIOME_NAMES[biome]} runs off its sheet`,
-      ).toBeLessThanOrEqual(sheet.image.width);
-      expect(sheet.image.height, BIOME_NAMES[biome]).toBe(AUTOTILE_COUNT * sheet.tile);
-    }
-  });
-
-  it('drawn over the ground rather than instead of it', () => {
-    for (const biome of countries().filter((one) => !isOpenSea(one))) {
-      const sheet = laid(biome);
-      const alone = sheet.cases.indexOf(ALONE);
-      const surrounded = sheet.cases.indexOf(SURROUNDED);
-      const middle = Math.floor(sheet.tile / 2);
-
-      // A cell in the middle of a street is all track; a cell with
-      // nothing beside it is a patch of one, and its corners are the
-      // country's own ground showing through
-      expect(lit(sheet, surrounded, 0, 0), `${BIOME_NAMES[biome]} surrounded`).toBe(true);
-      expect(lit(sheet, surrounded, middle, middle), `${BIOME_NAMES[biome]} surrounded`).toBe(true);
-      expect(lit(sheet, alone, middle, middle), `${BIOME_NAMES[biome]} alone`).toBe(true);
-      expect(lit(sheet, alone, 0, 0), `${BIOME_NAMES[biome]} alone`).toBe(false);
-    }
-  });
-
-  it('says which country lent the earth and which lent the outline', () => {
-    for (const biome of countries().filter((one) => !isOpenSea(one))) {
-      const sheet = laid(biome);
-      const borrowed = Number(fieldOf(sheet.path, 'borrowed'));
-
-      // Borrowed, because a path is bare earth and no country has any
-      expect([Biome.Steppe, Biome.Mountain], BIOME_NAMES[biome]).toContain(borrowed);
-      expect(fieldOf(sheet.path, 'shaped'), BIOME_NAMES[biome]).toBe(Biome.Grassland);
-      expect(borrowed, `${BIOME_NAMES[biome]} surfaces itself`).not.toBe(biome);
     }
   });
 });

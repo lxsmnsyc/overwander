@@ -31,6 +31,41 @@ export interface QuadSource {
 /** What a sheet can be: the tilesets recolour into canvases. */
 export type QuadSheet = HTMLCanvasElement | HTMLImageElement | ImageBitmap;
 
+/**
+ * What can take the quads: this layer, or the board's own scene.
+ *
+ * The board draws its marks inside a depth-tested scene now, where a
+ * grid line on a cell can be hidden by the cliff in front of it, so
+ * whatever writes a quad is asked for rather than assumed. The
+ * signatures are this class's own
+ */
+export interface Painter {
+  begin: (width: number, height: number, ratio: number) => void;
+  carry: (x: number, y: number, alpha?: number, scale?: number) => void;
+  quad: (
+    sheet: QuadSheet,
+    source: QuadSource,
+    corners: QuadPoint[],
+    alpha?: number,
+    colour?: string,
+    sampling?: QuadSampling,
+    blend?: QuadBlend,
+  ) => void;
+  solid: (colour: string, corners: QuadPoint[], alpha?: number, blend?: QuadBlend) => void;
+  line: (
+    colour: string,
+    from: QuadPoint,
+    to: QuadPoint,
+    width: number,
+    alpha?: number,
+    blend?: QuadBlend,
+  ) => void;
+  outline: (colour: string, corners: QuadPoint[], width: number, alpha?: number) => void;
+  triangle: (colour: string, corners: QuadPoint[], alpha?: number, blend?: QuadBlend) => void;
+  end: () => void;
+  invalidate: (sheet: QuadSheet) => void;
+}
+
 const VERTEX = `#version 300 es
 in vec2 spot;
 in vec2 uv;

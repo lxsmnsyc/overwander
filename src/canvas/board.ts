@@ -358,6 +358,18 @@ export function viewFor(width: number, height: number): BoardView {
 let looking = LAID_BACK;
 
 /**
+ * How high the ground the camera is centred on stands, in board
+ * widths.
+ *
+ * The picture is framed on the player rather than on the board, and
+ * the player climbs: standing two levels up, they would be drawn two
+ * levels up the screen and the country below them would fill the
+ * frame. Taken off every height instead, so the cell they are
+ * standing on is always the middle of the picture whatever level it is
+ */
+let standing = 0;
+
+/**
  * Which way the board is being looked at now. Everything drawn on it
  * that is not a projection — the shadow a thing throws, a lamp's
  * ellipse, whether the weather stands in the world — reads what it
@@ -375,6 +387,20 @@ export function boardView(): BoardView {
  */
 export function setBoardScreen(width: number, height: number): void {
   looking = viewFor(width, height);
+}
+
+/**
+ * Say how high the ground under the camera stands, which is what the
+ * picture is centred on. Called once a frame, before anything is
+ * projected: the board itself has no idea who is standing on it
+ */
+export function setBoardStand(height: number): void {
+  standing = height;
+}
+
+/** And how high it is standing now, for whatever is drawn at the middle */
+export function boardStand(): number {
+  return standing;
 }
 
 /**
@@ -456,7 +482,9 @@ export function projectGround(point: GroundPoint, yaw: Yaw = 0): ProjectedPoint 
  */
 export function projectAir(point: GroundPoint, height: number, yaw: Yaw = 0): ProjectedPoint {
   const { bounds, middle } = looking;
-  const projected = looking.raw(turn(point, yaw), height);
+  // Measured from the ground the camera is centred on rather than from
+  // the board's own floor
+  const projected = looking.raw(turn(point, yaw), height - standing);
   // Drawn toward the middle of the picture by however much the board
   // has given up at this angle. Whatever is standing on it gives up
   // the same, which is why the factor rides home on `scale`: a pokemon
@@ -488,6 +516,90 @@ export function unprojectGround(x: number, y: number, yaw: Yaw = 0): GroundPoint
   // ...and then turned back, since the turn is the first thing the
   // forward transform does and so the last thing this one undoes
   return turn(looking.groundAt(px, py), -yaw);
+}
+
+/**
+ * How much of the depth buffer the board is given. The whole scene is
+ * a couple of board widths deep, so it is scaled to sit well inside
+ * the near and far planes rather than against them: nothing is
+ * clipped, and what is left is precision the board has no use for
+ */
+const DEPTH_RANGE = 0.5;
+
+/**
+ * The board's own projection, as the one matrix a scene wants.
+ *
+ * The picture is drawn twice over: once by the projection above, which
+ * everything not in the scene still reads, and once by the graphics
+ * card. They have to agree exactly, or the grid is ruled somewhere the
+ * ground is not, so this is the transform above written out rather
+ * than a camera placed to look like it.
+ *
+ * It takes a point in **board cells** — across, up and back from the
+ * middle cell — and answers clip space, row by row. The depth it
+ * writes is the distance along the way the camera looks, which is what
+ * makes a cell raised two steps nearer than the flat ground in front
+ * of it
+ */
+export function boardClipMatrix(
+  yaw: Yaw,
+  screen: { width: number; height: number },
+  picture: { x: number; y: number; width: number; height: number },
+): number[] {
+  const { bounds, middle, depth, rise, mode } = looking;
+  const fit = fitAt(yaw);
+  const cell = 1 / BOARD_SPAN;
+  const cos = Math.cos(yaw);
+  const sin = Math.sin(yaw);
+  // No perspective at all on the flat board, which is a divisor of one
+  const lens = mode === '2d' ? 0 : depth / FOCAL;
+  const ax = (2 * picture.width) / (screen.width * bounds.width);
+  const bx = (2 * picture.x) / screen.width - 1;
+  const cx = middle.x * (1 - fit) - bounds.left;
+  const ay = (2 * picture.height) / (screen.height * bounds.height);
+  const by = 1 - (2 * picture.y) / screen.height;
+  const cy = middle.y * (1 - fit) - bounds.top;
+  const over = ax * fit;
+  const along = ax * cx + bx;
+  const up = -ay * fit;
+  const back = by - ay * cy;
+
+  return [
+    (over * cos - along * lens * sin) * cell,
+    0,
+    (-over * sin - along * lens * cos) * cell,
+    along,
+
+    (up * depth - back * lens) * sin * cell,
+    -up * rise * cell,
+    (up * depth - back * lens) * cos * cell,
+    // The ground under the camera, taken off the height the same way
+    // the projection above takes it off
+    back + up * rise * standing,
+
+    -DEPTH_RANGE * rise * sin * cell,
+    -DEPTH_RANGE * depth * cell,
+    -DEPTH_RANGE * rise * cos * cell,
+    0,
+
+    -lens * sin * cell,
+    0,
+    -lens * cos * cell,
+    1,
+  ];
+}
+
+/**
+ * How near the viewer a point of the board is, between -1 at the front
+ * of the scene and 1 at the back. It is the third row of the matrix
+ * above, divided by the fourth, and it is what a mark lying on the
+ * ground is drawn at
+ */
+export function boardClipDepth(matrix: number[], x: number, y: number, z: number): number {
+  const near = matrix[8] * x + matrix[9] * y + matrix[10] * z + matrix[11];
+  const away = matrix[12] * x + matrix[13] * y + matrix[14] * z + matrix[15];
+
+  return away === 0 ? 0 : near / away;
 }
 
 /**
@@ -556,15 +668,16 @@ export function boardCellOf(index: number): BoardCell {
 /**
  * The middle of a board cell, as a fraction of the picture
  */
-export function projectBoardCell(cell: BoardCell, yaw: Yaw = 0): ProjectedPoint {
+export function projectBoardCell(cell: BoardCell, yaw: Yaw = 0, height = 0): ProjectedPoint {
   // Measured out from the middle rather than from a corner: the square
   // the cells are indexed in is wider than the one the picture is
   // fitted to, and it is the picture that decides the perspective
-  return projectGround(
+  return projectAir(
     {
       u: 0.5 + (cell.x - BOARD_CENTER) / BOARD_SPAN,
       v: 0.5 + (cell.y - BOARD_CENTER) / BOARD_SPAN,
     },
+    height,
     yaw,
   );
 }
@@ -574,19 +687,30 @@ export function projectBoardCell(cell: BoardCell, yaw: Yaw = 0): ProjectedPoint 
  * cell is a quad rather than a square now: the two far corners are
  * closer together than the two near ones
  */
-export function projectBoardCellQuad(cell: BoardCell, yaw: Yaw = 0): ProjectedPoint[] {
+export function projectBoardCellQuad(cell: BoardCell, yaw: Yaw = 0, height = 0): ProjectedPoint[] {
   const left = 0.5 + (cell.x - BOARD_CENTER - 0.5) / BOARD_SPAN;
   const right = 0.5 + (cell.x - BOARD_CENTER + 0.5) / BOARD_SPAN;
   const far = 0.5 + (cell.y - BOARD_CENTER - 0.5) / BOARD_SPAN;
   const near = 0.5 + (cell.y - BOARD_CENTER + 0.5) / BOARD_SPAN;
 
   return [
-    projectGround({ u: left, v: far }, yaw),
-    projectGround({ u: right, v: far }, yaw),
-    projectGround({ u: right, v: near }, yaw),
-    projectGround({ u: left, v: near }, yaw),
+    projectAir({ u: left, v: far }, height, yaw),
+    projectAir({ u: right, v: far }, height, yaw),
+    projectAir({ u: right, v: near }, height, yaw),
+    projectAir({ u: left, v: near }, height, yaw),
   ];
 }
+
+/**
+ * How high a cell of wall stands, in the board widths `projectAir`
+ * takes: one cell, so a band of wall is one tile tall and the face is
+ * drawn at the size it was cut
+ */
+export const CELL_LIFT = 1 / BOARD_SPAN;
+
+/** And how high one terrace step stands, which is two of those */
+export const WALL_BANDS = 2;
+export const TERRACE_LIFT = CELL_LIFT * WALL_BANDS;
 
 /**
  * The middle of a board cell, as a fraction of the picture. It is where
@@ -738,8 +862,13 @@ export function boardCellAtFraction(
   y: number,
   yaw: Yaw = 0,
   shift: [number, number] = [0, 0],
+  height = 0,
 ): BoardCell | null {
-  const { u, v } = unprojectGround(x, y, yaw);
+  // A cell standing above the ground is drawn further up the picture
+  // than the ground under it, so a reading has to be taken back down
+  // by the same rise before it names a cell, and by whatever the
+  // camera itself is standing on
+  const { u, v } = unprojectGround(x, y + (height - standing) * riseOf(PITCH), yaw);
   // The ground is drawn shifted by however far the camera has yet to
   // catch up, so a reading off the picture is taken back the same way
   const cell = {

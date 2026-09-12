@@ -1,5 +1,5 @@
 import Biome, { BIOME_CONFIGS, isOpenSea, isWaterBiome } from '../data/ids/biome';
-import { ORTHOGONAL } from './grid';
+import { ORTHOGONAL, SQUARES } from './grid';
 import type World from './world';
 
 /**
@@ -44,7 +44,13 @@ const RIVER_WIDTH = 0.012;
  * mountains and a boulder or two on the plain
  */
 export const STONE_FREQUENCY = 1 / 8;
-const ROCK_LEVEL = 0.42;
+
+/**
+ * Where the stone breaks the surface. Nothing is walled off by it: it
+ * says where a hillside is, which is where a cave has its way in,
+ * which water may not stand on and where the shelf is drawn
+ */
+const ROCK_LEVEL = 0.5;
 const ROCK_LIFT = 0.18;
 
 /** How high the biome stands, for the rock that comes through it */
@@ -178,6 +184,59 @@ function isRiver(world: World, x: number, y: number): boolean {
 }
 
 /**
+ * The islands out in the open sea: the sea floor's own rock breaking
+ * the surface.
+ *
+ * Read off the stone field at a corner of its own and cut high, so an
+ * island is a few cells with a long way of water round it rather than
+ * an archipelago. Measured over an 800 cell square of sea: about one
+ * island every twelve hundred cells, nine cells across the middling
+ * one, and the largest found was 57
+ */
+const ISLAND_FREQUENCY = 1 / 11;
+const ISLAND_LEVEL = 0.62;
+const ISLAND_OFFSET = 43.5;
+
+/** Whether the field stands out of the water here, before it is opened */
+function isIslandField(world: World, x: number, y: number): boolean {
+  return (
+    world.stone.noise(x * ISLAND_FREQUENCY + ISLAND_OFFSET, y * ISLAND_FREQUENCY + ISLAND_OFFSET) >
+    ISLAND_LEVEL
+  );
+}
+
+/**
+ * Whether an island covers this cell.
+ *
+ * Two cells wide at the narrowest, the rule everything drawn with a
+ * rim is held to: the shore is a ring of edges and corners, and one
+ * cell of sand asks for all four corners of it at once. So the land is
+ * laid in 2x2 blocks of open sea, the way the water is: a block that
+ * reaches into another country would leave a cell of it alone, since
+ * the island field says nothing about what the coast next door does
+ */
+export function isIslandAt(world: World, x: number, y: number): boolean {
+  // The cell's own reading first: every cell of the sea asks this, and
+  // a cell the field does not stand out of is in no block of them
+  if (!isIslandField(world, x, y)) {
+    return false;
+  }
+  return SQUARES.some(([ox, oy]) => {
+    for (let dy = 0; dy < 2; dy += 1) {
+      for (let dx = 0; dx < 2; dx += 1) {
+        const cx = x + ox + dx;
+        const cy = y + oy + dy;
+
+        if (!isOpenSea(world.getCellBiome(cx, cy)) || !isIslandField(world, cx, cy)) {
+          return false;
+        }
+      }
+    }
+    return true;
+  });
+}
+
+/**
  * Whether a player swims here rather than walks.
  *
  * The biome answers first, since a sea is water wherever you stand in
@@ -188,7 +247,8 @@ export function isWaterAt(world: World, x: number, y: number, biome: Biome): boo
   const pooled = world.lakes.noise(x * LAKE_FREQUENCY, y * LAKE_FREQUENCY);
 
   if (isOpenSea(biome)) {
-    return true;
+    // Land out there is the islands and nothing else
+    return !isIslandAt(world, x, y);
   }
   if (isWaterBiome(biome)) {
     // A bank is where the field runs dry, which is the pool's own

@@ -5,7 +5,9 @@ import {
   BOARD_CENTER,
   BOARD_SPAN,
   type BoardCell,
+  CELL_LIFT,
   type ProjectedPoint,
+  TERRACE_LIFT,
   TURN_DEAD_ZONE,
   VIEW_RADIUS,
   angleOf,
@@ -18,12 +20,14 @@ import {
   depthOrder,
   facingFrom,
   fitPicture,
+  projectAir,
   projectBoardCell,
   projectBoardCellQuad,
   projectGround,
   radiusOf,
   reachOf,
   setBoardScreen,
+  setBoardStand,
   shortestTurn,
   unprojectGround,
   yawTurns,
@@ -50,11 +54,15 @@ import createTwist from '../../../canvas/twist';
 import { getLocalOffset, toLocalTime } from '../../../auth/local-time';
 import { serverNow } from '../../../auth/clock';
 import loadSpeciesSprite from '../../../canvas/species-sprites';
-import type BiomeTileset from '../../../canvas/biome-tileset';
-import { variantAt } from '../../../canvas/biome-tileset';
-import loadBiomeTileset from '../../../canvas/biome-tilesets';
-import drawTileQuad, { grownQuad, tileCorners } from '../../../canvas/tile-quad';
-import QuadBatch from '../../../canvas/gl/quad-batch';
+import drawTileQuad, { grownQuad } from '../../../canvas/tile-quad';
+import loadTerrainTiles, { type TerrainTiles } from '../../../canvas/terrain-tiles';
+import createBoardScene, {
+  type BoardScene,
+  type SceneSpot,
+} from '../../../canvas/three/board-scene';
+import { TERRACE_TOP } from '../../../overworld/terrace';
+import terrainCell from '../../../canvas/terrain-cell';
+import QuadBatch, { type Painter } from '../../../canvas/gl/quad-batch';
 import Bakery, { type Baked } from '../../../canvas/bakery';
 import {
   type ShadowPatch,
@@ -65,12 +73,10 @@ import {
 } from '../../../canvas/placement';
 import { BIOME_COLORS } from '../../../data/biome';
 import type Biome from '../../../data/ids/biome';
-import type { TerrainRole } from '../../../data/overworld/terrain';
-import boardTerrain, { maskAround } from '../../../overworld/terrain';
-import type { BoardGround } from '../../../overworld/ground';
-import { rotateMask } from '../../../data/overworld/autotile';
+import type { BoardGround } from '../../../overworld/board-ground';
 import { SpriteAnim } from '../../../data/ids/sprite-anims';
 import type Decoration from '../../../data/overworld/decoration';
+import { getBlocker } from '../../../data/overworld/decoration';
 import Landmark from '../../../data/overworld/landmark';
 import Phenomenon from '../../../data/overworld/phenomenon';
 import Npc, { npcSheet } from '../../../data/overworld/npc';
@@ -109,6 +115,7 @@ import {
   RIPPLE_SPREAD,
   RIPPLE_WEIGHT,
   SCENERY_CELLS,
+  SLIDE_PACE,
   SNAP_CELLS,
   SPRITE_STANDS,
   VEIL_ALPHA,
@@ -137,6 +144,26 @@ import {
   phenomenonSpan,
   plantCallOut,
 } from './scenery';
+
+/**
+ * How near the viewer the backdrop is drawn, in the scene's own clip
+ * space: behind the country, which is all there is behind it
+ */
+const BEHIND = 0.99;
+
+/** How far a mark spreads past the cell it belongs to, in cells */
+const RING_SPREAD = 2;
+
+/**
+ * And how far a standing picture is brought forward of the ground it
+ * stands on, in cells. Enough to break the tie with its own cell,
+ * which would otherwise cut its feet away, and short of the step a
+ * cliff stands so that one in front of it still hides it
+ */
+const SPRITE_LIFT = 0.3;
+
+/** The levels a press is read at, highest first */
+const DOWNWARD: number[] = Array.from({ length: TERRACE_TOP + 1 }, (_step, at) => TERRACE_TOP - at);
 
 export { type SpawnCoat, isTurningPress, slideGain };
 
@@ -354,6 +381,7 @@ const STANDINGS = 6;
 export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
   let canvas: HTMLCanvasElement | undefined;
   let layer: HTMLCanvasElement | undefined;
+  let stage: HTMLCanvasElement | undefined;
   /**
    * Bumped once per animation frame. The drawing is one effect over
    * everything that can change, so a sprite moving on is told the same
@@ -735,12 +763,28 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
   };
 
   /**
+   * What stands on a cell nothing can walk through.
+   *
+   * The rock that used to be drawn as a wall of the country is a tree
+   * now, or whatever the country grows in its place, so a blocked cell
+   * carries a piece of scenery rather than a tile of its own
+   */
+  const standingAt = (index: number): Decoration | null => {
+    const cell = boardCellOf(index);
+
+    if (props.ground.role(cell.x, cell.y) !== 'wall') {
+      return null;
+    }
+    return getBlocker(props.ground.biome(cell.x, cell.y));
+  };
+
+  /**
    * The picture a piece of scenery is drawn as, once its atlas is in
    * hand. A kind whose sheet has not landed is the shape it was before
    * there were any
    */
   const sceneryOn = (index: number): { sheet: BasicSprite; name: string } | null => {
-    const kind = props.decorations.get(index);
+    const kind = props.decorations.get(index) ?? standingAt(index);
 
     if (kind == null) {
       return null;
@@ -909,6 +953,13 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
    * jump too far to be a step snaps instead
    */
   const slide = { x: props.at[0], y: props.at[1] };
+  /**
+   * How high the ground under the player stands, eased the way their
+   * step is. The picture is centred on it, so walking up a terrace
+   * carries the camera up with them instead of leaving them drawn two
+   * levels above the middle of the screen
+   */
+  const underfoot = { at: props.ground.level(BOARD_CENTER, BOARD_CENTER) * TERRACE_LIFT };
 
   /** The way the player last walked, which is the way they stand. */
   let heading: SpriteDirection = 'Down';
@@ -916,66 +967,43 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
   /**
    * The countries in sight, once their ground has landed.
    *
-   * More than one, since a board is not one country any more: a
-   * border runs through a chunk wherever the climate field crosses,
-   * and each side is drawn out of its own tileset.
-   *
-   * Not part of the wait the pokemon are: a biome with no tileset
-   * packed yet is drawn in the flat colour it always was, so the board
-   * has nothing to gain by standing still until these arrive
+   * One pack for every country rather than a sheet apiece, so it is
+   * asked for once. Not part of the wait the pokemon are: a board with
+   * nothing packed is drawn in the flat colour it always was, so there
+   * is nothing to gain by standing still until it arrives
    */
-  const [tilesets, setTilesets] = createSignal<Map<Biome, BiomeTileset>>(new Map());
-
-  /** Every country the drawn window touches, the rim included */
-  const inSight = createMemo(() => {
-    const ground = props.ground;
-    const seen = new Set<Biome>([props.biome]);
-
-    for (let y = -ground.margin; y < BOARD_CELLS + ground.margin; y++) {
-      for (let x = -ground.margin; x < BOARD_CELLS + ground.margin; x++) {
-        seen.add(ground.biome(x, y));
-      }
-    }
-    return seen;
-  });
+  const [terrain, setTerrain] = createSignal<TerrainTiles | null>(null);
+  /** The scene the country is drawn in, once there is art for it */
+  const [staged, setStaged] = createSignal<BoardScene | null>(null);
+  /** The window the scene was last built for, so it is rebuilt on a step */
+  let built: string | null = null;
 
   createEffect(() => {
-    const wanted = inSight();
     let live = true;
 
-    onCleanup(() => {
-      live = false;
-    });
-    // Kept between windows: a step across a border asks for the
-    // country that was already being drawn a moment ago
-    Promise.all(
-      [...wanted].map(async (biome): Promise<[Biome, BiomeTileset | null]> => {
-        try {
-          return [biome, await loadBiomeTileset(biome)];
-        } catch {
-          // The flat colour it was drawn in before there were tilesets
-          return [biome, null];
-        }
-      }),
-    )
-      .then((loaded) => {
+    // The tilesets the ground is drawn from: one pack for every biome
+    // rather than a rip apiece, so it is asked for once
+    loadTerrainTiles().then(
+      (pack) => {
         if (!live) {
           return;
         }
-        setTilesets((held) => {
-          const sheets = new Map(held);
+        setTerrain(pack);
 
-          for (const [biome, tiles] of loaded) {
-            if (tiles != null) {
-              sheets.set(biome, tiles);
-            }
-          }
-          return sheets;
-        });
-      })
-      .catch(() => {
-        // Answered inside: nothing else to do with it
-      });
+        const surface = stage;
+
+        if (surface != null) {
+          setStaged(createBoardScene(surface, pack, BOARD_CELLS));
+          built = null;
+        }
+      },
+      () => {
+        // The flat colour, until it lands
+      },
+    );
+    onCleanup(() => {
+      live = false;
+    });
   });
 
   const spriteFor = (coat: SpawnCoat): SpeciesSpriteAnimation | null => {
@@ -1119,8 +1147,18 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
   };
 
   /** And where the middle of one is, which is where things stand */
-  const groundPoint = (index: number): ProjectedPoint =>
-    projectBoardCell(shifted(boardCellOf(index)), yaw());
+  const groundPoint = (index: number): ProjectedPoint => {
+    const cell = boardCellOf(index);
+
+    // Whatever stands on a cell stands on top of it: a tree on a
+    // terrace is drawn at the height of the terrace, not at the foot
+    // of the cliff holding it up
+    return projectBoardCell(
+      shifted(cell),
+      yaw(),
+      boardView().mode === '2d' ? 0 : props.ground.level(cell.x, cell.y) * TERRACE_LIFT,
+    );
+  };
 
   const setYaw = (turn: (angle: number) => number): void => {
     props.onTurn(turn(props.yaw));
@@ -1236,7 +1274,23 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
   const cellAt = (event: MouseEvent): BoardCell | null => {
     const at = fractionAt(event);
 
-    return at == null ? null : boardCellAtFraction(at.x, at.y, yaw(), camera());
+    if (at == null) {
+      return null;
+    }
+    if (boardView().mode === '2d') {
+      return boardCellAtFraction(at.x, at.y, yaw(), camera());
+    }
+    // Read from the top level down: a press lands on the highest cell
+    // whose own top the point falls on, which is what a player sees.
+    // Anything lower is behind the step holding that one up
+    for (const level of DOWNWARD) {
+      const cell = boardCellAtFraction(at.x, at.y, yaw(), camera(), level * TERRACE_LIFT);
+
+      if (cell != null && props.ground.level(cell.x, cell.y) === level) {
+        return cell;
+      }
+    }
+    return boardCellAtFraction(at.x, at.y, yaw(), camera());
   };
 
   /**
@@ -1314,7 +1368,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
      * context and where it has taken one away. Both leave the 2D
      * passes to draw as they always did
      */
-    let batch = QuadBatch.create(drawing);
+    let layerBatch = QuadBatch.create(drawing);
 
     /**
      * The drawn art, kept as pictures. Nothing on this sheet changes
@@ -1334,14 +1388,14 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       // Refused, because the default is that the context never comes
       // back: the board wants it again the moment it can have it
       event.preventDefault();
-      batch = null;
+      layerBatch = null;
     });
     drawing.addEventListener('webglcontextrestored', () => {
-      batch = QuadBatch.create(drawing);
+      layerBatch = QuadBatch.create(drawing);
     });
     onCleanup(() => {
-      batch?.dispose();
-      batch = null;
+      layerBatch?.dispose();
+      layerBatch = null;
     });
 
     // How big the page is, watched rather than measured once: the
@@ -1424,13 +1478,17 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       const right = 0.5 + 1.5 / BOARD_SPAN;
       const far = left;
       const near = right;
+      // Lifted onto the ground the player is standing on: a ring drawn
+      // at the board's floor sits at the foot of the cliff they are
+      // standing on top of
+      const floor = boardView().mode === '2d' ? 0 : underfoot.at;
 
       return [
         { u: left, v: far },
         { u: right, v: far },
         { u: right, v: near },
         { u: left, v: near },
-      ].map((corner) => at(projectGround(corner, yaw())));
+      ].map((corner) => at(projectAir(corner, floor, yaw())));
     };
 
     /**
@@ -1484,6 +1542,17 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         sprites.get(key)?.update(elapsed);
       }
 
+      // And the climb, at the same pace: a step onto a terrace is one
+      // step, so the ground it stands on is reached in one step's time
+      const climbing = props.ground.level(BOARD_CENTER, BOARD_CENTER) * TERRACE_LIFT;
+      const climb = climbing - underfoot.at;
+
+      if (climb !== 0) {
+        const gain = Math.min(Math.abs(climb), (elapsed / SLIDE_PACE) * TERRACE_LIFT);
+
+        underfoot.at += Math.sign(climb) * gain;
+      }
+
       // The player's slide toward wherever the tab says they are, and
       // the walk cycle fed by how far it actually moved this frame
       const walker = playerPerson();
@@ -1525,6 +1594,17 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       // something about the chunk changes
       beat();
 
+      /** The scene, where there is terrain art to build one from */
+      const show = staged();
+      /**
+       * What the marks are written into: the scene's own, so a grid
+       * line is hidden by the cliff in front of it and covered by
+       * whatever stands on the cell. The layer below only draws where
+       * there is no scene
+       */
+      const marks = show?.marks ?? null;
+      const batch: Painter | null = marks ?? layerBatch;
+
       /**
        * The screen, as it is this frame.
        *
@@ -1558,6 +1638,9 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       // single point is put through it: a screen taller than it is
       // wide is drawn flat, anything else laid back
       setBoardScreen(screen.width, screen.height);
+      // Nothing stands above a flat board, so there is nothing for the
+      // camera to climb there either
+      setBoardStand(boardView().mode === '2d' ? 0 : underfoot.at);
       placed = fitPicture(screen.width, screen.height);
       magnify = placed.width / pictureWidth();
 
@@ -1571,6 +1654,11 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
        * the glass rather than standing in the world
        */
       const flat = boardView().mode === '2d';
+
+      // The scene's camera is the board's own projection, so it is
+      // handed the page it is drawn on rather than placed to look like
+      // it: what is ruled on the ground lands on the ground
+      show?.look(yaw(), screen, placed, ratio, camera());
 
       /** The light's throw, which the flat board has nowhere to put */
       const throwing = (): Cast | undefined => (flat ? undefined : cast());
@@ -1593,12 +1681,19 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         { x: 0, y: screen.height },
       ];
 
+      if (marks != null) {
+        // Nothing of the old layer is left showing under the scene
+        layerBatch?.begin(screen.width, screen.height, ratio);
+        layerBatch?.end();
+      }
       if (batch != null) {
         batch.begin(screen.width, screen.height, ratio);
         if (baked !== bakery.revision) {
           batch.invalidate(bakery.sheet);
           baked = bakery.revision;
         }
+        // Behind everything in the scene, which is what a backdrop is
+        marks?.depth(BEHIND);
         // The country the chunk is standing in, over the whole layer
         // rather than only under the board. It is what the page behind
         // this is painted anyway, and having it here rather than there
@@ -1624,6 +1719,8 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       // ground rather than instead of it: the country is already
       // correct, and only what stands on it is late
       if (loading()) {
+        marks?.glass();
+
         const middle = at(projectGround({ u: 0.5, v: 0.5 }, yaw()));
         const size = Math.round(LOADING_SIZE * magnify);
         const font = `bold ${size}px monospace`;
@@ -1671,14 +1768,6 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
        * questions are the same question asked from the other side
        */
       const ground = props.ground;
-      const land = boardTerrain((x, y) => {
-        const role = ground.role(x, y);
-
-        // Shelf is water drawn with the ground tiles, which is what
-        // makes the sea's edge fade rather than stop
-        return role === 'water' && ground.shelf(x, y) ? 'ground' : role;
-      });
-      const sheets = tilesets();
       // How far round the camera has been walked, in quarters. The
       // ground art is drawn for one point of view and can only be
       // turned in quarters, so it changes over at the halfway point
@@ -1691,71 +1780,69 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
        * 2D one can only take three of them and reads the fourth as a
        * parallelogram, which is the approximation it has always drawn
        */
-      const lay = (
-        tiles: BiomeTileset,
-        spot: { sheet: CanvasImageSource; x: number; y: number },
-        corners: ProjectedPoint[],
-      ): void => {
-        const tile = tiles.tile;
+      /** What the new tilesets are asked about a cell. */
+      const look = {
+        biome: (x: number, y: number) => ground.biome(x, y),
+        role: (x: number, y: number) => ground.role(x, y),
+        paved: (x: number, y: number) => ground.road(x, y),
+        level: (x: number, y: number) => ground.level(x, y),
+        seam: (x: number, y: number) => ground.seam(x, y),
+      };
 
-        // The tilesets recolour into canvases. Anything else is drawn
-        // the old way rather than assumed to be uploadable
-        if (batch == null || !(spot.sheet instanceof HTMLCanvasElement)) {
-          drawTileQuad(context, spot.sheet, spot, tile, corners, turns);
-          return;
-        }
-        batch.quad(
-          spot.sheet,
-          { x: spot.x, y: spot.y, width: tile, height: tile },
-          grownQuad(tileCorners(corners, turns)),
-        );
+      const laidBack = !flat;
+
+      // How high a cell stands. Only where the board is laid back:
+      // seen from straight above a step up is invisible, and lifting
+      // it would only slide the ground off the grid
+      const liftOf = (square: BoardCell): number =>
+        laidBack ? ground.level(square.x, square.y) * TERRACE_LIFT : 0;
+
+      /** The middle cell, which is where the player is drawn */
+      const midCell = { x: BOARD_CENTER, y: BOARD_CENTER };
+
+      /**
+       * How near the viewer the top of a square is, for a mark lying
+       * on it. Where the ground is drawn rather than where it lives,
+       * and in cells rather than board widths, which is what the scene
+       * is built in
+       */
+      const floorOf = (square: BoardCell, lift: number, spread?: number): number => {
+        const spot = shifted(square);
+
+        return show?.depthAt({ x: spot.x, z: spot.y, y: lift * BOARD_SPAN }, spread) ?? 0;
       };
 
       /**
-       * One cell of ground, drawn from the biome's own tileset.
-       * Answers whether it drew anything, since a cell it could not
-       * draw still wants the flat colour it had before
+       * One composed cell, laid on its quad in the world's own way
+       * round: the cell was composed with the shore already turned in
+       * it, and nothing else in it follows the camera
+       */
+      const layTile = (sheet: HTMLCanvasElement, corners: ProjectedPoint[]): void => {
+        if (batch == null) {
+          drawTileQuad(context, sheet, { x: 0, y: 0 }, 16, corners);
+          return;
+        }
+        batch.quad(sheet, { x: 0, y: 0, width: 16, height: 16 }, grownQuad(corners));
+      };
+
+      /**
+       * One cell of ground, composed from the pack. Answers whether it
+       * drew anything, since a cell it could not draw still wants the
+       * flat colour it had before
+       *
+       * It is the fallback for a board with no scene: one cell is a
+       * few layers composed into a tile of its own, so the board lays
+       * a single quad for it the way it always has
        */
       const paintGround = (square: BoardCell, corners: ProjectedPoint[]): boolean => {
-        // Each cell is drawn out of its own country's tileset, so a
-        // border runs between two cells rather than round a chunk
-        const tiles = sheets.get(ground.biome(square.x, square.y));
+        const pack = terrain();
+        const cell =
+          pack == null ? null : terrainCell(pack, look, square.x, square.y, undefined, turns);
 
-        if (tiles == null) {
+        if (cell == null) {
           return false;
         }
-        const wanted = land.at(square.x, square.y);
-        // A rip with no water in it still has to draw an ocean chunk,
-        // and its ground is a better answer than a hole
-        const role: TerrainRole = tiles.has(wanted) ? wanted : 'ground';
-        // Asked per cell rather than once for the board: each terrain
-        // runs on its palette's own beat, and a rip that says the
-        // water moves faster than the ground means it
-        const spot = tiles.tileAt(
-          role,
-          rotateMask(land.maskAt(square.x, square.y), turns),
-          variantAt(props.origin[0] + square.x, props.origin[1] + square.y, tiles.data.variants),
-          clock,
-        );
-
-        if (spot == null) {
-          return false;
-        }
-        lay(tiles, spot, corners);
-
-        // Deep water against a shore takes the sea rips' foam overlay
-        // on top, which is what actually blends the two
-        if (role === 'water') {
-          const foam = tiles.shoreAt(
-            rotateMask(land.maskAt(square.x, square.y), turns),
-            variantAt(props.origin[0] + square.x, props.origin[1] + square.y, tiles.data.variants),
-            clock,
-          );
-
-          if (foam != null) {
-            lay(tiles, foam, corners);
-          }
-        }
+        layTile(cell, corners);
         return true;
       };
 
@@ -1786,13 +1873,39 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
        * the grid is ruled round the same ones, so a square is put
        * through the projection once rather than once a pass
        */
-      const drawn: { square: BoardCell; outline: ProjectedPoint[] }[] = [];
+      /** The cells standing above the ground, which carry a wall */
+      const lifted = new Set<number>();
+
+      /** Which sides of a cell's quad are which, and what lies beyond */
+      const SIDES: [from: number, to: number, dx: number, dy: number][] = [
+        [0, 1, 0, -1],
+        [1, 2, 1, 0],
+        [2, 3, 0, 1],
+        [3, 0, -1, 0],
+      ];
+      const drawn: { square: BoardCell; outline: ProjectedPoint[]; lift: number }[] = [];
 
       for (const square of painted) {
-        const outline = projectBoardCellQuad(shifted(square), yaw()).map(at);
+        const lift = liftOf(square);
+        const outline = projectBoardCellQuad(shifted(square), yaw(), lift).map(at);
 
         if (onScreen(outline)) {
-          drawn.push({ square, outline });
+          drawn.push({ square, outline, lift });
+        }
+      }
+      // Far to near by where the **ground** lies, not by where the
+      // lifted quad landed: a cell raised two steps is drawn higher up
+      // the picture, and sorted by that it would fall behind the flat
+      // ground in front of it and be painted over
+      const depthOf = (square: BoardCell): number => projectBoardCell(shifted(square), yaw()).y;
+
+      drawn.sort((one, other) => depthOf(one.square) - depthOf(other.square));
+
+      if (laidBack) {
+        for (const { square } of drawn) {
+          if (ground.level(square.x, square.y) > 0) {
+            lifted.add(square.y * BOARD_CELLS + square.x);
+          }
         }
       }
 
@@ -1800,53 +1913,122 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
        * The ground, in one pass of its own before anything is ruled
        * over it, over every square the picture is made of
        */
-      if (sheets.size > 0) {
-        // Off for the pass: these are pixel tiles, and smoothed up to
-        // the size of a cell they lose the edges they are drawn with
+      /**
+       * The wall under a cell's edge, where the ground beside it stands
+       * lower.
+       *
+       * The side facing the camera is the only one that can be seen: a
+       * wall on the far side is behind the ground holding it up, which
+       * is the test below, and it saves drawing three walls out of four
+       */
+      const paintWalls = (square: BoardCell): void => {
+        const pack = terrain();
+        const level = ground.level(square.x, square.y);
+
+        if (pack == null || level === 0) {
+          return;
+        }
+        const cliff = pack.of(ground.biome(square.x, square.y), 'face');
+        const under = pack.of(ground.biome(square.x, square.y), 'ground');
+
+        if (cliff == null) {
+          return;
+        }
+        // Pixel art, as the ground is: smoothed up to the size of a
+        // wall it loses the edges it was drawn with
+        context.save();
+        context.imageSmoothingEnabled = false;
+        for (const [from, to, dx, dy] of SIDES) {
+          const beside = ground.level(square.x + dx, square.y + dy);
+
+          if (beside >= level) {
+            continue;
+          }
+          // A wall faces the cell it drops to, so it can be seen only
+          // while that cell lies nearer the camera: down the picture
+          // from this one. Asked of the ground rather than of the
+          // wall's own corners, which holds at any angle
+          if (depthOf({ x: square.x + dx, y: square.y + dy }) <= depthOf(square)) {
+            continue;
+          }
+          const face = cliff.face(under?.tone ?? null);
+          // A band of wall a cell tall, so the face is drawn at the
+          // size it was cut rather than stretched down the whole drop
+          const bands = Math.round(((level - beside) * TERRACE_LIFT) / CELL_LIFT);
+
+          for (let band = 0; band < bands; band += 1) {
+            const top = projectBoardCellQuad(
+              shifted(square),
+              yaw(),
+              level * TERRACE_LIFT - band * CELL_LIFT,
+            ).map(at);
+            const foot = projectBoardCellQuad(
+              shifted(square),
+              yaw(),
+              level * TERRACE_LIFT - (band + 1) * CELL_LIFT,
+            ).map(at);
+            // Left to right as the screen reads it, so the face is
+            // drawn the way it was cut rather than mirrored on two
+            // sides of the same step
+            const [left, right] = top[from].x <= top[to].x ? [from, to] : [to, from];
+            const wall = [top[left], top[right], foot[right], foot[left]];
+            if (batch != null) {
+              batch.quad(face, { x: 0, y: 0, width: 16, height: 16 }, wall);
+              continue;
+            }
+            drawTileQuad(context, face, { x: 0, y: 0 }, 16, wall, 0);
+          }
+        }
+        context.restore();
+      };
+
+      if (show != null) {
+        // The country as a scene: the ground at its own height, a wall
+        // between one level and the next, and a depth buffer to say
+        // what is in front of what. Rebuilt on a step rather than a
+        // frame, since the geometry is in cells and only the camera
+        // moves between them
+        // The shape of the screen is part of it, since the flat board
+        // stands no elevation, and so is the quarter the camera is
+        // round to, since that is what picks the edge tiles
+        const window = `${props.origin[0]},${props.origin[1]}|${flat ? '2d' : '3d'}|${turns}|${
+          props.underground ? 'cave' : 'day'
+        }`;
+
+        if (built !== window) {
+          // Asked in the board's own cells, which is what the look
+          // answers: the window it covers is already the world's
+          show.ground(look, [0, 0], turns);
+          built = window;
+        }
+      } else if (terrain() != null) {
+        // No scene to draw it in, so the country is laid a quad at a
+        // time the way it was. Smoothing off for the pass: these are
+        // pixel tiles, and grown to the size of a cell they lose the
+        // edges they are drawn with
         context.save();
         context.imageSmoothingEnabled = false;
         for (const { square, outline } of drawn) {
           paintGround(square, outline);
+          paintWalls(square);
         }
         context.restore();
       }
 
       /**
-       * A town's streets, over the ground and under everything that
-       * stands on it.
+       * A town's streets, where the country has no paving of its own.
        *
-       * Tiled from the country's own path terrain, which is cut to the
-       * same 47 neighbourhoods as its water and laid over the ground
-       * the same way, so a street turns a corner and ends in a stub
-       * rather than in a square. A country with no path packed is
-       * washed in flat colour as it always was, grown by a hair since
-       * two washes meeting on a hairline leave a seam down the middle
+       * The pack lays a street with the rest of the cell, so this is
+       * only for a board drawing nothing but flat colour: a wash over
+       * the road's cells, grown by a hair since two washes meeting on
+       * a hairline leave a seam down the middle
        */
-      // Off for this pass as it is for the ground's: a path is cut
-      // from the same pixels and smoothing softens its edges away
       context.save();
-      context.imageSmoothingEnabled = false;
       for (const square of painted) {
-        if (!ground.road(square.x, square.y)) {
+        if (terrain() != null || !ground.road(square.x, square.y)) {
           continue;
         }
         const corners = projectBoardCellQuad(shifted(square), yaw()).map(at);
-        const tiles = sheets.get(ground.biome(square.x, square.y));
-        const spot =
-          tiles?.tileAt(
-            'path',
-            rotateMask(
-              maskAround(square.x, square.y, (x, y) => ground.road(x, y)),
-              turns,
-            ),
-            variantAt(props.origin[0] + square.x, props.origin[1] + square.y, tiles.data.variants),
-            clock,
-          ) ?? null;
-
-        if (tiles != null && spot != null) {
-          lay(tiles, spot, corners);
-          continue;
-        }
         const washed = grownQuad(corners);
 
         if (batch != null) {
@@ -1983,11 +2165,41 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
        * A sprite laid into the batch. Answers whether it went, so a
        * caller can draw it the old way when there is no batch
        */
+      /**
+       * Where the loop has got to, so a piece knows which cell it is
+       * standing on: the scene wants a place on the board rather than
+       * a box on the page
+       */
+      let standingOn: {
+        spot: SceneSpot;
+        middle: { x: number; y: number; scale: number };
+        floor: number;
+      } | null = null;
+
       const place = (quad: SpriteQuad | null, alpha = 1): boolean => {
-        if (batch == null || quad == null) {
+        if (quad == null || batch == null) {
           return false;
         }
+        if (marks != null && show != null && standingOn != null) {
+          // Standing up in the world, however flat the picture is: how
+          // far above its own foot the box reaches, in cells, is what
+          // says how near the viewer its top edge is
+          const span = CELL * standingOn.middle.scale * magnify;
+          const spot = standingOn.spot;
+          const above = span > 0 ? (standingOn.middle.y - quad.top) / span : 0;
+
+          // The foot's own depth at the bottom of the box, never
+          // below it: what a sheet draws under the feet is the shadow
+          // it was ripped with, and that lies on the ground rather
+          // than under it
+          marks.standing(
+            show.depthAt(spot, SPRITE_LIFT),
+            show.depthAt({ ...spot, y: spot.y + above }, SPRITE_LIFT),
+          );
+        }
         batch.quad(quad.sheet, quad.source, cornersOf(quad), alpha);
+        // Back to the ground for whatever else the cell has on it
+        marks?.depth(standingOn?.floor ?? 0);
         return true;
       };
 
@@ -2058,13 +2270,18 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         under != null && under.x === square.x && under.y === square.y;
       /** The square the cursor is over, kept to ring once the grid is laid */
       let hoveredOutline: ProjectedPoint[] | null = null;
+      let hoveredFloor = 0;
 
-      for (const { square, outline } of drawn) {
+      for (const { square, outline, lift } of drawn) {
         const hot = beneath(square);
 
+        // Lying on the cell they ring, so a cliff in front of it hides
+        // them and whatever stands on it covers them
+        marks?.depth(floorOf(square, lift));
         rule(outline, hot ? HOVER_GLOW : 0);
         if (hot) {
           hoveredOutline = outline;
+          hoveredFloor = floorOf(square, lift);
         }
 
         const index = square.y * BOARD_CELLS + square.x;
@@ -2158,7 +2375,11 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
        * since it is a fact about the ground
        */
       const ripple = (index: number, spread: number, alpha: number): void => {
-        const spot = shifted(boardCellOf(index));
+        const cell = boardCellOf(index);
+        const spot = shifted(cell);
+        const floor = liftOf(cell);
+
+        marks?.depth(floorOf(cell, floor, RING_SPREAD));
         const midU = 0.5 + (spot.x - BOARD_CENTER) / BOARD_SPAN;
         const midV = 0.5 + (spot.y - BOARD_CENTER) / BOARD_SPAN;
         const radius = spread / BOARD_SPAN / 2;
@@ -2169,8 +2390,9 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
 
           ring.push(
             at(
-              projectGround(
+              projectAir(
                 { u: midU + Math.cos(angle) * radius, v: midV + Math.sin(angle) * radius },
+                floor,
                 yaw(),
               ),
             ),
@@ -2214,12 +2436,14 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       // its neighbours draw their own edges over it, so a ring left in
       // the loop would come out with two sides missing
       if (hoveredOutline != null) {
+        marks?.depth(hoveredFloor);
         callOut(hoveredOutline, COLORS.highlight);
       }
 
       const reach = reachOutline();
 
       if (reach != null) {
+        marks?.depth(floorOf(midCell, liftOf(midCell), RING_SPREAD));
         if (batch == null) {
           context.beginPath();
           context.moveTo(reach[0].x, reach[0].y);
@@ -2251,7 +2475,16 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
        * and stays there. Everything about them comes off it: the
        * sprite, the shadow, and the light they carry
        */
-      const afoot = at(projectBoardCell({ x: BOARD_CENTER, y: BOARD_CENTER }, yaw()));
+      const afoot = at(
+        projectBoardCell(
+          { x: BOARD_CENTER, y: BOARD_CENTER },
+          yaw(),
+          // The height the camera is centred on rather than the cell's
+          // own, so they hold the middle of the picture while the
+          // ground drops away under them
+          flat ? 0 : underfoot.at,
+        ),
+      );
 
       lamps.length = 0;
       // The light travels with them rather than with the cell they are
@@ -2325,16 +2558,43 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
        * squares wide now, and asking every one of them what is on it
        * is a thousand lookups a frame to be told about grass
        */
+      const blocked: number[] = [];
+
+      for (let y = 0; y < BOARD_CELLS; y += 1) {
+        for (let x = 0; x < BOARD_CELLS; x += 1) {
+          if (ground.role(x, y) === 'wall') {
+            blocked.push(y * BOARD_CELLS + x);
+          }
+        }
+      }
+      // Every cell with a wall under its edge joins the depth-ordered
+      // pass: a wall has to be able to hide whatever stands behind it,
+      // which the ground, being flat, never does
+      const walled = [...lifted];
       const occupied = [
         playerCell,
         ...props.landmarks.keys(),
         ...props.decorations.keys(),
+        ...walled,
+        ...blocked,
         ...props.spawns.keys(),
         ...props.phenomena.keys(),
       ].filter((index) => reachOf(boardCellOf(index)) <= VIEW_RADIUS);
 
       for (const index of depthOrder(occupied, yaw())) {
+        const cell = boardCellOf(index);
         const middle = at(groundPoint(index));
+        const drawnAt = shifted(cell);
+
+        const floor = floorOf(cell, liftOf(cell));
+
+        standingOn = {
+          spot: { x: drawnAt.x, z: drawnAt.y, y: liftOf(cell) * BOARD_SPAN },
+          middle,
+          floor,
+        };
+        // Everything ruled or stamped on this cell lies on top of it
+        marks?.depth(floor);
 
         // Nothing standing anywhere while the sheets are still coming:
         // a field that fills in one pokemon at a time reads as a page
@@ -2593,6 +2853,16 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         if (index === playerCell) {
           const spot = afoot;
 
+          // Drawn in the middle whatever the ground has slid to, so
+          // they are placed there rather than on the cell the loop is
+          // carrying
+          standingOn = {
+            spot: { x: midCell.x, z: midCell.y, y: liftOf(midCell) * BOARD_SPAN },
+            middle: afoot,
+            floor: floorOf(midCell, liftOf(midCell)),
+          };
+          marks?.depth(standingOn.floor);
+
           if (walker == null || walking == null) {
             // The dot it was before the sheet landed, on its own line
             const radius = CELL * 0.3 * spot.scale * magnify;
@@ -2654,6 +2924,10 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       // drop to fall through, and a fall standing in the world would
       // be a field of dots holding still
       const sky = flat ? undefined : { yaw: yaw(), ...placed };
+
+      // In front of the world rather than in it: the light and the
+      // weather are the glass the board is seen through
+      marks?.glass();
 
       if (batch == null) {
         paintAmbient(context, screen.width, screen.height, worldTime(), props.latitude);
@@ -2722,6 +2996,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       // the ground, the world standing on it, the hour's light, the
       // sky and the compass, in one call
       batch?.end();
+      show?.draw();
 
       // Nothing else is written on the board. The chunk used to caption
       // itself in a corner of the picture, which cost four cells of
@@ -2748,6 +3023,14 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
           does */}
       <canvas
         ref={layer}
+        aria-hidden="true"
+        class="pointer-events-none absolute inset-0 block h-full w-full"
+      />
+      {/* The scene: the ground, the cliffs and everything standing on
+          them, drawn with a depth buffer so a step up hides what is
+          behind it however the camera is walked round */}
+      <canvas
+        ref={stage}
         aria-hidden="true"
         class="pointer-events-none absolute inset-0 block h-full w-full"
       />

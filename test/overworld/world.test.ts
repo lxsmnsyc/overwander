@@ -96,7 +96,6 @@ import {
   neighborCells,
   worldCell,
 } from '../../src/overworld/chunk';
-import { CARDINALS } from '../../src/overworld/path';
 import nameTown from '../../src/data/overworld/town-names';
 import type { Town } from '../../src/overworld/town';
 import {
@@ -291,7 +290,12 @@ import { LUCK_INCENSE_BONUS, PURE_INCENSE_QUIET } from '../../src/overworld/item
 import { AMULET_COIN_BONUS, CLEANSE_TAG_QUIET } from '../../src/overworld/items/trinkets';
 import { CATCHING_CHARM_BOOST, SHINY_CHARM_BOOST } from '../../src/overworld/items/key-items';
 import createOverworld from '../../src/overworld/setup';
-import { POCKET_LIMIT, roleAt } from '../../src/overworld/ground';
+import { roleAt } from '../../src/overworld/ground';
+import { Depth } from '../../src/overworld/depth';
+import { blocksWalk } from '../../src/overworld/cliff';
+import { isRouteAt } from '../../src/overworld/route';
+import { ORTHOGONAL, SQUARES, SURROUNDING } from '../../src/overworld/grid';
+import { levelAt } from '../../src/overworld/terrace';
 import World, {
   WORLD_MAX,
   WORLD_MIN,
@@ -4788,6 +4792,117 @@ describe('chunk snapshot', () => {
 });
 
 describe('terrain spots', () => {
+  it('lays no water narrower than two cells', () => {
+    const world = new World('overworld');
+    const wet = (x: number, y: number): boolean => roleAt(world, x, y) === 'water';
+
+    // One wide window rather than a handful of spots: a hairline or a
+    // lone cell at a lip is rare enough that a small square of country
+    // can miss every one of them
+    for (let y = -200; y <= 200; y += 1) {
+      for (let x = -200; x <= 200; x += 1) {
+        if (!wet(x, y)) {
+          continue;
+        }
+        // The shore is a ring of edges and corners, so a channel one
+        // cell across has no corner to draw: every wet cell belongs
+        // to a 2x2 block of wet ones
+        const broad = SQUARES.some(([ox, oy]) =>
+          [0, 1].every((dy) => [0, 1].every((dx) => wet(x + ox + dx, y + oy + dy))),
+        );
+
+        expect(broad, `${x},${y}`).toBe(true);
+      }
+    }
+  });
+
+  it('leaves no water hanging over a dry drop', () => {
+    const world = new World('overworld');
+    const wet = (x: number, y: number): boolean => roleAt(world, x, y) === 'water';
+
+    for (let y = -200; y <= 200; y += 1) {
+      for (let x = -200; x <= 200; x += 1) {
+        if (!wet(x, y)) {
+          continue;
+        }
+        const here = levelAt(world, x, y);
+
+        for (const [dx, dy] of ORTHOGONAL) {
+          // A pool's surface is level, so water at the lip of a step
+          // has to have water below it: the board seams the two into
+          // one fall, and dry ground there would leave the water
+          // drawn ending in mid-air
+          if (levelAt(world, x + dx, y + dy) < here) {
+            expect(wet(x + dx, y + dy), `${x + dx},${y + dy}`).toBe(true);
+          }
+        }
+      }
+    }
+  });
+
+  it("keeps a volcano's lava out of the water next door", () => {
+    const world = new World('overworld');
+    let lava = 0;
+
+    for (let y = -1500; y <= 1500; y += 7) {
+      for (let x = -1500; x <= 1500; x += 7) {
+        if (world.getCellBiome(x, y) !== Biome.Volcano || roleAt(world, x, y) !== 'water') {
+          continue;
+        }
+        lava += 1;
+        // A volcano's water is lava, so it may not run into a pool of
+        // the ordinary kind: the border dries off on the crater's side
+        for (const [dx, dy] of SURROUNDING) {
+          const wet = roleAt(world, x + dx, y + dy) === 'water';
+
+          expect(
+            wet && world.getCellBiome(x + dx, y + dy) !== Biome.Volcano,
+            `${x + dx},${y + dy}`,
+          ).toBe(false);
+        }
+      }
+    }
+    // A volcano with no lava in it would pass this without saying
+    // anything
+    expect(lava).toBeGreaterThan(0);
+  });
+
+  it('lets a walk cross a fall, and not a corner of one', () => {
+    const world = new World('overworld');
+    let falls = 0;
+    let corners = 0;
+
+    for (let y = -200; y <= 200; y += 1) {
+      for (let x = -200; x <= 200; x += 1) {
+        if (roleAt(world, x, y) !== 'water') {
+          continue;
+        }
+        const here = levelAt(world, x, y);
+        const under = ORTHOGONAL.filter(([dx, dy]) => levelAt(world, x + dx, y + dy) < here);
+        const corner = under.some(([ax, ay]) => under.some(([bx, by]) => ax * bx + ay * by === 0));
+
+        if (under.length === 0) {
+          // Water on the level it lies on stops nobody
+          expect(blocksWalk(world, x, y), `${x},${y}`).toBe(false);
+          continue;
+        }
+        if (corner) {
+          // Pouring off two sides at once is the corner of the cliff
+          // rather than a way down it, unless a route is cut through
+          // the step anyway
+          corners += 1;
+          expect(blocksWalk(world, x, y) || isRouteAt(world, x, y), `${x},${y}`).toBe(true);
+          continue;
+        }
+        // A fall running one way is one stream, so a swim follows it
+        falls += 1;
+        expect(blocksWalk(world, x, y), `${x},${y}`).toBe(false);
+      }
+    }
+    expect(falls).toBeGreaterThan(0);
+    expect(corners).toBeGreaterThan(0);
+  });
+
   it('reads the water out of the world rather than growing it in the chunk', () => {
     const world = new World('overworld');
 
@@ -4932,85 +5047,23 @@ describe('terrain spots', () => {
     expect(checked).toBeGreaterThan(0);
   });
 
-  it('never closes the rock round a pocket nothing can walk to', () => {
+  it('walls nothing off above ground', () => {
     const world = new World('overworld');
-    // Three chunks square, since a ridge belongs to the world rather
-    // than to a chunk: read one chunk at a time, a ridge crossing it
-    // cuts it in two and both halves are reached from the next chunk
-    // along
-    const span = CHUNK_CELLS * 3;
-    const rock = (x: number, y: number): boolean =>
-      roleAt(world, x - CHUNK_CELLS, y - CHUNK_CELLS) === 'wall';
-    const key = (x: number, y: number): number => y * span + x;
-    const reached = new Set<number>();
-    const queue: [number, number][] = [];
+    const cave = world.at(Depth.Cave);
+    let underground = 0;
 
-    // In from the rim of the window, which is as far out as the walk
-    // can be followed
-    for (let at = 0; at < span; at++) {
-      for (const [x, y] of [
-        [at, 0],
-        [at, span - 1],
-        [0, at],
-        [span - 1, at],
-      ]) {
-        if (!rock(x, y) && !reached.has(key(x, y))) {
-          reached.add(key(x, y));
-          queue.push([x, y]);
+    for (let y = -120; y <= 120; y += 3) {
+      for (let x = -120; x <= 120; x += 3) {
+        // The stone field still runs where it ran: what changed is
+        // that a cell it comes through is walked over rather than
+        // walled off, so only a cave has rock in the way
+        expect(roleAt(world, x, y), `${x},${y}`).not.toBe('wall');
+        if (roleAt(cave, x, y) === 'wall') {
+          underground += 1;
         }
       }
     }
-    for (let at = 0; at < queue.length; at++) {
-      const [x, y] = queue[at];
-
-      // Straight steps only, the way the overworld is walked: a
-      // diagonal slip past a corner is not a way out
-      for (const [dx, dy] of CARDINALS) {
-        const nx = x + dx;
-        const ny = y + dy;
-
-        if (nx < 0 || ny < 0 || nx >= span || ny >= span || reached.has(key(nx, ny))) {
-          continue;
-        }
-        if (!rock(nx, ny)) {
-          reached.add(key(nx, ny));
-          queue.push([nx, ny]);
-        }
-      }
-    }
-
-    // Whatever the walk did not reach is shut in. Every such pocket is
-    // bigger than the world fills in, since a small one is paved over
-    // where it is found
-    const shut = new Set<number>();
-
-    for (let y = 0; y < span; y++) {
-      for (let x = 0; x < span; x++) {
-        if (!rock(x, y) && !reached.has(key(x, y))) {
-          shut.add(key(x, y));
-        }
-      }
-    }
-    while (shut.size > 0) {
-      const [first] = shut;
-      const pocket = [first];
-
-      shut.delete(first);
-      for (let at = 0; at < pocket.length; at++) {
-        const x = pocket[at] % span;
-        const y = Math.floor(pocket[at] / span);
-
-        for (const [dx, dy] of CARDINALS) {
-          const next = key(x + dx, y + dy);
-
-          if (shut.has(next)) {
-            shut.delete(next);
-            pocket.push(next);
-          }
-        }
-      }
-      expect(pocket.length).toBeGreaterThan(POCKET_LIMIT);
-    }
+    expect(underground).toBeGreaterThan(0);
   });
 });
 
@@ -5078,6 +5131,39 @@ describe('what the ground grows', () => {
 });
 
 describe('the open seas', () => {
+  it('scatters small islands, two cells wide at the narrowest', () => {
+    const world = new World('overworld');
+    let sea = 0;
+    let land = 0;
+
+    for (let y = -120; y <= 120; y += 1) {
+      for (let x = -120; x <= 120; x += 1) {
+        if (!isOpenSea(world.getCellBiome(x, y))) {
+          continue;
+        }
+        sea += 1;
+        if (roleAt(world, x, y) !== 'ground') {
+          continue;
+        }
+        land += 1;
+        // Laid in blocks like everything else that is drawn with a
+        // rim: one cell of sand has no corner to draw
+        const broad = SQUARES.some(([ox, oy]) =>
+          [0, 1].every((dy) =>
+            [0, 1].every((dx) => roleAt(world, x + ox + dx, y + oy + dy) === 'ground'),
+          ),
+        );
+
+        expect(broad, `${x},${y}`).toBe(true);
+      }
+    }
+    // Somewhere to stand out there, and the sea is still the sea: a
+    // little over one cell in a hundred is dry
+    expect(sea).toBeGreaterThan(0);
+    expect(land).toBeGreaterThan(0);
+    expect(land / sea).toBeLessThan(0.05);
+  });
+
   it('rolls no berry patch and no wandering npc afloat', () => {
     const world = new World('overworld');
     let seen = 0;
@@ -5143,13 +5229,13 @@ describe('the open seas', () => {
     expect(duels).toBeGreaterThan(0);
   });
 
-  it('keeps everything out of the rocks, and mixes shallows in around them', () => {
+  it('mixes shallows into the sea, and keeps them out of a field', () => {
     const world = new World('overworld');
-    // A sea chunk with rock in it: the stone field runs where it
+    // A sea chunk with a shoal under it: the stone field runs where it
     // runs, so plenty of open water has none at all
     const chunk = findChunk(
       world,
-      (candidate) => isOpenSea(candidate.biome) && candidate.getRockCells().size > 0,
+      (candidate) => isOpenSea(candidate.biome) && candidate.getShallowCells().size > 0,
     );
 
     expect(chunk).not.toBeNull();
@@ -5157,32 +5243,12 @@ describe('the open seas', () => {
       return;
     }
 
-    const rocks = chunk.getRockCells();
     const shallows = chunk.getShallowCells();
 
-    // Nothing stands in one, and the answer is the same every time
-    // the chunk is resolved
-    expect([...world.getChunk(chunk.x, chunk.y).getRockCells()]).toEqual([...rocks]);
-    for (const cell of chunk.getDecorationCells().keys()) {
-      expect(rocks.has(cell)).toBe(false);
-    }
-    for (const cell of chunk.getLandmarkCells().keys()) {
-      expect(rocks.has(cell)).toBe(false);
-    }
-
-    const snapshot = new ChunkSnapshot(chunk, 0);
-
-    snapshot.getSpawns(10);
-    expect(snapshot.getSpawnCells().size).toBeGreaterThan(0);
-    for (const [cell] of snapshot.getSpawnCells()) {
-      expect(rocks.has(cell)).toBe(false);
-    }
-
-    // Every outcrop wears a skirt of shelf, and no cell is both
+    // Nothing above ground is walled off, and the answer is the same
+    // every time the chunk is resolved
+    expect(chunk.getRockCells().size).toBe(0);
     expect(shallows.size).toBeGreaterThan(0);
-    for (const cell of shallows) {
-      expect(rocks.has(cell)).toBe(false);
-    }
     expect([...world.getChunk(chunk.x, chunk.y).getShallowCells()]).toEqual([...shallows]);
 
     // Shelf is the seas' and the wetlands' own look: a field with a
@@ -5193,69 +5259,9 @@ describe('the open seas', () => {
       expect(land.getShallowCells().size).toBe(0);
     }
   });
-
-  it('grows rocks on land too, kept clear of the pools', () => {
-    const world = new World('overworld');
-    const chunk = findChunk(
-      world,
-      (candidate) => !isWaterBiome(candidate.biome) && candidate.getRockCells().size > 0,
-    );
-
-    expect(chunk).not.toBeNull();
-    if (chunk == null) {
-      return;
-    }
-
-    const rocks = chunk.getRockCells();
-    const pools = chunk.getSpotCells();
-
-    for (const cell of rocks) {
-      expect(pools.has(cell)).toBe(false);
-    }
-    // Fixtures keep their ring from the outcrop, bar the one that is
-    // cut into it: a cave mouth with no rock beside it would be a way
-    // into a hillside that is not there
-    for (const [cell, landmark] of chunk.getLandmarkCells()) {
-      if (landmark === Landmark.CaveMouth) {
-        expect(rocks.has(cell)).toBe(false);
-        expect(neighborCells(cell).some((neighbor) => rocks.has(neighbor))).toBe(true);
-        continue;
-      }
-      expect(rocks.has(cell)).toBe(false);
-      for (const neighbor of neighborCells(cell)) {
-        expect(rocks.has(neighbor)).toBe(false);
-      }
-    }
-    for (const cell of chunk.getDecorationCells().keys()) {
-      expect(rocks.has(cell)).toBe(false);
-      for (const neighbor of neighborCells(cell)) {
-        expect(rocks.has(neighbor)).toBe(false);
-      }
-    }
-  });
 });
 
 describe('placement invariants', () => {
-  it('keeps every fixture a ring away from the rocks', () => {
-    const world = new World('overworld');
-    const chunk = findChunk(world, (candidate) => isOpenSea(candidate.biome));
-
-    expect(chunk).not.toBeNull();
-    if (chunk == null) {
-      return;
-    }
-
-    const rocks = chunk.getRockCells();
-    const standing = [...chunk.getLandmarkCells().keys(), ...chunk.getDecorationCells().keys()];
-
-    for (const cell of standing) {
-      expect(rocks.has(cell)).toBe(false);
-      for (const neighbor of neighborCells(cell)) {
-        expect(rocks.has(neighbor)).toBe(false);
-      }
-    }
-  });
-
   it('stands a wetland happening on a bank, where a grotto can be', () => {
     const world = new World('overworld');
     let phenomena = 0;

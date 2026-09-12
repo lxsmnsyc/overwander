@@ -27,9 +27,12 @@ const OVERLAP = 0.012;
 /**
  * A cell's four corners in the tile's own order: the corner the art
  * hangs from, then across, then the far one, then down. `turns` is how
- * far round the camera has been walked, in quarters
+ * far round the camera has been walked, in quarters.
+ *
+ * Written over anything four long, so whatever is kept per corner is
+ * turned with them: the corners themselves, and how deep each one is
  */
-export function tileCorners(corners: ProjectedPoint[], turns = 0): ProjectedPoint[] {
+export function tileCorners<T>(corners: T[], turns = 0): T[] {
   const step = ((turns % 4) + 4) % 4;
 
   return [

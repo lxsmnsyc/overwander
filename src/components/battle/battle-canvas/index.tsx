@@ -20,9 +20,8 @@ import {
   moveMissVisual,
 } from '../../../canvas/battle/moves';
 import type { FieldView } from '../../../canvas/battle/field';
-import loadBiomeTileset from '../../../canvas/biome-tilesets';
-import type BiomeTileset from '../../../canvas/biome-tileset';
-import drawFloor, { type FloorRegion } from './floor';
+import loadTerrainTiles, { TERRAIN_TILE } from '../../../canvas/terrain-tiles';
+import drawFloor, { type FloorRegion, type FloorTile } from './floor';
 import QuadBatch from '../../../canvas/gl/quad-batch';
 import Bakery from '../../../canvas/bakery';
 import Biome from '../../../data/ids/biome';
@@ -347,14 +346,18 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
      * appears under a fight already under way, which is better than a
      * fight that waited for scenery
      */
-    let floor: BiomeTileset | null = null;
+    let floor: FloorTile | null = null;
     const standing = props.biome ?? Biome.Beyond;
 
     if (standing !== Biome.Beyond) {
-      loadBiomeTileset(standing)
-        .then((loaded) => {
-          if (live) {
-            floor = loaded;
+      loadTerrainTiles()
+        .then((pack) => {
+          const country = pack.of(standing, 'ground');
+
+          if (live && country != null) {
+            // The country's plain fill, which is the tile a chunk lays
+            // where the ground is its own on every side
+            floor = { sheet: country.fill(), x: 0, y: 0, tile: TERRAIN_TILE };
           }
         })
         .catch(() => {
@@ -499,7 +502,7 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       // charges a transform and a blit apiece for
       if (batch == null) {
         if (floor != null) {
-          drawFloor(context, floor, view, region, clock);
+          drawFloor(context, floor, view, region);
         }
       } else {
         // Opened here and handed over once the fight is written into
@@ -516,7 +519,7 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
         // the painted pass draws it
         batch.carry(stage.offsetX, stage.offsetY, 1, stage.scale);
         if (floor != null) {
-          drawFloor(context, floor, view, region, clock, batch);
+          drawFloor(context, floor, view, region, batch);
         }
       }
 

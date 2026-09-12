@@ -44,3 +44,32 @@ export const ORTHOGONAL: [dx: number, dy: number][] = [
   [0, 1],
   [-1, 0],
 ];
+
+/** The eight cells round one, for anything that counts a corner too. */
+export const SURROUNDING: [dx: number, dy: number][] = [
+  [0, -1],
+  [1, -1],
+  [1, 0],
+  [1, 1],
+  [0, 1],
+  [-1, 1],
+  [-1, 0],
+  [-1, -1],
+];
+
+/**
+ * The four 2x2 squares a cell belongs to, as their top-left corners.
+ *
+ * What "two cells wide" is asked with: a thing counts as broad where
+ * the cell belongs to a 2x2 block of it, which is a morphological
+ * opening of whatever field is being read and rubs out every spur and
+ * hairline. The cliffs and the water are both held to it, because the
+ * art is a ring of edges and corners and a single cell asks for all
+ * four corners at once
+ */
+export const SQUARES: [dx: number, dy: number][] = [
+  [0, 0],
+  [-1, 0],
+  [0, -1],
+  [-1, -1],
+];

@@ -1,6 +1,5 @@
 import Weather from '../../data/overworld/weather';
-import type QuadBatch from '../gl/quad-batch';
-import type { QuadPoint } from '../gl/quad-batch';
+import type { Painter, QuadPoint } from '../gl/quad-batch';
 import {
   CURTAINS,
   CURTAIN_TALL,
@@ -29,7 +28,7 @@ import { BLENDS, MODES, WASHES } from './wash';
  * them are lifted rather than laid on, the way they are painted
  */
 function batchLights(
-  batch: QuadBatch,
+  batch: Painter,
   width: number,
   height: number,
   weather: Weather,
@@ -105,7 +104,7 @@ function batchLights(
  * whether it wrote one
  */
 export function batchWash(
-  batch: QuadBatch,
+  batch: Painter,
   width: number,
   height: number,
   weather: Weather,
@@ -184,7 +183,7 @@ export function batchWash(
  * Answers whether it drew anything, so a caller knows not to stroke it
  */
 export function batchSky(
-  batch: QuadBatch,
+  batch: Painter,
   width: number,
   height: number,
   weather: Weather,
@@ -298,7 +297,7 @@ export function paintCavern(
  * `paintCavern`, for the board that draws its world through one
  */
 export function batchCavern(
-  batch: QuadBatch,
+  batch: Painter,
   width: number,
   height: number,
   lamps: Lamp[] = [],

@@ -187,6 +187,20 @@ export default class World {
    * chunk wherever the field says it does
    */
   getCellBiome(cellX: number, cellY: number): Biome {
+    const { humidity, temperature, elevation } = this.getCellClimate(cellX, cellY);
+
+    return getBiome(humidity, temperature, elevation);
+  }
+
+  /**
+   * The three fields a cell is classified from, read at the warped
+   * sample the biome uses. Asked apart from the biome by anything that
+   * needs the height itself rather than the country it makes
+   */
+  getCellClimate(
+    cellX: number,
+    cellY: number,
+  ): { humidity: number; temperature: number; elevation: number } {
     const x = clampToWorldCell(cellX);
     const y = clampToWorldCell(cellY);
     const drift = (x + CLIMATE_OFFSET) * WARP_FREQUENCY;
@@ -196,11 +210,11 @@ export default class World {
     const sampleY =
       (y + CLIMATE_OFFSET + this.warpY.noise(drift, wander) * WARP_REACH) * CELL_CLIMATE_FREQUENCY;
 
-    return getBiome(
-      spreadNoise(this.humidity.noise(sampleX, sampleY)),
-      spreadNoise(this.temperature.noise(sampleX, sampleY)),
-      spreadNoise(this.elevation.noise(sampleX, sampleY)),
-    );
+    return {
+      humidity: spreadNoise(this.humidity.noise(sampleX, sampleY)),
+      temperature: spreadNoise(this.temperature.noise(sampleX, sampleY)),
+      elevation: spreadNoise(this.elevation.noise(sampleX, sampleY)),
+    };
   }
 
   /**

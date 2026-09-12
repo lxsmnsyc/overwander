@@ -19,10 +19,13 @@ import settings from './settings';
 export const enum Effect {
   /** A shiny, whether it is standing in a chunk or in front of the player */
   ShinySparkle = 0,
+  /** A party handed back whole, at the counter it was handed over at */
+  NurseHeal = 1,
 }
 
 const FILES: Record<Effect, string> = {
   [Effect.ShinySparkle]: '/sounds/effects/shiny_sparkle.wav',
+  [Effect.NurseHeal]: '/sounds/effects/nurse_heal.wav',
 };
 
 /**

@@ -3,6 +3,7 @@ import type { CaughtPokemon } from '../../../../auth/caught';
 import { getMaxHealth } from '../../../../auth/health';
 import { visitNurse } from '../../../../auth/npcs';
 import { DialogActions } from '../../../styled';
+import playEffect, { Effect } from '../../../app/sound';
 import { type CounterProps, optionsOf, refusal, useSaying } from '../shared';
 import { NurseCounter } from './care';
 
@@ -32,6 +33,11 @@ export default function Nurse(props: CounterProps): JSX.Element {
     visitNurse(snapshot, standing[0], picked)
       .then((tended) => {
         setBusy(false);
+        // Only where she actually did something: a party handed
+        // straight back is not worth a fanfare
+        if (tended != null) {
+          playEffect(Effect.NurseHeal);
+        }
         said(
           tended == null
             ? 'She handed them straight back. Nothing to heal.'

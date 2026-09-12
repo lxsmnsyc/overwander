@@ -111,24 +111,32 @@ const OUTLINE = '41,41,41';
 const PARTS = 7;
 
 /**
- * Which of the family's colours each part takes, most drawn first. The
- * candy is symmetric about its middle stripe, so a part and the one
- * facing it across the ball are painted alike
+ * Which of the family's colours each part takes, most drawn first, by
+ * how many colours the family gave up.
+ *
+ * Two colours make a ball of the first with stripes of the second. A
+ * third splits the ball's middle off from its cap, and a fourth takes
+ * the middle stripe for itself. The candy is symmetric about that
+ * stripe, so a part and the one facing it across the ball are painted
+ * alike
  */
-const PART_COLOURS = [0, 2, 1, 3, 1, 2, 0];
+const PART_COLOURS: number[][] = [
+  [0, 1, 0, 1, 0, 1, 0],
+  [0, 1, 0, 1, 0, 1, 0],
+  [0, 1, 2, 1, 2, 1, 0],
+  [0, 2, 1, 3, 1, 2, 0],
+];
 
-/** How many colours a candy is painted in. */
-const COLOURS = Math.max(...PART_COLOURS) + 1;
+/** How many colours a candy is painted in, at most. */
+const COLOURS = 4;
 
 /**
- * Which parts touch, taken down the top half since the ball repeats.
- * Two of these painted the same lightness lose the seam between them
+ * The lightest the ball is painted, and the darkest a stripe is. The
+ * drawing is a dark ball under light stripes, and a family whose
+ * colours run the other way still has to read as that candy
  */
-const TOUCHING: [number, number][] = [
-  [0, 2],
-  [2, 1],
-  [1, 3],
-];
+const BALL_TOP = 0.55;
+const STRIPE_FLOOR = 0.7;
 
 /**
  * The wrapper's colours in the template: the stripes lit, shaded, and
@@ -526,31 +534,52 @@ function stepped(tone: Hsl, by: number): Hsl {
   return { ...tone, s: tone.s * 0.85, l: Math.min(Math.max(tone.l + by, 0.16), 0.94) };
 }
 
+/** One tone held inside a range of lightness. */
+function within(tone: Hsl, from: number, to: number): Hsl {
+  return { ...tone, l: Math.min(Math.max(tone.l, from), to) };
+}
+
+/** The tones one half of the candy draws on, in the order they are used. */
+function drawnOn(takes: number[], odd: boolean): number[] {
+  return [...new Set(takes.filter((_tone, at) => at % 2 === (odd ? 1 : 0)))];
+}
+
 /**
- * What the bands are painted in, from however many colours the sprite
- * gave up.
+ * What the parts are painted in, and which part takes which.
  *
- * A family drawn in one colour still has four bands to fill, so the
- * colours it did give up are stepped in lightness until there are
- * four, and two bands that touch are pushed apart until the seam
- * between them shows
+ * A family that gave one colour still has stripes, so it is given a
+ * second tone off its own. Then the ball is held dark and the stripes
+ * light, whatever they are painted in, and two tones drawn on the same
+ * half of the candy are pushed apart: a candy whose stripes stopped
+ * reading as stripes is not the drawing any more
  */
-function palette(colours: [number, number, number][]): Hsl[] {
-  const tones = colours.map(toHsl);
+function palette(colours: [number, number, number][]): { tones: Hsl[]; takes: number[] } {
+  const tones = colours.slice(0, COLOURS).map(toHsl);
 
-  while (tones.length < COLOURS) {
-    tones.push(stepped(tones[tones.length - 1], tones.length % 2 === 1 ? SEPARATION : -SEPARATION));
+  if (tones.length === 1) {
+    tones.push(stepped(tones[0], SEPARATION));
   }
-  for (const [one, two] of TOUCHING) {
-    const gap = tones[two].l - tones[one].l;
+  const takes = PART_COLOURS[tones.length - 1];
+  const balls = drawnOn(takes, false);
+  const stripes = drawnOn(takes, true);
 
-    if (Math.abs(gap) < SEPARATION) {
-      const push = tones[one].l + (gap < 0 ? -SEPARATION : SEPARATION);
-
-      tones[two] = { ...tones[two], l: Math.min(Math.max(push, 0.16), 0.94) };
+  for (const at of balls) {
+    tones[at] = within(tones[at], 0.16, BALL_TOP);
+  }
+  for (const at of stripes) {
+    tones[at] = within(tones[at], STRIPE_FLOOR, 0.94);
+  }
+  for (const at of balls.slice(1)) {
+    if (Math.abs(tones[at].l - tones[balls[0]].l) < SEPARATION) {
+      tones[at] = within(tones[at], 0.16, tones[balls[0]].l - SEPARATION / 2);
     }
   }
-  return tones;
+  for (const at of stripes.slice(1)) {
+    if (Math.abs(tones[at].l - tones[stripes[0]].l) < SEPARATION / 2) {
+      tones[at] = within(tones[at], tones[stripes[0]].l + SEPARATION / 2, 0.94);
+    }
+  }
+  return { tones, takes };
 }
 
 /** The template repainted for one family. */
@@ -559,7 +588,7 @@ function candyOf(
   parts: (Painted | null)[],
   colours: [number, number, number][],
 ): Image {
-  const tones = palette(colours);
+  const { tones, takes } = palette(colours);
   const painted = new Map<string, [number, number, number]>();
   const image: Image = {
     width: template.width,
@@ -573,7 +602,7 @@ function candyOf(
     if (held == null) {
       continue;
     }
-    const tone = PART_COLOURS[held.part];
+    const tone = takes[held.part];
     const colour = keyOf(image.rgba, at * 4);
     const key = `${tone} ${held.wrapper} ${colour}`;
     const into = painted.get(key) ?? swap(colour, held.wrapper, tones[tone]);

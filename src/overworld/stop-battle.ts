@@ -2,7 +2,7 @@ import type { TeamSnapshotRecord } from '../auth/teams';
 import { BattleModes } from '../battle/core';
 import type Biome from '../data/ids/biome';
 import createBattle from '../battle/setup';
-import { PVP_BATTLE_LIMITS } from '../data/constants/battle-limits';
+import { NPC_BATTLE_LIMITS } from '../data/constants/battle-limits';
 import Weather, { toBattleWeather } from '../data/overworld/weather';
 import { FRONTIER_TIME_LIMIT, FrontierRule } from '../data/overworld/experts';
 import type Battle from '../battle/core';
@@ -28,7 +28,7 @@ import { type RaidBattle, fieldTeams } from './raid-battle';
 export function createTrainerBattle(
   battleId: string,
   teams: TeamSnapshotRecord[],
-  limits = PVP_BATTLE_LIMITS,
+  limits = NPC_BATTLE_LIMITS,
   mode: BattleModes = BattleModes.Npc,
   weather = Weather.Clear,
   biome?: Biome,
@@ -60,7 +60,7 @@ export function createTrainerBattle(
 export function createStopBattle(
   battleId: string,
   teams: TeamSnapshotRecord[],
-  limits = PVP_BATTLE_LIMITS,
+  limits = NPC_BATTLE_LIMITS,
   weather = Weather.Clear,
   biome?: Biome,
 ): RaidBattle {

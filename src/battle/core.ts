@@ -1,6 +1,10 @@
 import type Biome from '../data/ids/biome';
 import AleaRNG from '../core/alea';
-import { PVP_BATTLE_LIMITS, UNLIMITED_BATTLE_LIMITS } from '../data/constants/battle-limits';
+import {
+  NPC_BATTLE_LIMITS,
+  PVP_BATTLE_LIMITS,
+  UNLIMITED_BATTLE_LIMITS,
+} from '../data/constants/battle-limits';
 import { type Slots, getSlots } from '../data/constants/slots';
 import { EventEngine } from '../core/event-engine';
 import { Weathers } from '../data/ids/status';
@@ -37,6 +41,17 @@ export const enum BattleModes {
   Npc = 3,
 }
 
+/**
+ * What each kind of fight allows where the caller names nothing. A
+ * raid and a fight against the world add no ceiling of their own; a
+ * fight between players keeps the mainline's one ability and one held
+ * item, and anything not listed is read as one of those
+ */
+const MODE_LIMITS: Partial<Record<BattleModes, number>> = {
+  [BattleModes.Raid]: UNLIMITED_BATTLE_LIMITS,
+  [BattleModes.Npc]: NPC_BATTLE_LIMITS,
+};
+
 export default class Battle extends EventEngine<BattleEventMap> {
   rng: AleaRNG;
 
@@ -72,8 +87,7 @@ export default class Battle extends EventEngine<BattleEventMap> {
     super();
     this.rng = new AleaRNG(seed);
     this.mode = mode;
-    this.limits =
-      limits ?? (mode === BattleModes.Raid ? UNLIMITED_BATTLE_LIMITS : PVP_BATTLE_LIMITS);
+    this.limits = limits ?? MODE_LIMITS[mode] ?? PVP_BATTLE_LIMITS;
     this.biome = biome;
     this.timeLimit = timeLimit;
   }

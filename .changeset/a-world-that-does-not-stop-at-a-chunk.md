@@ -17,6 +17,7 @@
 - A chunk of open country rolls two to four landmarks instead of five to eight, so what is left out there is what a player goes out for
 - Every region has exactly one portal, in its town where it has one, so the network is even and reaches every country including the open seas
 - A town levels the ground it stands on and holds no wild pokemon, and no two towns have the same charter
+- Walking into a town says its name, and walking out and back in says it again
 - A town has streets: its plaza is paved and a road runs out of it to every lot, turning square corners rather than cutting across, drawn from whatever country the town stands in
 - A street stops at a lot's door rather than paving it and goes round any other lot in its way, so nobody stands in the road and no road stops dead at a back wall
 - The board keeps the subscriptions it already has when it moves, and remembers what the server said about a window's claims, so a walk asks it a fraction of what it used to

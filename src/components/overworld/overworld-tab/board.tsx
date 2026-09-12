@@ -68,7 +68,7 @@ import getWorld from '../../../overworld/current';
 import type World from '../../../overworld/world';
 import { Depth } from '../../../overworld/depth';
 import { throughMouth } from '../../../overworld/cave';
-import { townAt } from '../../../overworld/town';
+import { townAt, townName } from '../../../overworld/town';
 import { discoverTown } from '../../../auth/towns';
 import { findPathBeside, findPathNear } from '../../../overworld/path';
 import type SafariSession from '../../../overworld/safari';
@@ -807,19 +807,38 @@ export default function OverworldBoard(props: {
    * itself is written once and for good
    */
   const reported = new Set<string>();
-  // Walking into a town puts it on everybody's register. It costs
-  // nothing, takes nothing and is not a claim: it is what makes the
-  // town somewhere the portals will cross to, for everybody
-  createEffect(() => {
-    const town = townAt(getWorld(), atX(), atY());
+  /**
+   * And which town they are standing in, which is a different question:
+   * the register is answered once a session, and the name is said every
+   * time somebody walks in. Leaving and coming back is walking in again
+   */
+  let standingIn: string | null = null;
 
-    if (town == null) {
+  // Walking into a town says its name and puts it on everybody's
+  // register. The register costs nothing, takes nothing and is not a
+  // claim: it is what makes the town somewhere the portals will cross
+  // to, for everybody
+  createEffect(() => {
+    // Nothing until the walk knows where it is. The board stands in the
+    // middle of chunk zero until the stored position lands, and a town
+    // sitting there is not one anybody has been to
+    if (!placed()) {
       return;
     }
+    // Read on the layer they are on: a cave under a town is not the
+    // town, and somebody crossing beneath it has walked into nothing
+    const town = townAt(around(), atX(), atY());
+    const key = town == null ? null : `${town.regionX},${town.regionY}`;
 
-    const key = `${town.regionX},${town.regionY}`;
-
-    if (reported.has(key)) {
+    if (key !== standingIn) {
+      standingIn = key;
+      // The one place in the world with a name of its own. A border is
+      // not drawn anywhere, so being told is how a player knows
+      if (town != null) {
+        remark(`Entered ${townName(town)}.`, 'leaf');
+      }
+    }
+    if (key == null || town == null || reported.has(key)) {
       return;
     }
     reported.add(key);

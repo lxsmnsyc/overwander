@@ -76,3 +76,62 @@ is still short of the mainline, in rough order of how much it matters:
 
 - Add non-canon abilities per family.
   
+## Open world gimmicks
+
+Candidates, none committed to. Secret bases are deliberately left out: they were
+already on the table when this list was drawn up. Each line says what the
+mechanic does and what it would cost a player, since a gimmick whose payoff is
+invisible or already reachable is not worth building.
+
+- [ ] **Rides.** Read off the buddy already carried: deep water opens to a Water
+      or Flying buddy, surface rock to a Rock, Ground or Fighting one, and a
+      Flying or Dragon buddy glides a straight line of up to 5 cells, landing on
+      the first walkable cell. Shelf water stays open to everyone, so nobody
+      loses ground they walk on today. Makes the buddy slot a route choice as
+      well as an odds choice, against the lure and shiny boost it already holds.
+- [ ] **Fishing.** Three rods, never consumed. Press an adjacent water cell,
+      rolled from `${window}:${worldCell}:cast:${n}` so everyone standing there
+      in that window sees the same fish, on a 20 second cooldown. Rod tier and
+      shelf versus deep water pick the band; a fish that breaks off is gone from
+      that cell for the window. Reaches for what is under the water rather than
+      filling an empty cell, since water already holds swimmers and floaters.
+- [ ] **Seasons.** Four, world wide, on the UTC clock the daily board uses, one
+      per real week. A quarter of every biome's rolls comes from a season pool.
+      Winter freezes water touching ground into walkable ice and spring floods
+      the lowest ground band, so routes open and close. A generation change, so
+      the world moves under everybody at once and a stored position can wake up
+      in water.
+- [ ] **Camp cooking.** Pitch every 30 minutes for 3 berries and run one
+      encounter power for 20 minutes, picked by dominant flavour: spawn count,
+      shiny odds, egg steps, wild levels or item finds. No stacking. The weakest
+      of the set, since lures and the buddy already hand out most of it.
+- [ ] **Tracks.** A rare spawn does not stand in the open. It leaves three or
+      four footprints on the ground pointing the way it went, redrawn each
+      window, and the trail can go cold. Chase it or keep walking.
+- [ ] **Itemfinder.** Caches stop being visible landmarks and become buried,
+      with a bag tool that pings by distance. Turns a chunk into something to
+      sweep rather than something to cross.
+- [ ] **A roaming legendary.** One per region, in a real chunk each three hour
+      window and moving when the window turns. The world map names the region it
+      is in, never the cell. It flees on contact; corner it three times in three
+      windows and it stands.
+- [ ] **Berry farming.** Plant in a cell you pick rather than harvesting what
+      the world placed. Hours to grow, waterable, and the plot is public the way
+      a gym seat is, so a stranger can water it or take the crop.
+- [ ] **A phone.** A beaten trainer gives you their number. Once a window one
+      calls, names the cell they are standing on, and wants a rematch with a
+      stronger party.
+- [ ] **A bike.** Halves the step pace, and an egg counts no steps while riding.
+      Speed against the thing walking is for.
+- [ ] **Deliveries.** A wanderer hands over a parcel for a town six or eight
+      chunks off, payable inside one window. A detour with a clock on it.
+- [ ] **A camera.** Photograph a wild pokemon instead of catching it: it fills
+      the dex sighting and pays nothing else, so the choice is on the encounter
+      itself.
+- [ ] **Contests.** A second axis of worth for a catch that is not its stats,
+      scored off nature, friendship and a move's flavour. Nothing currently makes
+      a pokemon worth raising for anything but a fight.
+
+Pairs that would ship as one release: rides and fishing, both wanting the same
+water; tracks and the camera, which turn a walk into looking; seasons and rides,
+since a frozen lake and a Lapras answer the same closed route.

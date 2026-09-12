@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import World from '../../src/overworld/world';
+import { Depth } from '../../src/overworld/depth';
 import { CHUNK_CELLS, chunkOfCell } from '../../src/overworld/chunk';
 import { ORTHOGONAL } from '../../src/overworld/grid';
 import {
@@ -98,6 +99,21 @@ describe('siting a town', () => {
     expect(isTownAt(world, town.x, town.y)).toBe(true);
     // And nothing a radius and a bit away is in it
     expect(isTownAt(world, town.x + TOWN_RADIUS + 2, town.y)).toBe(false);
+  });
+
+  it('is not underneath itself, so a cave beneath one is not the town', () => {
+    const town = townOfRegion(world, 1, 1);
+    const below = new World(world.seed, Depth.Cave);
+
+    expect(town).not.toBeNull();
+    if (town == null) {
+      return;
+    }
+    // Nobody has built anything underground, so walking beneath a
+    // plaza is walking through rock: what reads the layer is what
+    // keeps a cave crossing from announcing the town over it
+    expect(townAt(below, town.x, town.y)).toBeNull();
+    expect(isTownAt(below, town.x, town.y)).toBe(false);
   });
 });
 

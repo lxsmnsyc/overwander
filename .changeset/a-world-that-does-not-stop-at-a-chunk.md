@@ -8,7 +8,8 @@
 - The board is a window on the world with the player in the middle of it rather than the chunk they are standing in, so the world scrolls as they walk and there is no boundary to cross and nothing to wait for at one
 - A board straddles four or nine chunks at once, and their windows are all watched and all visited, so what is standing on the far side of a boundary is live before the player gets there
 - The board is a circle rather than a square, so a player sees the same distance in every direction
-- The country is drawn twenty cells out, past the edge of the picture on every side, while the board itself is the ten cells the player can press, and everything standing on it is inside those
+- The country is drawn twenty cells out, past the edge of the picture on every side, and every square of it can be pressed and walked to, so nothing on the screen is out of reach
+- The world is live within ten cells of the player, which is how near a pokemon has to be to be standing there, and no circle is drawn to say so
 - Scenery, landmarks and pokemon may stand on any cell of a chunk: the clear rim every chunk used to keep drew empty corridors across the world every sixteen cells
 - A new /demo/world page paints the world's ground a cell at a time, with the chunk grid over it
 - Towns: one settled circle 28 cells across in each 8x8 chunk region that has dry ground for it, holding nine to fourteen lots of market, auction board, gym seat and the ladder

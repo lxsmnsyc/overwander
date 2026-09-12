@@ -18,7 +18,6 @@ import {
   depthOrder,
   facingFrom,
   fitPicture,
-  groundRing,
   projectBoardCell,
   projectBoardCellQuad,
   projectGround,
@@ -27,7 +26,6 @@ import {
   setBoardScreen,
   shortestTurn,
   unprojectGround,
-  viewCells,
   yawTurns,
 } from '../../../canvas/board';
 import type SpeciesSpriteAnimation from '../../../canvas/species-sprite-animation';
@@ -103,9 +101,6 @@ import {
   PLANT_PHASES,
   PLAYER_SHEET,
   QUARTER_TURN,
-  REACH,
-  RIM,
-  RING_POINTS,
   RIPPLE_ALPHA,
   RIPPLE_FADE,
   RIPPLE_PERIOD,
@@ -1088,7 +1083,6 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
     width: pictureWidth(),
     height: pictureWidth() * boardView().aspect,
   });
-  const [focused, setFocused] = createSignal(false);
   /**
    * Which way round the board is being looked at. It is the camera's,
    * not the world's: nothing about the chunk changes when it turns,
@@ -1417,23 +1411,6 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
     };
 
     /**
-     * A ring of ground, as a path. `reach` is how far from the middle
-     * it runs, in board fractions: the circle the player can press, or
-     * the rim of country a cell outside it.
-     *
-     * Drawn as a ring in the **world** and then projected, so it comes
-     * out as the ellipse the tilt makes of a circle rather than as an
-     * ellipse drawn on the screen. Its own points, not the cells': a
-     * circle stepped round in cells is a staircase
-     */
-    const ringAt = (reach: number): ProjectedPoint[] =>
-      groundRing(reach, RING_POINTS).map((point) => at(projectGround(point, yaw())));
-
-    const traceGround = (reach: number): void => {
-      traceQuad(ringAt(reach));
-    };
-
-    /**
      * The four corners of the ring around the player, in the picture's
      * own pixels — or null while there is nowhere to draw it. It is
      * clipped to the board, so a player standing against an edge is
@@ -1458,10 +1435,11 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
 
     /**
      * Every square of country the picture is made of, worked out once.
-     * It runs off the picture on every side: what the player looks out
-     * over rather than what they can reach
+     * It runs off the picture on every side, and it is also every
+     * square the pointer may land on: what a player can see is what
+     * they can head for
      */
-    const painted = viewCells();
+    const painted = boardCells();
 
     /**
      * The hour the world is standing in, on the player's own clock.
@@ -1602,12 +1580,9 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
 
       paintedAt = clock;
 
-      // Nothing outside the board. A tilted board leaves corners of
-      // the canvas that are not board, and painting them — even a
-      // shade of the ground — draws a rectangle around a picture that
-      // has no rectangle in it. Cleared, the country the layer below
-      // paints is what shows through, which is this same country
-      // carrying on past the edge of what the player can reach
+      // Last frame's picture, cleared: what is drawn over it is the
+      // country to the corners of the canvas, so nothing of it may be
+      // left showing through a square the ground has since slid off
       context.clearRect(0, 0, screen.width, screen.height);
 
       /** The whole layer, as the four corners the backdrop fills */
@@ -1634,21 +1609,12 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
 
       context.save();
 
-      // The country, rim and all: what is drawn past the board is as
-      // much the world as what is on it
+      // The country, over the whole layer: there is no circle of board
+      // laid on it any more, so the ground goes to the edges the way
+      // the batch below already paints it
       if (batch == null) {
-        traceGround(RIM);
         context.fillStyle = BIOME_COLORS[props.biome];
-        context.fill();
-      }
-      // The one thing that tells the chunk from the ground around it: a
-      // surface catches a little more light than the country does. It
-      // stops at the board's own edge, so the rim reads as country
-      // out of reach rather than as more of the same
-      if (batch == null) {
-        traceGround(REACH);
-        context.fillStyle = COLORS.surface;
-        context.fill();
+        context.fillRect(0, 0, screen.width, screen.height);
       }
 
       context.textAlign = 'center';
@@ -1794,24 +1760,53 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       };
 
       /**
-       * The ground, in one pass of its own before anything is ruled
-       * over it. Over a wider circle than the board is, since the ring
-       * past it is where the ground slides in from
+       * Whether a square reaches the screen at all. The country is
+       * drawn well past the picture, so a good half of it is behind
+       * the edges: a square nobody can see is worth neither a tile nor
+       * a grid line
        */
-      if (batch != null) {
-        // The rim over the backdrop, and the board's own lit surface
-        // over that: the same country either side of the board's edge,
-        // with the light on the half of it the player can reach
-        batch.solid(BIOME_COLORS[props.biome], ringAt(RIM));
-        batch.solid(COLORS.surface, ringAt(REACH));
+      const onScreen = (corners: ProjectedPoint[]): boolean => {
+        let left = Number.POSITIVE_INFINITY;
+        let right = Number.NEGATIVE_INFINITY;
+        let top = Number.POSITIVE_INFINITY;
+        let bottom = Number.NEGATIVE_INFINITY;
+
+        for (const corner of corners) {
+          left = Math.min(left, corner.x);
+          right = Math.max(right, corner.x);
+          top = Math.min(top, corner.y);
+          bottom = Math.max(bottom, corner.y);
+        }
+        return right >= 0 && left <= screen.width && bottom >= 0 && top <= screen.height;
+      };
+
+      /**
+       * Every square on the screen this frame and where it landed,
+       * worked out once. The ground is painted into these corners and
+       * the grid is ruled round the same ones, so a square is put
+       * through the projection once rather than once a pass
+       */
+      const drawn: { square: BoardCell; outline: ProjectedPoint[] }[] = [];
+
+      for (const square of painted) {
+        const outline = projectBoardCellQuad(shifted(square), yaw()).map(at);
+
+        if (onScreen(outline)) {
+          drawn.push({ square, outline });
+        }
       }
+
+      /**
+       * The ground, in one pass of its own before anything is ruled
+       * over it, over every square the picture is made of
+       */
       if (sheets.size > 0) {
         // Off for the pass: these are pixel tiles, and smoothed up to
         // the size of a cell they lose the edges they are drawn with
         context.save();
         context.imageSmoothingEnabled = false;
-        for (const square of painted) {
-          paintGround(square, projectBoardCellQuad(shifted(square), yaw()).map(at));
+        for (const { square, outline } of drawn) {
+          paintGround(square, outline);
         }
         context.restore();
       }
@@ -2064,8 +2059,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       /** The square the cursor is over, kept to ring once the grid is laid */
       let hoveredOutline: ProjectedPoint[] | null = null;
 
-      for (const square of boardCells()) {
-        const outline = projectBoardCellQuad(shifted(square), yaw()).map(at);
+      for (const { square, outline } of drawn) {
         const hot = beneath(square);
 
         rule(outline, hot ? HOVER_GLOW : 0);
@@ -2639,25 +2633,6 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         props.onShiny?.();
       }
 
-      // A border while the keyboard is in here. It is not decoration:
-      // the camera keys only work while this has focus, so whether it
-      // does is the difference between Q and E turning the board and
-      // doing nothing at all. It follows the board's own outline — the
-      // rim included, since the board ends in country rather than in
-      // an edge
-      const edge = focused() ? COLORS.cursor : COLORS.grid;
-      const weight = focused() ? 3 : 1;
-
-      if (batch == null) {
-        traceGround(RIM);
-        context.strokeStyle = edge;
-        context.lineWidth = weight;
-        context.stroke();
-        context.lineWidth = 1;
-      } else {
-        batch.outline(edge, ringAt(RIM), weight);
-      }
-
       // The board is finished, so it is put back where it was found:
       // what is drawn from here is the player's own instruments, and
       // they are not the thing being carried off
@@ -2814,9 +2789,16 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         // finger twist here would otherwise be the browser's own pinch,
         // and a drag would scroll whatever is behind it
         style={{ 'touch-action': 'none' }}
-        class={`absolute inset-0 block h-full w-full focus-visible:outline-none ${
-          hovered() == null ? 'cursor-default' : 'cursor-pointer'
-        }`}
+        // A line round the picture while the keyboard is in here. It
+        // is not decoration: the camera keys only work while this has
+        // focus, so whether it does is the difference between Q and E
+        // turning the board and doing nothing at all. Drawn on the
+        // element rather than on the ground, since the board has no
+        // edge of its own any more: the country runs to the corners
+        class={`absolute inset-0 block h-full w-full focus:outline-2
+          focus:-outline-offset-2 focus:outline-tide ${
+            hovered() == null ? 'cursor-default' : 'cursor-pointer'
+          }`}
         // The right button walks the camera round the board rather than
         // opening the browser's own menu over it
         onContextMenu={(event) => {
@@ -2883,12 +2865,6 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         }}
         onMouseLeave={() => {
           setHovered(null);
-        }}
-        onFocus={() => {
-          setFocused(true);
-        }}
-        onBlur={() => {
-          setFocused(false);
         }}
         onKeyDown={(event) => {
           // The camera only. Walking and reaching are read at the

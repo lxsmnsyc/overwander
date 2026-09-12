@@ -27,12 +27,16 @@ import {
   reachOf,
   setBoardScreen,
   unprojectGround,
-  viewCells,
   viewFor,
   yawTurns,
 } from '../../src/canvas/board';
 /** Every cell of the board, by index */
 const BOARD = boardCells().map((cell) => cell.y * BOARD_CELLS + cell.x);
+/**
+ * The live circle inside it: the world the game keeps track of, which
+ * is the part the picture is fitted around
+ */
+const LIVE = boardCells().filter((cell) => reachOf(cell) <= BOARD_RADIUS);
 
 describe('the board projection', () => {
   it('lays the ground back under the camera', () => {
@@ -83,9 +87,9 @@ describe('the board projection', () => {
     }
   });
 
-  it('draws every cell inside the picture, corners and all', () => {
-    for (const index of BOARD) {
-      for (const corner of projectCellQuad(index)) {
+  it('draws every live cell inside the picture, corners and all', () => {
+    for (const cell of LIVE) {
+      for (const corner of projectCellQuad(cell.y * BOARD_CELLS + cell.x)) {
         expect(corner.x).toBeGreaterThanOrEqual(0);
         expect(corner.x).toBeLessThanOrEqual(1);
         expect(corner.y).toBeGreaterThanOrEqual(0);
@@ -94,14 +98,13 @@ describe('the board projection', () => {
     }
   });
 
-  it('answers nothing for a press beside the board', () => {
-    // The picture is a rectangle and the board inside it is not, so
-    // the far corners are ground the player is not standing on
-    expect(cellAtFraction(0.01, 0.01)).toBeNull();
-    expect(cellAtFraction(0.99, 0.01)).toBeNull();
-    // And past the edges entirely
-    expect(cellAtFraction(-0.2, 0.5)).toBeNull();
-    expect(cellAtFraction(0.5, 1.4)).toBeNull();
+  it('answers nothing for a press past where the country is drawn', () => {
+    // The country runs off the picture, so a press outside the frame
+    // is still a press on ground. What answers nothing is ground that
+    // was never drawn, which is a long way further out
+    expect(cellAtFraction(-0.2, 0.5)).not.toBeNull();
+    expect(cellAtFraction(-4, 0.5)).toBeNull();
+    expect(cellAtFraction(0.5, 6)).toBeNull();
   });
 
   it('keeps the rows in order from the back of the board forwards', () => {
@@ -230,17 +233,19 @@ describe('fitting the picture to a screen', () => {
 });
 
 describe('the country drawn past the board', () => {
-  it('is a good deal wider than what the player can press', () => {
-    const painted = viewCells();
-
+  it('is a good deal wider than the world the game keeps track of', () => {
     expect(VIEW_RADIUS).toBeGreaterThan(BOARD_RADIUS);
-    expect(painted.length).toBeGreaterThan(boardCells().length * 2);
-    for (const cell of painted) {
-      expect(reachOf(cell)).toBeLessThanOrEqual(VIEW_RADIUS);
+    expect(boardCells().length).toBeGreaterThan(LIVE.length * 2);
+    // Everywhere something can be standing is country the player sees
+    for (const cell of LIVE) {
+      expect(isBoardCell(cell)).toBe(true);
     }
-    // Everything the player can press is country they can see
+  });
+
+  it('is all of it pressable, since what is seen is what is headed for', () => {
     for (const cell of boardCells()) {
-      expect(painted).toContainEqual(cell);
+      expect(reachOf(cell)).toBeLessThanOrEqual(VIEW_RADIUS);
+      expect(boardIndexOf(cell)).toBe(cell.y * BOARD_CELLS + cell.x);
     }
   });
 
@@ -291,17 +296,17 @@ describe('the circle the board is', () => {
     // both the furthest a player can see and the least useful place
     // to see it, since nothing is ever reached diagonally
     expect(cells.length).toBeLessThan(BOARD_CELLS * BOARD_CELLS);
-    expect(cells.length).toBeGreaterThan(Math.PI * (BOARD_RADIUS - 1) ** 2);
-    expect(cells.length).toBeLessThan(Math.PI * (BOARD_RADIUS + 1) ** 2);
+    expect(cells.length).toBeGreaterThan(Math.PI * (VIEW_RADIUS - 1) ** 2);
+    expect(cells.length).toBeLessThan(Math.PI * (VIEW_RADIUS + 1) ** 2);
 
     for (const cell of cells) {
-      expect(reachOf(cell)).toBeLessThanOrEqual(BOARD_RADIUS);
+      expect(reachOf(cell)).toBeLessThanOrEqual(VIEW_RADIUS);
     }
     // The corners of the square are country rather than board, and
-    // so is anything further out than the reach
+    // so is anything further out than the drawing reaches
     expect(isBoardCell({ x: 0, y: 0 })).toBe(false);
-    expect(isBoardCell({ x: BOARD_CENTER, y: BOARD_CENTER - Math.floor(BOARD_RADIUS) })).toBe(true);
-    expect(isBoardCell({ x: BOARD_CENTER, y: BOARD_CENTER + Math.ceil(BOARD_RADIUS) })).toBe(false);
+    expect(isBoardCell({ x: BOARD_CENTER, y: BOARD_CENTER - VIEW_RADIUS })).toBe(true);
+    expect(isBoardCell({ x: BOARD_CENTER + 15, y: BOARD_CENTER + 15 })).toBe(false);
   });
 
   it('leaves the player in the middle of it', () => {
@@ -311,11 +316,11 @@ describe('the circle the board is', () => {
     expect(BOARD_CELLS % 2).toBe(1);
   });
 
-  it('is drawn inside the picture however the board is turned', () => {
+  it('keeps the live circle inside the picture however the board is turned', () => {
     for (let step = 0; step < 24; step++) {
       const yaw = (step / 24) * 2 * Math.PI;
 
-      for (const cell of boardCells()) {
+      for (const cell of LIVE) {
         for (const corner of projectBoardCellQuad(cell, yaw)) {
           expect(corner.x, `board at ${yaw}`).toBeGreaterThanOrEqual(-1e-9);
           expect(corner.x).toBeLessThanOrEqual(1 + 1e-9);
@@ -340,21 +345,24 @@ describe('the circle the board is', () => {
 });
 
 describe('the compass', () => {
-  it('stands its marks off the board, one to each side', () => {
+  it('stands its marks out in the country, one to each side', () => {
     const marks = compassMarks();
 
     // Only one of the four is told apart, and it is the one a player
     // is orienting by
     expect(marks.map((mark) => mark.north)).toEqual([true, false, false, false]);
 
-    // Inside the picture, and outside the board: north is beyond the
-    // far edge, south beyond the near one
+    // Inside the picture, and out past the live circle: north is
+    // beyond the far edge of it, south beyond the near one
     for (const mark of marks) {
       expect(mark.x).toBeGreaterThanOrEqual(0);
       expect(mark.x).toBeLessThanOrEqual(1);
       expect(mark.y).toBeGreaterThanOrEqual(0);
       expect(mark.y).toBeLessThanOrEqual(1);
-      expect(boardCellAtFraction(mark.x, mark.y)).toBeNull();
+
+      const under = boardCellAtFraction(mark.x, mark.y);
+
+      expect(under == null || reachOf(under) > BOARD_RADIUS).toBe(true);
     }
 
     const [north, east, south, west] = marks;
@@ -388,13 +396,15 @@ describe('walking the camera round the board', () => {
     }
   });
 
-  it('keeps the whole board inside the picture however it is turned', () => {
-    // The frame is fitted once, to the widest the board ever gets, so
-    // that turning it does not make it lurch toward the camera
+  it('keeps the live circle inside the picture however it is turned', () => {
+    // The frame is fitted once, to the widest that circle ever gets,
+    // so that turning it does not make it lurch toward the camera
+    const seats = LIVE.map((cell) => cell.y * BOARD_CELLS + cell.x);
+
     for (let step = 0; step < 24; step++) {
       const yaw = (step / 24) * 2 * Math.PI;
 
-      for (const index of [BOARD[0], BOARD[BOARD.length - 1], BOARD[BOARD.length >> 1]]) {
+      for (const index of [seats[0], seats[seats.length - 1], seats[seats.length >> 1]]) {
         for (const corner of projectCellQuad(index, yaw)) {
           expect(corner.x, `corner at ${yaw}`).toBeGreaterThanOrEqual(-1e-9);
           expect(corner.x).toBeLessThanOrEqual(1 + 1e-9);

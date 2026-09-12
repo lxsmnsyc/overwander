@@ -79,33 +79,34 @@ export interface ProjectedPoint {
 export type Yaw = number;
 
 /**
- * How far past the board the painting reaches, in cells. Two, because
- * the ground slides by up to a whole cell between steps and the rim is
- * drawn a cell outside the board: painted only to the rim, the far
- * edge would show a strip of nothing every time the camera caught up
+ * How far past the framing the painting reaches, in cells. Two,
+ * because the ground slides by up to a whole cell between steps:
+ * painted only to the rim, the far edge would show a strip of nothing
+ * every time the camera caught up
  */
 export const PAINT_CELLS = 2;
 
 /**
- * How far out the rim is drawn, in cells: the country just past what
- * the player can press, so the board ends in ground rather than in an
- * edge
+ * How far outside the live circle the picture is framed, in cells, so
+ * that the world the game is keeping track of is comfortably inside
+ * what is on the screen
  */
 export const BORDER_CELLS = 1;
 
 /**
- * The board and its rim in board fractions: the same units the ground
- * is measured in, where the whole square runs from 0 to 1. `REACH` is
- * as far as the player can press, and `RIM` the ring of country drawn
- * outside it
+ * How wide a circle of world the picture is fitted around, in board
+ * fractions: the same units the ground is measured in, where the whole
+ * square runs from 0 to 1. It is the live circle and a rim outside it,
+ * which is a framing rather than an edge: the country carries on past
+ * the picture, and so does what the player may press
  */
-export const REACH = BOARD_RADIUS / BOARD_SPAN;
-export const RIM = (BOARD_RADIUS + BORDER_CELLS) / BOARD_SPAN;
+const RIM = (BOARD_RADIUS + BORDER_CELLS) / BOARD_SPAN;
 
 /**
- * How far from the middle the compass marks stand: past the apron and
- * a cell further. Off the board on purpose: a mark lying on the ground
- * reads as scenery rather than as which way the board faces
+ * How far from the middle the compass marks stand: past the rim and a
+ * cell further. Out where the world is only looked at, on purpose: a
+ * mark lying among the cells reads as scenery rather than as which way
+ * the board faces
  */
 const COMPASS_REACH = RIM + 1 / BOARD_SPAN;
 
@@ -491,9 +492,8 @@ export function unprojectGround(x: number, y: number, yaw: Yaw = 0): GroundPoint
 
 /**
  * A cell of the drawn board, across and back from its top left corner.
- * A board cell has both in `0..BOARD_CELLS - 1`; the apron is one step
- * outside that. The four apron corners are not cells: a player only
- * steps onto the apron straight
+ * Both run `0..BOARD_CELLS - 1`, and the corners of that square are
+ * country rather than board: the board is the circle inside it
  */
 export interface BoardCell {
   x: number;
@@ -506,9 +506,9 @@ export function reachOf(cell: BoardCell): number {
 }
 
 /**
- * Whether the coordinates name a cell the player may press: one inside
- * the circle the grid is ruled over. The country drawn past it is
- * looked at rather than walked to a square at a time
+ * Whether the coordinates name a cell of the board: one inside the
+ * circle of country that is drawn. That is the same circle the player
+ * may press, since what is on the screen is what they can head for
  */
 export function isBoardCell(cell: BoardCell): boolean {
   return (
@@ -516,29 +516,16 @@ export function isBoardCell(cell: BoardCell): boolean {
     cell.y >= 0 &&
     cell.x < BOARD_CELLS &&
     cell.y < BOARD_CELLS &&
-    reachOf(cell) <= BOARD_RADIUS
+    reachOf(cell) <= VIEW_RADIUS
   );
 }
 
 /**
- * Every cell of country the painter draws, which runs off the picture
- * on every side: what the player looks out over rather than what they
- * can reach
+ * Every cell of country the painter draws and the pointer may land on.
+ * It runs off the picture on every side: the far ones are only pressed
+ * where the screen is showing them, which the pointer settles by being
+ * somewhere on the screen at all
  */
-export function viewCells(): BoardCell[] {
-  const cells: BoardCell[] = [];
-
-  for (let y = 0; y < BOARD_CELLS; y++) {
-    for (let x = 0; x < BOARD_CELLS; x++) {
-      if (reachOf({ x, y }) <= VIEW_RADIUS) {
-        cells.push({ x, y });
-      }
-    }
-  }
-  return cells;
-}
-
-/** Every cell the pointer may land on, which is the board itself */
 export function boardCells(): BoardCell[] {
   const cells: BoardCell[] = [];
 
@@ -553,7 +540,7 @@ export function boardCells(): BoardCell[] {
 }
 
 /**
- * Which board cell this is, or null for a square outside the circle
+ * Which board cell this is, or null for a square outside the country
  */
 export function boardIndexOf(cell: BoardCell): number | null {
   return isBoardCell(cell) ? cell.y * BOARD_CELLS + cell.x : null;

@@ -2,10 +2,11 @@ import { type Locator, type Page, expect } from '@playwright/test';
 import {
   BOARD_CELLS,
   BOARD_CENTER,
+  BOARD_RADIUS,
   fitPicture,
-  isBoardCell,
   projectBoardCell,
   projectCell,
+  reachOf,
   setBoardScreen,
 } from '../src/canvas/board';
 import { CHUNK_CELLS } from '../src/overworld/chunk';
@@ -113,9 +114,10 @@ export async function pressCell(page: Page, board: Locator, index: number): Prom
 }
 
 /**
- * Press the furthest cell of the board in one direction, which is how
- * a walk covers ground: the board is a circle round the player, so the
- * far side of it is as far as one press can send them
+ * Press the furthest cell of the live circle in one direction, which
+ * is how a walk covers ground. The country drawn past it is pressable
+ * too, but only the live circle is guaranteed to be inside the picture
+ * however the board is turned, and a click has to land on the canvas
  */
 export async function pressFar(page: Page, board: Locator, way: [number, number]): Promise<void> {
   const bounds = await board.boundingBox();
@@ -129,7 +131,7 @@ export async function pressFar(page: Page, board: Locator, way: [number, number]
   for (let step = 1; step < BOARD_CELLS; step++) {
     const candidate = { x: BOARD_CENTER + way[0] * step, y: BOARD_CENTER + way[1] * step };
 
-    if (!isBoardCell(candidate)) {
+    if (reachOf(candidate) > BOARD_RADIUS) {
       break;
     }
     reach = candidate;

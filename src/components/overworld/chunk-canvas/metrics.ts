@@ -1,4 +1,4 @@
-import { BOARD_SPAN, REACH, RIM, boardView } from '../../../canvas/board';
+import { BOARD_SPAN, boardView } from '../../../canvas/board';
 
 /**
  * The board's reference measurements, its colours, and the few facts
@@ -30,19 +30,6 @@ export const CELL = 26;
 export function pictureWidth(): number {
   return CELL * BOARD_SPAN * boardView().span;
 }
-
-/**
- * How far from the middle the board's edge is drawn, in board
- * fractions: the circle the player can press, and the rim of country
- * outside it. The projection's, since the picture is fitted round them
- */
-export { REACH, RIM };
-
-/**
- * How many points the board's edge is drawn with. Enough that a circle
- * a screen wide reads as one rather than as a polygon
- */
-export const RING_POINTS = 96;
 
 /**
  * How many source pixels of a pokemon sheet stand on one cell of
@@ -274,11 +261,6 @@ export const COLORS = {
   /** Under every mark, so one reads on pale ground as well as on dark */
   ringShade: 'rgba(0, 0, 0, 0.28)',
   /**
-   * The line round the board while it has the keyboard, which is what
-   * says the camera keys will answer
-   */
-  cursor: '#3b82f6',
-  /**
    * The compass, which is four marks standing on the ground off the
    * edges of the board, each pointing the way it stands for. They are
    * read against whatever country the chunk is made of, so each is
@@ -305,12 +287,6 @@ export const COLORS = {
    * standing beside sit on the same ground
    */
   shadow: 'rgba(0, 0, 0, 0.35)',
-  /**
-   * What lifts the board off the country it lies in. The ground
-   * beyond it is the same colour — it is the same country — so the
-   * board is the part of it with the light on
-   */
-  surface: 'rgba(255, 255, 255, 0.10)',
   /**
    * A town's streets, washed over whatever ground they run across
    * rather than tiled. Warm and half-clear, so it darkens a pale

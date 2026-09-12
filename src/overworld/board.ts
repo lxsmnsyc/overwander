@@ -20,10 +20,14 @@
 export const BOARD_SPAN = 21;
 
 /**
- * How far the board reaches, in cells: what the player may press, what
- * the grid is ruled over, which chunks are asked for windows, and how
- * near a pokemon has to be to be standing there. All the one distance,
- * so that everywhere a player can act on is somewhere things happen.
+ * How far the world is live around the player, in cells: which chunks
+ * are asked for windows, and how near a pokemon has to be to be
+ * standing there. Both the one distance, so that wherever something
+ * is standing is somewhere the game is keeping track of.
+ *
+ * It is not how far a player may press. That is as far as they can
+ * see: a square out in the country is walked to, and what is standing
+ * on it is rolled once the walk has brought it inside this circle.
  *
  * A circle rather than a square: a square board is a square of
  * country, and a corner of one is both the furthest a player can see
@@ -35,7 +39,11 @@ export const BOARD_RADIUS = BOARD_SPAN / 2;
 /**
  * How far the country is drawn, in cells: past the edge of the picture
  * on every side, so a player looks out over the world rather than at a
- * board of it laid on a coloured page
+ * board of it laid on a coloured page.
+ *
+ * It is also how far a press reaches, since what a player can see is
+ * what they can head for. Nothing on the screen is scenery to be
+ * looked at and not walked to
  */
 export const VIEW_RADIUS = 20;
 

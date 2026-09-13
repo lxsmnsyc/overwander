@@ -26,6 +26,8 @@ const HEAL_FRACTION: { [key in Moves]?: number } = {
   // https://bulbapedia.bulbagarden.net/wiki/Roost_(move)
   [Moves.Roost]: 0.5,
   [Moves.HealOrder]: 0.5,
+  // Cast at a teammate, which `healedUnit` below already reads
+  [Moves.HealPulse]: 0.5,
 };
 
 /**

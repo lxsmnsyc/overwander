@@ -2,6 +2,7 @@ import registerGen1Moves from './gen-1';
 import registerGen2Moves from './gen-2';
 import registerGen3Moves from './gen-3';
 import registerGen4Moves from './gen-4';
+import registerGen5Moves from './gen-5';
 import registerWeatherMoves from './weather';
 
 export {
@@ -25,5 +26,6 @@ export function registerMoves(): void {
   registerGen2Moves();
   registerGen3Moves();
   registerGen4Moves();
+  registerGen5Moves();
   registerWeatherMoves();
 }

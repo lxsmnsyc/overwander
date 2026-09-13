@@ -892,6 +892,12 @@ export const enum Items {
 
   /** The flute that opens the stair at the top of the mountain */
   AzureFlute = 427,
+
+  /** The cassettes that set the type of a Techno Blast */
+  DouseDrive = 428,
+  ShockDrive = 429,
+  BurnDrive = 430,
+  ChillDrive = 431,
 }
 
 /**

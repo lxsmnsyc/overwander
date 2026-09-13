@@ -15,6 +15,8 @@ export const ABILITY_MOVES = new Set<Moves>([
   Moves.SkillSwap,
   Moves.GastroAcid,
   Moves.WorrySeed,
+  Moves.Entrainment,
+  Moves.SimpleBeam,
 ]);
 
 /**
@@ -60,6 +62,41 @@ export default function setupAbilityMoves(battle: Battle): void {
       for (const ability of copying) {
         event.source.addAbility(ability);
       }
+      return;
+    }
+
+    // Entrainment is Role Play the other way round
+    if (event.move === Moves.Entrainment) {
+      const giving = abilitiesOf(event.source);
+
+      if (giving.length === 0) {
+        event.source.triggerMoveEffectFailed(event.move, event.target, event.steps);
+        return;
+      }
+
+      for (const ability of abilitiesOf(target)) {
+        target.removeAbility(ability);
+      }
+      for (const ability of giving) {
+        target.addAbility(ability);
+      }
+      return;
+    }
+
+    // Simple Beam is Worry Seed with Simple, and a target that is
+    // already Simple has nothing to lose
+    if (event.move === Moves.SimpleBeam) {
+      if (target.hasAbility(Abilities.Simple)) {
+        event.source.triggerMoveEffectFailed(event.move, event.target, event.steps);
+        return;
+      }
+
+      const held = abilitiesOf(target);
+
+      if (held.length > 0) {
+        target.removeAbility(held[Math.floor(battle.random() * held.length)]);
+      }
+      target.addAbility(Abilities.Simple);
       return;
     }
 

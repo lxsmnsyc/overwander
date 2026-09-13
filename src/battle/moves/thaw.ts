@@ -9,7 +9,12 @@ import { BattleEvents, EffectType } from '../events';
  * a unit out of casting, so the thaw is worth having on the two moves
  * a frozen Fire type would want
  */
-const THAWING_MOVES = new Set<Moves>([Moves.FlameWheel, Moves.SacredFire]);
+const THAWING_MOVES = new Set<Moves>([
+  Moves.FlameWheel,
+  Moves.SacredFire,
+  Moves.Scald,
+  Moves.FusionFlare,
+]);
 
 export default function setupThawingMoves(battle: Battle): void {
   battle.on(BattleEvents.UnitTriggerMove, AttackPriority.Post, (event) => {

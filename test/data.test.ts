@@ -1435,6 +1435,12 @@ describe('move damage', () => {
     Moves.CrushGrip,
     // And the one read off how far the target has pulled ahead
     Moves.Punishment,
+    // Unova's own: power read off Speed, off weight, and off the
+    // user's own HP
+    Moves.ElectroBall,
+    Moves.HeavySlam,
+    Moves.HeatCrash,
+    Moves.FinalGambit,
   ]);
 
   it('gives every damaging move something to hit with', () => {

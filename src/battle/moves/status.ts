@@ -42,6 +42,7 @@ export const SELF_STATUS_MOVES: { [key in Moves]?: Statuses } = {
   [Moves.Snatch]: Statuses.Snatching,
   [Moves.Grudge]: Statuses.Grudging,
   [Moves.Ingrain]: Statuses.Rooted,
+  [Moves.RagePowder]: Statuses.Centered,
 };
 
 const EFFECT_STATUS_MOVES: {
@@ -124,6 +125,19 @@ const EFFECT_STATUS_MOVES: {
   [Moves.ThunderFang]: { status: Statuses.Paralyzed, chance: 10 },
   [Moves.IceFang]: { status: Statuses.Frozen, chance: 10 },
   [Moves.FireFang]: { status: Statuses.Burned, chance: 10 },
+  [Moves.SludgeWave]: { status: Statuses.Poisoned, chance: 10 },
+  [Moves.Scald]: { status: Statuses.Burned, chance: 30 },
+  [Moves.Inferno]: { status: Statuses.Burned, chance: 100 },
+  [Moves.HeartStamp]: { status: Statuses.Flinched, chance: 30 },
+  [Moves.Steamroller]: { status: Statuses.Flinched, chance: 30 },
+  [Moves.Hurricane]: { status: Statuses.Confused, chance: 30 },
+  [Moves.SearingShot]: { status: Statuses.Burned, chance: 30 },
+  [Moves.RelicSong]: { status: Statuses.Sleeping, chance: 10 },
+  [Moves.BoltStrike]: { status: Statuses.Paralyzed, chance: 20 },
+  [Moves.BlueFlare]: { status: Statuses.Burned, chance: 20 },
+  [Moves.FreezeShock]: { status: Statuses.Paralyzed, chance: 30 },
+  [Moves.IceBurn]: { status: Statuses.Burned, chance: 30 },
+  [Moves.IcicleCrash]: { status: Statuses.Flinched, chance: 30 },
 };
 
 /**
@@ -227,6 +241,24 @@ const EFFECT_STAGE_MOVES: { [key in Moves]?: AttackStageEffect } = {
     ],
     value: 1,
     chance: 10,
+    self: true,
+  },
+  [Moves.FlameCharge]: { stage: Stages.Speed, value: 1, chance: 100, self: true },
+  [Moves.LowSweep]: { stage: Stages.Speed, value: -1, chance: 100 },
+  [Moves.AcidSpray]: { stage: Stages.SpecialDefense, value: -2, chance: 100 },
+  [Moves.StruggleBug]: { stage: Stages.SpecialAttack, value: -1, chance: 100 },
+  [Moves.Bulldoze]: { stage: Stages.Speed, value: -1, chance: 100 },
+  [Moves.Electroweb]: { stage: Stages.Speed, value: -1, chance: 100 },
+  [Moves.RazorShell]: { stage: Stages.Defense, value: -1, chance: 50 },
+  [Moves.LeafTornado]: { stage: Stages.Accuracy, value: -1, chance: 50 },
+  [Moves.NightDaze]: { stage: Stages.Accuracy, value: -1, chance: 40 },
+  [Moves.Glaciate]: { stage: Stages.Speed, value: -1, chance: 100 },
+  [Moves.FieryDance]: { stage: Stages.SpecialAttack, value: 1, chance: 50, self: true },
+  [Moves.Snarl]: { stage: Stages.SpecialAttack, value: -1, chance: 100 },
+  [Moves.VCreate]: {
+    stage: [Stages.Defense, Stages.SpecialDefense, Stages.Speed],
+    value: -1,
+    chance: 100,
     self: true,
   },
   [Moves.OminousWind]: {

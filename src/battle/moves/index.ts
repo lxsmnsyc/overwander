@@ -102,6 +102,19 @@ import setupStealthRock from './stealth-rock';
 import setupDefog from './defog';
 import setupCaptivate from './captivate';
 import setupJudgment from './judgment';
+import setupEchoingMoves from './echoes';
+import setupPledges from './pledges';
+import setupStatReadingMoves from './stat-reading';
+import setupRooms from './rooms';
+import setupSplitMoves from './splits';
+import setupAutotomize from './autotomize';
+import setupTeamGuards from './team-guards';
+import setupAirborneMoves from './airborne';
+import setupSkyDrop from './sky-drop';
+import setupPacingMoves from './pacing';
+import setupTypingMoves from './typing';
+import setupSynchronoise from './synchronoise';
+import setupFlameBurst from './flame-burst';
 
 export default function setupMoves(battle: Battle): void {
   // Overarching groups
@@ -218,6 +231,21 @@ export default function setupMoves(battle: Battle): void {
   setupDefog(battle);
   setupCaptivate(battle);
   setupJudgment(battle);
+
+  // Unova
+  setupEchoingMoves(battle);
+  setupPledges(battle);
+  setupStatReadingMoves(battle);
+  setupRooms(battle);
+  setupSplitMoves(battle);
+  setupAutotomize(battle);
+  setupTeamGuards(battle);
+  setupAirborneMoves(battle);
+  setupSkyDrop(battle);
+  setupPacingMoves(battle);
+  setupTypingMoves(battle);
+  setupSynchronoise(battle);
+  setupFlameBurst(battle);
 
   // Last, because they are what is left: both fallbacks only answer
   // when every resolver above has declined to pick anything. Attack

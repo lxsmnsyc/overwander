@@ -21,6 +21,16 @@ interface SemiInvulnerableConfig {
   status?: Statuses;
 }
 
+/** What still reaches a pokemon up in the air */
+const AIRBORNE_REACH = [
+  Moves.Gust,
+  Moves.Thunder,
+  Moves.Twister,
+  Moves.SkyUppercut,
+  Moves.Hurricane,
+  Moves.SmackDown,
+];
+
 /**
  * Two-step moves that hide the user on the charging step (Dig, Fly).
  * The damage on the final step is handled by the hit move group.
@@ -32,9 +42,8 @@ const SEMI_INVULNERABLE_MOVES: { [key in Moves]?: SemiInvulnerableConfig } = {
     doubled: new Set([Moves.Earthquake, Moves.Magnitude]),
   },
   // https://bulbapedia.bulbagarden.net/wiki/Fly_(move)
-  // TODO Hurricane once implemented
   [Moves.Fly]: {
-    bypass: new Set([Moves.Gust, Moves.Thunder, Moves.Twister, Moves.SkyUppercut]),
+    bypass: new Set(AIRBORNE_REACH),
     doubled: new Set([Moves.Gust, Moves.Twister]),
     status: Statuses.Floating,
   },
@@ -56,7 +65,14 @@ const SEMI_INVULNERABLE_MOVES: { [key in Moves]?: SemiInvulnerableConfig } = {
   // Uppercut is the fist that follows it up there
   // https://bulbapedia.bulbagarden.net/wiki/Bounce_(move)
   [Moves.Bounce]: {
-    bypass: new Set([Moves.Gust, Moves.Thunder, Moves.Twister, Moves.SkyUppercut]),
+    bypass: new Set(AIRBORNE_REACH),
+    doubled: new Set([Moves.Gust, Moves.Twister]),
+    status: Statuses.Floating,
+  },
+  // Both ends of it are up there, so the same moves reach either one
+  // https://bulbapedia.bulbagarden.net/wiki/Sky_Drop_(move)
+  [Moves.SkyDrop]: {
+    bypass: new Set(AIRBORNE_REACH),
     doubled: new Set([Moves.Gust, Moves.Twister]),
     status: Statuses.Floating,
   },

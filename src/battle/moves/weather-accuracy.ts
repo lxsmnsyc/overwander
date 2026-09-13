@@ -20,6 +20,8 @@ const WEATHER_ACCURACY_MOVES: { [key in Moves]?: WeatherAccuracyConfig } = {
   [Moves.Thunder]: { rain: null, sun: 50 },
   // https://bulbapedia.bulbagarden.net/wiki/Blizzard_(move)
   [Moves.Blizzard]: { hail: null },
+  // https://bulbapedia.bulbagarden.net/wiki/Hurricane_(move)
+  [Moves.Hurricane]: { rain: null, sun: 50 },
 };
 
 export default function setupWeatherAccuracyMoves(battle: Battle): void {

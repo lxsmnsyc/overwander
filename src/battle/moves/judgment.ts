@@ -1,23 +1,34 @@
 import { EventPriority } from '../../core/event-emitter';
+import type { Types } from '../../data/constants/types';
+import type { Items } from '../../data/ids/items';
 import { Moves } from '../../data/ids/moves';
+import { DRIVES } from '../../data/items/drives';
 import { PLATES } from '../../data/items/plates';
 import type Battle from '../core';
 import { BattleEvents } from '../events';
 
 /**
- * Judgment: thrown as whatever Plate the user carries, and Normal with
- * no Plate in hand. The Plate boosts it as it boosts anything of that
- * type, so the two stack the way they do in the mainline
+ * The moves thrown as the type of what the user holds: Judgment reads a
+ * Plate and Techno Blast a Drive, and both stay Normal without one. A
+ * Plate also boosts its type, so Judgment stacks the two the way the
+ * mainline does
  * https://bulbapedia.bulbagarden.net/wiki/Judgment_(move)
  */
+const HELD_TYPES = new Map<Moves, Map<Items, Types>>([
+  [Moves.Judgment, PLATES],
+  [Moves.TechnoBlast, DRIVES],
+]);
+
 export default function setupJudgment(battle: Battle): void {
   battle.on(BattleEvents.CheckUnitMoveType, EventPriority.Post, (event) => {
-    if (event.move !== Moves.Judgment) {
+    const table = HELD_TYPES.get(event.move);
+
+    if (table == null) {
       return;
     }
 
-    for (const [plate, type] of PLATES) {
-      if (event.source.hasItem(plate)) {
+    for (const [item, type] of table) {
+      if (event.source.hasItem(item)) {
         event.type = type;
         return;
       }

@@ -134,6 +134,45 @@ function magnitudePower(roll: number): number {
   return 70;
 }
 
+/** Stored Power: a base, and a share for every stage the user has raised */
+const STORED_BASE = 20;
+const STORED_PER_STAGE = 20;
+
+function raisedStages(unit: Unit): number {
+  return RAISED.reduce((total, stage) => total + Math.max(0, unit.stages[stage]), 0);
+}
+
+/**
+ * Electro Ball by how many times faster the user is, and Heavy Slam and
+ * Heat Crash by how many times heavier, as the mainline's bands
+ */
+const SPEED_BANDS: [ratio: number, power: number][] = [
+  [4, 150],
+  [3, 120],
+  [2, 80],
+  [1, 60],
+];
+const WEIGHT_BANDS: [ratio: number, power: number][] = [
+  [5, 120],
+  [4, 100],
+  [3, 80],
+  [2, 60],
+];
+const BAND_FLOOR = 40;
+
+function bandPower(bands: [ratio: number, power: number][], ratio: number): number {
+  for (const [least, power] of bands) {
+    if (ratio >= least) {
+      return power;
+    }
+  }
+  return BAND_FLOOR;
+}
+
+function weightPower(source: Unit, target: Unit): number {
+  return bandPower(WEIGHT_BANDS, source.checkWeight() / Math.max(0.1, target.checkWeight()));
+}
+
 /**
  * What each of them comes to. A table rather than a switch, so the
  * list of moves that work their power out is one place
@@ -145,6 +184,7 @@ const VARIABLE_POWER: { [key in Moves]?: (source: Unit, roll: number) => number 
   [Moves.Frustration]: (source) => friendshipPower(MAX_FRIENDSHIP - source.friendship),
   [Moves.Present]: (_source, roll) => PRESENT_POWERS[Math.floor(roll * PRESENT_POWERS.length)],
   [Moves.Magnitude]: (_source, roll) => magnitudePower(roll),
+  [Moves.StoredPower]: (source) => STORED_BASE + STORED_PER_STAGE * raisedStages(source),
 };
 
 function friendshipPower(value: number): number {
@@ -170,14 +210,16 @@ const TARGETED_POWER: { [key in Moves]?: (source: Unit, target: Unit) => number 
       ),
     ),
   [Moves.Punishment]: (_source, target) =>
-    Math.min(
-      PUNISHMENT_CEILING,
-      PUNISHMENT_BASE +
-        PUNISHMENT_PER_STAGE *
-          RAISED.reduce((total, stage) => total + Math.max(0, target.stages[stage]), 0),
-    ),
+    Math.min(PUNISHMENT_CEILING, PUNISHMENT_BASE + PUNISHMENT_PER_STAGE * raisedStages(target)),
   [Moves.WringOut]: (_source, target) => healthPower(target),
   [Moves.CrushGrip]: (_source, target) => healthPower(target),
+  [Moves.ElectroBall]: (source, target) =>
+    bandPower(
+      SPEED_BANDS,
+      source.checkStat(Stats.Speed, 0) / Math.max(1, target.checkStat(Stats.Speed, 0)),
+    ),
+  [Moves.HeavySlam]: weightPower,
+  [Moves.HeatCrash]: weightPower,
 };
 
 export default function setupVariablePowerMoves(battle: Battle): void {

@@ -46,6 +46,11 @@ const STAGE_MOVE_GROUPS: [Stages, StageMovesConfig][] = [
       [Moves.Tickle]: -1,
       [Moves.FeatherDance]: -2,
       [Moves.Memento]: -2,
+      [Moves.HoneClaws]: 1,
+      [Moves.Coil]: 1,
+      [Moves.ShellSmash]: 2,
+      [Moves.WorkUp]: 1,
+      [Moves.ShiftGear]: 1,
     },
   ],
   [
@@ -59,6 +64,9 @@ const STAGE_MOVE_GROUPS: [Stages, StageMovesConfig][] = [
       // cannot aim with
       [Moves.Flatter]: 1,
       [Moves.Memento]: -2,
+      [Moves.QuiverDance]: 1,
+      [Moves.ShellSmash]: 2,
+      [Moves.WorkUp]: 1,
     },
   ],
   [
@@ -72,6 +80,8 @@ const STAGE_MOVE_GROUPS: [Stages, StageMovesConfig][] = [
       [Moves.Charge]: 1,
       [Moves.MetalSound]: -2,
       [Moves.FakeTears]: -2,
+      [Moves.QuiverDance]: 1,
+      [Moves.ShellSmash]: -1,
     },
   ],
   [
@@ -91,6 +101,9 @@ const STAGE_MOVE_GROUPS: [Stages, StageMovesConfig][] = [
       [Moves.CosmicPower]: 1,
       [Moves.Stockpile]: 1,
       [Moves.Tickle]: -1,
+      [Moves.Coil]: 1,
+      [Moves.ShellSmash]: -1,
+      [Moves.CottonGuard]: 3,
     },
   ],
   [
@@ -102,6 +115,10 @@ const STAGE_MOVE_GROUPS: [Stages, StageMovesConfig][] = [
       [Moves.ScaryFace]: -2,
       [Moves.CottonSpore]: -2,
       [Moves.DragonDance]: 1,
+      [Moves.Autotomize]: 2,
+      [Moves.QuiverDance]: 1,
+      [Moves.ShellSmash]: 2,
+      [Moves.ShiftGear]: 2,
     },
   ],
   [
@@ -111,6 +128,8 @@ const STAGE_MOVE_GROUPS: [Stages, StageMovesConfig][] = [
       [Moves.SandAttack]: -1,
       [Moves.SmokeScreen]: -1,
       [Moves.Kinesis]: -1,
+      [Moves.HoneClaws]: 1,
+      [Moves.Coil]: 1,
     },
   ],
   [

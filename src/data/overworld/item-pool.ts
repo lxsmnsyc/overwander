@@ -1,5 +1,6 @@
 import { SPECIAL_SPAWN_ODDS } from '../biome/__create';
 import { Items } from '../ids/items';
+import { DRIVES } from '../items/drives';
 import { MARKET_GEAR } from '../items/gear';
 import { ONE_SHOTS } from '../items/one-shots';
 import { ORBS } from '../items/orbs';
@@ -200,6 +201,8 @@ export const ITEM_POOL: ItemRarityGroups = {
     // The plates, buried where they fell. Seventeen thin slots share
     // about what one stone is worth, so digging one up stays an event
     ...[...PLATES.keys()].map((item) => ({ item, weight: 1 })),
+    // The Drives are found on the same terms as the plates
+    ...[...DRIVES.keys()].map((item) => ({ item, weight: 1 })),
     // The held-item shelves, on the plates' terms: whole families of
     // thin slots, so the band stays the stones' and finding a Choice
     // Band stays an event. The type boosters also drop off the wild

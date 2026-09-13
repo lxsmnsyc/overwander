@@ -42,6 +42,8 @@ import setupHealBlockedStatus from './heal-blocked';
 import setupPowerTrickedStatus from './power-tricked';
 import setupRoostingStatus from './roosting';
 import setupMagnetRisenStatus from './magnet-risen';
+import setupTelekineticStatus from './telekinetic';
+import setupSkyDroppedStatus from './sky-dropped';
 import setupImprisonedStatus from './imprisoned';
 import setupRootedStatus from './rooted';
 import setupSnatchingStatus from './snatching';
@@ -85,6 +87,7 @@ export const MOVE_LOCKING_STATUS = new Set<Statuses>([
   Statuses.Recharging,
   Statuses.Dormant,
   Statuses.Switching,
+  Statuses.SkyDropped,
 ]);
 
 const NON_REFRESHABLE_STATUS = new Set<Statuses>([
@@ -203,6 +206,10 @@ export default function setupStatus(battle: Battle): void {
   setupPowerTrickedStatus(battle);
   setupRoostingStatus(battle);
   setupMagnetRisenStatus(battle);
+
+  // Unova
+  setupTelekineticStatus(battle);
+  setupSkyDroppedStatus(battle);
 
   setupNonRefreshableStatus(battle);
   setupStatusTypeImmunity(battle);

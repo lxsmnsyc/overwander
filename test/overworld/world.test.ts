@@ -711,6 +711,10 @@ describe('world', () => {
     expect(getSpeciesLairs(Species.Regirock)).toEqual([Lairs.DesertRuins, Lairs.RockPeakRuins]);
     expect(getSpeciesLairs(Species.Regice)).toEqual([Lairs.IslandCave, Lairs.IcebergRuins]);
     expect(getSpeciesLairs(Species.Registeel)).toEqual([Lairs.AncientTomb, Lairs.IronRuins]);
+    // The tower duo each keep their Johto home and share the rock
+    expect(getSpeciesLairs(Species.Lugia)).toEqual([Lairs.WhirlIslands, Lairs.NavelRock]);
+    expect(getSpeciesLairs(Species.HoOh)).toEqual([Lairs.BellTower, Lairs.NavelRock]);
+    expect(getBiomeLairs(Biome.DeepOcean)).toContain(Lairs.NavelRock);
     expect(getBiomeLairs(Biome.Badlands)).toContain(Lairs.RockPeakRuins);
     expect(getBiomeLairs(Biome.Tundra)).toContain(Lairs.IcebergRuins);
     expect(getBiomeLairs(Biome.Ocean)).toContain(Lairs.IronRuins);

@@ -131,6 +131,11 @@ const enum Lairs {
   RockPeakRuins = 30,
   IcebergRuins = 31,
   IronRuins = 32,
+  /**
+   * The rock far out at sea the tower duo meet at, one at its foot and
+   * one at its peak, so which of them answers is a roll
+   */
+  NavelRock = 33,
 }
 
 export const LAIR_NAMES: Record<Lairs, string> = {
@@ -167,6 +172,7 @@ export const LAIR_NAMES: Record<Lairs, string> = {
   [Lairs.RockPeakRuins]: 'Rock Peak Ruins',
   [Lairs.IcebergRuins]: 'Iceberg Ruins',
   [Lairs.IronRuins]: 'Iron Ruins',
+  [Lairs.NavelRock]: 'Navel Rock',
 };
 
 /**
@@ -210,6 +216,7 @@ export const LAIR_SPECIES: Record<Lairs, Species[]> = {
   [Lairs.RockPeakRuins]: [Species.Regirock],
   [Lairs.IcebergRuins]: [Species.Regice],
   [Lairs.IronRuins]: [Species.Registeel],
+  [Lairs.NavelRock]: [Species.Lugia, Species.HoOh],
 };
 
 /**
@@ -249,6 +256,7 @@ export const EVERY_LAIR: Lairs[] = [
   Lairs.RockPeakRuins,
   Lairs.IcebergRuins,
   Lairs.IronRuins,
+  Lairs.NavelRock,
 ];
 
 /**
@@ -288,7 +296,7 @@ const STAGED_LAIRS = new Set<Lairs>(EVERY_STAGED_LAIR);
  * resident in its special band, mythicals aside
  */
 const BIOME_LAIRS: { [key in Biome]?: Lairs[] } = {
-  [Biome.DeepOcean]: [Lairs.SeafoamIslands, Lairs.WhirlIslands, Lairs.MarineCave],
+  [Biome.DeepOcean]: [Lairs.SeafoamIslands, Lairs.WhirlIslands, Lairs.MarineCave, Lairs.NavelRock],
   [Biome.Ocean]: [
     Lairs.WhirlIslands,
     Lairs.SouthernIsland,

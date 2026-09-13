@@ -35,6 +35,18 @@ export const enum Effect {
   BattleWon = 7,
   /** The fight lost, which a draw is near enough to share */
   BattleLost = 8,
+  /** An egg taken: out of a nest, out of a grotto, or off the breeder */
+  EggGet = 9,
+  /** An item handed over the counter */
+  ItemGet = 10,
+  /** A pokemon received, however it arrived */
+  PokemonGet = 11,
+  /** Something out of the ground that a player will keep */
+  PrizedItem = 12,
+  /** Something out of the ground that hardly anybody digs up */
+  SpecialItem = 13,
+  /** The ball clicking shut on a pokemon that stayed in it */
+  BallClick = 14,
 }
 
 const FILES: Record<Effect, string> = {
@@ -47,6 +59,12 @@ const FILES: Record<Effect, string> = {
   [Effect.BattleStart]: '/sounds/effects/battle_start.wav',
   [Effect.BattleWon]: '/sounds/effects/battle_won.wav',
   [Effect.BattleLost]: '/sounds/effects/battle_lost.wav',
+  [Effect.EggGet]: '/sounds/effects/egg_get.wav',
+  [Effect.ItemGet]: '/sounds/effects/item_get.wav',
+  [Effect.PokemonGet]: '/sounds/effects/pokemon_get.wav',
+  [Effect.PrizedItem]: '/sounds/effects/prized_item.wav',
+  [Effect.SpecialItem]: '/sounds/effects/special_item.wav',
+  [Effect.BallClick]: '/sounds/effects/ball_click.wav',
 };
 
 /**

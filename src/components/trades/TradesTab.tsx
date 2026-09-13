@@ -12,6 +12,7 @@ import {
   watchTrades,
 } from '../../auth/trades';
 import { useGame } from '../app/game-context';
+import playEffect, { Effect } from '../app/sound';
 import CatchPicker, { type CatchOption } from '../catches/catch-picker';
 import PlayerPlate from '../profile/PlayerPlate';
 import NamedCatch from './NamedCatch';
@@ -151,7 +152,7 @@ export default function TradesTab(props: TradesTabProps): JSX.Element {
     return buddy.latest === option.id ? 'your buddy' : null;
   };
 
-  const settle = (id: string, done: Promise<boolean>, said: string): void => {
+  const settle = (id: string, done: Promise<boolean>, said: string, gained = false): void => {
     setBusy(id);
     setSure(null);
     done
@@ -159,6 +160,9 @@ export default function TradesTab(props: TradesTabProps): JSX.Element {
         if (!worked) {
           toast.push({ message: 'That trade is no longer open.', tone: 'ember' });
           return;
+        }
+        if (gained) {
+          playEffect(Effect.PokemonGet);
         }
         toast.push({ message: said, tone: 'leaf' });
         // Either a pokemon changed hands or one came home from
@@ -196,7 +200,7 @@ export default function TradesTab(props: TradesTabProps): JSX.Element {
       setSure(id);
       return;
     }
-    settle(id, acceptTrade(id, ''), 'Trade made.');
+    settle(id, acceptTrade(id, ''), 'Trade made.', true);
   };
 
   const withdraw = (id: string): void => {
@@ -325,7 +329,7 @@ export default function TradesTab(props: TradesTabProps): JSX.Element {
 
           setAnswering(null);
           if (id != null && picked != null) {
-            settle(id, acceptTrade(id, picked), 'Trade made.');
+            settle(id, acceptTrade(id, picked), 'Trade made.', true);
           }
         }}
       />

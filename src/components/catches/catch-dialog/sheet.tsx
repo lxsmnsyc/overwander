@@ -808,6 +808,9 @@ export function CatchSheetBody(
     }
     evolveCatch(catchId, into)
       .then((species) => {
+        if (species != null) {
+          playEffect(Effect.PokemonGet);
+        }
         say(species == null ? 'That evolution is no longer available.' : 'Evolution complete.');
         props.onRecordChanged();
         props.onEvolutionsChanged();

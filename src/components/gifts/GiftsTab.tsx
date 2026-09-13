@@ -34,6 +34,7 @@ import type { BoxEntry } from '../catches/CatchBox';
 import CatchGrid, { type CatchGridEntry } from '../catches/CatchGrid';
 import ItemGrid from '../items/ItemGrid';
 import { describeItem } from '../details';
+import playEffect, { Effect } from '../app/sound';
 import {
   Button,
   DialogSection,
@@ -293,6 +294,9 @@ function GiftShelf(props: {
         }
         // A pokemon out of a gift is a new record, and the box behind
         // this panel is showing the old list
+        if (claimed.gift.kind !== GiftKind.Item) {
+          playEffect(Effect.PokemonGet);
+        }
         game.touchRecords();
       })
       .catch(() => {

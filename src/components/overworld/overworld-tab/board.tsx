@@ -42,7 +42,7 @@ import {
   GYM_LEADER_NAMES,
   LEGEND_NAMES,
 } from '../../../data/overworld/experts';
-import type { ItemStack } from '../../../data/overworld/item-pool';
+import { type ItemStack, getItemBand } from '../../../data/overworld/item-pool';
 import Landmark, { LANDMARK_NAMES } from '../../../data/overworld/landmark';
 import Npc, { NPC_NAMES } from '../../../data/overworld/npc';
 import type { GymSeatStanding } from '../../../auth/gym-seat-record';
@@ -859,6 +859,7 @@ export default function OverworldBoard(props: {
         );
 
         if (catchId != null) {
+          playEffect(Effect.EggGet);
           // A new record, under whatever list is showing behind this
           game.touchRecords();
         }
@@ -1115,6 +1116,15 @@ export default function OverworldBoard(props: {
     if (landmark === Landmark.ItemCache) {
       const stash = await claimItemCache(loaded.snapshot, at);
 
+      // The best band anything in it belongs to, which is what says
+      // whether this was a dig worth hearing about
+      const rarest = (stash ?? []).map((held) => getItemBand(held.item));
+
+      if (rarest.includes('special')) {
+        playEffect(Effect.SpecialItem);
+      } else if (rarest.includes('prized')) {
+        playEffect(Effect.PrizedItem);
+      }
       // Empty either way: the stash was already carried off, or this
       // press carried it off
       setDug((cells) => new Set(cells).add(at));

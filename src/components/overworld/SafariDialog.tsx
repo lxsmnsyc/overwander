@@ -200,7 +200,7 @@ function SafariBody(
    * who has asked for less motion is shown the ball and told the
    * answer without the wait
    */
-  const rock = async (shakes: number): Promise<void> => {
+  const rock = async (shakes: number, result: ThrowResult): Promise<void> => {
     // Somebody who has asked for less motion is shown the ball for a
     // beat and told the answer. The rocking is where the near miss is
     // said, and there is nowhere else to say it that would not also
@@ -225,6 +225,16 @@ function SafariBody(
           BALL_LAND + shake * (BALL_SHAKE + BALL_REST),
         );
       }
+    }
+    // The click of a ball that held, on the beat it stops moving. The
+    // fanfare for what is in it comes after, once the answer is said
+    if (result === ThrowResult.Caught) {
+      setTimeout(
+        () => {
+          playEffect(Effect.BallClick);
+        },
+        still ? 0 : BALL_LAND + shakes * (BALL_SHAKE + BALL_REST),
+      );
     }
     await new Promise<void>((resolve) => {
       setTimeout(resolve, held);
@@ -427,8 +437,8 @@ function SafariBody(
       // hands the shakes over the moment they are rolled, and what is
       // awaited here is both halves finishing
       let played: Promise<void> = Promise.resolve();
-      const thrownAt = await throwBall(active, (shakes) => {
-        played = rock(shakes);
+      const thrownAt = await throwBall(active, (shakes, result) => {
+        played = rock(shakes, result);
       });
 
       await played;
@@ -444,6 +454,9 @@ function SafariBody(
       }
       // Said as the ball stops: one sound for it opening again, and
       // another for a pokemon that used the moment to bolt
+      if (thrownAt.result === ThrowResult.Caught) {
+        playEffect(Effect.PokemonGet);
+      }
       if (thrownAt.result === ThrowResult.BrokeFree) {
         playEffect(Effect.CatchFailed);
       }

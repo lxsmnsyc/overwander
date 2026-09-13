@@ -7,6 +7,7 @@ import { getSpeciesData } from '../../../../data/species';
 import { describeItem } from '../../../details';
 import AnimatedSprite from '../../../sprites/AnimatedSprite';
 import { DialogActions, useToast } from '../../../styled';
+import playEffect, { Effect } from '../../../app/sound';
 import { type CounterProps, refusal } from '../shared';
 import { ReviveCounter } from './goods';
 
@@ -42,6 +43,7 @@ export default function Scientist(props: CounterProps): JSX.Element {
           });
           return;
         }
+        playEffect(Effect.PokemonGet);
         // Said over the counter rather than under it: the bench is
         // cleared for the next rock the moment this one is open, and a
         // line in the panel would go with it

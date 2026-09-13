@@ -163,7 +163,7 @@ export default function registerTowerDuoSpecies(): void {
     eggGroups: [EggGroups.NoEggsDiscovered],
     genderRatio: undefined,
     catchRate: 3,
-    biomes: [Biome.Mountain, Biome.Volcano],
+    biomes: [Biome.Mountain, Biome.Volcano, Biome.DeepOcean],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {

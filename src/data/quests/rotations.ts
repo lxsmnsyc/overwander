@@ -2,7 +2,7 @@ import { Foe, Landmark, Metric } from '../../auth/quest-record';
 import AleaRNG from '../../core/alea';
 import type Families from '../ids/families';
 import { Items } from '../ids/items';
-import { getSpeciesLair } from '../overworld/lair';
+import { getSpeciesLairs } from '../overworld/lair';
 import { getRegisteredFamilies } from '../species/__create';
 import { getFamilyName, getRegisteredSpecies, getSpeciesData } from '../species';
 import { getFeaturedFamily } from '../species/day';
@@ -120,7 +120,7 @@ export function getDailyQuests(now: number): RotationQuest[] {
 function huntFamilies(): Families[] {
   const lairbound = new Set(
     getRegisteredSpecies()
-      .filter((species) => getSpeciesLair(species) != null)
+      .filter((species) => getSpeciesLairs(species).length > 0)
       .map((species) => getSpeciesData(species).family),
   );
 

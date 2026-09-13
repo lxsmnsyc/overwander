@@ -10,7 +10,7 @@ import { Stats } from '../../../data/constants/stats';
 import type Biome from '../../../data/ids/biome';
 import type { Moves } from '../../../data/ids/moves';
 import type { Species } from '../../../data/ids/species';
-import { LAIR_NAMES, getBiomeLairs, getSpeciesLair } from '../../../data/overworld/lair';
+import { LAIR_NAMES, getBiomeLairs, getSpeciesLairs } from '../../../data/overworld/lair';
 import { getBaseForms, getSpeciesData } from '../../../data/species';
 
 /**
@@ -101,8 +101,8 @@ export function groupHabitats(species: Species): Habitat[] {
 }
 
 /**
- * The place this species is at home in, if it has one, and the biomes
- * that place turns up in.
+ * The places this species is at home in, and the biomes each turns up
+ * in.
  *
  * A legendary is not caught by walking into it: it stands in a lair,
  * and a lair is a landmark the world stages in the biomes that could
@@ -110,18 +110,14 @@ export function groupHabitats(species: Species): Habitat[] {
  * Naming it is most of what a player needs, since a lair is what they
  * would travel to
  */
-export function describeLair(species: Species): { name: string; where: string[] } | null {
-  const lair = getSpeciesLair(species);
+export function describeLairs(species: Species): { name: string; where: string[] }[] {
+  return getSpeciesLairs(species).map((lair) => {
+    const where = (Object.keys(BIOME_NAMES).map(Number) as Biome[]).filter((biome) =>
+      new Set(getBiomeLairs(biome)).has(lair),
+    );
 
-  if (lair == null) {
-    return null;
-  }
-
-  const where = (Object.keys(BIOME_NAMES).map(Number) as Biome[]).filter((biome) =>
-    new Set(getBiomeLairs(biome)).has(lair),
-  );
-
-  return { name: LAIR_NAMES[lair], where: where.map((biome) => BIOME_NAMES[biome]) };
+    return { name: LAIR_NAMES[lair], where: where.map((biome) => BIOME_NAMES[biome]) };
+  });
 }
 
 /**

@@ -25,6 +25,7 @@ export default function registerTundraSpawns(): void {
         { species: Species.Suicune, weight: 10 },
         { species: Species.Uxie, weight: 10 },
         { species: Species.Regigigas, weight: 10 },
+        { species: Species.Regice, weight: 10 },
       ],
     },
     [TimeOfDay.Day]: {
@@ -45,6 +46,7 @@ export default function registerTundraSpawns(): void {
         { species: Species.Suicune, weight: 10 },
         { species: Species.Uxie, weight: 10 },
         { species: Species.Regigigas, weight: 10 },
+        { species: Species.Regice, weight: 10 },
       ],
     },
     [TimeOfDay.Evening]: {
@@ -70,6 +72,7 @@ export default function registerTundraSpawns(): void {
         { species: Species.Suicune, weight: 10 },
         { species: Species.Uxie, weight: 10 },
         { species: Species.Regigigas, weight: 10 },
+        { species: Species.Regice, weight: 10 },
       ],
     },
     [TimeOfDay.Night]: {
@@ -95,6 +98,7 @@ export default function registerTundraSpawns(): void {
         { species: Species.Suicune, weight: 10 },
         { species: Species.Uxie, weight: 10 },
         { species: Species.Regigigas, weight: 10 },
+        { species: Species.Regice, weight: 10 },
       ],
     },
   });

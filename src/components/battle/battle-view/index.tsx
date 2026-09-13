@@ -21,6 +21,7 @@ import {
 } from '../../../auth/battles';
 import { useAuth } from '../../../auth/context';
 import createClientSignal from '../../app/client-signal';
+import playEffect, { Effect } from '../../app/sound';
 import { forTheGame } from '../../app/keys';
 import { answered } from '../../app/resource-reads';
 import { PLAYER_ALLIANCE, clearRaid, getRaid, getRaidTitle } from '../../../auth/raids';
@@ -406,6 +407,26 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
     new Map(contributions().map((row) => [row.player, row.dealt]));
 
   /**
+   * Whether the end has been heard. `outcome` is read on every nudge
+   * of the fight, and a verdict is a thing that happens once
+   */
+  let sounded = false;
+
+  // Said the moment it settles, rather than when the dialog over it is
+  // read: the fight is what the player is watching
+  createEffect(() => {
+    const result = outcome();
+
+    if (result == null || sounded) {
+      return;
+    }
+    sounded = true;
+    // A draw is a fight nobody won, which is near enough a loss to
+    // share the sound with one
+    playEffect(result === 'won' ? Effect.BattleWon : Effect.BattleLost);
+  });
+
+  /**
    * What the end of the fight is called, and what it says. A replay
    * settles nothing, so it only reports what happened; a fight that
    * counted says where the prize went
@@ -660,6 +681,9 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
                 if (!drawable()) {
                   setDrawable(true);
                   setCounting(COUNTDOWN);
+                  // Over the count rather than after it: the fanfare
+                  // is what the three seconds are for
+                  playEffect(Effect.BattleStart);
                 }
               }}
             />

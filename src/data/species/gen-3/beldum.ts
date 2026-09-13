@@ -87,7 +87,7 @@ export default function registerBeldumSpecies(): void {
     hiddenAbilities: [Abilities.LightMetal],
     eggGroups: [EggGroups.Mineral],
     genderRatio: undefined,
-    catchRate: 3,
+    catchRate: 45,
     biomes: [Biome.Badlands, Biome.ColdDesert],
     activeTimes: AnyTimeOfDay,
     learnSet: {
@@ -126,7 +126,7 @@ export default function registerBeldumSpecies(): void {
     hiddenAbilities: [Abilities.LightMetal],
     eggGroups: [EggGroups.Mineral],
     genderRatio: undefined,
-    catchRate: 3,
+    catchRate: 45,
     biomes: [Biome.Badlands, Biome.ColdDesert],
     activeTimes: AnyTimeOfDay,
     learnSet: {
@@ -180,7 +180,7 @@ export default function registerBeldumSpecies(): void {
     hiddenAbilities: [Abilities.LightMetal, Abilities.Levitate, Abilities.Steelworker],
     eggGroups: [EggGroups.Mineral],
     genderRatio: undefined,
-    catchRate: 3,
+    catchRate: 45,
     biomes: [Biome.Badlands, Biome.ColdDesert],
     activeTimes: AnyTimeOfDay,
     learnSet: {

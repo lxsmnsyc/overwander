@@ -39,7 +39,12 @@ export default function registerBeachSpawns(): void {
         { species: Species.Luvdisc, weight: 15 },
       ],
       prized: [...UNOWN_SPAWNS],
-      special: [],
+      special: [
+        { species: Species.Kyogre, weight: 10 },
+        { species: Species.Groudon, weight: 10 },
+        { species: Species.Rayquaza, weight: 10 },
+      ],
+      mythical: [{ species: Species.Deoxys, weight: 10 }],
     },
     [TimeOfDay.Day]: {
       base: [{ species: Species.Squirtle, weight: 2 }],
@@ -73,7 +78,12 @@ export default function registerBeachSpawns(): void {
         { species: Species.Luvdisc, weight: 15 },
       ],
       prized: [...UNOWN_SPAWNS],
-      special: [],
+      special: [
+        { species: Species.Kyogre, weight: 10 },
+        { species: Species.Groudon, weight: 10 },
+        { species: Species.Rayquaza, weight: 10 },
+      ],
+      mythical: [{ species: Species.Deoxys, weight: 10 }],
     },
     [TimeOfDay.Evening]: {
       base: [],
@@ -98,7 +108,12 @@ export default function registerBeachSpawns(): void {
       ],
       elusive: [{ species: Species.Corsola, weight: 20 }],
       prized: [...UNOWN_SPAWNS],
-      special: [],
+      special: [
+        { species: Species.Kyogre, weight: 10 },
+        { species: Species.Groudon, weight: 10 },
+        { species: Species.Rayquaza, weight: 10 },
+      ],
+      mythical: [{ species: Species.Deoxys, weight: 10 }],
     },
     [TimeOfDay.Night]: {
       base: [],
@@ -123,7 +138,12 @@ export default function registerBeachSpawns(): void {
       ],
       elusive: [{ species: Species.Corsola, weight: 20 }],
       prized: [...UNOWN_SPAWNS],
-      special: [],
+      special: [
+        { species: Species.Kyogre, weight: 10 },
+        { species: Species.Groudon, weight: 10 },
+        { species: Species.Rayquaza, weight: 10 },
+      ],
+      mythical: [{ species: Species.Deoxys, weight: 10 }],
     },
   });
 }

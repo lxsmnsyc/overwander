@@ -206,8 +206,9 @@ corrected.
 
 ## 4. Make the Vercel project
 
-Import the repository. The build needs no `vercel.json` and no framework
-override:
+Import the repository. The build needs no framework override. The
+[`vercel.json`](../vercel.json) at the root only limits automatic deployments to
+pushes on `main`, so other branches get no preview unless you deploy one by hand.
 
 | Setting              | Value                                                 |
 | -------------------- | ----------------------------------------------------- |

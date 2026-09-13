@@ -7,7 +7,11 @@ import type { ItemStack } from '../../../data/overworld/item-pool';
 import type Landmark from '../../../data/overworld/landmark';
 import type Npc from '../../../data/overworld/npc';
 import type Phenomenon from '../../../data/overworld/phenomenon';
-import ChunkSnapshot, { SPAWN_COUNT, type Spawn } from '../../../overworld/chunk-snapshot';
+import ChunkSnapshot, {
+  SNAPSHOT_INTERVAL,
+  SPAWN_COUNT,
+  type Spawn,
+} from '../../../overworld/chunk-snapshot';
 import { CHUNK_CELLS, cellInChunk, chunkOfCell } from '../../../overworld/chunk';
 import { type BoardGround, readBoardGround } from '../../../overworld/board-ground';
 import { blocksWalk } from '../../../overworld/cliff';
@@ -184,6 +188,31 @@ export function viewChunks(originX: number, originY: number): [x: number, y: num
 }
 
 /**
+ * The most spawns each chunk's window has already shown this player.
+ *
+ * A lure decides how many of a window's rolls are drawn, but what was
+ * drawn stays standing for the rest of the window, so putting the lure
+ * buddy away never takes spawns back off the board
+ */
+const shown = new Map<string, number>();
+
+/** What this window has shown, never fewer than it showed a moment ago */
+function everShown(key: string, timestamp: number, visible: number): number {
+  // A window that has turned over is not standing any more
+  // Deleting while iterating a Map is safe: visited keys are not revisited
+  for (const held of shown.keys()) {
+    if (timestamp - Number(held.slice(held.lastIndexOf('@') + 1)) > SNAPSHOT_INTERVAL) {
+      shown.delete(held);
+    }
+  }
+
+  const most = Math.max(visible, shown.get(key) ?? 0);
+
+  shown.set(key, most);
+  return most;
+}
+
+/**
  * Build the board's view from the windows the store currently holds.
  *
  * Everything but the spawns re-derives from the chunk seeds and the
@@ -280,11 +309,16 @@ export function buildBoardView(
     carry(snapshot.getWandererCoats(), coats);
 
     const cells = [...snapshot.getSpawnCells()];
+    const drawn = everShown(
+      `${snapshot.key}:${offset}@${record.record.timestamp}`,
+      record.record.timestamp,
+      visible,
+    );
 
     cells.forEach(([cell], index) => {
       // Roll order and publication order are the same, so the nth
       // placed cell carries the nth published spawn
-      if (index >= visible || index >= record.record.spawns.length) {
+      if (index >= drawn || index >= record.record.spawns.length) {
         return;
       }
 

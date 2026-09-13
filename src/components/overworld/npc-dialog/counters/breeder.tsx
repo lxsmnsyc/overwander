@@ -4,6 +4,7 @@ import { BREEDING_FEE } from '../../../../data/overworld/npc';
 import { canBreed } from '../../../../overworld/breeding';
 import type { CatchOption } from '../../../catches/catch-picker';
 import { Badge, Button, DialogActions, useToast } from '../../../styled';
+import playEffect, { Effect } from '../../../app/sound';
 import { type CounterProps, asParent, optionsOf, refusal, useSaying } from '../shared';
 import { BreederCounter } from './care';
 
@@ -61,6 +62,7 @@ export default function Breeder(props: CounterProps): JSX.Element {
           return;
         }
         setChosen([]);
+        playEffect(Effect.EggGet);
         toast.push({
           title: 'An egg',
           message: `Carry it as your buddy and walk. −${BREEDING_FEE} gold`,

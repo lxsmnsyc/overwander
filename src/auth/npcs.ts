@@ -594,13 +594,15 @@ export async function reviveFossil(
   snapshot: ChunkSnapshot,
   cell: number,
   item: Items,
-): Promise<RevivedFossil | null> {
+  amount: number,
+): Promise<RevivedFossil[] | null> {
   return reviveOnServer(
     await getIdToken(),
     snapshot.chunk.x,
     snapshot.chunk.y,
     cell,
     item,
+    amount,
     snapshot.offset,
     getLocale(),
   );
@@ -612,16 +614,27 @@ async function reviveOnServer(
   y: number,
   cell: number,
   item: Items,
+  amount: number,
   offset: number,
   locale: string,
-): Promise<RevivedFossil | null> {
+): Promise<RevivedFossil[] | null> {
   'use server';
   const uid = await requireUid(token);
 
   return countVisit(
     uid,
     Npc.FossilScientist,
-    await reviveOnServerSide(uid, x, y, cell, item, await syncServerClock(), offset, locale),
+    await reviveOnServerSide(
+      uid,
+      x,
+      y,
+      cell,
+      item,
+      amount,
+      await syncServerClock(),
+      offset,
+      locale,
+    ),
   );
 }
 

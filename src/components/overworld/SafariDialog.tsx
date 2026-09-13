@@ -200,16 +200,42 @@ function SafariBody(
    * who has asked for less motion is shown the ball and told the
    * answer without the wait
    */
-  const rock = async (shakes: number): Promise<void> => {
+  const rock = async (shakes: number, result: ThrowResult): Promise<void> => {
     // Somebody who has asked for less motion is shown the ball for a
     // beat and told the answer. The rocking is where the near miss is
     // said, and there is nowhere else to say it that would not also
     // say it to everybody the animation already told
-    const held = settings().reduceMotion
-      ? BALL_SETTLE
-      : BALL_LAND + shakes * (BALL_SHAKE + BALL_REST) + BALL_SETTLE;
+    const still = settings().reduceMotion;
+    const held = still ? BALL_SETTLE : BALL_LAND + shakes * (BALL_SHAKE + BALL_REST) + BALL_SETTLE;
 
     setRocking(shakes);
+    // One knock on the beat the ball rocks, so the count a player
+    // hears is the count they are watching. Nothing is drawn rocking
+    // for somebody who asked for less motion, so they get the one
+    // knock the beat is worth rather than a count of a thing that is
+    // standing still
+    if (still) {
+      playEffect(Effect.BallShake);
+    } else {
+      for (let shake = 0; shake < shakes; shake += 1) {
+        setTimeout(
+          () => {
+            playEffect(Effect.BallShake);
+          },
+          BALL_LAND + shake * (BALL_SHAKE + BALL_REST),
+        );
+      }
+    }
+    // The click of a ball that held, on the beat it stops moving. The
+    // fanfare for what is in it comes after, once the answer is said
+    if (result === ThrowResult.Caught) {
+      setTimeout(
+        () => {
+          playEffect(Effect.BallClick);
+        },
+        still ? 0 : BALL_LAND + shakes * (BALL_SHAKE + BALL_REST),
+      );
+    }
     await new Promise<void>((resolve) => {
       setTimeout(resolve, held);
     });
@@ -411,8 +437,8 @@ function SafariBody(
       // hands the shakes over the moment they are rolled, and what is
       // awaited here is both halves finishing
       let played: Promise<void> = Promise.resolve();
-      const thrownAt = await throwBall(active, (shakes) => {
-        played = rock(shakes);
+      const thrownAt = await throwBall(active, (shakes, result) => {
+        played = rock(shakes, result);
       });
 
       await played;
@@ -425,6 +451,17 @@ function SafariBody(
       // out, in the same beat as being told it was caught
       if (thrownAt.result !== ThrowResult.Caught) {
         setRocking(null);
+      }
+      // Said as the ball stops: one sound for it opening again, and
+      // another for a pokemon that used the moment to bolt
+      if (thrownAt.result === ThrowResult.Caught) {
+        playEffect(Effect.PokemonGet);
+      }
+      if (thrownAt.result === ThrowResult.BrokeFree) {
+        playEffect(Effect.CatchFailed);
+      }
+      if (thrownAt.result === ThrowResult.Fled) {
+        playEffect(Effect.Flight);
       }
       // Written down whatever the setting says: the record is of what
       // happened, and turning the setting on later should pick up the
@@ -517,6 +554,9 @@ function SafariBody(
 
     if (active != null && active.state === SafariState.Active) {
       active.runAway();
+      // The same sound either way: what is left standing there is an
+      // empty cell, whoever walked off first
+      playEffect(Effect.Flight);
     }
     // What the panel is showing is left alone: it is on screen until
     // the fade is over, and the next encounter blanks it on the way in

@@ -34,7 +34,7 @@ import Lairs, {
   getBiomeLairs,
   getLairResidents,
   getLairTitle,
-  getSpeciesLair,
+  getSpeciesLairs,
 } from '../../src/data/overworld/lair';
 import Natures from '../../src/data/ids/natures';
 import { APRICORNS, ItemTypes, Items } from '../../src/data/ids/items';
@@ -760,7 +760,7 @@ describe('world', () => {
     // Mew's island is a lair like any other, but no biome lists it:
     // the world stages no mythical, so the rainforest it lives in
     // holds no lair at all
-    expect(getSpeciesLair(Species.Mew)).toBe(Lairs.FarawayIsland);
+    expect(getSpeciesLairs(Species.Mew)).toEqual([Lairs.FarawayIsland]);
     for (const key of Object.keys(BIOME_NAMES)) {
       expect(getBiomeLairs(Number(key))).not.toContain(Lairs.FarawayIsland);
     }
@@ -769,6 +769,26 @@ describe('world', () => {
 
     expect(chunk).not.toBeNull();
     expect(chunk == null ? -1 : new ChunkSnapshot(chunk, 0).getLegendaryLairs().size).toBe(0);
+  });
+
+  it('lets a legendary be at home in more than one lair', () => {
+    // The golems keep their Hoenn chambers and turn up again in
+    // Sinnoh's ruins, and the world stages either
+    expect(getSpeciesLairs(Species.Regirock)).toEqual([Lairs.DesertRuins, Lairs.RockPeakRuins]);
+    expect(getSpeciesLairs(Species.Regice)).toEqual([Lairs.IslandCave, Lairs.IcebergRuins]);
+    expect(getSpeciesLairs(Species.Registeel)).toEqual([Lairs.AncientTomb, Lairs.IronRuins]);
+    // The tower duo each keep their Johto home and share the rock
+    expect(getSpeciesLairs(Species.Lugia)).toEqual([Lairs.WhirlIslands, Lairs.NavelRock]);
+    expect(getSpeciesLairs(Species.HoOh)).toEqual([Lairs.BellTower, Lairs.NavelRock]);
+    expect(getBiomeLairs(Biome.DeepOcean)).toContain(Lairs.NavelRock);
+    // And the weather trio share the tower in the sea cliffs
+    expect(getSpeciesLairs(Species.Kyogre)).toEqual([Lairs.MarineCave, Lairs.EmbeddedTower]);
+    expect(getSpeciesLairs(Species.Groudon)).toEqual([Lairs.TerraCave, Lairs.EmbeddedTower]);
+    expect(getSpeciesLairs(Species.Rayquaza)).toEqual([Lairs.SkyPillar, Lairs.EmbeddedTower]);
+    expect(getBiomeLairs(Biome.Beach)).toEqual([Lairs.EmbeddedTower]);
+    expect(getBiomeLairs(Biome.Badlands)).toContain(Lairs.RockPeakRuins);
+    expect(getBiomeLairs(Biome.Tundra)).toContain(Lairs.IcebergRuins);
+    expect(getBiomeLairs(Biome.Ocean)).toContain(Lairs.IronRuins);
   });
 
   it('draws a lair from the biome rather than from its spawn pool', () => {
@@ -785,20 +805,13 @@ describe('world', () => {
       return;
     }
 
-    // A mountain holds six: the volcano, the cave under it, the two
-    // towers on it, the tomb cut into it and the pillar at the top.
-    // Every window stages one of them, and whoever is at home in it
+    // A mountain holds four: the volcano, the cave under it, the tower
+    // on it and the tomb cut into it. Every window stages one of them,
+    // and whoever is at home in it
     const hosted = new Set(getBiomeLairs(Biome.Mountain));
 
     expect(hosted).toEqual(
-      new Set([
-        Lairs.MtEmber,
-        Lairs.CeruleanCave,
-        Lairs.BellTower,
-        Lairs.AncientTomb,
-        Lairs.SkyPillar,
-        Lairs.SpearPillar,
-      ]),
+      new Set([Lairs.MtEmber, Lairs.CeruleanCave, Lairs.BellTower, Lairs.AncientTomb]),
     );
 
     for (let window = 0; window < 12; window++) {

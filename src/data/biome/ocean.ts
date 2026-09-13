@@ -55,6 +55,8 @@ export default function registerOceanSpawns(): void {
         { species: Species.Latias, weight: 10 },
         { species: Species.Latios, weight: 10 },
         { species: Species.Lugia, weight: 10 },
+        { species: Species.Rayquaza, weight: 10 },
+        { species: Species.Registeel, weight: 10 },
       ],
     },
     [TimeOfDay.Day]: {
@@ -105,6 +107,8 @@ export default function registerOceanSpawns(): void {
         { species: Species.Latias, weight: 10 },
         { species: Species.Latios, weight: 10 },
         { species: Species.Lugia, weight: 10 },
+        { species: Species.Rayquaza, weight: 10 },
+        { species: Species.Registeel, weight: 10 },
       ],
     },
     [TimeOfDay.Evening]: {
@@ -154,6 +158,8 @@ export default function registerOceanSpawns(): void {
         { species: Species.Latios, weight: 10 },
         { species: Species.Lugia, weight: 10 },
         { species: Species.Cresselia, weight: 10 },
+        { species: Species.Rayquaza, weight: 10 },
+        { species: Species.Registeel, weight: 10 },
       ],
     },
     [TimeOfDay.Night]: {
@@ -203,6 +209,8 @@ export default function registerOceanSpawns(): void {
         { species: Species.Latios, weight: 10 },
         { species: Species.Lugia, weight: 10 },
         { species: Species.Cresselia, weight: 10 },
+        { species: Species.Rayquaza, weight: 10 },
+        { species: Species.Registeel, weight: 10 },
       ],
       mythical: [{ species: Species.Darkrai, weight: 10 }],
     },

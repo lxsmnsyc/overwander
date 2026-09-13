@@ -94,10 +94,9 @@ export default function registerDeoxysSpecies(): void {
       eggGroups: [EggGroups.NoEggsDiscovered],
       genderRatio: undefined,
       catchRate: 3,
-      // Where it came down, which is a bare island shore. It is
-      // habitat rather than a spawn: no pool lists a mythical, so the
-      // ticket is still the only way to one. An arrangement lives
-      // nowhere, being rearranged into rather than met
+      // Where it came down, which is a bare island shore, and where
+      // the Beach pools stage it. An arrangement lives nowhere, being
+      // rearranged into rather than met
       biomes: at === 0 ? [Biome.Beach] : [],
       activeTimes: AnyTimeOfDay,
       learnSet: {
@@ -113,6 +112,8 @@ export default function registerDeoxysSpecies(): void {
           40: [Moves.Recover],
           45: [Moves.PsychoBoost],
           50: [Moves.HyperBeam],
+          57: [Moves.PsychoShift],
+          65: [Moves.ZenHeadbutt],
         },
         teachable: [
           Moves.FocusPunch,
@@ -151,6 +152,21 @@ export default function registerDeoxysSpecies(): void {
           Moves.Flash,
           Moves.RockSmash,
           Moves.WaterPulse,
+          Moves.Gravity,
+          Moves.NaturalGift,
+          Moves.Fling,
+          Moves.PoisonJab,
+          Moves.DrainPunch,
+          Moves.FocusBlast,
+          Moves.EnergyBall,
+          Moves.GigaImpact,
+          Moves.Avalanche,
+          Moves.ZenHeadbutt,
+          Moves.FlashCannon,
+          Moves.TrickRoom,
+          Moves.StealthRock,
+          Moves.GrassKnot,
+          Moves.ChargeBeam,
         ],
       },
     });

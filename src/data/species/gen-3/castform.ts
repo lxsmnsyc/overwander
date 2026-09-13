@@ -106,8 +106,15 @@ export default function registerCastformSpecies(): void {
           Moves.SleepTalk,
           Moves.DefenseCurl,
           Moves.Swift,
+          Moves.NaturalGift,
+          Moves.Tailwind,
+          Moves.LastResort,
+          Moves.EnergyBall,
+          Moves.Avalanche,
+          Moves.Captivate,
+          Moves.OminousWind,
         ],
-        egg: [Moves.FutureSight],
+        egg: [Moves.FutureSight, Moves.LuckyChant, Moves.OminousWind],
       },
     });
   }

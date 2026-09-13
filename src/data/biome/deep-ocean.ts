@@ -45,7 +45,10 @@ export default function registerDeepOceanSpawns(): void {
       special: [
         { species: Species.Kyogre, weight: 10 },
         { species: Species.Lugia, weight: 10 },
+        { species: Species.Articuno, weight: 10 },
+        { species: Species.HoOh, weight: 10 },
       ],
+      mythical: [{ species: Species.Manaphy, weight: 10 }],
     },
     [TimeOfDay.Day]: {
       base: [
@@ -75,7 +78,10 @@ export default function registerDeepOceanSpawns(): void {
       special: [
         { species: Species.Kyogre, weight: 10 },
         { species: Species.Lugia, weight: 10 },
+        { species: Species.Articuno, weight: 10 },
+        { species: Species.HoOh, weight: 10 },
       ],
+      mythical: [{ species: Species.Manaphy, weight: 10 }],
     },
     [TimeOfDay.Evening]: {
       base: [
@@ -104,7 +110,10 @@ export default function registerDeepOceanSpawns(): void {
       special: [
         { species: Species.Kyogre, weight: 10 },
         { species: Species.Lugia, weight: 10 },
+        { species: Species.Articuno, weight: 10 },
+        { species: Species.HoOh, weight: 10 },
       ],
+      mythical: [{ species: Species.Manaphy, weight: 10 }],
     },
     [TimeOfDay.Night]: {
       base: [
@@ -133,7 +142,10 @@ export default function registerDeepOceanSpawns(): void {
       special: [
         { species: Species.Kyogre, weight: 10 },
         { species: Species.Lugia, weight: 10 },
+        { species: Species.Articuno, weight: 10 },
+        { species: Species.HoOh, weight: 10 },
       ],
+      mythical: [{ species: Species.Manaphy, weight: 10 }],
     },
   });
 }

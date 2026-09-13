@@ -41,6 +41,7 @@ export default function registerAlpineTundraSpawns(): void {
         { species: Species.Dialga, weight: 10 },
         { species: Species.Palkia, weight: 10 },
       ],
+      mythical: [{ species: Species.Arceus, weight: 10 }],
     },
     [TimeOfDay.Day]: {
       base: [
@@ -79,6 +80,7 @@ export default function registerAlpineTundraSpawns(): void {
         { species: Species.Dialga, weight: 10 },
         { species: Species.Palkia, weight: 10 },
       ],
+      mythical: [{ species: Species.Arceus, weight: 10 }],
     },
     [TimeOfDay.Evening]: {
       base: [
@@ -115,6 +117,7 @@ export default function registerAlpineTundraSpawns(): void {
         { species: Species.Dialga, weight: 10 },
         { species: Species.Palkia, weight: 10 },
       ],
+      mythical: [{ species: Species.Arceus, weight: 10 }],
     },
     [TimeOfDay.Night]: {
       base: [{ species: Species.Swinub, weight: 25 }],
@@ -143,7 +146,9 @@ export default function registerAlpineTundraSpawns(): void {
         { species: Species.Articuno, weight: 10 },
         { species: Species.Dialga, weight: 10 },
         { species: Species.Palkia, weight: 10 },
+        { species: Species.Mewtwo, weight: 10 },
       ],
+      mythical: [{ species: Species.Arceus, weight: 10 }],
     },
   });
 }

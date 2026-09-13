@@ -1,5 +1,67 @@
 # overwander
 
+## 3.1.0
+
+### Minor Changes
+
+- b3d01d0: A pokemon that grows on candy is heard growing. It plays once for the run rather than once a level, and stays quiet where the candy could not be used.
+- 18162aa: Nurse Joy's counter plays a jingle when she hands a party back healed. It follows the sound slider like the rest, and stays quiet when there was nothing to heal.
+- 5467ca7: A battle is announced and answered: a fanfare plays over the count in, and the fight ends on one sound for a win and another for a loss. A draw takes the loss.
+- 0cba996: An encounter makes a noise now: the ball knocks once for every shake it takes, opens with a sound of its own when the pokemon breaks out, and a flight is heard whether the pokemon bolted or the player walked away.
+- 93e9f0c: Anything handed over says so:
+
+  - An egg taken from a nest, a grotto or the breeder.
+  - A rock bought off the fossil maniac.
+  - A pokemon received, whether it came out of a fossil, an evolution, a trade, a gift or a ball.
+  - A dig that turned up a prized item, and a different sound for a special one.
+  - The ball clicking shut on a pokemon that stayed in it, before the fanfare for what was caught.
+
+### Patch Changes
+
+- cf340b1: The fossil scientist opens rocks the way the vendor sells: press a fossil, say how many, and up to six come off the bench in one handover. The sound for what came out plays once for the handover rather than once for each pokemon.
+- 67e21d9: A family's candy is named and painted after the pokemon the line is known as.
+  Both were taken from the species the line hatches as, so eight families answered
+  to a baby a later generation put underneath them: a bag read "Pichu candy" for a
+  Pikachu's, and the sweet was painted in Pichu's colours. Marill, Wobbuffet,
+  Clefairy, Jigglypuff, Jynx, Electabuzz and Magmar were the others. The three
+  Hitmons keep Tyrogue's name, which is the one name that covers them.
+- 67e21d9: A family's candy is painted in as many of its own colours as its pokemon has,
+  up to four. Two colours make a ball of the first with stripes of the second, a
+  third splits the middle of the ball off from its top and bottom, and a fourth
+  takes the middle stripe. The colours are read off the pokemon the family is
+  named after.
+- 2041143: A pokemon that has been to auction can be let go again. Releasing one deleted
+  its record, which emptied the pointer on any lot that had named it, and the
+  auctions table refused to hold a pokemon lot with no pokemon in it: the release
+  came back as a constraint error, and a batch release failed whole because one
+  member of it had once been on the block. A settled lot may now outlive what it
+  sold, the way a gift claim already did. A lot that is still running must still
+  name its pokemon.
+- 46e7095: - A dialog whose close is refused stays on screen. Escape or a press on the
+  overlay put the panel away even where the handler declined, which left the
+  board underneath refusing every press: a safari encounter dismissed while the
+  ball was still rocking stranded the player where they stood.
+  - A safari encounter cannot be dismissed while a ball is in the air. The press
+    is refused outright rather than heard and dropped.
+- 2041143: A fight against the world no longer holds a pokemon to one ability and one held
+  item. Every trainer stop, gym, league seat and Frontier house now allows what a
+  raid allows, so both sides bring what they were built with:
+
+  - An expert's six are composed with 2 abilities and 2 items apiece, and half of
+    that was thrown away before the fight started.
+  - A player's pokemon carries the belt they packed, so a Sacred Ash sitting under
+    a Leftovers stopped doing nothing.
+  - Fights between players are unchanged: a duel and a gym seat keep the mainline
+    shape of one ability and one held item.
+
+- b3e4746: Beldum, Metang and Metagross are as catchable as the other pseudo-legendary lines. The mainline puts them at a rate rarer than most legendaries, which made the one family nobody could throw at.
+- 03b0db3: Spawns a lure drew into a chunk stay standing there for the rest of the window. Putting the buddy that drew them away no longer takes them off the board, and the server no longer refuses to stage the ones it had already shown.
+- 03b0db3: Nurse Joy's counter and the write behind it ask one shared question about whether a pokemon needs seeing to, so a pokemon at full health carrying a status is offered to her and healed.
+- 46e7095: - A ball that holds stays on the safari panel. The pokemon's sprite came back
+  under the "Caught!" line, which read as it getting out again.
+  - The ball lies still between shakes. The three ran into each other as one long
+    wobble rather than as three separate answers.
+
 ## 3.0.0
 
 ### Major Changes

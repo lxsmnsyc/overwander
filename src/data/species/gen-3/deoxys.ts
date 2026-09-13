@@ -151,6 +151,12 @@ export default function registerDeoxysSpecies(): void {
           Moves.Flash,
           Moves.RockSmash,
           Moves.WaterPulse,
+          Moves.WonderRoom,
+          Moves.Psyshock,
+          Moves.Telekinesis,
+          Moves.LowSweep,
+          Moves.Round,
+          Moves.AllySwitch,
         ],
       },
     });

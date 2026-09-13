@@ -50,6 +50,12 @@ const FAMILY_TEACHABLE = [
   Moves.LastResort,
   Moves.NaturalGift,
   Moves.ShadowClaw,
+  Moves.HoneClaws,
+  Moves.FlameCharge,
+  Moves.Round,
+  Moves.EchoedVoice,
+  Moves.Incinerate,
+  Moves.FirePledge,
 ];
 
 // What the two above the base pick up: the machines and tutors that
@@ -62,6 +68,9 @@ const GROWN_TEACHABLE = [
   Moves.FuryCutter,
   Moves.ThunderPunch,
   Moves.FirePunch,
+  Moves.LowSweep,
+  Moves.WorkUp,
+  Moves.DualChop,
 ];
 
 export default function registerTorchicSpecies(): void {
@@ -118,6 +127,7 @@ export default function registerTorchicSpecies(): void {
         Moves.SmellingSalts,
         Moves.Feint,
         Moves.NightSlash,
+        Moves.FlameBurst,
       ],
     },
   });
@@ -231,6 +241,8 @@ export default function registerTorchicSpecies(): void {
         Moves.RockClimb,
         Moves.StoneEdge,
         Moves.VacuumWave,
+        Moves.Acrobatics,
+        Moves.Bulldoze,
       ],
     },
   });

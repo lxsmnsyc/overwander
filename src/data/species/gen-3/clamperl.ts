@@ -39,6 +39,8 @@ const FAMILY_TEACHABLE = [
   Moves.Swagger,
   Moves.SleepTalk,
   Moves.NaturalGift,
+  Moves.Round,
+  Moves.Scald,
 ];
 
 // What both halves of the shell pick up once they are out of it
@@ -86,6 +88,7 @@ export default function registerClamperlSpecies(): void {
     learnSet: {
       level: {
         1: [Moves.WaterGun, Moves.Clamp, Moves.Whirlpool, Moves.IronDefense],
+        51: [Moves.ShellSmash],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.Brine, Moves.Captivate],
       egg: [

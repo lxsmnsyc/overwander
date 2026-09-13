@@ -56,6 +56,11 @@ const FAMILY_TEACHABLE = [
   Moves.Fling,
   Moves.NaturalGift,
   Moves.ZenHeadbutt,
+  Moves.Round,
+  Moves.EchoedVoice,
+  Moves.Incinerate,
+  Moves.Retaliate,
+  Moves.WorkUp,
 ];
 
 // What the two above the base pick up: a whisper has nothing to swing
@@ -70,6 +75,8 @@ const GROWN_TEACHABLE = [
   Moves.RockSlide,
   Moves.Strength,
   Moves.RockSmash,
+  Moves.SmackDown,
+  Moves.Bulldoze,
 ];
 
 export default function registerWhismurSpecies(): void {
@@ -113,11 +120,17 @@ export default function registerWhismurSpecies(): void {
         25: [Moves.Stomp],
         31: [Moves.Screech],
         35: [Moves.Roar],
-        41: [Moves.Rest, Moves.SleepTalk],
+        41: [Moves.Rest, Moves.SleepTalk, Moves.Synchronoise],
         45: [Moves.HyperVoice],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.TakeDown, Moves.Extrasensory, Moves.SmellingSalts, Moves.HammerArm],
+      egg: [
+        Moves.TakeDown,
+        Moves.Extrasensory,
+        Moves.SmellingSalts,
+        Moves.HammerArm,
+        Moves.CircleThrow,
+      ],
     },
   });
 
@@ -159,7 +172,7 @@ export default function registerWhismurSpecies(): void {
         29: [Moves.Stomp],
         37: [Moves.Screech],
         43: [Moves.Roar],
-        51: [Moves.Rest, Moves.SleepTalk],
+        51: [Moves.Rest, Moves.SleepTalk, Moves.Synchronoise],
         57: [Moves.HyperVoice],
       },
       teachable: [...FAMILY_TEACHABLE, ...GROWN_TEACHABLE],
@@ -209,7 +222,7 @@ export default function registerWhismurSpecies(): void {
         37: [Moves.Screech],
         40: [Moves.HyperBeam],
         45: [Moves.Roar],
-        55: [Moves.Rest, Moves.SleepTalk],
+        55: [Moves.Rest, Moves.SleepTalk, Moves.Synchronoise],
         63: [Moves.HyperVoice],
       },
       teachable: [

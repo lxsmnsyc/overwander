@@ -52,6 +52,9 @@ const FAMILY_TEACHABLE = [
   Moves.GrassKnot,
   Moves.NaturalGift,
   Moves.TrickRoom,
+  Moves.Psyshock,
+  Moves.Telekinesis,
+  Moves.Round,
 ];
 
 export default function registerSpoinkSpecies(): void {
@@ -97,6 +100,7 @@ export default function registerSpoinkSpecies(): void {
         28: [Moves.MagicCoat],
         34: [Moves.Psychic, Moves.Payback],
         37: [Moves.Rest, Moves.Snore],
+        38: [Moves.Psyshock],
         43: [Moves.Bounce],
         46: [Moves.PowerGem],
       },
@@ -139,6 +143,7 @@ export default function registerSpoinkSpecies(): void {
         26: [Moves.ZenHeadbutt],
         28: [Moves.MagicCoat],
         37: [Moves.Psychic, Moves.Payback],
+        42: [Moves.Psyshock],
         43: [Moves.Rest, Moves.Snore],
         55: [Moves.Bounce, Moves.PowerGem],
       },
@@ -160,6 +165,7 @@ export default function registerSpoinkSpecies(): void {
         Moves.Fling,
         Moves.FocusBlast,
         Moves.GigaImpact,
+        Moves.Bulldoze,
       ],
     },
   });

@@ -43,6 +43,9 @@ const FAMILY_TEACHABLE = [
   Moves.Roost,
   Moves.Tailwind,
   Moves.UTurn,
+  Moves.Round,
+  Moves.EchoedVoice,
+  Moves.WorkUp,
 ];
 
 export default function registerTaillowSpecies(): void {

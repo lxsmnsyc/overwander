@@ -39,6 +39,9 @@ const FAMILY_TEACHABLE = [
   Moves.FuryCutter,
   Moves.SleepTalk,
   Moves.NaturalGift,
+  Moves.HoneClaws,
+  Moves.Round,
+  Moves.StruggleBug,
 ];
 
 export default function registerNincadaSpecies(): void {
@@ -95,7 +98,14 @@ export default function registerNincadaSpecies(): void {
         45: [Moves.Dig],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.BugBite, Moves.XScissor],
-      egg: [Moves.Gust, Moves.FeintAttack, Moves.SilverWind, Moves.BugBuzz, Moves.NightSlash],
+      egg: [
+        Moves.Gust,
+        Moves.FeintAttack,
+        Moves.SilverWind,
+        Moves.BugBuzz,
+        Moves.NightSlash,
+        Moves.FinalGambit,
+      ],
     },
   });
 
@@ -205,6 +215,7 @@ export default function registerNincadaSpecies(): void {
         Moves.ShadowClaw,
         Moves.SuckerPunch,
         Moves.XScissor,
+        Moves.Telekinesis,
       ],
     },
   });

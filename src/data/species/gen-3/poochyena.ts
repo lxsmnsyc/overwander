@@ -46,6 +46,11 @@ const FAMILY_TEACHABLE = [
   Moves.DarkPulse,
   Moves.NaturalGift,
   Moves.Payback,
+  Moves.FoulPlay,
+  Moves.Round,
+  Moves.Incinerate,
+  Moves.Retaliate,
+  Moves.Snarl,
 ];
 
 export default function registerPoochyenaSpecies(): void {

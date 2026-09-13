@@ -65,6 +65,12 @@ const FAMILY_TEACHABLE = [
   Moves.PoisonJab,
   Moves.VacuumWave,
   Moves.ZenHeadbutt,
+  Moves.Psyshock,
+  Moves.Telekinesis,
+  Moves.LowSweep,
+  Moves.Round,
+  Moves.Retaliate,
+  Moves.WorkUp,
 ];
 
 export default function registerMedititeSpecies(): void {

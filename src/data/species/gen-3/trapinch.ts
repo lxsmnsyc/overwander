@@ -43,6 +43,9 @@ const FAMILY_TEACHABLE = [
   Moves.BugBite,
   Moves.Captivate,
   Moves.NaturalGift,
+  Moves.Round,
+  Moves.StruggleBug,
+  Moves.Bulldoze,
 ];
 
 // What the two above the base pick up: a pit in the sand has no
@@ -85,6 +88,7 @@ export default function registerTrapinchSpecies(): void {
         1: [Moves.Bite],
         9: [Moves.SandAttack],
         17: [Moves.FeintAttack],
+        21: [Moves.Bulldoze],
         25: [Moves.SandTomb],
         33: [Moves.Crunch],
         41: [Moves.Dig],
@@ -131,6 +135,7 @@ export default function registerTrapinchSpecies(): void {
     learnSet: {
       level: {
         1: [Moves.Bite, Moves.SandAttack, Moves.FeintAttack, Moves.SandTomb],
+        21: [Moves.Bulldoze],
         33: [Moves.Crunch],
         35: [Moves.DragonBreath],
         41: [Moves.Screech],
@@ -178,9 +183,11 @@ export default function registerTrapinchSpecies(): void {
     learnSet: {
       level: {
         1: [Moves.Bite, Moves.SandAttack, Moves.FeintAttack, Moves.SandTomb],
+        21: [Moves.Bulldoze],
         33: [Moves.Crunch],
         35: [Moves.DragonBreath],
         41: [Moves.Screech],
+        45: [Moves.DragonTail],
         53: [Moves.Sandstorm],
         65: [Moves.HyperBeam],
       },
@@ -203,6 +210,9 @@ export default function registerTrapinchSpecies(): void {
         Moves.StoneEdge,
         Moves.Tailwind,
         Moves.UTurn,
+        Moves.HoneClaws,
+        Moves.Incinerate,
+        Moves.DragonTail,
       ],
     },
   });

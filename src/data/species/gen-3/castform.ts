@@ -106,8 +106,13 @@ export default function registerCastformSpecies(): void {
           Moves.SleepTalk,
           Moves.DefenseCurl,
           Moves.Swift,
+          Moves.Round,
+          Moves.Scald,
+          Moves.Incinerate,
+          Moves.Retaliate,
+          Moves.WorkUp,
         ],
-        egg: [Moves.FutureSight],
+        egg: [Moves.FutureSight, Moves.ClearSmog, Moves.Hex],
       },
     });
   }

@@ -48,6 +48,9 @@ const FAMILY_TEACHABLE = [
   Moves.DragonPulse,
   Moves.NaturalGift,
   Moves.ShadowClaw,
+  Moves.HoneClaws,
+  Moves.Round,
+  Moves.Incinerate,
 ];
 
 // What the shell brings: a Bagon has nothing to curl up into
@@ -196,6 +199,7 @@ export default function registerBagonSpecies(): void {
         50: [Moves.Fly],
         61: [Moves.Crunch],
         79: [Moves.DragonClaw],
+        80: [Moves.DragonTail],
         93: [Moves.DoubleEdge],
       },
       teachable: [
@@ -214,6 +218,8 @@ export default function registerBagonSpecies(): void {
         Moves.Roost,
         Moves.StoneEdge,
         Moves.Tailwind,
+        Moves.Bulldoze,
+        Moves.DragonTail,
       ],
     },
   });

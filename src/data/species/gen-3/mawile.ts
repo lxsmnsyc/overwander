@@ -105,6 +105,9 @@ export default function registerMawileSpecies(): void {
         Moves.MagnetRise,
         Moves.NaturalGift,
         Moves.Payback,
+        Moves.FoulPlay,
+        Moves.Round,
+        Moves.Incinerate,
       ],
       egg: [
         Moves.AncientPower,

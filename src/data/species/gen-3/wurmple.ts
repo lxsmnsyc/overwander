@@ -40,6 +40,11 @@ const WINGED_TEACHABLE = [
   Moves.Swagger,
   Moves.SleepTalk,
   Moves.Swift,
+  Moves.Venoshock,
+  Moves.Round,
+  Moves.Acrobatics,
+  Moves.StruggleBug,
+  Moves.Electroweb,
 ];
 
 export default function registerWurmpleSpecies(): void {
@@ -88,7 +93,7 @@ export default function registerWurmpleSpecies(): void {
         5: [Moves.PoisonSting],
         15: [Moves.BugBite],
       },
-      teachable: [],
+      teachable: [Moves.Electroweb],
     },
   });
 
@@ -126,7 +131,7 @@ export default function registerWurmpleSpecies(): void {
       level: {
         1: [Moves.Harden],
       },
-      teachable: [Moves.BugBite],
+      teachable: [Moves.BugBite, Moves.Electroweb],
     },
   });
 
@@ -166,6 +171,7 @@ export default function registerWurmpleSpecies(): void {
         34: [Moves.SilverWind],
         38: [Moves.GigaDrain],
         41: [Moves.BugBuzz],
+        45: [Moves.QuiverDance],
       },
       teachable: [
         ...WINGED_TEACHABLE,
@@ -218,7 +224,7 @@ export default function registerWurmpleSpecies(): void {
       level: {
         1: [Moves.Harden],
       },
-      teachable: [Moves.BugBite],
+      teachable: [Moves.BugBite, Moves.Electroweb],
     },
   });
 
@@ -258,6 +264,7 @@ export default function registerWurmpleSpecies(): void {
         34: [Moves.SilverWind],
         38: [Moves.Toxic],
         41: [Moves.BugBuzz],
+        45: [Moves.QuiverDance],
       },
       teachable: [
         ...WINGED_TEACHABLE,

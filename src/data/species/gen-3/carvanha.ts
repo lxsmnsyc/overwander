@@ -48,6 +48,10 @@ const FAMILY_TEACHABLE = [
   Moves.NaturalGift,
   Moves.Payback,
   Moves.ZenHeadbutt,
+  Moves.Round,
+  Moves.Scald,
+  Moves.Retaliate,
+  Moves.Snarl,
 ];
 
 export default function registerCarvanhaSpecies(): void {
@@ -151,6 +155,7 @@ export default function registerCarvanhaSpecies(): void {
         Moves.Avalanche,
         Moves.GigaImpact,
         Moves.PoisonJab,
+        Moves.Bulldoze,
       ],
     },
   });

@@ -42,6 +42,8 @@ const FAMILY_TEACHABLE = [
   Moves.Avalanche,
   Moves.Captivate,
   Moves.NaturalGift,
+  Moves.Round,
+  Moves.FrostBreath,
 ];
 
 export default function registerSnoruntSpecies(): void {
@@ -95,7 +97,7 @@ export default function registerSnoruntSpecies(): void {
         43: [Moves.Blizzard],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.Block, Moves.Spikes],
+      egg: [Moves.Block, Moves.Spikes, Moves.Hex],
     },
   });
 
@@ -151,6 +153,7 @@ export default function registerSnoruntSpecies(): void {
         Moves.GyroBall,
         Moves.IronHead,
         Moves.Payback,
+        Moves.Bulldoze,
       ],
     },
   });

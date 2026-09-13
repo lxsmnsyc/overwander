@@ -78,8 +78,17 @@ export default function registerLuvdiscSpecies(): void {
         Moves.Swift,
         Moves.Brine,
         Moves.NaturalGift,
+        Moves.Round,
+        Moves.Scald,
       ],
-      egg: [Moves.Splash, Moves.Supersonic, Moves.WaterSport, Moves.MudSport, Moves.AquaJet],
+      egg: [
+        Moves.Splash,
+        Moves.Supersonic,
+        Moves.WaterSport,
+        Moves.MudSport,
+        Moves.AquaJet,
+        Moves.HealPulse,
+      ],
     },
   });
 }

@@ -48,6 +48,8 @@ const TRIO_TEACHABLE = [
   Moves.Swagger,
   Moves.SleepTalk,
   Moves.Swift,
+  Moves.Round,
+  Moves.Bulldoze,
 ];
 
 export default function registerWeatherTrioSpecies(): void {
@@ -110,6 +112,7 @@ export default function registerWeatherTrioSpecies(): void {
         Moves.GigaImpact,
         Moves.IronHead,
         Moves.NaturalGift,
+        Moves.Scald,
       ],
     },
   });
@@ -191,6 +194,10 @@ export default function registerWeatherTrioSpecies(): void {
         Moves.ShadowClaw,
         Moves.StealthRock,
         Moves.StoneEdge,
+        Moves.HoneClaws,
+        Moves.SmackDown,
+        Moves.Incinerate,
+        Moves.DragonTail,
       ],
     },
   });
@@ -273,6 +280,11 @@ export default function registerWeatherTrioSpecies(): void {
         Moves.ShadowClaw,
         Moves.StoneEdge,
         Moves.Tailwind,
+        Moves.HoneClaws,
+        Moves.EchoedVoice,
+        Moves.SkyDrop,
+        Moves.Incinerate,
+        Moves.DragonTail,
       ],
     },
   });

@@ -99,6 +99,8 @@ export default function registerRoseliaSpecies(): void {
         Moves.PoisonJab,
         Moves.SeedBomb,
         Moves.WorrySeed,
+        Moves.Venoshock,
+        Moves.Round,
       ],
     },
   });

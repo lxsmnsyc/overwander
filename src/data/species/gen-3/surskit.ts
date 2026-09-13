@@ -43,6 +43,9 @@ const FAMILY_TEACHABLE = [
   Moves.BugBite,
   Moves.Captivate,
   Moves.NaturalGift,
+  Moves.Round,
+  Moves.Scald,
+  Moves.StruggleBug,
 ];
 
 export default function registerSurskitSpecies(): void {
@@ -124,6 +127,7 @@ export default function registerSurskitSpecies(): void {
         47: [Moves.SilverWind, Moves.AirSlash],
         53: [Moves.Whirlwind],
         61: [Moves.BugBuzz],
+        68: [Moves.QuiverDance],
       },
       teachable: [
         ...FAMILY_TEACHABLE,

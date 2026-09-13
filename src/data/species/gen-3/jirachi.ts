@@ -93,6 +93,10 @@ export default function registerJirachiSpecies(): void {
         Moves.StealthRock,
         Moves.TrickRoom,
         Moves.UTurn,
+        Moves.Psyshock,
+        Moves.Telekinesis,
+        Moves.MagicRoom,
+        Moves.Round,
       ],
     },
   });

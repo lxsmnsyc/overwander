@@ -45,6 +45,8 @@ const FAMILY_TEACHABLE = [
   Moves.SeedBomb,
   Moves.StealthRock,
   Moves.WorrySeed,
+  Moves.SmackDown,
+  Moves.Round,
 ];
 
 export default function registerLileepSpecies(): void {
@@ -143,6 +145,8 @@ export default function registerLileepSpecies(): void {
         Moves.RockSmash,
         Moves.GigaImpact,
         Moves.StoneEdge,
+        Moves.SludgeWave,
+        Moves.Bulldoze,
       ],
     },
   });

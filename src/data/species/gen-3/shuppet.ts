@@ -53,6 +53,10 @@ const FAMILY_TEACHABLE = [
   Moves.OminousWind,
   Moves.Payback,
   Moves.TrickRoom,
+  Moves.Telekinesis,
+  Moves.MagicRoom,
+  Moves.FoulPlay,
+  Moves.Round,
 ];
 
 export default function registerShuppetSpecies(): void {
@@ -93,6 +97,7 @@ export default function registerShuppetSpecies(): void {
         13: [Moves.NightShade],
         20: [Moves.Curse, Moves.ShadowSneak],
         25: [Moves.Spite],
+        26: [Moves.Hex],
         32: [Moves.WillOWisp],
         35: [Moves.SuckerPunch],
         37: [Moves.FeintAttack],
@@ -137,6 +142,7 @@ export default function registerShuppetSpecies(): void {
         1: [Moves.KnockOff, Moves.Screech, Moves.NightShade, Moves.Curse],
         20: [Moves.ShadowSneak],
         25: [Moves.Spite],
+        26: [Moves.Hex],
         32: [Moves.WillOWisp],
         35: [Moves.SuckerPunch],
         39: [Moves.FeintAttack],

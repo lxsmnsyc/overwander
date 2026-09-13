@@ -68,6 +68,12 @@ const EON_TEACHABLE = [
   Moves.FuryCutter,
   Moves.SleepTalk,
   Moves.Swift,
+  Moves.HoneClaws,
+  Moves.Psyshock,
+  Moves.Telekinesis,
+  Moves.Round,
+  Moves.Retaliate,
+  Moves.Bulldoze,
 ];
 
 export default function registerEonDuoSpecies(): void {
@@ -112,7 +118,9 @@ export default function registerEonDuoSpecies(): void {
         45: [Moves.Recover],
         50: [Moves.Charm, Moves.PsychoShift],
         60: [Moves.HealingWish],
-        70: [Moves.DragonPulse],
+        65: [Moves.HealPulse],
+        70: [Moves.DragonPulse, Moves.ReflectType],
+        75: [Moves.GuardSplit],
       },
       teachable: [
         ...EON_TEACHABLE,
@@ -129,6 +137,7 @@ export default function registerEonDuoSpecies(): void {
         Moves.ShadowClaw,
         Moves.SuckerPunch,
         Moves.Tailwind,
+        Moves.MagicRoom,
       ],
     },
   });
@@ -173,7 +182,9 @@ export default function registerEonDuoSpecies(): void {
         40: [Moves.Psychic, Moves.ZenHeadbutt],
         45: [Moves.Recover],
         50: [Moves.DragonDance, Moves.PsychoShift],
-        70: [Moves.DragonPulse],
+        65: [Moves.HealPulse],
+        70: [Moves.DragonPulse, Moves.Telekinesis],
+        75: [Moves.PowerSplit],
       },
       teachable: [
         ...EON_TEACHABLE,
@@ -189,6 +200,7 @@ export default function registerEonDuoSpecies(): void {
         Moves.Roost,
         Moves.ShadowClaw,
         Moves.Tailwind,
+        Moves.WonderRoom,
       ],
     },
   });

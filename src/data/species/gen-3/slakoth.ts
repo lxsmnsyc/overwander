@@ -64,11 +64,17 @@ const FAMILY_TEACHABLE = [
   Moves.NaturalGift,
   Moves.ShadowClaw,
   Moves.SuckerPunch,
+  Moves.HoneClaws,
+  Moves.AfterYou,
+  Moves.Round,
+  Moves.Incinerate,
+  Moves.Retaliate,
+  Moves.WorkUp,
 ];
 
 // What the two above the base pick up: the sloth in the tree is not
 // getting up for any of them
-const GROWN_TEACHABLE = [Moves.Roar, Moves.Earthquake, Moves.Taunt];
+const GROWN_TEACHABLE = [Moves.Roar, Moves.Earthquake, Moves.Taunt, Moves.LowSweep, Moves.Bulldoze];
 
 export default function registerSlakothSpecies(): void {
   registerSpecies(Species.Slakoth, {
@@ -108,7 +114,7 @@ export default function registerSlakothSpecies(): void {
         19: [Moves.FeintAttack],
         25: [Moves.Amnesia],
         31: [Moves.Covet],
-        37: [Moves.Counter],
+        37: [Moves.Counter, Moves.ChipAway],
         43: [Moves.Flail],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.Fling],
@@ -119,6 +125,7 @@ export default function registerSlakothSpecies(): void {
         Moves.Curse,
         Moves.HammerArm,
         Moves.NightSlash,
+        Moves.AfterYou,
       ],
     },
   });
@@ -160,7 +167,7 @@ export default function registerSlakothSpecies(): void {
         25: [Moves.Endure],
         31: [Moves.Slash],
         37: [Moves.Counter],
-        43: [Moves.FocusPunch],
+        43: [Moves.FocusPunch, Moves.ChipAway],
         49: [Moves.Reversal],
       },
       teachable: [
@@ -207,7 +214,7 @@ export default function registerSlakothSpecies(): void {
         25: [Moves.Amnesia],
         31: [Moves.Covet],
         36: [Moves.Swagger],
-        37: [Moves.Counter],
+        37: [Moves.Counter, Moves.ChipAway],
         43: [Moves.Flail],
         49: [Moves.Fling],
         55: [Moves.Punishment],
@@ -220,6 +227,8 @@ export default function registerSlakothSpecies(): void {
         Moves.FocusBlast,
         Moves.GigaImpact,
         Moves.RockClimb,
+        Moves.SmackDown,
+        Moves.Quash,
       ],
     },
   });

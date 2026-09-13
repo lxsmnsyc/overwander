@@ -47,6 +47,9 @@ const FAMILY_TEACHABLE = [
   Moves.OminousWind,
   Moves.Pluck,
   Moves.UTurn,
+  Moves.Round,
+  Moves.EchoedVoice,
+  Moves.Scald,
 ];
 
 export default function registerWingullSpecies(): void {
@@ -90,6 +93,7 @@ export default function registerWingullSpecies(): void {
         31: [Moves.QuickAttack],
         43: [Moves.Pursuit],
         47: [Moves.AirSlash],
+        49: [Moves.Hurricane],
         55: [Moves.Agility],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.Tailwind],
@@ -123,7 +127,7 @@ export default function registerWingullSpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.Growl, Moves.WaterGun, Moves.WaterSport, Moves.WingAttack],
+        1: [Moves.Growl, Moves.WaterGun, Moves.WaterSport, Moves.WingAttack, Moves.Soak],
         7: [Moves.Supersonic],
         21: [Moves.Mist],
         24: [Moves.Payback],
@@ -134,6 +138,7 @@ export default function registerWingullSpecies(): void {
         47: [Moves.SpitUp],
         50: [Moves.Tailwind],
         61: [Moves.HydroPump],
+        63: [Moves.Hurricane],
       },
       teachable: [
         ...FAMILY_TEACHABLE,
@@ -142,6 +147,7 @@ export default function registerWingullSpecies(): void {
         Moves.GigaImpact,
         Moves.GunkShot,
         Moves.SeedBomb,
+        Moves.SkyDrop,
       ],
     },
   });

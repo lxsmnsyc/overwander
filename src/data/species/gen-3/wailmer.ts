@@ -47,6 +47,10 @@ const FAMILY_TEACHABLE = [
   Moves.Avalanche,
   Moves.Captivate,
   Moves.NaturalGift,
+  Moves.Round,
+  Moves.EchoedVoice,
+  Moves.Scald,
+  Moves.Bulldoze,
 ];
 
 export default function registerWailmerSpecies(): void {
@@ -94,10 +98,10 @@ export default function registerWailmerSpecies(): void {
         37: [Moves.Rest],
         41: [Moves.WaterSpout],
         46: [Moves.Amnesia],
-        50: [Moves.HydroPump],
+        50: [Moves.HydroPump, Moves.HeavySlam],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.Curse, Moves.Fissure, Moves.Thrash, Moves.Tickle, Moves.AquaRing],
+      egg: [Moves.Curse, Moves.Fissure, Moves.Thrash, Moves.Tickle, Moves.AquaRing, Moves.Soak],
     },
   });
 
@@ -139,6 +143,7 @@ export default function registerWailmerSpecies(): void {
         44: [Moves.WaterSpout],
         52: [Moves.Amnesia],
         59: [Moves.HydroPump],
+        70: [Moves.HeavySlam],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.GigaImpact, Moves.IronHead],
     },

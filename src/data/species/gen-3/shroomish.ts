@@ -41,6 +41,8 @@ const FAMILY_TEACHABLE = [
   Moves.EnergyBall,
   Moves.GrassKnot,
   Moves.NaturalGift,
+  Moves.Venoshock,
+  Moves.Round,
 ];
 
 export default function registerShroomishSpecies(): void {
@@ -156,6 +158,9 @@ export default function registerShroomishSpecies(): void {
         Moves.StoneEdge,
         Moves.VacuumWave,
         Moves.WorrySeed,
+        Moves.LowSweep,
+        Moves.Retaliate,
+        Moves.WorkUp,
       ],
     },
   });

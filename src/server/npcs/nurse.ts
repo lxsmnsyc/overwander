@@ -1,7 +1,7 @@
 import 'server-only';
 import { asCaughtPokemon } from '../../auth/caught-record';
 import { boostedSteps, stepsRemaining } from '../../auth/egg';
-import { getMaxHealth } from '../../auth/health';
+import { getMaxHealth, needsCare } from '../../auth/health';
 import Npc, { DAYCARE_FEE, NURSE_CARE_LIMIT } from '../../data/overworld/npc';
 import { isPurifiable, purifyIVs } from '../../data/items/purifying-gem';
 import { isEggRecord, isGuardedRecord } from '../catch-fields';
@@ -36,13 +36,14 @@ function tended(
   }
 
   const record = asCaughtPokemon(caught);
-  const whole = getMaxHealth(record);
   // A shadow is put right as well as patched up, which is the reason
   // to walk to her with one rather than with a potion in hand
   const purified = isPurifiable(record) ? purifiedFields(caught) : null;
-  const healed = record.health < whole || record.statuses !== 0;
 
-  if (purified == null && !healed) {
+  // The same question her counter asks before it offers the pokemon,
+  // so what she is handed and what she does to it cannot drift apart:
+  // hurt, statused, or both
+  if (purified == null && !needsCare(record)) {
     return null;
   }
   // Purifying raises the pool, and she fills whatever the pool ends up

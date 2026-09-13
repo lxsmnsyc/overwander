@@ -2,7 +2,7 @@ import 'server-only';
 import { type EncounterRecord, asEncounterRecord } from '../../auth/encounter-record';
 import { asSpawnRolls, spawnId as nameSpawn } from '../../auth/snapshot-record';
 import AleaRNG from '../../core/alea';
-import { SPAWN_COUNT, type Spawn } from '../../overworld/chunk-snapshot';
+import type { Spawn } from '../../overworld/chunk-snapshot';
 import type ChunkSnapshot from '../../overworld/chunk-snapshot';
 import getWorld from '../../overworld/current';
 import deriveEncounter, {
@@ -194,15 +194,11 @@ export async function meetSpawn(
       order by idx
     `,
   ]);
-  const overworld = createOverworld(uid, buddy);
-
-  // The extras a lure draws in are only there for the player whose
-  // buddy drew them: the window publishes them for everyone, and a
-  // player walking without a lure cannot meet what they cannot see
-  if (index >= overworld.checkSpawnCount(SPAWN_COUNT)) {
-    return null;
-  }
-
+  // What a lure changes is how many of the window's rolls a player is
+  // **shown**, not which of them are standing there: the window
+  // publishes the whole count for everybody. Judging it again here
+  // took the extras back off anybody who swapped their buddy after
+  // walking in, leaving spawns on their board that they were refused
   const rolls = asSpawnRolls([...stored]);
 
   if (index >= rolls.length) {

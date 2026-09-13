@@ -4,7 +4,11 @@ import type Weather from '../../../data/overworld/weather';
 import type Decoration from '../../../data/overworld/decoration';
 import type { ItemStack } from '../../../data/overworld/item-pool';
 import type Landmark from '../../../data/overworld/landmark';
-import ChunkSnapshot, { SPAWN_COUNT, type Spawn } from '../../../overworld/chunk-snapshot';
+import ChunkSnapshot, {
+  SNAPSHOT_INTERVAL,
+  SPAWN_COUNT,
+  type Spawn,
+} from '../../../overworld/chunk-snapshot';
 import type { Buddy } from '../../../overworld/core';
 import getWorld from '../../../overworld/current';
 import deriveEncounter from '../../../overworld/encounter';
@@ -87,6 +91,38 @@ export interface ChunkView {
 }
 
 /**
+ * The most spawns a window has already shown this player, by chunk and
+ * window.
+ *
+ * A lure decides how many of the window's rolls are drawn, and the
+ * rolls themselves belong to the window rather than to the buddy: what
+ * was drawn in stays standing there for as long as the window does.
+ * Without this, putting the lure buddy away took spawns back off the
+ * board that the player was walking towards.
+ *
+ * Keyed by window, so it dies with the window it is about: anything
+ * older than one interval is dropped on the next build
+ */
+const shown = new Map<string, number>();
+
+/** What this window has shown, never fewer than it showed a moment ago */
+function everShown(key: string, timestamp: number, visible: number): number {
+  // Windows the player has walked out of, and windows that have
+  // turned over: neither is standing any more, so neither is
+  // remembered
+  for (const held of [...shown.keys()]) {
+    if (timestamp - Number(held.slice(held.lastIndexOf('@') + 1)) > SNAPSHOT_INTERVAL) {
+      shown.delete(held);
+    }
+  }
+
+  const most = Math.max(visible, shown.get(key) ?? 0);
+
+  shown.set(key, most);
+  return most;
+}
+
+/**
  * Build the chunk's view from the window and the spawns the store
  * currently holds. Everything else — landmarks, caches, grottos,
  * raids — re-derives from the chunk seed and the window, so the
@@ -114,7 +150,11 @@ export function buildChunkView(
   // The same engine the server stages encounters with: a lure decides
   // how many of the window's rolls are there for this player
   const overworld = createOverworld(player ?? '', player == null ? null : buddy);
-  const visible = overworld.checkSpawnCount(SPAWN_COUNT);
+  const visible = everShown(
+    `${chunk.seed}:${offset}@${timestamp}`,
+    timestamp,
+    overworld.checkSpawnCount(SPAWN_COUNT),
+  );
   const lamp = overworld.checkLampReach(DARK_DAY_LAMP_CELLS);
   const revealsHeld = overworld.checkRevealsHeld();
   const revealsFlight = overworld.checkRevealsFlight();

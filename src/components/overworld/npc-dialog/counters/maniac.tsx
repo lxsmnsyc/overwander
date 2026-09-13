@@ -5,6 +5,7 @@ import { getFossilPrice } from '../../../../data/overworld/fossil';
 import { describeItem } from '../../../details';
 import ItemSprite from '../../../items/ItemSprite';
 import { DialogActions, useToast } from '../../../styled';
+import playEffect, { Effect } from '../../../app/sound';
 import { type CounterProps, refusal, useSaying } from '../shared';
 import { FossilCounter } from './goods';
 
@@ -45,6 +46,7 @@ export default function Maniac(props: CounterProps): JSX.Element {
         setBusy(false);
 
         if (done != null) {
+          playEffect(Effect.ItemGet);
           toast.push({
             title: describeItem(item),
             message: `−${getFossilPrice(item)} gold`,

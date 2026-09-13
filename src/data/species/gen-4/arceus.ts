@@ -181,7 +181,7 @@ export default function registerArceusSpecies(): void {
     eggGroups: [EggGroups.NoEggsDiscovered],
     genderRatio: undefined,
     catchRate: 3,
-    biomes: [Biome.Mountain],
+    biomes: [Biome.AlpineTundra],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: { ...ARCEUS_LEVELS },

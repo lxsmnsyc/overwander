@@ -90,7 +90,7 @@ export default function registerCreationTrioSpecies(): void {
     eggGroups: [EggGroups.NoEggsDiscovered],
     genderRatio: undefined,
     catchRate: 3,
-    biomes: [Biome.Mountain, Biome.AlpineTundra],
+    biomes: [Biome.AlpineTundra],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
@@ -152,7 +152,7 @@ export default function registerCreationTrioSpecies(): void {
     eggGroups: [EggGroups.NoEggsDiscovered],
     genderRatio: undefined,
     catchRate: 3,
-    biomes: [Biome.Mountain, Biome.AlpineTundra],
+    biomes: [Biome.AlpineTundra],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {

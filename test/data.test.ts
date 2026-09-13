@@ -1015,7 +1015,7 @@ describe('where a species lives', () => {
     // A mythical stands in a band of its own, one place apiece and as
     // thin as the legendary band. The relic is the other way to one,
     // not the only way
-    for (const species of [Species.Mew, Species.Celebi]) {
+    for (const species of [Species.Mew, Species.Celebi, Species.Jirachi, Species.Deoxys]) {
       expect(isMythicalSpecies(species)).toBe(true);
 
       const mythical = listSpeciesHabitats(species);

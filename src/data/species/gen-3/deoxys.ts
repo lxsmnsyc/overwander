@@ -94,10 +94,9 @@ export default function registerDeoxysSpecies(): void {
       eggGroups: [EggGroups.NoEggsDiscovered],
       genderRatio: undefined,
       catchRate: 3,
-      // Where it came down, which is a bare island shore. It is
-      // habitat rather than a spawn: no pool lists a mythical, so the
-      // ticket is still the only way to one. An arrangement lives
-      // nowhere, being rearranged into rather than met
+      // Where it came down, which is a bare island shore, and where
+      // the Beach pools stage it. An arrangement lives nowhere, being
+      // rearranged into rather than met
       biomes: at === 0 ? [Biome.Beach] : [],
       activeTimes: AnyTimeOfDay,
       learnSet: {

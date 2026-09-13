@@ -51,6 +51,8 @@ const FAMILY_TEACHABLE = [
   Moves.SeedBomb,
   Moves.SuckerPunch,
   Moves.WorrySeed,
+  Moves.Venoshock,
+  Moves.Round,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Chlorophyll];
@@ -113,6 +115,7 @@ export default function registerBellsproutSpecies(): void {
         Moves.Synthesis,
         Moves.Ingrain,
         Moves.MagicalLeaf,
+        Moves.ClearSmog,
       ],
     },
   });
@@ -211,6 +214,7 @@ export default function registerBellsproutSpecies(): void {
           Moves.Stockpile,
           Moves.Swallow,
         ],
+        27: [Moves.LeafTornado],
         47: [Moves.LeafStorm],
       },
       teachable: [

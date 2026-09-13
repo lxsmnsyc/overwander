@@ -48,6 +48,10 @@ const FAMILY_TEACHABLE = [
   Moves.Torment,
   Moves.NaturalGift,
   Moves.SuckerPunch,
+  Moves.FoulPlay,
+  Moves.Round,
+  Moves.VoltSwitch,
+  Moves.WildCharge,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Soundproof, Abilities.Static];
@@ -90,7 +94,7 @@ export default function registerVoltorbSpecies(): void {
         21: [Moves.Spark],
         22: [Moves.SelfDestruct],
         26: [Moves.ChargeBeam],
-        29: [Moves.LightScreen, Moves.Rollout],
+        29: [Moves.LightScreen, Moves.Rollout, Moves.ElectroBall],
         36: [Moves.Swift, Moves.MagnetRise],
         39: [Moves.Explosion],
         40: [Moves.GyroBall],
@@ -129,7 +133,7 @@ export default function registerVoltorbSpecies(): void {
         1: [Moves.Tackle, Moves.Screech, Moves.SonicBoom, Moves.SelfDestruct, Moves.Charge],
         21: [Moves.Spark],
         26: [Moves.ChargeBeam],
-        29: [Moves.Rollout],
+        29: [Moves.Rollout, Moves.ElectroBall],
         31: [Moves.LightScreen],
         40: [Moves.Swift, Moves.MagnetRise],
         44: [Moves.Explosion],

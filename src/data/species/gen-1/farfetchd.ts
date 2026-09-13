@@ -26,6 +26,10 @@ const TEACHABLE = [
   Moves.Substitute,
   Moves.Cut,
   Moves.Fly,
+  Moves.Round,
+  Moves.Acrobatics,
+  Moves.Retaliate,
+  Moves.WorkUp,
 ];
 
 export default function registerFarfetchdSpecies(): void {
@@ -62,7 +66,7 @@ export default function registerFarfetchdSpecies(): void {
         26: [Moves.FuryCutter],
         31: [Moves.Agility],
         33: [Moves.NightSlash],
-        37: [Moves.Slash, Moves.AirSlash],
+        37: [Moves.Slash, Moves.AirSlash, Moves.Acrobatics],
         43: [Moves.Feint],
         44: [Moves.FalseSwipe],
       },

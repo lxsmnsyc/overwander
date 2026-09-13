@@ -46,6 +46,10 @@ const FAMILY_TEACHABLE = [
   Moves.FlashCannon,
   Moves.Gravity,
   Moves.NaturalGift,
+  Moves.Round,
+  Moves.VoltSwitch,
+  Moves.Electroweb,
+  Moves.WildCharge,
 ];
 
 const FAMILY_ABILITIES = [Abilities.MagnetPull, Abilities.Sturdy];
@@ -91,6 +95,7 @@ export default function registerMagnemiteSpecies(): void {
         26: [Moves.Spark],
         27: [Moves.LockOn],
         30: [Moves.MagnetBomb],
+        32: [Moves.ElectroBall],
         33: [Moves.Swift],
         38: [Moves.Discharge],
         39: [Moves.Screech],
@@ -143,6 +148,7 @@ export default function registerMagnemiteSpecies(): void {
         26: [Moves.Spark],
         27: [Moves.LockOn],
         30: [Moves.MagnetBomb],
+        34: [Moves.ElectroBall],
         35: [Moves.Swift, Moves.TriAttack],
         40: [Moves.Discharge],
         43: [Moves.Screech],

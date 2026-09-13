@@ -53,6 +53,9 @@ const FAMILY_TEACHABLE = [
   Moves.Captivate,
   Moves.Fling,
   Moves.NaturalGift,
+  Moves.Round,
+  Moves.EchoedVoice,
+  Moves.DrillRun,
 ];
 
 const FAMILY_ABILITIES = [Abilities.ThickFat, Abilities.Hydration];
@@ -154,7 +157,13 @@ export default function registerSeelSpecies(): void {
         43: [Moves.IceBeam, Moves.AquaTail],
         60: [Moves.Safeguard],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.Avalanche, Moves.GigaImpact],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.HyperBeam,
+        Moves.Avalanche,
+        Moves.GigaImpact,
+        Moves.FrostBreath,
+      ],
     },
   });
 }

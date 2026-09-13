@@ -50,6 +50,8 @@ const FAMILY_TEACHABLE = [
   Moves.Captivate,
   Moves.FlashCannon,
   Moves.NaturalGift,
+  Moves.Round,
+  Moves.Scald,
 ];
 
 export default function registerHorseaSpecies(): void {
@@ -104,6 +106,7 @@ export default function registerHorseaSpecies(): void {
         Moves.DragonRage,
         Moves.Flail,
         Moves.Octazooka,
+        Moves.ClearSmog,
       ],
     },
   });

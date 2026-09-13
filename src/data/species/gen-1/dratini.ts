@@ -58,6 +58,9 @@ const FAMILY_TEACHABLE = [
   Moves.DracoMeteor,
   Moves.DragonPulse,
   Moves.NaturalGift,
+  Moves.Round,
+  Moves.Incinerate,
+  Moves.DragonTail,
 ];
 
 export default function registerDratiniSpecies(): void {
@@ -99,7 +102,7 @@ export default function registerDratiniSpecies(): void {
         20: [Moves.Agility],
         22: [Moves.DragonRage],
         29: [Moves.Slam],
-        31: [Moves.AquaTail],
+        31: [Moves.AquaTail, Moves.DragonTail],
         35: [Moves.DragonRush],
         43: [Moves.Safeguard],
         50: [Moves.HyperBeam, Moves.Outrage],
@@ -146,7 +149,7 @@ export default function registerDratiniSpecies(): void {
         20: [Moves.Agility],
         22: [Moves.DragonRage],
         29: [Moves.Slam],
-        33: [Moves.AquaTail],
+        33: [Moves.AquaTail, Moves.DragonTail],
         39: [Moves.DragonRush],
         47: [Moves.Safeguard],
         55: [Moves.HyperBeam],
@@ -185,11 +188,12 @@ export default function registerDratiniSpecies(): void {
         1: [Moves.Wrap, Moves.Leer, Moves.ThunderWave, Moves.Agility, Moves.Twister, Moves.Roost],
         22: [Moves.DragonRage],
         29: [Moves.Slam],
-        33: [Moves.AquaTail],
+        33: [Moves.AquaTail, Moves.DragonTail],
         39: [Moves.DragonRush],
         47: [Moves.Safeguard],
         55: [Moves.HyperBeam, Moves.WingAttack],
         61: [Moves.Outrage],
+        81: [Moves.Hurricane],
       },
       teachable: [
         ...FAMILY_TEACHABLE,
@@ -226,6 +230,9 @@ export default function registerDratiniSpecies(): void {
         Moves.OminousWind,
         Moves.StoneEdge,
         Moves.Tailwind,
+        Moves.HoneClaws,
+        Moves.SkyDrop,
+        Moves.Bulldoze,
       ],
     },
   });

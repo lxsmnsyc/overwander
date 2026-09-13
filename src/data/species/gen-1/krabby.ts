@@ -54,6 +54,9 @@ const FAMILY_TEACHABLE = [
   Moves.Fling,
   Moves.NaturalGift,
   Moves.XScissor,
+  Moves.HoneClaws,
+  Moves.Round,
+  Moves.Scald,
 ];
 
 const FAMILY_ABILITIES = [Abilities.HyperCutter, Abilities.ShellArmor];
@@ -101,7 +104,15 @@ export default function registerKrabbySpecies(): void {
         39: [Moves.Brine],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.Dig, Moves.Haze, Moves.Amnesia, Moves.Slam, Moves.Flail, Moves.KnockOff],
+      egg: [
+        Moves.Dig,
+        Moves.Haze,
+        Moves.Amnesia,
+        Moves.Slam,
+        Moves.Flail,
+        Moves.KnockOff,
+        Moves.ChipAway,
+      ],
     },
   });
 
@@ -131,7 +142,7 @@ export default function registerKrabbySpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
-        1: [Moves.Bubble, Moves.Leer, Moves.ViceGrip, Moves.MetalClaw],
+        1: [Moves.Bubble, Moves.Leer, Moves.ViceGrip, Moves.MetalClaw, Moves.WideGuard],
         16: [Moves.Harden],
         23: [Moves.Stomp, Moves.MudShot],
         25: [Moves.Guillotine],
@@ -140,7 +151,7 @@ export default function registerKrabbySpecies(): void {
         51: [Moves.Brine],
         65: [Moves.Flail],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.Dig, Moves.GigaImpact],
+      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.Dig, Moves.GigaImpact, Moves.Quash],
     },
   });
 }

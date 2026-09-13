@@ -77,6 +77,15 @@ const FAMILY_TEACHABLE = [
   Moves.SeedBomb,
   Moves.UTurn,
   Moves.VacuumWave,
+  Moves.HoneClaws,
+  Moves.SmackDown,
+  Moves.LowSweep,
+  Moves.Round,
+  Moves.Acrobatics,
+  Moves.Retaliate,
+  Moves.Bulldoze,
+  Moves.WorkUp,
+  Moves.DualChop,
 ];
 
 export default function registerMankeySpecies(): void {
@@ -122,6 +131,7 @@ export default function registerMankeySpecies(): void {
         39: [Moves.Thrash, Moves.CrossChop],
         45: [Moves.Screech, Moves.Punishment],
         49: [Moves.CloseCombat],
+        53: [Moves.FinalGambit],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.Fling],
       egg: [
@@ -174,6 +184,7 @@ export default function registerMankeySpecies(): void {
         53: [Moves.Punishment],
         54: [Moves.Screech],
         59: [Moves.CloseCombat],
+        63: [Moves.FinalGambit],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.GigaImpact, Moves.StoneEdge],
     },

@@ -60,6 +60,10 @@ const FAMILY_TEACHABLE = [
   Moves.Pluck,
   Moves.UTurn,
   Moves.ZenHeadbutt,
+  Moves.Round,
+  Moves.Retaliate,
+  Moves.WorkUp,
+  Moves.WildCharge,
 ];
 
 export default function registerRattataSpecies(): void {
@@ -116,6 +120,7 @@ export default function registerRattataSpecies(): void {
 
         Moves.Uproar,
         Moves.MeFirst,
+        Moves.FinalGambit,
       ],
     },
   });

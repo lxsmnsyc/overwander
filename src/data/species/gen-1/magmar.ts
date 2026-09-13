@@ -44,6 +44,8 @@ export default function registerMagmarSpecies(): void {
     learnSet: {
       level: {
         1: [Moves.Ember, Moves.Leer, Moves.FirePunch, Moves.Smog],
+        19: [Moves.ClearSmog],
+        22: [Moves.FlameBurst],
         25: [Moves.SmokeScreen],
         33: [Moves.SunnyDay],
         36: [Moves.LavaPlume],
@@ -106,6 +108,11 @@ export default function registerMagmarSpecies(): void {
         Moves.GigaImpact,
         Moves.NaturalGift,
         Moves.RockClimb,
+        Moves.FlameCharge,
+        Moves.LowSweep,
+        Moves.Round,
+        Moves.Incinerate,
+        Moves.DualChop,
       ],
     },
   });

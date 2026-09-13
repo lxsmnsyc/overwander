@@ -45,6 +45,7 @@ export default function registerElectabuzzSpecies(): void {
       level: {
         1: [Moves.QuickAttack, Moves.Leer, Moves.ThunderPunch],
         17: [Moves.LightScreen],
+        22: [Moves.ElectroBall],
         25: [Moves.Swift],
         34: [Moves.ThunderShock],
         36: [Moves.Screech],
@@ -115,6 +116,12 @@ export default function registerElectabuzzSpecies(): void {
         Moves.MagnetRise,
         Moves.NaturalGift,
         Moves.RockClimb,
+        Moves.LowSweep,
+        Moves.Round,
+        Moves.VoltSwitch,
+        Moves.Electroweb,
+        Moves.WildCharge,
+        Moves.DualChop,
       ],
     },
   });

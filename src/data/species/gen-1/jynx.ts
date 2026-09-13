@@ -36,7 +36,7 @@ export default function registerJynxSpecies(): void {
     learnSet: {
       level: {
         1: [Moves.Pound, Moves.LovelyKiss, Moves.Lick, Moves.PowderSnow],
-        21: [Moves.DoubleSlap],
+        21: [Moves.DoubleSlap, Moves.HeartStamp],
         25: [Moves.IcePunch],
         28: [Moves.WakeUpSlap],
         33: [Moves.Avalanche],
@@ -120,6 +120,12 @@ export default function registerJynxSpecies(): void {
         Moves.Payback,
         Moves.TrickRoom,
         Moves.ZenHeadbutt,
+        Moves.Psyshock,
+        Moves.Telekinesis,
+        Moves.MagicRoom,
+        Moves.Round,
+        Moves.EchoedVoice,
+        Moves.FrostBreath,
       ],
     },
   });

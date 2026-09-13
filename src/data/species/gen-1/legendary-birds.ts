@@ -43,6 +43,8 @@ const BIRD_TEACHABLE = [
   Moves.RainDance,
   Moves.SunnyDay,
   Moves.RockSmash,
+  Moves.Round,
+  Moves.SkyDrop,
 ];
 
 export default function registerLegendaryBirdSpecies(): void {
@@ -81,6 +83,7 @@ export default function registerLegendaryBirdSpecies(): void {
         61: [Moves.Reflect],
         64: [Moves.Tailwind],
         85: [Moves.SheerCold],
+        92: [Moves.Hurricane],
       },
       teachable: [
         ...BIRD_TEACHABLE,
@@ -102,6 +105,7 @@ export default function registerLegendaryBirdSpecies(): void {
         Moves.OminousWind,
         Moves.Pluck,
         Moves.UTurn,
+        Moves.FrostBreath,
       ],
     },
   });
@@ -161,6 +165,8 @@ export default function registerLegendaryBirdSpecies(): void {
         Moves.OminousWind,
         Moves.Tailwind,
         Moves.UTurn,
+        Moves.VoltSwitch,
+        Moves.WildCharge,
       ],
     },
   });
@@ -200,6 +206,7 @@ export default function registerLegendaryBirdSpecies(): void {
         60: [Moves.SkyAttack],
         61: [Moves.Safeguard],
         73: [Moves.HeatWave],
+        92: [Moves.Hurricane],
       },
       teachable: [
         ...BIRD_TEACHABLE,
@@ -216,6 +223,8 @@ export default function registerLegendaryBirdSpecies(): void {
         Moves.Pluck,
         Moves.Tailwind,
         Moves.UTurn,
+        Moves.FlameCharge,
+        Moves.Incinerate,
       ],
     },
   });

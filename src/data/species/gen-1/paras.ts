@@ -55,6 +55,11 @@ const FAMILY_TEACHABLE = [
   Moves.NaturalGift,
   Moves.SeedBomb,
   Moves.WorrySeed,
+  Moves.HoneClaws,
+  Moves.Venoshock,
+  Moves.AfterYou,
+  Moves.Round,
+  Moves.StruggleBug,
 ];
 
 export default function registerParasSpecies(): void {
@@ -98,7 +103,7 @@ export default function registerParasSpecies(): void {
         31: [Moves.Slash],
         37: [Moves.Growth],
         43: [Moves.GigaDrain, Moves.XScissor],
-        49: [Moves.Aromatherapy],
+        49: [Moves.Aromatherapy, Moves.RagePowder],
       },
       teachable: [...FAMILY_TEACHABLE],
       egg: [
@@ -146,7 +151,7 @@ export default function registerParasSpecies(): void {
         37: [Moves.Slash],
         46: [Moves.Growth],
         55: [Moves.GigaDrain, Moves.XScissor],
-        59: [Moves.Aromatherapy],
+        59: [Moves.Aromatherapy, Moves.RagePowder],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.Counter, Moves.GigaImpact],
     },

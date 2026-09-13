@@ -45,6 +45,9 @@ const FAMILY_TEACHABLE = [
   Moves.Captivate,
   Moves.NaturalGift,
   Moves.Roost,
+  Moves.Round,
+  Moves.EchoedVoice,
+  Moves.WorkUp,
 ];
 
 const FAMILY_ABILITIES = [Abilities.RunAway, Abilities.EarlyBird];

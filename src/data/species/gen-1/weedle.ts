@@ -44,7 +44,7 @@ export default function registerWeedleSpecies(): void {
         1: [Moves.PoisonSting, Moves.StringShot],
         15: [Moves.BugBite],
       },
-      teachable: [],
+      teachable: [Moves.Electroweb],
     },
   });
 
@@ -82,7 +82,7 @@ export default function registerWeedleSpecies(): void {
       level: {
         1: [Moves.Harden],
       },
-      teachable: [Moves.BugBite],
+      teachable: [Moves.BugBite, Moves.Electroweb],
     },
   });
 
@@ -172,6 +172,12 @@ export default function registerWeedleSpecies(): void {
         Moves.Tailwind,
         Moves.UTurn,
         Moves.XScissor,
+        Moves.Venoshock,
+        Moves.Round,
+        Moves.Acrobatics,
+        Moves.StruggleBug,
+        Moves.Electroweb,
+        Moves.DrillRun,
       ],
     },
   });

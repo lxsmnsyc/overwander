@@ -69,6 +69,12 @@ const FAMILY_TEACHABLE = [
   Moves.SeedBomb,
   Moves.ShadowClaw,
   Moves.UTurn,
+  Moves.HoneClaws,
+  Moves.FoulPlay,
+  Moves.Round,
+  Moves.EchoedVoice,
+  Moves.Retaliate,
+  Moves.WorkUp,
 ];
 
 export default function registerMeowthSpecies(): void {
@@ -126,6 +132,7 @@ export default function registerMeowthSpecies(): void {
         Moves.Charm,
         Moves.Assist,
         Moves.Punishment,
+        Moves.FoulPlay,
       ],
     },
   });

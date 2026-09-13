@@ -48,6 +48,10 @@ const FAMILY_TEACHABLE = [
   Moves.NaturalGift,
   Moves.ShadowClaw,
   Moves.StealthRock,
+  Moves.HoneClaws,
+  Moves.Round,
+  Moves.EchoedVoice,
+  Moves.Bulldoze,
 ];
 
 export default function registerDiglettSpecies(): void {
@@ -87,6 +91,7 @@ export default function registerDiglettSpecies(): void {
         5: [Moves.Growl],
         9: [Moves.Magnitude],
         17: [Moves.Dig],
+        18: [Moves.Bulldoze],
         21: [Moves.FurySwipes],
         23: [Moves.SuckerPunch],
         24: [Moves.SandAttack],
@@ -104,6 +109,7 @@ export default function registerDiglettSpecies(): void {
         Moves.AncientPower,
         Moves.BeatUp,
         Moves.Uproar,
+        Moves.FinalGambit,
       ],
     },
   });
@@ -142,6 +148,7 @@ export default function registerDiglettSpecies(): void {
           Moves.Magnitude,
           Moves.NightSlash,
         ],
+        18: [Moves.Bulldoze],
         21: [Moves.FurySwipes],
         23: [Moves.SuckerPunch],
         24: [Moves.SandAttack],
@@ -152,7 +159,13 @@ export default function registerDiglettSpecies(): void {
         47: [Moves.Earthquake],
         61: [Moves.Fissure],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.GigaImpact, Moves.StoneEdge],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.HyperBeam,
+        Moves.GigaImpact,
+        Moves.StoneEdge,
+        Moves.SludgeWave,
+      ],
     },
   });
 }

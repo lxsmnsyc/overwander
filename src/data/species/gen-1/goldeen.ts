@@ -47,6 +47,9 @@ const FAMILY_TEACHABLE = [
   Moves.AquaTail,
   Moves.Captivate,
   Moves.NaturalGift,
+  Moves.Round,
+  Moves.Scald,
+  Moves.DrillRun,
 ];
 
 const FAMILY_ABILITIES = [Abilities.SwiftSwim, Abilities.WaterVeil];
@@ -92,6 +95,7 @@ export default function registerGoldeenSpecies(): void {
         29: [Moves.FuryAttack],
         37: [Moves.Waterfall],
         43: [Moves.HornDrill],
+        51: [Moves.Soak],
         52: [Moves.Agility],
         57: [Moves.Megahorn],
       },
@@ -134,6 +138,7 @@ export default function registerGoldeenSpecies(): void {
         39: [Moves.Waterfall],
         48: [Moves.HornDrill],
         54: [Moves.Agility],
+        63: [Moves.Soak],
         69: [Moves.Megahorn],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.GigaImpact],

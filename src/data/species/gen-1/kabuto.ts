@@ -56,6 +56,10 @@ const FAMILY_TEACHABLE = [
   Moves.NaturalGift,
   Moves.RockPolish,
   Moves.StealthRock,
+  Moves.HoneClaws,
+  Moves.SmackDown,
+  Moves.Round,
+  Moves.Scald,
 ];
 
 const FAMILY_ABILITIES = [Abilities.SwiftSwim, Abilities.BattleArmor];

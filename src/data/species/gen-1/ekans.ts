@@ -55,6 +55,10 @@ const FAMILY_TEACHABLE = [
   Moves.Payback,
   Moves.PoisonJab,
   Moves.SeedBomb,
+  Moves.Venoshock,
+  Moves.SludgeWave,
+  Moves.Round,
+  Moves.Bulldoze,
 ];
 
 export default function registerEkansSpecies(): void {
@@ -94,12 +98,13 @@ export default function registerEkansSpecies(): void {
         9: [Moves.PoisonSting],
         15: [Moves.Bite],
         23: [Moves.Glare],
-        28: [Moves.MudBomb],
+        28: [Moves.MudBomb, Moves.AcidSpray],
         29: [Moves.Screech],
         33: [Moves.GastroAcid],
         37: [Moves.Acid, Moves.SpitUp, Moves.Stockpile, Moves.Swallow],
         41: [Moves.GunkShot],
         43: [Moves.Haze],
+        44: [Moves.Coil],
       },
       teachable: [...FAMILY_TEACHABLE],
       egg: [
@@ -150,15 +155,16 @@ export default function registerEkansSpecies(): void {
           Moves.ThunderFang,
         ],
         25: [Moves.Glare],
+        32: [Moves.AcidSpray],
         33: [Moves.Screech],
         34: [Moves.MudBomb],
         42: [Moves.GastroAcid],
         43: [Moves.Acid],
         46: [Moves.SpitUp, Moves.Stockpile, Moves.Swallow],
         51: [Moves.Haze],
-        56: [Moves.GunkShot],
+        56: [Moves.GunkShot, Moves.Coil],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.GigaImpact],
+      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.GigaImpact, Moves.DragonTail],
     },
   });
 }

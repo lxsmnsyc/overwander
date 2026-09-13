@@ -77,6 +77,13 @@ const FAMILY_TEACHABLE = [
   Moves.NaturalGift,
   Moves.TrickRoom,
   Moves.ZenHeadbutt,
+  Moves.WonderRoom,
+  Moves.Psyshock,
+  Moves.Telekinesis,
+  Moves.MagicRoom,
+  Moves.FoulPlay,
+  Moves.Round,
+  Moves.AllySwitch,
 ];
 
 const ABRA_STATS = {
@@ -145,6 +152,7 @@ export default function registerAbraSpecies(): void {
         Moves.KnockOff,
         Moves.GuardSwap,
         Moves.PowerTrick,
+        Moves.GuardSplit,
       ],
     },
   });
@@ -183,8 +191,9 @@ export default function registerAbraSpecies(): void {
       level: {
         ...KADABRA_LEVEL_MOVES,
         22: [Moves.MiracleEye],
+        24: [Moves.AllySwitch],
         33: [Moves.RolePlay],
-        34: [Moves.PsychoCut],
+        34: [Moves.PsychoCut, Moves.Telekinesis],
         43: [Moves.Trick],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.Dig, Moves.CalmMind, Moves.LightScreen],
@@ -219,8 +228,9 @@ export default function registerAbraSpecies(): void {
       level: {
         ...KADABRA_LEVEL_MOVES,
         22: [Moves.MiracleEye],
+        24: [Moves.AllySwitch],
         33: [Moves.CalmMind],
-        34: [Moves.PsychoCut],
+        34: [Moves.PsychoCut, Moves.Telekinesis],
         43: [Moves.Trick],
       },
       teachable: [

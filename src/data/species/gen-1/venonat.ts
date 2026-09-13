@@ -46,6 +46,9 @@ const FAMILY_TEACHABLE = [
   Moves.BugBite,
   Moves.Captivate,
   Moves.NaturalGift,
+  Moves.Venoshock,
+  Moves.Round,
+  Moves.StruggleBug,
 ];
 
 export default function registerVenonatSpecies(): void {
@@ -93,7 +96,14 @@ export default function registerVenonatSpecies(): void {
         41: [Moves.Psychic],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.Flash],
-      egg: [Moves.Screech, Moves.GigaDrain, Moves.BatonPass, Moves.SignalBeam, Moves.ToxicSpikes],
+      egg: [
+        Moves.Screech,
+        Moves.GigaDrain,
+        Moves.BatonPass,
+        Moves.SignalBeam,
+        Moves.ToxicSpikes,
+        Moves.RagePowder,
+      ],
     },
   });
 
@@ -140,6 +150,7 @@ export default function registerVenonatSpecies(): void {
         42: [Moves.SleepPowder],
         50: [Moves.Psychic],
         59: [Moves.BugBuzz],
+        63: [Moves.QuiverDance],
       },
       teachable: [
         ...FAMILY_TEACHABLE,
@@ -153,6 +164,7 @@ export default function registerVenonatSpecies(): void {
         Moves.Roost,
         Moves.Tailwind,
         Moves.UTurn,
+        Moves.Acrobatics,
       ],
     },
   });

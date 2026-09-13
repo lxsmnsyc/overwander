@@ -56,6 +56,9 @@ const FAMILY_TEACHABLE = [
   Moves.NaturalGift,
   Moves.RockPolish,
   Moves.StealthRock,
+  Moves.SmackDown,
+  Moves.Round,
+  Moves.Scald,
 ];
 
 const FAMILY_ABILITIES = [Abilities.SwiftSwim, Abilities.ShellArmor];
@@ -105,6 +108,7 @@ export default function registerOmanyteSpecies(): void {
         43: [Moves.Tickle],
         46: [Moves.SpikeCannon],
         49: [Moves.AncientPower],
+        52: [Moves.ShellSmash],
         53: [Moves.HydroPump],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.BodySlam],
@@ -159,6 +163,7 @@ export default function registerOmanyteSpecies(): void {
         46: [Moves.Tickle],
         49: [Moves.HydroPump],
         54: [Moves.AncientPower],
+        67: [Moves.ShellSmash],
       },
       teachable: [
         ...FAMILY_TEACHABLE,

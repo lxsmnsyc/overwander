@@ -88,6 +88,12 @@ const FAMILY_TEACHABLE = [
   Moves.LastResort,
   Moves.NaturalGift,
   Moves.StealthRock,
+  Moves.Round,
+  Moves.EchoedVoice,
+  Moves.Incinerate,
+  Moves.Retaliate,
+  Moves.WorkUp,
+  Moves.WildCharge,
 ];
 
 export default function registerJigglypuffSpecies(): void {
@@ -128,6 +134,7 @@ export default function registerJigglypuffSpecies(): void {
         4: [Moves.DefenseCurl],
         9: [Moves.Pound],
         14: [Moves.Disable],
+        17: [Moves.Round],
         19: [Moves.Rollout],
         24: [Moves.DoubleSlap],
         29: [Moves.Rest],
@@ -175,6 +182,7 @@ export default function registerJigglypuffSpecies(): void {
         Moves.FocusBlast,
         Moves.GigaImpact,
         Moves.GyroBall,
+        Moves.MagicRoom,
       ],
     },
   });

@@ -99,6 +99,7 @@ export default function registerTangelaSpecies(): void {
         Moves.GrassKnot,
         Moves.SeedBomb,
         Moves.WorrySeed,
+        Moves.Round,
       ],
       egg: [
         Moves.MegaDrain,
@@ -110,6 +111,7 @@ export default function registerTangelaSpecies(): void {
         Moves.NaturePower,
         Moves.LeafStorm,
         Moves.PowerSwap,
+        Moves.RagePowder,
       ],
     },
   });

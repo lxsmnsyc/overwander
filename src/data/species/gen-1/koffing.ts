@@ -49,6 +49,9 @@ const FAMILY_TEACHABLE = [
   Moves.DarkPulse,
   Moves.NaturalGift,
   Moves.Payback,
+  Moves.Venoshock,
+  Moves.Round,
+  Moves.Incinerate,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Levitate, Abilities.NeutralizingGas];
@@ -87,7 +90,7 @@ export default function registerKoffingSpecies(): void {
     learnSet: {
       level: {
         1: [Moves.Tackle, Moves.Smog, Moves.PoisonGas],
-        15: [Moves.Assurance],
+        15: [Moves.Assurance, Moves.ClearSmog],
         17: [Moves.SelfDestruct],
         21: [Moves.Sludge],
         25: [Moves.SmokeScreen],
@@ -135,7 +138,7 @@ export default function registerKoffingSpecies(): void {
     learnSet: {
       level: {
         1: [Moves.Tackle, Moves.Smog, Moves.Sludge, Moves.SelfDestruct, Moves.PoisonGas],
-        15: [Moves.Assurance],
+        15: [Moves.Assurance, Moves.ClearSmog],
         25: [Moves.SmokeScreen],
         33: [Moves.Haze, Moves.DoubleHit],
         44: [Moves.Explosion],

@@ -56,6 +56,9 @@ const FAMILY_TEACHABLE = [
   Moves.Tailwind,
   Moves.UTurn,
   Moves.ZenHeadbutt,
+  Moves.Venoshock,
+  Moves.Round,
+  Moves.Acrobatics,
 ];
 
 export default function registerZubatSpecies(): void {
@@ -97,6 +100,7 @@ export default function registerZubatSpecies(): void {
         12: [Moves.Bite],
         19: [Moves.ConfuseRay],
         27: [Moves.WingAttack],
+        30: [Moves.Acrobatics],
         31: [Moves.AirCutter],
         36: [Moves.Haze, Moves.MeanLook],
         41: [Moves.PoisonFang, Moves.AirSlash],
@@ -149,6 +153,7 @@ export default function registerZubatSpecies(): void {
         1: [Moves.Screech, Moves.LeechLife, Moves.Bite, Moves.Supersonic, Moves.Astonish],
         19: [Moves.ConfuseRay],
         30: [Moves.WingAttack],
+        33: [Moves.Acrobatics],
         35: [Moves.AirCutter],
         42: [Moves.MeanLook],
         43: [Moves.Haze],

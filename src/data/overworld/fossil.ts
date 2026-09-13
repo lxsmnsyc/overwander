@@ -62,6 +62,13 @@ export function getFossilPrice(item: Items): number {
 export const FOSSIL_REVIVE_LEVEL = 20;
 
 /**
+ * The most rocks he puts on the bench in one handover. The cap is the
+ * handover's rather than his: he opens as many as are brought to him,
+ * a pressful at a time, and every rock is a record written
+ */
+export const FOSSIL_BENCH_LIMIT = 6;
+
+/**
  * Which two this maniac is carrying, drawn without repeats.
  *
  * The draw is the caller's, the way the vendor's crate is, which is

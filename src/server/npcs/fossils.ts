@@ -1,7 +1,12 @@
 import 'server-only';
+import type ChunkSnapshot from '../../overworld/chunk-snapshot';
 import { Acquisition } from '../../auth/caught-record';
 import Npc from '../../data/overworld/npc';
-import { FOSSIL_REVIVE_LEVEL, getFossilPrice } from '../../data/overworld/fossil';
+import {
+  FOSSIL_BENCH_LIMIT,
+  FOSSIL_REVIVE_LEVEL,
+  getFossilPrice,
+} from '../../data/overworld/fossil';
 import AleaRNG from '../../core/alea';
 import { Balls, type Items, getApricornBall } from '../../data/ids/items';
 import type { Species } from '../../data/ids/species';
@@ -150,25 +155,56 @@ export async function reviveFossil(
   y: number,
   cell: number,
   item: Items,
+  amount: number,
   now: number,
   offset: number,
   locale: string,
-): Promise<RevivedFossil | null> {
+): Promise<RevivedFossil[] | null> {
   const snapshot = resolveNpc(x, y, cell, now, offset, Npc.FossilScientist);
   const species = FOSSIL_SPECIES.get(item);
 
-  if (snapshot == null || species == null) {
-    return null;
-  }
-  if (!(await consumeItem(uid, item))) {
+  if (snapshot == null || species == null || amount < 1 || amount > FOSSIL_BENCH_LIMIT) {
     return null;
   }
 
+  const revived: RevivedFossil[] = [];
+
+  // One rock at a time, each paid for before it is opened: a bench
+  // that ran out of rocks halfway hands back what it did open rather
+  // than nothing
+  for (let rock = 0; rock < amount; rock += 1) {
+    if (!(await consumeItem(uid, item))) {
+      break;
+    }
+
+    const opened = await openRock(uid, snapshot, cell, item, species, rock, now, offset, locale);
+
+    revived.push(opened);
+  }
+  return revived.length === 0 ? null : revived;
+}
+
+/**
+ * One rock on the bench. `rock` is which of the handover it is, so
+ * two of the same fossil opened in one press are two pokemon rather
+ * than one written twice
+ */
+async function openRock(
+  uid: string,
+  snapshot: ChunkSnapshot,
+  cell: number,
+  item: Items,
+  species: Species,
+  rock: number,
+  now: number,
+  offset: number,
+  locale: string,
+): Promise<RevivedFossil> {
   // Seeded by the player, the fossil and the instant: two of the same
   // rock opened one after the other are two different pokemon, and
   // re-running a call that failed on the way out gives the same one
   const rng = new AleaRNG(
-    `${snapshot.key}${snapshot.npcTimestamp}revive${cell}:${uid}:${item}:${now}`,
+    `${snapshot.key}${snapshot.npcTimestamp}revive${cell}:${uid}:${item}:${now}:${rock}`,
   );
   const encounter = deriveEncounter(snapshot, [species, rng.int32(), rng.int32()], uid, {
     type: EncounterType.Revived,
@@ -181,7 +217,7 @@ export async function reviveFossil(
     // arrived without a throw is written under
     const catchId = await writeCaughtRecord(
       uid,
-      { ...encounter, spawn: `fossil${cell}:${uid}:${item}:${now}`, player: uid },
+      { ...encounter, spawn: `fossil${cell}:${uid}:${item}:${now}:${rock}`, player: uid },
       Balls.PremierBall,
       Acquisition.Revived,
       now,

@@ -72,35 +72,19 @@ export function FossilCounter(props: FossilCounterProps): JSX.Element {
 }
 
 export interface ReviveCounterProps {
-  /** The fossils in the player's own bag, which is all he works on */
-  fossils: InventoryEntry[];
-  busy: boolean;
-  onRevive: (item: Items) => void;
+  /** How many kinds of fossil the player is carrying, which is all he works on */
+  carrying: number;
 }
 
+/**
+ * His bench, which is a word rather than a tray: what he opens is in
+ * the bag, and the bag is asked for in a window of its own the way
+ * the vendor asks for what he is being sold
+ */
 export function ReviveCounter(props: ReviveCounterProps): JSX.Element {
   return (
     <DialogSection class={CENTRED}>
-      {/* What he takes is in the bag rather than in a crate, so the
-          list is the player's own fossils. He charges nothing else,
-          and he will do it as often as there are rocks to open */}
-      <Show
-        when={props.fossils.length > 0}
-        fallback={<Note>You are carrying nothing he can open.</Note>}
-      >
-        {/* The bag's own tray, opening rocks the way the crate sells:
-            one press, one rock on the bench */}
-        <ItemGrid
-          bare
-          verb="Revive"
-          disabled={props.busy}
-          entries={props.fossils.map((entry) => ({
-            item: entry.item,
-            amount: entry.amount,
-            said: `Revive ${describeItem(entry.item)}`,
-          }))}
-          onPress={props.onRevive}
-        />
+      <Show when={props.carrying > 0} fallback={<Note>You are carrying nothing he can open.</Note>}>
         {/* What comes out is the rock's business, but the level is not
             — a party picked around it is worth planning before the
             fossil is spent */}

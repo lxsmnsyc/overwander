@@ -96,6 +96,13 @@ export default function registerStantlerSpecies(): void {
         Moves.NaturalGift,
         Moves.SuckerPunch,
         Moves.TrickRoom,
+        Moves.Psyshock,
+        Moves.MagicRoom,
+        Moves.Round,
+        Moves.Retaliate,
+        Moves.Bulldoze,
+        Moves.WorkUp,
+        Moves.WildCharge,
       ],
       egg: [
         Moves.Bite,

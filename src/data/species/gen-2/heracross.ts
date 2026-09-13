@@ -37,6 +37,7 @@ export default function registerHeracrossSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
+        16: [Moves.ChipAway],
         23: [Moves.BrickBreak],
         1: [Moves.Leer, Moves.Tackle, Moves.NightSlash],
         6: [Moves.HornAttack],
@@ -96,6 +97,13 @@ export default function registerHeracrossSpecies(): void {
         Moves.ShadowClaw,
         Moves.StoneEdge,
         Moves.VacuumWave,
+        Moves.Venoshock,
+        Moves.SmackDown,
+        Moves.Round,
+        Moves.Retaliate,
+        Moves.StruggleBug,
+        Moves.Bulldoze,
+        Moves.WorkUp,
       ],
       egg: [Moves.Bide, Moves.Flail, Moves.Harden, Moves.FalseSwipe],
     },

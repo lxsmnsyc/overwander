@@ -95,6 +95,13 @@ export default function registerUmbreonSpecies(): void {
         Moves.NaturalGift,
         Moves.Payback,
         Moves.SuckerPunch,
+        Moves.WonderRoom,
+        Moves.FoulPlay,
+        Moves.Round,
+        Moves.EchoedVoice,
+        Moves.Retaliate,
+        Moves.WorkUp,
+        Moves.Snarl,
       ],
     },
   });

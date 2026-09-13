@@ -49,6 +49,10 @@ const FAMILY_TEACHABLE = [
   Moves.ChargeBeam,
   Moves.NaturalGift,
   Moves.SeedBomb,
+  Moves.SmackDown,
+  Moves.Round,
+  Moves.Scald,
+  Moves.Incinerate,
 ];
 
 // The three beams all land together, at the same level up the line
@@ -92,6 +96,7 @@ export default function registerRemoraidSpecies(): void {
         ...BEAMS,
         33: [Moves.FocusEnergy],
         44: [Moves.IceBeam],
+        50: [Moves.Soak],
         55: [Moves.HyperBeam],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.GunkShot],
@@ -102,6 +107,7 @@ export default function registerRemoraidSpecies(): void {
         Moves.Supersonic,
         Moves.RockBlast,
         Moves.ThunderWave,
+        Moves.AcidSpray,
       ],
     },
   });
@@ -139,6 +145,7 @@ export default function registerRemoraidSpecies(): void {
         36: [Moves.WringOut],
         38: [Moves.FocusEnergy],
         54: [Moves.IceBeam],
+        64: [Moves.Soak],
         70: [Moves.HyperBeam],
       },
       teachable: [
@@ -151,6 +158,7 @@ export default function registerRemoraidSpecies(): void {
         Moves.FlashCannon,
         Moves.GigaImpact,
         Moves.Payback,
+        Moves.SludgeWave,
       ],
     },
   });

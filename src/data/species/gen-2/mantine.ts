@@ -37,6 +37,7 @@ export default function registerMantineSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
+        23: [Moves.WideGuard],
         43: [Moves.WaterPulse],
         1: [Moves.Bubble, Moves.Tackle],
         10: [Moves.Supersonic],
@@ -91,6 +92,10 @@ export default function registerMantineSpecies(): void {
         Moves.NaturalGift,
         Moves.SeedBomb,
         Moves.Tailwind,
+        Moves.Round,
+        Moves.Scald,
+        Moves.Acrobatics,
+        Moves.Bulldoze,
       ],
     },
   });

@@ -58,6 +58,10 @@ const FAMILY_TEACHABLE = [
   Moves.Fling,
   Moves.NaturalGift,
   Moves.ShadowClaw,
+  Moves.HoneClaws,
+  Moves.Round,
+  Moves.Scald,
+  Moves.WaterPledge,
 ];
 
 // What the two above the base pick up: the machines that ask for a
@@ -102,6 +106,7 @@ export default function registerTotodileSpecies(): void {
         13: [Moves.WaterGun],
         20: [Moves.Bite, Moves.IceFang],
         27: [Moves.ScaryFace],
+        29: [Moves.ChipAway],
         35: [Moves.Slash],
         36: [Moves.AquaTail],
         43: [Moves.Screech],
@@ -159,6 +164,7 @@ export default function registerTotodileSpecies(): void {
         13: [Moves.WaterGun],
         21: [Moves.Bite, Moves.IceFang],
         28: [Moves.ScaryFace],
+        33: [Moves.ChipAway],
         37: [Moves.Slash],
         42: [Moves.AquaTail],
         45: [Moves.Screech],
@@ -201,6 +207,7 @@ export default function registerTotodileSpecies(): void {
         1: [Moves.Scratch, Moves.Leer, Moves.WaterGun, Moves.Rage],
         21: [Moves.Bite, Moves.IceFang],
         28: [Moves.ScaryFace],
+        37: [Moves.ChipAway],
         38: [Moves.Slash],
         47: [Moves.Screech],
         50: [Moves.AquaTail],
@@ -218,6 +225,8 @@ export default function registerTotodileSpecies(): void {
         Moves.FocusBlast,
         Moves.GigaImpact,
         Moves.RockClimb,
+        Moves.Bulldoze,
+        Moves.DragonTail,
       ],
     },
   });

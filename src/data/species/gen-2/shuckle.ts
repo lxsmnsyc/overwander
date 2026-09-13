@@ -39,12 +39,15 @@ export default function registerShuckleSpecies(): void {
       level: {
         1: [Moves.Constrict, Moves.Withdraw],
         9: [Moves.Wrap],
+        12: [Moves.StruggleBug],
         14: [Moves.Encore],
         23: [Moves.Safeguard],
         28: [Moves.Bide],
+        34: [Moves.ShellSmash],
         35: [Moves.GastroAcid],
         37: [Moves.Rest],
         40: [Moves.BugBite],
+        45: [Moves.GuardSplit, Moves.PowerSplit],
         48: [Moves.PowerTrick],
       },
       teachable: [
@@ -89,8 +92,15 @@ export default function registerShuckleSpecies(): void {
         Moves.RockPolish,
         Moves.StealthRock,
         Moves.StoneEdge,
+        Moves.Venoshock,
+        Moves.SmackDown,
+        Moves.SludgeWave,
+        Moves.AfterYou,
+        Moves.Round,
+        Moves.StruggleBug,
+        Moves.Bulldoze,
       ],
-      egg: [Moves.SweetScent, Moves.Acupressure],
+      egg: [Moves.SweetScent, Moves.Acupressure, Moves.FinalGambit],
     },
   });
 }

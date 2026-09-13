@@ -38,6 +38,10 @@ const BEAST_TEACHABLE = [
   Moves.RockSmash,
   Moves.Roar,
   Moves.Swift,
+  Moves.Round,
+  Moves.Quash,
+  Moves.Bulldoze,
+  Moves.Snarl,
 ];
 
 export default function registerLegendaryBeastSpecies(): void {
@@ -99,6 +103,8 @@ export default function registerLegendaryBeastSpecies(): void {
         Moves.MagnetRise,
         Moves.NaturalGift,
         Moves.RockClimb,
+        Moves.VoltSwitch,
+        Moves.WildCharge,
       ],
     },
   });
@@ -158,6 +164,8 @@ export default function registerLegendaryBeastSpecies(): void {
         Moves.NaturalGift,
         Moves.RockClimb,
         Moves.StoneEdge,
+        Moves.FlameCharge,
+        Moves.Incinerate,
       ],
     },
   });
@@ -226,6 +234,7 @@ export default function registerLegendaryBeastSpecies(): void {
         Moves.NaturalGift,
         Moves.OminousWind,
         Moves.RockClimb,
+        Moves.Scald,
       ],
     },
   });

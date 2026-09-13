@@ -91,6 +91,10 @@ export default function registerQwilfishSpecies(): void {
         Moves.GyroBall,
         Moves.NaturalGift,
         Moves.Payback,
+        Moves.Venoshock,
+        Moves.SludgeWave,
+        Moves.Round,
+        Moves.Scald,
       ],
       egg: [
         Moves.BubbleBeam,
@@ -99,6 +103,7 @@ export default function registerQwilfishSpecies(): void {
         Moves.Supersonic,
         Moves.Astonish,
         Moves.AquaJet,
+        Moves.AcidSpray,
       ],
     },
   });

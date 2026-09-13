@@ -53,6 +53,11 @@ const FAMILY_TEACHABLE = [
   Moves.Captivate,
   Moves.EarthPower,
   Moves.NaturalGift,
+  Moves.SludgeWave,
+  Moves.AfterYou,
+  Moves.Round,
+  Moves.Scald,
+  Moves.Bulldoze,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Damp, Abilities.WaterAbsorb];
@@ -108,6 +113,8 @@ export default function registerWooperSpecies(): void {
         Moves.SpitUp,
         Moves.Stockpile,
         Moves.Swallow,
+        Moves.AcidSpray,
+        Moves.AfterYou,
       ],
     },
   });

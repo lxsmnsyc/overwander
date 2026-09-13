@@ -101,6 +101,11 @@ export default function registerSudowoodoSpecies(): void {
         Moves.RockPolish,
         Moves.StealthRock,
         Moves.StoneEdge,
+        Moves.SmackDown,
+        Moves.FoulPlay,
+        Moves.AfterYou,
+        Moves.Round,
+        Moves.Bulldoze,
       ],
     },
   });

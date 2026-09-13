@@ -80,6 +80,9 @@ export default function registerBellossomSpecies(): void {
         Moves.NaturalGift,
         Moves.SeedBomb,
         Moves.WorrySeed,
+        Moves.Venoshock,
+        Moves.AfterYou,
+        Moves.Round,
       ],
     },
   });

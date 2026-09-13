@@ -44,6 +44,11 @@ const FAMILY_TEACHABLE = [
   Moves.Substitute,
   Moves.Captivate,
   Moves.NaturalGift,
+  Moves.FlameCharge,
+  Moves.Round,
+  Moves.Incinerate,
+  Moves.FirePledge,
+  Moves.WildCharge,
 ];
 
 // What the two above the base pick up: the machines that ask for a
@@ -88,9 +93,10 @@ export default function registerCyndaquilSpecies(): void {
         12: [Moves.Ember],
         19: [Moves.QuickAttack],
         27: [Moves.FlameWheel],
+        28: [Moves.FlameCharge],
         31: [Moves.LavaPlume],
         36: [Moves.Swift],
-        46: [Moves.Flamethrower],
+        46: [Moves.Flamethrower, Moves.Inferno],
       },
       teachable: [...FAMILY_TEACHABLE],
       egg: [
@@ -102,6 +108,7 @@ export default function registerCyndaquilSpecies(): void {
         Moves.CrushClaw,
         Moves.Howl,
         Moves.FlareBlitz,
+        Moves.FlameBurst,
       ],
     },
   });
@@ -143,8 +150,9 @@ export default function registerCyndaquilSpecies(): void {
         12: [Moves.Ember],
         21: [Moves.QuickAttack],
         31: [Moves.FlameWheel],
-        35: [Moves.LavaPlume],
+        35: [Moves.LavaPlume, Moves.FlameCharge],
         42: [Moves.Swift],
+        53: [Moves.Inferno],
         54: [Moves.Flamethrower],
       },
       teachable: [...FAMILY_TEACHABLE, ...GROWN_TEACHABLE, Moves.BrickBreak, Moves.FocusPunch],
@@ -183,8 +191,9 @@ export default function registerCyndaquilSpecies(): void {
         1: [Moves.Tackle, Moves.Leer, Moves.Ember, Moves.SmokeScreen, Moves.GyroBall],
         21: [Moves.QuickAttack],
         31: [Moves.FlameWheel],
-        35: [Moves.LavaPlume],
+        35: [Moves.LavaPlume, Moves.FlameCharge],
         45: [Moves.Swift],
+        56: [Moves.Inferno],
         60: [Moves.Flamethrower],
       },
       teachable: [
@@ -208,6 +217,7 @@ export default function registerCyndaquilSpecies(): void {
         Moves.GigaImpact,
         Moves.RockClimb,
         Moves.ShadowClaw,
+        Moves.Bulldoze,
       ],
     },
   });

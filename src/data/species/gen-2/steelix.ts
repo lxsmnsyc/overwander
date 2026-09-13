@@ -35,6 +35,8 @@ export default function registerSteelixSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
+        19: [Moves.Autotomize],
+        22: [Moves.SmackDown],
         30: [Moves.RockPolish],
         57: [Moves.DoubleEdge],
         1: [Moves.Screech, Moves.Tackle, Moves.FireFang, Moves.IceFang, Moves.ThunderFang],
@@ -100,6 +102,10 @@ export default function registerSteelixSpecies(): void {
         Moves.Payback,
         Moves.RockClimb,
         Moves.StealthRock,
+        Moves.SmackDown,
+        Moves.Round,
+        Moves.Bulldoze,
+        Moves.DragonTail,
       ],
     },
   });

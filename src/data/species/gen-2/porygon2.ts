@@ -103,6 +103,11 @@ export default function registerPorygon2Species(): void {
         Moves.NaturalGift,
         Moves.TrickRoom,
         Moves.ZenHeadbutt,
+        Moves.WonderRoom,
+        Moves.Psyshock,
+        Moves.FoulPlay,
+        Moves.Round,
+        Moves.Electroweb,
       ],
     },
   });

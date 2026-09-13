@@ -65,6 +65,11 @@ const FAMILY_TEACHABLE = [
   Moves.Payback,
   Moves.SeedBomb,
   Moves.ShadowClaw,
+  Moves.HoneClaws,
+  Moves.Round,
+  Moves.Retaliate,
+  Moves.Bulldoze,
+  Moves.WorkUp,
 ];
 
 // Both learn the same list, only later once it has grown
@@ -128,6 +133,7 @@ export default function registerTeddiursaSpecies(): void {
         Moves.Yawn,
         Moves.CloseCombat,
         Moves.NightSlash,
+        Moves.ChipAway,
       ],
     },
   });
@@ -182,6 +188,7 @@ export default function registerTeddiursaSpecies(): void {
         Moves.GigaImpact,
         Moves.RockClimb,
         Moves.StoneEdge,
+        Moves.SmackDown,
       ],
     },
   });

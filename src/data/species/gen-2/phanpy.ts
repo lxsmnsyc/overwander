@@ -44,6 +44,9 @@ const FAMILY_TEACHABLE = [
   Moves.GunkShot,
   Moves.SeedBomb,
   Moves.StealthRock,
+  Moves.Round,
+  Moves.EchoedVoice,
+  Moves.Bulldoze,
 ];
 
 export default function registerPhanpySpecies(): void {
@@ -99,6 +102,7 @@ export default function registerPhanpySpecies(): void {
         Moves.Fissure,
         Moves.HeadSmash,
         Moves.IceShard,
+        Moves.HeavySlam,
       ],
     },
   });
@@ -132,7 +136,14 @@ export default function registerPhanpySpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.Growl, Moves.HornAttack, Moves.OdorSleuth, Moves.FireFang, Moves.ThunderFang],
+        1: [
+          Moves.Growl,
+          Moves.HornAttack,
+          Moves.OdorSleuth,
+          Moves.FireFang,
+          Moves.ThunderFang,
+          Moves.Bulldoze,
+        ],
         9: [Moves.DefenseCurl],
         17: [Moves.Flail],
         25: [Moves.FuryAttack],

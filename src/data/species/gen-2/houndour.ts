@@ -54,6 +54,12 @@ const FAMILY_TEACHABLE = [
   Moves.NaturalGift,
   Moves.Payback,
   Moves.SuckerPunch,
+  Moves.FlameCharge,
+  Moves.FoulPlay,
+  Moves.Round,
+  Moves.Incinerate,
+  Moves.Retaliate,
+  Moves.Snarl,
 ];
 
 const FAMILY_ABILITIES = [Abilities.EarlyBird, Abilities.FlashFire];
@@ -105,9 +111,10 @@ export default function registerHoundourSpecies(): void {
         31: [Moves.OdorSleuth],
         27: [Moves.FeintAttack],
         35: [Moves.Flamethrower],
-        40: [Moves.Embargo],
+        40: [Moves.Embargo, Moves.FoulPlay],
         43: [Moves.Crunch],
         53: [Moves.NastyPlot],
+        56: [Moves.Inferno],
       },
       teachable: [...FAMILY_TEACHABLE],
       egg: [
@@ -163,8 +170,10 @@ export default function registerHoundourSpecies(): void {
         30: [Moves.FeintAttack],
         41: [Moves.Flamethrower],
         44: [Moves.Embargo],
+        45: [Moves.FoulPlay],
         52: [Moves.Crunch],
         60: [Moves.NastyPlot],
+        65: [Moves.Inferno],
       },
       teachable: [
         ...FAMILY_TEACHABLE,

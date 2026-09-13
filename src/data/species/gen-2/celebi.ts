@@ -108,6 +108,10 @@ export default function registerCelebiSpecies(): void {
         Moves.UTurn,
         Moves.WorrySeed,
         Moves.ZenHeadbutt,
+        Moves.WonderRoom,
+        Moves.MagicRoom,
+        Moves.Round,
+        Moves.EchoedVoice,
       ],
     },
   });

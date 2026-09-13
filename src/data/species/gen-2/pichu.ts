@@ -92,6 +92,10 @@ export default function registerPichuSpecies(): void {
         Moves.GrassKnot,
         Moves.MagnetRise,
         Moves.NaturalGift,
+        Moves.Round,
+        Moves.EchoedVoice,
+        Moves.VoltSwitch,
+        Moves.WildCharge,
       ],
       egg: [
         Moves.Bide,
@@ -102,6 +106,7 @@ export default function registerPichuSpecies(): void {
         Moves.Charge,
         Moves.VoltTackle,
         Moves.Wish,
+        Moves.Bestow,
       ],
     },
   });

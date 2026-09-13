@@ -42,6 +42,8 @@ const FAMILY_TEACHABLE = [
   Moves.GrassKnot,
   Moves.NaturalGift,
   Moves.SeedBomb,
+  Moves.Round,
+  Moves.Acrobatics,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Chlorophyll, Abilities.LeafGuard];
@@ -92,8 +94,9 @@ export default function registerHoppipSpecies(): void {
         ...POWDERS,
         20: [Moves.LeechSeed],
         25: [Moves.CottonSpore],
+        28: [Moves.Acrobatics],
         30: [Moves.MegaDrain],
-        31: [Moves.UTurn],
+        31: [Moves.UTurn, Moves.RagePowder],
         34: [Moves.WorrySeed],
       },
       teachable: [...FAMILY_TEACHABLE],
@@ -108,6 +111,7 @@ export default function registerHoppipSpecies(): void {
 
         Moves.HelpingHand,
         Moves.PsychUp,
+        Moves.CottonGuard,
       ],
     },
   });
@@ -149,7 +153,8 @@ export default function registerHoppipSpecies(): void {
         ...POWDERS,
         22: [Moves.LeechSeed],
         29: [Moves.CottonSpore],
-        36: [Moves.MegaDrain, Moves.UTurn],
+        32: [Moves.Acrobatics],
+        36: [Moves.MegaDrain, Moves.UTurn, Moves.RagePowder],
         40: [Moves.WorrySeed],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.DoubleEdge],
@@ -189,7 +194,9 @@ export default function registerHoppipSpecies(): void {
         ...POWDERS,
         22: [Moves.LeechSeed],
         33: [Moves.CottonSpore],
+        34: [Moves.Acrobatics],
         36: [Moves.UTurn],
+        39: [Moves.RagePowder],
         40: [Moves.WorrySeed],
         44: [Moves.MegaDrain],
       },

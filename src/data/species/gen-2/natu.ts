@@ -55,6 +55,11 @@ const FAMILY_TEACHABLE = [
   Moves.TrickRoom,
   Moves.UTurn,
   Moves.ZenHeadbutt,
+  Moves.Psyshock,
+  Moves.Telekinesis,
+  Moves.MagicRoom,
+  Moves.Round,
+  Moves.AllySwitch,
 ];
 
 const FAMILY_ABILITIES = [Abilities.Synchronize, Abilities.EarlyBird];
@@ -99,7 +104,7 @@ export default function registerNatuSpecies(): void {
         20: [Moves.Teleport, Moves.MeFirst],
         30: [Moves.FutureSight, Moves.Wish],
         33: [Moves.PsychoShift],
-        39: [Moves.OminousWind],
+        39: [Moves.OminousWind, Moves.StoredPower],
         40: [Moves.ConfuseRay],
         44: [Moves.GuardSwap, Moves.PowerSwap],
         50: [Moves.Psychic],
@@ -113,6 +118,7 @@ export default function registerNatuSpecies(): void {
         Moves.SteelWing,
         Moves.FeatherDance,
         Moves.Refresh,
+        Moves.Synchronoise,
       ],
     },
   });
@@ -153,7 +159,7 @@ export default function registerNatuSpecies(): void {
         27: [Moves.Tailwind],
         35: [Moves.FutureSight, Moves.Wish],
         37: [Moves.PsychoShift],
-        47: [Moves.OminousWind],
+        47: [Moves.OminousWind, Moves.StoredPower],
         50: [Moves.ConfuseRay],
         54: [Moves.GuardSwap, Moves.PowerSwap],
         65: [Moves.Psychic],
@@ -165,6 +171,7 @@ export default function registerNatuSpecies(): void {
         Moves.SteelWing,
         Moves.Defog,
         Moves.GigaImpact,
+        Moves.FoulPlay,
       ],
     },
   });

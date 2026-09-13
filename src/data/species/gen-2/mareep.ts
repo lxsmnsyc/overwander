@@ -42,6 +42,10 @@ const FAMILY_TEACHABLE = [
   Moves.ChargeBeam,
   Moves.MagnetRise,
   Moves.NaturalGift,
+  Moves.AfterYou,
+  Moves.Round,
+  Moves.EchoedVoice,
+  Moves.WildCharge,
 ];
 
 // What the two evolved stages pick up once they stand on two legs
@@ -51,6 +55,7 @@ const EVOLVED_TEACHABLE = [
   Moves.ThunderPunch,
   Moves.RockSmash,
   Moves.Strength,
+  Moves.VoltSwitch,
 ];
 
 export default function registerMareepSpecies(): void {
@@ -89,9 +94,11 @@ export default function registerMareepSpecies(): void {
         1: [Moves.Tackle, Moves.Growl],
         9: [Moves.ThunderShock],
         16: [Moves.ThunderWave],
+        22: [Moves.ElectroBall],
         23: [Moves.CottonSpore],
         28: [Moves.Discharge],
         30: [Moves.LightScreen],
+        36: [Moves.CottonGuard],
         37: [Moves.Thunder],
         41: [Moves.PowerGem],
       },
@@ -104,6 +111,7 @@ export default function registerMareepSpecies(): void {
         Moves.TakeDown,
         Moves.Charge,
         Moves.OdorSleuth,
+        Moves.AfterYou,
       ],
     },
   });
@@ -143,9 +151,11 @@ export default function registerMareepSpecies(): void {
       level: {
         1: [Moves.Tackle, Moves.Growl, Moves.ThunderShock],
         18: [Moves.ThunderWave],
+        25: [Moves.ElectroBall],
         27: [Moves.CottonSpore],
         31: [Moves.Discharge],
         36: [Moves.LightScreen],
+        43: [Moves.CottonGuard],
         45: [Moves.Thunder],
         47: [Moves.PowerGem],
       },
@@ -195,10 +205,12 @@ export default function registerMareepSpecies(): void {
     learnSet: {
       level: {
         1: [Moves.Tackle, Moves.Growl, Moves.ThunderShock, Moves.ThunderWave],
+        25: [Moves.ElectroBall],
         27: [Moves.CottonSpore],
         30: [Moves.ThunderPunch],
         34: [Moves.Discharge],
         42: [Moves.LightScreen],
+        46: [Moves.CottonGuard],
         57: [Moves.Thunder],
         59: [Moves.PowerGem],
       },
@@ -217,6 +229,7 @@ export default function registerMareepSpecies(): void {
         Moves.FocusBlast,
         Moves.GigaImpact,
         Moves.RockClimb,
+        Moves.Bulldoze,
       ],
     },
   });

@@ -24,6 +24,7 @@ import registerBiomeSpawns, {
   spawnBand,
 } from '../src/data/biome';
 import EggGroups from '../src/data/ids/egg-groups';
+import { getBiomeLairs, getLairResidents } from '../src/data/overworld/lair';
 import Families from '../src/data/ids/families';
 import registerAbilities, { getAbilityData, getSignatureAbility } from '../src/data/abilities';
 import Abilities from '../src/data/ids/abilities';
@@ -1073,6 +1074,30 @@ describe('where a species lives', () => {
       }
     }
     expect(MYTHICAL_SPAWN_ODDS).toBe(SPECIAL_SPAWN_ODDS);
+  });
+
+  it('stages a legendary wild wherever its lair stands', () => {
+    // A lair equates to a wild spawn: a biome that hosts one lists each
+    // resident in its special band whenever that resident is about.
+    // Mythical lairs are never hosted, so they never reach this list
+    const homes = (Object.keys(BIOME_NAMES).map(Number) as Biome[]).flatMap((biome) =>
+      getBiomeLairs(biome).flatMap((lair) =>
+        getLairResidents(lair).map((species) => ({ biome, species })),
+      ),
+    );
+
+    expect(homes.length).toBeGreaterThan(0);
+    for (const { biome, species } of homes) {
+      const { activeTimes, name } = getSpeciesData(species);
+
+      for (const time of TIMES_OF_DAY.filter((period) => (activeTimes & period) !== 0)) {
+        const band = new Set(
+          spawnBand(getSpawnPool(biome, time), 'special').map((entry) => entry.species),
+        );
+
+        expect(band.has(species), `${name} in ${BIOME_NAMES[biome]}`).toBe(true);
+      }
+    }
   });
 
   it('says the same thing the pools do about every species', () => {

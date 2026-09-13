@@ -107,7 +107,12 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.MimeJr, weight: PRIZED_WEIGHT },
         { species: Species.Munchlax, weight: PRIZED_WEIGHT },
       ],
-      special: [{ species: Species.Mesprit, weight: 10 }],
+      special: [
+        { species: Species.Mesprit, weight: 10 },
+        { species: Species.Raikou, weight: 10 },
+        { species: Species.Entei, weight: 10 },
+        { species: Species.Suicune, weight: 10 },
+      ],
     },
     [TimeOfDay.Day]: {
       base: [
@@ -209,7 +214,12 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.MimeJr, weight: PRIZED_WEIGHT },
         { species: Species.Munchlax, weight: PRIZED_WEIGHT },
       ],
-      special: [{ species: Species.Mesprit, weight: 10 }],
+      special: [
+        { species: Species.Mesprit, weight: 10 },
+        { species: Species.Raikou, weight: 10 },
+        { species: Species.Entei, weight: 10 },
+        { species: Species.Suicune, weight: 10 },
+      ],
     },
     [TimeOfDay.Evening]: {
       base: [
@@ -299,7 +309,12 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.MimeJr, weight: PRIZED_WEIGHT },
         { species: Species.Munchlax, weight: PRIZED_WEIGHT },
       ],
-      special: [{ species: Species.Mesprit, weight: 10 }],
+      special: [
+        { species: Species.Mesprit, weight: 10 },
+        { species: Species.Raikou, weight: 10 },
+        { species: Species.Entei, weight: 10 },
+        { species: Species.Suicune, weight: 10 },
+      ],
     },
     [TimeOfDay.Night]: {
       base: [
@@ -398,7 +413,12 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.MimeJr, weight: PRIZED_WEIGHT },
         { species: Species.Munchlax, weight: PRIZED_WEIGHT },
       ],
-      special: [{ species: Species.Mesprit, weight: 10 }],
+      special: [
+        { species: Species.Mesprit, weight: 10 },
+        { species: Species.Raikou, weight: 10 },
+        { species: Species.Entei, weight: 10 },
+        { species: Species.Suicune, weight: 10 },
+      ],
     },
   });
 }

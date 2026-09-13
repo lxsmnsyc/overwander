@@ -45,6 +45,7 @@ export default function registerDeepOceanSpawns(): void {
       special: [
         { species: Species.Kyogre, weight: 10 },
         { species: Species.Lugia, weight: 10 },
+        { species: Species.Articuno, weight: 10 },
       ],
       mythical: [{ species: Species.Manaphy, weight: 10 }],
     },
@@ -76,6 +77,7 @@ export default function registerDeepOceanSpawns(): void {
       special: [
         { species: Species.Kyogre, weight: 10 },
         { species: Species.Lugia, weight: 10 },
+        { species: Species.Articuno, weight: 10 },
       ],
       mythical: [{ species: Species.Manaphy, weight: 10 }],
     },
@@ -106,6 +108,7 @@ export default function registerDeepOceanSpawns(): void {
       special: [
         { species: Species.Kyogre, weight: 10 },
         { species: Species.Lugia, weight: 10 },
+        { species: Species.Articuno, weight: 10 },
       ],
       mythical: [{ species: Species.Manaphy, weight: 10 }],
     },
@@ -136,6 +139,7 @@ export default function registerDeepOceanSpawns(): void {
       special: [
         { species: Species.Kyogre, weight: 10 },
         { species: Species.Lugia, weight: 10 },
+        { species: Species.Articuno, weight: 10 },
       ],
       mythical: [{ species: Species.Manaphy, weight: 10 }],
     },

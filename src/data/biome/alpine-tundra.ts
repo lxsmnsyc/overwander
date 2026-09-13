@@ -146,6 +146,7 @@ export default function registerAlpineTundraSpawns(): void {
         { species: Species.Articuno, weight: 10 },
         { species: Species.Dialga, weight: 10 },
         { species: Species.Palkia, weight: 10 },
+        { species: Species.Mewtwo, weight: 10 },
       ],
       mythical: [{ species: Species.Arceus, weight: 10 }],
     },

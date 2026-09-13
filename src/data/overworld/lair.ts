@@ -282,7 +282,10 @@ const STAGED_LAIRS = new Set<Lairs>(EVERY_STAGED_LAIR);
  *
  * A biome with no lair stages no legendary lair at all, which is most
  * of them: a legendary the whole world could walk to is not a
- * legendary
+ * legendary.
+ *
+ * A lair is also a wild spawn: a biome that hosts one lists each
+ * resident in its special band, mythicals aside
  */
 const BIOME_LAIRS: { [key in Biome]?: Lairs[] } = {
   [Biome.DeepOcean]: [Lairs.SeafoamIslands, Lairs.WhirlIslands, Lairs.MarineCave],
@@ -304,13 +307,7 @@ const BIOME_LAIRS: { [key in Biome]?: Lairs[] } = {
   [Biome.Steppe]: [Lairs.PowerPlant],
   [Biome.Desert]: [Lairs.MtEmber, Lairs.DesertRuins, Lairs.RockPeakRuins],
   [Biome.Badlands]: [Lairs.DesertRuins, Lairs.AncientTomb, Lairs.TurnbackCave, Lairs.RockPeakRuins],
-  [Biome.Mountain]: [
-    Lairs.MtEmber,
-    Lairs.CeruleanCave,
-    Lairs.BellTower,
-    Lairs.AncientTomb,
-    Lairs.SpearPillar,
-  ],
+  [Biome.Mountain]: [Lairs.MtEmber, Lairs.CeruleanCave, Lairs.BellTower, Lairs.AncientTomb],
   [Biome.AlpineTundra]: [Lairs.CeruleanCave, Lairs.SpearPillar],
   [Biome.Volcano]: [Lairs.TerraCave, Lairs.StarkMountain],
 };

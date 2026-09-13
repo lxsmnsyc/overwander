@@ -120,6 +120,9 @@ export default function registerGrasslandSpawns(): void {
       special: [
         { species: Species.Raikou, weight: 10 },
         { species: Species.Azelf, weight: 10 },
+        { species: Species.Zapdos, weight: 10 },
+        { species: Species.Entei, weight: 10 },
+        { species: Species.Suicune, weight: 10 },
       ],
       mythical: [{ species: Species.Shaymin, weight: 10 }],
     },
@@ -242,6 +245,9 @@ export default function registerGrasslandSpawns(): void {
       special: [
         { species: Species.Raikou, weight: 10 },
         { species: Species.Azelf, weight: 10 },
+        { species: Species.Zapdos, weight: 10 },
+        { species: Species.Entei, weight: 10 },
+        { species: Species.Suicune, weight: 10 },
       ],
       mythical: [{ species: Species.Shaymin, weight: 10 }],
     },
@@ -311,6 +317,9 @@ export default function registerGrasslandSpawns(): void {
       special: [
         { species: Species.Raikou, weight: 10 },
         { species: Species.Azelf, weight: 10 },
+        { species: Species.Zapdos, weight: 10 },
+        { species: Species.Entei, weight: 10 },
+        { species: Species.Suicune, weight: 10 },
       ],
       mythical: [{ species: Species.Shaymin, weight: 10 }],
     },
@@ -384,6 +393,9 @@ export default function registerGrasslandSpawns(): void {
       special: [
         { species: Species.Raikou, weight: 10 },
         { species: Species.Azelf, weight: 10 },
+        { species: Species.Zapdos, weight: 10 },
+        { species: Species.Entei, weight: 10 },
+        { species: Species.Suicune, weight: 10 },
       ],
       mythical: [{ species: Species.Shaymin, weight: 10 }],
     },

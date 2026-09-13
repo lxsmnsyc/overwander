@@ -730,9 +730,9 @@ describe('world', () => {
       return;
     }
 
-    // A mountain holds six: the volcano, the cave under it, the two
-    // towers on it, the tomb cut into it and the pillar at the top.
-    // Every window stages one of them, and whoever is at home in it
+    // A mountain holds five: the volcano, the cave under it, the tower
+    // on it, the tomb cut into it and the pillar at the top. Every
+    // window stages one of them, and whoever is at home in it
     const hosted = new Set(getBiomeLairs(Biome.Mountain));
 
     expect(hosted).toEqual(
@@ -741,7 +741,6 @@ describe('world', () => {
         Lairs.CeruleanCave,
         Lairs.BellTower,
         Lairs.AncientTomb,
-        Lairs.SkyPillar,
         Lairs.SpearPillar,
       ]),
     );

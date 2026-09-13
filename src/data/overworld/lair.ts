@@ -286,7 +286,13 @@ const STAGED_LAIRS = new Set<Lairs>(EVERY_STAGED_LAIR);
  */
 const BIOME_LAIRS: { [key in Biome]?: Lairs[] } = {
   [Biome.DeepOcean]: [Lairs.SeafoamIslands, Lairs.WhirlIslands, Lairs.MarineCave],
-  [Biome.Ocean]: [Lairs.WhirlIslands, Lairs.SouthernIsland, Lairs.FullmoonIsland, Lairs.IronRuins],
+  [Biome.Ocean]: [
+    Lairs.WhirlIslands,
+    Lairs.SouthernIsland,
+    Lairs.FullmoonIsland,
+    Lairs.IronRuins,
+    Lairs.SkyPillar,
+  ],
   [Biome.PolarOcean]: [Lairs.SeafoamIslands, Lairs.IslandCave],
   [Biome.Glacier]: [Lairs.SeafoamIslands, Lairs.IslandCave, Lairs.SnowpointTemple],
   [Biome.Grassland]: [Lairs.PowerPlant, Lairs.BurnedTower, Lairs.LakeValor],
@@ -303,7 +309,6 @@ const BIOME_LAIRS: { [key in Biome]?: Lairs[] } = {
     Lairs.CeruleanCave,
     Lairs.BellTower,
     Lairs.AncientTomb,
-    Lairs.SkyPillar,
     Lairs.SpearPillar,
   ],
   [Biome.AlpineTundra]: [Lairs.CeruleanCave, Lairs.SpearPillar],

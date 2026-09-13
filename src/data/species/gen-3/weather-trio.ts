@@ -221,7 +221,7 @@ export default function registerWeatherTrioSpecies(): void {
     // The one of the three the mainline lets a player face on level
     // terms, and the only reason it is not a 3
     catchRate: 45,
-    biomes: [Biome.Mountain],
+    biomes: [Biome.Ocean],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {

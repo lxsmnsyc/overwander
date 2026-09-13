@@ -2,7 +2,7 @@ import {
   ROTATION,
   STAT_BARS,
   STAT_CEILING,
-  describeLair,
+  describeLairs,
   groupHabitats,
   listLevelMoves,
 } from './species-facts';
@@ -309,7 +309,9 @@ export function DexEntryBody(
                 rather than showing an empty list */}
               <DialogSection title="Where it lives">
                 <Show
-                  when={groupHabitats(entry().species).length || describeLair(entry().species)}
+                  when={
+                    groupHabitats(entry().species).length || describeLairs(entry().species).length
+                  }
                   fallback={
                     // Nowhere at all is the answer for two kinds of
                     // species, and they are not the same answer: one
@@ -332,17 +334,17 @@ export function DexEntryBody(
                       came to this entry for a legendary came for the
                       name of the lair rather than for the odds of
                       walking into one */}
-                    <Show when={describeLair(entry().species)}>
+                    <For each={describeLairs(entry().species)}>
                       {(lair) => (
                         <ListRow class="flex-col items-start gap-0.5 sm:flex-row sm:items-center">
-                          <span class="grow text-left font-medium">{lair().name}</span>
+                          <span class="grow text-left font-medium">{lair.name}</span>
                           <span class="flex flex-wrap justify-end gap-1">
                             <Badge tone="tide">Lair</Badge>
-                            <For each={lair().where}>{(biome) => <Badge>{biome}</Badge>}</For>
+                            <For each={lair.where}>{(biome) => <Badge>{biome}</Badge>}</For>
                           </span>
                         </ListRow>
                       )}
-                    </Show>
+                    </For>
                     <For each={groupHabitats(entry().species)}>
                       {(place) => (
                         <ListRow class="flex-col items-start gap-0.5 sm:flex-row sm:items-center">

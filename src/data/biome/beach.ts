@@ -40,6 +40,7 @@ export default function registerBeachSpawns(): void {
       ],
       prized: [...UNOWN_SPAWNS],
       special: [],
+      mythical: [{ species: Species.Deoxys, weight: 10 }],
     },
     [TimeOfDay.Day]: {
       base: [{ species: Species.Squirtle, weight: 2 }],
@@ -74,6 +75,7 @@ export default function registerBeachSpawns(): void {
       ],
       prized: [...UNOWN_SPAWNS],
       special: [],
+      mythical: [{ species: Species.Deoxys, weight: 10 }],
     },
     [TimeOfDay.Evening]: {
       base: [],
@@ -99,6 +101,7 @@ export default function registerBeachSpawns(): void {
       elusive: [{ species: Species.Corsola, weight: 20 }],
       prized: [...UNOWN_SPAWNS],
       special: [],
+      mythical: [{ species: Species.Deoxys, weight: 10 }],
     },
     [TimeOfDay.Night]: {
       base: [],
@@ -124,6 +127,7 @@ export default function registerBeachSpawns(): void {
       elusive: [{ species: Species.Corsola, weight: 20 }],
       prized: [...UNOWN_SPAWNS],
       special: [],
+      mythical: [{ species: Species.Deoxys, weight: 10 }],
     },
   });
 }

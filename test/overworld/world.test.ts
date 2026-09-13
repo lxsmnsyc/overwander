@@ -715,6 +715,11 @@ describe('world', () => {
     expect(getSpeciesLairs(Species.Lugia)).toEqual([Lairs.WhirlIslands, Lairs.NavelRock]);
     expect(getSpeciesLairs(Species.HoOh)).toEqual([Lairs.BellTower, Lairs.NavelRock]);
     expect(getBiomeLairs(Biome.DeepOcean)).toContain(Lairs.NavelRock);
+    // And the weather trio share the tower in the sea cliffs
+    expect(getSpeciesLairs(Species.Kyogre)).toEqual([Lairs.MarineCave, Lairs.EmbeddedTower]);
+    expect(getSpeciesLairs(Species.Groudon)).toEqual([Lairs.TerraCave, Lairs.EmbeddedTower]);
+    expect(getSpeciesLairs(Species.Rayquaza)).toEqual([Lairs.SkyPillar, Lairs.EmbeddedTower]);
+    expect(getBiomeLairs(Biome.Beach)).toEqual([Lairs.EmbeddedTower]);
     expect(getBiomeLairs(Biome.Badlands)).toContain(Lairs.RockPeakRuins);
     expect(getBiomeLairs(Biome.Tundra)).toContain(Lairs.IcebergRuins);
     expect(getBiomeLairs(Biome.Ocean)).toContain(Lairs.IronRuins);

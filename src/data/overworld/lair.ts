@@ -136,6 +136,11 @@ const enum Lairs {
    * one at its peak, so which of them answers is a roll
    */
   NavelRock = 33,
+  /**
+   * The tower set into the sea cliffs, where an orb calls down any of
+   * the weather trio, so which of them answers is a roll
+   */
+  EmbeddedTower = 34,
 }
 
 export const LAIR_NAMES: Record<Lairs, string> = {
@@ -173,6 +178,7 @@ export const LAIR_NAMES: Record<Lairs, string> = {
   [Lairs.IcebergRuins]: 'Iceberg Ruins',
   [Lairs.IronRuins]: 'Iron Ruins',
   [Lairs.NavelRock]: 'Navel Rock',
+  [Lairs.EmbeddedTower]: 'Embedded Tower',
 };
 
 /**
@@ -217,6 +223,7 @@ export const LAIR_SPECIES: Record<Lairs, Species[]> = {
   [Lairs.IcebergRuins]: [Species.Regice],
   [Lairs.IronRuins]: [Species.Registeel],
   [Lairs.NavelRock]: [Species.Lugia, Species.HoOh],
+  [Lairs.EmbeddedTower]: [Species.Kyogre, Species.Groudon, Species.Rayquaza],
 };
 
 /**
@@ -257,6 +264,7 @@ export const EVERY_LAIR: Lairs[] = [
   Lairs.IcebergRuins,
   Lairs.IronRuins,
   Lairs.NavelRock,
+  Lairs.EmbeddedTower,
 ];
 
 /**
@@ -304,6 +312,7 @@ const BIOME_LAIRS: { [key in Biome]?: Lairs[] } = {
     Lairs.IronRuins,
     Lairs.SkyPillar,
   ],
+  [Biome.Beach]: [Lairs.EmbeddedTower],
   [Biome.PolarOcean]: [Lairs.SeafoamIslands, Lairs.IslandCave],
   [Biome.Glacier]: [Lairs.SeafoamIslands, Lairs.IslandCave, Lairs.SnowpointTemple],
   [Biome.Grassland]: [Lairs.PowerPlant, Lairs.BurnedTower, Lairs.LakeValor],

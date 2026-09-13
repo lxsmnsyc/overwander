@@ -1,11 +1,14 @@
 import {
   BIOME_NAMES,
   SPAWN_RARITY_NAMES,
+  type SpawnRarity,
   type SpeciesHabitat,
   TIMES_OF_DAY,
   TIME_OF_DAY_NAMES,
   listSpeciesHabitats,
+  listTownHabitats,
 } from '../../../data/biome';
+import type { TimeOfDay } from '../../../data/ids/biome';
 import { Stats } from '../../../data/constants/stats';
 import type Biome from '../../../data/ids/biome';
 import type { Moves } from '../../../data/ids/moves';
@@ -82,22 +85,27 @@ export function groupHabitats(species: Species): Habitat[] {
   }
 
   return [...places]
-    .map(([biome, found]): Habitat => {
-      const bands = new Map(found.map((habitat) => [habitat.time, habitat.rarity]));
-      const met = TIMES_OF_DAY.filter((time) => bands.has(time));
-      const rarities = new Set(met.map((time) => bands.get(time)));
-
-      if (met.length === TIMES_OF_DAY.length && rarities.size === 1) {
-        return { biome, hours: [`Anytime · ${SPAWN_RARITY_NAMES[bands.get(met[0]) ?? 0]}`] };
-      }
-      return {
-        biome,
-        hours: met.map(
-          (time) => `${TIME_OF_DAY_NAMES[time]} · ${SPAWN_RARITY_NAMES[bands.get(time) ?? 0]}`,
-        ),
-      };
-    })
+    .map(([biome, found]): Habitat => ({ biome, hours: hourBadges(found) }))
     .sort((one, other) => BIOME_NAMES[one.biome].localeCompare(BIOME_NAMES[other.biome]));
+}
+
+/** The badges for the hours something is met, collapsed to Anytime when every hour reads the same */
+function hourBadges(found: { time: TimeOfDay; rarity: SpawnRarity }[]): string[] {
+  const bands = new Map(found.map((habitat) => [habitat.time, habitat.rarity]));
+  const met = TIMES_OF_DAY.filter((time) => bands.has(time));
+  const rarities = new Set(met.map((time) => bands.get(time)));
+
+  if (met.length === TIMES_OF_DAY.length && rarities.size === 1) {
+    return [`Anytime · ${SPAWN_RARITY_NAMES[bands.get(met[0]) ?? 0]}`];
+  }
+  return met.map(
+    (time) => `${TIME_OF_DAY_NAMES[time]} · ${SPAWN_RARITY_NAMES[bands.get(time) ?? 0]}`,
+  );
+}
+
+/** The hours this species is met on a town's streets, as badges */
+export function townHours(species: Species): string[] {
+  return hourBadges(listTownHabitats(species));
 }
 
 /**

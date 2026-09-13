@@ -4,6 +4,7 @@ import {
   boostFamilyWeights,
   boostTypeWeights,
   getSpawnPool,
+  getTownPool,
   pickSpawn,
   spawnRanks,
 } from '../data/biome';
@@ -18,7 +19,7 @@ import {
 import { TimeOfDay, getTimeOfDay, isWaterBiome } from '../data/ids/biome';
 import type { Items } from '../data/ids/items';
 import type { ItemStack } from '../data/overworld/item-pool';
-import { Species } from '../data/ids/species';
+import type { Species } from '../data/ids/species';
 import { rollFossilOffer } from '../data/overworld/fossil';
 import Landmark from '../data/overworld/landmark';
 import type Lairs from '../data/overworld/lair';
@@ -86,8 +87,7 @@ import {
 import getWorld from './current';
 import type Chunk from './chunk';
 import { canStageBoss } from './raid';
-import { CELL_COUNT, CHUNK_CELLS, PLACEMENT_AREA, centeredCells, neighborCells } from './chunk';
-import { getPortalCell } from './portal';
+import { CELL_COUNT, CHUNK_CELLS, PLACEMENT_AREA, centeredCells } from './chunk';
 import type { Depth } from './depth';
 import type { PhenomenonReward } from './landmarks';
 import {
@@ -163,13 +163,6 @@ export type Spawn = [species: Species, individualValue: number, traitValue: numb
  * every player of the chunk shares one set of rolls
  */
 export const SPAWN_COUNT = 8;
-
-/**
- * How often a portal has its keeper standing beside it: Porygon, the
- * made pokemon, lives in the portal network rather than in any
- * biome's wild pool
- */
-export const PORTAL_KEEPER_CHANCE = 1 / 8;
 
 /**
  * How often a Team Rocket stop is Giovanni himself rather than a
@@ -429,7 +422,15 @@ export default class ChunkSnapshot {
    * the featured family for the day, and the sky for the hour
    */
   private getPool(): SpawnRarityGroups {
-    const pool = getSpawnPool(this.chunk.biome, getTimeOfDay(this.timestamp));
+    return this.crowd(getSpawnPool(this.chunk.biome, getTimeOfDay(this.timestamp)));
+  }
+
+  /** What a town's streets may roll this window, crowded the same way */
+  private getStreetPool(): SpawnRarityGroups {
+    return this.crowd(getTownPool(getTimeOfDay(this.timestamp)));
+  }
+
+  private crowd(pool: SpawnRarityGroups): SpawnRarityGroups {
     const featured = getFeaturedFamily(this.timestamp);
     const dayed =
       featured == null ? pool : boostFamilyWeights(pool, featured, SPECIES_DAY_WEIGHT_BOOST);
@@ -438,8 +439,9 @@ export default class ChunkSnapshot {
   }
 
   /**
-   * Roll the window's spawns from the biome pool for this time of day
-   * and place each on a free cell.
+   * Roll the window's spawns for this time of day and place each on a
+   * free cell: a town's streets from the town pool, the country around
+   * them from the biome's.
    *
    * They are placed **last**, on whatever cell the chunk's own
    * furniture is not standing on. Spacing is the fixtures' rule and
@@ -463,12 +465,10 @@ export default class ChunkSnapshot {
         // top of a dust cloud, and the spawn would answer the press
         ...this.getPhenomena().keys(),
       ]);
-      const free = centeredCells(PLACEMENT_AREA).filter(
-        // Nothing wild stands in a town. It is where a player puts
-        // their guard down: the country outside is where the pokemon
-        // are, and that is the whole reason to leave
-        (cell) => !occupied.has(cell) && !this.chunk.isTownCell(cell),
-      );
+      const placeable = centeredCells(PLACEMENT_AREA).filter((cell) => !occupied.has(cell));
+      const streets = placeable.filter((cell) => this.chunk.isTownCell(cell));
+      const street = new Set(streets);
+      const free = placeable.filter((cell) => !street.has(cell));
       // Where anything may stand, and where only what swims or flies
       // may.
       //
@@ -488,35 +488,33 @@ export default class ChunkSnapshot {
         (water ? over : standing).push(cell);
       }
 
-      // The portal's keeper rolls before the pool does, so it is the
-      // first published spawn and every player sees it, lure or none
-      const portal = getPortalCell(this.chunk);
+      // Each roll takes the streets' share of the window in turn, so any
+      // prefix of it a lure reveals keeps that share. A chunk no town
+      // touches has no share and rolls exactly as the country always has
+      const share = streets.length / Math.max(1, streets.length + free.length);
+      let streetPool: SpawnRarityGroups | null = null;
 
-      if (portal != null && this.rng.random() < PORTAL_KEEPER_CHANCE) {
-        // The keeper is the portal's rather than the country's, so it
-        // stands beside one in a town square the same as one out in a
-        // field: what a town keeps out is the wild
-        const beside = neighborCells(portal).filter((cell) => !occupied.has(cell));
+      for (let i = 0; i < count && standing.length + over.length + streets.length > 0; i++) {
+        if (streets.length > 0 && Math.floor((i + 1) * share) > Math.floor(i * share)) {
+          streetPool ??= this.getStreetPool();
 
-        if (beside.length > 0) {
-          const spawn: Spawn = [Species.Porygon, this.rng.int32(), this.rng.int32()];
-          const cell = beside[Math.floor(this.rng.random() * beside.length)];
+          const found = pickSpawn(streetPool, () => this.rng.random());
 
-          for (const cells of [standing, over]) {
-            const taken = cells.indexOf(cell);
-
-            if (taken >= 0) {
-              cells.splice(taken, 1);
-            }
+          if (found == null) {
+            continue;
           }
+
+          const spawn: Spawn = [found, this.rng.int32(), this.rng.int32()];
+          const [cell] = streets.splice(Math.floor(this.rng.random() * streets.length), 1);
+
           this.cells[cell] = spawn;
           spawns.push(spawn);
+          continue;
         }
-      }
+        if (standing.length + over.length === 0) {
+          continue;
+        }
 
-      // The keeper counts against the window, so a portal chunk never
-      // publishes more rolls than any other
-      for (let i = spawns.length; i < count && standing.length + over.length > 0; i++) {
         const rolled = pickSpawn(pool, () => this.rng.random());
 
         if (rolled == null) {

@@ -103,10 +103,11 @@ makes telling a friend a name worth anything. A town nobody has been to yet
 cannot be crossed to, however well you guess at its name.
 
 A town levels the ground it stands on: no lakes, no rivers and no rock inside
-the footprint, though it stops at the shore rather than draining the sea. No
-wild pokemon stand in one and nothing is going on there, so a town is somewhere
-to put your guard down. The portal's keeper is the exception, since the keeper
-belongs to the portal.
+the footprint, though it stops at the shore rather than draining the sea. Its
+streets have wild pokemon of their own, the kind that live around people:
+Pidgey and Rattata by day, Meowth and Grimer after dark, and Porygon at any hour.
+Every town shares that one list, whatever country it stands in. Nothing else
+is going on there, so a town is still somewhere to put your guard down.
 
 The plaza is paved and a street runs out of it to each lot, stopping at the door
 rather than paving it, so nobody is ever standing in the road and following one

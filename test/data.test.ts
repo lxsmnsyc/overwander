@@ -14,12 +14,14 @@ import registerBiomeSpawns, {
   getEggPool,
   getSpawnPool,
   getSpawnRarity,
+  getTownPool,
   isAwaitingBaby,
   isGrownSpecies,
   isLegendarySpecies,
   isMythicalSpecies,
   isPrizedSpecies,
   listSpeciesHabitats,
+  listTownHabitats,
   pickSpawn,
   spawnBand,
 } from '../src/data/biome';
@@ -1207,8 +1209,8 @@ describe('where a species lives', () => {
     // one there is, so no pool stages it though it names the water it
     // drifts in.
     //
-    // Porygon is made rather than met: it stands beside a portal and
-    // in no pool, and what it evolves into is met the same way. The
+    // Porygon is met on town streets, which no biome pool holds, and
+    // what it evolves into is made rather than met. The
     // far shore's shell is staged by the pool its west counterpart
     // sits in, and swapped for as the world hands it over, so no pool
     // names it either
@@ -5084,6 +5086,40 @@ describe('biome data', () => {
         }
       }
     }
+  });
+
+  it('files the town pool by the same rules as the country', () => {
+    // One pool every town's streets draw from: each entry sits in the
+    // band its line puts it in, at an hour it is about
+    const bands = [
+      ['base', SpawnRarity.Base],
+      ['uncommon', SpawnRarity.Uncommon],
+      ['rare', SpawnRarity.Rare],
+      ['scarce', SpawnRarity.Scarce],
+      ['elusive', SpawnRarity.Elusive],
+      ['prized', SpawnRarity.Prized],
+      ['special', SpawnRarity.Special],
+    ] as const;
+    let held = 0;
+
+    for (const time of TIMES_OF_DAY) {
+      for (const [band, rarity] of bands) {
+        for (const entry of getTownPool(time)[band] ?? []) {
+          const { activeTimes, name } = getSpeciesData(entry.species);
+
+          held += 1;
+          expect(getSpawnRarity(entry.species), name).toBe(rarity);
+          expect(activeTimes & time, name).not.toBe(0);
+        }
+      }
+    }
+    expect(held).toBeGreaterThan(0);
+
+    // Porygon is met on the streets at every hour, and what it evolves
+    // into is made rather than met
+    expect(listTownHabitats(Species.Porygon)).toHaveLength(TIMES_OF_DAY.length);
+    expect(listTownHabitats(Species.Porygon2)).toEqual([]);
+    expect(listTownHabitats(Species.PorygonZ)).toEqual([]);
   });
 
   it('knows which finds are worth stopping a player over', () => {

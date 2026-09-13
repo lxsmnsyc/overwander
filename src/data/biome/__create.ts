@@ -134,6 +134,21 @@ export function registerCavePool(pool: SpawnPool): void {
 }
 
 /**
+ * What lives on a town's streets: one pool every town draws from,
+ * whatever the country around it, but with its own hours
+ */
+let townPool: SpawnPool | null = null;
+
+export function registerTownPool(pool: SpawnPool): void {
+  townPool = pool;
+}
+
+/** What may be met on a town's streets at this hour */
+export function getTownPool(time: TimeOfDay): SpawnRarityGroups {
+  return townPool?.[time] ?? EMPTY_GROUPS;
+}
+
+/**
  * What may be met here. Underground answers from the cave's own pool
  * whatever the country overhead, and from the same one at every hour:
  * there is no sky down there for the time of day to come out of
@@ -393,6 +408,15 @@ function buildHabitats(): Map<Species, SpeciesHabitat[]> {
 export function listSpeciesHabitats(species: Species): SpeciesHabitat[] {
   habitatIndex ??= buildHabitats();
   return habitatIndex.get(species) ?? [];
+}
+
+/** Every hour and band this species is met on a town's streets */
+export function listTownHabitats(species: Species): { time: TimeOfDay; rarity: SpawnRarity }[] {
+  return TIMES_OF_DAY.flatMap((time) =>
+    BAND_RARITIES.filter(([band]) =>
+      spawnBand(getTownPool(time), band).some((entry) => entry.species === species),
+    ).map(([, rarity]) => ({ time, rarity })),
+  );
 }
 
 /**

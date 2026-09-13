@@ -10,6 +10,7 @@ import registerBiomeSpawns, {
   SpawnRarity,
   getSpawnPool,
   getSpawnRarity,
+  getTownPool,
   isGrownSpecies,
   spawnRanks,
 } from '../../src/data/biome';
@@ -5332,48 +5333,53 @@ describe('portal balancing', () => {
     }
   });
 
-  it('stations the keeper beside the portal, some windows', () => {
+  it('rolls a town street from the town pool', () => {
     const world = new World('overworld');
-    let stationed = 0;
-    let quiet = 0;
+    const hours = [TimeOfDay.Morning, TimeOfDay.Day, TimeOfDay.Evening, TimeOfDay.Night];
+    // A street holds something from the town pool at some hour, whichever
+    // hour the window happens to land in
+    const town = new Set(
+      hours.flatMap((time) => {
+        const pool = getTownPool(time);
 
-    for (let x = 0; x < 25 && stationed === 0; x++) {
-      for (let y = 0; y < 8; y++) {
-        const chunk = world.getChunk(x, y);
-        const portal = getPortalCell(chunk);
+        return [
+          ...pool.base,
+          ...pool.uncommon,
+          ...pool.rare,
+          ...(pool.scarce ?? []),
+          ...(pool.elusive ?? []),
+        ].map((entry) => entry.species);
+      }),
+    );
+    let street = 0;
 
-        if (portal == null) {
+    for (let x = 0; x < 64 && street === 0; x++) {
+      for (let y = 0; y < 64 && street === 0; y++) {
+        if (townOverChunk(world, x, y) == null) {
           continue;
         }
 
-        for (let window = 0; window < 64; window++) {
+        const chunk = world.getChunk(x, y);
+
+        for (let window = 0; window < 16; window++) {
           const snapshot = new ChunkSnapshot(chunk, window * SNAPSHOT_INTERVAL);
-          const spawns = snapshot.getSpawns(SPAWN_COUNT + LURE_SPAWN_BONUS);
 
-          // The keeper counts against the window rather than on top
-          expect(spawns.length).toBeLessThanOrEqual(SPAWN_COUNT + LURE_SPAWN_BONUS);
-
-          const keepers = [...snapshot.getSpawnCells()].filter(
-            ([, spawn]) => spawn[0] === Species.Porygon,
+          expect(snapshot.getSpawns(SPAWN_COUNT + LURE_SPAWN_BONUS).length).toBeLessThanOrEqual(
+            SPAWN_COUNT + LURE_SPAWN_BONUS,
           );
-
-          if (keepers.length === 0) {
-            quiet++;
-            continue;
+          for (const [cell, spawn] of snapshot.getSpawnCells()) {
+            if (chunk.isTownCell(cell)) {
+              expect(town.has(spawn[0])).toBe(true);
+              street++;
+            }
           }
-          // One keeper, published first, standing in the portal's ring
-          expect(keepers.length).toBe(1);
-          expect(spawns[0][0]).toBe(Species.Porygon);
-          expect(neighborCells(portal)).toContain(keepers[0][0]);
-          stationed++;
         }
       }
     }
-    expect(stationed).toBeGreaterThan(0);
-    expect(quiet).toBeGreaterThan(0);
+    expect(street).toBeGreaterThan(0);
   });
 
-  it('keeps porygon out of every wild pool', () => {
+  it('keeps porygon to the town streets', () => {
     for (const biome of Object.keys(BIOME_NAMES).map(Number) as Biome[]) {
       for (const time of [TimeOfDay.Morning, TimeOfDay.Day, TimeOfDay.Evening, TimeOfDay.Night]) {
         const pool = getSpawnPool(biome, time);
@@ -5382,6 +5388,10 @@ describe('portal balancing', () => {
           expect(band.some((entry) => entry.species === Species.Porygon)).toBe(false);
         }
       }
+    }
+    // It stands on the streets instead, at every hour
+    for (const time of [TimeOfDay.Morning, TimeOfDay.Day, TimeOfDay.Evening, TimeOfDay.Night]) {
+      expect(getTownPool(time).base.some((entry) => entry.species === Species.Porygon)).toBe(true);
     }
   });
 });

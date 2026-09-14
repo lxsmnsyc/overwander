@@ -94,21 +94,24 @@ export const PAINT_CELLS = 2;
 export const BORDER_CELLS = 1;
 
 /**
- * How wide a circle of world the picture is fitted around, in board
- * fractions: the same units the ground is measured in, where the whole
- * square runs from 0 to 1. It is the live circle and a rim outside it,
- * which is a framing rather than an edge: the country carries on past
- * the picture, and so does what the player may press
+ * How many cells round the player a phone frames, rather than the whole
+ * live circle: fitted to a few hundred pixels, the full circle left every
+ * cell too small to read or press
  */
-const RIM = (BOARD_RADIUS + BORDER_CELLS) / BOARD_SPAN;
+export const CLOSE_RADIUS = 5.5;
+
+/** The shortest side, in CSS pixels, below which a screen is framed close */
+export const CLOSE_SCREEN = 480;
 
 /**
- * How far from the middle the compass marks stand: past the rim and a
- * cell further. Out where the world is only looked at, on purpose: a
- * mark lying among the cells reads as scenery rather than as which way
- * the board faces
+ * How far from the middle the compass marks stand, in board fractions,
+ * round a framed circle of this many cells: past a rim of `BORDER_CELLS`
+ * and a cell further. Out where the world is only looked at, so a mark
+ * reads as which way the board faces rather than as scenery
  */
-const COMPASS_REACH = RIM + 1 / BOARD_SPAN;
+function compassReach(radius: number): number {
+  return (radius + BORDER_CELLS + 1) / BOARD_SPAN;
+}
 
 /**
  * Room for the mark itself, as a fraction of the picture's width. A
@@ -129,15 +132,6 @@ export function groundRing(reach: number, points: number): GroundPoint[] {
   }
   return ring;
 }
-
-/**
- * Everything that has to be inside the picture: the ring the compass
- * marks stand on, which is the widest thing drawn. A circle rather
- * than four corners, and sampled rather than taken at the axes: laid
- * back under the camera a circle is an ellipse, and its widest point
- * on the screen is not where its widest point on the ground was
- */
-const OUTER: GroundPoint[] = groundRing(COMPASS_REACH, 96);
 
 /**
  * A ground point turned about the middle of the board. The turn is
@@ -197,6 +191,8 @@ export interface BoardView {
    * asked for
    */
   span: number;
+  /** How far from the middle the compass marks stand, in board fractions */
+  compass: number;
   /** How much bigger than the board's middle row things are at a depth */
   scaleAt: (v: number) => number;
   /** The projection: the board's middle at the origin, one unit wide */
@@ -211,10 +207,21 @@ export interface BoardView {
 /**
  * A view of the board. A `focal` of null is no perspective at all,
  * which is what the flat board wants: a cell the same size wherever it
- * sits, rather than one that grows as it comes toward the camera
+ * sits, rather than one that grows as it comes toward the camera. The
+ * `radius` is how many cells round the player the picture is fitted to
  */
-function createView(mode: BoardMode, pitch: number, focal: number | null): BoardView {
+function createView(
+  mode: BoardMode,
+  pitch: number,
+  focal: number | null,
+  radius: number,
+): BoardView {
   const depth = depthOf(pitch);
+  const compass = compassReach(radius);
+  // Everything that has to be inside the picture is the ring the compass
+  // marks stand on, sampled as a circle: laid back, a circle's widest
+  // point on the screen is not where its widest point on the ground was
+  const outer = groundRing(compass, 96);
   const rise = riseOf(pitch);
   /**
    * The perspective factor at a depth: how much bigger or smaller than
@@ -269,7 +276,7 @@ function createView(mode: BoardMode, pitch: number, focal: number | null): Board
   const xs: number[] = [];
   const ys: number[] = [];
 
-  for (const point of OUTER) {
+  for (const point of outer) {
     const corner = raw(point);
 
     xs.push(corner.x);
@@ -311,7 +318,7 @@ function createView(mode: BoardMode, pitch: number, focal: number | null): Board
     const yaw = (step * Math.PI) / 180;
     let worst = 1;
 
-    for (const point of OUTER) {
+    for (const point of outer) {
       const turned = raw(turn(point, yaw));
 
       worst = Math.max(
@@ -328,6 +335,7 @@ function createView(mode: BoardMode, pitch: number, focal: number | null): Board
     depth,
     rise,
     squash: squashOf(pitch),
+    compass,
     aspect: bounds.height / bounds.width,
     span: bounds.width,
     scaleAt,
@@ -340,7 +348,7 @@ function createView(mode: BoardMode, pitch: number, focal: number | null): Board
 }
 
 /** The board laid back under the camera, drawn as a trapezoid */
-const LAID_BACK = createView('3d', PITCH, FOCAL);
+const LAID_BACK = createView('3d', PITCH, FOCAL, BOARD_RADIUS);
 
 /**
  * And the board flat, seen from straight above. It costs the picture
@@ -348,7 +356,11 @@ const LAID_BACK = createView('3d', PITCH, FOCAL);
  * square picture where a portrait screen has the room, and sprites all
  * drawn at one size
  */
-const FLAT = createView('2d', FLAT_PITCH, null);
+const FLAT = createView('2d', FLAT_PITCH, null, BOARD_RADIUS);
+
+/** The same two, framed close for a phone */
+const LAID_BACK_CLOSE = createView('3d', PITCH, FOCAL, CLOSE_RADIUS);
+const FLAT_CLOSE = createView('2d', FLAT_PITCH, null, CLOSE_RADIUS);
 
 /** Whether the player has asked for the flat board on every screen */
 let forcedFlat = false;
@@ -363,12 +375,20 @@ let forcedFlat = false;
  * square one can — and the cells it saves are the far ones, which the
  * tilt had drawn half as deep as the near ones.
  *
+ * A phone-sized screen, either way up, is framed close round the player
+ * so its cells stay large enough to read and press.
+ *
  * A reading of the box alone, bar the player's own choice to have
  * every screen flat, so the browser test can ask it of the box it just
  * measured rather than of whatever the last caller set
  */
 export function viewFor(width: number, height: number): BoardView {
-  return forcedFlat || height > width ? FLAT : LAID_BACK;
+  const flat = forcedFlat || height > width;
+
+  if (Math.min(width, height) < CLOSE_SCREEN) {
+    return flat ? FLAT_CLOSE : LAID_BACK_CLOSE;
+  }
+  return flat ? FLAT : LAID_BACK;
 }
 
 /** Say whether a wide screen is drawn flat too. The painter passes the setting on */
@@ -764,7 +784,7 @@ export function compassMarks(yaw: Yaw = 0): (ProjectedPoint & { north: boolean }
   ] as const) {
     marks.push({
       north,
-      ...projectGround({ u: 0.5 + du * COMPASS_REACH, v: 0.5 + dv * COMPASS_REACH }, yaw),
+      ...projectGround({ u: 0.5 + du * looking.compass, v: 0.5 + dv * looking.compass }, yaw),
     });
   }
   return marks;

@@ -4,6 +4,7 @@ import {
   BOARD_CENTER,
   BOARD_RADIUS,
   BORDER_CELLS,
+  CLOSE_RADIUS,
   PAINT_CELLS,
   PITCH,
   SPRITE_FACINGS,
@@ -193,6 +194,85 @@ describe('the flat board a portrait screen is drawn with', () => {
       expect(projectCell(row * BOARD_CELLS).y).toBeGreaterThan(
         projectCell((row - 1) * BOARD_CELLS).y,
       );
+    }
+  });
+});
+
+describe('the close framing a phone gets', () => {
+  /** A phone either way up, and a screen of the same shape three times the size */
+  const SCREENS: [phone: [number, number], big: [number, number]][] = [
+    [
+      [390, 844],
+      [1170, 2532],
+    ],
+    [
+      [844, 390],
+      [2532, 1170],
+    ],
+  ];
+
+  afterEach(() => {
+    setBoardScreen(1280, 720);
+  });
+
+  /** How wide the middle cell is drawn, as a share of the screen's shorter side */
+  const cellShare = (width: number, height: number): number => {
+    setBoardScreen(width, height);
+
+    const [farLeft, farRight] = projectBoardCellQuad({ x: BOARD_CENTER, y: BOARD_CENTER });
+
+    return ((farRight.x - farLeft.x) * fitPicture(width, height).width) / Math.min(width, height);
+  };
+
+  it('draws each cell larger for its size than a big screen of the same shape', () => {
+    for (const [phone, big] of SCREENS) {
+      expect(cellShare(...phone), phone.join('x')).toBeGreaterThan(cellShare(...big) * 1.5);
+      expect(boardView().mode).toBe(viewFor(...phone).mode);
+    }
+  });
+
+  it('keeps the circle it frames inside the picture however it is turned', () => {
+    const framed: number[] = [];
+
+    for (const cell of boardCells()) {
+      if (reachOf(cell) <= CLOSE_RADIUS) {
+        framed.push(cell.y * BOARD_CELLS + cell.x);
+      }
+    }
+    for (const [phone] of SCREENS) {
+      setBoardScreen(...phone);
+
+      for (let step = 0; step < 24; step++) {
+        const yaw = (step / 24) * 2 * Math.PI;
+
+        for (const index of framed) {
+          for (const corner of projectCellQuad(index, yaw)) {
+            expect(corner.x, `${phone.join('x')} at ${yaw}`).toBeGreaterThanOrEqual(-1e-9);
+            expect(corner.x).toBeLessThanOrEqual(1 + 1e-9);
+            expect(corner.y).toBeGreaterThanOrEqual(-1e-9);
+            expect(corner.y).toBeLessThanOrEqual(1 + 1e-9);
+          }
+        }
+      }
+    }
+  });
+
+  it('still reads every cell back as itself, with the compass out past the framing', () => {
+    for (const [phone] of SCREENS) {
+      setBoardScreen(...phone);
+
+      for (const cell of boardCells()) {
+        const middle = projectBoardCell(cell, 0.4);
+
+        expect(boardCellAtFraction(middle.x, middle.y, 0.4)).toEqual(cell);
+      }
+      for (const mark of compassMarks()) {
+        const under = boardCellAtFraction(mark.x, mark.y);
+
+        expect(mark.x).toBeGreaterThanOrEqual(0);
+        expect(mark.x).toBeLessThanOrEqual(1);
+        expect(under == null || reachOf(under) > CLOSE_RADIUS).toBe(true);
+      }
     }
   });
 });

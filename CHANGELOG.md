@@ -1,5 +1,24 @@
 # overwander
 
+## 3.3.0
+
+### Minor Changes
+
+- 8583a37: - Settings can turn the overworld's grid lines on. They are off by default.
+  - Settings can draw the board flat on wide screens too.
+
+### Patch Changes
+
+- c8e26e7: - A road or route that meets a cliff always cuts a way up it.
+  - The safari heading marks a shadow pokemon, and a species you have caught before.
+- 7ce3f64: The site loads again instead of answering every page with a server error.
+- d6124e3: - Walking into a town shows just its name, and pacing along its edge no longer repeats it.
+  - A change of weather fades in over a few seconds instead of switching at once.
+  - What a cache, patch or tree gave stays over the tile it came from while the player walks away.
+- 5954a14: - The overworld no longer slows down the longer a player walks.
+  - The board frees its graphics when a battle takes over the screen.
+  - Each step and each frame of the board does less work, and moving the pointer within a cell no longer redraws it.
+
 ## 3.2.0
 
 ### Minor Changes

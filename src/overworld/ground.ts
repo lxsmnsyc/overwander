@@ -1,3 +1,4 @@
+import CellMemo from '../core/cell-memo';
 import Biome, { isOpenSea, isWaterBiome } from '../data/ids/biome';
 import { STONE_FREQUENCY, isCaveFloor, isRock, isWaterAt, rockLevel } from './fields';
 import { SQUARES, SURROUNDING } from './grid';
@@ -46,9 +47,6 @@ export function isHillside(world: World, x: number, y: number): boolean {
   return isRock(world, x, y, biome);
 }
 
-/** How many columns of one answer are kept before the lot is dropped */
-const KEPT = 1 << 11;
-
 /**
  * The same rule, remembering what it has answered for each world.
  *
@@ -60,32 +58,23 @@ const KEPT = 1 << 11;
 function remembered(
   read: (world: World, x: number, y: number) => boolean,
 ): (world: World, x: number, y: number) => boolean {
-  const held = new WeakMap<World, Map<number, Map<number, boolean>>>();
+  const held = new WeakMap<World, CellMemo<boolean>>();
 
   return (world, x, y) => {
     let kept = held.get(world);
 
     if (kept == null) {
-      kept = new Map<number, Map<number, boolean>>();
+      kept = new CellMemo<boolean>();
       held.set(world, kept);
     }
-    let column = kept.get(x);
-
-    if (column == null) {
-      if (kept.size >= KEPT) {
-        kept.clear();
-      }
-      column = new Map<number, boolean>();
-      kept.set(x, column);
-    }
-    const known = column.get(y);
+    const known = kept.get(x, y);
 
     if (known != null) {
       return known;
     }
     const answer = read(world, x, y);
 
-    column.set(y, answer);
+    kept.set(x, y, answer);
     return answer;
   };
 }

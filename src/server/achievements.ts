@@ -134,22 +134,21 @@ export async function listUnlockedSprites(player: string): Promise<string[]> {
   const [standings, held] = await Promise.all([readAchievements(player), listAwards(player)]);
   const awards = new Set(held.map((entry) => entry.award));
 
-  return CHARSETS.filter((charset) => {
-    switch (charset.lock.kind) {
-      case 'free':
-        return true;
-      case 'award':
-        return awards.has(charset.lock.award);
-      case 'awards':
-        return charset.lock.awards.every((award) => awards.has(award));
-      default:
-        // The class' own wins rather than the trade's: beating
-        // Kanto's swimmers never dressed anybody as a Johto one
-        return (
-          (standings.variants.get(charset.lock.trainer)?.tier ?? AchievementTier.None) >=
-          AchievementTier.Bronze
-        );
+  return CHARSETS.filter(({ lock }) => {
+    if (lock.kind === 'free') {
+      return true;
     }
+    if (lock.kind === 'award') {
+      return awards.has(lock.award);
+    }
+    if (lock.kind === 'awards') {
+      return lock.awards.every((award) => awards.has(award));
+    }
+    // The class' own wins rather than the trade's: beating
+    // Kanto's swimmers never dressed anybody as a Johto one
+    return (
+      (standings.variants.get(lock.trainer)?.tier ?? AchievementTier.None) >= AchievementTier.Bronze
+    );
   }).map((charset) => charset.sheet);
 }
 

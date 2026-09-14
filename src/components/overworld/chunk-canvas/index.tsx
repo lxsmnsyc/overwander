@@ -1028,6 +1028,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
 
   createEffect(() => {
     let live = true;
+    let scene: BoardScene | null = null;
 
     // The tilesets the ground is drawn from: one pack for every biome
     // rather than a rip apiece, so it is asked for once
@@ -1041,7 +1042,8 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         const surface = stage;
 
         if (surface != null) {
-          setStaged(createBoardScene(surface, pack, BOARD_CELLS));
+          scene = createBoardScene(surface, pack, BOARD_CELLS);
+          setStaged(scene);
           built = null;
         }
       },
@@ -1051,6 +1053,9 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
     );
     onCleanup(() => {
       live = false;
+      // A battle unmounts the board, and a scene left behind keeps its WebGL context
+      setStaged(null);
+      scene?.dispose();
     });
   });
 
@@ -2351,14 +2356,14 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
           if (step != null) {
             const colour = step === 'cliff' ? '#ff0000' : '#00ff00';
 
-            if (batch != null) {
-              batch.solid(colour, outline, 0.45);
-            } else {
+            if (batch == null) {
               traceQuad(outline);
               context.globalAlpha *= 0.45;
               context.fillStyle = colour;
               context.fill();
               context.globalAlpha /= 0.45;
+            } else {
+              batch.solid(colour, outline, 0.45);
             }
           }
         }

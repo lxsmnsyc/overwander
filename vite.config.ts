@@ -66,6 +66,9 @@ export default defineConfig({
     noExternal: ['server-only'],
   },
   test: {
+    // The world tests generate thousands of chunks and sit near 5 seconds alone,
+    // so the default timeout fails them whenever the machine is busy
+    testTimeout: 20_000,
     /**
      * The battle engine and the modules that field it are
      * `client-only`: they are played in a browser and nothing on the

@@ -1,3 +1,4 @@
+import CellMemo from '../core/cell-memo';
 import { SQUARES } from './grid';
 import type World from './world';
 
@@ -32,29 +33,17 @@ export const TERRACE_TOP = TERRACE_STEPS.length;
  * without this. Held against the world rather than beside it, so a
  * world nobody is standing in is collected with its readings
  */
-const READ = new WeakMap<World, Map<number, Map<number, number>>>();
-
-/** How many columns are kept before the lot is dropped */
-const KEPT = 1 << 11;
+const READ = new WeakMap<World, CellMemo<number>>();
 
 /** How high the ground stands at a cell, before the thin parts go */
 function rawLevelAt(world: World, x: number, y: number): number {
   let kept = READ.get(world);
 
   if (kept == null) {
-    kept = new Map<number, Map<number, number>>();
+    kept = new CellMemo<number>();
     READ.set(world, kept);
   }
-  let column = kept.get(x);
-
-  if (column == null) {
-    if (kept.size >= KEPT) {
-      kept.clear();
-    }
-    column = new Map<number, number>();
-    kept.set(x, column);
-  }
-  const known = column.get(y);
+  const known = kept.get(x, y);
 
   if (known != null) {
     return known;
@@ -67,7 +56,7 @@ function rawLevelAt(world: World, x: number, y: number): number {
       level++;
     }
   }
-  column.set(y, level);
+  kept.set(x, y, level);
   return level;
 }
 

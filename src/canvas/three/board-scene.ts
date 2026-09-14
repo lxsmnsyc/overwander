@@ -333,6 +333,8 @@ export default function createBoardScene(
       rock.dispose();
       texture.dispose();
       renderer.dispose();
+      // Browsers cap live contexts, and dispose alone leaves this one held until collected
+      renderer.forceContextLoss();
     },
   };
 }

@@ -176,6 +176,12 @@ class MarkLayer {
   }
 }
 
+/** How many sheets are held before unused ones start being let go */
+const SHEET_LIMIT = 64;
+
+/** How many frames a sheet may go undrawn before it is let go, as the flat batch does */
+const SHEET_PATIENCE = 600;
+
 export default class SceneMarks {
   /** The board's own marks, and the ones on the glass in front of it */
   private readonly board = new MarkLayer(1);
@@ -187,6 +193,9 @@ export default class SceneMarks {
   private named = 0;
   private readonly textures = new Map<string, Texture>();
   private readonly materials = new Map<string, RawShaderMaterial>();
+  /** The frame each sheet was last drawn on, by its texture key */
+  private readonly used = new Map<string, number>();
+  private frame = 0;
   private readonly blank = blankSheet();
   /** How near the viewer whatever is written next lies */
   private near = 0;
@@ -365,8 +374,10 @@ export default class SceneMarks {
 
   /** Hand over whatever has been written, in both layers. */
   end(): void {
+    this.frame += 1;
     this.board.finish((run) => this.materialOf(run));
     this.glazing.finish((run) => this.materialOf(run));
+    this.sweep();
   }
 
   /** Say that a sheet has been drawn into since it was uploaded. */
@@ -390,8 +401,31 @@ export default class SceneMarks {
       held.dispose();
     }
     this.materials.clear();
+    this.used.clear();
     this.board.mesh.geometry.dispose();
     this.glazing.mesh.geometry.dispose();
+  }
+
+  /** Let go of sheets nobody has drawn for a while, with the materials that sample them. */
+  private sweep(): void {
+    if (this.textures.size <= SHEET_LIMIT) {
+      return;
+    }
+    for (const [key, texture] of this.textures) {
+      if (this.frame - (this.used.get(key) ?? 0) <= SHEET_PATIENCE) {
+        continue;
+      }
+      texture.dispose();
+      this.textures.delete(key);
+      this.used.delete(key);
+
+      for (const [name, material] of this.materials) {
+        if (name.startsWith(`${key}|`)) {
+          material.dispose();
+          this.materials.delete(name);
+        }
+      }
+    }
   }
 
   private keyOf(sheet: QuadSheet | null, sampling: QuadSampling): string {
@@ -432,7 +466,10 @@ export default class SceneMarks {
    * the picture's own opacity
    */
   private materialOf(run: Run): RawShaderMaterial {
-    const key = `${this.keyOf(run.sheet, run.sampling)}|${run.blend}`;
+    const sheetKey = this.keyOf(run.sheet, run.sampling);
+    const key = `${sheetKey}|${run.blend}`;
+
+    this.used.set(sheetKey, this.frame);
     const known = this.materials.get(key);
 
     if (known != null) {

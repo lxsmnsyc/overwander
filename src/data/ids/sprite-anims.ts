@@ -17,6 +17,8 @@
  * there is no second table to keep in step, and the sprite scripts run
  * under `node`, which refuses a file that declares an enum
  */
+// The type below shares the name on purpose, so it reads like an enum
+// oxlint-disable-next-line eslint/no-redeclare
 export const SpriteAnim = {
   // The ten every sheet carries, see `COMMON_CAST`
   Idle: 0,

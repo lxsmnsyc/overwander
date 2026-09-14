@@ -88,21 +88,22 @@ export function isPassAt(world: World, x: number, y: number): boolean {
   );
 }
 
-/** Whether a road, a route or a natural pass runs over the cell */
-function isWayAt(world: World, x: number, y: number): boolean {
-  return isRoadAt(world, x, y) || isRouteAt(world, x, y) || isPassAt(world, x, y);
+/** Whether a road or a route runs over the cell, which always cuts its way through a step */
+function isStreetAt(world: World, x: number, y: number): boolean {
+  return isRoadAt(world, x, y) || isRouteAt(world, x, y);
 }
 
 /**
  * Whether something cuts a way through the face here on its own account,
  * before asking what is beside it. Water pours over any step it stands on,
- * since a pool never sits at a dry drop
+ * since a pool never sits at a dry drop, and a road or route is graded through
+ * whatever step it meets
  */
 function cuts(world: World, x: number, y: number): boolean {
-  if (roleAt(world, x, y) === 'water') {
+  if (roleAt(world, x, y) === 'water' || isStreetAt(world, x, y)) {
     return true;
   }
-  return isWayAt(world, x, y) && descends(world, x, y);
+  return isPassAt(world, x, y) && descends(world, x, y);
 }
 
 /**
@@ -126,16 +127,17 @@ export function leadsThrough(world: World, x: number, y: number): boolean {
  * Whether a way through the face runs here.
  *
  * Water on a step is always a fall into more water, so nothing stops
- * whatever swims. A road, a route or a pass is the climb, wherever it
- * leads somewhere
+ * whatever swims. A road or route is always the climb, corners too, so
+ * no street is ever cut by a cliff. A natural pass is the climb wherever
+ * it leads somewhere
  */
 export function isSeam(world: World, x: number, y: number): boolean {
   // Underground every step is a way, corners too: a cliff across a
   // passage reads as a wall the walls already make hard enough
-  if (world.depth === Depth.Cave || roleAt(world, x, y) === 'water') {
+  if (world.depth === Depth.Cave || roleAt(world, x, y) === 'water' || isStreetAt(world, x, y)) {
     return true;
   }
-  return isWayAt(world, x, y) && leadsThrough(world, x, y);
+  return isPassAt(world, x, y) && leadsThrough(world, x, y);
 }
 
 /** Whether the step up here stops a walk. */

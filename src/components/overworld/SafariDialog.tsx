@@ -25,7 +25,8 @@ import playEffect, { Effect } from '../app/sound';
 import InventoryPicker from '../items/InventoryPicker';
 import ItemSprite from '../items/ItemSprite';
 import AnimatedSprite from '../sprites/AnimatedSprite';
-import { SparklesIcon } from '../icons';
+import { FireIcon, SparklesIcon } from '../icons';
+import { getSpeciesDexEntry } from '../../auth/pokedex';
 import { Badge, Button, Dialog, DialogActions, Status } from '../styled';
 import { SpriteAnim } from '../../data/ids/sprite-anims';
 import settings, { setSetting } from '../app/settings';
@@ -155,7 +156,12 @@ export interface SafariDialogProps {
  * reading half stands under the boundary below
  */
 function SafariBody(
-  props: SafariDialogProps & { bag: Resource<InventoryEntry[]>; onSpent: () => void },
+  props: SafariDialogProps & {
+    bag: Resource<InventoryEntry[]>;
+    /** Whether this player has ever owned the species standing there */
+    owned: Resource<boolean>;
+    onSpent: () => void;
+  },
 ): JSX.Element {
   const [status, setStatus] = createSignal<string | null>(null);
   // Whether the bag is open over the three actions. The picker is not
@@ -527,6 +533,15 @@ function SafariBody(
           <SparklesIcon aria-hidden="true" class="size-4 shrink-0" />
           <span class="sr-only">Shiny</span>
         </Show>
+        <Show when={isShadow(encounter)}>
+          <FireIcon aria-hidden="true" class="size-4 shrink-0" />
+          <span class="sr-only">Shadow</span>
+        </Show>
+        {/* Latest rather than read, so the heading never waits on the dex */}
+        <Show when={props.owned.latest === true}>
+          <ItemSprite item={BALL_ITEMS[Balls.PokeBall]} size={16} label="" />
+          <span class="sr-only">Caught before</span>
+        </Show>
         {said}
       </span>
     );
@@ -798,12 +813,18 @@ export default function SafariDialog(props: SafariDialogProps): JSX.Element {
     () => (props.session == null ? null : props.user.uid),
     getInventory,
   );
+  const [owned] = createResource(
+    () =>
+      props.session == null ? null : ([props.user.uid, props.session.encounter.species] as const),
+    async ([uid, species]) => (await getSpeciesDexEntry(uid, species)).owned,
+  );
 
   return (
     <Suspense>
       <SafariBody
         {...props}
         bag={bag}
+        owned={owned}
         onSpent={() => {
           Promise.resolve(refetch()).catch(() => undefined);
         }}

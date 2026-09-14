@@ -316,8 +316,11 @@ export function paintPhenomenon(phenomenon: Phenomenon, now: number): HTMLCanvas
 
   const canvas = held?.canvas ?? document.createElement('canvas');
 
-  canvas.width = PAINTED;
-  canvas.height = PAINTED;
+  // Only when it differs: setting a size reallocates the bitmap even when it is the same
+  if (canvas.width !== PAINTED || canvas.height !== PAINTED) {
+    canvas.width = PAINTED;
+    canvas.height = PAINTED;
+  }
 
   const context = canvas.getContext('2d');
 
@@ -529,8 +532,10 @@ export function paintCellAura(
 
   const canvas = held?.canvas ?? document.createElement('canvas');
 
-  canvas.width = AURA_PAINTED;
-  canvas.height = AURA_PAINTED;
+  if (canvas.width !== AURA_PAINTED || canvas.height !== AURA_PAINTED) {
+    canvas.width = AURA_PAINTED;
+    canvas.height = AURA_PAINTED;
+  }
 
   const context = canvas.getContext('2d');
 
@@ -726,8 +731,10 @@ export function paintSparkle(
 
   const canvas = held?.canvas ?? document.createElement('canvas');
 
-  canvas.width = across;
-  canvas.height = down;
+  if (canvas.width !== across || canvas.height !== down) {
+    canvas.width = across;
+    canvas.height = down;
+  }
 
   const context = canvas.getContext('2d');
 

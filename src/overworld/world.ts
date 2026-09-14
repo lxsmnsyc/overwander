@@ -1,4 +1,5 @@
 import AleaRNG from '../core/alea';
+import LRUMap from '../core/lru-map';
 import { Depth } from './depth';
 import PerlinNoise from '../core/perlin';
 import type Biome from '../data/ids/biome';
@@ -132,6 +133,9 @@ export function clampToWorldCell(value: number): number {
  */
 const BIOME_CACHE_LIMIT = 1 << 20;
 
+/** How many built chunks a world keeps, comfortably more than a board and its windows touch */
+const CHUNKS_KEPT = 64;
+
 export default class World {
   readonly humidity: PerlinNoise;
   readonly elevation: PerlinNoise;
@@ -161,6 +165,11 @@ export default class World {
    * remembered one can never go stale
    */
   private readonly biomes = new Map<number, Biome>();
+  /**
+   * Built chunks, so a step does not work the same landmarks and scenery out
+   * again. Safe because everything a chunk holds is derived and never written
+   */
+  private readonly chunks = new LRUMap<number, Chunk>(CHUNKS_KEPT);
 
   constructor(
     public seed: string,
@@ -295,13 +304,17 @@ export default class World {
   getChunk(chunkX: number, chunkY: number): Chunk {
     const x = clampToWorld(chunkX);
     const y = clampToWorld(chunkY);
-    // The layer is in the seed, so a cave chunk rolls its own
-    // landmarks and its own spawns, and the window rows it publishes
-    // can never be mistaken for the surface's
-    const seed =
-      this.depth === Depth.Cave ? `${this.seed}cave(${x}, ${y})` : `${this.seed}(${x}, ${y})`;
+    const key = (x - WORLD_MIN) * WORLD_SIZE + (y - WORLD_MIN);
 
-    return new Chunk(x, y, seed, this.getChunkBiome(x, y), this);
+    return this.chunks.getOrInsertComputed(key, () => {
+      // The layer is in the seed, so a cave chunk rolls its own
+      // landmarks and its own spawns, and the window rows it publishes
+      // can never be mistaken for the surface's
+      const seed =
+        this.depth === Depth.Cave ? `${this.seed}cave(${x}, ${y})` : `${this.seed}(${x}, ${y})`;
+
+      return new Chunk(x, y, seed, this.getChunkBiome(x, y), this);
+    });
   }
 
   private other: World | null = null;

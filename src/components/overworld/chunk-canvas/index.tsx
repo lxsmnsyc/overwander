@@ -40,7 +40,7 @@ import {
   directionOf,
   litFrame,
 } from '../../../canvas/sprite-sheet';
-import drawSparkle from '../../../canvas/sparkle';
+import drawSparkle, { SPARKLE_LIFE } from '../../../canvas/sparkle';
 import {
   type Cast,
   batchAmbient,
@@ -49,7 +49,7 @@ import {
   paintAmbient,
   paintSkybox,
 } from '../../../canvas/daylight';
-import type Weather from '../../../data/overworld/weather';
+import Weather from '../../../data/overworld/weather';
 import pixelRatio from '../../../canvas/ratio';
 import paintSky, {
   CAVERN,
@@ -105,7 +105,9 @@ import {
   CELL,
   CELL_STRIDE,
   COLORS,
+  DRAW_PACE,
   HOVER_GLOW,
+  IDLE_PACE,
   LOADING_LABEL,
   LOADING_SIZE,
   MARK_WEIGHT,
@@ -447,6 +449,16 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
    */
   let clock = 0;
 
+  /**
+   * Whether the last picture had something moving on its own in it, and
+   * whether anything worth drawing has changed since. Between the two the
+   * loop skips frames that would only repeat the last one
+   */
+  let animating = true;
+  let dirty = true;
+  /** The bushes last drawn and the frame each showed, since their frames run on the clock */
+  const plantsShown: { plant: OWPlantSprite; phase: number; frame: number }[] = [];
+
   /** The weather giving way and the one taking over, with when on `clock` it began */
   const skies = { from: props.weather, to: props.weather, since: -WEATHER_FADE };
 
@@ -580,6 +592,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
     const arriving = loadSpeciesSprite(coat.species, { shiny: coat.shiny })
       .then((loaded) => {
         sprites.set(key, loaded);
+        dirty = true;
       })
       .catch(() => {
         // The dot it always was
@@ -652,6 +665,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         } else {
           people.set(sheet, loaded);
           missedAt.delete(sheet);
+          dirty = true;
         }
       })
       .catch(() => {
@@ -734,6 +748,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         } else {
           plants.set(sheet, loaded);
           missedAt.delete(sheet);
+          dirty = true;
         }
       })
       .catch(() => {
@@ -803,6 +818,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         } else {
           scenery.set(sheet, loaded);
           missedAt.delete(sheet);
+          dirty = true;
         }
       })
       .catch(() => {
@@ -1030,6 +1046,28 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
   /** The window the scene was last built for, so it is rebuilt on a step */
   let built: string | null = null;
 
+  /**
+   * The squares on screen with their outlines, far to near, kept between
+   * frames: they only move when the camera, the screen or the ground does
+   */
+  let projected: {
+    key: string;
+    ground: BoardGround;
+    drawn: { square: BoardCell; outline: ProjectedPoint[]; lift: number; depth: number }[];
+    lifted: Set<number>;
+  } | null = null;
+  /** The standing pass's cells in paint order, kept while nothing on the board changes */
+  let standOrder: {
+    yaw: number;
+    projected: object;
+    ground: BoardGround;
+    landmarks: Map<number, Landmark>;
+    decorations: Map<number, Decoration>;
+    spawns: Map<number, SpawnCoat>;
+    phenomena: Map<number, Phenomenon>;
+    order: number[];
+  } | null = null;
+
   createEffect(() => {
     let live = true;
     let scene: BoardScene | null = null;
@@ -1158,7 +1196,10 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         settle();
       });
   });
-  const [hovered, setHovered] = createSignal<BoardCell | null>(null);
+  // Compared by cell, since the pointer hands a new object on every move and each change redraws
+  const [hovered, setHovered] = createSignal<BoardCell | null>(null, {
+    equals: (was, now) => was?.x === now?.x && was?.y === now?.y,
+  });
   /**
    * How big the canvas is on screen, in CSS pixels. The picture is
    * fitted into it, so this is what decides how large the board is
@@ -1481,6 +1522,8 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
     const lamps: Lamp[] = [];
     /** What the batch holds of it, so a newly baked piece re-uploads */
     let baked = -1;
+    /** Whether the layer has been emptied down to a pixel under the scene */
+    let layerIdle = false;
 
     drawing.addEventListener('webglcontextlost', (event) => {
       // Refused, because the default is that the context never comes
@@ -1490,6 +1533,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
     });
     drawing.addEventListener('webglcontextrestored', () => {
       layerBatch = QuadBatch.create(drawing);
+      layerIdle = false;
     });
     onCleanup(() => {
       layerBatch?.dispose();
@@ -1625,6 +1669,10 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
      * here. It stops with the component
      */
     let last = 0;
+    /** When the picture was last redrawn, on the frame clock */
+    let drewAt = 0;
+    /** Whether the player was still sliding last tick */
+    let sliding = false;
     let frame = requestAnimationFrame(function step(now: number): void {
       frame = requestAnimationFrame(step);
 
@@ -1637,7 +1685,23 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       // walking every playhead in it means paying for every chunk
       // ever visited on every frame of the one in front
       for (const key of drawnCoats()) {
-        sprites.get(key)?.update(elapsed);
+        const sprite = sprites.get(key);
+
+        if (sprite == null) {
+          continue;
+        }
+        const before = sprite.frame;
+
+        sprite.update(elapsed);
+        // An idle pokemon on a new frame is a picture worth drawing
+        if (sprite.frame !== before) {
+          dirty = true;
+        }
+      }
+      for (const shown of plantsShown) {
+        if (shown.plant.frameAt(clock, shown.phase) !== shown.frame) {
+          dirty = true;
+        }
       }
 
       // And the climb, at the same pace: a step onto a terrace is one
@@ -1649,6 +1713,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         const gain = Math.min(Math.abs(climb), (elapsed / SLIDE_PACE) * TERRACE_LIFT);
 
         underfoot.at += Math.sign(climb) * gain;
+        dirty = true;
       }
 
       // The player's slide toward wherever the tab says they are, and
@@ -1658,6 +1723,13 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       const dx = goalX - slide.x;
       const dy = goalY - slide.y;
       const span = Math.hypot(dx, dy);
+      const facing = heading;
+
+      // The tick a slide ends is drawn too, or the player holds a stride
+      if (span > 0 || sliding) {
+        dirty = true;
+      }
+      sliding = span > 0;
 
       if (span > SNAP_CELLS) {
         slide.x = goalX;
@@ -1678,7 +1750,19 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         heading = facingToward(0, 0, props.facing[0], props.facing[1]);
         walker?.stop();
       }
-      setBeat((count) => count + 1);
+      if (heading !== facing) {
+        dirty = true;
+      }
+      // Everything above keeps time every tick, but a 120 Hz screen redraws
+      // only every other one. Half a tick of slack keeps a 60 Hz screen on every one.
+      // A picture with nothing moving is only redrawn at the slow pace, for the hour's light
+      const due = dirty || animating ? DRAW_PACE : IDLE_PACE;
+
+      if (now - drewAt + elapsed / 2 >= due) {
+        drewAt = now;
+        dirty = false;
+        setBeat((count) => count + 1);
+      }
     });
 
     onCleanup(() => {
@@ -1691,6 +1775,9 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       // Read so the picture redraws with the animations, not only when
       // something about the chunk changes
       beat();
+      // Worked out afresh by whatever this picture draws that moves on its own
+      animating = false;
+      plantsShown.length = 0;
 
       /** The scene, where there is terrain art to build one from */
       const show = staged();
@@ -1779,10 +1866,14 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         { x: 0, y: screen.height },
       ];
 
-      if (marks != null) {
-        // Nothing of the old layer is left showing under the scene
-        layerBatch?.begin(screen.width, screen.height, ratio);
+      if (marks == null) {
+        layerIdle = false;
+      } else if (!layerIdle) {
+        // Nothing of the old layer is left showing under the scene, and one
+        // clear pixel is all it keeps rather than a screen composited for nothing
+        layerBatch?.begin(1, 1, 1);
         layerBatch?.end();
+        layerIdle = layerBatch != null;
       }
       if (batch != null) {
         batch.begin(screen.width, screen.height, ratio);
@@ -1978,34 +2069,56 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
        * the grid is ruled round the same ones, so a square is put
        * through the projection once rather than once a pass
        */
-      /** The cells standing above the ground, which carry a wall */
-      const lifted = new Set<number>();
+      const [cameraX, cameraY] = camera();
+      // Everything the projection reads, so a frame where none of it moved reuses the last one
+      const frameKey = [
+        cameraX,
+        cameraY,
+        yaw(),
+        screen.width,
+        screen.height,
+        placed.x,
+        placed.y,
+        placed.width,
+        placed.height,
+        laidBack ? underfoot.at : 0,
+      ].join(',');
 
-      const drawn: { square: BoardCell; outline: ProjectedPoint[]; lift: number }[] = [];
+      const project = (): NonNullable<typeof projected> => {
+        /** The cells standing above the ground, which carry a wall */
+        const raised = new Set<number>();
+        const squares: NonNullable<typeof projected>['drawn'] = [];
 
-      for (const square of painted) {
-        const lift = liftOf(square);
-        const outline = projectBoardCellQuad(shifted(square), yaw(), lift).map(at);
+        for (const square of painted) {
+          const lift = liftOf(square);
+          const spot = { x: square.x + cameraX, y: square.y + cameraY };
+          const outline = projectBoardCellQuad(spot, yaw(), lift).map(at);
 
-        if (onScreen(outline)) {
-          drawn.push({ square, outline, lift });
-        }
-      }
-      // Far to near by where the **ground** lies, not by where the
-      // lifted quad landed: a cell raised two steps is drawn higher up
-      // the picture, and sorted by that it would fall behind the flat
-      // ground in front of it and be painted over
-      const depthOf = (square: BoardCell): number => projectBoardCell(shifted(square), yaw()).y;
-
-      drawn.sort((one, other) => depthOf(one.square) - depthOf(other.square));
-
-      if (laidBack) {
-        for (const { square } of drawn) {
-          if (ground.level(square.x, square.y) > 0) {
-            lifted.add(square.y * BOARD_CELLS + square.x);
+          if (onScreen(outline)) {
+            // Far to near by where the **ground** lies, not by where the
+            // lifted quad landed: a cell raised two steps is drawn higher up
+            // the picture, and sorted by that it would fall behind the flat
+            // ground in front of it and be painted over
+            squares.push({ square, outline, lift, depth: projectBoardCell(spot, yaw()).y });
           }
         }
-      }
+        squares.sort((one, other) => one.depth - other.depth);
+
+        if (laidBack) {
+          for (const { square } of squares) {
+            if (ground.level(square.x, square.y) > 0) {
+              raised.add(square.y * BOARD_CELLS + square.x);
+            }
+          }
+        }
+        return { key: frameKey, ground, drawn: squares, lifted: raised };
+      };
+      const kept =
+        projected?.key === frameKey && projected.ground === ground ? projected : project();
+
+      projected = kept;
+
+      const { drawn, lifted } = kept;
 
       /**
        * The ground, in one pass of its own before anything is ruled
@@ -2311,6 +2424,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         if (aura == null) {
           return;
         }
+        animating = true;
         const squash = shadowSquash();
         const picture = batch == null ? null : paintCellAura(aura, part, clock, squash);
 
@@ -2416,6 +2530,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
           // everything else that is going on is drawn here
           if (showing !== Phenomenon.HiddenGrotto) {
             const middle = at(groundPoint(index));
+            animating = true;
             const picture = batch == null ? null : paintPhenomenon(showing, clock);
             let drew = false;
 
@@ -2515,6 +2630,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         if (!standing.featured) {
           continue;
         }
+        animating = true;
         // Several rings in the air at once, evenly apart, so the cell
         // is never without one and never has only a spent one
         for (let ring = 0; ring < RIPPLE_RINGS; ring++) {
@@ -2650,30 +2766,51 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
        * squares wide now, and asking every one of them what is on it
        * is a thousand lookups a frame to be told about grass
        */
-      const blocked: number[] = [];
+      if (
+        standOrder?.yaw !== yaw() ||
+        standOrder.projected !== kept ||
+        standOrder.ground !== ground ||
+        standOrder.landmarks !== props.landmarks ||
+        standOrder.decorations !== props.decorations ||
+        standOrder.spawns !== props.spawns ||
+        standOrder.phenomena !== props.phenomena
+      ) {
+        const blocked: number[] = [];
 
-      for (let y = 0; y < BOARD_CELLS; y += 1) {
-        for (let x = 0; x < BOARD_CELLS; x += 1) {
-          if (ground.role(x, y) === 'wall') {
-            blocked.push(y * BOARD_CELLS + x);
+        for (let y = 0; y < BOARD_CELLS; y += 1) {
+          for (let x = 0; x < BOARD_CELLS; x += 1) {
+            if (ground.role(x, y) === 'wall') {
+              blocked.push(y * BOARD_CELLS + x);
+            }
           }
         }
-      }
-      // Every cell with a wall under its edge joins the depth-ordered
-      // pass: a wall has to be able to hide whatever stands behind it,
-      // which the ground, being flat, never does
-      const walled = [...lifted];
-      const occupied = [
-        playerCell,
-        ...props.landmarks.keys(),
-        ...props.decorations.keys(),
-        ...walled,
-        ...blocked,
-        ...props.spawns.keys(),
-        ...props.phenomena.keys(),
-      ].filter((index) => reachOf(boardCellOf(index)) <= VIEW_RADIUS);
+        // Every cell with a wall under its edge joins the depth-ordered
+        // pass: a wall has to be able to hide whatever stands behind it,
+        // which the ground, being flat, never does
+        const walled = [...lifted];
+        const occupied = [
+          playerCell,
+          ...props.landmarks.keys(),
+          ...props.decorations.keys(),
+          ...walled,
+          ...blocked,
+          ...props.spawns.keys(),
+          ...props.phenomena.keys(),
+        ].filter((index) => reachOf(boardCellOf(index)) <= VIEW_RADIUS);
 
-      for (const index of depthOrder(occupied, yaw())) {
+        standOrder = {
+          yaw: yaw(),
+          projected: kept,
+          ground,
+          landmarks: props.landmarks,
+          decorations: props.decorations,
+          spawns: props.spawns,
+          phenomena: props.phenomena,
+          order: depthOrder(occupied, yaw()),
+        };
+      }
+
+      for (const index of standOrder.order) {
         const cell = boardCellOf(index);
         const middle = at(groundPoint(index));
         const drawnAt = shifted(cell);
@@ -2746,6 +2883,12 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
           } as const;
 
           const grown = plant.quadOf(middle.x, middle.y, growing);
+
+          plantsShown.push({
+            plant,
+            phase: growing.phase,
+            frame: plant.frameAt(clock, growing.phase),
+          });
           const alpha = veil(index, Standing.Plant, grown);
 
           if (!place(grown, alpha)) {
@@ -2914,12 +3057,18 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
                 announced = true;
               }
               const age = clock - (sparkles.get(standing.id) ?? clock);
-              const glint =
-                batch == null ? null : paintSparkle(standing.id, seed, age, sprite.sourceFrameSize);
+              // A spent sparkle draws nothing, so it is neither painted nor uploaded again
+              const spent = age > SPARKLE_LIFE;
 
-              if (batch == null || glint == null) {
+              animating ||= !spent;
+              const glint =
+                batch == null || spent
+                  ? null
+                  : paintSparkle(standing.id, seed, age, sprite.sourceFrameSize);
+
+              if (!spent && (batch == null || glint == null)) {
                 drawSparkle(context, seed, age, middle.x, middle.y, sprite.sourceFrameSize, scale);
-              } else {
+              } else if (batch != null && glint != null) {
                 // Painted in the sheet's own pixels around the point
                 // the pokemon stands on, so it is stamped over the box
                 // the pokemon fills, grown by the room the stars need
@@ -3036,6 +3185,11 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       }
       const risen = Math.min(1, (clock - skies.since) / WEATHER_FADE);
 
+      // Anything but a clear sky falls, flashes or drifts, and a fade is moving by definition
+      if (!props.underground && (risen < 1 || skies.to !== Weather.Clear)) {
+        animating = true;
+      }
+
       if (batch == null) {
         paintAmbient(context, screen.width, screen.height, worldTime(), props.latitude);
         if (props.underground) {
@@ -3109,10 +3263,17 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         }
       }
 
+      // A veil still easing in or out is drawn again next frame
+      if (veils.size > 0) {
+        animating = true;
+      }
       // Nothing else goes on the picture, so it is handed over here:
       // the ground, the world standing on it, the hour's light, the
       // sky and the compass, in one call
-      batch?.end();
+      // The scene finishes its own marks as it renders, so ending them here too built them twice
+      if (show == null) {
+        batch?.end();
+      }
       show?.draw();
 
       // Nothing else is written on the board. The chunk used to caption

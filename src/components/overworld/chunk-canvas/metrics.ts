@@ -125,6 +125,12 @@ export const PLAYER_SHEET = 'characters/frlg/red';
  */
 export const SLIDE_PACE = 250;
 
+/** The shortest gap between two redraws, in milliseconds: nothing on the board wants more than 60 a second */
+export const DRAW_PACE = 1000 / 60;
+
+/** How often a picture with nothing moving in it is redrawn anyway, for the hour's light, in milliseconds */
+export const IDLE_PACE = 500;
+
 /**
  * How far the slide moves this frame, in cells, with `span` still to
  * cover and `elapsed` milliseconds gone.

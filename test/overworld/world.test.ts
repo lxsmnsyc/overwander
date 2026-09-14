@@ -4888,12 +4888,18 @@ describe('terrain spots', () => {
         const lower = ([dx, dy]: [number, number]): boolean =>
           levelAt(world, x + dx, y + dy) < here;
 
-        if (roleAt(world, x, y) === 'water' || ORTHOGONAL.some(lower) || !SURROUNDING.some(lower)) {
+        if (
+          roleAt(world, x, y) === 'water' ||
+          isRoadAt(world, x, y) ||
+          isRouteAt(world, x, y) ||
+          ORTHOGONAL.some(lower) ||
+          !SURROUNDING.some(lower)
+        ) {
           continue;
         }
         // Lower ground only across a diagonal is where the ring's inside
         // corner is drawn, and that tile is as much the cliff as a side.
-        // No seam opens it, since a walk never steps across a diagonal
+        // No pass opens it, since a walk never steps across a diagonal
         corners += 1;
         expect(isSeam(world, x, y), `${x},${y}`).toBe(false);
         expect(blocksWalk(world, x, y), `${x},${y}`).toBe(true);
@@ -4902,17 +4908,17 @@ describe('terrain spots', () => {
     expect(corners).toBeGreaterThan(0);
   });
 
-  it('opens a corner of a cliff only where every face beside it opens too', () => {
+  it('opens a corner of a pass only where every face beside it opens too', () => {
     const world = new World('overworld');
     const descends = (x: number, y: number): boolean =>
       ORTHOGONAL.some(([dx, dy]) => levelAt(world, x + dx, y + dy) < levelAt(world, x, y));
-    const way = (x: number, y: number): boolean =>
-      isRoadAt(world, x, y) || isRouteAt(world, x, y) || isPassAt(world, x, y);
+    const street = (x: number, y: number): boolean =>
+      isRoadAt(world, x, y) || isRouteAt(world, x, y);
     let corners = 0;
 
     for (let y = -200; y <= 200; y += 1) {
       for (let x = -200; x <= 200; x += 1) {
-        if (roleAt(world, x, y) === 'water' || !descends(x, y)) {
+        if (roleAt(world, x, y) === 'water' || street(x, y) || !descends(x, y)) {
           continue;
         }
         const faces = ORTHOGONAL.filter(([dx, dy]) => isFace(world, x + dx, y + dy));
@@ -4920,19 +4926,37 @@ describe('terrain spots', () => {
         if (!faces.some(([ax, ay]) => faces.some(([bx, by]) => ax * bx + ay * by === 0))) {
           continue;
         }
-        // Where the faces turn, a way through reaches the high ground only
-        // by way of the faces beside it, so every one of them has to open
+        // Where the faces turn, a pass reaches the high ground only by way
+        // of the faces beside it, so every one of them has to open
         corners += 1;
         const joined = faces.every(
           ([dx, dy]) =>
             roleAt(world, x + dx, y + dy) === 'water' ||
-            (way(x + dx, y + dy) && descends(x + dx, y + dy)),
+            street(x + dx, y + dy) ||
+            (isPassAt(world, x + dx, y + dy) && descends(x + dx, y + dy)),
         );
 
-        expect(isSeam(world, x, y), `${x},${y}`).toBe(way(x, y) && joined);
+        expect(isSeam(world, x, y), `${x},${y}`).toBe(isPassAt(world, x, y) && joined);
       }
     }
     expect(corners).toBeGreaterThan(0);
+  });
+
+  it('never cuts a road or a route with a cliff', () => {
+    const world = new World('overworld');
+    let graded = 0;
+
+    for (let y = -200; y <= 200; y += 1) {
+      for (let x = -200; x <= 200; x += 1) {
+        if (!isFace(world, x, y) || (!isRoadAt(world, x, y) && !isRouteAt(world, x, y))) {
+          continue;
+        }
+        // Corners and diagonal-only faces too: a street is graded through any step
+        graded += 1;
+        expect(blocksWalk(world, x, y), `${x},${y}`).toBe(false);
+      }
+    }
+    expect(graded).toBeGreaterThan(0);
   });
 
   it('rolls no landmark onto a route', () => {

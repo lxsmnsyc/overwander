@@ -19,7 +19,8 @@ import { DEFAULT_CHARSET } from '../../../data/overworld/charsets';
 import { watchProfile } from '../../../auth/profile';
 import { type EggWalk, walk } from '../../../auth/eggs';
 import type { EncounterRecord } from '../../../auth/encounter-record';
-import { getLocalOffset } from '../../../auth/local-time';
+import { getLocalOffset, toLocalTime } from '../../../auth/local-time';
+import { serverNow } from '../../../auth/clock';
 import { RaidKind, type RaidView, canJoinRaids, peekRaid } from '../../../auth/raids';
 import { type StopRecord, stopIdOf } from '../../../auth/stop-record';
 import { claimStopReward, enterStop } from '../../../auth/stops';
@@ -41,8 +42,8 @@ import {
 } from '../../../auth/snapshots';
 import type { PlayerIdentity } from '../../../auth/user';
 import { type BoardCell, boardIndexOf } from '../../../canvas/board';
-import { latitudeOf } from '../../../canvas/daylight';
-import { BIOME_COLORS } from '../../../data/biome';
+import { getSkybox, latitudeOf } from '../../../canvas/daylight';
+import { CAVERN } from '../../../canvas/sky';
 import { DECORATION_NAMES } from '../../../data/overworld/decoration';
 import {
   CHAMPION_NAMES,
@@ -2087,7 +2088,14 @@ export default function OverworldBoard(props: {
                 page's */}
             <div
               class="absolute inset-0 transition-colors"
-              style={{ 'background-color': BIOME_COLORS[loaded().biome] }}
+              style={{
+                'background-color': loaded().underground
+                  ? CAVERN.colour
+                  : getSkybox(
+                      toLocalTime(serverNow(), getLocalOffset()),
+                      latitudeOf(loaded().chunkY),
+                    ).horizon,
+              }}
             >
               <ChunkCanvas
                 biome={loaded().biome}

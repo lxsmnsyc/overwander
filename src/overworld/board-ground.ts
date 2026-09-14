@@ -3,6 +3,7 @@ import { isFace, isSeam } from './cliff';
 import { type GroundRole, isShelfAt, readGround, roleAt } from './ground';
 import { isRouteAt } from './route';
 import { levelAt } from './terrace';
+import { Depth } from './depth';
 import { isPlotAt, isRoadAt, isTownAt } from './town';
 import type World from './world';
 
@@ -52,6 +53,11 @@ export interface BoardGround {
    * than as a wall, so a step a player can climb looks like one
    */
   seam: (x: number, y: number) => boolean;
+  /**
+   * Whether nothing is drawn here but a cliff and the ground under it.
+   * A cave's rock stands a level above its floor and shows its face
+   */
+  bare?: (x: number, y: number) => boolean;
   /** Dev overlay only: a face nobody passes, a face with a way through, or neither. Read on demand */
   step?: (x: number, y: number) => 'cliff' | 'seam' | null;
 }
@@ -78,6 +84,10 @@ export function readBoardGround(
   const towns = new Uint8Array(span * span);
   const seams = new Uint8Array(span * span);
   const levels = new Uint8Array(span * span);
+  const cave = world.depth === Depth.Cave;
+  // Underground the rock is a raised block rather than a wall of trees
+  const rockAt = (x: number, y: number): boolean =>
+    cave && roleAt(world, originX + x, originY + y) === 'wall';
   const inside = (x: number, y: number): boolean =>
     x >= -margin && y >= -margin && x < cells + margin && y < cells + margin;
   const key = (x: number, y: number): number => (y + margin) * span + (x + margin);
@@ -94,8 +104,11 @@ export function readBoardGround(
           : 0;
       routes[key(x, y)] = isRouteAt(world, originX + x, originY + y) ? 1 : 0;
       towns[key(x, y)] = isTownAt(world, originX + x, originY + y) ? 1 : 0;
-      seams[key(x, y)] = role !== 'water' && isSeam(world, originX + x, originY + y) ? 1 : 0;
-      levels[key(x, y)] = levelAt(world, originX + x, originY + y);
+      const rock = cave && role === 'wall';
+
+      seams[key(x, y)] =
+        role !== 'water' && !rock && isSeam(world, originX + x, originY + y) ? 1 : 0;
+      levels[key(x, y)] = levelAt(world, originX + x, originY + y) + (rock ? 1 : 0);
     }
   }
   for (let y = -margin; y < cells + margin; y++) {
@@ -124,14 +137,21 @@ export function readBoardGround(
       inside(x, y) ? routes[key(x, y)] === 1 : isRouteAt(world, originX + x, originY + y),
     town: (x, y) =>
       inside(x, y) ? towns[key(x, y)] === 1 : isTownAt(world, originX + x, originY + y),
-    level: (x, y) => (inside(x, y) ? levels[key(x, y)] : levelAt(world, originX + x, originY + y)),
+    level: (x, y) =>
+      inside(x, y)
+        ? levels[key(x, y)]
+        : levelAt(world, originX + x, originY + y) + (rockAt(x, y) ? 1 : 0),
+    bare: (x, y) =>
+      inside(x, y) ? cave && roles[key(x, y)] === ROLE_ORDER.indexOf('wall') : rockAt(x, y),
     seam: (x, y) =>
       inside(x, y)
         ? seams[key(x, y)] === 1
         : roleAt(world, originX + x, originY + y) !== 'water' &&
+          !rockAt(x, y) &&
           isSeam(world, originX + x, originY + y),
     step: (x, y) => {
-      if (!isFace(world, originX + x, originY + y)) {
+      // Cave rock is a wall rather than a step, whatever its terrace level says
+      if (rockAt(x, y) || !isFace(world, originX + x, originY + y)) {
         return null;
       }
       return isSeam(world, originX + x, originY + y) ? 'seam' : 'cliff';

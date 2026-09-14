@@ -3,6 +3,7 @@ import Landmark from '../../src/data/overworld/landmark';
 import { isOpenSea } from '../../src/data/ids/biome';
 import caveMouth, { caveMouthCellIn, nearestMouth, throughMouth } from '../../src/overworld/cave';
 import { MOUTH_SEARCH } from '../../src/data/overworld/cave';
+import { blocksWalk, isFace } from '../../src/overworld/cliff';
 import { CHUNK_CELLS, worldCell } from '../../src/overworld/grid';
 import { isHillside, roleAt } from '../../src/overworld/ground';
 import World, { Depth } from '../../src/overworld/world';
@@ -159,6 +160,24 @@ describe('the caves', () => {
     // chambers on their own reach 195 cells and go nowhere; the veins
     // take the biggest to about 1,500 here
     expect(biggest).toBeGreaterThan(800);
+  });
+
+  it('climbs every step', () => {
+    const cave = new World('overworld').at(Depth.Cave);
+    let steps = 0;
+
+    // Underground there are no passes to look for, and no corner is
+    // left standing across a passage as a cliff
+    for (let y = 3600; y < 3900; y++) {
+      for (let x = -3000; x < -2700; x++) {
+        if (roleAt(cave, x, y) !== 'ground' || !isFace(cave, x, y)) {
+          continue;
+        }
+        steps++;
+        expect(blocksWalk(cave, x, y), `${x}, ${y}`).toBe(false);
+      }
+    }
+    expect(steps).toBeGreaterThan(0);
   });
 
   it('never runs a passage under the shore', () => {

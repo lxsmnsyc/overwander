@@ -13,7 +13,10 @@ import { findPathNear } from '../../overworld/path';
 import { BOARD_MARGIN } from '../overworld/overworld-tab/metrics';
 import World from '../../overworld/world';
 import { WORLD_SEED } from '../../overworld/current';
-import { CHUNK_CELLS, chunkOfCell } from '../../overworld/chunk';
+import { CHUNK_CELLS, chunkOfCell, worldCell } from '../../overworld/chunk';
+import { Depth } from '../../overworld/depth';
+import { nearestMouth } from '../../overworld/cave';
+import { CAVE_DARK_CELLS } from '../../data/overworld/cave';
 import { type BoardGround, readBoardGround } from '../../overworld/board-ground';
 import { readGround } from '../../overworld/ground';
 import { isRouteAt, routesNear } from '../../overworld/route';
@@ -278,6 +281,9 @@ export default function BoardDemo(): JSX.Element {
   const [wanted, setWanted] = createSignal<Biome>(BiomeId.TemperateForest);
   const [weather, setWeather] = createSignal<Weather>(Weather.Clear);
   const [seed, setSeed] = createSignal(WORLD_SEED);
+  const [depth, setDepth] = createSignal<Depth>(Depth.Surface);
+  /** Whether the caves are drawn dark, the way the game draws them */
+  const [dark, setDark] = createSignal(false);
   const [yaw, setYaw] = createSignal(0);
   const [at, setAt] = createSignal<[number, number]>(START);
   const [facing, setFacing] = createSignal<[number, number]>([0, 1]);
@@ -292,7 +298,9 @@ export default function BoardDemo(): JSX.Element {
   const shape = (): (typeof FRAMES)[number] => FRAMES[frame()];
   const mode = (): string => viewFor(shape().width, shape().height).mode;
   /** The world itself, rebuilt only when another one is asked for */
-  const world = createMemo(() => new World(seed()));
+  const surface = createMemo(() => new World(seed()));
+  /** The same world at the layer in hand: a cave is the ground one layer down */
+  const world = (): World => surface().at(depth());
   const origin = (): [number, number] => [at()[0] - BOARD_CENTER, at()[1] - BOARD_CENTER];
   /**
    * The country under the window, read the way the overworld tab reads
@@ -310,13 +318,44 @@ export default function BoardDemo(): JSX.Element {
   });
   const biome = (): Biome => world().getCellBiome(at()[0], at()[1]);
 
-  /** Stand where the nearest country of this kind is, if there is one */
-  const goTo = (kind: Biome): void => {
-    const found =
-      findCountry(world(), kind, START, true) ?? findCountry(world(), kind, START, false) ?? START;
+  /**
+   * The nearest mouth's cell on one side of it. A cave is only ever
+   * entered through a mouth, so underground the board lands on one
+   * rather than inside solid rock
+   */
+  const throughNearest = (spot: [number, number], side: Depth): [number, number] => {
+    const found = nearestMouth(surface(), chunkOfCell(spot[0]), chunkOfCell(spot[1]));
 
+    if (found == null) {
+      return spot;
+    }
+
+    const cell = side === Depth.Cave ? found.mouth.cave : found.mouth.surface;
+
+    return [
+      worldCell(found.chunkX, cell % CHUNK_CELLS),
+      worldCell(found.chunkY, Math.floor(cell / CHUNK_CELLS)),
+    ];
+  };
+
+  /** Stand somewhere, at the layer in hand */
+  const land = (spot: [number, number]): void => {
+    const found = depth() === Depth.Cave ? throughNearest(spot, Depth.Cave) : spot;
+
+    setQueued([]);
     setAt(found);
     setSpawns(standing(world(), found));
+  };
+
+  /** Stand where the nearest country of this kind is, if there is one */
+  const goTo = (kind: Biome): void => {
+    // The country is read off the surface: underground is the same
+    // place, and the cave is found through the nearest mouth to it
+    land(
+      findCountry(surface(), kind, START, true) ??
+        findCountry(surface(), kind, START, false) ??
+        START,
+    );
   };
 
   /**
@@ -450,6 +489,30 @@ export default function BoardDemo(): JSX.Element {
             setWeather(chosen);
           }}
         />
+        <Select
+          label="Layer"
+          class="w-56"
+          value={depth()}
+          options={[
+            { value: Depth.Surface, label: 'Surface' },
+            { value: Depth.Cave, label: 'Caves' },
+          ]}
+          onChange={(chosen) => {
+            const going = chosen === Depth.Cave ? Depth.Cave : Depth.Surface;
+
+            if (going === depth()) {
+              return;
+            }
+            // Through the nearest mouth either way, the way a player
+            // crosses between the layers
+            const spot = throughNearest(at(), going);
+
+            setDepth(going);
+            setQueued([]);
+            setAt(spot);
+            setSpawns(standing(world(), spot));
+          }}
+        />
       </div>
 
       <Row>
@@ -458,6 +521,16 @@ export default function BoardDemo(): JSX.Element {
           {shape().width} x {shape().height}
         </Badge>
         <Badge tone="leaf">{BIOME_NAMES[biome()]}</Badge>
+        <Badge tone={depth() === Depth.Cave ? 'ember' : 'neutral'}>
+          {depth() === Depth.Cave ? 'caves' : 'surface'}
+        </Badge>
+        <Button
+          onClick={() => {
+            setDark((was) => !was);
+          }}
+        >
+          {dark() ? 'Light the caves' : 'Darken the caves'}
+        </Button>
         <Badge tone="neutral">
           {at()[0]}, {at()[1]}
         </Badge>
@@ -493,7 +566,7 @@ export default function BoardDemo(): JSX.Element {
         the face of a cliff stop them the way they do in the game. A screen taller than it is wide
         is drawn flat from above, with the round shadow the board uses at night and the weather
         against the glass; anything wider is laid back under the camera. Drag the ground to walk the
-        camera round.
+        camera round. The Layer switch goes down through the nearest cave mouth, or back up.
       </Note>
 
       {/* The board takes the whole of whatever it is put in, so the
@@ -506,8 +579,9 @@ export default function BoardDemo(): JSX.Element {
         <ChunkCanvas
           biome={biome()}
           weather={weather()}
-          lamp={LAMP}
-          underground={false}
+          lamp={depth() === Depth.Cave ? CAVE_DARK_CELLS : LAMP}
+          underground={depth() === Depth.Cave}
+          lit={!dark()}
           yaw={yaw()}
           onTurn={(turned) => {
             setYaw(turned);

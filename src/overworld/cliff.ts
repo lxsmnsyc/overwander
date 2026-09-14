@@ -1,3 +1,4 @@
+import { Depth } from './depth';
 import { ORTHOGONAL, SURROUNDING } from './grid';
 import { roleAt } from './ground';
 import { isRouteAt } from './route';
@@ -129,7 +130,9 @@ export function leadsThrough(world: World, x: number, y: number): boolean {
  * leads somewhere
  */
 export function isSeam(world: World, x: number, y: number): boolean {
-  if (roleAt(world, x, y) === 'water') {
+  // Underground every step is a way, corners too: a cliff across a
+  // passage reads as a wall the walls already make hard enough
+  if (world.depth === Depth.Cave || roleAt(world, x, y) === 'water') {
     return true;
   }
   return isWayAt(world, x, y) && leadsThrough(world, x, y);

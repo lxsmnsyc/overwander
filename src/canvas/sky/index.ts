@@ -402,6 +402,7 @@ export default function paintSky(
 }
 
 export type { Lamp } from './lamp';
+export { CAVERN } from './lamp';
 export { FALL_TABLE } from './fall';
 export type { SkyCamera, WorldDrop } from './drops';
 export { thinningAt, worldDropAt } from './drops';

@@ -35,6 +35,8 @@ export interface CellLook {
   level?: (x: number, y: number) => number;
   /** Whether a way through a step runs here, where the caller knows. */
   seam?: (x: number, y: number) => boolean;
+  /** Whether nothing is drawn here but a cliff and the ground under it: a cave's rock. */
+  bare?: (x: number, y: number) => boolean;
 }
 
 /** One tile to draw, and what to stand its rim in. */
@@ -190,8 +192,9 @@ export function layersAt(
     }
   }
   // An open sea draws no edge of its own, so the dry ground of another
-  // country beside it lays the sea's hollow ring, turned like any shore
-  if (dry(x, y)) {
+  // country beside it lays the sea's hollow ring, turned like any shore.
+  // Not an island: its own ground's rim is its shore already
+  if (dry(x, y) && !isOpenSea(look.biome(x, y))) {
     const seas = new Set<Biome>();
 
     for (const [dx, dy] of ROUND) {
@@ -245,6 +248,7 @@ export function layersAt(
       });
     }
   }
+  const bare = look.bare?.(x, y) === true;
   // the cliff, on the edge tile of the higher ground: the ring picked
   // for what stands at least as high around it. Not where a fall or a
   // road runs through the step, since those are the way down it
@@ -270,6 +274,10 @@ export function layersAt(
       });
     }
   }
+  // Bare rock keeps its ground only under a cliff, which the art's gaps show through
+  if (bare && !cliff) {
+    lays.length = 0;
+  }
   // and last the blend where one country meets the next: the ring of the
   // country that sorts lower, in its own ground, laid over this cell so
   // one side fades into the other. Only one side draws it, and never over
@@ -284,13 +292,17 @@ export function layersAt(
   };
   const mine = kind(x, y);
 
-  if (ground != null && mine != null && !look.paved(x, y) && !trailed(x, y) && !cliff) {
+  if (ground != null && mine != null && !bare && !look.paved(x, y) && !trailed(x, y) && !cliff) {
     const beside = new Map<string, Biome>();
 
     for (const [dx, dy] of ROUND) {
       const other = groundAt(x + dx, y + dy);
 
-      if (other != null && other.name < ground.name && kind(x + dx, y + dy) === mine) {
+      // A sea's ring is water, so dry ground never takes one: an island or a
+      // cave floor meeting another sea changes country without a blend
+      const watery = mine === 'land' && isOpenSea(look.biome(x + dx, y + dy));
+
+      if (other != null && !watery && other.name < ground.name && kind(x + dx, y + dy) === mine) {
         beside.set(other.name, look.biome(x + dx, y + dy));
       }
     }

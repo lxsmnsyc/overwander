@@ -293,6 +293,7 @@ import { AMULET_COIN_BONUS, CLEANSE_TAG_QUIET } from '../../src/overworld/items/
 import { CATCHING_CHARM_BOOST, SHINY_CHARM_BOOST } from '../../src/overworld/items/key-items';
 import createOverworld from '../../src/overworld/setup';
 import { roleAt } from '../../src/overworld/ground';
+import { isIslandAt } from '../../src/overworld/fields';
 import { Depth } from '../../src/overworld/depth';
 import { blocksWalk, isFace, isPassAt, isSeam } from '../../src/overworld/cliff';
 import { isRouteAt } from '../../src/overworld/route';
@@ -5006,16 +5007,24 @@ describe('terrain spots', () => {
   it('reads the water out of the world rather than growing it in the chunk', () => {
     const world = new World('overworld');
 
-    // A chunk that is sea in every cell is water throughout: nothing
-    // in one is the other ground. Asked of every cell rather than of
-    // the chunk's own biome, which is only the country in its middle:
-    // a chunk on a coast is named for the sea and still holds a beach
+    // A chunk that is sea in every cell is water throughout, but for its
+    // islands. Asked of every cell rather than of the chunk's own biome,
+    // which is only the country in its middle: a chunk on a coast is
+    // named for the sea and still holds a beach
     const sea = findChunk(world, (candidate) =>
       [...candidate.getCellBiomes()].every((biome) => isOpenSea(biome)),
     );
 
     if (sea != null) {
-      expect(sea.getSpotCells().size).toBe(0);
+      for (const cell of sea.getSpotCells()) {
+        expect(
+          isIslandAt(
+            world,
+            worldCell(sea.x, cell % CHUNK_CELLS),
+            worldCell(sea.y, Math.floor(cell / CHUNK_CELLS)),
+          ),
+        ).toBe(true);
+      }
     }
 
     let spotted = 0;

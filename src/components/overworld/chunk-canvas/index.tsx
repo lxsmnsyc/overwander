@@ -41,10 +41,18 @@ import {
   litFrame,
 } from '../../../canvas/sprite-sheet';
 import drawSparkle from '../../../canvas/sparkle';
-import { type Cast, batchAmbient, getCast, paintAmbient } from '../../../canvas/daylight';
+import {
+  type Cast,
+  batchAmbient,
+  batchSkybox,
+  getCast,
+  paintAmbient,
+  paintSkybox,
+} from '../../../canvas/daylight';
 import type Weather from '../../../data/overworld/weather';
 import pixelRatio from '../../../canvas/ratio';
 import paintSky, {
+  CAVERN,
   type Lamp,
   batchCavern,
   batchSky,
@@ -72,7 +80,6 @@ import {
   cornersOf,
   shadowCorners,
 } from '../../../canvas/placement';
-import { BIOME_COLORS } from '../../../data/biome';
 import type Biome from '../../../data/ids/biome';
 import type { BoardGround } from '../../../overworld/board-ground';
 import { SpriteAnim } from '../../../data/ids/sprite-anims';
@@ -329,6 +336,11 @@ export interface ChunkCanvasProps {
    * the weather is not drawn at all and the dark never lifts
    */
   underground: boolean;
+  /**
+   * Leaves the cave dark off, so a page for looking at the terrain can
+   * see all of it. The game never sets it
+   */
+  lit?: boolean;
   /**
    * A cell the player has asked to be at — the chunk's own, or one of
    * the ring of country drawn around it.
@@ -796,7 +808,8 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
   const standingAt = (index: number): Decoration | null => {
     const cell = boardCellOf(index);
 
-    if (props.ground.role(cell.x, cell.y) !== 'wall') {
+    // Underground the rock is its own cliff, so nothing grows on it
+    if (props.underground || props.ground.role(cell.x, cell.y) !== 'wall') {
       return null;
     }
     return getBlocker(props.ground.biome(cell.x, cell.y));
@@ -1759,22 +1772,25 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         }
         // Behind everything in the scene, which is what a backdrop is
         marks?.depth(BEHIND);
-        // The country the chunk is standing in, over the whole layer
-        // rather than only under the board. It is what the page behind
-        // this is painted anyway, and having it here rather than there
-        // is what lets the hour's light be a multiply: a wash only
+        // The hour's sky over the whole layer, or the cave's dark. Opaque,
+        // which is what lets the hour's light be a multiply: a wash only
         // means what it means over something opaque
-        batch.solid(BIOME_COLORS[props.biome], screenBox);
+        if (props.underground) {
+          batch.solid(CAVERN.colour, screenBox);
+        } else {
+          batchSkybox(batch, screen.width, screen.height, worldTime(), props.latitude);
+        }
       }
 
       context.save();
 
-      // The country, over the whole layer: there is no circle of board
-      // laid on it any more, so the ground goes to the edges the way
-      // the batch below already paints it
       if (batch == null) {
-        context.fillStyle = BIOME_COLORS[props.biome];
-        context.fillRect(0, 0, screen.width, screen.height);
+        if (props.underground) {
+          context.fillStyle = CAVERN.colour;
+          context.fillRect(0, 0, screen.width, screen.height);
+        } else {
+          paintSkybox(context, screen.width, screen.height, worldTime(), props.latitude);
+        }
       }
 
       context.textAlign = 'center';
@@ -1853,6 +1869,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         trail: (x: number, y: number) => ground.route(x, y) || ground.town(x, y),
         level: (x: number, y: number) => ground.level(x, y),
         seam: (x: number, y: number) => ground.seam(x, y),
+        bare: (x: number, y: number) => ground.bare?.(x, y) === true,
       };
 
       const laidBack = !flat;
@@ -2955,14 +2972,18 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         if (props.underground) {
           // No sky down here, so no weather and no hour: the dark is
           // the cave's own and the only thing that lifts it is a light
-          paintCavern(context, screen.width, screen.height, lamps);
+          if (props.lit !== true) {
+            paintCavern(context, screen.width, screen.height, lamps);
+          }
         } else {
           paintSky(context, screen.width, screen.height, props.weather, clock, 1, lamps, sky);
         }
       } else {
         batchAmbient(batch, screen.width, screen.height, worldTime(), props.latitude);
         if (props.underground) {
-          batchCavern(batch, screen.width, screen.height, lamps);
+          if (props.lit !== true) {
+            batchCavern(batch, screen.width, screen.height, lamps);
+          }
         } else {
           batchWash(batch, screen.width, screen.height, props.weather, clock, 1, lamps, sky);
           batchSky(batch, screen.width, screen.height, props.weather, clock, 1, sky);

@@ -93,7 +93,13 @@ export function isRock(world: World, x: number, y: number, biome: Biome): boolea
  * The chambers alone run nowhere. Anything from 0.02 up joins the
  * whole country into one cave, which is a second overworld with the
  * lights off. This width is a network worth walking, about seven
- * chunks end to end, that still stops and has to be left
+ * chunks end to end, that still stops and has to be left.
+ *
+ * The floor then widens every carving by a cell, which roomier
+ * passages cost without joining more of it:
+ *
+ *     0.008 widened    30.3% open   biggest  2,454   reach 132
+ *     and thin rock    31.5% open   biggest  5,951   reach 281
  */
 const VEIN_FREQUENCY = 1 / 24;
 const VEIN_WIDTH = 0.008;
@@ -101,9 +107,15 @@ const VEIN_WIDTH = 0.008;
 /** Where the vein is read, so it is not the rock over again */
 const VEIN_OFFSET = 11.5;
 
-/** The rock and the veins cut through it, before the shore is walled off */
-function isCarved(world: World, x: number, y: number, biome: Biome): boolean {
-  if (isRock(world, x, y, biome)) {
+/**
+ * The rock and the veins cut through it, before the shore is walled off.
+ * The country is only asked where the stone's height leaves it in doubt,
+ * since a climate reading costs five noise samples
+ */
+function isCarved(world: World, x: number, y: number, country: () => Biome): boolean {
+  const stone = world.stone.noise(x * STONE_FREQUENCY, y * STONE_FREQUENCY);
+
+  if (stone > ROCK_LEVEL || (stone > ROCK_LEVEL - ROCK_LIFT && stone > rockLevel(country()))) {
     return true;
   }
   return (
@@ -125,31 +137,24 @@ function isShoreWall(world: World, x: number, y: number, biome: Biome): boolean 
   return false;
 }
 
-/** The carved space, once the shore has been walled off */
-function isHollow(world: World, x: number, y: number): boolean {
-  const biome = world.getCellBiome(x, y);
-
-  // Carved first: it is a noise sample, where the shore is four more
-  // readings of the country. Three cells in four are solid, and this
-  // is asked of every one of their neighbours
-  return isCarved(world, x, y, biome) && !isShoreWall(world, x, y, biome);
-}
-
 /**
  * Whether a cave runs under this cell.
  *
- * Three things joined. The **chambers**, which are where the surface
- * has rock, so a cave is inside the crags and the ranges a player can
- * see and nowhere else; the **veins** that link them; and the
- * **elbows** that make the veins walkable.
+ * The **chambers**, which are where the surface has rock, so a cave is
+ * inside the crags and the ranges a player can see and nowhere else,
+ * and the **veins** that link them. Both are widened by a cell each
+ * way, so a passage is about three cells across and a chamber has room
+ * to walk round what stands in it. The widening also squares off a
+ * vein that steps diagonally, which nothing in this game can walk.
  *
- * An elbow is the fix for a passage that steps diagonally. A vein is a
- * line through a noise field and it corners wherever it likes, but
- * nothing in this game moves diagonally: two cells touching only at
- * their corners are two dead ends. So where a diagonal pair has both
- * of its connecting cells solid, one of them is opened. The westerly
- * one always, which is why the two cells that could serve agree on
- * which of them does without either having to ask.
+ * The widening reads neighbours against this cell's country rather than
+ * their own: it is one noise sample each rather than a climate reading
+ * each, and a border only nudges where the rock starts by a cell.
+ *
+ * Rock is only left standing where it is part of a 2x2 block of rock,
+ * the rule a terrace step keeps: a cave wall is drawn as a cliff, and a
+ * cliff is never one cell wide. Thinner rock is opened up, judged with
+ * each cell in its own country so a border keeps the rule too.
  *
  * Walled along every shore. A cave under the open sea is its own
  * network with its own way in, rather than a tunnel from the hills out
@@ -160,22 +165,32 @@ export function isCaveFloor(world: World, x: number, y: number, biome: Biome): b
   if (isShoreWall(world, x, y, biome)) {
     return false;
   }
-  if (isCarved(world, x, y, biome)) {
+
+  const opened = (cx: number, cy: number, country: () => Biome): boolean =>
+    isCarved(world, cx, cy, country) ||
+    ORTHOGONAL.some(([dx, dy]) => isCarved(world, cx + dx, cy + dy, country));
+
+  if (opened(x, y, () => biome)) {
     return true;
   }
 
-  // The corner a diagonal step needs squared off. Only the westerly of
-  // the two candidates opens, so exactly one does: the other sees the
-  // same pair with both offsets negated and stands down
-  if (!isHollow(world, x + 1, y)) {
-    return false;
-  }
-  for (const dy of [-1, 1]) {
-    if (isHollow(world, x, y + dy) && !isHollow(world, x + 1, y + dy)) {
-      return true;
-    }
-  }
-  return false;
+  // Each neighbour in its own country here, or a border leaves one cell
+  // of rock that both sides counted on the other to thicken
+  const solid = (cx: number, cy: number): boolean => {
+    let known: Biome | undefined;
+    const country = (): Biome => (known ??= world.getCellBiome(cx, cy));
+
+    return !opened(cx, cy, country) || isShoreWall(world, cx, cy, country());
+  };
+
+  return !SQUARES.some(([ox, oy]) =>
+    [
+      [0, 0],
+      [1, 0],
+      [0, 1],
+      [1, 1],
+    ].every(([dx, dy]) => solid(x + ox + dx, y + oy + dy)),
+  );
 }
 
 /** Whether a river runs through this cell */
@@ -188,13 +203,13 @@ function isRiver(world: World, x: number, y: number): boolean {
  * the surface.
  *
  * Read off the stone field at a corner of its own and cut high, so an
- * island is a few cells with a long way of water round it rather than
- * an archipelago. Measured over an 800 cell square of sea: about one
- * island every twelve hundred cells, nine cells across the middling
- * one, and the largest found was 57
+ * island is somewhere to walk about with a long way of water round it
+ * rather than an archipelago. Measured over an 800 cell square of sea:
+ * about one island every 1,700 cells, 37 cells in the middling one,
+ * and the largest found was 157
  */
-const ISLAND_FREQUENCY = 1 / 11;
-const ISLAND_LEVEL = 0.62;
+const ISLAND_FREQUENCY = 1 / 18;
+const ISLAND_LEVEL = 0.58;
 const ISLAND_OFFSET = 43.5;
 
 /** Whether the field stands out of the water here, before it is opened */

@@ -291,9 +291,9 @@ function starsOf(drawn: Drawn, seed: number): JSX.CSSProperties[] {
 const AURA_RESOLUTION = 3;
 
 /** How far an aura reaches past its ground shadow, in the shadow's radii: across, up and down */
-const AURA_ACROSS = 2;
+const AURA_ACROSS = 2.4;
 const AURA_UP = 3.5;
-const AURA_DOWN = 1.7;
+const AURA_DOWN = 2.2;
 
 /**
  * An aura painted behind the picture — a shadow's haze, or the light

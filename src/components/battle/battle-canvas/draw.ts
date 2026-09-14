@@ -8,7 +8,9 @@ import { paintAura, paintPurifiedAura, paintShadowAura } from '../../../canvas/a
 import type Bakery from '../../../canvas/bakery';
 import type { Painter, QuadPoint } from '../../../canvas/gl/quad-batch';
 import projectField, { type FieldView, unprojectField } from '../../../canvas/battle/field';
+import type EffectBatch from '../../../canvas/three/effect-batch';
 import type { Spot } from '../../../canvas/three/effect-batch';
+import { litPurifiedAura, litShadowAura, litSparkle } from '../../../canvas/battle/decor';
 import { cornersOf, shadowCorners } from '../../../canvas/placement';
 import { facingVector } from '../../../canvas/facing';
 import { SHIM_SPANS, shimMotion } from '../../../canvas/battle/sprite-shim';
@@ -67,6 +69,8 @@ export interface SlotBatch {
   bakery: Bakery;
   /** Whether what follows hides the scene's effects behind it, where there is a scene */
   solid?: (on: boolean) => void;
+  /** Whether auras and sparkles are built in the scene rather than stamped here */
+  lit?: boolean;
 }
 
 /** The four corners of a rectangle, for the batch */
@@ -394,6 +398,53 @@ function nameOf(unit: Unit): string {
 }
 
 /**
+ * A slot's aura and shiny sparkle, built in the battle scene where the
+ * pokemon's own picture hides whatever is behind it
+ */
+export function drawLitDecor(
+  kit: EffectBatch,
+  slot: Slot,
+  view: FieldView,
+  clock: number,
+  hidden: boolean,
+): void {
+  const sprite = slot.sprite;
+  const body = hidden || sprite?.ready !== true ? null : fieldBodyOf(slot, view);
+
+  if (sprite == null || body == null) {
+    return;
+  }
+  const { unit } = slot;
+  const scale = scaleOf(slot);
+  // Drawing pixels per field unit where it stands
+  const worth = scale / body.size;
+  const floor: Spot = [body.spot[0], 0, body.spot[2]];
+  const seed = Number(nameOf(unit).slice(5));
+
+  kit.near(0);
+  if (unit.hasAbility(Abilities.Shadow) || unit.hasAbility(Abilities.Purified)) {
+    const paint = unit.hasAbility(Abilities.Shadow) ? litShadowAura : litPurifiedAura;
+
+    // The ground shadow's, as the painted aura is measured
+    const radius = sprite.shadowRadius(scale).x / worth;
+
+    paint(kit, floor, radius, clock, seed, unit.alive ? 1 : 0.35);
+  }
+  if (!unit.shiny) {
+    return;
+  }
+  const arrived = shone.get(unit) ?? clock;
+
+  shone.set(unit, arrived);
+
+  const frame = sprite.sourceFrameSize;
+  const width = (frame.width * scale) / worth;
+
+  kit.near(width * 0.5);
+  litSparkle(kit, floor, width, (frame.height * scale) / worth, clock - arrived, seed);
+}
+
+/**
  * The stars a shiny throws as it arrives, the same announcement one
  * standing on a cell makes. It is over in about a second: a coat worth
  * looking twice at is worth being told about once
@@ -527,7 +578,9 @@ export function drawSlot(
       const haze = unit.hasAbility(Abilities.Shadow);
       const lit = unit.hasAbility(Abilities.Purified);
 
-      if (haze || lit) {
+      if ((haze || lit) && onto?.lit === true) {
+        // Built into the scene by `drawLitDecor`, and it stands in for the shadow
+      } else if (haze || lit) {
         const radius = sprite.shadowRadius(scaleOf(slot));
         const kind = haze ? 'shadow' : 'purified';
         const aura =
@@ -574,7 +627,7 @@ export function drawSlot(
         onto.batch.quad(quad.sheet, quad.source, turned(cornersOf(quad), x, y, slot.spin), alpha);
         onto.solid?.(false);
       }
-      if (unit.shiny) {
+      if (unit.shiny && onto?.lit !== true) {
         sparkle(context, slot, sprite, x, y, clock, onto);
       }
     } else {

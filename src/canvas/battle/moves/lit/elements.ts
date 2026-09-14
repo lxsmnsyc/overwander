@@ -1,4 +1,3 @@
-import type EffectBatch from '../../../three/effect-batch';
 import type { Spot } from '../../../three/effect-batch';
 import { decay, lighten, mix, noise, spread, swell } from '../__paint';
 import { CHASM_RUN, CHASM_TEAR, type EffectShape, many } from '../effect/shapes';
@@ -13,6 +12,7 @@ import {
   thrown,
   toward,
 } from './shapes';
+import { TAU, bolt, debris, smoke, sparks } from './pieces';
 
 /**
  * The elements arriving in the battle scene: the same shapes as the
@@ -20,125 +20,12 @@ import {
  * back to it.
  */
 
-const TAU = Math.PI * 2;
-
-/** Sparks flying out of a spot across the picture. */
-function sparks(
-  kit: EffectBatch,
-  at: Spot,
-  reach: number,
-  count: number,
-  seed: number,
-  share: number,
-  colour: string,
-  alpha: number,
-): void {
-  for (let spark = 0; spark < count; spark += 1) {
-    const angle = (spark / count) * TAU + noise(seed, spark + 7) * 0.5;
-    const out = reach * (0.25 + share * (0.8 + noise(seed, spark + 17) * 0.5));
-
-    kit.streak(
-      aside(kit, at, Math.cos(angle) * out, Math.sin(angle) * out),
-      reach * 0.22 * (1 - share * 0.5),
-      reach * 0.05,
-      angle,
-      colour,
-      alpha,
-    );
-  }
-}
-
-/** Broken pieces thrown out of a spot and falling back to the floor. */
-function debris(
-  kit: EffectBatch,
-  at: Spot,
-  reach: number,
-  count: number,
-  seed: number,
-  share: number,
-  colour: string,
-  alpha: number,
-): void {
-  for (let piece = 0; piece < count; piece += 1) {
-    kit.shard(
-      thrown(at, seed, piece, share, reach * 2, reach * 1.2),
-      reach * 0.14 * (0.7 + noise(seed, piece + 60) * 0.6),
-      noise(seed, piece) * TAU + share * 5,
-      colour,
-      alpha,
-    );
-  }
-}
-
-/** Soft clouds rising off a spot, painted rather than lit. */
-function smoke(
-  kit: EffectBatch,
-  at: Spot,
-  reach: number,
-  count: number,
-  seed: number,
-  share: number,
-  colour: string,
-  alpha: number,
-): void {
-  for (let puff = 0; puff < count; puff += 1) {
-    const spot = aside(
-      kit,
-      at,
-      spread(seed, puff + 30) * reach * 0.8,
-      reach * share * (0.6 + noise(seed, puff + 50) * 0.6),
-      spread(seed, puff + 70) * reach * 0.3,
-    );
-
-    kit.glow(spot, reach * (0.45 + share * 0.7), colour, alpha, 0, { add: 0 });
-  }
-}
-
 /** Yellow at a flame's root, orange partway and the move's own colour by the tip. */
 function flameTint(rise: number, hot: string, warm: string, colour: string): string {
   if (rise < 0.35) {
     return hot;
   }
   return rise < 0.7 ? warm : colour;
-}
-
-/** A jagged bolt between two spots, redrawn on a new seed to flicker. */
-function bolt(
-  kit: EffectBatch,
-  from: Spot,
-  to: Spot,
-  seed: number,
-  reach: number,
-  width: number,
-  colour: string,
-  alpha: number,
-): void {
-  const length = Math.hypot(to[0] - from[0], to[1] - from[1], to[2] - from[2]);
-  const wander = Math.max(reach * 0.25, length * 0.07);
-  const path: Spot[] = [];
-
-  for (let step = 0; step <= 10; step += 1) {
-    const along = step / 10;
-    // Loose in the middle and pinned at both ends
-    const loose = Math.sin(Math.PI * along) * wander;
-
-    path.push(
-      aside(
-        kit,
-        toward(from, to, along),
-        spread(seed, step) * loose,
-        spread(seed, step + 20) * loose,
-      ),
-    );
-  }
-  kit.ribbon(path, width * 4, colour, alpha * 0.25);
-  kit.ribbon(path, width, lighten(colour, 0.5), alpha);
-
-  const fork = path[3 + Math.floor(noise(seed, 40) * 5)];
-  const tip = aside(kit, fork, spread(seed, 41) * wander * 1.6, spread(seed, 42) * wander * 1.6);
-  const bend = aside(kit, toward(fork, tip, 0.5), spread(seed, 43) * wander * 0.4);
-
-  kit.ribbon([fork, bend, tip], width * 0.5, lighten(colour, 0.5), alpha * 0.8);
 }
 
 const elements = {

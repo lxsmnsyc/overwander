@@ -42,6 +42,9 @@ const enum Shape {
   Bubble = 6,
   Leaf = 7,
   Pit = 8,
+  Heart = 9,
+  Pane = 10,
+  Puff = 11,
 }
 
 const VERTEX = `
@@ -90,8 +93,8 @@ float hash(float n) {
 void main() {
   vec2 p = pass_uv;
   float r = length(p);
-  float shape = floor(pass_look.x + 0.5);
-  float param = fract(pass_look.x) * 4.0;
+  float shape = floor(pass_look.x);
+  float param = clamp((fract(pass_look.x) - 0.1) / 0.8, 0.0, 1.0) * 4.0;
   float alpha = 0.0;
   float hot = 0.0;
   vec3 colour = pass_tint.rgb;
@@ -102,7 +105,8 @@ void main() {
     hot = pow(max(0.0, 1.0 - r * 2.2), 2.0) * param;
   } else if (shape < 1.5) {
     // A ring, with a faint glow either side of the band
-    float width = max(0.02, param);
+    // A ring's setting is packed four times over, as every setting is
+    float width = max(0.02, param * 0.25);
     float band = abs(r - (1.0 - width));
     alpha = (1.0 - smoothstep(width * 0.35, width, band)) + exp(-band * band * 60.0) * 0.35;
     alpha *= step(r, 1.0);
@@ -146,24 +150,48 @@ void main() {
     alpha = smoothstep(0.0, 0.06, edge);
     colour = mix(colour * 0.7, colour, smoothstep(0.0, 0.08, abs(p.y)));
     hot = smoothstep(0.2, 0.0, abs(p.y - width * 0.5)) * 0.25;
-  } else {
+  } else if (shape < 8.5) {
     // The ground torn open along x, ragged at its lips, dark within
     float lip = sin(3.14159 * (p.x + 1.0) * 0.5);
     float rag = (hash(floor((p.x + 1.0) * 8.0)) - 0.5) * 0.18;
     float edge = lip * param * 0.22 + rag * lip - abs(p.y);
     alpha = smoothstep(0.0, 0.05, edge);
     colour = mix(colour, vec3(0.02, 0.015, 0.01), smoothstep(0.02, 0.2, edge));
+  } else if (shape < 9.5) {
+    // A heart, lobes up. Cubed by hand: pow is undefined below zero
+    vec2 q = vec2(p.x, p.y + 0.15) * 1.25;
+    float d = q.x * q.x + q.y * q.y - 1.0;
+    float f = d * d * d - q.x * q.x * q.y * q.y * q.y;
+    alpha = 1.0 - smoothstep(-0.02, 0.02, f);
+    hot = (1.0 - smoothstep(0.08, 0.2, length(p - vec2(-0.35, 0.3)))) * 0.7;
+  } else if (shape < 10.5) {
+    // A pane of glass: a faint face, bright edges and a fine sheen across it
+    float rim = smoothstep(0.86, 0.97, max(abs(p.x), abs(p.y)));
+    alpha = 0.22 + 0.05 * sin(p.y * 40.0) + rim * 0.75;
+    hot = rim * 0.45;
+  } else {
+    // A ball of cloud: a firm edge, and shaded darker underneath
+    alpha = 1.0 - smoothstep(0.86, 1.0, r);
+    colour *= 0.7 + 0.3 * smoothstep(-1.0, 0.8, p.y);
   }
 
   colour = mix(colour, vec3(1.0), clamp(hot, 0.0, 1.0) * 0.85);
   float seen = clamp(alpha, 0.0, 1.0) * pass_tint.a;
-  // Premultiplied, with light kept out of the alpha so it adds rather than covers
-  gl_FragColor = vec4(colour * seen, seen * (1.0 - pass_look.y));
+  // Premultiplied. Light covers only by as much as it is bright: with no
+  // alpha at all, a clear stretch of the canvas composites it as nothing
+  float cover = seen * (1.0 - pass_look.y);
+  float glare = seen * pass_look.y * max(colour.r, max(colour.g, colour.b));
+
+  gl_FragColor = vec4(colour * seen, cover + glare);
 }`;
 
-/** The white-hot share of a glow and the width of a ring ride in the shape's fraction. */
+/**
+ * The shape and its one setting (a glow's white-hot share, a ring's width),
+ * as one float. The setting rides in the middle of the fraction, clear of
+ * both whole numbers, so the shape never rounds into the next one
+ */
 function packed(shape: Shape, param: number): number {
-  return shape + Math.max(0, Math.min(0.999, param / 4));
+  return shape + 0.1 + 0.8 * Math.max(0, Math.min(1, param / 4));
 }
 
 const tints = new Map<string, [number, number, number]>();
@@ -297,13 +325,27 @@ export default class EffectBatch {
   }
 
   /** A ring facing the camera. `width` is the band's share of the radius, up to 1 */
-  ring(at: Spot, radius: number, width: number, colour: string, alpha: number): void {
-    this.square(at, radius, 0, packed(Shape.Ring, width * 4), colour, alpha, 1, false);
+  ring(
+    at: Spot,
+    radius: number,
+    width: number,
+    colour: string,
+    alpha: number,
+    light: Light = {},
+  ): void {
+    this.square(at, radius, 0, packed(Shape.Ring, width * 4), colour, alpha, light.add ?? 1, false);
   }
 
   /** A ring lying on the ground, spreading along it */
-  ripple(at: Spot, radius: number, width: number, colour: string, alpha: number): void {
-    this.square(at, radius, 0, packed(Shape.Ring, width * 4), colour, alpha, 1, true);
+  ripple(
+    at: Spot,
+    radius: number,
+    width: number,
+    colour: string,
+    alpha: number,
+    light: Light = {},
+  ): void {
+    this.square(at, radius, 0, packed(Shape.Ring, width * 4), colour, alpha, light.add ?? 1, true);
   }
 
   /** A streak through a point, `angle` turned on the picture with up positive */
@@ -315,7 +357,7 @@ export default class EffectBatch {
     colour: string,
     alpha: number,
   ): void {
-    this.quad(at, length, width, angle, Shape.Streak, colour, alpha, 1);
+    this.quad(at, length, width, angle, packed(Shape.Streak, 0), colour, alpha, 1);
   }
 
   /** A streak drawn from where something was a moment ago to where it is */
@@ -336,8 +378,15 @@ export default class EffectBatch {
   }
 
   /** A four-pointed glint */
-  star(at: Spot, size: number, turn: number, colour: string, alpha: number): void {
-    this.quad(at, size, size, turn, Shape.Star, colour, alpha, 1);
+  star(
+    at: Spot,
+    size: number,
+    turn: number,
+    colour: string,
+    alpha: number,
+    light: Light = {},
+  ): void {
+    this.quad(at, size, size, turn, packed(Shape.Star, 0), colour, alpha, light.add ?? 1);
   }
 
   /** A broken piece of something solid: rock, ice, earth */
@@ -349,15 +398,75 @@ export default class EffectBatch {
     alpha: number,
     light: Light = {},
   ): void {
-    this.quad(at, size, size, turn, Shape.Shard, colour, alpha, light.add ?? 0);
+    this.quad(at, size, size, turn, packed(Shape.Shard, 0), colour, alpha, light.add ?? 0);
+  }
+
+  heart(at: Spot, size: number, turn: number, colour: string, alpha: number): void {
+    this.quad(at, size, size, turn, packed(Shape.Heart, 0), colour, alpha, 0.2);
+  }
+
+  /** A ring drawn as an oval turned on the picture, with radii `across` and `up` */
+  oval(
+    at: Spot,
+    across: number,
+    up: number,
+    turn: number,
+    width: number,
+    colour: string,
+    alpha: number,
+  ): void {
+    this.quad(at, across, up, turn, packed(Shape.Ring, width * 4), colour, alpha, 1);
+  }
+
+  /** A flat pane through four spots in the field, in ring order from its top left */
+  panel(corners: [Spot, Spot, Spot, Spot], colour: string, alpha: number): void {
+    if (alpha <= 0) {
+      return;
+    }
+    const [red, green, blue] = tintOf(colour);
+
+    this.room();
+    for (const corner of [0, 1, 2, 0, 2, 3]) {
+      const u = corner === 0 || corner === 3 ? -1 : 1;
+      const v = corner <= 1 ? 1 : -1;
+
+      this.vertex(
+        corners[corner],
+        0,
+        0,
+        u,
+        v,
+        red,
+        green,
+        blue,
+        alpha,
+        packed(Shape.Pane, 0),
+        0.5,
+        1,
+        0,
+      );
+    }
+  }
+
+  /** Which way the line from one spot to another runs on the picture, up positive */
+  angleOn(from: Spot, to: Spot): number {
+    const [ax, ay] = this.onPicture(from);
+    const [bx, by] = this.onPicture(to);
+
+    return Math.atan2(by - ay, bx - ax);
+  }
+
+  /** A ball of cloud facing the camera. Paint by default, since a cloud covers */
+  puff(at: Spot, radius: number, colour: string, alpha: number, light: Light = {}): void {
+    this.square(at, radius, 0, packed(Shape.Puff, 0), colour, alpha, light.add ?? 0, false);
   }
 
   bubble(at: Spot, radius: number, colour: string, alpha: number): void {
-    this.square(at, radius, 0, Shape.Bubble, colour, alpha, 0.5, false);
+    this.square(at, radius, 0, packed(Shape.Bubble, 0), colour, alpha, 0.5, false);
   }
 
   leaf(at: Spot, size: number, turn: number, colour: string, alpha: number): void {
-    this.quad(at, size, size, turn, Shape.Leaf, colour, alpha, 0);
+    this.quad(at, size, size, turn, packed(Shape.Leaf, 0), colour, alpha, 0);
   }
 
   /** The ground split open across the picture: `half` along it and `open` from 0 to 1 */
@@ -537,7 +646,8 @@ export default class EffectBatch {
       return;
     }
     const [red, green, blue] = tintOf(colour);
-    const ground: Spot = [at[0], 0.02, at[2]];
+    // On the floor, or a ring laid level round something above it
+    const ground: Spot = [at[0], Math.max(0.02, at[1]), at[2]];
 
     this.room();
     for (const [u, v] of QUAD) {

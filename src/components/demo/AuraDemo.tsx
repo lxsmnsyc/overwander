@@ -90,7 +90,7 @@ export default function AuraDemo(): JSX.Element {
     <div class="flex flex-col gap-4 p-4">
       <h1 class="text-2xl">Auras</h1>
       <Meta>
-        A shadow pokemon's dark flame and a purified one's light, through the same painter the
+        A shadow pokemon's storm cloud and a purified one's light, through the same painter the
         dialogs and the battle use, on both themes at once.
       </Meta>
       <Row>

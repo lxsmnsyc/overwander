@@ -1,4 +1,5 @@
-import PaintedVisual, { type Painter } from '../moves/__painted';
+import PaintedVisual, { type LitPainter, type Painter } from '../moves/__painted';
+import type { LitCue } from './lit/shapes';
 import type { Point, Stage } from '../stage';
 import { type Painted, decay, fade, motes, noise, orb, ring, star, swell } from '../moves/__paint';
 
@@ -131,11 +132,21 @@ export function bitten(count: number, seed: number) {
   };
 }
 
-export function played(cue: Cue, scale = 1, alpha = 1): PaintedVisual {
+export function played(cue: Cue, scale = 1, alpha = 1, lit?: LitCue): PaintedVisual {
   const paint: Painted = { color: cue.color, alpha };
   const painter: Painter = (context, stage, share) => {
     cue.paint(context, { ...stage, scale: stage.scale * scale }, share, paint);
   };
+  const scened: LitPainter | undefined =
+    lit == null
+      ? undefined
+      : (kit, stage, share) => {
+          const sized = { ...stage, size: stage.size * scale };
 
-  return new PaintedVisual(cue.span, painter);
+          // Judged about a body nearer the camera, so it shows on the pokemon it is about
+          kit.near(REACH * sized.size);
+          lit(kit, sized, share, cue.color, alpha);
+        };
+
+  return new PaintedVisual(cue.span, painter, scened);
 }

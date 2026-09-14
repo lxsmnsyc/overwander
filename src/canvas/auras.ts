@@ -1,5 +1,5 @@
 /**
- * The auras a pokemon stands in, painted in code: the dark flame of a
+ * The auras a pokemon stands in, painted in code: the storm cloud of a
  * shadow, and the light of one put right.
  *
  * One painter each for both places a pokemon is drawn: the battle
@@ -19,20 +19,20 @@
 export type AuraKind = 'shadow' | 'purified';
 
 /** How high the tallest part of an aura climbs, as a multiple of the ellipse's width. */
-const RISE = 2.8;
+export const RISE = 2.8;
 
 /**
  * A deterministic scatter in [0, 1): the classic sine-fract hash, which
  * is cheap, seedable and the same on every machine
  */
-function drift(seed: number, index: number, part: number): number {
+export function drift(seed: number, index: number, part: number): number {
   const mixed = Math.sin(seed * 12.9898 + index * 78.233 + part * 37.719) * 43758.5453;
 
   return mixed - Math.floor(mixed);
 }
 
 /** Rises in fast and dies out slow, over a phase from 0 to 1 */
-function lifeOf(phase: number): number {
+export function lifeOf(phase: number): number {
   return Math.min(1, phase / 0.15) * (1 - phase) ** 1.5;
 }
 
@@ -55,56 +55,171 @@ function glow(
   context.fill();
 }
 
-/** How long a shadow flame takes to flicker through, in milliseconds */
-const FLICKER = 900;
+const TAU = Math.PI * 2;
 
-/** How long an ember takes to rise and go out */
-const EMBER_RISE = 1600;
+/** How long a puff of storm cloud takes to roll out from the feet and thin away, in milliseconds */
+export const SWELL = 2600;
 
-const FLAMES = 12;
-const EMBERS = 10;
+/** How often each plasma arc may strike, in milliseconds */
+export const STRIKE = 900;
+
+/** How long the plasma round the feet holds one shape before it crackles into the next */
+export const CRACKLE = 70;
+
+export const PUFFS = 18;
+export const ARCS = 3;
+
+/** The points round the crackling ring at the feet */
+const RING_STEPS = 28;
+
+/** How long an arc stays lit, as a share of its strike */
+const ARC_LIT = 0.25;
 
 /**
- * One tongue of flame standing on the ground at `x`, `y`: a teardrop
- * leaning with `lean`, its tip `tall` above its base
+ * A place round a pokemon, measured off its ground shadow: `angle` round
+ * it (0 across the picture, a quarter turn toward the viewer), `out` in
+ * radii from its middle and `up` in radii above the ground
  */
-function traceTongue(
-  context: CanvasRenderingContext2D,
-  x: number,
-  y: number,
-  wide: number,
-  tall: number,
-  lean: number,
-): void {
-  const tipX = x + lean;
-  const tipY = y - tall;
+export interface StormSpot {
+  angle: number;
+  out: number;
+  up: number;
+}
 
-  context.beginPath();
-  context.moveTo(x - wide, y);
-  context.bezierCurveTo(
-    x - wide * 1.1,
-    y - tall * 0.45,
-    tipX - wide * 0.35,
-    tipY + tall * 0.3,
-    tipX,
-    tipY,
-  );
-  context.bezierCurveTo(
-    tipX + wide * 0.35,
-    tipY + tall * 0.3,
-    x + wide * 1.1,
-    y - tall * 0.45,
-    x + wide,
-    y,
-  );
-  context.quadraticCurveTo(x, y + wide * 0.5, x - wide, y);
-  context.closePath();
+export interface StormPuff extends StormSpot {
+  /** Its radius, in the shadow's radii. A puff fades by shrinking, so the cloud stays one solid mass */
+  size: number;
+}
+
+export interface StormArc {
+  path: StormSpot[];
+  fork: StormSpot[];
+  life: number;
+}
+
+/** A shadow aura at one moment, worked out once so the painted aura and the battle scene build the same storm */
+export interface Storm {
+  /** Far side first, so the near ones cover them */
+  puffs: StormPuff[];
+  arcs: StormArc[];
+  /** The crackling plasma round the feet, closed */
+  ring: StormSpot[];
+  /** The ring swelling out along the ground */
+  wave: { out: number; life: number };
+  /** How lit the cloud is from inside by a striking arc, from 0 to 1 */
+  flash: number;
+}
+
+/** A jagged run from `from` to `to`, loose in the middle and pinned at both ends */
+function jagged(
+  from: StormSpot,
+  to: StormSpot,
+  key: number,
+  steps: number,
+  loose: number,
+): StormSpot[] {
+  const path: StormSpot[] = [];
+
+  for (let step = 0; step <= steps; step += 1) {
+    const along = step / steps;
+    const wander = Math.sin(Math.PI * along) * loose;
+
+    path.push({
+      angle: from.angle + (to.angle - from.angle) * along,
+      out: from.out + (to.out - from.out) * along + (drift(key, step, 13) - 0.5) * wander,
+      up: from.up + (to.up - from.up) * along + (drift(key, step, 14) - 0.5) * wander,
+    });
+  }
+  return path;
+}
+
+/** The shadow aura's storm at `elapsed` */
+export function stormOf(elapsed: number, seed: number): Storm {
+  const puffs: StormPuff[] = [];
+
+  for (let index = 0; index < PUFFS; index += 1) {
+    const phase = (elapsed / SWELL + drift(seed, index, 1)) % 1;
+    const rolled = 1 - (1 - phase) ** 2;
+    // Every third climbs beside the body, so the cloud stands up round it rather than only spreading
+    const climbs = index % 3 === 0;
+    const angle = (index / PUFFS) * TAU + drift(seed, index, 2) * 0.5 + phase * 0.4;
+    // Tallest at the sides, where the body does not stand in front
+    const side = Math.abs(Math.cos(angle));
+    const grown = (0.34 + drift(seed, index, 3) * 0.16) * (0.6 + rolled * 0.8);
+
+    puffs.push({
+      angle,
+      out: climbs ? 0.9 + rolled * 0.5 : 0.6 + rolled,
+      // Resting on the ground at the least, and staying where it is as it shrinks away
+      up: grown + rolled * (climbs ? 1 + side * 0.9 : 0.25),
+      size: grown * Math.min(1, phase / 0.15, (1 - phase) / 0.3),
+    });
+  }
+  puffs.sort((one, other) => Math.sin(one.angle) - Math.sin(other.angle));
+
+  const arcs: StormArc[] = [];
+  let flash = 0;
+
+  for (let slot = 0; slot < ARCS; slot += 1) {
+    const clock = elapsed / STRIKE + drift(seed, slot, 10) * 3;
+    const strike = Math.floor(clock);
+    const into = (clock - strike) / ARC_LIT;
+    const key = seed + strike * 13 + slot * 7;
+
+    // Some strikes are skipped, so the arcs never keep time
+    if (into >= 1 || drift(key, slot, 11) < 0.25) {
+      continue;
+    }
+    // Stutters as it dies, the way a spark does
+    const life = (1 - into) * (Math.floor(into * 6) % 2 === 0 ? 1 : 0.55);
+    // Off to one side, where the body does not hide it
+    const angle = (drift(key, 0, 12) < 0.5 ? 0 : Math.PI) + (drift(key, 1, 12) - 0.5) * 1.2;
+    const from = { angle, out: 1 + drift(key, 2, 12) * 0.4, up: 0.2 + drift(key, 3, 12) * 0.3 };
+    const to = {
+      angle: angle + (drift(key, 4, 12) - 0.5) * 0.8,
+      out: 1.2 + drift(key, 5, 12) * 0.5,
+      up: 1.2 + drift(key, 6, 12),
+    };
+    const path = jagged(from, to, key, 7, 0.45);
+    const split = path[2 + Math.floor(drift(key, 7, 12) * 3)];
+    const tip = {
+      angle: split.angle,
+      out: split.out + 0.35,
+      up: split.up + (drift(key, 8, 12) - 0.3) * 0.6,
+    };
+
+    arcs.push({ path, fork: jagged(split, tip, key + 1, 3, 0.2), life });
+    flash = Math.max(flash, life);
+  }
+
+  const ring: StormSpot[] = [];
+  const tick = Math.floor(elapsed / CRACKLE);
+
+  for (let step = 0; step <= RING_STEPS; step += 1) {
+    // The last point is the first again, so the ring closes
+    const at = step % RING_STEPS;
+
+    ring.push({
+      angle: (at / RING_STEPS) * TAU,
+      out: 1.08 + (drift(seed + tick, at, 15) - 0.5) * 0.22,
+      up: 0,
+    });
+  }
+  const swell = (elapsed / SWELL + seed * 0.29) % 1;
+
+  return {
+    puffs,
+    arcs,
+    ring,
+    wave: { out: 0.9 + swell * 1.1, life: Math.min(1, swell / 0.1) * (1 - swell) ** 2 },
+    flash,
+  };
 }
 
 /**
- * Paint the dark flame at a shadow point: `x`, `y` is the ellipse's
- * centre and `radiusX`/`radiusY` its radii, which is exactly what the
- * ground shadow is drawn from. `elapsed` is whatever clock the caller keeps
+ * Paint the storm at a shadow point: `x`, `y` is the ellipse's centre
+ * and `radiusX`/`radiusY` its radii, which is exactly what the ground
+ * shadow is drawn from. `elapsed` is whatever clock the caller keeps
  */
 export function paintShadowAura(
   context: CanvasRenderingContext2D,
@@ -118,104 +233,109 @@ export function paintShadowAura(
   if (radiusX <= 0 || radiusY <= 0) {
     return;
   }
+  const storm = stormOf(elapsed, seed);
+  const place = (spot: StormSpot): [number, number] => [
+    x + Math.cos(spot.angle) * radiusX * spot.out,
+    y + Math.sin(spot.angle) * radiusY * spot.out - spot.up * radiusX,
+  ];
+  const trace = (path: StormSpot[]): void => {
+    context.beginPath();
+    for (const spot of path) {
+      const [px, py] = place(spot);
+
+      context.lineTo(px, py);
+    }
+  };
+
   context.save();
+  context.lineCap = 'round';
+  context.lineJoin = 'round';
 
-  const beat = Math.sin((elapsed / FLICKER) * Math.PI * 2 * 0.5 + seed);
-
-  // The pool: a black-violet stain the flames stand in
+  // The pool: a black-violet stain the storm gathers in
   context.save();
   context.translate(x, y);
   context.scale(1, radiusY / radiusX);
   glow(context, 0, 0, radiusX * 1.5, 'rgba(18, 4, 34, 0.7)', 'rgba(18, 4, 34, 0)');
   context.restore();
 
-  // The rim: a dark ring for a light page, and a violet burn over it
-  // for a dark one
-  const ring = { x: radiusX * 1.12, y: radiusY * 1.12 };
+  // Every line is drawn dark for a light page, then violet over it for a dark one
+  const { wave } = storm;
 
-  context.lineWidth = Math.max(1, radiusY * 0.34);
-  context.strokeStyle = 'rgba(30, 8, 52, 0.55)';
   context.beginPath();
-  context.ellipse(x, y, ring.x, ring.y, 0, 0, Math.PI * 2);
+  context.ellipse(x, y, radiusX * wave.out, radiusY * wave.out, 0, 0, TAU);
+  context.lineWidth = Math.max(1, radiusY * 0.28);
+  context.strokeStyle = `rgba(30, 8, 52, ${0.5 * wave.life})`;
   context.stroke();
-  context.lineWidth = Math.max(0.75, radiusY * 0.16);
-  context.strokeStyle = `rgba(190, 96, 255, ${0.55 + 0.25 * beat})`;
-  context.beginPath();
-  context.ellipse(x, y, ring.x, ring.y, 0, 0, Math.PI * 2);
+  context.lineWidth = Math.max(0.75, radiusY * 0.12);
+  context.strokeStyle = `rgba(190, 96, 255, ${0.6 * wave.life})`;
   context.stroke();
 
-  // The flames, far side first so the near ones stand in front of them
-  const tongues: { angle: number; index: number }[] = [];
+  trace(storm.ring);
+  context.lineWidth = Math.max(1, radiusY * 0.3);
+  context.strokeStyle = 'rgba(30, 8, 52, 0.5)';
+  context.stroke();
+  context.lineWidth = Math.max(0.75, radiusY * 0.12);
+  context.strokeStyle = `rgba(200, 120, 255, ${0.5 + 0.4 * storm.flash})`;
+  context.stroke();
 
-  for (let index = 0; index < FLAMES; index += 1) {
-    tongues.push({
-      angle: (index / FLAMES) * Math.PI * 2 + drift(seed, index, 4) * 0.5,
-      index,
-    });
-  }
-  tongues.sort((one, other) => Math.sin(one.angle) - Math.sin(other.angle));
-
-  for (const { angle, index } of tongues) {
-    const out = 0.8 + drift(seed, index, 3) * 0.35;
-    const baseX = x + Math.cos(angle) * ring.x * out;
-    const baseY = y + Math.sin(angle) * ring.y * out;
-    const time = elapsed / FLICKER + drift(seed, index, 5) * 10;
-    // Two sines out of step, so no two flames flicker alike
-    const flicker = 0.7 + 0.2 * Math.sin(time * 2.3) + 0.1 * Math.sin(time * 5.1 + index);
-    // Tallest at the sides, where the body does not stand in front of them
-    const side = Math.abs(Math.cos(angle));
-    const tall = radiusX * (1.3 + side * 1.1 + drift(seed, index, 6) * 0.5) * flicker;
-    const wide = radiusX * (0.24 + drift(seed, index, 7) * 0.1);
-    const lean = Math.sin(time * 1.7 + index) * radiusX * 0.28;
-
-    traceTongue(context, baseX, baseY, wide * 1.35, tall * 1.08, lean);
-    context.fillStyle = 'rgba(26, 6, 46, 0.62)';
-    context.fill();
-    context.lineWidth = Math.max(0.5, radiusX * 0.05);
-    context.strokeStyle = 'rgba(200, 120, 255, 0.45)';
-    context.stroke();
-
-    const core = context.createLinearGradient(baseX, baseY, baseX + lean, baseY - tall);
-
-    core.addColorStop(0, 'rgba(120, 40, 200, 0.9)');
-    core.addColorStop(0.55, 'rgba(206, 110, 255, 0.75)');
-    core.addColorStop(1, 'rgba(255, 180, 255, 0)');
-    traceTongue(context, baseX, baseY, wide * 0.7, tall * 0.85, lean * 0.9);
-    context.fillStyle = core;
-    context.fill();
-  }
-
-  // The embers: sparks thrown up out of the flame, each a dark speck
-  // with a violet light in it
-  for (let index = 0; index < EMBERS; index += 1) {
-    const phase = (elapsed / EMBER_RISE + drift(seed, index, 8)) % 1;
-    const angle = drift(seed, index, 9) * Math.PI * 2;
-    const sway = Math.sin(phase * Math.PI * 3 + index) * radiusX * 0.25;
-    const ex = x + Math.cos(angle) * radiusX * 1.25 + sway;
-    const ey = y + Math.sin(angle) * radiusY * 0.6 - phase * radiusX * RISE;
-    const life = lifeOf(phase);
-    const size = Math.max(0.8, radiusX * 0.13 * (1 - phase * 0.5));
-
-    context.fillStyle = `rgba(22, 4, 40, ${0.6 * life})`;
+  // The cloud as one shape, so overlapping puffs never darken each other: a
+  // violet mass, then a dark one a little lower, leaving the tops lit
+  const cloud = (drop: number, shrink: number): void => {
     context.beginPath();
-    context.arc(ex, ey, size * 1.9, 0, Math.PI * 2);
-    context.fill();
-    glow(context, ex, ey, size * 1.6, `rgba(236, 190, 255, ${life})`, 'rgba(170, 80, 255, 0)');
+    for (const puff of storm.puffs) {
+      const [px, py] = place(puff);
+      const size = puff.size * radiusX;
+
+      context.moveTo(px + size * shrink, py + size * drop);
+      context.arc(px, py + size * drop, size * shrink, 0, TAU);
+    }
+  };
+  const flash = storm.flash;
+
+  cloud(0, 1);
+  context.fillStyle = `rgba(${92 + 108 * flash}, ${46 + 104 * flash}, ${150 + 105 * flash}, 0.9)`;
+  context.fill();
+  cloud(0.22, 0.92);
+  context.fillStyle = 'rgba(26, 8, 46, 0.94)';
+  context.fill();
+
+  for (const arc of storm.arcs) {
+    const [mx, my] = place(arc.path[Math.floor(arc.path.length / 2)]);
+
+    glow(
+      context,
+      mx,
+      my,
+      radiusX * 0.8,
+      `rgba(180, 110, 255, ${0.3 * arc.life})`,
+      'rgba(180, 110, 255, 0)',
+    );
+    for (const path of [arc.path, arc.fork]) {
+      const thin = path === arc.fork ? 0.6 : 1;
+
+      trace(path);
+      context.lineWidth = Math.max(2, radiusX * 0.24 * thin);
+      context.strokeStyle = `rgba(170, 80, 255, ${0.45 * arc.life})`;
+      context.stroke();
+      context.lineWidth = Math.max(1, radiusX * 0.08 * thin);
+      context.strokeStyle = `rgba(245, 225, 255, ${arc.life})`;
+      context.stroke();
+    }
   }
   context.restore();
 }
 
 /** How long the light takes to go once round the purified ring, in milliseconds */
-const ORBIT = 2600;
+export const ORBIT = 2600;
 
 /** How long a pillar of light takes to breathe in and out */
-const BREATH = 2200;
+export const BREATH = 2200;
 
 /** How long a star takes to rise and go out */
-const STAR_RISE = 2400;
+export const STAR_RISE = 2400;
 
-const PILLARS = 6;
-const STARS = 9;
+export const PILLARS = 6;
+export const STARS = 9;
 
 /** A four-pointed star at `x`, `y`, `size` from its centre to a point */
 function traceStar(context: CanvasRenderingContext2D, x: number, y: number, size: number): void {
@@ -350,9 +470,9 @@ export function paintPurifiedAura(
  * tallest part climbs `RISE` and sways on the way, which is what
  * decides how much bigger the picture is than the patch
  */
-const AURA_ACROSS = 2;
+const AURA_ACROSS = 2.4;
 const AURA_UP = RISE + 0.7;
-const AURA_DOWN = 1.7;
+const AURA_DOWN = 2.2;
 
 /** The largest an aura's picture is painted, in either direction */
 const AURA_LIMIT = 256;

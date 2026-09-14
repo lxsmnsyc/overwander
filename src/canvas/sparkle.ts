@@ -47,7 +47,7 @@ export const SPARKLE_MIDDLE = -0.5;
 const SPARKLE_MIN_STAR = 2;
 
 /** How far a glint drifts upward over its life, as a share of the sprite's height */
-const SPARKLE_RISE = 0.12;
+export const SPARKLE_RISE = 0.12;
 
 /**
  * How far to either side of the sprite the glints are thrown, as a

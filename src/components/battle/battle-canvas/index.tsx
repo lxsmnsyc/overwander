@@ -12,7 +12,8 @@ import abilityCueFor, {
 import pixelRatio from '../../../canvas/ratio';
 import createTwist from '../../../canvas/twist';
 import createLongPress from '../../styled/long-press';
-import paintWeather, { batchWeather } from '../../../canvas/battle/weather';
+import paintWeather, { batchHaze } from '../../../canvas/battle/weather';
+import buildWeather from '../../../canvas/battle/field-weather';
 import {
   delayShapeFor,
   moveDelayVisual,
@@ -42,7 +43,16 @@ import { Genders, type Species } from '../../../data/ids/species';
 
 import type { Statuses } from '../../../data/ids/status';
 import { getMoveData } from '../../../data/moves';
-import { bodyOf, boxOf, drawAim, drawSlot, fieldBodyOf, scaleOf, withinSlot } from './draw';
+import {
+  bodyOf,
+  boxOf,
+  drawAim,
+  drawLitDecor,
+  drawSlot,
+  fieldBodyOf,
+  scaleOf,
+  withinSlot,
+} from './draw';
 import type { Spot } from '../../../canvas/three/effect-batch';
 import { spread } from '../../../canvas/battle/moves/__paint';
 import {
@@ -574,6 +584,7 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
           : {
               batch,
               bakery,
+              lit: true,
               solid: (on: boolean): void => {
                 batch.opaque(on);
               },
@@ -643,11 +654,33 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
             1,
             stage.scale,
           );
-          batchWeather(batch, patch.weather, patch, clock);
+          batchHaze(batch, patch.weather, patch, clock);
         }
         batch.carry(stage.offsetX, stage.offsetY, 1, stage.scale);
       }
       if (scene != null) {
+        for (const slot of slots) {
+          drawLitDecor(scene.effects, slot, view, clock, gone.has(slot.unit));
+        }
+        // What falls and drifts, in the field among the pokemon
+        for (const patch of skies) {
+          const whole = patch.width >= WIDTH;
+
+          // The field's own sky runs on into the margins round the drawing
+          buildWeather(
+            scene.effects,
+            patch.weather,
+            view,
+            {
+              left: whole ? region.left : patch.x,
+              top: patch.y <= 0 ? region.top : patch.y,
+              right: whole ? region.right : patch.x + patch.width,
+              bottom: patch.y + patch.height >= HEIGHT ? region.bottom : patch.y + patch.height,
+              bleed: whole ? 40 : 0,
+            },
+            clock,
+          );
+        }
         // Effects with a scene version are built into it, in field units,
         // where one passing behind a pokemon is hidden by it
         for (const cast of casting) {

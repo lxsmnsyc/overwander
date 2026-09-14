@@ -6,7 +6,10 @@ import { BIOME_NAMES } from '../../data/biome';
 import Decoration from '../../data/overworld/decoration';
 import Weather, { WEATHER_NAMES } from '../../data/overworld/weather';
 import ChunkCanvas from '../overworld/chunk-canvas';
-import type { SpawnCoat } from '../overworld/chunk-canvas/scenery';
+import { CellAura, type SpawnCoat } from '../overworld/chunk-canvas/scenery';
+import Landmark from '../../data/overworld/landmark';
+import Npc from '../../data/overworld/npc';
+import Phenomenon from '../../data/overworld/phenomenon';
 import { CHUNK_CELLS } from '../../overworld/chunk';
 import { getRegisteredSpecies } from '../../data/species';
 import { viewFor } from '../../canvas/board';
@@ -44,6 +47,33 @@ const DECORATIONS = new Map<number, Decoration>([
   [8 * CHUNK_CELLS + 10, Decoration.Shrub],
   [11 * CHUNK_CELLS + 8, Decoration.Tree],
 ]);
+
+/** One landmark wearing each aura, beside a trainer and a wanderer wearing none */
+const LANDMARKS = new Map<number, Landmark>([
+  [10 * CHUNK_CELLS + 2, Landmark.LegendaryLair],
+  [10 * CHUNK_CELLS + 5, Landmark.GymSeat],
+  [10 * CHUNK_CELLS + 11, Landmark.GymSeat],
+  [13 * CHUNK_CELLS + 3, Landmark.Trainer],
+  [13 * CHUNK_CELLS + 6, Landmark.Trainer],
+  [13 * CHUNK_CELLS + 10, Landmark.WanderingNpc],
+  [13 * CHUNK_CELLS + 13, Landmark.WanderingNpc],
+]);
+
+const WANDERERS = new Map<number, Npc>([
+  [13 * CHUNK_CELLS + 10, Npc.Breeder],
+  [13 * CHUNK_CELLS + 13, Npc.Groomer],
+]);
+
+const AURAS = new Map<number, CellAura>([
+  [10 * CHUNK_CELLS + 2, CellAura.Cleared],
+  [10 * CHUNK_CELLS + 5, CellAura.Fight],
+  [10 * CHUNK_CELLS + 11, CellAura.Mine],
+  [13 * CHUNK_CELLS + 3, CellAura.Fight],
+  [13 * CHUNK_CELLS + 10, CellAura.Fresh],
+]);
+
+/** A grotto, which wears its aura without being told to */
+const PHENOMENA = new Map<number, Phenomenon>([[10 * CHUNK_CELLS + 14, Phenomenon.HiddenGrotto]]);
 
 /** Nothing to draw, but the board asks for all of them */
 const NOTHING_MAPPED = new Map<number, never>();
@@ -198,16 +228,17 @@ export default function BoardDemo(): JSX.Element {
           player={player()}
           facing={facing()}
           crossing={null}
-          landmarks={NOTHING_MAPPED}
-          phenomena={NOTHING_MAPPED}
+          landmarks={LANDMARKS}
+          phenomena={PHENOMENA}
           spots={NOTHING_SET}
           shallows={NOTHING_SET}
           rocks={NOTHING_SET}
-          wanderers={NOTHING_MAPPED}
+          wanderers={WANDERERS}
           coats={NOTHING_MAPPED}
           berries={NOTHING_MAPPED}
           picked={NOTHING_SET}
           dug={NOTHING_SET}
+          auras={AURAS}
           decorations={DECORATIONS}
           spawns={SPAWNS}
           label={(index) => `Cell ${index}`}

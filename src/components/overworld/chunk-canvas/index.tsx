@@ -125,13 +125,18 @@ import {
   slideGain,
 } from './metrics';
 import {
+  type AuraPart,
+  CellAura,
   SHADOW_STAMP,
   type SpawnCoat,
+  auraCorners,
   bakeShadowDisc,
   bakeWord,
+  drawCellAura,
   drawPhenomenon,
   facingOf,
   landmarkCallOut,
+  paintCellAura,
   paintPhenomenon,
   paintSparkle,
   phenomenonSpan,
@@ -234,6 +239,12 @@ export interface ChunkCanvasProps {
    * what a cell that would answer nothing looks like
    */
   dug: Set<number>;
+  /**
+   * The glow under a landmark that says where this player stands with
+   * it: a raid won, a fight still waiting, their own seat, a wanderer
+   * not yet visited
+   */
+  auras: Map<number, CellAura>;
   /**
    * The chunk's scenery by cell. It is drawn and nothing else: a tree
    * cannot be pressed, and standing on one does nothing
@@ -1955,6 +1966,40 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
 
       /** Which phenomena have been repainted for this frame already */
       const repainted = new Set<Phenomenon>();
+      const repaintedAuras = new Set<string>();
+
+      /** One layer of a cell's aura, if it has one */
+      const stampAura = (index: number, middle: ProjectedPoint, part: AuraPart): void => {
+        // A grotto needs no word from the caller: a claimed one is no
+        // longer in the phenomena at all
+        const aura =
+          props.auras.get(index) ??
+          (props.phenomena.get(index) === Phenomenon.HiddenGrotto ? CellAura.Grotto : null);
+
+        if (aura == null) {
+          return;
+        }
+        const squash = shadowSquash();
+        const picture = batch == null ? null : paintCellAura(aura, part, clock, squash);
+
+        if (picture == null || batch == null) {
+          drawCellAura(context, middle, aura, part, clock, magnify, squash);
+          return;
+        }
+        // Repainted since it was uploaded, so the batch is told once a frame
+        if (!repaintedAuras.has(`${aura}:${part}`)) {
+          batch.invalidate(picture);
+          repaintedAuras.add(`${aura}:${part}`);
+        }
+        batch.quad(
+          picture,
+          { x: 0, y: 0, width: picture.width, height: picture.height },
+          auraCorners(middle, magnify),
+          1,
+          undefined,
+          'smooth',
+        );
+      };
 
       /** The cell the cursor is over, once this frame */
       const under = hovered();
@@ -2268,6 +2313,9 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         // the backdrop a pokemon is standing in front of, and a lair
         // is the backdrop the whole cell is about
         if (!loading()) {
+          // The ring and its light lie under the landmark and whoever
+          // stands on it; the glints are drawn over them further down
+          stampAura(index, middle, 'ground');
           standPiece(context, sceneryOn(index), middle, magnify, place, (quad) =>
             veil(index, Standing.Scenery, quad),
           );
@@ -2369,6 +2417,10 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
               alpha === 1 ? standingPerson : { ...standingPerson, alpha },
             );
           }
+        }
+
+        if (!loading()) {
+          stampAura(index, middle, 'air');
         }
 
         if (standing != null) {

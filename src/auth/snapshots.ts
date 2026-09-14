@@ -4,6 +4,7 @@
 // oxlint-disable typescript/no-unnecessary-type-assertion
 import type { ItemStack } from '../data/overworld/item-pool';
 import type Chunk from '../overworld/chunk';
+import type { Depth } from '../overworld/depth';
 import ChunkSnapshot, {
   SNAPSHOT_INTERVAL,
   SPAWN_COUNT,
@@ -261,6 +262,7 @@ export async function claimItemCache(
     snapshot.chunk.y,
     cell,
     snapshot.offset,
+    snapshot.depth,
   );
 }
 
@@ -270,6 +272,7 @@ async function claimCacheOnServer(
   y: number,
   cell: number,
   offset: number,
+  depth: Depth,
 ): Promise<ItemStack[] | null> {
   'use server';
   return claimCacheOnServerSide(
@@ -279,6 +282,7 @@ async function claimCacheOnServer(
     cell,
     await syncServerClock(),
     offset,
+    depth,
   );
 }
 
@@ -298,6 +302,7 @@ export async function claimBerryPatch(
     snapshot.chunk.y,
     cell,
     snapshot.offset,
+    snapshot.depth,
   );
 }
 
@@ -307,6 +312,7 @@ async function claimBerryOnServer(
   y: number,
   cell: number,
   offset: number,
+  depth: Depth,
 ): Promise<ItemStack | null> {
   'use server';
   return claimBerryOnServerSide(
@@ -316,6 +322,7 @@ async function claimBerryOnServer(
     cell,
     await syncServerClock(),
     offset,
+    depth,
   );
 }
 
@@ -334,6 +341,7 @@ export async function claimApricornTree(
     snapshot.chunk.y,
     cell,
     snapshot.offset,
+    snapshot.depth,
   );
 }
 
@@ -343,6 +351,7 @@ async function claimApricornOnServer(
   y: number,
   cell: number,
   offset: number,
+  depth: Depth,
 ): Promise<ItemStack | null> {
   'use server';
   return claimApricornOnServerSide(
@@ -352,6 +361,7 @@ async function claimApricornOnServer(
     cell,
     await syncServerClock(),
     offset,
+    depth,
   );
 }
 
@@ -375,6 +385,7 @@ export async function peekNest(snapshot: ChunkSnapshot, cell: number): Promise<N
     snapshot.chunk.y,
     cell,
     snapshot.offset,
+    snapshot.depth,
   );
 }
 
@@ -384,9 +395,18 @@ async function peekNestOnServer(
   y: number,
   cell: number,
   offset: number,
+  depth: Depth,
 ): Promise<NestOffer | null> {
   'use server';
-  return peekNestOnServerSide(await requireUid(token), x, y, cell, await syncServerClock(), offset);
+  return peekNestOnServerSide(
+    await requireUid(token),
+    x,
+    y,
+    cell,
+    await syncServerClock(),
+    offset,
+    depth,
+  );
 }
 
 /**
@@ -404,6 +424,7 @@ export async function peekPhenomenonEgg(
     snapshot.chunk.y,
     cell,
     snapshot.offset,
+    snapshot.depth,
   );
 }
 
@@ -413,6 +434,7 @@ async function peekPhenomenonEggOnServer(
   y: number,
   cell: number,
   offset: number,
+  depth: Depth,
 ): Promise<NestOffer | null> {
   'use server';
   return peekPhenomenonEggOnServerSide(
@@ -422,6 +444,7 @@ async function peekPhenomenonEggOnServer(
     cell,
     await syncServerClock(),
     offset,
+    depth,
   );
 }
 
@@ -436,6 +459,7 @@ export async function listClaimedPhenomena(snapshot: ChunkSnapshot): Promise<num
     snapshot.chunk.x,
     snapshot.chunk.y,
     snapshot.offset,
+    snapshot.depth,
   );
 }
 
@@ -444,6 +468,7 @@ async function listClaimedOnServer(
   x: number,
   y: number,
   offset: number,
+  depth: Depth,
 ): Promise<number[]> {
   'use server';
   return listClaimedPhenomenaOnServerSide(
@@ -452,6 +477,7 @@ async function listClaimedOnServer(
     y,
     await syncServerClock(),
     offset,
+    depth,
   );
 }
 
@@ -466,6 +492,7 @@ export async function listPickedBerryPatches(snapshot: ChunkSnapshot): Promise<n
     snapshot.chunk.x,
     snapshot.chunk.y,
     snapshot.offset,
+    snapshot.depth,
   );
 }
 
@@ -474,6 +501,7 @@ async function listPickedOnServer(
   x: number,
   y: number,
   offset: number,
+  depth: Depth,
 ): Promise<number[]> {
   'use server';
   return listPickedBerryPatchesOnServerSide(
@@ -482,6 +510,7 @@ async function listPickedOnServer(
     y,
     await syncServerClock(),
     offset,
+    depth,
   );
 }
 
@@ -496,6 +525,7 @@ export async function listClaimedItemCaches(snapshot: ChunkSnapshot): Promise<nu
     snapshot.chunk.x,
     snapshot.chunk.y,
     snapshot.offset,
+    snapshot.depth,
   );
 }
 
@@ -504,6 +534,7 @@ async function listDugCachesOnServer(
   x: number,
   y: number,
   offset: number,
+  depth: Depth,
 ): Promise<number[]> {
   'use server';
   return listClaimedItemCachesOnServerSide(
@@ -512,6 +543,7 @@ async function listDugCachesOnServer(
     y,
     await syncServerClock(),
     offset,
+    depth,
   );
 }
 
@@ -532,6 +564,7 @@ export async function claimNest(snapshot: ChunkSnapshot, cell: number): Promise<
     cell,
     snapshot.offset,
     getLocale(),
+    snapshot.depth,
   );
 }
 
@@ -542,6 +575,7 @@ async function claimNestOnServer(
   cell: number,
   offset: number,
   locale: string,
+  depth: Depth,
 ): Promise<string | null> {
   'use server';
   return claimNestOnServerSide(
@@ -552,6 +586,7 @@ async function claimNestOnServer(
     await syncServerClock(),
     offset,
     locale,
+    depth,
   );
 }
 
@@ -586,6 +621,7 @@ export async function claimPhenomenon(
     cell,
     snapshot.offset,
     getLocale(),
+    snapshot.depth,
   );
 }
 
@@ -596,6 +632,7 @@ async function claimPhenomenonOnServer(
   cell: number,
   offset: number,
   locale: string,
+  depth: Depth,
 ): Promise<PhenomenonClaim | null> {
   'use server';
   return claimPhenomenonOnServerSide(
@@ -606,6 +643,7 @@ async function claimPhenomenonOnServer(
     await syncServerClock(),
     offset,
     locale,
+    depth,
   );
 }
 
@@ -629,6 +667,7 @@ export async function startEncounter(
     snapshot.chunk.y,
     spawn,
     snapshot.offset,
+    snapshot.depth,
   );
 }
 
@@ -638,7 +677,8 @@ async function meetSpawnOnServer(
   y: number,
   spawn: string,
   offset: number,
+  depth: Depth,
 ): Promise<EncounterRecord | null> {
   'use server';
-  return meetSpawn(await requireUid(token), x, y, spawn, await syncServerClock(), offset);
+  return meetSpawn(await requireUid(token), x, y, spawn, await syncServerClock(), offset, depth);
 }

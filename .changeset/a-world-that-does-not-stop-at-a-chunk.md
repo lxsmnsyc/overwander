@@ -1,0 +1,26 @@
+---
+'overwander': minor
+---
+
+- The climate is read a cell at a time, so a chunk can hold two countries and a border wanders through the ground instead of falling on a chunk boundary
+- Lakes, rivers and ridges of rock are world-wide fields now, so they run from one chunk into the next rather than being grown inside one
+- The board draws the neighbouring chunks' own ground past its edges, and every cell is drawn from its own country's tileset
+- The board is a window on the world with the player in the middle of it rather than the chunk they are standing in, so the world scrolls as they walk and there is no boundary to cross and nothing to wait for at one
+- A board straddles four or nine chunks at once, and their windows are all watched and all visited, so what is standing on the far side of a boundary is live before the player gets there
+- The board is a circle rather than a square, so a player sees the same distance in every direction
+- The country is drawn twenty cells out, past the edge of the picture on every side, and every square of it can be pressed and walked to, so nothing on the screen is out of reach
+- The world is live within ten cells of the player, which is how near a pokemon has to be to be standing there, and no circle is drawn to say so
+- Scenery, landmarks and pokemon may stand on any cell of a chunk: the clear rim every chunk used to keep drew empty corridors across the world every sixteen cells
+- A new /demo/world page paints the world's ground a cell at a time, with the chunk grid over it
+- Towns: one settled circle 28 cells across in each 8x8 chunk region that has dry ground for it, holding nine to fourteen lots of market, auction board, gym seat and the ladder
+- The region's portal stands on the town's plaza, dead centre, where every street of the town begins
+- A chunk of open country rolls two to four landmarks instead of five to eight, so what is left out there is what a player goes out for
+- Every region has exactly one portal, in its town where it has one, so the network is even and reaches every country including the open seas
+- A town levels the ground it stands on, and no two towns have the same charter
+- A town's streets have wild pokemon of their own, the kind that live around people, from one list every town shares
+- Porygon is met on town streets rather than beside a portal
+- Walking into a town says its name, and walking out and back in says it again
+- A town has streets: its plaza is paved and a road runs out of it to every lot, turning square corners rather than cutting across, drawn from whatever country the town stands in
+- A street stops at a lot's door rather than paving it and goes round any other lot in its way, so nobody stands in the road and no road stops dead at a back wall
+- The board keeps the subscriptions it already has when it moves, and remembers what the server said about a window's claims, so a walk asks it a fraction of what it used to
+- The world map marks the towns in view at the size they really are, and says so when the pointer is over one

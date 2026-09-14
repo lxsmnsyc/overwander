@@ -62,6 +62,7 @@ export function pickFreeCell(
     ...chunk.getLandmarkCells().keys(),
     ...chunk.getDecorationCells().keys(),
     ...chunk.getRockCells(),
+    ...chunk.getFaceCells(),
   ]);
   const free: number[] = [];
 

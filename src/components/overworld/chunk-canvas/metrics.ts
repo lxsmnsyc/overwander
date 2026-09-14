@@ -1,5 +1,4 @@
-import { BORDER_CELLS, boardView } from '../../../canvas/board';
-import { CHUNK_CELLS } from '../../../overworld/chunk';
+import { BOARD_SPAN, boardView } from '../../../canvas/board';
 
 /**
  * The board's reference measurements, its colours, and the few facts
@@ -19,24 +18,18 @@ import { CHUNK_CELLS } from '../../../overworld/chunk';
 export const CELL = 26;
 
 /**
- * The reference picture's width. It is wider than the chunk: there is
- * an apron of threshold cells around it and the compass marks stand
- * off that again.
+ * The reference picture's width. It is the span the projection is
+ * calibrated to rather than the square the cells are indexed in: the
+ * country runs off the picture on every side, and how big a sprite is
+ * drawn is a fact about the picture.
  *
  * Asked rather than kept, because the two boards are not the same
  * shape: the flat one is squarer than the laid-back one, and a painter
  * measuring against the wrong one draws every cell the wrong size
  */
 export function pictureWidth(): number {
-  return CELL * CHUNK_CELLS * boardView().span;
+  return CELL * BOARD_SPAN * boardView().span;
 }
-
-/**
- * How far past the chunk the apron of thresholds reaches, in board
- * fractions — the units the ground is measured in, where the chunk
- * itself runs from 0 to 1
- */
-export const APRON = BORDER_CELLS / CHUNK_CELLS;
 
 /**
  * How many source pixels of a pokemon sheet stand on one cell of
@@ -268,11 +261,6 @@ export const COLORS = {
   /** Under every mark, so one reads on pale ground as well as on dark */
   ringShade: 'rgba(0, 0, 0, 0.28)',
   /**
-   * The line round the board while it has the keyboard, which is what
-   * says the camera keys will answer
-   */
-  cursor: '#3b82f6',
-  /**
    * The compass, which is four marks standing on the ground off the
    * edges of the board, each pointing the way it stands for. They are
    * read against whatever country the chunk is made of, so each is
@@ -300,11 +288,12 @@ export const COLORS = {
    */
   shadow: 'rgba(0, 0, 0, 0.35)',
   /**
-   * What lifts the board off the country it lies in. The ground
-   * beyond it is the same colour — it is the same country — so the
-   * board is the part of it with the light on
+   * A town's streets, washed over whatever ground they run across
+   * rather than tiled. Warm and half-clear, so it darkens a pale
+   * country and warms a dark one and every biome keeps its own floor
+   * showing through the paving
    */
-  surface: 'rgba(255, 255, 255, 0.10)',
+  road: 'rgba(122, 92, 58, 0.42)',
 } as const;
 
 /**
@@ -505,15 +494,3 @@ export const QUARTER_TURN = Math.PI / 2;
 export function isTurningPress(event: { button: number; ctrlKey: boolean }): boolean {
   return event.button === RIGHT_BUTTON || (event.button === 0 && event.ctrlKey);
 }
-
-/**
- * Which way a step off the board goes, in the world's own words. North
- * is the far edge of the chunk however the camera has been walked
- * round, which is the same north the compass marks are drawn from
- */
-export const BEARINGS = new Map<string, string>([
-  ['0,-1', 'north'],
-  ['1,0', 'east'],
-  ['0,1', 'south'],
-  ['-1,0', 'west'],
-]);

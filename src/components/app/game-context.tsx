@@ -29,6 +29,7 @@ import type { AuctionSubject } from '../auctions/AuctionDialog';
 import type ProfileSection from '../profile/sections';
 import { ensureProfile } from '../../auth/profile';
 import getWorld from '../../overworld/current';
+import { Depth } from '../../overworld/depth';
 import pickStartPosition, { type StartPosition } from '../../overworld/start';
 /**
  * What is open over the world.
@@ -210,7 +211,7 @@ export interface GameState {
    * that could not recognise its own writes coming back around the
    * subscription would stand itself down mid-walk
    */
-  saveWalk: (chunkX: number, chunkY: number, cellX: number, cellY: number) => void;
+  saveWalk: (chunkX: number, chunkY: number, cellX: number, cellY: number, depth: Depth) => void;
   /**
    * Where that is, in words: the country and the chunk's coordinates.
    *
@@ -383,8 +384,14 @@ export default function GameProvider(props: ParentProps): JSX.Element {
    */
   let wroteAt = 0;
 
-  const saveWalk = (chunkX: number, chunkY: number, cellX: number, cellY: number): void => {
-    savePosition(chunkX, chunkY, cellX, cellY)
+  const saveWalk = (
+    chunkX: number,
+    chunkY: number,
+    cellX: number,
+    cellY: number,
+    depth: Depth,
+  ): void => {
+    savePosition(chunkX, chunkY, cellX, cellY, depth)
       .then((stamp) => {
         wroteAt = Math.max(wroteAt, stamp);
       })
@@ -411,7 +418,7 @@ export default function GameProvider(props: ParentProps): JSX.Element {
     }
     setElsewhere(null);
     setPosition(at);
-    saveWalk(at.chunkX, at.chunkY, at.cellX, at.cellY);
+    saveWalk(at.chunkX, at.chunkY, at.cellX, at.cellY, at.depth);
   };
   const [place, setPlace] = createSignal<string | null>(null);
   const [weather, setWeather] = createSignal<Weather | null>(null);
@@ -455,11 +462,20 @@ export default function GameProvider(props: ParentProps): JSX.Element {
         chunkY: at.chunkY,
         cellX: at.cellX,
         cellY: at.cellY,
+        // A player put down for the first time is put down outside, and
+        // a start position has no layer of its own to carry
+        depth: 'depth' in at ? at.depth : Depth.Surface,
         movedAt: 'movedAt' in at ? at.movedAt : 0,
       });
 
       if (store) {
-        saveWalk(at.chunkX, at.chunkY, at.cellX, at.cellY);
+        saveWalk(
+          at.chunkX,
+          at.chunkY,
+          at.cellX,
+          at.cellY,
+          'depth' in at ? at.depth : Depth.Surface,
+        );
       }
     };
 

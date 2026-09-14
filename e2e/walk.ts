@@ -1,9 +1,12 @@
 import { type Locator, type Page, expect } from '@playwright/test';
 import {
-  type BoardCell,
+  BOARD_CELLS,
+  BOARD_CENTER,
+  BOARD_RADIUS,
   fitPicture,
   projectBoardCell,
   projectCell,
+  reachOf,
   setBoardScreen,
 } from '../src/canvas/board';
 import { CHUNK_CELLS } from '../src/overworld/chunk';
@@ -111,17 +114,32 @@ export async function pressCell(page: Page, board: Locator, index: number): Prom
 }
 
 /**
- * Press one of the threshold cells around the chunk, which is how a
- * player leaves it: the walk goes to the edge and takes one more step
- * over it, into the chunk beyond
+ * Press the furthest cell of the live circle in one direction, which
+ * is how a walk covers ground. The country drawn past it is pressable
+ * too, but only the live circle is guaranteed to be inside the picture
+ * however the board is turned, and a click has to land on the canvas
  */
-export async function pressEdge(page: Page, board: Locator, cell: BoardCell): Promise<void> {
+export async function pressFar(page: Page, board: Locator, way: [number, number]): Promise<void> {
   const bounds = await board.boundingBox();
 
   if (bounds == null) {
     return;
   }
-  const spot = spotOf(bounds, () => projectBoardCell(cell));
+
+  let reach = { x: BOARD_CENTER, y: BOARD_CENTER };
+
+  for (let step = 1; step < BOARD_CELLS; step++) {
+    const candidate = { x: BOARD_CENTER + way[0] * step, y: BOARD_CENTER + way[1] * step };
+
+    if (reachOf(candidate) > BOARD_RADIUS) {
+      break;
+    }
+    reach = candidate;
+  }
+
+  // The point is a thunk: the screen has to be named from the board's
+  // own box before anything is put through the projection
+  const spot = spotOf(bounds, () => projectBoardCell(reach));
 
   await page.mouse.click(spot.x, spot.y);
 }
@@ -187,22 +205,29 @@ export function findLandmark(kind: Landmark): Standing | null {
 /**
  * Stand the player one step from a landmark, before the page has read
  * where they are. Written straight into the store the way a staged
- * raid is: the walk is the only thing skipped
+ * raid is: the walk is the only thing skipped.
+ *
+ * Resolves the **board** cell the landmark will be drawn on. The board
+ * is a window that keeps the player in the middle of it, so where
+ * something sits on screen is worked out from how far it is from them
+ * rather than from where it sits in its chunk
  */
-export async function standBeside(player: Player, at: Standing): Promise<void> {
+export async function standBeside(player: Player, at: Standing): Promise<number> {
   const cellX = at.cell % CHUNK_CELLS;
   const cellY = Math.floor(at.cell / CHUNK_CELLS);
+  // One cell over, so the press is a step rather than a hike. The
+  // landmark is never on the outer rows, so there is always room
+  const stoodX = cellX > 0 ? cellX - 1 : cellX + 1;
 
   await upsertRow('positions', {
     player: await uidOf(player),
     chunk_x: at.chunkX,
     chunk_y: at.chunkY,
-    // One cell over, so the press is a step rather than a hike. The
-    // landmark is never on the outer rows, so there is always room
-    cell_x: cellX > 0 ? cellX - 1 : cellX + 1,
+    cell_x: stoodX,
     cell_y: cellY,
     moved_at: Date.now(),
   });
+  return BOARD_CENTER * BOARD_CELLS + BOARD_CENTER + (cellX - stoodX);
 }
 
 /**
@@ -225,8 +250,10 @@ export async function openAuctionBoard(page: Page, player: Player): Promise<Loca
   // walk, so a save still in the air when the row is written puts them
   // back where they started; what says it took is the chunk the board
   // names once the page has read it again
+  let seat = BOARD_CENTER * BOARD_CELLS + BOARD_CENTER;
+
   await expect(async () => {
-    await standBeside(player, standing);
+    seat = await standBeside(player, standing);
     await page.reload();
     await expect(page.getByRole('navigation', { name: 'Game' })).toBeVisible({ timeout: 20_000 });
     await expect(board).toBeVisible();
@@ -239,13 +266,11 @@ export async function openAuctionBoard(page: Page, player: Player): Promise<Loca
   // what is standing on it, which is also what proves the arithmetic
   // above found the right one
   await expect(async () => {
-    expect(await nameAt(page, board, standing.cell)).toContain(
-      LANDMARK_NAMES[Landmark.AuctionBoard],
-    );
+    expect(await nameAt(page, board, seat)).toContain(LANDMARK_NAMES[Landmark.AuctionBoard]);
   }).toPass({ timeout: 30_000 });
 
   // The walk is one step, and the panel opens when it arrives
-  await pressCell(page, board, standing.cell);
+  await pressCell(page, board, seat);
 
   const lots = dialogNamed(page, 'Auctions');
 

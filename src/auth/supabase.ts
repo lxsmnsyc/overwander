@@ -87,13 +87,21 @@ export function watchRow<T>(
         // the next change or reconnect tries again
       });
   };
+  // The first subscribe is the socket catching up with the read below
+  // rather than a second reason to run it. Only a resubscribe is: a
+  // dropped socket may have missed a change while it was away
+  let connected = false;
   const channel = supabase
     .channel(`row:${table}:${filter}:${Math.random().toString(36).slice(2)}`)
     .on('postgres_changes', { event: '*', schema: 'public', table, filter }, refetch)
     .subscribe((status) => {
-      if (status === REALTIME_SUBSCRIBE_STATES.SUBSCRIBED) {
+      if (status !== REALTIME_SUBSCRIBE_STATES.SUBSCRIBED) {
+        return;
+      }
+      if (connected) {
         refetch();
       }
+      connected = true;
     });
 
   // The first paint cannot wait for the socket
@@ -136,10 +144,18 @@ export function watchTable<T>(
       refetch,
     );
   }
+  // As above: the first subscribe rides the read below, and only a
+  // resubscribe is worth another
+  let connected = false;
+
   channel.subscribe((status) => {
-    if (status === REALTIME_SUBSCRIBE_STATES.SUBSCRIBED) {
+    if (status !== REALTIME_SUBSCRIBE_STATES.SUBSCRIBED) {
+      return;
+    }
+    if (connected) {
       refetch();
     }
+    connected = true;
   });
 
   refetch();

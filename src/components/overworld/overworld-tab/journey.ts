@@ -5,20 +5,15 @@ import type { EggState } from '../NestDialog';
  * A walk in progress: where it is going, and what happens when it gets
  * there.
  *
- * The goal is a cell of the chunk the walk started in, so a walk does
- * not survive leaving it — which is the whole of what `exit` is for.
- * A threshold press is a walk to the edge cell in front of it and then
- * one step over, and that step is the last thing the walk does
+ * The goal is a world cell rather than a board one. The board follows
+ * the player, so a square four cells ahead of them is a different
+ * board cell after every step, and a walk kept in the board's numbers
+ * would chase its own tail
  */
 export interface Journey {
-  /**
-   * The cell being walked to, or the one being walked up to
-   */
-  goal: number;
-  /**
-   * A step out of the chunk on arrival, for a threshold press
-   */
-  exit: [number, number] | null;
+  /** The cell being walked to, or the one being walked up to */
+  goalX: number;
+  goalY: number;
   /**
    * Whether the goal is a thing rather than a place: something stands
    * on it, so the walk ends beside it and reaches out

@@ -1,6 +1,6 @@
 import 'server-only';
 import AleaRNG from '../core/alea';
-import { WORLD_MAX, WORLD_MIN } from '../overworld/world';
+import { Depth, WORLD_MAX, WORLD_MIN } from '../overworld/world';
 import { asChunkCoordinate } from '../auth/position-record';
 import findPlayer, { nameOf } from './players';
 import getWorld from '../overworld/current';
@@ -25,6 +25,8 @@ export interface TeleportOutcome {
   chunkY: number;
   cellX: number;
   cellY: number;
+  /** Which layer they landed on, which a teleport always puts outside */
+  depth: Depth;
   /** The stamp it was written under, which the caller's screen adopts */
   movedAt: number;
 }
@@ -80,6 +82,7 @@ export default async function teleport(
       standing.chunkY,
       standing.cellX,
       standing.cellY,
+      standing.depth,
       now,
     );
     return {
@@ -87,6 +90,7 @@ export default async function teleport(
       nickname: await nameOf(player),
       chunkX: standing.chunkX,
       chunkY: standing.chunkY,
+      depth: standing.depth,
       cellX: standing.cellX,
       cellY: standing.cellY,
       movedAt: now,
@@ -100,6 +104,17 @@ export default async function teleport(
   const chunkY = asChunkCoordinate(wanted.y ?? anywhere(rng));
   const { cellX, cellY } = pickFreeCell(getWorld(), chunkX, chunkY, rng);
 
-  await savePosition(player, chunkX, chunkY, cellX, cellY, now);
-  return { player, nickname: await nameOf(player), chunkX, chunkY, cellX, cellY, movedAt: now };
+  // Dropped on the surface: a staff teleport names a chunk, and a
+  // chunk is somewhere on both layers but only walkable on one
+  await savePosition(player, chunkX, chunkY, cellX, cellY, Depth.Surface, now);
+  return {
+    player,
+    nickname: await nameOf(player),
+    chunkX,
+    chunkY,
+    cellX,
+    cellY,
+    depth: Depth.Surface,
+    movedAt: now,
+  };
 }

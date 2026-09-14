@@ -14,7 +14,9 @@ import type { Moves } from '../../data/ids/moves';
 import { isPPItem } from '../../data/items/vitamins';
 import { type InventoryEntry, getInventory } from '../../auth/inventory';
 import { getLocalOffset } from '../../auth/local-time';
+import useEscapeRope from '../../auth/escape-rope';
 import { hostMythicalRaid } from '../../auth/raids';
+import { isEscapeRope } from '../../data/items/escape-rope';
 import { getRaidSpecies } from '../../data/items/raid-items';
 import { getItemData } from '../../data/items';
 import CatchPicker from '../catches/catch-picker';
@@ -60,6 +62,9 @@ function isRelic(item: Items): boolean {
 function relicVerb(item: Items): string {
   if (isRelic(item)) {
     return 'Open the raid with ';
+  }
+  if (isEscapeRope(item)) {
+    return 'Climb out with ';
   }
   return isUsable(item) ? 'Use ' : '';
 }
@@ -172,6 +177,27 @@ function BagBody(
       });
   };
 
+  /**
+   * Out of the cave, at the nearest mouth. Nothing is asked first: the
+   * rope is spent on a place, and pressing it is the whole question.
+   * The bag stays open over a board that has moved underneath it
+   */
+  const climb = (): void => {
+    useEscapeRope()
+      .then((at) => {
+        if (at == null) {
+          said('A rope is for the dark, and there is no way up within reach.', 'ember');
+          return;
+        }
+        props.onSpent();
+        game.standHere(at);
+        said('Up the rope, and out into the light.', 'leaf');
+      })
+      .catch((caught: unknown) => {
+        said(caught instanceof Error ? caught.message : String(caught), 'ember');
+      });
+  };
+
   /** Move on to the next move the level offered, or shut the dialog */
   const nextTeaching = (): void => {
     const current = teaching();
@@ -248,6 +274,10 @@ function BagBody(
           onPress={(item) => {
             if (isRelic(item)) {
               call(item);
+              return;
+            }
+            if (isEscapeRope(item)) {
+              climb();
               return;
             }
             if (isUsable(item)) {

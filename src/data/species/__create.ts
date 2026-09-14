@@ -1,6 +1,6 @@
 import type { Stats } from '../constants/stats';
-import type { Types } from '../constants/types';
-import type Abilities from '../ids/abilities';
+import { Types } from '../constants/types';
+import Abilities from '../ids/abilities';
 import type Biome from '../ids/biome';
 import type { TimeOfDay } from '../ids/biome';
 import type EggGroups from '../ids/egg-groups';
@@ -272,6 +272,42 @@ export function getSpeciesData(species: Species): SpeciesData {
  * another one. A registration that says nothing is one: variants are
  * the exception, and the exception is what gets written down
  */
+/**
+ * Whether a species can be in the water rather than only beside it.
+ *
+ * Asked of the overworld when a lake or a river runs through dry
+ * country: the pool there was written for the land around it, and a
+ * Rhyhorn standing in the middle of a pond is the pool answering a
+ * question nobody asked it. A country that is itself water is not
+ * asked, since everything in its pool was chosen knowing that
+ */
+export function swims(species: Species): boolean {
+  return getSpeciesData(species).types.includes(Types.Water);
+}
+
+/**
+ * Whether a species is over the ground rather than on it: the Flying
+ * types, and the hoverers the mainline hands Levitate to.
+ *
+ * Asked beside `swims` for the same pond. Something in the air is no
+ * more standing in the water than something swimming is, so a Zubat
+ * over a river is the pool answering the question it was asked. What
+ * the rule keeps out is the Rhyhorn.
+ *
+ * Read off the species' own abilities rather than the walk up its
+ * line, since what hovers is this stage rather than whatever its
+ * pre-evolution could be born with
+ */
+export function floats(species: Species): boolean {
+  const data = getSpeciesData(species);
+
+  return (
+    data.types.includes(Types.Flying) ||
+    data.abilities.includes(Abilities.Levitate) ||
+    (data.hiddenAbilities ?? []).includes(Abilities.Levitate)
+  );
+}
+
 export function isBaseForm(species: Species): boolean {
   return getSpeciesData(species).baseForm !== false;
 }

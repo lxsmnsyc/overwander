@@ -1,4 +1,5 @@
 import 'server-only';
+import { Depth } from '../../overworld/depth';
 import type { ItemStack } from '../../data/overworld/item-pool';
 import type ChunkSnapshot from '../../overworld/chunk-snapshot';
 import { getSql } from '../db';
@@ -21,8 +22,9 @@ export async function claimItemCache(
   cell: number,
   now: number,
   offset: number,
+  depth: Depth = Depth.Surface,
 ): Promise<ItemStack[] | null> {
-  const snapshot = await resolveSnapshot(x, y, now, offset);
+  const snapshot = await resolveSnapshot(x, y, now, offset, depth);
   const stash = snapshot?.getItemCaches().get(cell);
 
   if (snapshot == null || stash == null) {
@@ -71,8 +73,9 @@ export async function listClaimedItemCaches(
   y: number,
   now: number,
   offset: number,
+  depth: Depth = Depth.Surface,
 ): Promise<number[]> {
-  const snapshot = await resolveSnapshot(x, y, now, offset);
+  const snapshot = await resolveSnapshot(x, y, now, offset, depth);
 
   if (snapshot == null) {
     return [];

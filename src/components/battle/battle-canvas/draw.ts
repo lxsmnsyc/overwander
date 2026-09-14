@@ -338,6 +338,29 @@ export function withinSlot(slot: Slot, x: number, y: number): boolean {
 const shone = new WeakMap<Unit, number>();
 
 /**
+ * A name for each shiny's own sparkle picture. Both sides of a fight
+ * can be shiny at once, and one picture shared between them is one
+ * texture drawn in two places
+ */
+const named = new WeakMap<Unit, string>();
+let names = 0;
+
+function nameOf(unit: Unit): string {
+  const held = named.get(unit);
+
+  if (held != null) {
+    return held;
+  }
+
+  names += 1;
+
+  const fresh = `unit:${names}`;
+
+  named.set(unit, fresh);
+  return fresh;
+}
+
+/**
  * The stars a shiny throws as it arrives, the same announcement one
  * standing on a cell makes. It is over in about a second: a coat worth
  * looking twice at is worth being told about once
@@ -364,7 +387,7 @@ function sparkle(
   const seed = Math.round(slot.x + slot.y);
   const scale = scaleOf(slot);
   const frame = sprite.sourceFrameSize;
-  const glint = onto == null ? null : paintSparkle(seed, age, frame);
+  const glint = onto == null ? null : paintSparkle(nameOf(slot.unit), seed, age, frame);
 
   if (onto == null || glint == null) {
     drawSparkle(context, seed, age, x, y, frame, scale);

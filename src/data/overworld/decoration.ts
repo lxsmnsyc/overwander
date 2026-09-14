@@ -145,3 +145,20 @@ export function getBlocker(biome: Biome): Decoration {
 export function getBiomeDecorations(biome: Biome): Decoration[] {
   return DECORATIONS[biome];
 }
+
+/**
+ * What grows on an island in each open sea. The sea's own list is what
+ * stands in the water around it, and coral on the sand would be wrong
+ */
+const ISLAND_DECORATIONS: Partial<Record<Biome, Decoration[]>> = {
+  [Biome.DeepOcean]: [Decoration.Palm, Decoration.Rock, Decoration.Shrub],
+  [Biome.Ocean]: [Decoration.Palm, Decoration.Palm, Decoration.Shrub, Decoration.Grass],
+  [Biome.CoralReef]: [Decoration.Palm, Decoration.Palm, Decoration.Flower],
+  [Biome.KelpForest]: [Decoration.Rock, Decoration.Shrub, Decoration.Grass],
+  [Biome.PolarOcean]: [Decoration.Ice, Decoration.Rock, Decoration.Rock],
+};
+
+/** What grows on dry ground in this country: its islands, out at sea */
+export function getIslandDecorations(biome: Biome): Decoration[] {
+  return ISLAND_DECORATIONS[biome] ?? DECORATIONS[biome];
+}

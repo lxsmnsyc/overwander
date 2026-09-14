@@ -9,6 +9,7 @@ import {
   MAX_DECORATIONS,
   MIN_DECORATIONS,
   getBiomeDecorations,
+  getIslandDecorations,
 } from '../data/overworld/decoration';
 import Landmark, { LANDMARKS } from '../data/overworld/landmark';
 import { TOWN_LANDMARKS, getTownLots, isTownAt, portalCellIn, townOverChunk } from './town';
@@ -483,16 +484,20 @@ export default class Chunk {
         const taken = new Set<number>();
         const order = shuffled(rng, centeredCells(PLACEMENT_AREA));
 
+        // Out at sea the scenery stands in the water, and an island grows
+        // its own rather than coral on the sand
+        const sea = isOpenSea(this.biome);
+
         for (let i = 0; i < count; i++) {
           // The draws land in pair order: the kind, then its cell
-          const decoration = kinds[Math.floor(rng.random() * kinds.length)];
-          // Scenery keeps to dry ground: nothing here grows out of the
-          // water, so a chunk under a lake simply has less of it
+          const roll = rng.random();
+          // On land scenery keeps to dry ground, so a chunk under a lake
+          // simply has less of it
           const cell = order.find(
             (candidate) =>
               !taken.has(candidate) &&
               !landmarks.has(candidate) &&
-              this.getCellRole(candidate) === 'ground' &&
+              (sea || this.getCellRole(candidate) === 'ground') &&
               !this.getFaceCells().has(candidate) &&
               this.isClear(candidate) &&
               // Nothing grows in the street: a town is swept, and its
@@ -506,7 +511,10 @@ export default class Chunk {
           if (cell == null) {
             break;
           }
-          cells.set(cell, decoration);
+          const grows =
+            sea && this.getCellRole(cell) === 'ground' ? getIslandDecorations(this.biome) : kinds;
+
+          cells.set(cell, grows[Math.floor(roll * grows.length)]);
           taken.add(cell);
           for (const neighbor of neighborCells(cell)) {
             taken.add(neighbor);

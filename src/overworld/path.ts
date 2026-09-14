@@ -68,9 +68,28 @@ export function stepsBetween(one: number, other: number): number {
 }
 
 /**
+ * How far a cell strays from the straight line between the start and
+ * the goal. Many routes on open ground are equally short, and the one
+ * hugging this line reads as heading there rather than as one leg and
+ * then the other
+ */
+function strayFrom(start: number, goal: number): (cell: number) => number {
+  const goalX = goal % BOARD_CELLS;
+  const goalY = Math.floor(goal / BOARD_CELLS);
+  const lineX = (start % BOARD_CELLS) - goalX;
+  const lineY = Math.floor(start / BOARD_CELLS) - goalY;
+
+  return (cell) =>
+    Math.abs(
+      ((cell % BOARD_CELLS) - goalX) * lineY - (Math.floor(cell / BOARD_CELLS) - goalY) * lineX,
+    );
+}
+
+/**
  * A* over the board, with the goal given as a test rather than as a
  * cell, because two different things are asked for: the cell itself,
- * and any cell beside it.
+ * and any cell beside it. Ties between equally short routes go to the
+ * one that strays least, which never makes a route longer.
  *
  * The open set is a plain array scanned for its best entry. The board
  * is a few hundred cells; a heap would be more code than the search it
@@ -80,6 +99,7 @@ function search(
   from: number,
   arrived: (cell: number) => boolean,
   estimate: (cell: number) => number,
+  stray: (cell: number) => number,
   passable: Passable,
 ): number[] | null {
   if (arrived(from)) {
@@ -97,7 +117,7 @@ function search(
       const one = (cost.get(open[at]) ?? 0) + estimate(open[at]);
       const other = (cost.get(open[best]) ?? 0) + estimate(open[best]);
 
-      if (one < other) {
+      if (one < other || (one === other && stray(open[at]) < stray(open[best]))) {
         best = at;
       }
     }
@@ -124,7 +144,17 @@ function search(
       // The cell being walked to is checked for what is standing on it
       // rather than the one being left, so a player who somehow ends up
       // on an occupied cell can still walk off it
-      if (!passable(next) || spent >= (cost.get(next) ?? Number.POSITIVE_INFINITY)) {
+      if (!passable(next)) {
+        continue;
+      }
+      const known = cost.get(next) ?? Number.POSITIVE_INFINITY;
+      const parent = cameFrom.get(next);
+
+      // An equally short way in keeps whichever comes from nearer the line
+      if (spent === known && parent != null && stray(cell) < stray(parent)) {
+        cameFrom.set(next, cell);
+      }
+      if (spent >= known) {
         continue;
       }
       cost.set(next, spent);
@@ -148,6 +178,7 @@ export function findPath(from: number, to: number, passable: Passable): number[]
     from,
     (cell) => cell === to,
     (cell) => stepsBetween(cell, to),
+    strayFrom(from, to),
     passable,
   );
 }
@@ -229,6 +260,7 @@ export function findPathBeside(from: number, to: number, passable: Passable): nu
     // counts as beside is the diagonal one — and a guess that is too
     // high is a route that is not the shortest
     (cell) => Math.max(0, stepsBetween(cell, to) - 2),
+    strayFrom(from, to),
     passable,
   );
 }

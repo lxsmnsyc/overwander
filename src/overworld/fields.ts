@@ -205,11 +205,14 @@ function isRiver(world: World, x: number, y: number): boolean {
  * Read off the stone field at a corner of its own and cut high, so an
  * island is somewhere to walk about with a long way of water round it
  * rather than an archipelago. Measured over an 800 cell square of sea:
- * about one island every 1,700 cells, 37 cells in the middling one,
- * and the largest found was 157
+ * about one island every 1,200 cells, 65 cells in the middling one,
+ * 16 in the smallest and 165 in the largest
  */
-const ISLAND_FREQUENCY = 1 / 18;
-const ISLAND_LEVEL = 0.58;
+const ISLAND_FREQUENCY = 1 / 16;
+const ISLAND_LEVEL = 0.46;
+
+/** How many cells wide an island is at its narrowest */
+const ISLAND_BLOCK = 4;
 const ISLAND_OFFSET = 43.5;
 
 /** Whether the field stands out of the water here, before it is opened */
@@ -223,12 +226,11 @@ function isIslandField(world: World, x: number, y: number): boolean {
 /**
  * Whether an island covers this cell.
  *
- * Two cells wide at the narrowest, the rule everything drawn with a
- * rim is held to: the shore is a ring of edges and corners, and one
- * cell of sand asks for all four corners of it at once. So the land is
- * laid in 2x2 blocks of open sea, the way the water is: a block that
- * reaches into another country would leave a cell of it alone, since
- * the island field says nothing about what the coast next door does
+ * Laid in 4x4 blocks, so no island is a speck and its rim always has
+ * room for its edges and corners. A block has to be open sea at its
+ * corners, since the island field says nothing about what the coast
+ * next door does; the corners stand in for every cell of it, as a
+ * country's border does not wander within four cells
  */
 export function isIslandAt(world: World, x: number, y: number): boolean {
   // The cell's own reading first: every cell of the sea asks this, and
@@ -236,19 +238,42 @@ export function isIslandAt(world: World, x: number, y: number): boolean {
   if (!isIslandField(world, x, y)) {
     return false;
   }
-  return SQUARES.some(([ox, oy]) => {
-    for (let dy = 0; dy < 2; dy += 1) {
-      for (let dx = 0; dx < 2; dx += 1) {
-        const cx = x + ox + dx;
-        const cy = y + oy + dy;
+  const reach = ISLAND_BLOCK - 1;
+  const side = reach * 2 + 1;
+  // Every block holding this cell lies in this window, read once each
+  const known = new Int8Array(side * side);
+  const raised = (cx: number, cy: number): boolean => {
+    const at = (cy - y + reach) * side + (cx - x + reach);
 
-        if (!isOpenSea(world.getCellBiome(cx, cy)) || !isIslandField(world, cx, cy)) {
-          return false;
+    if (known[at] === 0) {
+      known[at] = isIslandField(world, cx, cy) ? 1 : -1;
+    }
+    return known[at] === 1;
+  };
+
+  for (let oy = -reach; oy <= 0; oy += 1) {
+    for (let ox = -reach; ox <= 0; ox += 1) {
+      let whole = true;
+
+      for (let dy = 0; whole && dy < ISLAND_BLOCK; dy += 1) {
+        for (let dx = 0; whole && dx < ISLAND_BLOCK; dx += 1) {
+          whole = raised(x + ox + dx, y + oy + dy);
         }
       }
+      if (
+        whole &&
+        [
+          [0, 0],
+          [reach, 0],
+          [0, reach],
+          [reach, reach],
+        ].every(([dx, dy]) => isOpenSea(world.getCellBiome(x + ox + dx, y + oy + dy)))
+      ) {
+        return true;
+      }
     }
-    return true;
-  });
+  }
+  return false;
 }
 
 /**

@@ -108,7 +108,7 @@ import {
   townOfRegion,
   townOverChunk,
 } from '../../src/overworld/town';
-import { getBiomeDecorations } from '../../src/data/overworld/decoration';
+import { getBiomeDecorations, getIslandDecorations } from '../../src/data/overworld/decoration';
 import ChunkSnapshot, {
   EXECUTIVE_CHANCE,
   LANDMARK_INTERVAL,
@@ -4214,7 +4214,7 @@ describe('chunk snapshot', () => {
       for (let x = -20; x < 20; x += 7) {
         const chunk = world.getChunk(x, y);
         const scenery = chunk.getDecorationCells();
-        const kinds = new Set(getBiomeDecorations(chunk.biome));
+        const sea = isOpenSea(chunk.biome);
 
         const dry = [...Array(CELL_COUNT).keys()].filter(
           (cell) => chunk.getCellRole(cell) === 'ground',
@@ -4236,8 +4236,16 @@ describe('chunk snapshot', () => {
         expect(scenery.size).toBeLessThanOrEqual(12);
 
         for (const [cell, decoration] of scenery) {
-          // Of this biome, and touching nothing of its own chunk's
-          expect(kinds.has(decoration)).toBe(true);
+          // Of this biome, and touching nothing of its own chunk's. Out
+          // at sea it stands in the water, and an island grows its own
+          const island = sea && chunk.getCellRole(cell) === 'ground';
+
+          expect(
+            (island ? getIslandDecorations : getBiomeDecorations)(chunk.biome).includes(decoration),
+          ).toBe(true);
+          if (!sea) {
+            expect(chunk.getCellRole(cell)).toBe('ground');
+          }
           for (const neighbor of neighborCells(cell)) {
             expect(scenery.has(neighbor)).toBe(false);
           }
@@ -5240,7 +5248,7 @@ describe('what the ground grows', () => {
 });
 
 describe('the open seas', () => {
-  it('scatters small islands, two cells wide at the narrowest', () => {
+  it('scatters islands, four cells wide at the narrowest', () => {
     const world = new World('overworld');
     let sea = 0;
     let land = 0;
@@ -5255,22 +5263,28 @@ describe('the open seas', () => {
           continue;
         }
         land += 1;
-        // Laid in blocks like everything else that is drawn with a
-        // rim: one cell of sand has no corner to draw
-        const broad = SQUARES.some(([ox, oy]) =>
-          [0, 1].every((dy) =>
-            [0, 1].every((dx) => roleAt(world, x + ox + dx, y + oy + dy) === 'ground'),
+        if (!isIslandAt(world, x, y)) {
+          // The ground closing a gap too narrow to be water, which only
+          // joins two islands into one
+          continue;
+        }
+        // Laid in 4x4 blocks, so no island is a speck of sand
+        const within = [0, 1, 2, 3].map((at) => -at);
+        const broad = within.some((oy) =>
+          within.some((ox) =>
+            [0, 1, 2, 3].every((dy) =>
+              [0, 1, 2, 3].every((dx) => isIslandAt(world, x + ox + dx, y + oy + dy)),
+            ),
           ),
         );
 
         expect(broad, `${x},${y}`).toBe(true);
       }
     }
-    // Somewhere to stand out there, and the sea is still the sea: a
-    // little over one cell in a hundred is dry
+    // Somewhere to stand out there, and the sea is still the sea
     expect(sea).toBeGreaterThan(0);
     expect(land).toBeGreaterThan(0);
-    expect(land / sea).toBeLessThan(0.05);
+    expect(land / sea).toBeLessThan(0.1);
   });
 
   it('rolls no berry patch and no wandering npc afloat', () => {

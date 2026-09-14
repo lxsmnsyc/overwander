@@ -187,7 +187,11 @@ export function layersAt(
       const near = around(x, y, dry);
 
       if (!enclosed(near)) {
-        lays.push({ terrain: ground, near, over: water.tone, whole: false, step: SHORE });
+        // An island's shore is drawn half a tile in from its rim, so it is
+        // taken whole: quarters of it meet out of step at every corner
+        const island = isOpenSea(look.biome(x, y));
+
+        lays.push({ terrain: ground, near, over: water.tone, whole: island, step: SHORE });
       }
     }
   }

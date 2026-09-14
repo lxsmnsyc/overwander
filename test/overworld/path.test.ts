@@ -46,6 +46,28 @@ describe('walking across a chunk', () => {
     expect(walkable(from, route)).toBe(true);
   });
 
+  it('heads along the line to the goal rather than one leg and then the other', () => {
+    const from = cell(1, 1);
+    const route = findPath(from, cell(9, 9), OPEN) ?? [];
+    let run = 0;
+    let longest = 0;
+    let at = from;
+    let axis = -1;
+
+    for (const step of route) {
+      // 0 for a step across, 1 for a step down
+      const turned = Math.abs(step - at) === 1 ? 0 : 1;
+
+      run = turned === axis ? run + 1 : 1;
+      axis = turned;
+      longest = Math.max(longest, run);
+      at = step;
+    }
+    expect(route).toHaveLength(16);
+    // A staircase on a square diagonal: never more than two steps the same way
+    expect(longest).toBeLessThanOrEqual(2);
+  });
+
   it('gives nothing back for a walk to where the walker already is', () => {
     expect(findPath(cell(4, 4), cell(4, 4), OPEN)).toEqual([]);
   });

@@ -245,7 +245,19 @@ export default function OverworldBoard(props: {
    * before the canvas that answers it
    */
   const [spotOf, setSpotOf] = createSignal<((cell: number) => CellSpot | null) | null>(null);
-  const notes = createCellNotes(() => spotOf());
+  // Asked by world cell, since the board's own seat for a cell moves every step
+  const notes = createCellNotes(() => {
+    const found = spotOf();
+
+    if (found == null) {
+      return null;
+    }
+    return (x, y) => {
+      const seat = seatOf(x, y);
+
+      return seat == null ? null : found(seat);
+    };
+  });
 
   /**
    * Say something in passing: over the world for a few seconds, and
@@ -268,8 +280,10 @@ export default function OverworldBoard(props: {
    * in the corner
    */
   const announce = (at: number, empty: string, items: ItemStack[] | null): void => {
+    const [x, y] = boardOf(at);
+
     if (items == null || items.length === 0) {
-      if (!notes.say(at, { message: empty, tone: 'neutral' })) {
+      if (!notes.say(x, y, { message: empty, tone: 'neutral' })) {
         remark(empty);
       }
       return;
@@ -281,7 +295,7 @@ export default function OverworldBoard(props: {
 
       // Over the cell where there is a board to hang it on, and in the
       // corner where there is not: a list has no square to point at
-      if (!notes.say(at, { message: said, art, tone: 'leaf' })) {
+      if (!notes.say(x, y, { message: said, art, tone: 'leaf' })) {
         toast.push({ message: said, art, tone: 'leaf' });
       }
     }

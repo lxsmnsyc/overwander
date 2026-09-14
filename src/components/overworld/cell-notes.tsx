@@ -48,7 +48,9 @@ export interface CellNoteRequest {
 
 interface CellNote extends CellNoteRequest {
   id: number;
-  cell: number;
+  /** The world cell it hangs over, so a step leaves it where it was */
+  x: number;
+  y: number;
   /** On its way out, and drawn for `LEAVING` longer because of it */
   leaving: boolean;
 }
@@ -59,7 +61,7 @@ export interface CellNotes {
    * where that cell is — a list rather than a canvas, a board not yet
    * drawn — so the caller can say it some other way
    */
-  say: (cell: number, note: CellNoteRequest) => boolean;
+  say: (x: number, y: number, note: CellNoteRequest) => boolean;
   /** The notes themselves, drawn over the page */
   view: () => JSX.Element;
 }
@@ -67,12 +69,12 @@ export interface CellNotes {
 /**
  * Notes over cells, for as long as each lasts.
  *
- * `spotOf` is the canvas' own, handed up when it mounts: it is read
- * every frame rather than once, since the camera turns and the window
- * resizes under a note that is already up
+ * `spotOf` answers for a world cell through the canvas, once it mounts: it is
+ * read every frame rather than once, since the player walks, the camera turns
+ * and the window resizes under a note that is already up
  */
 export function createCellNotes(
-  spotOf: () => ((cell: number) => CellSpot | null) | null,
+  spotOf: () => ((x: number, y: number) => CellSpot | null) | null,
 ): CellNotes {
   const host = usePortalHost();
   const [notes, setNotes] = createSignal<CellNote[]>([]);
@@ -110,11 +112,12 @@ export function createCellNotes(
    */
   const place = (): void => {
     const found = spotOf();
-    const stacked = new Map<number, number>();
+    const stacked = new Map<string, number>();
 
     for (const note of notes()) {
       const element = drawn.get(note.id);
-      const spot = found?.(note.cell) ?? null;
+      const spot = found?.(note.x, note.y) ?? null;
+      const key = `${note.x},${note.y}`;
 
       if (element == null) {
         continue;
@@ -123,9 +126,9 @@ export function createCellNotes(
         element.style.visibility = 'hidden';
         continue;
       }
-      const above = stacked.get(note.cell) ?? 0;
+      const above = stacked.get(key) ?? 0;
 
-      stacked.set(note.cell, above + 1);
+      stacked.set(key, above + 1);
       element.style.visibility = 'visible';
       element.style.left = `${spot.x}px`;
       element.style.top = `${spot.y - LIFT - above * APART}px`;
@@ -148,15 +151,15 @@ export function createCellNotes(
     }
   });
 
-  const say = (cell: number, note: CellNoteRequest): boolean => {
-    if (spotOf()?.(cell) == null) {
+  const say = (x: number, y: number, note: CellNoteRequest): boolean => {
+    if (spotOf()?.(x, y) == null) {
       return false;
     }
     next += 1;
 
     const id = next;
 
-    setNotes((shown) => [...shown, { ...note, id, cell, leaving: false }]);
+    setNotes((shown) => [...shown, { ...note, id, x, y, leaving: false }]);
     timers.set(
       id,
       setTimeout(() => {

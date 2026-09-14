@@ -200,6 +200,14 @@ export function fieldClipDepth(scale: number): number {
 }
 
 /**
+ * The field camera's focal length in element pixels: a field unit at
+ * camera distance `w` (the matrix's last row) is `lens / w` pixels across
+ */
+export function fieldLens(view: FieldView, stage: { scale: number }): number {
+  return FOCAL * view.unit * stage.scale;
+}
+
+/**
  * The field's projection as a 4x4 matrix written row by row, taking a
  * point in field units (`x` across, `y` up, `z` away) to clip space on
  * the element the fight is drawn into.

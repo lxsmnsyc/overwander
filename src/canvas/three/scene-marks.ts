@@ -90,11 +90,29 @@ void main() {
   gl_FragColor = texture2D(sheet, pass_uv) * pass_tint;
 }`;
 
+/** The same, for a picture that hides what is behind it: its see-through pixels are left out */
+const SOLID_FRAGMENT = `
+precision mediump float;
+uniform sampler2D sheet;
+varying vec2 pass_uv;
+varying vec4 pass_tint;
+
+void main() {
+  vec4 picked = texture2D(sheet, pass_uv);
+
+  if (picked.a < 0.5) {
+    discard;
+  }
+  gl_FragColor = picked * pass_tint;
+}`;
+
 /** One stretch of the buffer drawn from a single sheet, one way. */
 interface Run {
   sheet: QuadSheet | null;
   sampling: QuadSampling;
   blend: QuadBlend;
+  /** Whether it writes depth, so an effect behind it is hidden */
+  solid: boolean;
   start: number;
   length: number;
 }
@@ -219,6 +237,8 @@ export default class SceneMarks {
   private near = 0;
   /** And how near its top edge is, for a picture standing up in the world */
   private high = 0;
+  /** Whether what is written next hides what is drawn behind it later */
+  private solidity = false;
   private carryX = 0;
   private carryY = 0;
   private carryAlpha = 1;
@@ -239,6 +259,7 @@ export default class SceneMarks {
     }
     this.on = this.board;
     this.near = 0;
+    this.solidity = false;
     this.carry(0, 0);
   }
 
@@ -279,6 +300,14 @@ export default class SceneMarks {
     this.on = this.board;
     this.near = foot;
     this.high = top;
+  }
+
+  /**
+   * Whether what follows writes depth. Only a pokemon's own picture
+   * should: a move effect behind it is then hidden by it
+   */
+  opaque(on: boolean): void {
+    this.solidity = on;
   }
 
   /** Where everything written from here lands, until it is called again */
@@ -490,7 +519,7 @@ export default class SceneMarks {
    */
   private materialOf(run: Run): RawShaderMaterial {
     const sheetKey = this.keyOf(run.sheet, run.sampling);
-    const key = `${sheetKey}|${run.blend}`;
+    const key = `${sheetKey}|${run.blend}${run.solid ? '|solid' : ''}`;
 
     this.used.set(sheetKey, this.frame);
     const known = this.materials.get(key);
@@ -500,7 +529,7 @@ export default class SceneMarks {
     }
     const made = new RawShaderMaterial({
       vertexShader: VERTEX,
-      fragmentShader: FRAGMENT,
+      fragmentShader: run.solid ? SOLID_FRAGMENT : FRAGMENT,
       uniforms: {
         viewport: { value: this.viewport },
         sheet: { value: this.textureOf(run.sheet, run.sampling) },
@@ -512,8 +541,9 @@ export default class SceneMarks {
       // anticlockwise for others
       side: DoubleSide,
       // Written over rather than into: a mark is flat on whatever it
-      // lies on, and two of them on one cell are both meant to show
-      depthWrite: false,
+      // lies on, and two of them on one cell are both meant to show.
+      // A pokemon's own picture is the exception, so effects behind it hide
+      depthWrite: run.solid,
       blending: CustomBlending,
       blendSrc: run.blend === 'multiply' ? DstColorFactor : OneFactor,
       blendDst: run.blend === 'screen' ? OneMinusSrcColorFactor : OneMinusSrcAlphaFactor,
@@ -545,10 +575,17 @@ export default class SceneMarks {
 
     const last = layer.runs.length === 0 ? null : layer.runs[layer.runs.length - 1];
 
-    if (last?.sheet === sheet && last.sampling === sampling && last.blend === blend) {
+    const solid = this.solidity;
+
+    if (
+      last?.sheet === sheet &&
+      last.sampling === sampling &&
+      last.blend === blend &&
+      last.solid === solid
+    ) {
       last.length += 6;
     } else {
-      layer.runs.push({ sheet, sampling, blend, start: layer.filled, length: 6 });
+      layer.runs.push({ sheet, sampling, blend, solid, start: layer.filled, length: 6 });
     }
     // Premultiplied throughout, so what is left of a carried board is
     // taken out of the colour as well as the alpha

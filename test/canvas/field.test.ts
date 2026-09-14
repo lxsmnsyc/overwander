@@ -3,6 +3,7 @@ import projectField, {
   type FieldView,
   fieldClipDepth,
   fieldClipMatrix,
+  fieldLens,
   ringOf,
   ringRadius,
   scaleAt,
@@ -52,6 +53,20 @@ describe("the field camera's matrix", () => {
         // And at the depth a mark standing there is given
         expect(seen.depth).toBeCloseTo(fieldClipDepth(flat.scale), 6);
       }
+    }
+  });
+
+  it('sizes a field unit by its lens the way the flat projection scales that spot', () => {
+    for (const yaw of [0, 0.7, -1.9]) {
+      const view: FieldView = { ...VIEW, yaw };
+      const m = fieldClipMatrix(view, stage, screen);
+      const point = { x: 5, z: 8 };
+      const w = m[12] * point.x + m[14] * point.z + m[15];
+
+      expect(fieldLens(view, stage) / w).toBeCloseTo(
+        projectField(point, view).scale * VIEW.unit * stage.scale,
+        6,
+      );
     }
   });
 

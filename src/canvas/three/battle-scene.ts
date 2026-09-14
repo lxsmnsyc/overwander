@@ -1,5 +1,6 @@
 import { Camera, Scene, WebGLRenderer } from 'three';
-import { type FieldView, fieldClipDepth, fieldClipMatrix } from '../battle/field';
+import { type FieldView, fieldClipDepth, fieldClipMatrix, fieldLens } from '../battle/field';
+import EffectBatch from './effect-batch';
 import SceneMarks from './scene-marks';
 
 /**
@@ -14,6 +15,8 @@ import SceneMarks from './scene-marks';
 export interface BattleScene {
   /** The flat pictures, written in the drawing's own coordinates */
   readonly marks: SceneMarks;
+  /** Move effects, written in field units */
+  readonly effects: EffectBatch;
   /** Size the scene to its element, point the camera and open the marks for a frame */
   look: (
     view: FieldView,
@@ -43,15 +46,20 @@ export default function createBattleScene(canvas: HTMLCanvasElement): BattleScen
   const scene = new Scene();
   const camera = new Camera();
   const marks = new SceneMarks();
+  const effects = new EffectBatch();
   const sized = { width: 0, height: 0, ratio: 0 };
 
   camera.matrixAutoUpdate = false;
   for (const sheet of marks.meshes) {
     scene.add(sheet);
   }
+  // After the weather on the glass, as the painted effects always were
+  effects.mesh.renderOrder = 4;
+  scene.add(effects.mesh);
 
   return {
     marks,
+    effects,
     look: (view, stage, screen, ratio): void => {
       if (sized.width !== screen.width || sized.height !== screen.height || sized.ratio !== ratio) {
         renderer.setPixelRatio(ratio);
@@ -60,18 +68,23 @@ export default function createBattleScene(canvas: HTMLCanvasElement): BattleScen
         sized.height = screen.height;
         sized.ratio = ratio;
       }
+      const matrix = fieldClipMatrix(view, stage, screen);
+
       // Written row by row, and three.js reads a flat array a column at a time
-      camera.projectionMatrix.fromArray(fieldClipMatrix(view, stage, screen)).transpose();
+      camera.projectionMatrix.fromArray(matrix).transpose();
       camera.projectionMatrixInverse.copy(camera.projectionMatrix).invert();
       marks.begin(screen.width, screen.height);
+      effects.begin(matrix, fieldLens(view, stage), screen, view.yaw);
     },
     depthOf: fieldClipDepth,
     draw: (): void => {
       marks.end();
+      effects.end();
       renderer.render(scene, camera);
     },
     dispose: (): void => {
       marks.dispose();
+      effects.dispose();
       renderer.dispose();
       // Browsers cap live contexts, and dispose alone leaves this one held until collected
       renderer.forceContextLoss();

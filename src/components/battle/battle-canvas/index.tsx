@@ -42,7 +42,9 @@ import { Genders, type Species } from '../../../data/ids/species';
 
 import type { Statuses } from '../../../data/ids/status';
 import { getMoveData } from '../../../data/moves';
-import { bodyOf, boxOf, drawAim, drawSlot, scaleOf, withinSlot } from './draw';
+import { bodyOf, boxOf, drawAim, drawSlot, fieldBodyOf, scaleOf, withinSlot } from './draw';
+import type { Spot } from '../../../canvas/three/effect-batch';
+import { spread } from '../../../canvas/battle/moves/__paint';
 import {
   type Slot,
   aimedAt,
@@ -53,7 +55,7 @@ import {
   skiesOver,
   unitsOf,
 } from './field';
-import { COLORS, FIELD_UNIT, HEIGHT, LOADING_LABEL, TURN_SLOP, WIDTH } from './metrics';
+import { COLORS, FIELD_UNIT, HEIGHT, JOLT_BEAT, LOADING_LABEL, TURN_SLOP, WIDTH } from './metrics';
 import {
   CUE_GAP,
   type Casting,
@@ -449,6 +451,30 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
         return;
       }
 
+      // A heavy landing shakes the scene. Only there: the painted
+      // fallback keeps the look it had
+      if (scene != null) {
+        let jolt = 0;
+
+        for (const cast of casting) {
+          if (cast.visual.drawLit != null) {
+            jolt = Math.max(jolt, cast.visual.jolt ?? 0);
+          }
+        }
+        if (jolt > 0) {
+          const beat = Math.floor(clock / JOLT_BEAT);
+          const dx = spread(beat, 1) * jolt;
+          const dy = spread(beat, 2) * jolt;
+
+          stage = {
+            scale: stage.scale,
+            offsetX: stage.offsetX + dx * stage.scale,
+            offsetY: stage.offsetY + dy * stage.scale,
+          };
+          context.translate(dx, dy);
+        }
+      }
+
       const field = readField(props.battle, props.player, arrange);
 
       // The camera. It starts behind whoever is looking at the fight,
@@ -542,7 +568,16 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       // drawing is this list
       placed = slots;
 
-      const onto = batch == null ? undefined : { batch, bakery };
+      const onto =
+        batch == null
+          ? undefined
+          : {
+              batch,
+              bakery,
+              solid: (on: boolean): void => {
+                batch.opaque(on);
+              },
+            };
 
       // Who is aiming at whom, under the bodies: a field of four
       // winding up says who is busy and nothing about who is about to
@@ -611,11 +646,31 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
           batchWeather(batch, patch.weather, patch, clock);
         }
         batch.carry(stage.offsetX, stage.offsetY, 1, stage.scale);
-        // Everything the field is made of is written now. What follows
-        // is the move effects, which stay painted: they are the one
-        // thing here drawn as art rather than as pictures, and there
-        // is at most one of them on screen
-        scene?.draw();
+      }
+      if (scene != null) {
+        // Effects with a scene version are built into it, in field units,
+        // where one passing behind a pokemon is hidden by it
+        for (const cast of casting) {
+          const from = at.get(cast.source);
+          const source =
+            from == null || cast.visual.drawLit == null ? null : fieldBodyOf(from, view);
+
+          if (source == null) {
+            continue;
+          }
+          const targets: Spot[] = [];
+
+          for (const target of cast.targets) {
+            const slot = at.get(target);
+            const body = slot == null ? null : fieldBodyOf(slot, view);
+
+            if (body != null) {
+              targets.push(body.spot);
+            }
+          }
+          cast.visual.drawLit?.(scene.effects, { source: source.spot, targets, size: source.size });
+        }
+        scene.draw();
       }
 
       // Move effects go on top of everything: they are the loudest
@@ -625,7 +680,8 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       for (const cast of casting) {
         const from = at.get(cast.source);
 
-        if (from == null) {
+        // Built into the scene above instead
+        if (from == null || (scene != null && cast.visual.drawLit != null)) {
           continue;
         }
         const targets: ReturnType<typeof bodyOf>[] = [];

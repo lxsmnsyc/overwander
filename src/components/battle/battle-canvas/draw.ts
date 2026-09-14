@@ -7,6 +7,8 @@ import type Unit from '../../../battle/unit';
 import { paintAura, paintPurifiedAura, paintShadowAura } from '../../../canvas/auras';
 import type Bakery from '../../../canvas/bakery';
 import type { Painter, QuadPoint } from '../../../canvas/gl/quad-batch';
+import projectField, { type FieldView, unprojectField } from '../../../canvas/battle/field';
+import type { Spot } from '../../../canvas/three/effect-batch';
 import { cornersOf, shadowCorners } from '../../../canvas/placement';
 import { facingVector } from '../../../canvas/facing';
 import { SHIM_SPANS, shimMotion } from '../../../canvas/battle/sprite-shim';
@@ -63,6 +65,8 @@ const CAST_HEIGHT = 3;
 export interface SlotBatch {
   batch: Painter;
   bakery: Bakery;
+  /** Whether what follows hides the scene's effects behind it, where there is a scene */
+  solid?: (on: boolean) => void;
 }
 
 /** The four corners of a rectangle, for the batch */
@@ -296,6 +300,31 @@ export function bodyOf(slot: Slot): Point {
       : null;
 
   return placed ?? [x, y];
+}
+
+/**
+ * The same body in field units, for the battle scene: the ground under
+ * its feet lifted to its middle, and how many field units one painted
+ * pixel is worth there. Null past the horizon
+ */
+export function fieldBodyOf(slot: Slot, view: FieldView): { spot: Spot; size: number } | null {
+  const footY = slot.y + slot.offset[1];
+  const foot = unprojectField(slot.x + slot.offset[0], footY, view);
+
+  if (foot == null) {
+    return null;
+  }
+  const worth = view.unit * projectField(foot, view).scale;
+
+  if (worth <= 0) {
+    return null;
+  }
+  const [, middle] = bodyOf(slot);
+
+  return {
+    spot: [foot.x, Math.max(0, (footY - middle) / worth), foot.z],
+    size: scaleOf(slot) / worth,
+  };
 }
 
 /**
@@ -540,7 +569,10 @@ export function drawSlot(
           context.restore();
         }
       } else {
+        // The one picture that hides a move effect passing behind it
+        onto.solid?.(true);
         onto.batch.quad(quad.sheet, quad.source, turned(cornersOf(quad), x, y, slot.spin), alpha);
+        onto.solid?.(false);
       }
       if (unit.shiny) {
         sparkle(context, slot, sprite, x, y, clock, onto);

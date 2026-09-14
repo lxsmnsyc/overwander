@@ -406,6 +406,9 @@ export const VEIL_ALPHA = 0.35;
  */
 export const VEIL_FADE = 140;
 
+/** How long one weather takes to give way to the next, in milliseconds */
+export const WEATHER_FADE = 3000;
+
 /**
  * How flat the shadow lies. It is on the ground, and the ground is
  * laid back under the camera, so it is squashed the way the ground is

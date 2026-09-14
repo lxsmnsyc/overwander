@@ -113,6 +113,7 @@ import {
   START_CELL,
   STEP_PACE,
   STEP_REPORT_SIZE,
+  TOWN_NAME_PACE,
 } from './metrics';
 import playEffect, { Effect } from '../../app/sound';
 
@@ -882,6 +883,9 @@ export default function OverworldBoard(props: {
    * time somebody walks in. Leaving and coming back is walking in again
    */
   let standingIn: string | null = null;
+  /** The town last named and when, so pacing along its edge does not repeat it */
+  let named: string | null = null;
+  let namedAt = 0;
 
   // Walking into a town says its name and puts it on everybody's
   // register. The register costs nothing, takes nothing and is not a
@@ -903,8 +907,10 @@ export default function OverworldBoard(props: {
       standingIn = key;
       // The one place in the world with a name of its own. A border is
       // not drawn anywhere, so being told is how a player knows
-      if (town != null) {
-        remark(`Entered ${townName(town)}.`, 'leaf');
+      if (town != null && (key !== named || Date.now() - namedAt >= TOWN_NAME_PACE)) {
+        named = key;
+        namedAt = Date.now();
+        remark(townName(town), 'leaf');
       }
     }
     if (key == null || town == null || reported.has(key)) {

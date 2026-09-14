@@ -129,6 +129,7 @@ import {
   VEIL_ALPHA,
   VEIL_FADE,
   VEIL_SHARE,
+  WEATHER_FADE,
   compassArrow,
   coverOf,
   grownArrow,
@@ -445,6 +446,9 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
    * was rather than long over
    */
   let clock = 0;
+
+  /** The weather giving way and the one taking over, with when on `clock` it began */
+  const skies = { from: props.weather, to: props.weather, since: -WEATHER_FADE };
 
   /**
    * Which shinies have already been announced, and when.
@@ -3024,6 +3028,14 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       // weather are the glass the board is seen through
       marks?.glass();
 
+      // A change of weather crossfades rather than switching in one frame
+      if (props.weather !== skies.to) {
+        skies.from = skies.to;
+        skies.to = props.weather;
+        skies.since = clock;
+      }
+      const risen = Math.min(1, (clock - skies.since) / WEATHER_FADE);
+
       if (batch == null) {
         paintAmbient(context, screen.width, screen.height, worldTime(), props.latitude);
         if (props.underground) {
@@ -3033,7 +3045,9 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
             paintCavern(context, screen.width, screen.height, lamps);
           }
         } else {
-          paintSky(context, screen.width, screen.height, props.weather, clock, 1, lamps, sky);
+          // A strength of 0 draws nothing, so outside a fade this is one sky
+          paintSky(context, screen.width, screen.height, skies.from, clock, 1 - risen, lamps, sky);
+          paintSky(context, screen.width, screen.height, skies.to, clock, risen, lamps, sky);
         }
       } else {
         batchAmbient(batch, screen.width, screen.height, worldTime(), props.latitude);
@@ -3042,8 +3056,12 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
             batchCavern(batch, screen.width, screen.height, lamps);
           }
         } else {
-          batchWash(batch, screen.width, screen.height, props.weather, clock, 1, lamps, sky);
-          batchSky(batch, screen.width, screen.height, props.weather, clock, 1, sky);
+          const { width, height } = screen;
+
+          batchWash(batch, width, height, skies.from, clock, 1 - risen, lamps, sky);
+          batchWash(batch, width, height, skies.to, clock, risen, lamps, sky);
+          batchSky(batch, width, height, skies.from, clock, 1 - risen, sky);
+          batchSky(batch, width, height, skies.to, clock, risen, sky);
         }
       }
 

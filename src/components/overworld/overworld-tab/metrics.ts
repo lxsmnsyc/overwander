@@ -107,6 +107,9 @@ export const ICON_SIZE = 24;
  */
 export const STEP_PACE = 250;
 
+/** How long before walking back into the same town says its name again, in milliseconds */
+export const TOWN_NAME_PACE = 60_000;
+
 /**
  * How many claim lists the board remembers at once.
  *

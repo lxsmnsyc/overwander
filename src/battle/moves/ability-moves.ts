@@ -25,12 +25,19 @@ export const ABILITY_MOVES = new Set<Moves>([
  * The special tier is left out. A Boss, a shadow and the mark left
  * where a shadow was are marks of what a pokemon **is**, so they are
  * not a thing to copy, trade or shut off: a raid whose boss had been
- * talked out of being one would lose its health pool mid-fight
+ * talked out of being one would lose its health pool mid-fight. An
+ * ability worn with a form is left out for the same reason
  */
 function abilitiesOf(unit: Unit): Abilities[] {
   return (
     Object.entries(unit.abilities)
-      .filter(([ability, carried]) => carried && countsAgainstSlots(Number(ability)))
+      .filter(
+        ([ability, carried]) =>
+          carried &&
+          countsAgainstSlots(Number(ability)) &&
+          // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+          unit.worn[Number(ability) as Abilities] == null,
+      )
       // The list is keyed by the ability enum, which comes back as a
       // string from Object.entries
       // oxlint-disable-next-line typescript/no-unnecessary-type-assertion

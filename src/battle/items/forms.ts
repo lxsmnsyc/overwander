@@ -1,10 +1,23 @@
 import { EventPriority } from '../../core/event-emitter';
+import Abilities from '../../data/ids/abilities';
 import { FORM_ITEMS } from '../../data/items/form-items';
-import { getBaseFormSpecies } from '../../data/ids/species';
+import { Species, getBaseFormSpecies } from '../../data/ids/species';
 import type Battle from '../core';
 import { BattleEvents } from '../events';
 import { MergedLifecycle } from '../lifecycle';
 import { createHeldItem, holds } from './__create';
+
+/**
+ * The ability a shape brings on top of what the catch carries. Worn
+ * rather than rolled: the base species' pool never holds a form's own
+ * ability, so this is the only way it reaches a fight
+ */
+const SHAPE_ABILITIES = new Map<Species, Abilities>([
+  [Species.DialgaOrigin, Abilities.Unaware],
+  [Species.PalkiaOrigin, Abilities.ShadowTag],
+  [Species.GiratinaOrigin, Abilities.Levitate],
+  [Species.ShayminSky, Abilities.SereneGrace],
+]);
 
 /**
  * The form items: a held thing that decides which shape its holder
@@ -37,6 +50,12 @@ export default function setupFormItems(battle: Battle): void {
 
             if (unit.species !== shape) {
               unit.setSpecies(shape);
+            }
+
+            const bonus = SHAPE_ABILITIES.get(shape);
+
+            if (bonus != null) {
+              unit.wearAbility(bonus);
             }
           }),
         ]),

@@ -210,6 +210,11 @@ export interface UnitFaintsEvent extends UnitEvent {
 
 export interface UnitAbilityEvent extends UnitEvent {
   ability: Abilities;
+  /**
+   * Worn with a form rather than carried: it takes no slot and cannot
+   * be copied, traded or taken, the way a Shadow cannot
+   */
+  worn?: boolean;
 }
 
 export interface CheckUnitCanConsumeItemEvent extends UnitEvent {

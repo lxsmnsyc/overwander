@@ -6,6 +6,7 @@ import { DamageFlags, MoveCategories, type Moves } from '../../data/ids/moves';
 import { getMoveData } from '../../data/moves';
 import type Battle from '../core';
 import { Items } from '../../data/ids/items';
+import { Species, getBaseFormSpecies } from '../../data/ids/species';
 import { Statuses, Weathers } from '../../data/ids/status';
 import { BattleEvents, EffectType, type MoveTarget, MoveTargetType } from '../events';
 import { MergedLifecycle } from '../lifecycle';
@@ -165,27 +166,56 @@ const setupAbilities = [
   }),
 
   // https://bulbapedia.bulbagarden.net/wiki/Flower_Gift_(Ability)
-  // Cherrim's form change is not part of it here: the registry has no
-  // forms yet, so the gift is the buff alone
-  createAbility(Abilities.FlowerGift, (battle) =>
-    battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
+  createAbility(Abilities.FlowerGift, (battle) => {
+    // A Cherrim opens in the sun and shuts when it goes. The shapes
+    // share stats and type, so only the picture moves
+    function bloom(unit: Unit): void {
       if (
-        (event.stat !== Stats.Attack && event.stat !== Stats.SpecialDefense) ||
-        !isWeatherSunny(event.source)
+        !unit.hasAbility(Abilities.FlowerGift) ||
+        getBaseFormSpecies(unit.species) !== Species.Cherrim
       ) {
         return;
       }
 
-      // The holder gives it to the whole team, itself included, so
-      // the ally being asked about is rarely the one carrying it
-      for (const ally of event.source.team.units) {
-        if (ally.alive && ally.hasAbility(Abilities.FlowerGift)) {
-          event.value *= FLOWER_GIFT_BOOST;
+      const shape = isWeatherSunny(unit) ? Species.CherrimSunshine : Species.Cherrim;
+
+      if (unit.species !== shape) {
+        unit.triggerAbility(Abilities.FlowerGift);
+        unit.setSpecies(shape);
+      }
+    }
+
+    function bloomAll(): void {
+      for (const unit of battle.units()) {
+        bloom(unit);
+      }
+    }
+
+    return new MergedLifecycle([
+      battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
+        if (
+          (event.stat !== Stats.Attack && event.stat !== Stats.SpecialDefense) ||
+          !isWeatherSunny(event.source)
+        ) {
           return;
         }
-      }
-    }),
-  ),
+
+        // The holder gives it to the whole team, itself included, so
+        // the ally being asked about is rarely the one carrying it
+        for (const ally of event.source.team.units) {
+          if (ally.alive && ally.hasAbility(Abilities.FlowerGift)) {
+            event.value *= FLOWER_GIFT_BOOST;
+            return;
+          }
+        }
+      }),
+      battle.on(BattleEvents.SetWeather, EventPriority.Post, bloomAll),
+      battle.on(BattleEvents.TeamSetWeather, EventPriority.Post, bloomAll),
+      battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+        bloom(event.source);
+      }),
+    ]);
+  }),
 
   // https://bulbapedia.bulbagarden.net/wiki/Plus_(Ability)
   createPolarityAbility(Abilities.Plus),

@@ -19,8 +19,12 @@ function countAbilities(unit: Unit): number {
     // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
     const ability = Number(key) as Abilities;
 
-    // oxlint-disable-next-line typescript/no-unnecessary-condition
-    if (unit.abilities[ability] != null && countsAgainstSlots(ability)) {
+    if (
+      // oxlint-disable-next-line typescript/no-unnecessary-condition
+      unit.abilities[ability] != null &&
+      countsAgainstSlots(ability) &&
+      unit.worn[ability] == null
+    ) {
       count += 1;
     }
   }
@@ -32,6 +36,7 @@ export default function setupAbilityMechanics(battle: Battle): void {
   // A unit carries what it has room for, held to what the fight allows
   battle.on(BattleEvents.UnitAddAbility, EventPriority.Pre, (event) => {
     if (
+      event.worn !== true &&
       event.source.abilities[event.ability] == null &&
       countsAgainstSlots(event.ability) &&
       countAbilities(event.source) >= event.source.checkSlots(Slots.Ability)
@@ -41,10 +46,15 @@ export default function setupAbilityMechanics(battle: Battle): void {
   });
 
   battle.on(BattleEvents.UnitAddAbility, EventPriority.Exact, (event) => {
+    // One it already carries stays carried: wearing it too adds nothing
+    if (event.worn === true && event.source.abilities[event.ability] == null) {
+      event.source.worn[event.ability] = true;
+    }
     event.source.abilities[event.ability] = true;
   });
   battle.on(BattleEvents.UnitRemoveAbility, EventPriority.Exact, (event) => {
     event.source.abilities[event.ability] = undefined;
+    event.source.worn[event.ability] = undefined;
   });
   battle.on(BattleEvents.UnitEnableAbility, EventPriority.Exact, (event) => {
     event.source.abilities[event.ability] = true;

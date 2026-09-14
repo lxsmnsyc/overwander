@@ -766,12 +766,26 @@ export default class Unit {
 
   abilities: { [key in Abilities]?: boolean } = {};
 
+  /** The abilities worn with its current form, which take no slot */
+  worn: { [key in Abilities]?: true } = {};
+
   addAbility(ability: Abilities): void {
     this.battle.emit(BattleEvents.UnitAddAbility, {
       id: 'UnitAddAbility',
       disabled: false,
       source: this,
       ability,
+    });
+  }
+
+  /** Give it an ability that comes with its form rather than its record */
+  wearAbility(ability: Abilities): void {
+    this.battle.emit(BattleEvents.UnitAddAbility, {
+      id: 'UnitAddAbility',
+      disabled: false,
+      source: this,
+      ability,
+      worn: true,
     });
   }
 

@@ -22,12 +22,20 @@ import { asNumber, asNumberArray, asRecord, asRecordArray, asString } from '../a
 const SHEET = '/sprites/terrain/biome-tiles.png';
 const DATA = '/sprites/terrain/biome-tiles.json';
 
-export type TerrainRole = 'ground' | 'wall' | 'water' | 'paving' | 'face' | 'blend' | 'deep';
+export type TerrainRole =
+  | 'ground'
+  | 'wall'
+  | 'water'
+  | 'paving'
+  | 'trail'
+  | 'face'
+  | 'blend'
+  | 'deep';
 
 /** How many pixels square one tile of the pack is. */
 export const TERRAIN_TILE = 16;
 
-const ROLES: TerrainRole[] = ['ground', 'wall', 'water', 'paving', 'face', 'blend'];
+const ROLES: TerrainRole[] = ['ground', 'wall', 'water', 'paving', 'trail', 'face', 'blend'];
 
 /** A colour to stand a rim in, as hue, saturation and lightness. */
 export type Tone = [hue: number, saturation: number, lightness: number];

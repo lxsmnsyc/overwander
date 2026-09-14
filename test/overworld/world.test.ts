@@ -102,6 +102,7 @@ import type { Town } from '../../src/overworld/town';
 import {
   TOWN_REGION,
   getTownLots,
+  isRoadAt,
   townAt,
   townName,
   townOfRegion,
@@ -293,7 +294,7 @@ import { CATCHING_CHARM_BOOST, SHINY_CHARM_BOOST } from '../../src/overworld/ite
 import createOverworld from '../../src/overworld/setup';
 import { roleAt } from '../../src/overworld/ground';
 import { Depth } from '../../src/overworld/depth';
-import { blocksWalk, isFace, isSeam } from '../../src/overworld/cliff';
+import { blocksWalk, isFace, isPassAt, isSeam } from '../../src/overworld/cliff';
 import { isRouteAt } from '../../src/overworld/route';
 import { ORTHOGONAL, SQUARES, SURROUNDING } from '../../src/overworld/grid';
 import { levelAt } from '../../src/overworld/terrace';
@@ -4882,40 +4883,22 @@ describe('terrain spots', () => {
     expect(lava).toBeGreaterThan(0);
   });
 
-  it('lets a walk cross a fall, and not a corner of one', () => {
+  it('lets a walk cross every fall', () => {
     const world = new World('overworld');
     let falls = 0;
-    let corners = 0;
 
     for (let y = -200; y <= 200; y += 1) {
       for (let x = -200; x <= 200; x += 1) {
-        if (roleAt(world, x, y) !== 'water') {
+        if (roleAt(world, x, y) !== 'water' || !isFace(world, x, y)) {
           continue;
         }
-        const here = levelAt(world, x, y);
-        const under = ORTHOGONAL.filter(([dx, dy]) => levelAt(world, x + dx, y + dy) < here);
-        const corner = under.some(([ax, ay]) => under.some(([bx, by]) => ax * bx + ay * by === 0));
-
-        if (under.length === 0) {
-          // Water on the level it lies on stops nobody
-          expect(blocksWalk(world, x, y), `${x},${y}`).toBe(false);
-          continue;
-        }
-        if (corner) {
-          // Pouring off two sides at once is the corner of the cliff
-          // rather than a way down it, unless a route is cut through
-          // the step anyway
-          corners += 1;
-          expect(blocksWalk(world, x, y) || isRouteAt(world, x, y), `${x},${y}`).toBe(true);
-          continue;
-        }
-        // A fall running one way is one stream, so a swim follows it
+        // Water on a step always pours into more water, so it is a seam
+        // whatever shape the step takes
         falls += 1;
         expect(blocksWalk(world, x, y), `${x},${y}`).toBe(false);
       }
     }
     expect(falls).toBeGreaterThan(0);
-    expect(corners).toBeGreaterThan(0);
   });
 
   it('walls a walk off the inside corner of a cliff', () => {
@@ -4928,13 +4911,48 @@ describe('terrain spots', () => {
         const lower = ([dx, dy]: [number, number]): boolean =>
           levelAt(world, x + dx, y + dy) < here;
 
-        if (ORTHOGONAL.some(lower) || !SURROUNDING.some(lower)) {
+        if (roleAt(world, x, y) === 'water' || ORTHOGONAL.some(lower) || !SURROUNDING.some(lower)) {
           continue;
         }
         // Lower ground only across a diagonal is where the ring's inside
-        // corner is drawn, and that tile is as much the cliff as a side
+        // corner is drawn, and that tile is as much the cliff as a side.
+        // No seam opens it, since a walk never steps across a diagonal
         corners += 1;
-        expect(blocksWalk(world, x, y), `${x},${y}`).toBe(!isSeam(world, x, y));
+        expect(isSeam(world, x, y), `${x},${y}`).toBe(false);
+        expect(blocksWalk(world, x, y), `${x},${y}`).toBe(true);
+      }
+    }
+    expect(corners).toBeGreaterThan(0);
+  });
+
+  it('opens a corner of a cliff only where every face beside it opens too', () => {
+    const world = new World('overworld');
+    const descends = (x: number, y: number): boolean =>
+      ORTHOGONAL.some(([dx, dy]) => levelAt(world, x + dx, y + dy) < levelAt(world, x, y));
+    const way = (x: number, y: number): boolean =>
+      isRoadAt(world, x, y) || isRouteAt(world, x, y) || isPassAt(world, x, y);
+    let corners = 0;
+
+    for (let y = -200; y <= 200; y += 1) {
+      for (let x = -200; x <= 200; x += 1) {
+        if (roleAt(world, x, y) === 'water' || !descends(x, y)) {
+          continue;
+        }
+        const faces = ORTHOGONAL.filter(([dx, dy]) => isFace(world, x + dx, y + dy));
+
+        if (!faces.some(([ax, ay]) => faces.some(([bx, by]) => ax * bx + ay * by === 0))) {
+          continue;
+        }
+        // Where the faces turn, a way through reaches the high ground only
+        // by way of the faces beside it, so every one of them has to open
+        corners += 1;
+        const joined = faces.every(
+          ([dx, dy]) =>
+            roleAt(world, x + dx, y + dy) === 'water' ||
+            (way(x + dx, y + dy) && descends(x + dx, y + dy)),
+        );
+
+        expect(isSeam(world, x, y), `${x},${y}`).toBe(way(x, y) && joined);
       }
     }
     expect(corners).toBeGreaterThan(0);
@@ -4958,6 +4976,31 @@ describe('terrain spots', () => {
       }
     }
     expect(faces).toBeGreaterThan(0);
+  });
+
+  it('keeps scenery off the approach to a way up a cliff', () => {
+    const world = new World('overworld');
+    let placed = 0;
+
+    for (let cx = -12; cx < 12; cx++) {
+      for (let cy = -12; cy < 12; cy++) {
+        for (const cell of world.getChunk(cx, cy).getDecorationCells().keys()) {
+          const x = worldCell(cx, cell % CHUNK_CELLS);
+          const y = worldCell(cy, Math.floor(cell / CHUNK_CELLS));
+
+          placed += 1;
+          // A route is walked like a street, so nothing grows on one
+          expect(isRouteAt(world, x, y), `${x},${y}`).toBe(false);
+          // A tree beside a seam would stand in the way up it
+          for (const [dx, dy] of SURROUNDING) {
+            const seam = isFace(world, x + dx, y + dy) && isSeam(world, x + dx, y + dy);
+
+            expect(seam, `${x},${y} beside ${x + dx},${y + dy}`).toBe(false);
+          }
+        }
+      }
+    }
+    expect(placed).toBeGreaterThan(0);
   });
 
   it('reads the water out of the world rather than growing it in the chunk', () => {

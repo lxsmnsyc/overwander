@@ -18,6 +18,12 @@ import type World from './world';
  * the levels.
  */
 
+/** How far apart the natural passes up a cliff are, in cells along it */
+const PASS_SPACING = 20;
+
+/** How wide a pass is where it crosses a cliff, so a staircase of rock still opens */
+const PASS_WIDTH = 3;
+
 /**
  * Whether the cell stands higher than any ground around it, diagonals
  * included. The cliff art takes this whole tile, an inside corner as
@@ -29,41 +35,104 @@ export function isFace(world: World, x: number, y: number): boolean {
   return SURROUNDING.some(([dx, dy]) => levelAt(world, x + dx, y + dy) < level);
 }
 
+/** Whether lower ground lies straight beside the cell, since a walk never steps across a diagonal */
+function descends(world: World, x: number, y: number): boolean {
+  const here = levelAt(world, x, y);
+
+  return ORTHOGONAL.some(([dx, dy]) => levelAt(world, x + dx, y + dy) < here);
+}
+
+const SEEDS = new WeakMap<World, number>();
+
+/** The world seed folded to an integer once, for the pass offsets */
+function seedOf(world: World): number {
+  let seed = SEEDS.get(world);
+
+  if (seed == null) {
+    seed = 2166136261;
+    for (let at = 0; at < world.seed.length; at += 1) {
+      seed = Math.imul(seed ^ world.seed.charCodeAt(at), 16777619);
+    }
+    SEEDS.set(world, seed);
+  }
+  return seed;
+}
+
+/** A well-mixed non-negative integer from three */
+function mix(a: number, b: number, c: number): number {
+  let h = Math.imul(a ^ Math.imul(b, 0x9e3779b1), 0x85ebca6b) ^ Math.imul(c, 0xc2b2ae35);
+
+  h = Math.imul(h ^ (h >>> 16), 0x85ebca6b);
+  h = Math.imul(h ^ (h >>> 13), 0xc2b2ae35);
+  return (h ^ (h >>> 16)) >>> 0;
+}
+
 /**
- * Whether water runs over the step here rather than spilling off a
- * corner of it.
- *
- * Water seams itself: a pool never sits at a dry drop, so a wet cell
- * standing over a step stands over more water, the two levels are one
- * fall, and nothing there stops whatever swims.
- *
- * The exception is a cell at the corner of a terrace, where the ground
- * falls away on two sides at once. A fall runs one way, and a cell
- * pouring off two sides of itself is the corner of the cliff rather
- * than a way down it, so the step stays shut there. Two opposite sides
- * are a chute rather than a corner, and water does run through one
+ * Whether a natural pass crosses the cliff here, so a walk beside a terrace
+ * is never far from a way up it. Passes are bands across the run of the
+ * cliff, shifted per stretch and per level so they never line up
  */
-function falls(world: World, x: number, y: number): boolean {
-  if (roleAt(world, x, y) !== 'water') {
+export function isPassAt(world: World, x: number, y: number): boolean {
+  const here = levelAt(world, x, y);
+  const lower = (dx: number, dy: number): boolean => levelAt(world, x + dx, y + dy) < here;
+  const crosses = (along: number, across: number, axis: number): boolean => {
+    const offset = mix(seedOf(world), Math.floor(across / PASS_SPACING), axis * 8 + here);
+
+    return (((along - offset) % PASS_SPACING) + PASS_SPACING) % PASS_SPACING < PASS_WIDTH;
+  };
+
+  return (
+    ((lower(0, 1) || lower(0, -1)) && crosses(x, y, 0)) ||
+    ((lower(1, 0) || lower(-1, 0)) && crosses(y, x, 1))
+  );
+}
+
+/** Whether a road, a route or a natural pass runs over the cell */
+function isWayAt(world: World, x: number, y: number): boolean {
+  return isRoadAt(world, x, y) || isRouteAt(world, x, y) || isPassAt(world, x, y);
+}
+
+/**
+ * Whether something cuts a way through the face here on its own account,
+ * before asking what is beside it. Water pours over any step it stands on,
+ * since a pool never sits at a dry drop
+ */
+function cuts(world: World, x: number, y: number): boolean {
+  if (roleAt(world, x, y) === 'water') {
+    return true;
+  }
+  return isWayAt(world, x, y) && descends(world, x, y);
+}
+
+/**
+ * Whether a dry way through the face here leads anywhere. It needs lower
+ * ground straight beside it, and where the faces beside it turn a corner
+ * every one of them has to be a way through too: a corner joined to a
+ * single other seam reaches the high ground only diagonally
+ */
+export function leadsThrough(world: World, x: number, y: number): boolean {
+  if (!descends(world, x, y)) {
     return false;
   }
-  const here = levelAt(world, x, y);
-  const under = ORTHOGONAL.filter(([dx, dy]) => levelAt(world, x + dx, y + dy) < here);
+  const faces = ORTHOGONAL.filter(([dx, dy]) => isFace(world, x + dx, y + dy));
+  // Perpendicular sides: the dot product of two of the four offsets is zero only where they turn
+  const turns = faces.some(([ax, ay]) => faces.some(([bx, by]) => ax * bx + ay * by === 0));
 
-  // Perpendicular sides, which is what a corner is: the dot product of
-  // two of the four offsets is zero only where they turn
-  return !under.some(([ax, ay]) => under.some(([bx, by]) => ax * bx + ay * by === 0));
+  return !turns || faces.every(([dx, dy]) => cuts(world, x + dx, y + dy));
 }
 
 /**
  * Whether a way through the face runs here.
  *
- * A road is cut through what it crosses, so where one meets a step up
- * it is the climb: the cliff opens and the walk carries on. Water
- * carries a walk over a step of its own accord, which `falls` states
+ * Water on a step is always a fall into more water, so nothing stops
+ * whatever swims. A road, a route or a pass is the climb, wherever it
+ * leads somewhere
  */
 export function isSeam(world: World, x: number, y: number): boolean {
-  return falls(world, x, y) || isRoadAt(world, x, y) || isRouteAt(world, x, y);
+  if (roleAt(world, x, y) === 'water') {
+    return true;
+  }
+  return isWayAt(world, x, y) && leadsThrough(world, x, y);
 }
 
 /** Whether the step up here stops a walk. */

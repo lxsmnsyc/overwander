@@ -27,8 +27,10 @@ import { around, enclosed, turned } from './terrain-tiles';
 export interface CellLook {
   biome: (x: number, y: number) => Biome;
   role: (x: number, y: number) => 'ground' | 'water' | 'wall';
-  /** Whether a street or a route runs over it. */
+  /** Whether a town's street or a building's plot is paved over it. */
   paved: (x: number, y: number) => boolean;
+  /** Whether a route or a town's open ground is worn to a trail here, where the caller knows. */
+  trail?: (x: number, y: number) => boolean;
   /** How high the ground stands, where the caller knows. */
   level?: (x: number, y: number) => number;
   /** Whether a way through a step runs here, where the caller knows. */
@@ -187,9 +189,49 @@ export function layersAt(
       }
     }
   }
+  // An open sea draws no edge of its own, so the dry ground of another
+  // country beside it lays the sea's hollow ring, turned like any shore
+  if (dry(x, y)) {
+    const seas = new Set<Biome>();
+
+    for (const [dx, dy] of ROUND) {
+      const biome = look.biome(x + dx, y + dy);
+
+      if (biome !== look.biome(x, y) && wet(x + dx, y + dy) && isOpenSea(biome)) {
+        seas.add(biome);
+      }
+    }
+    for (const sea of seas) {
+      const ring = pack.of(sea, 'blend');
+
+      if (ring != null) {
+        const near = around(x, y, (cx, cy) => dry(cx, cy) || look.biome(cx, cy) !== sea);
+
+        lays.push({ terrain: ring, near, over: null, whole: false, step: SHORE });
+      }
+    }
+  }
   // the road is one thing wherever it runs: its neighbourhood is asked
   // of the paving alone, so crossing a border changes only the ground
   // its rim is painted in
+  // a route and a town's open ground are a beaten trail, laid under the
+  // paving so a street's rim meets worn earth. Nothing is drawn where a
+  // route fords water
+  const trailed = (cx: number, cy: number): boolean => look.trail?.(cx, cy) === true && dry(cx, cy);
+
+  if (trailed(x, y)) {
+    const trail = pack.of(look.biome(x, y), 'trail');
+
+    if (trail != null) {
+      lays.push({
+        terrain: trail,
+        near: around(x, y, (cx, cy) => trailed(cx, cy) || look.paved(cx, cy)),
+        over: null,
+        whole: false,
+        step: stepOf('paving'),
+      });
+    }
+  }
   if (look.paved(x, y)) {
     const road = pack.of(look.biome(x, y), 'paving');
 
@@ -242,7 +284,7 @@ export function layersAt(
   };
   const mine = kind(x, y);
 
-  if (ground != null && mine != null && !look.paved(x, y) && !cliff) {
+  if (ground != null && mine != null && !look.paved(x, y) && !trailed(x, y) && !cliff) {
     const beside = new Map<string, Biome>();
 
     for (const [dx, dy] of ROUND) {

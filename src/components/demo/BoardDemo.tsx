@@ -16,6 +16,7 @@ import { WORLD_SEED } from '../../overworld/current';
 import { CHUNK_CELLS, chunkOfCell } from '../../overworld/chunk';
 import { type BoardGround, readBoardGround } from '../../overworld/board-ground';
 import { readGround } from '../../overworld/ground';
+import { isRouteAt, routesNear } from '../../overworld/route';
 import { blocksWalk } from '../../overworld/cliff';
 import { TERRACE_TOP, levelAt } from '../../overworld/terrace';
 import { getRegisteredSpecies } from '../../data/species';
@@ -148,6 +149,39 @@ function findCountry(
           (!onAStep || stepped(world, spot[0], spot[1]))
         ) {
           return spot;
+        }
+      }
+    }
+  }
+  return null;
+}
+
+/** The nearest dry cell a route runs over, searched the same coarse way as a country */
+function findRoute(world: World, from: [number, number]): [number, number] | null {
+  for (let ring = 0; ring <= SEARCH_RINGS; ring += 1) {
+    const reach = ring * SEARCH_STEP;
+
+    for (let step = -ring; step <= ring; step += 1) {
+      const along = step * SEARCH_STEP;
+      const spots: [number, number][] =
+        ring === 0
+          ? [from]
+          : [
+              [from[0] + along, from[1] - reach],
+              [from[0] + along, from[1] + reach],
+              [from[0] - reach, from[1] + along],
+              [from[0] + reach, from[1] + along],
+            ];
+
+      for (const spot of spots) {
+        for (const route of routesNear(world, spot[0], spot[1])) {
+          const dry = route.line.find(
+            ([x, y]) => isRouteAt(world, x, y) && readGround(world, x, y).role === 'ground',
+          );
+
+          if (dry != null) {
+            return [Math.round(dry[0]), Math.round(dry[1])];
+          }
         }
       }
     }
@@ -430,6 +464,18 @@ export default function BoardDemo(): JSX.Element {
         <Badge tone="neutral">
           level {levelAt(world(), at()[0], at()[1])} of {TERRACE_TOP}
         </Badge>
+        <Button
+          onClick={() => {
+            const found = findRoute(world(), at());
+
+            if (found != null) {
+              setAt(found);
+              setSpawns(standing(world(), found));
+            }
+          }}
+        >
+          Nearest route
+        </Button>
         <Button
           onClick={() => {
             setSeed(`${WORLD_SEED}-${Math.floor(Math.random() * 1000)}`);

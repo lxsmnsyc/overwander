@@ -1,8 +1,9 @@
 import type Biome from '../data/ids/biome';
+import { isFace, isSeam } from './cliff';
 import { type GroundRole, isShelfAt, readGround, roleAt } from './ground';
 import { isRouteAt } from './route';
 import { levelAt } from './terrace';
-import { isRoadAt } from './town';
+import { isPlotAt, isRoadAt, isTownAt } from './town';
 import type World from './world';
 
 /**
@@ -30,11 +31,15 @@ export interface BoardGround {
   /** Whether the water here is drawn with the lighter shelf tiles */
   shelf: (x: number, y: number) => boolean;
   /**
-   * Whether a town's street runs through here. It is drawn over the
+   * Whether a town's street or a building's plot is paved here. It is drawn over the
    * ground rather than being a kind of ground, so nothing about
    * walking, spawning or building reads it
    */
   road: (x: number, y: number) => boolean;
+  /** Whether a route between towns runs through here, drawn as a trail */
+  route: (x: number, y: number) => boolean;
+  /** Whether a town stands here, whose open ground is drawn worn */
+  town: (x: number, y: number) => boolean;
   /**
    * How high the ground stands, in terrace levels. The face between
    * two of them is where a cliff is drawn, so the board wants it per
@@ -42,11 +47,13 @@ export interface BoardGround {
    */
   level: (x: number, y: number) => number;
   /**
-   * Whether a way through a step runs here, which is a road or a
-   * route. The board draws one as a ramp between the levels rather
+   * Whether a dry way through a step runs here: a road, a route or a
+   * natural pass. The board draws one as a ramp between the levels rather
    * than as a wall, so a step a player can climb looks like one
    */
   seam: (x: number, y: number) => boolean;
+  /** Dev overlay only: a face nobody passes, a face with a way through, or neither. Read on demand */
+  step?: (x: number, y: number) => 'cliff' | 'seam' | null;
 }
 
 const ROLE_ORDER: GroundRole[] = ['ground', 'water', 'wall'];
@@ -67,6 +74,8 @@ export function readBoardGround(
   const biomes = new Uint8Array(span * span);
   const shelves = new Uint8Array(span * span);
   const roads = new Uint8Array(span * span);
+  const routes = new Uint8Array(span * span);
+  const towns = new Uint8Array(span * span);
   const seams = new Uint8Array(span * span);
   const levels = new Uint8Array(span * span);
   const inside = (x: number, y: number): boolean =>
@@ -79,9 +88,13 @@ export function readBoardGround(
 
       roles[key(x, y)] = ROLE_ORDER.indexOf(role);
       biomes[key(x, y)] = biome;
-      roads[key(x, y)] = isRoadAt(world, originX + x, originY + y) ? 1 : 0;
-      seams[key(x, y)] =
-        roads[key(x, y)] === 1 || isRouteAt(world, originX + x, originY + y) ? 1 : 0;
+      roads[key(x, y)] =
+        isRoadAt(world, originX + x, originY + y) || isPlotAt(world, originX + x, originY + y)
+          ? 1
+          : 0;
+      routes[key(x, y)] = isRouteAt(world, originX + x, originY + y) ? 1 : 0;
+      towns[key(x, y)] = isTownAt(world, originX + x, originY + y) ? 1 : 0;
+      seams[key(x, y)] = role !== 'water' && isSeam(world, originX + x, originY + y) ? 1 : 0;
       levels[key(x, y)] = levelAt(world, originX + x, originY + y);
     }
   }
@@ -104,11 +117,24 @@ export function readBoardGround(
     shelf: (x, y) =>
       inside(x, y) ? shelves[key(x, y)] === 1 : isShelfAt(world, originX + x, originY + y),
     road: (x, y) =>
-      inside(x, y) ? roads[key(x, y)] === 1 : isRoadAt(world, originX + x, originY + y),
+      inside(x, y)
+        ? roads[key(x, y)] === 1
+        : isRoadAt(world, originX + x, originY + y) || isPlotAt(world, originX + x, originY + y),
+    route: (x, y) =>
+      inside(x, y) ? routes[key(x, y)] === 1 : isRouteAt(world, originX + x, originY + y),
+    town: (x, y) =>
+      inside(x, y) ? towns[key(x, y)] === 1 : isTownAt(world, originX + x, originY + y),
     level: (x, y) => (inside(x, y) ? levels[key(x, y)] : levelAt(world, originX + x, originY + y)),
     seam: (x, y) =>
       inside(x, y)
         ? seams[key(x, y)] === 1
-        : isRoadAt(world, originX + x, originY + y) || isRouteAt(world, originX + x, originY + y),
+        : roleAt(world, originX + x, originY + y) !== 'water' &&
+          isSeam(world, originX + x, originY + y),
+    step: (x, y) => {
+      if (!isFace(world, originX + x, originY + y)) {
+        return null;
+      }
+      return isSeam(world, originX + x, originY + y) ? 'seam' : 'cliff';
+    },
   };
 }

@@ -1,4 +1,3 @@
-import { SEA_LEVEL } from '../data/ids/biome';
 import { SQUARES } from './grid';
 import type World from './world';
 
@@ -7,15 +6,19 @@ import type World from './world';
  *
  * Read off the same warped elevation the biome is classified from, so
  * a mountain is high country because it is mountain country: the two
- * cannot disagree. Sea is level 0, the coast 1, and the bands above it
+ * cannot disagree. The sea and the low shore beside it share level 0,
+ * so a coast meets the water without a cliff, and the bands above it
  * are where a player climbs.
  *
  * A level is walkable ground like any other. What stops a player is
  * the face between two of them, which is the cliff.
  */
 
-/** The edges of the bands, in the elevation field's own units */
-export const TERRACE_STEPS = [SEA_LEVEL, 0.05, 0.3, 0.55] as const;
+/**
+ * The edges of the bands, in the elevation field's own units. The first
+ * sits above the beaches and wetlands (0 to 0.05), so no step splits them
+ */
+export const TERRACE_STEPS = [0.1, 0.3, 0.55] as const;
 
 /** The highest level the world reaches, which is the last step */
 export const TERRACE_TOP = TERRACE_STEPS.length;

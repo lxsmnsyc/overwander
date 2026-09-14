@@ -1850,6 +1850,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         biome: (x: number, y: number) => ground.biome(x, y),
         role: (x: number, y: number) => ground.role(x, y),
         paved: (x: number, y: number) => ground.road(x, y),
+        trail: (x: number, y: number) => ground.route(x, y) || ground.town(x, y),
         level: (x: number, y: number) => ground.level(x, y),
         seam: (x: number, y: number) => ground.seam(x, y),
       };
@@ -2281,6 +2282,24 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         // them and whatever stands on it covers them
         marks?.depth(floorOf(square, lift));
         rule(outline, hot ? HOVER_GLOW : 0);
+        // Dev only: a cliff tile in red and a seamed one in green, to check the step rules by eye
+        if (import.meta.env.DEV) {
+          const step = props.ground.step?.(square.x, square.y);
+
+          if (step != null) {
+            const colour = step === 'cliff' ? '#ff0000' : '#00ff00';
+
+            if (batch != null) {
+              batch.solid(colour, outline, 0.45);
+            } else {
+              traceQuad(outline);
+              context.globalAlpha *= 0.45;
+              context.fillStyle = colour;
+              context.fill();
+              context.globalAlpha /= 0.45;
+            }
+          }
+        }
         if (hot) {
           hoveredOutline = outline;
           hoveredFloor = floorOf(square, lift);

@@ -1,5 +1,5 @@
 import AleaRNG from '../core/alea';
-import { CELL_COUNT, CHUNK_CELLS, worldCell } from './grid';
+import { CELL_COUNT, CHUNK_CELLS, SURROUNDING, worldCell } from './grid';
 import type Biome from '../data/ids/biome';
 import { growsBerries, growsTrees, isOpenSea, isWaterBiome } from '../data/ids/biome';
 import { type GroundRole, isShelfAt, roleAt } from './ground';
@@ -13,7 +13,8 @@ import {
 import Landmark, { LANDMARKS } from '../data/overworld/landmark';
 import { TOWN_LANDMARKS, getTownLots, isTownAt, portalCellIn, townOverChunk } from './town';
 import { caveMouthCellIn } from './cave';
-import { isFace } from './cliff';
+import { isFace, isSeam } from './cliff';
+import { isRouteAt } from './route';
 import { Depth } from './depth';
 
 export { CELL_COUNT, CHUNK_CELLS, cellInChunk, chunkOfCell, worldCell } from './grid';
@@ -434,6 +435,25 @@ export default class Chunk {
     return clear;
   }
 
+  /** Whether a route between towns runs over this cell */
+  private isRouteCell(cell: number): boolean {
+    return isRouteAt(
+      this.world,
+      worldCell(this.x, cell % CHUNK_CELLS),
+      worldCell(this.y, Math.floor(cell / CHUNK_CELLS)),
+    );
+  }
+
+  /** Whether a way through a cliff touches this cell, so scenery there would block the way up */
+  private isBesideSeam(cell: number): boolean {
+    const x = worldCell(this.x, cell % CHUNK_CELLS);
+    const y = worldCell(this.y, Math.floor(cell / CHUNK_CELLS));
+
+    return SURROUNDING.some(
+      ([dx, dy]) => isFace(this.world, x + dx, y + dy) && isSeam(this.world, x + dx, y + dy),
+    );
+  }
+
   private decorationCells: Map<number, Decoration> | null = null;
 
   /**
@@ -477,7 +497,10 @@ export default class Chunk {
               this.isClear(candidate) &&
               // Nothing grows in the street: a town is swept, and its
               // scenery is the buildings on it
-              !this.isTownCell(candidate),
+              !this.isTownCell(candidate) &&
+              !this.isBesideSeam(candidate) &&
+              // nor on a route, which is walked like a street
+              !this.isRouteCell(candidate),
           );
 
           if (cell == null) {

@@ -133,18 +133,6 @@ function fitsSquare(ox: number, oy: number, is: (x: number, y: number) => boolea
 }
 
 /**
- * Whether a 2x2 block of water fits somewhere over this cell, as the
- * field alone sees it. What the lip rule asks about the cell below a
- * step, which cannot ask the finished answer without asking about
- * itself
- */
-function isBroadField(world: World, x: number, y: number): boolean {
-  return SQUARES.some(([ox, oy]) =>
-    fitsSquare(ox, oy, (cx, cy) => isWetField(world, x + cx, y + cy)),
-  );
-}
-
-/**
  * Whether the water here hangs over a cliff, read against whatever the
  * caller counts as water below the step.
  *
@@ -169,50 +157,25 @@ function spills(
 }
 
 /**
- * Whether the fields would leave water here, read one step short of
- * the answer: the lip rule against the water the fields alone put
- * below the step.
- *
- * Two readings of the same rule rather than one because the finished
- * answer cannot be asked of the cell below without asking about this
- * cell in turn. This is the rougher of the two, and it is what the
- * finished one reads below a step
- */
-const poolsAsField = remembered(
-  (world: World, x: number, y: number): boolean =>
-    isWetField(world, x, y) &&
-    !spills(world, x, y, (cx, cy) => isWetField(world, cx, cy) && isBroadField(world, cx, cy)),
-);
-
-/** Whether a 2x2 block of that rougher water fits over this cell */
-function isBroadPool(world: World, x: number, y: number): boolean {
-  return SQUARES.some(([ox, oy]) =>
-    fitsSquare(ox, oy, (cx, cy) => poolsAsField(world, x + cx, y + cy)),
-  );
-}
-
-/**
- * Whether water may stand on this cell: the fields put it here, and
- * the step below it, if there is one, falls into more water
- */
-const pools = remembered(
-  (world: World, x: number, y: number): boolean =>
-    isWetField(world, x, y) &&
-    !spills(world, x, y, (cx, cy) => poolsAsField(world, cx, cy) && isBroadPool(world, cx, cy)),
-);
-
-/**
  * Whether water covers this cell.
  *
  * Water is laid in 2x2 blocks rather than cell by cell: the shore is
  * drawn as a ring of edges and corners, and a single cell asks for
- * all four corners at once. Read as blocks, every water cell has three
- * others square with it whatever else has dried up, which drying cells
- * one at a time and measuring afterwards cannot promise
+ * all four corners at once. A block stands on one level, so water only
+ * ever depends on the water below it and the lip rule can ask this
+ * finished answer of the step below without asking about itself
  */
-function isWater(world: World, x: number, y: number): boolean {
-  return SQUARES.some(([ox, oy]) => fitsSquare(ox, oy, (cx, cy) => pools(world, x + cx, y + cy)));
-}
+const isWater = remembered((world: World, x: number, y: number): boolean => {
+  const level = levelAt(world, x, y);
+  // water may stand on a cell of this level where the fields put it and
+  // every lower cell beside it is water too
+  const pools = (cx: number, cy: number): boolean =>
+    levelAt(world, cx, cy) === level &&
+    isWetField(world, cx, cy) &&
+    !spills(world, cx, cy, (bx, by) => isWater(world, bx, by));
+
+  return SQUARES.some(([ox, oy]) => fitsSquare(ox, oy, (cx, cy) => pools(x + cx, y + cy)));
+});
 
 /**
  * What one cell of the world is: the country it belongs to and what

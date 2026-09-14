@@ -660,3 +660,49 @@ export function isRoadAt(world: World, x: number, y: number): boolean {
 
   return town != null && getTownRoads(world, town).has(pavedKey(town, x, y));
 }
+
+const plotted = new WeakMap<World, Map<number, Set<number>>>();
+
+/**
+ * The paved plots of a town, as offsets into its footprint: each lot and
+ * the ring it keeps clear, which the street to its door already touches.
+ * Only a look, and not a street, so a plot opens no way through a cliff
+ */
+function getTownPlots(world: World, town: Town): Set<number> {
+  const held = plotted.get(world) ?? new Map<number, Set<number>>();
+  const key = regionKey(regionOf(town.x), regionOf(town.y));
+
+  plotted.set(world, held);
+
+  const known = held.get(key);
+
+  if (known != null) {
+    return known;
+  }
+  const plots = new Set<number>();
+
+  for (const lot of getTownLots(world, town)) {
+    for (let dy = -1; dy <= 1; dy++) {
+      for (let dx = -1; dx <= 1; dx++) {
+        const x = lot.x + dx;
+        const y = lot.y + dy;
+
+        if (
+          Math.hypot(x - town.x, y - town.y) <= TOWN_RADIUS &&
+          !isOpenSea(world.getCellBiome(x, y))
+        ) {
+          plots.add(pavedKey(town, x, y));
+        }
+      }
+    }
+  }
+  held.set(key, plots);
+  return plots;
+}
+
+/** Whether a building's paved plot covers this world cell */
+export function isPlotAt(world: World, x: number, y: number): boolean {
+  const town = townAt(world, x, y);
+
+  return town != null && getTownPlots(world, town).has(pavedKey(town, x, y));
+}

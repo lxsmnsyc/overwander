@@ -8,12 +8,17 @@
  * board asks for the same handful every frame.
  */
 
+import LRUMap from '../../core/lru-map';
+
 export type Colour = [red: number, green: number, blue: number, alpha: number];
 
-const known = new Map<string, Colour>();
+/**
+ * How many colours are remembered before the least used is let go. Room for
+ * a sky turning over its bands without pushing out the board's steady colours
+ */
+const LIMIT = 256;
 
-/** How many colours are remembered before the oldest are let go. */
-const LIMIT = 64;
+const known = new LRUMap<string, Colour>(LIMIT);
 
 function hex(css: string): Colour | null {
   const digits = css.slice(1);
@@ -89,9 +94,6 @@ export default function parseColour(css: string): Colour | null {
 
   if (found == null) {
     return null;
-  }
-  if (known.size >= LIMIT) {
-    known.clear();
   }
   known.set(css, found);
   return found;

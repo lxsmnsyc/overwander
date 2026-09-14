@@ -224,6 +224,21 @@ export function paintSkybox(
   context.fillRect(0, 0, width, height);
 }
 
+/** The band colours of the last sky laid, since the hour's sky changes far slower than frames */
+const bands: { zenith: string; horizon: string; colours: string[] } = {
+  zenith: '',
+  horizon: '',
+  colours: [],
+};
+
+/** Corners reused by every band: a batch copies a quad the moment it is written */
+const BAND = [
+  { x: 0, y: 0 },
+  { x: 0, y: 0 },
+  { x: 0, y: 0 },
+  { x: 0, y: 0 },
+];
+
 /** The same sky, written into a batch */
 export function batchSkybox(
   batch: Painter,
@@ -234,16 +249,27 @@ export function batchSkybox(
 ): void {
   const { zenith, horizon } = getSkybox(localTime, latitude);
 
+  if (bands.zenith !== zenith || bands.horizon !== horizon) {
+    bands.zenith = zenith;
+    bands.horizon = horizon;
+    bands.colours.length = 0;
+    for (let band = 0; band < SKY_BANDS; band += 1) {
+      bands.colours.push(mixHex(zenith, horizon, (band + 0.5) / SKY_BANDS));
+    }
+  }
   for (let band = 0; band < SKY_BANDS; band += 1) {
     const top = (band / SKY_BANDS) * height;
     const bottom = ((band + 1) / SKY_BANDS) * height;
 
-    batch.solid(mixHex(zenith, horizon, (band + 0.5) / SKY_BANDS), [
-      { x: 0, y: top },
-      { x: width, y: top },
-      { x: width, y: bottom },
-      { x: 0, y: bottom },
-    ]);
+    BAND[0].x = 0;
+    BAND[0].y = top;
+    BAND[1].x = width;
+    BAND[1].y = top;
+    BAND[2].x = width;
+    BAND[2].y = bottom;
+    BAND[3].x = 0;
+    BAND[3].y = bottom;
+    batch.solid(bands.colours[band], BAND);
   }
 }
 

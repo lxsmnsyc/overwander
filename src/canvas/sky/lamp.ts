@@ -79,8 +79,11 @@ export function lampMask(
   const scale = MASK_WIDE / width;
   const down = Math.max(1, Math.round(height * scale));
 
-  held.width = MASK_WIDE;
-  held.height = down;
+  // Only when it differs: setting a size reallocates the bitmap even when it is the same
+  if (held.width !== MASK_WIDE || held.height !== down) {
+    held.width = MASK_WIDE;
+    held.height = down;
+  }
 
   const into = held.getContext('2d');
 

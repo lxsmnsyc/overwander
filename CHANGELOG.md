@@ -1,5 +1,94 @@
 # overwander
 
+## 3.2.0
+
+### Minor Changes
+
+- 98ab1f8: - There are caves under the world, at the same coordinates. Step into one and you are under the cell you stood on; walk to another mouth and you come out as far across the world as you walked.
+  - Caves are inside the rock you can see, so they are the way under a ridge the surface makes you walk around. About a fifth of the ground down there is open, and a network runs roughly seven chunks before it ends.
+  - Nothing grows underground, and a passage never steps diagonally, so every cave corner can be walked round.
+  - A cave under the open sea is its own network, cut off from the mainland by the shore. Kyogre, Articuno and Lugia keep their lairs in them.
+  - Caves hold pokemon that stand nowhere else, the same at every hour, along with item caches, nests, Team Rocket, duelling trainers and both kinds of raid lair. There are no towns, no markets and no portals underground.
+  - The Escape Rope climbs out of a cave at the nearest mouth, up to 8 chunks off, and is spent doing it. It is found in the same caches everything else is.
+  - A cave is dark whatever the hour: you see 2 cells carrying nothing, and 3 with an Illuminate buddy or the new Explorer Kit. The two are worth the same and do not stack.
+- 98ab1f8: - The climate is read a cell at a time, so a chunk can hold two countries and a border wanders through the ground instead of falling on a chunk boundary
+  - Lakes, rivers and ridges of rock are world-wide fields now, so they run from one chunk into the next rather than being grown inside one
+  - The board draws the neighbouring chunks' own ground past its edges, and every cell is drawn from its own country's tileset
+  - The board is a window on the world with the player in the middle of it rather than the chunk they are standing in, so the world scrolls as they walk and there is no boundary to cross and nothing to wait for at one
+  - A board straddles four or nine chunks at once, and their windows are all watched and all visited, so what is standing on the far side of a boundary is live before the player gets there
+  - The board is a circle rather than a square, so a player sees the same distance in every direction
+  - The country is drawn twenty cells out, past the edge of the picture on every side, and every square of it can be pressed and walked to, so nothing on the screen is out of reach
+  - The world is live within ten cells of the player, which is how near a pokemon has to be to be standing there, and no circle is drawn to say so
+  - Scenery, landmarks and pokemon may stand on any cell of a chunk: the clear rim every chunk used to keep drew empty corridors across the world every sixteen cells
+  - A new /demo/world page paints the world's ground a cell at a time, with the chunk grid over it
+  - Towns: one settled circle 28 cells across in each 8x8 chunk region that has dry ground for it, holding nine to fourteen lots of market, auction board, gym seat and the ladder
+  - The region's portal stands on the town's plaza, dead centre, where every street of the town begins
+  - A chunk of open country rolls two to four landmarks instead of five to eight, so what is left out there is what a player goes out for
+  - Every region has exactly one portal, in its town where it has one, so the network is even and reaches every country including the open seas
+  - A town levels the ground it stands on, and no two towns have the same charter
+  - A town's streets have wild pokemon of their own, the kind that live around people, from one list every town shares
+  - Porygon is met on town streets rather than beside a portal
+  - Walking into a town says its name, and walking out and back in says it again
+  - A town has streets: its plaza is paved and a road runs out of it to every lot, turning square corners rather than cutting across, drawn from whatever country the town stands in
+  - A street stops at a lot's door rather than paving it and goes round any other lot in its way, so nobody stands in the road and no road stops dead at a back wall
+  - The board keeps the subscriptions it already has when it moves, and remembers what the server said about a window's claims, so a walk asks it a fraction of what it used to
+  - The world map marks the towns in view at the size they really are, and says so when the pointer is over one
+- 98ab1f8: - Every town has a Pokémon Center with Nurse Joy behind the counter. She no longer turns up at wandering cells, so the open country has none.
+  - Every town has a name of its own, built out of the country it stands on and the county it stands in, such as Rimefell Village, Ashmarch. No two towns anywhere share a name.
+  - Walking into a town puts it on the map for everybody. A town one player found is a town every player can travel to, and a town nobody has been to cannot be crossed to.
+  - A portal now asks for a town by name, finishing the name as it is typed, and opens onto that town's plaza. It used to ask for a biome and send the traveller to the nearest portal there.
+- a9647f3: Landmarks wear a turning ring that shows where you stand with them:
+
+  - Gold under a lair whose raid you won this window.
+  - Red under a trainer or grunt you have not beaten yet, and under a seat somebody else holds.
+  - Green under the seat you hold.
+  - Blue under a once-a-window wanderer you have not been served by yet.
+  - Teal under a hidden grotto you have not claimed yet.
+
+- 98ab1f8: - The ground is drawn from tilesets: each biome has a ground, a cliff, water and paving, laid water first and seams last.
+  - Terraces stand up on the laid-back board, with a rock wall between one level and the next. Nothing is laid over the ground at the lip of a step: the top of a cliff is the country's own ground.
+  - The board is drawn as a scene with a depth buffer, so a cliff hides what stands behind it a pixel at a time and a sprite beside the corner of a step is covered exactly where the rock is nearer.
+  - The grid, the marks on a cell and a thrown shadow lie on the ground they belong to, so a cliff in front of them hides them and whatever stands there covers them.
+  - The picture is centred on the ground the player is standing on, so walking up a terrace carries the camera up with them and the ring round them is drawn on the level they are on.
+  - A cliff is a step between levels and nothing else. It stops a walk unless a road, a route, a natural pass or water cuts through it.
+  - The dungeon tileset rips are gone, with the loader, the processor's three tileset tools and the scripts that wrote them: one pack of terrain answers every country now, and a battle's floor is that country's own ground tile.
+  - Water is laid in 2x2 blocks, so every water cell has three others square with it: a hairline river dries up rather than being drawn as a row of puddles, and no cell is left touching the water only at a corner.
+  - Water never sits at the lip of a step with dry ground below it. Where the ground below is water too the step is a fall, drawn in the water's own art rather than in rock, and nothing stops a crossing there.
+  - Water on a step is always a way through it, whatever shape the step takes.
+  - A step with a way through it, a road, a route or a pass, is drawn as a ramp: the cell slopes straight down the step to the ground below instead of standing a wall, so a step a player can climb no longer looks like a cliff.
+  - A dry way through a step opens only where it leads somewhere. It needs lower ground straight beside it, and at a corner of the cliff every cliff tile beside it has to open too.
+  - Natural passes cross every cliff about every twenty cells, so a player walking beside a terrace is never far from a way up it.
+  - Scenery is never placed beside a way through a cliff.
+  - Only the edge between water and ground follows the camera. The rest of the country keeps its way round as the board is turned, so the ground no longer spins under a walk.
+  - Nothing above ground walls a cell off any more. The stone field still says where a hillside is, which is where a cave has its way in, which water may not stand on and where the shallows are drawn, but a step between two levels is the only thing on the surface that stops a walk.
+  - A volcano's lava stays in its crater: it dries off a cell short of the country's edge, so it never runs into an ordinary pool next door.
+  - Small islands break the surface of the open seas, a few cells of the country's own ground with a long way of water round them, so the sea is no longer featureless.
+  - The coast stands at sea level, so a beach meets the open sea without a cliff. The sea's own water and foam edge the shore.
+  - Routes between towns are drawn as beaten-earth trails in each country's colours. Nothing is drawn where a route crosses water.
+  - A town's open ground is drawn as the same worn trail, with its streets paved over it.
+  - Each building in a town stands on a paved plot joined to its street.
+  - Scenery is never placed on a route.
+- eda11cc: - The world map rings each chunk a town stands in.
+  - A Detailed world map setting draws the ground itself: water, the level of the land and its cliffs, towns and the routes between them.
+
+### Patch Changes
+
+- 98ab1f8: The sky behind the board follows the time of day instead of the biome. Caves show darkness behind the board.
+- 98ab1f8: - A portal is drawn as a gatepost with a poke ball set into it, and a gym seat as the gym's own signage.
+  - Both raid lairs are drawn as the statue the gym seat used to be. A shadow lair is the same statue in violet, so the two are told apart by colour rather than shape.
+  - A lair no longer changes with the biome it stands in, and a shadow lair is no longer sometimes boarded over.
+- 98ab1f8: The rocky coast's walls are grey sea stone rather than rust-brown rock, so they sit with its shingle and water.
+- fd6b2ca: Deoxys can be met on beaches, the way every other mythical is met in its home biome.
+- bcb3132: The awards shelf draws Hoenn's eight badges and the Battle Frontier's symbols from their sprites, where they were lettered discs.
+- c55fb89: - A player saved on a tree, rock, landmark or cliff comes back on the nearest open cell.
+- 98ab1f8: A lake or a river in dry country holds only pokemon that can be in the water or over it: what swims, the Flying types, and the hoverers. An ocean or a swamp is unchanged, since everything in its pool was chosen for it.
+- 98ab1f8: A live view reads once when it opens rather than twice, since the subscription connecting is the same read arriving over the socket. A dropped socket still re-reads when it comes back.
+- 98ab1f8: Open seas have scenery standing in the water.
+- 98ab1f8: A town's streets are drawn as beaten paths that tile and turn corners, rather than as a wash of flat colour.
+- 98ab1f8: - Trees are drawn without the flat shadow the source art laid under them, so the board's own shadows are the only ones on the ground.
+  - A savanna waterhole is drawn as the same clear pond the woodland has, rather than as brown water that looked dried out.
+- 98ab1f8: A walk across open ground heads toward its goal in a staircase instead of running one direction and then the other.
+
 ## 3.1.0
 
 ### Minor Changes

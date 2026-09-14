@@ -119,10 +119,13 @@ couple of avenues out of the plaza with short branches off them to the doors. A
 street is paving and nothing more: it does not decide where anybody may walk,
 and the ground under it is the same levelled ground the rest of the town is.
 
-Towns are marked on the world map, drawn at the size they really are, so a place
-worth walking to is visible from across the country rather than found by
-accident. The mark says a settlement is there and nothing more: which town it is
-and what it holds are what walking to it is for.
+The world map shows each chunk's country and rings every chunk a town stands in,
+so a place worth walking to is visible from across the country rather than
+found by accident. The **Detailed world map** setting draws the ground itself
+instead: water, how high the land stands and where its cliffs are, towns and the
+routes between them. It takes a moment to fill in. Either way the map shows that
+a settlement is there and nothing more: which town it is and what it holds are
+what walking to it is for.
 
 ### Inside a chunk
 

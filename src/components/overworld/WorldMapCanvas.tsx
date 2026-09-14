@@ -1,49 +1,79 @@
-import { type JSX, Show, createEffect, createSignal, onMount } from 'solid-js';
+import { type JSX, Show, createEffect, createSignal, onCleanup, onMount, untrack } from 'solid-js';
 import { BIOME_COLORS, BIOME_NAMES } from '../../data/biome';
 import type Biome from '../../data/ids/biome';
-import { CHUNK_CELLS } from '../../overworld/grid';
+import LRUMap from '../../core/lru-map';
+import shadeCell from '../../canvas/world-shade';
+import settings from '../app/settings';
+import { CHUNK_CELLS, worldCell } from '../../overworld/grid';
 import { TOWN_RADIUS, TOWN_REGION, townOfRegion } from '../../overworld/town';
 import getWorld from '../../overworld/current';
+import type World from '../../overworld/world';
 
 /**
- * The world around the player, painted a chunk at a time.
+ * The world around the player.
  *
- * A chunk is a handful of pixels rather than an element: a view this
- * wide is sixteen thousand of them, which is a picture rather than a
- * page. The camera is the caller's — this paints where it is pointed
- * and reports which way somebody asked to move it.
+ * By default a chunk is its country's colour, with the chunks towns stand
+ * in picked out, and all of it is drawn at once. The detailed map reads
+ * each chunk off every other cell of it instead: water, the level of the
+ * land and its cliffs, towns and routes, shaded the way the world demo
+ * shades them. The camera is the caller's: this paints where it is
+ * pointed and reports which way somebody asked to move it.
  *
- * What it is *for* is knowing which way to walk, which is why the
- * player's own chunk is marked and everything else is just ground.
  * A caller that wants a chunk chosen from it passes `onPick`; without
  * one the map is read and not used.
  */
 
-/**
- * How many pixels wide one chunk is drawn. Enough to carry a grid line
- * and still leave a square of colour inside it
- */
-const TILE = 6;
+/** How many cells each pixel of the map reads: every other one */
+const SAMPLE = 2;
+
+/** How many pixels wide one chunk is drawn */
+const TILE = CHUNK_CELLS / SAMPLE;
+
+/** How many chunk pictures are kept: several views' worth, so panning back costs nothing */
+const TILES_KEPT = 16_384;
+
+/** How long one frame may spend reading chunks that are not kept yet, in milliseconds */
+const FRAME_BUDGET = 12;
 
 const COLORS = {
   void: '#05070b',
   grid: 'rgba(0, 0, 0, 0.35)',
   /**
-   * The player's own chunk keeps its biome colour — where they are
-   * standing is still ground — and is called out by a ring drawn
-   * around it instead
+   * A chunk a town stands in is ringed rather than filled: a beach, a
+   * desert and a glacier are all pale, and a pale fill would read as one
    */
+  townRing: '#ffffff',
+  townEdge: 'rgba(0, 0, 0, 0.7)',
   player: '#ffffff',
   focus: '#3b82f6',
   /** The chunk somebody chose, ringed the way the player's own is */
   picked: '#facc15',
-  /**
-   * Every town is drawn the same: a map says a settlement is there,
-   * not which one, and finding out is what walking to it is for
-   */
-  town: '#f4e4c1',
-  townEdge: 'rgba(0, 0, 0, 0.55)',
 } as const;
+
+const tiles = new LRUMap<string, ImageData>(TILES_KEPT);
+
+/** One chunk's picture, read off every other cell of it */
+function chunkTile(world: World, chunkX: number, chunkY: number): ImageData {
+  const image = new ImageData(TILE, TILE);
+
+  for (let row = 0; row < TILE; row++) {
+    for (let column = 0; column < TILE; column++) {
+      const shade = shadeCell(
+        world,
+        worldCell(chunkX, column * SAMPLE),
+        worldCell(chunkY, row * SAMPLE),
+        { reach: SAMPLE },
+      );
+      const at = (row * TILE + column) * 4;
+
+      image.data[at] = shade[0];
+      image.data[at + 1] = shade[1];
+      image.data[at + 2] = shade[2];
+      image.data[at + 3] = 0xff;
+    }
+  }
+  return image;
+}
 
 /**
  * How far a pan moves the camera: one chunk, or a longer stride while
@@ -154,6 +184,11 @@ export interface WorldMapCanvasProps {
    * the map something to use rather than something to read
    */
   onPick?: (chunkX: number, chunkY: number) => void;
+  /**
+   * Whether the ground is read a cell at a time. Left out, the player's
+   * own setting decides
+   */
+  detailed?: boolean;
 }
 
 export default function WorldMapCanvas(props: WorldMapCanvasProps): JSX.Element {
@@ -165,6 +200,13 @@ export default function WorldMapCanvas(props: WorldMapCanvasProps): JSX.Element 
    * north-east is green, and nothing tells them which green
    */
   const [hovered, setHovered] = createSignal<number | null>(null);
+
+  /**
+   * Whether a town stands in a chunk: its middle against the town's reach,
+   * since a town is a circle and a chunk it barely clips is not where it is
+   */
+  const settledAt = (x: number, y: number): boolean =>
+    props.towns.some((town) => Math.hypot(x + 0.5 - town.x, y + 0.5 - town.y) <= town.radius);
 
   /**
    * Which chunk of the view a pointer at these page coordinates is
@@ -208,72 +250,29 @@ export default function WorldMapCanvas(props: WorldMapCanvasProps): JSX.Element 
     }
     const x = props.originX + (at % props.span);
     const y = props.originY + Math.floor(at / props.span);
-    // The middle of the chunk against the town's reach, since a town
-    // is a circle and a chunk it barely clips is not where it is
-    const settled = props.towns.some(
-      (town) => Math.hypot(x + 0.5 - town.x, y + 0.5 - town.y) <= town.radius,
-    );
 
-    return `${settled ? `Town, ${BIOME_NAMES[biome]}` : BIOME_NAMES[biome]} (${x}, ${y})`;
+    return `${settledAt(x, y) ? `Town, ${BIOME_NAMES[biome]}` : BIOME_NAMES[biome]} (${x}, ${y})`;
   };
 
   onMount(() => {
     const element = canvas;
     const context = element?.getContext('2d');
+    // The ground on a page of its own, so a chunk filling in never paints
+    // over the rings drawn on top
+    const ground = document.createElement('canvas');
+    const paint = ground.getContext('2d');
 
-    if (element == null || context == null) {
+    if (element == null || context == null || paint == null) {
       return;
     }
 
-    createEffect(() => {
+    /** The ground, and everything marked over it */
+    const compose = (): void => {
       const across = props.span;
       const size = TILE * across;
 
-      // Drawn at the map's own resolution and blown up by the browser,
-      // so the backing store is the size of the map rather than the
-      // size it is shown at
-      if (element.width !== size) {
-        element.width = size;
-        element.height = size;
-      }
-
-      for (let row = 0; row < across; row++) {
-        for (let column = 0; column < across; column++) {
-          const biome = props.biomes[row * across + column];
-
-          context.fillStyle = biome == null ? COLORS.void : BIOME_COLORS[biome];
-          context.fillRect(column * TILE, row * TILE, TILE, TILE);
-        }
-      }
-
-      // The grid on top of the ground rather than between the fills,
-      // so a line is one pixel wherever it falls
-      context.strokeStyle = COLORS.grid;
-      context.lineWidth = 1;
-      context.beginPath();
-      for (let line = 0; line <= across; line++) {
-        context.moveTo(line * TILE + 0.5, 0);
-        context.lineTo(line * TILE + 0.5, size);
-        context.moveTo(0, line * TILE + 0.5);
-        context.lineTo(size, line * TILE + 0.5);
-      }
-      context.stroke();
-
-      // The towns, over the grid: a settlement is a thing on the
-      // ground rather than a chunk, so it is drawn at its own place
-      // and at its own size instead of colouring the squares it clips
-      for (const town of props.towns) {
-        const townX = (town.x - props.originX) * TILE;
-        const townY = (town.y - props.originY) * TILE;
-
-        context.beginPath();
-        context.arc(townX, townY, Math.max(2, town.radius * TILE), 0, Math.PI * 2);
-        context.fillStyle = COLORS.town;
-        context.fill();
-        context.strokeStyle = COLORS.townEdge;
-        context.lineWidth = 1;
-        context.stroke();
-      }
+      context.clearRect(0, 0, size, size);
+      context.drawImage(ground, 0, 0);
 
       // Where the player is standing: the same ground, ringed
       const column = props.playerX - props.originX;
@@ -307,7 +306,124 @@ export default function WorldMapCanvas(props: WorldMapCanvasProps): JSX.Element 
         context.strokeRect(1, 1, size - 2, size - 2);
         context.lineWidth = 1;
       }
+    };
+
+    createEffect(() => {
+      const across = props.span;
+      const originX = props.originX;
+      const originY = props.originY;
+      const biomes = props.biomes;
+      const size = TILE * across;
+      const world = getWorld();
+      const detailed = props.detailed ?? settings().detailedMap;
+      const missing: number[] = [];
+      /** The chunks towns stand in, ringed once the grid is down */
+      const towns: number[] = [];
+
+      // Drawn at the map's own resolution and blown up by the browser,
+      // so the backing store is the size of the map rather than the
+      // size it is shown at
+      if (element.width !== size) {
+        element.width = size;
+        element.height = size;
+      }
+      if (ground.width !== size) {
+        ground.width = size;
+        ground.height = size;
+      }
+
+      for (let index = 0; index < across * across; index++) {
+        const column = index % across;
+        const row = Math.floor(index / across);
+        const biome = biomes[index];
+
+        if (biome == null) {
+          paint.fillStyle = COLORS.void;
+          paint.fillRect(column * TILE, row * TILE, TILE, TILE);
+          continue;
+        }
+        const kept = detailed ? tiles.get(`${originX + column},${originY + row}`) : undefined;
+
+        if (kept != null) {
+          paint.putImageData(kept, column * TILE, row * TILE);
+          continue;
+        }
+        // The country's own colour, which is what the detailed map shows
+        // until a chunk has been read
+        paint.fillStyle = BIOME_COLORS[biome];
+        paint.fillRect(column * TILE, row * TILE, TILE, TILE);
+        if (detailed) {
+          missing.push(index);
+        } else if (settledAt(originX + column, originY + row)) {
+          towns.push(index);
+        }
+      }
+      if (!detailed) {
+        // The chunk grid, which is what the quick map is read by
+        paint.strokeStyle = COLORS.grid;
+        paint.lineWidth = 1;
+        paint.beginPath();
+        for (let line = 0; line <= across; line++) {
+          paint.moveTo(line * TILE + 0.5, 0);
+          paint.lineTo(line * TILE + 0.5, size);
+          paint.moveTo(0, line * TILE + 0.5);
+          paint.lineTo(size, line * TILE + 0.5);
+        }
+        paint.stroke();
+
+        for (const index of towns) {
+          const left = (index % across) * TILE;
+          const top = Math.floor(index / across) * TILE;
+
+          paint.strokeStyle = COLORS.townEdge;
+          paint.strokeRect(left + 0.5, top + 0.5, TILE - 1, TILE - 1);
+          paint.strokeStyle = COLORS.townRing;
+          paint.strokeRect(left + 1.5, top + 1.5, TILE - 3, TILE - 3);
+        }
+      }
+      untrack(compose);
+
+      // Nearest the middle first, so the ground round the player fills in
+      // before the corners do
+      const middle = (across - 1) / 2;
+      const away = (index: number): number =>
+        Math.hypot((index % across) - middle, Math.floor(index / across) - middle);
+
+      missing.sort((one, other) => away(one) - away(other));
+
+      let next = 0;
+      let frame = 0;
+      const read = (): void => {
+        const until = performance.now() + FRAME_BUDGET;
+
+        while (next < missing.length && performance.now() < until) {
+          const index = missing[next];
+          const column = index % across;
+          const row = Math.floor(index / across);
+          const key = `${originX + column},${originY + row}`;
+          const tile = tiles.get(key) ?? chunkTile(world, originX + column, originY + row);
+
+          next += 1;
+          tiles.set(key, tile);
+          paint.putImageData(tile, column * TILE, row * TILE);
+        }
+        compose();
+        if (next < missing.length) {
+          frame = requestAnimationFrame(read);
+        }
+      };
+
+      if (missing.length > 0) {
+        frame = requestAnimationFrame(read);
+      }
+      onCleanup(() => {
+        cancelAnimationFrame(frame);
+      });
     });
+
+    // The rings and the focus border follow their own props without the
+    // ground being read again
+    createEffect(compose);
   });
 
   return (

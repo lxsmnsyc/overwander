@@ -59,6 +59,11 @@ export interface GameSettings {
    * else still has somewhere to walk from
    */
   keys: KeyBinds;
+  /**
+   * Whether the world map reads the ground a cell at a time. Off, it shows
+   * each chunk's country at once, with the towns picked out
+   */
+  detailedMap: boolean;
   /** Both 0 to 1 */
   sound: number;
   music: number;
@@ -78,6 +83,7 @@ function defaults(): GameSettings {
     keepBall: true,
     lastBall: Balls.PokeBall,
     keys: { ...DEFAULT_BINDS },
+    detailedMap: false,
     sound: 0.7,
     music: 0.5,
   };
@@ -151,6 +157,7 @@ function stored(): GameSettings {
       keepBall: typeof said.keepBall === 'boolean' ? said.keepBall : base.keepBall,
       lastBall: ballOf(said.lastBall, base.lastBall),
       keys: bindsOf(said.keys),
+      detailedMap: said.detailedMap === true,
       sound: volume(said.sound, base.sound),
       music: volume(said.music, base.music),
     };

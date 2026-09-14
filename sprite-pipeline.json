@@ -15218,15 +15218,15 @@
       }
     },
     "public/sprites/terrain/biome-tiles.png": {
-      "digest": "47bdfc88f288622b",
-      "bytes": 117401,
-      "width": 96,
-      "height": 7584,
+      "digest": "4f6dc95113c78897",
+      "bytes": 138157,
+      "width": 864,
+      "height": 864,
       "compact": {
-        "at": "2026-09-14T04:38:50Z",
+        "at": "2026-09-14T09:25:26Z",
         "as": "truecolour, none",
-        "was": 131762,
-        "bytes": 117401
+        "was": 143002,
+        "bytes": 138157
       }
     },
     "public/sprites/ui/candies/hoenn/image.png": {

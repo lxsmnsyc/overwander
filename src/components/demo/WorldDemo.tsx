@@ -1,11 +1,11 @@
-import { type JSX, Show, createEffect, createSignal, onCleanup } from 'solid-js';
-import { BIOME_COLORS, BIOME_NAMES } from '../../data/biome';
+import { type JSX, Show, createEffect, createMemo, createSignal, onCleanup } from 'solid-js';
+import WorldMapCanvas, { townsInView } from '../overworld/WorldMapCanvas';
+import getWorld from '../../overworld/current';
+import { BIOME_NAMES } from '../../data/biome';
 import { Badge, Button, Meta, Note, Row, Switch } from '../styled';
-import World from '../../overworld/world';
+import World, { isInWorld } from '../../overworld/world';
 import { CHUNK_CELLS } from '../../overworld/chunk';
-import { readGround } from '../../overworld/ground';
-import { isRoadAt, isTownAt } from '../../overworld/town';
-import { isRouteAt } from '../../overworld/route';
+import shadeCell from '../../canvas/world-shade';
 import { TERRACE_TOP, levelAt } from '../../overworld/terrace';
 import type Biome from '../../data/ids/biome';
 
@@ -26,27 +26,6 @@ import type Biome from '../../data/ids/biome';
 /** How wide the picture is, in cells */
 const SPAN = 512;
 
-/** How dark the water is drawn against the country it sits in */
-const WATER_SHADE = 0.45;
-
-/** What rock is drawn as, whatever country it comes through */
-const ROCK: [number, number, number] = [64, 60, 58];
-
-/** And what a town is drawn as, so the settled ground stands out */
-const TOWN: [number, number, number] = [214, 196, 164];
-
-/** A town's streets, darker than the ground they run over */
-const ROAD: [number, number, number] = [150, 122, 88];
-
-/** And the roads between towns, which are the same paving out in the open */
-const ROUTE: [number, number, number] = [178, 96, 60];
-
-/** The face between two levels, which is where a cliff would be drawn */
-const FACE: [number, number, number] = [24, 20, 18];
-
-/** How much darker the lowest level is drawn than the highest */
-const LEVEL_SHADE = 0.55;
-
 /** How the chunk grid is drawn over it */
 const GRID_COLOR = 'rgba(255, 255, 255, 0.25)';
 
@@ -59,23 +38,8 @@ const STEP = 128;
 /** The world every player is walking, so the picture is the real one */
 const DEFAULT_SEED = 'overworld';
 
-/** A colour from the palette, as its three channels */
-function channels(color: string): [number, number, number] {
-  const hex = color.replace('#', '');
-  const full =
-    hex.length === 3
-      ? hex
-          .split('')
-          .map((one) => one + one)
-          .join('')
-      : hex;
-
-  return [
-    Number.parseInt(full.slice(0, 2), 16),
-    Number.parseInt(full.slice(2, 4), 16),
-    Number.parseInt(full.slice(4, 6), 16),
-  ];
-}
+/** How many chunks across the in-game map below it is, which is what the game's dialog shows */
+const MAP_SPAN = 64;
 
 export default function WorldDemo(): JSX.Element {
   const [seed, setSeed] = createSignal(DEFAULT_SEED);
@@ -87,7 +51,26 @@ export default function WorldDemo(): JSX.Element {
   const [levels, setLevels] = createSignal(true);
   const [drawn, setDrawn] = createSignal(0);
   const [under, setUnder] = createSignal<{ x: number; y: number; biome: Biome } | null>(null);
+  const [detailedMap, setDetailedMap] = createSignal(true);
   let canvas: HTMLCanvasElement | undefined;
+
+  /** The in-game map's view, in chunks, centred on the middle of the picture above */
+  const mapX = createMemo(() => Math.floor((left() + SPAN / 2) / CHUNK_CELLS) - MAP_SPAN / 2);
+  const mapY = createMemo(() => Math.floor((top() + SPAN / 2) / CHUNK_CELLS) - MAP_SPAN / 2);
+  const mapBiomes = createMemo(() => {
+    const world = getWorld();
+    const values: (Biome | null)[] = [];
+
+    for (let row = 0; row < MAP_SPAN; row++) {
+      for (let column = 0; column < MAP_SPAN; column++) {
+        const x = mapX() + column;
+        const y = mapY() + row;
+
+        values.push(isInWorld(x, y) ? world.getChunkBiome(x, y) : null);
+      }
+    }
+    return values;
+  });
 
   createEffect(() => {
     const world = new World(seed());
@@ -120,39 +103,7 @@ export default function WorldDemo(): JSX.Element {
 
       for (let y = 0; y < cells; y++) {
         for (let x = 0; x < cells; x++) {
-          const { biome, role } = readGround(world, x0 + x, y0 + y);
-          let shade: number[] = ROCK;
-
-          if (isTownAt(world, x0 + x, y0 + y) && role === 'ground') {
-            shade = isRoadAt(world, x0 + x, y0 + y) ? ROAD : TOWN;
-          } else if (paved && isRouteAt(world, x0 + x, y0 + y)) {
-            // Drawn over whatever it crosses, which is what levelling
-            // the ground would come to: a bridge, or a cutting
-            shade = ROUTE;
-          } else if (role !== 'wall') {
-            shade = channels(BIOME_COLORS[biome]).map((one) =>
-              role === 'water' ? Math.round(one * WATER_SHADE) : one,
-            );
-          }
-          if (stepped) {
-            const level = levelAt(world, x0 + x, y0 + y);
-            // Lit by how high it stands, and the step between two
-            // levels drawn dark: that line is where a cliff goes
-            const lit = 1 - LEVEL_SHADE + (level / TERRACE_TOP) * LEVEL_SHADE;
-
-            shade = shade.map((one) => Math.min(0xff, Math.round(one * lit)));
-            for (const [dx, dy] of [
-              [1, 0],
-              [-1, 0],
-              [0, 1],
-              [0, -1],
-            ]) {
-              if (levelAt(world, x0 + x + dx, y0 + y + dy) > level) {
-                shade = FACE;
-                break;
-              }
-            }
-          }
+          const shade = shadeCell(world, x0 + x, y0 + y, { roads: paved, levels: stepped });
 
           // One cell is `scale` pixels square, so the picture holds
           // fewer cells the closer it is looked at
@@ -321,6 +272,39 @@ export default function WorldDemo(): JSX.Element {
           </Note>
         )}
       </Show>
+      <Meta>
+        The world map as the game draws it, {MAP_SPAN} chunks across and centred on the same ground,
+        in the game's own world whatever seed is above.
+      </Meta>
+      <Row>
+        <Switch
+          label="Detailed world map"
+          checked={detailedMap()}
+          onChange={(checked) => {
+            setDetailedMap(checked);
+          }}
+        />
+      </Row>
+      <div class="w-full max-w-136 self-start">
+        <WorldMapCanvas
+          detailed={detailedMap()}
+          span={MAP_SPAN}
+          originX={mapX()}
+          originY={mapY()}
+          biomes={mapBiomes()}
+          towns={townsInView(mapX(), mapY(), MAP_SPAN)}
+          playerX={Number.NaN}
+          playerY={Number.NaN}
+          onPan={(dx, dy) => {
+            setLeft((was) => was + dx * CHUNK_CELLS);
+            setTop((was) => was + dy * CHUNK_CELLS);
+          }}
+          onRecenter={() => {
+            setLeft(-SPAN / 2);
+            setTop(-SPAN / 2);
+          }}
+        />
+      </div>
     </div>
   );
 }

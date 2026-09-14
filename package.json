@@ -66,5 +66,10 @@
     "vite": "^8.2.1",
     "vite-plugin-solid-marked": "^0.8.0",
     "vitest": "^4.1.10"
+  },
+  "pnpm": {
+    "overrides": {
+      "rolldown": "^1.2.8"
+    }
   }
 }

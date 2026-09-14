@@ -15,6 +15,7 @@ import { serverNow, syncServerClock } from '../../auth/clock';
 import { getLocalOffset, toLocalTime } from '../../auth/local-time';
 import { TIME_OF_DAY_NAMES } from '../../data/biome';
 import { getTimeOfDay } from '../../data/ids/biome';
+import { WEATHER_NAMES } from '../../data/overworld/weather';
 import {
   LANDMARK_INTERVAL,
   NEST_INTERVAL,
@@ -30,6 +31,7 @@ import {
   BellIcon,
   FireIcon,
   GiftIcon,
+  InformationIcon,
   MapIcon,
   MenuIcon,
   NewsIcon,
@@ -67,7 +69,8 @@ const TOGGLE = `cursor-pointer rounded-full border-0 bg-transparent px-2 py-1 te
  *
  * Beside the button is what a player would otherwise have to open
  * something to learn: where they are standing, the hour the world is
- * in, and what is in the purse
+ * in, and what is in the purse. On a phone those go behind a second
+ * button, since the bar has no room to say them
  */
 
 /**
@@ -191,10 +194,37 @@ function saidWait(left: number): string {
   return `in ${hours}h ${past}m`;
 }
 
+/**
+ * When each window next turns over, rather than how long it runs: a
+ * player reads this to decide whether to wait where they stand or walk on
+ */
+function Windows(props: { now: number; class?: string }): JSX.Element {
+  return (
+    <>
+      <dl class={props.class}>
+        <For each={WINDOWS}>
+          {([called, every]) => (
+            <>
+              <dt>{called}</dt>
+              <dd>{saidWait(until(props.now, every))}</dd>
+            </>
+          )}
+        </For>
+      </dl>
+      <p class="mt-2 text-xs text-muted">
+        Counted off this clock, yours rather than the world's, so nothing turns over halfway through
+        what you are doing at it.
+      </p>
+    </>
+  );
+}
+
 export default function GameMenu(): JSX.Element {
   const auth = useAuth();
   const game = useGame();
   const [open, setOpen] = createSignal(false);
+  /** The readings on a phone, behind their own button beside the menu */
+  const [details, setDetails] = createSignal(false);
   const [now, setNow] = createSignal(toLocalTime(serverNow(), getLocalOffset()));
   const [gold, setGold] = createSignal<number | null>(null);
 
@@ -203,6 +233,9 @@ export default function GameMenu(): JSX.Element {
 
   /** How many things are waiting on the player, for the key's own badge */
   const waiting = (): number => game.notices().length;
+
+  const period = (): string => TIME_OF_DAY_NAMES[getTimeOfDay(now())];
+  const clock = (): string => worldClock(now(), settings().clock);
 
   /**
    * The instant, read the way the world reads it: the server's clock
@@ -287,12 +320,16 @@ export default function GameMenu(): JSX.Element {
         isOpen={open()}
         onChange={(state: boolean) => {
           setOpen(state);
+          // One panel at a time: both open out of the top of the bar
+          if (state) {
+            setDetails(false);
+          }
         }}
         // No `overflow-hidden` however tempting: the panel opens out
         // of the top of this box, and a clipped panel is a menu that
         // does not appear
         class="pointer-events-auto relative flex max-w-full items-center gap-2 rounded-full
-          border-2 border-tide bg-paper/95 py-1 pr-4 pl-1 shadow-pop backdrop-blur-sm"
+          border-2 border-tide bg-paper/95 py-1 pr-1 pl-1 shadow-pop backdrop-blur-sm sm:pr-4"
       >
         <PopoverButton
           ref={button}
@@ -305,93 +342,144 @@ export default function GameMenu(): JSX.Element {
           Menu
         </PopoverButton>
 
-        <Divider />
-
-        {/* Where they are standing. It is the one reading that can be
-            missing — a chunk still being read has no name yet */}
-        {/* Read straight rather than through a `Show`. Its callback
-            form hands the child an accessor and then untracks the call,
-            so a child that *is* the call — `{(place) => place()}` —
-            captures the first place the player stood in and holds it:
-            the words only changed when they went from nothing to
-            something, which is once a session */}
-        <span class="min-w-0 truncate text-sm font-bold text-ink">
-          {game.place() ?? 'Somewhere'}
-        </span>
-
-        <Divider />
-
-        {/* What the sky is doing, which is worth reading: a pokemon met
-            under weather comes with a floor under its values. Drawn
-            rather than named, since the bar is a strip and the place
-            beside it has the words */}
-        <span class="flex shrink-0 items-center text-muted">
-          {(() => {
-            const sky = game.weather();
-
-            return sky == null ? '' : <WeatherIcon weather={sky} />;
-          })()}
-        </span>
-
-        <Divider />
-
-        {/* What hour the world is in, which is what decides what walks
-            about in it. The reading the player did not choose is the
-            first thing the card says, so neither is ever more than a
-            hover away, and the windows the hour is divided into are
-            under it: what changes on this clock, and how often */}
-        <HoverCard
-          title="The world's clock"
-          description={
-            settings().worldTime === 'clock'
-              ? TIME_OF_DAY_NAMES[getTimeOfDay(now())]
-              : `World time ${worldClock(now(), settings().clock)}`
-          }
-          placement="top"
-          width="wide"
-          class="shrink-0 cursor-help rounded text-sm whitespace-nowrap text-muted
-          focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tide"
-          trigger={
-            settings().worldTime === 'clock'
-              ? worldClock(now(), settings().clock)
-              : TIME_OF_DAY_NAMES[getTimeOfDay(now())]
-          }
+        {/* On a phone. Not positioned itself, so its panel hangs off the
+            bar the way the menu's does */}
+        <Popover
+          isOpen={details()}
+          onChange={(state: boolean) => {
+            setDetails(state);
+            if (state) {
+              setOpen(false);
+            }
+          }}
+          class="flex sm:hidden"
         >
-          {/* When each of them next turns over, rather than how long
-              it runs: a player reads this to decide whether to wait
-              where they stand or walk on */}
-          <dl>
-            <For each={WINDOWS}>
-              {([called, every]) => (
-                <>
-                  <dt>{called}</dt>
-                  <dd>{saidWait(until(now(), every))}</dd>
-                </>
-              )}
-            </For>
-          </dl>
-          <p class="mt-2 text-xs text-muted">
-            Counted off this clock, yours rather than the world's, so nothing turns over halfway
-            through what you are doing at it.
-          </p>
-        </HoverCard>
+          <PopoverButton
+            aria-label="Details"
+            class="flex shrink-0 cursor-pointer items-center rounded-full border-2
+              border-transparent bg-transparent p-1.5 text-ink shadow-none transition-colors
+              hover:bg-tide hover:text-on-accent focus-visible:outline-2
+              focus-visible:outline-offset-2 focus-visible:outline-tide"
+          >
+            <InformationIcon class="size-5" aria-hidden="true" />
+          </PopoverButton>
+          <Transition
+            show={details()}
+            {...SHEER}
+            class="absolute bottom-full left-1/2 z-30 mb-2 w-72 max-w-[calc(100vw-2rem)]
+              -translate-x-1/2"
+          >
+            <PopoverPanel
+              class="flex flex-col gap-2 rounded-panel border-2 border-tide bg-paper p-3 text-sm
+                shadow-pop"
+            >
+              <div class="flex items-center justify-between gap-3">
+                <span class="min-w-0 truncate font-bold text-ink">
+                  {game.place() ?? 'Somewhere'}
+                </span>
+                <span class="shrink-0 font-bold whitespace-nowrap text-gold">
+                  {gold() ?? 0} gold
+                </span>
+              </div>
+              {(() => {
+                const sky = game.weather();
 
-        <Divider />
+                return sky == null ? (
+                  ''
+                ) : (
+                  <span class="flex items-center gap-2 text-muted">
+                    <WeatherIcon weather={sky} />
+                    {WEATHER_NAMES[sky]}
+                  </span>
+                );
+              })()}
+              {/* The windows said outright, since a phone has no hover to open a card with */}
+              <div class="flex items-center justify-between gap-3 border-t-2 border-line-soft pt-2">
+                <span class="font-bold text-ink">{period()}</span>
+                <span class="text-muted">{clock()}</span>
+              </div>
+              <div class="text-xs">
+                <Windows
+                  now={now()}
+                  class="grid grid-cols-[1fr_auto] gap-x-4 gap-y-0.5 [&_dd]:text-right
+                    [&_dd]:text-muted"
+                />
+              </div>
+              <Show when={fullscreenOffered()}>
+                <div class="flex justify-end border-t-2 border-line-soft pt-2">
+                  <FullscreenToggle class={TOGGLE} />
+                </div>
+              </Show>
+            </PopoverPanel>
+          </Transition>
+        </Popover>
 
-        <span class="shrink-0 text-sm font-bold whitespace-nowrap text-gold">
-          {gold() ?? 0} gold
-        </span>
-
-        {/* On the bar rather than behind the button: taking the screen
-            is what a player does as they start walking, and a phone is
-            where the browser's own bars cost the most. The divider is
-            asked the same question the switch is, since a browser that
-            will not fill the screen draws neither */}
-        <Show when={fullscreenOffered()}>
+        {/* The readings on the bar itself, from a screen wide enough to hold them */}
+        <div class="hidden min-w-0 items-center gap-2 sm:flex">
           <Divider />
-        </Show>
 
-        <FullscreenToggle class={`${TOGGLE} shrink-0`} />
+          {/* Where they are standing. It is the one reading that can be
+              missing — a chunk still being read has no name yet */}
+          {/* Read straight rather than through a `Show`. Its callback
+              form hands the child an accessor and then untracks the call,
+              so a child that *is* the call — `{(place) => place()}` —
+              captures the first place the player stood in and holds it:
+              the words only changed when they went from nothing to
+              something, which is once a session */}
+          <span class="min-w-0 truncate text-sm font-bold text-ink">
+            {game.place() ?? 'Somewhere'}
+          </span>
+
+          <Divider />
+
+          {/* What the sky is doing, which is worth reading: a pokemon met
+              under weather comes with a floor under its values. Drawn
+              rather than named, since the bar is a strip and the place
+              beside it has the words */}
+          <span class="flex shrink-0 items-center text-muted">
+            {(() => {
+              const sky = game.weather();
+
+              return sky == null ? '' : <WeatherIcon weather={sky} />;
+            })()}
+          </span>
+
+          <Divider />
+
+          {/* What hour the world is in, which is what decides what walks
+              about in it. The reading the player did not choose is the
+              first thing the card says, so neither is ever more than a
+              hover away, and the windows the hour is divided into are
+              under it: what changes on this clock, and how often */}
+          <HoverCard
+            title="The world's clock"
+            description={settings().worldTime === 'clock' ? period() : `World time ${clock()}`}
+            placement="top"
+            width="wide"
+            class="shrink-0 cursor-help rounded text-sm whitespace-nowrap text-muted
+            focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tide"
+            trigger={settings().worldTime === 'clock' ? clock() : period()}
+          >
+            <Windows now={now()} />
+          </HoverCard>
+
+          <Divider />
+
+          <span class="shrink-0 text-sm font-bold whitespace-nowrap text-gold">
+            {gold() ?? 0} gold
+          </span>
+
+          {/* On the bar rather than behind the button: taking the screen
+              is what a player does as they start walking, and a phone is
+              where the browser's own bars cost the most. The divider is
+              asked the same question the switch is, since a browser that
+              will not fill the screen draws neither */}
+          <Show when={fullscreenOffered()}>
+            <Divider />
+          </Show>
+
+          <FullscreenToggle class={`${TOGGLE} shrink-0`} />
+        </div>
 
         {/* Above the button rather than below it: the button is at the
             bottom of the window, and there is nothing under it to open

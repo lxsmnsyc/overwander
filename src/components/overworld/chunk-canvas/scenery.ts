@@ -339,6 +339,245 @@ export function phenomenonSpan(spot: { scale: number }, magnify: number): number
 }
 
 /**
+ * What the ground under a landmark says about this player's standing
+ * with it. The colour is the state, the same on every kind of landmark
+ */
+export const enum CellAura {
+  /** A raid this player has won this window */
+  Cleared = 0,
+  /** A fight waiting: a trainer or grunt not yet beaten, or a seat somebody else holds */
+  Fight = 1,
+  /** The seat this player is holding */
+  Mine = 2,
+  /** A wanderer who has not done their one thing for this player yet */
+  Fresh = 3,
+  /** A hidden grotto this player has not claimed this hour */
+  Grotto = 4,
+}
+
+type Ink = readonly [number, number, number];
+
+const AURA_INKS: Record<CellAura, Ink> = {
+  [CellAura.Cleared]: [255, 196, 64],
+  [CellAura.Fight]: [236, 56, 48],
+  [CellAura.Mine]: [80, 214, 104],
+  [CellAura.Fresh]: [56, 146, 255],
+  [CellAura.Grotto]: [64, 224, 200],
+};
+
+/** The two halves of an aura: what lies under a landmark, and what rises over it */
+export type AuraPart = 'ground' | 'air';
+
+/** How wide an aura is repainted, and where its ground point sits in it */
+const AURA_PAINTED = 128;
+const AURA_ORIGIN_Y = 0.72;
+
+/** The painted ring's radius, and the one it is drawn at on the board, in cells */
+const AURA_RADIUS = 28;
+const AURA_REACH = 0.62;
+
+/** How long the ring takes to turn once, a pulse to spread and a glint to rise, in ms */
+const RING_TURN = 6000;
+const PULSE = 1600;
+const GLINT_RISE = 1800;
+
+const DASHES = 6;
+const GLINTS = 3;
+
+function rgba([red, green, blue]: Ink, alpha: number): string {
+  return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
+}
+
+/** Halfway to white, for the bright core of the ring and the glints */
+function paler([red, green, blue]: Ink): Ink {
+  return [Math.round((red + 255) / 2), Math.round((green + 255) / 2), Math.round((blue + 255) / 2)];
+}
+
+/** A four-point glint, pinched at the waist */
+function fillGlint(context: CanvasRenderingContext2D, x: number, y: number, size: number): void {
+  const waist = size * 0.25;
+
+  context.beginPath();
+  context.moveTo(x, y - size);
+  context.quadraticCurveTo(x + waist, y - waist, x + size, y);
+  context.quadraticCurveTo(x + waist, y + waist, x, y + size);
+  context.quadraticCurveTo(x - waist, y + waist, x - size, y);
+  context.quadraticCurveTo(x - waist, y - waist, x, y - size);
+  context.fill();
+}
+
+/**
+ * A landmark's aura at a ground point: a turning dashed ring with a
+ * pulse spreading out of it under a column of light, or the glints
+ * rising up that column. Deliberately unlike a pokemon's aura, so the
+ * two are never read as the same thing
+ */
+function paintLandmarkAura(
+  context: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  radius: number,
+  squash: number,
+  now: number,
+  ink: Ink,
+  part: AuraPart,
+): void {
+  if (!(radius > 0)) {
+    return;
+  }
+  const light = paler(ink);
+
+  context.save();
+  if (part === 'air') {
+    for (let glint = 0; glint < GLINTS; glint += 1) {
+      const phase = (now / GLINT_RISE + glint / GLINTS) % 1;
+
+      context.globalAlpha = Math.sin(phase * Math.PI);
+      context.fillStyle = rgba(light, 1);
+      fillGlint(
+        context,
+        x + Math.sin(now / 700 + glint * 2.1) * radius * 0.45,
+        y - phase * radius * 2.4,
+        radius * 0.3 * (1 - phase * 0.5),
+      );
+    }
+    context.restore();
+    return;
+  }
+
+  // The column first, so the ring reads as its base
+  const top = y - radius * 2.6;
+  const column = context.createLinearGradient(0, y, 0, top);
+
+  column.addColorStop(0, rgba(ink, 0.6));
+  column.addColorStop(1, rgba(ink, 0));
+  context.fillStyle = column;
+  context.beginPath();
+  context.moveTo(x - radius * 0.75, y);
+  context.lineTo(x - radius * 0.35, top);
+  context.lineTo(x + radius * 0.35, top);
+  context.lineTo(x + radius * 0.75, y);
+  context.closePath();
+  context.fill();
+
+  // The rest lies on the ground, so it is squashed the way the ground is
+  context.translate(x, y);
+  context.scale(1, squash);
+
+  const floor = context.createRadialGradient(0, 0, 0, 0, 0, radius);
+
+  floor.addColorStop(0, rgba(ink, 0.6));
+  floor.addColorStop(1, rgba(ink, 0));
+  context.fillStyle = floor;
+  context.beginPath();
+  context.arc(0, 0, radius, 0, Math.PI * 2);
+  context.fill();
+
+  const pulse = (now / PULSE) % 1;
+
+  context.strokeStyle = rgba(light, 0.8 * (1 - pulse));
+  context.lineWidth = radius * 0.06;
+  context.beginPath();
+  context.arc(0, 0, radius * (0.3 + pulse * 0.9), 0, Math.PI * 2);
+  context.stroke();
+
+  const turn = (now / RING_TURN) * Math.PI * 2;
+  const dash = (Math.PI * 2) / DASHES;
+
+  // A dark-edged stroke under a bright core, so the ring holds on pale ground
+  for (const [width, style] of [
+    [radius * 0.2, rgba(ink, 0.95)],
+    [radius * 0.09, rgba(light, 1)],
+  ] as const) {
+    context.lineWidth = width;
+    context.strokeStyle = style;
+    for (let at = 0; at < DASHES; at += 1) {
+      context.beginPath();
+      context.arc(0, 0, radius, turn + at * dash, turn + at * dash + dash * 0.62);
+      context.stroke();
+    }
+  }
+  context.restore();
+}
+
+const auraPainted = new Map<string, { canvas: HTMLCanvasElement; at: number; squash: number }>();
+
+/**
+ * The picture of one aura's part at this moment. One canvas per kind
+ * and part rather than per cell, so a chunk of trainers repaints once
+ * a frame
+ */
+export function paintCellAura(
+  aura: CellAura,
+  part: AuraPart,
+  now: number,
+  squash: number,
+): HTMLCanvasElement | null {
+  const key = `${aura}:${part}`;
+  const held = auraPainted.get(key);
+
+  if (held?.at === now && held.squash === squash) {
+    return held.canvas;
+  }
+
+  const canvas = held?.canvas ?? document.createElement('canvas');
+
+  canvas.width = AURA_PAINTED;
+  canvas.height = AURA_PAINTED;
+
+  const context = canvas.getContext('2d');
+
+  if (context == null) {
+    return null;
+  }
+  context.clearRect(0, 0, AURA_PAINTED, AURA_PAINTED);
+  paintLandmarkAura(
+    context,
+    AURA_PAINTED / 2,
+    AURA_PAINTED * AURA_ORIGIN_Y,
+    AURA_RADIUS,
+    squash,
+    now,
+    AURA_INKS[aura],
+    part,
+  );
+  auraPainted.set(key, { canvas, at: now, squash });
+  return canvas;
+}
+
+/** Where that picture is stamped so its ring sits on the cell's middle */
+export function auraCorners(
+  spot: { x: number; y: number; scale: number },
+  magnify: number,
+): { x: number; y: number }[] {
+  const span = (AURA_PAINTED * AURA_REACH * CELL * spot.scale * magnify) / AURA_RADIUS;
+  const left = spot.x - span / 2;
+  const top = spot.y - span * AURA_ORIGIN_Y;
+
+  return [
+    { x: left, y: top },
+    { x: left + span, y: top },
+    { x: left + span, y: top + span },
+    { x: left, y: top + span },
+  ];
+}
+
+/** The same aura painted straight onto the board, where there is no batch */
+export function drawCellAura(
+  context: CanvasRenderingContext2D,
+  spot: { x: number; y: number; scale: number },
+  aura: CellAura,
+  part: AuraPart,
+  now: number,
+  magnify: number,
+  squash: number,
+): void {
+  const radius = AURA_REACH * CELL * spot.scale * magnify;
+
+  paintLandmarkAura(context, spot.x, spot.y, radius, squash, now, AURA_INKS[aura], part);
+}
+
+/**
  * The round patch every shadow is stamped from.
  *
  * One white disc, tinted and turned to whatever shape a shadow wants:

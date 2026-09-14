@@ -44,9 +44,11 @@ import {
 } from '../../../data/overworld/experts';
 import { type ItemStack, getItemBand } from '../../../data/overworld/item-pool';
 import Landmark, { LANDMARK_NAMES } from '../../../data/overworld/landmark';
-import Npc, { NPC_NAMES } from '../../../data/overworld/npc';
+import Npc, { NPC_NAMES, NPC_VISIT_TAGS } from '../../../data/overworld/npc';
 import type { GymSeatStanding } from '../../../auth/gym-seat-record';
 import { enterGymSeat } from '../../../auth/gym-seats';
+import { readLandmarkStandings } from '../../../auth/landmark-standings';
+import { CellAura } from '../chunk-canvas/scenery';
 import GymSeatDialog from '../GymSeatDialog';
 import { VENDOR_KIND_NAMES } from '../../../data/overworld/vendor';
 import type Phenomenon from '../../../data/overworld/phenomenon';
@@ -635,6 +637,72 @@ export default function OverworldBoard(props: {
       })
       .catch(() => {
         // The same bargain the bushes make
+      });
+    onCleanup(() => {
+      live = false;
+    });
+  });
+
+  /**
+   * The glow under each landmark saying where this player stands with
+   * it. Re-read when a dialog that can change it closes; a battle
+   * unmounts the board, so coming back from one reads it afresh
+   */
+  const [auras, setAuras] = createSignal<Map<number, CellAura>>(new Map());
+  const [rechecked, setRechecked] = createSignal(0);
+  const recheck = (): void => {
+    setRechecked((count) => count + 1);
+  };
+
+  createEffect(() => {
+    const loaded = view();
+    const user = auth.user();
+
+    rechecked();
+    if (loaded == null || user == null) {
+      return;
+    }
+
+    let live = true;
+    const { snapshot } = loaded;
+
+    readLandmarkStandings(snapshot, user.uid)
+      .then((standings) => {
+        if (!live) {
+          return;
+        }
+
+        const next = new Map<number, CellAura>();
+
+        for (const [at, landmark] of loaded.landmarks) {
+          if (landmark === Landmark.LegendaryLair || landmark === Landmark.ShadowLair) {
+            if (standings.cleared.has(at)) {
+              next.set(at, CellAura.Cleared);
+            }
+          } else if (landmark === Landmark.GymSeat) {
+            const holder = standings.seats.get(at);
+
+            if (holder != null) {
+              next.set(at, holder === user.uid ? CellAura.Mine : CellAura.Fight);
+            }
+          } else if (landmark === Landmark.Trainer || landmark === Landmark.TeamRocket) {
+            const staged = snapshot.getTrainerStops().has(at) || snapshot.getRocketStops().has(at);
+
+            if (staged && !standings.beaten.has(at)) {
+              next.set(at, CellAura.Fight);
+            }
+          } else if (landmark === Landmark.WanderingNpc) {
+            const standing = snapshot.getStandingNpc(at);
+
+            if (standing != null && NPC_VISIT_TAGS.has(standing) && !standings.visited.has(at)) {
+              next.set(at, CellAura.Fresh);
+            }
+          }
+        }
+        setAuras(next);
+      })
+      .catch(() => {
+        // No glow is the board as it was: every press still asks
       });
     onCleanup(() => {
       live = false;
@@ -1981,6 +2049,7 @@ export default function OverworldBoard(props: {
                 berries={fruiting(loaded().snapshot)}
                 picked={picked()}
                 dug={dug()}
+                auras={auras()}
                 decorations={loaded().decorations}
                 spawns={
                   new Map(
@@ -2070,6 +2139,8 @@ export default function OverworldBoard(props: {
               }}
               onClose={() => {
                 setSession(null);
+                // A won raid's claim lands while its pokemon is being met
+                recheck();
                 // A meeting that ended in a flight leaves the chunk
                 // with one fewer pokemon in it for this player
                 // Worst case the spawn is drawn until the window turns
@@ -2085,6 +2156,7 @@ export default function OverworldBoard(props: {
               challenger={challenger()}
               onClose={() => {
                 setChallenge(null);
+                recheck();
               }}
             />
             <NpcDialog
@@ -2093,6 +2165,7 @@ export default function OverworldBoard(props: {
               standing={wanderer()}
               onClose={() => {
                 setWanderer(null);
+                recheck();
               }}
             />
             <GymSeatDialog
@@ -2102,8 +2175,10 @@ export default function OverworldBoard(props: {
               standing={seat()?.[1] ?? null}
               onClose={() => {
                 setSeat(null);
+                recheck();
               }}
               onChange={() => {
+                recheck();
                 // The seat moved under the dialog, so what it is
                 // showing is re-read rather than guessed at
                 const standing = seat();

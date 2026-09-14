@@ -134,6 +134,18 @@ export const NPCS: Npc[] = [
 ];
 
 /**
+ * The wanderers who serve a player once a window, and the visit marker
+ * the server takes for it. Everyone else can be visited again
+ */
+export const NPC_VISIT_TAGS = new Map<Npc, string>([
+  [Npc.Breeder, 'breed'],
+  [Npc.DaycareLady, 'daycare'],
+  [Npc.Groomer, 'groom'],
+  [Npc.FossilManiac, 'fossil'],
+  [Npc.Channeler, 'channel'],
+]);
+
+/**
  * The charsets a role may turn up wearing: the community packs' takes
  * on the same figure, FRLG and LGPE where both drew one. Which of a
  * role's styles is standing there is the window's roll, see

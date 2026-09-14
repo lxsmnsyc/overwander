@@ -61,6 +61,7 @@ import type { Buddy } from '../../../overworld/core';
 import getWorld from '../../../overworld/current';
 import { findPathBeside, findPathNear } from '../../../overworld/path';
 import type SafariSession from '../../../overworld/safari';
+import { isFreeCell } from '../../../overworld/start';
 import { isInWorld } from '../../../overworld/world';
 import { GameDialog, useGame } from '../../app/game-context';
 import { createCellNotes } from '../cell-notes';
@@ -1129,6 +1130,10 @@ export default function OverworldBoard(props: {
     // Leaving the chunk: hold on to what is drawn, so the board can be
     // carried off the screen rather than taken off it
     if (chunk !== chunkX() || row !== chunkY()) {
+      // The board only knows its own chunk, so the cell across the edge is asked of the world
+      if (!isFreeCell(getWorld(), chunk, row, x, y)) {
+        return;
+      }
       cross(deltaX, deltaY);
     }
     setChunkX(chunk);

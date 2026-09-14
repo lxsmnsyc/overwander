@@ -1,4 +1,5 @@
 import AleaRNG from '../core/alea';
+import type Chunk from './chunk';
 import { CELL_COUNT, CHUNK_CELLS } from './chunk';
 import type World from './world';
 
@@ -57,12 +58,7 @@ export function pickFreeCell(
   chunkY: number,
   rng: AleaRNG,
 ): { cellX: number; cellY: number } {
-  const chunk = world.getChunk(chunkX, chunkY);
-  const occupied = new Set([
-    ...chunk.getLandmarkCells().keys(),
-    ...chunk.getDecorationCells().keys(),
-    ...chunk.getRockCells(),
-  ]);
+  const occupied = blockedCells(world.getChunk(chunkX, chunkY));
   const free: number[] = [];
 
   for (let cell = 0; cell < CELL_COUNT; cell++) {
@@ -75,4 +71,57 @@ export function pickFreeCell(
   const cell = free.length === 0 ? middle : free[Math.floor(rng.random() * free.length)];
 
   return { cellX: cell % CHUNK_CELLS, cellY: Math.floor(cell / CHUNK_CELLS) };
+}
+
+/** The cells nobody can stand on, the same set the board walks round */
+function blockedCells(chunk: Chunk): Set<number> {
+  return new Set([
+    ...chunk.getLandmarkCells().keys(),
+    ...chunk.getDecorationCells().keys(),
+    ...chunk.getRockCells(),
+  ]);
+}
+
+/** Whether a player may stand on this cell */
+export function isFreeCell(
+  world: World,
+  chunkX: number,
+  chunkY: number,
+  cellX: number,
+  cellY: number,
+): boolean {
+  return !blockedCells(world.getChunk(chunkX, chunkY)).has(cellY * CHUNK_CELLS + cellX);
+}
+
+/**
+ * The open cell nearest this one, or the cell itself when it is open.
+ * A saved position can sit under scenery once generation changes, so it
+ * is moved off rather than trusted
+ */
+export function nearestFreeCell(
+  world: World,
+  chunkX: number,
+  chunkY: number,
+  cellX: number,
+  cellY: number,
+): { cellX: number; cellY: number } {
+  const occupied = blockedCells(world.getChunk(chunkX, chunkY));
+  let best = { cellX, cellY };
+  let bestDistance = Number.POSITIVE_INFINITY;
+
+  for (let cell = 0; cell < CELL_COUNT; cell++) {
+    if (occupied.has(cell)) {
+      continue;
+    }
+
+    const x = cell % CHUNK_CELLS;
+    const y = Math.floor(cell / CHUNK_CELLS);
+    const distance = Math.abs(x - cellX) + Math.abs(y - cellY);
+
+    if (distance < bestDistance) {
+      best = { cellX: x, cellY: y };
+      bestDistance = distance;
+    }
+  }
+  return best;
 }

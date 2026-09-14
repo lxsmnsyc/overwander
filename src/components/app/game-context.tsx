@@ -29,7 +29,7 @@ import type { AuctionSubject } from '../auctions/AuctionDialog';
 import type ProfileSection from '../profile/sections';
 import { ensureProfile } from '../../auth/profile';
 import getWorld from '../../overworld/current';
-import pickStartPosition, { type StartPosition } from '../../overworld/start';
+import pickStartPosition, { type StartPosition, nearestFreeCell } from '../../overworld/start';
 /**
  * What is open over the world.
  *
@@ -466,7 +466,19 @@ export default function GameProvider(props: ParentProps): JSX.Element {
     getPosition(user.uid)
       .then((stored) => {
         if (stored != null) {
-          standAt(stored, false);
+          // Scenery can have moved onto a saved cell since, so step off it and keep the new spot
+          const open = nearestFreeCell(
+            getWorld(),
+            stored.chunkX,
+            stored.chunkY,
+            stored.cellX,
+            stored.cellY,
+          );
+
+          standAt(
+            { ...stored, ...open },
+            open.cellX !== stored.cellX || open.cellY !== stored.cellY,
+          );
           return;
         }
         standAt(pickStartPosition(getWorld(), `${user.uid}:${Date.now()}:${Math.random()}`), true);

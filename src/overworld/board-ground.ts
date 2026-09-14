@@ -64,6 +64,25 @@ export interface BoardGround {
 
 const ROLE_ORDER: GroundRole[] = ['ground', 'water', 'wall'];
 
+/** What one read filled, kept so the next read can carry over the cells both windows share */
+interface WindowRead {
+  world: World;
+  originX: number;
+  originY: number;
+  margin: number;
+  cells: number;
+  roles: Uint8Array;
+  biomes: Uint8Array;
+  shelves: Uint8Array;
+  roads: Uint8Array;
+  routes: Uint8Array;
+  towns: Uint8Array;
+  seams: Uint8Array;
+  levels: Uint8Array;
+}
+
+let lastRead: WindowRead | null = null;
+
 /**
  * The ground under a board window, in board coordinates: `0, 0` is
  * the cell at `originX, originY` of the world
@@ -91,33 +110,65 @@ export function readBoardGround(
   const inside = (x: number, y: number): boolean =>
     x >= -margin && y >= -margin && x < cells + margin && y < cells + margin;
   const key = (x: number, y: number): number => (y + margin) * span + (x + margin);
+  // A step moves the window a cell, so nearly all of it was read a moment ago. Every
+  // field is a pure function of the world cell, so a carried cell is what a read would give
+  const before =
+    lastRead?.world === world && lastRead.margin === margin && lastRead.cells === cells
+      ? lastRead
+      : null;
+  const shiftX = before == null ? 0 : originX - before.originX;
+  const shiftY = before == null ? 0 : originY - before.originY;
 
   for (let y = -margin; y < cells + margin; y++) {
     for (let x = -margin; x < cells + margin; x++) {
+      const at = key(x, y);
+
+      if (before != null && inside(x + shiftX, y + shiftY)) {
+        const from = key(x + shiftX, y + shiftY);
+
+        roles[at] = before.roles[from];
+        biomes[at] = before.biomes[from];
+        shelves[at] = before.shelves[from];
+        roads[at] = before.roads[from];
+        routes[at] = before.routes[from];
+        towns[at] = before.towns[from];
+        seams[at] = before.seams[from];
+        levels[at] = before.levels[from];
+        continue;
+      }
       const { biome, role } = readGround(world, originX + x, originY + y);
 
-      roles[key(x, y)] = ROLE_ORDER.indexOf(role);
-      biomes[key(x, y)] = biome;
-      roads[key(x, y)] =
+      roles[at] = ROLE_ORDER.indexOf(role);
+      biomes[at] = biome;
+      roads[at] =
         isRoadAt(world, originX + x, originY + y) || isPlotAt(world, originX + x, originY + y)
           ? 1
           : 0;
-      routes[key(x, y)] = isRouteAt(world, originX + x, originY + y) ? 1 : 0;
-      towns[key(x, y)] = isTownAt(world, originX + x, originY + y) ? 1 : 0;
+      routes[at] = isRouteAt(world, originX + x, originY + y) ? 1 : 0;
+      towns[at] = isTownAt(world, originX + x, originY + y) ? 1 : 0;
       const rock = cave && role === 'wall';
 
-      seams[key(x, y)] =
-        role !== 'water' && !rock && isSeam(world, originX + x, originY + y) ? 1 : 0;
-      levels[key(x, y)] = levelAt(world, originX + x, originY + y) + (rock ? 1 : 0);
+      seams[at] = role !== 'water' && !rock && isSeam(world, originX + x, originY + y) ? 1 : 0;
+      levels[at] = levelAt(world, originX + x, originY + y) + (rock ? 1 : 0);
+      shelves[at] = role === 'water' && isShelfAt(world, originX + x, originY + y) ? 1 : 0;
     }
   }
-  for (let y = -margin; y < cells + margin; y++) {
-    for (let x = -margin; x < cells + margin; x++) {
-      if (roles[key(x, y)] === ROLE_ORDER.indexOf('water')) {
-        shelves[key(x, y)] = isShelfAt(world, originX + x, originY + y) ? 1 : 0;
-      }
-    }
-  }
+  // Fresh arrays every read, so a board still holding the last ground never sees it change
+  lastRead = {
+    world,
+    originX,
+    originY,
+    margin,
+    cells,
+    roles,
+    biomes,
+    shelves,
+    roads,
+    routes,
+    towns,
+    seams,
+    levels,
+  };
 
   return {
     margin,

@@ -2204,7 +2204,13 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         if (built !== window) {
           // Asked in the board's own cells, which is what the look
           // answers: the window it covers is already the world's
-          show.ground(look, [0, 0], turns);
+          show.ground(
+            look,
+            [0, 0],
+            turns,
+            [props.origin[0], props.origin[1]],
+            `${flat ? '2d' : '3d'}|${props.underground ? 'cave' : 'day'}`,
+          );
           built = window;
         }
       } else if (terrain() != null) {

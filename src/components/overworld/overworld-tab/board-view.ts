@@ -196,6 +196,14 @@ export function viewChunks(originX: number, originY: number): [x: number, y: num
  */
 const shown = new Map<string, number>();
 
+/** The walls the last board carried, so a step only works out the edge it walks into */
+let lastWalls: {
+  world: ReturnType<typeof getWorld>;
+  originX: number;
+  originY: number;
+  walls: Set<number>;
+} | null = null;
+
 /** What this window has shown, never fewer than it showed a moment ago */
 function everShown(key: string, timestamp: number, visible: number): number {
   // A window that has turned over is not standing any more
@@ -367,11 +375,24 @@ export function buildBoardView(
 
   const ground = readBoardGround(world, originX, originY, BOARD_MARGIN, BOARD_CELLS);
   const walls = new Set<number>();
+  // Whether a cell stops a walk depends only on the world cell, so what the last
+  // board worked out still holds for the cells both boards cover
+  const before = lastWalls?.world === world ? lastWalls : null;
+  const shiftX = before == null ? 0 : originX - before.originX;
+  const shiftY = before == null ? 0 : originY - before.originY;
 
   for (let cell = 0; cell < BOARD_CELLS * BOARD_CELLS; cell++) {
     const x = cell % BOARD_CELLS;
     const y = Math.floor(cell / BOARD_CELLS);
+    const oldX = x + shiftX;
+    const oldY = y + shiftY;
 
+    if (before != null && oldX >= 0 && oldY >= 0 && oldX < BOARD_CELLS && oldY < BOARD_CELLS) {
+      if (before.walls.has(oldY * BOARD_CELLS + oldX)) {
+        walls.add(cell);
+      }
+      continue;
+    }
     // A tree stops a walk, and so does the face of a cliff: the cell
     // the rim is drawn on is the cliff itself, and only a road cut
     // through it opens a way up
@@ -379,6 +400,7 @@ export function buildBoardView(
       walls.add(cell);
     }
   }
+  lastWalls = { world, originX, originY, walls };
 
   // The window under the player, or the one it is about to be. A
   // window's instant snaps to its interval, so a snapshot rolled off

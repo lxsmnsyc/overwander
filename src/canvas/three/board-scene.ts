@@ -4,6 +4,7 @@ import {
   Camera,
   CanvasTexture,
   DoubleSide,
+  DynamicDrawUsage,
   Matrix4,
   Mesh,
   MeshBasicMaterial,
@@ -60,6 +61,13 @@ const TILE = TERRAIN_TILE;
  */
 const MARK_NUDGE = 1;
 
+/**
+ * How deep a strip of cells is painted again along the edge a step walks into,
+ * counted from the old edge. More than the one new row, so a tile composed at
+ * the old edge from what lay just past it is composed again once it is inside
+ */
+const SLIDE_STRIP = 2;
+
 /** Where something stands: a board cell, and how high the ground is */
 export interface SceneSpot {
   x: number;
@@ -73,7 +81,15 @@ export interface BoardScene {
    * `turns` is how far round the camera has been walked, in quarters,
    * which is what decides the water's edge tiles
    */
-  ground: (look: CellLook, origin: [number, number], turns: number) => void;
+  ground: (
+    look: CellLook,
+    origin: [number, number],
+    turns: number,
+    /** The world cell at the page's corner, so a step can slide the page rather than repaint it */
+    window: [number, number],
+    /** What else the page was painted for, such as the board's shape or the layer underground */
+    layer: string,
+  ) => void;
   /**
    * Where the camera is and how big the page is. `shift` is how far
    * the country is drawn from where it lives, in cells
@@ -107,12 +123,18 @@ export default function createBoardScene(
 
   camera.matrixAutoUpdate = false;
 
-  const page = document.createElement('canvas');
+  /** A page and the context it is painted through */
+  const sheetOf = (): { canvas: HTMLCanvasElement; paint: CanvasRenderingContext2D | null } => {
+    const made = document.createElement('canvas');
 
-  page.width = cells * TILE;
-  page.height = cells * TILE;
-
-  const paint = page.getContext('2d');
+    made.width = cells * TILE;
+    made.height = cells * TILE;
+    return { canvas: made, paint: made.getContext('2d') };
+  };
+  /** The page on show and a spare to slide it into, swapped on every slide */
+  let front = sheetOf();
+  let back = sheetOf();
+  const page = front.canvas;
   const texture = new CanvasTexture(page);
 
   // The page holds the colours the tiles were drawn in, so it is read
@@ -128,7 +150,44 @@ export default function createBoardScene(
    * backdrop everything else is depth-tested against
    */
   const rock = new MeshBasicMaterial({ map: texture, alphaTest: 0.5, side: DoubleSide });
-  const country = new Mesh(new BufferGeometry(), rock);
+  /**
+   * One quad per cell, written in place on every build. The tile a quad samples
+   * never moves, since the page slides under the quads rather than the other way
+   */
+  const count = cells * cells;
+  const positions = new Float32Array(count * 12);
+  const tiles = new Float32Array(count * 8);
+  const joins = count * 4 > 0xffff ? new Uint32Array(count * 6) : new Uint16Array(count * 6);
+  const placed = new BufferAttribute(positions, 3).setUsage(DynamicDrawUsage);
+  const joined = new BufferAttribute(joins, 1).setUsage(DynamicDrawUsage);
+  const shape = new BufferGeometry();
+
+  for (let z = 0; z < cells; z += 1) {
+    for (let x = 0; x < cells; x += 1) {
+      const at = (z * cells + x) * 8;
+      // Half a texel in on every side, so a quad never samples the tile beside it
+      const u0 = (x * TILE + 0.5) / page.width;
+      const u1 = (x * TILE + TILE - 0.5) / page.width;
+      const v0 = 1 - (z * TILE + 0.5) / page.height;
+      const v1 = 1 - (z * TILE + TILE - 0.5) / page.height;
+
+      // The tile's own corners hung on the cell's in the world's order: the
+      // country keeps its way round however far the camera is walked
+      tiles[at] = u0;
+      tiles[at + 1] = v0;
+      tiles[at + 2] = u1;
+      tiles[at + 3] = v0;
+      tiles[at + 4] = u1;
+      tiles[at + 5] = v1;
+      tiles[at + 6] = u0;
+      tiles[at + 7] = v1;
+    }
+  }
+  shape.setAttribute('position', placed);
+  shape.setAttribute('uv', new BufferAttribute(tiles, 2));
+  shape.setIndex(joined);
+
+  const country = new Mesh(shape, rock);
 
   country.frustumCulled = false;
   scene.add(country);
@@ -145,81 +204,53 @@ export default function createBoardScene(
   const lens = new Matrix4();
   const sized = { width: 0, height: 0, ratio: 0 };
 
-  /**
-   * One cell's quad, with its tile laid on it. Half a texel in on every
-   * side, so a quad never samples the tile beside it however the
-   * picture is scaled.
-   *
-   * Corners run far left, far right, near right, near left. The quad is
-   * split along whichever diagonal joins the two corners nearest in
-   * height, so a slope running across the cell is one plane: split the
-   * other way, a step that turns a corner or runs on the diagonal folds
-   * into a zigzag from corner to corner
-   */
-  const quad = (
-    spots: number[],
-    uvs: number[],
-    order: number[],
-    corners: number[][],
-    cell: [number, number],
+  /** What the page shows: the world cell at its corner, and what else it was painted for */
+  let shown: { x: number; y: number; layer: string; turns: number; laidBack: boolean } | null =
+    null;
+
+  const ground = (
+    look: CellLook,
+    origin: [number, number],
+    turns: number,
+    window: [number, number],
+    layer: string,
   ): void => {
-    const start = spots.length / 3;
-
-    for (const corner of corners) {
-      spots.push(corner[0], corner[1], corner[2]);
-    }
-    const u0 = (cell[0] * TILE + 0.5) / page.width;
-    const u1 = (cell[0] * TILE + TILE - 0.5) / page.width;
-    const v0 = 1 - (cell[1] * TILE + 0.5) / page.height;
-    const v1 = 1 - (cell[1] * TILE + TILE - 0.5) / page.height;
-    /**
-     * The tile's own four corners, hung on the cell's in the world's
-     * order. Nothing is laid back here: the country keeps its way
-     * round however far the camera is walked, and the one piece of art
-     * that does follow the camera, the shore, is turned inside the
-     * cell it was composed in
-     */
-    for (const [u, v] of [
-      [u0, v0],
-      [u1, v0],
-      [u1, v1],
-      [u0, v1],
-    ]) {
-      uvs.push(u, v);
-    }
-    const falling = Math.abs(corners[0][1] - corners[2][1]);
-    const rising = Math.abs(corners[1][1] - corners[3][1]);
-
-    if (rising < falling) {
-      order.push(start, start + 3, start + 1, start + 1, start + 3, start + 2);
-      return;
-    }
-    order.push(start, start + 2, start + 1, start, start + 3, start + 2);
-  };
-
-  const meshOf = (spots: number[], uvs: number[], order: number[]): BufferGeometry => {
-    const made = new BufferGeometry();
-
-    made.setAttribute('position', new BufferAttribute(new Float32Array(spots), 3));
-    made.setAttribute('uv', new BufferAttribute(new Float32Array(uvs), 2));
-    made.setIndex(order);
-    return made;
-  };
-
-  const ground = (look: CellLook, origin: [number, number], turns: number): void => {
-    if (paint == null) {
-      return;
-    }
     // Flat on there is no elevation at all: the rest of the board zeroes
     // every height, and lifted here alone the ground would stand nearer
     // the camera than everything on it. The cliff tile still marks the
     // step, since it is picked from the levels rather than the heights
     const laidBack = boardView().mode !== '2d';
     const middle = cells / 2;
+    const width = page.width;
+    const height = page.height;
 
     const at = (x: number, z: number): number => z * cells + x;
 
-    paint.clearRect(0, 0, page.width, page.height);
+    const shiftX = shown == null ? 0 : window[0] - shown.x;
+    const shiftY = shown == null ? 0 : window[1] - shown.y;
+    // A step, rather than a turn, a new shape or a jump: the country a cell over is
+    // already on the page, and only the edge walked into has to be painted
+    const slides =
+      shown?.layer === layer &&
+      shown.turns === turns &&
+      shown.laidBack === laidBack &&
+      Math.abs(shiftX) < cells &&
+      Math.abs(shiftY) < cells;
+
+    if (slides) {
+      back.paint?.clearRect(0, 0, width, height);
+      back.paint?.drawImage(front.canvas, -shiftX * TILE, -shiftY * TILE);
+      [front, back] = [back, front];
+      texture.image = front.canvas;
+    } else {
+      front.paint?.clearRect(0, 0, width, height);
+    }
+
+    const paint = front.paint;
+
+    if (paint == null) {
+      return;
+    }
     paint.imageSmoothingEnabled = false;
 
     for (let z = 0; z < cells; z += 1) {
@@ -227,10 +258,6 @@ export default function createBoardScene(
         heights[at(x, z)] = laidBack ? (look.level?.(origin[0] + x, origin[1] + z) ?? 0) * STEP : 0;
       }
     }
-
-    const spots: number[] = [];
-    const uvs: number[] = [];
-    const order: number[] = [];
 
     /**
      * How low the ground lies at one corner of the grid: the lowest of
@@ -255,31 +282,86 @@ export default function createBoardScene(
 
     for (let z = 0; z < cells; z += 1) {
       for (let x = 0; x < cells; x += 1) {
-        const world: [number, number] = [origin[0] + x, origin[1] + z];
+        const cell = at(x, z);
         const left = x - middle;
         const right = left + 1;
         const far = z - middle;
         const near = far + 1;
-        const corners = [
-          [left, sunken(x, z), far],
-          [right, sunken(x + 1, z), far],
-          [right, sunken(x + 1, z + 1), near],
-          [left, sunken(x, z + 1), near],
-        ];
+        // Corners run far left, far right, near right, near left
+        const farLeft = sunken(x, z);
+        const farRight = sunken(x + 1, z);
+        const nearRight = sunken(x + 1, z + 1);
+        const nearLeft = sunken(x, z + 1);
+        const spot = cell * 12;
+
+        positions[spot] = left;
+        positions[spot + 1] = farLeft;
+        positions[spot + 2] = far;
+        positions[spot + 3] = right;
+        positions[spot + 4] = farRight;
+        positions[spot + 5] = far;
+        positions[spot + 6] = right;
+        positions[spot + 7] = nearRight;
+        positions[spot + 8] = near;
+        positions[spot + 9] = left;
+        positions[spot + 10] = nearLeft;
+        positions[spot + 11] = near;
+
+        // Split along whichever diagonal joins the two corners nearest in height,
+        // so a slope across the cell is one plane rather than a zigzag
+        const start = cell * 4;
+        const join = cell * 6;
+
+        if (Math.abs(farRight - nearLeft) < Math.abs(farLeft - nearRight)) {
+          joins[join] = start;
+          joins[join + 1] = start + 3;
+          joins[join + 2] = start + 1;
+          joins[join + 3] = start + 1;
+          joins[join + 4] = start + 3;
+          joins[join + 5] = start + 2;
+        } else {
+          joins[join] = start;
+          joins[join + 1] = start + 2;
+          joins[join + 2] = start + 1;
+          joins[join + 3] = start;
+          joins[join + 4] = start + 3;
+          joins[join + 5] = start + 2;
+        }
+
+        const oldX = x + shiftX;
+        const oldZ = z + shiftY;
+        const walkedInto =
+          (shiftX !== 0 && (oldX < SLIDE_STRIP || oldX >= cells - SLIDE_STRIP)) ||
+          (shiftY !== 0 && (oldZ < SLIDE_STRIP || oldZ >= cells - SLIDE_STRIP));
+
+        if (slides && !walkedInto) {
+          continue;
+        }
+        if (slides) {
+          paint.clearRect(x * TILE, z * TILE, TILE, TILE);
+        }
         // The camera's quarter goes in for the shore alone, which is
         // the one edge that has to be picked and laid back to read
         // right from every side
-        const tile = terrainCell(pack, look, world[0], world[1], undefined, turns, laidBack);
+        const tile = terrainCell(
+          pack,
+          look,
+          origin[0] + x,
+          origin[1] + z,
+          undefined,
+          turns,
+          laidBack,
+        );
 
         if (tile != null) {
           paint.drawImage(tile, x * TILE, z * TILE);
         }
-        quad(spots, uvs, order, corners, [x, z]);
       }
     }
+    shown = { x: window[0], y: window[1], layer, turns, laidBack };
     texture.needsUpdate = true;
-    country.geometry.dispose();
-    country.geometry = meshOf(spots, uvs, order);
+    placed.needsUpdate = true;
+    joined.needsUpdate = true;
   };
 
   /**

@@ -864,6 +864,13 @@ export const enum Items {
   GentleMint = 413,
   SassyMint = 414,
   CarefulMint = 415,
+
+  /**
+   * The kit a player goes underground with. In the mainline it is
+   * what opens the Underground at all; here the caves are open to
+   * anybody, and what the kit is worth is the light
+   */
+  ExplorerKit = 428,
 }
 
 /**

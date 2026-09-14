@@ -115,6 +115,22 @@ const enum Landmark {
    * the crown of the region the house stands in
    */
   FrontierBrain = 17,
+  /**
+   * A Pokémon Center: Nurse Joy behind her own counter, fixed to the
+   * spot. She used to be one of the faces a wandering cell drew, which
+   * meant the one service a player cannot do without was a 3-hour roll
+   * somewhere out in the country. Every town has exactly one of these
+   * and the country has none, so being patched up is a reason to walk
+   * back into town
+   */
+  PokemonCenter = 18,
+  /**
+   * A way into the caves, and back out of them. Not rolled like the
+   * rest: a mouth is cut where the ground already has a hillside to
+   * cut it into, so it stands at the same pair of cells for both
+   * layers and a player who goes down can always come back up
+   */
+  CaveMouth = 19,
 
   //
   // TODO: Honey Tree, with Sinnoh. Honey is slathered on and the tree
@@ -158,6 +174,8 @@ export const LANDMARKS: Landmark[] = [
   Landmark.AuctionBoard,
   Landmark.ApricornTree,
   Landmark.FrontierBrain,
+  Landmark.PokemonCenter,
+  Landmark.CaveMouth,
 ];
 
 /**
@@ -181,4 +199,6 @@ export const LANDMARK_NAMES: Record<Landmark, string> = {
   [Landmark.AuctionBoard]: 'Auction Board',
   [Landmark.ApricornTree]: 'Apricorn Tree',
   [Landmark.FrontierBrain]: 'Frontier Brain',
+  [Landmark.PokemonCenter]: 'Pokémon Center',
+  [Landmark.CaveMouth]: 'Cave',
 };

@@ -41,6 +41,17 @@ export const LAMPLIT: Partial<Record<Weather, Lamplit>> = {
 };
 
 /**
+ * The dark underground, which is not a sky at all.
+ *
+ * A cave has no weather over it, so nothing in the table above ever
+ * answers for one: this is the veil a cave is drawn under whatever is
+ * happening on the surface above it, and it never lifts. Not quite
+ * the dark day's pitch black, since a cave is somewhere a player has
+ * to be able to walk rather than a sky to wait out
+ */
+export const CAVERN: Lamplit = { colour: '#05060a', depth: 0.94 };
+
+/**
  * How wide the dark is kept, whatever the window is. A lamp is a soft
  * edge and nothing else, so it survives being drawn small and
  * stretched: a mask the size of the page would be a page repainted

@@ -4,26 +4,32 @@ import projectField, {
   horizonOf,
   unprojectField,
 } from '../../../canvas/battle/field';
-import type BiomeTileset from '../../../canvas/biome-tileset';
-import { type TileSpot, variantAt } from '../../../canvas/biome-tileset';
 import type { QuadPoint } from '../../../canvas/gl/quad-batch';
 import type QuadBatch from '../../../canvas/gl/quad-batch';
 
 /**
  * The ground a fight is standing on, drawn from the biome's own
- * tileset.
+ * ground tile.
  *
- * The same tiles the overworld lays on a chunk, put through the
- * battle's projection instead of the board's: a raid in a bog is
- * fought on the bog. A battle with no biome of its own, and one whose
- * biome nobody has packed a tileset for, keeps the plain field colour
- * that was there before any of this.
+ * The same tile the overworld fills a chunk's country with, put
+ * through the battle's projection instead of the board's: a raid in a
+ * bog is fought on the bog. A battle with no biome of its own, and one
+ * whose biome has no ground packed, keeps the plain field colour that
+ * was there before any of this.
  *
- * Nothing here is picked per cell the way a chunk's tiles are. A chunk
- * has a map to read and edges to blend; a battlefield is one terrain
- * from end to end, so every tile is the fully-surrounded case and the
- * only thing that varies is which of the biome's variants it draws.
+ * One tile from end to end. A chunk has a map to read and edges to
+ * blend; a battlefield is all one terrain, so what it wants is the
+ * country's plain fill and nothing else.
  */
+
+/** The one tile a field is laid with, cut from whatever holds it. */
+export interface FloorTile {
+  sheet: CanvasImageSource;
+  x: number;
+  y: number;
+  /** How many pixels square it is */
+  tile: number;
+}
 
 /**
  * How many field units one tile covers.
@@ -33,9 +39,6 @@ import type QuadBatch from '../../../canvas/gl/quad-batch';
  * ground at on an ordinary window
  */
 const TILE_UNITS = 8;
-
-/** The tile case with the same terrain on all eight sides. */
-const SOLID = 255;
 
 /**
  * How far out the ground is laid, in field units.
@@ -146,10 +149,10 @@ function coverage(view: FieldView, region: FloorRegion): Patch | null {
  * a step that showed the field colour through would read as a hole in
  * the world rather than as distance
  */
-const HAZE = new WeakMap<BiomeTileset, string>();
+const HAZE = new WeakMap<CanvasImageSource, string>();
 
-function hazeOf(tiles: BiomeTileset, spot: TileSpot, tile: number): string {
-  const known = HAZE.get(tiles);
+function hazeOf(ground: FloorTile): string {
+  const known = HAZE.get(ground.sheet);
 
   if (known != null) {
     return known;
@@ -163,13 +166,13 @@ function hazeOf(tiles: BiomeTileset, spot: TileSpot, tile: number): string {
   let colour = 'transparent';
 
   if (into != null) {
-    into.drawImage(spot.sheet, spot.x, spot.y, tile, tile, 0, 0, 1, 1);
+    into.drawImage(ground.sheet, ground.x, ground.y, ground.tile, ground.tile, 0, 0, 1, 1);
 
     const [red, green, blue] = into.getImageData(0, 0, 1, 1).data;
 
     colour = `rgb(${red} ${green} ${blue})`;
   }
-  HAZE.set(tiles, colour);
+  HAZE.set(ground.sheet, colour);
   return colour;
 }
 
@@ -244,8 +247,7 @@ function grown(corners: QuadPoint[]): QuadPoint[] {
  */
 function layTile(
   context: CanvasRenderingContext2D,
-  spot: TileSpot,
-  tile: number,
+  ground: FloorTile,
   corners: { x: number; y: number }[],
 ): void {
   const [farLeft, farRight, nearRight, nearLeft] = corners;
@@ -265,11 +267,11 @@ function layTile(
   context.save();
   context.transform(acrossX, acrossY, downX, downY, farLeft.x, farLeft.y);
   context.drawImage(
-    spot.sheet,
-    spot.x,
-    spot.y,
-    tile,
-    tile,
+    ground.sheet,
+    ground.x,
+    ground.y,
+    ground.tile,
+    ground.tile,
     -OVERLAP,
     -OVERLAP,
     1 + OVERLAP * 2,
@@ -286,32 +288,21 @@ function layTile(
  */
 export default function drawFloor(
   context: CanvasRenderingContext2D,
-  tiles: BiomeTileset,
+  ground: FloorTile,
   view: FieldView,
   region: FloorRegion,
-  now: number,
   onto?: QuadBatch,
 ): void {
-  if (!tiles.has('ground')) {
-    return;
-  }
   const patch = coverage(view, region);
 
   if (patch == null) {
-    return;
-  }
-
-  const variants = tiles.data.variants;
-  const sample = tiles.tileAt('ground', SOLID, 0, now);
-
-  if (sample == null) {
     return;
   }
   // Everything from the horizon down is ground, whatever the tiles
   // manage to cover of it
   const skyline = Math.max(region.top, horizonOf(view));
 
-  const haze = hazeOf(tiles, sample, tiles.tile);
+  const haze = hazeOf(ground);
 
   if (onto == null) {
     context.fillStyle = haze;
@@ -392,16 +383,11 @@ export default function drawFloor(
         continue;
       }
 
-      const spot = tiles.tileAt('ground', SOLID, variantAt(column, row, variants), now);
-
-      if (spot == null) {
-        continue;
-      }
       // The tile is never turned: the ground is a surface rather than
       // a picture of one, so it swings with the camera the way the
       // pokemon standing on it do
-      if (onto == null || !(spot.sheet instanceof HTMLCanvasElement)) {
-        layTile(context, spot, tiles.tile, laid);
+      if (onto == null || !(ground.sheet instanceof HTMLCanvasElement)) {
+        layTile(context, ground, laid);
         continue;
       }
       // Written as the quad it actually covers. A 2D context can only
@@ -409,16 +395,16 @@ export default function drawFloor(
       // measures the longer edges for; a pair of triangles takes the
       // cell as it is
       onto.quad(
-        spot.sheet,
+        ground.sheet,
         // Half a texel in on every side. A 2D context samples inside
         // the rectangle it was given; a sampler does not, and these
         // tiles are packed against each other, so the edge of one
         // reads as a stripe of whatever was packed beside it
         {
-          x: spot.x + INSET,
-          y: spot.y + INSET,
-          width: tiles.tile - INSET * 2,
-          height: tiles.tile - INSET * 2,
+          x: ground.x + INSET,
+          y: ground.y + INSET,
+          width: ground.tile - INSET * 2,
+          height: ground.tile - INSET * 2,
         },
         grown(laid),
         1,

@@ -10,6 +10,7 @@ import registerBiomeSpawns, {
   SpawnRarity,
   getSpawnPool,
   getSpawnRarity,
+  getTownPool,
   isGrownSpecies,
   spawnRanks,
 } from '../../src/data/biome';
@@ -54,11 +55,13 @@ import EggGroups from '../../src/data/ids/egg-groups';
 import { Genders, Species } from '../../src/data/ids/species';
 import {
   SPECIES_DAY_HIDDEN_ABILITY_BOOST,
+  floats,
   getBaseSpecies,
   getRegisteredSpecies,
   getSpeciesAbilityPools,
   getSpeciesData,
   registerSpecies,
+  swims,
 } from '../../src/data/species';
 import { MAX_LEVEL } from '../../src/data/constants/levels';
 import { WILD_HELD_COMMON, WILD_HELD_UNCOMMON } from '../../src/data/species/held-items';
@@ -90,10 +93,22 @@ import {
   CHUNK_CELLS,
   PLACEMENT_AREA,
   centeredCells,
+  chunkOfCell,
   neighborCells,
+  worldCell,
 } from '../../src/overworld/chunk';
-import { CARDINALS } from '../../src/overworld/path';
-import { getBiomeDecorations } from '../../src/data/overworld/decoration';
+import nameTown from '../../src/data/overworld/town-names';
+import type { Town } from '../../src/overworld/town';
+import {
+  TOWN_REGION,
+  getTownLots,
+  isRoadAt,
+  townAt,
+  townName,
+  townOfRegion,
+  townOverChunk,
+} from '../../src/overworld/town';
+import { getBiomeDecorations, getIslandDecorations } from '../../src/data/overworld/decoration';
 import ChunkSnapshot, {
   EXECUTIVE_CHANCE,
   LANDMARK_INTERVAL,
@@ -213,11 +228,12 @@ import { FOSSIL_OFFER_KINDS, getFossilPrice } from '../../src/data/overworld/fos
 import { isFossil } from '../../src/data/items/fossils';
 import Landmark from '../../src/data/overworld/landmark';
 import { SYNDICATE_BOSS_CHARSETS } from '../../src/data/overworld/syndicate';
-import { findPortal, findPortals, getPortalCell } from '../../src/overworld/portal';
+import { getPortalCell, portalInRegion } from '../../src/overworld/portal';
 import Npc, {
   EXECUTIVE_CHARSETS,
   EXECUTIVE_NAMES,
   NPCS,
+  npcSheet,
   npcSheets,
 } from '../../src/data/overworld/npc';
 import Phenomenon, {
@@ -274,6 +290,13 @@ import { LUCK_INCENSE_BONUS, PURE_INCENSE_QUIET } from '../../src/overworld/item
 import { AMULET_COIN_BONUS, CLEANSE_TAG_QUIET } from '../../src/overworld/items/trinkets';
 import { CATCHING_CHARM_BOOST, SHINY_CHARM_BOOST } from '../../src/overworld/items/key-items';
 import createOverworld from '../../src/overworld/setup';
+import { roleAt } from '../../src/overworld/ground';
+import { isIslandAt } from '../../src/overworld/fields';
+import { Depth } from '../../src/overworld/depth';
+import { blocksWalk, isFace, isPassAt, isSeam } from '../../src/overworld/cliff';
+import { isRouteAt } from '../../src/overworld/route';
+import { ORTHOGONAL, SQUARES, SURROUNDING } from '../../src/overworld/grid';
+import { levelAt } from '../../src/overworld/terrace';
 import World, {
   WORLD_MAX,
   WORLD_MIN,
@@ -319,7 +342,56 @@ describe('perlin noise', () => {
  * Biomes span whole regions, so a search for a specific one has to
  * cover far more ground than a handful of chunks
  */
+/**
+ * The first region whose town, or lack of one, is what a test is
+ * after. Swept the way `findChunk` sweeps, since a town is sited to
+ * every eighth chunk and most of the world is water
+ */
+function findRegion(
+  world: World,
+  matches: (town: Town | null) => boolean,
+): [regionX: number, regionY: number] | null {
+  for (let regionY = -24; regionY < 24; regionY++) {
+    for (let regionX = -24; regionX < 24; regionX++) {
+      if (matches(townOfRegion(world, regionX, regionY))) {
+        return [regionX, regionY];
+      }
+    }
+  }
+  return null;
+}
+
 function findChunk(world: World, matches: (chunk: Chunk) => boolean): Chunk | null {
+  // The towns first, and by region rather than by chunk. A town is two
+  // chunks across and one is sited to every eight, so a sweep that
+  // steps over chunks steps over the towns, and everything a town
+  // holds is exactly what a chunk of open country no longer does
+  for (let regionY = -24; regionY < 24; regionY++) {
+    for (let regionX = -24; regionX < 24; regionX++) {
+      const town = townOfRegion(world, regionX, regionY);
+
+      if (town == null) {
+        continue;
+      }
+
+      const seen = new Set<string>();
+
+      for (const lot of getTownLots(world, town)) {
+        const key = `${chunkOfCell(lot.x)},${chunkOfCell(lot.y)}`;
+
+        if (seen.has(key)) {
+          continue;
+        }
+        seen.add(key);
+
+        const candidate = world.getChunk(chunkOfCell(lot.x), chunkOfCell(lot.y));
+
+        if (matches(candidate)) {
+          return candidate;
+        }
+      }
+    }
+  }
   for (let y = -200; y < 200; y += 4) {
     for (let x = -200; x < 200; x += 4) {
       const candidate = world.getChunk(x, y);
@@ -398,7 +470,7 @@ describe('world', () => {
     expect(chunk.biome).toBe(world.getChunk(3, -7).biome);
   });
 
-  it('rolls 5-8 fixed landmarks per chunk, each on its own cell', () => {
+  it('rolls a few fixed landmarks per chunk of open country, each on its own cell', () => {
     const world = new World('overworld');
     const shapes = new Set<string>();
 
@@ -406,18 +478,15 @@ describe('world', () => {
       const chunk = world.getChunk(x, 0);
       const landmarks = chunk.getLandmarks();
 
-      expect(landmarks.length).toBeGreaterThanOrEqual(5);
-      expect(landmarks.length).toBeLessThanOrEqual(8);
+      // Thin: the services live in towns, so what is left out here is
+      // what a player goes out for. A chunk a town falls on holds the
+      // town's lots as well
+      expect(landmarks.length).toBeGreaterThanOrEqual(1);
 
-      // One cell each: the cell map holds every landmark, all
-      // within the central 15x15
+      // One cell each, anywhere on the grid: the rim used to be held
+      // clear for a player walking in from the chunk next door, and
+      // nobody walks in any more
       expect(chunk.getLandmarkCells().size).toBe(landmarks.length);
-      for (const cell of chunk.getLandmarkCells().keys()) {
-        expect(cell % 16).toBeGreaterThanOrEqual(1);
-        expect(cell % 16).toBeLessThanOrEqual(14);
-        expect(Math.floor(cell / 16)).toBeGreaterThanOrEqual(1);
-        expect(Math.floor(cell / 16)).toBeLessThanOrEqual(14);
-      }
 
       // Fixed forever: a fresh resolution of the chunk agrees
       const again = world.getChunk(x, 0);
@@ -2985,7 +3054,7 @@ describe('world', () => {
     const shapes = new Set<string>();
     const met = new Set<Npc>();
 
-    // Enough windows that all 9 roles have room to turn up on however
+    // Enough windows that all 10 roles have room to turn up on however
     // few wandering cells the chunk rolled
     for (let window = 0; window < 96; window++) {
       const standing = new ChunkSnapshot(chunk, window * NPC_INTERVAL).getWanderingNpcs();
@@ -2996,13 +3065,14 @@ describe('world', () => {
       }
     }
     expect(shapes.size).toBeGreaterThan(1);
-    // Everyone who wanders turns up: the nurse and the groomer are
-    // drawn from the same pool as the two who came first
-    expect(met.has(Npc.NurseJoy)).toBe(true);
+    // Everyone who wanders turns up: the groomer is drawn from the
+    // same pool as the two who came first
     expect(met.has(Npc.Groomer)).toBe(true);
     expect(met.has(Npc.MoveReminder)).toBe(true);
-    // The vendor is not among them any more: his stall is a landmark
+    // Neither of the two with a place of their own is among them: the
+    // vendor keeps a stall and Nurse Joy keeps a centre
     expect(met.has(Npc.Vendor)).toBe(false);
+    expect(met.has(Npc.NurseJoy)).toBe(false);
   });
 
   it('dresses each wanderer from their role’s own wardrobe', () => {
@@ -3201,29 +3271,168 @@ describe('world', () => {
     }
   });
 
-  it('posts an auction board on land, one to a chunk and reachable', () => {
+  it('keeps Nurse Joy at a centre in every town, whatever the window', () => {
+    const world = new World('overworld');
+    const chunk = findChunk(world, (candidate) =>
+      new Set(candidate.getLandmarkCells().values()).has(Landmark.PokemonCenter),
+    );
+
+    expect(chunk).not.toBeNull();
+    if (chunk == null) {
+      return;
+    }
+
+    const counters = [...chunk.getLandmarkCells()]
+      .filter(([, landmark]) => landmark === Landmark.PokemonCenter)
+      .map(([cell]) => cell);
+
+    for (let window = 0; window < 24; window++) {
+      const snapshot = new ChunkSnapshot(chunk, window * NPC_INTERVAL);
+
+      for (const cell of counters) {
+        // She is never rolled away: the counter is the landmark
+        expect(snapshot.getStandingNpc(cell)).toBe(Npc.NurseJoy);
+        expect(snapshot.getWandererCoats().get(cell)).toBe(npcSheet(Npc.NurseJoy));
+      }
+      // And a wandering cell never stages her any more
+      for (const npc of snapshot.getWanderingNpcs().values()) {
+        expect(npc).not.toBe(Npc.NurseJoy);
+      }
+    }
+  });
+
+  it('charters a centre in every town and none in the country', () => {
+    const world = new World('overworld');
+    let towns = 0;
+
+    for (let regionY = -8; regionY < 8; regionY++) {
+      for (let regionX = -8; regionX < 8; regionX++) {
+        const town = townOfRegion(world, regionX, regionY);
+
+        if (town == null) {
+          continue;
+        }
+        towns++;
+
+        const lots = getTownLots(world, town).filter(
+          (lot) => lot.landmark === Landmark.PokemonCenter,
+        );
+
+        // One, never two: a second counter is the same service twice
+        expect(lots.length, `${town.x}, ${town.y}`).toBe(1);
+      }
+    }
+    expect(towns).toBeGreaterThan(0);
+
+    // Nothing out in the country stages one. A chunk that holds a
+    // centre is a chunk a town reaches into
+    for (let x = -20; x < 20; x++) {
+      for (let y = -20; y < 20; y++) {
+        const chunk = world.getChunk(x, y);
+        const centres = [...chunk.getLandmarkCells()].filter(
+          ([, landmark]) => landmark === Landmark.PokemonCenter,
+        );
+
+        if (centres.length > 0) {
+          expect(townOverChunk(world, x, y)).not.toBeNull();
+        }
+      }
+    }
+  });
+
+  it('names every town it grows, and never two of them the same', () => {
+    const world = new World('overworld');
+    const names = new Map<string, string>();
+
+    // Not a sample of the odds: names are worked out from where a town
+    // is, so two of them sharing one is not unlikely, it is impossible
+    for (let regionY = -24; regionY < 24; regionY++) {
+      for (let regionX = -24; regionX < 24; regionX++) {
+        const town = townOfRegion(world, regionX, regionY);
+
+        if (town == null) {
+          continue;
+        }
+
+        const name = townName(town);
+        const where = `${regionX}, ${regionY}`;
+
+        expect(name).toMatch(/^[A-Z].*, [A-Z][a-z]+$/);
+        // Answered the same way every time, by anybody, with nothing
+        // asked of a store
+        expect(townName(town)).toBe(name);
+        expect(names.get(name) ?? where, name).toBe(where);
+        names.set(name, where);
+      }
+    }
+    expect(names.size).toBeGreaterThan(500);
+  });
+
+  it('names a town for its own country and its own county', () => {
+    const world = new World('overworld');
+    const settled = findRegion(world, (town) => town != null);
+
+    expect(settled).not.toBeNull();
+    if (settled == null) {
+      return;
+    }
+
+    const town = townOfRegion(world, settled[0], settled[1]);
+
+    expect(town).not.toBeNull();
+    if (town == null) {
+      return;
+    }
+
+    // The same answer the data table gives for those coordinates: the
+    // town carries nothing of its own into it but where it stands
+    expect(townName(town)).toBe(nameTown(town.regionX, town.regionY, town.biome));
+
+    // And a second world says the same thing, since there is nothing
+    // remembered anywhere for it to differ about
+    const other = new World('overworld');
+    const same = townOfRegion(other, settled[0], settled[1]);
+
+    expect(same).not.toBeNull();
+    expect(same == null ? null : townName(same)).toBe(townName(town));
+  });
+
+  it('posts an auction board in a town, one to a chunk and reachable', () => {
     const world = new World('overworld');
     let boards = 0;
-    let chunks = 0;
+    let towns = 0;
+    const span = TOWN_REGION * CHUNK_CELLS;
 
-    for (let x = 0; x < 25; x++) {
-      for (let y = 0; y < 8; y++) {
+    for (let regionY = -3; regionY < 3; regionY++) {
+      for (let regionX = -3; regionX < 3; regionX++) {
+        // Sampled across the region, since a town sits wherever its
+        // region's own roll put it
+        for (let step = 0; step < span; step += 8) {
+          if (townAt(world, regionX * span + step, regionY * span + step) != null) {
+            towns++;
+            break;
+          }
+        }
+      }
+    }
+
+    for (let x = -40; x < 40; x++) {
+      for (let y = -40; y < 40; y++) {
         const chunk = world.getChunk(x, y);
         const cells = [...chunk.getLandmarkCells()].filter(
           ([, landmark]) => landmark === Landmark.AuctionBoard,
         );
 
-        chunks++;
         boards += cells.length;
         // One board to a chunk: every board reads the same global
         // lots, so a second would be the same board twice
         expect(cells.length).toBeLessThanOrEqual(1);
       }
     }
-
-    // Common enough that trading is a walk rather than an expedition
-    expect(boards).toBeGreaterThan(0);
-    expect(boards / chunks).toBeGreaterThan(0.2);
+    // Boards live in towns, and about half of a town's charters carry
+    // one, so a stretch of country this size holds several
+    expect(towns).toBeGreaterThan(0);
+    expect(boards).toBeGreaterThan(3);
   });
 
   it('names a gym seat by its place and never by its window', () => {
@@ -3258,8 +3467,15 @@ describe('world', () => {
 
   it('gives the fossil maniac two of the three, drawn with his window', () => {
     const world = new World('overworld');
-    const chunk = findChunk(world, (candidate) =>
-      new Set(candidate.getLandmarkCells().values()).has(Landmark.WanderingNpc),
+    // Several of them rather than any: a chunk with one wanderer in it
+    // draws the maniac a handful of times over forty-eight windows,
+    // which is too few to say anything about what he varies
+    const chunk = findChunk(
+      world,
+      (candidate) =>
+        [...candidate.getLandmarkCells().values()].filter(
+          (landmark) => landmark === Landmark.WanderingNpc,
+        ).length >= 3,
     );
 
     expect(chunk).not.toBeNull();
@@ -3305,7 +3521,7 @@ describe('world', () => {
     expect(offers.size).toBeGreaterThan(1);
   });
 
-  it('opens a portal onto the nearest portal of the biome asked for', () => {
+  it('opens a portal onto the portal in the town named', () => {
     const world = new World('overworld');
     const chunk = findChunk(world, (candidate) =>
       new Set(candidate.getLandmarkCells().values()).has(Landmark.Portal),
@@ -3323,43 +3539,46 @@ describe('world', () => {
     expect(cell).not.toBeNull();
     expect(chunk.getLandmarkCells().get(cell ?? -1)).toBe(Landmark.Portal);
 
-    const destinations = findPortals(world, chunk.x, chunk.y);
+    // A region with a town is a place somebody can name; one without
+    // has a portal out in the country and nothing to call it
+    const settled = findRegion(world, (town) => town != null);
 
-    expect(destinations.size).toBeGreaterThan(0);
-
-    for (const [biome, destination] of destinations) {
-      // Every destination is a portal, of the biome it was filed
-      // under, and somewhere other than here
-      expect(destination.biome).toBe(biome);
-      expect(world.getChunkBiome(destination.x, destination.y)).toBe(biome);
-      expect(getPortalCell(world.getChunk(destination.x, destination.y))).toBe(destination.cell);
-      expect(destination.x === chunk.x && destination.y === chunk.y).toBe(false);
-      expect(destination.distance).toBeGreaterThan(0);
-
-      // ...and it is the *nearest* one: nothing of that biome inside
-      // its ring has a portal
-      for (let radius = 1; radius < destination.distance; radius++) {
-        for (let dy = -radius; dy <= radius; dy++) {
-          for (let dx = -radius; dx <= radius; dx++) {
-            if (Math.max(Math.abs(dx), Math.abs(dy)) !== radius) {
-              continue;
-            }
-
-            const x = chunk.x + dx;
-            const y = chunk.y + dy;
-
-            if (isInWorld(x, y) && world.getChunkBiome(x, y) === biome) {
-              expect(getPortalCell(world.getChunk(x, y))).toBeNull();
-            }
-          }
-        }
-      }
+    expect(settled).not.toBeNull();
+    if (settled == null) {
+      return;
     }
 
-    // Asked one biome at a time, the answer is the same one
-    for (const [biome, destination] of destinations) {
-      expect(findPortal(world, chunk.x, chunk.y, biome)).toEqual(destination);
+    const town = townOfRegion(world, settled[0], settled[1]);
+
+    expect(town).not.toBeNull();
+    if (town == null) {
+      return;
     }
+
+    const destination = portalInRegion(world, settled[0], settled[1]);
+
+    expect(destination).not.toBeNull();
+    if (destination == null) {
+      return;
+    }
+
+    // It is a real portal, in the middle of the town it was named for
+    expect(destination.name).toBe(townName(town));
+    expect(destination.biome).toBe(town.biome);
+    expect(getPortalCell(world.getChunk(destination.x, destination.y))).toBe(destination.cell);
+    expect(worldCell(destination.x, destination.cell % CHUNK_CELLS)).toBe(town.x);
+    expect(worldCell(destination.y, Math.floor(destination.cell / CHUNK_CELLS))).toBe(town.y);
+  });
+
+  it('has nowhere to come out in a region with no town', () => {
+    const world = new World('overworld');
+    const empty = findRegion(world, (town) => town == null);
+
+    expect(empty).not.toBeNull();
+    if (empty == null) {
+      return;
+    }
+    expect(portalInRegion(world, empty[0], empty[1])).toBeNull();
   });
 
   it('reads the window back out of an encounter key', () => {
@@ -3841,10 +4060,6 @@ describe('chunk snapshot', () => {
           placed.push(occupant);
           expect(chunk.getLandmarkAt(x, y)).toBeNull();
           expect(chunk.getDecorationCells().has(y * 16 + x)).toBe(false);
-          expect(x).toBeGreaterThanOrEqual(1);
-          expect(x).toBeLessThanOrEqual(14);
-          expect(y).toBeGreaterThanOrEqual(1);
-          expect(y).toBeLessThanOrEqual(14);
         }
       }
     }
@@ -3866,16 +4081,96 @@ describe('chunk snapshot', () => {
     // fixtures are not standing on and stops
     const packed = new ChunkSnapshot(chunk, NOON);
     // Whatever is going on this hour holds its cell too, so the room
-    // left is what nothing else is standing on
+    // left is what nothing else is standing on. The water is not room
+    // for everybody: a lake in dry country takes swimmers only, so it
+    // is what stops this filling the grid corner to corner
+    const biomes = chunk.getCellBiomes();
     const room = centeredCells(PLACEMENT_AREA).filter(
       (cell) =>
         !chunk.getLandmarkCells().has(cell) &&
         !chunk.getDecorationCells().has(cell) &&
         !chunk.getRockCells().has(cell) &&
+        !chunk.getFaceCells().has(cell) &&
         !packed.getPhenomena().has(cell),
     );
+    const dry = room.filter(
+      (cell) => chunk.getCellRole(cell) !== 'water' || isWaterBiome(biomes[cell]),
+    );
 
-    expect(packed.getSpawns(1000)).toHaveLength(room.length);
+    packed.getSpawns(1000);
+
+    const filled = [...packed.getSpawnCells().keys()];
+
+    expect(filled.length).toBeGreaterThanOrEqual(dry.length);
+    expect(filled.length).toBeLessThanOrEqual(room.length);
+    for (const cell of dry) {
+      expect(filled).toContain(cell);
+    }
+  });
+
+  it('leaves a lake in dry country to what swims in it or flies over it', () => {
+    const world = new World('overworld');
+    const NOON = 12 * 60 * 60 * 1000;
+    let checked = 0;
+    let airborne = 0;
+
+    // A Rhyhorn standing in the middle of a pond is the country's pool
+    // answering a question nobody asked it. A country that is itself
+    // water is not asked: everything in its pool was chosen knowing so
+    for (let x = -12; x < 12; x++) {
+      for (let y = -12; y < 12; y++) {
+        const chunk = world.getChunk(x, y);
+        const biomes = chunk.getCellBiomes();
+        const snapshot = new ChunkSnapshot(chunk, NOON);
+
+        snapshot.getSpawns(SPAWN_COUNT);
+        for (const [cell, spawn] of snapshot.getSpawnCells()) {
+          if (chunk.getCellRole(cell) !== 'water' || isWaterBiome(biomes[cell])) {
+            continue;
+          }
+          checked++;
+          expect(swims(spawn[0]) || floats(spawn[0])).toBe(true);
+          if (!swims(spawn[0])) {
+            airborne++;
+          }
+        }
+      }
+    }
+    expect(checked).toBeGreaterThan(0);
+    // And the water is not the swimmers' alone: a pond with nothing
+    // over it would mean the rule was written and never reached
+    expect(airborne).toBeGreaterThan(0);
+  });
+
+  it('places fixtures right up to the chunk edge, leaving no lattice of bare corridors', () => {
+    const world = new World('overworld');
+    let onTheRim = 0;
+    let looked = 0;
+
+    for (let y = -12; y < 12; y += 3) {
+      for (let x = -12; x < 12; x += 3) {
+        const chunk = world.getChunk(x, y);
+
+        looked++;
+        for (const cell of [
+          ...chunk.getLandmarkCells().keys(),
+          ...chunk.getDecorationCells().keys(),
+        ]) {
+          const column = cell % CHUNK_CELLS;
+          const row = Math.floor(cell / CHUNK_CELLS);
+
+          if (column === 0 || row === 0 || column === CHUNK_CELLS - 1 || row === CHUNK_CELLS - 1) {
+            onTheRim++;
+          }
+        }
+      }
+    }
+
+    // The board follows the player rather than the chunk, so a clear
+    // rim on every chunk would draw empty corridors across the world
+    // every sixteen cells
+    expect(looked).toBeGreaterThan(0);
+    expect(onTheRim).toBeGreaterThan(looked);
   });
 
   it('furnishes a chunk with the biome scenery, spaced like everything else', () => {
@@ -3887,26 +4182,38 @@ describe('chunk snapshot', () => {
       for (let x = -20; x < 20; x += 7) {
         const chunk = world.getChunk(x, y);
         const scenery = chunk.getDecorationCells();
-        const kinds = new Set(getBiomeDecorations(chunk.biome));
+        const sea = isOpenSea(chunk.biome);
 
-        chunks++;
-        // The roll is 8 to 12, and scenery is placed last of the
-        // three: a chunk whose landmarks, pools and rocks left no room
-        // takes fewer, which is allowed and should stay rare
-        if (scenery.size < 8) {
-          short++;
+        const dry = [...Array(CELL_COUNT).keys()].filter(
+          (cell) => chunk.getCellRole(cell) === 'ground',
+        ).length;
+
+        // Nothing grows out of water, so what a chunk can hold is
+        // measured against the dry ground it actually has: one a lake
+        // or a sea has taken holds less, and one with none holds none
+        if (dry > CELL_COUNT / 2) {
+          chunks++;
+          expect(scenery.size).toBeGreaterThan(0);
+          // The roll is 8 to 12, and scenery is placed last of the
+          // three: a chunk whose landmarks and rocks left no room
+          // takes fewer, which is allowed and should stay rare
+          if (scenery.size < 8) {
+            short++;
+          }
         }
-        expect(scenery.size).toBeGreaterThan(0);
         expect(scenery.size).toBeLessThanOrEqual(12);
 
         for (const [cell, decoration] of scenery) {
-          // Of this biome, inside the placement area, and touching
-          // nothing
-          expect(kinds.has(decoration)).toBe(true);
-          expect(cell % 16).toBeGreaterThanOrEqual(1);
-          expect(cell % 16).toBeLessThanOrEqual(14);
-          expect(Math.floor(cell / 16)).toBeGreaterThanOrEqual(1);
-          expect(Math.floor(cell / 16)).toBeLessThanOrEqual(14);
+          // Of this biome, and touching nothing of its own chunk's. Out
+          // at sea it stands in the water, and an island grows its own
+          const island = sea && chunk.getCellRole(cell) === 'ground';
+
+          expect(
+            (island ? getIslandDecorations : getBiomeDecorations)(chunk.biome).includes(decoration),
+          ).toBe(true);
+          if (!sea) {
+            expect(chunk.getCellRole(cell)).toBe('ground');
+          }
           for (const neighbor of neighborCells(cell)) {
             expect(scenery.has(neighbor)).toBe(false);
           }
@@ -3918,6 +4225,7 @@ describe('chunk snapshot', () => {
     }
 
     // A crowded board is the exception, not the rule
+    expect(chunks).toBeGreaterThan(0);
     expect(short / chunks).toBeLessThan(0.05);
   });
 
@@ -3937,11 +4245,10 @@ describe('chunk snapshot', () => {
           }
         }
 
-        // Nine cells at most per landmark, out of the central 15x15's
-        // two hundred and twenty-five: the ring never costs a chunk
-        // one of its five to eight
-        expect(landmarks.size).toBeGreaterThanOrEqual(5);
-        expect(landmarks.size).toBeLessThanOrEqual(8);
+        // The open country is thin now: what a chunk holds is a
+        // couple of things worth going out for, unless a town has been
+        // laid over it, in which case it holds the town's own lots
+        expect(landmarks.size).toBeGreaterThanOrEqual(1);
         // The area is the landmarks plus their rings, and a ring
         // inside the placement area is never empty
         expect(chunk.getLandmarkArea().size).toBeGreaterThan(landmarks.size);
@@ -4478,48 +4785,306 @@ describe('chunk snapshot', () => {
 });
 
 describe('terrain spots', () => {
-  it('grows 1-3 seeded patches on land and in the wetlands', () => {
+  it('lays no water narrower than two cells', () => {
+    const world = new World('overworld');
+    const wet = (x: number, y: number): boolean => roleAt(world, x, y) === 'water';
+
+    // One wide window rather than a handful of spots: a hairline or a
+    // lone cell at a lip is rare enough that a small square of country
+    // can miss every one of them
+    for (let y = -200; y <= 200; y += 1) {
+      for (let x = -200; x <= 200; x += 1) {
+        if (!wet(x, y)) {
+          continue;
+        }
+        // The shore is a ring of edges and corners, so a channel one
+        // cell across has no corner to draw: every wet cell belongs
+        // to a 2x2 block of wet ones
+        const broad = SQUARES.some(([ox, oy]) =>
+          [0, 1].every((dy) => [0, 1].every((dx) => wet(x + ox + dx, y + oy + dy))),
+        );
+
+        expect(broad, `${x},${y}`).toBe(true);
+      }
+    }
+  });
+
+  it('leaves no water hanging over a dry drop', () => {
+    const world = new World('overworld');
+    const wet = (x: number, y: number): boolean => roleAt(world, x, y) === 'water';
+
+    for (let y = -200; y <= 200; y += 1) {
+      for (let x = -200; x <= 200; x += 1) {
+        if (!wet(x, y)) {
+          continue;
+        }
+        const here = levelAt(world, x, y);
+
+        for (const [dx, dy] of SURROUNDING) {
+          // A pool's surface is level, so water at the lip of a step
+          // has to have water below it: the board seams the two into
+          // one fall, and dry ground there would leave the water
+          // drawn ending in mid-air
+          if (levelAt(world, x + dx, y + dy) < here) {
+            expect(wet(x + dx, y + dy), `${x + dx},${y + dy}`).toBe(true);
+          }
+        }
+      }
+    }
+  });
+
+  it("keeps a volcano's lava out of the water next door", () => {
+    const world = new World('overworld');
+    let lava = 0;
+
+    for (let y = -1500; y <= 1500; y += 7) {
+      for (let x = -1500; x <= 1500; x += 7) {
+        if (world.getCellBiome(x, y) !== Biome.Volcano || roleAt(world, x, y) !== 'water') {
+          continue;
+        }
+        lava += 1;
+        // A volcano's water is lava, so it may not run into a pool of
+        // the ordinary kind: the border dries off on the crater's side
+        for (const [dx, dy] of SURROUNDING) {
+          const wet = roleAt(world, x + dx, y + dy) === 'water';
+
+          expect(
+            wet && world.getCellBiome(x + dx, y + dy) !== Biome.Volcano,
+            `${x + dx},${y + dy}`,
+          ).toBe(false);
+        }
+      }
+    }
+    // A volcano with no lava in it would pass this without saying
+    // anything
+    expect(lava).toBeGreaterThan(0);
+  });
+
+  it('lets a walk cross every fall', () => {
+    const world = new World('overworld');
+    let falls = 0;
+
+    for (let y = -200; y <= 200; y += 1) {
+      for (let x = -200; x <= 200; x += 1) {
+        if (roleAt(world, x, y) !== 'water' || !isFace(world, x, y)) {
+          continue;
+        }
+        // Water on a step always pours into more water, so it is a seam
+        // whatever shape the step takes
+        falls += 1;
+        expect(blocksWalk(world, x, y), `${x},${y}`).toBe(false);
+      }
+    }
+    expect(falls).toBeGreaterThan(0);
+  });
+
+  it('walls a walk off the inside corner of a cliff', () => {
+    const world = new World('overworld');
+    let corners = 0;
+
+    for (let y = -200; y <= 200; y += 1) {
+      for (let x = -200; x <= 200; x += 1) {
+        const here = levelAt(world, x, y);
+        const lower = ([dx, dy]: [number, number]): boolean =>
+          levelAt(world, x + dx, y + dy) < here;
+
+        if (roleAt(world, x, y) === 'water' || ORTHOGONAL.some(lower) || !SURROUNDING.some(lower)) {
+          continue;
+        }
+        // Lower ground only across a diagonal is where the ring's inside
+        // corner is drawn, and that tile is as much the cliff as a side.
+        // No seam opens it, since a walk never steps across a diagonal
+        corners += 1;
+        expect(isSeam(world, x, y), `${x},${y}`).toBe(false);
+        expect(blocksWalk(world, x, y), `${x},${y}`).toBe(true);
+      }
+    }
+    expect(corners).toBeGreaterThan(0);
+  });
+
+  it('opens a corner of a cliff only where every face beside it opens too', () => {
+    const world = new World('overworld');
+    const descends = (x: number, y: number): boolean =>
+      ORTHOGONAL.some(([dx, dy]) => levelAt(world, x + dx, y + dy) < levelAt(world, x, y));
+    const way = (x: number, y: number): boolean =>
+      isRoadAt(world, x, y) || isRouteAt(world, x, y) || isPassAt(world, x, y);
+    let corners = 0;
+
+    for (let y = -200; y <= 200; y += 1) {
+      for (let x = -200; x <= 200; x += 1) {
+        if (roleAt(world, x, y) === 'water' || !descends(x, y)) {
+          continue;
+        }
+        const faces = ORTHOGONAL.filter(([dx, dy]) => isFace(world, x + dx, y + dy));
+
+        if (!faces.some(([ax, ay]) => faces.some(([bx, by]) => ax * bx + ay * by === 0))) {
+          continue;
+        }
+        // Where the faces turn, a way through reaches the high ground only
+        // by way of the faces beside it, so every one of them has to open
+        corners += 1;
+        const joined = faces.every(
+          ([dx, dy]) =>
+            roleAt(world, x + dx, y + dy) === 'water' ||
+            (way(x + dx, y + dy) && descends(x + dx, y + dy)),
+        );
+
+        expect(isSeam(world, x, y), `${x},${y}`).toBe(way(x, y) && joined);
+      }
+    }
+    expect(corners).toBeGreaterThan(0);
+  });
+
+  it('rolls no landmark onto a route', () => {
+    const world = new World('overworld');
+    let routed = 0;
+
+    for (let cx = -16; cx < 16; cx++) {
+      for (let cy = -16; cy < 16; cy++) {
+        const chunk = world.getChunk(cx, cy);
+        const at = (cell: number): [number, number] => [
+          worldCell(cx, cell % CHUNK_CELLS),
+          worldCell(cy, Math.floor(cell / CHUNK_CELLS)),
+        ];
+
+        for (const [cell, landmark] of chunk.getLandmarkCells()) {
+          // The portal and a cave mouth are laid where the world puts
+          // them, and a town lays its own lots
+          if (
+            landmark === Landmark.Portal ||
+            landmark === Landmark.CaveMouth ||
+            chunk.isTownCell(cell)
+          ) {
+            continue;
+          }
+          const [x, y] = at(cell);
+
+          expect(isRouteAt(world, x, y), `${landmark} at ${x},${y}`).toBe(false);
+        }
+        if (
+          Array.from({ length: CHUNK_CELLS * CHUNK_CELLS }, (_, cell) => at(cell)).some(([x, y]) =>
+            isRouteAt(world, x, y),
+          )
+        ) {
+          routed += 1;
+        }
+      }
+    }
+    // A sweep that crossed no route would pass without saying anything
+    expect(routed).toBeGreaterThan(0);
+  });
+
+  it('keeps scenery off the edge of a cliff', () => {
+    const world = new World('overworld');
+    let faces = 0;
+
+    for (let cx = -12; cx < 12; cx++) {
+      for (let cy = -12; cy < 12; cy++) {
+        const chunk = world.getChunk(cx, cy);
+
+        faces += chunk.getFaceCells().size;
+        for (const cell of chunk.getDecorationCells().keys()) {
+          const x = worldCell(cx, cell % CHUNK_CELLS);
+          const y = worldCell(cy, Math.floor(cell / CHUNK_CELLS));
+
+          expect(isFace(world, x, y), `${x},${y}`).toBe(false);
+        }
+      }
+    }
+    expect(faces).toBeGreaterThan(0);
+  });
+
+  it('keeps scenery off the approach to a way up a cliff', () => {
+    const world = new World('overworld');
+    let placed = 0;
+
+    for (let cx = -12; cx < 12; cx++) {
+      for (let cy = -12; cy < 12; cy++) {
+        for (const cell of world.getChunk(cx, cy).getDecorationCells().keys()) {
+          const x = worldCell(cx, cell % CHUNK_CELLS);
+          const y = worldCell(cy, Math.floor(cell / CHUNK_CELLS));
+
+          placed += 1;
+          // A route is walked like a street, so nothing grows on one
+          expect(isRouteAt(world, x, y), `${x},${y}`).toBe(false);
+          // A tree beside a seam would stand in the way up it
+          for (const [dx, dy] of SURROUNDING) {
+            const seam = isFace(world, x + dx, y + dy) && isSeam(world, x + dx, y + dy);
+
+            expect(seam, `${x},${y} beside ${x + dx},${y + dy}`).toBe(false);
+          }
+        }
+      }
+    }
+    expect(placed).toBeGreaterThan(0);
+  });
+
+  it('reads the water out of the world rather than growing it in the chunk', () => {
     const world = new World('overworld');
 
-    // The open seas have no spots at all: their variation is the
-    // rocks and the shallows
-    const sea = findChunk(world, (candidate) => isOpenSea(candidate.biome));
+    // A chunk that is sea in every cell is water throughout, but for its
+    // islands. Asked of every cell rather than of the chunk's own biome,
+    // which is only the country in its middle: a chunk on a coast is
+    // named for the sea and still holds a beach
+    const sea = findChunk(world, (candidate) =>
+      [...candidate.getCellBiomes()].every((biome) => isOpenSea(biome)),
+    );
 
     if (sea != null) {
-      expect(sea.getSpotCells().size).toBe(0);
+      for (const cell of sea.getSpotCells()) {
+        expect(
+          isIslandAt(
+            world,
+            worldCell(sea.x, cell % CHUNK_CELLS),
+            worldCell(sea.y, Math.floor(cell / CHUNK_CELLS)),
+          ),
+        ).toBe(true);
+      }
     }
 
-    for (const chunk of [
-      findChunk(world, (candidate) => !isWaterBiome(candidate.biome)),
-      findChunk(world, (candidate) => isWaterBiome(candidate.biome) && !isOpenSea(candidate.biome)),
-    ]) {
-      expect(chunk).not.toBeNull();
-      if (chunk == null) {
-        continue;
+    let spotted = 0;
+    let crossed = 0;
+
+    for (let x = -20; x < 20; x++) {
+      for (let y = -20; y < 20; y++) {
+        const chunk = world.getChunk(x, y);
+
+        if (isWaterBiome(chunk.biome)) {
+          continue;
+        }
+
+        const spots = chunk.getSpotCells();
+
+        if (spots.size > 0) {
+          spotted += 1;
+        }
+        // A lake that reaches the last column runs on into the first
+        // column of the chunk beside it: neither of them decided where
+        // it began, so neither can end it at the boundary
+        const east = world.getChunk(x + 1, y);
+
+        for (let row = 0; row < CHUNK_CELLS; row++) {
+          if (
+            spots.has(row * CHUNK_CELLS + CHUNK_CELLS - 1) &&
+            east.getCellRole(row * CHUNK_CELLS) === 'water'
+          ) {
+            crossed += 1;
+          }
+        }
       }
+    }
+    // Water on land at all, and water that carries over a boundary:
+    // the old chunk-grown pools were confined to the placement area
+    // and could not touch a rim, let alone cross one
+    expect(spotted).toBeGreaterThan(0);
+    expect(crossed).toBeGreaterThan(0);
 
-      const spots = chunk.getSpotCells();
+    // Fixed forever: a fresh resolution of the chunk agrees
+    const land = findChunk(world, (candidate) => !isWaterBiome(candidate.biome));
 
-      // One grown patch at least, three at most, all confined inside
-      // the placement area's own ring
-      expect(spots.size).toBeGreaterThanOrEqual(9);
-      expect(spots.size).toBeLessThanOrEqual(48);
-      for (const cell of spots) {
-        expect(cell % 16).toBeGreaterThanOrEqual(2);
-        expect(cell % 16).toBeLessThanOrEqual(13);
-        expect(Math.floor(cell / 16)).toBeGreaterThanOrEqual(2);
-        expect(Math.floor(cell / 16)).toBeLessThanOrEqual(13);
-      }
-
-      // Grown, not scattered: every cell continues its patch
-      for (const cell of spots) {
-        const joined = [cell - 1, cell + 1, cell - 16, cell + 16].some((next) => spots.has(next));
-
-        expect(joined).toBe(true);
-      }
-
-      // Fixed forever: a fresh resolution of the chunk agrees
-      expect([...world.getChunk(chunk.x, chunk.y).getSpotCells()]).toEqual([...spots]);
+    expect(land).not.toBeNull();
+    if (land != null) {
+      expect([...world.getChunk(land.x, land.y).getSpotCells()]).toEqual([...land.getSpotCells()]);
     }
   });
 
@@ -4606,44 +5171,23 @@ describe('terrain spots', () => {
     expect(checked).toBeGreaterThan(0);
   });
 
-  it('never closes an outcrop round a cell nothing can walk to', () => {
+  it('walls nothing off above ground', () => {
     const world = new World('overworld');
+    const cave = world.at(Depth.Cave);
+    let underground = 0;
 
-    for (let y = -12; y < 12; y++) {
-      for (let x = -12; x < 12; x++) {
-        const chunk = world.getChunk(x, y);
-        const rocks = chunk.getRockCells();
-        const open = [...Array(CELL_COUNT).keys()].filter((cell) => !rocks.has(cell));
-
-        // The walk in from the rim, which is outside every blob's
-        // reach and so is always ground
-        const reached = new Set([0]);
-        const queue = [0];
-
-        for (let at = 0; at < queue.length; at++) {
-          const cell = queue[at];
-
-          // Straight steps only, the way the overworld is walked: a
-          // diagonal slip past a corner is not a way out
-          for (const [dx, dy] of CARDINALS) {
-            const nx = (cell % 16) + dx;
-            const ny = Math.floor(cell / 16) + dy;
-            const next = ny * 16 + nx;
-
-            if (nx < 0 || ny < 0 || nx > 15 || ny > 15) {
-              continue;
-            }
-            if (!rocks.has(next) && !reached.has(next)) {
-              reached.add(next);
-              queue.push(next);
-            }
-          }
+    for (let y = -120; y <= 120; y += 3) {
+      for (let x = -120; x <= 120; x += 3) {
+        // The stone field still runs where it ran: what changed is
+        // that a cell it comes through is walked over rather than
+        // walled off, so only a cave has rock in the way
+        expect(roleAt(world, x, y), `${x},${y}`).not.toBe('wall');
+        if (roleAt(cave, x, y) === 'wall') {
+          underground += 1;
         }
-        // Everything not rock is walked to: a yard behind a wall is
-        // somewhere a spawn could land and nobody could reach
-        expect(reached.size).toBe(open.length);
       }
     }
+    expect(underground).toBeGreaterThan(0);
   });
 });
 
@@ -4711,6 +5255,45 @@ describe('what the ground grows', () => {
 });
 
 describe('the open seas', () => {
+  it('scatters islands, four cells wide at the narrowest', () => {
+    const world = new World('overworld');
+    let sea = 0;
+    let land = 0;
+
+    for (let y = -120; y <= 120; y += 1) {
+      for (let x = -120; x <= 120; x += 1) {
+        if (!isOpenSea(world.getCellBiome(x, y))) {
+          continue;
+        }
+        sea += 1;
+        if (roleAt(world, x, y) !== 'ground') {
+          continue;
+        }
+        land += 1;
+        if (!isIslandAt(world, x, y)) {
+          // The ground closing a gap too narrow to be water, which only
+          // joins two islands into one
+          continue;
+        }
+        // Laid in 4x4 blocks, so no island is a speck of sand
+        const within = [0, 1, 2, 3].map((at) => -at);
+        const broad = within.some((oy) =>
+          within.some((ox) =>
+            [0, 1, 2, 3].every((dy) =>
+              [0, 1, 2, 3].every((dx) => isIslandAt(world, x + ox + dx, y + oy + dy)),
+            ),
+          ),
+        );
+
+        expect(broad, `${x},${y}`).toBe(true);
+      }
+    }
+    // Somewhere to stand out there, and the sea is still the sea
+    expect(sea).toBeGreaterThan(0);
+    expect(land).toBeGreaterThan(0);
+    expect(land / sea).toBeLessThan(0.1);
+  });
+
   it('rolls no berry patch and no wandering npc afloat', () => {
     const world = new World('overworld');
     let seen = 0;
@@ -4776,64 +5359,13 @@ describe('the open seas', () => {
     expect(duels).toBeGreaterThan(0);
   });
 
-  it('keeps everything out of the rocks, and mixes shallows in around them', () => {
+  it('mixes shallows into the sea, and keeps them out of a field', () => {
     const world = new World('overworld');
-    const chunk = findChunk(world, (candidate) => isOpenSea(candidate.biome));
-
-    expect(chunk).not.toBeNull();
-    if (chunk == null) {
-      return;
-    }
-
-    const rocks = chunk.getRockCells();
-    const shallows = chunk.getShallowCells();
-
-    // At least one grown outcrop, confined inside the placement
-    // area's own ring, and nothing stands in one
-    expect(rocks.size).toBeGreaterThanOrEqual(9);
-    expect(rocks.size).toBeLessThanOrEqual(48);
-    for (const cell of rocks) {
-      expect(cell % 16).toBeGreaterThanOrEqual(2);
-      expect(cell % 16).toBeLessThanOrEqual(13);
-      expect(Math.floor(cell / 16)).toBeGreaterThanOrEqual(2);
-      expect(Math.floor(cell / 16)).toBeLessThanOrEqual(13);
-    }
-    expect([...world.getChunk(chunk.x, chunk.y).getRockCells()]).toEqual([...rocks]);
-    for (const cell of chunk.getDecorationCells().keys()) {
-      expect(rocks.has(cell)).toBe(false);
-    }
-    for (const cell of chunk.getLandmarkCells().keys()) {
-      expect(rocks.has(cell)).toBe(false);
-    }
-    const snapshot = new ChunkSnapshot(chunk, 0);
-
-    snapshot.getSpawns(10);
-    expect(snapshot.getSpawnCells().size).toBeGreaterThan(0);
-    for (const [cell] of snapshot.getSpawnCells()) {
-      expect(rocks.has(cell)).toBe(false);
-    }
-
-    // Shallow patches exist, keep clear of the rock, and hold still
-    expect(shallows.size).toBeGreaterThan(0);
-    for (const cell of shallows) {
-      expect(rocks.has(cell)).toBe(false);
-    }
-    expect([...world.getChunk(chunk.x, chunk.y).getShallowCells()]).toEqual([...shallows]);
-
-    // A land chunk has no shallows, and 0-2 outcrops of its own
-    const land = findChunk(world, (candidate) => !isWaterBiome(candidate.biome));
-
-    if (land != null) {
-      expect(land.getShallowCells().size).toBe(0);
-      expect(land.getRockCells().size).toBeLessThanOrEqual(32);
-    }
-  });
-
-  it('grows rocks on land too, kept clear of the pools', () => {
-    const world = new World('overworld');
+    // A sea chunk with a shoal under it: the stone field runs where it
+    // runs, so plenty of open water has none at all
     const chunk = findChunk(
       world,
-      (candidate) => !isWaterBiome(candidate.biome) && candidate.getRockCells().size > 0,
+      (candidate) => isOpenSea(candidate.biome) && candidate.getShallowCells().size > 0,
     );
 
     expect(chunk).not.toBeNull();
@@ -4841,43 +5373,25 @@ describe('the open seas', () => {
       return;
     }
 
-    const rocks = chunk.getRockCells();
-    const pools = chunk.getSpotCells();
+    const shallows = chunk.getShallowCells();
 
-    for (const cell of rocks) {
-      expect(pools.has(cell)).toBe(false);
-    }
-    // Fixtures keep their ring from the outcrop
-    for (const cell of [...chunk.getLandmarkCells().keys(), ...chunk.getDecorationCells().keys()]) {
-      expect(rocks.has(cell)).toBe(false);
-      for (const neighbor of neighborCells(cell)) {
-        expect(rocks.has(neighbor)).toBe(false);
-      }
+    // Nothing above ground is walled off, and the answer is the same
+    // every time the chunk is resolved
+    expect(chunk.getRockCells().size).toBe(0);
+    expect(shallows.size).toBeGreaterThan(0);
+    expect([...world.getChunk(chunk.x, chunk.y).getShallowCells()]).toEqual([...shallows]);
+
+    // Shelf is the seas' and the wetlands' own look: a field with a
+    // pond in it draws the pond with its own shoreline instead
+    const land = findChunk(world, (candidate) => !isWaterBiome(candidate.biome));
+
+    if (land != null) {
+      expect(land.getShallowCells().size).toBe(0);
     }
   });
 });
 
 describe('placement invariants', () => {
-  it('keeps every fixture a ring away from the rocks', () => {
-    const world = new World('overworld');
-    const chunk = findChunk(world, (candidate) => isOpenSea(candidate.biome));
-
-    expect(chunk).not.toBeNull();
-    if (chunk == null) {
-      return;
-    }
-
-    const rocks = chunk.getRockCells();
-    const standing = [...chunk.getLandmarkCells().keys(), ...chunk.getDecorationCells().keys()];
-
-    for (const cell of standing) {
-      expect(rocks.has(cell)).toBe(false);
-      for (const neighbor of neighborCells(cell)) {
-        expect(rocks.has(neighbor)).toBe(false);
-      }
-    }
-  });
-
   it('stands a wetland happening on a bank, where a grotto can be', () => {
     const world = new World('overworld');
     let phenomena = 0;
@@ -4893,6 +5407,12 @@ describe('placement invariants', () => {
 
         const banks = chunk.getSpotCells();
 
+        // Only where the marsh has a bank to stand on: the banks are
+        // the world's own dry ground now, and a chunk the water covers
+        // outright has none
+        if (banks.size === 0) {
+          continue;
+        }
         for (const cell of new ChunkSnapshot(chunk, 0).getPhenomena().keys()) {
           phenomena += 1;
           banked += banks.has(cell) ? 1 : 0;
@@ -4929,48 +5449,53 @@ describe('portal balancing', () => {
     }
   });
 
-  it('stations the keeper beside the portal, some windows', () => {
+  it('rolls a town street from the town pool', () => {
     const world = new World('overworld');
-    let stationed = 0;
-    let quiet = 0;
+    const hours = [TimeOfDay.Morning, TimeOfDay.Day, TimeOfDay.Evening, TimeOfDay.Night];
+    // A street holds something from the town pool at some hour, whichever
+    // hour the window happens to land in
+    const town = new Set(
+      hours.flatMap((time) => {
+        const pool = getTownPool(time);
 
-    for (let x = 0; x < 25 && stationed === 0; x++) {
-      for (let y = 0; y < 8; y++) {
-        const chunk = world.getChunk(x, y);
-        const portal = getPortalCell(chunk);
+        return [
+          ...pool.base,
+          ...pool.uncommon,
+          ...pool.rare,
+          ...(pool.scarce ?? []),
+          ...(pool.elusive ?? []),
+        ].map((entry) => entry.species);
+      }),
+    );
+    let street = 0;
 
-        if (portal == null) {
+    for (let x = 0; x < 64 && street === 0; x++) {
+      for (let y = 0; y < 64 && street === 0; y++) {
+        if (townOverChunk(world, x, y) == null) {
           continue;
         }
 
-        for (let window = 0; window < 64; window++) {
+        const chunk = world.getChunk(x, y);
+
+        for (let window = 0; window < 16; window++) {
           const snapshot = new ChunkSnapshot(chunk, window * SNAPSHOT_INTERVAL);
-          const spawns = snapshot.getSpawns(SPAWN_COUNT + LURE_SPAWN_BONUS);
 
-          // The keeper counts against the window rather than on top
-          expect(spawns.length).toBeLessThanOrEqual(SPAWN_COUNT + LURE_SPAWN_BONUS);
-
-          const keepers = [...snapshot.getSpawnCells()].filter(
-            ([, spawn]) => spawn[0] === Species.Porygon,
+          expect(snapshot.getSpawns(SPAWN_COUNT + LURE_SPAWN_BONUS).length).toBeLessThanOrEqual(
+            SPAWN_COUNT + LURE_SPAWN_BONUS,
           );
-
-          if (keepers.length === 0) {
-            quiet++;
-            continue;
+          for (const [cell, spawn] of snapshot.getSpawnCells()) {
+            if (chunk.isTownCell(cell)) {
+              expect(town.has(spawn[0])).toBe(true);
+              street++;
+            }
           }
-          // One keeper, published first, standing in the portal's ring
-          expect(keepers.length).toBe(1);
-          expect(spawns[0][0]).toBe(Species.Porygon);
-          expect(neighborCells(portal)).toContain(keepers[0][0]);
-          stationed++;
         }
       }
     }
-    expect(stationed).toBeGreaterThan(0);
-    expect(quiet).toBeGreaterThan(0);
+    expect(street).toBeGreaterThan(0);
   });
 
-  it('keeps porygon out of every wild pool', () => {
+  it('keeps porygon to the town streets', () => {
     for (const biome of Object.keys(BIOME_NAMES).map(Number) as Biome[]) {
       for (const time of [TimeOfDay.Morning, TimeOfDay.Day, TimeOfDay.Evening, TimeOfDay.Night]) {
         const pool = getSpawnPool(biome, time);
@@ -4979,6 +5504,10 @@ describe('portal balancing', () => {
           expect(band.some((entry) => entry.species === Species.Porygon)).toBe(false);
         }
       }
+    }
+    // It stands on the streets instead, at every hour
+    for (const time of [TimeOfDay.Morning, TimeOfDay.Day, TimeOfDay.Evening, TimeOfDay.Night]) {
+      expect(getTownPool(time).base.some((entry) => entry.species === Species.Porygon)).toBe(true);
     }
   });
 });

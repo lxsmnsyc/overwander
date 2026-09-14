@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { CHUNK_CELLS } from '../../src/overworld/chunk';
-import { isFreeCell, nearestFreeCell } from '../../src/overworld/start';
+import { nearestFreeCell } from '../../src/overworld/start';
 import World from '../../src/overworld/world';
 
 const world = new World('start-test');
@@ -27,10 +27,11 @@ describe('nearestFreeCell', () => {
     const at = sceneryCell();
     const open = nearestFreeCell(world, at.chunkX, at.chunkY, at.cellX, at.cellY);
 
-    expect(isFreeCell(world, at.chunkX, at.chunkY, at.cellX, at.cellY)).toBe(false);
-    expect(isFreeCell(world, at.chunkX, at.chunkY, open.cellX, open.cellY)).toBe(true);
-    // Scenery keeps a clear ring, so an open neighbour is always one step away
-    expect(Math.abs(open.cellX - at.cellX) + Math.abs(open.cellY - at.cellY)).toBe(1);
+    const decorations = world.getChunk(at.chunkX, at.chunkY).getDecorationCells();
+
+    expect(open).not.toEqual({ cellX: at.cellX, cellY: at.cellY });
+    expect(decorations.has(open.cellY * CHUNK_CELLS + open.cellX)).toBe(false);
+    expect(nearestFreeCell(world, at.chunkX, at.chunkY, open.cellX, open.cellY)).toEqual(open);
   });
 
   it('leaves an open position where it is', () => {

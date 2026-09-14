@@ -156,6 +156,18 @@ function GeneralPane(): JSX.Element {
         />
       </Card>
 
+      <Card title="World map">
+        <Switch
+          label="Detailed world map"
+          description="Draws water, cliffs, towns and routes on the map, and takes a moment to fill
+            in. Off, the map shows each chunk's country at once, with towns picked out."
+          checked={settings().detailedMap}
+          onChange={(on) => {
+            setSetting('detailedMap', on);
+          }}
+        />
+      </Card>
+
       <Card title="The box">
         <RadioGroup
           label="Box width"

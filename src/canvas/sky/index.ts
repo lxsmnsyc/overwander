@@ -1,6 +1,5 @@
 import Weather from '../../data/overworld/weather';
-import type QuadBatch from '../gl/quad-batch';
-import type { QuadPoint } from '../gl/quad-batch';
+import type { Painter, QuadPoint } from '../gl/quad-batch';
 import {
   CURTAINS,
   CURTAIN_TALL,
@@ -14,7 +13,7 @@ import {
 import { type SkyCamera, eachDrop, eachWorldDrop, paintFall, zoomFor } from './drops';
 import { FALL_TABLE } from './fall';
 import { FLASHES, flashAt } from './flash';
-import { LAMPLIT, type Lamp, lampMask } from './lamp';
+import { CAVERN, LAMPLIT, type Lamp, lampMask } from './lamp';
 import { SHEENS, batchSheen, paintSheen } from './sheen';
 import { SHOWERS, meteorAt, paintShower, worldMeteorAt } from './shower';
 import { BLENDS, MODES, WASHES } from './wash';
@@ -29,7 +28,7 @@ import { BLENDS, MODES, WASHES } from './wash';
  * them are lifted rather than laid on, the way they are painted
  */
 function batchLights(
-  batch: QuadBatch,
+  batch: Painter,
   width: number,
   height: number,
   weather: Weather,
@@ -105,7 +104,7 @@ function batchLights(
  * whether it wrote one
  */
 export function batchWash(
-  batch: QuadBatch,
+  batch: Painter,
   width: number,
   height: number,
   weather: Weather,
@@ -184,7 +183,7 @@ export function batchWash(
  * Answers whether it drew anything, so a caller knows not to stroke it
  */
 export function batchSky(
-  batch: QuadBatch,
+  batch: Painter,
   width: number,
   height: number,
   weather: Weather,
@@ -261,6 +260,72 @@ export function batchSky(
  * `strength` is how much of it to draw, so a sky can be faded in as a
  * chunk is walked into rather than switched on
  */
+/**
+ * The dark of a cave, laid over the board with the lamps cut out of
+ * it.
+ *
+ * Apart from `paintSky` because a cave is not weather: there is no
+ * sky down there to have a mood, nothing falls, nothing blows, and
+ * the dark does not lift with the hour. What is left of the sky's own
+ * job is the one thing that still applies, which is that a player
+ * sees as far as they are carrying light
+ */
+export function paintCavern(
+  context: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  lamps: Lamp[] = [],
+): void {
+  if (!(width > 0) || !(height > 0)) {
+    return;
+  }
+
+  const cut = lampMask(width, height, CAVERN, lamps, 1);
+
+  if (cut == null) {
+    return;
+  }
+  context.save();
+  context.globalCompositeOperation = 'source-over';
+  context.globalAlpha = 1;
+  context.drawImage(cut, 0, 0, width, height);
+  context.restore();
+}
+
+/**
+ * The cave dark, written into a batch. The batched twin of
+ * `paintCavern`, for the board that draws its world through one
+ */
+export function batchCavern(
+  batch: Painter,
+  width: number,
+  height: number,
+  lamps: Lamp[] = [],
+): boolean {
+  if (!(width > 0) || !(height > 0)) {
+    return false;
+  }
+
+  const cut = lampMask(width, height, CAVERN, lamps, 1);
+
+  if (cut == null) {
+    return false;
+  }
+  batch.invalidate(cut);
+  batch.quad(
+    cut,
+    { x: 0, y: 0, width: cut.width, height: cut.height },
+    [
+      { x: 0, y: 0 },
+      { x: width, y: 0 },
+      { x: width, y: height },
+      { x: 0, y: height },
+    ],
+    1,
+  );
+  return true;
+}
+
 export default function paintSky(
   context: CanvasRenderingContext2D,
   width: number,
@@ -337,6 +402,7 @@ export default function paintSky(
 }
 
 export type { Lamp } from './lamp';
+export { CAVERN } from './lamp';
 export { FALL_TABLE } from './fall';
 export type { SkyCamera, WorldDrop } from './drops';
 export { thinningAt, worldDropAt } from './drops';

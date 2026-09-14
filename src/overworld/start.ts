@@ -1,6 +1,8 @@
 import AleaRNG from '../core/alea';
 import type Chunk from './chunk';
 import { CELL_COUNT, CHUNK_CELLS } from './chunk';
+import { blocksWalk } from './cliff';
+import { worldCell } from './grid';
 import type World from './world';
 
 /**
@@ -58,7 +60,8 @@ export function pickFreeCell(
   chunkY: number,
   rng: AleaRNG,
 ): { cellX: number; cellY: number } {
-  const occupied = blockedCells(world.getChunk(chunkX, chunkY));
+  const chunk = world.getChunk(chunkX, chunkY);
+  const occupied = new Set([...fixtureCells(chunk), ...chunk.getFaceCells()]);
   const free: number[] = [];
 
   for (let cell = 0; cell < CELL_COUNT; cell++) {
@@ -73,8 +76,8 @@ export function pickFreeCell(
   return { cellX: cell % CHUNK_CELLS, cellY: Math.floor(cell / CHUNK_CELLS) };
 }
 
-/** The cells nobody can stand on, the same set the board walks round */
-function blockedCells(chunk: Chunk): Set<number> {
+/** The cells a walk goes round, cliffs aside */
+function fixtureCells(chunk: Chunk): Set<number> {
   return new Set([
     ...chunk.getLandmarkCells().keys(),
     ...chunk.getDecorationCells().keys(),
@@ -82,21 +85,10 @@ function blockedCells(chunk: Chunk): Set<number> {
   ]);
 }
 
-/** Whether a player may stand on this cell */
-export function isFreeCell(
-  world: World,
-  chunkX: number,
-  chunkY: number,
-  cellX: number,
-  cellY: number,
-): boolean {
-  return !blockedCells(world.getChunk(chunkX, chunkY)).has(cellY * CHUNK_CELLS + cellX);
-}
-
 /**
- * The open cell nearest this one, or the cell itself when it is open.
- * A saved position can sit under scenery once generation changes, so it
- * is moved off rather than trusted
+ * The walkable cell nearest this one, or the cell itself when it is walkable.
+ * A saved position can sit under scenery or a cliff once generation changes,
+ * so it is moved off rather than trusted
  */
 export function nearestFreeCell(
   world: World,
@@ -105,17 +97,23 @@ export function nearestFreeCell(
   cellX: number,
   cellY: number,
 ): { cellX: number; cellY: number } {
-  const occupied = blockedCells(world.getChunk(chunkX, chunkY));
+  const chunk = world.getChunk(chunkX, chunkY);
+  const fixtures = fixtureCells(chunk);
+  const faces = chunk.getFaceCells();
   let best = { cellX, cellY };
   let bestDistance = Number.POSITIVE_INFINITY;
 
   for (let cell = 0; cell < CELL_COUNT; cell++) {
-    if (occupied.has(cell)) {
-      continue;
-    }
-
     const x = cell % CHUNK_CELLS;
     const y = Math.floor(cell / CHUNK_CELLS);
+
+    // A seamed face is a road up the cliff, so standing on one is fine
+    if (
+      fixtures.has(cell) ||
+      (faces.has(cell) && blocksWalk(world, worldCell(chunk.x, x), worldCell(chunk.y, y)))
+    ) {
+      continue;
+    }
     const distance = Math.abs(x - cellX) + Math.abs(y - cellY);
 
     if (distance < bestDistance) {

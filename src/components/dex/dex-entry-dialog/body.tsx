@@ -5,6 +5,7 @@ import {
   describeLair,
   groupHabitats,
   listLevelMoves,
+  townHours,
 } from './species-facts';
 import { EGG_HATCH_STEPS } from '../../../auth/egg';
 import type { SpeciesDexEntry } from '../../../auth/pokedex';
@@ -309,7 +310,11 @@ export function DexEntryBody(
                 rather than showing an empty list */}
               <DialogSection title="Where it lives">
                 <Show
-                  when={groupHabitats(entry().species).length || describeLair(entry().species)}
+                  when={
+                    groupHabitats(entry().species).length ||
+                    townHours(entry().species).length ||
+                    describeLair(entry().species)
+                  }
                   fallback={
                     // Nowhere at all is the answer for two kinds of
                     // species, and they are not the same answer: one
@@ -353,6 +358,16 @@ export function DexEntryBody(
                         </ListRow>
                       )}
                     </For>
+                    <Show when={townHours(entry().species).length}>
+                      <ListRow class="flex-col items-start gap-0.5 sm:flex-row sm:items-center">
+                        <span class="grow text-left font-medium">Towns</span>
+                        <span class="flex flex-wrap justify-end gap-1">
+                          <For each={townHours(entry().species)}>
+                            {(hour) => <Badge>{hour}</Badge>}
+                          </For>
+                        </span>
+                      </ListRow>
+                    </Show>
                   </List>
                 </Show>
               </DialogSection>

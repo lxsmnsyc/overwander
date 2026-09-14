@@ -1,6 +1,5 @@
 import { Weathers } from '../../data/ids/status';
-import type QuadBatch from '../gl/quad-batch';
-import type { QuadPoint } from '../gl/quad-batch';
+import type { Painter, QuadPoint } from '../gl/quad-batch';
 import { fade, noise } from './moves/__paint';
 
 /**
@@ -218,7 +217,7 @@ function box(x: number, y: number, across: number, down: number): QuadPoint[] {
 
 /** One tinted stamp, centred on a point */
 function blot(
-  batch: QuadBatch,
+  batch: Painter,
   kind: 'disc' | 'glow',
   x: number,
   y: number,
@@ -244,12 +243,7 @@ function blot(
  * The same sky, written into a batch rather than painted. Answers
  * whether it wrote anything
  */
-export function batchWeather(
-  batch: QuadBatch,
-  weather: Weathers,
-  sky: Sky,
-  clock: number,
-): boolean {
+export function batchWeather(batch: Painter, weather: Weathers, sky: Sky, clock: number): boolean {
   const heavy = weather === Weathers.HeavyRain;
 
   if (weather === Weathers.Rain || heavy) {

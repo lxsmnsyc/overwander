@@ -553,6 +553,8 @@ export default function OverworldBoard(props: {
    * and each fresh watcher costs a read
    */
   const watched = new Map<string, Unwatch>();
+  /** Which layer those subscriptions are open on */
+  const watchedLayer: { depth: Depth | null } = { depth: null };
 
   createEffect(() => {
     // Nothing is watched until the player has been put somewhere:
@@ -563,7 +565,20 @@ export default function OverworldBoard(props: {
     }
 
     const wanted = overlapped();
+    const depth = atDepth();
     const keys = new Set<string>();
+
+    // A cave has the same chunk coordinates as the ground above it, so a
+    // change of layer drops every window: kept, the board drew one layer's
+    // spawns under the other layer's ids and met a different pokemon
+    if (depth !== watchedLayer.depth) {
+      for (const stop of watched.values()) {
+        stop();
+      }
+      watched.clear();
+      setWindows(new Map());
+      watchedLayer.depth = depth;
+    }
 
     for (const [x, y] of wanted) {
       keys.add(`${x},${y}`);
@@ -597,6 +612,10 @@ export default function OverworldBoard(props: {
       watched.set(
         key,
         watchSnapshotWindow(around().getChunk(x, y), zone, (record) => {
+          // A read that was already on its way when the layer changed
+          if (watchedLayer.depth !== depth) {
+            return;
+          }
           setWindows((held) => {
             const next = new Map(held);
 
@@ -715,7 +734,7 @@ export default function OverworldBoard(props: {
         (async (): Promise<string[]> => {
           // The player is in the key because a claim is theirs: signing
           // in as somebody else must not read back the last one's
-          const key = `${who}|${named}|${piece.x},${piece.y}|${piece.snapshot.timestamp}`;
+          const key = `${who}|${named}|${piece.snapshot.depth}|${piece.x},${piece.y}|${piece.snapshot.timestamp}`;
           const known = claimed.get(key) ?? ask(piece.snapshot);
 
           claimed.set(key, known);

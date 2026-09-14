@@ -289,7 +289,8 @@ export function buildBoardView(
 
     const record = records.get(`${x},${y}`);
 
-    if (record == null) {
+    // A window of the other layer at the same coordinates is not this chunk's
+    if (record == null || record.record.seed !== chunk.seed) {
       continue;
     }
 

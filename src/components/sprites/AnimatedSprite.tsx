@@ -224,6 +224,11 @@ function starsOf(drawn: Drawn, seed: number): JSX.CSSProperties[] {
  */
 const AURA_RESOLUTION = 3;
 
+/** How far an aura reaches past its ground shadow, in the shadow's radii: across, up and down */
+const AURA_ACROSS = 2;
+const AURA_UP = 3.5;
+const AURA_DOWN = 1.7;
+
 /**
  * An aura painted behind the picture — a shadow's haze, or the light
  * of one put right.
@@ -242,20 +247,43 @@ function AuraCanvas(props: {
   let canvas: HTMLCanvasElement | undefined;
   let played = 0;
 
+  /**
+   * The box the aura is painted in, in box pixels: the sprite's own
+   * bounds grown to the aura's reach, since flames and a ring spill past
+   * the ground shadow the bounds were sized for
+   */
+  const reach = createMemo(() => {
+    const drawn = props.drawn();
+
+    if (drawn == null) {
+      return null;
+    }
+    const box = drawn.bounds;
+    const feet = drawn.feet ?? [drawn.cell.width / 2, drawn.cell.height - 1];
+    const x = feet[0] + 0.5;
+    const y = feet[1] + 0.5;
+    const left = Math.min(box.x, x - drawn.shadow.x * AURA_ACROSS);
+    const top = Math.min(box.y, y - drawn.shadow.x * AURA_UP);
+    const right = Math.max(box.x + box.width, x + drawn.shadow.x * AURA_ACROSS);
+    const bottom = Math.max(box.y + box.height, y + drawn.shadow.y * AURA_DOWN);
+
+    return { x: left, y: top, width: right - left, height: bottom - top, feet: [x, y] };
+  });
+
   onCleanup(
     ticking((elapsed) => {
       played += elapsed;
 
       const drawn = props.drawn();
+      const area = reach();
       const context = canvas?.getContext('2d');
 
-      if (canvas == null || context == null || drawn == null) {
+      if (canvas == null || context == null || drawn == null || area == null) {
         return;
       }
 
-      const box = drawn.bounds;
-      const width = Math.max(1, Math.round(box.width * AURA_RESOLUTION));
-      const height = Math.max(1, Math.round(box.height * AURA_RESOLUTION));
+      const width = Math.max(1, Math.round(area.width * AURA_RESOLUTION));
+      const height = Math.max(1, Math.round(area.height * AURA_RESOLUTION));
 
       if (canvas.width !== width) {
         canvas.width = width;
@@ -264,13 +292,10 @@ function AuraCanvas(props: {
         canvas.height = height;
       }
       context.clearRect(0, 0, width, height);
-
-      const feet = drawn.feet ?? [drawn.cell.width / 2, drawn.cell.height - 1];
-
       props.paint(
         context,
-        (-box.x + feet[0] + 0.5) * AURA_RESOLUTION,
-        (-box.y + feet[1] + 0.5) * AURA_RESOLUTION,
+        (area.feet[0] - area.x) * AURA_RESOLUTION,
+        (area.feet[1] - area.y) * AURA_RESOLUTION,
         drawn.shadow.x * AURA_RESOLUTION,
         drawn.shadow.y * AURA_RESOLUTION,
         played,
@@ -278,12 +303,26 @@ function AuraCanvas(props: {
     }),
   );
 
+  /** Where the grown box sits, as shares of the element it hangs out of */
+  const placed = (): JSX.CSSProperties => {
+    const drawn = props.drawn();
+    const area = reach();
+
+    if (drawn == null || area == null) {
+      return {};
+    }
+    const box = drawn.bounds;
+
+    return {
+      left: share(area.x - box.x, box.width),
+      top: share(area.y - box.y, box.height),
+      width: share(area.width, box.width),
+      height: share(area.height, box.height),
+    };
+  };
+
   return (
-    <canvas
-      ref={canvas}
-      aria-hidden="true"
-      class="pointer-events-none absolute inset-0 h-full w-full"
-    />
+    <canvas ref={canvas} aria-hidden="true" class="pointer-events-none absolute" style={placed()} />
   );
 }
 

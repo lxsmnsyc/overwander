@@ -27,6 +27,7 @@ import {
   projectGround,
   radiusOf,
   reachOf,
+  setBoardFlat,
   setBoardScreen,
   setBoardStand,
   shortestTurn,
@@ -50,6 +51,7 @@ import {
   paintSkybox,
 } from '../../../canvas/daylight';
 import Weather from '../../../data/overworld/weather';
+import settings from '../../app/settings';
 import pixelRatio from '../../../canvas/ratio';
 import paintSky, {
   CAVERN,
@@ -1864,7 +1866,8 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
 
       // Which of the two boards this screen is drawn with, before a
       // single point is put through it: a screen taller than it is
-      // wide is drawn flat, anything else laid back
+      // wide is drawn flat, and so is any screen when the player asked
+      setBoardFlat(settings().flatBoard);
       setBoardScreen(screen.width, screen.height);
       // Nothing stands above a flat board, so there is nothing for the
       // camera to climb there either
@@ -2298,14 +2301,21 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
        * ruling a lattice, so two cells sharing an edge lay their lines
        * over each other. That doubling is what the grid looks like:
        * ruled once each, the inside of the board would go pale and
-       * only its outer edge would keep its weight
+       * only its outer edge would keep its weight. The line is only
+       * ruled while the player has grid lines on
        */
+      const gridLines = settings().gridLines;
       const rule = (corners: ProjectedPoint[], glow: number): void => {
         if (batch != null) {
           if (glow > 0) {
             batch.solid(COLORS.highlight, corners, glow);
           }
-          batch.outline(COLORS.grid, corners, 1);
+          if (gridLines) {
+            batch.outline(COLORS.grid, corners, 1);
+          }
+          return;
+        }
+        if (!gridLines && glow <= 0) {
           return;
         }
         traceQuad(corners);
@@ -2318,8 +2328,10 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
           context.fill();
           context.globalAlpha = prior;
         }
-        context.strokeStyle = COLORS.grid;
-        context.stroke();
+        if (gridLines) {
+          context.strokeStyle = COLORS.grid;
+          context.stroke();
+        }
       };
 
       /**
@@ -2521,6 +2533,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       /** The square the cursor is over, kept to ring once the grid is laid */
       let hoveredOutline: ProjectedPoint[] | null = null;
       let hoveredFloor = 0;
+      const stepHighlight = import.meta.env.DEV && settings().stepHighlight;
 
       for (const { square, outline, lift } of drawn) {
         const hot = beneath(square);
@@ -2530,7 +2543,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         marks?.depth(floorOf(square, lift));
         rule(outline, hot ? HOVER_GLOW : 0);
         // Dev only: a cliff tile in red and a seamed one in green, to check the step rules by eye
-        if (import.meta.env.DEV) {
+        if (stepHighlight) {
           const step = props.ground.step?.(square.x, square.y);
 
           if (step != null) {

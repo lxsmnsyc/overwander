@@ -1,4 +1,4 @@
-import { For, type JSX } from 'solid-js';
+import { For, type JSX, Show } from 'solid-js';
 import { useColorScheme, usePreferredColorScheme } from 'terracotta';
 import settings, {
   type BoxColumns,
@@ -157,6 +157,39 @@ function GeneralPane(): JSX.Element {
           }}
         />
       </Card>
+
+      <Card title="Overworld">
+        <Switch
+          label="Grid lines"
+          description="Rules a line round every cell of the board."
+          checked={settings().gridLines}
+          onChange={(on) => {
+            setSetting('gridLines', on);
+          }}
+        />
+        <Switch
+          label="Flat board"
+          description="Draws the board flat from straight above on a wide screen too, the way an
+            upright screen always shows it."
+          checked={settings().flatBoard}
+          onChange={(on) => {
+            setSetting('flatBoard', on);
+          }}
+        />
+      </Card>
+
+      <Show when={import.meta.env.DEV}>
+        <Card title="Development">
+          <Switch
+            label="Highlight cliffs and seams"
+            description="Tints cliff tiles red and seamed tiles green on the board."
+            checked={settings().stepHighlight}
+            onChange={(on) => {
+              setSetting('stepHighlight', on);
+            }}
+          />
+        </Card>
+      </Show>
 
       <Card title="World map">
         <Switch

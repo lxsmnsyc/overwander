@@ -350,6 +350,9 @@ const LAID_BACK = createView('3d', PITCH, FOCAL);
  */
 const FLAT = createView('2d', FLAT_PITCH, null);
 
+/** Whether the player has asked for the flat board on every screen */
+let forcedFlat = false;
+
 /**
  * Which of the two a screen this shape is drawn with: taller than it
  * is wide is flat, anything else is laid back.
@@ -360,11 +363,17 @@ const FLAT = createView('2d', FLAT_PITCH, null);
  * square one can — and the cells it saves are the far ones, which the
  * tilt had drawn half as deep as the near ones.
  *
- * A pure reading, so the browser test can ask it of the box it just
+ * A reading of the box alone, bar the player's own choice to have
+ * every screen flat, so the browser test can ask it of the box it just
  * measured rather than of whatever the last caller set
  */
 export function viewFor(width: number, height: number): BoardView {
-  return height > width ? FLAT : LAID_BACK;
+  return forcedFlat || height > width ? FLAT : LAID_BACK;
+}
+
+/** Say whether a wide screen is drawn flat too. The painter passes the setting on */
+export function setBoardFlat(flat: boolean): void {
+  forcedFlat = flat;
 }
 
 let looking = LAID_BACK;

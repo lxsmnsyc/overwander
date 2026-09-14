@@ -10,7 +10,7 @@ description: The overworld board is drawn either laid back under the camera or f
 - **3d**, the board laid back under the camera at sixty degrees: a trapezoid, the far rows smaller than the near ones, sprites standing up out of it.
 - **2d**, the board flat from straight above: square cells, no perspective at all, nothing standing above the ground.
 
-Which one is drawn is decided by the shape of the screen, in `viewFor(width, height)`: taller than it is wide is flat, anything else is laid back. Nothing else may decide it.
+Which one is drawn is decided by the shape of the screen, in `viewFor(width, height)`: taller than it is wide is flat, anything else is laid back. The one exception is the player's Flat board setting, which the painter hands to `setBoardFlat` so every screen is drawn flat. Nothing else may decide it.
 
 ## Ask the board, do not assume
 

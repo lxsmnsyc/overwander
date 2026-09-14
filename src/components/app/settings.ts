@@ -64,6 +64,12 @@ export interface GameSettings {
    * each chunk's country at once, with the towns picked out
    */
   detailedMap: boolean;
+  /** Whether every cell of the board is ruled round */
+  gridLines: boolean;
+  /** Whether a wide screen draws the board flat too, as an upright one always does */
+  flatBoard: boolean;
+  /** Dev only: whether cliff tiles are tinted red and seamed ones green */
+  stepHighlight: boolean;
   /** Both 0 to 1 */
   sound: number;
   music: number;
@@ -84,6 +90,9 @@ function defaults(): GameSettings {
     lastBall: Balls.PokeBall,
     keys: { ...DEFAULT_BINDS },
     detailedMap: false,
+    gridLines: false,
+    flatBoard: false,
+    stepHighlight: true,
     sound: 0.7,
     music: 0.5,
   };
@@ -163,6 +172,9 @@ function stored(): GameSettings {
       lastBall: ballOf(said.lastBall, base.lastBall),
       keys: bindsOf(said.keys),
       detailedMap: said.detailedMap === true,
+      gridLines: said.gridLines === true,
+      flatBoard: said.flatBoard === true,
+      stepHighlight: said.stepHighlight !== false,
       sound: volume(said.sound, base.sound),
       music: volume(said.music, base.music),
     };

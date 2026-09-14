@@ -47,6 +47,21 @@ const ROOM = 1024;
 /** How near the viewer the glass is: in front of everything drawn */
 const GLASS = -0.99;
 
+/** Ring order in, two triangles out: the first corner is shared by both, so each starts there */
+const RING = [0, 1, 2, 0, 2, 3] as const;
+
+/**
+ * Corners reused by every line and triangle. A quad is copied into the
+ * buffer the moment it is written, so nothing holds on to these
+ */
+const EDGE: QuadPoint[] = [
+  { x: 0, y: 0 },
+  { x: 0, y: 0 },
+  { x: 0, y: 0 },
+  { x: 0, y: 0 },
+];
+const TRIANGLE: QuadPoint[] = [EDGE[0], EDGE[0], EDGE[0], EDGE[0]];
+
 const VERTEX = `
 uniform vec2 viewport;
 attribute vec3 spot;
@@ -352,17 +367,15 @@ export default class SceneMarks {
     const nx = (-down / span) * width * 0.5;
     const ny = (across / span) * width * 0.5;
 
-    this.solid(
-      colour,
-      [
-        { x: from.x + nx, y: from.y + ny },
-        { x: to.x + nx, y: to.y + ny },
-        { x: to.x - nx, y: to.y - ny },
-        { x: from.x - nx, y: from.y - ny },
-      ],
-      alpha,
-      blend,
-    );
+    EDGE[0].x = from.x + nx;
+    EDGE[0].y = from.y + ny;
+    EDGE[1].x = to.x + nx;
+    EDGE[1].y = to.y + ny;
+    EDGE[2].x = to.x - nx;
+    EDGE[2].y = to.y - ny;
+    EDGE[3].x = from.x - nx;
+    EDGE[3].y = from.y - ny;
+    this.solid(colour, EDGE, alpha, blend);
   }
 
   outline(colour: string, corners: QuadPoint[], width: number, alpha = 1): void {
@@ -372,7 +385,11 @@ export default class SceneMarks {
   }
 
   triangle(colour: string, corners: QuadPoint[], alpha = 1, blend: QuadBlend = 'over'): void {
-    this.solid(colour, [corners[0], corners[1], corners[2], corners[2]], alpha, blend);
+    TRIANGLE[0] = corners[0];
+    TRIANGLE[1] = corners[1];
+    TRIANGLE[2] = corners[2];
+    TRIANGLE[3] = corners[2];
+    this.solid(colour, TRIANGLE, alpha, blend);
   }
 
   /** Hand over whatever has been written, in both layers. */
@@ -530,17 +547,12 @@ export default class SceneMarks {
     } else {
       layer.runs.push({ sheet, sampling, blend, start: layer.filled, length: 6 });
     }
-    // Ring order in, two triangles out: the far corner is shared by
-    // both, so it is written first in each
-    const order = [0, 1, 2, 0, 2, 3];
-    const us = [left, right, right, left];
-    const vs = [top, top, bottom, bottom];
     // Premultiplied throughout, so what is left of a carried board is
     // taken out of the colour as well as the alpha
     const fade = this.carryAlpha;
     const zoom = this.carryScale;
 
-    for (const corner of order) {
+    for (const corner of RING) {
       const at = layer.filled * STRIDE;
 
       layer.vertices[at] = corners[corner].x * zoom + this.carryX;
@@ -548,8 +560,9 @@ export default class SceneMarks {
       // The first two corners are the top of the box and the last two
       // its foot, which is the order a quad's ring comes in
       layer.vertices[at + 2] = corner <= 1 ? this.high : this.near;
-      layer.vertices[at + 3] = us[corner];
-      layer.vertices[at + 4] = vs[corner];
+      // A ring runs top left, top right, bottom right, bottom left
+      layer.vertices[at + 3] = corner === 0 || corner === 3 ? left : right;
+      layer.vertices[at + 4] = corner <= 1 ? top : bottom;
       layer.vertices[at + 5] = red * fade;
       layer.vertices[at + 6] = green * fade;
       layer.vertices[at + 7] = blue * fade;

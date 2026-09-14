@@ -1,4 +1,4 @@
-import { ORTHOGONAL } from './grid';
+import { ORTHOGONAL, SURROUNDING } from './grid';
 import { roleAt } from './ground';
 import { isRouteAt } from './route';
 import { levelAt } from './terrace';
@@ -19,14 +19,14 @@ import type World from './world';
  */
 
 /**
- * Whether the cell stands higher than the ground beside it, which is
- * where the face of the cliff is drawn and so what a player cannot
- * walk on to
+ * Whether the cell stands higher than any ground around it, diagonals
+ * included. The cliff art takes this whole tile, an inside corner as
+ * much as a side, so nobody walks on it and nothing is placed on it
  */
 export function isFace(world: World, x: number, y: number): boolean {
   const level = levelAt(world, x, y);
 
-  return ORTHOGONAL.some(([dx, dy]) => levelAt(world, x + dx, y + dy) < level);
+  return SURROUNDING.some(([dx, dy]) => levelAt(world, x + dx, y + dy) < level);
 }
 
 /**

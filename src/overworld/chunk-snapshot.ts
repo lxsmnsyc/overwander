@@ -454,11 +454,12 @@ export default class ChunkSnapshot {
     if (this.spawns == null) {
       const pool = this.getPool();
       const spawns: Spawn[] = [];
-      // Nothing spawns inside solid rock
+      // Nothing spawns inside solid rock or on a cliff's edge
       const occupied = new Set([
         ...this.chunk.getDecorationCells().keys(),
         ...this.chunk.getLandmarkCells().keys(),
         ...this.chunk.getRockCells(),
+        ...this.chunk.getFaceCells(),
         // Whatever is going on this hour holds its ground too. The
         // hour is the slower clock, so it takes its cells first and
         // the pokemon fit around it; sharing one would put a spawn on
@@ -1594,11 +1595,12 @@ export default class ChunkSnapshot {
       const count = MIN_PHENOMENA + Math.floor(rng.random() * (MAX_PHENOMENA - MIN_PHENOMENA + 1));
       // A phenomenon may stand in water where a landmark may not: the
       // water rippling is one of the four. What it may not do is stand
-      // on somebody's stall, in a rock, or inside a tree
+      // on somebody's stall, in a rock, inside a tree or on a cliff
       const occupied = new Set([
         ...this.chunk.getDecorationCells().keys(),
         ...this.chunk.getLandmarkCells().keys(),
         ...this.chunk.getRockCells(),
+        ...this.chunk.getFaceCells(),
       ]);
       const spots = this.chunk.getSpotCells();
       const flooded = isWaterBiome(this.chunk.biome);

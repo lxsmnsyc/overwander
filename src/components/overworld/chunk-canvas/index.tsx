@@ -1,11 +1,11 @@
 import { type JSX, createEffect, createMemo, createSignal, onCleanup, onMount } from 'solid-js';
+import { SQUARES } from '../../../overworld/grid';
 import LRUMap from '../../../core/lru-map';
 import {
   BOARD_CELLS,
   BOARD_CENTER,
   BOARD_SPAN,
   type BoardCell,
-  CELL_LIFT,
   type ProjectedPoint,
   TERRACE_LIFT,
   TURN_DEAD_ZONE,
@@ -20,6 +20,7 @@ import {
   depthOrder,
   facingFrom,
   fitPicture,
+  isBoardCell,
   projectAir,
   projectBoardCell,
   projectBoardCellQuad,
@@ -164,6 +165,29 @@ const SPRITE_LIFT = 0.3;
 
 /** The levels a press is read at, highest first */
 const DOWNWARD: number[] = Array.from({ length: TERRACE_TOP + 1 }, (_step, at) => TERRACE_TOP - at);
+
+/** A cell and the eight around it, for a reading that may have landed one cell off */
+const AROUND: [number, number][] = [-1, 0, 1].flatMap((dy) =>
+  [-1, 0, 1].map((dx): [number, number] => [dx, dy]),
+);
+
+/** Whether a point falls inside a quad, its corners given in order round it */
+function inQuad(point: { x: number; y: number }, corners: { x: number; y: number }[]): boolean {
+  let inside = false;
+
+  for (let at = 0, before = corners.length - 1; at < corners.length; before = at, at += 1) {
+    const one = corners[at];
+    const other = corners[before];
+
+    if (
+      one.y > point.y !== other.y > point.y &&
+      point.x < ((other.x - one.x) * (point.y - one.y)) / (other.y - one.y) + one.x
+    ) {
+      inside = !inside;
+    }
+  }
+  return inside;
+}
 
 export { type SpawnCoat, isTurningPress, slideGain };
 
@@ -1146,6 +1170,29 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
     return { x: cell.x + dx, y: cell.y + dy };
   };
 
+  /**
+   * How high each corner of a laid-back cell is drawn: far left, far
+   * right, near right, near left, each sunk to the lowest ground meeting
+   * there, which is how a step becomes a slope
+   */
+  const cornerLifts = (cell: BoardCell): number[] => {
+    const sunk = (cx: number, cy: number): number => {
+      let low = Number.POSITIVE_INFINITY;
+
+      for (const [ox, oy] of SQUARES) {
+        low = Math.min(low, props.ground.level(cx + ox, cy + oy));
+      }
+      return low * TERRACE_LIFT;
+    };
+
+    return [
+      sunk(cell.x, cell.y),
+      sunk(cell.x + 1, cell.y),
+      sunk(cell.x + 1, cell.y + 1),
+      sunk(cell.x, cell.y + 1),
+    ];
+  };
+
   /** And where the middle of one is, which is where things stand */
   const groundPoint = (index: number): ProjectedPoint => {
     const cell = boardCellOf(index);
@@ -1280,17 +1327,35 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
     if (boardView().mode === '2d') {
       return boardCellAtFraction(at.x, at.y, yaw(), camera());
     }
-    // Read from the top level down: a press lands on the highest cell
-    // whose own top the point falls on, which is what a player sees.
-    // Anything lower is behind the step holding that one up
-    for (const level of DOWNWARD) {
-      const cell = boardCellAtFraction(at.x, at.y, yaw(), camera(), level * TERRACE_LIFT);
+    // Read at every level, and kept only where the point falls inside a
+    // cell as it is drawn, corners sunk down any slope. A slope lies below
+    // its own level, so a reading at that level alone names the tile
+    // behind it. Of the cells the point is inside, the nearest is on top
+    const candidates: BoardCell[] = [];
 
-      if (cell != null && props.ground.level(cell.x, cell.y) === level) {
-        return cell;
+    for (const level of DOWNWARD) {
+      const hit = boardCellAtFraction(at.x, at.y, yaw(), camera(), level * TERRACE_LIFT);
+
+      if (hit != null) {
+        candidates.push(...AROUND.map(([dx, dy]) => ({ x: hit.x + dx, y: hit.y + dy })));
       }
     }
-    return boardCellAtFraction(at.x, at.y, yaw(), camera());
+
+    let found: BoardCell | null = null;
+    let nearest = Number.NEGATIVE_INFINITY;
+
+    for (const cell of candidates) {
+      const corners = cornerLifts(cell).map(
+        (lift, corner) => projectBoardCellQuad(shifted(cell), yaw(), lift)[corner],
+      );
+      const depth = projectBoardCell(shifted(cell), yaw()).y;
+
+      if (isBoardCell(cell) && depth > nearest && inQuad(at, corners)) {
+        nearest = depth;
+        found = cell;
+      }
+    }
+    return found ?? boardCellAtFraction(at.x, at.y, yaw(), camera());
   };
 
   /**
@@ -1837,7 +1902,9 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       const paintGround = (square: BoardCell, corners: ProjectedPoint[]): boolean => {
         const pack = terrain();
         const cell =
-          pack == null ? null : terrainCell(pack, look, square.x, square.y, undefined, turns);
+          pack == null
+            ? null
+            : terrainCell(pack, look, square.x, square.y, undefined, turns, laidBack);
 
         if (cell == null) {
           return false;
@@ -1876,13 +1943,6 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       /** The cells standing above the ground, which carry a wall */
       const lifted = new Set<number>();
 
-      /** Which sides of a cell's quad are which, and what lies beyond */
-      const SIDES: [from: number, to: number, dx: number, dy: number][] = [
-        [0, 1, 0, -1],
-        [1, 2, 1, 0],
-        [2, 3, 0, 1],
-        [3, 0, -1, 0],
-      ];
       const drawn: { square: BoardCell; outline: ProjectedPoint[]; lift: number }[] = [];
 
       for (const square of painted) {
@@ -1914,77 +1974,20 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
        * over it, over every square the picture is made of
        */
       /**
-       * The wall under a cell's edge, where the ground beside it stands
-       * lower.
-       *
-       * The side facing the camera is the only one that can be seen: a
-       * wall on the far side is behind the ground holding it up, which
-       * is the test below, and it saves drawing three walls out of four
+       * A cell's quad with each corner sunk to the lowest ground meeting
+       * there, the scene's own rule, so a cliff tile runs from the ground
+       * above it to the ground below
        */
-      const paintWalls = (square: BoardCell): void => {
-        const pack = terrain();
-        const level = ground.level(square.x, square.y);
+      const slopedQuad = (square: BoardCell): ProjectedPoint[] => {
+        const cell = shifted(square);
+        const lifts = laidBack ? cornerLifts(square) : [0, 0, 0, 0];
 
-        if (pack == null || level === 0) {
-          return;
-        }
-        const cliff = pack.of(ground.biome(square.x, square.y), 'face');
-        const under = pack.of(ground.biome(square.x, square.y), 'ground');
-
-        if (cliff == null) {
-          return;
-        }
-        // Pixel art, as the ground is: smoothed up to the size of a
-        // wall it loses the edges it was drawn with
-        context.save();
-        context.imageSmoothingEnabled = false;
-        for (const [from, to, dx, dy] of SIDES) {
-          const beside = ground.level(square.x + dx, square.y + dy);
-
-          if (beside >= level) {
-            continue;
-          }
-          // A wall faces the cell it drops to, so it can be seen only
-          // while that cell lies nearer the camera: down the picture
-          // from this one. Asked of the ground rather than of the
-          // wall's own corners, which holds at any angle
-          if (depthOf({ x: square.x + dx, y: square.y + dy }) <= depthOf(square)) {
-            continue;
-          }
-          const face = cliff.face(under?.tone ?? null);
-          // A band of wall a cell tall, so the face is drawn at the
-          // size it was cut rather than stretched down the whole drop
-          const bands = Math.round(((level - beside) * TERRACE_LIFT) / CELL_LIFT);
-
-          for (let band = 0; band < bands; band += 1) {
-            const top = projectBoardCellQuad(
-              shifted(square),
-              yaw(),
-              level * TERRACE_LIFT - band * CELL_LIFT,
-            ).map(at);
-            const foot = projectBoardCellQuad(
-              shifted(square),
-              yaw(),
-              level * TERRACE_LIFT - (band + 1) * CELL_LIFT,
-            ).map(at);
-            // Left to right as the screen reads it, so the face is
-            // drawn the way it was cut rather than mirrored on two
-            // sides of the same step
-            const [left, right] = top[from].x <= top[to].x ? [from, to] : [to, from];
-            const wall = [top[left], top[right], foot[right], foot[left]];
-            if (batch != null) {
-              batch.quad(face, { x: 0, y: 0, width: 16, height: 16 }, wall);
-              continue;
-            }
-            drawTileQuad(context, face, { x: 0, y: 0 }, 16, wall, 0);
-          }
-        }
-        context.restore();
+        return lifts.map((lift, corner) => at(projectBoardCellQuad(cell, yaw(), lift)[corner]));
       };
 
       if (show != null) {
-        // The country as a scene: the ground at its own height, a wall
-        // between one level and the next, and a depth buffer to say
+        // The country as a scene: the ground at its own height, a cliff
+        // tile between one level and the next, and a depth buffer to say
         // what is in front of what. Rebuilt on a step rather than a
         // frame, since the geometry is in cells and only the camera
         // moves between them
@@ -2008,9 +2011,8 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         // edges they are drawn with
         context.save();
         context.imageSmoothingEnabled = false;
-        for (const { square, outline } of drawn) {
-          paintGround(square, outline);
-          paintWalls(square);
+        for (const { square } of drawn) {
+          paintGround(square, slopedQuad(square));
         }
         context.restore();
       }

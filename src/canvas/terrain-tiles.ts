@@ -22,12 +22,12 @@ import { asNumber, asNumberArray, asRecord, asRecordArray, asString } from '../a
 const SHEET = '/sprites/terrain/biome-tiles.png';
 const DATA = '/sprites/terrain/biome-tiles.json';
 
-export type TerrainRole = 'ground' | 'wall' | 'water' | 'paving' | 'face';
+export type TerrainRole = 'ground' | 'wall' | 'water' | 'paving' | 'face' | 'blend' | 'deep';
 
 /** How many pixels square one tile of the pack is. */
 export const TERRAIN_TILE = 16;
 
-const ROLES: TerrainRole[] = ['ground', 'wall', 'water', 'paving', 'face'];
+const ROLES: TerrainRole[] = ['ground', 'wall', 'water', 'paving', 'face', 'blend'];
 
 /** A colour to stand a rim in, as hue, saturation and lightness. */
 export type Tone = [hue: number, saturation: number, lightness: number];
@@ -504,12 +504,23 @@ export default async function loadTerrainTiles(): Promise<TerrainTiles> {
     skirt: asRect(one.skirt),
     cornerSkirt: asRect(one.cornerSkirt),
   }));
-  const entries = asRecordArray(root.terrains).map((one) => ({
+  const entries: Entry[] = asRecordArray(root.terrains).map((one) => ({
     biome: asNumber(one.biome),
     role: ROLES.find((role) => role === one.role) ?? 'ground',
     name: asString(one.name),
     piece: asNumber(one.piece),
   }));
+
+  // The deep water is listed apart, since only the countries with a pool
+  // wide enough to darken carry one
+  for (const one of root.deep == null ? [] : asRecordArray(root.deep)) {
+    entries.push({
+      biome: asNumber(one.biome),
+      role: 'deep',
+      name: asString(one.name),
+      piece: asNumber(one.piece),
+    });
+  }
 
   return new TerrainTiles(entries, pieces, sheet, image.width);
 }

@@ -293,7 +293,7 @@ import { CATCHING_CHARM_BOOST, SHINY_CHARM_BOOST } from '../../src/overworld/ite
 import createOverworld from '../../src/overworld/setup';
 import { roleAt } from '../../src/overworld/ground';
 import { Depth } from '../../src/overworld/depth';
-import { blocksWalk } from '../../src/overworld/cliff';
+import { blocksWalk, isFace, isSeam } from '../../src/overworld/cliff';
 import { isRouteAt } from '../../src/overworld/route';
 import { ORTHOGONAL, SQUARES, SURROUNDING } from '../../src/overworld/grid';
 import { levelAt } from '../../src/overworld/terrace';
@@ -4120,6 +4120,7 @@ describe('chunk snapshot', () => {
         !chunk.getLandmarkCells().has(cell) &&
         !chunk.getDecorationCells().has(cell) &&
         !chunk.getRockCells().has(cell) &&
+        !chunk.getFaceCells().has(cell) &&
         !packed.getPhenomena().has(cell),
     );
     const dry = room.filter(
@@ -4841,7 +4842,7 @@ describe('terrain spots', () => {
         }
         const here = levelAt(world, x, y);
 
-        for (const [dx, dy] of ORTHOGONAL) {
+        for (const [dx, dy] of SURROUNDING) {
           // A pool's surface is level, so water at the lip of a step
           // has to have water below it: the board seams the two into
           // one fall, and dry ground there would leave the water
@@ -4915,6 +4916,48 @@ describe('terrain spots', () => {
     }
     expect(falls).toBeGreaterThan(0);
     expect(corners).toBeGreaterThan(0);
+  });
+
+  it('walls a walk off the inside corner of a cliff', () => {
+    const world = new World('overworld');
+    let corners = 0;
+
+    for (let y = -200; y <= 200; y += 1) {
+      for (let x = -200; x <= 200; x += 1) {
+        const here = levelAt(world, x, y);
+        const lower = ([dx, dy]: [number, number]): boolean =>
+          levelAt(world, x + dx, y + dy) < here;
+
+        if (ORTHOGONAL.some(lower) || !SURROUNDING.some(lower)) {
+          continue;
+        }
+        // Lower ground only across a diagonal is where the ring's inside
+        // corner is drawn, and that tile is as much the cliff as a side
+        corners += 1;
+        expect(blocksWalk(world, x, y), `${x},${y}`).toBe(!isSeam(world, x, y));
+      }
+    }
+    expect(corners).toBeGreaterThan(0);
+  });
+
+  it('keeps scenery off the edge of a cliff', () => {
+    const world = new World('overworld');
+    let faces = 0;
+
+    for (let cx = -12; cx < 12; cx++) {
+      for (let cy = -12; cy < 12; cy++) {
+        const chunk = world.getChunk(cx, cy);
+
+        faces += chunk.getFaceCells().size;
+        for (const cell of chunk.getDecorationCells().keys()) {
+          const x = worldCell(cx, cell % CHUNK_CELLS);
+          const y = worldCell(cy, Math.floor(cell / CHUNK_CELLS));
+
+          expect(isFace(world, x, y), `${x},${y}`).toBe(false);
+        }
+      }
+    }
+    expect(faces).toBeGreaterThan(0);
   });
 
   it('reads the water out of the world rather than growing it in the chunk', () => {

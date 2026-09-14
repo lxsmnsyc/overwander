@@ -1,20 +1,22 @@
 import type Biome from '../data/ids/biome';
+import { isOpenSea } from '../data/ids/biome';
 import type { Around, Terrain, TerrainTiles, Tone } from './terrain-tiles';
 import { around, enclosed, turned } from './terrain-tiles';
 
 /**
  * One cell of ground, built up in the order the ground is laid.
  *
- * Water everywhere first, the ground over it, the shore where the two
- * meet, paving, and last the seam where one country meets the next. A
- * cell is five layers at most and one tile at least, so it is composed
+ * Water everywhere first, the deep in the middle of a wide water, the
+ * ground over it, the shore where the two meet, paving, the cliff, and
+ * last the blend where one country meets the next. A cell is a handful
+ * of layers at most and one tile at least, so it is composed
  * once into a 16x16 and kept: a board redrawn every frame asks for the
  * same few hundred cells over and over, and two cells alike ask for
  * the same picture.
  *
- * A step up is drawn by the board rather than here: the laid-back one
- * stands a wall between the levels, and nothing is laid over the
- * country's own ground at the lip.
+ * A step up is drawn here as well, where the caller knows the levels:
+ * the edge tile of the higher ground is the cliff, and the laid-back
+ * board only tilts that tile down to the ground below.
  *
  * The board draws it laid back under the camera and the terrain demo
  * draws it flat, which is why the composing lives here rather than in
@@ -39,12 +41,18 @@ interface Lay {
   near: Around | null;
   over: Tone | null;
   whole: boolean;
-  /** Which of the five steps laid it, so a caller can stop partway. */
+  /** Which step laid it, so a caller can stop partway. */
   step: number;
+  /** How many quarters the art was picked turned, and is drawn turned back by */
+  spin?: number;
 }
 
-/** The five steps, in the order the ground is laid. */
-export const STEPS = ['water', 'ground', 'shore', 'paving', 'seams'] as const;
+/** The steps, in the order the ground is laid. */
+export const STEPS = ['water', 'deep', 'ground', 'shore', 'paving', 'cliffs', 'blends'] as const;
+
+function stepOf(name: (typeof STEPS)[number]): number {
+  return STEPS.indexOf(name);
+}
 
 /**
  * The one step that follows the camera: the edge between water and
@@ -53,7 +61,7 @@ export const STEPS = ['water', 'ground', 'shore', 'paving', 'seams'] as const;
  * frame and laid back again. Everything else keeps the world's own way
  * round, so walking the camera about leaves the country where it is
  */
-const SHORE = STEPS.indexOf('shore');
+const SHORE = stepOf('shore');
 
 /** One cell of ground, in pixels. */
 const SIZE = 16;
@@ -73,7 +81,7 @@ function keyOf(lays: Lay[]): string {
           : `${near.n ? 1 : 0}${near.e ? 1 : 0}${near.s ? 1 : 0}${near.w ? 1 : 0}` +
             `${near.nw ? 1 : 0}${near.ne ? 1 : 0}${near.sw ? 1 : 0}${near.se ? 1 : 0}`;
 
-      return `${one.terrain.name}:${mask}:${one.whole ? 'w' : 'q'}:${one.over == null ? '' : one.over.join(',')}`;
+      return `${one.terrain.name}:${mask}:${one.whole ? 'w' : 'q'}:${one.over == null ? '' : one.over.join(',')}:${one.spin ?? 0}`;
     })
     .join('|');
 }
@@ -90,8 +98,39 @@ const ROUND: [number, number][] = [
   [-1, -1],
 ];
 
-/** Every tile a cell is made of, in the order they go down. */
-export function layersAt(pack: TerrainTiles, look: CellLook, x: number, y: number): Lay[] {
+/**
+ * How many quarters a cliff's neighbourhood is turned so its low side
+ * reads as south, which picks from the bottom row of the ring, or the
+ * bottom of the inside corner where only a diagonal is low
+ */
+function downhill(near: Around): number {
+  for (let spin = 0; spin < 4; spin += 1) {
+    if (!turned(near, spin).s) {
+      return spin;
+    }
+  }
+  for (let spin = 0; spin < 4; spin += 1) {
+    const one = turned(near, spin);
+
+    if (!one.se || !one.sw) {
+      return spin;
+    }
+  }
+  return 0;
+}
+
+/**
+ * Every tile a cell is made of, in the order they go down. `standing` is
+ * the laid-back board, where a cliff tile is tilted down its step: there
+ * it always shows the face of the rock, turned to fall the way the step does
+ */
+export function layersAt(
+  pack: TerrainTiles,
+  look: CellLook,
+  x: number,
+  y: number,
+  standing = false,
+): Lay[] {
   const wet = (cx: number, cy: number): boolean => look.role(cx, cy) === 'water';
   const dry = (cx: number, cy: number): boolean => !wet(cx, cy);
   const groundAt = (cx: number, cy: number): Terrain | null =>
@@ -101,10 +140,35 @@ export function layersAt(pack: TerrainTiles, look: CellLook, x: number, y: numbe
   const lays: Lay[] = [];
 
   if (water != null) {
-    lays.push({ terrain: water, near: null, over: null, whole: false, step: 0 });
+    lays.push({ terrain: water, near: null, over: null, whole: false, step: stepOf('water') });
   }
-  if (ground != null && (dry(x, y) || ROUND.some(([dx, dy]) => dry(x + dx, y + dy)))) {
-    lays.push({ terrain: ground, near: null, over: null, whole: false, step: 1 });
+  // the deep, two cells or more from any shore: the pool darkens toward
+  // its middle, and the rim of the deep fades out into the water round it.
+  // Water in a country with no deep of its own is shallow, so the rim runs
+  // along that border rather than the deep stopping dead against it
+  const deep = pack.of(look.biome(x, y), 'deep');
+  const open = (cx: number, cy: number): boolean =>
+    pack.of(look.biome(cx, cy), 'deep') != null &&
+    wet(cx, cy) &&
+    ROUND.every(([dx, dy]) => wet(cx + dx, cy + dy));
+
+  if (deep != null && open(x, y)) {
+    lays.push({
+      terrain: deep,
+      near: around(x, y, open),
+      over: null,
+      whole: false,
+      step: stepOf('deep'),
+    });
+  }
+  // Under the water beside dry ground as well, but only where the water
+  // draws the shore: a pool's rounded edge lets the ground show through.
+  // Where the ground draws it instead, as an island does, the water beside
+  // it stays water
+  const underShore = water?.drawn === true && ROUND.some(([dx, dy]) => dry(x + dx, y + dy));
+
+  if (ground != null && (dry(x, y) || underShore)) {
+    lays.push({ terrain: ground, near: null, over: null, whole: false, step: stepOf('ground') });
   }
   // where the two meet. water with no edge of its own leaves the shore
   // to the ground, which is how a beach was drawn
@@ -113,13 +177,13 @@ export function layersAt(pack: TerrainTiles, look: CellLook, x: number, y: numbe
       const near = around(x, y, wet);
 
       if (!enclosed(near)) {
-        lays.push({ terrain: water, near, over: ground.tone, whole: false, step: 2 });
+        lays.push({ terrain: water, near, over: ground.tone, whole: false, step: SHORE });
       }
     } else if (!water.drawn && dry(x, y)) {
       const near = around(x, y, dry);
 
       if (!enclosed(near)) {
-        lays.push({ terrain: ground, near, over: water.tone, whole: false, step: 2 });
+        lays.push({ terrain: ground, near, over: water.tone, whole: false, step: SHORE });
       }
     }
   }
@@ -135,30 +199,70 @@ export function layersAt(pack: TerrainTiles, look: CellLook, x: number, y: numbe
         near: around(x, y, (cx, cy) => look.paved(cx, cy)),
         over: ground?.tone ?? null,
         whole: false,
-        step: 3,
+        step: stepOf('paving'),
       });
     }
   }
-  // and last the seam, drawn by whichever side sorts higher so that it
-  // is drawn once rather than from both sides. Never over paving: a
-  // road crossing a border is one road, and a seam laid on top of it
-  // cuts it in two
-  if (ground != null && dry(x, y) && !look.paved(x, y)) {
-    let over: Tone | null = null;
+  // the cliff, on the edge tile of the higher ground: the ring picked
+  // for what stands at least as high around it. Not where a fall or a
+  // road runs through the step, since those are the way down it
+  const level = look.level;
+  let cliff = false;
 
-    for (const [dx, dy] of ROUND.slice(0, 4)) {
+  if (level != null && dry(x, y) && look.seam?.(x, y) !== true) {
+    const here = level(x, y);
+    const near = around(x, y, (cx, cy) => level(cx, cy) >= here);
+    const face = pack.of(look.biome(x, y), 'face');
+
+    if (face != null && !enclosed(near)) {
+      const spin = standing ? downhill(near) : 0;
+
+      cliff = true;
+      lays.push({
+        terrain: face,
+        near: turned(near, spin),
+        over: ground?.tone ?? null,
+        whole: true,
+        step: stepOf('cliffs'),
+        spin,
+      });
+    }
+  }
+  // and last the blend where one country meets the next: the ring of the
+  // country that sorts lower, in its own ground, laid over this cell so
+  // one side fades into the other. Only one side draws it, and never over
+  // paving or a cliff: a road crossing a border is one road, and the rock
+  // of a cliff is its own edge already. Land blends into land, and an open
+  // sea's ring is its own water, so a sea blends into the sea beside it
+  const kind = (cx: number, cy: number): 'land' | 'sea' | null => {
+    if (dry(cx, cy)) {
+      return 'land';
+    }
+    return isOpenSea(look.biome(cx, cy)) ? 'sea' : null;
+  };
+  const mine = kind(x, y);
+
+  if (ground != null && mine != null && !look.paved(x, y) && !cliff) {
+    const beside = new Map<string, Biome>();
+
+    for (const [dx, dy] of ROUND) {
       const other = groundAt(x + dx, y + dy);
 
-      if (other != null && other.name !== ground.name && ground.name > other.name) {
-        over = other.tone;
-        break;
+      if (other != null && other.name < ground.name && kind(x + dx, y + dy) === mine) {
+        beside.set(other.name, look.biome(x + dx, y + dy));
       }
     }
-    if (over != null) {
-      const near = around(x, y, (cx, cy) => groundAt(cx, cy)?.name === ground.name);
+    for (const name of [...beside.keys()].toSorted()) {
+      const biome = beside.get(name);
+      const blend = biome == null ? null : pack.of(biome, 'blend');
+      const near = around(
+        x,
+        y,
+        (cx, cy) => kind(cx, cy) !== mine || groundAt(cx, cy)?.name !== name,
+      );
 
-      if (!enclosed(near)) {
-        lays.push({ terrain: ground, near, over, whole: false, step: 4 });
+      if (blend != null && !enclosed(near)) {
+        lays.push({ terrain: blend, near, over: null, whole: false, step: stepOf('blends') });
       }
     }
   }
@@ -173,8 +277,9 @@ export default function terrainCell(
   y: number,
   upto = STEPS.length - 1,
   turns = 0,
+  standing = false,
 ): HTMLCanvasElement | null {
-  const lays = layersAt(pack, look, x, y).filter((one) => one.step <= upto);
+  const lays = layersAt(pack, look, x, y, standing).filter((one) => one.step <= upto);
 
   if (lays.length === 0) {
     return null;
@@ -184,7 +289,9 @@ export default function terrainCell(
   // it rather than four is most of what the cache holds
   const spun = lays.some((one) => one.step === SHORE) ? ((turns % 4) + 4) % 4 : 0;
   const turnedLays = lays.map((one) =>
-    one.near == null || one.step !== SHORE ? one : { ...one, near: turned(one.near, spun) },
+    one.near == null || one.step !== SHORE
+      ? one
+      : { ...one, near: turned(one.near, spun), spin: spun },
   );
   const key = `${spun}|${keyOf(turnedLays)}`;
   const known = made.get(key);
@@ -206,12 +313,12 @@ export default function terrainCell(
     const art =
       one.near == null ? one.terrain.fill() : one.terrain.tile(one.near, one.over, one.whole);
 
-    // The shore laid back by the quarter it was picked in, so its rim
-    // lands on the side the water actually is
-    if (one.step === SHORE && spun !== 0) {
+    // Laid back by the quarter it was picked in, so a shore's rim lands on
+    // the side the water actually is and a cliff's face on the low side
+    if ((one.spin ?? 0) !== 0) {
       context.save();
       context.translate(SIZE / 2, SIZE / 2);
-      context.rotate((-spun * Math.PI) / 2);
+      context.rotate((-(one.spin ?? 0) * Math.PI) / 2);
       context.drawImage(art, -SIZE / 2, -SIZE / 2);
       context.restore();
       continue;

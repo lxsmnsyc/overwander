@@ -5558,15 +5558,15 @@
       }
     },
     "public/sprites/overworld/trees/image.png": {
-      "digest": "b912ea4727370010",
-      "bytes": 15562,
-      "width": 326,
-      "height": 271,
+      "digest": "5ebb4f0c8e8fc8c5",
+      "bytes": 14997,
+      "width": 324,
+      "height": 234,
       "compact": {
-        "at": "2026-08-27T16:40:44Z",
+        "at": "2026-09-13T16:55:10Z",
         "as": "already compact",
-        "was": 15562,
-        "bytes": 15562
+        "was": 14997,
+        "bytes": 14997
       }
     },
     "public/sprites/pokemon/hoenn/1035101/regular.png": {
@@ -20402,15 +20402,15 @@
       }
     },
     "public/sprites/terrain/biome-tiles.png": {
-      "digest": "c40e1e3a78321e3a",
-      "bytes": 155778,
-      "width": 176,
-      "height": 6192,
+      "digest": "132b19099e2dcbfc",
+      "bytes": 100190,
+      "width": 96,
+      "height": 6432,
       "compact": {
-        "at": "2026-09-12T15:55:16Z",
+        "at": "2026-09-13T19:12:06Z",
         "as": "truecolour, none",
-        "was": 164727,
-        "bytes": 155778
+        "was": 112529,
+        "bytes": 100190
       }
     },
     "public/sprites/ui/candies/hoenn/image.png": {

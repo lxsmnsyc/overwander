@@ -27,21 +27,20 @@ import SceneMarks from './scene-marks';
  * what stands on it, and a cliff could only hide a sprite if it
  * happened to be painted later. No order answers a tree beside the
  * corner of a raised cell, where one sprite is in front of part of the
- * step and behind another part of it. So the country, the walls, the
- * sprites and the marks on the ground all go into one scene at their
- * real depths and the graphics card decides what is in front, a pixel
- * at a time.
+ * step and behind another part of it. So the country, the sprites and
+ * the marks on the ground all go into one scene at their real depths
+ * and the graphics card decides what is in front, a pixel at a time.
  *
  * The camera is the board's own projection rather than one placed to
  * look like it: [`boardClipMatrix`](../board.ts) writes the very
  * transform the rest of the game reads cells through, so a grid ruled
  * on the page lands on the ground it belongs to.
  *
- * The country is one mesh: a quad of ground per cell at its own
- * height, and a band of wall for every cell of drop on a side where
- * the ground beside it stands lower. Both read from one canvas, the
- * ground tiles down its left half and the cliff faces down its right,
- * so it is a single draw however much country is on screen.
+ * The country is one mesh: a quad of ground per cell, whose corners
+ * sink to the lowest ground meeting at each of them. The edge tile of
+ * a terrace is the cliff, so its high side meets the ground above and
+ * its low side the ground below with nothing standing between, and it
+ * is a single draw however much country is on screen.
  */
 
 /** How high one terrace step stands, in cells: the board's own rise. */
@@ -56,7 +55,7 @@ const TILE = TERRAIN_TILE;
  * A whole cell, not a hair: a mark is given the depth of the cell it
  * belongs to, and a ring drawn round a cell or a shadow thrown across
  * one covers ground nearer the camera than that. Less than the two
- * cells a terrace step stands, so a cliff in front of a mark still
+ * cells a terrace step stands, so a slope in front of a mark still
  * hides it
  */
 const MARK_NUDGE = 1;
@@ -110,7 +109,7 @@ export default function createBoardScene(
 
   const page = document.createElement('canvas');
 
-  page.width = cells * TILE * 2;
+  page.width = cells * TILE;
   page.height = cells * TILE;
 
   const paint = page.getContext('2d');
@@ -130,17 +129,9 @@ export default function createBoardScene(
    */
   const rock = new MeshBasicMaterial({ map: texture, alphaTest: 0.5, side: DoubleSide });
   const country = new Mesh(new BufferGeometry(), rock);
-  /**
-   * The walls, in a mesh of their own: which of them can be seen is a
-   * fact about where the camera stands, so they are built again when
-   * it is walked round and the ground is left alone
-   */
-  const cliffs = new Mesh(new BufferGeometry(), rock);
 
   country.frustumCulled = false;
-  cliffs.frustumCulled = false;
   scene.add(country);
-  scene.add(cliffs);
 
   const marks = new SceneMarks();
 
@@ -149,21 +140,21 @@ export default function createBoardScene(
   }
 
   const heights = new Float32Array(cells * cells);
-  /** Which cells carry a way through a step, so it is drawn as a ramp */
-  const ramps = new Uint8Array(cells * cells);
   /** The projection, kept so a mark can be given a depth off it */
   let clip = boardClipMatrix(0, { width: 1, height: 1 }, { x: 0, y: 0, width: 1, height: 1 });
-  /** Which way round the camera has been walked, in radians */
-  let turn = 0;
-  /** And which way the walls standing in the scene were built for */
-  let built = Number.NaN;
   const lens = new Matrix4();
   const sized = { width: 0, height: 0, ratio: 0 };
 
   /**
-   * One quad, with the tile of the cell it belongs to laid on it.
-   * Half a texel in on every side, so a quad never samples the tile
-   * beside it however the picture is scaled
+   * One cell's quad, with its tile laid on it. Half a texel in on every
+   * side, so a quad never samples the tile beside it however the
+   * picture is scaled.
+   *
+   * Corners run far left, far right, near right, near left. The quad is
+   * split along whichever diagonal joins the two corners nearest in
+   * height, so a slope running across the cell is one plane: split the
+   * other way, a step that turns a corner or runs on the diagonal folds
+   * into a zigzag from corner to corner
    */
   const quad = (
     spots: number[],
@@ -171,16 +162,14 @@ export default function createBoardScene(
     order: number[],
     corners: number[][],
     cell: [number, number],
-    face: boolean,
   ): void => {
     const start = spots.length / 3;
 
     for (const corner of corners) {
       spots.push(corner[0], corner[1], corner[2]);
     }
-    const column = cell[0] * TILE + (face ? cells * TILE : 0);
-    const u0 = (column + 0.5) / page.width;
-    const u1 = (column + TILE - 0.5) / page.width;
+    const u0 = (cell[0] * TILE + 0.5) / page.width;
+    const u1 = (cell[0] * TILE + TILE - 0.5) / page.width;
     const v0 = 1 - (cell[1] * TILE + 0.5) / page.height;
     const v1 = 1 - (cell[1] * TILE + TILE - 0.5) / page.height;
     /**
@@ -198,6 +187,13 @@ export default function createBoardScene(
     ]) {
       uvs.push(u, v);
     }
+    const falling = Math.abs(corners[0][1] - corners[2][1]);
+    const rising = Math.abs(corners[1][1] - corners[3][1]);
+
+    if (rising < falling) {
+      order.push(start, start + 3, start + 1, start + 1, start + 3, start + 2);
+      return;
+    }
     order.push(start, start + 2, start + 1, start, start + 3, start + 2);
   };
 
@@ -210,93 +206,14 @@ export default function createBoardScene(
     return made;
   };
 
-  /**
-   * The walls, for the way the camera is facing now.
-   *
-   * Only the sides turned toward it are built. A side turned away is
-   * behind the ground it holds up and the depth buffer would hide it,
-   * but one seen edge-on is a wedge a pixel wide, drawn up the picture
-   * from the cliff it belongs to, and nothing hides that
-   */
-  const walls = (): void => {
-    const middle = cells / 2;
-    const at = (x: number, z: number): number => z * cells + x;
-    const spots: number[] = [];
-    const uvs: number[] = [];
-    const order: number[] = [];
-    const side = Math.sin(turn);
-    const front = Math.cos(turn);
-
-    built = turn;
-
-    for (let z = 0; z < cells; z += 1) {
-      for (let x = 0; x < cells; x += 1) {
-        const high = heights[at(x, z)];
-
-        if (high === 0) {
-          continue;
-        }
-        const left = x - middle;
-        const right = left + 1;
-        const far = z - middle;
-        const near = far + 1;
-        /** Which way each side runs, from its left corner to its right */
-        const sides: [number, number, number[], number[]][] = [
-          [0, -1, [right, far], [left, far]],
-          [1, 0, [right, near], [right, far]],
-          [0, 1, [left, near], [right, near]],
-          [-1, 0, [left, far], [left, near]],
-        ];
-
-        for (const [dx, dz, from, to] of sides) {
-          // Turned toward the camera, which is where its own way out of
-          // the board points once the board has been turned under it
-          if (dx * side + dz * front <= 0) {
-            continue;
-          }
-          const outside = x + dx < 0 || z + dz < 0 || x + dx >= cells || z + dz >= cells;
-          const beside = outside ? 0 : heights[at(x + dx, z + dz)];
-
-          if (beside >= high) {
-            continue;
-          }
-          // A way through the step is a ramp: this cell's own surface
-          // slopes down to the ground below, so nothing stands across it
-          if (ramps[at(x, z)] === 1) {
-            continue;
-          }
-          // A band of wall a cell tall apiece, so the face is drawn at
-          // the size it was cut rather than stretched down a whole step
-          for (let band = high; band > beside; band -= 1) {
-            quad(
-              spots,
-              uvs,
-              order,
-              [
-                [from[0], band, from[1]],
-                [to[0], band, to[1]],
-                [to[0], band - 1, to[1]],
-                [from[0], band - 1, from[1]],
-              ],
-              [x, z],
-              true,
-            );
-          }
-        }
-      }
-    }
-    cliffs.geometry.dispose();
-    cliffs.geometry = meshOf(spots, uvs, order);
-  };
-
   const ground = (look: CellLook, origin: [number, number], turns: number): void => {
     if (paint == null) {
       return;
     }
-    // Flat on there is no elevation at all: seen from straight above a
-    // step up cannot be seen, and the rest of the board zeroes every
-    // height for that reason. Lifted here and nowhere else, the ground
-    // would stand nearer the camera than everything on it
+    // Flat on there is no elevation at all: the rest of the board zeroes
+    // every height, and lifted here alone the ground would stand nearer
+    // the camera than everything on it. The cliff tile still marks the
+    // step, since it is picked from the levels rather than the heights
     const laidBack = boardView().mode !== '2d';
     const middle = cells / 2;
 
@@ -307,32 +224,9 @@ export default function createBoardScene(
 
     for (let z = 0; z < cells; z += 1) {
       for (let x = 0; x < cells; x += 1) {
-        const world: [number, number] = [origin[0] + x, origin[1] + z];
-        // The camera's quarter goes in for the shore alone, which is
-        // the one edge that has to be picked and laid back to read
-        // right from every side
-        const tile = terrainCell(pack, look, world[0], world[1], undefined, turns);
-
-        if (tile != null) {
-          paint.drawImage(tile, x * TILE, z * TILE);
-        }
-        const biome = look.biome(world[0], world[1]);
-        const face = pack.of(biome, 'face');
-        const under = pack.of(biome, 'ground');
-        // A step standing in water is water all the way down: a fall
-        // is the stream carrying on over the edge rather than rock
-        // with a stream on top of it
-        const swum = look.role(world[0], world[1]) === 'water';
-        const wall = swum ? pack.of(biome, 'water')?.fill() : face?.face(under?.tone ?? null);
-
-        if (wall != null) {
-          paint.drawImage(wall, cells * TILE + x * TILE, z * TILE);
-        }
-        heights[at(x, z)] = laidBack ? (look.level?.(world[0], world[1]) ?? 0) * STEP : 0;
-        ramps[at(x, z)] = look.seam?.(world[0], world[1]) ? 1 : 0;
+        heights[at(x, z)] = laidBack ? (look.level?.(origin[0] + x, origin[1] + z) ?? 0) * STEP : 0;
       }
     }
-    texture.needsUpdate = true;
 
     const spots: number[] = [];
     const uvs: number[] = [];
@@ -340,12 +234,9 @@ export default function createBoardScene(
 
     /**
      * How low the ground lies at one corner of the grid: the lowest of
-     * the four cells that meet there, whatever they are.
-     *
-     * It is what makes a road crossing a step climbable to look at.
-     * A ramp cell drops each of its corners to the ground the corner
-     * touches, so the quad slopes straight down the step toward the
-     * lower country rather than along the road to the next ramp cell
+     * the four cells that meet there. Two cells sharing a corner read
+     * the same four, so a cliff tile's low side meets the ground below
+     * it and its high side the ground above, with no gap between
      */
     const sunken = (cx: number, cz: number): number => {
       let low = Number.POSITIVE_INFINITY;
@@ -364,34 +255,31 @@ export default function createBoardScene(
 
     for (let z = 0; z < cells; z += 1) {
       for (let x = 0; x < cells; x += 1) {
-        const high = heights[at(x, z)];
+        const world: [number, number] = [origin[0] + x, origin[1] + z];
         const left = x - middle;
         const right = left + 1;
         const far = z - middle;
         const near = far + 1;
-        const ramped = ramps[at(x, z)] === 1;
-        /** Each corner's own height, which only a ramp ever slopes */
-        const corner = (cx: number, cz: number): number =>
-          ramped ? Math.min(high, sunken(cx, cz)) : high;
+        const corners = [
+          [left, sunken(x, z), far],
+          [right, sunken(x + 1, z), far],
+          [right, sunken(x + 1, z + 1), near],
+          [left, sunken(x, z + 1), near],
+        ];
+        // The camera's quarter goes in for the shore alone, which is
+        // the one edge that has to be picked and laid back to read
+        // right from every side
+        const tile = terrainCell(pack, look, world[0], world[1], undefined, turns, laidBack);
 
-        quad(
-          spots,
-          uvs,
-          order,
-          [
-            [left, corner(x, z), far],
-            [right, corner(x + 1, z), far],
-            [right, corner(x + 1, z + 1), near],
-            [left, corner(x, z + 1), near],
-          ],
-          [x, z],
-          false,
-        );
+        if (tile != null) {
+          paint.drawImage(tile, x * TILE, z * TILE);
+        }
+        quad(spots, uvs, order, corners, [x, z]);
       }
     }
+    texture.needsUpdate = true;
     country.geometry.dispose();
     country.geometry = meshOf(spots, uvs, order);
-    walls();
   };
 
   /**
@@ -407,13 +295,6 @@ export default function createBoardScene(
     ground,
     marks,
     look: (yaw, screen, picture, ratio, shift): void => {
-      turn = yaw;
-
-      // The walls are rebuilt as the camera comes round, since which
-      // of them can be seen changes with it
-      if (!(Math.abs(yaw - built) < 0.002)) {
-        walls();
-      }
       lean = ((boardView().mode === '2d' ? FLAT_PITCH : PITCH) * Math.PI) / 180;
       rise = Math.cos(lean);
       away = Math.sin(lean);
@@ -424,7 +305,6 @@ export default function createBoardScene(
       // The country is drawn where the camera has got to rather than
       // where it lives, which is what makes a step a scroll
       country.position.set(shift[0], 0, shift[1]);
-      cliffs.position.copy(country.position);
 
       if (sized.width !== screen.width || sized.height !== screen.height || sized.ratio !== ratio) {
         renderer.setPixelRatio(ratio);
@@ -450,7 +330,6 @@ export default function createBoardScene(
     dispose: (): void => {
       marks.dispose();
       country.geometry.dispose();
-      cliffs.geometry.dispose();
       rock.dispose();
       texture.dispose();
       renderer.dispose();

@@ -177,7 +177,30 @@ for (const area of ALL) {
   assertWhole(sheet, area);
 }
 
-const boxes = new Map<string, Image>(ALL.map((area) => [area.name, cut(sheet, area)]));
+/**
+ * The rip lays every tree over a flat shadow: pure black at alpha 89,
+ * the only half-transparent colour on a tree. The board throws its own
+ * shadows, so the baked one is cleared before anything is measured
+ */
+function withoutShadow(image: Image): Image {
+  for (let at = 0; at < image.rgba.length; at += 4) {
+    const { rgba } = image;
+
+    if (rgba[at] === 0 && rgba[at + 1] === 0 && rgba[at + 2] === 0 && rgba[at + 3] === 89) {
+      rgba[at + 3] = 0;
+    }
+  }
+  return image;
+}
+
+const TREE_NAMES = new Set([...TREE_CUTS, ...COAT_CUTS].map((area) => area.name));
+const boxes = new Map<string, Image>(
+  ALL.map((area) => {
+    const box = cut(sheet, area);
+
+    return [area.name, TREE_NAMES.has(area.name) ? withoutShadow(box) : box];
+  }),
+);
 
 /** The cut of that name, which the tables above have or the run is wrong. */
 function boxOf(name: string): Image {

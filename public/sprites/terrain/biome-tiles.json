@@ -1,74 +1,34 @@
 {
   "from": "image.png",
   "tile": 16,
-  "note": "One entry per terrain a biome draws. `art` is the 3x3 block and `corner` the 2x2 piece: a fill, four edges, four outer corners and four inner ones, thirteen tiles that answer all 47 neighbourhoods. The country each block was drawn standing in has been cut away and kept as `skirt`, a grey where 128 is no change and anything else is how much lighter or darker that pixel of the rim was drawn. Paint the skirt in the ground the terrain actually stands beside, at that ground's hue and saturation, and lay the art over it.",
+  "note": "One entry per terrain a biome draws. `art` is the 3x3 block and `corner` the 2x2 piece, drawn as they are with no skirt: a block keeps the rim it was drawn with. The `face` of a biome is its cliff, the ring cliff recoloured and baked over the ground of that biome. `blend` is a ring in the colour of the ground of a biome, drawn over a neighbour where two biomes meet. `deep` names the darker pool a biome mixes into a wide body of water; nothing reads it yet.",
   "sheet": {
-    "width": 176,
-    "height": 6192
+    "width": 96,
+    "height": 6432
   },
   "pieces": [
     {
-      "from": "sand-shoal",
-      "recolored": true,
+      "from": "tan-island-deep",
       "tone": [
-        44.016,
-        0.451,
-        0.669
+        44.159,
+        0.56,
+        0.73
       ],
       "fill": [
-        160,
-        0,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        0,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        0,
-        32,
-        32
-      ],
-      "skirt": [
         80,
         0,
-        48,
-        48
-      ],
-      "cornerSkirt": [
-        128,
-        0,
-        32,
-        32
-      ]
-    },
-    {
-      "from": "rock-cliff-ring",
-      "recolored": true,
-      "tone": [
-        null,
-        null,
-        null
-      ],
-      "fill": [
-        160,
-        48,
         16,
         16
       ],
       "art": [
         0,
-        48,
+        0,
         48,
         48
       ],
       "corner": [
         48,
-        48,
+        0,
         32,
         32
       ],
@@ -76,15 +36,32 @@
       "cornerSkirt": null
     },
     {
-      "from": "deep-sea",
-      "recolored": false,
+      "from": "dark-sea",
       "tone": [
         201.062,
         0.401,
         0.402
       ],
       "fill": [
-        160,
+        80,
+        48,
+        16,
+        16
+      ],
+      "art": null,
+      "corner": null,
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "tan-island-deep-hollow",
+      "tone": [
+        0,
+        0,
+        0.5
+      ],
+      "fill": [
+        80,
         96,
         16,
         16
@@ -95,25 +72,24 @@
         48,
         48
       ],
-      "corner": null,
-      "skirt": [
-        80,
-        96,
+      "corner": [
         48,
-        48
+        96,
+        32,
+        32
       ],
+      "skirt": null,
       "cornerSkirt": null
     },
     {
-      "from": "sea-cliff-deep",
-      "recolored": true,
+      "from": "ring-cliff",
       "tone": [
-        205.06,
-        0.223,
-        0.423
+        44.159,
+        0.56,
+        0.73
       ],
       "fill": [
-        160,
+        80,
         144,
         16,
         16
@@ -130,76 +106,31 @@
         32,
         32
       ],
-      "skirt": [
-        80,
-        144,
-        48,
-        48
-      ],
+      "skirt": null,
       "cornerSkirt": null
     },
     {
-      "from": "sandbar",
-      "recolored": false,
+      "from": "sand-island-shallows",
       "tone": [
         58.549,
         0.716,
         0.901
       ],
       "fill": [
-        160,
-        192,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        192,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        192,
-        32,
-        32
-      ],
-      "skirt": [
         80,
         192,
-        48,
-        48
-      ],
-      "cornerSkirt": [
-        128,
-        192,
-        32,
-        32
-      ]
-    },
-    {
-      "from": "rock-cliff-ring",
-      "recolored": true,
-      "tone": [
-        null,
-        null,
-        null
-      ],
-      "fill": [
-        160,
-        240,
         16,
         16
       ],
       "art": [
         0,
-        240,
+        192,
         48,
         48
       ],
       "corner": [
         48,
-        240,
+        192,
         32,
         32
       ],
@@ -208,704 +139,14 @@
     },
     {
       "from": "sea",
-      "recolored": false,
       "tone": [
-        201.098,
-        0.423,
-        0.402
+        200.483,
+        0.41,
+        0.548
       ],
       "fill": [
-        160,
-        288,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        288,
-        48,
-        48
-      ],
-      "corner": null,
-      "skirt": [
         80,
-        288,
-        48,
-        48
-      ],
-      "cornerSkirt": null
-    },
-    {
-      "from": "sea-cliff",
-      "recolored": true,
-      "tone": [
-        205.164,
-        0.195,
-        0.502
-      ],
-      "fill": [
-        160,
-        336,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        336,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        336,
-        32,
-        32
-      ],
-      "skirt": [
-        80,
-        336,
-        48,
-        48
-      ],
-      "cornerSkirt": [
-        128,
-        336,
-        32,
-        32
-      ]
-    },
-    {
-      "from": "sand-shoal-pale",
-      "recolored": true,
-      "tone": [
-        52.417,
-        0.64,
-        0.769
-      ],
-      "fill": [
-        160,
-        384,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        384,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        384,
-        32,
-        32
-      ],
-      "skirt": [
-        80,
-        384,
-        48,
-        48
-      ],
-      "cornerSkirt": [
-        128,
-        384,
-        32,
-        32
-      ]
-    },
-    {
-      "from": "rock-cliff-ring",
-      "recolored": true,
-      "tone": [
-        null,
-        null,
-        null
-      ],
-      "fill": [
-        160,
-        432,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        432,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        432,
-        32,
-        32
-      ],
-      "skirt": null,
-      "cornerSkirt": null
-    },
-    {
-      "from": "shallows",
-      "recolored": true,
-      "tone": [
-        172.495,
-        0.551,
-        0.608
-      ],
-      "fill": [
-        160,
-        480,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        480,
-        48,
-        48
-      ],
-      "corner": null,
-      "skirt": [
-        80,
-        480,
-        48,
-        48
-      ],
-      "cornerSkirt": null
-    },
-    {
-      "from": "sandstone-shore-cliff",
-      "recolored": true,
-      "tone": [
-        34.008,
-        0.431,
-        0.684
-      ],
-      "fill": [
-        160,
-        528,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        528,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        528,
-        32,
-        32
-      ],
-      "skirt": [
-        80,
-        528,
-        48,
-        48
-      ],
-      "cornerSkirt": [
-        128,
-        528,
-        32,
-        32
-      ]
-    },
-    {
-      "from": "sandbar-pale",
-      "recolored": false,
-      "tone": [
-        58.549,
-        0.716,
-        0.901
-      ],
-      "fill": [
-        160,
-        576,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        576,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        576,
-        32,
-        32
-      ],
-      "skirt": [
-        80,
-        576,
-        48,
-        48
-      ],
-      "cornerSkirt": [
-        128,
-        576,
-        32,
-        32
-      ]
-    },
-    {
-      "from": "rock-cliff-ring",
-      "recolored": true,
-      "tone": [
-        null,
-        null,
-        null
-      ],
-      "fill": [
-        160,
-        624,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        624,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        624,
-        32,
-        32
-      ],
-      "skirt": null,
-      "cornerSkirt": null
-    },
-    {
-      "from": "shallows",
-      "recolored": true,
-      "tone": [
-        194.61,
-        0.431,
-        0.589
-      ],
-      "fill": [
-        160,
-        672,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        672,
-        48,
-        48
-      ],
-      "corner": null,
-      "skirt": [
-        80,
-        672,
-        48,
-        48
-      ],
-      "cornerSkirt": null
-    },
-    {
-      "from": "flagstones",
-      "recolored": true,
-      "tone": [
-        33.788,
-        0.248,
-        0.722
-      ],
-      "fill": [
-        160,
-        720,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        720,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        720,
-        32,
-        32
-      ],
-      "skirt": [
-        80,
-        720,
-        48,
-        48
-      ],
-      "cornerSkirt": null
-    },
-    {
-      "from": "shore-cliff",
-      "recolored": true,
-      "tone": [
-        35.866,
-        0.528,
-        0.767
-      ],
-      "fill": [
-        160,
-        768,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        768,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        768,
-        32,
-        32
-      ],
-      "skirt": [
-        80,
-        768,
-        48,
-        48
-      ],
-      "cornerSkirt": [
-        128,
-        768,
-        32,
-        32
-      ]
-    },
-    {
-      "from": "dirt",
-      "recolored": true,
-      "tone": [
-        44.592,
-        0.106,
-        0.443
-      ],
-      "fill": [
-        160,
-        816,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        816,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        816,
-        32,
-        32
-      ],
-      "skirt": [
-        80,
-        816,
-        48,
-        48
-      ],
-      "cornerSkirt": null
-    },
-    {
-      "from": "rock-cliff-ring",
-      "recolored": true,
-      "tone": [
-        null,
-        null,
-        null
-      ],
-      "fill": [
-        160,
-        864,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        864,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        864,
-        32,
-        32
-      ],
-      "skirt": null,
-      "cornerSkirt": null
-    },
-    {
-      "from": "banked-pool",
-      "recolored": true,
-      "tone": [
-        186.358,
-        0.777,
-        0.525
-      ],
-      "fill": [
-        160,
-        912,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        912,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        912,
-        32,
-        32
-      ],
-      "skirt": null,
-      "cornerSkirt": null
-    },
-    {
-      "from": "parquet",
-      "recolored": true,
-      "tone": [
-        36.046,
-        0.272,
-        0.505
-      ],
-      "fill": [
-        160,
-        960,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        960,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        960,
-        32,
-        32
-      ],
-      "skirt": [
-        80,
-        960,
-        48,
-        48
-      ],
-      "cornerSkirt": [
-        128,
-        960,
-        32,
-        32
-      ]
-    },
-    {
-      "from": "timber-cliff",
-      "recolored": true,
-      "tone": [
-        21.844,
-        0.369,
-        0.521
-      ],
-      "fill": [
-        160,
-        1008,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        1008,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        1008,
-        32,
-        32
-      ],
-      "skirt": null,
-      "cornerSkirt": null
-    },
-    {
-      "from": "mossy-stones",
-      "recolored": true,
-      "tone": [
-        41.584,
-        0.132,
-        0.349
-      ],
-      "fill": [
-        160,
-        1056,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        1056,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        1056,
-        32,
-        32
-      ],
-      "skirt": [
-        80,
-        1056,
-        48,
-        48
-      ],
-      "cornerSkirt": null
-    },
-    {
-      "from": "rock-cliff-ring",
-      "recolored": true,
-      "tone": [
-        null,
-        null,
-        null
-      ],
-      "fill": [
-        160,
-        1104,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        1104,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        1104,
-        32,
-        32
-      ],
-      "skirt": null,
-      "cornerSkirt": null
-    },
-    {
-      "from": "marsh",
-      "recolored": false,
-      "tone": [
-        75.417,
-        0.17,
-        0.339
-      ],
-      "fill": [
-        160,
-        1152,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        1152,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        1152,
-        32,
-        32
-      ],
-      "skirt": null,
-      "cornerSkirt": null
-    },
-    {
-      "from": "flagstones",
-      "recolored": true,
-      "tone": [
-        95.766,
-        0.168,
-        0.592
-      ],
-      "fill": [
-        160,
-        1200,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        1200,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        1200,
-        32,
-        32
-      ],
-      "skirt": [
-        80,
-        1200,
-        48,
-        48
-      ],
-      "cornerSkirt": null
-    },
-    {
-      "from": "rock-cliff",
-      "recolored": true,
-      "tone": [
-        80.058,
-        0.334,
-        0.589
-      ],
-      "fill": [
-        160,
-        1248,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        1248,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        1248,
-        32,
-        32
-      ],
-      "skirt": null,
-      "cornerSkirt": null
-    },
-    {
-      "from": "grass-edge",
-      "recolored": true,
-      "tone": [
-        105.887,
-        0.543,
-        0.574
-      ],
-      "fill": [
-        160,
-        1296,
+        240,
         16,
         16
       ],
@@ -915,28 +156,213 @@
       "cornerSkirt": null
     },
     {
-      "from": "rock-cliff-ring",
-      "recolored": true,
+      "from": "sand-island-shallows-hollow",
       "tone": [
-        null,
-        null,
-        null
+        0,
+        0,
+        0.5
       ],
       "fill": [
-        160,
-        1344,
+        80,
+        288,
         16,
         16
       ],
       "art": [
         0,
-        1344,
+        288,
         48,
         48
       ],
       "corner": [
         48,
-        1344,
+        288,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "ring-cliff",
+      "tone": [
+        58.549,
+        0.716,
+        0.901
+      ],
+      "fill": [
+        80,
+        336,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        336,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        336,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "sand-island-pale",
+      "tone": [
+        58.549,
+        0.716,
+        0.901
+      ],
+      "fill": [
+        80,
+        384,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        384,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        384,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "sea",
+      "tone": [
+        176.458,
+        0.439,
+        0.483
+      ],
+      "fill": [
+        80,
+        432,
+        16,
+        16
+      ],
+      "art": null,
+      "corner": null,
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "sand-island-pale-hollow",
+      "tone": [
+        0,
+        0,
+        0.5
+      ],
+      "fill": [
+        80,
+        480,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        480,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        480,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "ring-cliff",
+      "tone": [
+        58.549,
+        0.716,
+        0.901
+      ],
+      "fill": [
+        80,
+        528,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        528,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        528,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "sand",
+      "tone": [
+        46.529,
+        0.58,
+        0.793
+      ],
+      "fill": [
+        80,
+        576,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        576,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        576,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "slate-herringbone",
+      "tone": [
+        40.693,
+        0.38,
+        0.674
+      ],
+      "fill": [
+        80,
+        624,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        624,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        624,
         32,
         32
       ],
@@ -945,90 +371,26 @@
     },
     {
       "from": "bright-pool",
-      "recolored": false,
       "tone": [
         199.709,
         0.863,
         0.57
       ],
       "fill": [
-        160,
-        1392,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        1392,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        1392,
-        32,
-        32
-      ],
-      "skirt": null,
-      "cornerSkirt": null
-    },
-    {
-      "from": "flagstones",
-      "recolored": true,
-      "tone": [
-        88.583,
-        0.167,
-        0.602
-      ],
-      "fill": [
-        160,
-        1440,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        1440,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        1440,
-        32,
-        32
-      ],
-      "skirt": [
         80,
-        1440,
-        48,
-        48
-      ],
-      "cornerSkirt": null
-    },
-    {
-      "from": "grass-cliff",
-      "recolored": true,
-      "tone": [
-        25.057,
-        0.579,
-        0.633
-      ],
-      "fill": [
-        160,
-        1488,
+        672,
         16,
         16
       ],
       "art": [
         0,
-        1488,
+        672,
         48,
         48
       ],
       "corner": [
         48,
-        1488,
+        672,
         32,
         32
       ],
@@ -1036,168 +398,27 @@
       "cornerSkirt": null
     },
     {
-      "from": "grass-edge",
-      "recolored": true,
+      "from": "grass-ring-wide",
       "tone": [
-        85.988,
-        0.598,
-        0.704
-      ],
-      "fill": [
-        160,
-        1536,
-        16,
-        16
-      ],
-      "art": null,
-      "corner": null,
-      "skirt": null,
-      "cornerSkirt": null
-    },
-    {
-      "from": "rock-cliff-ring",
-      "recolored": true,
-      "tone": [
-        null,
-        null,
-        null
-      ],
-      "fill": [
-        160,
-        1584,
-        16,
-        16
-      ],
-      "art": [
         0,
-        1584,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        1584,
-        32,
-        32
-      ],
-      "skirt": null,
-      "cornerSkirt": null
-    },
-    {
-      "from": "banked-pool",
-      "recolored": false,
-      "tone": [
-        212.268,
-        0.87,
-        0.546
+        0,
+        0.5
       ],
       "fill": [
-        160,
-        1632,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        1632,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        1632,
-        32,
-        32
-      ],
-      "skirt": null,
-      "cornerSkirt": null
-    },
-    {
-      "from": "red-rock-grass-cliff",
-      "recolored": true,
-      "tone": [
-        21.804,
-        0.522,
-        0.647
-      ],
-      "fill": [
-        160,
-        1680,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        1680,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        1680,
-        32,
-        32
-      ],
-      "skirt": null,
-      "cornerSkirt": null
-    },
-    {
-      "from": "dry-grass",
-      "recolored": false,
-      "tone": [
-        52.436,
-        0.621,
-        0.722
-      ],
-      "fill": [
-        160,
-        1728,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        1728,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        1728,
-        32,
-        32
-      ],
-      "skirt": [
         80,
-        1728,
-        48,
-        48
-      ],
-      "cornerSkirt": null
-    },
-    {
-      "from": "rock-cliff-ring",
-      "recolored": true,
-      "tone": [
-        null,
-        null,
-        null
-      ],
-      "fill": [
-        160,
-        1776,
+        720,
         16,
         16
       ],
       "art": [
         0,
-        1776,
+        720,
         48,
         48
       ],
       "corner": [
         48,
-        1776,
+        720,
         32,
         32
       ],
@@ -1205,154 +426,27 @@
       "cornerSkirt": null
     },
     {
-      "from": "banked-pool",
-      "recolored": true,
+      "from": "ring-cliff",
       "tone": [
-        37.987,
-        0.533,
-        0.527
+        46.529,
+        0.58,
+        0.793
       ],
       "fill": [
-        160,
-        1824,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        1824,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        1824,
-        32,
-        32
-      ],
-      "skirt": null,
-      "cornerSkirt": null
-    },
-    {
-      "from": "clay",
-      "recolored": true,
-      "tone": [
-        10.395,
-        0.326,
-        0.517
-      ],
-      "fill": [
-        160,
-        1872,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        1872,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        1872,
-        32,
-        32
-      ],
-      "skirt": null,
-      "cornerSkirt": null
-    },
-    {
-      "from": "sandstone-grass-cliff",
-      "recolored": true,
-      "tone": [
-        33.584,
-        0.469,
-        0.787
-      ],
-      "fill": [
-        160,
-        1920,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        1920,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        1920,
-        32,
-        32
-      ],
-      "skirt": null,
-      "cornerSkirt": [
-        128,
-        1920,
-        32,
-        32
-      ]
-    },
-    {
-      "from": "sand",
-      "recolored": true,
-      "tone": [
-        40.682,
-        0.777,
-        0.752
-      ],
-      "fill": [
-        160,
-        1968,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        1968,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        1968,
-        32,
-        32
-      ],
-      "skirt": [
         80,
-        1968,
-        48,
-        48
-      ],
-      "cornerSkirt": null
-    },
-    {
-      "from": "rock-cliff-ring",
-      "recolored": true,
-      "tone": [
-        null,
-        null,
-        null
-      ],
-      "fill": [
-        160,
-        2016,
+        768,
         16,
         16
       ],
       "art": [
         0,
-        2016,
+        768,
         48,
         48
       ],
       "corner": [
         48,
-        2016,
+        768,
         32,
         32
       ],
@@ -1360,594 +454,27 @@
       "cornerSkirt": null
     },
     {
-      "from": "banked-pool",
-      "recolored": true,
+      "from": "deep-pool",
       "tone": [
-        196.212,
-        0.651,
-        0.627
+        199.491,
+        0.86,
+        0.392
       ],
       "fill": [
-        160,
-        2064,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        2064,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        2064,
-        32,
-        32
-      ],
-      "skirt": null,
-      "cornerSkirt": null
-    },
-    {
-      "from": "flagstones",
-      "recolored": true,
-      "tone": [
-        36.125,
-        0.31,
-        0.702
-      ],
-      "fill": [
-        160,
-        2112,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        2112,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        2112,
-        32,
-        32
-      ],
-      "skirt": [
         80,
-        2112,
-        48,
-        48
-      ],
-      "cornerSkirt": null
-    },
-    {
-      "from": "sandstone-cliff",
-      "recolored": true,
-      "tone": [
-        32.326,
-        0.507,
-        0.78
-      ],
-      "fill": [
-        160,
-        2160,
+        816,
         16,
         16
       ],
       "art": [
         0,
-        2160,
+        816,
         48,
         48
       ],
       "corner": [
         48,
-        2160,
-        32,
-        32
-      ],
-      "skirt": null,
-      "cornerSkirt": [
-        128,
-        2160,
-        32,
-        32
-      ]
-    },
-    {
-      "from": "dry-grass",
-      "recolored": true,
-      "tone": [
-        68.8,
-        0.314,
-        0.663
-      ],
-      "fill": [
-        160,
-        2208,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        2208,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        2208,
-        32,
-        32
-      ],
-      "skirt": [
-        80,
-        2208,
-        48,
-        48
-      ],
-      "cornerSkirt": null
-    },
-    {
-      "from": "rock-cliff-ring",
-      "recolored": true,
-      "tone": [
-        null,
-        null,
-        null
-      ],
-      "fill": [
-        160,
-        2256,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        2256,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        2256,
-        32,
-        32
-      ],
-      "skirt": null,
-      "cornerSkirt": null
-    },
-    {
-      "from": "flagstones",
-      "recolored": false,
-      "tone": [
-        52.399,
-        0.09,
-        0.656
-      ],
-      "fill": [
-        160,
-        2304,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        2304,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        2304,
-        32,
-        32
-      ],
-      "skirt": [
-        80,
-        2304,
-        48,
-        48
-      ],
-      "cornerSkirt": null
-    },
-    {
-      "from": "rock-cliff",
-      "recolored": true,
-      "tone": [
-        30.598,
-        0.273,
-        0.689
-      ],
-      "fill": [
-        160,
-        2352,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        2352,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        2352,
-        32,
-        32
-      ],
-      "skirt": null,
-      "cornerSkirt": null
-    },
-    {
-      "from": "grass-edge",
-      "recolored": false,
-      "tone": [
-        99.886,
-        0.518,
-        0.755
-      ],
-      "fill": [
-        160,
-        2400,
-        16,
-        16
-      ],
-      "art": null,
-      "corner": null,
-      "skirt": null,
-      "cornerSkirt": null
-    },
-    {
-      "from": "rock-cliff-ring",
-      "recolored": true,
-      "tone": [
-        null,
-        null,
-        null
-      ],
-      "fill": [
-        160,
-        2448,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        2448,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        2448,
-        32,
-        32
-      ],
-      "skirt": null,
-      "cornerSkirt": null
-    },
-    {
-      "from": "path-on-grass",
-      "recolored": false,
-      "tone": [
-        43.295,
-        0.393,
-        0.659
-      ],
-      "fill": [
-        160,
-        2496,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        2496,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        2496,
-        32,
-        32
-      ],
-      "skirt": [
-        80,
-        2496,
-        48,
-        48
-      ],
-      "cornerSkirt": null
-    },
-    {
-      "from": "grass-cliff",
-      "recolored": true,
-      "tone": [
-        24.253,
-        0.644,
-        0.733
-      ],
-      "fill": [
-        160,
-        2544,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        2544,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        2544,
-        32,
-        32
-      ],
-      "skirt": null,
-      "cornerSkirt": null
-    },
-    {
-      "from": "grass-edge",
-      "recolored": true,
-      "tone": [
-        107.812,
-        0.518,
-        0.614
-      ],
-      "fill": [
-        160,
-        2592,
-        16,
-        16
-      ],
-      "art": null,
-      "corner": null,
-      "skirt": null,
-      "cornerSkirt": null
-    },
-    {
-      "from": "rock-cliff-ring",
-      "recolored": true,
-      "tone": [
-        null,
-        null,
-        null
-      ],
-      "fill": [
-        160,
-        2640,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        2640,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        2640,
-        32,
-        32
-      ],
-      "skirt": null,
-      "cornerSkirt": null
-    },
-    {
-      "from": "banked-pool",
-      "recolored": true,
-      "tone": [
-        216.415,
-        0.87,
-        0.476
-      ],
-      "fill": [
-        160,
-        2688,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        2688,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        2688,
-        32,
-        32
-      ],
-      "skirt": null,
-      "cornerSkirt": null
-    },
-    {
-      "from": "rock-cliff",
-      "recolored": true,
-      "tone": [
-        19.84,
-        0.353,
-        0.589
-      ],
-      "fill": [
-        160,
-        2736,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        2736,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        2736,
-        32,
-        32
-      ],
-      "skirt": null,
-      "cornerSkirt": null
-    },
-    {
-      "from": "mossy-stones",
-      "recolored": true,
-      "tone": [
-        48.908,
-        0.16,
-        0.368
-      ],
-      "fill": [
-        160,
-        2784,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        2784,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        2784,
-        32,
-        32
-      ],
-      "skirt": [
-        80,
-        2784,
-        48,
-        48
-      ],
-      "cornerSkirt": null
-    },
-    {
-      "from": "rock-cliff-ring",
-      "recolored": true,
-      "tone": [
-        null,
-        null,
-        null
-      ],
-      "fill": [
-        160,
-        2832,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        2832,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        2832,
-        32,
-        32
-      ],
-      "skirt": null,
-      "cornerSkirt": null
-    },
-    {
-      "from": "banked-pool",
-      "recolored": true,
-      "tone": [
-        190.223,
-        0.824,
-        0.526
-      ],
-      "fill": [
-        160,
-        2880,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        2880,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        2880,
-        32,
-        32
-      ],
-      "skirt": null,
-      "cornerSkirt": null
-    },
-    {
-      "from": "flagstones",
-      "recolored": true,
-      "tone": [
-        99.915,
-        0.176,
-        0.611
-      ],
-      "fill": [
-        160,
-        2928,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        2928,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        2928,
-        32,
-        32
-      ],
-      "skirt": [
-        80,
-        2928,
-        48,
-        48
-      ],
-      "cornerSkirt": null
-    },
-    {
-      "from": "lichen-cliff",
-      "recolored": true,
-      "tone": [
-        94.668,
-        0.223,
-        0.721
-      ],
-      "fill": [
-        160,
-        2976,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        2976,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        2976,
+        816,
         32,
         32
       ],
@@ -1956,196 +483,26 @@
     },
     {
       "from": "dirt",
-      "recolored": true,
       "tone": [
-        41.097,
-        0.064,
-        0.594
+        36.95,
+        0.265,
+        0.332
       ],
       "fill": [
-        160,
-        3024,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        3024,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        3024,
-        32,
-        32
-      ],
-      "skirt": [
         80,
-        3024,
-        48,
-        48
-      ],
-      "cornerSkirt": null
-    },
-    {
-      "from": "rock-cliff-ring",
-      "recolored": true,
-      "tone": [
-        null,
-        null,
-        null
-      ],
-      "fill": [
-        160,
-        3072,
+        864,
         16,
         16
       ],
       "art": [
         0,
-        3072,
+        864,
         48,
         48
       ],
       "corner": [
         48,
-        3072,
-        32,
-        32
-      ],
-      "skirt": null,
-      "cornerSkirt": null
-    },
-    {
-      "from": "ice-pool",
-      "recolored": true,
-      "tone": [
-        194.777,
-        0.408,
-        0.894
-      ],
-      "fill": [
-        160,
-        3120,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        3120,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        3120,
-        32,
-        32
-      ],
-      "skirt": null,
-      "cornerSkirt": null
-    },
-    {
-      "from": "chalk-cliff",
-      "recolored": true,
-      "tone": [
-        39.931,
-        0.394,
-        0.764
-      ],
-      "fill": [
-        160,
-        3168,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        3168,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        3168,
-        32,
-        32
-      ],
-      "skirt": null,
-      "cornerSkirt": null
-    },
-    {
-      "from": "grass-edge",
-      "recolored": true,
-      "tone": [
-        129.649,
-        0.416,
-        0.455
-      ],
-      "fill": [
-        160,
-        3216,
-        16,
-        16
-      ],
-      "art": null,
-      "corner": null,
-      "skirt": null,
-      "cornerSkirt": null
-    },
-    {
-      "from": "rock-cliff-ring",
-      "recolored": true,
-      "tone": [
-        null,
-        null,
-        null
-      ],
-      "fill": [
-        160,
-        3264,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        3264,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        3264,
-        32,
-        32
-      ],
-      "skirt": null,
-      "cornerSkirt": null
-    },
-    {
-      "from": "banked-pool",
-      "recolored": true,
-      "tone": [
-        218.247,
-        0.787,
-        0.456
-      ],
-      "fill": [
-        160,
-        3312,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        3312,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        3312,
+        864,
         32,
         32
       ],
@@ -2154,66 +511,306 @@
     },
     {
       "from": "parquet",
-      "recolored": true,
       "tone": [
-        38.013,
-        0.295,
-        0.485
+        32.45,
+        0.405,
+        0.354
       ],
       "fill": [
-        160,
-        3360,
+        80,
+        912,
         16,
         16
       ],
       "art": [
         0,
-        3360,
+        912,
         48,
         48
       ],
       "corner": [
         48,
-        3360,
+        912,
         32,
         32
       ],
-      "skirt": [
-        80,
-        3360,
-        48,
-        48
-      ],
-      "cornerSkirt": [
-        128,
-        3360,
-        32,
-        32
-      ]
+      "skirt": null,
+      "cornerSkirt": null
     },
     {
-      "from": "rock-cliff",
-      "recolored": true,
+      "from": "banked-pool",
       "tone": [
-        209.944,
-        0.19,
-        0.608
+        171.322,
+        0.335,
+        0.374
       ],
       "fill": [
-        160,
-        3408,
+        80,
+        960,
         16,
         16
       ],
       "art": [
         0,
-        3408,
+        960,
         48,
         48
       ],
       "corner": [
         48,
-        3408,
+        960,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "grass-ring-wide",
+      "tone": [
+        0,
+        0,
+        0.5
+      ],
+      "fill": [
+        80,
+        1008,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        1008,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        1008,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "ring-cliff",
+      "tone": [
+        36.95,
+        0.265,
+        0.332
+      ],
+      "fill": [
+        80,
+        1056,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        1056,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        1056,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "deep-pool",
+      "tone": [
+        172.278,
+        0.333,
+        0.218
+      ],
+      "fill": [
+        80,
+        1104,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        1104,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        1104,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "dirt",
+      "tone": [
+        71.216,
+        0.218,
+        0.322
+      ],
+      "fill": [
+        80,
+        1152,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        1152,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        1152,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "dark-cobbles",
+      "tone": [
+        81.318,
+        0.127,
+        0.333
+      ],
+      "fill": [
+        80,
+        1200,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        1200,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        1200,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "banked-pool",
+      "tone": [
+        114.959,
+        0.181,
+        0.356
+      ],
+      "fill": [
+        80,
+        1248,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        1248,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        1248,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "grass-ring-wide",
+      "tone": [
+        0,
+        0,
+        0.5
+      ],
+      "fill": [
+        80,
+        1296,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        1296,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        1296,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "ring-cliff",
+      "tone": [
+        71.216,
+        0.218,
+        0.322
+      ],
+      "fill": [
+        80,
+        1344,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        1344,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        1344,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "deep-pool",
+      "tone": [
+        112.747,
+        0.184,
+        0.202
+      ],
+      "fill": [
+        80,
+        1392,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        1392,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        1392,
         32,
         32
       ],
@@ -2222,61 +819,26 @@
     },
     {
       "from": "dry-grass",
-      "recolored": true,
       "tone": [
-        96.923,
-        0.213,
-        0.642
+        117.696,
+        0.394,
+        0.389
       ],
       "fill": [
-        160,
-        3456,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        3456,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        3456,
-        32,
-        32
-      ],
-      "skirt": [
         80,
-        3456,
-        48,
-        48
-      ],
-      "cornerSkirt": null
-    },
-    {
-      "from": "rock-cliff-ring",
-      "recolored": true,
-      "tone": [
-        null,
-        null,
-        null
-      ],
-      "fill": [
-        160,
-        3504,
+        1440,
         16,
         16
       ],
       "art": [
         0,
-        3504,
+        1440,
         48,
         48
       ],
       "corner": [
         48,
-        3504,
+        1440,
         32,
         32
       ],
@@ -2284,28 +846,27 @@
       "cornerSkirt": null
     },
     {
-      "from": "ice-pool",
-      "recolored": false,
+      "from": "dark-cobbles",
       "tone": [
-        194.835,
-        0.402,
-        0.855
+        91.78,
+        0.172,
+        0.359
       ],
       "fill": [
-        160,
-        3552,
+        80,
+        1488,
         16,
         16
       ],
       "art": [
         0,
-        3552,
+        1488,
         48,
         48
       ],
       "corner": [
         48,
-        3552,
+        1488,
         32,
         32
       ],
@@ -2313,62 +874,27 @@
       "cornerSkirt": null
     },
     {
-      "from": "flagstones",
-      "recolored": true,
+      "from": "grass-ring-rough",
       "tone": [
-        210.195,
-        0.189,
-        0.702
+        0,
+        0,
+        0.5
       ],
       "fill": [
-        160,
-        3600,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        3600,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        3600,
-        32,
-        32
-      ],
-      "skirt": [
         80,
-        3600,
-        48,
-        48
-      ],
-      "cornerSkirt": null
-    },
-    {
-      "from": "snow-cliff",
-      "recolored": true,
-      "tone": [
-        29.419,
-        0.155,
-        0.939
-      ],
-      "fill": [
-        160,
-        3648,
+        1536,
         16,
         16
       ],
       "art": [
         0,
-        3648,
+        1536,
         48,
         48
       ],
       "corner": [
         48,
-        3648,
+        1536,
         32,
         32
       ],
@@ -2376,62 +902,195 @@
       "cornerSkirt": null
     },
     {
-      "from": "mossy-stones",
-      "recolored": true,
+      "from": "ring-cliff",
       "tone": [
-        41.514,
-        0.048,
-        0.41
+        117.696,
+        0.394,
+        0.389
       ],
       "fill": [
-        160,
-        3696,
+        80,
+        1584,
         16,
         16
       ],
       "art": [
         0,
-        3696,
+        1584,
         48,
         48
       ],
       "corner": [
         48,
-        3696,
+        1584,
         32,
         32
       ],
-      "skirt": [
-        80,
-        3696,
-        48,
-        48
-      ],
+      "skirt": null,
       "cornerSkirt": null
     },
     {
-      "from": "rock-cliff-ring",
-      "recolored": true,
+      "from": "dry-grass",
       "tone": [
-        null,
-        null,
-        null
+        80.71,
+        0.414,
+        0.497
       ],
       "fill": [
-        160,
-        3744,
+        80,
+        1632,
         16,
         16
       ],
       "art": [
         0,
-        3744,
+        1632,
         48,
         48
       ],
       "corner": [
         48,
-        3744,
+        1632,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "red-carpet",
+      "tone": [
+        15.298,
+        0.475,
+        0.446
+      ],
+      "fill": [
+        80,
+        1680,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        1680,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        1680,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "grass-ring",
+      "tone": [
+        0,
+        0,
+        0.5
+      ],
+      "fill": [
+        80,
+        1728,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        1728,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        1728,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "ring-cliff",
+      "tone": [
+        80.71,
+        0.414,
+        0.497
+      ],
+      "fill": [
+        80,
+        1776,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        1776,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        1776,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "dry-grass",
+      "tone": [
+        52.436,
+        0.621,
+        0.722
+      ],
+      "fill": [
+        80,
+        1824,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        1824,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        1824,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "red-carpet",
+      "tone": [
+        29.768,
+        0.453,
+        0.545
+      ],
+      "fill": [
+        80,
+        1872,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        1872,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        1872,
         32,
         32
       ],
@@ -2440,182 +1099,26 @@
     },
     {
       "from": "banked-pool",
-      "recolored": true,
       "tone": [
-        214.042,
-        0.738,
-        0.596
+        212.268,
+        0.87,
+        0.546
       ],
       "fill": [
-        160,
-        3792,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        3792,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        3792,
-        32,
-        32
-      ],
-      "skirt": null,
-      "cornerSkirt": null
-    },
-    {
-      "from": "stone-cliff",
-      "recolored": true,
-      "tone": [
-        212.459,
-        0.07,
-        0.641
-      ],
-      "fill": [
-        160,
-        3840,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        3840,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        3840,
-        32,
-        32
-      ],
-      "skirt": null,
-      "cornerSkirt": [
-        128,
-        3840,
-        32,
-        32
-      ]
-    },
-    {
-      "from": "snow",
-      "recolored": true,
-      "tone": [
-        204.495,
-        0.304,
-        0.86
-      ],
-      "fill": [
-        160,
-        3888,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        3888,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        3888,
-        32,
-        32
-      ],
-      "skirt": null,
-      "cornerSkirt": null
-    },
-    {
-      "from": "rock-cliff-ring",
-      "recolored": true,
-      "tone": [
-        null,
-        null,
-        null
-      ],
-      "fill": [
-        160,
-        3936,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        3936,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        3936,
-        32,
-        32
-      ],
-      "skirt": null,
-      "cornerSkirt": null
-    },
-    {
-      "from": "flagstones",
-      "recolored": true,
-      "tone": [
-        212.402,
-        0.174,
-        0.742
-      ],
-      "fill": [
-        160,
-        3984,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        3984,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        3984,
-        32,
-        32
-      ],
-      "skirt": [
         80,
-        3984,
-        48,
-        48
-      ],
-      "cornerSkirt": null
-    },
-    {
-      "from": "lichen-cliff",
-      "recolored": true,
-      "tone": [
-        214.286,
-        0.128,
-        0.9
-      ],
-      "fill": [
-        160,
-        4032,
+        1920,
         16,
         16
       ],
       "art": [
         0,
-        4032,
+        1920,
         48,
         48
       ],
       "corner": [
         48,
-        4032,
+        1920,
         32,
         32
       ],
@@ -2623,202 +1126,503 @@
       "cornerSkirt": null
     },
     {
-      "from": "snow",
-      "recolored": true,
+      "from": "olive-ring",
       "tone": [
-        199.253,
-        0.355,
-        0.88
+        0,
+        0,
+        0.5
       ],
       "fill": [
-        160,
-        4080,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        4080,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        4080,
-        32,
-        32
-      ],
-      "skirt": null,
-      "cornerSkirt": null
-    },
-    {
-      "from": "rock-cliff-ring",
-      "recolored": true,
-      "tone": [
-        null,
-        null,
-        null
-      ],
-      "fill": [
-        160,
-        4128,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        4128,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        4128,
-        32,
-        32
-      ],
-      "skirt": null,
-      "cornerSkirt": null
-    },
-    {
-      "from": "ice-pool",
-      "recolored": true,
-      "tone": [
-        195.53,
-        0.486,
-        0.915
-      ],
-      "fill": [
-        160,
-        4176,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        4176,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        4176,
-        32,
-        32
-      ],
-      "skirt": null,
-      "cornerSkirt": null
-    },
-    {
-      "from": "flagstones",
-      "recolored": true,
-      "tone": [
-        193.824,
-        0.268,
-        0.762
-      ],
-      "fill": [
-        160,
-        4224,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        4224,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        4224,
-        32,
-        32
-      ],
-      "skirt": [
         80,
-        4224,
-        48,
-        48
-      ],
-      "cornerSkirt": null
-    },
-    {
-      "from": "ice-cliff",
-      "recolored": true,
-      "tone": [
-        194.732,
-        0.297,
-        0.837
-      ],
-      "fill": [
-        160,
-        4272,
+        1968,
         16,
         16
       ],
       "art": [
         0,
-        4272,
+        1968,
         48,
         48
       ],
       "corner": [
         48,
-        4272,
+        1968,
         32,
         32
       ],
-      "skirt": null,
-      "cornerSkirt": [
-        128,
-        4272,
-        32,
-        32
-      ]
-    },
-    {
-      "from": "grass-edge-rough",
-      "recolored": true,
-      "tone": [
-        104.451,
-        0.519,
-        0.696
-      ],
-      "fill": [
-        160,
-        4320,
-        16,
-        16
-      ],
-      "art": null,
-      "corner": null,
       "skirt": null,
       "cornerSkirt": null
     },
     {
-      "from": "rock-cliff-ring",
-      "recolored": true,
+      "from": "ring-cliff",
       "tone": [
-        null,
-        null,
-        null
+        52.436,
+        0.621,
+        0.722
       ],
       "fill": [
-        160,
-        4368,
+        80,
+        2016,
         16,
         16
       ],
       "art": [
         0,
-        4368,
+        2016,
         48,
         48
       ],
       "corner": [
         48,
-        4368,
+        2016,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "deep-pool",
+      "tone": [
+        212.326,
+        0.87,
+        0.392
+      ],
+      "fill": [
+        80,
+        2064,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        2064,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        2064,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "sand",
+      "tone": [
+        40.244,
+        0.624,
+        0.707
+      ],
+      "fill": [
+        80,
+        2112,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        2112,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        2112,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "slate-herringbone",
+      "tone": [
+        36.149,
+        0.493,
+        0.61
+      ],
+      "fill": [
+        80,
+        2160,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        2160,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        2160,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "banked-pool",
+      "tone": [
+        184.05,
+        0.473,
+        0.466
+      ],
+      "fill": [
+        80,
+        2208,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        2208,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        2208,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "grass-ring-wide",
+      "tone": [
+        0,
+        0,
+        0.5
+      ],
+      "fill": [
+        80,
+        2256,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        2256,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        2256,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "ring-cliff",
+      "tone": [
+        40.244,
+        0.624,
+        0.707
+      ],
+      "fill": [
+        80,
+        2304,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        2304,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        2304,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "deep-pool",
+      "tone": [
+        183.666,
+        0.473,
+        0.313
+      ],
+      "fill": [
+        80,
+        2352,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        2352,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        2352,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "dry-grass",
+      "tone": [
+        60.946,
+        0.239,
+        0.528
+      ],
+      "fill": [
+        80,
+        2400,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        2400,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        2400,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "grey-tiles",
+      "tone": [
+        135.088,
+        0.022,
+        0.761
+      ],
+      "fill": [
+        80,
+        2448,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        2448,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        2448,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "olive-ring",
+      "tone": [
+        0,
+        0,
+        0.5
+      ],
+      "fill": [
+        80,
+        2496,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        2496,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        2496,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "ring-cliff",
+      "tone": [
+        60.946,
+        0.239,
+        0.528
+      ],
+      "fill": [
+        80,
+        2544,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        2544,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        2544,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "dry-grass",
+      "tone": [
+        100.56,
+        0.467,
+        0.55
+      ],
+      "fill": [
+        80,
+        2592,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        2592,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        2592,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "parquet-in-grass",
+      "tone": [
+        43.295,
+        0.393,
+        0.659
+      ],
+      "fill": [
+        80,
+        2640,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        2640,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        2640,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "grass-ring",
+      "tone": [
+        0,
+        0,
+        0.5
+      ],
+      "fill": [
+        80,
+        2688,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        2688,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        2688,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "ring-cliff",
+      "tone": [
+        100.56,
+        0.467,
+        0.55
+      ],
+      "fill": [
+        80,
+        2736,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        2736,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        2736,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "dry-grass",
+      "tone": [
+        116.251,
+        0.351,
+        0.447
+      ],
+      "fill": [
+        80,
+        2784,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        2784,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        2784,
         32,
         32
       ],
@@ -2827,14 +1631,937 @@
     },
     {
       "from": "parquet",
-      "recolored": false,
       "tone": [
         44.012,
         0.347,
         0.585
       ],
       "fill": [
-        160,
+        80,
+        2832,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        2832,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        2832,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "grass-ring-rough",
+      "tone": [
+        0,
+        0,
+        0.5
+      ],
+      "fill": [
+        80,
+        2880,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        2880,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        2880,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "ring-cliff",
+      "tone": [
+        116.251,
+        0.351,
+        0.447
+      ],
+      "fill": [
+        80,
+        2928,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        2928,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        2928,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "dry-grass",
+      "tone": [
+        130.748,
+        0.32,
+        0.363
+      ],
+      "fill": [
+        80,
+        2976,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        2976,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        2976,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "dark-cobbles",
+      "tone": [
+        122.96,
+        0.075,
+        0.408
+      ],
+      "fill": [
+        80,
+        3024,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        3024,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        3024,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "banked-pool",
+      "tone": [
+        198.546,
+        0.392,
+        0.378
+      ],
+      "fill": [
+        80,
+        3072,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        3072,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        3072,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "grass-ring-rough",
+      "tone": [
+        0,
+        0,
+        0.5
+      ],
+      "fill": [
+        80,
+        3120,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        3120,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        3120,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "ring-cliff",
+      "tone": [
+        130.748,
+        0.32,
+        0.363
+      ],
+      "fill": [
+        80,
+        3168,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        3168,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        3168,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "deep-pool",
+      "tone": [
+        197.999,
+        0.386,
+        0.224
+      ],
+      "fill": [
+        80,
+        3216,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        3216,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        3216,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "dirt",
+      "tone": [
+        37.762,
+        0.195,
+        0.661
+      ],
+      "fill": [
+        80,
+        3264,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        3264,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        3264,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "slate-herringbone",
+      "tone": [
+        52.399,
+        0.09,
+        0.656
+      ],
+      "fill": [
+        80,
+        3312,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        3312,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        3312,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "ice-pool",
+      "tone": [
+        194.835,
+        0.402,
+        0.855
+      ],
+      "fill": [
+        80,
+        3360,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        3360,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        3360,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "grass-ring-wide",
+      "tone": [
+        0,
+        0,
+        0.5
+      ],
+      "fill": [
+        80,
+        3408,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        3408,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        3408,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "ring-cliff",
+      "tone": [
+        37.762,
+        0.195,
+        0.661
+      ],
+      "fill": [
+        80,
+        3456,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        3456,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        3456,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "snow-patch",
+      "tone": [
+        180,
+        0.193,
+        0.923
+      ],
+      "fill": [
+        80,
+        3504,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        3504,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        3504,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "parquet",
+      "tone": [
+        28.912,
+        0.302,
+        0.335
+      ],
+      "fill": [
+        80,
+        3552,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        3552,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        3552,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "grass-ring-wide",
+      "tone": [
+        0,
+        0,
+        0.5
+      ],
+      "fill": [
+        80,
+        3600,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        3600,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        3600,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "ring-cliff",
+      "tone": [
+        180,
+        0.193,
+        0.923
+      ],
+      "fill": [
+        80,
+        3648,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        3648,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        3648,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "snow-patch",
+      "tone": [
+        180,
+        0.13,
+        0.888
+      ],
+      "fill": [
+        80,
+        3696,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        3696,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        3696,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "grass-ring-wide",
+      "tone": [
+        0,
+        0,
+        0.5
+      ],
+      "fill": [
+        80,
+        3744,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        3744,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        3744,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "ring-cliff",
+      "tone": [
+        180,
+        0.13,
+        0.888
+      ],
+      "fill": [
+        80,
+        3792,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        3792,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        3792,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "stone-patch",
+      "tone": [
+        224.596,
+        0.031,
+        0.722
+      ],
+      "fill": [
+        80,
+        3840,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        3840,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        3840,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "banked-pool",
+      "tone": [
+        204.026,
+        0.308,
+        0.45
+      ],
+      "fill": [
+        80,
+        3888,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        3888,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        3888,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "grass-ring-wide",
+      "tone": [
+        0,
+        0,
+        0.5
+      ],
+      "fill": [
+        80,
+        3936,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        3936,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        3936,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "ring-cliff",
+      "tone": [
+        224.596,
+        0.031,
+        0.722
+      ],
+      "fill": [
+        80,
+        3984,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        3984,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        3984,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "deep-pool",
+      "tone": [
+        203.621,
+        0.307,
+        0.294
+      ],
+      "fill": [
+        80,
+        4032,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        4032,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        4032,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "grey-tiles",
+      "tone": [
+        208.337,
+        0.2,
+        0.765
+      ],
+      "fill": [
+        80,
+        4080,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        4080,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        4080,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "ring-cliff",
+      "tone": [
+        180,
+        0.193,
+        0.923
+      ],
+      "fill": [
+        80,
+        4128,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        4128,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        4128,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "snow-patch",
+      "tone": [
+        198.056,
+        0.629,
+        0.902
+      ],
+      "fill": [
+        80,
+        4176,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        4176,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        4176,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "grey-tiles",
+      "tone": [
+        198.575,
+        0.457,
+        0.82
+      ],
+      "fill": [
+        80,
+        4224,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        4224,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        4224,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "grass-ring-wide",
+      "tone": [
+        0,
+        0,
+        0.5
+      ],
+      "fill": [
+        80,
+        4272,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        4272,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        4272,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "ring-cliff",
+      "tone": [
+        198.056,
+        0.629,
+        0.902
+      ],
+      "fill": [
+        80,
+        4320,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        4320,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        4320,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "dry-grass",
+      "tone": [
+        91.566,
+        0.397,
+        0.536
+      ],
+      "fill": [
+        80,
+        4368,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        4368,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        4368,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "grass-ring",
+      "tone": [
+        0,
+        0,
+        0.5
+      ],
+      "fill": [
+        80,
         4416,
         16,
         16
@@ -2851,29 +2578,18 @@
         32,
         32
       ],
-      "skirt": [
-        80,
-        4416,
-        48,
-        48
-      ],
-      "cornerSkirt": [
-        128,
-        4416,
-        32,
-        32
-      ]
+      "skirt": null,
+      "cornerSkirt": null
     },
     {
-      "from": "grass-cliff",
-      "recolored": true,
+      "from": "ring-cliff",
       "tone": [
-        25.848,
-        0.618,
-        0.753
+        91.566,
+        0.397,
+        0.536
       ],
       "fill": [
-        160,
+        80,
         4464,
         16,
         16
@@ -2895,48 +2611,41 @@
     },
     {
       "from": "dry-grass",
-      "recolored": true,
       "tone": [
-        60.936,
-        0.502,
-        0.773
+        52.441,
+        0.398,
+        0.648
       ],
       "fill": [
-        160,
-        4512,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        4512,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        4512,
-        32,
-        32
-      ],
-      "skirt": [
         80,
         4512,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        4512,
         48,
         48
       ],
+      "corner": [
+        48,
+        4512,
+        32,
+        32
+      ],
+      "skirt": null,
       "cornerSkirt": null
     },
     {
-      "from": "rock-cliff-ring",
-      "recolored": true,
+      "from": "red-carpet",
       "tone": [
-        null,
-        null,
-        null
+        29.73,
+        0.384,
+        0.552
       ],
       "fill": [
-        160,
+        80,
         4560,
         16,
         16
@@ -2957,15 +2666,14 @@
       "cornerSkirt": null
     },
     {
-      "from": "banked-pool",
-      "recolored": true,
+      "from": "olive-ring",
       "tone": [
-        212.356,
-        0.738,
-        0.566
+        0,
+        0,
+        0.5
       ],
       "fill": [
-        160,
+        80,
         4608,
         16,
         16
@@ -2986,15 +2694,14 @@
       "cornerSkirt": null
     },
     {
-      "from": "clay",
-      "recolored": true,
+      "from": "ring-cliff",
       "tone": [
-        15.158,
-        0.242,
-        0.558
+        52.441,
+        0.398,
+        0.648
       ],
       "fill": [
-        160,
+        80,
         4656,
         16,
         16
@@ -3015,15 +2722,14 @@
       "cornerSkirt": null
     },
     {
-      "from": "sandstone-cliff",
-      "recolored": true,
+      "from": "dry-grass",
       "tone": [
-        33.42,
-        0.38,
-        0.792
+        130.608,
+        0.245,
+        0.395
       ],
       "fill": [
-        160,
+        80,
         4704,
         16,
         16
@@ -3041,55 +2747,30 @@
         32
       ],
       "skirt": null,
-      "cornerSkirt": [
-        128,
-        4704,
-        32,
-        32
-      ]
+      "cornerSkirt": null
     },
     {
-      "from": "grass-edge",
-      "recolored": true,
+      "from": "dark-cobbles",
       "tone": [
-        121.765,
-        0.414,
-        0.555
+        41.275,
+        0.138,
+        0.39
       ],
       "fill": [
-        160,
+        80,
         4752,
         16,
         16
       ],
-      "art": null,
-      "corner": null,
-      "skirt": null,
-      "cornerSkirt": null
-    },
-    {
-      "from": "rock-cliff-ring",
-      "recolored": true,
-      "tone": [
-        null,
-        null,
-        null
-      ],
-      "fill": [
-        160,
-        4800,
-        16,
-        16
-      ],
       "art": [
         0,
-        4800,
+        4752,
         48,
         48
       ],
       "corner": [
         48,
-        4800,
+        4752,
         32,
         32
       ],
@@ -3098,14 +2779,41 @@
     },
     {
       "from": "banked-pool",
-      "recolored": true,
       "tone": [
-        217.307,
-        0.697,
-        0.517
+        196.22,
+        0.338,
+        0.376
       ],
       "fill": [
-        160,
+        80,
+        4800,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        4800,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        4800,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "grass-ring-rough",
+      "tone": [
+        0,
+        0,
+        0.5
+      ],
+      "fill": [
+        80,
         4848,
         16,
         16
@@ -3126,15 +2834,14 @@
       "cornerSkirt": null
     },
     {
-      "from": "rock-cliff",
-      "recolored": true,
+      "from": "ring-cliff",
       "tone": [
-        69.485,
-        0.251,
-        0.609
+        130.608,
+        0.245,
+        0.395
       ],
       "fill": [
-        160,
+        80,
         4896,
         16,
         16
@@ -3155,15 +2862,14 @@
       "cornerSkirt": null
     },
     {
-      "from": "snow",
-      "recolored": true,
+      "from": "deep-pool",
       "tone": [
-        196.83,
-        0.347,
-        0.9
+        196.166,
+        0.339,
+        0.22
       ],
       "fill": [
-        160,
+        80,
         4944,
         16,
         16
@@ -3184,15 +2890,14 @@
       "cornerSkirt": null
     },
     {
-      "from": "rock-cliff-ring",
-      "recolored": true,
+      "from": "sand-island-pale",
       "tone": [
-        null,
-        null,
-        null
+        195.443,
+        0.37,
+        0.92
       ],
       "fill": [
-        160,
+        80,
         4992,
         16,
         16
@@ -3214,43 +2919,31 @@
     },
     {
       "from": "deep-sea",
-      "recolored": true,
       "tone": [
-        206.905,
-        0.285,
-        0.462
+        204.447,
+        0.293,
+        0.386
       ],
       "fill": [
-        160,
+        80,
         5040,
         16,
         16
       ],
-      "art": [
-        0,
-        5040,
-        48,
-        48
-      ],
+      "art": null,
       "corner": null,
-      "skirt": [
-        80,
-        5040,
-        48,
-        48
-      ],
+      "skirt": null,
       "cornerSkirt": null
     },
     {
-      "from": "ice-cliff-worn",
-      "recolored": true,
+      "from": "sand-island-pale-hollow",
       "tone": [
-        195.231,
-        0.333,
-        0.93
+        0,
+        0,
+        0.5
       ],
       "fill": [
-        160,
+        80,
         5088,
         16,
         16
@@ -3268,57 +2961,45 @@
         32
       ],
       "skirt": null,
-      "cornerSkirt": [
-        128,
-        5088,
-        32,
-        32
-      ]
-    },
-    {
-      "from": "dirt",
-      "recolored": true,
-      "tone": [
-        30.783,
-        0.024,
-        0.314
-      ],
-      "fill": [
-        160,
-        5136,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        5136,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        5136,
-        32,
-        32
-      ],
-      "skirt": [
-        80,
-        5136,
-        48,
-        48
-      ],
       "cornerSkirt": null
     },
     {
-      "from": "rock-cliff-ring",
-      "recolored": true,
+      "from": "ring-cliff",
       "tone": [
-        null,
-        null,
-        null
+        195.443,
+        0.37,
+        0.92
       ],
       "fill": [
-        160,
+        80,
+        5136,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        5136,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        5136,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "dirt",
+      "tone": [
+        13.355,
+        0.097,
+        0.265
+      ],
+      "fill": [
+        80,
         5184,
         16,
         16
@@ -3332,6 +3013,34 @@
       "corner": [
         48,
         5184,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "dark-cobbles",
+      "tone": [
+        354.665,
+        0.043,
+        0.229
+      ],
+      "fill": [
+        80,
+        5232,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        5232,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        5232,
         32,
         32
       ],
@@ -3340,82 +3049,41 @@
     },
     {
       "from": "lava-pool",
-      "recolored": false,
       "tone": [
         7.018,
         0.876,
         0.43
       ],
       "fill": [
-        160,
-        5232,
+        80,
+        5280,
         16,
         16
       ],
       "art": [
         0,
-        5232,
+        5280,
         48,
         48
       ],
       "corner": [
         48,
-        5232,
+        5280,
         32,
         32
       ],
       "skirt": null,
-      "cornerSkirt": [
-        128,
-        5232,
-        32,
-        32
-      ]
-    },
-    {
-      "from": "flagstones",
-      "recolored": true,
-      "tone": [
-        59.462,
-        0.019,
-        0.36
-      ],
-      "fill": [
-        160,
-        5280,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        5280,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        5280,
-        32,
-        32
-      ],
-      "skirt": [
-        80,
-        5280,
-        48,
-        48
-      ],
       "cornerSkirt": null
     },
     {
-      "from": "dark-stone-cliff",
-      "recolored": true,
+      "from": "grass-ring-wide",
       "tone": [
-        280.909,
-        0.063,
-        0.384
+        0,
+        0,
+        0.5
       ],
       "fill": [
-        160,
+        80,
         5328,
         16,
         16
@@ -3432,29 +3100,18 @@
         32,
         32
       ],
-      "skirt": [
-        80,
-        5328,
-        48,
-        48
-      ],
-      "cornerSkirt": [
-        128,
-        5328,
-        32,
-        32
-      ]
+      "skirt": null,
+      "cornerSkirt": null
     },
     {
-      "from": "clay",
-      "recolored": false,
+      "from": "ring-cliff",
       "tone": [
-        4.069,
-        0.365,
-        0.459
+        13.355,
+        0.097,
+        0.265
       ],
       "fill": [
-        160,
+        80,
         5376,
         16,
         16
@@ -3473,235 +3130,212 @@
       ],
       "skirt": null,
       "cornerSkirt": null
-    },
-    {
-      "from": "rock-cliff-ring",
-      "recolored": true,
-      "tone": [
-        null,
-        null,
-        null
-      ],
-      "fill": [
-        160,
-        5424,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        5424,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        5424,
-        32,
-        32
-      ],
-      "skirt": null,
-      "cornerSkirt": null
-    },
-    {
-      "from": "banked-pool",
-      "recolored": true,
-      "tone": [
-        194.596,
-        0.39,
-        0.507
-      ],
-      "fill": [
-        160,
-        5472,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        5472,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        5472,
-        32,
-        32
-      ],
-      "skirt": null,
-      "cornerSkirt": null
-    },
-    {
-      "from": "red-rock-grass-cliff",
-      "recolored": true,
-      "tone": [
-        14.222,
-        0.573,
-        0.626
-      ],
-      "fill": [
-        160,
-        5520,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        5520,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        5520,
-        32,
-        32
-      ],
-      "skirt": null,
-      "cornerSkirt": null
-    },
-    {
-      "from": "mossy-stones",
-      "recolored": true,
-      "tone": [
-        61.501,
-        0.063,
-        0.408
-      ],
-      "fill": [
-        160,
-        5568,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        5568,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        5568,
-        32,
-        32
-      ],
-      "skirt": [
-        80,
-        5568,
-        48,
-        48
-      ],
-      "cornerSkirt": null
-    },
-    {
-      "from": "rock-cliff-ring",
-      "recolored": true,
-      "tone": [
-        null,
-        null,
-        null
-      ],
-      "fill": [
-        160,
-        5616,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        5616,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        5616,
-        32,
-        32
-      ],
-      "skirt": null,
-      "cornerSkirt": null
-    },
-    {
-      "from": "banked-pool",
-      "recolored": true,
-      "tone": [
-        216.25,
-        0.61,
-        0.576
-      ],
-      "fill": [
-        160,
-        5664,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        5664,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        5664,
-        32,
-        32
-      ],
-      "skirt": null,
-      "cornerSkirt": null
-    },
-    {
-      "from": "sea-cliff",
-      "recolored": true,
-      "tone": [
-        204.948,
-        0.139,
-        0.542
-      ],
-      "fill": [
-        160,
-        5712,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        5712,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        5712,
-        32,
-        32
-      ],
-      "skirt": [
-        80,
-        5712,
-        48,
-        48
-      ],
-      "cornerSkirt": [
-        128,
-        5712,
-        32,
-        32
-      ]
     },
     {
       "from": "dirt",
-      "recolored": true,
       "tone": [
-        31.166,
-        0.099,
-        0.375
+        20.917,
+        0.434,
+        0.48
       ],
       "fill": [
-        160,
+        80,
+        5424,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        5424,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        5424,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "red-carpet",
+      "tone": [
+        18.266,
+        0.447,
+        0.423
+      ],
+      "fill": [
+        80,
+        5472,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        5472,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        5472,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "banked-pool",
+      "tone": [
+        169.991,
+        0.108,
+        0.49
+      ],
+      "fill": [
+        80,
+        5520,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        5520,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        5520,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "grass-ring-wide",
+      "tone": [
+        0,
+        0,
+        0.5
+      ],
+      "fill": [
+        80,
+        5568,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        5568,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        5568,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "ring-cliff",
+      "tone": [
+        20.917,
+        0.434,
+        0.48
+      ],
+      "fill": [
+        80,
+        5616,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        5616,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        5616,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "deep-pool",
+      "tone": [
+        172.344,
+        0.106,
+        0.333
+      ],
+      "fill": [
+        80,
+        5664,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        5664,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        5664,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "stone-patch",
+      "tone": [
+        200.124,
+        0.049,
+        0.622
+      ],
+      "fill": [
+        80,
+        5712,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        5712,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        5712,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "banked-pool",
+      "tone": [
+        201.009,
+        0.319,
+        0.428
+      ],
+      "fill": [
+        80,
         5760,
         16,
         16
@@ -3718,24 +3352,18 @@
         32,
         32
       ],
-      "skirt": [
-        80,
-        5760,
-        48,
-        48
-      ],
+      "skirt": null,
       "cornerSkirt": null
     },
     {
-      "from": "rock-cliff-ring",
-      "recolored": true,
+      "from": "grass-ring-wide",
       "tone": [
-        null,
-        null,
-        null
+        0,
+        0,
+        0.5
       ],
       "fill": [
-        160,
+        80,
         5808,
         16,
         16
@@ -3756,15 +3384,14 @@
       "cornerSkirt": null
     },
     {
-      "from": "marsh",
-      "recolored": true,
+      "from": "ring-cliff",
       "tone": [
-        79.782,
-        0.132,
-        0.249
+        200.124,
+        0.049,
+        0.622
       ],
       "fill": [
-        160,
+        80,
         5856,
         16,
         16
@@ -3778,6 +3405,62 @@
       "corner": [
         48,
         5856,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "deep-pool",
+      "tone": [
+        200.146,
+        0.324,
+        0.273
+      ],
+      "fill": [
+        80,
+        5904,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        5904,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        5904,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "tilled-earth",
+      "tone": [
+        37.323,
+        0.191,
+        0.258
+      ],
+      "fill": [
+        80,
+        5952,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        5952,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        5952,
         32,
         32
       ],
@@ -3786,66 +3469,26 @@
     },
     {
       "from": "parquet",
-      "recolored": true,
       "tone": [
-        34.207,
-        0.252,
-        0.445
+        31.366,
+        0.296,
+        0.29
       ],
       "fill": [
-        160,
-        5904,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        5904,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        5904,
-        32,
-        32
-      ],
-      "skirt": [
         80,
-        5904,
-        48,
-        48
-      ],
-      "cornerSkirt": [
-        128,
-        5904,
-        32,
-        32
-      ]
-    },
-    {
-      "from": "timber-cliff",
-      "recolored": true,
-      "tone": [
-        23.953,
-        0.346,
-        0.46
-      ],
-      "fill": [
-        160,
-        5952,
+        6000,
         16,
         16
       ],
       "art": [
         0,
-        5952,
+        6000,
         48,
         48
       ],
       "corner": [
         48,
-        5952,
+        6000,
         32,
         32
       ],
@@ -3853,54 +3496,14 @@
       "cornerSkirt": null
     },
     {
-      "from": "sand-shoal",
-      "recolored": true,
+      "from": "banked-pool",
       "tone": [
-        70.218,
-        0.39,
-        0.61
+        95.041,
+        0.183,
+        0.299
       ],
       "fill": [
-        160,
-        6000,
-        16,
-        16
-      ],
-      "art": [
-        0,
-        6000,
-        48,
-        48
-      ],
-      "corner": [
-        48,
-        6000,
-        32,
-        32
-      ],
-      "skirt": [
         80,
-        6000,
-        48,
-        48
-      ],
-      "cornerSkirt": [
-        128,
-        6000,
-        32,
-        32
-      ]
-    },
-    {
-      "from": "rock-cliff-ring",
-      "recolored": true,
-      "tone": [
-        null,
-        null,
-        null
-      ],
-      "fill": [
-        160,
         6048,
         16,
         16
@@ -3921,15 +3524,14 @@
       "cornerSkirt": null
     },
     {
-      "from": "shallows",
-      "recolored": true,
+      "from": "grass-ring-wide",
       "tone": [
-        145.704,
-        0.313,
-        0.489
+        0,
+        0,
+        0.5
       ],
       "fill": [
-        160,
+        80,
         6096,
         16,
         16
@@ -3940,47 +3542,171 @@
         48,
         48
       ],
+      "corner": [
+        48,
+        6096,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "ring-cliff",
+      "tone": [
+        37.323,
+        0.191,
+        0.258
+      ],
+      "fill": [
+        80,
+        6144,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        6144,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        6144,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "deep-pool",
+      "tone": [
+        91.532,
+        0.178,
+        0.143
+      ],
+      "fill": [
+        80,
+        6192,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        6192,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        6192,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "tan-island",
+      "tone": [
+        43.485,
+        0.242,
+        0.55
+      ],
+      "fill": [
+        80,
+        6240,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        6240,
+        48,
+        48
+      ],
+      "corner": [
+        48,
+        6240,
+        32,
+        32
+      ],
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "deep-sea",
+      "tone": [
+        169.086,
+        0.406,
+        0.31
+      ],
+      "fill": [
+        80,
+        6288,
+        16,
+        16
+      ],
+      "art": null,
       "corner": null,
-      "skirt": [
-        80,
-        6096,
-        48,
-        48
-      ],
+      "skirt": null,
       "cornerSkirt": null
     },
     {
-      "from": "sea-cliff-deep",
-      "recolored": true,
+      "from": "tan-island-hollow",
       "tone": [
-        140.192,
-        0.223,
-        0.423
+        0,
+        0,
+        0.5
       ],
       "fill": [
-        160,
-        6144,
+        80,
+        6336,
         16,
         16
       ],
       "art": [
         0,
-        6144,
+        6336,
         48,
         48
       ],
       "corner": [
         48,
-        6144,
+        6336,
         32,
         32
       ],
-      "skirt": [
+      "skirt": null,
+      "cornerSkirt": null
+    },
+    {
+      "from": "ring-cliff",
+      "tone": [
+        43.485,
+        0.242,
+        0.55
+      ],
+      "fill": [
         80,
-        6144,
+        6384,
+        16,
+        16
+      ],
+      "art": [
+        0,
+        6384,
         48,
         48
       ],
+      "corner": [
+        48,
+        6384,
+        32,
+        32
+      ],
+      "skirt": null,
       "cornerSkirt": null
     }
   ],
@@ -3989,24 +3715,24 @@
       "biome": 0,
       "of": "Deep Ocean",
       "role": "ground",
-      "name": "trench-sand",
-      "why": "The floor a trench shows where it shoals.",
+      "name": "deep-ocean-ground",
+      "why": "tan-island-deep, as drawn.",
       "piece": 0
     },
     {
       "biome": 0,
       "of": "Deep Ocean",
-      "role": "wall",
-      "name": "trench-rock",
-      "why": "The one rock wall the sheet has as a ring, recoloured for this country. Being a ring, the ground it stands on shows through the middle, which is the part walked on.",
+      "role": "water",
+      "name": "deep-ocean-water",
+      "why": "Open sea, a fill only: the island block draws the shore, water and all.",
       "piece": 1
     },
     {
       "biome": 0,
       "of": "Deep Ocean",
-      "role": "water",
-      "name": "deep-sea",
-      "why": "The open dark blue.",
+      "role": "blend",
+      "name": "deep-ocean-blend",
+      "why": "The tan-island-deep-hollow recoloured to the ground of this country, laid over a neighbour to blend the seam between them.",
       "piece": 2
     },
     {
@@ -4014,31 +3740,39 @@
       "of": "Deep Ocean",
       "role": "face",
       "name": "deep-ocean-face",
-      "why": "The side of the cliff, cut from the rock this country was drawn with and painted to match its rim.",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim.",
+      "piece": 3
+    },
+    {
+      "biome": 0,
+      "of": "Deep Ocean",
+      "role": "wall",
+      "name": "deep-ocean-wall",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim.",
       "piece": 3
     },
     {
       "biome": 1,
       "of": "Ocean",
       "role": "ground",
-      "name": "ocean-sand",
-      "why": "A sand island in open water.",
+      "name": "ocean-ground",
+      "why": "sand-island-shallows, as drawn.",
       "piece": 4
     },
     {
       "biome": 1,
       "of": "Ocean",
-      "role": "wall",
-      "name": "sea-rock",
-      "why": "The one rock wall the sheet has as a ring, recoloured for this country. Being a ring, the ground it stands on shows through the middle, which is the part walked on.",
+      "role": "water",
+      "name": "ocean-water",
+      "why": "Open sea, a fill only: the island block draws the shore, water and all.",
       "piece": 5
     },
     {
       "biome": 1,
       "of": "Ocean",
-      "role": "water",
-      "name": "sea",
-      "why": "Plain blue water.",
+      "role": "blend",
+      "name": "ocean-blend",
+      "why": "The sand-island-shallows-hollow recoloured to the ground of this country, laid over a neighbour to blend the seam between them.",
       "piece": 6
     },
     {
@@ -4046,31 +3780,39 @@
       "of": "Ocean",
       "role": "face",
       "name": "ocean-face",
-      "why": "The side of the cliff, cut from the rock this country was drawn with and painted to match its rim.",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim.",
+      "piece": 7
+    },
+    {
+      "biome": 1,
+      "of": "Ocean",
+      "role": "wall",
+      "name": "ocean-wall",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim.",
       "piece": 7
     },
     {
       "biome": 2,
       "of": "Coral Reef",
       "role": "ground",
-      "name": "reef-sand",
-      "why": "Bright shoal sand under shallow water.",
+      "name": "coral-reef-ground",
+      "why": "sand-island-pale, as drawn.",
       "piece": 8
     },
     {
       "biome": 2,
       "of": "Coral Reef",
-      "role": "wall",
-      "name": "reef-rock",
-      "why": "The one rock wall the sheet has as a ring, recoloured for this country. Being a ring, the ground it stands on shows through the middle, which is the part walked on.",
+      "role": "water",
+      "name": "coral-reef-water",
+      "why": "Open sea, a fill only: the island block draws the shore, water and all.",
       "piece": 9
     },
     {
       "biome": 2,
       "of": "Coral Reef",
-      "role": "water",
-      "name": "reef-water",
-      "why": "Turquoise, the one water that reads as reef.",
+      "role": "blend",
+      "name": "coral-reef-blend",
+      "why": "The sand-island-pale-hollow recoloured to the ground of this country, laid over a neighbour to blend the seam between them.",
       "piece": 10
     },
     {
@@ -4078,39 +3820,47 @@
       "of": "Coral Reef",
       "role": "face",
       "name": "coral-reef-face",
-      "why": "The side of the cliff, cut from the rock this country was drawn with and painted to match its rim.",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim.",
+      "piece": 11
+    },
+    {
+      "biome": 2,
+      "of": "Coral Reef",
+      "role": "wall",
+      "name": "coral-reef-wall",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim.",
       "piece": 11
     },
     {
       "biome": 3,
       "of": "Beach",
       "role": "ground",
-      "name": "beach-sand",
-      "why": "Sand drawn standing in water, which is what a shore is.",
+      "name": "beach-ground",
+      "why": "sand, as drawn.",
       "piece": 12
-    },
-    {
-      "biome": 3,
-      "of": "Beach",
-      "role": "wall",
-      "name": "beach-cliff",
-      "why": "The one rock wall the sheet has as a ring, recoloured for this country. Being a ring, the ground it stands on shows through the middle, which is the part walked on.",
-      "piece": 13
-    },
-    {
-      "biome": 3,
-      "of": "Beach",
-      "role": "water",
-      "name": "beach-shallows",
-      "why": "The pale shelf sea the sand runs into.",
-      "piece": 14
     },
     {
       "biome": 3,
       "of": "Beach",
       "role": "paving",
       "name": "beach-paving",
-      "why": "The grey paving warmed to shell and driftwood.",
+      "why": "slate-herringbone, recoloured for this country.",
+      "piece": 13
+    },
+    {
+      "biome": 3,
+      "of": "Beach",
+      "role": "water",
+      "name": "beach-water",
+      "why": "bright-pool, as drawn.",
+      "piece": 14
+    },
+    {
+      "biome": 3,
+      "of": "Beach",
+      "role": "blend",
+      "name": "beach-blend",
+      "why": "The grass-ring-wide recoloured to the ground of this country, laid over a neighbour to blend the seam between them.",
       "piece": 15
     },
     {
@@ -4118,679 +3868,815 @@
       "of": "Beach",
       "role": "face",
       "name": "beach-face",
-      "why": "The side of the cliff, cut from the rock this country was drawn with and painted to match its rim.",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim.",
+      "piece": 16
+    },
+    {
+      "biome": 3,
+      "of": "Beach",
+      "role": "wall",
+      "name": "beach-wall",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim.",
       "piece": 16
     },
     {
       "biome": 4,
       "of": "Mangrove",
       "role": "ground",
-      "name": "tidal-mud",
-      "why": "Bare soil pushed to wet tidal mud.",
-      "piece": 17
-    },
-    {
-      "biome": 4,
-      "of": "Mangrove",
-      "role": "wall",
-      "name": "root-wall",
-      "why": "The one rock wall the sheet has as a ring, recoloured for this country. Being a ring, the ground it stands on shows through the middle, which is the part walked on.",
+      "name": "mangrove-ground",
+      "why": "dirt, recoloured for this country.",
       "piece": 18
     },
     {
       "biome": 4,
       "of": "Mangrove",
-      "role": "water",
-      "name": "brackish-water",
-      "why": "The pond turned green blue, standing water among the roots.",
+      "role": "paving",
+      "name": "mangrove-paving",
+      "why": "parquet, recoloured for this country.",
       "piece": 19
     },
     {
       "biome": 4,
       "of": "Mangrove",
-      "role": "paving",
-      "name": "boardwalk",
-      "why": "Weathered planking for a walkway over the mud.",
+      "role": "water",
+      "name": "mangrove-water",
+      "why": "banked-pool, recoloured for this country.",
       "piece": 20
+    },
+    {
+      "biome": 4,
+      "of": "Mangrove",
+      "role": "blend",
+      "name": "mangrove-blend",
+      "why": "The grass-ring-wide recoloured to the ground of this country, laid over a neighbour to blend the seam between them.",
+      "piece": 21
     },
     {
       "biome": 4,
       "of": "Mangrove",
       "role": "face",
       "name": "mangrove-face",
-      "why": "The side of the cliff, cut from the rock this country was drawn with and painted to match its rim.",
-      "piece": 21
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim.",
+      "piece": 22
     },
     {
-      "biome": 5,
-      "of": "Swamp",
-      "role": "ground",
-      "name": "swamp-moss",
-      "why": "Stones under moss, already the right thing.",
+      "biome": 4,
+      "of": "Mangrove",
+      "role": "wall",
+      "name": "mangrove-wall",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim.",
       "piece": 22
     },
     {
       "biome": 5,
       "of": "Swamp",
-      "role": "wall",
-      "name": "mossy-rock",
-      "why": "The one rock wall the sheet has as a ring, recoloured for this country. Being a ring, the ground it stands on shows through the middle, which is the part walked on.",
-      "piece": 23
-    },
-    {
-      "biome": 5,
-      "of": "Swamp",
-      "role": "water",
-      "name": "marsh-water",
-      "why": "Still green water in a muddy bank.",
+      "role": "ground",
+      "name": "swamp-ground",
+      "why": "dirt, recoloured for this country.",
       "piece": 24
     },
     {
       "biome": 5,
       "of": "Swamp",
       "role": "paving",
-      "name": "damp-flags",
-      "why": "Grey paving gone damp and green.",
+      "name": "swamp-paving",
+      "why": "dark-cobbles, recoloured for this country.",
       "piece": 25
+    },
+    {
+      "biome": 5,
+      "of": "Swamp",
+      "role": "water",
+      "name": "swamp-water",
+      "why": "banked-pool, recoloured for this country.",
+      "piece": 26
+    },
+    {
+      "biome": 5,
+      "of": "Swamp",
+      "role": "blend",
+      "name": "swamp-blend",
+      "why": "The grass-ring-wide recoloured to the ground of this country, laid over a neighbour to blend the seam between them.",
+      "piece": 27
     },
     {
       "biome": 5,
       "of": "Swamp",
       "role": "face",
       "name": "swamp-face",
-      "why": "The side of the cliff, cut from the rock this country was drawn with and painted to match its rim.",
-      "piece": 26
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim.",
+      "piece": 28
     },
     {
-      "biome": 6,
-      "of": "Tropical Rainforest",
-      "role": "ground",
-      "name": "jungle-floor",
-      "why": "Deep saturated green, darker than any temperate grass.",
-      "piece": 27
-    },
-    {
-      "biome": 6,
-      "of": "Tropical Rainforest",
+      "biome": 5,
+      "of": "Swamp",
       "role": "wall",
-      "name": "jungle-cliff",
-      "why": "The one rock wall the sheet has as a ring, recoloured for this country. Being a ring, the ground it stands on shows through the middle, which is the part walked on.",
+      "name": "swamp-wall",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim.",
       "piece": 28
     },
     {
       "biome": 6,
       "of": "Tropical Rainforest",
-      "role": "water",
-      "name": "jungle-pool",
-      "why": "Bright water in a muddy bank.",
-      "piece": 29
+      "role": "ground",
+      "name": "tropical-rainforest-ground",
+      "why": "dry-grass, recoloured for this country.",
+      "piece": 30
     },
     {
       "biome": 6,
       "of": "Tropical Rainforest",
       "role": "paving",
-      "name": "temple-stone",
-      "why": "Overgrown stone, the ruin under the canopy.",
-      "piece": 30
+      "name": "tropical-rainforest-paving",
+      "why": "dark-cobbles, recoloured for this country.",
+      "piece": 31
+    },
+    {
+      "biome": 6,
+      "of": "Tropical Rainforest",
+      "role": "water",
+      "name": "tropical-rainforest-water",
+      "why": "bright-pool, as drawn.",
+      "piece": 14
+    },
+    {
+      "biome": 6,
+      "of": "Tropical Rainforest",
+      "role": "blend",
+      "name": "tropical-rainforest-blend",
+      "why": "The grass-ring-rough recoloured to the ground of this country, laid over a neighbour to blend the seam between them.",
+      "piece": 32
     },
     {
       "biome": 6,
       "of": "Tropical Rainforest",
       "role": "face",
       "name": "tropical-rainforest-face",
-      "why": "The side of the cliff, cut from the rock this country was drawn with and painted to match its rim.",
-      "piece": 31
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim.",
+      "piece": 33
     },
     {
-      "biome": 7,
-      "of": "Tropical Seasonal Forest",
-      "role": "ground",
-      "name": "warm-grass",
-      "why": "Grass pulled towards yellow for the dry season.",
-      "piece": 32
-    },
-    {
-      "biome": 7,
-      "of": "Tropical Seasonal Forest",
+      "biome": 6,
+      "of": "Tropical Rainforest",
       "role": "wall",
-      "name": "laterite-cliff",
-      "why": "The one rock wall the sheet has as a ring, recoloured for this country. Being a ring, the ground it stands on shows through the middle, which is the part walked on.",
+      "name": "tropical-rainforest-wall",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim.",
       "piece": 33
     },
     {
       "biome": 7,
       "of": "Tropical Seasonal Forest",
-      "role": "water",
-      "name": "seasonal-pool",
-      "why": "The plain pond.",
+      "role": "ground",
+      "name": "tropical-seasonal-forest-ground",
+      "why": "dry-grass, recoloured for this country.",
       "piece": 34
     },
     {
       "biome": 7,
       "of": "Tropical Seasonal Forest",
       "role": "paving",
-      "name": "temple-stone",
-      "why": "Overgrown stone, the same floor the rainforest lays.",
-      "piece": 30
+      "name": "tropical-seasonal-forest-paving",
+      "why": "red-carpet, recoloured for this country.",
+      "piece": 35
+    },
+    {
+      "biome": 7,
+      "of": "Tropical Seasonal Forest",
+      "role": "water",
+      "name": "tropical-seasonal-forest-water",
+      "why": "bright-pool, as drawn.",
+      "piece": 14
+    },
+    {
+      "biome": 7,
+      "of": "Tropical Seasonal Forest",
+      "role": "blend",
+      "name": "tropical-seasonal-forest-blend",
+      "why": "The grass-ring recoloured to the ground of this country, laid over a neighbour to blend the seam between them.",
+      "piece": 36
     },
     {
       "biome": 7,
       "of": "Tropical Seasonal Forest",
       "role": "face",
       "name": "tropical-seasonal-forest-face",
-      "why": "The side of the cliff, cut from the rock this country was drawn with and painted to match its rim.",
-      "piece": 35
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim.",
+      "piece": 37
     },
     {
-      "biome": 8,
-      "of": "Savanna",
-      "role": "ground",
-      "name": "savanna-grass",
-      "why": "Yellowed grass, exactly the savanna.",
-      "piece": 36
-    },
-    {
-      "biome": 8,
-      "of": "Savanna",
+      "biome": 7,
+      "of": "Tropical Seasonal Forest",
       "role": "wall",
-      "name": "savanna-cliff",
-      "why": "The one rock wall the sheet has as a ring, recoloured for this country. Being a ring, the ground it stands on shows through the middle, which is the part walked on.",
+      "name": "tropical-seasonal-forest-wall",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim.",
       "piece": 37
     },
     {
       "biome": 8,
       "of": "Savanna",
-      "role": "water",
-      "name": "waterhole",
-      "why": "The pond turned brown, a waterhole rather than clear water.",
+      "role": "ground",
+      "name": "savanna-ground",
+      "why": "dry-grass, as drawn.",
       "piece": 38
     },
     {
       "biome": 8,
       "of": "Savanna",
       "role": "paving",
-      "name": "baked-clay",
-      "why": "Packed clay lightened to a sun-baked floor.",
+      "name": "savanna-paving",
+      "why": "red-carpet, recoloured for this country.",
       "piece": 39
+    },
+    {
+      "biome": 8,
+      "of": "Savanna",
+      "role": "water",
+      "name": "savanna-water",
+      "why": "banked-pool, as drawn.",
+      "piece": 40
+    },
+    {
+      "biome": 8,
+      "of": "Savanna",
+      "role": "blend",
+      "name": "savanna-blend",
+      "why": "The olive-ring recoloured to the ground of this country, laid over a neighbour to blend the seam between them.",
+      "piece": 41
     },
     {
       "biome": 8,
       "of": "Savanna",
       "role": "face",
       "name": "savanna-face",
-      "why": "The side of the cliff, cut from the rock this country was drawn with and painted to match its rim.",
-      "piece": 40
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim.",
+      "piece": 42
     },
     {
-      "biome": 9,
-      "of": "Desert",
-      "role": "ground",
-      "name": "desert-sand",
-      "why": "The beach sand deepened to a dune gold.",
-      "piece": 41
-    },
-    {
-      "biome": 9,
-      "of": "Desert",
+      "biome": 8,
+      "of": "Savanna",
       "role": "wall",
-      "name": "mesa",
-      "why": "The one rock wall the sheet has as a ring, recoloured for this country. Being a ring, the ground it stands on shows through the middle, which is the part walked on.",
+      "name": "savanna-wall",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim.",
       "piece": 42
     },
     {
       "biome": 9,
       "of": "Desert",
-      "role": "water",
-      "name": "oasis",
-      "why": "The pond gone pale and still, the one water in a dry country.",
-      "piece": 43
+      "role": "ground",
+      "name": "desert-ground",
+      "why": "sand, recoloured for this country.",
+      "piece": 44
     },
     {
       "biome": 9,
       "of": "Desert",
       "role": "paving",
-      "name": "sandstone-paving",
-      "why": "Paving cut from the same sandstone as the mesa.",
-      "piece": 44
+      "name": "desert-paving",
+      "why": "slate-herringbone, recoloured for this country.",
+      "piece": 45
+    },
+    {
+      "biome": 9,
+      "of": "Desert",
+      "role": "water",
+      "name": "desert-water",
+      "why": "banked-pool, recoloured for this country.",
+      "piece": 46
+    },
+    {
+      "biome": 9,
+      "of": "Desert",
+      "role": "blend",
+      "name": "desert-blend",
+      "why": "The grass-ring-wide recoloured to the ground of this country, laid over a neighbour to blend the seam between them.",
+      "piece": 47
     },
     {
       "biome": 9,
       "of": "Desert",
       "role": "face",
       "name": "desert-face",
-      "why": "The side of the cliff, cut from the rock this country was drawn with and painted to match its rim.",
-      "piece": 45
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim.",
+      "piece": 48
+    },
+    {
+      "biome": 9,
+      "of": "Desert",
+      "role": "wall",
+      "name": "desert-wall",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim.",
+      "piece": 48
     },
     {
       "biome": 10,
       "of": "Shrubland",
       "role": "ground",
-      "name": "scrub",
-      "why": "Dry grass turned sage, the chaparral colour.",
-      "piece": 46
-    },
-    {
-      "biome": 10,
-      "of": "Shrubland",
-      "role": "wall",
-      "name": "dry-rock-cliff",
-      "why": "The one rock wall the sheet has as a ring, recoloured for this country. Being a ring, the ground it stands on shows through the middle, which is the part walked on.",
-      "piece": 47
-    },
-    {
-      "biome": 10,
-      "of": "Shrubland",
-      "role": "water",
-      "name": "scrub-pool",
-      "why": "The plain pond.",
-      "piece": 34
+      "name": "shrubland-ground",
+      "why": "dry-grass, recoloured for this country.",
+      "piece": 50
     },
     {
       "biome": 10,
       "of": "Shrubland",
       "role": "paving",
-      "name": "grey-flags",
-      "why": "Plain grey herringbone.",
-      "piece": 48
+      "name": "shrubland-paving",
+      "why": "grey-tiles, as drawn.",
+      "piece": 51
+    },
+    {
+      "biome": 10,
+      "of": "Shrubland",
+      "role": "water",
+      "name": "shrubland-water",
+      "why": "banked-pool, as drawn.",
+      "piece": 40
+    },
+    {
+      "biome": 10,
+      "of": "Shrubland",
+      "role": "blend",
+      "name": "shrubland-blend",
+      "why": "The olive-ring recoloured to the ground of this country, laid over a neighbour to blend the seam between them.",
+      "piece": 52
     },
     {
       "biome": 10,
       "of": "Shrubland",
       "role": "face",
       "name": "shrubland-face",
-      "why": "The side of the cliff, cut from the rock this country was drawn with and painted to match its rim.",
-      "piece": 49
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim.",
+      "piece": 53
+    },
+    {
+      "biome": 10,
+      "of": "Shrubland",
+      "role": "wall",
+      "name": "shrubland-wall",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim.",
+      "piece": 53
     },
     {
       "biome": 11,
       "of": "Grassland",
       "role": "ground",
-      "name": "meadow",
-      "why": "Plain grass, the default country.",
-      "piece": 50
-    },
-    {
-      "biome": 11,
-      "of": "Grassland",
-      "role": "wall",
-      "name": "grass-cliff",
-      "why": "The one rock wall the sheet has as a ring, recoloured for this country. Being a ring, the ground it stands on shows through the middle, which is the part walked on.",
-      "piece": 51
-    },
-    {
-      "biome": 11,
-      "of": "Grassland",
-      "role": "water",
-      "name": "meadow-pool",
-      "why": "Bright blue in a muddy bank.",
-      "piece": 29
+      "name": "grassland-ground",
+      "why": "dry-grass, recoloured for this country.",
+      "piece": 54
     },
     {
       "biome": 11,
       "of": "Grassland",
       "role": "paving",
-      "name": "tan-path",
-      "why": "Tan paving laid across grass.",
-      "piece": 52
+      "name": "grassland-paving",
+      "why": "parquet-in-grass, as drawn.",
+      "piece": 55
+    },
+    {
+      "biome": 11,
+      "of": "Grassland",
+      "role": "water",
+      "name": "grassland-water",
+      "why": "bright-pool, as drawn.",
+      "piece": 14
+    },
+    {
+      "biome": 11,
+      "of": "Grassland",
+      "role": "blend",
+      "name": "grassland-blend",
+      "why": "The grass-ring recoloured to the ground of this country, laid over a neighbour to blend the seam between them.",
+      "piece": 56
     },
     {
       "biome": 11,
       "of": "Grassland",
       "role": "face",
       "name": "grassland-face",
-      "why": "The side of the cliff, cut from the rock this country was drawn with and painted to match its rim.",
-      "piece": 53
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim.",
+      "piece": 57
+    },
+    {
+      "biome": 11,
+      "of": "Grassland",
+      "role": "wall",
+      "name": "grassland-wall",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim.",
+      "piece": 57
     },
     {
       "biome": 12,
       "of": "Temperate Forest",
       "role": "ground",
-      "name": "forest-floor",
-      "why": "Grass in shade, a step darker than the meadow.",
-      "piece": 54
-    },
-    {
-      "biome": 12,
-      "of": "Temperate Forest",
-      "role": "wall",
-      "name": "brown-rock",
-      "why": "The one rock wall the sheet has as a ring, recoloured for this country. Being a ring, the ground it stands on shows through the middle, which is the part walked on.",
-      "piece": 55
-    },
-    {
-      "biome": 12,
-      "of": "Temperate Forest",
-      "role": "water",
-      "name": "forest-pool",
-      "why": "The pond in shade, a step darker.",
-      "piece": 56
+      "name": "temperate-forest-ground",
+      "why": "dry-grass, recoloured for this country.",
+      "piece": 58
     },
     {
       "biome": 12,
       "of": "Temperate Forest",
       "role": "paving",
-      "name": "grey-flags",
-      "why": "Plain grey herringbone.",
-      "piece": 48
+      "name": "temperate-forest-paving",
+      "why": "parquet, as drawn.",
+      "piece": 59
+    },
+    {
+      "biome": 12,
+      "of": "Temperate Forest",
+      "role": "water",
+      "name": "temperate-forest-water",
+      "why": "banked-pool, as drawn.",
+      "piece": 40
+    },
+    {
+      "biome": 12,
+      "of": "Temperate Forest",
+      "role": "blend",
+      "name": "temperate-forest-blend",
+      "why": "The grass-ring-rough recoloured to the ground of this country, laid over a neighbour to blend the seam between them.",
+      "piece": 60
     },
     {
       "biome": 12,
       "of": "Temperate Forest",
       "role": "face",
       "name": "temperate-forest-face",
-      "why": "The side of the cliff, cut from the rock this country was drawn with and painted to match its rim.",
-      "piece": 57
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim.",
+      "piece": 61
+    },
+    {
+      "biome": 12,
+      "of": "Temperate Forest",
+      "role": "wall",
+      "name": "temperate-forest-wall",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim.",
+      "piece": 61
     },
     {
       "biome": 13,
       "of": "Temperate Rainforest",
       "role": "ground",
-      "name": "wet-moss",
-      "why": "Moss over stone, greener and wetter.",
-      "piece": 58
-    },
-    {
-      "biome": 13,
-      "of": "Temperate Rainforest",
-      "role": "wall",
-      "name": "lichen-cliff",
-      "why": "The one rock wall the sheet has as a ring, recoloured for this country. Being a ring, the ground it stands on shows through the middle, which is the part walked on.",
-      "piece": 59
-    },
-    {
-      "biome": 13,
-      "of": "Temperate Rainforest",
-      "role": "water",
-      "name": "rain-pool",
-      "why": "The pond pulled towards green, wet country water.",
-      "piece": 60
+      "name": "temperate-rainforest-ground",
+      "why": "dry-grass, recoloured for this country.",
+      "piece": 62
     },
     {
       "biome": 13,
       "of": "Temperate Rainforest",
       "role": "paving",
-      "name": "mossy-flags",
-      "why": "Paving with moss in its joints.",
-      "piece": 61
+      "name": "temperate-rainforest-paving",
+      "why": "dark-cobbles, recoloured for this country.",
+      "piece": 63
+    },
+    {
+      "biome": 13,
+      "of": "Temperate Rainforest",
+      "role": "water",
+      "name": "temperate-rainforest-water",
+      "why": "banked-pool, recoloured for this country.",
+      "piece": 64
+    },
+    {
+      "biome": 13,
+      "of": "Temperate Rainforest",
+      "role": "blend",
+      "name": "temperate-rainforest-blend",
+      "why": "The grass-ring-rough recoloured to the ground of this country, laid over a neighbour to blend the seam between them.",
+      "piece": 65
     },
     {
       "biome": 13,
       "of": "Temperate Rainforest",
       "role": "face",
       "name": "temperate-rainforest-face",
-      "why": "The side of the cliff, cut from the rock this country was drawn with and painted to match its rim.",
-      "piece": 62
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim.",
+      "piece": 66
+    },
+    {
+      "biome": 13,
+      "of": "Temperate Rainforest",
+      "role": "wall",
+      "name": "temperate-rainforest-wall",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim.",
+      "piece": 66
     },
     {
       "biome": 14,
       "of": "Cold Desert",
       "role": "ground",
-      "name": "cold-gravel",
-      "why": "Soil drained to a pale grey gravel.",
-      "piece": 63
-    },
-    {
-      "biome": 14,
-      "of": "Cold Desert",
-      "role": "wall",
-      "name": "cold-chalk",
-      "why": "The one rock wall the sheet has as a ring, recoloured for this country. Being a ring, the ground it stands on shows through the middle, which is the part walked on.",
-      "piece": 64
-    },
-    {
-      "biome": 14,
-      "of": "Cold Desert",
-      "role": "water",
-      "name": "cold-tarn",
-      "why": "The frozen pool of the high country, which is the same water this one has.",
-      "piece": 65
+      "name": "cold-desert-ground",
+      "why": "dirt, recoloured for this country.",
+      "piece": 68
     },
     {
       "biome": 14,
       "of": "Cold Desert",
       "role": "paving",
-      "name": "grey-flags",
-      "why": "Plain grey herringbone.",
-      "piece": 48
+      "name": "cold-desert-paving",
+      "why": "slate-herringbone, as drawn.",
+      "piece": 69
+    },
+    {
+      "biome": 14,
+      "of": "Cold Desert",
+      "role": "water",
+      "name": "cold-desert-water",
+      "why": "ice-pool, as drawn.",
+      "piece": 70
+    },
+    {
+      "biome": 14,
+      "of": "Cold Desert",
+      "role": "blend",
+      "name": "cold-desert-blend",
+      "why": "The grass-ring-wide recoloured to the ground of this country, laid over a neighbour to blend the seam between them.",
+      "piece": 71
     },
     {
       "biome": 14,
       "of": "Cold Desert",
       "role": "face",
       "name": "cold-desert-face",
-      "why": "The side of the cliff, cut from the rock this country was drawn with and painted to match its rim.",
-      "piece": 66
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim.",
+      "piece": 72
+    },
+    {
+      "biome": 14,
+      "of": "Cold Desert",
+      "role": "wall",
+      "name": "cold-desert-wall",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim.",
+      "piece": 72
     },
     {
       "biome": 15,
       "of": "Taiga",
       "role": "ground",
-      "name": "conifer-floor",
-      "why": "Dark blue green, the needle floor.",
-      "piece": 67
-    },
-    {
-      "biome": 15,
-      "of": "Taiga",
-      "role": "wall",
-      "name": "grey-rock",
-      "why": "The one rock wall the sheet has as a ring, recoloured for this country. Being a ring, the ground it stands on shows through the middle, which is the part walked on.",
-      "piece": 68
-    },
-    {
-      "biome": 15,
-      "of": "Taiga",
-      "role": "water",
-      "name": "cold-pool",
-      "why": "The pond made cold and dark.",
-      "piece": 69
+      "name": "taiga-ground",
+      "why": "snow-patch, as drawn.",
+      "piece": 73
     },
     {
       "biome": 15,
       "of": "Taiga",
       "role": "paving",
-      "name": "timber-floor",
-      "why": "Dark planking, the timber country.",
+      "name": "taiga-paving",
+      "why": "parquet, recoloured for this country.",
+      "piece": 74
+    },
+    {
+      "biome": 15,
+      "of": "Taiga",
+      "role": "water",
+      "name": "taiga-water",
+      "why": "ice-pool, as drawn.",
       "piece": 70
+    },
+    {
+      "biome": 15,
+      "of": "Taiga",
+      "role": "blend",
+      "name": "taiga-blend",
+      "why": "The grass-ring-wide recoloured to the ground of this country, laid over a neighbour to blend the seam between them.",
+      "piece": 75
     },
     {
       "biome": 15,
       "of": "Taiga",
       "role": "face",
       "name": "taiga-face",
-      "why": "The side of the cliff, cut from the rock this country was drawn with and painted to match its rim.",
-      "piece": 71
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim.",
+      "piece": 76
+    },
+    {
+      "biome": 15,
+      "of": "Taiga",
+      "role": "wall",
+      "name": "taiga-wall",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim.",
+      "piece": 76
     },
     {
       "biome": 16,
       "of": "Tundra",
       "role": "ground",
-      "name": "lichen-ground",
-      "why": "Dry grass turned to the grey green of lichen.",
-      "piece": 72
-    },
-    {
-      "biome": 16,
-      "of": "Tundra",
-      "role": "wall",
-      "name": "snow-cliff",
-      "why": "The one rock wall the sheet has as a ring, recoloured for this country. Being a ring, the ground it stands on shows through the middle, which is the part walked on.",
-      "piece": 73
-    },
-    {
-      "biome": 16,
-      "of": "Tundra",
-      "role": "water",
-      "name": "frozen-pool",
-      "why": "Ice inside a muddy bank.",
-      "piece": 74
+      "name": "tundra-ground",
+      "why": "snow-patch, recoloured for this country.",
+      "piece": 77
     },
     {
       "biome": 16,
       "of": "Tundra",
       "role": "paving",
-      "name": "cold-flags",
-      "why": "Paving with a cold cast to it.",
-      "piece": 75
+      "name": "tundra-paving",
+      "why": "grey-tiles, as drawn.",
+      "piece": 51
+    },
+    {
+      "biome": 16,
+      "of": "Tundra",
+      "role": "water",
+      "name": "tundra-water",
+      "why": "ice-pool, as drawn.",
+      "piece": 70
+    },
+    {
+      "biome": 16,
+      "of": "Tundra",
+      "role": "blend",
+      "name": "tundra-blend",
+      "why": "The grass-ring-wide recoloured to the ground of this country, laid over a neighbour to blend the seam between them.",
+      "piece": 78
     },
     {
       "biome": 16,
       "of": "Tundra",
       "role": "face",
       "name": "tundra-face",
-      "why": "The side of the cliff, cut from the rock this country was drawn with and painted to match its rim.",
-      "piece": 76
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim.",
+      "piece": 79
     },
     {
-      "biome": 17,
-      "of": "Mountain",
-      "role": "ground",
-      "name": "scree",
-      "why": "The mossy stones drained to bare scree.",
-      "piece": 77
-    },
-    {
-      "biome": 17,
-      "of": "Mountain",
+      "biome": 16,
+      "of": "Tundra",
       "role": "wall",
-      "name": "stone-cliff",
-      "why": "The one rock wall the sheet has as a ring, recoloured for this country. Being a ring, the ground it stands on shows through the middle, which is the part walked on.",
-      "piece": 78
-    },
-    {
-      "biome": 17,
-      "of": "Mountain",
-      "role": "water",
-      "name": "mountain-tarn",
-      "why": "The pond, high and clear.",
+      "name": "tundra-wall",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim.",
       "piece": 79
     },
     {
       "biome": 17,
       "of": "Mountain",
+      "role": "ground",
+      "name": "mountain-ground",
+      "why": "stone-patch, as drawn.",
+      "piece": 80
+    },
+    {
+      "biome": 17,
+      "of": "Mountain",
       "role": "paving",
-      "name": "grey-flags",
-      "why": "Plain grey herringbone.",
-      "piece": 48
+      "name": "mountain-paving",
+      "why": "slate-herringbone, as drawn.",
+      "piece": 69
+    },
+    {
+      "biome": 17,
+      "of": "Mountain",
+      "role": "water",
+      "name": "mountain-water",
+      "why": "banked-pool, recoloured for this country.",
+      "piece": 81
+    },
+    {
+      "biome": 17,
+      "of": "Mountain",
+      "role": "blend",
+      "name": "mountain-blend",
+      "why": "The grass-ring-wide recoloured to the ground of this country, laid over a neighbour to blend the seam between them.",
+      "piece": 82
     },
     {
       "biome": 17,
       "of": "Mountain",
       "role": "face",
       "name": "mountain-face",
-      "why": "The side of the cliff, cut from the rock this country was drawn with and painted to match its rim.",
-      "piece": 80
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim.",
+      "piece": 83
+    },
+    {
+      "biome": 17,
+      "of": "Mountain",
+      "role": "wall",
+      "name": "mountain-wall",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim.",
+      "piece": 83
     },
     {
       "biome": 18,
       "of": "Alpine Tundra",
       "role": "ground",
-      "name": "alpine-snow",
-      "why": "Thin snow with a blue cast.",
-      "piece": 81
-    },
-    {
-      "biome": 18,
-      "of": "Alpine Tundra",
-      "role": "wall",
-      "name": "alpine-rock",
-      "why": "The one rock wall the sheet has as a ring, recoloured for this country. Being a ring, the ground it stands on shows through the middle, which is the part walked on.",
-      "piece": 82
-    },
-    {
-      "biome": 18,
-      "of": "Alpine Tundra",
-      "role": "water",
-      "name": "tarn",
-      "why": "A frozen tarn.",
-      "piece": 65
+      "name": "alpine-tundra-ground",
+      "why": "snow-patch, as drawn.",
+      "piece": 73
     },
     {
       "biome": 18,
       "of": "Alpine Tundra",
       "role": "paving",
-      "name": "pale-flags",
-      "why": "Paving pale enough to sit under snow.",
-      "piece": 83
+      "name": "alpine-tundra-paving",
+      "why": "grey-tiles, recoloured for this country.",
+      "piece": 85
+    },
+    {
+      "biome": 18,
+      "of": "Alpine Tundra",
+      "role": "water",
+      "name": "alpine-tundra-water",
+      "why": "ice-pool, as drawn.",
+      "piece": 70
+    },
+    {
+      "biome": 18,
+      "of": "Alpine Tundra",
+      "role": "blend",
+      "name": "alpine-tundra-blend",
+      "why": "The grass-ring-wide recoloured to the ground of this country, laid over a neighbour to blend the seam between them.",
+      "piece": 75
     },
     {
       "biome": 18,
       "of": "Alpine Tundra",
       "role": "face",
       "name": "alpine-tundra-face",
-      "why": "The side of the cliff, cut from the rock this country was drawn with and painted to match its rim.",
-      "piece": 84
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim.",
+      "piece": 86
     },
     {
-      "biome": 19,
-      "of": "Glacier",
-      "role": "ground",
-      "name": "glacier-snow",
-      "why": "Snow with the blue of deep ice in it.",
-      "piece": 85
-    },
-    {
-      "biome": 19,
-      "of": "Glacier",
+      "biome": 18,
+      "of": "Alpine Tundra",
       "role": "wall",
-      "name": "ice-cliff",
-      "why": "The one rock wall the sheet has as a ring, recoloured for this country. Being a ring, the ground it stands on shows through the middle, which is the part walked on.",
+      "name": "alpine-tundra-wall",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim.",
       "piece": 86
     },
     {
       "biome": 19,
       "of": "Glacier",
-      "role": "water",
-      "name": "melt-pool",
-      "why": "A frozen pool with the blue of deep ice in it. The ring of broken ice is a decoration laid over water, not a fill, so it cannot tile.",
+      "role": "ground",
+      "name": "glacier-ground",
+      "why": "snow-patch, recoloured for this country.",
       "piece": 87
     },
     {
       "biome": 19,
       "of": "Glacier",
       "role": "paving",
-      "name": "ice-flags",
-      "why": "Paving cut from ice.",
+      "name": "glacier-paving",
+      "why": "grey-tiles, recoloured for this country.",
       "piece": 88
+    },
+    {
+      "biome": 19,
+      "of": "Glacier",
+      "role": "water",
+      "name": "glacier-water",
+      "why": "ice-pool, as drawn.",
+      "piece": 70
+    },
+    {
+      "biome": 19,
+      "of": "Glacier",
+      "role": "blend",
+      "name": "glacier-blend",
+      "why": "The grass-ring-wide recoloured to the ground of this country, laid over a neighbour to blend the seam between them.",
+      "piece": 89
     },
     {
       "biome": 19,
       "of": "Glacier",
       "role": "face",
       "name": "glacier-face",
-      "why": "The side of the cliff, cut from the rock this country was drawn with and painted to match its rim.",
-      "piece": 89
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim.",
+      "piece": 90
     },
     {
-      "biome": 20,
-      "of": "Woodland",
-      "role": "ground",
-      "name": "woodland-grass",
-      "why": "Grass with a ragged edge, the open canopy.",
+      "biome": 19,
+      "of": "Glacier",
+      "role": "wall",
+      "name": "glacier-wall",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim.",
       "piece": 90
     },
     {
       "biome": 20,
       "of": "Woodland",
-      "role": "wall",
-      "name": "woodland-cliff",
-      "why": "The one rock wall the sheet has as a ring, recoloured for this country. Being a ring, the ground it stands on shows through the middle, which is the part walked on.",
+      "role": "ground",
+      "name": "woodland-ground",
+      "why": "dry-grass, recoloured for this country.",
       "piece": 91
     },
     {
       "biome": 20,
       "of": "Woodland",
-      "role": "water",
-      "name": "woodland-pool",
-      "why": "The plain pond.",
-      "piece": 34
+      "role": "paving",
+      "name": "woodland-paving",
+      "why": "parquet, as drawn.",
+      "piece": 59
     },
     {
       "biome": 20,
       "of": "Woodland",
-      "role": "paving",
-      "name": "tan-parquet",
-      "why": "Tan herringbone.",
+      "role": "water",
+      "name": "woodland-water",
+      "why": "banked-pool, as drawn.",
+      "piece": 40
+    },
+    {
+      "biome": 20,
+      "of": "Woodland",
+      "role": "blend",
+      "name": "woodland-blend",
+      "why": "The grass-ring recoloured to the ground of this country, laid over a neighbour to blend the seam between them.",
       "piece": 92
     },
     {
@@ -4798,312 +4684,494 @@
       "of": "Woodland",
       "role": "face",
       "name": "woodland-face",
-      "why": "The side of the cliff, cut from the rock this country was drawn with and painted to match its rim.",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim.",
+      "piece": 93
+    },
+    {
+      "biome": 20,
+      "of": "Woodland",
+      "role": "wall",
+      "name": "woodland-wall",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim.",
       "piece": 93
     },
     {
       "biome": 21,
       "of": "Steppe",
       "role": "ground",
-      "name": "steppe-grass",
-      "why": "Dry grass bleached to pale straw.",
+      "name": "steppe-ground",
+      "why": "dry-grass, recoloured for this country.",
       "piece": 94
     },
     {
       "biome": 21,
       "of": "Steppe",
-      "role": "wall",
-      "name": "sandstone-cliff",
-      "why": "The one rock wall the sheet has as a ring, recoloured for this country. Being a ring, the ground it stands on shows through the middle, which is the part walked on.",
+      "role": "paving",
+      "name": "steppe-paving",
+      "why": "red-carpet, recoloured for this country.",
       "piece": 95
     },
     {
       "biome": 21,
       "of": "Steppe",
       "role": "water",
-      "name": "steppe-pool",
-      "why": "A shallow pond.",
-      "piece": 96
+      "name": "steppe-water",
+      "why": "banked-pool, as drawn.",
+      "piece": 40
     },
     {
       "biome": 21,
       "of": "Steppe",
-      "role": "paving",
-      "name": "pale-clay",
-      "why": "Clay dried pale.",
-      "piece": 97
+      "role": "blend",
+      "name": "steppe-blend",
+      "why": "The olive-ring recoloured to the ground of this country, laid over a neighbour to blend the seam between them.",
+      "piece": 96
     },
     {
       "biome": 21,
       "of": "Steppe",
       "role": "face",
       "name": "steppe-face",
-      "why": "The side of the cliff, cut from the rock this country was drawn with and painted to match its rim.",
-      "piece": 98
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim.",
+      "piece": 97
+    },
+    {
+      "biome": 21,
+      "of": "Steppe",
+      "role": "wall",
+      "name": "steppe-wall",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim.",
+      "piece": 97
     },
     {
       "biome": 22,
       "of": "Montane Forest",
       "role": "ground",
-      "name": "cloud-forest-floor",
-      "why": "Dark damp green, the cloud forest.",
-      "piece": 99
-    },
-    {
-      "biome": 22,
-      "of": "Montane Forest",
-      "role": "wall",
-      "name": "montane-rock",
-      "why": "The one rock wall the sheet has as a ring, recoloured for this country. Being a ring, the ground it stands on shows through the middle, which is the part walked on.",
-      "piece": 100
-    },
-    {
-      "biome": 22,
-      "of": "Montane Forest",
-      "role": "water",
-      "name": "montane-pool",
-      "why": "The pond under cloud.",
-      "piece": 101
+      "name": "montane-forest-ground",
+      "why": "dry-grass, recoloured for this country.",
+      "piece": 98
     },
     {
       "biome": 22,
       "of": "Montane Forest",
       "role": "paving",
-      "name": "damp-flags",
-      "why": "Damp green paving.",
-      "piece": 25
+      "name": "montane-forest-paving",
+      "why": "dark-cobbles, as drawn.",
+      "piece": 99
+    },
+    {
+      "biome": 22,
+      "of": "Montane Forest",
+      "role": "water",
+      "name": "montane-forest-water",
+      "why": "banked-pool, recoloured for this country.",
+      "piece": 100
+    },
+    {
+      "biome": 22,
+      "of": "Montane Forest",
+      "role": "blend",
+      "name": "montane-forest-blend",
+      "why": "The grass-ring-rough recoloured to the ground of this country, laid over a neighbour to blend the seam between them.",
+      "piece": 101
     },
     {
       "biome": 22,
       "of": "Montane Forest",
       "role": "face",
       "name": "montane-forest-face",
-      "why": "The side of the cliff, cut from the rock this country was drawn with and painted to match its rim.",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim.",
+      "piece": 102
+    },
+    {
+      "biome": 22,
+      "of": "Montane Forest",
+      "role": "wall",
+      "name": "montane-forest-wall",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim.",
       "piece": 102
     },
     {
       "biome": 23,
       "of": "Polar Ocean",
       "role": "ground",
-      "name": "pack-ice",
-      "why": "Ice floating as ground.",
-      "piece": 103
-    },
-    {
-      "biome": 23,
-      "of": "Polar Ocean",
-      "role": "wall",
-      "name": "berg",
-      "why": "The one rock wall the sheet has as a ring, recoloured for this country. Being a ring, the ground it stands on shows through the middle, which is the part walked on.",
+      "name": "polar-ocean-ground",
+      "why": "sand-island-pale, recoloured for this country.",
       "piece": 104
     },
     {
       "biome": 23,
       "of": "Polar Ocean",
       "role": "water",
-      "name": "polar-sea",
-      "why": "Dark water lightened towards grey.",
+      "name": "polar-ocean-water",
+      "why": "Open sea, a fill only: the island block draws the shore, water and all.",
       "piece": 105
+    },
+    {
+      "biome": 23,
+      "of": "Polar Ocean",
+      "role": "blend",
+      "name": "polar-ocean-blend",
+      "why": "The sand-island-pale-hollow recoloured to the ground of this country, laid over a neighbour to blend the seam between them.",
+      "piece": 106
     },
     {
       "biome": 23,
       "of": "Polar Ocean",
       "role": "face",
       "name": "polar-ocean-face",
-      "why": "The side of the cliff, cut from the rock this country was drawn with and painted to match its rim.",
-      "piece": 106
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim.",
+      "piece": 107
     },
     {
-      "biome": 25,
-      "of": "Volcano",
-      "role": "ground",
-      "name": "basalt-ground",
-      "why": "Soil burnt down to black basalt grit.",
+      "biome": 23,
+      "of": "Polar Ocean",
+      "role": "wall",
+      "name": "polar-ocean-wall",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim.",
       "piece": 107
     },
     {
       "biome": 25,
       "of": "Volcano",
-      "role": "wall",
-      "name": "basalt-cliff",
-      "why": "The one rock wall the sheet has as a ring, recoloured for this country. Being a ring, the ground it stands on shows through the middle, which is the part walked on.",
+      "role": "ground",
+      "name": "volcano-ground",
+      "why": "dirt, recoloured for this country.",
       "piece": 108
     },
     {
       "biome": 25,
       "of": "Volcano",
-      "role": "water",
-      "name": "lava",
-      "why": "Molten rock in a stone rim.",
+      "role": "paving",
+      "name": "volcano-paving",
+      "why": "dark-cobbles, recoloured for this country.",
       "piece": 109
     },
     {
       "biome": 25,
       "of": "Volcano",
-      "role": "paving",
-      "name": "basalt-paving",
-      "why": "Paving cut from the same black rock.",
+      "role": "water",
+      "name": "volcano-water",
+      "why": "lava-pool, as drawn.",
       "piece": 110
+    },
+    {
+      "biome": 25,
+      "of": "Volcano",
+      "role": "blend",
+      "name": "volcano-blend",
+      "why": "The grass-ring-wide recoloured to the ground of this country, laid over a neighbour to blend the seam between them.",
+      "piece": 111
     },
     {
       "biome": 25,
       "of": "Volcano",
       "role": "face",
       "name": "volcano-face",
-      "why": "The side of the cliff, cut from the rock this country was drawn with and painted to match its rim.",
-      "piece": 111
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim.",
+      "piece": 112
     },
     {
-      "biome": 26,
-      "of": "Badlands",
-      "role": "ground",
-      "name": "red-clay",
-      "why": "Dark red packed clay, already the badlands.",
+      "biome": 25,
+      "of": "Volcano",
+      "role": "wall",
+      "name": "volcano-wall",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim.",
       "piece": 112
     },
     {
       "biome": 26,
       "of": "Badlands",
-      "role": "wall",
-      "name": "rust-cliff",
-      "why": "The one rock wall the sheet has as a ring, recoloured for this country. Being a ring, the ground it stands on shows through the middle, which is the part walked on.",
+      "role": "ground",
+      "name": "badlands-ground",
+      "why": "dirt, recoloured for this country.",
       "piece": 113
     },
     {
       "biome": 26,
       "of": "Badlands",
-      "role": "water",
-      "name": "brackish-pool",
-      "why": "The pond drained of colour, the last water in a dry country.",
+      "role": "paving",
+      "name": "badlands-paving",
+      "why": "red-carpet, recoloured for this country.",
       "piece": 114
     },
     {
       "biome": 26,
       "of": "Badlands",
-      "role": "paving",
-      "name": "pale-clay",
-      "why": "Clay dried pale, the same floor the steppe lays.",
-      "piece": 97
+      "role": "water",
+      "name": "badlands-water",
+      "why": "banked-pool, recoloured for this country.",
+      "piece": 115
+    },
+    {
+      "biome": 26,
+      "of": "Badlands",
+      "role": "blend",
+      "name": "badlands-blend",
+      "why": "The grass-ring-wide recoloured to the ground of this country, laid over a neighbour to blend the seam between them.",
+      "piece": 116
     },
     {
       "biome": 26,
       "of": "Badlands",
       "role": "face",
       "name": "badlands-face",
-      "why": "The side of the cliff, cut from the rock this country was drawn with and painted to match its rim.",
-      "piece": 115
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim.",
+      "piece": 117
     },
     {
-      "biome": 27,
-      "of": "Rocky Coast",
-      "role": "ground",
-      "name": "coastal-rock",
-      "why": "Wet grey rock with weed on it.",
-      "piece": 116
-    },
-    {
-      "biome": 27,
-      "of": "Rocky Coast",
+      "biome": 26,
+      "of": "Badlands",
       "role": "wall",
-      "name": "coast-cliff",
-      "why": "The one rock wall the sheet has as a ring, recoloured for this country. Being a ring, the ground it stands on shows through the middle, which is the part walked on.",
+      "name": "badlands-wall",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim.",
       "piece": 117
     },
     {
       "biome": 27,
       "of": "Rocky Coast",
-      "role": "water",
-      "name": "coastal-water",
-      "why": "The pond gone grey blue, water with a shore of its own.",
-      "piece": 118
+      "role": "ground",
+      "name": "rocky-coast-ground",
+      "why": "stone-patch, recoloured for this country.",
+      "piece": 119
     },
     {
       "biome": 27,
       "of": "Rocky Coast",
       "role": "paving",
-      "name": "grey-flags",
-      "why": "Plain grey herringbone.",
-      "piece": 48
+      "name": "rocky-coast-paving",
+      "why": "slate-herringbone, as drawn.",
+      "piece": 69
+    },
+    {
+      "biome": 27,
+      "of": "Rocky Coast",
+      "role": "water",
+      "name": "rocky-coast-water",
+      "why": "banked-pool, recoloured for this country.",
+      "piece": 120
+    },
+    {
+      "biome": 27,
+      "of": "Rocky Coast",
+      "role": "blend",
+      "name": "rocky-coast-blend",
+      "why": "The grass-ring-wide recoloured to the ground of this country, laid over a neighbour to blend the seam between them.",
+      "piece": 121
     },
     {
       "biome": 27,
       "of": "Rocky Coast",
       "role": "face",
       "name": "rocky-coast-face",
-      "why": "The side of the cliff, cut from the rock this country was drawn with and painted to match its rim.",
-      "piece": 119
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim.",
+      "piece": 122
+    },
+    {
+      "biome": 27,
+      "of": "Rocky Coast",
+      "role": "wall",
+      "name": "rocky-coast-wall",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim.",
+      "piece": 122
     },
     {
       "biome": 28,
       "of": "Bog",
       "role": "ground",
-      "name": "peat",
-      "why": "Soil gone to black wet peat.",
-      "piece": 120
+      "name": "bog-ground",
+      "why": "tilled-earth, recoloured for this country.",
+      "piece": 124
     },
     {
       "biome": 28,
       "of": "Bog",
-      "role": "wall",
-      "name": "peat-bank",
-      "why": "The one rock wall the sheet has as a ring, recoloured for this country. Being a ring, the ground it stands on shows through the middle, which is the part walked on.",
-      "piece": 121
+      "role": "paving",
+      "name": "bog-paving",
+      "why": "parquet, recoloured for this country.",
+      "piece": 125
     },
     {
       "biome": 28,
       "of": "Bog",
       "role": "water",
       "name": "bog-water",
-      "why": "Green water gone dark and still.",
-      "piece": 122
+      "why": "banked-pool, recoloured for this country.",
+      "piece": 126
     },
     {
       "biome": 28,
       "of": "Bog",
-      "role": "paving",
-      "name": "bog-boards",
-      "why": "Dark boards laid over the peat.",
-      "piece": 123
+      "role": "blend",
+      "name": "bog-blend",
+      "why": "The grass-ring-wide recoloured to the ground of this country, laid over a neighbour to blend the seam between them.",
+      "piece": 127
     },
     {
       "biome": 28,
       "of": "Bog",
       "role": "face",
       "name": "bog-face",
-      "why": "The side of the cliff, cut from the rock this country was drawn with and painted to match its rim.",
-      "piece": 124
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim.",
+      "piece": 128
+    },
+    {
+      "biome": 28,
+      "of": "Bog",
+      "role": "wall",
+      "name": "bog-wall",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim.",
+      "piece": 128
     },
     {
       "biome": 29,
       "of": "Kelp Forest",
       "role": "ground",
-      "name": "kelp-bed",
-      "why": "The shoal darkened and greened by weed.",
-      "piece": 125
-    },
-    {
-      "biome": 29,
-      "of": "Kelp Forest",
-      "role": "wall",
-      "name": "kelp-rock",
-      "why": "The one rock wall the sheet has as a ring, recoloured for this country. Being a ring, the ground it stands on shows through the middle, which is the part walked on.",
-      "piece": 126
+      "name": "kelp-forest-ground",
+      "why": "tan-island, recoloured for this country.",
+      "piece": 130
     },
     {
       "biome": 29,
       "of": "Kelp Forest",
       "role": "water",
-      "name": "kelp-water",
-      "why": "Green water, the shelf sea.",
-      "piece": 127
+      "name": "kelp-forest-water",
+      "why": "Open sea, a fill only: the island block draws the shore, water and all.",
+      "piece": 131
+    },
+    {
+      "biome": 29,
+      "of": "Kelp Forest",
+      "role": "blend",
+      "name": "kelp-forest-blend",
+      "why": "The tan-island-hollow recoloured to the ground of this country, laid over a neighbour to blend the seam between them.",
+      "piece": 132
     },
     {
       "biome": 29,
       "of": "Kelp Forest",
       "role": "face",
       "name": "kelp-forest-face",
-      "why": "The side of the cliff, cut from the rock this country was drawn with and painted to match its rim.",
-      "piece": 128
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim.",
+      "piece": 133
+    },
+    {
+      "biome": 29,
+      "of": "Kelp Forest",
+      "role": "wall",
+      "name": "kelp-forest-wall",
+      "why": "The ring cliff, recoloured to the rock of this country and baked over its ground, trimmed outside the rim.",
+      "piece": 133
+    }
+  ],
+  "deep": [
+    {
+      "biome": 3,
+      "of": "Beach",
+      "name": "beach-deep-water",
+      "piece": 17
+    },
+    {
+      "biome": 4,
+      "of": "Mangrove",
+      "name": "mangrove-deep-water",
+      "piece": 23
+    },
+    {
+      "biome": 5,
+      "of": "Swamp",
+      "name": "swamp-deep-water",
+      "piece": 29
+    },
+    {
+      "biome": 6,
+      "of": "Tropical Rainforest",
+      "name": "tropical-rainforest-deep-water",
+      "piece": 17
+    },
+    {
+      "biome": 7,
+      "of": "Tropical Seasonal Forest",
+      "name": "tropical-seasonal-forest-deep-water",
+      "piece": 17
+    },
+    {
+      "biome": 8,
+      "of": "Savanna",
+      "name": "savanna-deep-water",
+      "piece": 43
+    },
+    {
+      "biome": 9,
+      "of": "Desert",
+      "name": "desert-deep-water",
+      "piece": 49
+    },
+    {
+      "biome": 10,
+      "of": "Shrubland",
+      "name": "shrubland-deep-water",
+      "piece": 43
+    },
+    {
+      "biome": 11,
+      "of": "Grassland",
+      "name": "grassland-deep-water",
+      "piece": 17
+    },
+    {
+      "biome": 12,
+      "of": "Temperate Forest",
+      "name": "temperate-forest-deep-water",
+      "piece": 43
+    },
+    {
+      "biome": 13,
+      "of": "Temperate Rainforest",
+      "name": "temperate-rainforest-deep-water",
+      "piece": 67
+    },
+    {
+      "biome": 17,
+      "of": "Mountain",
+      "name": "mountain-deep-water",
+      "piece": 84
+    },
+    {
+      "biome": 20,
+      "of": "Woodland",
+      "name": "woodland-deep-water",
+      "piece": 43
+    },
+    {
+      "biome": 21,
+      "of": "Steppe",
+      "name": "steppe-deep-water",
+      "piece": 43
+    },
+    {
+      "biome": 22,
+      "of": "Montane Forest",
+      "name": "montane-forest-deep-water",
+      "piece": 103
+    },
+    {
+      "biome": 26,
+      "of": "Badlands",
+      "name": "badlands-deep-water",
+      "piece": 118
+    },
+    {
+      "biome": 27,
+      "of": "Rocky Coast",
+      "name": "rocky-coast-deep-water",
+      "piece": 123
+    },
+    {
+      "biome": 28,
+      "of": "Bog",
+      "name": "bog-deep-water",
+      "piece": 129
     }
   ]
 }

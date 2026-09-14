@@ -1,6 +1,6 @@
 import Biome, { isOpenSea, isWaterBiome } from '../data/ids/biome';
 import { STONE_FREQUENCY, isCaveFloor, isRock, isWaterAt, rockLevel } from './fields';
-import { ORTHOGONAL, SQUARES, SURROUNDING } from './grid';
+import { SQUARES, SURROUNDING } from './grid';
 import { isTownAt } from './town';
 import { levelAt } from './terrace';
 import type World from './world';
@@ -152,7 +152,8 @@ function isBroadField(world: World, x: number, y: number): boolean {
  * with open country below it: drawn there, the water would end in
  * mid-air and the cliff would be wearing it as a hat. Where the ground
  * below is water too, the two are one fall and the board runs them
- * together, so only a dry drop dries the lip up
+ * together, so only a dry drop dries the lip up. Diagonals count, since
+ * a cliff's inside corner is as much its edge as a side
  */
 function spills(
   world: World,
@@ -162,7 +163,7 @@ function spills(
 ): boolean {
   const here = levelAt(world, x, y);
 
-  return ORTHOGONAL.some(
+  return SURROUNDING.some(
     ([dx, dy]) => levelAt(world, x + dx, y + dy) < here && !below(x + dx, y + dy),
   );
 }

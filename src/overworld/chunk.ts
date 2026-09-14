@@ -13,6 +13,7 @@ import {
 import Landmark, { LANDMARKS } from '../data/overworld/landmark';
 import { TOWN_LANDMARKS, getTownLots, isTownAt, portalCellIn, townOverChunk } from './town';
 import { caveMouthCellIn } from './cave';
+import { isFace } from './cliff';
 import { Depth } from './depth';
 
 export { CELL_COUNT, CHUNK_CELLS, cellInChunk, chunkOfCell, worldCell } from './grid';
@@ -326,6 +327,30 @@ export default class Chunk {
     return this.rockCells;
   }
 
+  private faceCells: Set<number> | null = null;
+
+  /**
+   * The chunk's cliff edges, seamed or not. The cliff art takes the
+   * whole tile and the laid-back board tilts it between two levels, so
+   * nothing is placed on one
+   */
+  getFaceCells(): Set<number> {
+    if (this.faceCells == null) {
+      const cells = new Set<number>();
+
+      for (let cell = 0; cell < CELL_COUNT; cell++) {
+        const x = worldCell(this.x, cell % CHUNK_CELLS);
+        const y = worldCell(this.y, Math.floor(cell / CHUNK_CELLS));
+
+        if (isFace(this.world, x, y)) {
+          cells.add(cell);
+        }
+      }
+      this.faceCells = cells;
+    }
+    return this.faceCells;
+  }
+
   private shallowCells: Set<number> | null = null;
 
   /**
@@ -448,6 +473,7 @@ export default class Chunk {
               !taken.has(candidate) &&
               !landmarks.has(candidate) &&
               this.getCellRole(candidate) === 'ground' &&
+              !this.getFaceCells().has(candidate) &&
               this.isClear(candidate) &&
               // Nothing grows in the street: a town is swept, and its
               // scenery is the buildings on it
@@ -565,7 +591,10 @@ export default class Chunk {
         // Nothing of the country is rolled onto a town's own ground:
         // what stands in a town is the town's to say
         const free = (candidate: number): boolean =>
-          !taken.has(candidate) && this.isClear(candidate) && !this.isTownCell(candidate);
+          !taken.has(candidate) &&
+          this.isClear(candidate) &&
+          !this.getFaceCells().has(candidate) &&
+          !this.isTownCell(candidate);
         // Dry ground first and the water only where there is none: a
         // landmark stands beside the pool rather than in it, and a
         // chunk one lake covers is stood on all the same rather than

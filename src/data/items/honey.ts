@@ -2,14 +2,9 @@ import { ItemFlags, ItemTypes, Items } from '../ids/items';
 import { registerItem } from './__create';
 
 /**
- * Honey: sticky sweet food a pokemon carries and eats when it is
- * nearly out.
- *
- * The mainline uses it to bait a tree and nothing else, and the tree
- * belongs to a region this game has not reached. What it is in the
- * meantime is the thing a Teddiursa gathers, so it is held and eaten
- * rather than left as an id with nothing behind it. Baiting a tree
- * with the same jar stays open.
+ * Honey: lathered on a honey tree to draw out what lives in it, or
+ * held and eaten when its pokemon is nearly out. Sold at the medicine
+ * stall and buried in caches
  */
 
 /**
@@ -30,8 +25,8 @@ export default function registerHoney(): void {
     description: `Restores ${HONEY_RESTORE} HP to the pokemon holding it once it drops to a quarter.`,
     type: ItemTypes.Held,
     icon: 'other/honey',
-    flags: ItemFlags.Holdable | ItemFlags.Consumable,
-    buy: 0,
+    flags: ItemFlags.Holdable | ItemFlags.Consumable | ItemFlags.Marketable,
+    buy: 200,
     sell: 100,
   });
 }

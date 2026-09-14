@@ -24,6 +24,7 @@ import {
   claimPhenomenon,
   listClaimedItemCaches,
   listClaimedPhenomena,
+  listLatheredHoneyTrees,
   listPickedBerryPatches,
   peekNest,
   peekPhenomenonEgg,
@@ -71,6 +72,7 @@ import RaidDialog from '../../raids/RaidDialog';
 import { Badge, Button, Note, useToast } from '../../styled';
 import NestDialog, { type EggSource, type EggState } from '../NestDialog';
 import PortalDialog from '../PortalDialog';
+import HoneyTreeDialog from '../HoneyTreeDialog';
 import StopDialog, { type StopChallenge } from '../StopDialog';
 import SafariDialog from '../SafariDialog';
 import ChunkCanvas, {
@@ -259,6 +261,8 @@ export default function OverworldBoard(props: {
    * onto is derived in the dialog rather than here
    */
   const [portal, setPortal] = createSignal<number | null>(null);
+  /** The honey tree cell the player is standing at, or null */
+  const [honeyTree, setHoneyTree] = createSignal<number | null>(null);
   /**
    * The gym seat the player has walked up to: the cell, and where
    * this player stands with it — who holds it, when they may
@@ -610,6 +614,9 @@ export default function OverworldBoard(props: {
    */
   const [dug, setDug] = createSignal<Set<number>>(new Set());
 
+  /** The honey trees this player has lathered this window */
+  const [lathered, setLathered] = createSignal<Set<number>>(new Set());
+
   createEffect(() => {
     const loaded = view();
 
@@ -637,6 +644,15 @@ export default function OverworldBoard(props: {
       })
       .catch(() => {
         // The same bargain the bushes make
+      });
+    listLatheredHoneyTrees(loaded.snapshot)
+      .then((cells) => {
+        if (live) {
+          setLathered(new Set(cells));
+        }
+      })
+      .catch(() => {
+        // The server refuses a second lather either way
       });
     onCleanup(() => {
       live = false;
@@ -1384,6 +1400,10 @@ export default function OverworldBoard(props: {
         return 'An egg, tucked away in the grotto. Walk it warm.';
       }
       return meet(user, claim.encounter, true);
+    }
+    if (landmark === Landmark.HoneyTree) {
+      setHoneyTree(at);
+      return null;
     }
     if (landmark === Landmark.Portal) {
       // Where it goes is derived from the chunk it stands in, so the
@@ -2210,6 +2230,28 @@ export default function OverworldBoard(props: {
               reason={lairReason()}
               onClose={() => {
                 setLair(null);
+              }}
+            />
+            <HoneyTreeDialog
+              player={user().uid}
+              snapshot={view()?.snapshot ?? null}
+              cell={honeyTree()}
+              lathered={lathered().has(honeyTree() ?? -1)}
+              onClose={() => {
+                setHoneyTree(null);
+              }}
+              onLathered={(at, encounter) => {
+                setLathered((cells) => new Set(cells).add(at));
+                if (encounter == null) {
+                  return;
+                }
+                meet(user(), encounter, true)
+                  .then((said) => {
+                    if (said != null) {
+                      remark(said);
+                    }
+                  })
+                  .catch(() => undefined);
               }}
             />
             <PortalDialog

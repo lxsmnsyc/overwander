@@ -56,7 +56,7 @@ export default function registerCombeeSpecies(): void {
     eggGroups: [EggGroups.Bug],
     genderRatio: [7, 1],
     catchRate: 120,
-    biomes: [Biome.Woodland, Biome.TemperateForest, Biome.Grassland],
+    biomes: [],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {

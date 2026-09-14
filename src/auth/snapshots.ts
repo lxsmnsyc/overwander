@@ -13,14 +13,17 @@ import { LURE_SPAWN_BONUS } from '../overworld/abilities/__create';
 import { type SnapshotRecord, asSnapshotRecord, spawnId } from './snapshot-record';
 import { requireUid } from '../server/auth';
 import {
+  type LatherResult,
   type NestOffer,
   claimApricornTree as claimApricornOnServerSide,
   claimBerryPatch as claimBerryOnServerSide,
   claimItemCache as claimCacheOnServerSide,
   claimNest as claimNestOnServerSide,
   claimPhenomenon as claimPhenomenonOnServerSide,
+  latherHoneyTree as latherHoneyTreeOnServerSide,
   listClaimedItemCaches as listClaimedItemCachesOnServerSide,
   listClaimedPhenomena as listClaimedPhenomenaOnServerSide,
+  listLatheredHoneyTrees as listLatheredHoneyTreesOnServerSide,
   listPickedBerryPatches as listPickedBerryPatchesOnServerSide,
   meetSpawn,
   peekNest as peekNestOnServerSide,
@@ -32,6 +35,8 @@ import { asOffset, getLocale, toLocalTime, toZoneKey } from './local-time';
 import type { EncounterRecord } from './encounter-record';
 import getSupabase, { type Unwatch, watchTable } from './supabase';
 import getIdToken from './session';
+
+export type { LatherResult } from '../server/overworld';
 
 /** The stored window plus its spawn rows, in the record shape */
 async function readSnapshotWindow(chunk: Chunk, offset: number): Promise<SnapshotRecord | null> {
@@ -641,4 +646,63 @@ async function meetSpawnOnServer(
 ): Promise<EncounterRecord | null> {
   'use server';
   return meetSpawn(await requireUid(token), x, y, spawn, await syncServerClock(), offset);
+}
+
+/** Which of this chunk's honey trees this player has lathered this window */
+export async function listLatheredHoneyTrees(snapshot: ChunkSnapshot): Promise<number[]> {
+  return listLatheredOnServer(
+    await getIdToken(),
+    snapshot.chunk.x,
+    snapshot.chunk.y,
+    snapshot.offset,
+  );
+}
+
+async function listLatheredOnServer(
+  token: string,
+  x: number,
+  y: number,
+  offset: number,
+): Promise<number[]> {
+  'use server';
+  return listLatheredHoneyTreesOnServerSide(
+    await requireUid(token),
+    x,
+    y,
+    await syncServerClock(),
+    offset,
+  );
+}
+
+/** Lather a honey tree: one jar spent, and whatever it draws out met on the spot */
+export async function latherHoneyTree(
+  snapshot: ChunkSnapshot,
+  cell: number,
+): Promise<LatherResult | null> {
+  await freshenWindow(snapshot);
+  return latherOnServer(
+    await getIdToken(),
+    snapshot.chunk.x,
+    snapshot.chunk.y,
+    cell,
+    snapshot.offset,
+  );
+}
+
+async function latherOnServer(
+  token: string,
+  x: number,
+  y: number,
+  cell: number,
+  offset: number,
+): Promise<LatherResult | null> {
+  'use server';
+  return latherHoneyTreeOnServerSide(
+    await requireUid(token),
+    x,
+    y,
+    cell,
+    await syncServerClock(),
+    offset,
+  );
 }

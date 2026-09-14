@@ -115,24 +115,12 @@ const enum Landmark {
    * the crown of the region the house stands in
    */
   FrontierBrain = 17,
-
-  //
-  // TODO: Honey Tree, with Sinnoh. Honey is slathered on and the tree
-  // left alone; something is waiting at it hours later, which makes
-  // it the one landmark a player arms rather than claims. `Items.Honey`
-  // has an id and no registration, and the pokemon it draws are a
-  // Sinnoh pool that does not exist.
-  //
-  // TODO: five more Frontier Brains, with the rest of Hoenn's
-  // facilities. Brandon's Pyramid and Greta's Arena are open; the
-  // Factory rents a party, the Palace gives no orders, the Dome shows
-  // its six first, the Pike opens with a rolled condition, and the
-  // Tower asks nothing at all. Each brings a silver symbol and a gold
-  // one, and a rule in `FrontierRule`.
-  //
-  // Both take the next free numbers and want a row in `LANDMARKS`,
-  // `LANDMARK_NAMES`, `SEA_PEOPLE` (neither stands on water) and a
-  // resolver in `chunk-snapshot.ts`.
+  /**
+   * A tree in the forest that honey can be lathered on, once per
+   * player per landmark window. Whatever the honey draws out is met on
+   * the spot, and nothing in its pool spawns anywhere else
+   */
+  HoneyTree = 18,
 }
 
 export default Landmark;
@@ -158,6 +146,7 @@ export const LANDMARKS: Landmark[] = [
   Landmark.AuctionBoard,
   Landmark.ApricornTree,
   Landmark.FrontierBrain,
+  Landmark.HoneyTree,
 ];
 
 /**
@@ -181,4 +170,5 @@ export const LANDMARK_NAMES: Record<Landmark, string> = {
   [Landmark.AuctionBoard]: 'Auction Board',
   [Landmark.ApricornTree]: 'Apricorn Tree',
   [Landmark.FrontierBrain]: 'Frontier Brain',
+  [Landmark.HoneyTree]: 'Honey Tree',
 };

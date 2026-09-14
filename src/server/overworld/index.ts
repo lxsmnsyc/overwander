@@ -9,6 +9,8 @@ export { claim, liveSnapshot, resolveSnapshot } from './claims';
 export type { ClaimRecord } from './claims';
 export { claimItemCache, listClaimedItemCaches } from './caches';
 export { claimApricornTree, claimBerryPatch, listPickedBerryPatches } from './berries';
+export { latherHoneyTree, listLatheredHoneyTrees } from './honey';
+export type { LatherResult } from './honey';
 export { claimNest, peekNest } from './nests';
 export type { NestOffer, PhenomenonClaim } from './nests';
 export { claimPhenomenon, listClaimedPhenomena, peekPhenomenonEgg } from './phenomena';

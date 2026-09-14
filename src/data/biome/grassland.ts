@@ -41,7 +41,6 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Girafarig, weight: 5 },
         { species: Species.Togetic, weight: 5 },
         { species: Species.Roselia, weight: 20 },
-        { species: Species.Combee, weight: 22 },
         { species: Species.Buneary, weight: 25 },
         { species: Species.Glameow, weight: 25 },
       ],
@@ -115,7 +114,6 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Budew, weight: PRIZED_WEIGHT },
         { species: Species.MimeJr, weight: PRIZED_WEIGHT },
         { species: Species.Happiny, weight: PRIZED_WEIGHT },
-        { species: Species.Munchlax, weight: PRIZED_WEIGHT },
       ],
       special: [
         { species: Species.Raikou, weight: 10 },
@@ -162,7 +160,6 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Girafarig, weight: 5 },
         { species: Species.Togetic, weight: 5 },
         { species: Species.Roselia, weight: 20 },
-        { species: Species.Combee, weight: 22 },
         { species: Species.Buneary, weight: 25 },
         { species: Species.Glameow, weight: 25 },
       ],
@@ -240,7 +237,6 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Budew, weight: PRIZED_WEIGHT },
         { species: Species.MimeJr, weight: PRIZED_WEIGHT },
         { species: Species.Happiny, weight: PRIZED_WEIGHT },
-        { species: Species.Munchlax, weight: PRIZED_WEIGHT },
       ],
       special: [
         { species: Species.Raikou, weight: 10 },
@@ -267,7 +263,6 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Electabuzz, weight: 5 },
         { species: Species.Girafarig, weight: 5 },
         { species: Species.Roselia, weight: 20 },
-        { species: Species.Combee, weight: 22 },
         { species: Species.Buneary, weight: 25 },
         { species: Species.Glameow, weight: 25 },
         { species: Species.Stunky, weight: 22 },
@@ -312,7 +307,6 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Budew, weight: PRIZED_WEIGHT },
         { species: Species.MimeJr, weight: PRIZED_WEIGHT },
         { species: Species.Happiny, weight: PRIZED_WEIGHT },
-        { species: Species.Munchlax, weight: PRIZED_WEIGHT },
       ],
       special: [
         { species: Species.Raikou, weight: 10 },
@@ -341,7 +335,6 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Electabuzz, weight: 5 },
         { species: Species.Girafarig, weight: 5 },
         { species: Species.Roselia, weight: 20 },
-        { species: Species.Combee, weight: 22 },
         { species: Species.Buneary, weight: 25 },
         { species: Species.Glameow, weight: 25 },
         { species: Species.Stunky, weight: 22 },
@@ -388,7 +381,6 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Budew, weight: PRIZED_WEIGHT },
         { species: Species.MimeJr, weight: PRIZED_WEIGHT },
         { species: Species.Happiny, weight: PRIZED_WEIGHT },
-        { species: Species.Munchlax, weight: PRIZED_WEIGHT },
       ],
       special: [
         { species: Species.Raikou, weight: 10 },

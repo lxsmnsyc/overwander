@@ -25,6 +25,11 @@ import registerBiomeSpawns, {
 } from '../src/data/biome';
 import EggGroups from '../src/data/ids/egg-groups';
 import { getBiomeLairs, getLairResidents } from '../src/data/overworld/lair';
+import {
+  HONEY_TREE_POOL,
+  HONEY_TREE_SPECIES,
+  rollHoneyTree,
+} from '../src/data/overworld/honey-tree';
 import Families from '../src/data/ids/families';
 import registerAbilities, { getAbilityData, getSignatureAbility } from '../src/data/abilities';
 import Abilities from '../src/data/ids/abilities';
@@ -2831,7 +2836,13 @@ describe('item data', () => {
       expect(getItemData(item).type, getItemData(item).name).toBe(ItemTypes.PokeBall);
       expect(medicine.has(item)).toBe(false);
     }
+    // Honey is the one held item on the medicine shelf: it is food, and
+    // the jar a honey tree wants
+    expect(medicine.has(Items.Honey)).toBe(true);
     for (const item of medicine) {
+      if (item === Items.Honey) {
+        continue;
+      }
       expect(getItemData(item).type, getItemData(item).name).toBe(ItemTypes.Medicine);
       expect(balls.has(item)).toBe(false);
     }
@@ -7210,6 +7221,56 @@ describe('a region’s pokedex chain', () => {
         expect(ids.has(id)).toBe(false);
         ids.add(id);
       }
+    }
+  });
+});
+
+describe('honey trees', () => {
+  it('keeps what a honey tree draws out out of every wild pool', () => {
+    for (const biome of Object.keys(BIOME_NAMES).map(Number) as Biome[]) {
+      for (const time of TIMES_OF_DAY) {
+        const groups = getSpawnPool(biome, time);
+
+        for (const band of SPAWN_BAND_KEYS) {
+          for (const entry of spawnBand(groups, band)) {
+            expect(
+              HONEY_TREE_SPECIES.has(entry.species),
+              `${getSpeciesData(entry.species).name} in ${BIOME_NAMES[biome]}`,
+            ).toBe(false);
+          }
+        }
+      }
+    }
+    for (const species of HONEY_TREE_SPECIES) {
+      expect(getSpeciesData(species).biomes).toEqual([]);
+    }
+  });
+
+  it('bands each pokemon where its line puts it', () => {
+    const rarities: Record<string, SpawnRarity> = {
+      base: SpawnRarity.Base,
+      uncommon: SpawnRarity.Uncommon,
+      rare: SpawnRarity.Rare,
+      scarce: SpawnRarity.Scarce,
+      elusive: SpawnRarity.Elusive,
+      prized: SpawnRarity.Prized,
+    };
+
+    for (const band of SPAWN_BAND_KEYS) {
+      for (const entry of spawnBand(HONEY_TREE_POOL, band)) {
+        expect(getSpawnRarity(entry.species), getSpeciesData(entry.species).name).toBe(
+          rarities[band],
+        );
+      }
+    }
+  });
+
+  it('only ever draws out one of its own', () => {
+    for (const roll of [0, 0.1, 0.3, 0.6, 0.9, 0.999]) {
+      const drawn = rollHoneyTree(() => roll);
+
+      expect(drawn).not.toBeNull();
+      expect(HONEY_TREE_SPECIES.has(drawn ?? Species.Missingno)).toBe(true);
     }
   });
 });

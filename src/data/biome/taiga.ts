@@ -8,7 +8,7 @@ import { PRIZED_WEIGHT, UNOWN_SPAWNS, registerSpawnPool } from './__create';
 export default function registerTaigaSpawns(): void {
   registerSpawnPool(Biome.Taiga, {
     [TimeOfDay.Morning]: {
-      base: [{ species: Species.Teddiursa, weight: 20 }],
+      base: [],
       uncommon: [
         { species: Species.Stantler, weight: 5 },
         { species: Species.Snover, weight: 20 },
@@ -27,7 +27,7 @@ export default function registerTaigaSpawns(): void {
       ],
     },
     [TimeOfDay.Day]: {
-      base: [{ species: Species.Teddiursa, weight: 20 }],
+      base: [],
       uncommon: [
         { species: Species.Stantler, weight: 5 },
         { species: Species.Snover, weight: 20 },

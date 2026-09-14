@@ -83,6 +83,7 @@ const GROUND_ITEMS: [item: Items, biomes: Biome[]][] = [
   [ItemIds.TinyMushroom, [...FOREST, ...WETLAND]],
   [ItemIds.BigMushroom, [...FOREST, ...WETLAND]],
   [ItemIds.BalmMushroom, FOREST],
+  [ItemIds.Honey, FOREST],
   // Old ground, where what died in it is still near the surface
   [ItemIds.RareBone, [...ARID, ...HIGHLAND, BiomeIds.Glacier]],
   // Clear skies, and what falls out of them

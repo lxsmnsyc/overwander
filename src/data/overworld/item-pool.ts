@@ -96,6 +96,8 @@ export const ITEM_POOL: ItemRarityGroups = {
     // bought, and the pokemon that swallows one settles the bill
     { item: Items.EnergyPowder, weight: 8 },
     { item: Items.HealPowder, weight: 8 },
+    // A jar for a honey tree, left where the trees are
+    { item: Items.Honey, weight: 6 },
   ],
   uncommon: [
     { item: Items.UltraBall, weight: 15 },

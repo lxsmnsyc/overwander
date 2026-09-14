@@ -1,6 +1,12 @@
 import AleaRNG from '../core/alea';
 import type Biome from '../data/ids/biome';
-import { growsBerries, growsTrees, isOpenSea, isWaterBiome } from '../data/ids/biome';
+import {
+  growsBerries,
+  growsHoneyTrees,
+  growsTrees,
+  isOpenSea,
+  isWaterBiome,
+} from '../data/ids/biome';
 import type Decoration from '../data/overworld/decoration';
 import {
   MAX_DECORATIONS,
@@ -108,6 +114,9 @@ function biomeLandmarks(biome: Biome): Landmark[] {
     }
     if (kind === Landmark.ApricornTree) {
       return growsTrees(biome);
+    }
+    if (kind === Landmark.HoneyTree) {
+      return growsHoneyTrees(biome);
     }
     return true;
   });

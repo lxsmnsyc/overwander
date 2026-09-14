@@ -80,7 +80,7 @@ export default function registerWurmpleSpecies(): void {
     eggGroups: [EggGroups.Bug],
     genderRatio: [1, 1],
     catchRate: 255,
-    biomes: [Biome.Woodland, Biome.TemperateForest],
+    biomes: [],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
@@ -120,7 +120,7 @@ export default function registerWurmpleSpecies(): void {
     eggGroups: [EggGroups.Bug],
     genderRatio: [1, 1],
     catchRate: 120,
-    biomes: [Biome.Woodland, Biome.TemperateForest],
+    biomes: [],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
@@ -212,7 +212,7 @@ export default function registerWurmpleSpecies(): void {
     eggGroups: [EggGroups.Bug],
     genderRatio: [1, 1],
     catchRate: 120,
-    biomes: [Biome.Woodland, Biome.TemperateForest],
+    biomes: [],
     activeTimes: TimeOfDay.Evening | TimeOfDay.Night,
     learnSet: {
       level: {

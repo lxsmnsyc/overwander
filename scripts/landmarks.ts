@@ -51,6 +51,8 @@ const CUTS: Cut[] = [
   // walked up to
   { name: 'cache', x: 1409, y: 978, width: 15, height: 12 },
   { name: 'cache-taken', x: 1441, y: 976, width: 16, height: 14, crowded: true },
+  // A squat tree gone gold with honey, beside the rip's vine-hung trees
+  { name: 'honey-tree', x: 1516, y: 140, width: 54, height: 56 },
 ];
 
 /**

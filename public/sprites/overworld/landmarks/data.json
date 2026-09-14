@@ -1,194 +1,211 @@
 {
   "compact": true,
-  "width": 147,
-  "height": 108,
+  "width": 145,
+  "height": 127,
   "stands": 24,
   "images": [
     {
       "name": "board.png",
-      "x": 0,
-      "y": 83,
+      "x": 41,
+      "y": 86,
       "width": 34,
       "height": 24,
-      "sourceWidth": 41,
-      "sourceHeight": 41,
+      "sourceWidth": 44,
+      "sourceHeight": 44,
       "trim": [
-        3,
-        17
+        5,
+        20
       ],
       "base": [
-        20,
-        32
+        22,
+        35
       ]
     },
     {
       "name": "cache-taken.png",
       "x": 82,
-      "y": 58,
+      "y": 61,
       "width": 15,
       "height": 14,
-      "sourceWidth": 41,
-      "sourceHeight": 41,
+      "sourceWidth": 44,
+      "sourceHeight": 44,
       "trim": [
-        13,
-        27
+        14,
+        30
       ],
       "base": [
-        20,
-        36
+        21,
+        39
       ]
     },
     {
       "name": "cache.png",
-      "x": 35,
-      "y": 83,
+      "x": 76,
+      "y": 86,
       "width": 15,
       "height": 12,
-      "sourceWidth": 41,
-      "sourceHeight": 41,
+      "sourceWidth": 44,
+      "sourceHeight": 44,
       "trim": [
-        13,
-        29
+        14,
+        32
       ],
       "base": [
-        20,
-        36
+        21,
+        39
+      ]
+    },
+    {
+      "name": "honey-tree.png",
+      "x": 0,
+      "y": 0,
+      "width": 38,
+      "height": 44,
+      "sourceWidth": 44,
+      "sourceHeight": 44,
+      "trim": [
+        3,
+        0
+      ],
+      "base": [
+        22,
+        40
       ]
     },
     {
       "name": "lair-ice.png",
-      "x": 0,
-      "y": 42,
+      "x": 41,
+      "y": 45,
       "width": 40,
       "height": 40,
-      "sourceWidth": 41,
-      "sourceHeight": 41,
+      "sourceWidth": 44,
+      "sourceHeight": 44,
       "trim": [
-        0,
-        1
+        2,
+        4
       ],
       "base": [
-        20,
-        30
+        22,
+        33
       ]
     },
     {
       "name": "lair-moss.png",
-      "x": 65,
-      "y": 0,
+      "x": 0,
+      "y": 45,
       "width": 40,
       "height": 40,
-      "sourceWidth": 41,
-      "sourceHeight": 41,
+      "sourceWidth": 44,
+      "sourceHeight": 44,
       "trim": [
-        0,
-        1
+        2,
+        4
       ],
       "base": [
-        20,
-        30
+        22,
+        33
       ]
     },
     {
       "name": "lair-rubble.png",
-      "x": 41,
-      "y": 42,
+      "x": 104,
+      "y": 0,
       "width": 40,
       "height": 40,
-      "sourceWidth": 41,
-      "sourceHeight": 41,
+      "sourceWidth": 44,
+      "sourceHeight": 44,
       "trim": [
-        0,
-        1
+        2,
+        4
       ],
       "base": [
-        20,
-        30
+        22,
+        33
       ]
     },
     {
       "name": "lair-sealed.png",
-      "x": 106,
-      "y": 0,
+      "x": 104,
+      "y": 41,
       "width": 40,
       "height": 40,
-      "sourceWidth": 41,
-      "sourceHeight": 41,
+      "sourceWidth": 44,
+      "sourceHeight": 44,
       "trim": [
-        0,
-        1
+        2,
+        4
       ],
       "base": [
-        20,
-        30
+        22,
+        33
       ]
     },
     {
       "name": "lair.png",
-      "x": 24,
+      "x": 63,
       "y": 0,
       "width": 40,
       "height": 40,
-      "sourceWidth": 41,
-      "sourceHeight": 41,
+      "sourceWidth": 44,
+      "sourceHeight": 44,
       "trim": [
-        0,
-        1
+        2,
+        4
       ],
       "base": [
-        20,
-        30
+        22,
+        33
       ]
     },
     {
       "name": "nest.png",
       "x": 82,
-      "y": 42,
+      "y": 45,
       "width": 15,
       "height": 15,
-      "sourceWidth": 41,
-      "sourceHeight": 41,
+      "sourceWidth": 44,
+      "sourceHeight": 44,
       "trim": [
-        13,
-        26
+        14,
+        29
       ],
       "base": [
-        20,
-        37
+        21,
+        40
       ]
     },
     {
       "name": "portal.png",
-      "x": 106,
-      "y": 41,
+      "x": 0,
+      "y": 86,
       "width": 40,
       "height": 40,
-      "sourceWidth": 41,
-      "sourceHeight": 41,
+      "sourceWidth": 44,
+      "sourceHeight": 44,
       "trim": [
-        0,
-        1
+        2,
+        4
       ],
       "base": [
-        20,
-        30
+        22,
+        33
       ]
     },
     {
       "name": "seat.png",
-      "x": 0,
+      "x": 39,
       "y": 0,
       "width": 23,
       "height": 41,
-      "sourceWidth": 41,
-      "sourceHeight": 41,
+      "sourceWidth": 44,
+      "sourceHeight": 44,
       "trim": [
-        9,
-        0
+        10,
+        3
       ],
       "base": [
-        20,
-        34
+        21,
+        37
       ]
     }
   ]

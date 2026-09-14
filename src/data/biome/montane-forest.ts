@@ -10,7 +10,6 @@ export default function registerMontaneForestSpawns(): void {
     [TimeOfDay.Morning]: {
       base: [
         { species: Species.Mankey, weight: 20 },
-        { species: Species.Teddiursa, weight: 20 },
         { species: Species.Ralts, weight: 20 },
         { species: Species.Chimchar, weight: 3 },
         { species: Species.Turtwig, weight: 3 },
@@ -19,7 +18,6 @@ export default function registerMontaneForestSpawns(): void {
         { species: Species.Makuhita, weight: 20 },
         { species: Species.Meditite, weight: 25 },
         { species: Species.Stantler, weight: 5 },
-        { species: Species.Burmy, weight: 20 },
       ],
       rare: [
         { species: Species.Kirlia, weight: 10 },
@@ -35,7 +33,6 @@ export default function registerMontaneForestSpawns(): void {
         { species: Species.Mothim, weight: 4 },
       ],
       elusive: [
-        { species: Species.Heracross, weight: 5 },
         { species: Species.Gardevoir, weight: 5 },
         { species: Species.Spinda, weight: 12 },
         { species: Species.Chimecho, weight: 5 },
@@ -54,7 +51,6 @@ export default function registerMontaneForestSpawns(): void {
     [TimeOfDay.Day]: {
       base: [
         { species: Species.Mankey, weight: 20 },
-        { species: Species.Teddiursa, weight: 20 },
         { species: Species.Ralts, weight: 20 },
         { species: Species.Chimchar, weight: 3 },
         { species: Species.Turtwig, weight: 3 },
@@ -63,7 +59,6 @@ export default function registerMontaneForestSpawns(): void {
         { species: Species.Makuhita, weight: 20 },
         { species: Species.Meditite, weight: 25 },
         { species: Species.Stantler, weight: 5 },
-        { species: Species.Burmy, weight: 20 },
       ],
       rare: [
         { species: Species.Kirlia, weight: 10 },
@@ -79,8 +74,6 @@ export default function registerMontaneForestSpawns(): void {
         { species: Species.Mothim, weight: 4 },
       ],
       elusive: [
-        { species: Species.Pinsir, weight: 5 },
-        { species: Species.Heracross, weight: 5 },
         { species: Species.Gardevoir, weight: 5 },
         { species: Species.Spinda, weight: 12 },
         { species: Species.Chimecho, weight: 5 },
@@ -102,7 +95,6 @@ export default function registerMontaneForestSpawns(): void {
         { species: Species.Hoothoot, weight: 25 },
         { species: Species.Stantler, weight: 5 },
         { species: Species.Kricketot, weight: 25 },
-        { species: Species.Burmy, weight: 20 },
       ],
       rare: [{ species: Species.Golbat, weight: 10 }],
       scarce: [
@@ -111,7 +103,6 @@ export default function registerMontaneForestSpawns(): void {
         { species: Species.Mothim, weight: 4 },
       ],
       elusive: [
-        { species: Species.Heracross, weight: 5 },
         { species: Species.Crobat, weight: 5 },
         { species: Species.Sableye, weight: 8 },
         { species: Species.Chimecho, weight: 5 },
@@ -127,7 +118,6 @@ export default function registerMontaneForestSpawns(): void {
         { species: Species.Hoothoot, weight: 25 },
         { species: Species.Stantler, weight: 5 },
         { species: Species.Kricketot, weight: 25 },
-        { species: Species.Burmy, weight: 20 },
       ],
       rare: [{ species: Species.Golbat, weight: 10 }],
       scarce: [
@@ -138,7 +128,6 @@ export default function registerMontaneForestSpawns(): void {
         { species: Species.Mothim, weight: 4 },
       ],
       elusive: [
-        { species: Species.Heracross, weight: 5 },
         { species: Species.Crobat, weight: 5 },
         { species: Species.Sableye, weight: 8 },
         { species: Species.Chimecho, weight: 5 },

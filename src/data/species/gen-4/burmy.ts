@@ -90,7 +90,7 @@ export default function registerBurmySpecies(): void {
     eggGroups: [EggGroups.Bug],
     genderRatio: [1, 1],
     catchRate: 120,
-    biomes: [Biome.Woodland, Biome.TemperateForest, Biome.MontaneForest],
+    biomes: [],
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {

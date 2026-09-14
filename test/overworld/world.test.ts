@@ -25,6 +25,7 @@ import Biome, {
   TimeOfDay,
   getTimeOfDay,
   growsBerries,
+  growsHoneyTrees,
   growsTrees,
   isOpenSea,
   isWaterBiome,
@@ -3500,6 +3501,18 @@ describe('world', () => {
     );
 
     expect(snapshot.getApricornTree(elsewhere?.[0] ?? 0)).toBeNull();
+  });
+
+  it('grows honey trees in the forests and nowhere else', () => {
+    const world = new World('overworld');
+    const chunk = findChunk(world, (candidate) =>
+      new Set(candidate.getLandmarkCells().values()).has(Landmark.HoneyTree),
+    );
+
+    expect(chunk).not.toBeNull();
+    expect(growsHoneyTrees(chunk?.biome ?? Biome.Desert)).toBe(true);
+    expect(growsHoneyTrees(Biome.Grassland)).toBe(false);
+    expect(growsHoneyTrees(Biome.Taiga)).toBe(false);
   });
 
   it('bears one apricorn colour a tree, and a handful of it', () => {

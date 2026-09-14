@@ -4935,6 +4935,45 @@ describe('terrain spots', () => {
     expect(corners).toBeGreaterThan(0);
   });
 
+  it('rolls no landmark onto a route', () => {
+    const world = new World('overworld');
+    let routed = 0;
+
+    for (let cx = -16; cx < 16; cx++) {
+      for (let cy = -16; cy < 16; cy++) {
+        const chunk = world.getChunk(cx, cy);
+        const at = (cell: number): [number, number] => [
+          worldCell(cx, cell % CHUNK_CELLS),
+          worldCell(cy, Math.floor(cell / CHUNK_CELLS)),
+        ];
+
+        for (const [cell, landmark] of chunk.getLandmarkCells()) {
+          // The portal and a cave mouth are laid where the world puts
+          // them, and a town lays its own lots
+          if (
+            landmark === Landmark.Portal ||
+            landmark === Landmark.CaveMouth ||
+            chunk.isTownCell(cell)
+          ) {
+            continue;
+          }
+          const [x, y] = at(cell);
+
+          expect(isRouteAt(world, x, y), `${landmark} at ${x},${y}`).toBe(false);
+        }
+        if (
+          Array.from({ length: CHUNK_CELLS * CHUNK_CELLS }, (_, cell) => at(cell)).some(([x, y]) =>
+            isRouteAt(world, x, y),
+          )
+        ) {
+          routed += 1;
+        }
+      }
+    }
+    // A sweep that crossed no route would pass without saying anything
+    expect(routed).toBeGreaterThan(0);
+  });
+
   it('keeps scenery off the edge of a cliff', () => {
     const world = new World('overworld');
     let faces = 0;

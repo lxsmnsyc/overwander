@@ -620,12 +620,14 @@ export default class Chunk {
         // one that did not was the phenomenon, which is no longer one:
         // something happening is rolled over the chunk by the hour
         // Nothing of the country is rolled onto a town's own ground:
-        // what stands in a town is the town's to say
+        // what stands in a town is the town's to say. Nor onto a route,
+        // which is walked like a street and would be blocked by one
         const free = (candidate: number): boolean =>
           !taken.has(candidate) &&
           this.isClear(candidate) &&
           !this.getFaceCells().has(candidate) &&
-          !this.isTownCell(candidate);
+          !this.isTownCell(candidate) &&
+          !this.isRouteCell(candidate);
         // Dry ground first and the water only where there is none: a
         // landmark stands beside the pool rather than in it, and a
         // chunk one lake covers is stood on all the same rather than

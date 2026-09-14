@@ -1,9 +1,11 @@
 import {
-  BufferAttribute,
   BufferGeometry,
   CustomBlending,
   DoubleSide,
   DstColorFactor,
+  DynamicDrawUsage,
+  InterleavedBuffer,
+  InterleavedBufferAttribute,
   LinearFilter,
   type Material,
   Mesh,
@@ -107,61 +109,62 @@ function blankSheet(): HTMLCanvasElement {
  * always did; the hour's light and the weather are drawn after
  * everything, since they are the glass the world is seen through
  */
+/** A buffer the marks are written straight into, laid out as the shader reads it */
+function markBuffer(vertices: Float32Array): InterleavedBuffer {
+  const buffer = new InterleavedBuffer(vertices, STRIDE);
+
+  // Rewritten every frame, so the driver is told to expect it
+  buffer.setUsage(DynamicDrawUsage);
+  return buffer;
+}
+
 class MarkLayer {
   readonly mesh: Mesh<BufferGeometry, Material[]>;
   vertices = new Float32Array(ROOM * 6 * STRIDE);
   filled = 0;
   readonly runs: Run[] = [];
+  private buffer = markBuffer(this.vertices);
 
   constructor(order: number) {
-    const geometry = new BufferGeometry();
-
-    geometry.setAttribute('spot', new BufferAttribute(new Float32Array(0), 3));
-    geometry.setAttribute('uv', new BufferAttribute(new Float32Array(0), 2));
-    geometry.setAttribute('tint', new BufferAttribute(new Float32Array(0), 4));
-    this.mesh = new Mesh<BufferGeometry, Material[]>(geometry, []);
+    this.mesh = new Mesh<BufferGeometry, Material[]>(new BufferGeometry(), []);
     this.mesh.frustumCulled = false;
     this.mesh.renderOrder = order;
+    this.attach();
+  }
+
+  /** Point the shader's three attributes at their stretches of the one buffer */
+  private attach(): void {
+    const geometry = this.mesh.geometry;
+
+    geometry.setAttribute('spot', new InterleavedBufferAttribute(this.buffer, 3, 0));
+    geometry.setAttribute('uv', new InterleavedBufferAttribute(this.buffer, 2, 3));
+    geometry.setAttribute('tint', new InterleavedBufferAttribute(this.buffer, 4, 5));
   }
 
   room(): void {
-    if ((this.filled + 6) * STRIDE > this.vertices.length) {
-      const grown = new Float32Array(this.vertices.length * 2);
-
-      grown.set(this.vertices);
-      this.vertices = grown;
+    if ((this.filled + 6) * STRIDE <= this.vertices.length) {
+      return;
     }
+    const grown = new Float32Array(this.vertices.length * 2);
+
+    grown.set(this.vertices);
+    this.vertices = grown;
+    this.buffer = markBuffer(grown);
+    // A GPU buffer cannot be resized, so the old one is let go before the bigger one is attached
+    this.mesh.geometry.dispose();
+    this.attach();
   }
 
   /** Hand over whatever has been written, one group per run. */
   finish(materialOf: (run: Run) => RawShaderMaterial): void {
     const geometry = this.mesh.geometry;
 
-    if (geometry.getAttribute('spot').count < this.filled) {
-      geometry.setAttribute('spot', new BufferAttribute(new Float32Array(this.filled * 3), 3));
-      geometry.setAttribute('uv', new BufferAttribute(new Float32Array(this.filled * 2), 2));
-      geometry.setAttribute('tint', new BufferAttribute(new Float32Array(this.filled * 4), 4));
+    // Only what this frame wrote is uploaded, not the whole buffer
+    this.buffer.clearUpdateRanges();
+    if (this.filled > 0) {
+      this.buffer.addUpdateRange(0, this.filled * STRIDE);
+      this.buffer.needsUpdate = true;
     }
-    const places = geometry.getAttribute('spot');
-    const uvs = geometry.getAttribute('uv');
-    const tints = geometry.getAttribute('tint');
-
-    for (let vertex = 0; vertex < this.filled; vertex += 1) {
-      const at = vertex * STRIDE;
-
-      places.setXYZ(vertex, this.vertices[at], this.vertices[at + 1], this.vertices[at + 2]);
-      uvs.setXY(vertex, this.vertices[at + 3], this.vertices[at + 4]);
-      tints.setXYZW(
-        vertex,
-        this.vertices[at + 5],
-        this.vertices[at + 6],
-        this.vertices[at + 7],
-        this.vertices[at + 8],
-      );
-    }
-    places.needsUpdate = true;
-    uvs.needsUpdate = true;
-    tints.needsUpdate = true;
     geometry.setDrawRange(0, this.filled);
     geometry.clearGroups();
 

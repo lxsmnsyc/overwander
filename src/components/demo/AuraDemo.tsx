@@ -1,5 +1,5 @@
-import { For, type JSX, createMemo, createSignal } from 'solid-js';
-import { Meta, Row, Select } from '../styled';
+import { For, type JSX, Show, createMemo, createSignal } from 'solid-js';
+import { Button, Meta, Row, Select } from '../styled';
 import AnimatedSprite from '../sprites/AnimatedSprite';
 import type { AuraKind } from '../../canvas/auras';
 import { getRegisteredSpecies, getSpeciesData } from '../../data/species';
@@ -22,6 +22,7 @@ const SCALES = [4, 2];
  */
 export default function AuraDemo(): JSX.Element {
   const [species, setSpecies] = createSignal<Species>(getRegisteredSpecies()[0]);
+  const [replay, setReplay] = createSignal(0);
 
   const pokemon = createMemo(() => {
     const options: { value: Species; label: string }[] = [];
@@ -58,6 +59,29 @@ export default function AuraDemo(): JSX.Element {
             </div>
           )}
         </For>
+        <div class="flex flex-wrap items-end justify-around gap-6">
+          <For each={SCALES}>
+            {(scale) => (
+              <div class="flex flex-col items-center gap-2">
+                {/* Keyed on the replay count, so each press mounts a
+                    fresh sprite and the sparkle runs again */}
+                <Show when={`${species()}:${replay()}`} keyed>
+                  <AnimatedSprite
+                    species={species()}
+                    shiny
+                    sparkle
+                    animation={SpriteAnim.Idle}
+                    direction="DownLeft"
+                    scale={scale}
+                    shadow
+                    label=""
+                  />
+                </Show>
+                <span class="text-sm text-muted">Shiny sparkle</span>
+              </div>
+            )}
+          </For>
+        </div>
       </div>
     </div>
   );
@@ -79,6 +103,13 @@ export default function AuraDemo(): JSX.Element {
             setSpecies(chosen);
           }}
         />
+        <Button
+          onClick={() => {
+            setReplay((count) => count + 1);
+          }}
+        >
+          Replay sparkle
+        </Button>
       </Row>
       <div class="grid gap-4 lg:grid-cols-2">
         {panel(false)}

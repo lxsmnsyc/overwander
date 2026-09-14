@@ -256,10 +256,12 @@ function standing(world: World, at: [number, number]): [at: [number, number], co
       spot,
       // The window names what it publishes, and the name is what the
       // board keeps a sheet under while the ground slides past
+      // The first is shiny, named for where it stands so the sparkle
+      // plays again wherever the page lands
       {
-        id: `demo-${placed.length}`,
+        id: `demo-${placed.length}-${spot[0]},${spot[1]}`,
         species: species[placed.length],
-        shiny: false,
+        shiny: placed.length === 0,
         featured: false,
       },
     ]);
